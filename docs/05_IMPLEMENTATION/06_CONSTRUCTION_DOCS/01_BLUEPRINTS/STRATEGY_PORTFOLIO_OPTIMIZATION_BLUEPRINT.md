@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 策略组合优化
-  - 策略权重分配
-  - 策略融合
-  - 多策略优化
+  - 投资组合优化蓝图设计与实施指导与实施方案
 
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0

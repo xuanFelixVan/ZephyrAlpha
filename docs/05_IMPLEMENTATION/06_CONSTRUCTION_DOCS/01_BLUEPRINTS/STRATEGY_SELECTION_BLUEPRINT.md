@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 策略选择
-  - 策略排名
-  - 策略评估
-  - 策略决策
+  - 交易策略框架设计与实施指导与实施指导
 
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0

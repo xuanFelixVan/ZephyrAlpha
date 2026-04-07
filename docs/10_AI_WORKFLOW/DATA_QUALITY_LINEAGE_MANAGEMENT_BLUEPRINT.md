@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ integrated_modules:
   - AIWF_DQM_001
   - AIWF_DLT_001
 responsibility:
-  - 蓝图设计、架构规划
+  - 数据管理架构设计与实施规范与优化维护
 
 ---
 ---

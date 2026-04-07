@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: Layer 8 - ﻛﭦﭦﮔﭦﻛﭦ۳ﻛﭦ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../ARCHITECTURE.md

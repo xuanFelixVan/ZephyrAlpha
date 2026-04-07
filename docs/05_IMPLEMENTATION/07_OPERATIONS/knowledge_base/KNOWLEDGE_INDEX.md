@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KNOWLEDGE_INDEX
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ϊ╕ςϊ║║ί╝ΑίΠ?standard_type: ύθξϋψΗύ┤λί╝ΧόΨΘόκμ
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 applicable_scope: ϊ╕ςϊ║║ύθξϋψΗύχκύΡΗ
 compliance_level: ύχΑίΝΨόιΘ?parent_document: ../README.md
 implementation_status: Active

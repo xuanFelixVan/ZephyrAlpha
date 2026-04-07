@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_BOUNDARY_MATRIX
 version: 1.0.0
 status: Active
@@ -20,8 +20,7 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT.md
 implementation_status: 设计阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 11 STRATEGIC DECISION模块文档管理与维护
 ---
 
 # Layer 11 职责边界矩阵

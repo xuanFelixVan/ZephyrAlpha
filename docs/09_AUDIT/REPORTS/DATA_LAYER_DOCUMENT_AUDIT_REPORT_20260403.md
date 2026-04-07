@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 审计报告、合规检查
-  - 绩效分析
-  - 系统架构
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: ц╖▒х║жхобшобцКехСК
 applicable_scope: Layer 0цХ░цНоц║Рх▒ВцЦЗцбгф╜Уч│╗
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

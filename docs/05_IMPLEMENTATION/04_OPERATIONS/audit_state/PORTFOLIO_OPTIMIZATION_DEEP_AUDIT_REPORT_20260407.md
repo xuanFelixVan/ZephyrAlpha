@@ -57,7 +57,7 @@ module_id: QUARTERLY_REBALANCE_BLUEPRINT_001
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 **修复建议**:
@@ -66,10 +66,7 @@ module_id: QUARTERLY_REBALANCE_001
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 responsibility:
-  - 季度调仓
-  - 季度再平衡
-  - 调仓决策
-  - 季度权重调整
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 ---
@@ -90,7 +87,7 @@ module_id: MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT_001
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 风险预算 (Layer 11)
+  - 系统审计分析与质量评估报告与改进建议
 
 layer: "Layer 6 (组合优化层)"
 ---
@@ -117,9 +114,7 @@ module_id: STRATEGIC_WEIGHTING_BLUEPRINT_001
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 **修复建议**:
@@ -128,10 +123,7 @@ module_id: STRATEGIC_WEIGHTING_001
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 responsibility:
-  - 战略权重分配
-  - 战略资产配置
-  - 长期权重优化
-  - 战略配置决策
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 ---
@@ -223,10 +215,7 @@ RISK_CONTROL_BLUEPRINT.md的职责是"风险控制、风险限额管理、风险
 **问题证据**:
 ```yaml
 responsibility:
-  - 风险控制
-  - 风险限额管理
-  - 风险监控
-  - 风险预警
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 6 (组合优化层)"
 ```
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_ENGINE_DATA_CONSISTENCY_DESIGN
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
-  - 实施指南、部署文档
-  - 交易执行
-  - 回测系统
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻛﺟﻠ?
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ

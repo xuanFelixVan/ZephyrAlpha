@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ROBUST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 鲁棒优化
-  - 不确定性建模
-  - 鲁棒解求解
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 5.2 (组合优化)
 ---
 

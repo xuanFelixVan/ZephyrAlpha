@@ -21,9 +21,7 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility:
-  - Layer 10索引导航
-  - 蓝图文档索引
-  - 模块覆盖度分析
+  - 系统框架设计与核心架构管理与优化维护
 
 ---
 ---

@@ -13,7 +13,7 @@ parent_document: ../INDEX.md
 
 ﻿---
 responsibility:
-  - 目录导航、文档索引
+  - 目录导航与文档索引管理与优化维护
 module_id: INDEX_LAYER4_ML_20260407124048
 version: 1.0.0
 status: Active

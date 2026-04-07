@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_01_DATABASE_DESIGN_DOCUMENT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席蓝图架构?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 standard_type: 专业量化机构数据库设计标?
 applicable_scope: 全系统数据存?
 compliance_level: 专业机构标准

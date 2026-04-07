@@ -55,10 +55,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据采集框架
-  - 数据存储架构
-  - 数据处理引擎
-  - 基础设施管理
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 1 (数据层)"
 ---
 ```
@@ -75,10 +72,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 战略资产配置
-  - 风险预算分配
-  - 投资组合优化
-  - 再平衡决策
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 11 (战略决策层)"
 ---
 ```
@@ -95,11 +89,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 交易成本分析
-  - 成本计算
-  - 基准对比
-  - 成本归因
-  - 执行质量评分
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 5 (交易成本层)"
 ---
 ```
@@ -118,11 +108,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 历史情景回放
-  - 假设情景分析
-  - 敏感性分析
-  - 情景库管理
-  - 情景报告生成
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 6 (组合优化层)"
 ---
 ```
@@ -132,9 +118,7 @@ layer: "Layer 6 (组合优化层)"
 ```yaml
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 组合优化
+  - 系统审计分析与质量评估报告与改进建议
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -204,7 +188,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 ---
 ```
 
@@ -218,9 +202,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -14,7 +14,7 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 responsibility:
-  - 资源管理、平台文档
+  - 目录导航与文档索引管理与优化维护
 applicable_scope: εΛ•ιηΒφΚ
 compliance_level: δΗ™δΗφ†΅ε΅
 parent_document: ../INDEX.md

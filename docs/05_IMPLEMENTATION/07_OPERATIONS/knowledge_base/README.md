@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲ﻛﭦ?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 version: 1.0.0
 module_id: IMP_README
 created_date: 2026-04-02

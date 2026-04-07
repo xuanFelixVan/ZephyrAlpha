@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECHNICAL_SOLUTION_SUMMARY_REPORT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮД?
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшо╛шобцЦЗцбг
 applicable_scope: цибцЛЯф║дцШУч│╗ч╗Я
 compliance_level: цЮ╢цЮДцаЗхЗЖ

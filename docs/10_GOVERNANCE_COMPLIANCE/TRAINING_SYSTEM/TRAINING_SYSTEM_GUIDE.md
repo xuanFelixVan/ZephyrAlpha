@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRAINING_SYSTEM_GUIDE
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 培训团队
 responsibility:
-  - 实施指南、操作手册
-  - 能力提升
-  - 知识传承
+  - 操作指南编写与使用说明与系统维护管理
 standard_type: 培训指南
 applicable_scope: 全系统文档治理培训
 compliance_level: 专业标准

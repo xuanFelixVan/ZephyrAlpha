@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V5_20260405
 version: 1.0.0
 status: Active
@@ -21,7 +21,7 @@ parent_document: ../INDEX.md
 audit_type: 第五次深度审计
 audit_date: 2026-04-05
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

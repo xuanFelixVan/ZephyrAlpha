@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-04
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 responsibility:
-  - AI工作流、智能辅助、自动化流程
+  - 系统实施与部署管理与优化维护
 standard_type: 实施指南
 applicable_scope: 舆情分析层改进模块实施
 compliance_level: 专业标准

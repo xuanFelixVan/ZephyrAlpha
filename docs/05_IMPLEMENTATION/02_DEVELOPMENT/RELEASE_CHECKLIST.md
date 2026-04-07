@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RELEASE_CHECKLIST
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﭖﻝ۷ﮔ?
 applicable_scope: ﻝﺏﭨﻝﭨﻝﮔ؛ﮒﮒﺕ
 compliance_level: ﮔﭖﻝ۷ﮔﮒ

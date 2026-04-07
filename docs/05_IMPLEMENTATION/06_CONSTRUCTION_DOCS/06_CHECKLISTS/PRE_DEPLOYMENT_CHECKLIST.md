@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PRE_DEPLOYMENT_CHECKLIST
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ждќтИГТъХТъётИ?standard_type: СИЊСИџжЄЈтїќТю║ТъёТБђТЪЦТИЁтЇ?applicable_scope: у│╗у╗ЪжЃеуй▓тЅЇТБђТЪ?compliance_level: СИЊСИџТаЄтЄє
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
-  - 审计系统
+  - 系统实施与部署管理与优化维护
 parent_document: ../README.md---
 
 

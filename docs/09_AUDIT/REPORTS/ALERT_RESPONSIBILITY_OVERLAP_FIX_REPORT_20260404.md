@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALERT_RESPONSIBILITY_OVERLAP_FIX_REPORT_20260404
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ owner: 首席蓝图架构?standard_type: 专业量化机构P2问题修复报告
 applicable_scope: 告警功能职责重叠问题修复
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统审计分析与质量评估报告与改进建议
 ---
 # 清风量化系统告警功能职责重叠问题修复报告
 

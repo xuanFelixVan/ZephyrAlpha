@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md

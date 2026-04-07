@@ -8,7 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - å
+  - 数据管理架构设计与实施规范与优化维护
 ¸
   - 影响分析
 layer: Layer 5 (策略执行层)

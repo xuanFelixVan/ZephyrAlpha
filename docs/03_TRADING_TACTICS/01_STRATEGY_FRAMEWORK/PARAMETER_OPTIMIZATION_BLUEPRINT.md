@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 交易策略团队
 responsibility:
-  - 交易策略、战术执行
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

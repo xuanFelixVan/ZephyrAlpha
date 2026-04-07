@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DUPLICATE_DOCUMENT_ARCHIVE_REPORT_20260403
 version: 1.0.0
 status: Active
@@ -17,9 +17,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构?standard_type: 专业量化机构归档报告
 responsibility:
-  - 审计报告、合规检查
-  - 交易执行
-  - 系统架构
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: 重复文档归档
 compliance_level: 专业标准---
 

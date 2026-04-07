@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_MANAGEMENT_STANDARD
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构师
 responsibility:
-  - 因子计算、因子库管理
+  - 技术标准制定与规范管理与优化维护
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 初始标准

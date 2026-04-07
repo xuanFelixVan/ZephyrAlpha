@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENTATION_CENTER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 文档中心系统设计
-  - 文档组织和导航
-  - 文档搜索功能
-  - 文档版本管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 ## 二、架构设计
 

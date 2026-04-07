@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRESS_TEST_TEMPLATE
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: жөӢиҜ•ж–ҮжЎЈ
 responsibility:
-  - 审计报告、合规检查
-  - 测试系统
+  - 文档模板设计与标准化管理与优化维护
 applicable_scope: йЈҺйҷзЎзҗҶ
 compliance_level: дё“дёҡжҮеҮҶ
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md

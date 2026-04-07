@@ -1,4 +1,4 @@
----
+﻿---
 module_id: YAML_FIX_PROGRESS_REPORT_20260406
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 分析系统状态，生成评估报告和优化建议
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准

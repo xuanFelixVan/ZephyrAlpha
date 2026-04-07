@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CLASSIFICATION_STANDARD
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 个人开发者
 responsibility:
-  - 文档分类标准、分类体系、分类检查
+  - 技术标准制定与规范管理与优化维护
 layer: Layer 10 (治理合规层)
 standard_type: 专业量化机构文档
 ---

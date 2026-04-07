@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTH_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 用户认证授权系统设计
-  - 身份验证和权限管理
-  - 会话管理和安全控制
-  - 多因素认证支持
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ﻿---
@@ -37,7 +34,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
-  - 认证授权系统，负责用户身份认证、登录管理和基础权限验证，不负责细粒度权限控制
+  - 系统架构蓝图设计与实施指导与实施方案
 ## 1. 概述
 
 ### 1.1 功能定位

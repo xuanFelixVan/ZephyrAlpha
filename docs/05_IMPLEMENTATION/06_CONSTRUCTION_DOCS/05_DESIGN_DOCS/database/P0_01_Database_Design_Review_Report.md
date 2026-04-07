@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_01_DATABASE_DESIGN_REVIEW_REPORT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
-  - 实施指南、部署文档
-  - 交易执行
-  - 数据源
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰ﻟﺁ?
 applicable_scope: ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰ﻟﺁﮒ؟۰ﻛﺕﻛﺙﮒ
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ

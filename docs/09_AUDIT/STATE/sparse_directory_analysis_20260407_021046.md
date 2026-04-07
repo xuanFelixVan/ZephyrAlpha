@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SPARSE_DIRECTORY_ANALYSIS_20260407_021046
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 
 module_id: SPARSE_DIRECTORY_ANALYSIS_20260407_021046_001
 version: 1.0.0

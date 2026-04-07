@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_BLUEPRINT_COMPLETENESS_REPORT
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 系统蓝图完整性报告
 applicable_scope: 全系统蓝图完整性分析
 compliance_level: 专业机构标准
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 # 清风量化系统蓝图完整性报告

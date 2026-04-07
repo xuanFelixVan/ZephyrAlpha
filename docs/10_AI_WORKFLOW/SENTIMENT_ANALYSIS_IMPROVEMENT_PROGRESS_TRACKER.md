@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ applicable_scope: 舆情分析层改进文档索引
 compliance_level: 专业标准
 parent_document: INDEX.md
 responsibility:
-  - AI工作流、智能辅助、自动化流程
+  - AI工作流设计与智能辅助管理与优化维护
 ---
 ---
 

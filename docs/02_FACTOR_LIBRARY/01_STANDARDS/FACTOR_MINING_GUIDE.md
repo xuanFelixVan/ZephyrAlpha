@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_MINING_GUIDE
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 操作手册
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 因子计算、因子库管理
+  - 操作指南编写与使用说明与系统维护管理
 
 ---
 ---

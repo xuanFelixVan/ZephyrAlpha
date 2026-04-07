@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: STRATEGIC_DECISION_BP_001
 version: 3.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 
 ---
 ---

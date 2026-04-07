@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_MANAGEMENT_DOCUMENT_INDEX
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_INTERFACE_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﮔﺁﮔﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?version: 1.0.0
 module_id: MODULE_INTERFACE_SPECIFICATION

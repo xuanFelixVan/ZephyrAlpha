@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_CONSTRUCTION_QUICK_REFERENCE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?applicable_scope: AIﮔﭦﻟﺛﻛﺛﮔﺛﮒﺓ۴ﮒﺟﻟﺁ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 parent_document: ./CONSTRUCTION_SPECIFICATION.md
 implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 ---

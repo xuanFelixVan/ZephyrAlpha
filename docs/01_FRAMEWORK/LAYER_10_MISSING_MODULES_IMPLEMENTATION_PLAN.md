@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_MISSING_MODULES_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
@@ -26,10 +26,7 @@ related_documents:
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 实施方案设计完成
 responsibility:
-  - 缺失模块识别与分析
-  - 开源项目集成方案设计
-  - 实施路径规划
-  - 质量保证方案
+  - 系统框架设计与核心架构管理与优化维护
 ---
 
 # Layer 10治理与合规层缺失模块补充实施方案

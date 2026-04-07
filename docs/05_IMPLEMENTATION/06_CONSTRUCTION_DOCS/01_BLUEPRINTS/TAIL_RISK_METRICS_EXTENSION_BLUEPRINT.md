@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 responsibility:
-  - 尾部风险度量扩展
-  - CVaR/EVaR/CDaR计算
-  - 高级风险指标
-  - 风险度量分析
+  - 风险管理框架设计与实施方案与优化维护
 ---
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 25_STRATEGY_IDE_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 策略开发环境
-  - 代码编辑
-  - 回测集成
+  - 交易策略框架设计与实施指导与实施指导
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

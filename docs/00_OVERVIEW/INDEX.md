@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
 responsibility:
-  - 系统概览、架构总览
-  - 系统架构
-  - 文档治理
+  - 目录导航与文档索引管理与优化维护
 applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md

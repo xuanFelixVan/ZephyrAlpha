@@ -1,4 +1,4 @@
----
+﻿---
 module_id: METADATA_ENHANCER_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 responsibility:
-  - 实施指南、部署文档
-  - 审计系统
+  - 系统实施与部署管理与优化维护
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: METADATA_ENHANCER_SPECIFICATION

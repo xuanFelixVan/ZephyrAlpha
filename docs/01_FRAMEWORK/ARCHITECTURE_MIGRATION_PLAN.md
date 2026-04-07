@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_MIGRATION_PLAN
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构?
 responsibility:
-  - 定义系统架构和模块组织，确保架构清晰
+  - 系统架构设计与技术选型与实施指导
 standard_type: 架构迁移计划
 applicable_scope: Layer 0-11架构 ?三级时间框架架构迁移 | 业务架构: 三级时间框架融合架构
 compliance_level: 顶级专业标准

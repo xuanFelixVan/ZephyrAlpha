@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_NAMING_STANDARD
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ owner: 首席文档架构?standard_type: 专业量化机构文档命名规范
 applicable_scope: 全系统文档管?compliance_level: 专业标准
 parent_document: docs/01_FRAMEWORK/DOCUMENT_NUMBERING_STANDARD.md
 responsibility:
-  - 系统框架、架构设计
+  - 技术标准制定与规范管理与优化维护
 
 ---
 ---

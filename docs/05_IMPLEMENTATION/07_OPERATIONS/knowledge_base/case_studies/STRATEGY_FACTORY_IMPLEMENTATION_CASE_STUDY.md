@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: ﮔﮔﺁﮔ۰ﻛﺝﻝﻝ۸?applicable_scope: ﻝﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒﮒ؟ﮔﺛ
 responsibility:
-  - 实施指南、部署文档
+  - 因子研究与管理框架设计与优化维护
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?

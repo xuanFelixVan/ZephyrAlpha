@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMP_002_QMT_API_COMMUNITY_RESEARCH
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 设计阶段
 version: 1.0.0
 last_updated: 2026-04-02
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统实施与部署管理与优化维护
 ---
 
 

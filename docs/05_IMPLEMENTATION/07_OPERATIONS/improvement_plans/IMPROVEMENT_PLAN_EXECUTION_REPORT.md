@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMPROVEMENT_PLAN_EXECUTION_REPORT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ф╕кф║║х╝АхПСя┐╜?standard_type: цФ╣ш┐ЫшобхИТцЙзшбМцКехСК
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: Layer 5 чнЦчХецЙзшбМя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 implementation_status: цЙзшбМя┐?---
 

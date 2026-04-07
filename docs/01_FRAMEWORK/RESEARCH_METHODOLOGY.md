@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_METHODOLOGY
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: 核心文档
 responsibility:
-  - 系统框架、架构设计
+  - 系统框架设计与核心架构管理与优化维护
 applicable_scope:
 parent_document: ../INDEX.md
 module_id: RESEARCH_METHODOLOGY

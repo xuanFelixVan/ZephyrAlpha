@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 顶级专业标准
 parent_document: ./COMPLETE_BLUEPRINT_OVERVIEW.md
 implementation_status: 实施阶段
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

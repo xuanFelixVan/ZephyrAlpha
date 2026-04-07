@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_GOVERNANCE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,10 +37,7 @@ responsibility_boundary: |
   - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
 responsibility:
-  - AI行为准则体系
-  - AI决策透明度
-  - AI错误责任归属
-  - AI持续改进机制
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机?

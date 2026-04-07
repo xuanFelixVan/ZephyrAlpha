@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONTINUOUS_IMPROVEMENT_PROCESS
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 applicable_scope: хЕич│╗ч╗?compliance_level: цнгх╝ПцаЗхЗЖ
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_DEVELOPMENT_LESSONS_LEARNED
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: у╗ЈжфїТђ╗у╗Њ
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
-  - 审计系统
+  - 系统实施与部署管理与优化维护
 applicable_scope: СИфС║║т╝ђтЈ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
 implementation_status: ти▓тїТѕ?owner: СИфС║║т╝ђтЈЉУђ?version: 1.0.0

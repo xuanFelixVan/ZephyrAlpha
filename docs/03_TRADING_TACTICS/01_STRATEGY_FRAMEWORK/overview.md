@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OVERVIEW
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 系统概览与整体架构说明与系统维护管理
 ---
 
 # 策略体系概述

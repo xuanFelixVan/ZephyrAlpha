@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_TEMPLATES
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 交易策略、战术执行
+  - 文档模板设计与标准化管理与优化维护
 standard_type: 专业量化机构模板标准
 applicable_scope: 文档模板与规?
 compliance_level: 初始标准

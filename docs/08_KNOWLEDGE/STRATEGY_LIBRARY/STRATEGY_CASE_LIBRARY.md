@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_CASE_LIBRARY
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕﻝﻝ۴ﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۰ﻛﺝﮒﭦ?applicable_scope: ﻝﻝ۴ﻝﻝ۸ﭘﻛﺕﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 08 KNOWLEDGE模块文档管理与维护
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﻝﻝ۴ﮔ۰ﻛﺝ", "ﮔ۰ﻛﺝﮒﭦ?, "ﻛﺕﻛﺕﮔﮒ"]
 ---

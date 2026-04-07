@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: Audit Sentinel
 responsibility:
-  - 审计脚本改进报告
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 改进报告
 applicable_scope: 文档治理审计工具优化
 compliance_level: 专业标准

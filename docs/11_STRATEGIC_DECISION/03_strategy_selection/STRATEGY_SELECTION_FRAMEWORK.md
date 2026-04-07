@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_SELECTION_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -23,8 +23,7 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 策略选择 (Layer 11)
-  - 组合优化 (Layer 6)
+  - 系统框架设计与核心架构管理与优化维护
 ---
 
 # 策略选择框架蓝图

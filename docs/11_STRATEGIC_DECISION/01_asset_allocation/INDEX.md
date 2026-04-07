@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 规划中
 responsibility:
-  - 索引文档、导航目录
+  - 目录导航与文档索引管理与优化维护
 
 ---
 ---

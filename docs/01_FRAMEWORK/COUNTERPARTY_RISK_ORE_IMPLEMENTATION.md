@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COUNTERPARTY_RISK_ORE_IMPLEMENTATION
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - ORE集成实施
-  - 交易对手风险评估
-  - Basel III标准实现
+  - 系统框架设计与核心架构管理与优化维护
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 交易对手风险管理系统 - ORE集成

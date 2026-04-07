@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 系统增强
-  - 功能扩展
-  - 性能优化
-  - 系统升级
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: SYSTEM_ENHANCEMENT_001
 version: 1.0.0

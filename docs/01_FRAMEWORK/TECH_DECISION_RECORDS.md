@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECH_DECISION_RECORDS
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席蓝图架构?standard_type: 专业量化机构蓝图
 responsibility:
-  - 系统框架、架构设计
+  - 系统框架设计与核心架构管理与优化维护
 applicable_scope: 技术选型决策
 compliance_level: 顶级专业标准
 reference_models: ["Technology Decision Records Best Practices", "ADR (Architecture Decision Records)"]

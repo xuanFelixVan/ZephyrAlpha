@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOC_GOVERNANCE_OPTIMIZATION_PROPOSAL
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮒ؟?standard_type: ﮔﮔ۰۲ﮔﺎﭨﻝﻛﺙﮒﮔﮔ۰
 responsibility:
-  - 审计报告、合规检查
+  - 治理合规框架设计与实施与实施指导
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝ?
 ---
 ---

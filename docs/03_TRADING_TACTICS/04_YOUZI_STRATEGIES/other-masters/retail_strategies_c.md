@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RETAIL_STRATEGIES_C
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 交易策略设计与实施管理与优化维护
 ---
 
 # 游资量化策略?- 第三部分

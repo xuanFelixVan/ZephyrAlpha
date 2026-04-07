@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_REPORT_DISTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "自研 + SMTP + Webhook"
 priority: P2
 responsibility:
-  - 报告生成调度
-  - 多渠道分发
-  - 权限管理
-  - 分发记录跟踪
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

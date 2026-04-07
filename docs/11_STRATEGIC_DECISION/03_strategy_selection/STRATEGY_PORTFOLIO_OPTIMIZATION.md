@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION
 version: 1.0.0
 status: Active
@@ -23,8 +23,7 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 策略组合优化 (Layer 11)
-  - 组合优化 (Layer 6)
+  - 11 STRATEGIC DECISION模块文档管理与维护
 ---
 
 # 策略组合优化蓝图

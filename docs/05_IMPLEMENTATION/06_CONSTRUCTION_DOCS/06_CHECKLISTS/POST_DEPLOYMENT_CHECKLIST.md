@@ -1,4 +1,4 @@
----
+﻿---
 module_id: POST_DEPLOYMENT_CHECKLIST
 version: 1.0.0
 status: Active
@@ -10,9 +10,7 @@ owner: 首席文档架构师
 ﻿---
 standard_type: жЈҖжҹҘжё…еҚ?applicable_scope: е…Ёзіз?compliance_level: жӯЈејҸжҮеҮҶ
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
-  - 审计系统
+  - 系统实施与部署管理与优化维护
 parent_document: ../README.md
 implementation_status: еІеҢжҲ?owner: иҝҗзҙеӣўйҳҹ
 version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_DECAY_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,11 +26,7 @@ reference_models:
 open_source_solution: "pandas-ta + 自研分析模块"
 priority: P0
 responsibility:
-  - 信号有效期分析
-  - 衰减曲线拟合
-  - 最优持有期计算
-  - 信号强度评估
-  - 衰减预警
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

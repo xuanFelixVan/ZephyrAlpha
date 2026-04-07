@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 responsibility:
-  - 多模态分析技术规格
-  - AI虚拟研究团队技术规格
-  - 长期改进模块实施指导
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 技术规格书
 applicable_scope: 舆情分析层长期改进模块
 compliance_level: 专业标准

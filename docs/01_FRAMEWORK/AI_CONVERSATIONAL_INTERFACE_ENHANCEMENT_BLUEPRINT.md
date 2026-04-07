@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -35,7 +35,7 @@ responsibility_boundary: |
   基础自然语言界面请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
   报告问答请参考：REPORT_INTELLIGENT_QA_BLUEPRINT.md
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

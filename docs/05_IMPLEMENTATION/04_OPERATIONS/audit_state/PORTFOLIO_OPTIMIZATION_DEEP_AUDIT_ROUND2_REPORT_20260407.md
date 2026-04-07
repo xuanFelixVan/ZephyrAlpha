@@ -94,10 +94,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 7 风险管理层
 compliance_level: 专业标准
 responsibility:
-  - 风险贡献分析
-  - 风险分解
-  - 风险预算管理
-  - 风险归因
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 7 (风险管理层)"  # ❌ 错误：应该是Layer 6
 ---
 ```
@@ -114,10 +111,7 @@ layer: "Layer 7 (风险管理层)"  # ❌ 错误：应该是Layer 6
 ```yaml
 ---
 responsibility:
-  - 策略组合优化
-  - 策略权重分配
-  - 策略融合
-  - 多策略优化
+  - 系统审计分析与质量评估报告与改进建议
 
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0

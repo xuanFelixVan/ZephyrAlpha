@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 市场参与者模拟
-  - 模拟结果应用
-  - 模拟集成
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5 (策略执行层)
 ---
 

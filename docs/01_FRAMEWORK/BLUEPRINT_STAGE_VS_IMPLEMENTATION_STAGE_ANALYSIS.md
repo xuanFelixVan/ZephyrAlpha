@@ -19,9 +19,7 @@ standard_type: 专业量化机构级阶段分析
 applicable_scope: 蓝图阶段vs施工阶段模块需求分析
 compliance_level: 顶级专业标准
 responsibility:
-  - 蓝图阶段vs施工阶段分析
-  - 模块需求分类
-  - 实施阶段规划
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 蓝图阶段vs施工阶段模块需求分析

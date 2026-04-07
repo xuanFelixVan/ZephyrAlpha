@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -23,8 +23,7 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 市场状态识别 (Layer 11)
-  - 宏观配置 (Layer 11)
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 市场状态识别蓝图

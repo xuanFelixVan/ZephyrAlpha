@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODEL_MONITORING_DRIFT_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "Evidently AI + NannyML"
 priority: P0
 responsibility:
-  - 模型性能监控
-  - 数据漂移检测
-  - 概念漂移检测
-  - 模型退化预警
-  - 自动化报告生成
+  - 系统监控架构设计与实施方案与实施指导
 ---
 
 ## 文档职责说明

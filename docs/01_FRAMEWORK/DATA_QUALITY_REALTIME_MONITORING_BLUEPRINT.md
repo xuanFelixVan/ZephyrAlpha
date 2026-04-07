@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 
 module_id: DATA_QUALITY_REALTIME_MONITORING_001
 version: 1.0.0

@@ -9,7 +9,7 @@ standard_type: 专业量化机构深度审计报告
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

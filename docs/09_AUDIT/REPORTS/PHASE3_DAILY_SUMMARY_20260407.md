@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PHASE3_DAILY_SUMMARY_20260407
 version: 1.0.0
 status: Active
@@ -20,8 +20,7 @@ standard_type: 专业量化机构工作总结
 applicable_scope: 第三阶段今日工作总结
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 审计体系设计与质量监控与实施指导
 ---
 
 # 第三阶段今日工作总结报告

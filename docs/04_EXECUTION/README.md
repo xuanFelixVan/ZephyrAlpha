@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 风险预算 (Layer 3)
+  - 交易执行系统设计与优化与实施指导
 ---
 
 # 04_EXECUTION - 执行与运行阶?

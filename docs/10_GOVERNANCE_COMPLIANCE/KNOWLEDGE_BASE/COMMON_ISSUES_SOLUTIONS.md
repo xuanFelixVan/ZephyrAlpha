@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMMON_ISSUES_SOLUTIONS
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 治理合规框架设计与实施与实施指导
 
 module_id: COMMON_ISSUES_SOLUTIONS_001
 version: 1.0.0

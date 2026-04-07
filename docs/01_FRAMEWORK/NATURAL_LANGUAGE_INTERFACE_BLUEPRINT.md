@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业机构标准
 responsibility:
-  - 自然语言交互界面设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 # 自然语言交互界面蓝图

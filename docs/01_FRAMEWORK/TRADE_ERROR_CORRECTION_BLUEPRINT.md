@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADE_ERROR_CORRECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -46,8 +46,7 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪系统（事件记录）
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 交易错误纠正系统蓝图

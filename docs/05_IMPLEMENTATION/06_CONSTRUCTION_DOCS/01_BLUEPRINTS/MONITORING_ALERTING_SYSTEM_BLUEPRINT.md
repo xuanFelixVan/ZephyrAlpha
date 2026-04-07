@@ -8,10 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 监控告警系统
-  - 系统监控
-  - 异常告警
-  - 性能监控
+  - 系统监控架构设计与实施方案与实施指导
 layer: Layer 5 (策略执行层)
 ---
 

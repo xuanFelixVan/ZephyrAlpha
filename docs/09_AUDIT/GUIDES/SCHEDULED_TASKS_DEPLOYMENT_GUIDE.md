@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: ../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 responsibility:
-  - 审计报告、合规检查
+  - 操作指南编写与使用说明与系统维护管理
 version: 1.0.0
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 created_date: 2026-04-02

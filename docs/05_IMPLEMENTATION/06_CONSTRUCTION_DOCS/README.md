@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺛﮒﺓ۴ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﺛﮒﺓ۴ﮔﮔ۰۲ﻝ؟۰ﻝ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../README.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EXCELLENCE_STANDARD_IMPROVEMENT_PLAN_20260402
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: цФ╣ш┐ЫшобхИТ
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
+  - 技术标准制定与规范管理与优化维护
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0

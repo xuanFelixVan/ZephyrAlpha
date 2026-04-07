@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REALTIME_RISK_HEDGE_ENGINE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ reviewer: 首席技术评审官
 review_date: 2026-04-02
 owner: 个人开?standard_type: 专业量化机构技术规格书
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段

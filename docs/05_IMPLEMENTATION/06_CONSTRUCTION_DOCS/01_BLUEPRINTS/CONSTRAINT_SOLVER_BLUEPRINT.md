@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 约束建模
-  - 求解算法
-  - 优化引擎
-  - 约束验证
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0

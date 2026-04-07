@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 蓝图设计、架构规划
-  - 交易执行
-  - 数据源
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 3 (舆情分析层)
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情分析层中期改进模块

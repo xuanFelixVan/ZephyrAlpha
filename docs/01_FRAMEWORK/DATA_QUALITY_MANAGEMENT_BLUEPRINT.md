@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -46,9 +46,7 @@ responsibility_boundary: |
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 顶层架构设计、跨层协调、标准制定（治理视角）
   - 本文档: 规则定义、验证执行、改进跟踪、报告生成（执行视角）
 responsibility:
-  - 数据质量规则定义
-  - 数据质量验证执行
-  - 数据质量报告生成
+  - 数据管理架构设计与实施规范与优化维护
 ---
 ---
 

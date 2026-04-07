@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_P1_P2_RESOLUTION_SUMMARY_20260406
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: Audit Sentinel
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 standard_type: 审计问题修复总结报告
 applicable_scope: 全系统文档
 compliance_level: 专业标准

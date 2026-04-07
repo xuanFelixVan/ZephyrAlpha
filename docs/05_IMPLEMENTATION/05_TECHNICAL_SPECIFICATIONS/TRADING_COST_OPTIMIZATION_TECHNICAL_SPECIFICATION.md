@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_COST_OPTIMIZATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -23,9 +23,7 @@ reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
-  - 实施指南、部署文档
-  - 交易执行
-  - 文档治理
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ---
 

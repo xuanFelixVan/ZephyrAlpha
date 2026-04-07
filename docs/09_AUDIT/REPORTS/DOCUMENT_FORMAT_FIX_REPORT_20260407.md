@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_FORMAT_FIX_REPORT_20260407
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ standard_type: 专业量化机构修复报告
 applicable_scope: 文档格式修复和改进建议
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 # 文档格式修复和改进建议报告

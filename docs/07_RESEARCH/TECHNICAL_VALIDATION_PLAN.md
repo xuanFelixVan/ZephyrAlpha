@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECHNICAL_VALIDATION_PLAN
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 07 RESEARCH模块文档管理与维护
 
 ---
 ---

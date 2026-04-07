@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REAL_TIME_ALERT_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -33,7 +33,7 @@ responsibility_boundary: |
   - 接收所有子系统的告警（包括本模块）
   - 提供告警聚合、抑制、路由、多渠道分发
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

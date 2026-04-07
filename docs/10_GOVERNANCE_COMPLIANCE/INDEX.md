@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 风险预算 (Layer 11)
+  - 目录导航与文档索引管理与优化维护
 ---
 
 # Layer 10: 治理与合规层目录索引

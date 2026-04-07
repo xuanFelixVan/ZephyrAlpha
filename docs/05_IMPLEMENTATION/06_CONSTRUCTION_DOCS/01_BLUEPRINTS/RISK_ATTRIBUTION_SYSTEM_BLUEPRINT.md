@@ -1,8 +1,6 @@
 ﻿---
 responsibility:
-  - 风险归因
-  - 风险分解
-  - 风险来源分析
+  - 风险管理框架设计与实施方案与优化维护
 
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0

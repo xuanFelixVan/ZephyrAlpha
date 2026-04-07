@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_ADJUSTMENT_MECHANISM
 version: 1.0.0
 status: Active
@@ -23,8 +23,7 @@ priority: P0
 parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 11 STRATEGIC DECISION模块文档管理与维护
 ---
 
 # 战略调整机制蓝图

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONTINUOUS_AUDIT_WORKFLOW
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计系统
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 审计流程文档
 applicable_scope: 全系统持续审计
 compliance_level: 专业标准

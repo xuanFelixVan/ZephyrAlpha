@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECHNOLOGY_SELECTION_DECISION
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ related_documents:
   - BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 11 STRATEGIC DECISION模块文档管理与维护
 
 ---
 ---

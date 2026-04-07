@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SHORT_TERM_OPTIMIZATION_COMPLETION_REPORT_20260403
 version: 1.0.0
 status: Active
@@ -17,7 +17,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: йЦеЄ≠иУЭеЫЊжЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзЯ≠жЬЯдЉШеМЦеЃМжИРжК•еСК
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: еЕз≥їзїЯжЦЗжж≤їзРЖдЉШеМ?compliance_level: дЄУдЄЪж†ЗеЗЖ
 ---
 ---

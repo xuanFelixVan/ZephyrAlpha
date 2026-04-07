@@ -9,9 +9,7 @@ standard_type: 专业量化机构文档治理完成报告
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 responsibility:
-  - 文档治理审计
-  - 索引质量提升
-  - 持续改进机制
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 # 文档治理完成报告

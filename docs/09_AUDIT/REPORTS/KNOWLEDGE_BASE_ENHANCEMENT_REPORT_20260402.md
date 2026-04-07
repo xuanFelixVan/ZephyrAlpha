@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KNOWLEDGE_BASE_ENHANCEMENT_REPORT_20260402
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮒ؟ﮔﺛﮔ۴ﮒ
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
-  - 审计系统
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0

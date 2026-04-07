@@ -1,8 +1,6 @@
 ﻿﻿---
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
-  - 风险预算
-  - 数据质量
+  - 系统审计分析与质量评估报告与改进建议
 
 module_id: SHORT_TERM_IMPROVEMENT_REPORT_20260407
 version: 1.0.0

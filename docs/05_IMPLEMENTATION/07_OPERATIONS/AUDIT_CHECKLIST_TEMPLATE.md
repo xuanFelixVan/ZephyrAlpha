@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_CHECKLIST_TEMPLATE
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 

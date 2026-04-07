@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ applicable_scope: 全系统质量监?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

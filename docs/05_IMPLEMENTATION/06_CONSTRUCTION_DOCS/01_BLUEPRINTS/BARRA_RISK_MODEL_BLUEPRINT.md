@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - Barra风险模型
-  - 风险因子建模
-  - 风险暴露分析
-  - 风险预测
+  - 风险管理框架设计与实施方案与优化维护
 
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0

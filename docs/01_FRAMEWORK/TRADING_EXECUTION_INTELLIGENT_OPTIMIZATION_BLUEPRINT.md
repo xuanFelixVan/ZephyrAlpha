@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_EXECUTION_INTELLIGENT_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -30,7 +30,7 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 5 策略执行层）：
 responsibility:
-  - 系统框架、架构设计
+  - 系统优化方案设计与实施指导与实施指导
 
 ---
 ---

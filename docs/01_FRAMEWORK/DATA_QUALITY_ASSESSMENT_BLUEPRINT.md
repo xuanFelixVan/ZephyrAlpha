@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_ASSESSMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -35,7 +35,7 @@ responsibility_boundary: |
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 
 ---
 ---

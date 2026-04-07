@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_INTERFACE_TEMPLATE
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﮔ۰۲ﮔ۷۰ﮔﺟ
 responsibility:
-  - 审计报告、合规检查
+  - 文档模板设计与标准化管理与优化维护
 applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../STANDARDS/MODULE_INTERFACE_SPECIFICATION.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?version: 1.0.0

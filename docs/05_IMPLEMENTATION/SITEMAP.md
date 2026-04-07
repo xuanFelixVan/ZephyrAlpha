@@ -6,9 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
 responsibility:
-  - 实施指南、部署文档
-  - 回测系统
-  - 数据源
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ
 applicable_scope: 05_IMPLEMENTATIONﻝ؟ﮒﺛ
 compliance_level: ﻛﺕﻛﺕﮔﮒ

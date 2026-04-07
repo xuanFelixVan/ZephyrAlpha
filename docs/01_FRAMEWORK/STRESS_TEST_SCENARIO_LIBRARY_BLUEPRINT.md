@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,9 +37,7 @@ responsibility_boundary: |
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
 responsibility:
-  - 压力测试场景库
-  - 极端情况模拟
-  - 风险管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 压力测试场景库蓝图

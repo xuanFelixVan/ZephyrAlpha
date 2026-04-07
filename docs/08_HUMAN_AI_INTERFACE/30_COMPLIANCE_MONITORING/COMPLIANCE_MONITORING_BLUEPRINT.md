@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 30_COMPLIANCE_MONITORING_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 合规规则配置
-  - 合规检查报告
-  - 异常交易监控
+  - 系统监控架构设计与实施方案与实施指导
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_FACTOR_LIBRARY_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ layer: Layer 3 (舆情分析层)
 priority: P0
 estimated_effort: 50h
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

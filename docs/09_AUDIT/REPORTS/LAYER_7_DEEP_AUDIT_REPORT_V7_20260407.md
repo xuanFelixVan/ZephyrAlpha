@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V7_20260407
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

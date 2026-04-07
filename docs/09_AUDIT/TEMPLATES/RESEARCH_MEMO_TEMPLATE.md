@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_MEMO_TEMPLATE
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: цЦЗцбгцибцЭ┐
 responsibility:
-  - 审计报告、合规检查
+  - 文档模板设计与标准化管理与优化维护
 applicable_scope: чаФчй╢ц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../STANDARDS/RESEARCH_MEMO_STANDARD.md

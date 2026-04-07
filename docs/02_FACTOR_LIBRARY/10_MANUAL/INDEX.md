@@ -19,9 +19,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算、因子库管理
-  - 数据源
-  - 系统架构
+  - 目录导航与文档索引管理与优化维护
 standard_type: 索引文档
 applicable_scope: 全系统
 compliance_level: 专业标准---

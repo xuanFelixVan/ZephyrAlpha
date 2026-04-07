@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 目录导航、文档索引
+  - 目录导航与文档索引管理与优化维护
 module_id: INDEX_AUTOMATION_20260407124048
 version: 1.0.0
 status: Active

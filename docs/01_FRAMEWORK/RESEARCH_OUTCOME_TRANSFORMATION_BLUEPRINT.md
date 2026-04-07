@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_OUTCOME_TRANSFORMATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ responsibility_boundary: |
   - RESEARCH_PROJECT_MANAGEMENT_BLUEPRINT.md: 研究项目管理
   - STRATEGY_EXECUTION_LAYER_BLUEPRINT.md: 策略执行层
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

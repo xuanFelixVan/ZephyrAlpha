@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -31,9 +31,7 @@ responsibility_boundary: |
   实现层文? 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md
   - 合规监控模块的具体实现方?  - 技术栈选型和详细设?  - 代码示例和部署方?
 responsibility:
-  - 合规监控系统架构
-  - 交易合规监控
-  - 持仓合规监控
+  - 系统监控架构设计与实施方案与实施指导
 ---
 
 # 合规监控系统蓝图

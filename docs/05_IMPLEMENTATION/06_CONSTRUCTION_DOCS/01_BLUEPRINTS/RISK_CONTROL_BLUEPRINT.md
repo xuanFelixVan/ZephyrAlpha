@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 风险控制
-  - 风险限额管理
-  - 风险监控
-  - 风险预警
+  - 风险管理框架设计与实施方案与优化维护
 
 module_id: RISK_CONTROL_001
 version: 1.0.0

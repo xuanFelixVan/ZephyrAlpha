@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_METADATA_TEMPLATE
 version: 1.0.0
 status: Active
@@ -6,8 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 元数据模板
-  - 文档标准化
+  - 文档模板设计与标准化管理与优化维护
 standard_type: 模板
 applicable_scope: 全系统文档元数据标准
 compliance_level: 专业标准
@@ -78,8 +77,7 @@ created_date: YYYY-MM-DD
 last_updated: YYYY-MM-DD
 owner: [负责人]
 responsibility:
-  - [职责1]
-  - [职责2]
+  - 文档模板设计与标准化管理与优化维护
 standard_type: [文档类型]
 applicable_scope: [适用范围]
 compliance_level: 专业标准
@@ -151,9 +149,7 @@ status: Archived    # 已归档
 **示例**:
 ```yaml
 responsibility:
-  - 因子库索引
-  - 因子分类管理
-  - 因子质量监控
+  - 文档模板设计与标准化管理与优化维护
 ```
 
 ### standard_type

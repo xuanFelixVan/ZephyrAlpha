@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GITHUB_ISSUE_CREATION_LIST_20260406
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: GitHub Issue创建清单
 applicable_scope: TODO标记转换
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 
 ---
 ---

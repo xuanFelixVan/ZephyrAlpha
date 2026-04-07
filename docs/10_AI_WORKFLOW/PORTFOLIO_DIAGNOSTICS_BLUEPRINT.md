@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_DIAGNOSTICS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,11 +26,7 @@ reference_models:
 open_source_solution: "PyPortfolioOpt"
 priority: P1
 responsibility:
-  - 组合风险暴露分析
-  - 收益来源分析
-  - 组合优化建议
-  - 风险预算分析
-  - 组合健康度评估
+  - 投资组合优化蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

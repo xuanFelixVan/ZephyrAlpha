@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_ID_DUPLICATION_REMEDIATION_REPORT_20260403
 version: 1.0.0
 status: Active
@@ -17,7 +17,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构?standard_type: 专业量化机构P0问题整改报告
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: module_id重复问题整改
 compliance_level: 专业标准
 ---

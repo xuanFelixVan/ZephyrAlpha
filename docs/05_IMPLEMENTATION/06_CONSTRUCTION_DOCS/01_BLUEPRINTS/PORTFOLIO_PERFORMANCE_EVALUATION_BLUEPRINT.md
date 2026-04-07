@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 组合绩效评估
-  - 绩效指标计算
-  - 绩效归因分析
-  - 绩效报告生成
+  - 投资组合优化蓝图设计与实施指导与实施方案
 
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0

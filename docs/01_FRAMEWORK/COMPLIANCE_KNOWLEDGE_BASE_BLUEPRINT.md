@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,10 +26,7 @@ related_documents:
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 蓝图设计完成
 responsibility:
-  - 合规知识库管理
-  - 法规文档存储与查询
-  - 最佳实践库维护
-  - 合规培训资料管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 合规知识库管理系统蓝图

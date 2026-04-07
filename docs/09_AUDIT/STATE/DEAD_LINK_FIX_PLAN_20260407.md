@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 死链接修复计划
+  - 审计体系设计与质量监控与实施指导
 standard_type: 标准文档
 applicable_scope: 记录死链接修复的计划和进度
 compliance_level: 专业标准

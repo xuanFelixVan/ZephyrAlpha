@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_TRAIL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 审计追踪系统架构
-  - 事件溯源机制
-  - 不可篡改审计日志
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 审计追踪系统

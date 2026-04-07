@@ -20,7 +20,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算、因子库管理
+  - 因子研究与管理框架设计与优化维护
 
 ---
 ---
@@ -33,9 +33,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 市场状态识别
-  - 因子计算
-  - 交易执行
+  - 因子研究与管理框架设计与优化维护
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准---

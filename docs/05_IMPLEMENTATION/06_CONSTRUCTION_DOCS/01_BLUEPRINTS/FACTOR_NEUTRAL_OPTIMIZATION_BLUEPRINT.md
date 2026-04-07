@@ -9,8 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 responsibility:
-  - 因子暴露约束
-  - 因子风险控制
+  - 系统优化方案设计与实施指导与实施指导
 ---
 
 

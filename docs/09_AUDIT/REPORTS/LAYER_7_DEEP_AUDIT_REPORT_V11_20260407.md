@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V11_20260407
 version: 1.0.0
 status: Active
@@ -19,8 +19,7 @@ applicable_scope: Layer 7 AI报告层二次深度审计
 compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
+  - 系统审计分析与质量评估报告与改进建议
 layer: Layer 7 (AI报告层)
 ---
 

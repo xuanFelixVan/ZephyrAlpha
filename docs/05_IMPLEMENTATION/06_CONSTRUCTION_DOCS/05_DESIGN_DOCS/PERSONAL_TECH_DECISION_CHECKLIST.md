@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_TECH_DECISION_CHECKLIST
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻝﺏﭨﻝﭨﮒﺙﮒ?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﮒﺏﻝﮔﭖﻝ۷
 applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮒ؟ﻝ۷ﮔﮒ

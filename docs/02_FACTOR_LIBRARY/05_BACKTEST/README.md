@@ -19,9 +19,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算、因子库管理
-  - 回测系统
-  - 绩效分析
+  - 因子研究与管理框架设计与优化维护
 standard_type: 说明文档
 applicable_scope: 全系统
 compliance_level: 专业标准---

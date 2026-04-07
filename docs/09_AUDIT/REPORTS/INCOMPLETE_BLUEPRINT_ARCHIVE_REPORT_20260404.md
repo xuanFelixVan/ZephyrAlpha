@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404
 version: 1.0.0
 status: Active
@@ -17,7 +17,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席蓝图架构?standard_type: 专业量化机构归档报告
 responsibility:
-  - 审计报告、合规检查
+  - 系统架构蓝图设计与实施指导与实施方案
 applicable_scope: 内容不完整蓝图文档归?compliance_level: 专业标准
 ---
 ---

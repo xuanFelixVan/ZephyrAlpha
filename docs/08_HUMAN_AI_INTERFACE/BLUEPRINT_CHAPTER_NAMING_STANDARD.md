@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_CHAPTER_NAMING_STANDARD
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 章节命名规范、文档标准化
+  - 系统架构蓝图设计与实施指导与实施方案
 standard_type: 规范文档
 applicable_scope: BLUEPRINT文档
 compliance_level: 专业标准

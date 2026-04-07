@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,11 +26,7 @@ reference_models:
 open_source_solution: "MLflow + Prefect + transitions"
 priority: P0
 responsibility:
-  - 策略研发管理
-  - 策略测试验证
-  - 策略上线部署
-  - 策略监控告警
-  - 策略下线归档
+  - 交易策略框架设计与实施指导与实施指导
 ---
 
 ## 文档职责说明

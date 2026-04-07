@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 在线研究环境设计
-  - 交互式研究工具
-  - 研究资源管理
-  - 协作研究支持
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ﻿---
@@ -39,7 +36,7 @@ open_source_project: JupyterLab
 github_url: https://github.com/jupyterlab/jupyterlab
 license: BSD-3-Clause
 responsibility:
-  - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
+  - 系统架构蓝图设计与实施指导与实施方案
 ## 1. 概述
 
 ### 1.1 定位与目标

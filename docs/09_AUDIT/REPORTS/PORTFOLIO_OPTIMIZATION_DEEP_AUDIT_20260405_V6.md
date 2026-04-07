@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ audit_scope: 组合优化层(Layer 6) + 风险控制层(Layer 7)相关文档
 audit_type: 三层深度审计(L1+L2+L3)
 compliance_standard: 专业量化机构五大原则
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

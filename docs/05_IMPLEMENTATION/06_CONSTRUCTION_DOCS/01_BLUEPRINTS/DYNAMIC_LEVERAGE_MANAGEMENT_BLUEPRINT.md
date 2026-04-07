@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -17,9 +17,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 杠杆水平调整
-  - 风险控制
-  - 杠杆优化
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5.3 (风险管理)
 ---
 
@@ -99,7 +97,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 standard_type: 专业量化机构文档
 responsibility:
-  - 风险预算 (Layer 11)
+  - 系统架构蓝图设计与实施指导与实施方案
 
 layer: Layer 5.3 (风险管理)
 

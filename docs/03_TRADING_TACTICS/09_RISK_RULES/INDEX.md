@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 交易策略、战术执行
-  - 系统架构
-  - 文档治理
+  - 目录导航与文档索引管理与优化维护
 standard_type: 索引文档
 applicable_scope: 风险管理
 compliance_level: 专业标准---

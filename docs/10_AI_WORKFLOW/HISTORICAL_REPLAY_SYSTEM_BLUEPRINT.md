@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HISTORICAL_REPLAY_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "Backtrader + 自研"
 priority: P2
 responsibility:
-  - 历史数据回放
-  - 策略回测验证
-  - 场景重现分析
-  - 性能对比评估
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

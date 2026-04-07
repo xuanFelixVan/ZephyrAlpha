@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "Great Expectations"
 priority: P1
 responsibility:
-  - 数据完整性检查
-  - 数据一致性验证
-  - 数据时效性监控
-  - 数据质量报告
-  - 异常数据告警
+  - 数据管理架构设计与实施规范与优化维护
 ---
 
 ## 文档职责说明

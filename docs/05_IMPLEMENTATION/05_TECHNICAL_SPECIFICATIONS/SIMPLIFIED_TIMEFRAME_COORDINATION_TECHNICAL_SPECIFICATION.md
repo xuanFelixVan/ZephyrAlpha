@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIMPLIFIED_TIMEFRAME_COORDINATION_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -23,8 +23,7 @@ reviewer: ϯ
 review_date: 2026-04-03
 owner: Ż㸺
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: רҵ
 applicable_scope: ȫϵͳ
 compliance_level: רҵ׼---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ layer: Layer 3 (舆情分析层)
 priority: P0
 estimated_effort: 30h
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统监控架构设计与实施方案与实施指导
 
 ---
 ---

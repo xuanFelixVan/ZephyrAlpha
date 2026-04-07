@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_TEMPLATE
 version: 1.0.0
 status: Active
@@ -14,8 +14,7 @@ parent_document: ../INDEX.md
 implementation_status: иҫиЎйҳжө
 owner: ж–ҮжЎЈзҙжҠӨиҖ?version: 1.0.0
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
+  - 文档模板设计与标准化管理与优化维护
 module_id: DOC_TEMPLATE
 created_date: 2026-04-02
 last_updated: 2026-04-02---

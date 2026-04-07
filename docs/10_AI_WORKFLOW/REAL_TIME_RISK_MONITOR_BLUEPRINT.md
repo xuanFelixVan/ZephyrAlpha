@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REAL_TIME_RISK_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,7 +37,7 @@ open_source_solution:
   license: Apache 2.0
   cost: 完全免费
 responsibility:
-  - 蓝图设计、架构规划
+  - 风险管理框架设计与实施方案与优化维护
 
 ---
 ---

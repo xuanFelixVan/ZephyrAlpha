@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADE_EXECUTION_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,11 +26,7 @@ reference_models:
 open_source_solution: "QuantLib + 自研"
 priority: P1
 responsibility:
-  - 订单执行质量分析
-  - 成交分析
-  - 滑点分析
-  - 执行效率评估
-  - 执行优化建议
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

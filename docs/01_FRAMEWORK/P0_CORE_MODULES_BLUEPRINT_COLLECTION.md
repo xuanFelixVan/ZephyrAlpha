@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_CORE_MODULES_BLUEPRINT_COLLECTION
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

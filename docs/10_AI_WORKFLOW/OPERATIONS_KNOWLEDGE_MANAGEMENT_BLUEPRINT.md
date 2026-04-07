@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,7 +27,7 @@ integrated_modules:
   - AIWF_POM_001
   - AIWF_KMM_001
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

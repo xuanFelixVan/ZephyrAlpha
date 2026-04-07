@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 5.2 组合优化
 compliance_level: 专业标准
 responsibility:
-  - 均值方差优化
-  - 有效前沿计算
-  - 最优组合求解
-  - 风险收益权衡
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 5.2 (组合优化)
 ---
 

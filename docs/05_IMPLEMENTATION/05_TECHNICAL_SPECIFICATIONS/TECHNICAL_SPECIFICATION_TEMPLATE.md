@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TECHNICAL_SPECIFICATION_TEMPLATE
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ reviewer: [REVIEWER_NAME]
 review_date: [REVIEW_DATE]
 owner: ﮔ۷۰ﮔﺟﻟﺑﻟﺑ۲?
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۷۰ﮔﺟ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔ۷۰?
 compliance_level: ﮔ۷۰ﮔﺟﮔﮒ

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHIVED
 version: 1.0.0
 status: Active
@@ -16,8 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 ---
 
 ---
@@ -28,8 +27,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 系统架构
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 standard_type: 专业量化机构文档
 applicable_scope: 全系?
 compliance_level: 专业标准

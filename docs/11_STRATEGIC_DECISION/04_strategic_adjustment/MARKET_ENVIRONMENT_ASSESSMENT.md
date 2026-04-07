@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_ENVIRONMENT_ASSESSMENT
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 11 STRATEGIC DECISION模块文档管理与维护
 
 ---
 ---

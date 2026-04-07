@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_AUDIT_REPORT
 version: 1.0.0
 status: Active
@@ -14,7 +14,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 responsibility:
-  - 系统框架、架构设计
+  - 系统审计分析与质量评估报告与改进建议
 reference_models: ["Bridgewater", "Renaissance", "Two Sigma", "Citadel"]
 parent_document: ../INDEX.md
 implementation_status: 审计完成

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PYTHON_CODING_BEST_PRACTICES
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝﻝﺙﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../BEST_PRACTICES_INDEX.md
 implementation_status: Active

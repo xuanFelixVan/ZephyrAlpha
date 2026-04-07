@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SITEMAP
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 系统架构?standard_type: 专业量化机构文档地图
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 系统文档管理与维护与优化维护
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 活跃维护

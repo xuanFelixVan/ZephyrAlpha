@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_DELETED_FILES_ANALYSIS
 version: 1.0.0
 status: Active
@@ -24,9 +24,7 @@ related_documents:
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 分析完成
 responsibility:
-  - 删除文件价值分析
-  - Git备份检查
-  - 误删风险评估
+  - 系统框架设计与核心架构管理与优化维护
 ---
 
 # Layer 10治理与合规层删除文件价值分析报告

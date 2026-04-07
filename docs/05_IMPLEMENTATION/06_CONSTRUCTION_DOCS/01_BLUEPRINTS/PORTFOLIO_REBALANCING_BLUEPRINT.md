@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 通用再平衡框架
-  - 再平衡触发机制
-  - 权重调整策略
-  - 再平衡决策引擎
+  - 投资组合优化蓝图设计与实施指导与实施方案
 layer: Layer 6 (组合优化层)
 ---
 

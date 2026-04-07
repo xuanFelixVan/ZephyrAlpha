@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKDOWN_LINK_VALIDATOR
 version: 1.0.0
 status: Active
@@ -17,9 +17,7 @@ created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
-  - 审计报告、合规检查
-  - 绩效分析
-  - 系统架构
+  - 审计体系设计与质量监控与实施指导
 standard_type: 专业量化机构工具
 applicable_scope: Markdown文档引用链接验证
 compliance_level: 专业标准---

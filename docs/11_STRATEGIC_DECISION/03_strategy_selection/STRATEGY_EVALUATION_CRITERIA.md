@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_EVALUATION_CRITERIA
 version: 1.0.0
 status: Active
@@ -14,9 +14,7 @@ status: Active
 created_date: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 绩效分析
-  - 系统架构
+  - 11 STRATEGIC DECISION模块文档管理与维护
 priority: P1
 implementation_status: 蓝图阶段---
 

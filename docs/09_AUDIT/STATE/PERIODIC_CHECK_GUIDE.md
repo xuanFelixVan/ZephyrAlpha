@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERIODIC_CHECK_GUIDE
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、操作手册
-  - 定期检查
-  - 质量监控
+  - 操作指南编写与使用说明与系统维护管理
 standard_type: 操作指南
 applicable_scope: 全系统文档定期检查
 compliance_level: 专业标准

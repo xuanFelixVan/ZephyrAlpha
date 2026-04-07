@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -20,8 +20,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 审计报告、合规检查
-  - 决策追溯
+  - 目录导航与文档索引管理与优化维护
 ---
 
 # 决策记录目录索引

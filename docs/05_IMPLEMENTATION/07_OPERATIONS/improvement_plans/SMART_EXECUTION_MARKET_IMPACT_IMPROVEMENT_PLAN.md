@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﺅﺟﺛ?standard_type: ﮔﮔﺁﮔﺗﻟﺟﻟ؟۰ﺅﺟ?applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰ﺅﺟ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 交易执行系统设计与优化与实施指导
 implementation_status: ﻟ؟۰ﮒﮒﭘﮒ؟
 ---
 ---

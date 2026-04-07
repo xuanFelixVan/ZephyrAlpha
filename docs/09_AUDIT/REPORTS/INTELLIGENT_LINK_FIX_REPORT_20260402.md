@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_LINK_FIX_REPORT_20260402
 version: 1.0.0
 status: Active
@@ -15,8 +15,7 @@ parent_document: ../INDEX.md
 implementation_status: ти▓тїТѕ?
 owner: ТќЄТАБуАуљєтЉ?
 responsibility:
-  - 审计报告、合规检查
-  - 审计系统
+  - 系统审计分析与质量评估报告与改进建议
 version: 1.0.0
 module_id: INTELLIGENT_LINK_FIX_REPORT_20260402
 created_date: 2026-04-02

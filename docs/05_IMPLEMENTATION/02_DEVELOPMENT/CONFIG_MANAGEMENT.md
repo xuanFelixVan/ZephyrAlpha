@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONFIG_MANAGEMENT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
 compliance_level: ﮒﮒ۶ﮔﮒ

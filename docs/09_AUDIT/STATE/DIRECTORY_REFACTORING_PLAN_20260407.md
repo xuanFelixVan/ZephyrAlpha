@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DIRECTORY_REFACTORING_PLAN_20260407
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
-  - 目录重构
-  - 结构优化
+  - 因子研究与管理框架设计与优化维护
 standard_type: 重构计划
 applicable_scope: 目录结构重构
 compliance_level: 专业标准

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告、合规检查
-  - 系统架构
-  - 文档治理
+  - 审计体系设计与质量监控与实施指导
 ---
 
 ---

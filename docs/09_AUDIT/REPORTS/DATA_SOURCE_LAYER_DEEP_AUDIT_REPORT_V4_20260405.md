@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260405
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席架构师
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 深度审计报告
 applicable_scope: 数据源层文档体系
 compliance_level: 专业标准

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_TEST_PLAN
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-04
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 responsibility:
-  - 测试文档、质量保证
+  - AI工作流设计与智能辅助管理与优化维护
 standard_type: 测试计划
 applicable_scope: 舆情分析层改进模块测试
 compliance_level: 专业标准

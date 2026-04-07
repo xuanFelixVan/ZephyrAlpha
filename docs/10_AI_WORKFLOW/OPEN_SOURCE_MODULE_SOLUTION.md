@@ -1,4 +1,4 @@
----
+﻿---
 module_id: OPEN_SOURCE_MODULE_SOLUTION
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-04
 owner: 首席架构师
 layer: Layer 7 (AI报告层)
 responsibility:
-  - AI工作流、智能辅助、自动化流程
+  - AI工作流设计与智能辅助管理与优化维护
 standard_type: 开源方案选型推荐
 applicable_scope: 开源模块选型与推荐
 compliance_level: 专业标准

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_V12_20260406
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ audit_type: 三层深度审计 (L1/L2/L3)
 audit_date: 2026-04-06
 audit_scope: 全系统所有文档文件
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

@@ -8,8 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 约束处理
-  - 优化求解
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 5.2 (组合优化)
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_SUPERVISION_INTEGRATION_PLAN
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 交易策略、战术执行
+  - 交易策略设计与实施管理与优化维护
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TODO_CLEANUP_ANALYSIS_20260406
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: TODO清理分析报告
 applicable_scope: 活跃文档TODO标记
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 
 ---
 ---

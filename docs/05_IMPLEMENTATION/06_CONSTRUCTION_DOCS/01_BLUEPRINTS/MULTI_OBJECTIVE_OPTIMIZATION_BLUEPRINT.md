@@ -1,8 +1,6 @@
 ﻿---
 responsibility:
-  - 帕累托最优解生成
-  - 目标权衡分析
-  - 优化算法选择
+  - 系统优化方案设计与实施指导与实施指导
 
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0

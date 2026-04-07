@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUALITY_STANDARDS_OPTIMIZATION_20260407
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
-  - 质量标准
-  - 持续优化
+  - 技术标准制定与规范管理与优化维护
 standard_type: 优化报告
 applicable_scope: 质量标准持续优化
 compliance_level: 专业标准

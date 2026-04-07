@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_ANOMALY_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "PyOD + Alibi Detect"
 priority: P1
 responsibility:
-  - 异常交易检测
-  - 异常收益检测
-  - 异常风险检测
-  - 数据异常检测
-  - 异常预警
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

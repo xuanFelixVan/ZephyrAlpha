@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RTX3090_BEST_MODELS
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
-  - 执行引擎、订单执行、交易执行
+  - 交易执行系统设计与优化与实施指导
 version: 1.0.0
 module_id: EXE_RTX3090_BEST_MODELS
 created_date: 2026-04-02

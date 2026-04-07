@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONSTRAINT_SOLVER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -23,9 +23,7 @@ reviewer: 首席技术评审官
 review_date: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 实施指南、部署文档
-  - 约束求解实现
-  - 约束验证
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准

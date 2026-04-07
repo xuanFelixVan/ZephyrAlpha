@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 税收优化
-  - 税损收割
-  - 税务筹划
-  - 成本优化
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0

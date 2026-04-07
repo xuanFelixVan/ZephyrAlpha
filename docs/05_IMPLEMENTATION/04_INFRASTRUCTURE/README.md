@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-03
 owner: 首席文档架构?standard_type: 专业量化机构实施标准
 responsibility:
-  - 实施指南、部署文档
-  - 因子计算
-  - 交易执行
+  - 系统实施与部署管理与优化维护
 applicable_scope: 系统实施与部?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---

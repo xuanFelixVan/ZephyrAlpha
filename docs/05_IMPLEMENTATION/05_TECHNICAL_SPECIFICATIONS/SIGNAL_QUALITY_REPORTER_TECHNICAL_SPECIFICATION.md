@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 7 AI报告?
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 
 ---
 ---

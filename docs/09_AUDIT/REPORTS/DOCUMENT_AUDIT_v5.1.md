@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_AUDIT_V5_1
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: όΨΘόκμύ╗┤όΛνϋΑ?
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 version: 5.0.0
 module_id: DOC_DOCUMENT_AUDIT_V5.1
 created_date: 2026-03-31

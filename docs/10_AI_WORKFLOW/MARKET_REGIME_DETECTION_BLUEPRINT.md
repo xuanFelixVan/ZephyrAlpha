@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "hmmlearn + 自研"
 priority: P1
 responsibility:
-  - 牛熊市场识别
-  - 波动率状态分类
-  - 趋势判断
-  - 市场转折点检测
-  - 状态转换预警
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

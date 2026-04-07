@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_SCHEDULING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "Prefect (推荐) / Airflow"
 priority: P0
 responsibility:
-  - 任务调度管理
-  - 资源分配优化
-  - 优先级管理
-  - 依赖关系管理
-  - 失败重试机制
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

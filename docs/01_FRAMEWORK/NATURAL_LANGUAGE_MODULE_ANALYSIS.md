@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NATURAL_LANGUAGE_MODULE_ANALYSIS
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ responsibility_boundary: |
   整体架构设计请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 implementation_status: 分析完成
 responsibility:
-  - 系统框架、架构设计
+  - 系统框架设计与核心架构管理与优化维护
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 实施路线图
-  - 模块规划
-  - 开源项目集成策略
+  - 系统框架设计与核心架构管理与优化维护
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施路线图
 applicable_scope: Layer 10治理与合规层完整实施

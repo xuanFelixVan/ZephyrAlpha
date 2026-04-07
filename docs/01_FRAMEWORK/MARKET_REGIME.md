@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_REGIME
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 系统框架设计与核心架构管理与优化维护
 ---
 
 # 市场状态识?(MARKET REGIME)

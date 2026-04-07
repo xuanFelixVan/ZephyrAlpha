@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IFIND_CONNECTOR_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 
 ---
 ---

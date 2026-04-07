@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "MLflow + DVC + Jupyter"
 priority: P2
 responsibility:
-  - 研究项目管理
-  - 实验版本控制
-  - 研究成果归档
-  - 协作流程管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

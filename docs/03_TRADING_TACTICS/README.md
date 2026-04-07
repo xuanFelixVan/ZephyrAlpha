@@ -1,4 +1,4 @@
----
+﻿---
 module_id: README
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?standard_type: 专业量化机构文档
 responsibility:
-  - 交易策略、战术执行
-  - 交易执行
-  - 系统架构
+  - 交易策略设计与实施管理与优化维护
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 进行?---

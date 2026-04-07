@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0

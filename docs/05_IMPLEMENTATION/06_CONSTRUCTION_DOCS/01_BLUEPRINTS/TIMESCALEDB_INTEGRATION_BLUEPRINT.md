@@ -8,10 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - TimescaleDB集成
-  - 时序数据存储
-  - 高频数据管理
-  - 时间窗口聚合
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5.1 (数据处理)
 ---
 

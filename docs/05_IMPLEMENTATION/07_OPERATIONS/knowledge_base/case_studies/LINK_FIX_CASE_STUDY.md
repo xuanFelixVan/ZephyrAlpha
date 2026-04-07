@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LINK_FIX_CASE_STUDY
 version: 1.0.0
 status: Active
@@ -11,8 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: όκΙϊ╛ΜύιΦύσ╢
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 applicable_scope: όΨΘόκμό▓╗ύΡΗ
 compliance_level: όφμί╝ΠόιΘίΘΗ
 parent_document: ../README.md

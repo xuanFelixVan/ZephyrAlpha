@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two S
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构设计与技术选型与实施指导
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_V2
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 审计报告、合规检查
-  - 职责规范
-  - 质量标准
+  - 技术标准制定与规范管理与优化维护
 standard_type: 文档治理规范
 applicable_scope: 全系统职责描述规范
 compliance_level: 专业标准

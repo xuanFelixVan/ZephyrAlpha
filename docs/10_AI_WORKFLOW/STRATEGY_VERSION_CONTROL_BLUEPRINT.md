@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_VERSION_CONTROL_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "DVC + Git"
 priority: P1
 responsibility:
-  - 策略代码版本
-  - 参数版本管理
-  - 回滚机制
-  - 分支管理
-  - 变更历史
+  - 交易策略框架设计与实施指导与实施指导
 ---
 
 ## 文档职责说明

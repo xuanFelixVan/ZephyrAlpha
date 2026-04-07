@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_07_ORDER_MANAGEMENT_DETAILED_DESIGN
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
-  - 实施指南、部署文档
-  - 交易执行
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔﮒ
 applicable_scope: ﻟ؟۱ﮒﮔﮒ۰ﮔ۷۰ﮒ
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ

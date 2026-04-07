@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_REPORT_GENERATOR
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 报告文档、状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准

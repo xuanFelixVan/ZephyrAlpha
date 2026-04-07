@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PLAN_FILES_CREATION_REPORT_20260402
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: тъТќйТіЦтЉі
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: тЁеу│╗у╗?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../INDEX.md
 implementation_status: ти▓тїТѕ?owner: ТќЄТАБуАуљєтЉ?version: 1.0.0

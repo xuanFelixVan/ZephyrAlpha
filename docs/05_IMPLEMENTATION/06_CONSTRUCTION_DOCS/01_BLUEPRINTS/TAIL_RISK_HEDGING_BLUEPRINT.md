@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 responsibility:
-  - 尾部风险对冲
-  - 期权对冲策略
-  - VIX对冲
-  - 极端风险保护
+  - 风险管理框架设计与实施方案与优化维护
 ---
 
 

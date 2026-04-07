@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_INVENTORY
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ applicable_scope: 全系统数据源管理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 
 ---
 ---

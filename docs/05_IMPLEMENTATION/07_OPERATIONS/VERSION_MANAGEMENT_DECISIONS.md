@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VERSION_MANAGEMENT_DECISIONS
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮД?
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 decision_type: цКАцЬпцЮ╢цЮДхЖ│?
 decision_status: х╖▓щЗЗ?
 implementation_status: хоЮцЦ╜?

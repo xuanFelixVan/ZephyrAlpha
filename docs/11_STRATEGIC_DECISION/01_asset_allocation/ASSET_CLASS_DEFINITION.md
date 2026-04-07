@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ASSET_CLASS_DEFINITION
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ priority: P1
 parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 11 STRATEGIC DECISION模块文档管理与维护
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_DEVELOPMENT_BEST_PRACTICES
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?version: 1.0.0
 module_id: PERSONAL_DEV_BEST_PRACTICES

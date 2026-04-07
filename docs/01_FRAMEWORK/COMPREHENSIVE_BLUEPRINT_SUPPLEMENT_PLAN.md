@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ applicable_scope: 全系统缺失模块蓝图设计
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater"]
 responsibility:
-  - 风险预算测试验证、质量保证
+  - 系统架构蓝图设计与实施指导与实施方案
   responsibility_layer: Layer 1
   responsibility_layer: Layer 11
 last_updated: 2026-04-07

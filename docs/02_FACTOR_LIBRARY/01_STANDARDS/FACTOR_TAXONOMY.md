@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_TAXONOMY
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
 responsibility:
-  - 数据质量 (Layer 1)
+  - 因子研究与管理框架设计与优化维护
 ---
 
 # 因子分类学(Factor Taxonomy)

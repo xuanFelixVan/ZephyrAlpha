@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_AUDIT_GUIDELINES
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

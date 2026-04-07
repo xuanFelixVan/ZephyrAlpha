@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMP_003_QMT_CLIENT_STABILITY_SOLUTION
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 设计阶段
 version: 1.0.0
 last_updated: 2026-04-02
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 
 ---
 ---

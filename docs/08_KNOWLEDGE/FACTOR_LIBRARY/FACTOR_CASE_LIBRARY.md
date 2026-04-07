@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_CASE_LIBRARY
 version: 1.0.0
 status: Active
@@ -14,9 +14,7 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 回测系统
-  - 数据源
+  - 因子研究与管理框架设计与优化维护
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﮒﮒﮔ۰ﻛﺝ", "ﮔ۰ﻛﺝﮒﭦ?, "ﻛﺕﻛﺕﮔﮒ"]---
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PRIORITY_FIX_COMPLETION_REPORT_20260407
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 文档治理、合规修复、审计报告
+  - 系统审计分析与质量评估报告与改进建议
 module_id: PRIORITY_FIX_COMPLETION_REPORT_20260407_001
 version: 1.0.0
 status: Active

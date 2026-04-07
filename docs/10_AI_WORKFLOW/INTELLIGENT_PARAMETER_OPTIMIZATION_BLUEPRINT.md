@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "Optuna + MLflow"
 priority: P2
 responsibility:
-  - 参数空间定义
-  - 优化算法选择
-  - 优化过程跟踪
-  - 最优参数推荐
+  - 系统优化方案设计与实施指导与实施指导
 ---
 
 ## 文档职责说明

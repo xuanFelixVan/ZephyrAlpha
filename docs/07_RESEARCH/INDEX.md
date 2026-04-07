@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席文档架构?standard_type: 专业量化机构索引
 responsibility:
-  - 索引文档、导航目录
+  - 目录导航与文档索引管理与优化维护
 applicable_scope: 研究支持
 compliance_level: 专业标准
 parent_document: ../INDEX.md

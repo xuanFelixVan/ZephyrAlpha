@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_LINEAGE_TRACKING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,9 +37,7 @@ responsibility_boundary: |
   - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md: 数据质量管理执行
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
 responsibility:
-  - 数据血缘追踪
-  - 数据资产管理
-  - 数据合规管理
+  - 数据管理架构设计与实施规范与优化维护
 ---
 ---
 

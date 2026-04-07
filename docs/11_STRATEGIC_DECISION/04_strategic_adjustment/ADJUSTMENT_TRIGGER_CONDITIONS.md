@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ADJUSTMENT_TRIGGER_CONDITIONS
 version: 1.0.0
 status: Active
@@ -16,8 +16,7 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
+  - 11 STRATEGIC DECISION模块文档管理与维护
 ---
 
 # 调整触发条件蓝图

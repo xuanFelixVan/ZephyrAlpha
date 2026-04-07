@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V3_20260406
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

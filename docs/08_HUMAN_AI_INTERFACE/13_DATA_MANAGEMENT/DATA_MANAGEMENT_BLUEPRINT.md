@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,8 +16,5 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据管理系统设计
-  - 数据导入导出
-  - 数据备份恢复
-  - 数据质量检查
+  - 数据管理架构设计与实施规范与优化维护
 ---

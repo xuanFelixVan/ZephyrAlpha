@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_QUALITY_GATE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۷ﻠﻠ۷ﻝ۵
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 applicable_scope: ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۹ﻟﺁ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../README.md

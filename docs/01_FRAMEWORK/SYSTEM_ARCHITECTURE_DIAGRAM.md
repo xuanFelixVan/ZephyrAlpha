@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_ARCHITECTURE_DIAGRAM
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ module_id: SYSTEM_ARCHITECTURE_DIAGRAM
 created_date: 2026-04-02
 last_updated: 2026-04-02
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构设计与技术选型与实施指导
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "QuantLib + 自研分析模块"
 priority: P0
 responsibility:
-  - 交易成本分解
-  - 滑点分析
-  - 冲击成本估算
-  - 执行效率评估
-  - 成本优化建议
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

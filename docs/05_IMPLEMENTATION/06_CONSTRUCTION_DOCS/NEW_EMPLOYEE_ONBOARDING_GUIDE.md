@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEW_EMPLOYEE_ONBOARDING_GUIDE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 操作指南编写与使用说明与系统维护管理
 applicable_scope: ﮔﮔﮔﺍﮒﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../README.md
 implementation_status: Active

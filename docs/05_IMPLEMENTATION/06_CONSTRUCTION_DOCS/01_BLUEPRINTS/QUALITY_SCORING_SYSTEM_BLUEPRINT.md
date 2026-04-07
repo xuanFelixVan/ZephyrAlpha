@@ -8,10 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据质量评分
-  - 质量指标计算
-  - 质量等级评定
-  - 质量趋势分析
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5 (策略执行层)
 ---
 

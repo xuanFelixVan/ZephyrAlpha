@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_EXTENSION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -22,7 +22,7 @@ layer: Layer 0 (数据源层)
 priority: P0
 estimated_effort: 40h
 responsibility:
-  - 数据质量 (Layer 1)
+  - 数据管理架构设计与实施规范与优化维护
 ---
 
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_NUMBERING_STANDARD
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 实施指南、部署文档
-  - 系统架构
-  - 文档治理
+  - 技术标准制定与规范管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﺁﮔﮔ۰?
 compliance_level: ﮒﺙﮒﮔﮒ?

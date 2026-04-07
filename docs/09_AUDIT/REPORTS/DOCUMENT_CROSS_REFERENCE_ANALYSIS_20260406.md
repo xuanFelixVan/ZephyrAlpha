@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406
 version: 1.0.0
 status: Active
@@ -20,8 +20,7 @@ standard_type: 专业量化机构分析报告
 applicable_scope: 蓝图文档交叉引用分析
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 审计体系设计与质量监控与实施指导
 ---
 
 # 文档交叉引用关系分析报告

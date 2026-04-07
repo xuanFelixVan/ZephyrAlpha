@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_RATE_LIMITING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - API限流系统设计
-  - 请求频率限制
-  - 流量控制策略
-  - 限流规则配置
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ﻿---
@@ -39,7 +36,7 @@ open_source_project: slowapi
 github_url: https://github.com/laurentS/slowapi
 license: MIT
 responsibility:
-  - API限流系统，负责API访问频率控制、流量管理和限流策略，不负责API文档和权限管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ## 1. 概述
 
 ### 1.1 定位与目标

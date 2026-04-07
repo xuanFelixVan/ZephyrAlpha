@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_AUDIT_REPORT_20260403_V2
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ owner: 首席蓝图架构?standard_type: 专业量化机构深度审计报告
 applicable_scope: 数据预处理层文档治理
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

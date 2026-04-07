@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_PROGRESS_REPORT_20260407
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT_INDEX.md
 implementation_status: 实施中
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

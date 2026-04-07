@@ -8,8 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 交易成本优化
-  - 市场冲击建模
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 5 (策略执行层)
 ---
 

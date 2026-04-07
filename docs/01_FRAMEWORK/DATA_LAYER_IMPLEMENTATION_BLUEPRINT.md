@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_LAYER_IMPLEMENTATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -25,7 +25,7 @@ related_documents:
 parent_document: ../INDEX.md
 implementation_status: 蓝图设计阶段
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 
 ---
 ---

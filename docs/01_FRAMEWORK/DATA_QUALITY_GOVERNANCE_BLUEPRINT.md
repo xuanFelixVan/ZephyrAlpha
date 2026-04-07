@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_QUALITY_GOVERNANCE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -39,9 +39,7 @@ responsibility_boundary: |
   - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
 responsibility:
-  - 数据质量治理体系顶层架构
-  - 四层架构统一协调
-  - 数据质量治理标准制定
+  - 数据管理架构设计与实施规范与优化维护
 ---
 ---
 

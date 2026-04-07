@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KNOWLEDGE_TRANSFER_SYSTEM
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮔﺕﮒﺟﮔﮔ۰۲
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 文档治理
-  - 日志系统
+  - 08 KNOWLEDGE模块文档管理与维护
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﻝ۴ﻟﺁﮒ؟?version: 1.0.0

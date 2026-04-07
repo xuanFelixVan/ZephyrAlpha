@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -48,9 +48,7 @@ responsibility_boundary: |
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
   - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
 responsibility:
-  - 策略绩效归因
-  - 因子绩效分析
-  - 绩效报告生成
+  - 交易策略框架设计与实施指导与实施指导
 ---
 
 # 策略绩效归因系统蓝图

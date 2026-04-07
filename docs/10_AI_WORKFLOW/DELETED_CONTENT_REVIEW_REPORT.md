@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DELETED_CONTENT_REVIEW_REPORT
 version: 1.0.0
 status: Active
@@ -20,9 +20,7 @@ applicable_scope: Git历史删除内容审查
 compliance_level: 专业标准
 parent_document: INDEX.md
 responsibility:
-  - 删除内容审查
-  - 价值评估
-  - 恢复建议
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 ## 文档职责说明

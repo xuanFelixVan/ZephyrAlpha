@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_20260404_V8
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: Audit Sentinel
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构审计报告
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准

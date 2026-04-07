@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MARKET_MICROSTRUCTURE_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "自研 + QuantLib"
 priority: P2
 responsibility:
-  - 市场流动性分析
-  - 交易成本估算
-  - 市场冲击分析
-  - 微观结构指标计算
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

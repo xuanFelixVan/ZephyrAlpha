@@ -9,8 +9,7 @@ standard_type: 专业量化机构索引质量达标报告
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 索引质量达标验证
-  - 持续质量监控
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 # 索引质量标准达标报告

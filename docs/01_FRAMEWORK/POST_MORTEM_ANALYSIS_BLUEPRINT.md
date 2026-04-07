@@ -1,4 +1,4 @@
----
+﻿---
 module_id: POST_MORTEM_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 事后分析
-  - 根因分析
-  - 改进建议生成
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 事后分析系统架构设计

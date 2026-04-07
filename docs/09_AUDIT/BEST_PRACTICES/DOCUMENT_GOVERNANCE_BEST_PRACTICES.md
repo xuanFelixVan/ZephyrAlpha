@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_BEST_PRACTICES
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?
 owner: ώοΨί╕φόη╢όηΕί╕?
 responsibility:
-  - 审计报告、合规检查
+  - 治理合规框架设计与实施与实施指导
 version: 1.0.0
 module_id: DOC_GOVERNANCE_BEST_PRACTICES
 created_date: 2026-04-02

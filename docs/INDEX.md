@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ module_id: INDEX_ROOT_001
 created_date: 2026-04-02
 last_updated: 2026-04-07
 responsibility:
-  - 风险预算核心功能、系统架构
+  - 目录导航与文档索引管理与优化维护
   responsibility_layer: Layer 11
 ---
 ---

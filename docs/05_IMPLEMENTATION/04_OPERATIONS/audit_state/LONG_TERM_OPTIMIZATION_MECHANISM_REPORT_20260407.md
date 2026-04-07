@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 机制建设报告
 applicable_scope: 全系统长期优化机制
 compliance_level: 专业标准

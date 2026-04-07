@@ -9,7 +9,7 @@ standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 # Layer 7-11目录重构完成报告

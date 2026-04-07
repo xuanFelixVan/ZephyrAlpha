@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_ADVANCED_GOVERNANCE_GAP_ANALYSIS
 version: 1.0.0
 status: Active
@@ -25,9 +25,7 @@ related_documents:
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 差距分析完成
 responsibility:
-  - 高级治理模块差距分析
-  - 专业机构对标分析
-  - 实施优先级评估
+  - 系统框架设计与核心架构管理与优化维护
 ---
 
 # Layer 10高级治理模块差距分析报告

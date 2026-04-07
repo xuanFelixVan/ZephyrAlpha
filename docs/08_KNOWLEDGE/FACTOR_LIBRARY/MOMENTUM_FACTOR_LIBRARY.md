@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOMENTUM_FACTOR_LIBRARY
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮒﮒﮔﮔ۰۲
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 文档治理
-  - 日志系统
+  - 因子研究与管理框架设计与优化维护
 applicable_scope: ﮒﮒﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﻝﻝ۸ﭘﮒ؟?version: 1.0.0

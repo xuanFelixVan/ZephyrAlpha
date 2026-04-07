@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SCHEDULED_AUDIT_CONFIGURATION
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 version: 1.0.0
 module_id: SCHEDULED_AUDIT_CONFIG
 created_date: 2026-04-02

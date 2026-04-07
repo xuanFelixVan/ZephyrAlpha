@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_PRIORITY_MODULES_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
@@ -21,9 +21,7 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 蓝图阶段完成
 responsibility:
-  - 优先实施方案
-  - 详细实施步骤
-  - 个人开发适配方案
+  - 系统框架设计与核心架构管理与优化维护
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
   - 5个优先实施模块的实施方案

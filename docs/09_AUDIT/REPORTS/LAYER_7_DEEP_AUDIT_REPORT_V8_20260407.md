@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V8_20260407
 version: 1.0.0
 status: Active
@@ -9,9 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 审计报告、合规检查
-  - 风险预算
-  - 数据质量
+  - 系统审计分析与质量评估报告与改进建议
 
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V8_001
 version: 8.0.0

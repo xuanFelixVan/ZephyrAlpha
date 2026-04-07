@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,7 +26,7 @@ related_documents:
 parent_document: INDEX.md
 implementation_status: 规划阶段
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 26_FACTOR_ANALYSIS_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 因子库管理
-  - 因子有效性测试
-  - 因子组合优化
+  - 系统架构蓝图设计与实施指导与实施方案
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

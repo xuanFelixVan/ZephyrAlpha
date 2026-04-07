@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_BUDGETING_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 系统框架设计与核心架构管理与优化维护
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,8 +16,5 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 参数优化系统设计
-  - 参数搜索算法
-  - 优化结果分析
-  - 参数调优工具
+  - 系统优化方案设计与实施指导与实施指导
 ---

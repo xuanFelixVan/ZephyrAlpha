@@ -1,8 +1,6 @@
 ﻿---
 responsibility:
-  - 组合优化引擎集成
-  - 多优化器协调
-  - 优化结果融合
+  - 投资组合优化蓝图设计与实施指导与实施方案
 
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0

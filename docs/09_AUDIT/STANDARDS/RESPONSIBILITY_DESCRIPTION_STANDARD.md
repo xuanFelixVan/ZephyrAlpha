@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD
 version: 1.0.0
 status: Active
@@ -9,9 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 审计报告、合规检查
-  - 风险预算
-  - 数据质量
+  - 技术标准制定与规范管理与优化维护
 
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_001
 version: 1.0.0

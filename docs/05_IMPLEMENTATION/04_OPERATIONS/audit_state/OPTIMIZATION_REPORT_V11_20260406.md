@@ -6,9 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
-  - 交易执行
-  - 数据源
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构文档优化报告
 applicable_scope: Alpha因子层
 compliance_level: 专业标准

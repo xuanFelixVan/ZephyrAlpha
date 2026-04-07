@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ parent_document: ../INDEX.md
 audit_type: 架构评估与开源推荐
 audit_methodology: 专业机构标准对比 + GitHub成熟项目调研
 responsibility:
-  - 审计报告、合规检查
+  - 系统架构设计与技术选型与实施指导
 
 ---
 ---

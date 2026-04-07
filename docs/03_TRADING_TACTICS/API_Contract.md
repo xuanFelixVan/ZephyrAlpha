@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_CONTRACT
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 交易策略、战术执行
-  - 因子计算
-  - 组合优化
+  - 交易策略设计与实施管理与优化维护
 ---
 
 ---

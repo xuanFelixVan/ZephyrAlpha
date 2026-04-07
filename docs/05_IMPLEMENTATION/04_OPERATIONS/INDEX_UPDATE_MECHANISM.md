@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_UPDATE_MECHANISM
 version: 1.0.0
 status: Active
@@ -18,9 +18,7 @@ standard_type: 专业量化机构索引更新机制
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 实施指南、部署文档
-  - 确保索引完整性
-  - 持续维护索引质量
+  - 系统实施与部署管理与优化维护
 ---
 
 # 文档索引更新机制

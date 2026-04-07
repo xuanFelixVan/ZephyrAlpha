@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DECISION_RECORD_STANDARD
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﻝ؟۰ﻝﮔﮒ
 responsibility:
-  - 审计报告、合规检查
+  - 技术标准制定与规范管理与优化维护
 applicable_scope: ﮒﺏﻝﮔﭖﻝ۷
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md

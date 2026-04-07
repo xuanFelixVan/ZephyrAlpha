@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ owner: 首席技术评审官
 standard_type: 文档索引
 applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 目录导航与文档索引管理与优化维护
 
 ---
 ---

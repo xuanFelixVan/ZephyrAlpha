@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEWS_STOCK_MATCHER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 3 舆情分析?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准

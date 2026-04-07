@@ -1,6 +1,6 @@
 ﻿﻿---
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 
 module_id: DELETED_FILES_REVIEW_20260407_001
 version: 1.0.0

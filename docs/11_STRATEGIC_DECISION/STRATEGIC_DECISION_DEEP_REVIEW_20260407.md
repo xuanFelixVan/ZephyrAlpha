@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 战略决策深度审查
+  - 11 STRATEGIC DECISION模块文档管理与维护
 standard_type: 标准文档
 applicable_scope: 记录战略决策的深度审查结果
 compliance_level: 专业标准

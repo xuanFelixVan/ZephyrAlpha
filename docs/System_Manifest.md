@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_MANIFEST
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 风险预算模块设计、技术实现
+  - 系统文档管理与维护与优化维护
   responsibility_layer: Layer 1
   responsibility_layer: Layer 4
   responsibility_layer: Layer 11

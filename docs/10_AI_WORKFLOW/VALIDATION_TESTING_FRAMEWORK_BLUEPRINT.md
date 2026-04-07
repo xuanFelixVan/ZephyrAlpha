@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VALIDATION_TESTING_FRAMEWORK_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 standard_type: 专业机构级蓝图
 applicable_scope: 验证与测试框架模块
 compliance_level: 专业标准

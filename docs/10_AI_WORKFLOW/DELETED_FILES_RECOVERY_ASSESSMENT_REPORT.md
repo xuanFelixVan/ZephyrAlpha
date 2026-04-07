@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DELETED_FILES_RECOVERY_ASSESSMENT_REPORT
 version: 1.0.0
 status: Active
@@ -20,9 +20,7 @@ applicable_scope: 删除文件恢复价值评估
 compliance_level: 专业标准
 parent_document: DELETED_CONTENT_REVIEW_REPORT.md
 responsibility:
-  - 文档治理
-  - 内容价值评估
-  - 恢复决策建议
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 # 删除文件恢复价值评估报告

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 33_I18N_SUPPORT_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 多语言切换
-  - 语言包管理
-  - 自动翻译集成
+  - 系统架构蓝图设计与实施指导与实施方案
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

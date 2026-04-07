@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_AI_QUANT_SYSTEM_IMPLEMENTATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ applicable_scope: 个人开发+AI维护量化系统
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Engineering", "Bridgewater AI Systems", "Citadel Technology"]
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

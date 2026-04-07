@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобцбЖцЮ╢
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: хЕич│╗ч╗ЯхдзшзДцибцЦЗф╗╢хобшоб
 compliance_level: цЮ╢цЮДцаЗхЗЖ
 parent_document: ../INDEX.md

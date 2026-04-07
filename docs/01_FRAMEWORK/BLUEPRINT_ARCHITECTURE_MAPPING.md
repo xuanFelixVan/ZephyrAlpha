@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_ARCHITECTURE_MAPPING
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构?standard_type: 架构映射文档
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 applicable_scope:
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 layer: Layer 2 (Alpha因子层)

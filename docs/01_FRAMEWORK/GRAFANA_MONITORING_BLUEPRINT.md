@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GRAFANA_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
+  - 系统监控架构设计与实施方案与实施指导
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

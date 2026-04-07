@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "MLflow + SQLite"
 priority: P1
 responsibility:
-  - 回测结果存储
-  - 结果对比分析
-  - 统计分析
-  - 历史查询
-  - 结果可视化
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

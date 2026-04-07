@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,9 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 索引文档、导航目录
-  - 风险预算
-  - 数据质量
+  - 目录导航与文档索引管理与优化维护
 
 module_id: GOVERNANCE_PROCESSES_INDEX_001
 version: 1.0.0

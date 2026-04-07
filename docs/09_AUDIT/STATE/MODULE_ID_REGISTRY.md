@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_ID_REGISTRY
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 审计管理文档
 applicable_scope: 全系统module_id管理
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 
 ---
 ---

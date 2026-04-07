@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_AUDIT_REPORT_20260405_V6
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ parent_document: ../INDEX.md
 audit_type: 深度审计
 audit_methodology: 三层审计标准 (L1-L3)
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

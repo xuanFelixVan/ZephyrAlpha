@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOVERNANCE_DASHBOARD_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,10 +26,7 @@ related_documents:
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 蓝图设计完成
 responsibility:
-  - 治理仪表盘管理
-  - 合规指标可视化
-  - 实时监控展示
-  - 报告生成
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 治理仪表盘系统蓝图

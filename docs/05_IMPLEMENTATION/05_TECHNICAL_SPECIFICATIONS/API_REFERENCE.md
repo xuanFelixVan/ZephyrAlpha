@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_REFERENCE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席技术评审官
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 standard_type: API接口文档
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准

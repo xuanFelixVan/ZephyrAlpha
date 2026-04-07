@@ -1,4 +1,4 @@
----
+﻿---
 module_id: REGULATORY_REPORTING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 监管报告自动化
-  - 交易报告生成
-  - 风险报告生成
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 监管报告自动化系统

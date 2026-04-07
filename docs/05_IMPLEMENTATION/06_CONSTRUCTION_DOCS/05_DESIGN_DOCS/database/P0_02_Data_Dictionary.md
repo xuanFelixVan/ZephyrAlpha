@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_02_DATA_DICTIONARY
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: йҰ–еёӯи“қеӣҫжһжһ„её?
 responsibility:
-  - 实施指南、部署文档
-  - 交易执行
-  - 数据源
+  - 系统实施与部署管理与优化维护
 standard_type: дё“дёҡйҮҸеҢ–жңәжһ„ж•жҚеӯ—е…ёжҮеҮҶ
 applicable_scope: е…Ёзізҹж•жҚеҡд№?
 compliance_level: дё“дёҡжңәжһ„жҮеҮҶ

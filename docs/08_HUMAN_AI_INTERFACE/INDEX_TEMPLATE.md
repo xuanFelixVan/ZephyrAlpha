@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX_TEMPLATE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 索引模板、文档治理
+  - 文档模板设计与标准化管理与优化维护
 standard_type: 模板文档
 applicable_scope: 人机交互层索引文档
 compliance_level: 专业标准
@@ -41,7 +41,7 @@ created_date: {创建日期}
 last_updated: {更新日期}
 owner: 文档治理系统
 responsibility:
-  - 索引文档、导航目录
+  - 文档模板设计与标准化管理与优化维护
 standard_type: 索引文档
 applicable_scope: {模块适用范围}
 compliance_level: 专业标准
@@ -75,7 +75,7 @@ created_date: {创建日期}
 last_updated: {更新日期}
 owner: 文档治理系统
 responsibility:
-  - 索引文档、导航目录
+  - 文档模板设计与标准化管理与优化维护
 standard_type: 索引文档
 applicable_scope: {模块适用范围}
 compliance_level: 专业标准

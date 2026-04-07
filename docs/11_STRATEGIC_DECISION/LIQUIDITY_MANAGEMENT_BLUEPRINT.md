@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LIQUIDITY_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

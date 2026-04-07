@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONFIGURATION_MANAGEMENT_CENTER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,11 +27,7 @@ reference_models:
 open_source_solution: "Hydra + Dynaconf"
 priority: P1
 responsibility:
-  - 参数配置管理
-  - 环境管理
-  - 配置版本控制
-  - 动态配置更新
-  - 配置验证
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ## 文档职责说明

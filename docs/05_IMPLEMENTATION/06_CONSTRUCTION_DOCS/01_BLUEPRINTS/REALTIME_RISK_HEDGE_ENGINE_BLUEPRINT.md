@@ -8,9 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 实时风险对冲
-  - 对冲交易生成
-  - 风险敞口管理
+  - 风险管理框架设计与实施方案与优化维护
 layer: Layer 5.3 (风险管理)
 ---
 

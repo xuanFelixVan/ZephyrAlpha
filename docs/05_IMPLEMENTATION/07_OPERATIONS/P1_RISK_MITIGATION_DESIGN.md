@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P1_RISK_MITIGATION_DESIGN
 version: 1.0.0
 status: Active
@@ -13,9 +13,7 @@ version: 1.0.0
 created_date: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 status: ﮒﺝﮒ؟ﮔ?

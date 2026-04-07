@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_WORKFLOW_GUIDE
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
 responsibility:
-  - 实施指南、部署文档
+  - 工作流程设计与优化管理与优化维护
 applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_PROCESS_STANDARD
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 审计报告、合规检查
-  - 数据源
-  - 文档治理
+  - 技术标准制定与规范管理与优化维护
 applicable_scope: хЕич│╗ч╗?compliance_level: цнгх╝ПцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0

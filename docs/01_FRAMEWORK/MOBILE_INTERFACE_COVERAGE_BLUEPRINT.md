@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MOBILE_INTERFACE_COVERAGE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -33,7 +33,7 @@ responsibility_boundary: |
   
   推送通知请参考：MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 # 移动端界面覆盖蓝图

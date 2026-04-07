@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RESEARCH_COLLABORATION_PLATFORM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -34,8 +34,7 @@ responsibility_boundary: |
   - 知识共享（研究笔记、实验记录、经验分享）
   - 项目管理（任务分配、进度跟踪、成果管理）
 responsibility:
-  - 系统框架、架构设计
-  - AI辅助
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # 研究协作平台蓝图

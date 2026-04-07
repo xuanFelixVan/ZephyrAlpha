@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_FIX_REPORT_001
 version: 1.0.0
 status: Active
@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: Audit Sentinel
 responsibility:
-  - 文档治理修复报告
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 修复报告
 applicable_scope: 人机交互层文档治理
 compliance_level: 专业标准
@@ -50,7 +50,7 @@ compliance_level: 专业标准
 **修复前**: 24个INDEX.md文件具有相同的职责描述
 ```yaml
 responsibility:
-  - 索引文档、导航目录
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 **问题影响**: 违反职责驱动原则，无法区分不同模块的职责
@@ -65,13 +65,11 @@ responsibility:
 ```yaml
 # 修复前
 responsibility:
-  - 索引文档、导航目录
+  - 系统审计分析与质量评估报告与改进建议
 
 # 修复后（01_MONITORING）
 responsibility:
-  - 索引文档、导航目录
-  - 监控模块文档索引
-  - 系统监控和指标展示相关文档导航
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 #### 修复成果
@@ -133,9 +131,7 @@ module_id: HUMAN_AI_INTERFACE_INDEX_001
 version: 1.3.0
 title: 人机交互层索引
 responsibility:
-  - 索引文档、导航目录
-  - 人机交互层文档索引
-  - 用户界面和交互系统相关文档导航
+  - 系统审计分析与质量评估报告与改进建议
 ```
 
 **修复成果**:

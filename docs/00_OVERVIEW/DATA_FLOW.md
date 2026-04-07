@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FLOW
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 responsibility:
-  - 系统概览、架构总览
+  - 00 OVERVIEW模块文档管理与维护
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?

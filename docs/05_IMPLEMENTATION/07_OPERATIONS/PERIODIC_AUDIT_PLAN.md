@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERIODIC_AUDIT_PLAN
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЮ╢цЮД?standard_type: хоЪцЬЯхобшобшобхИТ
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: хЕич│╗ч╗ЯцЦЗцбгхоб?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT
 version: 1.0.0
 status: Active
@@ -19,9 +19,7 @@ audit_scope: Layer 10治理与合规层所有文档
 audit_standard: 专业量化机构五大原则 + 三层审计标准
 compliance_level: 顶级专业标准
 responsibility:
-  - 文档治理审计
-  - 合规性评估
-  - 问题识别与修复建议
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

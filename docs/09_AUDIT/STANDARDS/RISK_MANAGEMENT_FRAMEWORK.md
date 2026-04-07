@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_MANAGEMENT_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: قةقبف
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
-  - 测试系统
+  - 系统框架设计与核心架构管理与优化维护
 applicable_scope: لثلآرقةق
 compliance_level: غ╕غ╕أبف
 parent_document: ../INDEX.md

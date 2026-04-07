@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_CALCULATION_FRAMEWORK
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算、因子库管理
-  - 交易执行
-  - 回测系统
+  - 系统框架设计与核心架构管理与优化维护
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: GOVERNANCE_DECISION_SUPPORT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -30,9 +30,7 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 10 治理与合规层）：
 responsibility:
-  - 治理决策支持
-  - 决策树分析
-  - AI推荐引擎
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

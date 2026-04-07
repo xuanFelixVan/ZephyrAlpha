@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ERROR_HANDLING
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 风险预算 (Layer 11)
+  - 系统实施与部署管理与优化维护
 ---
 
 # ERROR_HANDLING.md - 错误处理规范

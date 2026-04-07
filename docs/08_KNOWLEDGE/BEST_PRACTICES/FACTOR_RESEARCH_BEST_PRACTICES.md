@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_RESEARCH_BEST_PRACTICES
 version: 1.0.0
 status: Active
@@ -10,9 +10,7 @@ owner: 首席文档架构师
 ﻿---
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 组合优化
-  - 绩效分析
+  - 因子研究与管理框架设计与优化维护
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﮔﺁﮒ؟
 version: 1.0.0

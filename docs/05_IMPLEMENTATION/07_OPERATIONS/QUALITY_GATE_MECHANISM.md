@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUALITY_GATE_MECHANISM
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-  - 回测系统
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 ---
 
 ---
@@ -29,9 +27,7 @@ parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 因子计算
-  - 回测系统
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 version: 1.0.0
 module_id: IMP_QUALITY_GATE_MECHANI
 created_date: 2026-04-02

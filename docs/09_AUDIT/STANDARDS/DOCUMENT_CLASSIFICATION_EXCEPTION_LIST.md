@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CLASSIFICATION_EXCEPTION_LIST
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: уАуљєТаЄтЄє
 responsibility:
-  - 审计报告、合规检查
+  - 审计体系设计与质量监控与实施指导
 applicable_scope: тЁеу│╗у╗?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: DOCUMENT_CLASSIFICATION_STANDARD.md
 implementation_status: ти▓тїТѕ?owner: ждќтИГТъХТъётИ?version: 1.0.0

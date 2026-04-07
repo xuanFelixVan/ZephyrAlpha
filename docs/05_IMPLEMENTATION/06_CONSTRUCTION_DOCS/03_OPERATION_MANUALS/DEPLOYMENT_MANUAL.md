@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEPLOYMENT_MANUAL
 version: 1.0.0
 status: Active
@@ -10,7 +10,7 @@ owner: 首席文档架构师
 ﻿---
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

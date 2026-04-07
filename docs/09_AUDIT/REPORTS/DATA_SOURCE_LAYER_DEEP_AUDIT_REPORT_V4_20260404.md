@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260404
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: 专业标准
 parent_document: ../../09_AUDIT/INDEX.md
 implementation_status: 已完成
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

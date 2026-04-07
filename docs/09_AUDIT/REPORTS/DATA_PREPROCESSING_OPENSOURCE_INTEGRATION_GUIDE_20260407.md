@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_PREPROCESSING_OPENSOURCE_INTEGRATION_GUIDE_20260407
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 操作指南编写与使用说明与系统维护管理
 ---
 
 # Layer 1 开源项目集成指南

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERIODIC_CHECK_PLAN
 version: 1.0.0
 status: Active
@@ -6,8 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 定期检查计划
-  - 质量监控机制
+  - 审计体系设计与质量监控与实施指导
 standard_type: 计划文档
 applicable_scope: 文档治理定期检查
 compliance_level: 专业标准

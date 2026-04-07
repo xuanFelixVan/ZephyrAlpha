@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_DATA_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ applicable_scope: 舆情数据源集成模块
 compliance_level: 顶级专业标准
 reference_models: ["Bloomberg Terminal", "Refinitiv", "Wind"]
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 
 ---
 ---

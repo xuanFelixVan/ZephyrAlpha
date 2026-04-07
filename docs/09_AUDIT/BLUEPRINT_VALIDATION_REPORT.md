@@ -1,4 +1,4 @@
----
+﻿---
 module_id: BLUEPRINT_VALIDATION_REPORT
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告、合规检查
-  - 组合优化
-  - 交易执行
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ---
@@ -29,9 +27,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-02
 owner: 首席文档架构?standard_type: 专业量化机构蓝图
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 交易执行
+  - 系统架构蓝图设计与实施指导与实施方案
 applicable_scope: 全系统架构设?compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段---

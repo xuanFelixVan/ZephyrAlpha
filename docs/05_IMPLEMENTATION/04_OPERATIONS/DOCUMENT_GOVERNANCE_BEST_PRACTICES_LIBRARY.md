@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY
 version: 1.0.0
 status: Active
@@ -18,9 +18,7 @@ standard_type: 专业量化机构最佳实践库
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 responsibility:
-  - 实施指南、部署文档
-  - 总结文档治理经验
-  - 提供问题解决方案
+  - 系统实施与部署管理与优化维护
 ---
 
 # 文档治理最佳实践库

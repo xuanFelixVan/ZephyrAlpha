@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_DESIGN
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 实施指南、部署文档
-  - 组合优化
-  - 回测系统
+  - 因子研究与管理框架设计与优化维护
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管?
 compliance_level: 研究标准

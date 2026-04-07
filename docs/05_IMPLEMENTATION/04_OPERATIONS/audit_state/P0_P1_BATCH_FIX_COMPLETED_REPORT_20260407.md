@@ -107,7 +107,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---
@@ -127,9 +127,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据源
+  - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
@@ -151,10 +149,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据层
 compliance_level: 专业标准
 responsibility:
-  - 数据版本管理
-  - 数据回溯
-  - 数据审计
-  - 版本控制
+  - 系统审计分析与质量评估报告与改进建议
 layer: "Layer 1 (数据层)"
 ---
 

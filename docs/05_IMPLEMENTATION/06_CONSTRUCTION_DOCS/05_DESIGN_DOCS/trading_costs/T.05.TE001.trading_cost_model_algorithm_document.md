@@ -1,4 +1,4 @@
----
+﻿---
 module_id: T_05_TE001_TRADING_COST_MODEL_ALGORITHM_DOCUMENT
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
+  - 交易策略设计与实施管理与优化维护
 
 ---
 ---
@@ -29,7 +29,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?
 responsibility:
-  - 文档治理
+  - 交易策略设计与实施管理与优化维护
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшо╛шобцЦЗцбг
 applicable_scope: цибцЛЯф║дцШУч│╗ч╗Я
 compliance_level: цЮ╢цЮДцаЗхЗЖ

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_COMPLIANCE_CHECK_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -43,9 +43,7 @@ responsibility_boundary: |
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告系统
 responsibility:
-  - 智能合规检查
-  - 合规规则引擎
-  - 实时合规验证
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

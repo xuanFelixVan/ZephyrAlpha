@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTOMATED_CHECK_REPORT_20260407_031229
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 审计报告、合规检查
+  - 系统审计分析与质量评估报告与改进建议
 
 module_id: AUTOMATED_CHECK_REPORT_20260407_031229
 version: 1.0.0

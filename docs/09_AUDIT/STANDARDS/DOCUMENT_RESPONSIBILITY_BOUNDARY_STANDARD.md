@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD
 version: 1.0.0
 status: Active
@@ -17,8 +17,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
+  - 技术标准制定与规范管理与优化维护
 standard_type: ﮔﮔ۰۲ﮔﺎﭨﻝﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛﺕﮔﮒ---
 

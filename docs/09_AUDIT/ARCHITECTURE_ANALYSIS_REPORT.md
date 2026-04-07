@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE_ANALYSIS_REPORT
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告、合规检查
-  - 系统架构
-  - 文档治理
+  - 系统审计分析与质量评估报告与改进建议
 ---
 
 ---
@@ -29,9 +27,7 @@ parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: щжЦх╕нхобшобхо?version: 1.0.0
 responsibility:
-  - 因子计算
-  - 系统架构
-  - 文档治理
+  - 系统审计分析与质量评估报告与改进建议
 module_id: DOC_ARCHITECTURE_ANALYSI
 created_date: 2026-04-02
 last_updated: 2026-04-02---

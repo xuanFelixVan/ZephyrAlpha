@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 压力测试
-  - 极端场景模拟
-  - 风险评估
-  - 压力测试报告
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0

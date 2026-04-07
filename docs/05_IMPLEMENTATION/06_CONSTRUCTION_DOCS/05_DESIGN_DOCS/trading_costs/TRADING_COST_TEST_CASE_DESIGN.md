@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADING_COST_TEST_CASE_DESIGN
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
+  - 交易策略设计与实施管理与优化维护
 
 ---
 ---
@@ -29,9 +29,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 机器学习
+  - 交易策略设计与实施管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒ
 compliance_level: ﮔﭘﮔﮔﮒ

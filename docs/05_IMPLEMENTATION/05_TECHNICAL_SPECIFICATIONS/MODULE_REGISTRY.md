@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_REGISTRY
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 系统实施与部署管理与优化维护
 
 ---
 ---

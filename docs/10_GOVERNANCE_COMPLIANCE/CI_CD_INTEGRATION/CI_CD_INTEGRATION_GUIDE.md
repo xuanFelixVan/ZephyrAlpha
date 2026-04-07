@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CI_CD_INTEGRATION_GUIDE
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: DevOps团队
 responsibility:
-  - 实施指南、操作手册
-  - 自动化审计
-  - 开发流程
+  - 操作指南编写与使用说明与系统维护管理
 standard_type: 集成指南
 applicable_scope: 全系统CI/CD集成
 compliance_level: 专业标准

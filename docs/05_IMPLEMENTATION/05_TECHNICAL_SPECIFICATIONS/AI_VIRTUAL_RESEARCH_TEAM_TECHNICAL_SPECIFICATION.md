@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 实施指南、部署文档
-  - 回测系统
-  - 数据源
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 applicable_scope: Layer 9 - AIﮒﮔﺍﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
 compliance_level: ﻛﺕﻛﺕﮔﮒ

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_REGISTRY
 version: 1.0.0
 status: Active
@@ -18,9 +18,7 @@ standard_type: 专业量化机构标准
 applicable_scope: Layer 2 - 因子库层
 compliance_level: 专业标准
 responsibility:
-  - 因子注册管理
-  - 因子元数据维护
-  - 因子生命周期跟踪
+  - 因子研究与管理框架设计与优化维护
 ---
 
 ## 核心定位

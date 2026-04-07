@@ -1,4 +1,4 @@
----
+﻿---
 module_id: POST_TRADE_REVIEW_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -29,7 +29,7 @@ related_documents:
   - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
   - QUALITY_MONITORING_BLUEPRINT.md
 responsibility:
-  - 数据质量 (Layer 1)
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 

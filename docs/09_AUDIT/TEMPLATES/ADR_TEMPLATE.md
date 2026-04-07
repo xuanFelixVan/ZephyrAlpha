@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ADR_TEMPLATE
 version: 1.0.0
 status: Active
@@ -10,7 +10,7 @@ owner: 首席文档架构师
 ﻿---
 version: 1.0.0
 responsibility:
-  - 审计报告、合规检查
+  - 文档模板设计与标准化管理与优化维护
 applicable_scope: ئ╢ئف│قص
 compliance_level: غ╕غ╕أبف
 parent_document: ../STANDARDS/ADR_STANDARD.md

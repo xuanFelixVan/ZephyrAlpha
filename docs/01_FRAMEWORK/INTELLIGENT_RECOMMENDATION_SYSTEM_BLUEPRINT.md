@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_RECOMMENDATION_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -32,7 +32,7 @@ responsibility_boundary: |
   
   AI对话增强请参考：AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

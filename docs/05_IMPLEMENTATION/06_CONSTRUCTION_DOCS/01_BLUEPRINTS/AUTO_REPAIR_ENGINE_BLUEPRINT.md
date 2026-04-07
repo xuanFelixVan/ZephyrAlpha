@@ -1,8 +1,6 @@
 ﻿---
 responsibility:
-  - 自动修复
-  - 系统恢复
-  - 数据修复
+  - 系统架构蓝图设计与实施指导与实施方案
 
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0

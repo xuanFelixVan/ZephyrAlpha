@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AI_FACTOR_MINER_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 实施指南、部署文档
+  - 技术规格定义与实施标准制定与实施标准
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 ---

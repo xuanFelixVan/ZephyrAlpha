@@ -8,8 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据监控
-  - 数据追踪
+  - 数据管理架构设计与实施规范与优化维护
 layer: Layer 5.1 (数据处理)
 ---
 

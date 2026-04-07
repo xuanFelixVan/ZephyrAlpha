@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NATURAL_LANGUAGE_REPORT_GENERATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ responsibility_boundary: |
   - RAG_SYSTEM_BLUEPRINT.md: 知识检索和问答
   - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md: 绩效分析界面
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

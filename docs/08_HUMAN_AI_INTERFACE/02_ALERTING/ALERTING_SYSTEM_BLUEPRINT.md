@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALERTING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 告警通知系统设计
-  - 多渠道告警推送
-  - 告警规则配置和管理
-  - 告警路由和分组
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 ## 1. 概述
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ responsibility_boundary: |
   - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md: 动态风险预算
   - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md: 组合优化层
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

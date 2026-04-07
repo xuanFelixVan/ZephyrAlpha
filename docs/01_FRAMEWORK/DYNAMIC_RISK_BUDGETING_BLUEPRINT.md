@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DYNAMIC_RISK_BUDGETING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ applicable_scope: 动态风险预算模块
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater", "AQR", "Two Sigma"]
 responsibility:
-  - 风险预算文档说明、使用指南
+  - 风险管理框架设计与实施方案与优化维护
   responsibility_layer: Layer 11
 ---
 ---

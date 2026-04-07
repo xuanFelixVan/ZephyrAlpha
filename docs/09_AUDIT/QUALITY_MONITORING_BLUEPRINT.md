@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QUALITY_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ applicable_scope: 全系统架构设?compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 审计报告、合规检查
+  - 系统监控架构设计与实施方案与实施指导
 
 ---
 ---

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CONTINUOUS_MONITORING_CONFIG
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 持续监控机制配置和使用指南
+  - 审计体系设计与质量监控与实施指导
 ---
 # 持续监控机制配置指南
 

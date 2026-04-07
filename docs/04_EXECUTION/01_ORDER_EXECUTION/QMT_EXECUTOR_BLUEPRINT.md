@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QMT_EXECUTOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 执行团队
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5 (执行层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统

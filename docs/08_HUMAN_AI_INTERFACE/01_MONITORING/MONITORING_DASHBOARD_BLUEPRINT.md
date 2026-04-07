@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MONITORING_DASHBOARD_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 系统监控仪表板设计
-  - 实时监控系统运行状态
-  - 关键指标可视化展示
-  - 性能监控和告警展示
+  - 系统监控架构设计与实施方案与实施指导
 ---
 ## 1. 概述
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_20260404_V7
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 审计系统架构?standard_type: 专业文档治理审计报告
 responsibility:
-  - 审计报告、合规检查
-  - 系统架构
-  - 文档治理
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: 全系统深度审?compliance_level: 专业标准
 audit_type: 深度系统审计
 audit_scope: 全文档系?audit_date: 2026-04-04

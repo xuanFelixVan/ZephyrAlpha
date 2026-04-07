@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLIANCE_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -42,8 +42,7 @@ responsibility_boundary: |
   - 分析专业机构的合规实
   - 规划核心组件和接
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 10)
+  - 系统监控架构设计与实施方案与实施指导
 ---
 
 

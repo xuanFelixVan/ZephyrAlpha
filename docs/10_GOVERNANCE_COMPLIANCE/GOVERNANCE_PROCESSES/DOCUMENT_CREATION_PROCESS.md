@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CREATION_PROCESS
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 个人开发者
 responsibility:
-  - 文档创建流程、规范管理、质量控制
+  - 治理合规框架设计与实施与实施指导
 layer: Layer 10 (治理合规层)
 standard_type: 专业量化机构文档
 ---
@@ -56,7 +56,7 @@ created_date: YYYY-MM-DD
 last_updated: YYYY-MM-DD
 owner: 个人开发者
 responsibility:
-  - [职责描述]
+  - 治理合规框架设计与实施与实施指导
 layer: Layer X ([Layer名称])
 standard_type: 专业量化机构文档
 ---

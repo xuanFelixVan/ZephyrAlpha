@@ -10,7 +10,7 @@ applicable_scope: 个人开发、AI维护、个人使用
 compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw"]
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统实施与部署管理与优化维护
 
 ---
 ---

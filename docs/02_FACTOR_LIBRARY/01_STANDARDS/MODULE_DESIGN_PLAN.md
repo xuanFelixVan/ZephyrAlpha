@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MODULE_DESIGN_PLAN
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 因子计算、因子库管理
+  - 因子研究与管理框架设计与优化维护
 
 ---
 ---

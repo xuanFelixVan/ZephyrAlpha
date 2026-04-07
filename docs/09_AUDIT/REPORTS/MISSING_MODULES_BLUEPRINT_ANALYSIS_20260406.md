@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MISSING_MODULES_BLUEPRINT_ANALYSIS_20260406
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 缺失模块蓝图分析报告
 applicable_scope: 全系统架构完整性
 compliance_level: 专业标准
 responsibility:
-  - 审计报告、合规检查
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

@@ -19,7 +19,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: йҰ–еёӯж–ҮжЎЈжһжһ„её?standard_type: дё“дёҡйҮҸеҢ–жңәжһ„ж–ҮжЎЈ
 responsibility:
-  - 负责readme的设计、实现和维护工作
+  - 系统框架设计与核心架构管理与优化维护
 applicable_scope: е…Ёзіз?compliance_level: дё“дёҡжҮеҮҶ
 parent_document: ../INDEX.md
 implementation_status: иҝӣиЎҢдё?

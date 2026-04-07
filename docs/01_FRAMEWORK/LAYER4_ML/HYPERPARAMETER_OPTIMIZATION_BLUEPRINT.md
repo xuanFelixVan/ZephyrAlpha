@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HYPERPARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 系统架构师
 responsibility:
-  - 提供超参数优化的完整架构设计和技术选型
+  - 系统优化方案设计与实施指导与实施指导
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图文档
 priority: P0核心

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_DOCS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -16,10 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - API文档系统设计
-  - 自动生成API文档
-  - 交互式API测试界面
-  - 文档版本管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 ﻿---
@@ -37,7 +34,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已实现
 responsibility:
-  - API文档系统，负责API接口文档的自动生成、展示和维护，不负责API限流和权限管理
+  - 系统架构蓝图设计与实施指导与实施方案
 ## 1. 概述
 
 API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文档和交互式测试功能。

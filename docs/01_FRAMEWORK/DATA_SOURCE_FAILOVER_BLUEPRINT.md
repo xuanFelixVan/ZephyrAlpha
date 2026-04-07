@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_FAILOVER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
+  - 数据管理架构设计与实施规范与优化维护
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据源故障转移模块

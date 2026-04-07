@@ -1,4 +1,4 @@
----
+﻿---
 module_id: T_06_UI001_WEB_MANAGEMENT_INTERFACE_ARCHITECTURE_DESIGN
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
-  - 实施指南、部署文档
+  - 系统架构设计与技术选型与实施指导
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮒ
 applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰

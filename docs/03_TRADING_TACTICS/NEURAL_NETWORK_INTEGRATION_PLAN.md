@@ -1,4 +1,4 @@
----
+﻿---
 module_id: NEURAL_NETWORK_INTEGRATION_PLAN
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ compliance_level: ﮔﭘﮔﮔﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 responsibility:
-  - 交易策略、战术执行
+  - 交易策略设计与实施管理与优化维护
 
 ---
 ---

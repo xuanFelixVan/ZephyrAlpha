@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUTO_REPORT_GENERATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -37,7 +37,7 @@ open_source_solution:
   license: MIT
   cost: 完全免费
 responsibility:
-  - 蓝图设计、架构规划
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

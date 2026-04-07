@@ -1,4 +1,4 @@
----
+﻿---
 module_id: IMP_001_QMT_API_LEARNING_PLAN
 version: 1.0.0
 status: Active
@@ -16,9 +16,7 @@ created_date: 2026-04-02
 completed_date: 2026-04-02
 owner: 数据源层负责?
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 系统架构
+  - 系统实施与部署管理与优化维护
 standard_type: 技术培训计?
 applicable_scope: 系统实施
 compliance_level: 初始标准

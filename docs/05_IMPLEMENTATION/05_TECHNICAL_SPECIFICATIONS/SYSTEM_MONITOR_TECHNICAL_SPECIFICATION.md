@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SYSTEM_MONITOR_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -14,9 +14,7 @@ status: Active
 created_date: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 实施指南、部署文档
-  - 机器学习
-  - 系统架构
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规?
 applicable_scope: Layer 8 - 人机交互?| 业务架构: 三级时间框架融合架构
 compliance_level: 初始标准

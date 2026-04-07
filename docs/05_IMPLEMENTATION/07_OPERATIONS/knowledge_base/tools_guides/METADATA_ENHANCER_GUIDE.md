@@ -1,4 +1,4 @@
----
+﻿---
 module_id: METADATA_ENHANCER_GUIDE
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: тиЦтЁиТїЄтЇЌ
 responsibility:
-  - 实施指南、部署文档
+  - 操作指南编写与使用说明与系统维护管理
 applicable_scope: тЁЃТЋ░ТЇуАуљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
 implementation_status: ти▓тїТѕ?owner: ТќЄТАБуАуљєтЉ?version: 1.0.0

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДя┐?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДч┤вх╝Х
 responsibility:
-  - 实施指南、部署文档
-  - 文档治理
-  - 审计系统
+  - 目录导航与文档索引管理与优化维护
 applicable_scope: х╝АхПСцаЗхЗЖчЫоя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМя┐?---

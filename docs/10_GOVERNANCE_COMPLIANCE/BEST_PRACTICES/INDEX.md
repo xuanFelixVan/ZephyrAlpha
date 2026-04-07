@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -18,7 +18,7 @@ standard_type: 专业量化机构索引
 applicable_scope: 治理最佳实践
 compliance_level: 专业标准
 responsibility:
-  - 最佳实践索引、文档导航
+  - 目录导航与文档索引管理与优化维护
 ---
 
 # 治理最佳实践索引

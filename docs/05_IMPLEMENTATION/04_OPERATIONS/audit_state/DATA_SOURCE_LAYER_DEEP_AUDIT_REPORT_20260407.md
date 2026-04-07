@@ -12,7 +12,7 @@ parent_document: ../../INDEX.md
 audit_type: 深度文档治理审计
 audit_layers: L1, L2, L3
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

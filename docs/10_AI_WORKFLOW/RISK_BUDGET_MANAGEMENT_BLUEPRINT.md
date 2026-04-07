@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_BUDGET_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "PyPortfolioOpt + Riskfolio-Lib"
 priority: P2
 responsibility:
-  - 风险预算分配
-  - 风险贡献计算
-  - 组合风险监控
-  - 风险调整优化
+  - 风险管理框架设计与实施方案与优化维护
 ---
 
 ## 文档职责说明

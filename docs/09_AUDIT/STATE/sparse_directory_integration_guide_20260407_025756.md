@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SPARSE_DIRECTORY_INTEGRATION_GUIDE_20260407_025756
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告、合规检查
+  - 操作指南编写与使用说明与系统维护管理
 
 ---
 

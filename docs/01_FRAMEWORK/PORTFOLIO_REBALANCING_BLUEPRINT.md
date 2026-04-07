@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_REBALANCING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -42,7 +42,7 @@ responsibility_boundary: |
   - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析（包含再平衡成本分析）
 responsibility:
-  - 风险预算 (Layer 11)
+  - 投资组合优化蓝图设计与实施指导与实施方案
 ---
 
 # 组合再平衡系统蓝图（蓝图阶段）

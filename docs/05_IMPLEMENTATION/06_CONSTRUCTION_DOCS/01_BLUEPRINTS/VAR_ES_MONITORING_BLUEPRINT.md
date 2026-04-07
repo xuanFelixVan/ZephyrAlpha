@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - VaR/ES计算
-  - 风险监控
-  - 风险预警
-  - 风险度量
+  - 系统监控架构设计与实施方案与实施指导
 
 module_id: VAR_ES_MONITORING_001
 version: 1.0.0

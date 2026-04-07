@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VERSION_MANAGEMENT_GUIDE
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?standard_type: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﻝﮔ؛ﮔ۶ﮒﭘ
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 文档治理
+  - 操作指南编写与使用说明与系统维护管理
 compliance_level: ﻝ؟ﮒﮔﮒ?parent_document: ../README.md
 implementation_status: Active---
 

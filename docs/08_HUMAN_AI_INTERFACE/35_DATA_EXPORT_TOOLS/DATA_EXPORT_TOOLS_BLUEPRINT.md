@@ -1,4 +1,4 @@
----
+﻿---
 module_id: 35_DATA_EXPORT_TOOLS_BLUEPRINT_001
 version: 1.0.0
 status: Active
@@ -6,9 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 多格式导出
-  - 批量数据导出
-  - 导出任务管理
+  - 数据管理架构设计与实施规范与优化维护
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

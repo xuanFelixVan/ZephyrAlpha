@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_EXECUTION_PROCEDURES
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
-  - 审计系统
+  - 系统审计分析与质量评估报告与改进建议
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../STANDARDS/COMPLIANCE_AUDIT_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮒﻟ۶ﮒ؟?version: 1.0.0

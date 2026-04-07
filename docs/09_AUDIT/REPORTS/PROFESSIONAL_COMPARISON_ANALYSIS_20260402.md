@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_COMPARISON_ANALYSIS_20260402
 version: 1.0.0
 status: Active
@@ -11,9 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: хп╣цпФхИЖцЮР
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
-  - 审计系统
+  - 审计体系设计与质量监控与实施指导
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0

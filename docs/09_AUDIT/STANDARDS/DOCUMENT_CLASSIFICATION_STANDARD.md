@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_CLASSIFICATION_STANDARD
 version: 1.0.0
 status: Active
@@ -11,7 +11,7 @@ owner: 首席文档架构师
 version: 1.0.0
 standard_type: ﻝ؟۰ﻝﮔﮒ
 responsibility:
-  - 审计报告、合规检查
+  - 技术标准制定与规范管理与优化维护
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?version: 1.0.0

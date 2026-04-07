@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -30,7 +30,7 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 11 战略决策层）：
 responsibility:
-  - 系统框架、架构设计
+  - 交易策略框架设计与实施指导与实施指导
 
 ---
 ---

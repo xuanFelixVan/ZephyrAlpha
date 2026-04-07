@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P0_MODULES_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
+  - 系统框架设计与核心架构管理与优化维护
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: P0高优先级模块实施

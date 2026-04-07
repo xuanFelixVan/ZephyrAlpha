@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
@@ -24,10 +24,7 @@ applicable_modules:
   - 深度学习情感分析
   - 实时预警系统
 responsibility:
-  - 数据源扩展技术规格
-  - 深度学习情感分析技术规格
-  - 实时预警系统技术规格
-  - 短期改进模块实施指导
+  - 技术规格定义与实施标准制定与实施标准
 ---
 ---
 

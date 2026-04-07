@@ -9,7 +9,7 @@ standard_type: 文档治理审计报告
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
+  - 系统审计分析与质量评估报告与改进建议
 
 ---
 ---

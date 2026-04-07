@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -24,10 +24,7 @@ priority: P0
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 实验追踪
-  - 数据血缘
-  - 版本控制
-  - 数据治理
+  - 数据管理架构设计与实施规范与优化维护
 ---
 
 ## 文档职责说明

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -21,8 +21,7 @@ reference_models: ["Bridgewater Investment Committee", "Two Sigma Decision Proce
 parent_document: ./BLUEPRINT.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 投资委员会决策支持系统设计
-  - 决策流程管理
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 

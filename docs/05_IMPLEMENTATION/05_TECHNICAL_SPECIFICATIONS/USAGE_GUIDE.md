@@ -1,4 +1,4 @@
----
+﻿---
 module_id: USAGE_GUIDE
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席技术评审官
 responsibility:
-  - 实施指南、部署文档
+  - 操作指南编写与使用说明与系统维护管理
 standard_type: 使用指南
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准

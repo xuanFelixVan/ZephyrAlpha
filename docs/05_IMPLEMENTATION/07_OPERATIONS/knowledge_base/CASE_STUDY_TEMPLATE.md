@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CASE_STUDY_TEMPLATE
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
+  - 文档模板设计与标准化管理与优化维护
 
 ---
 
@@ -36,7 +36,7 @@ parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: ίχηόΨ╜ϋ┤θϋ┤μ?
 responsibility:
-  - 文档治理
+  - 文档模板设计与标准化管理与优化维护
 module_id: IMP_CASE_STUDY_TEMPLATE---
 
 

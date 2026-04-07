@@ -1,4 +1,4 @@
----
+﻿---
 module_id: AUDIT_LOG_VIEWER_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席蓝图架构师
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 审计日志查看器

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -9,7 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 系统框架、架构设计
+  - 投资组合优化蓝图设计与实施指导与实施方案
 
 module_id: MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0

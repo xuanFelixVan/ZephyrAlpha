@@ -3,7 +3,7 @@ module_id: IMPL_PORTFOLIO_OPT_BP_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-01
-last_updated: '2026-04-06'
+last_updated: 2026-04-07
 standard_type: 专业量化机构蓝图
 applicable_scope: å
 compliance_level: 初始标准
@@ -14,9 +14,7 @@ estimated_effort: 140小时
 priority: P0
 owner: 实施团队
 responsibility:
-  - 投资组合优化框架
-  - 优化流程协调
-  - 优化结果整合
+  - 投资组合优化蓝图设计与实施指导与实施方案
 layer: Layer 5.2 (组合优化)
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 module_id: P2_CROSS_REFERENCE_PROGRESS_20260406
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ standard_type: 专业量化机构进度报告
 applicable_scope: 数据预处理层P2文档交叉引用更新
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 审计体系设计与质量监控与实施指导
 ---
 
 # 数据预处理层P2文档交叉引用更新进度报告

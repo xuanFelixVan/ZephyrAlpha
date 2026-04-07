@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 文档治理
+  - 系统实施与部署管理与优化维护
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДх╝АхПСц╡Бчи?
 applicable_scope: хЕич│╗ч╗Ях╝АхП?
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

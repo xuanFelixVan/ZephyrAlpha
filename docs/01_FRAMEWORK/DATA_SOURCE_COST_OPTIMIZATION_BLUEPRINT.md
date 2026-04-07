@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_COST_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -34,8 +34,7 @@ responsibility_boundary: |
   - 成本报告生成（日报、周报、月报）
   - 预算管理（预算设定、预算预警、预算控制）
 responsibility:
-  - 系统框架、架构设计
-  - 预算管理
+  - 数据管理架构设计与实施规范与优化维护
 ---
 ---
 

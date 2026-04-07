@@ -1,9 +1,6 @@
 ﻿---
 responsibility:
-  - 交易成本优化
-  - 成本分析
-  - 成本预测
-  - 成本控制
+  - 系统优化方案设计与实施指导与实施指导
 
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0

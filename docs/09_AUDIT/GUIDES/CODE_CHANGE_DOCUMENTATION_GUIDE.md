@@ -1,4 +1,4 @@
----
+﻿---
 module_id: CODE_CHANGE_DOCUMENTATION_GUIDE
 version: 1.0.0
 status: Active
@@ -13,7 +13,7 @@ compliance_level: وهڈو‡ه‡†
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ههŒوˆ?
 responsibility:
-  - 审计报告、合规检查
+  - 操作指南编写与使用说明与系统维护管理
 version: 1.0.0
 module_id: CODE_CHANGE_DOC_GUIDE
 created_date: 2026-04-02

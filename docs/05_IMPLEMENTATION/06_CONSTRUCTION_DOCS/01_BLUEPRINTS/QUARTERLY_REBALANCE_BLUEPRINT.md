@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 季度调仓实现
-  - 季度再平衡执行
-  - 定期调仓决策
-  - 季度权重调整
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 6 (组合优化层)
 ---
 # 季度调仓蓝图

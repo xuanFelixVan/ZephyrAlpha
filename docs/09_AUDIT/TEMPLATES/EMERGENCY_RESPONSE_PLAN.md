@@ -1,4 +1,4 @@
----
+﻿---
 module_id: EMERGENCY_RESPONSE_PLAN
 version: 1.0.0
 status: Active
@@ -10,8 +10,7 @@ owner: 首席文档架构师
 ﻿---
 version: 1.0.0
 responsibility:
-  - 审计报告、合规检查
-  - 文档治理
+  - 审计体系设计与质量监控与实施指导
 compliance_level: غ╕غ╕أبف
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md
 module_id: EMERGENCY_RESPONSE_PLAN

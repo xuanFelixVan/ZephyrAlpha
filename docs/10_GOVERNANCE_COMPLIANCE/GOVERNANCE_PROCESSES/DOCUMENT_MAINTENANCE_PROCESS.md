@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DOCUMENT_MAINTENANCE_PROCESS
 version: 1.0.0
 status: Active
@@ -9,9 +9,7 @@ owner: 首席文档架构师
 
 ﻿---
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 风险预算
-  - 数据质量
+  - 治理合规框架设计与实施与实施指导
 
 module_id: 10_GOVERNANCE_COMPLIANCE_DOCUMENT_MAINTENANCE_PROCESS_20260407124139
 version: 1.0.0

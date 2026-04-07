@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ESG_COMPLIANCE_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - ESG合规监控
-  - ESG评分计算
-  - ESG报告生成
+  - 系统监控架构设计与实施方案与实施指导
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: ESG合规监控系统

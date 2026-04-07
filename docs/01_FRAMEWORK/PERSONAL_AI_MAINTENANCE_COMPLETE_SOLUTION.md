@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ applicable_scope: 个人开发+AI维护+个人使用
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 系统框架、架构设计
+  - 系统框架设计与核心架构管理与优化维护
 
 ---
 ---

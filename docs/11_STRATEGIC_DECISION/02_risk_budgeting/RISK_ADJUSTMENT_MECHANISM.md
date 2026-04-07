@@ -1,4 +1,4 @@
----
+﻿---
 module_id: RISK_ADJUSTMENT_MECHANISM
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 风险预算 (Layer 11)
+  - 11 STRATEGIC DECISION模块文档管理与维护
 ---
 
 # 风险调整机制蓝图

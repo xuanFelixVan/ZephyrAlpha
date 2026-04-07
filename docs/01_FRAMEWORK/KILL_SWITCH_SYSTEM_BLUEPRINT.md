@@ -1,4 +1,4 @@
----
+﻿---
 module_id: KILL_SWITCH_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -58,8 +58,7 @@ responsibility_boundary: |
   - STOP_LOSS_MANAGEMENT_BLUEPRINT.md: 止损管理系统（止损触发）
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
 responsibility:
-  - 紧急停止 (Layer 10)
-  - 风险控制 (Layer 10)
+  - 系统架构蓝图设计与实施指导与实施方案
 ---
 
 # Kill Switch紧急停止系统蓝图

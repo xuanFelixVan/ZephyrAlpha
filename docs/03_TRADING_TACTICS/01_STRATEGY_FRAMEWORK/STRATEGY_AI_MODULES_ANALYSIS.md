@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STRATEGY_AI_MODULES_ANALYSIS
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﮔﭦﮔﻝﭦ۶ﮒﮔ?applicable_scope: ﻝﻝ۴ﮒﺎAIﮔ۷۰ﮒﻠﮔﺎﮒﮔ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
-  - 交易策略、战术执行
+  - 交易策略设计与实施管理与优化维护
 parent_document: ../10_AI_WORKFLOW/INDEX.md
 implementation_status: ﮒﮔﮒ؟ﮔ
 ---

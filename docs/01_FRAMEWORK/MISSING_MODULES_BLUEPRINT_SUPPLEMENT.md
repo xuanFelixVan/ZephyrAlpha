@@ -1,4 +1,4 @@
----
+﻿---
 module_id: MISSING_MODULES_BLUEPRINT_SUPPLEMENT
 version: 1.0.0
 status: Active
@@ -19,7 +19,7 @@ applicable_scope: Layer 0-11全系统
 compliance_level: 专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

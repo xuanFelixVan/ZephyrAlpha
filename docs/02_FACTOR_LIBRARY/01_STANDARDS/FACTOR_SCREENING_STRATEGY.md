@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_SCREENING_STRATEGY
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-03-30
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 因子计算、因子库管理
+  - 因子研究与管理框架设计与优化维护
 standard_type: 因子筛选策略标准
 applicable_scope: Layer 2 Alpha因子层- 因子筛选流程
 compliance_level: 专业标准

@@ -9,10 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 5.3 风险管理
 compliance_level: 专业标准
 responsibility:
-  - 层级风险预算
-  - 风险预算分配
-  - 风险层级管理
-  - 风险预算优化
+  - 风险管理框架设计与实施方案与优化维护
 layer: Layer 5.3 (风险管理)
 ---
 # 层级风险预算蓝图

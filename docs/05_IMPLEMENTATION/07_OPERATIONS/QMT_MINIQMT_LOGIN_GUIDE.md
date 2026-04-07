@@ -1,4 +1,4 @@
----
+﻿---
 module_id: QMT_MINIQMT_LOGIN_GUIDE
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 测试系统
+  - 操作指南编写与使用说明与系统维护管理
 standard_type: 专业量化机构指南
 applicable_scope: 全系统
 compliance_level: 专业标准---

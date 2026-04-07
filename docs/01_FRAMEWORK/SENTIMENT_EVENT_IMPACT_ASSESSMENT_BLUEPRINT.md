@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SENTIMENT_EVENT_IMPACT_ASSESSMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -30,7 +30,7 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 3 舆情分析层）：
 responsibility:
-  - 系统框架、架构设计
+  - 系统架构蓝图设计与实施指导与实施方案
 
 ---
 ---

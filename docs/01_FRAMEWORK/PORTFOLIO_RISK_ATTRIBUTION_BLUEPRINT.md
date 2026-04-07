@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -48,9 +48,7 @@ responsibility_boundary: |
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
 responsibility:
-  - 组合风险归因
-  - 风险因子暴露
-  - 风险报告生成
+  - 投资组合优化蓝图设计与实施指导与实施方案
 ---
 
 # 组合风险归因系统蓝图

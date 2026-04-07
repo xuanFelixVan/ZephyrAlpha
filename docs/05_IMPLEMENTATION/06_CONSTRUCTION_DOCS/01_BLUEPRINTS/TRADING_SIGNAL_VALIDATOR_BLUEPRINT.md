@@ -8,9 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 交易信号验证
-  - 信号质量评估
-  - 信号过滤
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5.4 (交易执行)
 ---
 

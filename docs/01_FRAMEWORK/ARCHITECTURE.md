@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ARCHITECTURE
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 定义系统架构和模块组织，确保架构清晰
+  - 系统架构设计与技术选型与实施指导
   responsibility_layer: Layer 4 - 机器学习层
   responsibility_layer: Layer 4 - 机器学习层
 responsibility_layer: Layer 4 - 机器学习层

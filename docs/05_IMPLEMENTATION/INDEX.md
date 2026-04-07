@@ -6,9 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 实施层架构师
 responsibility:
-  - 实施指南、部署文档
-  - 因子计算
-  - 系统架构
+  - 目录导航与文档索引管理与优化维护
 standard_type: 专业量化机构目录索引
 applicable_scope: 05_IMPLEMENTATION目录
 compliance_level: 专业标准

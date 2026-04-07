@@ -1,4 +1,4 @@
----
+﻿---
 module_id: FACTOR_EFFECTIVENESS_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -27,10 +27,7 @@ reference_models:
 open_source_solution: "Alphalens + Empyrical"
 priority: P2
 responsibility:
-  - 因子IC监控
-  - 因子收益预测能力
-  - 因子衰减分析
-  - 因子有效性报告
+  - 系统监控架构设计与实施方案与实施指导
 ---
 
 ## 文档职责说明

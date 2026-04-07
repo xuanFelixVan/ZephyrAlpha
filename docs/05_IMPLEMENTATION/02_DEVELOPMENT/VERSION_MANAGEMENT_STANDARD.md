@@ -1,4 +1,4 @@
----
+﻿---
 module_id: VERSION_MANAGEMENT_STANDARD
 version: 1.0.0
 status: Active
@@ -15,7 +15,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
-  - 实施指南、部署文档
+  - 技术标准制定与规范管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒﺙﮒﮔ?
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﻝﮔ؛ﻝ؟۰?
 compliance_level: ﮒﺙﮒﮔ?

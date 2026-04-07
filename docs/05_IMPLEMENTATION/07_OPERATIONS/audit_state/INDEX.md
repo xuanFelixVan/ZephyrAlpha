@@ -1,6 +1,6 @@
 ﻿﻿---
 responsibility:
-  - 目录导航、文档索引
+  - 目录导航与文档索引管理与优化维护
 module_id: 05_IMPLEMENTATION_INDEX_20260407124139
 version: 1.0.0
 status: Active

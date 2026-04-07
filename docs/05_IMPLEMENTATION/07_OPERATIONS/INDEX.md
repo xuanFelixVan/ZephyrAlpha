@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -15,9 +15,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 实施指南、部署文档
-  - 数据源
-  - 绩效分析
+  - 目录导航与文档索引管理与优化维护
 standard_type: 专业量化机构索引文档
 applicable_scope: 07_OPERATIONS目录
 compliance_level: 专业标准
