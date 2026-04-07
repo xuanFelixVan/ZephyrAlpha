@@ -2,7 +2,7 @@
 responsibility:
   - 组合归因
   - 收益分解
-  - 风险归因
+  - 组合绩效风险归因
   - 归因报告
 
 module_id: PORTFOLIO_ATTRIBUTION_001
@@ -85,7 +85,7 @@ layer: Layer 5.2 (组合优化)
 
 
 - 因子归因分析
-- 风险归因分析
+- 组合绩效风险归因分析
 - 多期归因链接
 
 - 理解收益来源

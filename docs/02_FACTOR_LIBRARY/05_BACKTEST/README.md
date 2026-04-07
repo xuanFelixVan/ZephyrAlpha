@@ -1,11 +1,5 @@
 ---
 
-## 回测报告模板
-
-详见：01_STANDARDS/BACKTEST_STANDARDS.md
-
----
-
 ## 更新记录
 
 | 版本 | 日期 | 变更内容 |

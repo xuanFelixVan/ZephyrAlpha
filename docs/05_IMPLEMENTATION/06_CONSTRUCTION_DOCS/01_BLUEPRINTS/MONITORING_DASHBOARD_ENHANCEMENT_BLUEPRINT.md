@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 监控面板增强
   - 可视化
-  - 实时监控
+  - 监控面板实时展示
   - 交互式分析
 
 layer: Layer 5 (策略执行层)

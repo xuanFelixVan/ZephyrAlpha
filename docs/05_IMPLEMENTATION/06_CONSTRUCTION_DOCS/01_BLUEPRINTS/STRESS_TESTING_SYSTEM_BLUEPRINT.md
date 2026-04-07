@@ -3,7 +3,7 @@ responsibility:
   - 压力测试系统
   - 情景定义
   - 冲击模拟
-  - 结果分析
+  - 压力测试结果分析
 
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0

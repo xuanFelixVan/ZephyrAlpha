@@ -503,7 +503,7 @@ class AsyncTimescaleDBWriter:
         )
     
     async def write_ticks_batch(self, ticks: List[Dict]) -> int:
-¥"""
+        """批量写入 tick 数据。"""
         async with self.pool.acquire() as conn:
             values = [
                 (t['time'], t['symbol'], t['price'], t['volume'])

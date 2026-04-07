@@ -1,26 +1,5 @@
 ---
 
-## 5. 预处理配?
-
-```python
-PREPROCESSING_CONFIG = {
-    'missing_values': {
-        'method': 'median',
-        'threshold': 0.3
-    },
-    'outliers': {
-        'method': 'mad',
-        'k': 3
-    },
-    'standardization': {
-        'method': 'zscore',
-        'groupby': 'industry'
-    }
-}
-```
-
----
-
 ## 更新记录
 
 | 版本 | 日期 | 变更内容 |

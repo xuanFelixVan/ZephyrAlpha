@@ -1,20 +1,5 @@
 ---
 
-## 📅 扩展计划
-
-### Phase 1（当前）
-- ✅ 智能下载调度器蓝图
-
-### Phase 2（计划中）
-- 🟡 SCHEDULER_API.md - 调度器API文档
-- 🟡 SCHEDULER_CONFIG.md - 调度器配置指南
-
-### Phase 3（未来）
-- 🟢 SCHEDULER_MONITORING.md - 调度器监控方案
-- 🟢 SCHEDULER_OPTIMIZATION.md - 调度器性能优化
-
----
-
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-04 | **维护者**: 首席文档架构师
 
 ---

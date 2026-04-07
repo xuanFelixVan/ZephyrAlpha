@@ -1,24 +1,5 @@
 ---
 
-## 7. 指标依赖关系
-
-```python
-INDICATOR_DEPENDENCIES = {
-    'MACD': ['EMA'],
-    'BBANDS': ['SMA', 'STDDEV'],
-    'SAR': [],
-    'ADX': ['TR'],
-    'RSI': ['MOM'],
-    'CCI': ['SMA', 'MAD'],
-    'MFI': ['TP', 'MOM'],
-    'OBV': ['MOM'],
-    'KELTNER': ['EMA', 'ATR'],
-    'STOCH': ['HHV', 'LLV']
-}
-```
-
----
-
 **版本**: 1.0 | **更新**: 2026-03-28
 
 ---

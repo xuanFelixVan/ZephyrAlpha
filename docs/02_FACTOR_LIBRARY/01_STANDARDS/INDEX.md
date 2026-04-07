@@ -1,17 +1,4 @@
 ---
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-standard_type: 索引文件
-applicable_scope: 02_FACTOR_LIBRARY\01_STANDARDS
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility:
-  - 01_STANDARDS目录索引
----
 
 # 因子标准规范目录索引
 

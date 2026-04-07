@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 经济范式判断引擎
-  - 范式识别
+  - 经济周期范式识别
   - 经济指标
   - 市场状态
 

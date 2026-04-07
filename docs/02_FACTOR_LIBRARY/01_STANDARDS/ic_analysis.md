@@ -1,34 +1,5 @@
 ---
 
-## 5. IC分析报告模板
-
-```markdown
-## {因子名称} IC分析报告
-
-### 基本信息
-- 因子ID: {ID}
-- 分析区间: {start} - {end}
-- 股票? {pool}
-- 频率: {freq}
-
-### IC统计
-
-| 指标 | ?|
-|------|-----|
-| IC均?| {value} |
-| IC标准?| {value} |
-| ICIR | {value} |
-| 胜率 | {value} |
-
-### IC时序?
-![IC时序图] (已移? path/to/ic_plot.png)
-
-### 结论
-- {conclusion}
-```
-
----
-
 ## 更新记录
 
 | 版本 | 日期 | 变更内容 |

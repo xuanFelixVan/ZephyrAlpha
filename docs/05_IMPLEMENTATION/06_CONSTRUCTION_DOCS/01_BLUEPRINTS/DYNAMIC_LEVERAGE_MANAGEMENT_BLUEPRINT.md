@@ -7,8 +7,8 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 动态杠杆管理
-  - 杠杆优化
-  - 风险控制
+  - 动态杠杆管理与风险控制
+  - 杠杆风险监控
   - 保证金管理
 
 
@@ -118,7 +118,7 @@ layer: Layer 5.3 (风险管理)
 **Layer 2 - 风险预算计算?*
 景）
 
-**Layer 3 - 杠杆优化引擎?*
+**Layer 3 - 动态杠杆管理与风险控制引擎?*
 - 波动率目标杠杆优化器（Inverse Volatility Strategy?- 风险预算杠杆优化器（Risk Parity Leverage?- Kelly准则杠杆计算?- 最大夏普比率杠杆优化器
 
 **Layer 4 - 杠杆决策与执行层**

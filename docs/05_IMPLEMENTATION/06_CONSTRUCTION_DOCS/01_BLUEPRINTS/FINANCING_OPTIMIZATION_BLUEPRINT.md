@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 融资优化
   - 融资成本
-  - 杠杆优化
+  - 融资杠杆成本优化
   - 资金效率
 
 layer: Layer 5 (策略执行层)

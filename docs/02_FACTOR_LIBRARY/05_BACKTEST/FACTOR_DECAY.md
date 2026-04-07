@@ -1,24 +1,5 @@
 ---
 
-## 5. 告警规则
-
-```yaml
-factor_alerts:
-  icir_threshold:
-    warning: 0.5
-    critical: 0.3
-
-  decay_rate_threshold:
-    warning: 0.3  # 5日衰减超?0%
-    critical: 0.5  # 5日衰减超?0%
-
-  turnover_threshold:
-    warning: 0.5  # 日换手率超过50%
-    critical: 0.8
-```
-
----
-
 **版本**: 1.0 | **更新**: 2026-03-28
 
 ---

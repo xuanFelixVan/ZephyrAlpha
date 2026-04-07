@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-彻底清理重复的YAML头部 - 修复版
-处理缺少换行符的情况
+彻底清理重复的YAML头部 - 最终修复版
+处理所有情况
 """
 
 import re
@@ -18,50 +18,51 @@ def clean_yaml_headers(file_path):
         with open(file_path, 'r', encoding='utf-8-sig') as f:
             content = f.read()
         
-        # 查找所有YAML头部的位置
-        yaml_blocks = []
-        i = 0
-        while i < len(content):
-            # 查找 ---
-            if content[i:i+3] == '---':
-                # 检查是否是YAML块开始
-                if i == 0 or content[i-1] == '\n':
-                    # 查找结束的 ---
-                    end_pos = content.find('\n---', i + 3)
-                    if end_pos > i:
-                        # 找到结束的 ---
-                        yaml_content = content[i:end_pos+4]
-                        yaml_blocks.append({
-                            'start': i,
-                            'end': end_pos + 4,
-                            'content': yaml_content
-                        })
-                        i = end_pos + 4
-                    else:
-                        i += 1
-                else:
-                    i += 1
-            else:
-                i += 1
+        # 使用正则表达式查找所有完整的YAML块
+        # YAML块格式: ---\n...\n---
+        yaml_pattern = r'^---\s*\n(.*?)\n---\s*\n'
+        matches = list(re.finditer(yaml_pattern, content, re.DOTALL | re.MULTILINE))
         
-        if len(yaml_blocks) > 1:
-            print(f"\n{file_path.relative_to(FACTOR_LIBRARY)}")
-            print(f"  发现{len(yaml_blocks)}个YAML头部")
-            
-            # 保留最后一个YAML头部
-            last_block = yaml_blocks[-1]
-            
-            # 删除之前的所有YAML头部
-            new_content = content[last_block['start']:]
-            
-            # 清理开头的空白行
-            new_content = new_content.lstrip()
-            
-            # 写入文件
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(new_content)
-            
-            return True
+        if len(matches) >= 1:
+            # 检查是否有多个YAML块
+            if len(matches) > 1:
+                print(f"\n{file_path.relative_to(FACTOR_LIBRARY)}")
+                print(f"  发现{len(matches)}个完整YAML头部")
+                
+                # 保留最后一个YAML头部
+                last_match = matches[-1]
+                new_content = content[last_match.start():]
+                
+                # 写入文件
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(new_content)
+                
+                return True
+            else:
+                # 只有一个YAML块，检查是否有未完成的YAML块
+                # 查找所有 --- 行
+                dash_lines = []
+                lines = content.split('\n')
+                for i, line in enumerate(lines):
+                    if line.strip() == '---':
+                        dash_lines.append(i)
+                
+                if len(dash_lines) > 2:
+                    print(f"\n{file_path.relative_to(FACTOR_LIBRARY)}")
+                    print(f"  发现{len(dash_lines)}个---行，可能有未完成的YAML块")
+                    
+                    # 保留最后一个完整的YAML块
+                    # 找到最后一个完整的YAML块
+                    last_yaml_start = dash_lines[-2] if len(dash_lines) >= 2 else dash_lines[-1]
+                    
+                    # 从最后一个YAML块开始
+                    new_content = '\n'.join(lines[last_yaml_start:])
+                    
+                    # 写入文件
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        f.write(new_content)
+                    
+                    return True
         
         return False
     

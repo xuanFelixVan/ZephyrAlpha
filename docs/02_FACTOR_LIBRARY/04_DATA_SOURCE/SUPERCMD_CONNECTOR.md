@@ -1,14 +1,5 @@
 ---
 
-## 🔗 相关文档
-
-- 数据源索引
-- [QMT数据接口](./QMT_INTERFACE.md)
-- [iFind连接器](./IFIND_CONNECTOR.md)
-- [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-
----
-
 **设计状?*: ?设计完成  
 **创建日期**: 2026-04-02  
 **最后更?*: 2026-04-02  

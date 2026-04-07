@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 智能执行引擎
   - 执行算法
-  - 成本优化
+  - 智能执行成本优化
   - 市场适应
 
 layer: Layer 5.4 (交易执行)

@@ -2,8 +2,8 @@
 responsibility:
   - 交易成本优化
   - 成本模型
-  - 执行优化
-  - 成本控制
+  - 交易执行成本优化
+  - 交易成本控制
 
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0

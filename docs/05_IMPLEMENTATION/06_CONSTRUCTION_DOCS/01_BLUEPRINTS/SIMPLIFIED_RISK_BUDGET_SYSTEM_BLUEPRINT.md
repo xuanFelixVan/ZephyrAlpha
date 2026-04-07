@@ -1,7 +1,7 @@
 ---
 responsibility:
   - 简化风险预算系统
-  - 风险预算
+  - 简化风险预算分配
   - 预算分配
   - 风险约束
 
@@ -90,8 +90,8 @@ layer: Layer 5.3 (风险管理)
 **核心价值**:
 - 基于 VaR 的风险预算分配（Risk Budget Allocation）
 - 动态风险预算调整（Dynamic Risk Budgeting）
-- 风险预算使用监控（Budget Utilization Monitoring）
-- 风险预算预警机制（Budget Alerting）
+- 简化风险预算分配使用监控（Budget Utilization Monitoring）
+- 简化风险预算分配预警机制（Budget Alerting）
 
 **业务价值**:
 - 将风险预算从“静态阈值”升级为“动态约束”

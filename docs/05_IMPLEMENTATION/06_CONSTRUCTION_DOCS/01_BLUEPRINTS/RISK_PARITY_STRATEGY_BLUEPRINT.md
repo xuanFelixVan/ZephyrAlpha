@@ -2,10 +2,10 @@
 responsibility:
   - 风险平价策略
   - 风险贡献均衡
-  - 权重优化
-  - 风险预算
+  - 风险平价权重优化
+  - 风险平价预算分配
 
-  - 权重优化
+  - 风险平价权重优化
 
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0

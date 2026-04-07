@@ -2,7 +2,7 @@
 responsibility:
   - Barra风险模型
   - 因子风险建模
-  - 风险归因
+  - Barra因子风险归因
   - 风险预测
 
 module_id: BARRA_RISK_MODEL_001

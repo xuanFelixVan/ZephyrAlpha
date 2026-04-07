@@ -1,20 +1,5 @@
 ---
 
-## 📅 扩展计划
-
-### Phase 1（当前）
-- ✅ 数据质量控制系统
-
-### Phase 2（计划中）
-- 🟡 QUALITY_METRICS.md - 质量指标体系
-- 🟡 QUALITY_ALERTS.md - 质量告警机制
-
-### Phase 3（未来）
-- 🟢 QUALITY_DASHBOARD.md - 质量监控面板
-- 🟢 QUALITY_IMPROVEMENT.md - 质量改进方案
-
----
-
 **索引版本**: v1.0.0 | **创建日期**: 2026-04-04 | **维护者**: 首席文档架构师
 
 ---

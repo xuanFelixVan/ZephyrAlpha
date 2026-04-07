@@ -9,7 +9,7 @@ responsibility:
   - 交易成本分析
   - 成本建模
   - 成本预测
-  - 成本优化
+  - 交易成本分析优化
 owner: 实施团队
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)

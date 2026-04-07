@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - 市场范式检测
-  - 范式识别
+  - 市场状态范式识别
   - 状态转换
   - 趋势判断
 

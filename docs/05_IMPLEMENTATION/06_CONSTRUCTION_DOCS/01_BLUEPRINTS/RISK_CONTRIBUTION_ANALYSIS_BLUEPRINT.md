@@ -11,7 +11,7 @@ compliance_level: 专业标准
 responsibility:
   - 风险贡献分析
   - 边际风险
-  - 风险预算
+  - 风险贡献度预算分析
   - 贡献度计算
 
 layer: Layer 5.3 (风险管理)

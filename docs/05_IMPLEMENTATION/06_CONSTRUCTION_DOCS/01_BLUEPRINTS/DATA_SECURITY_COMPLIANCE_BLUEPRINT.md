@@ -10,7 +10,7 @@ compliance_level: 专业标准
 responsibility:
   - 数据安全合规
   - 安全策略
-  - 合规检查
+  - 数据安全合规检查
   - 审计日志
 
 layer: Layer 5.1 (数据处理)
