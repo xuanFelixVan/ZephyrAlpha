@@ -1,4 +1,4 @@
----
+﻿---
 responsibility:
   - VaR/ES监控
   - 风险价值
@@ -140,30 +140,31 @@ graph LR
 
 ```mermaid
 graph TB
-¥"
+    subgraph "输入"
         A[组合持仓] --> D[VaR/ES计算器]
         B[收益率序列] --> D
         C[市场数据] --> D
     end
-    
+
     subgraph "计算方法"
         D --> E[历史模拟法]
         D --> F[参数法]
         D --> G[蒙特卡洛法]
         D --> H[极值理论法]
     end
-    
+
+    subgraph "阈值与预警"
         I[风险阈值检查]
         J[预警信号生成]
         K[回测验证]
     end
-    
+
     subgraph "输出"
         L[实时监控面板]
         M[风险报告]
         N[历史记录]
     end
-    
+
     E --> I
     F --> I
     G --> I

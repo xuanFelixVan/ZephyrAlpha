@@ -26,8 +26,7 @@ layer: Layer 5.2 (组合优化)
 
 ## 核心定位
 
-> 核心职责: Portfolio Optimization Diagnostics蓝图设计
-> 职责边界: 
+负责组合优化诊断模块设计，实现优化结果分析、约束冲突检测、优化建议生成。
 
 
 ## 设计目标
