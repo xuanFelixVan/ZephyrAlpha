@@ -10,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - **本文档职责（Layer 10 治理与合规层）**：
+  - 提供ai capability gap blueprint的架构设计和实施蓝图
 AI能力差距分析（对标专业机构能力）
 AI能力补充计划（补齐能力短板）
 AI能力提升路径（从85%到95%完整度）

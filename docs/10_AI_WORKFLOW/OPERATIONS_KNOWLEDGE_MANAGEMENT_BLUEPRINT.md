@@ -9,7 +9,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 运维与知识管理模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析
+layer: Layer 7 (AI报告层)
 priority: P2
 estimated_effort: 70h
 integrated_modules:

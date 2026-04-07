@@ -9,7 +9,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 数据源扩展模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析层
+layer: Layer 0 (数据源层)
 priority: P0
 estimated_effort: 40h
 responsibility:

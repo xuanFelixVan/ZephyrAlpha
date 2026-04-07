@@ -5,13 +5,13 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-layer: Layer 11 (战略决策层)
+layer: Layer 4 - 机器学习层
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility: 市场状态识别
   - 市场状态识别 (Layer 4)
-  responsibility_layer: Layer 4
+  responsibility_layer: Layer 4 - 机器学习层
 ---
 
 ﻿---
@@ -21,7 +21,7 @@ status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席架构师
-layer: Layer 10 (治理与合规层)
+layer: Layer 4 - 机器学习层
 standard_type: 专业机构级可解释性工具蓝图专业机构级可解释性工具蓝�?applicable_scope: 全系统AI决策透明�?compliance_level: 顶级专业标准
 reference_models: ["Bridgewater AIA", "SHAP", "LIME", "Captum"]
 parent_document: ../INDEX.md
@@ -483,7 +483,7 @@ class AuditLogger:
 #### Layer 10: 治理与合规层
 ##### 0.001. Ai Explainability Toolkit Blueprint
 - **模块ID**: AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT_001
-- **蓝图文档**: [AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./01_FRAMEWORK\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)
+- **蓝图文档**: [AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

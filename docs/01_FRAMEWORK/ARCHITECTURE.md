@@ -7,10 +7,10 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 风险预算监控告警、性能分析
-  responsibility_layer: Layer 1
-  responsibility_layer: Layer 4
-responsibility_layer: Layer 11
+  - 系统架构设计和模块组织
+  responsibility_layer: Layer 4 - 机器学习层
+  responsibility_layer: Layer 4 - 机器学习层
+responsibility_layer: Layer 4 - 机器学习层
 ---
 ---
 ---
@@ -236,7 +236,7 @@ Layer 0: 数据源层 (Data Sources)
 | 文档 | 说明 |
 |------|------|
 | **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | **🆕 P0�?* AI可解释性工具蓝�?|
-| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | **🆕 P0�?* RAG知识系统蓝图 |
+| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](#)** | **🆕 P0�?* RAG知识系统蓝图 |
 | **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | **🆕 P0�?* 统一自适应模型蓝图 |
 | **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | **🆕 P0�?* 实施加速方案蓝�?|
 

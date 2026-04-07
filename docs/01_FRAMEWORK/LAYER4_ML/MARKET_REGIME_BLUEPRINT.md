@@ -1089,9 +1089,9 @@ class MarketRegimeTester:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
-| [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统 |
-| [REBALANCING_BLUEPRINT.md](./REBALANCING_BLUEPRINT.md) | 再平衡决策系统 |
+| [BLUEPRINT.md](#) | Layer 11主蓝图 |
+| [TCA_BLUEPRINT.md](#) | 交易成本分析系统 |
+| [REBALANCING_BLUEPRINT.md](#) | 再平衡决策系统 |
 
 ---
 

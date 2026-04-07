@@ -9,7 +9,7 @@ responsibility:
   - 风险预算
   - 组合优化
   - 交易执行
-layer: Layer 6 (组合优化层)
+layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 情景分析与压力测试系统
 compliance_level: 专业标准

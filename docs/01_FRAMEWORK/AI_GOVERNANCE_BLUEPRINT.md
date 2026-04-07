@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-06
 owner: 首席蓝图架构师
-layer: Layer 10 (治理与合规层)
+layer: Layer 4 - 机器学习层
 standard_type: 专业量化机构蓝图
 applicable_scope: AI系统治理
 compliance_level: 顶级专业标准
@@ -31,8 +31,8 @@ responsibility: 市场状态识别
   - 风险预算 (Layer 11)
   - 市场状态识别 (Layer 4)
   - 数据质量 (Layer 10)
-  responsibility_layer: Layer 10
-  responsibility_layer: Layer 4
+  responsibility_layer: Layer 4 - 机器学习层
+  responsibility_layer: Layer 4 - 机器学习层
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机�?
@@ -430,7 +430,7 @@ responsibility: 市场状态识别
 ### 6.1 核心参考文�?
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [Layer 8总体蓝图](./LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
+| [Layer 8总体蓝图](#) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
 | [投资原则算法化蓝图](./PRINCIPLE_CODIFIER_BLUEPRINT.md) | `docs/01_FRAMEWORK/PRINCIPLE_CODIFIER_BLUEPRINT.md` | 投资原则算法化方法论 |
 | [AI行为约束引擎技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) | 技术规格书 | 约束引擎实现方案 |
 
@@ -456,7 +456,7 @@ responsibility: 市场状态识别
 #### Layer 10: 治理与合规层
 ##### 0.001. Ai Governance Blueprint
 - **模块ID**: AI_GOVERNANCE_BLUEPRINT_001
-- **蓝图文档**: [AI_GOVERNANCE_BLUEPRINT.md](./01_FRAMEWORK\AI_GOVERNANCE_BLUEPRINT.md)
+- **蓝图文档**: [AI_GOVERNANCE_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: AI系统治理
 - **状态**: Active

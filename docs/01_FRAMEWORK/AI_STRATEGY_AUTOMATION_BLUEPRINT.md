@@ -5,14 +5,14 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-layer: Layer 3 (策略层)
+layer: Layer 4 - 机器学习层
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility: 市场状态识别
   - 风险预算 (Layer 5)
   - 市场状态识别 (Layer 4)
-  responsibility_layer: Layer 4
+  responsibility_layer: Layer 4 - 机器学习层
 ---
 
 ﻿---
@@ -22,7 +22,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
-layer: Layer 10 (治理与合规层)
+layer: Layer 4 - 机器学习层
 standard_type: 专业机构级AI自动化蓝图专业机构级AI自动化蓝?applicable_scope: AI策略自动化集?compliance_level: 顶级专业标准
 reference_models: ["AgentQuant", "FinRobot", "RD-Agent", "FinRL-X", "TradingAgents"]
 related_documents:
@@ -2665,7 +2665,7 @@ class AgentQuantQMTAdapter:
 | 文档 | 说明 | 实施周期 |
 |------|------|---------|
 | **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | AI可解释性工?- 桥水基金"安全花园"体系 | 2?|
-| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | RAG知识系统 - AI利用历史知识 | 2?|
+| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](#)** | RAG知识系统 - AI利用历史知识 | 2?|
 | **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | 统一自适应模型 - 文艺复兴实时优化 | 3?|
 | **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | 实施加速方?- AI辅助开?0% | 8个月 |
 
@@ -2691,7 +2691,7 @@ class AgentQuantQMTAdapter:
 #### Layer 10: 治理与合规层
 ##### 0.001. Ai Strategy Automation Blueprint
 - **模块ID**: AI_STRATEGY_AUTOMATION_BLUEPRINT_001
-- **蓝图文档**: [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](./01_FRAMEWORK\AI_STRATEGY_AUTOMATION_BLUEPRINT.md)
+- **蓝图文档**: [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

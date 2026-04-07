@@ -1160,7 +1160,7 @@ github-actions-runner>=2.0.0
 
 | [模型服务架构](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_SERVING_ARCHITECTURE_TECHNICAL_SPECIFICATION.md) | 模型服务架构 | 服务架构设计 |
 
-| [MLOps平台技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md) | MLOps平台技术规格书 | 详细技术设�?|
+| [MLOps平台技术规格书](#) | MLOps平台技术规格书 | 详细技术设�?|
 
 
 

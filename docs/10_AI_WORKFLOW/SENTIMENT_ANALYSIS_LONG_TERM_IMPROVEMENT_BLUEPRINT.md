@@ -7,7 +7,7 @@ last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
   - 扩展功能、辅助模块
-layer: Layer 8 (人机交互层)
+layer: Layer 3 (舆情分析层)
 standard_type: 专业机构级蓝图
 applicable_scope: 舆情分析层长期改进模块
 compliance_level: 专业标准

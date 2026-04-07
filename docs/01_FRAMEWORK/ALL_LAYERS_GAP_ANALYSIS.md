@@ -5,16 +5,16 @@ status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
-layer: Layer 0-11 (全系统)
+layer: Layer 4 - 机器学习层
 standard_type: 专业量化机构级完整性分析报告
 applicable_scope: 全系统架构完整性评估
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 风险预算配置管理、参数优化
-  responsibility_layer: Layer 1
-  responsibility_layer: Layer 4
-  responsibility_layer: Layer 11
+  - 扩展功能、辅助模块
+  responsibility_layer: Layer 4 - 机器学习层
+  responsibility_layer: Layer 4 - 机器学习层
+  responsibility_layer: Layer 4 - 机器学习层
 ---
 ---
 ---
@@ -172,11 +172,11 @@ responsibility:
 
 #### 现有模块 (55个) ✅
 
-详细清单见: [LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md](./LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md)
+详细清单见: [LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md](#)
 
 #### 缺失模块 (20个) ⚠️
 
-详细清单见: [LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md](./LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md)
+详细清单见: [LAYER4_MACHINE_LEARNING_GAP_ANALYSIS.md](#)
 
 **核心缺失**:
 1. 模型服务框架 (BentoML + FastAPI)

@@ -11,7 +11,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 验证与测试框架模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析
+layer: Layer 7 (AI报告层)
 priority: P1
 estimated_effort: 60h
 integrated_modules:

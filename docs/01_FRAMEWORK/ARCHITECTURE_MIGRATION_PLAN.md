@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统架构设计和模块组织
 standard_type: æ¶æè¿ç§»è®¡å
 applicable_scope: Layer 0-11æ¶æ ?ä¸çº§æ¶é´æ¡æ¶æ¶æè¿ç§» | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 compliance_level: é¡¶çº§ä¸ä¸æ å

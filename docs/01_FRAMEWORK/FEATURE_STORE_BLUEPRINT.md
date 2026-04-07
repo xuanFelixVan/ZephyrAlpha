@@ -1017,7 +1017,7 @@ pandas>=2.0.0
 
 | [特征工程技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md) | 特征工程技术规格书 | 特征工程设计 |
 
-| [特征存储技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/FEATURE_STORE_TECHNICAL_SPECIFICATION.md) | 特征存储技术规格书 | 详细技术设�?|
+| [特征存储技术规格书](#) | 特征存储技术规格书 | 详细技术设�?|
 
 
 

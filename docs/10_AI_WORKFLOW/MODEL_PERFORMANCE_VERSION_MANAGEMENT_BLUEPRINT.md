@@ -11,7 +11,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 模型性能与版本管理模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析
+layer: Layer 4 (机器学习层)
 priority: P0
 estimated_effort: 50h
 integrated_modules:

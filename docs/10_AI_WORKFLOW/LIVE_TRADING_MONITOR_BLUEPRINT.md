@@ -7,7 +7,7 @@ last_updated: 2026-04-02
 owner: 首席架构师
 responsibility:
   - 扩展功能、辅助模块
-layer: Layer 7 (风控层)
+layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 实盘交易监控
 compliance_level: 专业标准

@@ -9,7 +9,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 舆情因子库模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析层
+layer: Layer 3 (舆情分析层)
 priority: P0
 estimated_effort: 50h
 responsibility:

@@ -956,7 +956,7 @@ requests>=2.31.0
 
 | [数据漂移检测蓝图](./DRIFT_DETECTION_BLUEPRINT.md) | 数据漂移检测蓝�?| 漂移检测系统设�?|
 
-| [模型监控技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_MONITORING_TECHNICAL_SPECIFICATION.md) | 模型监控技术规格书 | 详细技术设�?|
+| [模型监控技术规格书](#) | 模型监控技术规格书 | 详细技术设�?|
 
 
 

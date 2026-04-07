@@ -333,8 +333,8 @@ responsibility:
 
 ### B. 参考标准文档
 
-- [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [专业文档治理审计指南](#)
+- [文档治理审计检查清单](#)
 - [审计质量标准v5.1](#)
 
 ### C. 审计数据文件

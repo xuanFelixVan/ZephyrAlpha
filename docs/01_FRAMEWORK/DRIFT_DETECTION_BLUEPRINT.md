@@ -1005,7 +1005,7 @@ plotly>=5.18.0
 
 | [在线学习蓝图](./ONLINE_LEARNING_BLUEPRINT.md) | 在线学习蓝图 | 在线学习系统设计 |
 
-| [漂移检测技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md) | 漂移检测技术规格书 | 详细技术设�?|
+| [漂移检测技术规格书](#) | 漂移检测技术规格书 | 详细技术设�?|
 
 
 

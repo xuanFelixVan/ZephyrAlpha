@@ -35,7 +35,7 @@ responsibility:
 
 **与PORTFOLIO_REBALANCING的关系**:
 - 本文档是**高级强化学习调仓模块**，使用PPO/SAC算法实现智能决策
-- [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md)是**基础再平衡模块**，使用传统触发机制
+- [PORTFOLIO_REBALANCING_BLUEPRINT.md](#)是**基础再平衡模块**，使用传统触发机制
 - **职责边界**: 本文档负责AI增强的智能决策，基础模块负责触发机制和交易成本优化
 - **推荐实施路径**: 先实现基础模块（40h），再实施本文档（200h）
 
@@ -1101,17 +1101,17 @@ class RLRebalancingSystem:
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依赖 | 提供基础再平衡框架 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [市场状态识别蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md) | MARKET_REGIME_DETECTION_001 | 中依赖 | 提供市场状态识别 |
+| [组合再平衡蓝图](#) | PORTFOLIO_REBALANCING_001 | 强依赖 | 提供基础再平衡框架 |
+| [数据质量监控蓝图](#) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [市场状态识别蓝图](#) | MARKET_REGIME_DETECTION_001 | 中依赖 | 提供市场状态识别 |
 
 #### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依赖 | VaR/ES监控 |
-| [算法交易优化器蓝图](./ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
+| [组合优化引擎集成蓝图](#) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
+| [VaR/ES监控蓝图](#) | VAR_ES_MONITORING_001 | 中依赖 | VaR/ES监控 |
+| [算法交易优化器蓝图](#) | ALGORITHMIC_TRADING_OPTIMIZER_001 | 中依赖 | 算法交易执行 |
 
 #### 技术依赖
 

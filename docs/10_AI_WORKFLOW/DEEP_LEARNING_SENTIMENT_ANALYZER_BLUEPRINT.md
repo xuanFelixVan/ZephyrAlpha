@@ -11,7 +11,7 @@ standard_type: 专业机构级蓝图
 applicable_scope: 深度学习情感分析模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析
+layer: Layer 3 (舆情分析层)
 priority: P0
 estimated_effort: 60h
 ---

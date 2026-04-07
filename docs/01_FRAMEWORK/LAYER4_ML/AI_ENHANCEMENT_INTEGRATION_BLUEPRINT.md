@@ -1212,16 +1212,16 @@ class TechnicalValidation:
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
 | [AI模式识别引擎蓝图](./AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md) | AI_PATTERN_RECOGNITION_ENGINE_001 | 强依赖 | 提供AI模式识别能力 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依赖 | 提供数据元数据 |
+| [数据质量监控蓝图](#) | DATA_QUALITY_MONITORING_001 | 强依赖 | 提供数据质量指标 |
+| [数据目录蓝图](#) | DATA_CATALOG_001 | 中依赖 | 提供数据元数据 |
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
-| [智能执行引擎蓝图](./SMART_EXECUTION_ENGINE_BLUEPRINT.md) | SMART_EXECUTION_ENGINE_001 | 中依赖 | 智能执行引擎 |
-| [交易信号验证器蓝图](./TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md) | TRADING_SIGNAL_VALIDATOR_001 | 中依赖 | 交易信号验证 |
+| [组合优化引擎集成蓝图](#) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依赖 | 组合优化 |
+| [智能执行引擎蓝图](#) | SMART_EXECUTION_ENGINE_001 | 中依赖 | 智能执行引擎 |
+| [交易信号验证器蓝图](#) | TRADING_SIGNAL_VALIDATOR_001 | 中依赖 | 交易信号验证 |
 
 ### 技术依赖
 
