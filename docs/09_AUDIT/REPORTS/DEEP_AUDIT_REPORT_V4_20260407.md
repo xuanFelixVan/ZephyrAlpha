@@ -1,6 +1,6 @@
 ---
 module_id: 09_AUDIT_DEEP_AUDIT_REPORT_V4_20260407_20260407124139
-version: 1.0.0
+version: 4.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07

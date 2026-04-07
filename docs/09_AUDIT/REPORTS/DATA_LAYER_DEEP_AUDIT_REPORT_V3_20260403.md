@@ -1,6 +1,6 @@
 ---
 module_id: DATA_SOURCE_LAYER_AUDIT_REPORT_V3_001
-version: 1.0.0
+version: 3.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03

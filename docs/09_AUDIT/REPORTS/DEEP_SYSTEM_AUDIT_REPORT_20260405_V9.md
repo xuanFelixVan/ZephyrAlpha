@@ -1,6 +1,6 @@
 ---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_20260405_V9
-version: 1.0.0
+version: 9.0.0
 status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05

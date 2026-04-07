@@ -1,6 +1,6 @@
 ---
 module_id: AI_LAYER_V_002
-version: 1.0.0
+version: 4.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07

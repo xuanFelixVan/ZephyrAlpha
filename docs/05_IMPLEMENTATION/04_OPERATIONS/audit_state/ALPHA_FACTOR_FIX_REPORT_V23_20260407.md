@@ -3,7 +3,7 @@ responsibility:
   - 实施指南、部署文档、审计状态追踪
 
 module_id: LAYER2_ALPHA_FACTOR_FIX_REPORT_V23_20260407
-version: 1.0.0
+version: 23.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07

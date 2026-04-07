@@ -18,7 +18,7 @@ implementation_status: 进行�?
 
 
 # 因子库审计报告与优化总结 (Factor Library Audit Report)
-> **核心职责**: 审计报告和问题追踪
+> **核心职责**: 因子库审计报告与优化总结 (Factor Library Audit Report)的定义和实现
 > **职责边界**: 
 > - ✅ 本文档负责：审计报告和问题追踪相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容

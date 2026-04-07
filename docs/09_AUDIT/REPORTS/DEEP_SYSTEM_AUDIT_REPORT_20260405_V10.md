@@ -1,6 +1,6 @@
 ---
 module_id: AUDIT_深度系统审计报告_V10_001
-version: 1.0.0
+version: 10.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07

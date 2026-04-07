@@ -16,7 +16,7 @@ responsibility:
 
 
 # 因子验证指南 (Factor Validation Guide)
-> **核心职责**: 因子验证流程和标准
+> **核心职责**: 因子验证指南 (Factor Validation Guide)的定义和实现
 > **职责边界**: 
 > - ✅ 本文档负责：因子验证流程和标准相关内容
 > - ❌ 本文档不负责：具体实现细节、其他模块内容

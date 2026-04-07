@@ -1,23 +1,27 @@
 ---
-module_id: QUARTERLY_REBALANCE_BLUEPRINT_001
+module_id: QUARTERLY_REBALANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
-
+  - 季度调仓
+  - 季度再平衡
+  - 调仓决策
+  - 季度权重调整
 layer: "Layer 6 (组合优化层)"
 ---
 
-# QUARTERLY REBALANCE BLUEPRINT
+# 季度调仓蓝图
 
-> **核心职责**: Quarterly Rebalance蓝图设计
+> **核心职责**: 季度调仓决策，季度权重调整
 > **职责边界**: 
-> - ✅ 本文档负责：Quarterly Rebalance蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - ✅ 本文档负责：季度调仓、季度再平衡、调仓决策、季度权重调整
+> - ❌ 本文档不负责：日内调仓、实时调仓、风险控制
 
 ﻿# 📋 执行摘要
 

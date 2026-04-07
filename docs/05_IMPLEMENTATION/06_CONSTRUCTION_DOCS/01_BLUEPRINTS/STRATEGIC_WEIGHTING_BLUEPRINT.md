@@ -1,25 +1,27 @@
 ---
-module_id: STRATEGIC_WEIGHTING_BLUEPRINT_001
+module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
-
+  - 战略权重分配
+  - 战略资产配置
+  - 长期权重优化
+  - 战略配置决策
 layer: "Layer 6 (组合优化层)"
 ---
 
-# STRATEGIC WEIGHTING BLUEPRINT
+# 战略权重分配蓝图
 
-> **核心职责**: Strategic Weighting蓝图设计
+> **核心职责**: 战略权重分配，战略资产配置
 > **职责边界**: 
-> - ✅ 本文档负责：Strategic Weighting蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
+> - ✅ 本文档负责：战略权重分配、战略资产配置、长期权重优化、战略配置决策
+> - ❌ 本文档不负责：战术权重调整、短期权重优化、风险控制
 
 ﻿# 📋 执行摘要
 

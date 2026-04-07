@@ -17,7 +17,7 @@ compliance_level: 专业标准---
 
 
 # 02_ALPHA_FACTORS_INDEX.md - Alpha因子索引�?
-> **核心职责**: 目录导航和文档索引
+> **核心职责**: 02_ALPHA_FACTORS_INDEX.md - Alpha因子索引�?的定义和实现
 > **职责边界**: 
 > - ✅ 本文档负责：目录结构导航、文档索引、快速定位
 > - ❌ 本文档不负责：具体内容实现、详细设计

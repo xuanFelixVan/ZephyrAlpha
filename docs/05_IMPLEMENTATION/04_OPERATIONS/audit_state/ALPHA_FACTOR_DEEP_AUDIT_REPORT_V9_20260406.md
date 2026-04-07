@@ -1,6 +1,6 @@
 ---
 module_id: AUDIT_REPORT_V9_20260406_001
-version: 1.0.0
+version: 9.0.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06

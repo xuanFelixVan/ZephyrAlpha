@@ -20,7 +20,7 @@ responsibility: SuperCMD命令行接口对接
 
 # SuperCommand连接器技术规格
 
-> **核心职责**: SuperCMD数据源连接器接口定义
+> **核心职责**: SuperCMD数据源连接器接口定义，涉及连接器技术规格
 > **职责边界**: 
 > - ✅ 本文档负责：SuperCMD数据源连接器接口定义
 > - ❌ 本文档不负责：其他模块内容

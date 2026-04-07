@@ -2,7 +2,7 @@
 module_id: LAYER1_DEEP_AUDIT_REPORT_20260405_V5_001
 
 audit_id: LAYER1_DEEP_AUDIT_REPORT_20260405_V5
-version: 1.0.0
+version: 5.0.0
 status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05

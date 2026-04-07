@@ -1,6 +1,6 @@
 ---
 module_id: LAYER_7_DEEP_AUDIT_REPORT_V12_001
-version: 1.2.0
+version: 12.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07

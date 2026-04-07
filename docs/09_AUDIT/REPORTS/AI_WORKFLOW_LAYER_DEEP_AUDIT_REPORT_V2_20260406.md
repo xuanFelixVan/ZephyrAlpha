@@ -1,6 +1,6 @@
 ---
 module_id: AUDIT_AI_001_L09_REPORT
-version: 1.0.0
+version: 2.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
