@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席架构师
+responsibility: 
 standard_type: 专业机构级蓝图
 applicable_scope: 数据源扩展模块
 compliance_level: 专业标准
@@ -12,8 +13,6 @@ parent_document: INDEX.md
 layer: Layer 0 (数据源层)
 priority: P0
 estimated_effort: 40h
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
 ---
 
 

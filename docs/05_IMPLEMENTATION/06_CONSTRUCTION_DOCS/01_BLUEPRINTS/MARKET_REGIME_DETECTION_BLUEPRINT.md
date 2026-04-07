@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_REGIME_DETECTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - MARKET_REGIME_DETECTION蓝图设计
----
+  - 市场范式检测
+  - 范式识别
+  - 状态转换
+  - 趋势判断
 
-﻿---
+
+﻿
 module_id: MARKET_REGIME_DETECTION_001
 version: 1.0.0
 status: Active
@@ -23,11 +26,12 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+
 # MARKET REGIME DETECTION BLUEPRINT
 
 > **核心职责**: Market Regime Detection蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 > **版本**: v1.0
@@ -303,7 +307,7 @@ class LiquidityFeatureExtractor:
 
 
 class SentimentFeatureExtractor:
-    """æ
+    """
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
 绪特征"""
@@ -721,7 +725,7 @@ class MarketRegimeRuleEngine:
         return state, probs
 ```
 
----
+
 
 ## 📊 数据模型设计
 
@@ -768,7 +772,7 @@ CREATE TABLE regime_transition_log (
 ) COMMENT '状态转换记录表';
 ```
 
----
+
 
 ## 🔌 接口规范
 
@@ -834,7 +838,7 @@ Response:
 }
 ```
 
----
+
 
 ## 🚀 实施要点
 
@@ -843,7 +847,7 @@ Response:
 
 **验收标准**:
 
----
+
 
 
 **任务**:
@@ -852,7 +856,7 @@ Response:
 - 所有模型可以正常训练和预测
 - 模型性能达标
 
----
+
 
 ### 阶段3：集成测试与优化（第2-3周）
 
@@ -862,7 +866,7 @@ Response:
 - 模型准确率≥80%
 - 部署文档完整
 
----
+
 
 ## 🧪 测试策略
 
@@ -913,7 +917,7 @@ def test_hmm_model():
     assert probs.shape == (len(features), 5)
 ```
 
----
+
 
 ## 📈 性能指标
 
@@ -927,23 +931,23 @@ def test_hmm_model():
 | 特征类型 | 计算时间 |
 |---------|---------|
 | **趋势特征** | <100ms |
-| **æ
+| **
 绪特征** | <200ms |
 
----
+
 
 
 - [阿尔法因子工厂蓝图](./ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
 
----
+
 
 ## 📝 变更历史
 
 |------|------|---------|------|
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -964,5 +968,13 @@ def test_hmm_model():
 
 |------|------|----------|--------|
 
----
+
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
 

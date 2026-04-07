@@ -1,17 +1,18 @@
 ﻿---
-## 文档职责说明
-
+module_id: AI_DECISION_EXPLANATION_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - AI DECISION EXPLANATION module blueprint design
 **本文档职责**: AI决策解释系统蓝图
-- AI决策可解释性、特征重要性分析、决策路径可视化、解释报告生成
-
-# AI决策解释系统蓝图
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 2-3周
 > **核心定位**: 增强AI决策透明度和用户信任
 > **技术栈**: SHAP + LIME + Python + Streamlit
-
 ---
 
 ## 1. 概述

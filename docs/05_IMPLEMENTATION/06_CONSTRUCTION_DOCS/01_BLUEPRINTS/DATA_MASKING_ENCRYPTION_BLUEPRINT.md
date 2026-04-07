@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,13 +6,21 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - DATA_MASKING_ENCRYPTION蓝图设计
+  - 数据脱敏加密
+  - 敏感数据识别
+  - 脱敏规则
+  - 加密存储
+standard_type: 专业量化机构蓝图
+compliance_level: 专业标准
+layer: Layer 5.1 (数据处理)
 ---
 
 
-
-
 ## 核心定位
+
+> **职责边界**: 
+> - ✅ 本文档负责：数据脱敏加密、敏感数据识别、脱敏规则
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
 负责数据脱敏加密的设计与构建和运行和操作，基于加密技术，保护敏感数据，确保数据安全合规。 生成和输出数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
@@ -67,7 +75,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -80,7 +88,7 @@ responsibility:
 |---------|---------|--------|-----------|---------|
 | **密钥管理** | HashiCorp Vault (轻量) | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
----
+
 
 
 
@@ -92,7 +100,7 @@ responsibility:
                           完整血缘追踪链
 ```
 
----
+
 
 
 ### 3.1 PII识别引擎
@@ -747,7 +755,7 @@ class KeyManagementService:
             self._save_metadata()
 ```
 
----
+
 
 
 ### 4.1 Docker Composeé
@@ -819,7 +827,7 @@ data_masking:
     - password
 ```
 
----
+
 
 
 
@@ -883,7 +891,7 @@ print(f"访问日志: {logs}")
 anomalies = audit.detect_anomalies(hours=24)
 ```
 
----
+
 
 
 ### 6.1 性能基准
@@ -892,17 +900,17 @@ anomalies = audit.detect_anomalies(hours=24)
 | PII扫描 | 1MB文本 | 50ms | 20MB/s |
 | 数据加密 | 1MB数据 | 30ms | 33MB/s |
 | 数据解密 | 1MB数据 | 30ms | 33MB/s |
-¥ | 1000æ?| 50ms | 20Kæ?s |
+¥ | 1000?| 50ms | 20K?s |
 
 ### 6.2 资源占用
 
 |------|---------|---------|
-| CPU | 1æ ?| 2æ ?|
-| å
+| CPU | 1 ?| 2 ?|
+| 
 存 | 512MB | 1GB |
 | 存储 | 1GB | 5GB |
 
----
+
 
 
 ### 7.1 密钥管理
@@ -918,9 +926,9 @@ anomalies = audit.detect_anomalies(hours=24)
 | 法规 | 要求 | 实现方式 |
 |------|------|---------|
 | GDPR | 数据最小化 | PII识别+脱敏 |
-¨ | å
+¨ | 
 
----
+
 
 
 
@@ -936,7 +944,7 @@ anomalies = audit.detect_anomalies(hours=24)
 - [x] 性能优化
 - [x] 监控告警
 
----
+
 
 
 
@@ -947,11 +955,20 @@ anomalies = audit.detect_anomalies(hours=24)
 - [GDPR合规指南](https://gdpr.eu/)
 - [PCI DSS标准](https://www.pcisecuritystandards.org/)
 
----
+
 
 
 |------|------|---------|------|
 
----
+
 
 **文档结束**
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

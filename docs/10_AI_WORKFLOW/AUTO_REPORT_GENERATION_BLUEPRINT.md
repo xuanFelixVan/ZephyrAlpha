@@ -1,18 +1,19 @@
 ﻿---
-## 文档职责说明
-
+module_id: AUTO_REPORT_GENERATION_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - AUTO REPORT GENERATION module blueprint design
 **本文档职责**: 自动化报告生成引擎蓝图
-- 自动化报告生成、多维度数据融合、AI决策仪表盘、多渠道推送、定时调度
-
-# 自动化报告生成引擎蓝图
-
 > **版本**: v1.0.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 1-2周
 > **核心定位**: 全自动报告生成与推送系统
 > **技术栈**: daily_stock_analysis + Jinja2 + Markdown
 > **开源方案**: daily_stock_analysis (GitHub 5,500+ Stars)
-
 ---
 
 ## 一、概述

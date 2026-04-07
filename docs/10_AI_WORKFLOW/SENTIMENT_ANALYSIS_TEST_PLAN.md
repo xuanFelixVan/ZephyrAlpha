@@ -1,22 +1,19 @@
 ﻿---
-## 文档职责说明
-
+module_id: SENTIMENT_ANALYSIS_TEST_PLAN_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - SENTIMENT ANALYSIS TEST PLAN document
 **本文档职责**: 测试计划文档
-- 测试策略、单元测试、集成测试、性能测试
-
-# 舆情分析层改进模块测试计划文
-
 > **核心职责**: 文档内容说明
 > **职责边界**: 
-> - ✅ 本文档负责：文档内容说明相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **文档类型**: 测试计划
 > **状*: 活跃
-
 ---
 
 ## 📋 文档目录

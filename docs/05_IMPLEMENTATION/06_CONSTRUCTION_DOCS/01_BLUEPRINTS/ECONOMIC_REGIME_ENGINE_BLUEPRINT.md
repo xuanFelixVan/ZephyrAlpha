@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ECONOMIC_REGIME_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - ECONOMIC_REGIME_ENGINE蓝图设计
----
+  - 经济范式判断引擎
+  - 范式识别
+  - 经济指标
+  - 市场状态
 
-﻿---
+
+﻿
 module_id: ECONOMIC_REGIME_ENGINE_001
 version: 1.0.0
 status: Active
@@ -23,6 +26,7 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+
 # ECONOMIC REGIME ENGINE BLUEPRINT
 
 ## 核心定位
@@ -33,7 +37,7 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Economic Regime Engine蓝图设计
 > **职责边界**: 
-å®...
+®...
 
 
 ## 设计目标
@@ -88,7 +92,7 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 核心职责: Economic Regime Engine蓝图设计
 > 职责边界: 
@@ -162,7 +166,7 @@ layer: Layer 5 (策略执行层)
 时间复杂? O(N * M), N=范式? M=资产?空间复杂? O(M)
 ```
 
----
+
 
 ## 4. 数据流设?
 ¥
@@ -176,7 +180,7 @@ layer: Layer 5 (策略执行层)
                                         ?                                   转换预警 ?风险提示
 ```
 
----
+
 
 ## 5. 接口设计
 
@@ -190,7 +194,7 @@ class EconomicRegimeEngine:
         获取当前经济范式分析
         
         Returns:
-            RegimeAnalysis: å
+            RegimeAnalysis: 
         pass
     
     def get_regime_probability(self) -> Dict[str, float]:
@@ -237,7 +241,7 @@ economic_regime_engine:
     max_leverage: 2.0              # 最大杠?    rebalance_frequency: 'quarterly' # 调仓频率
 ```
 
----
+
 
 ## 6. 风险管理
 
@@ -251,7 +255,7 @@ economic_regime_engine:
 ### 6.2 风险控制措施
 4. **回测验证**: 定期回测模型表现
 
----
+
 
 ## 7. 实施计划
 
@@ -266,7 +270,7 @@ economic_regime_engine:
 ### 7.5 Phase 5: 上线与监控（Week 9?- Day 1-3: 生产环境部署
 - Day 4-5: 监控系统搭建
 - Day 6-7: 文档与培?
----
+
 
 ## 8. 验收标准
 
@@ -284,7 +288,7 @@ economic_regime_engine:
 - ?文档完整??95%
 - ?架构合规?100%
 
----
+
 
 
 ### 9.1 上游依赖
@@ -298,9 +302,9 @@ economic_regime_engine:
 - iFinD数据源：宏观经济数据
 - Wind数据源：备用数据?- hmmlearn库：HMM模型实现
 
----
 
-## 10. å
+
+## 10. 
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
 | **M1: 数据层完?* | Week 2 | 数据采集与预处理模块 | 数据质量?5% |
@@ -309,16 +313,16 @@ economic_regime_engine:
 | **M4: 测试通过** | Week 8 | 测试报告 | 所有测试通过 |
 | **M5: 生产上线** | Week 9 | 生产系统 | 系统稳定运行 |
 
----
+
 
 
 ## 变更历史
 
 |------|------|----------|--------|
 
----
 
----
+
+
 
 ## 11. 文档治理
 
@@ -334,11 +338,11 @@ economic_regime_engine:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Economic Regime Engine** | å
+| **Economic Regime Engine** | 
 
 ### 11.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - STRATEGIC_ALLOCATION_ENGINE蓝图设计
+  - 战略配置引擎
+  - 资产配置
+  - 长期配置
+  - 配置决策
+standard_type: 专业量化机构蓝图
+compliance_level: 专业标准
+layer: Layer 5.2 (组合优化)
 ---
-
-
 
 
 ## 核心定位
@@ -70,7 +74,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 职责边界: 
 
@@ -84,7 +88,7 @@ responsibility:
 
 |------|---------|------|------|---------|
 
----
+
 
 
 ### 2.1 PyPortfolioOpt集成
@@ -187,7 +191,7 @@ class StrategicAllocationEngine:
 ```
 ```
 
----
+
 
 
 
@@ -322,7 +326,7 @@ def dynamic_rebalancing(
     return rebalance_weights
 ```
 
----
+
 
 
 ### 4.1 核心数据模型
@@ -354,7 +358,7 @@ class RebalancingSignal:
     estimated_cost: float
 ```
 
----
+
 
 
 ### 5.1 Phase 1: 核心功能 (Week 1)
@@ -376,9 +380,9 @@ class RebalancingSignal:
 - [ ] 部署上线
 
 
----
 
-## å
+
+## 
 
 ### 6.1 测试策略
 
@@ -391,16 +395,16 @@ class RebalancingSignal:
 | **é
 | **优化计算时间** | <5s |
 
----
+
 
 
 |------|--------|
 | **é
 | **风险控制** | VaR <5% |
 
----
 
-## å
+
+## 
 
 ### 上游依赖
 
@@ -433,13 +437,13 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### å
+### 
 
 | 文档 | 说明 |
 |------|------|
 | ARCHITECTURE.md | 系统架构 |
 
----
+
 
 **蓝图版本**: v1.0
 **蓝图日期**: 2026-04-06
@@ -448,9 +452,9 @@ graph LR
 
 |------|------|----------|--------|
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -471,5 +475,5 @@ graph LR
 
 |------|------|----------|--------|
 
----
+
 

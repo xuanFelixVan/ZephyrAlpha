@@ -5,18 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility: 
 layer: Layer 3 (舆情分析层)
-responsibility:
-  - 舆情分析层中期改进技术规格定义
-  - 知识图谱、流式处理、多语言支持技术规格
 standard_type: 技术规格书
 applicable_scope: 舆情分析层中期改进模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-applicable_modules:
-  - 知识图谱
-  - 流式处理架构
-  - 多语言支持
+applicable_modules: 
 ---
 
 

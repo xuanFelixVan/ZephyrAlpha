@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_CLEANING_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,16 +8,22 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - DATA_CLEANING_ENGINE蓝图设计
-洗引擎
-洗
-?
+  - 数据清洗引擎
+  - 数据质量检测
+  - 异常值处理
+  - 数据标准化
+
 layer: Layer 5.1 (数据处理)
----
 
 洗引擎蓝图
+---
+
 
 ## 核心定位
+
+> **职责边界**: 
+> - ✅ 本文档负责：数据清洗引擎、数据质量检测、异常值处理
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
 负责数据清洗引擎的设计与构建和运行和操作，基于数据清洗技术，分析和转换数据质量问题，提升数据可用性。 生成和输出数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
@@ -72,7 +78,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 📋 执行摘要
@@ -81,11 +87,11 @@ layer: Layer 5.1 (数据处理)
 - 自动化异常值检测与处理
 ?
 - 重复数据去重
-- æ¸
+- ¸
 
 
 
----
+
 
 
 ### 1.1 模块定位
@@ -102,9 +108,9 @@ layer: Layer 5.1 (数据处理)
 
 |------|--------|----------|
 ?|
-| **æ¸
+| **¸
 
----
+
 
 ## 2. 系统架构设计
 
@@ -114,29 +120,29 @@ layer: Layer 5.1 (数据处理)
 graph TB
     end
     
-    subgraph "æ¸
+    subgraph "¸
 洗引擎"
         B --> C[异常值检测器]
         B --> D[缺失值处理器]
         B --> E[重复数据去重器]
         B --> F[格式标准化器]
         
-        C --> G[æ¸
+        C --> G[¸
 洗规则引擎]
         D --> G
         E --> G
         F --> G
     end
     
-        G --> H[æ¸
+        G --> H[¸
 洗后数据]
-        G --> I[æ¸
+        G --> I[¸
 洗报告]
         G --> J[质量指标]
     end
     
     subgraph "é
-        K[æ¸
+        K[¸
     end
 ```
 
@@ -171,7 +177,7 @@ class AnomalyDetector:
             df: Spark DataFrame
         
         Returns:
-            DataFrame: å
+            DataFrame: 
 含异常值标记的DataFrame
         """
         detector = self.methods.get(method)
@@ -536,7 +542,7 @@ class DuplicateRemover:
         ).filter(col('row_num') == 1).drop('row_num')
 ```
 
----
+
 
 
 ### 3.1 Great Expectations集成
@@ -651,12 +657,12 @@ class SparkDataCleaner:
         
         Args:
 ¥DataFrame
-            cleaning_config: æ¸
+            cleaning_config: ¸
         
         Returns:
-            DataFrame: æ¸
+            DataFrame: ¸
 洗后的DataFrame
-            Dict: æ¸
+            Dict: ¸
 洗报告
         """
         report = {
@@ -704,11 +710,11 @@ class SparkDataCleaner:
         return df, report
 ```
 
----
+
 
 ## 4. é
 
-### 4.1 æ¸
+### 4.1 ¸
 
 ```yaml
 # data_cleaning_config.yaml
@@ -752,7 +758,7 @@ format_standardization:
     precision: 2
     rounding: half_up
 
-# æ¸
+# ¸
 cleaning_rules:
   - name: price_range_check
     type: range
@@ -779,7 +785,7 @@ import yaml
 from typing import Dict, Any
 
 class CleaningConfigLoader:
-    """æ¸
+    """¸
     
     def __init__(self, config_path: str):
         self.config_path = config_path
@@ -806,7 +812,7 @@ class CleaningConfigLoader:
         return self.config.get('cleaning_rules', [])
 ```
 
----
+
 
 ## 5. 部署架构
 
@@ -855,7 +861,7 @@ services:
       - ./config:/config
 ```
 
-### 5.2 æ¸
+### 5.2 ¸
 洗引擎Dockerfile
 
 ```dockerfile
@@ -880,7 +886,7 @@ COPY config/ /app/config/
 CMD ["python", "src/data_cleaning_engine.py"]
 ```
 
----
+
 
 ## 6. 使用示例
 
@@ -925,7 +931,7 @@ cleaned_df, report = cleaner.clean_data(
 cleaned_df.write.parquet("data/cleaned/market_data.parquet", mode='overwrite')
 
 洗报告
-print("æ¸
+print("¸
 洗报告:")
 ? {report['missing_values_filled']}")
 ```
@@ -945,7 +951,7 @@ cleaned_df, validation_results = gx_cleaner.validate_and_clean(df)
 print(f"验证成功: {validation_results.success}")
 ```
 
----
+
 
 ## 7. 性能优化
 
@@ -983,10 +989,10 @@ def clean_data_with_cache(df, cleaning_config):
     return cleaned_df
 ```
 
----
 
 
-### 8.1 æ¸
+
+### 8.1 ¸
 洗质量监控
 
 ```python
@@ -1037,7 +1043,7 @@ def monitor_cleaning(func):
     return wrapper
 ```
 
----
+
 
 ## 9. 开发路线图
 
@@ -1053,7 +1059,7 @@ def monitor_cleaning(func):
 
 洗报告生成
 
----
+
 
 ## 10. 成本效益分析
 
@@ -1069,12 +1075,21 @@ def monitor_cleaning(func):
 
 **ROI**: (45,000 - 6,000) / 6,000 = 650%
 
----
+
 
 ## 📋 变更历史
 
 |------|------|---------|------|
 
----
+
 
 **文档结束**
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

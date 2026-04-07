@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARGIN_CALL_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - MARGIN_CALL_MONITOR蓝图设计
----
+  - 保证金监控
+  - 保证金计算
+  - 预警机制
+  - 风险控制
 
-﻿---
+
+﻿
 module_id: MARGIN_CALL_MONITOR_001
 version: 1.0.0
 status: Active
@@ -102,7 +105,7 @@ layer: Layer 5.3 (风险管理)
 layer: Layer 5.3 (风险管理)
 ---|--------|----------|-----------|
 
----
+
 
 ## 2. 架构设计
 
@@ -139,7 +142,7 @@ from typing import List, Dict, Optional
 
 class AlertLevel(Enum):
     """预警等级"""
-å
+
     P3_LOW = "P3_LOW"              # 低风险，持续监控
 
 
@@ -183,10 +186,10 @@ class MarginCallMonitorConfig:
         
         if self.margin_call_thresholds is None:
             self.margin_call_thresholds = {
-                'P0_CRITICAL': 1.30,   # æ
-                'P1_HIGH': 1.50,       # æ
-                'P2_MEDIUM': 1.80,     # æ
-                'P3_LOW': 2.00         # æ
+                'P0_CRITICAL': 1.30,   # 
+                'P1_HIGH': 1.50,       # 
+                'P2_MEDIUM': 1.80,     # 
+                'P3_LOW': 2.00         # 
             }
         
         if self.market_leverage_thresholds is None:
@@ -244,7 +247,7 @@ CREATE TABLE market_leverage_metrics (
 );
 ```
 
----
+
 
 ## 5. 接口设计
 
@@ -321,7 +324,7 @@ class MarginCallMonitorIntegrator:
         pass
 ```
 
----
+
 
 ## 6. 实施路径
 
@@ -338,11 +341,11 @@ class MarginCallMonitorIntegrator:
 **阶段四：AI增强与优化（2周）**
 - 使用机器学习优化爆仓概率预测
 
-### 6.2 å
+### 6.2 
 
 |--------|--------------|--------|----------|
 
----
+
 
 ## 7. 风险评估
 
@@ -354,7 +357,7 @@ class MarginCallMonitorIntegrator:
 
 |--------|---------|------|---------|
 
----
+
 
 ## 8. 质量保证
 
@@ -372,7 +375,7 @@ class MarginCallMonitorIntegrator:
 
 |---------|---------|--------|---------|
 
----
+
 
 ## 9. 文档治理
 
@@ -394,7 +397,7 @@ class MarginCallMonitorIntegrator:
 
 **当前版本**: v1.0.0
 
----
+
 
 
 ### 10.1 学术文献
@@ -415,7 +418,7 @@ class MarginCallMonitorIntegrator:
 - [融资优化蓝图](./FINANCING_OPTIMIZATION_BLUEPRINT.md) - Layer 6融资管理
 - [压力测试系统蓝图](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) - Layer 7压力测试
 
----
+
 
 
 ## 变更历史
@@ -424,5 +427,5 @@ class MarginCallMonitorIntegrator:
 | v1.0.0 | 2026-04-05 | 初始版本创建 | 组合优化层负责人 |
 
 
----
+
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_GOVERNANCE_PLATFORM_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+  - 数据治理平台
+  - 数据标准
+  - 数据质量
+  - 数据安全
+
 layer: Layer 5.1 (数据处理)
 ---
+
 
 # DATA GOVERNANCE PLATFORM BLUEPRINT
 
@@ -69,7 +74,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 核心职责: Data Governance Platform蓝图设计
 > 职责边界: 
@@ -79,7 +84,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-æ?
+?
 - 合规要求难以落实
 
 **业务目标**:
@@ -88,7 +93,7 @@ layer: Layer 5.1 (数据处理)
 
 |------|--------|------|
 
----
+
 
 ### 上游依赖
 
@@ -103,7 +108,7 @@ layer: Layer 5.1 (数据处理)
 
 |---------|------|------|------|
 | **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
-| **DataHub** | 0.10+ | å
+| **DataHub** | 0.10+ | 
 | **OpenMetadata** | 1.2+ | 数据目录 | [官方文档](https://docs.open-metadata.org/) |
 
 
@@ -122,7 +127,7 @@ graph LR
     style C fill:#96ceb4
 ```
 
----
+
 
 
 
@@ -132,9 +137,9 @@ graph LR
 ### 2.2 技术选型
 
 |------|---------|---------|---------|
-| **å
+| **
 
----
+
 
 
 
@@ -401,7 +406,7 @@ class AuditTrailEngine:
         return report
 ```
 
----
+
 
 
 ### 4.1 RESTful API
@@ -443,7 +448,7 @@ POST /api/v1/governance/compliance/check
 }
 ```
 
----
+
 
 
 ```yaml
@@ -474,9 +479,9 @@ services:
       - "8181:8181"
 ```
 
----
 
-## å
+
+## 
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -485,21 +490,21 @@ services:
 | `governance_violations_total` | Counter | 违规总数 |
 | `governance_audit_events_total` | Counter | 审计事件总数 |
 
----
+
 
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
 
----
 
-## å
+
+## 
 
 - [数据网格蓝图](./DATA_MESH_BLUEPRINT.md)
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -522,7 +527,7 @@ services:
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 变更历史
@@ -531,5 +536,5 @@ services:
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

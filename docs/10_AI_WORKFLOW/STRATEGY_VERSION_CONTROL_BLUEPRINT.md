@@ -5,20 +5,16 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 策略版本控制与管理
 compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
-reference_models:
-  - DVC
-  - Git LFS
-  - LakeFS
+reference_models: 
 open_source_solution: "DVC + Git"
 priority: P1
-responsibility:
-  - 交易策略框架设计与实施指导与实施指导
 ---
 
 ## 文档职责说明

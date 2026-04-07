@@ -1,17 +1,18 @@
 ﻿---
-## 文档职责说明
-
+module_id: INTELLIGENT_QA_SYSTEM_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - INTELLIGENT QA SYSTEM module blueprint design
 **本文档职责**: 智能问答系统蓝图
-- 自然语言查询、知识检索、智能回答、上下文理解、多轮对话
-
-# 智能问答系统蓝图
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 2-3周
 > **核心定位**: 自然语言交互接口，降低系统使用门槛
 > **技术栈**: LangChain + RAG + OpenAI API + ChromaDB
-
 ---
 
 ## 1. 概述

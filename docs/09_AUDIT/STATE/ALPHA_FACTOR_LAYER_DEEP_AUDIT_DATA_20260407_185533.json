@@ -1,0 +1,5801 @@
+{
+  "analysis_results": [
+    {
+      "path": "INDEX.md",
+      "depth": 0,
+      "size": 7887,
+      "hash": "86a8c8eb53dbcac2b5555c6610f8ea68",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "02_FACTOR_LIBRARY目录索引"
+        ]
+      },
+      "title": "因子库目录索引",
+      "summary": "02_FACTOR_LIBRARY模块目录导航和文档索引，涉及因子库目录索引",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../System_Manifest.md",
+          "path": "../System_Manifest.md",
+          "full_match": "[../System_Manifest.md](../System_Manifest.md)"
+        },
+        {
+          "text": "系统清单",
+          "path": "../System_Manifest.md",
+          "full_match": "[系统清单](../System_Manifest.md)"
+        },
+        {
+          "text": "SITEMAP",
+          "path": "./SITEMAP.md",
+          "full_match": "[SITEMAP](./SITEMAP.md)"
+        },
+        {
+          "text": "优化总结",
+          "path": "./OPTIMIZATION_SUMMARY.md",
+          "full_match": "[优化总结](./OPTIMIZATION_SUMMARY.md)"
+        },
+        {
+          "text": "因子分类学",
+          "path": "./01_STANDARDS/FACTOR_TAXONOMY.md",
+          "full_match": "[因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md)"
+        },
+        {
+          "text": "因子计算框架",
+          "path": "./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[因子计算框架](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "因子管理标准",
+          "path": "./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md)"
+        },
+        {
+          "text": "因子筛选策略",
+          "path": "./01_STANDARDS/FACTOR_SCREENING_STRATEGY.md",
+          "full_match": "[因子筛选策略](./01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)"
+        },
+        {
+          "text": "因子挖掘指南",
+          "path": "./01_STANDARDS/FACTOR_MINING_GUIDE.md",
+          "full_match": "[因子挖掘指南](./01_STANDARDS/FACTOR_MINING_GUIDE.md)"
+        },
+        {
+          "text": "因子验证指南",
+          "path": "./01_STANDARDS/FACTOR_VALIDATION_GUIDE.md",
+          "full_match": "[因子验证指南](./01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)"
+        },
+        {
+          "text": "研究管理",
+          "path": "./01_STANDARDS/research_management.md",
+          "full_match": "[研究管理](./01_STANDARDS/research_management.md)"
+        },
+        {
+          "text": "未来因子工具",
+          "path": "./01_STANDARDS/FUTURE_FACTOR_TOOLS.md",
+          "full_match": "[未来因子工具](./01_STANDARDS/FUTURE_FACTOR_TOOLS.md)"
+        },
+        {
+          "text": "因子预处理",
+          "path": "./01_STANDARDS/factor_preprocessing.md",
+          "full_match": "[因子预处理](./01_STANDARDS/factor_preprocessing.md)"
+        },
+        {
+          "text": "因子中性化",
+          "path": "./01_STANDARDS/factor_neutralization.md",
+          "full_match": "[因子中性化](./01_STANDARDS/factor_neutralization.md)"
+        },
+        {
+          "text": "因子收益分析",
+          "path": "./01_STANDARDS/factor_return_analysis.md",
+          "full_match": "[因子收益分析](./01_STANDARDS/factor_return_analysis.md)"
+        },
+        {
+          "text": "因子合成",
+          "path": "./01_STANDARDS/factor_synthesis.md",
+          "full_match": "[因子合成](./01_STANDARDS/factor_synthesis.md)"
+        },
+        {
+          "text": "IC分析",
+          "path": "./01_STANDARDS/ic_analysis.md",
+          "full_match": "[IC分析](./01_STANDARDS/ic_analysis.md)"
+        },
+        {
+          "text": "回测标准",
+          "path": "./01_STANDARDS/backtest_standards.md",
+          "full_match": "[回测标准](./01_STANDARDS/backtest_standards.md)"
+        },
+        {
+          "text": "技术指标",
+          "path": "./01_STANDARDS/TECHNICAL_INDICATORS.md",
+          "full_match": "[技术指标](./01_STANDARDS/TECHNICAL_INDICATORS.md)"
+        },
+        {
+          "text": "数据需求",
+          "path": "./04_DATA_SOURCE/DATA_REQUIREMENTS.md",
+          "full_match": "[数据需求](./04_DATA_SOURCE/DATA_REQUIREMENTS.md)"
+        },
+        {
+          "text": "数据采集",
+          "path": "./04_DATA_SOURCE/DATA_ACQUISITION.md",
+          "full_match": "[数据采集](./04_DATA_SOURCE/DATA_ACQUISITION.md)"
+        },
+        {
+          "text": "文档命名标准",
+          "path": "./04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md",
+          "full_match": "[文档命名标准](./04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md)"
+        },
+        {
+          "text": "数据质量",
+          "path": "./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md",
+          "full_match": "[数据质量](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md)"
+        },
+        {
+          "text": "数据源适配器",
+          "path": "./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[数据源适配器](./04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "QMT接口",
+          "path": "./04_DATA_SOURCE/QMT_INTERFACE.md",
+          "full_match": "[QMT接口](./04_DATA_SOURCE/QMT_INTERFACE.md)"
+        },
+        {
+          "text": "iFind连接器",
+          "path": "./04_DATA_SOURCE/IFIND_CONNECTOR.md",
+          "full_match": "[iFind连接器](./04_DATA_SOURCE/IFIND_CONNECTOR.md)"
+        },
+        {
+          "text": "Baostock连接器",
+          "path": "./04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md",
+          "full_match": "[Baostock连接器](./04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)"
+        },
+        {
+          "text": "SuperCmd连接器",
+          "path": "./04_DATA_SOURCE/SUPERCMD_CONNECTOR.md",
+          "full_match": "[SuperCmd连接器](./04_DATA_SOURCE/SUPERCMD_CONNECTOR.md)"
+        },
+        {
+          "text": "免费数据源",
+          "path": "./04_DATA_SOURCE/FREE_DATA_SOURCES.md",
+          "full_match": "[免费数据源](./04_DATA_SOURCE/FREE_DATA_SOURCES.md)"
+        },
+        {
+          "text": "调度器API",
+          "path": "./04_DATA_SOURCE/02_SCHEDULER/SCHEDULER_API.md",
+          "full_match": "[调度器API](./04_DATA_SOURCE/02_SCHEDULER/SCHEDULER_API.md)"
+        },
+        {
+          "text": "清洗规则",
+          "path": "./04_DATA_SOURCE/03_CLEANING/CLEANING_RULES.md",
+          "full_match": "[清洗规则](./04_DATA_SOURCE/03_CLEANING/CLEANING_RULES.md)"
+        },
+        {
+          "text": "相关性分析",
+          "path": "./04_DATA_SOURCE/CORRELATION_ANALYSIS.md",
+          "full_match": "[相关性分析](./04_DATA_SOURCE/CORRELATION_ANALYSIS.md)"
+        },
+        {
+          "text": "统计工具",
+          "path": "./04_DATA_SOURCE/STATISTICAL_TOOLS.md",
+          "full_match": "[统计工具](./04_DATA_SOURCE/STATISTICAL_TOOLS.md)"
+        },
+        {
+          "text": "宏观数据",
+          "path": "./04_DATA_SOURCE/MACRO_DATA.md",
+          "full_match": "[宏观数据](./04_DATA_SOURCE/MACRO_DATA.md)"
+        },
+        {
+          "text": "新闻情感数据源",
+          "path": "./04_DATA_SOURCE/NEWS_SENTIMENT_DATA_SOURCE.md",
+          "full_match": "[新闻情感数据源](./04_DATA_SOURCE/NEWS_SENTIMENT_DATA_SOURCE.md)"
+        },
+        {
+          "text": "A股历史数据处理蓝图",
+          "path": "./04_DATA_SOURCE/A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+          "full_match": "[A股历史数据处理蓝图](./04_DATA_SOURCE/A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md)"
+        },
+        {
+          "text": "THS_BD完整指标列表",
+          "path": "./04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md",
+          "full_match": "[THS_BD完整指标列表](./04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md)"
+        },
+        {
+          "text": "财务报表API",
+          "path": "./04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md",
+          "full_match": "[财务报表API](./04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md)"
+        },
+        {
+          "text": "数据质量控制体系",
+          "path": "./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md",
+          "full_match": "[数据质量控制体系](./04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md)"
+        },
+        {
+          "text": "质量指标",
+          "path": "./04_DATA_SOURCE/QUALITY_MANAGEMENT/QUALITY_METRICS.md",
+          "full_match": "[质量指标](./04_DATA_SOURCE/QUALITY_MANAGEMENT/QUALITY_METRICS.md)"
+        },
+        {
+          "text": "因子验证蓝图",
+          "path": "./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md",
+          "full_match": "[因子验证蓝图](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md)"
+        },
+        {
+          "text": "因子衰减",
+          "path": "./05_BACKTEST/FACTOR_DECAY.md",
+          "full_match": "[因子衰减](./05_BACKTEST/FACTOR_DECAY.md)"
+        },
+        {
+          "text": "分层回测",
+          "path": "./05_BACKTEST/LAYERED_BACKTEST.md",
+          "full_match": "[分层回测](./05_BACKTEST/LAYERED_BACKTEST.md)"
+        },
+        {
+          "text": "过拟合测试",
+          "path": "./05_BACKTEST/OVERFITTING_TEST.md",
+          "full_match": "[过拟合测试](./05_BACKTEST/OVERFITTING_TEST.md)"
+        },
+        {
+          "text": "相关性矩阵",
+          "path": "./05_BACKTEST/correlation_matrix.md",
+          "full_match": "[相关性矩阵](./05_BACKTEST/correlation_matrix.md)"
+        },
+        {
+          "text": "PE_TTM回测",
+          "path": "./05_BACKTEST/value_factors/PE_TTM_BACKTEST.md",
+          "full_match": "[PE_TTM回测](./05_BACKTEST/value_factors/PE_TTM_BACKTEST.md)"
+        },
+        {
+          "text": "PE_TTM IC分析",
+          "path": "./05_BACKTEST/value_factors/PE_TTM_IC.md",
+          "full_match": "[PE_TTM IC分析](./05_BACKTEST/value_factors/PE_TTM_IC.md)"
+        },
+        {
+          "text": "因子监控",
+          "path": "./07_FACTOR_MONITORING/factor_monitoring.md",
+          "full_match": "[因子监控](./07_FACTOR_MONITORING/factor_monitoring.md)"
+        },
+        {
+          "text": "AI因子管家",
+          "path": "./07_FACTOR_MONITORING/AI_FACTOR_AGENT.md",
+          "full_match": "[AI因子管家](./07_FACTOR_MONITORING/AI_FACTOR_AGENT.md)"
+        },
+        {
+          "text": "01_STANDARDS/",
+          "path": "./01_STANDARDS/",
+          "full_match": "[01_STANDARDS/](./01_STANDARDS/)"
+        },
+        {
+          "text": "03_RISK_FACTORS/",
+          "path": "./03_RISK_FACTORS/",
+          "full_match": "[03_RISK_FACTORS/](./03_RISK_FACTORS/)"
+        },
+        {
+          "text": "04_DATA_SOURCE/",
+          "path": "./04_DATA_SOURCE/",
+          "full_match": "[04_DATA_SOURCE/](./04_DATA_SOURCE/)"
+        },
+        {
+          "text": "05_BACKTEST/",
+          "path": "./05_BACKTEST/",
+          "full_match": "[05_BACKTEST/](./05_BACKTEST/)"
+        },
+        {
+          "text": "06_REGISTRY/",
+          "path": "./06_REGISTRY/",
+          "full_match": "[06_REGISTRY/](./06_REGISTRY/)"
+        },
+        {
+          "text": "07_FACTOR_MONITORING/",
+          "path": "./07_FACTOR_MONITORING/",
+          "full_match": "[07_FACTOR_MONITORING/](./07_FACTOR_MONITORING/)"
+        },
+        {
+          "text": "10_MANUAL/",
+          "path": "./10_MANUAL/",
+          "full_match": "[10_MANUAL/](./10_MANUAL/)"
+        },
+        {
+          "text": "系统清单",
+          "path": "../System_Manifest.md",
+          "full_match": "[系统清单](../System_Manifest.md)"
+        },
+        {
+          "text": "因子分类学",
+          "path": "./01_STANDARDS/FACTOR_TAXONOMY.md",
+          "full_match": "[因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md)"
+        },
+        {
+          "text": "01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
+          "path": "./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md",
+          "path": "./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md",
+          "full_match": "[05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md](./05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md)"
+        },
+        {
+          "text": "01_STANDARDS/IC_ANALYSIS.md",
+          "path": "./01_STANDARDS/ic_analysis.md",
+          "full_match": "[01_STANDARDS/IC_ANALYSIS.md](./01_STANDARDS/ic_analysis.md)"
+        },
+        {
+          "text": "系统主索引",
+          "path": "../INDEX.md",
+          "full_match": "[系统主索引](../INDEX.md)"
+        },
+        {
+          "text": "框架设计索引",
+          "path": "../01_FRAMEWORK/INDEX.md",
+          "full_match": "[框架设计索引](../01_FRAMEWORK/INDEX.md)"
+        },
+        {
+          "text": "实施层索引",
+          "path": "../05_IMPLEMENTATION/README.md",
+          "full_match": "[实施层索引](../05_IMPLEMENTATION/README.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "OPTIMIZATION_SUMMARY.md",
+      "depth": 0,
+      "size": 7062,
+      "hash": "8861740aa96a4d9557c6eaa1ce867bf8",
+      "metadata": {
+        "module_id": "OPTIMIZATION_SUMMARY",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "OPTIMIZATION_SUMMARY文档"
+        ]
+      },
+      "title": null,
+      "summary": "因子库优化成果总结、改进记录和效果评估",
+      "links": [],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "README.md",
+      "depth": 0,
+      "size": 1974,
+      "hash": "f59d68a9849020f3a7538b8b4df2c5b0",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "02_FACTOR_LIBRARY说明文档"
+        ]
+      },
+      "title": "02_FACTOR_LIBRARY - 因子库，采用专业量化机构标准构建",
+      "summary": "因子库整体架构说明和导航入口，涉及采用专业量化机构标准构建 因子库",
+      "links": [
+        {
+          "text": "目录索引",
+          "path": "INDEX.md",
+          "full_match": "[目录索引](INDEX.md)"
+        },
+        {
+          "text": "文档地图",
+          "path": "SITEMAP.md",
+          "full_match": "[文档地图](SITEMAP.md)"
+        },
+        {
+          "text": "因子库目录索引",
+          "path": "./INDEX.md",
+          "full_match": "[因子库目录索引](./INDEX.md)"
+        },
+        {
+          "text": "因子分类体系",
+          "path": "./01_STANDARDS/FACTOR_TAXONOMY.md",
+          "full_match": "[因子分类体系](./01_STANDARDS/FACTOR_TAXONOMY.md)"
+        },
+        {
+          "text": "因子管理标准",
+          "path": "./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md)"
+        },
+        {
+          "text": "因子计算框架",
+          "path": "./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[因子计算框架](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "因子监控",
+          "path": "./07_FACTOR_MONITORING/factor_monitoring.md",
+          "full_match": "[因子监控](./07_FACTOR_MONITORING/factor_monitoring.md)"
+        },
+        {
+          "text": "监控中心",
+          "path": "./07_FACTOR_MONITORING/factor_monitoring.md",
+          "full_match": "[监控中心](./07_FACTOR_MONITORING/factor_monitoring.md)"
+        },
+        {
+          "text": "目录索引",
+          "path": "./INDEX.md",
+          "full_match": "[目录索引](./INDEX.md)"
+        },
+        {
+          "text": "文档地图",
+          "path": "./SITEMAP.md",
+          "full_match": "[文档地图](./SITEMAP.md)"
+        },
+        {
+          "text": "系统清单",
+          "path": "../System_Manifest.md",
+          "full_match": "[系统清单](../System_Manifest.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "SITEMAP.md",
+      "depth": 0,
+      "size": 8547,
+      "hash": "49092e25f7d635920f495e49e2cf3d16",
+      "metadata": {
+        "module_id": "SITEMAP",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "02_FACTOR_LIBRARY站点地图"
+        ]
+      },
+      "title": "ĵͼ (SITEMAP)",
+      "summary": "ĵͼ (SITEMAP)的定义、实现和应用",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[INDEX.md](../03_TRADING_TACTICS/INDEX.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[INDEX.md](../03_TRADING_TACTICS/INDEX.md)"
+        },
+        {
+          "text": "01_FRAMEWORK/ARCHITECTURE.md",
+          "path": "../01_FRAMEWORK/ARCHITECTURE.md",
+          "full_match": "[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)"
+        },
+        {
+          "text": "AI_Permissions.md",
+          "path": "../01_FRAMEWORK/AI_PERMISSIONS.md",
+          "full_match": "[AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md)"
+        },
+        {
+          "text": "Strategy_Spec_S001.md",
+          "path": "../03_TRADING_TACTICS/Strategy_Spec_S001.md",
+          "full_match": "[Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md)"
+        },
+        {
+          "text": "03_TRADING_TACTICS/INDEX.md",
+          "path": "../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)"
+        },
+        {
+          "text": "05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md",
+          "path": "../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md",
+          "full_match": "[05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md)"
+        },
+        {
+          "text": "AI_Permissions.md",
+          "path": "../01_FRAMEWORK/AI_PERMISSIONS.md",
+          "full_match": "[AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md)"
+        },
+        {
+          "text": "05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md",
+          "path": "../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md",
+          "full_match": "[05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md)"
+        },
+        {
+          "text": "05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md",
+          "path": "../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md",
+          "full_match": "[05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md)"
+        },
+        {
+          "text": "CHANGELOG.md",
+          "path": "../06_ARCHIVE/CHANGELOG.md",
+          "full_match": "[CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md)"
+        },
+        {
+          "text": "09_AUDIT/INDEX_AUDIT.md",
+          "path": "../09_AUDIT/INDEX_AUDIT.md",
+          "full_match": "[09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md)"
+        },
+        {
+          "text": "09_AUDIT/STANDARDS/AUDIT_STANDARDS.md",
+          "path": "../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md",
+          "full_match": "[09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)"
+        },
+        {
+          "text": "09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md",
+          "path": "../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md",
+          "full_match": "[09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md)"
+        },
+        {
+          "text": "01_FRAMEWORK/ARCHITECTURE.md",
+          "path": "../01_FRAMEWORK/ARCHITECTURE.md",
+          "full_match": "[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md)"
+        },
+        {
+          "text": "01_FRAMEWORK/MARKET_REGIME.md",
+          "path": "../01_FRAMEWORK/MARKET_REGIME.md",
+          "full_match": "[01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md)"
+        },
+        {
+          "text": "API_Contract.md",
+          "path": "../03_TRADING_TACTICS/API_Contract.md",
+          "full_match": "[API_Contract.md](../03_TRADING_TACTICS/API_Contract.md)"
+        },
+        {
+          "text": "AI_Permissions.md",
+          "path": "../01_FRAMEWORK/AI_PERMISSIONS.md",
+          "full_match": "[AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md)"
+        },
+        {
+          "text": "Strategy_Spec_S001.md",
+          "path": "../03_TRADING_TACTICS/Strategy_Spec_S001.md",
+          "full_match": "[Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md)"
+        },
+        {
+          "text": "03_TRADING_TACTICS/INDEX.md",
+          "path": "../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md)"
+        },
+        {
+          "text": "05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md",
+          "path": "../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md",
+          "full_match": "[05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md)"
+        },
+        {
+          "text": "CHANGELOG.md",
+          "path": "../06_ARCHIVE/CHANGELOG.md",
+          "full_match": "[CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md)"
+        },
+        {
+          "text": "EXPERIMENT_TRACKING.md",
+          "path": "../07_RESEARCH/EXPERIMENT_TRACKING.md",
+          "full_match": "[EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md)"
+        },
+        {
+          "text": "09_AUDIT/INDEX_AUDIT.md",
+          "path": "../09_AUDIT/INDEX_AUDIT.md",
+          "full_match": "[09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md)"
+        },
+        {
+          "text": "09_AUDIT/STANDARDS/AUDIT_STANDARDS.md",
+          "path": "../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md",
+          "full_match": "[09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)"
+        },
+        {
+          "text": "09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md",
+          "path": "../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md",
+          "full_match": "[09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md)"
+        },
+        {
+          "text": "09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md",
+          "path": "../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md",
+          "full_match": "[09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "00_GOVERNANCE\\INDEX.md",
+      "depth": 1,
+      "size": 1289,
+      "hash": "a1cb5aabe4d40df9122997911c00b669",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "00_GOVERNANCE目录索引"
+        ]
+      },
+      "title": "因子库治理文档索引",
+      "summary": "1. **因子准入治理**: 因子注册和审批流程",
+      "links": [
+        {
+          "text": "因子注册表",
+          "path": "../01_STANDARDS/FACTOR_REGISTRY.md",
+          "full_match": "[因子注册表](../01_STANDARDS/FACTOR_REGISTRY.md)"
+        },
+        {
+          "text": "因子定义标准",
+          "path": "../01_STANDARDS/FACTOR_DEFINITION.md",
+          "full_match": "[因子定义标准](../01_STANDARDS/FACTOR_DEFINITION.md)"
+        },
+        {
+          "text": "因子管理标准",
+          "path": "../01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](../01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+      "depth": 1,
+      "size": 5467,
+      "hash": "b7c262ba3ff4cdef19c4c1e466a6505d",
+      "metadata": {
+        "module_id": "ALPHA_FACTORS_INDEX_STANDARD",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "ALPHA_FACTORS_INDEX标准规范"
+        ]
+      },
+      "title": "02_ALPHA_FACTORS_INDEX.md - Alpha因子索引?",
+      "summary": "02_ALPHA_FACTORS_INDEX.md - Alpha因子索引?的定义和实现",
+      "links": [
+        {
+          "text": "趋势跟踪",
+          "path": "#趋势跟踪因子",
+          "full_match": "[趋势跟踪](#趋势跟踪因子)"
+        },
+        {
+          "text": "均值回归",
+          "path": "#均值回归因? | 12 | 价格偏离均值时反向交易 |\n| [价值](#价值因? | 11 | 低估值策?|\n| [成长](#成长因子",
+          "full_match": "[均值回归](#均值回归因? | 12 | 价格偏离均值时反向交易 |\n| [价值](#价值因? | 11 | 低估值策?|\n| [成长](#成长因子)"
+        },
+        {
+          "text": "质量",
+          "path": "#质量因子",
+          "full_match": "[质量](#质量因子)"
+        },
+        {
+          "text": "动量",
+          "path": "#动量因子",
+          "full_match": "[动量](#动量因子)"
+        },
+        {
+          "text": "情绪",
+          "path": "#情绪因子",
+          "full_match": "[情绪](#情绪因子)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\backtest_standards.md",
+      "depth": 1,
+      "size": 7936,
+      "hash": "c5a60247144f9368f4c1b53f64273cab",
+      "metadata": {
+        "module_id": "BACKTEST_STANDARDS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "回测标准文档"
+        ]
+      },
+      "title": "回测标准",
+      "summary": "回测标准的定义、实现流程和应用规范",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "depth": 1,
+      "size": 21233,
+      "hash": "1fbe3cb28e3e00d3a26ee884bdcea249",
+      "metadata": {
+        "module_id": "FACTOR_CALCULATION_FRAMEWORK",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子计算框架文档"
+        ]
+      },
+      "title": "因子计算框架",
+      "summary": "因子计算引擎架构和调度系统设计，涉及因子计算框架",
+      "links": [
+        {
+          "text": "FACTOR_TAXONOMY.md",
+          "path": "./FACTOR_TAXONOMY.md",
+          "full_match": "[FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)"
+        },
+        {
+          "text": "TECHNICAL_INDICATORS.md",
+          "path": "./TECHNICAL_INDICATORS.md",
+          "full_match": "[TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)"
+        },
+        {
+          "text": "IC_ANALYSIS.md",
+          "path": "./ic_analysis.md",
+          "full_match": "[IC_ANALYSIS.md](./ic_analysis.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_DEFINITION.md",
+      "depth": 1,
+      "size": 1971,
+      "hash": "a5905bc7cd89e22e4f62f28b4fed76c7",
+      "metadata": {
+        "module_id": "FACTOR_DEFINITION",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子定义标准文档"
+        ]
+      },
+      "title": "因子定义标准",
+      "summary": "因子命名规范和标准化定义规则，涉及因子定义标准",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
+      "depth": 1,
+      "size": 15095,
+      "hash": "b298f46b7977f592e1218ff48198d427",
+      "metadata": {
+        "module_id": "FACTOR_MANAGEMENT_STANDARD",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FACTOR_MANAGEMENT标准规范"
+        ]
+      },
+      "title": "因子管理标准 (Factor Management Standard)",
+      "summary": "因子生命周期管理和分层管理标准制定，涉及因子管理标准",
+      "links": [
+        {
+          "text": "因子计算框架",
+          "path": "./FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "5900因子筛选策略",
+          "path": "./FACTOR_SCREENING_STRATEGY.md",
+          "full_match": "[5900因子筛选策略](./FACTOR_SCREENING_STRATEGY.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_MINING_GUIDE.md",
+      "depth": 1,
+      "size": 11438,
+      "hash": "874a788a4381b93c5f50e66d8f72563f",
+      "metadata": {
+        "module_id": "FACTOR_MINING_GUIDE",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FACTOR_MINING操作指南"
+        ]
+      },
+      "title": "因子挖掘指南 (Factor Mining Guide)",
+      "summary": "因子挖掘方法论和指南，涉及因子挖掘指南",
+      "links": [
+        {
+          "text": "AI_FACTOR_MINER",
+          "path": "../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md",
+          "full_match": "[AI_FACTOR_MINER](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md)"
+        },
+        {
+          "text": "FACTOR_CALCULATION_FRAMEWORK",
+          "path": "./FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[FACTOR_CALCULATION_FRAMEWORK](./FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "FACTOR_REGISTRY",
+          "path": "./FACTOR_TAXONOMY.md",
+          "full_match": "[FACTOR_REGISTRY](./FACTOR_TAXONOMY.md)"
+        },
+        {
+          "text": "ic_analysis",
+          "path": "./ic_analysis.md",
+          "full_match": "[ic_analysis](./ic_analysis.md)"
+        },
+        {
+          "text": "因子管理标准",
+          "path": "./FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md)"
+        },
+        {
+          "text": "因子验证指南",
+          "path": "./FACTOR_VALIDATION_GUIDE.md",
+          "full_match": "[因子验证指南](./FACTOR_VALIDATION_GUIDE.md)"
+        },
+        {
+          "text": "因子计算框架",
+          "path": "./FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "因子注册表",
+          "path": "./FACTOR_TAXONOMY.md",
+          "full_match": "[因子注册表](./FACTOR_TAXONOMY.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\factor_neutralization.md",
+      "depth": 1,
+      "size": 10731,
+      "hash": "8a57f8d4b0bf347a5092d4f9b488b0ac",
+      "metadata": {
+        "module_id": "FACTOR_NEUTRALIZATION",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子中性化处理文档"
+        ]
+      },
+      "title": "因子中性化处理",
+      "summary": "因子中性化方法和标准，涉及因子中性化处理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\factor_preprocessing.md",
+      "depth": 1,
+      "size": 4245,
+      "hash": "fb020769ce8fad0e3ec5724cc76a4ef2",
+      "metadata": {
+        "module_id": "FACTOR_PREPROCESSING",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子预处理方文档"
+        ]
+      },
+      "title": "因子预处理方?",
+      "summary": "因子预处理方法和流程，涉及因子预处理方",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+      "depth": 1,
+      "size": 4335,
+      "hash": "75bb745a18c73452cccc636f01df36b4",
+      "metadata": {
+        "module_id": "FACTOR_REGISTRY",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子注册表 Factor Registry文档"
+        ]
+      },
+      "title": "因子注册表 (Factor Registry)",
+      "summary": "因子注册管理，维护因子元数据，跟踪因子生命周期",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\factor_return_analysis.md",
+      "depth": 1,
+      "size": 13036,
+      "hash": "f86d8ef07f40755f31ed28d037e1b010",
+      "metadata": {
+        "module_id": "FACTOR_RETURN_ANALYSIS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子收益率分文档"
+        ]
+      },
+      "title": "因子收益率分?",
+      "summary": "因子收益率分?的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
+      "depth": 1,
+      "size": 12672,
+      "hash": "6ab9a83171a924cd049f29acc89de280",
+      "metadata": {
+        "module_id": "FACTOR_SCREENING_STRATEGY",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "5900因子筛选策略Factor Screening Strategy文档"
+        ]
+      },
+      "title": "5900因子筛选策略(Factor Screening Strategy)",
+      "summary": "因子筛选流程实施和工具开发，涉及因子筛选策略",
+      "links": [
+        {
+          "text": "因子管理标准",
+          "path": "./FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\factor_synthesis.md",
+      "depth": 1,
+      "size": 2862,
+      "hash": "60216466bc7ee2cf3267b34f547f1275",
+      "metadata": {
+        "module_id": "FACTOR_SYNTHESIS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子合成方法文档"
+        ]
+      },
+      "title": "因子合成方法",
+      "summary": "因子合成方法的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+      "depth": 1,
+      "size": 16585,
+      "hash": "31a827ca03de01ad01804696ab043927",
+      "metadata": {
+        "module_id": "FACTOR_TAXONOMY",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子分类学Factor Taxonomy文档"
+        ]
+      },
+      "title": "因子分类学(Factor Taxonomy)",
+      "summary": "定义因子分类体系架构和参数配置标准，涉及因子分类学",
+      "links": [
+        {
+          "text": "03_RISK_FACTORS/",
+          "path": "../03_RISK_FACTORS/",
+          "full_match": "[03_RISK_FACTORS/](../03_RISK_FACTORS/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FACTOR_VALIDATION_GUIDE.md",
+      "depth": 1,
+      "size": 18909,
+      "hash": "016c024840c7f602e1965659039289bb",
+      "metadata": {
+        "module_id": "FACTOR_VALIDATION_GUIDE",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FACTOR_VALIDATION操作指南"
+        ]
+      },
+      "title": "因子验证指南 (Factor Validation Guide)",
+      "summary": "因子验证指南 (Factor Validation Guide)的定义和实现",
+      "links": [
+        {
+          "text": "因子管理标准",
+          "path": "./FACTOR_MANAGEMENT_STANDARD.md",
+          "full_match": "[因子管理标准](./FACTOR_MANAGEMENT_STANDARD.md)"
+        },
+        {
+          "text": "因子挖掘指南",
+          "path": "./FACTOR_MINING_GUIDE.md",
+          "full_match": "[因子挖掘指南](./FACTOR_MINING_GUIDE.md)"
+        },
+        {
+          "text": "因子计算框架",
+          "path": "./FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "IC分析方法",
+          "path": "./ic_analysis.md",
+          "full_match": "[IC分析方法](./ic_analysis.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
+      "depth": 1,
+      "size": 18701,
+      "hash": "5e16ff6ef3b8059a47a742169285fb53",
+      "metadata": {
+        "module_id": "FUTURE_FACTOR_TOOLS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "未来因子工具规划文档"
+        ]
+      },
+      "title": "未来因子工具规划",
+      "summary": "未来因子工具规划和设计，涉及未来因子工具规划",
+      "links": [
+        {
+          "text": "FACTOR_CALCULATION_FRAMEWORK.md",
+          "path": "./FACTOR_CALCULATION_FRAMEWORK.md",
+          "full_match": "[FACTOR_CALCULATION_FRAMEWORK.md](./FACTOR_CALCULATION_FRAMEWORK.md)"
+        },
+        {
+          "text": "IC_ANALYSIS.md",
+          "path": "./ic_analysis.md",
+          "full_match": "[IC_ANALYSIS.md](./ic_analysis.md)"
+        },
+        {
+          "text": "FACTOR_SYNTHESIS.md",
+          "path": "./factor_synthesis.md",
+          "full_match": "[FACTOR_SYNTHESIS.md](./factor_synthesis.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\ic_analysis.md",
+      "depth": 1,
+      "size": 3109,
+      "hash": "9d41d3dd49f0aaabb6f04d99836d393d",
+      "metadata": {
+        "module_id": "IC_ANALYSIS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "IC分析体系文档"
+        ]
+      },
+      "title": "IC分析体系",
+      "summary": "IC分析方法和评估标准，涉及分析体系",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\INDEX.md",
+      "depth": 1,
+      "size": 848,
+      "hash": "f33d7c3ce799c51ead705916892d1beb",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "01_STANDARDS目录索引"
+        ]
+      },
+      "title": null,
+      "summary": "因子标准目录导航、文档索引和规范管理",
+      "links": [
+        {
+          "text": "因子定义标准",
+          "path": "./FACTOR_DEFINITION.md",
+          "full_match": "[因子定义标准](./FACTOR_DEFINITION.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "01_STANDARDS\\MODULE_DESIGN_PLAN.md",
+      "depth": 1,
+      "size": 12529,
+      "hash": "ec83b32206249c1c5841f7c75109c1c0",
+      "metadata": {
+        "module_id": "MODULE_DESIGN_PLAN",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "模块设计计划文档"
+        ]
+      },
+      "title": "模块设计计划",
+      "summary": "模块设计规划和架构设计，涉及模块设计计划",
+      "links": [
+        {
+          "text": "因子库蓝图",
+          "path": "../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+          "full_match": "[因子库蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\README.md",
+      "depth": 1,
+      "size": 1669,
+      "hash": "cb4e1b2c47d75733fb560ae9d7c9ebb0",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "01_STANDARDS说明文档"
+        ]
+      },
+      "title": "因子研究方法?",
+      "summary": "模块概述和快速入门指引，涉及因子研究方法",
+      "links": [
+        {
+          "text": "IC_ANALYSIS.md",
+          "path": "./ic_analysis.md",
+          "full_match": "[IC_ANALYSIS.md](./ic_analysis.md)"
+        },
+        {
+          "text": "FACTOR_PREPROCESSING.md",
+          "path": "./factor_preprocessing.md",
+          "full_match": "[FACTOR_PREPROCESSING.md](./factor_preprocessing.md)"
+        },
+        {
+          "text": "FACTOR_SYNTHESIS.md",
+          "path": "./factor_synthesis.md",
+          "full_match": "[FACTOR_SYNTHESIS.md](./factor_synthesis.md)"
+        },
+        {
+          "text": "BACKTEST_STANDARDS.md",
+          "path": "./backtest_standards.md",
+          "full_match": "[BACKTEST_STANDARDS.md](./backtest_standards.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\research_management.md",
+      "depth": 1,
+      "size": 6117,
+      "hash": "de3d224c62451703ac257b0ae332a732",
+      "metadata": {
+        "module_id": "RESEARCH_MANAGEMENT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "研究项目管理文档"
+        ]
+      },
+      "title": "研究项目管理",
+      "summary": "研究项目管理的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "01_STANDARDS\\TECHNICAL_INDICATORS.md",
+      "depth": 1,
+      "size": 12934,
+      "hash": "bfe586ef1b9eee33e1da3d1af49c7dca",
+      "metadata": {
+        "module_id": "TECHNICAL_INDICATORS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "技术指标完整参数表文档"
+        ]
+      },
+      "title": "技术指标完整参数表",
+      "summary": "技术指标定义和计算方法，涉及技术指标完整参数表",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
+      "depth": 1,
+      "size": 9340,
+      "hash": "c9dcc86e21e8efdad2785f47611b5734",
+      "metadata": {
+        "module_id": "BREADTH_INDICATORS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "市场广度指标文档"
+        ]
+      },
+      "title": "市场广度指标",
+      "summary": "市场宽度指标定义和计算，涉及市场广度指标",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "depth": 1,
+      "size": 983,
+      "hash": "a4093d12fddd1641eb482200cf88f50f",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "02_ALPHA_FACTORS_INDEX目录索引"
+        ]
+      },
+      "title": "Alpha因子索引目录索引",
+      "summary": "提供Alpha因子索引目录的导航和文档索引管理",
+      "links": [
+        {
+          "text": "返回因子库主页",
+          "path": "../INDEX.md",
+          "full_match": "[返回因子库主页](../INDEX.md)"
+        },
+        {
+          "text": "查看站点地图",
+          "path": "../SITEMAP.md",
+          "full_match": "[查看站点地图](../SITEMAP.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
+      "depth": 1,
+      "size": 22137,
+      "hash": "7cffa93927d6726695eaa20c844de655",
+      "metadata": {
+        "module_id": "BARRA_OPTIMIZER",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "T03RM003barra_optimizer文档"
+        ]
+      },
+      "title": "T.03.RM003.barra_optimizer",
+      "summary": "Barra风险模型和组合优化器设计",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "03_RISK_FACTORS\\BARRA_STYLE_FACTORS.md",
+      "depth": 1,
+      "size": 13618,
+      "hash": "d7980c4e365ab52e9bf67f180f9b63b5",
+      "metadata": {
+        "module_id": "BARRA_STYLE_FACTORS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "T03RF001Barra风格因子A股适配版文档"
+        ]
+      },
+      "title": "T.03.RF001.Barra风格因子（A股适配版）",
+      "summary": "Barra风格因子体系定义（A股适配版），涉及风格因子",
+      "links": [
+        {
+          "text": "../../INDEX.md",
+          "path": "../../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
+      "depth": 1,
+      "size": 11042,
+      "hash": "042b36ee331ab9d7b226c4cade74d81d",
+      "metadata": {
+        "module_id": "FACTOR_TRANSPARENCY_REPORT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FACTOR_TRANSPARENCY报告文档"
+        ]
+      },
+      "title": "T.03.RM004.factor_transparency_report",
+      "summary": "T.03.RM004.factor_transparency_report的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "03_RISK_FACTORS\\INDEX.md",
+      "depth": 1,
+      "size": 1501,
+      "hash": "78a3c3c5f223b010ad8771cfa64c3e7a",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "03_RISK_FACTORS目录索引"
+        ]
+      },
+      "title": null,
+      "summary": "风险因子目录导航、文档索引和分类管理",
+      "links": [
+        {
+          "text": "风险管理规则",
+          "path": "../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md",
+          "full_match": "[风险管理规则](../../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md)"
+        },
+        {
+          "text": "T.03.RM003.barra_optimizer",
+          "path": "./BARRA_OPTIMIZER.md",
+          "full_match": "[T.03.RM003.barra_optimizer](./BARRA_OPTIMIZER.md)"
+        },
+        {
+          "text": "T.03.RF001.Barra风格因子（A股适配版）",
+          "path": "./BARRA_STYLE_FACTORS.md",
+          "full_match": "[T.03.RF001.Barra风格因子（A股适配版）](./BARRA_STYLE_FACTORS.md)"
+        },
+        {
+          "text": "T.03.RF002.申万行业因子",
+          "path": "./INDUSTRY_FACTORS.md",
+          "full_match": "[T.03.RF002.申万行业因子](./INDUSTRY_FACTORS.md)"
+        },
+        {
+          "text": "尾部风险因子",
+          "path": "./TAIL_RISK_FACTORS.md",
+          "full_match": "[尾部风险因子](./TAIL_RISK_FACTORS.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "03_RISK_FACTORS\\INDUSTRY_FACTORS.md",
+      "depth": 1,
+      "size": 10893,
+      "hash": "eeee30220acf197d572ca3d47e6b8670",
+      "metadata": {
+        "module_id": "INDUSTRY_FACTORS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "T03RF002申万行业因子文档"
+        ]
+      },
+      "title": "T.03.RF002.申万行业因子",
+      "summary": "申万行业因子体系定义，涉及申万行业因子",
+      "links": [
+        {
+          "text": "../../INDEX.md",
+          "path": "../../03_TRADING_TACTICS/INDEX.md",
+          "full_match": "[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "03_RISK_FACTORS\\TAIL_RISK_FACTORS.md",
+      "depth": 1,
+      "size": 1182,
+      "hash": "d57770c11ff8ef750fc2fb93bb79a928",
+      "metadata": {
+        "module_id": "TAIL_RISK_FACTORS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "尾部风险因子文档"
+        ]
+      },
+      "title": "尾部风险因子",
+      "summary": "尾部风险因子和极端风险度量定义，涉及尾部风险因子",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+      "depth": 1,
+      "size": 27290,
+      "hash": "af2943efdec358ccd33ae3aca42048e5",
+      "metadata": {
+        "module_id": "A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "A_SHARE_HISTORICAL_DATA_PROCESSING蓝图设计"
+        ]
+      },
+      "title": "A股历史数据处理与数据库集成蓝图",
+      "summary": "A股历史数据处理与数据库集成蓝图的定义和实现",
+      "links": [
+        {
+          "text": "DATA_ACQUISITION.md",
+          "path": "./DATA_ACQUISITION.md",
+          "full_match": "[DATA_ACQUISITION.md](./DATA_ACQUISITION.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+      "depth": 1,
+      "size": 6786,
+      "hash": "d00de844c41c4a818c9b6c4256366a8d",
+      "metadata": {
+        "module_id": "BAOSTOCK_CONNECTOR",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "Baostock连接器技术规格文档"
+        ]
+      },
+      "title": "Baostock连接器技术规格",
+      "summary": "Baostock数据源连接器接口定义和使用说明，涉及连接器技术规格",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "QMT数据接口",
+          "path": "./QMT_INTERFACE.md",
+          "full_match": "[QMT数据接口](./QMT_INTERFACE.md)"
+        },
+        {
+          "text": "iFind连接器",
+          "path": "./IFIND_CONNECTOR.md",
+          "full_match": "[iFind连接器](./IFIND_CONNECTOR.md)"
+        },
+        {
+          "text": "SuperCommand连接器",
+          "path": "./SUPERCMD_CONNECTOR.md",
+          "full_match": "[SuperCommand连接器](./SUPERCMD_CONNECTOR.md)"
+        },
+        {
+          "text": "专业多时间框架架构",
+          "path": "../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+          "full_match": "[专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+      "depth": 1,
+      "size": 8309,
+      "hash": "5318cfa5032f3a99868e08e660eefe7c",
+      "metadata": {
+        "module_id": "CORRELATION_ANALYSIS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "相关性分析文档"
+        ]
+      },
+      "title": "相关性分析",
+      "summary": "因子相关性分析方法与统计检验实现，涉及相关性分析",
+      "links": [
+        {
+          "text": "STATISTICAL_TOOLS.md",
+          "path": "./STATISTICAL_TOOLS.md",
+          "full_match": "[STATISTICAL_TOOLS.md](./STATISTICAL_TOOLS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ACQUISITION.md",
+      "depth": 1,
+      "size": 11175,
+      "hash": "bab4fad02947f3cbe94adfdb7af59ffb",
+      "metadata": {
+        "module_id": "DATA_ACQUISITION",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据采集蓝图文档"
+        ]
+      },
+      "title": "数据采集蓝图",
+      "summary": "数据采集架构设计和多数据源接入方案，涉及数据采集蓝图",
+      "links": [
+        {
+          "text": "DATA_REQUIREMENTS.md",
+          "path": "./DATA_REQUIREMENTS.md",
+          "full_match": "[DATA_REQUIREMENTS.md](./DATA_REQUIREMENTS.md)"
+        },
+        {
+          "text": "03_CLEANING/",
+          "path": "./03_CLEANING/",
+          "full_match": "[03_CLEANING/](./03_CLEANING/)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+      "depth": 1,
+      "size": 6457,
+      "hash": "f10cdcf01fd95349823927e82038bf7c",
+      "metadata": {
+        "module_id": "DATA_REQUIREMENTS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据需求清单文档"
+        ]
+      },
+      "title": "数据需求清单",
+      "summary": "数据需求规格定义和数据质量标准，涉及数据需求清单",
+      "links": [
+        {
+          "text": "DATA_ACQUISITION.md",
+          "path": "./DATA_ACQUISITION.md",
+          "full_match": "[DATA_ACQUISITION.md](./DATA_ACQUISITION.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+      "depth": 1,
+      "size": 14563,
+      "hash": "da4a6b627cf5b0a71ba2a3144a58df36",
+      "metadata": {
+        "module_id": "DATA_SOURCE_ADAPTERS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据源适配器文档"
+        ]
+      },
+      "title": "数据源适配器",
+      "summary": "数据源统一适配器接口和多源数据整合，涉及数据源适配器",
+      "links": [
+        {
+          "text": "FREE_DATA_SOURCES.md",
+          "path": "./FREE_DATA_SOURCES.md",
+          "full_match": "[FREE_DATA_SOURCES.md](./FREE_DATA_SOURCES.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+      "depth": 1,
+      "size": 9751,
+      "hash": "9b3f453fbf4e196e850f320d179b2ea1",
+      "metadata": {
+        "module_id": "DATA_SOURCE_LAYER_GAP_ANALYSIS_V2",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据源层架构完整性深度评估报告 v20文档"
+        ]
+      },
+      "title": "数据源层架构完整性深度评估报告 v2.0",
+      "summary": "数据源层差距分析和改进方案，涉及数据源层架构完整性深度评估报告",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "../../System_Manifest.md",
+          "path": "../../System_Manifest.md",
+          "full_match": "[../../System_Manifest.md](../../System_Manifest.md)"
+        },
+        {
+          "text": "Databricks Lakehouse架构",
+          "path": "https://www.databricks.com/blog/databricks-financial-services-lakehouse-quantitative-research",
+          "full_match": "[Databricks Lakehouse架构](https://www.databricks.com/blog/databricks-financial-services-lakehouse-quantitative-research)"
+        },
+        {
+          "text": "Microsoft Presidio",
+          "path": "https://github.com/microsoft/presidio",
+          "full_match": "[Microsoft Presidio](https://github.com/microsoft/presidio)"
+        },
+        {
+          "text": "OpenLineage",
+          "path": "https://github.com/OpenLineage/OpenLineage",
+          "full_match": "[OpenLineage](https://github.com/OpenLineage/OpenLineage)"
+        },
+        {
+          "text": "Great Expectations",
+          "path": "https://github.com/great-expectations/great_expectations",
+          "full_match": "[Great Expectations](https://github.com/great-expectations/great_expectations)"
+        },
+        {
+          "text": "DataHub",
+          "path": "https://github.com/datahub-project/datahub",
+          "full_match": "[DataHub](https://github.com/datahub-project/datahub)"
+        },
+        {
+          "text": "OpenMetadata",
+          "path": "https://github.com/open-metadata/OpenMetadata",
+          "full_match": "[OpenMetadata](https://github.com/open-metadata/OpenMetadata)"
+        },
+        {
+          "text": "Soda Core",
+          "path": "https://github.com/sodadata/soda-core",
+          "full_match": "[Soda Core](https://github.com/sodadata/soda-core)"
+        },
+        {
+          "text": "Apache SeaTunnel",
+          "path": "https://github.com/apache/seatunnel",
+          "full_match": "[Apache SeaTunnel](https://github.com/apache/seatunnel)"
+        },
+        {
+          "text": "Dynaconf",
+          "path": "https://github.com/dynaconf/dynaconf",
+          "full_match": "[Dynaconf](https://github.com/dynaconf/dynaconf)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L1",
+          "type": "旧架构命名残留",
+          "description": "文件名包含旧架构关键词: DATA_SOURCE_LAYER_GAP_ANALYSIS"
+        }
+      ]
+    },
+    {
+      "path": "04_DATA_SOURCE\\DOCUMENT_NAMING_STANDARD.md",
+      "depth": 1,
+      "size": 5476,
+      "hash": "0fdd63d92ca01980104839fd374371d9",
+      "metadata": {
+        "module_id": "DOCUMENT_NAMING_STANDARD",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DOCUMENT_NAMING标准规范"
+        ]
+      },
+      "title": "数据源层文档命名规范",
+      "summary": "数据源层文档命名规范的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\factor_master_index.md",
+      "depth": 1,
+      "size": 2920,
+      "hash": "33bfdeb5b8c67464233de3c70fa102ad",
+      "metadata": {
+        "module_id": "FACTOR_MASTER_INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子主索引文档"
+        ]
+      },
+      "title": "因子主索引",
+      "summary": "因子主索引管理和元数据维护，涉及因子主索引",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
+      "depth": 1,
+      "size": 26088,
+      "hash": "ad332e37f4c2a45fa9b40fb032df53ec",
+      "metadata": {
+        "module_id": "FREE_DATA_SOURCES",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "T01DS001免费数据源技术规格书文档"
+        ]
+      },
+      "title": "T.01.DS001.免费数据源技术规格书",
+      "summary": "免费数据源清单和接入指南，涉及免费数据源技术规格书",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "BAOSTOCK_CONNECTOR.md",
+          "path": "./BAOSTOCK_CONNECTOR.md",
+          "full_match": "[BAOSTOCK_CONNECTOR.md](./BAOSTOCK_CONNECTOR.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "../../INDEX.md",
+          "path": "../../INDEX.md",
+          "full_match": "[../../INDEX.md](../../INDEX.md)"
+        },
+        {
+          "text": "数据源索引",
+          "path": "./INDEX.md",
+          "full_match": "[数据源索引](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND_CONNECTOR.md",
+      "depth": 1,
+      "size": 8233,
+      "hash": "82b4c787aafabd9cdc071ee4a6fd0d61",
+      "metadata": {
+        "module_id": "IFIND_CONNECTOR",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "iFind连接器技术规格文档"
+        ]
+      },
+      "title": "iFind连接器技术规格",
+      "summary": "iFind数据源连接器接口和使用说明，涉及连接器技术规格",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "QMT数据接口",
+          "path": "./QMT_INTERFACE.md",
+          "full_match": "[QMT数据接口](./QMT_INTERFACE.md)"
+        },
+        {
+          "text": "专业多时间框架架构",
+          "path": "../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+          "full_match": "[专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\INDEX.md",
+      "depth": 1,
+      "size": 3389,
+      "hash": "627a9709b736d30a8ca3b04aa8fce0e3",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "04_DATA_SOURCE目录索引"
+        ]
+      },
+      "title": "Layer 1 数据预处理层索引",
+      "summary": "Layer 1数据预处理层总索引与模块导航，涉及数据预处理层索引",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\MACRO_DATA.md",
+      "depth": 1,
+      "size": 4586,
+      "hash": "1ecbcec774555b1a9d0728ab1c96e3dd",
+      "metadata": {
+        "module_id": "MACRO_DATA",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "宏观数据源文档"
+        ]
+      },
+      "title": "宏观数据源",
+      "summary": "宏观经济数据采集和处理方法，涉及宏观数据源",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "depth": 1,
+      "size": 59042,
+      "hash": "0d2c5261e93bb48636400ff464d7216d",
+      "metadata": {
+        "module_id": "NEWS_SENTIMENT_DATA_SOURCE",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "另类数据  新闻舆情文档"
+        ]
+      },
+      "title": "另类数据 - 新闻舆情",
+      "summary": "新闻情感数据源接入和情感分析，涉及新闻舆情 另类数据",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\QMT_INTERFACE.md",
+      "depth": 1,
+      "size": 15011,
+      "hash": "4b561fe1efa6f00ecc10a958861419d9",
+      "metadata": {
+        "module_id": "QMT_INTERFACE",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "QMT数据接口技术规格文档"
+        ]
+      },
+      "title": "QMT数据接口技术规格",
+      "summary": "QMT量化交易接口定义和使用说明，涉及数据接口技术规格",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "QMT快速开始指南",
+          "path": "https://dict.thinktrader.net/innerApi/start_now.html",
+          "full_match": "[QMT快速开始指南](https://dict.thinktrader.net/innerApi/start_now.html)"
+        },
+        {
+          "text": "XtQuant原生API",
+          "path": "https://dict.thinktrader.net/nativeApi/start_now.html",
+          "full_match": "[XtQuant原生API](https://dict.thinktrader.net/nativeApi/start_now.html)"
+        },
+        {
+          "text": "QMT数据字典",
+          "path": "https://dict.thinktrader.net/dictionary/",
+          "full_match": "[QMT数据字典](https://dict.thinktrader.net/dictionary/)"
+        },
+        {
+          "text": "VBA公式系统",
+          "path": "https://dict.thinktrader.net/VBA/start_now.html",
+          "full_match": "[VBA公式系统](https://dict.thinktrader.net/VBA/start_now.html)"
+        },
+        {
+          "text": "数据源适配器",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[数据源适配器](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "数据获取规范",
+          "path": "./DATA_ACQUISITION.md",
+          "full_match": "[数据获取规范](./DATA_ACQUISITION.md)"
+        },
+        {
+          "text": "专业多时间框架架构",
+          "path": "../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+          "full_match": "[专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+      "depth": 1,
+      "size": 8359,
+      "hash": "bb750300e1bf3f52beaa0153563b04e2",
+      "metadata": {
+        "module_id": "STATISTICAL_TOOLS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "统计分析工具文档"
+        ]
+      },
+      "title": "统计分析工具",
+      "summary": "统计分析工具集和数学计算方法，涉及统计分析工具",
+      "links": [
+        {
+          "text": "CORRELATION_ANALYSIS.md",
+          "path": "./CORRELATION_ANALYSIS.md",
+          "full_match": "[CORRELATION_ANALYSIS.md](./CORRELATION_ANALYSIS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\SUPERCMD_CONNECTOR.md",
+      "depth": 1,
+      "size": 8006,
+      "hash": "36322f0f91d5e04ab5b7035b234f7785",
+      "metadata": {
+        "module_id": "SUPERCMD_CONNECTOR",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "SuperCommand连接器技术规格文档"
+        ]
+      },
+      "title": "SuperCommand连接器技术规格",
+      "summary": "SuperCMD数据源连接器接口定义，涉及连接器技术规格",
+      "links": [
+        {
+          "text": "DATA_SOURCE_ADAPTERS.md",
+          "path": "./DATA_SOURCE_ADAPTERS.md",
+          "full_match": "[DATA_SOURCE_ADAPTERS.md](./DATA_SOURCE_ADAPTERS.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "QMT数据接口",
+          "path": "./QMT_INTERFACE.md",
+          "full_match": "[QMT数据接口](./QMT_INTERFACE.md)"
+        },
+        {
+          "text": "iFind连接器",
+          "path": "./IFIND_CONNECTOR.md",
+          "full_match": "[iFind连接器](./IFIND_CONNECTOR.md)"
+        },
+        {
+          "text": "专业多时间框架架构",
+          "path": "../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+          "full_match": "[专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\BACKTEST_REORGANIZATION.md",
+      "depth": 1,
+      "size": 3154,
+      "hash": "c39f39639e4b6bff8fd6ba894b6732e3",
+      "metadata": {
+        "module_id": "BACKTEST_REORGANIZATION",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "05_BACKTEST 目录重组方案文档"
+        ]
+      },
+      "title": "05_BACKTEST 目录重组方案",
+      "summary": "回测目录重组方案和规划，涉及目录重组方案",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\correlation_matrix.md",
+      "depth": 1,
+      "size": 2634,
+      "hash": "548a15f9fe08cf8b95ecc1608a1082fe",
+      "metadata": {
+        "module_id": "CORRELATION_MATRIX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子相关性矩文档"
+        ]
+      },
+      "title": "因子相关性矩?",
+      "summary": "相关性矩阵计算和分析，涉及因子相关性矩",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\FACTOR_DECAY.md",
+      "depth": 1,
+      "size": 5112,
+      "hash": "4ae7f3852f7065020cf8ff1cc4a87e7f",
+      "metadata": {
+        "module_id": "FACTOR_DECAY",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子衰减分析文档"
+        ]
+      },
+      "title": "因子衰减分析",
+      "summary": "因子衰减分析的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
+      "depth": 1,
+      "size": 14602,
+      "hash": "073505a34e2c6f37864421b568206751",
+      "metadata": {
+        "module_id": "FACTOR_VALIDATION_BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FACTOR_VALIDATION蓝图设计"
+        ]
+      },
+      "title": "因子验证框架蓝图",
+      "summary": "因子验证蓝图和架构设计，涉及因子验证框架蓝图",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\INDEX.md",
+      "depth": 1,
+      "size": 1705,
+      "hash": "062482b89b161bc5a16c260a8e0ab432",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "05_BACKTEST目录索引"
+        ]
+      },
+      "title": null,
+      "summary": "回测目录导航、文档索引和系统管理",
+      "links": [
+        {
+          "text": "因子验证蓝图",
+          "path": "./FACTOR_VALIDATION_BLUEPRINT.md",
+          "full_match": "[因子验证蓝图](./FACTOR_VALIDATION_BLUEPRINT.md)"
+        },
+        {
+          "text": "因子衰减测试",
+          "path": "./FACTOR_DECAY.md",
+          "full_match": "[因子衰减测试](./FACTOR_DECAY.md)"
+        },
+        {
+          "text": "分层回测",
+          "path": "./LAYERED_BACKTEST.md",
+          "full_match": "[分层回测](./LAYERED_BACKTEST.md)"
+        },
+        {
+          "text": "过拟合测试",
+          "path": "./OVERFITTING_TEST.md",
+          "full_match": "[过拟合测试](./OVERFITTING_TEST.md)"
+        },
+        {
+          "text": "相关性矩阵",
+          "path": "./correlation_matrix.md",
+          "full_match": "[相关性矩阵](./correlation_matrix.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "05_BACKTEST\\LAYERED_BACKTEST.md",
+      "depth": 1,
+      "size": 18777,
+      "hash": "552d534f8ed175a4f868816c54c99327",
+      "metadata": {
+        "module_id": "LAYERED_BACKTEST",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "分层回测框架文档"
+        ]
+      },
+      "title": "分层回测框架",
+      "summary": "分层回测框架的定义、实现和应用",
+      "links": [],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L1",
+          "type": "旧架构命名残留",
+          "description": "文件名包含旧架构关键词: LAYERED_BACKTEST"
+        }
+      ]
+    },
+    {
+      "path": "05_BACKTEST\\OVERFITTING_TEST.md",
+      "depth": 1,
+      "size": 18175,
+      "hash": "c046f623730cc9deef16e998c32e621f",
+      "metadata": {
+        "module_id": "OVERFITTING_TEST",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "过拟合检验框文档"
+        ]
+      },
+      "title": "过拟合检验框?",
+      "summary": "过拟合测试方法和标准，涉及过拟合检验框",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\README.md",
+      "depth": 1,
+      "size": 1385,
+      "hash": "6c9806221bebad33d309a7703d9ad50f",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "05_BACKTEST说明文档"
+        ]
+      },
+      "title": "05_BACKTEST - 回测报告目录",
+      "summary": "模块概述和快速入门指引，涉及回测报告目录",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "06_REGISTRY\\FACTOR_CATALOG.md",
+      "depth": 1,
+      "size": 2767,
+      "hash": "a6681937072fc0064b65e707aa3459d0",
+      "metadata": {
+        "module_id": "FACTOR_CATALOG",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子注册表Factor Registry文档"
+        ]
+      },
+      "title": "因子注册表(Factor Registry)",
+      "summary": "因子清单管理和元数据维护，涉及因子注册表",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "06_REGISTRY\\INDEX.md",
+      "depth": 1,
+      "size": 1198,
+      "hash": "7d5f10e90761754891cb6053d9f33e5a",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "06_REGISTRY目录索引"
+        ]
+      },
+      "title": null,
+      "summary": "因子注册目录导航、文档索引和注册管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "07_FACTOR_MONITORING\\AI_FACTOR_AGENT.md",
+      "depth": 1,
+      "size": 14974,
+      "hash": "41b40fb5f6b22ec4204d7c0df4d44fd3",
+      "metadata": {
+        "module_id": "AI_FACTOR_AGENT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "AI因子管家 Alpha Factor Agent文档"
+        ]
+      },
+      "title": "AI因子管家 (Alpha Factor Agent)",
+      "summary": "AI因子代理设计和实现，涉及因子管家",
+      "links": [
+        {
+          "text": "因子监控",
+          "path": "./factor_monitoring.md",
+          "full_match": "[因子监控](./factor_monitoring.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "07_FACTOR_MONITORING\\factor_monitoring.md",
+      "depth": 1,
+      "size": 12975,
+      "hash": "6d9b508b7b374fda082eb82a774132b5",
+      "metadata": {
+        "module_id": "FACTOR_MONITORING",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子监控文档"
+        ]
+      },
+      "title": "因子监控",
+      "summary": "因子监控系统和预警机制，涉及因子监控",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "07_FACTOR_MONITORING\\INDEX.md",
+      "depth": 1,
+      "size": 1571,
+      "hash": "0f4576ef46554d8acb43e8d6a481b2bd",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "07_FACTOR_MONITORING目录索引"
+        ]
+      },
+      "title": null,
+      "summary": "因子监控目录导航、文档索引和监控管理",
+      "links": [
+        {
+          "text": "因子监控系统",
+          "path": "./factor_monitoring.md",
+          "full_match": "[因子监控系统](./factor_monitoring.md)"
+        },
+        {
+          "text": "AI因子代理",
+          "path": "./AI_FACTOR_AGENT.md",
+          "full_match": "[AI因子代理](./AI_FACTOR_AGENT.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": [
+        {
+          "level": "L2",
+          "type": "标题缺失",
+          "description": "文档缺少标题"
+        }
+      ]
+    },
+    {
+      "path": "09_AUDIT\\AUDIT_REPORT.md",
+      "depth": 1,
+      "size": 8464,
+      "hash": "d3d77f95e72fc89e25f24a60444caee4",
+      "metadata": {
+        "module_id": "AUDIT_REPORT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "AUDIT报告文档"
+        ]
+      },
+      "title": "因子库审计报告与优化总结 (Factor Library Audit Report)",
+      "summary": "因子库审计报告与优化总结 (Factor Library Audit Report)的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "09_AUDIT\\INDEX.md",
+      "depth": 1,
+      "size": 915,
+      "hash": "3251d336b0d344861a7f75eea95967a9",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "09_AUDIT目录索引"
+        ]
+      },
+      "title": "审计报告目录索引",
+      "summary": "提供审计报告目录的导航和文档索引管理",
+      "links": [
+        {
+          "text": "返回因子库主页",
+          "path": "../INDEX.md",
+          "full_match": "[返回因子库主页](../INDEX.md)"
+        },
+        {
+          "text": "查看站点地图",
+          "path": "../SITEMAP.md",
+          "full_match": "[查看站点地图](../SITEMAP.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
+      "depth": 1,
+      "size": 68962,
+      "hash": "cea9f3195792c7384c911eb902ba8274",
+      "metadata": {
+        "module_id": "FACTOR_LIBRARY_MANUAL",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "因子库手v32文档"
+        ]
+      },
+      "title": "因子库手?v3.2",
+      "summary": "因子库操作手册和使用指南，涉及因子库手",
+      "links": [
+        {
+          "text": "../../trading-tactics/tactics_manual.md",
+          "path": "../../06_ARCHIVE/tactics_manual.md",
+          "full_match": "[../../trading-tactics/tactics_manual.md](../../06_ARCHIVE/tactics_manual.md)"
+        },
+        {
+          "text": "因子研究方法论",
+          "path": "#1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系",
+          "full_match": "[因子研究方法论](#1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系)"
+        },
+        {
+          "text": "Barra风格因子",
+          "path": "#3-barra风格因子",
+          "full_match": "[Barra风格因子](#3-barra风格因子)"
+        },
+        {
+          "text": "行业因子模型",
+          "path": "#4-行业因子模型",
+          "full_match": "[行业因子模型](#4-行业因子模型)"
+        },
+        {
+          "text": "数据源因子体系",
+          "path": "#5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
+          "full_match": "[数据源因子体系](#5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子)"
+        },
+        {
+          "text": "因子研究方法论",
+          "path": "#1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系",
+          "full_match": "[因子研究方法论](#1-因子研究方法?\n2. [因子分类体系](#2-因子分类体系)"
+        },
+        {
+          "text": "Barra风格因子",
+          "path": "#3-barra风格因子",
+          "full_match": "[Barra风格因子](#3-barra风格因子)"
+        },
+        {
+          "text": "行业因子模型",
+          "path": "#4-行业因子模型",
+          "full_match": "[行业因子模型](#4-行业因子模型)"
+        },
+        {
+          "text": "数据源因子体系",
+          "path": "#5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子",
+          "full_match": "[数据源因子体系](#5-数据源因子体?\n6. [Table1.xls补充因子](#216-table1xls补充因子)"
+        },
+        {
+          "text": "THS_BD完整指标清单",
+          "path": "#24-ths_bd完整指标清单",
+          "full_match": "[THS_BD完整指标清单](#24-ths_bd完整指标清单)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "10_MANUAL\\FAQ.md",
+      "depth": 1,
+      "size": 4841,
+      "hash": "bc38d4dc33e581e25d49787c0e1d458a",
+      "metadata": {
+        "module_id": "FAQ",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "FAQmd  常见问题文档"
+        ]
+      },
+      "title": "FAQ.md - 常见问题",
+      "summary": "常见问题解答和用户指引，涉及常见问题",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "10_MANUAL\\HANDOVER.md",
+      "depth": 1,
+      "size": 8325,
+      "hash": "fd4217b333673f6ff04ddc3a3bcf191b",
+      "metadata": {
+        "module_id": "HANDOVER",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "ZephyrAlpha 项目交接文档文档"
+        ]
+      },
+      "title": "ZephyrAlpha 项目交接文档",
+      "summary": "项目交接文档和知识传递，涉及项目交接文档",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "10_MANUAL\\INDEX.md",
+      "depth": 1,
+      "size": 1482,
+      "hash": "a66b0126fc70107d86ea2e743dff5025",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "10_MANUAL目录索引"
+        ]
+      },
+      "title": "10_MANUAL - 因子库手册",
+      "summary": "10_MANUAL - 因子库手册的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "10_MANUAL\\KNOWLEDGE_MANAGEMENT.md",
+      "depth": 1,
+      "size": 18135,
+      "hash": "eb124b84454ecd449ba81aa7a552546c",
+      "metadata": {
+        "module_id": "KNOWLEDGE_MANAGEMENT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "知识管理蓝图文档"
+        ]
+      },
+      "title": "知识管理蓝图",
+      "summary": "知识管理体系和方法论，涉及知识管理蓝图",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\02_SCHEDULER\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 13770,
+      "hash": "928c3fdb1efb425fd8c20566da4cfdd7",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "智能下载调度器蓝图",
+      "summary": "智能下载调度器蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+      "depth": 2,
+      "size": 3028,
+      "hash": "b373dcabfef19fd3679e42515a5424ca",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "02_SCHEDULER目录索引"
+        ]
+      },
+      "title": "智能下载调度器",
+      "summary": "智能下载调度器的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "数据源层索引",
+          "path": "../INDEX.md",
+          "full_match": "[数据源层索引](../INDEX.md)"
+        },
+        {
+          "text": "数据清洗引擎",
+          "path": "../03_CLEANING/",
+          "full_match": "[数据清洗引擎](../03_CLEANING/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
+      "depth": 2,
+      "size": 12939,
+      "hash": "59ab8370a39e6ac9daf0566ce755064a",
+      "metadata": {
+        "module_id": "SCHEDULER_API",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "智能下载调度器API参考文档"
+        ]
+      },
+      "title": "智能下载调度器API参考",
+      "summary": "数据调度器API接口和任务调度管理，涉及智能下载调度器 参考",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "INDEX.md",
+          "full_match": "[INDEX.md](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 14477,
+      "hash": "15cd2ce791d87dfb6c2ac2d745bbcf39",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据清洗引擎蓝图",
+      "summary": "数据清洗引擎蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
+      "depth": 2,
+      "size": 9820,
+      "hash": "0dc504ecde9ccc7e10f6093d4a187e8e",
+      "metadata": {
+        "module_id": "CLEANING_RULES",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据清洗规则配置文档"
+        ]
+      },
+      "title": "数据清洗规则配置",
+      "summary": "数据清洗规则定义和质量控制标准，涉及数据清洗规则配置",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+      "depth": 2,
+      "size": 3149,
+      "hash": "03038f2a28ac5b7a4a6235a456817595",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "03_CLEANING目录索引"
+        ]
+      },
+      "title": "数据清洗引擎",
+      "summary": "数据清洗引擎的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "数据源层索引",
+          "path": "../INDEX.md",
+          "full_match": "[数据源层索引](../INDEX.md)"
+        },
+        {
+          "text": "智能下载调度器",
+          "path": "../02_SCHEDULER/",
+          "full_match": "[智能下载调度器](../02_SCHEDULER/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 15193,
+      "hash": "5da0c03989109e33078193a32e6f1174",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据流水线蓝图",
+      "summary": "数据流水线蓝图的蓝图设计和架构规划",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+      "depth": 2,
+      "size": 1776,
+      "hash": "6cd87f3eed5595b3c90d1dc5a1a73b3d",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "07_DATA_PIPELINE目录索引"
+        ]
+      },
+      "title": "数据管道目录索引",
+      "summary": "数据管道目录索引的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "depth": 2,
+      "size": 2778,
+      "hash": "957b826b9c451f926cbd8da5ac9fa20d",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "07_DATA_PIPELINE说明文档"
+        ]
+      },
+      "title": "数据流水线概述",
+      "summary": "模块说明和快速入门指南，涉及数据流水线蓝图",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2717,
+      "hash": "9b6a9bac39e3c8d58244540007e1d257",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "配置管理蓝图",
+      "summary": "配置管理蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_SECURITY_PRIVACY/",
+          "path": "../DATA_SECURITY_PRIVACY/",
+          "full_match": "[../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+      "depth": 2,
+      "size": 1107,
+      "hash": "6dd5bda67630cd14a51b23d6e4f5b398",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "CONFIG_MANAGEMENT目录索引"
+        ]
+      },
+      "title": "配置管理系统",
+      "summary": "配置管理系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+      "depth": 2,
+      "size": 1733,
+      "hash": "cc6e569fca41c60bf14f9db95e105a54",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "CONFIG_MANAGEMENT说明文档"
+        ]
+      },
+      "title": "配置管理",
+      "summary": "系统配置管理与环境变量管理，涉及配置管理",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 10140,
+      "hash": "87b2e25a50dd5bfff9c6efe90b43c8a4",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据异常检测蓝图",
+      "summary": "数据异常检测蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_MONITORING_ENHANCED/",
+          "path": "../DATA_MONITORING_ENHANCED/",
+          "full_match": "[../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+      "depth": 2,
+      "size": 1138,
+      "hash": "6e817b4366c10945778c18233c469768",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_ANOMALY_DETECTION目录索引"
+        ]
+      },
+      "title": "数据异常检测系统",
+      "summary": "数据异常检测系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+      "depth": 2,
+      "size": 1775,
+      "hash": "476a8b1cca654896b0431e6917fce916",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_ANOMALY_DETECTION说明文档"
+        ]
+      },
+      "title": "数据异常检测",
+      "summary": "数据异常检测算法与告警机制，涉及数据异常检测",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2876,
+      "hash": "5b36b23cf14b4c1706fad0f63087660e",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据API网关蓝图",
+      "summary": "数据API网关蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_PERMISSION_MANAGEMENT/",
+          "path": "../DATA_PERMISSION_MANAGEMENT/",
+          "full_match": "[../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/)"
+        },
+        {
+          "text": "../DATA_SECURITY_PRIVACY/",
+          "path": "../DATA_SECURITY_PRIVACY/",
+          "full_match": "[../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+      "depth": 2,
+      "size": 1129,
+      "hash": "a770de9b4eab8adfa907f713bf584b6b",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_API_GATEWAY目录索引"
+        ]
+      },
+      "title": "数据API网关系统",
+      "summary": "数据API网关系统的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+      "depth": 2,
+      "size": 1735,
+      "hash": "98bc2d117f874ad6cf2de42d0bc60f95",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_API_GATEWAY说明文档"
+        ]
+      },
+      "title": "数据API网关",
+      "summary": "统一数据访问接口与API管理，涉及数据 网关",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2774,
+      "hash": "4f0df4bae5226db42d9cd60690585d05",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据备份恢复蓝图",
+      "summary": "数据备份恢复蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+      "depth": 2,
+      "size": 1131,
+      "hash": "790553339454d42f878b752f1d8880a6",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_BACKUP_RECOVERY目录索引"
+        ]
+      },
+      "title": "数据备份恢复系统",
+      "summary": "数据备份恢复系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+      "depth": 2,
+      "size": 1749,
+      "hash": "922f11c51b03ae05c961f9c4a9beec40",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_BACKUP_RECOVERY说明文档"
+        ]
+      },
+      "title": "数据备份恢复",
+      "summary": "数据备份策略与灾难恢复机制，涉及数据备份恢复",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CATALOG\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 17813,
+      "hash": "1c0bbae740434f56989e6b8748936b1b",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据目录系统蓝图",
+      "summary": "数据目录系统蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_PERMISSION_MANAGEMENT/",
+          "path": "../DATA_PERMISSION_MANAGEMENT/",
+          "full_match": "[../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/)"
+        },
+        {
+          "text": "DataHub官方文档",
+          "path": "https://datahubproject.io/docs/",
+          "full_match": "[DataHub官方文档](https://datahubproject.io/docs/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+      "depth": 2,
+      "size": 1262,
+      "hash": "62d527c9741f4a9920919f21eb822ea0",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_CATALOG目录索引"
+        ]
+      },
+      "title": "数据目录系统",
+      "summary": "数据目录系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+      "depth": 2,
+      "size": 1685,
+      "hash": "2750af18acd07ac84e4dc27aefb20e54",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_CATALOG说明文档"
+        ]
+      },
+      "title": "数据目录",
+      "summary": "数据资产管理与元数据组织，涉及数据目录",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 13052,
+      "hash": "2ecf05dd599a1bba3b235c9a65f76db2",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据压缩归档蓝图",
+      "summary": "数据压缩归档蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "Parquet官方文档",
+          "path": "https://parquet.apache.org/docs/",
+          "full_match": "[Parquet官方文档](https://parquet.apache.org/docs/)"
+        },
+        {
+          "text": "ZSTD压缩算法",
+          "path": "https://facebook.github.io/zstd/",
+          "full_match": "[ZSTD压缩算法](https://facebook.github.io/zstd/)"
+        },
+        {
+          "text": "Delta Lake文档",
+          "path": "https://delta.io/",
+          "full_match": "[Delta Lake文档](https://delta.io/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+      "depth": 2,
+      "size": 1187,
+      "hash": "a4acdb52ca5e9f196718049cb765e494",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_COMPRESSION_ARCHIVE目录索引"
+        ]
+      },
+      "title": "数据压缩归档系统",
+      "summary": "数据压缩归档系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../DATA_SYNC_REPLICATION/",
+          "path": "../DATA_SYNC_REPLICATION/",
+          "full_match": "[../DATA_SYNC_REPLICATION/](../DATA_SYNC_REPLICATION/)"
+        },
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+      "depth": 2,
+      "size": 1633,
+      "hash": "50e81e08a83f634ebdcf3e0773a51b39",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_COMPRESSION_ARCHIVE说明文档"
+        ]
+      },
+      "title": "数据压缩归档",
+      "summary": "数据压缩策略与长期存储优化，涉及数据压缩归档",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CONTRACT\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 11890,
+      "hash": "920b676a200b0f0e66f6ced85a3f794c",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据契约管理系统蓝图",
+      "summary": "数据契约管理系统蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+      "depth": 2,
+      "size": 1107,
+      "hash": "eab5d5763edf0d86c420fd4cbfe3db96",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_CONTRACT目录索引"
+        ]
+      },
+      "title": "数据契约系统",
+      "summary": "数据契约系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+      "depth": 2,
+      "size": 1689,
+      "hash": "a92288a00e5ce4fe9e315baeaef57aaf",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_CONTRACT说明文档"
+        ]
+      },
+      "title": "数据契约",
+      "summary": "数据契约定义与服务级别协议，涉及数据契约",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_FEDERATION\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 11538,
+      "hash": "49d84b8010520186b9d156dfb3412dee",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据联邦查询系统蓝图",
+      "summary": "数据联邦查询系统蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../TIME_SERIES_STORAGE/",
+          "path": "../TIME_SERIES_STORAGE/",
+          "full_match": "[../TIME_SERIES_STORAGE/](../TIME_SERIES_STORAGE/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+      "depth": 2,
+      "size": 1112,
+      "hash": "1c52787cecb763f1acc3b150f91f789e",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_FEDERATION目录索引"
+        ]
+      },
+      "title": "数据联邦系统",
+      "summary": "数据联邦系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+      "depth": 2,
+      "size": 1697,
+      "hash": "830b5d8d75241ac7b20431549e07d6bb",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_FEDERATION说明文档"
+        ]
+      },
+      "title": "数据联邦",
+      "summary": "跨源数据访问与联邦查询，涉及数据联邦",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 12467,
+      "hash": "684fce9dd3cb6c58a4ebf22e47a98615",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据生命周期管理蓝图",
+      "summary": "数据生命周期管理蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_COMPRESSION_ARCHIVE/",
+          "path": "../DATA_COMPRESSION_ARCHIVE/",
+          "full_match": "[../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+      "depth": 2,
+      "size": 1162,
+      "hash": "e86c1f1af9208043b1e7a6ef8e8b8223",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_LIFECYCLE_MANAGEMENT目录索引"
+        ]
+      },
+      "title": "数据生命周期管理系统",
+      "summary": "数据生命周期管理系统的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+      "depth": 2,
+      "size": 1801,
+      "hash": "9a97350b2ff80cfea52e068ec141b994",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_LIFECYCLE_MANAGEMENT说明文档"
+        ]
+      },
+      "title": "数据生命周期管理",
+      "summary": "数据生命周期管理与归档策略，涉及数据生命周期管理",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 19261,
+      "hash": "2d96ac6f6b2d240f217bea730474c52e",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据血缘追踪系统蓝图",
+      "summary": "数据血缘追踪系统蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "OpenLineage官方文档",
+          "path": "https://openlineage.io/docs/",
+          "full_match": "[OpenLineage官方文档](https://openlineage.io/docs/)"
+        },
+        {
+          "text": "Marquez官方文档",
+          "path": "https://marquezproject.github.io/marquez/",
+          "full_match": "[Marquez官方文档](https://marquezproject.github.io/marquez/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+      "depth": 2,
+      "size": 1284,
+      "hash": "e09562095a629df848e7585d9c85adf1",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_LINEAGE_TRACKING目录索引"
+        ]
+      },
+      "title": "数据血缘追踪系统",
+      "summary": "数据血缘追踪系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+      "depth": 2,
+      "size": 1751,
+      "hash": "b6abe628c22f3b7337488f855d5405e8",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_LINEAGE_TRACKING说明文档"
+        ]
+      },
+      "title": "数据血缘追踪",
+      "summary": "数据血缘追踪与流向分析，涉及数据血缘追踪",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 29132,
+      "hash": "91713260b8cfb477d3c06570d4e56ae5",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据监控系统蓝图（增强）",
+      "summary": "数据监控系统蓝图（增强）的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "Great Expectations官方文档",
+          "path": "https://docs.greatexpectations.io/",
+          "full_match": "[Great Expectations官方文档](https://docs.greatexpectations.io/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+      "depth": 2,
+      "size": 1300,
+      "hash": "e45a8985fd2e269a5701b13a603a6cff",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_MONITORING_ENHANCED目录索引"
+        ]
+      },
+      "title": "数据监控增强系统",
+      "summary": "数据监控增强系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+      "depth": 2,
+      "size": 1785,
+      "hash": "3b21dbe96bdc04b8ff7582bbf253b0d6",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_MONITORING_ENHANCED说明文档"
+        ]
+      },
+      "title": "数据监控增强",
+      "summary": "增强的数据监控与可视化功能，涉及数据监控增强",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 3097,
+      "hash": "a92f280f4d0689aefca8c0010ad32ed8",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据可观测性平台蓝图",
+      "summary": "数据可观测性平台蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_MONITORING_ENHANCED/",
+          "path": "../DATA_MONITORING_ENHANCED/",
+          "full_match": "[../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+      "depth": 2,
+      "size": 1141,
+      "hash": "749d6a8df90ce54c79f52a0b8651dc09",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_OBSERVABILITY目录索引"
+        ]
+      },
+      "title": "数据可观测性系统",
+      "summary": "数据可观测性系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+      "depth": 2,
+      "size": 1741,
+      "hash": "bf3ccf34e488514a6b305142022fe78d",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_OBSERVABILITY说明文档"
+        ]
+      },
+      "title": "数据可观测性",
+      "summary": "数据可观测性架构与监控指标，涉及数据可观测性",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 16457,
+      "hash": "9156b432bc28786649e0deb2a4813d44",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据编排增强蓝图",
+      "summary": "数据编排增强蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../02_SCHEDULER/",
+          "path": "../02_SCHEDULER/",
+          "full_match": "[../02_SCHEDULER/](../02_SCHEDULER/)"
+        },
+        {
+          "text": "../07_DATA_PIPELINE/",
+          "path": "../07_DATA_PIPELINE/",
+          "full_match": "[../07_DATA_PIPELINE/](../07_DATA_PIPELINE/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+      "depth": 2,
+      "size": 3870,
+      "hash": "66daf4b1d8cf44a17a9769bdaa0d4dd6",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_ORCHESTRATION_ENHANCED目录索引"
+        ]
+      },
+      "title": "数据编排增强系统索引",
+      "summary": "数据编排增强系统索引的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../02_SCHEDULER/",
+          "path": "../02_SCHEDULER/",
+          "full_match": "[../02_SCHEDULER/](../02_SCHEDULER/)"
+        },
+        {
+          "text": "../07_DATA_PIPELINE/",
+          "path": "../07_DATA_PIPELINE/",
+          "full_match": "[../07_DATA_PIPELINE/](../07_DATA_PIPELINE/)"
+        },
+        {
+          "text": "../DATA_MONITORING_ENHANCED/",
+          "path": "../DATA_MONITORING_ENHANCED/",
+          "full_match": "[../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)"
+        },
+        {
+          "text": "../03_CLEANING/",
+          "path": "../03_CLEANING/",
+          "full_match": "[../03_CLEANING/](../03_CLEANING/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+      "depth": 2,
+      "size": 1807,
+      "hash": "a070498dd4fc4c785214add98d5a292c",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_ORCHESTRATION_ENHANCED说明文档"
+        ]
+      },
+      "title": "数据编排增强",
+      "summary": "增强的数据编排与工作流管理，涉及数据编排增强",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 5435,
+      "hash": "28b766b1cdd900a3dc19b5faf53fe829",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据权限管理蓝图",
+      "summary": "数据权限管理蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_SECURITY_PRIVACY/",
+          "path": "../DATA_SECURITY_PRIVACY/",
+          "full_match": "[../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+      "depth": 2,
+      "size": 1191,
+      "hash": "9cfabd6d2a76f57e715a8fbe31865442",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_PERMISSION_MANAGEMENT目录索引"
+        ]
+      },
+      "title": "数据权限管理系统",
+      "summary": "数据权限管理系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../DATA_MONITORING_ENHANCED/",
+          "path": "../DATA_MONITORING_ENHANCED/",
+          "full_match": "[../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)"
+        },
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+      "depth": 2,
+      "size": 1639,
+      "hash": "ed553ee158c5d5881283cd7485f662f0",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_PERMISSION_MANAGEMENT说明文档"
+        ]
+      },
+      "title": "数据权限管理",
+      "summary": "数据权限策略与访问控制，涉及数据权限管理",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PROFILING\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 13648,
+      "hash": "a557b4bd9e07dcf1fb642ac8388368b0",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据画像蓝图",
+      "summary": "数据画像蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+      "depth": 2,
+      "size": 963,
+      "hash": "07d8518a10016360eaa43bb87848868e",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_PROFILING目录索引"
+        ]
+      },
+      "title": "数据剖析系统",
+      "summary": "数据剖析系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+      "depth": 2,
+      "size": 1553,
+      "hash": "122062aacc98a2ceb0428b03dfca4b7b",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_PROFILING说明文档"
+        ]
+      },
+      "title": "数据分析",
+      "summary": "数据统计分析与特征提取，涉及数据分析",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2923,
+      "hash": "d7a0b2f3460c410a6c5530b47c2b18ba",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据安全与隐私保护蓝图",
+      "summary": "数据安全与隐私保护蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_PERMISSION_MANAGEMENT/",
+          "path": "../DATA_PERMISSION_MANAGEMENT/",
+          "full_match": "[../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+      "depth": 2,
+      "size": 1001,
+      "hash": "6246b35009a905e1d3d115aa6720326a",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_SECURITY_PRIVACY目录索引"
+        ]
+      },
+      "title": "数据安全隐私系统",
+      "summary": "数据安全隐私系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+      "depth": 2,
+      "size": 1612,
+      "hash": "1c74760dd721fd730763781f0081ae55",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_SECURITY_PRIVACY说明文档"
+        ]
+      },
+      "title": "数据安全隐私",
+      "summary": "数据安全策略与隐私保护机制，涉及数据安全隐私",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2783,
+      "hash": "fa69966b37db4aead550b69e49fd90b9",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据标准化蓝图",
+      "summary": "数据标准化蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../03_CLEANING/",
+          "path": "../03_CLEANING/",
+          "full_match": "[../03_CLEANING/](../03_CLEANING/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+      "depth": 2,
+      "size": 987,
+      "hash": "27cd425efecadb2e92399d03fa10f9a3",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_STANDARDIZATION目录索引"
+        ]
+      },
+      "title": "数据标准化系统",
+      "summary": "数据标准化系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+      "depth": 2,
+      "size": 1603,
+      "hash": "457bc690d2577889fb1a78205e9d4b8c",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_STANDARDIZATION说明文档"
+        ]
+      },
+      "title": "数据标准化",
+      "summary": "数据标准化规则与格式统一，涉及数据标准化",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 7959,
+      "hash": "8cbacd0e5e58532d7a98eb997d19ac07",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据同步复制蓝图",
+      "summary": "数据同步复制蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../REALTIME_DATA_STREAMING/",
+          "path": "../REALTIME_DATA_STREAMING/",
+          "full_match": "[../REALTIME_DATA_STREAMING/](../REALTIME_DATA_STREAMING/)"
+        },
+        {
+          "text": "Debezium官方文档",
+          "path": "https://debezium.io/documentation/",
+          "full_match": "[Debezium官方文档](https://debezium.io/documentation/)"
+        },
+        {
+          "text": "Kafka Connect文档",
+          "path": "https://kafka.apache.org/documentation/#connect",
+          "full_match": "[Kafka Connect文档](https://kafka.apache.org/documentation/#connect)"
+        },
+        {
+          "text": "ClickHouse Kafka集成",
+          "path": "https://clickhouse.com/docs/en/integrations/kafka/",
+          "full_match": "[ClickHouse Kafka集成](https://clickhouse.com/docs/en/integrations/kafka/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+      "depth": 2,
+      "size": 1184,
+      "hash": "891ec602f5e579629179e90e374b215a",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_SYNC_REPLICATION目录索引"
+        ]
+      },
+      "title": "数据同步复制系统",
+      "summary": "数据同步复制系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../DATA_COMPRESSION_ARCHIVE/",
+          "path": "../DATA_COMPRESSION_ARCHIVE/",
+          "full_match": "[../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/)"
+        },
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+      "depth": 2,
+      "size": 1610,
+      "hash": "6ab666cb3e390f148a23f6dbd279b6a5",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_SYNC_REPLICATION说明文档"
+        ]
+      },
+      "title": "数据同步复制",
+      "summary": "数据同步策略与一致性保证，涉及数据同步复制",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 2953,
+      "hash": "b323725288632bc2a0cdc88d6a53db2e",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据测试框架蓝图",
+      "summary": "数据测试框架蓝图的蓝图设计和架构规划",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+      "depth": 2,
+      "size": 988,
+      "hash": "9f391fc55522ca3cce64b8efb8f63d9d",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_TESTING_FRAMEWORK目录索引"
+        ]
+      },
+      "title": "数据测试框架系统",
+      "summary": "数据测试框架系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+      "depth": 2,
+      "size": 1623,
+      "hash": "6f65958f2b41f828ceb3c2bd5d7217ee",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_TESTING_FRAMEWORK说明文档"
+        ]
+      },
+      "title": "数据测试框架",
+      "summary": "数据测试框架与测试用例管理，涉及数据测试框架",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 25341,
+      "hash": "0abf35c31d9de254144534328852c63b",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "数据版本控制系统蓝图",
+      "summary": "数据版本控制系统蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "DVC官方文档",
+          "path": "https://dvc.org/doc",
+          "full_match": "[DVC官方文档](https://dvc.org/doc)"
+        },
+        {
+          "text": "Delta Lake官方文档",
+          "path": "https://docs.delta.io/",
+          "full_match": "[Delta Lake官方文档](https://docs.delta.io/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+      "depth": 2,
+      "size": 1213,
+      "hash": "3498ee7fd601c59c5b9a0a94c1a4c502",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_VERSION_CONTROL目录索引"
+        ]
+      },
+      "title": "数据版本控制系统",
+      "summary": "数据版本控制系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../DATA_SYNC_REPLICATION/",
+          "path": "../DATA_SYNC_REPLICATION/",
+          "full_match": "[../DATA_SYNC_REPLICATION/](../DATA_SYNC_REPLICATION/)"
+        },
+        {
+          "text": "../DATA_COMPRESSION_ARCHIVE/",
+          "path": "../DATA_COMPRESSION_ARCHIVE/",
+          "full_match": "[../DATA_COMPRESSION_ARCHIVE/](../DATA_COMPRESSION_ARCHIVE/)"
+        },
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "返回数据源层",
+          "path": "../INDEX.md",
+          "full_match": "[返回数据源层](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+      "depth": 2,
+      "size": 1605,
+      "hash": "67c49888ffa96d6b8ac0bdbf401f6336",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "DATA_VERSION_CONTROL说明文档"
+        ]
+      },
+      "title": "数据版本控制",
+      "summary": "数据版本控制策略与变更追踪，涉及数据版本控制",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND\\INDEX.md",
+      "depth": 2,
+      "size": 2790,
+      "hash": "ee4301ae1d6e7ac9ba93d22873c75424",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "IFIND目录索引"
+        ]
+      },
+      "title": "iFind数据源",
+      "summary": "iFind数据源的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND\\README.md",
+      "depth": 2,
+      "size": 1537,
+      "hash": "96ddd14d689e1746293d5295d23b195d",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "IFIND说明文档"
+        ]
+      },
+      "title": "iFind数据源使用指南",
+      "summary": "iFind数据源接入与金融数据获取，涉及数据源",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+      "depth": 2,
+      "size": 26069,
+      "hash": "50fd0d2a0c8e60b0fb2b1cd62d09e189",
+      "metadata": {
+        "module_id": "DATA_QUALITY_CONTROL_SYSTEM",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据质量控制系统文档"
+        ]
+      },
+      "title": "数据质量控制系统",
+      "summary": "数据质量控制体系和质量评估方法，涉及数据质量控制系统",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+      "depth": 2,
+      "size": 3255,
+      "hash": "a0e183d0ab9d7c159ff25fb55a3a3e98",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "QUALITY_MANAGEMENT目录索引"
+        ]
+      },
+      "title": "数据质量管理系统",
+      "summary": "数据质量管理系统的目录导航和文档索引管理",
+      "links": [
+        {
+          "text": "DATA_QUALITY_CONTROL_SYSTEM.md",
+          "path": "./DATA_QUALITY_CONTROL_SYSTEM.md",
+          "full_match": "[DATA_QUALITY_CONTROL_SYSTEM.md](./DATA_QUALITY_CONTROL_SYSTEM.md)"
+        },
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "数据源层索引",
+          "path": "../INDEX.md",
+          "full_match": "[数据源层索引](../INDEX.md)"
+        },
+        {
+          "text": "数据清洗引擎",
+          "path": "../03_CLEANING/",
+          "full_match": "[数据清洗引擎](../03_CLEANING/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+      "depth": 2,
+      "size": 14018,
+      "hash": "a8ff61438e09fbe9b178a55640529156",
+      "metadata": {
+        "module_id": "QUALITY_METRICS",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "数据质量指标定义文档"
+        ]
+      },
+      "title": "数据质量指标定义",
+      "summary": "数据质量指标定义和评估标准，涉及数据质量指标定义",
+      "links": [
+        {
+          "text": "DATA_QUALITY_CONTROL_SYSTEM.md",
+          "path": "./DATA_QUALITY_CONTROL_SYSTEM.md",
+          "full_match": "[DATA_QUALITY_CONTROL_SYSTEM.md](./DATA_QUALITY_CONTROL_SYSTEM.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 16264,
+      "hash": "47a41be2c0b1dd022c0e78c30af50a29",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "实时数据流平台蓝图",
+      "summary": "实时数据流平台蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_SYNC_REPLICATION/",
+          "path": "../DATA_SYNC_REPLICATION/",
+          "full_match": "[../DATA_SYNC_REPLICATION/](../DATA_SYNC_REPLICATION/)"
+        },
+        {
+          "text": "../07_DATA_PIPELINE/",
+          "path": "../07_DATA_PIPELINE/",
+          "full_match": "[../07_DATA_PIPELINE/](../07_DATA_PIPELINE/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+      "depth": 2,
+      "size": 3732,
+      "hash": "79632815b8d08e1afed1e72c1c7fd65b",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "REALTIME_DATA_STREAMING目录索引"
+        ]
+      },
+      "title": "实时数据流平台索引",
+      "summary": "实时数据流平台索引的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../DATA_SYNC_REPLICATION/",
+          "path": "../DATA_SYNC_REPLICATION/",
+          "full_match": "[../DATA_SYNC_REPLICATION/](../DATA_SYNC_REPLICATION/)"
+        },
+        {
+          "text": "../07_DATA_PIPELINE/",
+          "path": "../07_DATA_PIPELINE/",
+          "full_match": "[../07_DATA_PIPELINE/](../07_DATA_PIPELINE/)"
+        },
+        {
+          "text": "../DATA_MONITORING_ENHANCED/",
+          "path": "../DATA_MONITORING_ENHANCED/",
+          "full_match": "[../DATA_MONITORING_ENHANCED/](../DATA_MONITORING_ENHANCED/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+      "depth": 2,
+      "size": 1644,
+      "hash": "0ebb27eaee6582511d182aa70462e336",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "REALTIME_DATA_STREAMING说明文档"
+        ]
+      },
+      "title": "实时数据流",
+      "summary": "实时数据流处理架构与Kafka集成，涉及实时数据流",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\BLUEPRINT.md",
+      "depth": 2,
+      "size": 9410,
+      "hash": "e06032240842144082a62490d3baf5eb",
+      "metadata": {
+        "module_id": "BLUEPRINT",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "BLUEPRINT蓝图设计"
+        ]
+      },
+      "title": "高性能时序存储系统蓝图",
+      "summary": "高性能时序存储系统蓝图的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "../07_DATA_PIPELINE/",
+          "path": "../07_DATA_PIPELINE/",
+          "full_match": "[../07_DATA_PIPELINE/](../07_DATA_PIPELINE/)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+      "depth": 2,
+      "size": 994,
+      "hash": "067ddabee6eb42496bb335d2899d9949",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "TIME_SERIES_STORAGE目录索引"
+        ]
+      },
+      "title": "时序数据存储系统",
+      "summary": "时序数据存储系统的目录导航和文档索引管理",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+      "depth": 2,
+      "size": 1648,
+      "hash": "3297d2d2fed9d58e1c8127ae48db04d3",
+      "metadata": {
+        "module_id": "README",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "TIME_SERIES_STORAGE说明文档"
+        ]
+      },
+      "title": "时序存储",
+      "summary": "时序数据存储架构与TimescaleDB集成，涉及时序存储",
+      "links": [
+        {
+          "text": "INDEX",
+          "path": "INDEX.md",
+          "full_match": "[INDEX](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+      "depth": 3,
+      "size": 13600,
+      "hash": "3ff0fda9f801bbe6ccacfbdc11976c11",
+      "metadata": {
+        "module_id": "FINANCIAL_STATEMENTS_API",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "iFind财务数据API参考文档"
+        ]
+      },
+      "title": "iFind财务数据API参考",
+      "summary": "财务报表数据API接口和使用说明，涉及财务数据 参考",
+      "links": [
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        },
+        {
+          "text": "THS_BD_COMPLETE_INDICATOR_LIST.md",
+          "path": "./THS_BD_COMPLETE_INDICATOR_LIST.md",
+          "full_match": "[THS_BD_COMPLETE_INDICATOR_LIST.md](./THS_BD_COMPLETE_INDICATOR_LIST.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "INDEX.md",
+          "full_match": "[INDEX.md](INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+      "depth": 3,
+      "size": 2773,
+      "hash": "ed4237904f244fe93dfd25dbb95bb6b1",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "financial_statements目录索引"
+        ]
+      },
+      "title": "iFind财务数据",
+      "summary": "iFind财务数据的定义和实现",
+      "links": [
+        {
+          "text": "../INDEX.md",
+          "path": "../INDEX.md",
+          "full_match": "[../INDEX.md](../INDEX.md)"
+        },
+        {
+          "text": "FINANCIAL_STATEMENTS_API.md",
+          "path": "./FINANCIAL_STATEMENTS_API.md",
+          "full_match": "[FINANCIAL_STATEMENTS_API.md](./FINANCIAL_STATEMENTS_API.md)"
+        },
+        {
+          "text": "iFind数据源",
+          "path": "../INDEX.md",
+          "full_match": "[iFind数据源](../INDEX.md)"
+        },
+        {
+          "text": "数据源层索引",
+          "path": "../../INDEX.md",
+          "full_match": "[数据源层索引](../../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+      "depth": 3,
+      "size": 57303,
+      "hash": "2a540d0c6919fc2f59f9b6b6e209116b",
+      "metadata": {
+        "module_id": "THS_BD_COMPLETE_INDICATOR_LIST",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "iFind THS_BD 完整指标清单文档"
+        ]
+      },
+      "title": "iFind THS_BD 完整指标清单",
+      "summary": "同花顺BD完整指标清单和映射关系，涉及完整指标清单",
+      "links": [
+        {
+          "text": "FINANCIAL_STATEMENTS_API.md",
+          "path": "./FINANCIAL_STATEMENTS_API.md",
+          "full_match": "[FINANCIAL_STATEMENTS_API.md](./FINANCIAL_STATEMENTS_API.md)"
+        },
+        {
+          "text": "INDEX.md",
+          "path": "./INDEX.md",
+          "full_match": "[INDEX.md](./INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\value_factors\\INDEX.md",
+      "depth": 2,
+      "size": 1643,
+      "hash": "645e4192a6155d6e75598894ab86ab82",
+      "metadata": {
+        "module_id": "INDEX",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "value_factors目录索引"
+        ]
+      },
+      "title": "value_factors - 价值因子回测报告",
+      "summary": "value_factors - 价值因子回测报告的定义和实现",
+      "links": [
+        {
+          "text": "PE_TTM_IC.md",
+          "path": "./PE_TTM_IC.md",
+          "full_match": "[PE_TTM_IC.md](./PE_TTM_IC.md)"
+        },
+        {
+          "text": "PE_TTM_BACKTEST.md",
+          "path": "./PE_TTM_BACKTEST.md",
+          "full_match": "[PE_TTM_BACKTEST.md](./PE_TTM_BACKTEST.md)"
+        },
+        {
+          "text": "PE_TTM_IC.md",
+          "path": "./PE_TTM_IC.md",
+          "full_match": "[PE_TTM_IC.md](./PE_TTM_IC.md)"
+        },
+        {
+          "text": "PE_TTM_BACKTEST.md",
+          "path": "./PE_TTM_BACKTEST.md",
+          "full_match": "[PE_TTM_BACKTEST.md](./PE_TTM_BACKTEST.md)"
+        },
+        {
+          "text": "回测报告总目录",
+          "path": "../INDEX.md",
+          "full_match": "[回测报告总目录](../INDEX.md)"
+        }
+      ],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+      "depth": 2,
+      "size": 2660,
+      "hash": "08cdc59b3958598a9b2c79fb33dcb238",
+      "metadata": {
+        "module_id": "PE_TTM_BACKTEST",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "PE_TTM  单因子回测报文档"
+        ]
+      },
+      "title": "PE_TTM - 单因子回测报?",
+      "summary": "PE_TTM - 单因子回测报?的定义和实现",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    },
+    {
+      "path": "05_BACKTEST\\value_factors\\PE_TTM_IC.md",
+      "depth": 2,
+      "size": 2045,
+      "hash": "13526b02709dd31b2278a379b20e88bd",
+      "metadata": {
+        "module_id": "PE_TTM_IC",
+        "version": "1.0.0",
+        "status": "Active",
+        "responsibility": [
+          "PE_TTM  IC验证记录文档"
+        ]
+      },
+      "title": "PE_TTM - IC验证记录",
+      "summary": "PE_TTM因子IC验证结果记录，涉及验证记录",
+      "links": [],
+      "invalid_links": [],
+      "issues": []
+    }
+  ],
+  "duplicates": [],
+  "overlaps": [
+    {
+      "keyword": "目录索引",
+      "items": [
+        {
+          "path": "INDEX.md",
+          "responsibility": "02_FACTOR_LIBRARY目录索引"
+        },
+        {
+          "path": "00_GOVERNANCE\\INDEX.md",
+          "responsibility": "00_GOVERNANCE目录索引"
+        },
+        {
+          "path": "01_STANDARDS\\INDEX.md",
+          "responsibility": "01_STANDARDS目录索引"
+        },
+        {
+          "path": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+          "responsibility": "02_ALPHA_FACTORS_INDEX目录索引"
+        },
+        {
+          "path": "03_RISK_FACTORS\\INDEX.md",
+          "responsibility": "03_RISK_FACTORS目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\INDEX.md",
+          "responsibility": "04_DATA_SOURCE目录索引"
+        },
+        {
+          "path": "05_BACKTEST\\INDEX.md",
+          "responsibility": "05_BACKTEST目录索引"
+        },
+        {
+          "path": "06_REGISTRY\\INDEX.md",
+          "responsibility": "06_REGISTRY目录索引"
+        },
+        {
+          "path": "07_FACTOR_MONITORING\\INDEX.md",
+          "responsibility": "07_FACTOR_MONITORING目录索引"
+        },
+        {
+          "path": "09_AUDIT\\INDEX.md",
+          "responsibility": "09_AUDIT目录索引"
+        },
+        {
+          "path": "10_MANUAL\\INDEX.md",
+          "responsibility": "10_MANUAL目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+          "responsibility": "02_SCHEDULER目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+          "responsibility": "03_CLEANING目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+          "responsibility": "07_DATA_PIPELINE目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+          "responsibility": "CONFIG_MANAGEMENT目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+          "responsibility": "DATA_ANOMALY_DETECTION目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+          "responsibility": "DATA_API_GATEWAY目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+          "responsibility": "DATA_BACKUP_RECOVERY目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+          "responsibility": "DATA_CATALOG目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+          "responsibility": "DATA_COMPRESSION_ARCHIVE目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+          "responsibility": "DATA_CONTRACT目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+          "responsibility": "DATA_FEDERATION目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+          "responsibility": "DATA_LIFECYCLE_MANAGEMENT目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+          "responsibility": "DATA_LINEAGE_TRACKING目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+          "responsibility": "DATA_MONITORING_ENHANCED目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+          "responsibility": "DATA_OBSERVABILITY目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+          "responsibility": "DATA_ORCHESTRATION_ENHANCED目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+          "responsibility": "DATA_PERMISSION_MANAGEMENT目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+          "responsibility": "DATA_PROFILING目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+          "responsibility": "DATA_SECURITY_PRIVACY目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+          "responsibility": "DATA_STANDARDIZATION目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+          "responsibility": "DATA_SYNC_REPLICATION目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+          "responsibility": "DATA_TESTING_FRAMEWORK目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+          "responsibility": "DATA_VERSION_CONTROL目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\IFIND\\INDEX.md",
+          "responsibility": "IFIND目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+          "responsibility": "QUALITY_MANAGEMENT目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+          "responsibility": "REALTIME_DATA_STREAMING目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+          "responsibility": "TIME_SERIES_STORAGE目录索引"
+        },
+        {
+          "path": "04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+          "responsibility": "financial_statements目录索引"
+        },
+        {
+          "path": "05_BACKTEST\\value_factors\\INDEX.md",
+          "responsibility": "value_factors目录索引"
+        }
+      ],
+      "count": 40
+    },
+    {
+      "keyword": "说明文档",
+      "items": [
+        {
+          "path": "README.md",
+          "responsibility": "02_FACTOR_LIBRARY说明文档"
+        },
+        {
+          "path": "01_STANDARDS\\README.md",
+          "responsibility": "01_STANDARDS说明文档"
+        },
+        {
+          "path": "05_BACKTEST\\README.md",
+          "responsibility": "05_BACKTEST说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+          "responsibility": "07_DATA_PIPELINE说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+          "responsibility": "CONFIG_MANAGEMENT说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+          "responsibility": "DATA_ANOMALY_DETECTION说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+          "responsibility": "DATA_API_GATEWAY说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+          "responsibility": "DATA_BACKUP_RECOVERY说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+          "responsibility": "DATA_CATALOG说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+          "responsibility": "DATA_COMPRESSION_ARCHIVE说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+          "responsibility": "DATA_CONTRACT说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+          "responsibility": "DATA_FEDERATION说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+          "responsibility": "DATA_LIFECYCLE_MANAGEMENT说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+          "responsibility": "DATA_LINEAGE_TRACKING说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+          "responsibility": "DATA_MONITORING_ENHANCED说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+          "responsibility": "DATA_OBSERVABILITY说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+          "responsibility": "DATA_ORCHESTRATION_ENHANCED说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+          "responsibility": "DATA_PERMISSION_MANAGEMENT说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+          "responsibility": "DATA_PROFILING说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+          "responsibility": "DATA_SECURITY_PRIVACY说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+          "responsibility": "DATA_STANDARDIZATION说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+          "responsibility": "DATA_SYNC_REPLICATION说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+          "responsibility": "DATA_TESTING_FRAMEWORK说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+          "responsibility": "DATA_VERSION_CONTROL说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\IFIND\\README.md",
+          "responsibility": "IFIND说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+          "responsibility": "REALTIME_DATA_STREAMING说明文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+          "responsibility": "TIME_SERIES_STORAGE说明文档"
+        }
+      ],
+      "count": 27
+    },
+    {
+      "keyword": "蓝图设计",
+      "items": [
+        {
+          "path": "04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+          "responsibility": "A_SHARE_HISTORICAL_DATA_PROCESSING蓝图设计"
+        },
+        {
+          "path": "05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
+          "responsibility": "FACTOR_VALIDATION蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\02_SCHEDULER\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CATALOG\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_CONTRACT\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_FEDERATION\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_PROFILING\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        },
+        {
+          "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\BLUEPRINT.md",
+          "responsibility": "BLUEPRINT蓝图设计"
+        }
+      ],
+      "count": 27
+    },
+    {
+      "keyword": "文档",
+      "items": [
+        {
+          "path": "OPTIMIZATION_SUMMARY.md",
+          "responsibility": "OPTIMIZATION_SUMMARY文档"
+        },
+        {
+          "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+          "responsibility": "因子注册表 Factor Registry文档"
+        },
+        {
+          "path": "01_STANDARDS\\FACTOR_SCREENING_STRATEGY.md",
+          "responsibility": "5900因子筛选策略Factor Screening Strategy文档"
+        },
+        {
+          "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+          "responsibility": "因子分类学Factor Taxonomy文档"
+        },
+        {
+          "path": "03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
+          "responsibility": "T03RM003barra_optimizer文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+          "responsibility": "数据源层架构完整性深度评估报告 v20文档"
+        },
+        {
+          "path": "06_REGISTRY\\FACTOR_CATALOG.md",
+          "responsibility": "因子注册表Factor Registry文档"
+        },
+        {
+          "path": "07_FACTOR_MONITORING\\AI_FACTOR_AGENT.md",
+          "responsibility": "AI因子管家 Alpha Factor Agent文档"
+        },
+        {
+          "path": "10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
+          "responsibility": "因子库手v32文档"
+        }
+      ],
+      "count": 9
+    },
+    {
+      "keyword": "标准规范",
+      "items": [
+        {
+          "path": "01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+          "responsibility": "ALPHA_FACTORS_INDEX标准规范"
+        },
+        {
+          "path": "01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
+          "responsibility": "FACTOR_MANAGEMENT标准规范"
+        },
+        {
+          "path": "04_DATA_SOURCE\\DOCUMENT_NAMING_STANDARD.md",
+          "responsibility": "DOCUMENT_NAMING标准规范"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "keyword": "连接器技术规格文档",
+      "items": [
+        {
+          "path": "04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+          "responsibility": "Baostock连接器技术规格文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\IFIND_CONNECTOR.md",
+          "responsibility": "iFind连接器技术规格文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\SUPERCMD_CONNECTOR.md",
+          "responsibility": "SuperCommand连接器技术规格文档"
+        }
+      ],
+      "count": 3
+    },
+    {
+      "keyword": "操作指南",
+      "items": [
+        {
+          "path": "01_STANDARDS\\FACTOR_MINING_GUIDE.md",
+          "responsibility": "FACTOR_MINING操作指南"
+        },
+        {
+          "path": "01_STANDARDS\\FACTOR_VALIDATION_GUIDE.md",
+          "responsibility": "FACTOR_VALIDATION操作指南"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "keyword": "因子注册表",
+      "items": [
+        {
+          "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+          "responsibility": "因子注册表 Factor Registry文档"
+        },
+        {
+          "path": "06_REGISTRY\\FACTOR_CATALOG.md",
+          "responsibility": "因子注册表Factor Registry文档"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "keyword": "报告文档",
+      "items": [
+        {
+          "path": "03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
+          "responsibility": "FACTOR_TRANSPARENCY报告文档"
+        },
+        {
+          "path": "09_AUDIT\\AUDIT_REPORT.md",
+          "responsibility": "AUDIT报告文档"
+        }
+      ],
+      "count": 2
+    },
+    {
+      "keyword": "参考文档",
+      "items": [
+        {
+          "path": "04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
+          "responsibility": "智能下载调度器API参考文档"
+        },
+        {
+          "path": "04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+          "responsibility": "iFind财务数据API参考文档"
+        }
+      ],
+      "count": 2
+    }
+  ],
+  "unclear_docs": [
+    {
+      "path": "OPTIMIZATION_SUMMARY.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "OPTIMIZATION_SUMMARY文档"
+      ],
+      "title": null
+    },
+    {
+      "path": "01_STANDARDS\\backtest_standards.md",
+      "issues": [
+        "标题过短: 回测标准"
+      ],
+      "responsibilities": [
+        "回测标准文档"
+      ],
+      "title": "回测标准"
+    },
+    {
+      "path": "01_STANDARDS\\INDEX.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "01_STANDARDS目录索引"
+      ],
+      "title": null
+    },
+    {
+      "path": "03_RISK_FACTORS\\INDEX.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "03_RISK_FACTORS目录索引"
+      ],
+      "title": null
+    },
+    {
+      "path": "05_BACKTEST\\INDEX.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "05_BACKTEST目录索引"
+      ],
+      "title": null
+    },
+    {
+      "path": "06_REGISTRY\\INDEX.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "06_REGISTRY目录索引"
+      ],
+      "title": null
+    },
+    {
+      "path": "07_FACTOR_MONITORING\\factor_monitoring.md",
+      "issues": [
+        "标题过短: 因子监控"
+      ],
+      "responsibilities": [
+        "因子监控文档"
+      ],
+      "title": "因子监控"
+    },
+    {
+      "path": "07_FACTOR_MONITORING\\INDEX.md",
+      "issues": [
+        "缺少标题"
+      ],
+      "responsibilities": [
+        "07_FACTOR_MONITORING目录索引"
+      ],
+      "title": null
+    },
+    {
+      "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+      "issues": [
+        "标题过短: 配置管理"
+      ],
+      "responsibilities": [
+        "CONFIG_MANAGEMENT说明文档"
+      ],
+      "title": "配置管理"
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+      "issues": [
+        "标题过短: 数据目录"
+      ],
+      "responsibilities": [
+        "DATA_CATALOG说明文档"
+      ],
+      "title": "数据目录"
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+      "issues": [
+        "标题过短: 数据契约"
+      ],
+      "responsibilities": [
+        "DATA_CONTRACT说明文档"
+      ],
+      "title": "数据契约"
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+      "issues": [
+        "标题过短: 数据联邦"
+      ],
+      "responsibilities": [
+        "DATA_FEDERATION说明文档"
+      ],
+      "title": "数据联邦"
+    },
+    {
+      "path": "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+      "issues": [
+        "标题过短: 数据分析"
+      ],
+      "responsibilities": [
+        "DATA_PROFILING说明文档"
+      ],
+      "title": "数据分析"
+    },
+    {
+      "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+      "issues": [
+        "标题过短: 时序存储"
+      ],
+      "responsibilities": [
+        "TIME_SERIES_STORAGE说明文档"
+      ],
+      "title": "时序存储"
+    }
+  ],
+  "dir_issues": {
+    "sparse_dirs": [
+      {
+        "path": "00_GOVERNANCE",
+        "file_count": 1,
+        "files": [
+          "00_GOVERNANCE\\INDEX.md"
+        ]
+      },
+      {
+        "path": "02_ALPHA_FACTORS_INDEX",
+        "file_count": 2,
+        "files": [
+          "02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
+          "02_ALPHA_FACTORS_INDEX\\INDEX.md"
+        ]
+      },
+      {
+        "path": "06_REGISTRY",
+        "file_count": 2,
+        "files": [
+          "06_REGISTRY\\FACTOR_CATALOG.md",
+          "06_REGISTRY\\INDEX.md"
+        ]
+      },
+      {
+        "path": "09_AUDIT",
+        "file_count": 2,
+        "files": [
+          "09_AUDIT\\AUDIT_REPORT.md",
+          "09_AUDIT\\INDEX.md"
+        ]
+      },
+      {
+        "path": "04_DATA_SOURCE\\IFIND",
+        "file_count": 2,
+        "files": [
+          "04_DATA_SOURCE\\IFIND\\INDEX.md",
+          "04_DATA_SOURCE\\IFIND\\README.md"
+        ]
+      }
+    ],
+    "deep_dirs": []
+  },
+  "index_issues": {
+    "missing_index_dirs": []
+  },
+  "module_id_duplicates": [
+    {
+      "module_id": "INDEX",
+      "paths": [
+        "INDEX.md",
+        "00_GOVERNANCE\\INDEX.md",
+        "01_STANDARDS\\INDEX.md",
+        "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+        "03_RISK_FACTORS\\INDEX.md",
+        "04_DATA_SOURCE\\INDEX.md",
+        "05_BACKTEST\\INDEX.md",
+        "06_REGISTRY\\INDEX.md",
+        "07_FACTOR_MONITORING\\INDEX.md",
+        "09_AUDIT\\INDEX.md",
+        "10_MANUAL\\INDEX.md",
+        "04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+        "04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+        "04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+        "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+        "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+        "04_DATA_SOURCE\\IFIND\\INDEX.md",
+        "04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+        "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+        "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+        "04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+        "05_BACKTEST\\value_factors\\INDEX.md"
+      ],
+      "count": 40
+    },
+    {
+      "module_id": "README",
+      "paths": [
+        "README.md",
+        "01_STANDARDS\\README.md",
+        "05_BACKTEST\\README.md",
+        "04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+        "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+        "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+        "04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+        "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+        "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+        "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+        "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+        "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+        "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+        "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+        "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+        "04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+        "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+        "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+        "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+        "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+        "04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+        "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+        "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+        "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+        "04_DATA_SOURCE\\IFIND\\README.md",
+        "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+        "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md"
+      ],
+      "count": 27
+    },
+    {
+      "module_id": "BLUEPRINT",
+      "paths": [
+        "04_DATA_SOURCE\\02_SCHEDULER\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_API_GATEWAY\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_CATALOG\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_CONTRACT\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_FEDERATION\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_OBSERVABILITY\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_PROFILING\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_STANDARDIZATION\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\BLUEPRINT.md",
+        "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\BLUEPRINT.md"
+      ],
+      "count": 25
+    }
+  ]
+}

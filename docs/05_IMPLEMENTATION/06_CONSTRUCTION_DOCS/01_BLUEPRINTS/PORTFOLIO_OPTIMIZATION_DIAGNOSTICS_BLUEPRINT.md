@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 version: 1.0.0
 status: Active
@@ -14,6 +14,7 @@ responsibility:
   - 问题排查
 layer: Layer 5.2 (组合优化)
 ---
+
 
 # 组合优化诊断蓝图
 
@@ -121,13 +122,13 @@ class OptimizationDiagnostics:
         pass
 ```
 
----
+
 
 ## 3. 实施路径
 
 - [ ] 实现优化结果验证
 
----
+
 
 ## 4. 文档治理
 
@@ -142,4 +143,4 @@ class OptimizationDiagnostics:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

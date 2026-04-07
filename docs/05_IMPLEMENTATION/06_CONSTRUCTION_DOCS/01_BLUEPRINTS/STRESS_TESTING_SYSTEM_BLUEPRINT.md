@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 压力测试系统
+  - 情景定义
+  - 冲击模拟
+  - 结果分析
 
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0
@@ -12,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
+
 
 # 压力测试系统蓝图
 
@@ -103,7 +107,7 @@ layer: Layer 5.3 (风险管理)
 景
 景下的风险暴露报告
 
----
+
 
 ## 2. 架构设计
 
@@ -114,11 +118,11 @@ layer: Layer 5.3 (风险管理)
 
 ```
 历史危机事件数据 + 当前组合持仓
-æ
+
 生成压力测试报告
 ```
 
----
+
 
 ## 3. 核心模块设计
 
@@ -146,7 +150,7 @@ class StressTestingSystem:
         
         Args:
             portfolio: 当前组合
-            scenarios: æ
+            scenarios: 
             
         Returns:
             StressTestResult: 压力测试结果
@@ -181,15 +185,15 @@ class StressTestingSystem:
         )
 ```
 
-### 3.2 æ
+### 3.2 
 
 ```python
 class ScenarioAnalyzer:
     """
-    æ
+    
     
     索引: STRESS_TEST_001-M02
-æ?
+?
     """
     
     def apply_shock(
@@ -201,7 +205,7 @@ class ScenarioAnalyzer:
         
         Args:
             portfolio: 原始组合
-            scenario: æ
+            scenario: 
 景定义
             
         Returns:
@@ -215,16 +219,16 @@ class ScenarioAnalyzer:
             return self._apply_custom_shock(portfolio, scenario)
 ```
 
----
+
 
 ## 4. 压力测试场景设计
 
 
-| æ
+| 
 景名称 | 时间范围 | 触发事件 | 主要冲击 | 适用场景 |
 |----------|----------|----------|----------|----------|
 
-### 4.2 æ
+### 4.2 
 
 ```yaml
 # stress_test_scenarios.yaml
@@ -378,7 +382,7 @@ class MonteCarloScenarioGenerator:
         return pd.DataFrame(simulated, columns=mean.index)
 ```
 
----
+
 
 ## 5. 测试指标体系
 
@@ -490,15 +494,15 @@ class StressTestMetricsCalculator:
 ## 1. 测试概况
 - **测试日期**: {test_date}
 - **测试范围**: {test_scope}
-- **æ
+- **
 景数量**: {n_scenarios}
 - **测试结论**: {conclusion}
 
-## 2. æ
+## 2. 
 景分析结果
 
 景
-| æ
+| 
 景名称 | 组合损失 | 风险等级 | 主要风险因子 |
 |----------|----------|----------|--------------|
 | {scenario_1} | {loss_1:.2%} | {risk_level_1} | {factors_1} |
@@ -526,7 +530,7 @@ class StressTestMetricsCalculator:
 {recommendations}
 ```
 
----
+
 
 ## 6. 接口设计
 
@@ -536,7 +540,7 @@ class StressTestMetricsCalculator:
 # 压力测试接口
 > **核心职责**: Stress Testing System蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
@@ -544,7 +548,7 @@ class StressTestMetricsCalculator:
 景的风险评估
 
 
----
+
 
 ## 📋 概述
 
@@ -560,7 +564,7 @@ def run_stress_test(
     
     Args:
         portfolio: 当前组合
-        scenarios: æ
+        scenarios: 
 景列表
         
     Returns:
@@ -568,7 +572,7 @@ def run_stress_test(
     """
     pass
 
-# æ
+# 
 景生成接口
 def generate_scenarios(
     scenario_type: str,
@@ -578,17 +582,17 @@ def generate_scenarios(
 景
     
     Args:
-        scenario_type: æ
-        config: æ
+        scenario_type: 
+        config: 
         
     Returns:
-        List[Scenario]: æ
+        List[Scenario]: 
 景列表
     """
     pass
 ```
 
----
+
 
 
 
@@ -598,17 +602,17 @@ def generate_scenarios(
 
 ### 5.2 推荐实施路径
 
-1. å
+1. 
 
----
+
 
 ## 6. 性能指标
 
 |------|--------|----------|
-| **æ
+| **
 | **压力测试执行时间** | <10s | 性能测试 |
 
----
+
 
 
 ### 上游依赖
@@ -643,7 +647,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 变更历史
 
@@ -652,9 +656,9 @@ graph LR
 | v1.0.1 | 2026-04-06 | 修复编码问题，删除乱码YAML头部 | 审计系统 |
 容结构 | 审计系统 |
 
----
 
----
+
+
 
 ## 7. 文档治理
 
@@ -670,11 +674,11 @@ graph LR
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Stress Testing System** | å
+| **Stress Testing System** | 
 
 ### 7.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

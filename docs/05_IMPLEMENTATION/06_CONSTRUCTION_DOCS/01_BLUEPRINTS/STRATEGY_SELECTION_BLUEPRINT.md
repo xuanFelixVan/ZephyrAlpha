@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 交易策略框架设计与实施指导与实施指导
+  - 策略选择
+  - 策略评估
+  - 策略排名
+  - 策略组合
 
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0
@@ -888,7 +891,7 @@ class AIStrategyRecommender:
 # config/strategy_selection.yaml
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
@@ -896,7 +899,7 @@ class AIStrategyRecommender:
 策略选择，负责交易策略的评估和选择
 
 
----
+
 
 ## 📋 概述
 
@@ -997,7 +1000,7 @@ python strategy_selector.py query \
 - 数据库：SQLite（开发）?PostgreSQL（生产）
 - 可视化：Plotly、ECharts、Highcharts
 
-## å
+## 
 
 ### Phase 1: 基础排名系统?周）
 - [ ] MultiCriteriaEvaluator TOPSIS实现
@@ -1083,11 +1086,11 @@ graph LR
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategy Selection** | å
+| **Strategy Selection** | 
 
 ### 1.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

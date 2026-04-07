@@ -1,23 +1,20 @@
 ﻿---
-## 文档职责说明
-
+module_id: SENTIMENT_ANALYSIS_RISK_MANAGEMENT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - SENTIMENT ANALYSIS RISK MANAGEMENT document
 **本文档职责**: 风险管理文档
-- 风险识别、风险评估、风险缓解措施
-
-# 舆情分析层改进模块风险管理文
-
 > **核心职责**: 文档内容说明
 > **职责边界**: 
-> - ✅ 本文档负责：文档内容说明相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
 > **最后更*: 2026-04-04
 > **文档类型**: 风险管理
 > **状*: 活跃
-
 ---
 
 ## 📋 文档目录

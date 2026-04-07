@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
 version: 1.0.0
 status: Active
@@ -151,7 +151,7 @@ class DiversificationMetrics:
         pass
 ```
 
----
+
 
 ## 3. é
 
@@ -171,13 +171,13 @@ diversification_metrics:
 过40%
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -206,4 +206,4 @@ diversification_metrics:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

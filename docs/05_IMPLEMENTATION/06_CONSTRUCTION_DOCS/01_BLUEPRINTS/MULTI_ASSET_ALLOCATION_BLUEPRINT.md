@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -82,7 +82,7 @@ layer: Layer 5.2 (组合优化)
 ### 2.2 核心数据?
 ```
 
----
+
 
 ## 3. 核心模块设计
 
@@ -518,7 +518,7 @@ class CorrelationConfig:
 class RiskParityConfig:
     max_weight: float = 0.60  # 单资产最大权?    min_weight: float = 0.05  # 单资产最小权?```
 
----
+
 
 ## 4. 数据模型定义
 
@@ -546,7 +546,7 @@ class RiskReport:
     timestamp: datetime
 ```
 
----
+
 
 ## 5. 集成方案
 
@@ -585,7 +585,7 @@ class BarraRiskModel:
         return risk_budget
 ```
 
----
+
 
 ## 6. 实施路线?
 ### 6.1 开发阶段（3周）
@@ -609,7 +609,7 @@ class BarraRiskModel:
 | **M4: 监控器完?* | Week 3 Day 2 | 跨资产风险监控器 | 监控有效 |
 | **M5: 测试通过** | Week 3 Day 4 | 测试报告 | 所有测试通过 |
 
----
+
 
 ## 7. 预期收益评估
 
@@ -621,7 +621,7 @@ class BarraRiskModel:
 
 ### 7.2 定性收?
 
----
+
 
 ## 8. 技术栈选择
 
@@ -644,7 +644,7 @@ pip install scipy>=1.7
 pip install arch>=5.0
 ```
 
----
+
 
 ## 9. 风险评估
 
@@ -661,7 +661,7 @@ pip install arch>=5.0
 洗和验?|
 | **性能不达?* | ?| 性能优化 |
 
----
+
 
 ## 10. 文档治理
 
@@ -681,7 +681,7 @@ pip install arch>=5.0
 | **Barra风险模型** | 风险模型 | 提供风险模型数据 |
 部优化 |
 
----
+
 
 ## 附录
 
@@ -690,7 +690,7 @@ pip install arch>=5.0
    - Qian, E. (2005). "Risk Parity Portfolios"
    - Asness, C., Frazzini, A., and Pedersen, L.H. (2012). "Leverage Aversion and Risk Parity"
 
-2. **å
+2. **
    - Bridgewater Associates. "The All Weather Story"
    - Dalio, R. (2017). "Principles for Dealing with the Changing World Order"
 
@@ -699,23 +699,23 @@ pip install arch>=5.0
 
 
 |------|------|--------|
-| **å
+| **
 | **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
 
----
+
 
 ## 11. 变更历史
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
----
+
 
 ## 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ```

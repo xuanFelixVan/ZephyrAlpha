@@ -5,20 +5,16 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 数据质量监控与保障
 compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
-reference_models:
-  - Great Expectations
-  - Deequ
-  - Apache Griffin
+reference_models: 
 open_source_solution: "Great Expectations"
 priority: P1
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
 ---
 
 ## 文档职责说明

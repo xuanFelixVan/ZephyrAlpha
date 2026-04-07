@@ -1,17 +1,18 @@
 ﻿---
-## 文档职责说明
-
+module_id: PERFORMANCE_ANALYSIS_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - PERFORMANCE ANALYSIS module blueprint design
 **本文档职责**: 性能分析模块蓝图
-- 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析
-
-# 性能分析模块蓝图
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **实施周期**: 1.5
 > **核心定位**: 系统性能分析与优
 > **技术栈**: Python + cProfile + Py-Spy
-
 ---
 
 ## 一、概

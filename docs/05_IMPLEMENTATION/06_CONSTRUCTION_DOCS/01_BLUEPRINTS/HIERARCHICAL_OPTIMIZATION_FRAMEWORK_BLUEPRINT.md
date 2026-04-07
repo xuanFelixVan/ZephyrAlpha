@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 version: 1.0.0
 status: Active
@@ -14,6 +14,7 @@ responsibility:
   - 多层级优化
 layer: Layer 5.2 (组合优化)
 ---
+
 
 ## 核心定位
 
@@ -76,7 +77,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 2. 架构设计
@@ -84,7 +85,7 @@ layer: Layer 5.2 (组合优化)
 ### 2.1 三层优化架构
 
 ```
-¥: å
+¥: 
 ```
 
 
@@ -227,7 +228,7 @@ class CrossLayerConstraintCoordinator:
         """
         
         示例:
-        å
+        
         分解: 
         """
         pass
@@ -251,7 +252,7 @@ class CrossLayerConstraintCoordinator:
         pass
 ```
 
----
+
 ## 3. 功能设计
 
 ### 3.1 核心功能
@@ -361,7 +362,7 @@ class OptimizationMethodSelector:
         pass
 ```
 
----
+
 
 
 ```
@@ -381,17 +382,17 @@ class OptimizationMethodSelector:
 └── 诊断信息 (Dict)
 ```
 
----
+
 
 ## 5. 应用场景
 
-### 5.1 å
+### 5.1 
 
 ```python
 # 三层优化示例
 > **核心职责**: Hierarchical Optimization Framework蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
@@ -399,7 +400,7 @@ class OptimizationMethodSelector:
 分层优化框架，负责多层级组合优化
 
 
----
+
 
 ## 📋 概述
 
@@ -408,7 +409,7 @@ optimizer = HierarchicalOptimizer(n_layers=3)
 
 
 
-# å
+# 
 
 result = optimizer.optimize(
     assets=global_assets,
@@ -456,7 +457,7 @@ result = optimizer.optimize(
 )
 ```
 
----
+
 
 ## 6. 性能优化
 
@@ -466,7 +467,7 @@ result = optimizer.optimize(
 | 单层优化 | 500 | O(n³) | ~10s |
 | 双层优化 | 500 | O(n³/k² + k³) | ~2s |
 
-å
+
 
 
 ```python
@@ -477,7 +478,7 @@ optimizer = HierarchicalOptimizer(
 )
 ```
 
----
+
 
 ## 7. 实施路径
 
@@ -489,20 +490,20 @@ optimizer = HierarchicalOptimizer(
 - [ ] 实现迭代协调
 - [ ] 集成测试
 
----
+
 
 ## 8. 文档治理
 
 ### 8.1 索引信息
-- **System_Manifest.md**: å¾
-- **INDEX.md**: å¾
+- **System_Manifest.md**: ¾
+- **INDEX.md**: ¾
 - **module_id**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 
 ### 8.2 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 ## 9. 风险评估
 
@@ -524,4 +525,4 @@ optimizer = HierarchicalOptimizer(
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

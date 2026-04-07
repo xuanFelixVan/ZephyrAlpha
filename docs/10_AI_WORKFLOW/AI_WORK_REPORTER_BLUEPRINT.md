@@ -1,17 +1,18 @@
 ﻿---
-## 文档职责说明
-
+module_id: AI_WORK_REPORTER_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - AI WORK REPORTER module blueprint design
 **本文档职责**: AI工作汇报与交付模块蓝图
-- 每日工作总结、进度通知、决策汇报、交互交付、可视化展示
-
-# AI工作汇报与交付模块蓝
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **实施周期**: 1.5
 > **核心定位**: AI与用户的交互交付桥梁
 > **技术栈**: Streamlit + Plotly + Markdown
-
 ---
 
 ## 一、概

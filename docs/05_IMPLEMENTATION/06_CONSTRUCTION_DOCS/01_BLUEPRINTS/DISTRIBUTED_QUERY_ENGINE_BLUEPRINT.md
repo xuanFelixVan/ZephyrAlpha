@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DISTRIBUTED_QUERY_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,12 +8,20 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 分布式查询引擎
+  - 查询优化
+  - 并行执行
+  - 结果聚合
+
 layer: Layer 5.1 (数据处理)
 ---
 
 
 ## 核心定位
+
+> **职责边界**: 
+> - ✅ 本文档负责：分布式查询引擎、查询优化、并行执行
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
 负责分布式查询引擎的设计与构建和运行和操作，基于分布式计算技术，生成和输出跨数据源查询能力。 提供数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
@@ -68,7 +76,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 📋 执行摘要
@@ -81,7 +89,7 @@ layer: Layer 5.1 (数据处理)
 
 
 
----
+
 
 
 ### 1.1 模块定位
@@ -102,7 +110,7 @@ layer: Layer 5.1 (数据处理)
 | **跨源查询** | P0 | Trino |
 | **数据联邦** | P1 | Trino Connectors |
 
----
+
 
 ## 2. 系统架构设计
 
@@ -147,24 +155,24 @@ graph TB
 **核心功能**:
 - 并行执行
 - 数据传输
-- å
+- 
 存管理
 - 错误处理
 
 
 
 **核心功能**:
-- å
+- 
 - 数据类型映射
 
----
+
 
 
 ### 3.1 Trino集成
 
 **GitHub**: https://github.com/trinodb/trino
 
-**Staræ?*: 10k+
+**Star?*: 10k+
 
 - 分布式SQL查询
 - 多数据源支持
@@ -455,7 +463,7 @@ class QueryCache:
         return time.time() - cached_result['timestamp'] < self.ttl
     
     def _evict(self):
-        """æ¸
+        """¸
 理缓存"""
         import time
         
@@ -477,7 +485,7 @@ class QueryCache:
             del self.cache[oldest_key]
 ```
 
----
+
 
 
 
@@ -513,7 +521,7 @@ hive.s3.aws-secret-key: minioadmin
 hive.s3.path-style-access: true
 ```
 
----
+
 
 ## 5. 查询示例
 
@@ -593,7 +601,7 @@ result = cross_source_manager.federated_query(query_config)
 print(result)
 ```
 
----
+
 
 ## 6. 实施计划
 
@@ -620,10 +628,10 @@ print(result)
 - 查询缓存
 - 性能优化
 
----
 
 
-### 7.1 å
+
+### 7.1 
 
 |------|--------|----------|
 
@@ -631,9 +639,9 @@ print(result)
 
 |------|------|--------|
 | **检查查询性能** | 每天 | 运维人员 |
-| **æ¸
+| **¸
 
----
+
 
 ## 8. 成本效益分析
 
@@ -653,7 +661,7 @@ print(result)
 
 **ROI**: (45,000 - 3,000) / 3,000 = 1400%
 
----
+
 
 
 
@@ -666,7 +674,7 @@ print(result)
 |------|------|----------|
 时控制 + 异步查询 |
 
----
+
 
 ## 10. 后续优化方向
 
@@ -683,7 +691,7 @@ print(result)
 助查询
 - [ ] 自适应优化
 
----
+
 
 
 
@@ -694,6 +702,15 @@ print(result)
 - [Trino官方文档](https://trino.io/docs/current/)
 - [SQL查询优化指南](https://trino.io/docs/current/optimizer.html)
 
----
+
 
 **文档版本**: v1.0.0
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

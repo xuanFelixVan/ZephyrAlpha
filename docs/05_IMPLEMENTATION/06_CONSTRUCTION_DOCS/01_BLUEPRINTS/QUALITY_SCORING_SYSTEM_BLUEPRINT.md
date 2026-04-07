@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 质量评分系统
+  - 评分模型
+  - 质量指标
+  - 评分报告
+
 layer: Layer 5 (策略执行层)
 ---
+
 
 # 数据质量评分系统蓝图
 
@@ -451,7 +456,7 @@ class ScoreHistoryManager:
         }
 ```
 
----
+
 
 ## 四、数据流设计
 
@@ -465,7 +470,7 @@ class ScoreHistoryManager:
 ```
 ```
 
----
+
 
 
 ### 5.1 RESTful API
@@ -515,9 +520,9 @@ GET /api/v1/quality/trend/{table_name}?days=30
 }
 ```
 
----
 
-## å
+
+## 
 
 
 ```yaml
@@ -552,7 +557,7 @@ volumes:
   redis-data:
 ```
 
----
+
 
 
 ### 7.1 核心指标
@@ -562,9 +567,9 @@ volumes:
 | `quality_score_overall` | Gauge | 综合质量评分 |
 | `quality_score_calculation_duration_seconds` | Histogram | 评分计算耗时 |
 
----
 
-## å
+
+## 
 
 
 |------|------|---------|--------|
@@ -574,14 +579,14 @@ volumes:
 - [ ] 评分准确率≥95%
 - [ ] 趋势分析功能正常
 
----
+
 
 
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
 
----
+
 
 
 ### 上游依赖
@@ -615,9 +620,9 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -640,7 +645,7 @@ graph LR
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 变更历史
@@ -649,5 +654,5 @@ graph LR
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,13 +6,21 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - DATA_SOURCE_HEALTH_MONITOR蓝图设计
+  - 数据源健康监控
+  - 健康检查
+  - 故障检测
+  - 告警通知
+standard_type: 专业量化机构蓝图
+compliance_level: 专业标准
+layer: Layer 5.1 (数据处理)
 ---
 
 
-
-
 ## 核心定位
+
+> **职责边界**: 
+> - ✅ 本文档负责：数据源健康监控、健康检查、故障检测
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
 负责数据源健康监控的设计与构建和运行和操作，基于健康检查技术，监控数据源状态，确保数据可用性。 生成和输出数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
@@ -67,7 +75,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -78,10 +86,10 @@ responsibility:
 ### 1.2 核心功能矩阵
 
 |---------|---------|--------|-----------|---------|
-| **æ
+| **
 障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
----
+
 
 
 
@@ -93,7 +101,7 @@ responsibility:
                     完整监控链路
 ```
 
----
+
 
 
 ### 3.1 数据源健康检查器
@@ -521,11 +529,11 @@ class DataSourceMetrics:
         self.source_info.info(info)
 ```
 
-### 3.3 æ
+### 3.3 
 
 ```python
 """
-æ
+
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -536,7 +544,7 @@ import logging
 
 
 class FailoverStrategy(Enum):
-    """æ
+    """
 障切换策略"""
     ACTIVE_PASSIVE = "active_passive"
     ACTIVE_ACTIVE = "active_active"
@@ -556,7 +564,7 @@ class DataSourceEndpoint:
 
 
 class FailoverManager:
-    """æ
+    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -949,7 +957,7 @@ class AlertManager:
         return filtered
 ```
 
----
+
 
 
 ### 4.1 Prometheusé
@@ -1104,7 +1112,7 @@ networks:
     external: true
 ```
 
----
+
 
 
 
@@ -1139,7 +1147,7 @@ for source_name, result in results.items():
     print(f"{source_name}: {result.status.value} - {result.response_time_ms:.2f}ms")
 ```
 
-### 5.2 æ
+### 5.2 
 障切换
 
 ```python
@@ -1167,7 +1175,7 @@ failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
-print(f"æ
+print(f"
 ```
 
 ### 5.3 告警通知
@@ -1204,7 +1212,7 @@ alert = alert_manager.create_alert(
 print(f"告警ID: {alert.alert_id}")
 ```
 
----
+
 
 
 ### 6.1 监控指标
@@ -1212,26 +1220,26 @@ print(f"告警ID: {alert.alert_id}")
 |------|--------|---------|
 | **响应时间(P95)** | <1s | >5s |
 | **数据延迟** | <10s | >60s |
-| **æ
-| **æ
+| **
+| **
 障切换时间** | <10s | >30s |
 
 ### 6.2 资源占用
 
 | 资源 | Prometheus | Grafana | Alertmanager | 总计 |
 |------|-----------|---------|-------------|------|
-| CPU | 0.5æ ?| 0.2æ ?| 0.1æ ?| 0.8æ ?|
-| å
+| CPU | 0.5 ?| 0.2 ?| 0.1 ?| 0.8 ?|
+| 
 存 | 512MB | 256MB | 128MB | 896MB |
 | 存储 | 10GB | 1GB | 1GB | 12GB |
 
----
 
 
 
-æ?
 
-### 7.2 æ
+?
+
+### 7.2 
 障切换
 
 2. **自动恢复**: 备用数据源恢复后自动切回主数据源
@@ -1243,7 +1251,7 @@ print(f"告警ID: {alert.alert_id}")
 3. **多渠道通知**: 邮件 + Webhook + 即时通讯
 4. **告警聚合**: 相同告警聚合显示
 
----
+
 
 
 
@@ -1251,14 +1259,14 @@ print(f"告警ID: {alert.alert_id}")
 - [x] 指标采集
 
 
-- [x] æ
+- [x] 
 障切换功能
 
 
 - [x] 多渠道通知
 - [x] SLA报表
 
----
+
 
 
 
@@ -1272,11 +1280,20 @@ print(f"告警ID: {alert.alert_id}")
 - [SRE运维手册](https://sre.google/sre-book/)
 - [监控告警设计模式](https://www.oreilly.com/library/view/monitoring-distributed-systems/9781491913580/)
 
----
+
 
 
 |------|------|---------|------|
 
----
+
 
 **文档结束**
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

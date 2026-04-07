@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 系统集成
+  - 模块集成
+  - 接口对接
+  - 数据流
 
 module_id: SYSTEM_INTEGRATION_001
 version: 1.0.0
@@ -233,7 +236,7 @@ class ReportDistributor:
                 self.file_exporter.export(report)
 ```
 
----
+
 ## 三、模块间通信机制
 
 ### 3.1 同步通信
@@ -330,7 +333,7 @@ event_bus.publish("risk_threshold_breach", {
 })
 ```
 
----
+
 
 ## 四、数据流设计
 
@@ -365,7 +368,7 @@ pipeline.add_transformer(DataEnricher())
 processed_data = pipeline.process(raw_data)
 ```
 
----
+
 
 ## 五、集成测试策?
 
@@ -434,9 +437,9 @@ def test_complete_report_workflow():
     assert 'fused_report' in result
 ```
 
----
 
-## å
+
+## 
 ### 6.1 容器化部?
 **Docker Composeé
 ```yaml
@@ -531,7 +534,7 @@ spec:
             secretKeyRef:
               name: layer7-secrets
               key: redis-url
----
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -545,13 +548,13 @@ spec:
   type: LoadBalancer
 ```
 
----
+
 
 ## 七、监控与运维
 
 ### 7.1 监控指标
 
-**å
+**
 |---------|---------|------|---------|
 | 性能 | API响应时间 | >200ms | P2 |
 | 性能 | 报告生成时间 | >5min | P1 |
@@ -598,9 +601,9 @@ groups:
       summary: "报告生成失败率过?
 ```
 
----
 
-## å
+
+## 
 ### 8.1 认证授权
 
 **JWT认证**?```python
@@ -625,7 +628,7 @@ def analyze_scenario(
     request: ScenarioRequest,
     user: dict = Depends(verify_token)
 ):
-    """æ
+    """
 景分析接口"""
     if 'scenario:analyze' not in user['permissions']:
         raise HTTPException(status_code=403, detail="Permission denied")
@@ -672,7 +675,7 @@ class RBACManager:
         return permission in role_permissions or '*:' + permission.split(':')[1] in role_permissions
 ```
 
----
+
 
 ## 九、性能优化
 
@@ -739,7 +742,7 @@ def generate_stress_test_report(portfolio_id: str):
 result = generate_stress_test_report.delay("PORTFOLIO_001")
 ```
 
----
+
 
 ## 十、验收标?
 ### 10.1 功能验收
@@ -766,11 +769,11 @@ result = generate_stress_test_report.delay("PORTFOLIO_001")
 | 数据加密 | 敏感数据加密 | 加密验证 |
 | 审计日志 | 操作日志完整 | 日志审查 |
 
----
+
 
 审?**下一?*: 提交给架构评审委员会进行最终评?
 
----
+
 
 
 ### 上游依赖
@@ -804,16 +807,16 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 变更历史
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -834,5 +837,5 @@ graph LR
 
 |------|------|----------|--------|
 
----
+
 

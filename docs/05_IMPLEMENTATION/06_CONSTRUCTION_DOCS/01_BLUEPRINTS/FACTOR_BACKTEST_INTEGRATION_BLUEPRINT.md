@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_BACKTEST_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 因子回测集成
+  - 因子测试
+  - 回测框架
+  - 结果分析
+
 layer: Layer 5 (策略执行层)
 ---
+
 
 ## 核心定位
 
@@ -75,7 +80,7 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 1. 设计原则
@@ -92,7 +97,7 @@ layer: Layer 5 (策略执行层)
 ### 2.1 模块化分层架?(行业标准)
 
 专业量化机构普遍采用分层解耦架构，如ZVT框架?基础设施层→计算引擎层→策略执行层→结果分析?四层模型[1]。这种设计的核心优势是：
-- **å
+- **
 - **可扩?*: 新功能通过插件机制扩展，不影响核心系统
 - **维护?*: 模块化设计降低系统复杂度，提升代码可维护?
 
@@ -142,7 +147,7 @@ layer: Layer 5 (策略执行层)
 # 定制化量化数据模?
 > **核心职责**: Factor Backtest Integration蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
@@ -150,7 +155,7 @@ layer: Layer 5 (策略执行层)
 因子回测集成，负责因子策略的回测验证
 
 
----
+
 
 ## 📋 概述
 
@@ -223,7 +228,7 @@ iFinD API?
 pip install iFinDAPI
 
 # 方法2: 使用SuperCommand客户端进行环境修?
-å
+
 后，运行SuperCommand.exe
 # 选择Python语言 -> 环境修复 -> 选择Python路径
 ```
@@ -405,7 +410,7 @@ Feast历史因子 ?QLib数据预处??AI模型训练 ?新因子发??回Feast存�
 
 ```
 
-### 4.3 å
+### 4.3 
 
 ```python
 # 因子数据标准接口
@@ -560,7 +565,7 @@ class PortfolioOptimizer(ABC):
 | 原则 | 解释 | 实施要点 |
 |------|------|----------|
 | **é
-| **æ
+| **
 
 ### 7.2 极简身份认证与访问控?
 
@@ -573,7 +578,7 @@ class PortfolioOptimizer(ABC):
 api_keys:
   data_sources:
     tushare: "your_tushare_token_here"      # 数据API密钥
-    baostock: ""                            # å
+    baostock: ""                            # 
     ifind: {username: "your_ifind_username", password: "your_ifind_password"}  # iFinD账号和密?
   
   trading:
@@ -629,7 +634,7 @@ chmod 700 ~/.zephyralpha
 
 **简化审计日?*:
 ```python
-# å
+# 
 import logging
 from datetime import datetime
 
@@ -655,13 +660,13 @@ class PersonalAuditLogger:
         return text
 ```
 
-**å¿
+**¿
 1. **API密钥使用**: 每次使用外部API时记录（脱敏后）
 2. **交易执行**: 模拟或实盘交易记?
 3. **数据导出**: 大规模数据导出操?
 4. **系统异常**: 程序崩溃或错?
 
-**æ
+**
 障恢复机制**:
 1. **é
    ```bash
@@ -707,7 +712,7 @@ last_updated: "2026-04-01"
 api_keys:
   data_sources:
     tushare: "您的Tushare Token"
-    baostock: ""  # å
+    baostock: ""  # 
     ifind: {username: "您的iFinD账号", password: "您的iFinD密码"}  # iFinD账号和密?
   
   trading:
@@ -768,7 +773,7 @@ def validate_config(config_path: str) -> bool:
 
 ?
 
-?**å¿
+?**¿
 2. 设置文件权限: `chmod 600 ~/.zephyralpha/config.yaml`
 4. 不在代码中硬编码任何API密钥
 5. 不在日志中输出敏感信?
@@ -795,7 +800,7 @@ def validate_config(config_path: str) -> bool:
 
 **用户友好文档**:
 - 常见问题解答（FAQ）章?
-- æ
+- 
 障排除流程?
 - 一键恢复脚?
 
@@ -810,12 +815,12 @@ def validate_config(config_path: str) -> bool:
 | 组件 | 要求 | 说明 |
 |------|------|------|
 | **Python版本** | Python 3.8 - 3.11 | 推荐Python 3.9（最稳定?|
-| **å
+| **
 ?|
 | **存储空间** | 50GB 可用空间 | 用于存储历史数据和计算结?|
 | **网络** | 稳定的互联网连接 | 用于下载数据和调用API |
 
-**å
+**
 - ?**Windows**: 支持原生Python和Anaconda
 的Python和Anaconda
 的Python和Anaconda
@@ -845,7 +850,7 @@ chmod +x install.sh
 
 （高级用户）**:
 ```bash
-# 1. å
+# 1. 
 git clone https://github.com/zephyralpha/zephyralpha.git
 cd zephyralpha
 
@@ -1077,7 +1082,7 @@ class StorageManager:
         return self.dirs[category] / filename
 ```
 
-### 8.7 æ
+### 8.7 
 障排除与恢?
 
 **常见问题解决方案**:
@@ -1093,7 +1098,7 @@ class StorageManager:
 # 恢复脚本：修复常见问?
 python scripts/recovery.py --fix-all
 
-# å
+# 
 python scripts/recovery.py --fix-deps      # 修复依赖
 python scripts/recovery.py --fix-data      # 修复数据目录
 python scripts/recovery.py --fix-perms     # 修复权限
@@ -1245,14 +1250,14 @@ def first_run_wizard():
 ### 8.10 维护与升?
 
 **日常维护**:
-1. **æ¸
+1. **¸
 理旧数?*:
    ```bash
-   # æ¸
+   # ¸
 理30天前的日志文?
    find ~/zephyralpha_logs -name "*.log" -mtime +30 -delete
    
-   # æ¸
+   # ¸
 理90天前的备份文?
    find ~/zephyralpha_backups -name "backup_*" -mtime +90 -delete
    ```
@@ -1353,11 +1358,11 @@ python scripts/migrate.py
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Factor Backtest Integration** | å
+| **Factor Backtest Integration** | 
 
 ### 11.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

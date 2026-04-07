@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,11 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 质量报告自动化
+  - 报告生成
+  - 数据汇总
+  - 自动化流程
+
 layer: Layer 5 (策略执行层)
 ---
 
@@ -465,7 +469,7 @@ class ReportFormatter:
             json.dump(report_data, f, indent=2, default=str, ensure_ascii=False)
 ```
 
----
+
 
 ## 四、数据流设计
 
@@ -479,7 +483,7 @@ class ReportFormatter:
 ```
 ```
 
----
+
 
 
 ### 5.1 RESTful API
@@ -517,9 +521,9 @@ POST /api/v1/reports/generate
 GET /api/v1/reports/history?report_type=daily&days=30
 ```
 
----
 
-## å
+
+## 
 
 
 ```yaml
@@ -550,7 +554,7 @@ volumes:
   pg-data:
 ```
 
----
+
 
 
 ### 7.1 核心指标
@@ -561,9 +565,9 @@ volumes:
 | `report_generation_duration_seconds` | Histogram | 报告生成耗时 |
 | `reports_sent_total` | Counter | 发送的报告总数 |
 
----
 
-## å
+
+## 
 
 
 |------|------|---------|--------|
@@ -573,14 +577,14 @@ volumes:
 - [ ] 报告生成时间<5分钟
 - [ ] 邮件分发功能正常
 
----
+
 
 
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
 
----
+
 
 
 ### 上游依赖
@@ -616,9 +620,9 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -641,7 +645,7 @@ graph LR
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 变更历史
@@ -650,5 +654,5 @@ graph LR
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

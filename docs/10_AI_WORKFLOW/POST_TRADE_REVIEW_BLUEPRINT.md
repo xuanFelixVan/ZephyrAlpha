@@ -5,22 +5,15 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 交易复盘分析
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
-reference_models:
-  - Professional Trading Review
-  - Performance Attribution
-  - Risk Analysis Framework
-related_documents:
-  - AI_WORKFLOW_LOGGER_BLUEPRINT.md
-  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
-  - QUALITY_MONITORING_BLUEPRINT.md
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+reference_models: 
+related_documents: 
 ---
 
 

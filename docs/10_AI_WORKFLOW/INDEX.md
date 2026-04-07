@@ -1,25 +1,19 @@
 ﻿---
-## 文档职责说明
-
+module_id: INDEX_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - AI工作流与舆情分析综合层索引管理 - comprehensive navigation and document index management
 **本文档职责**: AI工作流与舆情分析综合层索引
-- AI工作流模块导航和文档索引
-- 舆情分析模块导航和文档索引
-- 综合层职责边界说明
-
-# AI工作流与舆情分析综合层索引
-
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
-> - ✅ 本文档负责：AI工作流与舆情分析综合层的导航和索引
-> - ✅ 本文档负责：Layer 7 (AI报告层) 相关模块索引
-> - ✅ 本文档负责：Layer 3 (舆情分析层) 相关模块索引
-> - ❌ 本文档不负责：其他模块内容
-
-> **版本**: v1.2  
-> **创建日期**: 2026-04-02  
-> **核心定位**: AI工作流与舆情分析综合层 - 融合Layer 7 AI报告层与Layer 3舆情分析层  
+> **版本**: v1.2
+> **创建日期**: 2026-04-02
+> **核心定位**: AI工作流与舆情分析综合层 - 融合Layer 7 AI报告层与Layer 3舆情分析层
 > **技术栈**: MLflow + SQLite + Python + Streamlit + LangChain + SHAP
-
 ---
 
 ## 📋 目录职责定义

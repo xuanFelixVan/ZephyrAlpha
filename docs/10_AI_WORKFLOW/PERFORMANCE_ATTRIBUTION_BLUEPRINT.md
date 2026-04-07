@@ -1,17 +1,18 @@
 ﻿---
-## 文档职责说明
-
+module_id: PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - PERFORMANCE ATTRIBUTION module blueprint design
 **本文档职责**: 绩效归因分析系统蓝图
-- 收益归因分析、风险归因分析、因子归因分析、归因报告生成、归因可视化
-
-# 绩效归因分析系统蓝图
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 2-3周
 > **核心定位**: 深入分析收益来源，识别策略优势和劣势
 > **技术栈**: PyPortfolioOpt + Brinson Model + Python + Plotly
-
 ---
 
 ## 1. 概述

@@ -1,16 +1,15 @@
 ﻿---
-## 文档职责说明
-
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - SENTIMENT ANALYSIS SHORT TERM technical specification
 **本文档职责**: 短期改进技术规格书
-- 数据源扩展、深度学习情感分析、实时预警系统技术规格
-
-# 舆情分析层短期改进模块详细技术规格书
-
 > **核心职责**: 文档内容说明
 > **职责边界**: 
-> - ✅ 本文档负责：文档内容说明相关内容
-> - ❌ 本文档不负责：其他模块内容
-
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
 > **最后更新**: 2026-04-04

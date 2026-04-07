@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FINANCING_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,11 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 融资优化
+  - 融资成本
+  - 杠杆优化
+  - 资金效率
+
 layer: Layer 5 (策略执行层)
 ---
 
@@ -74,7 +78,7 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -109,7 +113,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 融资策略
 
@@ -119,7 +123,7 @@ graph LR
 
 ### 2.2 成本优化
 
----
+
 
 ## 3. 核心算法
 
@@ -147,7 +151,7 @@ def optimize_financing(capital_needed: float,
     return optimal_mix
 ```
 
----
+
 
 
 ## 变更历史
@@ -156,9 +160,9 @@ def optimize_financing(capital_needed: float,
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 
----
 
----
+
+
 
 ## 4. 文档治理
 
@@ -174,11 +178,11 @@ def optimize_financing(capital_needed: float,
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Financing Optimization** | å
+| **Financing Optimization** | 
 
 ### 4.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

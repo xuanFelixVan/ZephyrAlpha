@@ -1,6 +1,10 @@
-﻿---
+---
 responsibility:
-  - DYNAMIC_CORRELATION_MODELING蓝图设计
+  - 动态相关性建模
+  - 相关性估计
+  - 时变相关
+  - 协方差矩阵
+
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
 status: Active
@@ -68,10 +72,10 @@ layer: Layer 5.3 (风险管理)
 4. 部署与监控
 
 
-## 核心定位
 
 
----
+
+
 
 
 > **职责边界**: 
@@ -106,7 +110,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 架构设计
 
@@ -118,7 +122,7 @@ graph LR
 市场收益率数?    ?数据预处理（缺失值处理、异常值检测）
 ```
 
----
+
 
 ## 3. 核心模块设计
 
@@ -352,7 +356,7 @@ class DCCConfig:
 class RegimeDetectionConfig:
 ?""
 
----
+
 
 ## 4. 数据模型定义
 
@@ -401,7 +405,7 @@ class RegimeChange:
     timestamp: datetime
 ```
 
----
+
 
 ## 5. 技术实现细?
 ### 5.1 DCC-GARCH模型原理
@@ -412,7 +416,7 @@ class RegimeChange:
 Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?· diag(Q??²
 ```
 
-å
+
 
 ### 5.2 开源库选择
 
@@ -431,9 +435,9 @@ Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?
 **计算优化**?- 使用Numba加速矩阵运?- 并行计算多资产GARCH模型
 - 缓存中间结果
 
-**å
+**
 保留最近N天的数据
----
+
 
 ## 6. 集成方案
 
@@ -478,7 +482,7 @@ class CorrelationAlertSystem:
             )
 ```
 
----
+
 
 ## 7. 测试策略
 
@@ -535,7 +539,7 @@ def test_integration_with_risk_parity():
     assert all(weights >= 0)
 ```
 
----
+
 
 ## 8. 实施路线?
 ### 8.1 开发阶段（2周）
@@ -554,7 +558,7 @@ def test_integration_with_risk_parity():
 | **M5: 集成测试通过** | Day 9 | 完整系统 | 所有测试通过 |
 | **M6: 生产就绪** | Day 10 | 生产系统 | 系统稳定运行 |
 
----
+
 
 ## 9. AI维护指南
 
@@ -572,7 +576,7 @@ def test_integration_with_risk_parity():
 
 **数据异常**?- 缺失数据 ?使用插值或前值填?- 异常??使用Winsorize处理
 
----
+
 
 ## 10. 预期收益评估
 
@@ -584,7 +588,7 @@ def test_integration_with_risk_parity():
 | **组合回撤控制** | -25% | ?18% | +28% |
 
 ### 10.2 定性收?
----
+
 
 ## 11. 风险与约?
 ### 11.1 技术风?
@@ -598,7 +602,7 @@ def test_integration_with_risk_parity():
 
 1. **数据约束**: 需要至?年的历史数据
 
----
+
 
 ## 附录
 
@@ -614,16 +618,16 @@ def test_integration_with_risk_parity():
 - mgarch? https://github.com/ritchan/mgarch
 - 示例代码: docs/examples/dynamic_correlation_example.py
 
----
+
 
 ## 12. 变更历史
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
----
 
----
+
+
 
 ## 13. 文档治理
 
@@ -639,11 +643,11 @@ def test_integration_with_risk_parity():
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Dynamic Correlation Modeling** | å
+| **Dynamic Correlation Modeling** | 
 
 ### 13.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

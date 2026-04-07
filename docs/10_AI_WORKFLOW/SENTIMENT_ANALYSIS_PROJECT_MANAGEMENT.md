@@ -1,23 +1,20 @@
 ﻿---
-## 文档职责说明
-
+module_id: SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - SENTIMENT ANALYSIS PROJECT MANAGEMENT document
 **本文档职责**: 项目管理文档
-- WBS分解、甘特图、里程碑计划、资源分配
-
-# 舆情分析层改进模块项目管理文
-
 > **核心职责**: 文档内容说明
 > **职责边界**: 
-> - ✅ 本文档负责：文档内容说明相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
 > **最后更*: 2026-04-04
 > **文档类型**: 项目管理
 > **状*: 活跃
-
 ---
 
 ## 📋 文档目录

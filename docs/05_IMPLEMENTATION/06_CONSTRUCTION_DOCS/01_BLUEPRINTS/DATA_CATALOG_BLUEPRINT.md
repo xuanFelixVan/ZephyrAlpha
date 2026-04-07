@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_CATALOG_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - DATA_CATALOG蓝图设计
----
+  - 数据目录
+  - 元数据管理
+  - 数据发现
+  - 血缘追踪
 
-﻿---
+
+﻿
 module_id: DATA_CATALOG_001
 version: 1.0.0
 status: Active
@@ -26,7 +29,7 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-负责数据目录的设计与构建和运行和操作，生成和输出数据资产注册、分类、检索和血缘追踪功能，兼容和适配数据治理和资产协调和监控。
+负责数据目录的设计与构建，提供数据资产注册、分类、检索和血缘追踪功能，支持数据治理和资产管理。
 
 # DATA CATALOG BLUEPRINT
 
@@ -84,7 +87,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 一、设计背景与目标
@@ -98,9 +101,9 @@ layer: Layer 5.1 (数据处理)
 
 
 |------|--------|------|
-| **å
+| **
 
----
+
 
 ### 上游依赖
 
@@ -114,7 +117,7 @@ layer: Layer 5.1 (数据处理)
 
 
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | å
+| **OpenMetadata** | 1.2+ | 
 | **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
 | **Neo4j** | 5.0+ | 图数据库 | [官方文档](https://neo4j.com/) |
 
@@ -135,7 +138,7 @@ graph LR
 
 
 
-### 3.1 å
+### 3.1 
 
 
 ```python
@@ -179,7 +182,7 @@ class ColumnMetadata:
     tags: List[str] = field(default_factory=list)
 
 class MetadataCollector:
-    """å
+    """
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -362,8 +365,8 @@ from datetime import datetime
 
 class DataClassification(Enum):
     """数据分类"""
-    PUBLIC = "public"           # å
-    INTERNAL = "internal"       # å
+    PUBLIC = "public"           # 
+    INTERNAL = "internal"       # 
 部数据
     CONFIDENTIAL = "confidential"  # 机密数据
 
@@ -478,7 +481,7 @@ class DataGovernanceService:
         )
 ```
 
----
+
 
 ## 四、OpenMetadata集成方案
 
@@ -624,7 +627,7 @@ class OpenMetadataClient:
         self.client.create_or_update(table)
 ```
 
----
+
 
 ## 五、与现有系统集成
 
@@ -685,9 +688,9 @@ class CatalogQualityIntegration:
         )
 ```
 
----
 
-## å
+
+## 
 
 
 |------|---------|--------|--------|
@@ -699,46 +702,46 @@ class CatalogQualityIntegration:
 |------|---------|--------|--------|
 | é
 
----
+
 
 
 ### 7.1 功能验收
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| å
+| 
 | 数据治理 | 敏感数据自动标记 | 功能测试 |
 
 ### 7.2 性能验收
 
 |------|--------|---------|
-| å
+| 
 
----
 
-## å
+
+## 
 
 | 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|---------|
-| å
+| 
 
----
+
 
 
 1. OpenMetadata官方文档: https://docs.open-metadata.org/
 2. OpenMetadata GitHub: https://github.com/open-metadata/OpenMetadata
 4. 数据质量监控蓝图: REALTIME_QUALITY_MONITOR_BLUEPRINT.md
 
----
+
 
 
 ## 变更历史
 
 |------|------|----------|--------|
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -761,5 +764,5 @@ class CatalogQualityIntegration:
 
 |------|------|----------|--------|
 
----
+
 

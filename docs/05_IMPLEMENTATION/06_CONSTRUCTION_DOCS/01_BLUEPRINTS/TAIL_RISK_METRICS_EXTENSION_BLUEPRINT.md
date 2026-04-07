@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,10 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 系统架构蓝图设计与实施指导
+  - 模块功能实现
+  - 性能优化
+  - 质量保证
 ---
 
 
@@ -72,7 +75,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 职责边界: 
 
@@ -149,7 +152,7 @@ class TailRiskMetrics:
         pass
 ```
 
----
+
 
 ## 3. é
 
@@ -170,7 +173,7 @@ tail_risk_metrics:
   drawdown:
 ```
 
----
+
 
 
 ### 上游依赖
@@ -205,13 +208,13 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -233,5 +236,5 @@ graph LR
 **文档维护**:
 - **责任模块**: TAIL_RISK_METRICS_EXTENSION
 
----
+
 

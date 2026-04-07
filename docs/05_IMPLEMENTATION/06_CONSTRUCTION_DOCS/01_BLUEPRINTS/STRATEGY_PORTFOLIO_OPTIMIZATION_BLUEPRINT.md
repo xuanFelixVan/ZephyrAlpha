@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 策略组合优化
   - 策略权重分配
@@ -16,6 +16,7 @@ applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
+
 
 # 策略组合优化蓝图
 
@@ -124,7 +125,7 @@ layer: Layer 5.2 (组合优化)
 1. 先实现本模块 (5-7? - 建立策略组合优化能力
 2. 再实?MULTI_STRATEGY_HIERARCHICAL_SYSTEM (160h) - 构建完整的分层管理系?
 
----
+
 ## 📚 相关文档
 
 ### 上游依赖
@@ -169,7 +170,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 技术实?
 
@@ -234,7 +235,7 @@ class StrategyPortfolioOptimizer:
         pass
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -266,7 +267,7 @@ class StrategyPortfolioAPI:
         """分配策略风险预算"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -276,7 +277,7 @@ class StrategyPortfolioAPI:
 | Phase 2 | 多策略优化算法实?| 16h |
 | Phase 3 | API、测试、文?| 12h |
 
----
+
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状?*: Active | **合规?*: 100% ?
 
@@ -287,10 +288,10 @@ class StrategyPortfolioAPI:
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 | v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历?| 审计系统 |
 
----
+
 
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状?*: Active
----
+
 
 ## 5. 文档治理
 
@@ -318,6 +319,6 @@ class StrategyPortfolioAPI:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 
----
+
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状?*: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+  - 数据质量监控
+  - 质量规则
+  - 质量评分
+  - 质量报告
+
 layer: Layer 5.1 (数据处理)
 ---
+
 
 # DATA QUALITY MONITORING BLUEPRINT
 
@@ -69,7 +74,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ### 职责边界
@@ -97,7 +102,7 @@ layer: Layer 5.1 (数据处理)
 
 洗**: 由统一数据基础设施负责
 
----
+
 
 
 ### 上游依赖
@@ -134,7 +139,7 @@ graph LR
     style D fill:#96ceb4
 ```
 
----
+
 
 
 ### 整体架构
@@ -240,10 +245,10 @@ graph TB
 
 **特点**:
 - 定时执行
-- å
+- 
 - 报告生成
 
----
+
 
 
 ### 1. 质量规则引擎 (Quality Rule Engine)
@@ -867,7 +872,7 @@ class QualityReportGenerator:
         
         # 基于异常结果生成建议
         if anomaly_results['anomaly_count'] > 10:
-æ´?)
+´?)
         
         critical_anomalies = [a for a in anomaly_results.get('anomalies', []) 
                              if a.get('severity') == 'critical']
@@ -1164,7 +1169,7 @@ class WebhookAlertChannel(AlertChannel):
             return False
 ```
 
----
+
 
 ## 📊 数据模型设计
 
@@ -1217,7 +1222,7 @@ CREATE TABLE quality_reports (
     INDEX idx_report_time (report_time)
 ```
 
----
+
 
 ## 🔌 接口规范
 
@@ -1326,7 +1331,7 @@ Response:
 }
 ```
 
----
+
 
 ## 🚀 实施要点
 
@@ -1335,14 +1340,14 @@ Response:
 
 **验收标准**:
 
----
+
 
 
 **任务**:
 
 **验收标准**:
 
----
+
 
 
 **任务**:
@@ -1352,7 +1357,7 @@ Response:
 - 趋势分析准确
 - 报告生成完整
 
----
+
 
 
 **任务**:
@@ -1361,7 +1366,7 @@ Response:
 - 告警规则可以正常触发
 - 告警历史记录完整
 
----
+
 
 ### 阶段5：集成测试与部署（第2周）
 
@@ -1371,7 +1376,7 @@ Response:
 - 系统可以正常运行
 - 部署文档完整
 
----
+
 
 ## 🧪 测试策略
 
@@ -1440,7 +1445,7 @@ def test_quality_scorer():
     assert score['grade'] in ['A', 'B', 'C', 'D', 'F']
 ```
 
----
+
 
 ## 📈 性能指标
 
@@ -1451,19 +1456,19 @@ def test_quality_scorer():
 
 |------|--------|
 
----
+
 
 
 - [统一数据基础设施蓝图](./UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 
----
+
 
 ## 📝 变更历史
 
 |------|------|---------|------|
 
----
+
 
 
 ## 变更历史
@@ -1471,7 +1476,7 @@ def test_quality_scorer():
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
 
----
+
 
 ## 1. 文档治理
 
@@ -1487,11 +1492,11 @@ def test_quality_scorer():
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Quality Monitoring** | å
+| **Data Quality Monitoring** | 
 
 ### 1.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

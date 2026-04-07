@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 风险平价策略
   - 风险贡献均衡
@@ -17,6 +17,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
+
 
 # 风险平价策略蓝图
 
@@ -97,13 +98,13 @@ layer: Layer 5.2 (组合优化)
 | **创建日期** | 2026-04-06 |
 
 
-| å
+| 
 |---------|---------|-----------|---------|
 | **输出目标** | 组合优化模块 | PORTFOLIO_OPTIMIZATION_001 | 提供风险平价权重 |
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
 | **协同工作** | Black-Litterman模型 | BLACK_LITTERMAN_MODEL_001 | 可选的收益增强 |
 
----
+
 
 ### 上游依赖
 
@@ -136,7 +137,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 架构设计
 
@@ -191,7 +192,7 @@ graph TB
                             风险贡献验证
 ```
 
----
+
 
 
 
@@ -360,7 +361,7 @@ class SkfolioRiskParityOptimizer:
         }
 ```
 
-### 3.2 å
+### 3.2 
 
 #### 3.2.1 风险贡献计算
 
@@ -372,7 +373,7 @@ class SkfolioRiskParityOptimizer:
 RC_i = w_i * (Σ w)_i / σ_p
 ```
 
-å
+
 - w: 权重向量
 
 **实现代码**:
@@ -412,7 +413,7 @@ min Î£ (RC_i - b_i)^2
 s.t. Î£ w_i = 1
 ```
 
-å
+
 
 **实现代码**:
 
@@ -511,10 +512,10 @@ def hierarchical_risk_parity(
 ### 3.4 性能要求
 
 |---------|--------|------|
-| **å
+| **
 存占用** | <50MB | 单次优化 |
 
----
+
 
 ## 4. 数据模型
 
@@ -569,7 +570,7 @@ CREATE TABLE IF NOT EXISTS risk_parity_history (
 );
 ```
 
----
+
 
 ## 5. 接口定义
 
@@ -633,7 +634,7 @@ class RiskParityAPI:
         pass
 ```
 
----
+
 
 ## 6. 实施路径
 
@@ -654,7 +655,7 @@ class RiskParityAPI:
 | 回测验证 | 4h | 回测报告 |
 | 文档编写 | 4h | 用户手册、API文档 |
 
----
+
 
 ## 7. 文档治理
 
@@ -667,7 +668,7 @@ class RiskParityAPI:
 
 - 风险平价负责实现风险预算目标
 
----
+
 
 ## 8. 风险评估
 
@@ -678,7 +679,7 @@ class RiskParityAPI:
 
 |--------|---------|---------|---------|
 
----
+
 
 ## 9. 质量保证
 
@@ -693,7 +694,7 @@ class RiskParityAPI:
 |--------|------|---------|
 | 性能达标 | 优化时间<300ms | 性能测试 |
 
----
+
 
 
 ### 10.1 学术论文
@@ -710,7 +711,7 @@ class RiskParityAPI:
 - [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
 - [层级风险预算蓝图](./HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md)
 
----
+
 
 
 ## 变更历史
@@ -718,5 +719,5 @@ class RiskParityAPI:
 |------|------|----------|--------|
 
 
----
+
 

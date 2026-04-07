@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -77,7 +77,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 核心职责: Portfolio Insurance Strategy蓝图设计
 > 职责边界: 
@@ -116,10 +116,10 @@ def cppi_adjust(portfolio_value: float,
     return new_risk_asset
 ```
 
----
 
 
----
+
+
 
 
 ### 上游依赖
@@ -153,7 +153,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 变更历史
 
@@ -161,9 +161,9 @@ graph LR
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 
----
 
----
+
+
 
 ## 4. 文档治理
 
@@ -179,11 +179,11 @@ graph LR
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Insurance Strategy** | å
+| **Portfolio Insurance Strategy** | 
 
 ### 4.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

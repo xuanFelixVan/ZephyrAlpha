@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -113,7 +113,7 @@ class LiquidityConstrainedOptimizer:
     ) -> None:
         """
         
-æ¸
+¸
 ç®?
         """
         pass
@@ -143,7 +143,7 @@ class LiquidityConstrainedOptimizer:
         pass
 ```
 
----
+
 ## 3. é
 
 ```yaml
@@ -161,13 +161,13 @@ liquidity_constrained_optimization:
     max_slices: 10       # 最大分批数
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -196,4 +196,4 @@ liquidity_constrained_optimization:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 多目标优化
   - 目标权衡
@@ -79,7 +79,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 1. 概述
@@ -97,7 +97,7 @@ layer: Layer 5.2 (组合优化)
 | **模块ID** | MULTI_OBJECTIVE_OPTIMIZATION_001 |
 | **版本** | v1.0.0 |
 
----
+
 
 ### 上游依赖
 
@@ -128,7 +128,7 @@ graph LR
     style D fill:#45b7d1
 ```
 
----
+
 
 
 ### 2.1 核心API
@@ -200,7 +200,7 @@ class MultiObjectiveOptimizer:
         return result.X
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -235,7 +235,7 @@ class MultiObjectiveAPI:
     ) -> List[OptimizationResult]:
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -243,7 +243,7 @@ class MultiObjectiveAPI:
 |------|------|------|
 | Phase 2 | pymoo Pareto前沿实现 | 20h |
 
----
+
 
 
 ## 变更历史
@@ -251,9 +251,9 @@ class MultiObjectiveAPI:
 |------|------|----------|--------|
 
 
----
 
----
+
+
 
 ## 5. 文档治理
 
@@ -274,5 +274,5 @@ class MultiObjectiveAPI:
 
 |------|------|----------|--------|
 
----
+
 

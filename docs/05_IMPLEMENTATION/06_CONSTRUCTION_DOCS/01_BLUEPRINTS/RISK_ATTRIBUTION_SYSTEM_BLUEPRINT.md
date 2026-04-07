@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 风险归因系统
+  - 风险分解
+  - 因子归因
+  - 风险报告
 
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
@@ -12,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
+
 
 # 风险归因系统蓝图
 
@@ -104,7 +108,7 @@ layer: Layer 5.3 (风险管理)
 3. **资产风险归因**: 分解资产风险贡献
 况
 5. **风险归因报告生成**: 生成可视化归因报?
----
+
 
 ## 2. 架构设计
 
@@ -117,7 +121,7 @@ layer: Layer 5.3 (风险管理)
     ?风险分解（因?行业/资产?    ?归因分析（贡献度计算?    ?风险预算执行监控
     ?输出：归因报告、可视化图表、预警信?```
 
----
+
 
 ## 3. 核心模块设计
 
@@ -584,14 +588,14 @@ class AttributionReportGenerator:
 # Risk Attribution Report
 > **核心职责**: Risk Attribution System蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
 
 
 
----
+
 
 ## 📋 概述
 
@@ -659,7 +663,7 @@ class AssetAttributionConfig:
     top_n_assets: int = 20  # 显示Top N资产
 ```
 
----
+
 
 ## 4. 数据模型定义
 
@@ -691,7 +695,7 @@ class RiskBudgetMonitorResult:
     timestamp: datetime
 ```
 
----
+
 
 ## 5. 集成方案
 
@@ -740,7 +744,7 @@ class PortfolioOptimizer:
         return optimal_weights, attribution
 ```
 
----
+
 
 ## 6. 实施路线?
 ### 6.1 开发阶段（2周）
@@ -760,7 +764,7 @@ class PortfolioOptimizer:
 | **M4: 报告生成完成** | Day 7 | 归因报告生成?| 报告完整 |
 | **M5: 测试通过** | Day 10 | 测试报告 | 所有测试通过 |
 
----
+
 
 ## 7. 预期收益评估
 
@@ -776,7 +780,7 @@ class PortfolioOptimizer:
 - ?实现Two Sigma核心能力：风险归?- ?多维度风险分解（因子/行业/资产?- ?风险预算执行监控
 - ?可视化归因报?- ?风险预警机制
 
----
+
 
 ## 8. 技术栈选择
 
@@ -797,7 +801,7 @@ pip install matplotlib>=3.5
 pip install jinja2>=3.0
 ```
 
----
+
 
 ## 9. 风险评估
 
@@ -817,7 +821,7 @@ pip install jinja2>=3.0
 分测试 |
 | **性能不达?* | ?| 性能优化 |
 
----
+
 
 ## 10. 文档治理
 
@@ -839,7 +843,7 @@ pip install jinja2>=3.0
 | **Barra风险模型** | 风险模型、风险分?| 提供风险模型数据 |
 | **组合优化?* | 组合权重优化 | 使用归因结果优化 |
 
----
+
 
 ## 附录
 
@@ -862,7 +866,7 @@ pip install jinja2>=3.0
 风险贡献** | 单位权重增加带来的风险增?| 风险度量 |
 | **主动风险** | 组合相对基准的风?| 相对风险 |
 
----
+
 
 **蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
@@ -898,7 +902,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 变更历史
 
@@ -906,5 +910,5 @@ graph LR
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 
----
+
 

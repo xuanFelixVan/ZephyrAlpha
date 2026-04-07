@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -71,10 +71,10 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
 
 
----
+
+
 
 
 > **职责边界**: 
@@ -106,7 +106,7 @@ Layer 0: 数据源层
 等多源数据
 2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计?3. **交互层面**: 需要模拟智能体之间的博弈和交互
 4. **输出层面**: 需要同时输出因子、信号、决策三种形?
----
+
 
 ### 2.2 因子输出层集成方?
 #### 2.2.1 因子定义
@@ -134,7 +134,7 @@ class InstitutionalActivityFactor(BaseFactor):
         """计算主力动向因子
         
 ¥:
-            data: å
+            data: 
 含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
@@ -320,7 +320,7 @@ class AgentBasedFactorLibrary:
         """计算所有智能体因子
         
         输出:
-            pd.DataFrame: å
+            pd.DataFrame: 
 含所有因子值的DataFrame
         """
         factor_values = {}
@@ -354,7 +354,7 @@ class AgentBasedFactorLibrary:
         return integrated_factors
 ```
 
----
+
 
 ### 2.3 信号输出层集成方?
 #### 2.3.1 信号生成?
@@ -572,7 +572,7 @@ class StrategyWithAgentSignals(BaseStrategy):
         return fused_signals
 ```
 
----
+
 
 ### 2.4 决策输出层集成方?
 #### 2.4.1 多智能体投票机制
@@ -749,11 +749,11 @@ class PortfolioOptimizerWithAgents:
         优化目标:
         max: w'Î¼ - Î» * w'Î£w - Î³ * ||w - w_prior||^2
         
-        å
+        
         - w: 组合权重
         - μ: 预期收益
         - λ: 风险厌恶系数
-        - Î³: å
+        - Î³: 
         """
         import cvxpy as cp
         
@@ -769,7 +769,7 @@ class PortfolioOptimizerWithAgents:
         
         # 目标函数
         lambda_risk = self.config.risk_aversion  # 风险厌恶系数
-        gamma_prior = self.config.prior_deviation_penalty  # å
+        gamma_prior = self.config.prior_deviation_penalty  # 
         
         objective = cp.Maximize(
             mu @ w - 
@@ -793,7 +793,7 @@ class PortfolioOptimizerWithAgents:
         return optimal_weights
 ```
 
----
+
 
 ## 📊 三、集成效果对?
 ### 3.1 单一集成方式 vs 多层次集?
@@ -822,7 +822,7 @@ class PortfolioOptimizerWithAgents:
    - 每个智能体的决策都有明确理由
    - 投票过程透明可追?   - 因子贡献度可量化分析
 
----
+
 
 ## 🚀 四、实施建?
 ### 4.1 分阶段实施路?
@@ -854,7 +854,7 @@ class PortfolioOptimizerWithAgents:
 | **信号生成** | 事件驱动架构 | 灵活,易扩?|
 | **组合优化** | CVXPY + Barra模型 | 专业,可解?|
 
----
+
 
 ## 📝 五、总结
 
@@ -873,7 +873,7 @@ class PortfolioOptimizerWithAgents:
    - 与现有组合优化器集成
    - 提升决策质量
 
-### å
+### 
 
 之间的交互
 - ?**灵活可扩?*: 可单独或组合使用各层输出
@@ -893,7 +893,7 @@ class PortfolioOptimizerWithAgents:
 
 **现在可以开始编码实现了!** 🚀
 
----
+
 
 
 ## 1. 文档治理
@@ -915,11 +915,11 @@ class PortfolioOptimizerWithAgents:
 **文档维护**:
 - **责任模块**: MARKET_PARTICIPANT_SIMULATION
 
----
 
 
 
----
+
+
 
 ## 📊 文档治理
 
@@ -935,4 +935,4 @@ class PortfolioOptimizerWithAgents:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

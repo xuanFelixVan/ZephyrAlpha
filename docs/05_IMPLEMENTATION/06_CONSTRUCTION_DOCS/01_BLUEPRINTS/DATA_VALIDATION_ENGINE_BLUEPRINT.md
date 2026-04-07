@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_VALIDATION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -8,13 +8,22 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+  - 数据验证引擎
+  - 验证规则
+  - 数据校验
+  - 错误报告
+
 layer: Layer 5.1 (数据处理)
 ---
+
 
 # 数据验证引擎蓝图
 
 ## 核心定位
+
+> **职责边界**: 
+> - ✅ 本文档负责：数据验证引擎、验证规则、数据校验
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
 
 负责数据验证引擎的设计与构建和运行和操作，基于验证规则，检查数据有效性，确保数据质量。 生成和输出数据协调和监控、查询、更新功能，确保数据质量和一致性。
 ## 设计目标
@@ -69,7 +78,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 📋 执行摘要
@@ -81,7 +90,7 @@ layer: Layer 5.1 (数据处理)
 
 
 
----
+
 
 
 ### 1.1 模块定位
@@ -100,7 +109,7 @@ layer: Layer 5.1 (数据处理)
 | **业务规则验证** | P0 | Great Expectations |
 | **验证报告生成** | P1 | Great Expectations Docs |
 
----
+
 
 ## 2. 系统架构设计
 
@@ -108,7 +117,7 @@ layer: Layer 5.1 (数据处理)
 
 ```mermaid
 graph TB
-        A[å¾
+        A[¾
     end
     
     subgraph "验证引擎"
@@ -148,7 +157,7 @@ graph TB
 **技术栈**: Pandera
 
 **核心功能**:
-- å¿
+- ¿
 - 数据类型验证
 - 外键约束验证
 
@@ -169,14 +178,14 @@ graph TB
 - 统计指标验证
 - 趋势验证
 
----
+
 
 
 ### 3.1 Great Expectations集成
 
 **GitHub**: https://github.com/great-expectations/great_expectations
 
-**Staræ?*: 9.8k+
+**Star?*: 9.8k+
 
 
 **集成方式**:
@@ -300,7 +309,7 @@ class BusinessRuleValidator:
 
 **GitHub**: https://github.com/unionai-oss/pandera
 
-**Staræ?*: 3.2k+
+**Star?*: 3.2k+
 
 - 数据类型强制转换
 - 统计验证
@@ -387,7 +396,7 @@ class IntegrityValidator:
         
         Args:
             df: Spark DataFrame
-            required_columns: å¿
+            required_columns: ¿
         
         Returns:
             ValidationResult: 验证结果
@@ -545,7 +554,7 @@ class ConsistencyValidator:
         }
 ```
 
----
+
 
 
 
@@ -643,7 +652,7 @@ consistency_rules:
     gap_unit: seconds
 ```
 
----
+
 
 ## 5. 验证报告生成
 
@@ -750,7 +759,7 @@ class ValidationReportGenerator:
         )
 ```
 
----
+
 
 ## 6. 数据质量评分
 
@@ -825,7 +834,7 @@ class DataQualityScorer:
             return 'F'
 ```
 
----
+
 
 ## 7. 实施计划
 
@@ -851,10 +860,10 @@ class DataQualityScorer:
 
 - 验证文档
 
----
 
 
-### 8.1 å
+
+### 8.1 
 
 |------|--------|----------|
 
@@ -875,7 +884,7 @@ alerts:
     severity: warning
 ```
 
----
+
 
 ## 9. 成本效益分析
 
@@ -894,7 +903,7 @@ alerts:
 
 **ROI**: (100,000 - 5,000) / 5,000 = 1900%
 
----
+
 
 
 
@@ -906,7 +915,7 @@ alerts:
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
 
----
+
 
 ## 11. 后续优化方向
 
@@ -924,7 +933,7 @@ alerts:
 - [ ] 数据质量预测
 - [ ] 自适应验证
 
----
+
 
 
 
@@ -937,6 +946,15 @@ alerts:
 - [Pandera官方文档](https://pandera.readthedocs.io/)
 - [Spark DataFrame验证最佳实践](https://spark.apache.org/docs/latest/)
 
----
+
 
 **文档版本**: v1.0.0
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

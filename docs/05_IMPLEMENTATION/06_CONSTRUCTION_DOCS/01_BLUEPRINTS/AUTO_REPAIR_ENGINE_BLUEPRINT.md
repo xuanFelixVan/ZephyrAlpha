@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 自动修复引擎
+  - 异常检测
+  - 自动修复
+  - 健康检查
 
 module_id: AUTO_REPAIR_ENGINE_001
 version: 1.0.0
@@ -71,7 +74,7 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -93,7 +96,7 @@ layer: Layer 5 (策略执行层)
 
 |------|--------|------|
 
----
+
 
 ### 上游依赖
 
@@ -128,7 +131,7 @@ graph LR
     style D fill:#96ceb4
 ```
 
----
+
 
 
 
@@ -146,7 +149,7 @@ graph LR
 
 - **Layer归属**: Layer 1 - 数据预处理层
 
----
+
 
 
 ### 3.1 问题检测器 (ProblemDetector)
@@ -475,7 +478,7 @@ class RepairEvaluator:
         return 0.9
 ```
 
----
+
 
 ## 四、数据流设计
 
@@ -489,7 +492,7 @@ class RepairEvaluator:
 ```
 ```
 
----
+
 
 
 ### 5.1 RESTful API
@@ -538,9 +541,9 @@ POST /api/v1/repair/execute
 }
 ```
 
----
 
-## å
+
+## 
 
 
 ```yaml
@@ -563,7 +566,7 @@ services:
       - ./models:/models
 ```
 
----
+
 
 
 ### 7.1 核心指标
@@ -574,9 +577,9 @@ services:
 | `repair_actions_executed_total` | Counter | 执行的修复动作总数 |
 | `repair_duration_seconds` | Histogram | 修复耗时 |
 
----
 
-## å
+
+## 
 
 
 |------|------|---------|--------|
@@ -585,22 +588,22 @@ services:
 
 - [ ] 修复准确率≥85%
 
----
+
 
 
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
 
----
+
 
 
 - 实时数据质量监控蓝图
 - [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md)
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -623,7 +626,7 @@ services:
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 变更历史
@@ -632,5 +635,5 @@ services:
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

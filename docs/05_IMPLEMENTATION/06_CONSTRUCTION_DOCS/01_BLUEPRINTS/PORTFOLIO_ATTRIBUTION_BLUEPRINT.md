@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 组合归因
   - 收益分解
@@ -76,7 +76,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 1. 概述
@@ -98,7 +98,7 @@ layer: Layer 5.2 (组合优化)
 | **模块ID** | PORTFOLIO_ATTRIBUTION_001 |
 | **版本** | v1.0.0 |
 
----
+
 
 ### 上游依赖
 
@@ -133,7 +133,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 
 ### 2.1 核心API
@@ -223,12 +223,12 @@ class PortfolioAttributionAnalyzer:
 选择效应 = Σ w_b × (r_p - r_b)
 交互效应 = Σ (w_p - w_b) × (r_p - r_b)
 
-å
+
 - w_p: 组合权重
 - w_b: 基准权重
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -264,7 +264,7 @@ class AttributionAPI:
         """风险归因分析"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -272,7 +272,7 @@ class AttributionAPI:
 |------|------|------|
 | Phase 1 | brinson_attribution集成 | 12h |
 
----
+
 
 
 ## 变更历史
@@ -280,9 +280,9 @@ class AttributionAPI:
 |------|------|----------|--------|
 
 
----
 
----
+
+
 
 ## 5. 文档治理
 
@@ -303,5 +303,5 @@ class AttributionAPI:
 
 |------|------|----------|--------|
 
----
+
 

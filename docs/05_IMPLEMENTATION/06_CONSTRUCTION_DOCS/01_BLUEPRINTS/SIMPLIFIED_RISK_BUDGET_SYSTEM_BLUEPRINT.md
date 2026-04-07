@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 简化风险预算系统
+  - 风险预算
+  - 预算分配
+  - 风险约束
 
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
@@ -13,6 +16,7 @@ applicable_scope: Layer 5.3 (风险管理)
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
+
 
 # 简化版动态风险预算系统蓝图 (Simplified Risk Budget System Blueprint)
 
@@ -118,7 +122,7 @@ layer: Layer 5.3 (风险管理)
 2. 再实现本模块（60h）：完成简化版风险预算闭环（分配→监控→预警→调整）
 3. 最后演进到 **HIERARCHICAL_RISK_BUDGET**（5-7 天）：支持多层级预算与更复杂约束
 
----
+
 
 ### 2.1 核心API
 
@@ -216,7 +220,7 @@ class VaRCalculator:
         pass
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -249,14 +253,14 @@ class SimplifiedRiskBudgetAPI:
         """监控风险预算使用"""
 ```
 
----
+
 
 ## 4. 实施路径
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
 
----
+
 
 
 ### 5.1 上游依赖
@@ -266,15 +270,15 @@ class SimplifiedRiskBudgetAPI:
 ### 5.2 下游服务
 
 |------|----------|------|
-¥å
+¥
 
----
+
 
 ## 6. 质量指标
 
 |------|--------|----------|
 
----
+
 
 
 ## 变更历史
@@ -282,9 +286,9 @@ class SimplifiedRiskBudgetAPI:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
----
 
----
+
+
 
 ## 7. 文档治理
 
@@ -305,5 +309,5 @@ class SimplifiedRiskBudgetAPI:
 
 |------|------|----------|--------|
 
----
+
 

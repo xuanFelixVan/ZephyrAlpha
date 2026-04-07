@@ -5,35 +5,19 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+responsibility: 
 layer: Layer 10 (治理与合规层)
 standard_type: 专业机构级蓝图
 applicable_scope: 合规监控模块实现
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
-reference_models:
-  - Professional Compliance Framework
-  - Risk Management Standards
-  - Regulatory Reporting Systems
-related_documents:
-  upstream:
-    - 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md (框架层文
-    - 01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md (实时风控)
-  peer:
-    - RISK_RULE_ENGINE.md
-    - QUALITY_MONITORING_BLUEPRINT.md
+reference_models: 
+related_documents: 
+upstream: 
+peer: 
 responsibility_boundary: |
-  本文档职 实现层模块设
-  - 合规监控模块的具体实现方
-  - 技术栈选型: Python + SQLite + Rule Engine
-  - 代码示例和部署方
-  
-  框架层文 01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-  - 定义合规监控的整体架构和设计原则
-  - 分析专业机构的合规实
-  - 规划核心组件和接
-responsibility:
-  - 系统监控架构设计与实施方案与实施指导
+- 技术栈选型: Python + SQLite + Rule Engine
 ---
 
 

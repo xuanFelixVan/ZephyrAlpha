@@ -5,20 +5,16 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 因子有效性监控
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
-reference_models:
-  - Alphalens
-  - Empyrical
-  - Pyfolio
+reference_models: 
 open_source_solution: "Alphalens + Empyrical"
 priority: P2
-responsibility:
-  - 系统监控架构设计与实施方案与实施指导
 ---
 
 ## 文档职责说明

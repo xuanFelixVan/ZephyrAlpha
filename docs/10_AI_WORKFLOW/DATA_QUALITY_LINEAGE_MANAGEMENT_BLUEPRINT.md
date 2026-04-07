@@ -1,17 +1,15 @@
 ﻿---
-## 文档职责说明
-
+module_id: DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - DATA QUALITY LINEAGE MANAGEMENT module blueprint design
 **本文档职责**: 数据质量与血缘管理模块蓝图
-- 数据质量评分、数据血缘追踪、异常检测、质量报告
-
-# 数据质量与血缘管理模块蓝(Data Quality & Lineage Management Blueprint)
-
 > **核心职责**: 蓝图设计和架构规划
 > **职责边界**: 
-> - ✅ 本文档负责：蓝图设计和架构规划相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **模块ID**: AIWF_DQLM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
@@ -19,7 +17,6 @@
 > **优先*: P0 (阻断
 > **预计工作*: 40小时
 > **整合模块**: AIWF_DQM_001 (数据质量管理) + AIWF_DLT_001 (数据血缘追
-
 ---
 
 ## 一、模块概述

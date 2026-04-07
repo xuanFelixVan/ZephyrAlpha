@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - Black-Litterman模型
   - 观点融合
@@ -74,10 +74,10 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
 
 
----
+
+
 
 
 主观观点的组合优化
@@ -90,7 +90,7 @@ layer: Layer 5.2 (组合优化)
 
 - 解决传统均值方差优化对预期收益率估计过于敏感的问题
 
-- å
+- 
 - 降低因参数估计误差导致的优化偏差
 
 ### 1.2 版本信息
@@ -101,12 +101,12 @@ layer: Layer 5.2 (组合优化)
 | **创建日期** | 2026-04-06 |
 
 
-| å
+| 
 |---------|---------|-----------|---------|
 | **输出目标** | 组合优化模块 | PORTFOLIO_OPTIMIZATION_001 | 提供优化后的组合权重 |
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
 
----
+
 
 ### 上游依赖
 
@@ -139,7 +139,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 架构设计
 
@@ -166,7 +166,7 @@ graph TB
     end
     
     subgraph "Black-Litterman核心引擎"
-        B --> H[å
+        B --> H[
         D --> I[观点矩阵构建]
         I --> J[观点置信度设定]
         H --> K[Black-Litterman融合器]
@@ -192,7 +192,7 @@ graph TB
 Black-Litterman融合
 ```
 
----
+
 
 
 
@@ -382,7 +382,7 @@ class RiskfolioBlackLittermanOptimizer:
         return w
 ```
 
-### 3.2 å
+### 3.2 
 
 #### 3.2.1 市场均衡收益计算
 
@@ -392,7 +392,7 @@ class RiskfolioBlackLittermanOptimizer:
 π = δ * Σ * w_market
 ```
 
-å
+
 - π: 市场均衡收益向量
 - w_market: 市场权重（基于市值）
 
@@ -422,14 +422,14 @@ def market_implied_prior_returns(
     return pi
 ```
 
-#### 3.2.2 Black-Littermanå
+#### 3.2.2 Black-Litterman
 
 
 ```
 E[R] = [(τΣ)^(-1) + P'Ω^(-1)P]^(-1) * [(τΣ)^(-1)π + P'Ω^(-1)Q]
 ```
 
-å
+
 - E[R]: 后验预期收益
 - P: 观点矩阵
 - π: 市场均衡收益
@@ -471,10 +471,10 @@ def black_litterman_formula(
 ### 3.3 性能要求
 
 |---------|--------|------|
-| **å
+| **
 存占用** | <100MB | 单次优化 |
 
----
+
 
 ## 4. 数据模型
 
@@ -539,7 +539,7 @@ CREATE TABLE IF NOT EXISTS black_litterman_results (
 );
 ```
 
----
+
 
 ## 5. 接口定义
 
@@ -602,7 +602,7 @@ class BlackLittermanAPI:
 |---------|---------|---------|---------|
 | **输出接口** | 风险预算系统 | JSON | 风险贡献数据 |
 
----
+
 
 ## 6. 实施路径
 
@@ -626,7 +626,7 @@ class BlackLittermanAPI:
 | 集成测试 | 4h | 测试报告 |
 | 文档编写 | 4h | 用户手册、API文档 |
 
----
+
 
 ## 7. 文档治理
 
@@ -657,7 +657,7 @@ class BlackLittermanAPI:
 | v1.1.0 | 增加因子观点自动生成 | TBD |
 | v1.2.0 | 增加动态观点置信度调整 | TBD |
 
----
+
 
 ## 8. 风险评估
 
@@ -673,7 +673,7 @@ class BlackLittermanAPI:
 |--------|---------|---------|---------|
 | 版本管理混乱 | P2 | 追踪困难 | 严格执行版本管理策略 |
 
----
+
 
 ## 9. 质量保证
 
@@ -688,7 +688,7 @@ class BlackLittermanAPI:
 |--------|------|---------|
 | 性能达标 | 优化时间<500ms | 性能测试 |
 
----
+
 
 
 ### 10.1 学术论文
@@ -705,7 +705,7 @@ class BlackLittermanAPI:
 - [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md)
 - [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
 
----
+
 
 
 ## 变更历史
@@ -713,5 +713,5 @@ class BlackLittermanAPI:
 |------|------|----------|--------|
 
 
----
+
 

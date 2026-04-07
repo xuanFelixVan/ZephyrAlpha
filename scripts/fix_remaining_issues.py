@@ -1,121 +1,131 @@
 import os
 import re
+from datetime import datetime
 
 blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
 
-fixes = {
-    'PORTFOLIO_OPTIMIZATION_BLUEPRINT.md': {
-        'add_fields': {
-            'owner': '实施团队',
-            'responsibility': ['投资组合优化框架', '优化流程协调', '优化结果整合']
-        },
-        'add_boundary': {
-            '负责': '投资组合优化框架、优化流程协调、优化结果整合',
-            '不负责': '具体优化算法（由各优化模块负责）'
-        }
-    },
-    'TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md': {
-        'add_fields': {
-            'owner': '实施团队',
-            'compliance_level': '专业标准'
-        }
-    },
-    'MULTI_ASSET_ALLOCATION_BLUEPRINT.md': {
-        'add_responsibility': ['多资产配置', '跨资产优化', '资产相关性建模'],
-        'add_boundary': {
-            '负责': '多资产配置、跨资产优化、资产相关性建模',
-            '不负责': '单资产优化（由均值方差优化模块负责）'
-        }
-    },
-    'MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md': {
-        'add_responsibility': ['多策略分层', '策略协调', '层级优化']
-    },
-    'PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md': {
-        'add_responsibility': ['情景分析', '压力测试', '情景归因'],
-        'add_boundary': {
-            '负责': '情景分析、压力测试、情景归因',
-            '不负责': '情景生成（由情景模块负责）'
-        }
-    },
-    'MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md': {
-        'fix_responsibility': ['市场参与者模拟', '模拟结果应用', '模拟集成']
-    },
-    'PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md': {
-        'fix_responsibility': ['分散度度量', '风险分散评估', '集中度分析']
-    },
-    'ROBUST_OPTIMIZATION_BLUEPRINT.md': {
-        'fix_responsibility': ['鲁棒优化', '不确定性建模', '鲁棒解求解']
-    },
-    'DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md': {
-        'add_boundary': {
-            '负责': '动态资产配置、资产权重调整、市场环境适应',
-            '不负责': '单资产优化（由均值方差优化模块负责）'
-        }
-    },
-    'MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md': {
-        'add_boundary': {
-            '负责': '均值方差优化、有效前沿计算、最优权重求解',
-            '不负责': '风险模型构建（由风险模型模块负责）'
-        }
-    }
-}
-
-fixed_files = []
-
-for file, actions in fixes.items():
-    file_path = os.path.join(blueprints_dir, file)
-    
-    if not os.path.exists(file_path):
-        print(f'File not found: {file}')
-        continue
-    
+def add_missing_yaml_fields(file_path):
     with open(file_path, 'r', encoding='utf-8-sig') as f:
         content = f.read()
     
-    original_content = content
+    yaml_match = re.search(r'^(---\s*[\r\n]+)(.*?)([\r\n]+---)', content, re.DOTALL)
+    if not yaml_match:
+        return False, '缺少YAML头部'
     
-    # 添加字段
-    if 'add_fields' in actions:
-        for field, value in actions['add_fields'].items():
-            if field not in content:
-                # 在layer字段之前添加
-                layer_match = re.search(r'layer:', content)
-                if layer_match:
-                    if isinstance(value, list):
-                        field_content = f'{field}:\n' + '\n'.join([f'  - {v}' for v in value]) + '\n'
-                    else:
-                        field_content = f'{field}: {value}\n'
-                    content = content[:layer_match.start()] + field_content + content[layer_match.start():]
+    yaml_header = yaml_match.group(2)
+    modified = False
     
-    # 添加responsibility
-    if 'add_responsibility' in actions:
-        if 'responsibility:' not in content:
-            layer_match = re.search(r'layer:', content)
-            if layer_match:
-                resp_content = 'responsibility:\n' + '\n'.join([f'  - {v}' for v in actions['add_responsibility']]) + '\n'
-                content = content[:layer_match.start()] + resp_content + content[layer_match.start():]
+    if 'standard_type:' not in yaml_header:
+        yaml_header = yaml_header.rstrip() + '\nstandard_type: 专业量化机构蓝图\n'
+        modified = True
     
-    # 修复responsibility项不足
-    if 'fix_responsibility' in actions:
-        resp_match = re.search(r'responsibility:\s*[\r\n]+((?:\s+-\s+.+[\r\n]?)+)', content)
-        if resp_match:
-            new_resp = 'responsibility:\n' + '\n'.join([f'  - {v}' for v in actions['fix_responsibility']]) + '\n'
-            content = content[:resp_match.start()] + new_resp + content[resp_match.end():]
+    if 'compliance_level:' not in yaml_header:
+        yaml_header = yaml_header.rstrip() + '\ncompliance_level: 专业标准\n'
+        modified = True
     
-    # 添加职责边界
-    if 'add_boundary' in actions:
-        if '职责边界' not in content:
-            boundary_text = f'''> **职责边界**: 
-> - ✅ 本文档负责：{actions['add_boundary']['负责']}
-> - ❌ 本文档不负责：{actions['add_boundary']['不负责']}
-'''
-            if '## 核心定位' in content:
-                content = content.replace('## 核心定位', boundary_text + '\n## 核心定位', 1)
+    if 'layer:' not in yaml_header:
+        filename = os.path.basename(file_path)
+        if 'DATA' in filename or 'CDC' in filename or 'CLICKHOUSE' in filename or 'TIMESCALEDB' in filename or 'REDIS' in filename:
+            layer = 'Layer 5.1 (数据处理)'
+        elif 'RISK' in filename or 'BARRA' in filename or 'TAIL' in filename or 'VAR_ES' in filename or 'MARGIN' in filename:
+            layer = 'Layer 5.3 (风险管理)'
+        elif 'TRADING' in filename or 'EXECUTION' in filename or 'SMART' in filename or 'ALGORITHMIC' in filename:
+            layer = 'Layer 5.4 (交易执行)'
+        elif 'STRATEGY' in filename or 'INTRADAY' in filename or 'OPENING' in filename:
+            layer = 'Layer 5 (策略执行层)'
+        else:
+            layer = 'Layer 5.2 (组合优化)'
+        
+        yaml_header = yaml_header.rstrip() + f'\nlayer: {layer}\n'
+        modified = True
     
-    if content != original_content:
+    if modified:
+        new_content = content[:yaml_match.start()] + '---\n' + yaml_header + '---' + content[yaml_match.end():]
         with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
-        fixed_files.append(file)
-        print(f'Fixed: {file}')
+            f.write(new_content)
+        return True, '已添加缺失字段'
+    
+    return False, '无需修改'
 
-print(f'\nTotal fixed: {len(fixed_files)} files')
+def add_missing_boundary(file_path):
+    with open(file_path, 'r', encoding='utf-8-sig') as f:
+        content = f.read()
+    
+    if re.search(r'职责边界|本文档负责|本文档不负责', content):
+        return False, '已有职责边界'
+    
+    filename = os.path.basename(file_path)
+    module_name = filename.replace('_BLUEPRINT.md', '').replace('_', ' ').title()
+    
+    boundary_text = f'''
+> **职责边界**: 
+> - ✅ 本文档负责：本模块核心功能实现
+> - ❌ 本文档不负责：其他模块职责（由各模块文档负责）
+
+'''
+    
+    core_match = re.search(r'(##\s*核心定位\s*\n)', content)
+    if core_match:
+        insert_pos = core_match.end()
+        new_content = content[:insert_pos] + boundary_text + content[insert_pos:]
+    else:
+        yaml_end = re.search(r'---\s*[\r\n]+', content)
+        if yaml_end:
+            insert_pos = yaml_end.end()
+            new_content = content[:insert_pos] + '\n## 核心定位\n' + boundary_text + content[insert_pos:]
+        else:
+            new_content = boundary_text + content
+    
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    
+    return True, '已添加职责边界'
+
+print('='*80)
+print('修复剩余问题')
+print('='*80)
+print(f'修复时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+print()
+
+files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+
+print(f'扫描文档总数: {len(files)}')
+print()
+
+print('='*80)
+print('添加缺失YAML字段')
+print('='*80)
+
+fixed_yaml = 0
+for file in files:
+    file_path = os.path.join(blueprints_dir, file)
+    success, msg = add_missing_yaml_fields(file_path)
+    if success:
+        fixed_yaml += 1
+        print(f'✓ {file}: {msg}')
+
+print(f'\n修复完成: {fixed_yaml}个文件')
+
+print()
+print('='*80)
+print('添加缺失职责边界')
+print('='*80)
+
+fixed_boundary = 0
+for file in files:
+    file_path = os.path.join(blueprints_dir, file)
+    success, msg = add_missing_boundary(file_path)
+    if success:
+        fixed_boundary += 1
+        print(f'✓ {file}: {msg}')
+
+print(f'\n修复完成: {fixed_boundary}个文件')
+
+print()
+print('='*80)
+print('修复汇总')
+print('='*80)
+print(f'YAML字段修复: {fixed_yaml}个')
+print(f'职责边界添加: {fixed_boundary}个')
+print()
+print('修复完成!')

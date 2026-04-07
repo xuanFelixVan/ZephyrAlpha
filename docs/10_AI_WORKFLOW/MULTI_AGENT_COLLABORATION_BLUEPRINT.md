@@ -1,18 +1,19 @@
 ﻿---
-## 文档职责说明
-
+module_id: MULTI_AGENT_COLLABORATION_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - MULTI AGENT COLLABORATION module blueprint design
 **本文档职责**: 多智能体协作系统蓝图
-- 多智能体角色定义、协作机制、任务分配、知识共享、决策融合
-
-# 多智能体协作系统蓝图
-
 > **版本**: v1.0.0
 > **创建日期**: 2026-04-07
 > **实施周期**: 2-3周
 > **核心定位**: AI投研团队模拟与协作决策
 > **技术栈**: TradingAgents-CN + LangChain + LLM
 > **开源方案**: TradingAgents-CN (GitHub 15,300+ Stars)
-
 ---
 
 ## 一、概述

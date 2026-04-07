@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 约束建模
   - 求解算法
@@ -72,10 +72,10 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
 
 
----
+
+
 
 
 > **核心职责**: 组合优化约束处理
@@ -98,7 +98,7 @@ layer: Layer 5.2 (组合优化)
     ?约束松弛（如有冲突）
     ?输出：优化结果、约束状态、求解报?```
 
----
+
 ## 3. 核心模块设计
 
 ### 3.1 约束求解器核心类（ConstraintSolver?
@@ -471,7 +471,7 @@ class ConstraintRelaxer:
                         c2: Constraint) -> List[Constraint]:
         """软约?""
         # 将硬约束转化为软约束
-        # å
+        # 
         c1.is_soft = True
         c2.is_soft = True
         
@@ -622,7 +622,7 @@ class RelaxConfig:
     slack_amount: float = 0.01  # 松弛?    penalty_weight: float = 100.0  # 惩罚权重
     max_relax_iterations: int = 10  # 最大松弛迭代次?```
 
----
+
 
 ## 4. 数据模型定义
 
@@ -675,7 +675,7 @@ class SolverReport:
     objective_value: float  # 目标函数?    constraint_violations: Dict[str, float]  # 约束违反程度
 ```
 
----
+
 
 ## 5. 集成方案
 
@@ -746,7 +746,7 @@ class BarraRiskModel:
         )
 ```
 
----
+
 
 ## 6. 实施路线?
 ### 6.1 开发阶段（1.5周）
@@ -768,7 +768,7 @@ class BarraRiskModel:
 | **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正?|
 | **M5: 测试通过** | Day 9 | 测试报告 | 所有测试通过 |
 
----
+
 
 ## 7. 预期收益评估
 
@@ -783,7 +783,7 @@ class BarraRiskModel:
 ### 7.2 定性收?
 - ?支持复杂约束条件
 - ?自动检测和解决约束冲突
----
+
 
 ## 8. 技术栈选择
 
@@ -804,7 +804,7 @@ pip install numpy>=1.21
 pip install pandas>=1.5
 ```
 
----
+
 
 ## 9. 风险评估
 
@@ -824,7 +824,7 @@ pip install pandas>=1.5
 分测试、接口文档完?|
 | **性能不达?* | ?| 性能优化、算法改?|
 
----
+
 
 ## 10. 文档治理
 
@@ -845,7 +845,7 @@ pip install pandas>=1.5
 | **组合优化?* | 组合权重优化 | 使用约束求解?|
 | **Barra风险模型** | 风险模型、风险约?| 提供风险约束 |
 
----
+
 
 ## 附录
 
@@ -865,7 +865,7 @@ pip install pandas>=1.5
 |------|------|--------|
 | **约束松弛** | 放宽约束条件以获得可行解 | 冲突解决 |
 
----
+
 
 ## 11. 变更历史
 
@@ -873,5 +873,5 @@ pip install pandas>=1.5
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
 
----
+
 

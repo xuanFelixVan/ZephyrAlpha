@@ -5,6 +5,7 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility: 
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全流程数据持久化
@@ -14,8 +15,6 @@ open_source_solution: "MLflow + SQLite + DVC"
 priority: P0
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
 ---
 
 ## 文档职责说明

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TIMEFRAME_COORDINATION_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,11 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 简化时间框架协调
+  - 时间框架
+  - 信号协调
+  - 周期管理
+
 layer: Layer 5 (策略执行层)
 ---
 
@@ -86,7 +90,7 @@ layer: Layer 5 (策略执行层)
 冲突检测（检测信号冲突）
 ```
 
----
+
 ## 3. 核心模块设计
 
 
@@ -189,7 +193,7 @@ class SignalFusion:
         return fused
 ```
 
----
+
 
 ## 4. 接口设计
 
@@ -199,14 +203,14 @@ class SignalFusion:
 # 信号协同接口
 > **核心职责**: Simplified Timeframe Coordination蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
 
 
 
----
+
 
 ## 📋 概述
 
@@ -246,7 +250,7 @@ def resolve_conflicts(
     pass
 ```
 
----
+
 
 
 
@@ -256,9 +260,9 @@ def resolve_conflicts(
 
 ### 5.2 推荐实施路径
 
-1. å
+1. 
 
----
+
 
 ## 6. 性能指标
 
@@ -266,7 +270,7 @@ def resolve_conflicts(
 | **冲突解决效率** | <50ms | 性能测试 |
 | **协同优化效果** | 提升20% | 功能测试 |
 
----
+
 
 ## 变更历史
 
@@ -275,9 +279,9 @@ def resolve_conflicts(
 | v1.0.1 | 2026-04-06 | 修复编码问题，删除乱码YAML头部 | 审计系统 |
 容结构 | 审计系统 |
 
----
 
----
+
+
 
 ## 7. 文档治理
 
@@ -293,11 +297,11 @@ def resolve_conflicts(
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Simplified Timeframe Coordination** | å
+| **Simplified Timeframe Coordination** | 
 
 ### 7.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

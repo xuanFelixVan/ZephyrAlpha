@@ -5,11 +5,10 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: AI工作流团队
+responsibility: 
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 10 - AI工作流层
 compliance_level: 专业标准
-responsibility:
-  - AI工作流与舆情分析综合层模块蓝图设计模块设计与实施指导
 layer: Layer 10 (AI工作流)
 ---
 

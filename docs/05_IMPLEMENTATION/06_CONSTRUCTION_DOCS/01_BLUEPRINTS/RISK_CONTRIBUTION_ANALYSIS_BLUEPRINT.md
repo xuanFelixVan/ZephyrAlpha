@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RISK_CONTRIBUTION_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -9,9 +9,14 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 风险贡献分析
+  - 边际风险
+  - 风险预算
+  - 贡献度计算
+
 layer: Layer 5.3 (风险管理)
 ---
+
 
 # 风险贡献分析蓝图
 
@@ -125,7 +130,7 @@ layer: Layer 5.3 (风险管理)
 - 识别风险集中?
 - 为风险平价和风险预算提供基础
 
----
+
 ## 📚 相关文档
 
 ### 上游依赖
@@ -170,7 +175,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 技术实?
 
@@ -255,7 +260,7 @@ class RiskContributionAnalyzer:
         return concentrated_assets.tolist()
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -279,7 +284,7 @@ class RiskContributionAPI:
         """识别风险集中"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -289,7 +294,7 @@ class RiskContributionAPI:
 | Phase 2 | 集成开源库、API开?| 8h |
 | Phase 3 | 测试、文?| 8h |
 
----
+
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状?*: Active | **合规?*: 100% ?
 
@@ -300,10 +305,10 @@ class RiskContributionAPI:
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 | v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历?| 审计系统 |
 
----
+
 
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状?*: Active
----
+
 
 ## 5. 文档治理
 
@@ -331,6 +336,6 @@ class RiskContributionAPI:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 
----
+
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状?*: Active

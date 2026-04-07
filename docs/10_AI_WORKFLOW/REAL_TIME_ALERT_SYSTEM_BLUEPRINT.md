@@ -1,32 +1,21 @@
 ﻿---
-## 文档职责说明
-
+module_id: REAL_TIME_ALERT_SYSTEM_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - REAL TIME ALERT SYSTEM module blueprint design
 **本文档职责**: 实时预警系统模块蓝图
-- 实时预警、多渠道推送、规则引擎、预警历史管理
-
-**📌 职责边界说明**:
+**📌 职责边界说明**: 
 - **本文档**: 舆情专用预警模块，负责舆情监控和预警事件生成
 - **REAL_TIME_RISK_MONITOR**: 系统级核心风险监控，负责全系统风险评估
 - **LIVE_TRADING_MONITOR**: 实盘交易专用监控，负责交易层面的监控
 - **REAL_TIME_MONITORING_DASHBOARD**: 舆情专用仪表盘，负责舆情可视化
-
-**职责关系**:
-```
-统一告警平台（上游）
-    ├── REAL_TIME_RISK_MONITOR（系统级风险监控）
-    ├── LIVE_TRADING_MONITOR（实盘交易监控）
-    ├── REAL_TIME_ALERT_SYSTEM（本模块：舆情预警）
-    └── REAL_TIME_MONITORING_DASHBOARD（舆情仪表盘）
-```
-
-# 实时预警系统模块蓝图 (Real-Time Alert System Blueprint)
-
+**职责关系**: 
 > **核心职责**: 蓝图设计和架构规划
 > **职责边界**: 
-> - ✅ 本文档负责：蓝图设计和架构规划相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
 > **模块ID**: AIWF_RTAS_001
 > **版本**: v1.0.1
 > **创建日期**: 2026-04-02
@@ -35,7 +24,6 @@
 > **业务架构**: 三级时间框架融合架构（中观策略层
 > **优先*: P0 (阻断
 > **预计工作*: 50小时
-
 ---
 
 ## 文档层级关系

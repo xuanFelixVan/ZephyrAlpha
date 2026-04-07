@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 风险控制
+  - 风险限额
+  - 止损机制
+  - 风险预警
 
 module_id: RISK_CONTROL_001
 version: 1.0.0
@@ -73,7 +76,7 @@ layer: Layer 5.3 (风险管理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -81,7 +84,7 @@ layer: Layer 5.3 (风险管理)
 
 |---------|---------|------|---------|
 
----
+
 
 
 
@@ -343,7 +346,7 @@ class RiskHandler:
             self.order_executor.sell(symbol, reduce_amount)
 ```
 
----
+
 
 ## 📋 风险控制机制详解
 
@@ -461,7 +464,7 @@ class RiskActionExecutor:
         return True
     
     def _close_all_positions(self, context: Dict[str, Any]) -> bool:
-        """å
+        """
         for symbol, position in self.position_manager.get_all_positions().items():
             self.order_manager.sell(symbol, position.quantity)
         return True
@@ -606,24 +609,24 @@ class RiskMetricsCalculator:
 {recommendations}
 ```
 
----
+
 
 ## 🚀 实施要点
 
 
 **任务**:
 
----
 
-
-**任务**:
-
----
 
 
 **任务**:
 
----
+
+
+
+**任务**:
+
+
 
 ## 📈 性能指标
 
@@ -631,21 +634,21 @@ class RiskMetricsCalculator:
 
 |------|--------|
 
----
+
 
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [盘中策略模块蓝图](./INTRADAY_STRATEGY_BLUEPRINT.md)
 
----
+
 
 ## 📝 变更历史
 
 |------|------|---------|------|
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -666,5 +669,13 @@ class RiskMetricsCalculator:
 
 |------|------|----------|--------|
 
----
+
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
 

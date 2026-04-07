@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_SCENARIO_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -75,7 +75,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 职责边界: 
 
@@ -87,8 +87,8 @@ layer: Layer 5.2 (组合优化)
 
 等）
 - 敏感性分析（参数敏感性、模型敏感性）
-- æ
-- æ
+- 
+- 
 景报告生成
 
 - 支持风险管理决策
@@ -124,12 +124,12 @@ class ScenarioAnalyzer:
         
         Args:
             portfolio_weights: 组合权重
-            scenario_name: æ
-            scenario_dates: æ
+            scenario_name: 
+            scenario_dates: 
 景日期范围
             
         Returns:
-            æ
+            
 景分析结果
         """
         pass
@@ -147,7 +147,7 @@ class ScenarioAnalyzer:
             shock_params: 冲击参数，如 {'equity_shock': -0.2, 'rate_shock': 0.02}
             
         Returns:
-            æ
+            
 景分析结果
         """
         pass
@@ -177,7 +177,7 @@ class ScenarioAnalyzer:
 景分析报告
         
         Args:
-            scenario_results: æ
+            scenario_results: 
 景分析结果列表
             
         Returns:
@@ -188,7 +188,7 @@ class ScenarioAnalyzer:
 
 景库
 
-| æ
+| 
 景类型 | 日期范围 | 描述 |
 |---------|---------|---------|------|
  |
@@ -196,12 +196,12 @@ class ScenarioAnalyzer:
 景 | - | 利率冲击 |
 景 | - | 市场冲击 |
 
----
+
 ## 3. 接口定义
 
 ```python
 class ScenarioAPI:
-    """æ
+    """
 景分析API"""
     
     @endpoint("/api/v1/scenario/historical")
@@ -237,14 +237,14 @@ class ScenarioAPI:
 景报告"""
 ```
 
----
+
 
 ## 4. 实施路径
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
 
----
+
 
 
 ## 变更历史
@@ -252,9 +252,9 @@ class ScenarioAPI:
 |------|------|----------|--------|
 
 
----
 
----
+
+
 
 ## 5. 文档治理
 
@@ -275,5 +275,5 @@ class ScenarioAPI:
 
 |------|------|----------|--------|
 
----
+
 

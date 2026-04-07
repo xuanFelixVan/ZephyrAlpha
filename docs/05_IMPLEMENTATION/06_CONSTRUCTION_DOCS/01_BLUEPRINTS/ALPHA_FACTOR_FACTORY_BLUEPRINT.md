@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_FACTORY_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,14 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - ALPHA_FACTOR_FACTORY蓝图设计
+  - Alpha因子工厂
+  - 因子生成
+  - 因子评估
+  - 因子组合
+standard_type: 专业量化机构蓝图
+compliance_level: 专业标准
+layer: Layer 5.2 (组合优化)
 ---
-
-
 
 
 ## 核心定位
@@ -72,7 +76,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 
@@ -81,7 +85,7 @@ responsibility:
 |---------|---------|---------|
 | **因子更新** | 定期更新因子 | 更新日志 |
 
----
+
 
 
 ### 整体架构
@@ -98,7 +102,7 @@ graph TB
         B2[价值因子计算器]
         B3[质量因子计算器]
         B4[成长因子计算器]
-        B5[æ
+        B5[
 绪因子计算器]
         B6[技术因子计算器]
     end
@@ -141,7 +145,7 @@ graph TB
     D1 --> E1
 ```
 
----
+
 
 
 ### 1. 因子基类 (Factor Base Class)
@@ -319,34 +323,34 @@ class AlphaFactorFactory:
         return [factor[0] for factor in sorted_factors[:top_n]]
 ```
 
----
+
 
 
 ### 因子分类体系
 
 |---------|---------|---------|---------|
 | **质量因子** | ROA | 总资产收益率 | Net Income / Assets |
-| **æ
+| **
 绪指标 |
 
----
+
 
 ## 🚀 实施要点
 
 
 **任务**:
 
----
 
-
-**任务**:
-
----
 
 
 **任务**:
 
----
+
+
+
+**任务**:
+
+
 
 ## 📈 性能指标
 
@@ -356,20 +360,20 @@ class AlphaFactorFactory:
 | **ICIR** | > 0.5 |
 | **单调性R²** | > 0.8 |
 
----
+
 
 
 - [市场状态识别系统蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
 
----
+
 
 ## 📝 变更历史
 
 |------|------|---------|------|
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -390,5 +394,13 @@ class AlphaFactorFactory:
 
 |------|------|----------|--------|
 
----
+
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
 

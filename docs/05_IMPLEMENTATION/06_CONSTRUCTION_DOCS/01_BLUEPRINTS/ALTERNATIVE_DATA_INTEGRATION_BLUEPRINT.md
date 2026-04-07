@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -76,7 +76,7 @@ layer: Layer 5 (策略执行层)
 4. 部署与监控
 
 
-## 核心定位
+
 
 括新闻数据、社交媒体数据、分析师预期数据的采集、处理和因子生成
 
@@ -107,7 +107,7 @@ layer: Layer 5 (策略执行层)
 | **实时流处?* | Kafka（可选） | 支持实时数据?|
 | **数据缓存** | Redis | 提升查询性能 |
 
----
+
 
 ## 二、数据源详细设计
 
@@ -149,11 +149,11 @@ class CailianNewsDataSource:
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| sentiment | float | æ
+| sentiment | float | 
 感得分?1??|
 | event_type | string | 事件类型 |
 
----
+
 
 #### 2.1.2 新浪财经API
 
@@ -179,7 +179,7 @@ class SinaFinanceDataSource:
 ```
 
 
----
+
 
 #### 2.1.3 东方财富API
 
@@ -206,7 +206,7 @@ class EastMoneyDataSource:
 ```
 
 
----
+
 
 ### 2.2 社交媒体数据?
 #### 2.2.1 微博API
@@ -254,13 +254,13 @@ class WeiboDataSource:
 | likes | int | 点赞?|
 | comments | int | 评论?|
 | reposts | int | 转发?|
-| sentiment | float | æ
+| sentiment | float | 
 感得分 |
 
----
+
 
 #### 2.2.2 雪球网爬?
-æ
+
 ?- 热门股票
 
 **技术方?*:
@@ -292,7 +292,7 @@ class XueqiuDataSource:
         return self._parse_hot_stocks(response.json())
 ```
 
----
+
 
 #### 2.2.3 东方财富股吧
 
@@ -316,7 +316,7 @@ class GubaDataSource:
 ```
 
 
----
+
 
 ### 2.3 分析师预期数据源
 
@@ -358,18 +358,18 @@ class AnalystExpectationDataSource:
 | report_date | date | 报告日期 |
 
 
----
+
 
 ## 三、NLP处理流程
 
-### 3.1 æ
+### 3.1 
 感分析
 
 **技术方?*: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
-    """æ
+    """
 感分析?""
     
     def __init__(self):
@@ -400,7 +400,7 @@ class SentimentAnalyzer:
 
 **成本**: 0.1?百万tokens
 
----
+
 
 ### 3.2 事件提取
 
@@ -425,7 +425,7 @@ class EventExtractor:
             "event_type": "事件类型",
             "event_summary": "事件摘要",
             "impact_level": "影响等级（高/?低）",
-            "sentiment": "æ
+            "sentiment": "
 感倾向（正?负面/中性）"
         }}
         """
@@ -435,7 +435,7 @@ class EventExtractor:
         return event_info
 ```
 
----
+
 
 ### 3.3 实体识别
 
@@ -464,7 +464,7 @@ class EntityRecognizer:
         return list(set(stock_codes + stock_names))
 ```
 
----
+
 
 ## 四、因子构建方?
 ### 4.1 新闻因子
@@ -502,7 +502,7 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
 
----
+
 
 #### 因子2: 事件驱动因子
 
@@ -543,7 +543,7 @@ def calculate_event_driven_factor(stock_code, date):
 - 更新频率: 日频
 - 数据窗口: 30?- IC预期: 0.04-0.06
 
----
+
 
 #### 因子3: 新闻热度因子
 
@@ -575,9 +575,9 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 **因子特征**:
 - 数据窗口: 7?- IC预期: 0.02-0.04
 
----
 
-### 4.2 æ
+
+### 4.2 
 绪因子
 
 绪因子
@@ -613,7 +613,7 @@ def calculate_market_sentiment_factor(date):
 绪因子
 - 更新频率: 日频
 
----
+
 
 绪因子
 
@@ -652,7 +652,7 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
 
----
+
 
 ### 4.3 预期因子
 
@@ -689,7 +689,7 @@ def calculate_expectation_gap_factor(stock_code, date):
 - 更新频率: 季度
 - IC预期: 0.05-0.08
 
----
+
 
 #### 因子7: 分析师评级变化因?
 **因子定义**: 基于分析师评级变化构建的因子
@@ -725,9 +725,9 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 - 更新频率: 日频
 - 数据窗口: 30?- IC预期: 0.03-0.05
 
----
 
-### 4.4 å
+
+### 4.4 
 #### 因子8: 社交媒体热度因子
 
 **计算方法**:
@@ -763,7 +763,7 @@ def calculate_social_heat_factor(stock_code, date, window=7):
 **因子特征**:
 - 数据窗口: 7?- IC预期: 0.02-0.04
 
----
+
 
 ## 五、数据存储设?
 ### 5.1 数据库设?
@@ -851,7 +851,7 @@ CREATE INDEX idx_factor_date ON alternative_factors(date);
 CREATE INDEX idx_factor_stock ON alternative_factors(stock_code);
 ```
 
----
+
 
 ### 5.2 向量数据库设?
 容的向量表示，支持语义搜?
@@ -897,9 +897,9 @@ class VectorStore:
         return results
 ```
 
----
 
-## å
+
+## 
 ### 6.1 时间规划
 
 | 阶段 | 时间 | 任务 | 交付?|
@@ -908,7 +908,7 @@ class VectorStore:
 | **Phase 3: 因子构建** | Week 6-7 | 构建8个另类数据因?| 因子计算模块、因子数?|
 | **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测?| 测试报告、验收文?|
 
----
+
 
 ### 6.2 里程?
 | 里程?| 时间 | 验收标准 |
@@ -916,7 +916,7 @@ class VectorStore:
 感分析准确?80%，事件提取完?|
 | **M4: 项目验收** | Week 8 | 所有测试通过，文档完?|
 
----
+
 
 ## 七、资源分?
 ### 7.1 人力资源
@@ -930,7 +930,7 @@ class VectorStore:
 
 **总工作量**: ?80人时
 
----
+
 
 ### 7.2 技术资?
 | 资源类型 | 规格 | 成本 |
@@ -940,9 +940,9 @@ class VectorStore:
 | **API调用** | GLM-4-Flash | ?00??|
 
 **总成?*: ?00??
----
 
-## å
+
+## 
 ### 8.1 技术风?
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
@@ -951,7 +951,7 @@ class VectorStore:
 | **NLP准确率不?* | ?| ?| 模型优化、人工标注验?|
 | **系统性能瓶颈** | ?| ?| 异步处理、缓存优?|
 
----
+
 
 ### 8.2 项目风险
 
@@ -960,7 +960,7 @@ class VectorStore:
 | **进度延期** | ?| ?| 预留缓冲时间、并行开?|
 | **需求变?* | ?| ?| 需求冻结、变更控?|
 
----
+
 
 ## 九、验收标?
 ### 9.1 功能验收
@@ -971,7 +971,7 @@ class VectorStore:
 感分析准确?80% | 人工标注验证 |
 | **因子计算** | 因子数量??| 功能测试 |
 
----
+
 
 ### 9.2 性能验收
 
@@ -981,12 +981,12 @@ class VectorStore:
 | **因子计算延迟** | <10?| 性能测试 |
 | **系统可用?* | >99% | 监控统计 |
 
----
+
 
 ## 十、项目文?
 ### 10.1 已生成文?
 制?
----
+
 
 **蓝图版本**: v1.0  
 **创建日期**: 2026-04-02  
@@ -995,12 +995,12 @@ class VectorStore:
 
 |------|------|----------|--------|
 
----
-
----
 
 
----
+
+
+
+
 
 
 ### 上游依赖
@@ -1051,5 +1051,5 @@ graph LR
 
 |------|------|----------|--------|
 
----
+
 

@@ -5,13 +5,12 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席蓝图架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构完整性最终评估
 applicable_scope: Layer 7 AI报告层最终完整性评估
 compliance_level: 顶级专业标准
 parent_document: INDEX.md
-responsibility:
-  - 系统审计分析与质量评估报告与改进建议
 ---
 
 ## 文档职责说明

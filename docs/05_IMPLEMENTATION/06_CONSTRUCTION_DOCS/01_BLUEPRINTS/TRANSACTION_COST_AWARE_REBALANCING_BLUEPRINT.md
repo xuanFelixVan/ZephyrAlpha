@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -15,6 +15,7 @@ responsibility:
   - 交易成本控制与优化
 layer: Layer 6 (组合优化层)
 ---
+
 
 > **核心职责**: 在再平衡决策中考虑交易成本
 > **职责边界**: 
@@ -100,7 +101,7 @@ layer: Layer 6 (组合优化层)
 **职责边界**:
 
 **推荐实施路径**:
-1. å
+1. 
 
 
 
@@ -112,7 +113,7 @@ layer: Layer 6 (组合优化层)
 - 本模块在基础决策之上增加成本感知能力
 
 **推荐实施路径**:
-1. å
+1. 
 
 
 ### 2.1 核心API
@@ -200,7 +201,7 @@ class TransactionCostAwareRebalancer:
         return expected_benefit > transaction_cost * 2
 ```
 
----
+
 ## 3. 接口定义
 
 ```python
@@ -236,7 +237,7 @@ class TransactionCostAPI:
         """判断是否需要再平衡"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -245,7 +246,7 @@ class TransactionCostAPI:
 | Phase 1 | 交易成本模型实现 | 12h |
 | Phase 2 | 优化算法集成 | 16h |
 
----
+
 
 
 ## 变更历史
@@ -253,9 +254,9 @@ class TransactionCostAPI:
 |------|------|----------|--------|
 
 
----
 
----
+
+
 
 ## 5. 文档治理
 
@@ -276,5 +277,5 @@ class TransactionCostAPI:
 
 |------|------|----------|--------|
 
----
+
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ROBUST_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -14,6 +14,7 @@ responsibility:
   - 参数敏感性
 layer: Layer 5.2 (组合优化)
 ---
+
 
 # 鲁棒优化蓝图
 
@@ -211,7 +212,7 @@ class SensitivityAnalyzer:
         pass
 ```
 
----
+
 
 ### 3.1 接口设计
 
@@ -269,13 +270,13 @@ robust_optimization:
     perturbation_range: 0.1
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -304,4 +305,4 @@ robust_optimization:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

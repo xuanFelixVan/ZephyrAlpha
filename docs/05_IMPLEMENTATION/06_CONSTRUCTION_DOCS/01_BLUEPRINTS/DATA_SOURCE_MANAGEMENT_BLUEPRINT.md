@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_SOURCE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -6,10 +6,13 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - DATA_SOURCE_MANAGEMENT蓝图设计
----
+  - 数据源管理
+  - 数据源注册
+  - 连接管理
+  - 元数据采集
 
-﻿---
+
+﻿
 module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -85,7 +88,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 一、设计背景与目标
@@ -100,9 +103,9 @@ layer: Layer 5.1 (数据处理)
 
 
 |------|--------|------|
-| **æ
+| **
 障发现时间<1分钟 |
-| **æ
+| **
 障恢复时间<10分钟 |
 
 
@@ -276,7 +279,7 @@ class SourceMonitor:
         return []
 ```
 
-### 3.3 æ
+### 3.3 
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -284,7 +287,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class FailureSeverity(Enum):
-    """æ
+    """
 障严重程度"""
     LOW = "low"
     MEDIUM = "medium"
@@ -293,7 +296,7 @@ class FailureSeverity(Enum):
 
 @dataclass
 class FailureEvent:
-    """æ
+    """
 障事件"""
     event_id: str
     source_id: str
@@ -305,7 +308,7 @@ class FailureEvent:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class FailureManager:
-    """æ
+    """
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
@@ -373,7 +376,7 @@ class FailureManager:
         return [f for f in self.failures if not f.resolved_at]
 ```
 
----
+
 
 ### 4.1 RESTful API
 
@@ -413,30 +416,30 @@ GET /api/v1/sources/{source_id}/health
 ```
 
 
-## å
+## 
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `source_total_sources` | Gauge | 数据源总数 |
-| `source_failures_total` | Counter | æ
+| `source_failures_total` | Counter | 
 障总数 |
 
----
+
 
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
 
----
 
-## å
+
+## 
 
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 - [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -459,11 +462,11 @@ GET /api/v1/sources/{source_id}/health
 
 |------|------|----------|--------|
 
----
 
 
 
----
+
+
 
 
 ### 下游依赖
@@ -494,5 +497,5 @@ graph LR
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

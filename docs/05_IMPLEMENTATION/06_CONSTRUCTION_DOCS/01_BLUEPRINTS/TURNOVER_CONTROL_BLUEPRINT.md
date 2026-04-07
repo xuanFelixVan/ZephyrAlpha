@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 换手率控制
+  - 换手约束
+  - 交易频率
+  - 成本控制
 
 module_id: TURNOVER_CONTROL_001
 version: 1.0.0
@@ -116,7 +119,7 @@ class TurnoverController:
         pass
 ```
 
----
+
 
 ## 3. é
 
@@ -129,7 +132,7 @@ turnover_control:
   # 成本考虑
 ```
 
----
+
 
 
 ### 上游依赖
@@ -163,13 +166,13 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -191,5 +194,5 @@ graph LR
 **文档维护**:
 - **责任模块**: TURNOVER_CONTROL
 
----
+
 

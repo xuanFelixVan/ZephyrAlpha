@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -81,7 +81,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 2. 功能设计
@@ -181,7 +181,7 @@ class StyleFactorNeutralOptimizer:
             expected_returns: 预期收益
             style_loadings: 风格因子载荷
             target_exposures: 目标因子暴露
-            constraints: å
+            constraints: 
             
         返回:
             最优权重和因子暴露
@@ -211,7 +211,7 @@ class MarketNeutralOptimizer:
         参数:
             expected_returns: 预期收益
             beta_loadings: Beta系数
-            constraints: å
+            constraints: 
             
         返回:
             最优权重和Beta暴露
@@ -255,7 +255,7 @@ class TrackingErrorController:
         pass
 ```
 
----
+
 
 ### 3.1 接口设计
 
@@ -380,7 +380,7 @@ factor_neutral_optimization:
     benchmark: 'SPY'
 ```
 
----
+
 
 ## 4. 实现路径
 
@@ -388,14 +388,14 @@ factor_neutral_optimization:
 ```python
 > **核心职责**: Factor Neutral Optimization蓝图设计
 > **职责边界**: 
-å®?
+®?
 
 
 ## 核心职责
 
 
 
----
+
 
 ## 📋 概述
 
@@ -431,7 +431,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
 |------|------|--------|------|
 
----
+
 
 ## 5. 测试规格
 
@@ -457,13 +457,13 @@ class TestFactorNeutralOptimizer:
         pass
 ```
 
----
+
 
 ## 6. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 7. 文档治理
@@ -492,4 +492,4 @@ class TestFactorNeutralOptimizer:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

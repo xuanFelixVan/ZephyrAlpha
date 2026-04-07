@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TAIL_RISK_HEDGING_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,10 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 responsibility:
-  - 风险管理框架设计与实施方案与优化维护
+  - 尾部风险对冲
+  - 尾部风险
+  - 期权对冲
+  - 极端事件
 ---
 
 
@@ -72,7 +75,7 @@ responsibility:
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 职责边界: 
 
@@ -91,7 +94,7 @@ responsibility:
 ### 2.2 VIX对冲
 
 - **VIX期货**: 直接对冲波动?- **VIX期权**: 非线性对?
----
+
 
 ## 3. 核心算法
 
@@ -113,10 +116,10 @@ def calculate_hedge_ratio(portfolio_var: float,
     return hedge_ratio
 ```
 
----
 
 
----
+
+
 
 
 ### 上游依赖
@@ -150,16 +153,16 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 变更历史
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
----
 
----
+
+
 
 ## 4. 文档治理
 
@@ -175,11 +178,11 @@ graph LR
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tail Risk Hedging** | å
+| **Tail Risk Hedging** | 
 
 ### 4.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 市场冲击模型
+  - 冲击成本
+  - 执行成本
+  - 市场微观结构
 
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0
@@ -12,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.4 (交易执行)
 ---
+
 
 # 市场冲击模型蓝图
 
@@ -94,7 +98,7 @@ layer: Layer 5.4 (交易执行)
 冲击与预测的偏差
 数据持续优化模型
 
----
+
 
 
 ### 上游依赖
@@ -129,7 +133,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 
 ## 2. 架构设计
 
@@ -280,7 +284,7 @@ class AlmgrenChrissModel:
         )
 ```
 
----
+
 
 ## 3. 接口定义
 
@@ -368,7 +372,7 @@ class OptimalStrategy:
     optimal_participation_rate: float  # 最优参与率
     time_slices: int               # 时间分片数量
 
----
+
 
 ## 4. 数据模型与存?
 ### 4.1 数据存储设计
@@ -439,7 +443,7 @@ CREATE TABLE model_parameters (
     ?实时预测 ?冲击监控 ?偏差分析 ?模型更新 ?性能报告
 ```
 
----
+
 
 ## 5. 算法实现说明
 
@@ -452,7 +456,7 @@ CREATE TABLE model_parameters (
 Impact = α * (Q/ADV)^β * σ
 ```
 
-å
+
 - ADV: 平均日成交量
 - σ: 波动?
 #### 5.1.2 参数拟合方法
@@ -495,7 +499,7 @@ def fit_linear_model(
 总冲? I_total = I_temp + I_perm
 ```
 
-å
+
 冲击系数
 - Q: 订单大小
 - T: 执行时间（天?- ADV: 平均日成交量
@@ -515,7 +519,7 @@ def optimize_execution_time(
     目标函数:
     Minimize: E[Cost] + Î» * Var[Cost]
     
-    å
+    
     - E[Cost] = Î· * (Q/ADV) / T + Î³ * (Q/ADV)
     - Var[Cost] = σ^2 * T * (Q/ADV)^2
     - λ: 风险厌恶系数
@@ -534,7 +538,7 @@ def optimize_execution_time(
 - **空间复杂?*: O(1)
 - **计算复杂?*: 低，适合实时优化
 
----
+
 
 ## 6. 实施技术栈
 
@@ -558,11 +562,11 @@ def optimize_execution_time(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **å
+| **
 存** | ?GB |
 | **存储** | ?GB（历史数据） |
 
----
+
 
 ## 7. 测试策略
 
@@ -610,7 +614,7 @@ class TestMarketImpactModel:
 | **模型训练** | 训练时间 | <5分钟 |
 | **并发预测** | 同时预测?| ?00?|
 
----
+
 
 ## 8. 风险与约?
 ### 8.1 技术风?
@@ -628,7 +632,7 @@ class TestMarketImpactModel:
 | **时间约束** | 开发时?0小时 | 需要合理规?|
 | **资源约束** | 个人开发，资源有限 | 采用简化方?|
 
----
+
 
 ## 9. 验收标准
 
@@ -656,7 +660,7 @@ class TestMarketImpactModel:
 | **文档完整?* | 100% | 文档审查 |
 | **代码规范** | 符合PEP8 | pylint |
 
----
+
 
 ## 10. 实施路线?
 ### 10.1 Phase 1: 线性冲击模型实现（1周）
@@ -695,7 +699,7 @@ class TestMarketImpactModel:
 - 实时监控系统
 - 性能评估报告
 
----
+
 
 
 ### 11.1 技术规格书
@@ -710,11 +714,11 @@ class TestMarketImpactModel:
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
----
+
 
 **蓝图编写?*: 首席架构?**蓝图日期**: 2026-04-02
 **蓝图?*: ?已完?
----
+
 
 **文档结束**
 
@@ -722,9 +726,9 @@ class TestMarketImpactModel:
 
 |------|------|----------|--------|
 
----
 
----
+
+
 
 ## 12. 文档治理
 
@@ -740,11 +744,11 @@ class TestMarketImpactModel:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Market Impact Model** | å
+| **Market Impact Model** | 
 
 ### 12.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

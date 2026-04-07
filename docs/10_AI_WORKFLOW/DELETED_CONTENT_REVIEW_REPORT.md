@@ -5,13 +5,12 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
+responsibility: 
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构审计报告
 applicable_scope: Git历史删除内容审查
 compliance_level: 专业标准
 parent_document: INDEX.md
-responsibility:
-  - 系统审计分析与质量评估报告与改进建议
 ---
 
 ## 文档职责说明

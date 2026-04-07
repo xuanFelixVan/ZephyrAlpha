@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 交易成本优化
+  - 成本模型
+  - 执行优化
+  - 成本控制
 
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0
@@ -12,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.4 (交易执行)
 ---
+
 
 # 交易成本优化蓝图
 
@@ -109,7 +113,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
----
+
 ## 2. 架构设计
 
 ### 2.1 系统架构?
@@ -120,7 +124,7 @@ graph LR
 目标组合权重 - 当前组合权重
     ?输出执行计划与成本估?```
 
----
+
 
 ## 3. 核心模块设计
 
@@ -356,8 +360,8 @@ class AlmgrenChrissModel:
         """
         计算临时冲击成本
         
-        å
-        å
+        
+        
         participation_rate = abs(trade_size) / avg_volume
         temp_impact = (
             self.temporary_impact_coeff * 
@@ -374,8 +378,8 @@ class AlmgrenChrissModel:
         """
 冲击成本
         
-        å
-        å
+        
+        
 冲击系数
         """
         participation_rate = abs(trade_size) / avg_volume
@@ -508,7 +512,7 @@ class ImpactModelConfig:
     volatility_lookback: int = 20  # 波动率计算回看期
 ```
 
----
+
 
 ## 4. 数据模型定义
 
@@ -551,7 +555,7 @@ class TotalCost:
     total: float
 ```
 
----
+
 
 ## 5. 技术实现细?
 ### 5.1 Almgren-Chriss模型原理
@@ -568,7 +572,7 @@ class TotalCost:
 Î³ Â· (X/V)
 ```
 
-å
+
 冲击系数
 
 ### 5.2 参数校准
@@ -584,7 +588,7 @@ class TotalCost:
 **计算优化**?- 缓存市场数据（波动率、成交量?- 预计算冲击成本矩?- 使用向量化计?
 **实时优化**?- 实时更新市场数据
 - 动态调整执行计?
----
+
 
 ## 6. 集成方案
 
@@ -662,7 +666,7 @@ class RebalancingSystem:
         )
 ```
 
----
+
 
 ## 7. 测试策略
 
@@ -714,7 +718,7 @@ def test_integration_with_portfolio_optimizer():
     assert result.net_return is not None
 ```
 
----
+
 
 ## 8. 实施路线?
 ### 8.1 开发阶段（1.5周）
@@ -733,7 +737,7 @@ def test_integration_with_portfolio_optimizer():
 | **M4: 测试通过** | Day 8 | 测试报告 | 所有测试通过 |
 | **M5: 生产就绪** | Day 10 | 生产系统 | 系统稳定运行 |
 
----
+
 
 ## 9. AI维护指南
 
@@ -760,7 +764,7 @@ def test_integration_with_portfolio_optimizer():
 **模型异常**?- 冲击成本估计异常 ?使用历史平均?- 执行算法失败 ?切换到简单算?- 参数越界 ?使用默认参数
 
 **数据异常**?- 缺失市场数据 ?使用最近可用数?- 异常波动??使用历史平均?
----
+
 
 ## 10. 预期收益评估
 
@@ -775,7 +779,7 @@ def test_integration_with_portfolio_optimizer():
 ### 10.2 定性收?
 - ?支持高频调仓策略
 - ?提供成本感知的组合优?
----
+
 
 ## 11. 风险与约?
 ### 11.1 技术风?
@@ -789,7 +793,7 @@ def test_integration_with_portfolio_optimizer():
 
 1. **数据约束**: 需要市场成交量数据
 2. **计算约束**: 实时计算需要优?3. **时间约束**: 开发周?.5?
----
+
 
 ## 附录
 
@@ -804,7 +808,7 @@ def test_integration_with_portfolio_optimizer():
 - 交易成本模型示例: docs/examples/trading_cost_example.py
 ·: tools/impact_model_calibration.py
 
----
+
 
 **蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
@@ -813,9 +817,9 @@ def test_integration_with_portfolio_optimizer():
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
 
----
 
----
+
+
 
 ## 12. 文档治理
 
@@ -831,11 +835,11 @@ def test_integration_with_portfolio_optimizer():
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Trading Cost Optimization** | å
+| **Trading Cost Optimization** | 
 
 ### 12.3 版本管理
 
 |------|------|----------|--------|
 
----
+
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_OBSERVABILITY_001
 version: 1.0.0
 status: Active
@@ -8,9 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+  - 数据可观测性
+  - 数据监控
+  - 数据血缘
+  - 数据质量告警
+
 layer: Layer 5.1 (数据处理)
 ---
+
 
 # DATA OBSERVABILITY BLUEPRINT
 
@@ -69,7 +74,7 @@ layer: Layer 5.1 (数据处理)
 4. 部署与监控
 
 
-## 核心定位
+
 
 > 核心职责: Data Observability蓝图设计
 > 职责边界: 
@@ -90,7 +95,7 @@ layer: Layer 5.1 (数据处理)
 | **问题发现时间** | <5分钟 | 数据问题发现时间<5分钟 |
 | **根因定位时间** | <30分钟 | 根因定位时间<30分钟 |
 
----
+
 
 ### 上游依赖
 
@@ -123,7 +128,7 @@ graph LR
     style D fill:#feca57
 ```
 
----
+
 
 
 
@@ -134,7 +139,7 @@ graph LR
 
 |------|---------|---------|---------|
 
----
+
 
 
 
@@ -383,7 +388,7 @@ class RootCauseAnalyzer:
                 if a.asset_id == asset_id and a.detected_at >= recent_time]
 ```
 
----
+
 
 
 ### 4.1 RESTful API
@@ -424,7 +429,7 @@ GET /api/v1/observability/health/{asset_id}
 }
 ```
 
----
+
 
 
 ```yaml
@@ -452,9 +457,9 @@ services:
       - POSTGRES_PASSWORD=pass
 ```
 
----
 
-## å
+
+## 
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -463,22 +468,22 @@ services:
 | `observability_health_score` | Gauge | 数据健康评分 |
 | `observability_incident_resolution_time_seconds` | Histogram | 事件解决时间 |
 
----
+
 
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
 
----
 
-## å
+
+## 
 
 - 实时数据质量监控蓝图
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 
----
 
----
+
+
 
 ## 1. 文档治理
 
@@ -501,7 +506,7 @@ services:
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 变更历史
@@ -510,5 +515,5 @@ services:
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 
----
+
 

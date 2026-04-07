@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -75,10 +75,10 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
 
 
-## 核心定位
+
+
 
 
 ## 2. 功能设计
@@ -231,7 +231,7 @@ class RiskBudgetAdjuster:
         pass
 ```
 
----
+
 
 
 ### 3.1 接口设计
@@ -333,13 +333,13 @@ dynamic_asset_allocation:
       reduction_rate: 0.5
 ```
 
----
+
 
 ## 4. 变更历史
 
 |------|------|----------|--------|
 
----
+
 
 
 ## 5. 文档治理
@@ -368,4 +368,4 @@ dynamic_asset_allocation:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
----
+

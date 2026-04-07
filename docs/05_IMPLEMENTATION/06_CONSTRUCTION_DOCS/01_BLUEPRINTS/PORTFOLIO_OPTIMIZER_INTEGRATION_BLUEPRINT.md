@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 优化器集成
   - 接口封装
@@ -77,7 +77,7 @@ layer: Layer 5.2 (组合优化)
 4. 部署与监控
 
 
-## 核心定位
+
 
 
 ## 1. 概述
@@ -98,7 +98,7 @@ layer: Layer 5.2 (组合优化)
 | **模块ID** | PORTFOLIO_OPTIMIZER_INTEGRATION_001 |
 | **版本** | v1.0.0 |
 
----
+
 
 ### 上游依赖
 
@@ -132,7 +132,7 @@ graph LR
     style D fill:#45b7d1
 ```
 
----
+
 
 
 ### 2.1 核心API
@@ -284,7 +284,7 @@ class OptimizerIntegration:
 |--------|------|---------|------|
 | **deepfolio** | 深度学习、端到端优化 | 复杂优化问题 | ⭐⭐ |
 
----
+
 
 ## 3. 接口定义
 
@@ -317,7 +317,7 @@ class OptimizerAPI:
     ) -> OptimizerRecommendation:
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -326,7 +326,7 @@ class OptimizerAPI:
 | Phase 1 | 统一接口设计、PyPortfolioOpt集成 | 16h |
 | Phase 2 | Riskfolio-Lib、skfolio、deepfolio集成 | 20h |
 
----
+
 
 
 ## 变更历史
@@ -334,9 +334,9 @@ class OptimizerAPI:
 |------|------|----------|--------|
 
 
----
 
----
+
+
 
 ## 5. 文档治理
 
@@ -357,5 +357,5 @@ class OptimizerAPI:
 
 |------|------|----------|--------|
 
----
+
 
