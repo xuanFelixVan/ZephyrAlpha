@@ -21,8 +21,7 @@ layer: Layer 5.1 (数据处理)
 ## 核心定位
 
 
-## 设计目标
-
+TimescaleDB集成模块，实现与TimescaleDB时序数据库的集成，支持大规模时序数据的高效存储和查询。
 ### 主要目标
 
 1. **功能完整性**: 确保TIMESCALEDB INTEGRATION功能完整，满足业务需求

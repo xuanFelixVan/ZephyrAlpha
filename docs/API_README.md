@@ -1,4 +1,4 @@
----
+﻿---
 module_id: API_README
 version: 1.0.0
 status: Active
@@ -16,7 +16,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - API文档、接口规范
+  - 系统文档管理与维护与优化维护
 
 ---
 ---
@@ -30,9 +30,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 因子计算
-  - 交易执行
-  - 回测系统
+  - 系统文档管理与维护与优化维护
 standard_type: 说明文档
 applicable_scope: 全系统
 compliance_level: 专业标准---
