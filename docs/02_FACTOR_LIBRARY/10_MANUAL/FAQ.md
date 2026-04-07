@@ -1,134 +1,7 @@
 ---
-module_id: MANUAL_FAQ
 responsibility:
-- FAQ.md - 常见问题相关文档
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
----
-
-# FAQ.md - 常见问题
-> **核心职责**: 常见问题解答和用户指引，涉及常见问题
-> **职责边界**: 
-> - ✅ 本文档负责：常见问题解答和用户指引相关内容
-> - ❌ 本文档不负责：具体实现细节、其他模块内容
-
-> 清风量化系统常见问题解答
-
-## 系统架构
-
-### Q1: Layer 0-11 是什么？
-
-**A**: Layer 0-11 是系统的分层架构?
-
-- **Layer 0**: 数据?- 数据采集、清洗、存?
-- **Layer 1**: 前置?- 市场状态识?
-- **Layer 2**: Alpha?- 因子生成、信号预?
-- **Layer 3**: 风险?- 风险建模、归?
-- **Layer 4**: 组合?- 组合优化、权重分?
-- **Layer 5**: 执行?- 订单生成、交易执?
-- **Layer 6**: 监控?- 实时监控、告?
-- **Layer 7**: 归因?- 绩效归因、分?
-
-详见: 01_FRAMEWORK/README.md
-
-### Q2: 系统支持多少个策略？
-
-**A**: 系统设计支持 30-50 个策略的动态管理。当前已实现 1 个策略（S001），其他策略在开发中?
-
-### Q3: 如何添加新的 Layer?
-
-**A**: 不建议添加新?Layer。如需扩展功能，应该在现有 Layer 内添加新模块?
-
-## 因子管理
-
-### Q4: 如何添加新因子？
-
-**A**: 
-
-1. ?`02_ALPHA_FACTORS_INDEX.md` 中分配新的因子ID（如 ALPHA_088?
-2. 在对应类别的表格中添加因子信?
-3. ?`factors/` 目录下创建详细定义文?
-4. ?`CHANGELOG.md` 中记录新增因?
-5. 更新 `CONTEXT_SNAPSHOT.json`
-
-**示例**:
-```markdown
-| ALPHA_088 | 新因子名?| 计算方法 | 数据?| ?| ?|
-```
-
-### Q5: 如何修改因子定义?
-
-**A**:
-
-1. ?`02_ALPHA_FACTORS_INDEX.md` 中更新因子信?
-2. ?`factors/{FACTOR_ID}.md` 中更新详细定?
-3. ?`CHANGELOG.md` 中记录修改内?
-4. 更新 `CONTEXT_SNAPSHOT.json` 中的文件哈希
-
-### Q6: 如何删除因子?
-
-**A**:
-
-1. 不要直接删除，改为标记为"已弃?
-2. ?`02_ALPHA_FACTORS_INDEX.md` 中将状态改?`⚠️ 已弃用`
-3. ?`CHANGELOG.md` 中记录弃用原?
-4. 保留历史记录以便追踪
-
-### Q7: 因子库中有多少个因子?
-
-**A**: 当前?87 ?Alpha 因子 + 46 个风险因?= 133 个因?
-
-详见: 02_ALPHA_FACTORS_INDEX.md
-
-## 策略开?
-
-### Q8: 如何创建新策略？
-
-**A**:
-
-1. 创建 `Strategy_Spec_S{ID}.md` 文件
-2. 定义策略逻辑（赚钱逻辑、公式、伪代码?
-3. 定义风险控制（止损、止盈、仓位）
-4. 定义异常处理
-5. ?`03_TRADING_TACTICS/` 中创建策略文?
-6. ?`CHANGELOG.md` 中记录新增策?
-
-详见: Strategy_Spec_S001.md
-
-### Q9: 如何运行策略回测?
-
-**A**:
-
-1. 准备历史数据（至?年）
-2. 配置回测参数（初始资金、手续费等）
-3. 运行回测框架
-4. 生成回测报告
-5. 将报告保存到 `05_BACKTEST/strategy_reports/S{ID}/`
-
-### Q10: 回测报告应该包含什么内容？
-
-**A**:
-
-- 策略说明
-- 回测参数
-- 性能指标（夏普比、最大回撤、胜率等?
-- 权益曲线
-- 交易统计
-- 风险分析
-
-详见: 05_BACKTEST/strategy_reports/README.md
-
-## 数据管理
-
-### Q11: 数据存储在哪里？
-
-**A**:
-
-| 数据类型 | 存储位置 | 格式 |
-|---------|---------|------|
+  - 提供10 Manual相关文档支持
+---|
 | 原始数据 | `data/raw/{type}/{year}/` | Parquet |
 | 处理后数?| `data/processed/` | Parquet + SQLite |
 | 因子数据 | `data/factors/{factor_id}/` | Parquet |
@@ -143,7 +16,7 @@ owner: 文档管理团队
 1. 配置数据源（`config/data_sources.yaml`?
 2. 运行数据采集模块
 3. 数据自动清洗和存?
-4. 因子自动计算和更?
+4. 因子自动计算和更新
 
 ### Q13: 数据更新频率是多少？
 
@@ -248,7 +121,7 @@ owner: 文档管理团队
 2. AI?`02_ALPHA_FACTORS_INDEX.md` 中添加因子信?
 3. AI?`factors/` 目录下创建详细定?
 4. AI?`CHANGELOG.md` 中记录新增因?
-5. 人工审核并验?
+5. 人工审核并验证
 
 ### Q22: 如何让AI修改系统配置?
 
@@ -267,7 +140,7 @@ owner: 文档管理团队
 
 **A**:
 
-1. 检?`CONTEXT_SNAPSHOT.json` 版本是否匹配
+1. 检查`CONTEXT_SNAPSHOT.json` 版本是否匹配
 2. 检查依赖库是否安装（`pip install -r requirements.txt`?
 3. 检查配置文件是否正确（`config/system.yaml`?
 4. 查看日志文件（`logs/`）获取错误信?
@@ -296,7 +169,7 @@ owner: 文档管理团队
 
 **A**: 
 
-- 查看 `FAQ.md`（本文档?
+- 查看 `FAQ.md`（本文档案
 - 查看相关模块?`README.md`
 - 查看 `CHANGELOG.md` 了解最新变?
 - 查看 `System_Manifest.md` 了解系统结构

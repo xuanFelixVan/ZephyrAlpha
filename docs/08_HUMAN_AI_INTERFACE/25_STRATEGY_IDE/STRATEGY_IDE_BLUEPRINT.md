@@ -2,12 +2,13 @@
 module_id: 08_HUMAN_AI_INTERFACE_25_STRATEGY_IDE_001
 - [JupyterLab官方文档](https://github.com/jupyterlab)
 responsibility:
-- 策略开发IDE设计与实施方案与优化维护
+  - 策略开发IDE设计、代码编辑器集成、策略调试工具、策略回测与优化功能实现
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
+  - 策略开发IDE设计与实施方案与优化维护
 ---
 
 **蓝图状态**: ✅ 活跃  

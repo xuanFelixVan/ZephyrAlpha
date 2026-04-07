@@ -31,7 +31,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易策略设计与实施管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -206,7 +206,7 @@ class AskingScalpingStrategy(BaseStrategy):
 - 总分?.6
 
 **卖出条件**?
-- 不涨停立即清?
+- 不涨停立即清单
 - 盈利5%以上卖出一?
 - 亏损2%止损
 
@@ -358,8 +358,8 @@ class LingHuChongReboundStrategy(BaseStrategy):
 - 总分?.6
 
 **卖出条件**?
-- 放量大阴线立即清?
-- 达到目标位（+15%）清?
+- 放量大阴线立即清单
+- 达到目标位（+15%）清单
 - 高开低走且盈?5%卖出一?
 
 **风险控制**?

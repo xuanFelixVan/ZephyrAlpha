@@ -57,7 +57,7 @@ responsibility:
 
 
 
-# 强化学习蓝图：智能交易决策系?
+# 强化学习蓝图：智能交易决策系统
 > **核心职责**: 提供reinforcement learning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Reinforcement Learning蓝图设计相关内容
@@ -106,7 +106,7 @@ responsibility:
 
 ### 1.3 版本信息与变更记?
 
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 
 |------|------|------|----------|------|
 
@@ -118,7 +118,7 @@ responsibility:
 
 
 
-## 🎯 二、专业机构对?
+## 🎯 二、专业机构对接
 
 ### 2.1 文艺复兴科技 (Renaissance Technologies)
 
@@ -174,7 +174,7 @@ responsibility:
 
 
 
-## 🏗?三、技术架构设?
+## 🏗?三、技术架构设计
 
 ### 3.1 系统架构?
 
@@ -270,7 +270,7 @@ class ActionType(Enum):
 
 class TradingState:
 
-    """交易状?""
+    """交易状态""
 
     cash: float
 
@@ -472,7 +472,7 @@ class TradingEnvironment(gym.Env):
 
     def _get_state(self) -> np.ndarray:
 
-        """获取状?""
+        """获取状态""
 
         return np.zeros(self.observation_space.shape, dtype=np.float32)
 

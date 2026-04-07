@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 系统模块设计与实施方案与优化维护
+  - 风控面板设计、风控规则配置、风控参数调整、风控日志记录与审计实现
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

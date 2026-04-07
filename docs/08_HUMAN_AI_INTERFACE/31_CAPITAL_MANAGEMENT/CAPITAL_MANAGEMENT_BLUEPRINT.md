@@ -2,12 +2,13 @@
 module_id: 08_HUMAN_AI_INTERFACE_31_CAPITAL_MANAGEMENT_001
 - [自研官方文档](https://github.com/自研)
 responsibility:
-- 资金管理界面设计与实施方案与优化维护
+  - 资金管理界面设计、资金分配算法、资金使用监控、资金调拨功能实现
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
+  - 资金管理界面设计与实施方案与优化维护
 ---
 
 **蓝图状态**: ✅ 活跃  

@@ -251,7 +251,7 @@ class Layer8DeepAuditor:
                             yaml_content = yaml_match.group(1)
                             
                             # 提取responsibility
-                            resp_match = re.search(r'responsibility:\s*\n((?:\s+-.*\n)+)', yaml_content)
+                            resp_match = re.search(r'responsibility:\s*\n((?:\s+-[^\n]+\n?)+)', yaml_content)
                             if resp_match:
                                 responsibilities = []
                                 for line in resp_match.group(1).strip().split('\n'):

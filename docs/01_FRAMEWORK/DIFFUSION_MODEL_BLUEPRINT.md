@@ -158,7 +158,7 @@ class DiffusionModel:
 
     ):
 
-        """初始化扩散模?        
+        """初始化扩散模块        
 
         Args:
 

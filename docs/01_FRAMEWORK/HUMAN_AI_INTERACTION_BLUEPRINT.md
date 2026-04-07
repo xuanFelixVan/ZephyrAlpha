@@ -18,7 +18,7 @@ last_updated: 2026-04-02
 owner: 首席蓝图架构师
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
-applicable_scope: 人机交互层战略规?
+applicable_scope: 人机交互层战略规范
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater AYA System", "Renaissance Technologies AI Governance", "Two Sigma Human-AI Collaboration"]
 related_documents:
@@ -57,7 +57,7 @@ implementation_status: 蓝图设计完成
 
 | AI角色 | 定位 | 决策?| 适用场景 | 信任等级 |
 |--------|------|--------|----------|----------|
-| **数据分析?* | 执行?| 100%自动?| 数据采集、清洗、计?| L5 (完全信任) |
+| **数据分析?* | 执行?| 100%自动?| 数据采集、清洗、计划| L5 (完全信任) |
 | **信号生成?* | 执行?| 90%自动?| 因子计算、信号生?| L4 (高度信任) |
 | **策略优化?* | 辅助?| 70%自动?| 参数优化、策略改?| L3 (中度信任) |
 | **风险监控?* | 辅助?| 50%自动?| 风险识别、告警触?| L2 (谨慎信任) |
@@ -329,7 +329,7 @@ implementation_status: 蓝图设计完成
 - **模块ID**: HUMAN_AI_INTERACTION_BLUEPRINT_001
 - **蓝图文档**: HUMAN_AI_INTERACTION_BLUEPRINT.md
 - **技术规格书**: 待创建
-- **职责**: 人机交互层战略规?
+- **职责**: 人机交互层战略规范
 - **状态**: Active
 ```
 

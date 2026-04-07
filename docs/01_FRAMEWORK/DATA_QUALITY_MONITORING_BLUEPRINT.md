@@ -177,7 +177,7 @@ Two Sigma数据治理架构:
 
 
 
-## 二、系统架构设?
+## 二、系统架构设计
 
 ### 2.1 数据质量监控架构
 
@@ -249,7 +249,7 @@ class CompletenessChecker:
 
         
 
-        # 3. 生成完整性报?        overall_missing_rate = sum([s['missing_rate'] for s in missing_stats.values()]) / len(missing_stats)
+        # 3. 生成完整性报告        overall_missing_rate = sum([s['missing_rate'] for s in missing_stats.values()]) / len(missing_stats)
 
         
 
@@ -309,15 +309,15 @@ class AccuracyChecker:
 
         for column in data.select_dtypes(include=[np.number]).columns:
 
-            # 1. Z-Score异常检?            zscore_anomalies = self.anomaly_methods['zscore'].detect(data[column])
+            # 1. Z-Score异常检查            zscore_anomalies = self.anomaly_methods['zscore'].detect(data[column])
 
             
 
-            # 2. IQR异常检?            iqr_anomalies = self.anomaly_methods['iqr'].detect(data[column])
+            # 2. IQR异常检查            iqr_anomalies = self.anomaly_methods['iqr'].detect(data[column])
 
             
 
-            # 3. Isolation Forest异常检?            if_anomalies = self.anomaly_methods['isolation_forest'].detect(data[[column]])
+            # 3. Isolation Forest异常检查            if_anomalies = self.anomaly_methods['isolation_forest'].detect(data[[column]])
 
             
 
@@ -395,7 +395,7 @@ class TimelinessChecker:
 
         
 
-        # 4. 生成时效性报?        return TimelinessResult(
+        # 4. 生成时效性报告        return TimelinessResult(
 
             data_timestamp=data_timestamp,
 
@@ -501,7 +501,7 @@ class ConsistencyChecker:
 
         
 
-        # 3. 生成一致性报?        return ConsistencyResult(
+        # 3. 生成一致性报告        return ConsistencyResult(
 
             field_stats=consistency_stats,
 
@@ -679,7 +679,7 @@ class AlertEngine:
 
     def process_quality_result(self, quality_result: QualityResult):
 
-        """处理质量检查结?""
+        """处理质量检查结束""
 
         
 

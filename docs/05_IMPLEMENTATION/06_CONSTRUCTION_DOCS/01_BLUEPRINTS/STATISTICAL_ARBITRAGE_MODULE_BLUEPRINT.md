@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 统计套利模块
-- 配对交易
+- 统计套利配对交易
 - 协整分析
 - 均值回归
 layer: Layer 5 (策略执行层)
@@ -119,9 +119,9 @@ class CointegrationAnalyzer:
         series_b: pd.Series
     ) -> CointegrationResult:
         """
-        协整检?        
+        协整检查        
         使用Engle-Granger两步?
-        1. 对价格序列进行线性回?        2. 对残差序列进行ADF检?        3. 计算半衰?        
+        1. 对价格序列进行线性回?        2. 对残差序列进行ADF检查        3. 计算半衰?        
         Returns:
             CointegrationResult: 
         """
@@ -248,7 +248,7 @@ class RiskManager:
         
         控制措施:
         2. 总仓位限?        3. 止损机制
-        4. 流动性约?        """
+        4. 流动性约束        """
         pass
 
 
@@ -277,8 +277,8 @@ class RealTimeMonitor:
 1. 线性回?   - 对价格序列进行OLS回归: y = α + βx + ε
    - 计算对冲比例β
 
-2. ADF检?   - 对残差序列ε进行ADF检?   - 检验残差的平稳?
-3. 半衰期计?   - 计算价差的半衰期
+2. ADF检查   - 对残差序列ε进行ADF检查   - 检验残差的平稳?
+3. 半衰期计划   - 计算价差的半衰期
    - 半衰?= -ln(2) / λ
    - λ为均值回归速度参数
 
@@ -365,7 +365,7 @@ class RealTimeMonitor:
 ### 5.1 对外接口
 ```python
 class StatisticalArbitrageModule:
-    """统计套利模块主接?""
+    """统计套利模块主接口""
     
     def find_cointegrated_pairs(
         self, 

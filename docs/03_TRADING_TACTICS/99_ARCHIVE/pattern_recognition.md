@@ -35,7 +35,7 @@ responsibility:
   - 系统架构
   - 文档治理
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---

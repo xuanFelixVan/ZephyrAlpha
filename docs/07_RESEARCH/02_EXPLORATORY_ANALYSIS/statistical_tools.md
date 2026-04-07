@@ -92,7 +92,7 @@ def distribution_analysis(series: pd.Series) -> dict:
 
 ## 2. 稳定性分?
 
-### 2.1 平稳性检?
+### 2.1 平稳性检查
 
 ```python
 from statsmodels.tsa.stattools import adfuller, kpss

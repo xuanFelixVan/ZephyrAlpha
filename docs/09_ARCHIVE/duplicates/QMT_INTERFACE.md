@@ -1,6 +1,6 @@
 ---
 module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
-**文档状?*: ?已完成迁?
+**文档状?*: ?已完成迁移
 **最后更?*: 2026-04-02
 **维护人员**: 数据架构?
 responsibility:

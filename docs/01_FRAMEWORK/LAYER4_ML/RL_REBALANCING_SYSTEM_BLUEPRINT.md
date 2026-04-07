@@ -56,7 +56,7 @@ responsibility:
 ### 1.3 核心功能清单
 
 1. **强化学习调仓模型**: 基于PPO/SAC算法训练调仓决策模型
-2. **动态奖励函?*: 根据市场状态动态调整奖励函?3. **状态空间设?*: 设计多维状态空间表征市场环?4. **动作空间设计**: 设计连续/离散动作空间表征调仓决策
+2. **动态奖励函?*: 根据市场状态动态调整奖励函?3. **状态空间设计: 设计多维状态空间表征市场环?4. **动作空间设计**: 设计连续/离散动作空间表征调仓决策
 
 ---
 
@@ -110,7 +110,7 @@ class PortfolioRebalancingEnv(gym.Env):
     
     索引: RL_REBALANCING_001-M01
     职责: 构建强化学习交易环境
-    输入: 市场数据、组合数?    输出: 状态、奖励、是否结?    """
+    输入: 市场数据、组合数?    输出: 状态、奖励、是否结束    """
     
     def __init__(self, config: EnvConfig):
         super(PortfolioRebalancingEnv, self).__init__()
@@ -183,7 +183,7 @@ class PortfolioRebalancingEnv(gym.Env):
         Args:
             action: 调仓权重调整?1?之间?            
         Returns:
-            state: 新状?            reward: 奖励
+            state: 新状态            reward: 奖励
             done: 是否结束
             info: 额外信息
         """
@@ -223,7 +223,7 @@ class PortfolioRebalancingEnv(gym.Env):
             self.current_capital <= self.initial_capital * 0.5  # 回撤超过50%
         )
         
-        # 11. 获取新状?        state = self._get_state()
+        # 11. 获取新状态        state = self._get_state()
         
         # 12. 额外信息
         info = {
@@ -592,7 +592,7 @@ class SACRebalancingAgent:
 class DynamicRewardFunction:
     """动态奖励函?    
     索引: RL_REBALANCING_001-M04
-    职责: 根据市场状态动态调整奖励函?    输入: 组合收益、风险、成本、市场状?    输出: 动态奖?    """
+    职责: 根据市场状态动态调整奖励函?    输入: 组合收益、风险、成本、市场状态    输出: 动态奖?    """
     
     def __init__(self, config: RewardConfig):
         self.config = config
@@ -891,7 +891,7 @@ class OptimizerConfig:
 
 
 class IRLAgent(ABC):
-    """强化学习智能体接?""
+    """强化学习智能体接口""
     
     @abstractmethod
     def train(self, total_timesteps: int) -> None:
@@ -917,7 +917,7 @@ class IRLAgent(ABC):
 ### 4.2 主接?
 ```python
 class RLRebalancingSystem:
-    """强化学习调仓系统主接?    
+    """强化学习调仓系统主接口    
     索引: RL_REBALANCING_001-MAIN
     职责: 协调环境构建、模型训练、模型评估、模型部?    """
     

@@ -361,7 +361,7 @@ class UnifiedInterfaceFramework:
 
 ### 6.1 RESTful API服务
 
-**优化目标**: 为人机协同界面提供RESTful API，支持外部系统集?
+**优化目标**: 为人机协同界面提供RESTful API，支持外部系统集成
 **技术方?*:
 
 ```python
@@ -559,12 +559,12 @@ async def quick_approve_decision(decision_id: str, approved: bool):
 - 实时决策协同功能
 - 多终端同步测?
 #### Phase 3 (1个月): 移动端支?- 移动端API开?- 推送通知集成
-- 移动端SDK开?
+- 移动端SDK开发
 #### Phase 4 (1个月): 测试和优?- 性能测试和优?- 安全性测?- 文档完善
 
 ### 6.5 与合规检查模块的集成
 
-**集成?*: 人机协同界面可以调用合规检查API，在决策审批前进行合规检?
+**集成?*: 人机协同界面可以调用合规检查API，在决策审批前进行合规检查
 ```python
 @app.post("/api/v1/decision/approve-with-compliance")
 async def approve_decision_with_compliance(decision: DecisionRequest):

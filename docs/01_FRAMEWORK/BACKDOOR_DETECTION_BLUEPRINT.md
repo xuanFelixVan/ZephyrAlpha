@@ -144,7 +144,7 @@ layer: Layer 4 (机器学习层)
 
 class BackdoorDetector:
 
-    """后门检测系?""
+    """后门检测系统""
 
     
 
@@ -184,13 +184,13 @@ class BackdoorDetector:
 
         Args:
 
-            model: 待检测模?            clean_data: 干净数据
+            model: 待检测模块            clean_data: 干净数据
 
             
 
         Returns:
 
-            Dict: 检测结?        """
+            Dict: 检测结束        """
 
         pass
 
@@ -218,7 +218,7 @@ class BackdoorDetector:
 
         Returns:
 
-            np.ndarray: 触发器模?        """
+            np.ndarray: 触发器模块        """
 
         pass
 

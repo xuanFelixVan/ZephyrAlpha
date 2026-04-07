@@ -109,20 +109,20 @@ layer: Layer 5.2 (组合优化)
 
 ### 1.3 与多策略分层系统的关?
 
-本模块与MULTI_STRATEGY_HIERARCHICAL_SYSTEM形成互补关系?
+本模块与MULTI_STRATEGY_HIERARCHICAL_SYSTEM形成互补关系统
 
 | 模块 | 核心定位 | 适用场景 | 关系说明 |
 |------|----------|----------|----------|
-| **STRATEGY_PORTFOLIO_OPTIMIZATION** (本模? | 策略组合优化 | 策略权重优化、相关性建?| 提供优化算法支持 |
+| **STRATEGY_PORTFOLIO_OPTIMIZATION** (本模块 | 策略组合优化 | 策略权重优化、相关性建?| 提供优化算法支持 |
 | **MULTI_STRATEGY_HIERARCHICAL_SYSTEM** | 多策略分层管?| 策略分层、信号融合、协同优?| 使用本模块的优化结果 |
 
 **职责边界**:
-- 本模? 专注于策略层面的组合优化，计算最优策略权?
+- 本模块 专注于策略层面的组合优化，计算最优策略权?
 - MULTI_STRATEGY_HIERARCHICAL_SYSTEM: 专注于策略分层管理、信号融合和协同优化
 
 **推荐实施路径**:
 1. 先实现本模块 (5-7? - 建立策略组合优化能力
-2. 再实?MULTI_STRATEGY_HIERARCHICAL_SYSTEM (160h) - 构建完整的分层管理系?
+2. 再实?MULTI_STRATEGY_HIERARCHICAL_SYSTEM (160h) - 构建完整的分层管理系统
 
 
 ## 📚 相关文档
@@ -152,7 +152,7 @@ layer: Layer 5.2 (组合优化)
 | **NumPy** | 1.24+ | 数值计?| [官方文档](https://numpy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### 引用关系?
+### 引用关系统
 
 ```mermaid
 graph LR
@@ -282,7 +282,7 @@ class StrategyPortfolioAPI:
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更?|
+| 版本 | 日期 | 变更内容 | 变更新|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 | v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历?| 审计系统 |
@@ -314,7 +314,7 @@ class StrategyPortfolioAPI:
 
 ### 5.3 版本管理
 
-| 版本 | 日期 | 变更内容 | 变更?|
+| 版本 | 日期 | 变更内容 | 变更新|
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构?|
 

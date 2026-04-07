@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 > - ✅ 本文档负责：Strategy Selection蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> 清风量化交易系统 v5.3 - 策略排名与选择系统详细技术设?> **索引**: `STRAT.SELECTION.001`
+> 清风量化交易系统 v5.3 - 策略排名与选择系统详细技术设计> **索引**: `STRAT.SELECTION.001`
 > **开发周?*: 80小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支?20+策略多维度评分、智能排名、动态选择和市场适应性分?> **参考开?*: vn.py的StrategyRanking + quant-system策略选择模块 + 多准则决策分?MCDA)
 > **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于策略排名与选择功能
@@ -61,14 +61,14 @@ implementation_status: 设计阶段
 | **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权?|
 | **策略相关性分?* | P1 | 收益相关性矩阵、风险分散度计算 |
 | **AI辅助决策** | P1 | AI推荐策略组合、风险评估、市场匹配度分析 |
-| **实时性能监控** | P2 | 策略运行状态监控、性能衰减检?|
+| **实时性能监控** | P2 | 策略运行状态监控、性能衰减检查|
 | **用户友好界面** | P2 | 可视化排名仪表盘、自然语言策略推荐 |
 
 ### 1.2 技术约束与原则
 
 1. **客观公正原则**：评分标准透明可解释，避免黑箱决策
 2. **动态适应性原?*：评分权重随市场状态、用户风险偏好动态调?3. **风险分散原则**：避免选择高度相关的策略组?4. **持续优化原则**：基于实盘表现持续更新策略评?5. **用户友好原则**：不懂编程的用户也能理解评分逻辑和推荐理?
-### 1.3 与现有系统集?
+### 1.3 与现有系统集成
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **BatchEvaluation系统** | 绩效数据?| 获取策略历史绩效数据 |
@@ -77,7 +77,7 @@ implementation_status: 设计阶段
 | **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |
 
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 整体架构?
 ```
 策略排名与选择系统四层架构?┌─────────────────────────────────────────────────────────??                  用户交互?(User Interaction)          ?├─────────────────────────────────────────────────────────??1. RankingDashboard - 排名仪表?                       ??2. RecommendationEngine - 推荐引擎                       ??3. NaturalLanguageExplainer - 自然语言解释?            ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               决策逻辑?(Decision Logic)               ?├─────────────────────────────────────────────────────────??1. MultiCriteriaEvaluator - 多准则评估器                 ??2. WeightOptimizer - 权重优化?                         ??3. PortfolioConstructor - 组合构建?                    ??4. RiskDiversifier - 风险分散?                         ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               评分计算?(Scoring Layer)                ?├─────────────────────────────────────────────────────────??1. PerformanceScorer - 绩效评分?                       ??2. RiskScorer - 风险评分?                              ??3. StabilityScorer - 稳定性评分器                        ??4. AdaptabilityScorer - 适应性评分器                     ??5. ComplexityScorer - 复杂度评分器                       ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               数据源层 (Data Sources)                   ?├─────────────────────────────────────────────────────────??1. BatchEvaluationResults - 批量评估结果                 ??2. RealTimePerformance - 实时绩效数据                    ??3. MarketStateData - 市场状态数?                       ??4. UserPreferences - 用户偏好数据                        ?└─────────────────────────────────────────────────────────?```
@@ -140,7 +140,7 @@ class TOPSISEvaluator:
         
         # 6. 计算相对接近?        closeness_scores = distances_to_negative / (distances_to_positive + distances_to_negative)
         
-        # 7. 排序并生成结?        ranking = self._create_ranking(strategies, closeness_scores, criteria_matrix)
+        # 7. 排序并生成结束        ranking = self._create_ranking(strategies, closeness_scores, criteria_matrix)
         
         return RankingResult(
             ranking=ranking,
@@ -217,12 +217,12 @@ class DynamicWeightOptimizer:
         """优化评分权重
         
         基于以下因素动态调整权重：
-        1. 当前市场状?        2. 用户风险偏好
+        1. 当前市场状态        2. 用户风险偏好
         3. 策略历史表现
         4. 经济周期阶段
         """
         
-        # 1. 获取当前市场状?        market_state = self.market_state_detector.get_current_state()
+        # 1. 获取当前市场状态        market_state = self.market_state_detector.get_current_state()
         
         # 2. 获取用户风险偏好
         user_prefs = self.user_preference_store.get_preferences()
@@ -379,10 +379,10 @@ class DynamicWeightOptimizer:
 class TimeWeightedPerformanceScorer:
     """时间加权绩效评分?    
     索引: STRAT.SELECTION.001-M03
-    职责: 计算绩效指标评分，近期表现权重更?    特点: 指数衰减加权，重视近期表?    """
+    职责: 计算绩效指标评分，近期表现权重更新    特点: 指数衰减加权，重视近期表?    """
     
     def __init__(self, decay_factor: float = 0.9, min_periods: int = 20):
-        self.decay_factor = decay_factor  # 衰减因子，越大表示历史权重越?        self.min_periods = min_periods     # 最小计算周?        
+        self.decay_factor = decay_factor  # 衰减因子，越大表示历史权重越?        self.min_periods = min_periods     # 最小计算周期        
     def calculate_scores(self, strategy: Strategy, 
                         performance_data: pd.DataFrame) -> PerformanceScores:
         """计算时间加权绩效评分"""
@@ -440,7 +440,7 @@ class TimeWeightedPerformanceScorer:
             
             if end_idx > start_idx:
                 segment_return = (equity_curve.iloc[end_idx] / equity_curve.iloc[start_idx]) - 1
-                # 近期段权重更?                weight = self.decay_factor ** (n_segments - i - 1)
+                # 近期段权重更新                weight = self.decay_factor ** (n_segments - i - 1)
                 segment_returns.append(segment_return * weight)
                 
         if not segment_returns:
@@ -453,7 +453,7 @@ class TimeWeightedPerformanceScorer:
         
     def _time_weighted_max_drawdown(self, equity_curve: pd.Series) -> float:
         """时间加权最大回?        
-        近期回撤给予更高权重，反映最新风险状?        """
+        近期回撤给予更高权重，反映最新风险状态        """
         if len(equity_curve) < self.min_periods:
             return 0
             
@@ -481,7 +481,7 @@ class StrategyCorrelationAnalyzer:
     
     索引: STRAT.SELECTION.001-M04
     职责: 分析策略间收益相关性，支持风险分散
-    特点: 多维度相关性分析，动态相关性检?    """
+    特点: 多维度相关性分析，动态相关性检查    """
     
     def __init__(self, correlation_threshold: float = 0.7):
         self.correlation_threshold = correlation_threshold
@@ -733,7 +733,7 @@ class AIStrategyRecommender:
             f"组合风险等级: {risk_level}，最大回撤预? {risk_assessment.expected_max_dd:.1%}"
         )
         
-        # 分散化解?        diversification_score = risk_assessment.diversification_score
+        # 分散化解释        diversification_score = risk_assessment.diversification_score
         if diversification_score >= 0.7:
             div_explanation = "高度分散"
         elif diversification_score >= 0.4:
@@ -743,7 +743,7 @@ class AIStrategyRecommender:
             
         explanations.append(f"风险分散效果: {div_explanation}")
         
-        # 市场适应性解?        market_adaptability = risk_assessment.market_adaptability
+        # 市场适应性解释        market_adaptability = risk_assessment.market_adaptability
         if market_adaptability >= 0.7:
             adapt_explanation = "适应性强"
         elif market_adaptability >= 0.4:

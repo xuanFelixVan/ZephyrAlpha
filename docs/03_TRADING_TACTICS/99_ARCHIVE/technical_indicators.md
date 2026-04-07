@@ -35,7 +35,7 @@ responsibility:
   - 交易执行
   - 系统架构
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -87,7 +87,7 @@ implementation_status: 进行?---
 | 慢速EMA | 26 | 长期平滑 |
 | DIF计算 | DIF=EMA12-EMA26 | 快线 |
 | DEA?| 9日EMA | 信号?|
-| 柱状?| (DIF-DEA)2 | 动量指示 |
+| 柱状态| (DIF-DEA)2 | 动量指示 |
 
 ### 2.2 MACD信号量化
 
@@ -197,7 +197,7 @@ def calculate_atr(high, low, close, period=14):
 
 ***
 
-## 7. Python指标?
+## 7. Python指指标
 
 ```python
 import pandas as pd

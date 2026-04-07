@@ -1,0 +1,901 @@
+{
+  "dir": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS",
+  "total_files": 21,
+  "total_hits": 1407,
+  "items": [
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+      "count": 194,
+      "samples": [
+        {
+          "line": 90,
+          "text": "| **模块化分层架?* | 遵循12层架构蓝图，保持系统可扩展性和可维?| ZVT量化框架[1] |"
+        },
+        {
+          "line": 91,
+          "text": "| **因子中间库核?* | 建立专业级因子特征存?Feature Store)，实现因子数据版本化管理 | 对冲基金因子建模管道[2] |"
+        },
+        {
+          "line": 92,
+          "text": "| **AI驱动研究范式** | 集成AI技术实现自动化因子挖掘和策略优?| QLib AI量化平台[3] |"
+        },
+        {
+          "line": 93,
+          "text": "| **生产级监控运?* | 实现因子漂移监控、性能监控、告警体?| 因子生命周期管理[5] |"
+        },
+        {
+          "line": 95,
+          "text": "## 2. 专业机构最佳实践分?"
+        },
+        {
+          "line": 97,
+          "text": "### 2.1 模块化分层架?(行业标准)"
+        },
+        {
+          "line": 99,
+          "text": "专业量化机构普遍采用分层解耦架构，如ZVT框架?基础设施层→计算引擎层→策略执行层→结果分析?四层模型[1]。这种设计的核心优势是："
+        },
+        {
+          "line": 102,
+          "text": "- **维护?*: 模块化设计降低系统复杂度，提升代码可维护?"
+        },
+        {
+          "line": 104,
+          "text": "### 2.2 因子中间?Feature Store)作为核心基础设施"
+        },
+        {
+          "line": 107,
+          "text": "- **版本化管?*: 因子数据按时间、版本、参数多维度存储"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md",
+      "count": 114,
+      "samples": [
+        {
+          "line": 120,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 123,
+          "text": "### 2.2 核心子系统设?"
+        },
+        {
+          "line": 124,
+          "text": "#### 2.2.1 资金数据采集子系?"
+        },
+        {
+          "line": 149,
+          "text": "- FundDataset: 资金数据?        \"\"\""
+        },
+        {
+          "line": 161,
+          "text": "'turnover_ratio': TurnoverRatioCalculator(),    # 资金周转?            'liquidity_ratio': LiquidityRatioCalculator(),  # 流动比率"
+        },
+        {
+          "line": 162,
+          "text": "'cash_flow': CashFlowPredictor()                # 现金流预?        }"
+        },
+        {
+          "line": 169,
+          "text": "分析流动?"
+        },
+        {
+          "line": 171,
+          "text": "?        2. 资金周转? 资金使用效率"
+        },
+        {
+          "line": 172,
+          "text": "3. 流动比率: 短期偿债能?        4. 现金流预? 未来现金流预?"
+        },
+        {
+          "line": 176,
+          "text": "- turnover_ratio: 周转?          - liquidity_ratio: 流动比率"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md",
+      "count": 112,
+      "samples": [
+        {
+          "line": 81,
+          "text": "行为模拟系?- 多层次集成架构方案"
+        },
+        {
+          "line": 86,
+          "text": "> **技术评审官**: Spec-Approver (审批智能?"
+        },
+        {
+          "line": 88,
+          "text": "> **答案**: 多层次集?- 同时作为因子、信号、决策三种形式接口"
+        },
+        {
+          "line": 92,
+          "text": "分析? 之间新增"
+        },
+        {
+          "line": 97,
+          "text": "?Layer 2: Alpha因子?(现有5700+因子)"
+        },
+        {
+          "line": 98,
+          "text": "模拟层 🆕 (新增核心?"
+        },
+        {
+          "line": 100,
+          "text": "├─ 主力智能?(InstitutionalAgent)"
+        },
+        {
+          "line": 101,
+          "text": "├─ 散户智能?(RetailAgent)"
+        },
+        {
+          "line": 103,
+          "text": "分析?    ?Layer 4: 机器学习?    ?Layer 5: 策略执行?    ?Layer 6: 组合优化?    ?Layer 7: AI报告?    ?Layer 8: 人机交互?```"
+        },
+        {
+          "line": 107,
+          "text": "2. **计算层面**: 需要运行RL模型、行为金融学模型等复杂计?3. **交互层面**: 需要模拟智能体之间的博弈和交互"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+      "count": 110,
+      "samples": [
+        {
+          "line": 100,
+          "text": "| 技术领?| 技术选型 | 选择理由 |"
+        },
+        {
+          "line": 102,
+          "text": "| **数据采集** | Scrapy + Selenium + Requests | 成熟稳定，支持动态页?|"
+        },
+        {
+          "line": 103,
+          "text": "| **NLP处理** | GLM-4-Flash | 成本低（0.1?百万tokens），速度?|"
+        },
+        {
+          "line": 104,
+          "text": "| **实体识别** | GLM-4-Flash + 正则表达?| 准确率高，成本低 |"
+        },
+        {
+          "line": 107,
+          "text": "| **实时流处?* | Kafka（可选） | 支持实时数据?|"
+        },
+        {
+          "line": 114,
+          "text": "### 2.1 新闻数据?"
+        },
+        {
+          "line": 117,
+          "text": "**技术方?*:"
+        },
+        {
+          "line": 145,
+          "text": "| 字段?| 类型 | 说明 |"
+        },
+        {
+          "line": 153,
+          "text": "感得分?1??|"
+        },
+        {
+          "line": 160,
+          "text": "**技术方?*:"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_SELECTION_BLUEPRINT.md",
+      "count": 102,
+      "samples": [
+        {
+          "line": 87,
+          "text": "| **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权?|"
+        },
+        {
+          "line": 93,
+          "text": "2. **动态适应性原?*：评分权重随市场状态、用户风险偏好动态调?"
+        },
+        {
+          "line": 94,
+          "text": "4. **持续优化原则**：基于实盘表现持续更新策略评?"
+        },
+        {
+          "line": 95,
+          "text": "5. **用户友好原则**：不懂编程的用户也能理解评分逻辑和推荐理?"
+        },
+        {
+          "line": 101,
+          "text": "| **BatchEvaluation系统** | 绩效数据?| 获取策略历史绩效数据 |"
+        },
+        {
+          "line": 103,
+          "text": "| **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |"
+        },
+        {
+          "line": 107,
+          "text": "### 2.1 整体架构?"
+        },
+        {
+          "line": 110,
+          "text": "策略排名与选择系统四层架构?"
+        },
+        {
+          "line": 112,
+          "text": "?                  用户交互?(User Interaction)          ?"
+        },
+        {
+          "line": 114,
+          "text": "?1. RankingDashboard - 排名仪表?                       ?"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SYSTEM_ENHANCEMENT_BLUEPRINT.md",
+      "count": 102,
+      "samples": [
+        {
+          "line": 81,
+          "text": "## 一、蓝图概?"
+        },
+        {
+          "line": 88,
+          "text": "| P1 | 监管合规报告 | 满足证监会要?| ?| 合规风险 |"
+        },
+        {
+          "line": 100,
+          "text": "### 1.3 技术定?"
+        },
+        {
+          "line": 101,
+          "text": "**Layer定位**: Layer 7 - AI报告?**模块类型**: 核心报告模块"
+        },
+        {
+          "line": 110,
+          "text": "### 2.1 整体架构?"
+        },
+        {
+          "line": 112,
+          "text": "景分析?  ? ?压力测试     ? ?实时风险     ?         ?? ?Scenario     ? ?StressTest   ? ?RealTimeRisk ?         ?? ?Analyzer     ? ?Reporter     ? ?Reporter     ?         ?? └──────┬───────? └──────┬───────? └────"
+        },
+        {
+          "line": 116,
+          "text": "#### P0级模块（核心差距?"
+        },
+        {
+          "line": 118,
+          "text": "景分析?(ScenarioAnalyzer)**"
+        },
+        {
+          "line": 120,
+          "text": "景分析报告（收益影响、风险指标、敏感度分析?- 调用频率：按需调用 / 周度定期分析"
+        },
+        {
+          "line": 122,
+          "text": "**P0-02: 压力测试报告生成?(StressTestReporter)**"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SMART_EXECUTION_ENGINE_BLUEPRINT.md",
+      "count": 76,
+      "samples": [
+        {
+          "line": 88,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 90,
+          "text": "┌─────────────────────────────────────────────────────────────────??                   智能执行算法引擎架构                           ?├─────────────────────────────────────────────────────────────────??       "
+        },
+        {
+          "line": 92,
+          "text": "### 2.2 核心子系统设?"
+        },
+        {
+          "line": 97,
+          "text": "\"\"\"订单分析?\"\""
+        },
+        {
+          "line": 106,
+          "text": "分析订单特征，选择最优执行算?"
+        },
+        {
+          "line": 108,
+          "text": "1. 订单规模: 相对ADV的比?        2. 紧急流程 执行时间窗口"
+        },
+        {
+          "line": 109,
+          "text": "3. 市场条件: 波动率、流?        4. 风险偏好: 可接受的滑点范围"
+        },
+        {
+          "line": 119,
+          "text": "#### 2.2.2 智能执行算法子系?"
+        },
+        {
+          "line": 127,
+          "text": "'VWAP': VWAPAlgorithm(),      # 成交量加权平均价?            'IS': ISAlgorithm(),          # Implementation Shortfall"
+        },
+        {
+          "line": 161,
+          "text": "，以市场最优价格执?"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md",
+      "count": 75,
+      "samples": [
+        {
+          "line": 84,
+          "text": "### 1.1 设计背景与业务目?"
+        },
+        {
+          "line": 89,
+          "text": "**技术痛?*?- 无多维度风险归因能力"
+        },
+        {
+          "line": 91,
+          "text": "- 无风险预算执行监?- 无风险贡献度分析"
+        },
+        {
+          "line": 93,
+          "text": "**预期?*?- 风险透明度：提升60%"
+        },
+        {
+          "line": 95,
+          "text": "- 风险决策支持：新增能?- 为Two Sigma模式提供核心能力支撑"
+        },
+        {
+          "line": 97,
+          "text": "### 1.2 技术定位与架构层归?"
+        },
+        {
+          "line": 98,
+          "text": "**Layer定位**: Layer 6 - 组合优化层（风险管理子层?"
+        },
+        {
+          "line": 115,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 118,
+          "text": "### 2.2 核心数据?"
+        },
+        {
+          "line": 121,
+          "text": "?风险分解（因?行业/资产?    ?归因分析（贡献度计算?    ?风险预算执行监控"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md",
+      "count": 74,
+      "samples": [
+        {
+          "line": 86,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 91,
+          "text": "**Layer 1 - 策略绩效评估?*"
+        },
+        {
+          "line": 99,
+          "text": "**Layer 3 - 信号融合机制?*"
+        },
+        {
+          "line": 100,
+          "text": "- 信号收集器（收集各策略的交易信号?- 冲突检测器（检测信号冲突和矛盾?- 融合算法引擎（投票法、加权平均、机器学习融合）"
+        },
+        {
+          "line": 101,
+          "text": "- 置信度加权器（基于历史准确率加权?"
+        },
+        {
+          "line": 102,
+          "text": "**Layer 4 - 策略协同优化?*"
+        },
+        {
+          "line": 104,
+          "text": "- 动态调整器（实时调整策略权重和资源?"
+        },
+        {
+          "line": 106,
+          "text": "- 权重输出器（输出策略权重方案?- 信号输出器（输出融合后的交易信号?- 绩效报告生成器（生成策略绩效报告?- 预警机制（策略表现异常预警）"
+        },
+        {
+          "line": 108,
+          "text": "### 2.3 数据流设?"
+        },
+        {
+          "line": 110,
+          "text": "?          ?          ?          ?          ?信号验证   风险评估   权重约束   融合决策   动态调?```"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md",
+      "count": 72,
+      "samples": [
+        {
+          "line": 80,
+          "text": "### 1.1 业务背景与价值主?"
+        },
+        {
+          "line": 81,
+          "text": "**业务需?*?- 当前系统缺乏市场冲击预测能力，大额订单执行成本不可控"
+        },
+        {
+          "line": 83,
+          "text": "**价值主?*?- 准确预测市场冲击（误差≤20%?- 优化执行策略，降低执行成?0-50%"
+        },
+        {
+          "line": 84,
+          "text": "- 提供实时冲击监控和预?- 为智能执行算法提供决策支?"
+        },
+        {
+          "line": 85,
+          "text": "### 1.2 技术定位与架构层归?"
+        },
+        {
+          "line": 96,
+          "text": "2. **执行成本估算**: 估算订单执行的总成?3. **最优执行策?*: 基于冲击预测优化执行策略"
+        },
+        {
+          "line": 139,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 141,
+          "text": "洗 ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌────"
+        },
+        {
+          "line": 143,
+          "text": "### 2.2 核心子系统设?"
+        },
+        {
+          "line": 169,
+          "text": "3. 订单数据: 订单大小、订单类型、执行时?        4. 市场数据: ADV、市值、流动性指?"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md",
+      "count": 68,
+      "samples": [
+        {
+          "line": 88,
+          "text": "### 1.1 业务背景与价值主?"
+        },
+        {
+          "line": 89,
+          "text": "**业务需?*?- 当前系统缺乏实时风险对冲能力，无法应对突发市场风?- 组合风险暴露无法实时监控，风险控制滞?- 缺乏自动化的对冲交易生成机制"
+        },
+        {
+          "line": 92,
+          "text": "**价值主?*?- 实时监控组合风险，提前预警风险暴?- 自动生成对冲交易，快速响应市场变?- 降低组合波动?0-50%"
+        },
+        {
+          "line": 93,
+          "text": "- 实现桥水模式的宏观对冲能?"
+        },
+        {
+          "line": 94,
+          "text": "### 1.2 技术定位与架构层归?"
+        },
+        {
+          "line": 104,
+          "text": "限时自动预?3. **对冲交易生成**: 自动生成对冲交易建议"
+        },
+        {
+          "line": 105,
+          "text": "4. **动态对冲调?*: 根据市场变化动态调整对冲比?5. **对冲效果评估**: 评估对冲效果，持续优?"
+        },
+        {
+          "line": 109,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 112,
+          "text": "### 2.2 核心子系统设?"
+        },
+        {
+          "line": 113,
+          "text": "#### 2.2.1 实时风险监控子系?"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TRADING_COST_OPTIMIZATION_BLUEPRINT.md",
+      "count": 58,
+      "samples": [
+        {
+          "line": 119,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 122,
+          "text": "### 2.2 核心数据?"
+        },
+        {
+          "line": 125,
+          "text": "?输出执行计划与成本估?```"
+        },
+        {
+          "line": 135,
+          "text": "交易成本优化?"
+        },
+        {
+          "line": 160,
+          "text": "含流动性、波动率?            constraints: 执行约束（可选）"
+        },
+        {
+          "line": 163,
+          "text": "ExecutionPlan: 最优执行计?        \"\"\""
+        },
+        {
+          "line": 164,
+          "text": "# 1. 计算交易需?        trades = self._calculate_trades(target_portfolio, current_portfolio)"
+        },
+        {
+          "line": 169,
+          "text": "# 3. 选择最优执行算?        best_algorithm = self._select_algorithm(trades, impact_cost, constraints)"
+        },
+        {
+          "line": 176,
+          "text": "# 5. 计算总成?        total_cost = self._calculate_total_cost(execution_plan, impact_cost)"
+        },
+        {
+          "line": 197,
+          "text": "execution_time: 执行时间（天?"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md",
+      "count": 42,
+      "samples": [
+        {
+          "line": 28,
+          "text": "> **核心定位**: 风险贡献分析蓝图的核心功能实?"
+        },
+        {
+          "line": 32,
+          "text": "> **开发周?*: 2-3?"
+        },
+        {
+          "line": 34,
+          "text": "> **参考开?*: PyPortfolioOpt, Riskfolio-Lib"
+        },
+        {
+          "line": 38,
+          "text": "部署RISK CONTRIBUTION ANALYSIS的设计与实现，基于压力测试技术，控制核心功能，提升风控效率?"
+        },
+        {
+          "line": 96,
+          "text": "**Layer定位**: Layer 6 - 组合优化层（风险预算模块?"
+        },
+        {
+          "line": 98,
+          "text": "**核心价?*:"
+        },
+        {
+          "line": 103,
+          "text": "**业务价?*:"
+        },
+        {
+          "line": 104,
+          "text": "- 识别组合风险集中?"
+        },
+        {
+          "line": 106,
+          "text": "- 提升风险管理透明?"
+        },
+        {
+          "line": 114,
+          "text": "| **开源依?* | PyPortfolioOpt, Riskfolio-Lib |"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md",
+      "count": 42,
+      "samples": [
+        {
+          "line": 90,
+          "text": "**核心价?*:"
+        },
+        {
+          "line": 92,
+          "text": "- 策略间的相关性建?"
+        },
+        {
+          "line": 94,
+          "text": "- 动态策略权重调?"
+        },
+        {
+          "line": 96,
+          "text": "**业务价?*:"
+        },
+        {
+          "line": 97,
+          "text": "- 提升组合稳定?"
+        },
+        {
+          "line": 99,
+          "text": "- 实现策略层面的风险控?"
+        },
+        {
+          "line": 107,
+          "text": "| **开源依?* | PyPortfolioOpt, Riskfolio-Lib |"
+        },
+        {
+          "line": 110,
+          "text": "### 1.3 与多策略分层系统的关?"
+        },
+        {
+          "line": 116,
+          "text": "| **STRATEGY_PORTFOLIO_OPTIMIZATION** (本模块 | 策略组合优化 | 策略权重优化、相关性建?| 提供优化算法支持 |"
+        },
+        {
+          "line": 117,
+          "text": "| **MULTI_STRATEGY_HIERARCHICAL_SYSTEM** | 多策略分层管?| 策略分层、信号融合、协同优?| 使用本模块的优化结果 |"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md",
+      "count": 41,
+      "samples": [
+        {
+          "line": 116,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 119,
+          "text": "### 2.2 核心数据?"
+        },
+        {
+          "line": 121,
+          "text": "市场收益率数?    ?数据预处理（缺失值处理、异常值检测）"
+        },
+        {
+          "line": 156,
+          "text": "# 2. 计算标准化残?        standardized_residuals = self._calculate_standardized_residuals("
+        },
+        {
+          "line": 183,
+          "text": "# 4. 计算协方差矩?        conditional_volatility = self._get_conditional_volatility()"
+        },
+        {
+          "line": 209,
+          "text": "# 2. 识别突变?        breakdown_points = self._identify_breakdown_points("
+        },
+        {
+          "line": 233,
+          "text": "# 1. 预测条件波动?        volatility_forecast = self._forecast_volatility(horizon)"
+        },
+        {
+          "line": 259,
+          "text": "\"\"\"计算标准化残?\"\""
+        },
+        {
+          "line": 315,
+          "text": "# 2. 与历史均值比?        historical_mean = self._get_historical_mean_correlation()"
+        },
+        {
+          "line": 337,
+          "text": "\"\"\"判断是否为极端市?\"\""
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ECONOMIC_REGIME_ENGINE_BLUEPRINT.md",
+      "count": 40,
+      "samples": [
+        {
+          "line": 93,
+          "text": "### 1.1 业务背景与价值主?"
+        },
+        {
+          "line": 94,
+          "text": "**价值主?*?- 实现对宏观经济周期的准确识别（准确率?5%?- 提前1-2个月预警经济范式转换"
+        },
+        {
+          "line": 97,
+          "text": "### 1.2 技术定位与架构层归?"
+        },
+        {
+          "line": 118,
+          "text": "1. 数据预处?   - 缺失值处理（插值法?   - 异常值检测（3σ原则?   - 标准化（Z-score?"
+        },
+        {
+          "line": 122,
+          "text": "- 货币指标: M2增速、利率、信贷增?   - 动量指标: 指标变化?"
+        },
+        {
+          "line": 124,
+          "text": "- 设定4个隐状态（扩张/滞胀/衰退/复苏?   - 使用Baum-Welch算法训练模型"
+        },
+        {
+          "line": 125,
+          "text": "- 学习状态转换概率矩?"
+        },
+        {
+          "line": 126,
+          "text": "4. 状态推?   - 使用Viterbi算法解码最可能的状态序?   - 计算当前时刻各状态的后验概率"
+        },
+        {
+          "line": 129,
+          "text": "时间复杂? O(T * N^2), T=时间序列长度, N=状态数"
+        },
+        {
+          "line": 130,
+          "text": "空间复杂? O(T * N)"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ENHANCED_ALERT_SYSTEM_BLUEPRINT.md",
+      "count": 38,
+      "samples": [
+        {
+          "line": 90,
+          "text": "### 1.1 业务需?"
+        },
+        {
+          "line": 93,
+          "text": "- ?告警噪音?- ?缺少告警聚合和抑?"
+        },
+        {
+          "line": 95,
+          "text": "- ?多渠道告警（邮件、短信、Slack、Webhook?- ?告警聚合和抑?- ?告警趋势分析"
+        },
+        {
+          "line": 97,
+          "text": "### 1.2 技术目?"
+        },
+        {
+          "line": 98,
+          "text": "| 指标 | 目标?| 说明 |"
+        },
+        {
+          "line": 100,
+          "text": "| **告警覆盖?* | ?5% | 95%以上的问题能触发告警 |"
+        },
+        {
+          "line": 101,
+          "text": "| **告警聚合准确?* | ?0% | 相似告警聚合准确率≥90% |"
+        },
+        {
+          "line": 106,
+          "text": "### 3.1 告警聚合?(AlertAggregator)"
+        },
+        {
+          "line": 142,
+          "text": "\"\"\"告警聚合?\"\""
+        },
+        {
+          "line": 159,
+          "text": "时间（秒?        self.group_wait = config.get('group_wait', 30)"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md",
+      "count": 35,
+      "samples": [
+        {
+          "line": 86,
+          "text": "### 2.1 系统架构?"
+        },
+        {
+          "line": 89,
+          "text": "### 2.2 核心子系统设?"
+        },
+        {
+          "line": 112,
+          "text": "\"\"\"协整分析?\"\""
+        },
+        {
+          "line": 115,
+          "text": "self.adf_critical_value = 0.05  # ADF检验临?        self.min_half_life = 5          # 最小半衰期（天?        self.max_half_life = 60         # 最大半衰期（天?"
+        },
+        {
+          "line": 123,
+          "text": "使用Engle-Granger两步?"
+        },
+        {
+          "line": 124,
+          "text": "1. 对价格序列进行线性回?        2. 对残差序列进行ADF检查        3. 计算半衰?"
+        },
+        {
+          "line": 148,
+          "text": "基于Z-score的价差交易策?"
+        },
+        {
+          "line": 156,
+          "text": "含信号类型、Z-score、仓位比?        \"\"\""
+        },
+        {
+          "line": 161,
+          "text": "\"\"\"信号质量过滤?\"\""
+        },
+        {
+          "line": 164,
+          "text": "self.min_signal_strength = 0.5  # 最小信号强?        self.max_signals_per_day = 20   # 每日最大信号数"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md",
+      "count": 7,
+      "samples": [
+        {
+          "line": 90,
+          "text": "组合保险策略模块负责?- CPPI（固定比例组合保险）"
+        },
+        {
+          "line": 93,
+          "text": "- 动态风险控?"
+        },
+        {
+          "line": 94,
+          "text": "### 1.2 技术目?"
+        },
+        {
+          "line": 95,
+          "text": "- **灵活?*: 参与市场上涨"
+        },
+        {
+          "line": 96,
+          "text": "- **透明?*: 风险可控"
+        },
+        {
+          "line": 108,
+          "text": "CPPI动态调?"
+        },
+        {
+          "line": 112,
+          "text": "float: 新的风险资产投资?    \"\"\""
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/TAIL_RISK_HEDGING_BLUEPRINT.md",
+      "count": 3,
+      "samples": [
+        {
+          "line": 89,
+          "text": "> **核心定位**: 期权对冲、尾部风险保?"
+        },
+        {
+          "line": 99,
+          "text": "- **VIX期货**: 直接对冲波动?- **VIX期权**: 非线性对接"
+        },
+        {
+          "line": 113,
+          "text": "vix_beta: VIX敏感?        target_protection: 目标保护比例"
+        }
+      ]
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FINANCING_OPTIMIZATION_BLUEPRINT.md",
+      "count": 2,
+      "samples": [
+        {
+          "line": 121,
+          "text": "- **券商融资**: 便捷但成本较?- **银行融资**: 成本较低但审批复?- **回购协议**: 灵活性高"
+        },
+        {
+          "line": 142,
+          "text": "Dict[str, float]: 最优融资组?    \"\"\""
+        }
+      ]
+    }
+  ]
+}

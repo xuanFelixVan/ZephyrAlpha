@@ -57,10 +57,10 @@ implementation_status: 进行?---
 
 | 原则 | 说明 |
 |------|------|
-| **AAA模式** | Arrange-Act-Assert，测试结构清?|
+| **AAA模式** | Arrange-Act-Assert，测试结构清单|
 | **单一职责** | 每个测试只验证一个行?|
 | **独立?* | 测试间无依赖，可并行执行 |
-| **可重?* | 测试结果稳定，不依赖外部状?|
+| **可重?* | 测试结果稳定，不依赖外部状态|
 | **快速执?* | 单元测试<1s，集成测?10s |
 
 
@@ -521,7 +521,7 @@ class DataFactory:
 | 策略测试 | 1.5h | test_strategies.py |
 | pytest配置 | 0.5h | pytest.ini |
 | CI集成 | 1h | github/workflows |
-| 覆盖率报?| 0.5h | 报告配置 |
+| 覆盖率报告| 0.5h | 报告配置 |
 
 
 **维护?*: 清风量化系统

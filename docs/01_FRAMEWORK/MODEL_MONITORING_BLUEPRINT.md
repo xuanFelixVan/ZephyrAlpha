@@ -109,7 +109,7 @@ responsibility_boundary: |
 
 ### 1.3 版本信息与变更记?
 
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 
 |------|------|------|----------|------|
 
@@ -121,7 +121,7 @@ responsibility_boundary: |
 
 
 
-## 🎯 二、专业机构对?
+## 🎯 二、专业机构对接
 
 ### 2.1 桥水基金 (Bridgewater Associates)
 
@@ -181,7 +181,7 @@ responsibility_boundary: |
 
 
 
-## 🏗?三、技术架构设?
+## 🏗?三、技术架构设计
 
 ### 3.1 系统架构?
 
@@ -299,7 +299,7 @@ class AlertLevel(Enum):
 
 class MetricValue:
 
-    """指标?""
+    """指指标""
 
     metric_type: MetricType
 

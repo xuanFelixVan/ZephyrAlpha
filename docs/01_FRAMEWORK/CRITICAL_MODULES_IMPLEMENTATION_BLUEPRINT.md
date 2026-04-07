@@ -1127,7 +1127,7 @@ class GlobalMarketDataEngine:
             # 统一列名
             df = df.rename(columns={
                 '日期': 'date',
-                '开?: 'open',
+                '开发: 'open',
                 '收盘': 'close',
                 '最?: 'high',
                 '最?: 'low',

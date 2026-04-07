@@ -137,7 +137,7 @@ class HomomorphicEncryptionML:
 
     ):
 
-        """初始化同态加密系?        
+        """初始化同态加密系统        
 
         Args:
 

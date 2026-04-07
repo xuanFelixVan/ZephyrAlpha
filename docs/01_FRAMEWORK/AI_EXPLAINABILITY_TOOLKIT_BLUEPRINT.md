@@ -66,7 +66,7 @@ responsibility_boundary: |
 
 **关键原则**:
 1. **透明性原?*: 所有AI决策必须转化为人类可理解的代码和文字
-2. **可追溯原?*: 每个决策信号必须有明确的数据来源和推理路?3. **可验证原?*: AI决策必须可以通过独立验证确认正确?4. **可审计原?*: 全流程记?支持事后审计和合规检?
+2. **可追溯原?*: 每个决策信号必须有明确的数据来源和推理路?3. **可验证原?*: AI决策必须可以通过独立验证确认正确?4. **可审计原?*: 全流程记?支持事后审计和合规检查
 ### 1.2 文艺复兴科技可解释性实?
 **核心机制**:
 ```
@@ -80,7 +80,7 @@ responsibility_boundary: |
 
 ---
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 可解释性工具架?
 ```
 ┌─────────────────────────────────────────────────────────────────??                   AI可解释性工具架?                           ?├─────────────────────────────────────────────────────────────────??                                                                ?? Layer 1: 决策捕获?                                           ??     ├── DecisionCapture (决策捕获?                           ??     ├── SignalTracker (信号追踪?                             ??     └── ContextRecorder (上下文记录器)                         ??                                                                ?? Layer 2: 解释生成?                                           ??     ├── SHAPExplainer (SHAP解释?                             ??     ├── LIMEExplainer (LIME解释?                             ??     ├── FeatureImportance (特征重要性分?                     ??     └── DecisionTreeVisualizer (决策树可视化)                  ??                                                                ?? Layer 3: 验证审计?                                           ??     ├── CrossValidator (交叉验证?                            ??     ├── AuditLogger (审计日志?                               ??     ├── ComplianceChecker (合规检查器)                         ??     └── ReportGenerator (报告生成?                           ??                                                                ?? Layer 4: 可视化交互层                                          ??     ├── ExplanationDashboard (解释仪表?                      ??     ├── DecisionFlowChart (决策流程?                         ??     ├── RiskAttributionView (风险归因视图)                     ??     └── AlertMonitor (异常告警监控)                            ??                                                                ?└─────────────────────────────────────────────────────────────────?```
@@ -150,7 +150,7 @@ class DecisionCapture:
 
 ```python
 class SHAPExplainer:
-    """SHAP解释?- 基于博弈论的特征重要性解?""
+    """SHAP解释?- 基于博弈论的特征重要性解释""
     
     def __init__(self, model):
         self.model = model
@@ -227,7 +227,7 @@ class AuditLogger:
                           explanation: SHAPExplanation) -> AuditRecord:
         """记录决策审计日志"""
         
-        # 1. 合规性检?        compliance_result = self.compliance_checker.check(
+        # 1. 合规性检查        compliance_result = self.compliance_checker.check(
             decision=captured_decision,
             explanation=explanation
         )
@@ -309,7 +309,7 @@ class AuditLogger:
         self.audit_logger = AuditLogger()
         
     def execute_strategy(self, market_data: MarketData) -> StrategyDecision:
-        """执行策略并生成解?""
+        """执行策略并生成解释""
         
         # 1. 捕获决策过程
         with self.decision_capture.capture_context() as context:
@@ -351,7 +351,7 @@ class AuditLogger:
     
     def generate_explanation_report(self, 
                                    decision: ExplainableStrategyDecision) -> ExplanationReport:
-        """生成可解释性报?""
+        """生成可解释性报告""
         
         report = ExplanationReport(
             title="投资决策可解释性报?,

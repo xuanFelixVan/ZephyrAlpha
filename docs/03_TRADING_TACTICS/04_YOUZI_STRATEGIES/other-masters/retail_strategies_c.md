@@ -17,7 +17,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -730,7 +730,7 @@ class OneNightHoldingStrategy(BaseStrategy):
 
 ***
 
-## 5. 做T仓位管理与决策规?
+## 5. 做T仓位管理与决策规范
 
 ### S027: 做T仓位管理策略
 

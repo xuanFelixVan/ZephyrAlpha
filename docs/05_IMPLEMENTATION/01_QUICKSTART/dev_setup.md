@@ -111,7 +111,7 @@ python -c "import sys; print(f'Python: {sys.version}')"
 python -c "import pandas; print(f'Pandas: {pandas.__version__}')"
 ```
 
-无错误输出即表示成功?
+无错误输出即表示成功能
 
 ---
 

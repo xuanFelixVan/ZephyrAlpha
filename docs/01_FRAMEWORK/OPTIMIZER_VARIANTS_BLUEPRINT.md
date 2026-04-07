@@ -76,7 +76,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-## 2. 优化器对?
+## 2. 优化器对接
 
 | 优化?| 特点 | 适用场景 |
 
@@ -86,7 +86,7 @@ layer: Layer 2 (Alpha因子层)
 
 | LAMB | 自适应大批?| BERT预训?|
 
-| Lion | 内存高效 | 大模?|
+| Lion | 内存高效 | 大模块|
 
 | AdaBelief | 稳定训练 | 通用 |
 

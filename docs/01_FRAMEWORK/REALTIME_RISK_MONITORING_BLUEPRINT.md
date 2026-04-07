@@ -116,7 +116,7 @@ Two Sigma实时风险监控体系:
 
 ---
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 实时风险监控架构
 
 ```
@@ -486,7 +486,7 @@ class AutoHedger:
     
     def __init__(self):
         self.hedge_instruments = {
-            'market': 'IF期货',      # 市场风险用股指期货对?            'size': 'IC期货',        # 规模风险用中?00期货对冲
+            'market': 'IF期货',      # 市场风险用股指期货对接            'size': 'IC期货',        # 规模风险用中?00期货对冲
             'sector': '行业ETF'      # 行业风险用行业ETF对冲
         }
         

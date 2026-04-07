@@ -199,7 +199,7 @@ class InferenceAccelerator:
 
         Returns:
 
-            nn.Module: 优化后模?        """
+            nn.Module: 优化后模块        """
 
         pass
 
@@ -229,7 +229,7 @@ class InferenceAccelerator:
 
         Returns:
 
-            Any: 编译后模?        """
+            Any: 编译后模块        """
 
         pass
 
@@ -443,7 +443,7 @@ class OperatorFusion:
 
         Returns:
 
-            nn.Module: 融合后模?        """
+            nn.Module: 融合后模块        """
 
         pass
 
@@ -469,7 +469,7 @@ class OperatorFusion:
 
         Returns:
 
-            nn.Module: 融合后模?        """
+            nn.Module: 融合后模块        """
 
         pass
 

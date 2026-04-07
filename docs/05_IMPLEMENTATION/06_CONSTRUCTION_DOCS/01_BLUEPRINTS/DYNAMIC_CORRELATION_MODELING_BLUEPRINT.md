@@ -201,7 +201,7 @@ class DynamicCorrelationModeler:
         """
         Args:
         Returns:
-            CorrelationBreakdownResult: 突变检测结?        """
+            CorrelationBreakdownResult: 突变检测结束        """
         correlation_changes = self._calculate_correlation_changes(
             correlation_history, window
         )
@@ -308,7 +308,7 @@ class CorrelationRegimeDetector:
         """
         Args:
         Returns:
-            RegimeChange: 突变检测结?        """
+            RegimeChange: 突变检测结束        """
             np.triu_indices_from(correlation_matrix.values, k=1)
         ].mean()
         
@@ -507,7 +507,7 @@ def test_dynamic_correlation_estimation():
     assert np.allclose(np.diag(result.correlation_matrix.values), 1.0)
 
 def test_breakdown_detection():
-    """测试突变检?""
+    """测试突变检查""
 含突变的数?    returns = generate_returns_with_breakdown()
     modeler = DynamicCorrelationModeler(DCCConfig())
     modeler.fit(returns)

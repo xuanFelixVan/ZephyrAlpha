@@ -58,7 +58,7 @@ StreamlitDashboard是Layer 8（人机交互层）的核心模块，负责量化�
 
 | 版本 | 日期 | 变更说明 |
 |------|------|----------|
-| v1.0 | 2026-04-02 | 初始版本，完成核心功能设?|
+| v1.0 | 2026-04-02 | 初始版本，完成核心功能设计|
 
 ---
 
@@ -80,7 +80,7 @@ StreamlitDashboard是Layer 8（人机交互层）的核心模块，负责量化�
 
 ```python
 上游依赖:
-- Layer 0: QMT数据接口, iFind连接? SuperCommand, Baostock
+- Layer 0: QMT数据接口, iFind连接口 SuperCommand, Baostock
 - Layer 1: DataValidator, DataCleaner, FeatureEngineer, DataStorage
 - Layer 2: AlphaFactor, TechnicalFactor, FundamentalFactor, AlternativeFactor
 - Layer 3: NewsCrawler, SentimentAnalyzer, EventDetector, KnowledgeGraph
@@ -537,7 +537,7 @@ class SessionStorage:
         """创建会话
         
         - 生成会话ID
-        - 初始化会话状?        """
+        - 初始化会话状态        """
         pass
     
     def get_session(self, session_id: str) -> Optional[DashboardSession]:
@@ -600,7 +600,7 @@ CREATE TABLE widget_state (
 
 ### 4.3 数据流设?
 ```
-┌─────────────────────────────────────────────────────────────────────??                         数据流设?                                  ?├─────────────────────────────────────────────────────────────────────??                                                                    ?? 用户请求                                                            ?? ├── 页面访问                                                        ?? ├── 参数配置                                                        ?? └── 报告请求                                                        ??                             ?                                     ?? 会话管理?(SessionManager)                                        ?? ├── 会话验证                                                        ?? ├── 权限检?                                                       ?? └── 状态管?                                                       ??                             ?                                     ?? 数据聚合?(DataAggregator)                                        ?? ├── 数据请求                                                        ?? ├── 数据聚合                                                        ?? └── 数据缓存                                                        ??                             ?                                     ?? 上游模块                                                            ?? ├── Layer 0-1: 数据源、预处理                                      ?? ├── Layer 2-4: 因子、舆情、机器学?                               ?? ├── Layer 5: 策略执行                                              ?? ├── Layer 6: 组合优化                                              ?? └── Layer 7: AI报告                                                ??                             ?                                     ?? 数据转换?(DataTransformer)                                       ?? ├── 数据格式?                                                     ?? ├── 数据转换                                                        ?? └── 数据验证                                                        ??                             ?                                     ?? 组件渲染?(ChartComponents, TableComponents)                      ?? ├── 图表渲染                                                        ?? ├── 表格渲染                                                        ?? └── 指标渲染                                                        ??                             ?                                     ?? 页面渲染?(OverviewPage, StrategyPage, etc.)                      ?? ├── 页面布局                                                        ?? ├── 组件组装                                                        ?? └── 交互处理                                                        ??                             ?                                     ?? 用户界面                                                            ??                                                                    ?└─────────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────────??                         数据流设计                                  ?├─────────────────────────────────────────────────────────────────────??                                                                    ?? 用户请求                                                            ?? ├── 页面访问                                                        ?? ├── 参数配置                                                        ?? └── 报告请求                                                        ??                             ?                                     ?? 会话管理?(SessionManager)                                        ?? ├── 会话验证                                                        ?? ├── 权限检查                                                       ?? └── 状态管?                                                       ??                             ?                                     ?? 数据聚合?(DataAggregator)                                        ?? ├── 数据请求                                                        ?? ├── 数据聚合                                                        ?? └── 数据缓存                                                        ??                             ?                                     ?? 上游模块                                                            ?? ├── Layer 0-1: 数据源、预处理                                      ?? ├── Layer 2-4: 因子、舆情、机器学?                               ?? ├── Layer 5: 策略执行                                              ?? ├── Layer 6: 组合优化                                              ?? └── Layer 7: AI报告                                                ??                             ?                                     ?? 数据转换?(DataTransformer)                                       ?? ├── 数据格式?                                                     ?? ├── 数据转换                                                        ?? └── 数据验证                                                        ??                             ?                                     ?? 组件渲染?(ChartComponents, TableComponents)                      ?? ├── 图表渲染                                                        ?? ├── 表格渲染                                                        ?? └── 指标渲染                                                        ??                             ?                                     ?? 页面渲染?(OverviewPage, StrategyPage, etc.)                      ?? ├── 页面布局                                                        ?? ├── 组件组装                                                        ?? └── 交互处理                                                        ??                             ?                                     ?? 用户界面                                                            ??                                                                    ?└─────────────────────────────────────────────────────────────────────?```
 
 ---
 
@@ -815,9 +815,9 @@ def test_page_rendering():
 |------|----------|----------|------|
 | **编程语言** | Python | ?.10 | 类型提示、dataclass支持 |
 | **Web框架** | Streamlit | ?.28 | 可视化仪表板框架 |
-| **图表?* | Plotly | ?.18 | 交互式图?|
+| **图表?* | Plotly | ?.18 | 交互式图表|
 | **数据处理** | Pandas | ?.0 | 数据处理 |
-| **数值计?* | NumPy | ?.24 | 数值计?|
+| **数值计?* | NumPy | ?.24 | 数值计划|
 
 ### 6.2 第三方依?
 ```toml
@@ -840,7 +840,7 @@ loguru = ">=0.7"
 | **Python版本** | ?.10 |
 | **内存** | ?GB |
 | **磁盘空间** | ?GB |
-| **网络** | 需要访问上游模?|
+| **网络** | 需要访问上游模块|
 
 ### 6.4 部署架构
 

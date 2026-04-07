@@ -67,7 +67,7 @@ layer: Layer 2 (Alpha因子层)
 置??Layer 5
 
 **技术视?*: Layer 5 - 策略执行?
-| 业务模块 | 技术模?| Layer | 职责 |
+| 业务模块 | 技术模块| Layer | 职责 |
 |---------|---------|-------|------|
 | 经济范式判断引擎 | EconomicRegimeEngine | Layer 5 | 识别宏观经济周期阶段 |
 |
@@ -80,9 +80,9 @@ layer: Layer 2 (Alpha因子层)
 
 **业务视角**: 中观策略?周度/日度决策)
 分析?机器学习?
-| 业务模块 | 技术模?| Layer | 职责 |
+| 业务模块 | 技术模块| Layer | 职责 |
 |---------|---------|-------|------|
-| 市场状态识别系?| MarketRegimeSystem | Layer 4 | HMM市场状态识?|
+| 市场状态识别系统| MarketRegimeSystem | Layer 4 | HMM市场状态识?|
 | 阿尔法因子工?| AlphaFactorFactory | Layer 2 | 5700+因子动态管?|
 | 日线组合优化?| DailyPortfolioOptimizer | Layer 6 | 日度仓位优化 |
 | 策略选择与权重分?| StrategySelectionSystem | Layer 5 | TOPSIS多准则评?|
@@ -93,12 +93,12 @@ layer: Layer 2 (Alpha因子层)
 
 /分钟/秒级决策)
 **技术视?*: Layer 5-6 - 策略执行?组合优化?
-| 业务模块 | 技术模?| Layer | 职责 |
+| 业务模块 | 技术模块| Layer | 职责 |
 |---------|---------|-------|------|
 | 分钟执行优化?| MinuteExecutionOptimizer | Layer 5 | 分时图模式识?|
 | 智能执行算法?| SmartExecutionAlgorithms | Layer 5 | VWAP/TWAP/IS算法 |
 | 实时风险对冲引擎 | RealtimeRiskHedger | Layer 6 | 秒级风险控制 |
-| 开盘策略模?| OpeningStrategy | Layer 5 | 集合竞价分析 |
+| 开盘策略模块| OpeningStrategy | Layer 5 | 集合竞价分析 |
 | 盘中策略模块 | IntradayStrategy | Layer 5 | 分时图突?|
 | 收盘策略模块 | ClosingStrategy | Layer 5 | 收盘动量 |
 
@@ -109,7 +109,7 @@ layer: Layer 2 (Alpha因子层)
 #### 2.2.4 贯穿支撑系统 ?Layer 0-11
 
 
-| 业务模块 | 技术模?| Layer | 职责 |
+| 业务模块 | 技术模块| Layer | 职责 |
 |---------|---------|-------|------|
 | 统一数据基础设施 | UnifiedDataInfrastructure | Layer 0-1 | 多时间框架数据管?|
 | 多时间框架风控体?| MultiTimeframeRiskSystem | Layer 0-11 | 分层风险控制 |

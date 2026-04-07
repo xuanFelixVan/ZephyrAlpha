@@ -35,7 +35,7 @@ implementation_status: 设计阶段
 
 # 流动性管理系统技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 流动性管理系统详细技术设?> **索引**: `LIQUIDITY_MGMT_001`
+> 清风量化系统 v5.3 - 流动性管理系统详细技术设计> **索引**: `LIQUIDITY_MGMT_001`
 > **开发时?*: 80h
 > **核心定位**: 监控资金流动性，预测资金需求，优化资金配置，实现桥水模式的流动性管理能?
 ---
@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 ### 1.1 设计背景与业务目?
 **业务需?*?- 当前系统缺乏流动性管理能力，无法预测资金需?- 资金使用效率低，闲置资金过多或资金紧?- 缺乏流动性风险预警机?- 需要实现桥水模式的流动性管理能?
 **技术痛?*?- 无资金流动性监控系?- 无现金流预测模型
-- 无流动性风险预警机?- 无资金优化配置系?
+- 无流动性风险预警机?- 无资金优化配置系统
 **预期?*?- 实时监控资金流动性，提前预警资金风险
 - 预测资金需求，优化资金配置
 - 提高资金使用效率20-30%
@@ -118,7 +118,7 @@ def monitor_liquidity(
     - account_id: 账户ID
     
     返回:
-    - LiquidityMonitorResult: 流动性监控结?      - available_fund: 可用资金
+    - LiquidityMonitorResult: 流动性监控结束      - available_fund: 可用资金
       - frozen_fund: 冻结资金
       - total_asset: 总资?      - cash_ratio: 现金比例
       - turnover_ratio: 周转?      - liquidity_ratio: 流动比率
@@ -126,7 +126,7 @@ def monitor_liquidity(
       - timestamp: 时间?    
     性能要求:
     - 响应时间: <50ms
-    - 并发能力: ?0个账户同时监?    """
+    - 并发能力: ?0个账户同时监控    """
     pass
 ```
 
@@ -526,7 +526,7 @@ class TestTurnoverRatioCalculator:
     """周转率计算单元测?""
     
     def test_turnover_ratio_calculation(self):
-        """测试周转率计?""
+        """测试周转率计划""
         pass
     
     def test_edge_cases(self):
@@ -552,7 +552,7 @@ class TestLiquidityManagementSystem:
     """流动性管理系统集成测?""
     
     def test_end_to_end_monitoring(self):
-        """测试端到端监?""
+        """测试端到端监控""
         pass
     
     def test_warning_generation(self):

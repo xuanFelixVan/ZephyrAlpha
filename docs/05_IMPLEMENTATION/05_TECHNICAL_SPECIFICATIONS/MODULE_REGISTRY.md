@@ -59,15 +59,15 @@ responsibility:
 ## 2. 模块注册?
 ### 2.1 Layer 0 - 数据源层
 
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
-| QMT_DATA_INTERFACE_001 | QMT数据接口 | QMT数据源接?| Active |
+| QMT_DATA_INTERFACE_001 | QMT数据接口 | QMT数据源接口| Active |
 | BAOSTOCK_001 | BaoStock数据?| 历史行情数据获取 | Active |
 | IFIND_001 | iFinD数据?| 金融数据接入 | Active |
 
 ### 2.2 Layer 1 - 数据预处理层
 
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | DATACLEANER_001 | 数据清洗?| 数据清洗、缺失值处?| Active |
 | DATAVALIDATOR_001 | 数据验证?| 数据质量验证 | Active |
@@ -75,14 +75,14 @@ responsibility:
 | ASHARE_HISTORICAL_001 | A股历史数?| A股历史数据管?| Active |
 
 ### 2.3 Layer 2 - Alpha因子?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | FACTOR_CALCULATOR_001 | 因子计算?| 基础因子计算 | Active |
-| FACTOR_IC_001 | 因子IC分析 | IC计算、统计、检?| Active |
+| FACTOR_IC_001 | 因子IC分析 | IC计算、统计、检查| Active |
 | FACTOR_BACKTEST_001 | 因子回测 | 因子回测、绩效分?| Active |
 
 ### 2.4 Layer 4 - 机器学习?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | MODEL_TRAINING_PIPELINE_001 | 模型训练流水?| 通用训练流水?| Active |
 | MODEL_SERVING_ARCHITECTURE_001 | 模型服务化架?| 模型部署、服?| Active |
@@ -95,23 +95,23 @@ responsibility:
 | ONLINE_LEARNING_001 | 在线学习 | 实时模型更新 | Active |
 
 ### 2.5 Layer 5 - 策略执行?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | MARKET_IMPACT_MODEL_001 | 市场冲击模型 | 交易成本估计 | Active |
 
 ### 2.6 Layer 6 - 组合优化?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | ALL_WEATHER_OPTIMIZER_001 | 全天候优化器 | 风险平价配置 | Active |
-| BARRA_RISK_MODEL_001 | Barra风险模型 | 多因子风险模?| Active |
+| BARRA_RISK_MODEL_001 | Barra风险模型 | 多因子风险模块| Active |
 
 ### 2.7 Layer 8 - 人机交互?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | STREAMLIT_DASHBOARD_001 | Streamlit仪表?| 可视化界?| Active |
 
 ### 2.8 数据服务?
-| 模块ID | 模块名称 | 核心职责 | 状?|
+| 模块ID | 模块名称 | 核心职责 | 状态|
 |--------|----------|----------|------|
 | FEATURE_STORE_001 | 特征存储 | 特征存储、服?| Active |
 
@@ -211,11 +211,11 @@ interface_contract: IModelTrainer v1.0 (调用?
 
 ---
 
-## 5. 职责边界检?
-### 5.1 检查规?
+## 5. 职责边界检查
+### 5.1 检查规范
 1. **单一职责**: 每个模块只负责一种核心功?2. **无重复定?*: 相同功能不在多个模块中定?3. **明确依赖**: 依赖关系清晰，无循环依赖
 
-### 5.2 检查结?
+### 5.2 检查结束
 | 检查项 | 结果 | 说明 |
 |--------|------|------|
 | 因子计算职责 | ?通过 | FactorCalculator统一负责 |

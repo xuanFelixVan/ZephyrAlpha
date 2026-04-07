@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 系统模块设计与实施方案与优化维护
+  - 资金管理界面设计、资金分配算法、资金使用监控、资金调拨功能实现
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

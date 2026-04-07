@@ -34,7 +34,7 @@ implementation_status: 技术规格设计完?
 
 # 模型可解释性技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 模型可解释性详细技术设?> **索引**: `MI-001`
+> 清风量化系统 v5.3 - 模型可解释性详细技术设计> **索引**: `MI-001`
 > **开发时?*: 60h
 > **核心定位**: 提供模型决策解释、特征重要性分析和可视化能?---
 
@@ -59,11 +59,11 @@ implementation_status: 技术规格设计完?
 
 ### 1.2 技术定位与架构层归?
 - **Layer定位**: Layer 4 - 机器学习层（AI模型服务?- **模块类别**: 核心支撑模块
-- **架构角色**: 提供模型可解释性、特征重要性分析、决策解?
+- **架构角色**: 提供模型可解释性、特征重要性分析、决策解释
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | AI工程?| 初始版本 | Active |
+| v1.0 | 2026-04-03 | AI工流程| 初始版本 | Active |
 
 ---
 ## 2. 详细架构设计
@@ -160,7 +160,7 @@ class LIMEExplanation:
 
 @dataclass
 class CounterfactualExplanation:
-    """反事实解?""
+    """反事实解释""
     sample_id: str
     original_prediction: float
     counterfactual_prediction: float
@@ -241,7 +241,7 @@ class SHAPExplainer:
         }
     
     def explain_local(self, X: pd.DataFrame, sample_indices: Optional[List[int]] = None) -> List[SHAPExplanation]:
-        """局部解?        
+        """局部解释        
         Args:
             X: 特征数据
             sample_indices: 样本索引列表
@@ -341,7 +341,7 @@ class LIMEExplainer:
         )
     
     def explain_local(self, sample: pd.Series, num_features: int = 10) -> LIMEExplanation:
-        """局部解?        
+        """局部解释        
         Args:
             sample: 单个样本
             num_features: 解释的特征数?            
@@ -574,7 +574,7 @@ class DecisionExplainer:
 
 class ModelInterpretabilityService:
     """模型可解释性服?    
-    统一的可解释性服务接?    """
+    统一的可解释性服务接口    """
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -638,7 +638,7 @@ class ModelInterpretabilityService:
         y: pd.Series,
         model: Any
     ) -> Dict[str, Any]:
-        """生成可解释性报?        
+        """生成可解释性报告        
         Args:
             model_id: 模型ID
             X: 特征数据
@@ -646,7 +646,7 @@ class ModelInterpretabilityService:
             model: 模型对象
             
         Returns:
-            Dict: 可解释性报?        """
+            Dict: 可解释性报告        """
         shap_global = self.shap_explainers[model_id].explain_global(X)
         
         importance_analyzer = FeatureImportanceAnalyzer(model, X, y)
@@ -719,7 +719,7 @@ class TestSHAPExplainer:
         assert result["feature_importance"][0].feature_name in ['A', 'B']
     
     def test_local_explanation(self, sample_data):
-        """测试局部解?""
+        """测试局部解释""
         X, y = sample_data
         from sklearn.linear_model import LinearRegression
         

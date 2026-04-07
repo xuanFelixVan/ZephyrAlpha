@@ -36,7 +36,7 @@ implementation_status: 设计阶段
 
 # 智能执行算法引擎技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 智能执行算法引擎详细技术设?> **索引**: `SMART_EXEC_001`
+> 清风量化系统 v5.3 - 智能执行算法引擎详细技术设计> **索引**: `SMART_EXEC_001`
 > **开发时?*: 80h
 > **核心定位**: 实现VWAP/TWAP/IS/POV等智能执行算法，最小化交易成本和市场冲?
 ---
@@ -48,7 +48,7 @@ implementation_status: 设计阶段
 - 缺乏执行算法性能评估和优化机?- 需要实现专业机构级的执行能力，降低执行成本?.1-0.3%
 
 **技术痛?*?- 无智能执行算法引擎（VWAP/TWAP/IS/POV?- 无市场冲击预测和控制机制
-- 无实时执行监控和动态调整能?- 无执行算法性能评估和优化系?
+- 无实时执行监控和动态调整能?- 无执行算法性能评估和优化系统
 **预期?*?- 降低执行成本60-80%（从0.5-1.0%降至0.1-0.3%?- 提高大额订单执行效率，减少市场冲?- 实现执行过程的实时监控和动态优?- 为策略提供专业机构级的执行能?
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 5 - 策略执行层（微观执行层）
@@ -192,7 +192,7 @@ class SmartExecutionEngineAPI(ABC):
             side: 买卖方向
             quantity: 总数?            algorithm: 执行算法类型
             duration_minutes: 执行时长（分钟）
-            participation_rate: 参与率（POV算法?            urgency: 紧急程?            price_limit: 价格限制
+            participation_rate: 参与率（POV算法?            urgency: 紧急流程            price_limit: 价格限制
             
         Returns:
             ExecutionOrder: 执行订单对象

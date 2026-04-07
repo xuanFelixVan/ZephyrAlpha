@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -64,7 +64,7 @@ implementation_status: 进行?
 | SELL | 卖出信号 | 因子值低于阈?|
 | HOLD | 持有信号 | 无显著信?|
 | COVER | 买回信号 | 做空时平?|
-| SHORT | 卖出信号 | 做空时开?|
+| SHORT | 卖出信号 | 做空时开发|
 
 ### 2.2 信号强度
 

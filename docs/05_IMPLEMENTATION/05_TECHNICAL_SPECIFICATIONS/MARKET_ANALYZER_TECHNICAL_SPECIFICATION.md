@@ -50,7 +50,7 @@ MarketAnalyzer是Layer 7（AI报告层）的核心模块，负责市场行情数
 |------|------|
 | **架构层级** | Layer 7: AI报告?|
 | **核心职责** | 市场行情分析、板块轮动分析、市场情绪分析、AI市场解读 |
-| **上游依赖** | QMT数据接口, iFind连接? SuperCommand |
+| **上游依赖** | QMT数据接口, iFind连接口 SuperCommand |
 | **下游服务** | DailyReporter, MonthlyReporter, StreamlitDashboard |
 | **技术栈** | Python 3.10+, Pandas, NumPy, GLM-4-Flash, TA-Lib |
 
@@ -58,7 +58,7 @@ MarketAnalyzer是Layer 7（AI报告层）的核心模块，负责市场行情数
 
 | 版本 | 日期 | 变更说明 |
 |------|------|----------|
-| v1.0 | 2026-04-02 | 初始版本，完成核心功能设?|
+| v1.0 | 2026-04-02 | 初始版本，完成核心功能设计|
 
 ---
 
@@ -470,7 +470,7 @@ class MarketDataInput:
 
 ### 3.3 性能指标
 
-| 指标 | 目标?| 说明 |
+| 指标 | 目指标| 说明 |
 |------|--------|------|
 | **分析生成时间** | ?0?| 从数据采集到分析完成 |
 | **数据采集时间** | ??| 从上游模块获取所有数?|
@@ -637,7 +637,7 @@ CREATE TABLE market_analysis_metadata (
 );
 ```
 
-### 4.3 数据流设?
+### 4.3 数据流设计
 ```
 ┌─────────────────────────────────────────────────────────────────────??                         数据流设?                                  ?├─────────────────────────────────────────────────────────────────────??                                                                    ?? 上游数据?                                                         ?? ├── QMT数据接口 ?实时行情数据                                     ?? ├── iFind连接??板块数据、因子数?                              ?? ├── SuperCommand ?实时行情推?                                   ?? └── Baostock ?历史行情数据                                       ??                             ?                                     ?? 数据采集?(MarketDataCollector)                                   ?? ├── 数据验证                                                        ?? ├── 数据清洗                                                        ?? └── 数据聚合                                                        ??                             ?                                     ?? 数据处理?(MarketIndicatorCalculator)                             ?? ├── 市场指标计算                                                    ?? ├── 板块轮动分析                                                    ?? ├── 情绪分析                                                        ?? └── 风格识别                                                        ??                             ?                                     ?? AI解读?(MarketInterpreter)                                       ?? ├── 市场解读                                                        ?? ├── 趋势预测                                                        ?? └── 风险预警                                                        ??                             ?                                     ?? 输出?(MarketReportGenerator)                                     ?? ├── 市场报告生成                                                    ?? ├── 预警发?                                                       ?? └── 数据导出                                                        ??                             ?                                     ?? 输出                                                                ?? ├── DailyReporter (日报数据)                                       ?? ├── MonthlyReporter (月报数据)                                     ?? ├── StreamlitDashboard (可视化展?                                ?? └── NotificationSystem (预警推?                                  ??                                                                    ?└─────────────────────────────────────────────────────────────────────?```
 
@@ -1091,7 +1091,7 @@ loguru = ">=0.7"
 | **市场指标计算** | ?0% | 指标计算准确?|
 | **板块轮动分析** | ?5% | 轮动信号识别 |
 | **情绪分析** | ?5% | 情绪得分计算 |
-| **LLM接口** | ?0% | API调用、响应解?|
+| **LLM接口** | ?0% | API调用、响应解释|
 
 ### 7.2 集成测试
 
@@ -1117,7 +1117,7 @@ class TestMarketAnalyzerIntegration:
 | 测试场景 | 性能目标 | 测试方法 |
 |----------|----------|----------|
 | **市场分析** | ?0?| 分析100次，计算平均时间 |
-| **并发分析** | ?0并发 | 同时分析20次，验证成功?|
+| **并发分析** | ?0并发 | 同时分析20次，验证成功能|
 
 ### 7.4 安全测试
 
@@ -1129,7 +1129,7 @@ class TestMarketAnalyzerIntegration:
 
 ---
 
-## 8. 风险与约?
+## 8. 风险与约束
 ### 8.1 技术风?
 | 风险ID | 风险描述 | 风险等级 | 缓解措施 |
 |--------|----------|----------|----------|
@@ -1175,7 +1175,7 @@ class TestMarketAnalyzerIntegration:
 
 ### 9.2 性能验收
 
-| 指标 | 目标?| 验证方法 |
+| 指标 | 目指标| 验证方法 |
 |------|--------|----------|
 | **分析生成时间** | ?0?| 性能测试 |
 | **并发支持** | ?0 | 压力测试 |
@@ -1184,8 +1184,8 @@ class TestMarketAnalyzerIntegration:
 
 | 质量维度 | 验收标准 | 验证方法 |
 |----------|----------|----------|
-| **代码质量** | 通过所有lint检?| 代码审查 |
-| **测试覆盖?* | ?5% | 覆盖率报?|
+| **代码质量** | 通过所有lint检查| 代码审查 |
+| **测试覆盖?* | ?5% | 覆盖率报告|
 | **文档完整?* | 所有接口有文档 | 文档审查 |
 
 ### 9.4 文档验收
@@ -1205,10 +1205,10 @@ class TestMarketAnalyzerIntegration:
 
 | 任务 | 工时 | 交付?|
 |------|------|--------|
-| 数据采集模块开?| 1?| MarketDataCollector |
-| 市场指标计算模块开?| 1?| MarketIndicatorCalculator |
-| 板块轮动分析模块开?| 1?| SectorRotationAnalyzer |
-| AI解读模块开?| 1?| MarketInterpreter |
+| 数据采集模块开发| 1?| MarketDataCollector |
+| 市场指标计算模块开发| 1?| MarketIndicatorCalculator |
+| 板块轮动分析模块开发| 1?| SectorRotationAnalyzer |
+| AI解读模块开发| 1?| MarketInterpreter |
 
 **验收标准**:
 - ?能够完成市场分析
@@ -1225,7 +1225,7 @@ class TestMarketAnalyzerIntegration:
 | 集成测试 | 0.5?| 集成测试报告 |
 
 **验收标准**:
-- ?与上游模块正确集?- ?与下游模块正确对?
+- ?与上游模块正确集?- ?与下游模块正确对接
 ### 10.3 Phase 3: 优化与上线（1天）
 
 **目标**: 性能优化和生产环境部?
@@ -1252,7 +1252,7 @@ class TestMarketAnalyzerIntegration:
 
 ## 附录
 
-### A. 技术评审检查清?
+### A. 技术评审检查清单
 - [ ] Layer定位正确（Layer 7: AI报告层）
 - [ ] 职责边界清晰（不越界到其他层?- [ ] 接口定义完整（API、数据格式）
 - [ ] 数据模型合理（表结构、存储方案）
@@ -1262,10 +1262,10 @@ class TestMarketAnalyzerIntegration:
 2. [DAILY_REPORTER_TECHNICAL_SPECIFICATION.md](./DAILY_REPORTER_TECHNICAL_SPECIFICATION.md) - 日报生成器技术规?3. [MONTHLY_REPORTER_TECHNICAL_SPECIFICATION.md](./MONTHLY_REPORTER_TECHNICAL_SPECIFICATION.md) - 月报生成器技术规?
 ### C. 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更?|
+| 版本 | 日期 | 变更内容 | 变更新|
 |------|------|----------|--------|
 | v1.0 | 2026-04-02 | 初始版本 | 首席技术评审官 |
 
 ---
 
-**文档状?*: ?已完?**下一?*: 生成技术评审报?
+**文档状?*: ?已完?**下一?*: 生成技术评审报告

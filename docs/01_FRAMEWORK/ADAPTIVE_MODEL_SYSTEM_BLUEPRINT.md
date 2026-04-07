@@ -165,7 +165,7 @@ Two Sigma自适应架构:
 
 ```
 
-┌─────────────────────────────────────────────────────────────────??                   统一自适应模型系统架构                         ?├─────────────────────────────────────────────────────────────────??                                                                ?? Layer 1: 市场感知?                                           ??     ├── RegimeDetector (市场状态识别器)                         ??     ├── FeatureMonitor (特征监控?                             ??     ├── PerformanceTracker (性能追踪?                         ??     └── AnomalyDetector (异常检测器)                            ??                                                                ?? Layer 2: 模型管理?                                           ??     ├── ModelPool (模型?                                      ??     ├── ModelSelector (模型选择?                              ??     ├── ModelRegistry (模型注册?                              ??     └── ModelVersionControl (模型版本管理)                      ??                                                                ?? Layer 3: 集成决策?                                           ??     ├── EnsembleManager (集成管理?                            ??     ├── WeightOptimizer (权重优化?                            ??     ├── ConfidenceCalculator (置信度计算器)                     ??     └── DecisionAggregator (决策聚合?                         ??                                                                ?? Layer 4: 自我优化?                                           ??     ├── PerformanceAnalyzer (性能分析?                        ??     ├── HyperparameterTuner (超参数调优器)                      ??     ├── AutoRetrainer (自动重训练器)                            ??     └── ModelUpdater (模型更新?                               ??                                                                ?? Layer 5: 监控反馈?                                           ??     ├── RealTimeMonitor (实时监控?                            ??     ├── DriftDetector (漂移检测器)                              ??     ├── AlertGenerator (告警生成?                             ??     └── FeedbackCollector (反馈收集?                          ??                                                                ?└─────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────??                   统一自适应模型系统架构                         ?├─────────────────────────────────────────────────────────────────??                                                                ?? Layer 1: 市场感知?                                           ??     ├── RegimeDetector (市场状态识别器)                         ??     ├── FeatureMonitor (特征监控?                             ??     ├── PerformanceTracker (性能追踪?                         ??     └── AnomalyDetector (异常检测器)                            ??                                                                ?? Layer 2: 模型管理?                                           ??     ├── ModelPool (模型?                                      ??     ├── ModelSelector (模型选择?                              ??     ├── ModelRegistry (模型注册?                              ??     └── ModelVersionControl (模型版本管理)                      ??                                                                ?? Layer 3: 集成决策?                                           ??     ├── EnsembleManager (集成管理?                            ??     ├── WeightOptimizer (权重优化?                            ??     ├── ConfidenceCalculator (置信度计算器)                     ??     └── DecisionAggregator (决策聚合?                         ??                                                                ?? Layer 4: 自我优化?                                           ??     ├── PerformanceAnalyzer (性能分析?                        ??     ├── HyperparameterTuner (超参数调优器)                      ??     ├── AutoRetrainer (自动重训练器)                            ??     └── ModelUpdater (模型更新?                               ??                                                                ?? Layer 5: 监控反馈?                                           ??     ├── RealTimeMonitor (实时监控?                            ??     ├── DriftDetector (漂移检测器)                              ??     ├── AlertGenerator (告警生成?                             ??     └── FeedbackCollector (反馈收集成                          ??                                                                ?└─────────────────────────────────────────────────────────────────?```
 
 
 
@@ -813,7 +813,7 @@ class AutoRetrainer:
 
 ## 四、集成方?
 
-### 4.1 与Layer 2 Alpha因子层集?
+### 4.1 与Layer 2 Alpha因子层集成
 
 ```python
 
@@ -881,7 +881,7 @@ class AdaptiveFactorEngine:
 
 
 
-### 4.2 与Layer 4机器学习层集?
+### 4.2 与Layer 4机器学习层集成
 
 ```python
 
@@ -939,7 +939,7 @@ class AdaptiveMLPipeline:
 
 
 
-## 五、实施计?
+## 五、实施计划
 
 ### 5.1 实施阶段
 
@@ -973,11 +973,11 @@ class AdaptiveMLPipeline:
 
 |------|--------|--------|--------|
 
-| Layer 2因子层集?| 2?| Alpha因子?| AdaptiveFactorEngine |
+| Layer 2因子层集成| 2?| Alpha因子?| AdaptiveFactorEngine |
 
 | Layer 4机器学习集成 | 2?| 机器学习?| AdaptiveMLPipeline |
 
-| 性能监控系统 | 2?| 全系?| PerformanceMonitor |
+| 性能监控系统 | 2?| 全系统| PerformanceMonitor |
 
 | 集成测试 | 1?| pytest | 集成测试套件 |
 
@@ -1005,7 +1005,7 @@ class AdaptiveMLPipeline:
 
 
 
-## 六、验收标?
+## 六、验收指标
 
 ### 6.1 功能验收标准
 
@@ -1029,7 +1029,7 @@ class AdaptiveMLPipeline:
 
 
 
-| 指标 | 目标?| 测试方法 |
+| 指标 | 目指标| 测试方法 |
 
 |------|--------|---------|
 

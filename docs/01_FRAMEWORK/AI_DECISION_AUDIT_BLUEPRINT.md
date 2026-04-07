@@ -667,7 +667,7 @@ class OutcomeAuditor:
         lessons = []
         
         if prediction_accuracy is not None and prediction_accuracy < 0.6:
-            lessons.append(f"预测准确率偏?{prediction_accuracy:.2%})，需要改进预测模?)
+            lessons.append(f"预测准确率偏?{prediction_accuracy:.2%})，需要改进预测模块)
         
         if decision_quality_score < 0.7:
             lessons.append(f"决策质量评分偏低({decision_quality_score:.2f})，需要优化决策逻辑")
@@ -690,7 +690,7 @@ class OutcomeAuditor:
             suggestions.append("建议重新训练预测模型或调整模型参?)
         
         if decision_quality_score < 0.7:
-            suggestions.append("建议优化决策逻辑或增加决策约?)
+            suggestions.append("建议优化决策逻辑或增加决策约束)
         
         if risk_control_effect < 0.8:
             suggestions.append("建议加强风险控制措施或调整风险参?)
@@ -883,7 +883,7 @@ class DecisionTracer:
 |---------|---------|---------|---------|
 | **决策模式分析** | 历史决策模式 | 聚类分析 | 模式识别 |
 | **效果趋势分析** | 效果变化趋势 | 时间序列分析 | 趋势识别 |
-| **错误模式分析** | 错误决策模式 | 异常检?| 错误预防 |
+| **错误模式分析** | 错误决策模式 | 异常检查| 错误预防 |
 | **改进效果分析** | 改进措施效果 | 对比分析 | 改进验证 |
 
 ---
@@ -895,7 +895,7 @@ class DecisionTracer:
 | 监控维度 | 监控指标 | 阈?| 告警级别 |
 |---------|---------|------|---------|
 | **审计完整?* | 审计记录完整?| < 95% | P1 |
-| **追溯成功?* | 链路追溯成功?| < 98% | P1 |
+| **追溯成功?* | 链路追溯成功能| < 98% | P1 |
 | **责任明确?* | 责任归属明确?| < 100% | P0 |
 | **效果评估?* | 效果评估完成?| < 90% | P2 |
 
@@ -927,7 +927,7 @@ class DecisionTracer:
 
 ### 9.2 成功标准
 
-| 成功指标 | 目标?| 验证方法 |
+| 成功指标 | 目指标| 验证方法 |
 |---------|--------|---------|
 | **审计完整?* | ?98% | 系统验证 |
 | **追溯成功?* | ?99% | 链路测试 |

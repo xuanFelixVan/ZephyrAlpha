@@ -147,7 +147,7 @@ layer: Layer 4 (机器学习层)
 
 class GraphNeuralNetwork:
 
-    """图神经网络系?""
+    """图神经网络系统""
 
     
 
@@ -219,7 +219,7 @@ class GraphNeuralNetwork:
 
     ) -> torch.Tensor:
 
-        """编码图节?        
+        """编码图节奏        
 
         Args:
 

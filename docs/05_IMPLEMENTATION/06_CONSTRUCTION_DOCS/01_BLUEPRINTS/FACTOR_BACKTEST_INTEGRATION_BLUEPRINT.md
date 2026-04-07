@@ -26,8 +26,8 @@ layer: Layer 5 (策略执行层)
 
 
 > **索引**: `FAC_BT_001`
-> **开发时?*: 120h
-> **核心定位**: ...
+> **开发时间**: 120h
+> **核心定位**: 因子库与回测框架的集成与治理（面向专业机构落地）
 ## 设计目标
 
 ### 主要目标
@@ -87,66 +87,64 @@ layer: Layer 5 (策略执行层)
 
 | 原则 | 说明 | 专业机构对标 |
 |------|------|--------------|
-| **模块化分层架?* | 遵循12层架构蓝图，保持系统可扩展性和可维?| ZVT量化框架[1] |
-| **因子中间库核?* | 建立专业级因子特征存?Feature Store)，实现因子数据版本化管理 | 对冲基金因子建模管道[2] |
-| **AI驱动研究范式** | 集成AI技术实现自动化因子挖掘和策略优?| QLib AI量化平台[3] |
-| **生产级监控运?* | 实现因子漂移监控、性能监控、告警体?| 因子生命周期管理[5] |
+| **模块化分层架构** | 遵循 12 层架构蓝图，保持系统可扩展性与可维护性 | ZVT 量化框架[1] |
+| **因子中间库核心（Feature Store）** | 建立专业级因子特征存储（Feature Store），实现因子数据版本化管理 | 对冲基金因子建模管道[2] |
+| **AI 驱动研究范式** | 集成 AI 技术实现自动化因子挖掘与策略优化 | QLib AI 量化平台[3] |
+| **生产级监控运维体系** | 实现因子漂移监控、性能监控与告警体系 | 因子生命周期管理[5] |
 
-## 2. 专业机构最佳实践分?
+## 2. 专业机构最佳实践分析
 
-### 2.1 模块化分层架?(行业标准)
+### 2.1 模块化分层架构（行业标准）
 
-专业量化机构普遍采用分层解耦架构，如ZVT框架?基础设施层→计算引擎层→策略执行层→结果分析?四层模型[1]。这种设计的核心优势是：
-- **
-- **可扩?*: 新功能通过插件机制扩展，不影响核心系统
-- **维护?*: 模块化设计降低系统复杂度，提升代码可维护?
+专业量化机构普遍采用分层解耦架构，如 ZVT 框架：基础设施层 → 计算引擎层 → 策略执行层 → 结果分析层 的四层模型[1]。这种设计的核心优势是：
+- **可扩展性**：新功能通过插件机制扩展，不影响核心系统
+- **可维护性**：模块化设计降低系统复杂度，提升可维护性
 
-### 2.2 因子中间?Feature Store)作为核心基础设施
+### 2.2 因子中间库（Feature Store）作为核心基础设施
 
 对冲基金普遍采用因子中间库管理因子数据。AWS上的对冲基金工作流显示，他们使用云原生架构构建因子建模数据管道，通过AWS Batch和Step Functions实现并行计算[2]。核心特征：
-- **版本化管?*: 因子数据按时间、版本、参数多维度存储
-- **高性能查询**: 支持大规模时序数据的快速检?
-- **血缘追?*: 完整记录因子计算的数据来源和变换过程
+- **版本化管理**：因子数据按时间、版本、参数多维度存储
+- **高性能查询**: 支持大规模时序数据的快速检索
+- **血缘追踪**：完整记录因子计算的数据来源和变换过程
 
-### 2.3 AI驱动的量化研究范?
+### 2.3 AI驱动的量化研究范围
 
-微软QLib平台代表了AI导向的量化投资最新趋势[3]?
-- **端到端AI工作?*: 从数据到交易信号的完整AI流水?
+微软 QLib 平台代表了 AI 导向的量化投资趋势[3]：
+- **端到端 AI 工作流**：从数据到交易信号的完整 AI 流水线
 - **高性能基础设施**: 专门为金融时序数据优化的计算引擎
 
-### 2.4 因子生命周期管理最佳实?
+### 2.4 因子生命周期管理最佳实践
 
-专业因子开发强调持续监控与迭代[5]?
-- **漂移监控**: 跟踪因子分布变化，识别失效信?
-- **再训练机?*: 根据市场环境调整因子参数
-- **压力测试**: 极端市场条件下的因子稳健性验?
+专业因子开发强调持续监控与迭代[5]：
+- **漂移监控**: 跟踪因子分布变化，识别失效信号
+- **再训练机制**: 根据市场环境调整因子参数
+- **压力测试**: 极端市场条件下的因子稳健性验证
 
 ## 3. 开源模块推荐与集成策略
 
 基于专业机构实践和ZephyrAlpha现有12层架构，推荐以下开源模块组合：
 
-| 架构?| 推荐模块 | 核心功能 | 选择理由 | 集成策略 |
+| 架构 | 推荐模块 | 核心功能 | 选择理由 | 集成策略 |
 |--------|----------|----------|----------|----------|
-| **Layer 8: 人机交互?* | **Streamlit** + **Grafana** | 可视化仪表板、实时监?| Streamlit快速原型，Grafana专业监控 | 直接使用 |
-
-专业归?| 混合集成 |
-| **Layer 6: 组合优化?* | **PyPortfolioOpt** | 组合权重优化、风险模?| API简洁、功能完整、社区活?| 直接集成 |
-?|
-| **Layer 4: 机器学习?* | **QLib** (AI引擎) | AI因子挖掘、预测模?| 微软开源、机构级验证 | 参考架?定制 |
-感分析、另类数据处?| 蓝图已选定，技术栈统一 | 直接使用 |
-| **Layer 2: Alpha因子?* | **Feast** + **factor_calculator.py** | 因子存储、计算、验?| 专业级Feature Store，支持时序数?| 定制开发集?|
-洗、对齐、特征工?| 现有技术栈延续 | 自主开?|
-| **Layer 0: 数据源层** | **iFind/Baostock/AkShare** | 市场数据、财务数据、另类数?| 蓝图已选定，数据源稳定 | 直接使用 |
-| **横向支撑?* | **Dask** + **Apache Airflow** | 分布式计算、工作流编排 | Dask无缝扩展Pandas，Airflow成熟调度 | 渐进式集?|
+| **Layer 8: 人机交互** | **Streamlit** + **Grafana** | 可视化仪表板、实时监控 | Streamlit 快速原型，Grafana 专业监控 | 直接使用 |
+| **Layer 7: 专业归因与报告** | **pyfolio** + **Brinson** | 绩效分析、归因报告 | 机构常用报告形态 | 混合集成 |
+| **Layer 6: 组合优化** | **PyPortfolioOpt** | 权重优化、风险模块 | API 简洁、功能完整、社区活跃 | 直接集成 |
+| **Layer 4: 机器学习** | **QLib**（AI 引擎） | AI 因子挖掘、预测模块 | 微软开源、机构级验证 | 参考架构定制 |
+| **Layer 3: NLP/另类数据** | 既有蓝图技术栈 | 情感分析、另类数据处理 | 技术栈统一 | 直接使用 |
+| **Layer 2: Alpha 因子** | **Feast** + `factor_calculator.py` | 因子存储、计算、验证 | 专业级 Feature Store，支持时序数据 | 定制开发集成 |
+| **Layer 1: 数据预处理** | 既有技术栈 | 清洗、对齐、特征工程 | 现有能力延续 | 自主开发 |
+| **Layer 0: 数据源层** | **iFind/Baostock/AkShare** | 市场/财务/另类数据 | 数据源稳定 | 直接使用 |
+| **横向支撑** | **Dask** + **Apache Airflow** | 分布式计算、工作流编排 | Dask 扩展 Pandas，Airflow 成熟调度 | 渐进式集成 |
 
 ### 3.1 核心模块详解
 
-#### **Feast (Uber开? - 因子中间?*
+#### **Feast（Uber 开发 - 因子中间库 / Feature Store）**
 ```python
-# 定制化量化数据模?
+# 定制化量化数据模型
 > **核心职责**: Factor Backtest Integration蓝图设计
 > **职责边界**: 
-?
+> - ✅ 本节负责：Feature Store（因子存储/点查/批查/离线服务）的集成示例
+> - ❌ 本节不负责：具体因子公式与业务口径（由因子库与研究文档定义）
 
 
 ## 核心职责
@@ -170,7 +168,7 @@ date_entity = Entity(name="date", value_type=ValueType.UNIX_TIMESTAMP)
 factor_view = FeatureView(
     name="alpha_factors",
     entities=[stock_entity, date_entity],
-    ttl=timedelta(days=365*5),  # 5年历史数?
+    ttl=timedelta(days=365*5),  # 5年历史数据
     features=[
         Field(name="factor_momentum", dtype=Float32),
         Field(name="factor_value", dtype=Float32),
@@ -180,11 +178,11 @@ factor_view = FeatureView(
 ```
 
 **优势**: 
-- 专门的特征存储，支持版本控制、点查批查、在?离线服务
-- 可定制金融时序数据Schema，支持四维索引（时间×资产×因子×版本?
+- 专门的特征存储，支持版本控制、点查批查、在线/离线服务
+- 可定制金融时序数据Schema，支持四维索引（时间×资产×因子×版本）
 - 替代方案: 如需要更轻量级方案，可用**QuestDB**（高性能时序数据库）
 
-#### **QLib (微软开? - AI量化引擎**
+#### **QLib (微软开发 - AI量化引擎**
 ```python
 from qlib.contrib.model.gbdt import LGBModel
 from qlib.contrib.data.handler import Alpha158
@@ -205,7 +203,7 @@ model.fit(features, labels)
 ```python
 from pypfopt import EfficientFrontier, risk_models, expected_returns
 
-# 基于因子暴露的优?
+# 基于因子暴露的优化
 mu = expected_returns.mean_historical_return(prices)  # 预期收益
 S = risk_models.sample_cov(prices)  # 风险模型
 
@@ -214,25 +212,25 @@ weights = ef.max_sharpe()  # 最大化夏普比率
 ```
 
 **优势**:
-- ?方差优化、风险平价、Black-Litterman模型等多种优化方?
-- 可结?*Riskfolio-Lib**增强风险预算功能
+- 均值方差优化、风险平价、Black-Litterman模型等多种优化方案
+- 可结合 **Riskfolio-Lib**增强风险预算功能
 
-#### **iFinD (同花? - 专业金融数据?*
+#### **iFinD (同花顺 - 专业金融数据接口
 
-iFinD是同花顺提供的专业金融数据接口，支持Python、MATLAB、Java等多种编程语言。ZephyrAlpha系统将iFinD作为核心数据源之一，用于获取高质量的市场数据、财务数据和另类数据?
+iFinD是同花顺提供的专业金融数据接口，支持Python、MATLAB、Java等多种编程语言。ZephyrAlpha系统将iFinD作为核心数据源之一，用于获取高质量的市场数据、财务数据和另类数据。
 
 ?*:
 ```bash
 iFinD API?
 pip install iFinDAPI
 
-# 方法2: 使用SuperCommand客户端进行环境修?
+# 方法2: 使用SuperCommand客户端进行环境修复
 
 后，运行SuperCommand.exe
 # 选择Python语言 -> 环境修复 -> 选择Python路径
 ```
 
-**登录与认?*:
+**登录与认证:
 ```python
 from iFinDPy import *
 
@@ -270,13 +268,13 @@ data = THS_DS('000001.SZ',
               '2024-12-31')
 ```
 
-**数据权限与限?*:
-- **正式账号**: 单次请求最?00万条数据
+**数据权限与限制:
+- **正式账号**: 单次请求最多 100 万条数据
 - **基础数据**: 每周500万条限制
 - **数据更新时间**:
 : 15:07左右更新
-  - 港股日行? 16:37左右更新  
-  - 美股日行? 次日06:12左右更新
+  - 港股日行情 16:37左右更新  
+  - 美股日行情 次日06:12左右更新
 
 **集成架构设计**:
 ```python
@@ -319,14 +317,14 @@ class iFinDDataSource:
 过每周限制
 
 **优势**:
-括技术指标、财务指标、宏观数?
-和历史数据，数据质量高、更新及?
+括技术指标、财务指标、宏观数据
+和历史数据，数据质量高、更新及时
 
 **注意事项**:
-- 同一账号不能在不同电脑同时登录，会产生互?
-- 分钟K线数据因数据源不同可能存在细微差?
+- 同一账号不能在不同电脑同时登录，会产生互斥
+- 分钟K线数据因数据源不同可能存在细微差异
 - 复权因子计算需注意向前复权和向后复权的区别
-- 建议在收盘后1-2小时提取当日数据，确保数据完?
+- 建议在收盘后1-2小时提取当日数据，确保数据完整
 
 
 ```python
@@ -340,71 +338,58 @@ class StrategyFactory:
 
 ## 4. 完整集成架构设计
 
-### 4.1 系统架构?(基于8层蓝图增?
+### 4.1 系统架构（基于 8 层蓝图增强）
 
-```
-┌─────────────────────────────────────────────────────────────────────?
-?                   ZephyrAlpha因子库与回测集成架构                     ?
-├─────────────────────────────────────────────────────────────────────?
-?                                                                    ?
-? Layer 8: 人机交互?                                                 ?
-? ├── Streamlit Dashboard (因子监控、回测可视化)                        ?
-? └── Grafana监控面板 (IC衰减告警、因子有效性热?                       ?
-?                                                                    ?
-? Layer 7: AI报告?                                                   ?
-? ├── pyfolio绩效分析 (基础指标计算)                                    ?
-? ├── Brinson归因引擎 (收益分解：因?择时/选股)                         ?
-? └── 自动报告生成?(Markdown/PDF报告)                                ?
-?                                                                    ?
-? Layer 6: 组合优化?                                                 ?
-? ├── PyPortfolioOpt优化?(?方差优化)                             ?
-? ├── 风险模型引擎 (风格因子+行业因子暴露控制)                           ?
-? └── 交易成本模型 (冲击成本、滑点模?                                 ?
-?                                                                    ?
-? Layer 5: 策略执行?                                                 ?
-? ├── Backtrader回测引擎 (事件驱动回测)                                 ?
-?(FactorData ?Backtrader DataFeed)               ?
-? └── QMT实盘接口 (国金证券对接)                                       ?
-?                                                                    ?
-? Layer 4: 机器学习?                                                 ?
-? ├── QLib AI引擎 (自动化因子挖?                                     ?
-? ├── 预测模型?(LSTM、Transformer、GBDT)                             ?
-? └── 强化学习代理 (策略参数自优?                                    ?
-?                                                                    ?
-分析?                                                 ?
-绪提取)                                   ?
-? ├── 另类数据处理?(文本、社交媒体、卫星数?                          ?
-? └── 新闻Alpha因子生成?                                             ?
-?                                                                    ?
-? Layer 2: Alpha因子?                                                ?
-? ├── Feast因子中间?(版本化因子存?                                  ?
-? ├── factor_calculator.py (现有87因子计算)                            ?
-? ├── IC分析引擎 (信息系数计算、衰减监?                                ?
-? └── 因子验证框架 (单因?多因子验?                                  ?
-?                                                                    ?
-? Layer 1: 数据预处理层                                                ?
-洗管道 (缺失值处理、异常值检?                              ?
-? ├── 时序对齐?(多频率数据对?                                       ?
-?                                                                    ?
-? Layer 0: 数据源层                                                    ?
-? ├── iFind终端接口 (5700+因子数据)                                    ?
-? └── AkShare另类数据 (宏观、非结构化数?                              ?
-?                                                                    ?
-└─────────────────────────────────────────────────────────────────────?
+```mermaid
+graph TB
+  subgraph L0[Layer 0 数据源层]
+    IF[iFind 终端接口] --> PREP
+    AK[AkShare/其它数据源] --> PREP
+  end
+
+  subgraph L1[Layer 1 数据预处理层]
+    PREP[清洗/对齐/特征工程] --> FS
+  end
+
+  subgraph L2[Layer 2 Alpha 因子层]
+    FS[Feast 因子中间库（版本化存储）] --> IC
+    CALC[factor_calculator.py] --> FS
+    IC[IC 分析与衰减监控] --> VLD
+    VLD[因子验证框架（单因子/多因子）] --> BT
+  end
+
+  subgraph L5[Layer 5 策略执行层]
+    BT[Backtrader 回测引擎] --> EXEC
+    EXEC[QMT/实盘接口] --> UI
+  end
+
+  subgraph L6[Layer 6 组合优化层]
+    OPT[PyPortfolioOpt/风险模型/交易成本] --> UI
+  end
+
+  subgraph L7[Layer 7 报告与归因]
+    REP[pyfolio/Brinson/报告生成] --> UI
+  end
+
+  subgraph L8[Layer 8 人机交互]
+    UI[Streamlit Dashboard / Grafana] 
+  end
 ```
 
-### 4.2 核心数据流设?
+### 4.2 核心数据流设计
 
-```
-数据?#1: 因子计算与存?
+```text
+数据流 #1：因子计算与存储
+- 原始数据 → 预处理 → 因子计算 → Feast（版本化存储/点查/批查）
 
-数据?#2: AI因子挖掘
-Feast历史因子 ?QLib数据预处??AI模型训练 ?新因子发??回Feast存储
+数据流 #2：AI 因子挖掘
+- Feast 历史因子 → QLib 数据预处理 → AI 模型训练 → 新因子发布 → 写回 Feast
 
-数据?#3: 回测流水?
+数据流 #3：回测流水线
+- 因子/特征 → 策略信号 → Backtrader 回测 → 绩效/风险指标 → 报告生成
 
-数据?#4: 组合优化与归?
-
+数据流 #4：组合优化与归因
+- 回测结果/风险预算 → 组合优化 → 归因分析 → 可视化与告警
 ```
 
 ### 4.3 
@@ -416,9 +401,9 @@ class FactorData:
     factor_id: str
     values: pd.DataFrame  # index=datetime, columns=symbols
     metadata: FactorMetadata
-    lineage: FactorLineage  # 血缘信?
+    lineage: FactorLineage  # 血缘信息
     
-# 因子中间库接?
+# 因子中间库接口
 class FactorStore(ABC):
     """因子存储抽象接口"""
     @abstractmethod
@@ -433,9 +418,9 @@ class FactorStore(ABC):
     def list_factors(self) -> List[FactorMetadata]:
     
 class BacktraderAdapter:
-?""
+    \"\"\"Backtrader 适配器：将因子数据转换为 DataFeed，并生成因子策略。\"\"\"
     def create_datafeed(self, factor: FactorData, price_data: pd.DataFrame) -> bt.feeds.PandasData:
-        """创建Backtrader数据?""
+        \"\"\"创建 Backtrader 数据源。\"\"\"
     
     def create_factor_strategy(self, factor_weights: Dict[str, float]) -> Type[bt.Strategy]:
         """创建基于因子的策略类"""
@@ -452,14 +437,14 @@ class PortfolioOptimizer(ABC):
 
 ### 5.1 模块选择权衡矩阵
 
-| 决策?| 选项A | 选项B | 推荐选择 | 理由 |
+| 决策 | 选项A | 选项B | 推荐选择 | 理由 |
 |--------|-------|-------|----------|------|
-| **因子存储** | Feast (完整Feature Store) | 自建Parquet+SQLite | **Feast** | 生产级功能、版本管理、社区支?|
-| **组合优化** | PyPortfolioOpt | CVXPY+自定义模?| **PyPortfolioOpt** | 开箱即用，金融专用功能 |
-| **可视?* | Streamlit+Grafana | Plotly Dash | **Streamlit+Grafana** | Streamlit快速开发，Grafana专业监控 |
-| **分布式计?* | Dask | Ray | **Dask** | 与Pandas生态无缝集?|
+| **因子存储** | Feast (完整Feature Store) | 自建Parquet+SQLite | **Feast** | 生产级功能、版本管理、社区支持|
+| **组合优化** | PyPortfolioOpt | CVXPY+自定义模块| **PyPortfolioOpt** | 开箱即用，金融专用功能 |
+| **可视化 | Streamlit+Grafana | Plotly Dash | **Streamlit+Grafana** | Streamlit快速开发，Grafana专业监控 |
+| **分布式计算 | Dask | Ray | **Dask** | 与Pandas生态无缝集成|
 
-### 5.2 实施风险与应对措?
+### 5.2 实施风险与应对措施
 
 #### **高风险项 (P0)**
 1. **Backtrader性能瓶颈**
@@ -468,23 +453,23 @@ class PortfolioOptimizer(ABC):
 存使用量
 
 2. **因子数据一?*
-   - **风险**: 多版本因子数据可能导致回测结果不一?
-   - **应对**: 实现数据版本控制、校验机制、回测结果复现性测?
-   - **监控指标**: 数据校验通过率、版本冲突次?
+   - **风险**: 多版本因子数据可能导致回测结果不一致
+   - **应对**: 实现数据版本控制、校验机制、回测结果复现性测试
+   - **监控指标**: 数据校验通过率、版本冲突次数
 
 #### **中风险项 (P1)**
 ?*
    - **风险**: 不同开源库版本冲突、API变更
-   - **应对**: 建立依赖隔离层、版本锁定、定期更新测?
+   - **应对**: 建立依赖隔离层、版本锁定、定期更新测试
    - **监控指标**: 依赖冲突警告数、API变更影响评估
 
-2. **技术债累?*
-   - **风险**: 快速集成导致代码质量下?
-   - **监控指标**: 代码复杂度、测试覆盖率、技术债标签数?
+2. **技术债累积
+   - **风险**: 快速集成导致代码质量下降
+   - **监控指标**: 代码复杂度、测试覆盖率、技术债标签数
 
 #### **低风险项 (P2)**
-1. **团队技能缺?*
-   - **风险**: 新模块（如QLib、Feast）学习曲线陡?
+1. **团队技能缺口
+   - **风险**: 新模块（如QLib、Feast）学习曲线陡峭
    - **应对**: 专项培训、知识分享、渐进式集成
    - **监控指标**: 团队成员技能评估、培训完成率
 
@@ -496,7 +481,7 @@ class PortfolioOptimizer(ABC):
 | **IC分析引擎** | ?(3-4? | ?| ?(因子有效性评? | **P0** |
 | **PyPortfolioOpt集成** | ?(2-3? | ?| ?(组合优化能力) | **P1** |
 | **QLib AI集成** | ?(6-8? | ?| ?(AI因子挖掘) | **P2** |
-| **Streamlit可视?* | ?(2-3? | ?| ?(用户体验提升) | **P1** |
+| **Streamlit可视化 | ?(2-3? | ?| ?(用户体验提升) | **P1** |
 
 ## 6. 实施路径规划
 
@@ -504,9 +489,9 @@ class PortfolioOptimizer(ABC):
 **目标**: 建立因子库与回测的基础集成能力
 
 ?(4?**
-   - 实现FactorData到Backtrader DataFeed的转?
+   - 实现FactorData到Backtrader DataFeed的转换
    - 开发多因子策略模板
-   - 完成基础回测流水线验?
+   - 完成基础回测流水线验证
 
 2. **Feast因子中间库简化版 (6?**
    - 部署Feast基础环境
@@ -515,15 +500,15 @@ class PortfolioOptimizer(ABC):
 
 3. **IC分析引擎实现 (4?**
    - 基于 [ic_analysis.md] 蓝图实现
-   - 完成单因子IC计算和验?
-   - 实现因子有效性评估报?
+   - 完成单因子IC计算和验证
+   - 实现因子有效性评估报告
 
 ### 6.2 第二阶段: 专业能力提升 (6个月)
-**目标**: 增加专业级量化研究能?
+**目标**: 增加专业级量化研究能力
 
 1. **PyPortfolioOpt集成 (3?**
-   - 集成?方差优化
-   - 实现基于因子暴露的权重分?
+   - 集成均值方差优化
+   - 实现基于因子暴露的权重分析
    - 完成组合优化测试
 
 2. **绩效归因系统 (4?**
@@ -531,9 +516,9 @@ class PortfolioOptimizer(ABC):
    - 实现Brinson归因模型
    - 完成收益分解报告生成
 
-3. **Streamlit可视化监?(3?**
-   - 构建因子监控仪表?
-   - 实现回测结果可视?
+3. **Streamlit可视化监控(3?**
+   - 构建因子监控仪表板
+   - 实现回测结果可视化
    - 完成用户交互界面
 
 ### 6.3 第三阶段: AI与规模化 (12个月)
@@ -541,21 +526,21 @@ class PortfolioOptimizer(ABC):
 
 1. **QLib AI引擎集成 (8?**
    - 选择性集成AI因子挖掘模块
-   - 实现自动化因子发现流?
-   - 完成AI模型训练和验?
+   - 实现自动化因子发现流程
+   - 完成AI模型训练和验证
 
 2. **Dask分布式计?(6?**
    - 部署Dask集群环境
    - 实现因子计算的并行化
-   - 完成大规模数据测?
+   - 完成大规模数据测试
 
 3. **生产监控告警体系 (4?**
    - 集成Grafana监控
    - 实现因子漂移告警
-   - 完成生产级运维能?
+   - 完成生产级运维能力
 
 
-> **适用场景**: 个人开?+ AI维护 + 个人使用，不涉及团队协作
+> **适用场景**: 个人开发+ AI维护 + 个人使用，不涉及团队协作
 
 
 
@@ -564,11 +549,11 @@ class PortfolioOptimizer(ABC):
 | **
 | **
 
-### 7.2 极简身份认证与访问控?
+### 7.2 极简身份认证与访问控制
 
 **个人使用场景无需复杂认证**:
 - ?移除团队功能：OAuth、RBAC、多用户权限系统
-保护对外API的调用权?
+保护对外API的调用权限
 
 **API密钥管理方案**:
 ```yaml
@@ -576,7 +561,7 @@ api_keys:
   data_sources:
     tushare: "your_tushare_token_here"      # 数据API密钥
     baostock: ""                            # 
-    ifind: {username: "your_ifind_username", password: "your_ifind_password"}  # iFinD账号和密?
+    ifind: {username: "your_ifind_username", password: "your_ifind_password"}  # iFinD账号和密码
   
   trading:
     broker: "simulated"                     # 模拟交易无需密钥
@@ -597,23 +582,23 @@ system:
 
 **文件权限保护**:
 ```bash
-可读写?
+可读写：
 chmod 600 ~/.zephyralpha/config.yaml
 
-可访问?
+可访问：
 chmod 700 ~/.zephyralpha
 ```
 
 ### 7.3 敏感数据保护策略
 
 **保护范围定义**:
-须保护): API密钥、交易账户凭证、个人身份信?
-- 🟡 **业务敏感数据** (建议保护): 策略参数、因子权重、回测结?
+须保护): API密钥、交易账户凭证、个人身份信息
+- 🟡 **业务敏感数据** (建议保护): 策略参数、因子权重、回测结束
 
 **保护措施**:
-2. **本地数据加密**: 个人开发环境可选，使用Python `cryptography`库简单加?
+2. **本地数据加密**: 个人开发环境可选，使用Python `cryptography`库简单加密
    ```python
-   # 可选功能：简单文件加?
+   # 可选功能：简单文件加密
    from cryptography.fernet import Fernet
    
    # 生成密钥（首次运行）
@@ -625,7 +610,7 @@ chmod 700 ~/.zephyralpha
    cipher = Fernet(key)
    encrypted = cipher.encrypt(b"sensitive_data")
    ```
-3. **数据库安?*: 使用SQLite本地数据库，无需网络访问和密?
+3. **数据库安?*: 使用SQLite本地数据库，无需网络访问和密码
 
 障恢?
 
@@ -659,9 +644,9 @@ class PersonalAuditLogger:
 
 **
 1. **API密钥使用**: 每次使用外部API时记录（脱敏后）
-2. **交易执行**: 模拟或实盘交易记?
-3. **数据导出**: 大规模数据导出操?
-4. **系统异常**: 程序崩溃或错?
+2. **交易执行**: 模拟或实盘交易记录
+3. **数据导出**: 大规模数据导出操作
+4. **系统异常**: 程序崩溃或错误
 
 **
 障恢复机制**:
@@ -669,7 +654,7 @@ class PersonalAuditLogger:
    ```bash
    cp ~/.zephyralpha/config.yaml ~/zephyralpha_backups/config_$(date +%Y%m%d).yaml
    
-   # 保留最?天的备份
+   # 保留最多 7 天的备份
    find ~/zephyralpha_backups -name "config_*.yaml" -mtime +7 -delete
    ```
 2. **恢复脚本**:
@@ -682,7 +667,7 @@ class PersonalAuditLogger:
        backup_dir = os.path.expanduser("~/zephyralpha_backups")
        config_file = os.path.expanduser("~/.zephyralpha/config.yaml")
        
-       # 查找最新备?
+       # 查找最新备份
        backups = sorted([f for f in os.listdir(backup_dir) if f.startswith("config_")])
        if backups:
            latest = os.path.join(backup_dir, backups[-1])
@@ -709,7 +694,7 @@ api_keys:
   data_sources:
     tushare: "您的Tushare Token"
     baostock: ""  # 
-    ifind: {username: "您的iFinD账号", password: "您的iFinD密码"}  # iFinD账号和密?
+    ifind: {username: "您的iFinD账号", password: "您的iFinD密码"}  # iFinD账号和密码
   
   trading:
     mode: "simulation"  # simulation / paper_trading / live_trading
@@ -756,7 +741,7 @@ def validate_config(config_path: str) -> bool:
 需字段: {field}")
                 return False
         
-        # 检查文件权?
+        # 检查文件权限
         if os.stat(config_path).st_mode & 0o777 != 0o600:
         
 print("
@@ -772,7 +757,7 @@ print(f"
 ?**
 2. 设置文件权限: `chmod 600 ~/.zephyralpha/config.yaml`
 4. 不在代码中硬编码任何API密钥
-5. 不在日志中输出敏感信?
+5. 不在日志中输出敏感信息
 
 1. 使用不同的API密钥用于不同服务
 2. 定期轮换API密钥（每3-6个月?
@@ -783,21 +768,21 @@ print(f"
 
 ### 7.7 针对“不懂开发”用户的特别设计
 
-**无密码体?*:
+**无密码体系:
 -
 要信息
 需的部?
 
-**防锁死设?*:
+**防锁死设计:
 1. **
 ?
-2. **紧急重?*: 提供命令行参?`--reset-config` 重置为出厂设?
+2. **紧急重?*: 提供命令行参?`--reset-config` 重置为出厂设计
 晰的修复指导，而不是技术性错误堆?
 
 **用户友好文档**:
 - 常见问题解答（FAQ）章?
 - 
-障排除流程?
+障排除流流程
 - 一键恢复脚?
 
 ## 8. 简易个人开发环境与部署
@@ -807,13 +792,13 @@ print(f"
 
 ?
 
-**最低系统要?*:
+**最低系统要求:
 | 组件 | 要求 | 说明 |
 |------|------|------|
 | **Python版本** | Python 3.8 - 3.11 | 推荐Python 3.9（最稳定?|
 | **
 ?|
-| **存储空间** | 50GB 可用空间 | 用于存储历史数据和计算结?|
+| **存储空间** | 50GB 可用空间 | 用于存储历史数据和计算结束|
 | **网络** | 稳定的互联网连接 | 用于下载数据和调用API |
 
 **
@@ -822,7 +807,7 @@ print(f"
 的Python和Anaconda
 - ?**ARM架构**: 支持Apple Silicon (M1/M2/M3) ?ARM Linux
 
-方?
+方案
 
 脚本（推荐）**:
 ```bash
@@ -838,7 +823,7 @@ chmod +x install.sh
 ```
 
 脚本功能**:
-1. 检查Python版本并提示升?
+1. 检查Python版本并提示升级
 2. 创建虚拟环境（venv或conda?
 
 5. 设置数据目录结构
@@ -853,7 +838,7 @@ cd zephyralpha
 # 2. 创建虚拟环境
 python -m venv venv
 
-# 3. 激活虚拟环?
+# 3. 激活虚拟环境
 # Linux/macOS:
 source venv/bin/activate
 # Windows:
@@ -904,7 +889,7 @@ from pathlib import Path
 def initialize_config():
 ?""
     
-    # 确定用户主目?
+    # 确定用户主目录
     home_dir = Path.home()
     config_dir = home_dir / ".zephyralpha"
     config_file = config_dir / "config.yaml"
@@ -946,7 +931,7 @@ response = input("
     with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
     
-限Unix系统?
+仅限 Unix 系统
     if os.name != 'nt':
         os.chmod(config_file, 0o600)
     
@@ -956,14 +941,14 @@ print(f"
     return config_file
 ```
 
-### 8.5 启动与运?
+### 8.5 启动与运维
 
-**简单启动方?*:
+**简单启动方式:
 ```bash
 # 方法1: 使用启动脚本
 python scripts/start.py
 
-# 方法2: 直接运行主程?
+# 方法2: 直接运行主程序
 python src/main.py
 
 # 方法3: 交互式模式（带菜单）
@@ -978,14 +963,14 @@ import os
 from pathlib import Path
 
 def main():
-    """启动主程?""
+    """启动主程序""
     
     # 检查Python版本
     if sys.version_info < (3, 8):
         print("错误: 需要Python 3.8或更高版?)
         sys.exit(1)
     
-    # 检查虚拟环?
+    # 检查虚拟环境
     if not hasattr(sys, 'real_prefix') and not sys.prefix == sys.base_prefix:
         print("警告: 建议在虚拟环境中运行")
     
@@ -998,7 +983,7 @@ print("
     
     from src.main import run
     
-    # 运行主程?
+    # 运行主程序
     try:
         run()
     except KeyboardInterrupt:
@@ -1084,7 +1069,7 @@ class StorageManager:
 
 | 问题 | 症状 | 解决方案 |
 |------|------|----------|
-缺?* | ModuleNotFoundError | 运行 `pip install -r requirements.txt` |
+缺口 | ModuleNotFoundError | 运行 `pip install -r requirements.txt` |
 | **
 理旧数据，扩展磁盘空间 |
 
@@ -1159,7 +1144,7 @@ if __name__ == "__main__":
     main()
 ```
 
-### 8.8 备份与迁?
+### 8.8 备份与迁移
 
 **自动备份策略**:
 ```python
@@ -1242,7 +1227,7 @@ print("\n
 ```
 
 
-### 8.10 维护与升?
+### 8.10 维护与升级
 
 **日常维护**:
 1. **
@@ -1289,10 +1274,10 @@ python scripts/migrate.py
 | **回测系统** | 事件驱动 + 成本模型完整 | Backtrader蓝图，未实现 | **?* | **P0** |
 概念层 | **?* | **P1** |
 | **监控告警** | 实时监控 + 自动告警 | ?| **?* | **P1** |
-| **AI集成** | AI工作流完整集?| 蓝图有，未实?| **?* | **P2** |
+| **AI集成** | AI工作流完整集成| 蓝图有，未实?| **?* | **P2** |
 
 
-1. **保持架构一?*: 所有新增模块严格遵循现?层架构设?
+1. **保持架构一?*: 所有新增模块严格遵循现?层架构设计
 2. **渐进式演?*: 每阶段交付可运行、可验证的成果，控制技术风?
 4. **文档同步更新**: 代码实现与蓝图文档同步更新，保持系统可维?
 
@@ -1303,22 +1288,22 @@ python scripts/migrate.py
 1. **因子中间?*: 选择**Feast**作为核心基础设施，解决因子数据版本化存储和管理问?
 2. **AI引擎**: ?*QLib**为参考架构，选择性集成AI因子挖掘能力
 4. **组合优化**: 直接集成**PyPortfolioOpt**，快速获得专业级优化能力
-5. **可视化监?*: **Streamlit**用于快速开发，**Grafana**用于专业监控
+5. **可视化监控*: **Streamlit**用于快速开发，**Grafana**用于专业监控
 
 ### 10.2 对ZephyrAlpha系统的最佳价?
 
 **推荐方案的优?*:
 1. **尊重现有投资**: 最大化利用已有蓝图设计和代码实?(factor_calculator.py)
-2. **加速专业能?*: 通过成熟开源模块快速达到机构级水平
+2. **加速专业能力*: 通过成熟开源模块快速达到机构级水平
 3. **降低实施风险**: 模块化集成，可独立测试和部署
-4. **保持系统一?*: 所有新增模块都遵循现有12层架构规?
+4. **保持系统一?*: 所有新增模块都遵循现有12层架构规范
 
 ### 10.3 立即行动建议
 
 1. **创建详细设计文档**: 为每个P0模块编写接口规范和数据流设计
 2. **制定集成测试计划**: 设计开源模块的集成验证方案
 3. **建立技术决策日?*: 记录所有技术选型的理由和权衡分析
-4. **制定分阶段路线图**: 明确每个阶段的交付物和验收标?
+4. **制定分阶段路线图**: 明确每个阶段的交付物和验收指标
 
 
 ## 参考文?
@@ -1329,7 +1314,7 @@ python scripts/migrate.py
 
 [3] QLib: An AI-oriented Quantitative Investment Platform。微软开源的AI量化平台架构?
 
-[4] Computing Patterns for Trading - Principles of Quantitative Development。金融软件设计模式标?
+[4] Computing Patterns for Trading - Principles of Quantitative Development。金融软件设计模式指标
 
 [5] 因子开发：量化投资的基?- 今日头条。因子生命周期管理的最佳实?
 

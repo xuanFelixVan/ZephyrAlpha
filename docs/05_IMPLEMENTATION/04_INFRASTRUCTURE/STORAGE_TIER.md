@@ -183,7 +183,7 @@ class StorageTierManager:
 
 ---
 
-## 5. 20年数据存储规?
+## 5. 20年数据存储规范
 
 ```python
 STORAGE_PLAN_20Y = {

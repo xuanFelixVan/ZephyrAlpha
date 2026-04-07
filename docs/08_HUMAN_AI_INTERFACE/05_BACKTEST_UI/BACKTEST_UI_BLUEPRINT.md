@@ -859,3 +859,55 @@ responsibility:
 
 responsibility:
   - 回测界面设计与实施方案与优化维护
+
+
+## 💻 实现代码示例
+
+```python
+# 回测界面实现示例
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import pandas as pd
+
+app = FastAPI()
+
+class BacktestConfig(BaseModel):
+    strategy_id: str
+    start_date: str
+    end_date: str
+    initial_capital: float
+    parameters: dict
+
+@app.post("/api/backtest/run")
+async def run_backtest(config: BacktestConfig):
+    """执行回测"""
+    # 加载策略
+    strategy = load_strategy(config.strategy_id)
+    
+    # 执行回测
+    results = strategy.backtest(
+        start_date=config.start_date,
+        end_date=config.end_date,
+        initial_capital=config.initial_capital,
+        **config.parameters
+    )
+    
+    return {
+        "status": "success",
+        "results": results.to_dict()
+    }
+
+@app.get("/api/backtest/results/{backtest_id}")
+async def get_backtest_results(backtest_id: str):
+    """获取回测结果"""
+    results = load_backtest_results(backtest_id)
+    
+    return {
+        "metrics": {
+            "total_return": results['total_return'],
+            "sharpe_ratio": results['sharpe_ratio'],
+            "max_drawdown": results['max_drawdown']
+        },
+        "trades": results['trades']
+    }
+```

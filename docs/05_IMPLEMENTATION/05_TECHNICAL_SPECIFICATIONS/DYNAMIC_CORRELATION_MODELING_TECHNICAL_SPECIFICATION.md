@@ -41,7 +41,7 @@ implementation_status: 设计阶段
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.3 - 动态相关性建模详细技术设?> **索引**: `DYNAMIC_CORRELATION_MODELING_SPEC_001`
+> 清风量化系统 v5.3 - 动态相关性建模详细技术设计> **索引**: `DYNAMIC_CORRELATION_MODELING_SPEC_001`
 > **开发时?*: 80h
 > **核心定位**: DCC-GARCH动态相关性建模，桥水核心能力
 
@@ -62,7 +62,7 @@ implementation_status: 设计阶段
 
 ## 2. 接口定义
 
-### 2.1 核心类接?
+### 2.1 核心类接口
 ```python
 class DynamicCorrelationModel:
     """
@@ -374,4 +374,4 @@ pandas>=1.3.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开发

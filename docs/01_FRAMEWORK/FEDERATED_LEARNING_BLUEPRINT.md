@@ -164,7 +164,7 @@ class FederatedLearning:
 
     ):
 
-        """初始化联邦学习系?        
+        """初始化联邦学习系统        
 
         Args:
 
@@ -242,7 +242,7 @@ class FederatedLearning:
 
     ) -> nn.Module:
 
-        """聚合客户端更?        
+        """聚合客户端更新        
 
         Args:
 

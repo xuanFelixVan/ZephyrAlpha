@@ -18,8 +18,8 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 ------|------|
-| **Obsidian + AI** | Obsidian手工 + AI自动提取，混合模?|
-| **向量检?* | 使用向量数据库实现语义检?|
+| **Obsidian + AI** | Obsidian手工 + AI自动提取，混合模块|
+| **向量检?* | 使用向量数据库实现语义检查|
 | **自动入库** | 实验完成后自动提取关键信息入?|
 | **可追?* | 完整记录知识来源和血?|
 
@@ -475,7 +475,7 @@ class KnowledgeAPI:
 | knowledge_count | 知识条目?| - |
 | query_count | 查询次数/?| - |
 | query_hit_rate | 查询命中?| >70% |
-| auto_ingest_rate | 自动入库?| >80% |
+| auto_ingest_rate | 自动入库| >80% |
 
 ## 10. 测试策略
 

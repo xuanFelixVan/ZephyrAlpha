@@ -244,7 +244,7 @@ class AIAgentFramework:
 
     ) -> Dict:
 
-        """反思执行结?        
+        """反思执行结束        
 
         Args:
 
@@ -254,7 +254,7 @@ class AIAgentFramework:
 
         Returns:
 
-            Dict: 反思结?        """
+            Dict: 反思结束        """
 
         pass
 

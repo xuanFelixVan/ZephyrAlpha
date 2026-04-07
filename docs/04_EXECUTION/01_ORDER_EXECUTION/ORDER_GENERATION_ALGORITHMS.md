@@ -34,7 +34,7 @@ implementation_status: 进行?
 > - ❌ 本文档不负责：其他模块内容
 
 
-> TWAP、VWAP、冲击成本模?
+> TWAP、VWAP、冲击成本模块
 
 **版本**: v1.0
 **更新**: 2026-04-04

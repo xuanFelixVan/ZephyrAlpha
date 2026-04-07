@@ -87,9 +87,9 @@ layer: Layer 3 (策略层)
 
 | StepLR | 阶梯式衰?| 通用 |
 
-| CosineAnnealing | 余弦退?| 大模?|
+| CosineAnnealing | 余弦退?| 大模块|
 
-| OneCycle | 单周?| 快速训?|
+| OneCycle | 单周期| 快速训?|
 
 | Warmup | 预热 | Transformer |
 

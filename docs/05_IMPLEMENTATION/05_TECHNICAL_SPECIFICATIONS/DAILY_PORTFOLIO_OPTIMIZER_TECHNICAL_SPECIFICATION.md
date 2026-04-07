@@ -36,7 +36,7 @@ responsibility:
 
 # 日线组合优化器技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 日线组合优化器详细技术设?> **索引**: `DAILY_PORTFOLIO_OPTIMIZER_001`
+> 清风量化系统 v5.3 - 日线组合优化器详细技术设计> **索引**: `DAILY_PORTFOLIO_OPTIMIZER_001`
 > **开发时?*: 180h
 > **核心定位**: 基于Alpha信号和风险模型优化组合权重，为文艺复兴模式提供最优仓位配?
 ---
@@ -147,7 +147,7 @@ class PortfolioOutput:
     risk_contributions: Dict[str, float] # 风险贡献
     turnover: float                      # 换手?    execution_priority: Dict[str, float] # 执行优先?    timestamp: datetime                  # 时间?
 class IDailyPortfolioOptimizer(ABC):
-    """日线组合优化器接?""
+    """日线组合优化器接口""
     
     @abstractmethod
     def optimize_portfolio(self, portfolio_input: PortfolioInput) -> PortfolioOutput:
@@ -364,7 +364,7 @@ CREATE TABLE portfolio_constraints (
 #### 5.1.1 样本协方差矩?
 ```python
 class RiskModelEstimator:
-    """风险模型估计?""
+    """风险模型估计划""
     
     def estimate_sample_covariance(self, historical_returns: pd.DataFrame,
                                    lookback_period: int = 252) -> pd.DataFrame:
@@ -604,7 +604,7 @@ def apply_weight_constraints(self, weights: Dict[str, float],
 def apply_turnover_constraint(self, target_weights: Dict[str, float],
                              current_weights: Dict[str, float],
                              max_turnover: float) -> Dict[str, float]:
-    """应用换手率约?    
+    """应用换手率约束    
     Args:
         target_weights: 目标权重
         current_weights: 当前权重

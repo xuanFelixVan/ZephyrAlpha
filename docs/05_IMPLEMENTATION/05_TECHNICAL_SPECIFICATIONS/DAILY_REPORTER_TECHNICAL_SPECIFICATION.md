@@ -58,7 +58,7 @@ DailyReporter是Layer 7（AI报告层）的核心模块，负责每日交易数�
 
 | 版本 | 日期 | 变更说明 |
 |------|------|----------|
-| v1.0 | 2026-04-02 | 初始版本，完成核心功能设?|
+| v1.0 | 2026-04-02 | 初始版本，完成核心功能设计|
 
 ---
 
@@ -82,7 +82,7 @@ DailyReporter是Layer 7（AI报告层）的核心模块，负责每日交易数�
 上游依赖:
 - PerformanceAnalyzer (绩效分析?: 提供绩效指标数据
 - PositionManager (仓位管理?: 提供持仓数据
-- TradeAuditor (交易审计?: 提供交易记录
+- TradeAuditor (交易审计划: 提供交易记录
 - MarketAnalyzer (市场分析?: 提供市场行情数据
 - RiskMonitor (风险监控?: 提供风险指标数据
 
@@ -321,7 +321,7 @@ class ScheduleAPI:
         self,
         schedule_id: str
     ) -> Dict[str, Any]:
-        """获取调度状?        
+        """获取调度状态        
         参数:
             schedule_id: 调度任务ID
             
@@ -368,7 +368,7 @@ class ReportInput:
 今日账户总资?**1,234,567.89**，日收益?**+1.23%**，累计收益率 **+23.45%**?市场整体震荡上行，沪?00指数上涨0.89%?
 ### 关键指标
 
-| 指标 | 数?| 目标 | 状?|
+| 指标 | 数?| 目标 | 状态|
 |------|------|------|------|
 | 日收益率 | +1.23% | >0% | ?达标 |
 | 最大回?| -3.45% | <-5% | ?达标 |
@@ -484,7 +484,7 @@ class ReportSecurity:
     @staticmethod
     def validate_input_data(data: ReportInput) -> bool:
         """验证输入数据合法?        
-        - 检查数据完整?        - 检查数据格?        - 检查数据范?        """
+        - 检查数据完整?        - 检查数据格?        - 检查数据范围        """
         pass
     
     @staticmethod
@@ -588,13 +588,13 @@ class ReportStorage:
         """保存报告
         
         - 保存报告文件
-        - 更新元数据索?        - 计算文件校验?        """
+        - 更新元数据索?        - 计算文件校验证        """
         pass
     
     def load_report(self, report_id: str) -> Optional[DailyReport]:
         """加载报告
         
-        - 从文件加载报?        - 验证文件完整?        - 返回报告对象
+        - 从文件加载报告        - 验证文件完整?        - 返回报告对象
         """
         pass
     
@@ -607,8 +607,8 @@ class ReportStorage:
         pass
     
     def archive_reports(self, before_date: date) -> int:
-        """归档旧报?        
-        - 压缩旧报?        - 移动到归档目?        - 返回归档数量
+        """归档旧报告        
+        - 压缩旧报告        - 移动到归档目?        - 返回归档数量
         """
         pass
 ```
@@ -659,7 +659,7 @@ CREATE TABLE report_metadata (
 
 ### 4.3 数据流设?
 ```
-┌─────────────────────────────────────────────────────────────────────??                         数据流设?                                  ?├─────────────────────────────────────────────────────────────────────??                                                                    ?? 上游数据?                                                         ?? ├── PerformanceAnalyzer ?绩效指标数据                             ?? ├── PositionManager ?持仓数据                                     ?? ├── TradeAuditor ?交易记录                                        ?? ├── MarketAnalyzer ?市场行情数据                                  ?? └── RiskMonitor ?风险指标数据                                     ??                             ?                                     ?? 数据采集?(TradingDataCollector)                                  ?? ├── 数据验证                                                        ?? ├── 数据清洗                                                        ?? └── 数据聚合                                                        ??                             ?                                     ?? 数据处理?(DataAggregator)                                        ?? ├── 指标计算                                                        ?? ├── 趋势分析                                                        ?? └── 对比分析                                                        ??                             ?                                     ?? AI解读?(LLMInterpreter)                                          ?? ├── 数据解读                                                        ?? ├── 洞察提取                                                        ?? └── 建议生成                                                        ??                             ?                                     ?? 报告生成?(TemplateRenderer)                                      ?? ├── 模板渲染                                                        ?? ├── 图表生成                                                        ?? └── 格式化输?                                                     ??                             ?                                     ?? 输出                                                                ?? ├── 报告存储 (data/reports/daily/)                                 ?? ├── 通知推?(NotificationSystem)                                  ?? └── 可视化展?(StreamlitDashboard)                                ??                                                                    ?└─────────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────────??                         数据流设计                                  ?├─────────────────────────────────────────────────────────────────────??                                                                    ?? 上游数据?                                                         ?? ├── PerformanceAnalyzer ?绩效指标数据                             ?? ├── PositionManager ?持仓数据                                     ?? ├── TradeAuditor ?交易记录                                        ?? ├── MarketAnalyzer ?市场行情数据                                  ?? └── RiskMonitor ?风险指标数据                                     ??                             ?                                     ?? 数据采集?(TradingDataCollector)                                  ?? ├── 数据验证                                                        ?? ├── 数据清洗                                                        ?? └── 数据聚合                                                        ??                             ?                                     ?? 数据处理?(DataAggregator)                                        ?? ├── 指标计算                                                        ?? ├── 趋势分析                                                        ?? └── 对比分析                                                        ??                             ?                                     ?? AI解读?(LLMInterpreter)                                          ?? ├── 数据解读                                                        ?? ├── 洞察提取                                                        ?? └── 建议生成                                                        ??                             ?                                     ?? 报告生成?(TemplateRenderer)                                      ?? ├── 模板渲染                                                        ?? ├── 图表生成                                                        ?? └── 格式化输?                                                     ??                             ?                                     ?? 输出                                                                ?? ├── 报告存储 (data/reports/daily/)                                 ?? ├── 通知推?(NotificationSystem)                                  ?? └── 可视化展?(StreamlitDashboard)                                ??                                                                    ?└─────────────────────────────────────────────────────────────────────?```
 
 ---
 
@@ -936,10 +936,10 @@ def test_llm_interpretation():
 | 类别 | 技术选型 | 版本要求 | 说明 |
 |------|----------|----------|------|
 | **编程语言** | Python | ?.10 | 类型提示、dataclass支持 |
-| **数据处理** | Pandas | ?.0 | 数据聚合、计?|
+| **数据处理** | Pandas | ?.0 | 数据聚合、计划|
 | **模板引擎** | Jinja2 | ?.1 | 报告模板渲染 |
 | **任务调度** | APScheduler | ?.10 | 定时任务调度 |
-| **图表生成** | Plotly | ?.18 | 交互式图?|
+| **图表生成** | Plotly | ?.18 | 交互式图表|
 | **LLM接口** | zhipuai | ?.0 | GLM-4-Flash API |
 
 ### 6.2 第三方依?

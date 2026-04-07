@@ -35,7 +35,7 @@ compliance_level: 专业标准
 **文档ID**: LAYER7_API_REFERENCE_001
 **版本**: v1.0.0
 **创建日期**: 2026-04-02
-**适用范围**: Layer 7所有报告模?所有报告模?
+**适用范围**: Layer 7所有报告模?所有报告模块
 ---
 
 ## 一、API概览
@@ -210,7 +210,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 **接口**: `POST /api/v1/reports/stress-test/run`
 
-**描述**: 执行压力测试并生成报?
+**描述**: 执行压力测试并生成报告
 **请求参数**:
 
 | 参数?| 类型 | 必填 | 描述 |
@@ -570,10 +570,10 @@ ws.onmessage = (event) => {
 }
 ```
 
-### 6.2 更新策略状?
+### 6.2 更新策略状态
 **接口**: `PUT /api/v1/reports/strategy-lifecycle/strategy/{strategy_id}`
 
-**描述**: 更新策略状?
+**描述**: 更新策略状态
 **请求示例**:
 ```json
 {
@@ -638,10 +638,10 @@ ws.onmessage = (event) => {
 }
 ```
 
-### 7.2 获取合规检查规?
+### 7.2 获取合规检查规范
 **接口**: `GET /api/v1/reports/regulatory/rules`
 
-**描述**: 获取所有合规检查规?
+**描述**: 获取所有合规检查规范
 **响应示例**:
 ```json
 {
@@ -662,10 +662,10 @@ ws.onmessage = (event) => {
 
 ## 八、AI可解释性API
 
-### 8.1 生成可解释性报?
+### 8.1 生成可解释性报告
 **接口**: `POST /api/v1/reports/ai-explainability/analyze`
 
-**描述**: 生成AI决策可解释性报?
+**描述**: 生成AI决策可解释性报告
 **请求参数**:
 
 | 参数?| 类型 | 必填 | 描述 |
@@ -703,10 +703,10 @@ ws.onmessage = (event) => {
 }
 ```
 
-### 8.2 获取单样本解?
+### 8.2 获取单样本解释
 **接口**: `GET /api/v1/reports/ai-explainability/sample/{sample_id}`
 
-**描述**: 获取单个样本的决策解?
+**描述**: 获取单个样本的决策解释
 **响应示例**:
 ```json
 {

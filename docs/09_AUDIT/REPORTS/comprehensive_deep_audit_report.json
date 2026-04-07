@@ -1,23 +1,26 @@
 {
   "summary": {
-    "audit_date": "2026-04-07T19:23:48.008031",
-    "total_documents": 2466,
-    "total_issues": 493,
+    "audit_date": "2026-04-07T20:13:40.492713",
+    "total_documents": 2485,
+    "total_issues": 656,
     "severity_distribution": {
       "low": 38,
-      "medium": 165,
-      "high": 290
+      "medium": 320,
+      "high": 298
     },
     "layer_distribution": {
-      "L1": 119,
-      "L2": 374
+      "L1": 135,
+      "L2": 344,
+      "L3": 177
     },
     "category_distribution": {
-      "目录结构": 40,
-      "文件命名": 64,
+      "目录结构": 41,
+      "文件命名": 79,
       "路径引用": 15,
-      "职责驱动": 354,
-      "版本隔离": 20
+      "职责驱动": 332,
+      "版本隔离": 12,
+      "五大原则": 57,
+      "编号体系": 120
     }
   },
   "layer1_issues": [
@@ -108,6 +111,14 @@
       "issue_type": "稀疏目录",
       "description": "目录文件过少(2个)，建议整合",
       "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\old_versions",
+      "issue_type": "空目录",
+      "description": "目录为空，建议删除或填充内容",
+      "suggestion": "删除空目录或添加必要文档"
     },
     {
       "category": "目录结构",
@@ -368,6 +379,14 @@
     {
       "category": "文件命名",
       "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
       "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_FULL_AUDIT_REPORT_20260407_184216.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER6_FULL_AUDIT_REPORT_20260407_184216",
@@ -448,6 +467,14 @@
     {
       "category": "文件命名",
       "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_CONTINUOUS_IMPROVEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_CONTINUOUS_IMPROVEMENT_FINAL_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
       "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_184442.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_184442",
@@ -507,6 +534,54 @@
       "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_191831.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_191831",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_192415.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_192415",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_192542.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_192542",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_192831.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_192831",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_192959.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_192959",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_20260407_201321.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_20260407_201321",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DUPLICATE_CHECK_REPORT_20260407_192354.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DUPLICATE_CHECK_REPORT_20260407_192354",
       "suggestion": "重命名文件，移除旧架构关键词"
     },
     {
@@ -595,6 +670,30 @@
       "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_P2_FIX_REPORT_20260407_184934.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER8_P2_FIX_REPORT_20260407_184934",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_REMAINING_ISSUES_FIX_REPORT_20260407_201259.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_REMAINING_ISSUES_FIX_REPORT_20260407_201259",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_RESPONSIBILITY_ADD_REPORT_20260407_192948.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_RESPONSIBILITY_ADD_REPORT_20260407_192948",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_YAML_FORMAT_FIX_REPORT_20260407_192530.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_YAML_FORMAT_FIX_REPORT_20260407_192530",
       "suggestion": "重命名文件，移除旧架构关键词"
     },
     {
@@ -715,6 +814,30 @@
       "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192212.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER5_DEEP_AUDIT_REPORT_20260407_192212",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192714.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_DEEP_AUDIT_REPORT_20260407_192714",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201210.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_DEEP_AUDIT_REPORT_20260407_201210",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201332.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_DEEP_AUDIT_REPORT_20260407_201332",
       "suggestion": "重命名文件，移除旧架构关键词"
     },
     {
@@ -843,6 +966,14 @@
       "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_THIRD_ROUND_AUDIT_FINAL_REPORT_20260407.md",
       "issue_type": "旧架构命名残留",
       "description": "文件名包含旧架构关键词: LAYER5_THIRD_ROUND_AUDIT_FINAL_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155",
       "suggestion": "重命名文件，移除旧架构关键词"
     },
     {
@@ -1009,35 +1140,27 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(45字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\README.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\README.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(44字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\SITEMAP.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
@@ -1049,34 +1172,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\BLUEPRINT_CHAPTER_NAMING_STANDARD.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\BLUEPRINT_CHAPTER_NAMING_STANDARD.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(39字)，职责可能不完整",
+      "description": "文档内容过短(32字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\INDEX_TEMPLATE.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\INDEX_TEMPLATE.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(36字)，职责可能不完整",
+      "description": "文档内容过短(24字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1098,7 +1205,7 @@
     {
       "category": "职责驱动",
       "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
@@ -1106,73 +1213,49 @@
     {
       "category": "职责驱动",
       "severity": "medium",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(63字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(15字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(56字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_DEFINITION.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_DEFINITION.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(58字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(60字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MINING_GUIDE.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MINING_GUIDE.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(60字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1204,103 +1287,55 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_TAXONOMY.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(59字)，职责可能不完整",
+      "description": "文档内容过短(39字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(56字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\MODULE_DESIGN_PLAN.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\MODULE_DESIGN_PLAN.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(81字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(56字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(46字)，职责可能不完整",
+      "description": "文档内容过短(17字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1313,115 +1348,75 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(65字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_STYLE_FACTORS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(57字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\INDUSTRY_FACTORS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\TAIL_RISK_FACTORS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\TAIL_RISK_FACTORS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(95字)，职责可能不完整",
+      "description": "文档内容过短(25字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1433,120 +1428,80 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(26字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(48字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_GAP_ANALYSIS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_GAP_ANALYSIS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(54字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(51字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(53字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(51字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(48字)，职责可能不完整",
+      "description": "文档内容过短(16字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\BACKTEST_REORGANIZATION.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
@@ -1554,89 +1509,57 @@
     {
       "category": "职责驱动",
       "severity": "medium",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\BACKTEST_REORGANIZATION.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(89字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_DECAY.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(15字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_DECAY.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(46字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(85字)，职责可能不完整",
+      "description": "文档内容过短(24字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(56字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\STRATIFIED_BACKTEST.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\STRATIFIED_BACKTEST.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(62字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(48字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1657,18 +1580,10 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1681,43 +1596,27 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FAQ.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\HANDOVER.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(15字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\10_MANUAL\\HANDOVER.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(44字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\10_MANUAL\\KNOWLEDGE_MANAGEMENT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1729,34 +1628,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(49字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(15字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1769,11 +1652,11 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
+      "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
+      "issue_type": "内容过短",
+      "description": "文档内容过短(16字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1785,11 +1668,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1801,11 +1700,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1817,11 +1732,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1833,11 +1764,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1849,11 +1796,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1865,11 +1828,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1881,11 +1860,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1897,11 +1892,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1913,11 +1924,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1929,6 +1956,14 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
       "issue_type": "职责不清",
@@ -1937,11 +1972,27 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\README.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
@@ -1956,7 +2007,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(52字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1972,7 +2023,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -1985,6 +2036,14 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
       "issue_type": "职责不清",
@@ -1993,6 +2052,14 @@
     },
     {
       "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(13字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
       "severity": "high",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
       "issue_type": "职责不清",
@@ -2004,7 +2071,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2020,7 +2087,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(60字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2036,7 +2103,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(44字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2052,7 +2119,7 @@
       "severity": "medium",
       "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(44字)，职责可能不完整",
+      "description": "文档内容过短(10字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2094,6 +2161,14 @@
       "issue_type": "内容过短",
       "description": "文档内容过短(98字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
     },
     {
       "category": "职责驱动",
@@ -2291,6 +2366,14 @@
       "category": "职责驱动",
       "severity": "high",
       "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md",
       "issue_type": "职责不清",
       "description": "文档缺少明确的职责描述",
       "suggestion": "在文档头部添加职责说明"
@@ -2513,6 +2596,14 @@
     },
     {
       "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201332.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
       "severity": "medium",
       "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md",
       "issue_type": "内容过短",
@@ -2601,22 +2692,6 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\24_RISK_DASHBOARD\\RISK_DASHBOARD_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
-      "severity": "medium",
-      "file": "08_HUMAN_AI_INTERFACE\\24_RISK_DASHBOARD\\RISK_DASHBOARD_BLUEPRINT.md",
-      "issue_type": "内容过短",
-      "description": "文档内容过短(37字)，职责可能不完整",
-      "suggestion": "扩充文档内容或合并到相关文档"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\25_STRATEGY_IDE\\README.md",
       "issue_type": "内容过短",
@@ -2625,34 +2700,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\26_FACTOR_ANALYSIS\\FACTOR_ANALYSIS_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\26_FACTOR_ANALYSIS\\FACTOR_ANALYSIS_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2673,34 +2732,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\27_RISK_CONTROL_PANEL\\RISK_CONTROL_PANEL_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\27_RISK_CONTROL_PANEL\\RISK_CONTROL_PANEL_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(49字)，职责可能不完整",
+      "description": "文档内容过短(52字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\28_API_GATEWAY\\API_GATEWAY_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\28_API_GATEWAY\\API_GATEWAY_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2721,34 +2764,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\30_COMPLIANCE_MONITORING\\COMPLIANCE_MONITORING_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\30_COMPLIANCE_MONITORING\\COMPLIANCE_MONITORING_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(75字)，职责可能不完整",
+      "description": "文档内容过短(78字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2761,18 +2788,10 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\31_CAPITAL_MANAGEMENT\\CAPITAL_MANAGEMENT_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\31_CAPITAL_MANAGEMENT\\CAPITAL_MANAGEMENT_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2793,34 +2812,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\33_I18N_SUPPORT\\I18N_SUPPORT_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\33_I18N_SUPPORT\\I18N_SUPPORT_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2841,34 +2844,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(48字)，职责可能不完整",
+      "description": "文档内容过短(51字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(50字)，职责可能不完整",
+      "description": "文档内容过短(53字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2889,34 +2876,18 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2929,18 +2900,10 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -2961,18 +2924,10 @@
     },
     {
       "category": "职责驱动",
-      "severity": "high",
-      "file": "08_HUMAN_AI_INTERFACE\\39_THIRD_PARTY_INTEGRATION\\THIRD_PARTY_INTEGRATION_BLUEPRINT.md",
-      "issue_type": "职责不清",
-      "description": "文档缺少明确的职责描述",
-      "suggestion": "在文档头部添加职责说明"
-    },
-    {
-      "category": "职责驱动",
       "severity": "medium",
       "file": "08_HUMAN_AI_INTERFACE\\39_THIRD_PARTY_INTEGRATION\\THIRD_PARTY_INTEGRATION_BLUEPRINT.md",
       "issue_type": "内容过短",
-      "description": "文档内容过短(47字)，职责可能不完整",
+      "description": "文档内容过短(50字)，职责可能不完整",
       "suggestion": "扩充文档内容或合并到相关文档"
     },
     {
@@ -3810,95 +3765,7 @@
     {
       "category": "版本隔离",
       "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\INDEX.md, 09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md, 09_ARCHIVE\\duplicates\\SITEMAP.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\00_GOVERNANCE\\INDEX.md, 02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_00_GOVERNANCE_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md, 09_ARCHIVE\\duplicates\\backtest_standards.md, 09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md, 09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md, 09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md, 09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md, 09_ARCHIVE\\duplicates\\factor_neutralization.md, 09_ARCHIVE\\duplicates\\factor_preprocessing.md, 09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md, 09_ARCHIVE\\duplicates\\factor_return_analysis.md, 09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md, 09_ARCHIVE\\duplicates\\factor_synthesis.md, 09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md, 09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md, 09_ARCHIVE\\duplicates\\ic_analysis.md, 09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md, 09_ARCHIVE\\duplicates\\research_management.md, 09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md, 02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md, 09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md, 09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md, 09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md, 09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md, 09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md, 09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md, 09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md, 09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md, 09_ARCHIVE\\duplicates\\factor_master_index.md, 09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md, 09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md, 09_ARCHIVE\\duplicates\\MACRO_DATA.md, 09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md, 09_ARCHIVE\\duplicates\\QMT_INTERFACE.md, 09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md, 09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\BACKTEST_REORGANIZATION.md, 09_ARCHIVE\\duplicates\\correlation_matrix.md, 09_ARCHIVE\\duplicates\\FACTOR_DECAY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md, 09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md, 09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md, 02_FACTOR_LIBRARY\\06_REGISTRY\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_06_REGISTRY_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\INDEX.md, 02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_07_FACTOR_MONITORING_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md, 02_FACTOR_LIBRARY\\09_AUDIT\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_09_AUDIT_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md, 09_ARCHIVE\\duplicates\\FAQ.md, 09_ARCHIVE\\duplicates\\HANDOVER.md, 09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md, 02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md, 09_ARCHIVE\\duplicates\\SCHEDULER_API.md",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md, 09_ARCHIVE\\duplicates\\SCHEDULER_API.md",
       "issue_type": "编号重复",
       "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001",
       "suggestion": "为每个文档分配唯一的module_id"
@@ -3906,33 +3773,9 @@
     {
       "category": "版本隔离",
       "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md, 02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md, 09_ARCHIVE\\duplicates\\CLEANING_RULES.md, 09_ARCHIVE\\duplicates\\INDEX.md",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md, 09_ARCHIVE\\duplicates\\CLEANING_RULES.md, 09_ARCHIVE\\duplicates\\INDEX.md",
       "issue_type": "编号重复",
       "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md, 09_ARCHIVE\\duplicates\\README.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md, 09_ARCHIVE\\duplicates\\QUALITY_METRICS.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_QUALITY_MANAGEMENT_001",
-      "suggestion": "为每个文档分配唯一的module_id"
-    },
-    {
-      "category": "版本隔离",
-      "severity": "high",
-      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md, 09_ARCHIVE\\duplicates\\FINANCIAL_STATEMENTS_API.md",
-      "issue_type": "编号重复",
-      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_IFIND_FINANCIAL_STATEMENTS_001",
       "suggestion": "为每个文档分配唯一的module_id"
     },
     {
@@ -3946,7 +3789,7 @@
     {
       "category": "版本隔离",
       "severity": "high",
-      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_190508.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_190758.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191039.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191517.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191712.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191841.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192212.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_SIMILARITY_FIX_REPORT_20260407_190452.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_TENTH_ROUND_FIX_REPORT_20260407_191021.md",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_190508.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_190758.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191039.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191517.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191712.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191841.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192212.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192714.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201210.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_SIMILARITY_FIX_REPORT_20260407_190452.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_TENTH_ROUND_FIX_REPORT_20260407_191021.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155.md",
       "issue_type": "编号重复",
       "description": "多个文档使用相同module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001",
       "suggestion": "为每个文档分配唯一的module_id"
@@ -3954,7 +3797,55 @@
     {
       "category": "版本隔离",
       "severity": "high",
-      "file": "09_AUDIT\\REPORTS\\FINAL_AUDIT_REPORT_20260407.md, 09_AUDIT\\REPORTS\\PRIORITY_ISSUE_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\ROUND2_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\SECOND_DEEP_AUDIT_REPORT_20260407.md",
+      "file": "09_ARCHIVE\\duplicates\\backtest_standards.md, 09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md, 09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md, 09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md, 09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md, 09_ARCHIVE\\duplicates\\factor_neutralization.md, 09_ARCHIVE\\duplicates\\factor_preprocessing.md, 09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md, 09_ARCHIVE\\duplicates\\factor_return_analysis.md, 09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md, 09_ARCHIVE\\duplicates\\factor_synthesis.md, 09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md, 09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md, 09_ARCHIVE\\duplicates\\ic_analysis.md, 09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md, 09_ARCHIVE\\duplicates\\research_management.md, 09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md, 09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md, 09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md, 09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md, 09_ARCHIVE\\duplicates\\factor_master_index.md, 09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md, 09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md, 09_ARCHIVE\\duplicates\\MACRO_DATA.md, 09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md, 09_ARCHIVE\\duplicates\\QMT_INTERFACE.md, 09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md, 09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md, 09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md, 09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md, 09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\correlation_matrix.md, 09_ARCHIVE\\duplicates\\FACTOR_DECAY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md, 09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md, 09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FAQ.md, 09_ARCHIVE\\duplicates\\HANDOVER.md, 09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md, 09_ARCHIVE\\duplicates\\SITEMAP.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\DOCS_ENCODING_GOVERNANCE_FIX_REPORT_20260407.md, 09_AUDIT\\REPORTS\\FINAL_AUDIT_REPORT_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\PRIORITY_ISSUE_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\ROUND2_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\SECOND_DEEP_AUDIT_REPORT_20260407.md",
       "issue_type": "编号重复",
       "description": "多个文档使用相同module_id: 09_AUDIT_REPORTS_001",
       "suggestion": "为每个文档分配唯一的module_id"
@@ -3962,14 +3853,1602 @@
     {
       "category": "版本隔离",
       "severity": "high",
-      "file": "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191954.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md",
+      "file": "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191954.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201104.md",
       "issue_type": "编号重复",
       "description": "多个文档使用相同module_id: 09_AUDIT_STATE_001",
       "suggestion": "为每个文档分配唯一的module_id"
     }
   ],
-  "layer3_issues": [],
+  "layer3_issues": [
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\README.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\SITEMAP.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\00_GOVERNANCE\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\MODULE_DESIGN_PLAN.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\TAIL_RISK_FACTORS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_GAP_ANALYSIS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_DECAY.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\STRATIFIED_BACKTEST.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\HANDOVER.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\INDEX.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201332.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\SITEMAP.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\00_GOVERNANCE\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_DEFINITION.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MINING_GUIDE.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_TAXONOMY.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\MODULE_DESIGN_PLAN.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_STYLE_FACTORS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\INDUSTRY_FACTORS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\TAIL_RISK_FACTORS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_GAP_ANALYSIS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\BACKTEST_REORGANIZATION.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_DECAY.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_VALIDATION_BLUEPRINT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\STRATIFIED_BACKTEST.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\FAQ.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\HANDOVER.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\KNOWLEDGE_MANAGEMENT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\INDEX.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201332.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    }
+  ],
   "duplicates": [
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+        "02_FACTOR_LIBRARY\\README.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\INDEX.md",
+        "02_FACTOR_LIBRARY\\06_REGISTRY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\INDEX.md",
+        "02_FACTOR_LIBRARY\\10_MANUAL\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\INDEX.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_BACKTEST.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\value_factors\\PE_TTM_IC.md"
+      ],
+      "severity": "high",
+      "description": "18个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\backtest_standards.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_DEFINITION.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MANAGEMENT_STANDARD.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_MINING_GUIDE.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\README.md"
+      ],
+      "severity": "high",
+      "description": "5个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FUTURE_FACTOR_TOOLS.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\MODULE_DESIGN_PLAN.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\research_management.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\TECHNICAL_INDICATORS.md"
+      ],
+      "severity": "high",
+      "description": "5个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
+        "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_STYLE_FACTORS.md",
+        "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\FACTOR_TRANSPARENCY_REPORT.md",
+        "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\INDUSTRY_FACTORS.md"
+      ],
+      "severity": "high",
+      "description": "4个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_GAP_ANALYSIS.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md"
+      ],
+      "severity": "high",
+      "description": "10个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\correlation_matrix.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\FACTOR_DECAY.md",
+        "02_FACTOR_LIBRARY\\05_BACKTEST\\STRATIFIED_BACKTEST.md"
+      ],
+      "severity": "high",
+      "description": "3个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
+        "02_FACTOR_LIBRARY\\10_MANUAL\\HANDOVER.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md"
+      ],
+      "severity": "high",
+      "description": "20个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md"
+      ],
+      "severity": "high",
+      "description": "23个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
     {
       "type": "内容重复",
       "files": [
@@ -4023,189 +5502,21 @@
     {
       "type": "编号重复",
       "files": [
-        "02_FACTOR_LIBRARY\\INDEX.md",
-        "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md",
-        "09_ARCHIVE\\duplicates\\SITEMAP.md"
-      ],
-      "severity": "high",
-      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\00_GOVERNANCE\\INDEX.md",
-        "02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_00_GOVERNANCE_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
-        "09_ARCHIVE\\duplicates\\backtest_standards.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
-        "09_ARCHIVE\\duplicates\\factor_neutralization.md",
-        "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md",
-        "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md",
-        "09_ARCHIVE\\duplicates\\factor_synthesis.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md",
-        "09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md",
-        "09_ARCHIVE\\duplicates\\ic_analysis.md",
-        "09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md",
-        "09_ARCHIVE\\duplicates\\research_management.md",
-        "09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md"
-      ],
-      "severity": "high",
-      "description": "19个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\BREADTH_INDICATORS.md",
-        "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\BARRA_OPTIMIZER.md",
-        "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md",
-        "09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md",
-        "09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md"
-      ],
-      "severity": "high",
-      "description": "5个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
-        "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
-        "09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md",
-        "09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md",
-        "09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md",
-        "09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md",
-        "09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
-        "09_ARCHIVE\\duplicates\\factor_master_index.md",
-        "09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md",
-        "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
-        "09_ARCHIVE\\duplicates\\MACRO_DATA.md",
-        "09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md",
-        "09_ARCHIVE\\duplicates\\QMT_INTERFACE.md",
-        "09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md",
-        "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md"
-      ],
-      "severity": "high",
-      "description": "15个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\05_BACKTEST\\BACKTEST_REORGANIZATION.md",
-        "09_ARCHIVE\\duplicates\\correlation_matrix.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_DECAY.md",
-        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md",
-        "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
-        "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md"
-      ],
-      "severity": "high",
-      "description": "6个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\06_REGISTRY\\FACTOR_CATALOG.md",
-        "02_FACTOR_LIBRARY\\06_REGISTRY\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_06_REGISTRY_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\INDEX.md",
-        "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_07_FACTOR_MONITORING_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\09_AUDIT\\AUDIT_REPORT.md",
-        "02_FACTOR_LIBRARY\\09_AUDIT\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_09_AUDIT_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\10_MANUAL\\FACTOR_LIBRARY_MANUAL.md",
-        "09_ARCHIVE\\duplicates\\FAQ.md",
-        "09_ARCHIVE\\duplicates\\HANDOVER.md",
-        "09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md"
-      ],
-      "severity": "high",
-      "description": "4个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
         "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md",
         "09_ARCHIVE\\duplicates\\SCHEDULER_API.md"
       ],
       "severity": "high",
-      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001"
+      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001"
     },
     {
       "type": "编号重复",
       "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
         "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md",
         "09_ARCHIVE\\duplicates\\CLEANING_RULES.md",
         "09_ARCHIVE\\duplicates\\INDEX.md"
       ],
       "severity": "high",
-      "description": "4个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
-        "09_ARCHIVE\\duplicates\\README.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
-        "09_ARCHIVE\\duplicates\\QUALITY_METRICS.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_QUALITY_MANAGEMENT_001"
-    },
-    {
-      "type": "编号重复",
-      "files": [
-        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
-        "09_ARCHIVE\\duplicates\\FINANCIAL_STATEMENTS_API.md"
-      ],
-      "severity": "high",
-      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_IFIND_FINANCIAL_STATEMENTS_001"
+      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001"
     },
     {
       "type": "编号重复",
@@ -4232,45 +5543,139 @@
         "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191712.md",
         "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_191841.md",
         "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192212.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_192714.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_20260407_201210.md",
         "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md",
         "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_SIMILARITY_FIX_REPORT_20260407_190452.md",
-        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_TENTH_ROUND_FIX_REPORT_20260407_191021.md"
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_TENTH_ROUND_FIX_REPORT_20260407_191021.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155.md"
       ],
       "severity": "high",
-      "description": "10个文档使用相同module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001"
+      "description": "13个文档使用相同module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001"
     },
     {
       "type": "编号重复",
       "files": [
+        "09_ARCHIVE\\duplicates\\backtest_standards.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
+        "09_ARCHIVE\\duplicates\\factor_neutralization.md",
+        "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md",
+        "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md",
+        "09_ARCHIVE\\duplicates\\factor_synthesis.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md",
+        "09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md",
+        "09_ARCHIVE\\duplicates\\ic_analysis.md",
+        "09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md",
+        "09_ARCHIVE\\duplicates\\research_management.md",
+        "09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md"
+      ],
+      "severity": "high",
+      "description": "18个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md",
+        "09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md",
+        "09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md",
+        "09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md",
+        "09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+        "09_ARCHIVE\\duplicates\\factor_master_index.md",
+        "09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md",
+        "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\MACRO_DATA.md",
+        "09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md",
+        "09_ARCHIVE\\duplicates\\QMT_INTERFACE.md",
+        "09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md",
+        "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md"
+      ],
+      "severity": "high",
+      "description": "14个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md",
+        "09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md",
+        "09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md"
+      ],
+      "severity": "high",
+      "description": "4个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\correlation_matrix.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_DECAY.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md",
+        "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
+        "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md"
+      ],
+      "severity": "high",
+      "description": "5个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\FAQ.md",
+        "09_ARCHIVE\\duplicates\\HANDOVER.md",
+        "09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md"
+      ],
+      "severity": "high",
+      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md",
+        "09_ARCHIVE\\duplicates\\SITEMAP.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_AUDIT\\REPORTS\\DOCS_ENCODING_GOVERNANCE_FIX_REPORT_20260407.md",
         "09_AUDIT\\REPORTS\\FINAL_AUDIT_REPORT_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_20260407.md",
         "09_AUDIT\\REPORTS\\PRIORITY_ISSUE_FIX_SUMMARY_20260407.md",
         "09_AUDIT\\REPORTS\\ROUND2_FIX_SUMMARY_20260407.md",
         "09_AUDIT\\REPORTS\\SECOND_DEEP_AUDIT_REPORT_20260407.md"
       ],
       "severity": "high",
-      "description": "4个文档使用相同module_id: 09_AUDIT_REPORTS_001"
+      "description": "6个文档使用相同module_id: 09_AUDIT_REPORTS_001"
     },
     {
       "type": "编号重复",
       "files": [
         "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md",
         "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191954.md",
-        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md"
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201104.md"
       ],
       "severity": "high",
-      "description": "3个文档使用相同module_id: 09_AUDIT_STATE_001"
+      "description": "4个文档使用相同module_id: 09_AUDIT_STATE_001"
     }
   ],
   "recommendations": [
     {
       "priority": "P0",
-      "action": "立即修复290个高严重性问题",
+      "action": "立即修复298个高严重性问题",
       "impact": "影响文档质量和系统稳定性",
       "timeline": "24小时内"
     },
     {
       "priority": "P1",
-      "action": "处理20个重复问题",
+      "action": "处理12个重复问题",
       "impact": "影响文档职责清晰度",
       "timeline": "1周内"
     }

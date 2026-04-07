@@ -78,7 +78,7 @@ wandb能力:
 ```
 
 
-## 3. wandb快速集?
+## 3. wandb快速集成
 
 ### 3.1 环境配置
 
@@ -387,7 +387,7 @@ artifact.download()
 ```
 
 
-## 7. 与现有系统集?
+## 7. 与现有系统集成
 
 ### 7.1 与ResearchPipeline集成
 
@@ -443,7 +443,7 @@ def on_experiment_complete(experiment_id: str):
 | 策略实验类封?| 6h | StrategyBacktestExperiment |
 | Optuna集成 | 4h | wandb_optuna_callback |
 | 看板设计 | 4h | wandb dashboard配置 |
-| 知识库集?| 3h | on_experiment_complete |
+| 知识库集成| 3h | on_experiment_complete |
 | 测试 | 2h | 集成测试 |
 
 
@@ -454,7 +454,7 @@ def on_experiment_complete(experiment_id: str):
 | 指标 | 说明 | 阈?|
 |------|------|------|
 | experiment_count | 实验??| - |
-| experiment_success_rate | 实验成功?| >70% |
+| experiment_success_rate | 实验成功能| >70% |
 | avg_experiment_duration | 平均实验时长 | <30min |
 
 

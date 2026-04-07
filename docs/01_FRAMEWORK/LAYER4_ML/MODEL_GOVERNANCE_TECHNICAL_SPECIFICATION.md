@@ -32,7 +32,7 @@ responsibility:
 
 # 模型治理与合规技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 模型治理与合规详细技术设?> **索引**: `MG-001`
+> 清风量化系统 v5.3 - 模型治理与合规详细技术设计> **索引**: `MG-001`
 > **开发时?*: 80h
 > **核心定位**: 提供模型风险管理、文档自动化、审计追踪、审批工作流
 
@@ -68,7 +68,7 @@ responsibility:
 - **架构角色**: 提供模型风险管理、文档自动化、审计追踪、审批工作流
 
 ### 1.4 版本信息与变更记?
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | 首席风险?| 初始版本 | Active |
 
@@ -123,7 +123,7 @@ class RiskLevel(Enum):
 
 
 class ModelStatus(Enum):
-    """模型状?""
+    """模型状态""
     DEVELOPMENT = "development"
     TESTING = "testing"
     STAGING = "staging"
@@ -133,7 +133,7 @@ class ModelStatus(Enum):
 
 
 class ApprovalStatus(Enum):
-    """审批状?""
+    """审批状态""
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
@@ -473,7 +473,7 @@ class AuditTrail:
         Args:
             model_id: 模型ID
             change_type: 变更类型
-            old_value: 旧?            new_value: 新?            actor: 变更?            reason: 变更原因
+            old_value: 旧?            new_value: 新?            actor: 变更新            reason: 变更原因
             
         Returns:
             AuditLog: 审计日志
@@ -959,7 +959,7 @@ class TestApprovalWorkflow:
 
 ---
 
-## 7. 风险与约?
+## 7. 风险与约束
 ### 7.1 技术风?
 | 风险?| 风险等级 | 缓解措施 |
 |--------|----------|----------|
@@ -990,7 +990,7 @@ class TestApprovalWorkflow:
 
 ### 8.2 性能验收
 
-| 指标 | 目标?|
+| 指标 | 目指标|
 |------|--------|
 | 风险评估响应时间 | < 5?|
 | 文档生成时间 | < 30?|
@@ -1011,11 +1011,11 @@ class TestApprovalWorkflow:
 ### 9.1 Phase 1: 核心功能（第1-4周）
 
 - Week 1-2: 模型风险管理模块
-- Week 3-4: 模型文档自动化模?
+- Week 3-4: 模型文档自动化模块
 ### 9.2 Phase 2: 审计与审批（?-8周）
 
 - Week 5-6: 审计追踪模块
-- Week 7-8: 审批工作流模?
+- Week 7-8: 审批工作流模块
 ### 9.3 Phase 3: 集成与测试（?-12周）
 
 - Week 9-10: 系统集成

@@ -134,7 +134,7 @@ class CodeGenerationModel:
 
     ):
 
-        """初始化代码生成模?        
+        """初始化代码生成模块        
 
         Args:
 

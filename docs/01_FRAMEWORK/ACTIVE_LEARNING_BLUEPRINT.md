@@ -90,7 +90,7 @@ layer: Layer 3 (策略层)
 
 | **成本节约** | 降低标注成本 |
 
-| **模型性能** | 相同标注下更?|
+| **模型性能** | 相同标注下更新|
 
 | **迭代加?* | 加速模型迭?|
 
@@ -230,11 +230,11 @@ class ActiveLearning:
 
             model: 当前模型
 
-            labeled_data: 已标注数?            new_labels: 新标?            
+            labeled_data: 已标注数?            new_labels: 新指标            
 
         Returns:
 
-            nn.Module: 更新后模?        """
+            nn.Module: 更新后模块        """
 
         pass
 

@@ -122,7 +122,7 @@ layer: Layer 2 (Alpha因子层)
 
 class ArbitrageDetectionModel:
 
-    """套利检测模?""
+    """套利检测模块""
 
     
 
@@ -136,7 +136,7 @@ class ArbitrageDetectionModel:
 
     ):
 
-        """初始化套利检测模?        
+        """初始化套利检测模块        
 
         Args:
 

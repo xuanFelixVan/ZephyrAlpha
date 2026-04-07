@@ -47,7 +47,7 @@ implementation_status: 进行?---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.0 - 简化认证授权系?
+> 清风量化系统 v5.0 - 简化认证授权系统
 > **索引**: `AUTH.001`
 > **开发时?*: 5h
 > **核心定位**: 提供简化的身份认证和权限控制，支持AI权限管理
@@ -76,7 +76,7 @@ implementation_status: 进行?---
 
 ## 3. 核心实现
 
-### 3.1 用户和权限模?
+### 3.1 用户和权限模块
 
 ```python
 from dataclasses import dataclass, field
@@ -306,7 +306,7 @@ class AuthService:
         return hashlib.sha256(api_key.encode()).hexdigest()
 ```
 
-### 3.3 权限检?
+### 3.3 权限检查
 
 ```python
 class PermissionService:
@@ -647,7 +647,7 @@ class AIAuthIntegration:
 
 | 任务 | 时间 | 交付?|
 |------|------|--------|
-| 用户和权限模?| 0.5h | User, APIKey模型 |
+| 用户和权限模块| 0.5h | User, APIKey模型 |
 | JWT认证服务 | 1h | AuthService |
 | API Key认证 | 0.5h | API Key相关方法 |
 | 权限检查服?| 0.5h | PermissionService |

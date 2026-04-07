@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 > - ✅ 本文档负责：Parameter Optimization蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> 清风量化交易系统 v5.3 - 参数优化系统详细技术设?> **索引**: `STRAT.PARAM.OPT.001`
+> 清风量化交易系统 v5.3 - 参数优化系统详细技术设计> **索引**: `STRAT.PARAM.OPT.001`
 > **开发周?*: 100小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支持网格搜索、贝叶斯优化、遗传算法等多种优化方法，自动寻找最优策略参?> **参考开?*: RQAlpha的ParameterOptimization + Optuna贝叶斯优化框?+ DEAP遗传算法?> **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于参数优化功?
 
@@ -67,16 +67,16 @@ implementation_status: 设计阶段
 1. **过拟合防护第一原则**：所有优化必须包含样本外验证，防止过度优?2. **计算效率原则**：支持智能采样，减少不必要的参数组合计算
 3. **可复现性原?*：相同参数、相同数据必须得到相同优化结?4. **增量优化原则**：支持基于历史结果的增量优化，避免重复计?5. **用户友好原则**：不懂编程的用户也能通过配置文件定义优化任务
 
-### 1.3 与现有系统集?
+### 1.3 与现有系统集成
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **BatchEvaluation系统** | 优化评估后端 | 复用批量评估接口 |
 | **StrategyEngine核心** | 策略执行?| 通过策略接口调用 |
-| **Backtrader回测引擎** | 回测执行后端 | 适配器模式集?|
+| **Backtrader回测引擎** | 回测执行后端 | 适配器模式集成|
 | **缓存系统** | 结果缓存 | 共享优化结果缓存 |
 
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 整体架构?
 ```
 参数优化系统三层架构?┌─────────────────────────────────────────────────────────??                  优化控制?(Optimization Control)      ?├─────────────────────────────────────────────────────────??1. OptimizationController - 优化控制?                  ??2. AlgorithmSelector - 算法选择?                       ??3. ConfigParser - 配置解析?                            ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               优化算法?(Optimization Algorithms)      ?├─────────────────────────────────────────────────────────??1. GridSearchOptimizer - 网格搜索优化?                 ??2. BayesianOptimizer - 贝叶斯优化器 (Optuna集成)        ??3. GeneticAlgorithmOptimizer - 遗传算法优化?(DEAP集成) ??4. RandomSearchOptimizer - 随机搜索优化?               ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               评估执行?(Evaluation Execution)         ?├─────────────────────────────────────────────────────────??1. BatchEvaluatorAdapter - 批量评估适配?               ??2. CrossValidationSplitter - 交叉验证分割?             ??3. OutOfSampleValidator - 样本外验证器                   ??4. ResultCache - 结果缓存管理?                         ?└─────────────────────────────────────────────────────────?```
@@ -128,8 +128,8 @@ class OptimizationController:
             param_space: 参数空间定义
             
         返回:
-            OptimizationResult: 优化结果，包含最优参数、性能指标?        """
-        # 1. 检查缓存中是否有历史结?        cached_result = self.result_cache.get(strategy_id, param_space)
+            OptimizationResult: 优化结果，包含最优参数、性能指指标        """
+        # 1. 检查缓存中是否有历史结束        cached_result = self.result_cache.get(strategy_id, param_space)
         if cached_result and self.config.use_cache:
             logger.info(f"使用缓存优化结果: {strategy_id}")
             return cached_result
@@ -151,7 +151,7 @@ class OptimizationController:
             env=optimization_env
         )
         
-        # 5. 样本外验?        oos_result = self._validate_out_of_sample(
+        # 5. 样本外验证        oos_result = self._validate_out_of_sample(
             strategy_id, 
             optimization_result.best_params
         )
@@ -204,7 +204,7 @@ class OptimizationController:
         return objective
         
     def _validate_out_of_sample(self, strategy_id: str, params: Dict) -> ValidationResult:
-        """样本外验?        
+        """样本外验证        
         使用未参与优化的数据进行验证，检测过拟合
         """
         # 1. 划分样本外数据（时间序列分割?        oos_time_range = self._get_out_of_sample_range()
@@ -281,7 +281,7 @@ class SmartGridSearchOptimizer:
         基于参数重要性进行非均匀采样?        - 重要参数：密集采?        - 次要参数：稀疏采?        - 相关参数：联合采?        """
         grid = []
         
-        # 分析参数类型和范?        continuous_params = []
+        # 分析参数类型和范围        continuous_params = []
         discrete_params = []
         
         for param_name, param_def in param_space.items():
@@ -330,13 +330,13 @@ class SmartGridSearchOptimizer:
         param_names = list(continuous_samples.keys())
         n_params = len(param_names)
         
-        # 生成拉丁超立方设?        lhs = lhs(n_params, samples=n_samples, criterion='maximin')
+        # 生成拉丁超立方设计        lhs = lhs(n_params, samples=n_samples, criterion='maximin')
         
         # 将设计点映射到实际参数?        samples = []
         for i in range(n_samples):
             params = {}
             for j, param_name in enumerate(param_names):
-                # 将[0,1]区间映射到参数范?                param_def = continuous_samples[param_name]
+                # 将[0,1]区间映射到参数范围                param_def = continuous_samples[param_name]
                 if isinstance(param_def, np.ndarray):
                     # 从预定义值中选择
                     idx = int(lhs[i, j] * len(param_def))
@@ -614,7 +614,7 @@ class OverfittingDetector:
 ### 4.2 正则化技?
 ```python
 class RegularizationTechniques:
-    """正则化技术集?""
+    """正则化技术集成""
     
     @staticmethod
     def parameter_complexity_penalty(params: Dict) -> float:

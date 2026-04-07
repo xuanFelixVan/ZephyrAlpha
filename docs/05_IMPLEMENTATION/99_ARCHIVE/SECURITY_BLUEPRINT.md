@@ -34,7 +34,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设?
+applicable_scope: 全系统架构设计
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -73,7 +73,7 @@ implementation_status: 设计阶段
 | 权限管理 | `AUTH.md` 已有 | 0h |
 | 密钥管理 | `AUTH.md` 已有 | 0h |
 | 审计日志 | `AUTH.md` 已有 | 0h |
-| 合规?| 新建 `COMPLIANCE.md` | 20h |
+| 合规范| 新建 `COMPLIANCE.md` | 20h |
 
 ---
 
@@ -93,7 +93,7 @@ implementation_status: 设计阶段
 | 文档 | 说明 |
 |------|------|
 | AUTH.md | 简化认证模?已有) |
-| DEVELOPER_RULES.md | 开发规?|
+| DEVELOPER_RULES.md | 开发规范|
 
 ---
 
@@ -119,7 +119,7 @@ implementation_status: 设计阶段
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Archive Security Blueprint** | 全系统架构设? | **核心模块** |
+| **Archive Security Blueprint** | 全系统架构设计 | **核心模块** |
 
 ### 1.3 版本管理
 

@@ -17,7 +17,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -64,7 +64,7 @@ responsibility:
 | 平台 | 选择 | 理由 |
 |------|------|------|
 | **QMT (迅投)** | ?主平?| 国金证券QMT，深度API支持 |
-| **Backtrader** | ?研究 | 轻量回测，快速验?|
+| **Backtrader** | ?研究 | 轻量回测，快速验证|
 | **自研引擎** | 最终目?| 完全可控的完整回?|
 
 ### QMT核心能力
@@ -149,7 +149,7 @@ responsibility:
 | **热数?* | Redis | 1分钟K线，60交易?|
 | **温数?* | ClickHouse | 5分钟K线，1?|
 | **冷数?* | ClickHouse | 日K线，10? |
-| **缓存** | Redis | 因子值缓?|
+| **缓存** | Redis | 因子值缓存|
 
 ---
 

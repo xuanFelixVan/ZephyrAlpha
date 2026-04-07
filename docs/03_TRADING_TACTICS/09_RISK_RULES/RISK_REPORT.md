@@ -33,7 +33,7 @@ owner: 首席文档架构?
 responsibility:
   - 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -59,7 +59,7 @@ implementation_status: 进行?---
 |------|------|
 | **自动?* | 日报自动生成，周报月报按需 |
 | **可视?* | 关键指标图表化，一目了?|
-| **可追?* | 历史报告存档，支持对?|
+| **可追?* | 历史报告存档，支持对接|
 | **分层** | 摘要+详情，满足不同阅读需?|
 
 
@@ -477,7 +477,7 @@ class ReportIndex:
 
 | 模块 | 接口 | 说明 |
 |------|------|------|
-| NotificationSystem | send_report() | 发送报?|
+| NotificationSystem | send_report() | 发送报告|
 | ReportStorage | save() | 存储报告 |
 | Dashboard | display() | 展示报告 |
 

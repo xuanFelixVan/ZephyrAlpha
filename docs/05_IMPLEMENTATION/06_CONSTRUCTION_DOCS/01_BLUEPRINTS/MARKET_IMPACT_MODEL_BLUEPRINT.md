@@ -145,7 +145,7 @@ graph LR
 
 ```python
 class MarketImpactDataCollector:
-    """市场冲击数据采集?""
+    """市场冲击数据采集成""
     
     def __init__(self):
         self.data_sources = {
@@ -179,7 +179,7 @@ class MarketImpactModelTrainer:
     
     def __init__(self):
         self.models = {
-            'linear': LinearImpactModel(),           # 线性冲击模?            'almgren_chriss': AlmgrenChrissModel(),  # Almgren-Chriss模型
+            'linear': LinearImpactModel(),           # 线性冲击模块            'almgren_chriss': AlmgrenChrissModel(),  # Almgren-Chriss模型
             'ml': MachineLearningModel()             # 机器学习模型
         }
         
@@ -192,9 +192,9 @@ class MarketImpactModelTrainer:
         训练市场冲击模型
         
         模型类型:
-        1. 线性冲击模? Impact = α * (Q/ADV)^β
+        1. 线性冲击模块 Impact = α * (Q/ADV)^β
 冲击
-        3. 机器学习模型: 基于特征的预测模?        
+        3. 机器学习模型: 基于特征的预测模块        
         输出:
         - MarketImpactModel: 训练好的模型
         """
@@ -204,7 +204,7 @@ class MarketImpactModelTrainer:
 #### 2.2.3 线性冲击模型实?
 ```python
 class LinearImpactModel:
-    """线性市场冲击模?""
+    """线性市场冲击模块""
     
     def __init__(self):
         self.alpha = 0.1   # 冲击系数
@@ -435,7 +435,7 @@ CREATE TABLE model_parameters (
 );
 ```
 
-### 4.2 数据流设?
+### 4.2 数据流设计
 ```
 历史数据 ?特征工程 ?模型训练 ?参数优化 ?模型验证
     ?          ?          ?          ?          ? 数据存储   特征存储   参数存储   评分存储   验证报告
@@ -545,7 +545,7 @@ Minimize: E[Cost] +  * Var[Cost]
 | 类别 | 技术选型 | 版本要求 | ?|
 |------|----------|----------|------|
 | **编程语言** | Python | 3.9+ | 核心开发语言 |
-| **数值计?* | numpy | 1.24+ | 数值计?|
+| **数值计?* | numpy | 1.24+ | 数值计划|
 | **数据处理** | pandas | 2.0+ | 数据处理和分?|
 | **科学计算** | scipy | 1.11+ | 优化求解 |
 
@@ -607,7 +607,7 @@ class TestMarketImpactModel:
 
 ### 7.3 性能测试
 
-| 测试场景 | 性能指标 | 目标?|
+| 测试场景 | 性能指标 | 目指标|
 |----------|----------|--------|
 | **预测速度** | 单次预测 | <10ms |
 | **模型训练** | 训练时间 | <5分钟 |
@@ -615,7 +615,7 @@ class TestMarketImpactModel:
 
 
 
-## 8. 风险与约?
+## 8. 风险与约束
 ### 8.1 技术风?
 | 风险ID | 风险描述 | 影响程度 | 缓解措施 |
 |--------|----------|----------|----------|
@@ -628,8 +628,8 @@ class TestMarketImpactModel:
 | 约束类型 | 约束描述 | 影响 |
 |----------|----------|------|
 | **数据约束** | 需要历史交易数?| 需要数据准?|
-| **时间约束** | 开发时?0小时 | 需要合理规?|
-| **资源约束** | 个人开发，资源有限 | 采用简化方?|
+| **时间约束** | 开发时?0小时 | 需要合理规范|
+| **资源约束** | 个人开发，资源有限 | 采用简化方案|
 
 
 
@@ -645,7 +645,7 @@ class TestMarketImpactModel:
 
 ### 9.2 性能验收标准
 
-| 指标 | 目标?| 验收方法 |
+| 指标 | 目指标| 验收方法 |
 |------|--------|----------|
 | **预测准确?* | 误差?0% | 回测验证 |
 | **预测速度** | <10ms | 性能测试 |
@@ -664,7 +664,7 @@ class TestMarketImpactModel:
 ## 10. 实施路线?
 ### 10.1 Phase 1: 线性冲击模型实现（1周）
 
-**目标**: 实现基础线性冲击模?
+**目标**: 实现基础线性冲击模块
 单**:
 1. ?设计数据结构
 2. ?实现参数拟合
@@ -687,7 +687,7 @@ class TestMarketImpactModel:
 
 ### 10.3 Phase 3: 高级功能实现（可选）
 
-**目标**: 实现机器学习模型和实时监?
+**目标**: 实现机器学习模型和实时监控
 单**:
 1. 📝 实现机器学习冲击模型
 2. 📝 实现实时冲击监控

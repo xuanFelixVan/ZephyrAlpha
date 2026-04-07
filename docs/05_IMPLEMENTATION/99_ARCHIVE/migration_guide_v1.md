@@ -53,7 +53,7 @@ implementation_status: 进行?---
 | `main/` | `01_FRAMEWORK/` | 核心框架 |
 | `factor-library/` | `02_FACTOR_LIBRARY/` | 因子?|
 | `trading-tactics/` | `03_TRADING_TACTICS/` | 交易策略 |
-| `technical-specs/` | `04_TECHNICAL_SPECS/` | 技术规?|
+| `technical-specs/` | `04_TECHNICAL_SPECS/` | 技术规范|
 | `archive/` | `05_ARCHIVE/` | 历史归档 |
 
 ---
@@ -83,7 +83,7 @@ ren technical-specs 04_TECHNICAL_SPECS
 ren archive 05_ARCHIVE
 ```
 
-### 步骤3：验证目录结?
+### 步骤3：验证目录结束
 
 最终目录结构应该是?
 
@@ -121,7 +121,7 @@ docs/
 
 ---
 
-## 执行检查清?
+## 执行检查清单
 
 ```
 ?关闭所有可能占用目录的应用程序

@@ -11,7 +11,7 @@ layer: Layer 5 (策略执行层)
 responsibility:
   - 协整关系识别与分析
   - 统计套利
-  - 配对交易
+  - 协整分析配对交易
 ---
 
 # COINTEGRATION ANALYSIS BLUEPRINT

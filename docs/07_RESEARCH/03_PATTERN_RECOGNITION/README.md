@@ -126,7 +126,7 @@ class HeadShoulderRecognizer(PatternRecognizer):
 
 ---
 
-## 4. 蜡烛图模?
+## 4. 蜡烛图模块
 
 ```python
 class CandlestickPatternRecognizer:

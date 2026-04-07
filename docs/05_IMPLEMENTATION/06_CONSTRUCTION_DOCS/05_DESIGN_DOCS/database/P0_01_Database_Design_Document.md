@@ -18,7 +18,7 @@ last_updated: 2026-04-02
 owner: 首席蓝图架构?
 responsibility:
   - 系统实施与部署管理与优化维护
-standard_type: 专业量化机构数据库设计标?
+standard_type: 专业量化机构数据库设计指标
 applicable_scope: 全系统数据存?
 compliance_level: 专业机构标准
 optimization_version: v2.0（专业量化机构标准优化版?
@@ -46,9 +46,9 @@ implementation_status: 进行?
 
 ### 优化前后对比
 
-| 设计维度 | 优化?| 优化?| 提升幅度 | 达标状?|
+| 设计维度 | 优化?| 优化?| 提升幅度 | 达标状态|
 |----------|--------|--------|----------|----------|
-| **表结构设?* | 85% | 95% | +10% | ?达标 |
+| **表结构设计 | 85% | 95% | +10% | ?达标 |
 | **数据类型选择** | 70% | 100% | +30% | ?达标 |
 | **分区策略** | 60% | 95% | +35% | ?达标 |
 | **索引策略** | 80% | 95% | +15% | ?达标 |
@@ -134,13 +134,13 @@ clickhouse:
 
 ---
 
-## 2. 核心表结构设?
+## 2. 核心表结构设计
 
 ### 2.1 账户管理模块
 
 #### 2.1.1 账户?(accounts) ?已优?
 
-**表说?*: 存储交易账户的基本信息和资金状?
+**表说?*: 存储交易账户的基本信息和资金状态
 
 **优化内容**:
 - ?数据类型优化: DECIMAL(18,2) ?DECIMAL(20,4)
@@ -384,7 +384,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
 
 #### 2.3.1 订单?(orders) ?已优?
 
-**表说?*: 存储订单信息和执行状?
+**表说?*: 存储订单信息和执行状态
 
 **优化内容**:
 - ?数据类型优化: DECIMAL(18,2) ?DECIMAL(20,4), INTEGER ?BIGINT
@@ -411,7 +411,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
 | stamp_tax | DECIMAL(12,4) | NOT NULL | 0.0000 | 印花?|
 | transfer_fee | DECIMAL(12,4) | NOT NULL | 0.0000 | 过户?|
 | total_cost | DECIMAL(20,4) | NOT NULL | 0.0000 | 总成?|
-| status | VARCHAR(20) | NOT NULL | 'pending' | 订单状?|
+| status | VARCHAR(20) | NOT NULL | 'pending' | 订单状态|
 | reject_reason | VARCHAR(500) | - | NULL | 拒绝原因 |
 | engine_id | VARCHAR(50) | - | NULL | 执行引擎ID |
 | broker_order_id | VARCHAR(100) | - | NULL | 券商订单ID |
@@ -561,7 +561,7 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 | confidence | DECIMAL(12,6) | NOT NULL | 0.000000 | 信号置信度（0-1?|
 | expected_return | DECIMAL(12,6) | - | NULL | 预期收益?|
 | risk_level | VARCHAR(20) | NOT NULL | 'medium' | 风险等级（low/medium/high?|
-| status | VARCHAR(20) | NOT NULL | 'pending' | 信号状?|
+| status | VARCHAR(20) | NOT NULL | 'pending' | 信号状态|
 | generated_at | TIMESTAMP | NOT NULL | NOW() | 生成时间 |
 | expired_at | TIMESTAMP | - | NULL | 过期时间 |
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
@@ -591,7 +591,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'executed', 'expire
 
 ---
 
-### 2.5 多引擎管理模?
+### 2.5 多引擎管理模块
 
 #### 2.5.1 引擎?(engines)
 
@@ -605,7 +605,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'executed', 'expire
 | engine_type | VARCHAR(20) | NOT NULL | - | 引擎类型（vnpy/rqalpha/backtrader/qmt/backtesting?|
 | version | VARCHAR(20) | NOT NULL | - | 引擎版本 |
 | config | JSONB | NOT NULL | '{}' | 引擎配置 |
-| status | VARCHAR(20) | NOT NULL | 'inactive' | 引擎状?|
+| status | VARCHAR(20) | NOT NULL | 'inactive' | 引擎状态|
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
 | updated_at | TIMESTAMP | NOT NULL | NOW() | 更新时间 |
 
@@ -652,7 +652,7 @@ FOREIGN KEY (engine_id) REFERENCES engines(engine_id) ON DELETE CASCADE;
 
 #### 2.5.3 Saga事务?(saga_transactions) ?已优?
 
-**表说?*: 存储Saga分布式事务的状?
+**表说?*: 存储Saga分布式事务的状态
 
 **优化内容**:
 - ?数据类型优化: DECIMAL(10,4) ?DECIMAL(12,6)
@@ -664,7 +664,7 @@ FOREIGN KEY (engine_id) REFERENCES engines(engine_id) ON DELETE CASCADE;
 | saga_type | VARCHAR(50) | NOT NULL | - | 事务类型（order_execution/position_sync?|
 | current_step | INTEGER | NOT NULL | 0 | 当前步骤 |
 | total_steps | INTEGER | NOT NULL | 0 | 总步骤数 |
-| status | VARCHAR(20) | NOT NULL | 'pending' | 事务状?|
+| status | VARCHAR(20) | NOT NULL | 'pending' | 事务状态|
 | steps_data | JSONB | NOT NULL | '{}' | 步骤数据 |
 | compensation_data | JSONB | NOT NULL | '{}' | 补偿数据 |
 | retry_count | INTEGER | NOT NULL | 0 | 重试次数 |
@@ -737,7 +737,7 @@ FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
 | severity | VARCHAR(20) | NOT NULL | - | 严重程度（critical/high/medium/low?|
 | description | TEXT | NOT NULL | - | 违规描述 |
 | action_taken | VARCHAR(50) | NOT NULL | - | 采取的措?|
-| resolved | BOOLEAN | NOT NULL | FALSE | 是否已解?|
+| resolved | BOOLEAN | NOT NULL | FALSE | 是否已解释|
 | resolved_at | TIMESTAMP | - | NULL | 解决时间 |
 | created_at | TIMESTAMP | NOT NULL | NOW() | 创建时间 |
 
@@ -773,7 +773,7 @@ FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
 |--------|----------|------|--------|------|
 | id | BIGSERIAL | PRIMARY KEY | - | 指标ID |
 | metric_name | VARCHAR(100) | NOT NULL | - | 指标名称 |
-| metric_value | DECIMAL(20,4) | NOT NULL | - | 指标?|
+| metric_value | DECIMAL(20,4) | NOT NULL | - | 指指标|
 | metric_unit | VARCHAR(20) | NOT NULL | - | 指标单位 |
 | tags | JSONB | NOT NULL | '{}' | 标签 |
 | recorded_at | TIMESTAMP | NOT NULL | NOW() | 记录时间 |
@@ -815,7 +815,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-01-08');
 | title | VARCHAR(200) | NOT NULL | - | 告警标题 |
 | message | TEXT | NOT NULL | - | 告警消息 |
 | source | VARCHAR(100) | NOT NULL | - | 告警来源 |
-| status | VARCHAR(20) | NOT NULL | 'active' | 告警状?|
+| status | VARCHAR(20) | NOT NULL | 'active' | 告警状态|
 | acknowledged_by | VARCHAR(100) | - | NULL | 确认?|
 | acknowledged_at | TIMESTAMP | - | NULL | 确认时间 |
 | resolved_at | TIMESTAMP | - | NULL | 解决时间 |
@@ -841,7 +841,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 |----------|--------|--------|------|
 | **核心金额** | DECIMAL(18,2) | DECIMAL(20,4) | 支持万亿级资金，精度4位小?|
 | **次要金额** | DECIMAL(18,2) | DECIMAL(20,4) | 统一标准，避免精度损?|
-| **费用金额** | DECIMAL(10,2) | DECIMAL(12,4) | 精度提升，支持精确计?|
+| **费用金额** | DECIMAL(10,2) | DECIMAL(12,4) | 精度提升，支持精确计划|
 
 ### 3.2 百分比字段优?
 
@@ -883,7 +883,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 | **trades** | 5?| 10?| 监管要求7年，支持长期回测 |
 | **position_history** | 3?| 7?| 监管要求，历史追?|
 | **account_snapshots** | 3?| 7?| 业绩评估，风险分?|
-| **system_metrics** | 1?| 2?| 性能监控，容量规?|
+| **system_metrics** | 1?| 2?| 性能监控，容量规范|
 
 ---
 
@@ -914,7 +914,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 | 表名 | 删除字段 | 删除理由 |
 |------|----------|----------|
-| **accounts** | total_market_value | 可通过positions表聚合计?|
+| **accounts** | total_market_value | 可通过positions表聚合计划|
 | **accounts** | daily_pnl | 可通过account_snapshots表查?|
 
 ### 6.2 字段数量优化
@@ -929,9 +929,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 ### 7.1 符合度评?
 
-| 设计维度 | 专业标准 | 优化后符合度 | 达标状?|
+| 设计维度 | 专业标准 | 优化后符合度 | 达标状态|
 |----------|----------|--------------|----------|
-| **表结构设?* | 核心?5-25个字?| 95% | ?达标 |
+| **表结构设计 | 核心?5-25个字?| 95% | ?达标 |
 | **数据类型选择** | DECIMAL(20,4) | 100% | ?达标 |
 | **分区策略** | 按月分区，保??| 95% | ?达标 |
 | **索引策略** | 核心?-10个索?| 95% | ?达标 |
@@ -948,7 +948,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 ---
 
-## 8. 监管合规性检?
+## 8. 监管合规性检查
 
 ### 8.1 证监会要?
 
@@ -990,9 +990,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 ---
 
-## 10. 数据库设计评审清?
+## 10. 数据库设计评审清单
 
-### 10.1 设计完整性检?
+### 10.1 设计完整性检查
 
 - [x] 所有表都有主键
 - [x] 所有业务唯一标识都有唯一索引
@@ -1002,9 +1002,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 - [x] 大表都有分区策略
 - [x] 所有外键关系都定义清楚
 - [x] 所有数据完整性约束都定义
-- [x] 所有枚举值都有约束检?
+- [x] 所有枚举值都有约束检查
 
-### 10.2 性能优化检?
+### 10.2 性能优化检查
 
 - [x] 索引设计合理
 - [x] 分区策略合理
@@ -1012,7 +1012,7 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 - [x] 写入优化建议完整
 - [x] 连接池配置合?
 
-### 10.3 运维保障检?
+### 10.3 运维保障检查
 
 - [x] 备份策略完整
 - [x] 恢复方案可行

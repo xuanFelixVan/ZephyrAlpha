@@ -4,13 +4,13 @@ module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
 ```bash
 mkdir -p docs/module_designs/layer_{0..8}
 ```
-2. **开始第一个模块设?*
+2. **开始第一个模块设计
 - 选择: L0_QMT数据接口 (优先级最?
 - ? QMT API文档和架构文?
 - 模板: 使用MODULE_DESIGN_TEMPLATE.md
 3. **设置进度跟踪**
-- 在MODULE_DESIGN_PLAN.md中更新状?
-- 建立设计完成检查清?
+- 在MODULE_DESIGN_PLAN.md中更新状态
+- 建立设计完成检查清单
 ```
 ?(决策/审核) ?AI (设计助手) ?模块设计文档 ??(审核完善) ?归档
 ```

@@ -6,6 +6,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
+responsibility:
+  - 38_OFFLINE_SUPPORT模块目录导航与文档索引管理与优化维护
 ---------|------|------|------|
 | OFFLINE_SUPPORT_BLUEPRINT.md | 蓝图 | 活跃 | 离线功能支持系统，支持离线访问和操作 |
 

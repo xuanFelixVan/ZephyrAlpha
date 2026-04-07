@@ -334,7 +334,7 @@ class ExperimentTracker:
 
         Args:
 
-            status: 运行状?        """
+            status: 运行状态        """
 
         pass
 
@@ -530,7 +530,7 @@ class ModelVersioning:
 
     ) -> str:
 
-        """从实验注册模?""
+        """从实验注册模块""
 
         pass
 

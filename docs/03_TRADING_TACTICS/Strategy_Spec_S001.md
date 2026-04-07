@@ -17,7 +17,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行?
@@ -51,7 +51,7 @@ responsibility:
 |------|-----|
 | 适用标的 | A股主板（沪深300成分股） |
 | 操作周期 | 1小时K?|
-| 市场状?| 趋势市（排除震荡市） |
+| 市场状态| 趋势市（排除震荡市） |
 | 风险等级 | 中等 |
 
 
@@ -73,7 +73,7 @@ HOLD & \text{otherwise}
 
 其中 $[-1]$ 表示前一个时间步的?
 
-### 2.3 置信度计?
+### 2.3 置信度计划
 
 $$Confidence = \frac{|MA_5 - MA_{20}|}{MA_{20}} \times 100\%$$
 
@@ -82,7 +82,7 @@ $$Confidence = \frac{|MA_5 - MA_{20}|}{MA_{20}} \times 100\%$$
 - 置信?< 1% 时，信号强度??
 
 
-## 3. 伪代码验?
+## 3. 伪代码验证
 
 ```python
 def calculate_signal(close_prices, ma5_period=5, ma20_period=20):
@@ -213,7 +213,7 @@ if price_change > 10%:  # 单根K线涨?10%
 
 ## 7. 回测验证标准
 
-| 指标 | 目标?| 说明 |
+| 指标 | 目指标| 说明 |
 |------|--------|------|
 | 夏普比率 | > 1.5 | 风险调整收益 |
 | 最大回?| < 15% | 最坏情况损?|

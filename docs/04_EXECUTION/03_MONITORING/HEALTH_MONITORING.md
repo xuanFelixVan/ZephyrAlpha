@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -34,7 +34,7 @@ implementation_status: 进行?
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 简化的自动化健康检?
+> 简化的自动化健康检查
 
 **版本**: v1.0
 **更新**: 2026-03-29
@@ -43,7 +43,7 @@ implementation_status: 进行?
 
 ---
 
-## 1. 为什么需要健康监?
+## 1. 为什么需要健康监控
 
 ```
 ?监督) ?AI(执行) ?AI(优化) ??监督) ?AI(报告)
@@ -92,7 +92,7 @@ class SimpleHealthCheck:
 
 ## 3. 检查项定义
 
-### 3.1 进程检?
+### 3.1 进程检查
 
 ```python
 def check_processes(self) -> CheckResult:
@@ -121,7 +121,7 @@ def _is_process_running(self, process_name: str) -> bool:
     return True  # 简化实?
 ```
 
-### 3.2 数据新鲜度检?
+### 3.2 数据新鲜度检查
 
 ```python
 def check_data_fresh(self) -> CheckResult:
@@ -153,7 +153,7 @@ def check_data_fresh(self) -> CheckResult:
     )
 ```
 
-### 3.3 磁盘空间检?
+### 3.3 磁盘空间检查
 
 ```python
 def check_disk_space(self) -> CheckResult:
@@ -177,7 +177,7 @@ def check_disk_space(self) -> CheckResult:
     )
 ```
 
-### 3.4 错误日志检?
+### 3.4 错误日志检查
 
 ```python
 def check_error_logs(self) -> CheckResult:
@@ -211,7 +211,7 @@ def check_error_logs(self) -> CheckResult:
     )
 ```
 
-### 3.5 流水线状态检?
+### 3.5 流水线状态检查
 
 ```python
 def check_pipeline_status(self) -> CheckResult:

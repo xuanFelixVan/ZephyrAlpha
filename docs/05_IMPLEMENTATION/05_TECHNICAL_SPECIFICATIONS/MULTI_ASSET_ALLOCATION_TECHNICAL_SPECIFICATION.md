@@ -41,7 +41,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.3 - 多资产类别配置详细技术设?> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
+> 清风量化系统 v5.3 - 多资产类别配置详细技术设计> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
 > **开发时?*: 80h
 > **核心定位**: 跨资产风险平价配置，全天候策略实?
 ---
@@ -56,7 +56,7 @@ responsibility:
 
 ## 2. 接口定义
 
-### 2.1 核心类接?
+### 2.1 核心类接口
 ```python
 class MultiAssetAllocator:
     """

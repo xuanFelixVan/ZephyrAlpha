@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -9,8 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据源层
 compliance_level: 专业标准
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
-?
+  - 另类数据集成
+  - 数据采集与解析
+  - 数据清洗与标准化
+  - 特征提取与因子构建
   - 数据质量控制
 layer: Layer 5 (策略执行层)
 ---
@@ -83,38 +85,51 @@ layer: Layer 5 (策略执行层)
 ### 职责边界
 
 
-感分析、事件提取、实体识别）
+情感分析、事件提取、实体识别）
 - 因子管理与验证（存储、IC验证、监控）
 
 - 传统市场数据采集
 - 数据质量监控
 - 数据存储基础设施
 
-## 一、项目架构设?
+## 一、项目架构设计
 ### 1.1 整体架构
 
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
 ```
 
 ### 1.2 技术栈选择
 
-| 技术领?| 技术选型 | 选择理由 |
+| 技术领域 | 技术选型 | 选择理由 |
 |---------|---------|---------|
-| **数据采集** | Scrapy + Selenium + Requests | 成熟稳定，支持动态页?|
-| **NLP处理** | GLM-4-Flash | 成本低（0.1?百万tokens），速度?|
-| **实体识别** | GLM-4-Flash + 正则表达?| 准确率高，成本低 |
+| **数据采集** | Scrapy + Selenium + Requests | 成熟稳定，支持动态页面 |
+| **NLP处理** | GLM-4-Flash | 成本低（约 0.1 元/百万 tokens），速度快 |
+| **实体识别** | GLM-4-Flash + 正则表达式 | 准确率高，成本低 |
 | **数据存储** | SQLite + ChromaDB | 轻量级，适合个人使用 |
 | **任务调度** | Apache Airflow | 成熟的工作流引擎 |
-| **实时流处?* | Kafka（可选） | 支持实时数据?|
+| **实时流处理 | Kafka（可选） | 支持实时数据接入 |
 | **数据缓存** | Redis | 提升查询性能 |
 
 
 
 ## 二、数据源详细设计
 
-### 2.1 新闻数据?
+### 2.1 新闻数据源
 #### 2.1.1 财联社API
 
-**技术方?*:
+**技术方案**:
 ```python
 class CailianNewsDataSource:
     """财联社新闻数据源"""
@@ -142,7 +157,7 @@ class CailianNewsDataSource:
 ```
 
 **数据字段**:
-| 字段?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | news_id | string | 新闻唯一ID |
 | title | string | 新闻标题 |
@@ -150,17 +165,17 @@ class CailianNewsDataSource:
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
 | sentiment | float | 
-感得分?1??|
+情感得分（-1~1） |
 | event_type | string | 事件类型 |
 
 
 
 #### 2.1.2 新浪财经API
 
-**技术方?*:
+**技术方案**:
 ```python
 class SinaFinanceDataSource:
-    """新浪财经数据?""
+    """新浪财经数据源"""
     
     def __init__(self, config):
         self.api_url = "https://feed.mix.sina.com.cn/api/roll/get"
@@ -183,10 +198,10 @@ class SinaFinanceDataSource:
 
 #### 2.1.3 东方财富API
 
-**技术方?*:
+**技术方案**:
 ```python
 class EastMoneyDataSource:
-    """东方财富数据?""
+    """东方财富数据源"""
     
     def __init__(self, config):
         self.api_url = "https://np-listapi.eastmoney.com/comm/web/getFastNewsList"
@@ -208,16 +223,16 @@ class EastMoneyDataSource:
 
 
 
-### 2.2 社交媒体数据?
+### 2.2 社交媒体数据源
 #### 2.2.1 微博API
 
 - 财经大V观点
-?- 热门话题
+- 热门话题
 
-**技术方?*:
+**技术方案**:
 ```python
 class WeiboDataSource:
-    """微博数据?""
+    """微博数据源"""
     
     def __init__(self, config):
         self.api_url = "https://m.weibo.cn/api/container/getIndex"
@@ -245,7 +260,7 @@ class WeiboDataSource:
 ```
 
 **数据字段**:
-| 字段?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | post_id | string | 微博ID |
 | user_id | string | 用户ID |
@@ -263,7 +278,7 @@ class WeiboDataSource:
 
 ?- 热门股票
 
-**技术方?*:
+**技术方案**:
 ```python
 class XueqiuDataSource:
     """雪球数据?""
@@ -297,7 +312,7 @@ class XueqiuDataSource:
 #### 2.2.3 东方财富股吧
 
 
-**技术方?*:
+**技术方案**:
 ```python
 class GubaDataSource:
     """东方财富股吧数据?""
@@ -320,10 +335,12 @@ class GubaDataSource:
 
 ### 2.3 分析师预期数据源
 
-#### 2.3.1 东方财富分析师预?
-- 分析师评?- 目标价预?- 盈利预测
+#### 2.3.1 东方财富分析师预期
+- 分析师评级
+- 目标价预期
+- 盈利预测
 
-**技术方?*:
+**技术方案**:
 ```python
 class AnalystExpectationDataSource:
     """分析师预期数据源"""
@@ -332,13 +349,13 @@ class AnalystExpectationDataSource:
         self.api_url = "https://data.eastmoney.com/dataapi/limit_up"
         
     def get_analyst_rating(self, stock_code):
-        """获取分析师评?""
+        """获取分析师评级"""
         url = f"https://data.eastmoney.com/report/info/{stock_code}.html"
         response = requests.get(url)
         return self._parse_rating(response.text)
     
     def get_consensus_forecast(self, stock_code):
-        """获取一致预?""
+        """获取一致预期"""
         params = {
             'code': stock_code,
             'rtype': 'EPS'
@@ -348,12 +365,12 @@ class AnalystExpectationDataSource:
 ```
 
 **数据字段**:
-| 字段?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | stock_code | string | 股票代码 |
-| analyst_name | string | 分析师姓?|
+| analyst_name | string | 分析师姓名 |
 | institution | string | 机构名称 |
-| target_price | float | 目标?|
+| target_price | float | 目标价 |
 | eps_forecast | float | EPS预测 |
 | report_date | date | 报告日期 |
 
@@ -363,14 +380,14 @@ class AnalystExpectationDataSource:
 ## 三、NLP处理流程
 
 ### 3.1 
-感分析
+情感分析
 
-**技术方?*: GLM-4-Flash
+**技术方案**: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
     """
-感分析?""
+情情感分析""
     
     def __init__(self):
         self.model = "glm-4-flash"
@@ -380,7 +397,7 @@ class SentimentAnalyzer:
 感"""
         prompt = f"""
 感得分：
-        -1表示极度负面?表示中性，1表示极度正面
+        -1 表示极度负面，0 表示中性，1 表示极度正面
         
 容：{text}
         
@@ -390,7 +407,7 @@ class SentimentAnalyzer:
         return sentiment_score
     
     def batch_analyze(self, texts):
-感分析"""
+情感分析"""
         results = []
         for text in texts:
             sentiment = self.analyze_sentiment(text)
@@ -404,11 +421,11 @@ class SentimentAnalyzer:
 
 ### 3.2 事件提取
 
-**技术方?*: GLM-4-Flash
+**技术方案**: GLM-4-Flash
 
 ```python
 class EventExtractor:
-    """事件提取?""
+    """事件提取""
     
     def __init__(self):
         self.model = "glm-4-flash"
@@ -421,12 +438,12 @@ class EventExtractor:
         
 容：{text}
         
-        请返回JSON格式?        {{
+        请返回 JSON 格式：        {{
             "event_type": "事件类型",
             "event_summary": "事件摘要",
-            "impact_level": "影响等级（高/?低）",
+            "impact_level": "影响等级（高/中/低）",
             "sentiment": "
-感倾向（正?负面/中性）"
+情感倾向（正面/负面/中性）"
         }}
         """
         
@@ -439,10 +456,10 @@ class EventExtractor:
 
 ### 3.3 实体识别
 
-**技术方?*: GLM-4-Flash + 正则表达?
+**技术方案**: GLM-4-Flash + 正则表达?
 ```python
 class EntityRecognizer:
-    """实体识别?""
+    """实体识别""
     
     def __init__(self):
         self.stock_pattern = r'(SH\d{6}|SZ\d{6}|\d{6}\.(SH|SZ))'
@@ -466,27 +483,27 @@ class EntityRecognizer:
 
 
 
-## 四、因子构建方?
+## 四、因子构建方案
 ### 4.1 新闻因子
 
-感因子
+情感因子
 
-感分析构建的因?
+情基于情感分析构建的因子
 **计算方法**:
 ```python
 def calculate_news_sentiment_factor(stock_code, date, window=7):
     """
-感因子
+情感因子
     
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（-1??    """
+        因子值（-1~1）    """
     news_list = get_stock_news(stock_code, date-window, date)
     
-感得?    sentiments = [analyze_sentiment(news['content']) for news in news_list]
+情感得分    sentiments = [analyze_sentiment(news['content']) for news in news_list]
     
     # 3. 加权平均（近期新闻权重更高）
     weights = np.exp(np.linspace(-1, 0, len(sentiments)))
@@ -498,7 +515,7 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-绪因子
+情绪因子
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
 
@@ -519,15 +536,15 @@ def calculate_event_driven_factor(stock_code, date):
         date: 计算日期
     
     Returns:
-        因子值（事件影响得分?    """
+        因子值（事件影响得分）    """
     # 1. 获取近期重大事件
     events = get_recent_events(stock_code, date, days=30)
     
     # 2. 计算事件影响得分
     impact_scores = []
     for event in events:
-        # 根据事件类型和影响等级计算得?        base_score = EVENT_IMPACT_MAP[event['event_type']]
-        level_multiplier = {'?: 1.0, '?: 0.6, '?: 0.3}[event['impact_level']]
+        # 根据事件类型和影响等级计算得分        base_score = EVENT_IMPACT_MAP[event['event_type']]
+        level_multiplier = {'高': 1.0, '中': 0.6, '低': 0.3}[event['impact_level']]
         
         score = base_score * level_multiplier * sentiment_multiplier
         impact_scores.append(score)
@@ -556,9 +573,9 @@ def calculate_news_heat_factor(stock_code, date, window=7):
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（热度得分?    """
+        因子值（热度得分）    """
     # 1. 获取过去window天的新闻数量
     news_count = count_stock_news(stock_code, date-window, date)
     
@@ -578,22 +595,22 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 
 
 ### 4.2 
-绪因子
+情绪因子
 
-绪因子
+情绪因子
 
-绪因?
+情绪因子
 **计算方法**:
 ```python
 def calculate_market_sentiment_factor(date):
     """
-绪因子
+情绪因子
     
     Args:
         date: 计算日期
     
     Returns:
-绪得分?    """
+情绪得分    """
     # 1. 获取微博、雪球、股吧的热门讨论
     posts = get_hot_posts(date)
     
@@ -610,26 +627,26 @@ def calculate_market_sentiment_factor(date):
 ```
 
 **因子特征**:
-绪因子
+情绪因子
 - 更新频率: 日频
 
 
 
-绪因子
+情绪因子
 
-绪因?
+情绪因子
 **计算方法**:
 ```python
 def calculate_stock_sentiment_factor(stock_code, date, window=7):
     """
-绪因子
+情绪因子
     
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天?    
+        window: 时间窗口（天）    
     Returns:
-绪得分?    """
+情绪得分    """
     # 1. 获取社交媒体讨论
     posts = get_stock_posts(stock_code, date-window, date)
     
@@ -639,7 +656,7 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
     # 3. 计算讨论热度
     engagement = sum([post['likes'] + post['comments'] + post['reposts'] for post in posts])
     
-绪和热?    avg_sentiment = np.mean(sentiments)
+情绪与热度    avg_sentiment = np.mean(sentiments)
     heat_score = np.log1p(engagement)
     
     factor_value = avg_sentiment * (1 + 0.1 * heat_score)
@@ -648,7 +665,7 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-绪因子
+情绪因子
 - 更新频率: 日频
 - 数据窗口: 7?- IC预期: 0.03-0.05
 
@@ -656,21 +673,21 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 
 ### 4.3 预期因子
 
-#### 因子6: 分析师预期差异因?
+#### 因子6: 分析师预期差异因子
 值差异构建的因子
 
 **计算方法**:
 ```python
 def calculate_expectation_gap_factor(stock_code, date):
     """
-    计算分析师预期差异因?    
+    计算分析师预期差异因子    
     Args:
         stock_code: 股票代码
         date: 计算日期
     
     Returns:
-        因子值（预期差异得分?    """
-    # 1. 获取分析师一致预?    consensus = get_consensus_forecast(stock_code, date)
+        因子值（预期差异得分）    """
+    # 1. 获取分析师一致预期    consensus = get_consensus_forecast(stock_code, date)
     
 ?    actual = get_actual_eps(stock_code, date)
     
@@ -691,20 +708,20 @@ def calculate_expectation_gap_factor(stock_code, date):
 
 
 
-#### 因子7: 分析师评级变化因?
+#### 因子7: 分析师评级变化因子
 **因子定义**: 基于分析师评级变化构建的因子
 
 **计算方法**:
 ```python
 def calculate_rating_change_factor(stock_code, date, window=30):
     """
-    计算分析师评级变化因?    
+    计算分析师评级变化因子    
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（评级变化得分?    """
+        因子值（评级变化得分）    """
     # 1. 获取过去window天的评级变化
     ratings = get_rating_history(stock_code, date-window, date)
     
@@ -739,9 +756,9 @@ def calculate_social_heat_factor(stock_code, date, window=7):
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（热度得分?    """
+        因子值（热度得分）    """
     # 1. 获取社交媒体讨论?    posts = get_stock_posts(stock_code, date-window, date)
     
     # 2. 计算总互动量
@@ -765,9 +782,9 @@ def calculate_social_heat_factor(stock_code, date, window=7):
 
 
 
-## 五、数据存储设?
-### 5.1 数据库设?
-#### 新闻数据?
+## 五、数据存储设计
+### 5.1 数据库设计
+#### 新闻数据
 ```sql
 CREATE TABLE news_data (
     news_id TEXT PRIMARY KEY,
@@ -790,7 +807,7 @@ CREATE INDEX idx_news_source ON news_data(source);
 CREATE INDEX idx_news_sentiment ON news_data(sentiment);
 ```
 
-#### 社交媒体数据?
+#### 社交媒体数据
 ```sql
 CREATE TABLE social_posts (
     post_id TEXT PRIMARY KEY,
@@ -831,7 +848,7 @@ CREATE INDEX idx_analyst_stock ON analyst_expectations(stock_code);
 CREATE INDEX idx_analyst_date ON analyst_expectations(report_date);
 ```
 
-#### 因子数据?
+#### 因子数据
 ```sql
 CREATE TABLE alternative_factors (
     factor_id TEXT PRIMARY KEY,
@@ -853,8 +870,8 @@ CREATE INDEX idx_factor_stock ON alternative_factors(stock_code);
 
 
 
-### 5.2 向量数据库设?
-容的向量表示，支持语义搜?
+### 5.2 向量数据库设计
+容的向量表示，支持语义搜索
 ```python
 from chromadb import Client
 from chromadb.config import Settings
@@ -902,9 +919,9 @@ class VectorStore:
 ## 
 ### 6.1 时间规划
 
-| 阶段 | 时间 | 任务 | 交付?|
+| 阶段 | 时间 | 任务 | 交付物 |
 |------|------|------|--------|
-感分析、事件提取、实体识别模?| NLP处理模块、API集成 |
+情情感分析、事件提取、实体识别模块 | NLP处理模块、API集成 |
 | **Phase 3: 因子构建** | Week 6-7 | 构建8个另类数据因?| 因子计算模块、因子数?|
 | **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测?| 测试报告、验收文?|
 
@@ -913,7 +930,7 @@ class VectorStore:
 ### 6.2 里程?
 | 里程?| 时间 | 验收标准 |
 |--------|------|---------|
-感分析准确?80%，事件提取完?|
+情感分析准确?80%，事件提取完?|
 | **M4: 项目验收** | Week 8 | 所有测试通过，文档完?|
 
 
@@ -924,7 +941,7 @@ class VectorStore:
 | 角色 | 职责 | 工作?|
 |------|------|--------|
 | **项目负责?* | 整体协调、进度管?| 20% |
-感分析、事件提?| 40% |
+情感分析、事件提?| 40% |
 | **因子研究?* | 因子构建、IC验证 | 40% |
 | **测试工程?* | 系统测试、质量保?| 20% |
 
@@ -968,7 +985,7 @@ class VectorStore:
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
 | **数据采集** | 数据完整?95% | 数据质量检?|
-感分析准确?80% | 人工标注验证 |
+情感分析准确?80% | 人工标注验证 |
 | **因子计算** | 因子数量??| 功能测试 |
 
 

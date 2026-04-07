@@ -31,7 +31,7 @@ responsibility_boundary: |
   - 规划合规监控系统的核心组件和接口
   
   实现层文? 10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md
-  - 合规监控模块的具体实现方?  - 技术栈选型和详细设?  - 代码示例和部署方?
+  - 合规监控模块的具体实现方?  - 技术栈选型和详细设计  - 代码示例和部署方?
 responsibility:
   - 系统监控架构设计与实施方案与实施指导
 ---
@@ -47,7 +47,7 @@ responsibility:
 > **创建日期**: 2026-04-03
 > **更新日期**: 2026-04-04
 > **实施周期**: 2?> **核心理念**: Citadel合规体系 - 合规是量化系统的底线,必须实时、全面、可追溯
-> **目标**: 实现专业机构级的合规监控能力,确保系统运行符合监管要求和内部风控标?
+> **目标**: 实现专业机构级的合规监控能力,确保系统运行符合监管要求和内部风控指标
 ---
 
 ## 文档层级关系
@@ -99,7 +99,7 @@ Two Sigma合规监控框架:
 
 ---
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 合规监控系统架构
 
 ```
@@ -170,7 +170,7 @@ class TradingRuleEngine:
         }
     
     def validate_trade(self, trade: Trade, portfolio: Portfolio) -> ValidationResult:
-        """验证交易合规?""
+        """验证交易合规范""
         
         validation_results = []
         
@@ -179,7 +179,7 @@ class TradingRuleEngine:
             if not rule.is_applicable(trade):
                 continue
             
-            # 执行规则检?            result = rule.check(trade, portfolio)
+            # 执行规则检查            result = rule.check(trade, portfolio)
             validation_results.append(result)
             
             # 如果违规且需要阻?            if not result.is_compliant and rule.violation_action == 'block':
@@ -189,7 +189,7 @@ class TradingRuleEngine:
                     action='BLOCKED'
                 )
         
-        # 汇总验证结?        all_violations = [r for r in validation_results if not r.is_compliant]
+        # 汇总验证结束        all_violations = [r for r in validation_results if not r.is_compliant]
         
         return ValidationResult(
             is_compliant=len(all_violations) == 0,
@@ -260,12 +260,12 @@ class PositionRuleEngine:
         }
     
     def validate_position(self, positions: Dict[str, float], total_assets: float) -> PositionValidationResult:
-        """验证持仓合规?""
+        """验证持仓合规范""
         
         violations = []
         
         for rule_name, rule in self.rules.items():
-            # 执行规则检?            result = rule.check(positions, total_assets)
+            # 执行规则检查            result = rule.check(positions, total_assets)
             if not result.is_compliant:
                 violations.append(result)
         
@@ -340,7 +340,7 @@ class RiskLimitRuleEngine:
         violations = []
         
         for rule_name, rule in self.rules.items():
-            # 执行规则检?            result = rule.check(risk_metrics)
+            # 执行规则检查            result = rule.check(risk_metrics)
             if not result.is_compliant:
                 violations.append(result)
         
@@ -370,7 +370,7 @@ class TradingComplianceChecker:
         # 1. 规则验证
         validation_result = self.rule_engine.validate_trade(trade, portfolio)
         
-        # 2. 生成检查报?        check_result = ComplianceCheckResult(
+        # 2. 生成检查报告        check_result = ComplianceCheckResult(
             check_id=f"CHECK_{pd.Timestamp.now().strftime('%Y%m%d%H%M%S')}",
             trade_id=trade.trade_id,
             timestamp=pd.Timestamp.now(),
@@ -419,7 +419,7 @@ class PositionComplianceChecker:
         # 1. 规则验证
         validation_result = self.rule_engine.validate_position(positions, total_assets)
         
-        # 2. 生成检查报?        check_result = ComplianceCheckResult(
+        # 2. 生成检查报告        check_result = ComplianceCheckResult(
             check_id=f"POSITION_CHECK_{pd.Timestamp.now().strftime('%Y%m%d%H%M%S')}",
             timestamp=pd.Timestamp.now(),
             is_compliant=validation_result.is_compliant,

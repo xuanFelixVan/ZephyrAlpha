@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 系统实施与部署管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -27,7 +27,7 @@ implementation_status: 进行?
 ---
 
 
-# NozyIO可视化编辑系?
+# NozyIO可视化编辑系统
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
 > - ✅ 本文档负责：模块说明和快速入门指南相关内容
@@ -116,7 +116,7 @@ NozyIO通过四层可视化编辑系统，让用户通过拖拽、连线、配�
 
 ### 2.3 支持的因子类?
 
-#### 技术指标模?
+#### 技术指标模块
 
 | 类别 | 因子 | 参数 | 输出类型 |
 |------|------|------|----------|
@@ -145,7 +145,7 @@ NozyIO通过四层可视化编辑系统，让用户通过拖拽、连线、配�
 |------|------|------|----------|
 | 降维 | PCA | n_components | array |
 | 聚类 | KMEANS | n_clusters | array |
-| 异常检?| ISOLATION_FOREST | threshold | array |
+| 异常检查| ISOLATION_FOREST | threshold | array |
 
 ### 2.4 接口定义
 
@@ -284,7 +284,7 @@ class FeatureSetConfig:
 └─────────────────────────────────────────────────────────────?
 ```
 
-### 4.3 支持的策略模?
+### 4.3 支持的策略模块
 
 | 类别 | 模块 | 参数 | 说明 |
 |------|------|------|------|
@@ -337,7 +337,7 @@ class StrategyConfig:
 完整回测和可视化报告?
 - 高性能回测引擎
 - 多参数配?
-- 可视化绩效报?
+- 可视化绩效报告
 - 风险分析
 
 ### 5.2 界面布局
@@ -529,10 +529,10 @@ BacktestResult = {
 | 文档路径 | 说明 |
 |----------|------|
 | docs/08_USER_EXPERIENCE/04_NOZYIO/README.md | 本文?|
-| docs/08_USER_EXPERIENCE/04_NOZYIO/因子编辑?md | 第一层详细设?|
-| docs/08_USER_EXPERIENCE/04_NOZYIO/特征编辑?md | 第二层详细设?|
-| docs/08_USER_EXPERIENCE/04_NOZYIO/策略编辑?md | 第三层详细设?|
-| docs/08_USER_EXPERIENCE/04_NOZYIO/回测系统.md | 第四层详细设?|
+| docs/08_USER_EXPERIENCE/04_NOZYIO/因子编辑?md | 第一层详细设计|
+| docs/08_USER_EXPERIENCE/04_NOZYIO/特征编辑?md | 第二层详细设计|
+| docs/08_USER_EXPERIENCE/04_NOZYIO/策略编辑?md | 第三层详细设计|
+| docs/08_USER_EXPERIENCE/04_NOZYIO/回测系统.md | 第四层详细设计|
 | docs/08_USER_EXPERIENCE/04_NOZYIO/API.md | API文档 |
 
 ### 8.2 模块索引

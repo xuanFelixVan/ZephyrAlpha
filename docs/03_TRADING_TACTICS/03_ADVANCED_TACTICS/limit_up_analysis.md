@@ -31,7 +31,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易策略设计与实施管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -192,7 +192,7 @@ class ConsecutiveLimitUpAnalyzer:
 |------|----------|------|
 | 涨停家数 | 当日涨停股票数量 | 市场热度 |
 | 连板股比?| 连续涨停?涨停?| 接力情况 |
-| 炸板?| 炸板股数/涨停股数 | 封板成功?|
+| 炸板?| 炸板股数/涨停股数 | 封板成功能|
 | 跌停家数 | 当日跌停股票数量 | 市场恐慌程度 |
 | 涨停溢价 | 次日平均高开幅度 | 赚钱效应 |
 

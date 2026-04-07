@@ -79,7 +79,7 @@ responsibility:
 | **系统蓝图** | `实施蓝图` | 系统总体实施蓝图 | 核心架构 |
 | **架构文档** | [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | 架构设计 |
 | **完整架构** | [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11完整架构体系 | 架构设计 |
-| **因子?* | | 因子库系统清?| 因子管理 |
+| **因子?* | | 因子库系统清单| 因子管理 |
 | **交易战术** | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易策略和战术索?| 策略设计 |
 | **审计标准** | [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计标准 | 审计规范 |
 
@@ -87,7 +87,7 @@ responsibility:
 
 ## 📚 文档体系架构
 
-### 一级目录结?
+### 一级目录结束
 ```
 docs/
 ├── 00_OVERVIEW/              # 系统概览

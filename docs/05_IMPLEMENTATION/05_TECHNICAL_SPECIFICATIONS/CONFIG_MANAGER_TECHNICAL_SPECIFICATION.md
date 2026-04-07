@@ -17,7 +17,7 @@ created_date: 2026-04-02
 owner: 首席技术评审官
 responsibility:
   - 技术规格定义与实施标准制定与实施标准
-standard_type: 专业量化机构技术规?
+standard_type: 专业量化机构技术规范
 applicable_scope: Layer 8 - 人机交互?| 业务架构: 三级时间框架融合架构
 compliance_level: 初始标准
 parent_document: ../INDEX.md
@@ -116,7 +116,7 @@ class ConfigVersion:
 - **PyYAML**: ?.0 (YAML配置)
 - **pydantic**: ?.0 (配置验证)
 
-## 6. 风险与约?
+## 6. 风险与约束
 
 | 风险ID | 风险描述 | 风险等级 | 缓解措施 |
 |--------|----------|----------|----------|
@@ -125,7 +125,7 @@ class ConfigVersion:
 
 ## 7. 验收标准
 
-| 指标 | 目标?|
+| 指标 | 目指标|
 |------|--------|
 | 配置加载时间 | ??|
 | 配置验证覆盖?| 100% |

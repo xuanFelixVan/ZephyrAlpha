@@ -81,7 +81,7 @@ implementation_status: 进行?---
 - 代码标准（文件头部、类定义、函数定义、类型提示）
 - 配置管理原则（配置文件原则、system.yaml示例?
 - 测试规范（测试文件位置、命名、覆盖率要求?
-- 文件归属检查清?
+- 文件归属检查清单
 
 ### 2. 开发工作流?
 
@@ -131,15 +131,15 @@ implementation_status: 进行?---
 
 | 原章?| 新文?| 新章?|
 |--------|--------|--------|
-| 一、目录结构规?| DEVELOPMENT_STANDARDS.md | 一、目录结构规?|
-| 二、文件命名规?| DEVELOPMENT_STANDARDS.md | 二、文件命名规?|
-| 三、代码标?| DEVELOPMENT_STANDARDS.md | 三、代码标?|
+| 一、目录结构规范| DEVELOPMENT_STANDARDS.md | 一、目录结构规范|
+| 二、文件命名规范| DEVELOPMENT_STANDARDS.md | 二、文件命名规范|
+| 三、代码指标| DEVELOPMENT_STANDARDS.md | 三、代码指标|
 | 四、配置管?| DEVELOPMENT_STANDARDS.md | 四、配置管?|
-| 五、测试规?| DEVELOPMENT_STANDARDS.md | 五、测试规?|
+| 五、测试规范| DEVELOPMENT_STANDARDS.md | 五、测试规范|
 | 六、工作流?| DEVELOPMENT_WORKFLOW.md | 一、开发流?|
-| 七、提交规?| DEVELOPMENT_WORKFLOW.md | 二、提交规?|
+| 七、提交规范| DEVELOPMENT_WORKFLOW.md | 二、提交规范|
 | 八、依赖管?| DEVELOPMENT_WORKFLOW.md | 三、依赖管?|
-| 九、日志规?| DEVELOPMENT_WORKFLOW.md | 四、日志规?|
+| 九、日志规范| DEVELOPMENT_WORKFLOW.md | 四、日志规范|
 | 十、核心设计原?| DESIGN_PRINCIPLES.md | 一、优先级驱动原则 |
 | 十、开源优先原?| DESIGN_PRINCIPLES.md | 二、开源优先原?|
 | 十、容错与恢复机制 | DESIGN_PRINCIPLES.md | 三、容错与恢复机制 |
@@ -158,7 +158,7 @@ implementation_status: 进行?---
 | **专业符合?* | 35% (违反SoC) | 100% (符合SoC) | +65% |
 
 
-> **维护部门**: 清风量化审计?
+> **维护部门**: 清风量化审计划
 > **最后更?*: 2026-04-01
 > **文档版本**: v5.3
 

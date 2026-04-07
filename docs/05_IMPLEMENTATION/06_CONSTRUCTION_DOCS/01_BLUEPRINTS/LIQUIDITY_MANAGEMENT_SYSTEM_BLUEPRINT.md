@@ -117,14 +117,31 @@ graph LR
 
 ## 2. 架构设计
 
-### 2.1 系统架构?
+### 2.1 系统架构
+
+```mermaid
+graph TB
+  subgraph In[数据输入]
+    A[账户数据] --> C
+    B[交易流水/划转/费用] --> C
+  end
+
+  C[资金数据采集与标准化] --> D[流动性分析器]
+  D --> E[现金流预测器]
+  D --> F[流动性风险检查]
+
+  F --> G[预警生成]
+  E --> G
+
+  G --> H[行动建议/应急预案]
 ```
 
-### 2.2 核心子系统设?
-#### 2.2.1 资金数据采集子系?
+### 2.2 核心子系统设计
+
+#### 2.2.1 资金数据采集子系统
 ```python
 class FundDataCollector:
-    """资金数据采集?""
+    """资金数据采集器"""
     
     def __init__(self):
         self.data_sources = {
@@ -146,7 +163,8 @@ class FundDataCollector:
         数据维度:
         
         输出:
-        - FundDataset: 资金数据?        """
+        - FundDataset: 资金数据集
+        """
         pass
 ```
 
@@ -158,27 +176,34 @@ class LiquidityAnalyzer:
     
     def __init__(self):
         self.metrics = {
-            'turnover_ratio': TurnoverRatioCalculator(),    # 资金周转?            'liquidity_ratio': LiquidityRatioCalculator(),  # 流动比率
-            'cash_flow': CashFlowPredictor()                # 现金流预?        }
+            'turnover_ratio': TurnoverRatioCalculator(),    # 资金周转率
+            'liquidity_ratio': LiquidityRatioCalculator(),  # 流动比率
+            'cash_flow': CashFlowPredictor()                # 现金流预测
+        }
         
     def analyze_liquidity(
         self,
         fund_data: FundDataset
     ) -> LiquidityReport:
         """
-        分析流动?        
+        分析流动性
+
         分析维度:
-?        2. 资金周转? 资金使用效率
-        3. 流动比率: 短期偿债能?        4. 现金流预? 未来现金流预?        
+        1. 资金周转率：资金使用效率
+        2. 流动比率：短期偿债能力
+        3. 现金流预测：未来现金流预测
+
         输出:
           - outflow: 资金流出
           - net_flow: 净流量
-          - turnover_ratio: 周转?          - liquidity_ratio: 流动比率
-          - cash_flow_forecast: 现金流预?        """
+          - turnover_ratio: 周转率
+          - liquidity_ratio: 流动比率
+          - cash_flow_forecast: 现金流预测
+        """
         pass
 ```
 
-#### 2.2.3 资金周转率计?
+#### 2.2.3 资金周转率计算
 ```python
 class TurnoverRatioCalculator:
     """资金周转率计算器"""
@@ -189,15 +214,16 @@ class TurnoverRatioCalculator:
         period: int = 30
     ) -> float:
         """
-        计算资金周转?        
+        计算资金周转率
         
         Turnover Ratio = Total Trading Volume / Average Capital
         
         参数:
         - fund_data: 资金数据
-        - period: 计算周期（天?        
+        - period: 计算周期（天）
         返回:
-        - turnover_ratio: 资金周转?        """
+        - turnover_ratio: 资金周转率
+        """
         total_trading_volume = fund_data.get_total_trading_volume(period)
         average_capital = fund_data.get_average_capital(period)
         
@@ -206,7 +232,7 @@ class TurnoverRatioCalculator:
         return turnover_ratio
 ```
 
-#### 2.2.4 现金流预测模?
+#### 2.2.4 现金流预测模块
 ```python
 class CashFlowPredictor:
     """现金流预测器"""
@@ -220,7 +246,7 @@ class CashFlowPredictor:
         forecast_days: int = 30
     ) -> CashFlowForecast:
         """
-        预测未来现金?        
+        预测未来现金流
         方法:
         2. 时间序列模型: ARIMA/Prophet
         3. 机器学习模型: LSTM（可选）
@@ -228,7 +254,8 @@ class CashFlowPredictor:
         输出:
           - daily_outflow: 每日流出预测
           - net_flow: 净流量预测
-          - confidence: 预测置信?        """
+          - confidence: 预测置信度
+        """
         pass
 ```
 
@@ -240,20 +267,20 @@ class LiquidityRiskWarner:
     
     def __init__(self):
         self.thresholds = {
-            'max_outflow_ratio': 0.5        # 最大流出比?        }
+            'max_outflow_ratio': 0.5        # 最大流出比例        }
         
     def check_liquidity_risk(
         self,
         liquidity_report: LiquidityReport
     ) -> LiquidityWarning:
         """
-        检查流动性风?        
-        检查维?
+        检查流动性风险        
+        检查维度
 
         3. 流出压力: 预期流出是否过大
         
         输出:
-        - LiquidityWarning: 流动性预?          - risk_level: 风险级别（LOW/MEDIUM/HIGH?          - warning_items: 预警项列?          - recommendations: 建议措施
+        - LiquidityWarning: 流动性预警          - risk_level: 风险级别（LOW/MEDIUM/HIGH）          - warning_items: 预警项列表          - recommendations: 建议措施
         """
         pass
 ```
@@ -270,17 +297,17 @@ def monitor_liquidity(
     account_id: str
 ) -> LiquidityMonitorResult:
     """
-    监控流动?    
+    监控流动性    
     参数:
     - account_id: 账户ID
     
     返回:
-    - LiquidityMonitorResult: 流动性监控结?      - available_fund: 可用资金
+    - LiquidityMonitorResult: 流动性监控结束      - available_fund: 可用资金
       - frozen_fund: 冻结资金
-      - total_asset: 总资?      - cash_ratio: 现金比例
-      - turnover_ratio: 周转?      - liquidity_ratio: 流动比率
+      - total_asset: 总资产      - cash_ratio: 现金比例
+      - turnover_ratio: 周转率      - liquidity_ratio: 流动比率
       - risk_level: 风险级别
-      - timestamp: 时间?    """
+      - timestamp: 时间戳    """
     pass
 ```
 
@@ -291,14 +318,14 @@ def predict_cash_flow(
     forecast_days: int = 30
 ) -> CashFlowForecast:
     """
-    预测现金?    
+    预测现金流    
     参数:
     - account_id: 账户ID
     - forecast_days: 预测天数
     
     返回:
-    - CashFlowForecast: 现金流预?      - daily_forecasts: 每日预测列表
-      - confidence: 预测置信?    """
+    - CashFlowForecast: 现金流预测      - daily_forecasts: 每日预测列表
+      - confidence: 预测置信度    """
     pass
 ```
 
@@ -308,13 +335,13 @@ def generate_liquidity_warning(
     account_id: str
 ) -> LiquidityWarning:
     """
-    生成流动性预?    
+    生成流动性预警    
     参数:
     - account_id: 账户ID
     
     返回:
-    - LiquidityWarning: 流动性预?      - warning_level: 预警级别（GREEN/YELLOW/RED?      - warning_items: 预警项列?      - recommendations: 建议措施
-      - timestamp: 时间?    """
+    - LiquidityWarning: 流动性预警      - warning_level: 预警级别（GREEN/YELLOW/RED）      - warning_items: 预警项列表      - recommendations: 建议措施
+      - timestamp: 时间戳    """
     pass
 ```
 
@@ -329,52 +356,52 @@ def optimize_fund_allocation(
     
     参数:
     - account_id: 账户ID
-    - target_return: 目标收益?    
+    - target_return: 目标收益率    
     返回:
-      - action_items: 行动?    """
+      - action_items: 行动项    """
     pass
 ```
 
 ### 3.2 数据格式定义
 
-#### 3.2.1 流动性监控数据格?
+#### 3.2.1 流动性监控数据格式
 ```python
 @dataclass
 class LiquidityMonitorResult:
     account_id: str                  # 账户ID
     available_fund: float            # 可用资金
     frozen_fund: float               # 冻结资金
-    total_asset: float               # 总资?    cash_ratio: float                # 现金比例
-    turnover_ratio: float            # 周转?    liquidity_ratio: float           # 流动比率
-    daily_inflow: float              # 日流?    daily_outflow: float             # 日流?    net_flow: float                  # 净流量
+    total_asset: float               # 总资产    cash_ratio: float                # 现金比例
+    turnover_ratio: float            # 周转率    liquidity_ratio: float           # 流动比率
+    daily_inflow: float              # 日流量    daily_outflow: float             # 日流量    net_flow: float                  # 净流量
     risk_level: str                  # 风险级别
-    timestamp: datetime              # 时间?```
+    timestamp: datetime              # 时间戳```
 
-#### 3.2.2 现金流预测数据格?
+#### 3.2.2 现金流预测数据格式
 ```python
 @dataclass
 class CashFlowForecast:
     account_id: str                  # 账户ID
     forecast_days: int               # 预测天数
     daily_forecasts: List[DailyForecast]  # 每日预测
-    confidence: float                # 预测置信?    forecast_time: datetime          # 预测时间
+    confidence: float                # 预测置信度    forecast_time: datetime          # 预测时间
 ```
 
-#### 3.2.3 流动性预警数据格?
+#### 3.2.3 流动性预警数据格式
 ```python
 @dataclass
 class LiquidityWarning:
     account_id: str                  # 账户ID
     warning_level: str               # 预警级别
     warning_items: List[WarningItem]  # 预警?    recommendations: List[str]       # 建议措施
-    timestamp: datetime              # 时间?```
+    timestamp: datetime              # 时间戳```
 
 
 
-## 4. 数据模型与存?
+## 4. 数据模型与存储
 ### 4.1 数据存储设计
 
-#### 4.1.1 资金流水记录?
+#### 4.1.1 资金流水记录表
 ```sql
 CREATE TABLE fund_flows (
     flow_id VARCHAR(50) PRIMARY KEY,
@@ -451,10 +478,10 @@ CREATE TABLE liquidity_warnings (
 );
 ```
 
-### 4.2 数据流设?
+### 4.2 数据流设计
 ```
 账户数据 ?流水记录 ?流动性分??风险评估 ?预警生成
-    ?现金流预??资金优化 ?行动建议 ?效果评估
+    ?现金流预测?资金优化 ?行动建议 ?效果评估
     ?          ?          ?          ? 预测存储   优化方案   行动记录   效果报告
 ```
 
@@ -465,7 +492,7 @@ CREATE TABLE liquidity_warnings (
 ### 5.1 资金周转率计算算?
 #### 5.1.1 算法原理
 
-**资金周转?*衡量资金使用效率，反映资金的活跃程度?
+**资金周转率*衡量资金使用效率，反映资金的活跃程度?
 **数学模型**:
 ```
 Turnover Ratio = Total Trading Volume / Average Capital
@@ -481,11 +508,11 @@ def calculate_turnover_ratio(
     period: int = 30
 ) -> float:
     """
-    计算资金周转?    
+    计算资金周转率    
     步骤:
-平均资金占?    3. 计算周转?    
+平均资金占?    3. 计算周转率    
     返回:
-    - turnover_ratio: 资金周转?    """
+    - turnover_ratio: 资金周转率    """
     total_trading_volume = 0.0
     for i in range(period):
         daily_volume = fund_data.get_daily_trading_volume(i)
@@ -503,8 +530,8 @@ def calculate_turnover_ratio(
 ```
 
 #### 5.1.3 复杂度分?
-- **时间复杂?*: O(N)，N为计算周期天?- **空间复杂?*: O(1)
-- **计算复杂?*: 低，适合实时计算
+- **时间复杂度: O(N)，N为计算周期天?- **空间复杂度: O(1)
+- **计算复杂度: 低，适合实时计算
 
 ### 5.2 现金流预测算?
 #### 5.2.1 算法原理
@@ -522,9 +549,9 @@ def predict_cash_flow_simple(
     """
     简单现金流预测（历史平均法?    
     步骤:
-    1. 计算历史平均日流?    2. 计算历史平均日流?    3. 预测未来每日现金?    
+    1. 计算历史平均日流量    2. 计算历史平均日流量    3. 预测未来每日现金?    
     返回:
-    - CashFlowForecast: 现金流预?    """
+    - CashFlowForecast: 现金流预测    """
     avg_daily_inflow = historical_data['inflow'].mean()
     avg_daily_outflow = historical_data['outflow'].mean()
     
@@ -549,9 +576,9 @@ def predict_cash_flow_simple(
 ```
 
 #### 5.2.3 复杂度分?
-- **时间复杂?*: O(N)，N为历史数据量
-- **空间复杂?*: O(N)
-- **计算复杂?*: 低，适合实时预测
+- **时间复杂度: O(N)，N为历史数据量
+- **空间复杂度: O(N)
+- **计算复杂度: 低，适合实时预测
 
 ### 5.3 流动性风险评估算?
 #### 5.3.1 算法原理
@@ -560,7 +587,7 @@ def predict_cash_flow_simple(
 **评估维度**:
 
 3. **流出压力**: 预期流出是否过大
-4. **周转?*: 资金活跃?
+4. **周转率*: 资金活跃?
 #### 5.3.2 风险评分计算
 
 ```python
@@ -638,11 +665,11 @@ def calculate_liquidity_risk_score(
 class TestLiquidityAnalyzer:
     
     def test_turnover_ratio_calculation(self):
-        """测试周转率计?""
+        """测试周转率计划""
         pass
     
     def test_cash_flow_prediction(self):
-        """测试现金流预?""
+        """测试现金流预测""
         pass
     
     def test_risk_assessment(self):
@@ -657,7 +684,7 @@ class TestLiquidityManagementSystem:
     """流动性管理系统集成测?""
     
     def test_end_to_end_monitoring(self):
-        """测试端到端监?""
+        """测试端到端监控""
         pass
     
     def test_warning_generation(self):
@@ -703,8 +730,8 @@ class TestLiquidityManagementSystem:
 
 | 功能 | 验收标准 | 测试方法 |
 |------|----------|----------|
-| **流动性监?* | 能够实时监控流动?| 集成测试 |
-| **现金流预?* | 预测误差?0% | 回测验证 |
+| **流动性监?* | 能够实时监控流动性| 集成测试 |
+| **现金流预测* | 预测误差?0% | 回测验证 |
 限时自动预?| 集成测试 |
 
 ### 9.2 性能验收标准
@@ -740,7 +767,7 @@ class TestLiquidityManagementSystem:
 **目标**: 实现现金流预测和资金优化
 
 单**:
-1. ?实现现金流预?2. ?实现资金优化建议
+1. ?实现现金流预测2. ?实现资金优化建议
 3. ?实现报告生成
 5. ?性能优化
 

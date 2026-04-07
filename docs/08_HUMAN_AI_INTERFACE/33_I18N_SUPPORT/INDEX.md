@@ -6,6 +6,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
+responsibility:
+  - 33_I18N_SUPPORT模块目录导航与文档索引管理与优化维护
 ---------|------|------|------|
 | I18N_SUPPORT_BLUEPRINT.md | 蓝图 | 活跃 | 国际化支持系统，支持多语言切换、语言包管理和自动翻译集成 |
 

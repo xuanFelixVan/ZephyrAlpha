@@ -25,7 +25,7 @@ parent_document: ../INDEX.md
 implementation_status: 进行?---
 
 
-# 蜡烛图模式识别系?
+# 蜡烛图模式识别系统
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -882,7 +882,7 @@ class CandlestickRecognizer:
 
 ---
 
-## 8. 与策略系统集?
+## 8. 与策略系统集成
 
 ### 8.1 接口设计
 

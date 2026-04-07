@@ -31,7 +31,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易策略设计与实施管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -432,12 +432,12 @@ class ComprehensiveChecklist(BaseStrategy):
 
 ## 5. 万狮虎养家心?
 
-### S054: 万狮虎择时系?
+### S054: 万狮虎择时系统
 
 | 属?| 内容 |
 |------|------|
 | 策略编号 | S054 |
-| 策略名称 | 万狮虎择时系?|
+| 策略名称 | 万狮虎择时系统|
 | 来源 | 万狮?|
 | 适用市场 | 任何市场 |
 | 风险等级 | ?|
@@ -696,7 +696,7 @@ class YoungCrocodileSupplement(BaseStrategy):
 | 风险等级 | ?|
 | 持仓周期 | 1-3?|
 
-**核心理念**：次新股量化分析，二板模?
+**核心理念**：次新股量化分析，二板模块
 
 **量化规则**?
 - 次新股特征：上市时间短，筹码干净

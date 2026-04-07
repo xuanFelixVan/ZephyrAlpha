@@ -83,7 +83,7 @@ owner: 文档管理团队
 
 详见: 02_ALPHA_FACTORS_INDEX.md
 
-## 策略开?
+## 策略开发
 
 ### Q8: 如何创建新策略？
 
@@ -143,7 +143,7 @@ owner: 文档管理团队
 1. 配置数据源（`config/data_sources.yaml`?
 2. 运行数据采集模块
 3. 数据自动清洗和存?
-4. 因子自动计算和更?
+4. 因子自动计算和更新
 
 ### Q13: 数据更新频率是多少？
 
@@ -248,7 +248,7 @@ owner: 文档管理团队
 2. AI?`02_ALPHA_FACTORS_INDEX.md` 中添加因子信?
 3. AI?`factors/` 目录下创建详细定?
 4. AI?`CHANGELOG.md` 中记录新增因?
-5. 人工审核并验?
+5. 人工审核并验证
 
 ### Q22: 如何让AI修改系统配置?
 
@@ -267,7 +267,7 @@ owner: 文档管理团队
 
 **A**:
 
-1. 检?`CONTEXT_SNAPSHOT.json` 版本是否匹配
+1. 检查`CONTEXT_SNAPSHOT.json` 版本是否匹配
 2. 检查依赖库是否安装（`pip install -r requirements.txt`?
 3. 检查配置文件是否正确（`config/system.yaml`?
 4. 查看日志文件（`logs/`）获取错误信?
@@ -296,7 +296,7 @@ owner: 文档管理团队
 
 **A**: 
 
-- 查看 `FAQ.md`（本文档?
+- 查看 `FAQ.md`（本文档案
 - 查看相关模块?`README.md`
 - 查看 `CHANGELOG.md` 了解最新变?
 - 查看 `System_Manifest.md` 了解系统结构

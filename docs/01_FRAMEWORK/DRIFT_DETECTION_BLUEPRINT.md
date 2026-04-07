@@ -57,7 +57,7 @@ responsibility:
 
 
 
-# 数据漂移检测蓝图：模型稳定性保障系?
+# 数据漂移检测蓝图：模型稳定性保障系统
 > **核心职责**: 提供drift detection blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Drift Detection蓝图设计相关内容
@@ -102,11 +102,11 @@ responsibility:
 
 - **模块类别**: 核心支撑模块
 
-- **架构角色**: 提供数据漂移检测、概念漂移检测和预测漂移检?
+- **架构角色**: 提供数据漂移检测、概念漂移检测和预测漂移检查
 
 ### 1.3 版本信息与变更记?
 
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 
 |------|------|------|----------|------|
 
@@ -118,7 +118,7 @@ responsibility:
 
 
 
-## 🎯 二、专业机构对?
+## 🎯 二、专业机构对接
 
 ### 2.1 桥水基金 (Bridgewater Associates)
 
@@ -166,7 +166,7 @@ responsibility:
 
 
 
-## 🏗?三、技术架构设?
+## 🏗?三、技术架构设计
 
 ### 3.1 系统架构?
 
@@ -278,7 +278,7 @@ class DriftSeverity(Enum):
 
 class DriftResult:
 
-    """漂移检测结?""
+    """漂移检测结束""
 
     drift_type: DriftType
 
@@ -590,11 +590,11 @@ class DataDriftDetector:
 
         if severity == DriftSeverity.CRITICAL:
 
-            return f"特征 {feature_name} 发生严重漂移，建议立即重新训练模?
+            return f"特征 {feature_name} 发生严重漂移，建议立即重新训练模块
 
         elif severity == DriftSeverity.HIGH:
 
-            return f"特征 {feature_name} 发生显著漂移，建议尽快重新训练模?
+            return f"特征 {feature_name} 发生显著漂移，建议尽快重新训练模块
 
         elif severity == DriftSeverity.MEDIUM:
 

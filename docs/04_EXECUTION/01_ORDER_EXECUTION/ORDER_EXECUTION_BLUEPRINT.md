@@ -32,7 +32,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设?
+applicable_scope: 全系统架构设计
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -46,7 +46,7 @@ implementation_status: 设计阶段
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.0 - 订单生成与执行系?
+> 清风量化系统 v5.0 - 订单生成与执行系统
 > **索引**: `EXEC.001`
 > **开发时?*: 40h
 > **核心定位**: 实现"信号 ?订单 ?撮合 ?成交"的完整交易执行闭?
@@ -300,7 +300,7 @@ class SmartOrderAlgorithm:
         )
 ```
 
-### 3.3 风控检?
+### 3.3 风控检查
 
 ```python
 class RiskChecker:
@@ -509,7 +509,7 @@ class SimulatedBroker:
 
 ## 5. vn.py集成
 
-### 5.1 vn.py连接?
+### 5.1 vn.py连接口
 
 ```python
 class VNpyConnector:
@@ -634,7 +634,7 @@ class TradingAPI:
 |------|------|------|
 | 订单生成?| 6h | OrderGenerator |
 | TWAP/VWAP算法 | 8h | SmartOrderAlgorithm |
-| 风控检?| 6h | RiskChecker |
+| 风控检查| 6h | RiskChecker |
 | 订单执行?| 6h | OrderExecutor |
 | 模拟撮合 | 6h | SimulatedBroker |
 | vn.py集成 | 4h | VNpyConnector |
@@ -670,7 +670,7 @@ class TradingAPI:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Exec Order Exec Bp** | 全系统架构设? | **核心模块** |
+| **Exec Order Exec Bp** | 全系统架构设计 | **核心模块** |
 
 ### 9.3 版本管理
 

@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -32,7 +32,7 @@ implementation_status: 进行?---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 策略状态、实时PnL、异常检?
+> 策略状态、实时PnL、异常检查
 
 **版本**: v1.0
 **更新**: 2026-03-29
@@ -54,7 +54,7 @@ implementation_status: 进行?---
 
 ## 2. 核心监控指标
 
-### 2.1 策略状态监?
+### 2.1 策略状态监控
 
 ```python
 class StrategyMonitor:
@@ -156,7 +156,7 @@ class PositionSummary:
 
 ---
 
-## 3. 异常检?
+## 3. 异常检查
 
 ### 3.1 价格异常
 

@@ -108,7 +108,7 @@ SW_CODE_MAP = {
 
 ## 3. 行业因子计算
 
-### 3.1 行业暴露度计?
+### 3.1 行业暴露度计划
 
 ```python
 class IndustryFactor:
@@ -157,7 +157,7 @@ class IndustryFactor:
         return pd.DataFrame(matrix, index=stocks_industries.keys(), columns=industries)
 ```
 
-### 3.2 行业收益率计?
+### 3.2 行业收益率计划
 
 ```python
 def calc_industry_return(self, industry_stocks, price_df):
@@ -440,7 +440,7 @@ print(f"首选行? {rotation['preferred_industries']}")
 ## 7. 注意事项
 
 1. **行业分类**：需定期更新申万行业分类
-2. **成分股变?*：行业成分股可能调整，需动态更?
+2. **成分股变?*：行业成分股可能调整，需动态更新
 3. **停牌处理**：停牌股票收益率?计算
 4. **权重计算**：建议使用流通市值加?
 

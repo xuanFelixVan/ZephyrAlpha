@@ -36,7 +36,7 @@ compliance_level: 专业标准
 **创建日期**: 2026-04-02
 **适用对象**: 开发者、量化研究员、运维人?---
 
-## 一、快速开?
+## 一、快速开发
 ### 1.1 环境准备
 
 **安装依赖**:
@@ -578,7 +578,7 @@ print(f"违规事项: {compliance_report.violations}")
 print(f"整改措施: {compliance_report.corrective_actions}")
 ```
 
-### 7.2 自定义合规规?
+### 7.2 自定义合规规范
 ```python
 reporter.compliance_checker.add_custom_rule(
     rule_name="ESG投资限制",
@@ -605,7 +605,7 @@ reporter.enable_auto_correction(True)
 ---
 
 ## 八、AI可解释性使用示?
-### 8.1 生成可解释性报?
+### 8.1 生成可解释性报告
 ```python
 from zephyr_alpha.reports import AIExplainabilityReporter
 
@@ -635,7 +635,7 @@ for feature in explainability_report.global_feature_importance[:5]:
     print(f"{feature.feature_name}: {feature.importance_score:.3f} ({feature.contribution_direction})")
 ```
 
-### 8.2 单样本解?
+### 8.2 单样本解释
 ```python
 sample_explanation = reporter.explain_single_prediction(
     features=features.iloc[0],

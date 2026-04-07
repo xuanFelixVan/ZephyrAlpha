@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -34,7 +34,7 @@ implementation_status: 进行?
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 策略运行状态、性能追踪、异常检?
+> 策略运行状态、性能追踪、异常检查
 
 ---
 
@@ -65,7 +65,7 @@ implementation_status: 进行?
 
 ---
 
-## 2. 策略状态监?
+## 2. 策略状态监控
 
 ```python
 from dataclasses import dataclass, field
@@ -269,7 +269,7 @@ class PerformanceTracker:
 
 ---
 
-## 4. 异常检?
+## 4. 异常检查
 
 ```python
 class AnomalyDetector:
@@ -480,7 +480,7 @@ monitoring:
 
 | 类别 | 指标 | 正常范围 | 告警条件 |
 |------|------|---------|---------|
-| 策略 | 运行状?| RUNNING | ERROR, STOPPED |
+| 策略 | 运行状态| RUNNING | ERROR, STOPPED |
 | 策略 | 信号频率 | 0-10/分钟 | > 20/分钟 |
 | 策略 | 无信号时?| < 30分钟 | > 60分钟 |
 | 持仓 | 单股持仓 | < 20% | > 25% |

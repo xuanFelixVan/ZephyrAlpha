@@ -35,7 +35,7 @@ implementation_status: 技术规格设计完?
 
 # 强化学习技术规格书 v1.0
 
-> 清风量化系统 v5.2 - 强化学习详细技术设?> **索引**: `RL-001`
+> 清风量化系统 v5.2 - 强化学习详细技术设计> **索引**: `RL-001`
 > **开发时?*: 80h
 > **核心定位**: 提供基于强化学习的交易执行、组合优化和风险控制能力
 ---
@@ -54,9 +54,9 @@ implementation_status: 技术规格设计完?
 - **模块类别**: 核心AI模块
 - **架构角色**: 提供基于强化学习的交易决策能?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | 作?| 变更说明 | 状?|
+| 版本 | 日期 | 作?| 变更说明 | 状态|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | AI工程?| 初始版本 | Active |
+| v1.0 | 2026-04-03 | AI工流程| 初始版本 | Active |
 
 ---
 
@@ -116,7 +116,7 @@ class AgentType(Enum):
 
 
 class TrainingStatus(Enum):
-    """训练状?""
+    """训练状态""
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -125,7 +125,7 @@ class TrainingStatus(Enum):
 
 @dataclass
 class TradingState:
-    """交易状?""
+    """交易状态""
     cash: float
     position: float
     portfolio_value: float
@@ -338,12 +338,12 @@ class ReinforcementLearningAPI:
         agent_id: str
     ) -> TrainingStatus:
         """
-        获取训练状?        
+        获取训练状态        
         Args:
             agent_id: 智能体ID
             
         Returns:
-            训练状?        """
+            训练状态        """
         pass
 ```
 

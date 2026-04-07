@@ -8,7 +8,7 @@ owner: 首席文档架构?
 responsibility:
   - 交易策略设计与实施管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -168,7 +168,7 @@ class QiaoBangZhuEntry:
             return {'position': 1.0, 'action': '满仓'}
 ```
 
-### S106D: 分时起爆点检?
+### S106D: 分时起爆点检查
 
 ```python
 class QiaoBangZhuBoomPoint:

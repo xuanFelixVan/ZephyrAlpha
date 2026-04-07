@@ -35,7 +35,7 @@ implementation_status: 技术规格设计完?
 
 # 模型监控技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 模型监控详细技术设?> **索引**: `MM-001`
+> 清风量化系统 v5.3 - 模型监控详细技术设计> **索引**: `MM-001`
 > **开发时?*: 40h
 > **核心定位**: 提供实时模型性能监控、告警和健康度评?---
 
@@ -60,7 +60,7 @@ implementation_status: 技术规格设计完?
 ### 1.3 版本信息与变更记?
 | 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
-| v1.0 | 2026-04-03 | AI工程?| 初始版本 | Active |
+| v1.0 | 2026-04-03 | AI工流程| 初始版本 | Active |
 
 ---
 ## 2. 详细架构设计
@@ -127,7 +127,7 @@ class AlertLevel(Enum):
 
 
 class MetricValue(BaseModel):
-    """指标?""
+    """指指标""
     metric_type: MetricType
     value: float
     timestamp: datetime
@@ -461,7 +461,7 @@ class TestModelMonitor:
         assert alerts[0].alert_level == AlertLevel.WARNING
     
     def test_health_score_calculation(self):
-        """测试健康度计?""
+        """测试健康度计划""
         monitor = ModelMonitor({})
         
         for i in range(100):

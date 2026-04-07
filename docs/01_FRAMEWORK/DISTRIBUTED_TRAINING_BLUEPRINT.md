@@ -210,7 +210,7 @@ class DistributedTrainer:
 
         Returns:
 
-            nn.Module: 分布式模?        """
+            nn.Module: 分布式模块        """
 
         pass
 

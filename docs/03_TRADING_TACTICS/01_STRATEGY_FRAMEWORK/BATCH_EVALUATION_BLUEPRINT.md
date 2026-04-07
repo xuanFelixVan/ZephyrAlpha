@@ -45,7 +45,7 @@ implementation_status: 设计阶段
 > - ✅ 本文档负责：Batch Evaluation蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> 清风量化交易系统 v5.3 - 批量策略评估系统详细技术设?> **索引**: `STRAT.BATCH.EVAL.001`
+> 清风量化交易系统 v5.3 - 批量策略评估系统详细技术设计> **索引**: `STRAT.BATCH.EVAL.001`
 > **开发周?*: 120小时（胶合代码开发）
 > **核心定位**: 策略工厂核心组件，支?20+策略并行回测、结果对比、性能分析的批量评估系?> **参考开?*: quant-system的BatchBacktester + RQAlpha的并行回测框?> **补充文档**: 本蓝图是[STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)的技术补充，专注于批量评估功?
 
@@ -67,7 +67,7 @@ implementation_status: 设计阶段
 1. **性能优先原则**：支持单?00+策略并行回测，回测时间控制在10分钟?2. **结果一致性原?*：相同策略在不同时间、不同批次回测结果必须一?3. **内存可控原则**：内存使用线性增长，避免OOM问题
 4. **可中断可恢复**：支持长时间回测的中断和恢复
 5. **AI辅助优化**：利用AI分析回测结果，提供优化建?
-### 1.3 与现有系统集?
+### 1.3 与现有系统集成
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **StrategyEngine核心** | 策略执行?| 复用StrategyEngine接口 |
@@ -76,7 +76,7 @@ implementation_status: 设计阶段
 | **策略配置文件** | 策略发现?| 扫描strategies/目录配置 |
 
 
-## 二、系统架构设?
+## 二、系统架构设计
 ### 2.1 整体架构?
 ```
 策略工厂批量评估系统架构?┌─────────────────────────────────────────────────────────??                  用户界面?(UI Layer)                  ?├─────────────────────────────────────────────────────────??1. 命令行接?(CLI)     2. Web可视化界?(可?          ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               批量评估控制?(Control Layer)             ?├─────────────────────────────────────────────────────────??1. BatchEvaluationController - 批量评估控制?           ??2. TaskScheduler - 任务调度?                           ??3. ResourceManager - 资源管理?                         ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               并行执行?(Parallel Execution)           ?├─────────────────────────────────────────────────────────??1. ProcessPoolExecutor - 多进程池                        ??2. TaskQueue - 任务队列 (Redis/内存队列)                 ??3. ResultAggregator - 结果聚合?                        ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               策略执行?(Strategy Execution)           ?├─────────────────────────────────────────────────────────??1. BacktestAdapter - Backtrader适配?                  ??2. StrategyExecutor - 策略执行?                        ??3. DataFeedManager - 数据馈送管理器                      ?└─────────────────────────────────────────────────────────?                              ?┌─────────────────────────────────────────────────────────??               绩效分析?(Performance Analysis)         ?├─────────────────────────────────────────────────────────??1. MetricsCalculator - 指标计算?                       ??2. ReportGenerator - 报告生成?                         ??3. Visualizer - 可视化生成器                             ?└─────────────────────────────────────────────────────────?```
@@ -182,7 +182,7 @@ class BatchEvaluationController:
         
         包括:
         - 数据下载与预处理
-        - 因子计算与缓?        - 内存分配与监?        - 临时文件清理
+        - 因子计算与缓存        - 内存分配与监控        - 临时文件清理
         """
         env = EvaluationEnv()
         
@@ -192,7 +192,7 @@ class BatchEvaluationController:
         
         # 预计算因?        env.factors = await self._precompute_factors(env.data, batch_request.factors)
         
-        # 初始化缓?        env.cache = LRUCache(maxsize=self.config.cache_size)
+        # 初始化缓存        env.cache = LRUCache(maxsize=self.config.cache_size)
         
         return env
 ```
@@ -203,7 +203,7 @@ class BatchEvaluationController:
 class ParallelBacktestExecutor:
     """并行回测执行?    
     索引: STRAT.BATCH.EVAL.001-M02
-    职责: 多进程并行回测执行，进程管理与资源控?    设计模式: 生产?消费者模?+ 工作进程?    """
+    职责: 多进程并行回测执行，进程管理与资源控?    设计模式: 生产?消费者模?+ 工作进流程    """
     
     def __init__(self, max_workers: int = None):
         self.max_workers = max_workers or (cpu_count() - 1)
@@ -213,7 +213,7 @@ class ParallelBacktestExecutor:
         self.running = False
         
     def start(self):
-        """启动工作进程?""
+        """启动工作进流程""
         self.running = True
         for i in range(self.max_workers):
             worker = Process(
@@ -295,7 +295,7 @@ class StandardizedMetricsCalculator:
     
     索引: STRAT.BATCH.EVAL.001-M03
     职责: 计算20+标准化绩效指标，支持风险调整收益计算
-    参考标? CFA协会绩效评估标准 + 专业量化机构指标
+    参考指标 CFA协会绩效评估标准 + 专业量化机构指标
     """
     
     # 核心指标定义
@@ -384,11 +384,11 @@ class StandardizedMetricsCalculator:
 
 ## 四、性能优化方案
 
-### 4.1 数据复用与缓?
+### 4.1 数据复用与缓存
 **多级缓存系统设计**?```
 Level 1: 内存缓存 (LRU策略)
   ├─ 原始价格数据
-  ├─ 技术指标计算结?  └─ 因子数据
+  ├─ 技术指标计算结束  └─ 因子数据
 
 Level 2: 磁盘缓存 (Parquet格式)
   ├─ 预处理后的数?  ├─ 回测中间结果
@@ -467,7 +467,7 @@ def incremental_equity_update(previous_equity: pd.Series,
 ```
 
 
-## 五、用户接口设?
+## 五、用户接口设计
 ### 5.1 命令行接?CLI)
 
 ```bash
@@ -551,7 +551,7 @@ batch_evaluation:
 ### Phase 1: 基础批量评估?周）
 - [ ] BatchEvaluationController 基础实现
 - [ ] 单进程顺序评估功?- [ ] 基础绩效指标计算
-- [ ] 命令行接口开?
+- [ ] 命令行接口开发
 ### Phase 2: 并行优化?周）
 - [ ] ProcessPoolExecutor 多进程支?- [ ] 内存优化与缓存系?- [ ] 任务调度与负载均?- [ ] 性能监控与调?
 ### Phase 3: 高级功能?周）

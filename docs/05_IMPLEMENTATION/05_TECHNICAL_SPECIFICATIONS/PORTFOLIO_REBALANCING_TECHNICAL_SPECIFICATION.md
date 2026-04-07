@@ -41,7 +41,7 @@ implementation_status: 设计阶段
 > - ❌ 本文档不负责：其他模块内容
 
 
-> 清风量化系统 v5.3 - 组合再平衡策略详细技术设?> **索引**: `PORTFOLIO_REBALANCING_SPEC_001`
+> 清风量化系统 v5.3 - 组合再平衡策略详细技术设计> **索引**: `PORTFOLIO_REBALANCING_SPEC_001`
 > **开发时?*: 100h
 > **核心定位**: 强化学习调仓，多时间框架协同
 
@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 ## 2. 接口定义
 
-### 2.1 核心类接?
+### 2.1 核心类接口
 ```python
 class PortfolioRebalancer:
     """

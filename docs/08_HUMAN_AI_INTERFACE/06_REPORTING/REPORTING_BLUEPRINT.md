@@ -802,3 +802,59 @@ responsibility:
 
 responsibility:
   - 报告系统设计与实施方案与优化维护
+
+
+## 💻 实现代码示例
+
+```python
+# 报告系统实现示例
+from fastapi import FastAPI, HTTPException
+from jinja2 import Template
+import pdfkit
+
+app = FastAPI()
+
+class ReportConfig(BaseModel):
+    report_type: str
+    title: str
+    data: dict
+    template_id: str
+
+@app.post("/api/report/generate")
+async def generate_report(config: ReportConfig):
+    """生成报告"""
+    # 加载模板
+    template = load_template(config.template_id)
+    
+    # 渲染报告
+    rendered = template.render(
+        title=config.title,
+        data=config.data,
+        generated_at=datetime.now()
+    )
+    
+    # 生成PDF
+    pdf_path = f"/tmp/report_{datetime.now().timestamp()}.pdf"
+    pdfkit.from_string(rendered, pdf_path)
+    
+    return {
+        "status": "success",
+        "pdf_path": pdf_path
+    }
+
+@app.get("/api/report/templates")
+async def list_templates():
+    """列出所有报告模板"""
+    templates = load_all_templates()
+    
+    return {
+        "templates": [
+            {
+                "id": t.id,
+                "name": t.name,
+                "type": t.type
+            }
+            for t in templates
+        ]
+    }
+```

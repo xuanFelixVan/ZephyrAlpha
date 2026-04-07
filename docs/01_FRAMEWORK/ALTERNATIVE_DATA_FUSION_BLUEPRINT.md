@@ -162,7 +162,7 @@ class AlternativeDataFusion:
 
     ):
 
-        """初始化融合系?        
+        """初始化融合系统        
 
         Args:
 

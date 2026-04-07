@@ -72,14 +72,14 @@ implementation_status: 活跃维护---
 
 ## 📚 核心文档
 
-### 快速开?
+### 快速开发
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
 | 快速开始 | 快速开始指?| ⭐⭐⭐⭐?|
 | [学习路径](./01_QUICKSTART/LEARNING_PATH.md) | 学习路径 | ⭐⭐⭐⭐ |
 | [路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线?| ⭐⭐⭐⭐ |
 
-### 开发标?
+### 开发指标
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
 | 开发概述 | 开发概?| ⭐⭐⭐⭐?|
@@ -112,7 +112,7 @@ implementation_status: 活跃维护---
 | [审计检查清单模板](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | 审计检查清?| ⭐⭐⭐⭐ |
 | [质量门机制](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | 质量门机?| ⭐⭐⭐⭐ |
 
-### 技术规?
+### 技术规范
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
 | [技术规格索引](./05_TECHNICAL_SPECIFICATIONS/) | 技术规格文?| ⭐⭐⭐⭐?|
@@ -144,7 +144,7 @@ implementation_status: 活跃维护---
 1. 阅读 01_QUICKSTART/README.md - 快速开?2. 阅读 [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - 学习路径
 3. 阅读 [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - 设计原则
 
-### 开?
+### 开发
 1. 阅读 [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - 开发标?2. 阅读 [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - 代码质量
 3. 阅读 [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - 测试标准
 

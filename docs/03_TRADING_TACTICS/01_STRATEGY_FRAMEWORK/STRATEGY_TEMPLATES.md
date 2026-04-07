@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 文档模板设计与标准化管理与优化维护
 standard_type: 专业量化机构模板标准
-applicable_scope: 文档模板与规?
+applicable_scope: 文档模板与规范
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -306,7 +306,7 @@ class DonchianChannelStrategy(StrategyBase):
 
 ---
 
-## 4. 均值回归策略模?
+## 4. 均值回归策略模块
 
 ### 4.1 布林带回归策?
 

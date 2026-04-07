@@ -32,7 +32,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设?
+applicable_scope: 全系统架构设计
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -58,7 +58,7 @@ implementation_status: 设计阶段
 |------|------|
 | **Backtrader主力** | 使用Backtrader作为回测引擎 |
 | **事件驱动** | 完整的事件驱动回?|
-| **成本真实** | 手续费、滑点、冲击成本全部模?|
+| **成本真实** | 手续费、滑点、冲击成本全部模块|
 | **Optuna优化** | 使用Optuna进行参数优化 |
 
 
@@ -602,7 +602,7 @@ class BacktestAPI:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tactics Backtest Bp** | 全系统架构设? | **核心模块** |
+| **Tactics Backtest Bp** | 全系统架构设计 | **核心模块** |
 
 ### 9.3 版本管理
 

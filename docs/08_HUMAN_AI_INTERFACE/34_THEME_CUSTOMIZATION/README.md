@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 系统模块设计与实施方案与优化维护
+  - 主题定制系统设计、主题模板管理、主题切换机制、主题配置持久化实现
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

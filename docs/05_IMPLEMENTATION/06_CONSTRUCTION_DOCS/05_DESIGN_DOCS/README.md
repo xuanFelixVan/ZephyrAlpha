@@ -19,7 +19,7 @@ owner: 首席文档架构?
 responsibility:
   - 系统实施与部署管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
@@ -76,18 +76,18 @@ docs/08_USER_EXPERIENCE/
 
 ### 1. UI设计 (01_UI_DESIGN)
 
-**目的**: 定义清风量化系统的视觉设计标?
+**目的**: 定义清风量化系统的视觉设计指标
 
 | 文档 | 内容 | 优先?|
 |------|------|--------|
 | ui_layout_standard.md | 五区域布局、栅格系统、响应式断点 | P0 |
-| 组件?md | 按钮、表单、表格、对话框等组件规?| P0 |
+| 组件?md | 按钮、表单、表格、对话框等组件规范| P0 |
 | 色彩系统.md | 主色、辅助色、语义色、渐变色 | P1 |
 | 字体规范.md | 字体家族、字号、字重、行?| P1 |
 
 ### 2. 交互设计 (02_INTERACTION)
 
-**目的**: 定义用户与系统交互的方式和规?
+**目的**: 定义用户与系统交互的方式和规范
 
 | 文档 | 内容 | 优先?|
 |------|------|--------|

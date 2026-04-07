@@ -16,6 +16,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
+responsibility:
+  - 文档中心架构设计、文档分类管理、文档搜索与导航、文档版本控制实现
 ------|------|
 | **文档生成** | 将Markdown转换为静态网站 |
 | **文档部署** | 自动化部署到GitHub Pages |

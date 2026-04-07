@@ -590,7 +590,7 @@ class SentimentFeatureExtractor:
 class ModelEnsembler:
     """模型集成?    
     索引: AI_PATTERN_001-M04
-    职责: 融合LSTM和Transformer模型的预测结?    输入: 多个模型的预测结?    输出: 集成后的最终预?    """
+    职责: 融合LSTM和Transformer模型的预测结束    输入: 多个模型的预测结束    输出: 集成后的最终预?    """
     
     def __init__(self, config: EnsembleConfig):
         self.config = config
@@ -609,7 +609,7 @@ class ModelEnsembler:
         }
     
     def ensemble_predictions(self, predictions: Dict[str, PatternPrediction]) -> EnsemblePrediction:
-        """集成多个模型的预测结?        
+        """集成多个模型的预测结束        
         Args:
             predictions: 各模型的预测结果
             
@@ -703,7 +703,7 @@ class PatternPrediction:
 
 @dataclass
 class AttentionPrediction(PatternPrediction):
-    """注意力预测结?""
+    """注意力预测结束""
     attention_weights: np.ndarray  # 注意力权重矩?
 @dataclass
 class EnsemblePrediction(PatternPrediction):
@@ -724,7 +724,7 @@ class AIPatternRecognitionResult:
     risk_assessment: Dict[str, float]      # 风险评估
 
 class IPatternRecognizer(ABC):
-    """模式识别器接?""
+    """模式识别器接口""
     
     @abstractmethod
     def train(self, train_data: np.ndarray, train_labels: np.ndarray,
@@ -748,7 +748,7 @@ class IPatternRecognizer(ABC):
         pass
 
 class IFeatureExtractor(ABC):
-    """特征提取器接?""
+    """特征提取器接口""
     
     @abstractmethod
     def extract(self, data: pd.DataFrame) -> np.ndarray:
@@ -756,7 +756,7 @@ class IFeatureExtractor(ABC):
         pass
 
 class IModelEnsembler(ABC):
-    """模型集成器接?""
+    """模型集成器接口""
     
     @abstractmethod
     def ensemble_predictions(self, predictions: Dict[str, PatternPrediction]) -> EnsemblePrediction:
@@ -772,7 +772,7 @@ class IModelEnsembler(ABC):
 ### 4.2 主接?
 ```python
 class AIPatternRecognitionEngine:
-    """AI模式识别引擎主接?    
+    """AI模式识别引擎主接口    
     索引: AI_PATTERN_001-MAIN
     职责: 协调特征工程、模型训练、模型推理和模型集成
     """
@@ -795,7 +795,7 @@ class AIPatternRecognitionEngine:
             horizon: 时间框架 ('short_term', 'mid_term', 'long_term')
             
         Returns:
-            AIPatternRecognitionResult: 完整的模式识别结?        """
+            AIPatternRecognitionResult: 完整的模式识别结束        """
         # 1. 特征提取
         features = self.feature_engineer.extract_features(market_data, sentiment_data)
         
