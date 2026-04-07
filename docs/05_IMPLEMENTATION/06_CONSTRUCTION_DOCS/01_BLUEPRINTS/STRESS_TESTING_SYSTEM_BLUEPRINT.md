@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 压力测试
+  - 极端场景模拟
+  - 风险评估
+  - 压力测试报告
 
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0

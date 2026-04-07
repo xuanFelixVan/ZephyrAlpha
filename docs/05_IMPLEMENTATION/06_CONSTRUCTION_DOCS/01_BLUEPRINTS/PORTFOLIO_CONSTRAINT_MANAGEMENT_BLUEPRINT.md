@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 组合约束管理
+  - 约束条件设置
+  - 约束验证
+  - 约束优化
 
 module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 version: 1.0.0

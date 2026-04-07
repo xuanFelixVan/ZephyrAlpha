@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 动态相关性建模
+  - 相关性预测
+  - 相关性矩阵
+  - 相关性分析
 
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0

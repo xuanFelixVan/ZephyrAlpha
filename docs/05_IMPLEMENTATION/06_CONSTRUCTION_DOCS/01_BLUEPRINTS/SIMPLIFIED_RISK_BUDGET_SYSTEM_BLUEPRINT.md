@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 简化版风险预算系统
+  - 风险预算分配
+  - 动态风险调整
+  - 风险预算优化
 
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0

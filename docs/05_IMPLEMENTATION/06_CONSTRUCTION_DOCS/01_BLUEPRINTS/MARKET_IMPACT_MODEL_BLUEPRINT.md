@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 市场冲击建模
+  - 冲击成本预测
+  - 交易影响分析
+  - 冲击优化
 
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0

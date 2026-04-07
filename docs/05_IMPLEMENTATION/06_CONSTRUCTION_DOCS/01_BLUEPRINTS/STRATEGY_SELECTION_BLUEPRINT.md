@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 策略选择
+  - 策略排名
+  - 策略评估
+  - 策略决策
 
 module_id: STRATEGY_SELECTION_001
 version: 1.0.0

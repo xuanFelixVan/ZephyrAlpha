@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 策略组合优化
+  - 策略权重分配
+  - 策略融合
+  - 多策略优化
 
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0

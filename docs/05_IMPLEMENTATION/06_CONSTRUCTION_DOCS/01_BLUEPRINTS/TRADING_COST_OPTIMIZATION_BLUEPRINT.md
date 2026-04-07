@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 交易成本优化
+  - 成本分析
+  - 成本预测
+  - 成本控制
 
 module_id: TRADING_COST_OPTIMIZATION_001
 version: 1.0.0

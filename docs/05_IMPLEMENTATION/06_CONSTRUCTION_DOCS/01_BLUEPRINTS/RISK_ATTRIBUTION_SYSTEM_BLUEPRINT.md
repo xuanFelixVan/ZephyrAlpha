@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 风险归因
+  - 风险分解
+  - 风险来源分析
+  - 风险贡献度
 
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0

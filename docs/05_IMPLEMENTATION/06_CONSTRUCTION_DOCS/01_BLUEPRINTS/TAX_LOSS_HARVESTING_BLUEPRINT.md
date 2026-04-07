@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 税收优化
+  - 税损收割
+  - 税务筹划
+  - 成本优化
 
 module_id: TAX_LOSS_HARVESTING_001
 version: 1.0.0

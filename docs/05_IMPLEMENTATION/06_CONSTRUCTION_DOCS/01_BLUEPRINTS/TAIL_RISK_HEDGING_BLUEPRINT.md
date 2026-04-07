@@ -10,9 +10,10 @@ applicable_scope: Layer 7 风险管理层
 compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
 responsibility:
-  - 实施指南、部署文档
+  - 尾部风险对冲
   - 期权对冲策略
   - VIX对冲
+  - 极端风险保护
 ---
 
 # 尾部风险对冲蓝图

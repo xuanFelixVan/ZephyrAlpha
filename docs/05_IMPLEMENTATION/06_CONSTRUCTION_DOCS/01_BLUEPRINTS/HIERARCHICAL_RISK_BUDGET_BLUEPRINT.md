@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 层级风险预算
+  - 风险预算分配
+  - 风险层级管理
+  - 风险预算优化
 
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0

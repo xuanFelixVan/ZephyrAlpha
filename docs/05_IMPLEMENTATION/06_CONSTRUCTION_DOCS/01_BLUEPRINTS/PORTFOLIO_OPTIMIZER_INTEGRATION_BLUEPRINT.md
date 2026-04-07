@@ -1,8 +1,9 @@
 ---
 responsibility:
-  - 实施指南、部署文档
-  - 风险预算
-  - 数据质量
+  - 组合优化引擎集成
+  - 优化器接口
+  - 多优化器协调
+  - 优化结果融合
 
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0
