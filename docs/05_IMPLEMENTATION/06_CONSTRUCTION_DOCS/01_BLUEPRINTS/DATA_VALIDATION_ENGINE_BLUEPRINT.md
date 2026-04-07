@@ -320,3 +320,170 @@ class IntegrityValidator:
         return {
             'tick_data': DataFrameSchema({
                 'symbol': Column(str, Check.str_length(min_value=1)),
+                'timestamp': Column(pa.DateTime, nullable=False),
+                'open': Column(float, Check.ge(0)),
+                'high': Column(float, Check.ge(0)),
+                'low': Column(float, Check.ge(0)),
+                'close': Column(float, Check.ge(0)),
+                'volume': Column(int, Check.ge(0)),
+            }, strict=True),
+            
+            'order_book': DataFrameSchema({
+                'symbol': Column(str, Check.str_length(min_value=1)),
+                'timestamp': Column(pa.DateTime, nullable=False),
+                'bid_price': Column(float, Check.ge(0)),
+                'bid_volume': Column(int, Check.ge(0)),
+                'ask_price': Column(float, Check.ge(0)),
+                'ask_volume': Column(int, Check.ge(0)),
+            }, strict=True),
+            
+            'trade_data': DataFrameSchema({
+                'symbol': Column(str, Check.str_length(min_value=1)),
+                'timestamp': Column(pa.DateTime, nullable=False),
+                'price': Column(float, Check.ge(0)),
+                'volume': Column(int, Check.ge(0)),
+                'side': Column(str, Check.isin(['buy', 'sell'])),
+            }, strict=True)
+        }
+    
+    def validate_schema(self, df, schema_name):
+        """
+        验证Schema
+        
+        Args:
+            df: Spark DataFrame
+            schema_name: Schema名称
+        
+        Returns:
+            ValidationResult: 验证结果
+        """
+        schema = self.schemas.get(schema_name)
+        
+        if not schema:
+            raise ValueError(f"Unknown schema: {schema_name}")
+        
+        try:
+            validated_df = schema.validate(df)
+            return {
+                'success': True,
+                'errors': [],
+                'warnings': []
+            }
+        except pa.errors.SchemaError as e:
+            return {
+                'success': False,
+                'errors': e.failure_cases.to_dict('records'),
+                'warnings': []
+            }
+    
+    def validate_completeness(self, df, required_columns):
+        """
+        验证数据完整性
+        
+        Args:
+            df: Spark DataFrame
+            required_columns: 必填列列表
+        
+        Returns:
+            ValidationResult: 验证结果
+        """
+        errors = []
+        
+        for col in required_columns:
+            null_count = df.filter(df[col].isNull()).count()
+            if null_count > 0:
+                errors.append({
+                    'column': col,
+                    'error': f"Found {null_count} null values",
+                    'severity': 'error'
+                })
+        
+        return {
+            'success': len(errors) == 0,
+            'errors': errors,
+            'warnings': []
+        }
+    
+    def validate_uniqueness(self, df, unique_columns):
+        """
+        验证唯一性约束
+        
+        Args:
+            df: Spark DataFrame
+            unique_columns: 唯一性约束列列表
+        
+        Returns:
+            ValidationResult: 验证结果
+        """
+        errors = []
+        
+        for cols in unique_columns:
+            if isinstance(cols, str):
+                cols = [cols]
+            
+            duplicate_count = df.groupBy(*cols).count().filter('count > 1').count()
+            
+            if duplicate_count > 0:
+                errors.append({
+                    'columns': cols,
+                    'error': f"Found {duplicate_count} duplicate groups",
+                    'severity': 'error'
+                })
+        
+        return {
+            'success': len(errors) == 0,
+            'errors': errors,
+            'warnings': []
+        }
+```
+
+### 3.3 一致性验证器
+
+**技术栈**: 自定义实现
+
+**核心功能**:
+- 跨数据源对比
+- 时间戳对齐
+- 价格一致性验证
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, abs as spark_abs
+
+class ConsistencyValidator:
+    """一致性验证器"""
+    
+    def __init__(self, spark: SparkSession, config):
+        self.spark = spark
+        self.config = config
+        self.tolerance = config.get('tolerance', 0.01)
+    
+    def validate_cross_source(self, df1, df2, key_columns, value_columns):
+        """
+        跨数据源验证
+        
+        Args:
+            df1: 第一个数据源
+            df2: 第二个数据源
+            key_columns: 键列
+            value_columns: 值列
+        
+        Returns:
+            ValidationResult: 验证结果
+        """
+        errors = []
+        
+        joined_df = df1.alias('a').join(
+            df2.alias('b'),
+            on=key_columns,
+            how='inner'
+        )
+        
+        for value_col in value_columns:
+            diff_col = f"{value_col}_diff"
+            joined_df = joined_df.withColumn(
+                diff_col,
+                spark_abs(col(f"a.{value_col}") - col(f"b.{value_col}")) / col(f"a.{value_col}")
+            )
+            
+            inconsistent_count = joined_df

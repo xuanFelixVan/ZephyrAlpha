@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-04
 owner: 首席文档架构�?
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 执行引擎、订单执行、交易执行
 standard_type: 专业量化机构文档
 applicable_scope: 订单生成算法
 compliance_level: 初始标准

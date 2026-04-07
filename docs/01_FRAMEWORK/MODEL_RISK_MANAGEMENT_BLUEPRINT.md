@@ -30,8 +30,9 @@ responsibility_boundary: |
   - MODEL_REGISTRY_BLUEPRINT.md: 模型版本管理
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
 responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
+  - 模型生命周期管理
+  - 模型风险评估
+  - 模型验证测试
 ---
 
 # 模型风险管理系统蓝图

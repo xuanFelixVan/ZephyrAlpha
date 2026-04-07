@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: Þ«¥Þ«íÚÿÂµ«Á
 owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
 responsibility:
-  - 扩展功能、辅助模块、支撑文档
+  - 执行引擎、订单执行、交易执行
 version: 1.0.0
 module_id: EXE_IMPORTANT_PYTHON_VER
 created_date: 2026-04-02
