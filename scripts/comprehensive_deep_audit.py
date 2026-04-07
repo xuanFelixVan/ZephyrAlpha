@@ -263,6 +263,9 @@ class ComprehensiveDeepAuditor:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
+                
                 # 提取YAML头部
                 yaml_match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
                 
@@ -350,6 +353,9 @@ class ComprehensiveDeepAuditor:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
+                
                 # 计算内容哈希
                 content_hash = hashlib.md5(content.encode()).hexdigest()
                 self.content_hashes[content_hash].append(str(md_file.relative_to(self.layer_path)))
@@ -379,6 +385,9 @@ class ComprehensiveDeepAuditor:
             try:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
+                
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
                 
                 # 检查旧架构引用
                 if re.search(r'Layer\s*[0-9]', content, re.IGNORECASE):
@@ -468,6 +477,9 @@ class ComprehensiveDeepAuditor:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
+                # 移除BOM字符
+                content = content.lstrip('\ufeff')
+                
                 lines = content.split('\n')
                 
                 # 检查文档过短
@@ -497,6 +509,10 @@ class ComprehensiveDeepAuditor:
                         content1 = f.read()
                     with open(file2, 'r', encoding='utf-8') as f:
                         content2 = f.read()
+                    
+                    # 移除BOM字符
+                    content1 = content1.lstrip('\ufeff')
+                    content2 = content2.lstrip('\ufeff')
                     
                     # 计算相似度（简化版）
                     similarity = self.calculate_similarity(content1, content2)
