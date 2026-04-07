@@ -18,6 +18,12 @@ layer: "Layer 6 (ç»åä¼åå±?"
 
 # ECONOMIC REGIME ENGINE BLUEPRINT
 
+## 核心定位
+
+负责经济周期引擎的设计与实现，识别经济周期阶段。
+
+
+
 > **æ ¸å¿èè´£**: Economic Regime Engineèå¾è®¾è®¡
 > **èè´£è¾¹ç**: 
 > - â?æ¬ææ¡£è´è´£ï¼Economic Regime Engineèå¾è®¾è®¡ç¸å³åå®¹
