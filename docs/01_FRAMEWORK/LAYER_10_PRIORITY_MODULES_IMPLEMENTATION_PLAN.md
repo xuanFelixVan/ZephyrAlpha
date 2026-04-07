@@ -11,6 +11,10 @@ applicable_scope: Layer 10优先实施模块个人开发AI维护方案
 compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 蓝图阶段完成
+responsibility:
+  - 优先实施方案
+  - 详细实施步骤
+  - 个人开发适配方案
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
   - 5个优先实施模块的实施方案

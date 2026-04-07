@@ -21,7 +21,8 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 10 治理与合规层）：
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---

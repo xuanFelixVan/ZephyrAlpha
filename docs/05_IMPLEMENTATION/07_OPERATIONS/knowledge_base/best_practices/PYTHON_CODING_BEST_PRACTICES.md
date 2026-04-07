@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../BEST_PRACTICES_INDEX.md
 implementation_status: Active

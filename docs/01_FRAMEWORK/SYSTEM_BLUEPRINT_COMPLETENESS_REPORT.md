@@ -9,7 +9,7 @@ standard_type: 系统蓝图完整性报告
 applicable_scope: 全系统蓝图完整性分析
 compliance_level: 专业机构标准
 responsibility:
-  - 系统蓝图完整性分析
+  - 系统框架、架构设计
 
 ---
 # 清风量化系统蓝图完整性报告

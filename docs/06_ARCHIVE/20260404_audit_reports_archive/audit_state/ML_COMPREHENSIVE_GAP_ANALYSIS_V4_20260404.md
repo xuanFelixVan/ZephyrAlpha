@@ -6,7 +6,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮДх╕?layer: Layer 4 (цЬ║хЩихнжф╣ах▒?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 standard_type: х╖ош╖ЭхИЖцЮРцКехСК
 ---
 ---

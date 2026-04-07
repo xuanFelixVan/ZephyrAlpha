@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 
 module_id: AUTOMATED_CHECK_REPORT_20260407_031229
 version: 1.0.0

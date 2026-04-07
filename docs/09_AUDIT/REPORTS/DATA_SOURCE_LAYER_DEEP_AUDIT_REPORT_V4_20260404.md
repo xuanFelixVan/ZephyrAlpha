@@ -11,7 +11,8 @@ compliance_level: 专业标准
 parent_document: ../../09_AUDIT/INDEX.md
 implementation_status: 已完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

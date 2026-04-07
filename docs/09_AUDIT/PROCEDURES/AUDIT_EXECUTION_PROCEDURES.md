@@ -1,7 +1,7 @@
 ---
 standard_type: ﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷
 responsibility:
-  - 绩效分析
+  - 审计报告、合规检查
   - 文档治理
   - 审计系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ

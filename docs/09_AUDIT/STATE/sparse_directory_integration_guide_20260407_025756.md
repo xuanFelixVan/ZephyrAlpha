@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
+
 ---
 
 # 稀疏目录整合指南

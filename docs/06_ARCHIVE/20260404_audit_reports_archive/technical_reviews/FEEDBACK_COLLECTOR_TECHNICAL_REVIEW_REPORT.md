@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 系统架构
+  - 归档文档、历史版本、技术评审
   - 文档治理
 standard_type: 专业量化机构技术评审报�?
 applicable_scope: Layer 8 - 人机交互�?

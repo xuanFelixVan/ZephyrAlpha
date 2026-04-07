@@ -26,7 +26,8 @@ responsibility_boundary: |
   基础自然语言界面请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
   报告问答请参考：REPORT_INTELLIGENT_QA_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

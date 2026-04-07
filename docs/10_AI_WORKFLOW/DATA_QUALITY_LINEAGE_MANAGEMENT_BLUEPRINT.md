@@ -16,7 +16,8 @@ integrated_modules:
   - AIWF_DQM_001
   - AIWF_DLT_001
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 

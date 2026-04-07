@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 standard_type: 文档恢复执行报告
 applicable_scope: 策略执行层文档恢复
 compliance_level: 专业标准

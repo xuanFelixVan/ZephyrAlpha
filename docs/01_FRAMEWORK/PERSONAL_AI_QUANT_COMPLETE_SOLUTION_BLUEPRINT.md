@@ -17,7 +17,8 @@ related_documents:
 parent_document: INDEX.md
 implementation_status: 规划阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

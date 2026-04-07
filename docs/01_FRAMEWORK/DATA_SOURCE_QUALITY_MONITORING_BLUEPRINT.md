@@ -27,7 +27,8 @@ responsibility_boundary: |
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---
@@ -1225,7 +1226,7 @@ python src/data_quality/monitor.py
 #### Layer 0: 数据源层
 ##### 0.001. Data Source Quality Monitoring Blueprint
 - **模块ID**: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT_001
-- **蓝图文档**: [DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md](./01_FRAMEWORK\DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: [DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md](01_FRAMEWORK\DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 0数据源质量监控
 - **状态**: Active

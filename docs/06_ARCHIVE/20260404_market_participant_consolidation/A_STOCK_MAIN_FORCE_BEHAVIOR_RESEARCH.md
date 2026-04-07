@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本
 standard_type: ύιΦύσ╢ϋ╡ΕόΨβό▒Θύ╝Ψ
 applicable_scope: ί╕Γίε║ίΠΓϊ╕ΟϋΑΖϋκΝϊ╕║όρκόΜθύ│╗ύ╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ---
 

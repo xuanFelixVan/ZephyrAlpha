@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 培训团队
 responsibility:
-  - 培训体系
+  - 实施指南、操作手册
   - 能力提升
   - 知识传承
 standard_type: 培训指南

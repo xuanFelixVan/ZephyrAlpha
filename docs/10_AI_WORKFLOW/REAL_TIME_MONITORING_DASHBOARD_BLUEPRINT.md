@@ -13,7 +13,8 @@ layer: Layer 3 (舆情分析层)
 priority: P0
 estimated_effort: 30h
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 

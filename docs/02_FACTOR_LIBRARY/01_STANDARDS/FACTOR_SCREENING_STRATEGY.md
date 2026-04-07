@@ -6,7 +6,7 @@ created_date: 2026-03-30
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算、因子库管理
 standard_type: 因子筛选策略标准
 applicable_scope: Layer 2 Alpha因子层- 因子筛选流程
 compliance_level: 专业标准

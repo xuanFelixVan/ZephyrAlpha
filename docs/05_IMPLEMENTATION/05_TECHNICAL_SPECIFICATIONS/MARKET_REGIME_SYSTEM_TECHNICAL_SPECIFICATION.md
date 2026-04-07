@@ -18,7 +18,8 @@ applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
+
 ---
 ---
 

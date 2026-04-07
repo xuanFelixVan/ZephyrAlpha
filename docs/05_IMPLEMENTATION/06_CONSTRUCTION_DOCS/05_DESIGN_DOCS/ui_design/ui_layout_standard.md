@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: 专业量化机构标准
 applicable_scope: 全系统标准规�?
 compliance_level: 标准规范

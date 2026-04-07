@@ -21,7 +21,8 @@ open_source_projects:
 responsibility_boundary: |
   本文档职责（Layer 7 AI报告层）：
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

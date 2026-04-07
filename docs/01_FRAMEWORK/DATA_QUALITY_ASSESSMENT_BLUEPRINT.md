@@ -26,7 +26,8 @@ responsibility_boundary: |
   - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---
@@ -875,7 +876,7 @@ python src/data_quality/assessor.py
 #### Layer 1: 数据层
 ##### 0.001. Data Quality Assessment Blueprint
 - **模块ID**: DATA_QUALITY_ASSESSMENT_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_ASSESSMENT_BLUEPRINT.md](./01_FRAMEWORK\DATA_QUALITY_ASSESSMENT_BLUEPRINT.md)
+- **蓝图文档**: [DATA_QUALITY_ASSESSMENT_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_ASSESSMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 1数据质量评估
 - **状态**: Active

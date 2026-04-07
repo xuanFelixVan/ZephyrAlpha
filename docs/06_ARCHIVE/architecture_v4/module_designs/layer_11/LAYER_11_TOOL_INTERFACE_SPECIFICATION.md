@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﮒﺝ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 applicable_scope: Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
 parent_document: ./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md

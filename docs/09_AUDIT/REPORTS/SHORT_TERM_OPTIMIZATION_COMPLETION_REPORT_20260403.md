@@ -8,7 +8,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: й¶ЦеЄ≠иУЭеЫЊжЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзЯ≠жЬЯдЉШеМЦеЃМжИРжК•еСК
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: еЕ®з≥їзїЯжЦЗж°£ж≤їзРЖдЉШеМ?compliance_level: дЄУдЄЪж†ЗеЗЖ
 ---
 ---

@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实时数据分发
+  - 实施指南、部署文档
   - 数据订阅管理
   - 消息推送
 layer: "Layer 1 (数据预处理层)"

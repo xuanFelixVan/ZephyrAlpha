@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: хобшобч│╗ч╗Я
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 审计系统
   - 安全系统
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК

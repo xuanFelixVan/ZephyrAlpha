@@ -1,7 +1,7 @@
 ---
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 数据源
   - 文档治理
 applicable_scope: хЕич│╗ч╗?compliance_level: цнгх╝ПцаЗхЗЖ

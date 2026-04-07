@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 layer: Layer 11
 module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
 priority: P0

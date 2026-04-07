@@ -12,7 +12,10 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - Layer 10索引导航
+  - 蓝图文档索引
+  - 模块覆盖度分析
+
 ---
 ---
 ---

@@ -5,7 +5,7 @@ status: Archived
 created_date: 2026-04-04
 owner: 审计系统架构�?standard_type: 归档索引
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 applicable_scope: 审计报告归档
 archive_date: 2026-04-04
 archive_reason: 整理分散的审计报告，统一归档管理

@@ -12,7 +12,8 @@ reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two S
 parent_document: ../INDEX.md
 implementation_status: è¿è¡?
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

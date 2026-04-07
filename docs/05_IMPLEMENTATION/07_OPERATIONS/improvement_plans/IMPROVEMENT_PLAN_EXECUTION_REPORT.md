@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ф╕кф║║х╝АхПСя┐╜?standard_type: цФ╣ш┐ЫшобхИТцЙзшбМцКехСК
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
 applicable_scope: Layer 5 чнЦчХецЙзшбМя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 implementation_status: цЙзшбМя┐?---
 

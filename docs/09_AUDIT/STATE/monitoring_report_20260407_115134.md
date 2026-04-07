@@ -1,3 +1,15 @@
+---
+responsibility:
+  - 审计报告、合规检查
+module_id: 09_AUDIT_MONITORING_REPORT_20260407_115134_20260407124139
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+standard_type: 专业量化机构文档
+---
+
 # 文档治理监控报告
 
 > **监控时间**: 2026-04-07 11:51:34

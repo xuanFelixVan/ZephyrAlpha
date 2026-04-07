@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 responsibility:
-  - 市场状态识别
+  - 归档文档、历史版本、审计状态追踪
   - 因子计算
   - 组合优化
 standard_type: 专业量化机构审计标准

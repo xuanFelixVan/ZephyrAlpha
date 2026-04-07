@@ -6,7 +6,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 数据源
   - 绩效分析
 standard_type: 专业量化机构索引文档
@@ -46,8 +46,8 @@ parent_document: ../INDEX.md---
 ### audit_state/ - 审计状态
 | 文档 | 职责 |
 |------|------|
-| [LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md](./audit_state/LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md) | Layer5深度审计报告 |
-| [LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md](./audit_state/LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md) | Layer2因子审计报告 |
+
+
 
 ### knowledge_base/ - 知识库
 | 文档 | 职责 |

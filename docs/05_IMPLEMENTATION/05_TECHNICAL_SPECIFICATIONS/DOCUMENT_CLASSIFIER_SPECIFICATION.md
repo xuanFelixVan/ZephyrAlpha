@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒﻝﺎﭨﻝﺏﭨﻝﭨ
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ

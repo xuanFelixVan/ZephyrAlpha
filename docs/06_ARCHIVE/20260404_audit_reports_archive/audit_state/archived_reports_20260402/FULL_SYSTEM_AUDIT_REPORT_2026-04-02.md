@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: Audit Sentinel
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、审计状态追踪
   - 文档治理
   - 审计系统
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДхобшобцаЗхЗЖ

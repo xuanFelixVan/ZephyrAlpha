@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 standard_type: 索引文档
 applicable_scope: 文档索引导航
 compliance_level: 专业标准
@@ -74,9 +74,9 @@ compliance_level: 专业标准
 
 ## 🔗 相关文档
 
-- [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
-- [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+
+
+
 
 ---
 

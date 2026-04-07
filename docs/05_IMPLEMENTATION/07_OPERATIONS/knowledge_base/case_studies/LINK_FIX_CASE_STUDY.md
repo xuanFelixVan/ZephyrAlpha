@@ -1,7 +1,7 @@
 ---
 standard_type: όκΙϊ╛ΜύιΦύσ╢
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 文档治理
 applicable_scope: όΨΘόκμό▓╗ύΡΗ
 compliance_level: όφμί╝ΠόιΘίΘΗ

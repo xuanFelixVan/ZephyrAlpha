@@ -1,7 +1,7 @@
 ---
 standard_type: у«АуљєТаЄтЄє
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: тЁеу│╗у╗?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: DOCUMENT_CLASSIFICATION_STANDARD.md
 implementation_status: ти▓т«їТѕ?owner: ждќтИГТъХТъётИ?version: 1.0.0

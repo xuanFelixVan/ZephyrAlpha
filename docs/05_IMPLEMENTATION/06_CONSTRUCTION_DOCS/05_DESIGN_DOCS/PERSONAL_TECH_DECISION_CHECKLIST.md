@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻝﺏﭨﻝﭨﮒﺙﮒ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﮒﺏﻝ­ﮔﭖﻝ۷
 applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮒ؟ﻝ۷ﮔ ﮒ

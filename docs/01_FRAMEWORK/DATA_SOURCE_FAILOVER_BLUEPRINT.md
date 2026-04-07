@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据源故障转移模块

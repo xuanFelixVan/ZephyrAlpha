@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 
 module_id: DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT_001
 version: 1.0.0

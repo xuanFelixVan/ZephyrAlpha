@@ -25,7 +25,7 @@ responsibility_boundary: |
   - 知识共享（研究笔记、实验记录、经验分享）
   - 项目管理（任务分配、进度跟踪、成果管理）
 responsibility:
-  - 研究协作
+  - 系统框架、架构设计
   - AI辅助
 ---
 

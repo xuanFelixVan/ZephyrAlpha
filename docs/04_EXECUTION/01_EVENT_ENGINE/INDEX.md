@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзіҐеЉХ
 responsibility:
-  - 文档治理
+  - 索引文档、导航目录
 applicable_scope: дЇЛдїґеЉХжУОзЫЃељХ
 compliance_level: дЄУдЄЪж†ЗеЗЖ
 parent_document: ../INDEX.md

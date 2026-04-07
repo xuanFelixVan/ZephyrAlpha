@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 version: 1.0.0
 module_id: IMP_COMPREHENSIVE_AUDIT_
 created_date: 2026-04-02

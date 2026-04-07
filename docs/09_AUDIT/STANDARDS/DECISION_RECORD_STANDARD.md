@@ -1,7 +1,7 @@
 ---
 standard_type: ﻝ؟۰ﻝﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: ﮒﺏﻝ­ﮔﭖﻝ۷
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../INDEX.md

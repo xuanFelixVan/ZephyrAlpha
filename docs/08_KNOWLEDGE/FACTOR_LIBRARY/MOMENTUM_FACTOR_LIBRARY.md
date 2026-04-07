@@ -1,7 +1,7 @@
 ---
 standard_type: ﮒ ﮒ­ﮔﮔ۰۲
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
   - 文档治理
   - 日志系统
 applicable_scope: ﮒ ﮒ­ﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ

@@ -1,10 +1,10 @@
 ---
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
   - 风险预算
   - 数据质量
 
-module_id: DOCUMENT_MAINTENANCE_PROCESS_001
+module_id: 10_GOVERNANCE_COMPLIANCE_DOCUMENT_MAINTENANCE_PROCESS_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

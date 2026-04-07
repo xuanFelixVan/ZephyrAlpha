@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 交易策略、战术执行
   - 系统架构
   - 文档治理
 ---

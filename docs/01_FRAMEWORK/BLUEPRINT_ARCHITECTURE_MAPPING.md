@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?standard_type: æ¶ææ å°ææ¡£
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 applicable_scope: å¨ç³»?compliance_level: ä¸ä¸æ å
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 layer: Layer 2 (Alpha因子层)
@@ -54,7 +54,7 @@ layer: Layer 2 (Alpha因子层)
 ### 2.1 å®æ´æ å°?
 | ä¸çº§æ¶é´æ¡æ¶æ¶æ | Layerå®ä½ | æ ¸å¿æ¨¡å | ææ¯è§æ ¼ä¹¦ |
 |----------------|----------|---------|-----------|
-| **ç¬¬ä¸?å®è§éç½®?* | Layer 5 | ç»æµèå¼å¤æ­å¼æ<br>å¨å¤©åéç½®ä¼åå¨ | [ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md) |
+| **ç¬¬ä¸?å®è§éç½®?* | Layer 5 | ç»æµèå¼å¤æ­å¼æ<br>å¨å¤©åéç½®ä¼åå¨ | [ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION\05_TECHNICAL_SPECIFICATIONS\ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md) |
 | **ç¬¬äº?ä¸­è§ç­ç¥?* | Layer 2-4 | å¸åºç¶æè¯å«ç³»?br>é¿å°æ³å å­å·¥?br>æ¥çº¿ç»åä¼å?| å¾ç?|
 | **ç¬¬ä¸?å¾®è§æ§è¡?* | Layer 5-6 | åéæ§è¡ä¼å?br>æºè½æ§è¡ç®æ³?br>å®æ¶é£é©å¯¹å²å¼æ | [SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md)<br>[MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md) |
 | **è´¯ç©¿æ¯æç³»ç»** | Layer 0-11 | ç»ä¸æ°æ®åºç¡è®¾æ½<br>å¤æ¶é´æ¡æ¶é£æ§ä½?br>å¨å¨æç»©æå½å ç³»?| [QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md) |
@@ -72,7 +72,7 @@ layer: Layer 2 (Alpha因子层)
 | æç¥èµäº§æéåé | StrategicAllocator | Layer 5 | å­£åº¦è°ä»å³ç­ |
 
 **ææ¯è§æ ¼ä¹¦å¯¹åº**:
-- ?[ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md)
+- ?[ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION\05_TECHNICAL_SPECIFICATIONS\ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md)
 - â ï¸ ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md - å¾ç?
 #### 2.2.2 ç¬¬äº?ä¸­è§ç­ç¥??Layer 2-4
 
@@ -165,7 +165,7 @@ layer: Layer 2 (Alpha因子层)
 - æ¥åçææºå¶
 - äººæºåä½æµç¨
 
-**åèæ?*: [LAYER_8_MASTER_BLUEPRINT.md](./LAYER_8_MASTER_BLUEPRINT.md)
+**åèæ?*: [LAYER_8_MASTER_BLUEPRINT.md](LAYER_8_MASTER_BLUEPRINT.md)
 
 #### 4.1.2 æ°æ®æµå¾(ç¼ºå¤±)
 

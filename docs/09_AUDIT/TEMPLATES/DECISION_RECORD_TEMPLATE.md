@@ -1,7 +1,7 @@
 ---
 standard_type: цЦЗцбгцибцЭ┐
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
 applicable_scope: хЖ│чнЦц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../STANDARDS/DECISION_RECORD_STANDARD.md

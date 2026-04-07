@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ч│╗ч╗ЯцЮ╢цЮД?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДц╖▒х║жхобшобцКехСК
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 applicable_scope: хЕич│╗ч╗ЯцЦЗцбгц▓╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md
 implementation_status: х╖▓хоМ?

@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 数据源
   - 机器学习
 standard_type: 专业量化机构评审报告

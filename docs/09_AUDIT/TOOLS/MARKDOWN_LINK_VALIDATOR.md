@@ -8,7 +8,7 @@ created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 绩效分析
   - 系统架构
 standard_type: 专业量化机构工具

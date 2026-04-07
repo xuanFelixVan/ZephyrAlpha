@@ -20,7 +20,8 @@ related_documents:
   - QUALITY_MONITORING_BLUEPRINT.md
   - PERFORMANCE_MONITORING.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 

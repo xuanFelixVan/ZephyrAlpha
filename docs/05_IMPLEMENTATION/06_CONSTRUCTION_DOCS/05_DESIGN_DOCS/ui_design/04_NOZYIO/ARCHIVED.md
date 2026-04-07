@@ -1,5 +1,5 @@
 ---
-module_id: ARCHIVED_001
+module_id: 05_IMPLEMENTATION_ARCHIVED_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 系统架构
+  - 实施指南、部署文档
   - 文档治理
 ---
 

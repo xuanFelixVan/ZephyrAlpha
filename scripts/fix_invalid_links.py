@@ -1,154 +1,207 @@
-import os
-import re
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+修复无效链接脚本
+自动修复文档索引中的无效链接
+"""
 
-def fix_invalid_links():
-    """修复无效链接"""
+import re
+from pathlib import Path
+from typing import List, Dict, Tuple
+import sys
+
+class InvalidLinkFixer:
+    def __init__(self, docs_root: str = "docs"):
+        self.docs_root = Path(docs_root)
+        self.results = {
+            'total_files': 0,
+            'fixed_files': 0,
+            'removed_links': 0,
+            'errors': []
+        }
     
-    # 定义需要修复的INDEX.md文件和修复规则
-    fixes = {
-        'docs/INDEX.md': {
-            'remove_links': [
-                './02_FACTOR_LIBRARY/System_Manifest.md',
-                './02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md',
-                './02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md',
-                './03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md',
-            ]
-        },
-        'docs/01_FRAMEWORK/INDEX.md': {
-            'remove_links': [
-                './STRESS_TESTING_SYSTEM_BLUEPRINT.md',
-                './RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md',
-                './COMPLIANCE_AUDIT_LOG_BLUEPRINT.md',
-                './MODEL_COMPRESSION_BLUEPRINT.md',
-                './DATA_VERSION_CONTROL_BLUEPRINT.md',
-            ]
-        },
-        'docs/02_FACTOR_LIBRARY/INDEX.md': {
-            'update_links': {
-                './04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS.md': './04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md'
-            }
-        },
-        'docs/03_TRADING_TACTICS/INDEX.md': {
-            'remove_links': [
-                '../08_AI_GOVERNANCE/AI_Permissions.md',
-                '../01_FRAMEWORK/HUMAN_AI_FLOW.md',
-                '../../DOCUMENT_AUDIT_v5.3.md',
-            ]
-        },
-        'docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/INDEX.md': {
-            'remove_links': [
-                '../09_ARCHIVE/TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED.md',
-            ]
-        },
-        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md': {
-            'update_links': {
-                '01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md': '01_BLUEPRINTS/STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md'
-            }
-        },
-        'docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md': {
-            'remove_links': [
-                '../../09_AUDIT/REPORTS/IMMEDIATE_ACTION_EXECUTION_REPORT_20260406.md',
-            ]
-        },
-        'docs/08_KNOWLEDGE/INDEX.md': {
-            'remove_links': [
-                'BEST_PRACTICES/RISK_MANAGEMENT_BEST_PRACTICES.md',
-                'BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md',
-                'FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md',
-                'STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md',
-                '../03_STRATEGY_ENGINE/INDEX.md',
-                '../04_RISK_CONTROL/INDEX.md',
-            ]
-        },
-        'docs/09_RESEARCH_INNOVATION/01_ai_research_lab/INDEX.md': {
-            'remove_links': [
-                './AI研究团队架构.md',
-                './自动化研究流程.md',
-                './研究成果评估.md',
-                './研究员能力模型.md',
-                './实验设计框架.md',
-                './知识沉淀机制.md',
-            ]
-        },
-        'docs/10_AI_WORKFLOW/INDEX.md': {
-            'remove_links': [
-                '../02_FACTOR_LIBRARY/System_Manifest.md',
-            ]
-        },
-        'docs/10_GOVERNANCE_COMPLIANCE/01_internal_controls/INDEX.md': {
-            'remove_links': [
-                './风险控制框架.md',
-                './合规管理制度.md',
-                './内部审计制度.md',
-                './监管合规清单.md',
-                './合规检查流程.md',
-                './审计追踪机制.md',
-            ]
-        },
-        'docs/11_STRATEGIC_DECISION/01_asset_allocation/INDEX.md': {
-            'remove_links': [
-                './资产配置模型.md',
-                './风险预算框架.md',
-                './策略选择框架.md',
-                './配置优化方法.md',
-                './策略组合优化.md',
-                './战略调整机制.md',
-            ]
-        },
-    }
+    def find_all_index_files(self) -> List[Path]:
+        """查找所有INDEX.md文件"""
+        index_files = []
+        for index_file in self.docs_root.rglob("INDEX.md"):
+            index_files.append(index_file)
+        return index_files
     
-    print('=' * 80)
-    print('修复无效链接')
-    print('=' * 80)
-    print()
+    def is_archive_index(self, file_path: Path) -> bool:
+        """判断是否为归档目录的索引文件"""
+        archive_indicators = ['06_ARCHIVE', '99_ARCHIVE', 'archive', 'archived']
+        return any(indicator in str(file_path) for indicator in archive_indicators)
     
-    fixed_count = 0
+    def fix_archive_index_links(self, index_file: Path) -> Tuple[bool, int]:
+        """修复归档目录索引中的无效链接"""
+        try:
+            with open(index_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            original_content = content
+            removed_count = 0
+            
+            # 查找所有相对路径链接
+            link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
+            matches = list(re.finditer(link_pattern, content))
+            
+            # 从后往前删除，避免位置偏移
+            for match in reversed(matches):
+                link_text = match.group(1)
+                link_url = match.group(2)
+                
+                # 跳过外部链接和锚点链接
+                if link_url.startswith('http://') or link_url.startswith('https://') or link_url.startswith('#'):
+                    continue
+                
+                # 检查是否为审计相关的链接
+                if '09_AUDIT' in link_url or 'MODULE_ID_REGISTRY' in link_url or 'RESPONSIBILITY_BOUNDARY' in link_url or 'PROFESSIONAL_DOCUMENT_GOVERNANCE' in link_url:
+                    # 移除这行
+                    line_start = content.rfind('\n', 0, match.start()) + 1
+                    line_end = content.find('\n', match.end())
+                    if line_end == -1:
+                        line_end = len(content)
+                    
+                    line = content[line_start:line_end]
+                    
+                    # 检查是否为表格行或列表项
+                    if line.strip().startswith('|') or line.strip().startswith('-') or line.strip().startswith('*'):
+                        content = content[:line_start] + content[line_end:]
+                        removed_count += 1
+            
+            if content != original_content:
+                with open(index_file, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return True, removed_count
+            
+            return False, 0
+            
+        except Exception as e:
+            self.results['errors'].append(f"修复文件 {index_file} 时出错: {str(e)}")
+            return False, 0
     
-    for index_file, fix_rules in fixes.items():
-        if not os.path.exists(index_file):
-            print(f'❌ 文件不存在: {index_file}')
-            continue
+    def fix_regular_index_links(self, index_file: Path) -> Tuple[bool, int]:
+        """修复常规索引中的无效链接"""
+        try:
+            with open(index_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            original_content = content
+            removed_count = 0
+            
+            # 查找所有相对路径链接
+            link_pattern = r'\[([^\]]+)\]\(([^)]+)\)'
+            matches = list(re.finditer(link_pattern, content))
+            
+            # 从后往前删除，避免位置偏移
+            for match in reversed(matches):
+                link_text = match.group(1)
+                link_url = match.group(2)
+                
+                # 跳过外部链接和锚点链接
+                if link_url.startswith('http://') or link_url.startswith('https://') or link_url.startswith('#'):
+                    continue
+                
+                # 处理相对路径
+                if link_url.startswith('./'):
+                    target_path = index_file.parent / link_url[2:]
+                elif link_url.startswith('../'):
+                    target_path = index_file.parent / link_url
+                else:
+                    target_path = index_file.parent / link_url
+                
+                # 规范化路径
+                try:
+                    target_path = target_path.resolve()
+                except:
+                    continue
+                
+                # 检查文件是否存在
+                if not target_path.exists():
+                    # 移除这行
+                    line_start = content.rfind('\n', 0, match.start()) + 1
+                    line_end = content.find('\n', match.end())
+                    if line_end == -1:
+                        line_end = len(content)
+                    
+                    line = content[line_start:line_end]
+                    
+                    # 检查是否为表格行或列表项
+                    if line.strip().startswith('|') or line.strip().startswith('-') or line.strip().startswith('*'):
+                        content = content[:line_start] + content[line_end:]
+                        removed_count += 1
+            
+            if content != original_content:
+                with open(index_file, 'w', encoding='utf-8') as f:
+                    f.write(content)
+                return True, removed_count
+            
+            return False, 0
+            
+        except Exception as e:
+            self.results['errors'].append(f"修复文件 {index_file} 时出错: {str(e)}")
+            return False, 0
+    
+    def run_fix(self):
+        """运行修复"""
+        print("=" * 80)
+        print("无效链接修复")
+        print("=" * 80)
+        print(f"文档根目录: {self.docs_root}")
+        print()
         
-        print(f'处理文件: {index_file}')
+        # 查找所有索引文件
+        index_files = self.find_all_index_files()
+        print(f"找到索引文件数: {len(index_files)}")
+        print()
         
-        # 读取文件内容
-        with open(index_file, 'r', encoding='utf-8') as f:
-            content = f.read()
+        # 分类处理
+        archive_indexes = [f for f in index_files if self.is_archive_index(f)]
+        regular_indexes = [f for f in index_files if not self.is_archive_index(f)]
         
-        original_content = content
+        print(f"归档目录索引文件数: {len(archive_indexes)}")
+        print(f"常规索引文件数: {len(regular_indexes)}")
+        print()
         
-        # 删除无效链接
-        if 'remove_links' in fix_rules:
-            for link_url in fix_rules['remove_links']:
-                # 匹配Markdown链接格式: [text](url)
-                pattern = rf'\[[^\]]+\]\({re.escape(link_url)}[^\)]*\)\s*\n?'
-                content = re.sub(pattern, '', content)
-                print(f'  删除链接: {link_url}')
+        # 修复归档目录索引
+        print("=" * 80)
+        print("修复归档目录索引")
+        print("=" * 80)
         
-        # 更新链接
-        if 'update_links' in fix_rules:
-            for old_url, new_url in fix_rules['update_links'].items():
-                # 匹配Markdown链接格式: [text](url)
-                pattern = rf'(\[[^\]]+\])\({re.escape(old_url)}\)'
-                replacement = rf'\1({new_url})'
-                content = re.sub(pattern, replacement, content)
-                print(f'  更新链接: {old_url} -> {new_url}')
-        
-        # 如果内容有变化，保存文件
-        if content != original_content:
-            with open(index_file, 'w', encoding='utf-8') as f:
-                f.write(content)
-            print(f'  ✅ 已保存修改')
-            fixed_count += 1
-        else:
-            print(f'  ⚠️ 无需修改')
+        for index_file in archive_indexes:
+            fixed, removed = self.fix_archive_index_links(index_file)
+            if fixed:
+                self.results['fixed_files'] += 1
+                self.results['removed_links'] += removed
+                print(f"✅ 修复: {index_file.relative_to(self.docs_root)} (移除 {removed} 个链接)")
         
         print()
-    
-    print('=' * 80)
-    print('修复完成')
-    print('=' * 80)
-    print(f'修复文件数: {fixed_count}')
+        
+        # 修复常规索引
+        print("=" * 80)
+        print("修复常规索引")
+        print("=" * 80)
+        
+        for index_file in regular_indexes:
+            fixed, removed = self.fix_regular_index_links(index_file)
+            if fixed:
+                self.results['fixed_files'] += 1
+                self.results['removed_links'] += removed
+                print(f"✅ 修复: {index_file.relative_to(self.docs_root)} (移除 {removed} 个链接)")
+        
+        print()
+        print("=" * 80)
+        print("修复统计")
+        print("=" * 80)
+        print(f"总文件数: {len(index_files)}")
+        print(f"修复文件数: {self.results['fixed_files']}")
+        print(f"移除链接数: {self.results['removed_links']}")
+        
+        if self.results['errors']:
+            print(f"\n错误数: {len(self.results['errors'])}")
+            for error in self.results['errors']:
+                print(f"  ❌ {error}")
 
-if __name__ == '__main__':
-    fix_invalid_links()
+if __name__ == "__main__":
+    fixer = InvalidLinkFixer()
+    fixer.run_fix()

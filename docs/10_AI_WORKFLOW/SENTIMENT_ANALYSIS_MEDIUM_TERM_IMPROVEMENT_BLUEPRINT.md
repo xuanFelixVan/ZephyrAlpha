@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 数据质量
+  - 蓝图设计、架构规划
   - 交易执行
   - 数据源
 layer: Layer 3 (舆情分析层)

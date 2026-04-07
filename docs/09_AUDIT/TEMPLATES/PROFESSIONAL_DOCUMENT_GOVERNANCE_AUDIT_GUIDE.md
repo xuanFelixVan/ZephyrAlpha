@@ -9,7 +9,8 @@ applicable_scope: 全系统质量监�?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

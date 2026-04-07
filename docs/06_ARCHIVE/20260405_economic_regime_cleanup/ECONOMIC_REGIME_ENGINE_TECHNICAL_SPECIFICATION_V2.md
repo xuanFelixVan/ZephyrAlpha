@@ -19,7 +19,8 @@ implementation_status: 开发阶?development_mode: 个人开?+ AI维护
 current_version: true
 archived_versions: [ECONOMIC_REGIME_ENGINE_001]
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
+
 ---
 ---
 

@@ -10,7 +10,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---
@@ -175,7 +176,7 @@ responsibility:
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
 | [AI_VIRTUAL_RESEARCH_TEAM/](./AI_VIRTUAL_RESEARCH_TEAM/) | AI虚拟研究团队蓝图 | 3 |
-| [ARCHITECTURE_DECISIONS/](./ARCHITECTURE_DECISIONS/) | 架构决策记录 | 1 |
+
 
 ---
 

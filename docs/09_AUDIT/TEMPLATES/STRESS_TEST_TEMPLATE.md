@@ -1,7 +1,7 @@
 ---
 standard_type: жөӢиҜ•ж–ҮжЎЈ
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 测试系统
 applicable_scope: йЈҺйҷ©з®ЎзҗҶ
 compliance_level: дё“дёҡж ҮеҮҶ

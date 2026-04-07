@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 绩效分析
   - 系统架构
 standard_type: ц╖▒х║жхобшобцКехСК

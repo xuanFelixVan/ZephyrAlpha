@@ -10,7 +10,7 @@ applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
 responsibility:
-  - 因子中性优化
+  - 实施指南、部署文档
   - 因子暴露约束
   - 行业中性策略
 ---

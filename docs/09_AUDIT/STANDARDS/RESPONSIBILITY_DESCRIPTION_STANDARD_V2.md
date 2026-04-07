@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 职责规范
   - 质量标准
 standard_type: 文档治理规范

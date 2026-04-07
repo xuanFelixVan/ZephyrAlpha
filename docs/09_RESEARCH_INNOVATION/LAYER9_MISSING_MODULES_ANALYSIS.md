@@ -9,7 +9,7 @@ standard_type: Layer 9缺失模块分析报告
 applicable_scope: Layer 9 - 研究与创新层缺失模块分析
 compliance_level: 专业机构标准
 responsibility:
-  - 缺失模块分析
+  - 研究创新、技术探索
 
 ---
 # Layer 9研究与创新层缺失模块深度分析报告

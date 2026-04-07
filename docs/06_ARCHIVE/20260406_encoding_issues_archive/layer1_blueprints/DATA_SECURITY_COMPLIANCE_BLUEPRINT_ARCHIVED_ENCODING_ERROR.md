@@ -17,7 +17,8 @@ priority: P0
 archive_reason: 编码错误归档
 archive_date: 2026-04-06
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、蓝图设计
+
 ---
 ---
 

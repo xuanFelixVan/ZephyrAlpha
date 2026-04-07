@@ -1,7 +1,7 @@
 ---
 standard_type: æ ¸å¿ææ¡£
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 applicable_scope: å¨ç³»ç»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
 implementation_status: å·²å®æ?owner: é¦å¸­ç ç©¶å®?version: 1.0.0

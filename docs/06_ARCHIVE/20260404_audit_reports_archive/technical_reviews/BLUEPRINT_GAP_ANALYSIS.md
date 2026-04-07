@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、技术评审
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДх╖ош╖ЭхИЖцЮРцКехСК
 applicable_scope: Layer 1цХ░цНощвДхдДчРЖх▒В | ф╕ЪхКбцЮ╢цЮД: ф╕Йч║зцЧ╢щЧ┤цбЖцЮ╢шЮНхРИцЮ╢цЮД
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

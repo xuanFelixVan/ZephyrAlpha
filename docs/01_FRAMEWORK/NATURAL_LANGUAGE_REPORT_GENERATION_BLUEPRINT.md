@@ -34,7 +34,8 @@ responsibility_boundary: |
   - RAG_SYSTEM_BLUEPRINT.md: 知识检索和问答
   - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md: 绩效分析界面
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

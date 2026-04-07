@@ -1,5 +1,5 @@
 ---
-module_id: AUTO_GENERATED_001
+module_id: 09_AUDIT_WEEKLY_LAYER_CHECK_REPORT_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 审计系统
 ---
 

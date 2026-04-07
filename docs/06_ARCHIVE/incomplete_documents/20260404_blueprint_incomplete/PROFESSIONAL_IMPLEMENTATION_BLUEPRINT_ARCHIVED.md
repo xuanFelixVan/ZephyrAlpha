@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 文档治理
+  - 归档文档、历史版本
+
 ---
 
 # PROFESSIONAL IMPLEMENTATION BLUEPRINT ARCHIVED

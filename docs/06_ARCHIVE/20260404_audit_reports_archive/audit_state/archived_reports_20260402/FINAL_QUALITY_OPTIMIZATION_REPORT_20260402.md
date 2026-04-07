@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲ﻛﭦ?
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、审计状态追踪
   - 文档治理
   - 审计系统
 version: 1.0.0

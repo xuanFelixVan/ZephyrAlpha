@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 owner: 实施负责�?
 responsibility:
-  - 风险预算
+  - 归档文档、历史版本、技术评审
   - 交易执行
   - 系统架构
 version: 1.0.0

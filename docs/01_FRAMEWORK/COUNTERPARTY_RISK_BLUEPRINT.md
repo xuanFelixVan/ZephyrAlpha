@@ -546,7 +546,7 @@ class CollateralInfo:
 
 | 文档 | 说明 |
 |------|------|
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | 治理与合规层蓝图 |
 | [MODEL_RISK_MANAGEMENT_BLUEPRINT.md](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理蓝图 |
 
@@ -563,7 +563,7 @@ class CollateralInfo:
 #### Layer 10: 治理与合规层
 ##### 0.001. Counterparty Risk Blueprint
 - **模块ID**: COUNTERPARTY_RISK_BLUEPRINT_001
-- **蓝图文档**: [COUNTERPARTY_RISK_BLUEPRINT.md](./01_FRAMEWORK\COUNTERPARTY_RISK_BLUEPRINT.md)
+- **蓝图文档**: [COUNTERPARTY_RISK_BLUEPRINT.md](01_FRAMEWORK\COUNTERPARTY_RISK_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 交易对手风险管理系统
 - **状态**: Active

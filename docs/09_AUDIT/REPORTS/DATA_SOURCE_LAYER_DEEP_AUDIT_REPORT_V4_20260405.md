@@ -6,7 +6,7 @@ created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 standard_type: 深度审计报告
 applicable_scope: 数据源层文档体系
 compliance_level: 专业标准

@@ -10,7 +10,8 @@ owner: 首席技术评审官
 standard_type: 文档索引
 applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
+
 ---
 ---
 
@@ -57,7 +58,7 @@ responsibility:
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 经济范式判断引擎技术规格书 v2.0 | ECONOMIC_REGIME_ENGINE_002 | v2.0.0 | Active | 2026-04-02 | [链接](./ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md) | � 当前有效版本 |
+
 | 经济范式判断引擎技术规格书 v1.0 | ECONOMIC_REGIME_ENGINE_001 | v1.0.0 | Archived | 2026-04-02 | | 已归�?|
 
 ### 2.6 策略引擎核心
@@ -137,14 +138,14 @@ responsibility:
 |----------|-----------|------|------|----------|----------|
 | LSTM模型技术规格书 | LSTM_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./LSTM_MODEL_TECHNICAL_SPECIFICATION.md) |
 | Transformer模型技术规格书 | TRANSFORMER_MODEL_001 | v1.0.0 | Active | 2026-04-02 | [链接](./TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md) |
-| 强化学习技术规格书 | REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md) | 已恢复|
+
 
 ### 5.2 特征工程
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
 | 特征工程技术规格书 | FEATURE_ENGINEERING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md) |
-| 特征存储技术规格书 | FEATURE_STORE_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./FEATURE_STORE_TECHNICAL_SPECIFICATION.md) | 已恢复|
+
 
 ### 5.3 模型训练与服�?
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
@@ -155,34 +156,34 @@ responsibility:
 ### 5.4 MLOps与监控
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| MLOps平台技术规格书 | MLOPS_PLATFORM_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md) | 已恢复|
-| 模型监控技术规格书 | MODEL_MONITORING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./MODEL_MONITORING_TECHNICAL_SPECIFICATION.md) |
-| 数据漂移检测技术规格书 | DRIFT_DETECTION_TECHNICAL_SPECIFICATION_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md) |
-| 在线学习技术规格书 | ONLINE_LEARNING_001 | v1.0.0 | Active | 2026-04-02 | [链接](./ONLINE_LEARNING_TECHNICAL_SPECIFICATION.md) |
+
+
+
+
 
 ### 5.5 模型治理与合规(新增 P0�?
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 模型治理与合规技术规格书 | MODEL_GOVERNANCE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MODEL_GOVERNANCE_TECHNICAL_SPECIFICATION.md) | P0级核心模块|
+
 
 ### 5.6 模型可解释�?(新增 P0�?
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 模型可解释性技术规格书 | MODEL_INTERPRETABILITY_001 | v1.0.0 | Active | 2026-04-03 | [链接](./MODEL_INTERPRETABILITY_TECHNICAL_SPECIFICATION.md) | P0级核心模块|
+
 
 ### 5.7 因果推断 (新增 P0�?
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 因果推断技术规格书 | CAUSAL_INFERENCE_001 | v1.0.0 | Active | 2026-04-03 | [链接](./CAUSAL_INFERENCE_TECHNICAL_SPECIFICATION.md) | P0级核心模块|
+
 
 ### 5.8 概率预测 (新增 P0�?
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 | 备注 |
 |----------|-----------|------|------|----------|----------|------|
-| 概率预测技术规格书 | PROBABILISTIC_FORECASTING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./PROBABILISTIC_FORECASTING_TECHNICAL_SPECIFICATION.md) | P0级核心模块|
+
 
 ---
 

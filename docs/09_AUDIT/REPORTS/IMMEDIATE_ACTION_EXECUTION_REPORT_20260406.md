@@ -8,7 +8,7 @@ created_date: 2026-04-06
 last_updated: '2026-04-06'
 owner: 首席蓝图架构师
 responsibility:
-  - 交易执行
+  - 审计报告、合规检查
   - 数据源
   - 机器学习
 standard_type: 专业量化机构审计报告

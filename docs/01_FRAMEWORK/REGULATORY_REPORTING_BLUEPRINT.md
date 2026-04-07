@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 交易执行
+  - 系统框架、架构设计
   - 数据源
   - 机器学习
 layer: Layer 10 (治理与合规层)

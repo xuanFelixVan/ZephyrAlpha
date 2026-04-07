@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 系统架构
+  - 索引文档、导航目录
   - 文档治理
   - 审计系统
 standard_type: 索引文档
@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Tca](tca.md) - `EXEC_TCA_001`
+
 
 ---
 

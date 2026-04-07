@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 系统架构
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 standard_type: 索引文档
@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [T.08.Ar001.A Stock Rule Engine Design](T.08.AR001.a_stock_rule_engine_design.md) - `DESIGN_DOC_001`
+
 
 ---
 
@@ -74,9 +74,9 @@ compliance_level: 专业标准---
 
 ## 🔗 相关文档
 
-- [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
-- [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+
+
+
 
 ---
 

@@ -15,14 +15,20 @@ related_documents:
   - HUMAN_AI_INTEGRATION_BLUEPRINT.md
   - INDEX.md
 responsibility_boundary: |
-  本文档负责人机交互层缺失模块分析，包括：
-  - 现有模块盘点
-  - 缺失模块识别
-  - 开源项目替代方案
-  - 实施优先级建议
+  本文档负责人机交互层缺失模块分析（仅分析职责），包括：
+  - 现有模块盘点与覆盖度评估
+  - 缺失模块识别与优先级排序
+  - 开源项目替代方案调研
+  - 问题分析与改进建议
   
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-  界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
+  **职责边界**：
+  - ✅ 本文档负责：分析、识别、调研
+  - ❌ 本文档不负责：具体蓝图设计、实施计划（请参考COMPLETE_SUPPLEMENT）
+  
+  **相关文档**：
+  - 战略规划：HUMAN_AI_INTERACTION_BLUEPRINT.md
+  - 界面设计：HUMAN_AI_INTEGRATION_BLUEPRINT.md
+  - 补充方案：HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 ---

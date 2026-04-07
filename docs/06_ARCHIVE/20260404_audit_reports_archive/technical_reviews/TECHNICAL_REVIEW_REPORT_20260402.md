@@ -8,7 +8,8 @@ compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 decision: ﮔﺗﮒﮒ؟ﮔﺛ
 overall_score: 83.9
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、技术评审
+
 ---
 ---
 

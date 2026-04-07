@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: Audit Sentinel
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 standard_type: P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?applicable_scope: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?

@@ -10,7 +10,8 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---
@@ -465,7 +466,7 @@ with tab3:
 #### Layer 8: 人机交互层
 ##### 0.001. Decision Dashboard Blueprint
 - **模块ID**: DECISION_DASHBOARD_BLUEPRINT_001
-- **蓝图文档**: [DECISION_DASHBOARD_BLUEPRINT.md](./01_FRAMEWORK\DECISION_DASHBOARD_BLUEPRINT.md)
+- **蓝图文档**: [DECISION_DASHBOARD_BLUEPRINT.md](01_FRAMEWORK\DECISION_DASHBOARD_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - 决策仪表板
 - **状态**: Active

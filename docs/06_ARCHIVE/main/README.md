@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
 responsibility:
-  - 系统架构
+  - 归档文档、历史版本
   - 文档治理
   - 日志系统
 standard_type: 专业量化机构文档

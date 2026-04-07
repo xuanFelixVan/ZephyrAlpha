@@ -8,7 +8,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构�?standard_type: 专业量化机构文档治理P2问题整改报告
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: 全系统文档治理优�?compliance_level: 专业标准
 ---
 ---

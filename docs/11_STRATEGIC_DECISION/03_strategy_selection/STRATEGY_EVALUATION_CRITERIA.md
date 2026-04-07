@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 组合优化
+  - 扩展功能、辅助模块
   - 绩效分析
   - 系统架构
 priority: P1

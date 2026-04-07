@@ -1,7 +1,7 @@
 ---
 standard_type: ﻝ۴ﻟﺁﮒﭦ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
   - 组合优化
   - 文档治理
 parent_document: ../INDEX.md

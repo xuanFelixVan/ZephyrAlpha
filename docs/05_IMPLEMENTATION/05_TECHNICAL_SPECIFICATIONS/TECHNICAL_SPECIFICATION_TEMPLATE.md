@@ -14,7 +14,7 @@ reviewer: [REVIEWER_NAME]
 review_date: [REVIEW_DATE]
 owner: ﮔ۷۰ﮔﺟﻟﺑﻟﺑ۲?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۷۰ﮔﺟ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔ۷۰?
 compliance_level: ﮔ۷۰ﮔﺟﮔ ﮒ

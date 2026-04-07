@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ТќЄТАБТъХТъётИ?standard_type: ТќЄТАБТ▓╗уљєС╝ўтїќт«їТѕљТіЦтЉі
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 applicable_scope: тЁеу│╗у╗ЪТќЄТАБТ▓╗уљ?compliance_level: СИЊСИџТаЄтЄє
 parent_document: ../COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md
 ---

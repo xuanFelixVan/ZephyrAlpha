@@ -9,7 +9,7 @@ standard_type: 专业量化机构索引验证报告
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 验证索引链接有效性
+  - 实施指南、部署文档、审计状态追踪
   - 检查索引完整性
   - 提供改进建议
 ---

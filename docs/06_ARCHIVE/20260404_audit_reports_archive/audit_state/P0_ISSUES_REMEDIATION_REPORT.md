@@ -8,7 +8,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: й¶ЦеЄ≠жКАжЬѓиѓДеЃ°еЃШ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 standard_type: жХіжФєеЃМжИРжК•еСК
 applicable_scope: Layer 5з≠ЦзХ•жЙІи°Ме±ВжЦЗж°£ж≤їпњ?compliance_level: дЄУдЄЪж†ЗеЗЖ
 ---

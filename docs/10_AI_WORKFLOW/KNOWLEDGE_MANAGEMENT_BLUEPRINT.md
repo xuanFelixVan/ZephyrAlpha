@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 风险预算
+  - 蓝图设计、架构规划
   - 因子计算
   - 交易执行
 layer: Layer 7 (AI报告层)

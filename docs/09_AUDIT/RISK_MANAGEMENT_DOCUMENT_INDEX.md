@@ -10,7 +10,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

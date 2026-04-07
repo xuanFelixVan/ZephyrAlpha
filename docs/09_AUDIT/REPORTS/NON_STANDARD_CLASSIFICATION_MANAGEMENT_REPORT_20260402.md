@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?
 owner: щжЦх╕нцЮ╢цЮДх╕?
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 审计系统
 version: 1.0.0
 module_id: DOC_NON_STANDARD_MANAGEMENT_REPORT

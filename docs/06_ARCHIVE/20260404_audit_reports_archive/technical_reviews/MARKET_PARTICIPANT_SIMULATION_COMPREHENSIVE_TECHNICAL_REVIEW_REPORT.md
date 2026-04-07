@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 组合优化
   - 交易执行
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпшпДхобцКе?applicable_scope: х╕ВхЬ║хПВф╕ОшАЕшбМф╕║цибцЛЯч│╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ

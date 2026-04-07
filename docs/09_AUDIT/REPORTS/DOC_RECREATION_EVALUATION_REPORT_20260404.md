@@ -8,7 +8,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 standard_type: 专业量化机构评估报告
 applicable_scope: 归档文档重新创建必要性评估
 compliance_level: 专业标准

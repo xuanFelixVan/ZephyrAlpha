@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ύ│╗ύ╗θόη╢όηΕ?standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΚπϋκΝόΛξίΣΛ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 applicable_scope: ίΖρύ│╗?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 parent_document: ../DEEP_SYSTEM_AUDIT_REPORT_ROUND2_20260403.md
 implementation_status: ί╖▓ίχΝ?

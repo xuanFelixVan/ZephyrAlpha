@@ -1,5 +1,5 @@
 ---
-module_id: AUTO_GENERATED_001
+module_id: 03_TRADING_TACTICS_INDEX_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易策略、战术执行
+
 ---
 ---
 

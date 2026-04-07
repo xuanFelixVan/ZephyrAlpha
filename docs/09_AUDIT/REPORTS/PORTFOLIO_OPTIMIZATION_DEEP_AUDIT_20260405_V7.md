@@ -11,7 +11,8 @@ audit_scope: 组合优化层(Layer 6) + 全局蓝图文档
 audit_type: 三层深度审计(L1+L2+L3)
 compliance_standard: 专业量化机构五大原则
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

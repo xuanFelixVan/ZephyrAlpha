@@ -9,7 +9,8 @@ standard_type: 技术规格书
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
+
 ---
 ---
 

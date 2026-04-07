@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席审计官
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档、审计状态追踪
   - 交易执行
   - 文档治理
 layer: Layer 10 (治理与合规层)

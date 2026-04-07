@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 数据质量
+  - 归档文档、历史版本、技术评审
   - 交易执行
   - 机器学习
 standard_type: 专业量化机构报告

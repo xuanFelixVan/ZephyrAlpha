@@ -23,7 +23,8 @@ responsibility_boundary: |
   
   AI对话增强请参考：AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---

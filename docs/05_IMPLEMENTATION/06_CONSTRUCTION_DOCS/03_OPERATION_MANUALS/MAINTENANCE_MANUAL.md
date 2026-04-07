@@ -1,7 +1,7 @@
 ---
 standard_type: µôغ╜£µîçفù
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 文档治理
   - 日志系统
 applicable_scope: فàذق│╗ق╗?compliance_level: µصثف╝µبçفç

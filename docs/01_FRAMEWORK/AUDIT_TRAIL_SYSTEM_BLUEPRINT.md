@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 风险预算
+  - 系统框架、架构设计
   - 交易执行
   - 机器学习
 layer: Layer 10 (治理与合规层)
@@ -784,7 +784,7 @@ class AuditStatistics:
 #### Layer 10: 治理与合规层
 ##### 0.001. Audit Trail System Blueprint
 - **模块ID**: AUDIT_TRAIL_SYSTEM_BLUEPRINT_001
-- **蓝图文档**: [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](./01_FRAMEWORK\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](01_FRAMEWORK\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 审计追踪系统
 - **状态**: Active

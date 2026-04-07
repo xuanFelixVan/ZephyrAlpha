@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 数据源
+  - 实施指南、部署文档
   - 机器学习
   - 系统架构
 standard_type: 专业量化机构技术规�?

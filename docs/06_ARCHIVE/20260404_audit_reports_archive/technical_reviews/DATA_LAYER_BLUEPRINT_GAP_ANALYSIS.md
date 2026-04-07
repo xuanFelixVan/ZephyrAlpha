@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 组合优化
+  - 归档文档、历史版本、技术评审
   - 机器学习
   - 文档治理
 standard_type: ﻛﺕﻛﺕﮔﭦﮔﻝﭦ۶ﮒﺓ؟ﻟﺓﮒﮔﮔ۴?applicable_scope: Layer 0ﮔﺍﮔ؟ﮔﭦﮒﺎﻟﮒﺝ

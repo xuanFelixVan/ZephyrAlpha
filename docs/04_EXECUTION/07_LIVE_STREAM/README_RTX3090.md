@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
-  - 扩展功能、辅助模块
+  - 说明文档、快速入门
 version: 1.0.0
 module_id: EXE_README_RTX3090
 created_date: 2026-04-02

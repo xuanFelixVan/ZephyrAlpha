@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 执行团队
 responsibility:
-  - 因子计算
+  - 蓝图设计、架构规划
   - 交易执行
   - 数据源
 layer: Layer 5 (执行层)

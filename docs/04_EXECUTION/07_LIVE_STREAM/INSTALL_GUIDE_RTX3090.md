@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: Þ«¥Þ«íÚÿÂµ«Á
 owner: µëºÞíîÕ▒éÞ┤ƒÞ┤úõ║║
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、操作手册
 version: 1.0.0
 module_id: EXE_INSTALL_GUIDE_RTX309
 created_date: 2026-04-02

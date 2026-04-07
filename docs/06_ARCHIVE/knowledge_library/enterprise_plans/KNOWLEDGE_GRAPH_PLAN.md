@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﻝ۴ﻟﺁﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ۶ﮒﮔﮔ۰۲
 responsibility:
-  - 数据源
+  - 归档文档、历史版本
   - 绩效分析
   - 文档治理
 applicable_scope: ﻝ۴ﻟﺁﮒﺝﻟﺍﺎﮒﭨﭦﻟ؟ﺝ

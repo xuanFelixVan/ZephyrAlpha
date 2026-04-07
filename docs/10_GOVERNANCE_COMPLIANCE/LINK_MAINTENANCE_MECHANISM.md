@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 交易执行
+  - 扩展功能、辅助模块
   - 系统架构
   - 文档治理
 layer: Layer 10 (治理与合规层)

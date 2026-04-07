@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﮔﭦﮔﻝﭦ۶ﮒﮔ?applicable_scope: ﻝ­ﻝ۴ﮒﺎAIﮔ۷۰ﮒﻠﮔﺎﮒﮔ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易策略、战术执行
 parent_document: ../10_AI_WORKFLOW/INDEX.md
 implementation_status: ﮒﮔﮒ؟ﮔ
 ---

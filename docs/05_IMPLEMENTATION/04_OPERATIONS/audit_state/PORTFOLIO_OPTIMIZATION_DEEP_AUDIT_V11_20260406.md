@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: Audit Sentinel
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 standard_type: 专业文档治理审计报告
 audit_scope: Layer 6 组合优化层所有文档
 audit_depth: 三层审计 (L1-L3)

@@ -7,7 +7,7 @@ created_date: 2026-04-02
 completed_date: 2026-04-02
 owner: 数据源层负责�?
 responsibility:
-  - 交易执行
+  - 实施指南、部署文档
   - 数据源
   - 系统架构
 standard_type: 技术培训计�?

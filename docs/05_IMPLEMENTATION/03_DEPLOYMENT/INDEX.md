@@ -6,7 +6,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 系统架构
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 standard_type: 专业量化机构索引文档

@@ -15,7 +15,8 @@ open_source_dependency: pandas, numpy, dask
 estimated_effort: 3周
 priority: P1
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、蓝图设计
+
 ---
 ---
 

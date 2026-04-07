@@ -1,7 +1,7 @@
 ---
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: хЕич│╗ч╗?compliance_level: цнгх╝ПцаЗхЗЖ
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: х╖▓хоМцИ?owner: щжЦх╕нцЮ╢цЮДх╕?version: 1.0.0

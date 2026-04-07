@@ -9,7 +9,7 @@ last_updated: 2026-04-04
 auditor: Audit Sentinel
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК
 responsibility:
-  - 市场状态识别
+  - 实施指南、部署文档、审计状态追踪
   - 系统架构
   - 文档治理
 applicable_scope: 05_IMPLEMENTATION чнЦчХецЙзшбМх▒ВхЕичЫох╜Х

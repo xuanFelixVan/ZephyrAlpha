@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 系统架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构级索引文档
 applicable_scope: Layer 4全系统文档

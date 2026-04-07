@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?version: 1.0.0
 module_id: PERSONAL_DEV_BEST_PRACTICES

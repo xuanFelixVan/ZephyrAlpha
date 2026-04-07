@@ -15,7 +15,8 @@ open_source_dependency: pandas, numpy, great_expectations
 estimated_effort: 2周
 priority: P0
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、蓝图设计
+
 ---
 ---
 

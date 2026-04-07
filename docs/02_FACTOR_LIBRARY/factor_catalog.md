@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构师
 responsibility:
-  - 因子计算
+  - 因子计算、因子库管理
   - 系统架构
   - 文档治理
 standard_type: 专业量化机构因子标准

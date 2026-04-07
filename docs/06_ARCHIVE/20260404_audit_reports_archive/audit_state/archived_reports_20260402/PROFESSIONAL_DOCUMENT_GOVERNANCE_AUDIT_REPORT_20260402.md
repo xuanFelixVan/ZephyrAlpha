@@ -8,7 +8,7 @@ audit_date: 2026-04-02
 audit_version: v5.3
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、审计状态追踪
   - 系统架构
   - 文档治理
 version: 1.0.0

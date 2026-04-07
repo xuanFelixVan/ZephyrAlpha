@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 因子计算
+  - 索引文档、导航目录
   - 系统架构
   - 文档治理
 standard_type: 索引文档

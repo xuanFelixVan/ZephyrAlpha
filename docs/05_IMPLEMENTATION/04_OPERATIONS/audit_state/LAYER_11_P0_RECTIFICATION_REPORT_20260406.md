@@ -11,7 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT.md
 implementation_status: 整改完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
+
 ---
 ---
 

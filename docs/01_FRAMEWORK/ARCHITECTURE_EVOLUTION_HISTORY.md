@@ -330,16 +330,16 @@ ZephyrAlphaç³»ç»ç»åäºä»æ¦å¿µå°æçç�
 
 ### 5.2 ADRææ¡£ä½ç½®
 
-- [æ¶æå³ç­è®°å½ç´¢å¼](../01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md)
+- [æ¶æå³ç­è®°å½ç´¢å¼](01_FRAMEWORK\ARCHITECTURE_DECISIONS\README.md)
 - [ADRæ¨¡æ¿](../09_AUDIT/TEMPLATES/ADR_TEMPLATE.md)
 - [ADRæ å](../09_AUDIT/STANDARDS/ADR_STANDARD.md)
 
 ---
 
 ## 6. åèæ?
-- [ç³»ç»æ¶æèå¾](./SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- [ç³»ç»æ¶æèå¾](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 - [æ¨¡åèè´£è¾¹çå®ä¹](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ææ¯è§èææ¡£](./TECHNICAL_SPECIFICATIONS.md)
+- [ææ¯è§èææ¡£](TECHNICAL_SPECIFICATIONS.md)
 
 ---
 

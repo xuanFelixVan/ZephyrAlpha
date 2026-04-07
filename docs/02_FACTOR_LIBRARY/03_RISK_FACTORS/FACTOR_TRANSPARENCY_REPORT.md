@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算、因子库管理
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准

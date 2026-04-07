@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТќЄТАБТъХТъё?standard_type: СИЊСИџжЄЈтїќТю║ТъёТќЄТАБС╝ўтїќТіЦтЉі
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 回测系统
   - 文档治理
 applicable_scope: AlphaтЏатГљт▒ѓТќЄТАБТ▓╗?compliance_level: СИЊСИџТаЄтЄє

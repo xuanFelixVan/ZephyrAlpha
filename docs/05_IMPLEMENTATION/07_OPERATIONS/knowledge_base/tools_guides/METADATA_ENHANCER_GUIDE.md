@@ -1,7 +1,7 @@
 ---
 standard_type: тиЦтЁиТїЄтЇЌ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 applicable_scope: тЁЃТЋ░ТЇ«у«Ауљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
 implementation_status: ти▓т«їТѕ?owner: ТќЄТАБу«АуљєтЉ?version: 1.0.0

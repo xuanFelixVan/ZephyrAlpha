@@ -9,7 +9,8 @@ standard_type: 文档恢复评估报告
 applicable_scope: 策略执行层文档恢复
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
+
 ---
 ---
 

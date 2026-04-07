@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 
 module_id: SPARSE_DIRECTORY_ANALYSIS_20260407_021046_001
 version: 1.0.0

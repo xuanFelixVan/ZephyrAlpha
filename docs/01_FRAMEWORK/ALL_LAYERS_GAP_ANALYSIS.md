@@ -11,7 +11,7 @@ applicable_scope: 全系统架构完整性评估
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
   responsibility_layer: Layer 4 - 机器学习层
   responsibility_layer: Layer 4 - 机器学习层
   responsibility_layer: Layer 4 - 机器学习层

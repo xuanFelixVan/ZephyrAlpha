@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计系统
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 交易执行
   - 数据源
 standard_type: 审计报告

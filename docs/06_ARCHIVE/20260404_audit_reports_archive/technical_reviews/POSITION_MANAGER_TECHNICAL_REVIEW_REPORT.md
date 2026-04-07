@@ -12,7 +12,7 @@ parent_document: ../INDEX.md
 implementation_status: ш┐ЫшбМ?
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 数据源
+  - 归档文档、历史版本、技术评审
   - 系统架构
   - 文档治理
 last_updated: 2026-04-02---

@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 owner: 实施负责�?
 responsibility:
-  - 数据质量
+  - 归档文档、历史版本、审计状态追踪
   - 因子计算
   - 交易执行
 version: 1.0.0

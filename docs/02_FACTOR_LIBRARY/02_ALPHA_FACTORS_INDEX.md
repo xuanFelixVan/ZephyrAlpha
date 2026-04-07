@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算
+  - 因子计算、因子库管理
   - 交易执行
   - 绩效分析
 standard_type: 索引文档

@@ -12,7 +12,7 @@ parent_document: ../INDEX.md
 implementation_status: ш┐ЫшбМ?
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 数据源
   - 系统架构
 last_updated: 2026-04-02---

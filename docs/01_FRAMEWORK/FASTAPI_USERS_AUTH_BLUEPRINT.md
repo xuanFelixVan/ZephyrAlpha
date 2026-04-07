@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -454,7 +454,7 @@ FastAPI-Users认证权限系统通过**开源优先策略**，实现了：
 #### Layer 8: 人机交互层
 ##### 0.001. Fastapi Users Auth Blueprint
 - **模块ID**: FASTAPI_USERS_AUTH_BLUEPRINT_001
-- **蓝图文档**: [FASTAPI_USERS_AUTH_BLUEPRINT.md](./01_FRAMEWORK\FASTAPI_USERS_AUTH_BLUEPRINT.md)
+- **蓝图文档**: [FASTAPI_USERS_AUTH_BLUEPRINT.md](01_FRAMEWORK\FASTAPI_USERS_AUTH_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - FastAPI-Users认证权限系统
 - **状态**: Active

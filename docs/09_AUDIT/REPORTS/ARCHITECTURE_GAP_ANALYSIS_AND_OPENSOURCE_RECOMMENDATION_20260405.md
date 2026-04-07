@@ -14,7 +14,8 @@ parent_document: ../INDEX.md
 audit_type: 架构评估与开源推荐
 audit_methodology: 专业机构标准对比 + GitHub成熟项目调研
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

@@ -6,7 +6,7 @@ created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: 首席文档架构师
 responsibility:
-  - 市场状态识别
+  - 归档文档、历史版本
   - 系统架构
   - 文档治理
 standard_type: 归档说明

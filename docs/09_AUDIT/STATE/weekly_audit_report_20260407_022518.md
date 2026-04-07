@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 
 module_id: WEEKLY_AUDIT_REPORT_20260407_022518
 version: 1.0.0

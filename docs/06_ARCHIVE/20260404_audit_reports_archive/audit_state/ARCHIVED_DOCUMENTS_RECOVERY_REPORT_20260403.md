@@ -9,7 +9,7 @@ last_updated: 2026-04-03
 auditor: Audit Sentinel
 standard_type: ϊ╕Υϊ╕γόΨΘόκμόΒλίνΞϋψΕϊ╝░όΛξίΣΛ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ
 applicable_scope: Layer 5ύφΨύΧξόΚπϋκΝί▒Γί╜ΤόκμόΨΘόκ?parent_document: ../AUDIT_STANDARDS_v5.1.md
 implementation_status: ί╖▓ίχΝόΙ?

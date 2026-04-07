@@ -14,7 +14,7 @@ reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶?applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ
 ---

@@ -324,7 +324,7 @@ class AlgorithmPerformanceBenchmark:
 #### Layer 10: 治理与合规层
 ##### 0.001. Algorithm Performance Benchmark Blueprint
 - **模块ID**: ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT_001
-- **蓝图文档**: [ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md](./01_FRAMEWORK\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md)
+- **蓝图文档**: [ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md](01_FRAMEWORK\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 算法性能基准、性能测试、性能监控
 - **状态**: Active

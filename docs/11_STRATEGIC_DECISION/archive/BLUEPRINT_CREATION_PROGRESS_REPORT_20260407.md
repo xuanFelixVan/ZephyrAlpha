@@ -11,7 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./BLUEPRINT_IMPLEMENTATION_STATUS_REPORT_20260407.md
 implementation_status: 实施中
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 

@@ -208,7 +208,7 @@ responsibility_boundary: |
 | 5 | 止损管理系统 | SLM-001 | Backtrader | 1周 | P1 | ✅ 已创建 |
 | 6 | 事后分析系统 | PMA-001 | Jupyter + Pandas | 1.5周 | P1 | ✅ 已创建 |
 
-**详细蓝图**: [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md)
+**详细蓝图**: [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](layer10_GOVERNANCE_COMPLIANCE_INDEX.md)
 
 ---
 
@@ -854,7 +854,7 @@ class MultiStrategyCoordinator:
 | 系统清单 | [../System_Manifest.md](../System_Manifest.md) | 系统文档总索引 |
 | 缺失模块蓝图补充 | [MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md](./MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md) | 50个缺失模块蓝图 |
 | 全系统完整性分析 | [ALL_LAYERS_GAP_ANALYSIS.md](./ALL_LAYERS_GAP_ANALYSIS.md) | Layer 0-11完整性分析 |
-| Layer 10治理合规索引 | [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10蓝图索引 |
+| Layer 10治理合规索引 | [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10蓝图索引 |
 
 ### 8.2 开源项目快速链接
 

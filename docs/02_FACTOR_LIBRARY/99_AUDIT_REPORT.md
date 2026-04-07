@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算、因子库管理
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监�?
 compliance_level: 审计标准

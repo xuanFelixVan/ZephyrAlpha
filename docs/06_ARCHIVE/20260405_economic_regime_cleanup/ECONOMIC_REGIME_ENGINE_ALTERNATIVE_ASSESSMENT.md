@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 standard_type: цКАцЬпцЦ╣цбИшпДф╝░цКехС?applicable_scope: ч╗Пц╡ОшМГх╝ПхИдцЦнх╝ХцУО
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_REVIEW_REPORT.md

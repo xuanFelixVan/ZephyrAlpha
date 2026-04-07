@@ -267,7 +267,7 @@ class DataQualityManager:
 #### Layer 10: 治理与合规层
 ##### 0.001. Data Quality Management Blueprint
 - **模块ID**: DATA_QUALITY_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_MANAGEMENT_BLUEPRINT.md](./01_FRAMEWORK\DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [DATA_QUALITY_MANAGEMENT_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据质量管理、数据验证、数据监控
 - **状态**: Active

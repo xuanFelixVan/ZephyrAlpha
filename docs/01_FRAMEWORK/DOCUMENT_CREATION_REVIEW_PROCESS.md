@@ -215,7 +215,7 @@ python scripts/check_links.py --report link_report.md
 - [ä¸ä¸ææ¡£æ²»çå®¡è®¡æå](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [ææ¡£æ²»çå®¡è®¡æ£æ¥æ¸å](../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [ææ¡£èè´£è¾¹çå®ä¹](./DOCUMENT_RESPONSIBILITY_BOUNDARIES.md)
-- [ç¼ç è§èæ å](./.editorconfig)
+- [ç¼ç è§èæ å](.editorconfig)
 
 ---
 

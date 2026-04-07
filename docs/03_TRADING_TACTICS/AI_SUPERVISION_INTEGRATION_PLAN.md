@@ -11,7 +11,8 @@ compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易策略、战术执行
+
 ---
 ---
 

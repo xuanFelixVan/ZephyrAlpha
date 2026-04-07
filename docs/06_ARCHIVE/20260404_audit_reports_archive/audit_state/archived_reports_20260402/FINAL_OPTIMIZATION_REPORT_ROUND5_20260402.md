@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 owner: 实施负责�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 version: 1.0.0
 module_id: ARCHIVE_FINAL_OPT_ROUND5_001
 created_date: 2026-04-02

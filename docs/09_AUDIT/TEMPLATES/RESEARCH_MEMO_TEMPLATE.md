@@ -1,7 +1,7 @@
 ---
 standard_type: цЦЗцбгцибцЭ┐
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
 applicable_scope: чаФчй╢ц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../STANDARDS/RESEARCH_MEMO_STANDARD.md

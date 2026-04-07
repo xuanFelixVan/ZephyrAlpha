@@ -1,7 +1,7 @@
 ---
 standard_type: ж“ҚдҪңжҢҮеҚ—
 responsibility:
-  - 数据源
+  - 实施指南、部署文档
   - 文档治理
   - 日志系统
 applicable_scope: е…Ёзі»з»?compliance_level: жӯЈејҸж ҮеҮҶ

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 回测系统
   - 数据源
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ

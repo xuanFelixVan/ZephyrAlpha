@@ -10,7 +10,8 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---
@@ -922,7 +923,7 @@ class NewsData:
 #### Layer 0: 数据源层
 ##### 0.001. Data Source Layer Blueprint
 - **模块ID**: DATA_SOURCE_LAYER_BLUEPRINT_001
-- **蓝图文档**: [DATA_SOURCE_LAYER_BLUEPRINT.md](./01_FRAMEWORK\DATA_SOURCE_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [DATA_SOURCE_LAYER_BLUEPRINT.md](01_FRAMEWORK\DATA_SOURCE_LAYER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 0 - 数据源层
 - **状态**: Active

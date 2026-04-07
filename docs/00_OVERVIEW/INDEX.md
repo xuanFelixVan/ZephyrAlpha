@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝﺑ۱ﮒﺙ
 responsibility:
-  - 因子计算
+  - 系统概览、架构总览
   - 系统架构
   - 文档治理
 applicable_scope: ﻝﺏﭨﻝﭨﮔﭨﻟ۶
@@ -26,7 +26,7 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 
 | ﮔﻛﭨﭘ/ﻝ؟ﮒﺛ | ﻟﻟﺑ۲ | ﻝﭘﮔ?|
 |----------|------|------|
-| [README.md](README.md) | ﻝﺏﭨﻝﭨﮔﭨﮒ۴ﮒ۲ﻟﺁﺑﮔ?| Active |
+
 | [DATA_FLOW.md](DATA_FLOW.md) | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
 
 ## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?

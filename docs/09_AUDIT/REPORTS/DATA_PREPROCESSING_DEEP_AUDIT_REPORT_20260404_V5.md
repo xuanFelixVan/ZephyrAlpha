@@ -14,7 +14,8 @@ audit_type: 深度审计
 audit_methodology: 三层审计标准 (L1-L3)
 audit_standard: AUDIT_STANDARDS_v5.1
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

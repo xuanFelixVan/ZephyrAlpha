@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: У«ЙУ«АжўХТ«х
 owner: т«ъТќйУ┤ЪУ┤БС║?
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、审计状态追踪
   - 数据源
   - 文档治理
 version: 1.0.0

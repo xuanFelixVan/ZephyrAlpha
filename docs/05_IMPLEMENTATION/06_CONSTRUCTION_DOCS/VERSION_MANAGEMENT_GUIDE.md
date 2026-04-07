@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟ?standard_type: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﻟﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﻝﮔ؛ﮔ۶ﮒﭘ
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 数据源
   - 文档治理
 compliance_level: ﻝ؟ﮒﮔ ﮒ?parent_document: ../README.md

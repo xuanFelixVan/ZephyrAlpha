@@ -9,7 +9,7 @@ last_updated: 2026-04-03
 auditor: Audit Sentinel
 standard_type: P2ق║دلù«لتءµـ┤µ¤╣µèحفّ?compliance_level: غ╕ôغ╕أµبçفç
 responsibility:
-  - 文档治理
+  - 归档文档、历史版本、审计状态追踪
   - 审计系统
 parent_document: ./LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403.md
 implementation_status: ف╖▓ف«îµê?---

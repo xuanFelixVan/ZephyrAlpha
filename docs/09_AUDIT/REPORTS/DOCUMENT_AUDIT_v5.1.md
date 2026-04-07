@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: όΨΘόκμύ╗┤όΛνϋΑ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 version: 1.0.0
 module_id: DOC_DOCUMENT_AUDIT_V5.1
 created_date: 2026-03-31

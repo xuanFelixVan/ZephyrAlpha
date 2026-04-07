@@ -16,7 +16,8 @@ responsibility_boundary: |
   整体架构设计请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 implementation_status: 分析完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

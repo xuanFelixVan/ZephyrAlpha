@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 文档治理
+  - 扩展功能、辅助模块
   - 知识积累
   - 问题解决
 standard_type: 知识库

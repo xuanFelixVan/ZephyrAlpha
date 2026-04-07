@@ -9,7 +9,7 @@ standard_type: Layer 9实施优先级排序
 applicable_scope: Layer 9 - 研究与创新层实施优先级
 compliance_level: 专业机构标准
 responsibility:
-  - 实施优先级排序
+  - 研究创新、技术探索
 
 ---
 # Layer 9研究与创新层实施优先级排序

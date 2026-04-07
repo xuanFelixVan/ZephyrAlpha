@@ -104,7 +104,7 @@ responsibility:
 | [因子分类学](./01_STANDARDS/FACTOR_TAXONOMY.md) | 因子注册表与分类体系 | ⭐⭐⭐⭐�?|
 | [因子计算框架](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | ⭐⭐⭐⭐�?|
 | [因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | ⭐⭐⭐⭐�?|
-| [因子定义框架](./01_STANDARDS/T.02.FE001.factor_definition.md) | 因子定义框架 | ⭐⭐⭐⭐�?|
+
 
 ### 因子研究
 
@@ -147,11 +147,11 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [Barra风格因子](./03_RISK_FACTORS/T.03.RF001.barra_style_factors.md) | Barra风格因子 | ⭐⭐⭐⭐�?|
-| [行业因子](./03_RISK_FACTORS/T.03.RF002.industry_factors.md) | 行业因子 | ⭐⭐⭐⭐�?|
-| [尾部风险因子](./03_RISK_FACTORS/T.03.RF003.tail_risk_factors.md) | 尾部风险因子 | ⭐⭐⭐⭐�?|
-| [Barra优化器](./03_RISK_FACTORS/T.03.RM003.barra_optimizer.md) | Barra优化�?| ⭐⭐⭐⭐ |
-| [因子透明度报告](./03_RISK_FACTORS/T.03.RM004.factor_transparency_report.md) | 因子透明度报�?| ⭐⭐⭐⭐ |
+
+
+
+
+
 
 ---
 
@@ -204,7 +204,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子主索引](./04_DATA_SOURCE/IFIND/FACTOR_MASTER_INDEX.md) | iFind因子主索�?| ⭐⭐⭐⭐�?|
+
 | [THS_BD完整指标列表](./04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) | THS_BD完整指标列表 | ⭐⭐⭐⭐�?|
 | [财务报表API](./04_DATA_SOURCE/IFIND/financial_statements/FINANCIAL_STATEMENTS_API.md) | 财务报表接口 |  |
 
@@ -249,7 +249,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子目录](./06_REGISTRY/FACTOR_CATALOG.md) | 因子目录 | ⭐⭐⭐⭐�?|
+
 
 ---
 
@@ -266,7 +266,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子库手册](./10_MANUAL/FACTOR_LIBRARY_MANUAL.md) | 因子库使用手�?| ⭐⭐⭐⭐�?|
+
 
 ---
 

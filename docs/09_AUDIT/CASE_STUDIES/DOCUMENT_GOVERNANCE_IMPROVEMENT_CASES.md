@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ί╖▓ίχΝόΙ?
 owner: ώοΨί╕φόη╢όηΕί╕?
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 文档治理
 version: 1.0.0
 module_id: DOC_GOVERNANCE_IMPROVEMENT_CASES

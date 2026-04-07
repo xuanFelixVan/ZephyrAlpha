@@ -11,7 +11,8 @@ compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
+
 ---
 ---
 

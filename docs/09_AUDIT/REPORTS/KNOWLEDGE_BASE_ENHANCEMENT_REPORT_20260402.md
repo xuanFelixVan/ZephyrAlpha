@@ -1,7 +1,7 @@
 ---
 standard_type: ﮒ؟ﮔﺛﮔ۴ﮒ
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 文档治理
   - 审计系统
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ

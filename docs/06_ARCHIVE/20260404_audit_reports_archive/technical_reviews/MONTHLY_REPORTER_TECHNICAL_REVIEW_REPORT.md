@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、技术评审
 standard_type: 专业量化机构技术评审报�?applicable_scope: Layer 7 - AI报告�?compliance_level: 专业标准
 parent_document: ../MONTHLY_REPORTER_TECHNICAL_SPECIFICATION.md
 implementation_status: 评审通过

@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理员
 responsibility:
-  - 文档治理
+  - 归档文档、历史版本
   - 审计系统
   - 测试系统
 standard_type: 专业量化机构文档

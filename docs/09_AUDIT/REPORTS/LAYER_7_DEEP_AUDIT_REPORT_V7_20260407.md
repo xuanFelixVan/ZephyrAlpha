@@ -11,7 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 # Layer 7 AI报告层深度审计报告 V7

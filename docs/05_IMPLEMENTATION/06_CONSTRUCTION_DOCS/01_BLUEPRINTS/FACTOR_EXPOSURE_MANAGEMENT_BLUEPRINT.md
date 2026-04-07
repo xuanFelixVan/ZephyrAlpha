@@ -10,7 +10,7 @@ applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
 responsibility:
-  - 因子暴露管理
+  - 实施指南、部署文档
   - 因子暴露监控
   - 因子暴露调整
 ---

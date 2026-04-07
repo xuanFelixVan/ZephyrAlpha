@@ -8,7 +8,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 首席蓝图架构�?standard_type: 专业量化机构归档报告
 responsibility:
-  - 组合优化
+  - 审计报告、合规检查
   - 交易执行
   - 系统架构
 applicable_scope: 重复文档归档

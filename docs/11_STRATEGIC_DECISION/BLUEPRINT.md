@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
 
 module_id: STRATEGIC_DECISION_BP_001
 version: 3.0.0

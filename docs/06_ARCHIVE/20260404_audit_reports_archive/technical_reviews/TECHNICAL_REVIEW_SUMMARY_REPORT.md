@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 文档治理
 standard_type: цКАцЬпшпДхобч╗╝хРИцКе?applicable_scope: Layer 1цХ░цНощвДхдДчРЖх▒ВцЦ░хвЮшУЭхЫ╛
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

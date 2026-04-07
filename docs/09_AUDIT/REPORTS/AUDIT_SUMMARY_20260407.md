@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 首席架构师
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计总结
+  - 审计报告、合规检查
   - 问题分析
   - 修复建议
 layer: "Layer 1 (数据预处理层)"

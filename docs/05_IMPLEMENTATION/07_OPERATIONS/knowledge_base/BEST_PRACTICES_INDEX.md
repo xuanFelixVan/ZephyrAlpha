@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцЮ╢цЮДх╕?standard_type: цЬАф╜│хоЮш╖╡ч┤вх╝?applicable_scope: хЕич│╗ч╗Ях╝АхПСцЬАф╜│хоЮш╖?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 parent_document: ../README.md
 implementation_status: Active
 ---

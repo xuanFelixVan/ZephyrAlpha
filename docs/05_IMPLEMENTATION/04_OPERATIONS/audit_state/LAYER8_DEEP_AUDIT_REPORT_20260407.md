@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 人机交互
+  - 实施指南、部署文档、审计状态追踪
   - 文档治理
   - 审计
 standard_type: 专业量化机构报告

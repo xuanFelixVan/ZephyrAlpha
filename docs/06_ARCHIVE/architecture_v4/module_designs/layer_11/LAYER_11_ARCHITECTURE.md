@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席文档架构�?standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 applicable_scope: 全系�?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计完成

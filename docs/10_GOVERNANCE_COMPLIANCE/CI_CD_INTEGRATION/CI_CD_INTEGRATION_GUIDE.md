@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: DevOps团队
 responsibility:
-  - CI/CD集成
+  - 实施指南、操作手册
   - 自动化审计
   - 开发流程
 standard_type: 集成指南

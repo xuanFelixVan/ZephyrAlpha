@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: لخûف╕صµئ╢µئف╕?standard_type: µ╖▒ف║خµûçµةثف«ةك«ةµèحفّè
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: µـ░µ«µ║ف▒éµûçµةثغ╜ôق│╗
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../INDEX.md

@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ти▓т«їТѕ?
 owner: ТќЄТАБу«АуљєтЉ?
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
   - 审计系统
 version: 1.0.0
 module_id: INTELLIGENT_LINK_FIX_REPORT_20260402

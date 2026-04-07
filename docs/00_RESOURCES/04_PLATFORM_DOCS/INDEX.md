@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档治理系统
 responsibility:
-  - 系统架构
+  - 资源管理、平台文档
   - 文档治理
   - 审计系统
 standard_type: 索引文档

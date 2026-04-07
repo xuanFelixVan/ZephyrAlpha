@@ -9,7 +9,7 @@ standard_type: 专业量化机构长期优化报告
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
 responsibility:
-  - 执行长期优化项
+  - 实施指南、部署文档、审计状态追踪
   - 建立治理机制
   - 完善文档体系
 ---

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: لخûف╕صقاحك»ف«?standard_type: ف╜ْµةثك»┤µءµûçµةث
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本
   - 文档治理
 applicable_scope: قاحك»ف║ôف╜ْµةثق«ةق?compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../../INDEX.md

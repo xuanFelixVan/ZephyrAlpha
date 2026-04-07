@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 测试文档、质量保证
 standard_type: 测试计划
 applicable_scope: 舆情分析层改进模块测
 compliance_level: 专业标准

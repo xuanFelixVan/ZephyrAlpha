@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 responsibility:
-  - 文档治理
+  - 实施指南、部署文档
   - 审计系统
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0

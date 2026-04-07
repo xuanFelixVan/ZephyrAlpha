@@ -6,7 +6,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 审计系统架构�?standard_type: 专业文档治理审计报告
 responsibility:
-  - 交易执行
+  - 审计报告、合规检查
   - 系统架构
   - 文档治理
 applicable_scope: 全系统深度审�?compliance_level: 专业标准

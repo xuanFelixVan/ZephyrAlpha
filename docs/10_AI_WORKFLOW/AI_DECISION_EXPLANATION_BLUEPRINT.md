@@ -29,7 +29,8 @@ open_source_solution:
   license: MIT / BSD
   cost: 完全免费
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 

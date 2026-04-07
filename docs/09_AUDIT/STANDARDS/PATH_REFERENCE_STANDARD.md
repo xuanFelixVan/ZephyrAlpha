@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计团队
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 系统架构
   - 文档治理
 standard_type: 专业量化机构标准

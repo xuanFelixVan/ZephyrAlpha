@@ -1102,7 +1102,7 @@ start_http_server(8000)
 #### Layer 10: 治理与合规层
 ##### 0.001. Data Quality Governance Blueprint
 - **模块ID**: DATA_QUALITY_GOVERNANCE_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_GOVERNANCE_BLUEPRINT.md](./01_FRAMEWORK\DATA_QUALITY_GOVERNANCE_BLUEPRINT.md)
+- **蓝图文档**: [DATA_QUALITY_GOVERNANCE_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_GOVERNANCE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统数据质量管理与治理
 - **状态**: Active

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 文档治理
+  - 实施指南、部署文档
 standard_type: ﮔﺎﭨﻝﮔﭖﻝ۷ﻟ۶ﻟ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
 

@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 layer: Layer 5 (策略执行层)
 standard_type: 专业量化机构级完整性审计报告
 applicable_scope: 策略执行层架构完整性、开源项目映射、个人开发适用性评估

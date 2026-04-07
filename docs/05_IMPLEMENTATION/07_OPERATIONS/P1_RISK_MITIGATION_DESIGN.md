@@ -4,7 +4,7 @@ version: 1.0.0
 created_date: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 数据源
   - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻠ۲ﻠ۸ﻝ؟۰ﻝ

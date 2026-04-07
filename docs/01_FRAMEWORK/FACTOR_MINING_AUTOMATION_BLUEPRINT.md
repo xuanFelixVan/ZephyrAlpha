@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -789,7 +789,7 @@ python src/factor_mining/miner.py
 #### Layer 2: 因子层
 ##### 0.001. Factor Mining Automation Blueprint
 - **模块ID**: FACTOR_MINING_AUTOMATION_BLUEPRINT_001
-- **蓝图文档**: [FACTOR_MINING_AUTOMATION_BLUEPRINT.md](./01_FRAMEWORK\FACTOR_MINING_AUTOMATION_BLUEPRINT.md)
+- **蓝图文档**: [FACTOR_MINING_AUTOMATION_BLUEPRINT.md](01_FRAMEWORK\FACTOR_MINING_AUTOMATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 2因子挖掘自动化
 - **状态**: Active

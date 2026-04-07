@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔﺁﮔ ﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?version: 1.0.0
 module_id: MODULE_INTERFACE_SPECIFICATION

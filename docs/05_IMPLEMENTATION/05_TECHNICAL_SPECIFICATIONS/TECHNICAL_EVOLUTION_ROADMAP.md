@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцКАцЬпц╝Фш┐Ыш╖пч║┐хЫ╛
 applicable_scope: хЕич│╗ч╗ЯцКАцЬпц╝Фш┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md

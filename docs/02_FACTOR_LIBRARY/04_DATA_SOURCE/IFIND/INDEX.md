@@ -32,7 +32,7 @@ responsibility: iFind数据源模块导航
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 因子主索引 | [FACTOR_MASTER_INDEX.md](./FACTOR_MASTER_INDEX.md) | 核心索引 | 因子库主索引 |
+
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -48,7 +48,7 @@ responsibility: iFind数据源模块导航
 
 | 文件/目录 | 职责 | 状态 |
 |-----------|------|------|
-| [FACTOR_MASTER_INDEX.md](FACTOR_MASTER_INDEX.md) | 因子主索引 | Active |
+
 | [financial_statements/](financial_statements/) | 财务数据 | Active |
 | factor_list.csv | 因子列表数据 | Active |
 | factor_master_index.csv | 因子主索引数据 | Active |
@@ -90,7 +90,7 @@ responsibility: iFind数据源模块导航
 
 ### 因子数据
 
-- [FACTOR_MASTER_INDEX.md](FACTOR_MASTER_INDEX.md) - 因子主索引
+
 
 ---
 

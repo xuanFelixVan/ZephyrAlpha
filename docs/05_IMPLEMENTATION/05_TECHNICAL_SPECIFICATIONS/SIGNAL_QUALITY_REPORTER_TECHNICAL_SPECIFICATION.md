@@ -16,7 +16,8 @@ owner: 首席技术评审官
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 7 AI报告�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
+
 ---
 ---
 

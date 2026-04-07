@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 实施层架构师
 responsibility:
-  - 数据质量
+  - 实施指南、部署文档
   - 因子计算
   - 系统架构
 standard_type: 专业量化机构目录索引
@@ -105,7 +105,7 @@ implementation_status: 活跃维护---
 |---------|------|--------|
 | [基础设施概述](./04_INFRASTRUCTURE/README.md) | 基础设施概述 | ⭐⭐⭐⭐?|
 | [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | 日常流水?| ⭐⭐⭐⭐ |
-| [数据清洗](./04_INFRASTRUCTURE/DATA_CLEANING.md) | 数据清洗 | ⭐⭐⭐⭐ |
+
 
 ### 运维
 

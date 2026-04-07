@@ -1,7 +1,7 @@
 ---
 standard_type: хоЮцЦ╜цКехСК
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 数据源
   - 系统架构
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ

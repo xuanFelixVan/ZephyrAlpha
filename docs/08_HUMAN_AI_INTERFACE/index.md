@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 系统架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 索引文档、导航目录
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构系统蓝图
 applicable_scope: ZephyrAlpha人机交互层完整设计

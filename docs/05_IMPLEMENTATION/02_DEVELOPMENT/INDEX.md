@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДя┐?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДч┤вх╝Х
 responsibility:
-  - 数据源
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 applicable_scope: х╝АхПСцаЗхЗЖчЫоя┐?compliance_level: ф╕Уф╕ЪцаЗхЗЖ

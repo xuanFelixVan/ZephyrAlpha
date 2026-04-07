@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 交易策略团队
 responsibility:
-  - 因子计算
+  - 交易策略、战术执行
   - 交易执行
   - 回测系统
 layer: Layer 3 (策略层)

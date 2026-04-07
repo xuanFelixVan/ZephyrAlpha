@@ -9,7 +9,8 @@ standard_type: 审计管理文档
 applicable_scope: 全系统职责边界管理
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

@@ -13,7 +13,8 @@ audit_date: 2026-04-06
 audit_type: 深度审计（三层审计标准）
 audit_scope: L1文件系统层 + L2文档内容层 + L3专业标准层
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
+
 ---
 ---
 

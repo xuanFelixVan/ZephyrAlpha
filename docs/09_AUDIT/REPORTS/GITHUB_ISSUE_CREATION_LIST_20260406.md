@@ -9,7 +9,8 @@ standard_type: GitHub Issue创建清单
 applicable_scope: TODO标记转换
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

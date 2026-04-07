@@ -34,7 +34,8 @@ responsibility_boundary: |
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告系统
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 ---

@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 standard_type: ф╕кф║║х╝АхП?AIч╗┤цКдхоЮцЦ╜цМЗхНЧ
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md

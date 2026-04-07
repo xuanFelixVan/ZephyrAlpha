@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 绩效分析
   - 系统架构
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕίχΝόΧ┤όΑπϋψΕϊ╝░όΛξ?applicable_scope: Layer 1όΧ░όΞχώλΕίνΕύΡΗί▒Γ

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ιΠ•εΗ≠φ•΅φΓΘφûΕφû³εΗ?standard_type: δΗ™δΗöι΅èε¨•φ€Κφû³γ¥ΔεΦï
 responsibility:
-  - 文档治理
+  - 资源管理、平台文档
 applicable_scope: εΛ•ιÉ®ηΒ³φΚê
 compliance_level: δΗ™δΗöφ†΅ε΅Ü
 parent_document: ../INDEX.md
@@ -24,7 +24,7 @@ implementation_status: εΖ≤ε°¨φà?---
 
 | φ•΅δΜΕ/γ¦°εΫï | η¹¨η¥Θ | γäΕφÄ?|
 |----------|------|------|
-| [README.md](README.md) | ηΒ³φΚêγ¦°εΫïη·¥φ‰é | Active |
+
 | [04_PLATFORM_DOCS/](04_PLATFORM_DOCS/) | εΙ≥εèΑφ•΅φΓΘ | Active |
 
 ## πü™² ε≠êγ¦°εΫïη·ΠφÉ?

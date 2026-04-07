@@ -9,7 +9,7 @@ standard_type: 专业量化机构索引优化完成报告
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 执行索引体系优化
+  - 实施指南、部署文档、审计状态追踪
   - 明确索引职责边界
   - 提升索引效率
 ---

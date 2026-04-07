@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0

@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔ۰۲ﮔ۷۰ﮔﺟ
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../STANDARDS/MODULE_INTERFACE_SPECIFICATION.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?version: 1.0.0

@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -1259,7 +1259,7 @@ class GlobalMarketDataEngine:
 #### Layer 2: Alpha因子层
 ##### 0.001. Critical Modules Implementation Blueprint
 - **模块ID**: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT_001
-- **蓝图文档**: [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](./01_FRAMEWORK\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
+- **蓝图文档**: [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 0æ°æ®æºå±å³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 - **状态**: Active

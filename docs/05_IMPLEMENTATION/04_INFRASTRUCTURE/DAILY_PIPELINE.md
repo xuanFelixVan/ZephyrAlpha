@@ -11,7 +11,8 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
+
 ---
 ---
 

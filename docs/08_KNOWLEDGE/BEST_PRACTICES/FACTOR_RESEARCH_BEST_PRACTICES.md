@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块
   - 组合优化
   - 绩效分析
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md

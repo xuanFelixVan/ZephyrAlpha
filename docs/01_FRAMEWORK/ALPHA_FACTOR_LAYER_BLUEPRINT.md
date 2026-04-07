@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -465,7 +465,7 @@ class FactorEvaluation:
 | 文档 | 说明 |
 |------|------|
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
-| [FACTOR_RESEARCH_BLUEPRINT.md](./FACTOR_RESEARCH_BLUEPRINT.md) | 因子研究蓝图 |
+| [FACTOR_RESEARCH_BLUEPRINT.md](FACTOR_RESEARCH_BLUEPRINT.md) | 因子研究蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
@@ -481,7 +481,7 @@ class FactorEvaluation:
 #### Layer 2: Alpha因子层
 ##### 0.001. Alpha Factor Layer Blueprint
 - **模块ID**: ALPHA_FACTOR_LAYER_BLUEPRINT_001
-- **蓝图文档**: [ALPHA_FACTOR_LAYER_BLUEPRINT.md](./01_FRAMEWORK\ALPHA_FACTOR_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [ALPHA_FACTOR_LAYER_BLUEPRINT.md](01_FRAMEWORK\ALPHA_FACTOR_LAYER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 2 - Alpha因子层
 - **状态**: Active

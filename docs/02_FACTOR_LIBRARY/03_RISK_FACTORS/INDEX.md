@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 风险预算
+  - 因子计算、因子库管理
   - 因子计算
   - 交易执行
 standard_type: 索引文档
@@ -26,11 +26,11 @@ compliance_level: 专业标准---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [Barra风格因子](./T.03.RF001.barra_style_factors.md) | Barra风格因子定义和计�?| ⭐⭐⭐⭐�?|
-| [行业因子](./T.03.RF002.industry_factors.md) | 行业分类因子和暴露度 | ⭐⭐⭐⭐�?|
-| [尾部风险因子](./T.03.RF003.tail_risk_factors.md) | 极端市场风险因子 | ⭐⭐⭐⭐ |
-| [Barra优化器](./T.03.RM003.barra_optimizer.md) | Barra模型优化工具 | ⭐⭐⭐⭐ |
-| [因子透明度报告](./T.03.RM004.factor_transparency_report.md) | 因子透明度分�?| ⭐⭐�?|
+
+
+
+
+
 
 ---
 

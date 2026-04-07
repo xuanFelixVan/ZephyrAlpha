@@ -12,7 +12,7 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
 responsibility:
-  - 数据质量
+  - 归档文档、历史版本、技术评审
   - 因子计算
   - 组合优化
 last_updated: 2026-04-02---

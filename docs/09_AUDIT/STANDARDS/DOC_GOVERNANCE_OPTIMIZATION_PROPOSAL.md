@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮒ؟?standard_type: ﮔﮔ۰۲ﮔﺎﭨﻝﻛﺙﮒﮔﮔ۰
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮔﺎﭨﻝ?
 ---
 ---

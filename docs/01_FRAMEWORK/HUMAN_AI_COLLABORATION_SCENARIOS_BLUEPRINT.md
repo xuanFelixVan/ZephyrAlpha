@@ -13,7 +13,7 @@ related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - AI_TRUST_CALIBRATION_BLUEPRINT.md
   - EXTREME_MARKET_RESPONSE_BLUEPRINT.md
-parent_document: ../ARCHITECTURE.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 responsibility_boundary: |
   本文档负责人机协作场景细化与动态调整，包括：
@@ -637,7 +637,7 @@ class CollaborationSelector:
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Collaboration Scenarios Blueprint
 - **模块ID**: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md](./01_FRAMEWORK\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md)
+- **蓝图文档**: [HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 人机协作场景细化与动态调�?compliance_level: 顶级专业标准
 - **状态**: Active

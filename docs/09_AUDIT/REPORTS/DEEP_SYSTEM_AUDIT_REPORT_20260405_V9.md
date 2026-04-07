@@ -6,7 +6,7 @@ created_date: 2026-04-05
 last_updated: 2026-04-05
 owner: Audit Sentinel
 responsibility:
-  - 市场状态识别
+  - 审计报告、合规检查
   - 因子计算
   - 交易执行
 standard_type: 专业量化机构审计报告

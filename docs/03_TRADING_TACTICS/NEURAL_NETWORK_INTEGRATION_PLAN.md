@@ -11,7 +11,8 @@ compliance_level: ﮔﭘﮔﮔ ﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 交易策略、战术执行
+
 ---
 ---
 

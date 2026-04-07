@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 
 module_id: RESPONSIBILITY_OVERLAP_FIX_REPORT_001
 version: 1.0.0

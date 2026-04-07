@@ -11,7 +11,8 @@ compliance_level: 顶级专业标准
 parent_document: ./INDEX.md
 implementation_status: 索引阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
+
 ---
 ---
 # Layer 11 战略决策层蓝图索引

@@ -9,7 +9,7 @@ standard_type: Layer 9开源工具集成指南
 applicable_scope: Layer 9 - 研究与创新层开源工具集成
 compliance_level: 专业机构标准
 responsibility:
-  - 开源工具集成指南
+  - 研究创新、技术探索
 
 ---
 # Layer 9研究与创新层开源工具集成指南

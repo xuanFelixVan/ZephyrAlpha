@@ -9,7 +9,8 @@ audit_standard: v5.1
 auditor: AI审计系统
 status: 完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

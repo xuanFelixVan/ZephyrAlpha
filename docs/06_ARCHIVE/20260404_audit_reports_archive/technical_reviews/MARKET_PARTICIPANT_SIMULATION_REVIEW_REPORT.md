@@ -11,7 +11,7 @@ review_type: цаЗхЗЖшпДхобцибх╝П (30хИЖщТЯ)
 review_standard: v5.3
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 系统架构
   - 审计系统
 ---

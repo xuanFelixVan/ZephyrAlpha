@@ -9,7 +9,8 @@ standard_type: TODO清理分析报告
 applicable_scope: 活跃文档TODO标记
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
+
 ---
 ---
 

@@ -1,7 +1,7 @@
 ---
 standard_type: ق«ةقµبçفç
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 文档治理
   - 测试系统
 applicable_scope: لثلآرق«ةق

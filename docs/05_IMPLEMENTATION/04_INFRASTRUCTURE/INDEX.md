@@ -6,7 +6,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
 responsibility:
-  - 数据质量
+  - 实施指南、部署文档
   - 交易执行
   - 系统架构
 standard_type: 专业量化机构索引文档
@@ -69,7 +69,7 @@ parent_document: ../INDEX.md---
 ## 🔗 相关文档
 
 - [DATACLEANER_TECHNICAL_SPECIFICATION.md](../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md) - 数据清洗
-- [DATA_LINEAGE_TRACKING_BLUEPRINT.md](../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LINEAGE_TRACKING_BLUEPRINT.md) - 数据血缘
+
 
 ---
 

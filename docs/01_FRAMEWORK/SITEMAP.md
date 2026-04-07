@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ç³»ç»æ¶æ?standard_type: ä¸ä¸éåæºæææ¡£å°å¾
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 applicable_scope: 01_FRAMEWORKç®å½
 compliance_level: ä¸ä¸æ å
 parent_document: INDEX.md

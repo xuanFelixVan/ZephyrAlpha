@@ -34,7 +34,8 @@ responsibility_boundary: |
   - RESEARCH_PROJECT_MANAGEMENT_BLUEPRINT.md: 研究项目管理
   - STRATEGY_EXECUTION_LAYER_BLUEPRINT.md: 策略执行层
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

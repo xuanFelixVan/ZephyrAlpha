@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 
 module_id: MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT_001
 version: 1.0.0

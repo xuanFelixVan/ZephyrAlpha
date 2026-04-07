@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲?
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 version: 1.0.0
 module_id: IMP_DOCUMENT_QUALITY_GAT
 created_date: 2026-04-02

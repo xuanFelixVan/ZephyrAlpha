@@ -1,7 +1,7 @@
 ---
 standard_type: у╗ЈжфїТђ╗у╗Њ
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 applicable_scope: СИфС║║т╝ђтЈ?compliance_level: ТГБт╝ЈТаЄтЄє

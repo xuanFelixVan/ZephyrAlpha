@@ -1,7 +1,7 @@
 ---
 standard_type: ﮔﮔ۰۲ﮔ۷۰ﮔﺟ
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
 applicable_scope: ﻠ۲ﻠ۸ﻝ؟۰ﻝ
 compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md

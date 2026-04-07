@@ -16,7 +16,10 @@ related_documents:
 parent_document: ../System_Manifest.md
 implementation_status: 审计完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 深度审计
+  - 全面评估
+  - 专业标准符合性检查
+
 ---
 ---
 ---

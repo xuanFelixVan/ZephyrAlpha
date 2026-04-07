@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТќЄТАБТъХТъётИ?standard_type: СИЊСИџжЄЈтїќТю║Тъёу┤бт╝Ћ
 responsibility:
-  - 绩效分析
+  - 索引文档、导航目录
   - 文档治理
   - 日志系统
 applicable_scope: уЏЉТјДуЏ«тйЋ

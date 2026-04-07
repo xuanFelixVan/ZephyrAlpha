@@ -8,7 +8,7 @@ created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席蓝图架构�?standard_type: 归档文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 applicable_scope: 内容不完整的蓝图文档
 compliance_level: 专业标准
 ---

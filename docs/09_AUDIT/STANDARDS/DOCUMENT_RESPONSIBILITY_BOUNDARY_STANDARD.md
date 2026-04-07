@@ -8,7 +8,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 数据源
+  - 审计报告、合规检查
   - 文档治理
 standard_type: ﮔﮔ۰۲ﮔﺎﭨﻝﮔ ﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛﺕﮔ ﮒ---

@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ώοΨί╕φόΛΑόεψϋψΕίχκίχα
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本、技术评审
   - 回测系统
   - 数据源
 standard_type: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΛΑόεψϋψΕ?applicable_scope: Layer 2 AlphaίδιίφΡί▒Γόη╢?compliance_level: ϊ╕Υϊ╕γόιΘίΘΗ

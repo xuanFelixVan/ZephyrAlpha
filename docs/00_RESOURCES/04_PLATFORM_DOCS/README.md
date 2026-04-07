@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?standard_type: 专业量化机构文档
 responsibility:
-  - 因子计算
+  - 资源管理、平台文档
   - 交易执行
   - 回测系统
 applicable_scope: 全系�?compliance_level: 专业标准
@@ -135,8 +135,8 @@ find docs/00_RESOURCES/04_PLATFORM_DOCS -name "*.pdf" | grep -i "qmt"
 
 ## 🔗 系统索引
 
-- **上级目录**: [00_RESOURCES/README.md](../README.md)
-- **系统主索�?*: [System_Manifest.md](../../02_FACTOR_LIBRARY/System_Manifest.md)
+- **上级目录**: [00_RESOURCES/README.md](00_RESOURCES\README.md)
+- **系统主索�?*: [System_Manifest.md](02_FACTOR_LIBRARY\System_Manifest.md)
 - **快速导�?*: [INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
 
 ---

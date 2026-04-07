@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 风险预算
   - 数据质量
 
@@ -93,7 +93,7 @@ compliance_level: 专业标准
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| AI模式识别引擎蓝图 v1.0 | AI_V_001 | 1.0.0 | Active | 2026-04-07 | [链接](./AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md) |
+
 | 自动化数据修复引擎蓝图 | AUTOREPAIRENGINEBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) |
 | 约束求解器蓝?v1.0 | V_014 | 1.0.0 | Active | 2026-04-07 | [链接](./CONSTRAINT_SOLVER_BLUEPRINT.md) |
 | 流动性约束优化蓝图 | LIQUIDITYCONSTRAINEDOPTIMIZA_001 | 1.0.0 | Active | 2026-04-07 | [链接](./LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md) |

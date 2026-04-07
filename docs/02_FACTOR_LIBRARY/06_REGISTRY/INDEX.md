@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算
+  - 因子计算、因子库管理
   - 系统架构
   - 文档治理
 standard_type: 索引文档
@@ -26,7 +26,7 @@ compliance_level: 专业标准---
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [因子目录](./FACTOR_CATALOG.md) | 完整的因子目录清�?| ⭐⭐⭐⭐�?|
+
 
 ---
 

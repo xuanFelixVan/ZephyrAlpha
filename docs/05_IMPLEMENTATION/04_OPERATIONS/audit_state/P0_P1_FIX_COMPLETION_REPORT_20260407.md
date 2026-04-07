@@ -9,7 +9,7 @@ standard_type: 专业量化机构修复报告
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 修复P0和P1问题
+  - 实施指南、部署文档、审计状态追踪
   - 提升索引质量
 ---
 

@@ -11,7 +11,8 @@ applicable_scope: 个人开发+AI维护+个人使用
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Renaissance Technologies", "Bridgewater", "D.E. Shaw"]
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

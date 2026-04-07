@@ -11,7 +11,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 决策记录管理
+  - 审计报告、合规检查
   - 决策追溯
 ---
 

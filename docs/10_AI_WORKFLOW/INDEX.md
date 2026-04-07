@@ -11,7 +11,7 @@ applicable_scope: AI工作流与舆情分析综合管理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 responsibility:
-  - AI工作流管理
+  - 索引文档、导航目录
   - 舆情分析管理
 layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 ---

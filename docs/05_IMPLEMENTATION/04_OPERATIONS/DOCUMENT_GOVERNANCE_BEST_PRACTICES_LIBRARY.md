@@ -9,7 +9,7 @@ standard_type: 专业量化机构最佳实践库
 applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 responsibility:
-  - 建立最佳实践库
+  - 实施指南、部署文档
   - 总结文档治理经验
   - 提供问题解决方案
 ---

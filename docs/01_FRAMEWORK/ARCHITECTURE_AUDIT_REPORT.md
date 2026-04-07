@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: é¦å¸­æ¶æ?standard_type: ä¸ä¸æºæçº§æ¶æå®¡?applicable_scope: å¨ç³»ç»æ¶æå®æ´æ§è¯?compliance_level: é¡¶çº§ä¸ä¸æ å
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 reference_models: ["Bridgewater", "Renaissance", "Two Sigma", "Citadel"]
 parent_document: ../INDEX.md
 implementation_status: å®¡è®¡å®æ

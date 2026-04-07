@@ -1,7 +1,7 @@
 ---
 standard_type: жЈҖжҹҘжё…еҚ?applicable_scope: е…Ёзі»з»?compliance_level: жӯЈејҸж ҮеҮҶ
 responsibility:
-  - 数据源
+  - 实施指南、部署文档
   - 文档治理
   - 审计系统
 parent_document: ../README.md

@@ -1,7 +1,7 @@
 ---
 standard_type: µûçµةثµذةµإ┐
 responsibility:
-  - 文档治理
+  - 审计报告、合规检查
 applicable_scope: µئ╢µئف│قصû
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../STANDARDS/ADR_STANDARD.md

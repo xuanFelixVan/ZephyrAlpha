@@ -6,7 +6,7 @@ parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 version: 1.0.0
 module_id: SCHEDULED_AUDIT_CONFIG
 created_date: 2026-04-02

@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 风险预算
+  - 因子计算、因子库管理
   - 因子计算
   - 系统架构
 standard_type: 通用文档

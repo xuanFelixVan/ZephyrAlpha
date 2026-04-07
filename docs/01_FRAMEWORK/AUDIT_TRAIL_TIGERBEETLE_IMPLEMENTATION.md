@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 审计追踪系统TigerBeetle集成
@@ -1756,7 +1756,7 @@ pause
 |------|------|
 | [审计追踪系统蓝图](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统详细设计 |
 | [P0模块实施计划](./P0_MODULES_IMPLEMENTATION_PLAN.md) | P0模块完整实施计划 |
-| [Layer 10治理与合规层索引](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
+| [Layer 10治理与合规层索引](layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
 
 ---
 

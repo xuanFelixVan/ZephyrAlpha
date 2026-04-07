@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﺅﺟﺛ?standard_type: ﮔﮔﺁﮔﺗﻟﺟﻟ؟۰ﺅﺟ?applicable_scope: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﺅﺟ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 implementation_status: ﻟ؟۰ﮒﮒﭘﮒ؟
 ---
 ---

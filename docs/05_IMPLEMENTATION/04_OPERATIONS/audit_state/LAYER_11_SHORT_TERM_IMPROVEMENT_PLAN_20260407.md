@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 standard_type: 专业量化机构改进计划
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准

@@ -1,7 +1,7 @@
 ---
 standard_type: чобчРЖцаЗхЗЖ
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 applicable_scope: чаФчй╢ц╡БчиЛ
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md

@@ -9,7 +9,8 @@ standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 因子计算、因子库管理
+
 ---
 ---
 

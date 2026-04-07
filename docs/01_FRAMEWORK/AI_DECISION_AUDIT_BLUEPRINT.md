@@ -983,7 +983,7 @@ class DecisionTracer:
 #### Layer 10: 治理与合规层
 ##### 0.001. Ai Decision Audit Blueprint
 - **模块ID**: AI_DECISION_AUDIT_BLUEPRINT_001
-- **蓝图文档**: [AI_DECISION_AUDIT_BLUEPRINT.md](./01_FRAMEWORK\AI_DECISION_AUDIT_BLUEPRINT.md)
+- **蓝图文档**: [AI_DECISION_AUDIT_BLUEPRINT.md](01_FRAMEWORK\AI_DECISION_AUDIT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: AI决策审计追踪与责任归�?compliance_level: 顶级专业标准
 - **状态**: Active

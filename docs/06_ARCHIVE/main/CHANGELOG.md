@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: é¦–ه¸­و–‡و،£و‍¶و‍„ه¸?
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本
 standard_type: ن¸“ن¸ڑé‡ڈهŒ–وœ؛و‍„و–‡و،£
 applicable_scope: ه…¨ç³»ç»?
 compliance_level: ن¸“ن¸ڑو ‡ه‡†

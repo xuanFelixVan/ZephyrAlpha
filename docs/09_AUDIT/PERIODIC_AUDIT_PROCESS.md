@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 系统架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 layer: Layer 9 (监控层)
 standard_type: 专业量化机构级流程文档
 applicable_scope: 全系统文档治理

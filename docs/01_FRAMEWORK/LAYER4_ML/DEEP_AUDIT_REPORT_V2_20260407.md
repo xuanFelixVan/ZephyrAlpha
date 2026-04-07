@@ -7,7 +7,8 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 审计报告和审计记录
+  - 系统框架、架构设计
+
 ---
 
 # Layer 4机器学习层深度审计报告 v2

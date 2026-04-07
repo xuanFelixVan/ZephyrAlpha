@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
 
 module_id: LONG_TERM_OPTIMIZATION_IMPLEMENTATION_REPORT_20260407
 version: 1.0.0

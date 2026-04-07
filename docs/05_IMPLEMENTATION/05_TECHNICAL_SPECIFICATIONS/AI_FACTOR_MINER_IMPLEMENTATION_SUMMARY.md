@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ждќтИГТіђТю»У»ёт«Ат«ў
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: т«ъТќйТђ╗у╗ЊТіЦтЉі
 applicable_scope: AIтЏатГљТїќТјўТеАтЮЌ
 compliance_level: СИЊСИџТаЄтЄє

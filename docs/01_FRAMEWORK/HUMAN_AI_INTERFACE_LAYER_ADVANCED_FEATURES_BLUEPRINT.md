@@ -17,10 +17,17 @@ parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 responsibility_boundary: |
   本文档负责人机交互层高级特性补充，包括：
+  - AI对话式交互增强系统
+  - 移动端界面覆盖系统
+  - 智能推荐系统
   
-  基础功能请参考：HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-responsibility:
-  - 扩展功能、辅助模块
+  **职责边界**：
+  - ✅ 本文档负责：高级特性、扩展功能
+  - ❌ 本文档不负责：基础功能（请参考COMPLETE_SUPPLEMENT）
+  
+  **相关文档**：
+  - 基础功能：HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
+  - 缺失分析：HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md
 ---
 # 人机交互层高级特性补充蓝图
 

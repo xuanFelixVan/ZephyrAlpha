@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构?standard_type: 专业量化机构施工规范
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 applicable_scope: 全系统开发和文档构建
 compliance_level: 强制执行
 parent_document: ../README.md

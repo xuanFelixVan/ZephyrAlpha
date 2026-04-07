@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档
   - 回测系统
   - 文档治理
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﻝ؟۰ﻝ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ

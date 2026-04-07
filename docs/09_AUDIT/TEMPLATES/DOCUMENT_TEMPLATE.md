@@ -4,7 +4,7 @@ parent_document: ../INDEX.md
 implementation_status: и®ҫи®Ўйҳ¶ж®ө
 owner: ж–ҮжЎЈз»ҙжҠӨиҖ?version: 1.0.0
 responsibility:
-  - 系统架构
+  - 审计报告、合规检查
   - 文档治理
 module_id: DOC_TEMPLATE
 created_date: 2026-04-02

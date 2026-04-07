@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?
 responsibility:
-  - 交易执行
+  - 实施指南、部署文档
   - 绩效分析
   - 系统架构
 standard_type: 专业量化机构实施标准

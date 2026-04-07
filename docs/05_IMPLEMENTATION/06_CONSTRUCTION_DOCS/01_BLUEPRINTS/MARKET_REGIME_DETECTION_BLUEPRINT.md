@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 
 layer: "Layer 6 (组合优化层)"
 ---

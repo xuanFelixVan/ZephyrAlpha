@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 组合优化
+  - 实施指南、部署文档、审计状态追踪
   - 回测系统
   - 文档治理
 ---

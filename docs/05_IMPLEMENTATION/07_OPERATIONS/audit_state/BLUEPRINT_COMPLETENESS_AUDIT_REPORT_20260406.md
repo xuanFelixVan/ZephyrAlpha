@@ -10,7 +10,8 @@ applicable_scope: 全系统蓝图完整性审计
 compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw", "Jump Trading"]
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
+
 ---
 ---
 

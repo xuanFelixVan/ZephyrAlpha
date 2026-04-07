@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 数据源
+  - 实施指南、部署文档
   - 系统架构
   - 文档治理
 layer: Layer 9 (治理层)

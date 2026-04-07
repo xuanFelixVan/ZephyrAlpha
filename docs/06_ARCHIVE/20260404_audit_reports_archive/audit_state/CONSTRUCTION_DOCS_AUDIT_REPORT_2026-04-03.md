@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: Audit Sentinel
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК
 applicable_scope: цЦ╜х╖ецЦЗцбгф╕УхМ║ц╖▒х║жхобшоб
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

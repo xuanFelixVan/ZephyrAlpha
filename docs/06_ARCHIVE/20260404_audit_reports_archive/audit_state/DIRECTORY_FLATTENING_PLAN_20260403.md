@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: µצחµíúµ₧╢µ₧הσ╕?standard_type: τ¢«σ╜ץµיבσ╣│σלצµצ╣µí?applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
 responsibility:
-  - 扩展功能、辅助模块
+  - 归档文档、历史版本、审计状态追踪
 compliance_level: Σ╕ףΣ╕תµáחσחז
 parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
 ---

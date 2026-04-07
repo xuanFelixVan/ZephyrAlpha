@@ -34,7 +34,8 @@ responsibility_boundary: |
   - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md: 动态风险预算
   - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md: 组合优化层
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 ---
 

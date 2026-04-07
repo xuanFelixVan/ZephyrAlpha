@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-04
 owner: 执行层架构师
 responsibility:
-  - 因子计算
+  - 索引文档、导航目录
   - 交易执行
   - 机器学习
 standard_type: 专业量化机构目录索引
@@ -99,7 +99,7 @@ implementation_status: 活跃维护---
 ### 交易执行�?
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [交易成本分析](./02_TRADE_EXECUTOR/tca.md) | 交易成本分析 | ⭐⭐⭐⭐ |
+
 
 ### 监控系统
 
@@ -113,13 +113,13 @@ implementation_status: 活跃维护---
 ### AI委员�?
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [AI委员会概述](./04_AI_COMMITTEE/README.md) | AI委员会概�?| ⭐⭐⭐⭐ |
+
 
 ### 风险引擎
 
 | 文档名称 | 说明 | 重要�?|
 |---------|------|--------|
-| [风险引擎概述](./05_RISK_ENGINE/README.md) | 风险引擎概述 | ⭐⭐⭐⭐ |
+
 
 ### 模拟系统
 
@@ -144,8 +144,8 @@ implementation_status: 活跃维护---
 | [01_ORDER_EXECUTION/](./01_ORDER_EXECUTION/) | 订单执行 | 3 |
 | [02_TRADE_EXECUTOR/](./02_TRADE_EXECUTOR/) | 交易执行�?| 1 |
 | [03_MONITORING/](./03_MONITORING/) | 监控系统 | 6 |
-| [04_AI_COMMITTEE/](./04_AI_COMMITTEE/) | AI委员�?| 1 |
-| [05_RISK_ENGINE/](./05_RISK_ENGINE/) | 风险引擎 | 1 |
+
+
 | [06_SIMULATION/](./06_SIMULATION/) | 模拟系统 | 3 |
 | [07_LIVE_STREAM/](./07_LIVE_STREAM/) | 实盘系统 | 10+ |
 

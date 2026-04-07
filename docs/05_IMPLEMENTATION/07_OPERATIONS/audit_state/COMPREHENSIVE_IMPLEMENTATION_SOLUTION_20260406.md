@@ -11,7 +11,8 @@ compliance_level: 专业标准
 reference_models: ["Citadel", "Two Sigma", "文艺复兴", "DE Shaw", "Jump Trading"]
 target_users: ["个人开发者", "AI维护", "个人使用"]
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档、审计状态追踪
+
 ---
 ---
 

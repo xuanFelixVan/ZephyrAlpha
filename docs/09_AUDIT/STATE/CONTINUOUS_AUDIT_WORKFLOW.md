@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计系统
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告、合规检查
 standard_type: 审计流程文档
 applicable_scope: 全系统持续审计
 compliance_level: 专业标准

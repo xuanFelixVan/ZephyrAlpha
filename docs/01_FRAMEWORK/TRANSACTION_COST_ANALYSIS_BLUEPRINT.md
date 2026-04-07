@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 数据质量
+  - 系统框架、架构设计
   - 交易执行
   - 回测系统
 layer: Layer 10 (治理与合规层)

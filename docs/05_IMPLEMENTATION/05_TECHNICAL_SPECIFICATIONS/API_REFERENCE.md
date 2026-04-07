@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席技术评审官
 responsibility:
-  - 扩展功能、辅助模块
+  - 实施指南、部署文档
 standard_type: API接口文档
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准

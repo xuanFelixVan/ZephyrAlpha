@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 数据标准化
+  - 实施指南、部署文档
   - 数据格式统一
   - 数据验证
 layer: "Layer 1 (数据预处理层)"

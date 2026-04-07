@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 因子计算
+  - 实施指南、部署文档、审计状态追踪
   - 交易执行
   - 系统架构
 standard_type: 优化报告

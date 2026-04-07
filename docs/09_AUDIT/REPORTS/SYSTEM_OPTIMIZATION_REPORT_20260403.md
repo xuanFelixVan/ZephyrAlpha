@@ -1,7 +1,7 @@
 ---
 standard_type: т«ъТќйТіЦтЉі
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 系统架构
   - 文档治理
 applicable_scope: тЁеу│╗у╗?compliance_level: СИЊСИџТаЄтЄє

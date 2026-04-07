@@ -1,7 +1,7 @@
 ---
 standard_type: цФ╣ш┐ЫшобхИТ
 responsibility:
-  - 系统架构
+  - 审计报告、合规检查
   - 文档治理
 applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 parent_document: ../INDEX.md

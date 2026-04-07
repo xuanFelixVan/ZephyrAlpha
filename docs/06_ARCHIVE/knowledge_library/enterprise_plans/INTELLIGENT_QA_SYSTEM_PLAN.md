@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­AIﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ۶ﮒﮔﮔ۰۲
 responsibility:
-  - 因子计算
+  - 归档文档、历史版本
   - 交易执行
   - 数据源
 applicable_scope: ﮔﭦﻟﺛﻠ؟ﻝ­ﻝﺏﭨﻝﭨﮒﭨﭦﻟ؟ﺝ

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: 系统架构?standard_type: 专业量化机构文档地图
 responsibility:
-  - 配置管理、参数优化
+  - 扩展功能、辅助模块
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 活跃维护
@@ -62,8 +62,8 @@ docs/
 ### 我要开发策?
 **策略开发路?* (4小时):
 1. 阅读 [03_TRADING_TACTICS/INDEX.md](./03_TRADING_TACTICS/INDEX.md) - 交易战术索引 (30分钟)
-2. 阅读 [02_FACTOR_LIBRARY/System_Manifest.md](./02_FACTOR_LIBRARY/System_Manifest.md) - 因子库系统清?(30分钟)
-3. 阅读 [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md) - 因子注册?(30分钟)
+2. 阅读 [02_FACTOR_LIBRARY/System_Manifest.md](02_FACTOR_LIBRARY/System_Manifest.md) - 因子库系统清?(30分钟)
+3. 阅读 [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md) - 因子注册?(30分钟)
 4. 阅读 [05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - 开发规?(1小时)
 5. 实践编写策略代码 (1.5小时)
 
@@ -88,7 +88,7 @@ docs/
 - [技术栈](./01_FRAMEWORK/TECH_STACK.md)
 
 **子目?*:
-- [ARCHITECTURE_DECISIONS/](./01_FRAMEWORK/ARCHITECTURE_DECISIONS/) - 架构决策记录
+- [ARCHITECTURE_DECISIONS/](01_FRAMEWORK/ARCHITECTURE_DECISIONS/) - 架构决策记录
 
 **索引文件**: [INDEX.md](./01_FRAMEWORK/INDEX.md) | [SITEMAP.md](./01_FRAMEWORK/SITEMAP.md)
 
@@ -96,13 +96,13 @@ docs/
 **核心职责**: 因子方法论、因子计算、因子回测、数据源接口
 
 **关键文档**:
-- [系统清单](./02_FACTOR_LIBRARY/System_Manifest.md)
-- [因子注册表](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
+- [系统清单](02_FACTOR_LIBRARY/System_Manifest.md)
+- [因子注册表](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
 - [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
-- [数据源概述](./02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md)
+- [数据源概述](02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md)
 
 **子目?*:
-- [00_GOVERNANCE/](./02_FACTOR_LIBRARY/00_GOVERNANCE/) - 治理文档
+- [00_GOVERNANCE/](02_FACTOR_LIBRARY/00_GOVERNANCE/) - 治理文档
 - [01_STANDARDS/](./02_FACTOR_LIBRARY/01_STANDARDS/) - 方法?- [03_RISK_FACTORS/](./02_FACTOR_LIBRARY/03_RISK_FACTORS/) - 风险因子
 - [04_DATA_SOURCE/](./02_FACTOR_LIBRARY/04_DATA_SOURCE/) - 数据?- [05_BACKTEST/](./02_FACTOR_LIBRARY/05_BACKTEST/) - 回测
 
@@ -177,13 +177,13 @@ docs/
 
 ### 因子相关
 
-- **因子注册**: [因子注册表](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
+- **因子注册**: [因子注册表](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_REGISTRY.md)
 - **因子计算**: [因子计算框架](./02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md)
 - **因子回测**: [回测概述](./02_FACTOR_LIBRARY/05_BACKTEST/README.md)
 
 ### 数据相关
 
-- **数据?*: [数据源概述](./02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md)
+- **数据?*: [数据源概述](02_FACTOR_LIBRARY/04_DATA_SOURCE/README.md)
 - **QMT接口**: [QMT接口](./02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 - **iFind连接?*: [iFind连接器](./02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md)
 

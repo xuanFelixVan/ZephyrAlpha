@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДч┤вх╝Х
 responsibility:
-  - 组合优化
+  - 交易策略、战术执行
   - 回测系统
   - 文档治理
 applicable_scope: чнЦчХецбЖцЮ╢чЫох╜Х
@@ -34,7 +34,7 @@ implementation_status: х╖▓хоМцИ?---
 | [BACKTEST_BLUEPRINT.md](BACKTEST_BLUEPRINT.md) | хЫЮц╡Лч│╗ч╗ЯшУЭхЫ╛ | Active |
 | [BATCH_EVALUATION_BLUEPRINT.md](BATCH_EVALUATION_BLUEPRINT.md) | цЙ╣щЗПшпДф╝░шУЭхЫ╛ | Active |
 | [PARAMETER_OPTIMIZATION_BLUEPRINT.md](PARAMETER_OPTIMIZATION_BLUEPRINT.md) | хПВцХ░ф╝ШхМЦшУЭхЫ╛ | Active |
-| [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | ч╗ДхРИф╝ШхМЦшУЭхЫ╛ | Active |
+
 | [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md) | AIч╗ДхРИф╝ШхМЦшУЭхЫ╛ | Active |
 | [PRODUCTION_MONITORING_BLUEPRINT.md](PRODUCTION_MONITORING_BLUEPRINT.md) | чФЯф║зчЫСцОзшУЭхЫ╛ | Active |
 | [RISK_CONTROL_AI_BLUEPRINT.md](RISK_CONTROL_AI_BLUEPRINT.md) | AIщгОщЩйцОзхИ╢шУЭхЫ╛ | Active |

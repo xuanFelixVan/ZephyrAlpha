@@ -24,7 +24,8 @@ responsibility_boundary: |
   
   推送通知请参考：MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
+
 ---
 # 移动端界面覆盖蓝图
 

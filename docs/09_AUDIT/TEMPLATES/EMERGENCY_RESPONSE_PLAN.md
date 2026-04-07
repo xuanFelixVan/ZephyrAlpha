@@ -1,7 +1,7 @@
 ---
 standard_type: ف║¤µحµëïف?applicable_scope: لثلآرق«ةق
 responsibility:
-  - 因子计算
+  - 审计报告、合规检查
   - 文档治理
 compliance_level: غ╕ôغ╕أµبçفç
 parent_document: ../STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md

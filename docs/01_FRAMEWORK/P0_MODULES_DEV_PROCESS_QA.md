@@ -6,7 +6,7 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 系统框架、架构设计
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级开发流程
 applicable_scope: P0模块开发流程和质量保证

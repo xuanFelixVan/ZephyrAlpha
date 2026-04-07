@@ -1,12 +1,12 @@
 ---
-module_id: STRATEGIC_DECISION_BP_001
+module_id: 11_STRATEGIC_DECISION_BLUEPRINT_V2_0_1_BACKUP_20260407124139
 version: 2.0.1
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-05
 owner: 首席架构�?standard_type: 专业量化机构级蓝�?applicable_scope: Layer 11 - 战略决策�?compliance_level: 顶级专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 蓝图设计、架构规划
 reference_models: ["Bridgewater Investment Committee", "Renaissance Technologies Strategic Allocation", "Two Sigma Portfolio Strategy", "Citadel Multi-Strategy Framework"]
 related_documents:
   - ARCHITECTURE.md
