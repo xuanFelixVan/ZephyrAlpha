@@ -1,46 +1,22 @@
 ---
-module_id: PORTFOLIO_REBALANCING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# PORTFOLIO REBALANCING BLUEPRINT
-
-> **核心职责**: Portfolio Rebalancing蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Rebalancing蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: PORTFOLIO_REBALANCING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 概述
-
-> **开发时?*: 40h（约1周）
-> **核心定位**: 智能再平衡决策，平衡跟踪误差与交易成?> **对标机构**: 专业量化机构标准配置
-> **个人开发可?*: ⭐⭐⭐⭐?完全可行
-> **AI维护难度**: ?
 ---
-## 核心定位
 
-组合再平衡模块，负责定期或触发式调整投资组合权重，维持目标配置
+# 组合再平衡蓝图
+
+> **核心职责**: 智能再平衡决策，平衡跟踪误差与交易成本
+> **职责边界**: 
+> - ✅ 本文档负责：再平衡触发、权重调整、成本优化
+> - ❌ 本文档不负责：RL增强调仓（由RL_REBALANCING_SYSTEM负责）
 
 
 ## 1. 概述

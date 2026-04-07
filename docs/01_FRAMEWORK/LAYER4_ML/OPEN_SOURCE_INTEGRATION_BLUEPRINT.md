@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供open source integration blueprint的架构设计和实施蓝图
 layer: Layer 4 (机器学习层)
 standard_type: 专业机构级蓝图
 applicable_scope: 开源项目集成与管理
@@ -35,10 +35,10 @@ related_documents:
 
 **📌 文档关系说明**:
 - **本文档**: 侧重**技术实施**，提供具体的集成代码、部署方案、配置模板
-- **配套文档**: [开源模块完整方案](./OPEN_SOURCE_MODULE_SOLUTION.md) - 侧重**方案选型**，提供全景图、对比分析、推荐理由
+- **配套文档**: [开源模块完整方案](#) - 侧重**方案选型**，提供全景图、对比分析、推荐理由
 
 **🎯 使用场景**:
-- 如果您需要**选型决策** → 先阅读[开源模块完整方案](./OPEN_SOURCE_MODULE_SOLUTION.md)
+- 如果您需要**选型决策** → 先阅读[开源模块完整方案](#)
 - 如果您需要**技术实施** → 阅读本文档
 - 如果您需要**完整流程** → 先阅读选型文档，再阅读本文档
 
@@ -394,7 +394,7 @@ class MomentumStrategy(StrategyBase):
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [开源项目集成方案蓝图](../10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md` | OPEN_SOURCE_INTEGRATION_001 | 1.0 | Active | MLflow集成、Qlib集成、架构参考、工具集|
+| [开源项目集成方案蓝图](#) | `docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md` | OPEN_SOURCE_INTEGRATION_001 | 1.0 | Active | MLflow集成、Qlib集成、架构参考、工具集|
 ```
 
 ### 5.2 模块职责边界
@@ -444,8 +444,8 @@ class MomentumStrategy(StrategyBase):
 | 文档 | 说明 |
 |------|------|
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | MLflow集成基础 |
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录集成 |
-| [技术栈文档](../01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 |
+| [AI工作记录与优化模块蓝图](#) | AI工作记录集成 |
+| [技术栈文档](#) | 技术栈选择 |
 
 ---
 

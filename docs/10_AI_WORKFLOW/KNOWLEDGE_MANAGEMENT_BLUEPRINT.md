@@ -9,7 +9,7 @@ responsibility:
   - 风险预算
   - 因子计算
   - 交易执行
-layer: Layer 2 (Alpha因子层)
+layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 知识管理与传承系统
 compliance_level: 专业标准
@@ -37,6 +37,16 @@ open_source_solution:
 
 **本文档职责**: 知识管理与传承系统蓝图
 - 知识库构建、知识检索、知识图谱、经验传承、学习路径规划
+
+**📌 职责边界说明**:
+- **本文档**: 系统级知识管理平台，负责全系统知识的积累、检索和传承
+- **OPERATIONS_KNOWLEDGE_MANAGEMENT**: 舆情专用运维知识库，负责舆情运维知识管理
+
+**职责关系**:
+```
+KNOWLEDGE_MANAGEMENT（本模块：系统级知识平台）
+    └── OPERATIONS_KNOWLEDGE_MANAGEMENT（舆情运维知识库）
+```
 
 # 知识管理与传承系统蓝图
 

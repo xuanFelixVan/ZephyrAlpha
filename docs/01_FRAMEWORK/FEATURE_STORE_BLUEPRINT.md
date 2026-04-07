@@ -40,7 +40,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的特征存储系统设计，包括特征管理、特征服务、特征版本控制等核心功能。
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供feature store blueprint的架构设计和实施蓝图
 ---
 ---
 ---
@@ -1051,7 +1051,7 @@ pandas>=2.0.0
 
 - **模块ID**: FEATURE_STORE_BLUEPRINT_001
 
-- **蓝图文档**: [FEATURE_STORE_BLUEPRINT.md](./01_FRAMEWORK\FEATURE_STORE_BLUEPRINT.md)
+- **蓝图文档**: [FEATURE_STORE_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

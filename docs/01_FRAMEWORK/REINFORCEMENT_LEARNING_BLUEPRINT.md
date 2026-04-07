@@ -40,7 +40,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的强化学习系统设计，包括策略优化、价值函数、环境建模等核心功能。
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供reinforcement learning blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -1349,7 +1349,7 @@ pandas>=2.0.0
 
 - **模块ID**: REINFORCEMENT_LEARNING_BLUEPRINT_001
 
-- **蓝图文档**: [REINFORCEMENT_LEARNING_BLUEPRINT.md](./01_FRAMEWORK\REINFORCEMENT_LEARNING_BLUEPRINT.md)
+- **蓝图文档**: [REINFORCEMENT_LEARNING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

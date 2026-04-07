@@ -10,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供data preprocessing layer blueprint的架构设计和实施蓝图
 ---
 ---
 ---
@@ -1021,7 +1021,7 @@ class DataQualityReport:
 #### Layer 1: 数据预处理层
 ##### 0.001. Data Preprocessing Layer Blueprint
 - **模块ID**: DATA_PREPROCESSING_LAYER_BLUEPRINT_001
-- **蓝图文档**: [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./01_FRAMEWORK\DATA_PREPROCESSING_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: Layer 1 - 数据预处理层
 - **状态**: Active

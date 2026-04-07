@@ -11,7 +11,7 @@ last_updated: 2026-04-02
 
 owner: é¦å¸­èå¾æ¶æï¿?standard_type: ä¸ä¸éåæºæèå¾
 responsibility:
-  - 集成接口、数据交换
+  - 提供acceptance criteria blueprint的架构设计和实施蓝图
 layer: Layer 4
 ---
 ---
@@ -777,7 +777,7 @@ responsibility_boundary: |
 
 |---------|------|------|
 
-| [Layer 8æ»ä½èå¾](./LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | äººæºååæç¥è§å |
+| [Layer 8æ»ä½èå¾](#) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | äººæºååæç¥è§å |
 
 | [AIæ²»çæ¡æ¶èå¾](./AI_GOVERNANCE_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` | AIè¡ä¸ºåååæ²»çæºï¿?|
 
@@ -831,7 +831,7 @@ responsibility_boundary: |
 
 - **模块ID**: ACCEPTANCE_CRITERIA_BLUEPRINT_001
 
-- **蓝图文档**: [ACCEPTANCE_CRITERIA_BLUEPRINT.md](./01_FRAMEWORK\ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- **蓝图文档**: [ACCEPTANCE_CRITERIA_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

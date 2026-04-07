@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供mlops platform blueprint的架构设计和实施蓝图
 ---
 ---
 ---
@@ -1194,7 +1194,7 @@ github-actions-runner>=2.0.0
 
 - **模块ID**: MLOPS_PLATFORM_BLUEPRINT_001
 
-- **蓝图文档**: [MLOPS_PLATFORM_BLUEPRINT.md](./01_FRAMEWORK\MLOPS_PLATFORM_BLUEPRINT.md)
+- **蓝图文档**: [MLOPS_PLATFORM_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

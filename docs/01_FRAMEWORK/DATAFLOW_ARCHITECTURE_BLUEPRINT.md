@@ -23,7 +23,7 @@ compliance_level: 专业标准
 
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供dataflow architecture blueprint的架构设计和实施蓝图
   responsibility_layer: Layer 11
 ---
 ---
@@ -748,7 +748,7 @@ class TacticalToExecutionDataFlow:
 
 - **模块ID**: DATAFLOW_ARCHITECTURE_BLUEPRINT_001
 
-- **蓝图文档**: [DATAFLOW_ARCHITECTURE_BLUEPRINT.md](./01_FRAMEWORK\DATAFLOW_ARCHITECTURE_BLUEPRINT.md)
+- **蓝图文档**: [DATAFLOW_ARCHITECTURE_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

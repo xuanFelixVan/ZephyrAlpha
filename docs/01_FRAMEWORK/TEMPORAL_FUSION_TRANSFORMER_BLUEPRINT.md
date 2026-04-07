@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供temporal fusion transformer blueprint的架构设计和实施蓝图
 
 standard_type: é«å±æ¶æèå¾
 
@@ -779,7 +779,7 @@ class PortfolioOptimizer:
 
 - **模块ID**: TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT_001
 
-- **蓝图文档**: [TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md](./01_FRAMEWORK\TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md)
+- **蓝图文档**: [TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

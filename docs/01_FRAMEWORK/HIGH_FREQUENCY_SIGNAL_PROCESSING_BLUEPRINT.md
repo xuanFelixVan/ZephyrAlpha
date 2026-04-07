@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供high frequency signal processing blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -332,7 +332,7 @@ pywavelets>=1.5.0
 
 - **模块ID**: HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT_001
 
-- **蓝图文档**: [HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md](./01_FRAMEWORK\HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md)
+- **蓝图文档**: [HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

@@ -11,7 +11,7 @@ last_updated: 2026-04-05
 
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供machine learning layer blueprint的架构设计和实施蓝图
 
 layer: Layer 4 (机器学习层)
 
@@ -862,7 +862,7 @@ class ModelPerformance:
 
 - **模块ID**: MACHINE_LEARNING_LAYER_BLUEPRINT_001
 
-- **蓝图文档**: [MACHINE_LEARNING_LAYER_BLUEPRINT.md](./01_FRAMEWORK\MACHINE_LEARNING_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [MACHINE_LEARNING_LAYER_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

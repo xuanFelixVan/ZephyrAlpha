@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供sparse attention blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -271,7 +271,7 @@ output = flash_attn_func(q, k, v, causal=True)
 
 - **模块ID**: SPARSE_ATTENTION_BLUEPRINT_001
 
-- **蓝图文档**: [SPARSE_ATTENTION_BLUEPRINT.md](./01_FRAMEWORK\SPARSE_ATTENTION_BLUEPRINT.md)
+- **蓝图文档**: [SPARSE_ATTENTION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

@@ -40,7 +40,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的在线学习系统设计，包括增量学习、概念漂移、实时更新等核心功能。
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供online learning blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -827,7 +827,7 @@ pandas>=2.0.0
 
 - **模块ID**: ONLINE_LEARNING_BLUEPRINT_001
 
-- **蓝图文档**: [ONLINE_LEARNING_BLUEPRINT.md](./01_FRAMEWORK\ONLINE_LEARNING_BLUEPRINT.md)
+- **蓝图文档**: [ONLINE_LEARNING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

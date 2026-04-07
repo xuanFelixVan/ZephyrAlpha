@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 因子计算
+  - 提供ai enhancement integration blueprint的架构设计和实施蓝图
   - 风险预算
   - 数据质量
 

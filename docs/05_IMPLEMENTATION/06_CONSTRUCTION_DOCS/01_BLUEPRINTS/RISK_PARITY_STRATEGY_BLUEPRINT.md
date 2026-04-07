@@ -1,49 +1,22 @@
 ---
-module_id: RISK_PARITY_STRATEGY_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# RISK PARITY STRATEGY BLUEPRINT
-
-> **核心职责**: Risk Parity Strategy蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Risk Parity Strategy蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 市场状态识别
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 风险平价策略蓝图
+---
 
-> **核心定位**: 风险平价策略蓝图的核心功能实现
+# 风险平价策略蓝图
 
-
-> **索引**: `RISK_PARITY_STRATEGY_001`
-> **开发周期**: 2-3天（集成开源项目）
-> **核心定位**: 基于风险贡献而非资金贡献的组合构建策略，实现真正的分散化投资
-> **参考开源**: PyPortfolioOpt (4.2k+ ⭐) + Riskfolio-Lib (3.1k+ ⭐) + skfolio (500+ ⭐)
-> **专业对标**: 桥水基金全天候策略、AQR风险平价策略
-
-## 核心定位
-
-风险平价策略模块，负责构建风险平价投资组合，实现风险均衡配置
+> **核心职责**: 构建风险平价投资组合，实现风险均衡配置
+> **职责边界**: 
+> - ✅ 本文档负责：风险平价组合构建、风险贡献计算
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

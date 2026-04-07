@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供model monitoring blueprint的架构设计和实施蓝图
 ---
 ---
 ---
@@ -990,7 +990,7 @@ requests>=2.31.0
 
 - **模块ID**: MODEL_MONITORING_BLUEPRINT_001
 
-- **蓝图文档**: [MODEL_MONITORING_BLUEPRINT.md](./01_FRAMEWORK\MODEL_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: [MODEL_MONITORING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

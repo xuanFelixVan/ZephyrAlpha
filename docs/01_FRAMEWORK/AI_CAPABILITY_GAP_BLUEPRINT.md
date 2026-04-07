@@ -1260,7 +1260,7 @@ Month 5-6: P1级高级AI能力建设
 #### Layer 10: 治理与合规层
 ##### 0.001. Ai Capability Gap Blueprint
 - **模块ID**: AI_CAPABILITY_GAP_BLUEPRINT_001
-- **蓝图文档**: [AI_CAPABILITY_GAP_BLUEPRINT.md](./01_FRAMEWORK\AI_CAPABILITY_GAP_BLUEPRINT.md)
+- **蓝图文档**: [AI_CAPABILITY_GAP_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: AI能力补充与完�?compliance_level: 顶级专业标准
 - **状态**: Active

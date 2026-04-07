@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供sentiment analysis layer blueprint的架构设计和实施蓝图
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -547,7 +547,7 @@ class AnalystForecast:
 
 | 文档 | 说明 |
 |------|------|
-| [NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md](./NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md) | 新闻情感分析蓝图 |
+| [NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md](#) | 新闻情感分析蓝图 |
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
@@ -564,7 +564,7 @@ class AnalystForecast:
 #### Layer 3: 舆情分析层
 ##### 0.001. Sentiment Analysis Layer Blueprint
 - **模块ID**: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT_001
-- **蓝图文档**: [SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md](./01_FRAMEWORK\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: Layer 3 - 舆情分析层
 - **状态**: Active

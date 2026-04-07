@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供ai pattern recognition engine blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -27,7 +27,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 市场状态识别 (Layer 4)
+  - 提供ai pattern recognition engine blueprint的架构设计和实施蓝图
   - 数据质量 (Layer 1)
 
 layer: "Layer 4 (机器学习层)"

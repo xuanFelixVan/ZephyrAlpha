@@ -29,7 +29,7 @@ open_source_solution:
   license: Apache 2.0
   cost: 完全免费
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供model drift detection blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -561,7 +561,7 @@ class EnhancedModelManager(ModelManager):
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| **MODEL_DRIFT_DETECTION_001** | 模型漂移检测系统 | 1.0 | Active | [MODEL_DRIFT_DETECTION_BLUEPRINT.md](10_AI_WORKFLOW/MODEL_DRIFT_DETECTION_BLUEPRINT.md) | 数据漂移检测、模型性能漂移检测、概念漂移检测、漂移告警引擎、漂移报告生成 |
+| **MODEL_DRIFT_DETECTION_001** | 模型漂移检测系统 | 1.0 | Active | [MODEL_DRIFT_DETECTION_BLUEPRINT.md](#) | 数据漂移检测、模型性能漂移检测、概念漂移检测、漂移告警引擎、漂移报告生成 |
 ```
 
 ### 6.2 模块职责边界

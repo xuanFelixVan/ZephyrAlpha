@@ -1,49 +1,22 @@
 ---
-module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# STRATEGY PORTFOLIO OPTIMIZATION BLUEPRINT
-
-> **核心职责**: Strategy Portfolio Optimization蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Strategy Portfolio Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 3 策略层
+compliance_level: 专业标准
 layer: "Layer 3 (策略层)"
-﻿# 策略组合优化蓝图
+---
 
-> **核心定位**: 策略组合优化蓝图的核心功能实现
+# 策略组合优化蓝图
 
-
-> **索引**: `STRATEGY_PORTFOLIO_OPTIMIZATION_001`
-> **开发周期**: 5-7天
-> **核心定位**: 多策略组合优化，实现策略间的资金分配和风险预算管理
-> **参考开源**: PyPortfolioOpt, Riskfolio-Lib
-
-## 核心定位
-
-策略组合优化模块，负责优化多个策略的资金分配和风险预算
+> **核心职责**: 多策略组合优化，实现策略间资金分配
+> **职责边界**: 
+> - ✅ 本文档负责：策略组合优化、资金分配、风险预算管理
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

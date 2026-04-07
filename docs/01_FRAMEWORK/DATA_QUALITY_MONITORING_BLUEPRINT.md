@@ -53,7 +53,7 @@ responsibility_boundary: |
 
   - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
 responsibility:
-  - 数据质量 (Layer 1)
+  - 提供data quality monitoring blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -984,7 +984,7 @@ class AutoSwitcher:
 
 | [AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md) | AI可解释性工?| ⭐⭐?|
 
-| [RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md) | RAG知识系统 | ⭐⭐?|
+| [RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](#) | RAG知识系统 | ⭐⭐?|
 
 
 
@@ -1014,7 +1014,7 @@ class AutoSwitcher:
 
 - **模块ID**: DATA_QUALITY_MONITORING_BLUEPRINT_001
 
-- **蓝图文档**: [DATA_QUALITY_MONITORING_BLUEPRINT.md](./01_FRAMEWORK\DATA_QUALITY_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: [DATA_QUALITY_MONITORING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

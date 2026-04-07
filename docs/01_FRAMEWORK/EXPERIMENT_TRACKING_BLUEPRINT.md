@@ -11,7 +11,7 @@ last_updated: 2026-04-07
 
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供experiment tracking blueprint的架构设计和实施蓝图
 
 layer: Layer 4 (机器学习层)
 
@@ -697,7 +697,7 @@ mlflow.register_model("runs:/<run_id>/model", "model_name")
 
 - **模块ID**: EXPERIMENT_TRACKING_BLUEPRINT_001
 
-- **蓝图文档**: [EXPERIMENT_TRACKING_BLUEPRINT.md](./01_FRAMEWORK\EXPERIMENT_TRACKING_BLUEPRINT.md)
+- **蓝图文档**: [EXPERIMENT_TRACKING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

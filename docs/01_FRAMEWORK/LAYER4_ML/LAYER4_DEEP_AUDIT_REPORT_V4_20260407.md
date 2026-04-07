@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告和审计记录
 ---
 ---
 
@@ -19,7 +19,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 审计团队
 responsibility:
-  - 机器学习
+  - 审计报告和审计记录
   - 文档治理
   - 审计系统
 standard_type: 专业量化机构报告

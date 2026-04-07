@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供learning rate scheduler blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -308,7 +308,7 @@ scheduler = get_cosine_schedule_with_warmup(
 
 - **模块ID**: LEARNING_RATE_SCHEDULER_BLUEPRINT_001
 
-- **蓝图文档**: [LEARNING_RATE_SCHEDULER_BLUEPRINT.md](./01_FRAMEWORK\LEARNING_RATE_SCHEDULER_BLUEPRINT.md)
+- **蓝图文档**: [LEARNING_RATE_SCHEDULER_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

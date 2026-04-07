@@ -18,7 +18,7 @@ compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/ONLINE_LEARNING_BLUEPRINT.md
 implementation_status: 技术规格设计完?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供online learning technical specification的技术规格和实现细节
 ---
 ---
 

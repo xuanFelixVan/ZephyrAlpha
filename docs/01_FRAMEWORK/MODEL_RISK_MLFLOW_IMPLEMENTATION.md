@@ -1606,7 +1606,7 @@ if __name__ == '__main__':
 |------|------|
 | [模型风险管理系统蓝图](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理详细设计 |
 | [P0模块实施计划](./P0_MODULES_IMPLEMENTATION_PLAN.md) | P0模块完整实施计划 |
-| [Layer 10治理与合规层索引](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
+| [Layer 10治理与合规层索引](#) | 完整的蓝图索引 |
 
 ---
 

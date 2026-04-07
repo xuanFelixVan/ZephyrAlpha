@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供optimizer variants blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -283,7 +283,7 @@ optimizer = bnb.optim.AdamW8bit(
 
 - **模块ID**: OPTIMIZER_VARIANTS_BLUEPRINT_001
 
-- **蓝图文档**: [OPTIMIZER_VARIANTS_BLUEPRINT.md](./01_FRAMEWORK\OPTIMIZER_VARIANTS_BLUEPRINT.md)
+- **蓝图文档**: [OPTIMIZER_VARIANTS_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

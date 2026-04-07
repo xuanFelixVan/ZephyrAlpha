@@ -17,7 +17,7 @@ related_documents:
 parent_document: ../ARCHITECTURE.md
 implementation_status: 蓝图设计阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供layer4 p2 frontier modules blueprint collection的架构设计和实施蓝图
 ---
 ---
 ---

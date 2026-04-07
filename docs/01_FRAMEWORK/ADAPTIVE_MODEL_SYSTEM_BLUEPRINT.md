@@ -27,7 +27,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供adaptive model system blueprint的架构设计和实施蓝图
   responsibility_layer: Layer 4
 ---
 ---
@@ -1078,7 +1078,7 @@ class AdaptiveMLPipeline:
 
 - **模块ID**: ADAPTIVE_MODEL_SYSTEM_BLUEPRINT_001
 
-- **蓝图文档**: [ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./01_FRAMEWORK\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: [ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

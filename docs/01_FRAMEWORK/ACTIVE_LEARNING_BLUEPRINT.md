@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 部署运维、环境配置
+  - 提供active learning blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -303,7 +303,7 @@ modAL>=0.4.0
 
 - **模块ID**: ACTIVE_LEARNING_BLUEPRINT_001
 
-- **蓝图文档**: [ACTIVE_LEARNING_BLUEPRINT.md](./01_FRAMEWORK\ACTIVE_LEARNING_BLUEPRINT.md)
+- **蓝图文档**: [ACTIVE_LEARNING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

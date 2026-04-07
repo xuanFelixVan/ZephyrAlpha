@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供arbitrage detection blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -299,7 +299,7 @@ class ArbitrageDetectionModel:
 
 - **模块ID**: ARBITRAGE_DETECTION_BLUEPRINT_001
 
-- **蓝图文档**: [ARBITRAGE_DETECTION_BLUEPRINT.md](./01_FRAMEWORK\ARBITRAGE_DETECTION_BLUEPRINT.md)
+- **蓝图文档**: [ARBITRAGE_DETECTION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

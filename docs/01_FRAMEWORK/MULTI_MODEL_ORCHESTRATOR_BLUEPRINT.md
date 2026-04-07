@@ -31,7 +31,7 @@ parent_document: ../ARCHITECTURE.md
 
 implementation_status: 蓝图设计完成
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供multi model orchestrator blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -780,7 +780,7 @@ class WeightOptimizer:
 
 |---------|------|------|
 
-| [Layer 8总体蓝图](./LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
+| [Layer 8总体蓝图](#) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
 
 | [AI治理框架蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` | AI行为准则和治理机�?|
 
@@ -830,7 +830,7 @@ class WeightOptimizer:
 
 - **模块ID**: MULTI_MODEL_ORCHESTRATOR_BLUEPRINT_001
 
-- **蓝图文档**: [MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md](./01_FRAMEWORK\MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md)
+- **蓝图文档**: [MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

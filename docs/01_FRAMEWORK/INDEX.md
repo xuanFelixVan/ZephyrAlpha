@@ -16,10 +16,48 @@ responsibility:
 ---
 
 # 框架设计目录索引
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
+
+> **版本**: v5.3  
+> **架构**: 三级时间框架融合架构  
+> **最后更新**: 2026-04-07  
+> **维护者**: 系统架构师
+
+---
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**框架设计层的导航索引文档**，负责：
+- 提供框架设计层的快速导航
+- 说明框架设计层的目录结构
+- 推荐框架设计文档的阅读路径
+- 为框架设计文档查找提供导航服务
+
+### 职责边界
+
+**负责**：
+- ✅ 提供框架设计层的快速导航入口
+- ✅ 提供框架设计文档的分类和层级说明
+- ✅ 推荐框架设计文档的阅读路径
+- ✅ 说明框架设计层的文档体系架构
+
+**不负责**：
+- ❌ 完整的模块清单（由System_Manifest.md负责）
+- ❌ 详细的实施状态跟踪（由System_Manifest.md负责）
+- ❌ 版本管理和变更历史（由System_Manifest.md负责）
+
+### 对接文档
+
+**相关文档**：
+- [../INDEX.md](../INDEX.md) - 系统导航入口（快速导航和文档分类）
+- [../System_Manifest.md](../System_Manifest.md) - 系统清单账本（完整模块清单和实施状态）
+
+---
+
+## 🎯 目录职责
+
+本目录存放系统框架设计文档，包括架构定义、技术决策、模块边界等核心设计文档。
 
 
 > **版本**: v5.3  
@@ -79,6 +117,11 @@ responsibility:
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
 | [人机交互层缺失模块分析](./HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md) | 人机交互层缺失模块分析与补充 | ⭐⭐⭐⭐⭐ |
+| [人机交互层完整补充蓝图](./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md) | 人机交互层完整补充方案 | ⭐⭐⭐⭐⭐ |
+| [人机交互层高级特性蓝图](./HUMAN_AI_INTERFACE_LAYER_ADVANCED_FEATURES_BLUEPRINT.md) | 人机交互层高级特性补充 | ⭐⭐⭐⭐⭐ |
+| [AI对话式交互增强蓝图](./AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md) | AI对话式交互增强系统 | ⭐⭐⭐⭐⭐ |
+| [移动端界面覆盖蓝图](./MOBILE_INTERFACE_COVERAGE_BLUEPRINT.md) | 移动端界面覆盖系统 | ⭐⭐⭐⭐ |
+| [智能推荐系统蓝图](./INTELLIGENT_RECOMMENDATION_SYSTEM_BLUEPRINT.md) | 智能推荐系统 | ⭐⭐⭐⭐ |
 | [决策仪表板蓝图](./DECISION_DASHBOARD_BLUEPRINT.md) | 决策入口整合、AI建议展示、审批流程 | ⭐⭐⭐⭐⭐ |
 | [策略配置界面蓝图](./STRATEGY_CONFIGURATION_INTERFACE_BLUEPRINT.md) | 策略参数配置、版本管理、回测验证 | ⭐⭐⭐⭐⭐ |
 | [审计日志查看器蓝图](./AUDIT_LOG_VIEWER_BLUEPRINT.md) | 决策审计追踪、日志查询分析 | ⭐⭐⭐⭐⭐ |

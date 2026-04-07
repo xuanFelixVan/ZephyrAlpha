@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供feature selection automation blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -303,7 +303,7 @@ boruta>=0.3
 
 - **模块ID**: FEATURE_SELECTION_AUTOMATION_BLUEPRINT_001
 
-- **蓝图文档**: [FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md](./01_FRAMEWORK\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md)
+- **蓝图文档**: [FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

@@ -10,7 +10,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供market regime blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -1106,7 +1106,7 @@ class MarketRegimeTester:
 #### Layer 0: 系统架构
 ##### 0.001. Market Regime Detection
 - **模块ID**: MARKET_REGIME_DETECTION_001
-- **蓝图文档**: [MARKET_REGIME_BLUEPRINT.md](./11_STRATEGIC_DECISION\MARKET_REGIME_BLUEPRINT.md)
+- **蓝图文档**: [MARKET_REGIME_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: Layer 11.13 - 市场状态识别系统
 - **状态**: Active

@@ -1,39 +1,22 @@
 ---
-module_id: STRESS_TESTING_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-﻿---
 module_id: STRESS_TESTING_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 组合优化
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
-﻿> **索引**: `STRESS_TEST_001`
-> **开发时长**: 80h（约2周）
-> **核心定位**: 极端市场情景下的风险暴露，提供应急预警
-> **个人开发可行性**: 完全可行
-> **AI维护难度**: 低
-
 ---
-## 核心定位
 
-压力测试系统，负责模拟极端市场情景，评估投资组合的抗压能力
+# 压力测试系统蓝图
+
+> **核心职责**: 模拟极端市场情景，评估投资组合抗压能力
+> **职责边界**: 
+> - ✅ 本文档负责：压力测试、情景分析、风险预警
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 模块概述

@@ -424,7 +424,7 @@ class STRReport:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 25 | 反洗钱监控系统 | [AML_MONITORING_SYSTEM_BLUEPRINT.md](01_FRAMEWORK/AML_MONITORING_SYSTEM_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 25 | 反洗钱监控系统 | [AML_MONITORING_SYSTEM_BLUEPRINT.md](#) | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

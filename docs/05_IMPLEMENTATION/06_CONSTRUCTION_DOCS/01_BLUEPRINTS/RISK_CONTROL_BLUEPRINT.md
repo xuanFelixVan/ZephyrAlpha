@@ -1,53 +1,22 @@
 ---
-module_id: RISK_CONTROL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# RISK CONTROL BLUEPRINT
-
-> **核心职责**: Risk Control蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Risk Control蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: RISKCONTROLBLUEPRINT_001
+module_id: RISK_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 风险预算
-  - 因子计算
-  - 组合优化
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 📋 执行摘要
+---
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **核心定位**: 微观执行层实时风险控制
-> **索引**: `RISK_CONTROL_001`
-> **开发周期**: 2.5周
+# 风险控制蓝图
 
-## 🎯 模块定位与职责
-
-### 核心职责
-
-| 职责类别 | 具体职责 | 输出产物 |
-|---------|---------|---------|
-| **实时监控** | 监控实时风险指标 | 风险监控报告 |
-| **风险预警** | 发出风险预警信号 | 预警消息 |
+> **核心职责**: 微观执行层实时风险控制
+> **职责边界**: 
+> - ✅ 本文档负责：实时监控、风险预警、风险控制
+> - ❌ 本文档不负责：因子计算（由因子模块负责） |
 | **风险处置** | 执行风险处置措施 | 处置记录 |
 | **风险报告** | 生成风险报告 | 风险报告 |
 

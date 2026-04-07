@@ -11,7 +11,7 @@ last_updated: 2026-04-03
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供model pruning blueprint的架构设计和实施蓝图
 
 standard_type: é«å±æ¶æèå¾
 
@@ -294,7 +294,7 @@ torch-pruning>=1.2.0
 
 - **模块ID**: MODEL_PRUNING_BLUEPRINT_001
 
-- **蓝图文档**: [MODEL_PRUNING_BLUEPRINT.md](./01_FRAMEWORK\MODEL_PRUNING_BLUEPRINT.md)
+- **蓝图文档**: [MODEL_PRUNING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

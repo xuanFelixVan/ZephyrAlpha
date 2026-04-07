@@ -1,43 +1,22 @@
 ---
-module_id: STRATEGY_SELECTION_BLUEPRINT_001
+module_id: STRATEGY_SELECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-﻿---
-module_id: STRATEGY_SELECTION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
-
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 3 策略层
+compliance_level: 专业标准
 layer: "Layer 3 (策略层)"
 ---
-﻿# 策略排名与选择系统技术蓝?
 
-> **核心定位**: 策略排名与选择系统技术蓝?的核心功能实现
+# 策略排名与选择系统技术蓝图
 
-
-> **索引**: `STRAT.SELECTION.001`
-> **开发周?*: 80小时（胶合代码开发）
-> **核心定位**: 策略工厂核心组件，支?20+策略多维度评分、智能排名、动态选择和市场适应性分?
-> **参考开?*: vn.py的StrategyRanking + quant-system策略选择模块 + 多准则决策分?MCDA)
-> **补充文档**: 本蓝图是STRATEGY_ENGINE_CORE_BLUEPRINT.md的技术补充，专注于策略排名与选择功能
-
-## 核心定位
-
-策略选择模块，负责根据市场环境动态选择最优策略组合
+> **核心职责**: 根据市场环境动态选择最优策略组合
+> **职责边界**: 
+> - ✅ 本文档负责：策略评分、智能排名、动态选择
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 一、设计目标与约束

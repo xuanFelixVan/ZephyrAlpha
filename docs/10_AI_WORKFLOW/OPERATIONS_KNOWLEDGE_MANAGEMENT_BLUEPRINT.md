@@ -28,6 +28,16 @@ responsibility:
 **本文档职责**: 运维知识管理模块蓝图
 - 知识库构建、运维经验沉淀、故障诊断、知识检索
 
+**📌 职责边界说明**:
+- **本文档**: 舆情专用运维知识库，负责舆情运维知识管理
+- **KNOWLEDGE_MANAGEMENT**: 系统级知识管理平台，负责全系统知识的积累、检索和传承
+
+**职责关系**:
+```
+KNOWLEDGE_MANAGEMENT（系统级知识平台）
+    └── OPERATIONS_KNOWLEDGE_MANAGEMENT（本模块：舆情运维知识库）
+```
+
 # 运维与知识管理模块蓝(Operations & Knowledge Management Blueprint)
 
 > **核心职责**: 蓝图设计和架构规划

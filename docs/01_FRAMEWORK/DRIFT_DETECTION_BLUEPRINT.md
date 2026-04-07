@@ -38,7 +38,7 @@ priority: P0
 responsibility_boundary: |
   本文档负责Layer 4机器学习层的漂移检测系统设计，包括数据漂移、概念漂移、模型漂移等核心功能。
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供drift detection blueprint的架构设计和实施蓝图
 ---
 ---
 ---
@@ -1039,7 +1039,7 @@ plotly>=5.18.0
 
 - **模块ID**: DRIFT_DETECTION_BLUEPRINT_001
 
-- **蓝图文档**: [DRIFT_DETECTION_BLUEPRINT.md](./01_FRAMEWORK\DRIFT_DETECTION_BLUEPRINT.md)
+- **蓝图文档**: [DRIFT_DETECTION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

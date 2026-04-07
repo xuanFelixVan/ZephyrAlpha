@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供llm fine tuning blueprint的架构设计和实施蓝图
 
 standard_type: é«å±æ¶æèå¾
 
@@ -352,7 +352,7 @@ accelerate>=0.25.0
 
 - **模块ID**: LLM_FINE_TUNING_BLUEPRINT_001
 
-- **蓝图文档**: [LLM_FINE_TUNING_BLUEPRINT.md](./01_FRAMEWORK\LLM_FINE_TUNING_BLUEPRINT.md)
+- **蓝图文档**: [LLM_FINE_TUNING_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

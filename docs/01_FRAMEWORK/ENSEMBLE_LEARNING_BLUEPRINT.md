@@ -15,7 +15,7 @@ related_documents:
   - AUTOML_AUTOMATION_BLUEPRINT.md
   - MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供ensemble learning blueprint的架构设计和实施蓝图
 responsibility_boundary: |
   本文档负责模型集成学习，包括：
   

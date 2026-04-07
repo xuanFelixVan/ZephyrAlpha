@@ -11,7 +11,7 @@ last_updated: 2026-04-07
 
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供data augmentation blueprint的架构设计和实施蓝图
 
 layer: Layer 4 (机器学习层)
 
@@ -325,7 +325,7 @@ def time_series_augment(data):
 
 - **模块ID**: DATA_AUGMENTATION_BLUEPRINT_001
 
-- **蓝图文档**: [DATA_AUGMENTATION_BLUEPRINT.md](./01_FRAMEWORK\DATA_AUGMENTATION_BLUEPRINT.md)
+- **蓝图文档**: [DATA_AUGMENTATION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

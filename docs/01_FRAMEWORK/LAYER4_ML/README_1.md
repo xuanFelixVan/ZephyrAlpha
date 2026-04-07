@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构�?standard_type: 专业量化机构文档
 responsibility:
-  - 文档说明、使用指南
+  - 扩展功能、辅助模块
 applicable_scope: 全系�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行�?
@@ -141,7 +141,7 @@ find docs/00_RESOURCES -name "*.pdf" | grep -i "qmt"
 ### 04_PLATFORM_DOCS/ - 交易平台文档
 | 文档 | 说明 | 版本 | 添加日期 | 状�?|
 |------|------|------|----------|------|
-| [xuntou_qmt_trading_system_documentation.pdf](04_PLATFORM_DOCS/xuntou_qmt_trading_system_documentation.pdf) | 迅投QMT交易平台完整说明 | 官方�?| 2026-04-01 | �?已收�?|
+| [xuntou_qmt_trading_system_documentation.pdf](#) | 迅投QMT交易平台完整说明 | 官方�?| 2026-04-01 | �?已收�?|
 
 ---
 

@@ -1,46 +1,24 @@
 ---
-module_id: RL_REBALANCING_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# RL REBALANCING SYSTEM BLUEPRINT
-
-> **核心职责**: Rl Rebalancing System蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Rl Rebalancing System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: RL_REBALANCING_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 市场状态识别
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 4 机器学习层
+compliance_level: 专业标准
 layer: "Layer 4 (机器学习层)"
-﻿# 模块概述
-
-> **索引**: `RL_REBALANCING_SYSTEM_001`
-> **开发时?*: 200h
-> **核心定位**: 基于Stable-Baselines3实现强化学习调仓决策模型，动态优化组合权重和调仓时机
-
+responsibility:
+  - 提供rl rebalancing system blueprint的架构设计和实施蓝图
 ---
-## 核心定位
 
-强化学习再平衡系统，负责利用强化学习算法优化再平衡决策
+# 强化学习再平衡系统蓝图
+
+> **核心职责**: 利用强化学习算法优化再平衡决策
+> **职责边界**: 
+> - ✅ 本文档负责：RL调仓决策、动态优化组合权重
+> - ❌ 本文档不负责：基础再平衡触发（由PORTFOLIO_REBALANCING负责）
 
 
 ## 1. 模块概述

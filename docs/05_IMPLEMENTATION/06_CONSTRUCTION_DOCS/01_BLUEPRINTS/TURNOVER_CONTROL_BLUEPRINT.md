@@ -1,46 +1,22 @@
 ---
-module_id: TURNOVER_CONTROL_BLUEPRINT_001
+module_id: TURNOVER_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# TURNOVER CONTROL BLUEPRINT
-
-> **核心职责**: Turnover Control蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Turnover Control蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: TURNOVER_CONTROL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
 ---
-﻿# 组合周转率控制蓝图
 
-> **核心定位**: 组合周转率控制蓝图的核心功能实现
+# 组合周转率控制蓝图
 
-
-> **模块ID**: TURNOVER_CONTROL_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 控制组合周转率，降低交易成本，提高税后收益
-> **索引**: `TURNOVER_CONTROL_001`
-> **开发周期**: 1周
+> **核心职责**: 控制组合周转率，降低交易成本
+> **职责边界**: 
+> - ✅ 本文档负责：周转率控制、交易成本优化
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 ## 2. 功能设计
 

@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供trusted execution environment blueprint的架构设计和实施蓝图
 
 layer: Layer 4 (机器学习层)
 
@@ -327,7 +327,7 @@ occlum run /bin/python model_inference.py
 
 - **模块ID**: TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT_001
 
-- **蓝图文档**: [TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md](./01_FRAMEWORK\TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md)
+- **蓝图文档**: [TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

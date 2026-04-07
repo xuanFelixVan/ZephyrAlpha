@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供model registry blueprint的架构设计和实施蓝图
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
@@ -508,7 +508,7 @@ class ModelDeployment:
 #### Layer 0: 系统架构
 ##### 0.001. Model Registry Blueprint
 - **模块ID**: MODEL_REGISTRY_BLUEPRINT_001
-- **蓝图文档**: [MODEL_REGISTRY_BLUEPRINT.md](./01_FRAMEWORK\MODEL_REGISTRY_BLUEPRINT.md)
+- **蓝图文档**: [MODEL_REGISTRY_BLUEPRINT.md](#)
 - **技术规格书**: 待创建
 - **职责**: 模型注册中心
 - **状态**: Active

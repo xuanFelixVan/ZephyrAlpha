@@ -7,7 +7,7 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 扩展功能、辅助模块
+  - 审计报告和审计记录
 ---
 ---
 # Layer 4机器学习层深度审计报告
@@ -335,7 +335,7 @@ responsibility:
 
 - [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](../STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- [审计质量标准v5.1](#)
 
 ### C. 审计数据文件
 

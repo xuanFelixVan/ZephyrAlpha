@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: йҰ–еёӯж–ҮжЎЈжһ¶жһ„её?standard_type: дё“дёҡйҮҸеҢ–жңәжһ„ж–ҮжЎЈ
 responsibility:
-  - 测试验证、质量保证
+  - 扩展功能、辅助模块
 applicable_scope: е…Ёзі»з»?compliance_level: дё“дёҡж ҮеҮҶ
 parent_document: ../INDEX.md
 implementation_status: иҝӣиЎҢдё?
@@ -48,19 +48,19 @@ layer: Layer 4
 
 | зұ»еһӢ | ж–ҮжЎЈ | иҜҙжҳҺ |
 |------|------|------|
-| **дё»е…ҘеҸ?* | [INDEX.md](../03_TRADING_TACTICS/INDEX.md) | ж–ҮжЎЈзҙўеј•е…ҘеҸЈ |
-| **жһ¶жһ„** | [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | зі»з»ҹи“қеӣҫ |
-| **зүҲжң¬** | [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | зүҲжң¬еҸҳжӣҙж—Ҙеҝ— |
+| **дё»е…ҘеҸ?* | [INDEX.md](#) | ж–ҮжЎЈзҙўеј•е…ҘеҸЈ |
+| **жһ¶жһ„** | [BLUEPRINT.md](#) | зі»з»ҹи“қеӣҫ |
+| **зүҲжң¬** | [CHANGELOG.md](#) | зүҲжң¬еҸҳжӣҙж—Ҙеҝ— |
 
 ### 2.2 дё»иҰҒжЁЎеқ—
 
 | зӣ®еҪ• | иҜҙжҳҺ |
 |------|------|
-| [01_FRAMEWORK/](../01_FRAMEWORK/) | ж ёеҝғжЎҶжһ¶пјҲLayer 0-11жҲҳжңҜе®һзҺ°пј?|
-| [02_FACTOR_LIBRARY/](../02_FACTOR_LIBRARY/) | еӣ еӯҗеә“пјҲ87 Alpha + 46 Riskпј?|
-| [03_TRADING_TACTICS/](../03_TRADING_TACTICS/) | дәӨжҳ“зӯ–з•Ҙжұ пјҲS001-S120пј?|
-| [04_EXECUTION/](../04_EXECUTION/) | жү§иЎҢеј•ж“Һ |
-| [05_IMPLEMENTATION/](../05_IMPLEMENTATION/) | е®һж–ҪжҢҮеҚ— |
+| [01_FRAMEWORK/](#) | ж ёеҝғжЎҶжһ¶пјҲLayer 0-11жҲҳжңҜе®һзҺ°пј?|
+| [02_FACTOR_LIBRARY/](#) | еӣ еӯҗеә“пјҲ87 Alpha + 46 Riskпј?|
+| [03_TRADING_TACTICS/](#) | дәӨжҳ“зӯ–з•Ҙжұ пјҲS001-S120пј?|
+| [04_EXECUTION/](#) | жү§иЎҢеј•ж“Һ |
+| [05_IMPLEMENTATION/](#) | е®һж–ҪжҢҮеҚ— |
 
 ---
 
@@ -78,7 +78,7 @@ layer: Layer 4
 | Layer 7 | AIжҠҘе‘Ҡеұ?| з»©ж•ҲеҪ’еӣ гҖҒеҲҶжһ?|
 | Layer 8 | дәәжңәдәӨдә’еұ?| жҺҲжқғгҖҒзӣ‘жҺ§гҖҒжҠҘе‘?|
 
-> иҜҰи§Ғпјҡ[01_FRAMEWORK/](../01_FRAMEWORK/) дёӯзҡ„жҲҳжңҜе®һзҺ°ж–ҮжЎЈ
+> иҜҰи§Ғпјҡ[01_FRAMEWORK/](#) дёӯзҡ„жҲҳжңҜе®һзҺ°ж–ҮжЎЈ
 
 ---
 
@@ -97,10 +97,10 @@ layer: Layer 4
 
 | ж–ҮжЎЈ | иҜҙжҳҺ |
 |------|------|
-| [INDEX.md](../03_TRADING_TACTICS/INDEX.md) | ж–ҮжЎЈзҙўеј•е…ҘеҸЈ |
-| [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md) | е®Ңж•ҙж–ҮжЎЈең°еӣҫ |
-| [BLUEPRINT.md](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) | зі»з»ҹи“қеӣҫ |
-| [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) | еҸҳжӣҙж—Ҙеҝ— |
+| [INDEX.md](#) | ж–ҮжЎЈзҙўеј•е…ҘеҸЈ |
+| [SITEMAP.md](#) | е®Ңж•ҙж–ҮжЎЈең°еӣҫ |
+| [BLUEPRINT.md](#) | зі»з»ҹи“қеӣҫ |
+| [CHANGELOG.md](#) | еҸҳжӣҙж—Ҙеҝ— |
 
 ---
 

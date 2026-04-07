@@ -14,7 +14,7 @@ layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图补充
 applicable_scope: 三级时间框架人机协同界面设计
 compliance_level: 专业标准
-parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md

@@ -12,7 +12,7 @@ review_status: Pending
 reviewer: 首席技术评审官
 owner: 量化研究�?standard_type: 专业量化机构技术规格书
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供probabilistic forecasting technical specification的技术规格和实现细节
 applicable_scope: 概率预测与不确定性量�?compliance_level: 顶级专业标准
 parent_document: ../INDEX.md
 implementation_status: 技术规格设计完�?

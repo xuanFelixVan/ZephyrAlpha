@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 棣栧腑钃濆浘鏋舵瀯甯?layer: Layer 4 (鏈哄櫒瀛︿範灞?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供volatility prediction blueprint的架构设计和实施蓝图
 
 standard_type: 楂樺眰鏋舵瀯钃濆浘
 
@@ -205,7 +205,7 @@ class VolatilityPredictor:
 
 - **模块ID**: VOLATILITY_PREDICTION_BLUEPRINT_001
 
-- **蓝图文档**: [VOLATILITY_PREDICTION_BLUEPRINT.md](./01_FRAMEWORK\VOLATILITY_PREDICTION_BLUEPRINT.md)
+- **蓝图文档**: [VOLATILITY_PREDICTION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 

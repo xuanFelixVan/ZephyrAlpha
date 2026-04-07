@@ -20,7 +20,7 @@ related_documents:
   - POST_TRADE_REVIEW_BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供full process data persistence blueprint的架构设计和实施蓝图
 ---
 ---
 
@@ -611,7 +611,7 @@ class ExperimentTracker:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [全流程数据保存机制蓝图](../10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` | FULL_PROCESS_DATA_PERSISTENCE_001 | 1.0 | Active | 实验追踪、数据血缘、版本控制、数据治|
+| [全流程数据保存机制蓝图](#) | `docs/10_AI_WORKFLOW/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` | FULL_PROCESS_DATA_PERSISTENCE_001 | 1.0 | Active | 实验追踪、数据血缘、版本控制、数据治|
 ```
 
 ### 6.2 模块职责边界
@@ -659,8 +659,8 @@ class ExperimentTracker:
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据|
-| [复盘模块蓝图](./POST_TRADE_REVIEW_BLUEPRINT.md) | 复盘分析机制 |
+| [AI工作记录与优化模块蓝图](#) | AI工作记录数据|
+| [复盘模块蓝图](#) | 复盘分析机制 |
 | [开源项目集成方案蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md) | 开源项目集成方|
 | [MLflow官方文档](https://mlflow.org/docs/latest/index.html) | MLflow使用指南 |
 

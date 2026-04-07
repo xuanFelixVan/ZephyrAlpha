@@ -11,7 +11,7 @@ last_updated: 2026-04-04
 
 owner: 首席蓝图架构�?layer: Layer 4 (机器学习�?
 responsibility:
-  - 扩展功能、辅助模块
+  - 提供batch inference optimization blueprint的架构设计和实施蓝图
 
 standard_type: 高层架构蓝图
 
@@ -265,7 +265,7 @@ outputs = llm.generate(prompts, sampling_params)
 
 - **模块ID**: BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT_001
 
-- **蓝图文档**: [BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md](./01_FRAMEWORK\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: [BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md](#)
 
 - **技术规格书**: 待创建
 
