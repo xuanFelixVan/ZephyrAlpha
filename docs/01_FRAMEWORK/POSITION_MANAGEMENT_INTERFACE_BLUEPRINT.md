@@ -5,8 +5,6 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-responsibility:
-  - 系统框架、架构设计
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 持仓管理界面
@@ -18,12 +16,16 @@ related_documents:
   - RISK_MONITORING_INTERFACE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责持仓管理界面设计，包括：
+  - 实时持仓展示
+  - 持仓调整界面
+  - 持仓分析报告
+  - 持仓历史查询
+  - 持仓风险分析
   
   组合优化请参考：PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
   风险监控请参考：RISK_MONITORING_INTERFACE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
----
 ---
 
 

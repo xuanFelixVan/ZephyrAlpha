@@ -212,7 +212,575 @@ class VaRESCalculator:
 
 ---
 
-## 4. 接口定义
+## 4. VaR/ES计算方法详解
+
+### 4.1 历史模拟法 (Historical Simulation)
+
+**原理**: 使用历史收益率分布直接估计VaR和ES
+
+**优点**:
+- 无需假设收益率分布
+- 捕捉肥尾特征
+- 实现简单直观
+
+**缺点**:
+- 依赖历史数据质量
+- 无法预测极端事件
+- 样本量要求高
+
+```python
+class HistoricalVaR:
+    """历史模拟法VaR计算器"""
+    
+    def __init__(self, confidence_level: float = 0.95):
+        self.confidence_level = confidence_level
+    
+    def calculate_var(
+        self,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算历史模拟VaR
+        
+        参数:
+            returns: 历史收益率序列
+            portfolio_value: 组合价值
+            
+        返回:
+            (VaR金额, VaR百分比)
+        """
+        var_percentile = np.percentile(
+            returns, 
+            (1 - self.confidence_level) * 100
+        )
+        var_value = -var_percentile * portfolio_value
+        
+        return var_value, -var_percentile
+    
+    def calculate_es(
+        self,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算历史模拟ES (Expected Shortfall)
+        
+        参数:
+            returns: 历史收益率序列
+            portfolio_value: 组合价值
+            
+        返回:
+            (ES金额, ES百分比)
+        """
+        var_percentile = np.percentile(
+            returns,
+            (1 - self.confidence_level) * 100
+        )
+        
+        tail_returns = returns[returns <= var_percentile]
+        
+        if len(tail_returns) == 0:
+            es_percentile = var_percentile
+        else:
+            es_percentile = np.mean(tail_returns)
+        
+        es_value = -es_percentile * portfolio_value
+        
+        return es_value, -es_percentile
+```
+
+### 4.2 参数法 (Parametric Method)
+
+**原理**: 假设收益率服从特定分布（通常为正态分布），使用参数估计
+
+**优点**:
+- 计算效率高
+- 数学推导清晰
+- 易于扩展到多资产
+
+**缺点**:
+- 分布假设可能不成立
+- 无法捕捉肥尾特征
+- 对极端事件估计不足
+
+```python
+class ParametricVaR:
+    """参数法VaR计算器"""
+    
+    def __init__(
+        self,
+        confidence_level: float = 0.95,
+        distribution: str = "normal"
+    ):
+        self.confidence_level = confidence_level
+        self.distribution = distribution
+    
+    def calculate_var(
+        self,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算参数法VaR
+        
+        参数:
+            returns: 收益率序列
+            portfolio_value: 组合价值
+            
+        返回:
+            (VaR金额, VaR百分比)
+        """
+        mu = np.mean(returns)
+        sigma = np.std(returns, ddof=1)
+        
+        if self.distribution == "normal":
+            z_score = stats.norm.ppf(self.confidence_level)
+        elif self.distribution == "t":
+            df = self._estimate_degrees_of_freedom(returns)
+            z_score = stats.t.ppf(self.confidence_level, df)
+        
+        var_percentile = mu - z_score * sigma
+        var_value = -var_percentile * portfolio_value
+        
+        return var_value, -var_percentile
+    
+    def calculate_es(
+        self,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算参数法ES
+        
+        参数:
+            returns: 收益率序列
+            portfolio_value: 组合价值
+            
+        返回:
+            (ES金额, ES百分比)
+        """
+        mu = np.mean(returns)
+        sigma = np.std(returns, ddof=1)
+        
+        if self.distribution == "normal":
+            z_score = stats.norm.ppf(self.confidence_level)
+            es_percentile = mu - sigma * stats.norm.pdf(z_score) / (1 - self.confidence_level)
+        elif self.distribution == "t":
+            df = self._estimate_degrees_of_freedom(returns)
+            z_score = stats.t.ppf(self.confidence_level, df)
+            es_percentile = mu - sigma * (df + z_score**2) / (df - 1) * \
+                           stats.t.pdf(z_score, df) / (1 - self.confidence_level)
+        
+        es_value = -es_percentile * portfolio_value
+        
+        return es_value, -es_percentile
+    
+    def _estimate_degrees_of_freedom(
+        self,
+        returns: np.ndarray
+    ) -> int:
+        """估计t分布自由度"""
+        kurtosis = stats.kurtosis(returns)
+        if kurtosis <= 0:
+            return 30
+        df = int(6 / kurtosis + 4)
+        return max(3, min(df, 30))
+```
+
+### 4.3 蒙特卡洛模拟法 (Monte Carlo Simulation)
+
+**原理**: 通过随机模拟生成大量情景，估计VaR和ES
+
+**优点**:
+- 灵活性高
+- 可处理复杂分布
+- 可纳入非线性关系
+
+**缺点**:
+- 计算量大
+- 依赖模型假设
+- 需要大量模拟次数
+
+```python
+class MonteCarloVaR:
+    """蒙特卡洛模拟VaR计算器"""
+    
+    def __init__(
+        self,
+        confidence_level: float = 0.95,
+        n_simulations: int = 10000,
+        distribution: str = "student_t"
+    ):
+        self.confidence_level = confidence_level
+        self.n_simulations = n_simulations
+        self.distribution = distribution
+    
+    def calculate_var(
+        self,
+        returns: pd.DataFrame,
+        weights: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算蒙特卡洛VaR
+        
+        参数:
+            returns: 资产收益率DataFrame
+            weights: 组合权重
+            portfolio_value: 组合价值
+            
+        返回:
+            (VaR金额, VaR百分比)
+        """
+        mean_returns = returns.mean().values
+        cov_matrix = returns.cov().values
+        
+        simulated_returns = self._simulate_returns(mean_returns, cov_matrix)
+        
+        portfolio_returns = simulated_returns @ weights
+        
+        var_percentile = np.percentile(
+            portfolio_returns,
+            (1 - self.confidence_level) * 100
+        )
+        var_value = -var_percentile * portfolio_value
+        
+        return var_value, -var_percentile
+    
+    def calculate_es(
+        self,
+        returns: pd.DataFrame,
+        weights: np.ndarray,
+        portfolio_value: float
+    ) -> Tuple[float, float]:
+        """
+        计算蒙特卡洛ES
+        
+        参数:
+            returns: 资产收益率DataFrame
+            weights: 组合权重
+            portfolio_value: 组合价值
+            
+        返回:
+            (ES金额, ES百分比)
+        """
+        mean_returns = returns.mean().values
+        cov_matrix = returns.cov().values
+        
+        simulated_returns = self._simulate_returns(mean_returns, cov_matrix)
+        
+        portfolio_returns = simulated_returns @ weights
+        
+        var_percentile = np.percentile(
+            portfolio_returns,
+            (1 - self.confidence_level) * 100
+        )
+        
+        tail_returns = portfolio_returns[portfolio_returns <= var_percentile]
+        es_percentile = np.mean(tail_returns) if len(tail_returns) > 0 else var_percentile
+        
+        es_value = -es_percentile * portfolio_value
+        
+        return es_value, -es_percentile
+    
+    def _simulate_returns(
+        self,
+        mean: np.ndarray,
+        cov: np.ndarray
+    ) -> np.ndarray:
+        """模拟收益率"""
+        n_assets = len(mean)
+        
+        L = np.linalg.cholesky(cov)
+        
+        if self.distribution == "normal":
+            z = np.random.standard_normal((self.n_simulations, n_assets))
+        elif self.distribution == "student_t":
+            df = 5
+            z = np.random.standard_t(df, (self.n_simulations, n_assets))
+        
+        simulated = z @ L.T + mean
+        
+        return simulated
+```
+
+### 4.4 方法比较与选择
+
+| 方法 | 计算速度 | 准确性 | 适用场景 | 推荐置信度 |
+|------|----------|--------|----------|------------|
+| **历史模拟法** | 快 | 中 | 数据充足、分布未知 | 95%-99% |
+| **参数法** | 最快 | 低 | 正态分布假设成立 | 95%-99% |
+| **蒙特卡洛** | 慢 | 高 | 复杂分布、非线性 | 95%-99.9% |
+
+---
+
+## 5. 监控指标体系
+
+### 5.1 核心监控指标
+
+| 指标类别 | 指标名称 | 计算方法 | 监控频率 | 预警阈值 | 说明 |
+|----------|----------|----------|----------|----------|------|
+| **VaR指标** | 1日VaR(95%) | 历史模拟法 | 实时 | -5% | 95%置信度下1日最大损失 |
+| **VaR指标** | 1日VaR(99%) | 历史模拟法 | 实时 | -8% | 99%置信度下1日最大损失 |
+| **VaR指标** | 10日VaR(99%) | √10×1日VaR | 每日 | -25% | 99%置信度下10日最大损失 |
+| **ES指标** | 1日ES(95%) | 尾部平均损失 | 实时 | -7% | 超过VaR的平均损失 |
+| **ES指标** | 1日ES(99%) | 尾部平均损失 | 实时 | -12% | 超过VaR的平均损失 |
+| **回测指标** | Kupiec检验 | LR统计量 | 每周 | p<0.05 | VaR模型有效性检验 |
+| **回测指标** | Christoffersen检验 | 独立性检验 | 每周 | p<0.05 | 突破序列独立性检验 |
+| **回测指标** | 突破次数 | 实际损失>VaR次数 | 每日 | >5% | VaR突破频率 |
+
+### 5.2 监控指标计算器
+
+```python
+class VaRESMonitor:
+    """VaR/ES监控器"""
+    
+    def __init__(
+        self,
+        confidence_levels: List[float] = [0.95, 0.99],
+        holding_periods: List[int] = [1, 10]
+    ):
+        self.confidence_levels = confidence_levels
+        self.holding_periods = holding_periods
+        self.historical_var = HistoricalVaR()
+        self.parametric_var = ParametricVaR()
+        self.monte_carlo_var = MonteCarloVaR()
+    
+    def calculate_all_metrics(
+        self,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Dict[str, float]:
+        """计算所有监控指标"""
+        metrics = {}
+        
+        for conf in self.confidence_levels:
+            self.historical_var.confidence_level = conf
+            
+            var_value, var_pct = self.historical_var.calculate_var(
+                returns, portfolio_value
+            )
+            metrics[f"var_{int(conf*100)}_value"] = var_value
+            metrics[f"var_{int(conf*100)}_pct"] = var_pct
+            
+            es_value, es_pct = self.historical_var.calculate_es(
+                returns, portfolio_value
+            )
+            metrics[f"es_{int(conf*100)}_value"] = es_value
+            metrics[f"es_{int(conf*100)}_pct"] = es_pct
+        
+        for period in self.holding_periods:
+            for conf in self.confidence_levels:
+                var_1d = metrics[f"var_{int(conf*100)}_pct"]
+                var_nd = var_1d * np.sqrt(period)
+                metrics[f"var_{period}d_{int(conf*100)}_pct"] = var_nd
+        
+        return metrics
+    
+    def check_thresholds(
+        self,
+        metrics: Dict[str, float],
+        thresholds: Dict[str, float]
+    ) -> List[Dict[str, Any]]:
+        """检查阈值并生成预警"""
+        alerts = []
+        
+        for metric_name, value in metrics.items():
+            if metric_name in thresholds:
+                threshold = thresholds[metric_name]
+                
+                if value < threshold:
+                    alerts.append({
+                        "metric": metric_name,
+                        "value": value,
+                        "threshold": threshold,
+                        "severity": "HIGH" if value < threshold * 1.5 else "MEDIUM",
+                        "message": f"{metric_name} 超过阈值: {value:.2%} > {threshold:.2%}"
+                    })
+        
+        return alerts
+```
+
+### 5.3 回测验证系统
+
+```python
+class VaRBacktester:
+    """VaR回测验证器"""
+    
+    def __init__(self, confidence_level: float = 0.95):
+        self.confidence_level = confidence_level
+    
+    def kupiec_test(
+        self,
+        actual_returns: np.ndarray,
+        var_estimates: np.ndarray
+    ) -> Dict[str, float]:
+        """
+        Kupiec无条件覆盖检验
+        
+        参数:
+            actual_returns: 实际收益率
+            var_estimates: VaR估计值
+            
+        返回:
+            检验结果字典
+        """
+        n = len(actual_returns)
+        x = np.sum(actual_returns < -var_estimates)
+        p = 1 - self.confidence_level
+        
+        if x == 0 or x == n:
+            lr_stat = 0
+            p_value = 1.0
+        else:
+            lr_stat = -2 * (
+                x * np.log(p / (x / n)) +
+                (n - x) * np.log((1 - p) / (1 - x / n))
+            )
+            p_value = 1 - stats.chi2.cdf(lr_stat, 1)
+        
+        return {
+            "test_name": "Kupiec Test",
+            "n_observations": n,
+            "n_breaches": x,
+            "expected_breaches": n * p,
+            "breach_rate": x / n,
+            "expected_rate": p,
+            "lr_statistic": lr_stat,
+            "p_value": p_value,
+            "passed": p_value > 0.05
+        }
+    
+    def christoffersen_test(
+        self,
+        actual_returns: np.ndarray,
+        var_estimates: np.ndarray
+    ) -> Dict[str, float]:
+        """
+        Christoffersen独立性检验
+        
+        参数:
+            actual_returns: 实际收益率
+            var_estimates: VaR估计值
+            
+        返回:
+            检验结果字典
+        """
+        breaches = (actual_returns < -var_estimates).astype(int)
+        
+        n00 = np.sum((breaches[:-1] == 0) & (breaches[1:] == 0))
+        n01 = np.sum((breaches[:-1] == 0) & (breaches[1:] == 1))
+        n10 = np.sum((breaches[:-1] == 1) & (breaches[1:] == 0))
+        n11 = np.sum((breaches[:-1] == 1) & (breaches[1:] == 1))
+        
+        if n01 + n00 == 0 or n10 + n11 == 0:
+            lr_stat = 0
+            p_value = 1.0
+        else:
+            p01 = n01 / (n00 + n01)
+            p10 = n10 / (n10 + n11)
+            p = (n01 + n11) / (n00 + n01 + n10 + n11)
+            
+            lr_stat = -2 * (
+                (n00 + n01) * np.log(1 - p) + (n10 + n11) * np.log(p) -
+                n00 * np.log(1 - p01) - n01 * np.log(p01) -
+                n10 * np.log(1 - p10) - n11 * np.log(p10)
+            )
+            p_value = 1 - stats.chi2.cdf(lr_stat, 1)
+        
+        return {
+            "test_name": "Christoffersen Test",
+            "n_00": n00,
+            "n_01": n01,
+            "n_10": n10,
+            "n_11": n11,
+            "lr_statistic": lr_stat,
+            "p_value": p_value,
+            "passed": p_value > 0.05
+        }
+    
+    def generate_backtest_report(
+        self,
+        actual_returns: np.ndarray,
+        var_estimates: np.ndarray
+    ) -> Dict[str, Any]:
+        """生成回测报告"""
+        kupiec_result = self.kupiec_test(actual_returns, var_estimates)
+        christoffersen_result = self.christoffersen_test(actual_returns, var_estimates)
+        
+        return {
+            "summary": {
+                "total_observations": len(actual_returns),
+                "total_breaches": kupiec_result["n_breaches"],
+                "breach_rate": kupiec_result["breach_rate"],
+                "expected_rate": kupiec_result["expected_rate"]
+            },
+            "kupiec_test": kupiec_result,
+            "christoffersen_test": christoffersen_result,
+            "overall_passed": kupiec_result["passed"] and christoffersen_result["passed"]
+        }
+```
+
+### 5.4 实时监控面板指标
+
+```python
+class VaRESMonitorDashboard:
+    """VaR/ES实时监控面板"""
+    
+    def __init__(self):
+        self.monitor = VaRESMonitor()
+        self.backtester = VaRBacktester()
+    
+    def get_dashboard_metrics(
+        self,
+        portfolio_id: str,
+        returns: np.ndarray,
+        portfolio_value: float
+    ) -> Dict[str, Any]:
+        """获取监控面板指标"""
+        metrics = self.monitor.calculate_all_metrics(returns, portfolio_value)
+        
+        thresholds = {
+            "var_95_pct": -0.05,
+            "var_99_pct": -0.08,
+            "es_95_pct": -0.07,
+            "es_99_pct": -0.12
+        }
+        
+        alerts = self.monitor.check_thresholds(metrics, thresholds)
+        
+        return {
+            "portfolio_id": portfolio_id,
+            "timestamp": datetime.now(),
+            "metrics": metrics,
+            "alerts": alerts,
+            "risk_level": self._calculate_risk_level(metrics, thresholds)
+        }
+    
+    def _calculate_risk_level(
+        self,
+        metrics: Dict[str, float],
+        thresholds: Dict[str, float]
+    ) -> str:
+        """计算风险等级"""
+        breach_count = 0
+        
+        for metric_name, value in metrics.items():
+            if metric_name in thresholds and value < thresholds[metric_name]:
+                breach_count += 1
+        
+        if breach_count >= 3:
+            return "HIGH"
+        elif breach_count >= 1:
+            return "MEDIUM"
+        else:
+            return "LOW"
+```
+
+---
+
+## 6. 性能要求
 
 ```python
 class VaRESAPI:
