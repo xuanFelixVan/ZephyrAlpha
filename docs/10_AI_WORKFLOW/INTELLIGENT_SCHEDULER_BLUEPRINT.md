@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 10 - AI工作流层
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - AI工作流与舆情分析综合层模块蓝图设计模块设计与实施指导
 layer: Layer 10 (AI工作流)
 ---
 

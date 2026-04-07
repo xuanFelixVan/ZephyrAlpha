@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRADE_EXECUTION_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

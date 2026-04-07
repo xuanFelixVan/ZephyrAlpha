@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT
 version: 1.0.0
 status: Active

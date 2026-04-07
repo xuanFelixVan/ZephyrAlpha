@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SIGNAL_DECAY_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active

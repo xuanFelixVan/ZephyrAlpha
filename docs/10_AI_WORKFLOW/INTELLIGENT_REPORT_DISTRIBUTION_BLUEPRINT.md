@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_REPORT_DISTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active

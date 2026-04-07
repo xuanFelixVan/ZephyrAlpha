@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HISTORICAL_REPLAY_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active

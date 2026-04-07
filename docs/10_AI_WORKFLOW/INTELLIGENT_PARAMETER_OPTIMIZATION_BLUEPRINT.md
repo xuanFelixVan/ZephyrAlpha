@@ -1,4 +1,4 @@
----
+﻿---
 module_id: INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active

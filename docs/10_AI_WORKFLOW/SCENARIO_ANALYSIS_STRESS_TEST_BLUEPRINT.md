@@ -1,4 +1,4 @@
----
+﻿---
 module_id: SCENARIO_ANALYSIS_STRESS_TEST_BLUEPRINT
 version: 1.0.0
 status: Active
