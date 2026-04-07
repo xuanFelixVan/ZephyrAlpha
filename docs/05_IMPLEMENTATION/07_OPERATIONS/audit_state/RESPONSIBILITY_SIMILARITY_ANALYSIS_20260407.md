@@ -1,6 +1,6 @@
 # 职责描述相似度分析报告
 
-> **分析时间**: 2026-04-07 14:11:27
+> **分析时间**: 2026-04-07 14:21:47
 > **分析范围**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS
 > **分析目的**: 分析职责描述相似度高的原因，提供优化建议
 
@@ -10,7 +10,7 @@
 
 **分析文档数**: 113个
 **职责描述数**: 112个
-**高相似度对数**: 41对
+**高相似度对数**: 17对
 **相似度阈值**: 80%
 
 ---
@@ -21,92 +21,14 @@
 
 | 相似度范围 | 数量 | 占比 |
 |------------|------|------|
-| 80%-85% | 35 | 85.4% |
-| 85%-90% | 6 | 14.6% |
+| 80%-85% | 17 | 100.0% |
+| 85%-90% | 0 | 0.0% |
 | 90%以上 | 0 | 0.0% |
 
 ### 2.2 高相似度案例（Top 10）
 
 
-#### 案例1: RISK_CONTROL_BLUEPRINT.md vs TURNOVER_CONTROL_BLUEPRINT.md
-
-**相似度**: 88.5%
-
-**职责描述1**: 负责Risk Control的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**职责描述2**: 负责Turnover Control的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例2: INTRADAY_STRATEGY_BLUEPRINT.md vs OPENING_STRATEGY_BLUEPRINT.md
-
-**相似度**: 88.4%
-
-**职责描述1**: 构建INTRADAY STRATEGY的设计与实现，基于风险平价技术，优化核心功能，实现投资目标。支持业务需求，确保系统稳定运行。
-
-**职责描述2**: 管理OPENING STRATEGY的设计与实现，基于风险平价技术，优化核心功能，实现投资目标。支持业务需求，确保系统稳定运行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例3: RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md vs RISK_CONTROL_BLUEPRINT.md
-
-**相似度**: 87.7%
-
-**职责描述1**: 负责Risk Contribution Analysis的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**职责描述2**: 负责Risk Control的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例4: FINANCING_OPTIMIZATION_BLUEPRINT.md vs ROBUST_OPTIMIZATION_BLUEPRINT.md
-
-**相似度**: 87.6%
-
-**职责描述1**: > 核心职责: Financing Optimization蓝图设计
-> 职责边界: 
-> - ✅ 本文档负责：Financing Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
-
-**职责描述2**: > 核心职责: Robust Optimization蓝图设计
-> 职责边界: 
-> - ✅ 本文档负责：Robust Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例5: MARGIN_CALL_MONITOR_BLUEPRINT.md vs VAR_ES_MONITORING_BLUEPRINT.md
-
-**相似度**: 87.5%
-
-**职责描述1**: 负责Margin Call Monitor的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**职责描述2**: 负责Var Es Monitoring的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例6: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md vs SYSTEM_INTEGRATION_BLUEPRINT.md
-
-**相似度**: 86.0%
-
-**职责描述1**: 负责Factor Backtest Integration的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**职责描述2**: 负责System Integration的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
-**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
-
----
-
-#### 案例7: MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md vs MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+#### 案例1: MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md vs MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
 
 **相似度**: 84.6%
 
@@ -118,49 +40,151 @@
 
 ---
 
-#### 案例8: FINANCING_OPTIMIZATION_BLUEPRINT.md vs MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md
+#### 案例2: FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md vs MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
 
-**相似度**: 84.4%
+**相似度**: 83.7%
 
-**职责描述1**: > 核心职责: Financing Optimization蓝图设计
+**职责描述1**: 负责Factor Neutral Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
+**职责描述2**: 负责Mean Variance Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例3: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md vs QUALITY_SCORING_SYSTEM_BLUEPRINT.md
+
+**相似度**: 83.7%
+
+**职责描述1**: > 核心职责: Liquidity Management System蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Financing Optimization蓝图设计相关内容
+> - ✅ 本文档负责：Liquidity Management System蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
-**职责描述2**: > 核心职责: Multi Period Dynamic Optimization蓝图设计
+**职责描述2**: > 核心职责: Quality Scoring System蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Multi Period Dynamic Optimization蓝图设计相关内容
+> - ✅ 本文档负责：Quality Scoring System蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
 **分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
 
 ---
 
-#### 案例9: LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md vs ROBUST_OPTIMIZATION_BLUEPRINT.md
+#### 案例4: PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md vs PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md
 
-**相似度**: 84.2%
+**相似度**: 83.6%
 
-**职责描述1**: > 核心职责: Liquidity Constrained Optimization蓝图设计
+**职责描述1**: > 核心职责: Portfolio Diversification Metric蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Liquidity Constrained Optimization蓝图设计相关内容
+> - ✅ 本文档负责：Portfolio Diversification Metric蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
-**职责描述2**: > 核心职责: Robust Optimization蓝图设计
+**职责描述2**: > 核心职责: Portfolio Optimization Diagnostics蓝图设计
 > 职责边界: 
-> - ✅ 本文档负责：Robust Optimization蓝图设计相关内容
+> - ✅ 本文档负责：Portfolio Optimization Diagnostics蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
 **分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
 
 ---
 
-#### 案例10: MARGIN_CALL_MONITOR_BLUEPRINT.md vs RISK_CONTROL_BLUEPRINT.md
+#### 案例5: ECONOMIC_REGIME_ENGINE_BLUEPRINT.md vs REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
 
-**相似度**: 84.1%
+**相似度**: 82.8%
 
-**职责描述1**: 负责Margin Call Monitor的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+**职责描述1**: > 核心职责: Economic Regime Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Economic Regime Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
-**职责描述2**: 负责Risk Control的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+**职责描述2**: > 核心职责: Realtime Risk Hedge Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Realtime Risk Hedge Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例6: FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md vs MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+
+**相似度**: 82.4%
+
+**职责描述1**: 负责Factor Neutral Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
+**职责描述2**: 负责Multi Objective Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例7: ECONOMIC_REGIME_ENGINE_BLUEPRINT.md vs SMART_EXECUTION_ENGINE_BLUEPRINT.md
+
+**相似度**: 82.3%
+
+**职责描述1**: > 核心职责: Economic Regime Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Economic Regime Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**职责描述2**: > 核心职责: Smart Execution Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Smart Execution Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例8: REALTIME_DATA_LAKE_BLUEPRINT.md vs REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
+
+**相似度**: 82.3%
+
+**职责描述1**: > 核心职责: Realtime Data Lake蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Realtime Data Lake蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**职责描述2**: > 核心职责: Realtime Risk Hedge Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Realtime Risk Hedge Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例9: DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md vs DATA_OBSERVABILITY_BLUEPRINT.md
+
+**相似度**: 82.0%
+
+**职责描述1**: > 核心职责: Data Governance Platform蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Data Governance Platform蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**职责描述2**: > 核心职责: Data Observability蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Data Observability蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
+
+---
+
+#### 案例10: DATA_OBSERVABILITY_BLUEPRINT.md vs DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
+
+**相似度**: 82.0%
+
+**职责描述1**: > 核心职责: Data Observability蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Data Observability蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
+**职责描述2**: > 核心职责: Data Security Compliance蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Data Security Compliance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
 **分析**: 两个模块职责描述相似，可能是因为使用了相似的模板或功能相近。
 
@@ -172,14 +196,14 @@
 
 | 短语 | 出现次数 | 占比 |
 |------|----------|------|
-| 确保 | 70 | 62.5% |
-| 负责 | 68 | 60.7% |
-| 执行 | 68 | 60.7% |
-| 实现 | 48 | 42.9% |
-| 提供 | 39 | 34.8% |
-| 支持 | 30 | 26.8% |
-| 维护 | 25 | 22.3% |
+| 确保 | 61 | 54.5% |
+| 负责 | 60 | 53.6% |
+| 执行 | 59 | 52.7% |
+| 实现 | 50 | 44.6% |
+| 提供 | 32 | 28.6% |
+| 支持 | 23 | 20.5% |
 | 优化 | 20 | 17.9% |
+| 维护 | 18 | 16.1% |
 | 管理 | 16 | 14.3% |
 | 生成 | 10 | 8.9% |
 
@@ -187,10 +211,10 @@
 
 | 原因类型 | 数量 | 占比 | 说明 |
 |----------|------|------|------|
-| 模板使用 | 40 | 97.6% | 使用相似的职责描述模板 |
-| 常用短语 | 23 | 56.1% | 使用相同的功能描述短语 |
-| 功能相似 | 5 | 12.2% | 模块功能相近，职责自然相似 |
-| 标准格式 | 41 | 100.0% | 采用标准化的职责描述格式 |
+| 模板使用 | 17 | 100.0% | 使用相似的职责描述模板 |
+| 常用短语 | 7 | 41.2% | 使用相同的功能描述短语 |
+| 功能相似 | 4 | 23.5% | 模块功能相近，职责自然相似 |
+| 标准格式 | 17 | 100.0% | 采用标准化的职责描述格式 |
 
 ---
 

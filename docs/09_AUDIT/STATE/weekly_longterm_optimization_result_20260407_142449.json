@@ -1,0 +1,287 @@
+{
+  "timestamp": "2026-04-07T14:24:49.619191",
+  "classification_analysis": {
+    "root_docs": [
+      "02_ALPHA_FACTORS_INDEX.md",
+      "05_BACKTEST_REORGANIZATION.md",
+      "05_BREADTH_INDICATORS.md",
+      "99_AUDIT_REPORT.md",
+      "factor_catalog.md",
+      "factor_library_manual.md",
+      "FAQ.md",
+      "HANDOVER.md",
+      "KNOWLEDGE_MANAGEMENT.md",
+      "MODULE_DESIGN_PLAN.md",
+      "OPTIMIZATION_SUMMARY.md"
+    ],
+    "suggestions": {
+      "02_ALPHA_FACTORS_INDEX.md": "01_STANDARDS",
+      "05_BACKTEST_REORGANIZATION.md": "05_BACKTEST",
+      "05_BREADTH_INDICATORS.md": "02_ALPHA_FACTORS_INDEX",
+      "99_AUDIT_REPORT.md": "09_AUDIT",
+      "factor_catalog.md": "06_REGISTRY",
+      "factor_library_manual.md": "10_MANUAL",
+      "FAQ.md": "10_MANUAL",
+      "HANDOVER.md": "10_MANUAL",
+      "KNOWLEDGE_MANAGEMENT.md": "10_MANUAL",
+      "MODULE_DESIGN_PLAN.md": "01_STANDARDS"
+    },
+    "stats": {
+      "total": 11,
+      "suggested_moves": 10,
+      "keep_in_root": 1
+    }
+  },
+  "responsibility_analysis": {
+    "too_short_count": 67,
+    "too_vague_count": 0,
+    "mismatch_count": 144
+  },
+  "mechanisms": {
+    "periodic_review": {
+      "name": "文档治理定期审查机制",
+      "version": "1.0.0",
+      "created_date": "2026-04-07",
+      "review_schedule": {
+        "daily": [
+          "文件命名检查",
+          "YAML头部完整性检查"
+        ],
+        "weekly": [
+          "职责描述质量检查",
+          "索引完整性检查",
+          "死链接检查"
+        ],
+        "monthly": [
+          "分类规范性检查",
+          "稀疏目录检查",
+          "重复内容检查"
+        ],
+        "quarterly": [
+          "架构一致性检查",
+          "文档覆盖率检查",
+          "质量指标评估"
+        ]
+      },
+      "responsibilities": {
+        "首席文档架构师": "负责月度和季度审查",
+        "文档维护团队": "负责周度审查",
+        "自动化系统": "负责日度检查"
+      },
+      "escalation_rules": {
+        "P0严重问题": "立即通知首席文档架构师",
+        "P1高优先级": "24小时内处理",
+        "P2中优先级": "本周内处理",
+        "P3低优先级": "本月内处理"
+      }
+    },
+    "naming_check": {
+      "name": "自动化命名检查机制",
+      "version": "1.0.0",
+      "created_date": "2026-04-07",
+      "naming_rules": {
+        "format": "UPPER_CASE_WITH_UNDERSCORES.md",
+        "pattern": "^[A-Z][A-Z0-9_]*\\.md$",
+        "exceptions": [
+          "INDEX.md",
+          "README.md",
+          "SITEMAP.md",
+          "BLUEPRINT.md",
+          "FAQ.md"
+        ],
+        "special_prefixes": [
+          "T.",
+          "M.",
+          "API.",
+          "SPEC."
+        ]
+      },
+      "check_items": [
+        "文件名是否全大写",
+        "文件名是否使用下划线分隔",
+        "文件名是否包含特殊字符",
+        "文件名是否过长（>50字符）",
+        "文件名是否反映文档职责"
+      ],
+      "auto_fix": {
+        "enabled": true,
+        "rules": {
+          "lowercase": "自动转换为大写",
+          "spaces": "自动替换为下划线",
+          "special_chars": "自动移除特殊字符"
+        }
+      }
+    },
+    "classification_standard": {
+      "name": "文档分类规范",
+      "version": "1.0.0",
+      "created_date": "2026-04-07",
+      "categories": {
+        "01_STANDARDS": {
+          "description": "标准规范文档",
+          "examples": [
+            "因子计算标准",
+            "回测标准",
+            "命名规范"
+          ],
+          "naming_pattern": "FACTOR_*.md, BACKTEST_*.md"
+        },
+        "02_ALPHA_FACTORS_INDEX": {
+          "description": "Alpha因子索引",
+          "examples": [
+            "动量因子",
+            "价值因子",
+            "质量因子"
+          ],
+          "naming_pattern": "MOMENTUM_*.md, VALUE_*.md"
+        },
+        "03_RISK_FACTORS": {
+          "description": "风险因子",
+          "examples": [
+            "Barra风格因子",
+            "行业因子",
+            "尾部风险因子"
+          ],
+          "naming_pattern": "RISK_*.md, BARRA_*.md"
+        },
+        "04_DATA_SOURCE": {
+          "description": "数据源",
+          "examples": [
+            "数据采集",
+            "数据清洗",
+            "数据质量"
+          ],
+          "naming_pattern": "DATA_*.md, *_CONNECTOR.md"
+        },
+        "05_BACKTEST": {
+          "description": "回测系统",
+          "examples": [
+            "回测引擎",
+            "回测报告",
+            "相关性分析"
+          ],
+          "naming_pattern": "BACKTEST_*.md, CORRELATION_*.md"
+        },
+        "06_REGISTRY": {
+          "description": "注册中心",
+          "examples": [
+            "因子注册",
+            "因子目录"
+          ],
+          "naming_pattern": "REGISTRY_*.md, CATALOG_*.md"
+        },
+        "07_FACTOR_MONITORING": {
+          "description": "因子监控",
+          "examples": [
+            "监控指标",
+            "预警系统"
+          ],
+          "naming_pattern": "MONITOR_*.md, ALERT_*.md"
+        },
+        "08_OPTIMIZATION": {
+          "description": "优化系统",
+          "examples": [
+            "组合优化",
+            "风险优化"
+          ],
+          "naming_pattern": "OPTIMIZATION_*.md, PORTFOLIO_*.md"
+        },
+        "09_AUDIT": {
+          "description": "审计报告",
+          "examples": [
+            "审计报告",
+            "合规检查"
+          ],
+          "naming_pattern": "AUDIT_*.md, COMPLIANCE_*.md"
+        },
+        "10_MANUAL": {
+          "description": "手册文档",
+          "examples": [
+            "使用手册",
+            "FAQ",
+            "交接文档"
+          ],
+          "naming_pattern": "MANUAL_*.md, FAQ.md, HANDOVER.md"
+        }
+      },
+      "classification_rules": [
+        "根据文档核心职责确定分类",
+        "优先选择最具体的分类",
+        "避免跨分类存放",
+        "定期审查分类合理性"
+      ]
+    },
+    "responsibility_standard": {
+      "name": "职责描述质量标准",
+      "version": "2.0.0",
+      "created_date": "2026-04-07",
+      "quality_criteria": {
+        "length": {
+          "min": 10,
+          "max": 100,
+          "optimal": "20-50字符"
+        },
+        "clarity": {
+          "avoid_words": [
+            "管理",
+            "处理",
+            "相关",
+            "等",
+            "内容",
+            "说明"
+          ],
+          "use_words": [
+            "定义",
+            "实现",
+            "提供",
+            "负责",
+            "支持"
+          ],
+          "specificity": "必须包含具体的动词和对象"
+        },
+        "completeness": {
+          "must_have": [
+            "核心职责",
+            "职责边界"
+          ],
+          "should_have": [
+            "对接文档",
+            "相关文档"
+          ],
+          "nice_to_have": [
+            "示例",
+            "注意事项"
+          ]
+        },
+        "consistency": {
+          "format": "> **核心职责**: [动词] + [对象] + [目的]",
+          "example": "> **核心职责**: 定义因子计算标准并提供计算方法"
+        }
+      },
+      "quality_levels": {
+        "A级（优秀）": {
+          "criteria": "职责清晰、具体、完整",
+          "score": "90-100"
+        },
+        "B级（良好）": {
+          "criteria": "职责清晰但不够具体",
+          "score": "70-89"
+        },
+        "C级（合格）": {
+          "criteria": "职责基本清晰但存在模糊",
+          "score": "60-69"
+        },
+        "D级（不合格）": {
+          "criteria": "职责不清或缺失",
+          "score": "0-59"
+        }
+      },
+      "review_process": {
+        "step1": "自动检查长度和格式",
+        "step2": "人工审查清晰度和完整性",
+        "step3": "定期评估质量等级",
+        "step4": "持续优化改进"
+      }
+    }
+  }
+}

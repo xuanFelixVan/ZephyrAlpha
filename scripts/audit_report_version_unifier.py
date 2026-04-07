@@ -2,31 +2,28 @@
 # -*- coding: utf-8 -*-
 """
 审计报告版本号统一脚本
-将审计报告文件名中的版本号与YAML中的版本号统一
+统一审计报告文件名版本号与YAML版本号
 """
 
-import os
 import re
 from pathlib import Path
-import json
 from datetime import datetime
+import json
 
 def extract_version_from_filename(filename):
     """
     从文件名提取版本号
-    支持格式: _V2, _V3, _v2, _v3等
+    支持格式: _V2, _V3, _v2, _v3
     """
-    # 匹配 _V数字 或 _v数字
     version_patterns = [
-        r'_V(\d+)(?:_|\.|$)',  # _V2_, _V2., _V2
-        r'_v(\d+)(?:_|\.|$)',  # _v2_, _v2., _v2
+        r'_V(\d+)(?:_|\.|$)',
+        r'_v(\d+)(?:_|\.|$)',
     ]
     
     for pattern in version_patterns:
         match = re.search(pattern, filename, re.IGNORECASE)
         if match:
             version_num = match.group(1)
-            # 转换为标准版本号格式: X.0.0
             return f"{version_num}.0.0"
     
     return None
@@ -35,17 +32,13 @@ def update_yaml_version(content, new_version):
     """
     更新YAML头部的版本号
     """
-    # 匹配YAML头部
     yaml_pattern = re.compile(r'^(---\s*\n)(.*?)(\n---)', re.DOTALL)
     match = yaml_pattern.match(content)
     
     if match:
         yaml_header = match.group(2)
-        # 替换版本号
         version_pattern = re.compile(r'^version:\s*[^\s]+', re.MULTILINE)
         new_yaml_header = version_pattern.sub(f'version: {new_version}', yaml_header)
-        
-        # 重组内容
         new_content = match.group(1) + new_yaml_header + match.group(3) + content[match.end():]
         return new_content
     
@@ -66,7 +59,6 @@ def process_audit_reports(docs_dir):
     
     docs_path = Path(docs_dir)
     
-    # 定义审计报告目录
     audit_dirs = [
         '05_IMPLEMENTATION/04_OPERATIONS/audit_state',
         '05_IMPLEMENTATION/07_OPERATIONS/audit_state',
@@ -94,14 +86,12 @@ def process_audit_reports(docs_dir):
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
                 
-                # 检查YAML中是否有版本号
                 yaml_version_pattern = re.compile(r'^version:\s*([^\s]+)', re.MULTILINE)
                 yaml_match = yaml_version_pattern.search(content)
                 
                 if yaml_match:
                     current_version = yaml_match.group(1)
                     
-                    # 如果版本号不一致，更新
                     if current_version != file_version:
                         new_content = update_yaml_version(content, file_version)
                         
@@ -118,15 +108,9 @@ def process_audit_reports(docs_dir):
                             })
                         else:
                             results['error_files'] += 1
-                            results['details'].append({
-                                'file': str(md_file.relative_to(docs_path)),
-                                'error': '无法更新YAML',
-                                'status': 'error'
-                            })
                     else:
                         results['skipped_files'] += 1
                 else:
-                    # YAML中没有版本号，添加
                     new_content = update_yaml_version(content, file_version)
                     if new_content:
                         with open(md_file, 'w', encoding='utf-8') as f:
@@ -171,12 +155,12 @@ def generate_report(results, output_file):
     ]
     
     if results['updated_files'] > 0:
-        report_lines.append("### ✅ 已更新文件")
+        report_lines.append("### ✅ 已更新文件（前50个）")
         report_lines.append("")
         report_lines.append("| 文件路径 | 原版本号 | 新版本号 | 状态 |")
         report_lines.append("|---------|---------|---------|------|")
         
-        for detail in results['details']:
+        for detail in results['details'][:50]:
             if detail['status'] in ['updated', 'added']:
                 status = '✅ 已更新' if detail['status'] == 'updated' else '✅ 已添加'
                 report_lines.append(
@@ -228,20 +212,19 @@ def main():
     主函数
     """
     docs_dir = 'docs'
-    output_file = 'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_REPORT_VERSION_UNIFICATION_REPORT_20260407.md'
+    output_file = 'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_REPORT_VERSION_UNIFICATION_20260407.md'
     
     print("开始处理审计报告版本号...")
     results = process_audit_reports(docs_dir)
     
-    print(f"扫描完成，共检查 {results['total_files']} 个文件")
-    print(f"更新文件: {results['updated_files']}")
-    print(f"跳过文件: {results['skipped_files']}")
-    print(f"错误文件: {results['error_files']}")
+    print(f"扫描文件数: {results['total_files']}")
+    print(f"更新文件数: {results['updated_files']}")
+    print(f"跳过文件数: {results['skipped_files']}")
+    print(f"错误文件数: {results['error_files']}")
     
     report_path = generate_report(results, output_file)
     print(f"\n报告已生成: {report_path}")
     
-    # 同时保存JSON格式的详细结果
     json_file = output_file.replace('.md', '.json')
     with open(json_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)

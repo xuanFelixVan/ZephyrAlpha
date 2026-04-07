@@ -121,6 +121,10 @@ class ComprehensiveDeepAudit:
         
         for file_path in self.all_files:
             file_name = file_path.name
+            relative_path = str(file_path.relative_to(DOCS_DIR))
+            
+            if "06_ARCHIVE" in relative_path:
+                continue
             
             if re.search(r'Layer\s*[0-8]', file_name, re.IGNORECASE):
                 old_architecture_files.append(str(file_path.relative_to(DOCS_DIR)))
