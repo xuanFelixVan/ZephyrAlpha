@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 version: 1.0.0
 standard_type: 系统索引
 applicable_scope: 全系?compliance_level: 顶级标准
