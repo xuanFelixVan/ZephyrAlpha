@@ -13,14 +13,12 @@ responsibility:
 layer: "Layer 1 (数据预处理层)"
 ---
 
-# ClickHouse列式存储引擎集成蓝图
-> **核心职责**: Clickhouse Integration蓝图设计
+# ClickHouse列式存储集成蓝图
+
+> **核心职责**: 大规模历史数据的存储、查询和分析，专注于OLAP场景
 > **职责边界**: 
-> - ✅ 本文档负责：Clickhouse Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **核心定位**: 专业列式存储解决方案，为量化交易系统提供高性能的大规模历史数据分析能力
+> - ✅ 本模块负责：大规模历史数据存储、列式聚合查询、物化视图、数据压缩
+> - ❌ 本模块不负责：实时数据存储（TimescaleDB）、缓存（Redis）
 
 ## 核心定位
 
@@ -28,232 +26,400 @@ layer: "Layer 1 (数据预处理层)"
 
 ### 职责边界
 
-**✅ 核心职责**:
-- 历史行情数据存储（日频及以上）
-- 大规模数据聚合分析
-- 因子回测数据查询
-- 数据报表生成
-- 列式压缩存储
-
-**❌ 非职责范围**:
-- 高频时序数据存储（由TimescaleDB负责）
-- 数据缓存（由Redis负责）
-- 实时数据流处理（由Kafka负责）
+| 负责 | 不负责 |
+|------|--------|
+| ✅ 历史行情数据存储（10年+） | ❌ 实时数据存储 |
+| ✅ 列式聚合分析 | ❌ 事务处理 |
+| ✅ 物化视图预计算 | ❌ 高频写入 |
+| ✅ 数据压缩存储 | ❌ 实时查询 |
+| ✅ 复杂分析查询 | ❌ 数据订阅 |
 
 ---
 
-## 一、模块概述
+## 1. 技术选型
 
-### 1.1 业务价值
+### 1.1 为什么选择ClickHouse
 
-**为什么需要列式存储**:
-- ✅ 分析查询性能提升100倍
-- ✅ 压缩率高，节省存储空间
-- ✅ 支持实时数据摄入
-- ✅ 支持SQL查询，学习成本低
+| 特性 | ClickHouse | Apache Doris | Apache Druid |
+|------|------------|--------------|--------------|
+| 查询性能 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| 压缩能力 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| 部署复杂度 | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
+| 学习曲线 | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
+| Python支持 | ✅ clickhouse-driver | ✅ pydoris | ✅ pydruid |
+| 单机适用 | ✅ 支持 | ✅ 支持 | ❌ 需集群 |
+| 社区活跃度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 
-**专业机构标准**:
-- 所有量化机构都使用列式存储进行历史数据分析
-- 支持PB级数据存储
-- 支持复杂聚合查询
-- 支持实时数据摄入
+### 1.2 核心优势
 
-### 1.2 技术选型
-
-**为什么选择ClickHouse**:
-- ✅ 列式存储，查询性能极佳
-- ✅ 支持实时数据摄入
-- ✅ 支持SQL查询，学习成本低
-- ✅ 压缩率高，节省存储空间
-- ✅ 单机部署，适合个人开发
-- ✅ 有成熟的Python客户端
-- ✅ 开源免费，社区活跃
+1. **极致性能**: 单机每秒处理数亿行数据
+2. **高压缩比**: 列式存储压缩比可达10:1
+3. **SQL兼容**: 支持标准SQL语法
+4. **单机友好**: 个人开发场景最佳选择
 
 ---
 
-## 二、架构设计
+## 2. 架构设计
 
-### 2.1 Layer定位
+### 2.1 整体架构
 
-**Layer归属**: Layer 1 - 数据预处理层
-
-**模块类别**: 数据存储模块
-
-**依赖关系**:
-- 上游: DATA_SOURCE_MANAGEMENT（数据源管理）
-- 下游: HIGH_PERFORMANCE_DATA_PIPELINE（数据管道）
-
-### 2.2 核心组件设计
-
-```python
-from clickhouse_driver import Client
-from typing import List, Dict, Optional
-import pandas as pd
-from datetime import datetime
-
-class ClickHouseManager:
-    """ClickHouse管理器"""
-    
-    def __init__(self, host: str = 'localhost', port: int = 9000):
-        self.client = Client(host=host, port=port)
-    
-    def create_database(self, database: str):
-        """创建数据库"""
-        self.client.execute(f'CREATE DATABASE IF NOT EXISTS {database}')
-    
-    def create_table(self, table_sql: str):
-        """创建表"""
-        self.client.execute(table_sql)
-    
-    def insert_data(
-        self,
-        database: str,
-        table: str,
-        data: pd.DataFrame
-    ):
-        """插入数据"""
-        self.client.insert_dataframe(
-            f'INSERT INTO {database}.{table} VALUES',
-            data
-        )
-    
-    def query_data(
-        self,
-        query: str
-    ) -> pd.DataFrame:
-        """查询数据"""
-        result, columns = self.client.execute(
-            query,
-            with_column_types=True
-        )
-        column_names = [col[0] for col in columns]
-        return pd.DataFrame(result, columns=column_names)
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    ClickHouse集成架构                            │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
+│  │ 数据导入层   │    │ 数据存储层   │    │ 数据查询层   │     │
+│  │              │    │              │    │              │     │
+│  │ • 批量导入   │    │ • MergeTree  │    │ • 聚合查询   │     │
+│  │ • 增量导入   │    │ • 分区策略   │    │ • 物化视图   │     │
+│  │ • 数据归档   │    │ • TTL策略    │    │ • 分析函数   │     │
+│  └──────────────┘    └──────────────┘    └──────────────┘     │
+│         │                   │                    │              │
+│         └───────────────────┴────────────────────┘              │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    数据分层策略                          │   │
+│  │  • 热数据: TimescaleDB (30天内)                          │   │
+│  │  • 温数据: ClickHouse (1年内)                            │   │
+│  │  • 冷数据: 对象存储 (归档)                               │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 三、数据模型设计
-
-### 3.1 核心表结构
+### 2.2 数据模型设计
 
 ```sql
 -- 历史行情数据表
-CREATE TABLE IF NOT EXISTS zephyr_quant.daily_market_data (
+CREATE TABLE historical_klines (
     date Date,
-    symbol String,
-    open Decimal(10, 2),
-    high Decimal(10, 2),
-    low Decimal(10, 2),
-    close Decimal(10, 2),
+    symbol LowCardinality(String),
+    interval LowCardinality(String),
+    open_time DateTime,
+    open Decimal(18,4),
+    high Decimal(18,4),
+    low Decimal(18,4),
+    close Decimal(18,4),
     volume UInt64,
-    amount Decimal(20, 2)
-) ENGINE = MergeTree()
+    amount Decimal(18,4),
+    trades UInt32
+)
+ENGINE = MergeTree()
 PARTITION BY toYYYYMM(date)
-ORDER BY (symbol, date)
-SETTINGS index_granularity = 8192;
+ORDER BY (symbol, interval, open_time)
+TTL date + INTERVAL 5 YEAR;
 
--- 因子数据表
-CREATE TABLE IF NOT EXISTS zephyr_quant.factor_data (
+-- 因子历史数据表
+CREATE TABLE factor_history (
     date Date,
-    symbol String,
-    factor_name String,
-    factor_value Decimal(20, 6)
-) ENGINE = MergeTree()
+    symbol LowCardinality(String),
+    factor_id LowCardinality(String),
+    value Decimal(18,6),
+    quality UInt8
+)
+ENGINE = MergeTree()
 PARTITION BY toYYYYMM(date)
-ORDER BY (factor_name, symbol, date)
-SETTINGS index_granularity = 8192;
+ORDER BY (factor_id, symbol, date)
+TTL date + INTERVAL 3 YEAR;
+
+-- 财务数据表
+CREATE TABLE financial_statements (
+    report_date Date,
+    symbol LowCardinality(String),
+    report_type LowCardinality(String),
+    revenue Decimal(18,2),
+    net_income Decimal(18,2),
+    total_assets Decimal(18,2),
+    total_liabilities Decimal(18,2),
+    eps Decimal(18,4),
+    pe_ratio Decimal(18,4),
+    pb_ratio Decimal(18,4)
+)
+ENGINE = MergeTree()
+PARTITION BY toYYYYMM(report_date)
+ORDER BY (symbol, report_date, report_type);
 ```
 
 ---
 
-## 四、部署方案
+## 3. 核心功能实现
 
-### 4.1 Docker部署
+### 3.1 物化视图
+
+```sql
+-- 日收益统计物化视图
+CREATE MATERIALIZED VIEW daily_stats_mv
+ENGINE = SummingMergeTree()
+PARTITION BY toYYYYMM(date)
+ORDER BY (symbol, date)
+AS SELECT
+    date,
+    symbol,
+    count() as trade_days,
+    sum(volume) as total_volume,
+    avg(close) as avg_close,
+    max(high) as max_high,
+    min(low) as min_low
+FROM historical_klines
+WHERE interval = '1d'
+GROUP BY date, symbol;
+
+-- 因子统计物化视图
+CREATE MATERIALIZED VIEW factor_stats_mv
+ENGINE = AggregatingMergeTree()
+PARTITION BY toYYYYMM(date)
+ORDER BY (factor_id, date)
+AS SELECT
+    date,
+    factor_id,
+    avgState(value) as avg_value,
+    quantileState(0.5)(value) as median_value,
+    quantileState(0.25)(value) as q1_value,
+    quantileState(0.75)(value) as q3_value
+FROM factor_history
+GROUP BY date, factor_id;
+```
+
+### 3.2 高效查询
+
+```sql
+-- 时间范围查询
+SELECT 
+    symbol,
+    open_time,
+    close,
+    volume
+FROM historical_klines
+WHERE symbol = '000001.SZ'
+AND interval = '1d'
+AND date BETWEEN '2020-01-01' AND '2025-12-31'
+ORDER BY open_time;
+
+-- 聚合分析查询
+SELECT 
+    symbol,
+    avg(close) as avg_close,
+    stddev(close) as std_close,
+    max(high) as max_high,
+    min(low) as min_low,
+    sum(volume) as total_volume
+FROM historical_klines
+WHERE interval = '1d'
+AND date >= today() - INTERVAL 1 YEAR
+GROUP BY symbol
+ORDER BY total_volume DESC
+LIMIT 100;
+
+-- 窗口函数查询
+SELECT 
+    symbol,
+    open_time,
+    close,
+    avg(close) OVER (
+        PARTITION BY symbol 
+        ORDER BY open_time 
+        ROWS BETWEEN 19 PRECEDING AND CURRENT ROW
+    ) as ma20,
+    avg(close) OVER (
+        PARTITION BY symbol 
+        ORDER BY open_time 
+        ROWS BETWEEN 49 PRECEDING AND CURRENT ROW
+    ) as ma50
+FROM historical_klines
+WHERE symbol = '000001.SZ'
+AND interval = '1d'
+ORDER BY open_time DESC
+LIMIT 100;
+```
+
+---
+
+## 4. Python接口设计
+
+### 4.1 数据写入接口
+
+```python
+from typing import List, Dict, Optional
+from datetime import datetime
+from clickhouse_driver import Client
+import pandas as pd
+
+class ClickHouseWriter:
+    """ClickHouse数据写入器"""
+    
+    def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
+        self.client = Client(host=host, port=port, database=database)
+    
+    def write_klines(self, klines: pd.DataFrame) -> int:
+        """批量写入K线数据"""
+        data = [
+            (
+                row['date'], row['symbol'], row['interval'],
+                row['open_time'], row['open'], row['high'],
+                row['low'], row['close'], row['volume'],
+                row.get('amount', 0), row.get('trades', 0)
+            )
+            for _, row in klines.iterrows()
+        ]
+        
+        self.client.execute(
+            """
+            INSERT INTO historical_klines VALUES
+            """,
+            data
+        )
+        
+        return len(data)
+    
+    def write_factors(self, factors: pd.DataFrame) -> int:
+        """批量写入因子数据"""
+        data = [
+            (
+                row['date'], row['symbol'], row['factor_id'],
+                row['value'], row.get('quality', 100)
+            )
+            for _, row in factors.iterrows()
+        ]
+        
+        self.client.execute(
+            """
+            INSERT INTO factor_history VALUES
+            """,
+            data
+        )
+        
+        return len(data)
+```
+
+### 4.2 数据查询接口
+
+```python
+class ClickHouseReader:
+    """ClickHouse数据查询器"""
+    
+    def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
+        self.client = Client(host=host, port=port, database=database)
+    
+    def get_klines(
+        self,
+        symbol: str,
+        interval: str,
+        start_date: str,
+        end_date: str
+    ) -> pd.DataFrame:
+        """获取K线数据"""
+        sql = """
+        SELECT 
+            open_time, symbol, open, high, low, close, volume, amount
+        FROM historical_klines
+        WHERE symbol = %(symbol)s
+        AND interval = %(interval)s
+        AND date BETWEEN %(start_date)s AND %(end_date)s
+        ORDER BY open_time
+        """
+        
+        result = self.client.execute(sql, {
+            'symbol': symbol,
+            'interval': interval,
+            'start_date': start_date,
+            'end_date': end_date
+        })
+        
+        return pd.DataFrame(result, columns=[
+            'open_time', 'symbol', 'open', 'high', 'low', 'close', 'volume', 'amount'
+        ])
+    
+    def get_factor_panel(
+        self,
+        factor_id: str,
+        symbols: List[str],
+        start_date: str,
+        end_date: str
+    ) -> pd.DataFrame:
+        """获取因子截面数据"""
+        sql = """
+        SELECT 
+            date, symbol, value
+        FROM factor_history
+        WHERE factor_id = %(factor_id)s
+        AND symbol IN %(symbols)s
+        AND date BETWEEN %(start_date)s AND %(end_date)s
+        ORDER BY date, symbol
+        """
+        
+        result = self.client.execute(sql, {
+            'factor_id': factor_id,
+            'symbols': symbols,
+            'start_date': start_date,
+            'end_date': end_date
+        })
+        
+        df = pd.DataFrame(result, columns=['date', 'symbol', 'value'])
+        return df.pivot(index='date', columns='symbol', values='value')
+```
+
+---
+
+## 5. 部署配置
+
+### 5.1 Docker部署
 
 ```yaml
+# docker-compose.yml
 version: '3.8'
 
 services:
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     container_name: zephyr_clickhouse
+    environment:
+      CLICKHOUSE_DB: zephyr
+      CLICKHOUSE_USER: zephyr
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
     ports:
       - "8123:8123"  # HTTP接口
       - "9000:9000"  # Native接口
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - ./config.xml:/etc/clickhouse-server/config.d/config.xml
-    environment:
-      CLICKHOUSE_DB: zephyr_quant
-      CLICKHOUSE_USER: zephyr
-      CLICKHOUSE_PASSWORD: zephyr123
+      - clickhouse_logs:/var/log/clickhouse-server
+      - ./config.xml:/etc/clickhouse-server/config.d/custom.xml
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   clickhouse_data:
+  clickhouse_logs:
+```
+
+### 5.2 配置优化
+
+```xml
+<!-- config.xml -->
+<clickhouse>
+    <max_connections>4096</max_connections>
+    <keep_alive_timeout>3</keep_alive_timeout>
+    <max_concurrent_queries>100</max_concurrent_queries>
+    
+    <mark_cache_size>5368709120</mark_cache_size>
+    
+    <logger>
+        <level>information</level>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    </logger>
+</clickhouse>
 ```
 
 ---
 
-## 五、实施路径
-
-### Phase 1: 基础部署（1周）
-
-**任务清单**:
-- [x] Docker部署ClickHouse
-- [x] 创建基础表结构
-- [x] 开发数据摄入器
-- [x] 开发基础查询器
-
-**预期成果**:
-- ✅ ClickHouse服务运行正常
-- ✅ 支持历史数据存储
-- ✅ 支持基础查询
-
-### Phase 2: 性能优化（1周）
-
-**任务清单**:
-- [x] 优化表结构
-- [x] 开发聚合查询
-- [x] 性能测试和调优
-
-**预期成果**:
-- ✅ 查询性能提升100倍
-- ✅ 支持复杂聚合查询
-
----
-
-## 六、成本估算
-
-### 6.1 硬件成本
-
-**个人开发场景**:
-- CPU: 4核
-- 内存: 8GB
-- 存储: 500GB SSD
-- 成本: 云服务器 ¥200/月 或 本地部署一次性 ¥2000
-
-### 6.2 学习成本
-
-- ClickHouse基础: 2天
-- Python客户端开发: 1天
-- 性能优化: 1天
-- **总计**: 4天
-
----
-
-## 七、相关文档
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **ClickHouse** | 24.0+ | 列式数据库 | [官方文档](https://clickhouse.com/docs) |
-| **clickhouse-driver** | 0.2+ | Python客户端 | [官方文档](https://clickhouse-driver.readthedocs.io/) |
-
----
-
-## 📝 变更历史
+## 📋 变更历史
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|

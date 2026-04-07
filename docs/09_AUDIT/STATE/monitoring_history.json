@@ -323,5 +323,31 @@
       "sparse_dirs": 51
     },
     "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T11:51:05.636421",
+    "stats": {
+      "total_files": 1806,
+      "total_dirs": 192,
+      "files_with_yaml": 1804,
+      "files_with_responsibility": 1783,
+      "files_with_module_id": 1804,
+      "encoding_issues": 0,
+      "sparse_dirs": 52
+    },
+    "compliance_rate": 99.63
+  },
+  {
+    "timestamp": "2026-04-07T11:51:34.859927",
+    "stats": {
+      "total_files": 1808,
+      "total_dirs": 192,
+      "files_with_yaml": 1808,
+      "files_with_responsibility": 1808,
+      "files_with_module_id": 1808,
+      "encoding_issues": 0,
+      "sparse_dirs": 52
+    },
+    "compliance_rate": 100.0
   }
 ]
