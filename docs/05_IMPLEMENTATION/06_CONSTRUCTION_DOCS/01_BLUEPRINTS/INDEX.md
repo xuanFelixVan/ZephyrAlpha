@@ -35,15 +35,15 @@ compliance_level: 专业标准
 
 ## 📊 文档统计
 
-- **总文档数**: 112
-- **Active文档**: 112
+- **总文档数**: 113
+- **Active文档**: 113
 - **更新日期**: 2026-04-07
 
 ---
 
 ## 1. Layer 1 (数据源层)
 
-**文档数**: 37
+**文档数**: 38
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -63,6 +63,7 @@ compliance_level: 专业标准
 | 数据脱敏与加密服务蓝图 | DATA_MASKING_ENCRYPTION_BLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_MASKING_ENCRYPTION_BLUEPRINT.md) |
 | 数据网格蓝图 | DATAMESHBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_MESH_BLUEPRINT.md) |
 | 数据可观测性蓝图 | DATAOBSERVABILITYBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_OBSERVABILITY_BLUEPRINT.md) |
+| 数据调度系统蓝图 | DATA_ORCHESTRATION_SYSTEM_BLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md) |
 | 数据质量监控系统蓝图 v1.0 | V_015 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_QUALITY_MONITORING_BLUEPRINT.md) |
 | 数据安全合规蓝图 | DATASECURITYCOMPLIANCEBLUEP_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) |
 | 数据源健康监控蓝图 | DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md) |

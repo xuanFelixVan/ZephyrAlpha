@@ -303,12 +303,27 @@ responsibility:
 
 **核心设计理念**: 开源复用优先，适合个人开发+AI维护
 
+#### P0高优先级模块蓝图（12个）
+
 | 蓝图文档 | 核心内容 | 开源方案 | 开源复用率 | 工作量 |
 |---------|---------|---------|-----------|--------|
 | [数据版本控制蓝图](01_FRAMEWORK/LAYER4_ML/DATA_VERSION_CONTROL_BLUEPRINT.md) | 数据版本管理、数据血缘追踪 | DVC (13k+ Stars) | 100% | 20h |
 | [超参数优化蓝图](01_FRAMEWORK/LAYER4_ML/HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | 自动调参、贝叶斯优化、分布式优化 | Optuna (10k+ Stars) | 100% | 25h |
-| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/LAYER4_MISSING_MODULES_BLUEPRINT.md) | 时序预测、异常检测、模型服务、数据质量 | GluonTS/PyOD/BentoML/Great Expectations | 90% | 140h |
+| [时序预测模型蓝图](01_FRAMEWORK/LAYER4_ML/TIME_SERIES_FORECASTING_BLUEPRINT.md) | 价格预测、波动率预测、因子预测 | GluonTS (4k+ Stars) | 100% | 30h |
+| [异常检测模型蓝图](01_FRAMEWORK/LAYER4_ML/ANOMALY_DETECTION_BLUEPRINT.md) | 价格异常、交易异常、市场崩盘预警 | PyOD (8k+ Stars) | 100% | 20h |
+| [模型服务框架蓝图](01_FRAMEWORK/LAYER4_ML/MODEL_SERVING_BLUEPRINT.md) | 模型打包、部署、推理服务 | BentoML (7k+ Stars) | 100% | 25h |
+| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/LAYER4_MISSING_MODULES_BLUEPRINT.md) | 分布式训练、自动重训练、性能退化检测 | Ray/MLflow/Evidently | 90% | 140h |
 | [架构完整性分析](01_FRAMEWORK/LAYER4_ML/LAYER4_GAP_ANALYSIS_BLUEPRINT.md) | 34个缺失模块识别与分析 | - | - | - |
+| [完整缺失模块总览](01_FRAMEWORK/LAYER4_ML/COMPLETE_MISSING_MODULES_OVERVIEW.md) | 所有34个缺失模块的完整概览 | - | - | - |
+| [实施路线图](01_FRAMEWORK/LAYER4_ML/LAYER4_IMPLEMENTATION_ROADMAP.md) | 6周实施计划与资源规划 | - | - | - |
+
+#### P1/P2模块蓝图集合（22个）
+
+| 蓝图文档 | 核心内容 | 开源方案 | 开源复用率 | 工作量 |
+|---------|---------|---------|-----------|--------|
+| [P1/P2模块蓝图集合](01_FRAMEWORK/LAYER4_ML/P1_P2_MODULES_BLUEPRINT_COLLECTION.md) | P1中优先级14个 + P2低优先级8个模块 | Featuretools/MLflow/PyTorch | 80% | 230h |
+
+**总计**: 34个缺失模块，430h工作量，85%开源复用率
 
 **开源方案推荐**:
 - 数据版本控制: DVC (Apache 2.0, 13k+ Stars)

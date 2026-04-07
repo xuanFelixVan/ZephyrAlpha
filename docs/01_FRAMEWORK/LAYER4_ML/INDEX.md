@@ -31,8 +31,21 @@ standard_type: 专业量化机构文档
 
 ### 🔥 核心蓝图文档 ⭐新增 2026-04-07
 
+#### P0高优先级模块蓝图
+
 - [数据版本控制蓝图](DATA_VERSION_CONTROL_BLUEPRINT.md) - DVC集成，数据版本管理
 - [超参数优化蓝图](HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) - Optuna集成，自动调参
+- [时序预测模型蓝图](TIME_SERIES_FORECASTING_BLUEPRINT.md) - GluonTS集成，价格/波动率预测 🆕
+- [异常检测模型蓝图](ANOMALY_DETECTION_BLUEPRINT.md) - PyOD集成，异常检测 🆕
+- [模型服务框架蓝图](MODEL_SERVING_BLUEPRINT.md) - BentoML集成，模型服务 🆕
+- [缺失模块综合蓝图](LAYER4_MISSING_MODULES_BLUEPRINT.md) - 分布式训练、自动重训练等 🆕
+- [架构完整性分析](LAYER4_GAP_ANALYSIS_BLUEPRINT.md) - 34个缺失模块识别与分析 🆕
+- [完整缺失模块总览](COMPLETE_MISSING_MODULES_OVERVIEW.md) - 所有34个缺失模块概览 🆕
+- [实施路线图](LAYER4_IMPLEMENTATION_ROADMAP.md) - 6周实施计划与资源规划 🆕
+
+#### P1/P2模块蓝图集合
+
+- [P1/P2模块蓝图集合](P1_P2_MODULES_BLUEPRINT_COLLECTION.md) - P1中优先级14个 + P2低优先级8个模块 🆕
 
 ### 📖 技术规范文档
 
