@@ -2,7 +2,7 @@
 responsibility:
   - 系统框架、架构设计
 
-module_id: DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT_001
+module_id: DATA_QUALITY_REALTIME_MONITORING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

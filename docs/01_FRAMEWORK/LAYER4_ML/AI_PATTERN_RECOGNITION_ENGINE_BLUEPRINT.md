@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT_001
+module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -19,7 +19,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 ﻿---
-module_id: AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT_001
+module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

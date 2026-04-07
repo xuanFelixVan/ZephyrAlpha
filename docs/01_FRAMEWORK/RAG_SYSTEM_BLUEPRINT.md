@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: RAG_SYSTEM_BLUEPRINT_001
+module_id: RAG_SYSTEM_001
 
 version: 1.0.0
 

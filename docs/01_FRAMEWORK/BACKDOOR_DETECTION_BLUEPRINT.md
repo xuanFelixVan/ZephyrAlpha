@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: BACKDOOR_DETECTION_BLUEPRINT_001
+module_id: BACKDOOR_DETECTION_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: KNOWLEDGE_DISTILLATION_BLUEPRINT_001
+module_id: KNOWLEDGE_DISTILLATION_001
 
 version: 1.0.0
 

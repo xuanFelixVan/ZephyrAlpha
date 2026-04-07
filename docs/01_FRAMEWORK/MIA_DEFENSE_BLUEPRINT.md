@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MIA_DEFENSE_BLUEPRINT_001
+module_id: MIA_DEFENSE_001
 
 version: 1.0.0
 

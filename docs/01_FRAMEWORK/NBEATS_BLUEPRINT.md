@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: NBEATS_BLUEPRINT_001
+module_id: NBEATS_001
 
 version: 1.0.0
 

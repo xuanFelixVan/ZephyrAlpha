@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: TAIL_RISK_PREDICTION_BLUEPRINT_001
+module_id: TAIL_RISK_PREDICTION_001
 
 version: 1.0.0
 

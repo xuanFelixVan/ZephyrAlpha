@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: IMPLEMENTATION_BLUEPRINT_001
+module_id: IMPLEMENTATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -15,7 +15,7 @@ compliance_level: 专业标准
 
 
 ﻿---
-module_id: IMPL_BLUEPRINT_001
+module_id: IMPLEMENTATION_001
 version: 6.0.1
 status: Active
 created_date: 2026-04-01

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_WARMUP_BLUEPRINT_001
+module_id: MODEL_WARMUP_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DRIFT_DETECTION_BLUEPRINT_001
+module_id: DRIFT_DETECTION_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MULTIMODAL_FUSION_BLUEPRINT_001
+module_id: MULTIMODAL_FUSION_001
 
 version: 1.0.0
 

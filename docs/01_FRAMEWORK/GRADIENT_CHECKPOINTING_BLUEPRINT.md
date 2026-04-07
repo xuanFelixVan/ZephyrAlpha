@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: GRADIENT_CHECKPOINTING_BLUEPRINT_001
+module_id: GRADIENT_CHECKPOINTING_001
 
 version: 1.0.0
 

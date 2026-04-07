@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: SERVICE_MESH_INTEGRATION_BLUEPRINT_001
+module_id: SERVICE_MESH_INTEGRATION_001
 
 version: 1.0.0
 

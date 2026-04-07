@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: PROMPT_ENGINEERING_BLUEPRINT_001
+module_id: PROMPT_ENGINEERING_001
 
 version: 1.0.0
 

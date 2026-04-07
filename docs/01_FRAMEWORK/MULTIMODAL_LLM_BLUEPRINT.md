@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MULTIMODAL_LLM_BLUEPRINT_001
+module_id: MULTIMODAL_LLM_001
 
 version: 1.0.0
 

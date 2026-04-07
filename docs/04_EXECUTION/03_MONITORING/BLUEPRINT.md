@@ -26,7 +26,7 @@ module_id: EXE_BLUEPRINT
 created_date: 2026-03-28
 last_updated: 2026-04-02
 ---
-module_id: MONITORING_BLUEPRINT_001
+module_id: MONITORING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01

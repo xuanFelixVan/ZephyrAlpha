@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DATAFLOW_ARCHITECTURE_BLUEPRINT_001
+module_id: DATAFLOW_ARCHITECTURE_001
 
 version: 1.0.0
 

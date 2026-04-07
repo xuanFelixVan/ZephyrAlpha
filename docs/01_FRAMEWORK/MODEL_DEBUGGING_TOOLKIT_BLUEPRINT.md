@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_DEBUGGING_TOOLKIT_BLUEPRINT_001
+module_id: MODEL_DEBUGGING_TOOLKIT_001
 
 version: 1.0.0
 

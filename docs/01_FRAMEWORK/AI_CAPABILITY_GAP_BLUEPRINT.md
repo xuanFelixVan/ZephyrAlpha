@@ -27,7 +27,7 @@ MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
 ---
 ---
 ﻿---
-module_id: AI_CAPABILITY_GAP_BLUEPRINT_001
+module_id: AI_CAPABILITY_GAP_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

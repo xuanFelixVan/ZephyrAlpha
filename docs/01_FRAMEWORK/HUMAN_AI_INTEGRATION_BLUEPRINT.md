@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: HUMAN_AI_INTEGRATION_BLUEPRINT_001
+module_id: HUMAN_AI_INTEGRATION_001
 version: 1.1.0
 status: Active
 created_date: 2026-04-02

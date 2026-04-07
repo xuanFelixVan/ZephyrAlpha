@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: REGULATORY_REPORTING_BLUEPRINT_001
+module_id: REGULATORY_REPORTING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06

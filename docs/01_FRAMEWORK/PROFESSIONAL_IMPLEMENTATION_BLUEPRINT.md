@@ -16,7 +16,7 @@ compliance_level: 专业标准
 
 
 ﻿---
-module_id: PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_001
+module_id: PROFESSIONAL_IMPLEMENTATION_001
 version: 1.2.0
 status: Active
 created_date: 2026-04-02

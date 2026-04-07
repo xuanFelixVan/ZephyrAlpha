@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: GRADIENT_ACCUMULATION_BLUEPRINT_001
+module_id: GRADIENT_ACCUMULATION_001
 
 version: 1.0.0
 

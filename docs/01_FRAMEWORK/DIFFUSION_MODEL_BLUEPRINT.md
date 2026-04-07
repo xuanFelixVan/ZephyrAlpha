@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DIFFUSION_MODEL_BLUEPRINT_001
+module_id: DIFFUSION_MODEL_001
 
 version: 1.0.0
 

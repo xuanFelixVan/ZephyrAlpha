@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT_001
+module_id: STRESS_TEST_SCENARIO_LIBRARY_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06

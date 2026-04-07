@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: TEXT_ENCODER_BLUEPRINT_001
+module_id: TEXT_ENCODER_001
 
 version: 1.0.0
 

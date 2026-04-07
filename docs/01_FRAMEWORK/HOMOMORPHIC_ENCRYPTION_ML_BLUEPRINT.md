@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT_001
+module_id: HOMOMORPHIC_ENCRYPTION_ML_001
 
 version: 1.0.0
 

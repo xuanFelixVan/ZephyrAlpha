@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_LINEAGE_BLUEPRINT_001
+module_id: MODEL_LINEAGE_001
 
 version: 1.0.0
 

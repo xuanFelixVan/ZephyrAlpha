@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT_001
+module_id: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-04

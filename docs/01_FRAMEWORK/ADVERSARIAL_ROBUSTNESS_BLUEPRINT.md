@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: ADVERSARIAL_ROBUSTNESS_BLUEPRINT_001
+module_id: ADVERSARIAL_ROBUSTNESS_001
 
 version: 1.0.0
 

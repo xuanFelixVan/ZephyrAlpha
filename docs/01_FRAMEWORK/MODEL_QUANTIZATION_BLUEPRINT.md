@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_QUANTIZATION_BLUEPRINT_001
+module_id: MODEL_QUANTIZATION_001
 
 version: 1.0.0
 

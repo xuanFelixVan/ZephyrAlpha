@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: AI_AGENT_FRAMEWORK_BLUEPRINT_001
+module_id: AI_AGENT_FRAMEWORK_001
 
 version: 1.0.0
 

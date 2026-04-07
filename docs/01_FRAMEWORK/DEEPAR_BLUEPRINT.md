@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DEEPAR_BLUEPRINT_001
+module_id: DEEPAR_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MULTI_TASK_LEARNING_BLUEPRINT_001
+module_id: MULTI_TASK_LEARNING_001
 
 version: 1.0.0
 

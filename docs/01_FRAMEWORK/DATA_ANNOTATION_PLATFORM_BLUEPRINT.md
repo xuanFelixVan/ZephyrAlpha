@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DATA_ANNOTATION_PLATFORM_BLUEPRINT_001
+module_id: DATA_ANNOTATION_PLATFORM_001
 
 version: 1.0.0
 

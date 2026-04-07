@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MLOPS_PLATFORM_BLUEPRINT_001
+module_id: MLOPS_PLATFORM_001
 
 version: 1.0.0
 

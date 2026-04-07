@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MARKET_ABUSE_SURVEILLANCE_BLUEPRINT_001
+module_id: MARKET_ABUSE_SURVEILLANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

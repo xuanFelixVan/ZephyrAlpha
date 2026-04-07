@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MACHINE_LEARNING_LAYER_BLUEPRINT_001
+module_id: MACHINE_LEARNING_LAYER_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: INFERENCE_ACCELERATION_BLUEPRINT_001
+module_id: INFERENCE_ACCELERATION_001
 
 version: 1.0.0
 

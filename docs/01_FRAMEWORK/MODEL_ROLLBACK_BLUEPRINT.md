@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_ROLLBACK_BLUEPRINT_001
+module_id: MODEL_ROLLBACK_001
 
 version: 1.0.0
 

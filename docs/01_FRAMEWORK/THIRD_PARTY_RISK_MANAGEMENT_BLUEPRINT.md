@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: THIRD_PARTY_RISK_MANAGEMENT_BLUEPRINT_001
+module_id: THIRD_PARTY_RISK_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

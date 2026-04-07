@@ -1,4 +1,4 @@
-﻿﻿---
+---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -8,16 +8,16 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-?
+  - 动态资产配置
   - 资产权重调整
   - 市场环境适应
--
+  - 配置策略优化
 layer: Layer 5.2 (组合优化)
 ---
 
-?
-
 ## 核心定位
+
+负责动态资产配置的设计与实现，基于配置模型，动态调整资产权重，优化风险收益。
 
 负责动态资产配置的设计与实现，基于配置模型，动态调整资产权重，优化风险收益。 提供风险识别、评估、监控功能，支持风险管理和决策。
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT_001
+module_id: GOVERNANCE_COMPLIANCE_LAYER_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-03

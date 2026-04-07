@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: CORRELATION_PREDICTION_BLUEPRINT_001
+module_id: CORRELATION_PREDICTION_001
 
 version: 1.0.0
 

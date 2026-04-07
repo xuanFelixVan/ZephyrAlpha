@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MULTI_MODEL_ORCHESTRATOR_BLUEPRINT_001
+module_id: MULTI_MODEL_ORCHESTRATOR_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT_001
+module_id: HUMAN_AI_COLLABORATION_SCENARIOS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

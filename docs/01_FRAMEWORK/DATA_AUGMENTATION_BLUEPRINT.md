@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DATA_AUGMENTATION_BLUEPRINT_001
+module_id: DATA_AUGMENTATION_001
 
 version: 1.0.0
 

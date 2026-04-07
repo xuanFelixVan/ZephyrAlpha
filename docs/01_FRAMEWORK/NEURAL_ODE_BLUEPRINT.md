@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: NEURAL_ODE_BLUEPRINT_001
+module_id: NEURAL_ODE_001
 
 version: 1.0.0
 

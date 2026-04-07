@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: REGULATORY_CHANGE_TRACKING_BLUEPRINT_001
+module_id: REGULATORY_CHANGE_TRACKING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

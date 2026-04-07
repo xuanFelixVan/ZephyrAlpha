@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DATA_CLEANING_BLUEPRINT_001
+module_id: DATA_CLEANING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -27,7 +27,7 @@ responsibility: 数据清洗流程设计与清洗规则制定
 **职责边界**:
 -  本文档负责: 核心功能定义与规范
 -  本文档不负责: 具体实现细节
-module_id: DATA_CLEANING_BLUEPRINT_001
+module_id: DATA_CLEANING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01

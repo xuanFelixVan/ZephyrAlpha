@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MEMORY_AUGMENTED_NN_BLUEPRINT_001
+module_id: MEMORY_AUGMENTED_NN_001
 
 version: 1.0.0
 

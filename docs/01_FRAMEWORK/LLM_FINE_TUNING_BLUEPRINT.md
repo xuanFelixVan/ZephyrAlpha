@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: LLM_FINE_TUNING_BLUEPRINT_001
+module_id: LLM_FINE_TUNING_001
 
 version: 1.0.0
 

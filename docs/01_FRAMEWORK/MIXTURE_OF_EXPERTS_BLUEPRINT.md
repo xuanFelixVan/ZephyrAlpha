@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MIXTURE_OF_EXPERTS_BLUEPRINT_001
+module_id: MIXTURE_OF_EXPERTS_001
 
 version: 1.0.0
 

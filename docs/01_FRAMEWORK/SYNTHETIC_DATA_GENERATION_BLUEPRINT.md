@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: SYNTHETIC_DATA_GENERATION_BLUEPRINT_001
+module_id: SYNTHETIC_DATA_GENERATION_001
 
 version: 1.0.0
 

@@ -16,7 +16,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
+module_id: LIQUIDITY_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05

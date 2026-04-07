@@ -16,7 +16,7 @@ compliance_level: 专业标准
 
 
 ﻿---
-module_id: STRATEGY_EXECUTION_LAYER_BLUEPRINT_001
+module_id: STRATEGY_EXECUTION_LAYER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05

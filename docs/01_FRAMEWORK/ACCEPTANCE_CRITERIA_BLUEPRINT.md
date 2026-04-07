@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: ACCEPTANCE_CRITERIA_BLUEPRINT_001
+module_id: ACCEPTANCE_CRITERIA_001
 
 version: 1.0.0
 

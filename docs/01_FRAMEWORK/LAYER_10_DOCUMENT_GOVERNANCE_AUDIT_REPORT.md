@@ -284,7 +284,7 @@ responsibility:
 2. **修正编号不规范** (5分钟)
    ```bash
    # 文件: AI_GOVERNANCE_BLUEPRINT.md
-   # 修改: module_id: AI_GOVERNANCE_001 → module_id: AI_GOVERNANCE_BLUEPRINT_001
+   # 修改: module_id: AI_GOVERNANCE_001 → module_id: AI_GOVERNANCE_001
    ```
 
 3. **明确职责边界** (30分钟)

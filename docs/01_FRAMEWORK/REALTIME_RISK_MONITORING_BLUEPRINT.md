@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: REALTIME_RISK_MONITORING_BLUEPRINT_001
+module_id: REALTIME_RISK_MONITORING_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-03

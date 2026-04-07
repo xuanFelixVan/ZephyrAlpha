@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MAMBA_SSM_BLUEPRINT_001
+module_id: MAMBA_SSM_001
 
 version: 1.0.0
 

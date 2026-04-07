@@ -26,7 +26,8 @@ layer: Layer 5.2 (组合优化)
 
 ?
 > **职责边界**: 
-
+> -  本文档负责：风险平价权重、风险贡献均衡、平价优化求解、分散度优化
+> -  本文档不负责：风险预算分配（由HIERARCHICAL_RISK_BUDGET/SIMPLIFIED_RISK_BUDGET负责）
 
 ## 设计目标
 

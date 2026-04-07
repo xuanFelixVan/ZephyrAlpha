@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: AUTOML_PIPELINE_BLUEPRINT_001
+module_id: AUTOML_PIPELINE_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: EXPERIMENT_TRACKING_BLUEPRINT_001
+module_id: EXPERIMENT_TRACKING_001
 
 version: 1.0.0
 

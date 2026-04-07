@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: DIFFERENTIAL_PRIVACY_ML_BLUEPRINT_001
+module_id: DIFFERENTIAL_PRIVACY_ML_001
 
 version: 1.0.0
 

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT_001
+module_id: ALGORITHM_PERFORMANCE_BENCHMARK_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06

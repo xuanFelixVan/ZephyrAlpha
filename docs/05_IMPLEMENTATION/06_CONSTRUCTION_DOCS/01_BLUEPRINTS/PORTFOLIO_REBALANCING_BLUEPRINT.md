@@ -9,10 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 通用再平衡框架
-  - 再平衡触发机制
-  - 权重调整策略
-  - 再平衡决策引擎
+  - 信号驱动再平衡
+  - 事件触发机制
+  - 动态权重调整
+  - 再平衡决策框架
 layer: Layer 6 (组合优化层)
 ---
 
@@ -23,7 +23,8 @@ layer: Layer 6 (组合优化层)
 
 
 > **职责边界**: 
-
+> -  本文档负责：信号驱动再平衡、事件触发机制、动态权重调整、再平衡决策框架
+> -  本文档不负责：交易成本优化（由TRANSACTION_COST_AWARE负责）、季度周期调度（由QUARTERLY_REBALANCE负责）
 
 ## 设计目标
 

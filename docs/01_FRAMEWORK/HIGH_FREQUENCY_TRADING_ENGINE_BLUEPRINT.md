@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: HIGH_FREQUENCY_TRADING_ENGINE_BLUEPRINT_001
+module_id: HIGH_FREQUENCY_TRADING_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: MODEL_SECURITY_SCANNER_BLUEPRINT_001
+module_id: MODEL_SECURITY_SCANNER_001
 
 version: 1.0.0
 

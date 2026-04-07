@@ -1,5 +1,5 @@
 ﻿﻿---
-module_id: OPTIMIZER_VARIANTS_BLUEPRINT_001
+module_id: OPTIMIZER_VARIANTS_001
 
 version: 1.0.0
 
