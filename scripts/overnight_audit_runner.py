@@ -222,8 +222,8 @@ def write_consolidated(
         "- `module_id_duplicates_detail.md` — 重复 id 与路径列表",
         "- `invalid_links_detail.md` — 无效链接表",
         "- `git_snapshot.txt` — 分支、tag、diff 摘要",
-        "- `SENTINEL_L1_SCAN_*.json` — 机器可读全量",
-        "- `MD_FILES_BY_SUBDIRECTORY_*.md` — 按目录文件清单副本",
+        "- `sentinel_l1_scan_<run_id>.json` — 机器可读全量",
+        "- `md_by_subdir_<run_id>.md` — 按目录文件清单副本",
         "",
         "## 3. docs/ 一级目录文档量（Top 30）",
         "",
@@ -299,8 +299,9 @@ def main() -> int:
             code = 1
         inv_src = STATE / "MD_FILES_BY_SUBDIRECTORY_20260408.md"
         if inv_src.is_file():
-            dst = run_dir / f"MD_FILES_BY_SUBDIRECTORY_{run_id}.md"
-            dst.write_text(inv_src.read_text(encoding="utf-8", errors="replace"), encoding="utf-8")
+            (run_dir / f"md_by_subdir_{run_id}.md").write_text(
+                inv_src.read_text(encoding="utf-8", errors="replace"), encoding="utf-8"
+            )
 
         # 2) sentinel
         rc2 = run_cmd(log, "sentinel_l1", [sys.executable, str(SCRIPTS / "sentinel_l1_governance_scan.py")], REPO)
@@ -315,7 +316,8 @@ def main() -> int:
             for name in ["SENTINEL_L1_SCAN_20260408.json", "SENTINEL_L1_SCAN_20260408.md"]:
                 p = STATE / name
                 if p.is_file():
-                    (run_dir / f"{p.stem}_{run_id}{p.suffix}").write_bytes(p.read_bytes())
+                    suf = ".json" if name.endswith(".json") else ".md"
+                    (run_dir / f"sentinel_l1_scan_{run_id}{suf}").write_bytes(p.read_bytes())
 
         build_module_id_report(sentinel_data, run_dir / "module_id_duplicates_detail.md")
         build_invalid_links_report(sentinel_data, run_dir / "invalid_links_detail.md")
@@ -329,9 +331,10 @@ def main() -> int:
         (run_dir / "MANIFEST.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
         # 可选：inventory CSV 若存在则复制
-        csv_path = STATE / "inventory_md_20260408.csv"
-        if csv_path.is_file():
-            (run_dir / f"inventory_md_{run_id}.csv").write_bytes(csv_path.read_bytes())
+        for csv_glob in ("inventory_md_20260408.csv",):
+            csv_path = STATE / csv_glob
+            if csv_path.is_file():
+                (run_dir / f"inventory_md_{run_id}.csv").write_bytes(csv_path.read_bytes())
 
         log.info("DONE run_dir=%s exit=%s", run_dir, code)
         return code
