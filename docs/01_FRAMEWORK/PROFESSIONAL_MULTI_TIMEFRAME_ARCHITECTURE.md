@@ -1011,7 +1011,7 @@ class FullCyclePerformanceAttribution:
 | èå¾ææ¡£ | è¯´æ | å®æ½å¨æ |
 |---------|------|---------|
 | **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | AIå¯è§£éæ§å·¥?- æ¡¥æ°´åºé"å®å¨è±å­"ä½ç³» | 2?|
-| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](./RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | RAGç¥è¯ç³»ç» - AIå©ç¨åå²ç¥è¯ | 2?|
+| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md)** | RAGç¥è¯ç³»ç» - AIå©ç¨åå²ç¥è¯ | 2?|
 | **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | ç»ä¸èªéåºæ¨¡å - æèºå¤å´å®æ¶ä¼å | 3?|
 | **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | å®æ½å éæ¹?- AIè¾å©å¼?0% | 8ä¸ªæ |
 
@@ -1021,7 +1021,7 @@ class FullCyclePerformanceAttribution:
 |---------|------|---------|
 | **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | æ°æ®è´¨éçæ§ - æ¡¥æ°´åºéæ°æ®è´¨éä½ç³» | 2?|
 | **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | å®æ¶é£é©çæ§ - Two Sigmaé£é©çæ§ä½ç³» | 2?|
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | ååæµè¯ç³»ç» - æ¡¥æ°´åºéååæµè¯ä½ç³» | 2?|
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | ååæµè¯ç³»ç» - æ¡¥æ°´åºéååæµè¯ä½ç³» | 2?|
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | åè§çæ§ç³»ç» - Citadelåè§ä½ç³» | 2?|
 
 ### 6.2 éå¥å®æ½ææ¡£

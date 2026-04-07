@@ -26,7 +26,7 @@ compliance_level: 专业标准
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
-> - 因子库索引：[../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md](../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md)
+> - 因子库索引：[../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\iFind\FACTOR_MASTER_INDEX.md)
 > - 风险因子：[风险因子 README](../../../README.md)
 
 ***

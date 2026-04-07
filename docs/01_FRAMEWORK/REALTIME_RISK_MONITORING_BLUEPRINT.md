@@ -75,7 +75,7 @@ responsibility_boundary: |
 - 规划系统架构层次和核心组件接�?- 制定风险监控的关键原则和标准
 
 **下游文档**:
-- [风控规则体系蓝图](../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) - 战术层规则定�?- [风控规则引擎](../04_EXECUTION/05_RISK_ENGINE/README.md) - 执行层实�?- [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 实施层细�?
+- [风控规则体系蓝图](../03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md) - 战术层规则定�?- [风控规则引擎](04_EXECUTION\05_RISK_ENGINE\README.md) - 执行层实�?- [实时风险对冲引擎蓝图](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md) - 实施层细�?
 ---
 
 ## 一、专业机构实践分�?
@@ -571,7 +571,7 @@ class AutoHedger:
 |------|------|--------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11主架�?| ⭐⭐⭐⭐�?|
 | [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架�?| ⭐⭐⭐⭐�?|
-| [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 压力测试系统 | ⭐⭐⭐⭐�?|
+| [STRESS_TESTING_SYSTEM_BLUEPRINT.md](STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 压力测试系统 | ⭐⭐⭐⭐�?|
 | [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控 | ⭐⭐⭐⭐ |
 | [COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 合规监控 | ⭐⭐⭐⭐ |
 
@@ -588,7 +588,7 @@ class AutoHedger:
 #### Layer 10: 治理与合规层
 ##### 0.001. Realtime Risk Monitoring Blueprint
 - **模块ID**: REALTIME_RISK_MONITORING_BLUEPRINT_001
-- **蓝图文档**: [REALTIME_RISK_MONITORING_BLUEPRINT.md](./01_FRAMEWORK\REALTIME_RISK_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: [REALTIME_RISK_MONITORING_BLUEPRINT.md](01_FRAMEWORK\REALTIME_RISK_MONITORING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统风险管理
 - **状态**: Active

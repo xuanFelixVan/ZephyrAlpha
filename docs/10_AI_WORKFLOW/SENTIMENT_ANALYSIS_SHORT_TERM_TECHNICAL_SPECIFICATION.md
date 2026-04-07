@@ -14,7 +14,7 @@ applicable_modules:
   - 深度学习情感分析
   - 实时预警系统
 responsibility:
-  - 扩展功能、辅助模块
+  - AI工作流、智能辅助、自动化流程
 
 ---
 ---

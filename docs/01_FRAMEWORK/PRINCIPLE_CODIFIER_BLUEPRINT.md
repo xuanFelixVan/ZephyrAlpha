@@ -508,7 +508,7 @@ class TestDispersedInvestmentRule:
 ### 6.1 核心参考文�?
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
-| [Layer 8总体蓝图](./LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
+| [Layer 8总体蓝图](LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | 人机协同战略规划 |
 | [AI治理框架蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` | AI行为准则和治理机�?|
 | [AI行为约束引擎技术规格书](../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) | 技术规格书 | 约束引擎实现方案 |
 
@@ -534,7 +534,7 @@ class TestDispersedInvestmentRule:
 #### Layer 10: 治理与合规层
 ##### 0.001. Principle Codifier Blueprint
 - **模块ID**: PRINCIPLE_CODIFIER_BLUEPRINT_001
-- **蓝图文档**: [PRINCIPLE_CODIFIER_BLUEPRINT.md](./01_FRAMEWORK\PRINCIPLE_CODIFIER_BLUEPRINT.md)
+- **蓝图文档**: [PRINCIPLE_CODIFIER_BLUEPRINT.md](01_FRAMEWORK\PRINCIPLE_CODIFIER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 投资原则算法�?compliance_level: 顶级专业标准
 - **状态**: Active

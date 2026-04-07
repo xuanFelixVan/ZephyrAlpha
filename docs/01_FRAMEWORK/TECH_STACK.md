@@ -181,7 +181,7 @@ responsibility:
 |------|------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 统一架构 |
 | [MARKET_REGIME.md](./MARKET_REGIME.md) | 市场状态识?|
-| [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) | 人机协作流程 |
+| [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) | 人机协作流程 |
 | [README.md](./README.md) | 框架总览 |
 
 ---

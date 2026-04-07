@@ -1,6 +1,6 @@
 ---
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 
 module_id: PROFESSIONAL_TERMINOLOGY_STANDARD_001
 version: 1.0.0

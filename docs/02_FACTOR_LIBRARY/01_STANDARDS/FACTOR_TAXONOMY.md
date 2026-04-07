@@ -22,7 +22,7 @@ responsibility:
 > **职责边界**: 
 > - ✅ 本文档负责：因子分类体系定义、分类标准、参数配置规范
 > - ❌ 本文档不负责：具体因子清单、因子元数据、因子注册管理
-> - 📋 相关文档：[因子注册表](../06_REGISTRY/factor_catalog.md) - 因子清单和元数据管理
+> - 📋 相关文档：[因子注册表](02_FACTOR_LIBRARY\06_REGISTRY\factor_catalog.md) - 因子清单和元数据管理
 > - 📋 相关文档：[因子计算框架](FACTOR_CALCULATION_FRAMEWORK.md) - 计算引擎和调度器
 
 ---
@@ -599,9 +599,9 @@ class FactorMonitor:
 | Alpha质量 | 17+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | Alpha动量 | 9+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | Alpha情绪 | 14+ | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
-| Barra风格 | 10 | [T.03.RF001.barra_style_factors.md](../03_RISK_FACTORS/T.03.RF001.barra_style_factors.md) |
-| 行业因子 | 28+ | [T.03.RF002.industry_factors.md](../03_RISK_FACTORS/T.03.RF002.industry_factors.md) |
-| 尾部风险 | 8+ | [T.03.RF003.tail_risk_factors.md](../03_RISK_FACTORS/T.03.RF003.tail_risk_factors.md) |
+| Barra风格 | 10 | [T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF001.barra_style_factors.md) |
+| 行业因子 | 28+ | [T.03.RF002.industry_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF002.industry_factors.md) |
+| 尾部风险 | 8+ | [T.03.RF003.tail_risk_factors.md](02_FACTOR_LIBRARY\03_RISK_FACTORS\T.03.RF003.tail_risk_factors.md) |
 | THS_BD数据�?| 5700+ | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
 | **合计** | **5900+** | |
 
@@ -614,7 +614,7 @@ class FactorMonitor:
 | Alpha因子列表 | [02_ALPHA_FACTORS_INDEX.md](../02_ALPHA_FACTORS_INDEX.md) |
 | 风险因子列表 | [03_RISK_FACTORS/](../03_RISK_FACTORS/) |
 | THS_BD完整指标 | [THS_BD_COMPLETE_INDICATOR_LIST.md](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
-| 因子注册�?| [FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) |
+| 因子注册�?| [FACTOR_CATALOG.md](02_FACTOR_LIBRARY\06_REGISTRY\FACTOR_CATALOG.md) |
 | 因子计算框架 | [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) |
 
 ---

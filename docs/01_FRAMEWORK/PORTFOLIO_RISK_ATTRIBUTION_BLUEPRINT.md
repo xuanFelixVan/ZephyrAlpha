@@ -640,7 +640,7 @@ class RiskAttributionAlertSystem:
 #### Layer 10: 治理与合规层
 ##### 0.001. Portfolio Risk Attribution Blueprint
 - **模块ID**: PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT_001
-- **蓝图文档**: [PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md](./01_FRAMEWORK\PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md)
+- **蓝图文档**: [PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK\PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 组合风险归因分析
 - **状态**: Active

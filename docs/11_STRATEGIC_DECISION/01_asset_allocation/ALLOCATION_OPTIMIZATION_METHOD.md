@@ -14,7 +14,7 @@ priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 
 ---
 ---

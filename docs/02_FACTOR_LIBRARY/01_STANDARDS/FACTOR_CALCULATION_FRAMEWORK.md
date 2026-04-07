@@ -75,7 +75,7 @@ compliance_level: 专业标准---
 
 > **注意**: 因子定义和分类请参考以下文档：
 > - **因子分类�?*: [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) - 因子分类体系和参数配�?
-> - **因子注册�?*: [../06_REGISTRY/FACTOR_CATALOG.md](../06_REGISTRY/FACTOR_CATALOG.md) - 因子清单和元数据
+> - **因子注册�?*: [../06_REGISTRY/FACTOR_CATALOG.md](02_FACTOR_LIBRARY\06_REGISTRY\FACTOR_CATALOG.md) - 因子清单和元数据
 
 ### 2.1 因子依赖管理
 

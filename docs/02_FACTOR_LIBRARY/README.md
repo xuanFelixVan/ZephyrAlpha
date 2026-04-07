@@ -48,7 +48,7 @@ implementation_status: 进行中---
 | 角色 | 推荐路径 |
 |------|---------|
 | **新用�?* | [因子库目录索引](./INDEX.md) �?[因子分类体系](./01_STANDARDS/FACTOR_TAXONOMY.md) |
-| **研究人员** | [因子注册表](./06_REGISTRY/FACTOR_CATALOG.md) �?[因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) |
+| **研究人员** | [因子注册表](06_REGISTRY/FACTOR_CATALOG.md) �?[因子管理标准](./01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) |
 | **开发人�?* | [因子计算框架](./01_STANDARDS/FACTOR_CALCULATION_FRAMEWORK.md) �?[因子监控](./07_FACTOR_MONITORING/FACTOR_MONITORING.md) |
 
 ---

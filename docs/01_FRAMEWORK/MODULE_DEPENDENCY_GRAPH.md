@@ -471,7 +471,7 @@ Module B â?Event Bus
 ---
 
 ## 9. åèææ¡?
-- [ç³»ç»æ¶æèå¾](./SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- [ç³»ç»æ¶æèå¾](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 - [æ¨¡åèè´£è¾¹çå®ä¹](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [æ¨¡åæ¥å£å®ä¹è§è](../09_AUDIT/STANDARDS/MODULE_INTERFACE_SPECIFICATION.md)
 

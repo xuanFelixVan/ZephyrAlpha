@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
   - 知识积累
   - 问题解决
 standard_type: 知识库
@@ -197,7 +197,7 @@ created_date: [创建日期]
 last_updated: [更新日期]
 owner: [负责人]
 responsibility:
-  - [职责1]
+  - 扩展功能、辅助模块、支撑文档
   - [职责2]
 standard_type: [标准类型]
 applicable_scope: [适用范围]
@@ -417,7 +417,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 因子工程团队
 responsibility:
-  - 因子计算
+  - 扩展功能、辅助模块、支撑文档
   - 交易执行
   - 回测系统
 standard_type: 通用文档

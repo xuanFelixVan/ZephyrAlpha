@@ -746,7 +746,7 @@ suppression:
 #### Layer 8: 人机交互层
 ##### 0.001. Mobile Push Notification Blueprint
 - **模块ID**: MOBILE_PUSH_NOTIFICATION_BLUEPRINT_001
-- **蓝图文档**: [MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md](./01_FRAMEWORK\MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md)
+- **蓝图文档**: [MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md](01_FRAMEWORK\MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - 移动端推送通知系统
 - **状态**: Active

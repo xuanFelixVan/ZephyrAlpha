@@ -83,7 +83,7 @@ Layer 11: æå­é©±å¨?(èªç¶è¯­è¨äº¤äº/é¶�
 |------|------|
 | çè§£ç³»ç»æ¶æ | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | äºè§£å¤§çæ©æ¶ | [MARKET_REGIME.md](./MARKET_REGIME.md) |
-| çè§£äººæºåä½ | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
+| çè§£äººæºåä½ | [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) |
 | æ¥çææ¯éå | [TECH_STACK.md](./TECH_STACK.md) |
 | é¶ä»£ç æä½ç³»?| [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
@@ -99,7 +99,7 @@ Layer 11: æå­é©±å¨?(èªç¶è¯­è¨äº¤äº/é¶�
 | Layer 5 | [æ§è¡ææ¡£](../04_EXECUTION/README.md) |
 | Layer 6 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 7 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 8 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
+| Layer 8 | [HUMAN_AI_FLOW.md](HUMAN_AI_FLOW.md) |
 | Layer 11 | [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
 ---

@@ -6,7 +6,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 初始标准

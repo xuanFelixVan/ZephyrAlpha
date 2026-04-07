@@ -538,7 +538,7 @@ class RebalanceSignal:
 | 文档 | 说明 |
 |------|------|
 | [ALPHA_FACTOR_LAYER_BLUEPRINT.md](./ALPHA_FACTOR_LAYER_BLUEPRINT.md) | Alpha因子层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
@@ -554,7 +554,7 @@ class RebalanceSignal:
 #### Layer 6: 组合优化层
 ##### 0.001. Portfolio Optimization Layer Blueprint
 - **模块ID**: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT_001
-- **蓝图文档**: [PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md](./01_FRAMEWORK\PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md](01_FRAMEWORK\PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 6 - 组合优化层
 - **状态**: Active

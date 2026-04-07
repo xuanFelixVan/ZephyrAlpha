@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 owner: ﻠ۵ﮒﺕ­ﻝ­ﻝ۴ﮒ؟?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ۰ﻛﺝﮒﭦ?applicable_scope: ﻝ­ﻝ۴ﻝ ﻝ۸ﭘﻛﺕﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?tags: ["ﻝ­ﻝ۴ﮔ۰ﻛﺝ", "ﮔ۰ﻛﺝﮒﭦ?, "ﻛﺕﻛﺕﮔ ﮒ"]
 ---

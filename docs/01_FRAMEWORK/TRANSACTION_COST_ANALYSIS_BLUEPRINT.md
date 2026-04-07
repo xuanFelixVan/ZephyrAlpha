@@ -734,7 +734,7 @@ class TCAAlertSystem:
 #### Layer 10: 治理与合规层
 ##### 0.001. Transaction Cost Analysis Blueprint
 - **模块ID**: TRANSACTION_COST_ANALYSIS_BLUEPRINT_001
-- **蓝图文档**: [TRANSACTION_COST_ANALYSIS_BLUEPRINT.md](./01_FRAMEWORK\TRANSACTION_COST_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: [TRANSACTION_COST_ANALYSIS_BLUEPRINT.md](01_FRAMEWORK\TRANSACTION_COST_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 交易成本分析与优化
 - **状态**: Active

@@ -1062,7 +1062,7 @@ class KnowledgeBaseIntegration:
 #### Layer 2: Alpha因子层
 ##### 0.001. Ai Virtual Research Team
 - **模块ID**: AI_VIRTUAL_RESEARCH_TEAM_001
-- **蓝图文档**: [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](./01_FRAMEWORK\AI_VIRTUAL_RESEARCH_TEAM\AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
+- **蓝图文档**: [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK\AI_VIRTUAL_RESEARCH_TEAM\AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 9 - AIåæ°å±?| ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
 - **状态**: Active

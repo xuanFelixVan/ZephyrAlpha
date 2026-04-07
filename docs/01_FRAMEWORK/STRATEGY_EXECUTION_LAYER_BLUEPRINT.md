@@ -447,7 +447,7 @@ class RiskMetrics:
 | 文档 | 说明 |
 |------|------|
 | [PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md) | 组合优化层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
@@ -463,7 +463,7 @@ class RiskMetrics:
 #### Layer 5: 策略执行层
 ##### 0.001. Strategy Execution Layer Blueprint
 - **模块ID**: STRATEGY_EXECUTION_LAYER_BLUEPRINT_001
-- **蓝图文档**: [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](./01_FRAMEWORK\STRATEGY_EXECUTION_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](01_FRAMEWORK\STRATEGY_EXECUTION_LAYER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 5 - 策略执行层
 - **状态**: Active

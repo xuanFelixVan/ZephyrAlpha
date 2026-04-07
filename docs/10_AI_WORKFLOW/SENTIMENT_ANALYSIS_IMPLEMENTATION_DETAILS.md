@@ -6,7 +6,7 @@ created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
 responsibility:
-  - 扩展功能、辅助模块
+  - AI工作流、智能辅助、自动化流程
 standard_type: 实施指南
 applicable_scope: 舆情分析层改进模块实
 compliance_level: 专业标准

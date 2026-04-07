@@ -56,7 +56,7 @@ compliance_level: 专业标准---
 
 ## 2. 因子定义标准
 
-详见：[T.02.FE001.factor_definition.md](./T.02.FE001.factor_definition.md)
+详见：[T.02.FE001.factor_definition.md](T.02.FE001.factor_definition.md)
 
 ---
 

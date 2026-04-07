@@ -290,7 +290,7 @@ implementation_status: 蓝图设计完成
 |---------|------|------|
 | [AI治理框架蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | `docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md` | AI行为准则和治理机�?|
 | [投资原则算法化蓝图](./PRINCIPLE_CODIFIER_BLUEPRINT.md) | `docs/01_FRAMEWORK/PRINCIPLE_CODIFIER_BLUEPRINT.md` | 投资原则算法化方法论 |
-| [人机协作流程](./HUMAN_AI_FLOW.md) | `docs/01_FRAMEWORK/HUMAN_AI_FLOW.md` | 人机协作详细流程 |
+| [人机协作流程](HUMAN_AI_FLOW.md) | `docs/01_FRAMEWORK/HUMAN_AI_FLOW.md` | 人机协作详细流程 |
 | [架构定义](./ARCHITECTURE.md) | `docs/01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11架构定义 |
 
 ### 6.2 技术规格书
@@ -316,7 +316,7 @@ implementation_status: 蓝图设计完成
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Interaction Blueprint
 - **模块ID**: HUMAN_AI_INTERACTION_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_INTERACTION_BLUEPRINT.md](./01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- **蓝图文档**: [HUMAN_AI_INTERACTION_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 人机交互层战略规�?
 - **状态**: Active

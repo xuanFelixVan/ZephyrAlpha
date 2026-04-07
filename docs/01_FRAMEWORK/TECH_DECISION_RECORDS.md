@@ -340,7 +340,7 @@ implementation_status: èå¾è®¾è®¡å®æ
 ### 4.1 æ ¸å¿åèæ?
 | ææ¡£åç§° | è·¯å¾ | è¯´æ |
 |---------|------|------|
-| [Layer 8æ»ä½èå¾](./LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | äººæºååæç¥è§å |
+| [Layer 8æ»ä½èå¾](LAYER_8_MASTER_BLUEPRINT.md) | `docs/01_FRAMEWORK/LAYER_8_MASTER_BLUEPRINT.md` | äººæºååæç¥è§å |
 | [ç³»ç»æ¶æ](./ARCHITECTURE.md) | `docs/01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11æ¶æå®ä¹ |
 | [ææ¯æ éæ©](./TECH_STACK.md) | `docs/01_FRAMEWORK/TECH_STACK.md` | ææ¯æ è¯¦ç»è¯´æ |
 

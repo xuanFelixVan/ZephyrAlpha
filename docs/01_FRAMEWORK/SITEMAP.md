@@ -87,7 +87,7 @@ implementation_status: æ´»è·ç»´æ¤
 ### æè¦å¼åAIç³»ç»
 
 **AIç³»ç»å¼åè·¯?* (3å°æ¶):
-1. éè¯» [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) - AIèæç ç©¶å¢é (30åé)
+1. éè¯» [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) - AIèæç ç©¶å¢é (30åé)
 2. éè¯» [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md) - äººæºäº¤äº (30åé)
 3. éè¯» [AI_GOVERNANCE_BLUEPRINT.md](./AI_GOVERNANCE_BLUEPRINT.md) - AIæ²»ç (30åé)
 4. éè¯» [MLOPS_PLATFORM_BLUEPRINT.md](./MLOPS_PLATFORM_BLUEPRINT.md) - MLOpså¹³å° (30åé)
@@ -125,7 +125,7 @@ implementation_status: æ´»è·ç»´æ¤
 
 | ææ¡£åç§° | è¯´æ | éè¦?|
 |---------|------|--------|
-| [AIèæç ç©¶å¢éèå¾](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AIèæç ç©¶å¢éè®¾è®¡ | â­â­â­â­?|
+| [AIèæç ç©¶å¢éèå¾](AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AIèæç ç©¶å¢éè®¾è®¡ | â­â­â­â­?|
 | [äººæºäº¤äºèå¾](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | äººæºäº¤äºè®¾è®¡ | â­â­â­â­ |
 | [AIæ²»çèå¾](./AI_GOVERNANCE_BLUEPRINT.md) | AIæ²»çæ¡æ¶ | â­â­â­â­ |
 | [MLOpså¹³å°èå¾](./MLOPS_PLATFORM_BLUEPRINT.md) | MLOpså¹³å°è®¾è®¡ | â­â­â­â­ |
@@ -151,7 +151,7 @@ implementation_status: æ´»è·ç»´æ¤
 - **æ°æ®?*: [æ°æ®æµæ¶æèå¾](./DATAFLOW_ARCHITECTURE_BLUEPRINT.md)
 
 ### AIå³é®?
-- **AIç ç©¶å¢é**: [AIèæç ç©¶å¢éèå¾](./AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
+- **AIç ç©¶å¢é**: [AIèæç ç©¶å¢éèå¾](AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
 - **äººæºäº¤äº**: [äººæºäº¤äºèå¾](./HUMAN_AI_INTERACTION_BLUEPRINT.md)
 - **AIæ²»ç**: [AIæ²»çèå¾](./AI_GOVERNANCE_BLUEPRINT.md)
 - **MLOps**: [MLOpså¹³å°èå¾](./MLOPS_PLATFORM_BLUEPRINT.md)

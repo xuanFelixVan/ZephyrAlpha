@@ -565,7 +565,7 @@ class ReportTemplate:
 #### Layer 10: 治理与合规层
 ##### 0.001. Regulatory Reporting Blueprint
 - **模块ID**: REGULATORY_REPORTING_BLUEPRINT_001
-- **蓝图文档**: [REGULATORY_REPORTING_BLUEPRINT.md](./01_FRAMEWORK\REGULATORY_REPORTING_BLUEPRINT.md)
+- **蓝图文档**: [REGULATORY_REPORTING_BLUEPRINT.md](01_FRAMEWORK\REGULATORY_REPORTING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 监管报告自动化系统
 - **状态**: Active

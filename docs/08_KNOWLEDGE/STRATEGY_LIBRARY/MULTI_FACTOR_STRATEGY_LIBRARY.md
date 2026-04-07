@@ -1,7 +1,7 @@
 ---
 standard_type: ﻝ­ﻝ۴ﮔﮔ۰۲
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 applicable_scope: ﻝ­ﻝ۴ﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 parent_document: ../KNOWLEDGE_TRANSFER_SYSTEM.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﻟﭖﮒ؟?version: 1.0.0

@@ -494,7 +494,7 @@ implementation_status: 蓝图设计完成
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Interface Layer Gap Analysis
 - **模块ID**: HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_001
-- **蓝图文档**: [HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md](./01_FRAMEWORK\HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: [HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 人机交互层缺失模块分析
 - **状态**: Active

@@ -77,7 +77,7 @@ responsibility:
 ---
 
 ## 4. åèææ¡?
-- [ç³»ç»æ¶æèå¾](./SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- [ç³»ç»æ¶æèå¾](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 - [æ¨¡åèè´£è¾¹çå®ä¹](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - [æ¨¡åä¾èµå³ç³»å¾](./MODULE_DEPENDENCY_GRAPH.md)
 

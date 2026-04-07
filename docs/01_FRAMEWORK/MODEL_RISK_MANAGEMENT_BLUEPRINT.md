@@ -702,7 +702,7 @@ class ModelMonitoringReport:
 #### Layer 10: 治理与合规层
 ##### 0.001. Model Risk Management Blueprint
 - **模块ID**: MODEL_RISK_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [MODEL_RISK_MANAGEMENT_BLUEPRINT.md](./01_FRAMEWORK\MODEL_RISK_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: [MODEL_RISK_MANAGEMENT_BLUEPRINT.md](01_FRAMEWORK\MODEL_RISK_MANAGEMENT_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 模型风险管理系统
 - **状态**: Active

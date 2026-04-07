@@ -604,7 +604,7 @@ class StrategySelection:
 #### Layer 2: Alpha因子层
 ##### 0.001. Framework Strategic Decision Bp
 - **模块ID**: FRAMEWORK_STRATEGIC_DECISION_BP_001
-- **蓝图文档**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./01_FRAMEWORK\STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](01_FRAMEWORK\STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

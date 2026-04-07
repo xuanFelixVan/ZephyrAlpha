@@ -1,7 +1,7 @@
 ---
 standard_type: ﮒ ﮒ­ﮔﮔ۰۲
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
   - 文档治理
   - 日志系统
 applicable_scope: ﮒ ﮒ­ﮒﭦ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ

@@ -33,7 +33,7 @@ implementation_status: 进行中
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | iFind数据源 | [INDEX.md](./INDEX.md) | 上级索引 | iFind数据源总索引 |
-| iFind连接器 | [../IFIND_CONNECTOR.md](../IFIND_CONNECTOR.md) | 实现层 | iFind数据源实现 |
+| iFind连接器 | [../IFIND_CONNECTOR.md](02_FACTOR_LIBRARY\IFIND_CONNECTOR.md) | 实现层 | iFind数据源实现 |
 
 **职责边界**:
 - ✅ 本文档负责: 因子库索引和追踪管理
@@ -79,7 +79,7 @@ implementation_status: 进行中
 
 | THS代码 | 因子名称 | 所属类别 | IC状态 | 回测状态 | 文件位置 |
 |---------|----------|----------|--------|----------|----------|
-| ths_pe_ttm_stock | 市盈率TTM | 价值 | 是已验证 | 是已回测 | [IC验证记录/PE_TTM_IC.md](../../05_BACKTEST/value_factors/PE_TTM_IC.md) |
+| ths_pe_ttm_stock | 市盈率TTM | 价值 | 是已验证 | 是已回测 | [IC验证记录/PE_TTM_IC.md](05_BACKTEST\value_factors\PE_TTM_IC.md) |
 | ths_pb_stock | 市净率 | 价值 | 待验证 | - | - |
 | ths_roe_ttm_stock | 净资产收益率 | 质量 | 待验证 | - | - |
 | ths_revenue_yoy_stock | 营业收入增长 | 成长 | 待验证 | - | - |
@@ -88,7 +88,7 @@ implementation_status: 进行中
 | ths_rsi | RSI | 均值回归 | 待验证 | - | - |
 | ths_turnover_rate | 换手率 | 情绪 | 待验证 | - | - |
 
-**完整因子清单**: [factor_list.csv](./factor_list.csv)
+**完整因子清单**: [factor_list.csv](factor_list.csv)
 
 ---
 

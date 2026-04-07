@@ -358,7 +358,7 @@ class RiskEventTracker:
 #### Layer 10: 治理与合规层
 ##### 0.001. Risk Event Tracking Blueprint
 - **模块ID**: RISK_EVENT_TRACKING_BLUEPRINT_001
-- **蓝图文档**: [RISK_EVENT_TRACKING_BLUEPRINT.md](./01_FRAMEWORK\RISK_EVENT_TRACKING_BLUEPRINT.md)
+- **蓝图文档**: [RISK_EVENT_TRACKING_BLUEPRINT.md](01_FRAMEWORK\RISK_EVENT_TRACKING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 风险事件追踪、事件管理、风险治理
 - **状态**: Active

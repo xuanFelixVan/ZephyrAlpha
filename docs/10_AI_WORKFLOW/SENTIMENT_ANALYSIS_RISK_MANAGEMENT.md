@@ -10,7 +10,7 @@ applicable_scope: 舆情分析层改进模块风险管
 compliance_level: 专业标准
 parent_document: INDEX.md
 responsibility:
-  - 扩展功能、辅助模块
+  - AI工作流、智能辅助、自动化流程
 
 ---
 ---

@@ -16,7 +16,7 @@ related_documents:
   - BLUEPRINT.md
   - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 扩展功能、辅助模块
+  - 扩展功能、辅助模块、支撑文档
 
 ---
 ---
