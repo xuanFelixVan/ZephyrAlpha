@@ -28,26 +28,6 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 审计日志系统，负责操作审计、日志记录和审计追踪，不负责系统监控和告警
----
-# 审计日志系统模块蓝图
-> **核心职责**: Audit Log蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Audit Log蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了AUDIT LOG的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: Loki + 文件日志
-> **优先级**: P1（重要模块）
-
----
-
 ## 一、模块概述
 
 审计日志系统负责记录所有系统操作，用于合规审计和问题追溯。
@@ -60,34 +40,6 @@ responsibility:
 | 日志查询 | 查询历史日志 | P0 |
 | 日志存储 | 长期存储日志 | P0 |
 | 日志导出 | 导出日志文件 | P1 |
-
----
-
-## 二、技术选型
-
-### 2.1 核心技术栈
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  审计日志技术栈                           │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐      ┌─────────────┐                 │
-│  │   Loki      │ ◄─── │Promtail     │                 │
-│  │ (日志存储)  │      │ (日志收集)  │                 │
-│  └──────┬──────┘      └─────────────┘                 │
-│         │                                               │
-│         │                                               │
-│         ▼                                               │
-│  ┌─────────────┐                                       │
-│  │   Grafana   │                                       │
-│  │  (查询)     │                                       │
-│  └─────────────┘                                       │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、日志类型
 
@@ -119,63 +71,6 @@ responsibility:
 }
 ```
 
----
-
-## 四、实施步骤
-
-### 4.1 部署Loki
-
-```bash
-docker run -d --name loki -p 3100:3100 grafana/loki:latest
-```
-
-### 4.2 配置Promtail
-
-```yaml
-server:
-  http_listen_port: 9080
-
-positions:
-  filename: /tmp/positions.yaml
-
-clients:
-  - url: http://localhost:3100/loki/api/v1/push
-
-scrape_configs:
-  - job_name: zephyr
-    static_configs:
-      - targets:
-          - localhost
-        labels:
-          job: zephyr
-          __path__: /var/log/zephyr/*.log
-```
-
-### 4.3 日志记录代码
-
-```python
-import logging
-import json
-from datetime import datetime
-
-class AuditLogger:
-    def __init__(self):
-        self.logger = logging.getLogger('audit')
-        self.logger.setLevel(logging.INFO)
-        
-    def log_operation(self, user, action, resource, details):
-        log_entry = {
-            "timestamp": datetime.now().isoformat(),
-            "user": user,
-            "action": action,
-            "resource": resource,
-            "details": details
-        }
-        self.logger.info(json.dumps(log_entry))
-```
-
----
-
 ## 五、验收标准
 
 | 验收项 | 验收标准 | 测试方法 |
@@ -184,12 +79,6 @@ class AuditLogger:
 | 日志查询 | 可查询日志 | 功能测试 |
 | 日志存储 | 日志持久化 | 检查存储 |
 | 日志完整 | 包含所有字段 | 视觉检查 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13
----
 
 ## 1. 文档治理
 
@@ -216,13 +105,6 @@ class AuditLogger:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

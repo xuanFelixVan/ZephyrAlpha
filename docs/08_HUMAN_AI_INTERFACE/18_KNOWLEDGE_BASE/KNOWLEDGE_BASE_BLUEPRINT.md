@@ -30,26 +30,6 @@ github_url: https://github.com/obsidianmd/obsidian-releases
 license: Proprietary (Free for personal use)
 responsibility:
   - 知识库系统，负责知识管理、知识检索和知识共享，不负责文档中心管理
----
-# 知识库模块蓝图
-> **核心职责**: Knowledge Base蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Knowledge Base蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了KNOWLEDGE BASE的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **开源项目**: [Obsidian](https://obsidian.md)
-> **License**: 免费个人使用
-
----
-
 ## 一、模块概述
 
 ### 1.1 定位与目标
@@ -81,74 +61,6 @@ responsibility:
 | **Joplin** | 46k+ | 开源，端到端加密 | ⚠️ 无知识图谱 |
 
 **最终选择**: **Obsidian** - 已有docs目录，直接使用，零迁移成本
-
----
-
-## 二、架构设计
-
-### 2.1 Layer定位
-
-```
-Layer 8: 人机交互层
-    └── 知识库模块 (KNOWLEDGE_BASE_001)
-        ├── 知识笔记管理
-        ├── 双向链接系统
-        ├── 知识图谱可视化
-        └── AI检索集成
-```
-
-### 2.2 模块职责
-
-| 职责 | 说明 |
-|------|------|
-| **笔记管理** | 创建、编辑、组织知识笔记 |
-| **双向链接** | 建立笔记之间的关联 |
-| **知识图谱** | 可视化知识网络 |
-| **全文搜索** | 快速检索知识内容 |
-
-### 2.3 知识库架构图
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    知识库架构                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              Obsidian应用                           │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ 编辑器   │  │ 图谱视图  │  │ 搜索功能  │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              本地Markdown文件 (docs/)               │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ 研究笔记  │  │ 策略文档  │  │ 经验总结  │         │   │
-│  │  │ *.md     │  │ *.md     │  │ *.md     │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              双向链接系统                           │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ [[链接]] │  │ 反向链接  │  │ 关联图谱  │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              AI检索集成                             │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ RAG系统  │  │ 向量存储  │  │ 语义搜索  │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、知识库结构设计
 
@@ -189,74 +101,10 @@ docs/
 | **经验总结** | 经验教训、最佳实践、问题解决 | [[止损经验]]、[[风控最佳实践]] |
 | **参考资料** | 论文笔记、书籍摘要、外部资源 | [[Barra模型笔记]]、[[机器学习论文]] |
 
----
-
-## 四、Obsidian配置
-
-### 4.1 基础配置
-
-```json
-{
-  "attachmentFolderPath": "00_KNOWLEDGE_BASE/attachments",
-  "newFileLocation": "current",
-  "promptDelete": true,
-  "showUnsupportedFiles": true,
-  "spellcheck": true,
-  "spellcheckLanguages": ["zh-CN", "en-US"],
-  "tabSize": 2,
-  "useTab": false,
-  "vimMode": false,
-  "readableLineLength": true,
-  "defaultViewMode": "preview"
-}
-```
-
-### 4.2 推荐插件
-
-| 插件 | 功能 | 必要性 |
-|------|------|--------|
-| **Templates** | 笔记模板 | ⭐⭐⭐⭐⭐ |
-| **Daily Notes** | 日记功能 | ⭐⭐⭐⭐ |
-| **Graph Analysis** | 图谱分析 | ⭐⭐⭐⭐⭐ |
-| **Dataview** | 数据查询 | ⭐⭐⭐⭐⭐ |
-| **Excalidraw** | 手绘图表 | ⭐⭐⭐ |
-| **Kanban** | 看板管理 | ⭐⭐⭐ |
-| **Calendar** | 日历视图 | ⭐⭐⭐⭐ |
-| **Advanced Tables** | 表格增强 | ⭐⭐⭐⭐ |
-
-### 4.3 模板配置
-
-```markdown
----
 date: {{date}}
 type: research_note
 tags: [研究, 因子]
 status: 进行中
----
-
-# {{title}}
-
-## 研究背景
-
-
-## 研究目标
-
-
-## 研究方法
-
-
-## 研究结果
-
-
-## 相关链接
-- [[]]
-
-## 参考资料
-- []
-```
-
----
-
 ## 五、双向链接系统
 
 ### 5.1 链接语法
@@ -286,95 +134,6 @@ status: 进行中
 ## 参考文献
 - [[Jegadeesh1993_Momentum]]
 ```
-
----
-
-## 六、AI检索集成
-
-### 6.1 RAG系统集成
-
-```python
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.text_splitter import MarkdownTextSplitter
-import os
-
-class KnowledgeBaseRAG:
-    def __init__(self, docs_path: str = "docs/00_KNOWLEDGE_BASE"):
-        self.docs_path = docs_path
-        self.embeddings = OpenAIEmbeddings()
-        self.text_splitter = MarkdownTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200
-        )
-        self.vectorstore = None
-    
-    def build_index(self):
-        documents = []
-        for root, dirs, files in os.walk(self.docs_path):
-            for file in files:
-                if file.endswith('.md'):
-                    file_path = os.path.join(root, file)
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        chunks = self.text_splitter.split_text(content)
-                        documents.extend(chunks)
-        
-        self.vectorstore = Chroma.from_texts(
-            documents,
-            self.embeddings,
-            persist_directory="./chroma_db"
-        )
-    
-    def search(self, query: str, k: int = 5):
-        results = self.vectorstore.similarity_search(query, k=k)
-        return results
-```
-
-### 6.2 语义搜索增强
-
-```python
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-class SemanticSearch:
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        self.model = SentenceTransformer(model_name)
-        self.embeddings = None
-        self.documents = []
-    
-    def index_documents(self, docs_path: str):
-        for root, dirs, files in os.walk(docs_path):
-            for file in files:
-                if file.endswith('.md'):
-                    file_path = os.path.join(root, file)
-                    with open(file_path, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        self.documents.append({
-                            'path': file_path,
-                            'content': content
-                        })
-        
-        texts = [doc['content'] for doc in self.documents]
-        self.embeddings = self.model.encode(texts)
-    
-    def search(self, query: str, top_k: int = 5):
-        query_embedding = self.model.encode([query])
-        similarities = np.dot(self.embeddings, query_embedding.T)
-        top_indices = np.argsort(similarities.flatten())[-top_k:][::-1]
-        
-        results = []
-        for idx in top_indices:
-            results.append({
-                'path': self.documents[idx]['path'],
-                'content': self.documents[idx]['content'],
-                'score': similarities.flatten()[idx]
-            })
-        
-        return results
-```
-
----
 
 ## 七、知识图谱可视化
 
@@ -436,28 +195,6 @@ class KnowledgeGraph:
         return sorted_nodes[:top_k]
 ```
 
----
-
-## 八、实施路径
-
-### 8.1 Phase 1: 基础搭建（0天）
-
-| 任务 | 时间 | 交付物 |
-|------|------|--------|
-| 安装Obsidian | 0.5小时 | 应用安装完成 |
-| 配置工作区 | 0.5小时 | 工作区配置 |
-| 整理现有文档 | 0小时 | 已有docs目录 |
-
-### 8.2 Phase 2: 知识体系构建（持续）
-
-| 任务 | 时间 | 交付物 |
-|------|------|--------|
-| 创建知识分类 | 1小时 | 目录结构 |
-| 编写笔记模板 | 1小时 | 模板文件 |
-| 建立链接体系 | 持续 | 双向链接 |
-
----
-
 ## 九、验收标准
 
 ### 9.1 功能验收
@@ -477,26 +214,6 @@ class KnowledgeGraph:
 | 链接密度 | > 3 | 平均每笔记链接数 |
 | 覆盖率 | > 80% | 核心知识点覆盖 |
 
----
-
-## 十、风险与缓解
-
-### 10.1 技术风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 数据丢失 | 高 | Git版本控制 |
-| 格式混乱 | 中 | 统一模板规范 |
-
-### 10.2 运维风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 知识碎片化 | 中 | 定期整理归档 |
-| 链接失效 | 低 | 定期链接检查 |
-
----
-
 ## 十一、参考资料
 
 ### 11.1 开源项目
@@ -514,11 +231,6 @@ class KnowledgeGraph:
 | Obsidian帮助 | https://help.obsidian.md/ |
 | 双向链接指南 | https://notes.andymatuschak.org/Evergreen_notes |
 | 知识管理最佳实践 | https://fortelabs.com/blog/basc-where-to-start-for-knowledge-workers/ |
-
----
-
-**版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 蓝图设计完成
----
 
 ## 1. 文档治理
 
@@ -545,13 +257,6 @@ class KnowledgeGraph:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

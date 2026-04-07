@@ -410,7 +410,7 @@ tags: ["æ§è½åºå", "æ§è½æµè¯", "æ§è½ç
 ---
 
 ## 10. åèææ¡?
-- [ç³»ç»æ¶æèå¾](../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_BLUEPRINT.md)
+- [ç³»ç»æ¶æèå¾](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
 - [ææ¯è§èææ¡£](../../01_FRAMEWORK/TECHNICAL_SPECIFICATIONS.md)
 - [è¿ç»´æå](../../05_IMPLEMENTATION/07_OPERATIONS/OPERATIONS_MANUAL.md)
 

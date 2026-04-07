@@ -38,16 +38,6 @@ compliance_level: 专业标准---
 | **活跃模块** | 1 |
 | **更新频率** | 按需更新 |
 
----
-
-## 📚 文档列表
-
-### 核心文档
-
-- [Alerting System Blueprint](08_HUMAN_AI_INTERFACE/02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md) - `ALERTINGSYSTEMBLUEPRINT_001`
-
----
-
 ## 🔍 维护指南
 
 ### 更新规则
@@ -61,16 +51,6 @@ compliance_level: 专业标准---
 - ✅ 所有文档必须有明确的module_id
 - ✅ 文档命名遵循专业量化机构标准
 - ✅ 保持索引与实际文件一致
-
----
-
-## 📝 变更历史
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-|------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
-
----
 
 ## 🔗 相关文档
 

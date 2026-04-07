@@ -28,26 +28,6 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 交易日志系统，负责交易记录的展示、分析和归档，不负责实盘交易操作和策略管理
----
-# 交易日志系统模块蓝图
-> **核心职责**: Trading Journal蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Trading Journal蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了TRADING JOURNAL的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: SQLite + Streamlit
-> **优先级**: P2（可选模块）
-
----
-
 ## 一、模块概述
 
 交易日志系统用于记录交易决策过程，支持交易复盘和分析。
@@ -60,33 +40,6 @@ responsibility:
 | 日志查询 | 查询历史日志 | P0 |
 | 复盘分析 | 分析交易决策 | P1 |
 | 统计报告 | 生成统计报告 | P2 |
-
----
-
-## 二、技术选型
-
-### 2.1 核心技术栈
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  交易日志技术栈                           │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐      ┌─────────────┐                 │
-│  │  Streamlit  │ ◄─── │   SQLite    │                 │
-│  │  (界面)     │      │  (存储)     │                 │
-│  └─────────────┘      └─────────────┘                 │
-│                                                         │
-│  功能:                                                  │
-│  - 记录交易决策过程                                     │
-│  - 标注交易理由                                         │
-│  - 评估交易结果                                         │
-│  - 生成复盘报告                                         │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、日志内容
 
@@ -130,67 +83,6 @@ responsibility:
 └────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 四、实施步骤
-
-### 4.1 数据库设计
-
-```sql
-CREATE TABLE trading_journal (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    trade_date DATE NOT NULL,
-    symbol VARCHAR(20) NOT NULL,
-    direction VARCHAR(10) NOT NULL,
-    reason TEXT,
-    target_price DECIMAL(10, 2),
-    stop_loss DECIMAL(10, 2),
-    actual_result DECIMAL(10, 2),
-    review TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### 4.2 Streamlit界面
-
-```python
-import streamlit as st
-import sqlite3
-import pandas as pd
-
-st.title("ZephyrAlpha 交易日志")
-
-# 新增日志
-st.header("新增交易日志")
-trade_date = st.date_input("交易日期")
-symbol = st.text_input("交易标的")
-direction = st.selectbox("交易方向", ["买入", "卖出"])
-reason = st.text_area("交易理由")
-target_price = st.number_input("预期目标价")
-stop_loss = st.number_input("止损位")
-
-if st.button("保存"):
-    conn = sqlite3.connect('trading_journal.db')
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO trading_journal 
-        (trade_date, symbol, direction, reason, target_price, stop_loss)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (trade_date, symbol, direction, reason, target_price, stop_loss))
-    conn.commit()
-    conn.close()
-    st.success("保存成功")
-
-# 查询历史
-st.header("历史交易日志")
-conn = sqlite3.connect('trading_journal.db')
-df = pd.read_sql_query("SELECT * FROM trading_journal ORDER BY trade_date DESC", conn)
-st.dataframe(df)
-conn.close()
-```
-
----
-
 ## 五、验收标准
 
 | 验收项 | 验收标准 | 测试方法 |
@@ -199,12 +91,6 @@ conn.close()
 | 日志查询 | 可查询历史 | 功能测试 |
 | 日志编辑 | 可编辑日志 | 功能测试 |
 | 日志导出 | 可导出数据 | 功能测试 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13
----
 
 ## 1. 文档治理
 
@@ -231,13 +117,6 @@ conn.close()
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

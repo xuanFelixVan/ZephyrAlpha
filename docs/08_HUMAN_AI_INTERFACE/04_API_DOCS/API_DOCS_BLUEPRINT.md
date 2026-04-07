@@ -27,27 +27,6 @@ parent_document: ../INDEX.md
 implementation_status: 已实现
 responsibility:
   - API文档系统，负责API接口文档的自动生成、展示和维护，不负责API限流和权限管理
----
-# API文档系统模块蓝图
-> **核心职责**: Api Docs蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Api Docs蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了API DOCS的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: FastAPI内置Swagger
-> **优先级**: P0（核心模块）
-> **状态**: ✅ 已实现
-
----
-
 ## 一、模块概述
 
 API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文档和交互式测试功能。
@@ -69,36 +48,6 @@ API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文�
 | ReDoc | http://localhost:8000/redoc |
 | OpenAPI JSON | http://localhost:8000/openapi.json |
 
----
-
-## 二、配置说明
-
-### 2.1 FastAPI配置
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI(
-    title="ZephyrAlpha量化交易系统API",
-    description="专业级量化交易系统RESTful API",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
-    openapi_url="/openapi.json",
-)
-```
-
-### 2.2 API分组
-
-| 分组 | 说明 |
-|------|------|
-| health | 系统健康检查 |
-| strategies | 策略管理 |
-| backtest | 回测系统 |
-| monitoring | 实时监控 |
-
----
-
 ## 三、验收标准
 
 | 验收项 | 验收标准 | 状态 |
@@ -107,12 +56,6 @@ app = FastAPI(
 | ReDoc访问 | 可访问/redoc | ✅ |
 | API测试 | 可在线测试 | ✅ |
 | 文档完整 | 所有API有文档 | ✅ |
-
----
-
-**文档状态**: 🟢 已实现
-**下次更新**: 2026-04-13
----
 
 ## 1. 文档治理
 
@@ -139,13 +82,6 @@ app = FastAPI(
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

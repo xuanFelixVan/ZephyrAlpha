@@ -28,26 +28,6 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 移动推送通知，负责移动端消息推送、通知管理和推送策略，不负责告警规则配置
----
-# 移动推送通知模块蓝图
-> **核心职责**: Mobile Push蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Mobile Push蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了MOBILE PUSH的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: 企业微信/邮件推送
-> **优先级**: P2（可选模块）
-
----
-
 ## 一、模块概述
 
 移动推送通知系统负责向移动设备发送告警和重要通知。
@@ -59,31 +39,6 @@ responsibility:
 | 告警推送 | 推送告警通知 | P0 |
 | 交易通知 | 推送交易通知 | P1 |
 | 报告推送 | 推送报告通知 | P2 |
-
----
-
-## 二、技术选型
-
-### 2.1 推送渠道
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  移动推送技术栈                           │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐      ┌─────────────┐                 │
-│  │  企业微信    │      │   邮件推送   │                 │
-│  │  (推荐)     │      │   (备用)    │                 │
-│  └─────────────┘      └─────────────┘                 │
-│                                                         │
-│  优势:                                                  │
-│  - 企业微信: 即时推送、免费、易用                       │
-│  - 邮件推送: 通用性强、无需额外配置                     │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、推送场景
 
@@ -103,49 +58,6 @@ responsibility:
 | 持仓变化 | 持仓调整通知 |
 | 盈亏提醒 | 每日盈亏汇总 |
 
----
-
-## 四、实施步骤
-
-### 4.1 企业微信机器人
-
-```python
-import requests
-
-def send_wechat_message(webhook_url, content):
-    message = {
-        "msgtype": "markdown",
-        "markdown": {
-            "content": content
-        }
-    }
-    requests.post(webhook_url, json=message)
-
-# 使用示例
-webhook_url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY"
-send_wechat_message(webhook_url, "**告警通知**/n/n系统CPU使用率超过80%")
-```
-
-### 4.2 邮件推送
-
-```python
-import smtplib
-from email.mime.text import MIMEText
-
-def send_email(to, subject, content):
-    msg = MIMEText(content, 'html', 'utf-8')
-    msg['Subject'] = subject
-    msg['From'] = 'your_email@qq.com'
-    msg['To'] = to
-    
-    server = smtplib.SMTP('smtp.qq.com', 587)
-    server.login('your_email@qq.com', 'your_password')
-    server.send_message(msg)
-    server.quit()
-```
-
----
-
 ## 五、验收标准
 
 | 验收项 | 验收标准 | 测试方法 |
@@ -154,12 +66,6 @@ def send_email(to, subject, content):
 | 邮件推送 | 收到邮件 | 功能测试 |
 | 推送延迟 | < 10秒 | 性能测试 |
 | 推送成功率 | > 99% | 统计测试 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13
----
 
 ## 1. 文档治理
 
@@ -186,13 +92,6 @@ def send_email(to, subject, content):
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

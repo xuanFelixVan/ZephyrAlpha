@@ -29,26 +29,6 @@ github_url: https://github.com/jupyterlab/jupyterlab
 license: BSD-3-Clause
 responsibility:
   - 在线研究环境，负责交互式研究、数据分析和实验管理，不负责策略回测和参数优化
----
-# 在线研究环境模块蓝图
-> **核心职责**: Online Research Environment蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Online Research Environment蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了ONLINE RESEARCH ENVIRONMENT的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **开源项目**: [JupyterLab](https://github.com/jupyterlab/jupyterlab)
-> **Stars**: 14k+ | **License**: BSD-3-Clause
-
----
-
 ## 一、模块概述
 
 ### 1.1 定位与目标
@@ -79,78 +59,6 @@ responsibility:
 | **VS Code** | - | 通用IDE | ⚠️ 非专用研究环境 |
 
 **最终选择**: **JupyterLab** - 功能强大，适合个人使用
-
----
-
-## 二、架构设计
-
-### 2.1 Layer定位
-
-```
-Layer 8: 人机交互层
-    └── 在线研究环境模块 (ONLINE_RESEARCH_ENVIRONMENT_001)
-        ├── JupyterLab服务
-        ├── Notebook管理
-        ├── 内核管理
-        └── 扩展管理
-```
-
-### 2.2 模块职责
-
-| 职责 | 说明 |
-|------|------|
-| **研究环境** | 提供交互式Python环境 |
-| **Notebook管理** | 创建、编辑、保存Notebook |
-| **内核管理** | 管理Python内核和资源 |
-| **扩展管理** | 安装和管理Jupyter扩展 |
-
-### 2.3 研究环境架构图
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    在线研究环境架构                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              JupyterLab界面                         │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ 文件浏览器│  │ 编辑器    │  │ 终端     │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ Notebook │  │ Console  │  │ Markdown │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              Jupyter Server                         │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ 内核管理  │  │ 会话管理  │  │ 扩展管理  │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              Python内核                             │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ IPython  │  │ 数据分析  │  │ 可视化   │         │   │
-│  │  │ Kernel   │  │ (Pandas) │  │ (Plotly) │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └────────────────────┬────────────────────────────────┘   │
-│                       │                                     │
-│                       ▼                                     │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              文件系统                               │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ Notebook │  │ 数据文件  │  │ 脚本文件  │         │   │
-│  │  │ (*.ipynb)│  │ (*.parquet)│ │ (*.py)   │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、技术实现
 
@@ -189,146 +97,6 @@ c.ServerApp.root_dir = '/path/to/notebooks'
 | **jupyterlab-plotly** | Plotly扩展 | `pip install jupyterlab-plotly` |
 | **jupyterlab-system-monitor** | 系统监控 | `pip install jupyterlab-system-monitor` |
 
----
-
-## 四、研究模板
-
-### 4.1 因子研究模板
-
-```python
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "# 因子研究模板/n",
-    "/n",
-    "## 研究目标/n",
-    "/n",
-    "## 数据准备"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "metadata": {},
-   "source": [
-    "import pandas as pd/n",
-    "import numpy as np/n",
-    "import matplotlib.pyplot as plt/n",
-    "import seaborn as sns/n",
-    "/n",
-    "from src.data.loader import DataLoader/n",
-    "from src.factors.factor_engine import FactorEngine"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "metadata": {},
-   "source": [
-    "loader = DataLoader()/n",
-    "data = loader.load_stock_data(start_date='2020-01-01', end_date='2024-12-31')"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 因子计算"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "metadata": {},
-   "source": [
-    "factor_engine = FactorEngine(data)/n",
-    "factor_values = factor_engine.calculate_factor('momentum', window=20)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 因子分析"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "metadata": {},
-   "source": [
-    "from src.analysis.factor_analysis import FactorAnalyzer/n",
-    "/n",
-    "analyzer = FactorAnalyzer(factor_values, data['returns'])/n",
-    "ic_result = analyzer.calculate_ic()/n",
-    "print(f/"IC Mean: {ic_result['ic_mean']:.4f}/")/n",
-    "print(f/"ICIR: {ic_result['icir']:.4f}/")"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## 可视化"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "metadata": {},
-   "source": [
-    "fig, axes = plt.subplots(2, 2, figsize=(15, 10))/n",
-    "/n",
-    "axes[0, 0].plot(ic_result['ic_series'])/n",
-    "axes[0, 0].set_title('IC Time Series')/n",
-    "/n",
-    "axes[0, 1].hist(ic_result['ic_series'], bins=30)/n",
-    "axes[0, 1].set_title('IC Distribution')/n",
-    "/n",
-    "plt.tight_layout()/n",
-    "plt.show()"
-   ]
-  }
- ]
-}
-```
-
-### 4.2 策略回测模板
-
-```python
-{
- "cells": [
-  {
-   "cell_type": "markdown",
-   "source": ["# 策略回测模板"]
-  },
-  {
-   "cell_type": "code",
-   "source": [
-    "from src.backtest.backtest_engine import BacktestEngine/n",
-    "from src.strategies.momentum import MomentumStrategy"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "source": [
-    "strategy = MomentumStrategy(lookback=20, holding_period=5)/n",
-    "engine = BacktestEngine(strategy, data)/n",
-    "results = engine.run()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "source": [
-    "print(f/"Total Return: {results['total_return']:.2%}/")/n",
-    "print(f/"Sharpe Ratio: {results['sharpe_ratio']:.2f}/")/n",
-    "print(f/"Max Drawdown: {results['max_drawdown']:.2%}/")"
-   ]
-  }
- ]
-}
-```
-
----
-
 ## 五、与系统集成
 
 ### 5.1 数据访问集成
@@ -355,29 +123,6 @@ c.ServerApp.password = passwd('your-password')
 jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 ```
 
----
-
-## 六、实施路径
-
-### 6.1 Phase 1: 基础环境（1天）
-
-| 任务 | 时间 | 交付物 |
-|------|------|--------|
-| 安装JupyterLab | 0.5小时 | 环境搭建完成 |
-| 安装扩展 | 1小时 | 扩展安装完成 |
-| 配置安全 | 1小时 | 认证配置 |
-| 创建模板 | 2小时 | 研究模板 |
-
-### 6.2 Phase 2: 集成优化（1天）
-
-| 任务 | 时间 | 交付物 |
-|------|------|--------|
-| 数据集成 | 2小时 | 数据访问正常 |
-| 策略集成 | 2小时 | 策略调用正常 |
-| 可视化优化 | 2小时 | 图表美化 |
-
----
-
 ## 七、验收标准
 
 ### 7.1 功能验收
@@ -397,26 +142,6 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 | 内核响应 | < 1s | 代码执行响应 |
 | 内存占用 | < 500MB | 空闲状态 |
 
----
-
-## 八、风险与缓解
-
-### 8.1 技术风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 内核崩溃 | 中 | 自动重启机制 |
-| 内存溢出 | 中 | 资源限制配置 |
-
-### 8.2 安全风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 未授权访问 | 高 | 密码认证 |
-| 代码注入 | 中 | 内核隔离 |
-
----
-
 ## 九、参考资料
 
 ### 9.1 开源项目
@@ -433,11 +158,6 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 |------|------|
 | JupyterLab文档 | https://jupyterlab.readthedocs.io/ |
 | Jupyter扩展 | https://jupyterlab-contrib.github.io/ |
-
----
-
-**版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 蓝图设计完成
----
 
 ## 1. 文档治理
 
@@ -464,13 +184,6 @@ jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 

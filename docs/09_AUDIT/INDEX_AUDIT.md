@@ -100,7 +100,7 @@ implementation_status: 进行�?---
 - **** - 问题状态跟踪模�?- **[专业文档治理审计指南](./TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)** - 专业量化机构文档治理标准
 - **[文档治理审计检查清单](./TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)** - 专业文档治理审计检查清�?- **[AI文档治理审计提示词](./TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)** - AI文档治理审计专用提示�?- **** - 自动化审计工具说�?
 ### 📊 报告与输�?- **** - 标准审计报告格式
-- **[当前审计报告](../../DOCUMENT_AUDIT_v5.3.md)** - 最新系统审计结�?
+- **[当前审计报告](./REPORTS/DOCUMENT_AUDIT_v5.1.md)** - 最新系统审计结�?
 
 ## 🔄 审计触发机制
 

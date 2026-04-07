@@ -28,26 +28,6 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图设计
 responsibility:
   - 交互式回测界面，负责策略回测的可视化展示、结果分析和报告生成，不负责实盘交易和参数优化
----
-# 交互式回测界面模块蓝图
-> **核心职责**: Backtest Ui蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Backtest Ui蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-## 📋 概述
-
-本文档定义了BACKTEST UI的核心功能和技术实现。
-
-
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: Streamlit
-> **优先级**: P1（重要模块）
-
----
-
 ## 一、模块概述
 
 交互式回测界面提供策略回测、结果可视化和报告生成功能。
@@ -60,34 +40,6 @@ responsibility:
 | 参数配置 | 配置回测参数 | P0 |
 | 结果可视化 | 图表展示 | P0 |
 | 报告生成 | 生成回测报告 | P1 |
-
----
-
-## 二、技术选型
-
-### 2.1 核心技术栈
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                  回测界面技术栈                           │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐      ┌─────────────┐                 │
-│  │  Streamlit  │ ◄─── │  Backtest   │                 │
-│  │  (界面)     │      │  Engine     │                 │
-│  └──────┬──────┘      └─────────────┘                 │
-│         │                                               │
-│         │                                               │
-│         ▼                                               │
-│  ┌─────────────┐                                       │
-│  │ Quantstats  │                                       │
-│  │ (可视化)    │                                       │
-│  └─────────────┘                                       │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
-
----
 
 ## 三、界面设计
 
@@ -120,58 +72,6 @@ responsibility:
 └────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 四、实施步骤
-
-### 4.1 安装依赖
-
-```bash
-pip install streamlit quantstats plotly
-```
-
-### 4.2 主程序代码
-
-```python
-import streamlit as st
-import quantstats as qs
-import pandas as pd
-
-st.set_page_config(page_title="ZephyrAlpha回测系统", layout="wide")
-
-st.title("ZephyrAlpha 回测系统")
-
-# 侧边栏配置
-st.sidebar.header("回测配置")
-strategy = st.sidebar.selectbox("策略选择", ["双均线策略", "动量策略", "均值回归"])
-start_date = st.sidebar.date_input("开始日期")
-end_date = st.sidebar.date_input("结束日期")
-initial_capital = st.sidebar.number_input("初始资金", value=1000000)
-
-# 回测按钮
-if st.sidebar.button("开始回测"):
-    with st.spinner("回测运行中..."):
-        # 执行回测
-        result = run_backtest(strategy, start_date, end_date, initial_capital)
-        
-        # 显示结果
-        col1, col2, col3 = st.columns(3)
-        col1.metric("总收益率", f"{result['total_return']:.2%}")
-        col2.metric("年化收益", f"{result['annual_return']:.2%}")
-        col3.metric("夏普比率", f"{result['sharpe']:.2f}")
-        
-        # 显示图表
-        st.plotly_chart(result['equity_curve'])
-```
-
-### 4.3 启动命令
-
-```bash
-streamlit run backtest_ui.py
-```
-
----
-
 ## 五、验收标准
 
 | 验收项 | 验收标准 | 测试方法 |
@@ -181,12 +81,6 @@ streamlit run backtest_ui.py
 | 参数配置 | 可配置参数 | 功能测试 |
 | 回测执行 | 可执行回测 | 功能测试 |
 | 结果展示 | 图表正常显示 | 视觉检查 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13
----
 
 ## 1. 文档治理
 
@@ -213,13 +107,6 @@ streamlit run backtest_ui.py
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-
----
-
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active
-
-
----
 
 ## 📊 文档治理
 
