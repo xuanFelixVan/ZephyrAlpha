@@ -43,8 +43,8 @@ compliance_level: 专业标准---
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 5 |
-| **活跃模块** | 5 |
+| **文档总数** | 6 |
+| **活跃模块** | 6 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -58,6 +58,7 @@ compliance_level: 专业标准---
 - Personal Audit Workflow - `AUDIT_PROC_PERSONAL_WF_001`
 - [全系统文档审计方案（分批目录）](./FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) - `AUDIT_PLAN_FULL_SYSTEM_20260408`
 - [全系统文档审计全案（含重复处理办法 + 清单引用）](./FULL_SYSTEM_AUDIT_COMPLETE_CASE_20260408.md) - `AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408`
+- [Sentinel 自动治理运行报告](../REPORTS/SENTINEL_AUTONOMOUS_GOVERNANCE_RUN_20260408.md) - `SENTINEL_AUTONOMOUS_RUN_20260408`
 
 ---
 

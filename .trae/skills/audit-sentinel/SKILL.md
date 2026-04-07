@@ -62,7 +62,7 @@ description: "Performs professional quantitative institution-standard system aud
    - 专业文档治理审计指南 (docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
    - 文档治理审计检查清单 (docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
    - AI文档治理审计提示词 (docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
-   - 审计质量标准v5.1 (docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+   - 审计质量标准 (docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 ```
 
 ### 2. 三层审计执行阶段（20-30分钟）
@@ -743,19 +743,19 @@ Audit Sentinel响应:
 
 ### 核心标准文档
 
-- [专业文档治理审计指南](../../docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../../docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [AI文档治理审计提示词](../../docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
-- [审计质量标准v5.1](../../docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- [专业文档治理审计指南](../../../docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [文档治理审计检查清单](../../../docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [AI文档治理审计提示词](../../../docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
+- [审计质量标准](../../../docs/09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 
 ### 审计门户
 
-- [审计门户首页](../../docs/09_AUDIT/INDEX_AUDIT.md)
-- [审计体系目录](../../docs/09_AUDIT/README.md)
+- [审计门户首页](../../../docs/09_AUDIT/INDEX_AUDIT.md)
+- [审计体系目录](../../../docs/09_AUDIT/README.md)
 
 ### 输出目录
 
-- [审计状态记录](../../docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/)
+- [审计状态记录](../../../docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/)
 
 ***
 
