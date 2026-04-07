@@ -558,7 +558,7 @@ def optimize_execution_time(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **å
+| **å
 存** | ?GB |
 | **存储** | ?GB（历史数据） |
 

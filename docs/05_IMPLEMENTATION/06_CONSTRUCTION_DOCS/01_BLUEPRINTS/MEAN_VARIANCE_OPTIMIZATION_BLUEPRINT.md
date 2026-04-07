@@ -192,7 +192,7 @@ mean_variance_optimization:
     
   constraints:
     
-é
+é
   discrete_allocation:
     method: 'greedy'
 ```
@@ -262,7 +262,7 @@ class TestMeanVarianceOptimizer:
         pass
     
     def test_discrete_allocation(self):
-"""
+"""
         pass
     
     def test_constraints(self):
@@ -294,7 +294,7 @@ class TestIntegration:
 ### 6.1 计算性能
 
 |------|--------|----------|
-| å
+| å
 存监控 |
 
 

@@ -553,7 +553,7 @@ class RebalancingEvaluator:
 ```python
 @dataclass
 class RebalancingConfig:
-?""
+?""
     trigger_config: TriggerConfig
     decision_config: DecisionConfig
     cost_config: CostOptimizationConfig

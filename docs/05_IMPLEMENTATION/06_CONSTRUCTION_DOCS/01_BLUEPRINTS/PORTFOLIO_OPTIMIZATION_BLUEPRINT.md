@@ -164,7 +164,7 @@ graph TB
 - 约束条件处理?
 
 **Layer 3 - AI增强?*
-?
+?
 - 市场环境感知优化?
 - 自适应调仓决策?
 
@@ -409,7 +409,7 @@ class RiskParityOptimizer:
         
         # 权重分布?
         weights.plot(kind='bar', ax=ax1, color='skyblue')
-')
+')
         ax1.set_ylabel('权重比例')
         ax1.tick_params(axis='x', rotation=45)
         
@@ -668,7 +668,7 @@ class RLRebalancer:
 
 ```yaml
 # é
-?
+?
 pypfopt_config:
   optimization_methods:
     - name: "mean_variance"
@@ -842,7 +842,7 @@ async def run_complete_portfolio_optimization():
     print("组合优化结果")
     print("=" * 60)
     
-:")
+:")
     for strategy_id, weight in result.weights.items():
         print(f"  {strategy_id}: {weight:.2%}")
     
@@ -1045,7 +1045,7 @@ portfolio_optimization:
 
 ### 7.3 数据与可视化
 
-7. **yfinance** - é
+7. **yfinance** - é
 虎财经数据接口
    - GitHub: https://github.com/ranaroussi/yfinance
    - 集成方式：用于获取实时市场数?

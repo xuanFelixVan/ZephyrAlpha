@@ -162,7 +162,7 @@ graph TB
 
 **GitHub**: https://github.com/minio/minio
 
-**Staræ?*: 48k+
+**Staræ?*: 48k+
 
 - S3å
 - 高性能

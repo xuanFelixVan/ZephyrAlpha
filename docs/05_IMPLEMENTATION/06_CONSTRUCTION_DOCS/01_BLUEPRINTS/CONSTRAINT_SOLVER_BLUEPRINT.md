@@ -606,13 +606,13 @@ class BoxConstraint(Constraint):
 ```python
 @dataclass
 class SolverConfig:
-?""
+?""
     convex_config: ConvexConfig
     relax_config: RelaxConfig
     
 @dataclass
 class ConvexConfig:
-?""
+?""
     solver_type: str = 'ecos'  # 'ecos', 'scs', 'osqp', 'cvxopt'
     max_iter: int = 1000
     tolerance: float = 1e-6

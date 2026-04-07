@@ -625,7 +625,7 @@ def analyze_scenario(
     request: ScenarioRequest,
     user: dict = Depends(verify_token)
 ):
-    """æ
+    """æ
 景分析接口"""
     if 'scenario:analyze' not in user['permissions']:
         raise HTTPException(status_code=403, detail="Permission denied")

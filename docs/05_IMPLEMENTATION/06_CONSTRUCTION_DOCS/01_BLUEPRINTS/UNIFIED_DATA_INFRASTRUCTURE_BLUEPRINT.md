@@ -1146,7 +1146,7 @@ def test_query_performance():
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.1  # 100mså
+    assert (end_time - start_time) < 0.1  # 100mså
     
     # 测试实时数据查询性能
     start_time = time.time()
@@ -1154,7 +1154,7 @@ def test_query_performance():
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.01  # 10mså
+    assert (end_time - start_time) < 0.01  # 10mså
 ```
 
 ---

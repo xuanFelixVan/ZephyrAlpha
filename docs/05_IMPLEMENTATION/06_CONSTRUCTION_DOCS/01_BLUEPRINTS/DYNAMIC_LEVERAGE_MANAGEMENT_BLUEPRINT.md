@@ -155,7 +155,7 @@ class VolatilityTargetLeverageOptimizer:
             portfolio_returns: 组合历史收益?            current_leverage: 当前杠杆水平
             
         Returns:
-            LeverageDecision: å
+            LeverageDecision: å
 度、调整理?        """
         # 1. 计算当前波动?        current_volatility = self._calculate_volatility(portfolio_returns)
         
@@ -324,7 +324,7 @@ class KellyLeverageCalculator:
         Args:
             strategy_returns: 策略历史收益?            
         Returns:
-            KellyResult: å
+            KellyResult: å
 含Kelly杠杆、半Kelly杠杆、调整后杠杆
         """
         # 1. 计算期望收益率和波动?        mean_return = strategy_returns.mean() * 252      # 年化期望收益?        volatility = strategy_returns.std() * np.sqrt(252)  # 年化波动?        

@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - STRATEGIC_WEIGHTING蓝图设计
-
+
   - 长期权重优化
 layer: Layer 5 (策略执行层)
 ---
@@ -126,7 +126,7 @@ class RiskParityModel:
         """优化风险平价权重"""
         n_assets = len(covariance_matrix)
         
-
+
         if target_risk is None:
             target_risk_contribution = np.ones(n_assets) / n_assets
         else:
@@ -417,7 +417,7 @@ class ConstraintHandler:
 
 ```mermaid
 graph LR
-]
+]
     C[数据质量监控] --> B
     D[风险平价策略] --> B
     

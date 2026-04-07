@@ -386,7 +386,7 @@ def monitor_system_health(self):
     col1, col2, col3 = st.columns(3)
     with col1:
     with col2:
-        st.metric("å
+        st.metric("å
     with col3:
 ```
 

@@ -167,7 +167,7 @@ graph TB
 
 **GitHub**: https://github.com/restic/restic
 
-**Staræ?*: 26k+
+**Staræ?*: 26k+
 
 - 加密备份
 
@@ -450,7 +450,7 @@ class BackupScheduler:
 
 **GitHub**: https://github.com/vmware-tanzu/velero
 
-**Staræ?*: 8.5k+
+**Staræ?*: 8.5k+
 
 - Kubernetes集群备份
 - 灾难恢复

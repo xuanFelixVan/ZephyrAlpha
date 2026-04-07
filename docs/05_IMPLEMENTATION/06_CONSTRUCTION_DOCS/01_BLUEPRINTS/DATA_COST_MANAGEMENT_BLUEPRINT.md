@@ -92,7 +92,7 @@ layer: Layer 5.1 (数据处理)
 
 **当前痛点**:
 - 数据成本不透明
-æ?
+æ?
 - 缺少成本优化建议
 - 成本预算难以控制
 
@@ -222,7 +222,7 @@ from datetime import datetime
 
 @dataclass
 class CostAllocation:
-"""
+"""
     allocation_id: str
     resource_id: str
     team: str
@@ -466,7 +466,7 @@ GET /api/v1/cost/recommendations
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-å?|
+å?|
 
 ### 下游依赖
 

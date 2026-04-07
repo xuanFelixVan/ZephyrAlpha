@@ -303,7 +303,7 @@ class LiquidityFeatureExtractor:
 
 
 class SentimentFeatureExtractor:
-    """æ
+    """æ
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
 绪特征"""
@@ -927,7 +927,7 @@ def test_hmm_model():
 | 特征类型 | 计算时间 |
 |---------|---------|
 | **趋势特征** | <100ms |
-| **æ
+| **æ
 绪特征** | <200ms |
 
 ---

@@ -154,7 +154,7 @@ graph TB
 
 **GitHub**: https://github.com/apache/ranger
 
-**Staræ?*: 900+
+**Staræ?*: 900+
 
 - 访问审计日志
 - 策略管理
@@ -277,7 +277,7 @@ class AccessAuditLogger:
 - Logstash: https://github.com/elastic/logstash
 - Kibana: https://github.com/elastic/kibana
 
-**Staræ?*: 
+**Staræ?*: 
 - Elasticsearch: 68k+
 - Logstash: 14k+
 - Kibana: 19k+

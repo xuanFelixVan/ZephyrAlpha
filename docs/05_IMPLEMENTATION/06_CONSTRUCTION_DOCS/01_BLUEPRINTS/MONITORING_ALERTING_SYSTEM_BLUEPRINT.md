@@ -171,7 +171,7 @@ graph TB
 
 **GitHub**: https://github.com/prometheus/prometheus
 
-**Staræ?*: 56k+
+**Staræ?*: 56k+
 
 - Pull模式采集
 - 服务发现
@@ -391,7 +391,7 @@ class SystemMetricsExporter:
 
 **GitHub**: https://github.com/prometheus/alertmanager
 
-**Staræ?*: 6.7k+
+**Staræ?*: 6.7k+
 
 - 告警去重
 - 告警分组

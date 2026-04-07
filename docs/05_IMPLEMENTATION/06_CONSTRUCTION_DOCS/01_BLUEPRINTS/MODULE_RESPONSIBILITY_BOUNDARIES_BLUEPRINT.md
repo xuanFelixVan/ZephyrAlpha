@@ -76,14 +76,14 @@ layer: Layer 5 (策略执行层)
 
 
 ## 二、核心模块职责边?
-### 2.1 æ
+### 2.1 æ
 景分析?vs 压力测试报告?
 #### 职责边界定义
 
 | 维度 | ScenarioAnalyzer | StressTestReporter |
 |------|------------------|-------------------|
 景定义和模?| 压力测试执行和报?|
-¥** | æ
+¥** | æ
 景分析报告 | 压力测试报告 |
 | **调用频率** | 按需/周度 | 月度/季度 |
 | **å
@@ -91,13 +91,13 @@ layer: Layer 5 (策略执行层)
 
 #### ScenarioAnalyzer 职责范围
 
-**å
+**å
 含**:
-- ?æ
+- ?æ
 景类型管理（FINANCIAL_CRISIS, COVID_CRASH等）
 - ?资产影响评估
 景风险指标计算
-- ?æ
+- ?æ
 景分析报告生成
 
 ?*:
@@ -107,7 +107,7 @@ layer: Layer 5 (策略执行层)
 
 #### StressTestReporter 职责范围
 
-**å
+**å
 含**:
 - ?压力测试执行管理
 等）
@@ -116,13 +116,13 @@ layer: Layer 5 (策略执行层)
 - ?监管合规报告输出
 
 ?*:
-- ?æ
+- ?æ
 景类型定义
 景详细分析
 
 
 ```
-ScenarioAnalyzer (æ
+ScenarioAnalyzer (æ
 景定义)
 景参数
 StressTestReporter (压力测试执行)
@@ -143,7 +143,7 @@ StressTestReporter (压力测试执行)
 
 #### RealTimeRiskReporter 职责范围
 
-**å
+**å
 含**:
 - ?风险指标计算（用于报告）
 - ?VaR/CVaR实时计算
@@ -158,7 +158,7 @@ StressTestReporter (压力测试执行)
 
 #### risk_manager.py 职责范围
 
-**å
+**å
 含**:
 - ?风险限额管理
 - ?风险控制决策
@@ -192,7 +192,7 @@ risk_manager.py (风险控制)
 
 #### MultiTimeframeReportFusion 职责范围
 
-**å
+**å
 含**:
 - ?多时间框架报告聚?- ?一致性分?- ?跨时间框架风险识?- ?融合报告生成
 - ?优化建议生成
@@ -204,7 +204,7 @@ risk_manager.py (风险控制)
 
 #### EconomicRegimeReporter 职责范围
 
-**å
+**å
 含**:
 - ?经济周期判断（扩?顶峰/衰退/复苏?- ?范式转换预警
 - ?宏观因子暴露分析
@@ -234,7 +234,7 @@ EconomicRegimeReporter (经济范式分析)
 
 #### DailyReporter/MonthlyReporter 职责范围
 
-**å
+**å
 含**:
 - ?汇总各类专题报?- ?提供整体视角
 - ?生成综合性报?- ?趋势分析
@@ -246,7 +246,7 @@ EconomicRegimeReporter (经济范式分析)
 - ?专项指标计算
 
 #### 专题报告器职责范?
-**å
+**å
 含**:
 - ?深度分析特定领域
 - ?提供专业视角

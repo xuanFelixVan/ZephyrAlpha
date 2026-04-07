@@ -174,40 +174,60 @@ def analyze_trends(history, days=7):
         print(f"\n最近{days}天数据不足，无法分析趋势")
         return None
     
-    # 计算趋势
+    # 计算趋势 - 适应不同的数据格式
     first = recent_data[0]
     last = recent_data[-1]
     
+    # 提取指标值 - 支持两种格式
+    def get_metric(data, metric_name):
+        """从数据中提取指标值"""
+        # 新格式（扁平结构）
+        if metric_name in data:
+            return data[metric_name]
+        
+        # 旧格式（嵌套结构）
+        if metric_name == 'compliance_score':
+            return data.get('compliance_metrics', {}).get('compliance_score', 0)
+        elif metric_name == 'metadata_compliance_rate':
+            return data.get('document_metrics', {}).get('metadata_compliance_rate', 0)
+        elif metric_name == 'responsibility_compliance_rate':
+            return data.get('document_metrics', {}).get('responsibility_compliance_rate', 0)
+        elif metric_name == 'link_validity_rate':
+            return data.get('reference_metrics', {}).get('link_validity_rate', 0)
+        elif metric_name == 'deep_file_count':
+            return data.get('structure_metrics', {}).get('deep_files_count', 0)
+        return 0
+    
     trends = {
         'compliance_score': {
-            'start': first['compliance_score'],
-            'end': last['compliance_score'],
-            'change': last['compliance_score'] - first['compliance_score'],
-            'trend': 'improving' if last['compliance_score'] > first['compliance_score'] else 'declining' if last['compliance_score'] < first['compliance_score'] else 'stable'
+            'start': get_metric(first, 'compliance_score'),
+            'end': get_metric(last, 'compliance_score'),
+            'change': get_metric(last, 'compliance_score') - get_metric(first, 'compliance_score'),
+            'trend': 'improving' if get_metric(last, 'compliance_score') > get_metric(first, 'compliance_score') else 'declining' if get_metric(last, 'compliance_score') < get_metric(first, 'compliance_score') else 'stable'
         },
         'metadata_compliance_rate': {
-            'start': first['metadata_compliance_rate'],
-            'end': last['metadata_compliance_rate'],
-            'change': last['metadata_compliance_rate'] - first['metadata_compliance_rate'],
-            'trend': 'improving' if last['metadata_compliance_rate'] > first['metadata_compliance_rate'] else 'declining' if last['metadata_compliance_rate'] < first['metadata_compliance_rate'] else 'stable'
+            'start': get_metric(first, 'metadata_compliance_rate'),
+            'end': get_metric(last, 'metadata_compliance_rate'),
+            'change': get_metric(last, 'metadata_compliance_rate') - get_metric(first, 'metadata_compliance_rate'),
+            'trend': 'improving' if get_metric(last, 'metadata_compliance_rate') > get_metric(first, 'metadata_compliance_rate') else 'declining' if get_metric(last, 'metadata_compliance_rate') < get_metric(first, 'metadata_compliance_rate') else 'stable'
         },
         'responsibility_compliance_rate': {
-            'start': first['responsibility_compliance_rate'],
-            'end': last['responsibility_compliance_rate'],
-            'change': last['responsibility_compliance_rate'] - first['responsibility_compliance_rate'],
-            'trend': 'improving' if last['responsibility_compliance_rate'] > first['responsibility_compliance_rate'] else 'declining' if last['responsibility_compliance_rate'] < first['responsibility_compliance_rate'] else 'stable'
+            'start': get_metric(first, 'responsibility_compliance_rate'),
+            'end': get_metric(last, 'responsibility_compliance_rate'),
+            'change': get_metric(last, 'responsibility_compliance_rate') - get_metric(first, 'responsibility_compliance_rate'),
+            'trend': 'improving' if get_metric(last, 'responsibility_compliance_rate') > get_metric(first, 'responsibility_compliance_rate') else 'declining' if get_metric(last, 'responsibility_compliance_rate') < get_metric(first, 'responsibility_compliance_rate') else 'stable'
         },
         'link_validity_rate': {
-            'start': first['link_validity_rate'],
-            'end': last['link_validity_rate'],
-            'change': last['link_validity_rate'] - first['link_validity_rate'],
-            'trend': 'improving' if last['link_validity_rate'] > first['link_validity_rate'] else 'declining' if last['link_validity_rate'] < first['link_validity_rate'] else 'stable'
+            'start': get_metric(first, 'link_validity_rate'),
+            'end': get_metric(last, 'link_validity_rate'),
+            'change': get_metric(last, 'link_validity_rate') - get_metric(first, 'link_validity_rate'),
+            'trend': 'improving' if get_metric(last, 'link_validity_rate') > get_metric(first, 'link_validity_rate') else 'declining' if get_metric(last, 'link_validity_rate') < get_metric(first, 'link_validity_rate') else 'stable'
         },
         'deep_file_count': {
-            'start': first['deep_file_count'],
-            'end': last['deep_file_count'],
-            'change': last['deep_file_count'] - first['deep_file_count'],
-            'trend': 'improving' if last['deep_file_count'] < first['deep_file_count'] else 'declining' if last['deep_file_count'] > first['deep_file_count'] else 'stable'
+            'start': get_metric(first, 'deep_file_count'),
+            'end': get_metric(last, 'deep_file_count'),
+            'change': get_metric(last, 'deep_file_count') - get_metric(first, 'deep_file_count'),
+            'trend': 'improving' if get_metric(last, 'deep_file_count') < get_metric(first, 'deep_file_count') else 'declining' if get_metric(last, 'deep_file_count') > get_metric(first, 'deep_file_count') else 'stable'
         }
     }
     

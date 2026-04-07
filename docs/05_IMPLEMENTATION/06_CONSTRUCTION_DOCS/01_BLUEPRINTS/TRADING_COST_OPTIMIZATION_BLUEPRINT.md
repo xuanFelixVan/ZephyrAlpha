@@ -406,7 +406,7 @@ class VWAPAlgorithm:
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
         """生成VWAP执行计划"""
-
+
         schedule = {}
         
         for asset, trade_size in trades.items():
@@ -444,7 +444,7 @@ class TWAPAlgorithm:
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
         """生成TWAP执行计划"""
-
+
         schedule = {}
         
         for asset, trade_size in trades.items():
@@ -483,7 +483,7 @@ class ImplementationShortfallAlgorithm:
         schedule = {}
         
         for asset, trade_size in trades.items():
-
+
             schedule[asset] = {
                 'total': trade_size,
                 'initial_burst': trade_size * 0.5,  # ?0分钟

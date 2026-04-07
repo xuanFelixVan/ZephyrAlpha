@@ -176,7 +176,7 @@ graph TB
 
 **GitHub**: https://github.com/great-expectations/great_expectations
 
-**Staræ?*: 9.8k+
+**Staræ?*: 9.8k+
 
 
 **集成方式**:
@@ -300,7 +300,7 @@ class BusinessRuleValidator:
 
 **GitHub**: https://github.com/unionai-oss/pandera
 
-**Staræ?*: 3.2k+
+**Staræ?*: 3.2k+
 
 - 数据类型强制转换
 - 统计验证

@@ -119,7 +119,7 @@ class CointegrationAnalyzer:
         使用Engle-Granger两步?
         1. 对价格序列进行线性回?        2. 对残差序列进行ADF检?        3. 计算半衰?        
         Returns:
-            CointegrationResult: å
+            CointegrationResult: å
         """
         pass
 ```
@@ -148,7 +148,7 @@ class SpreadTradingEngine:
            - z > 2: 做空价差（做空A，做多B?           - z < -2: 做多价差（做多A，做空B?           - |z| < 0.5: 平仓
         
         Returns:
-            TradingSignal: å
+            TradingSignal: å
 含信号类型、Z-score、仓位比?        """
         pass
 
@@ -190,7 +190,7 @@ class MarketNeutralPortfolioConstructor:
         3. 风格中性：确保风格因子暴露为零
         4. 杠杆控制：限制总杠?        
         Returns:
-            PortfolioAllocation: å
+            PortfolioAllocation: å
 含多空头寸、净敞口、总敞?        """
         pass
 
@@ -400,7 +400,7 @@ class StatisticalArbitrageModule:
         运行完整流程
         
         Returns:
-?        """
+?        """
         pass
 ```
 

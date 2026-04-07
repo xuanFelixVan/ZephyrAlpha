@@ -190,7 +190,7 @@ class EconomicRegimeEngine:
         获取当前经济范式分析
         
         Returns:
-            RegimeAnalysis: å
+            RegimeAnalysis: å
         pass
     
     def get_regime_probability(self) -> Dict[str, float]:

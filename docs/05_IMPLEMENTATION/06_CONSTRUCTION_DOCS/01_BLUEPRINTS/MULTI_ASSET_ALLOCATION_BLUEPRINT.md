@@ -105,7 +105,7 @@ class MultiAssetAllocator:
                 optimization_method: str = 'risk_parity',
                 risk_budget: Optional[Dict[str, float]] = None) -> AllocationResult:
         """
-?        
+?        
         Args:
             asset_classes: 资产类别列表
             
@@ -142,7 +142,7 @@ class MultiAssetAllocator:
                                economic_regime: str,
                                regime_probability: float) -> AllocationResult:
         """
-?        
+?        
         Args:
             economic_regime: 经济范式?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: 范式概率
             
@@ -298,7 +298,7 @@ class RiskParityOptimizer:
     """
     风险平价优化?    
     索引: MULTI_ASSET_001-M04
-?    """
+?    """
     
     def __init__(self, config: RiskParityConfig):
         self.config = config
@@ -312,7 +312,7 @@ class RiskParityOptimizer:
         
         Args:
 ¸
-
+
             
         Returns:
         """
@@ -494,7 +494,7 @@ class CrossAssetRiskMonitor:
 ```python
 @dataclass
 class MultiAssetConfig:
-?""
+?""
     data_config: DataConfig
     corr_config: CorrelationConfig
     rp_config: RiskParityConfig
@@ -510,7 +510,7 @@ class DataConfig:
     
 @dataclass
 class CorrelationConfig:
-?""
+?""
     use_dcc_garch: bool = True
     dcc_config: DCCGARCHConfig = None
     
@@ -561,7 +561,7 @@ class EconomicRegimeEngine:
         # 1. 识别经济范式
         regime, probability = self.identify_regime(market_data)
         
-?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
+?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
 ```
 
 ### 5.2 与Barra风险模型集成
@@ -694,7 +694,7 @@ pip install arch>=5.0
    - Bridgewater Associates. "The All Weather Story"
    - Dalio, R. (2017). "Principles for Dealing with the Changing World Order"
 
-?*:
+?*:
    - Ang, A. (2014). "Asset Management: A Systematic Approach to Factor Investing"
 
 

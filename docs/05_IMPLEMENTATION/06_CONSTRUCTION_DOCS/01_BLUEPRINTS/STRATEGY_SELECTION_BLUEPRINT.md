@@ -96,7 +96,7 @@ layer: Layer 5 (策略执行层)
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **BatchEvaluation系统** | 绩效数据?| 获取策略历史绩效数据 |
-?|
+?|
 | **MarketStateDetector** | 市场状态输?| 获取当前市场状态（牛市/熊市/震荡市） |
 
 ## 二、系统架构设?
@@ -236,7 +236,7 @@ class TOPSISEvaluator:
         )
         
     def _default_weights(self) -> Dict[str, float]:
-"""
+"""
         return {
             'sharpe_ratio': 0.25,      # 夏普比率：收益风险平?
             'max_drawdown': 0.20,       # 最大回撤：风险控制
@@ -450,7 +450,7 @@ class DynamicWeightOptimizer:
                           historical_performance: pd.DataFrame) -> Dict[str, float]:
         """从历史表现中学习优化权重
         
-
+
         """
         
         if len(self.weight_history) < 10:
@@ -924,7 +924,7 @@ strategy_selection:
       enabled: true
       decay_factor: 0.9  # 近期表现权重
     
-?
+?
   correlation:
     threshold: 0.7
     analysis_period: "1y"  # 1m, 3m, 6m, 1y, 3y
@@ -1032,7 +1032,7 @@ python strategy_selector.py query \
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
- |
+ |
 
 
 |---------|------|------|------|
@@ -1046,7 +1046,7 @@ graph LR
     C[数据目录] --> B
     D[组合优化引擎] --> B
     
-]
+]
     B --> F[季度调仓]
     B --> G[组合再平衡]
     

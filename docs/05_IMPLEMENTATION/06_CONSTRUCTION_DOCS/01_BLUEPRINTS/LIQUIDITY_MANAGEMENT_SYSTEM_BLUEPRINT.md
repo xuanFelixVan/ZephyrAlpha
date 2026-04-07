@@ -618,7 +618,7 @@ def calculate_liquidity_risk_score(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **å
+| **å
 存** | ?GB |
 | **存储** | ?GB |
 
@@ -744,7 +744,7 @@ class TestLiquidityManagementSystem:
 **目标**: 实现高级预测模型和智能优?
 单**:
 1. 📝 实现机器学习预测模型
-
+
 3. 📝 实现多账户管?4. 📝 性能评估和优?
 **交付?*:
 - 高级功能实现代码

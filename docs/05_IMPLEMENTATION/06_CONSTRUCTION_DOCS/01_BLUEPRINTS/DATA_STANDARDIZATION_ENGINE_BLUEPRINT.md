@@ -155,7 +155,7 @@ class FormatStandardizer:
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
+            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)

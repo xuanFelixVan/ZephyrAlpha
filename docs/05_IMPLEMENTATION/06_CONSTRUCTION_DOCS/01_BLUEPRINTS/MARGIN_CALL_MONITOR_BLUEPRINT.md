@@ -183,10 +183,10 @@ class MarginCallMonitorConfig:
         
         if self.margin_call_thresholds is None:
             self.margin_call_thresholds = {
-                'P0_CRITICAL': 1.30,   # æ
-                'P1_HIGH': 1.50,       # æ
-                'P2_MEDIUM': 1.80,     # æ
-                'P3_LOW': 2.00         # æ
+                'P0_CRITICAL': 1.30,   # æ
+                'P1_HIGH': 1.50,       # æ
+                'P2_MEDIUM': 1.80,     # æ
+                'P3_LOW': 2.00         # æ
             }
         
         if self.market_leverage_thresholds is None:

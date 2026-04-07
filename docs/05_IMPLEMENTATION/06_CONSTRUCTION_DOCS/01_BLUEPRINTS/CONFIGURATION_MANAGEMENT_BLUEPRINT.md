@@ -148,7 +148,7 @@ graph TB
 
 **核心功能**:
 - é
-å?
+å?
 - 版本控制
 
 #### 2.2.3 é
@@ -166,7 +166,7 @@ graph TB
 
 **GitHub**: https://github.com/hashicorp/consul
 
-**Staræ?*: 28k+
+**Staræ?*: 28k+
 
 - 服务发现
 - é
@@ -406,7 +406,7 @@ class ConfigValidator:
 
 **GitHub**: https://github.com/etcd-io/etcd
 
-**Staræ?*: 47k+
+**Staræ?*: 47k+
 
 - 监听机制
 

@@ -147,7 +147,7 @@ graph TB
 **核心功能**:
 - 并行执行
 - 数据传输
-- å
+- å
 存管理
 - 错误处理
 
@@ -164,7 +164,7 @@ graph TB
 
 **GitHub**: https://github.com/trinodb/trino
 
-**Staræ?*: 10k+
+**Staræ?*: 10k+
 
 - 分布式SQL查询
 - 多数据源支持

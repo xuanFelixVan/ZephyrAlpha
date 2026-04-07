@@ -521,7 +521,7 @@ services:
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `pipeline_latency_milliseconds` | Histogram | 处理延迟 |
-| `pipeline_memory_utilization_ratio` | Gauge | å
+| `pipeline_memory_utilization_ratio` | Gauge | å
 
 ---
 

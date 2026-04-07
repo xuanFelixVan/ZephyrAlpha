@@ -4,7 +4,7 @@ responsibility:
   - 风险贡献均衡
   - 权重优化
   - 风险预算
-
+
   - 权重优化
 
 module_id: RISK_PARITY_STRATEGY_001
@@ -511,7 +511,7 @@ def hierarchical_risk_parity(
 ### 3.4 性能要求
 
 |---------|--------|------|
-| **å
+| **å
 存占用** | <50MB | 单次优化 |
 
 ---
@@ -664,7 +664,7 @@ class RiskParityAPI:
 ### 7.2 模块职责边界
 
 
-
+
 - 风险平价负责实现风险预算目标
 
 ---

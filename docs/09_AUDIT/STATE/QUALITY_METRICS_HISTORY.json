@@ -295,5 +295,49 @@
       "compliance_level": "合格",
       "target_score": 90
     }
+  },
+  {
+    "timestamp": "2026-04-07 18:49:43",
+    "total_files": 1978,
+    "compliance_score": 86.81,
+    "metadata_compliance_rate": 98.43,
+    "responsibility_compliance_rate": 97.12,
+    "link_validity_rate": 99.72,
+    "deep_file_count": 59,
+    "total_links": 3231,
+    "valid_links": 3222
+  },
+  {
+    "timestamp": "2026-04-07 18:50:04",
+    "document_metrics": {
+      "total_files": 2353,
+      "files_with_metadata": 2068,
+      "files_with_responsibility": 1942,
+      "metadata_compliance_rate": 87.88780280492988,
+      "responsibility_compliance_rate": 82.53293667658309
+    },
+    "reference_metrics": {
+      "total_links": 5449,
+      "valid_links": 5368,
+      "invalid_links": 80,
+      "link_validity_rate": 98.51348871352542
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.199320016999575,
+      "depth_distribution": {
+        "0": 4,
+        "1": 478,
+        "2": 1008,
+        "3": 771,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 82.42697479085321,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
   }
 ]

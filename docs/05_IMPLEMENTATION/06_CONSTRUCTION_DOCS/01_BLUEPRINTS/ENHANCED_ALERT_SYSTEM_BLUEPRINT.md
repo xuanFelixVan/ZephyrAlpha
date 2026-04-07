@@ -298,7 +298,7 @@ class AlertInhibitor:
             bool: 是否应该抑制
         """
         for rule in self.inhibit_rules:
-
+
             if self._match_source(alert, rule['source_match']):
                 for active_alert in active_alerts:
                     if self._match_target(active_alert, rule['target_match']):
@@ -315,7 +315,7 @@ class AlertInhibitor:
         Args:
             alert: 告警
         Returns:
-
+
         """
         for key, value in source_match.items():
             if key == 'alertname':
@@ -343,7 +343,7 @@ class AlertInhibitor:
             alert: 告警
             
         Returns:
-
+
         """
         return self._match_source(alert, target_match)
 ```

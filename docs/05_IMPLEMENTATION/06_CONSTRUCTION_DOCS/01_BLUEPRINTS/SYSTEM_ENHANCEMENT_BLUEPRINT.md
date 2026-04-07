@@ -81,7 +81,7 @@ layer: Layer 5 (策略执行层)
 
 
 |--------|--------|--------------|----------|------|
-| P0 | æ
+| P0 | æ
 日度报?| 风险响应滞后 |
 | P1 | 监管合规报告 | 满足证监会要?| ?| 合规风险 |
 | P1 | 执行成本分析 | 滑点/冲击成本 | ?| 成本失控 |
@@ -112,7 +112,7 @@ layer: Layer 5 (策略执行层)
 ### 2.2 模块职责边界
 
 #### P0级模块（核心差距?
-**P0-01: æ
+**P0-01: æ
 景分析?(ScenarioAnalyzer)**
 景类型、自定义冲击参数
 景分析报告（收益影响、风险指标、敏感度分析?- 调用频率：按需调用 / 周度定期分析
@@ -374,7 +374,7 @@ class CrossAssetCorrelationReport:
 
 | 模块 | API路径 | 功能描述 | 详细文档位置 |
 |------|---------|---------|-------------|
-| æ
+| æ
 景分析 | SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md |
 | 压力测试 | POST /api/v1/reports/stress-test/run | 执行压力测试 | [STRESS_TESTING_SYSTEM_BLUEPRINT.md](./STRESS_TESTING_SYSTEM_BLUEPRINT.md) |
 | 实时风险监控 | GET /api/v1/reports/realtime-risk/current | 获取实时风险指标 | REALTIME_RISK_MONITORING_BLUEPRINT.md |
@@ -420,7 +420,7 @@ class CrossAssetCorrelationReport:
 
 | 模块 | 依赖数据 | 数据?| 更新频率 |
 |------|---------|--------|---------|
-| æ
+| æ
 景分析?| 组合数据、因子暴?| Layer 4 | 日度 |
 | 压力测试 | 组合数据、历史行?| Layer 2, 4 | 月度 |
 、组合快?| Layer 2, 4 | 秒级 |
@@ -437,9 +437,9 @@ class CrossAssetCorrelationReport:
 
 ### 5.1 Phase 1: P0级核心模块（3周）
 
-**Week 1: æ
+**Week 1: æ
 景分析 + 压力测试**
-- Day 1-2: æ
+- Day 1-2: æ
 - Day 3-4: 压力测试报告生成器开?- Day 5: 集成测试与文档编?
 **Week 2-3: 实时风险 + 多时间框架融?*
 - Day 1-3: 实时风险监控报告器开发（重点：性能优化?  - 增量计算实现
@@ -481,7 +481,7 @@ class CrossAssetCorrelationReport:
 #### 6.1.1 P0级核心模块验收标?
 | 模块 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| æ
+| æ
 | 压力测试 | 支持历史/假设/反向三种测试类型 | 回测验证 |
 | 实时风险 | 延迟?秒，准确率≥95% | 性能测试 |
 | 多时间框架融?| 一致性评分算法准确率?0% | 专家评审 |

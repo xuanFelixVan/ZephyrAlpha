@@ -100,9 +100,9 @@ layer: Layer 5.1 (数据处理)
 
 
 |------|--------|------|
-| **æ
+| **æ
 障发现时间<1分钟 |
-| **æ
+| **æ
 障恢复时间<10分钟 |
 
 
@@ -276,7 +276,7 @@ class SourceMonitor:
         return []
 ```
 
-### 3.3 æ
+### 3.3 æ
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -284,7 +284,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class FailureSeverity(Enum):
-    """æ
+    """æ
 障严重程度"""
     LOW = "low"
     MEDIUM = "medium"
@@ -293,7 +293,7 @@ class FailureSeverity(Enum):
 
 @dataclass
 class FailureEvent:
-    """æ
+    """æ
 障事件"""
     event_id: str
     source_id: str
@@ -305,7 +305,7 @@ class FailureEvent:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class FailureManager:
-    """æ
+    """æ
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
@@ -316,7 +316,7 @@ class FailureManager:
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-é?""
+é?""
         if health.is_healthy:
             return None
         
@@ -418,7 +418,7 @@ GET /api/v1/sources/{source_id}/health
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `source_total_sources` | Gauge | 数据源总数 |
-| `source_failures_total` | Counter | æ
+| `source_failures_total` | Counter | æ
 障总数 |
 
 ---

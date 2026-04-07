@@ -149,7 +149,7 @@ class CailianNewsDataSource:
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| sentiment | float | æ
+| sentiment | float | æ
 感得分?1??|
 | event_type | string | 事件类型 |
 
@@ -254,13 +254,13 @@ class WeiboDataSource:
 | likes | int | 点赞?|
 | comments | int | 评论?|
 | reposts | int | 转发?|
-| sentiment | float | æ
+| sentiment | float | æ
 感得分 |
 
 ---
 
 #### 2.2.2 雪球网爬?
-æ
+æ
 ?- 热门股票
 
 **技术方?*:
@@ -362,14 +362,14 @@ class AnalystExpectationDataSource:
 
 ## 三、NLP处理流程
 
-### 3.1 æ
+### 3.1 æ
 感分析
 
 **技术方?*: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
-    """æ
+    """æ
 感分析?""
     
     def __init__(self):
@@ -425,7 +425,7 @@ class EventExtractor:
             "event_type": "事件类型",
             "event_summary": "事件摘要",
             "impact_level": "影响等级（高/?低）",
-            "sentiment": "æ
+            "sentiment": "æ
 感倾向（正?负面/中性）"
         }}
         """
@@ -577,7 +577,7 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 
 ---
 
-### 4.2 æ
+### 4.2 æ
 绪因子
 
 绪因子

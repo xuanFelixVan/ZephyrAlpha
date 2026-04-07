@@ -363,7 +363,7 @@ from datetime import datetime
 class DataClassification(Enum):
     """数据分类"""
     PUBLIC = "public"           # å
-    INTERNAL = "internal"       # å
+    INTERNAL = "internal"       # å
 部数据
     CONFIDENTIAL = "confidential"  # 机密数据
 

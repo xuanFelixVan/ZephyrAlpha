@@ -114,7 +114,7 @@ layer: Layer 5.3 (风险管理)
 
 ```
 历史危机事件数据 + 当前组合持仓
-æ
+æ
 生成压力测试报告
 ```
 
@@ -146,7 +146,7 @@ class StressTestingSystem:
         
         Args:
             portfolio: 当前组合
-            scenarios: æ
+            scenarios: æ
             
         Returns:
             StressTestResult: 压力测试结果
@@ -181,15 +181,15 @@ class StressTestingSystem:
         )
 ```
 
-### 3.2 æ
+### 3.2 æ
 
 ```python
 class ScenarioAnalyzer:
     """
-    æ
+    æ
     
     索引: STRESS_TEST_001-M02
-æ?
+æ?
     """
     
     def apply_shock(
@@ -201,7 +201,7 @@ class ScenarioAnalyzer:
         
         Args:
             portfolio: 原始组合
-            scenario: æ
+            scenario: æ
 景定义
             
         Returns:
@@ -220,11 +220,11 @@ class ScenarioAnalyzer:
 ## 4. 压力测试场景设计
 
 
-| æ
+| æ
 景名称 | 时间范围 | 触发事件 | 主要冲击 | 适用场景 |
 |----------|----------|----------|----------|----------|
 
-### 4.2 æ
+### 4.2 æ
 
 ```yaml
 # stress_test_scenarios.yaml
@@ -490,15 +490,15 @@ class StressTestMetricsCalculator:
 ## 1. 测试概况
 - **测试日期**: {test_date}
 - **测试范围**: {test_scope}
-- **æ
+- **æ
 景数量**: {n_scenarios}
 - **测试结论**: {conclusion}
 
-## 2. æ
+## 2. æ
 景分析结果
 
 景
-| æ
+| æ
 景名称 | 组合损失 | 风险等级 | 主要风险因子 |
 |----------|----------|----------|--------------|
 | {scenario_1} | {loss_1:.2%} | {risk_level_1} | {factors_1} |
@@ -560,7 +560,7 @@ def run_stress_test(
     
     Args:
         portfolio: 当前组合
-        scenarios: æ
+        scenarios: æ
 景列表
         
     Returns:
@@ -568,7 +568,7 @@ def run_stress_test(
     """
     pass
 
-# æ
+# æ
 景生成接口
 def generate_scenarios(
     scenario_type: str,
@@ -578,11 +578,11 @@ def generate_scenarios(
 景
     
     Args:
-        scenario_type: æ
-        config: æ
+        scenario_type: æ
+        config: æ
         
     Returns:
-        List[Scenario]: æ
+        List[Scenario]: æ
 景列表
     """
     pass
@@ -605,7 +605,7 @@ def generate_scenarios(
 ## 6. 性能指标
 
 |------|--------|----------|
-| **æ
+| **æ
 | **压力测试执行时间** | <10s | 性能测试 |
 
 ---

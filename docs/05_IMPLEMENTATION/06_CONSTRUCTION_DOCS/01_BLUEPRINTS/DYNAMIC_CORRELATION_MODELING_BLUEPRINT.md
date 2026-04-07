@@ -350,7 +350,7 @@ class DCCConfig:
     
 @dataclass
 class RegimeDetectionConfig:
-?""
+?""
 
 ---
 
@@ -431,7 +431,7 @@ Q?= (1-α-β)·Q̄ + α·uₜ₋₁·u'ₜ₋?+ β·Qₜ₋?R?= diag(Q??² · Q?
 **计算优化**?- 使用Numba加速矩阵运?- 并行计算多资产GARCH模型
 - 缓存中间结果
 
-**å
+**å
 保留最近N天的数据
 ---
 

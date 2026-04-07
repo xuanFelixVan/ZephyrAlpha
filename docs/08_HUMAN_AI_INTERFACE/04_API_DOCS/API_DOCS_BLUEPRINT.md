@@ -102,3 +102,23 @@ API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文�
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
 
 ---
+
+---
+
+## 💻 实现代码示例
+
+```python
+# API文档系统实现示例
+from fastapi import FastAPI
+from fastapi.openapi.docs import get_swagger_ui_html
+
+app = FastAPI(
+    title="ZephyrAlpha API",
+    description="量化交易系统API文档",
+    version="1.0.0"
+)
+
+@app.get("/docs", tags=["documentation"])
+async def get_documentation():
+    return get_swagger_ui_html(openapi_url="/openapi.json")
+```

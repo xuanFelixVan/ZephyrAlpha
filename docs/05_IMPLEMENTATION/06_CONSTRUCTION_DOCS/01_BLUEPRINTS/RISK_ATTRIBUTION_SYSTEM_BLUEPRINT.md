@@ -188,7 +188,7 @@ class RiskAttributionSystem:
         
         Args:
             portfolio_weights: 组合权重
-
+
             barra_model: Barra风险模型
             
         Returns:

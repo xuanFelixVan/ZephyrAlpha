@@ -127,7 +127,7 @@ layer: Layer 5 (策略执行层)
 
 专业归?| 混合集成 |
 | **Layer 6: 组合优化?* | **PyPortfolioOpt** | 组合权重优化、风险模?| API简洁、功能完整、社区活?| 直接集成 |
-?|
+?|
 | **Layer 4: 机器学习?* | **QLib** (AI引擎) | AI因子挖掘、预测模?| 微软开源、机构级验证 | 参考架?定制 |
 感分析、另类数据处?| 蓝图已选定，技术栈统一 | 直接使用 |
 | **Layer 2: Alpha因子?* | **Feast** + **factor_calculator.py** | 因子存储、计算、验?| 专业级Feature Store，支持时序数?| 定制开发集?|
@@ -217,13 +217,13 @@ weights = ef.max_sharpe()  # 最大化夏普比率
 
 iFinD是同花顺提供的专业金融数据接口，支持Python、MATLAB、Java等多种编程语言。ZephyrAlpha系统将iFinD作为核心数据源之一，用于获取高质量的市场数据、财务数据和另类数据?
 
-?*:
+?*:
 ```bash
 iFinD API?
 pip install iFinDAPI
 
 # 方法2: 使用SuperCommand客户端进行环境修?
-å
+å
 后，运行SuperCommand.exe
 # 选择Python语言 -> 环境修复 -> 选择Python路径
 ```
@@ -277,7 +277,7 @@ data = THS_DS('000001.SZ',
 **集成架构设计**:
 ```python
 class iFinDDataSource:
-?""
+?""
     def __init__(self, config):
         self.username = config["ifind_username"]
         self.password = config["ifind_password"]
@@ -360,7 +360,7 @@ class StrategyFactory:
 ?                                                                    ?
 ? Layer 5: 策略执行?                                                 ?
 ? ├── Backtrader回测引擎 (事件驱动回测)                                 ?
-?(FactorData ?Backtrader DataFeed)               ?
+?(FactorData ?Backtrader DataFeed)               ?
 ? └── QMT实盘接口 (国金证券对接)                                       ?
 ?                                                                    ?
 ? Layer 4: 机器学习?                                                 ?
@@ -431,7 +431,7 @@ class FactorStore(ABC):
     def list_factors(self) -> List[FactorMetadata]:
     
 class BacktraderAdapter:
-?""
+?""
     def create_datafeed(self, factor: FactorData, price_data: pd.DataFrame) -> bt.feeds.PandasData:
         """创建Backtrader数据?""
     
@@ -488,7 +488,7 @@ class PortfolioOptimizer(ABC):
 
 ### 5.3 成本效益分析
 
-?|
+?|
 |------|----------|----------|----------|-----------|
 | **Feast因子中间?* | ?(4-6? | ?| ?(因子数据管理革命) | **P0** |
 | **IC分析引擎** | ?(3-4? | ?| ?(因子有效性评? | **P0** |
@@ -501,7 +501,7 @@ class PortfolioOptimizer(ABC):
 ### 6.1 第一阶段: 基础能力建设 (3个月)
 **目标**: 建立因子库与回测的基础集成能力
 
-?(4?**
+?(4?**
    - 实现FactorData到Backtrader DataFeed的转?
    - 开发多因子策略模板
    - 完成基础回测流水线验?
@@ -560,7 +560,7 @@ class PortfolioOptimizer(ABC):
 | 原则 | 解释 | 实施要点 |
 |------|------|----------|
 | **é
-| **æ
+| **æ
 
 ### 7.2 极简身份认证与访问控?
 
@@ -661,7 +661,7 @@ class PersonalAuditLogger:
 3. **数据导出**: 大规模数据导出操?
 4. **系统异常**: 程序崩溃或错?
 
-**æ
+**æ
 障恢复机制**:
 1. **é
    ```bash
@@ -789,13 +789,13 @@ def validate_config(config_path: str) -> bool:
 
 **防锁死设?*:
 1. **é
-?
+?
 2. **紧急重?*: 提供命令行参?`--reset-config` 重置为出厂设?
 晰的修复指导，而不是技术性错误堆?
 
 **用户友好文档**:
 - 常见问题解答（FAQ）章?
-- æ
+- æ
 障排除流程?
 - 一键恢复脚?
 
@@ -810,7 +810,7 @@ def validate_config(config_path: str) -> bool:
 | 组件 | 要求 | 说明 |
 |------|------|------|
 | **Python版本** | Python 3.8 - 3.11 | 推荐Python 3.9（最稳定?|
-| **å
+| **å
 ?|
 | **存储空间** | 50GB 可用空间 | 用于存储历史数据和计算结?|
 | **网络** | 稳定的互联网连接 | 用于下载数据和调用API |
@@ -861,7 +861,7 @@ venv\Scripts\activate
 依赖
 pip install -r requirements.txt
 
-?
+?
 python scripts/init_config.py
 ```
 
@@ -902,7 +902,7 @@ import yaml
 from pathlib import Path
 
 def initialize_config():
-?""
+?""
     
     # 确定用户主目?
     home_dir = Path.home()
@@ -1045,7 +1045,7 @@ if __name__ == "__main__":
    ```
 
 3. **JSONé
-?
+?
 
 **存储路径管理**:
 ```python
@@ -1077,7 +1077,7 @@ class StorageManager:
         return self.dirs[category] / filename
 ```
 
-### 8.7 æ
+### 8.7 æ
 障排除与恢?
 
 **常见问题解决方案**:
@@ -1216,8 +1216,8 @@ def first_run_wizard():
     print("=" * 60)
     print()
     
-?
-?)
+?
+?)
     
     use_ai = input("是否启用AI服务?y/N): ").lower() == 'y'
     
@@ -1282,7 +1282,7 @@ python scripts/migrate.py
 
 ### 9.1 当前差距分析
 
-?|
+?|
 |------|--------------|-----------------|----------|------------|
 | **因子数据管理** | 专用Feature Store + 版本控制 | 文件系统存储，无版本管理 | **?* | **P0** |
 | **计算架构** | 分布式计?+ 流批一?| 单机Pandas计算 | **?* | **P2** |

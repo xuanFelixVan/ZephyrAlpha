@@ -20,3 +20,17 @@ standard_type: 专业量化机构文档
 responsibility:
   - 交易策略框架设计与实施指导与实施指导
 ---
+
+---
+
+## 💻 实现代码示例
+
+```python
+# 实现示例
+class ModuleImplementation:
+    def __init__(self):
+        pass
+    
+    def execute(self):
+        pass
+```

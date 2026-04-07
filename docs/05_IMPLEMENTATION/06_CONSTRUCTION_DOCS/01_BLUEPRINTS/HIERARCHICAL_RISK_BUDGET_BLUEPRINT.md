@@ -161,7 +161,7 @@ class HierarchicalRiskBudgetManager:
             level_mapping: 层级到资产的映射
             
         Returns:
-
+
         """
         pass
     

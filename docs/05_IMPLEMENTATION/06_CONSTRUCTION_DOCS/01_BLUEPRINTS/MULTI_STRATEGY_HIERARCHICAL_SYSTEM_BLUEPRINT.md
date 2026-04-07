@@ -93,7 +93,7 @@ layer: Layer 5.2 (组合优化)
 - 风险指标计算器（VaR、CVaR、最大回撤、夏普比率）
 - 容量评估器（策略容量、资金使用效率）
 
-?*
+?*
 - 权重约束处理器（权重上下限、风险约束）
 
 **Layer 3 - 信号融合机制?*
@@ -273,10 +273,10 @@ class StrategyPerformanceEvaluator:
         return correlation_matrix
 ```
 
-?
+?
 ```python
 class StrategyLayerWeightAllocator:
-?    
+?    
     索引: STRATEGY_HIERARCHY_001-M02
     """
     
@@ -432,7 +432,7 @@ class StrategyLayerWeightAllocator:
         if adjustments:
             return "基于绩效评估和风险贡献调? " + ", ".join(adjustments)
         else:
-"
+"
 ```
 
 ### 3.3 信号融合引擎
@@ -576,13 +576,13 @@ class SignalFusionEngine:
 ```
 
 ### 3.4 策略协同优化?
-
+
 
 ```python
 class StrategySynergyOptimizer:
     """策略协同优化?    
     索引: STRATEGY_HIERARCHY_001-M04
-
+
     """
     
     def __init__(self, config: SynergyConfig):
@@ -605,7 +605,7 @@ class StrategySynergyOptimizer:
         # 2. 识别冲突策略
         conflicts = self._identify_conflicts(correlation_matrix)
         
-
+
         resource_allocation = self._optimize_resources(
             strategy_performances, synergies, conflicts, resource_constraints
         )
@@ -670,7 +670,7 @@ class StrategySynergyOptimizer:
                            synergies: List[StrategySynergy],
                            conflicts: List[StrategyConflict],
                            constraints: ResourceConstraints) -> Dict[str, ResourceAllocation]:
-"""
+"""
         allocations = {}
         
             base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一?            
@@ -711,7 +711,7 @@ class StrategySynergyOptimizer:
         
         # 协同建议
         for synergy in synergies[:3]:  # ?个协同效?            recommendations.append(
-?
+?
             )
         
         # 冲突建议
@@ -798,7 +798,7 @@ class StrategyConflict:
 
 @dataclass
 class ResourceAllocation:
-"""
+"""
     strategy_name: str
     allocation_ratio: float
     capital_allocation: float
@@ -880,7 +880,7 @@ class MultiStrategyHierarchicalSystem:
             performances[name] = self.performance_evaluator.evaluate_strategy(returns)
         
         
-
+
         weight_result = self.weight_allocator.allocate_weights(
             performances, correlation_matrix, current_weights
         )

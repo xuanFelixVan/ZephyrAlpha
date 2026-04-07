@@ -176,7 +176,7 @@ def genetic_algorithm_optimize(algorithm, symbol, volume, duration, param_ranges
 
 #### 3.2.2 算法选择算法
 
-**:
+**:
 ```python
 def select_algorithm(market_conditions):
     volatility = market_conditions['volatility']

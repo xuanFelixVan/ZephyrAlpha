@@ -87,8 +87,8 @@ layer: Layer 5.2 (组合优化)
 
 等）
 - 敏感性分析（参数敏感性、模型敏感性）
-- æ
-- æ
+- æ
+- æ
 景报告生成
 
 - 支持风险管理决策
@@ -124,12 +124,12 @@ class ScenarioAnalyzer:
         
         Args:
             portfolio_weights: 组合权重
-            scenario_name: æ
-            scenario_dates: æ
+            scenario_name: æ
+            scenario_dates: æ
 景日期范围
             
         Returns:
-            æ
+            æ
 景分析结果
         """
         pass
@@ -147,7 +147,7 @@ class ScenarioAnalyzer:
             shock_params: 冲击参数，如 {'equity_shock': -0.2, 'rate_shock': 0.02}
             
         Returns:
-            æ
+            æ
 景分析结果
         """
         pass
@@ -177,7 +177,7 @@ class ScenarioAnalyzer:
 景分析报告
         
         Args:
-            scenario_results: æ
+            scenario_results: æ
 景分析结果列表
             
         Returns:
@@ -188,7 +188,7 @@ class ScenarioAnalyzer:
 
 景库
 
-| æ
+| æ
 景类型 | 日期范围 | 描述 |
 |---------|---------|---------|------|
  |
@@ -201,7 +201,7 @@ class ScenarioAnalyzer:
 
 ```python
 class ScenarioAPI:
-    """æ
+    """æ
 景分析API"""
     
     @endpoint("/api/v1/scenario/historical")

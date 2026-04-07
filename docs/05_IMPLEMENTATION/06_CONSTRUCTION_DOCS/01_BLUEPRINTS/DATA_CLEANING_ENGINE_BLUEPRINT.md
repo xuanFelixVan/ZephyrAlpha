@@ -171,7 +171,7 @@ class AnomalyDetector:
             df: Spark DataFrame
         
         Returns:
-            DataFrame: å
+            DataFrame: å
 含异常值标记的DataFrame
         """
         detector = self.methods.get(method)

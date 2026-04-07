@@ -134,7 +134,7 @@ class InstitutionalActivityFactor(BaseFactor):
         """计算主力动向因子
         
 ¥:
-            data: å
+            data: å
 含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
@@ -320,7 +320,7 @@ class AgentBasedFactorLibrary:
         """计算所有智能体因子
         
         输出:
-            pd.DataFrame: å
+            pd.DataFrame: å
 含所有因子值的DataFrame
         """
         factor_values = {}
