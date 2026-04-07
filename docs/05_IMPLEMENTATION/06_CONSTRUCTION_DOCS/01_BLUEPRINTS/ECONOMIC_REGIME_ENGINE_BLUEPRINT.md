@@ -39,6 +39,13 @@ layer: "Layer 6 (组合优化层)"
 > **开发时?*: 60h（个人开发，时间灵活?> **核心定位**: 基于随机森林模型识别宏观经济周期阶段，为桥水全天候策略提供经济范式判断能?>
 > **技术规格书**: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md
 
+## 核心定位
+
+> 核心职责: Economic Regime Engine蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Economic Regime Engine蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
 ## 1. 模块概述
 
 ### 1.1 业务背景与价值主?

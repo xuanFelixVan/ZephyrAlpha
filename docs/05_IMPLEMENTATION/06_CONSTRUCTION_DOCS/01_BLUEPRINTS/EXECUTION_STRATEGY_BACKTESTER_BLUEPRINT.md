@@ -35,6 +35,10 @@ layer: "Layer 8 (执行层)"
 > **开源项目**: Backtrader (12k+ Stars) + VeighNa (27k+ Stars)
 > **目标**: 构建专业级执行策略回测器，实现回测到实盘无缝切换
 
+## 核心定位
+
+负责Execution Strategy Backtester的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
 ## 二、架构设计
 
 ### 2.1 Layer定位

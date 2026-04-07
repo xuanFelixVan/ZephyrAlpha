@@ -43,6 +43,13 @@ layer: "Layer 6 (组合优化层)"
 > **索引**: `PORTFOLIO_DIVERSIFICATION_METRIC_001`
 > **开发周期**: 1周
 
+## 核心定位
+
+> 核心职责: Portfolio Diversification Metric蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Portfolio Diversification Metric蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
 ## 2. 功能设计
 
 ### 2.1 核心功能

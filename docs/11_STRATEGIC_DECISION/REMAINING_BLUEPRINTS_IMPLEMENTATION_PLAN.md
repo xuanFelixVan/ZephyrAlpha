@@ -17,6 +17,11 @@ responsibility:
 ---
 
 # Layer 11剩余蓝图实施计划
+> **核心职责**: 蓝图设计和规划
+> **职责边界**: 
+> - ✅ 本文档负责：蓝图设计和规划相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > **核心职责**: Remaining Blueprints Implementation Plan.Md蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Remaining Blueprints Implementation Plan.Md蓝图设计相关内容

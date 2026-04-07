@@ -38,6 +38,13 @@ layer: "Layer 6 (组合优化层)"
 > **创建日期**: 2026-04-07
 > **核心定位**: 诊断组合优化问题的健康状况
 
+## 核心定位
+
+> 核心职责: Portfolio Optimization Diagnostics蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Portfolio Optimization Diagnostics蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
 ## 2. 功能设计
 
 ### 2.1 核心功能

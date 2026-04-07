@@ -43,6 +43,13 @@ layer: "Layer 6 (组合优化层)"
 > **开源项目**: Streamlit (35k+ Stars, Apache 2.0 License)
 > **目标**: 构建专业级实时监控面板，对标Two Sigma、Citadel、桥水标准
 
+## 核心定位
+
+> 核心职责: Monitoring Dashboard Enhancement蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Monitoring Dashboard Enhancement蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+
 ## 一、架构设计
 
 ### 1.1 Layer 8整体架构

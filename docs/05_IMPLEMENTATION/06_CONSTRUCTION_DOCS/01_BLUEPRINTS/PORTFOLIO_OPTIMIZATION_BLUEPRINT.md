@@ -27,6 +27,10 @@ priority: P0
 > **补充文档**: 本蓝图是[STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md)的后续组件，专注于多策略组合构建与优?
 
 
+## 核心定位
+
+负责Portfolio Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
 ## 一、设计目标与约束
 
 ### 1.1 核心设计目标

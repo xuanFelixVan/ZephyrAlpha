@@ -27,6 +27,10 @@ layer: "Layer 2 (Alpha因子层)"
 > **索引**: `ALPHA_FACTOR_FACTORY_001`
 > **开发周期**: 3周
 
+## 核心定位
+
+负责Alpha Factor Factory的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+
 ## 🎯 模块定位与职责
 
 ### 核心职责

@@ -31,6 +31,13 @@ responsibility:
 > **索引**: `TAIL_RISK_METRICS_EXTENSION_001`
 > **开发周期**: 1周
 
+## 核心定位
+
+> 核心职责: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指标
+> 职责边界: 
+> - ✅ 本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指标
+> - ❌ 本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责），确保系统功能的稳定运行和高效执行。
+
 ## 2. 功能设计
 
 ### 2.1 核心功能

@@ -22,6 +22,13 @@ responsibility:
 > - ✅ 本文档负责：尾部风险对冲策略、期权对冲、VIX对冲
 > - ❌ 本文档不负责：尾部风险度量（由TAIL_RISK_METRICS_EXTENSION负责）
 
+## 核心定位
+
+> 核心职责: 期权对冲、尾部风险保护
+> 职责边界: 
+> - ✅ 本文档负责：尾部风险对冲策略、期权对冲、VIX对冲
+> - ❌ 本文档不负责：尾部风险度量（由TAIL_RISK_METRICS_EXTENSION负责），确保系统功能的稳定运行和高效执行。
+
 ## 概述
 
 > **索引**: `TAIL_RISK_BLUEPRINT_001`

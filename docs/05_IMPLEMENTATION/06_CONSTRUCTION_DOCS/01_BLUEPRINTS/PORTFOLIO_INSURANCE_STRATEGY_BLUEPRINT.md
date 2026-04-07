@@ -40,7 +40,10 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-组合保险策略模块，负责实施投资组合保护策略，如CPPI、OBPI等
+> 核心职责: Portfolio Insurance Strategy蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：Portfolio Insurance Strategy蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
 
 ## 1. 概述

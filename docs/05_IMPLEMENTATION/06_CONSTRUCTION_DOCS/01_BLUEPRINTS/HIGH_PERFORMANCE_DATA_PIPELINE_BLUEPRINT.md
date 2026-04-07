@@ -43,7 +43,10 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-高性能数据管道，负责构建低延迟、高吞吐的数据处理流水线
+> 核心职责: High Performance Data Pipeline蓝图设计
+> 职责边界: 
+> - ✅ 本文档负责：High Performance Data Pipeline蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
 
 
 ## 一、设计背景与目标
