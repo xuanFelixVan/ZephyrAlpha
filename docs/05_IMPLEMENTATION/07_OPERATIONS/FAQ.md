@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha常见问题
+responsibility:
+  - ZephyrAlpha常见问题FAQ文档
 ---
 
 # ZephyrAlpha常见问题FAQ

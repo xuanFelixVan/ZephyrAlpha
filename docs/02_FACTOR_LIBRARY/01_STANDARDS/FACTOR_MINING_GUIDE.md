@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_MINING_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FACTOR_MINING操作指南
 ---
 
 ﻿---
@@ -436,9 +438,9 @@ def calculate_sentiment_factor(stock_code, date, window=7):
 ### 9.2 数据?
 | 数据?| 说明 | 链接 |
 |--------|------|------|
-| **iFinD** | 5900+预计算因?| [IFIND_CONNECTOR](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) |
-| **QMT** | 实时行情数据 | [QMT_INTERFACE](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md) |
-| **Baostock** | 免费历史数据 | [BAOSTOCK_CONNECTOR](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md) |
+| **iFinD** | 5900+预计算因?| IFIND_CONNECTOR |
+| **QMT** | 实时行情数据 | QMT_INTERFACE |
+| **Baostock** | 免费历史数据 | BAOSTOCK_CONNECTOR |
 
 ### 9.3 参考资?
 | 资料 | 说明 |

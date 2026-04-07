@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 专业多时间框架策略架文档
 ---
 
 ﻿---
@@ -1012,9 +1014,9 @@ class FullCyclePerformanceAttribution:
 
 | 蓝图文档 | 说明 | 实施周期 |
 |---------|------|---------|
-| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md)** | 数据质量监控 - 桥水基金数据质量体系 | 2?|
+| **DATA_QUALITY_MONITORING_BLUEPRINT.md** | 数据质量监控 - 桥水基金数据质量体系 | 2?|
 | **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | 实时风险监控 - Two Sigma风险监控体系 | 2?|
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | 压力测试系统 - 桥水基金压力测试体系 | 2?|
+| **STRESS_TESTING_SYSTEM_BLUEPRINT.md** | 压力测试系统 - 桥水基金压力测试体系 | 2?|
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | 合规监控系统 - Citadel合规体系 | 2?|
 
 ### 6.2

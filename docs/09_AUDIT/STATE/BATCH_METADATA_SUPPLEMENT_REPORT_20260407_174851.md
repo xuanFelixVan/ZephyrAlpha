@@ -9,6 +9,8 @@ standard_type: 补充报告
 applicable_scope: 批量元数据补充
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - BATCH_METADATA_SUPPLEMENT_20260407_174851报告文档
 ---
 
 # 批量元数据补充报告

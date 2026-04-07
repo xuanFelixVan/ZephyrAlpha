@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FRONTEND_COMPONENT_STRUCTURE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﮒﻝﺁﻝﭨﻛﭨﭘﻝﭨﮔ文档
 ---
 
 ﻿---
@@ -34,7 +36,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 > ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ
 > **ﻝﺑ۱ﮒﺙ**: `DESIGN_004`
-> **ﮒﺏﻟﮔﮔ۰۲**: [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
+> **ﮒﺏﻟﮔﮔ۰۲**: Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
 ## 1. ﮔﺑﻛﺛﻝﭨﻛﭨﭘﮔﭘﮔ
 

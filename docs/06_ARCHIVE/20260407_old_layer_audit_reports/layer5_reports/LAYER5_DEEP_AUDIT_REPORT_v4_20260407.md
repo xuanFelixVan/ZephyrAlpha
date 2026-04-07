@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - LAYER5_DEEP_AUDIT_v4_20260407报告文档
 ---
 
 ﻿---

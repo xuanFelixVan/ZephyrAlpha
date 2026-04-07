@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DOC_GOVERNANCE_OPTIMIZATION_PROPOSAL
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﮔﮔ۰۲ﮔﺎﭨﻝﻛﺙﮒﮔﮔ۰ﺅﺙﻝﺙﻝﻠﻠ۱ﻛﺕﻟﻟﺑ۲ﻟﺝﺗﻝ文档
 ---
 
 ﻿---

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DATA_SUBSCRIPTION_SERVICE_001
 version: 1.0.0
 status: Active
@@ -8,6 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
+  - DATA_SUBSCRIPTION_SERVICE蓝图设计
 服务
 管理
   - 实时数据分发

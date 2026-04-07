@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha数据迁移
+responsibility:
+  - DATA_MIGRATION操作指南
 ---
 
 # ZephyrAlpha数据迁移指南
@@ -407,7 +409,7 @@ curl http://localhost:8000/health
 
 - [系统部署指南](DEPLOYMENT_GUIDE.md)
 - [环境配置指南](ENVIRONMENT_CONFIG_GUIDE.md)
-- [故障诊断指南](TROUBLESHOOTING_GUIDE.md)
+- 故障诊断指南
 - [常见问题FAQ](../07_OPERATIONS/FAQ.md)
 
 ---

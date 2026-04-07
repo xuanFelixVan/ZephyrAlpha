@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ALGORITHMIC_TRADING_COMPLIANCE蓝图设计
 ---
 
 ﻿---
@@ -371,7 +373,7 @@ class ExecutionReport:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 31 | 算法交易合规系统 | [ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md](01_FRAMEWORK/ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 31 | 算法交易合规系统 | ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

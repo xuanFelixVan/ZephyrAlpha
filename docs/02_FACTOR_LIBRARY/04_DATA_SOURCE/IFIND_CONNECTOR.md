@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - iFind连接器技术规格文档
 ---
 
 ﻿---
@@ -319,7 +321,7 @@ def _initialize_ifind_client(self) -> None:
 
 ## 🔗 相关文档
 
-- [数据源索引](API_README.md)
+- 数据源索引
 - [QMT数据接口](./QMT_INTERFACE.md)
 - [专业多时间框架架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 

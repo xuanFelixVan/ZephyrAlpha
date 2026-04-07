@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FAQ
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FAQmd  常见问题文档
 ---
 
 ﻿---
@@ -52,7 +54,7 @@ responsibility:
 - **Layer 6**: 监控?- 实时监控、告?
 - **Layer 7**: 归因?- 绩效归因、分?
 
-详见: [01_FRAMEWORK/README.md](API_README.md)
+详见: 01_FRAMEWORK/README.md
 
 ### Q2: 系统支持多少个策略？
 
@@ -102,7 +104,7 @@ responsibility:
 
 **A**: 当前?87 ?Alpha 因子 + 46 个风险因?= 133 个因?
 
-详见: [02_ALPHA_FACTORS_INDEX.md](02_FACTOR_LIBRARY/01_STANDARDS/ALPHA_FACTORS_INDEX_STANDARD.md)
+详见: 02_ALPHA_FACTORS_INDEX.md
 
 
 ## 策略开?
@@ -118,7 +120,7 @@ responsibility:
 5. ?`03_TRADING_TACTICS/` 中创建策略文?
 6. ?`CHANGELOG.md` 中记录新增策?
 
-详见: [Strategy_Spec_S001.md](03_TRADING_TACTICS/Strategy_Spec_S001.md)
+详见: Strategy_Spec_S001.md
 
 ### Q9: 如何运行策略回测?
 
@@ -141,7 +143,7 @@ responsibility:
 - 交易统计
 - 风险分析
 
-详见: [05_BACKTEST/strategy_reports/README.md](API_README.md)
+详见: 05_BACKTEST/strategy_reports/README.md
 
 
 ## 数据管理
@@ -220,7 +222,7 @@ responsibility:
 - 数据格式不兼?
 - 接口版本升级
 
-详见: [VERSIONING.md](05_IMPLEMENTATION/VERSIONING.md)
+详见: VERSIONING.md
 
 ### Q18: 什么时候升级次版本?
 
@@ -264,7 +266,7 @@ responsibility:
 - `secrets/`
 - `pyproject.toml`
 
-详见: [AI_Permissions.md](01_FRAMEWORK/AI_PERMISSIONS.md)
+详见: AI_Permissions.md
 
 ### Q21: 如何让AI添加新因子？
 

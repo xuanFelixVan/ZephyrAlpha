@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 说明文件
 applicable_scope: 01_FRAMEWORK\LAYER4_ML
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - LAYER4_ML说明文档
 ---
 
 ﻿---

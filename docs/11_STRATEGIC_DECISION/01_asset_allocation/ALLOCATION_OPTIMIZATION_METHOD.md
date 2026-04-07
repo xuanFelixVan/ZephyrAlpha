@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ALLOCATION_OPTIMIZATION_METHOD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 配置优化方法蓝图文档
 ---
 
 ﻿---

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PARAMETER_OPTIMIZATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PARAMETER_OPTIMIZATION蓝图设计
 ---
 
 ﻿---
@@ -799,7 +801,7 @@ result = optimizer.optimize(config)
 | [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 策略引擎核心蓝图 |
 | [BATCH_EVALUATION_BLUEPRINT.md](./BATCH_EVALUATION_BLUEPRINT.md) | 批量评估蓝图 |
 | [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | 策略选择蓝图 |
-| [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | 组合优化蓝图 |
+| PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 
 **文档版本**: v1.0  
@@ -816,7 +818,7 @@ result = optimizer.optimize(config)
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Param Opt Bp
 - **模块ID**: TACTICS_PARAM_OPT_BP_001
-- **蓝图文档**: [PARAMETER_OPTIMIZATION_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PARAMETER_OPTIMIZATION_BLUEPRINT.md)
+- **蓝图文档**: PARAMETER_OPTIMIZATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?compliance_level: 初始标准
 - **状态**: Active

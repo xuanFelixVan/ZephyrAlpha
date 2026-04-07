@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MISSING_MODULES_BLUEPRINT_COLLECTION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - MISSING_MODULES_COLLECTION蓝图设计
 ---
 
 ﻿---

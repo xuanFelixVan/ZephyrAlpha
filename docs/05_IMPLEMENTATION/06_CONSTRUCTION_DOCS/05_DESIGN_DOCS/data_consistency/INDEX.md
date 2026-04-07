@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - data_consistency目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Compensating Transaction Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/COMPENSATING_TRANSACTION_DESIGN.md) - `IMPL_DOC_003-02`
-- [Multi Engine Data Consistency Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md) - `IMPL_DOC_003`
-- [Saga Implementation Flowchart](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/SAGA_IMPLEMENTATION_FLOWCHART.md) - `IMPL_DOC_003-01`
+- Compensating Transaction Design - `IMPL_DOC_003-02`
+- Multi Engine Data Consistency Design - `IMPL_DOC_003`
+- Saga Implementation Flowchart - `IMPL_DOC_003-01`
 
 ---
 

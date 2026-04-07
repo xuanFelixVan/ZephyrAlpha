@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: REBALANCING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - REBALANCING蓝图设计
 ---
 
 ﻿---
@@ -1203,7 +1205,7 @@ class SuspendedStockRebalance:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md) | 组合优化AI蓝图 |
 | [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统 |
@@ -1230,7 +1232,7 @@ class SuspendedStockRebalance:
 #### Layer 0: 系统架构
 ##### 0.001. Rebalancing Blueprint
 - **模块ID**: REBALANCING_BLUEPRINT_001
-- **蓝图文档**: [REBALANCING_BLUEPRINT.md](11_STRATEGIC_DECISION\REBALANCING_BLUEPRINT.md)
+- **蓝图文档**: REBALANCING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.10 - 再平衡决策系统
 - **状态**: Active

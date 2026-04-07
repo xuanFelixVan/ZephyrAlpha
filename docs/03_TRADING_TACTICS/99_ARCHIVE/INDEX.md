@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 99_ARCHIVE目录索引
 ---
 
 ﻿---
@@ -53,10 +55,10 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [36 Decision Framework Archived](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md) - `TACTICS_ARCH_DECISION_FRAMEWORK_001`
+- 36 Decision Framework Archived - `TACTICS_ARCH_DECISION_FRAMEWORK_001`
 - Ai-Integration - `TACTICS_ARCH_AI_INTEGRATION_001`
 - Interface-Standard - `TACTICS_ARCH_INTERFACE_STD_001`
-- [Manager](03_TRADING_TACTICS/99_ARCHIVE/manager.md) - `TACTICS_ARCH_MANAGER_001`
+- Manager - `TACTICS_ARCH_MANAGER_001`
 - Pattern-Recognition - `TACTICS_ARCH_PATTERN_RECOG_001`
 - Technical-Indicators - `TACTICS_ARCH_TECH_INDICATORS_001`
 

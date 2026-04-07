@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: EVENT_BUS_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - EVENT_BUS操作指南
 ---
 
 ﻿---
@@ -56,7 +58,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ### ﮒﻟﻟﮒ?
 
-- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ
 
 ---
 
@@ -563,7 +565,7 @@ class EventBus:
 
 ### ﮒﻠ۷ﮔﮔ۰۲
 
-- [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ
 
 ### ﮒ۳ﻠ۷ﻟﭖﮔﭦ
 

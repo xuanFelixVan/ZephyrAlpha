@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: P0_P1_P2_RESOLUTION_SUMMARY_20260406
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 深度文档治理审计问题修复总结报告文档
 ---
 
 ﻿---

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_SOURCE_INVENTORY
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 清风量化系统数据接口清单文档
 ---
 
 ﻿---
@@ -523,9 +525,9 @@ class QlibAdapter:
 ### 7.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文?*: [DATA_SOURCE_MANAGEMENT_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
+- **父文?*: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
 - **关联文档**:
-  - [DATA_SOURCE_MANAGEMENT_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
+  - DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
   - [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 ### 7.2 版本管理

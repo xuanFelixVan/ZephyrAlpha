@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - AI_VIRTUAL_RESEARCH_TEAM蓝图设计
 ---
 
 ﻿---
@@ -961,7 +963,7 @@ class KnowledgeBaseIntegration:
 #### Layer 2: Alpha因子层
 ##### 0.001. Ai Virtual Research Team
 - **模块ID**: AI_VIRTUAL_RESEARCH_TEAM_001
-- **蓝图文档**: [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK\AI_VIRTUAL_RESEARCH_TEAM\AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
+- **蓝图文档**: AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 9 - AI?| : 
 - **状态**: Active

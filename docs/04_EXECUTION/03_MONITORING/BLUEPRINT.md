@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -428,7 +430,7 @@ start_http_server(8000)
 #### Layer 0: 系统架构
 ##### 0.BLUEPRINT. Exe
 - **模块ID**: EXE_BLUEPRINT
-- **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\03_MONITORING\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

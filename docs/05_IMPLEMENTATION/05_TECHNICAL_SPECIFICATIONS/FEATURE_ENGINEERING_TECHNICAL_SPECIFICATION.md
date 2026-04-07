@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FEATURE_ENGINEERING_TECHNICAL技术规范
 ---
 
 ﻿---
@@ -728,7 +730,7 @@ feature_engineering:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [模块设计计划](02_FACTOR_LIBRARY/01_STANDARDS/MODULE_DESIGN_PLAN.md)
+- 模块设计计划
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 机器学习层负责人

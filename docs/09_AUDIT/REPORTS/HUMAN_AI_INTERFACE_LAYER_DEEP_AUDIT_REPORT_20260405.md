@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_REPORT_20260405
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_20260405报告文档
 ---
 
 ﻿---

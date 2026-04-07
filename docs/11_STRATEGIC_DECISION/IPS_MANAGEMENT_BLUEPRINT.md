@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: IPS_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - IPS_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -902,7 +904,7 @@ class IPSGenerator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 | [RISK_BUDGET_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算分配系统 |
 
@@ -919,7 +921,7 @@ class IPSGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Ips Management
 - **模块ID**: IPS_MANAGEMENT_001
-- **蓝图文档**: [IPS_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\IPS_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: IPS_MANAGEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.19 - 投资政策声明管理系统
 - **状态**: Active

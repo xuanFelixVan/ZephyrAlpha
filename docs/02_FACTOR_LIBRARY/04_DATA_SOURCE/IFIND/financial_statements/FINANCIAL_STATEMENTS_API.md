@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - iFind财务数据API参考文档
 ---
 
 ﻿---
@@ -692,8 +694,8 @@ df = calculate_solvency(df)
 ## 9. 相关文档
 
 - [INDEX.md](INDEX.md): 财务数据目录索引
-- [THS_BD_COMPLETE_INDICATOR_LIST.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md): iFind完整指标列表
-- [../FACTOR_MASTER_INDEX.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/factor_master_index.md): 因子主索引
+- THS_BD_COMPLETE_INDICATOR_LIST.md: iFind完整指标列表
+- ../FACTOR_MASTER_INDEX.md: 因子主索引
 
 ---
 

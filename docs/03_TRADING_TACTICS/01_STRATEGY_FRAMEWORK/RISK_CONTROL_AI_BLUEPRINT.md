@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: RISK_CONTROL_AI_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - RISK_CONTROL_AI蓝图设计
 ---
 
 ﻿---
@@ -695,7 +697,7 @@ class RiskControlTextInterface:
 
 ### 8.1 文档索引
 
-- **?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **?*: STRATEGY_AI_MODULES_ANALYSIS.md
 - **
   - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
   - [COMPLIANCE_MONITORING_BLUEPRINT.md](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md)
@@ -718,7 +720,7 @@ class RiskControlTextInterface:
 #### Layer 0: 系统架构
 ##### 0.001. Risk Control Ai
 - **模块ID**: RISK_CONTROL_AI_001
-- **蓝图文档**: [RISK_CONTROL_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\RISK_CONTROL_AI_BLUEPRINT.md)
+- **蓝图文档**: RISK_CONTROL_AI_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

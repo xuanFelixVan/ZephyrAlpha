@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PRODUCTION_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PRODUCTION_MONITORING蓝图设计
 ---
 
 ﻿---
@@ -42,7 +44,7 @@ implementation_status: 设计阶段
 
 >
 
-文档**: 本蓝图是[PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)的后续组件，专注于生产环境策略监控与风险管理
+文档**: 本蓝图是PORTFOLIO_OPTIMIZATION_BLUEPRINT.md的后续组件，专注于生产环境策略监控与风险管理
 
 ---
 
@@ -909,7 +911,7 @@ class PerformanceEvaluationEngine:
 #### Layer 0: 系统架构
 ##### 0.001. Strat Prod Mon
 - **模块ID**: STRAT_PROD_MON_001
-- **蓝图文档**: [PRODUCTION_MONITORING_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PRODUCTION_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: PRODUCTION_MONITORING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 11 文字驱动层架构蓝文档
 ---
 
 ﻿---

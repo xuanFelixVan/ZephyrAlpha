@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BEST_PRACTICES_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - цЬАфхоЮшхУчвхХ文档
 ---
 
 ﻿---
@@ -173,8 +175,8 @@ implementation_status: Active
 
 ### **хЖЕщГицЦЗцбг**
 
-- [цбИф╛ЛчаФчй╢х║У](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
-- [ч╗ПщкМцХЩшонх║У](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md)
+- цбИф╛ЛчаФчй╢х║У
+- ч╗ПщкМцХЩшонх║У
 - х╖ехЕ╖ф╜┐чФицМЗхНЧ
 
 ### **хдЦщГиш╡Дц║Р**

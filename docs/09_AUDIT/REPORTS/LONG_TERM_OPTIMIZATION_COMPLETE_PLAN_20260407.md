@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 长期优化计划完整执行报告文档
 ---
 
 # 长期优化计划完整执行报告

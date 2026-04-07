@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -42,9 +44,9 @@ responsibility: 数据管道架构设计与编排流程
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集实现 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
-| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
+| 数据采集实现 | ../DATA_ACQUISITION.md | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | ../03_CLEANING/BLUEPRINT.md | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | ../QUALITY_MANAGEMENT/ | 下游检查 | 数据质量控制体系 |
 
 **职责边界**:
 - ✅ 本文档负责: 定义数据流水线的整体架构和设计原则
@@ -57,9 +59,9 @@ responsibility: 数据管道架构设计与编排流程
 **相关文档**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集实现 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 实现层 | 数据采集的具体实现 |
-| 数据清洗引擎 | [../03_CLEANING/BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 下游处理 | 数据清洗规则和流程 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
+| 数据采集实现 | ../DATA_ACQUISITION.md | 实现层 | 数据采集的具体实现 |
+| 数据清洗引擎 | ../03_CLEANING/BLUEPRINT.md | 下游处理 | 数据清洗规则和流程 |
+| 数据质量管理 | ../QUALITY_MANAGEMENT/ | 下游检查 | 数据质量控制体系 |
 
 **职责边界**:
 - ✅ 本文档负责: 定义数据流水线的整体架构和设计原则
@@ -646,7 +648,7 @@ retention:
 #### Layer 0: 系统架构
 ##### 0.001. Data Pipeline Blueprint
 - **模块ID**: DATA_PIPELINE_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\07_DATA_PIPELINE\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据流水线架构
 - **状态**: Active

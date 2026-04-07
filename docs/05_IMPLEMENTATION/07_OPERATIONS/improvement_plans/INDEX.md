@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - improvement_plans目录索引
 ---
 
 ﻿---
@@ -51,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Improvement Plan Execution Report](05_IMPLEMENTATION/07_OPERATIONS/improvement_plans/IMPROVEMENT_PLAN_EXECUTION_REPORT.md) - `IMPROVEMENT_PLAN_EXECUTION_001`
-- [Smart Execution Market Impact Improvement Plan](05_IMPLEMENTATION/07_OPERATIONS/improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md) - `IMPROVEMENT_PLAN_001`
+- Improvement Plan Execution Report - `IMPROVEMENT_PLAN_EXECUTION_001`
+- Smart Execution Market Impact Improvement Plan - `IMPROVEMENT_PLAN_001`
 
 ---
 

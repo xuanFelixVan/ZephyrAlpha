@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 11战略决策层短期改进计划文档
 ---
 
 ﻿---

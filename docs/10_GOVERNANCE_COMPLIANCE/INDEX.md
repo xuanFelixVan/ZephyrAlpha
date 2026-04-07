@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 10_GOVERNANCE_COMPLIANCE目录索引
 ---
 
 ﻿---
@@ -51,7 +53,7 @@ responsibility:
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [治理与合规层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 10总体架构设计 | ⭐⭐⭐⭐?|
+| 治理与合规层蓝图 | Layer 10总体架构设计 | ⭐⭐⭐⭐?|
 
 ### 子模块（规划中）
 

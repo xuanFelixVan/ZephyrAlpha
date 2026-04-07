@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MANUAL_LINK_REMOVAL_REPORT_20260407_170216
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 修复报告
 applicable_scope: 手动删除无效链接
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - MANUAL_LINK_REMOVAL_20260407_170216报告文档
 ---
 
 # 手动删除无效链接报告

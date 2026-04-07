@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 07_AI_REPORTING目录索引
 ---
 
 ﻿---
@@ -48,7 +50,7 @@ implementation_status: 设计阶段---
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [AI报告层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 7总体架构设计 | ⭐⭐⭐⭐⭐ |
+| AI报告层蓝图 | Layer 7总体架构设计 | ⭐⭐⭐⭐⭐ |
 
 ### 子模块（规划中）
 

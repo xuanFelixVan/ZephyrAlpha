@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PRINCIPLE_CODIFIER蓝图设计
 ---
 
 ﻿---
@@ -526,7 +528,7 @@ class TestDispersedInvestmentRule:
 #### Layer 10: 治理与合规层
 ##### 0.001. Principle Codifier Blueprint
 - **模块ID**: PRINCIPLE_CODIFIER_BLUEPRINT_001
-- **蓝图文档**: [PRINCIPLE_CODIFIER_BLUEPRINT.md](01_FRAMEWORK\PRINCIPLE_CODIFIER_BLUEPRINT.md)
+- **蓝图文档**: PRINCIPLE_CODIFIER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 投资原则算法?compliance_level: 顶级专业标准
 - **状态**: Active

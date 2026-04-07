@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - COUNTERPARTY_RISK蓝图设计
 ---
 
 ﻿---
@@ -572,7 +574,7 @@ class CollateralInfo:
 #### Layer 10: 治理与合规层
 ##### 0.001. Counterparty Risk Blueprint
 - **模块ID**: COUNTERPARTY_RISK_BLUEPRINT_001
-- **蓝图文档**: [COUNTERPARTY_RISK_BLUEPRINT.md](01_FRAMEWORK\COUNTERPARTY_RISK_BLUEPRINT.md)
+- **蓝图文档**: COUNTERPARTY_RISK_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 交易对手风险管理系统
 - **状态**: Active

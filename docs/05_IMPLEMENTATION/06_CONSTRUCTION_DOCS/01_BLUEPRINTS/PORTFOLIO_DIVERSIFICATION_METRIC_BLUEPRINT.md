@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 分散度度量
+  - 风险分散评估
+  - 集中度分析
+  - 分散化优化
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -196,5 +199,11 @@ diversification_metrics:
 **文档维护**:
 - **责任模块**: PORTFOLIO_DIVERSIFICATION_METRIC
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

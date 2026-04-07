@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DECISION_DASHBOARD_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DECISION_DASHBOARD蓝图设计
 ---
 
 ﻿---
@@ -475,7 +477,7 @@ with tab3:
 #### Layer 8: 人机交互层
 ##### 0.001. Decision Dashboard Blueprint
 - **模块ID**: DECISION_DASHBOARD_BLUEPRINT_001
-- **蓝图文档**: [DECISION_DASHBOARD_BLUEPRINT.md](01_FRAMEWORK\DECISION_DASHBOARD_BLUEPRINT.md)
+- **蓝图文档**: DECISION_DASHBOARD_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - 决策仪表板
 - **状态**: Active

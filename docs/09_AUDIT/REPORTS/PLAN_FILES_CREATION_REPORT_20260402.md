@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PLAN_FILES_CREATION_REPORT_20260402
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PLAN_FILES_CREATION_20260402报告文档
 ---
 
 ﻿---

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: QUALITY_METRICS_REPORT_20260407_171020
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 质量报告
 applicable_scope: 文档质量指标监控
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - QUALITY_METRICS_20260407_171020报告文档
 ---
 
 # 文档质量指标监控报告

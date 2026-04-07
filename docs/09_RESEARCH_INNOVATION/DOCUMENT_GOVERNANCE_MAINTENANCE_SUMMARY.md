@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 9文档治理维护总结文档
 ---
 
 ﻿---
@@ -114,7 +116,7 @@ compliance_level: 专业机构标准
 
 ### 5.1 维护计划
 
-**文档**: [LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN.md](09_RESEARCH_INNOVATION/DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN.md)
+**文档**: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN.md
 
 **维护策略**:
 1. **预防性维护**: 防止问题发生

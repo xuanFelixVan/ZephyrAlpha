@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\05_BACKTEST
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 05_BACKTEST目录索引
 ---
 
 ﻿---
@@ -37,7 +39,7 @@ compliance_level: 专业标准---
 
 | 目录 | 说明 | 文件数 |
 |------|------|--------|
-| [value_factors/](01_FRAMEWORK/DATA_LAYER_INDEX.md) | 价值因子回测报告 | 2个 |
+| value_factors/ | 价值因子回测报告 | 2个 |
 
 
 
@@ -50,7 +52,7 @@ compliance_level: 专业标准---
 | [分层回测](./LAYERED_BACKTEST.md) | 因子分层回测方法 | ⭐⭐⭐⭐⭐ |
 | [过拟合测试](./OVERFITTING_TEST.md) | 过拟合检测和防范 | ⭐⭐⭐⭐ |
 | [相关性矩阵](./correlation_matrix.md) | 因子相关性分析 | ⭐⭐⭐⭐ |
-| [回测概览](API_README.md) | 回测系统概述 | ⭐⭐⭐ | ⭐⭐?|
+| 回测概览 | 回测系统概述 | ⭐⭐⭐ | ⭐⭐?|
 
 ---
 
@@ -83,9 +85,9 @@ compliance_level: 专业标准---
 
 ## 📚 相关文档
 
-- [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
-- [因子监控](02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md)
+- 因子筛选策略
+- 因子验证指南
+- 因子监控
 
 ---
 

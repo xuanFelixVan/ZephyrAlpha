@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ZephyrAlpha架构演进历史文档
 ---
 
 ﻿---
@@ -334,7 +336,7 @@ ZephyrAlpha系统经历了从概念到成熟的完整演进过程，主要分为
 
 ### 5.2 ADR文档位置
 
-- [架构决策记录索引](API_README.md)
+- 架构决策记录索引
 - [ADR模板](../09_AUDIT/TEMPLATES/ADR_TEMPLATE.md)
 - [ADR标准](../09_AUDIT/STANDARDS/ADR_STANDARD.md)
 

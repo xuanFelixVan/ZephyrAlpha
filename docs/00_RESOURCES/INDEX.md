@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 00_RESOURCES目录索引
 ---
 
 ﻿---
@@ -35,7 +37,7 @@ implementation_status: εΖ≤εφ?---
 
 | φ•΅δΜΕ | ηφ‰ |
 |------|------|
-| [README.md](API_README.md) | εΙ≥εΑφ•΅φΓΘηφ‰ |
+| README.md | εΙ≥εΑφ•΅φΓΘηφ‰ |
 | xuntou_qmt_trading_system_documentation.pdf | ηΩφQMTδΚΛφ‰™γ≥ΜγΜφ•΅φΓΘ |
 
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LINK_MAINTENANCE_MECHANISM
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 链接维护机制文档
 ---
 
 ﻿---
@@ -369,7 +371,7 @@ python scripts/fix_invalid_links.py
 
 ## 🔗 七、相关文档
 
-- [文档编码规范](10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)
+- 文档编码规范
 - 文档治理Git Hook
 - 链接验证脚本
 - 链接分析脚本

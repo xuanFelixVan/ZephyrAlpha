@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 03_DEPLOYMENT目录索引
 ---
 
 ﻿---
@@ -39,7 +41,7 @@ parent_document: ../INDEX.md---
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](API_README.md) | 部署指南概述 | Active |
+| README.md | 部署指南概述 | Active |
 | [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md) | 部署计划 | Active |
 
 ---
@@ -48,7 +50,7 @@ parent_document: ../INDEX.md---
 
 ### 部署流程
 
-1. **阅读概述**: [README.md](API_README.md)
+1. **阅读概述**: README.md
 2. **制定计划**: [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md)
 
 ### 部署命令

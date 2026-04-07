@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PYTHON_CODING_BEST_PRACTICES
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Pythonﻛﭨ۲ﻝﻟ۶ﻟﮔﻛﺛﺏﮒﻟﺓ文档
 ---
 
 ﻿---
@@ -383,8 +385,8 @@ def process_data(data):
 
 ## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
 
-- [ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
-- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ
+- ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ
 
 ---
 
@@ -392,8 +394,8 @@ def process_data(data):
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
+- ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

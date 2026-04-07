@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_ARCHIVE目录索引
 ---
 
 ﻿---
@@ -40,7 +42,7 @@ implementation_status: 已完?
 | integrated_documents/ | 整合文档归档 | 2026-04-03 |
 | architecture_v4/ | v4架构归档（Layer 0-11技术流水线?| 2026-04-03 |
 | factor-library/ | 因子库历史版?| 2026-04-02 |
-| [main/](01_FRAMEWORK/PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION.md) | 主系统历史文?| 2026-04-01 |
+| main/ | 主系统历史文?| 2026-04-01 |
 
 ## 📂 子目录详?
 ### 20260404_audit_reports_archive - 审计报告归档 🆕
@@ -77,14 +79,14 @@ implementation_status: 已完?
 ### factor-library - 因子库历?
 | 文件 | 说明 |
 |------|------|
-| [ifind_factors_list.md](06_ARCHIVE/factor-library/ifind_factors_list.md) | iFind因子列表 |
+| ifind_factors_list.md | iFind因子列表 |
 | ifind_factors_raw.json | iFind因子原始数据 |
 
 ### main - 主系统历?
 | 文件/目录 | 说明 |
 |----------|------|
-| [BLUEPRINTS/](11_STRATEGIC_DECISION/COMPLETE_MISSING_MODULES_BLUEPRINTS_20260407.md) | 历史蓝图文档 |
-| [v4_development/](06_ARCHIVE/main/v4_development/qingfeng_v4_development_plan.md) | v4开发计?|
+| BLUEPRINTS/ | 历史蓝图文档 |
+| v4_development/ | v4开发计?|
 
 ## ⚠️ 归档说明
 

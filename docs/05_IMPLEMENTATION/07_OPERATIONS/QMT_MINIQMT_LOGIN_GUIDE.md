@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_MINIQMT_LOGIN_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT_MINIQMT_LOGIN操作指南
 ---
 
 ﻿---
@@ -180,8 +182,8 @@ python scripts/test_qmt_connection_v3.py
 
 ## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲
 
-- [QMTﻟﺟﮔ۴ﻠ؟ﻠ۱ﮔﺗﮔ؛ﮒﮒﮒﮔ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
-- [QMTﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﮔ۰۲](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- QMTﻟﺟﮔ۴ﻠ؟ﻠ۱ﮔﺗﮔ؛ﮒﮒﮒﮔ
+- QMTﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﮔ۰۲
 
 ---
 

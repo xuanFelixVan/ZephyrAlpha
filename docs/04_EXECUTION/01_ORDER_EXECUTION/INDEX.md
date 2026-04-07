@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 01_ORDER_EXECUTION目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Order Execution Blueprint](04_EXECUTION/01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md) - `ORDEREXECUTIONBLUEPRINT_001`
-- [Order Generation Algorithms](04_EXECUTION/01_ORDER_EXECUTION/ORDER_GENERATION_ALGORITHMS.md) - `EXECUTION_ORDER_ALGO_001`
-- [Qmt Executor Blueprint](04_EXECUTION/01_ORDER_EXECUTION/QMT_EXECUTOR_BLUEPRINT.md) - `QMT_001`
+- Order Execution Blueprint - `ORDEREXECUTIONBLUEPRINT_001`
+- Order Generation Algorithms - `EXECUTION_ORDER_ALGO_001`
+- Qmt Executor Blueprint - `QMT_001`
 
 ---
 

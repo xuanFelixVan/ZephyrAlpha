@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 成本感知再平衡
+  - 交易成本优化
+  - 再平衡策略
+  - 成本控制
 layer: Layer 6 (组合优化层)
 ---
 
@@ -18,9 +21,8 @@ layer: Layer 6 (组合优化层)
 
 
 ## 核心定位
+负责成本感知再平衡模块的设计与实现，优化交易成本，制定再平衡策略，平衡成本与跟踪误差。
 
-
-交易成本感知再平衡模块，在再平衡决策中考虑交易成本，优化再平衡频率和规模，平衡再平衡收益和交易成本。
 ### 主要目标
 
 1. **功能完整性**: 确保TRANSACTION COST AWARE REBALANCING功能完整，满足业务需求

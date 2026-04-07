@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - RISK_EVENT_TRACKING蓝图设计
 ---
 
 ﻿---
@@ -355,7 +357,7 @@ class RiskEventTracker:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
+- Layer 10差距分析报告
 - [OpenProject官方文档](https://www.openproject.org/)
 ---
 
@@ -367,7 +369,7 @@ class RiskEventTracker:
 #### Layer 10: 治理与合规层
 ##### 0.001. Risk Event Tracking Blueprint
 - **模块ID**: RISK_EVENT_TRACKING_BLUEPRINT_001
-- **蓝图文档**: [RISK_EVENT_TRACKING_BLUEPRINT.md](01_FRAMEWORK\RISK_EVENT_TRACKING_BLUEPRINT.md)
+- **蓝图文档**: RISK_EVENT_TRACKING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 风险事件追踪、事件管理、风险治理
 - **状态**: Active

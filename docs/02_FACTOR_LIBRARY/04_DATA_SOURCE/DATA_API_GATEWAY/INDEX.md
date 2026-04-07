@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_API_GATEWAY
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - DATA_API_GATEWAY目录索引
 ---
 
 ﻿---
@@ -57,7 +59,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据API网关系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据API网关系统详细设计 | ⭐⭐⭐⭐⭐ |
+| 数据API网关系统蓝图 | 数据API网关系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

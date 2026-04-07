@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha错误代码参考
+responsibility:
+  - ZephyrAlpha错误代码参考文档
 ---
 
 # ZephyrAlpha错误代码参考

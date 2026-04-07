@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX_04_YOUZI_STRATEGIES_001
 version: 1.0.0
 status: Active
@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](API_README.md) - `TACTICS_YOUZI_README_001`
+- Readme - `TACTICS_YOUZI_README_001`
 
 ---
 

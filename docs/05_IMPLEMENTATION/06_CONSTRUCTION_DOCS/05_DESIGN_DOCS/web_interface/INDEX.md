@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - web_interface目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Api Interface Specification](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/API_INTERFACE_SPECIFICATION.md) - `T.06.UI003`
-- [Frontend Component Structure](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/FRONTEND_COMPONENT_STRUCTURE.md) - `T.06.UI002`
-- [T.06.Ui001.Web Management Interface Architecture Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md) - `T.06.UI001`
+- Api Interface Specification - `T.06.UI003`
+- Frontend Component Structure - `T.06.UI002`
+- T.06.Ui001.Web Management Interface Architecture Design - `T.06.UI001`
 
 ---
 

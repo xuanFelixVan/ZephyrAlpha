@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -253,7 +255,7 @@ Layer 11战略决策层是清风量化系统的**战略大脑**，负责：
 |---------|---------|--------|------|
 | 投资组合保险 | [PORTFOLIO_INSURANCE_BLUEPRINT.md](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | P2 | ✅ 已创建 |
 | 融资融券管理 | [LEVERAGE_MANAGEMENT_BLUEPRINT.md](./LEVERAGE_MANAGEMENT_BLUEPRINT.md) | P2 | ✅ 已创建 |
-| 业绩归因系统 | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | P0 | ✅ 已创建 |
+| 业绩归因系统 | PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | P0 | ✅ 已创建 |
 | 流动性管理 | [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | P1 | ✅ 已创建 |
 | 交易成本分析(TCA) | [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | P0 | ✅ 已创建 |
 | ESG投资系统 | [ESG_INVESTING_BLUEPRINT.md](./ESG_INVESTING_BLUEPRINT.md) | P2 | ✅ 已创建 |
@@ -434,7 +436,7 @@ Layer 11战略决策层是清风量化系统的**战略大脑**，负责：
 #### Layer 0: 系统架构
 ##### 0.001. Strategic Decision Bp
 - **模块ID**: STRATEGIC_DECISION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](11_STRATEGIC_DECISION\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11 - 战略决策层
 - **状态**: Active

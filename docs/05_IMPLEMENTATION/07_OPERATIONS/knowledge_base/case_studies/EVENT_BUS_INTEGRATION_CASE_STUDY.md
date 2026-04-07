@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: EVENT_BUS_INTEGRATION_CASE_STUDY
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﮔ۰ﻛﺝﻝﻝ۸ﭘﺅﺙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨﻠﮔ文档
 ---
 
 ﻿---
@@ -334,8 +336,8 @@ asyncio.run(performance_test())
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md)
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+- ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ
+- ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

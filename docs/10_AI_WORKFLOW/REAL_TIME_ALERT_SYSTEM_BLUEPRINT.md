@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: REAL_TIME_ALERT_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - REAL_TIME_ALERT_SYSTEM蓝图设计
 ---
 
 ﻿---

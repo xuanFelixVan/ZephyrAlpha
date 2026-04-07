@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - NATURAL_LANGUAGE_INTERFACE蓝图设计
 ---
 
 ﻿---
@@ -536,9 +538,9 @@ nlu:
       
   - intent: buy_stock
     examples: |
-      - 买入[AAPL](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)股票
-      - 购买[100](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)股[茅台](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
-      - 我想买[苹果](02_FACTOR_LIBRARY/04_DATA_SOURCE/BAOSTOCK_CONNECTOR.md)
+      - 买入AAPL股票
+      - 购买100股茅台
+      - 我想买苹果
       
   - intent: query_performance
     examples: |

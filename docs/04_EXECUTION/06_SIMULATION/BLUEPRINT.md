@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -555,7 +557,7 @@ engine = TradingEngine(
 ### 9.4 完整多引擎设?
 
 详细的多引擎架构设计、接口定义、配置管理、实施路线图详见?
-**[MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md)**
+**MULTI_ENGINE_BLUEPRINT.md**
 
 该文档包含：
 - 三引擎详细设计（vn.py、RQAlpha、Backtrader?
@@ -568,7 +570,7 @@ engine = TradingEngine(
 
 **维护?*: 清风量化系统
 **索引**: `SIM_001` ?`SIM_002` (多引擎扩?
-**关联文档**: [MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md)
+**关联文档**: MULTI_ENGINE_BLUEPRINT.md
 ---
 
 ## 10. 文档治理
@@ -579,7 +581,7 @@ engine = TradingEngine(
 #### Layer 0: 系统架构
 ##### 0.001. Exec Simulation Bp
 - **模块ID**: EXEC_SIMULATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\06_SIMULATION\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_STANDARDIZATION说明文档
 ---
 
 ﻿---
@@ -39,7 +41,7 @@ layer: "Layer 1 (数据预处理层)"
 
 ## 📁 文档索引
 
-- [BLUEPRINT](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- BLUEPRINT
 - [INDEX](INDEX.md)
 
 ## 🚀 快速开始

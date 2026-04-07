@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - INVESTMENT_DECISION_AUDIT蓝图设计
 ---
 
 ﻿---
@@ -384,7 +386,7 @@ class ImpactAnalysis:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 33 | 投资决策审计系统 | [INVESTMENT_DECISION_AUDIT_BLUEPRINT.md](01_FRAMEWORK/INVESTMENT_DECISION_AUDIT_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 33 | 投资决策审计系统 | INVESTMENT_DECISION_AUDIT_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

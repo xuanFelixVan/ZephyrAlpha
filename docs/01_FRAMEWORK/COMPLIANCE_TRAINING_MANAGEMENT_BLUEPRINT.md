@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - COMPLIANCE_TRAINING_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -390,7 +392,7 @@ class Certification:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 34 | 合规培训管理系统 | [COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md](01_FRAMEWORK/COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 34 | 合规培训管理系统 | COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

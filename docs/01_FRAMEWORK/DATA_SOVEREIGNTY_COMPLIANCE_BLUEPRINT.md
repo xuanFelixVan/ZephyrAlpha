@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_SOVEREIGNTY_COMPLIANCE蓝图设计
 ---
 
 ﻿---
@@ -420,7 +422,7 @@ class TransferApproval:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 29 | 数据主权合规系统 | [DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md](01_FRAMEWORK/DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 29 | 数据主权合规系统 | DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

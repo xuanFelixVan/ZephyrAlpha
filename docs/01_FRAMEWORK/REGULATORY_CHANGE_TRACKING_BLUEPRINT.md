@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - REGULATORY_CHANGE_TRACKING蓝图设计
 ---
 
 ﻿---
@@ -414,7 +416,7 @@ class ImplementationPlan:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 28 | 监管变更追踪系统 | [REGULATORY_CHANGE_TRACKING_BLUEPRINT.md](01_FRAMEWORK/REGULATORY_CHANGE_TRACKING_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 28 | 监管变更追踪系统 | REGULATORY_CHANGE_TRACKING_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

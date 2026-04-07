@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - HUMAN_AI_COLLABORATION_SCENARIOS蓝图设计
 ---
 
 ﻿---
@@ -646,7 +648,7 @@ class CollaborationSelector:
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Collaboration Scenarios Blueprint
 - **模块ID**: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md)
+- **蓝图文档**: HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 人机协作场景细化与动态调?compliance_level: 顶级专业标准
 - **状态**: Active

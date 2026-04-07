@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -47,7 +49,7 @@ responsibility: 数据权限管理策略与访问控制
 | 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据安全隐私 | [../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/) | 协同模块 | 数据安全保护 |
-| 数据API网关 | [../DATA_API_GATEWAY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md) | 协同模块 | 数据访问接口 |
+| 数据API网关 | ../DATA_API_GATEWAY/ | 协同模块 | 数据访问接口 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据权限管理系统架构设计
@@ -243,7 +245,7 @@ class PermissionManager:
 #### Layer 0: 系统架构
 ##### 0.001. Data Permission Management Bp
 - **模块ID**: DATA_PERMISSION_MANAGEMENT_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_PERMISSION_MANAGEMENT\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据权限管理系统
 - **状态**: Blueprint

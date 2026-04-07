@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - CYBERSECURITY_INCIDENT_RESPONSE蓝图设计
 ---
 
 ﻿---
@@ -420,7 +422,7 @@ class ThreatIntelligence:
 ```markdown
 | 序号 | 模块名称 | 文档路径 | Layer | 状态 |
 |------|---------|---------|-------|------|
-| 26 | 网络安全事件响应系统 | [CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md](01_FRAMEWORK/CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md) | Layer 10 | ✅ 已创建 |
+| 26 | 网络安全事件响应系统 | CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md | Layer 10 | ✅ 已创建 |
 ```
 
 ### 6.2 模块职责边界

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: OPEN_SOURCE_INTEGRATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - OPEN_SOURCE_INTEGRATION蓝图设计
 ---
 
 ﻿---
@@ -1081,7 +1083,7 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 #### Layer 11: 战略决策层
 ##### 0.001. Open Source Integration Bp
 - **模块ID**: OPEN_SOURCE_INTEGRATION_BP_001
-- **蓝图文档**: [OPEN_SOURCE_INTEGRATION_BLUEPRINT.md](11_STRATEGIC_DECISION\OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
+- **蓝图文档**: OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11开源项目集成方案
 - **状态**: Active

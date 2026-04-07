@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: NATURAL_LANGUAGE_MODULE_ANALYSIS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 11 全模块文字交互需求分文档
 ---
 
 ﻿---

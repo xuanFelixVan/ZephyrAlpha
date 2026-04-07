@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 02_DEVELOPMENT说明文档
 ---
 
 ﻿---
@@ -162,7 +164,7 @@ isort src/
 
 ##  相关文档
 
-- [快速开始](API_README.md)
+- 快速开始
 - [文档索引](../../03_TRADING_TACTICS/INDEX.md)
 
 ---

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_TESTING_FRAMEWORK目录索引
 ---
 
 ﻿---
@@ -52,7 +54,7 @@ responsibility: 数据测试框架模块导航
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据测试框架系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据测试框架系统详细设计 | ⭐⭐⭐⭐⭐ |
+| 数据测试框架系统蓝图 | 数据测试框架系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

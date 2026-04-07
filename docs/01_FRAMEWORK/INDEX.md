@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX_FRAMEWORK_001
 version: 1.0.1
 status: Active
@@ -9,6 +9,8 @@ applicable_scope: 01_FRAMEWORK目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
+responsibility:
+  - 01_FRAMEWORK目录索引
 ---
 
 # 框架设计目录索引
@@ -157,7 +159,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?| 实施周期 |
 |---------|------|--------|---------|
-| [数据质量监控蓝图](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 实时数据质量监控、自动告警、质量报?| ⭐⭐⭐⭐?| 2?|
+| 数据质量监控蓝图 | 实时数据质量监控、自动告警、质量报?| ⭐⭐⭐⭐?| 2?|
 | [实时风险监控蓝图](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控仪表板、风险预警系?| ⭐⭐⭐⭐?| 2?|
 | | 历史情景压力测试、敏感性分?| ⭐⭐⭐⭐?| 2?|
 | [合规监控系统蓝图](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 监管合规监控、内部合规流?| ⭐⭐⭐⭐?| 2?|
@@ -184,7 +186,7 @@ implementation_status: 活跃维护
 ## 📖 快速导?
 ### 新手入门
 
-1. 阅读 [README.md](API_README.md) - 框架概述
+1. 阅读 README.md - 框架概述
 2. 阅读 [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) - 架构设计
 3. 阅读 [ARCHITECTURE_MIGRATION_PLAN.md](./ARCHITECTURE_MIGRATION_PLAN.md) - 架构迁移
 

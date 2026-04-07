@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 数据源层文档索引文档
 ---
 
 ﻿---
@@ -71,7 +73,7 @@ parent_document: ../INDEX.md
 
 | 文档 | 职责 | 日期 |
 |------|------|------|
-| [`DATA_LAYER_BLUEPRINT_GAP_ANALYSIS.md`](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/DATA_LAYER_BLUEPRINT_GAP_ANALYSIS.md) | 数据源层差距分析 | 2026-04-02 |
+| `DATA_LAYER_BLUEPRINT_GAP_ANALYSIS.md` | 数据源层差距分析 | 2026-04-02 |
 单 | 2026-04-02 |
 | [`DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md`](../09_AUDIT/REPORTS/DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md) | 文档深度审计报告 | 2026-04-03 |
 

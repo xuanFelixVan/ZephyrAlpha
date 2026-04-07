@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -46,7 +48,7 @@ responsibility: 数据目录管理与元数据组织
 |------|------|------|------|
 | 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据血缘追踪 | [../DATA_LINEAGE_TRACKING/](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 协同模块 | 数据血缘关系 |
+| 数据血缘追踪 | ../DATA_LINEAGE_TRACKING/ | 协同模块 | 数据血缘关系 |
 | 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
 
 **职责边界**:
@@ -670,7 +672,7 @@ for result in results:
 #### Layer 0: 系统架构
 ##### 0.001. Factor Data Catalog Bp
 - **模块ID**: FACTOR_DATA_CATALOG_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_CATALOG\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据目录系统
 - **状态**: Blueprint

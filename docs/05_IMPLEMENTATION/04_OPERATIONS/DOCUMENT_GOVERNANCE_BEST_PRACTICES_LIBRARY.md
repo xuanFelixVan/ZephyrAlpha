@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 文档治理最佳实践库文档
 ---
 
 ﻿---
@@ -564,8 +566,8 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 ### 附录B：典型案例索引
 
-1. [BLUEPRINT_INDEX.md职责明确](11_STRATEGIC_DECISION/BLUEPRINT_INDEX.md)
-2. [COMPLETE_BLUEPRINT_OVERVIEW.md状态清单](11_STRATEGIC_DECISION/COMPLETE_BLUEPRINT_OVERVIEW.md)
+1. BLUEPRINT_INDEX.md职责明确
+2. COMPLETE_BLUEPRINT_OVERVIEW.md状态清单
 3. LAYER11_DEEP_AUDIT_REPORT_20260407.md
 
 ### 附录C：参考标准文档

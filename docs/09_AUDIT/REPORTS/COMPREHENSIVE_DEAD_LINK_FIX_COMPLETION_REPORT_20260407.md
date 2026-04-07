@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - COMPREHENSIVE_DEAD_LINK_FIX_COMPLETION_20260407报告文档
 ---
 
 # 全面死链接修复完成报告

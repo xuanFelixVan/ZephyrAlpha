@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DEV_SETUP
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 开发环境搭5 分钟文档
 ---
 
 ﻿---
@@ -202,7 +204,7 @@ pip install -r requirements.txt
 
 环境搭建完成后：
 
-1. 前往 2. 学习 [开发规范](API_README.md)
+1. 前往 2. 学习 开发规范
 3. 阅读 
 
 ---

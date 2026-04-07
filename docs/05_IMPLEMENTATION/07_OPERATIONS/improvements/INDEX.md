@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - improvements目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Imp 001 Qmt Api Learning Plan](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_001_QMT_API_LEARNING_PLAN.md) - `IMPL_OPS_IMP_001_QMT_LEARNING_001`
-- [Imp 002 Qmt Api Community Research](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md) - `IMPL_OPS_IMP_002_QMT_RESEARCH_001`
-- [Imp 003 Qmt Client Stability Solution](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md) - `IMPL_OPS_IMP_003_QMT_STABILITY_001`
+- Imp 001 Qmt Api Learning Plan - `IMPL_OPS_IMP_001_QMT_LEARNING_001`
+- Imp 002 Qmt Api Community Research - `IMPL_OPS_IMP_002_QMT_RESEARCH_001`
+- Imp 003 Qmt Client Stability Solution - `IMPL_OPS_IMP_003_QMT_STABILITY_001`
 
 ---
 

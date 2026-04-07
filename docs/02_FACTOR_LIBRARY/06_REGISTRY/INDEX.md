@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\06_REGISTRY
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 06_REGISTRY目录索引
 ---
 
 ﻿---
@@ -57,9 +59,9 @@ compliance_level: 专业标准---
 
 ## 📚 相关文档
 
-- [因子分类体系](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md)
-- [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
+- 因子分类体系
+- 因子筛选策略
+- 因子验证指南
 
 ---
 

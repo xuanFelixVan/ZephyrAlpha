@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -821,9 +823,9 @@ class RiskEvent:
 ## 七、相关文?
 | 文档 | 说明 |
 |------|------|
-| [COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 合规监控系统蓝图 |
-| [AI_DECISION_AUDIT_BLUEPRINT.md](01_FRAMEWORK/AI_DECISION_AUDIT_BLUEPRINT.md) | AI决策审计蓝图 |
-| [REALTIME_RISK_MONITORING_BLUEPRINT.md](01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控蓝图 |
+| COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md | 合规监控系统蓝图 |
+| AI_DECISION_AUDIT_BLUEPRINT.md | AI决策审计蓝图 |
+| REALTIME_RISK_MONITORING_BLUEPRINT.md | 实时风险监控蓝图 |
 
 ---
 
@@ -844,7 +846,7 @@ class RiskEvent:
 #### Layer 0: 系统架构
 ##### 0.001. Gov Compliance Bp
 - **模块ID**: GOV_COMPLIANCE_BP_001
-- **蓝图文档**: [BLUEPRINT.md](10_GOVERNANCE_COMPLIANCE\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

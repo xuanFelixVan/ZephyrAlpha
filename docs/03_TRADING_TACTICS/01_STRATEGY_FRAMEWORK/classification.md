@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: CLASSIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 策略分类体系文档
 ---
 
 ﻿---
@@ -46,7 +48,7 @@ implementation_status: 进行?---
 >
 > **配套文档**?
 > - 主文档：
-> - 策略池概述：[index.md](08_HUMAN_AI_INTERFACE/index.md)
+> - 策略池概述：index.md
 
 ***
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: NEW_EMPLOYEE_ONBOARDING_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - NEW_EMPLOYEE_ONBOARDING操作指南
 ---
 
 ﻿---
@@ -83,8 +85,8 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
@@ -95,9 +97,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮒﺙﮒﻟ۶?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮔﭖﻟﺁﮔﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮒﺙﮒﻟ۶?* | docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔﭖﻟﺁﮔﮒ** | docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﮔﮔ۰ﻛﭨ۲ﻝﻝﺙﮒﻟ۶ﻟ
@@ -113,7 +115,7 @@ implementation_status: Active
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
 | **ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﻝﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
@@ -125,7 +127,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
@@ -138,7 +140,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
@@ -152,9 +154,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
 **ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
@@ -342,24 +344,24 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 ### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
 
-**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](API_README.md)
+**A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md
 - ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../INDEX.md)
 
 ### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
 
-**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
+**A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
 2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
 3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
 5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
 ### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴?*
 
-**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ
 2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
 3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔﻠ۰ﺗﻠﻟﺟ
 
 ### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
 
-**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
+**A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ
 2. ﮒﮒ۳ﻝﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
 4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
 ### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
@@ -397,9 +399,9 @@ strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
 
 ### **ﮒﻠ۷ﻟﭖﮔﭦ**
 
-- **ﻝ۴ﻟﺁ?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](01_FRAMEWORK/COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md)
-- **ﮔ۰ﻛﺝﻝﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
-- **ﮔﻛﺛﺏﮒ؟?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
+- **ﻝ۴ﻟﺁ?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/
+- **ﮔ۰ﻛﺝﻝﻝ۸ﭘ**: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/
+- **ﮔﻛﺛﺏﮒ؟?*: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

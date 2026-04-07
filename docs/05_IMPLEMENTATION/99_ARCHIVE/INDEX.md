@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 99_ARCHIVE目录索引
 ---
 
 ﻿---
@@ -53,9 +55,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Module Archive](05_IMPLEMENTATION/99_ARCHIVE/MODULE_ARCHIVE.md) - `IMPL_ARCHIVE_MODULE_001`
-- [Security Blueprint](05_IMPLEMENTATION/99_ARCHIVE/SECURITY_BLUEPRINT.md) - `SECURITY_BLUEPRINT_MD_001`
-- [Migration Guide V1](05_IMPLEMENTATION/99_ARCHIVE/migration_guide_v1.md) - `IMPL_ARCHIVE_MIGRATION_001`
+- Module Archive - `IMPL_ARCHIVE_MODULE_001`
+- Security Blueprint - `SECURITY_BLUEPRINT_MD_001`
+- Migration Guide V1 - `IMPL_ARCHIVE_MIGRATION_001`
 
 ---
 

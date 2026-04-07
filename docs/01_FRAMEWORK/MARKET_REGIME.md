@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MARKET_REGIME
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 市场状态识MARKET REGIME文档
 ---
 
 ﻿---
@@ -34,7 +36,7 @@ responsibility:
 > **创建日期**: 2026-03-30
 > **Layer**: Layer 0 前置
 > **职责**: 大盘择时是分层策略的第一步，也是最重要的前置决?
-> **父文?*: [README.md](API_README.md)
+> **父文?*: README.md
 
 ---
 
@@ -194,7 +196,7 @@ MARKET_TIMING_INDICATORS = {
 |------|------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 统一架构 |
 | HUMAN_AI_FLOW.md | 人机协作流程 |
-| [README.md](API_README.md) | 框架总览 |
+| README.md | 框架总览 |
 
 ---
 

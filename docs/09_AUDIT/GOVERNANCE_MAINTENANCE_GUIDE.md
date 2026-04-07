@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: GOVERNANCE_MAINTENANCE_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - GOVERNANCE_MAINTENANCE操作指南
 ---
 
 ﻿---
@@ -214,9 +216,9 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 
 ## 📚 相关文档
 
-- [文档治理五大原则](01_FRAMEWORK/ARCHITECTURE.md)
+- 文档治理五大原则
 - 蓝图质量验证工具
-- [系统总索引](System_Manifest.md)
+- 系统总索引
 
 ---
 

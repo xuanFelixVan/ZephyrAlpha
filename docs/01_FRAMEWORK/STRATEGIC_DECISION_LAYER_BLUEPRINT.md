@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGIC_DECISION_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGIC_DECISION_LAYER蓝图设计
 ---
 
 ﻿---
@@ -613,7 +615,7 @@ class StrategySelection:
 #### Layer 2: Alpha因子层
 ##### 0.001. Framework Strategic Decision Bp
 - **模块ID**: FRAMEWORK_STRATEGIC_DECISION_BP_001
-- **蓝图文档**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](01_FRAMEWORK\STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
+- **蓝图文档**: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

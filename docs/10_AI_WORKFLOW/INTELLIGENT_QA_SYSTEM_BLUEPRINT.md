@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INTELLIGENT_QA_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - INTELLIGENT_QA_SYSTEM蓝图设计
 ---
 
 ﻿---
@@ -491,7 +493,7 @@ class EnhancedQASystem(IntelligentQASystem):
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
+| **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | INTELLIGENT_QA_SYSTEM_BLUEPRINT.md | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
 ```
 
 ### 6.2 模块职责边界

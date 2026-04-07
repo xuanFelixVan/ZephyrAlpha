@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDUSTRY_FACTORS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - T03RF002申万行业因子文档
 ---
 
 ﻿---
@@ -35,8 +37,8 @@ compliance_level: 专业标准
 >
 > **配套文档**?
 > - 主文档：[../../INDEX.md](../../03_TRADING_TACTICS/INDEX.md)
-> - 因子库索引：[../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/factor_master_index.md)
-> - 风险因子：[风险因子 README](API_README.md)
+> - 因子库索引：../../04_DATA_SOURCE/iFind/FACTOR_MASTER_INDEX.md
+> - 风险因子：风险因子 README
 
 ***
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: TODO_CLEANUP_INVENTORY_20260406
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TODOTBD标记清理清单文档
 ---
 
 ﻿---

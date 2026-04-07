@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: TCA_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TCA蓝图设计
 ---
 
 ﻿---
@@ -1186,7 +1188,7 @@ class CallAuctionTCA:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | 流动性管理系统 |
 | [tcapy GitHub](https://github.com/cuemacro/tcapy) | tcapy开源项目 |
@@ -1214,7 +1216,7 @@ class CallAuctionTCA:
 #### Layer 0: 系统架构
 ##### 0.001. Tca Blueprint
 - **模块ID**: TCA_BLUEPRINT_001
-- **蓝图文档**: [TCA_BLUEPRINT.md](11_STRATEGIC_DECISION\TCA_BLUEPRINT.md)
+- **蓝图文档**: TCA_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.9 - 交易成本分析系统
 - **状态**: Active

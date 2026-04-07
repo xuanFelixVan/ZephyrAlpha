@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_CONSTRUCTION_DOCS说明文档
 ---
 
 ﻿---
@@ -72,9 +74,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
-| [ﻝ۴ﻟﺁﻝﺑ۱ﮒﺙ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/KNOWLEDGE_INDEX.md) | v1.0 | Active | 2026-04-02 | ﻭ **ﻝ۴ﻟﺁﮔﭨﻝﺑ۱ﮒﺙ?* - 25+ﮔﮔ۰۲ﮒﻝﺎﭨﻝﺑ۱ﮒﺙﻙﮒﺟ،ﻠﮔ۲ﻝﺑ?|
-| [ﮔ۰ﻛﺝﻝﻝ۸ﭘﮒﭦﻝﺑ۱ﮒﺙ](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md) | v1.0 | Active | 2026-04-02 | ﻭ **ﮔ۰ﻛﺝﮒﭦ?* - 2+ﮔﺕﮒﺟﮔ۰ﻛﺝﻙﮔﮒﮒ۳ﺎﻟﺑ۴ﮔ۰ﻛﺝ?|
-| [ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮒﭦﻝﺑ۱ﮒﺙ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | v1.0 | Active | 2026-04-02 | ﻭ۰ **ﮒ؟ﻟﺓﭖﮒﭦ?* - 15+ﮔﺕﮒﺟﮒ؟ﻟﺓﭖﻙﻝﺙﻝ?ﮔﭘﮔ/ﮔﭖﻟﺁ |
+| ﻝ۴ﻟﺁﻝﺑ۱ﮒﺙ | v1.0 | Active | 2026-04-02 | ﻭ **ﻝ۴ﻟﺁﮔﭨﻝﺑ۱ﮒﺙ?* - 25+ﮔﮔ۰۲ﮒﻝﺎﭨﻝﺑ۱ﮒﺙﻙﮒﺟ،ﻠﮔ۲ﻝﺑ?|
+| ﮔ۰ﻛﺝﻝﻝ۸ﭘﮒﭦﻝﺑ۱ﮒﺙ | v1.0 | Active | 2026-04-02 | ﻭ **ﮔ۰ﻛﺝﮒﭦ?* - 2+ﮔﺕﮒﺟﮔ۰ﻛﺝﻙﮔﮒﮒ۳ﺎﻟﺑ۴ﮔ۰ﻛﺝ?|
+| ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮒﭦﻝﺑ۱ﮒﺙ | v1.0 | Active | 2026-04-02 | ﻭ۰ **ﮒ؟ﻟﺓﭖﮒﭦ?* - 15+ﮔﺕﮒﺟﮒ؟ﻟﺓﭖﻙﻝﺙﻝ?ﮔﭘﮔ/ﮔﭖﻟﺁ |
 
 **ﻛﺕﻛﺕﮔﭦﮔﮔﮒ**: ﮔ۰۴ﮔﺍﺑﻙﮔﻟﭦﮒ۳ﮒﺑﻝﻠ۰ﭘﻝﭦ۶ﮔﭦﮔﻠﺛﮔﮒ؟ﮒﻝﻝ۴ﻟﺁﻛﺙﮔﺟﻛﺛﻝﺏﭨﺅﺙﮒﮔ؛ﮔ۰ﻛﺝﻝﻝ۸ﭘﮒﭦﻙﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮒﭦﻙﻝﭨﻠ۹ﮔﻟ؟ﮒﭦﻙ?
 ---
@@ -85,8 +87,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
-| [ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | v1.2 | Active | 2026-04-02 | 6ﻛﺕ۹ﮔﮒ؟ﮔﺛﻟ؟۰ﮒﺅﺙﻝ،ﮒﺏﻗﻝﮔﻗﻛﺕﮔﻗﻠﺟﮔﺅﺙ?|
-| [ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | ﻝﻝ۴ﮒﺓ۴ﮒﻙﮔﺏ۷ﮒﻟ۰۷ﻙﮒﻟﺛﺛﮒ۷ﻟ؟ﺝﻟ؟۰ |
+| ﻛﺕﻛﺕﻠﮒﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻟﮒﺝ | v1.2 | Active | 2026-04-02 | 6ﻛﺕ۹ﮔﮒ؟ﮔﺛﻟ؟۰ﮒﺅﺙﻝ،ﮒﺏﻗﻝﮔﻗﻛﺕﮔﻗﻠﺟﮔﺅﺙ?|
+| ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ | v1.0 | Active | 2026-04-01 | ﻝﻝ۴ﮒﺓ۴ﮒﻙﮔﺏ۷ﮒﻟ۰۷ﻙﮒﻟﺛﺛﮒ۷ﻟ؟ﺝﻟ؟۰ |
 | [ﻝﻝ۴ﻠﮔ۸ﻝﺏﭨﻝﭨﻟﮒﺝ](./01_BLUEPRINTS/STRATEGY_SELECTION_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | TOPSISﮒ۳ﮒﮒﻟﺁﻛﺙﺍﻝﺏﭨﻝﭨ?|
 | [ﻝﭨﮒﻛﺙﮒﻟﮒﺝ](./01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md) | v1.0 | Active | 2026-04-01 | ﻠ۲ﻠ۸ﮒﺗﺏﻛﭨﺓﻙBlack-Littermanﮔ۷۰ﮒ |
 
@@ -157,7 +159,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 **ﻟﻟﺑ۲**: ﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﺅﺙﻟ؟ﺍﮒﺛﮒ۷ﮔ۴ﮒﻠﻝ۷ﻝ۱?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻝﮔ؛ | ﻝﭘﮔ?| ﮔﮒﮔﺑﮔ?| ﻟﺁﺑﮔ |
 |---------|------|------|---------|------|
-| [ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/IMPLEMENTATION_PROGRESS.md) | v1.0 | Active | 2026-04-02 | ﮒ؟ﮔﭘﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ |
+| ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ﮔﭨﻟ۶ | v1.0 | Active | 2026-04-02 | ﮒ؟ﮔﭘﻟﺓﻟﺕ۹ﮒ؟ﮔﺛﻟﺟﮒﭦ۵ |
 | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﮒ۷ﮔ۴ﮒﺛﮔ۰۲ --> | - | Active | 2026-04-02 | ﮔﺁﮒ۷ﻟﺟﮒﭦ۵ﮔ۴ﮒ |
 | <!-- ﻟ؟۰ﮒﻝ؟ﮒﺛﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ? ﻠﻝ۷ﻝ۱ﻟ؟ﺍﮒﺛ --> | - | Pending | - | ﮒﺝﮒﮒﭨ?|
 
@@ -265,9 +267,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲
 
-- **ﻝﭘﮔﮔ۰?*: [ﮒ؟ﮔﺛﮔﮒﮔﭨﻟ۶](API_README.md)
+- **ﻝﭘﮔﮔ۰?*: ﮒ؟ﮔﺛﮔﮒﮔﭨﻟ۶
 - **ﮔﭘﮔﻟ؟ﺝﻟ؟۰**: [ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-- **ﻝﺏﭨﻝﭨﮔﺕﮒ**: [System_Manifest.md](System_Manifest.md)
+- **ﻝﺏﭨﻝﭨﮔﺕﮒ**: System_Manifest.md
 - **ﮔﮔ۰۲ﮔﺎﭨﻝﮔﮒ**: [ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---

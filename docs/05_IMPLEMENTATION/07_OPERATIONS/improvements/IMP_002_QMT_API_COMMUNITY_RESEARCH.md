@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: IMP_002_QMT_API_COMMUNITY_RESEARCH
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT API社区资源与最佳实践调研报文档
 ---
 
 ﻿---
@@ -642,8 +644,8 @@ def validate_quote_data(data: pd.DataFrame) -> bool:
 - **官方渠道**: 访问QMT官方网站和QQ?
 
 ### B. 参考文?
-- [QMT数据接口技术规格书](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-- [QMT数据接口评审报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
+- QMT数据接口技术规格书
+- QMT数据接口评审报告
 - [QMT API学习计划](./IMP_001_QMT_API_LEARNING_PLAN.md)
 
 

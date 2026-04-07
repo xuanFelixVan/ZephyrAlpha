@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: P0_MODULES_DEV_PROCESS_QA
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - P0模块开发流程和质量保证文档文档
 ---
 
 ﻿---

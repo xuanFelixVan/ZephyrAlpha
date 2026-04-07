@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -46,7 +48,7 @@ dependencies:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据API网关 | [../DATA_API_GATEWAY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md) | 接口层 | API网关设计 |
+| 数据API网关 | ../DATA_API_GATEWAY/ | 接口层 | API网关设计 |
 
 **职责边界**:
 - 本文档负责: 数据契约定义和验证架构设计
@@ -530,7 +532,7 @@ API请求 → 契约验证 → 业务处理 → 响应验证
 #### Layer 0: 系统架构
 ##### 0.001. Data Contract Bp
 - **模块ID**: DATA_CONTRACT_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_CONTRACT\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据契约管理系统
 - **状态**: Blueprint

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 9研究与创新层删除文件审查报告文档
 ---
 
 ﻿---

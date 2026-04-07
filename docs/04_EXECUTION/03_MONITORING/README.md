@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 03_MONITORING说明文档
 ---
 
 ﻿---
@@ -303,5 +305,5 @@ AI报告系统 ?自动报告生成
 
 ## 索引
 
-- 父目? [04_EXECUTION/README.md](API_README.md)
+- 父目? 04_EXECUTION/README.md
 - 相关: [PERFORMANCE_ATTRIBUTION.md](./PERFORMANCE_ATTRIBUTION.md)

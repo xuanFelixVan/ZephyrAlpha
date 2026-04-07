@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BACKTEST_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BACKTEST蓝图设计
 ---
 
 ﻿---
@@ -574,7 +576,7 @@ class BacktestAPI:
 | [overview.md](./overview.md) | 策略体系概述 |
 | [lifecycle.md](./lifecycle.md) | 策略生命周期管理 |
 | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝?|
-| [API_Contract.md](03_TRADING_TACTICS/API_Contract.md) | 系统API契约 |
+| API_Contract.md | 系统API契约 |
 
 
 **文档版本**: v1.0  
@@ -590,7 +592,7 @@ class BacktestAPI:
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Backtest Bp
 - **模块ID**: TACTICS_BACKTEST_BP_001
-- **蓝图文档**: [BACKTEST_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\BACKTEST_BLUEPRINT.md)
+- **蓝图文档**: BACKTEST_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

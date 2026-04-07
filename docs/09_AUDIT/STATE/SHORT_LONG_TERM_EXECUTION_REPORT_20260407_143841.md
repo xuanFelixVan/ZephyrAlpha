@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SHORT_LONG_TERM_EXECUTION_20260407_143841报告文档
 ---
 
 ﻿---

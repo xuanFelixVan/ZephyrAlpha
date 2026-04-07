@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: RESPONSIBILITY_REVIEW_MECHANISM
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 职责审查机制文档
 ---
 
 ﻿---
@@ -369,8 +371,8 @@ compliance_level: 专业标准
 
 ### 9.1 标准文档
 
-- [文档编码标准](10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)
-- [链接维护机制](10_GOVERNANCE_COMPLIANCE/LINK_MAINTENANCE_MECHANISM.md)
+- 文档编码标准
+- 链接维护机制
 - [文档治理审计指南](../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ### 9.2 工具文档

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 说明文件
 applicable_scope: 02_FACTOR_LIBRARY\01_STANDARDS
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 01_STANDARDS说明文档
 ---
 
 ﻿---
@@ -67,7 +69,7 @@ compliance_level: 专业标准---
 
 ## 2. 因子定义标准
 
-详见：[T.02.FE001.factor_definition.md](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_DEFINITION.md)
+详见：T.02.FE001.factor_definition.md
 
 ---
 

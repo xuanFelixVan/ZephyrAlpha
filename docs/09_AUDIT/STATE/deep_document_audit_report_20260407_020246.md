@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DEEP_DOCUMENT_AUDIT_REPORT_20260407_020246
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 深度文档治理审计报告文档
 ---
 
 ﻿---

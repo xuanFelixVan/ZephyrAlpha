@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MEAN_VARIANCE_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 5.2 组合优化
 compliance_level: 专业标准
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 均值方差优化
+  - 有效前沿计算
+  - 最优权重求解
+  - 风险收益权衡
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -326,5 +329,11 @@ class TestIntegration:
 **文档维护**:
 - **责任模块**: MEAN_VARIANCE_OPTIMIZATION
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

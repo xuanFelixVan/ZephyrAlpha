@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﮔﭦﻟﺛﮔ۶ﻟ۰ﻝﮔﺏﮒﺙﮔﮒﮒﺕﮒﭦﮒﺎﮒﭨﮔ۷۰ﮒﮔﺗﻟﺟﻟ۰ﺅﺟ文档
 ---
 
 ﻿---

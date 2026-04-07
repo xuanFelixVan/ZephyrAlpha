@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: REFERENCE_LINK_CHECK_REPORT_20260407_165625
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 检查报告
 applicable_scope: 引用链接自动化检查
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - REFERENCE_LINK_CHECK_20260407_165625报告文档
 ---
 
 # 引用链接自动化检查报告

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DECISION_AUDIT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DECISION_AUDIT蓝图设计
 ---
 
 ﻿---
@@ -1329,9 +1331,9 @@ class ComplianceReportGenerator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | 投资政策声明管理 |
-| [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | 业绩归因系统 |
+| PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | 业绩归因系统 |
 
 ---
 
@@ -1346,7 +1348,7 @@ class ComplianceReportGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Decision Audit
 - **模块ID**: DECISION_AUDIT_001
-- **蓝图文档**: [DECISION_AUDIT_BLUEPRINT.md](11_STRATEGIC_DECISION\DECISION_AUDIT_BLUEPRINT.md)
+- **蓝图文档**: DECISION_AUDIT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.21 - 投资决策审计系统
 - **状态**: Active

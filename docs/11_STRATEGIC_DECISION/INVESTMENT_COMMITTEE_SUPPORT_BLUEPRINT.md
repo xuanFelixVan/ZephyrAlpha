@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - INVESTMENT_COMMITTEE_SUPPORT蓝图设计
 ---
 
 ﻿---
@@ -900,9 +902,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 ## 八、相关文档
 
-- [战略决策层蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- 战略决策层蓝图
 - [架构补充方案](./STRATEGIC_DECISION_ARCHITECTURE_COMPLETION_PLAN_20260407.md)
-- [决策知识库蓝图](08_HUMAN_AI_INTERFACE/18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md)
+- 决策知识库蓝图
 - [开源集成蓝图](./OPEN_SOURCE_INTEGRATION_BLUEPRINT.md)
 
 ---

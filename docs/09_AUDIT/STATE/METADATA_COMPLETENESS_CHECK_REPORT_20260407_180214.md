@@ -9,6 +9,8 @@ standard_type: 检查报告
 applicable_scope: 元数据完整性检查
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - METADATA_COMPLETENESS_CHECK_20260407_180214报告文档
 ---
 
 # 元数据完整性检查报告

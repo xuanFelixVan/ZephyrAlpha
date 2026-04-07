@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - INTERFACE_CONTRACT蓝图设计
 ---
 
 ﻿---
@@ -201,7 +203,7 @@ class IEconomicRegimeEngine(ABC):
 #### Layer 2: Alpha因子层
 ##### 0.001. Interface Contract Blueprint
 - **模块ID**: INTERFACE_CONTRACT_BLUEPRINT_001
-- **蓝图文档**: [INTERFACE_CONTRACT_BLUEPRINT.md](01_FRAMEWORK\INTERFACE_CONTRACT_BLUEPRINT.md)
+- **蓝图文档**: INTERFACE_CONTRACT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 三级时间框架架构
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 07_OPERATIONS目录索引
 ---
 
 ﻿---
@@ -39,7 +41,7 @@ parent_document: ../INDEX.md---
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](API_README.md) | 运维手册概述 | Active |
+| README.md | 运维手册概述 | Active |
 | [DOCUMENT_AUDIT_WORKFLOW.md](./DOCUMENT_AUDIT_WORKFLOW.md) | 文档审查工作流程 | Active |
 | [AUDIT_CHECKLIST_TEMPLATE.md](./AUDIT_CHECKLIST_TEMPLATE.md) | 审查检查清单模板 | Active |
 | [QUALITY_GATE_MECHANISM.md](./QUALITY_GATE_MECHANISM.md) | 质量门机制 | Active |

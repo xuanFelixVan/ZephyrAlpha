@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PERSONAL_DEVELOPMENT_LESSONS_LEARNED
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - СИфСтђтЈЉуЈжфїТђуЊ文档
 ---
 
 ﻿---
@@ -408,8 +410,8 @@ tags: ["СИфС║║т╝ђтЈ?, "у╗ЈжфїТЋЎУГ", "ТюђСй│т�
 ---
 
 ## 8. тЈѓУђЃТќЄТА?
-- [СИфС║║т╝ђтЈЉТюђСй│тъУих](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+- СИфС║║т╝ђтЈЉТюђСй│тъУих
+- СИфС║║т╝ђтЈЉтиЦСйюТхЂуеІТїЄтЇЌ
 - [ТќЄТАБТ▓╗уљєТюђСй│тъУих](../../../09_AUDIT/BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md)
 
 ---

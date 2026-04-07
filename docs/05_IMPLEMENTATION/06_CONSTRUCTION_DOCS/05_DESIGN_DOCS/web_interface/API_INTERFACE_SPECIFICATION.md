@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: API_INTERFACE_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - API_INTERFACE技术规范
 ---
 
 ﻿---
@@ -35,9 +37,9 @@ implementation_status: ﻟﺟﻟ۰?
 > ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.3 - Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
 > **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`
 > **ﮒﺏﻟﮔﮔ۰۲**: 
-> - [Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/T.06.UI001.web_management_interface_architecture_design.md)
+> - Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 > - ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔﮒﺝ
-> - [ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ](05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
+> - ﻝﺏﭨﻝﭨAPIﻟ؟ﺝﻟ؟۰ﻟ۶ﻟ
 
 ## 1. ﮔ۵ﻟﺟﺍ
 

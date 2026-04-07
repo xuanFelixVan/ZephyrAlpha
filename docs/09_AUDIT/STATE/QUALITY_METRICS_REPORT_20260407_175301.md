@@ -9,6 +9,8 @@ standard_type: 质量报告
 applicable_scope: 文档质量指标监控
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - QUALITY_METRICS_20260407_175301报告文档
 ---
 
 # 文档质量指标监控报告

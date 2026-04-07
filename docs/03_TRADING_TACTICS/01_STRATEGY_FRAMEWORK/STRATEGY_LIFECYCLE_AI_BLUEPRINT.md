@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_LIFECYCLE_AI_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGY_LIFECYCLE_AI蓝图设计
 ---
 
 ﻿---
@@ -652,7 +654,7 @@ class StrategyLifecycleTextInterface:
 
 ### 8.1 文档索引
 
-- **?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **?*: STRATEGY_AI_MODULES_ANALYSIS.md
 - **
   - [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](../../01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
@@ -675,7 +677,7 @@ class StrategyLifecycleTextInterface:
 #### Layer 0: 系统架构
 ##### 0.001. Strategy Lifecycle Ai
 - **模块ID**: STRATEGY_LIFECYCLE_AI_001
-- **蓝图文档**: [STRATEGY_LIFECYCLE_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_LIFECYCLE_AI_BLUEPRINT.md)
+- **蓝图文档**: STRATEGY_LIFECYCLE_AI_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 - **状态**: Active

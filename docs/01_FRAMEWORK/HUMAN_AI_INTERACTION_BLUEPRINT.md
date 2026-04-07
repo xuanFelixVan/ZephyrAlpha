@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - HUMAN_AI_INTERACTION蓝图设计
 ---
 
 ﻿---
@@ -325,7 +327,7 @@ implementation_status: 蓝图设计完成
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Interaction Blueprint
 - **模块ID**: HUMAN_AI_INTERACTION_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_INTERACTION_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- **蓝图文档**: HUMAN_AI_INTERACTION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 人机交互层战略规?
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PERFORMANCE_ATTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PERFORMANCE_ATTRIBUTION蓝图设计
 ---
 
 ﻿---
@@ -539,7 +541,7 @@ class EnhancedPostTradeReviewer(PostTradeReviewer):
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](10_AI_WORKFLOW/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
+| **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
 ```
 
 ### 6.2 模块职责边界

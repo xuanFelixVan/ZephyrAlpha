@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ARCHITECTURE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 统一架构 UNIFIED_ARCHITECTURE文档
 ---
 
 ﻿---
@@ -44,7 +46,7 @@ implementation_status: 进行?---
 > **版本**: v5.3
 > **创建日期**: 2026-03-30
 > **Layer**: Layer 0-11
-> **职责**: Layer 0-11技术架构定?> **父文?*: [README.md](API_README.md)
+> **职责**: Layer 0-11技术架构定?> **父文?*: README.md
 
 ---
 
@@ -237,7 +239,7 @@ Layer 0: 数据源层 (Data Sources)
 | [MARKET_REGIME.md](./MARKET_REGIME.md) | 市场状态识?|
 | [HUMAN_AI_INTEGRATION_BLUEPRINT.md](./HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 人机协作流程 |
 | [TECH_STACK.md](./TECH_STACK.md) | 技术栈选择 |
-| [README.md](API_README.md) | 框架总览 |
+| README.md | 框架总览 |
 
 ### P0级核心蓝?
 #### AI增强系统
@@ -253,7 +255,7 @@ Layer 0: 数据源层 (Data Sources)
 
 | 文档 | 说明 |
 |------|------|
-| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md)** | **🆕 P0?* 数据质量监控蓝图 |
+| **DATA_QUALITY_MONITORING_BLUEPRINT.md** | **🆕 P0?* 数据质量监控蓝图 |
 | **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0?* 实时风险监控蓝图 |
 | **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0?* 压力测试系统蓝图 |
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0?* 合规监控系统蓝图 |

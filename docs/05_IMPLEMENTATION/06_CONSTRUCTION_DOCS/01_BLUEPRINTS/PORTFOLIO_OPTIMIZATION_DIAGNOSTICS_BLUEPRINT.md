@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 优化诊断
+  - 结果验证
+  - 性能分析
+  - 问题排查
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -132,5 +135,11 @@ class OptimizationDiagnostics:
 
 |------|------|----------|--------|
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

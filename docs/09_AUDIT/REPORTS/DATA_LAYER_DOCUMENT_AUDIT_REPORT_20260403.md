@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_LAYER_DOCUMENT_AUDIT_20260403报告文档
 ---
 
 ﻿---

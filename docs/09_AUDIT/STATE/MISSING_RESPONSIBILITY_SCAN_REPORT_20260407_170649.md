@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MISSING_RESPONSIBILITY_SCAN_REPORT_20260407_170649
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 扫描报告
 applicable_scope: 缺少职责描述文档扫描
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - MISSING_RESPONSIBILITY_SCAN_20260407_170649报告文档
 ---
 
 # 缺少职责描述文档扫描报告

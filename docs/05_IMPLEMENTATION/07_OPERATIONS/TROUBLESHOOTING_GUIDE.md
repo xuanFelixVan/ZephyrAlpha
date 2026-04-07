@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha故障诊断
+responsibility:
+  - TROUBLESHOOTING操作指南
 ---
 
 # ZephyrAlpha故障诊断指南

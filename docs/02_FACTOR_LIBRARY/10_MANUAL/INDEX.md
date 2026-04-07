@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\10_MANUAL
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 10_MANUAL目录索引
 ---
 
 ﻿---
@@ -79,7 +81,7 @@ compliance_level: 专业标准---
 
 ### 查看手册
 
-1. 阅读 [因子库手册](02_FACTOR_LIBRARY/10_MANUAL/FACTOR_LIBRARY_MANUAL.md) - 了解因子库手册
+1. 阅读 因子库手册 - 了解因子库手册
 2. 了解因子研究方法论和分类体系
 
 ### 配套文档
@@ -102,9 +104,9 @@ compliance_level: 专业标准---
 
 ## 🔗 相关链接
 
-- [因子库总览](API_README.md)
-- [因子分类体系](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md)
-- [THS_BD指标清单](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md)
+- 因子库总览
+- 因子分类体系
+- THS_BD指标清单
 
 ---
 

@@ -9,6 +9,8 @@ standard_type: 检查报告
 applicable_scope: 定期检查总结
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 定期检查总结报告文档
 ---
 
 # 定期检查总结报告

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\07_FACTOR_MONITORING
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 07_FACTOR_MONITORING目录索引
 ---
 
 ﻿---
@@ -78,9 +80,9 @@ AI因子代理提供以下功能?
 
 ## 📚 相关文档
 
-- [因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
-- [回测系统](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+- 因子筛选策略
+- 因子验证指南
+- 回测系统
 
 ---
 

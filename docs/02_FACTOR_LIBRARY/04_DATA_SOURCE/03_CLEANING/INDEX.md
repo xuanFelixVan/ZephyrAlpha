@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\03_CLEANING
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 03_CLEANING目录索引
 ---
 
 ﻿---
@@ -44,7 +46,7 @@ responsibility: 数据清洗模块导航与文档索引
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 清洗蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 数据清洗引擎详细设计 |
+| 清洗蓝图 | BLUEPRINT.md | 详细设计 | 数据清洗引擎详细设计 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -60,8 +62,8 @@ responsibility: 数据清洗模块导航与文档索引
 
 | 文件 | 职责 | 状态 |
 |------|------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据清洗引擎蓝图 | Active |
-| [CLEANING_RULES.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/03_CLEANING/CLEANING_RULES.md) | 数据清洗规则配置 | Active |
+| BLUEPRINT.md | 数据清洗引擎蓝图 | Active |
+| CLEANING_RULES.md | 数据清洗规则配置 | Active |
 
 ---
 
@@ -93,13 +95,13 @@ responsibility: 数据清洗模块导航与文档索引
 
 ### 上层文档
 - [数据源层索引](../INDEX.md) - 数据源层总览
-- [数据采集系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) - 数据采集方案
+- 数据采集系统 - 数据采集方案
 
 ### 相关模块
 - [智能下载调度器](../02_SCHEDULER/) - 数据下载调度
-- [数据质量管理系统](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) - 数据质量管理
-- [数据质量控制系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) - 数据质量标准
-- [数据源适配器](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) - 数据源接入管理
+- 数据质量管理系统 - 数据质量管理
+- 数据质量控制系统 - 数据质量标准
+- 数据源适配器 - 数据源接入管理
 
 ---
 

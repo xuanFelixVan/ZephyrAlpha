@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MACRO_FACTOR_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - MACRO_FACTOR蓝图设计
 ---
 
 ﻿---
@@ -1071,7 +1073,7 @@ class StatsmodelsIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 | [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | 市场状态识别系统 |
 
@@ -1088,7 +1090,7 @@ class StatsmodelsIntegration:
 #### Layer 0: 系统架构
 ##### 0.001. Macro Factor
 - **模块ID**: MACRO_FACTOR_001
-- **蓝图文档**: [MACRO_FACTOR_BLUEPRINT.md](11_STRATEGIC_DECISION\MACRO_FACTOR_BLUEPRINT.md)
+- **蓝图文档**: MACRO_FACTOR_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.15 - 宏观因子系统
 - **状态**: Active

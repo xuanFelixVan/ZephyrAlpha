@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_SIMULATION说明文档
 ---
 
 ﻿---
@@ -931,4 +933,4 @@ def example_simulation():
 ### 9.4 完整多引擎蓝?
 
 完整的多引擎架构设计、实施路线图、性能测试方案详见?
-**[MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md)**
+**MULTI_ENGINE_BLUEPRINT.md**

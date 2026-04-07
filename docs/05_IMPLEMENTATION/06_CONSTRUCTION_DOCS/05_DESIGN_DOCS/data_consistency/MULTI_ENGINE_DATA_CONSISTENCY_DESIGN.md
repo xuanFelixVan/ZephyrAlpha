@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MULTI_ENGINE_DATA_CONSISTENCY_DESIGN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﮒ۳ﮒﺙﮔﮔﺍﮔﻛﺕﻟﺑﮔ۶ﻟﺝﻟ۰ﮔﺗﮔ۰文档
 ---
 
 ﻿---
@@ -790,8 +792,8 @@ async def schedule_compensation(
 
 ## ﻠﮒﺛBﺅﺙﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?
 
-1. [MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md) - ﮒ۳ﮒﺙﮔﮔﭘﮔﻟﮒ?
-2. [STORAGE_TIER.md](05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒﮒ۷ﮒﺎﮔﭘﮔﻟ؟ﺝﻟ؟?
+1. MULTI_ENGINE_BLUEPRINT.md - ﮒ۳ﮒﺙﮔﮔﭘﮔﻟﮒ?
+2. STORAGE_TIER.md - ﮒﮒ۷ﮒﺎﮔﭘﮔﻟ؟ﺝﻟ؟?
 3.  - ﮒﺙﮔﻠﻠﮒ۷ﻟ؟ﺝﻟ؟?
 4.  - ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 

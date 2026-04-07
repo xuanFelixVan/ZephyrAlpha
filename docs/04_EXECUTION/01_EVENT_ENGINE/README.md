@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 01_EVENT_ENGINE说明文档
 ---
 
 ﻿---
@@ -295,5 +297,5 @@ Layer 5 (监控? ?事件监控
 
 ## 索引
 
-- 父目? [04_EXECUTION/README.md](API_README.md)
-- 相关: [04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md)
+- 父目? 04_EXECUTION/README.md
+- 相关: 04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md

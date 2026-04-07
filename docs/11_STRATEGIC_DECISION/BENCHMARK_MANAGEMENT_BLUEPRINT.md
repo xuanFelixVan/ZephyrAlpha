@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BENCHMARK_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BENCHMARK_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -1004,9 +1006,9 @@ class SectorNeutralBenchmark:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK/STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | 业绩归因系统 |
+| PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | 业绩归因系统 |
 | [REBALANCING_BLUEPRINT.md](./REBALANCING_BLUEPRINT.md) | 再平衡决策系统 |
 
 ---
@@ -1031,7 +1033,7 @@ class SectorNeutralBenchmark:
 #### Layer 0: 系统架构
 ##### 0.001. Benchmark Management Blueprint
 - **模块ID**: BENCHMARK_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [BENCHMARK_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\BENCHMARK_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: BENCHMARK_MANAGEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.11 - 基准管理系统
 - **状态**: Active

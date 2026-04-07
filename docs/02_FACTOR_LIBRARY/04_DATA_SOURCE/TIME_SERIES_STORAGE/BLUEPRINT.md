@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -445,7 +447,7 @@ result = con.execute("""
 #### Layer 0: 系统架构
 ##### 0.001. Time Series Storage Bp
 - **模块ID**: TIME_SERIES_STORAGE_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\TIME_SERIES_STORAGE\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 高性能时序存储系统
 - **状态**: Blueprint

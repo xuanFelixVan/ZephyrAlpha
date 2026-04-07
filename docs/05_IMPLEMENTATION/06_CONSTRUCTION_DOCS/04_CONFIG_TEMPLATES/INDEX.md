@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_CONFIG_TEMPLATES目录索引
 ---
 
 
@@ -60,7 +62,7 @@ owner: 首席文档架构师
 
 - [建设文档索引](../INDEX.md)
 - [蓝图文档索引](../01_BLUEPRINTS/INDEX.md)
-- [部署指南](../03_GUIDES/DEPLOYMENT_GUIDE.md)
+- 部署指南
 
 ---
 

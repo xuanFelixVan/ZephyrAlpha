@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PE_TTM_IC
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PE_TTM  IC验证记录文档
 ---
 
 ﻿---
@@ -107,7 +109,7 @@ implementation_status: 进行?---
 
 ---
 
-**关联回测报告**：[回测报告/PE_TTM_BACKTEST.md](02_FACTOR_LIBRARY/05_BACKTEST/value_factors/PE_TTM_BACKTEST.md)
+**关联回测报告**：回测报告/PE_TTM_BACKTEST.md
 
 **下次验证日期**?026-06-28（季度更新）
 

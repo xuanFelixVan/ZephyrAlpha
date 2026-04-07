@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LEVERAGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - LEVERAGE_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -1013,7 +1015,7 @@ class QMTLeverageAPI:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [PORTFOLIO_INSURANCE_BLUEPRINT.md](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | 投资组合保险系统 |
 | [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算系统 |
@@ -1040,7 +1042,7 @@ class QMTLeverageAPI:
 #### Layer 0: 系统架构
 ##### 0.001. Leverage Management Blueprint
 - **模块ID**: LEVERAGE_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [LEVERAGE_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\LEVERAGE_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: LEVERAGE_MANAGEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.6 - 融资融券管理系统
 - **状态**: Active

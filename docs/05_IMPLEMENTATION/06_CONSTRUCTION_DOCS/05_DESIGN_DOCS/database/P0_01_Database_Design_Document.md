@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: P0_01_DATABASE_DESIGN_DOCUMENT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 数据库设计文档专业量化机构标准优化版文档
 ---
 
 ﻿---

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MULTI_STRATEGY_COORDINATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - MULTI_STRATEGY_COORDINATION蓝图设计
 ---
 
 ﻿---
@@ -1074,7 +1076,7 @@ class MultiStrategyCoordinator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [CAPITAL_ALLOCATION_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 资本配置系统 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 
@@ -1091,7 +1093,7 @@ class MultiStrategyCoordinator:
 #### Layer 0: 系统架构
 ##### 0.001. Multi Strategy Coordination
 - **模块ID**: MULTI_STRATEGY_COORDINATION_001
-- **蓝图文档**: [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](11_STRATEGIC_DECISION\MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)
+- **蓝图文档**: MULTI_STRATEGY_COORDINATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.18 - 多策略协调系统
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FUTURE_FACTOR_TOOLS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 未来因子工具规划文档
 ---
 
 ﻿---
@@ -636,7 +638,7 @@ TA-Lib触发条件:
 
 ## 索引
 
-- 父目? [01_STANDARDS/README.md](API_README.md)
+- 父目? 01_STANDARDS/README.md
 - 相关: [FACTOR_CALCULATION_FRAMEWORK.md](./FACTOR_CALCULATION_FRAMEWORK.md)
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)
 - 相关: [FACTOR_SYNTHESIS.md](./factor_synthesis.md)

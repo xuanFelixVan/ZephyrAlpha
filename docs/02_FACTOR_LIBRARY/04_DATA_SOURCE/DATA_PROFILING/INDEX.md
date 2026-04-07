@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_PROFILING目录索引
 ---
 
 ﻿---
@@ -52,7 +54,7 @@ responsibility: 数据分析模块导航
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [数据剖析系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 数据剖析系统详细设计 | ⭐⭐⭐⭐⭐ |
+| 数据剖析系统蓝图 | 数据剖析系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

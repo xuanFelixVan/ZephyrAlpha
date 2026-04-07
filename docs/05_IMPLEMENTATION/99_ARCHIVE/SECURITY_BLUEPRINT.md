@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SECURITY蓝图设计
 ---
 
 ﻿---
@@ -56,7 +58,7 @@ implementation_status: 设计阶段
 | 原因 | 说明 |
 |------|------|
 | **个人系统** | 数据为公开行情，不需要企业级安全 |
-| **已有认证** | [AUTH.md](05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) 已实现JWT+API Key认证 |
+| **已有认证** | AUTH.md 已实现JWT+API Key认证 |
 | **工程量过?* | 完整安全方案需要额?0h |
 | **优先级低** | 1?AI模式核心是策略和风控，不是安?|
 
@@ -90,8 +92,8 @@ implementation_status: 设计阶段
 
 | 文档 | 说明 |
 |------|------|
-| [AUTH.md](05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) | 简化认证模?已有) |
-| [DEVELOPER_RULES.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规?|
+| AUTH.md | 简化认证模?已有) |
+| DEVELOPER_RULES.md | 开发规?|
 
 ---
 
@@ -107,7 +109,7 @@ implementation_status: 设计阶段
 #### Layer 0: 系统架构
 ##### 0.001. Archive Security Blueprint
 - **模块ID**: ARCHIVE_SECURITY_BLUEPRINT_001
-- **蓝图文档**: [SECURITY_BLUEPRINT.md](05_IMPLEMENTATION\99_ARCHIVE\SECURITY_BLUEPRINT.md)
+- **蓝图文档**: SECURITY_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

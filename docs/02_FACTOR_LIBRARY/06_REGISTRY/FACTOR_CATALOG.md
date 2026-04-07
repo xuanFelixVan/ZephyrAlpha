@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_CATALOG
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 因子注册表Factor Registry文档
 ---
 
 ﻿---
@@ -31,7 +33,7 @@ implementation_status: 进行中---
 > **职责边界**: 
 > - ✅ 本文档负责：因子清单维护、因子ID管理、元数据更新、因子评级
 > - ❌ 本文档不负责：因子分类体系定义、分类标准制定
-> - 📋 相关文档：[因子分类学](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系定义
+> - 📋 相关文档：因子分类学 - 因子分类体系定义
 >
 > **版本**: v4.0
 > **更新日期**: 2026-03-28

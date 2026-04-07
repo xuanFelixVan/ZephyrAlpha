@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ESG_COMPLIANCE_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ESG_COMPLIANCE_MONITORING蓝图设计
 ---
 
 ﻿---
@@ -604,7 +606,7 @@ class ESGComplianceCheck:
 #### Layer 10: 治理与合规层
 ##### 0.001. Esg Compliance Monitoring Blueprint
 - **模块ID**: ESG_COMPLIANCE_MONITORING_BLUEPRINT_001
-- **蓝图文档**: [ESG_COMPLIANCE_MONITORING_BLUEPRINT.md](01_FRAMEWORK\ESG_COMPLIANCE_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: ESG_COMPLIANCE_MONITORING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: ESG合规监控系统
 - **状态**: Active

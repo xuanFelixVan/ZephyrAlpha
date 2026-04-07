@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_PLATFORM_DOCS目录索引
 ---
 
 ﻿---
@@ -51,7 +53,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Readme](API_README.md) - `RESOURCES_PLATFORM_DOCS_README_001`
+- Readme - `RESOURCES_PLATFORM_DOCS_README_001`
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 09_RISK_RULES目录索引
 ---
 
 ﻿---
@@ -51,8 +53,8 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Blueprint](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - `BLUEPRINT_002`
-- [Risk Report](03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) - `TACTICS_RISK_REPORT_001`
+- Blueprint - `BLUEPRINT_002`
+- Risk Report - `TACTICS_RISK_REPORT_001`
 
 ---
 

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_PREPROCESSING_LAYER蓝图设计
 ---
 
 ﻿---
@@ -1014,7 +1016,7 @@ class DataQualityReport:
 | 文档 | 说明 |
 |------|------|
 | [DATA_SOURCE_LAYER_BLUEPRINT.md](./DATA_SOURCE_LAYER_BLUEPRINT.md) | 数据源层蓝图 |
-| [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控蓝图 |
+| DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量监控蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---

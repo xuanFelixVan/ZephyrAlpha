@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: SCENARIO_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SCENARIO_ANALYSIS蓝图设计
 ---
 
 ﻿---
@@ -1272,7 +1274,7 @@ class PolicyShockScenario:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | 流动性管理系统 |
 | [PORTFOLIO_INSURANCE_BLUEPRINT.md](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | 投资组合保险系统 |
@@ -1299,7 +1301,7 @@ class PolicyShockScenario:
 #### Layer 0: 系统架构
 ##### 0.001. Scenario Analysis Blueprint
 - **模块ID**: SCENARIO_ANALYSIS_BLUEPRINT_001
-- **蓝图文档**: [SCENARIO_ANALYSIS_BLUEPRINT.md](11_STRATEGIC_DECISION\SCENARIO_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: SCENARIO_ANALYSIS_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.12 - 情景分析系统
 - **状态**: Active

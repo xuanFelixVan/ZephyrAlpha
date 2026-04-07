@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: VERSION_MANAGEMENT_DECISIONS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - чЙИцЬмчобчРЖхЖчнЦшохХ文档
 ---
 
 ﻿---
@@ -175,13 +177,13 @@ parent_document: ../INDEX.md
 ## ЁЯУЭ хЖ│чнЦшо░х╜Х
 
 ### хЖ│чнЦцЦЗцбг
-1. [VERSION_MANAGEMENT_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/VERSION_MANAGEMENT_STANDARD.md) - чЙИцЬмчобчРЖцаЗхЗЖ
-2. [RELEASE_CHECKLIST.md](05_IMPLEMENTATION/02_DEVELOPMENT/RELEASE_CHECKLIST.md) - хПСх╕ГцгАцЯец╕Е?
-3. [DOCUMENT_NUMBERING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md) - цЦЗцбгч╝ЦхП╖цаЗхЗЖ
+1. VERSION_MANAGEMENT_STANDARD.md - чЙИцЬмчобчРЖцаЗхЗЖ
+2. RELEASE_CHECKLIST.md - хПСх╕ГцгАцЯец╕Е?
+3. DOCUMENT_NUMBERING_STANDARD.md - цЦЗцбгч╝ЦхП╖цаЗхЗЖ
 
 ### чЫ╕хЕ│хобшоб
 1. FULL_SYSTEM_AUDIT_REPORT_2026-04-02.md - хЕич│╗ч╗ЯхобшобцКе?
-2. [P1_FIXES_COMPLETED.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/P1_FIXES_COMPLETED.md) - P1щЧощвШф┐охдНхоМцИРшо░х╜Х
+2. P1_FIXES_COMPLETED.md - P1щЧощвШф┐охдНхоМцИРшо░х╜Х
 
 ### хоЮцЦ╜шпБцНо
 1. `config/system.yaml` - ч│╗ч╗ЯчЙИцЬмщЕНч╜о (v5.3.0)

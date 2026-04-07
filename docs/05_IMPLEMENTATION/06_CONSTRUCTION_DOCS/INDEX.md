@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_CONSTRUCTION_DOCS目录索引
 ---
 
 
@@ -89,8 +91,8 @@ owner: 首席文档架构师
 
 - [实施层索引](../INDEX.md)
 - [蓝图文档索引](01_BLUEPRINTS/INDEX.md)
-- [模板文档索引](02_TEMPLATES/INDEX.md)
-- [指南文档索引](03_GUIDES/INDEX.md)
+- 模板文档索引
+- 指南文档索引
 
 ---
 

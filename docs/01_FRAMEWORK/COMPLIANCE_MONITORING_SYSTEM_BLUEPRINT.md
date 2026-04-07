@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - COMPLIANCE_MONITORING_SYSTEM蓝图设计
 ---
 
 ﻿---
@@ -681,8 +683,8 @@ class ComplianceReporter:
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11主架?| ⭐⭐⭐⭐?|
 | [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架?| ⭐⭐⭐⭐?|
 | [REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控 | ⭐⭐⭐⭐?|
-| [STRESS_TESTING_SYSTEM_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md) | 压力测试系统 | ⭐⭐⭐⭐?|
-| [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控 | ⭐⭐⭐⭐ |
+| STRESS_TESTING_SYSTEM_BLUEPRINT.md | 压力测试系统 | ⭐⭐⭐⭐?|
+| DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量监控 | ⭐⭐⭐⭐ |
 
 ---
 
@@ -697,7 +699,7 @@ class ComplianceReporter:
 #### Layer 10: 治理与合规层
 ##### 0.001. Compliance Monitoring System Blueprint
 - **模块ID**: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT_001
-- **蓝图文档**: [COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](01_FRAMEWORK\COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

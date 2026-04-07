@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PERIODIC_CHECK_MECHANISM_20260407_161212报告文档
 ---
 
 ﻿---

@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 策略组合优化
+  - 策略权重分配
+  - 策略协调
+  - 组合构建
 
 module_id: STRATEGY_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
@@ -23,8 +26,7 @@ layer: Layer 5.2 (组合优化)
 
 
 ## 核心定位
-
-管理STRATEGY PORTFOLIO OPTIMIZATION的设计与实现，基于Black-Litterman技术，优化核心功能，提升收益风险比�?
+负责策略组合优化模块的设计与实现，分配策略权重，协调多策略，构建最优组合。
 
 ## 设计目标
 

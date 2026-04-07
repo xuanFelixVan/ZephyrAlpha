@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX_UPDATE_MECHANISM
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 文档索引更新机制文档
 ---
 
 ﻿---
@@ -129,7 +131,7 @@ responsibility:
 **验证工具**：
 ```bash
 # 检查死链
-grep -r "\[.*\](.*)" docs/**/INDEX.md | 检查链接目标是否存在
+grep -r "\.*\" docs/**/INDEX.md | 检查链接目标是否存在
 ```
 
 ### 3.2 索引完整性验证

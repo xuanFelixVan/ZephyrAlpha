@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - LAYER_10_DOCUMENT_GOVERNANCE_AUDIT报告文档
 ---
 
 ﻿---

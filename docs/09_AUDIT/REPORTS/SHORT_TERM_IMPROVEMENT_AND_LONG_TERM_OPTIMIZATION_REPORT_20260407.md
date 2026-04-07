@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SHORT_TERM_IMPROVEMENT_AND_LONG_TERM_OPTIMIZATION_20260407报告文档
 ---
 
 # 短期改进与长期优化完成报告

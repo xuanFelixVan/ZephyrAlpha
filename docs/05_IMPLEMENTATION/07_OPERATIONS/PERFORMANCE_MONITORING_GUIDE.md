@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha性能监控
+responsibility:
+  - PERFORMANCE_MONITORING操作指南
 ---
 
 # ZephyrAlpha性能监控指南

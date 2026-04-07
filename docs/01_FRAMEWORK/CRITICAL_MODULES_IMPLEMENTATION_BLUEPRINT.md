@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - CRITICAL_MODULES_IMPLEMENTATION蓝图设计
 ---
 
 ﻿---
@@ -1250,7 +1252,7 @@ class GlobalMarketDataEngine:
 #### Layer 2: Alpha因子层
 ##### 0.001. Critical Modules Implementation Blueprint
 - **模块ID**: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT_001
-- **蓝图文档**: [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
+- **蓝图文档**: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 0
 - **状态**: Active

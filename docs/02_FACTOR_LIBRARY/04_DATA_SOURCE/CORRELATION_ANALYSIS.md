@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 相关性分析文档
 ---
 
 ﻿---
@@ -61,7 +63,7 @@ implementation_status: 进行中
 
 本文档是统计分析工具的补充，专注于**深入的相关性分析**方法，包括偏相关、条件相关、协整检验等高级主题。
 
-> 基础相关系数计算请参考 [STATISTICAL_TOOLS.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/STATISTICAL_TOOLS.md) 中的 `CorrelationAnalysis` 类。
+> 基础相关系数计算请参考 STATISTICAL_TOOLS.md 中的 `CorrelationAnalysis` 类。
 
 ---
 

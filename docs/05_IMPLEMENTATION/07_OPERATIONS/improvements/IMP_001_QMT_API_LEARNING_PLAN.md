@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: IMP_001_QMT_API_LEARNING_PLAN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT API学习计划与基础培训文档文档
 ---
 
 ﻿---
@@ -363,8 +365,8 @@ last_updated: 2026-04-02---
 | `xtorder.cancel_order(...)` | 撤单 | account_type, order_id | bool: 是否成功 |
 
 ### B. 参考文?
-- [QMT数据接口技术规格书](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-- [QMT数据接口评审报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
+- QMT数据接口技术规格书
+- QMT数据接口评审报告
 
 
 **文档版本**: v1.0 | **创建日期**: 2026-04-02 | **维护?*: 数据源层负责?

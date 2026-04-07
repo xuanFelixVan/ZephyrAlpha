@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - knowledge_base目录索引
 ---
 
 ﻿---
@@ -53,11 +55,11 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Best Practices Index](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) - `BEST_PRACTICES_INDEX_001`
-- [Best Practices Template](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/BEST_PRACTICES_TEMPLATE.md) - `IMP_BEST_PRACTICES_TEMPL`
-- [Case Study Template](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/CASE_STUDY_TEMPLATE.md) - `IMP_CASE_STUDY_TEMPLATE`
-- [Knowledge Index](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/KNOWLEDGE_INDEX.md) - `KNOWLEDGE_INDEX_001`
-- [Readme](API_README.md) - `IMP_README`
+- Best Practices Index - `BEST_PRACTICES_INDEX_001`
+- Best Practices Template - `IMP_BEST_PRACTICES_TEMPL`
+- Case Study Template - `IMP_CASE_STUDY_TEMPLATE`
+- Knowledge Index - `KNOWLEDGE_INDEX_001`
+- Readme - `IMP_README`
 
 ---
 

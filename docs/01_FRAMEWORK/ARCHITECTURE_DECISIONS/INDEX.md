@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 01_FRAMEWORK\ARCHITECTURE_DECISIONS
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - ARCHITECTURE_DECISIONS目录索引
 ---
 
 

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - L4_FEATURE_ENG 自动化特征工程模块设文档
 ---
 
 ﻿---

@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 运维团队
 standard_type: 专业量化机构指南
 applicable_scope: ZephyrAlpha系统部署
+responsibility:
+  - DEPLOYMENT操作指南
 ---
 
 # ZephyrAlpha系统部署指南
@@ -399,8 +401,8 @@ ls -la /var/www/zephyr
 
 - [环境配置指南](ENVIRONMENT_CONFIG_GUIDE.md)
 - [数据迁移指南](DATA_MIGRATION_GUIDE.md)
-- [故障诊断指南](TROUBLESHOOTING_GUIDE.md)
-- [性能监控指南](PERFORMANCE_MONITORING_GUIDE.md)
+- 故障诊断指南
+- 性能监控指南
 
 ---
 

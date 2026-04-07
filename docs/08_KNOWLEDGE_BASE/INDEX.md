@@ -7,6 +7,8 @@ last_updated: 2026-04-07
 owner: 知识管理团队
 standard_type: 专业量化机构索引
 applicable_scope: ZephyrAlpha知识库
+responsibility:
+  - 08_KNOWLEDGE_BASE目录索引
 ---
 
 # ZephyrAlpha知识库索引
@@ -48,10 +50,10 @@ applicable_scope: ZephyrAlpha知识库
 
 | 分类ID | 分类名称 | 描述 | 条目数 |
 |--------|---------|------|--------|
-| **KB_01** | [技术知识](01_TECHNICAL_KNOWLEDGE/INDEX.md) | 系统架构、技术方案、最佳实践 | 0 |
-| **KB_02** | [业务知识](02_BUSINESS_KNOWLEDGE/INDEX.md) | 业务流程、业务规则、业务场景 | 0 |
-| **KB_03** | [运维知识](03_OPERATIONS_KNOWLEDGE/INDEX.md) | 部署流程、监控配置、故障处理 | 0 |
-| **KB_04** | [管理知识](04_MANAGEMENT_KNOWLEDGE/INDEX.md) | 项目管理、团队协作、流程规范 | 0 |
+| **KB_01** | 技术知识 | 系统架构、技术方案、最佳实践 | 0 |
+| **KB_02** | 业务知识 | 业务流程、业务规则、业务场景 | 0 |
+| **KB_03** | 运维知识 | 部署流程、监控配置、故障处理 | 0 |
+| **KB_04** | 管理知识 | 项目管理、团队协作、流程规范 | 0 |
 
 ---
 

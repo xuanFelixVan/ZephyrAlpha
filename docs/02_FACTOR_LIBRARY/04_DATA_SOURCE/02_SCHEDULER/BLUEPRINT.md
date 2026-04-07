@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -44,8 +46,8 @@ implementation_progress: 0%
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集系统 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 上游架构 | 数据采集整体架构 |
-| 数据源适配器 | [../DATA_SOURCE_ADAPTERS.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_ADAPTERS.md) | 数据源 | 数据源接口定义 |
+| 数据采集系统 | ../DATA_ACQUISITION.md | 上游架构 | 数据采集整体架构 |
+| 数据源适配器 | ../DATA_SOURCE_ADAPTERS.md | 数据源 | 数据源接口定义 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -565,7 +567,7 @@ task_defaults:
 #### Layer 0: 系统架构
 ##### 0.001. Data Scheduler
 - **模块ID**: DATA_SCHEDULER_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\02_SCHEDULER\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据调度系统
 - **状态**: Active

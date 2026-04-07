@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 9文档治理深度审计总结文档
 ---
 
 ﻿---
@@ -219,7 +221,7 @@ docs/09_RESEARCH_INNOVATION/
 
 ### 附录A: 审计检查清单（完整）
 
-详见[LAYER9_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md)的附录A
+详见LAYER9_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md的附录A
 
 ### 附录B: 文档清单
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_SIMULATION目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Blueprint](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - `BLUEPRINT_004`
-- [Multi Engine Blueprint](04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md) - `MULTIENGINEBLUEPRINT_001`
-- [Readme](API_README.md) - `EXEC_SIMULATION_README_001`
+- Blueprint - `BLUEPRINT_004`
+- Multi Engine Blueprint - `MULTIENGINEBLUEPRINT_001`
+- Readme - `EXEC_SIMULATION_README_001`
 
 ---
 

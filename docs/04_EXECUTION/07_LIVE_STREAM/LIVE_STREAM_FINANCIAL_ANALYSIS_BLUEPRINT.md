@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - LIVE_STREAM_FINANCIAL_ANALYSIS蓝图设计
 ---
 
 ﻿---
@@ -2068,7 +2070,7 @@ async def save_to_database(factors: Dict):
 #### Layer 0: 系统架构
 ##### 0.001. Live Stream Financial Analysis
 - **模块ID**: LIVE_STREAM_FINANCIAL_ANALYSIS_001
-- **蓝图文档**: [LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md](04_EXECUTION\07_LIVE_STREAM\LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 
 容分析与因子生成

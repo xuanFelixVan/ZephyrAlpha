@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LAYER_10_MISSING_MODULES_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 10治理与合规层缺失模块补充实施方案文档
 ---
 
 ﻿---

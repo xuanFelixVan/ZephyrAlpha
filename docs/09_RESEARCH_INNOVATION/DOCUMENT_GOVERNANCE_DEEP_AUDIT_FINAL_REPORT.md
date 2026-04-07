@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DOCUMENT_GOVERNANCE_DEEP_AUDIT_FINAL报告文档
 ---
 
 ﻿---
@@ -345,16 +347,16 @@ responsibility:
 
 | 文档名称 | 审计类型 | 审计日期 | 状态 |
 |---------|---------|---------|------|
-| [文档治理审计报告](09_RESEARCH_INNOVATION/DOCUMENT_GOVERNANCE_AUDIT_REPORT.md) | 初始审计 | 2026-04-07 | ✅ 完成 |
-| [文档治理修复报告](09_RESEARCH_INNOVATION/DOCUMENT_GOVERNANCE_FIX_REPORT.md) | 问题修复 | 2026-04-07 | ✅ 完成 |
-| [文档治理深度审计报告](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md) | 深度审计 | 2026-04-07 | ✅ 完成 |
-| [文档治理最终审计报告](09_RESEARCH_INNOVATION/_archive/DOCUMENT_GOVERNANCE_FINAL_AUDIT_REPORT.md) | 最终审计 | 2026-04-07 | ✅ 完成 |
+| 文档治理审计报告 | 初始审计 | 2026-04-07 | ✅ 完成 |
+| 文档治理修复报告 | 问题修复 | 2026-04-07 | ✅ 完成 |
+| 文档治理深度审计报告 | 深度审计 | 2026-04-07 | ✅ 完成 |
+| 文档治理最终审计报告 | 最终审计 | 2026-04-07 | ✅ 完成 |
 
 ## 🔧 维护记录
 
 | 文档名称 | 维护类型 | 维护日期 | 状态 |
 |---------|---------|---------|------|
-| [周维护报告](09_RESEARCH_INNOVATION/WEEKLY_MAINTENANCE_REPORT_20260407.md) | 周维护 | 2026-04-07 | ✅ 完成 |
+| 周维护报告 | 周维护 | 2026-04-07 | ✅ 完成 |
 ```
 
 ### 5.3 长期优化项（P2级，1月内）

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 06_CHECKLISTS目录索引
 ---
 
 ﻿---
@@ -51,10 +53,10 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Code Review Checklist](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) - `CODE_REVIEW_CHECKLIST_001`
-- [Document Quality Gate](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) - `DOCUMENT_QUALITY_GATE_001`
-- [Post Deployment Checklist](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/POST_DEPLOYMENT_CHECKLIST.md) - `POST_DEPLOYMENT_CHECKLIST`
-- [Pre Deployment Checklist](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) - `PRE_DEPLOYMENT_CHECKLIST_001`
+- Code Review Checklist - `CODE_REVIEW_CHECKLIST_001`
+- Document Quality Gate - `DOCUMENT_QUALITY_GATE_001`
+- Post Deployment Checklist - `POST_DEPLOYMENT_CHECKLIST`
+- Pre Deployment Checklist - `PRE_DEPLOYMENT_CHECKLIST_001`
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: BATCH_EVALUATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BATCH_EVALUATION蓝图设计
 ---
 
 ﻿---
@@ -564,7 +566,7 @@ batch_evaluation:
 |------|------|
 | [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 策略引擎核心蓝图 |
 | [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | 回测系统蓝图 |
-| [PARAMETER_OPTIMIZATION_BLUEPRINT.md](10_AI_WORKFLOW/INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT.md) | 参数优化蓝图 |
+| PARAMETER_OPTIMIZATION_BLUEPRINT.md | 参数优化蓝图 |
 | [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | 策略选择蓝图 |
 
 
@@ -582,7 +584,7 @@ batch_evaluation:
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Batch Eval Bp
 - **模块ID**: TACTICS_BATCH_EVAL_BP_001
-- **蓝图文档**: [BATCH_EVALUATION_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\BATCH_EVALUATION_BLUEPRINT.md)
+- **蓝图文档**: BATCH_EVALUATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?compliance_level: 初始标准
 - **状态**: Active

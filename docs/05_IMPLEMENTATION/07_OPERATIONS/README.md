@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 07_OPERATIONS说明文档
 ---
 
 ﻿---
@@ -120,7 +122,7 @@ python scripts/start_server.py
 
 ##  相关文档
 
-- [部署指南](API_README.md)
+- 部署指南
 - 
 
 ---

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AI_DECISION_EXPLANATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - AI_DECISION_EXPLANATION蓝图设计
 ---
 
 ﻿---
@@ -485,7 +487,7 @@ class ExplainableMultiAgentSystem(MultiAgentSystem):
 ### 6.1 System_Manifest.md索引
 
 ```markdown
-| **AI_DECISION_EXPLANATION_001** | AI决策解释系统 | 1.0 | Active | [AI_DECISION_EXPLANATION_BLUEPRINT.md](10_AI_WORKFLOW/AI_DECISION_EXPLANATION_BLUEPRINT.md) | SHAP解释引擎、LIME解释引擎、特征重要性分析、决策路径可视化、解释报告生成 |
+| **AI_DECISION_EXPLANATION_001** | AI决策解释系统 | 1.0 | Active | AI_DECISION_EXPLANATION_BLUEPRINT.md | SHAP解释引擎、LIME解释引擎、特征重要性分析、决策路径可视化、解释报告生成 |
 ```
 
 ### 6.2 模块职责边界

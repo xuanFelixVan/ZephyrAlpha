@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Layer 10 治理与合规层蓝图索引文档
 ---
 
 ﻿---
@@ -215,7 +217,7 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 |-------|---------|---------|------|
 | **Layer 0** | [数据源质量监控蓝图](./DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md) | 源头保障 | 数据源健康监控、实时验证、异常告警 |
 | **Layer 1** | [数据质量评估蓝图](./DATA_QUALITY_ASSESSMENT_BLUEPRINT.md) | 质量评估 | 多维度评估、评分体系、趋势分析 |
-| **Layer 4** | [数据质量监控蓝图](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 实时监控 | 实时检查、自动告警、Grafana仪表盘 |
+| **Layer 4** | 数据质量监控蓝图 | 实时监控 | 实时检查、自动告警、Grafana仪表盘 |
 | **Layer 10** | [数据质量管理系统蓝图](./DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 治理管理 | 规则定义、改进跟踪、合规管理 |
 | **Layer 10** | [数据质量治理体系蓝图](./DATA_QUALITY_GOVERNANCE_BLUEPRINT.md) | **顶层协调** | **四层架构统一协调、职责边界定义** |
 

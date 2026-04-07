@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX_AUDIT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 审计门户首页文档
 ---
 
 ﻿---
@@ -142,7 +144,7 @@ implementation_status: 进行?---
 ### 与现有审计文档关?- **[05_IMPLEMENTATION/07_OPERATIONS/](../05_IMPLEMENTATION/07_OPERATIONS/)** - 运维审计基础文档
 - **[DOCUMENT_AUDIT_WORKFLOW.md](../05_IMPLEMENTATION/07_OPERATIONS/DOCUMENT_AUDIT_WORKFLOW.md)** - 原始审计工作流程
 - **[AUDIT_CHECKLIST_TEMPLATE.md](../05_IMPLEMENTATION/07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)** - 原始检查清?
-### 与系统文档关?- **[System_Manifest.md](System_Manifest.md)** - 系统清单（审计对象）
+### 与系统文档关?- **System_Manifest.md** - 系统清单（审计对象）
 - **[INDEX.md](../03_TRADING_TACTICS/INDEX.md)** - 主文档索引（已添加审计入口）
 - **[SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)** - 完整文档地图（已更新审计位置?
 

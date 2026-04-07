@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -68,8 +70,8 @@ implementation_progress: 0%
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据采集系统 | [../DATA_ACQUISITION.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) | 上游采集 | 数据采集实现方案 |
-| 数据质量管理 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 下游检查 | 数据质量控制体系 |
+| 数据采集系统 | ../DATA_ACQUISITION.md | 上游采集 | 数据采集实现方案 |
+| 数据质量管理 | ../QUALITY_MANAGEMENT/ | 下游检查 | 数据质量控制体系 |
 | 清洗规则索引 | [INDEX.md](./INDEX.md) | 上级索引 | 清洗模块索引 |
 
 **职责边界**:
@@ -617,7 +619,7 @@ class CleaningReport:
 #### Layer 0: 系统架构
 ##### 0.001. Data Cleaning Blueprint
 - **模块ID**: DATA_CLEANING_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\03_CLEANING\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据清洗引擎
 - **状态**: Active

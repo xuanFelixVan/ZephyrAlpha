@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ALPHA_FACTOR_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ALPHA_FACTOR_LAYER蓝图设计
 ---
 
 ﻿---
@@ -235,7 +237,7 @@ class TechnicalFactorEngine:
         
         for factor_name in factor_names:
             if factor_name in self.factors:
-                result = self.factors[factor_name](01_FRAMEWORK/BACKTEST_RESULT_VIEWER_BLUEPRINT.md)
+                result = self.factorsfactor_name
         
         return result
     
@@ -487,7 +489,7 @@ class FactorEvaluation:
 #### Layer 2: Alpha因子层
 ##### 0.001. Alpha Factor Layer Blueprint
 - **模块ID**: ALPHA_FACTOR_LAYER_BLUEPRINT_001
-- **蓝图文档**: [ALPHA_FACTOR_LAYER_BLUEPRINT.md](01_FRAMEWORK\ALPHA_FACTOR_LAYER_BLUEPRINT.md)
+- **蓝图文档**: ALPHA_FACTOR_LAYER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 2 - Alpha因子层
 - **状态**: Active

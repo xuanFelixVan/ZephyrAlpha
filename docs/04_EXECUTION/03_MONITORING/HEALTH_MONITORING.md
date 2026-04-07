@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: HEALTH_MONITORING
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 系统健康监控文档
 ---
 
 ﻿---
@@ -390,5 +392,5 @@ monitoring:
 
 ## 索引
 
-- 父目? [04_EXECUTION/03_MONITORING/README.md](API_README.md)
+- 父目? 04_EXECUTION/03_MONITORING/README.md
 - 相关: [REAL_TIME_MONITORING.md](./REAL_TIME_MONITORING.md)

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -8609,7 +8611,7 @@ class RetryManager:
 #### Layer 0: 系统架构
 ##### 0.001. Research Innovation Bp
 - **模块ID**: RESEARCH_INNOVATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

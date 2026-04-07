@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 05_DESIGN_DOCS目录索引
 ---
 
 ﻿---
@@ -48,18 +50,18 @@ compliance_level: 专业标准---
 ---
 
 ## 📚 文档列表
-- [NozyIO可视化编辑系统（归档?](03_TRADING_TACTICS/99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
+- NozyIO可视化编辑系统（归档?
 
 - [Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./T.08.AR001.a_stock_rule_engine_design.md) - 设计文档
 
 
 ### 核心文档
 
-- [Personal Tech Decision Checklist](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/PERSONAL_TECH_DECISION_CHECKLIST.md) - `PERSONAL_DECISION_001`
-- [Professional Quant Development Process](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS.md) - `DEV_PROCESS_001`
-- [Review Material Distribution Checklist](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST.md) - `DISTRIBUTION_001`
-- [Technical Review Meeting Agenda](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/TECHNICAL_REVIEW_MEETING_AGENDA.md) - `REVIEW_AGENDA_001`
-- [Technical Solution Summary Report](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/TECHNICAL_SOLUTION_SUMMARY_REPORT.md) - `DESIGN_SUMMARY_001`
+- Personal Tech Decision Checklist - `PERSONAL_DECISION_001`
+- Professional Quant Development Process - `DEV_PROCESS_001`
+- Review Material Distribution Checklist - `DISTRIBUTION_001`
+- Technical Review Meeting Agenda - `REVIEW_AGENDA_001`
+- Technical Solution Summary Report - `DESIGN_SUMMARY_001`
 
 ---
 

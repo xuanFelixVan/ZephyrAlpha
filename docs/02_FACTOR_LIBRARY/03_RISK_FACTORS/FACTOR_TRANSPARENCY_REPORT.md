@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_TRANSPARENCY_REPORT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FACTOR_TRANSPARENCY报告文档
 ---
 
 ﻿---
@@ -36,8 +38,8 @@ compliance_level: 专业标准
 > **来源**：量化策略专业分层方案_v3.0 附录AJ
 >
 > **配套文档**?
-> - Barra风格因子：[T.03.RF001.barra_style_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_STYLE_FACTORS.md)
-> - Barra优化器：[T.03.RM003.barra_optimizer.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/BARRA_OPTIMIZER.md)
+> - Barra风格因子：T.03.RF001.barra_style_factors.md
+> - Barra优化器：T.03.RM003.barra_optimizer.md
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_CONNECTION_ROOT_CAUSE_ANALYSIS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMTшЮцОещЧощвШцацЬмхОЯхЫахИЖцЮРфОшзгхЖцЦцб文档
 ---
 
 ﻿---
@@ -168,14 +170,14 @@ python scripts/test_qmt_connection_v2.py
 ## ЁЯУЪ чЫ╕хЕ│цЦЗцбгч┤вх╝Х
 
 ### ч│╗ч╗ЯцЦЗцбг
-1. [QMTцХ░цНоцОехПгцЦЗцбг](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+1. QMTцХ░цНоцОехПгцЦЗцбг
    - хМЕхРлMiniQMTшжБц▒ВуАБTokenшО╖хПЦуАБш┐РшбМчОпхвГчнЙхЕ│щФоф┐бцБп
 
-2. [QMT APIчд╛хМ║ш╡Дц║Рш░ГчаФцКехСК](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md)
+2. QMT APIчд╛хМ║ш╡Дц║Рш░ГчаФцКехСК
    - хМЕхРлш┤жхП╖ч▒╗хЮЛуАБцЭГщЩРшжБц▒ВуАБцЬАф╜│хоЮш╖?
-3. [QMTховцИ╖члпчи│хоЪцАзцЦ╣цбИ](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md)
+3. QMTховцИ╖члпчи│хоЪцАзцЦ╣цбИ
    - хМЕхРлш┐ЮцОещЧощвШхдДчРЖуАБшЗкхКищЗНш┐ЮуАБщЩНч║зчнЦчХ?
-4. [QMT APIхнжф╣ашобхИТ](05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_001_QMT_API_LEARNING_PLAN.md)
+4. QMT APIхнжф╣ашобхИТ
    - хМЕхРлх╕╕шзБщЧощвШф╕ОшзгхЖ│цЦ╣цб?
 ### хоШцЦ╣цЦЗцбг
 1. ш┐ЕцКХчЯешпЖх║Уя╝Ъhttps://dict.thinktrader.net/

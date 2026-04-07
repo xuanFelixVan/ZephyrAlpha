@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 03_MONITORING目录索引
 ---
 
 ﻿---
@@ -33,18 +35,18 @@ implementation_status: ти▓тїТѕ?---
 
 | ТќЄС╗Х | УЂїУ┤Б | уіХТђ?|
 |------|------|------|
-| [README.md](API_README.md) | уЏЉТјДТдѓУ┐░ | Active |
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | уЏЉТјДу│╗у╗ЪУЊЮтЏЙ | Active |
-| [HEALTH_MONITORING.md](04_EXECUTION/03_MONITORING/HEALTH_MONITORING.md) | тЂЦт║иуЏЉТјД | Active |
-| [MODULE_MONITOR.md](04_EXECUTION/03_MONITORING/MODULE_MONITOR.md) | ТеАтЮЌуЏЉТјД | Active |
-| [PERFORMANCE_ATTRIBUTION.md](04_EXECUTION/03_MONITORING/PERFORMANCE_ATTRIBUTION.md) | у╗ЕТЋѕтйњтЏа | Active |
-| [REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md) | тъТЌХуЏЉТјД | Active |
+| README.md | уЏЉТјДТдѓУ┐░ | Active |
+| BLUEPRINT.md | уЏЉТјДу│╗у╗ЪУЊЮтЏЙ | Active |
+| HEALTH_MONITORING.md | тЂЦт║иуЏЉТјД | Active |
+| MODULE_MONITOR.md | ТеАтЮЌуЏЉТјД | Active |
+| PERFORMANCE_ATTRIBUTION.md | у╗ЕТЋѕтйњтЏа | Active |
+| REAL_TIME_MONITORING.md | тъТЌХуЏЉТјД | Active |
 
 ## ЪЊќ ТаИт┐ЃТќЄТАБ
 
-- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - уЏЉТјДу│╗у╗ЪУЊЮтЏЙ
-- [REAL_TIME_MONITORING.md](04_EXECUTION/03_MONITORING/REAL_TIME_MONITORING.md) - тъТЌХуЏЉТјД
-- [HEALTH_MONITORING.md](04_EXECUTION/03_MONITORING/HEALTH_MONITORING.md) - тЂЦт║иуЏЉТјД
+- BLUEPRINT.md - уЏЉТјДу│╗у╗ЪУЊЮтЏЙ
+- REAL_TIME_MONITORING.md - тъТЌХуЏЉТјД
+- HEALTH_MONITORING.md - тЂЦт║иуЏЉТјД
 ---
 
 

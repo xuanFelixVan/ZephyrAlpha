@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 多目标优化
+  - 目标权衡
+  - Pareto前沿
+  - 优化目标管理
 
 module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
 version: 1.0.0

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FINAL_LINK_FIX_REPORT_20260407_165803
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 修复报告
 applicable_scope: 最后无效链接修复
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - FINAL_LINK_FIX_20260407_165803报告文档
 ---
 
 # 最后无效链接修复报告

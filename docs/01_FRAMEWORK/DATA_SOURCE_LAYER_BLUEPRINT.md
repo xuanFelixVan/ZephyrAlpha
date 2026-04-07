@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_SOURCE_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_SOURCE_LAYER蓝图设计
 ---
 
 ﻿---
@@ -916,7 +918,7 @@ class NewsData:
 | 文档 | 说明 |
 |------|------|
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
-| [DATA_QUALITY_MONITORING_BLUEPRINT.md](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控蓝图 |
+| DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量监控蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
@@ -932,7 +934,7 @@ class NewsData:
 #### Layer 0: 数据源层
 ##### 0.001. Data Source Layer Blueprint
 - **模块ID**: DATA_SOURCE_LAYER_BLUEPRINT_001
-- **蓝图文档**: [DATA_SOURCE_LAYER_BLUEPRINT.md](01_FRAMEWORK\DATA_SOURCE_LAYER_BLUEPRINT.md)
+- **蓝图文档**: DATA_SOURCE_LAYER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 0 - 数据源层
 - **状态**: Active

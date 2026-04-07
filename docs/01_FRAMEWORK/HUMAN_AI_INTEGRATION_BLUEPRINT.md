@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - HUMAN_AI_INTEGRATION蓝图设计
 ---
 
 ﻿---
@@ -587,7 +589,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
     return result
 ```
 
-**技术规格书引用**: 详见 [COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md) ?3.3?API服务优化方向"
+**技术规格书引用**: 详见 COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md ?3.3?API服务优化方向"
 
 ---
 
@@ -615,7 +617,7 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 #### Layer 8: 人机交互层
 ##### 0.001. Human Ai Integration Blueprint
 - **模块ID**: HUMAN_AI_INTEGRATION_BLUEPRINT_001
-- **蓝图文档**: [HUMAN_AI_INTEGRATION_BLUEPRINT.md](01_FRAMEWORK\HUMAN_AI_INTEGRATION_BLUEPRINT.md)
+- **蓝图文档**: HUMAN_AI_INTEGRATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 三级时间框架人机协同界面设计
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PERSONAL_AI_QUANT_COMPLETE_SOLUTION蓝图设计
 ---
 
 ﻿---
@@ -389,7 +391,7 @@ responsibility:
 ```markdown
 | 文档名称 | 模块ID | 版本 | 状态 | 路径 | 职责摘要 |
 |---------|--------|------|------|------|---------|
-| [蓝图名称](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
+| 蓝图名称 | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
 ```
 
 #### 原则3: 版本隔离 (Version Isolation)

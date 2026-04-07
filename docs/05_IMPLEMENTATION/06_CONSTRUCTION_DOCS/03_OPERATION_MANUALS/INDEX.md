@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 03_OPERATION_MANUALS目录索引
 ---
 
 ﻿---
@@ -51,10 +53,10 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Deployment Manual](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/DEPLOYMENT_MANUAL.md) - `DEPLOYMENT_MANUAL`
-- [Maintenance Manual](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MAINTENANCE_MANUAL.md) - `MAINTENANCE_MANUAL`
-- [Monitoring Manual](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/MONITORING_MANUAL.md) - `MONITORING_MANUAL`
-- [Risk Monitoring Manual](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md) - `RISK_MONITORING_MANUAL`
+- Deployment Manual - `DEPLOYMENT_MANUAL`
+- Maintenance Manual - `MAINTENANCE_MANUAL`
+- Monitoring Manual - `MONITORING_MANUAL`
+- Risk Monitoring Manual - `RISK_MONITORING_MANUAL`
 
 ---
 

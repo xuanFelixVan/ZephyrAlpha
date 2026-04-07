@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 因子主索引文档
 ---
 
 ﻿---
@@ -42,7 +44,7 @@ implementation_status: 进行中
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
 | iFind数据源 | [INDEX.md](./INDEX.md) | 上级索引 | iFind数据源总索引 |
-| iFind连接器 | [../IFIND_CONNECTOR.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND_CONNECTOR.md) | 实现层 | iFind数据源实现 |
+| iFind连接器 | ../IFIND_CONNECTOR.md | 实现层 | iFind数据源实现 |
 
 **职责边界**:
 - ✅ 本文档负责: 因子库索引和追踪管理
@@ -88,7 +90,7 @@ implementation_status: 进行中
 
 | THS代码 | 因子名称 | 所属类别 | IC状态 | 回测状态 | 文件位置 |
 |---------|----------|----------|--------|----------|----------|
-| ths_pe_ttm_stock | 市盈率TTM | 价值 | 是已验证 | 是已回测 | [IC验证记录/PE_TTM_IC.md](02_FACTOR_LIBRARY/05_BACKTEST/value_factors/PE_TTM_IC.md) |
+| ths_pe_ttm_stock | 市盈率TTM | 价值 | 是已验证 | 是已回测 | IC验证记录/PE_TTM_IC.md |
 | ths_pb_stock | 市净率 | 价值 | 待验证 | - | - |
 | ths_roe_ttm_stock | 净资产收益率 | 质量 | 待验证 | - | - |
 | ths_revenue_yoy_stock | 营业收入增长 | 成长 | 待验证 | - | - |
@@ -129,7 +131,7 @@ implementation_status: 进行中
 | 版本追踪 | |
 | 血缘追踪 | |
 | 相关性矩阵 | |
-| THS_BD完整清单 | [financial_statements/ths_bd_complete_indicator_list.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md) |
+| THS_BD完整清单 | financial_statements/ths_bd_complete_indicator_list.md |
 
 ---
 

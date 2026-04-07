@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: COUNTERPARTY_RISK_ORE_IMPLEMENTATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 交易对手风险系统ORE集成实施方案文档
 ---
 
 ﻿---

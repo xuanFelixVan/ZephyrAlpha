@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 技术文v10文档
 ---
 
 ﻿---
@@ -37,7 +39,7 @@ responsibility:
 > **配套文档**?
 > - 主文档：
 > - 因子库：
-> - 战术手册：[../trading-tactics/tactics_manual.md](06_ARCHIVE/tactics_manual.md)
+> - 战术手册：../trading-tactics/tactics_manual.md
 >
 > **版本说明**?
 > - v1.0：初始版本，整合附录I/J/AC/AN

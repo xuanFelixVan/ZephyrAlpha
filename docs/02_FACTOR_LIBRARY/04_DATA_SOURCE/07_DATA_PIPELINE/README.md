@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 说明文件
 applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\07_DATA_PIPELINE
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 07_DATA_PIPELINE说明文档
 ---
 
 ﻿---
@@ -45,7 +47,7 @@ implementation_status: 进行中
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据流水线蓝图 | [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 详细设计 | 数据流水线详细设计 |
+| 数据流水线蓝图 | BLUEPRINT.md | 详细设计 | 数据流水线详细设计 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:

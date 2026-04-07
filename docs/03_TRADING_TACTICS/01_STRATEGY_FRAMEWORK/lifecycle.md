@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LIFECYCLE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 策略生命周期管理文档
 ---
 
 ﻿---
@@ -377,7 +379,7 @@ def generate_signal(data, params):
 ### 7.4 入池文档清单
 
 -  [策略文档](../INDEX.md)
--  [回测报告](08_HUMAN_AI_INTERFACE/index.md)
+-  回测报告
 -  [模拟盘记录](../99_ARCHIVE/)
 -  [实盘记录](../99_ARCHIVE/)
 -  [评审报告](../99_ARCHIVE/)

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DEPLOYMENT_MANUAL
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﻝﺏﭨﻝﭨﻠ۷ﻝﺛﺎﮔﮒ文档
 ---
 
 ﻿---
@@ -629,7 +631,7 @@ def cache_result(expire=300):
 - [ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ](../04_CONFIG_TEMPLATES/system_config_template.yaml)
 - [ﻝﮔ۶ﮔﮒ](./MONITORING_MANUAL.md)
 - [ﻝﭨﺑﮔ۳ﮔﮒ](./MAINTENANCE_MANUAL.md)
-- [ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md)
+- ﻠ۱ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ
 
 ---
 

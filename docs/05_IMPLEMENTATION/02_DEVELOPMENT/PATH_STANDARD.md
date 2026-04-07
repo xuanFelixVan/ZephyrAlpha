@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PATH_STANDARD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PATH标准规范
 ---
 
 ﻿---
@@ -81,7 +83,7 @@ T.00.MR001.市场趋势识别.md
 
 | 场景 | 推荐格式 | 示例 |
 |------|----------|------|
-| 文档内部链接 | 相对路径 | `[README](API_README.md)` |
+| 文档内部链接 | 相对路径 | `README` |
 | 配置文件 | 相对项目?| `config/system.yaml` |
 | 代码引用 | Python import路径 | `from src.core.base import Result` |
 | 外部引用 | 绝对路径(慎用) | `D:\project\config\secrets.yaml` |
@@ -171,7 +173,7 @@ path = Path(path_with_chinese)
 
 ```markdown
 <!-- ?正确：相对路?-->
-[回到首页](API_README.md)
+回到首页
 [策略池](../../03_TRADING_TACTICS/INDEX.md)
 
 <!-- ?正确：目录层级引?-->

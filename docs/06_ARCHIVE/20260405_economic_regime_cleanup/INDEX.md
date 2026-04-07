@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 20260405_economic_regime_cleanup目录索引
 ---
 
 ﻿---

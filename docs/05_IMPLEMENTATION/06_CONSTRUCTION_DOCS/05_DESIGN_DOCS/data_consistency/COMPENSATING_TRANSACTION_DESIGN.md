@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: COMPENSATING_TRANSACTION_DESIGN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﻟﺝﻟ۰ﮔﮔ۰۲文档
 ---
 
 ﻿---
@@ -1632,7 +1634,7 @@ class CompensationDisasterRecovery:
 1. ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md - ﻛﺕﭨﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 2. Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md - ﮔﭖﻝ۷ﮒﺝﮔﮔ۰?
 3.  - ﮒﺙﮔﻠﻠﮒ۷ﻟ؟ﺝﻟ؟?
-4. [STORAGE_TIER.md](05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
+4. STORAGE_TIER.md - ﮒﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
 
 ---
 

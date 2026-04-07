@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_QUALITY_ASSESSMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_QUALITY_ASSESSMENT蓝图设计
 ---
 
 ﻿---
@@ -885,7 +887,7 @@ python src/data_quality/assessor.py
 #### Layer 1: 数据层
 ##### 0.001. Data Quality Assessment Blueprint
 - **模块ID**: DATA_QUALITY_ASSESSMENT_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_ASSESSMENT_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_ASSESSMENT_BLUEPRINT.md)
+- **蓝图文档**: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 1数据质量评估
 - **状态**: Active

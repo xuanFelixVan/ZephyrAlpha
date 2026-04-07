@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_QUICK_ACTION_CHECKLIST
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMTϋηόΟξώΩχώλα  ίτώΑθϋκΝίΛρόΖίΞ文档
 ---
 
 ﻿---
@@ -103,9 +105,9 @@ python scripts/test_qmt_connection_v2.py
 
 ## ΏθΥγ ϋψού╗ΗόΨΘόκμ
 
-- [όι╣όευίΟθίδιίΙΗόηΡ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md)
-- [ϋ┐ηόΟξώΩχώλαόΟΤόθξόΝΘίΞΩ](05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md)
-- [QMTόΧ░όΞχόΟξίΠμόΨΘόκμ](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- όι╣όευίΟθίδιίΙΗόηΡ
+- ϋ┐ηόΟξώΩχώλαόΟΤόθξόΝΘίΞΩ
+- QMTόΧ░όΞχόΟξίΠμόΨΘόκμ
 
 ---
 

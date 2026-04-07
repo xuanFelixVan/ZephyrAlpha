@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 组合归因
+  - 收益分解
+  - 风险归因
+  - 归因报告
 
 module_id: PORTFOLIO_ATTRIBUTION_001
 version: 1.0.0

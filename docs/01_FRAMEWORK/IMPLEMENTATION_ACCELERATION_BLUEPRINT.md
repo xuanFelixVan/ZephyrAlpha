@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: IMPLEMENTATION_ACCELERATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - IMPLEMENTATION_ACCELERATION蓝图设计
 ---
 
 ﻿---
@@ -338,7 +340,7 @@ jobs:
 #### Layer 2: Alpha因子层
 ##### 0.001. Implementation Acceleration Blueprint
 - **模块ID**: IMPLEMENTATION_ACCELERATION_BLUEPRINT_001
-- **蓝图文档**: [IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](01_FRAMEWORK\IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)
+- **蓝图文档**: IMPLEMENTATION_ACCELERATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

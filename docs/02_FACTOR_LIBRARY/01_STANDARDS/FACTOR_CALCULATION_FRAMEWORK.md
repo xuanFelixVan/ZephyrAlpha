@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_CALCULATION_FRAMEWORK
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 因子计算框架文档
 ---
 
 ﻿---
@@ -28,8 +30,8 @@ compliance_level: 专业标准---
 > **职责边界**: 
 > - ✅ 本文档负责：因子计算引擎设计、调度系统架构、计算流程规范、性能优化标准
 > - ❌ 本文档不负责：具体因子实现、因子分类定义、因子回测流程
-> - 📋 相关文档：[因子分类学](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系定义
-> - 📋 相关文档：[因子管理标准](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) - 因子生命周期管理
+> - 📋 相关文档：因子分类学 - 因子分类体系定义
+> - 📋 相关文档：因子管理标准 - 因子生命周期管理
 >
 > **版本**: v1.0
 > **创建日期**: 2026-03-30
@@ -81,8 +83,8 @@ compliance_level: 专业标准---
 ## 2. 核心组件
 
 > **注意**: 因子定义和分类请参考以下文档：
-> - **因子分类?*: [FACTOR_TAXONOMY.md](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md) - 因子分类体系和参数配?
-> - **因子注册?*: [../06_REGISTRY/FACTOR_CATALOG.md](02_FACTOR_LIBRARY\06_REGISTRY\FACTOR_CATALOG.md) - 因子清单和元数据
+> - **因子分类?*: FACTOR_TAXONOMY.md - 因子分类体系和参数配?
+> - **因子注册?*: ../06_REGISTRY/FACTOR_CATALOG.md - 因子清单和元数据
 
 ### 2.1 因子依赖管理
 
@@ -576,7 +578,7 @@ class FactorValidator:
 
 ## 索引
 
-- 父目? [01_STANDARDS/README.md](API_README.md)
+- 父目? 01_STANDARDS/README.md
 - 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)

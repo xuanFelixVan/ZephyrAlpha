@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 量化策略专业分层方案_v31_机构级优化版文档
 ---
 
 ﻿---

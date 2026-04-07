@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AUDIT_TRAIL_SYSTEM_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - AUDIT_TRAIL_SYSTEM蓝图设计
 ---
 
 ﻿---
@@ -791,7 +793,7 @@ class AuditStatistics:
 #### Layer 10: 治理与合规层
 ##### 0.001. Audit Trail System Blueprint
 - **模块ID**: AUDIT_TRAIL_SYSTEM_BLUEPRINT_001
-- **蓝图文档**: [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](01_FRAMEWORK\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md)
+- **蓝图文档**: AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 审计追踪系统
 - **状态**: Active

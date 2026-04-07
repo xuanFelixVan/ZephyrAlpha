@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: RESPONSIBILITY_SUPPLEMENT_REPORT_20260407_170629
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 补充报告
 applicable_scope: 职责描述补充
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - RESPONSIBILITY_SUPPLEMENT_20260407_170629报告文档
 ---
 
 # 职责描述补充报告

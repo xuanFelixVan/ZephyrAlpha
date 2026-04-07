@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MINICONDA_INSTALLATION_CHECKLIST
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Minicondaﮒﻟ۲ﮒﺏﻠﮔ۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ文档
 ---
 
 ﻿---

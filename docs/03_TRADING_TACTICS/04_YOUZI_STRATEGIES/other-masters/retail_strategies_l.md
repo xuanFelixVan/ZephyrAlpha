@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TACTICS_YOUZI_OTHER_L_001
 version: 3.0.1
 status: Active
@@ -29,7 +29,7 @@ implementation_status: 进行?
 >
 > **配套文档**?
 > - 主文档：
-> - 策略池索引：[index.md](08_HUMAN_AI_INTERFACE/index.md)
+> - 策略池索引：index.md
 
 ---
 

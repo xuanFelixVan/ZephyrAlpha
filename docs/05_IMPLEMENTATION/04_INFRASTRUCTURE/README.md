@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_INFRASTRUCTURE说明文档
 ---
 
 ﻿---
@@ -45,8 +47,8 @@ implementation_status: 进行?---
 **⚠️ 归档说明**:
 - `DATA_CLEANING.md` 已归档至 `docs/06_ARCHIVE/duplicate_documents/20260403_layer1_infrastructure_audit/`
 - `DATA_LINEAGE.md` 已归档至 `docs/06_ARCHIVE/duplicate_documents/20260403_layer1_infrastructure_audit/`
-- 数据清洗相关内容请参? [DATACLEANER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md)
-- 数据血缘相关内容请参? [DATA_LINEAGE_TRACKING_BLUEPRINT.md](01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+- 数据清洗相关内容请参? DATACLEANER_TECHNICAL_SPECIFICATION.md
+- 数据血缘相关内容请参? DATA_LINEAGE_TRACKING_BLUEPRINT.md
 
 ---
 
@@ -89,6 +91,6 @@ Layer 1 (数据?
 
 ## 索引
 
-- 父目? [05_IMPLEMENTATION/README.md](API_README.md)
-- 相关: [04_DATA_SOURCE/README.md](API_README.md)
-- 归档: [20260403_layer1_infrastructure_audit](API_README.md)
+- 父目? 05_IMPLEMENTATION/README.md
+- 相关: 04_DATA_SOURCE/README.md
+- 归档: 20260403_layer1_infrastructure_audit

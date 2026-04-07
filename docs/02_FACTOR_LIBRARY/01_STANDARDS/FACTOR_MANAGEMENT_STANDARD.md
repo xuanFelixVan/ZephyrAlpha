@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_MANAGEMENT_STANDARD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FACTOR_MANAGEMENT标准规范
 ---
 
 ﻿---
@@ -31,7 +33,7 @@ implementation_status: 进行中
 > **职责边界**: 
 > - ✅ 本文档负责：因子生命周期管理、因子分层标准、IC阈值体系、管理规范制定
 > - ❌ 本文档不负责：具体筛选流程实施、筛选工具开发、筛选结果评估
-> - 📋 相关文档：[因子筛选策略](02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) - 具体筛选流程和工具
+> - 📋 相关文档：因子筛选策略 - 具体筛选流程和工具
 >
 > **版本**: v1.0
 > **创建日期**: 2026-03-30
@@ -467,9 +469,9 @@ factor_management:
 
 | 文档 | 说明 |
 |------|------|
-| [因子库总览](API_README.md) | 因子库整体介?|
+| 因子库总览 | 因子库整体介?|
 | [因子计算框架](./FACTOR_CALCULATION_FRAMEWORK.md) | 因子注册?DAG/调度?引擎 |
-| [因子监控](02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md) | IC监控/衰减预警 |
+| 因子监控 | IC监控/衰减预警 |
 | [5900因子筛选策略](./FACTOR_SCREENING_STRATEGY.md) | ?900筛选到20-30个有效因?|
 
 ---

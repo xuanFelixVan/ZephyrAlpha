@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 分层优化框架
+  - 层级协调
+  - 优化流程管理
+  - 多层级优化
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -515,5 +518,11 @@ optimizer = HierarchicalOptimizer(
 |------|------|----------|
 晰的接口，逐步集成 |
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

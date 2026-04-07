@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 00_OVERVIEW目录索引
 ---
 
 ﻿---
@@ -34,7 +36,7 @@ implementation_status: ﮒﺓﺎﮒ؟ﮔ?---
 | ﮔﻛﭨﭘ/ﻝ؟ﮒﺛ | ﻟﻟﺑ۲ | ﻝﭘﮔ?|
 |----------|------|------|
 
-| [DATA_FLOW.md](00_OVERVIEW/DATA_FLOW.md) | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
+| DATA_FLOW.md | ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﭖﮒﮒ?| Active |
 
 ## ﻭ ﮒﺟ،ﻠﮒﺁﺙﻟ?
 ### ﮔﺕﮒﺟﮔﮔ۰۲

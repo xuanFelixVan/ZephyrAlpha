@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - 动态资产配置
+  - 资产权重调整
+  - 市场环境适应
+  - 配置策略优化
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -360,5 +363,11 @@ dynamic_asset_allocation:
 **文档维护**:
 - **责任模块**: DYNAMIC_ASSET_ALLOCATION
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

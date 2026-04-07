@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AUTOMATED_WORKFLOW_REPORT_20260407_113557
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 自动化工作流报告文档
 ---
 
 ﻿---

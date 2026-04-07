@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_BACKTEST_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FACTOR_BACKTEST_TECHNICAL技术规范
 ---
 
 ﻿---
@@ -558,7 +560,7 @@ factor_backtester:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [分层回测框架](02_FACTOR_LIBRARY/05_BACKTEST/LAYERED_BACKTEST.md)
+- 分层回测框架
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人

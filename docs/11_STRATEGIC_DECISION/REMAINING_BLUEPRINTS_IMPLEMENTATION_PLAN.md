@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - REMAININGS_IMPLEMENTATION_PLAN蓝图设计
 ---
 
 ﻿---
@@ -569,7 +571,7 @@ implementation_status: 蓝图阶段
 | 文档 | 说明 |
 |------|------|
 | [完整系统蓝图总览](./COMPLETE_BLUEPRINT_OVERVIEW.md) | 所有模块的完整清单 |
-| [蓝图补充方案](06_ARCHIVE/20260407_old_layer_audit_reports/layer11_reports/LAYER_11_BLUEPRINT_COMPLETION_PLAN_20260407.md) | 蓝图补充详细方案 |
+| 蓝图补充方案 | 蓝图补充详细方案 |
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: VERSION_MANAGEMENT_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - VERSION_MANAGEMENT操作指南
 ---
 
 ﻿---
@@ -382,8 +384,8 @@ git commit -m "feat: ﮔﺓﭨﮒﻝﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ
 
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
-- [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md)
+- ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵
+- ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 

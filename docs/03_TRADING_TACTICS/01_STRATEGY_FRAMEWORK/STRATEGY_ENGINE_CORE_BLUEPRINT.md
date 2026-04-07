@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_ENGINE_CORE_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGY_ENGINE_CORE蓝图设计
 ---
 
 ﻿---
@@ -1074,7 +1076,7 @@ prometheus_metrics:
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Blueprint Core
 - **模块ID**: TACTICS_BLUEPRINT_CORE_001
-- **蓝图文档**: [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- **蓝图文档**: STRATEGY_ENGINE_CORE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: ?compliance_level: 
 - **状态**: Active

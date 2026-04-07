@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: T_06_UI001_WEB_MANAGEMENT_INTERFACE_ARCHITECTURE_DESIGN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Webﻝ۰ﻝﻝﻠ۱ﮔﭘﮔﻟﺝﻟ۰文档
 ---
 
 ﻿---

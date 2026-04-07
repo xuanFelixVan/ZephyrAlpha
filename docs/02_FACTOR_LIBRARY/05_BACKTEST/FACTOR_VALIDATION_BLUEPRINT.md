@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: FACTOR_VALIDATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - FACTOR_VALIDATION蓝图设计
 ---
 
 ﻿---
@@ -559,7 +561,7 @@ class FactorMonitor:
 #### Layer 0: 系统架构
 ##### 0.001. Factor Blueprint
 - **模块ID**: FACTOR_BLUEPRINT_001
-- **蓝图文档**: [FACTOR_VALIDATION_BLUEPRINT.md](02_FACTOR_LIBRARY\05_BACKTEST\FACTOR_VALIDATION_BLUEPRINT.md)
+- **蓝图文档**: FACTOR_VALIDATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

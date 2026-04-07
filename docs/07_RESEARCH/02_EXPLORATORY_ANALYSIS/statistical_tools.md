@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STATISTICAL_TOOLS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 探索性分 统计分析工具文档
 ---
 
 ﻿---

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TIME_SERIES_STORAGE目录索引
 ---
 
 ﻿---
@@ -53,7 +55,7 @@ parent_document: ../INDEX.md
 
 | 文档名称 | 说明 | 重要度 |
 |---------|------|--------|
-| [时序数据存储系统蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | 时序数据存储系统详细设计 | ⭐⭐⭐⭐⭐ |
+| 时序数据存储系统蓝图 | 时序数据存储系统详细设计 | ⭐⭐⭐⭐⭐ |
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: IMP_003_QMT_CLIENT_STABILITY_SOLUTION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT客户端稳定性应对方文档
 ---
 
 ﻿---
@@ -830,8 +832,8 @@ qmt_stability:
 ```
 
 ### B. 参考文?
-- [QMT数据接口技术规格书](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md)
-- [QMT数据接口评审报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT.md)
+- QMT数据接口技术规格书
+- QMT数据接口评审报告
 - [QMT API学习计划](./IMP_001_QMT_API_LEARNING_PLAN.md)
 - [QMT API社区资源调研](./IMP_002_QMT_API_COMMUNITY_RESEARCH.md)
 

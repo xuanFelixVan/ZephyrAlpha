@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -495,7 +497,7 @@ class QueryOptimizer:
 #### Layer 0: 系统架构
 ##### 0.001. Data Federation Bp
 - **模块ID**: DATA_FEDERATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_FEDERATION\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据联邦查询系统
 - **状态**: Blueprint

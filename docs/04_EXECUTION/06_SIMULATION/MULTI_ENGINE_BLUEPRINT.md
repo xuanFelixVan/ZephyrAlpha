@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: MULTI_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - MULTI_ENGINE蓝图设计
 ---
 
 ﻿---
@@ -2157,7 +2159,7 @@ ffn>=0.3.0
 
 **维护?*: 清风量化系统  
 **索引**: `SIM_002`  
-**关联文档**: [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md), [README.md](API_README.md)  
+**关联文档**: BLUEPRINT.md, README.md  
 **状?*: ?设计完成，待评审
 ---
 
@@ -2169,7 +2171,7 @@ ffn>=0.3.0
 #### Layer 0: 系统架构
 ##### 0.001. Exec Multi Engine Bp
 - **模块ID**: EXEC_MULTI_ENGINE_BP_001
-- **蓝图文档**: [MULTI_ENGINE_BLUEPRINT.md](04_EXECUTION\06_SIMULATION\MULTI_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: MULTI_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?
 - **状态**: Active

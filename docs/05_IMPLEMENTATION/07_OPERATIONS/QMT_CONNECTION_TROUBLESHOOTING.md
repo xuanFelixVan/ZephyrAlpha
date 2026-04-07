@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_CONNECTION_TROUBLESHOOTING
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMTфдцШУцОехПгшЮцОещЧощвШцОТцЯецМЗхНЧ文档
 ---
 
 ﻿---
@@ -219,8 +221,8 @@ python scripts\test_qmt_official_api.py
 ## чЫ╕хЕ│цЦЗцбг
 
 - [QMTхоШцЦ╣APIцЦЗцбг](https://dict.thinktrader.net/nativeApi/start_now.html)
-- [QMTцХ░цНоцОехПгцКАцЬпшзДшМГ](02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
-- [QMTцЙзшбМхЩишУЭхЫ╛](04_EXECUTION/01_ORDER_EXECUTION/QMT_EXECUTOR_BLUEPRINT.md)
+- QMTцХ░цНоцОехПгцКАцЬпшзДшМГ
+- QMTцЙзшбМхЩишУЭхЫ╛
 
 ---
 

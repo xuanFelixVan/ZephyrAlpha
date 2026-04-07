@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: METADATA_SUPPLEMENT_REPORT_20260407_173039
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 补充报告
 applicable_scope: 元数据补充
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - METADATA_SUPPLEMENT_20260407_173039报告文档
 ---
 
 # 元数据补充报告

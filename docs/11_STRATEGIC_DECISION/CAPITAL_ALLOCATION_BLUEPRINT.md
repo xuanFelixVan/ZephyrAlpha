@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: CAPITAL_ALLOCATION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - CAPITAL_ALLOCATION蓝图设计
 ---
 
 ﻿---
@@ -1085,7 +1087,7 @@ class SkfolioIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md) | 多策略协调系统 |
 | [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | 投资政策声明管理 |
 
@@ -1102,7 +1104,7 @@ class SkfolioIntegration:
 #### Layer 0: 系统架构
 ##### 0.001. Capital Allocation
 - **模块ID**: CAPITAL_ALLOCATION_001
-- **蓝图文档**: [CAPITAL_ALLOCATION_BLUEPRINT.md](11_STRATEGIC_DECISION\CAPITAL_ALLOCATION_BLUEPRINT.md)
+- **蓝图文档**: CAPITAL_ALLOCATION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.20 - 资本配置系统
 - **状态**: Active

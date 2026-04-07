@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT_DATA_INTERFACE_TECHNICAL技术规范
 ---
 
 ﻿---
@@ -1145,8 +1147,8 @@ class TestPerformance:
 
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [系统清单](System_Manifest.md)
-- [质量门禁机制](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- 系统清单
+- 质量门禁机制
 
 ### C. 变更历史
 

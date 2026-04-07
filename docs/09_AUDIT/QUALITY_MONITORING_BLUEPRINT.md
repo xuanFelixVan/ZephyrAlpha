@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QUALITY_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QUALITY_MONITORING蓝图设计
 ---
 
 ﻿---
@@ -1272,7 +1274,7 @@ class AICommandProcessor {
 2. [AI审计指南](./PROCEDURES/AI_AUDIT_GUIDELINES.md)
 3. [个人审计工作流](./PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md)
 4. [系统蓝图总览](../02_FACTOR_LIBRARY/04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md)
-5. [系统清单](System_Manifest.md)
+5. 系统清单
 
 
 **蓝图文档完成** ? 

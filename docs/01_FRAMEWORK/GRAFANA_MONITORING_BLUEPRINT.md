@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: GRAFANA_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - GRAFANA_MONITORING蓝图设计
 ---
 
 ﻿---
@@ -845,7 +847,7 @@ Grafana监控可视化系统通过**开源优先策略**，实现了：
 #### Layer 8: 人机交互层
 ##### 0.001. Grafana Monitoring Blueprint
 - **模块ID**: GRAFANA_MONITORING_BLUEPRINT_001
-- **蓝图文档**: [GRAFANA_MONITORING_BLUEPRINT.md](01_FRAMEWORK\GRAFANA_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: GRAFANA_MONITORING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 8 - Grafana监控可视化系统
 - **状态**: Active

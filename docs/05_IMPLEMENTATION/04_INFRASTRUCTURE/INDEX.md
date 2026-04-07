@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_INFRASTRUCTURE目录索引
 ---
 
 ﻿---
@@ -40,7 +42,7 @@ parent_document: ../INDEX.md---
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](API_README.md) | 基础设施概述 | Active |
+| README.md | 基础设施概述 | Active |
 | [DAILY_PIPELINE.md](./DAILY_PIPELINE.md) | 每日数据流水线 | Active |
 | [STORAGE_TIER.md](./STORAGE_TIER.md) | 多级存储架构 | Active |
 
@@ -75,7 +77,7 @@ parent_document: ../INDEX.md---
 
 ## 🔗 相关文档
 
-- [DATACLEANER_TECHNICAL_SPECIFICATION.md](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md) - 数据清洗
+- DATACLEANER_TECHNICAL_SPECIFICATION.md - 数据清洗
 
 
 ---

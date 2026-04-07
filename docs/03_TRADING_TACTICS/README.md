@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 03_TRADING_TACTICS说明文档
 ---
 
 ﻿---
@@ -62,11 +64,11 @@ implementation_status: 进行?---
 | 文档 | 说明 |
 |------|------|
 | [INDEX.md](INDEX.md) | 策略索引 |
-| [STRATEGY_ENGINE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝?|
-| [Strategy_Spec_S001.md](03_TRADING_TACTICS/Strategy_Spec_S001.md) | S001策略规格 |
-| [parameter_management.md](03_TRADING_TACTICS/parameter_management.md) | 参数管理 |
-| [OPTIMIZATION_REPORT.md](03_TRADING_TACTICS/OPTIMIZATION_REPORT.md) | 优化报告 |
-| [REFACTOR_COMPLETE.md](03_TRADING_TACTICS/REFACTOR_COMPLETE.md) | 重构完成记录 |
+| STRATEGY_ENGINE_BLUEPRINT.md | 策略引擎开发蓝?|
+| Strategy_Spec_S001.md | S001策略规格 |
+| parameter_management.md | 参数管理 |
+| OPTIMIZATION_REPORT.md | 优化报告 |
+| REFACTOR_COMPLETE.md | 重构完成记录 |
 
 ---
 

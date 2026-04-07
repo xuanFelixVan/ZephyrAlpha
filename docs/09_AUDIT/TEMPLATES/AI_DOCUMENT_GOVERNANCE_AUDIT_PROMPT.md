@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - AI文档治理审计专用提示词模v531文档
 ---
 
 ﻿---

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGY_PERFORMANCE_ATTRIBUTION蓝图设计
 ---
 
 ﻿---
@@ -720,7 +722,7 @@ class AttributionAlertSystem:
 #### Layer 10: 治理与合规层
 ##### 0.001. Strategy Performance Attribution Blueprint
 - **模块ID**: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
-- **蓝图文档**: [STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](01_FRAMEWORK\STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md)
+- **蓝图文档**: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 策略绩效归因分析
 - **状态**: Active

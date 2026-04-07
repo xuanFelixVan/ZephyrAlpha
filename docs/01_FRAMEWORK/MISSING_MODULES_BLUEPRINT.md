@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - MISSING_MODULES蓝图设计
 ---
 
 ﻿---
@@ -42,7 +44,7 @@ compliance_level: 专业机构标准
 | 1 | 移动端推送通知系统 | P2 | 90% | ⭐⭐⭐⭐⭐ |
 | 2 | 帮助系统 | P2 | 90% | ⭐⭐⭐⭐⭐ |
 
-**注**: 自然语言交互界面蓝图已单独创建，详见 [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](01_FRAMEWORK/NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
+**注**: 自然语言交互界面蓝图已单独创建，详见 NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
 
 ---
 

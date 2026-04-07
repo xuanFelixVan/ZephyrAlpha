@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 编码问题文档归档说明文档
 ---
 
 ﻿---
@@ -128,7 +130,7 @@ standard_type: רҵͼ
 ## 4. 相关文档
 
 - [严重编码问题审计报告](../09_AUDIT/REPORTS/CRITICAL_ENCODING_ISSUES_AUDIT_REPORT_20260406.md)
-- [数据预处理层深度审计报告V6](09_AUDIT/REPORTS/DEEP_AUDIT_REPORT_20260405_V6.md)
+- 数据预处理层深度审计报告V6
 
 ---
 

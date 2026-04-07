@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: TRANSACTION_COST_AWARE_REBALANCING_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TRANSACTION_COST_AWARE_REBALANCING_TECHNICAL技术规范
 ---
 
 ﻿---

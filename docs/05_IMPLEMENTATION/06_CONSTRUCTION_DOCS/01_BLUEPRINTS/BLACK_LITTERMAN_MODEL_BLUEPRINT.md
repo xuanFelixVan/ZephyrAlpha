@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+  - Black-Litterman模型
+  - 观点融合
+  - 市场均衡收益计算
+  - 后验收益估计
 
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DOCUMENT_QUALITYS标准规范
 ---
 
 # 文档质量标准 v1.0

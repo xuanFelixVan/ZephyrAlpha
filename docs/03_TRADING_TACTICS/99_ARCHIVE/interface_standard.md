@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 策略接口标准文档
 ---
 
 ﻿---
@@ -34,7 +36,7 @@ responsibility:
 >
 > **配套文档**?
 > - 主文档：[../../INDEX.md](../INDEX.md)
-> - 策略池概述：[../05_STRATEGY_POOL/index.md](08_HUMAN_AI_INTERFACE/index.md)
+> - 策略池概述：../05_STRATEGY_POOL/index.md
 
 ***
 

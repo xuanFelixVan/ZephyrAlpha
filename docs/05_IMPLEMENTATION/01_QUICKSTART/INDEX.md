@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 01_QUICKSTART目录索引
 ---
 
 ﻿---
@@ -43,21 +45,21 @@ implementation_status: ти▓тї№┐?---
 
 | ТќЄС╗Х | УЂїУ┤Б | уіХ№┐й?|
 |------|------|------|
-| [README.md](API_README.md) | т┐ФжђЪтЁЦжЌеТдѓ№┐?| Active |
+| README.md | т┐ФжђЪтЁЦжЌеТдѓ№┐?| Active |
 | dev-setup.md | т╝ђтЈЉујтбЃжЁЇуйТїЄ№┐?| Active |
-| [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) | тГдС╣аУитЙёУДётѕњ | Active |
-| [ROADMAP.md](05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md) | т╝ђтЈЉУиу║┐тЏЙ | Active |
-| [PHASE1_DESIGN.md](05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md) | уггСИђжўХТхУЙУА | Active |
-| [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) | тЏатГљУЙУАтЁЦжЌе | Active |
+| LEARNING_PATH.md | тГдС╣аУитЙёУДётѕњ | Active |
+| ROADMAP.md | т╝ђтЈЉУиу║┐тЏЙ | Active |
+| PHASE1_DESIGN.md | уггСИђжўХТхУЙУА | Active |
+| factor_design.md | тЏатГљУЙУАтЁЦжЌе | Active |
 | first-backtest.md | уггСИђТгАтЏъТхІТїЄ№┐?| Active |
 
 ## ЪЊќ ТаИт┐ЃТќЄТАБ
 
 ### тЁЦжЌет┐ЁУ╗
-1. [README.md](API_README.md) - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. dev-setup.md - т╝ђтЈЉујтбЃжЁЇ№┐?3. [LEARNING_PATH.md](05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md) - тГдС╣аУитЙё
+1. README.md - т┐ФжђЪтЁЦжЌеТдѓ№┐?2. dev-setup.md - т╝ђтЈЉујтбЃжЁЇ№┐?3. LEARNING_PATH.md - тГдС╣аУитЙё
 
 ### тъУихТїЄтЇЌ
-- [factor_design.md](05_IMPLEMENTATION/01_QUICKSTART/factor_design.md) - тЏатГљУЙУАтЁЦжЌе
+- factor_design.md - тЏатГљУЙУАтЁЦжЌе
 - first-backtest.md - уггСИђТгАтЏъ№┐?---
 
 

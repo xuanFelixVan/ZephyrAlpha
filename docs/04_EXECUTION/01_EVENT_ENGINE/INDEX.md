@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 01_EVENT_ENGINE目录索引
 ---
 
 ﻿---
@@ -33,13 +35,13 @@ implementation_status: еЈ≤еЃМжИ?---
 
 | жЦЗдїґ | иБМиі | зКґжА?|
 |------|------|------|
-| [README.md](API_README.md) | дЇЛдїґеЉХжУОжВињ∞ | Active |
-| [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) | дЇЛдїґжАїзЇњиЃЊиЃ | Active |
+| README.md | дЇЛдїґеЉХжУОжВињ∞ | Active |
+| EVENT_BUS.md | дЇЛдїґжАїзЇњиЃЊиЃ | Active |
 
 ## рЯУЦ ж†ЄењГжЦЗж
 
-- [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ
-- [README.md](API_README.md) - дЇЛдїґеЉХжУОдљњзФжМЗеНЧ
+- EVENT_BUS.md - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ
+- README.md - дЇЛдїґеЉХжУОдљњзФжМЗеНЧ
 ---
 
 

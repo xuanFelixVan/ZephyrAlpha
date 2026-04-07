@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ALERT_RESPONSIBILITY_OVERLAP_FIX_REPORT_20260404
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ALERT_RESPONSIBILITY_OVERLAP_FIX_20260404报告文档
 ---
 
 ﻿---

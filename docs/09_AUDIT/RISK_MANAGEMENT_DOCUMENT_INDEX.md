@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: RISK_MANAGEMENT_DOCUMENT_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 风险管理文档索引文档
 ---
 
 ﻿---
@@ -85,7 +87,7 @@ responsibility:
 
 | 文档 | 路径 | 职责 | 状?|
 |------|------|------|------|
-| 风控规则引擎 | [04_EXECUTION/05_RISK_ENGINE/README.md](API_README.md) | Layer 6执行 (v2.0合并? | ?已整?|
+| 风控规则引擎 | 04_EXECUTION/05_RISK_ENGINE/README.md | Layer 6执行 (v2.0合并? | ?已整?|
 | 风控规则体系蓝图 | [03_TRADING_TACTICS/09_RISK_RULES/BLUEPRINT.md](../05_IMPLEMENTATION/BLUEPRINT.md) | 规则框架 | ?保留 |
 | ~~风控规则引擎蓝图~~ | ~~03_TRADING_TACTICS/09_RISK_RULES/RISK_RULE_ENGINE.md~~ | ~~引擎实现~~ | 🗑?已删?|
 | 风险报告生成?| [03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md](../03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md) | 报告生成 | ?保留 |
@@ -93,7 +95,7 @@ responsibility:
 ### 2. 风险因子?
 | 文档 | 路径 | 职责 | 状?|
 |------|------|------|------|
-| 尾部风险因子 | [02_FACTOR_LIBRARY/03_RISK_FACTORS/T.03.RF003.tail_risk_factors.md](02_FACTOR_LIBRARY/03_RISK_FACTORS/TAIL_RISK_FACTORS.md) | 风险因子定义 | ?保留 |
+| 尾部风险因子 | 02_FACTOR_LIBRARY/03_RISK_FACTORS/T.03.RF003.tail_risk_factors.md | 风险因子定义 | ?保留 |
 
 ### 3. 风险预算系统
 

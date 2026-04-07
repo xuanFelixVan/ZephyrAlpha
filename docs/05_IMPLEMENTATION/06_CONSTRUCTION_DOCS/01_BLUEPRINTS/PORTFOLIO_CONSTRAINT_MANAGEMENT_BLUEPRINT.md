@@ -1,6 +1,9 @@
-﻿---
+---
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 组合约束管理
+  - 约束条件设置
+  - 约束验证
+  - 约束优化
 
 module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 version: 1.0.0

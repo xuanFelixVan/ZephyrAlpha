@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - RL_REBALANCING_SYSTEM蓝图设计
 ---
 
 ﻿---

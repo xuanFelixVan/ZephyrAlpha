@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGY_ENGINE蓝图设计
 ---
 
 ﻿---
@@ -357,7 +359,7 @@ A: 先专注回测验证，至少完成阶段二（36周）后再考虑实盘。
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Strategy Engine Bp
 - **模块ID**: TACTICS_STRATEGY_ENGINE_BP_001
-- **蓝图文档**: [STRATEGY_ENGINE_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_BLUEPRINT.md)
+- **蓝图文档**: STRATEGY_ENGINE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设?compliance_level: 初始标准
 - **状态**: Active

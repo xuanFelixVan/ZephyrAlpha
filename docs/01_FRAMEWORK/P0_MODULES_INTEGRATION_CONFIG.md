@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: P0_MODULES_INTEGRATION_CONFIG
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - P0模块统一集成配置文件文档
 ---
 
 ﻿---

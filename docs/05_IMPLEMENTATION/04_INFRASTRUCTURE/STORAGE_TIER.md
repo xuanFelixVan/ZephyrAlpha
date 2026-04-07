@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STORAGE_TIER
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 多级存储架构文档
 ---
 
 ﻿---
@@ -383,5 +385,5 @@ BACKUP_ARCHITECTURE = {
 
 ## 索引
 
-- 父目? [04_INFRASTRUCTURE/README.md](API_README.md)
+- 父目? 04_INFRASTRUCTURE/README.md
 - 相关: DATA_LINEAGE.md

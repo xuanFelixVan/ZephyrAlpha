@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: KNOWLEDGE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - ύθξϋψΗύλίΧΎΙϊςϊίΑίΠΣϋΑΖύΚΙ文档
 ---
 
 ﻿---
@@ -55,10 +57,10 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **Layer 0-11όη╢όηΕ** | [ARCHITECTURE.md](01_FRAMEWORK/ARCHITECTURE.md) | Layerόη╢όηΕήΑΒόΛΑόεψύχκώΒΥήΑΒόΧ░όΞχό╡Β | ΏθΦ┤ όι╕ί┐Δ |
-| **ίνγόΩ╢ώΩ┤όκΗόη╢όη╢?* | [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | ίχΠϋπΓώΖΞύ╜χήΑΒϊ╕φϋπΓύφΨύΧξήΑΒί╛χϋπΓόΚπ?| ΏθΦ┤ όι╕ί┐Δ |
-| **όρκίζΩϋΒΝϋ┤μϋ╛╣ύΧΝ** | [MODULE_RESPONSIBILITY_BOUNDARIES.md](01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | ϋΒΝϋ┤μίΙΗύο╗ήΑΒόρκίζΩϋ╛╣ύΧΝήΑΒϊ╛ζϋ╡ΨίΖ│?| ΏθΦ┤ όι╕ί┐Δ |
-| **ίχηόΨ╜ϋΥζίδ╛** | [PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | ίχηόΨ╜ϋχκίΙΤήΑΒPhaseϋπΕίΙΤήΑΒώΘΝύρΜύλΣ | ΏθΦ┤ όι╕ί┐Δ |
+| **Layer 0-11όη╢όηΕ** | ARCHITECTURE.md | Layerόη╢όηΕήΑΒόΛΑόεψύχκώΒΥήΑΒόΧ░όΞχό╡Β | ΏθΦ┤ όι╕ί┐Δ |
+| **ίνγόΩ╢ώΩ┤όκΗόη╢όη╢?* | PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md | ίχΠϋπΓώΖΞύ╜χήΑΒϊ╕φϋπΓύφΨύΧξήΑΒί╛χϋπΓόΚπ?| ΏθΦ┤ όι╕ί┐Δ |
+| **όρκίζΩϋΒΝϋ┤μϋ╛╣ύΧΝ** | MODULE_RESPONSIBILITY_BOUNDARIES.md | ϋΒΝϋ┤μίΙΗύο╗ήΑΒόρκίζΩϋ╛╣ύΧΝήΑΒϊ╛ζϋ╡ΨίΖ│?| ΏθΦ┤ όι╕ί┐Δ |
+| **ίχηόΨ╜ϋΥζίδ╛** | PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md | ίχηόΨ╜ϋχκίΙΤήΑΒPhaseϋπΕίΙΤήΑΒώΘΝύρΜύλΣ | ΏθΦ┤ όι╕ί┐Δ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `όη╢όηΕ` `Layer` `ίνγόΩ╢ώΩ┤όκΗόη╢` `ϋΒΝϋ┤μϋ╛╣ύΧΝ` `ίχηόΨ╜ϋΥζίδ╛`
 
@@ -68,9 +70,9 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **ύφΨύΧξί╝ΧόΥΟόι╕ί┐Δ** | [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | BaseStrategyήΑΒύφΨύΧξύΦθίΣ╜ίΣρόεθήΑΒύφΨύΧξόΟξ?| ΏθΦ┤ όι╕ί┐Δ |
+| **ύφΨύΧξί╝ΧόΥΟόι╕ί┐Δ** | STRATEGY_ENGINE_CORE_BLUEPRINT.md | BaseStrategyήΑΒύφΨύΧξύΦθίΣ╜ίΣρόεθήΑΒύφΨύΧξόΟξ?| ΏθΦ┤ όι╕ί┐Δ |
 | **ύφΨύΧξώΑΚόΜσύ│╗ύ╗θ** | STRATEGY_SELECTION_BLUEPRINT.md | ύφΨύΧξώΑΚόΜσήΑΒίΛρόΑΒίΙΘόΞλήΑΒόΑπϋΔ╜ϋψΕϊ╝░ | Ώθθκ ώΘΞϋοΒ |
-| **ύφΨύΧξί╖ξίΟΓόΝΘίΞΩ** | [STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | StrategyFactoryήΑΒύφΨύΧξό│ρίΗΝήΑΒίΛρόΑΒίΛι?| ΏθΦ┤ όι╕ί┐Δ |
+| **ύφΨύΧξί╖ξίΟΓόΝΘίΞΩ** | STRATEGY_FACTORY_GUIDE.md | StrategyFactoryήΑΒύφΨύΧξό│ρίΗΝήΑΒίΛρόΑΒίΛι?| ΏθΦ┤ όι╕ί┐Δ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `ύφΨύΧξ` `BaseStrategy` `ύφΨύΧξί╖ξίΟΓ` `ύφΨύΧξό│ρίΗΝ` `ίΛρόΑΒίΛιϋ╜╜`
 
@@ -80,8 +82,8 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **ϊ║Μϊ╗╢όΑ╗ύ║┐όΝΘίΞΩ** | [EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | EventBusήΑΒϊ║Μϊ╗╢ίΠΣί╕ΔϋχλώαΖήΑΒί╝Γόφξϊ║Μ?| ΏθΦ┤ όι╕ί┐Δ |
-| **ϊ║Μϊ╗╢ίνΕύΡΗ?* | [EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | Backtesting.pyήΑΒύφΨύΧξώΑΓώΖΞήΑΒόΧ░όΞχϋ╜υ?| ΏθΦ┤ όι╕ί┐Δ |
+| **ϊ║Μϊ╗╢όΑ╗ύ║┐όΝΘίΞΩ** | EVENT_BUS_GUIDE.md | EventBusήΑΒϊ║Μϊ╗╢ίΠΣί╕ΔϋχλώαΖήΑΒί╝Γόφξϊ║Μ?| ΏθΦ┤ όι╕ί┐Δ |
+| **ϊ║Μϊ╗╢ίνΕύΡΗ?* | EVENT_BUS_GUIDE.md | Backtesting.pyήΑΒύφΨύΧξώΑΓώΖΞήΑΒόΧ░όΞχϋ╜υ?| ΏθΦ┤ όι╕ί┐Δ |
 | **ίδηό╡ΜώΖΞύ╜χ** | backtest_config_template.yaml | ίδηό╡ΜίΠΓόΧ░ήΑΒόΧ░όΞχώΖΞύ╜χήΑΒόΑπϋΔ╜όΝΘόιΘ | Ώθθκ ώΘΞϋοΒ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `ίδηό╡Μ` `Backtesting.py` `ύφΨύΧξώΑΓώΖΞ` `όΧ░όΞχϋ╜υόΞλ` `ίδηό╡ΜόΛξίΣΛ`
@@ -92,9 +94,9 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **ϋΥζίδ╛όΨ╜ί╖ξϋψ┤όαΟ?* | [CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md) | όΨΘϊ╗╢ίν╣ύ╗ΥόηΕήΑΒίΣ╜ίΡΞϋπΕϋΝΔήΑΒόρκόζ┐ήΑΒό╡Β?| ΏθΦ┤ όι╕ί┐Δ |
-| **AIόΨ╜ί╖ξί┐τώΑθίΠΓ?* | [AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md) | 5ύπΤόμΑόθξήΑΒόι╕ί┐ΔϋπΕϋΝΔήΑΒί┐τώΑθίΠΓ?| ΏθΦ┤ όι╕ί┐Δ |
-| **όΨ░ϊ║║ίΖξϋΒΝόΝΘίΞΩ** | [NEW_EMPLOYEE_ONBOARDING_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/NEW_EMPLOYEE_ONBOARDING_GUIDE.md) | ίΖξϋΒΝό╡ΒύρΜήΑΒί┐Ζϋψ╗όΨΘόκμήΑΒύΟψίλΔώΖΞ?| Ώθθκ ώΘΞϋοΒ |
+| **ϋΥζίδ╛όΨ╜ί╖ξϋψ┤όαΟ?* | CONSTRUCTION_SPECIFICATION.md | όΨΘϊ╗╢ίν╣ύ╗ΥόηΕήΑΒίΣ╜ίΡΞϋπΕϋΝΔήΑΒόρκόζ┐ήΑΒό╡Β?| ΏθΦ┤ όι╕ί┐Δ |
+| **AIόΨ╜ί╖ξί┐τώΑθίΠΓ?* | AI_CONSTRUCTION_QUICK_REFERENCE.md | 5ύπΤόμΑόθξήΑΒόι╕ί┐ΔϋπΕϋΝΔήΑΒί┐τώΑθίΠΓ?| ΏθΦ┤ όι╕ί┐Δ |
+| **όΨ░ϊ║║ίΖξϋΒΝόΝΘίΞΩ** | NEW_EMPLOYEE_ONBOARDING_GUIDE.md | ίΖξϋΒΝό╡ΒύρΜήΑΒί┐Ζϋψ╗όΨΘόκμήΑΒύΟψίλΔώΖΞ?| Ώθθκ ώΘΞϋοΒ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `όΨ╜ί╖ξ` `όΨΘϊ╗╢ίν╣ύ╗ΥόηΕ` `ίΣ╜ίΡΞϋπΕϋΝΔ` `όρκόζ┐` `όΨ╜ί╖ξό╡ΒύρΜ`
 
@@ -104,7 +106,7 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **ύΚΙόευύχκύΡΗϋπΕϋΝΔ** | [VERSION_MANAGEMENT_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/VERSION_MANAGEMENT_GUIDE.md) | GitήΑΒϋψφϊ╣ΚίΝΨύΚΙόευήΑΒCHANGELOG | ΏθΦ┤ όι╕ί┐Δ |
+| **ύΚΙόευύχκύΡΗϋπΕϋΝΔ** | VERSION_MANAGEMENT_GUIDE.md | GitήΑΒϋψφϊ╣ΚίΝΨύΚΙόευήΑΒCHANGELOG | ΏθΦ┤ όι╕ί┐Δ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `ύΚΙόευ` `Git` `ϋψφϊ╣ΚίΝΨύΚΙόευ` `CHANGELOG` `ύΚΙόευόιΘύφ╛`
 
@@ -114,8 +116,8 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **ύφΨύΧξί╖ξίΟΓίχηόΨ╜όκΙϊ╛Μ** | [STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md) | ί╖ξίΟΓόρκί╝ΠήΑΒό│ρίΗΝϋκρόρκί╝ΠήΑΒίχηόΨ╜ό╡Β?| ΏθΦ┤ όι╕ί┐Δ |
-| **ϊ║Μϊ╗╢όΑ╗ύ║┐ώδΗόΙΡόκΙϊ╛Μ** | [EVENT_BUS_INTEGRATION_CASE_STUDY.md](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md) | ϋπΓίψθϋΑΖόρκί╝ΠήΑΒί╝Γόφξύ╝ΨύρΜήΑΒόΑπϋΔ╜ϊ╝αίΝΨ | ΏθΦ┤ όι╕ί┐Δ |
+| **ύφΨύΧξί╖ξίΟΓίχηόΨ╜όκΙϊ╛Μ** | STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md | ί╖ξίΟΓόρκί╝ΠήΑΒό│ρίΗΝϋκρόρκί╝ΠήΑΒίχηόΨ╜ό╡Β?| ΏθΦ┤ όι╕ί┐Δ |
+| **ϊ║Μϊ╗╢όΑ╗ύ║┐ώδΗόΙΡόκΙϊ╛Μ** | EVENT_BUS_INTEGRATION_CASE_STUDY.md | ϋπΓίψθϋΑΖόρκί╝ΠήΑΒί╝Γόφξύ╝ΨύρΜήΑΒόΑπϋΔ╜ϊ╝αίΝΨ | ΏθΦ┤ όι╕ί┐Δ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `όκΙϊ╛Μ` `ύφΨύΧξί╖ξίΟΓόκΙϊ╛Μ` `ϊ║Μϊ╗╢όΑ╗ύ║┐όκΙϊ╛Μ` `ίχηόΨ╜όκΙϊ╛Μ`
 
@@ -125,8 +127,8 @@ implementation_status: Active
 
 | ύθξϋψΗϊ╕╗ώλα | όΨΘόκμϊ╜Ξύ╜χ | ίΖ│ώΦχ?| ώΘΞϋοΒύρΜί║ο |
 |---------|---------|--------|---------|
-| **Pythonϊ╗μύιΒϋπΕϋΝΔ** | [PYTHON_CODING_BEST_PRACTICES.md](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/PYTHON_CODING_BEST_PRACTICES.md) | ίΣ╜ίΡΞϋπΕϋΝΔήΑΒϊ╗μύιΒόι╝ί╝ΠήΑΒύ▒╗ίηΜό│ρ?| ΏθΦ┤ όι╕ί┐Δ |
-| **όεΑϊ╜│ίχηϋ╖╡ύ┤λ?* | [BEST_PRACTICES_INDEX.md](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/BEST_PRACTICES_INDEX.md) | όεΑϊ╜│ίχηϋ╖╡ίΙΗύ▒╗ήΑΒίχηϋ╖╡ύ┤λ?| Ώθθκ ώΘΞϋοΒ |
+| **Pythonϊ╗μύιΒϋπΕϋΝΔ** | PYTHON_CODING_BEST_PRACTICES.md | ίΣ╜ίΡΞϋπΕϋΝΔήΑΒϊ╗μύιΒόι╝ί╝ΠήΑΒύ▒╗ίηΜό│ρ?| ΏθΦ┤ όι╕ί┐Δ |
+| **όεΑϊ╜│ίχηϋ╖╡ύ┤λ?* | BEST_PRACTICES_INDEX.md | όεΑϊ╜│ίχηϋ╖╡ίΙΗύ▒╗ήΑΒίχηϋ╖╡ύ┤λ?| Ώθθκ ώΘΞϋοΒ |
 
 **ί┐τώΑθόμΑύ┤λίΖ│ώΦχϋψΞ**: `όεΑϊ╜│ίχηϋ╖╡` `ϊ╗μύιΒϋπΕϋΝΔ` `ίΣ╜ίΡΞϋπΕϋΝΔ` `ύ▒╗ίηΜό│ρϋπμ`
 
@@ -303,8 +305,8 @@ backtest_config_template.yaml
 
 ### **ίΗΖώΔρόΨΘόκμ**
 
-- [ϋΥζίδ╛όΨ╜ί╖ξϋψ┤όαΟϊ╣ο](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [όΨ░ϊ║║ίΖξϋΒΝόΝΘίΞΩ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/NEW_EMPLOYEE_ONBOARDING_GUIDE.md)
+- ϋΥζίδ╛όΨ╜ί╖ξϋψ┤όαΟϊ╣ο
+- όΨ░ϊ║║ίΖξϋΒΝόΝΘίΞΩ
 
 ### **ίνΨώΔρϋ╡Εό║Ρ**
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_FACTORY_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRATEGY_FACTORY操作指南
 ---
 
 ﻿---
@@ -57,7 +59,7 @@ implementation_status: 进行?
 ### 参考蓝?
 
 - [策略引擎核心蓝图](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
-- [专业量化系统实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- 专业量化系统实施蓝图
 
 ---
 
@@ -518,7 +520,7 @@ def clear_cache_if_needed(self):
 ### 内部文档
 
 - [策略引擎核心蓝图](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
-- [专业量化系统实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- 专业量化系统实施蓝图
 
 ### 外部资源
 

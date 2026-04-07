@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 数据质量指标定义文档
 ---
 
 ﻿---
@@ -552,9 +554,9 @@ def analyze_quality_trend(quality_history: List[Dict]) -> Dict:
 
 ## 10. 相关文档
 
-- [数据质量控制系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) - 质量控制实现
-- [数据清洗规则配置](02_FACTOR_LIBRARY/04_DATA_SOURCE/03_CLEANING/CLEANING_RULES.md) - 清洗规则定义
-- [数据采集系统](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ACQUISITION.md) - 数据采集方案
+- 数据质量控制系统 - 质量控制实现
+- 数据清洗规则配置 - 清洗规则定义
+- 数据采集系统 - 数据采集方案
 
 ---
 

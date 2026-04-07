@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 系统增强手册 v10文档
 ---
 
 ﻿---
@@ -51,7 +53,7 @@ implementation_status: 进行?---
 > **配套文档**?
 > - 主文档：
 > - 因子库：
-> - 战术手册：[../trading-tactics/tactics_manual.md](06_ARCHIVE/tactics_manual.md)
+> - 战术手册：../trading-tactics/tactics_manual.md
 >
 > **版本说明**?
 > - v1.0：整合附录L/M/N/K等，补充AI优化和监控系?

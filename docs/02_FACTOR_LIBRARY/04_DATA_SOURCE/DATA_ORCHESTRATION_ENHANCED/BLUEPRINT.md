@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -743,7 +745,7 @@ async def backtest_orchestration(
 #### Layer 0: 系统架构
 ##### 0.001. Data Orchestration Enhanced Bp
 - **模块ID**: DATA_ORCHESTRATION_ENHANCED_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_ORCHESTRATION_ENHANCED\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据编排增强系统
 - **状态**: Blueprint

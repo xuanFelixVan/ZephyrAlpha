@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: TECHNICAL_SPECIFICATION_TEMPLATE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TECHNICAL_SPECIFICATION模板文档
 ---
 
 ﻿---
@@ -405,7 +407,7 @@ performance_benchmarks:
 ### B. ﮒﻟﮔ?
 1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ﮔﭘﮔﮒ؟ﻛﺗ
 2. [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
-3. [System_Manifest.md](System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱?
+3. System_Manifest.md - ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱?
 
 ### C. ﮒﮔﺑﻟ؟ﺍﮒﺛ
 | ﮔ۴ﮔ | ﻝﮔ؛ | ﮒﮔﺑﮒﮒ؟ﺗ | ﮒﮔﺑ?| ﮒ؟۰ﮔﺕ?|

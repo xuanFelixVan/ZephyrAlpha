@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: CONSTRUCTION_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - CONSTRUCTION技术规范
 ---
 
 ﻿---
@@ -640,8 +642,8 @@ implementation_status: 进行?---
 
 ### **内部文档**
 
-- [施工文档总索引](API_README.md)
-- [专业量化系统实施蓝图](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+- 施工文档总索引
+- 专业量化系统实施蓝图
 - [文档质量门禁](./06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md)
 
 ### **外部资源**

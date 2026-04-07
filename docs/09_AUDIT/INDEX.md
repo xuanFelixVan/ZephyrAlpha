@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 09_AUDIT目录索引
 ---
 
 ﻿---
@@ -48,7 +50,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [README](API_README.md) | 审计系统概述 | ⭐⭐⭐⭐?|
+| README | 审计系统概述 | ⭐⭐⭐⭐?|
 | [蓝图检查清单](./BLUEPRINT_CHECKLIST.md) | 蓝图检查清?| ⭐⭐⭐⭐ |
 | [蓝图验证报告](./BLUEPRINT_VALIDATION_REPORT.md) | 蓝图验证报告 | ⭐⭐⭐⭐ |
 
@@ -94,25 +96,25 @@ implementation_status: 活跃维护
 ## 🗂?子目?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
-| [BEST_PRACTICES/](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md) | 最佳实?| 1 |
-| [CASE_STUDIES/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md) | 案例研究 | 1 |
-| [CONFIGURATION/](01_FRAMEWORK/STRATEGY_CONFIGURATION_INTERFACE_BLUEPRINT.md) | 配置 | 1 |
-| [DECISION_RECORDS/](01_FRAMEWORK/TECH_DECISION_RECORDS.md) | 决策记录 | 1 |
+| BEST_PRACTICES/ | 最佳实?| 1 |
+| CASE_STUDIES/ | 案例研究 | 1 |
+| CONFIGURATION/ | 配置 | 1 |
+| DECISION_RECORDS/ | 决策记录 | 1 |
 | [GUIDES/](./GUIDES/) | 指南 | 2 |
 | [PROCEDURES/](./PROCEDURES/AUDIT_EXECUTION_PROCEDURES.md) | 流程 | 2 |
 | [REPORTS/](./REPORTS/) | 报告 | 12 |
 | [RESEARCH_MEMOS/](./RESEARCH_MEMOS/) | 研究备忘?| 1 |
 | [SOLUTIONS/](./SOLUTIONS/DOCUMENT_GOVERNANCE_SOLUTIONS.md) | 解决方案 | 1 |
-| [STANDARDS/](02_FACTOR_LIBRARY/01_STANDARDS/backtest_standards.md) | 标准 | 10 |
-| [TEMPLATES/](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_TEMPLATES.md) | 模板 | 11 |
-| [TRAINING/](01_FRAMEWORK/COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md) | 培训 | 1 |
+| STANDARDS/ | 标准 | 10 |
+| TEMPLATES/ | 模板 | 11 |
+| TRAINING/ | 培训 | 1 |
 
 ---
 
 ## 📖 快速导?
 ### 新手入门
 
-1. 阅读 [README.md](API_README.md) - 审计系统概述
+1. 阅读 README.md - 审计系统概述
 2. 阅读 [TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md](./TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) - 审计指南
 3. 阅读 [TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md](./TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md) - 培训手册
 

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: FACTOR_NEUTRAL_OPTIMIZATION_001
 version: 1.0.0
 status: Active
@@ -9,7 +9,10 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+  - 因子中性优化
+  - 因子暴露控制
+  - 中性约束求解
+  - 风险因子管理
 ---
 
 
@@ -484,5 +487,11 @@ class TestFactorNeutralOptimizer:
 **文档维护**:
 - **责任模块**: FACTOR_NEUTRAL_OPTIMIZATION
 
----
 
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
+
+---

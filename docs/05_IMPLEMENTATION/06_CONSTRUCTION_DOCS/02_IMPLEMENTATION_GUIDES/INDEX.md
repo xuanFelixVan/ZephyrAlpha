@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 02_IMPLEMENTATION_GUIDES目录索引
 ---
 
 ﻿---
@@ -51,9 +53,9 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Backtest Engine Guide](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) - `BACKTEST_ENGINE_GUIDE_001`
-- [Event Bus Guide](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) - `EVENT_BUS_GUIDE_001`
-- [Strategy Factory Guide](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) - `IMPL_STRATEGY_FACTORY_GUIDE_001`
+- Backtest Engine Guide - `BACKTEST_ENGINE_GUIDE_001`
+- Event Bus Guide - `EVENT_BUS_GUIDE_001`
+- Strategy Factory Guide - `IMPL_STRATEGY_FACTORY_GUIDE_001`
 
 ---
 

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_YOUZI_STRATEGIES说明文档
 ---
 
 ﻿---
@@ -77,7 +79,7 @@ responsibility:
 | **S015** | 连板接力策略 | 2 连板后接?| 1-2 ?|  |
 | **S016** | 尾盘偷袭策略 | 尾盘拉升个股 | 1 ?|  |
 
- **详细文档**: [./asking/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_MASKING_ENCRYPTION_BLUEPRINT.md)
+ **详细文档**: ./asking/
 
 ### 2.2 炒股养家系列 (S017-S022)
 

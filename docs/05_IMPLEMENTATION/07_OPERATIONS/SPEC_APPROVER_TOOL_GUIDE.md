@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: SPEC_APPROVER_TOOL_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SPEC_APPROVER_TOOL操作指南
 ---
 
 ﻿---
@@ -406,10 +408,10 @@ PATHS = {
 ## 9. ﻠﮒﺛ
 
 ### 9.1 ﻝﺕﮒﺏﮔﮔ۰۲ﻠﺝﮔ۴
-- [ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟](05_IMPLEMENTATION/02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md)
-- [ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ](05_IMPLEMENTATION/07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
-- [ﻝ۴ﻟﺁﮒﭦﮔ۰ﮔﭘ](API_README.md)
-- [ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۷۰ﮔﺟ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/TECHNICAL_SPECIFICATION_TEMPLATE.md)
+- ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟
+- ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
+- ﻝ۴ﻟﺁﮒﭦﮔ۰ﮔﭘ
+- ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۷۰ﮔﺟ
 
 ### 9.2 ﮒﺓ۴ﮒﺓﮔﭦﻝﻛﺛﻝﺛ؟
 - `scripts/technical_feasibility_assessor.py`

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -8,14 +8,17 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 交易策略框架设计与实施指导与实施指导
+  - 多策略分层
+  - 策略协调
+  - 层级优化
+  - 信号融合
 layer: Layer 5.2 (组合优化)
 ---
 
 
 ## 核心定位
+负责多策略分层系统的设计与实现，构建策略分层架构，提供策略协调和风险预算分配功能，支持多策略管理。
 
-多策略层级系统，管理多个投资策略的组合和协调，实现策略间的风险预算分配、收益归因分析和动态权重调整。
 ## 设计目标
 
 ### 主要目标

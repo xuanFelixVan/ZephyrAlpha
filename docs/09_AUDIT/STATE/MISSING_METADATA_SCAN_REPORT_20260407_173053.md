@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: MISSING_METADATA_SCAN_REPORT_20260407_173053
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 扫描报告
 applicable_scope: 缺少元数据文档扫描
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - MISSING_METADATA_SCAN_20260407_173053报告文档
 ---
 
 # 缺少元数据文档扫描报告

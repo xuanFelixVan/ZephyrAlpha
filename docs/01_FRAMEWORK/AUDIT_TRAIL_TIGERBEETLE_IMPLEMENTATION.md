@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 审计追踪系统TigerBeetle集成实施方案文档
 ---
 
 ﻿---

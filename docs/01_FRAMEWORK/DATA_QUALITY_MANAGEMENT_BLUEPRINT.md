@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_QUALITY_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_QUALITY_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -264,7 +266,7 @@ class DataQualityManager:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
+- Layer 10差距分析报告
 - [Great Expectations官方文档](https://docs.greatexpectations.io/)
 ---
 
@@ -276,7 +278,7 @@ class DataQualityManager:
 #### Layer 10: 治理与合规层
 ##### 0.001. Data Quality Management Blueprint
 - **模块ID**: DATA_QUALITY_MANAGEMENT_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_MANAGEMENT_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据质量管理、数据验证、数据监控
 - **状态**: Active

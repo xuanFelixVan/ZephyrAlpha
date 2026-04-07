@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - GOVERNANCE_COMPLIANCE_LAYER蓝图设计
 ---
 
 ﻿---
@@ -441,7 +443,7 @@ class TradingAuthorizationSystem:
 #### Layer 10: 治理与合规层
 ##### 0.001. Governance Compliance Layer Blueprint
 - **模块ID**: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT_001
-- **蓝图文档**: [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](01_FRAMEWORK\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)
+- **蓝图文档**: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 10 - 治理与合规层
 - **状态**: Active

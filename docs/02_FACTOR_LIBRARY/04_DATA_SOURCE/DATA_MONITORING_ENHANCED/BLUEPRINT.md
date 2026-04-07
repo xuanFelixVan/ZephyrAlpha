@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -46,8 +48,8 @@ responsibility: 数据监控增强功能与可视化
 |------|------|------|------|
 | 差距分析 | ../DATA_SOURCE_LAYER_GAP_ANALYSIS.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据质量控制 | [../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 协同模块 | 数据质量规则定义 |
-| 数据可观测性 | [../DATA_OBSERVABILITY/](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_OBSERVABILITY_BLUEPRINT.md) | 协同模块 | 数据可观测性 |
+| 数据质量控制 | ../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md | 协同模块 | 数据质量规则定义 |
+| 数据可观测性 | ../DATA_OBSERVABILITY/ | 协同模块 | 数据可观测性 |
 
 **职责边界**:
 - ✅ 本文档负责: 数据质量监控执行架构设计
@@ -1137,7 +1139,7 @@ alerter.send_alert("data_quality_issue", "HIGH", "数据质量问题", result)
 #### Layer 0: 系统架构
 ##### 0.001. Data Monitoring Enhanced
 - **模块ID**: DATA_MONITORING_ENHANCED_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据监控系统（增强）
 - **状态**: Blueprint

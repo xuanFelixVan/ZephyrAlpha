@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 01_FRAMEWORK\AI_VIRTUAL_RESEARCH_TEAM
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - AI_VIRTUAL_RESEARCH_TEAM目录索引
 ---
 
 ﻿---
@@ -31,9 +33,9 @@ parent_document: ../INDEX.md
 ## 📁 目录结构
 
 |------|------|------|
-| [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AI虚拟研究团队蓝图设计 | Active |
-| [AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md) | AI虚拟研究团队实施计划 | Active |
-| [AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md) | AI虚拟研究团队项目启动 | Active |
+| AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md | AI虚拟研究团队蓝图设计 | Active |
+| AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md | AI虚拟研究团队实施计划 | Active |
+| AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md | AI虚拟研究团队项目启动 | Active |
 
 ## 📖 文档说明
 
@@ -61,10 +63,10 @@ parent_document: ../INDEX.md
 - [AI因子挖掘器实施总结](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md)
 
 ### AI治理
-- [AI治理框架蓝图](01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md)
-- [AI
-单](01_FRAMEWORK/AI_PERMISSIONS.md)
-- [人机交互蓝图](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- AI治理框架蓝图
+- AI
+单
+- 人机交互蓝图
 
 
 ?

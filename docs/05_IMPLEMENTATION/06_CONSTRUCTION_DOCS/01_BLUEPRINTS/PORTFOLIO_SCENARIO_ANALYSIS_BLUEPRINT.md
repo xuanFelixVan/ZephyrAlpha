@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: PORTFOLIO_SCENARIO_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -8,7 +8,10 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
+  - 情景分析
+  - 压力测试
+  - 情景归因
+  - 情景报告生成
 layer: Layer 5.2 (组合优化)
 ---
 

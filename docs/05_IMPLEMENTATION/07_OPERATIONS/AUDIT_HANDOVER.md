@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: AUDIT_HANDOVER
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 审查工作交接文档文档
 ---
 
 ﻿---

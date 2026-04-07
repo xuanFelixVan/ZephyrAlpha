@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 20260407_old_layer_audit_reports目录索引
 ---
 
 ﻿---

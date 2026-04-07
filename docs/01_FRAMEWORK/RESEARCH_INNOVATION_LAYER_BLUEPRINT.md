@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: RESEARCH_INNOVATION_LAYER_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - RESEARCH_INNOVATION_LAYER蓝图设计
 ---
 
 ﻿---
@@ -1398,7 +1400,7 @@ class KnowledgeManagementAPI:
 #### Layer 0: 数据源层
 ##### 0.001. Framework Research Innovation Bp
 - **模块ID**: FRAMEWORK_RESEARCH_INNOVATION_BP_001
-- **蓝图文档**: [RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](01_FRAMEWORK\RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)
+- **蓝图文档**: RESEARCH_INNOVATION_LAYER_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 核心功能实现
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PERSONAL_AI_MAINTENANCE_COMPLETE_SOLUTION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 个人开发AI维护量化系统完整实施方案文档
 ---
 
 ﻿---
@@ -131,7 +133,7 @@ responsibility_boundary: |
 
 ## Layer 0: 数据源层
 - 数据源层蓝图 - module_id: DATA_LAYER_001
-- [数据质量监控](09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) - module_id: DQM_001
+- 数据质量监控 - module_id: DQM_001
 
 ## Layer 1: 数据预处理层
 - 数据清洗蓝图 - module_id: DC_001

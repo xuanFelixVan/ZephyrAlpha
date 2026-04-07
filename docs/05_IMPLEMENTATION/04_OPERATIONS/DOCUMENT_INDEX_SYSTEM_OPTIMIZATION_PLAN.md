@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 文档索引体系优化方案文档
 ---
 
 ﻿---
@@ -352,7 +354,7 @@ responsibility:
 
 ### 附录B：索引文档示例
 
-**示例**: [BLUEPRINT_INDEX.md](11_STRATEGIC_DECISION/BLUEPRINT_INDEX.md)
+**示例**: BLUEPRINT_INDEX.md
 
 ### 附录C：参考标准文档
 

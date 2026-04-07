@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - STRESS_TEST_SCENARIO_LIBRARY蓝图设计
 ---
 
 ﻿---
@@ -805,6 +807,6 @@ class OREIntegration:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/GAP_ANALYSIS_REPORT.md)
+- Layer 10差距分析报告
 - [ORE官方文档](https://www.opensourcerisk.org/)
 - [Basel III压力测试标准](https://www.bis.org/bcbs/)

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - BLUEPRINT蓝图设计
 ---
 
 ﻿---
@@ -42,9 +44,9 @@ responsibility: 数据标准化规则与格式统一
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
-| 数据质量控制 | [../QUALITY_MANAGEMENT/](01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md) | 协同模块 | 数据质量规则 |
+| 数据质量控制 | ../QUALITY_MANAGEMENT/ | 协同模块 | 数据质量规则 |
 | 数据清洗 | [../03_CLEANING/](../03_CLEANING/) | 协同模块 | 数据清洗引擎 |
 
 **职责边界**:
@@ -156,7 +158,7 @@ responsibility: 数据标准化规则与格式统一
 #### Layer 0: 系统架构
 ##### 0.001. Data Standardization Bp
 - **模块ID**: DATA_STANDARDIZATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_STANDARDIZATION\BLUEPRINT.md)
+- **蓝图文档**: BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据标准化系统
 - **状态**: Blueprint

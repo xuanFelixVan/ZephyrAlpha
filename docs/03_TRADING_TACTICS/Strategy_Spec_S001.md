@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: STRATEGY_SPEC_S001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - Strategy_Spec_S001md  均线趋势跟踪策略文档
 ---
 
 ﻿---
@@ -243,7 +245,7 @@ if price_change > 10%:  # 单根K线涨?10%
 
 | 文档 | 说明 |
 |------|------|
-| [API_Contract.md](03_TRADING_TACTICS/API_Contract.md) | 接口规范 |
+| API_Contract.md | 接口规范 |
 | 02_ALPHA_FACTORS/ | 因子?|
 | [05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/) | 回测报告 |
 

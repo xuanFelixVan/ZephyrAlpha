@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_SOURCE_QUALITY_MONITORING蓝图设计
 ---
 
 ﻿---
@@ -1235,7 +1237,7 @@ python src/data_quality/monitor.py
 #### Layer 0: 数据源层
 ##### 0.001. Data Source Quality Monitoring Blueprint
 - **模块ID**: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT_001
-- **蓝图文档**: [DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md](01_FRAMEWORK\DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 0数据源质量监控
 - **状态**: Active

@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: SITEMAP
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 站点地图
 applicable_scope: 01_FRAMEWORK
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 01_FRAMEWORK站点地图
 ---
 
 ﻿---
@@ -83,7 +85,7 @@ implementation_status: 活跃维护
 
 **快速上手路?* (30分钟):
 1.
-读 [README.md](API_README.md) - 框架概述 (5分钟)
+读 README.md - 框架概述 (5分钟)
 2.
 读 [ARCHITECTURE.md](./ARCHITECTURE.md) - 系统架构 (10分钟)
 3.
@@ -109,7 +111,7 @@ implementation_status: 活跃维护
 
 **AI系统开发路?* (3小时):
 1.
-读 [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) - AI虚拟研究团队 (30分钟)
+读 AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md - AI虚拟研究团队 (30分钟)
 2.
 读 [HUMAN_AI_INTERACTION_BLUEPRINT.md](./HUMAN_AI_INTERACTION_BLUEPRINT.md) - 人机交互 (30分钟)
 3.
@@ -154,7 +156,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [AI虚拟研究团队蓝图](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md) | AI虚拟研究团队设计 | ⭐⭐⭐⭐?|
+| AI虚拟研究团队蓝图 | AI虚拟研究团队设计 | ⭐⭐⭐⭐?|
 | [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 人机交互设计 | ⭐⭐⭐⭐ |
 | [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md) | AI治理框架 | ⭐⭐⭐⭐ |
 | [MLOps平台蓝图](./MLOPS_PLATFORM_BLUEPRINT.md) | MLOps平台设计 | ⭐⭐⭐⭐ |
@@ -182,7 +184,7 @@ implementation_status: 活跃维护
 
 ### AI
 ?
-- **AI研究团队**: [AI虚拟研究团队蓝图](01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
+- **AI研究团队**: AI虚拟研究团队蓝图
 - **人机交互**: [人机交互蓝图](./HUMAN_AI_INTERACTION_BLUEPRINT.md)
 - **AI治理**: [AI治理蓝图](./AI_GOVERNANCE_BLUEPRINT.md)
 - **MLOps**: [MLOps平台蓝图](./MLOPS_PLATFORM_BLUEPRINT.md)

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - L1_VALIDATOR 数据校验器模块设文档
 ---
 
 ﻿---

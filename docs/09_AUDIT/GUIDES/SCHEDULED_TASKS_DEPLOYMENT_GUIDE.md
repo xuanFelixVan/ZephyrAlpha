@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - SCHEDULED_TASKS_DEPLOYMENT操作指南
 ---
 
 ﻿---

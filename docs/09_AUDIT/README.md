@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 09_AUDIT说明文档
 ---
 
 ﻿---
@@ -102,7 +104,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ## ﻭ ﻝﺕﮒﺏﻠﺝﮔ۴
 
 ### ﻝﺏﭨﻝﭨﮔﮔ۰۲
-- [System_Manifest.md](System_Manifest.md) - ﻝﺏﭨﻝﭨﮔﺕﮒ
+- System_Manifest.md - ﻝﺏﭨﻝﭨﮔﺕﮒ
 - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ﻛﺕﭨﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md) - ﮒ؟ﮔﺑﮔﮔ۰۲ﮒﺍﮒﺝ
 
 ### ﻟﺟﻝﭨﺑﮒ؟۰ﻟ؟۰

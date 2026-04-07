@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: ORDER_GENERATION_ALGORITHMS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 订单生成算法文档
 ---
 
 ﻿---
@@ -251,6 +253,6 @@ Layer 5 (监控? ?执行监控
 
 ## 索引
 
-- 父目? [03_TRADING_TACTICS/README.md](API_README.md)
-- 上游: [06_POSITION_MANAGEMENT/README.md](API_README.md)
+- 父目? 03_TRADING_TACTICS/README.md
+- 上游: 06_POSITION_MANAGEMENT/README.md
 - 下游: 

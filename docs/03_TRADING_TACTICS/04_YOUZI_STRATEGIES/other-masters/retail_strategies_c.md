@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: RETAIL_STRATEGIES_C
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 游资量化策略 第三部分文档
 ---
 
 ﻿---
@@ -34,7 +36,7 @@ responsibility:
 >
 > **配套文档**?
 > - 主文档：
-> - 策略池索引：[index.md](08_HUMAN_AI_INTERFACE/index.md)
+> - 策略池索引：index.md
 
 ***
 

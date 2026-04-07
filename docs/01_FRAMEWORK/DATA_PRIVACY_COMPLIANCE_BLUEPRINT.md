@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_PRIVACY_COMPLIANCE蓝图设计
 ---
 
 ﻿---
@@ -590,7 +592,7 @@ class DataBreachEvent:
 #### Layer 10: 治理与合规层
 ##### 0.001. Data Privacy Compliance Blueprint
 - **模块ID**: DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001
-- **蓝图文档**: [DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md](01_FRAMEWORK\DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md)
+- **蓝图文档**: DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 数据隐私合规系统
 - **状态**: Active

@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - trading_costs目录索引
 ---
 
 ﻿---
@@ -53,8 +55,8 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [T.05.Te001.Trading Cost Model Algorithm Document](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md) - `DESIGN_DOC_002`
-- [Trading Cost Test Case Design](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/TRADING_COST_TEST_CASE_DESIGN.md) - `TEST_DESIGN_002`
+- T.05.Te001.Trading Cost Model Algorithm Document - `DESIGN_DOC_002`
+- Trading Cost Test Case Design - `TEST_DESIGN_002`
 
 ---
 

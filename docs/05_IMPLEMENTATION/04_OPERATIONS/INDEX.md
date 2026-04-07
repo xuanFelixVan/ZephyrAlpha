@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 04_OPERATIONS目录索引
 ---
 
 ﻿---
@@ -57,7 +59,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Document Governance Continuous Improvement](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT.md) - `DOCUMENTGOVERNANCECONTINUOUS_001`
+- Document Governance Continuous Improvement - `DOCUMENTGOVERNANCECONTINUOUS_001`
 
 ---
 

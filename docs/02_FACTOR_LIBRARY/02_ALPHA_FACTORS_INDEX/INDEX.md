@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: INDEX
 version: 1.0.0
 status: Active
@@ -9,6 +9,8 @@ standard_type: 索引文件
 applicable_scope: 02_FACTOR_LIBRARY\02_ALPHA_FACTORS_INDEX
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+  - 02_ALPHA_FACTORS_INDEX目录索引
 ---
 
 ﻿---
@@ -43,7 +45,7 @@ parent_document: ../INDEX.md
 
 ## 📚 文档列表
 
-- [05 BREADTH INDICATORS](02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX/BREADTH_INDICATORS.md)
+- 05 BREADTH INDICATORS
 
 ---
 

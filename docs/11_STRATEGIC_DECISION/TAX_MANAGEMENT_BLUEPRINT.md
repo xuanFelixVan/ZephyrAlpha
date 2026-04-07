@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: TAX_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - TAX_MANAGEMENT蓝图设计
 ---
 
 ﻿---
@@ -603,7 +605,7 @@ class TaxReportGenerator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统 |
 
 ---
@@ -619,7 +621,7 @@ class TaxReportGenerator:
 #### Layer 0: 系统架构
 ##### 0.001. Tax Management
 - **模块ID**: TAX_MANAGEMENT_001
-- **蓝图文档**: [TAX_MANAGEMENT_BLUEPRINT.md](11_STRATEGIC_DECISION\TAX_MANAGEMENT_BLUEPRINT.md)
+- **蓝图文档**: TAX_MANAGEMENT_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 11.17 - 税务管理系统
 - **状态**: Active

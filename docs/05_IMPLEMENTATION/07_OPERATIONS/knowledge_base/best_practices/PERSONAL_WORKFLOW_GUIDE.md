@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: PERSONAL_WORKFLOW_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - PERSONAL_WORKFLOW操作指南
 ---
 
 ﻿---
@@ -425,8 +427,8 @@ alias run='python src/main.py'
 
 ## 9. ﮒﻟﮔﮔ۰?
 - [ﻛﺕ۹ﻛﭦﭦﮒﺙﮒﮔﻛﺛﺏﮒ؟ﻟﺓﭖ](./PERSONAL_DEVELOPMENT_BEST_PRACTICES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ](09_AUDIT/REPORTS/CONTINUOUS_IMPROVEMENT_PILOT_REPORT_20260402.md)
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
+- ﮔﻝﭨﮔﺗﻟﺟﮔﭦﮒﭘﻟﺁﻟﺟﻟ۰ﮔ۴ﮒ
 
 ---
 

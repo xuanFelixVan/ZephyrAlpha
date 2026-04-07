@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DOCUMENT_AUDIT_WORKFLOW
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  -  文档与代码审查工作流文档
 ---
 
 ﻿---

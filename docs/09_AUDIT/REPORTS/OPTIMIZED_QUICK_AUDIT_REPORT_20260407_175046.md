@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - OPTIMIZED_QUICK_AUDIT_20260407_175046报告文档
 ---
 
 # 优化版快速审计报告

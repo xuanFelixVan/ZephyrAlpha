@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: QMT_EXECUTOR_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - QMT_EXECUTOR蓝图设计
 ---
 
 ﻿---
@@ -396,8 +398,8 @@ class QMTConfig:
 
 - [QMT数据接口技术规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
 - [QMT执行器技术规格书](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
-- [订单执行蓝图](04_EXECUTION/01_ORDER_EXECUTION/ORDER_EXECUTION_BLUEPRINT.md)
-- [模拟交易蓝图](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md)
+- 订单执行蓝图
+- 模拟交易蓝图
 
 ### 8.2 外部文档
 
@@ -426,7 +428,7 @@ class QMTConfig:
 #### Layer 0: 系统架构
 ##### 0.001. Qmt Executor Blueprint
 - **模块ID**: QMT_EXECUTOR_BLUEPRINT_001
-- **蓝图文档**: [QMT_EXECUTOR_BLUEPRINT.md](04_EXECUTION\01_ORDER_EXECUTION\QMT_EXECUTOR_BLUEPRINT.md)
+- **蓝图文档**: QMT_EXECUTOR_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: Layer 5 ?compliance_level: 
 - **状态**: Active

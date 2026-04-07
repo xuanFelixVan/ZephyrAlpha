@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: DATA_QUALITY_GOVERNANCE_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - DATA_QUALITY_GOVERNANCE蓝图设计
 ---
 
 ﻿---
@@ -269,7 +271,7 @@ class DataQualityValidator:
         results = {}
         for vtype in validation_types:
             if vtype in self.validators:
-                results[vtype] = self.validators[vtype](00_OVERVIEW/DATA_FLOW.md)
+                results[vtype] = self.validatorsvtype
         
         return results
     
@@ -468,7 +470,7 @@ class DataQualityAssessor:
         assessments = []
         for dimension in dimensions:
             if dimension in self.assessors:
-                assessment = self.assessors[dimension](00_OVERVIEW/DATA_FLOW.md)
+                assessment = self.assessorsdimension
                 assessments.append(assessment)
         
         return assessments
@@ -717,7 +719,7 @@ class AutoAlertEngine:
         channels = self._get_alert_channels(severity)
         
         for channel in channels:
-            self.alert_handlers[channel](01_FRAMEWORK/ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md)
+            self.alert_handlerschannel
     
     def _get_alert_channels(self, severity: str) -> List[str]:
         """获取告警渠道"""
@@ -1111,7 +1113,7 @@ start_http_server(8000)
 #### Layer 10: 治理与合规层
 ##### 0.001. Data Quality Governance Blueprint
 - **模块ID**: DATA_QUALITY_GOVERNANCE_BLUEPRINT_001
-- **蓝图文档**: [DATA_QUALITY_GOVERNANCE_BLUEPRINT.md](01_FRAMEWORK\DATA_QUALITY_GOVERNANCE_BLUEPRINT.md)
+- **蓝图文档**: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 - **技术规格书**: 待创建
 - **职责**: 全系统数据质量管理与治理
 - **状态**: Active

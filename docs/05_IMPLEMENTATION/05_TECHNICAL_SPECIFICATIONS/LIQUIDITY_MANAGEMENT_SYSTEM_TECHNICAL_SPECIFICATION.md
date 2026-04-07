@@ -1,10 +1,12 @@
-﻿---
+---
 module_id: LIQUIDITY_MANAGEMENT_SYSTEM_TECHNICAL_SPECIFICATION
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - LIQUIDITY_MANAGEMENT_SYSTEM_TECHNICAL技术规范
 ---
 
 ﻿---
@@ -661,7 +663,7 @@ class TestLiquidityManagementSystem:
 
 ### 11.1 蓝图文档
 
-- [LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md)
+- LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
 
 ### 11.2 架构文档
 

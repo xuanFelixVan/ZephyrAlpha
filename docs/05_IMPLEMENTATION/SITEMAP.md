@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DOC_IMPLEMENTATION_SITEMAP_001
 version: 1.0.0
 status: Active
@@ -77,12 +77,12 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮔﮔﺁﮔﺍﮔ
 
 **ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [01_QUICKSTART/README.md](API_README.md) - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
+1. ﻠﻟﺁﭨ 01_QUICKSTART/README.md - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
 2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ۵ﻛﺗﻟﺓﺁﮒﺝ (10ﮒﻠ)
 
 ### ﮔﮔﺁﮒﺙﮒ?
 **ﮒﺙﮒﻟ۶ﻟﮒ۵ﻛﺗﻟﺓﺁ?* (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [02_DEVELOPMENT/README.md](API_README.md) - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
+1. ﻠﻟﺁﭨ 02_DEVELOPMENT/README.md - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
 2. ﻠﻟﺁﭨ [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ?(30ﮒﻠ)
 3. ﻠﻟﺁﭨ [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - ﻟ؟ﺝﻟ؟۰ﮒﮒ (20ﮒﻠ)
 4. ﻠﻟﺁﭨ [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - ﻛﭨ۲ﻝﻟﺑ۷ﻠ (20ﮒﻠ)
@@ -92,7 +92,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮔﮔﺁﻟﺟﻝﭨﺑﻛﭦﭦﮒ
 
 **ﻟﺟﻝﭨﺑﮒﺓ۴ﻛﺛﻟﺓﺁﻝﭦﺟ** (2ﮒﺍﮔﭘ):
-1. ﻠﻟﺁﭨ [07_OPERATIONS/README.md](API_README.md) - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
+1. ﻠﻟﺁﭨ 07_OPERATIONS/README.md - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
 2. ﻠﻟﺁﭨ [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?(20ﮒﻠ)
 3. ﻠﻟﺁﭨ [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - ﻟﺑ۷ﻠﻠ۷ﮔﭦ?(20ﮒﻠ)
 4. ﻠﻟﺁﭨ [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ (20ﮒﻠ)
@@ -108,7 +108,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﮒﺟ،ﻠﮒﺙ?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﮒﺟ،ﻠﮒﺙﮒ۶](API_README.md) | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗﻗﻗﻗ?|
+| ﮒﺟ،ﻠﮒﺙﮒ۶ | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗﻗﻗﻗ?|
 | [ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ](./01_QUICKSTART/ROADMAP.md) | ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?| ﻗﻗﻗﻗ |
 
 ### ﮒﺙﮒﮔ?
@@ -128,7 +128,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md) | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗﻗﻗﻗ?|
+| ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗﻗﻗﻗ?|
 | [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?| ﻗﻗﻗﻗ |
 | [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | ﻟﺑ۷ﻠﻠ۷ﮔﭦ?| ﻗﻗﻗﻗ |
 | [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | ﮔ۶ﻟﺛﻝﮔ۶ | ﻗﻗﻗﻗ |
@@ -151,7 +151,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 - **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮔﺍﮔ؟ﮔﺕﮔﺑ
 
 ### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
-- **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](API_README.md)
+- **ﻟﺟﻝﭨﺑ**: ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ
 - **ﮒ؟۰ﻟ؟۰**: [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
 - **ﻟﺑ۷ﻠ?*: [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
 - **ﻝﮔ۶**: [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
