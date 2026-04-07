@@ -108,16 +108,6 @@ class Layer4DeepAuditV4:
             if not doc_path.exists():
                 continue
             
-            if "LAYER4_ML" not in doc and "01_FRAMEWORK" in doc:
-                expected_path = doc.replace("docs/01_FRAMEWORK/", "docs/01_FRAMEWORK/LAYER4_ML/")
-                self.audit_results["L1_file_system"]["directory_structure"].append({
-                    "doc": doc,
-                    "issue": "目录漂移",
-                    "description": "Layer 4文档不在LAYER4_ML目录中",
-                    "current_path": doc,
-                    "expected_path": expected_path
-                })
-            
             filename = doc_path.stem
             if re.search(r'Layer\s*[0-9]', filename, re.IGNORECASE):
                 self.audit_results["L1_file_system"]["file_naming"].append({

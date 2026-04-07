@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- [Archived](ARCHIVED.md) - `ARCHIVE_NOZYIO_UX_DOC_001`
+
 - [Readme](README.md) - `IMPL_NOZYIO_README_001`
 
 ---
