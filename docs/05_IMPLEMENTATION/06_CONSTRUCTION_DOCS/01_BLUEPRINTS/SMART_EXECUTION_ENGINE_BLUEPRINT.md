@@ -1,15 +1,4 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 提供文档支持
----
-
-﻿---
 module_id: SMART_EXECUTION_ENGINE_001
 version: 1.0.0
 status: Active
@@ -23,9 +12,8 @@ responsibility:
 - 执行算法
 - 智能执行成本优化
 - 市场适应
-layer: Layer 5.4 (交易执行)
+layer: Layer 6 (组合优化层)
 ---
-
 
 # 智能执行引擎蓝图
 

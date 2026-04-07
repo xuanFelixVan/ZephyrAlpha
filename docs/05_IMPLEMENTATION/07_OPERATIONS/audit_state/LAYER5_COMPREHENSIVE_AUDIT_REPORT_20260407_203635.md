@@ -1,17 +1,6 @@
----
-module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 提供文档支持
----
-
 # Layer 5 全面深度审计报告
 
-> **审计时间**: 2026-04-07 20:29:54
+> **审计时间**: 2026-04-07 20:36:35
 > **审计范围**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS
 > **审计类型**: 全面深度审计（三层审计标准）
 > **审计状态**: ✅ 完成
@@ -21,13 +10,13 @@ responsibility:
 ## 📊 审计概要
 
 - **扫描文档数**: 167个
-- **发现问题数**: 403个
+- **发现问题数**: 388个
 - **P0问题**: 0个
-- **P1问题**: 243个
-- **P2问题**: 160个
-- **重复文档对**: 0对
+- **P1问题**: 216个
+- **P2问题**: 172个
+- **重复文档对**: 1对
 - **职责问题**: 0个
-- **内容相似**: 33对
+- **内容相似**: 1对
 
 ---
 
@@ -41,7 +30,7 @@ responsibility:
 
 ### L2 文档内容层审计
 
-发现问题: 222个
+发现问题: 221个
 
 #### 🟡 P1 问题（优先修复）
 
@@ -189,533 +178,530 @@ responsibility:
 48. **缺少职责描述**: 05_DESIGN_DOCS\database\P0_05_Multi_Engine_Coordinator_Design.md
    - 文档缺少核心定位章节
 
-49. **缺少职责描述**: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
+49. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
    - 文档缺少核心定位章节
 
-50. **缺少职责描述**: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
+50. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\INDEX.md
    - 文档缺少核心定位章节
 
-51. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
+51. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
    - 文档缺少核心定位章节
 
-52. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\INDEX.md
+52. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
    - 文档缺少核心定位章节
 
-53. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+53. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\INDEX.md
    - 文档缺少核心定位章节
 
-54. **缺少职责描述**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
+54. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
    - 文档缺少核心定位章节
 
-55. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\INDEX.md
+55. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
    - 文档缺少核心定位章节
 
-56. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
+56. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\INDEX.md
    - 文档缺少核心定位章节
 
-57. **缺少职责描述**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
+57. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\README.md
    - 文档缺少核心定位章节
 
-58. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\INDEX.md
+58. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
    - 文档缺少核心定位章节
 
-59. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\README.md
+59. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
    - 文档缺少核心定位章节
 
-60. **缺少职责描述**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
+60. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
    - 文档缺少核心定位章节
 
-61. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
+61. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\INDEX.md
    - 文档缺少核心定位章节
 
-62. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
+62. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
    - 文档缺少核心定位章节
-
-63. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\INDEX.md
-   - 文档缺少核心定位章节
-
-64. **缺少职责描述**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
-   - 文档缺少核心定位章节
-
-65. **module_id重复**: 01_BLUEPRINTS\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md, 01_BLUEPRINTS\STRATEGY_SELECTION_BLUEPRINT.md
-   - module_id "05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_001" 在多个文档中重复使用
 
 #### 🟢 P2 问题（建议修复）
 
-1. **索引不完整**: INDEX.md
-   - 索引未包含文档: AI_CONSTRUCTION_QUICK_REFERENCE.md
+1. **职责描述过长**: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
+   - 职责描述长度: 409字 (最多200字)
 
-2. **索引不完整**: INDEX.md
-   - 索引未包含文档: BLUEPRINT_TEMPLATE.md
+2. **职责描述过长**: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
+   - 职责描述长度: 402字 (最多200字)
 
 3. **索引不完整**: INDEX.md
-   - 索引未包含文档: CONSTRUCTION_SPECIFICATION.md
+   - 索引未包含文档: AI_CONSTRUCTION_QUICK_REFERENCE.md
 
 4. **索引不完整**: INDEX.md
-   - 索引未包含文档: IMPLEMENTATION_PROGRESS.md
+   - 索引未包含文档: BLUEPRINT_TEMPLATE.md
 
 5. **索引不完整**: INDEX.md
-   - 索引未包含文档: NEW_EMPLOYEE_ONBOARDING_GUIDE.md
+   - 索引未包含文档: CONSTRUCTION_SPECIFICATION.md
 
 6. **索引不完整**: INDEX.md
-   - 索引未包含文档: README.md
+   - 索引未包含文档: IMPLEMENTATION_PROGRESS.md
 
 7. **索引不完整**: INDEX.md
-   - 索引未包含文档: VERSION_MANAGEMENT_GUIDE.md
+   - 索引未包含文档: NEW_EMPLOYEE_ONBOARDING_GUIDE.md
 
 8. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
+   - 索引未包含文档: README.md
 
 9. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ALPHA_FACTOR_FACTORY_BLUEPRINT.md
+   - 索引未包含文档: VERSION_MANAGEMENT_GUIDE.md
 
 10. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
 
 11. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\AUTO_REPAIR_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ALPHA_FACTOR_FACTORY_BLUEPRINT.md
 
 12. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\BARRA_RISK_MODEL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
 
 13. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\BLACK_LITTERMAN_MODEL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\AUTO_REPAIR_ENGINE_BLUEPRINT.md
 
 14. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\BARRA_RISK_MODEL_BLUEPRINT.md
 
 15. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\CLICKHOUSE_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\BLACK_LITTERMAN_MODEL_BLUEPRINT.md
 
 16. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\COINTEGRATION_ANALYSIS_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
 
 17. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\CONFIGURATION_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\CLICKHOUSE_INTEGRATION_BLUEPRINT.md
 
 18. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_ACCESS_AUDIT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\COINTEGRATION_ANALYSIS_BLUEPRINT.md
 
 19. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_BACKUP_RECOVERY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\CONFIGURATION_MANAGEMENT_BLUEPRINT.md
 
 20. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_ACCESS_AUDIT_BLUEPRINT.md
 
 21. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_CLEANING_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_BACKUP_RECOVERY_BLUEPRINT.md
 
 22. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_COST_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
 
 23. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_FABRIC_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_CLEANING_ENGINE_BLUEPRINT.md
 
 24. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_COST_MANAGEMENT_BLUEPRINT.md
 
 25. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_FABRIC_BLUEPRINT.md
 
 26. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md
 
 27. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_MESH_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
 
 28. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_OBSERVABILITY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
 
 29. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_MESH_BLUEPRINT.md
 
 30. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_OBSERVABILITY_BLUEPRINT.md
 
 31. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md
 
 32. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_QUALITY_MONITORING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
 
 33. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md
 
 34. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_QUALITY_MONITORING_BLUEPRINT.md
 
 35. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
 
 36. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
 
 37. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
 
 38. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_VALIDATION_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md
 
 39. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DATA_VERSION_CONTROL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md
 
 40. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_VALIDATION_ENGINE_BLUEPRINT.md
 
 41. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DATA_VERSION_CONTROL_BLUEPRINT.md
 
 42. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md
 
 43. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
 
 44. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
 
 45. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
 
 46. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
 
 47. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md
 
 48. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\FINANCING_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
 
 49. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md
 
 50. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\FINANCING_OPTIMIZATION_BLUEPRINT.md
 
 51. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md
 
 52. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\INTRADAY_STRATEGY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
 
 53. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md
 
 54. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\INTRADAY_STRATEGY_BLUEPRINT.md
 
 55. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MARGIN_CALL_MONITOR_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md
 
 56. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MARKET_IMPACT_MODEL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
 
 57. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MARGIN_CALL_MONITOR_BLUEPRINT.md
 
 58. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MARKET_REGIME_DETECTION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MARKET_IMPACT_MODEL_BLUEPRINT.md
 
 59. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md
 
 60. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MARKET_REGIME_DETECTION_BLUEPRINT.md
 
 61. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
 
 62. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MONITORING_ALERTING_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
 
 63. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md
 
 64. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MONITORING_ALERTING_SYSTEM_BLUEPRINT.md
 
 65. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md
 
 66. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
 
 67. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md
 
 68. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\OPENING_STRATEGY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
 
 69. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md
 
 70. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\OPENING_STRATEGY_BLUEPRINT.md
 
 71. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
 
 72. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
 
 73. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md
 
 74. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md
 
 75. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
 
 76. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md
 
 77. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md
 
 78. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md
 
 79. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\QUALITY_SCORING_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md
 
 80. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\QUARTERLY_REBALANCE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
 
 81. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\REALTIME_DATA_LAKE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\QUALITY_SCORING_SYSTEM_BLUEPRINT.md
 
 82. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\QUARTERLY_REBALANCE_BLUEPRINT.md
 
 83. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\REDIS_CACHE_LAYER_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\REALTIME_DATA_LAKE_BLUEPRINT.md
 
 84. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
 
 85. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\REDIS_CACHE_LAYER_BLUEPRINT.md
 
 86. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\RISK_CONTROL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
 
 87. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\RISK_PARITY_STRATEGY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md
 
 88. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\ROBUST_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\RISK_CONTROL_BLUEPRINT.md
 
 89. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\RISK_PARITY_STRATEGY_BLUEPRINT.md
 
 90. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\ROBUST_OPTIMIZATION_BLUEPRINT.md
 
 91. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\SMART_EXECUTION_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
 
 92. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\SMART_ORDER_ROUTER_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
 
 93. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\SMART_EXECUTION_ENGINE_BLUEPRINT.md
 
 94. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\STRATEGIC_WEIGHTING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\SMART_ORDER_ROUTER_BLUEPRINT.md
 
 95. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md
 
 96. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\STRATEGY_SELECTION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\STRATEGIC_WEIGHTING_BLUEPRINT.md
 
 97. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\STRESS_TESTING_SYSTEM_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
 
 98. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\SYSTEM_ENHANCEMENT_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\STRATEGY_SELECTION_BLUEPRINT.md
 
 99. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TAIL_RISK_HEDGING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\STRESS_TESTING_SYSTEM_BLUEPRINT.md
 
 100. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TAX_LOSS_HARVESTING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\SYSTEM_ENHANCEMENT_BLUEPRINT.md
 
 101. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TIMESCALEDB_INTEGRATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TAIL_RISK_HEDGING_BLUEPRINT.md
 
 102. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TRADING_COST_OPTIMIZATION_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TAX_LOSS_HARVESTING_BLUEPRINT.md
 
 103. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TIMESCALEDB_INTEGRATION_BLUEPRINT.md
 
 104. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TRADING_COST_OPTIMIZATION_BLUEPRINT.md
 
 105. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
 
 106. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\TURNOVER_CONTROL_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md
 
 107. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
 
 108. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\TURNOVER_CONTROL_BLUEPRINT.md
 
 109. **索引不完整**: INDEX.md
-   - 索引未包含文档: 01_BLUEPRINTS\VAR_ES_MONITORING_BLUEPRINT.md
+   - 索引未包含文档: 01_BLUEPRINTS\UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md
 
 110. **索引不完整**: INDEX.md
-   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\BACKTEST_ENGINE_GUIDE.md
+   - 索引未包含文档: 01_BLUEPRINTS\UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
 
 111. **索引不完整**: INDEX.md
-   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\EVENT_BUS_GUIDE.md
+   - 索引未包含文档: 01_BLUEPRINTS\VAR_ES_MONITORING_BLUEPRINT.md
 
 112. **索引不完整**: INDEX.md
-   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\STRATEGY_FACTORY_GUIDE.md
+   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\BACKTEST_ENGINE_GUIDE.md
 
 113. **索引不完整**: INDEX.md
-   - 索引未包含文档: 03_OPERATION_MANUALS\DEPLOYMENT_MANUAL.md
+   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\EVENT_BUS_GUIDE.md
 
 114. **索引不完整**: INDEX.md
-   - 索引未包含文档: 03_OPERATION_MANUALS\MAINTENANCE_MANUAL.md
+   - 索引未包含文档: 02_IMPLEMENTATION_GUIDES\STRATEGY_FACTORY_GUIDE.md
 
 115. **索引不完整**: INDEX.md
-   - 索引未包含文档: 03_OPERATION_MANUALS\MONITORING_MANUAL.md
+   - 索引未包含文档: 03_OPERATION_MANUALS\DEPLOYMENT_MANUAL.md
 
 116. **索引不完整**: INDEX.md
-   - 索引未包含文档: 03_OPERATION_MANUALS\RISK_MONITORING_MANUAL.md
+   - 索引未包含文档: 03_OPERATION_MANUALS\MAINTENANCE_MANUAL.md
 
 117. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\API_DOCUMENTATION_TEMPLATE.md
+   - 索引未包含文档: 03_OPERATION_MANUALS\MONITORING_MANUAL.md
 
 118. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\CHANGE_REQUEST_TEMPLATE.md
+   - 索引未包含文档: 03_OPERATION_MANUALS\RISK_MONITORING_MANUAL.md
 
 119. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\DEPLOYMENT_CHECKLIST_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\API_DOCUMENTATION_TEMPLATE.md
 
 120. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\INCIDENT_REPORT_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\CHANGE_REQUEST_TEMPLATE.md
 
 121. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\MODULE_DEVELOPMENT_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\DEPLOYMENT_CHECKLIST_TEMPLATE.md
 
 122. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\PERFORMANCE_REPORT_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\INCIDENT_REPORT_TEMPLATE.md
 
 123. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\TECHNICAL_REVIEW_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\MODULE_DEVELOPMENT_TEMPLATE.md
 
 124. **索引不完整**: INDEX.md
-   - 索引未包含文档: 04_CONFIG_TEMPLATES\TEST_PLAN_TEMPLATE.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\PERFORMANCE_REPORT_TEMPLATE.md
 
 125. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\PERSONAL_TECH_DECISION_CHECKLIST.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\TECHNICAL_REVIEW_TEMPLATE.md
 
 126. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS.md
+   - 索引未包含文档: 04_CONFIG_TEMPLATES\TEST_PLAN_TEMPLATE.md
 
 127. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\README.md
+   - 索引未包含文档: 05_DESIGN_DOCS\PERSONAL_TECH_DECISION_CHECKLIST.md
 
 128. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST.md
+   - 索引未包含文档: 05_DESIGN_DOCS\PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS.md
 
 129. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\T.08.AR001.a_stock_rule_engine_design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\README.md
 
 130. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\TECHNICAL_REVIEW_MEETING_AGENDA.md
+   - 索引未包含文档: 05_DESIGN_DOCS\REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST.md
 
 131. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\TECHNICAL_SOLUTION_SUMMARY_REPORT.md
+   - 索引未包含文档: 05_DESIGN_DOCS\T.08.AR001.a_stock_rule_engine_design.md
 
 132. **索引不完整**: INDEX.md
-   - 索引未包含文档: 06_CHECKLISTS\CODE_REVIEW_CHECKLIST.md
+   - 索引未包含文档: 05_DESIGN_DOCS\TECHNICAL_REVIEW_MEETING_AGENDA.md
 
 133. **索引不完整**: INDEX.md
-   - 索引未包含文档: 06_CHECKLISTS\DOCUMENT_QUALITY_GATE.md
+   - 索引未包含文档: 05_DESIGN_DOCS\TECHNICAL_SOLUTION_SUMMARY_REPORT.md
 
 134. **索引不完整**: INDEX.md
-   - 索引未包含文档: 06_CHECKLISTS\POST_DEPLOYMENT_CHECKLIST.md
+   - 索引未包含文档: 06_CHECKLISTS\CODE_REVIEW_CHECKLIST.md
 
 135. **索引不完整**: INDEX.md
-   - 索引未包含文档: 06_CHECKLISTS\PRE_DEPLOYMENT_CHECKLIST.md
+   - 索引未包含文档: 06_CHECKLISTS\DOCUMENT_QUALITY_GATE.md
 
 136. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\a_stock_rules\README.md
+   - 索引未包含文档: 06_CHECKLISTS\POST_DEPLOYMENT_CHECKLIST.md
 
 137. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_01_Database_Design_Document.md
+   - 索引未包含文档: 06_CHECKLISTS\PRE_DEPLOYMENT_CHECKLIST.md
 
 138. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_01_Database_Design_Review_Report.md
+   - 索引未包含文档: 05_DESIGN_DOCS\a_stock_rules\README.md
 
 139. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_02_Data_Dictionary.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_01_Database_Design_Document.md
 
 140. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_03_Internal_Service_Interface_Design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_01_Database_Design_Review_Report.md
 
 141. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_04_Third_Party_Interface_Integration_Design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_02_Data_Dictionary.md
 
 142. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_05_Multi_Engine_Coordinator_Design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_03_Internal_Service_Interface_Design.md
 
 143. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_04_Third_Party_Interface_Integration_Design.md
 
 144. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_05_Multi_Engine_Coordinator_Design.md
 
 145. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
 
 146. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+   - 索引未包含文档: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
 
 147. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
+   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
 
 148. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
+   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
 
 149. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
+   - 索引未包含文档: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
 
 150. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\ui_design\README.md
+   - 索引未包含文档: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
 
 151. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
+   - 索引未包含文档: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
 
 152. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
+   - 索引未包含文档: 05_DESIGN_DOCS\ui_design\README.md
 
 153. **索引不完整**: INDEX.md
-   - 索引未包含文档: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
+   - 索引未包含文档: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
 
 154. **索引不完整**: INDEX.md
+   - 索引未包含文档: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
+
+155. **索引不完整**: INDEX.md
+   - 索引未包含文档: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
+
+156. **索引不完整**: INDEX.md
    - 索引未包含文档: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
-
-155. **代码引用失效**: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
-   - 引用的代码模块不存在: src.core.config
-
-156. **代码引用失效**: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
-   - 引用的代码模块不存在: src.main
 
 157. **代码引用失效**: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
    - 引用的代码模块不存在: src.core.config
 
+158. **代码引用失效**: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
+   - 引用的代码模块不存在: src.main
+
+159. **代码引用失效**: 01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
+   - 引用的代码模块不存在: src.core.config
+
 ### L3 专业标准层审计
 
-发现问题: 148个
+发现问题: 165个
 
 #### 🟡 P1 问题（优先修复）
 
@@ -1050,128 +1036,182 @@ responsibility:
    - 缺少标准章节: 设计目标
 
 111. **缺少标准章节**: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
-   - 缺少标准章节: 核心定位
-
-112. **缺少标准章节**: 05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md
    - 缺少标准章节: 设计目标
 
-113. **缺少标准章节**: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
-   - 缺少标准章节: 核心定位
-
-114. **缺少标准章节**: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
+112. **缺少标准章节**: 05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md
    - 缺少标准章节: 设计目标
 
-115. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
+113. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
    - 缺少标准章节: 核心定位
 
-116. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
+114. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\COMPENSATING_TRANSACTION_DESIGN.md
    - 缺少标准章节: 设计目标
 
-117. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\INDEX.md
+115. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\INDEX.md
    - 缺少标准章节: 核心定位
 
-118. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\INDEX.md
+116. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\INDEX.md
    - 缺少标准章节: 设计目标
 
-119. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+117. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
    - 缺少标准章节: 核心定位
 
-120. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+118. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
    - 缺少标准章节: 设计目标
 
-121. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
+119. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
    - 缺少标准章节: 核心定位
 
-122. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
+120. **缺少标准章节**: 05_DESIGN_DOCS\data_consistency\SAGA_IMPLEMENTATION_FLOWCHART.md
    - 缺少标准章节: 设计目标
 
-123. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\INDEX.md
+121. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\INDEX.md
    - 缺少标准章节: 核心定位
 
-124. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\INDEX.md
+122. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\INDEX.md
    - 缺少标准章节: 设计目标
 
-125. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
+123. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
    - 缺少标准章节: 核心定位
 
-126. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
+124. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\T.05.TE001.trading_cost_model_algorithm_document.md
    - 缺少标准章节: 设计目标
 
-127. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
+125. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
    - 缺少标准章节: 核心定位
 
-128. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
+126. **缺少标准章节**: 05_DESIGN_DOCS\trading_costs\TRADING_COST_TEST_CASE_DESIGN.md
    - 缺少标准章节: 设计目标
 
-129. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\INDEX.md
+127. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\INDEX.md
    - 缺少标准章节: 核心定位
 
-130. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\INDEX.md
+128. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\INDEX.md
    - 缺少标准章节: 设计目标
 
-131. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\README.md
+129. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\README.md
    - 缺少标准章节: 核心定位
 
-132. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\README.md
+130. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\README.md
    - 缺少标准章节: 设计目标
 
-133. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
+131. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
    - 缺少标准章节: 核心定位
 
-134. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
+132. **缺少标准章节**: 05_DESIGN_DOCS\ui_design\ui_layout_standard.md
    - 缺少标准章节: 设计目标
 
-135. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
+133. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
    - 缺少标准章节: 核心定位
 
-136. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
+134. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\API_INTERFACE_SPECIFICATION.md
    - 缺少标准章节: 设计目标
 
-137. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
+135. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
    - 缺少标准章节: 核心定位
 
-138. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
+136. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\FRONTEND_COMPONENT_STRUCTURE.md
    - 缺少标准章节: 设计目标
 
-139. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\INDEX.md
+137. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\INDEX.md
    - 缺少标准章节: 核心定位
 
-140. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\INDEX.md
+138. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\INDEX.md
    - 缺少标准章节: 设计目标
 
-141. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
+139. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
    - 缺少标准章节: 核心定位
 
-142. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
+140. **缺少标准章节**: 05_DESIGN_DOCS\web_interface\T.06.UI001.web_management_interface_architecture_design.md
    - 缺少标准章节: 设计目标
 
-143. **YAML头部缺失**: 01_BLUEPRINTS\RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
+141. **YAML头部缺失**: 01_BLUEPRINTS\MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
    - 文档缺少标准YAML元数据头部
 
-144. **YAML头部缺失**: 01_BLUEPRINTS\SMART_EXECUTION_ENGINE_BLUEPRINT.md
+142. **YAML头部缺失**: 02_IMPLEMENTATION_GUIDES\INDEX.md
    - 文档缺少标准YAML元数据头部
 
-145. **YAML头部缺失**: 01_BLUEPRINTS\SYSTEM_ENHANCEMENT_BLUEPRINT.md
+143. **YAML头部缺失**: 03_OPERATION_MANUALS\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+144. **YAML头部缺失**: 04_CONFIG_TEMPLATES\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+145. **YAML头部缺失**: 05_DESIGN_DOCS\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+146. **YAML头部缺失**: 06_CHECKLISTS\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+147. **YAML头部缺失**: 05_DESIGN_DOCS\a_stock_rules\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+148. **YAML头部缺失**: 05_DESIGN_DOCS\database\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+149. **YAML头部缺失**: 05_DESIGN_DOCS\data_consistency\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+150. **YAML头部缺失**: 05_DESIGN_DOCS\trading_costs\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+151. **YAML头部缺失**: 05_DESIGN_DOCS\ui_design\INDEX.md
+   - 文档缺少标准YAML元数据头部
+
+152. **YAML头部缺失**: 05_DESIGN_DOCS\web_interface\INDEX.md
    - 文档缺少标准YAML元数据头部
 
 #### 🟢 P2 问题（建议修复）
 
-1. **分类层级错误**: 01_BLUEPRINTS\QUARTERLY_REBALANCE_BLUEPRINT.md
+1. **分类层级错误**: 01_BLUEPRINTS\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
    - 文档层级标识错误: Layer 6 (组合优化层)
 
-2. **分类层级错误**: 01_BLUEPRINTS\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
+2. **分类层级错误**: 01_BLUEPRINTS\SMART_EXECUTION_ENGINE_BLUEPRINT.md
    - 文档层级标识错误: Layer 6 (组合优化层)
 
-3. **文档内容过短**: 05_DESIGN_DOCS\a_stock_rules\README.md
+3. **分类层级错误**: 01_BLUEPRINTS\STRATEGY_SELECTION_BLUEPRINT.md
+   - 文档层级标识错误: Layer 6 (组合优化层)
+
+4. **分类层级错误**: 01_BLUEPRINTS\SYSTEM_ENHANCEMENT_BLUEPRINT.md
+   - 文档层级标识错误: Layer 6 (组合优化层)
+
+5. **文档内容过短**: 02_IMPLEMENTATION_GUIDES\INDEX.md
+   - 文档内容过短: 237字符
+
+6. **文档内容过短**: 03_OPERATION_MANUALS\INDEX.md
+   - 文档内容过短: 279字符
+
+7. **文档内容过短**: 06_CHECKLISTS\INDEX.md
+   - 文档内容过短: 313字符
+
+8. **文档内容过短**: 05_DESIGN_DOCS\a_stock_rules\INDEX.md
+   - 文档内容过短: 113字符
+
+9. **文档内容过短**: 05_DESIGN_DOCS\a_stock_rules\README.md
    - 文档内容过短: 284字符
+
+10. **文档内容过短**: 05_DESIGN_DOCS\data_consistency\INDEX.md
+   - 文档内容过短: 315字符
+
+11. **文档内容过短**: 05_DESIGN_DOCS\trading_costs\INDEX.md
+   - 文档内容过短: 265字符
+
+12. **文档内容过短**: 05_DESIGN_DOCS\ui_design\INDEX.md
+   - 文档内容过短: 159字符
+
+13. **文档内容过短**: 05_DESIGN_DOCS\web_interface\INDEX.md
+   - 文档内容过短: 343字符
 
 ---
 
 ## 🔄 重复内容检测
 
-发现重复: 0对
+发现重复: 1对
 
-✅ 无重复内容
+1. **05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md** ↔ **05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md**
+   - 相似度: 90.3%
+   - 严重程度: P1
+   - 类型: 职责描述相似
 
 ---
 
@@ -1185,173 +1225,13 @@ responsibility:
 
 ## 📄 内容相似度检查
 
-发现相似: 33对
+发现相似: 1对
 
-1. **01_BLUEPRINTS\BLACK_LITTERMAN_MODEL_BLUEPRINT.md** ↔ **01_BLUEPRINTS\RISK_PARITY_STRATEGY_BLUEPRINT.md**
-   - 相似度: 82.0%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-2. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **03_OPERATION_MANUALS\INDEX.md**
-   - 相似度: 83.8%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-3. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\INDEX.md**
-   - 相似度: 80.4%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-4. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **06_CHECKLISTS\INDEX.md**
-   - 相似度: 85.8%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-5. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\a_stock_rules\INDEX.md**
-   - 相似度: 86.4%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-6. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\data_consistency\INDEX.md**
-   - 相似度: 82.5%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-7. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\trading_costs\INDEX.md**
-   - 相似度: 82.9%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-8. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 84.6%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-9. **02_IMPLEMENTATION_GUIDES\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 82.8%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-10. **03_OPERATION_MANUALS\INDEX.md** ↔ **06_CHECKLISTS\INDEX.md**
-   - 相似度: 83.9%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-11. **03_OPERATION_MANUALS\INDEX.md** ↔ **05_DESIGN_DOCS\a_stock_rules\INDEX.md**
-   - 相似度: 88.3%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-12. **03_OPERATION_MANUALS\INDEX.md** ↔ **05_DESIGN_DOCS\data_consistency\INDEX.md**
-   - 相似度: 84.3%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-13. **03_OPERATION_MANUALS\INDEX.md** ↔ **05_DESIGN_DOCS\trading_costs\INDEX.md**
-   - 相似度: 86.2%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-14. **03_OPERATION_MANUALS\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 86.0%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-15. **03_OPERATION_MANUALS\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 83.8%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-16. **05_DESIGN_DOCS\INDEX.md** ↔ **05_DESIGN_DOCS\a_stock_rules\INDEX.md**
-   - 相似度: 82.6%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-17. **05_DESIGN_DOCS\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 83.3%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-18. **06_CHECKLISTS\INDEX.md** ↔ **05_DESIGN_DOCS\a_stock_rules\INDEX.md**
-   - 相似度: 87.9%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-19. **06_CHECKLISTS\INDEX.md** ↔ **05_DESIGN_DOCS\data_consistency\INDEX.md**
-   - 相似度: 83.9%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-20. **06_CHECKLISTS\INDEX.md** ↔ **05_DESIGN_DOCS\trading_costs\INDEX.md**
-   - 相似度: 85.5%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-21. **06_CHECKLISTS\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 85.4%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-22. **06_CHECKLISTS\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 83.2%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-23. **05_DESIGN_DOCS\a_stock_rules\INDEX.md** ↔ **05_DESIGN_DOCS\data_consistency\INDEX.md**
-   - 相似度: 89.5%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-24. **05_DESIGN_DOCS\a_stock_rules\INDEX.md** ↔ **05_DESIGN_DOCS\trading_costs\INDEX.md**
-   - 相似度: 90.6%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-25. **05_DESIGN_DOCS\a_stock_rules\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 93.7%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-26. **05_DESIGN_DOCS\a_stock_rules\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 89.5%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-27. **05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md** ↔ **05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md**
-   - 相似度: 84.0%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-28. **05_DESIGN_DOCS\data_consistency\INDEX.md** ↔ **05_DESIGN_DOCS\trading_costs\INDEX.md**
-   - 相似度: 88.4%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-29. **05_DESIGN_DOCS\data_consistency\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 87.5%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-30. **05_DESIGN_DOCS\data_consistency\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 86.0%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-31. **05_DESIGN_DOCS\trading_costs\INDEX.md** ↔ **05_DESIGN_DOCS\ui_design\INDEX.md**
-   - 相似度: 88.3%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-32. **05_DESIGN_DOCS\trading_costs\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 87.1%
-   - 严重程度: P1
-   - 类型: 内容高度相似
-
-33. **05_DESIGN_DOCS\ui_design\INDEX.md** ↔ **05_DESIGN_DOCS\web_interface\INDEX.md**
-   - 相似度: 87.5%
+1. **05_DESIGN_DOCS\database\P0_06_Account_Management_Detailed_Design.md** ↔ **05_DESIGN_DOCS\database\P0_07_Order_Management_Detailed_Design.md**
+   - 相似度: 87.8%
    - 严重程度: P1
    - 类型: 内容高度相似
 
 ---
 
-**审计完成时间**: 2026-04-07 20:29:54
+**审计完成时间**: 2026-04-07 20:36:35

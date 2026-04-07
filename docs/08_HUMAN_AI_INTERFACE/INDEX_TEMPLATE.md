@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - HUMAN_AI_INTERFACE文档
+  - 索引文档模板设计、标准化格式指南、文档结构规范
 ---
 
 **模板状态**: ✅ 活跃

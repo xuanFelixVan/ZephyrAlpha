@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - HUMAN_AI_INTERFACE文档
+  - 人机交互层主索引、模块导航与文档目录管理、系统架构概览
 standard_type: 索引文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准

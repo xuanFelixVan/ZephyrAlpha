@@ -4,19 +4,6 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 提供文档支持
-standard_type: 专业量化机构蓝图
-compliance_level: 专业标准
----
-
-﻿---
-module_id: ALTERNATIVE_DATA_INTEGRATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据源层
@@ -27,9 +14,8 @@ responsibility:
   - 数据清洗与标准化
   - 特征提取与因子构建
   - 数据质量控制
-layer: Layer 5 (策略执行层)
+layer: Layer 6 (组合优化层)
 ---
-
 
 ## 核心定位
 
