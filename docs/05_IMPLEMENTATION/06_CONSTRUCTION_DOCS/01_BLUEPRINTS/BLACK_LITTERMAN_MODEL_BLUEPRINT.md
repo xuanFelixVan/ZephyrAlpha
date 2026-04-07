@@ -1,50 +1,22 @@
 ---
-module_id: BLACK_LITTERMAN_MODEL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# BLACK LITTERMAN MODEL BLUEPRINT
-
-> **核心职责**: Black Litterman Model蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Black Litterman Model蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# Black-Litterman组合优化模型蓝图
+---
 
-> **核心定位**: Black-Litterman组合优化模型蓝图的核心功能实现
+# Black-Litterman组合优化模型蓝图
 
-
-> **索引**: `BLACK_LITTERMAN_MODEL_001`
-> **开发周期**: 2-3天（集成开源项目）
-> **核心定位**: 结合市场均衡观点与投资者主观观点的组合优化模型，解决传统均值方差优化对输入参数敏感的问题
-> **参考开源**: PyPortfolioOpt (4.2k+ ⭐) + Riskfolio-Lib (3.1k+ ⭐)
-> **专业对标**: 文艺复兴科技、Two Sigma、Citadel等顶级量化机构标配模型
-
-## 核心定位
-
-Black-Litterman资产配置模型，负责结合市场均衡收益和投资者观点，生成最优资产配置方案
+> **核心职责**: 结合市场均衡观点与投资者主观观点的组合优化
+> **职责边界**: 
+> - ✅ 本文档负责：Black-Litterman模型、观点融合、最优配置
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

@@ -14,13 +14,11 @@ layer: "Layer 1 (数据预处理层)"
 ---
 
 # TimescaleDB时序数据库集成蓝图
-> **核心职责**: Timescaledb Integration蓝图设计
+
+> **核心职责**: 时序数据的存储、查询和管理，专注于高频金融数据的时间序列特性
 > **职责边界**: 
-> - ✅ 本文档负责：Timescaledb Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **核心定位**: 专业时序数据存储解决方案，为量化交易系统提供高性能的时序数据管理能力
+> - ✅ 本模块负责：时序数据存储、时间窗口查询、连续聚合、数据压缩
+> - ❌ 本模块不负责：列式分析存储（ClickHouse）、缓存（Redis）
 
 ## 核心定位
 
@@ -28,574 +26,518 @@ layer: "Layer 1 (数据预处理层)"
 
 ### 职责边界
 
-**✅ 核心职责**:
-- 时序数据存储（股票、期货、因子的分钟/秒级数据）
-- 时间窗口聚合查询
-- 数据降采样和连续聚合
-- 时序数据压缩
-- 历史数据分区管理
-
-**❌ 非职责范围**:
-- 大规模历史数据分析（由ClickHouse负责）
-- 数据缓存（由Redis负责）
-- 数据质量监控（由Great Expectations负责）
+| 负责 | 不负责 |
+|------|--------|
+| ✅ 高频行情数据存储 | ❌ 大规模历史数据分析 |
+| ✅ 时间窗口聚合查询 | ❌ 列式聚合分析 |
+| ✅ 连续聚合预计算 | ❌ 实时数据缓存 |
+| ✅ 数据压缩与保留策略 | ❌ 数据订阅分发 |
+| ✅ 时序数据降采样 | ❌ 数据清洗处理 |
 
 ---
 
-## 一、模块概述
+## 1. 技术选型
 
-### 1.1 业务价值
+### 1.1 为什么选择TimescaleDB
 
-**为什么需要专用时序数据库**:
-- ✅ 传统关系数据库处理时序数据性能差
-- ✅ 时序数据有独特查询模式（时间窗口、降采样）
-- ✅ 高频数据量大，需要高效压缩
-- ✅ 需要预计算常用指标（连续聚合）
+| 特性 | TimescaleDB | InfluxDB | QuestDB |
+|------|-------------|----------|---------|
+| SQL兼容 | ✅ 完全兼容 | ❌ Flux语言 | ✅ 部分兼容 |
+| 学习曲线 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+| Python支持 | ✅ psycopg2 | ✅ influxdb | ✅ questdb |
+| 单机部署 | ✅ 简单 | ✅ 简单 | ✅ 简单 |
+| 压缩能力 | ✅ 优秀 | ✅ 优秀 | ✅ 优秀 |
+| 连续聚合 | ✅ 支持 | ✅ 支持 | ✅ 支持 |
+| 社区活跃度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
+| **推荐指数** | **⭐⭐⭐⭐⭐** | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 
-**专业机构标准**:
-- 所有量化机构都使用专用时序数据库
-- 支持纳秒级时间戳
-- 支持自动分区和压缩
-- 支持时序特有查询优化
+### 1.2 核心优势
 
-### 1.2 技术选型
-
-**为什么选择TimescaleDB**:
-- ✅ 基于PostgreSQL，学习成本低
-- ✅ 支持时序数据特有查询（时间窗口、降采样）
-- ✅ 支持压缩，节省存储空间
-- ✅ 支持连续聚合，预计算常用指标
-- ✅ 单机部署，适合个人开发
-- ✅ 有成熟的Python客户端
-- ✅ 开源免费，社区活跃
-
-**对比其他方案**:
-
-| 方案 | 优点 | 缺点 | 推荐度 |
-|------|------|------|--------|
-| **TimescaleDB** | 基于PG，学习成本低 | 单机性能有限 | ⭐⭐⭐⭐⭐ |
-| InfluxDB | 性能优秀 | 学习曲线陡，生态较小 | ⭐⭐⭐ |
-| QuestDB | 性能极佳 | 生态小，社区小 | ⭐⭐⭐ |
-| KDB+ | 性能最强 | 商业软件，成本高 | ⭐⭐ |
+1. **PostgreSQL兼容**: 无需学习新语言，SQL直接使用
+2. **时序优化**: 自动分区、压缩、连续聚合
+3. **生态完善**: psycopg2、SQLAlchemy、pandas完美支持
+4. **单机友好**: 个人开发场景最佳选择
 
 ---
 
-## 二、架构设计
+## 2. 架构设计
 
-### 2.1 Layer定位
+### 2.1 整体架构
 
-**Layer归属**: Layer 1 - 数据预处理层
-
-**模块类别**: 数据存储模块
-
-**依赖关系**:
-- 上游: DATA_SOURCE_MANAGEMENT（数据源管理）
-- 下游: HIGH_PERFORMANCE_DATA_PIPELINE（数据管道）
-
-### 2.2 整体架构
-
-```mermaid
-graph TB
-    subgraph "数据源层"
-        A1[股票行情数据]
-        A2[期货行情数据]
-        A3[因子数据]
-        A4[交易记录]
-    end
-    
-    subgraph "TimescaleDB层"
-        B1[数据摄入层]
-        B2[时序表管理]
-        B3[连续聚合层]
-        B4[压缩策略层]
-    end
-    
-    subgraph "应用层"
-        C1[数据查询API]
-        C2[数据订阅服务]
-        C3[数据回测引擎]
-    end
-    
-    A1 --> B1
-    A2 --> B1
-    A3 --> B1
-    A4 --> B1
-    
-    B1 --> B2
-    B2 --> B3
-    B2 --> B4
-    
-    B2 --> C1
-    B3 --> C2
-    B2 --> C3
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TimescaleDB集成架构                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
+│  │ 数据写入层   │    │ 数据存储层   │    │ 数据查询层   │     │
+│  │              │    │              │    │              │     │
+│  │ • 批量写入   │    │ • 超级表     │    │ • 时间窗口   │     │
+│  │ • 流式写入   │    │ • 自动分区   │    │ • 连续聚合   │     │
+│  │ • 异步写入   │    │ • 压缩策略   │    │ • 降采样查询 │     │
+│  └──────────────┘    └──────────────┘    └──────────────┘     │
+│         │                   │                    │              │
+│         └───────────────────┴────────────────────┘              │
+│                            │                                    │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                    数据保留策略                          │   │
+│  │  • 热数据: 7天 (未压缩)                                  │   │
+│  │  • 温数据: 30天 (压缩)                                   │   │
+│  │  • 冷数据: 归档到ClickHouse                              │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.3 核心组件设计
+### 2.2 数据模型设计
 
-#### 2.3.1 时序表管理器
+```sql
+-- 行情数据超级表
+CREATE TABLE stock_ticks (
+    time        TIMESTAMPTZ NOT NULL,
+    symbol      VARCHAR(20) NOT NULL,
+    price       DECIMAL(18,4),
+    volume      BIGINT,
+    bid_price   DECIMAL(18,4),
+    ask_price   DECIMAL(18,4),
+    bid_volume  BIGINT,
+    ask_volume  BIGINT
+);
+
+-- 转换为超级表
+SELECT create_hypertable('stock_ticks', 'time',
+    partitioning_column => 'symbol',
+    number_partitions => 4
+);
+
+-- K线数据超级表
+CREATE TABLE stock_klines (
+    time        TIMESTAMPTZ NOT NULL,
+    symbol      VARCHAR(20) NOT NULL,
+    interval    VARCHAR(10) NOT NULL,  -- 1m, 5m, 15m, 1h, 1d
+    open        DECIMAL(18,4),
+    high        DECIMAL(18,4),
+    low         DECIMAL(18,4),
+    close       DECIMAL(18,4),
+    volume      BIGINT,
+    amount      DECIMAL(18,4)
+);
+
+SELECT create_hypertable('stock_klines', 'time',
+    partitioning_column => 'symbol',
+    number_partitions => 4
+);
+
+-- 因子数据超级表
+CREATE TABLE factor_values (
+    time        TIMESTAMPTZ NOT NULL,
+    symbol      VARCHAR(20) NOT NULL,
+    factor_id   VARCHAR(50) NOT NULL,
+    value       DECIMAL(18,6),
+    quality     INTEGER  -- 数据质量评分
+);
+
+SELECT create_hypertable('factor_values', 'time',
+    partitioning_column => 'symbol',
+    number_partitions => 4
+);
+```
+
+---
+
+## 3. 核心功能实现
+
+### 3.1 连续聚合（Continuous Aggregates）
+
+```sql
+-- 1分钟K线聚合
+CREATE MATERIALIZED VIEW kline_1m
+WITH (timescaledb.continuous) AS
+SELECT 
+    time_bucket('1 minute', time) AS bucket,
+    symbol,
+    FIRST(price, time) AS open,
+    MAX(price) AS high,
+    MIN(price) AS low,
+    LAST(price, time) AS close,
+    SUM(volume) AS volume
+FROM stock_ticks
+GROUP BY bucket, symbol;
+
+-- 刷新策略
+SELECT add_continuous_aggregate_policy('kline_1m',
+    start_offset => INTERVAL '1 hour',
+    end_offset => INTERVAL '1 minute',
+    schedule_interval => INTERVAL '1 minute'
+);
+
+-- 5分钟K线聚合
+CREATE MATERIALIZED VIEW kline_5m
+WITH (timescaledb.continuous) AS
+SELECT 
+    time_bucket('5 minutes', time) AS bucket,
+    symbol,
+    FIRST(price, time) AS open,
+    MAX(price) AS high,
+    MIN(price) AS low,
+    LAST(price, time) AS close,
+    SUM(volume) AS volume
+FROM stock_ticks
+GROUP BY bucket, symbol;
+
+-- 日K线聚合
+CREATE MATERIALIZED VIEW kline_1d
+WITH (timescaledb.continuous) AS
+SELECT 
+    time_bucket('1 day', time) AS bucket,
+    symbol,
+    FIRST(price, time) AS open,
+    MAX(price) AS high,
+    MIN(price) AS low,
+    LAST(price, time) AS close,
+    SUM(volume) AS volume
+FROM stock_ticks
+GROUP BY bucket, symbol;
+```
+
+### 3.2 数据压缩策略
+
+```sql
+-- 启用压缩
+ALTER TABLE stock_ticks SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'symbol',
+    timescaledb.compress_orderby = 'time DESC'
+);
+
+-- 添加压缩策略（7天后压缩）
+SELECT add_compression_policy('stock_ticks', INTERVAL '7 days');
+
+-- K线数据压缩
+ALTER TABLE stock_klines SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'symbol,interval',
+    timescaledb.compress_orderby = 'time DESC'
+);
+
+SELECT add_compression_policy('stock_klines', INTERVAL '7 days');
+```
+
+### 3.3 数据保留策略
+
+```sql
+-- Tick数据保留30天
+SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
+
+-- K线数据保留1年
+SELECT add_retention_policy('stock_klines', INTERVAL '1 year');
+
+-- 因子数据保留1年
+SELECT add_retention_policy('factor_values', INTERVAL '1 year');
+```
+
+---
+
+## 4. Python接口设计
+
+### 4.1 数据写入接口
 
 ```python
-from dataclasses import dataclass
-from typing import Dict, List, Optional
-from datetime import datetime, timedelta
+from typing import List, Dict, Optional
+from datetime import datetime
 import psycopg2
 from psycopg2.extras import execute_values
+import pandas as pd
 
-@dataclass
-class TimeSeriesTable:
-    """时序表配置"""
-    table_name: str
-    time_column: str = 'time'
-    partition_interval: str = '1 day'
-    compression_after: str = '7 days'
-    retention_policy: Optional[str] = None
-
-class TimescaleDBManager:
-    """TimescaleDB管理器"""
+class TimescaleDBWriter:
+    """TimescaleDB数据写入器"""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
         self.cursor = self.conn.cursor()
     
-    def create_hypertable(
-        self, 
-        table_name: str, 
-        time_column: str = 'time',
-        partition_interval: str = '1 day'
-    ) -> None:
-        """创建超表（时序表）"""
-        sql = f"""
-        SELECT create_hypertable(
-            '{table_name}',
-            '{time_column}',
-            chunk_time_interval => INTERVAL '{partition_interval}'
-        );
-        """
-        self.cursor.execute(sql)
-        self.conn.commit()
-    
-    def add_compression_policy(
-        self,
-        table_name: str,
-        compress_after: str = '7 days'
-    ) -> None:
-        """添加压缩策略"""
-        sql = f"""
-        ALTER TABLE {table_name} SET (
-            timescaledb.compress,
-            timescaledb.compress_segmentby = 'symbol'
-        );
-        
-        SELECT add_compression_policy(
-            '{table_name}',
-            INTERVAL '{compress_after}'
-        );
-        """
-        self.cursor.execute(sql)
-        self.conn.commit()
-    
-    def create_continuous_aggregate(
-        self,
-        view_name: str,
-        source_table: str,
-        aggregation: str,
-        time_bucket: str = '1 hour'
-    ) -> None:
-        """创建连续聚合视图"""
-        sql = f"""
-        CREATE MATERIALIZED VIEW {view_name}
-        WITH (timescaledb.continuous) AS
-        SELECT
-            time_bucket('{time_bucket}', time) AS bucket,
-            symbol,
-            {aggregation}
-        FROM {source_table}
-        GROUP BY bucket, symbol;
-        
-        SELECT add_continuous_aggregate_policy(
-            '{view_name}',
-            start_offset => INTERVAL '1 hour',
-            end_offset => INTERVAL '1 minute',
-            schedule_interval => INTERVAL '1 hour'
-        );
-        """
-        self.cursor.execute(sql)
-        self.conn.commit()
-```
-
-#### 2.3.2 数据摄入器
-
-```python
-import pandas as pd
-from typing import List, Dict
-from datetime import datetime
-
-class TimeSeriesIngester:
-    """时序数据摄入器"""
-    
-    def __init__(self, db_manager: TimescaleDBManager):
-        self.db_manager = db_manager
-    
-    def ingest_market_data(
-        self,
-        data: pd.DataFrame,
-        table_name: str = 'market_data'
-    ) -> int:
-        """摄入市场数据"""
-        # 数据预处理
-        data = self._preprocess_data(data)
-        
-        # 批量插入
-        columns = data.columns.tolist()
-        values = [tuple(x) for x in data.values]
-        
-        sql = f"""
-        INSERT INTO {table_name} ({', '.join(columns)})
+    def write_ticks(self, ticks: List[Dict]) -> int:
+        """批量写入Tick数据"""
+        sql = """
+        INSERT INTO stock_ticks 
+        (time, symbol, price, volume, bid_price, ask_price, bid_volume, ask_volume)
         VALUES %s
-        ON CONFLICT (time, symbol) DO NOTHING
         """
         
-        execute_values(
-            self.db_manager.cursor,
-            sql,
-            values
-        )
-        self.db_manager.conn.commit()
+        values = [(
+            tick['time'], tick['symbol'], tick['price'], tick['volume'],
+            tick.get('bid_price'), tick.get('ask_price'),
+            tick.get('bid_volume'), tick.get('ask_volume')
+        ) for tick in ticks]
         
+        execute_values(self.cursor, sql, values)
+        self.conn.commit()
         return len(values)
     
-    def _preprocess_data(self, data: pd.DataFrame) -> pd.DataFrame:
-        """数据预处理"""
-        # 确保时间列存在
-        if 'time' not in data.columns:
-            data['time'] = datetime.now()
+    def write_klines(self, klines: pd.DataFrame) -> int:
+        """批量写入K线数据"""
+        sql = """
+        INSERT INTO stock_klines 
+        (time, symbol, interval, open, high, low, close, volume, amount)
+        VALUES %s
+        """
         
-        # 确保时间列是datetime类型
-        data['time'] = pd.to_datetime(data['time'])
+        values = [(
+            row['time'], row['symbol'], row['interval'],
+            row['open'], row['high'], row['low'], row['close'],
+            row['volume'], row.get('amount')
+        ) for _, row in klines.iterrows()]
         
-        # 按时间排序
-        data = data.sort_values('time')
+        execute_values(self.cursor, sql, values)
+        self.conn.commit()
+        return len(values)
+    
+    def write_factors(self, factors: pd.DataFrame) -> int:
+        """批量写入因子数据"""
+        sql = """
+        INSERT INTO factor_values 
+        (time, symbol, factor_id, value, quality)
+        VALUES %s
+        """
         
-        return data
+        values = [(
+            row['time'], row['symbol'], row['factor_id'],
+            row['value'], row.get('quality', 100)
+        ) for _, row in factors.iterrows()]
+        
+        execute_values(self.cursor, sql, values)
+        self.conn.commit()
+        return len(values)
 ```
 
-#### 2.3.3 时序查询器
+### 4.2 数据查询接口
 
 ```python
-from typing import List, Optional
-from datetime import datetime, timedelta
-
-class TimeSeriesQuery:
-    """时序数据查询器"""
+class TimescaleDBReader:
+    """TimescaleDB数据查询器"""
     
-    def __init__(self, db_manager: TimescaleDBManager):
-        self.db_manager = db_manager
+    def __init__(self, connection_string: str):
+        self.conn = psycopg2.connect(connection_string)
     
-    def query_time_range(
+    def get_klines(
         self,
-        table_name: str,
+        symbol: str,
+        interval: str,
+        start_time: datetime,
+        end_time: datetime
+    ) -> pd.DataFrame:
+        """获取K线数据"""
+        sql = """
+        SELECT time, symbol, open, high, low, close, volume, amount
+        FROM stock_klines
+        WHERE symbol = %s AND interval = %s
+        AND time >= %s AND time < %s
+        ORDER BY time
+        """
+        
+        return pd.read_sql(sql, self.conn, params=[
+            symbol, interval, start_time, end_time
+        ])
+    
+    def get_ticks(
+        self,
+        symbol: str,
+        start_time: datetime,
+        end_time: datetime
+    ) -> pd.DataFrame:
+        """获取Tick数据"""
+        sql = """
+        SELECT time, symbol, price, volume, bid_price, ask_price
+        FROM stock_ticks
+        WHERE symbol = %s
+        AND time >= %s AND time < %s
+        ORDER BY time
+        """
+        
+        return pd.read_sql(sql, self.conn, params=[
+            symbol, start_time, end_time
+        ])
+    
+    def get_factor_values(
+        self,
+        factor_id: str,
         symbols: List[str],
         start_time: datetime,
-        end_time: datetime,
-        columns: Optional[List[str]] = None
+        end_time: datetime
     ) -> pd.DataFrame:
-        """查询时间范围内的数据"""
-        columns_str = ', '.join(columns) if columns else '*'
-        symbols_str = ', '.join([f"'{s}'" for s in symbols])
-        
-        sql = f"""
-        SELECT {columns_str}
-        FROM {table_name}
-        WHERE symbol IN ({symbols_str})
-          AND time >= %s
-          AND time < %s
+        """获取因子数据"""
+        sql = """
+        SELECT time, symbol, value, quality
+        FROM factor_values
+        WHERE factor_id = %s
+        AND symbol = ANY(%s)
+        AND time >= %s AND time < %s
         ORDER BY time, symbol
         """
         
-        self.db_manager.cursor.execute(
-            sql,
-            (start_time, end_time)
-        )
-        
-        rows = self.db_manager.cursor.fetchall()
-        columns = [desc[0] for desc in self.db_manager.cursor.description]
-        
-        return pd.DataFrame(rows, columns=columns)
+        return pd.read_sql(sql, self.conn, params=[
+            factor_id, symbols, start_time, end_time
+        ])
     
-    def query_latest(
-        self,
-        table_name: str,
-        symbols: List[str],
-        limit: int = 1000
-    ) -> pd.DataFrame:
-        """查询最新数据"""
-        symbols_str = ', '.join([f"'{s}'" for s in symbols])
-        
-        sql = f"""
-        SELECT DISTINCT ON (symbol) *
-        FROM {table_name}
-        WHERE symbol IN ({symbols_str})
+    def get_latest_prices(self, symbols: List[str]) -> Dict[str, float]:
+        """获取最新价格"""
+        sql = """
+        SELECT DISTINCT ON (symbol) symbol, price, time
+        FROM stock_ticks
+        WHERE symbol = ANY(%s)
         ORDER BY symbol, time DESC
-        LIMIT {limit}
         """
         
-        self.db_manager.cursor.execute(sql)
-        rows = self.db_manager.cursor.fetchall()
-        columns = [desc[0] for desc in self.db_manager.cursor.description]
-        
-        return pd.DataFrame(rows, columns=columns)
-    
-    def query_time_bucket(
-        self,
-        table_name: str,
-        symbols: List[str],
-        start_time: datetime,
-        end_time: datetime,
-        bucket_size: str = '1 hour',
-        aggregation: str = 'AVG'
-    ) -> pd.DataFrame:
-        """时间桶聚合查询"""
-        symbols_str = ', '.join([f"'{s}'" for s in symbols])
-        
-        sql = f"""
-        SELECT
-            time_bucket('{bucket_size}', time) AS bucket,
-            symbol,
-            {aggregation}(close) AS close,
-            {aggregation}(volume) AS volume
-        FROM {table_name}
-        WHERE symbol IN ({symbols_str})
-          AND time >= %s
-          AND time < %s
-        GROUP BY bucket, symbol
-        ORDER BY bucket, symbol
-        """
-        
-        self.db_manager.cursor.execute(
-            sql,
-            (start_time, end_time)
-        )
-        
-        rows = self.db_manager.cursor.fetchall()
-        columns = [desc[0] for desc in self.db_manager.cursor.description]
-        
-        return pd.DataFrame(rows, columns=columns)
+        df = pd.read_sql(sql, self.conn, params=[symbols])
+        return dict(zip(df['symbol'], df['price']))
 ```
 
----
-
-## 三、数据模型设计
-
-### 3.1 核心表结构
-
-#### 3.1.1 市场数据表
-
-```sql
--- 股票分钟级数据表
-CREATE TABLE stock_minute_data (
-    time        TIMESTAMPTZ NOT NULL,
-    symbol      VARCHAR(20) NOT NULL,
-    open        NUMERIC(10, 2),
-    high        NUMERIC(10, 2),
-    low         NUMERIC(10, 2),
-    close       NUMERIC(10, 2),
-    volume      BIGINT,
-    amount      NUMERIC(20, 2),
-    PRIMARY KEY (time, symbol)
-);
-
--- 创建超表
-SELECT create_hypertable(
-    'stock_minute_data',
-    'time',
-    chunk_time_interval => INTERVAL '1 day'
-);
-
--- 添加压缩策略
-ALTER TABLE stock_minute_data SET (
-    timescaledb.compress,
-    timescaledb.compress_segmentby = 'symbol'
-);
-
-SELECT add_compression_policy(
-    'stock_minute_data',
-    INTERVAL '7 days'
-);
-```
-
-#### 3.1.2 因子数据表
-
-```sql
--- 因子数据表
-CREATE TABLE factor_data (
-    time        TIMESTAMPTZ NOT NULL,
-    symbol      VARCHAR(20) NOT NULL,
-    factor_name VARCHAR(50) NOT NULL,
-    factor_value NUMERIC(20, 6),
-    PRIMARY KEY (time, symbol, factor_name)
-);
-
--- 创建超表
-SELECT create_hypertable(
-    'factor_data',
-    'time',
-    chunk_time_interval => INTERVAL '1 day'
-);
-
--- 添加压缩策略
-ALTER TABLE factor_data SET (
-    timescaledb.compress,
-    timescaledb.compress_segmentby = 'symbol,factor_name'
-);
-
-SELECT add_compression_policy(
-    'factor_data',
-    INTERVAL '30 days'
-);
-```
-
-#### 3.1.3 连续聚合视图
-
-```sql
--- 小时聚合视图
-CREATE MATERIALIZED VIEW stock_hourly_data
-WITH (timescaledb.continuous) AS
-SELECT
-    time_bucket('1 hour', time) AS bucket,
-    symbol,
-    FIRST(open, time) AS open,
-    MAX(high) AS high,
-    MIN(low) AS low,
-    LAST(close, time) AS close,
-    SUM(volume) AS volume,
-    SUM(amount) AS amount
-FROM stock_minute_data
-GROUP BY bucket, symbol;
-
--- 添加自动刷新策略
-SELECT add_continuous_aggregate_policy(
-    'stock_hourly_data',
-    start_offset => INTERVAL '1 hour',
-    end_offset => INTERVAL '1 minute',
-    schedule_interval => INTERVAL '1 hour'
-);
-```
-
----
-
-## 四、性能优化
-
-### 4.1 索引策略
-
-```sql
--- 时间范围查询索引
-CREATE INDEX idx_stock_minute_time 
-ON stock_minute_data (time DESC);
-
--- 股票代码索引
-CREATE INDEX idx_stock_minute_symbol 
-ON stock_minute_data (symbol, time DESC);
-
--- 复合索引
-CREATE INDEX idx_stock_minute_symbol_time 
-ON stock_minute_data (symbol, time DESC);
-```
-
-### 4.2 查询优化
-
-**最佳实践**:
-- ✅ 使用时间范围限制查询
-- ✅ 使用连续聚合预计算
-- ✅ 避免SELECT *
-- ✅ 使用批量插入
-- ✅ 定期VACUUM和ANALYZE
-
-**查询示例**:
-```sql
--- 好的查询（使用时间范围）
-SELECT * FROM stock_minute_data
-WHERE symbol = '000001.SZ'
-  AND time >= '2026-04-01'
-  AND time < '2026-04-07'
-ORDER BY time;
-
--- 不好的查询（全表扫描）
-SELECT * FROM stock_minute_data
-WHERE symbol = '000001.SZ';
-```
-
----
-
-## 五、部署方案
-
-### 5.1 Docker部署（推荐）
-
-```yaml
-version: '3.8'
-
-services:
-  timescaledb:
-    image: timescale/timescaledb:latest-pg15
-    container_name: zephyr_timescaledb
-    environment:
-      POSTGRES_USER: zephyr
-      POSTGRES_PASSWORD: zephyr123
-      POSTGRES_DB: zephyr_quant
-    ports:
-      - "5432:5432"
-    volumes:
-      - timescaledb_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: unless-stopped
-
-volumes:
-  timescaledb_data:
-```
-
-### 5.2 初始化脚本
-
-```sql
--- init.sql
--- 启用TimescaleDB扩展
-CREATE EXTENSION IF NOT EXISTS timescaledb;
-
--- 创建数据库
-CREATE DATABASE zephyr_quant;
-
--- 连接到数据库
-\c zephyr_quant;
-
--- 创建表结构（见上文）
-```
-
-### 5.3 Python客户端配置
+### 4.3 时间窗口查询
 
 ```python
-# config/database.py
-from dataclasses import dataclass
-
-@dataclass
-class TimescaleDBConfig:
-    """TimescaleDB配置"""
-    host: str = 'localhost'
-    port: int = 5432
-    database: str = 'zephyr_quant'
-    user: str = 'zephyr'
-    password: str = 'zephyr123'
+class TimeWindowQueries:
+    """时间窗口查询"""
     
-    @property
-    def connection_string(self) -> str:
-        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
+    def __init__(self, reader: TimescaleDBReader):
+        self.reader = reader
+    
+    def get_rolling_stats(
+        self,
+        symbol: str,
+        window: str,  # '1h', '1d', '1w'
+        metric: str = 'close'
+    ) -> pd.DataFrame:
+        """获取滚动统计"""
+        sql = f"""
+        SELECT 
+            time,
+            {metric},
+            AVG({metric}) OVER (ORDER BY time RANGE BETWEEN INTERVAL '{window}' PRECEDING AND CURRENT ROW) as avg,
+            STDDEV({metric}) OVER (ORDER BY time RANGE BETWEEN INTERVAL '{window}' PRECEDING AND CURRENT ROW) as std,
+            MAX({metric}) OVER (ORDER BY time RANGE BETWEEN INTERVAL '{window}' PRECEDING AND CURRENT ROW) as max,
+            MIN({metric}) OVER (ORDER BY time RANGE BETWEEN INTERVAL '{window}' PRECEDING AND CURRENT ROW) as min
+        FROM stock_klines
+        WHERE symbol = %s AND interval = '1m'
+        ORDER BY time DESC
+        LIMIT 1000
+        """
+        
+        return pd.read_sql(sql, self.reader.conn, params=[symbol])
+    
+    def get_time_bucket_agg(
+        self,
+        symbol: str,
+        bucket_size: str,  # '1 hour', '1 day'
+        start_time: datetime,
+        end_time: datetime
+    ) -> pd.DataFrame:
+        """时间桶聚合查询"""
+        sql = f"""
+        SELECT 
+            time_bucket('{bucket_size}', time) AS bucket,
+            symbol,
+            FIRST(close, time) AS open,
+            MAX(high) AS high,
+            MIN(low) AS low,
+            LAST(close, time) AS close,
+            SUM(volume) AS volume
+        FROM stock_klines
+        WHERE symbol = %s AND interval = '1m'
+        AND time >= %s AND time < %s
+        GROUP BY bucket, symbol
+        ORDER BY bucket
+        """
+        
+        return pd.read_sql(sql, self.reader.conn, params=[
+            symbol, start_time, end_time
+        ])
 ```
 
 ---
 
-## 六、监控与维护
+## 5. 性能优化
+
+### 5.1 索引策略
+
+```sql
+-- 符号索引
+CREATE INDEX idx_ticks_symbol ON stock_ticks (symbol, time DESC);
+CREATE INDEX idx_klines_symbol_interval ON stock_klines (symbol, interval, time DESC);
+CREATE INDEX idx_factors_symbol_factor ON factor_values (symbol, factor_id, time DESC);
+
+-- 时间范围索引
+CREATE INDEX idx_ticks_time ON stock_ticks (time DESC);
+CREATE INDEX idx_klines_time ON stock_klines (time DESC);
+```
+
+### 5.2 查询优化
+
+```sql
+-- 使用时间桶函数优化
+EXPLAIN ANALYZE
+SELECT time_bucket('5 minutes', time) AS bucket,
+       symbol,
+       AVG(price) as avg_price
+FROM stock_ticks
+WHERE time > NOW() - INTERVAL '1 day'
+GROUP BY bucket, symbol;
+
+-- 使用连续聚合优化
+EXPLAIN ANALYZE
+SELECT * FROM kline_5m
+WHERE symbol = '000001.SZ'
+AND bucket > NOW() - INTERVAL '7 days';
+```
+
+### 5.3 批量写入优化
+
+```python
+import asyncio
+from asyncpg import create_pool
+
+class AsyncTimescaleDBWriter:
+    """异步批量写入器"""
+    
+    def __init__(self, connection_string: str, pool_size: int = 5):
+        self.connection_string = connection_string
+        self.pool_size = pool_size
+        self.pool = None
+    
+    async def init_pool(self):
+        """初始化连接池"""
+        self.pool = await create_pool(
+            self.connection_string,
+            min_size=1,
+            max_size=self.pool_size
+        )
+    
+    async def write_ticks_batch(self, ticks: List[Dict]) -> int:
+        """异步批量写入"""
+        async with self.pool.acquire() as conn:
+            values = [
+                (t['time'], t['symbol'], t['price'], t['volume'])
+                for t in ticks
+            ]
+            
+            await conn.executemany(
+                """
+                INSERT INTO stock_ticks (time, symbol, price, volume)
+                VALUES ($1, $2, $3, $4)
+                """,
+                values
+            )
+            
+            return len(values)
+```
+
+---
+
+## 6. 监控与运维
 
 ### 6.1 性能监控
 
 ```sql
--- 查看超表信息
+-- 查看超级表信息
 SELECT * FROM timescaledb_information.hypertables;
 
 -- 查看压缩状态
@@ -604,159 +546,171 @@ SELECT * FROM timescaledb_information.compression_settings;
 -- 查看连续聚合状态
 SELECT * FROM timescaledb_information.continuous_aggregates;
 
--- 查看数据分布
+-- 查看作业状态
+SELECT * FROM timescaledb_information.jobs;
+
+-- 查看数据大小
 SELECT 
     hypertable_name,
-    num_chunks,
-    total_size
-FROM timescaledb_information.chunks;
+    pg_size_pretty(total_bytes) as total_size,
+    pg_size_pretty(compressed_bytes) as compressed_size,
+    compression_ratio
+FROM timescaledb_information.compressed_hypertable_stats;
 ```
 
-### 6.2 维护任务
+### 6.2 健康检查
 
 ```python
-from datetime import datetime, timedelta
-import psycopg2
-
-class TimescaleDBMaintenance:
-    """TimescaleDB维护"""
+class TimescaleDBHealthCheck:
+    """健康检查"""
     
-    def __init__(self, connection_string: str):
-        self.conn = psycopg2.connect(connection_string)
+    def __init__(self, conn):
+        self.conn = conn
     
-    def vacuum_analyze(self, table_name: str):
-        """VACUUM和ANALYZE"""
-        sql = f"VACUUM ANALYZE {table_name};"
-        self.conn.cursor().execute(sql)
-        self.conn.commit()
+    def check_connection(self) -> bool:
+        """检查连接"""
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT 1")
+                return True
+        except Exception as e:
+            print(f"连接失败: {e}")
+            return False
     
-    def drop_old_chunks(
-        self,
-        table_name: str,
-        older_than: str = '1 year'
-    ):
-        """删除旧数据块"""
-        sql = f"""
-        SELECT drop_chunks(
-            '{table_name}',
-            older_than => INTERVAL '{older_than}'
-        );
+    def check_hypertables(self) -> List[Dict]:
+        """检查超级表状态"""
+        sql = """
+        SELECT 
+            hypertable_name,
+            num_chunks,
+            is_compressed
+        FROM timescaledb_information.hypertables
         """
-        self.conn.cursor().execute(sql)
-        self.conn.commit()
+        
+        with self.conn.cursor() as cur:
+            cur.execute(sql)
+            return cur.fetchall()
+    
+    def check_jobs(self) -> List[Dict]:
+        """检查作业状态"""
+        sql = """
+        SELECT 
+            job_id,
+            application_name,
+            schedule_interval,
+            last_run_status
+        FROM timescaledb_information.jobs
+        """
+        
+        with self.conn.cursor() as cur:
+            cur.execute(sql)
+            return cur.fetchall()
 ```
 
 ---
 
-## 七、实施路径
+## 7. 部署配置
 
-### Phase 1: 基础部署（1周）
+### 7.1 Docker部署
 
-**任务清单**:
-- [x] Docker部署TimescaleDB
-- [x] 创建基础表结构
-- [x] 配置压缩策略
-- [x] 开发数据摄入器
-- [x] 开发基础查询器
+```yaml
+# docker-compose.yml
+version: '3.8'
 
-**预期成果**:
-- ✅ TimescaleDB服务运行正常
-- ✅ 支持市场数据存储
-- ✅ 支持基础查询
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg15
+    container_name: zephyr_timescaledb
+    environment:
+      POSTGRES_USER: zephyr
+      POSTGRES_PASSWORD: ${TIMESCALEDB_PASSWORD}
+      POSTGRES_DB: zephyr_quant
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zephyr -d zephyr_quant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-### Phase 2: 性能优化（1周）
+volumes:
+  timescaledb_data:
+```
 
-**任务清单**:
-- [x] 创建连续聚合视图
-- [x] 优化索引策略
-- [x] 开发高级查询器
-- [x] 性能测试和调优
+### 7.2 初始化脚本
 
-**预期成果**:
-- ✅ 支持预计算聚合
-- ✅ 查询性能提升10倍
-- ✅ 支持复杂时序查询
+```sql
+-- init.sql
+-- 启用TimescaleDB扩展
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
-### Phase 3: 集成应用（1周）
+-- 创建超级表
+CREATE TABLE stock_ticks (
+    time        TIMESTAMPTZ NOT NULL,
+    symbol      VARCHAR(20) NOT NULL,
+    price       DECIMAL(18,4),
+    volume      BIGINT
+);
 
-**任务清单**:
-- [x] 集成到数据管道
-- [x] 开发数据迁移脚本
-- [x] 编写API接口
-- [x] 文档和测试
+SELECT create_hypertable('stock_ticks', 'time',
+    partitioning_column => 'symbol',
+    number_partitions => 4
+);
 
-**预期成果**:
-- ✅ 完整集成到系统
-- ✅ 支持数据迁移
-- ✅ 完整的API文档
+-- 设置压缩策略
+ALTER TABLE stock_ticks SET (
+    timescaledb.compress,
+    timescaledb.compress_segmentby = 'symbol'
+);
 
----
-
-## 八、成本估算
-
-### 8.1 硬件成本
-
-**个人开发场景**:
-- CPU: 4核
-- 内存: 8GB
-- 存储: 500GB SSD
-- 成本: 云服务器 ¥200/月 或 本地部署一次性 ¥2000
-
-### 8.2 学习成本
-
-- TimescaleDB基础: 2天
-- Python客户端开发: 1天
-- 性能优化: 1天
-- **总计**: 4天
-
----
-
-## 九、风险评估
-
-### 9.1 技术风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 单机性能瓶颈 | 中 | 使用连续聚合和压缩优化 |
-| 数据丢失风险 | 高 | 配置定期备份 |
-| 学习曲线 | 低 | 基于PostgreSQL，学习成本低 |
-
-### 9.2 运维风险
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|---------|
-| 存储空间不足 | 中 | 配置数据保留策略 |
-| 查询性能下降 | 中 | 定期VACUUM和ANALYZE |
-| 连接池耗尽 | 低 | 使用连接池管理 |
+SELECT add_compression_policy('stock_ticks', INTERVAL '7 days');
+SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
+```
 
 ---
 
-## 十、相关文档
+## 8. 与其他模块集成
 
-### 上游依赖
+### 8.1 与ClickHouse集成
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md) | DATA_SOURCE_MANAGEMENT_001 | 强依赖 | 提供数据源连接 |
+```python
+class TimescaleDBToClickHouse:
+    """数据归档到ClickHouse"""
+    
+    def archive_old_data(self, days: int = 30):
+        """归档旧数据到ClickHouse"""
+        # 1. 从TimescaleDB导出数据
+        sql = f"""
+        COPY (
+            SELECT * FROM stock_ticks
+            WHERE time < NOW() - INTERVAL '{days} days'
+        ) TO STDOUT WITH CSV HEADER
+        """
+        
+        # 2. 导入到ClickHouse
+        # 3. 删除TimescaleDB中的旧数据
+```
 
-### 下游依赖
+### 8.2 与Redis集成
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
-|---------|-----------|---------|------|
-| [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依赖 | 提供数据存储服务 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 中依赖 | 提供数据质量检查点 |
-
-### 技术依赖
-
-| 技术组件 | 版本 | 用途 | 文档 |
-|---------|------|------|------|
-| **TimescaleDB** | 2.13+ | 时序数据库 | [官方文档](https://docs.timescale.com/) |
-| **PostgreSQL** | 15+ | 基础数据库 | [官方文档](https://www.postgresql.org/docs/) |
-| **psycopg2** | 2.9+ | Python客户端 | [官方文档](https://www.psycopg.org/docs/) |
+```python
+class TimescaleDBRedisCache:
+    """Redis缓存层"""
+    
+    def get_latest_price_with_cache(self, symbol: str) -> float:
+        """带缓存的最新价格查询"""
+        # 1. 先查Redis缓存
+        # 2. 缓存未命中则查TimescaleDB
+        # 3. 写入Redis缓存
+```
 
 ---
 
-## 📝 变更历史
+## 📋 变更历史
 
 | 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|

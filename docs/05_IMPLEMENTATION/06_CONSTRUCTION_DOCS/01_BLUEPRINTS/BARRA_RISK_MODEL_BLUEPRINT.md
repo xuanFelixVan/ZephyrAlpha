@@ -1,40 +1,22 @@
 ---
-module_id: BARRA_RISK_MODEL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-﻿---
 module_id: BARRA_RISK_MODEL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
-﻿> **索引**: `BARRA_RISK_001`
-> **开发时长**: 100h（约2.5周）
-> **核心定位**: 多因子风险模型，实现风险分解、因子暴露度量、风险预算
-> **对标机构**: 桥水基金（Bridgewater Associates）
-> **个人开发可行性**: 中等 完全可行
-> **AI维护难度**: 中
-
 ---
-## 核心定位
 
-Barra风险模型，负责实施多因子风险模型，支持风险分解和对冲
+# Barra风险模型蓝图
+
+> **核心职责**: 多因子风险模型，实现风险分解、因子暴露度量
+> **职责边界**: 
+> - ✅ 本文档负责：风险分解、因子暴露、风险预算
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

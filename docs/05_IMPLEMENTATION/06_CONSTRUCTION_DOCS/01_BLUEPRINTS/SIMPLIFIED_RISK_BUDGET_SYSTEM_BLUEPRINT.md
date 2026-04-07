@@ -1,48 +1,22 @@
 ---
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# SIMPLIFIED RISK BUDGET SYSTEM BLUEPRINT
-
-> **核心职责**: Simplified Risk Budget System蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Simplified Risk Budget System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 风险预算
-  - 组合优化
-  - 回测系统
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 简化版动态风险预算系统蓝图
+---
 
-> **核心定位**: 简化版动态风险预算系统蓝图的核心功能实现
+# 简化版动态风险预算系统蓝图
 
-
-> **索引**: `SIMPLIFIED_RISK_BUDGET_SYSTEM_001`
-> **开发周期**: 60h（约1.5周）
-> **核心定位**: 基于VaR的风险预算 + 动态风险预算调整，实现风险预算动态化
-> **参考开源**: PyPortfolioOpt, Riskfolio-Lib
-
-## 核心定位
-
-简化风险预算系统，负责实施基于风险预算的资产配置策略
+> **核心职责**: 基于VaR的风险预算 + 动态风险预算调整
+> **职责边界**: 
+> - ✅ 本文档负责：风险预算、动态调整、VaR计算
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

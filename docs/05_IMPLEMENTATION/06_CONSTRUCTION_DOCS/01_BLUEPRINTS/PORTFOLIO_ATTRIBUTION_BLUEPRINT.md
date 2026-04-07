@@ -1,49 +1,22 @@
 ---
-module_id: PORTFOLIO_ATTRIBUTION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# PORTFOLIO ATTRIBUTION BLUEPRINT
-
-> **核心职责**: Portfolio Attribution蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Attribution蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: PORTFOLIO_ATTRIBUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 因子计算
-  - 组合优化
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 组合归因分析模块蓝图
+---
 
-> **核心定位**: 组合归因分析模块蓝图的核心功能实现
+# 组合归因分析模块蓝图
 
-
-> **索引**: `PORTFOLIO_ATTRIBUTION_001`
-> **开发周期**: 3-5天
-> **核心定位**: 专业级组合归因分析，支持Brinson模型、因子归因、风险归因
-> **参考开源**: brinson_attribution + QuantFAA
-> **专业对标**: 所有专业量化机构必备模块
-
-## 核心定位
-
-组合归因分析模块，负责分解投资组合收益来源，评估策略贡献和风险暴露
+> **核心职责**: 分解投资组合收益来源，评估策略贡献
+> **职责边界**: 
+> - ✅ 本文档负责：Brinson归因、因子归因、风险归因
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

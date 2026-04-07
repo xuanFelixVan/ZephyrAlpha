@@ -1,48 +1,22 @@
 ---
-module_id: HIERARCHICAL_RISK_BUDGET_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# HIERARCHICAL RISK BUDGET BLUEPRINT
-
-> **核心职责**: Hierarchical Risk Budget蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Hierarchical Risk Budget蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 风险预算
-  - 因子计算
-  - 组合优化
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 层级风险预算蓝图
+---
 
-> **核心定位**: 层级风险预算蓝图的核心功能实现
+# 层级风险预算蓝图
 
-
-> **索引**: `HIERARCHICAL_RISK_BUDGET_001`
-> **开发周期**: 5-7天
-> **核心定位**: 多层级风险预算分配，支持资产类别、策略、因子等多维度风险控制
-> **参考开源**: Riskfolio-Lib, skfolio
-
-## 核心定位
-
-分层风险预算模块，负责在多个层级分配风险预算
+> **核心职责**: 多层级风险预算分配
+> **职责边界**: 
+> - ✅ 本文档负责：层级风险预算、多维度风险控制
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

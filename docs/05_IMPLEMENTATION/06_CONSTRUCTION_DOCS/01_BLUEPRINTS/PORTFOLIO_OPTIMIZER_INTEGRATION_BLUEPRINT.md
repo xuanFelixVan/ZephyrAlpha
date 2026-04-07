@@ -1,49 +1,22 @@
 ---
-module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# PORTFOLIO OPTIMIZER INTEGRATION BLUEPRINT
-
-> **核心职责**: Portfolio Optimizer Integration蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Optimizer Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 组合优化
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 组合优化引擎集成模块蓝图
+---
 
-> **核心定位**: 组合优化引擎集成模块蓝图的核心功能实现
+# 组合优化引擎集成模块蓝图
 
-
-> **索引**: `OPTIMIZER_INTEGRATION_001`
-> **开发周期**: 5-7天
-> **核心定位**: 统一优化器接口，多优化器集成，优化器选择策略
-> **参考开源**: PyPortfolioOpt + Riskfolio-Lib + skfolio + deepfolio + cvxpy
-> **专业对标**: 所有专业量化机构必备模块
-
-## 核心定位
-
-组合优化器集成模块，负责集成多种优化算法（凸优化、遗传算法等），提供统一接口
+> **核心职责**: 统一优化器接口，多优化器集成
+> **职责边界**: 
+> - ✅ 本文档负责：优化器集成、统一接口、优化器选择
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

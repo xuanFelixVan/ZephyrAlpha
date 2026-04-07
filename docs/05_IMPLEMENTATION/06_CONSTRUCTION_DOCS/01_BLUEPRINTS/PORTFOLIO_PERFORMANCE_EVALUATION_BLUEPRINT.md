@@ -1,49 +1,22 @@
 ---
-module_id: PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# PORTFOLIO PERFORMANCE EVALUATION BLUEPRINT
-
-> **核心职责**: Portfolio Performance Evaluation蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Performance Evaluation蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
-﻿# 组合绩效评估模块蓝图
+---
 
-> **核心定位**: 组合绩效评估模块蓝图的核心功能实现
+# 组合绩效评估模块蓝图
 
-
-> **索引**: `PORTFOLIO_PERF_001`
-> **开发周期**: 2-3天
-> **核心定位**: 专业级组合绩效评估，支持多维度风险调整收益指标和基准对比
-> **参考开源**: pyfolio (5k+ ⭐) + QuantStats (4k+ ⭐)
-> **专业对标**: 所有专业量化机构必备模块
-
-## 核心定位
-
-组合绩效评估模块，负责计算和评估投资组合的风险调整收益、夏普比率等指标
+> **核心职责**: 计算和评估投资组合的风险调整收益
+> **职责边界**: 
+> - ✅ 本文档负责：绩效评估、风险调整收益、基准对比
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

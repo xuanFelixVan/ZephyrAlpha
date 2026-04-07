@@ -1,38 +1,22 @@
 ---
-module_id: RISK_ATTRIBUTION_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-﻿---
 module_id: RISK_ATTRIBUTION_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
-﻿> **索引**: `RISK_ATTRIBUTION_001`
-> **开发时?*: 80h（约2周）
-> **核心定位**: 多维度风险分解与归因分析，识别风险驱动因?> **对标机构**: Two Sigma
-> **个人开发可?*: ⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: ?
 ---
-## 核心定位
 
-风险归因系统，负责分解投资组合风险来源，识别主要风险因子
+# 风险归因系统蓝图
+
+> **核心职责**: 多维度风险分解与归因分析
+> **职责边界**: 
+> - ✅ 本文档负责：风险分解、风险归因、风险因子识别
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 概述

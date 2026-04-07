@@ -1,42 +1,22 @@
 ---
-module_id: DYNAMIC_CORRELATION_MODELING_BLUEPRINT_001
+module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# DYNAMIC CORRELATION MODELING BLUEPRINT
-
-> **核心职责**: Dynamic Correlation Modeling蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Dynamic Correlation Modeling蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: DYNAMIC_CORRELATION_MODELING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 市场状态识别 (Layer 4)
-  - 数据质量 (Layer 1)
-
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 layer: "Layer 6 (组合优化层)"
 ---
-﻿# 模块概述
 
-> **开发时?*: 80h（约2周）
-> **核心定位**: 使用DCC-GARCH模型实时更新资产间相关性，识别相关性突变，为风险平价优化提供动态相关性矩?> **个人开发可?*: ⭐⭐⭐⭐?完全可行
-> **AI维护难度**: ?
+# 动态相关性建模蓝图
+
+> **核心职责**: 使用DCC-GARCH模型实时更新资产间相关性
+> **职责边界**: 
+> - ✅ 本文档负责：动态相关性、相关性突变识别
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 ## 📚 相关文档
 
 ### 上游依赖

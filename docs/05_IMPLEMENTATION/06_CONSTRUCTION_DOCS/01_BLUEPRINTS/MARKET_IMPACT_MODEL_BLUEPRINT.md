@@ -1,46 +1,22 @@
 ---
-module_id: MARKET_IMPACT_MODEL_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# MARKET IMPACT MODEL BLUEPRINT
-
-> **核心职责**: Market Impact Model蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Market Impact Model蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: MARKET_IMPACT_MODEL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-responsibility:
-  - 数据质量
-  - 风险预算
-  - 因子计算
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 5 交易成本层
+compliance_level: 专业标准
 layer: "Layer 5 (交易成本层)"
-﻿# 模块概述
-
-> **索引**: `MARKET_IMPACT_BLUEPRINT_001`
-> **开发时?*: 60h
-> **核心定位**: 预测和控制交易行为对市场价格的影响，优化执行策略，实现文艺复兴模式的市场冲击控制能力
-
 ---
-## 核心定位
 
-市场冲击模型，负责预测交易对市场价格的影响，优化交易规模和时机选择
+# 市场冲击模型蓝图
+
+> **核心职责**: 预测交易对市场价格的影响，优化执行策略
+> **职责边界**: 
+> - ✅ 本文档负责：市场冲击预测、执行优化
+> - ❌ 本文档不负责：因子计算（由因子模块负责）
 
 
 ## 1. 模块概述
