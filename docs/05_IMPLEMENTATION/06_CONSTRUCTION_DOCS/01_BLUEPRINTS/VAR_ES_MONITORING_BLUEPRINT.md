@@ -27,7 +27,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-负责Var Es Monitoring的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+建立VAR ES MONITORING的设计与实现，基于ELK Stack技术，告警核心功能，预防系统故障。
 
 ## 1. 概述
 

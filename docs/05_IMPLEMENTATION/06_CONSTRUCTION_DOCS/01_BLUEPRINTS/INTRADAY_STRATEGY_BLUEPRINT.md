@@ -32,7 +32,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-构建INTRADAY STRATEGY的设计与实现，基于风险平价技术，优化核心功能，实现投资目标。支持业务需求，确保系统稳定运行。
+管理INTRADAY STRATEGY的设计与实现，基于Black-Litterman技术，评估核心功能，实现投资目标。
 
 ## 🎯 模块定位与职责
 

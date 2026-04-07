@@ -34,8 +34,7 @@ layer: "Layer 7 (风险管理层)"
 
 ## 核心定位
 
-负责Risk Contribution Analysis的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
+部署RISK CONTRIBUTION ANALYSIS的设计与实现，基于压力测试技术，控制核心功能，提升风控效率。
 
 ## 1. 概述
 

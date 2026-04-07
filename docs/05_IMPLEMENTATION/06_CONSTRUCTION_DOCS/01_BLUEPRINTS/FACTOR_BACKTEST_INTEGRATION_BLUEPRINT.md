@@ -26,8 +26,7 @@ layer: "Layer 2 (Alpha因子层)"
 
 ## 核心定位
 
-负责Factor Backtest Integration的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
-
+研究FACTOR BACKTEST INTEGRATION的设计与实现，基于回测框架技术，挖掘核心功能，发现投资机会。
 
 ## 1. 设计原则
 

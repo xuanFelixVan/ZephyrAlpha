@@ -29,10 +29,7 @@ layer: "Layer 6 (组合优化层)"
 > **核心定位**: 融资成本优化、杠杆效率提?
 ## 核心定位
 
-> 核心职责: Financing Optimization蓝图设计
-> 职责边界: 
-> - ✅ 本文档负责：Financing Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
+实现FINANCING OPTIMIZATION的设计与实现，基于因子投资技术，评估核心功能，提升收益风险比。
 
 ## 📚 相关文档
 

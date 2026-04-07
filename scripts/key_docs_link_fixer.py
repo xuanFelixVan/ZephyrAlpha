@@ -61,12 +61,12 @@ def fix_links_in_file(file_path, invalid_links, docs_root):
         correct_path = find_correct_path(link_url, docs_root)
         
         if correct_path:
-            # 替换链接
-            old_link_pattern = re.compile(r'\[([^\]]+)\]\(' + re.escape(link_url) + r'\)')
+            # 替换链接 - 使用字符串替换而不是正则表达式替换
+            old_link = f'[{link["link_text"]}]({link_url})'
             new_link = f'[{link["link_text"]}]({correct_path})'
             
-            if old_link_pattern.search(content):
-                content = old_link_pattern.sub(new_link, content)
+            if old_link in content:
+                content = content.replace(old_link, new_link)
                 fixes.append({
                     'line': line_number,
                     'old_url': link_url,
