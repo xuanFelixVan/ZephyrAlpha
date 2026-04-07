@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: у╗ЈжфїТђ╗у╗Њ
 responsibility:
   - 实施指南、部署文档

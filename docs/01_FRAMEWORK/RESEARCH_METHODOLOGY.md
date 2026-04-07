@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: æ ¸å¿ææ¡£
 responsibility:
   - 系统框架、架构设计

@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 module_id: TECHNICAL_REVIEW_REPORT_20260402_001
 
 review_id: REVIEW_20260402_001

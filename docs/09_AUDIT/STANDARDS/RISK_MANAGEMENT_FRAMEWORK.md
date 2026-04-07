@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: ق«ةقµبçفç
 responsibility:
   - 审计报告、合规检查

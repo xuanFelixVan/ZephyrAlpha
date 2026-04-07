@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: ﻝ­ﻝ۴ﮔﮔ۰۲
 responsibility:
   - 扩展功能、辅助模块、支撑文档

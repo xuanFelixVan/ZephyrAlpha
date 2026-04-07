@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: ﻛﺕ۹ﻛﭦﭦﮒﺙﮒ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
 responsibility:
   - 实施指南、部署文档

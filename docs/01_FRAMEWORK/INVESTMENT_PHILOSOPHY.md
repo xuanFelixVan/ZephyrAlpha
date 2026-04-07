@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: æ ¸å¿ææ¡£
 responsibility:
   - 负责investment philosophy的设计、实现和维护工作

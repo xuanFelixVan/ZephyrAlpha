@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒﻝﺎﭨﻝﺏﭨﻝﭨ
 responsibility:
   - 实施指南、部署文档

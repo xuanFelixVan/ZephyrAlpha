@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: ﮔﮔﺁﮔ ﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 responsibility:
   - 审计报告、合规检查

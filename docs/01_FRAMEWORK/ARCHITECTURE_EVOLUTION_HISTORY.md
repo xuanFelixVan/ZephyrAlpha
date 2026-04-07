@@ -1,4 +1,5 @@
 ---
+version: 1.0.0
 standard_type: æ ¸å¿ææ¡£
 applicable_scope: å¨ç³»?compliance_level: ä¸ä¸æ å
 parent_document: ../INDEX.md
