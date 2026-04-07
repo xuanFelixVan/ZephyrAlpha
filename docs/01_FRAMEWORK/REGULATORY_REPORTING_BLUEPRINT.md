@@ -6,9 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
-  - 数据源
-  - 机器学习
+  - 监管报告自动化
+  - 交易报告生成
+  - 风险报告生成
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 监管报告自动化系统

@@ -328,6 +328,362 @@ class RiskHandler:
 
 ---
 
+## 📋 风险控制机制详解
+
+### 1. 风险控制层次架构
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   风险控制三层架构                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │       第一层：事前风险控制                            │  │
+│  │ - 仓位限制检查                                        │  │
+│  │ - 集中度限制                                          │  │
+│  │ - 行业暴露限制                                        │  │
+│  │ - 因子暴露限制                                        │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                          ↓                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │       第二层：事中风险控制                            │  │
+│  │ - 实时风险监控                                        │  │
+│  │ - 动态止损检查                                        │  │
+│  │ - 异常交易检测                                        │  │
+│  │ - 流动性监控                                          │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                          ↓                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │       第三层：事后风险控制                            │  │
+│  │ - 风险报告生成                                        │  │
+│  │ - 风险归因分析                                        │  │
+│  │ - 风险事件复盘                                        │  │
+│  │ - 风险模型优化                                        │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 2. 风险阈值配置体系
+
+#### 2.1 风险阈值分类
+
+| 阈值类型 | 阈值名称 | 默认值 | 触发条件 | 处置措施 |
+|----------|----------|--------|----------|----------|
+| **价格风险** | 单股票止损 | -5% | 单股票亏损超过阈值 | 减仓50% |
+| **价格风险** | 组合止损 | -3% | 组合亏损超过阈值 | 全部平仓 |
+| **价格风险** | 单日最大亏损 | -2% | 单日亏损超过阈值 | 暂停交易 |
+| **仓位风险** | 单股票上限 | 10% | 单股票仓位超过阈值 | 限制开仓 |
+| **仓位风险** | 总仓位上限 | 95% | 总仓位超过阈值 | 限制开仓 |
+| **仓位风险** | 行业上限 | 30% | 行业仓位超过阈值 | 限制开仓 |
+| **流动性风险** | 成交量萎缩 | 50% | 成交量低于阈值 | 暂停交易 |
+| **流动性风险** | 换手率异常 | 3σ | 换手率异常 | 风险预警 |
+| **波动率风险** | 波动率飙升 | 3σ | 波动率超过阈值 | 降低仓位 |
+| **波动率风险** | 相关性突变 | 0.8 | 相关性超过阈值 | 风险预警 |
+
+#### 2.2 风险阈值配置文件
+
+```yaml
+# risk_thresholds.yaml
+risk_thresholds:
+  price_risk:
+    single_stock_loss:
+      warning: -0.03
+      critical: -0.05
+      action: "reduce_position_50%"
+      
+    portfolio_loss:
+      warning: -0.02
+      critical: -0.03
+      action: "close_all_positions"
+      
+    daily_max_loss:
+      warning: -0.015
+      critical: -0.02
+      action: "pause_trading"
+      
+  position_risk:
+    single_stock_position:
+      warning: 0.08
+      critical: 0.10
+      action: "limit_open"
+      
+    total_position:
+      warning: 0.90
+      critical: 0.95
+      action: "limit_open"
+      
+    sector_position:
+      warning: 0.25
+      critical: 0.30
+      action: "limit_open"
+      
+  liquidity_risk:
+    volume_drop:
+      warning: 0.70
+      critical: 0.50
+      action: "pause_trading"
+      
+    turnover_anomaly:
+      warning: 2.0
+      critical: 3.0
+      action: "alert"
+      
+  volatility_risk:
+    volatility_spike:
+      warning: 2.0
+      critical: 3.0
+      action: "reduce_position_30%"
+      
+    correlation_spike:
+      warning: 0.6
+      critical: 0.8
+      action: "alert"
+```
+
+### 3. 风险处置流程
+
+#### 3.1 风险处置决策树
+
+```
+风险事件触发
+    │
+    ├── 价格风险
+    │   ├── 单股票亏损 > 5%
+    │   │   └── 执行：减仓50%
+    │   ├── 组合亏损 > 3%
+    │   │   └── 执行：全部平仓
+    │   └── 单日亏损 > 2%
+    │       └── 执行：暂停交易
+    │
+    ├── 仓位风险
+    │   ├── 单股票仓位 > 10%
+    │   │   └── 执行：限制开仓
+    │   ├── 总仓位 > 95%
+    │   │   └── 执行：限制开仓
+    │   └── 行业仓位 > 30%
+    │       └── 执行：限制开仓
+    │
+    ├── 流动性风险
+    │   ├── 成交量萎缩 < 50%
+    │   │   └── 执行：暂停交易
+    │   └── 换手率异常 > 3σ
+    │       └── 执行：风险预警
+    │
+    └── 波动率风险
+        ├── 波动率飙升 > 3σ
+        │   └── 执行：降低仓位30%
+        └── 相关性突变 > 0.8
+            └── 执行：风险预警
+```
+
+#### 3.2 风险处置执行器
+
+```python
+class RiskActionExecutor:
+    """风险处置执行器"""
+    
+    def __init__(self, order_manager, position_manager):
+        self.order_manager = order_manager
+        self.position_manager = position_manager
+        self.action_handlers = {
+            "reduce_position_50%": self._reduce_position_50,
+            "reduce_position_30%": self._reduce_position_30,
+            "close_all_positions": self._close_all_positions,
+            "limit_open": self._limit_open,
+            "pause_trading": self._pause_trading,
+            "alert": self._send_alert
+        }
+    
+    def execute(self, action: str, context: Dict[str, Any]) -> bool:
+        """执行风险处置动作"""
+        if action in self.action_handlers:
+            return self.action_handlers[action](context)
+        return False
+    
+    def _reduce_position_50(self, context: Dict[str, Any]) -> bool:
+        """减仓50%"""
+        symbol = context.get("symbol")
+        position = self.position_manager.get_position(symbol)
+        reduce_quantity = position.quantity * 0.5
+        return self.order_manager.sell(symbol, reduce_quantity)
+    
+    def _reduce_position_30(self, context: Dict[str, Any]) -> bool:
+        """减仓30%"""
+        for symbol, position in self.position_manager.get_all_positions().items():
+            reduce_quantity = position.quantity * 0.3
+            self.order_manager.sell(symbol, reduce_quantity)
+        return True
+    
+    def _close_all_positions(self, context: Dict[str, Any]) -> bool:
+        """全部平仓"""
+        for symbol, position in self.position_manager.get_all_positions().items():
+            self.order_manager.sell(symbol, position.quantity)
+        return True
+    
+    def _limit_open(self, context: Dict[str, Any]) -> bool:
+        """限制开仓"""
+        self.order_manager.set_open_limit(True)
+        return True
+    
+    def _pause_trading(self, context: Dict[str, Any]) -> bool:
+        """暂停交易"""
+        self.order_manager.pause()
+        return True
+    
+    def _send_alert(self, context: Dict[str, Any]) -> bool:
+        """发送预警"""
+        alert_manager = AlertManager()
+        return alert_manager.send(context)
+```
+
+### 4. 风险监控指标体系
+
+#### 4.1 实时监控指标
+
+| 指标类别 | 指标名称 | 计算方法 | 监控频率 | 预警阈值 |
+|----------|----------|----------|----------|----------|
+| **价格风险** | 单股票亏损 | (当前价-成本价)/成本价 | 实时 | -5% |
+| **价格风险** | 组合亏损 | Σ(单股票亏损×权重) | 实时 | -3% |
+| **价格风险** | 最大回撤 | (峰值-当前)/峰值 | 每分钟 | -10% |
+| **仓位风险** | 单股票仓位 | 市值/总资产 | 实时 | 10% |
+| **仓位风险** | 总仓位 | 股票市值/总资产 | 实时 | 95% |
+| **仓位风险** | 行业集中度 | 行业市值/总资产 | 每分钟 | 30% |
+| **流动性风险** | 成交量比率 | 当前成交量/20日均值 | 实时 | 50% |
+| **流动性风险** | 换手率 | 成交量/流通股本 | 每分钟 | 3σ |
+| **波动率风险** | 波动率 | 收益率标准差×√252 | 每分钟 | 3σ |
+| **波动率风险** | 相关性 | 股票间相关系数 | 每分钟 | 0.8 |
+
+#### 4.2 监控指标计算器
+
+```python
+class RiskMetricsCalculator:
+    """风险指标计算器"""
+    
+    def calculate_price_risk_metrics(
+        self,
+        positions: Dict[str, Position],
+        market_data: pd.DataFrame
+    ) -> Dict[str, float]:
+        """计算价格风险指标"""
+        metrics = {}
+        
+        total_value = sum(p.market_value for p in positions.values())
+        
+        single_stock_losses = {}
+        for symbol, position in positions.items():
+            if symbol in market_data.columns:
+                current_price = market_data[symbol].iloc[-1]
+                loss = (current_price - position.cost_price) / position.cost_price
+                single_stock_losses[symbol] = loss
+        
+        metrics["single_stock_losses"] = single_stock_losses
+        metrics["max_single_loss"] = min(single_stock_losses.values())
+        metrics["portfolio_loss"] = sum(
+            loss * positions[symbol].market_value / total_value
+            for symbol, loss in single_stock_losses.items()
+        )
+        
+        return metrics
+    
+    def calculate_position_risk_metrics(
+        self,
+        positions: Dict[str, Position]
+    ) -> Dict[str, float]:
+        """计算仓位风险指标"""
+        metrics = {}
+        
+        total_value = sum(p.market_value for p in positions.values())
+        
+        single_positions = {
+            symbol: p.market_value / total_value
+            for symbol, p in positions.items()
+        }
+        
+        metrics["single_positions"] = single_positions
+        metrics["max_single_position"] = max(single_positions.values())
+        metrics["total_position"] = sum(single_positions.values())
+        
+        return metrics
+    
+    def calculate_liquidity_risk_metrics(
+        self,
+        market_data: pd.DataFrame
+    ) -> Dict[str, float]:
+        """计算流动性风险指标"""
+        metrics = {}
+        
+        volume_ma = market_data["volume"].rolling(20).mean()
+        current_volume = market_data["volume"].iloc[-1]
+        
+        metrics["volume_ratio"] = current_volume / volume_ma.iloc[-1]
+        
+        turnover = market_data["volume"] / market_data["shares_outstanding"]
+        turnover_ma = turnover.rolling(20).mean()
+        turnover_std = turnover.rolling(20).std()
+        
+        metrics["turnover_zscore"] = (
+            turnover.iloc[-1] - turnover_ma.iloc[-1]
+        ) / turnover_std.iloc[-1]
+        
+        return metrics
+    
+    def calculate_volatility_risk_metrics(
+        self,
+        market_data: pd.DataFrame
+    ) -> Dict[str, float]:
+        """计算波动率风险指标"""
+        metrics = {}
+        
+        returns = market_data["close"].pct_change()
+        volatility = returns.rolling(20).std() * np.sqrt(252 * 240)
+        
+        vol_ma = volatility.mean()
+        vol_std = volatility.std()
+        
+        metrics["volatility"] = volatility.iloc[-1]
+        metrics["vol_zscore"] = (volatility.iloc[-1] - vol_ma) / vol_std
+        
+        returns_df = market_data.pct_change()
+        correlation_matrix = returns_df.rolling(20).corr()
+        
+        metrics["max_correlation"] = correlation_matrix.max().max()
+        
+        return metrics
+```
+
+### 5. 风险报告模板
+
+#### 5.1 日报模板
+
+```markdown
+# 风险控制日报
+
+## 1. 风险概况
+- **日期**: {date}
+- **整体风险等级**: {overall_risk_level}
+- **风险评分**: {risk_score}
+
+## 2. 风险指标
+| 指标 | 当前值 | 阈值 | 状态 |
+|------|--------|------|------|
+| 组合亏损 | {portfolio_loss:.2%} | -3% | {status} |
+| 最大回撤 | {max_drawdown:.2%} | -10% | {status} |
+| 总仓位 | {total_position:.2%} | 95% | {status} |
+| 波动率 | {volatility:.2%} | 3σ | {status} |
+
+## 3. 风险事件
+{risk_events}
+
+## 4. 处置记录
+{action_records}
+
+## 5. 建议
+{recommendations}
+```
+
+---
+
 ## 🚀 实施要点
 
 ### 阶段1：实时风险监控器开发（第1周）

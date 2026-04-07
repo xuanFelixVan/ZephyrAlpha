@@ -25,7 +25,7 @@ responsibility:
 >
 > **配套文档**�?
 > - 主文档：[../../INDEX.md](../INDEX.md)
-> - 策略池概述：[../05_STRATEGY_POOL/index.md](../05_STRATEGY_POOL/index.md)
+> - 策略池概述：[../05_STRATEGY_POOL/index.md](03_TRADING_TACTICS\05_STRATEGY_POOL\index.md)
 
 ***
 

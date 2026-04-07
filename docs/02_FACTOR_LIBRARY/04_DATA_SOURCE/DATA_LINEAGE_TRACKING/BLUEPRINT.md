@@ -35,7 +35,7 @@ responsibility: 数据血缘追踪与数据流向分析
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 
 **职责边界**:
@@ -760,7 +760,7 @@ impact = service.get_impact_analysis("stock_prices")
 
 - [OpenLineage官方文档](https://openlineage.io/docs/)
 - [Marquez官方文档](https://marquezproject.github.io/marquez/)
-- [数据源层架构缺失分析](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
+- [数据源层架构缺失分析](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
 
 ---
 
@@ -783,7 +783,7 @@ impact = service.get_impact_analysis("stock_prices")
 #### Layer 0: 系统架构
 ##### 0.001. Data Lineage Tracking
 - **模块ID**: DATA_LINEAGE_TRACKING_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_LINEAGE_TRACKING\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_LINEAGE_TRACKING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据血缘追踪系统
 - **状态**: Blueprint

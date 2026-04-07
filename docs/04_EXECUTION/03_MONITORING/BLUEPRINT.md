@@ -463,7 +463,7 @@ start_http_server(8000)
 #### Layer 0: 系统架构
 ##### 0.BLUEPRINT. Exe
 - **模块ID**: EXE_BLUEPRINT
-- **蓝图文档**: [BLUEPRINT.md](./04_EXECUTION\03_MONITORING\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\03_MONITORING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: äº¤ææ§è¡
 - **状态**: Active

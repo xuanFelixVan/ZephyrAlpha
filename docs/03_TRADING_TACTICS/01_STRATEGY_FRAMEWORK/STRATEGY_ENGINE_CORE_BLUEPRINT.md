@@ -494,7 +494,7 @@ class StrategyEngine:
 - â?**å·¥å·åå°è£?*ï¼ç­ç¥å¼æå°è£ä¸ºå·¥å·ï¼éè¿LangChainè°ç¨
 
 **å·¥å·æ¥å£è§è**ï¼?
-è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å·æ¥å£è§è](../../module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
+è¯¦ç»æ¥å£å®ä¹åè§ï¼[Layer 11å·¥å·æ¥å£è§è](module_designs\layer_11\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
 
 **æ¯æçæä½?*ï¼?
 | æä½ | è¯´æ | åæ° | è¿åå?|
@@ -1186,7 +1186,7 @@ prometheus_metrics:
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Blueprint Core
 - **模块ID**: TACTICS_BLUEPRINT_CORE_001
-- **蓝图文档**: [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ç­ç¥å¼ææ ¸å¿æ¨¡åææ¯è®¾è®?compliance_level: ä¸ä¸æ å
 - **状态**: Active

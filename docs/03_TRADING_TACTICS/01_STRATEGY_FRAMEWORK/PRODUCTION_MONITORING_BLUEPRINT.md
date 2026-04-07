@@ -35,7 +35,7 @@ implementation_status: è®¾è®¡é¶æ®µ
 
 > æ¸é£éåäº¤æç³»ç» v5.3 - çäº§ç¯å¢ç­ç¥çæ§ç³»ç»è¯¦ç»ææ¯è®¾è®?> **ç´¢å¼**: `STRAT.PROD.MON.001`
 > **å¼åå¨æ?*: 160å°æ¶ï¼è¶åä»£ç å¼åï¼
-> **æ ¸å¿å®ä½**: ç­ç¥å·¥åçäº§ç¯å¢æ ¸å¿ç»ä»¶ï¼æ¯æå®æ¶ç­ç¥ç»©æçæ§ãå¼å¸¸æ£æµãé£é©é¢è­¦ãèªéåºè°ä»çæºè½çæ§ç³»ç»?> **åèå¼æº?*: Prometheus + Grafana + ELK Stack + å¼å¸¸æ£æµç®æ³åº + æ¶é´åºåæ°æ®åº?> **è¡¥åææ¡£**: æ¬èå¾æ¯[PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)çåç»­ç»ä»¶ï¼ä¸æ³¨äºçäº§ç¯å¢ç­ç¥çæ§ä¸é£é©ç®¡ç
+> **æ ¸å¿å®ä½**: ç­ç¥å·¥åçäº§ç¯å¢æ ¸å¿ç»ä»¶ï¼æ¯æå®æ¶ç­ç¥ç»©æçæ§ãå¼å¸¸æ£æµãé£é©é¢è­¦ãèªéåºè°ä»çæºè½çæ§ç³»ç»?> **åèå¼æº?*: Prometheus + Grafana + ELK Stack + å¼å¸¸æ£æµç®æ³åº + æ¶é´åºåæ°æ®åº?> **è¡¥åææ¡£**: æ¬èå¾æ¯[PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)çåç»­ç»ä»¶ï¼ä¸æ³¨äºçäº§ç¯å¢ç­ç¥çæ§ä¸é£é©ç®¡ç
 
 ---
 
@@ -995,7 +995,7 @@ class PerformanceEvaluationEngine:
 #### Layer 0: 系统架构
 ##### 0.001. Strat Prod Mon
 - **模块ID**: STRAT_PROD_MON_001
-- **蓝图文档**: [PRODUCTION_MONITORING_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PRODUCTION_MONITORING_BLUEPRINT.md)
+- **蓝图文档**: [PRODUCTION_MONITORING_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PRODUCTION_MONITORING_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: å¨ç³»ç»æ¶æè®¾è®?compliance_level: åå§æ å
 - **状态**: Active

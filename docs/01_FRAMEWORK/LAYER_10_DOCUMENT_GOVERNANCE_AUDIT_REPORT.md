@@ -10,7 +10,9 @@ audit_scope: Layer 10治理与合规层所有文档
 audit_standard: 专业量化机构五大原则 + 三层审计标准
 compliance_level: 顶级专业标准
 responsibility:
-  - 系统框架、架构设计
+  - 文档治理审计
+  - 合规性评估
+  - 问题识别与修复建议
 
 ---
 ---

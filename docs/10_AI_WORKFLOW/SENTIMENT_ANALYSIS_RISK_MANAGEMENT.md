@@ -5,13 +5,13 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-04
 owner: 首席架构师
+layer: Layer 3 (舆情分析层)
 standard_type: 风险管理文档
-applicable_scope: 舆情分析层改进模块风险管
+applicable_scope: 舆情分析层改进模块风险管理
 compliance_level: 专业标准
 parent_document: INDEX.md
 responsibility:
   - AI工作流、智能辅助、自动化流程
-
 ---
 ---
 

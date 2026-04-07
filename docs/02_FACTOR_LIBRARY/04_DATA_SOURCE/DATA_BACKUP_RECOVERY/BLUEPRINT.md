@@ -33,7 +33,7 @@ responsibility: 数据备份恢复策略与灾难恢复
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据版本控制 | [../DATA_VERSION_CONTROL/](../DATA_VERSION_CONTROL/) | 协同模块 | 数据版本管理 |
 | 数据生命周期 | [../DATA_LIFECYCLE_MANAGEMENT/](../DATA_LIFECYCLE_MANAGEMENT/) | 协同模块 | 数据生命周期管理 |
@@ -147,7 +147,7 @@ responsibility: 数据备份恢复策略与灾难恢复
 #### Layer 0: 系统架构
 ##### 0.001. Data Backup Recovery Bp
 - **模块ID**: DATA_BACKUP_RECOVERY_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_BACKUP_RECOVERY\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_BACKUP_RECOVERY\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据备份恢复系统
 - **状态**: Blueprint

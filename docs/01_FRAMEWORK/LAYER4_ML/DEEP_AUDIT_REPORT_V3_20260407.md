@@ -8,7 +8,7 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
   - 执行文档治理审计，生成审计报告和改进建议
-layer: Layer 10 (治理合规层)
+layer: Layer 4 (机器学习层)
 ---
 
 # Layer 4机器学习层深度审计报告 v3

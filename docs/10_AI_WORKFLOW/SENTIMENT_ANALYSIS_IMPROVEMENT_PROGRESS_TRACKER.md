@@ -4,11 +4,14 @@ version: 1.2.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-05
-owner: 首席架构师standard_type: 专业机构级索引applicable_scope: 舆情分析层改进文档索compliance_level: 专业标准
+owner: 首席架构师
+layer: Layer 3 (舆情分析层)
+standard_type: 专业机构级索引
+applicable_scope: 舆情分析层改进文档索引
+compliance_level: 专业标准
 parent_document: INDEX.md
 responsibility:
   - AI工作流、智能辅助、自动化流程
-
 ---
 ---
 

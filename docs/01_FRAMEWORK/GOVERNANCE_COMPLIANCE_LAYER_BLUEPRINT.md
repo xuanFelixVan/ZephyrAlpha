@@ -25,8 +25,9 @@ responsibility_boundary: |
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 负责审计追踪系统的具体实现
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 负责模型风险管理系统的具体实现
 responsibility:
-  - 风险预算集成接口、数据交换
-  responsibility_layer: Layer 11
+  - Layer 10总体架构设计
+  - 治理与合规体系规划
+  - 内部控制框架设计
 ---
 ---
 ---

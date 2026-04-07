@@ -651,7 +651,7 @@ class TradingAPI:
 #### Layer 0: 系统架构
 ##### 0.001. Exec Order Exec Bp
 - **模块ID**: EXEC_ORDER_EXEC_BP_001
-- **蓝图文档**: [ORDER_EXECUTION_BLUEPRINT.md](./04_EXECUTION\01_ORDER_EXECUTION\ORDER_EXECUTION_BLUEPRINT.md)
+- **蓝图文档**: [ORDER_EXECUTION_BLUEPRINT.md](04_EXECUTION\01_ORDER_EXECUTION\ORDER_EXECUTION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

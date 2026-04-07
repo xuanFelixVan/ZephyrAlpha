@@ -42,7 +42,7 @@ duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒ�
 > **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒﺛﮔ۰?
 > **ﮒﮒ **: 36ﻛﺕ۹ﻝﺁﻟﻟﺟﻛﭦﮒ۳ﮔﺅﺙﮒﻛﭦﭦﮔ ﮔﺏﻝﭨﺑﮔ۳
 > **ﻝﺑ۱ﮒﺙ**: `ARC_001`
-> **ﮒﺛﮔ۰۲ﮒﺁﮔ؛**: [99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md](../99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md)
+> **ﮒﺛﮔ۰۲ﮒﺁﮔ؛**: [99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md](99_ARCHIVE\36_DECISION_FRAMEWORK_ARCHIVED.md)
 
 
 ## ﮒﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟ?

@@ -120,7 +120,7 @@ implementation_status: 进行中
 | 版本追踪 | |
 | 血缘追踪 | |
 | 相关性矩阵 | |
-| THS_BD完整清单 | [financial_statements/ths_bd_complete_indicator_list.md](./financial_statements/ths_bd_complete_indicator_list.md) |
+| THS_BD完整清单 | [financial_statements/ths_bd_complete_indicator_list.md](financial_statements/ths_bd_complete_indicator_list.md) |
 
 ---
 

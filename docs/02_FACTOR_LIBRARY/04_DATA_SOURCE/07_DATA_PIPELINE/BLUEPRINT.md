@@ -637,7 +637,7 @@ retention:
 #### Layer 0: 系统架构
 ##### 0.001. Data Pipeline Blueprint
 - **模块ID**: DATA_PIPELINE_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\07_DATA_PIPELINE\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\07_DATA_PIPELINE\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据流水线架构
 - **状态**: Active

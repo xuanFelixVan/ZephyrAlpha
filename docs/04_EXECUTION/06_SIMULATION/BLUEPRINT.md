@@ -570,7 +570,7 @@ engine = TradingEngine(
 #### Layer 0: 系统架构
 ##### 0.001. Exec Simulation Bp
 - **模块ID**: EXEC_SIMULATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./04_EXECUTION\06_SIMULATION\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\06_SIMULATION\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

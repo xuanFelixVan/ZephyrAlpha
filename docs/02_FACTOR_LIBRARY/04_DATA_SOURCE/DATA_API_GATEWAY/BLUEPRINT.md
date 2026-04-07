@@ -34,7 +34,7 @@ dependencies:
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
+| 差距分析V2 | [./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md](DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据权限管理 | [../DATA_PERMISSION_MANAGEMENT/](../DATA_PERMISSION_MANAGEMENT/) | 协同模块 | 数据权限控制 |
 | 数据安全隐私 | [../DATA_SECURITY_PRIVACY/](../DATA_SECURITY_PRIVACY/) | 协同模块 | 数据安全保护 |
@@ -148,7 +148,7 @@ dependencies:
 #### Layer 0: 系统架构
 ##### 0.001. Data Api Gateway Bp
 - **模块ID**: DATA_API_GATEWAY_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_API_GATEWAY\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_API_GATEWAY\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据API网关
 - **状态**: Blueprint

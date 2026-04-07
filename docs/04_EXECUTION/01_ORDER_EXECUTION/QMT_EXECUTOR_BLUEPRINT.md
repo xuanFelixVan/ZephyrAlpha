@@ -488,7 +488,7 @@ class QMTConfig:
 #### Layer 0: 系统架构
 ##### 0.001. Qmt Executor Blueprint
 - **模块ID**: QMT_EXECUTOR_BLUEPRINT_001
-- **蓝图文档**: [QMT_EXECUTOR_BLUEPRINT.md](./04_EXECUTION\01_ORDER_EXECUTION\QMT_EXECUTOR_BLUEPRINT.md)
+- **蓝图文档**: [QMT_EXECUTOR_BLUEPRINT.md](04_EXECUTION\01_ORDER_EXECUTION\QMT_EXECUTOR_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: Layer 5 ç­ç¥æ§è¡å±?compliance_level: ä¸ä¸æ å
 - **状态**: Active

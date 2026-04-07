@@ -70,7 +70,7 @@ related_documents:
 **上游文档**: [实时风险监控仪表板](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 框架层架构定�?
 
 **下游文档**:
-- [风控规则引擎](../../04_EXECUTION/05_RISK_ENGINE/README.md) - 执行层实�?
+- [风控规则引擎](04_EXECUTION\05_RISK_ENGINE\README.md) - 执行层实�?
 - [风险报告生成器](./RISK_REPORT.md) - 报告生成
 
 ---
@@ -653,7 +653,7 @@ event_bus.subscribe('risk.action.*', self._handle_risk_action)
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Risk Rules Bp
 - **模块ID**: TACTICS_RISK_RULES_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./03_TRADING_TACTICS\09_RISK_RULES\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](03_TRADING_TACTICS\09_RISK_RULES\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

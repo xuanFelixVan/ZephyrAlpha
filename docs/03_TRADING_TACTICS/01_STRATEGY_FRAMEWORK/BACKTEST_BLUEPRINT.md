@@ -583,7 +583,7 @@ class BacktestAPI:
 #### Layer 0: 系统架构
 ##### 0.001. Tactics Backtest Bp
 - **模块ID**: TACTICS_BACKTEST_BP_001
-- **蓝图文档**: [BACKTEST_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\BACKTEST_BLUEPRINT.md)
+- **蓝图文档**: [BACKTEST_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\BACKTEST_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

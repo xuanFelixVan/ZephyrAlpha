@@ -41,7 +41,7 @@ implementation_status: 进行�?---
 >
 > **配套文档**�?
 > - 主文档：
-> - 策略池索引：[index.md](../../05_STRATEGY_POOL/index.md)
+> - 策略池索引：[index.md](03_TRADING_TACTICS\05_STRATEGY_POOL\index.md)
 
 ***
 

@@ -6,9 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
-  - 交易执行
-  - 机器学习
+  - 审计追踪系统架构
+  - 事件溯源机制
+  - 不可篡改审计日志
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 审计追踪系统

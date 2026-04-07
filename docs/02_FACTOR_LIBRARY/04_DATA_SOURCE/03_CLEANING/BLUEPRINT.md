@@ -608,7 +608,7 @@ class CleaningReport:
 #### Layer 0: 系统架构
 ##### 0.001. Data Cleaning Blueprint
 - **模块ID**: DATA_CLEANING_BLUEPRINT_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\03_CLEANING\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\03_CLEANING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据清洗引擎
 - **状态**: Active

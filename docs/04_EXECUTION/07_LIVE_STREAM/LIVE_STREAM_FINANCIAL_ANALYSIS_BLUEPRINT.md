@@ -2313,7 +2313,7 @@ async def save_to_database(factors: Dict):
 #### Layer 0: 系统架构
 ##### 0.001. Live Stream Financial Analysis
 - **模块ID**: LIVE_STREAM_FINANCIAL_ANALYSIS_001
-- **蓝图文档**: [LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md](./04_EXECUTION\07_LIVE_STREAM\LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)
+- **蓝图文档**: [LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md](04_EXECUTION\07_LIVE_STREAM\LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: å¤ä¸»æ­ç´æ­åå®¹åæä¸å å­çæ
 - **状态**: Active

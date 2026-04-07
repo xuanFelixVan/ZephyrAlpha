@@ -634,7 +634,7 @@ class RedpandaHealthCheck:
 #### Layer 0: 系统架构
 ##### 0.001. Data Realtime Streaming Bp
 - **模块ID**: DATA_REALTIME_STREAMING_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\REALTIME_DATA_STREAMING\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\REALTIME_DATA_STREAMING\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 实时数据流平台
 - **状态**: Blueprint

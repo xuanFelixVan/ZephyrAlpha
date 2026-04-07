@@ -1,0 +1,117 @@
+{
+  "audit_info": {
+    "audit_time": "2026-04-07 12:57:04",
+    "audit_standard": "专业量化机构五大原则 + 四层审计标准v4",
+    "audit_scope": "Layer 4机器学习层所有文档"
+  },
+  "L1_file_system": {
+    "directory_structure": [],
+    "file_naming": [],
+    "path_references": []
+  },
+  "L2_document_content": {
+    "responsibility_driven": [],
+    "index_completeness": [],
+    "version_isolation": []
+  },
+  "L3_professional_standards": {
+    "five_principles": [],
+    "document_classification": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+        "issue": "分类错误",
+        "description": "Layer归属错误: Layer 10 (治理合规层)"
+      }
+    ],
+    "numbering_system": [],
+    "document_quality": []
+  },
+  "deep_check": {
+    "duplicate_documents": [],
+    "unclear_responsibility": [],
+    "responsibility_overlap": [
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "定义清风量化系统的整体架构设计、模块组织和层级关系，确保系统架构清晰可维护",
+        "documents": [
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "执行Layer 4机器学习层深度审计（20260407），生成审计报告和问题清单",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "执行Layer 4机器学习层第2轮深度审计，生成详细审计报告和改进建议",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V2_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_DEEP_GOVERNANCE_AUDIT_V2_20260406.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "执行Layer 4机器学习层第5轮深度审计，生成详细审计报告和改进建议",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V5_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_COMPREHENSIVE_AUDIT_V5_20260404.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "提供Layer 4机器学习层的文档导航和索引服务，帮助用户快速定位相关文档",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\INDEX.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\MASTER_INDEX.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "执行Layer 4机器学习层第1轮深度审计，生成详细审计报告和改进建议",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "提供Layer 4机器学习层的概述说明、快速开始指南和模块介绍",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\README.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\README_1.md"
+        ]
+      },
+      {
+        "issue": "职责重叠",
+        "description": "发现2个文档具有相同职责",
+        "responsibility": "检查Layer 4机器学习层文档YAML元数据完整性，生成检查报告和修复建议",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_COMPLETENESS_CHECK_REPORT.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_FIX_PROGRESS_REPORT_20260406.md"
+        ]
+      }
+    ],
+    "content_similarity": []
+  },
+  "summary": {
+    "total_docs": 146,
+    "total_issues": 9,
+    "L1_issues": 0,
+    "L2_issues": 0,
+    "L3_issues": 1,
+    "deep_issues": 8,
+    "compliance_rate": 93.84
+  }
+}

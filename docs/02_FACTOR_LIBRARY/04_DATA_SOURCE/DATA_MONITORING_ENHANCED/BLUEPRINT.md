@@ -35,7 +35,7 @@ responsibility: 数据监控增强功能与可视化
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据质量控制 | [../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md](../QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md) | 协同模块 | 数据质量规则定义 |
 | 数据可观测性 | [../DATA_OBSERVABILITY/](../DATA_OBSERVABILITY/) | 协同模块 | 数据可观测性 |
@@ -1105,7 +1105,7 @@ alerter.send_alert("data_quality_issue", "HIGH", "数据质量问题", result)
 ## 🔗 相关文档
 
 - [Great Expectations官方文档](https://docs.greatexpectations.io/)
-- [数据源层架构缺失分析](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
+- [数据源层架构缺失分析](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md)
 
 ---
 
@@ -1128,7 +1128,7 @@ alerter.send_alert("data_quality_issue", "HIGH", "数据质量问题", result)
 #### Layer 0: 系统架构
 ##### 0.001. Data Monitoring Enhanced
 - **模块ID**: DATA_MONITORING_ENHANCED_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_MONITORING_ENHANCED\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据监控系统（增强）
 - **状态**: Blueprint

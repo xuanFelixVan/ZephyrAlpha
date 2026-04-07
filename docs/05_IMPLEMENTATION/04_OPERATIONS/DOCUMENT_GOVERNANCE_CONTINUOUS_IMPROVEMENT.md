@@ -32,7 +32,7 @@ compliance_level: 专业标准
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 审计标准v5.1 | [../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md) | 审计标准 | 审计质量标准 |
+| 审计标准v5.1 | [../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md) | 审计标准 | 审计质量标准 |
 | 文档治理审计检查清单 | [../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) | 审计工具 | 审计检查清单 |
 
 **职责边界**:
@@ -275,7 +275,7 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
 
 - [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- [审计质量标准v5.1](09_AUDIT\STANDARDS\AUDIT_STANDARDS_v5.1.md)
 - [数据源层文档命名规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DOCUMENT_NAMING_STANDARD.md)
 
 ---

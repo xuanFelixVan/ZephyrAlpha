@@ -132,7 +132,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 |---------|------|--------|
 | [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?| ﻗ­ﻗ­ﻗ­ﻗ­ |
-| [ﮔﺍﮔ؟ﮔﺕﮔﺑ](./04_INFRASTRUCTURE/DATA_CLEANING.md) | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗ­ﻗ­ﻗ­ﻗ­ |
+| [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md) | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 | [ﮒ­ﮒ۷ﮒﮒﺎ](./04_INFRASTRUCTURE/STORAGE_TIER.md) | ﮒ­ﮒ۷ﮒﮒﺎ | ﻗ­ﻗ­ﻗ­ﻗ­ |
 
 ### ﻟﺟﻝﭨﺑ
@@ -159,7 +159,7 @@ implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 ### ﻠ۷ﻝﺛﺎﮒﺏﻠ؟?
 - **ﻠ۷ﻝﺛﺎ**: [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
 - **ﮔﭖﮔﺍﺑ?*: [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
-- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](./04_INFRASTRUCTURE/DATA_CLEANING.md)
+- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: [ﮔﺍﮔ؟ﮔﺕﮔﺑ](04_INFRASTRUCTURE/DATA_CLEANING.md)
 
 ### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
 - **ﻟﺟﻝﭨﺑ**: [ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ](./07_OPERATIONS/README.md)

@@ -521,7 +521,7 @@ API请求 → 契约验证 → 业务处理 → 响应验证
 #### Layer 0: 系统架构
 ##### 0.001. Data Contract Bp
 - **模块ID**: DATA_CONTRACT_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_CONTRACT\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_CONTRACT\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据契约管理系统
 - **状态**: Blueprint

@@ -345,7 +345,7 @@ responsibility:
 
 ### 附录B：索引文档示例
 
-**示例**: [BLUEPRINT_INDEX.md](../11_STRATEGIC_DECISION/BLUEPRINT_INDEX.md)
+**示例**: [BLUEPRINT_INDEX.md](05_IMPLEMENTATION\11_STRATEGIC_DECISION\BLUEPRINT_INDEX.md)
 
 ### 附录C：参考标准文档
 

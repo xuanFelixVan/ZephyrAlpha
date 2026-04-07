@@ -44,7 +44,7 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [L4 Feature Eng](L4_FEATURE_ENG.md) - `ARCHIVE_L4_FEATURE_ENG_001`
+- [L4 Feature Eng](../L4_FEATURE_ENG.md) - `ARCHIVE_L4_FEATURE_ENG_001`
 
 ---
 

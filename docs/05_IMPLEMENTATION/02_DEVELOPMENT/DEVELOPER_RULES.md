@@ -158,4 +158,4 @@ implementation_status: 进行?---
 - [SITEMAP.md](../../02_FACTOR_LIBRARY/SITEMAP.md) - 文档地图
 - [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - 快速参?
 
-**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](../07_OPERATIONS/audit_state/FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行?
+**审计记录**: 本次拆分基于 [FULL_SYSTEM_AUDIT_REPORT.md](05_IMPLEMENTATION\07_OPERATIONS\audit_state\FULL_SYSTEM_AUDIT_REPORT.md) 审计发现执行?

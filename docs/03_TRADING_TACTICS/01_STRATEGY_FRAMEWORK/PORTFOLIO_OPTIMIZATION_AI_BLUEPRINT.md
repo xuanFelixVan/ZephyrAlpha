@@ -888,7 +888,7 @@ class PortfolioOptimizationTextInterface:
 #### Layer 0: 系统架构
 ##### 0.001. Portfolio Optimization Ai
 - **模块ID**: PORTFOLIO_OPTIMIZATION_AI_001
-- **蓝图文档**: [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md)
+- **蓝图文档**: [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ç»åä¼åç®¡ç
 - **状态**: Active

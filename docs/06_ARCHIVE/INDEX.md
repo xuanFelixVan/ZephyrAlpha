@@ -49,10 +49,8 @@ implementation_status: 已完�?
 
 ### duplicate_documents - 重复文档归档
 
-| 子目�?| 说明 |
+| 子目录 | 说明 |
 |--------|------|
-| [20260403_blueprint_spec_audit/](duplicate_documents/20260403_blueprint_spec_audit/) | 蓝图规格重复文档 |
-| [20260403_layer7_audit/](duplicate_documents/20260403_layer7_audit/) | Layer 7审计重复文档 |
 | [20260404_layer7_audit_reports/](duplicate_documents/20260404_layer7_audit_reports/) | Layer 7审计报告重复 |
 
 ### architecture_v4 - v4架构归档

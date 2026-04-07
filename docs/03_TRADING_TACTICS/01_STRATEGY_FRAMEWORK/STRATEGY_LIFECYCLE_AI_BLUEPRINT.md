@@ -827,7 +827,7 @@ AIå»ºè®®ï¼?
 #### Layer 0: 系统架构
 ##### 0.001. Strategy Lifecycle Ai
 - **模块ID**: STRATEGY_LIFECYCLE_AI_001
-- **蓝图文档**: [STRATEGY_LIFECYCLE_AI_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_LIFECYCLE_AI_BLUEPRINT.md)
+- **蓝图文档**: [STRATEGY_LIFECYCLE_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_LIFECYCLE_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ç­ç¥çå½å¨æç®¡ç
 - **状态**: Active

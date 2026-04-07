@@ -550,7 +550,7 @@ class FactorMonitor:
 #### Layer 0: 系统架构
 ##### 0.001. Factor Blueprint
 - **模块ID**: FACTOR_BLUEPRINT_001
-- **蓝图文档**: [FACTOR_VALIDATION_BLUEPRINT.md](./02_FACTOR_LIBRARY\05_BACKTEST\FACTOR_VALIDATION_BLUEPRINT.md)
+- **蓝图文档**: [FACTOR_VALIDATION_BLUEPRINT.md](02_FACTOR_LIBRARY\05_BACKTEST\FACTOR_VALIDATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 全系统架构设�?
 - **状态**: Active

@@ -849,7 +849,7 @@ AIå»ºè®®ï¼?
 #### Layer 0: 系统架构
 ##### 0.001. Risk Control Ai
 - **模块ID**: RISK_CONTROL_AI_001
-- **蓝图文档**: [RISK_CONTROL_AI_BLUEPRINT.md](./03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\RISK_CONTROL_AI_BLUEPRINT.md)
+- **蓝图文档**: [RISK_CONTROL_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\RISK_CONTROL_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: ä¸»å¨é£é©æ§å¶
 - **状态**: Active

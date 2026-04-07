@@ -235,7 +235,7 @@ if price_change > 10%:  # 单根K线涨�?10%
 | 文档 | 说明 |
 |------|------|
 | [API_Contract.md](API_Contract.md) | 接口规范 |
-| [02_ALPHA_FACTORS/](../02_FACTOR_LIBRARY/02_ALPHA_FACTORS/) | 因子�?|
+| [02_ALPHA_FACTORS/](02_FACTOR_LIBRARY\02_ALPHA_FACTORS) | 因子�?|
 | [05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/) | 回测报告 |
 
 

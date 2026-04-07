@@ -35,7 +35,7 @@ responsibility: 数据同步复制策略与一致性保证
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](../DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
+| 差距分析 | [../DATA_SOURCE_LAYER_GAP_ANALYSIS.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SOURCE_LAYER_GAP_ANALYSIS.md) | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 实时数据流 | [../REALTIME_DATA_STREAMING/](../REALTIME_DATA_STREAMING/) | 协同模块 | 实时数据流平台 |
 | 数据备份恢复 | [../DATA_BACKUP_RECOVERY/](../DATA_BACKUP_RECOVERY/) | 协同模块 | 数据备份方案 |
@@ -359,7 +359,7 @@ monitoring:
 #### Layer 0: 系统架构
 ##### 0.001. Data Sync Replication Bp
 - **模块ID**: DATA_SYNC_REPLICATION_BP_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SYNC_REPLICATION\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_SYNC_REPLICATION\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据同步复制系统
 - **状态**: Blueprint

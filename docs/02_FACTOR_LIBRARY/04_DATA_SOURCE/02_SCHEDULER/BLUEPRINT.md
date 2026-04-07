@@ -556,7 +556,7 @@ task_defaults:
 #### Layer 0: 系统架构
 ##### 0.001. Data Scheduler
 - **模块ID**: DATA_SCHEDULER_001
-- **蓝图文档**: [BLUEPRINT.md](./02_FACTOR_LIBRARY\04_DATA_SOURCE\02_SCHEDULER\BLUEPRINT.md)
+- **蓝图文档**: [BLUEPRINT.md](02_FACTOR_LIBRARY\04_DATA_SOURCE\02_SCHEDULER\BLUEPRINT.md)
 - **技术规格书**: 待创建
 - **职责**: 数据调度系统
 - **状态**: Active
