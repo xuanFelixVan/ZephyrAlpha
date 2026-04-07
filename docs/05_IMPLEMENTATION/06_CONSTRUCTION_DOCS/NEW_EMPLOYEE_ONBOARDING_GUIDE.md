@@ -49,9 +49,9 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﺏﭨﻝﭨﮔﭘﮔﮔﭨﻟ۶** | [docs/01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕ­ﻟ۶ﻝ­ﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
@@ -61,7 +61,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
 - ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
@@ -103,7 +103,7 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 | **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
 **ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
@@ -334,7 +334,7 @@ pip install -r requirements.txt
 ### **Q1: ﮒ۵ﻛﺛﮔﺝﮒﺍﻝﺕﮒﺏﮔﮔ۰۲?*
 
 **A**: ﻛﺛﺟﻝ۷ﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?- ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﮔﭨﻝﺑ۱? [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md](API_README.md)
-- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../../INDEX.md)
+- ﻝﺏﭨﻝﭨﮔﭨﻝﺑ۱? [docs/INDEX.md](../INDEX.md)
 
 ### **Q2: ﮒ۵ﻛﺛﮒﮒﭨﭦﮔﺍﮔ۷۰ﮒﺅﺙ**
 

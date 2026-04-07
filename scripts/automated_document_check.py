@@ -165,8 +165,7 @@ def main():
     
     total = len(naming_issues) + len(resp_issues) + len(index_issues) + len(dead_links) + len(yaml_issues)
     
-    print("
-" + "=" * 80)
+    print("\n" + "=" * 80)
     print("检查完成")
     print("=" * 80)
     print(f"总问题数: {total}")

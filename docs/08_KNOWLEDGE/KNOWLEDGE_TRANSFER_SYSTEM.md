@@ -392,8 +392,8 @@ tags: ["ﻝ۴ﻟﺁﻛﺙ ﮔﺟ", "ﻝ۴ﻟﺁﻝ؟۰ﻝ", "ﻝ�
 ---
 
 ## 7. ﮒﻟﮔﮔ۰?
-- [ﮔﻟﭖﮒﺎﮒ­۵](../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
-- [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
+- [ﮔﻟﭖﮒﺎﮒ­۵](../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
+- [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
 - [ﻝ۴ﻟﺁﮒﭦﮔ۰ﻛﺝﻝ ﻝ۸ﭘ](./KNOWLEDGE_BASE_CASE_STUDIES.md)
 
 ---

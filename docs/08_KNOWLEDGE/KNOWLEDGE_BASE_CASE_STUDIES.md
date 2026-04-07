@@ -582,8 +582,8 @@ class FactorCache:
 ---
 
 ## 7. ﮒﻟﮔﮔ۰?
-- [ﮔﻟﭖﮒﺎﮒ­۵](../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
-- [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
+- [ﮔﻟﭖﮒﺎﮒ­۵](../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md)
+- [ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ](../01_FRAMEWORK/RESEARCH_METHODOLOGY.md)
 - [ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﮒﭦ](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
 
 ---

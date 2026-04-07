@@ -71,7 +71,7 @@ tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗И
 ### 3.1 цЮ╢цЮДшо╛шобцФ╣ш┐Ыя╝?5хИ?тЖ?90хИЖя╝Й
 
 #### цИРцЮЬ1: хИЫх╗║ч│╗ч╗ЯцЮ╢цЮДхЕицЩпхЫ?
-**цЦЗцбг**: [SYSTEM_ARCHITECTURE_DIAGRAM.md](../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md)
+**цЦЗцбг**: [SYSTEM_ARCHITECTURE_DIAGRAM.md](../01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md)
 
 **ца╕х┐ГхЖЕхо╣**:
 - цХ┤ф╜УцЮ╢цЮДхЫ╛я╝ЪLayer 0-11хоМцХ┤хИЖх▒ВцЮ╢цЮД
@@ -84,7 +84,7 @@ tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗И
 
 #### цИРцЮЬ2: хИЫх╗║цХ░цНоц╡БхЫ╛ф╕ОцибхЭЧф║дф║ТхЫ╛
 
-**цЦЗцбг**: [DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md](../../01_FRAMEWORK/DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
+**цЦЗцбг**: [DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md](../01_FRAMEWORK/DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
 
 **ца╕х┐ГхЖЕхо╣**:
 - ч│╗ч╗Яф╕╗цХ░цНоц╡БхЫ╛я╝ЪхоМцХ┤чЪДцХ░цНоц╡Бш╜мш┐Зчи?- хЫахнРшобчоЧцХ░цНоц╡БхЫ╛я╝ЪхЫахнРшобчоЧц╡Бчи?- чнЦчХецЙзшбМцХ░цНоц╡БхЫ╛я╝ЪчнЦчХецЙзшбМц╡Бчи?- ца╕х┐Гх╝ХцУОф║дф║ТхЫ╛я╝Ъх╝ХцУОщЧ┤ф║дф║ТхЕ│ч│?- цЧ╢х║ПхЫ╛я╝Ъф┐бхП╖чФЯцИРхТМшовхНХцЙзшбМцЧ╢х║?
@@ -109,7 +109,7 @@ tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗И
 ### 3.3 чЯешпЖф╝ацЙ┐цФ╣ш┐Ыя╝?0хИ?тЖ?95хИЖя╝Й
 
 #### цИРцЮЬ: х╗║члЛхоМцХ┤чЪДчЯешпЖф╝ацЙ┐ф╜Уч│?
-**цЦЗцбг**: [KNOWLEDGE_TRANSFER_SYSTEM.md](../../08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md)
+**цЦЗцбг**: [KNOWLEDGE_TRANSFER_SYSTEM.md](../08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md)
 
 **ца╕х┐ГхЖЕхо╣**:
 - чЯешпЖх║Уф╜Уч│╗я╝ЪхЫахнРх║УуАБчнЦчХех║УуАБцбИф╛Лх║УуАБцЬАф╜│хоЮш╖╡х║УуАБч╗ПщкМцХЩшонх║УуАБх╖ехЕ╖х║У
@@ -275,12 +275,12 @@ tags: ["хНУш╢КцаЗхЗЖ", "цФ╣ш┐ЫцКехСК", "цЬАч╗И
 
 ### 8.2 цЮ╢цЮДшо╛шобцЦЗцбг
 
-- [ч│╗ч╗ЯцЮ╢цЮДхЕицЩпхЫ╛](../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md)
-- [цХ░цНоц╡БхЫ╛ф╕ОцибхЭЧф║дф║ТхЫ╛](../../01_FRAMEWORK/DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
+- [ч│╗ч╗ЯцЮ╢цЮДхЕицЩпхЫ╛](../01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md)
+- [цХ░цНоц╡БхЫ╛ф╕ОцибхЭЧф║дф║ТхЫ╛](../01_FRAMEWORK/DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
 
 ### 8.3 чЯешпЖф╝ацЙ┐цЦЗцбг
 
-- [чЯешпЖф╝ацЙ┐ф╜Уч│╗](../../08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md)
+- [чЯешпЖф╝ацЙ┐ф╜Уч│╗](../08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md)
 
 ### 8.4 хРИшзДхобшобцЦЗцбг
 
