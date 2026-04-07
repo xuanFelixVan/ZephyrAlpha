@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_LIFECYCLE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -367,45 +367,6 @@ GET /api/v1/lifecycle/tiers/statistics
 }
 ```
 
----
-
-## äºãé¨ç½²æ¶æ?
-
-```yaml
-version: '3.8'
-services:
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=password
-    volumes:
-      - minio-data:/data
-  
-  airflow:
-    image: apache/airflow:2.7.0
-    ports:
-      - "8080:8080"
-    environment:
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql://user:pass@postgres:5432/airflow
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=airflow
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-
-volumes:
-  minio-data:
-```
-
----
 
 ## å­ãçæ§ææ ?
 

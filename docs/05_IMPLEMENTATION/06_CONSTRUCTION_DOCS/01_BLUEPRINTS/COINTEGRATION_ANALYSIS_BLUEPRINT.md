@@ -1,4 +1,4 @@
----
+﻿---
 module_id: COINTEGRATION_ANALYSIS_001
 version: 1.0.0
 status: Active
@@ -182,42 +182,6 @@ class CointegrationAnalyzer:
         return sorted(cointegrated_pairs, key=lambda x: x['pvalue'])
 ```
 
----
-
-## 3. æ¥å£å®ä¹
-
-```python
-class CointegrationAPI:
-    """åæ´åæAPI"""
-    
-    @endpoint("/api/v1/cointegration/test_pair")
-    async def test_pair(
-        self,
-        asset1: str,
-        asset2: str,
-        start_date: str,
-        end_date: str
-    ) -> CointegrationResult:
-        """æ£éªèµäº§å¯¹åæ´å³ç³»"""
-        
-    @endpoint("/api/v1/cointegration/scan")
-    async def scan_pairs(
-        self,
-        assets: List[str],
-        pvalue_threshold: float = 0.05
-    ) -> List[CointegratedPair]:
-        """æ«æåæ´å¯?""
-        
-    @endpoint("/api/v1/cointegration/johansen")
-    async def johansen_test(
-        self,
-        assets: List[str],
-        det_order: int = 0
-    ) -> JohansenResult:
-        """Johansenå¤åéåæ´æ£éª?""
-```
-
----
 
 ## ð ç¸å³ææ¡£
 

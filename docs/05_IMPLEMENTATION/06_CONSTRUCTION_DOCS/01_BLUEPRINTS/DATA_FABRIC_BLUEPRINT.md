@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_FABRIC_001
 version: 1.0.0
 status: Active
@@ -336,47 +336,6 @@ async def set_data(data_type: str, key: str, data: Dict[str, Any]):
     return {"status": "success"}
 ```
 
----
-
-## åãæ¥å£è®¾è®?
-
-### 4.1 RESTful API
-
-#### 4.1.1 è·åæ°æ®
-
-```http
-GET /api/v1/data/{data_type}/{key}
-```
-
-**ååºç¤ºä¾**:
-```json
-{
-  "data_type": "stock_prices",
-  "key": "AAPL",
-  "data": {
-    "symbol": "AAPL",
-    "price": 150.0,
-    "timestamp": "2026-04-06T10:00:00Z"
-  }
-}
-```
-
-#### 4.1.2 è®¾ç½®æ°æ®
-
-```http
-POST /api/v1/data/{data_type}/{key}
-```
-
-**è¯·æ±ç¤ºä¾**:
-```json
-{
-  "symbol": "AAPL",
-  "price": 150.0,
-  "timestamp": "2026-04-06T10:00:00Z"
-}
-```
-
----
 
 ## äºãé¨ç½²æ¶æ?
 

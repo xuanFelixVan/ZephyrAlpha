@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -402,37 +402,6 @@ GET /api/v1/sources/{source_id}/health
 }
 ```
 
----
-
-## äºãé¨ç½²æ¶æ?
-
-```yaml
-version: '3.8'
-services:
-  airflow:
-    image: apache/airflow:2.7.0
-    ports:
-      - "8080:8080"
-    environment:
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql://user:pass@postgres:5432/airflow
-  
-  vault:
-    image: hashicorp/vault:latest
-    ports:
-      - "8200:8200"
-    environment:
-      - VAULT_DEV_ROOT_TOKEN_ID=root
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=airflow
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-```
-
----
 
 ## å­ãçæ§ææ ?
 

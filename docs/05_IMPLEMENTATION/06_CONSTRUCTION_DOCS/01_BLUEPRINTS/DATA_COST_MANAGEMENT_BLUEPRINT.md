@@ -1,4 +1,4 @@
----
+﻿---
 module_id: DATA_COST_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -398,43 +398,6 @@ GET /api/v1/cost/recommendations
 }
 ```
 
----
-
-## äºãé¨ç½²æ¶æ?
-
-```yaml
-version: '3.8'
-services:
-  kubecost:
-    image: kubecost/cost-analyzer:latest
-    ports:
-      - "9090:9090"
-    environment:
-      - KUBECOST_TOKEN=your-token
-  
-  openmeter:
-    image: openmeter/openmeter:latest
-    ports:
-      - "8080:8080"
-    environment:
-      - DATABASE_URL=postgresql://user:pass@postgres:5432/openmeter
-  
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=openmeter
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-```
-
----
 
 ## å­ãçæ§ææ ?
 
