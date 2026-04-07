@@ -22,10 +22,6 @@ responsibility_boundary: |
   灾备体系请参考：DISASTER_RECOVERY_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-responsibility:
-  - 系统框架、架构设计
-
----
 ---
 
 # 系统健康检查界面蓝图

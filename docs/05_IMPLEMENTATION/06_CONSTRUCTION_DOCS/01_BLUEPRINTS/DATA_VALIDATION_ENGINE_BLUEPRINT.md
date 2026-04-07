@@ -518,3 +518,357 @@ class ConsistencyValidator:
         
         timestamps1 = df1.select(timestamp_column).distinct().collect()
         timestamps2 = df2.select(timestamp_column).distinct().collect()
+        
+        set1 = set([row[timestamp_column] for row in timestamps1])
+        set2 = set([row[timestamp_column] for row in timestamps2])
+        
+        missing_in_1 = set2 - set1
+        missing_in_2 = set1 - set2
+        
+        if missing_in_1:
+            errors.append({
+                'source': 'df1',
+                'error': f"Missing {len(missing_in_1)} timestamps",
+                'severity': 'warning'
+            })
+        
+        if missing_in_2:
+            errors.append({
+                'source': 'df2',
+                'error': f"Missing {len(missing_in_2)} timestamps",
+                'severity': 'warning'
+            })
+        
+        return {
+            'success': len(errors) == 0,
+            'errors': errors,
+            'warnings': []
+        }
+```
+
+---
+
+## 4. 验证规则配置
+
+### 4.1 业务规则配置
+
+```yaml
+validation_rules:
+  price_range:
+    AAPL:
+      min: 100
+      max: 300
+    GOOGL:
+      min: 100
+      max: 200
+    MSFT:
+      min: 200
+      max: 500
+  
+  volume_range:
+    min: 0
+    max: 1000000000
+  
+  time_continuity:
+    allowed_gaps: 5
+    gap_unit: minutes
+  
+  market_state:
+    trading_hours:
+      start: "09:30:00"
+      end: "16:00:00"
+    timezone: "America/New_York"
+```
+
+### 4.2 完整性规则配置
+
+```yaml
+completeness_rules:
+  tick_data:
+    required_columns:
+      - symbol
+      - timestamp
+      - open
+      - high
+      - low
+      - close
+      - volume
+    
+    unique_constraints:
+      - [symbol, timestamp]
+    
+    not_null_columns:
+      - symbol
+      - timestamp
+      - close
+      - volume
+  
+  order_book:
+    required_columns:
+      - symbol
+      - timestamp
+      - bid_price
+      - bid_volume
+      - ask_price
+      - ask_volume
+    
+    unique_constraints:
+      - [symbol, timestamp, level]
+    
+    not_null_columns:
+      - symbol
+      - timestamp
+      - bid_price
+      - ask_price
+```
+
+### 4.3 一致性规则配置
+
+```yaml
+consistency_rules:
+  cross_source:
+    sources:
+      - name: primary
+        type: database
+      - name: backup
+        type: database
+    
+    key_columns:
+      - symbol
+      - timestamp
+    
+    value_columns:
+      - close
+      - volume
+    
+    tolerance: 0.001
+  
+  timestamp_alignment:
+    max_gap: 60
+    gap_unit: seconds
+```
+
+---
+
+## 5. 验证报告生成
+
+### 5.1 报告模板
+
+```python
+from datetime import datetime
+from typing import Dict, List, Any
+
+class ValidationReportGenerator:
+    """验证报告生成器"""
+    
+    def __init__(self, config):
+        self.config = config
+    
+    def generate_report(self, validation_results: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        生成验证报告
+        
+        Args:
+            validation_results: 验证结果
+        
+        Returns:
+            Dict: 验证报告
+        """
+        report = {
+            'report_id': self._generate_report_id(),
+            'timestamp': datetime.now().isoformat(),
+            'summary': self._generate_summary(validation_results),
+            'details': validation_results,
+            'quality_score': self._calculate_quality_score(validation_results),
+            'recommendations': self._generate_recommendations(validation_results)
+        }
+        
+        return report
+    
+    def _generate_summary(self, validation_results):
+        """生成摘要"""
+        total_checks = len(validation_results)
+        passed_checks = sum(1 for r in validation_results.values() if r.get('success', False))
+        
+        return {
+            'total_checks': total_checks,
+            'passed_checks': passed_checks,
+            'failed_checks': total_checks - passed_checks,
+            'pass_rate': passed_checks / total_checks if total_checks > 0 else 0
+        }
+    
+    def _calculate_quality_score(self, validation_results):
+        """计算数据质量评分"""
+        weights = {
+            'business_rules': 0.4,
+            'completeness': 0.3,
+            'consistency': 0.2,
+            'statistics': 0.1
+        }
+        
+        scores = {}
+        for category, result in validation_results.items():
+            if result.get('success', False):
+                scores[category] = 100
+            else:
+                error_count = len(result.get('errors', []))
+                scores[category] = max(0, 100 - error_count * 10)
+        
+        quality_score = sum(
+            scores.get(cat, 0) * weight
+            for cat, weight in weights.items()
+        )
+        
+        return round(quality_score, 2)
+    
+    def _generate_recommendations(self, validation_results):
+        """生成改进建议"""
+        recommendations = []
+        
+        for category, result in validation_results.items():
+            if not result.get('success', False):
+                for error in result.get('errors', []):
+                    recommendations.append({
+                        'category': category,
+                        'issue': error.get('error', 'Unknown error'),
+                        'recommendation': self._get_recommendation(category, error)
+                    })
+        
+        return recommendations
+    
+    def _get_recommendation(self, category, error):
+        """获取改进建议"""
+        recommendations_map = {
+            'business_rules': {
+                'price_range': '检查数据源价格范围配置',
+                'volume_range': '验证成交量数据源可靠性',
+                'time_continuity': '检查数据采集频率配置'
+            },
+            'completeness': {
+                'null_values': '检查数据源完整性',
+                'unique_constraint': '检查数据去重逻辑'
+            },
+            'consistency': {
+                'cross_source': '检查数据源同步机制',
+                'timestamp_alignment': '检查时间戳对齐逻辑'
+            }
+        }
+        
+        return recommendations_map.get(category, {}).get(
+            error.get('type', ''),
+            '检查数据源和处理逻辑'
+        )
+```
+
+---
+
+## 6. 数据质量评分
+
+### 6.1 评分维度
+
+| 维度 | 权重 | 评分标准 |
+|------|------|----------|
+| **业务规则符合度** | 40% | 业务规则验证通过率 |
+| **数据完整性** | 30% | 必填字段完整率 |
+| **数据一致性** | 20% | 跨源一致性比率 |
+| **统计特性** | 10% | 统计验证通过率 |
+
+### 6.2 评分计算
+
+```python
+class DataQualityScorer:
+    """数据质量评分器"""
+    
+    def __init__(self, config):
+        self.config = config
+        self.weights = {
+            'business_rules': 0.4,
+            'completeness': 0.3,
+            'consistency': 0.2,
+            'statistics': 0.1
+        }
+    
+    def calculate_score(self, validation_results):
+        """
+        计算数据质量评分
+        
+        Args:
+            validation_results: 验证结果
+        
+        Returns:
+            Dict: 评分结果
+        """
+        dimension_scores = {}
+        
+        for dimension, weight in self.weights.items():
+            result = validation_results.get(dimension, {})
+            dimension_scores[dimension] = self._calculate_dimension_score(result)
+        
+        overall_score = sum(
+            score * self.weights[dim]
+            for dim, score in dimension_scores.items()
+        )
+        
+        return {
+            'overall_score': round(overall_score, 2),
+            'dimension_scores': dimension_scores,
+            'grade': self._get_grade(overall_score)
+        }
+    
+    def _calculate_dimension_score(self, result):
+        """计算维度评分"""
+        if result.get('success', False):
+            return 100.0
+        
+        error_count = len(result.get('errors', []))
+        warning_count = len(result.get('warnings', []))
+        
+        score = 100 - (error_count * 10 + warning_count * 5)
+        return max(0, score)
+    
+    def _get_grade(self, score):
+        """获取等级"""
+        if score >= 90:
+            return 'A'
+        elif score >= 80:
+            return 'B'
+        elif score >= 70:
+            return 'C'
+        elif score >= 60:
+            return 'D'
+        else:
+            return 'F'
+```
+
+---
+
+## 7. 实施计划
+
+### 7.1 阶段一：核心验证功能（20小时）
+
+**目标**: 实现基础验证能力
+
+**任务**:
+- [ ] 集成Great Expectations（4小时）
+- [ ] 实现业务规则验证器（6小时）
+- [ ] 实现完整性验证器（6小时）
+- [ ] 编写验证规则配置（4小时）
+
+**交付物**:
+- 业务规则验证器
+- 完整性验证器
+- 验证规则配置文件
+
+### 7.2 阶段二：高级验证功能（15小时）
+
+**目标**: 实现高级验证能力
+
+**任务**:
+- [ ] 实现一致性验证器（6小时）
+- [ ] 实现统计验证器（5小时）
+- [ ] 集成Pandera（4小时）
+
+**交付物**:
+- 一致性验证器
+- 统计验证器
+- Pandera

@@ -1,21 +1,4 @@
 ---
-module_id: STREAMLIT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-responsibility:
-  - 提供streamlit backtest interface blueprint的架构设计和实施蓝图
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
----
-
-
-﻿---
 module_id: STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT_001
 version: 1.0.0
 status: Active
