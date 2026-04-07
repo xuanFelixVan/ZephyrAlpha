@@ -1,5 +1,5 @@
 ---
-module_id: README
+module_id: 06_ARCHIVE_README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

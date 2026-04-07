@@ -1,5 +1,5 @@
 ---
-module_id: BLUEPRINT_STANDARD_TEMPLATE
+module_id: 09_AUDIT_TEMPLATES_BLUEPRINT_STANDARD_TEMPLATE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

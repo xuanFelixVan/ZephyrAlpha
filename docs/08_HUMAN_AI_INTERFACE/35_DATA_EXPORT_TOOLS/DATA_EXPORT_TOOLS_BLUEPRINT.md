@@ -1,3 +1,14 @@
+---
+module_id: 08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_DATA_EXPORT_TOOLS_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 数据导出工具蓝图文档
+---
+
 
 
 # 数据导出工具蓝图

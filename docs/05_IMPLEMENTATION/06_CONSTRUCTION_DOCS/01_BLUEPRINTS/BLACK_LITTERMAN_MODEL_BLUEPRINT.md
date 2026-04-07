@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - Black-Litterman模型
   - 观点融合
@@ -15,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
+
 
 
 ## 核心定位

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_P0_ISSUES_REMEDIATION_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - P0зЇІйЧЃйҐШжХіжФєеЃМжИРжК•пњ?文档
+---
+
 ﻿﻿---
 module_id: P0_ISSUES_REMEDIATION_REPORT_001
 
@@ -74,7 +85,7 @@ applicable_scope: Layer 5з≠ЦзХ•жЙІиМеВжЦЗжж≤їпњ?complia
 
 **еЃМжИРжЧґйЧі**: 2026-04-02
 
-**иІДиМГжЦЗж**: [DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+**иІДиМГжЦЗж**: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md
 
 ### 2.3 иМеК3: дњЃж≠module_idйЗНеН
 
@@ -228,8 +239,8 @@ applicable_scope: Layer 5з≠ЦзХ•жЙІиМеВжЦЗжж≤їпњ?complia
 ### 7.2 зЫЄеЕ≥жЦЗж
 
 **жХіжФєзЫЄеЕ≥жЦЗж**:
-2. [жЦЗжиБМиіиЊєзХМиІДиМГ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-3. [жКАжЬѓиІДж†ЉдєзіҐеЉХ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+2. жЦЗжиБМиіиЊєзХМиІДиМГ
+3. жКАжЬѓиІДж†ЉдєзіҐеЉХ
 
 ---
 

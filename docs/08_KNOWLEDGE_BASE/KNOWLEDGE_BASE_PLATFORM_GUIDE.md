@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 知识管理团队
+responsibility:
+  - 知识库平台使用指南文档
 standard_type: 专业量化机构指南
 applicable_scope: 知识库平台使用
 ---
@@ -489,9 +491,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 ## 🔗 相关文档
 
-- [知识库架构设计](../KNOWLEDGE_BASE_ARCHITECTURE.md)
+- 知识库架构设计
 - [知识库索引](../INDEX.md)
-- [技术知识库索引](../01_TECHNICAL_KNOWLEDGE/INDEX.md)
+- 技术知识库索引
 
 ---
 

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_AUDIT_STRATEGY_ADJUSTMENT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 审计策略调整说明文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_AUDIT_STRATEGY_ADJ_001
 version: 2026.04.02

@@ -17,6 +17,7 @@ layer: Layer 5 (策略执行层)
 ---
 
 
+
 ## 核心定位
 
 负责因子回测集成的设计与构建和运行和操作，整合因子计算和回测框架，生成和输出因子效果评估和筛选功能，兼容和适配因子研究。
@@ -873,30 +874,29 @@ python scripts/init_config.py
 ### 8.3 目录结构设计
 
 ```
-zephyralpha/                    # 项目根目?
+zephyralpha/                    # 项目根目录
 ├── README.md                   # 项目说明
-├── requirements.txt            # Python依赖
-脚本
-?  ├── start.py               # 启动脚本
-?  ├── backup.py              # 备份脚本
-?  └── recovery.py            # 恢复脚本
-├── src/                       # 源代?
-¥?
-?  ├── core/                  # 核心模块
-?  ├── modules/               # 功能模块
-├── data/                      # 数据目录（自动创建）
-?  ├── raw/                   # 原始数据
-?  ├── processed/             # 处理后的数据
-?  └── factors/               # 因子数据
-├── logs/                      # 日志目录（自动创建）
-?  ├── system.log             # 系统日志
-?  ├── audit.log              # 审计日志
-?  └── error.log              # 错误日志
-├── notebooks/                 # Jupyter notebooks
-?  ├── tutorial.ipynb         # 教程
-?  └── examples/              # 示例
-└── backups/                   # 备份目录（自动创建）
-    └── data_backups/          # 数据备份
+├── requirements.txt            # Python 依赖
+├── scripts/                    # 运维与工具脚本
+│   ├── start.py                # 启动脚本
+│   ├── backup.py               # 备份脚本
+│   └── recovery.py             # 恢复脚本
+├── src/                        # 源代码
+│   ├── core/                   # 核心模块
+│   └── modules/                # 功能模块
+├── data/                       # 数据目录（运行期创建）
+│   ├── raw/                    # 原始数据
+│   ├── processed/              # 处理后的数据
+│   └── factors/                # 因子数据
+├── logs/                       # 日志目录
+│   ├── system.log
+│   ├── audit.log
+│   └── error.log
+├── notebooks/                  # Jupyter notebooks
+│   ├── tutorial.ipynb
+│   └── examples/
+└── backups/                    # 备份目录
+    └── data_backups/
 ```
 
 ### 8.4 é

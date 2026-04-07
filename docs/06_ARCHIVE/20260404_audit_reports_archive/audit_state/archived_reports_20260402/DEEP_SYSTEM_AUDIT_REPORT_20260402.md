@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DEEP_SYSTEM_AUDIT_REPORT_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 全系统深度审计报?文档
+---
+
 ﻿﻿---
 module_id: DEEPSYSTEMAUDITREPORT20260_002
 version: 1.0.0
@@ -328,14 +339,14 @@ compliance_level: 专业标准
 ## 📚 相关文档
 
 ### 审计相关文档
-1. [架构迁移计划](01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
-2. [架构版本冲突审计报告](06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/ARCHITECTURE_VERSION_CONFLICT_AUDIT_REPORT_20260402.md)
-3. [Layer 0迁移完成总结](06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/MIGRATION_COMPLETION_SUMMARY_20260402.md)
+1. 架构迁移计划
+2. 架构版本冲突审计报告
+3. Layer 0迁移完成总结
 
 ### 标准文档
-1. [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [专业多时间框架架构](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
+1. 专业文档治理审计指南
+2. 文档治理审计检查清单
+3. 专业多时间框架架构
 
 ---
 

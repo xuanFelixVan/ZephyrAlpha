@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_RECTIFICATION_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 11战略决策层整改报告文档
+---
+
 ﻿﻿---
 module_id: LAYER11_RECTIFICATION_REPORT_20260407_001
 version: 1.0.0
@@ -119,21 +130,21 @@ version: 3.0.0
 ```markdown
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [ASSET_ALLOCATION_MODEL.md](11_STRATEGIC_DECISION/01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
-| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](11_STRATEGIC_DECISION/01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
+| 1 | ASSET_ALLOCATION_MODEL.md | ... |
+| 2 | ALLOCATION_OPTIMIZATION_METHOD.md | ... |
 | 3 | 风险预算框架.md | ... | ❌ 死链接
 | 4 | 策略选择框架.md | ... | ❌ 死链接
 | 5 | 策略组合优化.md | ... | ❌ 死链接
-| 6 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](11_STRATEGIC_DECISION/04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
+| 6 | STRATEGIC_ADJUSTMENT_MECHANISM.md | ... |
 ```
 
 **整改后**:
 ```markdown
 | 序号 | 蓝图名称 | 核心职责 | 开源方案 | 实施时间 |
 |------|---------|---------|---------|---------|
-| 1 | [ASSET_ALLOCATION_MODEL.md](11_STRATEGIC_DECISION/01_asset_allocation/ASSET_ALLOCATION_MODEL.md) | ... |
-| 2 | [ALLOCATION_OPTIMIZATION_METHOD.md](11_STRATEGIC_DECISION/01_asset_allocation/ALLOCATION_OPTIMIZATION_METHOD.md) | ... |
-| 3 | [STRATEGIC_ADJUSTMENT_MECHANISM.md](11_STRATEGIC_DECISION/04_strategic_adjustment/STRATEGIC_ADJUSTMENT_MECHANISM.md) | ... |
+| 1 | ASSET_ALLOCATION_MODEL.md | ... |
+| 2 | ALLOCATION_OPTIMIZATION_METHOD.md | ... |
+| 3 | STRATEGIC_ADJUSTMENT_MECHANISM.md | ... |
 
 **注意**: 以下P0级蓝图待补充：
 - 风险预算框架.md（待创建）

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 运维团队
+responsibility:
+  - 部署检查清单模板文档
 standard_type: 专业量化机构模板
 applicable_scope: 部署检查清单
 ---
@@ -307,7 +309,7 @@ applicable_scope: 部署检查清单
 
 ## 🔗 相关文档
 
-- [系统部署指南](../../07_OPERATIONS/DEPLOYMENT_GUIDE.md)
+- 系统部署指南
 - [故障诊断指南](../../07_OPERATIONS/TROUBLESHOOTING_GUIDE.md)
 - [错误代码参考](../../07_OPERATIONS/ERROR_CODES.md)
 

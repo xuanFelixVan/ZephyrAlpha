@@ -1,3 +1,14 @@
+---
+module_id: 08_HUMAN_AI_INTERFACE_37_ACCESSIBILITY_ACCESSIBILITY_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 可访问性支持蓝图文档
+---
+
 
 
 # 可访问性支持蓝图

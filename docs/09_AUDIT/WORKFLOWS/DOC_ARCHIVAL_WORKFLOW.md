@@ -1,5 +1,5 @@
 ---
-module_id: DOC_ARCHIVAL_WORKFLOW
+module_id: 09_AUDIT_WORKFLOWS_DOC_ARCHIVAL_WORKFLOW
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

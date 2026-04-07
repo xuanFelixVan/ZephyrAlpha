@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_LONG_TERM_OPTIMIZATION_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 长期优化报告文档
+---
+
 ﻿﻿---
 responsibility:
   - 系统审计分析与质量评估报告与改进建议
@@ -46,7 +57,7 @@ parent_document: ../INDEX.md
 > - 📋 相关文档：[相关文档链接] - [简要说明]
 ```
 
-**规范文档**: [RESPONSIBILITY_DESCRIPTION_STANDARD.md](09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD.md)
+**规范文档**: RESPONSIBILITY_DESCRIPTION_STANDARD.md
 
 #### 1.2 职责描述审查机制
 
@@ -98,7 +109,7 @@ parent_document: ../INDEX.md
 | **缺少module_id** | 3个 | 🔴 高风险 |
 | **稀疏目录** | 97个 | 🟡 中风险 |
 
-**审计报告**: [weekly_audit_report_20260407_022518.md](09_AUDIT/STATE/weekly_audit_report_20260407_022518.md)
+**审计报告**: weekly_audit_report_20260407_022518.md
 
 ---
 

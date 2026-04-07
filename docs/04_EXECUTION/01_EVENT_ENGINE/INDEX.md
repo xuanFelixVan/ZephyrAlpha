@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 04_EXECUTION_01_EVENT_ENGINE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_EVENT_ENGINE
+module_id: 04_EXECUTION_01_EVENT_ENGINE_INDEX_EVENT_ENGINE
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

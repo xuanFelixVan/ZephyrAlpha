@@ -1,5 +1,5 @@
 ---
-module_id: DEEP_DOCUMENT_AUDIT_REPORT_20260407_020813
+module_id: 09_AUDIT_STATE_DEEP_DOCUMENT_AUDIT_REPORT_20260407_020813
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

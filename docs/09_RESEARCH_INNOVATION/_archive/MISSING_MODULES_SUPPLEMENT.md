@@ -1,5 +1,5 @@
 ---
-module_id: MISSING_MODULES_SUPPLEMENT
+module_id: 09_RESEARCH_INNOVATION__ARCHIVE_MISSING_MODULES_SUPPLEMENT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

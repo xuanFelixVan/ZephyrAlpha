@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403_V2
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТЋ┤Тћ╣ТіЦтЉ?V2文档
+---
+
 ﻿﻿---
 module_id: LAYER5_DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403_V2_001
 
@@ -259,8 +270,8 @@ applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљ
 
 **ТЋ┤Тћ╣уЏИтЁ│ТќЄТАБ**:
 1. Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дтАУАТіЦтЉ?V2
-2. [ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-3. [ТіђТюУДёТа╝С╣ду┤бт╝Ћ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+2. ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ
+3. ТіђТюУДёТа╝С╣ду┤бт╝Ћ
 
 ---
 

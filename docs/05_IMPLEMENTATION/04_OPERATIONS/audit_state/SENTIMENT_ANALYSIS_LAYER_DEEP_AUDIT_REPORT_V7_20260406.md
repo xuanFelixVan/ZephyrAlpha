@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V7_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 舆情分析层文档治理深度审计报告 v7文档
+---
+
 ﻿﻿---
 module_id: V_011
 version: 7.0.0

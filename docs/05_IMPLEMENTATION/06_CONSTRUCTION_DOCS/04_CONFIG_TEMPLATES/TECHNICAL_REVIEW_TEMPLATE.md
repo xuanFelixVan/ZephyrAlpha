@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 技术团队
+responsibility:
+  - 技术评审模板文档
 standard_type: 专业量化机构模板
 applicable_scope: 技术评审
 ---
@@ -256,8 +258,8 @@ applicable_scope: 技术评审
 ## 🔗 相关文档
 
 - [技术规范文档](../../05_TECHNICAL_SPECIFICATIONS/)
-- [代码规范最佳实践](../../08_KNOWLEDGE_BASE/01_TECHNICAL_KNOWLEDGE/BEST_PRACTICES/CODING_STANDARDS.md)
-- [安全设计规范](../../05_TECHNICAL_SPECIFICATIONS/SECURITY_SPECIFICATIONS.md)
+- 代码规范最佳实践
+- 安全设计规范
 
 ---
 

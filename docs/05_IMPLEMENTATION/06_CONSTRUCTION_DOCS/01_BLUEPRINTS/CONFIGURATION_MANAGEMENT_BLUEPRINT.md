@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: CONFIGURATION_MANAGEMENT_001
 version: 1.0.0
 status: Active
@@ -17,7 +17,8 @@ layer: Layer 5 (策略执行层)
 ---
 
 
-# é
+
+# 配置管理蓝图
 
 ## 核心定位
 

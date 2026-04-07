@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 专业文档治理审计报告文档
+---
+
 ﻿﻿---
 module_id: PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT_001
 version: 1.0.0
@@ -424,7 +435,7 @@ implementation_status: 进行?---
    - 中文文件名清? ?0个文件（详见报告正文?
 
 3. **L2审计证据**:
-   - DEVELOPER_RULES.md拆分示例: [DEVELOPER_RULES.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md)
+   - DEVELOPER_RULES.md拆分示例: DEVELOPER_RULES.md
    - API契约不一致证?  vs 
 
 4. **L3审计证据**:

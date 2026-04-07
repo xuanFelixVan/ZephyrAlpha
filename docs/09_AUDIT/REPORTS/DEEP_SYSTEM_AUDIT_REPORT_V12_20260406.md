@@ -1,5 +1,5 @@
 ---
-module_id: DEEP_SYSTEM_AUDIT_REPORT_V12_20260406
+module_id: 09_AUDIT_REPORTS_DEEP_SYSTEM_AUDIT_REPORT_V12_20260406
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: DEEP_SYSTEM_AUDIT_REPORT_V12_20260406_001
+module_id: 09_AUDIT_REPORTS_DEEP_SYSTEM_AUDIT_REPORT_V12_20260406_001
 version: 12.0.0
 status: Active
 created_date: 2026-04-06

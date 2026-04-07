@@ -190,9 +190,9 @@ python scripts/verify_compliance.py
 
 ## 🔗 相关文档
 
-- [全面死链接修复报告](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/COMPREHENSIVE_DEAD_LINK_FIX_REPORT_20260407.md)
-- [合规率验证报告](file:///D:/ZephyrAlpha/docs/09_AUDIT/STATE/COMPLIANCE_VERIFICATION_REPORT_20260407.md)
-- [最终优化完成报告V7](file:///D:/ZephyrAlpha/docs/09_AUDIT/REPORTS/FINAL_OPTIMIZATION_COMPLETION_REPORT_V7_20260407.md)
+- 全面死链接修复报告
+- 合规率验证报告
+- 最终优化完成报告V7
 
 ---
 

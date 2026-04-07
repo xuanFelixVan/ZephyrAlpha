@@ -1,5 +1,5 @@
 ---
-module_id: LAYER9_DELETED_FILES_REVIEW
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_LAYER9_DELETED_FILES_REVIEW
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: LAYER9_DELETED_FILES_REVIEW_001
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_LAYER9_DELETED_FILES_REVIEW_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

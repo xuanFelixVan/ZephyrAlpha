@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 风险平价策略
   - 风险贡献均衡
@@ -17,6 +17,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
+
 
 
 # 风险平价策略蓝图

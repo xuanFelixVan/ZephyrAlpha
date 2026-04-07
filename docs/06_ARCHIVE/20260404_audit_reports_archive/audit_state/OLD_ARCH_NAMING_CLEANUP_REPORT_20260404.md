@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_OLD_ARCH_NAMING_CLEANUP_REPORT_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Alpha因子层旧架构命名清理报告文档
+---
+
 ﻿﻿---
 module_id: ALPHA_009
 version: 1.0.0
@@ -179,7 +190,7 @@ compliance_level: 专业标准---
 
 - [目录结构优化报告](./DIR_STRUCTURE_OPTIMIZATION_REPORT_20260404.md)
 - [子目录INDEX.md补充报告](./SUBDIR_INDEX_CREATION_REPORT_20260404.md)
-- [第四次深度审计报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/ALPHA_FACTOR_DEEP_AUDIT_REPORT_V4_20260403.md)
+- 第四次深度审计报告
 
 ---
 

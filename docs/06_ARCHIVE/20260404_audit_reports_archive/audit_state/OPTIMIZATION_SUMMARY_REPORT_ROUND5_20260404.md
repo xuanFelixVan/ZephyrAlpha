@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_OPTIMIZATION_SUMMARY_REPORT_ROUND5_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Alpha因子层第五轮优化总结报告文档
+---
+
 ﻿﻿---
 module_id: ALPHA_010
 version: 1.0.0
@@ -234,7 +245,7 @@ compliance_level: 专业标准
 
 ### 审计报告
 
-- [第四次深度审计报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/ALPHA_FACTOR_DEEP_AUDIT_REPORT_V4_20260403.md)
+- 第四次深度审计报告
 - [被删除文件恢复报告](./DELETED_FILES_RECOVERY_REPORT_20260404.md)
 
 ### 优化报告

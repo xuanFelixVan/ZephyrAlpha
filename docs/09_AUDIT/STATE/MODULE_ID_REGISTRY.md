@@ -1,5 +1,5 @@
 ---
-module_id: MODULE_ID_REGISTRY
+module_id: 09_AUDIT_STATE_MODULE_ID_REGISTRY
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: MODULE_ID_REGISTRY_001
+module_id: 09_AUDIT_STATE_MODULE_ID_REGISTRY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06

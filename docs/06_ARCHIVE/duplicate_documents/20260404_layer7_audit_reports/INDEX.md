@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_DUPLICATE_DOCUMENTS_INDEX_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_20260404_LAYER7_AUDIT_REPORTS_001
+module_id: 06_ARCHIVE_DUPLICATE_DOCUMENTS_INDEX_2_20260404_LAYER7_AUDIT_REPORTS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

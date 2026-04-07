@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 开发团队
+responsibility:
+  - API文档模板文档
 standard_type: 专业量化机构模板
 applicable_scope: API文档编写
 ---
@@ -267,8 +269,8 @@ console.log(data);
 
 ## 🔗 相关文档
 
-- [API设计规范](../../05_TECHNICAL_SPECIFICATIONS/API_DESIGN_SPECIFICATIONS.md)
-- [认证文档](../AUTHENTICATION_GUIDE.md)
+- API设计规范
+- 认证文档
 - [错误代码参考](../../07_OPERATIONS/ERROR_CODES.md)
 
 ---

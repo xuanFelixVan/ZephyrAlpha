@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DEEP_SYSTEM_AUDIT_REPORT_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - хЕич│╗ч╗Яц╖▒х║жцЦЗцбгц▓╗чРЖхобшобцКехС?文档
+---
+
 ﻿﻿---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_20260404
 version: 1.0.0
@@ -96,13 +107,13 @@ implementation_status: хобшобхоМцИР
 
 #### 3.1.1 шБМш┤гц╕ЕцЩ░цЦЗцбгя╝ИтЬЕ чмжхРИцаЗхЗЖя╝?
 **чд║ф╛Л1я╝ЪчнЦчХех╝ХцУОцЦЗцб?*
-- [STRATEGY_ENGINE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_BLUEPRINT.md)
+- STRATEGY_ENGINE_BLUEPRINT.md
   - **шБМш┤г**я╝Ъф╕кф║║AIш╛ЕхКйщЗПхМЦч│╗ч╗Ях╝АхПСшУЭхЫ?  - **хоЪф╜Н**я╝Ъц╕ЕцЩ░я╝МшБЪчДжчнЦчХех╝ХцУОцХ┤ф╜Ушо╛шоб
   
-- [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- STRATEGY_ENGINE_CORE_BLUEPRINT.md
   - **шБМш┤г**я╝ЪчнЦчХех╝ХцУОца╕х┐ГцибхЭЧцКАцЬпшУЭхЫ?  - **хоЪф╜Н**я╝Ъц╕ЕцЩ░я╝Мф╜Ьф╕║STRATEGY_ENGINE_BLUEPRINTчЪДцКАцЬпшбехЕ?  - **хЕ│ч│╗**я╝ЪцШОчбошп┤цШОцШпшбехЕЕцЦЗцбгя╝МшБМш┤гш╛╣чХМц╕ЕцЩ?
 **чд║ф╛Л2я╝Ъф║║цЬ║ф║дф║ТцЦЗцб?*
-- [HUMAN_AI_INTERACTION_BLUEPRINT.md](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
   - **шБМш┤гш╛╣чХМхг░цШО**я╝ЪцШОчбошп┤цШОш┤Яш┤гф║║цЬ║ф║дф║Тх▒ВцИШчХешзДхИТ
   - **хЕ│шБФцЦЗцбг**я╝ЪцШОчбоцМЗхЗ║чХМщЭвшо╛шобч╗ЖшКВхПВшАГHUMAN_AI_INTEGRATION_BLUEPRINT.md
   - **шБМш┤гш╛╣чХМхнЧцо╡**я╝ЪYAMLхд┤щГихМЕхРлresponsibility_boundaryхнЧцо╡

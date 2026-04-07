@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_DOCUMENT_RECOVERY_EXECUTION_REPORT_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档恢复执行报告文档
+---
+
 ﻿﻿---
 module_id: DOCUMENT_RECOVERY_EXECUTION_REPORT_001
 version: 1.0.0
@@ -111,7 +122,7 @@ compliance_level: 专业标准
 
 | 文件 | 职责 |
 |------|------|
-| [DATA_CATALOG_METADATA_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CATALOG_METADATA_BLUEPRINT.md) | 数据目录元数据蓝图（已恢复）|
+| DATA_CATALOG_METADATA_BLUEPRINT.md | 数据目录元数据蓝图（已恢复）|
 ```
 
 ---

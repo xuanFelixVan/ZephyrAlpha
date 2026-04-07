@@ -1,31 +1,4 @@
 ---
-module_id: INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-standard_type: 索引文件
-applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_LINEAGE_TRACKING
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility:
-  - DATA_LINEAGE_TRACKING目录索引
----
-
-﻿---
-module_id: DATA_LINEAGE_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席文档架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 数据血缘追踪系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility: 数据血缘追踪模块导航
----
 
 # 数据血缘追踪系统
 

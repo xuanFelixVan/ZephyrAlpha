@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_CLASSIFICATION_STANDARD
+module_id: 09_AUDIT_STANDARDS_DOCUMENT_CLASSIFICATION_STANDARD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

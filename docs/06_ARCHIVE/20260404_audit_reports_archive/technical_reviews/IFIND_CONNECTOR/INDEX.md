@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_5
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,7 +12,7 @@ responsibility:
 ﻿---
 responsibility:
   - 目录导航、文档索引
-module_id: INDEX_IFIND_CONNECTOR_20260407124048
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_5_IFIND_CONNECTOR_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,5 +1,5 @@
 ---
-module_id: MARKET_REGIME_BLUEPRINT
+module_id: 01_FRAMEWORK_LAYER4_ML_MARKET_REGIME_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

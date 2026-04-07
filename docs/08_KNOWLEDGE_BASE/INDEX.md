@@ -190,8 +190,8 @@ graph LR
 ## 🔗 相关文档
 
 - [知识库架构设计](KNOWLEDGE_BASE_ARCHITECTURE.md)
-- [知识库建设计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/KNOWLEDGE_BASE_BUILDING_PLAN.md)
-- [文档体系完善计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/DOCUMENT_SYSTEM_PERFECTION_PLAN.md)
+- 知识库建设计划
+- 文档体系完善计划
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_STRUCTURE_STANDARD
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_STRUCTURE_STANDARD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -13,7 +13,7 @@ responsibility:
 responsibility:
   - 扩展功能、辅助模块、支撑文档
 
-module_id: DOCUMENT_STRUCTURE_STANDARD_001
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_STRUCTURE_STANDARD_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

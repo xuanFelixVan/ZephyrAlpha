@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_ANALYSIS_L0_IFIND_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档分析记录 - L0_IFIND.md文档
+---
+
 ﻿﻿---
 module_id: L_IFIND_MD_001
 version: 1.0.0

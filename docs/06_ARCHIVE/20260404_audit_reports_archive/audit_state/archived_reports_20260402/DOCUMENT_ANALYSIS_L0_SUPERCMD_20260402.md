@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_ANALYSIS_L0_SUPERCMD_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档分析记录 - L0_SUPERCMD.md文档
+---
+
 ﻿﻿---
 module_id: L_SUPERCMD_MD_001
 version: 1.0.0
@@ -173,7 +184,7 @@ implementation_status: "进行?
 
 ## 📚 相关文档
 
-- [架构迁移计划](01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
+- 架构迁移计划
 - [L0_QMT迁移日志](./MIGRATION_LOG_L0_QMT_20260402.md)
 - [L0_IFIND迁移日志](./MIGRATION_LOG_L0_IFIND_20260402.md)
 

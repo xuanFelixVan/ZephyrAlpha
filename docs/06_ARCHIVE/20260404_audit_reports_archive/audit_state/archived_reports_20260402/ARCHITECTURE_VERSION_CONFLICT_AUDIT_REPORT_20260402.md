@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ARCHITECTURE_VERSION_CONFLICT_AUDIT_REPORT_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - ﮔﭘﮔﻝﮔ؛ﮒﺎﻝ۹ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﮔ۴ﮒ文档
+---
+
 ﻿﻿---
 module_id: AUDIT_REPORT_ARCH_VERSION_001
 version: 1.0.0
@@ -482,10 +493,10 @@ docs/module_designs/
 
 ### ﻠﮒﺛBﺅﺙﮒﻟﮔﮒﮔ?
 
-1. [ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-4. [ﻛﺕﻛﺕﮒ؟ﮔﺛﻟﮒﺝ](01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+1. ﻛﺕﻛﺕﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔﮒ
+2. ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒ
+3. ﻛﺕﻛﺕﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘﮔ
+4. ﻛﺕﻛﺕﮒ؟ﮔﺛﻟﮒﺝ
 
 ### ﻠﮒﺛCﺅﺙﮔﺁﻟﺁﻟ۰۷
 

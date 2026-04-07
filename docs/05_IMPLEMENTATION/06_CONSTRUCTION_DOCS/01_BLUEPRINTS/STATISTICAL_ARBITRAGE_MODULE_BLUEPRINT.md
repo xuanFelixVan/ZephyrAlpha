@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: STATISTICAL_ARBITRAGE_001
 version: 1.0.0
 status: Active
@@ -15,6 +15,7 @@ responsibility:
 
 layer: Layer 5 (策略执行层)
 ---
+
 
 
 ## 核心定位

@@ -1,5 +1,5 @@
 ---
-module_id: README
+module_id: 06_ARCHIVE_INCOMPLETE_DOCUMENTS_README
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: README_002
+module_id: 06_ARCHIVE_INCOMPLETE_DOCUMENTS_README_002
 
 archive_id: ARCHIVE_INCOMPLETE_20260404_001
 version: 1.0.0

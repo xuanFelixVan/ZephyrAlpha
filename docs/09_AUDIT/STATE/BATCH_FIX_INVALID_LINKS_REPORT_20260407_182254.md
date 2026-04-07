@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 批量无效链接修复报告文档
 standard_type: 修复报告
 applicable_scope: 批量无效链接修复
 compliance_level: 专业标准

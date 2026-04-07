@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 因子库与回测集成系统专业审计报告文档
+---
+
 ﻿﻿---
 module_id: FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT_001
 version: 1.0.0
@@ -438,9 +449,9 @@ implementation_status: 进行?---
 
 ### C. 关键文件位置
 1. **因子计算?*: 
-2. **因子回测集成蓝图**: [FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md)
+2. **因子回测集成蓝图**: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
 3. **因子验证蓝图**: [FACTOR_VALIDATION_BLUEPRINT.md](../../../02_FACTOR_LIBRARY/05_BACKTEST/FACTOR_VALIDATION_BLUEPRINT.md)
-4. **系统清单**: [System_Manifest.md](System_Manifest.md)
+4. **系统清单**: System_Manifest.md
 
 ### D. 术语?
 | 术语 | 解释 |

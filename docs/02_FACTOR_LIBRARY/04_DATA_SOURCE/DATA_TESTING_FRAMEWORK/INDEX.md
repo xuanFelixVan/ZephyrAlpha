@@ -1,27 +1,4 @@
 ---
-module_id: INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_TESTING_FRAMEWORK目录索引
----
-
-﻿---
-module_id: DATA_TESTING_INDEX_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席文档架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 数据测试框架系统
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility: 数据测试框架模块导航
----
 
 # 数据测试框架系统
 

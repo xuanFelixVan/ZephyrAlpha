@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 研究工作流管理蓝图 (RESEARCH_WORKFLOW_MANAGEMENT)文档
+---
+
 ﻿---
 module_id: RESEARCH_WORKFLOW_MANAGEMENT_001
 version: 1.0.0

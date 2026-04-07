@@ -1,27 +1,6 @@
 ---
-module_id: README
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TIME_SERIES_STORAGE说明文档
----
 
-﻿---
-module_id: TIME_SERIES_STORAGE_README_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility: 时序存储模块说明与使用指南
-layer: "Layer 1 (数据预处理层)"
----
-
-# 时序存储
+# 时序数据存储系统
 
 > **核心职责**: 时序数据存储架构与TimescaleDB集成，涉及时序存储
 > **职责边界**: 

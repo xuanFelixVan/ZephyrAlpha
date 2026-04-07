@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 01_FRAMEWORK_AI_VIRTUAL_RESEARCH_TEAM_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -14,7 +14,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_AI_VIRTUAL_RESEARCH_TEAM
+module_id: 01_FRAMEWORK_AI_VIRTUAL_RESEARCH_TEAM_INDEX_AI_VIRTUAL_RESEARCH_TEAM
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

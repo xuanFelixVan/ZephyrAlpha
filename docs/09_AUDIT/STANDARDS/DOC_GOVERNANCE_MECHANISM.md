@@ -1,5 +1,5 @@
 ---
-module_id: DOC_GOVERNANCE_MECHANISM
+module_id: 09_AUDIT_STANDARDS_DOC_GOVERNANCE_MECHANISM
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

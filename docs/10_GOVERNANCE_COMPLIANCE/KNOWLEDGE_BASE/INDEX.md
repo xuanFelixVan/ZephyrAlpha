@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 10_GOVERNANCE_COMPLIANCE_KNOWLEDGE_BASE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DEEP_SYSTEM_AUDIT_REPORT_20260404_V2
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 专业文档治理深度审计报告文档
+---
+
 ﻿﻿---
 module_id: DEEPSYSTEMAUDITREPORT20260_001
 version: 1.0.0

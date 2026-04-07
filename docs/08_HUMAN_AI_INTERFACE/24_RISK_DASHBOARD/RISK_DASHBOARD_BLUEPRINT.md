@@ -1,3 +1,14 @@
+---
+module_id: 08_HUMAN_AI_INTERFACE_24_RISK_DASHBOARD_RISK_DASHBOARD_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 风险管理仪表板蓝图文档
+---
+
 
 
 # 风险管理仪表板蓝图

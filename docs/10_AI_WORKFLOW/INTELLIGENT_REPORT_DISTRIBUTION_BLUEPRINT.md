@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_INTELLIGENT_REPORT_DISTRIBUTION_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 智能报告分发蓝图 (INTELLIGENT_REPORT_DISTRIBUTION)文档
+---
+
 ﻿---
 module_id: INTELLIGENT_REPORT_DISTRIBUTION_001
 version: 1.0.0

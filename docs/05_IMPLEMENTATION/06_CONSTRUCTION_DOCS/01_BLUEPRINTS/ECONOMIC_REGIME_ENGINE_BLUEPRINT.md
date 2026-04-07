@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: ECONOMIC_REGIME_ENGINE_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -12,7 +12,7 @@ responsibility:
   - 市场状态
 
 
-﻿
+
 module_id: ECONOMIC_REGIME_ENGINE_001
 version: 1.0.0
 status: Active
@@ -25,6 +25,7 @@ responsibility:
   - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5 (策略执行层)
 ---
+
 
 
 # ECONOMIC REGIME ENGINE BLUEPRINT

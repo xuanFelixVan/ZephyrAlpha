@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - уГќуЋЦТЅДУАїт▒ѓтйњТАБТќЄТАБТЂбтцЇУёС╝░ТіЦтЉ?V2文档
+---
+
 ﻿﻿---
 module_id: LAYER5_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404_001
 

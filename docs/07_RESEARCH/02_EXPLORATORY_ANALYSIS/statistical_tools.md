@@ -1,5 +1,5 @@
 ---
-module_id: STATISTICAL_TOOLS
+module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_STATISTICAL_TOOLS
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

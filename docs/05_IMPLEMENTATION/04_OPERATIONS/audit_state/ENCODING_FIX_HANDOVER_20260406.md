@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_ENCODING_FIX_HANDOVER_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 编码修复交接文档文档
+---
+
 ﻿﻿---
 module_id: ENCODINGFIXHANDOVER20260406_001
 version: 1.0.0
@@ -101,7 +112,7 @@ compliance_level: 专业标准
 > **重要提示**: 在开始实施前，请先完成环境准备工作。详细的环境准备步骤请参考各模块蓝图文档。
 
 ### 0.1 数据源扩展模块环境准备
-**参考文档**: [另类数据集成模块蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md)
+**参考文档**: 另类数据集成模块蓝图
 **环境要求**:
 - Python 3.9+
 - PostgreSQL 12+

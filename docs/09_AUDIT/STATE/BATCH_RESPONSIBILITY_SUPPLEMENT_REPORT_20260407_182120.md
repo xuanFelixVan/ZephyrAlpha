@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 批量职责描述补充报告文档
 standard_type: 补充报告
 applicable_scope: 批量职责描述补充
 compliance_level: 专业标准

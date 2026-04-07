@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - цЦЗцбгц▓╗чРЖхобшобф┐охдНхоМцИРцКехСК文档
+---
+
 ﻿﻿---
 module_id: DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_001
 version: 1.0.0
@@ -272,9 +283,9 @@ git checkout backup-before-audit-cleanup-20260403
 ### B. чЫ╕хЕ│цЦЗцбг
 
 1. [хоМцХ┤хобшобцКехСК](./COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md)
-2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-4. [хобшобш┤ищЗПцаЗхЗЖv5.3](09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
+2. ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ
+3. цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ
+4. хобшобш┤ищЗПцаЗхЗЖv5.3
 
 ### C. ф┐охдНхС╜ф╗дхПВшА?
 **щЗНхС╜хРНф╕нцЦЗцЦЗф╗?*:

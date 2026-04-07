@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_LAYER_4_001
+module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_2_LAYER_4_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

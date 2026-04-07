@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_01_QUICKSTART_ROADMAP
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 开发路线图 v5.0文档
+---
+
 ﻿---
 module_id: IMPL_QUICKSTART_ROADMAP_001
 version: 5.0.1

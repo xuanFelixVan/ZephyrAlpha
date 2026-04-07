@@ -1,34 +1,45 @@
 import os
 import re
+from datetime import datetime
 
 blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
 
-fixed_files = []
+def fix_double_yaml(file_path):
+    with open(file_path, 'r', encoding='utf-8-sig') as f:
+        content = f.read()
+    
+    content = content.replace('\ufeff', '')
+    
+    yaml_pattern = r'---\s*[\r\n]+(.*?)[\r\n]+---'
+    yaml_matches = list(re.finditer(yaml_pattern, content, re.DOTALL))
+    
+    if len(yaml_matches) < 2:
+        return False, '无双YAML头部'
+    
+    second_yaml = yaml_matches[1]
+    second_yaml_content = second_yaml.group(1)
+    
+    new_content = '---\n' + second_yaml_content.strip() + '\n---\n' + content[second_yaml.end():]
+    
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    
+    return True, '已修复双YAML头部'
 
-for file in os.listdir(blueprints_dir):
-    if file.endswith('.md') and 'BLUEPRINT' in file:
-        file_path = os.path.join(blueprints_dir, file)
-        
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # 检查是否有双YAML头部
-        yaml_pattern = r'^---[\r\n\s]*(.*?)[\r\n\s]*---[\r\n\s]*---[\r\n\s]*(.*?)[\r\n\s]*---'
-        match = re.search(yaml_pattern, content, re.DOTALL)
-        
-        if match:
-            # 保留第二个YAML头部
-            second_yaml = match.group(2)
-            
-            # 检查第二个YAML是否包含module_id
-            if 'module_id:' in second_yaml:
-                # 移除第一个YAML头部，保留第二个
-                new_content = '---\n' + second_yaml + '---' + content[match.end():]
-                
-                with open(file_path, 'w', encoding='utf-8') as f:
-                    f.write(new_content)
-                
-                fixed_files.append(file)
-                print(f'Fixed: {file}')
+print('='*80)
+print('修复双YAML头部')
+print('='*80)
+print(f'修复时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+print()
 
-print(f'\nTotal fixed: {len(fixed_files)} files')
+files = [f for f in os.listdir(blueprints_dir) if f.endswith('.md') and f != 'INDEX.md']
+
+fixed_count = 0
+for file in files:
+    file_path = os.path.join(blueprints_dir, file)
+    success, msg = fix_double_yaml(file_path)
+    if success:
+        fixed_count += 1
+        print(f'✓ {file}: {msg}')
+
+print(f'\n修复完成: {fixed_count}个文件')

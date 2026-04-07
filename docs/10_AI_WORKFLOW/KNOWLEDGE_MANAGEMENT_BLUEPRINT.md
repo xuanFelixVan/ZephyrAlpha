@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_KNOWLEDGE_MANAGEMENT_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 知识管理与传承系统蓝图文档
+---
+
 ﻿---
 module_id: KNOWLEDGE_MANAGEMENT_AI_001
 version: 1.0.0

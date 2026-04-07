@@ -1,5 +1,5 @@
 ---
-module_id: BENCHMARK_MANAGEMENT_BLUEPRINT
+module_id: 11_STRATEGIC_DECISION_BENCHMARK_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 09_RESEARCH_INNOVATION__ARCHIVE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,7 +12,7 @@ responsibility:
 ﻿---
 responsibility:
   - 负责提供Layer 9研究与创新层归档目录的文档导航和索引服务，整合历史版本文档、补充文档和系统更新指南，为个人开发和AI维护提供归档文档的快速定位和检索支持，确保归档文档的可追溯性、可访问性和历史版本管理。
-module_id: INDEX__ARCHIVE_20260407124048
+module_id: 09_RESEARCH_INNOVATION__ARCHIVE_INDEX__ARCHIVE_20260407124048
 version: 1.0.0
 status: Archived
 created_date: 2026-04-07

@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 质量预警报告文档
 standard_type: 预警报告
 applicable_scope: 质量预警机制
 compliance_level: 专业标准

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V5_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехС?V5文档
+---
+
 ﻿﻿---
 module_id: LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V5_20260403_001
 
@@ -260,8 +271,8 @@ implementation_status: х╖▓хоМцИ?
 - шУЭхЫ╛цЦЗцбг: 50ф╕?
 ### B. хПВшАГцаЗхЗЖцЦЗцб?
 1. хобшобш┤ищЗПцаЗхЗЖv5.1
-2. [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+2. ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ
+3. цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ
 
 ---
 

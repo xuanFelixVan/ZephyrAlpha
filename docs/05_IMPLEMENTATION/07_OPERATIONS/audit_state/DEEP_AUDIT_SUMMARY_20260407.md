@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_DEEP_AUDIT_SUMMARY_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 5 策略执行层深度审计报告文档
+---
+
 ﻿---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_DEEP_AUDIT_SUMMARY_20260407_20260407180137
 ---
@@ -405,7 +416,7 @@ version: 1.0.0
 
 ### 7.1 审计报告
 
-- [Layer 5深度审计报告v4.0](06_ARCHIVE/20260407_old_layer_audit_reports/layer5_reports/LAYER5_DEEP_AUDIT_REPORT_v4_20260407.md)
+- Layer 5深度审计报告v4.0
 
 ### 7.2 审计工具
 
@@ -413,8 +424,8 @@ version: 1.0.0
 
 ### 7.3 参考标准
 
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 - 审计质量标准v5.1
 
 ---

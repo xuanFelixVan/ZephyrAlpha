@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 05_IMPLEMENTATION_02_DEVELOPMENT_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_DEVELOPMENT
+module_id: 05_IMPLEMENTATION_02_DEVELOPMENT_INDEX_DEVELOPMENT
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

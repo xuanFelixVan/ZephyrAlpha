@@ -26,10 +26,10 @@ responsibility:
 **检查结果**: 核心文档已完整
 
 **已有文档**:
-1. ✅ [ARCHITECTURE_EVOLUTION_HISTORY.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/ARCHITECTURE_EVOLUTION_HISTORY.md) - 系统架构演进历史
-2. ✅ [MODULE_DEPENDENCY_GRAPH.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/MODULE_DEPENDENCY_GRAPH.md) - 模块依赖关系图
-3. ✅ [DATAFLOW_ARCHITECTURE_BLUEPRINT.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/DATAFLOW_ARCHITECTURE_BLUEPRINT.md) - 数据流架构图
-4. ✅ [SYSTEM_ARCHITECTURE_DIAGRAM.md](file:///D:/ZephyrAlpha/docs/01_FRAMEWORK/SYSTEM_ARCHITECTURE_DIAGRAM.md) - 系统架构图
+1. ✅ ARCHITECTURE_EVOLUTION_HISTORY.md - 系统架构演进历史
+2. ✅ MODULE_DEPENDENCY_GRAPH.md - 模块依赖关系图
+3. ✅ DATAFLOW_ARCHITECTURE_BLUEPRINT.md - 数据流架构图
+4. ✅ SYSTEM_ARCHITECTURE_DIAGRAM.md - 系统架构图
 
 **文档覆盖率**: **100%**
 
@@ -195,9 +195,9 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [文档体系完善计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/DOCUMENT_SYSTEM_PERFECTION_PLAN.md)
-- [审计工具优化计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/AUDIT_TOOLS_OPTIMIZATION_PLAN.md)
-- [知识库建设计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/KNOWLEDGE_BASE_BUILDING_PLAN.md)
+- 文档体系完善计划
+- 审计工具优化计划
+- 知识库建设计划
 
 ---
 

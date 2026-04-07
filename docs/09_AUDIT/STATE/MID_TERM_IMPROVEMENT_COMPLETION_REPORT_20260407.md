@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 中期改进任务完成报告文档
 standard_type: 完成报告
 applicable_scope: 中期改进任务
 compliance_level: 专业标准

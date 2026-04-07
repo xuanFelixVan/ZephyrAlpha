@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_DELETED_FILES_REVIEW_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 数据源层删除文件评估报告文档
+---
+
 ﻿﻿---
 responsibility:
   - 系统审计分析与质量评估报告与改进建议
@@ -34,7 +45,7 @@ parent_document: ../INDEX.md
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |------|------|------|------|
-| 数据源索引 | [../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md](01_FRAMEWORK/DATA_LAYER_INDEX.md) | 审计对象 | 数据源层索引 |
+| 数据源索引 | ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md | 审计对象 | 数据源层索引 |
 | 审计标准 | ../STANDARDS/AUDIT_STANDARDS_v5.1.md | 审计标准 | 审计质量标准 |
 
 **职责边界**:

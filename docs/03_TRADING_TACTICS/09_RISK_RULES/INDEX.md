@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 03_TRADING_TACTICS_09_RISK_RULES_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_09_RISK_RULES_001
+module_id: 03_TRADING_TACTICS_09_RISK_RULES_INDEX_09_RISK_RULES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

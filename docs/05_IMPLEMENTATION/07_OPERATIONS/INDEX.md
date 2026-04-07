@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

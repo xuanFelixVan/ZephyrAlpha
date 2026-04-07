@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_P2_ISSUES_REMEDIATION_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - P2у║ДжЌжбўТЋ┤Тћ╣тїТѕљТіЦ?文档
+---
+
 ﻿﻿---
 module_id: P2_ISSUES_REMEDIATION_REPORT_001
 
@@ -258,12 +269,12 @@ applicable_scope: Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗?com
 ### 7.2 уЏИтЁ│ТќЄТАБ
 
 **ТЋ┤Тћ╣уЏИтЁ│ТќЄТАБ**:
-1. [Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дтАУАТіЦтЉі](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md)
+1. Layer 5уГќуЋЦТЅДУАїт▒ѓТќЄТАБТ▓╗уљєТи▒т║дтАУАТіЦтЉі
 2. [P0у║ДжЌжбўТЋ┤Тћ╣тїТѕљТіЦтЉі](./P0_ISSUES_REMEDIATION_REPORT.md)
 3. [P1у║ДжЌжбўТЋ┤Тћ╣тїТѕљТіЦтЉі](./P1_ISSUES_REMEDIATION_REPORT.md)
-4. [ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-5. [ТіђТюУДёТа╝С╣ду┤бт╝Ћ](01_FRAMEWORK/DATA_LAYER_INDEX.md)
-6. [у│╗у╗ЪТъХТъёТќЄТАБ](01_FRAMEWORK/ARCHITECTURE.md)
+4. ТќЄТАБУЂїУ┤БУЙ╣уЋїУДёУїЃ
+5. ТіђТюУДёТа╝С╣ду┤бт╝Ћ
+6. у│╗у╗ЪТъХТъёТќЄТАБ
 
 ---
 

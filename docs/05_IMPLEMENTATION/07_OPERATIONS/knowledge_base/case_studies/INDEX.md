@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_10
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_CASE_STUDIES_OPS_001
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_10_CASE_STUDIES_OPS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

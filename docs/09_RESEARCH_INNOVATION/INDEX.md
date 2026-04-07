@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 09_RESEARCH_INNOVATION_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_RESEARCH_INNOVATION_001
+module_id: 09_RESEARCH_INNOVATION_INDEX_RESEARCH_INNOVATION_001
 version: 2.1.0
 status: Active
 created_date: 2026-04-04

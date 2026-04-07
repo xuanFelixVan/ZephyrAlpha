@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_D2_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - BLOCK_D2_findings.md - D2块审计发?文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_BLOCK_D2_FINDINGS_001
 version: 4.0.15.0.0
@@ -86,7 +97,7 @@ responsibility:
 
 ### D2-P1-001: 02_FACTOR_LIBRARY/README.md 版本不一?
 
-**位置**: [02_FACTOR_LIBRARY/README.md](API_README.md)
+**位置**: 02_FACTOR_LIBRARY/README.md
 
 **问题**:
 - 文档标题显示 v5.0
@@ -104,7 +115,7 @@ responsibility:
 
 ### D2-P1-002: 03_TRADING_TACTICS/README.md 内容严重不足
 
-**位置**: [03_TRADING_TACTICS/README.md](API_README.md)
+**位置**: 03_TRADING_TACTICS/README.md
 
 **问题**:
 - 文件?行，内容几乎为空
@@ -133,7 +144,7 @@ responsibility:
 
 ### D2-P1-003: 02_FACTOR_LIBRARY/README.md 断裂父目录引?
 
-**位置**: [02_FACTOR_LIBRARY/README.md:19-21](API_README.md)
+**位置**: 02_FACTOR_LIBRARY/README.md:19-21
 
 **问题**: 引用了不存在的父目录
 
@@ -155,7 +166,7 @@ responsibility:
 
 ### D2-P1-004: 02_FACTOR_LIBRARY/README.md 断裂子目录引?
 
-**位置**: [02_FACTOR_LIBRARY/README.md:100,121,167,186-187](API_README.md)
+**位置**: 02_FACTOR_LIBRARY/README.md:100,121,167,186-187
 
 **问题**: 多处引用路径错误
 
@@ -164,7 +175,7 @@ responsibility:
 因子注册? [06_REGISTRY/factor_catalog.md](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
 监控报告: [07_MONITORING/factor_monitoring.md](../../../02_FACTOR_LIBRARY/07_FACTOR_MONITORING/factor_monitoring.md)
 - [因子注册表](../../../02_FACTOR_LIBRARY/06_REGISTRY/factor_catalog.md)
-- [监控报告](API_README.md)
+- 监控报告
 
 **问题**:
 ```markdown
@@ -214,7 +225,7 @@ responsibility:
 
 ### D2-P2-001: 02_FACTOR_LIBRARY/README.md 因子数量描述过时
 
-**位置**: [02_FACTOR_LIBRARY/README.md](API_README.md)
+**位置**: 02_FACTOR_LIBRARY/README.md
 
 **问题**:
 ```markdown

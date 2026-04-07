@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 策略选择
   - 策略评估
@@ -15,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 ---
+
 
 
 ## 核心定位

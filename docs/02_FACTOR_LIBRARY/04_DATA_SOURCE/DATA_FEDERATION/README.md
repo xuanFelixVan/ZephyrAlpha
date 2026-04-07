@@ -1,31 +1,6 @@
 ---
-module_id: README
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-standard_type: 说明文件
-applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_FEDERATION
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-responsibility:
-  - DATA_FEDERATION说明文档
----
 
-﻿---
-module_id: DATA_FEDERATION_README_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility: 数据联邦模块说明与使用指南
-layer: "Layer 1 (数据预处理层)"
----
-
-# 数据联邦
+# 数据联邦系统
 
 > **核心职责**: 跨源数据访问与联邦查询，涉及数据联邦
 > **职责边界**: 

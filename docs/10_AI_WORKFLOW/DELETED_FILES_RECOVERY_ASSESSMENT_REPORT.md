@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_DELETED_FILES_RECOVERY_ASSESSMENT_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 删除文件恢复价值评估报告文档
+---
+
 ﻿---
 module_id: DELETED_FILES_RECOVERY_ASSESSMENT_AI_001
 version: 1.0.0

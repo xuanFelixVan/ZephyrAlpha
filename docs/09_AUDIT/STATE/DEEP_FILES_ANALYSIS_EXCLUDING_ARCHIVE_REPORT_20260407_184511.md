@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 深层文件分析报告（排除归档）文档
 standard_type: 分析报告
 applicable_scope: 深层文件分析（排除归档）
 compliance_level: 专业标准

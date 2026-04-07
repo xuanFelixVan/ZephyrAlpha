@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_PERFORMANCE_ANALYSIS_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 性能分析报告文档
+---
+
 ﻿---
 module_id: PERFORMANCE_ANALYSIS_BLUEPRINT_001
 version: 1.0.0

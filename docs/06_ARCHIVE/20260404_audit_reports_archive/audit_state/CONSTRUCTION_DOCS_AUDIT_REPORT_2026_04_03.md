@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_CONSTRUCTION_DOCS_AUDIT_REPORT_2026_04_03
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - цЦ╜х╖ецЦЗцбгф╕УхМ║ц╖▒х║жхобшобцКехСК文档
+---
+
 ﻿﻿---
 module_id: CONSTRUCTION_DOCS_AUDIT_REPORT_001
 version: 1.0.0
@@ -421,8 +432,8 @@ mv RL_REBALANCING_SYSTEM_BLUEPRINT.md REINFORCEMENT_LEARNING_REBALANCING_BLUEPRI
 
 ### **хПВшАГцаЗхЗЖцЦЗ?*
 
-- [ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцМЗхНЧ
+- цЦЗцбгц▓╗чРЖхобшобцгАцЯец╕ЕхНХ
 - хобшобш┤ищЗПцаЗхЗЖv5.3
 
 ---

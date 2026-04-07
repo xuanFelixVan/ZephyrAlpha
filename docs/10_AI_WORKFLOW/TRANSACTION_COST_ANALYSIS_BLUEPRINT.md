@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_TRANSACTION_COST_ANALYSIS_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 交易成本分析蓝图 (TRANSACTION_COST_ANALYSIS)文档
+---
+
 ﻿---
 module_id: TRANSACTION_COST_ANALYSIS_001
 version: 1.0.0

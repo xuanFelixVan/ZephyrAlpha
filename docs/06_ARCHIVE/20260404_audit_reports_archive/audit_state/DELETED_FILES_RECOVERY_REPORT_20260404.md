@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DELETED_FILES_RECOVERY_REPORT_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Alpha因子层被删除文件恢复报告文档
+---
+
 ﻿﻿---
 module_id: ALPHA_007
 version: 1.0.0
@@ -272,8 +283,8 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 ## 📚 相关文档
 
 - [被删除文件价值评估报告](./DELETED_FILES_EVALUATION_REPORT_20260403.md)
-- [第四次深度审计报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/ALPHA_FACTOR_DEEP_AUDIT_REPORT_V4_20260403.md)
-- [P0级问题解决报告](06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/ALPHA_FACTOR_P0_RESOLUTION_REPORT_V3_20260403.md)
+- 第四次深度审计报告
+- P0级问题解决报告
 
 ---
 

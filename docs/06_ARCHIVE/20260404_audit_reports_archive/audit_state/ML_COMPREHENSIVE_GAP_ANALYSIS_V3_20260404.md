@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ML_COMPREHENSIVE_GAP_ANALYSIS_V3_20260404
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 4 цЬ║хЩихнжф╣ах▒Вц╖▒х║жх╖ош╖ЭхИЖцЮРцКехС?v3.0文档
+---
+
 ﻿﻿---
 module_id: LAYER4_ML_COMPREHENSIVE_GAP_ANALYSIS_V3_001
 version: 3.0.0

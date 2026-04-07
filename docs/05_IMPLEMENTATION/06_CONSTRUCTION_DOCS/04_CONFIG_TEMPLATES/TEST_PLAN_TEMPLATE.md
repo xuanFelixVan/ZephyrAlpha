@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 测试团队
+responsibility:
+  - 测试计划模板文档
 standard_type: 专业量化机构模板
 applicable_scope: 测试计划编写
 ---
@@ -243,7 +245,7 @@ applicable_scope: 测试计划编写
 
 ## 🔗 相关文档
 
-- [测试最佳实践](../../08_KNOWLEDGE_BASE/01_TECHNICAL_KNOWLEDGE/BEST_PRACTICES/TESTING_BEST_PRACTICES.md)
+- 测试最佳实践
 - [错误代码参考](../../07_OPERATIONS/ERROR_CODES.md)
 - [性能监控指南](../../07_OPERATIONS/PERFORMANCE_MONITORING_GUIDE.md)
 

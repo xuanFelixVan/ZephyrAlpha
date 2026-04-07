@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_CONTINUOUS_IMPROVEMENT_PLAN_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 中长期持续改进计划文档
+---
+
 ﻿﻿---
 module_id: CONTINUOUS_IMPROVEMENT_PLAN_20260407
 version: 1.0.0
@@ -338,18 +349,18 @@ parent_document: ../INDEX.md
 
 ### 1. 标准规范文档
 
-- [职责描述规范](09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD_V2.md)
-- [文件命名规范](09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)
-- [定期审计机制](09_AUDIT/STANDARDS/PERIODIC_AUDIT_MECHANISM.md)
+- 职责描述规范
+- 文件命名规范
+- 定期审计机制
 
 ### 2. 知识库文档
 
-- [文档治理知识库](10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE.md)
+- 文档治理知识库
 
 ### 3. 改进报告
 
-- [短期改进报告](05_IMPLEMENTATION/04_OPERATIONS/audit_state/SHORT_TERM_IMPROVEMENT_REPORT_V2_20260407.md)
-- [长期优化机制报告](05_IMPLEMENTATION/04_OPERATIONS/audit_state/LONG_TERM_OPTIMIZATION_MECHANISM_REPORT_20260407.md)
+- 短期改进报告
+- 长期优化机制报告
 
 ---
 

@@ -1,3 +1,14 @@
+---
+module_id: 08_HUMAN_AI_INTERFACE_06_REPORTING_REPORTING_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 报告系统实现示例文档
+---
+
 
 
 ﻿---

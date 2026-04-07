@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_DOCUMENT_GOVERNANCE_FIX_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档治理修复完成报告文档
+---
+
 ﻿---
 module_id: DOCUMENT_GOVERNANCE_FIX_REPORT_001
 version: 1.0.0
@@ -269,14 +280,14 @@ L3: 专业标准层审计
 
 ### 工具脚本
 
-- [职责描述更新脚本](../../scripts/update_index_responsibilities.py)
-- [综合深度审计脚本](../../scripts/comprehensive_deep_audit.py)
+- 职责描述更新脚本
+- 综合深度审计脚本
 
 ### 标准文档
 
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [职责描述模板库](../../09_AUDIT/STANDARDS/RESPONSIBILITY_TEMPLATE_LIBRARY.md)
-- [文档版本号命名标准](../../09_AUDIT/STANDARDS/DOCUMENT_VERSION_NAMING_STANDARD.md)
+- 专业文档治理审计指南
+- 职责描述模板库
+- 文档版本号命名标准
 
 ---
 

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_P2_ISSUES_REMEDIATION_REPORT_V2_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - P2ﻝﭦ۶ﻠ؟ﻠ۱ﮔﺑﮔﺗﮔ۴ﮒ?V2文档
+---
+
 ﻿﻿---
 remediation_id: P2_ISSUES_REMEDIATION_REPORT_V2_001
 version: 2.0.0

@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_AUDIT_WORKFLOW
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_AUDIT_WORKFLOW
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

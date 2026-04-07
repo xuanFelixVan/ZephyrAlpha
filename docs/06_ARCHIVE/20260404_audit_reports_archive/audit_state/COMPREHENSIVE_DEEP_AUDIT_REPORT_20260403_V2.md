@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - хЕич│╗ч╗Яц╖▒х║жцЦЗцбгц▓╗чРЖхобшобцКехС?V2文档
+---
+
 ﻿﻿---
 module_id: COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2
 version: 1.0.0

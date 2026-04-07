@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_D1_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - D1块审计发?- 00_OVERVIEW ~ 01_FRAMEWORK文档文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_BLOCK_D1_FINDINGS_001
 version: 4.0.1
@@ -165,10 +176,10 @@ implementation_status: 进行?---
 **问题描述**: 引用不存在的目录
 
 ```
-| Layer 2 | [因子库文档](API_README.md) |
-| Layer 5 | [执行文档](API_README.md) |
-| Layer 6 | [组合优化文档](API_README.md) |
-| Layer 7 | [绩效文档](API_README.md) |
+| Layer 2 | 因子库文档 |
+| Layer 5 | 执行文档 |
+| Layer 6 | 组合优化文档 |
+| Layer 7 | 绩效文档 |
 ```
 
 **问题分析**:

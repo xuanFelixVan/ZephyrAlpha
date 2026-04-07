@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_QUALITY_MONITORING_REPORT_20260407_012329
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - quality monitoring report 20260407 012329文档
+---
+
 ﻿﻿---
 module_id: QUALITY_MONITORING_REPORT_003
 version: 1.0.0

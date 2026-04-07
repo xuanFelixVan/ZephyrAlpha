@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V11_20260406
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 舆情分析层文档治理深度审计报告 V11文档
+---
+
 ﻿﻿---
 module_id: V_010
 version: 11.0.0
@@ -100,7 +111,7 @@ compliance_level: 专业标准
 
 **问题**: 中期改进蓝图章节标题重复
 
-**影响文件**: [SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md](10_AI_WORKFLOW/SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md)
+**影响文件**: SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md
 
 **问题描述**:
 - 文件第455行和第457行出现重复的章节标题"## 八、相关文档"
@@ -160,7 +171,7 @@ compliance_level: 专业标准
 
 **问题**: 短期技术规格书编码错误
 
-**影响文件**: [SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md](10_AI_WORKFLOW/SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md)
+**影响文件**: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md
 
 **问题描述**:
 - YAML头部已修复，中文正常显示
@@ -327,8 +338,8 @@ compliance_level: 专业标准
 
 ### 审计标准文档
 
-- [专业文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 - 审计质量标准v5.1
 
 ### Git备份
@@ -339,7 +350,7 @@ compliance_level: 专业标准
 
 ### 历史审计报告
 
-- [第十次深度审计报告](05_IMPLEMENTATION/04_OPERATIONS/audit_state/SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V10_20260406.md)
+- 第十次深度审计报告
 
 ---
 

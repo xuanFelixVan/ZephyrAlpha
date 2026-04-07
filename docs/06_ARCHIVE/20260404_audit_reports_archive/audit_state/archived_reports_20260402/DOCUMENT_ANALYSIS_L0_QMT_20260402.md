@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_ANALYSIS_L0_QMT_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档分析记录 - L0_QMT.md文档
+---
+
 ﻿﻿---
 module_id: L_QMT_MD_001
 version: 1.0.0
@@ -289,9 +300,9 @@ implementation_status: 进行?```
 ---
 
 ## 📚 参考文?
-1. [架构迁移计划](01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md)
-2. [专业多时间框架架构](01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-3. [文档治理审计指南](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+1. 架构迁移计划
+2. 专业多时间框架架构
+3. 文档治理审计指南
 
 ---
 

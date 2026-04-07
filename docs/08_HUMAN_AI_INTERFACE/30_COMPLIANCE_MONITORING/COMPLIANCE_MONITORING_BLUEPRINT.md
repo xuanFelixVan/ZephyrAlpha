@@ -1,3 +1,14 @@
+---
+module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_COMPLIANCE_MONITORING_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 合规监控界面蓝图文档
+---
+
 
 
 # 合规监控界面蓝图

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_MACHINE_LEARNING_DEEP_AUDIT_REPORT_V2_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 4 机器学习层深度审计报?v2.0文档
+---
+
 ﻿﻿---
 module_id: LAYER_V_001
 version: 1.0.0

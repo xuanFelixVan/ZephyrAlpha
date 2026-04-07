@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_FULL_SYSTEM_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V12_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 全系统文档治理深度审计报告 V12文档
+---
+
 ﻿---
 module_id: FULL_SYSTEM_AUDIT_V12_001
 version: 12.0.0
@@ -427,10 +438,10 @@ compliance_level: 专业标准
 
 ### B. 参考标准文档
 
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [AI文档治理审计提示词](../../09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md)
-- [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
+- AI文档治理审计提示词
+- 审计质量标准v5.1
 
 ### C. 术语表
 

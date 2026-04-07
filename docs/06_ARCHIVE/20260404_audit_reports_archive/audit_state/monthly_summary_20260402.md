@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_MONTHLY_SUMMARY_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 月度文档审计摘要报告文档
+---
+
 ﻿﻿---
 module_id: MONTHLY_SUMMARY_20260402_001
 version: 1.0.0

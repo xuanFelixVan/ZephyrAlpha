@@ -1,28 +1,4 @@
 ---
-module_id: FREE_DATA_SOURCES
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - T01DS001免费数据源技术规格书文档
----
-
-﻿---
-module_id: DATA_FREE_SOURCES_001
-version: 3.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-06
-owner: 首席文档架构师
-responsibility: 免费数据源汇总与使用指南
-standard_type: 数据源文档
-applicable_scope: 免费数据源
-compliance_level: 专业标准
-parent_document: ./INDEX.md
-implementation_status: 设计阶段
----
 
 
 # T.01.DS001.免费数据源技术规格书

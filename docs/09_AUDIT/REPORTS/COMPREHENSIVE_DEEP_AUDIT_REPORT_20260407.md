@@ -1,3 +1,14 @@
+---
+module_id: 09_AUDIT_REPORTS_COMPREHENSIVE_DEEP_AUDIT_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 综合深度审计报告文档
+---
+
 # 综合深度审计报告
 
 ## 📋 审计概要
@@ -329,7 +340,7 @@ python scripts/responsibility_detector.py
 
 ## 🔗 相关文档
 
-- [审计标准v5.1](../STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 审计标准v5.1
 - [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
 - [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 

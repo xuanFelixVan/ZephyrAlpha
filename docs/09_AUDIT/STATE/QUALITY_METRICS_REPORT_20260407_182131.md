@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
+responsibility:
+  - 文档质量指标监控报告文档
 standard_type: 质量报告
 applicable_scope: 文档质量指标监控
 compliance_level: 专业标准

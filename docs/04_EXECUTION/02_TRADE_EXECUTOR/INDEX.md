@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 04_EXECUTION_02_TRADE_EXECUTOR_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_02_TRADE_EXECUTOR_001
+module_id: 04_EXECUTION_02_TRADE_EXECUTOR_INDEX_02_TRADE_EXECUTOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

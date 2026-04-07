@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_U2_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - U2块审计发?- 根目录其他文?文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_BLOCK_U2_FINDINGS_001
 version: 4.0.1

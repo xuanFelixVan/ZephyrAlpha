@@ -1,5 +1,5 @@
 ---
-module_id: SITEMAP
+module_id: 01_FRAMEWORK_SITEMAP
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

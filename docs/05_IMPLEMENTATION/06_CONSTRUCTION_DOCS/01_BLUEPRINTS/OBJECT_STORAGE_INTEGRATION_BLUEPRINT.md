@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: OBJECT_STORAGE_INTEGRATION_001
 version: 1.0.0
 status: Active
@@ -15,6 +15,7 @@ responsibility:
 
 layer: Layer 5.1 (数据处理)
 ---
+
 
 
 # 对象存储集成蓝图

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_QUICK_AUDIT_SUMMARY_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 快速审计摘?文档
+---
+
 ﻿﻿---
 module_id: QUICKAUDITSUMMARY20260402_001
 version: 1.0.0

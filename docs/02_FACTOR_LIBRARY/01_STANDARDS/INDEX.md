@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,6 +12,12 @@ parent_document: ../INDEX.md
 responsibility:
   - 01_STANDARDS目录索引
 ---
+
+# 因子标准规范目录索引
+
+> 因子库标准规范模块的导航和索引
+
+
 
 ﻿---
 module_id: STANDARDS_INDEX_001

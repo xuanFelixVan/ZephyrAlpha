@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_NAMING_STANDARD
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_NAMING_STANDARD
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: DOCUMENT_NAMING_STANDARD_001
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_NAMING_STANDARD_001
 
 standard_id: DOCUMENT_NAMING_STANDARD_001
 version: 1.0.0

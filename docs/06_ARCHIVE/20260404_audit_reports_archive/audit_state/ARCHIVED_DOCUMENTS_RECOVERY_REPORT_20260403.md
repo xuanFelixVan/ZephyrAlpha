@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - ί╜ΤόκμόΨΘόκμόΒλίνΞϋψΕϊ╝░όΛξίΣΛ文档
+---
+
 ﻿﻿---
 module_id: ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403_001
 
@@ -259,8 +270,8 @@ Copy-Item -Path "docs\06_ARCHIVE\duplicate_documents\20260403_blueprint_spec_aud
 
 ### B. ίΠΓϋΑΔόιΘίΘΗόΨΘόκ?
 1. ίχκϋχκϋ┤ρώΘΠόιΘίΘΗv5.1
-2. [ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ](09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-3. [όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ](09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+2. ϊ╕Υϊ╕γόΨΘόκμό▓╗ύΡΗίχκϋχκόΝΘίΞΩ
+3. όΨΘόκμό▓╗ύΡΗίχκϋχκόμΑόθξό╕ΖίΞΧ
 
 ---
 

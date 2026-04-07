@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_INCOMPLETE_DOCUMENTS_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_20260404_BLUEPRINT_INCOMPLETE_001
+module_id: 06_ARCHIVE_INCOMPLETE_DOCUMENTS_INDEX_20260404_BLUEPRINT_INCOMPLETE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

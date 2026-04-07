@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_20260405_ECONOMIC_REGIME_CLEANUP_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_20260405_ECONOMIC_REGIME_CLEANUP_001
+module_id: 06_ARCHIVE_20260405_ECONOMIC_REGIME_CLEANUP_INDEX_20260405_ECONOMIC_REGIME_CLEANUP_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

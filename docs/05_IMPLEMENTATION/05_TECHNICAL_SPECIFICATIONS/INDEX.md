@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_002
+module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX_002
 
 index_id: TECHNICAL_SPECIFICATIONS_INDEX_001
 version: 1.0.0

@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 09_AUDIT_AUTOMATION_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,7 +12,7 @@ responsibility:
 ﻿---
 responsibility:
   - 目录导航与文档索引管理与优化维护
-module_id: INDEX_AUTOMATION_20260407124048
+module_id: 09_AUDIT_AUTOMATION_INDEX_AUTOMATION_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

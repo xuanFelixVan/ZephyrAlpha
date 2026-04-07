@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - VaR/ES监控
   - 风险价值
@@ -15,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.3 (风险管理)
 ---
+
 
 
 ## 核心定位

@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_P1_ISSUES_REMEDIATION_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - P1ч║зщЧощвШцХ┤цФ╣хоМцИРцКея┐?文档
+---
+
 ﻿﻿---
 module_id: P1_ISSUES_REMEDIATION_REPORT_001
 
@@ -280,10 +291,10 @@ applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗я�
 ### 8.2 чЫ╕хЕ│цЦЗцбг
 
 **цХ┤цФ╣чЫ╕хЕ│цЦЗцбг**:
-1. [Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК](02_FACTOR_LIBRARY/09_AUDIT/AUDIT_REPORT.md)
+1. Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК
 2. [P0ч║зщЧощвШцХ┤цФ╣хоМцИРцКехСК](./P0_ISSUES_REMEDIATION_REPORT.md)
-3. [цЦЗцбгшБМш┤гш╛╣чХМшзДшМГ](09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
-4. [цКАцЬпшзДца╝ф╣жч┤вх╝Х](01_FRAMEWORK/DATA_LAYER_INDEX.md)
+3. цЦЗцбгшБМш┤гш╛╣чХМшзДшМГ
+4. цКАцЬпшзДца╝ф╣жч┤вх╝Х
 
 ---
 

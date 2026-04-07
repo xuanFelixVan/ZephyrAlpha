@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DELETED_FILES_EVALUATION_REPORT_20260403
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Alpha因子层被删除文件价值评估报?文档
+---
+
 ﻿﻿---
 module_id: ALPHA_006
 version: 1.0.0

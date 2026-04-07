@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_SCRIPT_IMPROVEMENT_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 审计脚本改进报告文档
+---
+
 ﻿---
 module_id: AUDIT_SCRIPT_IMPROVEMENT_REPORT_001
 version: 1.0.0
@@ -235,13 +246,13 @@ L3: 专业标准层审计
 
 - [改进前审计报告](./COMPREHENSIVE_DEEP_AUDIT_20260407_170926.md)
 - [改进后审计报告](./COMPREHENSIVE_DEEP_AUDIT_20260407_172232.md)
-- [审计脚本](../../scripts/comprehensive_deep_audit.py)
+- 审计脚本
 
 ### 标准文档
 
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [职责描述模板库](../../09_AUDIT/STANDARDS/RESPONSIBILITY_TEMPLATE_LIBRARY.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
+- 职责描述模板库
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-module_id: SYSTEM_MANIFEST_UPDATE_GUIDE
+module_id: 09_RESEARCH_INNOVATION__ARCHIVE_SYSTEM_MANIFEST_UPDATE_GUIDE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

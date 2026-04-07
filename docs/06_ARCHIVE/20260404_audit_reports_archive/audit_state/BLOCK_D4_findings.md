@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_D4_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - BLOCK_D4_findings.md - D4块审计发?文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_BLOCK_D4_FINDINGS_001
 version: 4.0.1
@@ -79,7 +90,7 @@ implementation_status: 进行?
 
 ### D4-P1-001: 08_USER_EXPERIENCE/README.md 版本不一?
 
-**位置**: [08_USER_EXPERIENCE/README.md](API_README.md)
+**位置**: 08_USER_EXPERIENCE/README.md
 
 **问题**:
 - 文档标题显示 v5.0
@@ -95,7 +106,7 @@ implementation_status: 进行?
 
 ### D4-P2-001: 07_RESEARCH/README.md 版本特殊性确?
 
-**位置**: [07_RESEARCH/README.md](API_README.md)
+**位置**: 07_RESEARCH/README.md
 
 **问题**:
 - 文档版本显示 v1.0

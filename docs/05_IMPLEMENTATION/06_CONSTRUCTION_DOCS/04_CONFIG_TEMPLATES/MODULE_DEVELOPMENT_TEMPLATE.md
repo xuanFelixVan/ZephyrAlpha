@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 开发团队
+responsibility:
+  - 模块开发模板文档
 standard_type: 专业量化机构模板
 applicable_scope: 模块开发
 ---
@@ -163,7 +165,7 @@ applicable_scope: 模块开发
 
 - [技术规范文档](../../05_TECHNICAL_SPECIFICATIONS/)
 - [蓝图文档](../01_BLUEPRINTS/)
-- [测试文档](../../08_TESTING/)
+- 测试文档
 
 ---
 

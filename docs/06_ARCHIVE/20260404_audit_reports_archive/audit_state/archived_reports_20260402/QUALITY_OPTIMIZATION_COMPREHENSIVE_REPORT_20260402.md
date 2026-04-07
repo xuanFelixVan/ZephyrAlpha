@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_QUALITY_OPTIMIZATION_COMPREHENSIVE_REPORT_20260402
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - ТќЄТАБУ┤ежЄЈС╝ўтїќу╗╝тљѕТіЦтЉі文档
+---
+
 ﻿﻿---
 standard_type: тАУАТіЦтЉі
 applicable_scope: у│╗у╗ЪтъТќй

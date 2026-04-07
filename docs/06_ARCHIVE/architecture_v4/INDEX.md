@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,7 +12,7 @@ responsibility:
 ﻿---
 responsibility:
   - 目录导航、文档索引
-module_id: INDEX_ARCHITECTURE_V4_20260407124048
+module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_ARCHITECTURE_V4_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

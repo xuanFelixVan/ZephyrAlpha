@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_RISK_MANAGEMENT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - grafana/dashboards/risk_monitoring.json文档
+---
+
 ﻿---
 module_id: SENTIMENT_ANALYSIS_RISK_MANAGEMENT_001
 version: 1.0.0

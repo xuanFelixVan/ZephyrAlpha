@@ -1,25 +1,4 @@
 ---
-module_id: BACKTEST_REORGANIZATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 05_BACKTEST 目录重组方案文档
----
-
-﻿---
-module_id: 05_BACKTEST_REORGANIZATION_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子研究与管理框架设计与优化维护
----
 
 ---
 module_id: BACKTEST_REORGANIZATION_001

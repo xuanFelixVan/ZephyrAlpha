@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_STRATEGY_FRAMEWORK
+module_id: 03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_INDEX_STRATEGY_FRAMEWORK
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

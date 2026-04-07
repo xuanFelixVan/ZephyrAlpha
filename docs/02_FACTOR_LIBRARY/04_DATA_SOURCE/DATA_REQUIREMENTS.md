@@ -1,28 +1,4 @@
 ---
-module_id: DATA_REQUIREMENTS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 数据需求清单文档
----
-
-﻿---
-module_id: DATA_REQUIREMENTS_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-05
-owner: 首席文档架构师
-standard_type: 数据管理文档
-applicable_scope: 数据需求规格
-compliance_level: 专业标准
-parent_document: ./INDEX.md
-implementation_status: 进行中
-responsibility: 数据需求分析与数据规格定义
----
 
 # 数据需求清单
 

@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_OTHER-MASTERS_001
+module_id: 03_TRADING_TACTICS_04_YOUZI_STRATEGIES_INDEX_OTHER-MASTERS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

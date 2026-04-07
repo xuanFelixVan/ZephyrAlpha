@@ -449,10 +449,10 @@ responsibility:
 
 ## 🔗 相关文档
 
-- [文档体系完善计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/DOCUMENT_SYSTEM_PERFECTION_PLAN.md)
-- [审计工具优化计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/AUDIT_TOOLS_OPTIMIZATION_PLAN.md)
-- [知识库建设计划](file:///D:/ZephyrAlpha/docs/09_AUDIT/CONFIG/KNOWLEDGE_BASE_BUILDING_PLAN.md)
-- [知识库架构设计](file:///D:/ZephyrAlpha/docs/08_KNOWLEDGE_BASE/KNOWLEDGE_BASE_ARCHITECTURE.md)
+- 文档体系完善计划
+- 审计工具优化计划
+- 知识库建设计划
+- 知识库架构设计
 
 ---
 

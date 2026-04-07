@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_U1_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - U1块审计发?- 核心索引文档文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_BLOCK_U1_FINDINGS_001
 version: 4.0.11.0.0

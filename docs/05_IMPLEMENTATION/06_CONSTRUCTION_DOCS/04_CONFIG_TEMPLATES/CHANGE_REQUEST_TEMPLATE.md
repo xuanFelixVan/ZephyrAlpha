@@ -5,6 +5,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 项目管理团队
+responsibility:
+  - 变更请求模板文档
 standard_type: 专业量化机构模板
 applicable_scope: 变更请求
 ---

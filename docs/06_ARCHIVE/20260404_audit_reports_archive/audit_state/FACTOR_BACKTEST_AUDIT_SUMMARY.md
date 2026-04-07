@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_FACTOR_BACKTEST_AUDIT_SUMMARY
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 快速审计摘?- 因子库与回测集成系统文档
+---
+
 ﻿﻿---
 module_id: ARCHIVE_FACTOR_BT_SUMMARY_001
 version: 2026.04.02
@@ -64,7 +75,7 @@ implementation_status: 进行?
 
 ## 详细报告位置
 
-完整审计报告已生? [FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md](06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md)
+完整审计报告已生? FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md
 
 ### 报告主要内容:
 1. **执行摘要**: 审计目标、范围、方法、核心发?

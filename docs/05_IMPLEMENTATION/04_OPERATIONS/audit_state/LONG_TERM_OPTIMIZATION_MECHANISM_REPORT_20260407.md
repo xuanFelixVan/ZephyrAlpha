@@ -1,3 +1,14 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_LONG_TERM_OPTIMIZATION_MECHANISM_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 长期优化机制建设报告文档
+---
+
 ﻿﻿---
 module_id: LONG_TERM_OPTIMIZATION_MECHANISM_REPORT_20260407
 version: 1.0.0
@@ -74,7 +85,7 @@ parent_document: ../INDEX.md
 - 命名不规范: 131个
 - 稀疏目录: 93个
 
-**详细报告**: [automated_check_report_20260407_031229.md](09_AUDIT/STATE/automated_check_report_20260407_031229.md)
+**详细报告**: automated_check_report_20260407_031229.md
 
 ---
 
@@ -82,7 +93,7 @@ parent_document: ../INDEX.md
 
 #### 2.1 规范概述
 
-**文档**: [RESPONSIBILITY_DESCRIPTION_STANDARD_V2.md](09_AUDIT/STANDARDS/RESPONSIBILITY_DESCRIPTION_STANDARD_V2.md)  
+**文档**: RESPONSIBILITY_DESCRIPTION_STANDARD_V2.md  
 **功能**: 定义职责描述的标准格式、审查流程和质量要求
 
 #### 2.2 规范内容
@@ -124,7 +135,7 @@ parent_document: ../INDEX.md
 
 #### 3.1 规范概述
 
-**文档**: [FILE_NAMING_STANDARD.md](09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)  
+**文档**: FILE_NAMING_STANDARD.md  
 **功能**: 定义文件命名的标准格式、命名规则和检查机制
 
 #### 3.2 命名原则
@@ -157,7 +168,7 @@ parent_document: ../INDEX.md
 
 #### 4.1 机制概述
 
-**文档**: [PERIODIC_AUDIT_MECHANISM.md](09_AUDIT/STANDARDS/PERIODIC_AUDIT_MECHANISM.md)  
+**文档**: PERIODIC_AUDIT_MECHANISM.md  
 **功能**: 定义定期审计的流程、频率和质量要求
 
 #### 4.2 审计类型

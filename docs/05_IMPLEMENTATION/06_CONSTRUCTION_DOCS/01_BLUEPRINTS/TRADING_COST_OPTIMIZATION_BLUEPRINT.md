@@ -1,4 +1,4 @@
-﻿---
+---
 responsibility:
   - 交易成本优化
   - 成本模型
@@ -15,6 +15,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.4 (交易执行)
 ---
+
 
 
 # 交易成本优化蓝图

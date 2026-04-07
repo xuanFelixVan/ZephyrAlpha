@@ -1,5 +1,5 @@
 ---
-module_id: COMPLETE_SUPPLEMENT_V2
+module_id: 09_RESEARCH_INNOVATION__ARCHIVE_COMPLETE_SUPPLEMENT_V2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

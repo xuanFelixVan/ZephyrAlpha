@@ -1,3 +1,14 @@
+---
+module_id: 10_AI_WORKFLOW_DELETED_CONTENT_REVIEW_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - Layer 7 AI报告层删除内容审查报告文档
+---
+
 ﻿---
 module_id: DELETED_CONTENT_REVIEW_001
 version: 1.0.0

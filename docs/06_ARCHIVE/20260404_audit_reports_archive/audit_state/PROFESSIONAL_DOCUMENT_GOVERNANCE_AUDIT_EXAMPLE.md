@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 专业文档治理审计报告（示例）文档
+---
+
 ﻿﻿---
 module_id: PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE_001
 version: 1.0.0

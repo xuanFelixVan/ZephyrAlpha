@@ -1,3 +1,14 @@
+---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_TEMP_FILE_AUDIT_REPORT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 临时文件专项审计报告文档
+---
+
 ﻿﻿---
 module_id: TEMP_FILE_AUDIT_REPORT_001
 version: 1.0.0
@@ -135,7 +146,7 @@ implementation_status: 进行?---
 | **文档代码对应** | ?符合 | 不适用临时文件 | - |
 
 #### 3.2 开发标准符?
-根据 [DEVELOPMENT_STANDARDS.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md):
+根据 DEVELOPMENT_STANDARDS.md:
 
 | 标准条款 | 符合?| 发现的问?|
 |----------|----------|------------|
@@ -260,7 +271,7 @@ glob **/*2025*           # 0个结?
 ### 3. 参考标准文?
 1. [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 2. [审计质量标准 v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
-3. [开发标准](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+3. 开发标准
 
 
 ## 📊 附录：临时文件管理最佳实?

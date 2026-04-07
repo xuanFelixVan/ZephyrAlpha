@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 08_KNOWLEDGE_FACTOR_LIBRARY_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_FACTOR_LIBRARY_KNOWLEDGE_001
+module_id: 08_KNOWLEDGE_FACTOR_LIBRARY_INDEX_FACTOR_LIBRARY_KNOWLEDGE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

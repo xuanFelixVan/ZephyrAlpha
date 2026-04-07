@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 00_RESOURCES_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_00_RESOURCES
+module_id: 00_RESOURCES_INDEX_00_RESOURCES
 version: 1.0.0
 status: Active
 created_date: 2026-04-03

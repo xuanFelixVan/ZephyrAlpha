@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: 06_ARCHIVE_MAIN_INDEX_3
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,7 +10,7 @@ responsibility:
 ---
 
 ﻿---
-module_id: INDEX_V4_DEVELOPMENT_001
+module_id: 06_ARCHIVE_MAIN_INDEX_3_V4_DEVELOPMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
