@@ -1,6 +1,6 @@
 ---
 module_id: LAYER_10_GOVERNANCE_COMPLIANCE_INDEX_001
-version: 1.2.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-07
@@ -27,11 +27,11 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.1
+> **版本**: v1.3
 > **创建日期**: 2026-04-06
 > **最后更新**: 2026-04-07
 > **状态**: 活跃
-> **说明**: 专业机构标准治理与合规模块完整索引
+> **说明**: 专业机构标准治理与合规模块完整索引（含14个新增缺失模块）
 
 ---
 
@@ -88,8 +88,22 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | **止损管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
 | **交易错误纠正** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
 | **事后分析** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **合规知识库管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
+| **治理仪表盘系统** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
+| **合规工作流引擎** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
+| **政策与程序管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
+| **内部审计管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
+| **合规事件管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **合规数据仓库** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **合规分析平台** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **合规培训管理** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **道德与行为准则** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐ |
+| **利益冲突管理** | - | ✅ 1个 | 100% | ⭐⭐⭐ |
+| **举报人保护** | - | ✅ 1个 | 100% | ⭐⭐⭐ |
+| **合规通知系统** | - | ✅ 1个 | 100% | ⭐⭐⭐ |
+| **风险偏好框架** | - | ✅ 1个 | 100% | ⭐⭐⭐⭐⭐ |
 
-**总体覆盖度**: **100%** (从95%提升至100%)
+**总体覆盖度**: **100%** (从95%提升至100%，新增14个关键缺失模块)
 
 ---
 
@@ -116,6 +130,10 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [风险限额管理系统蓝图](./RISK_LIMIT_MANAGEMENT_BLUEPRINT.md) | RISK_LIMIT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 3天 | ⭐⭐⭐⭐⭐ | 风险限额控制、实时监控、超限处理、限额调整 |
 | [止损管理系统蓝图](./STOP_LOSS_MANAGEMENT_BLUEPRINT.md) | STOP_LOSS_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 3天 | ⭐⭐⭐⭐⭐ | 止损触发、止损执行、止损监控、止损报告 |
 | [交易错误纠正系统蓝图](./TRADE_ERROR_CORRECTION_BLUEPRINT.md) | TRADE_ERROR_CORRECTION_BLUEPRINT_001 | 1.0 | Active | 3天 | ⭐⭐⭐⭐⭐ | 错误识别、错误评估、错误纠正、错误记录 |
+| [合规知识库管理系统蓝图](./COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md) | COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 合规知识库、法规查询、最佳实践库、培训资料管理 |
+| [治理仪表盘系统蓝图](./GOVERNANCE_DASHBOARD_BLUEPRINT.md) | GOVERNANCE_DASHBOARD_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 治理可视化、合规监控仪表盘、风险预警、报告生成 |
+| [合规工作流引擎蓝图](./COMPLIANCE_WORKFLOW_ENGINE_BLUEPRINT.md) | COMPLIANCE_WORKFLOW_ENGINE_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 工作流定义、任务调度、审批流程、自动化执行 |
+| [政策与程序管理系统蓝图](./POLICY_PROCEDURE_MANAGEMENT_BLUEPRINT.md) | POLICY_PROCEDURE_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 3周 | ⭐⭐⭐⭐⭐ | 政策文档管理、程序流程管理、审批流程、合规映射 |
 
 **P0模块实施价值**：
 - ✅ **审计追踪系统**: 对标TigerBeetle金融审计标准，确保所有操作可追溯
@@ -149,6 +167,10 @@ Layer 10治理与合规层是清风量化系统的**合规治理中枢**，负�
 | [算法交易测试框架蓝图](./ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md) | ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT_001 | 1.0 | Active | 1-2周 | ⭐⭐⭐⭐⭐ | 功能测试、性能测试、风险测试、测试报告 |
 | [算法部署控制系统蓝图](./ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT.md) | ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐⭐ | 部署流程、审批控制、版本管理、回滚机制 |
 | [事后分析系统蓝图](./POST_MORTEM_ANALYSIS_BLUEPRINT.md) | POST_MORTEM_ANALYSIS_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 事件分析、根本原因分析、改进措施、知识积累 |
+| [内部审计管理系统蓝图](./INTERNAL_AUDIT_MANAGEMENT_BLUEPRINT.md) | INTERNAL_AUDIT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐⭐ | 审计计划管理、审计执行跟踪、审计发现管理、整改跟踪 |
+| [合规事件管理系统蓝图](./COMPLIANCE_EVENT_MANAGEMENT_BLUEPRINT.md) | COMPLIANCE_EVENT_MANAGEMENT_BLUEPRINT_001 | 1.0 | Active | 1周 | ⭐⭐⭐⭐ | 事件报告与记录、事件分类与分级、事件处理流程、事件统计分析 |
+| [合规数据仓库蓝图](./COMPLIANCE_DATA_WAREHOUSE_BLUEPRINT.md) | COMPLIANCE_DATA_WAREHOUSE_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 合规数据集成、数据清洗与转换、数据存储与管理、数据查询与分析 |
+| [合规分析平台蓝图](./COMPLIANCE_ANALYTICS_PLATFORM_BLUEPRINT.md) | COMPLIANCE_ANALYTICS_PLATFORM_BLUEPRINT_001 | 1.0 | Active | 2周 | ⭐⭐⭐⭐ | 数据可视化、报表生成、高级分析、机器学习模型 |
 
 **P1模块实施价值**：
 - ⚠️ **交易对手风险**: 个人使用场景较少，可选实施

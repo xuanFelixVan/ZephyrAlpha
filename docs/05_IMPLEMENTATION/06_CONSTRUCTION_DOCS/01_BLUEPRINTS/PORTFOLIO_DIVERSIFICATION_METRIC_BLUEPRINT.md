@@ -1,37 +1,27 @@
 ---
-module_id: PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT_001
+module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# PORTFOLIO DIVERSIFICATION METRIC BLUEPRINT
-
-> **核心职责**: Portfolio Diversification Metric蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Diversification Metric蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-
+  - 组合分散化度量
+  - 分散化指标计算
+  - 风险分散评估
+  - 分散化优化
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 组合分散化度量蓝图
+
+> **核心职责**: 组合分散化度量，量化组合分散化程度
+> **职责边界**: 
+> - ✅ 本文档负责：组合分散化度量、分散化指标计算、风险分散评估、分散化优化
+> - ❌ 本文档不负责：组合优化、风险控制、风险监控
 ﻿# 组合分散化度量蓝图
 
 > **核心定位**: 组合分散化度量蓝图的核心功能实现

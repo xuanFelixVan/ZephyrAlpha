@@ -1,37 +1,27 @@
 ---
-module_id: PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT_001
+module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# PORTFOLIO INSURANCE STRATEGY BLUEPRINT
-
-> **核心职责**: Portfolio Insurance Strategy蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Insurance Strategy蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+  - 组合保险策略
+  - CPPI/OBPI
+  - 下行风险保护
+  - 动态对冲
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 组合保险策略蓝图
+
+> **核心职责**: 组合保险策略，CPPI/OBPI组合保险策略
+> **职责边界**: 
+> - ✅ 本文档负责：组合保险策略、CPPI/OBPI、下行风险保护、动态对冲
+> - ❌ 本文档不负责：组合优化、风险控制、风险监控
 ﻿# 概述
 
 > **索引**: `CPPI_BLUEPRINT_001`

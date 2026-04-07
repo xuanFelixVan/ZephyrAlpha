@@ -1,36 +1,27 @@
 ---
-module_id: OPENING_STRATEGY_BLUEPRINT_001
+module_id: OPENING_STRATEGY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
-
-# OPENING STRATEGY BLUEPRINT
-
-> **核心职责**: Opening Strategy蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Opening Strategy蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: OPENING_STRATEGY_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 市场状态识别 (Layer 4)
-
+  - 开盘策略
+  - 开盘时段交易
+  - 开盘波动捕捉
+  - 开盘流动性管理
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 开盘策略蓝图
+
+> **核心职责**: 开盘策略，开盘时段交易策略
+> **职责边界**: 
+> - ✅ 本文档负责：开盘策略、开盘时段交易、开盘波动捕捉、开盘流动性管理
+> - ❌ 本文档不负责：日内策略、收盘策略、风险控制
 ﻿# 📋 执行摘要
 
 > **版本**: v1.0

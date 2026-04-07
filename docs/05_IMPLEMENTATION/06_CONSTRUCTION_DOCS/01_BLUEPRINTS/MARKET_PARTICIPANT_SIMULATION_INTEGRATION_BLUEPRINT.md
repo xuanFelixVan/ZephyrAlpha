@@ -1,38 +1,27 @@
 ---
-module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT_001
+module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# MARKET PARTICIPANT SIMULATION INTEGRATION BLUEPRINT
-
-> **核心职责**: Market Participant Simulation Integration蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Market Participant Simulation Integration蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-  - 市场状态识别 (Layer 4)
-
+  - 市场参与者模拟集成
+  - 参与者行为建模
+  - 多层次集成
+  - 模拟结果应用
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 市场参与者行为模拟集成蓝图
+
+> **核心职责**: 市场参与者行为模拟集成，多层次集成架构
+> **职责边界**: 
+> - ✅ 本文档负责：市场参与者模拟集成、参与者行为建模、多层次集成、模拟结果应用
+> - ❌ 本文档不负责：因子计算、策略执行、风险控制
 ﻿# 市场参与者行为模拟系?- 多层次集成架构方?
 
 > **核心定位**: 市场参与者行为模拟系?- 多层次集成架构方?的核心功能实现

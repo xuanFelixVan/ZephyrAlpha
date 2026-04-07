@@ -1,36 +1,27 @@
 ---
-module_id: QUALITY_REPORT_AUTOMATION_BLUEPRINT_001
+module_id: QUALITY_REPORT_AUTOMATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 9 监控层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
-
-# QUALITY REPORT AUTOMATION BLUEPRINT
-
-> **核心职责**: Quality Report Automation蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Quality Report Automation蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: QUALITY_REPORT_AUTOMATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+  - 质量报告自动化
+  - 报告生成
+  - 报告模板管理
+  - 报告分发
 layer: "Layer 9 (监控层)"
 ---
+
+# 质量报告自动化蓝图
+
+> **核心职责**: 质量报告自动化，自动生成和分发质量报告
+> **职责边界**: 
+> - ✅ 本文档负责：质量报告自动化、报告生成、报告模板管理、报告分发
+> - ❌ 本文档不负责：数据质量监控、数据质量评分、数据质量治理
 ﻿# 质量报告自动化蓝图
 
 > **核心定位**: 质量报告自动化蓝图的核心功能实现

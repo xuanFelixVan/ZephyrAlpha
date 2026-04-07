@@ -1,37 +1,27 @@
 ---
-module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT_001
+module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# MULTI STRATEGY HIERARCHICAL SYSTEM BLUEPRINT
-
-> **核心职责**: Multi Strategy Hierarchical System蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Multi Strategy Hierarchical System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 5)
-
+  - 多策略分层系统
+  - 策略权重分配
+  - 信号融合
+  - 策略协同优化
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 多策略分层系统蓝图
+
+> **核心职责**: 多策略分层系统，策略分层权重分配和信号融合
+> **职责边界**: 
+> - ✅ 本文档负责：多策略分层系统、策略权重分配、信号融合、策略协同优化
+> - ❌ 本文档不负责：单一策略执行、风险控制、订单管理
 ﻿# 模块概述
 
 > **开发时?*: 160h

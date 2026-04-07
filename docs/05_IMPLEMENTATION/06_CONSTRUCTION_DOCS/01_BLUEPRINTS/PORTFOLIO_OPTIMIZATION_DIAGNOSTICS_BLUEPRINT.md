@@ -1,37 +1,27 @@
 ---
-module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT_001
+module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# PORTFOLIO OPTIMIZATION DIAGNOSTICS BLUEPRINT
-
-> **核心职责**: Portfolio Optimization Diagnostics蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Portfolio Optimization Diagnostics蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+  - 组合优化诊断
+  - 优化问题检测
+  - 优化结果验证
+  - 优化性能分析
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 组合优化诊断蓝图
+
+> **核心职责**: 组合优化诊断，诊断组合优化问题的健康状况
+> **职责边界**: 
+> - ✅ 本文档负责：组合优化诊断、优化问题检测、优化结果验证、优化性能分析
+> - ❌ 本文档不负责：组合优化执行、约束求解、风险控制
 ﻿# 组合优化诊断蓝图
 
 > **模块ID**: PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_001

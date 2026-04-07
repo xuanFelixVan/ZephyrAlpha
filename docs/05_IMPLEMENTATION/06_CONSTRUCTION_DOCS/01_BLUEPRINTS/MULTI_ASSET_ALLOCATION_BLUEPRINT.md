@@ -1,38 +1,27 @@
 ---
-module_id: MULTI_ASSET_ALLOCATION_BLUEPRINT_001
+module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# MULTI ASSET ALLOCATION BLUEPRINT
-
-> **核心职责**: Multi Asset Allocation蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Multi Asset Allocation蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: MULTI_ASSET_ALLOCATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
-
+  - 多资产配置
+  - 跨资产优化
+  - 相关性建模
+  - 资产类别权重分配
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 多资产配置蓝图
+
+> **核心职责**: 多资产配置，跨资产类别配置优化
+> **职责边界**: 
+> - ✅ 本文档负责：多资产配置、跨资产优化、相关性建模、资产类别权重分配
+> - ❌ 本文档不负责：单一资产优化、风险控制、订单执行
 ﻿# 概述
 
 > **开发时?*: 120h（约3周）

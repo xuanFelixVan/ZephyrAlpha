@@ -1,39 +1,27 @@
 ---
-module_id: REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# REALTIME RISK HEDGE ENGINE BLUEPRINT
-
-> **核心职责**: Realtime Risk Hedge Engine蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Realtime Risk Hedge Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: REALTIMERISKHEDGEENGINEBLU_001
+module_id: REALTIME_RISK_HEDGE_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 风险预算
-  - 市场状态识别
-  - 组合优化
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 7 风险管理层
 compliance_level: 专业标准
+responsibility:
+  - 实时风险对冲
+  - 对冲交易生成
+  - 风险敞口管理
+  - 动态对冲
 layer: "Layer 7 (风险管理层)"
+---
+
+# 实时风险对冲引擎蓝图
+
+> **核心职责**: 实时风险对冲，自动生成对冲交易
+> **职责边界**: 
+> - ✅ 本文档负责：实时风险对冲、对冲交易生成、风险敞口管理、动态对冲
+> - ❌ 本文档不负责：风险监控、风险预警、风险控制
 ﻿# 文档职责说明
 
 > **索引**: `RISK_HEDGE_BLUEPRINT_001`

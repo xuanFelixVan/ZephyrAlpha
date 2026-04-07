@@ -1,37 +1,27 @@
 ---
-module_id: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT_001
+module_id: LIQUIDITY_MANAGEMENT_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 6 组合优化层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# LIQUIDITY MANAGEMENT SYSTEM BLUEPRINT
-
-> **核心职责**: Liquidity Management System蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Liquidity Management System蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+  - 流动性管理
+  - 资金流动性监控
+  - 资金需求预测
+  - 资金配置优化
 layer: "Layer 6 (组合优化层)"
 ---
+
+# 流动性管理系统蓝图
+
+> **核心职责**: 流动性管理，监控资金流动性，优化资金配置
+> **职责边界**: 
+> - ✅ 本文档负责：流动性管理、资金流动性监控、资金需求预测、资金配置优化
+> - ❌ 本文档不负责：资金调度、风险控制、订单执行
 ﻿# 模块概述
 
 > **开发时?*: 80h

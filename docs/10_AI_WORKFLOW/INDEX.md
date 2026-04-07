@@ -1,7 +1,7 @@
 ---
 module_id: INDEX_AI_WORKFLOW_001
 title: AI工作流与舆情分析综合层索引
-version: 1.3.0
+version: 1.4.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-07
@@ -218,7 +218,32 @@ layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 | **SIGNAL_DECAY_ANALYSIS_001** | 信号衰减分析 | 1.0 | Active | [SIGNAL_DECAY_ANALYSIS_BLUEPRINT.md](./SIGNAL_DECAY_ANALYSIS_BLUEPRINT.md) | 信号有效期分析、衰减曲线拟合、最优持有期计算 |
 | **INTELLIGENT_SCHEDULING_SYSTEM_001** | 智能调度系统 | 1.0 | Active | [INTELLIGENT_SCHEDULING_SYSTEM_BLUEPRINT.md](./INTELLIGENT_SCHEDULING_SYSTEM_BLUEPRINT.md) | 任务调度、资源分配、优先级管理、依赖关系管理 |
 
-### 3.3 架构完整性分析文档 (🆕 新增)
+### 3.3 P1重要缺失模块 (🆕 新增)
+
+| 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
+|--------|---------|------|------|----------|----------|
+| **CONFIGURATION_MANAGEMENT_CENTER_001** | 配置管理中心 | 1.0 | Active | [CONFIGURATION_MANAGEMENT_CENTER_BLUEPRINT.md](./CONFIGURATION_MANAGEMENT_CENTER_BLUEPRINT.md) | 配置集中管理、环境隔离、配置验证、配置版本控制 |
+| **DATA_QUALITY_MONITORING_001** | 数据质量监控 | 1.0 | Active | [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量检查、数据验证、质量报告、异常告警 |
+| **BACKTEST_RESULTS_MANAGEMENT_001** | 回测结果管理 | 1.0 | Active | [BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT.md](./BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT.md) | 回测结果存储、结果对比、性能分析、报告生成 |
+| **STRATEGY_VERSION_CONTROL_001** | 策略版本控制 | 1.0 | Active | [STRATEGY_VERSION_CONTROL_BLUEPRINT.md](./STRATEGY_VERSION_CONTROL_BLUEPRINT.md) | 策略版本管理、变更追踪、版本回滚、协作管理 |
+| **MARKET_REGIME_DETECTION_001** | 市场状态识别 | 1.0 | Active | [MARKET_REGIME_DETECTION_BLUEPRINT.md](./MARKET_REGIME_DETECTION_BLUEPRINT.md) | 市场状态识别、牛熊判断、震荡识别、状态转换预警 |
+| **INTELLIGENT_ANOMALY_DETECTION_001** | 智能异常检测 | 1.0 | Active | [INTELLIGENT_ANOMALY_DETECTION_BLUEPRINT.md](./INTELLIGENT_ANOMALY_DETECTION_BLUEPRINT.md) | 异常检测、离群点识别、异常模式学习、实时告警 |
+| **TRADE_EXECUTION_ANALYSIS_001** | 交易执行分析 | 1.0 | Active | [TRADE_EXECUTION_ANALYSIS_BLUEPRINT.md](./TRADE_EXECUTION_ANALYSIS_BLUEPRINT.md) | 执行质量评估、滑点分析、成交率统计、执行优化建议 |
+| **PORTFOLIO_DIAGNOSTICS_001** | 投资组合诊断 | 1.0 | Active | [PORTFOLIO_DIAGNOSTICS_BLUEPRINT.md](./PORTFOLIO_DIAGNOSTICS_BLUEPRINT.md) | 组合健康检查、风险诊断、收益归因、优化建议 |
+
+### 3.4 P2增强缺失模块 (🆕 新增)
+
+| 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
+|--------|---------|------|------|----------|----------|
+| **RESEARCH_WORKFLOW_MANAGEMENT_001** | 研究工作流管理 | 1.0 | Active | [RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT.md](./RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT.md) | 研究项目管理、实验版本控制、研究成果归档、协作流程管理 |
+| **FACTOR_EFFECTIVENESS_MONITORING_001** | 因子有效性监控 | 1.0 | Active | [FACTOR_EFFECTIVENESS_MONITORING_BLUEPRINT.md](./FACTOR_EFFECTIVENESS_MONITORING_BLUEPRINT.md) | 因子IC监控、因子收益预测能力、因子衰减分析、因子有效性报告 |
+| **INTELLIGENT_PARAMETER_OPTIMIZATION_001** | 智能参数优化 | 1.0 | Active | [INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT.md](./INTELLIGENT_PARAMETER_OPTIMIZATION_BLUEPRINT.md) | 参数空间定义、优化算法选择、优化过程跟踪、最优参数推荐 |
+| **MARKET_MICROSTRUCTURE_ANALYSIS_001** | 市场微观结构分析 | 1.0 | Active | [MARKET_MICROSTRUCTURE_ANALYSIS_BLUEPRINT.md](./MARKET_MICROSTRUCTURE_ANALYSIS_BLUEPRINT.md) | 市场流动性分析、交易成本估算、市场冲击分析、微观结构指标计算 |
+| **RISK_BUDGET_MANAGEMENT_001** | 风险预算管理 | 1.0 | Active | [RISK_BUDGET_MANAGEMENT_BLUEPRINT.md](./RISK_BUDGET_MANAGEMENT_BLUEPRINT.md) | 风险预算分配、风险贡献计算、组合风险监控、风险调整优化 |
+| **INTELLIGENT_REPORT_DISTRIBUTION_001** | 智能报告分发 | 1.0 | Active | [INTELLIGENT_REPORT_DISTRIBUTION_BLUEPRINT.md](./INTELLIGENT_REPORT_DISTRIBUTION_BLUEPRINT.md) | 报告生成调度、多渠道分发、权限管理、分发记录跟踪 |
+| **HISTORICAL_REPLAY_SYSTEM_001** | 历史回放系统 | 1.0 | Active | [HISTORICAL_REPLAY_SYSTEM_BLUEPRINT.md](./HISTORICAL_REPLAY_SYSTEM_BLUEPRINT.md) | 历史数据回放、策略回测验证、场景重现分析、性能对比评估 |
+
+### 3.5 架构完整性分析文档 (🆕 新增)
 
 | 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
 |---------|---------|------|------|----------|----------|

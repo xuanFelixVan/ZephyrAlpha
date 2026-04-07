@@ -1,39 +1,27 @@
 ---
-module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 实施指南、部署文档
-
----
----
-
-# MULTI PERIOD DYNAMIC OPTIMIZATION BLUEPRINT
-
-> **核心职责**: Multi Period Dynamic Optimization蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Multi Period Dynamic Optimization蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: MULTIPERIODDYNAMICOPTIMIZAT_001
+module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
-responsibility:
-  - 组合优化
-  - 交易执行
-  - 机器学习
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
+responsibility:
+  - 多期动态优化
+  - 动态规划
+  - 交易成本优化
+  - 市场冲击建模
 layer: "Layer 6 (组合优化层)"
+---
+
+# 多期动态优化蓝图
+
+> **核心职责**: 多期动态优化，考虑交易成本和市场冲击
+> **职责边界**: 
+> - ✅ 本文档负责：多期动态优化、动态规划、交易成本优化、市场冲击建模
+> - ❌ 本文档不负责：单期优化、风险控制、订单执行
 ﻿# 多期动态优化蓝图
 
 > **模块ID**: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001

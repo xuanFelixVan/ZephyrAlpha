@@ -1,36 +1,27 @@
 ---
-module_id: HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 实施指南、部署文档
-
----
-
-# HIGH PERFORMANCE DATA PIPELINE BLUEPRINT
-
-> **核心职责**: High Performance Data Pipeline蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：High Performance Data Pipeline蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
 module_id: HIGH_PERFORMANCE_DATA_PIPELINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 数据质量
-  - 因子计算
-  - 组合优化
-standard_type: 专业量化机构文档
-layer: "Layer 1 (数据源层)"
+  - 高性能数据管道
+  - 数据处理优化
+  - 数据流管理
+  - 性能优化
+layer: "Layer 1 (数据层)"
+---
+
+# 高性能数据管道蓝图
+
+> **核心职责**: 高性能数据管道，数据处理优化和性能优化
+> **职责边界**: 
+> - ✅ 本文档负责：高性能数据管道、数据处理优化、数据流管理、性能优化
+> - ❌ 本文档不负责：数据采集、数据存储、数据质量监控
 ﻿# 高性能数据管道蓝图
 
 > **核心定位**: 高性能数据管道蓝图的核心功能实现

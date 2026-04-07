@@ -1,30 +1,27 @@
 ---
-module_id: MARGIN_CALL_MONITOR_BLUEPRINT_001
+module_id: MARGIN_CALL_MONITOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
+  - 保证金监控
+  - 爆仓预警
+  - 杠杆风险监控
+  - 压力测试
+layer: "Layer 7 (风险管理层)"
 ---
----
 
-﻿---
-module_id: MARGIN_CALL_MONITOR_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
+# 保证金监控蓝图
 
-layer: "Layer 6 (组合优化层)"
----
+> **核心职责**: 保证金监控，爆仓预警和杠杆风险监控
+> **职责边界**: 
+> - ✅ 本文档负责：保证金监控、爆仓预警、杠杆风险监控、压力测试
+> - ❌ 本文档不负责：风险控制、风险对冲、订单执行
 ﻿# Margin Call Monitor
 
 ## 核心定位
