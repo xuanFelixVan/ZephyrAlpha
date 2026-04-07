@@ -1,19 +1,4 @@
 ---
-module_id: EXTREMEMARKETRESPONSEBLUEPR_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-layer: Layer 11 (战略决策层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
-responsibility:
-  - 市场状态识别 (Layer 4)
----
-
-﻿---
 module_id: EXTREME_MARKET_RESPONSE_BLUEPRINT_001
 version: 1.0.1
 status: Active

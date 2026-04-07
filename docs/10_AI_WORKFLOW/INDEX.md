@@ -1,7 +1,7 @@
 ---
 module_id: INDEX_AI_WORKFLOW_001
 title: AI工作流与舆情分析综合层索引
-version: 1.2.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-07
@@ -208,8 +208,23 @@ layer: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
 | **INTELLIGENT_QA_SYSTEM_001** | 智能问答系统 | 1.0 | Active | [INTELLIGENT_QA_SYSTEM_BLUEPRINT.md](./INTELLIGENT_QA_SYSTEM_BLUEPRINT.md) | 自然语言理解、知识检索引擎、RAG生成引擎、上下文管理、智能推荐引擎 |
 | **PERFORMANCE_ATTRIBUTION_001** | 绩效归因分析系统 | 1.0 | Active | [PERFORMANCE_ATTRIBUTION_BLUEPRINT.md](./PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) | Brinson归因模型、因子归因模型、风险归因模型、归因报告生成、归因可视化 |
 
+### 3.2 P0核心缺失模块 (🆕 新增)
 
-### 3.2 舆情分析模块
+| 模块ID | 模块名称 | 版本 | 状态 | 蓝图文档 | 核心职责 |
+|--------|---------|------|------|----------|----------|
+| **STRATEGY_LIFECYCLE_MANAGEMENT_001** | 策略生命周期管理 | 1.0 | Active | [STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md](./STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) | 策略研发→测试→上线→监控→下线全流程管理 |
+| **MODEL_MONITORING_DRIFT_DETECTION_001** | 模型监控与漂移检测 | 1.0 | Active | [MODEL_MONITORING_DRIFT_DETECTION_BLUEPRINT.md](./MODEL_MONITORING_DRIFT_DETECTION_BLUEPRINT.md) | 模型性能监控、数据漂移检测、概念漂移检测 |
+| **TRANSACTION_COST_ANALYSIS_001** | 交易成本分析(TCA) | 1.0 | Active | [TRANSACTION_COST_ANALYSIS_BLUEPRINT.md](./TRANSACTION_COST_ANALYSIS_BLUEPRINT.md) | 交易成本分解、滑点分析、冲击成本估算 |
+| **SIGNAL_DECAY_ANALYSIS_001** | 信号衰减分析 | 1.0 | Active | [SIGNAL_DECAY_ANALYSIS_BLUEPRINT.md](./SIGNAL_DECAY_ANALYSIS_BLUEPRINT.md) | 信号有效期分析、衰减曲线拟合、最优持有期计算 |
+| **INTELLIGENT_SCHEDULING_SYSTEM_001** | 智能调度系统 | 1.0 | Active | [INTELLIGENT_SCHEDULING_SYSTEM_BLUEPRINT.md](./INTELLIGENT_SCHEDULING_SYSTEM_BLUEPRINT.md) | 任务调度、资源分配、优先级管理、依赖关系管理 |
+
+### 3.3 架构完整性分析文档 (🆕 新增)
+
+| 文档类型 | 文档名称 | 版本 | 状态 | 文档路径 | 核心职责 |
+|---------|---------|------|------|----------|----------|
+| **架构分析** | Layer 7完整性分析与缺失模块补充方案 | 1.0 | Active | [LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_BLUEPRINT.md](./LAYER_7_GAP_ANALYSIS_AND_SUPPLEMENT_BLUEPRINT.md) | 缺失模块识别、开源替代方案、蓝图补充设计 |
+
+### 3.4 舆情分析模块
 
 | 模块ID | 模块名称 | 版本 | 状| 蓝图文档 | 核心职责 |
 |--------|---------|------|------|----------|----------|

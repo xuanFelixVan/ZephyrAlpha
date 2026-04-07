@@ -5,7 +5,7 @@ status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-06
 owner: 首席蓝图架构师
-layer: Layer 4 - 机器学习层
+layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构蓝图
 applicable_scope: AI系统治理
 compliance_level: 顶级专业标准

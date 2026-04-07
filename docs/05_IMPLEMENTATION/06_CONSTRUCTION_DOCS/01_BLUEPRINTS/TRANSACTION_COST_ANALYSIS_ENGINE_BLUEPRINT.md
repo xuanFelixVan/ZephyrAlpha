@@ -7,24 +7,20 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
-﻿---
-module_id: TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+  - 交易成本分析
+  - 成本计算
+  - 基准对比
+  - 成本归因
+  - 执行质量评分
 layer: "Layer 5 (交易成本层)"
 ---
+
+# 交易成本分析引擎蓝图
+
+> **核心职责**: 交易成本分析引擎，提供全面的成本分析和质量评估
+> **职责边界**: 
+> - ✅ 本文档负责：交易成本分析、成本计算、基准对比、成本归因、执行质量评分
+> - ❌ 本文档不负责：交易执行、订单管理、风险控制
 ﻿# 交易成本分析引擎蓝图
 
 > **核心定位**: 交易成本分析引擎蓝图的核心功能实现

@@ -16,17 +16,16 @@ related_documents:
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责数据质量监控界面设计，包括：
+  - 数据质量报告查看界面
+  - 数据质量指标监控界面
+  - 数据异常告警界面
+  - 数据质量趋势分析界面
+  - 数据质量规则配置界面
   
   数据质量计算请参考：DATA_QUALITY_MONITORING_BLUEPRINT.md
   数据治理请参考：DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-responsibility:
-  - 系统框架、架构设计
-
----
----
----
 ---
 
 # 数据质量监控界面蓝图

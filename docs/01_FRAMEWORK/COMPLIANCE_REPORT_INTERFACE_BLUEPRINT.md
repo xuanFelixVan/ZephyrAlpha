@@ -5,8 +5,6 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-responsibility:
-  - 系统框架、架构设计
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 合规报告界面
@@ -18,14 +16,16 @@ related_documents:
   - REGULATORY_REPORTING_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责合规报告界面设计，包括：
+  - 合规报告查看界面
+  - 审计追踪查询界面
+  - 合规状态监控界面
+  - 合规报告生成界面
+  - 合规事件记录界面
   
   合规监控请参考：COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
   监管报告请参考：REGULATORY_REPORTING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
----
----
----
 ---
 
 

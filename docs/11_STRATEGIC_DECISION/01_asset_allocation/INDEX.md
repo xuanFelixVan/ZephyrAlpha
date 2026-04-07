@@ -44,11 +44,11 @@ responsibility:
 
 ### 资产配置模型
 
-| 文档名称 | 说明 | 重要性 | 状态 |
-|---------|------|--------|------|
-| ASSET_ALLOCATION_MODEL.md | 战略资产配置模型设计 | ⭐⭐⭐⭐⭐ | 🔄 规划中 |
-| ASSET_CLASS_DEFINITION.md | 资产类别与风险特征 | ⭐⭐⭐⭐ | 🔄 规划中 |
-| ALLOCATION_OPTIMIZATION_METHOD.md | 资产配置优化方法 | ⭐⭐⭐⭐⭐ | 🔄 规划中 |
+| 文档名称 | 说明 | 重要性 | 状态 | 文档路径 |
+|---------|------|--------|------|----------|
+| 战略资产配置模型 | 战略资产配置模型设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 | [链接](./ASSET_ALLOCATION_MODEL.md) 🆕 |
+| 资产类别定义 | 资产类别与风险特征 | ⭐⭐⭐⭐ | ✅ 活跃 | [链接](./ASSET_CLASS_DEFINITION.md) 🆕 |
+| 资产配置优化方法 | 资产配置优化方法 | ⭐⭐⭐⭐⭐ | ✅ 活跃 | [链接](./ALLOCATION_OPTIMIZATION_METHOD.md) 🆕 |
 
 ### 风险预算
 

@@ -10,7 +10,9 @@ standard_type: 专业量化机构级完整方案
 applicable_scope: 个人开发+AI维护+个人使用完整方案
 compliance_level: 顶级专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+  - 个人开发+AI维护方案设计
+  - 个人使用场景适配
+  - AI辅助开发流程
 ---
 
 # 个人开发+AI维护+个人使用完整方案（蓝图阶段）

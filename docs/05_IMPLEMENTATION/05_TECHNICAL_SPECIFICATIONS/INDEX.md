@@ -222,9 +222,45 @@ responsibility:
 
 ---
 
-## 7. AI报告层技术规格书
+## 7. 风险管理与绩效评估技术规格书
 
-### 7.1 报告生成
+### 7.1 风险控制
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 风险控制技术规格书 | RISK_CONTROL_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./RISK_CONTROL_TECHNICAL_SPECIFICATION.md) 🆕 |
+
+### 7.2 风险预算与平价策略
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 风险平价策略技术规格书 | RISK_PARITY_STRATEGY_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./RISK_PARITY_STRATEGY_TECHNICAL_SPECIFICATION.md) 🆕 |
+
+### 7.3 压力测试与风险监控
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 压力测试系统技术规格书 | STRESS_TESTING_SYSTEM_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./STRESS_TESTING_SYSTEM_TECHNICAL_SPECIFICATION.md) 🆕 |
+| VaR/ES监控系统技术规格书 | VAR_ES_MONITORING_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./VAR_ES_MONITORING_TECHNICAL_SPECIFICATION.md) 🆕 |
+
+### 7.4 绩效评估与归因
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 组合归因技术规格书 | PORTFOLIO_ATTRIBUTION_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_ATTRIBUTION_TECHNICAL_SPECIFICATION.md) 🆕 |
+| 组合绩效评估技术规格书 | PORTFOLIO_PERFORMANCE_EVALUATION_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./PORTFOLIO_PERFORMANCE_EVALUATION_TECHNICAL_SPECIFICATION.md) 🆕 |
+
+### 7.5 交易成本感知
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 交易成本感知再平衡技术规格书 | TRANSACTION_COST_AWARE_REBALANCING_SPEC_001 | v1.0.0 | Active | 2026-04-07 | [链接](./TRANSACTION_COST_AWARE_REBALANCING_TECHNICAL_SPECIFICATION.md) 🆕 |
+
+---
+
+## 8. AI报告层技术规格书
+
+### 8.1 报告生成
 
 | 文档名称 | module_id | 版本 | 状�?| 最后更�?| 文档路径 |
 |----------|-----------|------|------|----------|----------|
@@ -235,9 +271,19 @@ responsibility:
 
 ---
 
-## 8. 归档文档
+## 9. 模板文档
 
-### 8.1 已归档技术规格书
+### 9.1 技术规格模板
+
+| 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
+|----------|-----------|------|------|----------|----------|
+| 技术规格书模板 | MODULE_TEMPLATE_002 | v1.0.0 | Active | 2026-01-01 | [链接](./TECHNICAL_SPECIFICATION_TEMPLATE.md) 🆕 |
+
+---
+
+## 10. 归档文档
+
+### 10.1 已归档技术规格书
 
 | 文档名称 | module_id | 版本 | 状�?| 归档日期 | 归档路径 | 归档原因 |
 |----------|-----------|------|------|----------|----------|----------|
@@ -245,7 +291,7 @@ responsibility:
 
 ---
 
-## 9. 索引统计
+## 11. 索引统计
 
 | 统计项 | 数量 |
 |--------|------|

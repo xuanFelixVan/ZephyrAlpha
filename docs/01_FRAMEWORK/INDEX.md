@@ -62,11 +62,6 @@ implementation_status: 活跃维护
 > **维护�?*: 系统架构�?
 ---
 
-## 🎯 目录职责
-
-本目录存放系统框架设计文档，包括架构定义、技术决策、模块边界等核心设计文档�?
----
-
 ## 📚 核心文档
 
 ### 架构设计
@@ -131,6 +126,17 @@ implementation_status: 活跃维护
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
 | [FastAPI认证权限蓝图](./FASTAPI_USERS_AUTH_BLUEPRINT.md) | FastAPI-Users认证权限系统 | ⭐⭐⭐⭐ |
 | [Streamlit回测界面蓝图](./STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md) | 交互式回测界面 | ⭐⭐⭐⭐ |
+| [交易授权界面蓝图](./TRADING_AUTHORIZATION_INTERFACE_BLUEPRINT.md) | AI交易建议审批、多级授权、紧急止损 | ⭐⭐⭐⭐⭐ |
+| [持仓管理界面蓝图](./POSITION_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 实时持仓展示、持仓调整、持仓分析 | ⭐⭐⭐⭐⭐ |
+| [风险监控界面蓝图](./RISK_MONITORING_INTERFACE_BLUEPRINT.md) | 实时风险指标、风险预警、风险归因 | ⭐⭐⭐⭐⭐ |
+| [模型管理界面蓝图](./MODEL_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 模型注册、版本管理、性能监控、部署控制 | ⭐⭐⭐⭐⭐ |
+| [资金管理界面蓝图](./FUND_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 资金流水、账户余额、资金效率分析 | ⭐⭐⭐⭐⭐ |
+| [数据质量监控界面蓝图](./DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md) | 数据质量报告、指标监控、异常告警 | ⭐⭐⭐⭐⭐ |
+| [系统健康检查界面蓝图](./SYSTEM_HEALTH_CHECK_INTERFACE_BLUEPRINT.md) | 系统组件状态、服务健康、资源监控 | ⭐⭐⭐⭐ |
+| [合规报告界面蓝图](./COMPLIANCE_REPORT_INTERFACE_BLUEPRINT.md) | 合规报告查看、审计追踪、合规状态监控 | ⭐⭐⭐⭐ |
+| [告警管理界面蓝图](./ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md) | 告警规则配置、通知管理、历史查询 | ⭐⭐⭐⭐ |
+| [回测结果查看器蓝图](./BACKTEST_RESULT_VIEWER_BLUEPRINT.md) | 回测结果查看、分析、报告生成 | ⭐⭐⭐⭐ |
+| [交易记录查看器蓝图](./TRADE_RECORD_VIEWER_BLUEPRINT.md) | 历史交易查询、执行质量分析、成本统计 | ⭐⭐⭐⭐ |
 
 ### Layer 11 文字驱动层 🆕
 

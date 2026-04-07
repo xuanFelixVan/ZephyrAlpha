@@ -5,8 +5,6 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-responsibility:
-  - 系统框架、架构设计
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 交易记录查看器
@@ -18,12 +16,16 @@ related_documents:
   - AUDIT_LOG_VIEWER_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责交易记录查看器设计，包括：
+  - 历史交易记录查询界面
+  - 交易执行质量分析界面
+  - 交易成本统计界面
+  - 交易明细查看界面
+  - 交易导出功能界面
   
   交易成本分析请参考：TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
   审计日志请参考：AUDIT_LOG_VIEWER_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
----
 ---
 
 

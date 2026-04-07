@@ -9,9 +9,10 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级阶段分析
 applicable_scope: 蓝图阶段vs施工阶段模块需求分析
 compliance_level: 顶级专业标准
-responsibility: 数据质量
-  - 数据质量 (Layer 1)
-  responsibility_layer: Layer 1
+responsibility:
+  - 蓝图阶段vs施工阶段分析
+  - 模块需求分类
+  - 实施阶段规划
 ---
 
 # 蓝图阶段vs施工阶段模块需求分析

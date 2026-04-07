@@ -7,31 +7,19 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-
----
+  - 数据采集框架
+  - 数据存储架构
+  - 数据处理引擎
+  - 基础设施管理
+layer: "Layer 1 (数据层)"
 ---
 
 # UNIFIED DATA INFRASTRUCTURE BLUEPRINT
 
-> **核心职责**: Unified Data Infrastructure蓝图设计
+> **核心职责**: 统一数据基础设施，构建数据采集、存储和处理框架
 > **职责边界**: 
-> - ✅ 本文档负责：Unified Data Infrastructure蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
-layer: "Layer 6 (组合优化层)"
----
+> - ✅ 本文档负责：数据采集、数据存储、数据处理、基础设施管理
+> - ❌ 本文档不负责：业务数据处理、数据质量监控、数据治理
 ﻿# 📋 执行摘要
 
 > **版本**: v1.0

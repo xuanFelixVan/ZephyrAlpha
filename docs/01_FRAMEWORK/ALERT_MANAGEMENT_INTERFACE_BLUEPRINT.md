@@ -5,8 +5,6 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
-responsibility:
-  - 系统框架、架构设计
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 告警管理界面
@@ -18,14 +16,16 @@ related_documents:
   - MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责告警管理界面设计，包括：
+  - 告警规则配置界面
+  - 告警通知管理界面
+  - 告警历史查询界面
+  - 告警级别设置界面
+  - 告警静默管理界面
   
   系统监控请参考：GRAFANA_MONITORING_BLUEPRINT.md
   推送通知请参考：MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
----
----
----
 ---
 
 

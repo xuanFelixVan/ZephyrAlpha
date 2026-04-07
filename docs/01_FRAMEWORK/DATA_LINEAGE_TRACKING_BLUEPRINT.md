@@ -28,7 +28,9 @@ responsibility_boundary: |
   - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md: 数据质量管理执行
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
 responsibility:
-  - 数据质量 (Layer 1)
+  - 数据血缘追踪
+  - 数据资产管理
+  - 数据合规管理
 ---
 ---
 

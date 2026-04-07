@@ -11,9 +11,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 5 交易成本层
+applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-layer: "Layer 5 (交易成本层)"
+layer: "Layer 6 (组合优化层)"
 ---
 
 # 交易成本感知再平衡蓝图

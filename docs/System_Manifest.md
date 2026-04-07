@@ -288,11 +288,41 @@ responsibility:
 | Layer 4 | 模型测试框架 | MTF-001 | 90% | 1周 | ✅ 已创建 |
 | Layer 4 | 模型可观测性系统 | MOB-001 | 85% | 1.5周 | ✅ 已创建 |
 | Layer 4 | 模型生命周期管理系统 | MLM-001 | 85% | 2周 | ✅ 已创建 |
+| Layer 4 | 数据版本控制系统 | DVC-001 | 100% | 1周 | ✅ 已创建 ⭐新增 |
+| Layer 4 | 超参数优化系统 | HPO-001 | 100% | 1.5周 | ✅ 已创建 ⭐新增 |
+| Layer 4 | 时序预测模型系统 | TSP-001 | 100% | 2周 | ✅ 已创建 ⭐新增 |
+| Layer 4 | 异常检测模型系统 | ADM-001 | 100% | 1.5周 | ✅ 已创建 ⭐新增 |
+| Layer 4 | 数据质量监控系统 | DQM-001 | 100% | 1.5周 | ✅ 已创建 ⭐新增 |
 | Layer 5 | 智能订单路由系统 | SOR-001 | 20% | 2周 | ✅ 已创建 |
 | Layer 6 | 动态风险预算系统 | DRB-001 | 70% | 2周 | ✅ 已创建 |
 | Layer 7 | AI报告生成系统 | AIRG-001 | 80% | 1.5周 | ✅ 已创建 |
 
 **详细蓝图**: [MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md](01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md)
+
+### 2.1.1 Layer 4机器学习层缺失模块补充蓝图 ⭐新增 2026-04-07
+
+**核心设计理念**: 开源复用优先，适合个人开发+AI维护
+
+| 蓝图文档 | 核心内容 | 开源方案 | 开源复用率 | 工作量 |
+|---------|---------|---------|-----------|--------|
+| [数据版本控制蓝图](01_FRAMEWORK/LAYER4_ML/DATA_VERSION_CONTROL_BLUEPRINT.md) | 数据版本管理、数据血缘追踪 | DVC (13k+ Stars) | 100% | 20h |
+| [超参数优化蓝图](01_FRAMEWORK/LAYER4_ML/HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md) | 自动调参、贝叶斯优化、分布式优化 | Optuna (10k+ Stars) | 100% | 25h |
+| [缺失模块综合蓝图](01_FRAMEWORK/LAYER4_ML/LAYER4_MISSING_MODULES_BLUEPRINT.md) | 时序预测、异常检测、模型服务、数据质量 | GluonTS/PyOD/BentoML/Great Expectations | 90% | 140h |
+| [架构完整性分析](01_FRAMEWORK/LAYER4_ML/LAYER4_GAP_ANALYSIS_BLUEPRINT.md) | 34个缺失模块识别与分析 | - | - | - |
+
+**开源方案推荐**:
+- 数据版本控制: DVC (Apache 2.0, 13k+ Stars)
+- 超参数优化: Optuna (MIT, 10k+ Stars)
+- 时序预测: GluonTS (Apache 2.0, 4k+ Stars)
+- 异常检测: PyOD (BSD, 8k+ Stars)
+- 模型服务: BentoML (Apache 2.0, 7k+ Stars)
+- 数据质量: Great Expectations (Apache 2.0, 10k+ Stars)
+- 分布式训练: Ray Train (Apache 2.0, 32k+ Stars)
+
+**总工作量**: 185小时（约1个月）
+**月运行成本**: $130-380
+**开源复用率**: 90%
+**自研比例**: 10%
 
 #### P1级专业模块 (20个)
 

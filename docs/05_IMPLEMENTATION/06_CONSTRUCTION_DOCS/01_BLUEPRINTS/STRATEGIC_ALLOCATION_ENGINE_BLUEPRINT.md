@@ -7,31 +7,19 @@ last_updated: 2026-04-07
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-
+  - 战略资产配置
+  - 风险预算分配
+  - 投资组合优化
+  - 再平衡决策
+layer: "Layer 11 (战略决策层)"
 ---
 
-# STRATEGIC ALLOCATION ENGINE BLUEPRINT
+# 战略配置引擎蓝图
 
-> **核心职责**: Strategic Allocation Engine蓝图设计
+> **核心职责**: 战略资产配置引擎，负责长期资产配置决策
 > **职责边界**: 
-> - ✅ 本文档负责：Strategic Allocation Engine蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 风险预算 (Layer 11)
-  - 数据质量 (Layer 1)
-
-layer: "Layer 6 (组合优化层)"
----
+> - ✅ 本文档负责：战略资产配置、风险预算分配、投资组合优化、再平衡决策
+> - ❌ 本文档不负责：战术配置、日内交易、实时风控
 ﻿# 战略配置引擎蓝图
 
 > **核心定位**: 战略配置引擎蓝图的核心功能实现

@@ -6,9 +6,9 @@ created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
-  - 交易执行
-  - 回测系统
+  - 交易成本分析
+  - 执行质量评估
+  - 成本优化建议
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易成本分析与优化

@@ -16,18 +16,17 @@ related_documents:
   - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
 responsibility_boundary: |
   本文档负责数据探索界面设计，包括：
+  - 数据浏览和查询界面
+  - 数据可视化分析界面
+  - 数据导出和下载界面
+  - 数据统计概览界面
+  - 数据关系探索界面
   
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   回测界面请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
   性能分析请参考：PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-responsibility:
-  - 系统框架、架构设计
-
----
----
----
 ---
 
 # 数据探索界面蓝图

@@ -6,9 +6,9 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席架构师
 responsibility:
-  - 系统框架、架构设计
-  - 风险预算
-  - 市场状态识别
+  - 事后分析
+  - 根因分析
+  - 改进建议生成
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 事后分析系统架构设计

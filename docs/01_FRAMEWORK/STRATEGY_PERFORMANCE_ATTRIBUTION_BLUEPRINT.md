@@ -39,7 +39,9 @@ responsibility_boundary: |
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
   - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
 responsibility:
-  - 风险预算 (Layer 5)
+  - 策略绩效归因
+  - 因子绩效分析
+  - 绩效报告生成
 ---
 
 # 策略绩效归因系统蓝图
