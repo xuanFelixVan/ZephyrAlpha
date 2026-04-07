@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: DATA_SOURCE_EXTENSION_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: AIWF_DSE_001
 version: 1.0.0
 status: Active

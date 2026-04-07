@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE__001
 version: 1.0.0
 status: Active
@@ -11,6 +11,8 @@ responsibility:
   - 基准对比
   - 成本归因
   - 执行质量评分
+owner: 实施团队
+compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
 

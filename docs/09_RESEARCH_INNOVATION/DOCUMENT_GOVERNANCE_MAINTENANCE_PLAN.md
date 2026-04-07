@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: DOCUMENT_GOVERNANCE_MAINTENANCE_PLAN
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 responsibility:
   - 负责制定Layer 9研究与创新层文档治理的维护计划，规划维护周期、维护内容、维护标准和管理机制，为文档治理维护提供指导，确保研究与创新层文档质量持续保持。
 

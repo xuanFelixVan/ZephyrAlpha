@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -14,6 +14,10 @@ responsibility:
 layer: Layer 5.2 (组合优化)
 ---
 
+
+> **职责边界**: 
+> - ✅ 本文档负责：动态资产配置、资产权重调整、市场环境适应
+> - ❌ 本文档不负责：单资产优化（由均值方差优化模块负责）
 
 ## 核心定位
 

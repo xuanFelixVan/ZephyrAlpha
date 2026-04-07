@@ -1,209 +1,121 @@
-"""
-修复剩余问题脚本
-用途：修复死链接和Layer定位缺失
-创建时间：2026-04-07
-"""
-
+import os
 import re
-from pathlib import Path
-from datetime import datetime
 
-BLUEPRINTS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
+blueprints_dir = r'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS'
 
+fixes = {
+    'PORTFOLIO_OPTIMIZATION_BLUEPRINT.md': {
+        'add_fields': {
+            'owner': '实施团队',
+            'responsibility': ['投资组合优化框架', '优化流程协调', '优化结果整合']
+        },
+        'add_boundary': {
+            '负责': '投资组合优化框架、优化流程协调、优化结果整合',
+            '不负责': '具体优化算法（由各优化模块负责）'
+        }
+    },
+    'TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md': {
+        'add_fields': {
+            'owner': '实施团队',
+            'compliance_level': '专业标准'
+        }
+    },
+    'MULTI_ASSET_ALLOCATION_BLUEPRINT.md': {
+        'add_responsibility': ['多资产配置', '跨资产优化', '资产相关性建模'],
+        'add_boundary': {
+            '负责': '多资产配置、跨资产优化、资产相关性建模',
+            '不负责': '单资产优化（由均值方差优化模块负责）'
+        }
+    },
+    'MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md': {
+        'add_responsibility': ['多策略分层', '策略协调', '层级优化']
+    },
+    'PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md': {
+        'add_responsibility': ['情景分析', '压力测试', '情景归因'],
+        'add_boundary': {
+            '负责': '情景分析、压力测试、情景归因',
+            '不负责': '情景生成（由情景模块负责）'
+        }
+    },
+    'MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md': {
+        'fix_responsibility': ['市场参与者模拟', '模拟结果应用', '模拟集成']
+    },
+    'PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md': {
+        'fix_responsibility': ['分散度度量', '风险分散评估', '集中度分析']
+    },
+    'ROBUST_OPTIMIZATION_BLUEPRINT.md': {
+        'fix_responsibility': ['鲁棒优化', '不确定性建模', '鲁棒解求解']
+    },
+    'DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md': {
+        'add_boundary': {
+            '负责': '动态资产配置、资产权重调整、市场环境适应',
+            '不负责': '单资产优化（由均值方差优化模块负责）'
+        }
+    },
+    'MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md': {
+        'add_boundary': {
+            '负责': '均值方差优化、有效前沿计算、最优权重求解',
+            '不负责': '风险模型构建（由风险模型模块负责）'
+        }
+    }
+}
 
-def read_document(filepath: Path) -> str:
-    """读取文档内容"""
-    encodings = ['utf-8-sig', 'utf-8', 'gbk', 'gb2312', 'latin-1']
-    for encoding in encodings:
-        try:
-            with open(filepath, 'r', encoding=encoding) as f:
-                return f.read()
-        except (UnicodeDecodeError, UnicodeError):
-            continue
-    return ""
+fixed_files = []
 
-
-def fix_dead_links(filepath: Path) -> int:
-    """修复死链接"""
-    content = read_document(filepath)
-    if not content:
-        return 0
+for file, actions in fixes.items():
+    file_path = os.path.join(blueprints_dir, file)
+    
+    if not os.path.exists(file_path):
+        print(f'File not found: {file}')
+        continue
+    
+    with open(file_path, 'r', encoding='utf-8-sig') as f:
+        content = f.read()
     
     original_content = content
-    fixed_count = 0
     
-    # 查找所有链接
-    links = re.findall(r'\[([^\]]+)\]\(([^\)]+)\)', content)
+    # 添加字段
+    if 'add_fields' in actions:
+        for field, value in actions['add_fields'].items():
+            if field not in content:
+                # 在layer字段之前添加
+                layer_match = re.search(r'layer:', content)
+                if layer_match:
+                    if isinstance(value, list):
+                        field_content = f'{field}:\n' + '\n'.join([f'  - {v}' for v in value]) + '\n'
+                    else:
+                        field_content = f'{field}: {value}\n'
+                    content = content[:layer_match.start()] + field_content + content[layer_match.start():]
     
-    for text, link in links:
-        if link.startswith('http') or link.startswith('#'):
-            continue
-        
-        # 检查链接是否存在
-        if link.startswith('../'):
-            target_path = filepath.parent.parent / link.replace('../', '')
-        else:
-            target_path = filepath.parent / link
-        
-        if not target_path.exists():
-            # 删除死链接，保留文本
-            content = content.replace(f'[{text}]({link})', text)
-            fixed_count += 1
+    # 添加responsibility
+    if 'add_responsibility' in actions:
+        if 'responsibility:' not in content:
+            layer_match = re.search(r'layer:', content)
+            if layer_match:
+                resp_content = 'responsibility:\n' + '\n'.join([f'  - {v}' for v in actions['add_responsibility']]) + '\n'
+                content = content[:layer_match.start()] + resp_content + content[layer_match.start():]
     
-    # 保存修改
+    # 修复responsibility项不足
+    if 'fix_responsibility' in actions:
+        resp_match = re.search(r'responsibility:\s*[\r\n]+((?:\s+-\s+.+[\r\n]?)+)', content)
+        if resp_match:
+            new_resp = 'responsibility:\n' + '\n'.join([f'  - {v}' for v in actions['fix_responsibility']]) + '\n'
+            content = content[:resp_match.start()] + new_resp + content[resp_match.end():]
+    
+    # 添加职责边界
+    if 'add_boundary' in actions:
+        if '职责边界' not in content:
+            boundary_text = f'''> **职责边界**: 
+> - ✅ 本文档负责：{actions['add_boundary']['负责']}
+> - ❌ 本文档不负责：{actions['add_boundary']['不负责']}
+'''
+            if '## 核心定位' in content:
+                content = content.replace('## 核心定位', boundary_text + '\n## 核心定位', 1)
+    
     if content != original_content:
-        with open(filepath, 'w', encoding='utf-8-sig') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
-    
-    return fixed_count
+        fixed_files.append(file)
+        print(f'Fixed: {file}')
 
-
-def fix_layer_positioning(filepath: Path) -> bool:
-    """修复Layer定位"""
-    content = read_document(filepath)
-    if not content:
-        return False
-    
-    # 检查是否已有Layer定位
-    if re.search(r'layer:\s*["\']?Layer\s+\d+', content):
-        return False
-    
-    # 从文件名推断Layer
-    filename = filepath.stem
-    
-    layer_mapping = {
-        "DATA": "Layer 1 (数据源层)",
-        "ALPHA": "Layer 2 (Alpha因子层)",
-        "STRATEGY": "Layer 3 (策略层)",
-        "AI": "Layer 4 (机器学习层)",
-        "PORTFOLIO": "Layer 6 (组合优化层)",
-        "REBALANCING": "Layer 6 (组合优化层)",
-        "RISK": "Layer 7 (风险管理层)",
-        "EXECUTION": "Layer 8 (执行层)",
-        "TRADING": "Layer 8 (执行层)",
-        "MONITORING": "Layer 9 (监控层)",
-        "IMPLEMENTATION": "Layer 6 (组合优化层)",
-    }
-    
-    layer = None
-    for keyword, layer_name in layer_mapping.items():
-        if keyword in filename.upper():
-            layer = layer_name
-            break
-    
-    if not layer:
-        layer = "Layer 6 (组合优化层)"  # 默认
-    
-    # 添加Layer定位到YAML头部
-    yaml_match = re.match(r'^(---\s*\n.*?)(\n---\s*\n)', content, re.DOTALL)
-    if yaml_match:
-        yaml_header = yaml_match.group(1)
-        yaml_end = yaml_match.group(2)
-        rest_content = content[yaml_match.end():]
-        
-        # 添加layer字段
-        if 'layer:' not in yaml_header:
-            yaml_header += f"\nlayer: {layer}"
-        
-        content = yaml_header + yaml_end + rest_content
-        
-        with open(filepath, 'w', encoding='utf-8-sig') as f:
-            f.write(content)
-        
-        return True
-    
-    return False
-
-
-def fix_change_history(filepath: Path) -> bool:
-    """补充变更历史"""
-    content = read_document(filepath)
-    if not content:
-        return False
-    
-    if '变更历史' in content or '版本历史' in content:
-        return False
-    
-    # 添加变更历史
-    change_history = """
-
-## 变更历史
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-|------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
-"""
-    
-    # 在文档末尾添加
-    content = content.rstrip()
-    if content.endswith('---'):
-        content = content[:-3].rstrip()
-    
-    content = content + change_history + "\n\n---\n"
-    
-    with open(filepath, 'w', encoding='utf-8-sig') as f:
-        f.write(content)
-    
-    return True
-
-
-def main():
-    """主函数"""
-    print("="*80)
-    print("修复剩余问题")
-    print("="*80)
-    print(f"执行时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("="*80)
-    
-    # 需要修复的文档
-    docs_to_fix = [
-        "DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md",
-        "FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md",
-        "IMPLEMENTATION_PROGRESS_TRACKING.md",
-        "MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md",
-        "PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md",
-    ]
-    
-    total_fixed = {
-        "dead_links": 0,
-        "layer_positioning": 0,
-        "change_history": 0
-    }
-    
-    for filename in docs_to_fix:
-        filepath = BLUEPRINTS_DIR / filename
-        if not filepath.exists():
-            continue
-        
-        print(f"\n处理: {filename}")
-        
-        # 修复死链接
-        dead_links_fixed = fix_dead_links(filepath)
-        if dead_links_fixed > 0:
-            total_fixed["dead_links"] += dead_links_fixed
-            print(f"  ✅ 修复死链接: {dead_links_fixed}个")
-        
-        # 修复Layer定位
-        if filename == "IMPLEMENTATION_PROGRESS_TRACKING.md":
-            layer_fixed = fix_layer_positioning(filepath)
-            if layer_fixed:
-                total_fixed["layer_positioning"] += 1
-                print(f"  ✅ 添加Layer定位")
-        
-        # 补充变更历史
-        if filename == "IMPLEMENTATION_PROGRESS_TRACKING.md":
-            history_fixed = fix_change_history(filepath)
-            if history_fixed:
-                total_fixed["change_history"] += 1
-                print(f"  ✅ 补充变更历史")
-    
-    print("\n" + "="*80)
-    print("修复完成")
-    print("="*80)
-    print(f"修复死链接: {total_fixed['dead_links']}个")
-    print(f"添加Layer定位: {total_fixed['layer_positioning']}个")
-    print(f"补充变更历史: {total_fixed['change_history']}个")
-
-
-if __name__ == "__main__":
-    main()
+print(f'\nTotal fixed: {len(fixed_files)} files')

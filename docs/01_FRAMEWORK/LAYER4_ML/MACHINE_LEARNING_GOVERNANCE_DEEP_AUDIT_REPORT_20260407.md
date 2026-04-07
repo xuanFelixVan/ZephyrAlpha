@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: AUDIT_LAYER_4机器学习层文档治理深度审计报告_001
 version: 1.0.0
 status: Active

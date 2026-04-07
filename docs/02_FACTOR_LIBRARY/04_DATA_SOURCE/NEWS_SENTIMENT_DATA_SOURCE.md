@@ -1,4 +1,13 @@
-﻿﻿---
+---
+module_id: NEWS_SENTIMENT_DATA_SOURCE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿---
 module_id: DATA_NEWS_SENTIMENT_001
 version: 2.0.0
 status: Active

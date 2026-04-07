@@ -1,4 +1,13 @@
-﻿﻿﻿---
+---
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+---
+
+﻿﻿---
 module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
 version: 1.1.0
 status: Active

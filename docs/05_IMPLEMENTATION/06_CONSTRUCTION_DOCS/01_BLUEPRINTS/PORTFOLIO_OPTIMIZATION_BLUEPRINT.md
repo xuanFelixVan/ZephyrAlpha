@@ -1,4 +1,4 @@
-﻿---
+---
 module_id: IMPL_PORTFOLIO_OPT_BP_001
 version: 1.0.2
 status: Active
@@ -12,6 +12,11 @@ implementation_status: 设计阶段
 open_source_dependency: PyPortfolioOpt, CVXPY, Riskfolio-Lib
 estimated_effort: 140小时
 priority: P0
+owner: 实施团队
+responsibility:
+  - 投资组合优化框架
+  - 优化流程协调
+  - 优化结果整合
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -26,6 +31,10 @@ layer: Layer 5.2 (组合优化)
 
 文档**: 本蓝图是[STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md)的后续组件，专注于多策略组合构建与优?
 
+
+> **职责边界**: 
+> - ✅ 本文档负责：投资组合优化框架、优化流程协调、优化结果整合
+> - ❌ 本文档不负责：具体优化算法（由各优化模块负责）
 
 ## 核心定位
 
