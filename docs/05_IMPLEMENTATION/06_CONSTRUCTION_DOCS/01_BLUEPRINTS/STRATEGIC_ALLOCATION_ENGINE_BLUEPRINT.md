@@ -17,7 +17,7 @@ layer: Layer 5 (策略执行层)
 
 负责战略配置引擎的设计与实现，基于长期资产配置模型，提供战略配置方案，支持长期投资决策。
 
-# æç¥é
+#
 
 > **职责边界**: 
 
@@ -82,10 +82,10 @@ layer: Layer 5 (策略执行层)
 ### 1.1 Layer 11整体架构
 
 ```
-â?                                                                â?
-ç½?                                 â?â?â?
- (Risk Budgeting)                       â?â?â?
-                                  â?â?â?
+?                                                                ?
+?                                 ???
+(Risk Budgeting)                       ???
+???
 ```
 
 ### 1.2 模块职责边界
@@ -116,7 +116,7 @@ from pypfopt import (
 )
 
 class StrategicAllocationEngine:
-    """æç¥é
+"""
     
     def __init__(self):
         self.optimizer = None
@@ -132,7 +132,6 @@ class StrategicAllocationEngine:
             prices: 价格数据
             
         返回:
-¸
         """
         mu = expected_returns.mean_historical_return(prices)
         S = risk_models.sample_cov(prices)
@@ -152,7 +151,6 @@ class StrategicAllocationEngine:
             prices: 价格数据
             
         返回:
-¸
         """
         returns = prices.pct_change().dropna()
         hrp = HRPOpt(returns)
@@ -167,7 +165,7 @@ class StrategicAllocationEngine:
         views: Dict[str, float],
         omega: np.ndarray
     ) -> Dict[str, float]:
-        """Black-Littermané
+"""Black-Litterman
 置
         
         参数:
@@ -175,8 +173,7 @@ class StrategicAllocationEngine:
             views: 观点数据
             
         返回:
-            BLæéå­å
-¸
+BL
         """
         S = risk_models.sample_cov(prices)
         
@@ -198,11 +195,11 @@ class StrategicAllocationEngine:
 ### 2.2 集成架构
 
 ```
-â?                 æç¥é
-â?                                                                â?
-â? â?             æ¸
-â?                           â?                                   â?
-â?                           â?                                   â?
+?
+?                                                                ?
+? ?
+?                           ?                                   ?
+?                           ?                                   ?
 ```
 
 ---
@@ -227,7 +224,6 @@ def strategic_asset_allocation(
         prices: 价格数据
         
     返回:
-ç½®æé
     """
     mu = expected_returns.mean_historical_return(prices)
     S = risk_models.sample_cov(prices)
@@ -263,7 +259,6 @@ def risk_budget_allocation(
     
     参数:
         prices: 价格数据
-¸
         
     返回:
         风险预算权重
@@ -296,7 +291,7 @@ def mean_variance_optimization(
         constraints: 约束条件
         
     返回:
-        æä¼æé?
+?
     """
     mu = expected_returns.mean_historical_return(prices)
     S = risk_models.sample_cov(prices)
@@ -318,7 +313,7 @@ def mean_variance_optimization(
 
 #### 3.4.1 动态再平衡
 
-ç½?
+?
 
 
 ```python
@@ -360,7 +355,7 @@ from typing import Dict, List, Optional
 
 @dataclass
 class StrategicAllocation:
-    """æç¥é
+"""
 置"""
     allocation_id: str
     timestamp: datetime
@@ -387,17 +382,16 @@ class RebalancingSignal:
 
 ### 5.1 Phase 1: 核心功能 (Week 1)
 
-å**ï¼?
-- [ ] éæPyPortfolioOptåº?
+**?
+- [ ] PyPortfolioOpt?
 置
 置
-- [ ] åå
-æµè¯
+- [ ]
 
 
 ### 5.2 Phase 2: 扩展功能 (Week 2)
 
-å**ï¼?
+**?
 - [ ] 实现Black-Litterman模型
 - [ ] 实现动态再平衡
 - [ ] 实现约束条件处理
@@ -406,7 +400,7 @@ class RebalancingSignal:
 
 ### 5.3 Phase 3: 优化完善 (Week 3)
 
-å**ï¼?
+**?
 - [ ] 性能优化
 - [ ] 文档完善
 - [ ] 部署上线
@@ -414,33 +408,32 @@ class RebalancingSignal:
 
 ---
 
-## å
+##
 
 ### 6.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
-| **åå
-æµè¯** | â?0% | pytest |
+| **
+** | ?0% | pytest |
 
 ### 6.2 性能指标
 
 |------|--------|
-| **é
+| **
 | **优化计算时间** | <5s |
 
 ---
 
 
 |------|--------|
-| **é
+| **
 | **风险控制** | VaR <5% |
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 ### 上游依赖
 
@@ -457,8 +450,8 @@ class RebalancingSignal:
 | **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -475,8 +468,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### å
-³ææ¡£
+###
 
 | 文档 | 说明 |
 |------|------|
@@ -503,8 +495,8 @@ graph LR
 ##### 6.001. Strategic Allocation Engine
 - **模块ID**: STRATEGIC_ALLOCATION_ENGINE_001
 - **蓝图文档**: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

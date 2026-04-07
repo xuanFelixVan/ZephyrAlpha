@@ -8,7 +8,6 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-³
   - 数据查询服务
   - API认证授权
   - 限流熔断
@@ -20,10 +19,9 @@ layer: Layer 5 (策略执行层)
 
 负责统一数据API网关的设计与实现，构建统一的数据访问接口，提供数据路由和权限控制功能，支持数据服务。
 
-³èå¾
 
 > **职责边界**: 
-> - â?æ¬...
+> - ?...
 
 
 ## 设计目标
@@ -93,9 +91,9 @@ layer: Layer 5 (策略执行层)
 
 ### 1.1 为什么选择FastAPI + Strawberry
 
-| ç¹æ?| FastAPI | Flask | Django |
+| ?| FastAPI | Flask | Django |
 |------|---------|-------|--------|
-| GraphQL | â?Strawberry | â?Ariadne | â?Graphene |
+| GraphQL | ?Strawberry | ?Ariadne | ?Graphene |
 
 ---
 
@@ -104,13 +102,13 @@ layer: Layer 5 (策略执行层)
 ### 2.1 整体架构
 
 ```
-³æ¶æ                           â?
-â?                                                                â?
-â? â?APIå
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-â?                           â?                                   â?
-â?                                                                â?
+?
+?                                                                ?
+? ?API
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+?                           ?                                   ?
+?                                                                ?
 ```
 
 ---
@@ -132,7 +130,7 @@ from datetime import datetime
 
 app = FastAPI(
     title="Zephyr Quant Data API",
-³",
+",
     version="1.0.0"
 )
 

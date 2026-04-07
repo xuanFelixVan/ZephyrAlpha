@@ -8,13 +8,13 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-ç½?
-  - ç¸å
+?
+-
 
 layer: Layer 5.2 (组合优化)
 ---
 
-ç½®èå?
+?
 ## 核心定位
 
 
@@ -111,7 +111,7 @@ class MultiAssetAllocator:
             asset_classes: 资产类别列表
             
         Returns:
-            AllocationResult: é
+AllocationResult:
         """
         # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
@@ -148,9 +148,9 @@ class MultiAssetAllocator:
             economic_regime: 经济范式?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: 范式概率
             
         Returns:
-            AllocationResult: é
+AllocationResult:
         """
-        # 1. å®ä¹å
+# 1.
         
         # 2. 根据经济范式调整风险预算
         risk_budget = self._adjust_risk_budget_by_regime(
@@ -216,7 +216,6 @@ class MultiAssetDataManager:
             asset_classes: 资产类别列表
             
         Returns:
-¸
         """
         asset_data = {}
         
@@ -260,13 +259,12 @@ class CrossAssetCorrelationModeler:
         
     def estimate_correlation(self, asset_data: Dict[str, AssetData]) -> pd.DataFrame:
         """
-³æ§ç©?        
+?
         Args:
-¸
             
         Returns:
-            pd.DataFrame: ç¸å
-³æ§ç©?        """
+pd.DataFrame:
+?        """
         # 1. 提取收益?        returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
@@ -274,7 +272,7 @@ class CrossAssetCorrelationModeler:
         # 2. 使用DCC-GARCH估计动态相?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
-³?            correlation_matrix = returns.corr()
+?            correlation_matrix = returns.corr()
         
         return correlation_matrix
     
@@ -282,13 +280,12 @@ class CrossAssetCorrelationModeler:
                            asset_data: Dict[str, AssetData],
                            horizon: int = 1) -> pd.DataFrame:
         """
-³?        
+?
         Args:
-¸
             horizon: 预测期数
             
         Returns:
-³æ§ç©?        """
+?        """
         returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
@@ -318,12 +315,10 @@ class RiskParityOptimizer:
         风险平价优化
         
         Args:
-¸
-            correlation_matrix: ç¸å
+correlation_matrix:
 
             
         Returns:
-ç½®æé
         """
         # 1. 提取波动?        volatility = pd.Series()
         for asset_class, data in asset_data.items():
@@ -343,7 +338,7 @@ class RiskParityOptimizer:
                                  volatility: pd.Series,
                                  correlation_matrix: pd.DataFrame) -> pd.DataFrame:
         """构建协方差矩?""
-        # Î£ = D * C * D
+#  = D * C * D
         # D = diag(σ)
         D = np.diag(volatility.values)
         C = correlation_matrix.values
@@ -360,7 +355,7 @@ class RiskParityOptimizer:
         求解风险平价权重
         
         使用凸优化求解：
-        s.t. Î£ w_i = 1, w_i >= 0
+s.t.  w_i = 1, w_i >= 0
         """
         import cvxpy as cp
         
@@ -409,9 +404,8 @@ class CrossAssetRiskMonitor:
         """
         监控跨资产风?        
         Args:
-ç½®æé
-            correlation_matrix: ç¸å
-³æ§ç©?            
+correlation_matrix:
+?
         Returns:
             RiskReport: 风险报告
         """
@@ -421,7 +415,7 @@ class CrossAssetRiskMonitor:
         # 2. 计算风险贡献
         risk_contribution = self._calculate_risk_contribution(allocation, correlation_matrix)
         
-³æ§çª?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
+?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
         
         # 4. 生成预警信号
         alerts = self._generate_alerts(risk_contribution, correlation_breakdown)
@@ -476,8 +470,8 @@ class CrossAssetRiskMonitor:
         return pd.Series(risk_contribution, index=allocation.index)
     
     def _detect_correlation_breakdown(self, correlation_matrix: pd.DataFrame) -> bool:
-³æ§çª?""
-        # å®é
+?""
+#
         
         return mean_correlation > 0.8
     
@@ -496,7 +490,7 @@ class CrossAssetRiskMonitor:
                 'message': f'风险过度集中：{risk_contribution.idxmax()}贡献{max_risk_contribution:.2%}风险'
             })
         
-        # 2. ç¸å
+# 2.
             alerts.append({
                 'type': 'correlation_breakdown',
                 'severity': 'medium',
@@ -505,7 +499,7 @@ class CrossAssetRiskMonitor:
         return alerts
 ```
 
-### 3.6 é
+### 3.6
 ```python
 @dataclass
 class MultiAssetConfig:
@@ -518,7 +512,7 @@ class MultiAssetConfig:
     
 @dataclass
 class DataConfig:
-    """æ°æ®é
+"""
 置"""
     equity_config: EquityDataConfig
     bond_config: BondDataConfig
@@ -527,8 +521,7 @@ class DataConfig:
     
 @dataclass
 class CorrelationConfig:
-    """ç¸å
-³æ§é
+"""
 ?""
     use_dcc_garch: bool = True
     dcc_config: DCCGARCHConfig = None
@@ -542,7 +535,7 @@ class RiskParityConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -556,9 +549,8 @@ class AssetData:
 ```python
 @dataclass
 class AllocationResult:
-    """é
-ç½®æé
-    correlation_matrix: pd.DataFrame  # ç¸å
+"""
+correlation_matrix: pd.DataFrame  #
     timestamp: datetime
     
 @dataclass
@@ -566,7 +558,7 @@ class RiskReport:
     """风险报告"""
     portfolio_risk: float  # 组合风险
     risk_contribution: pd.Series  # 风险贡献
-    correlation_breakdown: bool  # ç¸å
+correlation_breakdown: bool  #
     timestamp: datetime
 ```
 
@@ -587,7 +579,7 @@ class EconomicRegimeEngine:
         # 1. 识别经济范式
         regime, probability = self.identify_regime(market_data)
         
-        # 2. æ§è¡å
+# 2.
 ?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
 ```
 
@@ -634,7 +626,7 @@ class BarraRiskModel:
 ### 6.2 里程?
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
-| **M2: ç¸å
+| **M2:
 | **M3: 优化器完?* | Week 2 Day 4 | 风险平价优化?| 优化结果合理 |
 | **M4: 监控器完?* | Week 3 Day 2 | 跨资产风险监控器 | 监控有效 |
 | **M5: 测试通过** | Week 3 Day 4 | 测试报告 | 所有测试通过 |
@@ -665,7 +657,7 @@ class BarraRiskModel:
 需 |
 需 |
 
-### 8.2 å®è£
+### 8.2
 命令
 
 ```bash
@@ -683,8 +675,8 @@ pip install arch>=5.0
 ### 9.1 技术风?
 | 风险?| 风险等级 | 缓解措施 |
 |--------|---------|---------|
-| **ç¸å
-è¿æ¨¡?|
+| **
+?|
 | **优化求解稳定?* | ?| 使用成熟优化?|
 
 ### 9.2 实施风险
@@ -703,7 +695,7 @@ pip install arch>=5.0
 
 ```markdown
 #### Layer 6: 组合优化?
-?- **æ¨¡åID**: MULTI_ASSET_001
+?- **ID**: MULTI_ASSET_001
 - **蓝图文档**: MULTI_ASSET_ALLOCATION_BLUEPRINT.md
 - **?*: 设计阶段
 ```
@@ -725,7 +717,7 @@ pip install arch>=5.0
    - Qian, E. (2005). "Risk Parity Portfolios"
    - Asness, C., Frazzini, A., and Pedersen, L.H. (2012). "Leverage Aversion and Risk Parity"
 
-2. **å
+2. **
    - Bridgewater Associates. "The All Weather Story"
    - Dalio, R. (2017). "Principles for Dealing with the Changing World Order"
 
@@ -734,9 +726,9 @@ pip install arch>=5.0
 
 
 |------|------|--------|
-| **å
+| **
 置 |
-³æ?| ç¸å
+?|
 | **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
 
 ---

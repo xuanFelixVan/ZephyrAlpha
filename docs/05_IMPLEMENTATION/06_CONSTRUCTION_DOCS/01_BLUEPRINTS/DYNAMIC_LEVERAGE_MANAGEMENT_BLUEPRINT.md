@@ -81,11 +81,10 @@ layer: Layer 5.3 (风险管理)
 
 > **核心职责**: Dynamic Leverage Management蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
-ï»?--
+?--
 module_id: DYNAMIC_LEVERAGE_MANAGEMENT__001
 version: 1.0.0
 status: Active
@@ -106,8 +105,7 @@ layer: Layer 5.3 (风险管理)
 
 **Layer 1 - 市场环境感知?*
 - 流动性监控器（买卖价差、市场深度）
-- å¸åºæ
-ææ°ï¼
+-
 
 **Layer 2 - 风险预算计算?*
 景）
@@ -153,7 +151,7 @@ class VolatilityTargetLeverageOptimizer:
             portfolio_returns: 组合历史收益?            current_leverage: 当前杠杆水平
             
         Returns:
-            LeverageDecision: å
+LeverageDecision:
 度、调整理?        """
         # 1. 计算当前波动?        current_volatility = self._calculate_volatility(portfolio_returns)
         
@@ -228,7 +226,6 @@ class RiskBudgetLeverageOptimizer:
     """风险预算杠杆优化?    
     索引: LEVERAGE_001-M02
     职责: 在风险预算约束下优化杠杆水平
-    è¾å
     
     def __init__(self, config: RiskBudgetConfig):
         self.config = config
@@ -298,7 +295,7 @@ class RiskBudgetLeverageOptimizer:
         
         # 组合波动?        portfolio_vol = np.sqrt(np.dot(leveraged_weights.T, np.dot(cov_matrix, leveraged_weights)))
         
-        # è¾¹é
+#
 风险贡献
         marginal_risk = np.dot(cov_matrix, leveraged_weights) / portfolio_vol
         
@@ -326,7 +323,7 @@ class KellyLeverageCalculator:
         Args:
             strategy_returns: 策略历史收益?            
         Returns:
-            KellyResult: å
+KellyResult:
 含Kelly杠杆、半Kelly杠杆、调整后杠杆
         """
         # 1. 计算期望收益率和波动?        mean_return = strategy_returns.mean() * 252      # 年化期望收益?        volatility = strategy_returns.std() * np.sqrt(252)  # 年化波动?        
@@ -334,7 +331,7 @@ class KellyLeverageCalculator:
         sharpe_ratio = mean_return / volatility if volatility > 0 else 0
         
         # 3. 计算Kelly杠杆
-        # Kellyå
+# Kelly
         kelly_leverage = sharpe_ratio / volatility if volatility > 0 else 0
         
         # 4. 应用Kelly分数（半Kelly、四分之一Kelly等）
@@ -531,7 +528,6 @@ class LeverageRiskMonitor:
     """杠杆风险监控?    
     索引: LEVERAGE_001-M05
     职责: 实时监控杠杆风险，触发预警和止损
-    è¾å
     
     def __init__(self, config: RiskMonitorConfig):
         self.config = config
@@ -895,7 +891,6 @@ class DynamicLeverageManagementSystem:
 
 **Phase 1: 核心组件开发（Week 1-2?*
 - ?实现波动率目标杠杆优化器
-æµè¯
 
 **Phase 2: 决策融合与监控（Week 3-4?*
 - ?实现杠杆决策融合?- ?实现杠杆风险监控?- ?实现预警和止损机?- ?完成集成测试
@@ -980,8 +975,7 @@ class DynamicLeverageManagementSystem:
 2. **PyPortfolioOpt**: https://github.com/robertmartin8/PyPortfolioOpt
 3. **Riskfolio-Lib**: https://github.com/dcajasn/Riskfolio-Lib
 
-### 8.3 ç¸å
-³ææ¡£
+### 8.3
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 - PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
@@ -1010,16 +1004,16 @@ class DynamicLeverageManagementSystem:
 ##### 6.001. Dynamic Leverage Management
 - **模块ID**: DYNAMIC_LEVERAGE_MANAGEMENT_001
 - **蓝图文档**: DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 9.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Dynamic Leverage Management** | å
+| **Dynamic Leverage Management** |
 
 ### 9.3 版本管理
 

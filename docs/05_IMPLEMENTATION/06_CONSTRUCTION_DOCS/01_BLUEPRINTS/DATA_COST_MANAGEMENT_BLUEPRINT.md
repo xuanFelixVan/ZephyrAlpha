@@ -24,7 +24,7 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Cost Management蓝图设计
 > **职责边界**: 
-³å...
+...
 
 
 ## 设计目标
@@ -87,7 +87,7 @@ layer: Layer 5.1 (数据处理)
 
 **当前痛点**:
 - 数据成本不透明
-æ?
+?
 - 缺少成本优化建议
 - 成本预算难以控制
 
@@ -217,7 +217,7 @@ from datetime import datetime
 
 @dataclass
 class CostAllocation:
-    """ææ¬åé
+"""
 """
     allocation_id: str
     resource_id: str
@@ -245,8 +245,8 @@ class CostAttributionManager:
         }
     
     def allocate_cost(self, cost_record: CostRecord) -> List[CostAllocation]:
-        """åé
-ææ¬"""
+"""
+"""
         allocations = []
         
         for pattern, rule in self.attribution_rules.items():
@@ -408,11 +408,11 @@ GET /api/v1/cost/recommendations
 ```
 
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
-| `cost_total_dollars` | Gauge | æ»ææ?|
+| `cost_total_dollars` | Gauge | ?|
 | `cost_savings_potential_dollars` | Gauge | 潜在节省 |
 
 ---
@@ -423,9 +423,8 @@ GET /api/v1/cost/recommendations
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -443,9 +442,9 @@ GET /api/v1/cost/recommendations
 ##### 6.001. Data Cost Management
 - **模块ID**: DATA_COST_MANAGEMENT_001
 - **蓝图文档**: DATA_COST_MANAGEMENT_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -464,14 +463,13 @@ GET /api/v1/cost/recommendations
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-å?|
+?|
 
 ### 下游依赖
 
@@ -482,8 +480,8 @@ GET /api/v1/cost/recommendations
 |---------|------|------|------|
 | **Prometheus** | 2.40+ | 成本监控 | [官方文档](https://prometheus.io/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

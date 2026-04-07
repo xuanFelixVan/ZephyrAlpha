@@ -96,13 +96,13 @@ layer: Layer 5 (策略执行层)
 ### 层级定位
 
 ```
-â?          æ¸
+?
 ```
 
 ### 核心职责
 
 |---------|---------|---------|
-³ç³?|
+?|
 
 
 
@@ -116,8 +116,7 @@ graph TB
     subgraph "数据源层"
         A1[宏观经济数据源]
 数据源]
-        A3[æ¥å
-è¡æ
+A3[
 数据源]
 数据源]
         A5[另类数据源]
@@ -126,7 +125,7 @@ graph TB
         B1[批量采集器]
         B2[流式采集器]
 器]
-å¨]
+]
     end
     
         C4[归档存储<br/>对象存储]
@@ -144,8 +143,8 @@ graph TB
         E4[数据目录服务]
     end
     
-        F1[å®è§é
-ç½®å±]
+F1[
+]
         F2[中观策略层]
         F3[微观执行层]
     end
@@ -190,7 +189,7 @@ graph TB
 
 
 ```
-ç½®å±?
+?
 ```
 
 **特点**:
@@ -203,12 +202,10 @@ graph TB
 **特点**:
 - 每日更新
 
-#### æ¥å
+####
 数据流（分钟级）
 
 ```
-æ¥å
-è¡æ
 ```
 
 **特点**:
@@ -220,14 +217,14 @@ graph TB
 
 **特点**:
 - 秒级更新
-- è¶
+-
 低延迟要求
 
 ---
 
-## ð§ å
+##
 
-å?(Data Source Adapter)
+?(Data Source Adapter)
 
 ```python
 from abc import ABC, abstractmethod
@@ -249,7 +246,7 @@ class DataSourceAdapter(ABC):
     
     @abstractmethod
     def subscribe(self, callback: callable) -> None:
-        """è®¢é
+"""
 实时数据"""
         pass
     
@@ -260,7 +257,7 @@ class DataSourceAdapter(ABC):
 
 
 class MacroDataSourceAdapter(DataSourceAdapter):
-å?""
+?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -291,7 +288,7 @@ class MacroDataSourceAdapter(DataSourceAdapter):
 
 
 class DailyMarketDataSourceAdapter(DataSourceAdapter):
-å?""
+?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -320,20 +317,17 @@ class DailyMarketDataSourceAdapter(DataSourceAdapter):
 
 
 class IntradayMarketDataSourceAdapter(DataSourceAdapter):
-    """æ¥å
-è¡æ
-å?""
+"""
+?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
         self.connection = None
         
     def connect(self) -> bool:
-è¡æ
         pass
     
     def fetch(self, params: Dict[str, Any]) -> pd.DataFrame:
-è¡æ
 数据"""
         # params示例:
         # {
@@ -345,8 +339,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
         pass
     
     def subscribe(self, callback: callable) -> None:
-        """è®¢é
-æ¥å
+"""
 实时数据"""
 逻辑
         pass
@@ -357,7 +350,7 @@ class IntradayMarketDataSourceAdapter(DataSourceAdapter):
 
 
 class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
-å?""
+?""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -372,7 +365,7 @@ class RealtimeMarketDataSourceAdapter(DataSourceAdapter):
         pass
     
     def subscribe(self, callback: callable) -> None:
-        """è®¢é
+"""
 数据"""
 逻辑
         pass
@@ -403,8 +396,8 @@ class DataLakeStorage:
         # 转换为Spark DataFrame
         spark_df = self.spark.createDataFrame(data)
         
-        # åå
-¥Deltaè¡?
+#
+Delta?
         spark_df.write.format("delta") \
             .mode("overwrite") \
             .partitionBy("indicator_code") \
@@ -414,18 +407,17 @@ class DataLakeStorage:
 数据"""
         spark_df = self.spark.createDataFrame(data)
         
-        # åå
+#
         spark_df.write.format("delta") \
             .mode("append") \
             .partitionBy("trade_date") \
             .save(f"{self.base_path}/daily/{table_name}")
     
     def store_intraday_data(self, data: pd.DataFrame, table_name: str) -> None:
-è¡æ
 数据"""
         spark_df = self.spark.createDataFrame(data)
         
-        # åå
+#
         spark_df.write.format("delta") \
             .mode("append") \
             .partitionBy("trade_date", "symbol") \
@@ -462,7 +454,6 @@ class DataLakeStorage:
                            symbol: str,
                            date: str,
                            frequency: str = '1min') -> pd.DataFrame:
-è¡æ
 数据"""
         query = f"""
         SELECT * FROM delta.`{self.base_path}/intraday/{frequency}_data`
@@ -477,7 +468,7 @@ class DataLakeStorage:
         self.spark.sql(f"OPTIMIZE delta.`{table_path}`")
     
     def vacuum_data(self, table_path: str, retention_hours: int = 168) -> None:
-        """æ¸
+"""
 理旧版本数据，释放存储空间"""
         self.spark.sql(f"VACUUM delta.`{table_path}` RETAIN {retention_hours} HOURS")
 ```
@@ -503,7 +494,7 @@ class TimeSeriesDBStorage:
                            tags: Dict[str, str],
                            fields: Dict[str, Any],
                            timestamp: datetime) -> None:
-        """åå
+"""
         point = Point(measurement) \
             .time(timestamp, WritePrecision.NS)
         
@@ -519,7 +510,7 @@ class TimeSeriesDBStorage:
                                   measurement: str,
                                   data: pd.DataFrame,
                                   tag_columns: List[str]) -> None:
-        """æ¹éåå
+"""
         points = []
         for _, row in data.iterrows():
             point = Point(measurement) \
@@ -596,7 +587,7 @@ class DailyDataRequest(BaseModel):
 
 
 class IntradayDataRequest(BaseModel):
-    """æ¥å
+"""
 数据请求"""
     symbol: str
     date: str
@@ -636,8 +627,7 @@ class UnifiedDataAPI:
                 end_date=request.end_date
             )
             
-            # 3. åå
-¥ç¼å­
+# 3.
             self.cache.set(cache_key, data.to_dict(), expire=3600)  # 1小时过期
             
             return {
@@ -670,8 +660,7 @@ class UnifiedDataAPI:
                 fields=request.fields
             )
             
-            # 3. åå
-¥ç¼å­
+# 3.
             self.cache.set(cache_key, data.to_dict(), expire=1800)  # 30分钟过期
             
             return {
@@ -684,7 +673,6 @@ class UnifiedDataAPI:
     
     @app.post("/api/v1/intraday/data")
     async def get_intraday_data(self, request: IntradayDataRequest) -> Dict[str, Any]:
-è¡æ
 数据"""
         cache_key = f"intraday:{request.symbol}:{request.date}:{request.frequency}"
         cached_data = self.cache.get(cache_key)
@@ -704,8 +692,7 @@ class UnifiedDataAPI:
                 frequency=request.frequency
             )
             
-            # 3. åå
-¥ç¼å­
+# 3.
             self.cache.set(cache_key, data.to_dict(), expire=300)  # 5分钟过期
             
             return {
@@ -785,7 +772,7 @@ class DataSubscriptionService:
     async def subscribe_realtime_quotes(self, 
                                         symbols: List[str],
                                         callback: Callable) -> str:
-        """è®¢é
+"""
 """
         subscription_id = f"sub_{datetime.now().timestamp()}"
         
@@ -852,7 +839,7 @@ CREATE TABLE macro_indicators (
     indicator_code VARCHAR(50) NOT NULL COMMENT '指标代码',
     indicator_name VARCHAR(100) NOT NULL COMMENT '指标名称',
     date DATE NOT NULL COMMENT '日期',
-    value DECIMAL(20, 6) COMMENT 'ææ å?,
+value DECIMAL(20, 6) COMMENT '?,
     unit VARCHAR(20) COMMENT '单位',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (indicator_code, date)
@@ -867,33 +854,31 @@ CREATE TABLE daily_market_data (
     open DECIMAL(10, 3) COMMENT '开盘价',
     high DECIMAL(10, 3) COMMENT '最高价',
     low DECIMAL(10, 3) COMMENT '最低价',
-    close DECIMAL(10, 3) COMMENT 'æ¶çä»?,
-    volume BIGINT COMMENT 'æäº¤é?,
-    turnover_rate DECIMAL(10, 4) COMMENT 'æ¢æç?,
+close DECIMAL(10, 3) COMMENT '?,
+volume BIGINT COMMENT '?,
+turnover_rate DECIMAL(10, 4) COMMENT '?,
     pe_ttm DECIMAL(10, 2) COMMENT '市盈率TTM',
-    pb DECIMAL(10, 2) COMMENT 'å¸åç?,
+pb DECIMAL(10, 2) COMMENT '?,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (symbol, trade_date)
 ```
 
-### æ¥å
-è¡æ
+###
 数据模型
 
 ```sql
 CREATE TABLE intraday_market_data (
     symbol VARCHAR(20) NOT NULL COMMENT '股票代码',
     trade_date DATE NOT NULL COMMENT '交易日期',
-    timestamp TIMESTAMP NOT NULL COMMENT 'æ¶é´æ?,
+timestamp TIMESTAMP NOT NULL COMMENT '?,
     open DECIMAL(10, 3) COMMENT '开盘价',
     high DECIMAL(10, 3) COMMENT '最高价',
     low DECIMAL(10, 3) COMMENT '最低价',
-    close DECIMAL(10, 3) COMMENT 'æ¶çä»?,
-    volume BIGINT COMMENT 'æäº¤é?,
+close DECIMAL(10, 3) COMMENT '?,
+volume BIGINT COMMENT '?,
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (symbol, trade_date, timestamp, frequency)
-) COMMENT 'æ¥å
-è¡æ
+) COMMENT '
 ```
 
 ---
@@ -955,7 +940,6 @@ Response:
 }
 ```
 
-è¡æ
 数据
 
 ```
@@ -1002,7 +986,7 @@ Response:
 
 ### WebSocket接口
 
-#### è®¢é
+####
 
 
 ```
@@ -1036,8 +1020,8 @@ Unsubscribe:
 ### 阶段1：基础设施搭建（第1周）
 
 **任务**:
-2. â?é
-4. â?é
+2. ?
+4. ?
 
 **验收标准**:
 - Spark集群正常运行
@@ -1049,44 +1033,42 @@ Unsubscribe:
 
 
 **任务**:
-å?
-å?
-è¡æ
-å?
-å?
-å¨åå
-æµè¯?
+?
+?
+?
+?
+?
 
 **验收标准**:
 - 可以从数据源获取数据
-- åå
+-
 
 ---
 
 
 **任务**:
 洗和标准化
-æµè¯?
+?
 
 **验收标准**:
-¥Delta Lake
-¥InfluxDB
+Delta Lake
+InfluxDB
 洗和标准化正确
-- åå
+-
 
 ---
 
 
 **任务**:
 服务
-æµè¯?
+?
 
 **验收标准**:
 - RESTful API可以正常访问
-- WebSocketè®¢é
+- WebSocket
 功能正常
 - 缓存策略有效
-- åå
+-
 
 ---
 
@@ -1103,8 +1085,7 @@ Unsubscribe:
 
 ## 🧪 测试策略
 
-### åå
-æµè¯
+###
 
 ```python
 import pytest
@@ -1112,7 +1093,7 @@ import pandas as pd
 from datetime import datetime
 
 def test_macro_data_adapter_fetch():
-å?""
+?""
     adapter = MacroDataSourceAdapter(config)
     
     assert adapter.connect() == True
@@ -1225,8 +1206,8 @@ def test_query_performance():
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.1  # 100mså
-å®æ?
+assert (end_time - start_time) < 0.1  # 100ms
+?
     
     # 测试实时数据查询性能
     start_time = time.time()
@@ -1234,8 +1215,8 @@ def test_query_performance():
     end_time = time.time()
     
     assert response.status_code == 200
-    assert (end_time - start_time) < 0.01  # 10mså
-å®æ?
+assert (end_time - start_time) < 0.01  # 10ms
+?
 ```
 
 ---
@@ -1248,27 +1229,23 @@ def test_query_performance():
 |---------|---------|------------|---------|
 | **宏观经济数据** | 历史查询 | <1000ms | 1小时缓存 |
 数据** | 历史查询 | <100ms | 30分钟缓存 |
-| **æ¥å
-è¡æ
+| **
 数据** | 历史查询 | <50ms | 5分钟缓存 |
 
 
 |---------|-----------|-----------|
-| **æ¥å
-è¡æ
+| **
 
 ### 存储容量规划
 
 |---------|--------|--------|---------|
  |
-| **æ¥å
-è¡æ
+| **
 数据** | 100GB | 36TB | 1个月 |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [数据质量监控系统蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -1293,8 +1270,7 @@ def test_query_performance():
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 下游依赖
 
@@ -1305,11 +1281,11 @@ def test_query_performance():
 |---------|------|------|------|
 | **Apache Spark** | 3.5+ | 数据处理 | [官方文档](https://spark.apache.org/) |
 | **Apache Kafka** | 3.5+ | 消息队列 | [官方文档](https://kafka.apache.org/) |
-| **PostgreSQL** | 15+ | å
+| **PostgreSQL** | 15+ |
 | **Redis** | 7.0+ | 缓存 | [官方文档](https://redis.io/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -1330,16 +1306,16 @@ graph LR
 ##### 6.001. Unified Data Infrastructure
 - **模块ID**: UNIFIED_DATA_INFRASTRUCTURE_001
 - **蓝图文档**: UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Unified Data Infrastructure** | å
+| **Unified Data Infrastructure** |
 
 ### 1.3 版本管理
 

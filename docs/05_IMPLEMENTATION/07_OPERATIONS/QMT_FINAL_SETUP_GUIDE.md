@@ -23,7 +23,7 @@ compliance_level: 专业标准---
 
 ## Current Status
 
-Ô£?**Completed Successfully:**
+?**Completed Successfully:**
 
 1. **Miniconda installed** at `E:\Miniconda`
 2. **Python 3.12 environment** created as `qmt`
@@ -32,13 +32,13 @@ compliance_level: 专业标准---
 5. **Permissions verified** (strategy trading permission exists)
 6. **Configuration updated** with correct paths
 
-ÔØ?**Remaining Issue:**
+?**Remaining Issue:**
 
 **QMT trading interface connection returns -1**
 
 This means:
-- Ô£?Data interface works (xtdata connects)
-- ÔØ?Trading interface fails (xttrader returns -1)
+- ?Data interface works (xtdata connects)
+- ?Trading interface fails (xttrader returns -1)
 
 ## Root Cause Analysis
 
@@ -161,11 +161,11 @@ Once connection succeeds:
 **The only remaining issue is QMT client login mode.**
 
 All technical preparations are complete:
-- Ô£?Python 3.12 environment ready
-- Ô£?xtquant library installed
-- Ô£?Configuration files correct
-- Ô£?Permissions verified
-- Ô£?Data interface working
+- ?Python 3.12 environment ready
+- ?xtquant library installed
+- ?Configuration files correct
+- ?Permissions verified
+- ?Data interface working
 
 **You just need to ensure QMT is logged in with "Minimal Mode" checked.**
 

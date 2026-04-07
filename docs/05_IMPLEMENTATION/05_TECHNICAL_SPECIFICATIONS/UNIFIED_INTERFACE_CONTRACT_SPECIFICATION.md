@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
 standard_type: ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ
-applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 ---
 ---
 
@@ -23,7 +23,7 @@ compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 
 > **ﮔﮔ۰۲ﻝﮔ؛**: v1.0
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
-> **ﻠﻝ۷ﻟﮒﺑ**: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
+> **ﻠﻝ۷ﻟﮒﺑ**: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
 > **ﻝ؟ﻝ**: ﮔﭘﻠ۳ﮔ۴ﮒ۲ﻠﮒ۳ﮒ؟ﻛﺗﺅﺙﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﮔ۴ﮒ۲ﮒ۴ﺅﺟ?
 ---
 
@@ -31,8 +31,8 @@ compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 
 ### 1.1 ﮔﮔ۰۲ﻝ؟ﻝ
 
-ﮔ؛ﮔﮔ۰۲ﮒ؟ﻛﺗﻛﭦﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒﻝﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﺅﺙﻟ۶۲ﮒﺏﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ
-- ﮔ۴ﮒ۲ﮒ؟ﻛﺗﻠﮒ۳ﺅﺙﮒ ﮒ­ﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﻝﺗﮒﺝﮔﮒ۰ﺅﺙ
+ﮔ؛ﮔﮔ۰۲ﮒ؟ﻛﺗﻛﭦﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒﻝﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﺅﺙﻟ۶۲ﮒﺏﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ
+- ﮔ۴ﮒ۲ﮒ؟ﻛﺗﻠﮒ۳ﺅﺙﮒﮒﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟ﻝﭨﻙﻝﺗﮒﺝﮔﮒ۰ﺅﺙ
 - ﻟﻟﺑ۲ﻟﺝﺗﻝﻛﺕﮔﺕ
 - ﻟﺍﻝ۷ﮒﺏﻝﺏﭨﮔﺓﺓﻛﺗﺎ
 
@@ -40,25 +40,25 @@ compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 
 | ﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﻝﺎﭨﮒ | ﮒ۴ﻝﭦ۵ﻝﮔ؛ |
 |------|----------|----------|
-| FactorCalculator | ﮒ ﮒ­ﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
-| AlphaFactorFactory | ﮒ ﮒ­ﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
-| QlibAlpha158 | ﮒ ﮒ­ﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
-| ModelTrainingPipeline | ﮔ۷۰ﮒﻟ؟­ﻝﭨ | IModelTrainer v1.0 |
-| LSTMModel | ﮔ۷۰ﮒﻟ؟­ﻝﭨ | IModelTrainer v1.0 |
-| TransformerModel | ﮔ۷۰ﮒﻟ؟­ﻝﭨ | IModelTrainer v1.0 |
+| FactorCalculator | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| AlphaFactorFactory | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| QlibAlpha158 | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| ModelTrainingPipeline | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
+| LSTMModel | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
+| TransformerModel | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
 | FeatureEngineering | ﻝﺗﮒﺝﮔﮒ۰ | IFeatureService v1.0 |
 | FeatureStore | ﻝﺗﮒﺝﮔﮒ۰ | IFeatureService v1.0 |
 
 ---
 
-## 2. ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
+## 2. ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
 ### 2.1 IFactorCalculator v1.0
 
-**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮒ ﮒ­ﻟ؟۰ﻝ؟ﻝﮔ ﮒﮔ۴ﺅﺟ?
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮒﮒﻟ؟۰ﻝ؟ﻝﮔﮒﮔ۴ﺅﺟ?
 **ﮒ؟ﻝﺍﮔ۷۰ﮒ**: FactorCalculator (Layer 2), QlibAlpha158 (Layer 4)
 
-**ﻟﺍﻝ۷ﺅﺟ?*: AlphaFactorFactory, ﻝ­ﻝ۴ﮒﺙﮔ
+**ﻟﺍﻝ۷ﺅﺟ?*: AlphaFactorFactory, ﻝﻝ۴ﮒﺙﮔ
 
 ```python
 from abc import ABC, abstractmethod
@@ -70,7 +70,7 @@ import pandas as pd
 
 @dataclass
 class FactorInput:
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻟﺝﮒ۴"""
+"""ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴"""
     instruments: List[str]
     start_date: datetime
     end_date: datetime
@@ -80,7 +80,7 @@ class FactorInput:
 
 @dataclass
 class FactorOutput:
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻟﺝﮒﭦ"""
+"""ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒﭦ"""
     factor_values: pd.DataFrame
     factor_names: List[str]
     calculation_time: float
@@ -88,15 +88,15 @@ class FactorOutput:
 
 
 class IFactorCalculator(ABC):
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
+"""ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
-    - FactorCalculator: ﮒﭦﻝ۰ﮒ ﮒ­ﻟ؟۰ﻝ؟ (Layer 2)
-    - QlibAlpha158: AIﮒ ﮒ­ﻟ؟۰ﻝ؟ (Layer 4)
+- FactorCalculator: ﮒﭦﻝ۰ﮒﮒﻟ؟۰ﻝ؟ (Layer 2)
+- QlibAlpha158: AIﮒﮒﻟ؟۰ﻝ؟ (Layer 4)
     
     ﻟﺍﻝ۷ﺅﺟ?
-    - AlphaFactorFactory: ﮒ ﮒ­ﻝ­ﻠﮒﮒﮔ
-    - ﻝ­ﻝ۴ﮒﺙﮔ: ﻝﺑﮔ۴ﻛﺛﺟﻝ۷ﮒ ﮒ­
+- AlphaFactorFactory: ﮒﮒﻝﻠﮒﮒﮔ
+- ﻝﻝ۴ﮒﺙﮔ: ﻝﺑﮔ۴ﻛﺛﺟﻝ۷ﮒﮒ
     """
     
     @abstractmethod
@@ -104,26 +104,26 @@ class IFactorCalculator(ABC):
         self,
         factor_input: FactorInput
     ) -> FactorOutput:
-        """ﻟ؟۰ﻝ؟ﮒ ﮒ­
+"""ﻟ؟۰ﻝ؟ﮒﮒ
         
         Args:
-            factor_input: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻟﺝﮒ۴
+factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
             
         Returns:
-            FactorOutput: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻝﭨﮔ
+FactorOutput: ﮒﮒﻟ؟۰ﻝ؟ﻝﭨﮔ
             
         Raises:
-            FactorCalculationError: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
-            InvalidInputError: ﻟﺝﮒ۴ﮒﮔﺍﮔ ﮔ
+FactorCalculationError: ﮒﮒﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
+InvalidInputError: ﻟﺝﮒ۴ﮒﮔﺍﮔﮔ
         """
         pass
     
     @abstractmethod
     def get_factor_definitions(self) -> Dict[str, Dict[str, Any]]:
-        """ﻟﺓﮒﮒ ﮒ­ﮒ؟ﻛﺗ
+"""ﻟﺓﮒﮒﮒﮒ؟ﻛﺗ
         
         Returns:
-            Dict[str, Dict]: ﮒ ﮒ­ﮒﻝ۶ﺍ -> ﮒ ﮒ­ﮒ؟ﻛﺗ
+Dict[str, Dict]: ﮒﮒﮒﻝ۶ﺍ -> ﮒﮒﮒ؟ﻛﺗ
         """
         pass
     
@@ -132,7 +132,7 @@ class IFactorCalculator(ABC):
         """ﻠ۹ﻟﺁﻟﺝﮒ۴ﮒﮔﺍ
         
         Args:
-            factor_input: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻟﺝﮒ۴
+factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
             
         Returns:
             bool: ﻠ۹ﻟﺁﮔﺁﮒ۵ﻠﻟﺟ
@@ -140,30 +140,30 @@ class IFactorCalculator(ABC):
         pass
 ```
 
-### 2.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔ ﮒﺍ
+### 2.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
-| ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮒ ﮒ­ﻝﺎﭨﮒ | Layer |
+| ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮒﮒﻝﺎﭨﮒ | Layer |
 |----------|----------|----------|-------|
 | FactorCalculator | calculate_factors | ﻛﭨﺓﮒﺙﻙﮔﻠﺟﻙﮒ۷ﻠﻙﮔﮔﺁﮔﺅﺟ?| Layer 2 |
-| QlibAlpha158 | calculate_factors | Alpha158 AIﮒ ﮒ­ | Layer 4 |
-| BarraStyleFactorCalculator | calculate_factors | ﻠ۲ﮔ ﺙﮒ ﮒ­ | Layer 6 |
+| QlibAlpha158 | calculate_factors | Alpha158 AIﮒﮒ | Layer 4 |
+| BarraStyleFactorCalculator | calculate_factors | ﻠ۲ﮔﺙﮒﮒ | Layer 6 |
 
 ### 2.3 ﻟﺍﻝ۷ﮒﺏﻝﺏﭨ
 
 ```
 AlphaFactorFactory
-    ﻗﻗﻗ FactorCalculator.calculate_factors() -> ﮒﭦﻝ۰ﮒ ﮒ­
-    ﻗﻗﻗ QlibAlpha158.calculate_factors() -> AIﮒ ﮒ­
-    ﻗﻗﻗ ﮒﻠ۷ﻝ­ﻠﮒﮒﮔﻠﭨﻟﺝ
+ﻗﻗﻗ FactorCalculator.calculate_factors() -> ﮒﭦﻝ۰ﮒﮒ
+ﻗﻗﻗ QlibAlpha158.calculate_factors() -> AIﮒﮒ
+ﻗﻗﻗ ﮒﻠ۷ﻝﻠﮒﮒﮔﻠﭨﻟﺝ
 ```
 
 ---
 
-## 3. ﮔ۷۰ﮒﻟ؟­ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
+## 3. ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
 ### 3.1 IModelTrainer v1.0
 
-**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮔ۷۰ﮒﻟ؟­ﻝﭨﻝﮔ ﮒﮔ۴ﺅﺟ?
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮔ۷۰ﮒﻟ؟ﻝﭨﻝﮔﮒﮔ۴ﺅﺟ?
 **ﮒ؟ﻝﺍﮔ۷۰ﮒ**: LSTMTrainer, TransformerTrainer
 
 **ﻟﺍﻝ۷ﺅﺟ?*: ModelTrainingPipeline
@@ -178,7 +178,7 @@ import numpy as np
 
 @dataclass
 class TrainingConfig:
-    """ﻟ؟­ﻝﭨﻠﻝﺛ؟"""
+"""ﻟ؟ﻝﭨﻠﻝﺛ؟"""
     num_epochs: int = 100
     batch_size: int = 32
     learning_rate: float = 0.001
@@ -190,7 +190,7 @@ class TrainingConfig:
 
 @dataclass
 class TrainingResult:
-    """ﻟ؟­ﻝﭨﻝﭨﮔ"""
+"""ﻟ؟ﻝﭨﻝﭨﮔ"""
     model_id: str
     training_history: Dict[str, List[float]]
     best_epoch: int
@@ -201,12 +201,12 @@ class TrainingResult:
 
 
 class IModelTrainer(ABC):
-    """ﮔ۷۰ﮒﻟ؟­ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
+"""ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
-    - LSTMTrainer: LSTMﮔ۷۰ﮒﻟ؟­ﻝﭨﺅﺟ?    - TransformerTrainer: Transformerﮔ۷۰ﮒﻟ؟­ﻝﭨﺅﺟ?    
+- LSTMTrainer: LSTMﮔ۷۰ﮒﻟ؟ﻝﭨﺅﺟ?    - TransformerTrainer: Transformerﮔ۷۰ﮒﻟ؟ﻝﭨﺅﺟ?
     ﻟﺍﻝ۷ﺅﺟ?
-    - ModelTrainingPipeline: ﻠﻝ۷ﻟ؟­ﻝﭨﮔﭖﮔﺍﺑﺅﺟ?    """
+- ModelTrainingPipeline: ﻠﻝ۷ﻟ؟ﻝﭨﮔﭖﮔﺍﺑﺅﺟ?    """
     
     @abstractmethod
     def train(
@@ -216,31 +216,31 @@ class IModelTrainer(ABC):
         X_val: np.ndarray,
         y_val: np.ndarray
     ) -> TrainingResult:
-        """ﻟ؟­ﻝﭨﮔ۷۰ﮒ
+"""ﻟ؟ﻝﭨﮔ۷۰ﮒ
         
         Args:
-            X_train: ﻟ؟­ﻝﭨﻝﺗﮒﺝ
-            y_train: ﻟ؟­ﻝﭨﮔ ﻝ­ﺝ
+X_train: ﻟ؟ﻝﭨﻝﺗﮒﺝ
+y_train: ﻟ؟ﻝﭨﮔﻝﺝ
             X_val: ﻠ۹ﻟﺁﻝﺗﮒﺝ
-            y_val: ﻠ۹ﻟﺁﮔ ﻝ­ﺝ
+y_val: ﻠ۹ﻟﺁﮔﻝﺝ
             
         Returns:
-            TrainingResult: ﻟ؟­ﻝﭨﻝﭨﮔ
+TrainingResult: ﻟ؟ﻝﭨﻝﭨﮔ
         """
         pass
     
     @abstractmethod
     def save_model(self, path: str) -> None:
-        """ﻛﺟﮒ­ﮔ۷۰ﮒ
+"""ﻛﺟﮒﮔ۷۰ﮒ
         
         Args:
-            path: ﻛﺟﮒ­ﻟﺓﺁﮒﺝ
+path: ﻛﺟﮒﻟﺓﺁﮒﺝ
         """
         pass
     
     @abstractmethod
     def load_model(self, path: str) -> None:
-        """ﮒ ﻟﺛﺛﮔ۷۰ﮒ
+"""ﮒﻟﺛﺛﮔ۷۰ﮒ
         
         Args:
             path: ﮔ۷۰ﮒﻟﺓﺁﮒﺝ
@@ -257,12 +257,12 @@ class IModelTrainer(ABC):
         pass
 ```
 
-### 3.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔ ﮒﺍ
+### 3.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
 | ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮔ۷۰ﮒﻝﺎﭨﮒ | ﻟﻟﺑ۲ |
 |----------|----------|----------|------|
-| LSTMTrainer | train() | LSTM | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟­ﻝﭨﻠﭨﻟﺝ |
-| TransformerTrainer | train() | Transformer | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟­ﻝﭨﻠﭨﻟﺝ |
+| LSTMTrainer | train() | LSTM | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﻠﭨﻟﺝ |
+| TransformerTrainer | train() | Transformer | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﻠﭨﻟﺝ |
 
 ### 3.3 ﻟﺍﻝ۷ﮒﺏﻝﺏﭨ
 
@@ -271,7 +271,7 @@ ModelTrainingPipeline (ﻠﻝ۷ﮔﭖﮔﺍﺑﺅﺟ?
     ﺅﺟ?    ﻗﻗﻗ ﮔﺍﮔ؟ﻝﮔ؛ﻝ؟۰ﻝ (DVC)
     ﻗﻗﻗ ﻟﭘﮒﮔﺍﻛﺙﺅﺟ?(Optuna)
     ﻗﻗﻗ ﮒ؟ﻠ۹ﻟﺓﻟﺕ۹ (MLflow)
-    ﺅﺟ?    ﻗﻗﻗ IModelTrainer.train() (ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟­ﻝﭨ)
+ﺅﺟ?    ﻗﻗﻗ IModelTrainer.train() (ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨ)
             ﻗﻗﻗ LSTMTrainer.train()
             ﻗﻗﻗ TransformerTrainer.train()
 ```
@@ -282,10 +282,10 @@ ModelTrainingPipeline (ﻠﻝ۷ﮔﭖﮔﺍﺑﺅﺟ?
 
 ### 4.1 IFeatureService v1.0
 
-**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﻝﺗﮒﺝﮔﮒ۰ﻝﮔ ﮒﮔ۴ﺅﺟ?
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﻝﺗﮒﺝﮔﮒ۰ﻝﮔﮒﮔ۴ﺅﺟ?
 **ﮒ؟ﻝﺍﮔ۷۰ﮒ**: FeatureStore
 
-**ﻟﺍﻝ۷ﺅﺟ?*: ﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﮒ۷ﻝﭦﺟﮔ۷ﺅﺟ?
+**ﻟﺍﻝ۷ﺅﺟ?*: ﮔ۷۰ﮒﻟ؟ﻝﭨﻙﮒ۷ﻝﭦﺟﮔ۷ﺅﺟ?
 ```python
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
@@ -326,10 +326,10 @@ class IFeatureService(ABC):
     """ﻝﺗﮒﺝﮔﮒ۰ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
     ﮒ؟ﻝﺍﮔ۷۰ﮒ:
-    - FeatureStore: ﻝﺗﮒﺝﮒ­ﮒ۷ﮔﮒ۰
+- FeatureStore: ﻝﺗﮒﺝﮒﮒ۷ﮔﮒ۰
     
     ﻟﺍﻝ۷ﺅﺟ?
-    - ModelTrainingPipeline: ﻟ؟­ﻝﭨﮔﺍﮔ؟ﻟﺓﮒ
+- ModelTrainingPipeline: ﻟ؟ﻝﭨﮔﺍﮔ؟ﻟﺓﮒ
     - ModelServingService: ﮒ۷ﻝﭦﺟﮔ۷ﻝﻝﺗﮒﺝ
     """
     
@@ -381,7 +381,7 @@ class IFeatureService(ABC):
         pass
 ```
 
-### 4.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔ ﮒﺍ
+### 4.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
 | ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮔﮒ۰ﻝﺎﭨﮒ | ﻟﻟﺑ۲ |
 |----------|----------|----------|------|
@@ -395,9 +395,9 @@ FeatureEngineering (ﻝﺗﮒﺝﮒﺓ۴ﻝ۷)
     ﻗﻗﻗ ﻝﺗﮒﺝﻠﮔ۸
     ﻗﻗﻗ ﻝﺗﮒﺝﮒﮔ۱
     ﻗﻗﻗ ﻟﺝﮒﭦﻟ؟۰ﻝ؟ﮒﻝﻝﺗﮒﺝ
-            ﺅﺟ?            ﺅﺟ?FeatureStore (ﻝﺗﮒﺝﮒ­ﮒ۷)
+ﺅﺟ?            ﺅﺟ?FeatureStore (ﻝﺗﮒﺝﮒﮒ۷)
     ﺅﺟ?    ﻗﻗﻗ register_feature() -> ﮔﺏ۷ﮒﻝﺗﮒﺝ
-    ﻗﻗﻗ ﮒ­ﮒ۷ﻝﺗﮒﺝﮔﺍﮔ؟
+ﻗﻗﻗ ﮒﮒ۷ﻝﺗﮒﺝﮔﺍﮔ؟
     ﻗﻗﻗ get_online_features() -> ﮔﮒ۰ﻝﺗﮒﺝ
 ```
 
@@ -409,18 +409,18 @@ FeatureEngineering (ﻝﺗﮒﺝﮒﺓ۴ﻝ۷)
 
 1. **ﮒﮒﮒﺙﮒ؟ﺗ**: ﮔﺍﻝﮔ؛ﮒﺟﻠ۰ﭨﮒﮒﮒﺙﮒ؟ﺗﮔ۶ﻝﮔ؛
 2. **ﮒﭦﮒﺙﻠﻝ۴**: ﮒﭦﮒﺙﮔ۴ﮒ۲ﻠﮔﮒ3ﻛﺕ۹ﮔﻠﻝ۴
-3. **ﻝﮔ؛ﮔ ﻟﺁ**: ﮔﮔﮔ۴ﮒ۲ﻠﮔ ﮔﺏ۷ﻝﮔ؛ﺅﺟ?
+3. **ﻝﮔ؛ﮔﻟﺁ**: ﮔﮔﮔ۴ﮒ۲ﻠﮔﮔﺏ۷ﻝﮔ؛ﺅﺟ?
 ### 5.2 ﮒﮔﺑﻟ؟ﺍﮒﺛ
 
 | ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﮒﮒ؟ﺗ | ﮒﺛﺎﮒﮔ۷۰ﮒ |
 |------|------|----------|----------|
-| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟­ﻝﭨﻙﻝﺗﮒﺝﮔﺅﺟ?|
+| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﮒﮒﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟ﻝﭨﻙﻝﺗﮒﺝﮔﺅﺟ?|
 
 ---
 
 ## 6. ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷ﮔﮒ
 
-### 6.1 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
+### 6.1 ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
 
 ```python
 from factor_calculator import FactorCalculator
@@ -439,7 +439,7 @@ basic_factors = factor_calculator.calculate_factors(factor_input)
 ai_factors = alpha158_manager.calculate_factors(factor_input)
 ```
 
-### 6.2 ﮔ۷۰ﮒﻟ؟­ﻝﭨﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
+### 6.2 ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
 
 ```python
 from model_training_pipeline import ModelTrainingPipeline
@@ -481,16 +481,16 @@ features = feature_store.get_online_features(request)
 - [FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md)
 - [FEATURE_STORE_TECHNICAL_SPECIFICATION](01_FRAMEWORK/LAYER4_ML/FEATURE_STORE_TECHNICAL_SPECIFICATION.md)
 
-### 7.2 ﮔﺁﻟﺁ­ﺅﺟ?
-| ﮔﺁﻟﺁ­ | ﮒ؟ﻛﺗ |
+### 7.2 ﮔﺁﻟﺁﺅﺟ?
+| ﮔﺁﻟﺁ | ﮒ؟ﻛﺗ |
 |------|------|
-| ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ | ﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﻝﮔ ﮒﮒﮔ۴ﮒ۲ﮒ؟ﺅﺟ?|
-| ﮒ ﮒ­ﻟ؟۰ﻝ؟ | ﻛﭨﮒﮒ۶ﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮒﺙﻝﻟﺟﻝ۷ |
-| ﮔ۷۰ﮒﻟ؟­ﻝﭨ | ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﻟ؟­ﻝﭨﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮔ۷۰ﮒﻝﻟﺟﺅﺟ?|
-| ﻝﺗﮒﺝﮔﮒ۰ | ﮔﻛﺝﻝﺗﮒﺝﮔﺍﮔ؟ﻝﮒ­ﮒ۷ﮒﮔ۲ﻝﺑ۱ﮔﺅﺟ?|
+| ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ | ﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﻝﮔﮒﮒﮔ۴ﮒ۲ﮒ؟ﺅﺟ?|
+| ﮒﮒﻟ؟۰ﻝ؟ | ﻛﭨﮒﮒ۶ﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒﮒﮒﺙﻝﻟﺟﻝ۷ |
+| ﮔ۷۰ﮒﻟ؟ﻝﭨ | ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﻟ؟ﻝﭨﮔﭦﮒ۷ﮒ۵ﻛﺗﮔ۷۰ﮒﻝﻟﺟﺅﺟ?|
+| ﻝﺗﮒﺝﮔﮒ۰ | ﮔﻛﺝﻝﺗﮒﺝﮔﺍﮔ؟ﻝﮒﮒ۷ﮒﮔ۲ﻝﺑ۱ﮔﺅﺟ?|
 
 ---
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
-**ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+**ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟

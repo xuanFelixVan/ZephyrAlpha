@@ -93,7 +93,7 @@ layer: Layer 5.1 (数据处理)
 ### 层级定位
 
 ```
-â?          æ¸
+?
 ```
 
 ### 核心职责
@@ -105,15 +105,14 @@ layer: Layer 5.1 (数据处理)
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
-¨ç­ç¥ |
+?|
+|
 
 ### 下游依赖
 
@@ -127,13 +126,13 @@ layer: Layer 5.1 (数据处理)
 | **Deequ** | 2.0+ | 数据质量测试 | [官方文档](https://github.com/awslabs/deequ) |
 | **Prometheus** | 2.40+ | 监控指标采集 | [官方文档](https://prometheus.io/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[数据源管理] --> B[数据质量监控]
-¨åè§] --> B
+] --> B
     D[高性能数据管道] --> B
     
     B --> E[自动修复引擎]
@@ -156,8 +155,7 @@ graph LR
 graph TB
         A1[宏观经济数据]
 数据]
-        A3[æ¥å
-è¡æ
+A3[
 数据]
 数据]
     end
@@ -255,12 +253,12 @@ graph TB
 
 **特点**:
 - 定时执行
-- å
+-
 - 报告生成
 
 ---
 
-## ð§ å
+##
 
 ### 1. 质量规则引擎 (Quality Rule Engine)
 
@@ -730,7 +728,7 @@ class MLAnomalyDetector:
                 'anomalies': []
             }
         
-        # æ åå?
+# ?
         X_scaled = self.scaler.fit_transform(X)
         
         # 训练模型
@@ -884,7 +882,7 @@ class QualityReportGenerator:
         
         # 基于异常结果生成建议
         if anomaly_results['anomaly_count'] > 10:
-æ´?)
+?)
         
         critical_anomalies = [a for a in anomaly_results.get('anomalies', []) 
                              if a.get('severity') == 'critical']
@@ -919,7 +917,7 @@ class QualityScorer:
                 else:
                     severity_penalty += 1
         
-        # æç»åæ?
+# ?
         final_score = max(0, base_score - severity_penalty)
         
         # 评级
@@ -1021,7 +1019,7 @@ class AlertSystem:
                 alert = rule.create_alert(quality_results, anomaly_results)
                 alerts.append(alert)
                 
-                # åéåè­?
+# ?
                 for channel_name in rule.channels:
                     if channel_name in self.alert_channels:
                         self.alert_channels[channel_name].send(alert)
@@ -1087,7 +1085,7 @@ class AlertChannel(ABC):
     
     @abstractmethod
     def send(self, alert: Dict[str, Any]) -> bool:
-        """åéåè­?""
+"""?""
         pass
 
 
@@ -1207,7 +1205,7 @@ CREATE TABLE quality_rules (
 CREATE TABLE quality_check_results (
     check_id VARCHAR(100) PRIMARY KEY COMMENT '检查ID',
     rule_id VARCHAR(50) NOT NULL COMMENT '规则ID',
-ï¼JSONï¼?,
+JSON?,
     error_message TEXT COMMENT '错误信息',
     INDEX idx_rule_id (rule_id),
     INDEX idx_check_time (check_time),
@@ -1220,8 +1218,8 @@ CREATE TABLE quality_check_results (
 CREATE TABLE anomaly_records (
     anomaly_id VARCHAR(100) PRIMARY KEY COMMENT '异常ID',
     anomaly_type VARCHAR(50) NOT NULL COMMENT '异常类型',
-    severity VARCHAR(20) NOT NULL COMMENT 'ä¸¥éæ?,
-ï¼JSONï¼?,
+severity VARCHAR(20) NOT NULL COMMENT '?,
+JSON?,
     resolved_time TIMESTAMP COMMENT '解决时间',
     INDEX idx_data_source (data_source),
     INDEX idx_anomaly_type (anomaly_type),
@@ -1236,7 +1234,7 @@ CREATE TABLE quality_reports (
     report_time TIMESTAMP NOT NULL COMMENT '报告时间',
     overall_score DECIMAL(5, 2) COMMENT '总体评分',
     quality_grade VARCHAR(1) COMMENT '质量等级',
-ï¼JSONï¼?,
+JSON?,
     INDEX idx_report_type (report_type),
     INDEX idx_report_time (report_time)
 ```
@@ -1356,42 +1354,38 @@ Response:
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
-- åå
+-
 
 ---
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
-- åå
+-
 
 ---
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
 - 质量评分计算正确
 - 趋势分析准确
 - 报告生成完整
-- åå
+-
 
 ---
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
 - 告警规则可以正常触发
 - 告警历史记录完整
-- åå
+-
 
 ---
 
@@ -1407,8 +1401,7 @@ Response:
 
 ## 🧪 测试策略
 
-### åå
-æµè¯
+###
 
 ```python
 import pytest
@@ -1487,8 +1480,7 @@ def test_quality_scorer():
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [统一数据基础设施蓝图](./UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -1506,7 +1498,7 @@ def test_quality_scorer():
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 ---
 
@@ -1518,16 +1510,16 @@ def test_quality_scorer():
 ##### 6.001. Data Quality Monitoring
 - **模块ID**: DATA_QUALITY_MONITORING_001
 - **蓝图文档**: DATA_QUALITY_MONITORING_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Data Quality Monitoring** | å
+| **Data Quality Monitoring** |
 
 ### 1.3 版本管理
 

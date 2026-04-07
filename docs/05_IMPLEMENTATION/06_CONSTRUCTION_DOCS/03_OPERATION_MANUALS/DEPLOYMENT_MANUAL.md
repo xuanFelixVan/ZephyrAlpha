@@ -2,7 +2,7 @@
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
@@ -27,9 +27,9 @@ last_updated: 2026-04-02
 
 ## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ 
+### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ
 
-ﮔ؛ﮔﮔ۰۲ﮔﻛﺝZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮒ؟ﮔﺑﻠ۷ﻝﺛﺎﮔﮒﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒ۷ﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﺕ­ﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﻙ?
+ﮔ؛ﮔﮔ۰۲ﮔﻛﺝZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮒ؟ﮔﺑﻠ۷ﻝﺛﺎﮔﮒﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒ۷ﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﺕﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﻙ?
 ### 1.2 ﻠ۷ﻝﺛﺎﻟﮒﺑ
 
 - ﻝﻛﭦ۶ﻝﺁﮒ۱ﻠ۷ﻝﺛﺎ
@@ -42,7 +42,7 @@ last_updated: 2026-04-02
 - PostgreSQL 12+
 - Redis 6+
 - Docker 20+ﺅﺙﮒﺁﻠﺅﺙ
-- 8GB+ ﮒﮒ­
+- 8GB+ ﮒﮒ
 - 100GB+ ﻝ۲ﻝﻝ۸ﭦﻠﺑ
 
 ---
@@ -57,8 +57,8 @@ last_updated: 2026-04-02
 - CentOS 8+
 
 **ﻝ۰؛ﻛﭨﭘﻟ۵ﮔﺎ**:
-- CPU: 4ﮔ ﺕﮒﺟ+
-- ﮒﮒ­: 8GB+
+- CPU: 4ﮔﺕﮒﺟ+
+- ﮒﮒ: 8GB+
 - ﻝ۲ﻝ: 100GB+ SSD
 - ﻝﺛﻝﭨ: 100Mbps+
 
@@ -145,10 +145,10 @@ sudo apt-get install redis-server
 # ﻝﺙﻟﺝﻠﻝﺛ؟ﮔﻛﭨﭘ
 sudo vi /etc/redis/redis.conf
 
-# ﻟ؟ﺝﻝﺛ؟ﮒﺁﻝ 
+# ﻟ؟ﺝﻝﺛ؟ﮒﺁﻝ
 requirepass your_redis_password
 
-# ﻟ؟ﺝﻝﺛ؟ﮔﮒ۳۶ﮒﮒ­?maxmemory 2gb
+# ﻟ؟ﺝﻝﺛ؟ﮔﮒ۳۶ﮒﮒ?maxmemory 2gb
 maxmemory-policy allkeys-lru
 ```
 
@@ -162,9 +162,9 @@ sudo systemctl enable redis
 
 ## 4. ﮒﭦﻝ۷ﻠ۷ﻝﺛﺎ
 
-### 4.1 ﻛﭨ۲ﻝ ﻠ۷ﻝﺛﺎ
+### 4.1 ﻛﭨ۲ﻝﻠ۷ﻝﺛﺎ
 
-**ﮒﻠﻛﭨ۲ﻝ **:
+**ﮒﻠﻛﭨ۲ﻝ**:
 ```bash
 git clone https://github.com/your-org/zephyr-alpha.git
 cd zephyr-alpha
@@ -219,7 +219,7 @@ gunicorn src.api.main:app \
     --error-logfile logs/error.log
 ```
 
-**ﮒﺁﮒ۷ﻝ­ﻝ۴ﮒﺙﮔ**:
+**ﮒﺁﮒ۷ﻝﻝ۴ﮒﺙﮔ**:
 ```bash
 python src/strategy_engine/main.py
 ```
@@ -399,9 +399,9 @@ scrape_configs:
       - targets: ['localhost:8000']
 ```
 
-### 7.3 ﮒﻟ­۵ﻠﻝﺛ؟
+### 7.3 ﮒﻟ۵ﻠﻝﺛ؟
 
-**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﻠﻝﺛ؟ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 # alert_rules.yml
 groups:
@@ -416,7 +416,7 @@ groups:
 
 ---
 
-## 8. ﮒ۳ﻛﭨﺛﻝ­ﻝ۴
+## 8. ﮒ۳ﻛﭨﺛﻝﻝ۴
 
 ### 8.1 ﮔﺍﮔ؟ﮒﭦﮒ۳ﻛﭨ?
 **ﮒﮒﭨﭦﮒ۳ﻛﭨﺛﻟﮔ؛**:
@@ -433,7 +433,7 @@ pg_dump -U zephyr_user zephyr > $BACKUP_FILE
 # ﮒﻝﺙ۸ﮒ۳ﻛﭨﺛ
 gzip $BACKUP_FILE
 
-# ﮒ ﻠ۳30ﮒ۳۸ﮒﻝﮒ۳ﻛﭨ?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
+# ﮒﻠ۳30ﮒ۳۸ﮒﻝﮒ۳ﻛﭨ?find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
 ```
 
 **ﻠﻝﺛ؟ﮒ؟ﮔﭘﻛﭨﭨﮒ۰**:
@@ -474,7 +474,7 @@ tar -czf $BACKUP_DIR/config_$DATE.tar.gz config/
 redis-cli -a your_redis_password ping
 ```
 
-**ﻠ؟ﻠ۱3: APIﮔﮒ۰ﮔ ﮒﮒﭦ?*
+**ﻠ؟ﻠ۱3: APIﮔﮒ۰ﮔﮒﮒﭦ?*
 ```bash
 # ﮔ۲ﮔ۴ﻟﺟﻝ۷?ps aux | grep gunicorn
 
@@ -501,7 +501,7 @@ tail -f /var/log/nginx/access.log
 
 ---
 
-## 10. ﮒ؟ﮒ۷ﮒ ﮒﭦ
+## 10. ﮒ؟ﮒ۷ﮒﮒﭦ
 
 ### 10.1 ﻝﺏﭨﻝﭨﮒ؟ﮒ۷
 
@@ -521,7 +521,7 @@ sudo systemctl disable cups
 
 **ﻠﻝﺛ؟ﮒ؟ﮒ۷ﮒ۳?*:
 ```python
-# ﮒ۷APIﻛﺕ­ﮔﺓﭨﮒ ﮒ؟ﮒ۷ﮒ۳ﺑ
+# ﮒ۷APIﻛﺕﮔﺓﭨﮒﮒ؟ﮒ۷ﮒ۳ﺑ
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -572,9 +572,9 @@ engine = create_engine(
 CREATE INDEX idx_order_time ON orders(created_at);
 ```
 
-### 11.2 ﻝﺙﮒ­ﻛﺙﮒ
+### 11.2 ﻝﺙﮒﻛﺙﮒ
 
-**ﻠﻝﺛ؟Redisﻝﺙﮒ­**:
+**ﻠﻝﺛ؟Redisﻝﺙﮒ**:
 ```python
 import redis
 from functools import wraps
@@ -609,11 +609,11 @@ def cache_result(expire=300):
 - [ ] Redisﮒﺓﺎﮒﺁﮒ?- [ ] ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺓﺎﮔﺑﮔ?- [ ] ﻛﺝﻟﭖﮒﺓﺎﮒ؟ﻟ۲?- [ ] SSLﻟﺁﻛﺗ۵ﮒﺓﺎﻠﻝﺛ?- [ ] ﻠﺎﻝ،ﮒ۱ﻟ۶ﮒﮒﺓﺎﻟ؟ﺝﻝﺛ؟
 
 ### 12.2 ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ?
-- [ ] APIﮔﮒ۰ﮔ­۲ﮒﺕﺕﮒﮒﭦ
-- [ ] ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔ­۲ﮒﺕ?- [ ] Redisﻟﺟﮔ۴ﮔ­۲ﮒﺕﺕ
-- [ ] ﮔ۴ﮒﺟﮔ­۲ﮒﺕﺕﻟﺝﮒﭦ
-- [ ] ﻝﮔ۶ﮔ­۲ﮒﺕﺕﮒﺓ۴ﻛﺛ
-- [ ] ﮒ۳ﻛﭨﺛﻛﭨﭨﮒ۰ﮒﺓﺎﻠﻝﺛ?- [ ] ﮒﻟ­۵ﻟ۶ﮒﮒﺓﺎﻠﻝﺛ?
+- [ ] APIﮔﮒ۰ﮔ۲ﮒﺕﺕﮒﮒﭦ
+- [ ] ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮔ۲ﮒﺕ?- [ ] Redisﻟﺟﮔ۴ﮔ۲ﮒﺕﺕ
+- [ ] ﮔ۴ﮒﺟﮔ۲ﮒﺕﺕﻟﺝﮒﭦ
+- [ ] ﻝﮔ۶ﮔ۲ﮒﺕﺕﮒﺓ۴ﻛﺛ
+- [ ] ﮒ۳ﻛﭨﺛﻛﭨﭨﮒ۰ﮒﺓﺎﻠﻝﺛ?- [ ] ﮒﻟ۵ﻟ۶ﮒﮒﺓﺎﻠﻝﺛ?
 ---
 
 ## 13. ﮒﻟﮔﮔ۰?
@@ -624,5 +624,5 @@ def cache_result(expire=300):
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

@@ -193,13 +193,13 @@ Layer 11.7业绩归因系统是清风量化系统的**业绩诊断引擎**，负
 Total_Excess_Return = 组合收益 - 基准收益
 
 配置效应 (Allocation Effect):
-AE = Σ (w_p - w_b) × (R_b - R_b_total)
+AE = Σ (w_p - w_b)  (R_b - R_b_total)
 
 选择效应 (Selection Effect):
-SE = Σ w_b × (R_p - R_b)
+SE = Σ w_b  (R_p - R_b)
 
 交互效应 (Interaction Effect):
-IE = Σ (w_p - w_b) × (R_p - R_b)
+IE = Σ (w_p - w_b)  (R_p - R_b)
 
 其中:
 - w_p: 组合权重
@@ -377,7 +377,7 @@ class BrinsonAttributionEngine:
 
 ```
 组合收益分解:
-R_p = Σ β_i × F_i + α
+R_p = Σ β_i  F_i + α
 
 其中:
 - β_i: 因子i的暴露
@@ -385,7 +385,7 @@ R_p = Σ β_i × F_i + α
 - α: 特质收益
 
 因子贡献度:
-Contribution_i = β_i × F_i
+Contribution_i = β_i  F_i
 
 因子贡献比例:
 Contribution_Ratio_i = Contribution_i / R_p
@@ -400,7 +400,7 @@ class FactorAttributionResult:
     factor_contributions: Dict[str, float]  # 因子贡献
     idiosyncratic_return: float             # 特质收益
     total_return: float                     # 总收益
-    r_squared: float                        # R²
+r_squared: float                        # R
     details: Dict                           # 详细信息
     timestamp: datetime
 
@@ -453,7 +453,7 @@ class FactorAttributionEngine:
     def _calculate_r_squared(self, 
                             portfolio_return: float,
                             factor_contribution: float) -> float:
-        """计算R²"""
+        """计算R"""
         if abs(portfolio_return) < 1e-10:
             return 0.0
         
@@ -499,13 +499,13 @@ class FactorAttributionEngine:
 
 ```
 组合风险分解:
-σ_p² = Σ Σ w_i × w_j × σ_ij
+σ_p = Σ Σ w_i  w_j  σ_ij
 
 风险贡献度:
-RC_i = w_i × Σ w_j × σ_ij / σ_p
+RC_i = w_i  Σ w_j  σ_ij / σ_p
 
 边际风险:
-MR_i = ∂σ_p / ∂w_i = Σ w_j × σ_ij / σ_p
+MR_i = ∂σ_p / ∂w_i = Σ w_j  σ_ij / σ_p
 
 风险调整收益:
 RAR = R_p / σ_p
@@ -626,7 +626,7 @@ class RiskAttributionEngine:
 Cumulative_Excess = Π (1 + R_p,t) - Π (1 + R_b,t)
 
 时间加权归因:
-TWAE_t = (AE_t × (1 + R_b,t)) / (1 + R_p,t)
+TWAE_t = (AE_t  (1 + R_b,t)) / (1 + R_p,t)
 
 其中:
 - R_p,t: t期组合收益

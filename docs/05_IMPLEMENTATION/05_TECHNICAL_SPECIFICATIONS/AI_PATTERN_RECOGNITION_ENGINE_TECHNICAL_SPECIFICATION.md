@@ -392,7 +392,7 @@ def test_lstm_pattern_recognizer():
 **算法原理**:
 Transformer通过自注意力机制（Self-Attention）捕捉序列中的全局依赖关系，通过多头注意力（Multi-Head Attention）并行处理不同位置的信息，适用于捕捉市场中的复杂模?
 **算法复杂?*:
-- 时间复杂? O(n² * d)，其中n为序列长度，d为特征维?- 空间复杂? O(n²)
+- 时间复杂? O(n * d)，其中n为序列长度，d为特征维?- 空间复杂? O(n)
 
 **参数调优**:
 - 学习? 0.0001（Adam优化器）

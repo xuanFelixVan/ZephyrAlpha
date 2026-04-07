@@ -193,9 +193,9 @@ Target_Leverage = f(市场波动率, 策略夏普比率, 风险预算, 市场状
 Leverage_Efficiency = (杠杆后收益 - 融资成本) / 杠杆风险
 
 杠杆调整决策:
-如果 当前杠杆率 < 目标杠杆率 × 0.9:
+如果 当前杠杆率 < 目标杠杆率  0.9:
     增加杠杆
-否则如果 当前杠杆率 > 目标杠杆率 × 1.1:
+否则如果 当前杠杆率 > 目标杠杆率  1.1:
     降低杠杆
 否则:
     保持不变
@@ -318,7 +318,7 @@ class DynamicLeverageEngine:
                                      leverage_ratio: float) -> float:
         """计算杠杆效率"""
         net_return = leveraged_return - financing_cost
-        leverage_risk = leverage_ratio * 0.10  # 假设风险为杠杆率×10%
+        leverage_risk = leverage_ratio * 0.10  # 假设风险为杠杆率10%
         
         if leverage_risk > 0:
             efficiency = net_return / leverage_risk
@@ -382,7 +382,7 @@ class DynamicLeverageEngine:
 
 ```
 总融资成本:
-Total_Cost = 融资金额 × 融资利率 × 融资期限 / 360
+Total_Cost = 融资金额  融资利率  融资期限 / 360
 
 多券商比较:
 最优券商 = argmin(融资利率 + 交易成本 + 服务质量评分)
@@ -507,7 +507,7 @@ class FinancingCostOptimizer:
 Available = 券商库存 - 已融出数量
 
 融券成本:
-Short_Cost = 融券金额 × 融券费率 × 融券期限 / 360
+Short_Cost = 融券金额  融券费率  融券期限 / 360
 
 最优融券策略:
 最优券源 = argmin(融券费率 + 券源稳定性评分)
@@ -620,7 +620,7 @@ Warning_Line = 150%  # 维持担保比例低于150%预警
 Liquidation_Line = 130%  # 维持担保比例低于130%强制平仓
 
 保证金补充:
-Required_Margin = (融资余额 + 融券余额) × 1.5 - (现金 + 证券市值)
+Required_Margin = (融资余额 + 融券余额)  1.5 - (现金 + 证券市值)
 ```
 
 #### 2.4.2 技术实现

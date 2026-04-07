@@ -47,19 +47,19 @@ parent_document: ../INDEX.md
 
 
 **1. 01_FRAMEWORK\PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: ç³»ç»æ¶æèå¾
+- 链接文本: 
 - 链接路径: ../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_BLUEPRINT.md
 - 问题: 目标文件不存在
 
 
 **2. 01_FRAMEWORK\PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: ææ¯è§èææ¡£
+- 链接文本: 
 - 链接路径: ../../01_FRAMEWORK/TECHNICAL_SPECIFICATIONS.md
 - 问题: 目标文件不存在
 
 
 **3. 01_FRAMEWORK\PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: è¿ç»´æå
+- 链接文本: 
 - 链接路径: ../../05_IMPLEMENTATION/07_OPERATIONS/OPERATIONS_MANUAL.md
 - 问题: 目标文件不存在
 
@@ -71,25 +71,25 @@ parent_document: ../INDEX.md
 
 
 **5. 08_KNOWLEDGE\KNOWLEDGE_BASE_CASE_STUDIES.md**
-- 链接文本: ﮔﻟﭖﮒﺎﮒ­۵
+- 链接文本: ﮔﻟﭖﮒﺎﮒ۵
 - 链接路径: ../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 问题: 目标文件不存在
 
 
 **6. 08_KNOWLEDGE\KNOWLEDGE_BASE_CASE_STUDIES.md**
-- 链接文本: ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
+- 链接文本: ﻝﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
 - 链接路径: ../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 问题: 目标文件不存在
 
 
 **7. 08_KNOWLEDGE\KNOWLEDGE_TRANSFER_SYSTEM.md**
-- 链接文本: ﮔﻟﭖﮒﺎﮒ­۵
+- 链接文本: ﮔﻟﭖﮒﺎﮒ۵
 - 链接路径: ../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 问题: 目标文件不存在
 
 
 **8. 08_KNOWLEDGE\KNOWLEDGE_TRANSFER_SYSTEM.md**
-- 链接文本: ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
+- 链接文本: ﻝﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
 - 链接路径: ../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 问题: 目标文件不存在
 

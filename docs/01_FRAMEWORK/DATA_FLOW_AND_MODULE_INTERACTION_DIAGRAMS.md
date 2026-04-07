@@ -1,6 +1,6 @@
 ﻿﻿---
 version: 1.0.0
-standard_type: æ¶æå?applicable_scope: å
+standard_type: ?applicable_scope:
 parent_document: ../INDEX.md
 module_id: DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS
 created_date: 2026-04-02
@@ -15,7 +15,7 @@ tags: ["数据流图", "模块交互", "架构设计"]---
 
 
 **文档版本**: 1.0.0
-**æåæ´æ?*: 2026-04-02
+**?*: 2026-04-02
 ---
 
 ## 1. 数据流图
@@ -48,7 +48,7 @@ tags: ["数据流图", "模块交互", "架构设计"]---
 
 ---
 
-## 3. æ¶åºå?
+## 3. ?
 ```
 
 ---
@@ -57,8 +57,8 @@ tags: ["数据流图", "模块交互", "架构设计"]---
 
 ---
 
-## 4. åèææ¡?
-¨æ¯å¾](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
+## 4. ?
+](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
 - [性能基准测试体系](./PERFORMANCE_BENCHMARK_FRAMEWORK.md)
 
 ---

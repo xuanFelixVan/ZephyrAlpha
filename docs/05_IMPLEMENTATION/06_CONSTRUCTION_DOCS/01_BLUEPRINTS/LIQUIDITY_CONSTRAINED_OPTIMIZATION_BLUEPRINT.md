@@ -27,7 +27,6 @@ layer: Layer 5.2 (组合优化)
 
 > 核心职责: Liquidity Constrained Optimization蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -113,8 +112,7 @@ class LiquidityConstrainedOptimizer:
     ) -> None:
         """
         
-æ¸
-ç®?
+?
         """
         pass
     
@@ -144,7 +142,7 @@ class LiquidityConstrainedOptimizer:
 ```
 
 ---
-## 3. é
+## 3.
 
 ```yaml
 liquidity_constrained_optimization:

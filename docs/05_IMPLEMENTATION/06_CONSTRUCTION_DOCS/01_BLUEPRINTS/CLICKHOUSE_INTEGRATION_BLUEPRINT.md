@@ -81,7 +81,7 @@ layer: Layer 5.1 (数据处理)
 ### 职责边界
 
 |------|--------|
-¥ |
+|
  |
 
 ---
@@ -90,12 +90,12 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择ClickHouse
 
-| ç¹æ?| ClickHouse | Apache Doris | Apache Druid |
+| ?| ClickHouse | Apache Doris | Apache Druid |
 |------|------------|--------------|--------------|
 
 ### 1.2 核心优势
 
-3. **SQLå
+3. **SQL
 4. **单机友好**: 个人开发场景最佳选择
 
 ---
@@ -105,12 +105,12 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-â?                                                                â?
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-)                          â?  â?
-)                            â?  â?
-â?                                                                â?
+?                                                                ?
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+)                          ?  ?
+)                            ?  ?
+?                                                                ?
 ```
 
 ### 2.2 数据模型设计
@@ -258,7 +258,6 @@ LIMIT 100;
 
 ## 4. Python接口设计
 
-¥æ¥å£
 
 ```python
 from typing import List, Dict, Optional
@@ -267,13 +266,13 @@ from clickhouse_driver import Client
 import pandas as pd
 
 class ClickHouseWriter:
-¥å?""
+?""
     
     def __init__(self, host: str, port: int = 9000, database: str = 'zephyr'):
         self.client = Client(host=host, port=port, database=database)
     
     def write_klines(self, klines: pd.DataFrame) -> int:
-        """æ¹éåå
+"""
         data = [
             (
                 row['date'], row['symbol'], row['interval'],
@@ -294,7 +293,7 @@ class ClickHouseWriter:
         return len(data)
     
     def write_factors(self, factors: pd.DataFrame) -> int:
-        """æ¹éåå
+"""
         data = [
             (
                 row['date'], row['symbol'], row['factor_id'],
@@ -416,7 +415,7 @@ volumes:
   clickhouse_logs:
 ```
 
-### 5.2 é
+### 5.2
 
 ```xml
 <!-- config.xml -->

@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 ?
-ç½?
+?
 layer: Layer 5.1 (数据处理)
 ---
 
@@ -84,7 +84,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-ç½®åæ?
+?
 - 数据源状态不透明
 障影响大
 
@@ -93,9 +93,9 @@ layer: Layer 5.1 (数据处理)
 
 
 |------|--------|------|
-| **æ
+| **
 障发现时间<1分钟 |
-| **æ
+| **
 障恢复时间<10分钟 |
 
 
@@ -269,7 +269,7 @@ class SourceMonitor:
         return []
 ```
 
-### 3.3 æ
+### 3.3
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -277,7 +277,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class FailureSeverity(Enum):
-    """æ
+"""
 障严重程度"""
     LOW = "low"
     MEDIUM = "medium"
@@ -286,7 +286,7 @@ class FailureSeverity(Enum):
 
 @dataclass
 class FailureEvent:
-    """æ
+"""
 障事件"""
     event_id: str
     source_id: str
@@ -298,7 +298,7 @@ class FailureEvent:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class FailureManager:
-    """æ
+"""
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
@@ -309,8 +309,8 @@ class FailureManager:
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-        """æ£æµæ
-é?""
+"""
+?""
         if health.is_healthy:
             return None
         
@@ -343,7 +343,7 @@ class FailureManager:
             return FailureSeverity.LOW
     
     def _send_alerts(self, failure: FailureEvent):
-        """åéåè­?""
+"""?""
         for handler in self.alert_handlers:
             try:
                 handler(failure)
@@ -408,12 +408,12 @@ GET /api/v1/sources/{source_id}/health
 ```
 
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `source_total_sources` | Gauge | 数据源总数 |
-| `source_failures_total` | Counter | æ
+| `source_failures_total` | Counter |
 障总数 |
 
 ---
@@ -424,9 +424,8 @@ GET /api/v1/sources/{source_id}/health
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 - [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
@@ -443,9 +442,9 @@ GET /api/v1/sources/{source_id}/health
 ##### 6.001. Data Source Management
 - **模块ID**: DATA_SOURCE_MANAGEMENT_001
 - **蓝图文档**: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -464,22 +463,21 @@ GET /api/v1/sources/{source_id}/health
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ® |
-ç½?|
+|
+?|
 
 
 |---------|------|------|------|
 | **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

@@ -1,6 +1,6 @@
 ﻿﻿---
 version: 1.0.0
-standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 responsibility:
   - 实施指南、部署文档
   - 审计系统
@@ -23,18 +23,18 @@ last_updated: 2026-04-02---
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝ؟ﮔ 
+### 1.1 ﻝ؟ﮔ
 
 ﮒ؟ﻛﺗﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮒ۱ﮒﺙﭦﮔﮔ۰۲ﮒﮔﺍﮔ؟ﻙ?
 ### 1.2 ﻠﻝ۷ﻟﮒﺑ
 
-- ﮒﮔﺍﮔ؟ﻟ۹ﮒ۷ﮔ۷ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮔ ﺙﮒﺙﮔ ﮒﮒ
+- ﮒﮔﺍﮔ؟ﻟ۹ﮒ۷ﮔ۷ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮔﺙﮒﺙﮔﮒﮒ
 
 ---
 
 ## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class MetadataEnhancer:
@@ -47,7 +47,7 @@ class MetadataEnhancer:
         """ﮒ۱ﮒﺙﭦﮒﮔﺍﮔ?""
         
     def infer_metadata(self, file: Path) -> Dict:
-        """ﮔ۷ﮔ­ﮒﮔﺍﮔ?""
+"""ﮔ۷ﮔﮒﮔﺍﮔ?""
         
     def validate_metadata(self, metadata: Dict) -> List[str]:
         """ﻠ۹ﻟﺁﮒﮔﺍﮔ?""
@@ -58,19 +58,19 @@ class MetadataEnhancer:
 ## 3. ﮒﻟﺛﻟ۶ﻟ
 
 ### 3.1 ﮒﮔﺍﮔ؟ﮔ۷ﮔ?
-**ﮔ۷ﮔ­ﻟ۶ﮒ**:
-- ﻛﭨﮔﻛﭨﭘﻟﺓﺁﮒﺝﮔ۷ﮔ­module_id
-- ﻛﭨﮔﻛﭨﭘﮒﮔ۷ﮔ­ﮔ ﻠ۱
-- ﻛﭨﻝ؟ﮒﺛﻝﭨﮔﮔ۷ﮔ­ﮒﻝﺎ?
+**ﮔ۷ﮔﻟ۶ﮒ**:
+- ﻛﭨﮔﻛﭨﭘﻟﺓﺁﮒﺝﮔ۷ﮔmodule_id
+- ﻛﭨﮔﻛﭨﭘﮒﮔ۷ﮔﮔﻠ۱
+- ﻛﭨﻝ؟ﮒﺛﻝﭨﮔﮔ۷ﮔﮒﻝﺎ?
 ### 3.2 ﮒﮔﺍﮔ؟ﻠ۹ﻟﺁ?
-**ﮒﺟﻠﮒ­ﮔ؟ﭖ**:
+**ﮒﺟﻠﮒﮔ؟ﭖ**:
 - owner
 - version
 - module_id
 - created_date
 - last_updated
 
-**ﮔ۷ﻟﮒ­ﮔ؟ﭖ**:
+**ﮔ۷ﻟﮒﮔ؟ﭖ**:
 - standard_type
 - applicable_scope
 - compliance_level
@@ -79,17 +79,17 @@ class MetadataEnhancer:
 
 ## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| ﮔﮔ  | ﻟ۵ﮔﺎ |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
 | **ﮒ۳ﻝﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﻗ?00MB |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﻗ?00MB |
 
 ---
 
 ## 5. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

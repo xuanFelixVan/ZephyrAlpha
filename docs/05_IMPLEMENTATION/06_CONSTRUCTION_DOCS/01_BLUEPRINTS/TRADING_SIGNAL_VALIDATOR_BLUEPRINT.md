@@ -91,11 +91,11 @@ layer: Layer 5.4 (交易执行)
 
 
 ```
-â?                                                                â?
-â?                                                                â?
-â?                                                                â?
-â?                                                                â?
-â?                                                                â?
+?                                                                ?
+?                                                                ?
+?                                                                ?
+?                                                                ?
+?                                                                ?
 ```
 
 
@@ -198,7 +198,7 @@ def calculate_ir(signal, returns):
 ```
 
 
-**tæ£éª?*:
+**t?*:
 ```python
 def test_statistical_significance(signal, returns, alpha=0.05):
     from scipy.stats import ttest_1samp
@@ -255,9 +255,8 @@ class ValidationResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-| **å¼æºå
-è´?* | Qlibå®å
-¨å
+| **
+?* | Qlib
 
 
 |---------|--------|------|
@@ -267,7 +266,7 @@ class ValidationResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 ---
 
@@ -276,9 +275,9 @@ class ValidationResult:
 **目标**: 集成Qlib评估框架
 
 单**:
-1. â?å®è£
+1. ?
 Qlib依赖
-5. â?åå
+5. ?
 
 **交付成果**:
 - Qlib评估框架
@@ -305,12 +304,12 @@ Qlib依赖
 
 ---
 
-## å
+##
 
 
 |--------|-----------|---------|
 | **IC分析** | 支持多种IC指标 | 功能测试 |
-æµè¯ |
+|
 | **优化建议** | 支持参数+组合优化 | 性能测试 |
 
 ### 6.2 性能要求
@@ -330,7 +329,7 @@ Qlib依赖
 
 
 |--------|---------|---------|
-| **æ¡æ¶å
+| **
 
 
 ### 7.2 实施风险
@@ -341,7 +340,7 @@ Qlib依赖
 
 ---
 
-## å
+##
 
 ### 8.1 Two Sigma对标
 
@@ -354,13 +353,13 @@ Qlib依赖
 
 ---
 
-³ææ¡?
+?
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -374,8 +373,8 @@ Qlib依赖
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 | **scikit-learn** | 1.3+ | 机器学习 | [官方文档](https://scikit-learn.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -392,7 +391,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### ç¸å
+###
 
 | 文档名称 | 说明 |
 |---------|------|
@@ -419,8 +418,8 @@ graph LR
 ##### 6.001. Trading Signal Validator
 - **模块ID**: TRADING_SIGNAL_VALIDATOR_001
 - **蓝图文档**: TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

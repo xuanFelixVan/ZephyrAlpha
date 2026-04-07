@@ -4,7 +4,7 @@ standard_type: ﮒﺓ۴ﮒﺓﮔﮒ
 responsibility:
   - 实施指南、部署文档
 applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_GUIDE
@@ -29,10 +29,10 @@ tags: ["ﮒﺓ۴ﮒﺓﮔﮒ", "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰", "ﻟ۹ﮒ۷ﮒ?, "ﻛ
 ## 1. ﮒﺓ۴ﮒﺓﮔ۵ﻟﺟﺍ
 
 ### 1.1 ﮒﺓ۴ﮒﺓﻝ؟ﻛﭨ?
-ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮔ ﺕﮒﺟﻟﺑ۷ﻠﻛﺟﻟﺁﮒﺓ۴ﮒﺓﺅﺙﻝ۷ﻛﭦﻟ۹ﮒ۷ﮔ۲ﮔ۴ﮔﮔ۰۲ﻟﺑ۷ﻠﺅﺙﮒﻝﺍﮔﺛﮒ۷ﻠ؟ﻠ۱ﻙ?
+ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮔﺕﮒﺟﻟﺑ۷ﻠﻛﺟﻟﺁﮒﺓ۴ﮒﺓﺅﺙﻝ۷ﻛﭦﻟ۹ﮒ۷ﮔ۲ﮔ۴ﮔﮔ۰۲ﻟﺑ۷ﻠﺅﺙﮒﻝﺍﮔﺛﮒ۷ﻠ؟ﻠ۱ﻙ?
 ### 1.2 ﻛﺕﭨﻟ۵ﮒﻟﺛ
 
-- ﻗ?ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻗ?ﻝﮔ؛ﮔ ﺙﮒﺙﮔ۲ﮔ?- ﻗ?ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﻗ?ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﻗ?ﻟ۹ﮒ۷ﻝﮔﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- ﻗ?ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻗ?ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?- ﻗ?ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﻗ?ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﻗ?ﻟ۹ﮒ۷ﻝﮔﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 
 ---
 
@@ -58,12 +58,12 @@ pip install dataclasses
 python scripts/scheduled_quick_audit.py
 ```
 
-**ﮔ ﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﮒﭦ۵ﺅﺙ**:
+**ﮔﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﮒﭦ۵ﺅﺙ**:
 ```bash
 python scripts/scheduled_standard_audit.py
 ```
 
-**ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮒ­۲ﮒﭦ۵ﺅﺙ**:
+**ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮒ۲ﮒﭦ۵ﺅﺙ**:
 ```bash
 python scripts/scheduled_deep_audit.py
 ```
@@ -74,7 +74,7 @@ python scripts/scheduled_deep_audit.py
 
 ### 3.1 ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?
 **ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ­۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒ­ﮒ۷ﮔ?
+- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒﮒ۷ﮔ?
 **ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 from scripts.document_auditor import DocumentAuditor
@@ -93,9 +93,9 @@ results = auditor.check_links()
 }
 ```
 
-### 3.2 ﻝﮔ؛ﮔ ﺙﮒﺙﮔ۲ﮔ?
+### 3.2 ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?
 **ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
+- ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
 **ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 results = auditor.check_versions()
@@ -131,7 +131,7 @@ results = auditor.check_classification()
 
 ### 3.4 ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
 **ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﮒﺟﻠﮒ­ﮔ؟ﭖﮒ؟ﮔﺑﮔ?- ﮔ۷ﻟﮒ­ﮔ؟ﭖﮒ؟ﮔﺑﮔ?
+- ﮒﺟﻠﮒﮔ؟ﭖﮒ؟ﮔﺑﮔ?- ﮔ۷ﻟﮒﮔ؟ﭖﮒ؟ﮔﺑﮔ?
 **ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 results = auditor.check_metadata()
@@ -218,11 +218,11 @@ ignore_rules:
 
 **ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵**:
 - **Critical**: ﻠﭨﮒ۰ﮔ۶ﻠ؟ﻠ۱ﺅﺙﮒﺟﻠ۰ﭨﻝ،ﮒﺏﻛﺟ؟ﮒ۳
-- **Warning**: ﻟ­۵ﮒﻠ؟ﻠ۱ﺅﺙﮒﭨﭦﻟ؟؟ﮒﺍﺛﮒﺟ،ﻛﺟ؟ﮒ۳?- **Info**: ﻛﺟ۰ﮔﺁﮔﻝ۳ﭦﺅﺙﮒﺁﻠﻛﺟ؟ﮒ۳?
+- **Warning**: ﻟ۵ﮒﻠ؟ﻠ۱ﺅﺙﮒﭨﭦﻟ؟؟ﮒﺍﺛﮒﺟ،ﻛﺟ؟ﮒ۳?- **Info**: ﻛﺟ۰ﮔﺁﮔﻝ۳ﭦﺅﺙﮒﺁﻠﻛﺟ؟ﮒ۳?
 **ﻛﺙﮒﻝﭦ?*:
 - **P0**: ﻝ،ﮒﺏﮒ۳ﻝﺅﺙ?4ﮒﺍﮔﭘﮒﺅﺙ
 - **P1**: ﻝﺑ۶ﮔ۴ﮒ۳ﻝﺅﺙﮔ؛ﮒ۷ﮒﺅﺙ
-- **P2**: ﮔ­۲ﮒﺕﺕﮒ۳ﻝﺅﺙﮔ؛ﮔﮒﺅﺙ?- **P3**: ﻛﺛﻛﺙﮒﻝﭦ۶ﺅﺙﮔﻝ۸ﭦﮔﭘﺅﺙ?
+- **P2**: ﮔ۲ﮒﺕﺕﮒ۳ﻝﺅﺙﮔ؛ﮔﮒﺅﺙ?- **P3**: ﻛﺛﻛﺙﮒﻝﭦ۶ﺅﺙﮔﻝ۸ﭦﮔﭘﺅﺙ?
 ---
 
 ## 6. ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
@@ -238,7 +238,7 @@ ModuleNotFoundError: No module named 'document_auditor'
 
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```bash
-# ﻝ۰؟ﻛﺟﮒ۷ﻠ۰ﺗﻝ؟ﮔ ﺗﻝ؟ﮒﺛﻟﺟﻟ۰
+# ﻝ۰؟ﻛﺟﮒ۷ﻠ۰ﺗﻝ؟ﮔﺗﻝ؟ﮒﺛﻟﺟﻟ۰
 cd D:\ZephyrAlpha
 python scripts/scheduled_quick_audit.py
 ```
@@ -261,9 +261,9 @@ PermissionError: [Errno 13] Permission denied
 
 ### 6.2 ﮔ۴ﮒﻟ۶۲ﻟﺁﭨﻠ؟ﻠ۱
 
-**ﻠ؟ﻠ۱1: ﻠ؟ﻠ۱ﮔﺍﻠﻝ۹ﻝﭘﮒ۱ﮒ **
+**ﻠ؟ﻠ۱1: ﻠ؟ﻠ۱ﮔﺍﻠﻝ۹ﻝﭘﮒ۱ﮒ**
 
-**ﮒﺁﻟﺛﮒﮒ **:
+**ﮒﺁﻟﺛﮒﮒ**:
 - ﮔ،ﮔﻛﭦﮔﺑﮒ۳ﮔﻛﭨ?- ﮔﺍﮒ۱ﻛﭦﮔﮔ۰?- ﮔ۲ﮔﭖﻟ۶ﮒﮒﮒ?
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 - ﮔ۴ﻝﮔ،ﮔﮔﻛﭨﭘﮔﺍﮒﮒ?- ﮔ۲ﮔ۴ﮔﺍﮒ۱ﮔﮔ۰?- ﮒﺁﺗﮔﺁﮒﮒﺎﮔ۴ﮒ
@@ -272,7 +272,7 @@ PermissionError: [Errno 13] Permission denied
 
 **ﻠ؟ﻠ۱2: ﮔ۴ﮒﮔﻛﭨﭘﻟﺟﮒ۳۶**
 
-**ﮒﺁﻟﺛﮒﮒ **:
+**ﮒﺁﻟﺛﮒﮒ**:
 - ﮔ،ﮔﮔﻛﭨﭘﮔﺍﻟﺟﮒ۳?- ﻠ؟ﻠ۱ﮔﺍﻠﻟﺟﮒ۳
 
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
@@ -286,7 +286,7 @@ PermissionError: [Errno 13] Permission denied
 
 **ﮔ۷ﻟﻠ۱ﻝ**:
 - **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?*: ﮔﺁﮒ۷ﻛﺕ
-- **ﮔ ﮒﮒ؟۰ﻟ؟۰**: ﮔﺁﮔ1ﮔ?- **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰**: ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ?
+- **ﮔﮒﮒ؟۰ﻟ؟۰**: ﮔﺁﮔ1ﮔ?- **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰**: ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ?
 **ﻟ۹ﮒ۷ﮒﻠﻝﺛ?*:
 ```powershell
 # Windowsﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦ
@@ -303,7 +303,7 @@ PermissionError: [Errno 13] Permission denied
    ﻗ?5. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
 ```
 
-### 7.3 ﮔﻝﭨ­ﮔﺗﻟﺟ
+### 7.3 ﮔﻝﭨﮔﺗﻟﺟ
 
 **ﮔﺗﻟﺟﮔ۹ﮔﺛ**:
 - ﮒ؟ﮔﻛﺙﮒﮒ؟۰ﻟ؟۰ﻟ۶ﮒ
@@ -363,9 +363,9 @@ jobs:
 ## 9. ﮒﻟﮔﮔ۰?
 - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
 - [ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-02

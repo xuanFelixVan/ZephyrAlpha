@@ -4,10 +4,10 @@ version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 responsibility:
   - 系统概览、架构总览
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
@@ -38,7 +38,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ### 2.1 Layer 0 ﻗ?Layer 2 ﮔ۴ﮒ۲
 
 ```python
-# ﮔﺍﮔ؟ﻟﺝﮒﭦﮔ ﺙﮒﺙﺅﺙLayer 0 ﻟﺝﮒﭦﺅﺙ?DataOutput = {
+# ﮔﺍﮔ؟ﻟﺝﮒﭦﮔﺙﮒﺙﺅﺙLayer 0 ﻟﺝﮒﭦﺅﺙ?DataOutput = {
     "date": "2026-03-28",
     "code": "000001",
     "open": 10.5,
@@ -57,7 +57,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ### 2.2 Layer 2 ﻗ?Layer 3 ﮔ۴ﮒ۲
 
 ```python
-# ﮒ ﮒ­ﻟﺝﮒﭦﮔ ﺙﮒﺙﺅﺙLayer 2 ﻟﺝﮒﭦﺅﺙ?FactorOutput = {
+# ﮒﮒﻟﺝﮒﭦﮔﺙﮒﺙﺅﺙLayer 2 ﻟﺝﮒﭦﺅﺙ?FactorOutput = {
     "date": "2026-03-28",
     "code": "000001",
     "factor_id": "ALPHA_001",
@@ -66,7 +66,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
     "confidence": 0.85
 }
 
-# ﻝ­ﻝ۴ﻛﺟ۰ﮒﺓﮔ ﺙﮒﺙ
+# ﻝﻝ۴ﻛﺟ۰ﮒﺓﮔﺙﮒﺙ
 SignalOutput = {
     "signal_id": "SIG_001",
     "strategy_id": "S001",
@@ -83,7 +83,7 @@ SignalOutput = {
 ### 2.3 Layer 3 ﻗ?Layer 5 ﮔ۴ﮒ۲
 
 ```python
-# ﻠ۲ﻠ۸ﮔ ۰ﻠ۹ﮒﻛﺟ۰ﮒ?ValidatedSignal = {
+# ﻠ۲ﻠ۸ﮔ۰ﻠ۹ﮒﻛﺟ۰ﮒ?ValidatedSignal = {
     "signal_id": "SIG_001",
     "approved": True,
     "position_size": 0.15,
@@ -91,7 +91,7 @@ SignalOutput = {
     "adjustments": []
 }
 
-# ﻟ؟۱ﮒﮔ ﺙﮒﺙ
+# ﻟ؟۱ﮒﮔﺙﮒﺙ
 Order = {
     "order_id": "ORD_001",
     "signal_id": "SIG_001",
@@ -136,14 +136,14 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 
 ---
 
-## 4. ﮔﺍﮔ؟ﮒ­ﮒ۷ﻟ۶ﮔ ﺙ
+## 4. ﮔﺍﮔ؟ﮒﮒ۷ﻟ۶ﮔﺙ
 
-| ﮒ­ﮒ۷ﮒﺎ?| ﮔ ﺙﮒﺙ | ﻛﺛﻝﺛ؟ | ﻟﺁﺑﮔ |
+| ﮒﮒ۷ﮒﺎ?| ﮔﺙﮒﺙ | ﻛﺛﻝﺛ؟ | ﻟﺁﺑﮔ |
 |--------|------|------|------|
 | ﮒﮒ۶ﮔﺍﮔ؟ | Parquet | `data/raw/{type}/{year}/` | ﮒﮒ۶ﻠﻠﮔﺍﮔ؟ |
 | ﮒ۳ﻝﮒﮔﺍﮔ?| Parquet + SQLite | `data/processed/` | ﮔﺕﮔﺑﮒﮔﺍﮔ?|
-| ﮒ ﮒ­ﮔﺍﮔ؟ | Parquet | `data/factors/{factor_id}/` | ﮔﮒ ﮒ­ﮒ­ﮒ?|
-| ﻛﺟ۰ﮒﺓﮔﺍﮔ؟ | SQLite | `data/signals/` | ﻝ­ﻝ۴ﻛﺟ۰ﮒﺓ |
+| ﮒﮒﮔﺍﮔ؟ | Parquet | `data/factors/{factor_id}/` | ﮔﮒﮒﮒﮒ?|
+| ﻛﺟ۰ﮒﺓﮔﺍﮔ؟ | SQLite | `data/signals/` | ﻝﻝ۴ﻛﺟ۰ﮒﺓ |
 | ﻟ؟۱ﮒﮔﺍﮔ؟ | SQLite | `data/orders/` | ﻛﭦ۳ﮔﻟ؟۱ﮒ |
 | ﮒﮔﭖﻝﭨﮔ | Parquet | `data/backtest_results/` | ﮒﮔﭖﻝﭨ۸ﮔ |
 
@@ -152,7 +152,7 @@ logger ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﺙﻗﻗﻗ?exception_handler
 ## 5. ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺏﻟ
 
 ```
-ﻠﻝﺛ؟ﮔﻛﭨﭘ ﻗ?ﮔ۷۰ﮒﮔ ﮒﺍﺅﺙ?
+ﻠﻝﺛ؟ﮔﻛﭨﭘ ﻗ?ﮔ۷۰ﮒﮔﮒﺍﺅﺙ?
 config/
 ﻗﻗﻗ system.yaml ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?main.py / config_manager
 ﻗﻗﻗ data_sources.yaml ﻗﻗﻗﻗﻗﻗﻗﻗﻗ?data_collector
@@ -171,21 +171,21 @@ config/
 ## 6. ﻠﻟﺁﺁﮒ۳ﻝﮔﭦﮒﭘ
 
 ```python
-# ﻠﻟﺁﺁﻛﺙ ﮔ­ﻠ?
+# ﻠﻟﺁﺁﻛﺙﮔﻠ?
 Layer 0 (ﮔﺍﮔ؟ﮒﺎ?
-    ﻗ?    ﻗﻗﻗ DataException ﻗﻗﻗﻗﻗﻗﻗ?ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ﺅﺙﻝﭨ۶ﻝﭨ­ﮒ۳ﻝ?    ﻗ?    ﻗ?Layer 2 (Alphaﮒﺎ?
-    ﻗ?    ﻗﻗﻗ FactorException ﻗﻗﻗﻗﻗ?ﻟﺓﺏﻟﺟﻟﺁ۴ﮒ ﮒ­ﺅﺙﻛﺛﺟﻝ۷ﮒ۳ﻠﮒ ﮒ­?    ﻗ?    ﻗ?Layer 3 (ﻠ۲ﻠ۸ﮒﺎ?
+ﻗ?    ﻗﻗﻗ DataException ﻗﻗﻗﻗﻗﻗﻗ?ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ﺅﺙﻝﭨ۶ﻝﭨﮒ۳ﻝ?    ﻗ?    ﻗ?Layer 2 (Alphaﮒﺎ?
+ﻗ?    ﻗﻗﻗ FactorException ﻗﻗﻗﻗﻗ?ﻟﺓﺏﻟﺟﻟﺁ۴ﮒﮒﺅﺙﻛﺛﺟﻝ۷ﮒ۳ﻠﮒﮒ?    ﻗ?    ﻗ?Layer 3 (ﻠ۲ﻠ۸ﮒﺎ?
     ﻗ?    ﻗﻗﻗ RiskException ﻗﻗﻗﻗﻗﻗﻗ?ﮔﻝﭨﻛﺟ۰ﮒﺓﺅﺙﻟ؟ﺍﮒﺛﻠ۲ﮔ۶ﮔ۴ﮒﺟ?    ﻗ?    ﻗ?Layer 5 (ﮔ۶ﻟ۰ﮒﺎ?
-    ﻗ?    ﻗﻗﻗ ExecutionException ﻗﻗ?ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ­?```
+ﻗ?    ﻗﻗﻗ ExecutionException ﻗﻗ?ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ?```
 
 ---
 
 ## 7. ﻝﮔ؛ﮒﺙﮒ؟ﺗﮔ۶ﻟ۶ﮒ?
 | ﻟ۶ﮒ | ﻟﺁﺑﮔ |
 |------|------|
-| ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻝﮔ؛ | ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺙﮒ؟ﺗﺅﺙﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ |
+| ﮔﺍﮔ؟ﮔﺙﮒﺙﻝﮔ؛ | ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺙﮒ؟ﺗﺅﺙﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ |
 | ﮔ۴ﮒ۲ﻝﮔ؛ | ﻠﻟﺟﻝﮔ؛ﮒﺓﮒﮒ?|
-| ﻠﻝﺛ؟ﻝﮔ؛ | ﻠﻟﺟﻠﻝﺛ؟ﻛﺕ­ﻝversionﮒ­ﮔ؟ﭖﮔ ﻟﺁ |
+| ﻠﻝﺛ؟ﻝﮔ؛ | ﻠﻟﺟﻠﻝﺛ؟ﻛﺕﻝversionﮒﮔ؟ﭖﮔﻟﺁ |
 
 ---
 

@@ -89,7 +89,7 @@ layer: Layer 5 (策略执行层)
 
 ```mermaid
 graph TB
-¥å±?
+?
 数据]
         A2[财务数据]
         A3[分析师预期]
@@ -100,7 +100,7 @@ graph TB
         B2[价值因子计算器]
         B3[质量因子计算器]
         B4[成长因子计算器]
-        B5[æ
+B5[
 绪因子计算器]
         B6[技术因子计算器]
     end
@@ -113,8 +113,8 @@ graph TB
     
         D1[因子库]
         D2[因子版本管理]
-        D3[å å­å
-æ°æ®]
+D3[
+]
     end
     
         E1[多因子合成引擎]
@@ -147,7 +147,7 @@ graph TB
 
 ---
 
-## ð§ å
+##
 
 ### 1. 因子基类 (Factor Base Class)
 
@@ -250,7 +250,7 @@ class FactorEvaluator:
                      factor_values: pd.Series,
                      forward_returns: pd.Series) -> pd.Series:
         """计算IC序列"""
-³ç³»æ?
+?
         ic = factor_values.rolling(1).corr(forward_returns, method='spearman')
         return ic
     
@@ -330,10 +330,10 @@ class AlphaFactorFactory:
 
 ### 因子分类体系
 
-¬å¼ |
+|
 |---------|---------|---------|---------|
 | **质量因子** | ROA | 总资产收益率 | Net Income / Assets |
-| **æ
+| **
 绪指标 |
 
 ---
@@ -342,13 +342,11 @@ class AlphaFactorFactory:
 
 
 **任务**:
-æµè¯
 
 ---
 
 
 **任务**:
-æµè¯
 
 ---
 
@@ -362,14 +360,13 @@ class AlphaFactorFactory:
 ### 因子质量要求
 
 |------|--------|
-| **ICåå?* | |IC| > 0.03 |
+| **IC?* | |IC| > 0.03 |
 | **ICIR** | > 0.5 |
-| **单调性R²** | > 0.8 |
+| **单调性R** | > 0.8 |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [市场状态识别系统蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
 
@@ -391,8 +388,8 @@ class AlphaFactorFactory:
 ##### 6.001. Alpha Factor Factory
 - **模块ID**: ALPHA_FACTOR_FACTORY_001
 - **蓝图文档**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

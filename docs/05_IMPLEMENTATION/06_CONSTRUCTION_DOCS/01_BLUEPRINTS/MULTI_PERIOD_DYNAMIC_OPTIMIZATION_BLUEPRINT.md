@@ -78,7 +78,6 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Multi Period Dynamic Optimization蓝图设计
 > 职责边界: 
-³å
 容
 
 ## 2. 功能设计

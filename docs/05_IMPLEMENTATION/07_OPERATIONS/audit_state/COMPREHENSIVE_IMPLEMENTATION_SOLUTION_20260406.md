@@ -233,11 +233,11 @@ class MonitoringDashboard:
         st.title("实时交易监控")
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("总资产", "¥1,234,567", "+2.3%")
+            st.metric("总资产", "1,234,567", "+2.3%")
         with col2:
-            st.metric("持仓市值", "¥987,654", "+1.8%")
+            st.metric("持仓市值", "987,654", "+1.8%")
         with col3:
-            st.metric("可用资金", "¥246,913", "+5.2%")
+            st.metric("可用资金", "246,913", "+5.2%")
 ```
 
 #### 2.2.5 Layer 7: AI报告层

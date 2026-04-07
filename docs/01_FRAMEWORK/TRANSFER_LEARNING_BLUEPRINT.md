@@ -93,7 +93,7 @@ layer: Layer 3 (策略层)
 ```
 
 
-â?  âââ ...
+?   ...
 
 ├── 高级学习架构
 
@@ -121,7 +121,7 @@ layer: Layer 3 (策略层)
 
 |------|--------|----------|
 
-| ç¾è¡å
+|
 
 
 
@@ -132,7 +132,7 @@ layer: Layer 3 (策略层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -251,7 +251,7 @@ class TransferLearningFramework:
 
 class DomainAdapter:
 
-    """åéåºå?""
+"""?""
 
     
 
@@ -336,8 +336,8 @@ class PretrainedModelRegistry:
 
             source_domain: 源域描述
 
-            metadata: å
-æ°æ?        """
+metadata:
+?        """
 
         pass
 
@@ -358,7 +358,7 @@ class PretrainedModelRegistry:
 
             name: 模型名称
 
-            target_domain: ç®æ å?            
+target_domain: ?
 
         Returns:
 
@@ -369,7 +369,7 @@ class PretrainedModelRegistry:
 
 
 
-### 3.2 é
+### 3.2
 
 
 
@@ -450,7 +450,6 @@ torchvision>=0.15.0
 
 
 
-·
 
 tllib>=0.4
 
@@ -475,14 +474,14 @@ numpy>=1.24.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 500GB SSD | 1TB NVMe |
@@ -557,7 +556,7 @@ class ModelTrainingPipeline:
 
 |--------|----------|----------|
 
-æµè¯ |
+|
 
 | 微调迁移 | 精度提升 | 集成测试 |
 
@@ -588,12 +587,11 @@ class ModelTrainingPipeline:
 
 - [ ] 微调迁移实现
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 
-### Phase 2: åéåº (1å?
+### Phase 2:  (1?
 
 
 

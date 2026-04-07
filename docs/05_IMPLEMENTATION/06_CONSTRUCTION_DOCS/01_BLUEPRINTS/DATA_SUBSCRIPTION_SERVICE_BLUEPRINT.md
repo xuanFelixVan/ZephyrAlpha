@@ -75,12 +75,12 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-ç®¡ç?
+?
 
 ### 职责边界
 
 |------|--------|
-| â?è®¢é
+| ?
 洗 |
 
 ---
@@ -89,9 +89,9 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择Redis Streams
 
-| ç¹æ?| Redis Streams | Kafka | RabbitMQ |
+| ?| Redis Streams | Kafka | RabbitMQ |
 |------|---------------|-------|----------|
-| æä¹
+|
 
 ---
 
@@ -100,11 +100,10 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-â?                                                                â?
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-è®¢é
-â?                                                                â?
+?                                                                ?
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+?                                                                ?
 ```
 
 ---
@@ -156,20 +155,20 @@ class DataPublisher:
         return self.redis.xadd(stream_name, message)
 ```
 
-### 3.2 è®¢é
+### 3.2
 管理服务
 
 ```python
 class SubscriptionManager:
-    """è®¢é
-ç®¡çå?""
+"""
+?""
     
     def __init__(self, redis_client: redis.Redis):
         self.redis = redis_client
         self.subscriptions = {}
     
     def subscribe(self, client_id: str, stream_type: str, stream_id: str):
-        """è®¢é
+"""
         key = f"subscription:{client_id}"
         stream_name = f"stream:{stream_type}:{stream_id}"
         
@@ -194,12 +193,12 @@ class SubscriptionManager:
         return True
     
     def get_subscriptions(self, client_id: str) -> List[str]:
-åè¡?""
+?""
         key = f"subscription:{client_id}"
         return list(self.redis.smembers(key))
 ```
 
-æå?
+?
 
 ```python
 import asyncio
@@ -252,7 +251,7 @@ class DataConsumer:
 
 ---
 
-## 4. WebSocketæ¨é?
+## 4. WebSocket?
 
 ```python
 from fastapi import WebSocket, WebSocketDisconnect

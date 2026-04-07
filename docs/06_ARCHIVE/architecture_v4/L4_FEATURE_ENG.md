@@ -2032,7 +2032,7 @@ class FeatureEngineeringCache:
    - *Kubernetes in Action* by Marko Luksa
 
 4. **量化交易应用**:
-   - *Advances in Financial Machine Learning* by Marcos López de Prado
+- *Advances in Financial Machine Learning* by Marcos Lpez de Prado
    - *Machine Learning for Algorithmic Trading* by Stefan Jansen
 
 ---

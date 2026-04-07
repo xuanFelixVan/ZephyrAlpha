@@ -80,8 +80,7 @@ layer: Layer 5.4 (交易执行)
 4. 部署与监控
 
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -98,8 +97,8 @@ layer: Layer 5.4 (交易执行)
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -235,7 +234,7 @@ class TradingCostOptimizer:
     ) -> pd.Series:
         """计算交易需?""
         trades = target - current
-        return trades[trades != 0]  # ä»
+return trades[trades != 0]  #
 返回需要交易的资产
     
     def _select_algorithm(
@@ -304,7 +303,7 @@ class AlmgrenChrissModel:
         self.config = config
         # 市场冲击参数（需要根据历史数据校准）
         self.temporary_impact_coeff = config.temporary_impact_coeff  # σ
-        self.permanent_impact_coeff = config.permanent_impact_coeff  # Î³
+self.permanent_impact_coeff = config.permanent_impact_coeff  #
         
     def estimate(
         self,
@@ -363,8 +362,6 @@ class AlmgrenChrissModel:
         """
         计算临时冲击成本
         
-        å
-        å
         participation_rate = abs(trade_size) / avg_volume
         temp_impact = (
             self.temporary_impact_coeff * 
@@ -381,8 +378,6 @@ class AlmgrenChrissModel:
         """
 冲击成本
         
-        å
-        å
 冲击系数
         """
         participation_rate = abs(trade_size) / avg_volume
@@ -413,7 +408,7 @@ class VWAPAlgorithm:
         impact_cost: MarketImpactResult
     ) -> ExecutionSchedule:
         """生成VWAP执行计划"""
-        # æç
+#
 
         schedule = {}
         
@@ -502,20 +497,19 @@ class ImplementationShortfallAlgorithm:
         return ExecutionSchedule(schedule=schedule)
 ```
 
-### 3.4 é
+### 3.4
 ```python
 @dataclass
 class TradingCostConfig:
 置"""
     impact_config: ImpactModelConfig
-ï¼
     default_algorithm: str = 'VWAP'
 过市场成交量的10%?    
 @dataclass
 class ImpactModelConfig:
 置"""
     temporary_impact_coeff: float = 0.1  # 临时冲击系数
-    permanent_impact_coeff: float = 0.05  # æ°¸ä¹
+permanent_impact_coeff: float = 0.05  #
 冲击系数
     volatility_lookback: int = 20  # 波动率计算回看期
 ```
@@ -524,7 +518,7 @@ class ImpactModelConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -533,7 +527,7 @@ class ExecutionConstraints:
     algorithm: Optional[str] = None  # 指定执行算法
     max_execution_time: int = 1  # 最大执行时间（天）
     max_participation_rate: float = 0.1  # 最大参与率
-    avoid_auction: bool = True  # é¿å
+avoid_auction: bool = True  #
 ```
 
 ### 4.2 输出数据模型
@@ -574,16 +568,15 @@ class TotalCost:
 
 **临时冲击**（Temporary Impact）：
 ```
-σ · (X/V)^(1/2) · (1/T)^(1/2)
+σ  (X/V)^(1/2)  (1/T)^(1/2)
 ```
 
-**æ°¸ä¹
+**
 冲击**（Permanent Impact）：
 ```
-Î³ Â· (X/V)
+(X/V)
 ```
 
-å
 冲击系数
 
 ### 5.2 参数校准
@@ -591,7 +584,7 @@ class TotalCost:
 **临时冲击系数（σ）**?- 范围?.05 - 0.15
 - 影响：交易速度对价格的影响
 - 校准方法：使用历史交易数据回?
-**æ°¸ä¹
+**
 冲击系数（γ）**?- 范围?.01 - 0.10
 - 影响：交易对价格的长期影?- 校准方法：使用订单流数据估计
 
@@ -682,8 +675,7 @@ class RebalancingSystem:
 
 ## 7. 测试策略
 
-### 7.1 åå
-æµè¯
+### 7.1
 
 ```python
 def test_market_impact_estimation():
@@ -742,7 +734,7 @@ def test_integration_with_portfolio_optimizer():
 - Day 3-4: 执行算法（VWAP/TWAP/IS?- Day 5: 执行计划生成?
 **Week 2: 集成与测?*
 - Day 1-2: 与组合优化器集成
-- Day 3: åå
+- Day 3:
 ### 8.2 里程?
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
@@ -822,7 +814,7 @@ def test_integration_with_portfolio_optimizer():
 
 ### B. 开源资?
 - 交易成本模型示例: docs/examples/trading_cost_example.py
-·: tools/impact_model_calibration.py
+: tools/impact_model_calibration.py
 
 ---
 
@@ -845,16 +837,16 @@ def test_integration_with_portfolio_optimizer():
 ##### 6.001. Trading Cost Optimization
 - **模块ID**: TRADING_COST_OPTIMIZATION_001
 - **蓝图文档**: TRADING_COST_OPTIMIZATION_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Trading Cost Optimization** | å
+| **Trading Cost Optimization** |
 
 ### 12.3 版本管理
 

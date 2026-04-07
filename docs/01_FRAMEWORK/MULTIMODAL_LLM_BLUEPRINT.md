@@ -153,7 +153,6 @@ class MultimodalLLM:
 
         Returns:
 
-¥
 
         """
 
@@ -181,7 +180,6 @@ class MultimodalLLM:
 
         Returns:
 
-¥
 
         """
 
@@ -209,7 +207,6 @@ class MultimodalLLM:
 
         Returns:
 
-¥
 
         """
 
@@ -232,8 +229,7 @@ class MultimodalLLM:
 
         Returns:
 
-            torch.Tensor: èååµå
-¥
+torch.Tensor:
 
         """
 

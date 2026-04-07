@@ -74,13 +74,13 @@ parent_document: ../INDEX.md
 
 
 **3. 01_FRAMEWORK\PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: ææ¯è§èææ¡£
+- 链接文本: 
 - 链接路径: ../../01_FRAMEWORK/TECHNICAL_SPECIFICATIONS.md
 - 目标: 不存在
 
 
 **4. 01_FRAMEWORK\PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: è¿ç»´æå
+- 链接文本: 
 - 链接路径: ../../05_IMPLEMENTATION/07_OPERATIONS/OPERATIONS_MANUAL.md
 - 目标: 不存在
 

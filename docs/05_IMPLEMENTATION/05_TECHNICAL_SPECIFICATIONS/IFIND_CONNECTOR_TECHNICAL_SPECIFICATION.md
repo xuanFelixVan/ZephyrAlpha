@@ -237,7 +237,7 @@ class IFindDataConnector:
             frequency: 数据频率
         
         Returns:
-            pd.DataFrame: 因子数据，列为因子，行为时间×股票
+            pd.DataFrame: 因子数据，列为因子，行为时间股票
         
         Raises:
             IFindConnectionError: iFind连接失败

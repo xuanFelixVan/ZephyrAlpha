@@ -66,10 +66,10 @@ layer: Layer 2 (Alpha因子层)
 
 |----------|----------|
 
-| **å®å
+| **
 
 
-¨é£é© |
+|
 
 
 
@@ -98,7 +98,7 @@ layer: Layer 2 (Alpha因子层)
 ```
 
 
-â?  âââ ...
+?   ...
 
 
 └── 模型服务
@@ -129,9 +129,9 @@ layer: Layer 2 (Alpha因子层)
 
 | **模型窃取** | 模型逆向工程 | High |
 
-| **ä¸å®å
+| **
 
-¥ | High |
+| High |
 
 
 
@@ -139,7 +139,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -165,7 +165,7 @@ layer: Layer 2 (Alpha因子层)
 
 class ModelSecurityScanner:
 
-¨æ«æå?""
+?""
 
     
 
@@ -203,7 +203,6 @@ class ModelSecurityScanner:
 
     ) -> SecurityScanResult:
 
-¨æ«æ
 
         
 
@@ -235,7 +234,6 @@ class ModelSecurityScanner:
 
     ) -> List[Vulnerability]:
 
-¨
 
         
 
@@ -263,7 +261,6 @@ class ModelSecurityScanner:
 
     ) -> List[Vulnerability]:
 
-¨
 
         
 
@@ -415,7 +412,7 @@ class Vulnerability:
 
 class SecurityScanResult:
 
-    """å®å
+"""
 
     
 
@@ -433,7 +430,7 @@ class SecurityScanResult:
 
 
 
-### 3.2 é
+### 3.2
 
 
 
@@ -443,8 +440,7 @@ class SecurityScanResult:
 
 class SecurityScanConfig:
 
-    """å®å
-¨æ«æé
+"""
 置"""
 
     
@@ -466,7 +462,7 @@ class SecurityScanConfig:
 
 
 
-### 4.1 å®å
+### 4.1
 
 ```
 
@@ -474,8 +470,7 @@ class SecurityScanConfig:
 
 
 
-    â?å®å
-¨æ¥å
+?
 
 ```
 
@@ -486,7 +481,6 @@ class SecurityScanConfig:
 
 模型部署
 
-¨æ«æ
 
 
 
@@ -513,8 +507,7 @@ class SecurityScanConfig:
 
 
 
-# å®å
-¨æ«æ
+#
 
 bandit>=1.7.0
 
@@ -522,7 +515,6 @@ safety>=2.3.0
 
 
 
-¨
 
 privacy-evaluator>=0.1
 
@@ -545,14 +537,14 @@ jinja2>=3.1.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
-| CPU | 4æ ?| 8æ ?|
+| CPU | 4?| 8?|
 
-| å
+|
 存 | 16GB | 32GB |
 
 | 存储 | 100GB SSD | 256GB SSD |
@@ -652,7 +644,6 @@ class ModelGovernance:
 
 - [ ] 代码扫描实现
 
-æµè¯
 
 
 

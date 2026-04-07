@@ -3,9 +3,9 @@ version: 1.0.0
 standard_type: тиЦтЁиТїЄтЇЌ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: тЁЃТЋ░ТЇ«у«Ауљ?compliance_level: ТГБт╝ЈТаЄтЄє
+applicable_scope: тЁЃТЋ░ТЇуАуљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
-implementation_status: ти▓т«їТѕ?owner: ТќЄТАБу«АуљєтЉ?version: 1.0.0
+implementation_status: ти▓тїТѕ?owner: ТќЄТАБуАуљєтЉ?version: 1.0.0
 module_id: METADATA_ENHANCER_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
@@ -13,7 +13,7 @@ tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "С�
 ---
 ---
 
-# тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиСй┐ућеТїЄтЇ?
+# тЁЃТЋ░ТЇтбът╝║тиЦтЁиСй┐ућеТїЄтЇ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -21,16 +21,16 @@ tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "С�
 
 **ТќЄТАБуЅѕТюг**: 1.0.0
 **ТюђтљјТЏ┤Тќ?*: 2026-04-02
-**ТќЄТАБТЅђТюЅУђ?*: ТќЄТАБу«АуљєтЉ?
+**ТќЄТАБТЅђТюЅУђ?*: ТќЄТАБуАуљєтЉ?
 ---
 
 ## 1. тиЦтЁиТдѓУ┐░
 
-### 1.1 тиЦтЁиу«ђС╗?
-тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиућеС║јУЄфтіеТјеТќГтњїУАЦтЁЁТќЄТАБтЁЃТЋ░ТЇ«№╝їуА«С┐ЮТќЄТАБтЁЃТЋ░ТЇ«т«їТЋ┤ТђДтњїУДёУїЃТђДсђ?
+### 1.1 тиЦтЁиуђС╗?
+тЁЃТЋ░ТЇтбът╝║тиЦтЁиућеС║јУЄфтіеТјеТќГтњїУАЦтЁЁТќЄТАБтЁЃТЋ░ТЇ№╝їуАС┐ЮТќЄТАБтЁЃТЋ░ТЇтїТЋ┤ТђДтњїУДёУїЃТђДсђ?
 ### 1.2 СИ╗УдЂтіЪУЃй
 
-- Рю?УЄфтіеТјеТќГтЁЃТЋ░ТЇ?- Рю?ТЅ╣жЄЈТи╗тіатЁЃТЋ░ТЇ?- Рю?жфїУ»ЂтЁЃТЋ░ТЇ«т«їТЋ┤Тђ?- Рю?ућЪТѕљтбът╝║ТіЦтЉі
+- Рю?УЄфтіеТјеТќГтЁЃТЋ░ТЇ?- Рю?ТЅ╣жЄЈТи╗тіатЁЃТЋ░ТЇ?- Рю?жфїУЂтЁЃТЋ░ТЇтїТЋ┤Тђ?- Рю?ућЪТѕљтбът╝║ТіЦтЉі
 
 ---
 
@@ -42,38 +42,38 @@ tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "С�
 python scripts/metadata_enhancer.py
 ```
 
-**жфїУ»ЂтЁЃТЋ░ТЇ?*:
+**жфїУЂтЁЃТЋ░ТЇ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 3. тіЪУЃйУ»дУДБ
+## 3. тіЪУЃйУдУДБ
 
-### 3.1 тЁЃТЋ░ТЇ«ТјеТќ?
+### 3.1 тЁЃТЋ░ТЇТјеТќ?
 **ТјеТќГУДётѕЎ**:
-- С╗јТќЄС╗ХУи»тЙёТјеТќГmodule_id
+- С╗јТќЄС╗ХУитЙёТјеТќГmodule_id
 - С╗јТќЄС╗ХтљЇТјеТќГТаЄжбў
-- С╗јуЏ«тйЋу╗ЊТъёТјеТќГтѕєу▒?
+- С╗јуЏтйЋу╗ЊТъёТјеТќГтѕєу▒?
 **уц║СЙІ**:
 ```
-ТќЄС╗ХУи»тЙё: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
+ТќЄС╗ХУитЙё: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
 ТјеТќГу╗ЊТъю:
   - module_id: MOMENTUM_FACTOR
   - category: 02_FACTOR_LIBRARY
   - title: тіежЄЈтЏатГљ
 ```
 
-### 3.2 тЁЃТЋ░ТЇ«жфїУ»?
-**т┐ЁжюђтГЌТ«х**:
+### 3.2 тЁЃТЋ░ТЇжфїУ?
+**т┐ЁжюђтГЌТх**:
 - owner
 - version
 - module_id
 - created_date
 - last_updated
 
-**ТјеУЇљтГЌТ«х**:
+**ТјеУЇљтГЌТх**:
 - standard_type
 - applicable_scope
 - compliance_level
@@ -81,9 +81,9 @@ python scripts/metadata_enhancer.py --validate
 
 ---
 
-## 4. жЁЇуй«жђЅжА╣
+## 4. жЁЇуйжђЅжА╣
 
-### 4.1 ТјеТќГУДётѕЎжЁЇуй«
+### 4.1 ТјеТќГУДётѕЎжЁЇуй
 
 ```yaml
 inference_rules:
@@ -100,7 +100,7 @@ inference_rules:
 
 ---
 
-## 5. ТюђСй│т«ъУи?
+## 5. ТюђСй│тъУи?
 ### 5.1 Сй┐ућеТеАТЮ┐
 
 **тѕЏт╗║ТќЄТАБТЌХСй┐ућеТеАТЮ?*:
@@ -109,9 +109,9 @@ inference_rules:
 cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md new_document.md
 ```
 
-### 5.2 т«џТюЪжфїУ»Ђ
+### 5.2 тџТюЪжфїУЂ
 
-**Т»ЈТюѕжфїУ»ЂтЁЃТЋ░ТЇ«т«їТЋ┤Тђ?*:
+**ТЈТюѕжфїУЂтЁЃТЋ░ТЇтїТЋ┤Тђ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
@@ -119,7 +119,7 @@ python scripts/metadata_enhancer.py --validate
 ---
 
 ## 6. тЈѓУђЃТќЄТА?
-- [тЁЃТЋ░ТЇ«тбът╝║тиЦтЁиТіђТю»УДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
+- [тЁЃТЋ░ТЇтбът╝║тиЦтЁиТіђТюУДёУїЃ](05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
 - [ТќЄТАБТеАТЮ┐](09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
 
 ---

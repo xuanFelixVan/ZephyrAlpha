@@ -54,7 +54,6 @@ layer: Layer 4 (机器学习层)
 
 
 
-·ï¼
 
 
 
@@ -131,7 +130,7 @@ ModelCard:
 
   metrics:
 
-    - name: "åç¡®ç?
+- name: "?
 
       value: 0.85
 
@@ -139,11 +138,11 @@ ModelCard:
 
       
 
-  # å±éæ?  limitations:
+# ?  limitations:
 
-    - "å±éæ?"
+- "?"
 
-    - "å±éæ?"
+- "?"
 
     
 
@@ -161,7 +160,7 @@ ModelCard:
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -206,7 +205,7 @@ class ModelCard:
 
             model_name: 模型名称
 
-            version: çæ¬å?        """
+version: ?        """
 
         pass
 
@@ -307,7 +306,7 @@ jinja2>=3.1.0
 
 |------|--------|
 
-å¡«é¡?|
+?|
 
 
 | 格式规范 | 100%符合 |

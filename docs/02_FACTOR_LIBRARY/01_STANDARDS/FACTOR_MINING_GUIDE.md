@@ -435,7 +435,7 @@ def calculate_sentiment_factor(stock_code, date, window=7):
 | 资料 | 说明 |
 |------|------|
 | 《主动投资组合管理?| Grinold & Kahn |
-| 《量化投资策略?| 理查德·托托里?|
+| 《量化投资策略?| 理查德托托里?|
 | 《因子投资?| Andrew Ang |
 
 ---

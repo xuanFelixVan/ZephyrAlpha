@@ -282,7 +282,7 @@ class SensitivityAnalyzer:
         param_name : str
             待分析参数名
         range_pct : float
-            参数变化范围(±20%)
+            参数变化范围(20%)
         n_points : int
             采样点数
 

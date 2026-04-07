@@ -164,11 +164,11 @@ class StyleFactorNeutralOptimizer:
     风格因子中性优化器
     
     常见风格因子:
-    - Size (å¸å?
-    - Value (ä»·å?
+- Size (?
+- Value (?
     - Momentum (动量)
     - Quality (质量)
-    - Liquidity (æµå¨æ?
+- Liquidity (?
     """
     
     def optimize_style_neutral(
@@ -184,7 +184,7 @@ class StyleFactorNeutralOptimizer:
             expected_returns: 预期收益
             style_loadings: 风格因子载荷
             target_exposures: 目标因子暴露
-            constraints: å
+constraints:
             
         返回:
             最优权重和因子暴露
@@ -214,7 +214,7 @@ class MarketNeutralOptimizer:
         参数:
             expected_returns: 预期收益
             beta_loadings: Beta系数
-            constraints: å
+constraints:
             
         返回:
             最优权重和Beta暴露
@@ -253,7 +253,7 @@ class TrackingErrorController:
         """
         计算跟踪误差
         
-        TE = sqrt((w - w_b)' * Î£ * (w - w_b))
+TE = sqrt((w - w_b)' *  * (w - w_b))
         """
         pass
 ```
@@ -275,7 +275,7 @@ class FactorNeutralOptimizer:
         risk_model: Optional[str] = None
     ):
         """
-        åå§å?
+?
         
         参数:
             factor_model: 因子模型 ('barra', 'custom')
@@ -338,11 +338,11 @@ class FactorNeutralResult:
     factor_exposures: pd.Series
     tracking_error: float
     expected_return: float
-    alpha: float  # è¶
+alpha: float  #
 额收益
 ```
 
-### 3.3 é
+### 3.3
 
 ```yaml
 factor_neutral_optimization:
@@ -393,9 +393,8 @@ factor_neutral_optimization:
 ```python
 > **核心职责**: Factor Neutral Optimization蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -411,8 +410,8 @@ import riskfolio as rp
 
 class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
     """
-    Riskfolio-Libéé
-å?
+Riskfolio-Lib
+?
     """
     
     def optimize(self, expected_returns, factor_loadings, **kwargs):
@@ -444,8 +443,7 @@ class RiskfolioFactorNeutralAdapter(FactorNeutralOptimizer):
 
 ## 5. 测试规格
 
-### 5.1 åå
-æµè¯
+### 5.1
 
 ```python
 class TestFactorNeutralOptimizer:

@@ -21,7 +21,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
-applicable_scope: å
+applicable_scope:
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
@@ -31,7 +31,7 @@ implementation_status: 设计阶段
 > - ✅ 本文档负责：Production Monitoring蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> æ¸
+>
 
 文档**: 本蓝图是[PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)的后续组件，专注于生产环境策略监控与风险管理
 
@@ -43,7 +43,7 @@ implementation_status: 设计阶段
 
 |------|--------|----------|
 | **实时绩效监控** | P0 | 分钟级策略绩效计算、实时夏普比率、最大回撤、胜率等20+指标监控 |
-| **AIè¾
+| **AI
 助决策** | P2 | 利用AI分析监控数据，提供优化建议和预警预测 |
 
 ### 1.2 技术约束与原则
@@ -102,7 +102,7 @@ graph TB
 
 
 - 历史数据分析报告
-- çæ§é
+-
 
 ---
 
@@ -182,9 +182,9 @@ class RealTimeMonitoringController:
                 # 6. 执行决策
                 await self._execute_decisions(decisions)
                 
-                # 7. åéåè­?                await self._send_alerts(monitoring_results, decisions)
+# 7. ?                await self._send_alerts(monitoring_results, decisions)
                 
-                # ç­å¾
+#
                 
             except Exception as e:
                 logger.error(f"监控周期处理异常: {e}")
@@ -203,7 +203,7 @@ class RealTimeMonitoringController:
             task = collector.collect()
             collection_tasks.append((data_type, task))
         
-        # ç­å¾
+#
             try:
                 data = await task
                 monitoring_data[data_type] = data
@@ -252,7 +252,7 @@ class RealTimeMonitoringController:
             task = engine.analyze(metrics)
             analysis_tasks.append((analysis_type, task))
         
-        # ç­å¾
+#
             try:
                 analysis_result = await task
                 setattr(results, f"{analysis_type}_result", analysis_result)
@@ -322,7 +322,7 @@ class RealTimeMonitoringController:
         # 合并告警
         all_alerts = alerts_from_results + alerts_from_decisions
         
-        # åéåè­?        for alert in all_alerts:
+# ?        for alert in all_alerts:
             await self.alert_manager.send_alert(alert)
 ```
 
@@ -378,7 +378,7 @@ class AnomalyDetectionEngine:
             task = detector.detect(detection_data)
             detection_tasks.append((detector_name, task))
         
-        # ç­å¾
+#
         for detector_name, task in detection_tasks:
             try:
                 detector_result = await task
@@ -554,7 +554,6 @@ class RiskWarningEngine:
         """
         result = RiskWarningResult()
         
-³ææ 
         risk_metrics = self._extract_risk_metrics(metrics)
         
         # 并行执行各类风险监控
@@ -563,14 +562,14 @@ class RiskWarningEngine:
             task = monitor.monitor(risk_metrics.get(risk_type, {}))
             monitoring_tasks.append((risk_type, task))
         
-        # ç­å¾
+#
         for risk_type, task in monitoring_tasks:
             try:
                 monitor_result = await task
                 monitor_results[risk_type] = monitor_result
             except Exception as e:
         
-³æ?        correlation_result = await self.correlation_analyzer.analyze(monitor_results)
+?        correlation_result = await self.correlation_analyzer.analyze(monitor_results)
         
         # 生成综合风险评分
         composite_risk_score = self._calculate_composite_risk_score(monitor_results)
@@ -595,7 +594,6 @@ class RiskWarningEngine:
     
     def _extract_risk_metrics(self, metrics: Dict[str, MetricSet]) -> Dict[str, Dict]:
         """
-³ææ 
         """
         risk_metrics = {}
         
@@ -676,14 +674,14 @@ class RiskWarningEngine:
         """
         warnings = []
         
-è¿éå?        for risk_type, monitor_result in monitor_results.items():
+?        for risk_type, monitor_result in monitor_results.items():
             if monitor_result.risk_score > monitor_result.threshold:
                 warnings.append(RiskWarning(
                     risk_type=risk_type,
                     risk_score=monitor_result.risk_score,
                     threshold=monitor_result.threshold,
                     exceeded_by=(monitor_result.risk_score - monitor_result.threshold),
-è¿éå?,
+?,
                     metrics=monitor_result.metrics
                 ))
         
@@ -692,7 +690,7 @@ class RiskWarningEngine:
                 risk_score=correlation_result.correlation_score,
                 threshold=0.7,
                 exceeded_by=max(0, correlation_result.correlation_score - 0.7),
-³æ?,
+?,
                 details={
                     'high_correlation_risks': correlation_result.high_correlation_risks,
                     'correlation_matrix': correlation_result.correlation_matrix
@@ -771,7 +769,7 @@ class RiskWarningEngine:
             ))
         
             if monitor_result.risk_score > monitor_result.threshold * 1.5:
-è¿éå?                actions.append(Action(
+?                actions.append(Action(
                     type=ActionType.MITIGATE_SPECIFIC_RISK,
                     urgency=UrgencyLevel.HIGH,
                     parameters={
@@ -904,7 +902,7 @@ class PerformanceEvaluationEngine:
 - **模块ID**: STRAT_PROD_MON_001
 - **蓝图文档**: [PRODUCTION_MONITORING_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PRODUCTION_MONITORING_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -912,8 +910,8 @@ class PerformanceEvaluationEngine:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strat Prod Mon** | å
-¨ç³»ç»æ¶æè®¾è®?compliance_level: åå§æ å | **核心模块** |
+| **Strat Prod Mon** |
+?compliance_level:  | **核心模块** |
 
 ### 1.3 版本管理
 

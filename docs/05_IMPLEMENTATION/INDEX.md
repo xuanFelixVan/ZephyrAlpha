@@ -165,7 +165,7 @@ implementation_status: 活跃维护---
 
 - [编码实施路线?](./CODING_ROADMAP.md) - 系统文档
 
-- [уггС║їжўХТ«хтиЦСйют«їТѕљТђ╗у╗Њ](./PHASE2_COMPLETION_SUMMARY.md) - 系统文档
+- [уггС║їжўХТхтиЦСйютїТѕљТђ╗у╗Њ](./PHASE2_COMPLETION_SUMMARY.md) - 系统文档
 
 - [快速参?](./QUICK_REFERENCE.md) - 系统文档
 

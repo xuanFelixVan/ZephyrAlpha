@@ -10,18 +10,18 @@ layer: Layer 6 (ﻝﭨﮒﻛﺙﮒﮒﺎ?
 index: TRADING_COST_SPEC_001
 estimated_hours: 60h
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
   - 实施指南、部署文档
   - 交易执行
   - 文档治理
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ---
 
 
-# ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -30,7 +30,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ---
 
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `TRADING_COST_SPEC_001`
 > **ﮒﺙﮒﮔﭘﻠ?*: 60h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: Almgren-Chrissﮔ۷۰ﮒﻙﮔﻛﺙﮔ۶ﻟ۰ﻝ؟ﮔﺏ?
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: Almgren-Chrissﮔ۷۰ﮒﻙﮔﻛﺙﮔ۶ﻟ۰ﻝ؟ﮔﺏ?
 ---
 
 ## 1. ﮔ۵ﻟﺟﺍ
@@ -73,4 +73,4 @@ def almgren_chriss_impact(size: float, adv: float, sigma: float) -> float:
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final

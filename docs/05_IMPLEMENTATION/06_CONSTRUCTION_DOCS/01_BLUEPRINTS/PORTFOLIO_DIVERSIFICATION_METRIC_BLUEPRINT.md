@@ -27,7 +27,6 @@ layer: Layer 5.2 (组合优化)
 
 > 核心职责: Portfolio Diversification Metric蓝图设计
 > 职责边界: 
-³å
 容
 容，确保系统...
 
@@ -134,7 +133,6 @@ class DiversificationMetrics:
         correlation_matrix: np.ndarray
     ) -> float:
         """
-        ç¸å
         
         """
         pass
@@ -144,7 +142,7 @@ class DiversificationMetrics:
         weights: np.ndarray
     ) -> float:
         """
-        çµææ?
+?
         
         H = -sum(w_i * log(w_i))
         
@@ -154,7 +152,7 @@ class DiversificationMetrics:
 
 ---
 
-## 3. é
+## 3.
 
 ```yaml
 diversification_metrics:

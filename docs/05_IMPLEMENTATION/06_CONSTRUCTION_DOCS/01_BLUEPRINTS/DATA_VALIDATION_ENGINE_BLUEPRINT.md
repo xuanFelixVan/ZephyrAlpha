@@ -111,10 +111,10 @@ layer: Layer 5.1 (数据处理)
 
 ```mermaid
 graph TB
-    subgraph "è¾å
-¥å±?
-        A[å¾
-¥æ¥å£]
+subgraph "
+?
+A[
+]
     end
     
     subgraph "验证引擎"
@@ -134,9 +134,9 @@ graph TB
         G --> J[质量评分]
     end
     
-    subgraph "é
+subgraph "
 置] --> G
-        L[ææé
+L[
 置] --> G
     end
 ```
@@ -157,7 +157,7 @@ graph TB
 **技术栈**: Pandera
 
 **核心功能**:
-- å¿
+-
 - 数据类型验证
 - 外键约束验证
 
@@ -185,7 +185,7 @@ graph TB
 
 **GitHub**: https://github.com/great-expectations/great_expectations
 
-**Staræ?*: 9.8k+
+**Star?*: 9.8k+
 
 
 **集成方式**:
@@ -309,7 +309,7 @@ class BusinessRuleValidator:
 
 **GitHub**: https://github.com/unionai-oss/pandera
 
-**Staræ?*: 3.2k+
+**Star?*: 3.2k+
 
 - 数据类型强制转换
 - 统计验证
@@ -396,7 +396,7 @@ class IntegrityValidator:
         
         Args:
             df: Spark DataFrame
-            required_columns: å¿
+required_columns:
         
         Returns:
             ValidationResult: 验证结果
@@ -588,7 +588,7 @@ validation_rules:
     timezone: "America/New_York"
 ```
 
-ç½?
+?
 
 ```yaml
 completeness_rules:
@@ -630,7 +630,7 @@ completeness_rules:
       - ask_price
 ```
 
-ç½?
+?
 
 ```yaml
 consistency_rules:
@@ -748,7 +748,7 @@ class ValidationReportGenerator:
         recommendations_map = {
             'business_rules': {
 置',
-ç½?
+?
             },
             'completeness': {
                 'unique_constraint': '检查数据去重逻辑'
@@ -869,7 +869,7 @@ class DataQualityScorer:
 ---
 
 
-### 8.1 å
+### 8.1
 
 |------|--------|----------|
 
@@ -880,7 +880,7 @@ alerts:
   - name: validation_failure_rate_high
     condition: validation_failure_rate > 0.05
     severity: critical
-è¿?%"
+?%"
   
   - name: data_quality_score_low
     condition: data_quality_score < 70
@@ -889,26 +889,26 @@ alerts:
   - name: validation_latency_high
     condition: validation_latency > 10
     severity: warning
-è¿10ç§?
+10?
 ```
 
 ---
 
 ## 9. 成本效益分析
 
-### 9.1 å¼åææ?
+### 9.1 ?
 
 |------|--------|------|
-| **核心验证功能** | 20小时 | ¥2,000 |
-| **高级验证功能** | 15小时 | ¥1,500 |
-| **总计** | **50小时** | **¥5,000** |
+| **核心验证功能** | 20小时 | 2,000 |
+| **高级验证功能** | 15小时 | 1,500 |
+| **总计** | **50小时** | **5,000** |
 
 ### 9.2 收益评估
 
 |--------|----------|
-| **减少数据问题损失** | ¥50,000 |
-| **降低人工审核成本** | ¥20,000 |
-| **总计** | **¥100,000** |
+| **减少数据问题损失** | 50,000 |
+| **降低人工审核成本** | 20,000 |
+| **总计** | **100,000** |
 
 **ROI**: (100,000 - 5,000) / 5,000 = 1900%
 
@@ -923,7 +923,7 @@ alerts:
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
-çº§éå?|
+?|
 
 ---
 
@@ -945,7 +945,7 @@ alerts:
 
 ---
 
-## 12. åèèµæ?
+## 12. ?
 
 
 - [Great Expectations](https://github.com/great-expectations/great_expectations)
@@ -960,5 +960,5 @@ alerts:
 ---
 
 **文档版本**: v1.0.0
-**æåæ´æ?*: 2026-04-07
-å®¡æ ?
+**?*: 2026-04-07
+?

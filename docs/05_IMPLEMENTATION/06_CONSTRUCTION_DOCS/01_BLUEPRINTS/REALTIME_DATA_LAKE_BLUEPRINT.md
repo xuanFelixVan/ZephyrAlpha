@@ -78,7 +78,6 @@ layer: Layer 5.1 (数据处理)
 
 > 核心职责: Realtime Data Lake蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -99,19 +98,19 @@ layer: Layer 5.1 (数据处理)
 
 
 ```
-â?                                                            â?
-¥å±?(Data Ingestion)                â?  â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?(Data Ingestion)                ?  ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 技术选型
 
 |------|---------|---------|---------|
 | **查询引擎** | Trino | 435+ | 分布式SQL查询 |
-| **å
+| **
 
 ---
 
@@ -146,8 +145,8 @@ class DataLakeManager:
     
     def write_data(self, table_name: str, df: pd.DataFrame,
                    mode: str = "append"):
-        """åå
-¥æ°æ®"""
+"""
+"""
         table_path = f"{self.lake_path}/{table_name}"
         
         spark_df = self.spark.createDataFrame(df)
@@ -236,8 +235,7 @@ class QueryOptimizer:
 
 ### 4.1 RESTful API
 
-#### 4.1.1 åå
-¥æ°æ®
+#### 4.1.1
 
 ```http
 POST /api/v1/datalake/write
@@ -303,27 +301,26 @@ volumes:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `datalake_query_duration_seconds` | Histogram | 查询延迟 |
-| `datalake_write_operations_total` | Counter | åå
-¥æä½æ?|
-| `datalake_compression_ratio` | Gauge | åç¼©ç?|
+| `datalake_write_operations_total` | Counter |
+?|
+| `datalake_compression_ratio` | Gauge | ?|
 
 ---
 
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-ç½®Delta Lake | 3å¤?|
+Delta Lake | 3?|
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [数据网格蓝图](./DATA_MESH_BLUEPRINT.md)
 
@@ -339,9 +336,9 @@ volumes:
 ##### 6.001. Realtime Data Lake
 - **模块ID**: REALTIME_DATA_LAKE_001
 - **蓝图文档**: REALTIME_DATA_LAKE_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -360,8 +357,7 @@ volumes:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -377,8 +373,8 @@ volumes:
 |---------|------|------|------|
 | **MinIO** | latest | 对象存储 | [官方文档](https://min.io/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

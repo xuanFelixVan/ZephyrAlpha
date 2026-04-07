@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 归档文档、历史版本
 standard_type: ﮒ؟ﮒ۷ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ
-applicable_scope: ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+applicable_scope: ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
 implementation_status: ﻝ،ﮒﺏﻛﺟ؟ﮒ۳
 priority: P0
@@ -17,14 +17,14 @@ priority: P0
 ---
 
 
-# ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔP0ﻝﭦ۶ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ?
+# ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔP0ﻝﭦ۶ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 > **ﻛﺟ؟ﮒ۳ﻝﺙﮒﺓ**: `SECURITY_PATCH_20260402_001`
-> **ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶**: P0ﺅﺙﮔﻠ،ﻠ۲ﻠ?ﻠﭨﮔ­ﺅﺙ?> **ﻛﺟ؟ﮒ۳ﮔﭘﻠ**: 24ﮒﺍﮔﭘﮒ?> **ﻛﺟ؟ﮒ۳ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
+> **ﻠ۲ﻠ۸ﻝﻝﭦ۶**: P0ﺅﺙﮔﻠ،ﻠ۲ﻠ?ﻠﭨﮔﺅﺙ?> **ﻛﺟ؟ﮒ۳ﮔﭘﻠ**: 24ﮒﺍﮔﭘﮒ?> **ﻛﺟ؟ﮒ۳ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 ---
 
 ## 1. ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﮔﻟﺟﺍ
@@ -32,20 +32,20 @@ priority: P0
 ### 1.1 ﻠ۲ﻠ۸ﻟﺁﮒ،
 - **ﻠ۲ﻠ۸ID**: P0-001
 - **ﻠ۲ﻠ۸ﻝﺎﭨﮒ**: ﮒ؟ﮒ۷ﻠ۲ﻠ۸
-- **ﻠ۲ﻠ۸ﮔﻟﺟﺍ**: ﮔﺍﮔ؟ﻛﺙ ﻟﺝﮔ۹ﮒ ﮒﺁﺅﺙﮒ­ﮒ۷ﻛﺕ­ﻠﺑﻛﭦﭦﮔﭨﮒﭨﻠ۲ﻠ?- **ﮒﺛﺎﮒﻝ۷ﮒﭦ۵**: ﻠ،?- **ﮒﻝﮔ۵ﻝ**: ﻛﺕ?
+- **ﻠ۲ﻠ۸ﮔﻟﺟﺍ**: ﮔﺍﮔ؟ﻛﺙﻟﺝﮔ۹ﮒﮒﺁﺅﺙﮒﮒ۷ﻛﺕﻠﺑﻛﭦﭦﮔﭨﮒﭨﻠ۲ﻠ?- **ﮒﺛﺎﮒﻝ۷ﮒﭦ۵**: ﻠ،?- **ﮒﻝﮔ۵ﻝ**: ﻛﺕ?
 ### 1.2 ﻠ۲ﻠ۸ﮒﺛﺎﮒ
-- ﮒ؟ﻟ۶ﻝﭨﮔﭖﮔﺍﮔ؟ﮒ۷ﻛﺙ ﻟﺝﻟﺟﻝ۷ﻛﺕ­ﮒﺁﻟﺛﻟ۱،ﻝ۹ﮒ?- APIﮒﺁﻠ۴ﮒﺁﻟﺛﻟ۱،ﮔ۹ﻟﺓﺅﺙﮒﺁﺙﻟﺑﮔ۹ﮔﮔﻟ؟ﺟﻠ?- ﻟﮒﺙﮒ۳ﮔ­ﻝﭨﮔﮒﺁﻟﺛﻟ۱،ﻝﺁ۰ﮔ?- ﻟﺟﮒﮔﺍﮔ؟ﮒ؟ﮒ۷ﮒﻟ۶ﻟ۵ﮔﺎ
+- ﮒ؟ﻟ۶ﻝﭨﮔﭖﮔﺍﮔ؟ﮒ۷ﻛﺙﻟﺝﻟﺟﻝ۷ﻛﺕﮒﺁﻟﺛﻟ۱،ﻝ۹ﮒ?- APIﮒﺁﻠ۴ﮒﺁﻟﺛﻟ۱،ﮔ۹ﻟﺓﺅﺙﮒﺁﺙﻟﺑﮔ۹ﮔﮔﻟ؟ﺟﻠ?- ﻟﮒﺙﮒ۳ﮔﻝﭨﮔﮒﺁﻟﺛﻟ۱،ﻝﺁ۰ﮔ?- ﻟﺟﮒﮔﺍﮔ؟ﮒ؟ﮒ۷ﮒﻟ۶ﻟ۵ﮔﺎ
 
 ---
 
 ## 2. ﻛﺟ؟ﮒ۳ﮔﺗﮔ۰
 
-### 2.1 HTTPS/TLS 1.3ﮒ ﮒﺁﮒ؟ﻝﺍ
+### 2.1 HTTPS/TLS 1.3ﮒﮒﺁﮒ؟ﻝﺍ
 
 #### 2.1.1 ﮔﮒ۰ﻝ،ﺁﻠﻝﺛ?
 ```python
 """
-ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔ - HTTPSﮔﮒ۰ﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/server/https_config.py
+ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ - HTTPSﮔﮒ۰ﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/server/https_config.py
 """
 
 import ssl
@@ -68,11 +68,11 @@ class HTTPSConfig:
         self.key_file = Path(key_file)
         self.ca_file = Path(ca_file) if ca_file else None
         
-        # ﻠ۹ﻟﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﮒ­ﮒ۷
+# ﻠ۹ﻟﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﮒﮒ۷
         if not self.cert_file.exists():
-            raise FileNotFoundError(f"ﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒ­ﮒ? {cert_file}")
+raise FileNotFoundError(f"ﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒﮒ? {cert_file}")
         if not self.key_file.exists():
-            raise FileNotFoundError(f"ﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒ­ﮒ? {key_file}")
+raise FileNotFoundError(f"ﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒﮒ? {key_file}")
     
     def create_ssl_context(self) -> ssl.SSLContext:
         """
@@ -85,7 +85,7 @@ class HTTPSConfig:
         context.minimum_version = ssl.TLSVersion.TLSv1_3
         context.maximum_version = ssl.TLSVersion.TLSv1_3
         
-        # ﮒ ﻟﺛﺛﻟﺁﻛﺗ۵ﮒﻝ۶ﻠ?        context.load_cert_chain(
+# ﮒﻟﺛﺛﻟﺁﻛﺗ۵ﮒﻝ۶ﻠ?        context.load_cert_chain(
             certfile=str(self.cert_file),
             keyfile=str(self.key_file)
         )
@@ -94,7 +94,7 @@ class HTTPSConfig:
             context.load_verify_locations(cafile=str(self.ca_file))
             context.verify_mode = ssl.CERT_REQUIRED
         
-        # ﻝ۵ﻝ۷ﻛﺕﮒ؟ﮒ۷ﻝﮒﺁﻝ ﮒ۴ﻛﭨﭘ
+# ﻝ۵ﻝ۷ﻛﺕﮒ؟ﮒ۷ﻝﮒﺁﻝﮒ۴ﻛﭨﭘ
         context.set_ciphers('TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256')
         
         # ﮒﺁﻝ۷OCSPﻟ۲ﻟ؟۱
@@ -106,7 +106,7 @@ class HTTPSConfig:
         """
         ﻟﺓﮒﮒ؟ﮒ۷ﮒﮒﭦﮒ۳?        
         Returns:
-            dict: ﮒ؟ﮒ۷ﮒﮒﭦﮒ۳ﺑﮒ­ﮒ?        """
+dict: ﮒ؟ﮒ۷ﮒﮒﭦﮒ۳ﺑﮒﮒ?        """
         return {
             'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
             'X-Content-Type-Options': 'nosniff',
@@ -139,7 +139,7 @@ class SecureAPIServer:
 #### 2.1.2 ﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ?
 ```python
 """
-ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔ­ﮒﺙﮔ - HTTPSﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/client/https_client.py
+ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ - HTTPSﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/client/https_client.py
 """
 
 import ssl
@@ -200,9 +200,9 @@ class SecureAPIClient:
         
         # ﮒ۵ﮔﮔﻛﺝﻛﭦﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﺅﺙﻝ۷ﻛﭦﮒﮒﻟ؟۳ﻟﺁ?        if cert_file and key_file:
             if not Path(cert_file).exists():
-                raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒ­ﮒ۷: {cert_file}")
+raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒﮒ۷: {cert_file}")
             if not Path(key_file).exists():
-                raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒ­ﮒ۷: {key_file}")
+raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒﮒ۷: {key_file}")
             ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
         
         # ﮒﺍSSLﻛﺕﻛﺕﮔﮒﭦﻝ۷ﮒﺍﻠﻠﮒ?        adapter.poolmanager.connection_pool_kw['ssl_context'] = ssl_context
@@ -263,7 +263,7 @@ class APIKey:
     """APIﮒﺁﻠ۴ﮒﺁﺗﻟﺎ۰"""
     key_id: str
     api_key: str
-    api_key_hash: str  # ﮒ­ﮒ۷ﮒﮒﺕﮒﺙﺅﺙﻛﺕﮒ­ﮒ۷ﮔﮔ?    user_id: str
+api_key_hash: str  # ﮒﮒ۷ﮒﮒﺕﮒﺙﺅﺙﻛﺕﮒﮒ۷ﮔﮔ?    user_id: str
     role: str  # 'admin', 'trader', 'analyst', 'viewer'
     permissions: list
     created_at: datetime
@@ -298,7 +298,7 @@ class APIKeyManager:
         # ﻝﮔﮒﺁﻠ۴ID
         key_id = f"key_{secrets.token_hex(8)}"
         
-        # ﻝﮔAPIﮒﺁﻠ۴ﺅﺙ?2ﮒ­ﻟﻠﮔﭦﮔﺍﺅﺙbase64ﻝﺙﻝ ﺅﺙ?        api_key = secrets.token_urlsafe(self.key_length)
+# ﻝﮔAPIﮒﺁﻠ۴ﺅﺙ?2ﮒﻟﻠﮔﭦﮔﺍﺅﺙbase64ﻝﺙﻝﺅﺙ?        api_key = secrets.token_urlsafe(self.key_length)
         
         # ﻟ؟۰ﻝ؟ﮒﮒﺕﮒﺙﺅﺙSHA-256ﺅﺙ?        api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
         
@@ -309,7 +309,7 @@ class APIKeyManager:
         else:
             expires_at = datetime.now() + timedelta(days=self.default_expiry_days)
         
-        # ﮔ ﺗﮔ؟ﻟ۶ﻟﺎﻟ؟ﺝﻝﺛ؟ﻠﻝﻠﮒﭘ
+# ﮔﺗﮔ؟ﻟ۶ﻟﺎﻟ؟ﺝﻝﺛ؟ﻠﻝﻠﮒﭘ
         rate_limits = {
             'admin': 1000,
             'trader': 500,
@@ -331,7 +331,7 @@ class APIKeyManager:
             rate_limit=rate_limits.get(role, 100)
         )
         
-        # ﻛﺟﮒ­ﮒﺍﮔﺍﮔ؟ﮒﭦﺅﺙﻛﺕﻛﺟﮒ­ﮔﮔﮒﺁﻠ۴ﺅﺙ?        self._save_api_key(api_key_obj)
+# ﻛﺟﮒﮒﺍﮔﺍﮔ؟ﮒﭦﺅﺙﻛﺕﻛﺟﮒﮔﮔﮒﺁﻠ۴ﺅﺙ?        self._save_api_key(api_key_obj)
         
         return api_key_obj
     
@@ -376,7 +376,7 @@ class APIKeyManager:
         return self._deactivate_api_key(key_id)
     
     def _save_api_key(self, api_key: APIKey):
-        """ﻛﺟﮒ­APIﮒﺁﻠ۴ﮒﺍﮔﺍﮔ؟ﮒﭦ"""
+"""ﻛﺟﮒAPIﮒﺁﻠ۴ﮒﺍﮔﺍﮔ؟ﮒﭦ"""
         query = """
         INSERT INTO api_keys 
         (key_id, api_key_hash, user_id, role, permissions, created_at, expires_at, is_active, rate_limit)
@@ -396,7 +396,7 @@ class APIKeyManager:
         self.db.commit()
     
     def _get_api_key_by_hash(self, api_key_hash: str) -> Optional[APIKey]:
-        """ﮔ ﺗﮔ؟ﮒﮒﺕﮒﺙﮔ۴ﻟﺁ۱APIﮒﺁﻠ۴"""
+"""ﮔﺗﮔ؟ﮒﮒﺕﮒﺙﮔ۴ﻟﺁ۱APIﮒﺁﻠ۴"""
         query = """
         SELECT key_id, api_key_hash, user_id, role, permissions, created_at, expires_at, 
                last_used_at, is_active, rate_limit
@@ -435,10 +435,10 @@ class APIKeyManager:
         return True
 ```
 
-#### 2.2.2 ﻟ؟۳ﻟﺁﻛﺕ­ﻠﺑﻛﭨ?
+#### 2.2.2 ﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?
 ```python
 """
-APIﻟ؟۳ﻟﺁﻛﺕ­ﻠﺑﻛﭨ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/auth_middleware.py
+APIﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/auth_middleware.py
 """
 
 from functools import wraps
@@ -448,7 +448,7 @@ import time
 from collections import defaultdict
 
 class AuthenticationMiddleware:
-    """ﻟ؟۳ﻟﺁﻛﺕ­ﻠﺑﻛﭨ?""
+"""ﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?""
     
     def __init__(self, api_key_manager):
         self.api_key_manager = api_key_manager
@@ -473,7 +473,7 @@ class AuthenticationMiddleware:
                         'code': 'AUTH_MISSING'
                     }), 401
                 
-                # ﻠ۹ﻟﺁﮔ ﺙﮒﺙ: Bearer <api_key>
+# ﻠ۹ﻟﺁﮔﺙﮒﺙ: Bearer <api_key>
                 parts = auth_header.split()
                 if len(parts) != 2 or parts[0] != 'Bearer':
                     return jsonify({
@@ -554,11 +554,11 @@ class RateLimiter:
         return True
 ```
 
-### 2.3 ﮔﺍﮔ؟ﻛﺙ ﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰
+### 2.3 ﮔﺍﮔ؟ﻛﺙﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰
 
 ```python
 """
-ﮔﺍﮔ؟ﻛﺙ ﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰ﮔ۷۰ﮒ
+ﮔﺍﮔ؟ﻛﺙﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰ﮔ۷۰ﮒ
 ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/audit_logger.py
 """
 
@@ -593,8 +593,8 @@ class SecurityAuditLogger:
             method: HTTPﮔﺗﮔﺏ
             ip_address: ﮒ؟۱ﮔﺓﻝ،ﺁIPﮒﺍﮒ
             user_agent: ﻝ۷ﮔﺓﻛﭨ۲ﻝ
-            request_size: ﻟﺁﺓﮔﺎﮒ۳۶ﮒﺍﺅﺙﮒ­ﻟﺅﺙ
-            response_status: ﮒﮒﭦﻝﭘﮔﻝ 
+request_size: ﻟﺁﺓﮔﺎﮒ۳۶ﮒﺍﺅﺙﮒﻟﺅﺙ
+response_status: ﮒﮒﭦﻝﭘﮔﻝ
             response_time_ms: ﮒﮒﭦﮔﭘﻠﺑﺅﺙﮔﺁ،ﻝ۶ﺅﺙ
         """
         query = """
@@ -660,7 +660,7 @@ class SecurityAuditLogger:
         """
         anomalies = []
         
-        # ﮔ۲ﮔ?: ﻝ­ﮔﭘﻠﺑﮒﮒ۳۶ﻠﻟﺁﺓﮔﺎ
+# ﮔ۲ﮔ?: ﻝﮔﭘﻠﺑﮒﮒ۳۶ﻠﻟﺁﺓﮔﺎ
         query = """
         SELECT COUNT(*) as request_count
         FROM security_audit_log
@@ -719,7 +719,7 @@ class SecurityAuditLogger:
     api_key_hash VARCHAR(64) NOT NULL UNIQUE,  -- SHA-256ﮒﮒﺕ
     user_id VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL,
-    permissions TEXT NOT NULL,  -- JSONﮔ ﺙﮒﺙﮔﻠﮒﻟ۰۷
+permissions TEXT NOT NULL,  -- JSONﮔﺙﮒﺙﮔﻠﮒﻟ۰۷
     created_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP,
     last_used_at TIMESTAMP,
@@ -766,12 +766,12 @@ class SecurityAuditLogger:
 ## 4. ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ?
 ### 4.1 ﻟﺁﻛﺗ۵ﻠﻝﺛ؟ﮔ۲ﮔ?
 - [ ] ﻝﮔﮔﮒ۰ﮒ۷ﻟﺁﻛﺗ۵ﮒﻝ۶ﻠ۴
-- [ ] ﻠﻝﺛ؟TLS 1.3ﮒ ﮒﺁﮒ۴ﻛﭨﭘ
+- [ ] ﻠﻝﺛ؟TLS 1.3ﮒﮒﺁﮒ۴ﻛﭨﭘ
 - [ ] ﮒﺁﻝ۷HSTSﺅﺙHTTP Strict Transport Securityﺅﺙ?- [ ] ﻠﻝﺛ؟ﻟﺁﻛﺗ۵ﻟ۹ﮒ۷ﮔﺑﮔﺍﮔﭦﮒﭘ
 
 ### 4.2 APIﮒﺁﻠ۴ﻝ؟۰ﻝﮔ۲ﮔ?
 - [ ] ﻝﮔﮒﮒ۶APIﮒﺁﻠ۴
-- [ ] ﻠﻝﺛ؟ﮒﺁﻠ۴ﻟﺟﮔﻝ­ﻝ۴
+- [ ] ﻠﻝﺛ؟ﮒﺁﻠ۴ﻟﺟﮔﻝﻝ۴
 - [ ] ﮒﭨﭦﻝ،ﮒﺁﻠ۴ﮔ۳ﻠﮔﭖﻝ۷
 - [ ] ﻠﻝﺛ؟ﻠﻝﻠﮒﭘ
 
@@ -786,20 +786,20 @@ class SecurityAuditLogger:
 - [ ] ﮔ۶ﻟ۰ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﮔﭖﻟﺁ?
 ---
 
-## 5. ﻠ۹ﮔﭘﮔ ﮒ
+## 5. ﻠ۹ﮔﭘﮔﮒ
 
-### 5.1 ﮒ؟ﮒ۷ﻠ۹ﮔﭘﮔ ﮒ
+### 5.1 ﮒ؟ﮒ۷ﻠ۹ﮔﭘﮔﮒ
 
-| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔ ﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
+| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
 |--------|----------|----------|
-| **TLSﮒ ﮒﺁ** | TLS 1.3ﺅﺙA+ﻟﺁﻝﭦ۶ | SSL Labsﮔﭖﻟﺁ |
+| **TLSﮒﮒﺁ** | TLS 1.3ﺅﺙA+ﻟﺁﻝﭦ۶ | SSL Labsﮔﭖﻟﺁ |
 | **APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ** | 100%ﻟﺁﺓﮔﺎﻠﻟ۵ﻟ؟۳ﻟﺁ?| ﮒﻟﺛﮔﭖﻟﺁ |
 | **ﻠﻝﻠﮒﭘ** | ﻠﮒﭘﻝﮔﺅﺙﻟﭘﻠﻟﺟﮒ?29 | ﮒﮒﮔﭖﻟﺁ |
 | **ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ** | ﮔﮔﻟﺁﺓﮔﺎﻟ؟ﺍﮒﺛﮒ؟ﮔ?| ﮔ۴ﮒﺟﮒ؟۰ﮔ۴ |
 
-### 5.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔ ﮒ
+### 5.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
 
-| ﮔ۶ﻟﺛﮔﮔ  | ﻠ۹ﮔﭘﮔ ﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
 |----------|----------|----------|
 | **TLSﮔ۰ﮔﮒﭨﭘﻟﺟ** | ﻗ?0ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 | **ﻟ؟۳ﻟﺁﮒﭨﭘﻟﺟ** | ﻗ?0ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
@@ -811,7 +811,7 @@ class SecurityAuditLogger:
 
 ### 6.1 ﻛﺟ؟ﮒ۳ﮒ؟ﮔﻝ۰؟ﻟ؟۳
 
-- ﻗ?**HTTPS/TLS 1.3ﮒ ﮒﺁ**: ﮒﺓﺎﮒ؟ﻝﺍﮔﮒ۰ﻝ،ﺁﮒﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ؟
+- ﻗ?**HTTPS/TLS 1.3ﮒﮒﺁ**: ﮒﺓﺎﮒ؟ﻝﺍﮔﮒ۰ﻝ،ﺁﮒﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ؟
 - ﻗ?**APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ**: ﮒﺓﺎﮒ؟ﻝﺍﮒﺁﻠ۴ﻝﮔﻙﻠ۹ﻟﺁﻙﮔ۳ﻠﮔﭦﮒﭘ
 - ﻗ?**ﻠﻝﻠﮒﭘ**: ﮒﺓﺎﮒ؟ﻝﺍﮒﭦﻛﭦIPﮒﻝ۷ﮔﺓﻝﻠﻝﻠﮒﭘ
 - ﻗ?**ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰**: ﮒﺓﺎﮒ؟ﻝﺍﻟﺁﺓﮔﺎﮒ؟۰ﻟ؟۰ﮒﮔﺍﮔ؟ﻟ؟ﺟﻠ؟ﮒ؟۰ﻟ؟۰
@@ -820,10 +820,10 @@ class SecurityAuditLogger:
 
 | ﻠ۲ﻠ۸ID | ﻛﺟ؟ﮒ۳ﮒﻝﭘﮔ?| ﻛﺟ؟ﮒ۳ﮒﻝﭘﮔ?| ﻠ۹ﻟﺁﻝﭨﮔ |
 |--------|------------|------------|----------|
-| P0-001 | ﮔﺍﮔ؟ﻛﺙ ﻟﺝﮔ۹ﮒ ﮒﺁ?| ﮒﺓﺎﮒ ﮒﺁﺅﺙTLS 1.3ﺅﺙ?| ﻗ?ﻠﻟﺟ |
-| - | ﮔ APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ | ﮒﺓﺎﮒ؟ﻝﺍﻟ؟۳ﻟﺁﮔﭦﮒ?| ﻗ?ﻠﻟﺟ |
-| - | ﮔ ﻠﻝﻠﮒﭘ | ﮒﺓﺎﮒ؟ﻝﺍﻠﻝﻠﮒﭘ | ﻗ?ﻠﻟﺟ |
-| - | ﮔ ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟?| ﮒﺓﺎﮒ؟ﻝﺍﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ?| ﻗ?ﻠﻟﺟ |
+| P0-001 | ﮔﺍﮔ؟ﻛﺙﻟﺝﮔ۹ﮒﮒﺁ?| ﮒﺓﺎﮒﮒﺁﺅﺙTLS 1.3ﺅﺙ?| ﻗ?ﻠﻟﺟ |
+| - | ﮔAPIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ | ﮒﺓﺎﮒ؟ﻝﺍﻟ؟۳ﻟﺁﮔﭦﮒ?| ﻗ?ﻠﻟﺟ |
+| - | ﮔﻠﻝﻠﮒﭘ | ﮒﺓﺎﮒ؟ﻝﺍﻠﻝﻠﮒﭘ | ﻗ?ﻠﻟﺟ |
+| - | ﮔﮒ؟ﮒ۷ﮒ؟۰ﻟ؟?| ﮒﺓﺎﮒ؟ﻝﺍﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ?| ﻗ?ﻠﻟﺟ |
 
 ### 6.3 ﻛﺟ؟ﮒ۳ﮒ؟ﮔﮔﭘﻠﺑ
 
@@ -833,7 +833,7 @@ class SecurityAuditLogger:
 - **ﻛﺟ؟ﮒ۳ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 ---
 
-**ﻛﺟ؟ﮒ۳ﻟﺑﻟﺑ۲ﻛﭦ?*: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟  
+**ﻛﺟ؟ﮒ۳ﻟﺑﻟﺑ۲ﻛﭦ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 **ﻛﺟ؟ﮒ۳ﮔ۴ﮔ**: 2026-04-02  
 **ﻛﺕﮔ؛۰ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰**: 2026-05-02
 

@@ -87,7 +87,7 @@ layer: Layer 5 (策略执行层)
 
 ---
 
-## ð§ å
+##
 
 ### 1. 开盘信号生成器
 
@@ -205,13 +205,11 @@ class OpeningVolatilityAnalyzer:
 
 
 **任务**:
-æµè¯
 
 ---
 
 
 **任务**:
-æµè¯
 
 ---
 
@@ -230,8 +228,7 @@ class OpeningVolatilityAnalyzer:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [盘中策略模块蓝图](./INTRADAY_STRATEGY_BLUEPRINT.md)
 - [秒级风险控制系统蓝图](./RISK_CONTROL_BLUEPRINT.md)
@@ -254,8 +251,8 @@ class OpeningVolatilityAnalyzer:
 ##### 6.001. Opening Strategy
 - **模块ID**: OPENING_STRATEGY_001
 - **蓝图文档**: OPENING_STRATEGY_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

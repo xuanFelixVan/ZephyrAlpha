@@ -50,7 +50,7 @@ class BarraRiskModel:
     """
     Barra多因子风险模?(A股适配?
 
-    组合风险公式: σ²_p = w' * (X*F*X' + D) * w
+    组合风险公式: σ_p = w' * (X*F*X' + D) * w
     其中:
         X: 因子暴露矩阵 (N x K)
         F: 因子协方差矩?(K x K)
@@ -254,7 +254,7 @@ class BarraRiskModel:
         """
         计算组合风险
 
-        公式: σ²_p = w' * (X*F*X' + D) * w
+        公式: σ_p = w' * (X*F*X' + D) * w
 
         参数:
             weights: 组合权重 (N,)

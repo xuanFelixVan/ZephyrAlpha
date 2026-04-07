@@ -4,37 +4,37 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
   - 回测系统
   - 数据源
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 applicable_scope: Layer 9 - AIﮒﮔﺍﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
 implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ---
 
 
-# AIﻟﮔﻝ ﻝ۸ﭘﮒ۱ﻠﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+# AIﻟﮔﻝﻝ۸ﭘﮒ۱ﻠﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-AI-TEAM-2026-001
-> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-AI-TEAM-2026-001
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
-> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 > **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?
 ---
 
-## ﻭ ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
+## ﻭ ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
 
 ### ﮔﮔ۰۲ﻝ؟ﻝ
 
-ﮔ؛ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦAIﻟﮔﻝ ﻝ۸ﭘﮒ۱ﻠﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝ­ﻝ۴ﻝ­ﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
+ﮔ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦAIﻟﮔﻝﻝ۸ﭘﮒ۱ﻠﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝﻝ۴ﻝﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
 ---
 
 ## ﻛﺕﻙﮔ۵ﺅﺟ?
@@ -44,12 +44,12 @@ implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ---
 **Layerﮒ؟ﻛﺛ**: Layer 9 - AIﮒﮔﺍﺅﺟ?
 **ﮔﮔﺁﮔﻝﮒﭦ۵**: ﮔﻝﺅﺙﮒﭦﻛﭦGLM-4ﮒ۳۶ﮔ۷۰ﮒﺅﺙ
 
-**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕ­ﻝ­ﺅﺙﻠﻟ۵ﮒ۳AIﮒﻛﺛﮒﻝ۴ﻟﺁﮒﭦﻠﮔﺅﺟ?
+**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕﻝﺅﺙﻠﻟ۵ﮒ۳AIﮒﻛﺛﮒﻝ۴ﻟﺁﮒﭦﻠﮔﺅﺟ?
 ### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
 
 | ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﻟﺁﺑﮔ | ﻛﺛﺅﺟﺛ?|
 |------|------|---------|------|
-| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
+| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
 
 ---
 
@@ -60,7 +60,7 @@ implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ---
 ---
 
 ## ﻛﺕﻙﮔ۴ﮒ۲ﮒ؟ﺅﺟ?
-### 3.1 ﻝ ﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲
+### 3.1 ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲
 
 ```python
 from abc import ABC, abstractmethod
@@ -68,27 +68,27 @@ from typing import List, Dict, Optional
 from datetime import datetime
 
 class ResearchDirectorInterface(ABC):
-    """ﻝ ﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲"""
+"""ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def plan_research_direction(self, market_state: Dict) -> List[str]:
         """
-        ﻟ۶ﮒﻝ ﻝ۸ﭘﮔﺗﮒ
+ﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒ
         
         Args:
             market_state: ﮒﺕﮒﭦﻝﭘﮔﻛﺟ۰ﺅﺟ?            
         Returns:
-            ﻝ ﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷
+ﻝﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷
         """
         pass
     
     @abstractmethod
     def generate_tasks(self, research_direction: Dict) -> List[Dict]:
         """
-        ﻝﮔﻝ ﻝ۸ﭘﻛﭨﭨﮒ۰
+ﻝﮔﻝﻝ۸ﭘﻛﭨﭨﮒ۰
         
         Args:
-            research_direction: ﻝ ﻝ۸ﭘﮔﺗﮒ
+research_direction: ﻝﻝ۸ﭘﮔﺗﮒ
             
         Returns:
             ﻛﭨﭨﮒ۰ﮒﻟ۰۷
@@ -98,10 +98,10 @@ class ResearchDirectorInterface(ABC):
     @abstractmethod
     def evaluate_result(self, task: Dict) -> Dict:
         """
-        ﻟﺁﻛﺙﺍﻝ ﻝ۸ﭘﮔﮔ
+ﻟﺁﻛﺙﺍﻝﻝ۸ﭘﮔﮔ
         
         Args:
-            task: ﻝ ﻝ۸ﭘﻛﭨﭨﮒ۰
+task: ﻝﻝ۸ﭘﻛﭨﭨﮒ۰
             
         Returns:
             ﻟﺁﻛﺙﺍﻝﭨﮔ
@@ -109,10 +109,10 @@ class ResearchDirectorInterface(ABC):
         pass
 ```
 
-### 3.2 ﮒ ﮒ­ﻝ ﻝ۸ﭘﮒﮔ۴ﺅﺟ?
+### 3.2 ﮒﮒﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?
 ```python
 class FactorResearcherInterface(ABC):
-    """ﮒ ﮒ­ﻝ ﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
+"""ﮒﮒﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def mine_factors(self, 
@@ -120,14 +120,14 @@ class FactorResearcherInterface(ABC):
                     target: pd.Series,
                     factor_type: str = 'all') -> List[Dict]:
         """
-        ﮔﮔﮒ ﮒ­
+ﮔﮔﮒﮒ
         
         Args:
             data: ﮒﮒ۶ﻝﺗﮒﺝﮔﺍﮔ؟
-            target: ﻝ؟ﮔ ﮔﭘﻝﺅﺟ?            factor_type: ﮒ ﮒ­ﻝﺎﭨﮒ
+target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?            factor_type: ﮒﮒﻝﺎﭨﮒ
             
         Returns:
-            ﮒ ﮒ­ﮒﻟ۰۷
+ﮒﮒﮒﻟ۰۷
         """
         pass
     
@@ -137,11 +137,11 @@ class FactorResearcherInterface(ABC):
                        data: pd.DataFrame,
                        target: pd.Series) -> Dict:
         """
-        ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﺅﺟ?        
+ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?
         Args:
-            factor: ﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
             data: ﮔﺍﮔ؟
-            target: ﻝ؟ﮔ ﮔﭘﻝﺅﺟ?            
+target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?
         Returns:
             ﻠ۹ﻟﺁﻝﭨﮔ
         """
@@ -150,24 +150,24 @@ class FactorResearcherInterface(ABC):
     @abstractmethod
     def optimize_factor(self, factor: Dict, data: pd.DataFrame) -> Dict:
         """
-        ﻛﺙﮒﮒ ﮒ­
+ﻛﺙﮒﮒﮒ
         
         Args:
-            factor: ﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
             data: ﮔﺍﮔ؟
             
         Returns:
-            ﻛﺙﮒﮒﻝﮒ ﮒ­
+ﻛﺙﮒﮒﻝﮒﮒ
         """
         pass
     
     @abstractmethod
     def generate_report(self, factor: Dict) -> str:
         """
-        ﻝﮔﮒ ﮒ­ﻝ ﻝ۸ﭘﮔ۴ﮒ
+ﻝﮔﮒﮒﻝﻝ۸ﭘﮔ۴ﮒ
         
         Args:
-            factor: ﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
             
         Returns:
             ﮔ۴ﮒﮒﮒ؟ﺗ
@@ -175,23 +175,23 @@ class FactorResearcherInterface(ABC):
         pass
 ```
 
-### 3.3 ﻝ­ﻝ۴ﻝ ﻝ۸ﭘﮒﮔ۴ﺅﺟ?
+### 3.3 ﻝﻝ۴ﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?
 ```python
 class StrategyResearcherInterface(ABC):
-    """ﻝ­ﻝ۴ﻝ ﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
+"""ﻝﻝ۴ﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def design_strategy(self, 
                        factors: List[Dict],
                        market_state: Dict) -> Dict:
         """
-        ﻟ؟ﺝﻟ؟۰ﻝ­ﻝ۴
+ﻟ؟ﺝﻟ؟۰ﻝﻝ۴
         
         Args:
-            factors: ﮒ ﮒ­ﮒﻟ۰۷
+factors: ﮒﮒﮒﻟ۰۷
             market_state: ﮒﺕﮒﭦﻝﭘﺅﺟﺛ?            
         Returns:
-            ﻝ­ﻝ۴ﻟ؟ﺝﻟ؟۰
+ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
         """
         pass
     
@@ -200,10 +200,10 @@ class StrategyResearcherInterface(ABC):
                          strategy: Dict,
                          historical_data: pd.DataFrame) -> Dict:
         """
-        ﮒﮔﭖﻝ­ﻝ۴
+ﮒﮔﭖﻝﻝ۴
         
         Args:
-            strategy: ﻝ­ﻝ۴ﻟ؟ﺝﻟ؟۰
+strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
             historical_data: ﮒﮒﺎﮔﺍﮔ؟
             
         Returns:
@@ -216,14 +216,14 @@ class StrategyResearcherInterface(ABC):
                          strategy: Dict,
                          backtest_result: Dict) -> Dict:
         """
-        ﻛﺙﮒﻝ­ﻝ۴
+ﻛﺙﮒﻝﻝ۴
         
         Args:
-            strategy: ﻝ­ﻝ۴ﻟ؟ﺝﻟ؟۰
+strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
             backtest_result: ﮒﮔﭖﻝﭨﮔ
             
         Returns:
-            ﻛﺙﮒﮒﻝﻝ­ﻝ۴
+ﻛﺙﮒﮒﻝﻝﻝ۴
         """
         pass
 ```
@@ -280,10 +280,10 @@ class KnowledgeManagerInterface(ABC):
     @abstractmethod
     def extract_knowledge(self, research_result: Dict) -> Dict:
         """
-        ﻛﭨﻝ ﻝ۸ﭘﮔﮔﻛﺕ­ﮔﮒﻝ۴ﻟﺁ
+ﻛﭨﻝﻝ۸ﭘﮔﮔﻛﺕﮔﮒﻝ۴ﻟﺁ
         
         Args:
-            research_result: ﻝ ﻝ۸ﭘﮔﮔ
+research_result: ﻝﻝ۸ﭘﮔﮔ
             
         Returns:
             ﮔﮒﻝﻝ۴ﺅﺟ?        """
@@ -292,7 +292,7 @@ class KnowledgeManagerInterface(ABC):
     @abstractmethod
     def store_knowledge(self, knowledge: Dict) -> str:
         """
-        ﮒ­ﮒ۷ﻝ۴ﻟﺁﮒﺍﻝ۴ﻟﺁﮒﭦ
+ﮒﮒ۷ﻝ۴ﻟﺁﮒﺍﻝ۴ﻟﺁﮒﭦ
         
         Args:
             knowledge: ﻝ۴ﻟﺁﻛﺟ۰ﮔﺁ
@@ -318,11 +318,11 @@ class KnowledgeManagerInterface(ABC):
 
 ---
 
-## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ­ﮒ۷
+## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒﮒ۷
 
 ### 4.1 ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔ
 
-#### 4.1.1 ﻝ ﻝ۸ﭘﻛﭨﭨﮒ۰ﺅﺟ?
+#### 4.1.1 ﻝﻝ۸ﭘﻛﭨﭨﮒ۰ﺅﺟ?
 ```sql
 CREATE TABLE research_tasks (
     task_id TEXT PRIMARY KEY,
@@ -343,7 +343,7 @@ CREATE INDEX idx_task_assigned ON research_tasks(assigned_to);
 CREATE INDEX idx_task_deadline ON research_tasks(deadline);
 ```
 
-#### 4.1.2 ﻝ ﻝ۸ﭘﮔﮔﺅﺟ?
+#### 4.1.2 ﻝﻝ۸ﭘﮔﮔﺅﺟ?
 ```sql
 CREATE TABLE research_results (
     result_id TEXT PRIMARY KEY,
@@ -381,33 +381,33 @@ CREATE INDEX idx_knowledge_created ON knowledge_base(created_at);
 ---
 
 ## ﻛﭦﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﺅﺟ?
-### 5.1 ﻝ ﻝ۸ﭘﮔﺗﮒﻟ۶ﮒﻝ؟ﮔﺏ
+### 5.1 ﻝﻝ۸ﭘﮔﺗﮒﻟ۶ﮒﻝ؟ﮔﺏ
 
 #### 5.1.1 ﻝ؟ﮔﺏﮒﻝ
 
-ﻛﺛﺟﻝ۷GLM-4ﮒ۳۶ﮔ۷۰ﮒﺅﺙﻠﻟﺟPrompt Engineeringﮒﺙﮒﺁﺙﮔ۷۰ﮒﮔ ﺗﮔ؟ﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﻝ ﻝ۸ﭘﮔﺗﮒﺅﺟﺛ?
-#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
+ﻛﺛﺟﻝ۷GLM-4ﮒ۳۶ﮔ۷۰ﮒﺅﺙﻠﻟﺟPrompt Engineeringﮒﺙﮒﺁﺙﮔ۷۰ﮒﮔﺗﮔ؟ﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒﺅﺟﺛ?
+#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 def plan_research_direction(self, market_state: Dict) -> List[str]:
     """
-    ﻟ۶ﮒﻝ ﻝ۸ﭘﮔﺗﮒ
+ﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒ
     
-    ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?    1. ﮔﮒﭨﭦﮒﺕﮒﭦﻝﭘﮔﮔﺅﺟ?    2. ﻟﺍﻝ۷GLM-4ﻝﮔﻝ ﻝ۸ﭘﮔﺗﮒ
-    3. ﻟ۶۲ﮔﮒﻠ۹ﻟﺁﻝ ﻝ۸ﭘﮔﺗﺅﺟ?    """
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?    1. ﮔﮒﭨﭦﮒﺕﮒﭦﻝﭘﮔﮔﺅﺟ?    2. ﻟﺍﻝ۷GLM-4ﻝﮔﻝﻝ۸ﭘﮔﺗﮒ
+3. ﻟ۶۲ﮔﮒﻠ۹ﻟﺁﻝﻝ۸ﭘﮔﺗﺅﺟ?    """
     prompt = f"""
-    ﻛﺛﻛﺕﭦﻠﮒﻝ ﻝ۸ﭘﻛﺕﭨﻝ؟۰ﺅﺙﻟﺁﺓﮔ ﺗﮔ؟ﮒﺛﮒﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﮔ۹ﮔ۴ﻛﺕﮒ۷ﻝﻝ ﻝ۸ﭘﮔﺗﮒﺅﺟ?    
+ﻛﺛﻛﺕﭦﻠﮒﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﺅﺙﻟﺁﺓﮔﺗﮔ؟ﮒﺛﮒﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﮔ۹ﮔ۴ﻛﺕﮒ۷ﻝﻝﻝ۸ﭘﮔﺗﮒﺅﺟ?
     ﮒﺕﮒﭦﻝﭘﮔﺅﺙ
     - ﮒﺕﮒﭦﻟﭘﮒﺟﺅﺙ{market_state.get('trend', 'unknown')}
     - ﮔﺏ۱ﮒ۷ﻝﺅﺙ{market_state.get('volatility', 'unknown')}
     - ﮒﺕﮒﭦﮔﻝﭨ۹ﺅﺙ{market_state.get('sentiment', 'unknown')}
     - ﻟﺟﮔﻛﭦﻛﭨﭘﺅﺙ{market_state.get('recent_events', [])}
     
-    ﻟﺁﺓﻟﺟﮒJSONﮔ ﺙﮒﺙﻝﻝ ﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷ﺅﺙ
+ﻟﺁﺓﻟﺟﮒJSONﮔﺙﮒﺙﻝﻝﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷ﺅﺙ
     {{
         "research_directions": [
             {{
-                "direction": "ﻝ ﻝ۸ﭘﮔﺗﮒﮒﻝ۶ﺍ",
+"direction": "ﻝﻝ۸ﭘﮔﺗﮒﮒﻝ۶ﺍ",
                 "priority": ﻛﺙﮒﺅﺟ?1-5),
                 "reason": "ﻠﮔ۸ﻝﻝﺎ",
                 "expected_outcome": "ﻠ۱ﮔﮔﮔ"
@@ -424,11 +424,11 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 ---
 
-### 5.2 ﮒ ﮒ­ﮔﮔﻝ؟ﮔﺏ
+### 5.2 ﮒﮒﮔﮔﻝ؟ﮔﺏ
 
 #### 5.2.1 ﻝ؟ﮔﺏﮒﻝ
 
-#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
+#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 def mine_factors(self, 
@@ -436,11 +436,11 @@ def mine_factors(self,
                 target: pd.Series,
                 factor_type: str = 'all') -> List[Dict]:
     """
-    ﮔﮔﮒ ﮒ­
+ﮔﮔﮒﮒ
     
-    ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?    1. ﻟﺍﻝ۷AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒ
-    2. ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﺅﺟ?    3. ﻟﺟﮒﻠ۹ﻟﺁﻠﻟﺟﻝﮒ ﺅﺟ?    """
-    # 1. ﻛﺛﺟﻝ۷AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒﮔﮔﮒ ﮒ­
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?    1. ﻟﺍﻝ۷AIﮒﮒﮔﮔﮔ۷۰ﮒ
+2. ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?    3. ﻟﺟﮒﻠ۹ﻟﺁﻠﻟﺟﻝﮒﺅﺟ?    """
+# 1. ﻛﺛﺟﻝ۷AIﮒﮒﮔﮔﮔ۷۰ﮒﮔﮔﮒﮒ
     factors = self.ai_factor_miner.mine_factors(
         data=data,
         target=target,
@@ -449,7 +449,7 @@ def mine_factors(self,
         max_factors=20
     )
     
-    # 2. ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﺅﺟ?    validated_factors = []
+# 2. ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?    validated_factors = []
     for factor in factors:
         validation_result = self.validate_factor(factor, data, target)
         if validation_result['is_valid']:
@@ -461,17 +461,17 @@ def mine_factors(self,
 
 ---
 
-## ﮒ­ﻙﮒ؟ﮔﺛﮔﮔﺁﮔ 
+## ﮒﻙﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 ﻝﺙﻝ۷ﻟﺁ­ﻟ۷ﮒﮔ۰ﺅﺟ?
+### 6.1 ﻝﺙﻝ۷ﻟﺁﻟ۷ﮒﮔ۰ﺅﺟ?
 | ﮔﮔﺁﻠ۱ﺅﺟ?| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ | ﻟﺁﺑﮔ |
 |---------|---------|------|------|
-| **ﻝﺙﻝ۷ﻟﺁ­ﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁ­ﻟ۷ |
-| **AIﮔ۷۰ﮒ** | GLM-4-Flash | Latest | ﻝ ﻝ۸ﭘﮒ۸ﮔﮔ ﺕﮒﺟ |
+| **ﻝﺙﻝ۷ﻟﺁﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ |
+| **AIﮔ۷۰ﮒ** | GLM-4-Flash | Latest | ﻝﻝ۸ﭘﮒ۸ﮔﮔﺕﮒﺟ |
 | **ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵** | Apache Airflow | 2.7+ | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ |
 | **Webﮔ۰ﮔﭘ** | FastAPI | 0.104+ | APIﮔﮒ۰ |
-| **ﮒﻠﮔﺍﮔ؟ﺅﺟ?* | ChromaDB | 0.4+ | ﻝ۴ﻟﺁﮒ­ﮒ۷ |
-| **ﮒﺏﻝﺏﭨﮔﺍﮔ؟ﺅﺟ?* | SQLite | 3.40+ | ﮔﺍﮔ؟ﮒ­ﮒ۷ |
+| **ﮒﻠﮔﺍﮔ؟ﺅﺟ?* | ChromaDB | 0.4+ | ﻝ۴ﻟﺁﮒﮒ۷ |
+| **ﮒﺏﻝﺏﭨﮔﺍﮔ؟ﺅﺟ?* | SQLite | 3.40+ | ﮔﺍﮔ؟ﮒﮒ۷ |
 
 ### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝﺅﺟ?
 | ﻛﺝﻟﭖﺅﺟ?| ﻝﮔ؛ | ﻝ۷ﺅﺟﺛ?|
@@ -483,16 +483,16 @@ def mine_factors(self,
 
 ---
 
-## ﻛﺕﻙﮔﭖﻟﺁﻝ­ﺅﺟ?
+## ﻛﺕﻙﮔﭖﻟﺁﻝﺅﺟ?
 ### 7.1 ﮒﮒﮔﭖﻟﺁ
 
 #### 7.1.1 ﮔﭖﻟﺁﻟﮒﺑ
 
 | ﮔ۷۰ﮒ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟ﺅﺟ?|
 |------|---------|-----------|
-| **ﻝ ﻝ۸ﭘﻛﺕﭨﻝ؟۰** | ﻛﭨﭨﮒ۰ﻝﮔﻙﻟﺁﺅﺟ?| >85% |
-| **ﮒ ﮒ­ﻝ ﻝ۸ﭘﺅﺟ?* | ﮒ ﮒ­ﮔﮔﻙﻠ۹ﺅﺟ?| >80% |
-| **ﻝ­ﻝ۴ﻝ ﻝ۸ﭘﺅﺟ?* | ﻝ­ﻝ۴ﻟ؟ﺝﻟ؟۰ﻙﮒﺅﺟ?| >80% |
+| **ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰** | ﻛﭨﭨﮒ۰ﻝﮔﻙﻟﺁﺅﺟ?| >85% |
+| **ﮒﮒﻝﻝ۸ﭘﺅﺟ?* | ﮒﮒﮔﮔﻙﻠ۹ﺅﺟ?| >80% |
+| **ﻝﻝ۴ﻝﻝ۸ﭘﺅﺟ?* | ﻝﻝ۴ﻟ؟ﺝﻟ؟۰ﻙﮒﺅﺟ?| >80% |
 | **ﮒﺕﮒﭦﮒﮔﺅﺟ?* | ﮒﺕﮒﭦﮒﮔﻙﮔﻝﭨ۹ﮒﺅﺟ?| >80% |
 | **ﻝ۴ﻟﺁﻝ؟۰ﻝﺅﺟ?* | ﻝ۴ﻟﺁﮔﮒﻙﮔ۲ﺅﺟ?| >85% |
 
@@ -502,10 +502,10 @@ def mine_factors(self,
 import pytest
 
 class TestResearchDirector:
-    """ﻝ ﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔﭖﻟﺁ"""
+"""ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔﭖﻟﺁ"""
     
     def test_plan_research_direction(self):
-        """ﮔﭖﻟﺁﻝ ﻝ۸ﭘﮔﺗﮒﻟ۶ﮒ"""
+"""ﮔﭖﻟﺁﻝﻝ۸ﭘﮔﺗﮒﻟ۶ﮒ"""
         director = ResearchDirector(api_key="test_key")
         
         market_state = {
@@ -529,7 +529,7 @@ class TestResearchDirector:
 | ﻠ۲ﻠ۸ | ﮒﺛﺎﮒ | ﮔ۵ﻝ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |------|------|------|---------|
 | **GLM-4 APIﻠﮒﭘ** | ﺅﺟ?| ﺅﺟ?| ﻟﺁﺓﮔﺎﻠﮒﻙﻠﻟﺁﺁﻠﺅﺟ?|
-| **ﻝ۴ﻟﺁﮒﭦﮔ۶ﻟﺛ** | ﺅﺟ?| ﺅﺟ?| ﻛﺙﮒﻝﺑ۱ﮒﺙﻙﻝﺙﮒ­ﮔﭦﺅﺟ?|
+| **ﻝ۴ﻟﺁﮒﭦﮔ۶ﻟﺛ** | ﺅﺟ?| ﺅﺟ?| ﻛﺙﮒﻝﺑ۱ﮒﺙﻙﻝﺙﮒﮔﭦﺅﺟ?|
 | **AIﮒﻛﺛﮒ۳ﮔﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﻝ؟ﮒﮒﻛﺛﮔﭖﻝ۷ﻙﮔﻝ۰؟ﻟﺅﺟ?|
 
 ### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
@@ -538,19 +538,19 @@ class TestResearchDirector:
 3. **ﮔﮔﺁﻝﭦ۵ﺅﺟ?*: ﻛﺛﺟﻝ۷GLM-4ﮒ۳۶ﮔ۷۰ﺅﺟ?
 ---
 
-## ﻛﺗﻙﻠ۹ﮔﭘﮔ ﺅﺟ?
+## ﻛﺗﻙﻠ۹ﮔﭘﮔﺅﺟ?
 ### 9.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔﮒ |
 |------|---------|
-| **AIﻝ ﻝ۸ﭘﮒ۸ﮔ** | 5ﻛﺕ۹AIﻟ۶ﻟﺎﮒﺁﻝ۷ |
-| **ﻛﭨﭨﮒ۰ﻝ؟۰ﻝ** | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ­۲ﮒﺕﺕ |
+| **AIﻝﻝ۸ﭘﮒ۸ﮔ** | 5ﻛﺕ۹AIﻟ۶ﻟﺎﮒﺁﻝ۷ |
+| **ﻛﭨﭨﮒ۰ﻝ؟۰ﻝ** | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ۲ﮒﺕﺕ |
 | **ﻝ۴ﻟﺁﮒﭦﻠﺅﺟ?* | ﻝ۴ﻟﺁﻟ۹ﮒ۷ﮒ۴ﮒﭦﺅﺟ?90% |
-| **ﻝ ﻝ۸ﭘﮔﻝ** | ﮔﻝﮔﮒ>200% |
+| **ﻝﻝ۸ﭘﮔﻝ** | ﮔﻝﮔﮒ>200% |
 
 ### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?|
+| ﮔﮔ | ﻝ؟ﮔﺅﺟ?|
 |------|--------|
 | **ﻛﭨﭨﮒ۰ﮒﮒﭦﮔﭘﻠﺑ** | <5ﺅﺟ?|
 | **ﻝ۴ﻟﺁﮔ۲ﻝﺑ۱ﻠﮒﭦ۵** | <1ﺅﺟ?|
@@ -560,17 +560,17 @@ class TestResearchDirector:
 
 ## ﮒﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
-### 10.1 Phase 1: AIﻝ ﻝ۸ﭘﮒ۸ﮔﮒﺙﮒﺅﺙWeek 1-2ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔ5ﻛﺕ۹AIﻝ ﻝ۸ﭘﮒ۸ﮔﮒﺙﺅﺟ?
+### 10.1 Phase 1: AIﻝﻝ۸ﭘﮒ۸ﮔﮒﺙﮒﺅﺙWeek 1-2ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔ5ﻛﺕ۹AIﻝﻝ۸ﭘﮒ۸ﮔﮒﺙﺅﺟ?
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - 5ﻛﺕ۹AIﻟ۶ﻟﺎﮒﺁﻝ۷
-- ﮒﭦﮔ؛ﮒﻟﺛﮔ­۲ﮒﺕﺕ
+- ﮒﭦﮔ؛ﮒﻟﺛﮔ۲ﮒﺕﺕ
 
 ---
 
 ### 10.2 Phase 2: ﻛﭨﭨﮒ۰ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮒﺙﮒﺅﺙWeek 3-4ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﻝﺏﭨﻝﭨ
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﻝﺏﭨﻝﭨ
 
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. ﻛﭨﭨﮒ۰ﻝﮔﮔ۷۰ﮒ
@@ -578,38 +578,38 @@ class TestResearchDirector:
 3. ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹ﮔ۷۰ﮒ
 4. ﻝﭨﮔﮔﭘﻠﮔ۷۰ﮒ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ­۲ﮒﺕﺕ
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ۲ﮒﺕﺕ
 - ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹ﮒﻝ۰؟
 
 ---
 
 ### 10.3 Phase 3: ﻝ۴ﻟﺁﮒﭦﻠﮔﺅﺙWeek 5-6ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﻝ۴ﻟﺁﮒﭦﻠﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻝ۴ﻟﺁﮒﭦﻠﺅﺟ?
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. ﻝ۴ﻟﺁﮔﮒﮔ۷۰ﮒ
 2. ﻝ۴ﻟﺁﮒ۴ﮒﭦﮔ۷۰ﮒ
 3. ﻝ۴ﻟﺁﮔ۲ﻝﺑ۱ﮔ۷۰ﺅﺟ?4. ﻝ۴ﻟﺁﮔﺑﮔﺍﮔ۷۰ﮒ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - ﻝ۴ﻟﺁﻟ۹ﮒ۷ﮒ۴ﮒﭦﺅﺟ?90%
 - ﮔ۲ﻝﺑ۱ﻠﮒﭦ۵<1ﺅﺟ?
 ---
 
 ### 10.4 Phase 4: ﮔﭖﻟﺁﮒﻛﺙﮒﺅﺙWeek 7-8ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻛﺙﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻛﺙﺅﺟ?
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. ﮒﮒﮔﭖﻟﺁ
 2. ﻠﮔﮔﭖﻟﺁ
 3. ﮔ۶ﻟﺛﮔﭖﻟﺁ
 4. ﻝﺏﭨﻝﭨﻛﺙﮒ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - ﮔﮔﮔﭖﻟﺁﻠﻟﺟ
-- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻟﺝﺝﮔ 
+- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻟﺝﺝﮔ
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0  
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03  
 **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?

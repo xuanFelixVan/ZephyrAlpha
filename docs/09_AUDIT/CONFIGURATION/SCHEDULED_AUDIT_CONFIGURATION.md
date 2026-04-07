@@ -1,7 +1,7 @@
 ﻿﻿---
-standard_type: ﻠﻝﺛ؟ﮔ ﮒ
+standard_type: ﻠﻝﺛ؟ﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
@@ -34,15 +34,15 @@ last_updated: 2026-04-02
 | ﻛﭨﭨﮒ۰ﮒﻝ۶ﺍ | ﻠ۱ﻝ | ﮔ۶ﻟ۰ﮔﭘﻠﺑ | ﮒ؟۰ﻟ؟۰ﮒﮒ؟ﺗ | ﻟﺝﮒﭦﻛﺛﻝﺛ؟ |
 |---------|------|----------|----------|---------|
 | **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?* | ﮔﺁﮒ۷ﻛﺕ | ﮒﮔ۷2:00 | ﻠﺝﮔ۴ﮔﮔﮔ۶ﻙﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ?| audit_reports/weekly/ |
-| **ﮔ ﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?| audit_reports/monthly/ |
-| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﺓ۴ﻛﺛﮔﭘﻠﺑ | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?| audit_reports/quarterly/ |
+| **ﮔﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?| audit_reports/monthly/ |
+| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﺓ۴ﻛﺛﮔﭘﻠﺑ | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?| audit_reports/quarterly/ |
 | **ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰** | ﻛﭦﻛﭨﭘﻟ۶۵ﮒ | ﮒﮔﺑﮒ?4ﮒﺍﮔﭘﮒ?| ﮒﮔﺑﮒﺛﺎﮒﻟﮒﺑﻙﮔﮔ۰۲ﻛﺕﻟﺑﮔ?| audit_reports/adhoc/ |
 
 ### 1.2 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻛﺙﮒﻝﭦ?
 
 - **P0**: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﮒﭦﮔ؛ﻟﺑ۷ﻠﺅﺙ
-- **P1**: ﮔ ﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮔﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻟ۶ﻟﻝ؛۵ﮒﺅﺙ?
-- **P2**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮒ­۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻛﺕﻛﺕﮔ ﮒﺅﺙ
+- **P1**: ﮔﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮔﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻟ۶ﻟﻝ؛۵ﮒﺅﺙ?
+- **P2**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮔﺁﮒ۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﻝ۰؟ﻛﺟﻛﺕﻛﺕﮔﮒﺅﺙ
 - **P3**: ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﺅﺙﻛﭦﻛﭨﭘﻟ۶۵ﮒﺅﺙﻝ۰؟ﻛﺟﮒﮔﺑﻛﺕﻟﺑﮔ۶ﺅﺙ
 
 ---
@@ -56,7 +56,7 @@ last_updated: 2026-04-02
 crontab -e
 ```
 
-**ﮔﺓﭨﮒ ﻛﭨ۴ﻛﺕﻛﭨﭨﮒ۰**:
+**ﮔﺓﭨﮒﻛﭨ۴ﻛﺕﻛﭨﭨﮒ۰**:
 
 ```bash
 # ZephyrAlphaﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰
@@ -64,10 +64,10 @@ crontab -e
 # ﮒﺟ،ﻠﮒ؟۰ﻟ؟?- ﮔﺁﮒ۷ﻛﺕﮒﮔ۷2:00ﮔ۶ﻟ۰
 0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# ﮔ ﮒﮒ؟۰ﻟ؟۰ - ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
+# ﮔﮒﮒ؟۰ﻟ؟۰ - ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
 0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
-# ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ - ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰ﺅﺙ?ﮔﻙ?ﮔﻙ?ﮔﻙ?0ﮔﺅﺙ
+# ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ - ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰ﺅﺙ?ﮔﻙ?ﮔﻙ?ﮔﻙ?0ﮔﺅﺙ
 0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
 # ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮔﺁﮒ۷ﮔ۴ﮒﮔ?:30ﮔ۶ﻟ۰
@@ -89,7 +89,7 @@ crontab -e
    - ﮒﮔﺍ: `scripts\document_auditor.py --quick --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
    - ﻟﭖﺓﮒ۶ﻛﺛﻝﺛ؟: `D:\ZephyrAlpha`
 
-2. **ﮔ ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
+2. **ﮔﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
    - ﮒﻝ۶ﺍ: `ZephyrAlpha_Monthly_Audit`
    - ﻟ۶۵ﮒﮒ? ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00
    - ﮔﻛﺛ: ﮒﺁﮒ۷ﻝ۷ﮒﭦ
@@ -99,7 +99,7 @@ crontab -e
 
 3. **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
    - ﮒﻝ۶ﺍ: `ZephyrAlpha_Quarterly_Audit`
-   - ﻟ۶۵ﮒﮒ? ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﺅﺙﮔﮒ۷ﻟ؟ﺝﻝﺛ؟ﺅﺙ
+- ﻟ۶۵ﮒﮒ? ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﺅﺙﮔﮒ۷ﻟ؟ﺝﻝﺛ؟ﺅﺙ
    - ﮔﻛﺛ: ﮒﺁﮒ۷ﻝ۷ﮒﭦ
    - ﻝ۷ﮒﭦ: `python`
    - ﮒﮔﺍ: `scripts\document_auditor.py --deep --output "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\quarterly_%date:~0,4%%date:~5,2%%date:~8,2%.json"`
@@ -127,7 +127,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-# ﮔﺓﭨﮒ ﻠ۰ﺗﻝ؟ﮔ ﺗﻝ؟ﮒﺛﮒﺍﻟﺓﺁﮒﺝ
+# ﮔﺓﭨﮒﻠ۰ﺗﻝ؟ﮔﺗﻝ؟ﮒﺛﮒﺍﻟﺓﺁﮒﺝ
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from scripts.document_auditor import DocumentAuditor
@@ -159,11 +159,11 @@ def run_quick_audit():
         timestamp = datetime.now().strftime('%Y%m%d')
         output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_{timestamp}.json'
         
-        # ﻛﺟﮒ­ﮔ۴ﮒ
+# ﻛﺟﮒﮔ۴ﮒ
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒﺍ: {output_file}")
+logger.info(f"ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒﺍ: {output_file}")
         
         # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﻛﺕ۴ﻠﻠ؟ﻠ۱
         if results['summary']['total_issues'] > 0:
@@ -180,7 +180,7 @@ def run_quick_audit():
 
 def send_notification(results):
     """ﮒﻠﮒ؟۰ﻟ؟۰ﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ"""
-    # ﻟﺟﻠﮒﺁﻛﭨ۴ﻠﮔﻠ؟ﻛﭨﭘﻙﻠﻠﻙﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰ﻝ­ﻠﻝ۴ﮔﺗﮒﺙ
+# ﻟﺟﻠﮒﺁﻛﭨ۴ﻠﮔﻠ؟ﻛﭨﭘﻙﻠﻠﻙﻛﺙﻛﺕﮒﺝ؟ﻛﺟ۰ﻝﻠﻝ۴ﮔﺗﮒﺙ
     # ﻝ۳ﭦﻛﺝﺅﺙﮒﻠﻠ؟ﻛﭨﭘﻠﻝ۴
     pass
 
@@ -188,14 +188,14 @@ if __name__ == '__main__':
     sys.exit(run_quick_audit())
 ```
 
-### 3.2 ﮔ ﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
+### 3.2 ﮔﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
 
 **ﮔﻛﭨﭘ**: `scripts/scheduled_standard_audit.py`
 
 ```python
 #!/usr/bin/env python3
 """
-ﮔ ﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
+ﮔﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
 ﮒﻟﺛ: ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?
 """
 
@@ -222,9 +222,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def run_standard_audit():
-    """ﮔ۶ﻟ۰ﮔ ﮒﮒ؟۰ﻟ؟۰"""
+"""ﮔ۶ﻟ۰ﮔﮒﮒ؟۰ﻟ؟۰"""
     try:
-        logger.info("ﮒﺙﮒ۶ﮔ ﮒﮒ؟۰ﻟ؟?..")
+logger.info("ﮒﺙﮒ۶ﮔﮒﮒ؟۰ﻟ؟?..")
         
         auditor = DocumentAuditor(project_root='.')
         results = auditor.full_audit()
@@ -235,7 +235,7 @@ def run_standard_audit():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒ? {output_file}")
+logger.info(f"ﮔﮒﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒ? {output_file}")
         
         # ﻝﮔﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ
         generate_summary_report(results, timestamp)
@@ -243,7 +243,7 @@ def run_standard_audit():
         return 0
         
     except Exception as e:
-        logger.error(f"ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ۴: {str(e)}")
+logger.error(f"ﮔﮒﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ۴: {str(e)}")
         return 1
 
 def generate_summary_report(results, timestamp):
@@ -279,7 +279,7 @@ if __name__ == '__main__':
 #!/usr/bin/env python3
 """
 ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻟﮔ؛
-ﮒﻟﺛ: ﮔﺁﮒ­۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﮔ۶ﻟ۰ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﮒﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ۶ﮔ۲ﮔ?
+ﮒﻟﺛ: ﮔﺁﮒ۲ﮒﭦ۵ﮔ۶ﻟ۰ﺅﺙﮔ۶ﻟ۰ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﮒﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ۶ﮔ۲ﮔ?
 """
 
 import os
@@ -339,7 +339,7 @@ def run_deep_audit():
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
         
-        logger.info(f"ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒ­ﮒ? {output_file}")
+logger.info(f"ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮒ؟ﮔﺅﺙﮔ۴ﮒﮒﺓﺎﻛﺟﮒﮒ? {output_file}")
         
         # ﻝﮔﻟﺁ۵ﻝﭨﮔ۴ﮒ
         generate_detailed_report(results, timestamp)
@@ -355,7 +355,7 @@ def generate_detailed_report(results, timestamp):
     report_file = f'docs/09_AUDIT/REPORTS/QUARTERLY_AUDIT_REPORT_{timestamp}.md'
     
     with open(report_file, 'w', encoding='utf-8') as f:
-        f.write(f"# ﮒ­۲ﮒﭦ۵ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ\n\n")
+f.write(f"# ﮒ۲ﮒﭦ۵ﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ\n\n")
         f.write(f"**ﮒ؟۰ﻟ؟۰ﮔﭘﻠﺑ**: {results['summary']['scan_time']}\n")
         f.write(f"**ﮒ؟۰ﻟ؟۰ﻝﺎﭨﮒ**: ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰\n\n")
         
@@ -364,7 +364,7 @@ def generate_detailed_report(results, timestamp):
         f.write(f"|---------|---------|\n")
         f.write(f"| L1ﮔﻛﭨﭘﻝﺏﭨﻝﭨﮒﺎ?| {results['summary']['l1_issues']} |\n")
         f.write(f"| L2ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺎ?| {results['summary']['l2_issues']} |\n")
-        f.write(f"| L3ﻛﺕﻛﺕﮔ ﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
+f.write(f"| L3ﻛﺕﻛﺕﮔﮒﮒﺎ?| {results['summary']['l3_issues']} |\n")
         f.write(f"| **ﮔﭨﻟ؟۰** | **{results['summary']['total_issues']}** |\n\n")
         
         # L1ﻝﭨﮔﻟﺁ۵ﮔ
@@ -381,7 +381,7 @@ def generate_detailed_report(results, timestamp):
         
         # L3ﻝﭨﮔﻟﺁ۵ﮔ
         if results['l3_results'].get('issues'):
-            f.write(f"\n## L3ﻛﺕﻛﺕﮔ ﮒﮒﺎﮒ؟۰ﻟ؟۰ﻝﭨﮔ\n\n")
+f.write(f"\n## L3ﻛﺕﻛﺕﮔﮒﮒﺎﮒ؟۰ﻟ؟۰ﻝﭨﮔ\n\n")
             for issue in results['l3_results']['issues']:
                 f.write(f"- **{issue['file_path']}**: {issue['message']}\n")
 
@@ -391,14 +391,14 @@ if __name__ == '__main__':
 
 ---
 
-## 4. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮒﺛﮔ۰۲ﻝ­ﻝ۴
+## 4. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮒﺛﮔ۰۲ﻝﻝ۴
 
-### 4.1 ﮔ۴ﮒﻛﺟﻝﻝ­ﻝ۴
+### 4.1 ﮔ۴ﮒﻛﺟﻝﻝﻝ۴
 
 | ﮔ۴ﮒﻝﺎﭨﮒ | ﻛﺟﻝﮔﻠ | ﮒﺛﮔ۰۲ﻛﺛﻝﺛ؟ |
 |---------|---------|---------|
 | **ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?* | 3ﻛﺕ۹ﮔ | audit_reports/weekly/ |
-| **ﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | 1ﮒﺗ?| audit_reports/monthly/ |
+| **ﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | 1ﮒﺗ?| audit_reports/monthly/ |
 | **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | ﮔﺍﺕﻛﺗ | audit_reports/quarterly/ |
 | **ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﮔ۴ﮒ** | ﮔﺍﺕﻛﺗ | audit_reports/adhoc/ |
 
@@ -427,13 +427,13 @@ def cleanup_old_reports():
     if weekly_path.exists():
         cleanup_reports(weekly_path, days=90)
     
-    # ﮔﺕﻝﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ?ﮒﺗﺑﺅﺙ
+# ﮔﺕﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ?ﮒﺗﺑﺅﺙ
     monthly_path = base_path / 'monthly'
     if monthly_path.exists():
         cleanup_reports(monthly_path, days=365)
 
 def cleanup_reports(directory, days):
-    """ﮔﺕﻝﮔﮒ؟ﻝ؟ﮒﺛﻛﺕ­ﻟﭘﻟﺟﮔﮒ؟ﮒ۳۸ﮔﺍﻝﮔ۴ﮒ"""
+"""ﮔﺕﻝﮔﮒ؟ﻝ؟ﮒﺛﻛﺕﻟﭘﻟﺟﮔﮒ؟ﮒ۳۸ﮔﺍﻝﮔ۴ﮒ"""
     cutoff_date = datetime.now() - timedelta(days=days)
     
     for file_path in directory.glob('*.json'):
@@ -441,7 +441,7 @@ def cleanup_reports(directory, days):
         
         if file_date < cutoff_date:
             file_path.unlink()
-            print(f"ﮒﺓﺎﮒ ﻠ۳ﻟﺟﮔﮔ۴ﮒ? {file_path}")
+print(f"ﮒﺓﺎﮒﻠ۳ﻟﺟﮔﮔ۴ﮒ? {file_path}")
 
 if __name__ == '__main__':
     cleanup_old_reports()
@@ -475,11 +475,11 @@ email:
     - ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}
     - ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}
     - ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}
-    - ﻟ­۵ﮒﻠ؟ﻠ۱: {warning_issues}
+- ﻟ۵ﮒﻠ؟ﻠ۱: {warning_issues}
     
     ﻟﺁ۵ﻝﭨﮔ۴ﮒﻟﺁﺓﮔ۴ﻝ? {report_path}
     
-    ﮔ­۳ﻟﺑ
+ﮔ۳ﻟﺑ
     Audit Sentinel
 ```
 
@@ -495,7 +495,7 @@ dingtalk:
       "msgtype": "markdown",
       "markdown": {
         "title": "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ",
-<!-- ﮒ ﻛﺛﻝ؛۵ﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ: "text": "### {audit_type}ﮒ؟۰ﻟ؟۰ﮒ؟ﮔ\n\n- ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}\n- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}\n- ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}\n\n[ﮔ۴ﻝﻟﺁ۵ﻝﭨﮔ۴ﮒ]({report_url})" -->
+<!-- ﮒﻛﺛﻝ؛۵ﻠﺝﮔ۴ﮒﺓﺎﮔﺏ۷ﻠ: "text": "### {audit_type}ﮒ؟۰ﻟ؟۰ﮒ؟ﮔ\n\n- ﮔ،ﮔﮔﻛﭨﭘﮔ? {scanned_files}\n- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: {total_issues}\n- ﻛﺕ۴ﻠﻠ؟ﻠ۱: {critical_issues}\n\n[ﮔ۴ﻝﻟﺁ۵ﻝﭨﮔ۴ﮒ]({report_url})" -->
 
       }
     }
@@ -513,7 +513,7 @@ dingtalk:
 #!/usr/bin/env python3
 """
 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﭘﮔﮔ۲ﮔ۴ﻟﮔ?
-ﮒﻟﺛ: ﮔ۲ﮔ۴ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮔﺁﮒ۵ﮔ­۲ﮒﺕﺕﮔ۶ﻟ۰?
+ﮒﻟﺛ: ﮔ۲ﮔ۴ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮔﺁﮒ۵ﮔ۲ﮒﺕﺕﮔ۶ﻟ۰?
 """
 
 import os
@@ -529,18 +529,18 @@ def check_audit_status():
     if latest_weekly:
         days_since_last = (datetime.now() - latest_weekly).days
         if days_since_last > 7:
-            print(f"ﻗ ﺅﺕ  ﻟ­۵ﮒ: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒﺓﺎ {days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
+print(f"ﻗﺅﺕ  ﻟ۵ﮒ: ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮒﺓﺎ {days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
         else:
-            print(f"ﻗ?ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ­۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_weekly}")
+print(f"ﻗ?ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_weekly}")
     
-    # ﮔ۲ﮔ۴ﮔ ﮒﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙ?
+# ﮔ۲ﮔ۴ﮔﮒﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮔﮔ۶ﻟ۰ﺅﺙ?
     latest_monthly = get_latest_report(base_path / 'monthly')
     if latest_monthly:
         days_since_last = (datetime.now() - latest_monthly).days
         if days_since_last > 30:
-            print(f"ﻗ ﺅﺕ  ﻟ­۵ﮒ: ﮔ ﮒﮒ؟۰ﻟ؟۰ﮒﺓ?{days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
+print(f"ﻗﺅﺕ  ﻟ۵ﮒ: ﮔﮒﮒ؟۰ﻟ؟۰ﮒﺓ?{days_since_last} ﮒ۳۸ﮔ۹ﮔ۶ﻟ۰")
         else:
-            print(f"ﻗ?ﮔ ﮒﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ­۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_monthly}")
+print(f"ﻗ?ﮔﮒﮒ؟۰ﻟ؟۰ﻝﭘﮔﮔ۲ﮒﺕﺕﺅﺙﻛﺕﮔ؛۰ﮔ۶ﻟ۰: {latest_monthly}")
 
 def get_latest_report(directory):
     """ﻟﺓﮒﮔﮔﺍﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔﭘﻠﺑ"""
@@ -565,7 +565,7 @@ if __name__ == '__main__':
 
 ### 7.1 ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮒ۳ﺎﻟﺑ۴ﮒ۳ﻝ
 
-ﮒ۵ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮒ۳ﺎﻟﺑ۴ﺅﺙﮔ۶ﻟ۰ﻛﭨ۴ﻛﺕﮔ­۴ﻠ۹۳ﺅﺙ
+ﮒ۵ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﮒ۳ﺎﻟﺑ۴ﺅﺙﮔ۶ﻟ۰ﻛﭨ۴ﻛﺕﮔ۴ﻠ۹۳ﺅﺙ
 
 1. **ﮔ۲ﮔ۴ﮔ۴ﮒﺟﮔﻛﭨ?*:
    ```bash
@@ -580,7 +580,7 @@ if __name__ == '__main__':
 3. **ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦ?*:
    ```bash
    df -h  # ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?
-   free -m  # ﮔ۲ﮔ۴ﮒﮒ­?
+free -m  # ﮔ۲ﮔ۴ﮒﮒ?
    ```
 
 4. **ﻠﮒﺁﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰**:
@@ -589,17 +589,17 @@ if __name__ == '__main__':
    sudo systemctl restart cron
    
    # Windows
-   # ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﻛﺕ­ﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
+# ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﻛﺕﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
    ```
 
 ---
 
 ## 8. ﮒﻟﮔﮔ۰?
 
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
 
 ---
 
-**ﻠﻝﺛ؟ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﻠﻝﺛ؟ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

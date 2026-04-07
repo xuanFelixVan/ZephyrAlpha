@@ -78,7 +78,7 @@ layer: Layer 5.1 (数据处理)
 
 | 机构类型 | CDC要求 | 延迟目标 |
 |---------|---------|---------|
-éæ¢å¤?| <100ms |
+?| <100ms |
 
 ### 1.2 核心功能矩阵
 
@@ -89,16 +89,16 @@ layer: Layer 5.1 (数据处理)
 
 
 ```
-â?                                                                        â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                                                                        â?
+?                                                                        ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                                                                        ?
 ```
 
 
@@ -323,7 +323,7 @@ import logging
 
 @dataclass
 class APICDCConfig:
-    """API CDCé
+"""API CDC
 置"""
     endpoint: str
     method: str = "GET"
@@ -654,9 +654,9 @@ class CDCEventProcessor:
 
 ---
 
-ç½?
+?
 
-### 4.1 Debeziumé
+### 4.1 Debezium
 
 ```json
 {
@@ -677,7 +677,7 @@ class CDCEventProcessor:
 }
 ```
 
-### 4.2 Docker Composeé
+### 4.2 Docker Compose
 置
 
 ```yaml
@@ -777,21 +777,21 @@ asyncio.run(poller.start())
 
 ---
 
-## ð å
+##
 
 ### 6.1 CDC性能
 
 |------|--------|--------|
 | **捕获延迟** | <100ms | 50-80ms |
-| **ååé?* | >10K events/s | 15K events/s |
-| **æ
+| **?* | >10K events/s | 15K events/s |
+| **
 障恢复时间** | <30s | 20s |
 
 ### 6.2 资源占用
 
 | 资源 | Debezium | Kafka | 总计 |
 |------|----------|-------|------|
-| å
+|
 存 | 1GB | 2GB | 3GB |
 | 存储 | 1GB | 10GB | 11GB |
 
@@ -811,12 +811,12 @@ asyncio.run(poller.start())
 
 - [x] 性能优化
 - [x] 监控告警
-- [x] æ
+- [x]
 障恢复
 
 ---
 
-## ð å
+##
 
 |------|------|---------|------|
 

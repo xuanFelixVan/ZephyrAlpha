@@ -100,21 +100,20 @@ layer: Layer 5.2 (组合优化)
 |------|------|
 | **模块ID** | PORTFOLIO_PERFORMANCE_EVALUATION_001 |
 | **版本** | v1.0.0 |
-| **ç¶æ?* | Active |
+| **?* | Active |
 | **创建日期** | 2026-04-06 |
-| **æåæ´æ?* | 2026-04-06 |
+| **?* | 2026-04-06 |
 
-³ç³?
+?
 
-| å
+|
 |---------|---------|-----------|---------|
-| **è¾å
-| **è¾å
+| **
+| **
 | **协同工作** | 组合归因分析 | PORTFOLIO_ATTRIBUTION_001 | 绩效归因分析 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -132,8 +131,8 @@ layer: Layer 5.2 (组合优化)
 | **QuantStats** | 0.0.62+ | 绩效分析 | [GitHub](https://github.com/ranaroussi/quantstats) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -170,7 +169,7 @@ graph LR
 
 ```mermaid
 graph TB
-¥"
+"
         A[策略收益率] --> D[绩效评估引擎]
         B[基准收益率] --> D
         C[无风险利率] --> D
@@ -209,11 +208,11 @@ graph TB
 
 
 ```
-                                            â?
+?
                                     基准对比分析
-                                            â?
+?
                                     滚动指标计算
-                                            â?
+?
 ```
 
 ---
@@ -232,7 +231,6 @@ class PortfolioPerformanceEvaluator:
     """
     
     索引: PORTFOLIO_PERF_001-M01
-    è¾å
     输出: 绩效指标、风险指标、可视化报告
     """
     
@@ -250,7 +248,6 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-¸
         """
         perf_stats = pf.timeseries.perf_stats(
             returns,
@@ -277,7 +274,6 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-¸
         """
         return {
             'volatility': pf.timeseries.annual_volatility(returns),
@@ -298,8 +294,7 @@ class PortfolioPerformanceEvaluator:
         Args:
             
         Returns:
-            AlphaåBetaå­å
-¸
+AlphaBeta
         """
         alpha, beta = pf.timeseries.alpha_beta(
             returns,
@@ -363,7 +358,6 @@ class QuantStatsEvaluator:
         Args:
             
         Returns:
-¸
         """
         return {
             'sharpe': qs.stats.sharpe(returns),
@@ -435,19 +429,19 @@ def calculate_rolling_metrics(
 |---------|--------|------|
 | **指标计算时间** | <500ms | 单次计算 |
 | **报告生成时间** | <5s | 完整Tearsheet |
-| **å
+| **
 存占用** | <100MB | 单次分析 |
 
 ---
 
 ## 4. 数据模型
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
 class PerformanceInput:
-¥æ°æ®"""
+"""
     returns: pd.Series
     benchmark_returns: Optional[pd.Series] = None
     risk_free_rate: float = 0.02
@@ -563,7 +557,7 @@ class PerformanceAPI:
 
 
 |------|------|--------|
-æµè¯?|
+?|
 | QuantStats集成 | 4h | 扩展功能 |
 | 指标计算模块 | 4h | 计算模块 |
 | 数据库表创建 | 2h | SQL脚本 |
@@ -575,7 +569,7 @@ class PerformanceAPI:
 ### 6.3 Phase 3: 测试与文档（0.5周）
 
 |------|------|--------|
-| åå
+|
 | 集成测试 | 4h | 测试报告 |
 | 文档编写 | 4h | 用户手册、API文档 |
 
@@ -611,21 +605,21 @@ class PerformanceAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
-| åå
-æµè¯ | â?0% | pytest |
+|
+| ?0% | pytest |
 
 ### 9.2 验收标准
 
 |--------|------|---------|
-æµè¯ |
+|
 | 性能达标 | 指标计算<500ms | 性能测试 |
 晰完整 | 人工审查 |
 
 ---
 
-## 10. åèèµæ?
+## 10. ?
 
 ### 10.1 学术论文
 
@@ -637,8 +631,7 @@ class PerformanceAPI:
 2. QuantStats Documentation: https://github.com/ranaroussi/quantstats
 3. Quantopian Lectures: https://www.quantopian.com/lectures
 
-### 10.3 ç¸å
-³èå¾
+### 10.3
 
 - [组合归因分析蓝图](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md)
 - [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
@@ -649,7 +642,7 @@ class PerformanceAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

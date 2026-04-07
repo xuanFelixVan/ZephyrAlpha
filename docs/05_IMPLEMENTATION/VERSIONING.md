@@ -18,14 +18,14 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔ?
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
   - 因子计算
   - 机器学习
   - 文档治理
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰?---
 
@@ -41,7 +41,7 @@ implementation_status: ﻟﺟﻟ۰?---
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﻝﮔ؛ﮒﺓﻝ؟۰ﻝﮒﮒﻝﭦ۶ﻟ۶ﮒ
 
 
-## ﻝﮔ؛ﮒﺓﮔ ﺙ?
+## ﻝﮔ؛ﮒﺓﮔﺙ?
 
 ```
 {ﻛﺕﭨﻝﮔ؛}.{ﮔ؛۰ﻝﮔ؛}.{ﻟ۰۴ﻛﺕﻝﮔ؛}
@@ -56,14 +56,14 @@ implementation_status: ﻟﺟﻟ۰?---
 
 **ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**:
 - ﮔﭘﮔﮔﺗﮒﺅﺙLayer 0-11ﻠﻝﭨ?
-- ﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﺟﮔ۱
-- ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻛﺕﮒﺙ?
+- ﮔﺕﮒﺟﮔ۷۰ﮒﮔﺟﮔ۱
+- ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮒﺙ?
 - ﮔ۴ﮒ۲ﻝﮔ؛ﮒﻝﭦ۶ﺅﺙinterface_version: 1.0 ?2.0?
 
 **ﮔﻛﺛ**:
-1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕ­ﻝ `version` ﮒ­ﮔ؟ﭖ
-2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕ­ﻝ `system_version`
-3. ?`CHANGELOG.md` ﻛﺕ­ﻟ؟ﺍﮒﺛﻠﮒ۳۶ﮒ?
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﻠﮒ۳۶ﮒ?
 4. ﮒ۳ﻛﭨﺛﮔ۶ﻝﮔ؛ﮒﺍ `archives/v4.0/`
 
 **ﻝ۳ﭦﻛﺝ**:
@@ -73,7 +73,7 @@ implementation_status: ﻟﺟﻟ۰?---
   "interface_version": "2.0",
   "breaking_changes": [
     "Layer 0-11ﮔﭘﮔﻠﻝﭨ",
-    "ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻛﭨParquetﮔﺗﻛﺕﭦArrow"
+"ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﭨParquetﮔﺗﻛﺕﭦArrow"
   ]
 }
 ```
@@ -82,23 +82,23 @@ implementation_status: ﻟﺟﻟ۰?---
 
 **ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**:
 - ﮔﺍﮒ۱ﮔ۷۰ﮒ
-- ﮔﺍﮒ۱ﮒ ﮒ­ﮒﭦﺅﺙ>10ﻛﺕ۹ﮒ ﮒ­ﺅﺙ
-- ﮔﺍﮒ۱ﻝ­ﻝ۴?5ﻛﺕ۹ﻝ­ﻝ۴ﺅﺙ
+- ﮔﺍﮒ۱ﮒﮒﮒﭦﺅﺙ>10ﻛﺕ۹ﮒﮒﺅﺙ
+- ﮔﺍﮒ۱ﻝﻝ۴?5ﻛﺕ۹ﻝﻝ۴ﺅﺙ
 - ﮔﺍﮒ۱ﮒﻟﺛﺅﺙﻛﺕﮒﺛﺎﮒﻝﺍﮔﮔ۴ﮒ۲?
 
 **ﮔﻛﺛ**:
-1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕ­ﻝ `version` ﮒ­ﮔ؟ﭖ
-2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕ­ﻝ `system_version`
-3. ?`CHANGELOG.md` ﻛﺕ­ﻟ؟ﺍﮒﺛﮔﺍﮒ۱ﮒ?
-4. ﮔﺑﮔﺍ `02_ALPHA_FACTORS_INDEX.md` ﻛﺕ­ﻝﮒ ﮒ­ﻝﭨﻟ؟۰
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﮔﺍﮒ۱ﮒ?
+4. ﮔﺑﮔﺍ `02_ALPHA_FACTORS_INDEX.md` ﻛﺕﻝﮒﮒﻝﭨﻟ؟۰
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 ## [v4.1] - 2026-04-15
 
 ### Added
-- ﮔﺍﮒ۱10ﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﺅﺙALPHA_065-074?
-- ﮔﺍﮒ۱5ﻛﺕ۹ﻝ­ﻝ۴ﺅﺙS010-S014?
+- ﮔﺍﮒ۱10ﻛﺕ۹ﮒ۷ﻠﮒﮒﺅﺙALPHA_065-074?
+- ﮔﺍﮒ۱5ﻛﺕ۹ﻝﻝ۴ﺅﺙS010-S014?
 - ﮔﺍﮒ۱ﮒﺕﮒﭦﻝﭘﮔﻟﺁﮒ،ﮔ۷۰?
 ```
 
@@ -108,23 +108,23 @@ implementation_status: ﻟﺟﻟ۰?---
 - Bugﻛﺟ؟ﮒ۳
 - ﮔﮔ۰۲ﮔﺑﮔﺍ
 - ﮔ۶ﻟﺛﻛﺙﮒ
-- ﮒ ﮒ­ﮒﮔﺍﻟﺍﮔﺑ
+- ﮒﮒﮒﮔﺍﻟﺍﮔﺑ
 
 **ﮔﻛﺛ**:
-1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕ­ﻝ `version` ﮒ­ﮔ؟ﭖ
-2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕ­ﻝ `system_version`
-3. ?`CHANGELOG.md` ﻛﺕ­ﻟ؟ﺍﮒﺛﻛﺟ؟ﮒ۳ﮒ?
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﻛﺟ؟ﮒ۳ﮒ?
 
 **ﻝ۳ﭦﻛﺝ**:
 ```markdown
 ## [v4.0.1] - 2026-03-29
 
 ### Fixed
-- ﻛﺟ؟ﮒ۳MA5ﻟ؟۰ﻝ؟ﻛﺕ­ﻝNaNﮒ۳ﻝ
-- ﻛﺟ؟ﮒ۳PE_TTMﮒ ﮒ­ﻝﮔﺍﮔ؟ﮔﭦﻠﻟﺁﺁ
+- ﻛﺟ؟ﮒ۳MA5ﻟ؟۰ﻝ؟ﻛﺕﻝNaNﮒ۳ﻝ
+- ﻛﺟ؟ﮒ۳PE_TTMﮒﮒﻝﮔﺍﮔ؟ﮔﭦﻠﻟﺁﺁ
 
 ### Changed
-- ﻛﺙﮒﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﺅﺙﮔ?5%?
+- ﻛﺙﮒﮒﮒﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﺅﺙﮔ?5%?
 ```
 
 
@@ -133,7 +133,7 @@ implementation_status: ﻟﺟﻟ۰?---
 | ﻝﮔ؛ﻝﺎﭨﮒ | ﮒﺙﮒ؟ﺗ?| ﻟﺁﺑﮔ |
 |---------|--------|------|
 | ﻛﺕﭨﻝ?| ?ﻛﺕﮒﺙ?| v4.0 ﻝﮔﺍ?ﮔ۴ﮒ۲ﻛﺕﻟﺛﻝ۷ﻛﭦ v5.0 |
-| ﮔ؛۰ﻝ?| ?ﮒﮒﮒﺙﮒ؟ﺗ | v4.0 ﻝﻛﭨ۲ﻝ ﮒﺁﻛﭨ۴ﻝ۷?v4.1 |
+| ﮔ؛۰ﻝ?| ?ﮒﮒﮒﺙﮒ؟ﺗ | v4.0 ﻝﻛﭨ۲ﻝﮒﺁﻛﭨ۴ﻝ۷?v4.1 |
 | ﻟ۰۴ﻛﺕﻝﮔ؛ | ?ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ | v4.0 ?v4.0.1 ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
 
 
@@ -185,42 +185,42 @@ def negotiate_interface_version():
 
 ## ﻝﮔ؛ﮒﮒﺕﮔﭖﻝ۷
 
-### ﻝ؛؛ﻛﺕﮔ­۴ﺅﺙﮒﮒ۳
+### ﻝ؛؛ﻛﺕﮔ۴ﺅﺙﮒﮒ۳
 
-- [ ] ﮔﺑﮔﺍﮔﮔﻝﮔ؛ﮒﺓﮒ­ﮔ؟ﭖ
+- [ ] ﮔﺑﮔﺍﮔﮔﻝﮔ؛ﮒﺓﮒﮔ؟ﭖ
 - [ ] ﮔﺑﮔﺍ `CHANGELOG.md`
 - [ ] ﮔﺑﮔﺍ `System_Manifest.md`
 - [ ] ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json`
 
-### ﻝ؛؛ﻛﭦﮔ­۴ﺅﺙﻠ۹ﻟﺁ
+### ﻝ؛؛ﻛﭦﮔ۴ﺅﺙﻠ۹ﻟﺁ
 
 - [ ] ﻟﺟﻟ۰ﮔﮔﮒﮒﮔﭖ?
 - [ ] ﻟﺟﻟ۰ﻠﮔﮔﭖﻟﺁ
 - [ ] ﻠ۹ﻟﺁﮒﮒﮒﺙﮒ؟ﺗ?
 - [ ] ﻠ۹ﻟﺁﮔ۴ﮒ۲ﻝﮔ؛
 
-### ﻝ؛؛ﻛﺕﮔ­۴ﺅﺙﮒﮒﺕ
+### ﻝ؛؛ﻛﺕﮔ۴ﺅﺙﮒﮒﺕ
 
-- [ ] ﮒﮒﭨﭦGitﮔ ﻝ­ﺝﺅﺙv4.0.2?
+- [ ] ﮒﮒﭨﭦGitﮔﻝﺝﺅﺙv4.0.2?
 - [ ] ﮒ۳ﻛﭨﺛﮔ۶ﻝ?
 - [ ] ﮔﺑﮔﺍﮔﮔ۰۲
 - [ ] ﮒﮒﺕﮒﮔﺑﮔ۴ﮒﺟ
 
-### ﻝ؛؛ﮒﮔ­۴ﺅﺙﻠ۹ﻟﺁ
+### ﻝ؛؛ﮒﮔ۴ﺅﺙﻠ۹ﻟﺁ
 
-- [ ] ﻠ۹ﻟﺁﮔﺍﻝﮔ؛ﮒﺁﮔ­۲ﮒﺕﺕﮒﺁﮒ۷
+- [ ] ﻠ۹ﻟﺁﮔﺍﻝﮔ؛ﮒﺁﮔ۲ﮒﺕﺕﮒﺁﮒ۷
 - [ ] ﻠ۹ﻟﺁﮔﺍﮔ؟ﻟﺟﻝ۶ﭨﮔﮒ
-- [ ] ﻠ۹ﻟﺁﮔﮔﮔ۷۰ﮒﮔ­۲ﮒﺕﺕﻟﺟ?
+- [ ] ﻠ۹ﻟﺁﮔﮔﮔ۷۰ﮒﮔ۲ﮒﺕﺕﻟﺟ?
 
 
-## ﻝﮔ؛ﮒﺓﮒ­ﮔ؟ﭖﻛﺛ?
+## ﻝﮔ؛ﮒﺓﮒﮔ؟ﭖﻛﺛ?
 
-| ﮔﻛﭨﭘ | ﮒ­ﮔ؟ﭖ | ﮔ ﺙﮒﺙ |
+| ﮔﻛﭨﭘ | ﮒﮔ؟ﭖ | ﮔﺙﮒﺙ |
 |------|------|------|
 | `System_Manifest.md` | `version` | `4.0.2` |
 | `CONTEXT_SNAPSHOT.json` | `system_version` | `4.0.2` |
 | `CONTEXT_SNAPSHOT.json` | `interface_version` | `1.0` |
-| `CHANGELOG.md` | ﮔ ﻠ۱ | `[v4.0.2]` |
+| `CHANGELOG.md` | ﮔﻠ۱ | `[v4.0.2]` |
 | `pyproject.toml` | `version` | `4.0.2` |
 
 
@@ -228,7 +228,7 @@ def negotiate_interface_version():
 
 | ﻝﮔ؛ | ﮒﮒﺕﮔ۴ﮔ | ﻛﺕﭨﻟ۵ﮒﮔﺑ |
 |------|---------|---------|
-| v4.0.2 | 2026-03-28 | ﮒ؟ﮔﻠﭘﮔ؟ﭖﻛﺕﻛﭦ۳ﻛﭨﺅﺙﻛﺙﮒﮒ ﮒ­ﮒﭦﻝﭨﮔ |
+| v4.0.2 | 2026-03-28 | ﮒ؟ﮔﻠﭘﮔ؟ﭖﻛﺕﻛﭦ۳ﻛﭨﺅﺙﻛﺙﮒﮒﮒﮒﭦﻝﭨﮔ |
 | v4.0.1 | 2026-03-28 | ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭘﮔﻟ؟ﺝ?|
 | v4.0 | 2026-03-28 | ﻠ۵ﮔ؛۰ﮒﮒﺕ |
 

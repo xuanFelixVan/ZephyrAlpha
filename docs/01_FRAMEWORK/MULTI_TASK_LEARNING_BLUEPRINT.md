@@ -57,7 +57,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-- **ç¹å¾å
+- **
 
 
 
@@ -91,7 +91,7 @@ layer: Layer 2 (Alpha因子层)
 ```
 
 
-â?  âââ ...
+?   ...
 
 ├── 高级学习架构
 
@@ -132,11 +132,11 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
-| **å
+| **
 
 
 
@@ -183,11 +183,11 @@ class MultiTaskModel(nn.Module):
 
         Args:
 
-            input_dim: è¾å
+input_dim:
 
-            shared_hidden_dims: å
+shared_hidden_dims:
 
-            shared_encoder_type: å
+shared_encoder_type:
 
         """
 
@@ -209,8 +209,8 @@ class MultiTaskModel(nn.Module):
 
         Args:
 
-            x: è¾å
-¥ç¹å¾ (batch_size, input_dim)
+x:
+(batch_size, input_dim)
 
             
 
@@ -243,7 +243,7 @@ class MultiTaskModel(nn.Module):
 
         Returns:
 
-            torch.Tensor: æ»æå¤?        """
+torch.Tensor: ?        """
 
         pass
 
@@ -353,7 +353,7 @@ class GradientBalancer:
 
         Args:
 
-            shared_parameters: å
+shared_parameters:
 
 
         Returns:
@@ -368,7 +368,7 @@ class GradientBalancer:
 
 
 
-### 3.2 é
+### 3.2
 
 
 
@@ -378,7 +378,7 @@ class GradientBalancer:
 
 class MultiTaskConfig:
 
-ç½?""
+?""
 
     
 
@@ -403,7 +403,7 @@ class MultiTaskConfig:
 ```
 
 
-    â?å
+?
 
 
 
@@ -412,7 +412,7 @@ class MultiTaskConfig:
 
 实时特征
 
-    â?å
+?
 
 
 
@@ -456,14 +456,14 @@ numpy>=1.24.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 256GB SSD | 500GB SSD |
@@ -528,8 +528,8 @@ class AlphaFactorMiner:
 |--------|----------|----------|
 
 
-| ç¹å¾å
-±äº« | å
+|
+|
 
 | 权重学习 | 自动学习权重 | 功能测试 |
 
@@ -556,10 +556,9 @@ class AlphaFactorMiner:
 
 
 
-- [ ] å
+- [ ]
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 
@@ -589,7 +588,7 @@ class AlphaFactorMiner:
 |--------|----------|----------|
 
 
-³æ§åæ?|
+?|
 
 
 

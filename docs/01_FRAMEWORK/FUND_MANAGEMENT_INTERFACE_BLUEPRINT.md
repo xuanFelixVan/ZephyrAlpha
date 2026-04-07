@@ -71,13 +71,13 @@ class FundManagementInterface:
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("总资金", f"¥{self.total_fund:,.2f}")
+            st.metric("总资金", f"{self.total_fund:,.2f}")
         
         with col2:
-            st.metric("可用资金", f"¥{self.available_fund:,.2f}")
+            st.metric("可用资金", f"{self.available_fund:,.2f}")
         
         with col3:
-            st.metric("冻结资金", f"¥{self.frozen_fund:,.2f}")
+            st.metric("冻结资金", f"{self.frozen_fund:,.2f}")
         
         with col4:
             utilization = (self.total_fund - self.available_fund) / self.total_fund

@@ -369,7 +369,7 @@ def detect_outliers(
     算法原理:
     1. iqr: 四分位距法，识别超出Q1-1.5*IQR和Q3+1.5*IQR?
     2. zscore: Z分数法，识别|Z|>threshold?
-    3. mad: 中位数绝对偏差法，识别超出中位数±threshold*MAD?
+    3. mad: 中位数绝对偏差法，识别超出中位数threshold*MAD?
     4. isolation_forest: 孤立森林算法
     
     复杂? O(n) n为数据点?

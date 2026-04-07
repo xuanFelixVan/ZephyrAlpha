@@ -254,7 +254,7 @@ class OrderFlowPredictor:
 
 
 
-| IC | â?.05 |
+| IC | ?.05 |
 
 
 

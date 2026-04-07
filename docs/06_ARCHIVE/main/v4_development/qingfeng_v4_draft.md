@@ -1059,7 +1059,7 @@ responsibility:
       |---------|------------|------------|
       | Plotly | 交互式图表库 | `https://github.com/plotly/plotly.py` |
       | Seaborn | 统计数据可视化库 | `https://github.com/mwaskom/seaborn` |
-    - **最佳实?*：提供回归线的统计信息，包括R²值、p值等
+    - **最佳实?*：提供回归线的统计信息，包括R值、p值等
   - 动画
     - **功能描述**：展示模式或关系随时间的变化，增强可视化效果
     - **技术实?*：使用Matplotlib Animation或Plotly实现动画效果

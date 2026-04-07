@@ -121,9 +121,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | market_crash | 市场崩盘 | equity: -20%, vol: +50% |
 | rate_hike | 加息周期 | bond: -5%, equity: -10% |
 | liquidity_crisis | 流动性危?| spread: +100%, vol: +30% |
-| sector_rotation | 行业轮动 | sector_shift: ±15% |
-| currency_crisis | 货币危机 | fx: ±10%, equity: -15% |
-| commodity_shock | 商品冲击 | commodity: ±20% |
+| sector_rotation | 行业轮动 | sector_shift: 15% |
+| currency_crisis | 货币危机 | fx: 10%, equity: -15% |
+| commodity_shock | 商品冲击 | commodity: 20% |
 | credit_crisis | 信用危机 | credit_spread: +200bp |
 | custom | 自定?| 需提供custom_shock |
 

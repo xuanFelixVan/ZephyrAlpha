@@ -6059,19 +6059,19 @@ class ResearchRoadmapPlanner:
 **Phase 1: 基础规划（Week 1）**
 - 部署OpenProject
 - 配置项目管理流程
-- 成本: ¥0（开源）
+- 成本: 0（开源）
 
 **Phase 2: AI规划（Week 2）**
 - 集成GLM-4进行趋势分析
 - 实现自动路线图生成
-- 成本: ¥200/月
+- 成本: 200/月
 
 **Phase 3: 可视化（Week 3）**
 - 集成Mermaid甘特图
 - 实现进度追踪
-- 成本: ¥0（开源）
+- 成本: 0（开源）
 
-**总成本**: ¥200/月
+**总成本**: 200/月
 **开源替代率**: 85%
 
 
@@ -6177,7 +6177,7 @@ class CrossDomainInnovationDiscovery:
 | NLP | Transformers | 130k+ | 文本分析 |
 | 向量检索 | LlamaIndex | 35k+ | 知识检索 |
 
-**总成本**: ¥300/月
+**总成本**: 300/月
 **开源替代率**: 80%
 
 
@@ -6254,7 +6254,7 @@ class ResearchRiskManager:
         return risks
 ```
 
-**总成本**: ¥200/月
+**总成本**: 200/月
 **开源替代率**: 80%
 
 
@@ -6343,7 +6343,7 @@ class ResearchKnowledgeGraph:
         return self.query_knowledge(query)
 ```
 
-**总成本**: ¥300/月（Neo4j云服务）
+**总成本**: 300/月（Neo4j云服务）
 **开源替代率**: 85%
 
 
@@ -6450,7 +6450,7 @@ class ResearchTransformationSystem:
         )
 ```
 
-**总成本**: ¥200/月
+**总成本**: 200/月
 **开源替代率**: 70%
 
 
@@ -6590,7 +6590,7 @@ class ResearchEthicsReviewSystem:
 | 可解释性 | SHAP | 22k+ | 模型可解释性 |
 | 隐私保护 | Differential Privacy | 1k+ | 差分隐私 |
 
-**总成本**: ¥200/月
+**总成本**: 200/月
 **开源替代率**: 85%
 
 
@@ -6756,7 +6756,7 @@ class ResearchReproducibilitySystem:
 | 环境管理 | Conda | 6k+ | 依赖管理 |
 | 数据版本 | DVC | 14k+ | 数据版本控制 |
 
-**总成本**: ¥0（开源）
+**总成本**: 0（开源）
 **开源替代率**: 95%
 
 
@@ -6894,7 +6894,7 @@ class ResearchVersionControlSystem:
 | 数据版本 | DVC | 14k+ | 数据版本控制 |
 | 模型版本 | MLflow | 18k+ | 模型版本管理 |
 
-**总成本**: ¥0（开源）
+**总成本**: 0（开源）
 **开源替代率**: 100%
 
 
@@ -7035,7 +7035,7 @@ class ResearchEnvironmentIsolation:
 | 编排 | Kubernetes | 110k+ | 容器编排 |
 | 资源监控 | cAdvisor | 17k+ | 资源监控 |
 
-**总成本**: ¥0（开源）
+**总成本**: 0（开源）
 **开源替代率**: 95%
 
 
@@ -7170,7 +7170,7 @@ class ResearchCostAccounting:
         }
 ```
 
-**总成本**: ¥0（开源）
+**总成本**: 0（开源）
 **开源替代率**: 100%
 
 
@@ -7328,7 +7328,7 @@ class ResearchDataLifecycleManagement:
 | Delta Lake | 7k+ | 数据湖管理 | Databricks |
 | Apache Hudi | 5k+ | 数据湖增量处理 | 商业数据管道 |
 
-**成本**: ¥200/月 | **开源替代率**: 90%
+**成本**: 200/月 | **开源替代率**: 90%
 
 
 ### 2.63 研究性能基准测试系统 ⭐P1专业模块
@@ -7523,7 +7523,7 @@ class ResearchPerformanceBenchmarking:
 | Locust | 24k+ | 负载测试 | 商业负载测试工具 |
 | Apache JMeter | 8k+ | 性能测试 | 商业性能测试平台 |
 
-**成本**: ¥0（开源）| **开源替代率**: 100%
+**成本**: 0（开源）| **开源替代率**: 100%
 
 
 ### 2.65 研究用户体验优化系统 ⭐P1专业模块
@@ -7657,7 +7657,7 @@ class ResearchUXOptimization:
 | Matomo | 19k+ | 网站分析 | Google Analytics |
 | SurveyJS | 4k+ | 调查问卷 | 商业调查工具 |
 
-**成本**: ¥100/月 | **开源替代率**: 85%
+**成本**: 100/月 | **开源替代率**: 85%
 
 
 ### 2.67 研究混沌工程系统 ⭐P1专业模块
@@ -7841,7 +7841,7 @@ class ResearchChaosEngineering:
 | Litmus | 4k+ | 云原生混沌工程 | 商业混沌平台 |
 | Gremlin | - | 混沌工程平台 | 商业混沌平台 |
 
-**成本**: ¥0（开源）| **开源替代率**: 100%
+**成本**: 0（开源）| **开源替代率**: 100%
 
 
 ### 2.69 研究成本优化系统 ⭐P1专业模块
@@ -8005,7 +8005,7 @@ class ResearchCostOptimization:
 | CloudHealth | - | 云成本管理 | 商业成本管理 |
 | OpenCost | 1k+ | 云成本监控 | 商业成本工具 |
 
-**成本**: ¥100/月 | **开源替代率**: 85%
+**成本**: 100/月 | **开源替代率**: 85%
 
 
 ## 三、数据模型设计

@@ -81,7 +81,6 @@ layer: Layer 5.3 (风险管理)
 
 > 核心职责: Realtime Risk Hedge Engine蓝图设计
 > 职责边界: 
-³å
 容
 
 ## 1. 模块概述
@@ -195,14 +194,13 @@ class HedgeStrategyGenerator:
         """
         生成对冲策略
         
-·éæ©:
+:
         1. Beta风险: 使用股指期货对冲
         2. 行业风险: 使用行业ETF或期货对?        3. 风格风险: 使用风格ETF对冲
         4. 尾部风险: 使用期权保护
         
         输出:
         - HedgeStrategy: 对冲策略
-·
           - hedge_ratio: 对冲比例
           - hedge_orders: 对冲订单
           - expected_cost: 预期成本
@@ -227,8 +225,7 @@ class BetaHedge:
         """
         计算Beta对冲比例
         
-        å
-¬å¼:
+:
         Hedge Ratio = (Current Beta - Target Beta) / Futures Beta
         
         参数:
@@ -286,7 +283,7 @@ def generate_risk_warning(
     
     参数:
     - portfolio_id: 组合ID
-    - risk_thresholds: é£é©é?    
+- risk_thresholds: ?
     返回:
     - RiskWarning: 风险预警
       - warning_level: 预警级别（GREEN/YELLOW/RED?      - risk_items: 风险项列?      - recommendations: 对冲建议
@@ -344,7 +341,6 @@ class HedgeOrder:
     portfolio_id: str                # 组合ID
     symbol: str                      # 标的代码
     direction: str                   # 方向（BUY/SELL?    quantity: int                    # 数量
-·
     hedge_ratio: float               # 对冲比例
     hedge_reason: str                # 对冲原因
     expected_cost: float             # 预期成本
@@ -431,10 +427,9 @@ CREATE TABLE hedge_transactions (
 
 **数学模型**:
 ```
-Portfolio Beta = Î£(w_i * Î²_i)
+Portfolio Beta = (w_i * _i)
 ```
 
-å
 
 #### 5.1.2 Beta计算方法
 
@@ -478,7 +473,6 @@ def calculate_portfolio_beta(
 行业偏离?= Σ|w_sector_i - w_benchmark_i|
 ```
 
-å
 #### 5.2.2 行业暴露计算方法
 
 ```python
@@ -494,7 +488,6 @@ def calculate_sector_exposure(
     2. 计算组合在各行业的权?    3. 计算相对基准的偏离度
     
     返回:
-¸
     """
     sector_weights = {}
     
@@ -518,7 +511,7 @@ def calculate_sector_exposure(
 
 #### 5.3.1 算法原理
 
-·æ°é?
+?
 **数学模型**:
 ```
 Hedge Ratio = Risk Exposure / Hedge Tool Sensitivity
@@ -537,8 +530,7 @@ def calculate_beta_hedge_ratio(
     """
     计算Beta对冲需要的期货合约数量
     
-    å
-¬å¼:
+:
     Contracts = (Portfolio Beta - Target Beta) * Portfolio Value / (Futures Price * Multiplier)
     
     参数:
@@ -580,7 +572,7 @@ def calculate_beta_hedge_ratio(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **å
+| **
 存** | ?GB |
 | **存储** | ?GB |
 
@@ -588,12 +580,11 @@ def calculate_beta_hedge_ratio(
 
 ## 7. 测试策略
 
-### 7.1 åå
-æµè¯
+### 7.1
 
 ```python
 class TestRealtimeRiskMonitor:
-æµè¯"""
+"""
     
     def test_beta_calculation(self):
         """测试Beta计算"""
@@ -642,7 +633,7 @@ class TestRiskHedgeEngine:
 | 风险ID | 风险描述 | 影响程度 | 缓解措施 |
 |--------|----------|----------|----------|
 | TR-001 | Beta计算不准?| ?| 使用多种数据源，定期校准 |
-· |
+|
 | TR-003 | 对冲成本过高 | ?| 优化对冲比例，控制成?|
 
 ### 8.2 实施约束
@@ -693,12 +684,11 @@ class TestRiskHedgeEngine:
 2. ?实现Beta风险监控
 3. ?实现行业风险监控
 4. ?实现风格风险监控
-5. ?ç¼ååå
-æµè¯
+5. ?
 
 **交付?*:
 - 风险监控实现代码
-- åå
+-
 - 技术文?
 ### 10.2 Phase 2: 预警和对冲系统实现（1周）
 
@@ -706,8 +696,7 @@ class TestRiskHedgeEngine:
 单**:
 1. ?实现风险评估和预?2. ?实现Beta对冲策略
 3. ?实现行业对冲策略
-4. ?ç¼ååå
-æµè¯
+4. ?
 5. ?性能优化
 
 **交付?*:
@@ -724,18 +713,16 @@ class TestRiskHedgeEngine:
 
 ---
 
-## 11. ç¸å
-³ææ¡£
+## 11.
 
 ### 11.1 架构文档
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 
-### 11.2 ç¸å
-³æ¨¡å
+### 11.2
 
 - [ECONOMIC_REGIME_ENGINE_BLUEPRINT.md](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md) - 经济范式判断引擎
-- ALL_WEATHER_OPTIMIZER_BLUEPRINT.md - å
+- ALL_WEATHER_OPTIMIZER_BLUEPRINT.md -
 
 ---
 
@@ -760,16 +747,16 @@ class TestRiskHedgeEngine:
 ##### 6.001. Realtime Risk Hedge Engine
 - **模块ID**: REALTIME_RISK_HEDGE_ENGINE_001
 - **蓝图文档**: REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Realtime Risk Hedge Engine** | å
+| **Realtime Risk Hedge Engine** |
 
 ### 12.3 版本管理
 

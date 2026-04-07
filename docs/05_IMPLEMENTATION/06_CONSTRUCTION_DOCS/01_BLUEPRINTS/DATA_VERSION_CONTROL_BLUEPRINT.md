@@ -96,7 +96,7 @@ layer: Layer 5.1 (数据处理)
 
 **业务目标**:
 - 建立数据版本控制系统
-§ååæ»?
+?
 - 提供数据变更历史
 
 
@@ -418,7 +418,7 @@ volumes:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -435,9 +435,8 @@ volumes:
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 - [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
@@ -449,8 +448,7 @@ volumes:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -467,8 +465,8 @@ volumes:
 | **DVC** | 3.0+ | 数据版本控制 | [官方文档](https://dvc.org/) |
 | **Git** | 2.40+ | 版本管理 | [官方文档](https://git-scm.com/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -489,9 +487,9 @@ graph LR
 ##### 6.001. Data Version Control
 - **模块ID**: DATA_VERSION_CONTROL_001
 - **蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

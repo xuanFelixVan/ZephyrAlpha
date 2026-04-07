@@ -88,7 +88,7 @@ layer: Layer 5.3 (风险管理)
 
 - 当前系统缺乏多因子协方差风险模型，缺乏多因子风险模型
 
-**ææ¯çç?*:
+**?*:
 - 缺乏因子暴露度量
 
 **预期收益**:
@@ -112,24 +112,24 @@ layer: Layer 5.3 (风险管理)
 
 
 ```
-â?                                                                â?
-â?â?            è¾å
-¥å±?                                       â?  â?
-â?                        â?                                      â?
-â?                        â?                                      â?
-â?                        â?                                      â?
-â?                                                                â?
+?                                                                ?
+??
+?                                       ?  ?
+?                        ?                                      ?
+?                        ?                                      ?
+?                        ?                                      ?
+?                                                                ?
 ```
 
 
 ```
-    â?
+?
 因子暴露度量（回归分析）
-    â?
-    â?
+?
+?
 特质风险估计（回归残差）
-    â?
-    â?
+?
+?
 ```
 
 ---
@@ -142,7 +142,6 @@ class BarraRiskModel:
     """
     
     索引: BARRA_RISK_001-M01
-    è¾å
     """
     
     def __init__(self, config: BarraConfig):
@@ -215,7 +214,7 @@ class BarraRiskModel:
             weights.T @ np.diag(self.idiosyncratic_risk**2) @ weights
         )
         
-        # æ»é£é?
+# ?
         total_risk = np.sqrt(factor_risk**2 + idio_risk**2)
         
         return PortfolioRiskResult(
@@ -236,9 +235,8 @@ class BarraRiskModel:
 # 因子暴露计算接口
 > **核心职责**: Barra Risk Model蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -290,14 +288,13 @@ def decompose_risk(
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -309,8 +306,8 @@ def decompose_risk(
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -328,12 +325,10 @@ graph LR
 
 ---
 
-## 5. ä¸å
-³ç³»
+## 5.
 
-³ç³»
 
-| æ¨¡å | å
+|  |
 |------|----------|------|
 
 ### 5.2 Layer归属说明
@@ -368,16 +363,16 @@ graph LR
 ##### 6.001. Barra Risk Model
 - **模块ID**: BARRA_RISK_MODEL_001
 - **蓝图文档**: BARRA_RISK_MODEL_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 7.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Barra Risk Model** | å
+| **Barra Risk Model** |
 
 ### 7.3 版本管理
 

@@ -220,8 +220,8 @@ class FactorCombinationOptimizer:
 ### 3.2 性能指标要求
 | 性能指标 | 目标?| 测量方法 |
 |----------|--------|----------|
-| 权重优化时间 | < 5?| 10因子×1000?|
-| 因子正交化时?| < 2?| 10因子×1000?|
+| 权重优化时间 | < 5?| 10因子1000?|
+| 因子正交化时?| < 2?| 10因子1000?|
 | PCA降维时间 | < 3?| 100因子?0主成?|
 | 相关性分析时?| < 1?| 100因子相关性矩?|
 | 自动优化时间 | < 10?| 完整优化流程 |
@@ -303,7 +303,7 @@ def combine_factors(
     2. 根据方法计算权重
     3. 加权合成
     
-    复杂? O(n × m) n为因子数，m为数据点?
+    复杂? O(n  m) n为因子数，m为数据点?
     """
     factor_df = pd.DataFrame(factor_dict)
     
@@ -334,7 +334,7 @@ def optimize_weights(
     2. 设置约束条件（权重和?、单因子权重限制等）
     3. 使用优化算法求解
     
-    复杂? O(n^2 × iter) n为因子数，iter为迭代次?
+    复杂? O(n^2  iter) n为因子数，iter为迭代次?
     """
     from scipy.optimize import minimize
     
@@ -387,7 +387,7 @@ def orthogonalize_factors(
     2. 去除因子间的线性相?
     3. 保留独立信息
     
-    复杂? O(n^2 × m) n为因子数，m为数据点?
+    复杂? O(n^2  m) n为因子数，m为数据点?
     """
     from sklearn.linear_model import LinearRegression
     
@@ -428,7 +428,7 @@ def reduce_dimensionality(
     2. 计算协方差矩?
     3. 提取主成?
     
-    复杂? O(n^2 × m) n为因子数，m为数据点?
+    复杂? O(n^2  m) n为因子数，m为数据点?
     """
     from sklearn.decomposition import PCA
     from sklearn.preprocessing import StandardScaler

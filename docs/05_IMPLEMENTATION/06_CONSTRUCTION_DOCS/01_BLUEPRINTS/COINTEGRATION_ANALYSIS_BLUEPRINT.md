@@ -9,8 +9,8 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 协整分析
-  - åæ´å
-  - é
+-
+-
   - 统计套利
 layer: Layer 5 (策略执行层)
 ---
@@ -84,7 +84,6 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Cointegration Analysis蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -93,7 +92,7 @@ layer: Layer 5 (策略执行层)
 ### 1.1 模块定位
 
 
-- ä¸ºé
+-
 
 - 发现统计套利机会
 
@@ -207,15 +206,14 @@ class CointegrationAnalyzer:
 ```
 
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
-³æ§åæ?|
+?|
+?|
 
 ### 下游依赖
 
@@ -227,8 +225,8 @@ class CointegrationAnalyzer:
 | **statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -270,8 +268,8 @@ graph LR
 ##### 6.001. Cointegration Analysis
 - **模块ID**: COINTEGRATION_ANALYSIS_001
 - **蓝图文档**: COINTEGRATION_ANALYSIS_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

@@ -25,8 +25,7 @@ parent_document: ../LAYER_11_ARCHITECTURE.md
 implementation_status: 设计阶段
 ---
 
-# Layer 11å·¥å
-·å°è£
+# Layer 11
 方案蓝图
 > **核心职责**: Layer 11 Tool Encapsulation蓝图设计
 > **职责边界**: 
@@ -34,12 +33,10 @@ implementation_status: 设计阶段
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸
-·å°è£
+>
 详细设计
 > **索引**: `LAYER_11_TOOL_ENCAP_001`
-·å°è£
-> **å
+> **
 
 ## 一、设计背景与目标
 
@@ -49,10 +46,10 @@ implementation_status: 设计阶段
 
 ```
 
-    â?Layer 11 (AIçè§£)
-    â?æå¾: é
-    â?åæ°: {type: momentum, period: 5}
-    â?æå¾: é
+?Layer 11 (AI)
+?:
+?: {type: momentum, period: 5}
+?:
 
 2. 重复的意图识别和参数提取
 3. 成本翻倍（API费用或推理时间）
@@ -63,70 +60,63 @@ implementation_status: 设计阶段
 
 ```
 
-    â?åæ°: {type: momentum, period: 5}
+?: {type: momentum, period: 5}
 
-·è°ç¨
 ```
 
 ### 1.2 设计目标
 
 |------|--------|----------|
 | **纯执行层分离** | P0 | 所有模块只提供API接口，无AI |
-| **å·¥å
+| **
 | **性能优化** | P1 | 减少AI调用次数，降低延迟和成本 |
 
 ### 1.3 架构原则
 
 1. **单一职责原则**：Layer 11负责AI理解，各模块负责执行
-·ï¼?
+?
 
 ### 2.1 架构分层
 
 ```
 
-### 2.2 å·¥å
+### 2.2
 
-| å·¥å
-çº?|
+|
+?|
 |---------|---------|---------|--------|
-·** | Layer 5 | 6ä¸?| P0 |
-·** | Layer 2 | 4ä¸?| P0 |
-·** | Layer 6 | 4ä¸?| P0 |
-·** | Layer 8 | 1ä¸?| P0 |
-| **èæ
-å·¥å
-·** | Layer 3 | 2ä¸?| P1 |
-| **MLå·¥å
-·** | Layer 4 | 2ä¸?| P1 |
-·** | Layer 6 | 3ä¸?| P1 |
-·** | Layer 7 | 2ä¸?| P1 |
-?* | Layer 0 | 4ä¸?| P2 |
-?* | Layer 1 | 3ä¸?| P2 |
+** | Layer 5 | 6?| P0 |
+** | Layer 2 | 4?| P0 |
+** | Layer 6 | 4?| P0 |
+** | Layer 8 | 1?| P0 |
+| **
+** | Layer 3 | 2?| P1 |
+| **ML
+** | Layer 4 | 2?| P1 |
+** | Layer 6 | 3?| P1 |
+** | Layer 7 | 2?| P1 |
+?* | Layer 0 | 4?| P2 |
+?* | Layer 1 | 3?| P2 |
 
 
-·å°è£
-è§è?
-### 3.1 å·¥å
+?
+### 3.1
 
 ```python
 """
-å·¥å
-·å¿
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from langchain.tools import Tool
 
 class BaseTool(ABC):
-    """å·¥å
+"""
     
     def __init__(self, name: str, description: str):
         """
 ?        
         Args:
-            name: å·¥å
-·åç§°
-            description: å·¥å
-·æè¿°
+name:
+description:
         """
         self.name = name
         self.description = description
@@ -138,14 +128,12 @@ class BaseTool(ABC):
         
         Args:
         Returns:
-¸
         """
         pass
     
     def validate_params(self, params: Dict[str, Any]) -> bool:
         """
         Args:
-¸
             
         Returns:
             是否有效
@@ -153,7 +141,7 @@ class BaseTool(ABC):
         return True
     
     def to_langchain_tool(self) -> Tool:
-·"""
+"""
         return Tool(
             name=self.name,
             func=lambda params: self.execute(params),
@@ -161,16 +149,15 @@ class BaseTool(ABC):
         )
 ```
 
-### 3.2 å·¥å
+### 3.2
 
-#### è¾å
+####
 
 ```python
 {
 需：configure|start|stop|status|list
-    "params": {            # å¿
-éï¼å
-·ä½åæ?        "param1": "value1",
+"params": {            #
+?        "param1": "value1",
         "param2": "value2"
     }
 }
@@ -180,7 +167,7 @@ class BaseTool(ABC):
 
 ```python
 {
-    "success": True,       # å¿
+"success": True,       #
         "key1": "value1",
         "key2": "value2"
     },
@@ -188,39 +175,36 @@ class BaseTool(ABC):
 }
 ```
 
-### 3.3 å·¥å
+### 3.3
 
 |--------|------|------|
-| **å·¥å
-| **å·¥å
-| **å·¥å
-| **å·¥å
+| **
+| **
+| **
+| **
 
 
-·ï¼StrategyToolï¼?
+StrategyTool?
 **文件位置**: `src/layer_11/tools/strategy_tool.py`
 
 ```python
 """
-·
-å°è£
 策略引擎的纯API接口
 """
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# å¯¼å
+#
 
 class StrategyTool(BaseTool):
-·"""
+"""
     
     def __init__(self):
 ?""
         super().__init__(
             name="策略管理",
-æ¬é
 支持的操作：
-- configure: é
+- configure:
 - stop: 停止策略
     "action": "configure",
     "params": {
@@ -268,22 +252,20 @@ class StrategyTool(BaseTool):
         return all(field in params for field in required_fields)
 ```
 
-·ï¼FactorToolï¼?
+FactorTool?
 **文件位置**: `src/layer_11/tools/factor_tool.py`
 
 ```python
 """
-·
-å°è£
 因子库的纯API接口
 """
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# å¯¼å
+#
 
 class FactorTool(BaseTool):
-·"""
+"""
     
     def __init__(self):
 ?""
@@ -320,22 +302,20 @@ class FactorTool(BaseTool):
             return {"success": False, "error": f"未知操作：{action}"}
 ```
 
-·ï¼RiskControlToolï¼?
+RiskControlTool?
 **文件位置**: `src/layer_11/tools/risk_control_tool.py`
 
 ```python
 """
-·
-å°è£
 风控管理的纯API接口
 """
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# å¯¼å
+#
 
 class RiskControlTool(BaseTool):
-·"""
+"""
     
     def __init__(self):
 ?""
@@ -374,28 +354,27 @@ class RiskControlTool(BaseTool):
             return {"success": False, "error": f"未知操作：{action}"}
 ```
 
-·ï¼DataSourceToolï¼?
+DataSourceTool?
 **文件位置**: `src/layer_11/tools/data_source_tool.py`
 
 ```python
 """
-?å°è£
+?
 数据源管理的纯API接口
 """
 from typing import Dict, Any
 from .base_tool import BaseTool
 
-# å¯¼å
+#
 
 class DataSourceTool(BaseTool):
 ?""
     
     def __init__(self):
-·"""
+"""
         super().__init__(
-æ¬é
 支持的操作：
-- configure_qmt: é
+- configure_qmt:
     "action": "configure_qmt",
     "params": {
         "account": "your_account",
@@ -429,7 +408,6 @@ class DataSourceTool(BaseTool):
 
 ```python
 """
-å·¥å
 """
 from typing import List
 from langchain.tools import Tool
@@ -442,7 +420,7 @@ from .data_source_tool import DataSourceTool
 from .report_tool import ReportTool
 
 class ToolRegistry:
-    """å·¥å
+"""
     
     def __init__(self):
         self.tools = {}
@@ -450,28 +428,25 @@ class ToolRegistry:
     
     def _register_all_tools(self):
 ?""
-·
         self.register(StrategyTool())
         self.register(FactorTool())
         self.register(RiskControlTool())
         
-·
         self.register(DataSourceTool())
         self.register(ReportTool())
         
-        # ... æ³¨åå
-·
+# ...
     
     def register(self, tool: BaseTool):
-·"""
+"""
         self.tools[tool.name] = tool
     
     def get_tool(self, name: str) -> BaseTool:
-·"""
+"""
         return self.tools.get(name)
     
     def get_all_tools(self) -> List[Tool]:
-·"""
+"""
         return [tool.to_langchain_tool() for tool in self.tools.values()]
 
 
@@ -480,19 +455,19 @@ def get_all_tools() -> List[Tool]:
     return registry.get_all_tools()
 ```
 
-### 5.2 å·¥å
-| å·¥å
-çº?| ç¶æ?|
+### 5.2
+|
+?| ?|
 |---------|--------|--------|------|
-å¼å?|
-| èæ
-å¼å?|
-å¼å?|
-å¼å?|
-å¼å?|
+?|
+|
+?|
+?|
+?|
+?|
 
 
-## å
+##
 
 ### 6.1 Agent调用流程
 
@@ -504,8 +479,7 @@ from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 
-# å¯¼å
-¥å·¥å
+#
 from ..tools import get_all_tools
 
 class QuantTradingAgent:
@@ -539,39 +513,34 @@ class QuantTradingAgent:
         与Agent对话
         
         2. AI提取参数
-·
         result = self.agent.invoke({"input": user_input})
         return result["output"]
     
     def _get_system_prompt(self) -> str:
 ## 工作流程
 1. 理解用户意图
-2. æåå
-·
-·å
+2.
 部无AI，直接执行）
 5. 将结果转换为自然语言反馈
 
 ## 重要提示
-·å
 ```
 
 ### 6.2 调用示例
 
 ```python
-¥
 user_input = "创建一个动量因子策略，持仓5天，止损10%"
 
 # Agent处理流程
 agent = QuantTradingAgent()
 result = agent.chat(user_input)
 
-# å
+#
 部流程
 """
 2. AI提取参数: {strategy_type: "momentum", holding_period: 5, stop_loss: 0.1}
-·"
-·: StrategyTool.execute({
+"
+: StrategyTool.execute({
        "action": "configure",
        "params": {
            "strategy_type": "momentum",
@@ -579,7 +548,7 @@ result = agent.chat(user_input)
            "stop_loss": 0.1
        }
    })
-5. å·¥å
+5.
 """
 
 print(result)
@@ -596,8 +565,8 @@ print(result)
 
 ```python
 class ToolCache:
-    """å·¥å
-·ç¼å­"""
+"""
+"""
     
     def __init__(self, max_size: int = 100):
         self.cache = {}
@@ -616,9 +585,9 @@ class ToolCache:
 ```
 
 
-## å
+##
 
-·å¼å?
+?
 ```yaml
 容:
 策略引擎API
@@ -629,36 +598,32 @@ class ToolCache:
   
 风控引擎API
 授权确认API
-     - å®ç°å
+-
 
-  - åå
-æµè¯
+-
 ```
 
-·å¼å?
+?
 ```yaml
 容:
-  1. èæ
-å·¥å
-·å¼å?
+1.
+?
 ```
 
 ```yaml
 容:
   1. 性能优化
-     - å·¥å
-·ç¼å­
+-
      - 并发控制
      - 错误处理
   
   2. 文档完善
-     - å·¥å
+-
      - API文档
      - 示例代码
   
   3. 测试验证
-     - åå
-æµè¯
+-
      - 集成测试
      - 性能测试
 
@@ -670,8 +635,8 @@ class ToolCache:
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **å·¥å
-| **å·¥å
+| **
+| **
 
 ### 9.2 实施风险
 
@@ -681,7 +646,7 @@ class ToolCache:
 分测试、渐进式迁移 |
 
 
-## åãç¸å
+##
 | 文档名称 | 路径 | 说明 |
 |---------|------|------|
 | [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
@@ -693,16 +658,16 @@ class ToolCache:
 
 | 模块 | 路径 | 说明 |
 |------|------|------|
-| å·¥å
-·å®ç° |
-·å®ç° |
-·å®ç° |
-| å·¥å
+|
+|
+|
+|
+|
 
 ---
 
 **文档版本**: v1.0.0
-**æåæ´æ?*: 2026-04-02
+**?*: 2026-04-02
 ---
 
 ## 1. 文档治理
@@ -715,7 +680,7 @@ class ToolCache:
 - **模块ID**: LAYER_11_TOOL_ENCAPSULATION_001
 - **蓝图文档**: [LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md](06_ARCHIVE\architecture_v4\module_designs\layer_11\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: Layer 11æå­é©±å¨å±?compliance_level: ä¸ä¸æºææ å
+- **职责**: Layer 11?compliance_level: 
 - **状态**: Active
 ```
 
@@ -723,7 +688,7 @@ class ToolCache:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Layer 11 Tool Encapsulation** | Layer 11æå­é©±å¨å±?compliance_level: ä¸ä¸æºææ å | **核心模块** |
+| **Layer 11 Tool Encapsulation** | Layer 11?compliance_level:  | **核心模块** |
 
 ### 1.3 版本管理
 

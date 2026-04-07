@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 responsibility:
   - 审计报告、合规检查
-compliance_level: غ╕ôغ╕أµبçفç
+compliance_level: غ╕غ╕أبف
 parent_document: ../INDEX.md
 ---
 ---
@@ -22,22 +22,22 @@ parent_document: ../INDEX.md
 ---
 
 
-### ف«ةك«ةكîâفؤ┤
+### فةكةكفؤ┤
 
 |--------|---------|-----------|-----------|
 
-### ف«ةك«ةق╗ôك«║
+### فةكةق╗ك║
 
 
-**فà│ل¤«فّق░**:
+**ف│لفّق░**:
 
 ---
 
-### 1.1 قؤ«ف╜ـق╗ôµئلù«لتء
+### 1.1 قؤف╜ـق╗ئللتء
 
 
 
-**قر║قؤ«ف╜ـµ╕àف?*:
+**قر║قؤف╜ـ╕ف?*:
 ```
 docs/09_ARCHIVE/
 docs/00_RESOURCES/01_API_DOCS/
@@ -49,12 +49,12 @@ docs/02_FACTOR_LIBRARY/03_RISK_MODELS/
 docs/02_FACTOR_LIBRARY/04_DATA_UNIVERSE/
 docs/02_FACTOR_LIBRARY/05_BACKTEST_RESULTS/
 docs/02_FACTOR_LIBRARY/07_MONITORING/
-docs/02_FACTOR_LIBRARY/05_BACKTEST/فèذلçق▒?
-docs/02_FACTOR_LIBRARY/05_BACKTEST/فإçف╝فؤئف╜ْق▒╗/
-docs/02_FACTOR_LIBRARY/05_BACKTEST/µâàق╗زق▒?
-docs/02_FACTOR_LIBRARY/05_BACKTEST/µêلـ┐ق▒?
-docs/02_FACTOR_LIBRARY/05_BACKTEST/ك┤ذلçق▒?
-docs/02_FACTOR_LIBRARY/05_BACKTEST/ك╢ïفè┐ق▒?
+docs/02_FACTOR_LIBRARY/05_BACKTEST/فذلق▒?
+docs/02_FACTOR_LIBRARY/05_BACKTEST/فإف╝فؤئف╜ْق▒╗/
+docs/02_FACTOR_LIBRARY/05_BACKTEST/ق╗زق▒?
+docs/02_FACTOR_LIBRARY/05_BACKTEST/لـ┐ق▒?
+docs/02_FACTOR_LIBRARY/05_BACKTEST/ك┤ذلق▒?
+docs/02_FACTOR_LIBRARY/05_BACKTEST/ك╢ف┐ق▒?
 docs/02_FACTOR_LIBRARY/05_BACKTEST/لثلآرق▒?
 docs/03_TRADING_TACTICS/02_CORE_STRATEGIES/
 docs/03_TRADING_TACTICS/02_CORE_STRATEGIES/arbitrage/
@@ -82,40 +82,40 @@ docs/06_ARCHIVE/architecture_v4/module_designs/layer_8/
 docs/06_ARCHIVE/factor-library/v4_reports/
 ```
 
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
 
 
-**قج║غ╛ï**:
+**قج║غ╛**:
 ```
 docs/06_ARCHIVE/architecture_v4/module_designs/layer_0/ (5ف▒?
 docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/financial_statements/ (5ف▒?
 ```
 
-**غ╝ءفîûف╗║ك««**:
-### 1.2 µûçغ╗╢فّ╜فلù«لتء
+**غ╝ءفف╗║ك**:
+### 1.2 غ╗╢فّ╜فللتء
 
 
-**لù«لتءµ╕àفـ**:
+**للتء╕فـ**:
 |--------|------|------|
-| `T.01.DS001.free_data_sources.md` | ق╝ûف╖µب╝ف╝غ╕كدكî?| لçفّ╜فغ╕║FREE_DATA_SOURCES.md |
-| `ths_bd_complete_indicator_list.md` | ف░فآفّ╜ف | لçفّ╜فغ╕║THS_BD_COMPLETE_INDICATOR_LIST.md |
+| `T.01.DS001.free_data_sources.md` | ق╝ف╖ب╝ف╝غ╕كدك?| لفّ╜فغ╕║FREE_DATA_SOURCES.md |
+| `ths_bd_complete_indicator_list.md` | ف░فآفّ╜ف | لفّ╜فغ╕║THS_BD_COMPLETE_INDICATOR_LIST.md |
 
 
-**غ╝ءفîûف╗║ك««**:
-1. ق╗اغ╕غ╜┐ق¤ذفجدفآفّ╜ف
-### 1.3 ك╖»ف╛ف╝ـق¤ذلù«لتء
+**غ╝ءفف╗║ك**:
+1. ق╗اغ╕غ╜┐قذفجدفآفّ╜ف
+### 1.3 ك╖ف╛ف╝ـقذللتء
 
 
-**µثµاحµû╣µ│?*:
+**ثاح╣│?*:
 ```bash
 grep -r "\[.*\](.*)" docs/ | grep -v "http"
 ```
 
 
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
 ---
 
-### 2.1 كîك┤ثلر▒فèذفافêآلù«لتء
+### 2.1 كك┤ثلر▒فذفافآللتء
 
 
 
@@ -123,96 +123,96 @@ grep -r "\[.*\](.*)" docs/ | grep -v "http"
 
 
 
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
 
 
 
 
-**غ╝ءفîûف╗║ك««**:
-1. ف░`DATA_SOURCE_INVENTORY.md`فàف«╣فêف╣╢فê░`DATA_SOURCE_MANAGEMENT_BLUEPRINT.md`
-2. فêبلآج`DATA_SOURCE_INVENTORY.md`
+**غ╝ءفف╗║ك**:
+1. ف░`DATA_SOURCE_INVENTORY.md`فف╣فف╣╢ف░`DATA_SOURCE_MANAGEMENT_BLUEPRINT.md`
+2. فبلآج`DATA_SOURCE_INVENTORY.md`
 
-#### لù«لتء7ي╝أفصقؤ«ف╜ـق╝║ف░ّINDEX.mdي╝êP1ق║دي╝ë
+#### للتء7ي╝أفصقؤف╜ـق╝║ف░ّINDEX.mdي╝P1ق║دي╝
 
 
-**ق╝║فج▒µ╕àفـ**:
+**ق╝║فج▒╕فـ**:
 ```
 docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/ - ق╝║ف░ّINDEX.md
-docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ - µ£ëINDEX.md ظ£?```
+docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ - INDEX.md ظ?```
 
-**غ╝ءفîûف╗║ك««**:
-1. غ╕║ق╝║ف░ّINDEX.mdقأقؤ«ف╜ـفêؤف╗║ق┤تف╝ـµûçغ╗?
-
-
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
+1. غ╕║ق╝║ف░ّINDEX.mdقأقؤف╜ـفؤف╗║ق┤تف╝ـغ╗?
 
 
+**غ╝ءفف╗║ك**:
 
 
 
-**غ╝ءفîûف╗║ك««**:
+
+
+**غ╝ءفف╗║ك**:
 ---
 
 
-**µثµاحق╗ôµئ?*:
+**ثاحق╗ئ?*:
 
 
-**غ╝ءفîûف╗║ك««**:
-
-
-
-**µثµاحق╗ôµئ?*:
-- ظ£?70%قؤ«ف╜ـµ£ëINDEX.md
-- ظإ?30%قؤ«ف╜ـق╝║ف░ّINDEX.md
-
-**غ╝ءفîûف╗║ك««**:
-
-**µثµاحق╗ôµئ?*:
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
 
 
 
-**µثµاحق╗ôµئ?*:
+**ثاحق╗ئ?*:
+- ظ?70%قؤف╜ـINDEX.md
+- ظإ?30%قؤف╜ـق╝║ف░ّINDEX.md
 
+**غ╝ءفف╗║ك**:
 
-**غ╝ءفîûف╗║ك««**:
-
-**µثµاحق╗ôµئ?*:
-- ظأبي╕ 15%µûçµةثفّ╜فغ╕كدكî?
-
-**غ╝ءفîûف╗║ك««**:
-
-
-
-**µثµاحق╗ôµئ?*:
-
-**غ╝ءفîûف╗║ك««**:
-
-### 3.3 ق╝ûف╖غ╜ôق│╗لù«لتء
+**ثاحق╗ئ?*:
+**غ╝ءفف╗║ك**:
 
 
 
+**ثاحق╗ئ?*:
 
 
-**غ╝ءفîûف╗║ك««**:
+**غ╝ءفف╗║ك**:
+
+**ثاحق╗ئ?*:
+- ظأبي╕ 15%ةثفّ╜فغ╕كدك?
+
+**غ╝ءفف╗║ك**:
 
 
-#### لù«لتء17ي╝أYAMLفج┤لâذق╝║فج▒ي╝êP2ق║دي╝ë
 
-**µثµاحق╗ôµئ?*:
-- ظإ?10%µûçµةثق╝║ف░ّYAMLفج┤لâذ
+**ثاحق╗ئ?*:
+
+**غ╝ءفف╗║ك**:
+
+### 3.3 ق╝ف╖غ╜ق│╗للتء
 
 
-**غ╝ءفîûف╗║ك««**:
-2. ف╗║قسïYAMLفج┤لâذµذةµإ┐
+
+
+
+**غ╝ءفف╗║ك**:
+
+
+#### للتء17ي╝أYAMLفج┤لذق╝║فج▒ي╝P2ق║دي╝
+
+**ثاحق╗ئ?*:
+- ظإ?10%ةثق╝║ف░ّYAMLفج┤لذ
+
+
+**غ╝ءفف╗║ك**:
+2. ف╗║قسYAMLفج┤لذذةإ┐
 
 ---
 
 
 
-#### كةîفèذ1ي╝أفêبلآجقر║قؤ«ف╜ـ
+#### كةفذ1ي╝أفبلآجقر║قؤف╜ـ
 
-**µëدكةîفّ╜غ╗ج**:
+**دكةفّ╜غ╗ج**:
 ```powershell
 Get-ChildItem -Path "d:\ZephyrAlpha\docs" -Recurse -Directory | 
 Where-Object { $_.GetFiles().Count -eq 0 } | 
@@ -220,50 +220,50 @@ Remove-Item -Force
 ```
 
 
-**µëدكةîµصحلزج**:
-1. ف░`REALTIME_QUALITY_MONITOR_BLUEPRINT.md`فàف«╣فêف╣╢فê░`DATA_QUALITY_MONITORING_BLUEPRINT.md`
-2. فêبلآج`DATA_QUALITY.md`ي╝êdocs/02_FACTOR_LIBRARY/04_DATA_SOURCE/ي╝?
+**دكةصحلزج**:
+1. ف░`REALTIME_QUALITY_MONITOR_BLUEPRINT.md`فف╣فف╣╢ف░`DATA_QUALITY_MONITORING_BLUEPRINT.md`
+2. فبلآج`DATA_QUALITY.md`ي╝docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/ي╝?
 
-**µëدكةîµصحلزج**:
-1. لçفّ╜ف`T.01.DS001.free_data_sources.md` ظ?`FREE_DATA_SOURCES.md`
-2. لçفّ╜ف`ths_bd_complete_indicator_list.md` ظ?`THS_BD_COMPLETE_INDICATOR_LIST.md`
+**دكةصحلزج**:
+1. لفّ╜ف`T.01.DS001.free_data_sources.md` ظ?`FREE_DATA_SOURCES.md`
+2. لفّ╜ف`ths_bd_complete_indicator_list.md` ظ?`THS_BD_COMPLETE_INDICATOR_LIST.md`
 
-#### كةîفèذ4ي╝أفêؤف╗║ق╝║فج▒قأINDEX.md
+#### كةفذ4ي╝أفؤف╗║ق╝║فج▒قأINDEX.md
 
-**µëدكةîµصحلزج**:
-1. غ╕║`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/`فêؤف╗║INDEX.md
+**دكةصحلزج**:
+1. غ╕║`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/`فؤف╗║INDEX.md
 
-#### كةîفèذ5ي╝أفêف╣╢DATA_SOURCE_INVENTORY.md
+#### كةفذ5ي╝أفف╣╢DATA_SOURCE_INVENTORY.md
 
-**µëدكةîµصحلزج**:
-1. ف░`DATA_SOURCE_INVENTORY.md`فàف«╣فêف╣╢فê░`DATA_SOURCE_MANAGEMENT_BLUEPRINT.md`
-2. فêبلآج`DATA_SOURCE_INVENTORY.md`
+**دكةصحلزج**:
+1. ف░`DATA_SOURCE_INVENTORY.md`فف╣فف╣╢ف░`DATA_SOURCE_MANAGEMENT_BLUEPRINT.md`
+2. فبلآج`DATA_SOURCE_INVENTORY.md`
 
-**µëدكةîµصحلزج**:
+**دكةصحلزج**:
 
 
 ---
 
 
 |------|--------|--------|------|
-| **قر║قؤ«ف╜ـµـ░لç?* | 39غ╕?| 0غ╕?| -100% |
-| **فّ╜فكدكîâµ?* | 85فê?| 95فê?| +12% |
-| **µـ┤غ╜ôفحف║╖ف║?* | 72.5فê?| 85فê?| +17% |
+| **قر║قؤف╜ــ░ل?* | 39غ╕?| 0غ╕?| -100% |
+| **فّ╜فكدك?* | 85ف?| 95ف?| +12% |
+| **ـ┤غ╜فحف║╖ف║?* | 72.5ف?| 85ف?| +17% |
 
 ---
 
-## ≡ا» ف«ةك«ةق╗ôك«║
+## ≡ا فةكةق╗ك║
 
-### µ╗غ╜ôك»غ╗╖
+### ╗غ╜كغ╗╖
 
-**غ╝ءفîûµû╣فّ**:
+**غ╝ءف╣فّ**:
 
-### لثلآرك»غ╝░
+### لثلآركغ╝░
 
-| لثلآرلة?| لثلآرقصëق║د | ق╝ôكدثµزµû╜ |
+| لثلآرلة?| لثلآرقصق║د | ق╝كدثز╜ |
 |--------|---------|---------|
 
-### غ╕ïغ╕µصحكةîفè?
-1. ظ£?**ف╖▓فجçغ╗?*: Gitµبçقص╛ `backup-before-deep-audit-20260403-v2`
+### غ╕غ╕صحكةف?
+1. ظ?**ف╖▓فجغ╗?*: Gitبقص╛ `backup-before-deep-audit-20260403-v2`
 ---
 

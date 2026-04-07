@@ -17,7 +17,7 @@ compliance_level: 专业标准
 
 ﻿---
 standard_type: 蓝图标准
-applicable_scope: å
+applicable_scope:
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -37,13 +37,13 @@ last_updated: 2026-04-02
 ### 1.1 目录结构概览
 ```
 D:\ZephyrAlpha\A股数据\量化交易数据\
-â?  âââ ...å
+?   ...
 数据
-â?  âââ ...å
+?   ...
 ```
 
 
-#### 1.2.1 è¡æ
+#### 1.2.1
 数据格式
 **日线数据 (000002.csv)**:
 ```csv
@@ -59,8 +59,8 @@ date,open,high,low,close,volume,code
 
 #### 1.2.2 财务数据格式
 **Excel格式财务数据**:
-- æä»¶: `å
-- å
+- : `
+-
 含: 资产负债表、利润表、现金流量表、财务比率、估值指标等
 
 #### 1.2.3 压缩数据格式
@@ -71,7 +71,7 @@ date,open,high,low,close,volume,code
 ## 2. 总体处理架构设计
 
 ```
-    â?            â?             â?             â?           â?
+?            ?             ?             ?           ?
 洗        数据分类      SQLite/Parquet
    Excel      格式转换      异常处理        维度划分      数据仓库
 ```
@@ -160,12 +160,12 @@ class FinancialDataReader:
         self.excel_dir = Path(excel_dir)
         
     def read_quarterly_data(self):
-        quarter_files = sorted(self.excel_dir.glob("å
+quarter_files = sorted(self.excel_dir.glob("
         all_data = []
         
         for file_path in quarter_files:
             # 从文件名提取季度信息
-            quarter_str = file_path.stem.split('_')[-1]  # å¦?20250930
+quarter_str = file_path.stem.split('_')[-1]  # ?20250930
             quarter_date = pd.to_datetime(quarter_str, format='%Y%m%d')
             
             print(f"读取: {file_path.name}")
@@ -184,7 +184,7 @@ processed_data/
 ├── extracted/                    # 解压后的原始文件
 ├── raw_csv/                     # 原始CSV数据（保持原样）
 ├── raw_financial/               # 原始财务数据（保持原样）
-âââ metadata/                    # å
+metadata/                    #
     ├── file_index.json         # 文件索引
     ├── data_schema.json        # 数据模式定义
     └── extraction_log.csv      # 提取日志
@@ -192,10 +192,10 @@ processed_data/
 
 洗与标准化流程
 
-### 4.1 æ¸
+### 4.1
 洗规则定义
 
-#### 4.1.1 è¡æ
+#### 4.1.1
 洗规则
 洗规则 | 异常处理 |
 |------|----------|----------|
@@ -205,7 +205,6 @@ processed_data/
 洗规则
 洗规则 | 说明 |
 |----------|----------|------|
-³èè¡æ
 数据 |
 | **日期字段** | 转换为datetime格式 | 统一时间处理 |
 
@@ -217,8 +216,7 @@ class DataCleaner:
         self.rules = self._load_cleaning_rules()
         
     def clean_market_data(self, df):
-        """æ¸
-æ´è¡æ
+"""
 数据"""
         df['code'] = df['code'].apply(self._standardize_code)
         
@@ -230,7 +228,7 @@ class DataCleaner:
             df[col] = pd.to_numeric(df[col], errors='coerce')
             df.loc[df[col] <= 0, col] = np.nan
             
-        # 4. é»è¾å
+# 4.
         df = self._validate_price_logic(df)
         
         df = self._handle_missing_values(df)
@@ -238,7 +236,7 @@ class DataCleaner:
         return df
         
     def clean_financial_data(self, df):
-        """æ¸
+"""
 洗财务数据"""
         if '股票代码' in df.columns:
             df['stock_code'] = df['股票代码'].astype(str).str.zfill(6)
@@ -252,7 +250,7 @@ class DataCleaner:
         for col in text_cols:
             df[col] = df[col].astype(str).str.strip()
             
-        # 4. å»é¤å
+# 4.
         df = df.dropna(how='all')
         
         return df
@@ -285,7 +283,7 @@ class AnomalyDetector:
     def detect_price_anomalies(self, df):
         anomalies = []
         
-è¿å¤?
+?
         df['pct_change'] = df['close'].pct_change()
         large_jumps = df[abs(df['pct_change']) > 0.2]  # 20%以上跳动
         
@@ -332,7 +330,7 @@ class AnomalyDetector:
     └── 回测结果 (backtest_results)
 ```
 
-- **åå²å
+- **
 - **滚动窗口数据**: 最近N年数据，用于实时分析
 - **季度切片数据**: 按财务季度划分，用于季报分析
 
@@ -364,13 +362,13 @@ class DataClassifier:
         return 'unknown'
         
     def classify_by_content(self, df):
-        """æå
+"""
         column_set = set(df.columns)
         
         financial_cols = [col for col in column_set 
                          if any(keyword in str(col) for keyword in financial_keywords)]
         
-        # è¡æ
+#
         market_keywords = ['open', 'high', 'low', 'close', 'volume', 'amount']
         market_cols = [col for col in column_set 
                       if any(keyword.lower() in str(col).lower() for keyword in market_keywords)]
@@ -392,7 +390,6 @@ class DataClassifier:
         elif period == 'month':
             df['period'] = df[date_col].dt.to_period('M')
             
-¸
         return {period: group.drop('period', axis=1) 
                 for period, group in df.groupby('period')}
 ```
@@ -403,15 +400,15 @@ class DataClassifier:
 #### 6.1.1 混合存储策略
 ```
 存储架构:
-â?  âââ metadata.db    # å
-æ°æ?
+?   metadata.db    #
+?
 └── HDF5文件存储 (可选，用于复杂财务数据)
     ├── financial/    # 财务数据
     └── factors/      # 因子数据
 ```
 
 
-**1. å
+**1.
 ```sql
 CREATE TABLE metadata (
     id INTEGER PRIMARY KEY,
@@ -464,7 +461,6 @@ CREATE TABLE daily_market_data (
 );
 ```
 
-¥å®ç°
 
 ```python
 class DatabaseManager:
@@ -480,7 +476,7 @@ class DatabaseManager:
         # 1. 保存到Parquet文件
         parquet_path = self._save_to_parquet(df, frequency, adj_type)
         
-        # 2. æ´æ°å
+# 2.
         self._update_metadata(df, frequency, adj_type, parquet_path)
         
         if frequency == 'daily':
@@ -504,7 +500,7 @@ class DatabaseManager:
         return str(file_path)
         
     def _update_metadata(self, df, frequency, adj_type, file_path):
-        """æ´æ°å
+"""
         conn = sqlite3.connect(self.db_path)
         
         metadata = {
@@ -518,9 +514,8 @@ class DatabaseManager:
             'last_updated': datetime.now()
         }
         
-        # æå
-æ°æ®
-        # ... å
+#
+# ...
         
         conn.close()
         
@@ -546,7 +541,7 @@ class DataQuery:
         
     def get_stock_data(self, stock_codes, start_date, end_date, frequency='daily'):
         """获取股票数据"""
-        # 1. ä»å
+# 1.
         parquet_files = self._locate_parquet_files(stock_codes, frequency)
         
         # 2. 从Parquet文件读取数据
@@ -594,10 +589,10 @@ class AShareDataPipeline:
             self.source_dir / "A股数据_zip",
             self.output_dir / "extracted"
         )
-        self.csv_reader = CSVReader(self.source_dir / "CSVè¡æ
+self.csv_reader = CSVReader(self.source_dir / "CSV
 数据")
         self.financial_reader = FinancialDataReader(
-            self.source_dir / "ä¸å¸å
+self.source_dir / "
         )
         self.cleaner = DataCleaner()
         self.classifier = DataClassifier()
@@ -698,7 +693,7 @@ class IncrementalUpdater:
         
         # 只处理新文件
         for zip_file in new_files:
-            # æ¸
+#
 洗和标准化
             
         self._save_last_update_time()
@@ -726,13 +721,13 @@ python_version: ">=3.8"
 dependencies:
   - pandas>=1.3.0
   - numpy>=1.21.0
-  - sqlite3 (å
+- sqlite3 (
 置)
   - pyarrow>=6.0.0  # Parquet支持
   - openpyxl>=3.0.0  # Excel支持
 ```
 
-### 8.2 é
+### 8.2
 ```yaml
 # config.yaml
 data_pipeline:
@@ -740,12 +735,12 @@ data_pipeline:
   
   processing:
     chunk_size: 100000       # 分块大小
-    memory_limit_gb: 8       # å
+memory_limit_gb: 8       #
 存限制
     
   cleaning:
     price_range: [0, 10000]  # 价格合理范围
-éå?
+?
     
   storage:
     db_path: "zephyr_alpha.db"
@@ -808,16 +803,15 @@ class PipelineMonitor:
         pass
         
     def cleanup_old_data(self, days_to_keep=365):
-        """æ¸
+"""
         # 归档历史数据
         pass
 ```
 
 ## 9. 性能优化建议
 
-### 9.1 å
+### 9.1
 存优化
-å
 存溢出
 存**: 处理完成后及时删除不需要的数据
 
@@ -827,9 +821,8 @@ class PipelineMonitor:
 3. **压缩选择**: Snappy压缩速度快，Gzip压缩率高
 
 ### 9.3 处理速度优化
-å¾ªç¯
 
-## 10. æ
+## 10.
 
 ### 10.1 检查点机制
 ```python
@@ -863,7 +856,7 @@ class CheckpointManager:
 
 ### 10.2 备份策略
 1. **每日增量备份**: 备份当日新增数据
-2. **æ¯å¨å
+2. **
 
 ---
 
@@ -871,7 +864,7 @@ class CheckpointManager:
 
 这个蓝图提供了一个完整的A股历史数据处理方案，从原始数据提取到数据库存储的完整流程。方案特点：
 
-1. **å
+1. **
 数据、财务数据、分钟数据等多种数据类型
 
 ---
@@ -886,7 +879,7 @@ class CheckpointManager:
 - **模块ID**: DOC_TEMP_A_STOCK_BLUEPRI
 - **蓝图文档**: [A_STOCK_DATA_PROCESSING_BLUEPRINT.md](06_CONSTRUCTION_DOCS\01_BLUEPRINTS\A_STOCK_DATA_PROCESSING_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -894,8 +887,8 @@ class CheckpointManager:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Doc Temp A Stock** | å
-¨ç³»ç»? | **核心模块** |
+| **Doc Temp A Stock** |
+? | **核心模块** |
 
 ### 11.3 版本管理
 

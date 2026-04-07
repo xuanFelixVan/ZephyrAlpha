@@ -18,14 +18,14 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 因子计算
   - 交易执行
   - 机器学习
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﭖﻟﺁﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒ
-compliance_level: ﮔﭘﮔﮔ ﮒ
+compliance_level: ﮔﭘﮔﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
@@ -40,16 +40,16 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﭦ۳ﮔﮔﮔ؛ﮔ۷۰ﮒﮔﭖﻟﺁﻝ۷ﻛﺝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
 > **ﻝﺑ۱ﮒﺙ**: `TEST_TRADING_COSTS_001`
 > **ﮔﭖﻟﺁﻝﺎﭨﮒ**: ﮒﮒﮔﭖﻟﺁﻙﻠﮔﮔﭖﻟﺁﻙﮔ۶ﻟﺛﮔﭖﻟﺁﻙﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁ?
-> **ﮔ ﺕﮒﺟﻝ؟ﮔ **: ﻝ۰؟ﻛﺟﻛﭦ۳ﮔﮔﮔ؛ﻟ؟۰ﻝ؟ﻝﺎﺝﻝ۰؟ﻙﮒﺁﻠ ﻙﻠ،ﮔ۶ﻟﺛ
+> **ﮔﺕﮒﺟﻝ؟ﮔ**: ﻝ۰؟ﻛﺟﻛﭦ۳ﮔﮔﮔ؛ﻟ؟۰ﻝ؟ﻝﺎﺝﻝ۰؟ﻙﮒﺁﻠﻙﻠ،ﮔ۶ﻟﺛ
 
-## 1. ﮔﭖﻟﺁﻝ­ﻝ۴
+## 1. ﮔﭖﻟﺁﻝﻝ۴
 
 ### 1.1 ﮔﭖﻟﺁﻝﭦ۶ﮒ،
 
-| ﮔﭖﻟﺁﻝﭦ۶ﮒ، | ﮔﭖﻟﺁﻝ؟ﮔ  | ﮔﭖﻟﺁﮔﺗﮔﺏ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ |
+| ﮔﭖﻟﺁﻝﭦ۶ﮒ، | ﮔﭖﻟﺁﻝ؟ﮔ | ﮔﭖﻟﺁﮔﺗﮔﺏ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ |
 |----------|----------|----------|----------|
-| **ﮒﮒﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮒﻛﺕ۹ﮒﺛﮔﺍ/ﮔﺗﮔﺏﮔ­۲ﻝ۰؟ﮔ?| ﻝﺛﻝﮔﭖﻟﺁﻙﻟﺝﺗﻝﮒﺙﮒﮔ?| pytestﻙunittest |
-| **ﻠﮔﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﮔ­۲ﻝ۰؟ﮔ?| ﮔ۴ﮒ۲ﮔﭖﻟﺁﻙﮔﺍﮔ؟ﮔﭖﮔﭖﻟﺁ | pytestﻙmock |
+| **ﮒﮒﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮒﻛﺕ۹ﮒﺛﮔﺍ/ﮔﺗﮔﺏﮔ۲ﻝ۰؟ﮔ?| ﻝﺛﻝﮔﭖﻟﺁﻙﻟﺝﺗﻝﮒﺙﮒﮔ?| pytestﻙunittest |
+| **ﻠﮔﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﮔ۲ﻝ۰؟ﮔ?| ﮔ۴ﮒ۲ﮔﭖﻟﺁﻙﮔﺍﮔ؟ﮔﭖﮔﭖﻟﺁ | pytestﻙmock |
 | **ﻝﺏﭨﻝﭨﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﮔﺑﻛﺕ۹ﮔﮔ؛ﻟ؟۰ﻝ؟ﻝﺏﭨﻝﭨ | ﻝ،ﺁﮒﺍﻝ،ﺁﮔﭖﻟﺁﻙﮒﭦﮔﺁﮔﭖﻟﺁ?| pytestﻙﻠﮔﻝﺁﮒ۱?|
 | **ﮔ۶ﻟﺛﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﮒﻟﭖﮔﭦﻛﺛﺟﻝ?| ﮒﮒﮔﭖﻟﺁﻙﻟﺑﻟﺛﺛﮔﭖﻟﺁ?| pytest-benchmarkﻙmemory-profiler |
 | **ﮒﮒﺛﮔﭖﻟﺁ** | ﻠ۹ﻟﺁﻛﺟ؟ﮔﺗﻛﺕﮒﺛﺎﮒﻝﺍﮔﮒﻟ?| ﻟ۹ﮒ۷ﮒﮔﭖﻟﺁﮒ۴ﻛﭨ?| pytestﻙGitHub Actions |
@@ -61,13 +61,13 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
   ﮒﺙﮒﻝﺁﮒ۱?
     python_version: "3.13"
     os: "Windows/Linux/macOS"
-    ﮒﮒ­: ">=8GB"
+ﮒﮒ: ">=8GB"
     
   ﮔﭖﻟﺁﮔﺍﮔ؟:
-    ﮔ ﺓﮔ؛ﮔﺍﻠ: 1000ﻛﺕ۹ﮔﭖﻟﺁﻟ؟۱ﮒ?
+ﮔﺓﮔ؛ﮔﺍﻠ: 1000ﻛﺕ۹ﮔﭖﻟﺁﻟ؟۱ﮒ?
     ﮒﺕﮒﭦﻝﺎﭨﮒ: SH, SZ
     ﻟﺁﮒﺕﻝﺎﭨﮒ،: STOCK, ETF, BOND, CONVERTIBLE_BOND
-    ﻛﭨﺓﮔ ﺙﻟﮒﺑ: 0.1-1000ﮒ?
+ﻛﭨﺓﮔﺙﻟﮒﺑ: 0.1-1000ﮒ?
     ﮔﺍﻠﻟﮒﺑ: 100-1000000ﻟ?
     
   ﻛﺝﻟﭖﮒﭦ?
@@ -83,7 +83,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ### 1.3 ﮔﭖﻟﺁﮔﺍﮔ؟ﮒﮒ۳
 
 ```python
-ﮔﭖﻟﺁﮔﺍﮔ؟ﻝﮔﻝ­ﻝ۴:
+ﮔﭖﻟﺁﮔﺍﮔ؟ﻝﮔﻝﻝ۴:
   1. ﮒﭦﻝ۰ﮔﭖﻟﺁﮔﺍﮔ؟: ﮔﮒ۷ﻝﺙﮒﻝﮒﺕﮒﮒﭦﮔ?
   2. ﻠﮔﭦﮔﭖﻟﺁﮔﺍﮔ؟: ﻠﮔﭦﻝﮔﻝﻟﺝﺗﻝﮒﭦﮔ?
   3. ﮒ؟ﻝﮔﭖﻟﺁﮔﺍﮔ؟: ﻛﭨﮒ؟ﻝﻛﭦ۳ﮔﮔ۴ﮒﺟﮔﮒ?
@@ -92,7 +92,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﮔﭖﻟﺁﮔﺍﮔ؟ﮔﻛﭨﭘ:
   - test_data/basic_orders.json: ﮒﭦﻝ۰ﮔﭖﻟﺁﻟ؟۱ﮒ
   - test_data/random_orders_1000.json: 1000ﻛﺕ۹ﻠﮔﭦﮔﭖﻟﺁﻟ؟۱ﮒ?
-  - test_data/real_orders_sample.json: ﮒ؟ﻝﻟ؟۱ﮒﮔ ﺓﮔ؛
+- test_data/real_orders_sample.json: ﮒ؟ﻝﻟ؟۱ﮒﮔﺓﮔ؛
   - test_data/edge_cases.json: ﻟﺝﺗﻝﮔ۰ﻛﭨﭘﮔﭖﻟﺁﮔﺍﮔ؟
 ```
 
@@ -173,7 +173,7 @@ class TestCommissionCalculation:
         expected1 = max(500000 * 0.0003, 5.0)  # 150ﮒ?
         assert result1.commission == pytest.approx(expected1, rel=0.01)
         
-        # ﮔﭖﻟﺁﻛﺕ­ﻠﻠ۱ﺅﺙ300ﻛﺕﮒ
+# ﮔﭖﻟﺁﻛﺕﻠﻠ۱ﺅﺙ300ﻛﺕﮒ
         order2 = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -256,7 +256,7 @@ class TestCommissionCalculation:
         
         calculator = CostCalculator(config)
         
-        # ﮔ ﺗﮔ؟ﻠﻠ۱ﻟ؟۰ﻝ؟ﮔﺍﻠﮒﻛﭨﺓﮔ ?
+# ﮔﺗﮔ؟ﻠﻠ۱ﻟ؟۰ﻝ؟ﮔﺍﻠﮒﻛﭨﺓﮔ?
         price = 10.0
         quantity = int(amount / price)
         
@@ -630,7 +630,7 @@ class TestSlippageCalculation:
             category=SecurityCategory.STOCK,
             market_data={
                 "daily_volume": 50000000,  # 5000ﻛﺕﺅﺙﻠ،ﮔﭖﮒ۷ﮔ?
-                "volatility": 0.02,        # 2%ﮔﺏ۱ﮒ۷ﻝﺅﺙﻛﺕ­ﻝ­
+"volatility": 0.02,        # 2%ﮔﺏ۱ﮒ۷ﻝﺅﺙﻛﺕﻝ
                 "avg_trade_size": 10000
             }
         )
@@ -656,13 +656,13 @@ class TestSlippageCalculation:
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # ﻛﺛﮔﭖﮒ۷ﮔ۶ﺅﺙﮒ ﮒ­2.0ﺅﺙﻠ،ﮔﺏ۱ﮒ۷ﻝﺅﺙﮒ ﮒ­1.5
+# ﻛﺛﮔﭖﮒ۷ﮔ۶ﺅﺙﮒﮒ2.0ﺅﺙﻠ،ﮔﺏ۱ﮒ۷ﻝﺅﺙﮒﮒ1.5
         # ﮒﭦﻝ۰ﮔﭨﻝﺗﻝ?.02% ﺣ 2.0 ﺣ 1.5 = 0.06%
         expected_slippage2 = 100000 * 0.0002 * 2.0 * 1.5
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
     def test_slippage_order_size_factor(self):
-        """ﮔﭖﻟﺁﻟ؟۱ﮒﮒ۳۶ﮒﺍﮒ ﮒ­"""
+"""ﮔﭖﻟﺁﻟ؟۱ﮒﮒ۳۶ﮒﺍﮒﮒ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -682,7 +682,7 @@ class TestSlippageCalculation:
         )
         
         result1 = calculator.calculate_total_cost(order1)
-        # ﮒﺍﮒﺅﺙﮒ ﮒ­?.0
+# ﮒﺍﮒﺅﺙﮒﮒ?.0
         expected_slippage1 = 10000 * 0.0002 * 1.0 * 1.0 * 1.0
         assert result1.slippage == pytest.approx(expected_slippage1, rel=0.01)
         
@@ -702,12 +702,12 @@ class TestSlippageCalculation:
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # ﮒ۳۶ﮒﺅﺙﮒ ﮒ­?.5
+# ﮒ۳۶ﮒﺅﺙﮒﮒ?.5
         expected_slippage2 = 2000000 * 0.0002 * 1.0 * 1.0 * 1.5
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
     def test_slippage_time_factor(self):
-        """ﮔﭖﻟﺁﮔﭘﻠﺑﮒ ﮒ­"""
+"""ﮔﭖﻟﺁﮔﭘﻠﺑﮒﮒ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -728,7 +728,7 @@ class TestSlippageCalculation:
         )
         
         result1 = calculator.calculate_total_cost(order1)
-        # ﮒﺙﻝﮔﭘﮔ؟ﭖﺅﺙﮒ ﮒ­1.5
+# ﮒﺙﻝﮔﭘﮔ؟ﭖﺅﺙﮒﮒ1.5
         expected_slippage1 = 100000 * 0.0002 * 1.0 * 1.0 * 1.0 * 1.5
         assert result1.slippage == pytest.approx(expected_slippage1, rel=0.01)
         
@@ -749,7 +749,7 @@ class TestSlippageCalculation:
         )
         
         result2 = calculator.calculate_total_cost(order2)
-        # ﮒﻠﺑﮔﭘﮔ؟ﭖﺅﺙﮒ ﮒ­?.8
+# ﮒﻠﺑﮔﭘﮔ؟ﭖﺅﺙﮒﮒ?.8
         expected_slippage2 = 100000 * 0.0002 * 1.0 * 1.0 * 1.0 * 0.8
         assert result2.slippage == pytest.approx(expected_slippage2, rel=0.01)
     
@@ -758,7 +758,7 @@ class TestSlippageCalculation:
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # ﮔﻝ،ﺁﮔﮒﭖﺅﺙﮔﮔﮒ ﮒ­ﻠﺛﮒﮔﮒ۳۶ﮒ?
+# ﮔﻝ،ﺁﮔﮒﭖﺅﺙﮔﮔﮒﮒﻠﺛﮒﮔﮒ۳۶ﮒ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -856,7 +856,7 @@ class TestTotalCostCalculation:
         assert result.total_cost == pytest.approx(expected_total, rel=0.01)
         assert result.as_percentage == pytest.approx(expected_percentage, rel=0.0001)
         
-        # ﮒﮒﭦﮔﮔ؛ﮒﭦﻠ،ﻛﭦﻛﺗﺍﮒ۴ﮔﮔ؛ﺅﺙﮒ ﻛﺕﭦﮔﮒﺍﻟﺎﻝ۷ﺅﺙ?
+# ﮒﮒﭦﮔﮔ؛ﮒﭦﻠ،ﻛﭦﻛﺗﺍﮒ۴ﮔﮔ؛ﺅﺙﮒﻛﺕﭦﮔﮒﺍﻟﺎﻝ۷ﺅﺙ?
         assert result.total_cost > (expected_total - stamp_tax)
     
     def test_total_cost_etf(self):
@@ -890,7 +890,7 @@ class TestTotalCostCalculation:
         )
         stock_result = calculator.calculate_total_cost(stock_order)
         
-        # ETFﮔﮔ؛ﮒﭦﻛﺛﻛﭦﻟ۰ﻝ۴۷ﮔﮔ؛ﺅﺙﮒ ﻛﺕﭦﮒﮒﺍﻟﺎﻝ۷ﺅﺙ?
+# ETFﮔﮔ؛ﮒﭦﻛﺛﻛﭦﻟ۰ﻝ۴۷ﮔﮔ؛ﺅﺙﮒﻛﺕﭦﮒﮒﺍﻟﺎﻝ۷ﺅﺙ?
         assert result.total_cost < stock_result.total_cost
     
     def test_cost_breakdown(self):
@@ -929,7 +929,7 @@ class TestTotalCostCalculation:
         assert breakdown["slippage"] == pytest.approx(result.slippage, rel=0.01)
     
     def test_cache_functionality(self):
-        """ﮔﭖﻟﺁﻝﺙﮒ­ﮒﻟﺛ"""
+"""ﮔﭖﻟﺁﻝﺙﮒﮒﻟﺛ"""
         config = CostConfig()
         config.cache_enabled = True
         config.cache_ttl = 60
@@ -947,13 +947,13 @@ class TestTotalCostCalculation:
         # ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟?
         result1 = calculator.calculate_total_cost(order)
         
-        # ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮒﭦﻛﺛﺟﻝ۷ﻝﺙﮒ­ﺅﺙ
+# ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮒﭦﻛﺛﺟﻝ۷ﻝﺙﮒﺅﺙ
         result2 = calculator.calculate_total_cost(order)
         
         # ﻝﭨﮔﮒﭦﻟﺁ۴ﻝﺕﮒ
         assert result1.total_cost == result2.total_cost
         
-        # ﻝ۵ﻝ۷ﻝﺙﮒ­ﮒﻠﮔﺍﻟ؟۰ﻝ؟?
+# ﻝ۵ﻝ۷ﻝﺙﮒﮒﻠﮔﺍﻟ؟۰ﻝ؟?
         config.cache_enabled = False
         calculator2 = CostCalculator(config)
         result3 = calculator2.calculate_total_cost(order)
@@ -999,7 +999,7 @@ class TestEdgeCases:
         assert result.as_percentage == 0.0
     
     def test_zero_price(self):
-        """ﮔﭖﻟﺁﻠﭘﻛﭨﺓﮔ ?""
+"""ﮔﭖﻟﺁﻠﭘﻛﭨﺓﮔ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1007,14 +1007,14 @@ class TestEdgeCases:
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=10000,
-            price=0.0,  # ﻠﭘﻛﭨﺓﮔ ?
+price=0.0,  # ﻠﭘﻛﭨﺓﮔ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # ﻠﭘﻛﭨﺓﮔ ﺙﻟ؟۱ﮒﺅﺙﮔﮔﮔﮔ؛ﮒﭦﻛﺕ?
+# ﻠﭘﻛﭨﺓﮔﺙﻟ؟۱ﮒﺅﺙﮔﮔﮔﮔ؛ﮒﭦﻛﺕ?
         assert result.total_cost == 0.0
         assert result.commission == 0.0
         assert result.stamp_tax == 0.0
@@ -1024,7 +1024,7 @@ class TestEdgeCases:
         assert result.as_percentage == 0.0
     
     def test_negative_price(self):
-        """ﮔﭖﻟﺁﻟﺑﻛﭨﺓﮔ ﺙﺅﺙﮒﺙﮒﺕﺕﮔﮒﭖﺅﺙ?""
+"""ﮔﭖﻟﺁﻟﺑﻛﭨﺓﮔﺙﺅﺙﮒﺙﮒﺕﺕﮔﮒﭖﺅﺙ?""
         config = CostConfig()
         calculator = CostCalculator(config)
         
@@ -1032,19 +1032,19 @@ class TestEdgeCases:
             symbol="000001.SZ",
             side=OrderSide.BUY,
             quantity=10000,
-            price=-10.0,  # ﻟﺑﻛﭨﺓﮔ ?
+price=-10.0,  # ﻟﺑﻛﭨﺓﮔ?
             market=MarketType.SZ,
             category=SecurityCategory.STOCK
         )
         
         result = calculator.calculate_total_cost(order)
         
-        # ﻟﺑﻛﭨﺓﮔ ﺙﻟ؟۱ﮒﺅﺙﮔﻛﭦ۳ﻠﻠ۱ﻛﺕﭦﻟﺑﺅﺙﻛﺛﮔﮔ؛ﻟ؟۰ﻝ؟ﮒﭦﮒ۳ﻝ?
+# ﻟﺑﻛﭨﺓﮔﺙﻟ؟۱ﮒﺅﺙﮔﻛﭦ۳ﻠﻠ۱ﻛﺕﭦﻟﺑﺅﺙﻛﺛﮔﮔ؛ﻟ؟۰ﻝ؟ﮒﭦﮒ۳ﻝ?
         amount = order.quantity * order.price  # -100,000ﮒ?
         
         # ﻛﺛ۲ﻠﺅﺙﻟﺑﻠﻠ۱ﺣﻟﺑﺗﻝﺅﺙﻛﺛﮔﻛﺛ?ﮒﺅﺙﮒﭦﻛﺕﭦ0ﮔﮒﺙﮒﺕﺕﺅﺙ
-        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮒ۳ﻝﻟﺑﻠﻠ۱ﮔﮒ?
-        # ﻟﺟﻠﮔﭖﻟﺁﮔ۰ﮔﭘﮔﺁﮒ۵ﻟﺛﮔ­۲ﻝ۰؟ﮒ۳ﻝ?
+# ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕﮒﭦﮒ۳ﻝﻟﺑﻠﻠ۱ﮔﮒ?
+# ﻟﺟﻠﮔﭖﻟﺁﮔ۰ﮔﭘﮔﺁﮒ۵ﻟﺛﮔ۲ﻝ۰؟ﮒ۳ﻝ?
         assert result.total_cost <= 0  # ﮔﭨﮔﮔ؛ﮒﺁﻟﺛﻛﺕﭦ0ﮔﻟﺑ
     
     def test_negative_quantity(self):
@@ -1064,7 +1064,7 @@ class TestEdgeCases:
         result = calculator.calculate_total_cost(order)
         
         # ﻟﺑﮔﺍﻠﻟ؟۱ﮒﺅﺙﮔﻛﭦ۳ﻠﻠ۱ﻛﺕﭦﻟﺑ
-        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮒ۳ﻝﻟﺑﮔﺍﻠﮔﮒ?
+# ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕﮒﭦﮒ۳ﻝﻟﺑﮔﺍﻠﮔﮒ?
         assert result.total_cost <= 0  # ﮔﭨﮔﮔ؛ﮒﺁﻟﺛﻛﺕﭦ0ﮔﻟﺑ
     
     def test_very_small_amount(self):
@@ -1117,15 +1117,15 @@ class TestEdgeCases:
         assert isinstance(result.total_cost, float)
         assert result.total_cost > 0
         
-        # ﻠ۹ﻟﺁﮔﮔ؛ﮒ ﮔﺁﮒﻝ
-        assert 0 < result.as_percentage < 0.01  # ﮔﮔ؛ﮒ ﮔﺁﮒﭦﮒﺍﻛﭦ?%
+# ﻠ۹ﻟﺁﮔﮔ؛ﮒﮔﺁﮒﻝ
+assert 0 < result.as_percentage < 0.01  # ﮔﮔ؛ﮒﮔﺁﮒﭦﮒﺍﻛﭦ?%
     
     def test_extreme_slippage_factors(self):
-        """ﮔﭖﻟﺁﮔﻝ،ﺁﮔﭨﻝﺗﮒ ﮒ­"""
+"""ﮔﭖﻟﺁﮔﻝ،ﺁﮔﭨﻝﺗﮒﮒ"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # ﮔﮔﮒ ﮒ­ﻠﺛﮒﮔﻝ،ﺁﮒ?
+# ﮔﮔﮒﮒﻠﺛﮒﮔﻝ،ﺁﮒ?
         order = OrderInfo(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -1233,16 +1233,16 @@ class TestConfigValidation:
         assert len(config.regulatory_components) == 3
     
     def test_invalid_rate_range(self):
-        """ﮔﭖﻟﺁﮔ ﮔﻟﺑﺗﻝﻟﮒﺑ"""
+"""ﮔﭖﻟﺁﮔﮔﻟﺑﺗﻝﻟﮒﺑ"""
         # ﻛﺛ۲ﻠﻝﻟﭘﮒﭦﻟﮒ?
         config = CostConfig()
         config.commission_rate = 0.005  # 0.5%ﺅﺙﻟﭘﮒﭦﮒﻝﻟﮒ?
         
-        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
+# ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
         # ﻟﺟﻠﮔﭖﻟﺁﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰ﻟﺛﮒ۵ﮒﮒﭨﭦ
         
     def test_invalid_tiered_rates(self):
-        """ﮔﭖﻟﺁﮔ ﮔﻠﭘﮔ۱ﺁﻟﺑﺗﻝ"""
+"""ﮔﭖﻟﺁﮔﮔﻠﭘﮔ۱ﺁﻟﺑﺗﻝ"""
         # ﻠﮒﺙﻛﺕﻠﮒ۱
         config = CostConfig()
         config.commission_tiered_rates = [
@@ -1259,10 +1259,10 @@ class TestConfigValidation:
             TieredRate(threshold=None, rate=0.0002)
         ]
         
-        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
+# ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕﮒﭦﮔﻠ۹ﻟﺁﮔﭦﮒ?
     
     def test_config_from_yaml(self):
-        """ﮔﭖﻟﺁﻛﭨYAMLﮒ ﻟﺛﺛﻠﻝﺛ؟"""
+"""ﮔﭖﻟﺁﻛﭨYAMLﮒﻟﺛﺛﻠﻝﺛ؟"""
         yaml_content = """
 cost_config:
   commission:
@@ -1290,7 +1290,7 @@ cost_config:
         config_dict = yaml.safe_load(yaml_content)["cost_config"]
         config = CostConfig(**config_dict)
         
-        # ﻠ۹ﻟﺁﻠﻝﺛ؟ﮒ ﻟﺛﺛ
+# ﻠ۹ﻟﺁﻠﻝﺛ؟ﮒﻟﺛﺛ
         assert config.commission_rate == 0.00025
         assert config.stamp_tax_rate == 0.001
         assert config.sh_transfer_rate == 0.00001
@@ -1299,7 +1299,7 @@ cost_config:
     def test_config_validation_tool(self):
         """ﮔﭖﻟﺁﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓ"""
         # ﮒﮒﭨﭦﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓﮔﭖﻟﺁ
-        # ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕ­ﮒﭦﮔﻛﺕﻠ۷ﻝﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓ
+# ﮒ؟ﻠﮒ؟ﻝﺍﻛﺕﮒﭦﮔﻛﺕﻠ۷ﻝﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺓ۴ﮒﺓ
         pass
 ```
 
@@ -1374,7 +1374,7 @@ class TestIntegrationWithAdapters:
             EngineConfig(engine_type="rqalpha")
         )
         
-        # ﮒﻛﺕﻟ؟۱ﮒﮒ۷ﻛﺕﮒﻠﻠﮒ۷ﻛﺕ­ﮔﮔ؛ﮒﭦﻛﺕﻟ?
+# ﮒﻛﺕﻟ؟۱ﮒﮒ۷ﻛﺕﮒﻠﻠﮒ۷ﻛﺕﮔﮔ؛ﮒﭦﻛﺕﻟ?
         order = UnifiedOrder(
             symbol="000001.SZ",
             side=OrderSide.BUY,
@@ -1404,7 +1404,7 @@ class TestIntegrationWithConfig:
     """ﻠﻝﺛ؟ﻝ؟۰ﻝﻠﮔﮔﭖﻟﺁ"""
     
     def test_config_file_loading(self):
-        """ﮔﭖﻟﺁﻠﻝﺛ؟ﮔﻛﭨﭘﮒ ﻟﺛﺛ"""
+"""ﮔﭖﻟﺁﻠﻝﺛ؟ﮔﻛﭨﭘﮒﻟﺛﺛ"""
         # ﮒﮒﭨﭦﻛﺕﺑﮔﭘﻠﻝﺛ؟ﮔﻛﭨﭘ
         with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
             yaml_content = """
@@ -1428,7 +1428,7 @@ cost_config:
             config_path = f.name
         
         try:
-            # ﮒ ﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
+# ﮒﻟﺛﺛﻠﻝﺛ؟ﮔﻛﭨﭘ
             with open(config_path, 'r') as f:
                 config_dict = yaml.safe_load(f)["cost_config"]
             
@@ -1457,13 +1457,13 @@ cost_config:
             os.unlink(config_path)
     
     def test_config_hot_reload(self):
-        """ﮔﭖﻟﺁﻠﻝﺛ؟ﻝ­ﻠﻟﺛ?""
+"""ﮔﭖﻟﺁﻠﻝﺛ؟ﻝﻠﻟﺛ?""
         # ﮔﭖﻟﺁﻟﺟﻟ۰ﮔﭘﻛﺟ؟ﮔﺗﻠﻝﺛ?
         pass
     
     def test_config_validation_integration(self):
         """ﮔﭖﻟﺁﻠﻝﺛ؟ﻠ۹ﻟﺁﻠﮔ"""
-        # ﮔﭖﻟﺁﮒ ﻟﺛﺛﮔ ﮔﻠﻝﺛ؟ﮔﭘﻝﻠﻟﺁﺁﮒ۳ﻝ
+# ﮔﭖﻟﺁﮒﻟﺛﺛﮔﮔﻠﻝﺛ؟ﮔﭘﻝﻠﻟﺁﺁﮒ۳ﻝ
         pass
 ```
 
@@ -1494,7 +1494,7 @@ class TestPerformanceBasic:
             category=SecurityCategory.STOCK
         )
         
-        # ﻠ۱ﻝ­
+# ﻠ۱ﻝ
         for _ in range(10):
             calculator.calculate_total_cost(order)
         
@@ -1508,10 +1508,10 @@ class TestPerformanceBasic:
         avg_time = total_time / 1000 * 1000  # ﻟﺛ؛ﮔ۱ﻛﺕﭦﮔﺁ،ﻝ۶?
         
         print(f"ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻠﺑ: {avg_time:.3f}ms")
-        assert avg_time < 1.0  # ﻝ؟ﮔ ﺅﺙ?1ms
+assert avg_time < 1.0  # ﻝ؟ﮔﺅﺙ?1ms
     
     def test_calculation_with_cache(self):
-        """ﮔﭖﻟﺁﮒﺕ۵ﻝﺙﮒ­ﻝﮔ۶ﻟﺛ"""
+"""ﮔﭖﻟﺁﮒﺕ۵ﻝﺙﮒﻝﮔ۶ﻟﺛ"""
         config = CostConfig()
         config.cache_enabled = True
         calculator = CostCalculator(config)
@@ -1525,24 +1525,24 @@ class TestPerformanceBasic:
             category=SecurityCategory.STOCK
         )
         
-        # ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔ ﻝﺙﮒ­ﺅﺙ
+# ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒﺅﺙ
         start_time1 = time.perf_counter()
         result1 = calculator.calculate_total_cost(order)
         end_time1 = time.perf_counter()
         
         time1 = (end_time1 - start_time1) * 1000
         
-        # ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒ­ﺅﺙ
+# ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒﺅﺙ
         start_time2 = time.perf_counter()
         result2 = calculator.calculate_total_cost(order)
         end_time2 = time.perf_counter()
         
         time2 = (end_time2 - start_time2) * 1000
         
-        print(f"ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔ ﻝﺙﮒ­ﺅﺙ: {time1:.3f}ms")
-        print(f"ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒ­ﺅﺙ: {time2:.3f}ms")
+print(f"ﻝ؛؛ﻛﺕﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒﺅﺙ: {time1:.3f}ms")
+print(f"ﻝ؛؛ﻛﭦﮔ؛۰ﻟ؟۰ﻝ؟ﺅﺙﮔﻝﺙﮒﺅﺙ: {time2:.3f}ms")
         
-        # ﻝﺙﮒ­ﮒﺛﻛﺕ­ﮒﮒﭦﮔﺑﮒﺟ،
+# ﻝﺙﮒﮒﺛﻛﺕﮒﮒﭦﮔﺑﮒﺟ،
         assert time2 < time1
         
         # ﻝﭨﮔﮒﭦﻝﺕﮒ?
@@ -1592,7 +1592,7 @@ class TestPerformanceBatch:
         # ﻝﮔ1000ﻛﺕ۹ﮔﭖﻟﺁﻟ؟۱ﮒ?
         orders = self.generate_test_orders(1000)
         
-        # ﻠ۱ﻝ­
+# ﻠ۱ﻝ
         for order in orders[:100]:
             calculator.calculate_total_cost(order)
         
@@ -1612,7 +1612,7 @@ class TestPerformanceBatch:
         print(f"ﮔﺗﻠﻟ؟۰ﻝ؟ {len(orders)} ﻛﺕ۹ﻟ؟۱ﮒﺅﺙﮔﭨﮔﭘﻠ? {total_time:.1f}ms")
         print(f"ﮒﺗﺏﮒﮔﺁﻛﺕ۹ﻟ؟۱ﮒﻟ؟۰ﻝ؟ﮔﭘﻠﺑ: {avg_time:.3f}ms")
         
-        assert avg_time < 0.5  # ﻝ؟ﮔ ﺅﺙ?0.5ms/ﻟ؟۱ﮒ
+assert avg_time < 0.5  # ﻝ؟ﮔﺅﺙ?0.5ms/ﻟ؟۱ﮒ
         assert len(results) == len(orders)
     
     def test_concurrent_calculation(self):
@@ -1621,11 +1621,11 @@ class TestPerformanceBatch:
         pass
     
     def test_memory_usage(self):
-        """ﮔﭖﻟﺁﮒﮒ­ﻛﺛﺟﻝ۷"""
+"""ﮔﭖﻟﺁﮒﮒﻛﺛﺟﻝ۷"""
         config = CostConfig()
         calculator = CostCalculator(config)
         
-        # ﮔﭖﻟﺁﻝﺙﮒ­ﮒﮒ­ﮒ ﻝ۷
+# ﮔﭖﻟﺁﻝﺙﮒﮒﮒﮒﻝ۷
         orders = self.generate_test_orders(10000)
         
         import psutil
@@ -1634,17 +1634,17 @@ class TestPerformanceBatch:
         process = psutil.Process(os.getpid())
         memory_before = process.memory_info().rss / 1024 / 1024  # MB
         
-        # ﻟ؟۰ﻝ؟ﮒ۳۶ﻠﻟ؟۱ﮒﺅﺙﮒ۰،ﮒﻝﺙﮒ­?
+# ﻟ؟۰ﻝ؟ﮒ۳۶ﻠﻟ؟۱ﮒﺅﺙﮒ۰،ﮒﻝﺙﮒ?
         for order in orders[:1000]:
             calculator.calculate_total_cost(order)
         
         memory_after = process.memory_info().rss / 1024 / 1024  # MB
         memory_increase = memory_after - memory_before
         
-        print(f"ﮒﮒ­ﻛﺛﺟﻝ۷ﮒ۱ﮒ : {memory_increase:.2f}MB")
+print(f"ﮒﮒﻛﺛﺟﻝ۷ﮒ۱ﮒ: {memory_increase:.2f}MB")
         
-        # ﻠ۹ﻟﺁﮒﮒ­ﮒ۱ﮒ ﮒﻝ
-        assert memory_increase < 100  # ﮒ۱ﮒ ﮒﭦﮒﺍﻛﭦ?00MB
+# ﻠ۹ﻟﺁﮒﮒﮒ۱ﮒﮒﻝ
+assert memory_increase < 100  # ﮒ۱ﮒﮒﭦﮒﺍﻛﭦ?00MB
 ```
 
 ### 4.3 ﮒﮒﮔﭖﻟﺁ
@@ -1689,11 +1689,11 @@ class TestPerformanceStress:
         actual_rate = count / actual_duration
         
         print(f"ﮒ؟ﻠﻟ؟۰ﻝ؟ﻠﻝ: {actual_rate:.0f} ﮔ؛?ﻝ۶?)
-        print(f"ﻝ؟ﮔ ﻟ؟۰ﻝ؟ﻠﻝ: {calculations_per_second} ﮔ؛?ﻝ۶?)
+print(f"ﻝ؟ﮔﻟ؟۰ﻝ؟ﻠﻝ: {calculations_per_second} ﮔ؛?ﻝ۶?)
         print(f"ﮒ؟ﮔﻟ؟۰ﻝ؟ﮔ؛۰ﮔﺍ: {count}")
         
         # ﻠ۹ﻟﺁﻟﺛﮒ۳ﮒ۳ﻝﻠ،ﻠ۱ﻟ؟۰ﻝ؟
-        assert actual_rate > calculations_per_second * 0.5  # ﻟﺏﮒﺍﻟﺝﺝﮒﺍﻝ؟ﮔ ﻝ?0%
+assert actual_rate > calculations_per_second * 0.5  # ﻟﺏﮒﺍﻟﺝﺝﮒﺍﻝ؟ﮔﻝ?0%
     
     def test_concurrent_stress(self):
         """ﮔﭖﻟﺁﮒﺗﭘﮒﮒﮒ"""
@@ -1736,7 +1736,7 @@ class TestPerformanceStress:
         for thread in threads:
             thread.start()
         
-        # ﻝ­ﮒﺝﮔﮔﻝﭦﺟﻝ۷ﮒ؟ﮔ?
+# ﻝﮒﺝﮔﮔﻝﭦﺟﻝ۷ﮒ؟ﮔ?
         for thread in threads:
             thread.join()
         
@@ -1750,7 +1750,7 @@ class TestPerformanceStress:
         print(f"ﮔﭨﮔﭘﻠ? {total_time:.2f}ﻝ۶?)
         print(f"ﻟ؟۰ﻝ؟ﻠﻝ: {calculations_per_second:.0f} ﮔ؛?ﻝ۶?)
         
-        # ﻠ۹ﻟﺁﮒﺗﭘﮒﻟ؟۰ﻝ؟ﮔ­۲ﻝ۰؟ﮔ?
+# ﻠ۹ﻟﺁﮒﺗﭘﮒﻟ؟۰ﻝ؟ﮔ۲ﻝ۰؟ﮔ?
         assert len(results) == total_calculations
         
         # ﮔﮔﻟ؟۰ﻝ؟ﻝﭨﮔﮒﭦﻛﺕﻟ?
@@ -1775,7 +1775,7 @@ class TestRegression:
     """ﮒﮒﺛﮔﭖﻟﺁ"""
     
     def load_regression_data(self):
-        """ﮒ ﻟﺛﺛﮒﮒﺛﮔﭖﻟﺁﮔﺍﮔ؟"""
+"""ﮒﻟﺛﺛﮒﮒﺛﮔﭖﻟﺁﮔﺍﮔ؟"""
         data_path = Path(__file__).parent / "test_data" / "regression_cases.json"
         with open(data_path, 'r', encoding='utf-8') as f:
             return json.load(f)

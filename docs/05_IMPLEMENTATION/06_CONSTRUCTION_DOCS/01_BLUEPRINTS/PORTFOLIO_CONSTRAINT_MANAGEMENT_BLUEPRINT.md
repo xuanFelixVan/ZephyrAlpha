@@ -102,20 +102,19 @@ layer: Layer 5.2 (组合优化)
 | **版本** | v1.0.0 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æç¥é
+| [
 
 
 |---------|------|------|------|
@@ -123,8 +122,8 @@ layer: Layer 5.2 (组合优化)
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -133,7 +132,7 @@ graph LR
     D[数据目录] --> B
     
     B --> E[多目标优化]
-    B --> F[æç¥é
+B --> F[
     B --> G[场景分析]
     
     style B fill:#ff6b6b
@@ -272,7 +271,7 @@ class ConstraintAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -287,8 +286,8 @@ class ConstraintAPI:
 ##### 6.001. Portfolio Constraint Management
 - **模块ID**: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 - **蓝图文档**: PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

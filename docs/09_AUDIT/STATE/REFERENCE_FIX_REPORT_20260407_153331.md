@@ -52,28 +52,28 @@ parent_document: ../INDEX.md
 
 
 **2. 08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md**
-- 链接文本: ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
+- 链接文本: ﻝﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
 - 原路径: ../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 新路径: ../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 操作: 修复
 
 
 **3. 08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md**
-- 链接文本: ﮔﻟﭖﮒﺎﮒ­۵
+- 链接文本: ﮔﻟﭖﮒﺎﮒ۵
 - 原路径: ../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 新路径: ../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 操作: 修复
 
 
 **4. 08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md**
-- 链接文本: ﻝ ﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
+- 链接文本: ﻝﻝ۸ﭘﮔﺗﮔﺏﻟ؟ﭦ
 - 原路径: ../../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 新路径: ../01_FRAMEWORK/RESEARCH_METHODOLOGY.md
 - 操作: 修复
 
 
 **5. 08_KNOWLEDGE/KNOWLEDGE_TRANSFER_SYSTEM.md**
-- 链接文本: ﮔﻟﭖﮒﺎﮒ­۵
+- 链接文本: ﮔﻟﭖﮒﺎﮒ۵
 - 原路径: ../../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 新路径: ../01_FRAMEWORK/INVESTMENT_PHILOSOPHY.md
 - 操作: 修复
@@ -167,19 +167,19 @@ parent_document: ../INDEX.md
 
 
 **1. 01_FRAMEWORK/PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: è¿ç»´æå
+- 链接文本: 
 - 原路径: ../../05_IMPLEMENTATION/07_OPERATIONS/OPERATIONS_MANUAL.md
 - 操作: 需要人工处理
 
 
 **2. 01_FRAMEWORK/PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: ææ¯è§èææ¡£
+- 链接文本: 
 - 原路径: ../../01_FRAMEWORK/TECHNICAL_SPECIFICATIONS.md
 - 操作: 需要人工处理
 
 
 **3. 01_FRAMEWORK/PERFORMANCE_BENCHMARK_FRAMEWORK.md**
-- 链接文本: ç³»ç»æ¶æèå¾
+- 链接文本: 
 - 原路径: ../../01_FRAMEWORK/SYSTEM_ARCHITECTURE_BLUEPRINT.md
 - 操作: 需要人工处理
 

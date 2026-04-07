@@ -38,7 +38,7 @@ layer: Layer 2 (Alpha因子层)
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸
+>
 
 
 > **版本**: v1.0
@@ -53,15 +53,14 @@ layer: Layer 2 (Alpha因子层)
 >
 > **选择指南**?> - 如果你是大规模团??参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
 
-å
 
 
 ## 📋 一、实施概?
 ?
-| ä¼å
+|
 |--------|---------|---------|---------|-----------|------|
 | **P0** | 实时风控数据模块 | 1-2?| 🔴 ?| +10% | 🚀 立即启动 |
-| **P1** | å
+| **P1** |
 启?|
 启?|
 启?|
@@ -74,7 +73,7 @@ Week 1-2: P0?- 实时风控数据模块
 ├── Day 6-7: 压力测试引擎
 ├── Day 8-10: 风险预警系统
 └── Day 11-14: 集成测试和文?
-Week 3-6: P1?- å
+Week 3-6: P1?-
 ├── Week 3: 港股市场数据
 ├── Week 4: 美股市场数据
 ├── Week 5: 债券和商品市场数?└── Week 6: 外汇市场和集成测?
@@ -88,7 +87,7 @@ Week 3-6: P1?- å
 
 **模块名称**: `realtime_risk_data.py`
 
-**ä¼å
+**
 级
 
 **实施时间**: 1-2周（Week 1-2?
@@ -100,8 +99,8 @@ Week 3-6: P1?- å
 
 | 功能 | 描述 | 专业机构对标 |
 |------|------|-------------|
-´æ ?|
-| **å¸è
+?|
+| **
 景下的损失评估 | 桥水压力测试体系 |
 | **风险预警** | 多级预警机制（P0/P1/P2/P3?| Two Sigma风控系统 |
 
@@ -221,7 +220,7 @@ class VaRCalculator:
         cvar_return = np.mean(tail_returns)
         cvar = abs(cvar_return * portfolio_value)
         
-        logger.info(f"CVaR: {cvar:.2f}å
+logger.info(f"CVaR: {cvar:.2f}
         return cvar
     
     def portfolio_var(self, 
@@ -286,7 +285,7 @@ if __name__ == "__main__":
 
 ---
 
-#### 2.3.2 å¸è
+#### 2.3.2
 
 **Day 4-5实施计划**
 
@@ -305,7 +304,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class GreeksCalculator:
-    """å¸è
+"""
     
     功能?        - Delta计算
         - Gamma计算
@@ -466,14 +465,14 @@ class GreeksCalculator:
                             r: float, 
                             sigma: float, 
                             option_type: str = 'call') -> Dict[str, float]:
-å­?        
+?
         Args:
             S: 标的资产价格
             K: 行权?            T: 到期时间（年?            r: 无风险利?            sigma: 波动?            option_type: 期权类型
             
         Returns:
-            Dict: ææå¸è
-å­æ¯?        """
+Dict:
+?        """
         greeks = {
             'delta': self.delta(S, K, T, r, sigma, option_type),
             'gamma': self.gamma(S, K, T, r, sigma),
@@ -493,7 +492,7 @@ if __name__ == "__main__":
     K = 100  # 行权?    T = 0.25  # 到期时间?个月?    r = 0.05  # 无风险利?%
     sigma = 0.2  # 波动?0%
     
-å­?    greeks = greeks_calculator.calculate_all_greeks(S, K, T, r, sigma, 'call')
+?    greeks = greeks_calculator.calculate_all_greeks(S, K, T, r, sigma, 'call')
     
     print(f"\n期权参数:")
     print(f"标的资产价格: {S}")
@@ -501,16 +500,16 @@ if __name__ == "__main__":
     print(f"到期时间: {T}?)
     print(f"无风险利? {r*100}%")
     print(f"波动? {sigma*100}%")
-    print(f"\nå¸è
-å­æ¯:")
+print(f"\n
+:")
     for greek, value in greeks.items():
         print(f"{greek.upper()}: {value:.4f}")
 ```
 
 **验收标准**:
-- ?å¸è
+- ?
 - ?支持看涨/看跌期权
-å­?
+?
 ---
 
 #### 2.3.3 压力测试引擎
@@ -518,7 +517,7 @@ if __name__ == "__main__":
 **Day 6-7实施计划**
 
 **功能说明**:
-- **åå²æ
+- **
 景分析报告**: 生成压力测试报告
 
 **代码实现**:
@@ -536,7 +535,7 @@ class StressTestEngine:
     """压力测试引擎
     
 景压力测试
-        - åè®¾æ
+-
 景压力测试
 景分析报告
     """
@@ -566,19 +565,19 @@ class StressTestEngine:
     def historical_stress_test(self, 
                               portfolio: Dict[str, float],
                               scenario_name: str) -> Dict[str, Any]:
-        """åå²æ
+"""
 景压力测试
         
         Args:
             portfolio: 投资组合，{资产类型: 金额}
-            scenario_name: æ
+scenario_name:
 景名称
             
         Returns:
             Dict: 压力测试结果
         """
         if scenario_name not in self.historical_scenarios:
-            raise ValueError(f"æªç¥æ
+raise ValueError(f"
 景: {scenario_name}")
         
         scenario = self.historical_scenarios[scenario_name]
@@ -612,7 +611,7 @@ class StressTestEngine:
     def hypothetical_stress_test(self, 
                                 portfolio: Dict[str, float],
                                 custom_scenario: Dict[str, float]) -> Dict[str, Any]:
-        """åè®¾æ
+"""
 景压力测试
         
         Args:
@@ -690,7 +689,7 @@ class StressTestEngine:
             portfolio: 投资组合
             
         Returns:
-            Dict: æææ
+Dict:
 景的测试结果
         """
         results = {}
@@ -717,7 +716,7 @@ class StressTestEngine:
         report.append("")
         
         for scenario_name, result in results.items():
-            report.append(f"æ
+report.append(f"
 景: {result.get('description', scenario_name)}")
             report.append(f"总损? {result['total_loss']:,.2f}?)
             report.append(f"损失比例: {result['loss_percentage']*100:.2f}%")
@@ -793,7 +792,7 @@ class RiskAlertSystem:
     def __init__(self, risk_limits: Dict[str, float]):
         """初始化风险预警系?        
         Args:
-¸ï¼å¦?                {
+?                {
 
                     'delta_limit': 1000,  # Delta限额
                     'gamma_limit': 100,   # Gamma限额
@@ -815,8 +814,8 @@ class RiskAlertSystem:
         
         if utilization >= 1.0:
             level = RiskLevel.P0
-            message = f"VaRè¶
-ï¼éé¢: {var_limit:,.2f}?
+message = f"VaR
+: {var_limit:,.2f}?
         elif utilization >= 0.9:
             level = RiskLevel.P1
         elif utilization >= 0.7:
@@ -840,10 +839,9 @@ class RiskAlertSystem:
         return result
     
     def check_greeks_limit(self, greeks: Dict[str, float]) -> List[Dict[str, Any]]:
-å­æ¯é?        
+?
         Args:
-            greeks: å¸è
-¸
+greeks:
             
         Returns:
             List[Dict]: 检查结果列?        """
@@ -856,7 +854,7 @@ class RiskAlertSystem:
             
             if utilization >= 1.0:
                 level = RiskLevel.P0
-                message = f"{greek.upper()}è¶
+message = f"{greek.upper()}
             elif utilization >= 0.9:
                 level = RiskLevel.P1
                 message = f"{greek.upper()}接近限额！利用率: {utilization*100:.1f}%"
@@ -937,7 +935,7 @@ class RiskAlertSystem:
         elif level == RiskLevel.P1:
             return f"【高风险】风险指标接近限额，请尽快处理！"
         elif level == RiskLevel.P2:
-³æ³¨?
+?
         else:
             return f"【低风险】风险指标正?
     
@@ -952,7 +950,7 @@ class RiskAlertSystem:
         return [alert for alert in self.alerts if alert['level'] == level.value]
     
     def clear_alerts(self):
-        """æ¸
+"""
 除所有预?""
         self.alerts = []
 除")
@@ -976,13 +974,13 @@ if __name__ == "__main__":
     print("VaR检查结?")
     print(json.dumps(var_result, indent=2, ensure_ascii=False))
     
-å­æ¯é?    greeks = {
+?    greeks = {
         'delta': 850,
         'gamma': 95,
         'vega': 450
     }
     greeks_results = alert_system.check_greeks_limit(greeks)
-    print("\nå¸è
+print("\n
     for result in greeks_results:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     
@@ -1004,8 +1002,7 @@ if __name__ == "__main__":
 
 ### 2.4 集成测试和文档（Day 11-14?
 **Day 11-12: 集成测试**
-- ç¼ååå
-æµè¯
+-
 - 编写集成测试
 - 性能测试
 - 压力测试
@@ -1030,7 +1027,7 @@ tests/data/
 
 config/
 └── risk_data/
-    âââ config.yaml            # é
+config.yaml            #
 置
 
 docs/
@@ -1043,7 +1040,7 @@ docs/
 ### 2.6 验收标准
 
 - ?VaR计算准确?> 95%
-- ?å¸è
+- ?
 - ?文档完整?> 90%
 
 
@@ -1052,7 +1049,7 @@ docs/
 
 **模块名称**: `global_market_data.py`
 
-**ä¼å
+**
 级
 
 **实施时间**: 2-4周（Week 3-6?
@@ -1087,7 +1084,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class GlobalMarketDataEngine:
-    """å
+"""
     
     功能?        - 港股市场数据
         - 美股市场数据
@@ -1097,7 +1094,7 @@ class GlobalMarketDataEngine:
     """
     
     def __init__(self):
-        """åå§åå
+"""
         pass
     
     def fetch_hk_stock_data(self, symbol: str, start_date: str, end_date: str) -> pd.DataFrame:
@@ -1164,7 +1161,7 @@ class GlobalMarketDataEngine:
             logger.error(f"获取美股数据失败: {e}")
             return None
     
-    # å
+#
 ```
 
 ### 3.4 实施计划
@@ -1208,7 +1205,7 @@ class GlobalMarketDataEngine:
 | **核心数据能力** | 100% | 100% | 0% |
 | **数据处理能力** | 85% | 90% | +5% |
 | **数据治理能力** | 100% | 100% | 0% |
-| **å
+| **
 | **实时风控能力** | 0% | 100% | +100% |
 | **总体覆盖?* | **75%** | **95%** | **+20%** |
 
@@ -1216,17 +1213,17 @@ class GlobalMarketDataEngine:
 | 对标机构 | 当前蓝图 | 改进?| 专业机构水平 |
 |---------|---------|--------|-------------|
 | **桥水基金** | 75% | 95% | 100% |
-´ç§æ** | 75% | 95% | 100% |
+** | 75% | 95% | 100% |
 | **Two Sigma** | 75% | 95% | 100% |
 
 
-## ?å
+## ?
 
 ### 6.1 立即行动
 
 ### 6.2 预期成果
 
-- ?3-6å¨å
+- ?3-6
 完成P0+P1级模?- ?覆盖度从75%提升?5%
 - ?达到专业机构95%能力水平
 ---
@@ -1246,7 +1243,7 @@ class GlobalMarketDataEngine:
 - **模块ID**: CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT_001
 - **蓝图文档**: [CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md](01_FRAMEWORK\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: Layer 0æ°æ®æºå±å
+- **职责**: Layer 0
 - **状态**: Active
 ```
 
@@ -1254,7 +1251,7 @@ class GlobalMarketDataEngine:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-³é®æ¬ ç¼ºæ¨¡å | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **核心模块** |
+ | :  | **核心模块** |
 
 ### 1.3 版本管理
 

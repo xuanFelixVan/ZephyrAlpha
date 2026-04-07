@@ -98,8 +98,7 @@ layer: Layer 5.2 (组合优化)
 | **版本** | v1.0.0 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -115,8 +114,8 @@ layer: Layer 5.2 (组合优化)
 |---------|------|------|------|
 | **SciPy** | 1.11+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -162,7 +161,7 @@ class MultiObjectiveOptimizer:
         Args:
         
         Returns:
-            æä¼æé?
+?
         """
         w = Variable(self.n_assets)
         portfolio_return = returns @ w
@@ -255,7 +254,7 @@ class MultiObjectiveAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -270,8 +269,8 @@ class MultiObjectiveAPI:
 ##### 6.001. Multi Objective Optimization
 - **模块ID**: MULTI_OBJECTIVE_OPTIMIZATION_001
 - **蓝图文档**: MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

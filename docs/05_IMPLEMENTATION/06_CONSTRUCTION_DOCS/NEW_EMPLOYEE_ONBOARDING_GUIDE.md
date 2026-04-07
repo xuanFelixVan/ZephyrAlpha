@@ -4,10 +4,10 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
+owner: ﻠ۵ﮒﺕﮔﭘﮔ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮔﮔﮔﺍﮒ ﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
+applicable_scope: ﮔﮔﮔﺍﮒﮒ۴ﮒ۱ﻠﻝﮒﺙﮒﻛﭦﭦﮒﮒAIﮔﭦﻟﺛ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 parent_document: ../README.md
 implementation_status: Active
 ---
@@ -24,11 +24,11 @@ implementation_status: Active
 > **ﻝﮔ؛**: v1.0
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
 > **ﻟﻟﺑ۲**: ﮒﺕ؟ﮒ۸ﮔﺍﮔﮒﮒﺟ،ﻠﻛﭦﻟ۶۲ﻝﺏﭨﻝﭨﮔﭘﮔﻙﮒﺙﮒﮔﭖﻝ۷ﮒﮔﮔ۰۲ﻟ۶ﻟ
-> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒ ﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗ ﻝ
+> **ﻠﻝ۷ﮒﺁﺗﻟﺎ۰**: ﮔﺍﮒﮒ۴ﻝﮒﺙﮒﻛﭦﭦﮒﻙAIﮔﭦﻟﺛﻛﺛﻙﮒ؟ﻛﺗﻝ
 > **ﮒ؟ﮔﮔﭘﻠﺑ**: ﮒﭨﭦﻟ؟؟2ﮒ۷ﮒﮒ؟ﮔﮔﮔﮒﺟﻟﺁﭨﮒ?
 ---
 
-## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ **
+## ﻭﺁ **ﮒ۴ﻟﻝ؟ﮔ**
 
 ### **?ﮒ۷ﻝ؟?*
 
@@ -36,8 +36,8 @@ implementation_status: Active
 - [ ] ﮔﮔ۰ﮒﺙﮒﻝﺁﮒ۱ﻠ?- [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ؟ﮒﻛﭨﭨ?
 ### **?ﮒ۷ﻝ؟?*
 
-- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
-- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴
+- [ ] ﮔﺓﺎﮒ۴ﻝﻟ۶۲ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
+- [ ] ﻝﮔﮔﺛﮒﺓ۴ﻟ۶ﻟﮒﻟﺑ۷ﻠﻠ۷?- [ ] ﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴
 - [ ] ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ؟ﮔﺑﮒ?
 ---
 
@@ -53,8 +53,8 @@ implementation_status: Active
 | **ﮒ۳ﮔﭘﻠﺑﮔ۰ﮔﭘﮔﭘ?* | [docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 | **ﮒ؟ﮔﺛﻟﮒﺝ** | [docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](../../01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕ­ﻟ۶ﻝ­ﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+- ﻝﻟ۶۲Layer 0-11ﮔﮔﺁﻝ؟۰ﻠﮔﭘ?- ﻛﭦﻟ۶۲ﮒ؟ﻟ۶ﻠﻝﺛ؟ﮒﺎﻙﻛﺕﻟ۶ﻝﻝ۴ﮒﺎﻙﮒﺝ؟ﻟ۶ﮔ۶ﻟ۰ﮒﺎﻝﻟ؟ﺝ?- ﮔﮔ۰ﻝﺏﭨﻝﭨﻝﮔﺑﻛﺛﮒ؟ﮔﺛﻟ؟۰?
 ---
 
 #### **2. ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ**
@@ -63,7 +63,7 @@ implementation_status: Active
 |---------|------|---------|---------|
 | **ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ** | [docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﻝﻟﻟﺑ۲ﻟ?- ﻛﭦﻟ۶۲ﮔ۷۰ﮒﻠﺑﻝﻛﺝﻟﭖﮒﺏﻝﺏﭨ
 - ﮔﮔ۰ﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﻝﮒ?
 ---
@@ -77,39 +77,39 @@ implementation_status: Active
 | **ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 | **AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/AI_CONSTRUCTION_QUICK_REFERENCE.md) | 15ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﮔﮔ۰ﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶?- ﻝﮔﮒﺛﮒﻟ۶ﻟ
 - ﻛﭦﻟ۶۲ﮔﺛﮒﺓ۴ﮔﭖﻝ۷ﮒﻟﺑ۷ﻠﻠ۷?
 ---
 
-#### **4. ﮒﺙﮒﮔ ﮒﮔ?*
+#### **4. ﮒﺙﮒﮔﮒﮔ?*
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
 | **ﮒﺙﮒﻟ۶?* | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﮔﭖﻟﺁﮔ ﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﮔﭖﻟﺁﮔﮒ** | [docs/05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md](05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﮔﮔ۰ﻛﭨ۲ﻝ ﻝﺙﮒﻟ۶ﻟ
-- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+- ﮔﮔ۰ﻛﭨ۲ﻝﻝﺙﮒﻟ۶ﻟ
+- ﻛﭦﻟ۶۲ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﮒ
 - ﻝﮔﮔﭖﻟﺁﻟ۵ﮔﺎ
 
 ---
 
-### **Day 5-7: ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
+### **Day 5-7: ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰**
 
-#### **5. ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟ**
+#### **5. ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟ**
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ** | [docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md) | 60ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/STRATEGY_FACTORY_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
-- ﻝﻟ۶۲ﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
+- ﻝﻟ۶۲ﻝﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ
 - ﮔﮔ۰BaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
-- ﻛﭦﻟ۶۲ﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﮒ ﻟﺛﺛﮔﭦ?
+- ﻛﭦﻟ۶۲ﻝﻝ۴ﮔﺏ۷ﮒﮒﮒﻟﺛﺛﮔﭦ?
 ---
 
 #### **6. ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻝﺏﭨﻝﭨ**
@@ -118,10 +118,10 @@ implementation_status: Active
 |---------|------|---------|---------|
 | **ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/EVENT_BUS_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
 - ﮔﮔ۰ﻛﭦﻛﭨﭘﮒﮒﺕﻟ؟۱ﻠﮔﭦﮒﭘ
-- ﻛﭦﻟ۶۲ﮒﺙﮔ­۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
+- ﻛﭦﻟ۶۲ﮒﺙﮔ۴ﻛﭦﻛﭨﭘﮒﮒﻟ؟ﺝﻟ؟۰
 
 ---
 
@@ -131,9 +131,9 @@ implementation_status: Active
 |---------|------|---------|---------|
 | **ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md) | 45ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲Backtesting.pyﻠﮔﮔﺗﮔ۰
-- ﮔﮔ۰ﻝ­ﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔ ﺙﮒﺙﮒ
+- ﮔﮔ۰ﻝﻝ۴ﻠﻠﮒ۷ﻟ؟ﺝ?- ﻛﭦﻟ۶۲ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒﻝﭨﮔﮔﺙﮒﺙﮒ
 
 ---
 
@@ -144,12 +144,12 @@ implementation_status: Active
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
 | **ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﻝ۵** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md) | 30ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
-| **ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
+| **ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md) | 20ﮒﻠ | ﻭﺑ ﮒﺟﻟﺁﭨ |
 | **ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﮔﺕ?* | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/PRE_DEPLOYMENT_CHECKLIST.md) | 20ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﻟ۶۲ﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔﭦﮒﭘ
-- ﮔﮔ۰ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ ﮒ
+- ﮔﮔ۰ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﮒ
 - ﻛﭦﻟ۶۲ﻠ۷ﻝﺛﺎﮒﮔ۲ﮔ۴ﻟ۵?
 ---
 
@@ -159,18 +159,18 @@ implementation_status: Active
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻠﻟﺁﭨﮔﭘﻠﺑ | ﻠﻟ۵ﻝ۷ﮒﭦ۵ |
 |---------|------|---------|---------|
-| **ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
+| **ﻝﻝ۴ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/strategy_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\strategy_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 | **ﮒﮔﭖﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/backtest_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\backtest_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 | **ﻝﺏﭨﻝﭨﻠﻝﺛ؟ﮔ۷۰ﮔﺟ** | [docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES/system_config_template.yaml](05_IMPLEMENTATION\04_CONFIG_TEMPLATES\system_config_template.yaml) | 15ﮒﻠ | ﻭ۰ ﻠﻟ۵ |
 
-**ﮒ­۵ﻛﺗ ﻝ؟ﮔ **:
+**ﮒ۵ﻛﺗﻝ؟ﮔ**:
 - ﻝﮔﻠﻝﺛ؟ﮔﻛﭨﭘﻝﭨﮔ
 - ﻝﻟ۶۲ﻠﻝﺛ؟ﮒﮔﺍﮒ،ﻛﺗ
 - ﮔﮔ۰ﻠﻝﺛ؟ﻛﺟ؟ﮔﺗﮔﺗﮔﺏ
 
 ---
 
-## ﻭ ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
+## ﻭ?**ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ**
 
 ### **1. ﮒﺙﮒﻝﺁﮒ۱ﻟ۵?*
 
@@ -194,9 +194,9 @@ Pythonﮒﻝ؟۰?
   - conda (ﮔ۷ﻟ)
 ```
 
-### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ­۴?*
+### **2. ﮒﺙﮒﻝﺁﮒ۱ﻠﻝﺛ؟ﮔ۴?*
 
-#### **Step 1: ﮒﻠﻛﭨ۲ﻝ ﻛﭨﮒﭦ**
+#### **Step 1: ﮒﻠﻛﭨ۲ﻝﻛﭨﮒﭦ**
 
 ```bash
 # ﮒﻠﻛﭨﮒﭦ
@@ -248,18 +248,18 @@ pip install -r requirements.txt
 
 ## ﻭ **ﻝ؛؛ﻛﺕﻛﺕ۹ﻛﭨﭨﮒ۰ﮔ?*
 
-### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝ­ﻝ۴**
+### **ﻛﭨﭨﮒ۰1: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﻝﻝ۴**
 
-**ﻝ؟ﮔ **: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝ­ﻝ۴ﺅﺙﻝﮔﻝ­ﻝ۴ﮒﺙﮒﮔﭖ?
-**ﮔ­۴ﻠ۹۳**:
+**ﻝ؟ﮔ**: ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻝ؟ﮒﻝﮒﻝﭦﺟﻝﻝ۴ﺅﺙﻝﮔﻝﻝ۴ﮒﺙﮒﮔﭖ?
+**ﮔ۴ﻠ۹۳**:
 
-1. **ﻠﻟﺁﭨﻝ­ﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
+1. **ﻠﻟﺁﭨﻝﻝ۴ﮒﭦﻝﺎﭨﮔﮔ۰۲**
    ```bash
    # ﻠﻟﺁﭨBaseStrategyﮒﭦﻝﺎﭨﻟ؟ﺝﻟ؟۰
    docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md
    ```
 
-2. **ﮒﮒﭨﭦﻝ­ﻝ۴ﮔﻛﭨﭘ**
+2. **ﮒﮒﭨﭦﻝﻝ۴ﮔﻛﭨﭘ**
    ```python
    # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: src/strategy/simple_ma_strategy.py
    
@@ -267,7 +267,7 @@ pip install -r requirements.txt
    from typing import Dict, Any, Optional
    
    class SimpleMAStrategy(BaseStrategy):
-       """ﻝ؟ﮒﮒﻝﭦﺟﻝ­?       
+"""ﻝ؟ﮒﮒﻝﭦﺟﻝ?
        ﻛﺛﺟﻝ۷ﮒﺟ،ﻠﮒﻝﭦﺟﮒﮔ۱ﻠﮒﻝﭦﺟﻛﭦ۳ﮒﻛﺛﻛﺕﭦﻛﭦ۳ﮔﻛﺟ۰?       """
        
        def __init__(self, strategy_id: str, config: Optional[Dict[str, Any]] = None):
@@ -276,23 +276,23 @@ pip install -r requirements.txt
            self.slow_period = self.config.get('slow_period', 30)
        
        def initialize(self, context: Dict[str, Any]) -> None:
-           """ﮒﮒ۶ﮒﻝ­?""
-           self.logger.info(f"ﮒﮒ۶ﮒﻝ­? {self.strategy_id}")
+"""ﮒﮒ۶ﮒﻝ?""
+self.logger.info(f"ﮒﮒ۶ﮒﻝ? {self.strategy_id}")
            self.logger.info(f"ﮒﺟ،ﻠﮒﻝﭦﺟﮒ۷? {self.fast_period}")
            self.logger.info(f"ﮔ۱ﻠﮒﻝﭦﺟﮒ۷? {self.slow_period}")
        
        def on_bar(self, bar: Dict[str, Any]) -> Optional[Dict[str, Any]]:
            """ﮒ۳ﻝKﻝﭦﺟﮔﺍ?""
-           # ﮒ؟ﻝﺍﻝ­ﻝ۴ﻠﭨﻟﺝ
+# ﮒ؟ﻝﺍﻝﻝ۴ﻠﭨﻟﺝ
            pass
    ```
 
-3. **ﮒﮒﭨﭦﻝ­ﻝ۴ﻠﻝﺛ؟**
+3. **ﮒﮒﭨﭦﻝﻝ۴ﻠﻝﺛ؟**
    ```yaml
    # ﮔﻛﭨﭘﻛﺛﻝﺛ؟: config/strategies/simple_ma_strategy.yaml
    
    strategy_id: simple_ma_strategy_v1
-   strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ­?   strategy_type: trend_following
+strategy_name: ﻝ؟ﮒﮒﻝﭦﺟﻝ?   strategy_type: trend_following
    
    parameters:
      fast_period: 10
@@ -311,7 +311,7 @@ pip install -r requirements.txt
    from strategy.simple_ma_strategy import SimpleMAStrategy
    
    def test_strategy_initialization():
-       """ﮔﭖﻟﺁﻝ­ﻝ۴ﮒﮒ۶?""
+"""ﮔﭖﻟﺁﻝﻝ۴ﮒﮒ۶?""
        config = {
            'fast_period': 10,
            'slow_period': 30
@@ -340,29 +340,29 @@ pip install -r requirements.txt
 
 **A**: ﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟ?1. ﻠﻟﺁﭨ[ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
 2. ﻛﺛﺟﻝ۷LSﮒﺛﻛﭨ۳ﮔ۲ﮔ۴ﻝﺍﮔﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ
-3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
+3. ﻝ۰؟ﻟ؟۳ﻝ؟ﮔﻛﺛﻝﺛ؟ﮒﮒﺛ?4. ﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﮒﮒﭨﭦﮔﻛﭨﭘ
 5. ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ﮔ۲?
-### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴?*
+### **Q3: ﮒ۵ﻛﺛﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴?*
 
-**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
-2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝ ﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
-3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔ­ﻠ۰ﺗﻠﻟﺟ
+**A**: ﻠﭖﮒﺝ۹ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭖﻝ۷?1. ﻠﻟﺁﭨ[ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔ۲ﮔ۴ﮔﺕﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/CODE_REVIEW_CHECKLIST.md)
+2. ﮔ۲ﮔ۴ﻛﭨ۲ﻝﻟ۶ﻟﻙﮒ؟ﮒ۷ﮔ۶ﻙﮔ۶ﻟﺛ
+3. ﮔﮒﭦﮒﭨﭦﻟ؟ﺝﮔ۶ﮔ?4. ﻝ۰؟ﻛﺟﮔﮔﻠﭨﮔﻠ۰ﺗﻠﻟﺟ
 
 ### **Q4: ﮒ۵ﻛﺛﻟﺟﻟ۰ﮒﮔﭖ?*
 
 **A**: ﻛﺛﺟﻝ۷ﮒﮔﭖﮒﺙﮔ?1. ﻠﻟﺁﭨ[ﮒﮔﭖﮒﺙﮔﻠﮔﮔﮒ](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/BACKTEST_ENGINE_GUIDE.md)
-2. ﮒﮒ۳ﻝ­ﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
+2. ﮒﮒ۳ﻝﻝ۴ﮒﮔﺍ?3. ﻠﻝﺛ؟ﮒﮔﭖﮒﮔﺍ
 4. ﻟﺟﻟ۰ﮒﮔﭖﮒﺗﭘﮒﮔﻝﭨ?
 ### **Q5: ﮒ۵ﻛﺛﮔ۴ﮒﻠ؟ﻠ۱?*
 
 **A**: ﻛﺛﺟﻝ۷ﻠ؟ﻠ۱ﻟﺓﻟﺕ۹ﻝﺏﭨﻝﭨ?1. ﮒ۷GitﻛﭨﮒﭦﮒﮒﭨﭦIssue
 2. ﮔﻟﺟﺍﻠ؟ﻠ۱ﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
-3. ﮔﻛﺝﮒ۳ﻝﺍﮔ­۴ﻠ۹۳
-4. ﮔ ﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
+3. ﮔﻛﺝﮒ۳ﻝﺍﮔ۴ﻠ۹۳
+4. ﮔﻟ؟ﺍﻛﺙﮒﻝﭦ۶ﮒﻝﺎﭨﮒ
 
 ---
 
-## ﻭ **ﮒ­۵ﻛﺗ ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
+## ﻭ **ﮒ۵ﻛﺗﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹**
 
 ### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
@@ -371,25 +371,25 @@ pip install -r requirements.txt
 | ﻠﻟﺁﭨﻝﺏﭨﻝﭨﮔﭘﮔﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍLayer 0-11ﮔﭘﮔ |
 | ﻠﻟﺁﭨﮔﺛﮒﺓ۴ﻟ۶ﻟﮔﮔ۰۲ | ?| ﻟﺛﻟﺁﺑﮒﭦﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﻟ۶ﻟ |
 | ﻠﻝﺛ؟ﮒﺙﮒﻝﺁ?| ?| ﻟﺛﻟﺟﻟ۰pytestﮔﭖﻟﺁ |
-| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ­?| ?| ﻛﭨ۲ﻝ ﻠﻟﺟﮒ؟۰ﮔ۴ |
+| ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﻝ?| ?| ﻛﭨ۲ﻝﻠﻟﺟﮒ؟۰ﮔ۴ |
 
 ### **?ﮒ۷ﻟﺟﮒﭦ۵ﮔ۲?*
 
 | ﻛﭨﭨﮒ۰ | ﮒ؟ﮔﻝ?| ﻠ۹ﻟﺁﮔﺗﮒﺙ |
 |------|---------|---------|
-| ﻠﻟﺁﭨﮔ ﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝ­ﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
-| ﮒﻛﺕﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝ ﮒ؟۰?|
+| ﻠﻟﺁﭨﮔﺕﮒﺟﮔ۷۰ﮒﮔﮔ۰۲ | ?| ﻟﺛﮔﻟﺟﺍﻝﻝ۴ﮒﺓ۴ﮒﻟ؟ﺝ?|
+| ﮒﻛﺕﻛﭨ۲ﻝﮒ؟۰ﮔ۴ | ?| ﮒ؟ﮔ1ﮔ؛۰ﻛﭨ۲ﻝﮒ؟۰?|
 | ﮒ؟ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮒ?| ?| ﮒﻟﺛﻠﻟﺟﮔﭖﻟﺁ |
 | ﻠﻟﺟﻟﺑ۷ﻠﻠ۷ﻝ۵ | ?| ﮔﮔﮔ۲ﮔ۴ﻠ۰ﺗﻠﻟﺟ |
 
 ---
 
-## ﻭﺁ **ﮒ­۵ﻛﺗ ﻟﭖﮔﭦ**
+## ﻭﺁ **ﮒ۵ﻛﺗﻟﭖﮔﭦ**
 
 ### **ﮒﻠ۷ﻟﭖﮔﭦ**
 
 - **ﻝ۴ﻟﺁ?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/](01_FRAMEWORK/COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md)
-- **ﮔ۰ﻛﺝﻝ ﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
+- **ﮔ۰ﻛﺝﻝﻝ۸ﭘ**: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/](08_KNOWLEDGE/KNOWLEDGE_BASE_CASE_STUDIES.md)
 - **ﮔﻛﺛﺏﮒ؟?*: [docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/](05_IMPLEMENTATION/04_OPERATIONS/DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
@@ -404,7 +404,7 @@ pip install -r requirements.txt
 
 ### **ﻠﮒﺍﻠ؟ﻠ۱ﮔﻛﺗﮒﺅﺙ**
 
-1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ­?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
+1. **ﮔ۴ﻠﮔﮔ۰۲**: ﮒﮔ۴ﻠﻝﺕﮒﺏﮔﮔ۰۲ﺅﺙﮒ۳۶ﻠ۷ﮒﻠ؟ﻠ۱ﻠﺛﮔﻝ?2. **ﮔﻝﺑ۱Issue**: ﮒ۷Gitﻛﭨﮒﭦﮔﻝﺑ۱ﮔﺁﮒ۵ﮔﻝﺎﭨﻛﺙﺙﻠ؟?3. **ﮔﻠ؟**: ﮒﮒﭨﭦﮔﺍIssueﺅﺙﻟﺁ۵ﻝﭨﮔﻟﺟﺍﻠ؟?4. **ﮒﺁﭨﮔﺎﮒﺕ؟ﮒ۸**: ﻟﻝﺏﭨﮒﺁﺙﮒﺕﮔﮒ۱ﻠﮔ?
 ### **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
 - **ﮔﮔﺁﻠ؟?*: ﮒﮒﭨﭦGit Issue
@@ -416,25 +416,25 @@ pip install -r requirements.txt
 
 | ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔ?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮔﺍﻛﭦﭦﮒ۴ﻟﮔﮒ | ﻠ۵ﮒﺕﮔﭘﮔ?|
 
 ---
 
 ## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﮔﭘﮔ? 
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﮔﭘﮔ?
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
 **ﮔﮒﮔﺑ?*: 2026-04-02  
 **ﻝﮔ؛**: v1.0
 
 ---
 
-## ﻭ **ﮔ؛۱ﻟﺟﮒ ﮒ۴?*
+## ﻭ **ﮔ؛۱ﻟﺟﮒﮒ۴?*
 
-ﮔ؛۱ﻟﺟﮒ ﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ­۵ﻛﺗ ﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛ ﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
+ﮔ؛۱ﻟﺟﮒﮒ۴ﮔﺕﻠ۲ﻠﮒﮒ۱ﻠﺅﺙﮔﻛﭨ؛ﻝﺕﻛﺟ۰ﺅﺙﻠﻟﺟﻝﺏﭨﻝﭨﻝﮒ۵ﻛﺗﮒﮒ؟ﻟﺓﭖﺅﺙﻛﺛﮒﺍﮒﺟ،ﻠﮔﻠﺟﻛﺕﭦﻛﺕﮒﻛﺙﻝ۶ﻝﻠﮒﮒﺙﮒﮒﺓ۴ﻝ۷ﮒﺕ?
 **ﻟ؟ﺍﻛﺛ**: 
 - ﻭ ﮔﮔ۰۲ﮔﺁﮔﮒ۴ﺛﻝﻟﮒﺕ
-- ﻭ ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ­۵ﻛﺗ 
+- ﻭ?ﮒ؟ﻟﺓﭖﮔﺁﮔﮒ۴ﺛﻝﮒ۵ﻛﺗ
 - ﻭ۳ ﮒ۱ﻠﮔﺁﮔﮒ۴ﺛﻝﮔﺁﮔ
 
-**ﻝ۴ﻛﺛ ﮒ­۵ﻛﺗ ﻠ۰ﭦﮒ۸?* ﻭ
+**ﻝ۴ﻛﺛﮒ۵ﻛﺗﻠ۰ﭦﮒ۸?* ﻭ

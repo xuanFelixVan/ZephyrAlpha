@@ -134,7 +134,7 @@ class UnrealizedGainLossCalculator:
         参数:
             
         返回:
-            åéåè¡?
+?
         """
         pass
 ```
@@ -190,10 +190,9 @@ class SubstituteSecuritySelector:
         查找替代证券
         
         参数:
-            security: åè¯å?
-            correlation_threshold: ç¸å
-³æ§éå?
-³ï¼
+security: ?
+correlation_threshold:
+?
             
         返回:
         """
@@ -281,7 +280,7 @@ class TaxLossHarvester:
         pass
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 tax_loss_harvesting:
@@ -309,8 +308,7 @@ tax_loss_harvesting:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -327,8 +325,8 @@ tax_loss_harvesting:
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

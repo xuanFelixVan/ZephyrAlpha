@@ -943,17 +943,17 @@ class OpportunityCostAnalyzer:
         
         if idle_cost.amount > 0:
             recommendations.append(
-                f"建议将闲置资金投资于货币基金，可减少成本¥{idle_cost.amount:,.2f}"
+                f"建议将闲置资金投资于货币基金，可减少成本{idle_cost.amount:,.2f}"
             )
         
         if efficiency_cost.amount > 0:
             recommendations.append(
-                f"优化配置方案可提升收益¥{efficiency_cost.amount:,.2f}"
+                f"优化配置方案可提升收益{efficiency_cost.amount:,.2f}"
             )
         
         if timing_cost.amount > 0:
             recommendations.append(
-                f"减少执行延迟可节省成本¥{timing_cost.amount:,.2f}"
+                f"减少执行延迟可节省成本{timing_cost.amount:,.2f}"
             )
         
         return recommendations

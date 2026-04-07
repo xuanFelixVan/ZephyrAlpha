@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?applicable_scope: AIﮔﭦﻟﺛﻛﺛﮔﺛﮒﺓ۴ﮒﺟﻟﺁ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
+owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: AIﮔﺛﮒﺓ۴ﮒﺟ،ﻠﮒﻟ?applicable_scope: AIﮔﭦﻟﺛﻛﺛﮔﺛﮒﺓ۴ﮒﺟﻟﺁ?compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 responsibility:
   - 实施指南、部署文档
 parent_document: ./CONSTRUCTION_SPECIFICATION.md
@@ -28,35 +28,35 @@ implementation_status: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
 ## ﻗ?**5ﻝ۶ﮒﺟ،ﻠﮔ۲ﮔ?*
 
 ```
-ﮒﺙﮒ۶ﮔﺛﮒﺓ۴ﮒﺅﺙAIﮒﺟﻠ۰ﭨﮒﻝ­ﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ?
-ﻗ?1. ﮔﻟ۵ﮒﮒﭨﭦﻛﭨﻛﺗﻝﺎﭨﮒﻝﮔﻛﭨﭘﺅﺙ?     - ﻛﭨ۲ﻝ ﮔﻛﭨﭘ ﻗ?src/
+ﮒﺙﮒ۶ﮔﺛﮒﺓ۴ﮒﺅﺙAIﮒﺟﻠ۰ﭨﮒﻝﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ?
+ﻗ?1. ﮔﻟ۵ﮒﮒﭨﭦﻛﭨﻛﺗﻝﺎﭨﮒﻝﮔﻛﭨﭘﺅﺙ?     - ﻛﭨ۲ﻝﮔﻛﭨﭘ ﻗ?src/
      - ﮔﮔ۰۲ﮔﻛﭨﭘ ﻗ?docs/
      - ﻠﻝﺛ؟ﮔﻛﭨﭘ ﻗ?config/
      - ﮔﭖﻟﺁﮔﻛﭨﭘ ﻗ?tests/
 
-ﻗ?2. ﻝ؟ﮔ ﮔﻛﭨﭘﮒ۳ﺗﮔﺁﮒ۵ﮒ­ﮒ۷ﺅﺙ
+ﻗ?2. ﻝ؟ﮔﮔﻛﭨﭘﮒ۳ﺗﮔﺁﮒ۵ﮒﮒ۷ﺅﺙ
      - ﻛﺛﺟﻝ۷ LS ﮒﺛﻛﭨ۳ﮔ۲ﮔ?
-ﻗ?3. ﮔﻛﭨﭘﮒﺛﮒﮔﺁﮒ۵ﮔ­۲ﻝ۰؟ﺅﺙ?     - Pythonﮔﻛﭨﭘ: ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?(strategy_factory.py)
+ﻗ?3. ﮔﻛﭨﭘﮒﺛﮒﮔﺁﮒ۵ﮔ۲ﻝ۰؟ﺅﺙ?     - Pythonﮔﻛﭨﭘ: ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?(strategy_factory.py)
      - ﮔﮔ۰۲ﮔﻛﭨﭘ: ﮒ۳۶ﮒ+ﻛﺕﮒﻝﭦ?(STRATEGY_FACTORY_GUIDE.md)
      - ﻠﻝﺛ؟ﮔﻛﭨﭘ: ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?(strategy_config.yaml)
 
-ﻗ?4. ﮔﺁﮒ۵ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﺅﺙ?     - ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?     - ﻛﭨ۲ﻝ : ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
+ﻗ?4. ﮔﺁﮒ۵ﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﺅﺙ?     - ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?     - ﻛﭨ۲ﻝ: ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
 ```
 
 ---
 
-## ﻭ **ﮔ ﺕﮒﺟﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ**
+## ﻭ **ﮔﺕﮒﺟﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ**
 
 ```
 ZephyrAlpha/
 ﻗﻗﻗ docs/                    # ﮔﮔﮔﮔ۰?ﻗ?  ﻗﻗﻗ 05_IMPLEMENTATION/
 ﻗ?      ﻗﻗﻗ 06_CONSTRUCTION_DOCS/  # ﮔﺛﮒﺓ۴ﮔﮔ۰۲ﻛﺕﮒﭦ
-ﻗ?ﻗﻗﻗ src/                     # ﮔﮔﮔﭦﻛﭨ۲ﻝ 
-ﻗ?  ﻗﻗﻗ strategy/           # ﻝ­ﻝ۴ﮔ۷۰ﮒﺅﺙﻛﺕﮔﺁstrategies/ﺅﺙ?ﻗ?  ﻗﻗﻗ event_bus/          # ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﺅﺙﻛﺕﮔﺁevent/ﮔevents/ﺅﺙ?ﻗ?  ﻗﻗﻗ backtest/           # ﮒﮔﭖﮒﺙﮔﺅﺙﻛﺕﮔﺁbacktesting/ﺅﺙ?ﻗ?  ﻗﻗﻗ risk/               # ﻠ۲ﻠ۸ﻝ؟۰ﻝﺅﺙﻛﺕﮔﺁrisk_management/ﺅﺙ?ﻗ?  ﻗﻗﻗ execution/          # ﮔ۶ﻟ۰ﮒﺙﮔﺅﺙﻛﺕﮔﺁexecution_engine/ﺅﺙ?ﻗ?ﻗﻗﻗ tests/                   # ﮔﮔﮔﭖﻟﺁ?ﻗﻗﻗ config/                  # ﮔﮔﻠﻝﺛ?ﻗﻗﻗ scripts/                 # ﮔﮔﻟﮔ?ﻗﻗﻗ data/                    # ﮔﮔﮔﺍﮔ?ﻗﻗﻗ logs/                    # ﮔﮔﮔ۴ﮒﺟ?```
+ﻗ?ﻗﻗﻗ src/                     # ﮔﮔﮔﭦﻛﭨ۲ﻝ
+ﻗ?  ﻗﻗﻗ strategy/           # ﻝﻝ۴ﮔ۷۰ﮒﺅﺙﻛﺕﮔﺁstrategies/ﺅﺙ?ﻗ?  ﻗﻗﻗ event_bus/          # ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﺅﺙﻛﺕﮔﺁevent/ﮔevents/ﺅﺙ?ﻗ?  ﻗﻗﻗ backtest/           # ﮒﮔﭖﮒﺙﮔﺅﺙﻛﺕﮔﺁbacktesting/ﺅﺙ?ﻗ?  ﻗﻗﻗ risk/               # ﻠ۲ﻠ۸ﻝ؟۰ﻝﺅﺙﻛﺕﮔﺁrisk_management/ﺅﺙ?ﻗ?  ﻗﻗﻗ execution/          # ﮔ۶ﻟ۰ﮒﺙﮔﺅﺙﻛﺕﮔﺁexecution_engine/ﺅﺙ?ﻗ?ﻗﻗﻗ tests/                   # ﮔﮔﮔﭖﻟﺁ?ﻗﻗﻗ config/                  # ﮔﮔﻠﻝﺛ?ﻗﻗﻗ scripts/                 # ﮔﮔﻟﮔ?ﻗﻗﻗ data/                    # ﮔﮔﮔﺍﮔ?ﻗﻗﻗ logs/                    # ﮔﮔﮔ۴ﮒﺟ?```
 
 ---
 
-## ﻭ، **ﻝ۵ﮔ­۱ﮒﮒﭨﭦﻝﮔﻛﭨﭘﮒ۳ﺗﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ?*
+## ﻭ، **ﻝ۵ﮔ۱ﮒﮒﭨﭦﻝﮔﻛﭨﭘﮒ۳ﺗﺅﺙﻟ؟ﺍﻛﺛﻟﺟﻛﺕ۹ﺅﺙﺅﺙ?*
 
 ```
 ﻗ?src/strategies/          ﻗ?ﮒﭦﻛﺛﺟﻝ?src/strategy/
@@ -75,7 +75,7 @@ ZephyrAlpha/
 
 ## ﻭ **ﮒﺛﮒﻟ۶ﻟﻠﮔ۴ﻟ۰?*
 
-| ﮔﻛﭨﭘﻝﺎﭨﮒ | ﮔ­۲ﻝ۰؟ﻝ۳ﭦﻛﺝ | ﻠﻟﺁﺁﻝ۳ﭦﻛﺝ |
+| ﮔﻛﭨﭘﻝﺎﭨﮒ | ﮔ۲ﻝ۰؟ﻝ۳ﭦﻛﺝ | ﻠﻟﺁﺁﻝ۳ﭦﻛﺝ |
 |---------|---------|---------|
 | **Pythonﮔﻛﭨﭘ** | `strategy_factory.py` | `StrategyFactory.py` |
 | **ﮔﮔ۰۲ﮔﻛﭨﭘ** | `STRATEGY_FACTORY_GUIDE.md` | `strategy_factory_guide.md` |
@@ -88,22 +88,22 @@ ZephyrAlpha/
 
 ---
 
-## ﻭ **ﮔ ﮒﮔﺛﮒﺓ۴ﮔﭖﻝ۷**
+## ﻭ **ﮔﮒﮔﺛﮒﺓ۴ﮔﭖﻝ۷**
 
 ```
 Step 1: ﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔ?   ﻗ?LS d:\ZephyrAlpha\src\
    ﻗ?LS d:\ZephyrAlpha\docs\
 
-Step 2: ﻝ۰؟ﻟ؟۳ﻝ؟ﮔ ﻛﺛﻝﺛ؟
-   ﻗ?ﮔ۴ﻝﮔ؛ﮒﺟ،ﻠﮒﻟﻝﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ?   ﻗ?ﻝ۰؟ﻟ؟۳ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝ
+Step 2: ﻝ۰؟ﻟ؟۳ﻝ؟ﮔﻛﺛﻝﺛ؟
+ﻗ?ﮔ۴ﻝﮔ؛ﮒﺟ،ﻠﮒﻟﻝﮔﻛﭨﭘﮒ۳ﺗﻝﭨﮔ?   ﻗ?ﻝ۰؟ﻟ؟۳ﮔ۲ﻝ۰؟ﻟﺓﺁﮒﺝ
 
-Step 3: ﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟ
-   ﻗ?ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?   ﻗ?ﻛﭨ۲ﻝ : ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
+Step 3: ﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟ
+ﻗ?ﮔﮔ۰۲: ﮒﮒ،ﮒﺟﻠﮒﮔﺍﮔ?   ﻗ?ﻛﭨ۲ﻝ: ﮒﮒ،ﮒﺟﻠﮔﺏ۷ﻠ
 
 Step 4: ﮒﮒﭨﭦﮔﻛﭨﭘ
-   ﻗ?ﻛﺛﺟﻝ۷ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝ
-   ﻗ?ﻛﺛﺟﻝ۷ﮔ­۲ﻝ۰؟ﮒﺛﮒ
-   ﻗ?ﮔﺓﭨﮒ ﮔ ﮒﮒﮒ؟ﺗ
+ﻗ?ﻛﺛﺟﻝ۷ﮔ۲ﻝ۰؟ﻟﺓﺁﮒﺝ
+ﻗ?ﻛﺛﺟﻝ۷ﮔ۲ﻝ۰؟ﮒﺛﮒ
+ﻗ?ﮔﺓﭨﮒﮔﮒﮒﮒ؟ﺗ
 
 Step 5: ﻠ۹ﻟﺁ
    ﻗ?LS ﮔ۲ﮔ۴ﮔﻛﭨﭘﻛﺛﻝﺛ?   ﻗ?ﮔ۲ﮔ۴ﮒﺛﮒﻟ۶ﻟ?   ﻗ?ﻟﺟﻟ۰ﻟﺑ۷ﻠﻠ۷ﻝ۵
@@ -131,7 +131,7 @@ implementation_status: [ﮒ؟ﮔﺛﻝﭘﮔ]
 
 ---
 
-## ﻭﭨ **ﻛﭨ۲ﻝ ﮒﺟﻠﮔﺏ۷ﻠ**
+## ﻭﭨ **ﻛﭨ۲ﻝﮒﺟﻠﮔﺏ۷ﻠ**
 
 ```python
 """
@@ -171,7 +171,7 @@ def function_name(param1: str, param2: Optional[Dict] = None) -> Dict[str, Any]:
 # ﻗ?ﻠﻟﺁﺁ
 src/strategies/factory.py
 
-# ﻗ?ﮔ­۲ﻝ۰؟
+# ﻗ?ﮔ۲ﻝ۰؟
 src/strategy/factory.py
 ```
 
@@ -181,7 +181,7 @@ src/strategy/factory.py
 # ﻗ?ﻠﻟﺁﺁ
 StrategyFactory.py
 
-# ﻗ?ﮔ­۲ﻝ۰؟
+# ﻗ?ﮔ۲ﻝ۰؟
 strategy_factory.py
 ```
 
@@ -193,7 +193,7 @@ src/strategy/factory.py
 src/strategies/factory.py
 src/core/strategy_factory.py
 
-# ﻗ?ﮔ­۲ﻝ۰؟ﺅﺙﮒ۹ﻛﺟﻝﻛﺕﻛﺕ۹ﺅﺙ
+# ﻗ?ﮔ۲ﻝ۰؟ﺅﺙﮒ۹ﻛﺟﻝﻛﺕﻛﺕ۹ﺅﺙ
 src/strategy/factory.py
 ```
 
@@ -208,10 +208,10 @@ src/strategy/factory.py
 
 ## ﻭﺁ **ﻟ؟ﺍﻛﺛﻟﺟﮒ۴ﻟﺁ?*
 
-> **"ﮒ۷ﮒﮒﭨﭦﻛﭨﭨﻛﺛﮔﻛﭨﭘﮒﺅﺙﮒﻝ۷LSﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔﺅﺙﻝ۰؟ﻟ؟۳ﮔ­۲ﻝ۰؟ﻟﺓﺁﮒﺝﮒﮒﺛﮒﺅﺙﻛﺛﺟﻝ۷ﮔ ﮒﮔ۷۰ﮔﺟﺅﺙﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟﻙ?**
+> **"ﮒ۷ﮒﮒﭨﭦﻛﭨﭨﻛﺛﮔﻛﭨﭘﮒﺅﺙﮒﻝ۷LSﮔ۲ﮔ۴ﻝﺍﮔﻝﭨﮔﺅﺙﻝ۰؟ﻟ؟۳ﮔ۲ﻝ۰؟ﻟﺓﺁﮒﺝﮒﮒﺛﮒﺅﺙﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﺅﺙﻠﭖﮒﺝ۹ﮔﺛﮒﺓ۴ﻟ۶ﻟﻙ?**
 
 ---
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 **ﻝﮔ؛**: v1.0  
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02

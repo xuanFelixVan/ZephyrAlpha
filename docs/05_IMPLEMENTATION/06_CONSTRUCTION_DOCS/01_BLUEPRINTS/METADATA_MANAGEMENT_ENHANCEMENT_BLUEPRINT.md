@@ -8,8 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - å
-¸
+-
   - 影响分析
 layer: Layer 5 (策略执行层)
 ---
@@ -19,7 +18,7 @@ layer: Layer 5 (策略执行层)
 
 负责元数据管理增强的设计与实现，扩展元数据管理功能，提供元数据质量监控和分析功能，支持数据治理。
 
-# å
+#
 
 > **职责边界**: 
 
@@ -82,9 +81,9 @@ layer: Layer 5 (策略执行层)
 ### 职责边界
 
 |------|--------|
-| â?å
+| ?
 洗 |
-| â?å
+| ?
  |
 
 ---
@@ -93,7 +92,7 @@ layer: Layer 5 (策略执行层)
 
 ### 1.1 为什么选择OpenMetadata
 
-| ç¹æ?| OpenMetadata | DataHub | Apache Atlas |
+| ?| OpenMetadata | DataHub | Apache Atlas |
 |------|--------------|---------|--------------|
 
 ---
@@ -103,21 +102,21 @@ layer: Layer 5 (策略执行层)
 ### 2.1 整体架构
 
 ```
-â?                   å
-â?                                                                â?
-â? â?å
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-â? â?                   å
-³ç³?                         â?  â?
-â?                                                                â?
+?
+?                                                                ?
+? ?
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+? ?
+?                         ?  ?
+?                                                                ?
 ```
 
 ---
 
 ## 3. 核心功能实现
 
-### 3.1 å
+### 3.1
 
 ```python
 from typing import Dict, List
@@ -125,13 +124,13 @@ from datetime import datetime
 import json
 
 class MetadataCollector:
-    """å
+"""
     
     def __init__(self, storage):
         self.storage = storage
     
     def collect_table_metadata(self, table_info: Dict) -> Dict:
-æ°æ®"""
+"""
         metadata = {
             "table_name": table_info["name"],
             "database": table_info["database"],
@@ -156,7 +155,7 @@ class MetadataCollector:
         return metadata
     
     def collect_pipeline_metadata(self, pipeline_info: Dict) -> Dict:
-æ°æ?""
+?""
         metadata = {
             "pipeline_name": pipeline_info["name"],
             "description": pipeline_info.get("description"),
@@ -186,7 +185,7 @@ class LineageTracker:
         transformation: str = None,
         pipeline: str = None
     ):
-³ç³?""
+?""
         lineage = {
             "source": source,
             "target": target,
@@ -261,11 +260,10 @@ class LineageTracker:
         }
 ```
 
-¸
 
 ```python
 class DataDictionary:
-¸"""
+"""
     
     def __init__(self, storage):
         self.storage = storage

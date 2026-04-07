@@ -1,9 +1,9 @@
 ﻿﻿---
 responsibility:
-  - 简化版风险预算系统
-  - 风险预算分配
-  - 动态风险调整
-  - 风险预算优化
+  - VaR风险预算
+  - 动态预算调整
+  - 快速风险分配
+  - 简化预算优化
 
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0

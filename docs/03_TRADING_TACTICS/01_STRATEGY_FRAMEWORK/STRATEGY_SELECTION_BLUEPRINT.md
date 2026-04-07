@@ -115,7 +115,7 @@ class TOPSISEvaluator:
         6. 计算相对接近度并排序
         """
         
-        # 1. 构建决策矩阵（策?× 准则?        decision_matrix = self._build_decision_matrix(strategies, criteria_matrix)
+        # 1. 构建决策矩阵（策? 准则?        decision_matrix = self._build_decision_matrix(strategies, criteria_matrix)
         
         # 2. 标准化决策矩阵（消除量纲影响?        normalized_matrix = self.normalizer.normalize(decision_matrix)
         

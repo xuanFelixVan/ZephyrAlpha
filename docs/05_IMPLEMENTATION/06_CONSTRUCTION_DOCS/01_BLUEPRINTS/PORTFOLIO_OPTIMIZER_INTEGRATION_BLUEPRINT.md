@@ -101,14 +101,13 @@ layer: Layer 5.2 (组合优化)
 | **版本** | v1.0.0 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-¥ |
+|
 
 ### 下游依赖
 
@@ -122,8 +121,8 @@ layer: Layer 5.2 (组合优化)
 | **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -167,12 +166,12 @@ class BaseOptimizer(ABC):
             constraints: 约束条件
             
         Returns:
-            æä¼æé?
+?
         """
         pass
 
 class PyPortfolioOptOptimizer(BaseOptimizer):
-    """PyPortfolioOptä¼åå?""
+"""PyPortfolioOpt?""
     
     def optimize(
         self,
@@ -190,7 +189,7 @@ class PyPortfolioOptOptimizer(BaseOptimizer):
         return np.array(list(weights.values()))
 
 class RiskfolioLibOptimizer(BaseOptimizer):
-    """Riskfolio-Libä¼åå?""
+"""Riskfolio-Lib?""
     
     def optimize(
         self,
@@ -204,7 +203,7 @@ class RiskfolioLibOptimizer(BaseOptimizer):
         pass
 
 class SkfolioOptimizer(BaseOptimizer):
-    """skfolioä¼åå?""
+"""skfolio?""
     
     def optimize(
         self,
@@ -218,7 +217,7 @@ class SkfolioOptimizer(BaseOptimizer):
         pass
 
 class DeepfolioOptimizer(BaseOptimizer):
-    """deepfolioä¼åå?""
+"""deepfolio?""
     
     def optimize(
         self,
@@ -257,7 +256,7 @@ class OptimizerIntegration:
             constraints: 约束条件
             
         Returns:
-            æä¼æé?
+?
         """
         optimizer = self.optimizers.get(method)
         if not optimizer:
@@ -296,7 +295,7 @@ class OptimizerIntegration:
 
 
 |--------|------|---------|------|
-| **PyPortfolioOpt** | ç»å
+| **PyPortfolioOpt** |
 | **deepfolio** | 深度学习、端到端优化 | 复杂优化问题 | ⭐⭐ |
 
 ---
@@ -347,7 +346,7 @@ class OptimizerAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -362,8 +361,8 @@ class OptimizerAPI:
 ##### 6.001. Portfolio Optimizer Integration
 - **模块ID**: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 - **蓝图文档**: PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

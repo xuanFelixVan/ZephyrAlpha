@@ -2,8 +2,8 @@
 responsibility:
   - Black-Litterman模型
   - 观点融合
-  - æä¼é
-ç½?
+-
+?
   - 市场均衡收益
 
 module_id: BLACK_LITTERMAN_MODEL_001
@@ -83,7 +83,7 @@ layer: Layer 5.2 (组合优化)
 
 主观观点的组合优化
 > **职责边界**: 
-ç½?
+?
 
 
 ## 1. 概述
@@ -92,8 +92,7 @@ layer: Layer 5.2 (组合优化)
 
 - 解决传统均值方差优化对预期收益率估计过于敏感的问题
 
-- å
-èå
+-
 - 降低因参数估计误差导致的优化偏差
 
 ### 1.2 版本信息
@@ -102,35 +101,34 @@ layer: Layer 5.2 (组合优化)
 |------|------|
 | **模块ID** | BLACK_LITTERMAN_MODEL_001 |
 | **版本** | v1.0.0 |
-| **ç¶æ?* | Active |
+| **?* | Active |
 | **创建日期** | 2026-04-06 |
-| **æåæ´æ?* | 2026-04-06 |
+| **?* | 2026-04-06 |
 
-³ç³?
+?
 
-| å
+|
 |---------|---------|-----------|---------|
-| **è¾å
-| **è¾å
-| **è¾å
+| **
+| **
+| **
 | **输出目标** | 组合优化模块 | PORTFOLIO_OPTIMIZATION_001 | 提供优化后的组合权重 |
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [æç¥é
+| [
 置 |
 
 
@@ -139,8 +137,8 @@ layer: Layer 5.2 (组合优化)
 | **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -148,7 +146,7 @@ graph LR
     C[数据质量监控] --> B
     D[数据目录] --> B
     
-    B --> E[æç¥é
+B --> E[
     B --> F[风险预算系统]
     B --> G[策略选择]
     
@@ -165,7 +163,7 @@ graph LR
 
 ```
 ├── 6.1 组合构建模块
-ç½?(MULTI_ASSET_ALLOCATION_001)
+?(MULTI_ASSET_ALLOCATION_001)
 ├── 6.2 约束求解模块
 └── 6.3 风险预算模块
     ├── 风险预算系统 (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
@@ -178,8 +176,8 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "è¾å
-¥å±?
+subgraph "
+?
         A[市场数据] --> B[市场均衡收益计算器]
         C[因子预测] --> D[主观观点生成器]
         E[策略信号] --> D
@@ -187,7 +185,7 @@ graph TB
     end
     
     subgraph "Black-Litterman核心引擎"
-        B --> H[å
+B --> H[
         D --> I[观点矩阵构建]
         I --> J[观点置信度设定]
         H --> K[Black-Litterman融合器]
@@ -210,12 +208,12 @@ graph TB
 
 
 ```
-         â?
-         â?
+?
+?
 Black-Litterman融合
-         â?
-         â?
-         â?
+?
+?
+?
 ```
 
 ---
@@ -236,11 +234,10 @@ from pypfopt import risk_models, expected_returns
 
 class BlackLittermanOptimizer:
     """
-    Black-Littermanä¼åå?
+Black-Litterman?
     
     索引: BLACK_LITTERMAN_001-M01
     职责: 基于PyPortfolioOpt实现Black-Litterman组合优化
-    è¾å
     输出: 优化后的组合权重
     """
     
@@ -254,7 +251,6 @@ class BlackLittermanOptimizer:
         risk_aversion: float = 2.5
     ) -> pd.Series:
         """
-éªï¼
         
         Args:
             market_prices: 市场价格数据
@@ -315,7 +311,6 @@ class BlackLittermanOptimizer:
             risk_aversion: 风险厌恶系数
             
         Returns:
-¸ï¼å
         """
         assets = list(market_prices.columns)
         
@@ -412,7 +407,7 @@ class RiskfolioBlackLittermanOptimizer:
         return w
 ```
 
-### 3.2 å
+### 3.2
 
 #### 3.2.1 市场均衡收益计算
 
@@ -422,7 +417,6 @@ class RiskfolioBlackLittermanOptimizer:
 π = δ * Σ * w_market
 ```
 
-å
 - π: 市场均衡收益向量
 - w_market: 市场权重（基于市值）
 
@@ -452,16 +446,14 @@ def market_implied_prior_returns(
     return pi
 ```
 
-#### 3.2.2 Black-Littermanå
-¬å¼
+#### 3.2.2 Black-Litterman
 
-¬å¼**:
+**:
 
 ```
 E[R] = [(τΣ)^(-1) + P'Ω^(-1)P]^(-1) * [(τΣ)^(-1)π + P'Ω^(-1)Q]
 ```
 
-å
 - E[R]: 后验预期收益
 - P: 观点矩阵
 - π: 市场均衡收益
@@ -479,7 +471,6 @@ def black_litterman_formula(
     tau: float = 0.02
 ) -> tuple:
     """
-¬å¼
     
     Args:
         pi: 市场均衡收益
@@ -504,20 +495,20 @@ def black_litterman_formula(
 ### 3.3 性能要求
 
 |---------|--------|------|
-| **å
+| **
 存占用** | <100MB | 单次优化 |
 
 ---
 
 ## 4. 数据模型
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
 class BlackLittermanInput:
-    """Black-Littermanè¾å
-¥æ°æ®"""
+"""Black-Litterman
+"""
     market_prices: pd.DataFrame
     market_caps: Dict[str, float]
     views: Dict[str, float]
@@ -634,12 +625,12 @@ class BlackLittermanAPI:
         pass
 ```
 
-### 5.2 ä¸å
+### 5.2
 
 容 |
 |---------|---------|---------|---------|
-| **è¾å
-| **è¾å
+| **
+| **
 | **输出接口** | 风险预算系统 | JSON | 风险贡献数据 |
 
 ---
@@ -650,7 +641,7 @@ class BlackLittermanAPI:
 **目标**: 完成基础Black-Litterman优化功能
 
 |------|------|--------|
-æµè¯?|
+?|
 | 观点矩阵构建 | 4h | 观点处理模块 |
 
 
@@ -664,7 +655,7 @@ class BlackLittermanAPI:
 
 
 |------|------|--------|
-| åå
+|
 | 集成测试 | 4h | 测试报告 |
 | 文档编写 | 4h | 用户手册、API文档 |
 
@@ -690,7 +681,7 @@ class BlackLittermanAPI:
 - Black-Litterman负责将策略信号转化为组合权重
 
 - 组合优化模块提供优化框架
-- Black-Littermanæ¯å
+- Black-Litterman
 
 ### 7.3 版本管理策略
 
@@ -722,21 +713,21 @@ class BlackLittermanAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
-| åå
-æµè¯ | â?0% | pytest |
+|
+| ?0% | pytest |
 | 回测验证 | 历史数据 | Backtrader |
 
 ### 9.2 验收标准
 
 |--------|------|---------|
-æµè¯ |
+|
 | 性能达标 | 优化时间<500ms | 性能测试 |
 
 ---
 
-## 10. åèèµæ?
+## 10. ?
 
 ### 10.1 学术论文
 
@@ -747,8 +738,7 @@ class BlackLittermanAPI:
 1. PyPortfolioOpt Documentation: https://pyportfolioopt.readthedocs.io/
 2. Riskfolio-Lib Tutorials: https://riskfolio-lib.readthedocs.io/
 
-### 10.3 ç¸å
-³èå¾
+### 10.3
 
 - 组合优化蓝图
 - [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md)
@@ -760,7 +750,7 @@ class BlackLittermanAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

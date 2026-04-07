@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
@@ -23,30 +23,30 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ? ﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﻙﮒ۷ﮔﮔﺑﮔﺍﻙﻝﮔ؛ﮔ۶ﮒ?
+> ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ? ﻠﻛﺕﮒﺙﻠﻝﺛ؟ﻙﮒ۷ﮔﮔﺑﮔﺍﻙﻝﮔ؛ﮔ۶ﮒ?
 
 ---
 
 ## 1. ﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟﺍ
 
-ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮔﻛﺝﻠﻛﺕ­ﮒﺙﻠﻝﺛ؟ﮒ­ﮒ۷ﻙﮒ۷ﮔﮔﺑﮔﺍﮒﻝﮔ؛ﮔ۶ﮒﭘﮒﻟﺛﻙ?
+ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮔﻛﺝﻠﻛﺕﮒﺙﻠﻝﺛ؟ﮒﮒ۷ﻙﮒ۷ﮔﮔﺑﮔﺍﮒﻝﮔ؛ﮔ۶ﮒﭘﮒﻟﺛﻙ?
 
 ```
 ﻠﻝﺛ؟ﻝ؟۰ﻝﮔﭘﮔ
-ﻗﻗﻗ ﻠﻝﺛ؟ﮒ­ﮒ۷ﮒﺎ?(Config Storage)
-ﻗ?  ﻗﻗﻗ ﮔ؛ﮒﺍﮔﻛﭨﭘﮒ­ﮒ۷
-ﻗ?  ﻗﻗﻗ ﻟﺟﻝ۷ﻠﻝﺛ؟ﻛﺕ­ﮒﺟ (etcd/consul)
+ﻗﻗﻗ ﻠﻝﺛ؟ﮒﮒ۷ﮒﺎ?(Config Storage)
+ﻗ?  ﻗﻗﻗ ﮔ؛ﮒﺍﮔﻛﭨﭘﮒﮒ۷
+ﻗ?  ﻗﻗﻗ ﻟﺟﻝ۷ﻠﻝﺛ؟ﻛﺕﮒﺟ (etcd/consul)
 ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠ
-ﻗﻗﻗ ﻠﻝﺛ؟ﮒ ﻟﺛﺛﮒﺎ?(Config Loader)
-ﻗ?  ﻗﻗﻗ YAMLﮒ ﻟﺛﺛﮒ?
-ﻗ?  ﻗﻗﻗ JSONﮒ ﻟﺛﺛﮒ?
-ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠﮒ ﻟﺛﺛﮒ?
+ﻗﻗﻗ ﻠﻝﺛ؟ﮒﻟﺛﺛﮒﺎ?(Config Loader)
+ﻗ?  ﻗﻗﻗ YAMLﮒﻟﺛﺛﮒ?
+ﻗ?  ﻗﻗﻗ JSONﮒﻟﺛﺛﮒ?
+ﻗ?  ﻗﻗﻗ ﻝﺁﮒ۱ﮒﻠﮒﻟﺛﺛﮒ?
 ﻗﻗﻗ ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒﺎ?(Config Validator)
 ﻗ?  ﻗﻗﻗ ﻝﺎﭨﮒﻠ۹ﻟﺁ
 ﻗ?  ﻗﻗﻗ ﻟﮒﺑﻠ۹ﻟﺁ
 ﻗ?  ﻗﻗﻗ ﻛﺝﻟﭖﻠ۹ﻟﺁ
 ﻗﻗﻗ ﮒ۷ﮔﮔﺑﮔﺍﮒﺎ (Config Updater)
-ﻗ?  ﻗﻗﻗ ﻝ­ﮔﺑﮔﺍﮔﭦﮒ?
+ﻗ?  ﻗﻗﻗ ﻝﮔﺑﮔﺍﮔﭦﮒ?
 ﻗ?  ﻗﻗﻗ ﮒﮔﺑﻠﻝ۴
 ﻗ?  ﻗﻗﻗ ﮒﮔﭨﮔﭦﮒﭘ
 ﻗﻗﻗ ﻝﮔ؛ﮔ۶ﮒﭘﮒﺎ?(Config Versioning)
@@ -57,7 +57,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ---
 
-## 2. ﮔ ﺕﮒﺟﮒ؟ﻝﺍ
+## 2. ﮔﺕﮒﺟﮒ؟ﻝﺍ
 
 ### 2.1 ﻠﻝﺛ؟ﮔﺍﮔ؟ﻝﭨﮔ
 
@@ -119,7 +119,7 @@ class ConfigManager:
         self._load_all_configs()
 
     def _load_all_configs(self):
-        """ﮒ ﻟﺛﺛﮔﮔﻠﻝﺛ؟ﮔﻛﭨ?""
+"""ﮒﻟﺛﺛﮔﮔﻠﻝﺛ؟ﮔﻛﭨ?""
         system_config_path = os.path.join(self.config_dir, "system.yaml")
 
         if os.path.exists(system_config_path):
@@ -134,7 +134,7 @@ class ConfigManager:
                 self._load_from_dict(data, ConfigScope.SYSTEM)
 
     def _load_from_dict(self, data: Dict, scope: ConfigScope):
-        """ﻛﭨﮒ­ﮒﺕﮒ ﻟﺛﺛﻠﻝﺛ?""
+"""ﻛﭨﮒﮒﺕﮒﻟﺛﺛﻠﻝﺛ?""
         for key, value in data.items():
             if isinstance(value, dict):
                 self._load_from_dict(value, scope)
@@ -316,7 +316,7 @@ class ConfigTemplates:
 
     @staticmethod
     def get_factor_config() -> Dict:
-        """ﮒ ﮒ­ﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
+"""ﮒﮒﻠﻝﺛ؟ﮔ۷۰ﮔﺟ"""
         return {
             "factors": {
                 "lookback_periods": [5, 10, 20, 60],

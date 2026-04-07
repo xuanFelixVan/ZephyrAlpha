@@ -88,16 +88,16 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择Prefect
 
-| ç¹æ?| Prefect | Airflow | Dagster | Temporal |
+| ?| Prefect | Airflow | Dagster | Temporal |
 |------|---------|---------|---------|----------|
-| **å
+| **
 
 况
 
 | 机构 | 调度系统 | 规模 |
 |------|---------|------|
 | **桥水基金** | Airflow | 1000+ DAGs |
-´ç§æ** | Dagster | 500+ Pipelines |
+** | Dagster | 500+ Pipelines |
 | **Two Sigma** | Prefect | 800+ Flows |
 | **Citadel** | 自研系统 | 2000+ Jobs |
 
@@ -109,9 +109,9 @@ layer: Layer 5.1 (数据处理)
 
 ```
 
-                              â?
-                              â?
-                              â?
+?
+?
+?
 ```
 
 ### 2.2 核心组件
@@ -120,7 +120,7 @@ layer: Layer 5.1 (数据处理)
 |------|------|--------|
 | **Prefect Core** | 工作流定义和执行 | Python |
 | **Prefect Agent** | 任务执行代理 | Prefect Agent |
-å?| Local/S3 |
+?| Local/S3 |
 
 ---
 
@@ -212,7 +212,7 @@ def clean_data(df: pd.DataFrame):
         df: 原始数据
     
     Returns:
-        DataFrame: æ¸
+DataFrame:
 洗后的数据
     """
     df = df.drop_duplicates()
@@ -225,7 +225,7 @@ def calculate_features(df: pd.DataFrame):
     计算特征
     
     Args:
-        df: æ¸
+df:
 洗后的数据
     
     Returns:
@@ -287,7 +287,7 @@ def calculate_signals(df):
 
 @task
 def send_alerts(signals):
-    """åéåè­?""
+"""?""
     if signals['signal'] == 'BUY':
         send_email('buy_signal@example.com', signals)
 
@@ -381,7 +381,6 @@ from prefect.utilities.notifications import slack_notification
 @task(state_handlers=[slack_notification(webhook_url="...")])
 def critical_task():
     """
-    å
     
     Returns:
         bool: 是否成功
@@ -409,7 +408,7 @@ def monitor_task_status():
     return status
 ```
 
-### 4.2 åè­¦é
+### 4.2
 置
 
 ```python
@@ -482,16 +481,16 @@ docker-compose up -d
 
 存 | 存储 |
 |------|-----|------|------|
-| **Prefect Server** | 1æ ?| 2GB | 10GB |
-| **Prefect Agent** | 1æ ?| 1GB | 5GB |
+| **Prefect Server** | 1?| 2GB | 10GB |
+| **Prefect Agent** | 1?| 1GB | 5GB |
 
 ---
 
 ## 6. 实施计划
 
 
-å**ï¼?
-- [ ] å®è£
+**?
+- [ ]
 Prefect Core
 - [ ] 启动Prefect Server
 - [ ] 启动Prefect Agent
@@ -500,17 +499,17 @@ Prefect Core
 
 ### 6.2 阶段二：核心Flow开发（2周）
 
-å**ï¼?
+**?
 - [ ] 开发数据采集Flow
 - [ ] 开发数据处理Flow
 - [ ] 开发数据验证Flow
-- [ ] é
+- [ ]
 
 
 
-å**ï¼?
-- [ ] é
-- [ ] é
+**?
+- [ ]
+- [ ]
 - [ ] 开发监控Dashboard
 - [ ] 设置失败重试
 
@@ -519,26 +518,26 @@ Prefect Core
 
 ## 7. 成本效益分析
 
-### 7.1 å¼åææ?
+### 7.1 ?
 
 |------|--------|------|
-| **基础部署** | 10小时 | ¥1,000 |
-| **监控告警** | 5小时 | ¥500 |
-| **总计** | **30小时** | **¥3,000** |
+| **基础部署** | 10小时 | 1,000 |
+| **监控告警** | 5小时 | 500 |
+| **总计** | **30小时** | **3,000** |
 
 ### 7.2 运营成本
 
 |------|--------|--------|
-| **软件许可** | ¥0（开源） | ¥0 |
-| **维护** | ¥200 | ¥2,400 |
-| **总计** | **¥200** | **¥2,400** |
+| **软件许可** | 0（开源） | 0 |
+| **维护** | 200 | 2,400 |
+| **总计** | **200** | **2,400** |
 
 ### 7.3 收益分析
 
 |--------|----------|
-| **提高数据采集效率** | ¥20,000 |
-| **减少人工干预** | ¥15,000 |
-| **总计** | **¥45,000** |
+| **提高数据采集效率** | 20,000 |
+| **减少人工干预** | 15,000 |
+| **总计** | **45,000** |
 
 ### 7.4 ROI计算
 
@@ -550,14 +549,14 @@ Prefect Core
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **å
-| **ç½ç»æ
+| **
+| **
 
 ### 8.2 运维风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|----------|
-| **é
+| **
 
 ---
 
@@ -587,18 +586,18 @@ Prefect Core
    - 分布式锁
 
 2. **智能调度**
-çº?
+?
    - 资源预测
 
 ---
 
-## 10. ä¸å
+## 10.
 
 ### 10.1 上游依赖
 
 | 模块 | 依赖类型 | 说明 |
 |------|---------|------|
-| **é
+| **
 
 ### 10.2 下游依赖
 

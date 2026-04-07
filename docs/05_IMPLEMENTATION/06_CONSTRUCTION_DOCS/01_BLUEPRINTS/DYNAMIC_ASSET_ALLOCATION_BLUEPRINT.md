@@ -8,14 +8,14 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-ç½?
+?
   - 资产权重调整
   - 市场环境适应
-  - é
+-
 layer: Layer 5.2 (组合优化)
 ---
 
-ç½®èå?
+?
 
 ## 核心定位
 
@@ -88,7 +88,7 @@ layer: Layer 5.2 (组合优化)
 ```python
 class StrategicAssetAllocator:
     """
-ç½®å?
+?
     
     """
     
@@ -99,15 +99,12 @@ class StrategicAssetAllocator:
         asset_classes: List[str]
     ) -> Dict[str, float]:
         """
-ç½®æé
         
         参数:
             risk_tolerance: 风险承受能力 (0-1)
             asset_classes: 资产类别列表
             
         返回:
-            æç¥é
-ç½®æé
         """
         pass
     
@@ -126,7 +123,7 @@ class StrategicAssetAllocator:
 ```python
 class TacticalAssetAllocator:
     """
-ç½®å?
+?
     
     """
     
@@ -140,8 +137,7 @@ class TacticalAssetAllocator:
         计算战术调整
         
         参数:
-            strategic_weights: æç¥é
-ç½®æé
+strategic_weights:
             max_deviation: 最大偏离度
             
         返回:
@@ -161,14 +157,13 @@ class TacticalAssetAllocator:
         pass
 ```
 
-ç½?
+?
 
 ```python
 class RegimeBasedAllocator:
     """
-ç½®å¨
     
-ç½?
+?
     """
     
     def __init__(self):
@@ -190,8 +185,6 @@ class RegimeBasedAllocator:
             confidence: 状态判断置信度
             
         返回:
-            é
-ç½®æé
         """
         pass
     
@@ -250,7 +243,6 @@ class RiskBudgetAdjuster:
 ```python
 class DynamicAssetAllocator:
     """
-ç½®å¨
     
     """
     
@@ -271,14 +263,13 @@ class DynamicAssetAllocator:
         constraints: Optional[Dict] = None
     ) -> Dict:
         """
-ç½?
+?
         
         参数:
             risk_profile: 风险偏好
             constraints: 约束条件
             
         返回:
-            é
         """
 置
         strategic = self.saa.calculate_strategic_weights(
@@ -301,17 +292,17 @@ class DynamicAssetAllocator:
         return self._combine_allocations(strategic, regime_adjusted, tactical)
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 dynamic_asset_allocation:
-  # æç¥é
+#
 置
   strategic:
     rebalance_frequency: 'quarterly'
     drift_tolerance: 0.05
     
-  # ææ¯é
+#
 置
   tactical:
     max_deviation: 0.10

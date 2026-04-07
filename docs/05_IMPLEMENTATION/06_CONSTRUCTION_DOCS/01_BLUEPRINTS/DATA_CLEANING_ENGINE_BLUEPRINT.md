@@ -82,8 +82,8 @@ layer: Layer 5.1 (数据处理)
 - 自动化异常值检测与处理
 ?
 - 重复数据去重
-- æ¸
-ç½?
+-
+?
 
 
 
@@ -95,7 +95,7 @@ layer: Layer 5.1 (数据处理)
 **Layer定位**: Layer 1 - 数据预处理层（数据处理模块）
 
 - 提升数据质量
-- å¯é
+-
 洗规则
 
 - 减少人工干预
@@ -105,8 +105,8 @@ layer: Layer 5.1 (数据处理)
 
 |------|--------|----------|
 ?|
-| **æ¸
-ç½?* | P1 | YAMLé
+| **
+?* | P1 | YAML
 置 |
 
 ---
@@ -117,36 +117,36 @@ layer: Layer 5.1 (数据处理)
 
 ```mermaid
 graph TB
-    subgraph "è¾å
-¥å±?
-¥æ¥å£]
+subgraph "
+?
+]
     end
     
-    subgraph "æ¸
+subgraph "
 洗引擎"
         B --> C[异常值检测器]
         B --> D[缺失值处理器]
         B --> E[重复数据去重器]
         B --> F[格式标准化器]
         
-        C --> G[æ¸
+C --> G[
 洗规则引擎]
         D --> G
         E --> G
         F --> G
     end
     
-        G --> H[æ¸
+G --> H[
 洗后数据]
-        G --> I[æ¸
+G --> I[
 洗报告]
         G --> J[质量指标]
     end
     
-    subgraph "é
-        K[æ¸
+subgraph "
+K[
 置] --> G
-        L[éå¼é
+L[
 置] --> G
     end
 ```
@@ -182,7 +182,7 @@ class AnomalyDetector:
             df: Spark DataFrame
         
         Returns:
-            DataFrame: å
+DataFrame:
 含异常值标记的DataFrame
         """
         detector = self.methods.get(method)
@@ -558,7 +558,7 @@ from great_expectations.dataset import SparkDFDataset
 from typing import Dict, List
 
 class GreatExpectationsCleaner:
-æ´å?""
+?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -605,7 +605,7 @@ class GreatExpectationsCleaner:
         return suite
     
     def validate_and_clean(self, df):
-æ´æ°æ?""
+?""
         # 转换为Great Expectations Dataset
         gx_df = SparkDFDataset(df)
         
@@ -650,7 +650,7 @@ from pyspark.sql.functions import col, when, lit
 from typing import Dict, List, Any
 
 class SparkDataCleaner:
-æ´å?""
+?""
     
     def __init__(self, spark: SparkSession, config: Dict[str, Any]):
         self.spark = spark
@@ -664,16 +664,15 @@ class SparkDataCleaner:
 洗
         
         Args:
-            df: è¾å
-¥DataFrame
-            cleaning_config: æ¸
-æ´é
+df:
+DataFrame
+cleaning_config:
 置
         
         Returns:
-            DataFrame: æ¸
+DataFrame:
 洗后的DataFrame
-            Dict: æ¸
+Dict:
 洗报告
         """
         report = {
@@ -723,15 +722,15 @@ class SparkDataCleaner:
 
 ---
 
-## 4. é
+## 4.
 
-### 4.1 æ¸
+### 4.1
 置
 
 ```yaml
 # data_cleaning_config.yaml
 
-ç½?
+?
 anomaly_detection:
   enabled: true
   method: zscore  # zscore, iqr, isolation_forest, dbscan
@@ -744,7 +743,7 @@ anomaly_detection:
     iqr_multiplier: 1.5
     contamination: 0.1
 
-ç½?
+?
 missing_value_handling:
   enabled: true
   strategies:
@@ -766,7 +765,7 @@ duplicate_removal:
   fuzzy_threshold: 0.9
   time_window: 1 hour
 
-ç½?
+?
 format_standardization:
   enabled: true
   date_format: "%Y-%m-%d %H:%M:%S"
@@ -774,7 +773,7 @@ format_standardization:
     precision: 2
     rounding: half_up
 
-# æ¸
+#
 置
 cleaning_rules:
   - name: price_range_check
@@ -795,15 +794,14 @@ cleaning_rules:
     action: remove
 ```
 
-### 4.2 é
+### 4.2
 
 ```python
 import yaml
 from typing import Dict, Any
 
 class CleaningConfigLoader:
-    """æ¸
-æ´é
+"""
     
     def __init__(self, config_path: str):
         self.config_path = config_path
@@ -814,11 +812,11 @@ class CleaningConfigLoader:
             return yaml.safe_load(f)
     
     def get_anomaly_config(self) -> Dict[str, Any]:
-ç½?""
+?""
         return self.config.get('anomaly_detection', {})
     
     def get_missing_config(self) -> Dict[str, Any]:
-ç½?""
+?""
         return self.config.get('missing_value_handling', {})
     
     def get_dedup_config(self) -> Dict[str, Any]:
@@ -826,11 +824,11 @@ class CleaningConfigLoader:
         return self.config.get('duplicate_removal', {})
     
     def get_format_config(self) -> Dict[str, Any]:
-ç½?""
+?""
         return self.config.get('format_standardization', {})
     
     def get_cleaning_rules(self) -> List[Dict[str, Any]]:
-        """è·åæ¸
+"""
 洗规则"""
         return self.config.get('cleaning_rules', [])
 ```
@@ -884,7 +882,7 @@ services:
       - ./config:/config
 ```
 
-### 5.2 æ¸
+### 5.2
 洗引擎Dockerfile
 
 ```dockerfile
@@ -893,7 +891,7 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# å®è£
+#
 依赖
 RUN pip install --no-cache-dir \
     pyspark==3.4.0 \
@@ -929,7 +927,7 @@ spark = SparkSession.builder \
 置
 config_loader = CleaningConfigLoader("config/data_cleaning_config.yaml")
 
-æ´å?
+?
 cleaner = SparkDataCleaner(spark, config_loader.config)
 
 # 读取数据
@@ -956,11 +954,11 @@ cleaned_df, report = cleaner.clean_data(
 洗后的数据
 cleaned_df.write.parquet("data/cleaned/market_data.parquet", mode='overwrite')
 
-# æå°æ¸
+#
 洗报告
-print("æ¸
+print("
 洗报告:")
-print(f"è¾å
+print(f"
 ? {report['missing_values_filled']}")
 ```
 
@@ -969,24 +967,24 @@ print(f"è¾å
 ```python
 from great_expectations_cleaner import GreatExpectationsCleaner
 
-æ´å?
+?
 gx_cleaner = GreatExpectationsCleaner({
     'suite_name': 'market_data_cleaning_suite'
 })
 
-æ´æ°æ?
+?
 cleaned_df, validation_results = gx_cleaner.validate_and_clean(df)
 
 # 查看验证结果
 print(f"验证成功: {validation_results.success}")
-print(f"éè¿ç? {validation_results.statistics.success_percent:.2f}%")
+print(f"? {validation_results.statistics.success_percent:.2f}%")
 ```
 
 ---
 
 ## 7. 性能优化
 
-### 7.1 Sparkä¼åé
+### 7.1 Spark
 置
 
 ```python
@@ -1026,7 +1024,7 @@ def clean_data_with_cache(df, cleaning_config):
 ---
 
 
-### 8.1 æ¸
+### 8.1
 洗质量监控
 
 ```python
@@ -1043,7 +1041,7 @@ anomaly_counter = Counter(
 
 missing_counter = Counter(
     'missing_values_filled_total',
-    'å¡«å
+'
 
 )
 
@@ -1057,8 +1055,8 @@ cleaning_duration = Histogram(
 洗耗时'
 )
 
-# çæ§è£
-é¥°å?
+#
+?
 def monitor_cleaning(func):
     def wrapper(*args, **kwargs):
         cleaning_counter.inc()
@@ -1087,27 +1085,27 @@ def monitor_cleaning(func):
 
 
 
-- â?Great Expectationséæ
+- ?Great Expectations
 
 
 
 
-- â?å
+- ?
 存管理优化
 
 
-- â?æ¸
+- ?
 洗报告生成
 
 ---
 
 ## 10. 成本效益分析
 
-### 10.1 å¼åææ?
+### 10.1 ?
 
 |------|--------|------|
-| 文档编写 | 5h | ¥500 |
-| **总计** | **60h** | **¥6,000** |
+| 文档编写 | 5h | 500 |
+| **总计** | **60h** | **6,000** |
 
 ### 10.2 收益评估
 

@@ -92,7 +92,7 @@ layer: Layer 5.3 (风险管理)
 - 提供应急预警和风险缓释措施
 
 景分析 + 蒙特卡洛模拟
-- æ°æ®å
+-
 备
 
 
@@ -104,7 +104,7 @@ layer: Layer 5.3 (风险管理)
 
 单
 
-1. **åå²æ
+1. **
 景
 景下的风险暴露报告
 
@@ -114,27 +114,26 @@ layer: Layer 5.3 (风险管理)
 
 
 ```
-â?                                                                â?
-â?â?            è¾å
-¥å±?                                       â?  â?
-ç½?     â?    â?  â?
-â?                        â?                                      â?
-â?â?            æ
-æ?                                      â?  â?  â?
-â?                        â?                                      â?
-â?                        â?                                      â?
-â?                                                                â?
+?                                                                ?
+??
+?                                       ?  ?
+?     ?    ?  ?
+?                        ?                                      ?
+??
+?                                      ?  ?  ?
+?                        ?                                      ?
+?                        ?                                      ?
+?                                                                ?
 ```
 
 
 ```
 历史危机事件数据 + 当前组合持仓
-    â?
-æ
-    â?
-    â?
+?
+?
+?
 生成压力测试报告
-    â?
+?
 ```
 
 ---
@@ -147,8 +146,7 @@ class StressTestingSystem:
     """
     
     索引: STRESS_TEST_001-M01
-æ¯åæ?
-    è¾å
+?
     """
     
     def __init__(self, config: StressTestConfig):
@@ -167,8 +165,8 @@ class StressTestingSystem:
         
         Args:
             portfolio: 当前组合
-            scenarios: æ
-æ¯ï¼?
+scenarios:
+?
             
         Returns:
             StressTestResult: 压力测试结果
@@ -176,7 +174,7 @@ class StressTestingSystem:
         results = []
         
         for scenario in scenarios:
-            # 1. åºç¨æ
+# 1.
 景冲击
             shocked_portfolio = self.scenario_analyzer.apply_shock(
                 portfolio, scenario
@@ -204,16 +202,15 @@ class StressTestingSystem:
         )
 ```
 
-### 3.2 æ
+### 3.2
 
 ```python
 class ScenarioAnalyzer:
     """
-    æ
-æ¯åæå?
+?
     
     索引: STRESS_TEST_001-M02
-æ?
+?
     """
     
     def apply_shock(
@@ -222,11 +219,10 @@ class ScenarioAnalyzer:
         scenario: Scenario
     ) -> Portfolio:
         """
-        åºç¨æ
         
         Args:
             portfolio: 原始组合
-            scenario: æ
+scenario:
 景定义
             
         Returns:
@@ -244,15 +240,15 @@ class ScenarioAnalyzer:
 
 ## 4. 压力测试场景设计
 
-### 4.1 åå²æ
-æ¯åº?
+### 4.1
+?
 
-| æ
+|
 景名称 | 时间范围 | 触发事件 | 主要冲击 | 适用场景 |
 |----------|----------|----------|----------|----------|
-| **2020ç«æ
+| **2020
 
-### 4.2 æ
+### 4.2
 置
 
 ```yaml
@@ -320,11 +316,11 @@ custom_scenarios:
       growth_stocks: -0.50
 ```
 
-æ¯çæå?
+?
 
 ```python
 class MonteCarloScenarioGenerator:
-æ¯çæå?""
+?""
     
     def __init__(
         self,
@@ -417,9 +413,9 @@ class MonteCarloScenarioGenerator:
 
 |----------|----------|----------|----------|------|
 景的平均损失 |
-| **风险暴露** | 因子暴露 | β×因子冲击 | 0.5 | 因子风险暴露 |
-| **风险暴露** | 行业暴露 | 权重×行业冲击 | 30% | 行业风险暴露 |
-| **风险暴露** | 风格暴露 | 风格因子×冲击 | 0.3 | 风格风险暴露 |
+| **风险暴露** | 因子暴露 | β因子冲击 | 0.5 | 因子风险暴露 |
+| **风险暴露** | 行业暴露 | 权重行业冲击 | 30% | 行业风险暴露 |
+| **风险暴露** | 风格暴露 | 风格因子冲击 | 0.3 | 风格风险暴露 |
 况下平仓所需天数 |
 
 
@@ -521,16 +517,16 @@ class StressTestMetricsCalculator:
 ## 1. 测试概况
 - **测试日期**: {test_date}
 - **测试范围**: {test_scope}
-- **æ
+- **
 景数量**: {n_scenarios}
 - **测试结论**: {conclusion}
 
-## 2. æ
+## 2.
 景分析结果
 
-### 2.1 åå²æ
+### 2.1
 景
-| æ
+|
 景名称 | 组合损失 | 风险等级 | 主要风险因子 |
 |----------|----------|----------|--------------|
 | {scenario_1} | {loss_1:.2%} | {risk_level_1} | {factors_1} |
@@ -568,9 +564,8 @@ class StressTestMetricsCalculator:
 # 压力测试接口
 > **核心职责**: Stress Testing System蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -594,7 +589,7 @@ def run_stress_test(
     
     Args:
         portfolio: 当前组合
-        scenarios: æ
+scenarios:
 景列表
         
     Returns:
@@ -602,7 +597,7 @@ def run_stress_test(
     """
     pass
 
-# æ
+#
 景生成接口
 def generate_scenarios(
     scenario_type: str,
@@ -612,13 +607,12 @@ def generate_scenarios(
 景
     
     Args:
-        scenario_type: æ
-        config: æ
-æ¯é
+scenario_type:
+config:
 置
         
     Returns:
-        List[Scenario]: æ
+List[Scenario]:
 景列表
     """
     pass
@@ -626,38 +620,35 @@ def generate_scenarios(
 
 ---
 
-## 5. ä¸å
-³ç³»
+## 5.
 
-³ç³»
 
-| æ¨¡å | å
+|  |
 |------|----------|------|
 | RISK_BUDGET_SYSTEM | 依赖 | 提供风险预算约束 |
 | RISK_ATTRIBUTION_SYSTEM | 依赖 | 提供风险归因能力 |
 
 ### 5.2 推荐实施路径
 
-1. å
+1.
 
 ---
 
 ## 6. 性能指标
 
 |------|--------|----------|
-| **æ
+| **
 | **压力测试执行时间** | <10s | 性能测试 |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åæ
+| [
 景分析 |
 
 ### 下游依赖
@@ -670,13 +661,13 @@ def generate_scenarios(
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[VaR/ES监控] --> B[压力测试系统]
-    C[ç»åæ
+C[
 景分析] --> B
     D[数据质量监控] --> B
     
@@ -710,16 +701,16 @@ graph LR
 ##### 6.001. Stress Testing System
 - **模块ID**: STRESS_TESTING_SYSTEM_001
 - **蓝图文档**: STRESS_TESTING_SYSTEM_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 7.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Stress Testing System** | å
+| **Stress Testing System** |
 
 ### 7.3 版本管理
 

@@ -82,7 +82,6 @@ layer: Layer 5.2 (组合优化)
 
 > 核心职责: Portfolio Insurance Strategy蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -95,8 +94,7 @@ layer: Layer 5.2 (组合优化)
 - 保本底线管理
 - 动态风险控?
 ### 1.2 技术目?
-- **å®å
-¨
+- **
 - **灵活?*: 参与市场上涨
 - **透明?*: 风险可控
 
@@ -125,8 +123,7 @@ def cppi_adjust(portfolio_value: float,
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -143,8 +140,8 @@ def cppi_adjust(portfolio_value: float,
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -167,7 +164,7 @@ graph LR
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -182,16 +179,16 @@ graph LR
 ##### 6.001. Portfolio Insurance Strategy
 - **模块ID**: PORTFOLIO_INSURANCE_STRATEGY_001
 - **蓝图文档**: PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 4.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Insurance Strategy** | å
+| **Portfolio Insurance Strategy** |
 
 ### 4.3 版本管理
 

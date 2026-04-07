@@ -1,7 +1,7 @@
 ﻿﻿---
 version: 1.0.0
 standard_type: 架构文档
-applicable_scope: å
+applicable_scope:
 parent_document: ../INDEX.md
 module_id: FACTOR_ENGINE_DETAILED_DESIGN
 created_date: 2026-04-03
@@ -16,7 +16,7 @@ tags: ["架构设计", "因子引擎", "详细设计"]---
 
 
 **文档版本**: 2.0.0
-**æåæ´æ?*: 2026-04-03
+**?*: 2026-04-03
 ---
 
 ## 1. 因子引擎概述
@@ -74,7 +74,6 @@ class Factor:
     factor_name: str            # 因子名称
     factor_type: FactorType     # 因子类型
     description: str            # 因子描述
-¬å¼
     parameters: Dict[str, Any]  # 参数
     dependencies: List[str]     # 依赖因子
     updated_at: datetime        # 更新时间
@@ -117,7 +116,6 @@ class FactorCalculator:
 
 **计算流程**:
 ```
-¥
 ```
 
 ---
@@ -241,7 +239,7 @@ class FactorOptimizer:
 ```
 
 **优化方法**:
-³æ?
+?
 ---
 
 
@@ -270,7 +268,7 @@ class FactorMonitor:
         alert_type: str,
         message: str
     ) -> bool:
-        """åéåè­?""
+"""?""
         pass
 ```
 
@@ -292,7 +290,7 @@ class FactorMonitor:
 - 风格因子 (Style)
 
 **Alpha因子**:
-- æ
+-
 绪因子 (Sentiment)
 - 另类因子 (Alternative)
 
@@ -333,11 +331,11 @@ def pb_factor(data: pd.DataFrame) -> pd.Series:
     PB因子
     
     Args:
-        data: å
+data:
 含市值和账面价值的数据
     
     Returns:
-        PBå å­å?    """
+PB?    """
     return data['market_cap'] / data['book_value']
 
 # PE因子
@@ -346,9 +344,9 @@ def pe_factor(data: pd.DataFrame) -> pd.Series:
     PE因子
     
     Args:
-        data: å
+data:
     Returns:
-        PEå å­å?    """
+PE?    """
     return data['market_cap'] / data['net_income']
 ```
 
@@ -434,14 +432,12 @@ def save_factor_compressed(
 **告警流程**:
 ```
 监控指标异常
-³äººå
-³é­
 ```
 
 ---
 
-## 7. åèææ¡?
-¨æ¯å¾](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
+## 7. ?
+](./SYSTEM_ARCHITECTURE_DIAGRAM.md)
 - [数据流图与模块交互图](./DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md)
 - [性能基准测试体系](./PERFORMANCE_BENCHMARK_FRAMEWORK.md)
 

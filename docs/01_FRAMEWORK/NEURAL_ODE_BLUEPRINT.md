@@ -55,7 +55,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-å­æç**: O(1)å
+**: O(1)
 
 
 
@@ -99,7 +99,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-â?  âââ Temporal Fusion Transformer
+?   Temporal Fusion Transformer
 
 
 ├── 模型训练
@@ -123,7 +123,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -213,7 +213,7 @@ class NeuralODE(nn.Module):
 
 
 
-¥ (batch_size, num_time_points, input_dim)
+(batch_size, num_time_points, input_dim)
 
             
 
@@ -242,7 +242,6 @@ class NeuralODE(nn.Module):
         Args:
 
 
-¥
 
             
 
@@ -305,7 +304,6 @@ class ControlledNeuralODE(NeuralODE):
 
         Args:
 
-¥åºå
 
             
 
@@ -425,7 +423,7 @@ Tick级别数据 (非均匀采样)
 ```
 
 
-    â?Neural ODEæ¨ç
+?Neural ODE
 
 
 ```
@@ -473,21 +471,21 @@ pandas>=2.0.0
 
 
 
-# å¯è§å?matplotlib>=3.7.0
+# ?matplotlib>=3.7.0
 
 ```
 
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 500GB SSD | 1TB NVMe |
@@ -541,7 +539,7 @@ pandas>=2.0.0
 
 |--------|----------|----------|
 
-æµè¯ |
+|
 
 
 | 自适应计算 | 自动调整求解精度 | 性能测试 |
@@ -556,7 +554,7 @@ pandas>=2.0.0
 |------|--------|----------|
 
 
-| å
+|
 存分析 |
 
 
@@ -573,8 +571,7 @@ pandas>=2.0.0
 - [ ] ODE函数网络实现
 
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 

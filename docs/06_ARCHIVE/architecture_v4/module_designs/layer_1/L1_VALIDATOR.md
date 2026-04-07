@@ -280,7 +280,7 @@ def calculate_quality_score(
             - improvement_priority: 改进优先?
             
     评分算法:
-        综合得分 = Σ(维度得分 × 维度权重)
+        综合得分 = Σ(维度得分  维度权重)
         质量等级映射:
             - A? 90-100分（优秀?
             - B? 80-89分（良好?
@@ -2097,7 +2097,7 @@ class TestMemoryUsage:
     
     def test_memory_usage_with_large_data(self):
         """大数据的存使用测?""
-        # 生成大数据集?00万行 × 50列）
+        # 生成大数据集?00万行  50列）
         large_data = pd.DataFrame(
             np.random.randn(1_000_000, 50),
             columns=[f"feature_{i}" for i in range(50)]

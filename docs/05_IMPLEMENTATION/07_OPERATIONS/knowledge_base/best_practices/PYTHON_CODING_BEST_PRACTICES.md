@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝ ﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝ ﻝﺙﮒ
+owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?standard_type: ﻝﺙﻝﮔﻛﺛﺏﮒ؟ﻟﺓ?applicable_scope: Pythonﻛﭨ۲ﻝﻝﺙﮒ
 responsibility:
   - 实施指南、部署文档
 compliance_level: ﮒﺙﭦﮒﭘﮔ۶ﻟ۰
@@ -14,7 +14,7 @@ implementation_status: Active
 ---
 
 
-# Pythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?
+# Pythonﻛﭨ۲ﻝﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -22,7 +22,7 @@ implementation_status: Active
 
 > **ﮔﻛﺛﺏﮒ؟ﻟﺓﭖﻝﺙﮒ?*: BP-001  
 > **ﻝﮔ؛**: v1.0  
-> **ﻠﻝ۷ﮒﭦﮔﺁ**: ﮔﮔPythonﻛﭨ۲ﻝ ﻝﺙﮒ  
+> **ﻠﻝ۷ﮒﭦﮔﺁ**: ﮔﮔPythonﻛﭨ۲ﻝﻝﺙﮒ
 > **ﮒﺙﭦﮒﭘﻝﭦ۶ﮒ،**: ﻭﺑ **ﮒﺙﭦﮒﭘﮔ۶ﻟ۰**
 
 ---
@@ -32,21 +32,21 @@ implementation_status: Active
 ### **ﻛﺛﮔﭘﻛﺛﺟﻝ۷**
 
 - ﻗ?ﻝﺙﮒﮔﺍﻝPythonﮔ۷۰ﮒ
-- ﻗ?ﻠﮔﻝﺍﮔﻛﭨ۲ﻝ 
-- ﻗ?ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﮔ۲ﮔ?- ﻗ?ﮒ۱ﻠﮒﻛﺛﮒﺙﮒ?
+- ﻗ?ﻠﮔﻝﺍﮔﻛﭨ۲ﻝ
+- ﻗ?ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭘﮔ۲ﮔ?- ﻗ?ﮒ۱ﻠﮒﻛﺛﮒﺙﮒ?
 ### **ﻠﻝ۷ﻟﮒﺑ**
 
-- ﮔﮔﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﭨ۲ﻝ ?- ﮔﮔﮔﭖﻟﺁﻛﭨ۲ﻝ ?- ﮔﮔﻟﮔ؛ﻛﭨ۲ﻝ ?- ﮔﮔﻠﻝﺛ؟ﻛﭨ۲ﻝ ?
+- ﮔﮔﻝﻛﭦ۶ﻝﺁﮒ۱ﻛﭨ۲ﻝ?- ﮔﮔﮔﭖﻟﺁﻛﭨ۲ﻝ?- ﮔﮔﻟﮔ؛ﻛﭨ۲ﻝ?- ﮔﮔﻠﻝﺛ؟ﻛﭨ۲ﻝ?
 ---
 
-## ﻭﺁ **ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳**
+## ﻭﺁ **ﮒ؟ﮔﺛﮔ۴ﻠ۹۳**
 
 ### **1. ﮒﺛﮒﻟ۶ﻟ**
 
 #### **ﮒﻠﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?strategy_factory = StrategyFactory()
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦ?strategy_factory = StrategyFactory()
 event_bus = EventBus()
 max_position_size = 0.95
 
@@ -58,7 +58,7 @@ MaxPositionSize = 0.95
 #### **ﮒﺕﺕﻠﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۷ﮒ۳۶ﮒ?ﻛﺕﮒﻝﭦ?MAX_POSITION_SIZE = 0.95
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮒ۷ﮒ۳۶ﮒ?ﻛﺕﮒﻝﭦ?MAX_POSITION_SIZE = 0.95
 DEFAULT_TIMEOUT = 30
 API_BASE_URL = "https://api.example.com"
 
@@ -70,7 +70,7 @@ apiBaseUrl = "https://api.example.com"
 #### **ﮒﺛﮔﺍﮒﺛﮒ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦﺟﺅﺙﮒ۷ﻟﺁﮒﺙﮒ۳?def create_strategy(strategy_type: str) -> Strategy:
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮒﺍﮒ+ﻛﺕﮒﻝﭦﺟﺅﺙﮒ۷ﻟﺁﮒﺙﮒ۳?def create_strategy(strategy_type: str) -> Strategy:
     pass
 
 def calculate_position_size(capital: float) -> float:
@@ -89,7 +89,7 @@ def PositionSize(capital: float) -> float:
 #### **ﻝﺎﭨﮒﺛﮒ?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ۳۶ﻠ۸ﺙﮒﺏ?class StrategyFactory:
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮒ۳۶ﻠ۸ﺙﮒﺏ?class StrategyFactory:
     pass
 
 class EventBus:
@@ -107,12 +107,12 @@ class event_bus:
 
 ---
 
-### **2. ﻛﭨ۲ﻝ ﮔ ﺙﮒﺙ**
+### **2. ﻛﭨ۲ﻝﮔﺙﮒﺙ**
 
 #### **ﮒﺁﺙﮒ۴ﻠ۰ﭦﮒﭦ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔ ﮒﮒﭦ?ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﭦ ﻗ?ﮔ؛ﮒﺍﮔ۷۰ﮒ
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮔﮒﮒﭦ?ﻗ?ﻝ؛؛ﻛﺕﮔﺗﮒﭦ ﻗ?ﮔ؛ﮒﺍﮔ۷۰ﮒ
 import os
 import sys
 from typing import Dict, Any, Optional, List
@@ -132,10 +132,10 @@ from typing import Dict
 import numpy as np
 ```
 
-#### **ﻛﭨ۲ﻝ ﻝﺙ۸ﻟﺟ**
+#### **ﻛﭨ۲ﻝﻝﺙ۸ﻟﺟ**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - 4ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﻝﺙ۸ﻟﺟ?def calculate_position_size(
+# ﻗ?ﮔ۲ﻝ۰؟ - 4ﻛﺕ۹ﻝ۸ﭦﮔﺙﻝﺙ۸ﻟﺟ?def calculate_position_size(
     capital: float,
     risk_pct: float,
     entry_price: float,
@@ -146,7 +146,7 @@ import numpy as np
     position_size = risk_amount / price_diff
     return position_size
 
-# ﻗ?ﻠﻟﺁﺁ - 2ﻛﺕ۹ﻝ۸ﭦﮔ ﺙﮔTab
+# ﻗ?ﻠﻟﺁﺁ - 2ﻛﺕ۹ﻝ۸ﭦﮔﺙﮔTab
 def calculate_position_size(capital, risk_pct):
   risk_amount = capital * risk_pct
   return risk_amount
@@ -155,7 +155,7 @@ def calculate_position_size(capital, risk_pct):
 #### **ﻟ۰ﻠﺟﮒﭦ۵ﻠﮒ?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮔﺁﻟ۰ﻛﺕﻟﭘﻟﺟ?00ﮒ­ﻝ؛۵
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮔﺁﻟ۰ﻛﺕﻟﭘﻟﺟ?00ﮒﻝ؛۵
 result = self.strategy_factory.create_strategy(
     strategy_type="moving_average",
     strategy_id="ma_001",
@@ -175,23 +175,23 @@ result = self.strategy_factory.create_strategy(
 #### **ﮒﺛﮔﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲**
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﮒ؟ﮔﺑﻝﻝﺎﭨﮒﮔﺏ۷ﻟ۶?def create_strategy(
+# ﻗ?ﮔ۲ﻝ۰؟ - ﮒ؟ﮔﺑﻝﻝﺎﭨﮒﮔﺏ۷ﻟ۶?def create_strategy(
     strategy_type: str,
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
+"""ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ
     
     Args:
-        strategy_type: ﻝ­ﻝ۴ﻝﺎﭨﮒ
-        strategy_id: ﻝ­ﻝ۴ID
-        config: ﻝ­ﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
+strategy_type: ﻝﻝ۴ﻝﺎﭨﮒ
+strategy_id: ﻝﻝ۴ID
+config: ﻝﻝ۴ﻠﻝﺛ؟ﺅﺙﮒﺁﻠﺅﺙ
     
     Returns:
-        ﻝ­ﻝ۴ﮒ؟ﻛﺝ
+ﻝﻝ۴ﮒ؟ﻛﺝ
     
     Raises:
-        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?    """
+ValueError: ﮒ۵ﮔﻝﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?    """
     pass
 
 # ﻗ?ﻠﻟﺁﺁ - ﻝﺙﭦﮒﺍﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
@@ -202,8 +202,8 @@ def create_strategy(strategy_type, strategy_id, config=None):
 #### **ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?*
 
 ```python
-# ﻗ?ﮔ­۲ﻝ۰؟ - ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?class StrategyFactory:
-    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ"""
+# ﻗ?ﮔ۲ﻝ۰؟ - ﻝﺎﭨﮒﺎﮔ۶ﻝﺎﭨﮒﮔﺏ۷ﻟ۶?class StrategyFactory:
+"""ﻝﻝ۴ﮒﺓ۴ﮒ"""
     
     def __init__(self):
         self.registry: StrategyRegistry = StrategyRegistry()
@@ -220,34 +220,34 @@ class StrategyFactory:
 
 ---
 
-### **4. ﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+### **4. ﮔﮔ۰۲ﮒﻝ؛۵ﻛﺕ?*
 
-#### **ﮔ۷۰ﮒﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+#### **ﮔ۷۰ﮒﮔﮔ۰۲ﮒﻝ؛۵ﻛﺕ?*
 
 ```python
 """
-ﻝ­ﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ - ﻝ؟۰ﻝﻝ­ﻝ۴ﻝﮒﮒﭨﭦﮒﻝﮒﺛﮒ۷ﮔ
+ﻝﻝ۴ﮒﺓ۴ﮒﮔ۷۰ﮒ - ﻝ؟۰ﻝﻝﻝ۴ﻝﮒﮒﭨﭦﮒﻝﮒﺛﮒ۷ﮔ
 
 ﻝﮔ؛: v1.0
 ﮒﮒﭨﭦﮔ۴ﮔ: 2026-04-02
-ﻛﺛﻟ? ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+ﻛﺛﻟ? ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 ﻛﺕﭨﻟ۵ﻝﭨﻛﭨﭘ:
-- BaseStrategy: ﻝ­ﻝ۴ﮒﭦﻝﺎﭨ
-- StrategyFactory: ﻝ­ﻝ۴ﮒﺓ۴ﮒ
-- StrategyRegistry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?- StrategyLoader: ﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ?
+- BaseStrategy: ﻝﻝ۴ﮒﭦﻝﺎﭨ
+- StrategyFactory: ﻝﻝ۴ﮒﺓ۴ﮒ
+- StrategyRegistry: ﻝﻝ۴ﮔﺏ۷ﮒﻟ۰?- StrategyLoader: ﻝﻝ۴ﮒﻟﺛﺛﮒ?
 ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ:
     >>> factory = StrategyFactory()
     >>> strategy = factory.create_strategy("moving_average", "ma_001")
 """
 ```
 
-#### **ﻝﺎﭨﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕﺎ**
+#### **ﻝﺎﭨﮔﮔ۰۲ﮒﻝ؛۵ﻛﺕﺎ**
 
 ```python
 class StrategyFactory:
-    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ - ﮒﮒﭨﭦﮒﻝ؟۰ﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
+"""ﻝﻝ۴ﮒﺓ۴ﮒ - ﮒﮒﭨﭦﮒﻝ؟۰ﻝﻝﻝ۴ﮒ؟ﻛﺝ?
     Attributes:
-        registry: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ­
+registry: ﻝﻝ۴ﮔﺏ۷ﮒﻟ۰?        _instances: ﻝﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ
         _lock: ﻝﭦﺟﻝ۷ﻠ?    
     Example:
         >>> factory = StrategyFactory()
@@ -257,7 +257,7 @@ class StrategyFactory:
     """
 ```
 
-#### **ﮒﺛﮔﺍﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕ?*
+#### **ﮒﺛﮔﺍﮔﮔ۰۲ﮒﻝ؛۵ﻛﺕ?*
 
 ```python
 def create_strategy(
@@ -266,14 +266,14 @@ def create_strategy(
     strategy_id: str,
     config: Optional[Dict[str, Any]] = None
 ) -> BaseStrategy:
-    """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
+"""ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ
     
     Args:
     
     Returns:
-        ﮒﮒﭨﭦﻝﻝ­ﻝ۴ﮒ؟ﻛﺝ?    
+ﮒﮒﭨﭦﻝﻝﻝ۴ﮒ؟ﻛﺝ?
     Raises:
-        ValueError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?        KeyError: ﮒ۵ﮔﻝ­ﻝ۴ﻝﺎﭨﮒﻛﺕﮒ­ﮒ?    
+ValueError: ﮒ۵ﮔﻝﻝ۴ﻝﺎﭨﮒﮔ۹ﮔﺏ۷ﮒ?        KeyError: ﮒ۵ﮔﻝﻝ۴ﻝﺎﭨﮒﻛﺕﮒﮒ?
     Example:
         >>> factory = StrategyFactory()
         >>> config = {"fast_period": 10, "slow_period": 30}
@@ -286,9 +286,9 @@ def create_strategy(
 
 ---
 
-## ﻗ ﺅﺕ **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**
+## ﻗﺅﺕ **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**
 
-### **1. ﻠﺟﮒﻝﻝﺙﻝ ﻠ۲ﮔ ?*
+### **1. ﻠﺟﮒﻝﻝﺙﻝﻠ۲ﮔ?*
 
 ```python
 # ﻗ?ﻠﺟﮒﻛﺛﺟﻝ۷ﮒ۷ﮒﺎﮒﻠ
@@ -309,10 +309,10 @@ def get_strategy_factory():
         return cls._instance
 ```
 
-### **2. ﻠﺟﮒﻠ­ﮔﺏﮔﺍﮒ­**
+### **2. ﻠﺟﮒﻠﮔﺏﮔﺍﮒ**
 
 ```python
-# ﻗ?ﻠ­ﮔﺏﮔﺍﮒ­
+# ﻗ?ﻠﮔﺏﮔﺍﮒ
 if position_size > 0.95:
     pass
 
@@ -353,20 +353,20 @@ def process_data(data):
 
 ## ﻭ **ﮔﮔﻟﺁﻛﺙﺍ**
 
-### **ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔﮔ **
+### **ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮔ**
 
-| ﮔﮔ  | ﻝ؟ﮔ  | ﮒ؟ﻠ | ﻝﭘﮔ?|
+| ﮔﮔ | ﻝ؟ﮔ | ﮒ؟ﻠ | ﻝﭘﮔ?|
 |------|------|------|------|
-| ﻛﭨ۲ﻝ ﮒﺁﻟﺁﭨﮔ?| ﻗ?0ﮒ?| 95ﮒ?| ﻗ?|
-| ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?| ﻗ?0 | 8 | ﻗ?|
+| ﻛﭨ۲ﻝﮒﺁﻟﺁﭨﮔ?| ﻗ?0ﮒ?| 95ﮒ?| ﻗ?|
+| ﻛﭨ۲ﻝﮒ۳ﮔﮒﭦ?| ﻗ?0 | 8 | ﻗ?|
 | ﮔﮔ۰۲ﻟ۵ﻝﻝ?| ﻗ?0% | 90% | ﻗ?|
 | ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﻟ۵ﻝﻝ?| ﻗ?0% | 95% | ﻗ?|
 
-### **ﮒﺙﮒﮔﻝﮔﮔ ?*
+### **ﮒﺙﮒﮔﻝﮔﮔ?*
 
-| ﮔﮔ  | ﮔﺗﻟﺟﮒ?| ﮔﺗﻟﺟﮒ?| ﮔﮒ |
+| ﮔﮔ | ﮔﺗﻟﺟﮒ?| ﮔﺗﻟﺟﮒ?| ﮔﮒ |
 |------|--------|--------|------|
-| ﻛﭨ۲ﻝ ﮒ؟۰ﮔ۴ﮔﭘﻠﺑ | 2ﮒﺍﮔﭘ | 1ﮒﺍﮔﭘ | 50% |
+| ﻛﭨ۲ﻝﮒ؟۰ﮔ۴ﮔﭘﻠﺑ | 2ﮒﺍﮔﭘ | 1ﮒﺍﮔﭘ | 50% |
 | Bugﻛﺟ؟ﮒ۳ﮔﭘﻠﺑ | 4ﮒﺍﮔﭘ | 2ﮒﺍﮔﭘ | 50% |
 | ﮔﺍﻛﭦﭦﻛﺕﮔﮔﭘﻠﺑ | 2ﮒ?| 1ﮒ?| 50% |
 
@@ -374,7 +374,7 @@ def process_data(data):
 
 ## ﻭ **ﻝﺕﮒﺏﮔ۰ﻛﺝ**
 
-- [ﻝ­ﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
+- [ﻝﻝ۴ﮒﺓ۴ﮒﮒ؟ﮔﺛﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
 - [ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﻠﮔﮔ۰ﻛﺝ](05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
 
 ---
@@ -384,7 +384,7 @@ def process_data(data):
 ### **ﮒﻠ۷ﮔﮔ۰۲**
 
 - [ﻟﮒﺝﮔﺛﮒﺓ۴ﻟﺁﺑﮔﻛﺗ۵](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md)
-- [ﻛﭨ۲ﻝ ﻟﺑ۷ﻠﮔ ﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
+- [ﻛﭨ۲ﻝﻟﺑ۷ﻠﮔﮒ](05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md)
 
 ### **ﮒ۳ﻠ۷ﻟﭖﮔﭦ**
 
@@ -398,13 +398,13 @@ def process_data(data):
 
 | ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦPythonﻛﭨ۲ﻝ ﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?| ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦPythonﻛﭨ۲ﻝﻟ۶ﻟﮔﻛﺛﺏﮒ؟ﻟﺓ?| ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?|
 
 ---
 
 ## ﻭ **ﻟﻝﺏﭨﮔﺗﮒﺙ**
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02  
 **ﻝﮔ؛**: v1.0

@@ -90,11 +90,11 @@ layer: Layer 4 (机器学习层)
 
 
 
-â?  âââ Temporal Fusion Transformer
+?   Temporal Fusion Transformer
 
-â?  âââ Neural ODE
+?   Neural ODE
 
-â?  âââ DeepAR
+?   DeepAR
 
 
 └── 模型服务
@@ -124,11 +124,11 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
-¥åºå | Backcast + Forecast |
+| Backcast + Forecast |
 
 | **Stack** | 组织多个Block | 序列残差 | Stack预测 |
 
@@ -186,7 +186,7 @@ class NBEATSModel(nn.Module):
 
         Args:
 
-            input_size: è¾å
+input_size:
 
             forecast_length: 预测长度
 
@@ -218,8 +218,8 @@ class NBEATSModel(nn.Module):
 
         Args:
 
-            x: è¾å
-¥åºå (batch_size, input_size)
+x:
+(batch_size, input_size)
 
             
 
@@ -227,7 +227,7 @@ class NBEATSModel(nn.Module):
 
             Dict[str, torch.Tensor]: {
 
-                'forecast': é¢æµå?(batch_size, forecast_length),
+'forecast': ?(batch_size, forecast_length),
 
                 'trend': 趋势分量 (interpretable模式),
 
@@ -289,8 +289,7 @@ class NBEATSEnsemble:
 
         Args:
 
-            x: è¾å
-¥åºå
+x:
 
 
         Returns:
@@ -341,7 +340,7 @@ class NBEATSDataProcessor:
 
             time_series: 时间序列
 
-            input_size: è¾å
+input_size:
 
             forecast_length: 预测长度
 
@@ -381,7 +380,7 @@ class NBEATSDataProcessor:
 实时数据
 
 
-    â?NBEATSæ¨ç
+?NBEATS
 
 
 ```
@@ -426,21 +425,21 @@ numpy>=1.24.0
 
 
 
-# å¯è§å?matplotlib>=3.7.0
+# ?matplotlib>=3.7.0
 
 ```
 
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 16GB | 32GB |
 
 | 存储 | 256GB SSD | 500GB SSD |
@@ -532,8 +531,7 @@ class ModelTrainingPipeline:
 
 - [ ] Block和Stack实现
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 

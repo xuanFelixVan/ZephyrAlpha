@@ -1,9 +1,9 @@
 ﻿﻿---
 responsibility:
-  - ç¸å
-  - ç¸å
-  - ç¸å
-³æ§åæ?
+-
+-
+-
+?
 
 module_id: DYNAMIC_CORRELATION_MODELING_001
 version: 1.0.0
@@ -79,16 +79,15 @@ layer: Layer 5.3 (风险管理)
 ---
 
 
-³æ?
+?
 > **职责边界**: 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -98,11 +97,11 @@ layer: Layer 5.3 (风险管理)
 
 |---------|------|------|------|
 | **arch** | 5.0+ | GARCH模型 | [官方文档](https://arch.readthedocs.io/) |
-| **mgarch** | 0.1+ | å¤å
+| **mgarch** | 0.1+ |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -128,7 +127,6 @@ graph LR
 ### 2.2 核心数据?
 ```
 市场收益率数?    ?数据预处理（缺失值处理、异常值检测）
-³æ§ï¼
 ```
 
 ---
@@ -178,15 +176,15 @@ class DynamicCorrelationModeler:
         market_state: str = 'normal'
     ) -> DynamicCorrelationResult:
         """
-³æ§ç©?        
+?
         Args:
             returns_data: 多资产收益率数据
             market_state: 市场状态（normal/extreme?            
         Returns:
-³æ§ç»?        """
-³æ§ç©?        dcc_correlation = self.dcc_model.conditional_correlation()
+?        """
+?        dcc_correlation = self.dcc_model.conditional_correlation()
         
-³æ§çª?        regime_change = self.regime_detector.detect(dcc_correlation)
+?        regime_change = self.regime_detector.detect(dcc_correlation)
         
         # 3. 极端市场调整
         if market_state == 'extreme':
@@ -213,7 +211,7 @@ class DynamicCorrelationModeler:
         window: int = 20
     ) -> CorrelationBreakdownResult:
         """
-³æ§çª?        
+?
         Args:
         Returns:
             CorrelationBreakdownResult: 突变检测结?        """
@@ -240,15 +238,15 @@ class DynamicCorrelationModeler:
         horizon: int = 5
     ) -> CorrelationForecast:
         """
-³?        
+?
         Args:
             horizon: 预测期数（天数）
             
         Returns:
-            CorrelationForecast: ç¸å
+CorrelationForecast:
         # 1. 预测条件波动?        volatility_forecast = self._forecast_volatility(horizon)
         
-³?        correlation_forecast = self.dcc_model.forecast(horizon)
+?        correlation_forecast = self.dcc_model.forecast(horizon)
         
         # 3. 计算预测区间
         confidence_interval = self._calculate_forecast_interval(
@@ -297,7 +295,7 @@ class DynamicCorrelationModeler:
         correlation: pd.DataFrame,
         regime_change: RegimeChange
     ) -> pd.DataFrame:
-³æ§è°?""
+?""
         adjustment_factor = self.config.extreme_market_adjustment_factor
         
         if regime_change.is_extreme:
@@ -308,11 +306,10 @@ class DynamicCorrelationModeler:
         return correlation
 ```
 
-### 3.2 ç¸å
+### 3.2
 ```python
 class CorrelationRegimeDetector:
     """
-    ç¸å
     
     索引: DYNAMIC_CORR_001-M02
     
@@ -325,9 +322,9 @@ class CorrelationRegimeDetector:
         correlation_matrix: pd.DataFrame
     ) -> RegimeChange:
         """
-³æ§çª?        
+?
         Args:
-³æ§ç©?            
+?
         Returns:
             RegimeChange: 突变检测结?        """
             np.triu_indices_from(correlation_matrix.values, k=1)
@@ -363,11 +360,11 @@ class CorrelationRegimeDetector:
         return mean_corr > self.config.extreme_correlation_threshold
 ```
 
-### 3.3 é
+### 3.3
 ```python
 @dataclass
 class DCCConfig:
-    """DCCæ¨¡åé
+"""DCC
 置"""
     garch_p: int = 1  # GARCH模型p?    garch_q: int = 1  # GARCH模型q?    dcc_alpha: float = 0.05  # DCC模型alpha参数
     dcc_beta: float = 0.9   # DCC模型beta参数
@@ -382,7 +379,7 @@ class RegimeDetectionConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -404,7 +401,7 @@ class MarketData:
 ```python
 @dataclass
 class DynamicCorrelationResult:
-³æ§ç»?""
+?""
     correlation_matrix: pd.DataFrame
     covariance_matrix: pd.DataFrame
     regime: RegimeChange
@@ -413,7 +410,7 @@ class DynamicCorrelationResult:
     
 @dataclass
 class CorrelationBreakdownResult:
-    """ç¸å
+"""
     breakdown_points: List[datetime]
     severity: str  # low/medium/high
     affected_assets: List[str]
@@ -436,22 +433,21 @@ class RegimeChange:
 ### 5.1 DCC-GARCH模型原理
 
 **GARCH(1,1)模型**（单资产波动率）?```
-σ²?= ω + α·ε²ₜ₋?+ β·σ²ₜ₋?```
+σ?= ω + αεₜ₋?+ βσₜ₋?```
 
-³æ§ï¼?```
+?```
 ```
 
-å
 
 ### 5.2 开源库选择
 
 **推荐?*?1. **arch**: 用于GARCH模型拟合
-   - å®è£
+-
 ：`pip install arch`
    - 文档：https://arch.readthedocs.io/
 
 2. **mgarch**: 用于DCC模型拟合
-   - å®è£
+-
 ：`pip install mgarch`
    - GitHub: https://github.com/ritchan/mgarch
 
@@ -462,10 +458,10 @@ class RegimeChange:
 **计算优化**?- 使用Numba加速矩阵运?- 并行计算多资产GARCH模型
 - 缓存中间结果
 
-**å
+**
 保留最近N天的数据
-- å®ææ¸
-³æ§ç©?
+-
+?
 ---
 
 ## 6. 集成方案
@@ -474,14 +470,14 @@ class RegimeChange:
 
 ```python
 class RiskParityOptimizer:
-³æ§ï¼"""
+"""
     
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
         self.correlation_modeler = correlation_modeler
         
     def optimize(self, returns: pd.DataFrame) -> pd.Series:
         """执行风险平价优化"""
-³æ§ç©?        corr_result = self.correlation_modeler.estimate_dynamic_correlation(
+?        corr_result = self.correlation_modeler.estimate_dynamic_correlation(
             returns
         )
         
@@ -496,13 +492,13 @@ class RiskParityOptimizer:
 ### 6.2 与预警系统集?
 ```python
 class CorrelationAlertSystem:
-    """ç¸å
+"""
     
     def __init__(self, correlation_modeler: DynamicCorrelationModeler):
         self.correlation_modeler = correlation_modeler
         
     def monitor(self, returns: pd.DataFrame) -> Alert:
-³æ§å?""
+?""
         # 1. 检测突?        breakdown = self.correlation_modeler.detect_correlation_breakdown(
             returns
         )
@@ -511,7 +507,7 @@ class CorrelationAlertSystem:
         if breakdown.severity == 'high':
             return Alert(
                 level='CRITICAL',
-                message=f'ç¸å
+message=f'
                 affected_assets=breakdown.affected_assets
             )
 ```
@@ -520,8 +516,7 @@ class CorrelationAlertSystem:
 
 ## 7. 测试策略
 
-### 7.1 åå
-æµè¯
+### 7.1
 
 ```python
 def test_garch_fitting():
@@ -545,7 +540,7 @@ def test_dynamic_correlation_estimation():
 
 def test_breakdown_detection():
     """测试突变检?""
-    # çæå
+#
 含突变的数?    returns = generate_returns_with_breakdown()
     modeler = DynamicCorrelationModeler(DCCConfig())
     modeler.fit(returns)
@@ -586,8 +581,8 @@ def test_integration_with_risk_parity():
 - Day 5: DCC模型拟合模块
 
 **Week 2: 功能完善与测?*
-- Day 1-2: ç¸å
-- Day 4: åå
+- Day 1-2:
+- Day 4:
 ### 8.2 里程?
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
@@ -625,7 +620,7 @@ def test_integration_with_risk_parity():
 |------|---------|---------|---------|
 | **风险平价优化精度** | 80% | 95% | +15% |
 | **极端市场风险识别** | ?| 提前1-2?| 新增能力 |
-| **ç¸å
+| **
 | **组合回撤控制** | -25% | ?18% | +28% |
 
 ### 10.2 定性收?
@@ -652,7 +647,7 @@ def test_integration_with_risk_parity():
    - Engle, R. (2002). "Dynamic Conditional Correlation"
    - Tse, Y.K. and Tsui, A.K.C. (2002). "A Multivariate GARCH Model"
 
-2. **ç¸å
+2. **
    - Ang, A. and Bekaert, G. (2002). "International Asset Allocation with Regime Shifts"
 
 ### B. 开源资?
@@ -679,16 +674,16 @@ def test_integration_with_risk_parity():
 ##### 6.001. Dynamic Correlation Modeling
 - **模块ID**: DYNAMIC_CORRELATION_MODELING_001
 - **蓝图文档**: DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 13.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Dynamic Correlation Modeling** | å
+| **Dynamic Correlation Modeling** |
 
 ### 13.3 版本管理
 

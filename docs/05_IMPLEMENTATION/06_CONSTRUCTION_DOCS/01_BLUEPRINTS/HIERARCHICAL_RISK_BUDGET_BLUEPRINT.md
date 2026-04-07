@@ -9,10 +9,10 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 5.3 风险管理
 compliance_level: 专业标准
 responsibility:
-  - 层级风险预算
-  - 风险预算分配
-  - 风险层级管理
-  - 风险预算优化
+  - 多层级风险预算
+  - 层级风险分配
+  - 跨资产风险协调
+  - 层级预算优化
 layer: Layer 5.3 (风险管理)
 ---
 # 层级风险预算蓝图
@@ -81,7 +81,7 @@ layer: Layer 5.3 (风险管理)
 ### 1.1 模块定位
 
 
-ç½?
+?
 
 - 支持复杂组合结构
 
@@ -92,18 +92,16 @@ layer: Layer 5.3 (风险管理)
 | **模块ID** | HIERARCHICAL_RISK_BUDGET_001 |
 | **版本** | v1.0.0 |
 
-### 1.3 ä¸å
-³ç³»
+### 1.3
 
 
 |------|----------|----------|----------|
 
 **推荐实施路径**:
-1. å
+1.
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -121,8 +119,8 @@ layer: Layer 5.3 (风险管理)
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -168,7 +166,6 @@ class HierarchicalRiskBudgetManager:
         level_mapping: Dict[str, List[int]]
     ) -> Dict[str, np.ndarray]:
         """
-        åé
         
         Args:
             level_mapping: 层级到资产的映射
@@ -207,7 +204,7 @@ class HierarchicalRiskBudgetAPI:
         hierarchy: RiskBudgetLevel,
         cov_matrix: List[List[float]]
     ) -> AllocationResult:
-        """åé
+"""
         
     @endpoint("/api/v1/hierarchical_risk_budget/aggregate")
     async def aggregate(
@@ -232,7 +229,7 @@ class HierarchicalRiskBudgetAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -247,8 +244,8 @@ class HierarchicalRiskBudgetAPI:
 ##### 6.001. Hierarchical Risk Budget
 - **模块ID**: HIERARCHICAL_RISK_BUDGET_001
 - **蓝图文档**: HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

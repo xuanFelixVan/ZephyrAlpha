@@ -4,59 +4,59 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: Layer 2 Alphaﮒ ﮒ­ﺅﺟ?- ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 2 Alphaﮒﮒﺅﺟ?- ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
 implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+# ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-ALT-DATA-2026-001
-> **ﻟ۶ﮔ ﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-ALT-DATA-2026-001
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02
-> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 > **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?
 ---
 
-## ﻭ ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
+## ﻭ ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
 
 ### ﮔﮔ۰۲ﻝ؟ﻝ
 
-ﮔ؛ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝ­ﻝ۴ﻝ­ﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
+ﮔ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝﻝ۴ﻝﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
 ### ﻠﻝ۷ﻟﮒﺑ
 
-ﮔ؛ﻟ۶ﮔ ﺙﻛﺗ۵ﻠﻝ۷ﻛﭦﺅﺙ
+ﮔ؛ﻟ۶ﮔﺙﻛﺗ۵ﻠﻝ۷ﻛﭦﺅﺙ
 - ﮔﺍﮔ؟ﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﮒﮔﺍﮔ؟ﻠﻠ
-- NLPﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﮔﮔﮒﮔﮒﻛﭦﻛﭨﭘﮔﺅﺟ?- ﮒ ﮒ­ﻝ ﻝ۸ﭘﮒﺅﺙﮒ ﮒ­ﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?- ﮔﭖﻟﺁﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻟﺑ۷ﻠﻛﺟﺅﺟ?
+- NLPﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﮔﮔﮒﮔﮒﻛﭦﻛﭨﭘﮔﺅﺟ?- ﮒﮒﻝﻝ۸ﭘﮒﺅﺙﮒﮒﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?- ﮔﭖﻟﺁﮒﺓ۴ﻝ۷ﮒﺕﺅﺙﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻟﺑ۷ﻠﻛﺟﺅﺟ?
 ---
 
 ## ﻛﺕﻙﮔ۵ﺅﺟ?
 ### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁ
 
 ### 1.2 ﮔﮔﺁﮒ؟ﺅﺟ?
-**Layerﮒ؟ﻛﺛ**: Layer 2 - Alphaﮒ ﮒ­ﮒﺎﺅﺙﮔﺍﮔ؟ﮔﭦﮔ۸ﮒﺎﺅﺙ
+**Layerﮒ؟ﻛﺛ**: Layer 2 - Alphaﮒﮒﮒﺎﺅﺙﮔﺍﮔ؟ﮔﭦﮔ۸ﮒﺎﺅﺙ
 
 **ﮔﮔﺁﮔﻝﮒﭦ۵**: ﮔﻝﺅﺙﮒﭦﻛﭦﮒ؛ﮒﺙAPIﮒﮒﺙﮔﭦﮒﺓ۴ﮒﺓﺅﺙ
 
-**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕ­ﻝ­ﺅﺙﻠﻟ۵NLPﮒ۳ﻝﮒﮒ ﮒ­ﮔﮒﭨﭦﺅﺙ
+**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕﻝﺅﺙﻠﻟ۵NLPﮒ۳ﻝﮒﮒﮒﮔﮒﭨﭦﺅﺙ
 
 ### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
 
 | ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﻟﺁﺑﮔ | ﻛﺛﺅﺟﺛ?|
 |------|------|---------|------|
-| v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
+| v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
 
 ---
 
@@ -66,13 +66,13 @@ implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ
 
 ### 2.2 Layerﮒ؟ﻛﺛﻟﺁﺑﮔ
 
-| Layer | ﮒ؟ﻛﺛ | ﻟﻟﺑ۲ | ﮔﮔﺁﮔ  |
+| Layer | ﮒ؟ﻛﺛ | ﻟﻟﺑ۲ | ﮔﮔﺁﮔ |
 |-------|------|------|--------|
 | **Layer 1** | ﮔﺍﮔ؟ﮔﭦﮒﺎ | ﮔﻛﺝﮒﮒ۶ﮔﺍﮔ؟ | ﮒ؛ﮒﺙAPIﻙﻝ؛ﺅﺟ?|
 | **Layer 2** | ﮔﺍﮔ؟ﻠﻠﺅﺟ?| ﮔﺍﮔ؟ﻠﻠﮒﻟﺍﺅﺟ?| RequestsﻙScrapyﻙAirflow |
-| **Layer 3** | ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?| ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝ | GLM-4-Flashﻙﮔ­۲ﮒﻟ۰۷ﻟﺝﺝﮒﺙ |
-| **Layer 4** | ﮒ ﮒ­ﮔﮒﭨﭦﺅﺟ?| ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﮔﺅﺟ?| NumPyﻙPandas |
-| **Layer 5** | ﮒ ﮒ­ﻝ؟۰ﻝﺅﺟ?| ﮒ ﮒ­ﮒ­ﮒ۷ﮒﻠ۹ﺅﺟ?| SQLiteﻙChromaDB |
+| **Layer 3** | ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?| ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝ | GLM-4-Flashﻙﮔ۲ﮒﻟ۰۷ﻟﺝﺝﮒﺙ |
+| **Layer 4** | ﮒﮒﮔﮒﭨﭦﺅﺟ?| ﮒﮒﻟ؟۰ﻝ؟ﮒﮔﺅﺟ?| NumPyﻙPandas |
+| **Layer 5** | ﮒﮒﻝ؟۰ﻝﺅﺟ?| ﮒﮒﮒﮒ۷ﮒﻠ۹ﺅﺟ?| SQLiteﻙChromaDB |
 
 ### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ
 
@@ -81,7 +81,7 @@ implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ
 
 **ﻟﻟﺑ۲ﻟﺝﺗﻝ**:
 - **ﮔﺍﮔ؟ﮔﭦﮒﺎ**: ﻛﭨﻟﺑﻟﺑ۲ﮔﻛﺝﮒﮒ۶ﮔﺍﮔ؟ﺅﺙﻛﺕﮔﭘﮒﮔﺍﮔ؟ﮒ۳ﺅﺟ?- **ﮔﺍﮔ؟ﻠﻠﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮔﺍﮔ؟ﻠﻠﺅﺙﻛﺕﮔﭘﮒﻛﺕﮒ۰ﻠﭨﻟﺝ
-- **ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝﺅﺙﻛﺕﮔﭘﮒﮒ ﮒ­ﻟ؟۰ﻝ؟
+- **ﮔﺍﮔ؟ﮒ۳ﻝﺅﺟ?*: ﻛﭨﻟﺑﻟﺑ۲ﮔﺍﮔ؟ﮔﺕﮔﺑﮒNLPﮒ۳ﻝﺅﺙﻛﺕﮔﭘﮒﮒﮒﻟ؟۰ﻝ؟
 
 ---
 
@@ -108,7 +108,7 @@ class NewsDataSource(ABC):
         Returns:
             ﮔﺍﻠﭨﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﮔﺍﻠﭨﮒﮒ،ﺅﺙ
             - news_id: ﮔﺍﻠﭨID
-            - title: ﮔ ﻠ۱
+- title: ﮔﻠ۱
             - content: ﮒﮒ؟ﺗ
             - publish_time: ﮒﮒﺕﮔﭘﻠﺑ
             - source: ﮔﺍﮔ؟ﺅﺟ?            - url: ﻠﺝﮔ۴
@@ -124,7 +124,7 @@ class NewsDataSource(ABC):
         ﻟﺓﮒﻛﺕ۹ﻟ۰ﻝﺕﮒﺏﮔﺍﻠﭨ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             start_date: ﮒﺙﮒ۶ﮔ۴ﺅﺟ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         Returns:
@@ -162,12 +162,12 @@ class SocialMediaDataSource(ABC):
         ﻟﺓﮒﻟ۰ﻝ۴۷ﻝﺕﮒﺏﻟ؟۷ﻟ؟ﭦ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            page: ﻠ۰ﭖﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+page: ﻠ۰ﭖﻝ
             
         Returns:
             ﻟ؟۷ﻟ؟ﭦﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﻟ؟۷ﻟ؟ﭦﮒﮒ،ﺅﺙ
-            - post_id: ﮒﺕﮒ­ID
+- post_id: ﮒﺕﮒID
             - user_id: ﻝ۷ﮔﺓID
             - user_name: ﻝ۷ﮔﺓﺅﺟ?            - content: ﮒﮒ؟ﺗ
             - publish_time: ﮒﮒﺕﮔﭘﻠﺑ
@@ -177,10 +177,10 @@ class SocialMediaDataSource(ABC):
     @abstractmethod
     def get_hot_topics(self) -> List[Dict]:
         """
-        ﻟﺓﮒﻝ­ﻠ۷ﻟﺁﻠ۱
+ﻟﺓﮒﻝﻠ۷ﻟﺁﻠ۱
         
         Returns:
-            ﻝ­ﻠ۷ﻟﺁﻠ۱ﮒﻟ۰۷
+ﻝﻠ۷ﻟﺁﻠ۱ﮒﻟ۰۷
         """
         pass
     
@@ -212,13 +212,13 @@ class AnalystExpectationDataSource(ABC):
         """
         ﻟﺓﮒﮒﮔﮒﺕﻟﺁﺅﺟ?        
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             
         Returns:
             ﻟﺁﻝﭦ۶ﮒﻟ۰۷ﺅﺙﮔﺁﻛﺕ۹ﻟﺁﻝﭦ۶ﮒﮒ،ﺅﺙ
             - analyst_name: ﮒﮔﮒﺕﮒ۶ﺅﺟ?            - institution: ﮔﭦﮔﮒﻝ۶ﺍ
             - rating: ﻟﺁﻝﭦ۶
-            - target_price: ﻝ؟ﮔ ﺅﺟ?            - report_date: ﮔ۴ﮒﮔ۴ﮔ
+- target_price: ﻝ؟ﮔﺅﺟ?            - report_date: ﮔ۴ﮒﮔ۴ﮔ
         """
         pass
     
@@ -227,7 +227,7 @@ class AnalystExpectationDataSource(ABC):
         """
         ﻟﺓﮒﻛﺕﻟﺑﻠ۱ﺅﺟ?        
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             
         Returns:
             ﻛﺕﻟﺑﻠ۱ﮔﮔﺍﮔ؟ﺅﺙ
@@ -245,7 +245,7 @@ class AnalystExpectationDataSource(ABC):
         ﻟﺓﮒﻟﺁﻝﭦ۶ﮒﮒﺎ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             start_date: ﮒﺙﮒ۶ﮔ۴ﺅﺟ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         Returns:
@@ -271,7 +271,7 @@ class SentimentAnalyzer:
             
         Returns:
             ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?            -1: ﮔﮒﭦ۵ﻟﺑﻠ۱
-            0: ﻛﺕ­ﺅﺟﺛ?            1: ﮔﮒﭦ۵ﮔ­۲ﻠ۱
+0: ﻛﺕﺅﺟﺛ?            1: ﮔﮒﭦ۵ﮔ۲ﻠ۱
         """
         pass
     
@@ -305,8 +305,8 @@ class EventExtractor:
             ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﺅﺟ?            - event_type: ﻛﭦﻛﭨﭘﻝﺎﭨﮒ
             - event_summary: ﻛﭦﻛﭨﭘﮔﻟ۵
             - related_stocks: ﻝﺕﮒﺏﻟ۰ﻝ۴۷
-            - impact_level: ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ
-            - sentiment: ﮔﮔﮒﺝﮒﺅﺙﮔ­۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕ­ﮔ۶ﺅﺙ
+- impact_level: ﮒﺛﺎﮒﻝﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ
+- sentiment: ﮔﮔﮒﺝﮒﺅﺙﮔ۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕﮔ۶ﺅﺙ
         """
         pass
 ```
@@ -319,13 +319,13 @@ class EntityRecognizer:
     
     def extract_stocks(self, text: str) -> List[str]:
         """
-        ﮔﮒﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+ﮔﮒﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
         
         Args:
             text: ﮔﮔ؛ﮒﮒ؟ﺗ
             
         Returns:
-            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
         """
         pass
     
@@ -342,15 +342,15 @@ class EntityRecognizer:
         pass
 ```
 
-### 3.3 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔ۴ﮒ۲
+### 3.3 ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲
 
-#### 3.3.1 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
+#### 3.3.1 ﮒﮒﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
 
 ```python
 from abc import ABC, abstractmethod
 
 class AlternativeDataFactorCalculator(ABC):
-    """ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
+"""ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮒﮒﻟ؟۰ﻝ؟ﮒﭦﻝﺎﭨ
     
     ﻟﻟﺑ۲ﻟﺝﺗﻝﻟﺁﺑﮔ:
     - ﮒﺅﺟﺛ? [FACTOR_CALCULATOR](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
@@ -362,14 +362,14 @@ class AlternativeDataFactorCalculator(ABC):
                   date: datetime, 
                   **kwargs) -> float:
         """
-        ﻟ؟۰ﻝ؟ﮒ ﮒ­ﺅﺟ?        
+ﻟ؟۰ﻝ؟ﮒﮒﺅﺟ?
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             **kwargs: ﮒﭘﻛﭨﮒﮔﺍ
             
         Returns:
-            ﮒ ﮒ­ﺅﺟ?        """
+ﮒﮒﺅﺟ?        """
         pass
     
     @abstractmethod
@@ -377,24 +377,24 @@ class AlternativeDataFactorCalculator(ABC):
                        stock_codes: List[str], 
                        date: datetime) -> pd.Series:
         """
-        ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
+ﮔﺗﻠﻟ؟۰ﻝ؟ﮒﮒ
         
         Args:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            ﮒ ﮒ­ﮒﺙﮒﭦﮒﺅﺙindex=stock_codeﺅﺟ?        """
+ﮒﮒﮒﺙﮒﭦﮒﺅﺙindex=stock_codeﺅﺟ?        """
         pass
     
     def get_factor_info(self) -> Dict:
         """
-        ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+ﻟﺓﮒﮒﮒﻛﺟ۰ﮔﺁ
         
         Returns:
-            ﮒ ﮒ­ﻛﺟ۰ﮔﺁﺅﺟ?            - factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            - factor_type: ﮒ ﮒ­ﻝﺎﭨﮒ
-            - description: ﮒ ﮒ­ﮔﻟﺟﺍ
+ﮒﮒﻛﺟ۰ﮔﺁﺅﺟ?            - factor_name: ﮒﮒﮒﻝ۶ﺍ
+- factor_type: ﮒﮒﻝﺎﭨﮒ
+- description: ﮒﮒﮔﻟﺟﺍ
             - update_frequency: ﮔﺑﮔﺍﻠ۱ﻝ
             - data_window: ﮔﺍﮔ؟ﻝ۹ﮒ۲
             - expected_ic: ﻠ۱ﮔIC
@@ -402,70 +402,70 @@ class AlternativeDataFactorCalculator(ABC):
         pass
 ```
 
-#### 3.3.2 ﮔﺍﻠﭨﮒ ﮒ­ﮔ۴ﮒ۲
+#### 3.3.2 ﮔﺍﻠﭨﮒﮒﮔ۴ﮒ۲
 
 ```python
 class NewsSentimentFactor(AlternativeDataFactorCalculator):
-    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­"""
+"""ﮔﺍﻠﭨﮔﮔﮒﮒ"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒﮒ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            ﮒ ﮒ­ﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
+ﮒﮒﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
         pass
 
 class EventDrivenFactor(AlternativeDataFactorCalculator):
-    """ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­"""
+"""ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒﮒ"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime) -> float:
         """
-        ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒﮒ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            ﮒ ﮒ­ﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
+ﮒﮒﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
         pass
 
 class NewsHeatFactor(AlternativeDataFactorCalculator):
-    """ﮔﺍﻠﭨﻝ­ﮒﭦ۵ﮒ ﮒ­"""
+"""ﮔﺍﻠﭨﻝﮒﭦ۵ﮒﮒ"""
     
     def calculate(self, 
                   stock_code: str, 
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﻝ­ﮒﭦ۵ﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﻝﮒﭦ۵ﮒﮒ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            ﮒ ﮒ­ﮒﺙﺅﺙﻝ­ﮒﭦ۵ﮒﺝﮒﺅﺟ?        """
+ﮒﮒﮒﺙﺅﺙﻝﮒﭦ۵ﮒﺝﮒﺅﺟ?        """
         pass
 ```
 
-### 3.4 ﮒ ﮒ­ﻝ؟۰ﻝﮔ۴ﮒ۲
+### 3.4 ﮒﮒﻝ؟۰ﻝﮔ۴ﮒ۲
 
-#### 3.4.1 ﮒ ﮒ­ﮔﺏ۷ﮒﮔ۴ﮒ۲
+#### 3.4.1 ﮒﮒﮔﺏ۷ﮒﮔ۴ﮒ۲
 
 ```python
 class FactorRegistry:
-    """ﮒ ﮒ­ﮔﺏ۷ﮒﺅﺟ?""
+"""ﮒﮒﮔﺏ۷ﮒﺅﺟ?""
     
     def register_factor(self, 
                        factor_name: str,
@@ -473,38 +473,38 @@ class FactorRegistry:
                        calculator: AlternativeDataFactorCalculator,
                        metadata: Dict) -> str:
         """
-        ﮔﺏ۷ﮒﮒ ﮒ­
+ﮔﺏ۷ﮒﮒﮒ
         
         Args:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            factor_type: ﮒ ﮒ­ﻝﺎﭨﮒ
-            calculator: ﮒ ﮒ­ﻟ؟۰ﻝ؟ﺅﺟ?            metadata: ﮒ ﮒ­ﮒﮔﺍﺅﺟ?            
+factor_name: ﮒﮒﮒﻝ۶ﺍ
+factor_type: ﮒﮒﻝﺎﭨﮒ
+calculator: ﮒﮒﻟ؟۰ﻝ؟ﺅﺟ?            metadata: ﮒﮒﮒﮔﺍﺅﺟ?
         Returns:
-            ﮒ ﮒ­ID
+ﮒﮒID
         """
         pass
     
     def get_factor(self, factor_id: str) -> Dict:
         """
-        ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+ﻟﺓﮒﮒﮒﻛﺟ۰ﮔﺁ
         
         Args:
-            factor_id: ﮒ ﮒ­ID
+factor_id: ﮒﮒID
             
         Returns:
-            ﮒ ﮒ­ﻛﺟ۰ﮔﺁ
+ﮒﮒﻛﺟ۰ﮔﺁ
         """
         pass
     
     def list_factors(self, factor_type: Optional[str] = None) -> List[Dict]:
         """
-        ﮒﮒﭦﮒ ﮒ­
+ﮒﮒﭦﮒﮒ
         
         Args:
-            factor_type: ﮒ ﮒ­ﻝﺎﭨﮒﺅﺙﮒﺁﻠﺅﺙ
+factor_type: ﮒﮒﻝﺎﭨﮒﺅﺙﮒﺁﻠﺅﺙ
             
         Returns:
-            ﮒ ﮒ­ﮒﻟ۰۷
+ﮒﮒﮒﻟ۰۷
         """
         pass
 ```
@@ -521,7 +521,7 @@ class ICValidator:
         """
         ﻟ؟۰ﻝ؟ICﺅﺟ?        
         Args:
-            factor_values: ﮒ ﮒ­ﮒﺙﮒﭦﺅﺟ?            returns: ﮔﭘﻝﻝﮒﭦﺅﺟ?            
+factor_values: ﮒﮒﮒﺙﮒﭦﺅﺟ?            returns: ﮔﭘﻝﻝﮒﭦﺅﺟ?
         Returns:
             ICﺅﺟ?        """
         pass
@@ -543,19 +543,19 @@ class ICValidator:
                        min_ic: float = 0.03,
                        min_icir: float = 1.0) -> Dict:
         """
-        ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﺅﺟ?        
+ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?
         Args:
-            factor_values: ﮒ ﮒ­ﮒﺙﺅﺙindex=date, columns=stock_codeﺅﺟ?            returns: ﮔﭘﻝﻝﺅﺙindex=date, columns=stock_codeﺅﺟ?            min_ic: ﮔﮒﺍICﻠﺅﺟﺛ?            min_icir: ﮔﮒﺍICIRﻠﺅﺟﺛ?            
+factor_values: ﮒﮒﮒﺙﺅﺙindex=date, columns=stock_codeﺅﺟ?            returns: ﮔﭘﻝﻝﺅﺙindex=date, columns=stock_codeﺅﺟ?            min_ic: ﮔﮒﺍICﻠﺅﺟﺛ?            min_icir: ﮔﮒﺍICIRﻠﺅﺟﺛ?
         Returns:
             ﻠ۹ﻟﺁﻝﭨﮔﺅﺟ?            - ic_mean: ICﮒﺅﺟﺛ?            - icir: ICIR
-            - ic_std: ICﮔ ﮒﺅﺟ?            - is_valid: ﮔﺁﮒ۵ﮔﮔ
+- ic_std: ICﮔﮒﺅﺟ?            - is_valid: ﮔﺁﮒ۵ﮔﮔ
         """
         pass
 ```
 
 ---
 
-## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ­ﮒ۷
+## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒﮒ۷
 
 ### 4.1 ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔ
 
@@ -583,20 +583,20 @@ CREATE INDEX idx_news_sentiment ON news_data(sentiment);
 CREATE INDEX idx_news_event_type ON news_data(event_type);
 ```
 
-**ﮒ­ﮔ؟ﭖﻟﺁﺑﮔ**:
-| ﮒ­ﮔ؟ﭖﺅﺟ?| ﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﻝﺑ۱ﮒﺙ |
+**ﮒﮔ؟ﭖﻟﺁﺑﮔ**:
+| ﮒﮔ؟ﭖﺅﺟ?| ﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﻝﺑ۱ﮒﺙ |
 |--------|------|------|------|
 | news_id | TEXT | ﮔﺍﻠﭨﮒﺁﻛﺕIDﺅﺙﻛﺕﭨﻠ؟ﺅﺙ | PRIMARY |
-| title | TEXT | ﮔﺍﻠﭨﮔ ﻠ۱ | - |
-| content | TEXT | ﮔﺍﻠﭨﮔ­۲ﮔ | - |
+| title | TEXT | ﮔﺍﻠﭨﮔﻠ۱ | - |
+| content | TEXT | ﮔﺍﻠﭨﮔ۲ﮔ | - |
 | publish_time | TIMESTAMP | ﮒﮒﺕﮔﭘﻠﺑ | INDEX |
 | source | TEXT | ﮔﺍﮔ؟ﮔ۴ﮔﭦ | INDEX |
 | url | TEXT | ﮒﮔﻠﺝﮔ۴ | - |
-| stock_codes | TEXT | ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﺅﺙJSONﺅﺟ?| - |
+| stock_codes | TEXT | ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙJSONﺅﺟ?| - |
 | sentiment | REAL | ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?| INDEX |
 | event_type | TEXT | ﻛﭦﻛﭨﭘﻝﺎﭨﮒ | INDEX |
 | event_summary | TEXT | ﻛﭦﻛﭨﭘﮔﻟ۵ | - |
-| impact_level | TEXT | ﮒﺛﺎﮒﻝ­ﻝﭦ۶ | - |
+| impact_level | TEXT | ﮒﺛﺎﮒﻝﻝﭦ۶ | - |
 
 ---
 
@@ -648,7 +648,7 @@ CREATE INDEX idx_analyst_institution ON analyst_expectations(institution);
 
 ---
 
-#### 4.1.4 ﮒ ﮒ­ﮔﺍﮔ؟ﺅﺟ?
+#### 4.1.4 ﮒﮒﮔﺍﮔ؟ﺅﺟ?
 ```sql
 CREATE TABLE alternative_factors (
     factor_id TEXT PRIMARY KEY,
@@ -671,7 +671,7 @@ CREATE INDEX idx_factor_name ON alternative_factors(factor_name);
 
 ---
 
-#### 4.1.5 ﮒ ﮒ­ﮒﮔﺍﮔ؟ﻟ۰۷
+#### 4.1.5 ﮒﮒﮒﮔﺍﮔ؟ﻟ۰۷
 
 ```sql
 CREATE TABLE factor_metadata (
@@ -703,7 +703,7 @@ from chromadb import Client
 from chromadb.config import Settings
 
 class VectorStore:
-    """ﮒﻠﮒ­ﮒ۷"""
+"""ﮒﻠﮒﮒ۷"""
     
     def __init__(self, persist_directory: str = "./data/vector_db"):
         self.client = Client(Settings(
@@ -724,7 +724,7 @@ class VectorStore:
         )
 ```
 
-#### 4.2.2 ﮒﻠﮒ­ﮒ۷ﮔ ﺙﮒﺙ
+#### 4.2.2 ﮒﻠﮒﮒ۷ﮔﺙﮒﺙ
 
 **ﮔﺍﻠﭨﮒﻠ**:
 ```python
@@ -732,12 +732,12 @@ class VectorStore:
     "id": "news_001",
     "embedding": [0.1, 0.2, ...],  # 768ﻝﭨﺑﮒﺅﺟ?    "metadata": {
         "news_id": "news_001",
-        "title": "ﮔﺍﻠﭨﮔ ﻠ۱",
+"title": "ﮔﺍﻠﭨﮔﻠ۱",
         "publish_time": "2026-04-02T10:00:00",
         "source": "cailian",
         "sentiment": 0.8
     },
-    "document": "ﮔﺍﻠﭨﮔ­۲ﮔﮒﮒ؟ﺗ"
+"document": "ﮔﺍﻠﭨﮔ۲ﮔﮒﮒ؟ﺗ"
 }
 ```
 
@@ -760,15 +760,15 @@ class VectorStore:
 
 ### 4.3 ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﺅﺟ?
 ```
-ﮔﺍﮔ؟ﺅﺟ?ﺅﺟ?ﮔﺍﮔ؟ﻠﻠ ﺅﺟ?ﮔﺍﮔ؟ﮔﺕﮔﺑ ﺅﺟ?NLPﮒ۳ﻝ ﺅﺟ?ﮒ ﮒ­ﻟ؟۰ﻝ؟ ﺅﺟ?ﮒ ﮒ­ﮒ­ﮒ۷
-  ﺅﺟ?        ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?ﮒﮒ۶ﮔﺍﮔ؟  ﻠﻠﮔﺍﮔ؟   ﮔﺕﮔﺑﮔﺍﮔ؟   ﻝﭨﮔﮒﮔﺍﺅﺟ? ﮒ ﮒ­ﮔﺍﮔ؟   ﮔﺏ۷ﮒﮒ ﮒ­
+ﮔﺍﮔ؟ﺅﺟ?ﺅﺟ?ﮔﺍﮔ؟ﻠﻠ ﺅﺟ?ﮔﺍﮔ؟ﮔﺕﮔﺑ ﺅﺟ?NLPﮒ۳ﻝ ﺅﺟ?ﮒﮒﻟ؟۰ﻝ؟ ﺅﺟ?ﮒﮒﮒﮒ۷
+ﺅﺟ?        ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?         ﺅﺟ?ﮒﮒ۶ﮔﺍﮔ؟  ﻠﻠﮔﺍﮔ؟   ﮔﺕﮔﺑﮔﺍﮔ؟   ﻝﭨﮔﮒﮔﺍﺅﺟ? ﮒﮒﮔﺍﮔ؟   ﮔﺏ۷ﮒﮒﮒ
 ```
 
 **ﮔﺍﮔ؟ﮔﭖﻟﺛ؛ﻟﺟﻝ۷**:
 
 1. **ﮔﺍﮔ؟ﻠﻠ**: ﻛﭨﮔﺍﮔ؟ﮔﭦﻟﺓﮒﮒﮒ۶ﮔﺍﮔ؟
-2. **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮒﭨﻠﻙﮒﭨﮒ۹ﻙﮔ ﺙﮒﺙﮔ ﮒﮒ
-3. **NLPﮒ۳ﻝ**: ﮔﮔﮒﮔﻙﻛﭦﻛﭨﭘﮔﮒﻙﮒ؟ﻛﺛﻟﺁﺅﺟ?4. **ﮒ ﮒ­ﻟ؟۰ﻝ؟**: ﮒﭦﻛﭦﮒ۳ﻝﮒﻝﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ ﮒ­
+2. **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮒﭨﻠﻙﮒﭨﮒ۹ﻙﮔﺙﮒﺙﮔﮒﮒ
+3. **NLPﮒ۳ﻝ**: ﮔﮔﮒﮔﻙﻛﭦﻛﭨﭘﮔﮒﻙﮒ؟ﻛﺛﻟﺁﺅﺟ?4. **ﮒﮒﻟ؟۰ﻝ؟**: ﮒﭦﻛﭦﮒ۳ﻝﮒﻝﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒﮒ
 
 ---
 
@@ -778,7 +778,7 @@ class VectorStore:
 #### 5.1.1 ﻝ؟ﮔﺏﮒﻝ
 
 ﻛﺛﺟﻝ۷GLM-4-Flashﻟﺟﻟ۰ﮔﮔﮒﮔﺅﺙﻠﻟﺟPrompt Engineeringﮒﺙﮒﺁﺙﮔ۷۰ﮒﻟﺝﮒﭦﮔﮔﮒﺝﮒﺅﺟ?
-#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
+#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 class SentimentAnalyzer:
@@ -800,7 +800,7 @@ class SentimentAnalyzer:
             ﮔﮔﮒﺝﮒﺅﺟ?1ﺅﺟ?ﺅﺟ?        """
         prompt = f"""
         ﻟﺁﺓﮒﮔﻛﭨ۴ﻛﺕﻟﺑ۱ﻝﭨﮔﺍﻠﭨﻝﮔﮔﮒﺝﮒﺅﺙﻟﺟﺅﺟ?1ﺅﺟ?ﻛﺗﻠﺑﻝﮔﮔﮒﺝﮒﺅﺙ
-        -1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﻟﺑﻠ۱ﺅﺟ?ﻟ۰۷ﻝ۳ﭦﻛﺕ­ﮔ۶ﺅﺙ1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﮔ­۲ﻠ۱
+-1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﻟﺑﻠ۱ﺅﺟ?ﻟ۰۷ﻝ۳ﭦﻛﺕﮔ۶ﺅﺙ1ﻟ۰۷ﻝ۳ﭦﮔﮒﭦ۵ﮔ۲ﻠ۱
         
         ﮔﺍﻠﭨﮒﮒ؟ﺗﺅﺙ{text}
         
@@ -834,7 +834,7 @@ class SentimentAnalyzer:
 ```
 
 #### 5.1.3 ﮒ۳ﮔﮒﭦ۵ﮒﺅﺟ?
-- **ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ?*: O(n)ﺅﺙﮒﭘﻛﺕ­nﻛﺕﭦﮔﮔ؛ﻠﺟﺅﺟ?- **ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ?*: O(1)
+- **ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ?*: O(n)ﺅﺙﮒﭘﻛﺕnﻛﺕﭦﮔﮔ؛ﻠﺟﺅﺟ?- **ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ?*: O(1)
 - **APIﻟﺍﻝ۷ﮔﮔ؛**: 0.1ﺅﺟ?ﻝﺝﻛﺕtokens
 
 ---
@@ -843,8 +843,8 @@ class SentimentAnalyzer:
 
 #### 5.2.1 ﻝ؟ﮔﺏﮒﻝ
 
-ﻛﺛﺟﻝ۷GLM-4-Flashﻟﺟﻟ۰ﻛﭦﻛﭨﭘﮔﮒﺅﺙﻟﺁﮒ،ﮔﺍﻠﭨﻛﺕ­ﻝﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻙﮒﺛﺎﮒﻝ­ﻝﭦ۶ﮒﻝﺕﮒﺏﻟ۰ﻝ۴۷ﺅﺟ?
-#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ 
+ﻛﺛﺟﻝ۷GLM-4-Flashﻟﺟﻟ۰ﻛﭦﻛﭨﭘﮔﮒﺅﺙﻟﺁﮒ،ﮔﺍﻠﭨﻛﺕﻝﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻙﮒﺛﺎﮒﻝﻝﭦ۶ﮒﻝﺕﮒﺏﻟ۰ﻝ۴۷ﺅﺟ?
+#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 class EventExtractor:
@@ -854,8 +854,8 @@ class EventExtractor:
         self.api_key = api_key
         self.model = "glm-4-flash"
         self.event_types = [
-            'ﻛﺕﻝﭨ۸ﮒ؛ﮒ', 'ﮒﺗﭘﻟﺑ­ﻠﻝﭨ', 'ﻟ۰ﮔﮒﮒ۷', 'ﻠ،ﻝ؟۰ﮒﮒ۷',
-            'ﻛﭦ۶ﮒﮒﮒﺕ', 'ﮔﺟﻝ­ﮒﺛﺎﮒ', 'ﻟ۰ﻛﺕﮒ۷ﺅﺟﺛ?, 'ﮒﺕﮒﭦﻛﭦﻛﭨﭘ'
+'ﻛﺕﻝﭨ۸ﮒ؛ﮒ', 'ﮒﺗﭘﻟﺑﻠﻝﭨ', 'ﻟ۰ﮔﮒﮒ۷', 'ﻠ،ﻝ؟۰ﮒﮒ۷',
+'ﻛﭦ۶ﮒﮒﮒﺕ', 'ﮔﺟﻝﮒﺛﺎﮒ', 'ﻟ۰ﻛﺕﮒ۷ﺅﺟﺛ?, 'ﮒﺕﮒﭦﻛﭦﻛﭨﭘ'
         ]
         
     def extract_events(self, text: str) -> Dict:
@@ -866,19 +866,19 @@ class EventExtractor:
             text: ﮔﺍﻠﭨﮔﮔ؛
             
         Returns:
-            ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﮒ­ﮒﺕ
+ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﮒﮒﺕ
         """
         prompt = f"""
-        ﻟﺁﺓﻛﭨﻛﭨ۴ﻛﺕﻟﺑ۱ﻝﭨﮔﺍﻠﭨﻛﺕ­ﮔﮒﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﺅﺙ
+ﻟﺁﺓﻛﭨﻛﭨ۴ﻛﺕﻟﺑ۱ﻝﭨﮔﺍﻠﭨﻛﺕﮔﮒﮒﺏﻠ؟ﻛﭦﻛﭨﭘﻛﺟ۰ﮔﺁﺅﺙ
         
         ﮔﺍﻠﭨﮒﮒ؟ﺗﺅﺙ{text}
         
-        ﻟﺁﺓﻟﺟﮒJSONﮔ ﺙﮒﺙﺅﺟ?        {{
+ﻟﺁﺓﻟﺟﮒJSONﮔﺙﮒﺙﺅﺟ?        {{
             "event_type": "ﻛﭦﻛﭨﭘﻝﺎﭨﮒﺅﺙﻛﭨﻛﭨ۴ﻛﺕﻠﮔ۸ﺅﺙ{', '.join(self.event_types)}ﺅﺟ?,
-            "event_summary": "ﻛﭦﻛﭨﭘﮔﻟ۵ﺅﺟ?0ﮒ­ﻛﭨ۴ﮒﺅﺙ",
-            "related_stocks": ["ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ "],
-            "impact_level": "ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ",
-            "sentiment": "ﮔﮔﮒﺝﮒﺅﺙﮔ­۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕ­ﮔ۶ﺅﺙ"
+"event_summary": "ﻛﭦﻛﭨﭘﮔﻟ۵ﺅﺟ?0ﮒﻛﭨ۴ﮒﺅﺙ",
+"related_stocks": ["ﻝﺕﮒﺏﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ"],
+"impact_level": "ﮒﺛﺎﮒﻝﻝﭦ۶ﺅﺙﻠ،/ﺅﺟ?ﻛﺛﺅﺙ",
+"sentiment": "ﮔﮔﮒﺝﮒﺅﺙﮔ۲ﺅﺟ?ﻟﺑﻠ۱/ﻛﺕﮔ۶ﺅﺙ"
         }}
         
         ﮒ۹ﻟﺟﮒJSONﺅﺙﻛﺕﻟ۵ﮒﭘﻛﭨﻟ۶۲ﻠﺅﺟﺛ?        """
@@ -891,13 +891,13 @@ class EventExtractor:
 
 ---
 
-### 5.3 ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
+### 5.3 ﮒﮒﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 
-#### 5.3.1 ﮔﺍﻠﭨﮔﮔﮒ ﮒ­ﻝ؟ﮔﺏ
+#### 5.3.1 ﮔﺍﻠﭨﮔﮔﮒﮒﻝ؟ﮔﺏ
 
 ```python
 class NewsSentimentFactor(AlternativeDataFactorCalculator):
-    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­"""
+"""ﮔﺍﻠﭨﮔﮔﮒﮒ"""
     
     def __init__(self, news_data_source, sentiment_analyzer):
         self.news_data_source = news_data_source
@@ -908,17 +908,17 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
                   date: datetime, 
                   window: int = 7) -> float:
         """
-        ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﮔﺍﻠﭨﮔﮔﮒﮒ
         
-        ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮒﭨwindowﮒ۳۸ﻝﻝﺕﮒﺏﮔﺍﻠﭨ
-        2. ﻟ؟۰ﻝ؟ﮔﺁﮔ۰ﮔﺍﻠﭨﻝﮔﮔﮒﺝﺅﺟ?        3. ﮒ ﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮒﭨwindowﮒ۳۸ﻝﻝﺕﮒﺏﮔﺍﻠﭨ
+2. ﻟ؟۰ﻝ؟ﮔﺁﮔ۰ﮔﺍﻠﭨﻝﮔﮔﮒﺝﺅﺟ?        3. ﮒﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             window: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒ۳۸ﺅﺟ?            
         Returns:
-            ﮒ ﮒ­ﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
+ﮒﮒﮒﺙﺅﺙ-1ﺅﺟ?ﺅﺟ?        """
         # 1. ﻟﺓﮒﻟﺟﮒﭨwindowﮒ۳۸ﻝﻝﺕﮒﺏﮔﺍﻠﭨ
         start_date = date - timedelta(days=window)
         news_list = self.news_data_source.get_stock_news(
@@ -938,7 +938,7 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
                 )
             sentiments.append(sentiment)
         
-        # 3. ﮒ ﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
+# 3. ﮒﮔﮒﺗﺏﮒﺅﺙﻟﺟﮔﮔﺍﻠﭨﮔﻠﮔﺑﻠ،ﺅﺙ
         weights = np.exp(np.linspace(-1, 0, len(sentiments)))
         weights = weights / weights.sum()
         
@@ -948,24 +948,24 @@ class NewsSentimentFactor(AlternativeDataFactorCalculator):
 ```
 
 **ﻝ؟ﮔﺏﮒ۳ﮔﺅﺟ?*:
-- ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ? O(n)ﺅﺙﮒﭘﻛﺕ­nﻛﺕﭦﮔﺍﻠﭨﮔﺍﺅﺟ?- ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ? O(n)
+- ﮔﭘﻠﺑﮒ۳ﮔﺅﺟ? O(n)ﺅﺙﮒﭘﻛﺕnﻛﺕﭦﮔﺍﻠﭨﮔﺍﺅﺟ?- ﻝ۸ﭦﻠﺑﮒ۳ﮔﺅﺟ? O(n)
 
 ---
 
-#### 5.3.2 ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­ﻝ؟ﮔﺏ
+#### 5.3.2 ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒﮒﻝ؟ﮔﺏ
 
 ```python
 class EventDrivenFactor(AlternativeDataFactorCalculator):
-    """ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­"""
+"""ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒﮒ"""
     
     # ﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﭦﮒﮒﺝﮒ
     EVENT_IMPACT_MAP = {
         'ﻛﺕﻝﭨ۸ﮒ؛ﮒ': 0.8,
-        'ﮒﺗﭘﻟﺑ­ﻠﻝﭨ': 0.9,
+'ﮒﺗﭘﻟﺑﻠﻝﭨ': 0.9,
         'ﻟ۰ﮔﮒﮒ۷': 0.7,
         'ﻠ،ﻝ؟۰ﮒﮒ۷': 0.5,
         'ﻛﭦ۶ﮒﮒﮒﺕ': 0.6,
-        'ﮔﺟﻝ­ﮒﺛﺎﮒ': 0.8,
+'ﮔﺟﻝﮒﺛﺎﮒ': 0.8,
         'ﻟ۰ﻛﺕﮒ۷ﺅﺟﺛ?: 0.4,
         'ﮒﺕﮒﭦﻛﭦﻛﭨﭘ': 0.3
     }
@@ -976,17 +976,17 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
         
     def calculate(self, stock_code: str, date: datetime) -> float:
         """
-        ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮒﮒ
         
-        ﻝ؟ﮔﺏﮔ­۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮔﻠﮒ۳۶ﻛﭦﻛﭨﭘ
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?        1. ﻟﺓﮒﻟﺟﮔﻠﮒ۳۶ﻛﭦﻛﭨﭘ
         2. ﻟ؟۰ﻝ؟ﮔﺁﻛﺕ۹ﻛﭦﻛﭨﭘﻝﮒﺛﺎﮒﮒﺝﺅﺟ?        3. ﻝﭨﺙﮒﻟﺁﻛﺙﺍﻛﭦﻛﭨﭘﮒﺛﺎﮒ
         
         Args:
-            stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﻟ؟۰ﻝ؟ﮔ۴ﮔ
             
         Returns:
-            ﮒ ﮒ­ﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
+ﮒﮒﮒﺙﺅﺙﻛﭦﻛﭨﭘﮒﺛﺎﮒﮒﺝﮒﺅﺟ?        """
         # 1. ﻟﺓﮒﻟﺟﮔﻠﮒ۳۶ﻛﭦﻛﭨﭘ
         start_date = date - timedelta(days=30)
         news_list = self.news_data_source.get_stock_news(
@@ -1000,7 +1000,7 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
                 event_info = {
                     'event_type': news['event_type'],
                     'impact_level': news.get('impact_level', 'ﺅﺟ?),
-                    'sentiment': news.get('sentiment', 'ﻛﺕ­ﺅﺟﺛ?),
+'sentiment': news.get('sentiment', 'ﻛﺕﺅﺟﺛ?),
                     'publish_time': news['publish_time']
                 }
                 events.append(event_info)
@@ -1014,13 +1014,13 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
             # ﮒﭦﮒﮒﺝﮒ
             base_score = self.EVENT_IMPACT_MAP.get(event['event_type'], 0.5)
             
-            # ﮒﺛﺎﮒﻝ­ﻝﭦ۶ﻛﺗﮔﺍ
+# ﮒﺛﺎﮒﻝﻝﭦ۶ﻛﺗﮔﺍ
             level_multiplier = {'ﺅﺟ?: 1.0, 'ﺅﺟ?: 0.6, 'ﺅﺟ?: 0.3}.get(
                 event['impact_level'], 0.6
             )
             
             # ﮔﮔﻛﺗﮔﺍ
-            sentiment_multiplier = {'ﮔ­۲ﻠ۱': 1.0, 'ﻟﺑﻠ۱': -1.0, 'ﻛﺕ­ﺅﺟﺛ?: 0.0}.get(
+sentiment_multiplier = {'ﮔ۲ﻠ۱': 1.0, 'ﻟﺑﻠ۱': -1.0, 'ﻛﺕﺅﺟﺛ?: 0.0}.get(
                 event['sentiment'], 0.0
             )
             
@@ -1039,12 +1039,12 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 
 ---
 
-## ﮒ­ﻙﮒ؟ﮔﺛﮔﮔﺁﮔ 
+## ﮒﻙﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 ﻝﺙﻝ۷ﻟﺁ­ﻟ۷ﮒﮔ۰ﺅﺟ?
+### 6.1 ﻝﺙﻝ۷ﻟﺁﻟ۷ﮒﮔ۰ﺅﺟ?
 | ﮔﮔﺁﻠ۱ﺅﺟ?| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ | ﻟﺁﺑﮔ |
 |---------|---------|------|------|
-| **ﻝﺙﻝ۷ﻟﺁ­ﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁ­ﻟ۷ |
+| **ﻝﺙﻝ۷ﻟﺁﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ |
 | **ﻝ؛ﻟ،ﮔ۰ﮔﭘ** | Scrapy | 2.11+ | ﮔﺍﮔ؟ﻠﻠ |
 | **ﮒ۷ﮔﻠ۰ﭖﺅﺟ?* | Selenium | 4.15+ | JavaScriptﮔﺕﺎﮔ |
 | **HTTPﻟﺁﺓﮔﺎ** | Requests | 2.31+ | APIﻟﺍﻝ۷ |
@@ -1057,7 +1057,7 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 | **chromadb** | 0.4.0+ | ﮒﻠﮔﺍﮔ؟ﺅﺟ?|
 | **zhipuai** | 2.0.0+ | GLM-4 API |
 | **apache-airflow** | 2.7.0+ | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ |
-| **redis** | 5.0.0+ | ﻝﺙﮒ­ |
+| **redis** | 5.0.0+ | ﻝﺙﮒ |
 | **sqlalchemy** | 2.0.0+ | ORM |
 
 ### 6.3 ﻝﺁﮒ۱ﻟ۵ﮔﺎ
@@ -1065,13 +1065,13 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 | ﻝﺁﮒ۱ | ﻟ۵ﮔﺎ |
 |------|------|
 | **ﮔﻛﺛﻝﺏﭨﻝﭨ** | Windows 10/11, Linux, macOS |
-| **ﮒﮒ­** | ﺅﺟ?GB |
-| **ﮒ­ﮒ۷** | ﺅﺟ?0GBﮒﺁﻝ۷ﻝ۸ﭦﻠﺑ |
+| **ﮒﮒ** | ﺅﺟ?GB |
+| **ﮒﮒ۷** | ﺅﺟ?0GBﮒﺁﻝ۷ﻝ۸ﭦﻠﺑ |
 | **ﻝﺛﻝﭨ** | ﻝ۷ﺏﮒ؟ﻝﻛﭦﻟﻝﺛﻟﺟﮔ۴ |
 
 ---
 
-## ﻛﺕﻙﮔﭖﻟﺁﻝ­ﺅﺟ?
+## ﻛﺕﻙﮔﭖﻟﺁﻝﺅﺟ?
 ### 7.1 ﮒﮒﮔﭖﻟﺁ
 
 #### 7.1.1 ﮔﭖﻟﺁﻟﮒﺑ
@@ -1080,8 +1080,8 @@ class EventDrivenFactor(AlternativeDataFactorCalculator):
 |------|---------|-----------|
 | **ﮔﺍﮔ؟ﻠﻠ** | APIﻟﺍﻝ۷ﻙﮔﺍﮔ؟ﻟ۶۲ﺅﺟ?| >85% |
 | **NLPﮒ۳ﻝ** | ﮔﮔﮒﮔﻙﻛﭦﻛﭨﭘﮔﺅﺟ?| >80% |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟** | ﮒ ﮒ­ﻟ؟۰ﻝ؟ﻠﭨﻟﺝ | >90% |
-| **ﮔﺍﮔ؟ﮒ­ﮒ۷** | ﮔﺍﮔ؟ﮒﭦﮔﺅﺟ?| >85% |
+| **ﮒﮒﻟ؟۰ﻝ؟** | ﮒﮒﻟ؟۰ﻝ؟ﻠﭨﻟﺝ | >90% |
+| **ﮔﺍﮔ؟ﮒﮒ۷** | ﮔﺍﮔ؟ﮒﭦﮔﺅﺟ?| >85% |
 
 #### 7.1.2 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
 
@@ -1090,13 +1090,13 @@ import pytest
 from datetime import datetime
 
 class TestNewsSentimentFactor:
-    """ﮔﺍﻠﭨﮔﮔﮒ ﮒ­ﮔﭖﻟﺁ"""
+"""ﮔﺍﻠﭨﮔﮔﮒﮒﮔﭖﻟﺁ"""
     
     def test_calculate_with_positive_news(self):
-        """ﮔﭖﻟﺁﮔ­۲ﻠ۱ﮔﺍﻠﭨﻝﮒ ﮒ­ﻟ؟۰ﺅﺟ?""
+"""ﮔﭖﻟﺁﮔ۲ﻠ۱ﮔﺍﻠﭨﻝﮒﮒﻟ؟۰ﺅﺟ?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
-        # ﮔ۷۰ﮔﮔ­۲ﻠ۱ﮔﺍﻠﭨ
+# ﮔ۷۰ﮔﮔ۲ﻠ۱ﮔﺍﻠﭨ
         mock_news_source.get_stock_news.return_value = [
             {
                 'news_id': '001',
@@ -1113,7 +1113,7 @@ class TestNewsSentimentFactor:
         assert factor_value <= 1
     
     def test_calculate_with_no_news(self):
-        """ﮔﭖﻟﺁﮔ ﮔﺍﻠﭨﮔﭘﻝﮒ ﮒ­ﻟ؟۰ﺅﺟ?""
+"""ﮔﭖﻟﺁﮔﮔﺍﻠﭨﮔﭘﻝﮒﮒﻟ؟۰ﺅﺟ?""
         factor = NewsSentimentFactor(mock_news_source, mock_sentiment_analyzer)
         
         mock_news_source.get_stock_news.return_value = []
@@ -1129,22 +1129,22 @@ class TestNewsSentimentFactor:
 
 #### 7.2.1 ﮔﭖﻟﺁﮒﭦﮔﺁ
 
-| ﮒﭦﮔﺁ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻠ۹ﮔﭘﮔ ﮒ |
+| ﮒﭦﮔﺁ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻠ۹ﮔﭘﮔﮒ |
 |------|---------|---------|
 | **ﮔﺍﮔ؟ﻠﻠﮔﭖﻝ۷** | ﻛﭨﮔﺍﮔ؟ﮔﭦﮒﺍﮔﺍﮔ؟ﮒﭦﻝﮒ؟ﮔﺑﮔﭖﺅﺟ?| ﮔﺍﮔ؟ﮒ؟ﮔﺑﺅﺟ?95% |
 | **NLPﮒ۳ﻝﮔﭖﻝ۷** | ﻛﭨﮒﮒ۶ﮔﮔ؛ﮒﺍﻝﭨﮔﮒﮔﺍﺅﺟ?| ﮒﻝ۰؟ﺅﺟ?80% |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮔﭖﻝ۷** | ﻛﭨﮔﺍﮔ؟ﮒﺍﮒ ﮒ­ﻝﮒ؟ﮔﺑﮔﭖﺅﺟ?| IC>0.03 |
+| **ﮒﮒﻟ؟۰ﻝ؟ﮔﭖﻝ۷** | ﻛﭨﮔﺍﮔ؟ﮒﺍﮒﮒﻝﮒ؟ﮔﺑﮔﭖﺅﺟ?| IC>0.03 |
 
 ---
 
 ### 7.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
-#### 7.3.1 ﮔ۶ﻟﺛﮔﮔ 
+#### 7.3.1 ﮔ۶ﻟﺛﮔﮔ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮔﮔ | ﻝ؟ﮔﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
 | **ﮔﺍﮔ؟ﻠﻠﮒﭨﭘﻟﺟ** | <5ﮒﻠ | ﮒﮒﮔﭖﻟﺁ |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒﮒﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 | **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | >100ﻟﺁﺓﮔﺎ/ﺅﺟ?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
 
 ---
@@ -1156,8 +1156,8 @@ class TestNewsSentimentFactor:
 |------|------|------|---------|
 | **APIﻠ۱ﻝﻠﮒﭘ** | ﺅﺟ?| ﺅﺟ?| ﻟﺁﺓﮔﺎﻠﮒﻙﮒ۳ﻟﺑ۵ﮒﺓﻟﺛ؟ﮔ۱ |
 | **ﮔﺍﮔ؟ﻟﺑ۷ﻠﻛﺕﻝ۷ﺏﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﮔﺍﮔ؟ﮔﺕﮔﺑﻙﮒﺙﮒﺕﺕﮔ۲ﺅﺟ?|
-| **NLPﮒﻝ۰؟ﻝﻛﺕﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﮔ۷۰ﮒﻛﺙﮒﻙﻛﭦﭦﮒﺓ۴ﮔ ﺅﺟ?|
-| **ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﭘﻠ۱** | ﺅﺟ?| ﺅﺟ?| ﮒﺙﮔ­۴ﮒ۳ﻝﻙﻝﺙﮒ­ﻛﺙﺅﺟ?|
+| **NLPﮒﻝ۰؟ﻝﻛﺕﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﮔ۷۰ﮒﻛﺙﮒﻙﻛﭦﭦﮒﺓ۴ﮔﺅﺟ?|
+| **ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﭘﻠ۱** | ﺅﺟ?| ﺅﺟ?| ﮒﺙﮔ۴ﮒ۳ﻝﻙﻝﺙﮒﻛﺙﺅﺟ?|
 
 ### 8.2 ﮒ؟ﮔﺛﻠ۲ﻠ۸
 
@@ -1171,33 +1171,33 @@ class TestNewsSentimentFactor:
 
 1. **ﮔﺍﮔ؟ﮔﭦﻝﭦ۵ﺅﺟ?*: ﻛﭨﻛﺛﺟﻝ۷ﮒﻟﺑﺗﮒ؛ﮒﺙAPI
 2. **ﮔﮔ؛ﻝﭦ۵ﮔ**: ﮔﮔﺅﺟ?200ﺅﺟ?3. **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: 8ﮒ۷ﮒﮒ؟ﮔ
-4. **ﮔﮔﺁﻝﭦ۵ﺅﺟ?*: ﻛﺛﺟﻝ۷ﻝﺍﮔﮔﮔﺁﮔ 
+4. **ﮔﮔﺁﻝﭦ۵ﺅﺟ?*: ﻛﺛﺟﻝ۷ﻝﺍﮔﮔﮔﺁﮔ
 
 ---
 
-## ﻛﺗﻙﻠ۹ﮔﭘﮔ ﺅﺟ?
+## ﻛﺗﻙﻠ۹ﮔﭘﮔﺅﺟ?
 ### 9.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|---------|---------|
 | **ﮔﺍﮔ؟ﻠﻠ** | ﮔﺍﮔ؟ﮒ؟ﮔﺑﺅﺟ?95% | ﮔﺍﮔ؟ﻟﺑ۷ﻠﮔ۲ﺅﺟ?|
-| **NLPﮒ۳ﻝ** | ﮔﮔﮒﮔﮒﻝ۰؟ﺅﺟ?80% | ﻛﭦﭦﮒﺓ۴ﮔ ﮔﺏ۷ﻠ۹ﻟﺁ |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟** | ﮒ ﮒ­ﮔﺍﻠﺅﺟ?ﺅﺟ?| ﮒﻟﺛﮔﭖﻟﺁ |
+| **NLPﮒ۳ﻝ** | ﮔﮔﮒﮔﮒﻝ۰؟ﺅﺟ?80% | ﻛﭦﭦﮒﺓ۴ﮔﮔﺏ۷ﻠ۹ﻟﺁ |
+| **ﮒﮒﻟ؟۰ﻝ؟** | ﮒﮒﮔﺍﻠﺅﺟ?ﺅﺟ?| ﮒﻟﺛﮔﭖﻟﺁ |
 | **ICﻠ۹ﻟﺁ** | ICﮒﺅﺟﺛ?0.03 | ﻝﭨﻟ؟۰ﮔ۲ﺅﺟ?|
 
 ### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮔﮔ | ﻝ؟ﮔﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
 | **ﮔﺍﮔ؟ﻠﻠﮒﭨﭘﻟﺟ** | <5ﮒﻠ | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒﮒﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | <10ﺅﺟ?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 | **ﻝﺏﭨﻝﭨﮒﺁﻝ۷ﺅﺟ?* | >99% | ﻝﮔ۶ﻝﭨﻟ؟۰ |
 
 ### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮔﮔ | ﻝ؟ﮔﺅﺟ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
-| **ﻛﭨ۲ﻝ ﻟ۵ﻝﺅﺟ?* | >80% | ﮒﮒﮔﭖﻟﺁ |
+| **ﻛﭨ۲ﻝﻟ۵ﻝﺅﺟ?* | >80% | ﮒﮒﮔﭖﻟﺁ |
 | **ﮔﮔ۰۲ﮒ؟ﮔﺑﺅﺟ?* | 100% | ﮔﮔ۰۲ﮒ؟۰ﮔ۴ |
 | **ﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﺅﺟ?* | >99% | ﮒﮒﮔﭖﻟﺁ |
 
@@ -1206,49 +1206,49 @@ class TestNewsSentimentFactor:
 ## ﮒﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
 ### 10.1 Phase 1: ﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﺅﺙWeek 1-3ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﮒﮔﺍﮔ؟ﻠﻠ
+**ﻝ؟ﮔ**: ﮒ؟ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴ﮒﮔﺍﮔ؟ﻠﻠ
 
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. ﮔﺍﻠﭨﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?2. ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟ﮔﭦﮔ۴ﺅﺟ?3. ﮒﮔﮒﺕﻠ۱ﮔﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴
 4. ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔﻟ؟ﺝﻟ؟۰
 5. ﮔﺍﮔ؟ﻠﻠﻟﺍﮒﭦ۵ﻝﺏﭨﻝﭨ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - ﻟﺏﮒﺍ3ﻛﺕ۹ﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۴
 - ﮔﺍﮔ؟ﻟﺑ۷ﻠ>95%
-- ﮒ؟ﮔﭘﻠﻠﮔ­۲ﮒﺕﺕﻟﺟﻟ۰
+- ﮒ؟ﮔﭘﻠﻠﮔ۲ﮒﺕﺕﻟﺟﻟ۰
 
 ---
 
 ### 10.2 Phase 2: NLPﮒ۳ﻝﺅﺙWeek 4-5ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔNLPﮒ۳ﻝﮔ۷۰ﮒ
+**ﻝ؟ﮔ**: ﮒ؟ﮔNLPﮒ۳ﻝﮔ۷۰ﮒ
 
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. GLM-4-Flash APIﻠﮔ
 2. ﮔﮔﮒﮔﮔ۷۰ﮒﮒﺙﺅﺟ?3. ﻛﭦﻛﭨﭘﮔﮒﮔ۷۰ﮒﮒﺙﺅﺟ?4. ﮒ؟ﻛﺛﻟﺁﮒ،ﮔ۷۰ﮒﮒﺙﺅﺟ?5. ﮒﻠﮔﺍﮔ؟ﮒﭦﻠﺅﺟ?
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - ﮔﮔﮒﮔﮒﻝ۰؟ﺅﺟ?80%
 - ﻛﭦﻛﭨﭘﮔﮒﮒ؟ﮔﺑ
 - ﮒ؟ﻛﺛﻟﺁﮒ،ﮒﻝ۰؟ﺅﺟ?90%
 
 ---
 
-### 10.3 Phase 3: ﮒ ﮒ­ﮔﮒﭨﭦﺅﺙWeek 6-7ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﮒ ﮒ­ﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?
+### 10.3 Phase 3: ﮒﮒﮔﮒﭨﭦﺅﺙWeek 6-7ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﮒﮒﮔﮒﭨﭦﮒﻠ۹ﺅﺟ?
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
-1. ﮔﺍﻠﭨﮒ ﮒ­ﮔﮒﭨﭦ
-2. ﮔﻝﭨ۹ﮒ ﮒ­ﮔﮒﭨﭦ
-3. ﻠ۱ﮔﮒ ﮒ­ﮔﮒﭨﭦ
-4. ﮒﺏﮔﺏ۷ﮒﭦ۵ﮒ ﮒ­ﮔﺅﺟ?5. ICﻠ۹ﻟﺁ
+1. ﮔﺍﻠﭨﮒﮒﮔﮒﭨﭦ
+2. ﮔﻝﭨ۹ﮒﮒﮔﮒﭨﭦ
+3. ﻠ۱ﮔﮒﮒﮔﮒﭨﭦ
+4. ﮒﺏﮔﺏ۷ﮒﭦ۵ﮒﮒﮔﺅﺟ?5. ICﻠ۹ﻟﺁ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻟﺏﮒﺍ8ﻛﺕ۹ﮒ ﺅﺟ?- ICﮒﺅﺟﺛ?0.03
-- ﮒ ﮒ­ﮔﺏ۷ﮒﮒ؟ﮔ
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻟﺏﮒﺍ8ﻛﺕ۹ﮒﺅﺟ?- ICﮒﺅﺟﺛ?0.03
+- ﮒﮒﮔﺏ۷ﮒﮒ؟ﮔ
 
 ---
 
 ### 10.4 Phase 4: ﮔﭖﻟﺁﻠ۹ﻟﺁﺅﺙWeek 8ﺅﺟ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻠ۰ﺗﻝ؟ﻠ۹ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻠ۰ﺗﻝ؟ﻠ۹ﺅﺟ?
 **ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
 1. ﮒﮒﮔﭖﻟﺁ
 2. ﻠﮔﮔﭖﻟﺁ
@@ -1256,7 +1256,7 @@ class TestNewsSentimentFactor:
 4. ﮒﮔﭖﻠ۹ﻟﺁ
 5. ﮔﮔ۰۲ﻝﺙﮒ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
+**ﻠ۹ﮔﭘﮔﮒ**:
 - ﮔﮔﮔﭖﻟﺁﻠﻟﺟ
 - ﮔﮔ۰۲ﮒ؟ﮔﺑ
 - ﻠ۰ﺗﻝ؟ﻛﭦ۳ﻛﭨ
@@ -1269,7 +1269,7 @@ class TestNewsSentimentFactor:
 
 ﻟﺁ۵ﻟ۶: [ALTERNATIVE_DATA_API_DOCUMENTATION.md](ALTERNATIVE_DATA_API_DOCUMENTATION.md)
 
-### B. ﮔﺍﮔ؟ﮒ­ﮒﺕ
+### B. ﮔﺍﮔ؟ﮒﮒﺕ
 
 ﻟﺁ۵ﻟ۶: [ALTERNATIVE_DATA_DICTIONARY.md](ALTERNATIVE_DATA_DICTIONARY.md)
 
@@ -1279,7 +1279,7 @@ class TestNewsSentimentFactor:
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0  
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
 **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ? 
-**ﻛﺕﻛﺕﮔ­۴ﻟ۰ﺅﺟ?*: ﮒﺙﮒ۶Phase 1ﮒ؟ﮔﺛ
+**ﻛﺕﻛﺕﮔ۴ﻟ۰ﺅﺟ?*: ﮒﺙﮒ۶Phase 1ﮒ؟ﮔﺛ

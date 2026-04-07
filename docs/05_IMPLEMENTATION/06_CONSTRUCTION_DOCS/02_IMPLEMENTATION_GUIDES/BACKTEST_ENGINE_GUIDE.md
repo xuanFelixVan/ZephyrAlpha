@@ -4,14 +4,14 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 回测系统
   - 绩效分析
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﮒﮔﭖﮒﺙﮔﮔ۷۰ﮒﮒ؟ﮔﺛ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../README.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
@@ -33,15 +33,15 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ## ﻭ ﮒ؟ﮔﺛﮔ۵ﻟ۶
 
-### ﻝ؟ﮔ 
+### ﻝ؟ﮔ
 
-ﻠﮔBacktesting.pyﮒﺙﮔﭦﮒﮔﭖﮒﺙﮔﺅﺙﮒ؟ﻝﺍﻛﺕﻝﺏﭨﻝﭨﻝ­ﻝ۴ﮔ۰ﮔﭘﻝﮔ ﻝﺙﮒﺁﺗﮔ۴ﻙ?
+ﻠﮔBacktesting.pyﮒﺙﮔﭦﮒﮔﭖﮒﺙﮔﺅﺙﮒ؟ﻝﺍﻛﺕﻝﺏﭨﻝﭨﻝﻝ۴ﮔ۰ﮔﭘﻝﮔﻝﺙﮒﺁﺗﮔ۴ﻙ?
 
-### ﮔ ﺕﮒﺟﮒﻟﺛ
+### ﮔﺕﮒﺟﮒﻟﺛ
 
-- **ﻝ­ﻝ۴ﻠﻠ**: ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ
-- **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱**: ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
-- **ﻝﭨﮔﻝﭨﻛﺕ**: ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔ ﺙﮒﺙ
+- **ﻝﻝ۴ﻠﻠ**: ﮒﺍﻝﺏﭨﻝﭨﻝﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔﺙﮒﺙ
+- **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱**: ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱
+- **ﻝﭨﮔﻝﭨﻛﺕ**: ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔﺙﮒﺙ
 - **ﮔ۶ﻟﺛﻛﺙﮒ**: ﻛﺙﮒﮒﮔﭖﮔ۶ﻟﺛ
 - **ﮔ۴ﮒﻝﮔ**: ﻟ۹ﮒ۷ﻝﮔﮒﮔﭖﮔ۴ﮒ
 
@@ -59,9 +59,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 src/backtest/
 ﻗﻗﻗ __init__.py                 # ﮔ۷۰ﮒﮒﮒ۶ﮒ?
 ﻗﻗﻗ adapter.py                  # BacktestingPyAdapterﻠﻠﮒ?
-ﻗﻗﻗ strategy_wrapper.py         # ﻝ­ﻝ۴ﮒﻟ۲ﮒ?
+ﻗﻗﻗ strategy_wrapper.py         # ﻝﻝ۴ﮒﻟ۲ﮒ?
 ﻗﻗﻗ data_converter.py           # ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?
-ﻗﻗﻗ result_formatter.py         # ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷
+ﻗﻗﻗ result_formatter.py         # ﻝﭨﮔﮔﺙﮒﺙﮒﮒ۷
 ﻗﻗﻗ report_generator.py         # ﮔ۴ﮒﻝﮔﮒ?
 ﻗﻗﻗ exceptions.py               # ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕ?
 ﻗﻗﻗ tests/                      # ﮒﮒﮔﭖﻟﺁ
@@ -82,7 +82,7 @@ from backtesting.lib import crossover
 import pandas as pd
 
 class BacktestingPyAdapter:
-    """Backtesting.pyﻠﻠﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
+"""Backtesting.pyﻠﻠﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝﻝ۴ﻠﻠﻛﺕﭦBacktesting.pyﮔﺙﮒﺙ"""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
         self.config = config or {}
@@ -124,7 +124,7 @@ class BacktestingPyAdapter:
         maximize: str = "Return [%]",
         **kwargs
     ) -> Dict[str, Any]:
-        """ﻛﺙﮒﻝ­ﻝ۴ﮒﮔﺍ"""
+"""ﻛﺙﮒﻝﻝ۴ﮒﮔﺍ"""
         bt_strategy = StrategyWrapper.wrap(strategy)
         bt_data = self.data_converter.convert(data)
         
@@ -141,19 +141,19 @@ class BacktestingPyAdapter:
         return result
 ```
 
-#### StrategyWrapper - ﻝ­ﻝ۴ﮒﻟ۲ﮒ?
+#### StrategyWrapper - ﻝﻝ۴ﮒﻟ۲ﮒ?
 
 ```python
 from backtesting import Strategy
 from typing import Dict, Any
 
 class StrategyWrapper(Strategy):
-    """ﻝ­ﻝ۴ﮒﻟ۲ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝ­ﻝ۴ﮒﻟ۲ﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
+"""ﻝﻝ۴ﮒﻟ۲ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﻝﻝ۴ﮒﻟ۲ﻛﺕﭦBacktesting.pyﮔﺙﮒﺙ"""
     
     system_strategy = None
     
     def init(self):
-        """ﮒﮒ۶ﮒﻝ­ﻝ?""
+"""ﮒﮒ۶ﮒﻝﻝ?""
         if self.system_strategy:
             self.system_strategy.initialize({
                 "data": self.data,
@@ -190,7 +190,7 @@ class StrategyWrapper(Strategy):
     
     @classmethod
     def wrap(cls, system_strategy):
-        """ﮒﻟ۲ﻝﺏﭨﻝﭨﻝ­ﻝ۴"""
+"""ﮒﻟ۲ﻝﺏﭨﻝﭨﻝﻝ۴"""
         class WrappedStrategy(cls):
             pass
         
@@ -206,10 +206,10 @@ import pandas as pd
 from typing import Dict, Any
 
 class DataConverter:
-    """ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﻛﺕﭦBacktesting.pyﮔ ﺙﮒﺙ"""
+"""ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱ﮒ?- ﮒﺍﻝﺏﭨﻝﭨﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱ﻛﺕﭦBacktesting.pyﮔﺙﮒﺙ"""
     
     def convert(self, data: pd.DataFrame) -> pd.DataFrame:
-        """ﻟﺛ؛ﮔ۱ﮔﺍﮔ؟ﮔ ﺙﮒﺙ"""
+"""ﻟﺛ؛ﮔ۱ﮔﺍﮔ؟ﮔﺙﮒﺙ"""
         bt_data = data.copy()
         
         column_mapping = {
@@ -230,7 +230,7 @@ class DataConverter:
         return bt_data
     
     def convert_from_bt(self, bt_data: pd.DataFrame) -> pd.DataFrame:
-        """ﻛﭨBacktesting.pyﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮒﻝﺏﭨﻝﭨﮔ ﺙﮒﺙ?""
+"""ﻛﭨBacktesting.pyﮔﺙﮒﺙﻟﺛ؛ﮔ۱ﮒﻝﺏﭨﻝﭨﮔﺙﮒﺙ?""
         system_data = bt_data.copy()
         
         column_mapping = {
@@ -246,17 +246,17 @@ class DataConverter:
         return system_data
 ```
 
-#### ResultFormatter - ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷
+#### ResultFormatter - ﻝﭨﮔﮔﺙﮒﺙﮒﮒ۷
 
 ```python
 from typing import Dict, Any
 import pandas as pd
 
 class ResultFormatter:
-    """ﻝﭨﮔﮔ ﺙﮒﺙﮒﮒ۷ - ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔ ﺙﮒﺙ"""
+"""ﻝﭨﮔﮔﺙﮒﺙﮒﮒ۷ - ﻝﭨﻛﺕﮒﮔﭖﻝﭨﮔﮔﺙﮒﺙ"""
     
     def format(self, stats) -> Dict[str, Any]:
-        """ﮔ ﺙﮒﺙﮒﮒﮔﭖﻝﭨﮔ?""
+"""ﮔﺙﮒﺙﮒﮒﮔﭖﻝﭨﮔ?""
         return {
             "performance": self._format_performance(stats),
             "trades": self._format_trades(stats),
@@ -266,7 +266,7 @@ class ResultFormatter:
         }
     
     def _format_performance(self, stats) -> Dict[str, Any]:
-        """ﮔ ﺙﮒﺙﮒﻝﭨ۸ﮔﮔﮔ ?""
+"""ﮔﺙﮒﺙﮒﻝﭨ۸ﮔﮔﮔ?""
         return {
             "total_return": stats["Return [%]"],
             "annual_return": stats["Return (Ann.) [%]"],
@@ -278,7 +278,7 @@ class ResultFormatter:
         }
     
     def _format_trades(self, stats) -> List[Dict[str, Any]]:
-        """ﮔ ﺙﮒﺙﮒﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ?""
+"""ﮔﺙﮒﺙﮒﻛﭦ۳ﮔﻟ؟ﺍﮒﺛ?""
         trades = []
         
         if hasattr(stats, "_trades"):
@@ -296,19 +296,19 @@ class ResultFormatter:
         return trades
     
     def _format_equity_curve(self, stats) -> pd.Series:
-        """ﮔ ﺙﮒﺙﮒﮔﻝﮔﺎﻝﭦ?""
+"""ﮔﺙﮒﺙﮒﮔﻝﮔﺎﻝﭦ?""
         if hasattr(stats, "_equity_curve"):
             return stats._equity_curve
         return pd.Series()
     
     def _format_drawdown(self, stats) -> pd.Series:
-        """ﮔ ﺙﮒﺙﮒﮒﮔ۳ﮔﺎﻝﭦ?""
+"""ﮔﺙﮒﺙﮒﮒﮔ۳ﮔﺎﻝﭦ?""
         if hasattr(stats, "_drawdown"):
             return stats._drawdown
         return pd.Series()
     
     def _format_metrics(self, stats) -> Dict[str, Any]:
-        """ﮔ ﺙﮒﺙﮒﮒﭘﻛﭨﮔﮔ ?""
+"""ﮔﺙﮒﺙﮒﮒﭘﻛﭨﮔﮔ?""
         return {
             "start_date": stats["Start"],
             "end_date": stats["End"],
@@ -321,7 +321,7 @@ class ResultFormatter:
 
 ---
 
-## ﻭ ﮒ؟ﮔﺛﮔ­۴ﻠ۹۳
+## ﻭ ﮒ؟ﮔﺛﮔ۴ﻠ۹۳
 
 ### Step 1: ﮒ؟ﻟ۲ﻛﺝﻟﭖﺅﺙ?0ﮒﻠﺅﺙ?
 
@@ -336,39 +336,39 @@ pip install pandas numpy matplotlib
 ### Step 2: ﮒ؟ﻝﺍDataConverterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
 **ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
-- [ ] ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
+- [ ] ﮒ؟ﻝﺍﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱
 - [ ] ﮒ۳ﻝﻝﺙﭦﮒ۳ﺎﮔﺍﮔ؟
 - [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻗ?ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ­۲ﻝ۰؟
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻗ?ﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ۲ﻝ۰؟
 - ﻗ?ﻝﺙﭦﮒ۳ﺎﮔﺍﮔ؟ﮒ۳ﻝﮒ؟ﮒ
 - ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
 ### Step 3: ﮒ؟ﻝﺍStrategyWrapperﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
 **ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
-- [ ] ﮒ؟ﻝﺍﻝ­ﻝ۴ﮒﻟ۲
+- [ ] ﮒ؟ﻝﺍﻝﻝ۴ﮒﻟ۲
 - [ ] ﮒ؟ﻝﺍﻛﺟ۰ﮒﺓﮔ۶ﻟ۰
-- [ ] ﮒ۳ﻝﻝ­ﻝ۴ﻝﭘﮔ?
+- [ ] ﮒ۳ﻝﻝﻝ۴ﻝﭘﮔ?
 - [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻗ?ﻝ­ﻝ۴ﮒﻟ۲ﮔ­۲ﻝ۰؟
-- ﻗ?ﻛﺟ۰ﮒﺓﮔ۶ﻟ۰ﮔ­۲ﻝ۰؟
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻗ?ﻝﻝ۴ﮒﻟ۲ﮔ۲ﻝ۰؟
+- ﻗ?ﻛﺟ۰ﮒﺓﮔ۶ﻟ۰ﮔ۲ﻝ۰؟
 - ﻗ?ﻝﭘﮔﻝ؟۰ﻝﮒ؟ﮒ?
 - ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
 ### Step 4: ﮒ؟ﻝﺍResultFormatterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
 
 **ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
-- [ ] ﮒ؟ﻝﺍﻝﭨﮔﮔ ﺙﮒﺙﮒ?
-- [ ] ﮒ؟ﻝﺍﮔﮔ ﻟ؟۰ﻝ؟
+- [ ] ﮒ؟ﻝﺍﻝﭨﮔﮔﺙﮒﺙﮒ?
+- [ ] ﮒ؟ﻝﺍﮔﮔﻟ؟۰ﻝ؟
 - [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻗ?ﻝﭨﮔﮔ ﺙﮒﺙﻝﭨﻛﺕ
-- ﻗ?ﮔﮔ ﻟ؟۰ﻝ؟ﮔ­۲ﻝ۰؟
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻗ?ﻝﭨﮔﮔﺙﮒﺙﻝﭨﻛﺕ
+- ﻗ?ﮔﮔﻟ؟۰ﻝ؟ﮔ۲ﻝ۰؟
 - ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
 ### Step 5: ﮒ؟ﻝﺍBacktestingPyAdapterﺅﺙ?ﮒﺍﮔﭘﺅﺙ?
@@ -378,58 +378,58 @@ pip install pandas numpy matplotlib
 - [ ] ﮒ؟ﻝﺍﮒﮔﺍﻛﺙﮒ
 - [ ] ﻝﺙﮒﮒﮒﮔﭖﻟﺁ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻗ?ﮒﮔﭖﻟﺟﻟ۰ﮔ­۲ﻝ۰؟
-- ﻗ?ﮒﮔﺍﻛﺙﮒﮔ­۲ﻝ۰؟
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻗ?ﮒﮔﭖﻟﺟﻟ۰ﮔ۲ﻝ۰؟
+- ﻗ?ﮒﮔﺍﻛﺙﮒﮔ۲ﻝ۰؟
 - ﻗ?ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?> 90%
 
 ### Step 6: ﻠﮔﮔﭖﻟﺁﺅﺙ?.5ﮒﺍﮔﭘﺅﺙ?
 
 **ﻛﭨﭨﮒ۰ﮔﺕﮒ**:
-- [ ] ﮒﮒﭨﭦﮔﭖﻟﺁﻝ­ﻝ۴
+- [ ] ﮒﮒﭨﭦﮔﭖﻟﺁﻝﻝ۴
 - [ ] ﮔﭖﻟﺁﮒ؟ﮔﺑﮔﭖﻝ۷
 - [ ] ﮔ۶ﻟﺛﮔﭖﻟﺁ
 - [ ] ﮔﮔ۰۲ﻝﺙﮒ
 
-**ﻠ۹ﮔﭘﮔ ﮒ**:
-- ﻗ?ﮒ؟ﮔﺑﮔﭖﻝ۷ﮒﺁﮔ­۲ﮒﺕﺕﻟﺟﻟ۰?
-- ﻗ?ﮔ۶ﻟﺛﮔﮔ ﻟﺝﺝﮔ 
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻗ?ﮒ؟ﮔﺑﮔﭖﻝ۷ﮒﺁﮔ۲ﮒﺕﺕﻟﺟﻟ۰?
+- ﻗ?ﮔ۶ﻟﺛﮔﮔﻟﺝﺝﮔ
 - ﻗ?ﮔﮔ۰۲ﮒ؟ﮔﺑ
 
 ---
 
-## ﻗ?ﻠ۹ﮔﭘﮔ ﮒ
+## ﻗ?ﻠ۹ﮔﭘﮔﮒ
 
 ### ﮒﻟﺛﻠ۹ﮔﭘ
 
-| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔ ﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔﮒ | ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|---------|---------|
-| **ﻝ­ﻝ۴ﻠﻠ** | ﻝ­ﻝ۴ﮒﺁﮔ­۲ﻝ۰؟ﻠﻠ | ﻠﮔﮔﭖﻟﺁ |
-| **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱** | ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ­۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
-| **ﻝﭨﮔﻝﭨﻛﺕ** | ﻝﭨﮔﮔ ﺙﮒﺙﻝﭨﻛﺕ | ﮒﮒﮔﭖﻟﺁ |
-| **ﮒﮔﺍﻛﺙﮒ** | ﮒﮔﺍﻛﺙﮒﮔ­۲ﻝ۰؟ | ﻠﮔﮔﭖﻟﺁ |
-| **ﮔ۴ﮒﻝﮔ** | ﮔ۴ﮒﮒﺁﮔ­۲ﻝ۰؟ﻝﮔ?| ﻠﮔﮔﭖﻟﺁ |
+| **ﻝﻝ۴ﻠﻠ** | ﻝﻝ۴ﮒﺁﮔ۲ﻝ۰؟ﻠﻠ | ﻠﮔﮔﭖﻟﺁ |
+| **ﮔﺍﮔ؟ﻟﺛ؛ﮔ۱** | ﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| **ﻝﭨﮔﻝﭨﻛﺕ** | ﻝﭨﮔﮔﺙﮒﺙﻝﭨﻛﺕ | ﮒﮒﮔﭖﻟﺁ |
+| **ﮒﮔﺍﻛﺙﮒ** | ﮒﮔﺍﻛﺙﮒﮔ۲ﻝ۰؟ | ﻠﮔﮔﭖﻟﺁ |
+| **ﮔ۴ﮒﻝﮔ** | ﮔ۴ﮒﮒﺁﮔ۲ﻝ۰؟ﻝﮔ?| ﻠﮔﮔﭖﻟﺁ |
 
 ### ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮔﮔ | ﻝ؟ﮔﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
 | **ﮒﮔﭖﻠﮒﭦ۵** | > 1000 bars/s | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
-| **ﮒﮒ­ﮒ ﻝ۷** | < 500MB | ﮒﮒ­ﮒﮔ |
+| **ﮒﮒﮒﻝ۷** | < 500MB | ﮒﮒﮒﮔ |
 | **ﮔ۴ﮒﻝﮔﮔﭘﻠﺑ** | < 5s | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
 ### ﻟﺑ۷ﻠﻠ۹ﮔﭘ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+| ﮔﮔ | ﻝ؟ﮔﮒ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|---------|
 | **ﮒﮒﮔﭖﻟﺁﻟ۵ﻝﻝ?* | > 90% | pytest --cov |
-| **ﻛﭨ۲ﻝ ﮒ۳ﮔﮒﭦ?* | < 10 | radon cc |
-| **ﻛﭨ۲ﻝ ﻠﮒ۳ﻝ?* | < 5% | pylint |
+| **ﻛﭨ۲ﻝﮒ۳ﮔﮒﭦ?* | < 10 | radon cc |
+| **ﻛﭨ۲ﻝﻠﮒ۳ﻝ?* | < 5% | pylint |
 | **ﮔﮔ۰۲ﮒ؟ﮔﺑﮔ?* | 100% | ﮔﮔ۰۲ﮒ؟۰ﮔ۴ |
 
 ---
 
-## ﻭ۶۹ ﮔﭖﻟﺁﻝ­ﻝ۴
+## ﻭ۶۹ ﮔﭖﻟﺁﻝﻝ۴
 
 ### ﮒﮒﮔﭖﻟﺁ
 
@@ -505,7 +505,7 @@ class TestBacktestIntegration:
 
 ## ﻭ ﮔ۶ﻟﺛﻛﺙﮒ
 
-### ﮔﺍﮔ؟ﻝﺙﮒ­
+### ﮔﺍﮔ؟ﻝﺙﮒ
 
 ```python
 class DataConverter:
@@ -554,13 +554,13 @@ class BacktestingPyAdapter:
 
 ## ﻭ۷ ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-### Q1: ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻛﺕﮒﺗﻠ?
+### Q1: ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮒﺗﻠ?
 
 **ﻠ؟ﻠ۱**: ValueError: Missing required column: Open
 
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# ﻝ۰؟ﻛﺟﮔﺍﮔ؟ﮒﮒﮔ­۲ﻝ۰؟
+# ﻝ۰؟ﻛﺟﮔﺍﮔ؟ﮒﮒﮔ۲ﻝ۰؟
 data = data.rename(columns={
     "open": "Open",
     "high": "High",
@@ -570,18 +570,18 @@ data = data.rename(columns={
 })
 ```
 
-### Q2: ﻝ­ﻝ۴ﮒﮒ۶ﮒﮒ۳ﺎﻟﺑ?
+### Q2: ﻝﻝ۴ﮒﮒ۶ﮒﮒ۳ﺎﻟﺑ?
 
 **ﻠ؟ﻠ۱**: AttributeError: 'NoneType' object has no attribute 'initialize'
 
 **ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```python
-# ﻝ۰؟ﻛﺟﻝ­ﻝ۴ﮔ­۲ﻝ۰؟ﮒﻟ۲
+# ﻝ۰؟ﻛﺟﻝﻝ۴ﮔ۲ﻝ۰؟ﮒﻟ۲
 class WrappedStrategy(StrategyWrapper):
     system_strategy = your_strategy
 ```
 
-### Q3: ﮒﮒ­ﮒ ﻝ۷ﻟﺟﻠ،
+### Q3: ﮒﮒﮒﻝ۷ﻟﺟﻠ،
 
 **ﻠ؟ﻠ۱**: MemoryError: Unable to allocate array
 
@@ -619,13 +619,13 @@ def run_backtest_in_batches(self, data, batch_size=10000):
 
 | ﮔ۴ﮔ | ﻝﮔ؛ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﮔﺑﮔﺍﻛﭦ?|
 |------|------|---------|--------|
-| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮒﮔﭖﮒﺙﮔﮒ؟ﮔﺛﮔﮒ | ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?|
+| 2026-04-02 | v1.0 | ﮒﮒﭨﭦﮒﮔﭖﮒﺙﮔﮒ؟ﮔﺛﮔﮒ | ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?|
 
 ---
 
 ## ﻭ ﻟﻝﺏﭨﮔﺗﮒﺙ
 
-**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ? 
+**ﮔﮔ۰۲ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02  
 **ﻝﮔ؛**: v1.0

@@ -77,12 +77,12 @@ layer: Layer 5.1 (数据处理)
 ### 1.1 专业机构标准要求
 
 |---------|---------|-----------|
-éæ£æµ?| 99.99% |
+?| 99.99% |
 
 ### 1.2 核心功能矩阵
 
 |---------|---------|--------|-----------|---------|
-| **æ
+| **
 障切换** | 自研 + HAProxy | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 ---
@@ -90,16 +90,16 @@ layer: Layer 5.1 (数据处理)
 
 
 ```
-â?                                                                        â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                                                                        â?
+?                                                                        ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                                                                        ?
 ```
 
 
@@ -535,11 +535,10 @@ class DataSourceMetrics:
         self.source_info.info(info)
 ```
 
-### 3.3 æ
+### 3.3
 
 ```python
 """
-æ
 """
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -550,7 +549,7 @@ import logging
 
 
 class FailoverStrategy(Enum):
-    """æ
+"""
 障切换策略"""
     ACTIVE_PASSIVE = "active_passive"
     ACTIVE_ACTIVE = "active_active"
@@ -570,7 +569,7 @@ class DataSourceEndpoint:
 
 
 class FailoverManager:
-    """æ
+"""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -658,7 +657,7 @@ class FailoverManager:
                 break
     
     def _trigger_failover(self, source_type: str):
-        """è§¦åæ
+"""
 障切换"""
         if source_type not in self.endpoints:
             return
@@ -966,9 +965,9 @@ class AlertManager:
 
 ---
 
-ç½?
+?
 
-### 4.1 Prometheusé
+### 4.1 Prometheus
 置
 
 ```yaml
@@ -1021,7 +1020,7 @@ groups:
         labels:
           severity: critical
         annotations:
-è¿?åé"
+?"
       
       - alert: DataSourceDegraded
         expr: datasource_health_status == 0.5
@@ -1037,7 +1036,7 @@ groups:
         labels:
           severity: warning
         annotations:
-è¿5ç§?
+5?
       
       - alert: HighErrorRate
         expr: rate(datasource_error_total[5m]) > 0.1
@@ -1045,7 +1044,7 @@ groups:
         labels:
           severity: warning
         annotations:
-è¿?0%"
+?0%"
       
       - alert: LowAvailability
         expr: datasource_availability < 99
@@ -1055,7 +1054,7 @@ groups:
         annotations:
 ```
 
-### 4.3 Docker Composeé
+### 4.3 Docker Compose
 置
 
 ```yaml
@@ -1160,7 +1159,7 @@ for source_name, result in results.items():
     print(f"{source_name}: {result.status.value} - {result.response_time_ms:.2f}ms")
 ```
 
-### 5.2 æ
+### 5.2
 障切换
 
 ```python
@@ -1188,7 +1187,7 @@ failover.report_failure("market_data", "ifind")
 failover.report_failure("market_data", "ifind")
 
 active = failover.get_active_endpoint("market_data")
-print(f"æ
+print(f"
 ```
 
 ### 5.3 告警通知
@@ -1227,23 +1226,23 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## ð å
+##
 
 ### 6.1 监控指标
 
 |------|--------|---------|
 | **响应时间(P95)** | <1s | >5s |
-| **éè¯¯ç?* | <1% | >10% |
+| **?* | <1% | >10% |
 | **数据延迟** | <10s | >60s |
-| **æ
-| **æ
+| **
+| **
 障切换时间** | <10s | >30s |
 
 ### 6.2 资源占用
 
 | 资源 | Prometheus | Grafana | Alertmanager | 总计 |
 |------|-----------|---------|-------------|------|
-| å
+|
 存 | 512MB | 256MB | 128MB | 896MB |
 | 存储 | 10GB | 1GB | 1GB | 12GB |
 
@@ -1251,13 +1250,13 @@ print(f"告警ID: {alert.alert_id}")
 
 
 
-3. **è¶
-æ?
+3. **
+?
 
-### 7.2 æ
+### 7.2
 障切换
 
-1. **ä¼å
+1. **
 2. **自动恢复**: 备用数据源恢复后自动切回主数据源
 4. **通知机制**: 切换时发送通知
 
@@ -1269,7 +1268,7 @@ print(f"告警ID: {alert.alert_id}")
 
 ---
 
-## ð å
+##
 
 
 - [x] Prometheus部署
@@ -1277,7 +1276,7 @@ print(f"告警ID: {alert.alert_id}")
 
 
 置
-- [x] æ
+- [x]
 障切换功能
 
 
@@ -1290,12 +1289,11 @@ print(f"告警ID: {alert.alert_id}")
 
 |------|------|------|
 | Prometheus | https://prometheus.io/ | 监控系统 |
-| Grafana | https://grafana.com/ | å¯è§å?|
+| Grafana | https://grafana.com/ | ?|
 | Alertmanager | https://prometheus.io/docs/alerting/ | 告警管理 |
 | Blackbox Exporter | https://github.com/prometheus/blackbox_exporter | 黑盒探测 |
 
-### 9.2 ç¸å
-³ææ¡£
+### 9.2
 
 - [Prometheus最佳实践](https://prometheus.io/docs/practices/)
 - [SRE运维手册](https://sre.google/sre-book/)

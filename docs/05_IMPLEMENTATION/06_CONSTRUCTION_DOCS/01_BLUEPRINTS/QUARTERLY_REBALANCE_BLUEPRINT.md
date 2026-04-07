@@ -86,7 +86,7 @@ layer: Layer 6 (组合优化层)
 ### 核心职责
 
 |---------|---------|---------|
-| **å¹
+| **
 度 | 调仓计划 |
 | **成本评估** | 评估调仓成本 | 成本报告 |
 
@@ -97,7 +97,7 @@ layer: Layer 6 (组合优化层)
 
 ```mermaid
 graph TB
-    A[å½åé
+A[
     B -->|偏离度≥阈值| D[触发调仓]
     
 度]
@@ -113,7 +113,7 @@ graph TB
 
 ---
 
-## ð§ å
+##
 
 
 ```python
@@ -140,7 +140,7 @@ class RebalanceTrigger:
         
         if drift > self.drift_threshold:
             triggered = True
-            trigger_reasons.append(f'é
+trigger_reasons.append(f'
 过阈值{self.drift_threshold:.2%}')
         
         if days_since_last > self.time_threshold:
@@ -275,14 +275,12 @@ class RebalancingTimingOptimizer:
 
 
 **任务**:
-æµè¯
 
 ---
 
 
 **任务**:
 度计算
-æµè¯
 
 ---
 
@@ -296,13 +294,12 @@ class RebalancingTimingOptimizer:
 ### 调仓决策质量
 
 |------|--------|
-| **å¹
+| **
 | **时机优化收益** | > 0.1% |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -319,8 +316,8 @@ class RebalancingTimingOptimizer:
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -336,7 +333,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### ç¸å
+###
 
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
 
@@ -358,8 +355,8 @@ graph LR
 ##### 6.001. Quarterly Rebalance
 - **模块ID**: QUARTERLY_REBALANCE_001
 - **蓝图文档**: QUARTERLY_REBALANCE_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

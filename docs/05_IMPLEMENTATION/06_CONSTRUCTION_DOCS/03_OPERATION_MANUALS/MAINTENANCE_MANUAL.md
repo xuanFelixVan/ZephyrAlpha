@@ -3,9 +3,9 @@ responsibility:
   - 实施指南、部署文档
   - 文档治理
   - 日志系统
-applicable_scope: فàذق│╗ق╗?compliance_level: µصثف╝µبçفç
+applicable_scope: فذق│╗ق╗?compliance_level: صثف╝بف
 parent_document: ../README.md
-implementation_status: ف╖▓ف«îµê?owner: ك┐ق╗┤فؤتلءا
+implementation_status: ف╖▓ف?owner: ك┐ق╗┤فؤتلءا
 version: 1.0.0
 module_id: MAINTENANCE_MANUAL
 created_date: 2026-04-02
@@ -17,115 +17,115 @@ last_updated: 2026-04-02---
 > - ❌ 本文档不负责：其他模块内容
 
 
-**µ£فµؤ┤µû?*: 2026-04-02
+**فؤ┤?*: 2026-04-02
 
 ---
 
-## 1. ق╗┤µèجµخéك┐░
+## 1. ق╗┤جخك┐░
 
-### 1.1 ق╗┤µèجقؤ«µبç
+### 1.1 ق╗┤جقؤب
 
-### 1.2 ق╗┤µèجكîâفؤ┤
+### 1.2 ق╗┤جكفؤ┤
 
-- µùحف╕╕ق╗┤µèج
-- ف«أµ£اق╗┤µèج
+- حف╕╕ق╗┤ج
+- فأاق╗┤ج
 
 ---
 
-## 2. µùحف╕╕ق╗┤µèج
+## 2. حف╕╕ق╗┤ج
 
-**µثµاحلة╣**:
-- [ ] فجçغ╗╜قè╢µ?- [ ] قؤّµدفّèكصخ
+**ثاحلة╣**:
+- [ ] فجغ╗╜ق╢?- [ ] قؤّدفّكصخ
 
-### 2.2 µـ░µ«ق╗┤µèج
+### 2.2 ـ░ق╗┤ج
 
 ```bash
 psql -U zephyr_user -d zephyr -c "SELECT count(*) FROM pg_stat_activity;"
 
 python scripts/cleanup_old_data.py
 
-# غ╝ءفîûكة?psql -U zephyr_user -d zephyr -c "VACUUM ANALYZE;"
+# غ╝ءفكة?psql -U zephyr_user -d zephyr -c "VACUUM ANALYZE;"
 ```
 
-**Redisق╗┤µèج**:
+**Redisق╗┤ج**:
 ```bash
-# µثµاحRedisقè╢µ?redis-cli -a password INFO
+# ثاحRedisق╢?redis-cli -a password INFO
 
 ```
 
 ---
 
-## 3. ف«أµ£اق╗┤µèج
+## 3. فأاق╗┤ج
 
-### 3.1 µ»فّذق╗┤µèج
+### 3.1 فّذق╗┤ج
 
-**غ╗╗فèة**:
+**غ╗╗فة**:
 
-**غ╗╗فèة**:
-- µدكâ╜غ╝ءفîû
-- ف«ëفàذف«ةك«ة
+**غ╗╗فة**:
+- دك╜غ╝ءف
+- ففذفةكة
 
 ---
 
-## 4. ف║¤µحق╗┤µè?
-### 4.1 µـàلأ£فôف║¤
+## 4. ف║حق╗┤?
+### 4.1 ـلأفف║
 
-**فôف║¤µ╡قذï**:
-1. µحµ¤╢فّèكصخ
-2. قة«ك«جµـàلأ£
-5. لزîك»µتفج
-6. ك«░ف╜ـµ╗ق╗ô
+**فف║╡قذ**:
+1. ح╢فّكصخ
+2. قةكجـلأ
+5. لزكتفج
+6. ك░ف╜ـ╗ق╗
 
-### 4.2 ف╕╕كدµـàلأ£فجق
+### 4.2 ف╕╕كدـلأفجق
 
 ```bash
-# µثµاحقè╢µ?systemctl status postgresql
+# ثاحق╢?systemctl status postgresql
 
-# لçف»µ£فèة
+# لففة
 systemctl restart postgresql
 
-# µتفجفجçغ╗╜
+# تفجفجغ╗╜
 pg_restore -U zephyr_user -d zephyr backup.sql
 ```
 
-**Redisµـàلأ£**:
+**Redisـلأ**:
 ```bash
-# µثµاحقè╢µ?systemctl status redis
+# ثاحق╢?systemctl status redis
 
-# لçف»µ£فèة
+# لففة
 systemctl restart redis
 
-# µتفجµـ░µ«
+# تفجـ░
 redis-cli -a password SHUTDOWN NOSAVE
 redis-server /etc/redis/redis.conf
 ```
 
 ---
 
-## 5. فçق║دق╗┤µèج
+## 5. فق║دق╗┤ج
 
-### 5.1 فçق║دµ╡قذï
+### 5.1 فق║د╡قذ
 
-1. فجçغ╗╜µـ░µ«
-2. ف£µصتµ£فèة
-3. فçق║دف║¤ق¤ذ
-4. ك┐قد╗µـ░µ«
-5. ف»فèذµ£فèة
-6. لزîك»فèاكâ╜
+1. فجغ╗╜ـ░
+2. فصتفة
+3. فق║دف║قذ
+4. ك┐قد╗ـ░
+5. ففذفة
+6. لزكفاك╜
 
-### 5.2 فؤئµ╗أµ╡قذï
+### 5.2 فؤئ╗أ╡قذ
 
-1. ف£µصتµ£فèة
-2. µتفجفجçغ╗╜
-3. لآق║دف║¤ق¤ذ
-4. ف»فèذµ£فèة
-5. لزîك»فèاكâ╜
-
----
-
-- [لâذق╜▓µëïفî](./DEPLOYMENT_MANUAL.md)
-- [قؤّµدµëïفî](./MONITORING_MANUAL.md)
+1. فصتفة
+2. تفجفجغ╗╜
+3. لآق║دف║قذ
+4. ففذفة
+5. لزكفاك╜
 
 ---
 
-**غ╕ïµشةف«ةµاح**: 2026-07-02
+- [لذق╜▓ف](./DEPLOYMENT_MANUAL.md)
+- [قؤّدف](./MONITORING_MANUAL.md)
+
+---
+
+**غ╕شةفةاح**: 2026-07-02

@@ -102,14 +102,13 @@ layer: Layer 5.2 (组合优化)
 | **版本** | v1.0.0 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åæ
+| [
 景分析结果 |
 
 ### 下游依赖
@@ -123,12 +122,12 @@ layer: Layer 5.2 (组合优化)
 | **QuantFAA** | 1.0+ | 因子归因 | [GitHub](https://github.com/quantfaa) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
-    A[ç»åæ
+A[
 景分析] --> B[组合归因分析]
     C[组合优化引擎] --> B
     D[数据质量监控] --> B
@@ -172,11 +171,11 @@ class PortfolioAttributionAnalyzer:
             
         Returns:
             {
-                'allocation_effect': é
+'allocation_effect':
                 'selection_effect': 选择效应,
                 'interaction_effect': 交互效应,
-                'total_excess_return': æ»è¶
-é¢æ¶ç?
+'total_excess_return':
+?
             }
         """
         model = BrinsonModel(
@@ -228,15 +227,12 @@ class PortfolioAttributionAnalyzer:
         pass
 ```
 
-¬å¼
 
 ```
-é
-选择效应 = Σ w_b × (r_p - r_b)
-交互效应 = Σ (w_p - w_b) × (r_p - r_b)
+选择效应 = Σ w_b  (r_p - r_b)
+交互效应 = Σ (w_p - w_b)  (r_p - r_b)
 
-å
-¶ä¸­:
+:
 - w_p: 组合权重
 - w_b: 基准权重
 ```
@@ -291,7 +287,7 @@ class AttributionAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -306,8 +302,8 @@ class AttributionAPI:
 ##### 6.001. Portfolio Attribution
 - **模块ID**: PORTFOLIO_ATTRIBUTION_001
 - **蓝图文档**: PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

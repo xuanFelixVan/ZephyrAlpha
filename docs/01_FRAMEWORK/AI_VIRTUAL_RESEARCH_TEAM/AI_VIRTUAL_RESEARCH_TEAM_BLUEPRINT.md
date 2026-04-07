@@ -50,7 +50,7 @@ layer: Layer 2 (Alpha因子层)
 构建完整的AI虚拟研究团队，实现自动化研究流程
 
 **量化目标**:
-¥åºç?90%
+?90%
 
 度 |
 |---------|---------|---------|---------|
@@ -93,7 +93,7 @@ class ResearchTask:
     """研究任务"""
     task_id: str
     task_type: str  # factor_mining, strategy_design, market_analysis
-    priority: int  # 1-5, 1æé«?    description: str
+priority: int  # 1-5, 1?    description: str
     assigned_to: str  # AI角色名称
     deadline: datetime
     status: str  # pending, in_progress, completed, failed
@@ -124,7 +124,7 @@ class ResearchDirector:
         市场状态：
         - 市场趋势：{market_state.get('trend', 'unknown')}
         - 波动率：{market_state.get('volatility', 'unknown')}
-        - å¸åºæ
+-
 绪：{market_state.get('sentiment', 'unknown')}
         - 近期事件：{market_state.get('recent_events', [])}
         
@@ -133,8 +133,8 @@ class ResearchDirector:
             "research_directions": [
                 {{
                     "direction": "研究方向名称",
-                    "priority": ä¼å
-çº?1-5),
+"priority":
+?1-5),
                     "reason": "选择理由",
                     "expected_outcome": "预期成果"
                 }}
@@ -159,8 +159,7 @@ class ResearchDirector:
         """
         prompt = f"""
         研究方向：{research_direction['direction']}
-        ä¼å
-çº§ï¼{research_direction['priority']}
+{research_direction['priority']}
         预期成果：{research_direction['expected_outcome']}
         
         请返回JSON格式的任务列表：
@@ -169,8 +168,8 @@ class ResearchDirector:
                 {{
                     "task_type": "任务类型(factor_mining/strategy_design/market_analysis)",
                     "description": "任务描述",
-                    "assigned_to": "åé
-ç»?factor/strategy/market)",
+"assigned_to": "
+?factor/strategy/market)",
                     "estimated_hours": 预计工时,
                     "dependencies": ["依赖任务ID"]
                 }}
@@ -303,15 +302,15 @@ class FactorResearcher:
             验证结果
         """
         
-        # ICæ£éª?        ic_result = self.factor_evaluator.calculate_ic(factor_values, target)
+# IC?        ic_result = self.factor_evaluator.calculate_ic(factor_values, target)
         
         # 分层回测
         layer_result = self.factor_evaluator.layered_backtest(
             factor_values, target, n_layers=5
         )
         
-        # ç¸å
-³æ§åæ?        correlation = self.factor_evaluator.calculate_correlation(
+#
+?        correlation = self.factor_evaluator.calculate_correlation(
             factor_values, existing_factors
         )
         
@@ -376,7 +375,6 @@ class FactorResearcher:
             factor: 因子信息
             
         Returns:
-            æ¥åå
 容
         """
         prompt = f"""
@@ -513,7 +511,6 @@ class StrategyResearcher:
             backtest_result: 回测结果
             
         Returns:
-            æ¥åå
 容
         """
         prompt = f"""
@@ -563,7 +560,7 @@ class MarketAnalyst:
         {{
             "market_trend": "市场趋势(bull/bear/sideways)",
             "market_style": "市场风格(growth/value/balance)",
-            "market_sentiment": "å¸åºæ
+"market_sentiment": "
 绪(optimistic/neutral/pessimistic)",
             "key_sectors": ["强势板块1", "强势板块2"],
             "risk_factors": ["风险因素1", "风险因素2"],
@@ -588,7 +585,6 @@ class MarketAnalyst:
         """
         prompt = f"""
         新闻标题：{news['title']}
-        æ°é»å
 容：{news['content']}
         
         请返回JSON格式的解读结果：
@@ -597,7 +593,7 @@ class MarketAnalyst:
             "event_summary": "事件摘要",
             "impact_level": "影响等级(high/medium/low)",
             "impact_duration": "影响时长(short/medium/long)",
-            "sentiment": "æ
+"sentiment": "
 感倾向(positive/negative/neutral)",
             "trading_suggestions": ["交易建议1", "交易建议2"]
         }}
@@ -616,23 +612,22 @@ class MarketAnalyst:
             social_data: 社交媒体数据
             
         Returns:
-            æ
 绪分析结果
         """
         prompt = f"""
-ç»ªã?        
-        - æ
+?
+-
 感分布：{social_data['sentiment_distribution']}
         - 讨论热度：{social_data['discussion_heat']}
         
         请返回JSON格式的分析结果：
         {{
-            "overall_sentiment": "æ´ä½æ
+"overall_sentiment": "
 绪(optimistic/neutral/pessimistic)",
-            "sentiment_score": æ
+"sentiment_score":
             "hot_sectors": ["热门板块1", "热门板块2"],
             "hot_stocks": ["热门股票1", "热门股票2"],
-            "sentiment_trend": "æ
+"sentiment_trend": "
 绪趋势(improving/stable/worsening)",
             "risk_signals": ["风险信号1", "风险信号2"]
         }}
@@ -653,22 +648,20 @@ class MarketAnalyst:
         Args:
             market_analysis: 市场分析
             news_interpretations: 新闻解读列表
-            sentiment_analysis: æ
+sentiment_analysis:
 绪分析
             
         Returns:
-            æ¥åå
 容
         """
         prompt = f"""
         
         
-        æ
         
 容：
         1. 市场概况
         2. 重要事件解读
-        3. å¸åºæ
+3.
 绪分析
         4. 板块轮动分析
         5. 风险提示
@@ -686,7 +679,7 @@ class MarketAnalyst:
 
 **核心职责**:
 1. **知识提取**: 从研究成果中提取知识
-2. **ç¥è¯å
+2. **
 ```python
 class KnowledgeManager:
     
@@ -710,13 +703,13 @@ class KnowledgeManager:
             "knowledge_type": "知识类型(factor/strategy/market/lesson)",
             "title": "知识标题",
             "summary": "知识摘要",
-            "key_points": ["å
-³é®ç?", "å
-³é®ç?"],
+"key_points": ["
+?", "
+?"],
             "applicable_scenarios": ["适用场景1", "适用场景2"],
             "risk_warnings": ["风险提示1", "风险提示2"],
-            "related_knowledge": ["ç¸å
-³ç¥è¯ID"]
+"related_knowledge": ["
+ID"]
         }}
         """
         
@@ -775,7 +768,7 @@ class KnowledgeManager:
         
         Args:
             knowledge_id: 知识ID
-            updates: æ´æ°å
+updates:
 容
             
         Returns:
@@ -894,15 +887,15 @@ class KnowledgeBaseIntegration:
 
 |------|------|------|--------|
 
-### 5.2 éç¨ç¢?
+### 5.2 ?
 |--------|------|---------|
 | **M1: AI研究助手完成** | Week 2 | 5个AI角色可用 |
 | **M2: 任务管理系统完成** | Week 4 | 任务调度正常 |
-¥åº |
+|
 
 ---
 
-## å
+##
 ?
 ### 6.1 人力资源
 
@@ -913,9 +906,9 @@ class KnowledgeBaseIntegration:
 |---------|------|------|
 ?|
 ?|
-?æ?|
+??|
 
-?æ?
+??
 ---
 
 | 风险 | 影响 | 概率 | 缓解措施 |
@@ -928,14 +921,14 @@ class KnowledgeBaseIntegration:
 
 ---
 
-## å
+##
 ### 8.1 功能验收
 
 | 功能 | 验收标准 |
 |------|---------|
 | **AI研究助手** | 5个AI角色可用 |
 | **任务管理** | 任务调度正常 |
-¥åºç?90% |
+?90% |
 | **研究效率** | 效率提升>200% |
 
 ### 8.2 性能验收
@@ -944,7 +937,7 @@ class KnowledgeBaseIntegration:
 
 ---
 
-å¶å®?
+?
 ---
 
 **蓝图版本**: v1.0  
@@ -961,7 +954,7 @@ class KnowledgeBaseIntegration:
 - **模块ID**: AI_VIRTUAL_RESEARCH_TEAM_001
 - **蓝图文档**: [AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md](01_FRAMEWORK\AI_VIRTUAL_RESEARCH_TEAM\AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: Layer 9 - AIåæ°å±?| ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **职责**: Layer 9 - AI?| : 
 - **状态**: Active
 ```
 
@@ -969,7 +962,7 @@ class KnowledgeBaseIntegration:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Ai Virtual Research Team** | Layer 9 - AIåæ°å±?| ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **核心模块** |
+| **Ai Virtual Research Team** | Layer 9 - AI?| :  | **核心模块** |
 
 ### 1.3 版本管理
 

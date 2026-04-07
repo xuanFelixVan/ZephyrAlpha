@@ -9,8 +9,8 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 鲁棒优化
-  - æåæ
-åµä¼å?
+-
+?
 layer: Layer 5.2 (组合优化)
 ---
 
@@ -121,16 +121,15 @@ class UncertaintySetBuilder:
         pass
 ```
 
-#### 2.1.2 æåæ
-åµä¼å?
+#### 2.1.2
+?
 
 ```python
 class WorstCaseOptimizer:
     """
-    æåæ
 况优化器
     
-    min max f(w, Î¸)
+min max f(w, )
     w  θ∈U
     
     在最坏参数下优化
@@ -143,8 +142,7 @@ class WorstCaseOptimizer:
         risk_aversion: float = 1.0
     ) -> Dict:
         """
-        æåæ
-åµä¼å?
+?
         
         参数:
             risk_aversion: 风险厌恶系数
@@ -233,7 +231,7 @@ class RobustOptimizer:
         robust_method: str = 'worst_case'
     ):
         """
-        åå§å?
+?
         
         参数:
             robust_method: 鲁棒优化方法
@@ -257,7 +255,7 @@ class RobustOptimizer:
         pass
 ```
 
-### 3.2 é
+### 3.2
 
 ```yaml
 robust_optimization:

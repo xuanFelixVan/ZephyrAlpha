@@ -107,7 +107,7 @@ compliance_level: 专业标准
 **问题位置**: 
 - 文件：SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md
 - 行号：全文
-- 具体表现：所有中文字符显示为乱码（如"舆情分析层"显示为"èæ æå±"）
+- 具体表现：所有中文字符显示为乱码（如"舆情分析层"显示为" "）
 
 **根本原因**: 文件在之前的批量替换过程中使用了latin-1编码读取，导致UTF-8编码的中文字符损坏
 

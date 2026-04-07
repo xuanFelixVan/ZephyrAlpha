@@ -34,11 +34,10 @@ implementation_status: 设计阶段
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸
+>
 容分析与预测因子生成系统
 > **技术栈**: DouyinLiveRecorder + Whisper(本地) + Qwen2.5/DeepSeek(本地) + FinBERT(本地)
 > **设计原则**: 轻量化、自动化、智能化、可扩展、本地化部署
-¨ï¼
 
 ## 📋 系统概述
 
@@ -46,7 +45,7 @@ implementation_status: 设计阶段
 
 ### 系统特点
 
-æåæ?
+?
 
 ### 适用场景
 
@@ -60,7 +59,7 @@ implementation_status: 设计阶段
 
 | 对比维度 | 云端API方案 | 本地模型方案 | 推荐 |
 |---------|------------|-------------|------|
-| **åå§æå
+| **
 
 
 ---
@@ -131,12 +130,12 @@ result = transcriber.transcribe("recording.mp3")
 
 |------|--------|---------|------|--------|---------|
 | base | 74M | ~1GB | 很快 | 82% | 日常使用 |
-| large-v3 | 1550M | ~10GB | æ
+| large-v3 | 1550M | ~10GB |
 
 
 ---
 
-### 2. å
+### 2.
 容分析模型 (大语言模型)
 
 #### 方案A: OpenAI GPT-4 API（云端）
@@ -185,8 +184,7 @@ class LocalDeepSeekAnalyzer:
     def analyze(self, transcript: str) -> dict:
 容"""
 
-ç´æ­å
-å®¹ï¼?
+?
 {transcript}
 
 {{
@@ -197,12 +195,12 @@ class LocalDeepSeekAnalyzer:
         {{
             "code": "股票代码",
             "name": "股票名称",
-            "action": "ä¹°å
+"action": "
             "reason": "推荐理由"
         }}
     ],
     "risks": ["风险提示1", "风险提示2"],
-    "key_points": ["å
+"key_points": ["
 }}"""
         
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
@@ -331,8 +329,7 @@ class OllamaAnalyzer:
     def analyze(self, transcript: str) -> dict:
 容"""
 
-ç´æ­å
-å®¹ï¼?
+?
 {transcript}
 
 {{
@@ -377,8 +374,7 @@ class OllamaAnalyzer:
             }
 
 # 使用示例
-# é¦å
-å®è£
+#
 Ollama: https://ollama.ai/
 # 然后拉取模型: ollama pull qwen2.5:7b
 # 启动服务: ollama serve
@@ -390,12 +386,12 @@ result = analyzer.analyze(transcript_text)
 **模型选择建议**:
 
 |------|--------|---------|---------|---------|--------|
-ç½®ï¼?|
+?|
 
 
 ---
 
-### 3. æ
+### 3.
 感分析模型 (FinBERT)
 
 
@@ -404,8 +400,8 @@ from transformers import pipeline, AutoModelForSequenceClassification, AutoToken
 import torch
 
 class LocalFinBERTAnalyzer:
-    """æ¬å°FinBERTæ
-æåæå?""
+"""FinBERT
+?""
     
     def __init__(self, model_path: str = "yiyanghkust/finbert-tone"):
         """
@@ -428,7 +424,7 @@ class LocalFinBERTAnalyzer:
         
     
     def analyze_sentiment(self, text: str) -> dict:
-        """æ
+"""
 感分析"""
         max_length = 512
         segments = [text[i:i+max_length] for i in range(0, len(text), max_length)]
@@ -475,11 +471,10 @@ result = analyzer.analyze_sentiment(transcript_text)
 
 置建议
 
-#### æä½é
+####
 
 ```
 CPU: Intel i5-12400 / AMD Ryzen 5 5600
-å
 存: 16GB DDR4
 显卡: NVIDIA RTX 3060 12GB
 存储: 500GB NVMe SSD
@@ -487,15 +482,13 @@ CPU: Intel i5-12400 / AMD Ryzen 5 5600
 
 支持模型:
 - Whisper: small/medium
-- FinBERT: å®å
-¨æ¯æ
+- FinBERT:
 ```
 
-#### æ¨èé
+####
 
 ```
 CPU: Intel i7-13700K / AMD Ryzen 7 7800X3D
-å
 存: 32GB DDR5
 显卡: NVIDIA RTX 4070 Ti Super 16GB
 存储: 1TB NVMe SSD
@@ -503,14 +496,12 @@ CPU: Intel i7-13700K / AMD Ryzen 7 7800X3D
 
 支持模型:
 - Whisper: medium/large-v3
-- FinBERT: å®å
-¨æ¯æ
+- FinBERT:
 ```
 
 
 ```
 CPU: Intel i9-14900K / AMD Ryzen 9 7950X
-å
 存: 64GB DDR5
 显卡: NVIDIA RTX 4090 24GB
 存储: 2TB NVMe SSD
@@ -518,8 +509,7 @@ CPU: Intel i9-14900K / AMD Ryzen 9 7950X
 
 支持模型:
 - Whisper: large-v3（实时转录）
-- FinBERT: å®å
-¨æ¯æ
+- FinBERT:
 ```
 
 ---
@@ -530,25 +520,24 @@ CPU: Intel i9-14900K / AMD Ryzen 9 7950X
 ```
 
 Whisper API成本:
-- 365å¤?Ã $3.6 = $1,314/å¹?
+- 365? $3.6 = $1,314/?
 
 GPT-4 API成本:
-- 365å¤?Ã $30 = $10,950/å¹?
+- 365? $30 = $10,950/?
 
 ```
 
 
 ```
-ç½®ï¼:
-- RTX 4070 Ti Super: Â¥8,000
-- å
-¥ï¼
+:
+- RTX 4070 Ti Super: 8,000
+-
 
 电费成本:
 
 
 
-相比云端API节省: ¥88,000 - ¥15,657 = ¥72,343（第一年）
+相比云端API节省: 88,000 - 15,657 = 72,343（第一年）
 ```
 
 
@@ -559,24 +548,23 @@ GPT-4 API成本:
 #### 步骤1: 环境准备
 
 ```bash
-# å®è£
+#
 Python 3.10+
 conda create -n live-analysis python=3.10
 conda activate live-analysis
 
-# å®è£
+#
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# å®è£
+#
 Transformers
 pip install transformers accelerate
 
-# å®è£
+#
 Whisper
 pip install openai-whisper
 
-# å®è£
-å
+#
 pip install ffmpeg-python DrissionPage
 ```
 
@@ -623,12 +611,12 @@ python main.py
 
 ### 7. 模型优化建议
 
-#### éåå é?
+#### ?
 
 ```python
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig
 
-# 4-bitéåé
+# 4-bit
 置
 quantization_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -645,7 +633,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
-**ææ**: å
+****:
 
 #### 模型微调
 
@@ -672,37 +660,34 @@ trainer.train()
 
 
 置**: RTX 3090 24GB + 64GB RAM + i7-12700KF
-> **é
-ç½?
+> **
+?
 > **创建日期**: 2026-04-02
 
-ç½®åæ
 
 ```
-â?å
+?
 
 足
 
 足
 
-é
-ç½?
+?
 ```
 
 ### 已有Ollama模型分析
 
 |------|------|--------|--------|
-| qwen3:8b | 5.2GB | â?éåå
+| qwen3:8b | 5.2GB | ?
 容分析 | ⭐⭐⭐⭐ |
-| deepseek-r1:8b | 5.2GB | â?éåå
+| deepseek-r1:8b | 5.2GB | ?
 容分析 | ⭐⭐⭐⭐ |
-| **deepseek-r1:14b** | 9.0GB | â
-â
+| **deepseek-r1:14b** | 9.0GB |
 
 
 ```
-â? å
-â? æ
+?
+?
 
 ```
 
@@ -713,8 +698,8 @@ ollama pull qwen2.5:32b
 ```
 
 ```
-â? å
-â? æ
+?
+?
 
 ```
 
@@ -725,12 +710,12 @@ ollama pull qwen2.5:32b
 ### 成本对比
 
 |------|---------|-----------|----------|
-| 云端API | ¥0 | ¥88,000 | ¥88,000 |
-| 本地模型（现有） | ¥0 | ¥657 | ¥657 |
-| 本地模型（升级） | ¥0 | ¥1,000 | ¥1,000 |
+| 云端API | 0 | 88,000 | 88,000 |
+| 本地模型（现有） | 0 | 657 | 657 |
+| 本地模型（升级） | 0 | 1,000 | 1,000 |
 
 
-### é
+###
 
 ```yaml
 # config_local_rtx3090.yaml
@@ -742,7 +727,7 @@ models:
   
   llm:
     type: "ollama"
-    model_name: "deepseek-r1:14b"  # æ?"qwen2.5:32b"
+model_name: "deepseek-r1:14b"  # ?"qwen2.5:32b"
     base_url: "http://localhost:11434"
   
   sentiment:
@@ -770,10 +755,9 @@ ollama pull qwen2.5:32b
 python main.py
 ```
 
-### ç¸å
-³ææ¡£
+###
 
-- [é
+- [
 - [部署脚本（PowerShell）](./deploy_rtx3090.ps1)
 - [部署脚本（Bash）](./deploy_rtx3090.sh)
 
@@ -782,34 +766,34 @@ python main.py
 
 
 ```
-â? â?       LiveStreamFinancialApplication                 â? â?
-                            â?
-                            â?
-                            â?
-â? â?(å
+? ?       LiveStreamFinancialApplication                 ? ?
+?
+?
+?
+? ?(
 ```
 
 
 ```
-       â?
-â?(DrissionPage)â?
-       â?
-â?(FFmpeg)     â?
-       â?
-â?(Whisper)    â?
-       â?
-â?å
-â?(GPT-4)      â?
-       â?
-â?æ
-æåæ     â?â?FinBERT
-â?(FinBERT)    â?
-       â?
-â?(Aggregator) â?
-       â?
-â?(Factor Gen) â?
-       â?
-â?(Output)     â?
+?
+?(DrissionPage)?
+?
+?(FFmpeg)     ?
+?
+?(Whisper)    ?
+?
+?
+?(GPT-4)      ?
+?
+?
+??FinBERT
+?(FinBERT)    ?
+?
+?(Aggregator) ?
+?
+?(Factor Gen) ?
+?
+?(Output)     ?
 ```
 
 ---
@@ -860,7 +844,7 @@ class DouyinLiveMonitor:
                     # 触发录制事件
                     await self._on_streamer_live(streamer, live_data)
                 
-                # ç­å¾
+#
                 await asyncio.sleep(self.config["check_interval"])
                 
             except Exception as e:
@@ -909,10 +893,10 @@ class DouyinLiveMonitor:
         try:
             count_text = count_text.strip()
             
-            if 'ä¸? in count_text:
-                return int(float(count_text.replace('ä¸?, '')) * 10000)
-            elif 'äº? in count_text:
-                return int(float(count_text.replace('äº?, '')) * 100000000)
+if '? in count_text:
+return int(float(count_text.replace('?, '')) * 10000)
+elif '? in count_text:
+return int(float(count_text.replace('?, '')) * 100000000)
             else:
                 return int(count_text)
         except:
@@ -968,11 +952,11 @@ class AudioRecorder:
             # 构建FFmpeg命令
             cmd = [
                 self.ffmpeg_path,
-                "-i", stream_url,              # è¾å
-¥æµ?
+"-i", stream_url,              #
+?
                 "-vn",                          # 忽略视频
-                "-c:a", "libmp3lame",          # MP3ç¼ç å?
-                "-b:a", bitrate,               # æ¯ç¹ç?
+"-c:a", "libmp3lame",          # MP3?
+"-b:a", bitrate,               # ?
                 "-t", str(duration),           # 录制时长
                 str(output_file)
             ]
@@ -985,7 +969,7 @@ class AudioRecorder:
                 stderr=asyncio.subprocess.PIPE
             )
             
-            # ç­å¾
+#
 录制完成
             stdout, stderr = await process.communicate()
             
@@ -1036,12 +1020,12 @@ class AudioRecorder:
 
 ---
 
-### æ¨¡å2: å
+### 2:
 
 #### 2.1 功能职责
 
-- æåå
-- è¿è¡æ
+-
+-
 感分析
 
 
@@ -1131,7 +1115,7 @@ class AudioTranscriber:
         return results
 ```
 
-**å
+**
 
 ```python
 from openai import OpenAI
@@ -1140,7 +1124,7 @@ import json
 import logging
 
 class FinancialContentAnalyzer:
-    """éèå
+"""
     
     def __init__(self, config: Dict):
         self.config = config
@@ -1159,20 +1143,17 @@ class FinancialContentAnalyzer:
         streamer_name: str = ""
     ) -> Dict:
         """
-        æåå
         
         Args:
             transcript: 转录文本
             streamer_name: 主播名称
         
         Returns:
-            å
         """
         try:
             prompt = f"""
 
 主播名称: {streamer_name}
-ç´æ­å
 容:
 {transcript}
 
@@ -1185,17 +1166,17 @@ class FinancialContentAnalyzer:
         {{
             "code": "股票代码",
             "name": "股票名称",
-            "action": "ä¹°å
+"action": "
             "price": "建议价格",
             "reason": "推荐理由"
         }}
     ],
     "risks": ["风险提示1", "风险提示2"],
-    "key_points": ["å
+"key_points": ["
     "timeframe": "短期/中期/长期"
 }}
 
-1. market_viewå¿
+1. market_view
 """
             
             response = self.client.chat.completions.create(
@@ -1244,15 +1225,13 @@ class FinancialContentAnalyzer:
     
     async def analyze_sentiment(self, text: str) -> Dict:
         """
-        æ
 感分析
         
         Args:
-            text: å¾
-åæææ?
+text:
+?
         
         Returns:
-            æ
 感分析结果
         """
         try:
@@ -1273,7 +1252,7 @@ class FinancialContentAnalyzer:
                 result = sentiment_analyzer(segment)
                 sentiments.append(result[0])
             
-            # ç»¼åæ
+#
 感
             positive_count = sum(1 for s in sentiments if s['label'] == 'Positive')
             negative_count = sum(1 for s in sentiments if s['label'] == 'Negative')
@@ -1302,7 +1281,7 @@ class FinancialContentAnalyzer:
             }
             
         except Exception as e:
-            self.logger.error(f"æ
+self.logger.error(f"
 感分析失败: {e}")
             return {
                 "sentiment": "Neutral",
@@ -1421,10 +1400,10 @@ class OpinionAggregator:
         }
     
     def clear(self):
-        """æ¸
+"""
 空观点"""
         self.opinions = []
-ç©?)
+?)
 ```
 
 
@@ -1455,7 +1434,7 @@ class FactorGenerator:
             预测因子
         """
         try:
-            # 1. æ
+# 1.
             sentiment_factor = self._calculate_sentiment_factor(
                 aggregated_opinion["dominant_view"],
                 aggregated_opinion["consensus_ratio"]
@@ -1551,7 +1530,7 @@ class FactorGenerator:
         confidence_factor: float
     ) -> float:
         """计算综合因子"""
-        # æéé
+#
 置
         weights = self.config.get("factor_weights", {
             "sentiment": 0.4,
@@ -1617,7 +1596,7 @@ class LiveStreamFinancialSystem:
             )
             tasks.append(task)
         
-        # ç­å¾
+#
         await asyncio.gather(*tasks)
         
         final_factors = await self._generate_final_factors()
@@ -1660,13 +1639,13 @@ class LiveStreamFinancialSystem:
                 self.logger.error(f"转录失败: {streamer['name']}")
                 return
             
-            # 6. æåå
+# 6.
             key_points = await self.analyzer.extract_key_points(
                 transcript["text"],
                 streamer["name"]
             )
             
-            # 7. æ
+# 7.
 感分析
             sentiment = await self.analyzer.analyze_sentiment(transcript["text"])
             
@@ -1711,7 +1690,7 @@ class LiveStreamFinancialSystem:
         # 生成因子
         factors = self.factor_generator.generate_factors(aggregated)
         
-æ°æ?
+?
         factors["timestamp"] = datetime.now().isoformat()
         factors["streamer_count"] = len(self.results)
         
@@ -1726,7 +1705,7 @@ class LiveStreamFinancialSystem:
 
 ---
 
-## ð é
+##
 
 ### config.yaml
 
@@ -1736,13 +1715,13 @@ system:
   version: "1.0.0"
   log_level: "INFO"
 
-# çæ§é
+#
 置
 monitor:
   check_interval: 60  # 检查间隔（秒）
   headless: true  # 无头模式
 
-# å½å¶é
+#
 置
 recorder:
   output_dir: "./recordings"
@@ -1755,7 +1734,7 @@ transcriber:
   whisper_model: "base"  # tiny/base/small/medium/large
   language: "zh"
 
-# åæé
+#
 置
 analyzer:
   openai_api_key: "${OPENAI_API_KEY}"
@@ -1763,11 +1742,11 @@ analyzer:
   openai_model: "gpt-4"
   sentiment_model: "yiyanghkust/finbert-tone"
 
-# èåé
+#
 置
 aggregator:
 
-# å å­é
+#
 置
 factor_generator:
   factor_weights:
@@ -1776,7 +1755,7 @@ factor_generator:
     influence: 0.2
     confidence: 0.1
 
-# è¾åºé
+#
 置
 output:
   result_dir: "./results"
@@ -1831,21 +1810,21 @@ output:
 ### 方案一: 本地部署
 
 ```bash
-# 1. å
+# 1.
 git clone https://github.com/your-repo/live-stream-financial-analysis.git
 cd live-stream-financial-analysis
 
-# 2. å®è£
+# 2.
 依赖
 pip install -r requirements.txt
 
-# 3. å®è£
+# 3.
 FFmpeg
 # Windows: 下载 https://ffmpeg.org/download.html
 # Mac: brew install ffmpeg
 # Linux: sudo apt install ffmpeg
 
-# 4. é
+# 4.
 export OPENAI_API_KEY="your-api-key"
 
 # 5. 运行系统
@@ -1858,14 +1837,14 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# å®è£
+#
 系统依赖
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     chromium-browser \
     && rm -rf /var/lib/apt/lists/*
 
-# å®è£
+#
 Python依赖
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -1921,10 +1900,10 @@ async def main():
     # 输出结果
     print("=== 预测因子 ===")
     print(f"综合因子: {factors['composite_factor']:.3f}")
-    print(f"æ
+print(f"
 绪因子: {factors['sentiment_factor']:.3f}")
-    print(f"ä¸è´æ? {factors['consensus_factor']:.2%}")
-    print(f"å½±åå? {factors['influence_factor']:.3f}")
+print(f"? {factors['consensus_factor']:.2%}")
+print(f"? {factors['influence_factor']:.3f}")
     print(f"热门板块: {list(factors['sector_factors'].keys())[:5]}")
     
     # 保存结果
@@ -2042,7 +2021,7 @@ async def save_to_database(factors: Dict):
 - ⚠️ 请遵守抖音平台的使用条款
 用于个人学习和研究
 
-### 2. ææ¯éå?
+### 2. ?
 
 - ⚠️ 非官方API可能随时失效
 - ⚠️ 需要稳定的网络环境
@@ -2082,7 +2061,7 @@ async def save_to_database(factors: Dict):
 - **模块ID**: LIVE_STREAM_FINANCIAL_ANALYSIS_001
 - **蓝图文档**: [LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md](04_EXECUTION\07_LIVE_STREAM\LIVE_STREAM_FINANCIAL_ANALYSIS_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å¤ä¸»æ­ç´æ­å
+- **职责**: 
 容分析与因子生成
 - **状态**: Active
 ```
@@ -2091,7 +2070,7 @@ async def save_to_database(factors: Dict):
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-å®¹åæä¸å å­çæ | **核心模块** |
+ | **核心模块** |
 
 ### 1.3 版本管理
 

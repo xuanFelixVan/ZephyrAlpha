@@ -94,10 +94,10 @@ layer: Layer 6 (组合优化层)
 
 **模块类别**: 支持模块（P2级）
 
-**ä¸TRANSACTION_COST_AWARE_REBALANCINGçå
-³ç³?*:
+**TRANSACTION_COST_AWARE_REBALANCING
+?*:
 - **职责边界**: 本文档负责基础再平衡决策，TRANSACTION_COST_AWARE负责成本优化决策
-- **ä¾èµå
+- **
 
 **架构角色**: 
 - 作为组合优化的执行层，负责再平衡决策
@@ -132,7 +132,6 @@ class RebalancingStrategy:
     
     索引: REBALANCING_001-M01
     职责: 智能再平衡决策与执行
-    è¾å
     
     def __init__(self, config: RebalancingConfig):
         self.config = config
@@ -314,8 +313,7 @@ class RebalancingTriggerDetector:
     def _check_periodic_trigger(self) -> bool:
         """检查定期触?""
         # 简化实现：检查是否到达再平衡日期
-        # å®é
-åºä»é
+#
         last_rebalance_date = self.config.last_rebalance_date
         rebalance_frequency = self.config.rebalance_frequency  # days
         
@@ -544,7 +542,7 @@ class RebalancingEvaluator:
                                    target_weights: pd.Series) -> float:
         """计算风险改善"""
         # 简化实现：风险指标改善
-        # å®é
+#
     
     def _calculate_cost_efficiency(self,
                                   improvement: float,
@@ -556,7 +554,7 @@ class RebalancingEvaluator:
         return improvement / cost
 ```
 
-### 3.6 é
+### 3.6
 ```python
 @dataclass
 class RebalancingConfig:
@@ -568,14 +566,14 @@ class RebalancingConfig:
     min_trade_size: float = 0.001  # 最小交易规?    
 @dataclass
 class TriggerConfig:
-    """è§¦åé
+"""
 置"""
     rebalance_frequency: int = 30  # 再平衡周期（天）
     weight_threshold: float = 0.05  # 权重偏离?    last_rebalance_date: datetime = None
     
 @dataclass
 class DecisionConfig:
-    """å³ç­é
+"""
 置"""
     min_net_benefit: float = 0.001  # 最小净收益?    transaction_cost_rate: float = 0.001  # 交易成本?    
 @dataclass
@@ -589,7 +587,7 @@ class CostOptimizationConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -745,7 +743,7 @@ class TradingCostOptimizationModule:
 需 |
 需 |
 
-### 8.2 å®è£
+### 8.2
 命令
 
 ```bash
@@ -775,8 +773,7 @@ pip install numpy>=1.21
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -793,8 +790,8 @@ pip install numpy>=1.21
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -820,7 +817,7 @@ graph LR
 ```markdown
 - **模块ID**: REBALANCING_001
 - **蓝图文档**: PORTFOLIO_REBALANCING_BLUEPRINT.md
-åå»?
+?
 ```
 
 ### 10.2 模块职责边界
@@ -858,7 +855,7 @@ graph LR
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

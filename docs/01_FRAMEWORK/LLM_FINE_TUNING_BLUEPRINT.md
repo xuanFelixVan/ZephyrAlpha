@@ -61,7 +61,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-**: å°GPT/LLaMAéé
+**: GPT/LLaMA
 
 - **专业术语理解**: 理解金融专业术语
 
@@ -103,7 +103,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -156,7 +156,7 @@ class LLMFineTuner:
 
             method: 微调方法
 
-            lora_r: LoRAç§?            lora_alpha: LoRA alpha
+lora_r: LoRA?            lora_alpha: LoRA alpha
 
         """
 
@@ -297,8 +297,8 @@ accelerate>=0.25.0
 |------|--------|
 
 
-| æ
-æåæF1 | â?.80 |
+|
+F1 | ?.80 |
 
 
 

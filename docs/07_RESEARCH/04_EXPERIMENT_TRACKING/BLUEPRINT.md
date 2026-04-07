@@ -21,7 +21,7 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
 standard_type: 专业量化机构蓝图
-applicable_scope: å
+applicable_scope:
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -35,9 +35,9 @@ implementation_progress: 0%
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸
+>
 > **索引**: `EXP_001`
-> **çç±**: wandbå
+> ****: wandb
 
 
 ## 1. 设计原则
@@ -45,26 +45,25 @@ implementation_progress: 0%
 | 原则 | 说明 |
 |------|------|
 | 购买而非自研 | 使用wandb.ai，不自研实验追踪 |
-| æ°¸ä¹
-å
+|
 
 
 ## 2. 方案对比
 
 | 方案 | 自研系统 | wandb.ai(推荐) |
 |------|----------|----------------|
-| å
+|
 
 
 ## 3. wandb集成方案
 
 
 ```bash
-# å®è£
+#
 
 pip install wandb
 
-# ç»å½(å
+# (
 wandb login
 ```
 
@@ -75,7 +74,7 @@ import wandb
 import pandas as pd
 import numpy as np
 
-# åå§å?
+# ?
 wandb.init(
     project="quant-research",
     entity="your_username",
@@ -116,7 +115,7 @@ class FactorExperiment:
             wandb.log({
                 'ic_timeseries': wandb.plot.line(
                     metrics['ic_series'],
-                    title="ICæ¶åºå?
+title="IC?
                 ),
                 'factor_distribution': wandb.Histogram(
                     factor_values.stack()
@@ -171,14 +170,14 @@ class StrategyExperiment:
             })
 ```
 
-### 3.4 è¶
+### 3.4
 
 ```python
 import wandb
 from wandb.sklearn import plot_clusterer, plot_regressor
 
 def objective(params):
-    """Optuna + wandb è¶
+"""Optuna + wandb
 
     with wandb.init(
         project="quant-research",
@@ -215,8 +214,8 @@ study.optimize(
 
 
 
-- IC_IRæ£ç¹å?
-- è¶
+- IC_IR?
+-
 - 最佳实验对比表
 
 
@@ -290,7 +289,7 @@ with mlflow.start_run():
 - **模块ID**: RESEARCH_BLUEPRINT_001
 - **蓝图文档**: [BLUEPRINT.md](07_RESEARCH\04_EXPERIMENT_TRACKING\BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: å
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -298,8 +297,8 @@ with mlflow.start_run():
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Research Blueprint** | å
-¨ç³»ç»æ¶æè®¾è®? | **核心模块** |
+| **Research Blueprint** |
+? | **核心模块** |
 
 ### 8.3 版本管理
 

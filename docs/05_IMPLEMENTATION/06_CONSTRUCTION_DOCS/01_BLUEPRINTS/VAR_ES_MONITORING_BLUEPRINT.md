@@ -81,7 +81,7 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-éã?
+?
 
 ## 1. 概述
 
@@ -99,18 +99,17 @@ layer: Layer 5.3 (风险管理)
 |------|------|
 | **模块ID** | VAR_ES_MONITORING_001 |
 | **版本** | v1.0.0 |
-| **ç¶æ?* | Active |
+| **?* | Active |
 | **创建日期** | 2026-04-06 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åæ
+| [
 景分析结果 |
 
 ### 下游依赖
@@ -123,13 +122,13 @@ layer: Layer 5.3 (风险管理)
 | **pyRisk** | 1.0+ | 风险指标计算 | [GitHub](https://github.com/quantopian/pyfolio) |
 | **pyfolio** | 0.9+ | 组合分析 | [GitHub](https://github.com/quantopian/pyfolio) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[组合优化引擎] --> B[VaR/ES监控]
-    C[ç»åæ
+C[
 景分析] --> B
     D[数据质量监控] --> B
     
@@ -150,7 +149,7 @@ graph LR
 
 ```mermaid
 graph TB
-¥"
+"
         A[组合持仓] --> D[VaR/ES计算器]
         B[收益率序列] --> D
         C[市场数据] --> D
@@ -163,7 +162,7 @@ graph TB
         D --> H[极值理论法]
     end
     
-    subgraph "çæ§å±?
+subgraph "?
         I[风险阈值检查]
         J[预警信号生成]
         K[回测验证]
@@ -246,7 +245,7 @@ class VaRESCalculator:
 
 |------|--------|
 | 计算时间 | <100ms |
-| å
+|
 存占用 | <50MB |
 | 实时更新频率 | 1分钟 |
 
@@ -320,7 +319,7 @@ class HistoricalVaR:
         return es_value, -es_percentile
 ```
 
-### 4.2 åæ°æ³?(Parametric Method)
+### 4.2 ?(Parametric Method)
 
 
 **优点**:
@@ -411,7 +410,7 @@ class ParametricVaR:
 
 **优点**:
 - 灵活性高
-³ç³?
+?
 
 **缺点**:
 - 计算量大
@@ -531,7 +530,7 @@ class MonteCarloVaR:
 
 ```python
 class VaRESMonitor:
-    """VaR/ESçæ§å?""
+"""VaR/ES?""
     
     def __init__(
         self,
@@ -592,8 +591,8 @@ class VaRESMonitor:
                         "value": value,
                         "threshold": threshold,
                         "severity": "HIGH" if value < threshold * 1.5 else "MEDIUM",
-                        "message": f"{metric_name} è¶
-è¿éå? {value:.2%} > {threshold:.2%}"
+"message": f"{metric_name}
+? {value:.2%} > {threshold:.2%}"
                     })
         
         return alerts
@@ -615,8 +614,8 @@ class VaRBacktester:
         """
         
         参数:
-            actual_returns: å®é
-æ¶çç?
+actual_returns:
+?
             
         返回:
 ?
@@ -655,8 +654,8 @@ class VaRBacktester:
         """
         
         参数:
-            actual_returns: å®é
-æ¶çç?
+actual_returns:
+?
             
         返回:
 ?
@@ -827,7 +826,7 @@ class VaRESAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

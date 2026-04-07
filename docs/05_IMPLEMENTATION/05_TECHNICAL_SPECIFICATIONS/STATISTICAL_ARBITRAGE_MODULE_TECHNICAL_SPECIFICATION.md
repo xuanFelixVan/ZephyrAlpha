@@ -10,18 +10,18 @@ layer: Layer 6 (ﻝﭨﮒﻛﺙﮒﮒﺎ?
 index: STAT_ARB_SPEC_001
 estimated_hours: 160h
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 ---
 ---
 
 
-# ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -30,17 +30,17 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
 
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝﻟ؟?> **ﻝﺑ۱ﮒﺙ**: `STAT_ARB_SPEC_001`
 > **ﮒﺙﮒﮔﭘﻠ?*: 160h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﻙﮔﻟﭦﮒ۳ﮒﺑﮔ ﺕﮒﺟﻟﺛﮒ?
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﻙﮔﻟﭦﮒ۳ﮒﺑﮔﺕﮒﺟﻟﺛﮒ?
 ---
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
-ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﻟﺑﻟﺑ۲ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﮒﮒﺕﮒﭦﻛﺕ­ﮔ۶ﻝﭨﮒﮔﮒﭨﭦﻙ?
+ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ۷۰ﮒﻟﺑﻟﺑ۲ﻠﮒﺁﺗﻛﭦ۳ﮔﻙﮒﮔﺑﮒﮔﮒﮒﺕﮒﭦﻛﺕﮔ۶ﻝﭨﮒﮔﮒﭨﭦﻙ?
 ## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ```python
 class StatisticalArbitrage:
-    """ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔ ﺕﮒﺟﻝﺎ?""
+"""ﻝﭨﻟ؟۰ﮒ۴ﮒ۸ﮔﺕﮒﺟﻝﺎ?""
     
     def find_cointegrated_pairs(self, 
                                price_data: pd.DataFrame,
@@ -67,7 +67,7 @@ class StatisticalArbitrage:
 ```python
 def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, float]:
     """
-    ﮒﮔﺑﮔ۲ﻠ۹ﺅﺙEngle-Grangerﻛﺕ۳ﮔ­۴ﮔﺏﺅﺙ
+ﮒﮔﺑﮔ۲ﻠ۹ﺅﺙEngle-Grangerﻛﺕ۳ﮔ۴ﮔﺏﺅﺙ
     
     Returns:
         Tuple[float, float]: (ﮒﮔﺑﻝﺏﭨﮔﺍ, pﮒ?
@@ -79,4 +79,4 @@ def cointegration_test(price1: pd.Series, price2: pd.Series) -> Tuple[float, flo
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝﭘﮔ?*: Final

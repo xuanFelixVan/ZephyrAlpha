@@ -8,17 +8,17 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - æ¥å
+-
 策略
   - 盘中交易
-  - æ¥å
+-
 波动捕捉
-  - æ¥å
+-
 风险管理
 layer: Layer 5 (策略执行层)
 ---
 
-# æ¥å
+#
 策略蓝图
 
 > **职责边界**: 
@@ -99,7 +99,7 @@ layer: Layer 5 (策略执行层)
 
 ---
 
-## ð§ å
+##
 
 
 ```python
@@ -249,13 +249,11 @@ class VolumeAnalyzer:
 
 
 **任务**:
-æµè¯
 
 ---
 
 
 **任务**:
-æµè¯
 
 ---
 
@@ -274,8 +272,7 @@ class VolumeAnalyzer:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [秒级风险控制系统蓝图](./RISK_CONTROL_BLUEPRINT.md)
@@ -298,8 +295,8 @@ class VolumeAnalyzer:
 ##### 6.001. Intraday Strategy
 - **模块ID**: INTRADAY_STRATEGY_001
 - **蓝图文档**: INTRADAY_STRATEGY_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

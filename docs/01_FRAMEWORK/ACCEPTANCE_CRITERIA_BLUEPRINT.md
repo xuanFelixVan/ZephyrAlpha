@@ -91,7 +91,7 @@ responsibility_boundary: |
 
 
 
-#### 2.1.1 åè½æ¸
+#### 2.1.1
 单验收
 
 
@@ -102,7 +102,7 @@ responsibility_boundary: |
 
 | **数据采集** | 数据质量 | 数据完整性≥99% | 数据验证 |
 
-æµè¯ |
+|
 
 
 
@@ -136,7 +136,7 @@ responsibility_boundary: |
 
 
 
-## åè½æ¸
+##
 单
 
 
@@ -151,11 +151,11 @@ responsibility_boundary: |
 
 |---------|---------|---------|----------|
 
-] | ï¿?ï¿?|
+] | ??|
 
-] | ï¿?ï¿?|
+] | ??|
 
-] | ï¿?ï¿?|
+] | ??|
 
 
 
@@ -167,7 +167,6 @@ responsibility_boundary: |
 
 
 
-æ
 况 | 评分 |
 
 |---------|---------|---------|------|
@@ -260,8 +259,8 @@ responsibility_boundary: |
 
 - 测试环境: [环境描述]
 
-·: [å·¥å
-·åç§°]
+: [
+]
 
 
 
@@ -289,7 +288,7 @@ responsibility_boundary: |
 |---------|---------|---------|----------|
 
 
-| å
+|
 
 
 
@@ -348,7 +347,7 @@ responsibility_boundary: |
 |---------|---------|----------|----------|
 
 
-| **å
+| **
 
 
 
@@ -386,7 +385,7 @@ responsibility_boundary: |
 
 
 
-·åè¡¨]
+]
 
 
 
@@ -395,7 +394,7 @@ responsibility_boundary: |
 
 
 
-| å¯¼å
+|
 
 
 
@@ -446,7 +445,7 @@ responsibility_boundary: |
 
 |---------|-----------|----------|----------|
 
-| **åå
+| **
 
 
 
@@ -468,7 +467,6 @@ responsibility_boundary: |
 
 
 
-¨æ å
 
 
 
@@ -476,7 +474,7 @@ responsibility_boundary: |
 
 
 
-| å®å
+|
 
 |--------|----------|----------|----------|
 
@@ -486,13 +484,13 @@ responsibility_boundary: |
 
 
 
-#### 5.1.2 å®å
+#### 5.1.2
 
 
 
 ```markdown
 
-# å®å
+#
 
 
 
@@ -502,12 +500,11 @@ responsibility_boundary: |
 
 - 测试日期: [日期]
 
-·: [å·¥å
-·åè¡¨]
+: [
+]
 
 
 
-¨æµè¯
 
 
 |--------|---------|---------|----------|
@@ -539,7 +536,7 @@ responsibility_boundary: |
 
 
 
-## å®å
+##
 
 | 漏洞类型 | 漏洞数量 | 风险等级 | 是否修复 |
 
@@ -550,7 +547,7 @@ responsibility_boundary: |
 
 
 
-## å®å
+##
 
 
 - 访问控制: [通过/不通过]
@@ -562,7 +559,7 @@ responsibility_boundary: |
 
 
 
-## å®å
+##
 
 1. [建议1]
 
@@ -600,7 +597,7 @@ responsibility_boundary: |
 
 保留 |
 
-| **å®å
+| **
 
 
 
@@ -608,7 +605,7 @@ responsibility_boundary: |
 
 
 
-## ð å
+##
 
 
 ```
@@ -656,7 +653,7 @@ responsibility_boundary: |
 
 | 质量验收报告 | `docs/acceptance/quality/` | 质量验收报告 |
 
-| å®å
+|
 
 
 
@@ -692,7 +689,7 @@ responsibility_boundary: |
 
 - **技术规格书**: 待创建
 
-- **职责**: ç³»ç»éªæ¶æ å
+- **职责**: 
 
 - **状态**: Active
 
@@ -708,7 +705,7 @@ responsibility_boundary: |
 
 |------|------|------|
 
-| **Acceptance Criteria Blueprint** | ç³»ç»éªæ¶æ å | **核心模块** |
+| **Acceptance Criteria Blueprint** |  | **核心模块** |
 
 
 

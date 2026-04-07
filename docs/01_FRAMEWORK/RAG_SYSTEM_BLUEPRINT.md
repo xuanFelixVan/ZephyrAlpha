@@ -90,14 +90,14 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
 
-| **åµå
+| **
 
-³ææ¡£ |
+|
 
 
 
@@ -139,8 +139,7 @@ class RAGSystem:
 
         Args:
 
-            embedding_model: åµå
-¥æ¨¡å
+embedding_model:
 
             llm_model: 生成模型
 
@@ -184,7 +183,7 @@ class RAGSystem:
 
     ) -> List[Dict]:
 
-³ææ¡?        
+?
 
         Args:
 
@@ -196,8 +195,7 @@ class RAGSystem:
 
         Returns:
 
-            List[Dict]: ç¸å
-³ææ¡£
+List[Dict]:
 
         """
 

@@ -1,7 +1,7 @@
 ﻿﻿---
 standard_type: ﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
@@ -29,7 +29,7 @@ last_updated: 2026-04-02
 
 ## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ 
+### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ
 
 ﮒ۷Windowsﻝﺏﭨﻝﭨﻛﺕﻠ۷ﻝﺛﺎZephyrAlphaﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﺅﺙﮒ؟ﻝﺍﻟ۹ﮒ۷ﮒﮔﮔ۰۲ﻟﺑ۷ﻠﻝﮔ۶ﻙ?
 
@@ -38,8 +38,8 @@ last_updated: 2026-04-02
 | ﻛﭨﭨﮒ۰ﮒﻝ۶ﺍ | ﻠ۱ﻝ | ﮔ۶ﻟ۰ﮔﭘﻠﺑ | ﮒ؟۰ﻟ؟۰ﮒﮒ؟ﺗ |
 |---------|------|----------|----------|
 | **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?* | ﮔﺁﮒ۷ﻛﺕ | ﮒﮔ۷2:00 | ﻠﺝﮔ۴ﮔﮔﮔ۶ﻙﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ?|
-| **ﮔ ﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?|
-| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ­۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﮔ۷3:00 | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?|
+| **ﮔﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?|
+| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﮔ۷3:00 | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?|
 
 ### 1.3 ﻠ۷ﻝﺛﺎﮒﻝﺛ؟ﮔ۰ﻛﭨﭘ
 
@@ -50,9 +50,9 @@ last_updated: 2026-04-02
 
 ---
 
-## 2. ﻠ۷ﻝﺛﺎﮔ­۴ﻠ۹۳
+## 2. ﻠ۷ﻝﺛﺎﮔ۴ﻠ۹۳
 
-### 2.1 ﮔ­۴ﻠ۹۳1: ﮒﮒ۳ﻝﺁﮒ۱
+### 2.1 ﮔ۴ﻠ۹۳1: ﮒﮒ۳ﻝﺁﮒ۱
 
 **ﮔ۲ﮔ۴Pythonﻝﺁﮒ۱**:
 ```powershell
@@ -67,11 +67,11 @@ python --version
 # ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
 cd D:\ZephyrAlpha
 
-# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒ­ﮒ?
+# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒﮒ?
 ls scripts\scheduled_*.py
 ```
 
-### 2.2 ﮔ­۴ﻠ۹۳2: ﮔﭖﻟﺁﮒ؟۰ﻟ؟۰ﻟﮔ؛
+### 2.2 ﮔ۴ﻠ۹۳2: ﮔﭖﻟﺁﮒ؟۰ﻟ؟۰ﻟﮔ؛
 
 **ﻟﺟﻟ۰ﻠ۷ﻝﺛﺎﻟﮔ؛ﮔﭖﻟﺁ**:
 ```powershell
@@ -85,14 +85,14 @@ ls scripts\scheduled_*.py
 # ﮔﭖﻟﺁﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻟﮔ?
 python scripts\scheduled_quick_audit.py
 
-# ﮔﭖﻟﺁﮔ ﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
+# ﮔﭖﻟﺁﮔﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
 python scripts\scheduled_standard_audit.py
 
 # ﮔﭖﻟﺁﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻟﮔ؛
 python scripts\scheduled_deep_audit.py
 ```
 
-### 2.3 ﮔ­۴ﻠ۹۳3: ﮒ؟ﻟ۲ﮒ؟ﮔﻛﭨﭨﮒ۰
+### 2.3 ﮔ۴ﻠ۹۳3: ﮒ؟ﻟ۲ﮒ؟ﮔﻛﭨﭨﮒ۰
 
 **ﮒ؟ﻟ۲ﻛﭨﭨﮒ۰**:
 ```powershell
@@ -109,7 +109,7 @@ Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"}
 Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | Format-List *
 ```
 
-### 2.4 ﮔ­۴ﻠ۹۳4: ﻠﻝﺛ؟ﮒ؟۰ﻟ؟۰ﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ
+### 2.4 ﮔ۴ﻠ۹۳4: ﻠﻝﺛ؟ﮒ؟۰ﻟ؟۰ﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ
 
 **ﻝﺙﻟﺝﻠﻝ۴ﻠﻝﺛ؟**:
 ```yaml
@@ -150,8 +150,8 @@ Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | Format-List *
 
 **ﻛﺛﺟﻝ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮔ۴ﻝ**:
 1. ﮔﮒﺙ"ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦ"ﺅﺙTask Schedulerﺅﺙ?
-2. ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮒﭦﻛﺕ­ﮔﺝﮒ?ZephyrAlpha"ﻝﺕﮒﺏﻛﭨﭨﮒ۰
-3. ﮔ۴ﻝ"ﻟ۶۵ﮒﮒ?ﻙ?ﮔﻛﺛ"ﻙ?ﮒﮒﺎﻟ؟ﺍﮒﺛ"ﻝ­ﻠﻠ۰ﺗﮒ?
+2. ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮒﭦﻛﺕﮔﺝﮒ?ZephyrAlpha"ﻝﺕﮒﺏﻛﭨﭨﮒ۰
+3. ﮔ۴ﻝ"ﻟ۶۵ﮒﮒ?ﻙ?ﮔﻛﺛ"ﻙ?ﮒﮒﺎﻟ؟ﺍﮒﺛ"ﻝﻠﻠ۰ﺗﮒ?
 
 ### 3.2 ﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
 
@@ -160,7 +160,7 @@ Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | Format-List *
 # ﮔﮒ۷ﻟﺟﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
 Start-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 
-# ﮔﮒ۷ﻟﺟﻟ۰ﮔ ﮒﮒ؟۰ﻟ؟۰
+# ﮔﮒ۷ﻟﺟﻟ۰ﮔﮒﮒ؟۰ﻟ؟۰
 Start-ScheduledTask -TaskName "ZephyrAlpha_Monthly_Audit"
 
 # ﮔﮒ۷ﻟﺟﻟ۰ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
@@ -172,7 +172,7 @@ Start-ScheduledTask -TaskName "ZephyrAlpha_Quarterly_Audit"
 # ﻟﺟﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
 python scripts\scheduled_quick_audit.py
 
-# ﻟﺟﻟ۰ﮔ ﮒﮒ؟۰ﻟ؟۰
+# ﻟﺟﻟ۰ﮔﮒﮒ؟۰ﻟ؟۰
 python scripts\scheduled_standard_audit.py
 
 # ﻟﺟﻟ۰ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
@@ -210,18 +210,18 @@ Unregister-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" -Confirm:$false
 
 ### 4.1 ﮔ۴ﮒﻛﺛﻝﺛ؟
 
-ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟ۹ﮒ۷ﻛﺟﮒ­ﮒﺍﻛﭨ۴ﻛﺕﻛﺛﻝﺛ؟ﺅﺙ
+ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟ۹ﮒ۷ﻛﺟﮒﮒﺍﻛﭨ۴ﻛﺕﻛﺛﻝﺛ؟ﺅﺙ
 
 ```
 D:\ZephyrAlpha\
 ﻗﻗﻗ docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
 ﻗ?  ﻗﻗﻗ weekly_20260402.json          # ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
-ﻗ?  ﻗﻗﻗ monthly_20260402.json         # ﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
-ﻗ?  ﻗﻗﻗ monthly_summary_20260402.md   # ﮔ ﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
+ﻗ?  ﻗﻗﻗ monthly_20260402.json         # ﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+ﻗ?  ﻗﻗﻗ monthly_summary_20260402.md   # ﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
 ﻗ?  ﻗﻗﻗ quarterly_20260402.json       # ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 ﻗ?
 ﻗﻗﻗ docs\09_AUDIT\REPORTS\
-    ﻗﻗﻗ QUARTERLY_AUDIT_REPORT_20260402.md  # ﮒ­۲ﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+ﻗﻗﻗ QUARTERLY_AUDIT_REPORT_20260402.md  # ﮒ۲ﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 ```
 
 ### 4.2 ﮔ۴ﻝﮔﮔﺍﮔ۴ﮒ?
@@ -234,7 +234,7 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_*.json |
     Select-Object -First 1 | 
     Get-Content | ConvertFrom-Json | ConvertTo-Json -Depth 10
 
-# ﮔ۴ﻝﮔﮔﺍﻝﮔ ﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
+# ﮔ۴ﻝﮔﮔﺍﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
 Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*.md | 
     Sort-Object LastWriteTime -Descending | 
     Select-Object -First 1 | 
@@ -262,7 +262,7 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*
 }
 ```
 
-**ﮔ ﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵**:
+**ﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵**:
 ```markdown
 # ﮔﮒﭦ۵ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ
 
@@ -297,9 +297,9 @@ Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" |
     Select-Object TaskName, State, LastRunTime, LastTaskResult
 ```
 
-**ﮒﺁﻟﺛﮒﮒ ﮒﻟ۶۲ﮒﺏﮔﺗﮔﺏ?*:
+**ﮒﺁﻟﺛﮒﮒﮒﻟ۶۲ﮒﺏﮔﺗﮔﺏ?*:
 
-| ﻠ؟ﻠ۱ | ﮒﮒ  | ﻟ۶۲ﮒﺏﮔﺗﮔﺏ |
+| ﻠ؟ﻠ۱ | ﮒﮒ | ﻟ۶۲ﮒﺏﮔﺗﮔﺏ |
 |------|------|---------|
 | ﻛﭨﭨﮒ۰ﻝﭘﮔﻛﺕﭦ"ﮒﺓﺎﻝ۵ﻝ? | ﻛﭨﭨﮒ۰ﻟ۱،ﻝ۵ﻝ?| ﮒﺁﻝ۷ﻛﭨﭨﮒ۰ |
 | LastTaskResultﻛﺕﻛﺕﭦ0 | ﻟﮔ؛ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﮔ۴ﻝﮔ۴ﮒﺟﮔﻛﭨﭘ |
@@ -330,7 +330,7 @@ pip list | Select-String "pathlib|json|logging"
 
 **ﮔ۲ﮔ۴ﻟﮔ؛ﻟﺓﺁﮒﺝ?*:
 ```powershell
-# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒ­ﮒ?
+# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒﮒ?
 Test-Path scripts\scheduled_quick_audit.py
 
 # ﮔ۲ﮔ۴ﮒﺓ۴ﻛﺛﻝ؟ﮒﺛ?
@@ -350,7 +350,7 @@ python scripts\scheduled_quick_audit.py
 
 **ﮔ۲ﮔ۴ﻟﺝﮒﭦﻝ؟ﮒﺛ?*:
 ```powershell
-# ﮔ۲ﮔ۴ﻝ؟ﮒﺛﮔﺁﮒ۵ﮒ­ﮒ?
+# ﮔ۲ﮔ۴ﻝ؟ﮒﺛﮔﺁﮒ۵ﮒﮒ?
 Test-Path docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state
 
 # ﮔ۲ﮔ۴ﻝ؟ﮒﺛﮔﻠ?
@@ -375,11 +375,11 @@ Get-PSDrive D | Select-Object Used, Free
 - ﮒ۳ﻝﮒﻝﺍﻝﻠ؟ﻠ۱?
 
 **ﮔﺁﮔﮔ۲ﮔ?*:
-- ﮔ۴ﻝﮔ ﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- ﮔ۴ﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 - ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?
 - ﮔﺕﻝﻟﺟﮔﮔ۴ﮒ
 
-**ﮔﺁﮒ­۲ﮒﭦ۵ﮔ۲ﮔ?*:
+**ﮔﺁﮒ۲ﮒﭦ۵ﮔ۲ﮔ?*:
 - ﮔ۴ﻝﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 - ﻟﺁﻛﺙﺍﮒ؟۰ﻟ؟۰ﮔﮔ
 - ﻛﺙﮒﮒ؟۰ﻟ؟۰ﻟ۶ﮒ
@@ -419,8 +419,8 @@ python scripts\cleanup_audit_reports.py
 ## 7. ﮒﻟﮔﮔ۰?
 
 - [ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟](09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-<!-- ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md) -->
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+<!-- ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md) -->
 
 
 ---
@@ -453,5 +453,5 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

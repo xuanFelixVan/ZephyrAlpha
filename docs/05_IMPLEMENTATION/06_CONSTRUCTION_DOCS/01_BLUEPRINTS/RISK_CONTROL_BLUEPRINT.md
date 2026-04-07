@@ -24,7 +24,7 @@ layer: Layer 5.3 (风险管理)
 # 风险控制蓝图
 
 > **职责边界**: 
-> - â...
+> - ...
 
 
 ## 设计目标
@@ -81,7 +81,7 @@ layer: Layer 5.3 (风险管理)
 
 ## 核心定位
 
-¨ã?
+?
 
 
 ### 风险控制维度
@@ -90,7 +90,7 @@ layer: Layer 5.3 (风险管理)
 
 ---
 
-## ð§ å
+##
 
 
 ```python
@@ -358,17 +358,16 @@ class RiskHandler:
 ### 1. 风险控制层次架构
 
 ```
-â?                                                           â?
-â?                         â?                                â?
-â?                         â?                                â?
-â?                                                           â?
+?                                                           ?
+?                         ?                                ?
+?                         ?                                ?
+?                                                           ?
 ```
 
 
 
 |----------|----------|--------|----------|----------|
-è¿éå?| å
-³æ§è¶
+?|
 
 
 ```yaml
@@ -434,12 +433,12 @@ risk_thresholds:
 
 ```
 风险事件触发
-    â?
+?
     ├── 价格风险
-    â?
+?
     ├── 仓位风险
-    â?
-    â?
+?
+?
 ```
 
 
@@ -479,7 +478,7 @@ class RiskActionExecutor:
         return True
     
     def _close_all_positions(self, context: Dict[str, Any]) -> bool:
-        """å
+"""
         for symbol, position in self.position_manager.get_all_positions().items():
             self.order_manager.sell(symbol, position.quantity)
         return True
@@ -630,13 +629,11 @@ class RiskMetricsCalculator:
 
 
 **任务**:
-æµè¯
 
 ---
 
 
 **任务**:
-æµè¯
 
 ---
 
@@ -653,8 +650,7 @@ class RiskMetricsCalculator:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [盘中策略模块蓝图](./INTRADAY_STRATEGY_BLUEPRINT.md)
@@ -677,8 +673,8 @@ class RiskMetricsCalculator:
 ##### 6.001. Risk Control
 - **模块ID**: RISK_CONTROL_001
 - **蓝图文档**: RISK_CONTROL_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

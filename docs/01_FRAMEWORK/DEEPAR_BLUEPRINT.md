@@ -91,9 +91,9 @@ layer: Layer 4 (机器学习层)
 
 
 
-â?  âââ Temporal Fusion Transformer
+?   Temporal Fusion Transformer
 
-â?  âââ Neural ODE
+?   Neural ODE
 
 
 ├── 特征工程
@@ -117,11 +117,11 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
-¥åé |
+|
 
 
 
@@ -172,7 +172,7 @@ class DeepARModel(nn.Module):
 
         Args:
 
-            input_dim: è¾å
+input_dim:
 
 
             dropout: Dropout比率
@@ -202,7 +202,7 @@ class DeepARModel(nn.Module):
 
         Args:
 
-            past_values: åå²å?(batch_size, context_length)
+past_values: ?(batch_size, context_length)
 
             past_features: 历史特征 (batch_size, context_length, feature_dim)
 
@@ -214,7 +214,7 @@ class DeepARModel(nn.Module):
 
             Dict[str, torch.Tensor]: {
 
-                'mu': åå¼åæ?
+'mu': ?
 
 
 
@@ -387,7 +387,7 @@ class DeepARDataProcessor:
 实时数据
 
 
-    â?DeepARæ¨ç
+?DeepAR
 
 
 
@@ -451,14 +451,14 @@ scipy>=1.11.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 500GB SSD | 1TB NVMe |
@@ -583,8 +583,7 @@ class RiskManager:
 - [ ] DeepAR模型实现
 
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 

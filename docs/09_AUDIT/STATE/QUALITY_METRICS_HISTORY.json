@@ -31,5 +31,38 @@
       "compliance_level": "合格",
       "target_score": 90
     }
+  },
+  {
+    "timestamp": "2026-04-07 17:10:19",
+    "document_metrics": {
+      "total_files": 2091,
+      "files_with_metadata": 44,
+      "files_with_responsibility": 25,
+      "metadata_compliance_rate": 2.1042563366810136,
+      "responsibility_compliance_rate": 1.1956001912960306
+    },
+    "reference_metrics": {
+      "total_links": 8078,
+      "valid_links": 8076,
+      "invalid_links": 2,
+      "link_validity_rate": 99.97524139638524
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.194643711142994,
+      "depth_distribution": {
+        "0": 4,
+        "1": 475,
+        "2": 814,
+        "3": 706,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 40.862969358179086,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
   }
 ]

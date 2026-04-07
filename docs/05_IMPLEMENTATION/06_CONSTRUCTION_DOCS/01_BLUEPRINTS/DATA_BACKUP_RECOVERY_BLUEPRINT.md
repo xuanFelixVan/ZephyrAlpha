@@ -76,7 +76,7 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-¨ã?
+?
 
 ## 📋 执行摘要
 
@@ -93,7 +93,6 @@ layer: Layer 5.1 (数据处理)
 
 **Layer定位**: Layer 1 - 数据预处理层（数据运维模块）
 
-¨
 - 降低数据丢失风险
 - 满足合规要求
 
@@ -174,7 +173,7 @@ graph TB
 
 **GitHub**: https://github.com/restic/restic
 
-**Staræ?*: 26k+
+**Star?*: 26k+
 
 - 加密备份
 
@@ -284,8 +283,8 @@ class ResticBackupManager:
         恢复备份
         
         Args:
-            snapshot_id: å¿«ç
-§ID
+snapshot_id:
+ID
             target_path: 恢复目标路径
         
         Returns:
@@ -341,7 +340,6 @@ class ResticBackupManager:
     
     def prune_old_snapshots(self, keep_policy: Dict[str, int]):
         """
-        æ¸
 ?
         
         Args:
@@ -351,7 +349,7 @@ class ResticBackupManager:
                 - keep_monthly: 保留最近N月的每月备份
         
         Returns:
-            Dict: æ¸
+Dict:
 理结果
         """
         cmd = ['restic', 'forget', '--repo', self.repository]
@@ -387,7 +385,7 @@ class ResticBackupManager:
             }
     
     def _extract_snapshot_id(self, output):
-§ID"""
+ID"""
         for line in output.split('\n'):
             if 'snapshot' in line.lower():
                 parts = line.split()
@@ -458,7 +456,7 @@ class BackupScheduler:
 
 **GitHub**: https://github.com/vmware-tanzu/velero
 
-**Staræ?*: 8.5k+
+**Star?*: 8.5k+
 
 - Kubernetes集群备份
 - 灾难恢复
@@ -540,7 +538,6 @@ class DatabaseBackupManager:
     
     def create_full_backup(self, backup_path: str):
         """
-        åå»ºå
         
         Args:
             backup_path: 备份文件路径
@@ -800,7 +797,7 @@ recovery_strategies:
 
 ## 5. 备份验证
 
-### 5.1 éªè¯å?
+### 5.1 ?
 
 ```python
 import os
@@ -955,7 +952,7 @@ class DisasterRecoveryManager:
 **目标**: 实现基础备份能力
 
 **任务**:
-- [ ] é
+- [ ]
 
 - Restic集成
 置
@@ -963,7 +960,7 @@ class DisasterRecoveryManager:
 
 
 **任务**:
-- [ ] é
+- [ ]
 
 - 数据库备份管理器
 置
@@ -978,7 +975,7 @@ class DisasterRecoveryManager:
 ---
 
 
-### 8.1 å
+### 8.1
 
 |------|--------|----------|
 
@@ -991,19 +988,19 @@ class DisasterRecoveryManager:
 
 ## 9. 成本效益分析
 
-### 9.1 å¼åææ?
+### 9.1 ?
 
 |------|--------|------|
-| **核心备份功能** | 15小时 | ¥1,500 |
-| **灾难恢复** | 10小时 | ¥1,000 |
-| **总计** | **35小时** | **¥3,500** |
+| **核心备份功能** | 15小时 | 1,500 |
+| **灾难恢复** | 10小时 | 1,000 |
+| **总计** | **35小时** | **3,500** |
 
 ### 9.2 收益评估
 
 |--------|----------|
-| **减少数据丢失损失** | ¥50,000 |
-| **降低运维成本** | ¥10,000 |
-| **总计** | **¥90,000** |
+| **减少数据丢失损失** | 50,000 |
+| **降低运维成本** | 10,000 |
+| **总计** | **90,000** |
 
 **ROI**: (90,000 - 3,500) / 3,500 = 2471%
 
@@ -1019,8 +1016,8 @@ class DisasterRecoveryManager:
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|----------|
-| **RPOè¶
-| **RTOè¶
+| **RPO
+| **RTO
 
 ---
 
@@ -1041,7 +1038,7 @@ class DisasterRecoveryManager:
 
 ---
 
-## 12. åèèµæ?
+## 12. ?
 
 
 - [Restic](https://github.com/restic/restic)
@@ -1056,5 +1053,5 @@ class DisasterRecoveryManager:
 ---
 
 **文档版本**: v1.0.0
-**æåæ´æ?*: 2026-04-07
-å®¡æ ?
+**?*: 2026-04-07
+?

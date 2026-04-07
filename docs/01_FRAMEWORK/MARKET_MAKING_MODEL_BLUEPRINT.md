@@ -151,7 +151,7 @@ class MarketMakingModel:
 
         Returns:
 
-            torch.Tensor: ç¶æåé?        """
+torch.Tensor: ?        """
 
         pass
 
@@ -287,7 +287,7 @@ class MarketMakingRL:
 
         Args:
 
-            state: ç¶æ?            
+state: ?
 
         Returns:
 
@@ -350,7 +350,7 @@ class MarketMakingRL:
 
 
 
-| èç | â?5% |
+|  | ?5% |
 
 | 库存风险 | 受控 |
 

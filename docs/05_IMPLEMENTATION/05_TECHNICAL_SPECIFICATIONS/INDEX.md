@@ -333,27 +333,27 @@ responsibility:
 
 - [Layer 7 AI报告层 - 使用示例与最佳实践](./USAGE_GUIDE.md) - 实施指南文档
 
-- [AIﻟ۰ﻛﺕﭦﻝﭦ۵ﮔﮒﺙﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﻟ۰ﻛﺕﭦﻝﭦ۵ﮔﮒﺙﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](./AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [AIﮒﺁﻟ۶۲ﻠﮔ۶ﮒﺓ۴ﮒﺓﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./AI_EXPLAINABILITY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﮒﺁﻟ۶۲ﻠﮔ۶ﮒﺓ۴ﮒﺓﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](./AI_EXPLAINABILITY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [AIﮒ ﮒ­ﮔﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [AIﮒﮒﮔﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0](./AI_FACTOR_MINER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [AI模式识别引擎技术规格书 v1.0](./AI_PATTERN_RECOGNITION_ENGINE_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [Alpha因子工厂技术规格书 v1.0](./ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./ALTERNATIVE_DATA_INTEGRATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﮒ۵ﻝﺎﭨﮔﺍﮔ؟ﮔﭦﻠﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](./ALTERNATIVE_DATA_INTEGRATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0](./BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﻝﻝ؟۰ﮒﻟ۶ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻝﻝ؟۰ﮒﻟ۶ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](./COMPLIANCE_CHECKER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [ﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?](./DOCUMENT_CLASSIFIER_SPECIFICATION.md) - 技术规格说明
 
 - [EventDetector事件检测模块技术规格书](./EVENT_DETECTOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﮔﻝ،ﺁﮒﺕﮒﭦﮒﭦﮒﺁﺗﮔﭦﮒﭘﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵](./EXTREME_MARKET_HANDLER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﮔﻝ،ﺁﮒﺕﮒﭦﮒﭦﮒﺁﺗﮔﭦﮒﭘﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵](./EXTREME_MARKET_HANDLER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [FeedbackCollector反馈收集技术规格书](./FEEDBACK_COLLECTOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
@@ -373,7 +373,7 @@ responsibility:
 
 - [QlibAlpha158因子模型模块技术规格书](./QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0](./RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [ScenarioAnalyzer情景分析器技术规格书 v1.0](./SCENARIO_ANALYZER_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
@@ -381,9 +381,9 @@ responsibility:
 
 - [SystemMonitor系统监控技术规格书](./SYSTEM_MONITOR_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
-- [[ﮔ۷۰ﮒﮒﻝ۶ﺍ]ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - 技术规格说明
+- [[ﮔ۷۰ﮒﮒﻝ۶ﺍ]ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0](./TECHNICAL_SPECIFICATION_TEMPLATE.md) - 技术规格说明
 
-- [ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0](./TRADING_COST_OPTIMIZATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
+- [ﻛﭦ۳ﮔﮔﮔ؛ﻛﺙﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0](./TRADING_COST_OPTIMIZATION_TECHNICAL_SPECIFICATION.md) - 技术规格说明
 
 - [ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0](./UNIFIED_INTERFACE_CONTRACT_SPECIFICATION.md) - 技术规格说明
 

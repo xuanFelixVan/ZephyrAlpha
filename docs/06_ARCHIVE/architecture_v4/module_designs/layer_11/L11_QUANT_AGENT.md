@@ -4,16 +4,16 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 归档文档、历史版本
 layer: Layer 11
-module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
+module_type: ﮔﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
 estimated_hours: 30
 standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
@@ -29,9 +29,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 > **ﻝﮔ؛**: v1.0  
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
-> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒ­ﻠ۸ﺎﮒ۷ﮒﺎ? 
+> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒﻠ۸ﺎﮒ۷ﮒﺎ?
 > **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
-> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔ ﺕﮒﺟﮔ۷۰ﮒ)
+> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔﺕﮒﺟﮔ۷۰ﮒ)
 
 ---
 
@@ -54,17 +54,17 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 **L11_QUANT_AGENT**ﮔﺁLayer 11ﻝﮔﭦﻟﺛAgentﮔ۷۰ﮒﺅﺙﮒﭦﻛﭦLangChain 1.0ﮔﮒﭨﭦﺅﺙﻟﺑﻟﺑ۲ﮔﭦﻟﺛﮔ۷ﻝﮒﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻙ?
 
-**ﮔ ﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
-- ﻭ۶  **ﮔﭦﻟﺛﮔ۷ﻝ**ﺅﺙﮒﭦﻛﭦLLMﻟﺟﻟ۰ﮒ۳ﮔﮔ۷ﻝ
+**ﮔﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
+- ﻭ۶ **ﮔﭦﻟﺛﮔ۷ﻝ**ﺅﺙﮒﭦﻛﭦLLMﻟﺟﻟ۰ﮒ۳ﮔﮔ۷ﻝ
 - ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓﻠ
-- ﻭ­ **ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ**ﺅﺙﻝ؟۰ﻝﮒﺁﺗﻟﺁﮒﮒﺎﮒﻠﺟﮔﻟ؟ﺍﮒﺟ
+- ﻭ **ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ**ﺅﺙﻝ؟۰ﻝﮒﺁﺗﻟﺁﮒﮒﺎﮒﻠﺟﮔﻟ؟ﺍﮒﺟ
 - ﻭ۰ﺅﺕ?**ﮒ؟ﮒ۷ﮔ۶ﮒﭘ**ﺅﺙPIIﮔ۲ﮔﭖﮒﮔﻠﮔ۶ﮒﭘ
-- ﻭ **ﮔ۶ﻟﺛﻝﮔ۶**ﺅﺙﻝﮔ۶Agentﮔ۶ﻟﺛﮔﮔ 
+- ﻭ **ﮔ۶ﻟﺛﻝﮔ۶**ﺅﺙﻝﮔ۶Agentﮔ۶ﻟﺛﮔﮔ
 
-### 1.2 ﮔﮔﺁﮔ 
+### 1.2 ﮔﮔﺁﮔ
 
 ```yaml
-ﮔ ﺕﮒﺟﮔ۰ﮔﭘ:
+ﮔﺕﮒﺟﮔ۰ﮔﭘ:
   - LangChain 1.0: Agentﮔ۰ﮔﭘ
   - LangGraph: ﻝﭘﮔﮒﺝﮔ۶ﻟ۰ﮒﺙﮔ
   - LangSmith: ﻝﮔ۶ﮒﻟﺍﻟﺁﮒﺗﺏﮒ?
@@ -95,12 +95,12 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
   - ﮒﺁﺗﻟﺁﻛﺕﻛﺕﮔ?
 
 ﻟﺝﮒﭦ:
-  - ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮒﺏﻝ­
+- ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮒﺏﻝ
   - ﮔ۶ﻟ۰ﻝﭨﮔ
   - ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟
 
 ﻛﺕﮒﮒ?
-  - ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲ (ﻝﺎTEXT_DRIVERﻟﺑﻟﺑ۲)
+- ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲ (ﻝﺎTEXT_DRIVERﻟﺑﻟﺑ۲)
   - UIﮔﺕﺎﮔ (ﻝﺎWEB_UIﻟﺑﻟﺑ۲)
   - ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ (ﻝﺎTOOLSﻟﺑﻟﺑ۲)
 ```
@@ -121,10 +121,10 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
 ﻗ?                       ﻗ?                               ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
-ﻗ? ﻗ? AgentCore (Agentﮔ ﺕﮒﺟ)                          ﻗ?  ﻗ?
+ﻗ? ﻗ? AgentCore (Agentﮔﺕﮒﺟ)                          ﻗ?  ﻗ?
 ﻗ? ﻗ? ﻗﻗ ReActLoop (ﮔ۷ﻝﮒﺝ۹ﻝﺁ)                        ﻗ?  ﻗ?
 ﻗ? ﻗ? ﻗﻗ ToolSelector (ﮒﺓ۴ﮒﺓﻠﮔ۸)                     ﻗ?  ﻗ?
-ﻗ? ﻗ? ﻗﻗ DecisionMaker (ﮒﺏﻝ­ﮒ?                      ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ DecisionMaker (ﮒﺏﻝﮒ?                      ﻗ?  ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
 ﻗ?                       ﻗ?                               ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
@@ -152,7 +152,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ### 2.2 ReActﮒﺝ۹ﻝﺁ
 
-**LangChain 1.0ﮔ ﮒﮒReActﮒﺝ۹ﻝﺁ**ﺅﺙ?
+**LangChain 1.0ﮔﮒﮒReActﮒﺝ۹ﻝﺁ**ﺅﺙ?
 
 ```python
 # ReActﮒﺝ۹ﻝﺁﺅﺙReason ﻗ?Act ﻗ?Observe ﻗ?Decide
@@ -172,10 +172,10 @@ class ReActLoop:
         # 3. Observe (ﻟ۶ﮒﺁ)
         observation = self.observe(action)
         
-        # 4. Decide (ﮒﺏﻝ­)
+# 4. Decide (ﮒﺏﻝ)
         decision = self.decide(observation)
         
-        # ﮒﺝ۹ﻝﺁﻝﺑﮒﺍﮒﺝﮒﺍﮔﻝﭨﻝ­ﮔ۰?
+# ﮒﺝ۹ﻝﺁﻝﺑﮒﺍﮒﺝﮒﺍﮔﻝﭨﻝﮔ۰?
         while not decision.is_final:
             thought = self.reason(observation)
             action = self.act(thought)
@@ -185,7 +185,7 @@ class ReActLoop:
         return decision.answer
 ```
 
-### 2.3 ﮔ ﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
+### 2.3 ﮔﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
 
 ```python
 from langchain.agents import create_agent
@@ -201,7 +201,7 @@ class QuantTradingAgent:
         ﮒﮒ۶ﮒAgent
         
         Args:
-            config: ﻠﻝﺛ؟ﮒ­ﮒﺕ
+config: ﻠﻝﺛ؟ﮒﮒﺕ
                 - model_name: ﮔ۷۰ﮒﮒﻝ۶ﺍ
                 - tools: ﮒﺓ۴ﮒﺓﮒﻟ۰۷
                 - system_prompt: ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
@@ -261,41 +261,41 @@ class QuantTradingAgent:
             result = self.agent.invoke({"input": user_input})
             return result["output"]
         except Exception as e:
-            return f"ﮔﺎﮔ­ﺅﺙﮒ۳ﻝﮔ۷ﻝﻟﺁﺓﮔﺎﮔﭘﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙ{str(e)}"
+return f"ﮔﺎﮔﺅﺙﮒ۳ﻝﮔ۷ﻝﻟﺁﺓﮔﺎﮔﭘﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙ{str(e)}"
     
     def _default_prompt(self) -> str:
         """ﻠﭨﻟ؟۳ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?""
-        return """ﻛﺛ ﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝAIﮒ۸ﮔﺅﺙﻛﺕﻠ۷ﮒﺕ؟ﮒ۸ﻝ۷ﮔﺓﻠﻟﺟﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮔﻛﺛﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻙ?
+return """ﻛﺛﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝAIﮒ۸ﮔﺅﺙﻛﺕﻠ۷ﮒﺕ؟ﮒ۸ﻝ۷ﮔﺓﻠﻟﺟﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻛﺛﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻙ?
 
-## ﻛﺛ ﻝﻟﭦ،ﻛﭨﺛ
+## ﻛﺛﻝﻟﭦ،ﻛﭨﺛ
 - ﻛﺕﻛﺕﻠﮒﻛﭦ۳ﮔﻠ۰ﺝﻠ؟
 - ﻝﺏﭨﻝﭨﮔﻛﺛﮒ۸ﮔ
 - ﻠ۲ﻠ۸ﻝ؟۰ﻝﻛﺕﮒ؟ﭘ
 
-## ﻛﺛ ﻝﻟﺛﮒ
-1. **ﻝ­ﻝ۴ﻠﻝﺛ؟**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻝ­ﻝ۴ﮔﻟﺟﺍﺅﺙﮔﮒﮒﮔﺍﮒﺗﭘﻠﻝﺛ؟
+## ﻛﺛﻝﻟﺛﮒ
+1. **ﻝﻝ۴ﻠﻝﺛ؟**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻝﻝ۴ﮔﻟﺟﺍﺅﺙﮔﮒﮒﮔﺍﮒﺗﭘﻠﻝﺛ؟
 2. **ﻠ۲ﮔ۶ﻟﺍﮔﺑ**ﺅﺙﻝﻟ۶۲ﻠ۲ﻠ۸ﮒﮒ۴ﺛﺅﺙﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ
-3. **ﻝﭘﮔﮔ۴ﻟﺁ?*ﺅﺙﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔﮒﺗﭘﻝ۷ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
-4. **ﮒﮔﭖﮒﮔ**ﺅﺙﻟﺟﻟ۰ﻝ­ﻝ۴ﮒﮔﭖﺅﺙﮒﮔﻝﭨﮔ
-5. **ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟**ﺅﺙﮔ ﺗﮔ؟ﮒﺕﮒﭦﮔﮒﭖﻝﭨﮒﭦﻛﺕﻛﺕﮒﭨﭦﻟ؟?
+3. **ﻝﭘﮔﮔ۴ﻟﺁ?*ﺅﺙﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔﮒﺗﭘﻝ۷ﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﻠ۵
+4. **ﮒﮔﭖﮒﮔ**ﺅﺙﻟﺟﻟ۰ﻝﻝ۴ﮒﮔﭖﺅﺙﮒﮔﻝﭨﮔ
+5. **ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟**ﺅﺙﮔﺗﮔ؟ﮒﺕﮒﭦﮔﮒﭖﻝﭨﮒﭦﻛﺕﻛﺕﮒﭨﭦﻟ؟?
 
 ## ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
 1. ﮒﮔﻝ۷ﮔﺓﮔﮒﺝﺅﺙﻠﻝﺛ?ﮔ۴ﻟﺁ۱/ﻟﺍﮔﺑ/ﮒﭨﭦﻟ؟؟ﺅﺙ?
 2. ﮔﮒﮒﺏﻠ؟ﮒﮔﺍ
 3. ﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒ?
-4. ﮒﺍﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﮒ۴ﺛﻝﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﻠ۵
+4. ﮒﺍﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﮒ۴ﺛﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﻠ۵
 
-## ﻛﺕﻛﺕﮔﺁﻟﺁ­ﮔ ﮒﺍ
-- "ﮒ۷ﻠﻝ­ﻝ۴" ﻗ?momentum
-- "ﻛﭨﺓﮒﺙﻝ­ﻝ? ﻗ?value
-- "ﻟﺑ۷ﻠﻝ­ﻝ۴" ﻗ?quality
-- "ﮔﻠﺟﻝ­ﻝ۴" ﻗ?growth
+## ﻛﺕﻛﺕﮔﺁﻟﺁﮔﮒﺍ
+- "ﮒ۷ﻠﻝﻝ۴" ﻗ?momentum
+- "ﻛﭨﺓﮒﺙﻝﻝ? ﻗ?value
+- "ﻟﺑ۷ﻠﻝﻝ۴" ﻗ?quality
+- "ﮔﻠﺟﻝﻝ۴" ﻗ?growth
 - "ﮔﻛﭨ5ﮒ۳? ﻗ?holding_period=5
-- "ﮔ­۱ﮔ10%" ﻗ?stop_loss=0.10
+- "ﮔ۱ﮔ10%" ﻗ?stop_loss=0.10
 - "ﮔﮒ۳۶ﮒﮔ?5%" ﻗ?max_drawdown=0.15
 - "ﮒﮒ۹ﻛﭨﻛﺛ5%" ﻗ?position_limit=0.05
 
-## ﮒﮒ۳ﻠ۲ﮔ ﺙ
+## ﮒﮒ۳ﻠ۲ﮔﺙ
 - ﻛﺕﻛﺕﻛﺛﻛﺕﮔ۵ﮔﭘ۸
 - ﻝ؟ﮔﺑﻛﺛﻛﺕﮒ۳ﺎﻝﭨﻟ
 - ﮒﮒ۴ﺛﻛﺛﻛﺟﮔﻛﺕﻛﺕ?
@@ -330,13 +330,13 @@ class LocalModelManager:
                 "size": "9.0GB",
                 "vram": "~10GB",
                 "strength": "ﮔ۷ﻝﮒﺙ?,
-                "use_case": "ﻝ­ﻝ۴ﻠﻝﺛ؟"
+"use_case": "ﻝﻝ۴ﻠﻝﺛ؟"
             },
             "qwen2.5-coder:14b": {
                 "size": "9.0GB",
                 "vram": "~10GB",
                 "strength": "ﻝﺙﻝ۷ﮒﺙ?,
-                "use_case": "ﻛﭨ۲ﻝ ﻝﮔ"
+"use_case": "ﻛﭨ۲ﻝﻝﮔ"
             },
             "qwen3-coder:30b": {
                 "size": "18GB",
@@ -388,7 +388,7 @@ class CloudModelManager:
             "qwen-max": {
                 "provider": "alibaba",
                 "cost": "ﺡ۴0.01/1k tokens",
-                "strength": "ﻛﺕ­ﮔﻝﻟ۶۲"
+"strength": "ﻛﺕﮔﻝﻟ۶۲"
             }
         }
     
@@ -428,11 +428,11 @@ class ModelRouter:
         if intent == "query_status":
             return "deepseek-r1:8b"
         
-        # 2. ﻝ­ﻝ۴ﻠﻝﺛ؟ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
+# 2. ﻝﻝ۴ﻠﻝﺛ؟ ﻗ?ﮔ؛ﮒﺍﻛﺕﮔ۷۰ﮒ?
         elif intent == "configure_strategy":
             return "deepseek-r1:14b"
         
-        # 3. ﻛﭨ۲ﻝ ﻝﮔ ﻗ?ﮔ؛ﮒﺍﻝﺙﻝ۷ﮔ۷۰ﮒ
+# 3. ﻛﭨ۲ﻝﻝﮔ ﻗ?ﮔ؛ﮒﺍﻝﺙﻝ۷ﮔ۷۰ﮒ
         elif intent == "generate_code":
             return "qwen2.5-coder:14b"
         
@@ -444,7 +444,7 @@ class ModelRouter:
         elif intent == "urgent_task":
             return "gpt-4-turbo"
         
-        # 6. ﻠﭨﻟ؟۳ ﻗ?ﮔ؛ﮒﺍﻛﺕ­ﮔ۷۰ﮒ?
+# 6. ﻠﭨﻟ؟۳ ﻗ?ﮔ؛ﮒﺍﻛﺕﮔ۷۰ﮒ?
         else:
             return "deepseek-r1:14b"
     
@@ -470,7 +470,7 @@ class ModelRouter:
 from langchain.tools import Tool
 
 class ToolRegistry:
-    """ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕ­ﮒﺟ"""
+"""ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕﮒﺟ"""
     
     def __init__(self):
         self.tools = {}
@@ -498,19 +498,19 @@ class ToolRegistry:
 class ToolCategories:
     """ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ"""
     
-    # ﻝ­ﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
+# ﻝﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     STRATEGY_TOOLS = [
-        "ﻠﻝﺛ؟ﻝ­ﻝ۴",
-        "ﻛﺟ؟ﮔﺗﻝ­ﻝ۴",
-        "ﮒ ﻠ۳ﻝ­ﻝ۴",
-        "ﮒﺁﮒ۷ﻝ­ﻝ۴",
-        "ﮒﮔ­۱ﻝ­ﻝ۴"
+"ﻠﻝﺛ؟ﻝﻝ۴",
+"ﻛﺟ؟ﮔﺗﻝﻝ۴",
+"ﮒﻠ۳ﻝﻝ۴",
+"ﮒﺁﮒ۷ﻝﻝ۴",
+"ﮒﮔ۱ﻝﻝ۴"
     ]
     
     # ﻠ۲ﮔ۶ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     RISK_TOOLS = [
         "ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ",
-        "ﻟ؟ﺝﻝﺛ؟ﮔ­۱ﮔﮔ­۱ﻝ",
+"ﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔﮔ۱ﻝ",
         "ﻟﺍﮔﺑﻛﭨﻛﺛﻠﮒﭘ"
     ]
     
@@ -555,7 +555,7 @@ class ToolExecutor:
         if not tool:
             return {
                 "success": False,
-                "error": f"ﮒﺓ۴ﮒﺓ {tool_name} ﻛﺕﮒ­ﮒ?
+"error": f"ﮒﺓ۴ﮒﺓ {tool_name} ﻛﺕﮒﮒ?
             }
         
         # 2. ﮒﮔﺍﻠ۹ﻟﺁ
@@ -600,7 +600,7 @@ class ConversationMemory:
         self.max_history = max_history
     
     def add(self, role: str, content: str):
-        """ﮔﺓﭨﮒ ﮒﺁﺗﻟﺁ"""
+"""ﮔﺓﭨﮒﮒﺁﺗﻟﺁ"""
         if role == "user":
             self.memory.chat_memory.add_user_message(content)
         else:
@@ -635,7 +635,7 @@ class LongTermMemory:
         )
     
     def store(self, text: str, metadata: dict = None):
-        """ﮒ­ﮒ۷ﻟ؟ﺍﮒﺟ"""
+"""ﮒﮒ۷ﻟ؟ﺍﮒﺟ"""
         self.vectorstore.add_texts(
             texts=[text],
             metadatas=[metadata] if metadata else None
@@ -773,17 +773,17 @@ class AuditLogger:
 
 ## 7. ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 7.1 ﮔ۷۰ﮒﻝﺙﮒ­
+### 7.1 ﮔ۷۰ﮒﻝﺙﮒ
 
 ```python
 from functools import lru_cache
 
 class ModelCache:
-    """ﮔ۷۰ﮒﻝﺙﮒ­"""
+"""ﮔ۷۰ﮒﻝﺙﮒ"""
     
     @lru_cache(maxsize=10)
     def get_model(self, model_name: str):
-        """ﻟﺓﮒﮔ۷۰ﮒﺅﺙﮒﺕ۵ﻝﺙﮒ­ﺅﺙ?""
+"""ﻟﺓﮒﮔ۷۰ﮒﺅﺙﮒﺕ۵ﻝﺙﮒﺅﺙ?""
         return ChatOpenAI(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
@@ -825,7 +825,7 @@ class PerformanceMonitor:
         }
     
     def record(self, metric: str, value: float):
-        """ﻟ؟ﺍﮒﺛﮔﮔ """
+"""ﻟ؟ﺍﮒﺛﮔﮔ"""
         self.metrics[metric].append(value)
     
     def get_stats(self, metric: str) -> dict:
@@ -865,8 +865,8 @@ def test_model_routing():
     model = router.route("ﮔ۴ﻟﺁ۱ﻝﭘﮔ?, "query_status")
     assert model == "deepseek-r1:8b"
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟ﻟﺓﺁﻝﺎ
-    model = router.route("ﻠﻝﺛ؟ﻝ­ﻝ۴", "configure_strategy")
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟ﻟﺓﺁﻝﺎ
+model = router.route("ﻠﻝﺛ؟ﻝﻝ۴", "configure_strategy")
     assert model == "deepseek-r1:14b"
 ```
 
@@ -877,9 +877,9 @@ def test_end_to_end_conversation():
     """ﻝ،ﺁﮒﺍﻝ،ﺁﮒﺁﺗﻟﺁﮔﭖﻟﺁ?""
     agent = QuantTradingAgent(config)
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟
-    response = agent.chat("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%")
-    assert "ﻝ­ﻝ۴" in response
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟
+response = agent.chat("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%")
+assert "ﻝﻝ۴" in response
     
     # ﮔﭖﻟﺁﮒ۳ﻟﺛ؟ﮒﺁﺗﻟﺁ
     response = agent.chat("ﻟﺟﻟ۰ﮒﮔﭖ")
@@ -924,9 +924,9 @@ agent:
       - name: "deepseek-r1:8b"
         use_case: "ﻝ؟ﮒﮔ۴ﻟﺁ?
       - name: "deepseek-r1:14b"
-        use_case: "ﻝ­ﻝ۴ﻠﻝﺛ؟"
+use_case: "ﻝﻝ۴ﻠﻝﺛ؟"
       - name: "qwen2.5-coder:14b"
-        use_case: "ﻛﭨ۲ﻝ ﻝﮔ"
+use_case: "ﻛﭨ۲ﻝﻝﮔ"
       - name: "qwen3-coder:30b"
         use_case: "ﮒ۳ﮔﮒﮔ"
     
@@ -959,17 +959,17 @@ agent:
 
 ## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 
-### ﮔ ﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
+### ﮔﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
 | [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
 | [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔﻙﮒﻛﺕAIﮒﺎﻟ؟ﺝﻟ؟?|
 | [Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?|
-| [ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ﻙﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒ?|
+| [ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ﻙﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒ?|
 
 ---
 
 > **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
 > **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝ ﮒ؟ﮔﺛ
+> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝﮒ؟ﮔﺛ

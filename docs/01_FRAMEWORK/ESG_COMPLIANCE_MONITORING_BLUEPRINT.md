@@ -346,7 +346,7 @@ class ESGDataCollector:
                 category=ESGCategory.ENVIRONMENTAL,
                 metric_name='total_water_withdrawal',
                 metric_value=10000.0,
-                unit='m³',
+unit='m',
                 reporting_period='2025',
                 data_source='company_report',
                 last_updated=datetime.now()

@@ -90,8 +90,8 @@ def handle_missing_values(factor_data, method='median', threshold=0.3):
 
 | 方法 | 说明 | 阈?|
 |------|------|------|
-| 3σ原则 | 正态分布假?| mean±3*std |
-| MAD | 绝对中位数法 | median±3*MAD |
+| 3σ原则 | 正态分布假?| mean3*std |
+| MAD | 绝对中位数法 | median3*MAD |
 | 分位?| 非参数方?| 1%?9%分位 |
 
 ### 3.2 Python实现

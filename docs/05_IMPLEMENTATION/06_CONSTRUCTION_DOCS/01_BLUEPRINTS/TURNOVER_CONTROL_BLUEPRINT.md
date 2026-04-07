@@ -120,7 +120,7 @@ class TurnoverController:
 
 ---
 
-## 3. é
+## 3.
 
 ```yaml
 turnover_control:
@@ -133,8 +133,7 @@ turnover_control:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -151,8 +150,8 @@ turnover_control:
 | **PyPortfolioOpt** | 1.5+ | 约束系统 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

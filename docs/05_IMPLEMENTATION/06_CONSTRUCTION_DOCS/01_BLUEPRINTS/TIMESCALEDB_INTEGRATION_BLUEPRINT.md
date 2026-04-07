@@ -85,15 +85,14 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择TimescaleDB
 
-| ç¹æ?| TimescaleDB | InfluxDB | QuestDB |
+| ?| TimescaleDB | InfluxDB | QuestDB |
 |------|-------------|----------|---------|
-| SQLå
-¨å
-¼å®¹ |
+| SQL
+|
 
 ### 1.2 核心优势
 
-1. **PostgreSQLå
+1. **PostgreSQL
 4. **单机友好**: 个人开发场景最佳选择
 
 ---
@@ -103,17 +102,17 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-â?                                                                â?
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-â?                                                                â?
+?                                                                ?
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+?                                                                ?
 ```
 
 ### 2.2 数据模型设计
 
 ```sql
--- è¡æ
-çº§è¡?
+--
+?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -149,7 +148,7 @@ SELECT create_hypertable('stock_klines', 'time',
     number_partitions => 4
 );
 
-çº§è¡?
+?
 CREATE TABLE factor_values (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -252,7 +251,6 @@ SELECT add_retention_policy('factor_values', INTERVAL '1 year');
 
 ## 4. Python接口设计
 
-¥æ¥å£
 
 ```python
 from typing import List, Dict, Optional
@@ -262,15 +260,15 @@ from psycopg2.extras import execute_values
 import pandas as pd
 
 class TimescaleDBWriter:
-¥å?""
+?""
     
     def __init__(self, connection_string: str):
         self.conn = psycopg2.connect(connection_string)
         self.cursor = self.conn.cursor()
     
     def write_ticks(self, ticks: List[Dict]) -> int:
-        """æ¹éåå
-¥Tickæ°æ®"""
+"""
+Tick"""
         sql = """
         INSERT INTO stock_ticks 
         (time, symbol, price, volume, bid_price, ask_price, bid_volume, ask_volume)
@@ -288,7 +286,7 @@ class TimescaleDBWriter:
         return len(values)
     
     def write_klines(self, klines: pd.DataFrame) -> int:
-        """æ¹éåå
+"""
         sql = """
         INSERT INTO stock_klines 
         (time, symbol, interval, open, high, low, close, volume, amount)
@@ -306,7 +304,7 @@ class TimescaleDBWriter:
         return len(values)
     
     def write_factors(self, factors: pd.DataFrame) -> int:
-        """æ¹éåå
+"""
         sql = """
         INSERT INTO factor_values 
         (time, symbol, factor_id, value, quality)
@@ -497,15 +495,14 @@ WHERE symbol = '000001.SZ'
 AND bucket > NOW() - INTERVAL '7 days';
 ```
 
-### 5.3 æ¹éåå
-¥ä¼å
+### 5.3
 
 ```python
 import asyncio
 from asyncpg import create_pool
 
 class AsyncTimescaleDBWriter:
-¥å?""
+?""
     
     def __init__(self, connection_string: str, pool_size: int = 5):
         self.connection_string = connection_string
@@ -521,7 +518,7 @@ class AsyncTimescaleDBWriter:
         )
     
     async def write_ticks_batch(self, ticks: List[Dict]) -> int:
-¥"""
+"""
         async with self.pool.acquire() as conn:
             values = [
                 (t['time'], t['symbol'], t['price'], t['volume'])
@@ -545,7 +542,7 @@ class AsyncTimescaleDBWriter:
 ### 6.1 性能监控
 
 ```sql
--- æ¥çè¶
+--
 SELECT * FROM timescaledb_information.hypertables;
 
 SELECT * FROM timescaledb_information.compression_settings;
@@ -647,7 +644,7 @@ volumes:
 -- 启用TimescaleDB扩展
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
-çº§è¡?
+?
 CREATE TABLE stock_ticks (
     time        TIMESTAMPTZ NOT NULL,
     symbol      VARCHAR(20) NOT NULL,
@@ -672,7 +669,7 @@ SELECT add_retention_policy('stock_ticks', INTERVAL '30 days');
 
 ---
 
-## 8. ä¸å
+## 8.
 
 ### 8.1 与ClickHouse集成
 
@@ -690,8 +687,8 @@ class TimescaleDBToClickHouse:
         ) TO STDOUT WITH CSV HEADER
         """
         
-        # 2. å¯¼å
-¥å°ClickHouse
+# 2.
+ClickHouse
 ```
 
 ### 8.2 与Redis集成
@@ -700,10 +697,10 @@ class TimescaleDBToClickHouse:
 class TimescaleDBRedisCache:
     
     def get_latest_price_with_cache(self, symbol: str) -> float:
-        # 1. å
+# 1.
         # 2. 缓存未命中则查TimescaleDB
-        # 3. åå
-¥Redisç¼å­
+# 3.
+Redis
 ```
 
 ---

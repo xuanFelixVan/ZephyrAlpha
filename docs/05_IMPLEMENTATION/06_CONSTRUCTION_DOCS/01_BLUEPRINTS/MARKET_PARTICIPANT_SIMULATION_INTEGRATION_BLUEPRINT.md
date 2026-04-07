@@ -8,7 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - åä¸è
+-
   - 模拟结果应用
 layer: Layer 5 (策略执行层)
 ---
@@ -100,7 +100,7 @@ Layer 0: 数据源层
     ├─ 主力智能?(InstitutionalAgent)
     ├─ 散户智能?(RetailAgent)
     └─ 市场模拟引擎 (MarketSimulationEngine)
-    ?Layer 3: èæ
+?Layer 3:
 分析?    ?Layer 4: 机器学习?    ?Layer 5: 策略执行?    ?Layer 6: 组合优化?    ?Layer 7: AI报告?    ?Layer 8: 人机交互?```
 
 **为什么需要Layer 2.5?*
@@ -134,13 +134,11 @@ class InstitutionalActivityFactor(BaseFactor):
     def calculate(self, data: pd.DataFrame) -> pd.Series:
         """计算主力动向因子
         
-        è¾å
-¥:
-            data: å
+:
+data:
 含价格、成交量、订单簿等数?            
         输出:
             pd.Series: 主力动向因子?(范围[-1, 1])
-¥
             - 绝对值越?强度越大
         """
         # 1. 获取主力智能体的市场微观结构分析
@@ -179,19 +177,19 @@ class InstitutionalActivityFactor(BaseFactor):
         return factor_value
 ```
 
-**æ£æ·æ
+**
 绪因子** (RetailSentimentFactor)
 
 ```python
 class RetailSentimentFactor(BaseFactor):
-    """æ£æ·æ
+"""
 绪因子
     
     索引: FACTOR.RETAIL.001
     Layer: Layer 2 (Alpha因子?
     数据? Layer 2.5 散户智能体输?    
     因子构成:
-    1. å¸åºæ
+1.
 绪指数 (MarketSentimentIndex)
     2. 羊群效应强度 (HerdingIntensity)
     3. 散户持仓变化 (RetailHoldingChange)
@@ -205,7 +203,7 @@ class RetailSentimentFactor(BaseFactor):
 绪因子
         
         输出:
-            pd.Series: æ£æ·æ
+pd.Series:
 绪因子?(范围[-1, 1])
 绪乐观(可能见顶)
 绪悲观(可能见底)
@@ -326,7 +324,7 @@ class AgentBasedFactorLibrary:
         """计算所有智能体因子
         
         输出:
-            pd.DataFrame: å
+pd.DataFrame:
 含所有因子值的DataFrame
         """
         factor_values = {}
@@ -347,7 +345,7 @@ class AgentBasedFactorLibrary:
         
         集成方式:
         1. 直接拼接 (新增3个因子列)
-±çº¿?
+?
         3. 因子标准?(统一量纲)
         """
         # 1. 直接拼接
@@ -698,7 +696,6 @@ class PortfolioOptimizerWithAgents:
     Layer: Layer 6 (组合优化?
     
     集成方式:
-éª
     2. 因子模型作为收益预测
     3. 风险模型作为风险约束
     4. 优化求解最终权?    """
@@ -719,7 +716,7 @@ class PortfolioOptimizerWithAgents:
         优化流程:
         3. 风险模型计算风险
         4. 优化求解最终权?        """
-éªæ?        voting_result = self.voting_system.vote_on_portfolio(
+?        voting_result = self.voting_system.vote_on_portfolio(
             market_state, current_portfolio
         )
         prior_weights = voting_result.target_weights
@@ -757,12 +754,11 @@ class PortfolioOptimizerWithAgents:
         
         优化目标:
         
-        å
-¶ä¸­:
+:
         - w: 组合权重
         - μ: 预期收益
         - λ: 风险厌恶系数
-        - Î³: å
+- :
         """
         import cvxpy as cp
         
@@ -778,7 +774,7 @@ class PortfolioOptimizerWithAgents:
         
         # 目标函数
         lambda_risk = self.config.risk_aversion  # 风险厌恶系数
-        gamma_prior = self.config.prior_deviation_penalty  # å
+gamma_prior = self.config.prior_deviation_penalty  #
         
         objective = cp.Maximize(
             mu @ w - 
@@ -789,7 +785,7 @@ class PortfolioOptimizerWithAgents:
         # 约束条件
         constraints_list = [
             cp.sum(w) == 1,  # 权重和为1
-            w >= 0,  # ä¸å
+w >= 0,  #
         
         # 求解
         problem = cp.Problem(objective, constraints_list)
@@ -848,17 +844,17 @@ class PortfolioOptimizerWithAgents:
 - 集成到组合优化器
 - 实盘验证决策效果
 
-### 4.2 ä¼å
+### 4.2
 级建?
-**é«ä¼å
-çº§** (å¿
+**
+** (
 须实现):
 1. ?因子输出层集?(最简?最直接)
 2. ?信号输出层集?(核心功能)
 
 3. ?决策输出层集?(高级功能)
 
-**ä½ä¼å
+**
 4. ⏸️ 市场模拟引擎 (计算密集,可后期优?
 
 ### 4.3 技术选型建议
@@ -876,19 +872,19 @@ class PortfolioOptimizerWithAgents:
 ### 核心答案
 
 
-¥** (Layer 2):
+** (Layer 2):
 绪因?   - 与现?700+因子无缝集成
    - 供多因子模型使用
 
-¥** (Layer 5):
+** (Layer 5):
    - 生成买卖信号、仓位建议、风险预?   - 与现有策略框架协同工?   - 增强策略信号质量
 
-¥** (Layer 6):
+** (Layer 6):
    - 通过多智能体投票机制优化组合
    - 与现有组合优化器集成
    - 提升决策质量
 
-### å
+###
 
 之间的交互
 - ?**灵活可扩?*: 可单独或组合使用各层输出

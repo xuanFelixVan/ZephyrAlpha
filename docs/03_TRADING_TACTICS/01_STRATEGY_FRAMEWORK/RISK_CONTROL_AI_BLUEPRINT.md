@@ -71,18 +71,18 @@ related_documents:
 ### 2.1 整体架构
 
 ```
-â?                                                            â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 风险控制流程
 
 ```
-    â?                                                                       â?
+?                                                                       ?
 ```
 
 ---
@@ -148,7 +148,7 @@ class PreTradeRiskController:
         self,
         portfolio_value: float,
     ) -> Dict[str, float]:
-        """åé
+"""
         total_risk_budget = portfolio_value * max_risk
         
 
@@ -156,7 +156,7 @@ class PreTradeRiskController:
         sharpe_ratios = [s.sharpe_ratio for s in strategies]
         total_sharpe = sum(sharpe_ratios)
         
-        # 3. åé
+# 3.
         risk_budgets = {}
         for strategy in strategies:
             budget = (strategy.sharpe_ratio / total_sharpe) * total_risk_budget
@@ -257,7 +257,6 @@ class InTradeRiskController:
         """执行风险对冲"""
         hedge_requirement = self._calculate_hedge_requirement(portfolio)
         
-·
         hedge_instruments = self._select_hedge_instruments(hedge_requirement)
         
         # 3. 执行对冲交易
@@ -378,7 +377,7 @@ class ExtremeRiskHandler:
         self.systemic_risk_handler = SystemicRiskHandler()
         
     def handle_black_swan(self, event: BlackSwanEvent):
-äºä»?""
+?""
         # 1. 事件识别
         event_type = self._identify_black_swan_type(event)
         
@@ -626,7 +625,7 @@ class RiskControlTextInterface:
 ```
 
 
-ï¼?
+?
 ├─ 策略风险：策略H在当前市场环境下表现不佳
 
 2. 策略H暂停交易
@@ -635,22 +634,22 @@ class RiskControlTextInterface:
 
 
 
- å®æï¼?
- å®æï¼?
- å®æï¼?
- å®æï¼?
+?
+?
+?
+?
 
 
 ├─ 风险降低：约30%
 
 
-2. å
+2.
 况"
 ```
 
 ---
 
-## å
+##
 
 ### 6.1 实施计划
 
@@ -683,12 +682,12 @@ class RiskControlTextInterface:
 
 ---
 
-## å
+##
 
 ### 8.1 文档索引
 
-- **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-- **å
+- **?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **
   - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
   - [COMPLIANCE_MONITORING_BLUEPRINT.md](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md)
   - [LIVE_TRADING_MONITOR_BLUEPRINT.md](../../10_AI_WORKFLOW/LIVE_TRADING_MONITOR_BLUEPRINT.md)
@@ -712,7 +711,7 @@ class RiskControlTextInterface:
 - **模块ID**: RISK_CONTROL_AI_001
 - **蓝图文档**: [RISK_CONTROL_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\RISK_CONTROL_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: ä¸»å¨é£é©æ§å¶
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -720,7 +719,7 @@ class RiskControlTextInterface:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Risk Control Ai** | ä¸»å¨é£é©æ§å¶ | **核心模块** |
+| **Risk Control Ai** |  | **核心模块** |
 
 ### 1.3 版本管理
 

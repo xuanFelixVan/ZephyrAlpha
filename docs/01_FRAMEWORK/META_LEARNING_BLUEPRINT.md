@@ -26,7 +26,7 @@ layer: Layer 3 (策略层)
 
 
 
-# å
+#
 > **核心职责**: 提供meta learning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Meta Learning蓝图设计相关内容
@@ -56,7 +56,6 @@ layer: Layer 3 (策略层)
 
 
 
-å
 
 
 
@@ -79,7 +78,7 @@ layer: Layer 3 (策略层)
 
 
 
-- **Two Sigma**: å
+- **Two Sigma**:
 
 
 
@@ -98,7 +97,7 @@ layer: Layer 3 (策略层)
 ```
 
 
-â?  âââ ...
+?   ...
 
 ├── 高级学习架构
 
@@ -120,19 +119,18 @@ layer: Layer 3 (策略层)
 
 
 
-### 2.3 å
+### 2.3
 
 | 方法 | 描述 | 适用场景 |
 
 |------|------|----------|
 
-³å
 
 | **Prototypical Networks** | 原型网络 | 分类任务 |
 
-| **Matching Networks** | å¹é
+| **Matching Networks** |
 
-| **Meta-SGD** | å
+| **Meta-SGD** |
 
 
 
@@ -140,14 +138,14 @@ layer: Layer 3 (策略层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
 
-| **å
+| **
 
-åæ?|
+?|
 
 
 
@@ -168,7 +166,7 @@ layer: Layer 3 (策略层)
 
 class MetaLearningFramework:
 
-    """å
+"""
 
     
 
@@ -188,7 +186,7 @@ class MetaLearningFramework:
 
     ):
 
-        """åå§åå
+"""
 
         
 
@@ -196,12 +194,12 @@ class MetaLearningFramework:
 
             model: 基础模型
 
-            inner_lr: å
+inner_lr:
 循环学习率
 
             outer_lr: 外循环学习率
 
-            num_inner_steps: å
+num_inner_steps:
 
         pass
 
@@ -219,14 +217,14 @@ class MetaLearningFramework:
 
     ) -> Dict[str, float]:
 
-        """å
-è®­ç»?        
+"""
+?
 
         Args:
 
             task_distribution: 任务分布
 
-            num_epochs: å
+num_epochs:
 
         Returns:
 
@@ -372,8 +370,8 @@ class TaskBatch:
 
 class MetaOptimizer:
 
-    """å
-ä¼åå¨"""
+"""
+"""
 
     
 
@@ -387,12 +385,12 @@ class MetaOptimizer:
 
     ):
 
-        """åå§åå
-ä¼åå?        
+"""
+?
 
         Args:
 
-            meta_lr: å
+meta_lr:
 
 
         pass
@@ -409,11 +407,11 @@ class MetaOptimizer:
 
     ) -> None:
 
-        """å
+"""
 
         Args:
 
-            meta_parameters: å
+meta_parameters:
 
         pass
 
@@ -421,7 +419,7 @@ class MetaOptimizer:
 
 
 
-### 3.2 é
+### 3.2
 
 
 
@@ -431,8 +429,8 @@ class MetaOptimizer:
 
 class MetaLearningConfig:
 
-    """å
-ç½?""
+"""
+?""
 
     
 
@@ -461,7 +459,7 @@ class MetaLearningConfig:
 
 
 
-### 4.1 å
+### 4.1
 
 
 
@@ -471,9 +469,9 @@ class MetaLearningConfig:
 
 
 
-åæ?
+?
 
-    â?å
+?
 
 
 
@@ -511,7 +509,7 @@ torch>=2.0.0
 
 
 
-# å
+#
 
 torchmeta>=1.7.0
 
@@ -530,14 +528,14 @@ numpy>=1.24.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 | RTX 4090 |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 500GB SSD | 1TB NVMe |
@@ -619,7 +617,7 @@ class AssetDeployer:
 
 
 
-| å
+|
 
 
 
@@ -628,13 +626,12 @@ class AssetDeployer:
 
 
 
-### Phase 1: MAMLå®ç° (3å?
+### Phase 1: MAML (3?
 
 
 
 - [ ] MAML算法实现
 
-æµè¯
 
 
 
@@ -666,7 +663,7 @@ class AssetDeployer:
 
 |--------|----------|----------|
 
-| å
+|
 
 
 

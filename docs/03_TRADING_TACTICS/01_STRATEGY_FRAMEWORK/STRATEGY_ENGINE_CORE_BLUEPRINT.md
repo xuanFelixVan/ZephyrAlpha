@@ -31,7 +31,7 @@ implementation_status: 设计阶段
 > - ✅ 本文档负责：Strategy Engine Core蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> æ¸
+>
 
 
 
@@ -41,17 +41,16 @@ implementation_status: 设计阶段
 
 |------|--------|----------|
 | **统一策略接口** | P0 | 遵循API_Contract.md的IStrategyEngine接口 |
-| **é
+| **
 
 ### 1.2 技术约束与原则
 
-2. **æ¥å£å
-é¡»å
-3. **é
+2. **
+3. **
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **alert_manager.py** | 告警通知服务 | 事件总线集成 |
-å?| STRATEGY_ENGINE_BLUEPRINT.md 3.2è?|
+?| STRATEGY_ENGINE_BLUEPRINT.md 3.2?|
 
 
 ```
@@ -71,7 +70,7 @@ class StrategyScanner:
     
     def __init__(self, config_dir: str = "config/strategies"):
         self.config_dir = Path(config_dir)
-        self.cache = {}  # ç­ç¥ID â?(mtime, config_path)
+self.cache = {}  # ID ?(mtime, config_path)
         
     def scan(self, force_refresh: bool = False) -> Dict[str, str]:
         参数:
@@ -109,7 +108,6 @@ class StrategyScanner:
 class StrategyLoader:
     索引: STRAT.ENG.CORE.001-M02
     职责: 动态加载策略模块，验证策略接口
-    è¾å
     """
     
     def __init__(self, module_search_paths: List[str] = None):
@@ -117,8 +115,7 @@ class StrategyLoader:
         
     def load_strategy_class(self, config: Dict) -> Type[BaseStrategy]:
         参数:
-            config: ç­ç¥é
-¸
+config:
             
         返回:
         步骤:
@@ -130,7 +127,7 @@ class StrategyLoader:
         if not module_path or not class_name:
             raise StrategyLoadError("Missing module_path or class_name in config")
             
-¥æ¨¡å?        try:
+?        try:
             if module_path not in self._loaded_modules:
                 module = importlib.import_module(module_path)
                 self._loaded_modules[module_path] = module
@@ -138,7 +135,7 @@ class StrategyLoader:
                 module = self._loaded_modules[module_path]
                 
             
-¼å®¹æ?            self._validate_strategy_interface(strategy_class)
+?            self._validate_strategy_interface(strategy_class)
             
             return strategy_class
             
@@ -148,7 +145,7 @@ class StrategyLoader:
             raise StrategyLoadError(f"Class {class_name} not found in module {module_path}: {e}")
             
     def _validate_strategy_interface(self, strategy_class: Type) -> None:
-¼å®¹æ?""
+?""
         required_methods = [
             'initialize',
             'handle_data', 
@@ -169,12 +166,12 @@ class StrategyRegistry:
     索引: STRAT.ENG.CORE.001-M03
     
     def __init__(self):
-        self._strategies = {}  # ç­ç¥ID â?StrategyMetadata
+self._strategies = {}  # ID ?StrategyMetadata
     def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
-æ°æ?        
+?
         参数:
             strategy_id: 策略ID
-            metadata: ç­ç¥å
+metadata:
         if strategy_id in self._strategies:
             raise StrategyAlreadyRegisteredError(f"Strategy {strategy_id} already registered")
             
@@ -185,7 +182,7 @@ class StrategyRegistry:
         logger.info(f"Registered strategy: {strategy_id} ({metadata.name})")
         
     def get_metadata(self, strategy_id: str) -> StrategyMetadata:
-æ°æ?""
+?""
         if strategy_id not in self._strategies:
             raise StrategyNotFoundError(f"Strategy {strategy_id} not found")
         return self._strategies[strategy_id]
@@ -205,8 +202,8 @@ class StrategyRegistry:
 
 @dataclass
 class StrategyMetadata:
-    """ç­ç¥å
-æ°æ?""
+"""
+?""
     strategy_id: str
     name: str
     description: str
@@ -238,14 +235,12 @@ class ParameterInfo:
 
 ### 3.4 StrategyFactory（策略工厂）
 
-¥
 
 ```python
 class StrategyFactory:
     """策略工厂
     
     索引: STRAT.ENG.CORE.001-M04
-    è¾å
     输出: 策略实例对象
     """
     
@@ -270,7 +265,7 @@ class StrategyFactory:
                 instance.set_parameters(parameter_overrides)
             return instance
             
-æ°æ?        metadata = self.registry.get_metadata(strategy_id)
+?        metadata = self.registry.get_metadata(strategy_id)
         
             'module_path': metadata.module_path,
             'class_name': metadata.class_name
@@ -298,11 +293,11 @@ class StrategyFactory:
             
     def _build_parameters(self, metadata: StrategyMetadata, 
                          overrides: Dict[str, Any] = None) -> Dict[str, Any]:
-¸"""
+"""
         parameters = {}
         
         for param_name, param_info in metadata.parameters.items():
-            # ä¼å
+#
                 value = overrides[param_name]
             else:
                 value = param_info.default
@@ -338,7 +333,7 @@ class StrategyEngine:
         参数:
             strategy_id: 策略ID
             symbols: 股票代码列表
-            date: äº¤ææ?            
+date: ?
         返回:
             List[Signal]: 交易信号列表
             
@@ -418,17 +413,17 @@ class StrategyEngine:
             self.event_bus.publish(StrategyStoppedEvent(strategy_id=strategy_id))
 ```
 
-### 3.6 Layer 11å·¥å
+### 3.6 Layer 11
 
 含AI理解逻辑
 
 含AI理解
-- â?**å·¥å
+- ?**
 
-**å·¥å
+**
 
 |------|------|------|--------|
-| **configure** | é
+| **configure** |
 | **backtest** | 回测策略 | strategy_id, start_date, end_date | 回测结果 |
 | **optimize** | 优化策略参数 | strategy_id, param_ranges | 优化结果 |
 
@@ -436,7 +431,7 @@ class StrategyEngine:
 
 ?strategy_tool = StrategyTool()
 
-# é
+#
     "action": "configure",
     "params": {
         "strategy_type": "momentum",
@@ -449,8 +444,8 @@ class StrategyEngine:
 # 返回结果
 # {
 #     "success": True,
-#     "message": "ç­ç¥é
-ç½®æå",
+#     "message": "
+",
 #     "data": {
 #         "strategy_id": "STRAT_20260402_001",
 #         "status": "configured"
@@ -463,15 +458,14 @@ class EventBus:
     """事件总线
     
     索引: STRAT.ENG.CORE.001-M06
-æ¨¡å¼?    """
+?    """
     
     def __init__(self):
-è
         self._worker_thread = None
         self._running = False
         
     def subscribe(self, event_type: Type[Event], callback: Callable) -> None:
-        """è®¢é
+"""
 事件"""
         self._subscribers[event_type].append(callback)
         
@@ -498,7 +492,7 @@ class EventBus:
                 event = self._queue.get(timeout=1.0)
                 event_type = type(event)
                 
-è?                for callback in self._subscribers[event_type]:
+?                for callback in self._subscribers[event_type]:
                     try:
                         callback(event)
                     except Exception as e:
@@ -554,10 +548,10 @@ class StrategyTimeoutEvent(StrategyEvent):
 ### 4.1 策略发现流程
 
 ```
-1. é
-   â?3. å
+1.
+?3.
 
-### 4.2 é
+### 4.2
 
 ```yaml
 # config/strategies/trend/ma_cross.yaml
@@ -569,12 +563,12 @@ version: "1.0.0"
 created_date: "2026-03-01"
 last_modified: "2026-03-30"
 
-# æ¨¡åé
+#
 置
 module_path: "src.strategies.trend.ma_cross"
 class_name: "MovingAverageCrossStrategy"
 
-# åæ°é
+#
 置
 parameters:
   fast_period:
@@ -587,7 +581,7 @@ parameters:
     default: 50
     min_value: 10
     max_value: 200
-    description: "æ
+description: "
   position_size:
     type: "float"
     default: 0.1
@@ -595,7 +589,7 @@ parameters:
     max_value: 0.5
     description: "仓位大小比例"
 
-# ä¾èµé
+#
 置
 dependencies:
   - "pandas>=1.5.0"
@@ -604,7 +598,7 @@ dependencies:
 # 标签系统
 tags:
   - "趋势跟踪"
-  - "Aè¡ä¼å?
+- "A?
 ```
 
 ```python
@@ -625,7 +619,7 @@ class HotDeploymentManager:
         self.file_watcher.start()
         
     def _on_config_changed(self, event: FileSystemEvent) -> None:
-        """é
+"""
         if event.event_type in ('created', 'modified'):
             
             for strategy_id, config_path in configs.items():
@@ -636,13 +630,12 @@ class HotDeploymentManager:
                     
     def _reload_strategy(self, strategy_id: str, config_path: str) -> None:
         """重新加载策略"""
-ç½?        with open(config_path, 'r') as f:
+?        with open(config_path, 'r') as f:
             new_config = yaml.safe_load(f)
             
         
         strategy_class = loader.load_strategy_class(new_config)
         
-æ°æ®
         metadata = self._create_metadata(new_config, config_path)
         self.registry.update_metadata(strategy_id, metadata)
         
@@ -655,19 +648,17 @@ class HotDeploymentManager:
 
 ```python
 class BacktraderStrategyAdapter:
-å?""
+?""
     
     def __init__(self, strategy_engine: StrategyEngine):
         self.strategy_engine = strategy_engine
         
     def create_backtrader_strategy(self, strategy_id: str) -> bt.Strategy:
-è£
-å?""
+?""
         
         class BacktraderStrategyWrapper(bt.Strategy):
-            """Backtraderç­ç¥å
-è£
-å?""
+"""Backtrader
+?""
             
             params = (
                 ('strategy_id', strategy_id),
@@ -737,17 +728,15 @@ class SystemIntegrator:
 ```
 
 
-## å
-­ãé
+##
 
-### 6.1 å¤å±é
+### 6.1
 
 ```
-é
-çº§ï¼?
+?
 级)
 2. 策略实例参数
-3. ç­ç¥é
+3.
 级)
 ```
 
@@ -762,7 +751,7 @@ class ParameterVersionManager:
     def save_parameter_snapshot(self, strategy_id: str, 
                                parameters: Dict[str, Any],
                                version_note: str = "") -> str:
-§"""
+"""
         version_id = f"v{len(self._versions.get(strategy_id, [])) + 1}"
         
         snapshot = ParameterSnapshot(
@@ -775,7 +764,7 @@ class ParameterVersionManager:
         
         self.storage.save_snapshot(snapshot)
         
-        # æ´æ°å
+#
 存版本列表
         if strategy_id not in self._versions:
             self._versions[strategy_id] = []
@@ -796,7 +785,7 @@ class ParameterVersionManager:
         return snapshot.parameters
 ```
 
-### 6.3 é
+### 6.3
 
 ```python
 CONFIG_VALIDATION_RULES = {
@@ -885,9 +874,7 @@ CACHE_CONFIG = {
     'parameter_snapshots': {
         'max_size': 100,
         'ttl_seconds': 86400,  # 24小时
-        'eviction_policy': 'FIFO'  # å
-è¿å
-åº
+'eviction_policy': 'FIFO'  #
     }
 }
 ```
@@ -916,15 +903,15 @@ class ResourceIsolator:
 ```
 
 
-## å
+##
 
 | 错误类型 | 严重等级 | 处理策略 | 恢复动作 |
 |----------|----------|----------|----------|
-| **é
+| **
 | **加载错误** | ERROR | 立即失败 | 标记策略不可用，通知用户 |
-æ¶** | WARNING | è¶
+** | WARNING |
 时控制 | 终止执行，返回空信号 |
-| **å
+| **
 存溢出** | CRITICAL | 资源隔离 | 重启策略进程 |
 | **数据错误** | WARNING | 数据验证 | 使用默认值或跳过 |
 
@@ -1025,8 +1012,8 @@ prometheus_metrics:
 ```
 
 
-## åãç¸å
-³æ?|
+##
+?|
 |------|------|--------|
 | [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构设计 | ⭐⭐⭐⭐ |
 | [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | 回测系统设计 | ⭐⭐⭐⭐ |
@@ -1034,36 +1021,34 @@ prometheus_metrics:
 ### 10.2 代码实现位置
 
 |------|----------|------|
-| StrategyScanner | `src/modules/strategy_scanner.py` | å¾
-å®ç?|
-| StrategyLoader | `src/modules/strategy_loader.py` | å¾
-å®ç?|
-| StrategyRegistry | `src/modules/strategy_registry.py` | å¾
-å®ç?|
-| StrategyFactory | `src/modules/strategy_factory.py` | å¾
-å®ç?|
-| StrategyEngine | `src/modules/strategy_engine.py` | å¾
-å®ç?|
-| EventBus | `src/core/event_bus.py` | å¾
-å®ç?|
+| StrategyScanner | `src/modules/strategy_scanner.py` |
+?|
+| StrategyLoader | `src/modules/strategy_loader.py` |
+?|
+| StrategyRegistry | `src/modules/strategy_registry.py` |
+?|
+| StrategyFactory | `src/modules/strategy_factory.py` |
+?|
+| StrategyEngine | `src/modules/strategy_engine.py` |
+?|
+| EventBus | `src/core/event_bus.py` |
+?|
 
-### 10.3 é
+### 10.3
 
-| é
+|
 |----------|----------|------|
-| ç­ç¥é
-¨å±é
+|
 置 |
-| ç¼å­é
+|
 置 |
-| çæ§é
+|
 置 |
 
 
 ## 十一、开发里程碑
 
 
-¥
 - [ ] 实现StrategyEngine生命周期管理
 - [ ] 实现EventBus事件系统
 - [ ] 完成基础集成测试
@@ -1082,7 +1067,7 @@ prometheus_metrics:
 - **模块ID**: TACTICS_BLUEPRINT_CORE_001
 - **蓝图文档**: [STRATEGY_ENGINE_CORE_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: ç­ç¥å¼ææ ¸å¿æ¨¡åææ¯è®¾è®?compliance_level: ä¸ä¸æ å
+- **职责**: ?compliance_level: 
 - **状态**: Active
 ```
 
@@ -1090,7 +1075,7 @@ prometheus_metrics:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tactics Blueprint Core** | ç­ç¥å¼ææ ¸å¿æ¨¡åææ¯è®¾è®?compliance_level: ä¸ä¸æ å | **核心模块** |
+| **Tactics Blueprint Core** | ?compliance_level:  | **核心模块** |
 
 ### 1.3 版本管理
 

@@ -100,14 +100,13 @@ layer: Layer 5.4 (交易执行)
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -120,8 +119,8 @@ layer: Layer 5.4 (交易执行)
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 | **Statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -156,7 +155,7 @@ class MarketImpactDataCollector:
     def __init__(self):
         self.data_sources = {
             'trades': TradeDataSource(),      # 交易数据
-            'quotes': QuoteDataSource(),      # è¡æ
+'quotes': QuoteDataSource(),      #
 数据
             'orders': OrderDataSource(),      # 订单数据
             'market': MarketDataSource()      # 市场数据
@@ -226,8 +225,7 @@ class LinearImpactModel:
         """
         预测市场冲击
         
-        æ¨¡åå
-¬å¼:
+:
         Impact = α * (Q/ADV)^β * σ
         
         参数:
@@ -237,7 +235,7 @@ class LinearImpactModel:
         输出:
         - MarketImpact: 冲击预测结果
           - temporary_impact: 临时冲击
-          - permanent_impact: æ°¸ä¹
+- permanent_impact:
 冲击
           - total_impact: 总冲?        """
         participation_rate = order_size / adv
@@ -258,7 +256,7 @@ class AlmgrenChrissModel:
     
     def __init__(self):
         self.sigma = 0.02      # 波动?        self.eta = 0.1         # 临时冲击系数
-        self.gamma = 0.1       # æ°¸ä¹
+self.gamma = 0.1       #
 冲击系数
         
     def predict_impact(
@@ -270,10 +268,8 @@ class AlmgrenChrissModel:
         """
         Almgren-Chriss模型预测
         
-        æ¨¡åå
-¬å¼:
+:
         临时冲击: I_temp = η * (Q/ADV) / T
-        æ°¸ä¹
 冲击: I_perm = γ * (Q/ADV)
         总冲? I_total = I_temp + I_perm
         
@@ -337,7 +333,7 @@ def optimize_execution_strategy(
     参数:
     - symbol: 股票代码
     - order_size: 订单大小（股?    - max_time: 最大执行时间（天）
-    - max_impact: æå¤§å
+- max_impact:
     返回:
     - OptimalStrategy: 最优执行策?      - optimal_time: 最优执行时?      - optimal_participation_rate: 最优参与率
       - expected_impact: 预期冲击
@@ -358,7 +354,7 @@ def monitor_realtime_impact(
     返回:
     - ImpactMonitorResult: 监控结果
       - predicted_impact: 预测冲击
-      - actual_impact: å®é
+- actual_impact:
 冲击
       - deviation: 偏差
       - warning_level: 预警级别（GREEN/YELLOW/RED?    """
@@ -412,7 +408,7 @@ CREATE TABLE impact_predictions (
 );
 ```
 
-#### 4.1.2 å®é
+#### 4.1.2
 冲击记录?
 ```sql
 CREATE TABLE actual_impacts (
@@ -466,13 +462,12 @@ CREATE TABLE model_parameters (
 ### 5.1 线性冲击模型详细说?
 #### 5.1.1 模型原理
 
-³?
+?
 **数学模型**:
 ```
 Impact = α * (Q/ADV)^β * σ
 ```
 
-å
 - ADV: 平均日成交量
 - σ: 波动?
 #### 5.1.2 参数拟合方法
@@ -511,12 +506,10 @@ def fit_linear_model(
 **数学模型**:
 ```
 临时冲击: I_temp = η * (Q/ADV) / T
-æ°¸ä¹
 冲击: I_perm = γ * (Q/ADV)
 总冲? I_total = I_temp + I_perm
 ```
 
-å
 冲击系数
 - Q: 订单大小
 - T: 执行时间（天?- ADV: 平均日成交量
@@ -534,11 +527,10 @@ def optimize_execution_time(
     """
     求解最优执行时?    
     目标函数:
-    Minimize: E[Cost] + Î» * Var[Cost]
+Minimize: E[Cost] +  * Var[Cost]
     
-    å
-¶ä¸­:
-    - E[Cost] = Î· * (Q/ADV) / T + Î³ * (Q/ADV)
+:
+- E[Cost] =  * (Q/ADV) / T +  * (Q/ADV)
     - Var[Cost] = σ^2 * T * (Q/ADV)^2
     - λ: 风险厌恶系数
     
@@ -580,7 +572,7 @@ def optimize_execution_time(
 |------|------|
 | **操作系统** | Windows 10+ / Linux |
 | **Python版本** | 3.9+ |
-| **å
+| **
 存** | ?GB |
 | **存储** | ?GB（历史数据） |
 
@@ -588,12 +580,11 @@ def optimize_execution_time(
 
 ## 7. 测试策略
 
-### 7.1 åå
-æµè¯
+### 7.1
 
 ```python
 class TestLinearImpactModel:
-æµ?""
+?""
     
     def test_impact_prediction(self):
         """测试冲击预测"""
@@ -692,8 +683,7 @@ class TestMarketImpactModel:
 2. ?实现参数拟合
 3. ?实现冲击预测
 4. ?实现成本估算
-5. ?ç¼ååå
-æµè¯
+5. ?
 
 **交付?*:
 - 技术文?
@@ -703,14 +693,13 @@ class TestMarketImpactModel:
 
 单**:
 冲击分?2. ?实现最优执行时间求?3. ?实现策略优化
-4. ?ç¼ååå
-æµè¯
+4. ?
 5. ?性能优化
 
 **交付?*:
 - Almgren-Chriss模型实现代码
 - 策略优化代码
-- åå
+-
 
 ### 10.3 Phase 3: 高级功能实现（可选）
 
@@ -727,8 +716,7 @@ class TestMarketImpactModel:
 
 ---
 
-## 11. ç¸å
-³ææ¡£
+## 11.
 
 ### 11.1 技术规格书
 
@@ -766,16 +754,16 @@ class TestMarketImpactModel:
 ##### 6.001. Market Impact Model
 - **模块ID**: MARKET_IMPACT_MODEL_001
 - **蓝图文档**: MARKET_IMPACT_MODEL_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Market Impact Model** | å
+| **Market Impact Model** |
 
 ### 12.3 版本管理
 

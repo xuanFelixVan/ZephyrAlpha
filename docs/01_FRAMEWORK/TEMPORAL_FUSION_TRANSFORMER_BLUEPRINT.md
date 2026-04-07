@@ -114,7 +114,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -204,7 +204,7 @@ class TemporalFusionTransformer:
 
         Args:
 
-?{åéå? (batch_size,)}
+?{? (batch_size,)}
 
 ?(batch_size, encoder_length, num_features)
 
@@ -277,7 +277,7 @@ class TemporalFusionTransformer:
 
 class TFTDataConfig:
 
-    """TFTæ°æ®é
+"""TFT
 置"""
 
     
@@ -322,7 +322,7 @@ class TFTDataProcessor:
 
             raw_data: 原始数据
 
-            config: æ°æ®é
+config:
 置
 
             
@@ -409,7 +409,7 @@ scikit-learn>=1.3.0
 
 
 
-# å¯è§å?matplotlib>=3.7.0
+# ?matplotlib>=3.7.0
 
 seaborn>=0.12.0
 
@@ -425,14 +425,14 @@ captum>=0.7.0
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
 | GPU | RTX 3080 (10GB) | RTX 4090 (24GB) |
 
-| å
+|
 存 | 32GB | 64GB |
 
 | 存储 | 500GB SSD | 1TB NVMe SSD |
@@ -474,8 +474,7 @@ captum>=0.7.0
 
 
 
-### 6.3 åä½å
-³ç³»
+### 6.3
 
 
 
@@ -554,7 +553,7 @@ class PortfolioOptimizer:
 
 |--------|----------|----------|
 
-æµè¯ |
+|
 
 
 
@@ -598,8 +597,7 @@ class PortfolioOptimizer:
 - [ ] TFT模型架构实现
 
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 

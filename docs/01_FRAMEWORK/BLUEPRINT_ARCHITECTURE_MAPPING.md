@@ -7,7 +7,7 @@ last_updated: 2026-04-02
 owner: 首席架构?standard_type: 架构映射文档
 responsibility:
   - 系统框架、架构设计
-applicable_scope: å
+applicable_scope:
 parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 layer: Layer 2 (Alpha因子层)
 ---
@@ -15,7 +15,6 @@ layer: Layer 2 (Alpha因子层)
 ---
 
 
-³ç³»
 > **核心职责**: Blueprint Architecture Mapping.Md蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Blueprint Architecture Mapping.Md蓝图设计相关内容
@@ -24,7 +23,6 @@ layer: Layer 2 (Alpha因子层)
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-³ç³»
 ---
 
 ## 📊 一、架构体系说?
@@ -46,7 +44,6 @@ layer: Layer 2 (Alpha因子层)
 
 ---
 
-³ç³»
 
 ### 2.1 完整映射?
 | 三级时间框架架构 | Layer定位 | 核心模块 | 技术规格书 |
@@ -62,7 +59,7 @@ layer: Layer 2 (Alpha因子层)
 | 业务模块 | 技术模?| Layer | 职责 |
 |---------|---------|-------|------|
 | 经济范式判断引擎 | EconomicRegimeEngine | Layer 5 | 识别宏观经济周期阶段 |
-| å
+|
 置 |
 
 **技术规格书对应**:
@@ -105,7 +102,7 @@ layer: Layer 2 (Alpha因子层)
 |---------|---------|-------|------|
 | 统一数据基础设施 | UnifiedDataInfrastructure | Layer 0-1 | 多时间框架数据管?|
 | 多时间框架风控体?| MultiTimeframeRiskSystem | Layer 0-11 | 分层风险控制 |
-| å
+|
 | 人机协同决策界面 | HumanAIDecisionInterface | Layer 8 | 授权/监控/报告 |
 
 **技术规格书对应**:
@@ -118,16 +115,16 @@ layer: Layer 2 (Alpha因子层)
 
 基于已完成的蓝图设计,以下技术规格书需要立即生?
 
-?| ç?|
+?| ?|
 |-----------|-------------|-------|--------|------|
-| ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md | å
+| ALL_WEATHER_OPTIMIZER_TECHNICAL_SPECIFICATION.md |
 生?|
 生?|
 生?|
 
 ### 3.2 P2?短期生成)
 
-?| ç?|
+?| ?|
 |-----------|-------------|-------|--------|------|
 生?|
 生?|
@@ -136,7 +133,7 @@ layer: Layer 2 (Alpha因子层)
 
 ### 3.3 P3?中期生成)
 
-?| ç?|
+?| ?|
 |-----------|-------------|-------|--------|------|
 生?|
 生?|
@@ -153,7 +150,6 @@ layer: Layer 2 (Alpha因子层)
 **蓝图位置**: 贯穿支撑系统
 **技术定?*: Layer 8 - 人机交互?
 
-çå
 容**:
 - 授权机制设计
 - 监控界面设计
@@ -165,9 +161,8 @@ layer: Layer 2 (Alpha因子层)
 #### 4.1.2 数据流图(缺失)
 
 
-çå
 容**:
-- å®è§é
+-
 - 中观策略层数据流
 - 微观执行层数据流
 - 跨层数据流转
@@ -175,7 +170,6 @@ layer: Layer 2 (Alpha因子层)
 #### 4.1.3 接口契约(需要细?
 
 
-çå
 容**:
 - 各模块之间的接口定义
 - 数据格式规范
@@ -186,8 +180,8 @@ layer: Layer 2 (Alpha因子层)
 
 #### 4.2.1 同步原则
 
-1. **èå¾å
-è¡**: å
+1. **
+**:
 #### 4.2.2 同步流程
 
 ```
@@ -200,7 +194,7 @@ layer: Layer 2 (Alpha因子层)
 
 ## 📊 五、总结
 
-### 5.1 å½åç?
+### 5.1 ?
 |------|--------|------|
 | **蓝图架构设计** | 95% | ?基本完整 |
 | **技术规格书生成** | 30% | ⚠️ 严重滞后 |

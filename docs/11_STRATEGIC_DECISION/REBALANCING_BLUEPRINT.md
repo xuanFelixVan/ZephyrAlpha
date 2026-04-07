@@ -460,20 +460,20 @@ class RebalanceTriggerEngine:
 
 ```
 最小成本优化:
-min Σ |Δw_i| × Cost_i
+min Σ |Δw_i|  Cost_i
 s.t. |w_i - w_target_i| ≤ ε, ∀i
 
 税务优化:
-min Tax_Cost = Σ max(0, P_i - Cost_Basis_i) × Tax_Rate × Δw_i
+min Tax_Cost = Σ max(0, P_i - Cost_Basis_i)  Tax_Rate  Δw_i
 s.t. 达到目标权重
 
 部分再平衡:
-min Σ |Δw_i| × Cost_i
+min Σ |Δw_i|  Cost_i
 s.t. Σ |Δw_i| ≤ Max_Turnover
      |w_i - w_target_i| ≤ ε', ∀i
 
 风险预算再平衡:
-min Σ (RC_i - RC_target_i)²
+min Σ (RC_i - RC_target_i)
 s.t. Σ w_i = 1
 ```
 
@@ -870,7 +870,7 @@ Risk_Improvement = (σ_before - σ_after) / σ_before
 TE_Improvement = (TE_before - TE_after) / TE_before
 
 综合评分:
-Overall_Score = w1 × Cost_Score + w2 × Risk_Score + w3 × TE_Score
+Overall_Score = w1  Cost_Score + w2  Risk_Score + w3  TE_Score
 ```
 
 #### 2.4.2 技术实现

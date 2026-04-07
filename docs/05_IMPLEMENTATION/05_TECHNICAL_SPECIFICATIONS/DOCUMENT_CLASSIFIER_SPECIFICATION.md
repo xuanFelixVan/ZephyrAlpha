@@ -5,7 +5,7 @@ responsibility:
   - 实施指南、部署文档
   - 文档治理
   - 审计系统
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_CLASSIFIER_SPECIFICATION
@@ -25,7 +25,7 @@ last_updated: 2026-04-02---
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝ؟ﮔ 
+### 1.1 ﻝ؟ﮔ
 
 ﮒ؟ﻛﺗﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮒﻝﺎﭨﮒﻝ؟۰ﻝﮔﮔ۰۲ﻙ?
 ### 1.2 ﻠﻝ۷ﻟﮒﺑ
@@ -37,7 +37,7 @@ last_updated: 2026-04-02---
 
 ## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class DocumentClassifier:
@@ -60,9 +60,9 @@ class DocumentClassifier:
 
 ## 3. ﮒﻟﺛﻟ۶ﻟ
 
-### 3.1 ﮒﻝﺎﭨﮔ ﮒ
+### 3.1 ﮒﻝﺎﭨﮔﮒ
 
-**ﮔ ﮒﮒﻝﺎﭨ**:
+**ﮔﮒﮒﻝﺎﭨ**:
 - 01_FRAMEWORK
 - 02_FACTOR_LIBRARY
 - 03_TRADING_TACTICS
@@ -82,7 +82,7 @@ class DocumentClassifier:
 
 ## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| ﮔﮔ  | ﻟ۵ﮔﺎ |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
 | **ﮒﻝﺎﭨﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
 | **ﮒﻝ۰؟ﻝ?* | ﻗ?5% |
@@ -90,9 +90,9 @@ class DocumentClassifier:
 ---
 
 ## 5. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

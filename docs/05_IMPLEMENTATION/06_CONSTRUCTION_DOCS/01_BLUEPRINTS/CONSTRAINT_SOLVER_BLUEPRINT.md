@@ -86,7 +86,6 @@ layer: Layer 5.2 (组合优化)
 
 > **开发时?*: 60h（约1.5周）
 置
-¨å¯è¡
 > **AI维护难度**: ?
 ## 2. 架构设计
 
@@ -175,17 +174,15 @@ class ConstraintSolver:
             objective: 优化目标
             constraints: 约束条件列表
             variables: 优化变量
-çº§ï¼
             
         Returns:
             SolverResult: 求解结果
         """
-        # 1. æä¼å
+# 1.
         sorted_constraints = self.priority_manager.sort_by_priority(
             constraints, priorities
         )
         
-çº§ï¼
         solution = None
         satisfied_constraints = []
         
@@ -348,7 +345,7 @@ class ConstraintValidator:
     def _are_conflicting(self, c1: Constraint, c2: Constraint) -> bool:
         """判断两个约束是否冲突"""
         # 简化实现：检查约束范围是否有交集
-        # å®é
+#
 实现需要更复杂的逻辑
         return False
     
@@ -478,7 +475,7 @@ class ConstraintRelaxer:
                         c2: Constraint) -> List[Constraint]:
         """软约?""
         # 将硬约束转化为软约束
-        # å
+#
         c1.is_soft = True
         c2.is_soft = True
         
@@ -609,7 +606,7 @@ class BoxConstraint(Constraint):
         return np.all(solution >= self.lower_bounds) and np.all(solution <= self.upper_bounds)
 ```
 
-### 3.6 é
+### 3.6
 ```python
 @dataclass
 class SolverConfig:
@@ -634,7 +631,7 @@ class RelaxConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -765,8 +762,7 @@ class BarraRiskModel:
 - Day 5: 约束松弛?
 **Week 2: 集成与测?*
 - Day 1-2: 与组合优化器集成
-- Day 3: åå
-æµè¯
+- Day 3:
 - Day 4: 集成测试
 - Day 5: 文档编写
 
@@ -808,7 +804,7 @@ class BarraRiskModel:
 需 |
 需 |
 
-### 8.2 å®è£
+### 8.2
 命令
 
 ```bash
@@ -878,7 +874,7 @@ pip install pandas>=1.5
 
 |------|------|--------|
 | **约束松弛** | 放宽约束条件以获得可行解 | 冲突解决 |
-| **ä¼å
+| **
 
 ---
 
@@ -886,7 +882,7 @@ pip install pandas>=1.5
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

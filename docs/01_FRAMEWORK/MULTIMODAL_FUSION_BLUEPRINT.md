@@ -58,7 +58,7 @@ layer: Layer 3 (策略层)
 
 
 
-- **å
+- **
 
 
 
@@ -93,16 +93,16 @@ layer: Layer 3 (策略层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
-¥ |
+|
 
-¥ |
+|
 
-?| èååµå
-¥ |
+?|
+|
 
 
 
@@ -141,7 +141,7 @@ class MultimodalFusionModel(nn.Module):
 
         Args:
 
-            modality_configs: æ¨¡æé
+modality_configs:
 置}
 
             fusion_strategy: 融合策略
@@ -168,7 +168,7 @@ class MultimodalFusionModel(nn.Module):
 
         Args:
 
-¥æ°æ®}
+}
 
             
 
@@ -176,7 +176,7 @@ class MultimodalFusionModel(nn.Module):
 
             Dict[str, torch.Tensor]: {
 
-                'prediction': é¢æµå?
+'prediction': ?
 
 
         """
@@ -240,7 +240,7 @@ timm>=0.9.0
 |------|--------|
 
 
-| èåæç | â?00ms |
+|  | ?00ms |
 
 
 

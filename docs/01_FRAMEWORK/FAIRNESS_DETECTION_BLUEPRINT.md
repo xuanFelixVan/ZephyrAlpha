@@ -27,7 +27,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-# å
+#
 > **核心职责**: 提供fairness detection blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Fairness Detection蓝图设计相关内容
@@ -57,11 +57,9 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-å
 
 
 
-ä¸å
 
 
 
@@ -70,7 +68,6 @@ layer: Layer 2 (Alpha因子层)
 |----------|----------|
 
 
-ä¸å
 
 
 | **伦理** | 负责任的AI应用 |
@@ -83,7 +80,7 @@ layer: Layer 2 (Alpha因子层)
 
 - **Bridgewater**: ESG投资合规
 
-- **Citadel**: å
+- **Citadel**:
 
 
 
@@ -102,9 +99,8 @@ layer: Layer 2 (Alpha因子层)
 ```
 
 
-â?  âââ ...
+?   ...
 
-¨æ«æ
 
 ├── 模型训练
 
@@ -123,7 +119,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-### 2.3 å
+### 2.3
 
 | 指标 | 定义 | 适用场景 |
 
@@ -134,7 +130,7 @@ layer: Layer 2 (Alpha因子层)
 | **机会均等** | 不同群体TPR相等 | 风险评估 |
 
 
-| **æ ¡åå
+| **
 
 
 
@@ -142,7 +138,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -168,7 +164,7 @@ layer: Layer 2 (Alpha因子层)
 
 class FairnessDetector:
 
-    """å
+"""
 
     
 
@@ -182,7 +178,7 @@ class FairnessDetector:
 
     ):
 
-        """åå§åå
+"""
 
         
 
@@ -382,7 +378,7 @@ class BiasMitigator:
 
 class FairnessReportGenerator:
 
-    """å
+"""
 
     
 
@@ -396,15 +392,15 @@ class FairnessReportGenerator:
 
     ) -> FairnessReport:
 
-        """çæå
+"""
 
         Args:
 
-            fairness_metrics: å
+fairness_metrics:
 
         Returns:
 
-            FairnessReport: å
+FairnessReport:
 
         pass
 
@@ -412,7 +408,7 @@ class FairnessReportGenerator:
 
 
 
-### 3.2 é
+### 3.2
 
 
 
@@ -422,8 +418,8 @@ class FairnessReportGenerator:
 
 class FairnessConfig:
 
-    """å
-ç½?""
+"""
+?""
 
     
 
@@ -444,7 +440,7 @@ class FairnessConfig:
 
 
 
-### 4.1 å
+### 4.1
 
 
 
@@ -463,7 +459,7 @@ class FairnessConfig:
 
 偏见缓解
 
-    â?å
+?
 
 ```
 
@@ -487,7 +483,7 @@ class FairnessConfig:
 
 
 
-# å
+#
 
 fairlearn>=0.9.0
 
@@ -507,21 +503,21 @@ scikit-learn>=1.3.0
 
 
 
-# å¯è§å?matplotlib>=3.7.0
+# ?matplotlib>=3.7.0
 
 ```
 
 
 
 
-| é
+|
 置 |
 
 |--------|----------|----------|
 
-| CPU | 4æ ?| 8æ ?|
+| CPU | 4?| 8?|
 
-| å
+|
 存 | 16GB | 32GB |
 
 | 存储 | 100GB SSD | 256GB SSD |
@@ -627,10 +623,9 @@ class ModelGovernance:
 
 
 
-- [ ] å
+- [ ]
 
-- [ ] åå
-æµè¯
+- [ ]
 
 
 

@@ -4,10 +4,10 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮒ
 applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
@@ -37,14 +37,14 @@ implementation_status: ﻟﺟﻟ۰?
 - **RESTful API**: ﮒﻝ،ﺁﻛﺕﮒﻝ،ﺁﮔﺍﮔ؟ﻛﭦ۳ﻛﭦﮔ۴?
 - **WebSocket API**: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮔ۷ﻠﮔ۴?
 - **ﻟ؟۳ﻟﺁﮔﮔAPI**: ﻝ۷ﮔﺓﻟ؟۳ﻟﺁﮒﮔﻠﻝ؟۰ﻝﮔ۴?
-- **ﮔﻛﭨﭘﻛﺕﻛﺙ /ﻛﺕﻟﺛﺛAPI**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺁﺙﮒ۴ﮒﺁﺙﮒﭦﮔ۴ﮒ۲
+- **ﮔﻛﭨﭘﻛﺕﻛﺙ/ﻛﺕﻟﺛﺛAPI**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﺁﺙﮒ۴ﮒﺁﺙﮒﭦﮔ۴ﮒ۲
 
 ### 1.2 ﻟ؟ﺝﻟ؟۰ﮒﮒ
 | ﮒﮒ | ﻟﺁﺑﮔ | ﮒ؟ﻝﺍﻟ۵ﮔﺎ |
 |------|------|----------|
-| **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔ ﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁ­ﻛﺗ?|
-| **ﻛﺕﻟ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﮒ۳?| ﮔﮔﮔ۴ﮒ۲ﻟﺟﮒﮔ ﮒAPIResponseﮔ ﺙﮒﺙ |
-| **ﮒ؟ﮒ۷?* | ﻟ؟۳ﻟﺁﮔﮔﻙﮔﺍﮔ؟ﮒ ?| JWTﻟ؟۳ﻟﺁﻙHTTPSﮒ ﮒﺁﻙﻟﺝﮒ۴ﻠ۹?|
+| **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁﻛﺗ?|
+| **ﻛﺕﻟ?* | ﻝﭨﻛﺕﮒﮒﭦﮔﺙﮒﺙﻙﻠﻟﺁﺁﮒ۳?| ﮔﮔﮔ۴ﮒ۲ﻟﺟﮒﮔﮒAPIResponseﮔﺙﮒﺙ |
+| **ﮒ؟ﮒ۷?* | ﻟ؟۳ﻟﺁﮔﮔﻙﮔﺍﮔ؟ﮒ?| JWTﻟ؟۳ﻟﺁﻙHTTPSﮒﮒﺁﻙﻟﺝﮒ۴ﻠ۹?|
 | **ﻝﮔ؛ﮔ۶ﮒﭘ** | APIﻝﮔ؛ﻝ؟۰ﻝ | URLﻟﺓﺁﮒﺝﻝﮔ؛ﮔ۶ﮒﭘ (v1, v2) |
 | **ﮔﮔ۰۲?* | ﮔ۴ﮒ۲ﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ | OpenAPI/Swaggerﮔﮔ۰۲ﻟ۹ﮒ۷ﻝﮔ |
 
@@ -57,7 +57,7 @@ implementation_status: ﻟﺟﻟ۰?
 
 ## 2. ﮒﭦﻝ۰ﻟ۶ﻟ
 
-### 2.1 ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
+### 2.1 ﻝﭨﻛﺕﮒﮒﭦﮔﺙﮒﺙ
 
 #### 2.1.1 ﮔﮒﮒﮒﭦ
 ```json
@@ -76,44 +76,44 @@ implementation_status: ﻟﺟﻟ۰?
 ```json
 {
   "code": 1001,
-  "message": "ﮔﺍﮔ؟ﻛﺕﮒ­?,
+"message": "ﮔﺍﮔ؟ﻛﺕﮒ?,
   "data": null,
   "request_id": "req_abc123def456",
   "timestamp": "2026-04-02T12:00:00Z",
   "details": {
     "field": "engine_id",
     "value": "engine_001",
-    "suggestion": "ﻟﺁﺓﮔ۲ﮔ۴ﮒﺙﮔIDﮔﺁﮒ۵ﮔ­۲ﻝ۰؟"
+"suggestion": "ﻟﺁﺓﮔ۲ﮔ۴ﮒﺙﮔIDﮔﺁﮒ۵ﮔ۲ﻝ۰؟"
   }
 }
 ```
 
-### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟?
+### 2.2 ﻠﻟﺁﺁﻝﮒ؟?
 
 #### 2.2.1 ﻠﻝ۷ﻠﻟﺁﺁ?(0-999)
-| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ |
 |--------|------|------------|
 | 0 | ﮔﮒ | 200 |
 | 1 | ﮒﮔﺍﻠﻟﺁﺁ | 400 |
 | 2 | ﻟ؟۳ﻟﺁﮒ۳ﺎﻟﺑ۴ | 401 |
 | 3 | ﮔﻠﻛﺕﻟﭘﺏ | 403 |
-| 4 | ﻟﭖﮔﭦﻛﺕﮒ­?| 404 |
+| 4 | ﻟﭖﮔﭦﻛﺕﮒ?| 404 |
 | 5 | ﻟﺁﺓﮔﺎﮔﺗﮔﺏﻛﺕﮒ?| 405 |
 | 6 | ﻟﺁﺓﮔﺎﻟﭘﮔﭘ | 408 |
 | 7 | ﻝﺏﭨﻝﭨﮒﻠ۷ﻠﻟﺁﺁ | 500 |
 | 8 | ﮔﮒ۰ﻛﺕﮒﺁ?| 503 |
 
 #### 2.2.2 Webﻝﻠ۱ﻛﺕﻝ۷ﻠﻟﺁﺁ?(6000-6999)
-| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ  |
+| ﻠﻟﺁﺁ?| ﻟﺁﺑﮔ | HTTPﻝﭘﮔﻝ |
 |--------|------|------------|
 | 6001 | ﻛﭨ۹ﻟ۰۷ﮔﺟﮔﺍﮔ؟ﻟﺓﮒﮒ۳ﺎ?| 500 |
 | 6002 | ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
 | 6003 | ﮔ۶ﻟﺛﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6004 | ﻠﻝﺛ؟ﻛﺟﮒ­ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6004 | ﻠﻝﺛ؟ﻛﺟﮒﮒ۳ﺎﻟﺑ۴ | 500 |
 | 6005 | ﻠﻝﺛ؟ﻠ۹ﻟﺁﮒ۳ﺎﻟﺑ۴ | 400 |
 | 6006 | ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮔ۲ﮔ۴ﮒ۳ﺎ?| 500 |
 | 6007 | ﮔ۴ﮒﺟﮔ۴ﻟﺁ۱ﮒ۳ﺎﻟﺑ۴ | 500 |
-| 6008 | ﮔﻛﭨﭘﻛﺕﻛﺙ ﮒ۳ﺎﻟﺑ۴ | 500 |
+| 6008 | ﮔﻛﭨﭘﻛﺕﻛﺙﮒ۳ﺎﻟﺑ۴ | 500 |
 | 6009 | ﮔﻛﭨﭘﻛﺕﻟﺛﺛﮒ۳ﺎﻟﺑ۴ | 500 |
 | 6010 | ﮒ؟ﮔﭘﮔ۷ﻠﻟﺟﮔ۴ﮒ۳ﺎ?| 500 |
 
@@ -137,8 +137,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 |----------|--------|------|
 | **ﻠ۱ﻝﻠﮒﭘ** | 100?ﮒﻠ | ﮔﺁﻛﺕ۹IPﮒﺍﮒ |
 | **ﮒﺗﭘﮒﻟﺟﮔ۴** | 10?| ﮔﺁﻛﺕ۹ﻝ۷ﮔﺓ |
-| **ﻟﺁﺓﮔﺎﻛﺛﮒ۳۶?* | 10MB | ﮔﻛﭨﭘﻛﺕﻛﺙ ﻠ۳ﮒ۳ |
-| **ﮒﮒﭦﮔﭘﻠﺑ** | 30ﻝ۶ﻟﭘ?| ﻠﺟﻟﺁﺓﮔﺎﻠﻛﺛﺟﻝ۷ﮒﺙﮔ­۴ |
+| **ﻟﺁﺓﮔﺎﻛﺛﮒ۳۶?* | 10MB | ﮔﻛﭨﭘﻛﺕﻛﺙﻠ۳ﮒ۳ |
+| **ﮒﮒﭦﮔﭘﻠﺑ** | 30ﻝ۶ﻟﭘ?| ﻠﺟﻟﺁﺓﮔﺎﻠﻛﺛﺟﻝ۷ﮒﺙﮔ۴ |
 
 ## 3. RESTful API ﮔ۴ﮒ۲
 
@@ -222,7 +222,7 @@ Authorization: Bearer {token}
       {
         "id": "alert_001",
         "level": "warning",
-        "message": "ﮒﺙﮔ vn.py ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
+"message": "ﮒﺙﮔ vn.py ﮒﮒﻛﺛﺟﻝ۷ﻝﻟﭘ?0%",
         "timestamp": "2026-04-02T11:45:00Z",
         "acknowledged": false
       }
@@ -237,7 +237,7 @@ GET /api/v1/dashboard/engines/{engine_id}/status
 Authorization: Bearer {token}
 ```
 
-#### 3.2.3 ﮒﺁﮒ۷/ﮒﮔ­۱ﮒﺙﮔ
+#### 3.2.3 ﮒﺁﮒ۷/ﮒﮔ۱ﮒﺙﮔ
 ```http
 POST /api/v1/dashboard/engines/{engine_id}/start
 POST /api/v1/dashboard/engines/{engine_id}/stop
@@ -253,12 +253,12 @@ Authorization: Bearer {token}
 Query Parameters:
   - start_date: string (YYYY-MM-DD)   # ﮒﺙﮒ۶ﮔ۴?
   - end_date: string (YYYY-MM-DD)     # ﻝﭨﮔﮔ۴ﮔ
-  - symbol: string                    # ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+- symbol: string                    # ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
   - engine_id: string                 # ﮒﺙﮔID
   - side: string (buy/sell)           # ﻛﺗﺍﮒﮔﺗﮒ
-  - page: integer = 1                 # ﻠ۰ﭖﻝ 
+- page: integer = 1                 # ﻠ۰ﭖﻝ
   - page_size: integer = 50           # ﮔﺁﻠ۰ﭖﮔﺍﻠ
-  - sort_by: string = "timestamp"     # ﮔﮒﭦﮒ­ﮔ؟ﭖ
+- sort_by: string = "timestamp"     # ﮔﮒﭦﮒﮔ؟ﭖ
   - sort_order: string = "desc"       # ﮔﮒﭦﮔﺗﮒ
 ```
 
@@ -316,15 +316,15 @@ Accept: text/csv, application/json
 
 ### 3.4 ﮔ۶ﻟﺛﮒﮔﮔ۴ﮒ۲
 
-#### 3.4.1 ﻟﺓﮒﮔ۶ﻟﺛﮔﮔ 
+#### 3.4.1 ﻟﺓﮒﮔ۶ﻟﺛﮔﮔ
 ```http
 GET /api/v1/performance/metrics
 Authorization: Bearer {token}
 Query Parameters:
   - time_range: string (1d, 7d, 30d, 90d, 1y)  # ﮔﭘﻠﺑﻟﮒﺑ
   - engine_id: string                          # ﮒﺙﮔIDﺅﺙﮒﺁ?
-  - strategy_id: string                        # ﻝ­ﻝ۴IDﺅﺙﮒﺁ?
-  - metrics: string[]                          # ﮔﮔ ﮒﻟ۰۷ﺅﺙﮒﺁ?
+- strategy_id: string                        # ﻝﻝ۴IDﺅﺙﮒﺁ?
+- metrics: string[]                          # ﮔﮔﮒﻟ۰۷ﺅﺙﮒﺁ?
 ```
 
 **ﮒﮒﭦ**:
@@ -412,13 +412,13 @@ Content-Type: application/json
 }
 ```
 
-#### 3.5.4 ﻟﺓﮒﻝ­ﻝ۴ﻠﻝﺛ؟
+#### 3.5.4 ﻟﺓﮒﻝﻝ۴ﻠﻝﺛ؟
 ```http
 GET /api/v1/config/strategies
 Authorization: Bearer {token}
 ```
 
-#### 3.5.5 ﮔﺑﮔﺍﻝ­ﻝ۴ﻠﻝﺛ؟
+#### 3.5.5 ﮔﺑﮔﺍﻝﻝ۴ﻠﻝﺛ؟
 ```http
 PUT /api/v1/config/strategies/{strategy_id}
 Authorization: Bearer {token}
@@ -459,7 +459,7 @@ Authorization: Bearer {token}
         "last_check": "2026-04-02T12:00:00Z"
       },
       {
-        "name": "Redisﻝﺙﮒ­",
+"name": "Redisﻝﺙﮒ",
         "status": "healthy",
         "response_time": 12,
         "last_check": "2026-04-02T12:00:00Z"
@@ -469,7 +469,7 @@ Authorization: Bearer {token}
         "status": "degraded",
         "response_time": 350,
         "last_check": "2026-04-02T12:00:00Z",
-        "details": "ﮒﮒ­ﻛﺛﺟﻝ۷?5%"
+"details": "ﮒﮒﻛﺛﺟﻝ۷?5%"
       }
     ],
     "metrics": {
@@ -497,7 +497,7 @@ Query Parameters:
   - page_size: integer = 100
 ```
 
-#### 3.6.3 ﻟﺓﮒﮒﻟ­۵ﮒﮒﺎ
+#### 3.6.3 ﻟﺓﮒﮒﻟ۵ﮒﮒﺎ
 ```http
 GET /api/v1/system/alerts
 Authorization: Bearer {token}
@@ -508,7 +508,7 @@ Query Parameters:
   - end_time: string
 ```
 
-#### 3.6.4 ﻝ۰؟ﻟ؟۳ﮒﻟ­۵
+#### 3.6.4 ﻝ۰؟ﻟ؟۳ﮒﻟ۵
 ```http
 POST /api/v1/system/alerts/{alert_id}/acknowledge
 Authorization: Bearer {token}
@@ -516,7 +516,7 @@ Authorization: Bearer {token}
 
 ### 3.7 ﮔﻛﭨﭘﮔﻛﺛﮔ۴ﮒ۲
 
-#### 3.7.1 ﻛﺕﻛﺙ ﻠﻝﺛ؟ﮔﻛﭨﭘ
+#### 3.7.1 ﻛﺕﻛﺙﻠﻝﺛ؟ﮔﻛﭨﭘ
 ```http
 POST /api/v1/files/upload
 Authorization: Bearer {token}
@@ -612,7 +612,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.3 ﮒﻟ­۵ﻛﭦﻛﭨﭘ
+#### 4.2.3 ﮒﻟ۵ﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "alert_triggered",
@@ -633,7 +633,7 @@ ws://localhost:8000/api/v1/ws?token={jwt_token}
 }
 ```
 
-#### 4.2.4 ﮔ۶ﻟﺛﮔﮔ ﮔﺑﮔﺍﻛﭦﻛﭨﭘ
+#### 4.2.4 ﮔ۶ﻟﺛﮔﮔﮔﺑﮔﺍﻛﭦﻛﭨﭘ
 ```json
 {
   "type": "performance_updated",
@@ -729,8 +729,8 @@ class PaginatedResponse(BaseModel, Generic[T]):
 ```python
 class TimeRange(BaseModel):
     """ﮔﭘﻠﺑﻟﮒﺑﮔ۷۰ﮒ"""
-    start: str  # ISO 8601ﮔ ﺙﮒﺙ
-    end: str    # ISO 8601ﮔ ﺙﮒﺙ
+start: str  # ISO 8601ﮔﺙﮒﺙ
+end: str    # ISO 8601ﮔﺙﮒﺙ
     timezone: str = "UTC"
 ```
 
@@ -747,7 +747,7 @@ class EngineStatus(BaseModel):
     memory_usage: float  # MB
     trade_count_today: int
     error_count: int
-    last_heartbeat: str  # ISO 8601ﮔ ﺙﮒﺙ
+last_heartbeat: str  # ISO 8601ﮔﺙﮒﺙ
     start_time: Optional[str] = None
     uptime_seconds: Optional[int] = None
 ```
@@ -757,7 +757,7 @@ class EngineStatus(BaseModel):
 class Trade(BaseModel):
     """ﻛﭦ۳ﮔﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     trade_id: str
-    timestamp: str  # ISO 8601ﮔ ﺙﮒﺙ
+timestamp: str  # ISO 8601ﮔﺙﮒﺙ
     symbol: str
     side: str  # buy, sell
     price: float
@@ -788,10 +788,10 @@ class Trade(BaseModel):
         }
 ```
 
-#### 5.2.3 ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ
+#### 5.2.3 ﮔ۶ﻟﺛﮔﮔﮔ۷۰ﮒ
 ```python
 class PerformanceMetrics(BaseModel):
-    """ﮔ۶ﻟﺛﮔﮔ ﮔ۷۰ﮒ"""
+"""ﮔ۶ﻟﺛﮔﮔﮔ۷۰ﮒ"""
     sharpe_ratio: float
     max_drawdown: float
     win_rate: float
@@ -912,13 +912,13 @@ def test_get_trades_with_filters(client: TestClient, auth_headers: dict):
     assert len(data["data"]["trades"]) <= 10
 ```
 
-### 6.4 ﮔ۶ﻟﺛﮔﭖﻟﺁﮔ ﮒ
-| ﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
+### 6.4 ﮔ۶ﻟﺛﮔﭖﻟﺁﮔﮒ
+| ﮔﮔ | ﻝ؟ﮔ?| ﮔﭖﻟﺁﮔﺗﮔﺏ |
 |------|--------|----------|
 | **APIﮒﮒﭦﮔﭘﻠﺑ** | P95 < 200ms | ﻟﺑﻟﺛﺛﮔﭖﻟﺁ |
 | **ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ** | ?000 QPS | ﮒﮒﮔﭖﻟﺁ |
 | **WebSocketﻟﺟﮔ۴?* | ?00 ﮒﺗﭘﮒﻟﺟﮔ۴ | ﻟﺟﮔ۴ﮔﭖﻟﺁ |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | < 1GB | ﮒﮒ­ﮒﮔ |
+| **ﮒﮒﻛﺛﺟﻝ۷** | < 1GB | ﮒﮒﮒﮔ |
 | **ﻠﻟﺁﺁ?* | < 0.1% | ﻝ۷ﺏﮒ؟ﮔ۶ﮔﭖ?|
 
 ## 7. ﻠ۷ﻝﺛﺎﻛﺕﻟﺟ?
@@ -953,14 +953,14 @@ CORS_ORIGINS=["http://localhost:3000"]
 
 ### 7.2 ﻝﮔ۶ﻛﺕﮒ?
 
-#### 7.2.1 ﻝﮔ۶ﮔﮔ 
-| ﮔﮔ  | ﻠﻠﮔﺗﮒﺙ | ﮒﻟ­۵ﻠ?|
+#### 7.2.1 ﻝﮔ۶ﮔﮔ
+| ﮔﮔ | ﻠﻠﮔﺗﮒﺙ | ﮒﻟ۵ﻠ?|
 |------|----------|----------|
 | **APIﻟﺁﺓﮔﺎ?* | Prometheus | < 10 QPS ?> 1000 QPS |
 | **APIﻠﻟﺁﺁ?* | Prometheus | > 1% |
 | **APIﮒﮒﭦﮔﭘﻠﺑ** | Prometheus | P95 > 500ms |
 | **WebSocketﻟﺟﮔ۴?* | Prometheus | > 1000 |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷?* | cAdvisor | > 80% |
+| **ﮒﮒﻛﺛﺟﻝ۷?* | cAdvisor | > 80% |
 | **CPUﻛﺛﺟﻝ۷?* | cAdvisor | > 70% |
 
 #### 7.2.2 ﮔ۴ﮒﺟﻠﻝﺛ؟
@@ -979,7 +979,7 @@ logger.add("logs/api.log",
            rotation="100 MB", 
            retention="30 days",
            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-           serialize=True)  # ﻟﺝﮒﭦJSONﮔ ﺙﮒﺙ
+serialize=True)  # ﻟﺝﮒﭦJSONﮔﺙﮒﺙ
 ```
 
 ### 7.3 ﮒ؟ﮒ۷ﻠﻝﺛ؟
@@ -1007,7 +1007,7 @@ limiter = Limiter(key_func=get_remote_address)
 
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
-    """ﻠﻝﻠﮒﭘﻛﺕ­ﻠﺑ?""
+"""ﻠﻝﻠﮒﭘﻛﺕﻠﺑ?""
     # ﻛﺕﮒﮔ۴ﮒ۲ﻛﺕﮒﻠﮒﭘ
     if request.url.path.startswith("/api/v1/auth"):
         await limiter.check(request, "10/minute")
@@ -1022,17 +1022,17 @@ async def rate_limit_middleware(request: Request, call_next):
 
 ## 8. ﻝﮔ؛ﮒﻝﭦ۶ﻛﺕﮒﺙﮒ؟?
 
-### 8.1 ﻝﮔ؛ﮒﻝﭦ۶ﻝ­ﻝ۴
+### 8.1 ﻝﮔ؛ﮒﻝﭦ۶ﻝﻝ۴
 | ﮒﻝﭦ۶ﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?|
 |----------|------|------------|
 | **ﻟ۰۴ﻛﺕﻝﮔ؛** (x.y.z ?x.y.z+1) | Bugﻛﺟ؟ﮒ۳ﻙﮒ؟ﮒ۷ﮔﺑ?| ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
 | **ﮔ؛۰ﻟ۵ﻝﮔ؛** (x.y.z ?x.y+1.0) | ﮔﺍﮒ۱ﮒﻟﺛﻙAPIﮔ۸ﮒﺎ | ﮒﮒﮒﺙﮒ؟ﺗ |
 | **ﻛﺕﭨﻟ۵ﻝﮔ؛** (x.y.z ?x+1.0.0) | ﻠﮒ۳۶ﮒﮔﺑﻙAPIﻛﺕﮒﺙ?| ﻠﻟ۵ﻟﺟ?|
 
-### 8.2 APIﮒﭦﮒﺙﻝ­ﻝ۴
-1. **ﻠ۱ﮒ?*: ﮒ۷ﮔﮔ۰۲ﻛﺕ­ﮔ ﻟ؟ﺍ?ﮒﺓﺎﮒﭦ?ﺅﺙﮔ?ﻛﺕ۹ﮔ
-2. **ﻟ­۵ﮒ?*: ﻟﺟﮒﻟ­۵ﮒﮒ۳ﺑ`X-API-Deprecated: true`ﺅﺙﮔ?ﻛﺕ۹ﮔ
-3. **ﻝ۶ﭨﻠ۳?*: ﮒ؟ﮒ۷ﻝ۶ﭨﻠ۳ﮒﭦﮒﺙAPIﺅﺙﻟﺟ?10ﻝﭘﮔﻝ 
+### 8.2 APIﮒﭦﮒﺙﻝﻝ۴
+1. **ﻠ۱ﮒ?*: ﮒ۷ﮔﮔ۰۲ﻛﺕﮔﻟ؟ﺍ?ﮒﺓﺎﮒﭦ?ﺅﺙﮔ?ﻛﺕ۹ﮔ
+2. **ﻟ۵ﮒ?*: ﻟﺟﮒﻟ۵ﮒﮒ۳ﺑ`X-API-Deprecated: true`ﺅﺙﮔ?ﻛﺕ۹ﮔ
+3. **ﻝ۶ﭨﻠ۳?*: ﮒ؟ﮒ۷ﻝ۶ﭨﻠ۳ﮒﭦﮒﺙAPIﺅﺙﻟﺟ?10ﻝﭘﮔﻝ
 
 ### 8.3 ﮒ؟۱ﮔﺓﻝ،ﺁﮒﺙﮒ؟ﺗﮔ۶ﻟ۵?
 | ﮒ؟۱ﮔﺓﻝ،ﺁﻝﺎﭨ?| ﮔﻛﺛAPIﻝﮔ؛ | ﮒﻝﭦ۶ﻟ۵ﮔﺎ |
@@ -1045,6 +1045,6 @@ async def rate_limit_middleware(request: Request, call_next):
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
 **ﮔﮒﮔﺑ?*: 2026-04-02  
-**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
+**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 **ﻝﺑ۱ﮒﺙ**: `DESIGN_005`  
 **ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰

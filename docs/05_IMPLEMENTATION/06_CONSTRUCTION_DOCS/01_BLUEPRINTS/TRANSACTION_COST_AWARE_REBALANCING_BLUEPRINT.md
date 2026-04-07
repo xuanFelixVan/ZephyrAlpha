@@ -95,7 +95,6 @@ layer: Layer 6 (组合优化层)
 | **模块ID** | TRANSACTION_COST_AWARE_REBALANCING_001 |
 | **版本** | v1.0.0 |
 
-³ç³»
 
 
 |------|----------|----------|----------|
@@ -104,9 +103,9 @@ layer: Layer 6 (组合优化层)
 度
 
 **推荐实施路径**:
-1. å
+1.
 
-³ç³?
+?
 
 
 |------|----------|----------|----------|
@@ -114,13 +113,13 @@ layer: Layer 6 (组合优化层)
 **职责边界**:
 度
 
-**ä¾èµå
-³ç³»**:
+**
+**:
 - 本模块依赖PORTFOLIO_REBALANCING的触发机制和决策框架
 - 本模块在基础决策之上增加成本感知能力
 
 **推荐实施路径**:
-1. å
+1.
 
 
 ### 2.1 核心API
@@ -187,7 +186,7 @@ class TransactionCostAwareRebalancer:
         
         Returns:
             {
-                'optimal_weights': æä¼æé?
+'optimal_weights': ?
                 'transaction_cost': 交易成本,
                 'net_expected_return': 净预期收益
             }
@@ -260,7 +259,7 @@ class TransactionCostAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -275,8 +274,8 @@ class TransactionCostAPI:
 ##### 6.001. Transaction Cost Aware Rebalancing
 - **模块ID**: TRANSACTION_COST_AWARE_REBALANCING_001
 - **蓝图文档**: TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

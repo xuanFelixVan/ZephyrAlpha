@@ -96,7 +96,7 @@ layer: Layer 5 (策略执行层)
 ### 2.1 模块化分层架?(行业标准)
 
 专业量化机构普遍采用分层解耦架构，如ZVT框架?基础设施层→计算引擎层→策略执行层→结果分析?四层模型[1]。这种设计的核心优势是：
-- **å
+- **
 - **可扩?*: 新功能通过插件机制扩展，不影响核心系统
 - **维护?*: 模块化设计降低系统复杂度，提升代码可维护?
 
@@ -112,8 +112,7 @@ layer: Layer 5 (策略执行层)
 微软QLib平台代表了AI导向的量化投资最新趋势[3]?
 - **端到端AI工作?*: 从数据到交易信号的完整AI流水?
 - **高性能基础设施**: 专门为金融时序数据优化的计算引擎
-- **å·¥å
-·
+- **
 
 ### 2.4 因子生命周期管理最佳实?
 
@@ -134,8 +133,8 @@ layer: Layer 5 (策略执行层)
 | **Layer 6: 组合优化?* | **PyPortfolioOpt** | 组合权重优化、风险模?| API简洁、功能完整、社区活?| 直接集成 |
 ?|
 | **Layer 4: 机器学习?* | **QLib** (AI引擎) | AI因子挖掘、预测模?| 微软开源、机构级验证 | 参考架?定制 |
-| **Layer 3: èæ
-åæ?* | **DeepSeek/Qwen3** | æ
+| **Layer 3:
+?* | **DeepSeek/Qwen3** |
 感分析、另类数据处?| 蓝图已选定，技术栈统一 | 直接使用 |
 | **Layer 2: Alpha因子?* | **Feast** + **factor_calculator.py** | 因子存储、计算、验?| 专业级Feature Store，支持时序数?| 定制开发集?|
 洗、对齐、特征工?| 现有技术栈延续 | 自主开?|
@@ -149,9 +148,8 @@ layer: Layer 5 (策略执行层)
 # 定制化量化数据模?
 > **核心职责**: Factor Backtest Integration蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -186,7 +184,7 @@ factor_view = FeatureView(
 
 **优势**: 
 - 专门的特征存储，支持版本控制、点查批查、在?离线服务
-- 可定制金融时序数据Schema，支持四维索引（时间×资产×因子×版本?
+- 可定制金融时序数据Schema，支持四维索引（时间资产因子版本?
 - 替代方案: 如需要更轻量级方案，可用**QuestDB**（高性能时序数据库）
 
 #### **QLib (微软开? - AI量化引擎**
@@ -226,14 +224,13 @@ weights = ef.max_sharpe()  # 最大化夏普比率
 
 iFinD是同花顺提供的专业金融数据接口，支持Python、MATLAB、Java等多种编程语言。ZephyrAlpha系统将iFinD作为核心数据源之一，用于获取高质量的市场数据、财务数据和另类数据?
 
-**SDKå®è£
+**SDK
 ?*:
 ```bash
 iFinD API?
 pip install iFinDAPI
 
 # 方法2: 使用SuperCommand客户端进行环境修?
-å
 后，运行SuperCommand.exe
 # 选择Python语言 -> 环境修复 -> 选择Python路径
 ```
@@ -278,8 +275,8 @@ data = THS_DS('000001.SZ',
 
 **数据权限与限?*:
 - **正式账号**: 单次请求最?00万条数据
-- **è¡æ
-?1æ¡ï¼
+- **
+?1
 - **基础数据**: 每周500万条限制
 - **数据更新时间**:
 : 15:07左右更新
@@ -322,11 +319,9 @@ class iFinDDataSource:
         pass
 ```
 
-**å®å
-¨é
-1. **é
+**
+1. **
 3. **错误处理**: 实现自动重试和降级机制（如iFinD不可用时切换至Baostock?
-è¶
 过每周限制
 
 **优势**:
@@ -339,8 +334,8 @@ class iFinDDataSource:
 - 复权因子计算需注意向前复权和向后复权的区别
 - 建议在收盘后1-2小时提取当日数据，确保数据完?
 
-#### **Backtraderéé
-éç¨**éé
+#### **Backtrader
+**
 
 ```python
 class FactorBacktraderAdapter:
@@ -384,9 +379,9 @@ class StrategyFactory:
 ? ├── 预测模型?(LSTM、Transformer、GBDT)                             ?
 ? └── 强化学习代理 (策略参数自优?                                    ?
 ?                                                                    ?
-? Layer 3: èæ
+? Layer 3:
 分析?                                                 ?
-? âââ DeepSeekæ
+?  DeepSeek
 绪提取)                                   ?
 ? ├── 另类数据处理?(文本、社交媒体、卫星数?                          ?
 ? └── 新闻Alpha因子生成?                                             ?
@@ -403,7 +398,7 @@ class StrategyFactory:
 ?                                                                    ?
 ? Layer 0: 数据源层                                                    ?
 ? ├── iFind终端接口 (5700+因子数据)                                    ?
-? âââ Baostockå
+?  Baostock
 ? └── AkShare另类数据 (宏观、非结构化数?                              ?
 ?                                                                    ?
 └─────────────────────────────────────────────────────────────────────?
@@ -413,7 +408,6 @@ class StrategyFactory:
 
 ```
 数据?#1: 因子计算与存?
-§
 
 数据?#2: AI因子挖掘
 Feast历史因子 ?QLib数据预处??AI模型训练 ?新因子发??回Feast存储
@@ -422,10 +416,10 @@ Feast历史因子 ?QLib数据预处??AI模型训练 ?新因子发??回Feast存�
 
 数据?#4: 组合优化与归?
 
-API? REST APIç½å
+API? REST API
 ```
 
-### 4.3 å
+### 4.3
 
 ```python
 # 因子数据标准接口
@@ -449,12 +443,12 @@ class FactorStore(ABC):
     
     @abstractmethod
     def list_factors(self) -> List[FactorMetadata]:
-æ°æ®"""
+"""
     
-# åæµéé
-å¨æ¥?
+#
+?
 class BacktraderAdapter:
-    """Backtraderéé
+"""Backtrader
 ?""
     def create_datafeed(self, factor: FactorData, price_data: pd.DataFrame) -> bt.feeds.PandasData:
         """创建Backtrader数据?""
@@ -495,7 +489,7 @@ class PortfolioOptimizer(ABC):
    - **监控指标**: 数据校验通过率、版本冲突次?
 
 #### **中风险项 (P1)**
-¼?*
+?*
    - **风险**: 不同开源库版本冲突、API变更
    - **应对**: 建立依赖隔离层、版本锁定、定期更新测?
    - **监控指标**: 依赖冲突警告数、API变更影响评估
@@ -578,18 +572,15 @@ class PortfolioOptimizer(ABC):
 
 
 > **适用场景**: 个人开?+ AI维护 + 个人使用，不涉及团队协作
-> **å®å
+> **
 
-å®å
 
-¨ååï¼
 
 | 原则 | 解释 | 实施要点 |
 |------|------|----------|
-| **é
-¨æª?|
-| **æ
-é¡»å
+| **
+?|
+| **
 置模?|
 
 ### 7.2 极简身份认证与访问控?
@@ -600,11 +591,11 @@ class PortfolioOptimizer(ABC):
 
 **API密钥管理方案**:
 ```yaml
-ç½®æ?
+?
 api_keys:
   data_sources:
     tushare: "your_tushare_token_here"      # 数据API密钥
-    baostock: ""                            # å
+baostock: ""                            #
     ifind: {username: "your_ifind_username", password: "your_ifind_password"}  # iFinD账号和密?
   
   trading:
@@ -626,11 +617,9 @@ system:
 
 **文件权限保护**:
 ```bash
-ææè
 可读写?
 chmod 600 ~/.zephyralpha/config.yaml
 
-ææè
 可访问?
 chmod 700 ~/.zephyralpha
 ```
@@ -662,7 +651,7 @@ chmod 700 ~/.zephyralpha
 
 **简化审计日?*:
 ```python
-# å
+#
 import logging
 from datetime import datetime
 
@@ -688,16 +677,16 @@ class PersonalAuditLogger:
         return text
 ```
 
-**å¿
-³é®æ?*:
+**
+?*:
 1. **API密钥使用**: 每次使用外部API时记录（脱敏后）
 2. **交易执行**: 模拟或实盘交易记?
 3. **数据导出**: 大规模数据导出操?
 4. **系统异常**: 程序崩溃或错?
 
-**æ
+**
 障恢复机制**:
-1. **é
+1. **
    ```bash
    cp ~/.zephyralpha/config.yaml ~/zephyralpha_backups/config_$(date +%Y%m%d).yaml
    
@@ -711,7 +700,7 @@ class PersonalAuditLogger:
    import os
    
    def restore_config():
-       """æ¢å¤é
+"""
        backup_dir = os.path.expanduser("~/zephyralpha_backups")
        config_file = os.path.expanduser("~/.zephyralpha/config.yaml")
        
@@ -730,13 +719,11 @@ api_keys:
            with open(config_file, "w") as f:
                f.write(template)
    ```
-¥é
 置
 
-### 7.5 å®å
-¨é
+### 7.5
 
-**å®æ´é
+**
 ```yaml
 # ~/.zephyralpha/config.yaml 完整示例
 version: "1.0"
@@ -745,16 +732,16 @@ last_updated: "2026-04-01"
 api_keys:
   data_sources:
     tushare: "您的Tushare Token"
-    baostock: ""  # å
+baostock: ""  #
     ifind: {username: "您的iFinD账号", password: "您的iFinD密码"}  # iFinD账号和密?
   
   trading:
     mode: "simulation"  # simulation / paper_trading / live_trading
     broker: "simulated"
-    # å®çé
+#
     # broker: "qmt"
     # account: "您的账户"
-¨?
+?
   
   ai_services:
     deepseek: "您的DeepSeek API密钥"
@@ -776,14 +763,14 @@ logging:
   audit_file: "~/zephyralpha_logs/audit.log"
 ```
 
-**é
+**
 ```python
-# config_validator.py - é
+# config_validator.py -
 import yaml
 import os
 
 def validate_config(config_path: str) -> bool:
-    """éªè¯é
+"""
     try:
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
@@ -797,76 +784,75 @@ def validate_config(config_path: str) -> bool:
         
         # 检查文件权?
         if os.stat(config_path).st_mode & 0o777 != 0o600:
-            print("è­¦å: é
+print(":
         
-        print("é
+print("
         return True
         
     except Exception as e:
-        print(f"é
+print(f"
         return False
 ```
 
-### 7.6 å®å
+### 7.6
 ?
 
-?**å¿
-¨æª?*:
-1. å°é
+?**
+?*:
+1.
 2. 设置文件权限: `chmod 600 ~/.zephyralpha/config.yaml`
-¨ä½?
+?
 4. 不在代码中硬编码任何API密钥
 5. 不在日志中输出敏感信?
 
-¨ä¹ ?*:
+?*:
 1. 使用不同的API密钥用于不同服务
 2. 定期轮换API密钥（每3-6个月?
 3. 在API提供商处设置使用量限?
 况，发现异常及时处?
 
-ç½®æ?
+?
 4. 不要使用过于简单的API密钥
 
 ### 7.7 针对“不懂开发”用户的特别设计
 
 **无密码体?*:
-- é
+-
 要信息
-- ææé
+-
 需的部?
 
 **防锁死设?*:
-1. **é
+1. **
 ?
 2. **紧急重?*: 提供命令行参?`--reset-config` 重置为出厂设?
 晰的修复指导，而不是技术性错误堆?
 
 **用户友好文档**:
-ç½®æ?
+?
 - 常见问题解答（FAQ）章?
-- æ
+-
 障排除流程?
 - 一键恢复脚?
 
 ## 8. 简易个人开发环境与部署
 
-ï¼é¶é
-¼?
+?
 > **部署模式**: 单机Python环境，无外部依赖，数据本地存?
 
-¼?
+?
 
 **最低系统要?*:
 | 组件 | 要求 | 说明 |
 |------|------|------|
-¨æ¯?|
+?|
 | **Python版本** | Python 3.8 - 3.11 | 推荐Python 3.9（最稳定?|
-| **å
+| **
 ?|
 | **存储空间** | 50GB 可用空间 | 用于存储历史数据和计算结?|
 | **网络** | 稳定的互联网连接 | 用于下载数据和调用API |
 
-**å
+**
 - ?**Windows**: 支持原生Python和Anaconda
 的Python和Anaconda
 的Python和Anaconda
@@ -887,19 +873,19 @@ chmod +x install.sh
 # 下载 install.ps1 后以管理员权限运?
 ```
 
-**å®è£
+**
 脚本功能**:
 1. 检查Python版本并提示升?
 2. 创建虚拟环境（venv或conda?
-3. å®è£
+3.
 
-4. åå»ºé
+4.
 5. 设置数据目录结构
 6. 运行简单测试验证安?
 
 （高级用户）**:
 ```bash
-# 1. å
+# 1.
 git clone https://github.com/zephyralpha/zephyralpha.git
 cd zephyralpha
 
@@ -912,11 +898,11 @@ source venv/bin/activate
 # Windows:
 venv\Scripts\activate
 
-# 4. å®è£
+# 4.
 依赖
 pip install -r requirements.txt
 
-# 5. åå§åé
+# 5.
 ?
 python scripts/init_config.py
 ```
@@ -928,19 +914,17 @@ zephyralpha/                    # 项目根目?
 ├── README.md                   # 项目说明
 ├── requirements.txt            # Python依赖
 置
-·èæ¬
 脚本
 ?  ├── start.py               # 启动脚本
 ?  ├── backup.py              # 备份脚本
 ?  └── recovery.py            # 恢复脚本
 ├── src/                       # 源代?
-¥?
+?
 ?  ├── core/                  # 核心模块
 ?  ├── modules/               # 功能模块
-·å½æ°
-âââ config/                    # é
+config/                    #
 置
-?  âââ config_template.yaml   # é
+?   config_template.yaml   #
 ├── data/                      # 数据目录（自动创建）
 ?  ├── raw/                   # 原始数据
 ?  ├── processed/             # 处理后的数据
@@ -953,11 +937,11 @@ zephyralpha/                    # 项目根目?
 ?  ├── tutorial.ipynb         # 教程
 ?  └── examples/              # 示例
 └── backups/                   # 备份目录（自动创建）
-    âââ config_backups/        # é
+config_backups/        #
     └── data_backups/          # 数据备份
 ```
 
-### 8.4 é
+### 8.4
 
 置**:
 ```python
@@ -973,13 +957,13 @@ def initialize_config():
     config_dir = home_dir / ".zephyralpha"
     config_file = config_dir / "config.yaml"
     
-    # å¦æé
+#
     if config_file.exists():
-        response = input("é
+response = input("
         if response.lower() != 'y':
             return config_file
     
-    # åå»ºé
+#
     config_dir.mkdir(exist_ok=True)
     
 置
@@ -1009,8 +993,7 @@ def initialize_config():
         }
     }
     
-    # åå
-¥é
+#
     with open(config_file, "w", encoding="utf-8") as f:
         yaml.dump(default_config, f, allow_unicode=True, default_flow_style=False)
     
@@ -1018,7 +1001,7 @@ def initialize_config():
     if os.name != 'nt':
         os.chmod(config_file, 0o600)
     
-    print(f"é
+print(f"
     print("请编辑此文件，填写您的API密钥")
     
     return config_file
@@ -1057,16 +1040,16 @@ def main():
     if not hasattr(sys, 'real_prefix') and not sys.prefix == sys.base_prefix:
         print("警告: 建议在虚拟环境中运行")
     
-    # æ£æ¥é
-ç½®æ?
+#
+?
     config_path = Path.home() / ".zephyralpha" / "config.yaml"
     if not config_path.exists():
-        print("é
+print("
         from src.core.config import initialize_config
         initialize_config()
         sys.exit(0)
     
-    # å¯¼å
+#
     from src.main import run
     
     # 运行主程?
@@ -1115,7 +1098,7 @@ if __name__ == "__main__":
    factor_data = pd.read_parquet("~/zephyralpha_data/factors/factor_momentum.parquet")
    ```
 
-3. **JSONé
+3. **JSON
 ?
 
 **存储路径管理**:
@@ -1148,27 +1131,27 @@ class StorageManager:
         return self.dirs[category] / filename
 ```
 
-### 8.7 æ
+### 8.7
 障排除与恢?
 
 **常见问题解决方案**:
 
 | 问题 | 症状 | 解决方案 |
 |------|------|----------|
-¼?* | å¯¼å
-| **ä¾èµå
+?* |
+| **
 缺?* | ModuleNotFoundError | 运行 `pip install -r requirements.txt` |
-| **é
-¥æ?|
+| **
+?|
 理旧数据，扩展磁盘空间 |
 
-**ä¸é®æ
+**
 障恢?*:
 ```bash
 # 恢复脚本：修复常见问?
 python scripts/recovery.py --fix-all
 
-# å
+#
 python scripts/recovery.py --fix-deps      # 修复依赖
 置
 python scripts/recovery.py --fix-data      # 修复数据目录
@@ -1192,7 +1175,7 @@ def fix_configuration():
     from src.core.config import initialize_config
 置...")
     initialize_config()
-    print("é
+print("
 
 def fix_data_directories():
     """修复数据目录"""
@@ -1211,7 +1194,7 @@ def fix_data_directories():
     print("数据目录修复完成")
 
 def main():
-·")
+")
     parser.add_argument("--fix-all", action="store_true", help="修复所有问?)
     parser.add_argument("--fix-deps", action="store_true", help="修复依赖")
 置")
@@ -1274,7 +1257,7 @@ def create_backup():
 
 2. **在新系统上恢?*:
    ```bash
-   # 1. å®è£
+# 1.
 ZephyrAlpha
    ./install.sh
    
@@ -1306,7 +1289,7 @@ def first_run_wizard():
     default_data_dir = str(Path.home() / "zephyralpha_data")
     data_dir = input(f"数据存储目录（默? {default_data_dir}? ").strip() or default_data_dir
     
-    # ä¿å­é
+#
 置
     config = {
         "api_keys": {
@@ -1320,29 +1303,29 @@ def first_run_wizard():
     }
     
     save_config(config)
-    print("\né
+print("\n
 ```
 
-ç½®æ?
+?
 
 ### 8.10 维护与升?
 
 **日常维护**:
-1. **æ¸
+1. **
 理旧数?*:
    ```bash
-   # æ¸
+#
 理30天前的日志文?
    find ~/zephyralpha_logs -name "*.log" -mtime +30 -delete
    
-   # æ¸
+#
 理90天前的备份文?
    find ~/zephyralpha_backups -name "backup_*" -mtime +90 -delete
    ```
 
 2. **更新依赖?*:
    ```bash
-   # å®å
+#
    pip list --outdated
    pip install --upgrade -r requirements.txt
    ```
@@ -1431,16 +1414,16 @@ python scripts/migrate.py
 ##### 6.001. Factor Backtest Integration
 - **模块ID**: FACTOR_BACKTEST_INTEGRATION_001
 - **蓝图文档**: FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 11.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Factor Backtest Integration** | å
+| **Factor Backtest Integration** |
 
 ### 11.3 版本管理
 

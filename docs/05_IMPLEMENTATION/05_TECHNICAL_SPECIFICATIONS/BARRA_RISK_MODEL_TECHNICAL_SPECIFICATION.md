@@ -10,20 +10,20 @@ layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
 index: BARRA_RISK_SPEC_001
 estimated_hours: 100h
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -32,34 +32,34 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `BARRA_RISK_SPEC_001`
 > **ﮒﺙﮒﮔﭘ?*: 100h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻛﺕﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﮒﮒﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻛﺕﮒﮒﮔﺑﻠﺎﮔ۶?
 ---
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
 ### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
 
-Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔ ﺕﮒﺟﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
-- ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟
-- ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?- ﻠ۲ﻠ۸ﮒﻟ۶۲
-- ﻠ۲ﻠ۸ﮒﺛﮒ 
+Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔﺕﮒﺟﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
+- ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟
+- ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?- ﻠ۲ﻠ۸ﮒﻟ۶۲
+- ﻠ۲ﻠ۸ﮒﺛﮒ
 
 ### 1.2 ﮔﮔﺁﻝ؟?
-- **ﮒﻝ۰؟?*: ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻟﺁﺁﮒﺓ؟ < 5%
-- **ﻝ۷ﺏﮒ؟?*: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ۷ﺏﮒ؟ﺅﺙﻠﺟﮒﻟﺟﮔ?- **ﮔ۶ﻟﺛ**: ﮒﮔ؛۰ﻠ۲ﻠ۸ﮒﻟ۶۲ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ < 100ms
-- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮒ ﮒ­ﮔ۸?
+- **ﮒﻝ۰؟?*: ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻟﺁﺁﮒﺓ؟ < 5%
+- **ﻝ۷ﺏﮒ؟?*: ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ۷ﺏﮒ؟ﺅﺙﻠﺟﮒﻟﺟﮔ?- **ﮔ۶ﻟﺛ**: ﮒﮔ؛۰ﻠ۲ﻠ۸ﮒﻟ۶۲ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ < 100ms
+- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮒﮒﮔ۸?
 ---
 
 ## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 ﮔ ﺕﮒﺟﻝﺎﭨﮔ۴?
+### 2.1 ﮔﺕﮒﺟﻝﺎﭨﮔ۴?
 #### 2.1.1 BarraRiskModel
 
 ```python
 class BarraRiskModel:
     """
-    Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ ﺕﮒﺟ?    
-    ﻟﻟﺑ۲: ﮒ۳ﮒ ﮒ­ﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻙﮒ ﮒ­ﮔﺑﻠﺎﮔ۶?    """
+Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
+ﻟﻟﺑ۲: ﮒ۳ﮒﮒﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻙﮒﮒﮔﺑﻠﺎﮔ۶?    """
     
     def __init__(self, config: BarraConfig):
         """
@@ -78,14 +78,14 @@ class BarraRiskModel:
         ﮔﮒﻠ۲ﻠ۸ﮔ۷۰ﮒ
         
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
             returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
-            factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?            
+factor_loadings: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?
         Returns:
             self: ﮔﮒﮒﻝﮔ۷۰ﮒ
             
         Raises:
-            ValueError: ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁ
+ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ
             FittingError: ﮔ۷۰ﮒﮔﮒﮒ۳ﺎﻟﺑ۴
         """
         pass
@@ -93,13 +93,13 @@ class BarraRiskModel:
     def calculate_factor_exposure(self,
                                   portfolio_weights: pd.Series) -> pd.Series:
         """
-        ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
+ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ
         
         Args:
             portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
             
         Returns:
-            pd.Series: ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
+pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
         """
         pass
     
@@ -123,10 +123,10 @@ class BarraRiskModel:
         ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
         
         Args:
-            total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮔﺁﻛﺝ
+total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒﮒﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮔﺁﻛﺝ
             
         Returns:
-            Dict[str, float]: ﮒ ﮒ­ﻠ۲ﻠ۸ﻠ۱ﻝ؟?        """
+Dict[str, float]: ﮒﮒﻠ۲ﻠ۸ﻠ۱ﻝ؟?        """
         pass
 ```
 
@@ -135,15 +135,15 @@ class BarraRiskModel:
 ```python
 class FactorExposureCalculator:
     """
-    ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟?    
-    ﻟﻟﺑ۲: ﻟ؟۰ﻝ؟ﻟﭖﻛﭦ۶ﮒﺁﺗﮒ ﮒ­ﻝﮔﺑﻠﺎ?    """
+ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟?
+ﻟﻟﺑ۲: ﻟ؟۰ﻝ؟ﻟﭖﻛﭦ۶ﮒﺁﺗﮒﮒﻝﮔﺑﻠﺎ?    """
     
     def __init__(self, config: FactorConfig):
         """
-        ﮒﮒ۶ﮒﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷
+ﮒﮒ۶ﮒﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷
         
         Args:
-            config: ﮒ ﮒ­ﻠﻝﺛ؟
+config: ﮒﮒﻠﻝﺛ؟
         """
         pass
     
@@ -151,14 +151,14 @@ class FactorExposureCalculator:
                  factor_data: pd.DataFrame,
                  returns_data: pd.DataFrame) -> pd.DataFrame:
         """
-        ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
+ﻟ؟۰ﻝ؟ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
         
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
             returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
             
         Returns:
-            pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
+pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
         """
         pass
 ```
@@ -168,13 +168,13 @@ class FactorExposureCalculator:
 ```python
 class FactorCovarianceEstimator:
     """
-    ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷
+ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷
     
-    ﻟﻟﺑ۲: ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?    """
+ﻟﻟﺑ۲: ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?    """
     
     def __init__(self, config: CovarianceConfig):
         """
-        ﮒﮒ۶ﮒﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰?        
+ﮒﮒ۶ﮒﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰?
         Args:
             config: ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?        """
         pass
@@ -183,28 +183,28 @@ class FactorCovarianceEstimator:
                 factor_data: pd.DataFrame,
                 method: str = 'shrinkage') -> pd.DataFrame:
         """
-        ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        
+ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?
         Args:
-            factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
             method: ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ ('shrinkage', 'ewma', 'garch')
             
         Returns:
-            pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
+pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
         """
         pass
 ```
 
 ### 2.2 ﮔﺍﮔ؟ﮔ۴ﮒ۲
 
-#### 2.2.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+#### 2.2.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔﺙﮒﺙ
 
 ```python
-# ﮒ ﮒ­ﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+# ﮒﮒﮔﺍﮔ؟ﮔﺙﮒﺙ
 factor_data: pd.DataFrame
 """
 Index: DatetimeIndex (ﮔﭘﻠﺑ)
-Columns: ﮒ ﮒ­ﮒﻝ۶ﺍ
-Values: ﮒ ﮒ­?
+Columns: ﮒﮒﮒﻝ۶ﺍ
+Values: ﮒﮒ?
 ﻝ۳ﭦﻛﺝ:
             momentum  value  size  beta  ...
 2024-01-01    0.05   -0.02  0.01  1.2
@@ -212,10 +212,10 @@ Values: ﮒ ﮒ­?
 ...
 """
 
-# ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍﮔ؟ﮔ ﺙ?returns_data: pd.DataFrame
+# ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍﮔ؟ﮔﺙ?returns_data: pd.DataFrame
 """
 Index: DatetimeIndex (ﮔﭘﻠﺑ)
-Columns: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
+Columns: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ
 Values: ﮔﭘﻝ?
 ﻝ۳ﭦﻛﺝ:
             AAPL    MSFT    GOOGL   ...
@@ -224,10 +224,10 @@ Values: ﮔﭘﻝ?
 ...
 """
 
-# ﻝﭨﮒﮔﻠﮔ ﺙﮒﺙ
+# ﻝﭨﮒﮔﻠﮔﺙﮒﺙ
 portfolio_weights: pd.Series
 """
-Index: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ 
+Index: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ
 Values: ﮔﻠ
 
 ﻝ۳ﭦﻛﺝ:
@@ -238,25 +238,25 @@ GOOGL    0.10
 """
 ```
 
-#### 2.2.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔ ﺙﮒﺙ
+#### 2.2.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔﺙﮒﺙ
 
 ```python
 # ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
 @dataclass
 class RiskDecomposition:
     """ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ"""
-    factor_exposure: pd.Series  # ﮒ ﮒ­ﮔﺑﻠﺎ (K,)
-    factor_risk_contribution: pd.Series  # ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ (K,)
+factor_exposure: pd.Series  # ﮒﮒﮔﺑﻠﺎ (K,)
+factor_risk_contribution: pd.Series  # ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ (K,)
     idiosyncratic_risk_contribution: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
-    total_risk: float  # ﮔﭨﻠ۲?    factor_risk_ratio: float  # ﮒ ﮒ­ﻠ۲ﻠ۸ﮒ ﮔﺁ
-    idiosyncratic_risk_ratio: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﮒ ﮔﺁ
+total_risk: float  # ﮔﭨﻠ۲?    factor_risk_ratio: float  # ﮒﮒﻠ۲ﻠ۸ﮒﮔﺁ
+idiosyncratic_risk_ratio: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﮒﮔﺁ
 ```
 
 ---
 
 ## 3. ﮔﺍﮔ؟ﻝﭨﮔﻟ؟ﺝﻟ؟۰
 
-### 3.1 ﮔ ﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
+### 3.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
 #### 3.1.1 BarraConfig
 
@@ -268,17 +268,17 @@ class BarraConfig:
     cov_config: CovarianceConfig
     idio_config: IdiosyncraticConfig
     
-    # ﻠ۲ﮔ ﺙﮒ ﮒ­ﮒ؟ﻛﺗ
+# ﻠ۲ﮔﺙﮒﮒﮒ؟ﻛﺗ
     style_factors: List[str] = field(default_factory=lambda: [
-        'momentum',      # ﮒ۷ﻠﮒ ﮒ­
-        'value',         # ﻛﭨﺓﮒﺙﮒ ?        'size',          # ﻟ۶ﮔ۷۰ﮒ ﮒ­
-        'beta',          # Betaﮒ ﮒ­
-        'volatility',    # ﮔﺏ۱ﮒ۷ﻝﮒ ?        'liquidity',     # ﮔﭖﮒ۷ﮔ۶ﮒ ?        'leverage',      # ﮔ ﮔﮒ ﮒ­
-        'earnings_yield', # ﻝﮒ۸ﮔﭘﻝﻝﮒ ?        'growth',        # ﮔﻠﺟﮒ ﮒ­
-        'quality'        # ﻟﺑ۷ﻠﮒ ﮒ­
+'momentum',      # ﮒ۷ﻠﮒﮒ
+'value',         # ﻛﭨﺓﮒﺙﮒ?        'size',          # ﻟ۶ﮔ۷۰ﮒﮒ
+'beta',          # Betaﮒﮒ
+'volatility',    # ﮔﺏ۱ﮒ۷ﻝﮒ?        'liquidity',     # ﮔﭖﮒ۷ﮔ۶ﮒ?        'leverage',      # ﮔﮔﮒﮒ
+'earnings_yield', # ﻝﮒ۸ﮔﭘﻝﻝﮒ?        'growth',        # ﮔﻠﺟﮒﮒ
+'quality'        # ﻟﺑ۷ﻠﮒﮒ
     ])
     
-    # ﻟ۰ﻛﺕﮒ ﮒ­ﮒ؟ﻛﺗ
+# ﻟ۰ﻛﺕﮒﮒﮒ؟ﻛﺗ
     industry_factors: List[str] = field(default_factory=lambda: [
         'energy', 'materials', 'industrials', 'consumer_discretionary',
         'consumer_staples', 'health_care', 'financials', 'information_technology',
@@ -291,8 +291,8 @@ class BarraConfig:
 ```python
 @dataclass
 class FactorConfig:
-    """ﮒ ﮒ­ﻠﻝﺛ؟"""
-    # ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﺗﮔﺏ
+"""ﮒﮒﻠﻝﺛ؟"""
+# ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﺗﮔﺏ
     exposure_method: str = 'regression'  # 'regression', 'characteristics'
     
     # ﮒﮒﺛﻝ۹ﮒ۲
@@ -300,7 +300,7 @@ class FactorConfig:
     # ﮔﮒﺍRﺡﺎﻟ۵ﮔﺎ
     min_r_squared: float = 0.3
     
-    # ﮒ ﮒ­ﮔ ﮒ?    standardize_factors: bool = True
+# ﮒﮒﮔﮒ?    standardize_factors: bool = True
 ```
 
 #### 3.1.3 CovarianceConfig
@@ -325,7 +325,7 @@ class CovarianceConfig:
 ```
 
 ### 3.2 ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝ?
-#### 3.2.1 ﮒ ﮒ­ﮔﺍﮔ؟?(factor_data)
+#### 3.2.1 ﮒﮒﮔﺍﮔ؟?(factor_data)
 
 ```sql
 CREATE TABLE factor_data (
@@ -340,7 +340,7 @@ CREATE TABLE factor_data (
 );
 ```
 
-#### 3.2.2 ﮒ ﮒ­ﻟﺛﺛﻟﺓ?(factor_loadings)
+#### 3.2.2 ﮒﮒﻟﺛﺛﻟﺓ?(factor_loadings)
 
 ```sql
 CREATE TABLE factor_loadings (
@@ -357,7 +357,7 @@ CREATE TABLE factor_loadings (
 );
 ```
 
-#### 3.2.3 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻟ۰۷ (factor_covariance)
+#### 3.2.3 ﮒﮒﮒﮔﺗﮒﺓ؟ﻟ۰۷ (factor_covariance)
 
 ```sql
 CREATE TABLE factor_covariance (
@@ -377,7 +377,7 @@ CREATE TABLE factor_covariance (
 
 ## 4. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
-### 4.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
+### 4.1 ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 
 #### 4.1.1 ﮒﮒﺛ?
 ```python
@@ -387,18 +387,18 @@ def calculate_factor_exposure_regression(
     window: int = 252
 ) -> pd.DataFrame:
     """
-    ﻛﺛﺟﻝ۷ﮒﮒﺛﮔﺏﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑ?    
+ﻛﺛﺟﻝ۷ﮒﮒﺛﮔﺏﻟ؟۰ﻝ؟ﮒﮒﮔﺑ?
     ﻝ؟ﮔﺏ:
     1. ﮒﺁﺗﮔﺁﻛﺕ۹ﻟﭖﻛﭦ۶ﺅﺙﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮒﮒﺛ
     2. r_i = ﺳﺎ + ﺳﺎ_i1*f1 + ﺳﺎ_i2*f2 + ... + ﺳﭖ_i
-    3. ﺳﺎ_ij ﮒﺏﻛﺕﭦﻟﭖﻛﭦ۶iﮒﺁﺗﮒ ﮒ­jﻝﮔﺑ?    
+3. ﺳﺎ_ij ﮒﺏﻛﺕﭦﻟﭖﻛﭦ۶iﮒﺁﺗﮒﮒjﻝﮔﺑ?
     Args:
-        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
         returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
         window: ﮒﮒﺛﻝ۹ﮒ۲
         
     Returns:
-        pd.DataFrame: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
+pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
     """
     from sklearn.linear_model import LinearRegression
     
@@ -416,13 +416,13 @@ def calculate_factor_exposure_regression(
         model = LinearRegression()
         model.fit(X, y)
         
-        # ﻛﺟﮒ­ﮒ ﮒ­ﻟﺛﺛﻟﺓ
+# ﻛﺟﮒﮒﮒﻟﺛﺛﻟﺓ
         factor_loadings.loc[asset] = model.coef_
     
     return factor_loadings
 ```
 
-### 4.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ؟?
+### 4.2 ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ؟?
 #### 4.2.1 Shrinkageﻛﺙﺍﻟ؟۰
 
 ```python
@@ -431,22 +431,22 @@ def estimate_factor_covariance_shrinkage(
     shrinkage_intensity: float = 0.2
 ) -> pd.DataFrame:
     """
-    ﻛﺛﺟﻝ۷Shrinkageﮔﺗﮔﺏﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?    
+ﻛﺛﺟﻝ۷Shrinkageﮔﺗﮔﺏﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?
     ﻝ؟ﮔﺏ:
-    1. ﻟ؟۰ﻝ؟ﮔ ﺓﮔ؛ﮒﮔﺗﮒﺓ؟ﻝ۸?S
-    2. ﮔﮒﭨﭦﻝ؟ﮔ ﻝ۸ﻠﭖ F (ﮒ۵ﮒﻛﺛﻝ۸?
+1. ﻟ؟۰ﻝ؟ﮔﺓﮔ؛ﮒﮔﺗﮒﺓ؟ﻝ۸?S
+2. ﮔﮒﭨﭦﻝ؟ﮔﻝ۸ﻠﭖ F (ﮒ۵ﮒﻛﺛﻝ۸?
     3. ﻟ؟۰ﻝ؟Shrinkageﻛﺙﺍﻟ؟۰: ﺳ۲ = (1-ﺳﭨ)*S + ﺳﭨ*F
     
     Args:
-        factor_data: ﮒ ﮒ­ﮔﺍﮔ؟ (T x K)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
         shrinkage_intensity: Shrinkageﮒﺙﭦﮒﭦ۵
         
     Returns:
-        pd.DataFrame: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
+pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
     """
-    # ﮔ ﺓﮔ؛ﮒﮔﺗ?    sample_cov = factor_data.cov()
+# ﮔﺓﮔ؛ﮒﮔﺗ?    sample_cov = factor_data.cov()
     
-    # ﻝ؟ﮔ ﻝ۸ﻠﭖﺅﺙﮒﻛﺛﻝ۸ﻠﭖﺅﺙ
+# ﻝ؟ﮔﻝ۸ﻠﭖﺅﺙﮒﻛﺛﻝ۸ﻠﭖﺅﺙ
     target = np.eye(len(sample_cov))
     
     # Shrinkageﻛﺙﺍﻟ؟۰
@@ -473,23 +473,23 @@ def decompose_portfolio_risk(
     ﻠ۲ﻠ۸ﮒﻟ۶۲
     
     ﻝ؟ﮔﺏ:
-    1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ: f_p = X'w
-    2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_fﺡﺎ = f_p'ﺳ۲_f f_p
+1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ: f_p = X'w
+2. ﻟ؟۰ﻝ؟ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_fﺡﺎ = f_p'ﺳ۲_f f_p
     3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_ﺳﭖﺡﺎ = w'D_ﺳﭖ w
     4. ﮔﭨﻠ۲? ﺵ_p = sqrt(ﺵ_fﺡﺎ + ﺵ_ﺳﭖﺡﺎ)
     
     Args:
         portfolio_weights: ﻝﭨﮒﮔﻠ
-        factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
-        factor_covariance: ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸
+factor_loadings: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
+factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸
         
     Returns:
         RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
     """
-    # 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒ ﮒ­ﮔﺑﻠﺎ
+# 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ
     factor_exposure = factor_loadings.T @ portfolio_weights
     
-    # 2. ﻟ؟۰ﻝ؟ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+# 2. ﻟ؟۰ﻝ؟ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     factor_risk_squared = factor_exposure.T @ factor_covariance @ factor_exposure
     
     # ﻟﺝﺗﻠﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
@@ -517,7 +517,7 @@ def decompose_portfolio_risk(
 
 ### 5.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 5.1.1 ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
+#### 5.1.1 ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 import pytest
@@ -525,10 +525,10 @@ import numpy as np
 import pandas as pd
 
 class TestFactorExposureCalculator:
-    """ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷ﮔﭖ?""
+"""ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷ﮔﭖ?""
     
     def test_calculate_factor_exposure(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟"""
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟"""
         # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
@@ -540,7 +540,7 @@ class TestFactorExposureCalculator:
             columns=['asset_{}'.format(i) for i in range(50)]
         )
         
-        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
@@ -549,8 +549,8 @@ class TestFactorExposureCalculator:
         assert not factor_loadings.isnull().any().any()
     
     def test_factor_exposure_accuracy(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒﻝ۰؟?""
-        # ﻛﺛﺟﻝ۷ﮒﺓﺎﻝ۴ﮒ ﮒ­ﻝﮔﺍﮔ؟ﮔﭖ?        # ﮔ? r = 0.5*f1 + 0.3*f2 + noise
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒﻝ۰؟?""
+# ﻛﺛﺟﻝ۷ﮒﺓﺎﻝ۴ﮒﮒﻝﮔﺍﮔ؟ﮔﭖ?        # ﮔ? r = 0.5*f1 + 0.3*f2 + noise
         np.random.seed(42)
         f1 = np.random.randn(252)
         f2 = np.random.randn(252)
@@ -564,17 +564,17 @@ class TestFactorExposureCalculator:
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
-        # ﻠ۹ﻟﺁﮒ ﮒ­ﻟﺛﺛﻟﺓﮔ۴ﻟﺟﻝﮒ؟?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
+# ﻠ۹ﻟﺁﮒﮒﻟﺛﺛﻟﺓﮔ۴ﻟﺟﻝﮒ؟?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
         assert abs(factor_loadings.loc['asset', 'f2'] - 0.3) < 0.1
 ```
 
-#### 5.1.2 ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮔﭖ?
+#### 5.1.2 ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮔﭖ?
 ```python
 class TestFactorCovarianceEstimator:
-    """ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷ﮔﭖﻟﺁ"""
+"""ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷ﮔﭖﻟﺁ"""
     
     def test_estimate_factor_covariance(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?""
+"""ﮔﭖﻟﺁﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?""
         # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
@@ -582,13 +582,13 @@ class TestFactorCovarianceEstimator:
             columns=['factor_{}'.format(i) for i in range(10)]
         )
         
-        # ﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?        estimator = FactorCovarianceEstimator(CovarianceConfig())
+# ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?        estimator = FactorCovarianceEstimator(CovarianceConfig())
         factor_cov = estimator.estimate(factor_data)
         
         # ﻠ۹ﻟﺁﻝﭨﮔ
         assert factor_cov.shape == (10, 10)
         assert np.allclose(factor_cov.values, factor_cov.values.T)  # ﮒﺁﺗﻝ۶ﺍ
-        assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # ﮔ­۲ﮒ؟
+assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # ﮔ۲ﮒ؟
 ```
 
 #### 5.1.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ
@@ -652,7 +652,7 @@ class TestBarraRiskModelIntegration:
         # ﮔﮒﮔ۷۰ﮒ
         model.fit(factor_data, returns_data)
         
-        # ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
         portfolio_weights = pd.Series(
             np.random.dirichlet(np.ones(len(returns_data.columns))),
             index=returns_data.columns
@@ -670,7 +670,7 @@ class TestBarraRiskModelIntegration:
         """ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟"""
         np.random.seed(42)
         
-        # ﻝﮔﮒ ﮒ­ﮔﺍﮔ؟
+# ﻝﮔﮒﮒﮔﺍﮔ؟
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
             columns=['factor_{}'.format(i) for i in range(38)]
@@ -691,7 +691,7 @@ class TestBarraRiskModelPerformance:
     """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ۶ﻟﺛﮔﭖﻟﺁ"""
     
     def test_factor_exposure_performance(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
         # ﮒ۳۶ﻟ۶ﮔ۷۰ﮔﺍ?        np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
@@ -755,18 +755,18 @@ class TestBarraRiskModelPerformance:
 
 | ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ | ﮔﭖﻟﺁﻝﭨﮔ |
 |------|---------|---------|---------|
-| **ﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5?| ?ﻠﻟﺟ |
-| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?* | 38ﮒ ﮒ­ ﺣ 252?| < 1?| ?ﻠﻟﺟ |
+| **ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒﮒ | < 5?| ?ﻠﻟﺟ |
+| **ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?* | 38ﮒﮒ ﺣ 252?| < 1?| ?ﻠﻟﺟ |
 | **ﻠ۲ﻠ۸ﮒﻟ۶۲** | 1000ﻟﭖﻛﭦ۶ | < 100ms | ?ﻠﻟﺟ |
-| **ﻠ۲ﻠ۸ﮒﺛﮒ ** | 1000ﻟﭖﻛﭦ۶ | < 200ms | ?ﻠﻟﺟ |
+| **ﻠ۲ﻠ۸ﮒﺛﮒ** | 1000ﻟﭖﻛﭦ۶ | < 200ms | ?ﻠﻟﺟ |
 
-### 6.2 ﮒﮒ­ﻛﺛﺟﻝ۷
+### 6.2 ﮒﮒﻛﺛﺟﻝ۷
 
-| ﮔﻛﺛ | ﮒﮒ­ﮒ ﻝ۷ | ﻠﮒﭘ |
+| ﮔﻛﺛ | ﮒﮒﮒﻝ۷ | ﻠﮒﭘ |
 |------|---------|------|
-| **ﮒ ﮒ­ﮔﺍﮔ؟ﮒ­ﮒ۷** | 38ﮒ ﮒ­ ﺣ 252?| < 10MB |
-| **ﮒ ﮒ­ﻟﺛﺛﻟﺓﻝ۸ﻠﭖ** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒ ﮒ­ | < 5MB |
-| **ﮒ ﮒ­ﮒﮔﺗﮒﺓ؟ﻝ۸?* | 38 ﺣ 38 | < 1MB |
+| **ﮒﮒﮔﺍﮔ؟ﮒﮒ۷** | 38ﮒﮒ ﺣ 252?| < 10MB |
+| **ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒﮒ | < 5MB |
+| **ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?* | 38 ﺣ 38 | < 1MB |
 
 ---
 
@@ -775,7 +775,7 @@ class TestBarraRiskModelPerformance:
 ### 7.1 ﻠ۷ﻝﺛﺎﮔﭘﮔ
 
 ```
-ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮒﭦﻝ۷?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?  BarraRiskModel API             ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﮒ۰?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺑﻠﺎ ? ?ﻠ۲ﻠ۸ﮒﻟ۶۲ ?          ?? ?ﻟ؟۰ﻝ؟ﮔﮒ۰ ? ?ﮔﮒ۰     ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﺍﮔ؟?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒ ﮒ­ﮔﺍﮔ؟ ? ?ﮒﮔﺗ?  ?          ?? ??      ? ?ﮔﺍﮔ؟?  ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮒﭦﻝ۷?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?  BarraRiskModel API             ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﮒ۰?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒﮒﮔﺑﻠﺎ ? ?ﻠ۲ﻠ۸ﮒﻟ۶۲ ?          ?? ?ﻟ؟۰ﻝ؟ﮔﮒ۰ ? ?ﮔﮒ۰     ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﺍﮔ؟?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒﮒﮔﺍﮔ؟ ? ?ﮒﮔﺗ?  ?          ?? ??      ? ?ﮔﺍﮔ؟?  ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
 ### 7.2 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
@@ -833,13 +833,13 @@ database:
 ---
 
 ## 8. ﻝﮔ۶ﻛﺕﻝﭨﺑ?
-### 8.1 ﻝﮔ۶ﮔﮔ 
+### 8.1 ﻝﮔ۶ﮔﮔ
 
-| ﮔﮔ  | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ­۵ﻝﭦ۶ﮒ، |
+| ﮔﮔ | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ۵ﻝﭦ۶ﮒ، |
 |------|------|------|---------|
 | **ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﻟﮔﭘ | > 200ms | P1 |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﮒﮒ­ﮒ ﻝ۷?| > 80% | P2 |
-| **ﮒ ﮒ­ﮔﺑﻠﺎﮒﺙﮒﺕﺕ** | ﮒ ﮒ­ﮔﺑﻠﺎﻟﭘﻟﺟﻠ?| > 3ﺵ | P0 |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﮒﮒﮒﻝ۷?| > 80% | P2 |
+| **ﮒﮒﮔﺑﻠﺎﮒﺙﮒﺕﺕ** | ﮒﮒﮔﺑﻠﺎﻟﭘﻟﺟﻠ?| > 3ﺵ | P0 |
 | **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮒﺙ?* | ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮔ۰ﻛﭨﭘﮔﺍ | > 1000 | P1 |
 
 ### 8.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
@@ -854,7 +854,7 @@ def log_factor_exposure_calculation(
     factor_count: int,
     elapsed_time: float
 ):
-    """ﻟ؟ﺍﮒﺛﮒ ﮒ­ﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۴ﮒﺟ"""
+"""ﻟ؟ﺍﮒﺛﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۴ﮒﺟ"""
     logger.info({
         'event': 'factor_exposure_calculation',
         'asset_count': asset_count,
@@ -882,10 +882,10 @@ def log_risk_decomposition(
 
 | ﻝﭨﺑﮔ۳ﻛﭨﭨﮒ۰ | ﻠ۱ﻝ | ﮔﻟﺟﺍ |
 |---------|------|------|
-| **ﮒ ﮒ­ﮔﺍﮔ؟ﮔﺑﮔﺍ** | ﮔﺁﮔ۴ | ﮔﺑﮔﺍﮒ ﮒ­ﮔﺍﮔ؟ |
-| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﻠ?* | ﮔﺁﮒ۷ | ﻠﮔﺍﻛﺙﺍﻟ؟۰ﮒ ﮒ­ﮒﮔﺗ?|
+| **ﮒﮒﮔﺍﮔ؟ﮔﺑﮔﺍ** | ﮔﺁﮔ۴ | ﮔﺑﮔﺍﮒﮒﮔﺍﮔ؟ |
+| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﻠ?* | ﮔﺁﮒ۷ | ﻠﮔﺍﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?|
 | **ﮔ۷۰ﮒﮒﮔﭖ** | ﮔﺁﮔ | ﮒﮔﭖﮔ۷۰ﮒﮔ۶ﻟﺛ |
-| **ﮒﮔﺍﻟﺍﻛﺙ** | ﮔﺁﮒ­۲?| ﻟﺍﮔﺑﮔ۷۰ﮒﮒﮔﺍ |
+| **ﮒﮔﺍﻟﺍﻛﺙ** | ﮔﺁﮒ۲?| ﻟﺍﮔﺑﮔ۷۰ﮒﮒﮔﺍ |
 
 ---
 
@@ -896,7 +896,7 @@ def log_risk_decomposition(
 #### A.1 REST API
 
 ```yaml
-# ﻟ؟۰ﻝ؟ﮒ ﮒ­ﮔﺑﻠﺎ
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
 POST /api/v1/barra/factor_exposure
 Request:
   portfolio_weights: Dict[str, float]
@@ -931,4 +931,4 @@ riskfolio-lib>=4.0.0
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?

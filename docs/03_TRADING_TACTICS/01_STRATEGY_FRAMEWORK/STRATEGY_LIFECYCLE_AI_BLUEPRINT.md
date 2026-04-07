@@ -52,7 +52,7 @@ related_documents:
 ### 1.1 蓝图定位
 
 
-èµé?
+?
 
 
 4. **减少人工**: 减少人工管理策略的工作量
@@ -74,16 +74,16 @@ related_documents:
 ### 2.1 整体架构
 
 ```
-â?                                                            â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 
 ```
-    â?                                                       â?
+?                                                       ?
 ```
 
 ---
@@ -101,10 +101,10 @@ from typing import Dict, List, Optional
 
 class StrategyStage(Enum):
     """策略生命周期阶段"""
-    EMERGING = "emerging"      # èè½æ?
-    GROWING = "growing"        # æé¿æ?
-    MATURE = "mature"          # æçæ?
-    DECLINING = "declining"    # è¡°éæ?
+EMERGING = "emerging"      # ?
+GROWING = "growing"        # ?
+MATURE = "mature"          # ?
+DECLINING = "declining"    # ?
 
 @dataclass
 class StageCriteria:
@@ -194,14 +194,13 @@ class EmergingStageManager:
         
         feasibility = self._assess_feasibility(strategy_id)
         
-        # 3. ä¼å
+# 3.
         priority = self.prioritizer.calculate_priority(
             strategy_id=strategy_id,
             validation_result=validation_result,
             feasibility=feasibility
         )
         
-¥æé¿æ
         if validation_result.passed and feasibility.score > 0.6:
             self._promote_to_growing(strategy_id, priority)
         else:
@@ -253,7 +252,7 @@ class GrowingStageManager:
         # 1. 表现跟踪
         performance = self.tracker.track_performance(strategy_id)
         
-        # 2. èµéåé
+# 2.
 
         allocation = self.allocator.allocate_capital(
             strategy_id=strategy_id,
@@ -266,7 +265,6 @@ class GrowingStageManager:
             allocation=allocation
         )
         
-¥æçæ
         if performance.sharpe_ratio > 1.5 and performance.confidence > 0.7:
             self._promote_to_mature(strategy_id)
         elif performance.sharpe_ratio < 0.5:
@@ -437,7 +435,7 @@ class StrategyPoolManager:
         
         diversity_status = self.diversity_manager.manage_diversity()
         
-        # 3. ç¸å
+# 3.
         correlation_status = self.correlation_controller.control_correlation()
         
         if capacity_status.need_optimization:
@@ -608,7 +606,7 @@ class StrategyLifecycleTextInterface:
 
 ---
 
-## å
+##
 
 ### 6.1 实施计划
 
@@ -641,12 +639,12 @@ class StrategyLifecycleTextInterface:
 
 ---
 
-## å
+##
 
 ### 8.1 文档索引
 
-- **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-- **å
+- **?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **
   - [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](../../01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
   - [AI_WORKFLOW_LOGGER_BLUEPRINT.md](../../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md)
@@ -670,7 +668,7 @@ class StrategyLifecycleTextInterface:
 - **模块ID**: STRATEGY_LIFECYCLE_AI_001
 - **蓝图文档**: [STRATEGY_LIFECYCLE_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\STRATEGY_LIFECYCLE_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: ç­ç¥çå½å¨æç®¡ç
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -678,7 +676,7 @@ class StrategyLifecycleTextInterface:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategy Lifecycle Ai** | ç­ç¥çå½å¨æç®¡ç | **核心模块** |
+| **Strategy Lifecycle Ai** |  | **核心模块** |
 
 ### 1.3 版本管理
 

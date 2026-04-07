@@ -1,6 +1,6 @@
 ﻿﻿---
 version: 1.0.0
-standard_type: æ¶æå?applicable_scope: å
+standard_type: ?applicable_scope:
 parent_document: ../INDEX.md
 module_id: SYSTEM_ARCHITECTURE_DIAGRAM
 created_date: 2026-04-02
@@ -10,17 +10,17 @@ responsibility:
 
 ---
 ---
-¨æ¯å?
+?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 **文档版本**: 1.0.0
-**æåæ´æ?*: 2026-04-02
+**?*: 2026-04-02
 ---
 
-¨æ¯å?
+?
 ```
 
 ---
@@ -59,7 +59,7 @@ responsibility:
 
 ---
 
-## 4. åèææ¡?
+## 4. ?
 - [系统架构蓝图](SYSTEM_ARCHITECTURE_BLUEPRINT.md)
 - [模块职责边界定义](./MODULE_RESPONSIBILITY_BOUNDARIES.md)
 

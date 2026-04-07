@@ -1,9 +1,9 @@
 ﻿﻿---
 responsibility:
-  - 风险平价策略
+  - 风险平价权重
   - 风险贡献均衡
-
-  - 权重优化
+  - 平价优化求解
+  - 分散度优化
 
 module_id: RISK_PARITY_STRATEGY_001
 version: 1.0.0
@@ -24,7 +24,7 @@ layer: Layer 5.2 (组合优化)
 
 
 
-ç½?
+?
 > **职责边界**: 
 
 
@@ -87,7 +87,6 @@ layer: Layer 5.2 (组合优化)
 基于风险特征
 
 - 降低单一资产风险暴露
-ç½®åå
 置
 
 ### 1.2 版本信息
@@ -96,23 +95,22 @@ layer: Layer 5.2 (组合优化)
 |------|------|
 | **模块ID** | RISK_PARITY_STRATEGY_001 |
 | **版本** | v1.0.0 |
-| **ç¶æ?* | Active |
+| **?* | Active |
 | **创建日期** | 2026-04-06 |
-| **æåæ´æ?* | 2026-04-06 |
+| **?* | 2026-04-06 |
 
-³ç³?
+?
 
-| å
+|
 |---------|---------|-----------|---------|
-| **è¾å
-| **è¾å
+| **
+| **
 | **输出目标** | 组合优化模块 | PORTFOLIO_OPTIMIZATION_001 | 提供风险平价权重 |
 | **输出目标** | 风险预算系统 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 提供风险贡献分析 |
 | **协同工作** | Black-Litterman模型 | BLACK_LITTERMAN_MODEL_001 | 可选的收益增强 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -130,8 +128,8 @@ layer: Layer 5.2 (组合优化)
 | **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
 | **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -155,7 +153,7 @@ graph LR
 
 ```
 ├── 6.1 组合构建模块
-ç½?(MULTI_ASSET_ALLOCATION_001)
+?(MULTI_ASSET_ALLOCATION_001)
 ├── 6.2 约束求解模块
 └── 6.3 风险预算模块
     ├── 风险预算系统 (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
@@ -168,8 +166,8 @@ graph LR
 
 ```mermaid
 graph TB
-    subgraph "è¾å
-¥å±?
+subgraph "
+?
         A[资产价格数据] --> B[收益率计算器]
         B --> C[协方差矩阵估计器]
     end
@@ -199,13 +197,13 @@ graph TB
 
 
 ```
-                                    â?
+?
                             风险贡献计算
-                                    â?
+?
                             风险预算优化
-                                    â?
+?
                             风险平价权重 (w*)
-                                    â?
+?
                             风险贡献验证
 ```
 
@@ -226,8 +224,7 @@ class RiskParityOptimizer:
     
     索引: RISK_PARITY_001-M01
     职责: 基于PyPortfolioOpt实现风险平价优化
-    è¾å
-ç½?
+?
     输出: 风险平价权重
     """
     
@@ -266,7 +263,6 @@ class RiskParityOptimizer:
             risk_budget: 风险预算，默认等风险贡献
             
         Returns:
-¸
         """
         if risk_budget is None:
             risk_budget = np.ones(returns.shape[1]) / returns.shape[1]
@@ -312,7 +308,7 @@ class RiskfolioRiskParityOptimizer:
             risk_measure: 风险度量方法
                 - 'MV': 方差
                 - 'MAD': 平均绝对偏差
-                - 'MSV': åæ¹å·?
+- 'MSV': ?
                 - 'FLPM': 一阶下偏矩
                 - 'ADD': 平均回撤
                 - 'UCI': 溃疡指数
@@ -381,7 +377,7 @@ class SkfolioRiskParityOptimizer:
         }
 ```
 
-### 3.2 å
+### 3.2
 
 #### 3.2.1 风险贡献计算
 
@@ -393,7 +389,6 @@ class SkfolioRiskParityOptimizer:
 RC_i = w_i * (Σ w)_i / σ_p
 ```
 
-å
 - w: 权重向量
 
 **实现代码**:
@@ -429,12 +424,11 @@ def calculate_risk_contribution(
 
 
 ```
-min Î£ (RC_i - b_i)^2
-s.t. Î£ w_i = 1
-     w_i â?0
+min  (RC_i - b_i)^2
+s.t.  w_i = 1
+w_i ?0
 ```
 
-å
 
 **实现代码**:
 
@@ -452,7 +446,7 @@ def risk_parity_optimization(
         risk_budget: 风险预算，默认等风险贡献
         
     Returns:
-        æä¼æé?
+?
     """
     n_assets = cov_matrix.shape[0]
     
@@ -534,19 +528,19 @@ def hierarchical_risk_parity(
 ### 3.4 性能要求
 
 |---------|--------|------|
-| **å
+| **
 存占用** | <50MB | 单次优化 |
 
 ---
 
 ## 4. 数据模型
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
 class RiskParityInput:
-¥æ°æ®"""
+"""
     asset_prices: pd.DataFrame
     risk_budget: Optional[np.ndarray] = None
     risk_measure: str = 'MV'
@@ -664,7 +658,7 @@ class RiskParityAPI:
 
 
 |------|------|--------|
-æµè¯?|
+?|
 | Riskfolio-Lib集成 | 4h | 备选优化器 |
 | 风险贡献计算 | 4h | 计算模块 |
 
@@ -677,7 +671,7 @@ class RiskParityAPI:
 ### 6.3 Phase 3: 测试与文档（0.5周）
 
 |------|------|--------|
-| åå
+|
 | 回测验证 | 4h | 回测报告 |
 | 文档编写 | 4h | 用户手册、API文档 |
 
@@ -690,7 +684,7 @@ class RiskParityAPI:
 
 ### 7.2 模块职责边界
 
-- ç¸å
+-
 
 
 - 风险平价负责实现风险预算目标
@@ -712,25 +706,25 @@ class RiskParityAPI:
 
 ### 9.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
-| åå
-æµè¯ | â?0% | pytest |
+|
+| ?0% | pytest |
 | 回测验证 | 历史数据 | Backtrader |
 
 ### 9.2 验收标准
 
 |--------|------|---------|
-æµè¯ |
+|
 | 性能达标 | 优化时间<300ms | 性能测试 |
 
 ---
 
-## 10. åèèµæ?
+## 10. ?
 
 ### 10.1 学术论文
 
-1. Maillard, S., Roncalli, T., & TeÃ¯letche, J. (2010). "The Properties of Equally Weighted Risk Contribution Portfolios". Journal of Portfolio Management.
+1. Maillard, S., Roncalli, T., & Teletche, J. (2010). "The Properties of Equally Weighted Risk Contribution Portfolios". Journal of Portfolio Management.
 2. Roncalli, T. (2013). "Risk Parity". In Encyclopedia of Financial Models.
 
 
@@ -738,8 +732,7 @@ class RiskParityAPI:
 2. Riskfolio-Lib Tutorials: https://riskfolio-lib.readthedocs.io/
 3. skfolio Documentation: https://skfolio.readthedocs.io/
 
-### 10.3 ç¸å
-³èå¾
+### 10.3
 
 - [Black-Litterman模型蓝图](./BLACK_LITTERMAN_MODEL_BLUEPRINT.md)
 - [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
@@ -751,7 +744,7 @@ class RiskParityAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

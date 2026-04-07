@@ -16,7 +16,7 @@ layer: Layer 5.3 (风险管理)
 
 
 > **职责边界**: 
-ï»? Margin Call Monitor
+? Margin Call Monitor
 
 ## 核心定位
 
@@ -101,18 +101,17 @@ layer: Layer 5.3 (风险管理)
 
 
 ```
-â?                                                                        â?
-³æ?    â?         â?  â?
-â?                                   â?                                   â?
-â?                                   â?                                   â?
-â?                                   â?                                   â?
-â?                                                                        â?
+?                                                                        ?
+?    ?         ?  ?
+?                                   ?                                   ?
+?                                   ?                                   ?
+?                                   ?                                   ?
+?                                                                        ?
 ```
 
 ### 2.2 模块分层架构
 
 保比例、杠杆倍数、持仓明细）
-³æ§ï¼
 
 **Layer 2 - 爆仓风险计算引擎**
 保比例、强平价格）
@@ -125,7 +124,7 @@ layer: Layer 5.3 (风险管理)
 
 
 ```
-     â?             â?             â?             â?             â?
+?             ?             ?             ?             ?
 ```
 
 
@@ -140,15 +139,13 @@ from typing import List, Dict, Optional
 
 class AlertLevel(Enum):
     """预警等级"""
-è¡å?
-å
-³æ³?
+?
+?
     P3_LOW = "P3_LOW"              # 低风险，持续监控
 
 
 class RiskType(Enum):
     """风险类型"""
-¥
 
 
 @dataclass
@@ -174,7 +171,7 @@ class MarginCallMonitorConfig:
 置
     snowball_knock_in_thresholds: Dict[str, float] = None
     
-ç½?
+?
     margin_call_thresholds: Dict[str, float] = None
     
 置
@@ -187,18 +184,18 @@ class MarginCallMonitorConfig:
     def __post_init__(self):
         if self.snowball_knock_in_thresholds is None:
             self.snowball_knock_in_thresholds = {
-¥çº?< 5%
-¥çº?< 10%
-¥çº?< 15%
-¥çº?< 20%
+?< 5%
+?< 10%
+?< 15%
+?< 20%
             }
         
         if self.margin_call_thresholds is None:
             self.margin_call_thresholds = {
-                'P0_CRITICAL': 1.30,   # æ
-                'P1_HIGH': 1.50,       # æ
-                'P2_MEDIUM': 1.80,     # æ
-                'P3_LOW': 2.00         # æ
+'P0_CRITICAL': 1.30,   #
+'P1_HIGH': 1.50,       #
+'P2_MEDIUM': 1.80,     #
+'P3_LOW': 2.00         #
             }
         
         if self.market_leverage_thresholds is None:
@@ -350,7 +347,7 @@ class MarginCallMonitorIntegrator:
 **阶段四：AI增强与优化（2周）**
 - 使用机器学习优化爆仓概率预测
 
-### 6.2 å
+### 6.2
 
 |--------|--------------|--------|----------|
 
@@ -372,9 +369,9 @@ class MarginCallMonitorIntegrator:
 
 ### 8.1 测试策略
 
-**åå
-æµè¯**:
-- æ²å
+**
+**:
+-
 
 **集成测试**:
 
@@ -402,8 +399,8 @@ class MarginCallMonitorIntegrator:
 **职责定义**:
 
 **接口边界**:
-- **è¾å
-æ°æ?
+- **
+?
 
 ### 9.3 版本管理策略
 
@@ -413,7 +410,7 @@ class MarginCallMonitorIntegrator:
 
 ---
 
-## 10. åèèµæ?
+## 10. ?
 
 ### 10.1 学术文献
 
@@ -428,7 +425,7 @@ class MarginCallMonitorIntegrator:
 2. **[autocallable_barrier_reverse_convertibles](https://github.com/coder-sword-magic/autocallable_barrier_reverse_convertibles_aka_snowball_structure)** - 雪球结构蒙特卡洛定价
 3. **[Snowball-Exotic-Option-Pricing](https://github.com/lwh0721/Snowball-Exotic-Option-Pricing)** - 雪球奇异期权定价模拟
 
-### 10.3 ç¸å
+### 10.3
 
 - [动态杠杆管理蓝图](./DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) - Layer 6杠杆优化
 - [融资优化蓝图](./FINANCING_OPTIMIZATION_BLUEPRINT.md) - Layer 6融资管理
@@ -441,7 +438,7 @@ class MarginCallMonitorIntegrator:
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-05 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

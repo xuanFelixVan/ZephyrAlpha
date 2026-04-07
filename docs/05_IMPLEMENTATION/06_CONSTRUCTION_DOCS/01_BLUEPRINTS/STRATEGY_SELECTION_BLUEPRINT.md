@@ -24,7 +24,7 @@ layer: Layer 5 (策略执行层)
 
 
 > **职责边界**: 
-> - â?æ...
+> - ?...
 
 
 ## 设计目标
@@ -83,12 +83,12 @@ layer: Layer 5 (策略执行层)
 
 ### 1.1 核心设计目标
 
-?| ææ¯å®?|
+?| ?|
 |------|--------|----------|
 | **多维度评分体?* | P0 | 收益、风险、稳定性、适应性等20+维度评分 |
 | **动态权重调?* | P0 | 基于市场状态、风险偏好动态调整评分权?|
-| **AIè¾
-åº¦åæ |
+| **AI
+|
 | **实时性能监控** | P2 | 策略运行状态监控、性能衰减检?|
 | **用户友好界面** | P2 | 可视化排名仪表盘、自然语言策略推荐 |
 
@@ -173,7 +173,7 @@ layer: Layer 5 (策略执行层)
 
 **StabilityScorer (稳定性评分器)**
 - 评估策略绩效稳定?
-³æ§å?
+?
 - 参数敏感性测?
 
 **AdaptabilityScorer (适应性评分器)**
@@ -191,7 +191,6 @@ class TOPSISEvaluator:
     
     索引: STRAT.SELECTION.001-M01
     职责: 使用TOPSIS算法进行多维度策略排?
-ï¼é¿å
     """
     
     def __init__(self, criteria_weights: Dict[str, float] = None):
@@ -211,7 +210,7 @@ class TOPSISEvaluator:
         6. 计算相对接近度并排序
         """
         
-        # 1. 构建决策矩阵（策?× 准则?
+        # 1. 构建决策矩阵（策? 准则?
         decision_matrix = self._build_decision_matrix(strategies, criteria_matrix)
         
         # 2. 标准化决策矩阵（消除量纲影响?
@@ -610,7 +609,7 @@ class TimeWeightedPerformanceScorer:
 class StrategyCorrelationAnalyzer:
     
     索引: STRAT.SELECTION.001-M04
-³æ§æ£?
+?
     """
     
     def __init__(self, correlation_threshold: float = 0.7):
@@ -618,12 +617,12 @@ class StrategyCorrelationAnalyzer:
         
     def analyze(self, strategies: List[Strategy], 
                returns_data: Dict[str, pd.Series]) -> CorrelationAnalysis:
-³?""
+?""
         
-³æ§ç©?
+?
         corr_matrix = self._calculate_correlation_matrix(returns_data)
         
-³ç­ç¥?
+?
         high_corr_groups = self._find_high_correlation_groups(corr_matrix)
         
         # 3. 计算风险分散潜力
@@ -631,7 +630,7 @@ class StrategyCorrelationAnalyzer:
         
         dynamic_corr = self._analyze_dynamic_correlation(returns_data)
         
-³æ§å?
+?
         market_state_corr = self._analyze_market_state_correlation(returns_data)
         
         return CorrelationAnalysis(
@@ -646,7 +645,7 @@ class StrategyCorrelationAnalyzer:
         )
         
     def _calculate_correlation_matrix(self, returns_data: Dict[str, pd.Series]) -> pd.DataFrame:
-³æ§ç©?""
+?""
         # 对齐数据时间
         aligned_returns = self._align_returns_data(returns_data)
         
@@ -709,7 +708,7 @@ class StrategyCorrelationAnalyzer:
         
         recommendations = []
         
-³çç­?
+?
         for group in high_corr_groups:
             if len(group) > 1:
                 recommendations.append(
@@ -725,13 +724,13 @@ class StrategyCorrelationAnalyzer:
             recommendations.append(
                 Recommendation(
                     type='suggestion',
-                    message=f"ç­ç¥ {', '.join(top_diversifiers)} å
+message=f" {', '.join(top_diversifiers)}
                     priority='medium',
                     action='prioritize_diversification'
                 )
             )
             
-³?
+?
         risk_corr_matrix = self._calculate_risk_correlation(corr_matrix)
         balanced_strategies = self._find_balanced_strategies(corr_matrix, risk_corr_matrix)
         
@@ -748,7 +747,7 @@ class StrategyCorrelationAnalyzer:
         return recommendations
 ```
 
-## åãAIè¾
+## AI
 助决策系统
 
 ### 4.1 AI策略推荐引擎
@@ -821,7 +820,7 @@ class AIStrategyRecommender:
             n_strategies = min(4, len(strategies))
             diversification_weight = 0.5
             
-æ?
+?
         selected = []
         weights = []
         
@@ -832,7 +831,6 @@ class AIStrategyRecommender:
             # 检查相?
             if self._is_diversified(selected, strategy, diversification_weight):
                 selected.append(strategy)
-æé
                 weight = score / sum(s for _, s in sorted_strategies[:n_strategies * 2])
                 weights.append(weight)
                 
@@ -901,15 +899,14 @@ class AIStrategyRecommender:
 
 ## 五、用户接口设?
 
-### 5.1 é
+### 5.1
 
 ```yaml
 # config/strategy_selection.yaml
 > **核心职责**: Strategy Selection蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -947,7 +944,7 @@ strategy_selection:
       enabled: true
       decay_factor: 0.9  # 近期表现权重
     
-  # ç¸å
+#
 ?
   correlation:
     threshold: 0.7
@@ -955,7 +952,7 @@ strategy_selection:
     dynamic_analysis: true
     rolling_window: 60
     
-  # AIæ¨èé
+# AI
 置
   ai_recommendation:
     enabled: true
@@ -963,7 +960,7 @@ strategy_selection:
     confidence_threshold: 0.7
     explainability: true
     
-  # è¾åºé
+#
 置
   output:
     format: "html"  # json, html, pdf
@@ -990,8 +987,8 @@ python strategy_selector.py recommend \
   --ai-model "ensemble" \
   --output "recommendations/"
 
-# ç¸å
-³æ§å?
+#
+?
 python strategy_selector.py analyze-correlation \
   --strategies "strategies/*.yaml" \
   --period "1y" \
@@ -1016,7 +1013,7 @@ python strategy_selector.py query \
 
 **核心功能模块**?
 1. **实时排名看板**：策略综合评分动态展?
-2. **ç¸å
+2. **
 3. **AI推荐面板**：AI生成的策略组合推?
 4. **绩效对比图表**：多策略绩效对比分析
 5. **风险分析仪表**：组合风险指标监?
@@ -1028,7 +1025,7 @@ python strategy_selector.py query \
 - 数据库：SQLite（开发）?PostgreSQL（生产）
 - 可视化：Plotly、ECharts、Highcharts
 
-## å
+##
 
 ### Phase 1: 基础排名系统?周）
 - [ ] MultiCriteriaEvaluator TOPSIS实现
@@ -1038,8 +1035,8 @@ python strategy_selector.py query \
 
 ### Phase 2: 高级分析功能?周）
 - [ ] WeightOptimizer 动态权重调?
-- [ ] StrategyCorrelationAnalyzer ç¸å
-³æ§å?
+- [ ] StrategyCorrelationAnalyzer
+?
 - [ ] 时间加权评分算法
 - [ ] 可视化排名报?
 
@@ -1055,13 +1052,13 @@ python strategy_selector.py query \
 - [ ] 性能优化和缓?
 - [ ] 完整文档和示?
 
-³ææ¡?
+?
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -1074,8 +1071,8 @@ python strategy_selector.py query \
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -1092,7 +1089,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### ç¸å
+###
 
 | 文档 | 说明 |
 |------|------|
@@ -1102,7 +1099,7 @@ graph LR
 | PORTFOLIO_OPTIMIZATION_BLUEPRINT.md | 组合优化蓝图 |
 
 **文档版本**: v1.0  
-**æåæ´æ?*: 2026-04-01  
+**?*: 2026-04-01
 
 ## 变更历史
 
@@ -1116,16 +1113,16 @@ graph LR
 ##### 6.001. Strategy Selection
 - **模块ID**: STRATEGY_SELECTION_001
 - **蓝图文档**: STRATEGY_SELECTION_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategy Selection** | å
+| **Strategy Selection** |
 
 ### 1.3 版本管理
 

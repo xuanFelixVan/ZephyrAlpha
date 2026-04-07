@@ -517,7 +517,7 @@ class TaxReportGenerator:
         report += "=" * 50 + "\n\n"
         
         annual_stamp_tax = self.stamp_tax_calc.get_annual_stamp_tax(year)
-        report += f"年度印花税: ¥{annual_stamp_tax:,.2f}\n\n"
+        report += f"年度印花税: {annual_stamp_tax:,.2f}\n\n"
         
         pnl_df = self.lot_cost_manager.get_annual_realized_pnl(year)
         
@@ -527,7 +527,7 @@ class TaxReportGenerator:
             total_trades = len(pnl_df)
             
             report += "已实现盈亏统计:\n"
-            report += f"  总已实现盈亏: ¥{total_realized_pnl:,.2f}\n"
+            report += f"  总已实现盈亏: {total_realized_pnl:,.2f}\n"
             report += f"  盈利交易次数: {winning_trades}/{total_trades}\n"
             report += f"  胜率: {winning_trades/total_trades:.1%}\n\n"
         

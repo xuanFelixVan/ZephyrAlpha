@@ -8,7 +8,7 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - é
+-
   - 统计套利
   - 价差交易
 layer: Layer 5 (策略执行层)
@@ -80,7 +80,6 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Statistical Arbitrage Module蓝图设计
 > 职责边界: 
-³å
 容
 
 ## 2. 架构设计
@@ -89,14 +88,14 @@ layer: Layer 5 (策略执行层)
 ```
 
 ### 2.2 核心子系统设?
-#### 2.2.1 é
+#### 2.2.1
 ```python
 class PairSelectionEngine:
-    """é
+"""
     
     def __init__(self):
-        self.correlation_threshold = 0.7  # ç¸å
-å¯¹æ°?        
+self.correlation_threshold = 0.7  #
+?
     def select_pairs(
         self, 
         price_data: pd.DataFrame,
@@ -106,7 +105,7 @@ class PairSelectionEngine:
         选择候选股票对
         
         步骤:
-        3. æç¸å
+3.
         Returns:
             List[CandidatePair]: 候选股票对列表
         """
@@ -128,7 +127,7 @@ class CointegrationAnalyzer:
         使用Engle-Granger两步?
         1. 对价格序列进行线性回?        2. 对残差序列进行ADF检?        3. 计算半衰?        
         Returns:
-            CointegrationResult: å
+CointegrationResult:
         """
         pass
 ```
@@ -157,7 +156,7 @@ class SpreadTradingEngine:
            - z > 2: 做空价差（做空A，做多B?           - z < -2: 做多价差（做多A，做空B?           - |z| < 0.5: 平仓
         
         Returns:
-            TradingSignal: å
+TradingSignal:
 含信号类型、Z-score、仓位比?        """
         pass
 
@@ -176,7 +175,7 @@ class SignalQualityFilter:
         过滤低质量信?        
         过滤标准:
         1. 信号强度（Z-score绝对值）
-        2. åæ´å
+2.
         """
         pass
 ```
@@ -200,7 +199,7 @@ class MarketNeutralPortfolioConstructor:
         3. 风格中性：确保风格因子暴露为零
         4. 杠杆控制：限制总杠?        
         Returns:
-            PortfolioAllocation: å
+PortfolioAllocation:
 含多空头寸、净敞口、总敞?        """
         pass
 
@@ -217,7 +216,7 @@ class IndustryNeutralizer:
         行业中性化
         
         确保组合在各行业的暴露为?
-        Î£ w_long_i - w_short_i = 0 (for each industry)
+w_long_i - w_short_i = 0 (for each industry)
         """
         pass
 
@@ -234,7 +233,7 @@ class StyleNeutralizer:
         风格中性化
         
         确保组合在各风格因子的暴露为?
-        Î£ w_i * factor_i = 0 (for each factor)
+w_i * factor_i = 0 (for each factor)
         """
         pass
 ```
@@ -245,7 +244,7 @@ class RiskManager:
     """风险管理?""
     
     def __init__(self):
-        self.max_position_per_pair = 0.1  # åå¯¹é
+self.max_position_per_pair = 0.1  #
     def apply_risk_controls(
         self, 
         allocation: PortfolioAllocation
@@ -254,7 +253,7 @@ class RiskManager:
         应用风险控制
         
         控制措施:
-        1. åå¯¹é
+1.
         2. 总仓位限?        3. 止损机制
         4. 流动性约?        """
         pass
@@ -271,7 +270,7 @@ class RealTimeMonitor:
         实时监控持仓
         
         监控指标:
-        1. åæ´å
+1.
         """
         pass
 ```
@@ -294,7 +293,7 @@ class RealTimeMonitor:
 4. 协整判断
    - 如果ADF检验p?< 0.05
    - 且半衰期在合理范围（5-60天）
-³?
+?
 时间复杂? O(T), T=时间序列长度
 空间复杂? O(T)
 ```
@@ -351,15 +350,13 @@ class RealTimeMonitor:
 ---
 
 ## 4. 数据流设?
-¥
-- **è¡æ
+- **
 
 - **基本面数?*: 财务指标、行业分?- **因子数据**: 风格因子、行业因?
 ### 4.2 数据输出
 ### 4.3 数据流图
 ```
-è¡æ
-æ°æ® ?é
+?
     ?基本面数??行业??风格??组合优化 ?风险控制
     ?因子数据 ?信号过滤 ?风险调整 ?仓位管理 ?执行指令
 ```
@@ -405,7 +402,7 @@ class StatisticalArbitrageModule:
         """
         构建市场中性组?        
         Returns:
-            PortfolioAllocation: ç»åé
+PortfolioAllocation:
 置
         """
         pass
@@ -423,10 +420,10 @@ class StatisticalArbitrageModule:
         pass
 ```
 
-### 5.2 é
+### 5.2
 ```yaml
 statistical_arbitrage:
-  # é
+#
   pair_selection:
   # 协整检验参?  cointegration:
     adf_critical_value: 0.05      # ADF检验临?    min_half_life: 5              # 最小半衰期（天?    max_half_life: 60             # 最大半衰期（天?    
@@ -438,8 +435,7 @@ statistical_arbitrage:
     industry_neutral: true        # 行业?    style_neutral: true           # 风格?    max_leverage: 2.0             # 最大杠?    
   # 风险控制参数
   risk_control:
-    max_position_per_pair: 0.1    # åå¯¹é
-ï¼
+max_position_per_pair: 0.1    #
 ```
 
 ---
@@ -449,7 +445,7 @@ statistical_arbitrage:
 ### 6.1 风险识别
 | 风险类型 | 风险等级 | 影响范围 | 缓解措施 |
 |----------|----------|----------|----------|
-| åæ´å
+|
 | 市场冲击成本 | P2 | 交易执行 | 交易量限制、分批建?|
 | 模型过拟?| P2 | 信号质量 | 样本外测试、交叉验?|
 | 流动性风?| P1 | 交易执行 | 流动性筛选、仓位限?|
@@ -459,7 +455,7 @@ statistical_arbitrage:
 
 ## 7. 实施计划
 
-### 7.1 Phase 1: é
+### 7.1 Phase 1:
 - Day 4-5: 协整检验算法实?- Day 6-7: 价差交易策略实现
 
 ### 7.2 Phase 2: 市场中性组合构建（Week 3-4?- Day 1-3: 多空优化算法实现
@@ -471,7 +467,7 @@ statistical_arbitrage:
 - Day 6-7: 实时监控模块实现
 
 ### 7.4 Phase 4: 集成与测试（Week 7-8?- Day 1-3: 系统集成
-- Day 4-5: åå
+- Day 4-5:
 ---
 
 ## 8. 验收标准
@@ -480,7 +476,7 @@ statistical_arbitrage:
 - ?能够构建市场中性组?- ?能够生成统计套利信号
 
 ### 8.2 性能验收
-- ?é
+- ?
 - ?信号胜率 ?55%
 - ?组合夏普比率 ?1.5
 - ?最大回??10%
@@ -492,8 +488,7 @@ statistical_arbitrage:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -511,8 +506,8 @@ statistical_arbitrage:
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -531,8 +526,7 @@ graph LR
 
 ---
 
-## 9. ä¾èµå
-³ç³»
+## 9.
 
 ### 9.1 上游依赖
 数据
@@ -547,10 +541,10 @@ graph LR
 
 ---
 
-## 10. å
+## 10.
 
 |--------|------|--------|----------|
-| **M1: é
+| **M1:
 | **M4: 测试通过** | Week 8 | 测试报告 | 所有测试通过 |
 
 ---
@@ -559,7 +553,7 @@ graph LR
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -574,16 +568,16 @@ graph LR
 ##### 6.001. Statistical Arbitrage Module
 - **模块ID**: STATISTICAL_ARBITRAGE_MODULE_001
 - **蓝图文档**: STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 12.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Statistical Arbitrage Module** | å
+| **Statistical Arbitrage Module** |
 
 ### 12.3 版本管理
 

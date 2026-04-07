@@ -4,23 +4,23 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 归档文档、历史版本
 layer: Layer 11
-module_type: ﮔ ﺕﮒﺟﮔ۷۰ﮒ
+module_type: ﮔﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
 estimated_hours: 40
 standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
 ---
 
 
-# L11_TEXT_DRIVER: ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+# L11_TEXT_DRIVER: ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -29,9 +29,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 > **ﻝﮔ؛**: v1.0  
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
-> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒ­ﻠ۸ﺎﮒ۷ﮒﺎ? 
+> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒﻠ۸ﺎﮒ۷ﮒﺎ?
 > **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
-> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔ ﺕﮒﺟﮔ۷۰ﮒ)
+> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔﺕﮒﺟﮔ۷۰ﮒ)
 
 ---
 
@@ -53,20 +53,20 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ### 1.1 ﮒﻟﺛﮒ؟ﻛﺛ
 
-**L11_TEXT_DRIVER**ﮔﺁLayer 11ﻝﮔ ﺕﮒﺟﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﮒﺍﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮔﻟﺟﺍﻟﺛ؛ﮔ۱ﻛﺕﭦﻝﺏﭨﻝﭨﮔﻛﺛﮔﻛﭨ۳ﻙ?
+**L11_TEXT_DRIVER**ﮔﺁLayer 11ﻝﮔﺕﮒﺟﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﮒﺍﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻟﺟﺍﻟﺛ؛ﮔ۱ﻛﺕﭦﻝﺏﭨﻝﭨﮔﻛﺛﮔﻛﭨ۳ﻙ?
 
-**ﮔ ﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
-- ﻭﺁ **ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﮔﮒ­ﮔﻟﺟﺍ
-- ﻭ۶  **ﮔﮒﺝﻟﺁﮒ،**ﺅﺙﻟﺁﮒ،ﻝ۷ﮔﺓﻝﮔﻛﺛﮔﮒﺝ
-- ﻭ **ﮒﮔﺍﮔﮒ**ﺅﺙﻛﭨﮔﻟﺟﺍﻛﺕ­ﮔﮒﮒﺏﻠ؟ﮒﮔ?
+**ﮔﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
+- ﻭﺁ **ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﮔﮒﮔﻟﺟﺍ
+- ﻭ۶ **ﮔﮒﺝﻟﺁﮒ،**ﺅﺙﻟﺁﮒ،ﻝ۷ﮔﺓﻝﮔﻛﺛﮔﮒﺝ
+- ﻭ **ﮒﮔﺍﮔﮒ**ﺅﺙﻛﭨﮔﻟﺟﺍﻛﺕﮔﮒﮒﺏﻠ؟ﮒﮔ?
 - ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒﺓ
-- ﻭ؛ **ﻝﭨﮔﮒﻠ۵**ﺅﺙﮒﺍﮔ۶ﻟ۰ﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﻟ۹ﻝﭘﻟﺁ­ﻟ۷
+- ﻭ؛ **ﻝﭨﮔﮒﻠ۵**ﺅﺙﮒﺍﮔ۶ﻟ۰ﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﻟ۹ﻝﭘﻟﺁﻟ۷
 
 ### 1.2 ﮔ۷۰ﮒﻟﺝﺗﻝ
 
 ```yaml
 ﻟﺝﮒ۴:
-  - ﻝ۷ﮔﺓﮔﮒ­ﮔﻟﺟﺍ
+- ﻝ۷ﮔﺓﮔﮒﮔﻟﺟﺍ
   - ﮒﺁﺗﻟﺁﮒﮒﺎ
   - ﻝﺏﭨﻝﭨﻝﭘﮔ?
 
@@ -102,16 +102,16 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ## 2. ﮒﻟﺛﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﮔ ﺕﮒﺟﮒﻟﺛ
+### 2.1 ﮔﺕﮒﺟﮒﻟﺛ
 
-#### 2.1.1 ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲
+#### 2.1.1 ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲
 
-**ﮒﻟﺛﮔﻟﺟﺍ**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮔﻟﺟﺍ
+**ﮒﻟﺛﮔﻟﺟﺍ**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻟﺟﺍ
 
 **ﮒ؟ﻝﺍﮔﺗﮒﺙ**ﺅﺙ?
 ```python
 class NaturalLanguageUnderstanding:
-    """ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲"""
+"""ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲"""
     
     def __init__(self, model_name: str = "deepseek-r1:14b"):
         self.llm = ChatOpenAI(
@@ -141,7 +141,7 @@ class NaturalLanguageUnderstanding:
         
         ﻝ۷ﮔﺓﻟﺝﮒ۴: {user_input}
         
-        ﻟﺁﺓﻟﺟﮒJSONﮔ ﺙﮒﺙﺅﺙ?
+ﻟﺁﺓﻟﺟﮒJSONﮔﺙﮒﺙﺅﺙ?
         {{
             "intent": "ﮔﮒﺝﻝﺎﭨﮒ",
             "entities": {{}},
@@ -159,12 +159,12 @@ class NaturalLanguageUnderstanding:
 
 | ﮔﮒﺝﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﻝ۳ﭦﻛﺝ |
 |----------|------|------|
-| **configure_strategy** | ﻠﻝﺛ؟ﻝ­ﻝ۴ | "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ? |
+| **configure_strategy** | ﻠﻝﺛ؟ﻝﻝ۴ | "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ? |
 | **adjust_risk_control** | ﻟﺍﮔﺑﻠ۲ﮔ۶ | "ﮔﮔﮒ۳۶ﮒﮔ۳ﻠﮒﭘﻟﺍﮔﺑﮒﺍ10%" |
 | **query_status** | ﮔ۴ﻟﺁ۱ﻝﭘﮔ?| "ﮒﻟﺁﮔﻝﺏﭨﻝﭨﮒﺛﮒﻝﭘﮔ? |
-| **run_backtest** | ﻟﺟﻟ۰ﮒﮔﭖ | "ﮒﺁﺗﻟﺟﻛﺕ۹ﻝ­ﻝ۴ﻟﺟﻟ۰?023ﮒﺗﺑﻝﮒﮔﭖ" |
+| **run_backtest** | ﻟﺟﻟ۰ﮒﮔﭖ | "ﮒﺁﺗﻟﺟﻛﺕ۹ﻝﻝ۴ﻟﺟﻟ۰?023ﮒﺗﺑﻝﮒﮔﭖ" |
 | **export_report** | ﮒﺁﺙﮒﭦﮔ۴ﮒ | "ﮒﺁﺙﮒﭦﮔ؛ﮔﻝﻛﭦ۳ﮔﮔ۴ﮒ? |
-| **get_suggestion** | ﻟﺓﮒﮒﭨﭦﻟ؟؟ | "ﻝﭨﮔﻛﺕﻛﭦﻝ­ﻝ۴ﮒﭨﭦﻟ؟? |
+| **get_suggestion** | ﻟﺓﮒﮒﭨﭦﻟ؟؟ | "ﻝﭨﮔﻛﺕﻛﭦﻝﻝ۴ﮒﭨﭦﻟ؟? |
 
 **ﮔﮒﺝﻟﺁﮒ،ﻠﭨﻟﺝ**ﺅﺙ?
 ```python
@@ -176,8 +176,8 @@ class IntentRecognizer:
         
         # ﮒﺏﻠ؟ﻟﺁﮒﺗﻠ?
         keywords = {
-            "configure_strategy": ["ﮒﮒﭨﭦ", "ﻠﻝﺛ؟", "ﻟ؟ﺝﻝﺛ؟", "ﻝ­ﻝ۴"],
-            "adjust_risk_control": ["ﻟﺍﮔﺑ", "ﻠ۲ﮔ۶", "ﮒﮔ۳", "ﮔ­۱ﮔ"],
+"configure_strategy": ["ﮒﮒﭨﭦ", "ﻠﻝﺛ؟", "ﻟ؟ﺝﻝﺛ؟", "ﻝﻝ۴"],
+"adjust_risk_control": ["ﻟﺍﮔﺑ", "ﻠ۲ﮔ۶", "ﮒﮔ۳", "ﮔ۱ﮔ"],
             "query_status": ["ﮔ۴ﻟﺁ۱", "ﻝﭘﮔ?, "ﻟ۰۷ﻝﺍ", "ﮔﻛﭨ"],
             "run_backtest": ["ﮒﮔﭖ", "ﮔﭖﻟﺁ", "ﻠ۹ﻟﺁ"],
             "export_report": ["ﮒﺁﺙﮒﭦ", "ﮔ۴ﮒ", "ﻛﺕﻟﺛﺛ"],
@@ -209,11 +209,11 @@ class ParameterExtractor:
         # ... ﮒﭘﻛﭨﮔﮒﺝ
     
     def _extract_strategy_params(self, user_input: str) -> dict:
-        """ﮔﮒﻝ­ﻝ۴ﮒﮔﺍ"""
+"""ﮔﮒﻝﻝ۴ﮒﮔﺍ"""
         
         params = {}
         
-        # ﻝ­ﻝ۴ﻝﺎﭨﮒ
+# ﻝﻝ۴ﻝﺎﭨﮒ
         strategy_types = {
             "ﮒ۷ﻠ": "momentum",
             "ﻛﭨﺓﮒ?: "value",
@@ -230,8 +230,8 @@ class ParameterExtractor:
         if match:
             params["holding_period"] = int(match.group(1))
         
-        # ﮔ­۱ﮔﮔﺁﻛﺝ
-        match = re.search(r"ﮔ­۱ﮔ(\d+)%", user_input)
+# ﮔ۱ﮔﮔﺁﻛﺝ
+match = re.search(r"ﮔ۱ﮔ(\d+)%", user_input)
         if match:
             params["stop_loss"] = int(match.group(1)) / 100
         
@@ -251,7 +251,7 @@ class ConversationManager:
         self.max_history = 100
     
     def add_message(self, role: str, content: str):
-        """ﮔﺓﭨﮒ ﮔﭘﮔﺁ"""
+"""ﮔﺓﭨﮒﮔﭘﮔﺁ"""
         self.history.append({
             "role": role,
             "content": content,
@@ -278,10 +278,10 @@ class SmartPrompter:
     """ﮔﭦﻟﺛﮔﻝ۳ﭦ"""
     
     def suggest_next_action(self, context: dict) -> str:
-        """ﮒﭨﭦﻟ؟؟ﻛﺕﻛﺕﮔ­۴ﮔﻛﺛ?""
+"""ﮒﭨﭦﻟ؟؟ﻛﺕﻛﺕﮔ۴ﮔﻛﺛ?""
         
         if context.get("strategy_configured"):
-            return "ﻝ­ﻝ۴ﮒﺓﺎﻠﻝﺛ؟ﺅﺙﮔﺁﮒ۵ﻠﻟ۵ﻟﺟﻟ۰ﮒﮔﭖﻠ۹ﻟﺁﺅﺙ"
+return "ﻝﻝ۴ﮒﺓﺎﻠﻝﺛ؟ﺅﺙﮔﺁﮒ۵ﻠﻟ۵ﻟﺟﻟ۰ﮒﮔﭖﻠ۹ﻟﺁﺅﺙ"
         elif context.get("backtest_completed"):
             return "ﮒﮔﭖﮒ؟ﮔﺅﺙﮔﺁﮒ۵ﻠﻟ۵ﮒﺁﮒ۷ﮔ۷۰ﮔﻛﭦ۳ﮔﺅﺙ"
         else:
@@ -321,18 +321,18 @@ class SmartPrompter:
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
                         ﻗ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ? ResultFormatter (ﻝﭨﮔﮔ ﺙﮒﺙﮒ?                            ﻗ?
-ﻗ? ﻗﻗ NaturalLanguageGenerator (ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﮔ)              ﻗ?
+ﻗ? ResultFormatter (ﻝﭨﮔﮔﺙﮒﺙﮒ?                            ﻗ?
+ﻗ? ﻗﻗ NaturalLanguageGenerator (ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﮔ)              ﻗ?
 ﻗ? ﻗﻗ SmartPrompter (ﮔﭦﻟﺛﮔﻝ۳ﭦ)                             ﻗ?
 ﻗ? ﻗﻗ FeedbackCollector (ﮒﻠ۵ﮔﭘﻠ)                         ﻗ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 3.2 ﮔ ﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
+### 3.2 ﮔﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
 
 ```python
 class TextDriver:
-    """ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﻝﺎ?""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﻝﺎ?""
     
     def __init__(self, config: dict):
         self.nlu = NaturalLanguageUnderstanding(config["model"])
@@ -355,7 +355,7 @@ class TextDriver:
             understanding["entities"]
         )
         
-        # 4. ﮔ ﺙﮒﺙﮒﻝﭨﮔ?
+# 4. ﮔﺙﮒﺙﮒﻝﭨﮔ?
         response = self.result_formatter.format(tool_result)
         
         # 5. ﮔﺑﮔﺍﮒﺁﺗﻟﺁﮒﮒﺎ
@@ -372,7 +372,7 @@ class TextDriver:
 
 ```python
 class ITextDriver(ABC):
-    """ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ۴ﮒ۲"""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def process(self, user_input: str) -> str:
@@ -394,7 +394,7 @@ class ITextDriver(ABC):
 
 ```python
 class INaturalLanguageUnderstanding(ABC):
-    """ﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﻝﻟ۶۲ﮔ۴ﮒ۲"""
+"""ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def understand(self, user_input: str) -> dict:
@@ -419,7 +419,7 @@ class IToolDispatcher(ABC):
 ```
 ﻝ۷ﮔﺓﻟﺝﮒ۴
   ﻗ?
-[ﻠ۱ﮒ۳ﻝ] ﻗ?ﮔﺕﮔﺑﻙﮒﻟﺁﻙﮔ ﮒﮒ
+[ﻠ۱ﮒ۳ﻝ] ﻗ?ﮔﺕﮔﺑﻙﮒﻟﺁﻙﮔﮒﮒ
   ﻗ?
 [ﮔﮒﺝﻟﺁﮒ،] ﻗ?ﻟﺁﮒ،ﮔﻛﺛﮔﮒﺝ
   ﻗ?
@@ -433,7 +433,7 @@ class IToolDispatcher(ABC):
   ﻗ?
 [ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰] ﻗ?ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓﮔﻛﺛ
   ﻗ?
-[ﻝﭨﮔﮔ ﺙﮒﺙﮒ] ﻗ?ﻝﮔﻟ۹ﻝﭘﻟﺁ­ﻟ۷ﮒﮒﭦ
+[ﻝﭨﮔﮔﺙﮒﺙﮒ] ﻗ?ﻝﮔﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﮒﭦ
   ﻗ?
 ﻝ۷ﮔﺓﮒﻠ۵
 ```
@@ -442,7 +442,7 @@ class IToolDispatcher(ABC):
 
 ```python
 # ﻝ۷ﮔﺓﻟﺝﮒ۴
-user_input = "ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%"
+user_input = "ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%"
 
 # ﻝﻟ۶۲ﻝﭨﮔ
 understanding = {
@@ -469,7 +469,7 @@ tool_call = {
 # ﮔ۶ﻟ۰ﻝﭨﮔ
 tool_result = {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒ",
+"message": "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "strategy_1",
         "config": {...}
@@ -477,15 +477,15 @@ tool_result = {
 }
 
 # ﮒﮒﭦ
-response = """ﻗ?ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙ?
+response = """ﻗ?ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙ?
 
-ﻝ­ﻝ۴ID: strategy_1
-ﻝ­ﻝ۴ﻝﺎﭨﮒ: ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴
+ﻝﻝ۴ID: strategy_1
+ﻝﻝ۴ﻝﺎﭨﮒ: ﮒ۷ﻠﮒﮒﻝﻝ۴
 ﮔﻛﭨﮒ۷ﮔ: 5ﮒ۳?
-ﮔ­۱ﮔﮔﺁﻛﺝ: 10%
+ﮔ۱ﮔﮔﺁﻛﺝ: 10%
 
 ﻠ۱ﻟ؟۰ﮒﺗﺑﮒﮔﭘﻝ: 15-25%
-ﮒﭨﭦﻟ؟؟ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶: ﻛﺕ­ﻝ­
+ﮒﭨﭦﻟ؟؟ﻠ۲ﻠ۸ﻝﻝﭦ۶: ﻛﺕﻝ
 
 ﮔﺁﮒ۵ﻠﻟ۵ﻝ،ﮒﺏﮒﺁﮒ۷ﮒﮔﭖﻠ۹ﻟﺁﺅﺙ"""
 ```
@@ -499,7 +499,7 @@ response = """ﻗ?ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙ?
 **ﮔﻛﭨﭘﻟﺓﺁﮒﺝ**: `config/layer_11/text_driver_config.yaml`
 
 ```yaml
-# ﮔﮒ­ﻠ۸ﺎﮒ۷ﻠﻝﺛ؟
+# ﮔﮒﻠ۸ﺎﮒ۷ﻠﻝﺛ؟
 text_driver:
   # ﮔ۷۰ﮒﻠﻝﺛ؟
   model:
@@ -531,7 +531,7 @@ text_driver:
     retry_delay: 1
 ```
 
-### 6.2 ﻠﻝﺛ؟ﮒ ﻟﺛﺛ
+### 6.2 ﻠﻝﺛ؟ﮒﻟﺛﺛ
 
 ```python
 import yaml
@@ -560,7 +560,7 @@ class ConfigManager:
 
 ```python
 class TextDriverError(Exception):
-    """ﮔﮒ­ﻠ۸ﺎﮒ۷ﮒﭦﻝ۰ﻠﻟﺁﺁ"""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮒﭦﻝ۰ﻠﻟﺁﺁ"""
     pass
 
 class IntentRecognitionError(TextDriverError):
@@ -576,7 +576,7 @@ class ToolDispatchError(TextDriverError):
     pass
 ```
 
-### 7.2 ﻠﻟﺁﺁﮒ۳ﻝﻝ­ﻝ۴
+### 7.2 ﻠﻟﺁﺁﮒ۳ﻝﻝﻝ۴
 
 ```python
 class ErrorHandler:
@@ -586,7 +586,7 @@ class ErrorHandler:
         """ﮒ۳ﻝﻠﻟﺁﺁ"""
         
         if isinstance(error, IntentRecognitionError):
-            return "ﮔﺎﮔ­ﺅﺙﮔﻛﺕﮒ۳۹ﻝﻟ۶۲ﮔ۷ﻝﮔﮔﺅﺙﻟﺛﮔ۱ﻝ۶ﻟﺁﺑﮔﺏﮒﺅﺙ?
+return "ﮔﺎﮔﺅﺙﮔﻛﺕﮒ۳۹ﻝﻟ۶۲ﮔ۷ﻝﮔﮔﺅﺙﻟﺛﮔ۱ﻝ۶ﻟﺁﺑﮔﺏﮒﺅﺙ?
         
         elif isinstance(error, ParameterExtractionError):
             return f"ﮒﮔﺍﮔﮒﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﺁﺓﮔﻛﺝﮔﺑﻟﺁ۵ﻝﭨﻝﻛﺟ۰ﮔﺁﻙ?
@@ -609,8 +609,8 @@ def test_intent_recognition():
     """ﮔﭖﻟﺁﮔﮒﺝﻟﺁﮒ،"""
     recognizer = IntentRecognizer()
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒﺝ
-    intent = recognizer.recognize("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ?)
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺝ
+intent = recognizer.recognize("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ?)
     assert intent == "configure_strategy"
     
     # ﮔﭖﻟﺁﻠ۲ﮔ۶ﻟﺍﮔﺑﮔﮒﺝ
@@ -621,9 +621,9 @@ def test_parameter_extraction():
     """ﮔﭖﻟﺁﮒﮔﺍﮔﮒ"""
     extractor = ParameterExtractor()
     
-    # ﮔﭖﻟﺁﻝ­ﻝ۴ﮒﮔﺍﮔﮒ
+# ﮔﭖﻟﺁﻝﻝ۴ﮒﮔﺍﮔﮒ
     params = extractor.extract(
-        "ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%",
+"ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%",
         "configure_strategy"
     )
     
@@ -640,10 +640,10 @@ def test_end_to_end():
     driver = TextDriver(config)
     
     # ﮔﭖﻟﺁﮒ؟ﮔﺑﮔﭖﻝ۷
-    response = driver.process("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%")
+response = driver.process("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%")
     
-    assert "ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒ" in response
-    assert "ﮒ۷ﻠﮒ ﮒ­ﻝ­ﻝ۴" in response
+assert "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ" in response
+assert "ﮒ۷ﻠﮒﮒﻝﻝ۴" in response
     assert "5ﮒ۳? in response
     assert "10%" in response
 ```
@@ -662,10 +662,10 @@ def test_end_to_end():
   - Open WebUI (Webﻝﻠ۱)
   
 ﻟﭖﮔﭦﻠﮔﺎ?
-  CPU: 4ﮔ ?
-  ﮒﮒ­: 16GB+
+CPU: 4ﮔ?
+ﮒﮒ: 16GB+
   GPU: 8GB+ (ﮔ۷ﻟ)
-  ﮒ­ﮒ۷: 50GB+
+ﮒﮒ۷: 50GB+
 ```
 
 ### 9.2 ﮒﺁﮒ۷ﻟﮔ؛
@@ -675,14 +675,14 @@ def test_end_to_end():
 from src.layer_11.text_driver import TextDriver
 
 def main():
-    # ﮒ ﻟﺛﺛﻠﻝﺛ؟
+# ﮒﻟﺛﺛﻠﻝﺛ؟
     config = ConfigManager("config/layer_11/text_driver_config.yaml").config
     
-    # ﮒﮒ۶ﮒﮔﮒ­ﻠ۸ﺎﮒ?
+# ﮒﮒ۶ﮒﮔﮒﻠ۸ﺎﮒ?
     driver = TextDriver(config)
     
     # ﮒﺁﮒ۷ﮔﮒ۰
-    print("ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ۷۰ﮒﮒﺓﺎﮒﺁﮒ?)
+print("ﮔﮒﻠ۸ﺎﮒ۷ﮔ۷۰ﮒﮒﺓﺎﮒﺁﮒ?)
     
     # ﮔﭖﻟﺁ
     response = driver.process("ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?)
@@ -696,7 +696,7 @@ if __name__ == "__main__":
 
 ## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 
-### ﮔ ﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
+### ﮔﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
 
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
@@ -709,4 +709,4 @@ if __name__ == "__main__":
 
 > **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
 > **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝ ﮒ؟ﮔﺛ
+> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝﮒ؟ﮔﺛ

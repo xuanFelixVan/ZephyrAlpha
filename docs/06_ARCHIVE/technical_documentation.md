@@ -278,8 +278,8 @@ def calculate_total_explicit_cost(trade_amount: float,
 | 滑点来源 | 计算公式 | 说明 |
 |----------|----------|------|
 | **价差成本** | $SpreadCost = (ask - bid)/midprice / 2$ | 买卖价差50% |
-| **冲击成本** | $ImpactCost = 0.1 × OrderSize/ADV × σ$ | 订单占比×波动?|
-| **延迟成本** | $DelayCost = σ × sqrt(延迟分钟/240)$ | 时间损失 |
+| **冲击成本** | $ImpactCost = 0.1  OrderSize/ADV  σ$ | 订单占比波动?|
+| **延迟成本** | $DelayCost = σ  sqrt(延迟分钟/240)$ | 时间损失 |
 
 ```python
 def calculate_slippage(order_value: float, adv: float, volatility: float,
@@ -300,7 +300,7 @@ def calculate_slippage(order_value: float, adv: float, volatility: float,
 
 | 公式 | 说明 |
 |------|------|
-| $AnnualCost = 2 × Turnover × CostRate$ | 买卖双边×换手?|
+| $AnnualCost = 2  Turnover  CostRate$ | 买卖双边换手?|
 | $CostToReturn = AnnualCost / ExpectedReturn$ | 成本占收益比 |
 | $NetReturn = ExpectedReturn - AnnualCostRate$ | 扣除成本后收?|
 
@@ -571,7 +571,7 @@ class BarraRiskModel:
     def calc_portfolio_risk(self, weights, factor_exposures):
         """
         计算组合风险
-        公式: σ²_p = w' * (X*F*X' + D) * w
+        公式: σ_p = w' * (X*F*X' + D) * w
         """
         factor_cov = self.calc_factor_covariance()
         idio_var = self.idiosyncratic_var

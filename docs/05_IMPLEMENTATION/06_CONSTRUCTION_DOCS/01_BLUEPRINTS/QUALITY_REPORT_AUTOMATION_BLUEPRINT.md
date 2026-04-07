@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
+applicable_scope: Layer 9 ?
 compliance_level: 专业标准
 responsibility:
   - 报告生成
@@ -22,13 +22,12 @@ layer: Layer 5 (策略执行层)
 
 
 > **模块ID**: `QUALITY_REPORT_AUTO_001`
-> **ä¼å
+> **
 
 ## 核心定位
 
 > 核心职责: Quality Report Automation蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -89,7 +88,7 @@ layer: Layer 5 (策略执行层)
 
 **当前痛点**:
 - 报告格式不统一，缺少标准化模板
-- æ¥åå
+-
 - 报告分发不及时，影响决策效率
 
 **业务目标**:
@@ -529,7 +528,7 @@ GET /api/v1/reports/history?report_type=daily&days=30
 
 ---
 
-## å
+##
 
 
 ```yaml
@@ -573,7 +572,7 @@ volumes:
 
 ---
 
-## å
+##
 
 
 |------|------|---------|--------|
@@ -592,8 +591,7 @@ volumes:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -612,8 +610,8 @@ volumes:
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -642,9 +640,9 @@ graph LR
 ##### 6.001. Quality Report Automation
 - **模块ID**: QUALITY_REPORT_AUTOMATION_001
 - **蓝图文档**: QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

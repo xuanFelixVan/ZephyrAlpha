@@ -90,7 +90,7 @@ responsibility:
 
 ### 2.1 期权对冲
 
-- **ä¹°å
+- **
 - **卖出看涨期权**: 保护上行风险
 - **跨式期权**: 降低成本
 
@@ -124,8 +124,7 @@ def calculate_hedge_ratio(portfolio_var: float,
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -142,8 +141,8 @@ def calculate_hedge_ratio(portfolio_var: float,
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -179,16 +178,16 @@ graph LR
 ##### 6.001. Tail Risk Hedging
 - **模块ID**: TAIL_RISK_HEDGING_001
 - **蓝图文档**: TAIL_RISK_HEDGING_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 4.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Tail Risk Hedging** | å
+| **Tail Risk Hedging** |
 
 ### 4.3 版本管理
 

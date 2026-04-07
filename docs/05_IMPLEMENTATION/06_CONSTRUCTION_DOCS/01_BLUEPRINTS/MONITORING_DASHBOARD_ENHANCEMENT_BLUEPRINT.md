@@ -6,7 +6,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
+applicable_scope: Layer 9 ?
 compliance_level: 专业标准
 responsibility:
   - 监控面板增强
@@ -81,14 +81,13 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Monitoring Dashboard Enhancement蓝图设计
 > 职责边界: 
-³å
 容
 
 
 ### 1.1 Layer 8整体架构
 
 ```
-â?                                                                â?
+?                                                                ?
 ```
 
 ### 1.2 模块职责边界
@@ -120,7 +119,7 @@ class MonitoringDashboard:
     
     def __init__(self):
         st.set_page_config(
-            page_title="æ¸
+page_title="
 风量化监控面板",
             page_icon="📊",
             layout="wide"
@@ -128,7 +127,7 @@ class MonitoringDashboard:
         
     def render(self):
         """渲染监控面板"""
-        st.title("æ¸
+st.title("
 风量化实时监控面板")
         
         tab1, tab2, tab3, tab4 = st.tabs([
@@ -151,20 +150,20 @@ class MonitoringDashboard:
         """渲染交易监控"""
         st.header("实时交易监控")
         
-        # å
+#
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("今日订单", "156", "+12")
         with col2:
-            st.metric("æäº¤ç?, "95.2%", "+2.1%")
+st.metric("?, "95.2%", "+2.1%")
         with col3:
         with col4:
-            st.metric("可用资金", "¥246,913", "+5.2%")
+            st.metric("可用资金", "246,913", "+5.2%")
         
         order_status = {
             '部分成交': 12,
-            'å®å
-¨æäº¤': 89,
+'
+': 89,
             '已撤销': 10
         }
         fig = px.pie(
@@ -180,13 +179,13 @@ class MonitoringDashboard:
         # 风险指标卡片
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("VaR (95%)", "¥12,345", "-¥1,234")
+st.metric("VaR (95%)", "12,345", "-1,234")
         with col2:
         with col3:
             st.metric("Beta", "0.85", "-0.05")
         with col4:
         
-        # VaRè¶å¿å?
+# VaR?
         st.subheader("VaR趋势")
         dates = pd.date_range(start='2026-01-01', periods=30, freq='D')
         var_values = np.random.uniform(10000, 15000, 30)
@@ -200,7 +199,7 @@ class MonitoringDashboard:
         ))
         fig.update_layout(
             xaxis_title="日期",
-            yaxis_title="VaR (Â¥)"
+yaxis_title="VaR ()"
         )
         st.plotly_chart(fig, use_container_width=True)
     
@@ -249,7 +248,7 @@ class MonitoringDashboard:
         with col3:
             st.metric("并发用户", "12", "+3")
         with col4:
-            st.metric("éè¯¯ç?, "0.1%", "-0.05%")
+st.metric("?, "0.1%", "-0.05%")
         
         health_data = {
             '响应时间': ['23ms', '45ms', '67ms', '89ms', '34ms']
@@ -264,9 +263,9 @@ if __name__ == "__main__":
 ### 2.2 集成架构
 
 ```
-â?                                                                â?
-â?                           â?                                   â?
-â?                           â?                                   â?
+?                                                                ?
+?                           ?                                   ?
+?                           ?                                   ?
 ```
 
 ---
@@ -324,11 +323,11 @@ def monitor_var(self):
     # 显示VaR指标
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("VaR (95%)", f"Â¥{var_95:,.0f}")
+st.metric("VaR (95%)", f"{var_95:,.0f}")
     with col2:
-        st.metric("VaR (99%)", f"Â¥{var_99:,.0f}")
+st.metric("VaR (99%)", f"{var_99:,.0f}")
     
-    # VaRè¶å¿å?
+# VaR?
     var_history = self._get_var_history()
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -403,7 +402,7 @@ def monitor_system_health(self):
     col1, col2, col3 = st.columns(3)
     with col1:
     with col2:
-        st.metric("å
+st.metric("
     with col3:
 ```
 
@@ -445,17 +444,16 @@ class AlertMessage:
 
 ### 5.1 Phase 1: 核心功能 (Week 1)
 
-å**ï¼?
-- [ ] éæStreamlitåº?
+**?
+- [ ] Streamlit?
 - [ ] 实现实时交易监控
 - [ ] 实现风险监控
-- [ ] åå
-æµè¯
+- [ ]
 
 
 ### 5.2 Phase 2: 扩展功能 (Week 2)
 
-å**ï¼?
+**?
 - [ ] 实现绩效监控
 - [ ] 实现系统监控
 - [ ] 实现告警功能
@@ -464,7 +462,7 @@ class AlertMessage:
 
 ### 5.3 Phase 3: 优化完善 (Week 3)
 
-å**ï¼?
+**?
 - [ ] 性能优化
 - [ ] UI美化
 - [ ] 部署上线
@@ -472,15 +470,15 @@ class AlertMessage:
 
 ---
 
-## å
+##
 
 ### 6.1 测试策略
 
-· |
+|
 |---------|-----------|---------|
-| **åå
-æµè¯** | â?0% | pytest |
-| **UIæµè¯** | å
+| **
+** | ?0% | pytest |
+| **UI** |
 
 ### 6.2 性能指标
 
@@ -496,9 +494,8 @@ class AlertMessage:
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 | 文档 | 说明 |
 |------|------|
@@ -525,8 +522,8 @@ class AlertMessage:
 ##### 6.001. Monitoring Dashboard Enhancement
 - **模块ID**: MONITORING_DASHBOARD_ENHANCEMENT_001
 - **蓝图文档**: MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

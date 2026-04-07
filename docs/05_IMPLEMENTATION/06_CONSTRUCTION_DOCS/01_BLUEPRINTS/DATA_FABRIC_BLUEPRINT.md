@@ -22,7 +22,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Fabric蓝图设计
 > **职责边界**: 
-³å
 容
 
 
@@ -100,19 +99,19 @@ layer: Layer 5.1 (数据处理)
 
 
 ```
-â?                                                            â?
-¥å±?(Data Ingestion)                â?  â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?(Data Ingestion)                ?  ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 技术选型
 
 |------|---------|---------|---------|
 | **消息队列** | Apache Kafka | 3.5.0+ | 高吞吐量消息队列 |
-| **CDCå·¥å
+| **CDC
 | **API框架** | FastAPI | 0.100.0+ | 高性能API框架 |
 | **缓存** | Redis | 7.0+ | 高性能缓存 |
 
@@ -134,7 +133,7 @@ class IngestionType(Enum):
 
 @dataclass
 class DataSource:
-ç½?""
+?""
     source_id: str
     source_name: str
     source_type: str
@@ -364,7 +363,7 @@ volumes:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -377,13 +376,12 @@ volumes:
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-ç½®Debezium CDC | 3å¤?|
+Debezium CDC | 3?|
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [数据网格蓝图](./DATA_MESH_BLUEPRINT.md)
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
@@ -400,9 +398,9 @@ volumes:
 ##### 6.001. Data Fabric
 - **模块ID**: DATA_FABRIC_001
 - **蓝图文档**: DATA_FABRIC_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -421,8 +419,7 @@ volumes:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -437,8 +434,8 @@ volumes:
 
 |---------|------|------|------|
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

@@ -26,7 +26,6 @@ layer: Layer 5.2 (组合优化)
 
 > 核心职责: Portfolio Optimization Diagnostics蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -98,7 +97,6 @@ class OptimizationDiagnostics:
         constraints: Dict
     ) -> Dict:
         """
-        æ§è¡å
         
         返回:
             - recommendations: 改进建议

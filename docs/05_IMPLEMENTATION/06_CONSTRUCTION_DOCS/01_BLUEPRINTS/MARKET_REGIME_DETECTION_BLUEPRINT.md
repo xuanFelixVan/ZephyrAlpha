@@ -17,9 +17,8 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Market Regime Detection蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 > **版本**: v1.0
@@ -87,7 +86,7 @@ layer: Layer 5 (策略执行层)
 ### 层级定位
 
 ```
-â?          æ¸
+?
 ```
 
 ### 核心职责
@@ -98,7 +97,7 @@ layer: Layer 5 (策略执行层)
 
 
 
-## ð§ å
+##
 
 
 ```python
@@ -131,7 +130,7 @@ class MarketFeatureExtractor:
         liquidity_features = self.liquidity_extractor.extract(market_data, window)
         features = pd.concat([features, liquidity_features], axis=1)
         
-        # æåæ
+#
 绪特征
         sentiment_features = self.sentiment_extractor.extract(market_data, window)
         features = pd.concat([features, sentiment_features], axis=1)
@@ -274,7 +273,7 @@ class LiquidityFeatureExtractor:
         # 2. 成交额变化率
         features['amount_change'] = data['amount'].pct_change(window) if 'amount' in data.columns else 0
         
-        # 3. æ¢æç?
+# 3. ?
         features['turnover_rate'] = data['turnover_rate'] if 'turnover_rate' in data.columns else \
             data['volume'] / data['volume'].rolling(window).mean()
         
@@ -301,10 +300,10 @@ class LiquidityFeatureExtractor:
 
 
 class SentimentFeatureExtractor:
-    """æ
+"""
     
     def extract(self, data: pd.DataFrame, window: int) -> pd.DataFrame:
-        """æåæ
+"""
 绪特征"""
         features = pd.DataFrame(index=data.index)
         
@@ -376,7 +375,7 @@ class MarketRegimeHMM:
         # 准备训练数据
         X = features.values
         
-        # æ åå?
+# ?
         from sklearn.preprocessing import StandardScaler
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
@@ -557,7 +556,7 @@ class MarketRegimeEnsemble:
         self.ml_classifier = MarketRegimeClassifier()
         self.rule_engine = MarketRegimeRuleEngine()
         
-        # æéé
+#
 置
         self.weights = {
             'hmm': 0.4,
@@ -662,7 +661,7 @@ class MarketRegimeEnsemble:
             
             final_probs[state] = prob
         
-        # å½ä¸å?
+# ?
         final_probs = final_probs.div(final_probs.sum(axis=1), axis=0)
         
         return final_probs
@@ -750,7 +749,7 @@ CREATE TABLE market_features (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     trade_date DATE NOT NULL COMMENT '交易日期',
     feature_name VARCHAR(50) NOT NULL COMMENT '特征名称',
-    feature_value DECIMAL(20, 10) COMMENT 'ç¹å¾å?,
+feature_value DECIMAL(20, 10) COMMENT '?,
     feature_category VARCHAR(50) COMMENT '特征类别',
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     UNIQUE KEY uk_date_feature (trade_date, feature_name),
@@ -764,8 +763,8 @@ CREATE TABLE market_features (
 CREATE TABLE regime_transition_log (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     transition_date DATE NOT NULL COMMENT '转换日期',
-    from_state VARCHAR(20) NOT NULL COMMENT 'åç¶æ?,
-    to_state VARCHAR(20) NOT NULL COMMENT 'æ°ç¶æ?,
+from_state VARCHAR(20) NOT NULL COMMENT '?,
+to_state VARCHAR(20) NOT NULL COMMENT '?,
     transition_probability DECIMAL(5, 4) COMMENT '转换概率',
     created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     INDEX idx_transition_date (transition_date),
@@ -846,21 +845,19 @@ Response:
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
-- åå
+-
 
 ---
 
 
 **任务**:
-æµè¯
 
 **验收标准**:
 - 所有模型可以正常训练和预测
 - 模型性能达标
-- åå
+-
 
 ---
 
@@ -876,8 +873,7 @@ Response:
 
 ## 🧪 测试策略
 
-### åå
-æµè¯
+###
 
 ```python
 import pytest
@@ -939,13 +935,12 @@ def test_hmm_model():
 | 特征类型 | 计算时间 |
 |---------|---------|
 | **趋势特征** | <100ms |
-| **æ
+| **
 绪特征** | <200ms |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [阿尔法因子工厂蓝图](./ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
 
@@ -967,8 +962,8 @@ def test_hmm_model():
 ##### 6.001. Meso Market Regime
 - **模块ID**: MARKET_REGIME_DETECTION_001
 - **蓝图文档**: MARKET_REGIME_DETECTION_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

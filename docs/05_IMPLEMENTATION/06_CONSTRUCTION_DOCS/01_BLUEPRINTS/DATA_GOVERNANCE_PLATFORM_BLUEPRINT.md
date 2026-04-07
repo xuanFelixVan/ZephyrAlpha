@@ -78,7 +78,6 @@ layer: Layer 5.1 (数据处理)
 
 > 核心职责: Data Governance Platform蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -86,7 +85,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-æ?
+?
 - 合规要求难以落实
 
 **业务目标**:
@@ -96,15 +95,14 @@ layer: Layer 5.1 (数据处理)
 |------|--------|------|
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
-³ç³?|
+?|
+?|
 
 ### 下游依赖
 
@@ -114,17 +112,17 @@ layer: Layer 5.1 (数据处理)
 
 |---------|------|------|------|
 | **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
-| **DataHub** | 0.10+ | å
+| **DataHub** | 0.10+ |
 | **OpenMetadata** | 1.2+ | 数据目录 | [官方文档](https://docs.open-metadata.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[数据目录] --> D[数据治理平台]
     B[数据血缘追踪] --> D
-¨åè§] --> D
+] --> D
     
     D --> E[数据生命周期管理]
     D --> F[数据版本控制]
@@ -141,17 +139,17 @@ graph LR
 
 
 ```
-â?                                                            â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 技术选型
 
 |------|---------|---------|---------|
-| **å
+| **
 
 ---
 
@@ -312,7 +310,7 @@ class ComplianceCheckEngine:
     
     def _check_security_rules(self, rules: Dict[str, Any],
                                asset_data: Dict[str, Any]) -> List[str]:
-¨è§å?""
+?""
         violations = []
         
         if rules.get('encryption_required'):
@@ -496,7 +494,7 @@ services:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -513,9 +511,8 @@ services:
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [数据网格蓝图](./DATA_MESH_BLUEPRINT.md)
 
@@ -531,9 +528,9 @@ services:
 ##### 6.001. Data Governance Platform
 - **模块ID**: DATA_GOVERNANCE_PLATFORM_001
 - **蓝图文档**: DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

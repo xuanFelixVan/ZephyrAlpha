@@ -4,10 +4,10 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮒ
 applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱ﮒﻝ،ﺁﻝﭨﻛﭨﭘﻝﭨﮔ
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
@@ -33,11 +33,11 @@ implementation_status: ﻟﺟﻟ۰?
 
 ```mermaid
 graph TD
-    A[App ﮔ ﺗﻝﭨﻛﭨﭘ] --> B[Layout ﮒﺕﮒﺎﻝﭨﻛﭨﭘ]
-    B --> C1[Header ﮒ۳ﺑﻠ۷ﮔ ]
-    B --> C2[Sidebar ﻛﺝ۶ﻟﺝﺗﮔ ]
+A[App ﮔﺗﻝﭨﻛﭨﭘ] --> B[Layout ﮒﺕﮒﺎﻝﭨﻛﭨﭘ]
+B --> C1[Header ﮒ۳ﺑﻠ۷ﮔ]
+B --> C2[Sidebar ﻛﺝ۶ﻟﺝﺗﮔ]
     B --> C3[MainContent ﻛﺕﭨﮒﮒ؟ﺗﮒﭦ]
-    B --> C4[Footer ﮒﭦﻠ۷ﮔ ]
+B --> C4[Footer ﮒﭦﻠ۷ﮔ]
     
     C3 --> D1[DashboardPage ﻛﭨ۹ﻟ۰۷ﮔﺟﻠ۰ﭖﻠ۱]
     C3 --> D2[TradeMonitorPage ﻛﭦ۳ﮔﻝﮔ۶ﻠ۰ﭖﻠ۱]
@@ -51,41 +51,41 @@ graph TD
     D4 --> E4[ConfigContainer ﻠﻝﺛ؟ﮒ؟ﺗﮒ۷]
     D5 --> E5[SystemHealthContainer ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓﮒ؟ﺗﮒ۷]
     
-    E1 --> F1[EngineStatusGrid ﮒﺙﮔﻝﭘﮔﻝﺛﮔ ﺙ]
-    E1 --> F2[MetricsCards ﮔﮔ ﮒ۰ﻝﻝﭨ]
-    E1 --> F3[AlertPanel ﮒﻟ­۵ﻠ۱ﮔﺟ]
+E1 --> F1[EngineStatusGrid ﮒﺙﮔﻝﭘﮔﻝﺛﮔﺙ]
+E1 --> F2[MetricsCards ﮔﮔﮒ۰ﻝﻝﭨ]
+E1 --> F3[AlertPanel ﮒﻟ۵ﻠ۱ﮔﺟ]
     
-    E2 --> F4[TradeTable ﻛﭦ۳ﮔﻟ۰۷ﮔ ﺙ]
+E2 --> F4[TradeTable ﻛﭦ۳ﮔﻟ۰۷ﮔﺙ]
     E2 --> F5[TradeFilters ﻛﭦ۳ﮔﻟﺟﮔﭨ۳ﮒ۷]
     E2 --> F6[TradeDetailModal ﻛﭦ۳ﮔﻟﺁ۵ﮔﮔ۷۰ﮔﮔ۰]
     
     E3 --> F7[PerformanceChart ﮔ۶ﻟﺛﮒﺝﻟ۰۷]
     E3 --> F8[TimeRangeSelector ﮔﭘﻠﺑﻟﮒﺑﻠﮔ۸ﮒ۷]
-    E3 --> F9[MetricSelector ﮔﮔ ﻠﮔ۸ﮒ۷]
+E3 --> F9[MetricSelector ﮔﮔﻠﮔ۸ﮒ۷]
     
     E4 --> F10[EngineConfigForm ﮒﺙﮔﻠﻝﺛ؟ﻟ۰۷ﮒ]
-    E4 --> F11[StrategyConfigEditor ﻝ­ﻝ۴ﻠﻝﺛ؟ﻝﺙﻟﺝﮒ۷]
+E4 --> F11[StrategyConfigEditor ﻝﻝ۴ﻠﻝﺛ؟ﻝﺙﻟﺝﮒ۷]
     E4 --> F12[RiskLimitEditor ﻠ۲ﻠ۸ﻠﻠ۱ﻝﺙﻟﺝﮒ۷]
     
     E5 --> F13[HealthStatusPanel ﮒ۴ﮒﭦﺓﻝﭘﮔﻠ۱ﮔﺟ]
     E5 --> F14[LogViewer ﮔ۴ﮒﺟﮔ۴ﻝﮒ۷]
-    E5 --> F15[AlertHistory ﮒﻟ­۵ﮒﮒﺎ]
+E5 --> F15[AlertHistory ﮒﻟ۵ﮒﮒﺎ]
 ```
 
 ### 1.2 ﻝﭨﻛﭨﭘﮒﻝﺎﭨﻟﺁﺑﮔ
 
 | ﻝﭨﻛﭨﭘﮒﺎﻝﭦ۶ | ﻝﭨﻛﭨﭘﻝﺎﭨﮒ | ﻟﻟﺑ۲ﻟﺁﺑﮔ | ﻝ۳ﭦﻛﺝﻝﭨﻛﭨﭘ |
 |----------|----------|----------|----------|
-| **ﮔ ﺗﻝﭨ?* | App Component | ﮒﭦﻝ۷ﮒ۴ﮒ۲ﺅﺙﮒ۷ﮒﺎﻝﭘﮔﻝ؟۰?| `App.tsx` |
+| **ﮔﺗﻝﭨ?* | App Component | ﮒﭦﻝ۷ﮒ۴ﮒ۲ﺅﺙﮒ۷ﮒﺎﻝﭘﮔﻝ؟۰?| `App.tsx` |
 | **ﮒﺕﮒﺎﻝﭨﻛﭨﭘ** | Layout Components | ﻠ۰ﭖﻠ۱ﮒﺕﮒﺎﻝﭨﮔﺅﺙﮒﺁﺙﻟ۹ﮔ۰?| `Layout.tsx`, `Header.tsx` |
 | **ﻠ۰ﭖﻠ۱ﻝﭨﻛﭨﭘ** | Page Components | ﻟﺓﺁﻝﺎﮒﺁﺗﮒﭦﻝﮒ؟ﮔﺑﻠ۰ﭖ?| `DashboardPage.tsx` |
 | **ﮒ؟ﺗﮒ۷ﻝﭨﻛﭨﭘ** | Container Components | ﻛﺕﮒ۰ﻠﭨﻟﺝﮒ؟ﺗﮒ۷ﺅﺙﻝﭘﮔﻝ؟۰?| `DashboardContainer.tsx` |
-| **ﮒﺎﻝ۳ﭦﻝﭨﻛﭨﭘ** | Presentational Components | ﻝﭦﺁUIﮒﺎﻝ۳ﭦﺅﺙﮔ ﻛﺕﮒ۰ﻠﭨﻟﺝ | `MetricCard.tsx` |
+| **ﮒﺎﻝ۳ﭦﻝﭨﻛﭨﭘ** | Presentational Components | ﻝﭦﺁUIﮒﺎﻝ۳ﭦﺅﺙﮔﻛﺕﮒ۰ﻠﭨﻟﺝ | `MetricCard.tsx` |
 | **ﻟ۰۷ﮒﻝﭨﻛﭨﭘ** | Form Components | ﮔﺍﮔ؟ﻟﺝﮒ۴ﻛﺕﻠ۹?| `EngineConfigForm.tsx` |
 | **ﮒﺝﻟ۰۷ﻝﭨﻛﭨﭘ** | Chart Components | ﮔﺍﮔ؟ﮒﺁﻟ۶?| `PerformanceChart.tsx` |
 | **ﮒﺓ۴ﮒﺓﻝﭨﻛﭨﭘ** | Utility Components | ﻠﻝ۷ﮒﺓ۴ﮒﺓﻝﭨﻛﭨﭘ | `LoadingSpinner.tsx` |
 
-## 2. ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+## 2. ﮔﺕﮒﺟﻝﭨﻛﭨﭘﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
 
 ### 2.1 Layout ﮒﺕﮒﺎﻝﭨﻛﭨﭘ
 
@@ -108,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({
 };
 ```
 
-**ﮒ­ﻝﭨﻛﭨﭘﻝﭨ?*:
+**ﮒﻝﭨﻛﭨﭘﻝﭨ?*:
 ```
 Header
 ﻗﻗﻗ Logo (Logoﻝﭨﻛﭨﭘ)
@@ -170,7 +170,7 @@ const menuItems = [
     path: '/config',
     children: [
       { key: 'engines', label: 'ﮒﺙﮔﻠﻝﺛ؟', path: '/config/engines' },
-      { key: 'strategies', label: 'ﻝ­ﻝ۴ﻠﻝﺛ؟', path: '/config/strategies' },
+{ key: 'strategies', label: 'ﻝﻝ۴ﻠﻝﺛ؟', path: '/config/strategies' },
       { key: 'risk', label: 'ﻠ۲ﻠ۸ﻠﻠ۱', path: '/config/risk' }
     ]
   },
@@ -191,23 +191,23 @@ DashboardPage
 ﻗﻗﻗ DashboardContainer
     ﻗﻗﻗ EngineStatusGrid
     ?  ﻗﻗﻗ EngineStatusCard (ﺣN)
-    ?  ?  ﻗﻗﻗ EngineIcon (ﮒﺙﮔﮒﺝﮔ )
+?  ?  ﻗﻗﻗ EngineIcon (ﮒﺙﮔﮒﺝﮔ)
     ?  ?  ﻗﻗﻗ EngineName (ﮒﺙﮔﮒﻝ۶ﺍ)
     ?  ?  ﻗﻗﻗ StatusIndicator (ﻝﭘﮔﮔﻝ۳ﭦﮒ۷)
-    ?  ?  ﻗﻗﻗ PerformanceMetrics (ﮔ۶ﻟﺛﮔﮔ )
+?  ?  ﻗﻗﻗ PerformanceMetrics (ﮔ۶ﻟﺛﮔﮔ)
     ?  ?  ﻗﻗﻗ ActionButtons (ﮔﻛﺛﮔﻠ؟)
-    ?  ﻗﻗﻗ AddEngineCard (ﮔﺓﭨﮒ ﮒﺙﮔﮒ۰ﻝ)
+?  ﻗﻗﻗ AddEngineCard (ﮔﺓﭨﮒﮒﺙﮔﮒ۰ﻝ)
     ﻗﻗﻗ MetricsOverview
     ?  ﻗﻗﻗ TotalTradesCard (ﮔﭨﻛﭦ۳ﮔﮔﺍ)
     ?  ﻗﻗﻗ TotalVolumeCard (ﮔﭨﻛﭦ۳ﮔﻠ۱)
     ?  ﻗﻗﻗ ActiveEnginesCard (ﮔﺑﭨﻟﺓﮒﺙﮔ)
     ?  ﻗﻗﻗ SystemHealthCard (ﻝﺏﭨﻝﭨﮒ۴ﮒﭦﺓ?
     ﻗﻗﻗ RecentAlertsPanel
-    ?  ﻗﻗﻗ AlertItem (ﮒﻟ­۵?
+?  ﻗﻗﻗ AlertItem (ﮒﻟ۵?
     ?  ﻗﻗﻗ ViewAllAlertsButton (ﮔ۴ﻝﮒ۷ﻠ۷)
     ﻗﻗﻗ QuickActionsPanel
         ﻗﻗﻗ StartAllEnginesButton (ﮒﺁﮒ۷ﮔﮔﮒﺙ?
-        ﻗﻗﻗ StopAllEnginesButton (ﮒﮔ­۱ﮔﮔﮒﺙ?
+ﻗﻗﻗ StopAllEnginesButton (ﮒﮔ۱ﮔﮔﮒﺙ?
         ﻗﻗﻗ RunHealthCheckButton (ﻟﺟﻟ۰ﮒ۴ﮒﭦﺓﮔ۲?
 ```
 
@@ -248,7 +248,7 @@ const EngineStatusCard: React.FC<EngineStatusCardProps> = ({
         <Tooltip title="ﮒﺁﮒ۷">
           <PlayCircleOutlined onClick={() => onStart(engine.id)} />
         </Tooltip>,
-        <Tooltip title="ﮒﮔ­۱">
+<Tooltip title="ﮒﮔ۱">
           <StopOutlined onClick={() => onStop(engine.id)} />
         </Tooltip>,
         <Tooltip title="ﻠﻝﺛ؟">
@@ -261,7 +261,7 @@ const EngineStatusCard: React.FC<EngineStatusCardProps> = ({
     >
       <div className="engine-metrics">
         <MetricItem label="CPU" value={`${engine.cpuUsage}%`} />
-        <MetricItem label="ﮒﮒ­" value={`${engine.memoryUsage}%`} />
+<MetricItem label="ﮒﮒ" value={`${engine.memoryUsage}%`} />
         <MetricItem label="ﻛﭨﮔ۴ﻛﭦ۳ﮔ" value={engine.tradesToday} />
         <MetricItem label="ﻠﻟﺁﺁ? value={engine.errorCount} />
       </div>
@@ -281,27 +281,27 @@ TradeMonitorPage
 ﻗﻗﻗ TradeMonitorContainer
     ﻗﻗﻗ TradeFilters
     ?  ﻗﻗﻗ DateRangePicker (ﮔ۴ﮔﻟﮒﺑﻠﮔ۸?
-    ?  ﻗﻗﻗ SymbolSelector (ﮔ ﻝﻠﮔ۸?
+?  ﻗﻗﻗ SymbolSelector (ﮔﻝﻠﮔ۸?
     ?  ﻗﻗﻗ EngineSelector (ﮒﺙﮔﻠﮔ۸?
     ?  ﻗﻗﻗ SideFilter (ﻛﺗﺍﮒﮔﺗﮒﻟﺟﮔﭨ۳?
     ?  ﻗﻗﻗ ApplyFiltersButton (ﮒﭦﻝ۷ﻟﺟﮔﭨ۳?
     ﻗﻗﻗ TradeTable
-    ?  ﻗﻗﻗ TradeTableHeader (ﻟ۰۷ﮔ ﺙﮒ۳ﺑﻠ۷)
-    ?  ﻗﻗﻗ TradeTableRow (ﻟ۰۷ﮔ ﺙ?ﺣN)
+?  ﻗﻗﻗ TradeTableHeader (ﻟ۰۷ﮔﺙﮒ۳ﺑﻠ۷)
+?  ﻗﻗﻗ TradeTableRow (ﻟ۰۷ﮔﺙ?ﺣN)
     ?  ?  ﻗﻗﻗ TradeIdCell (ﻛﭦ۳ﮔID)
     ?  ?  ﻗﻗﻗ TimestampCell (ﮔﭘﻠﺑ?
-    ?  ?  ﻗﻗﻗ SymbolCell (ﮔ ﻝ)
+?  ?  ﻗﻗﻗ SymbolCell (ﮔﻝ)
     ?  ?  ﻗﻗﻗ SideCell (ﻛﺗﺍﮒﮔﺗﮒ)
-    ?  ?  ﻗﻗﻗ PriceCell (ﻛﭨﺓﮔ ﺙ)
+?  ?  ﻗﻗﻗ PriceCell (ﻛﭨﺓﮔﺙ)
     ?  ?  ﻗﻗﻗ QuantityCell (ﮔﺍﻠ)
     ?  ?  ﻗﻗﻗ VolumeCell (ﻠﻠ۱)
     ?  ?  ﻗﻗﻗ EngineCell (ﮒﺙﮔ)
     ?  ?  ﻗﻗﻗ ActionsCell (ﮔﻛﺛ)
-    ?  ﻗﻗﻗ TradeTableFooter (ﻟ۰۷ﮔ ﺙﮒﭦﻠ۷)
+?  ﻗﻗﻗ TradeTableFooter (ﻟ۰۷ﮔﺙﮒﭦﻠ۷)
     ﻗﻗﻗ TradeStatsPanel
     ?  ﻗﻗﻗ TotalTradesStat (ﮔﭨﻛﭦ۳ﮔﮔﺍ)
     ?  ﻗﻗﻗ TotalVolumeStat (ﮔﭨﻛﭦ۳ﮔﻠ۱)
-    ?  ﻗﻗﻗ AvgPriceStat (ﮒﺗﺏﮒﻛﭨﺓﮔ ﺙ)
+?  ﻗﻗﻗ AvgPriceStat (ﮒﺗﺏﮒﻛﭨﺓﮔﺙ)
     ?  ﻗﻗﻗ TradeDistributionChart (ﻛﭦ۳ﮔﮒﮒﺕ?
     ﻗﻗﻗ TradeDetailModal (ﻛﭦ۳ﮔﻟﺁ۵ﮔﮔ۷۰ﮔﮔ۰)
 ```
@@ -345,7 +345,7 @@ const TradeTable: React.FC<TradeTableProps> = ({
       width: 150
     },
     {
-      title: 'ﮔ ﻝ',
+title: 'ﮔﻝ',
       dataIndex: 'symbol',
       key: 'symbol',
       width: 100
@@ -362,7 +362,7 @@ const TradeTable: React.FC<TradeTableProps> = ({
       width: 80
     },
     {
-      title: 'ﻛﭨﺓﮔ ﺙ',
+title: 'ﻛﭨﺓﮔﺙ',
       dataIndex: 'price',
       key: 'price',
       sorter: true,
@@ -437,7 +437,7 @@ PerformancePage
 ﻗﻗﻗ PerformanceContainer
     ﻗﻗﻗ ChartControls
     ?  ﻗﻗﻗ TimeRangeSelector (ﮔﭘﻠﺑﻟﮒﺑﻠﮔ۸?
-    ?  ﻗﻗﻗ MetricSelector (ﮔﮔ ﻠﮔ۸?
+?  ﻗﻗﻗ MetricSelector (ﮔﮔﻠﮔ۸?
     ?  ﻗﻗﻗ ChartTypeSelector (ﮒﺝﻟ۰۷ﻝﺎﭨﮒﻠﮔ۸?
     ?  ﻗﻗﻗ EngineFilter (ﮒﺙﮔﻟﺟﮔﭨ۳?
     ?  ﻗﻗﻗ RefreshButton (ﮒﺓﮔﺍﮔﻠ؟)
@@ -446,7 +446,7 @@ PerformancePage
     ?  ﻗﻗﻗ DrawdownChart (ﮒﮔ۳?
     ?  ﻗﻗﻗ SharpeRatioChart (ﮒ۳ﮔ؟ﮔﺁﻝ?
     ?  ﻗﻗﻗ TradeDistributionChart (ﻛﭦ۳ﮔﮒﮒﺕ?
-    ?  ﻗﻗﻗ PerformanceHeatmap (ﮔ۶ﻟﺛﻝ­ﮒ?
+?  ﻗﻗﻗ PerformanceHeatmap (ﮔ۶ﻟﺛﻝﮒ?
     ﻗﻗﻗ PerformanceMetricsPanel
     ?  ﻗﻗﻗ SharpeRatioCard (ﮒ۳ﮔ؟ﮔﺁﻝ)
     ?  ﻗﻗﻗ MaxDrawdownCard (ﮔﮒ۳۶ﮒ?
@@ -706,7 +706,7 @@ src/
 #### 4.3.2 ﮒﺁﮒ۳ﻝ۷ﮔ۶ﮒ?
 - ﮔﮒﻠﻝ۷ﻝﭨﻛﭨﭘﮒﺍ`common/`ﻝ؟ﮒﺛ
 - ﻝﭨﻛﭨﭘﮒﮔﺍﻟ؟ﺝﻟ؟۰ﻟ۵ﻝﭖ?
-- ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔ ﺓﮒﺙﮒﻛﭦﻛﭨﭘ
+- ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔﺓﮒﺙﮒﻛﭦﻛﭨﭘ
 
 #### 4.3.3 ﮒﺁﮔﭖﻟﺁﮔ۶ﮒ?
 - ﻝﭨﻛﭨﭘﻠﭨﻟﺝﻛﺕUIﮒﻝ۵ﭨ
@@ -717,7 +717,7 @@ src/
 - ﻛﺛﺟﻝ۷React.memoﻠﺟﮒﻛﺕﮒﺟﻟ۵ﻝﻠﮔﺕﺎ?
 - ﻛﺛﺟﻝ۷useMemo/useCallbackﻛﺙﮒﻟ؟۰ﻝ؟
 - ﮒ؟ﻝﺍﻟﮔﮔﭨﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﺍﮔ؟ﮒ?
-- ﮔﻠﮒ ﻟﺛﺛﮒ۳۶ﮒﻝﭨﻛﭨﭘ
+- ﮔﻠﮒﻟﺛﺛﮒ۳۶ﮒﻝﭨﻛﭨﭘ
 
 ## 5. ﮒ؟ﮔﺛﮔﮒ
 
@@ -732,7 +732,7 @@ src/
    - ﻠ۰ﭖﻠ۱ﻠ۹۷ﮔﭘﻝﭨﻛﭨﭘ
    - ﮒﺁﺙﻟ۹ﮒﮔﻠﮔ۶?
 
-3. **ﮔ ﺕﮒﺟﮒﻟﺛﻝﭨﻛﭨﭘ** (?-4?
+3. **ﮔﺕﮒﺟﮒﻟﺛﻝﭨﻛﭨﭘ** (?-4?
    - Dashboardﻝﺕﮒﺏﻝﭨﻛﭨﭘ
    - TradeMonitorﻝﺕﮒﺏﻝﭨﻛﭨﭘ
    - Performanceﻝﺕﮒﺏﻝﭨﻛﭨﭘ
@@ -747,20 +747,20 @@ src/
    - ﮒﮒﭦﮒﺙﻟ؟ﺝ?
    - ﮒﮒﮔﭖﻟﺁﮒE2Eﮔﭖﻟﺁ
 
-### 5.2 ﻝﭨﻛﭨﭘﮔﭖﻟﺁﻝ­ﻝ۴
-| ﮔﭖﻟﺁﻝﺎﭨﮒ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ | ﮔﭖﻟﺁﻝ؟ﮔ  | ﻟ۵ﻝﻝﻝ؟?|
+### 5.2 ﻝﭨﻛﭨﭘﮔﭖﻟﺁﻝﻝ۴
+| ﮔﭖﻟﺁﻝﺎﭨﮒ | ﮔﭖﻟﺁﮒﺓ۴ﮒﺓ | ﮔﭖﻟﺁﻝ؟ﮔ | ﻟ۵ﻝﻝﻝ؟?|
 |----------|----------|----------|------------|
 | **ﮒﮒﮔﭖﻟﺁ** | Jest + React Testing Library | ﻝﭨﻛﭨﭘﻠﭨﻟﺝﮒﮔﺕﺎ?| ?0% |
 | **ﻠﮔﮔﭖﻟﺁ** | Cypress | ﻝﭨﻛﭨﭘﻠﺑﻛﭦ۳?| ?0% |
 | **E2Eﮔﭖﻟﺁ** | Cypress | ﮒ؟ﮔﺑﻝ۷ﮔﺓﮔﭖﻝ۷ | ?0% |
-| **ﮔ۶ﻟﺛﮔﭖﻟﺁ** | Lighthouse | ﮒ ﻟﺛﺛﮒﮔﺕﺎﮔﮔ۶ﻟﺛ | ﻟﺝﺝﮔ  |
+| **ﮔ۶ﻟﺛﮔﭖﻟﺁ** | Lighthouse | ﮒﻟﺛﺛﮒﮔﺕﺎﮔﮔ۶ﻟﺛ | ﻟﺝﺝﮔ |
 | **ﮒﺁﻟ۶ﮒﮔﭖ?* | Storybook + Chromatic | UIﻛﺕﻟﺑﮔ۶ﮒﮒﮒﺛ | 100% |
 
 ### 5.3 ﻝﭨﻛﭨﭘﮔﮔ۰۲ﻟ۶ﻟ
 ﮔﺁﻛﺕ۹ﻝﭨﻛﭨﭘﻠﻟ۵ﮒﮒ،ﺅﺙ
 1. **ﻝﭨﻛﭨﭘﻟﺁﺑﮔ**: ﻝ۷ﻠﻙﮒﻟﺛﻙﻛﺛﺟﻝ۷ﮒﭦ?
 2. **Propsﮔ۴ﮒ۲**: TypeScriptﮔ۴ﮒ۲ﮒ؟ﻛﺗ
-3. **ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ**: ﻛﭨ۲ﻝ ﻝ۳ﭦﻛﺝ
+3. **ﻛﺛﺟﻝ۷ﻝ۳ﭦﻛﺝ**: ﻛﭨ۲ﻝﻝ۳ﭦﻛﺝ
 4. **ﮔﺏ۷ﮔﻛﭦﻠ۰ﺗ**: ﻛﺛﺟﻝ۷ﻠﮒﭘﮒﮔﻛﺛﺏﮒ؟?
 5. **APIﮔﮔ۰۲**: ﮔﺗﮔﺏﮒﻛﭦﻛﭨﭘﻟﺁﺑ?
 
@@ -768,6 +768,6 @@ src/
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0  
 **ﮔﮒﮔﺑ?*: 2026-04-02  
-**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔ? 
+**ﻝﭨﺑﮔ۳?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 **ﻝﺑ۱ﮒﺙ**: `DESIGN_004`  
 **ﻝ?*: ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﮒﺝﻟﺁﮒ؟۰

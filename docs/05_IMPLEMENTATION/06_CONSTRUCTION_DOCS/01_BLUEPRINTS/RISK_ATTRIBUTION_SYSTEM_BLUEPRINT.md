@@ -132,7 +132,6 @@ class RiskAttributionSystem:
     风险归因系统核心?    
     索引: RISK_ATTRIBUTION_001-M01
     职责: 多维度风险分解与归因分析
-    è¾å
     """
     
     def __init__(self, config: AttributionConfig):
@@ -591,9 +590,8 @@ class AttributionReportGenerator:
 # Risk Attribution Report
 > **核心职责**: Risk Attribution System蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -646,7 +644,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         return report_path
 ```
 
-### 3.6 é
+### 3.6
 ```python
 @dataclass
 class AttributionConfig:
@@ -676,7 +674,7 @@ class AssetAttributionConfig:
 
 ## 4. 数据模型定义
 
-### 4.1 è¾å
+### 4.1
 
 ```python
 @dataclass
@@ -701,7 +699,7 @@ class AttributionResult:
 class RiskBudgetMonitorResult:
     """风险预算监控结果"""
 况
-    over_budget_risks: List[Dict]  # è¶
+over_budget_risks: List[Dict]  #
 预算风?    alerts: List[Dict]  # 预警信号
     timestamp: datetime
 ```
@@ -804,7 +802,7 @@ class PortfolioOptimizer:
 需 |
 需 |
 
-### 8.2 å®è£
+### 8.2
 命令
 
 ```bash
@@ -876,7 +874,7 @@ pip install jinja2>=3.0
 | 术语 | 定义 | 上下?|
 |------|------|--------|
 | **风险归因** | 分析风险来源 | 风险分解 |
-| **è¾¹é
+| **
 风险贡献** | 单位权重增加带来的风险增?| 风险度量 |
 | **主动风险** | 组合相对基准的风?| 相对风险 |
 
@@ -884,8 +882,7 @@ pip install jinja2>=3.0
 
 **蓝图版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 技术规格书编写
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -902,8 +899,8 @@ pip install jinja2>=3.0
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -926,7 +923,7 @@ graph LR
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

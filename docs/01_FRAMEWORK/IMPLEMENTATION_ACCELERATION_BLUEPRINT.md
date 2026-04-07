@@ -60,13 +60,13 @@ layer: Layer 2 (Alpha因子层)
 ### 2.1 三大核心策略
 
 ```
-âââ 1. AIè¾
+1. AI
 助审查
 
-### 2.2 AIè¾
+### 2.2 AI
 ```python
 class AIAssistedDevelopment:
-    """AIè¾
+"""AI
     
     def __init__(self):
         self.code_generator = AICodeGenerator()
@@ -75,7 +75,7 @@ class AIAssistedDevelopment:
         self.code_reviewer = AICodeReviewer()
         
     def ai_develop_module(self, blueprint: Blueprint) -> DevelopedModule:
-        """AIè¾
+"""AI
         
         # 1. AI生成代码
         generated_code = self.code_generator.generate(
@@ -135,13 +135,13 @@ class AIAssistedDevelopment:
 #### Week 5-6: 策略工厂
 
 |------|-----------|---------|--------|--------|
-| åæµéé
+|
 
 
 #### Week 7-8: 事件总线
 
 |------|-----------|---------|--------|--------|
-| å
+|
 
 
 
@@ -161,20 +161,20 @@ class AIAssistedDevelopment:
 
 ---
 
-### 3.3 Phase 3: å®è§é
-ç½®ï¿?(Month 5-6)
+### 3.3 Phase 3:
+?(Month 5-6)
 
 #### Week 17-20: 宏观经济引擎
 
 |------|-----------|---------|--------|--------|
-| å
-| Black-Litterman | 75% | PyPortfolioOpt | 2ï¿?| BLModelï¿?|
+|
+| Black-Litterman | 75% | PyPortfolioOpt | 2?| BLModel?|
 
 
 #### Week 21-24: 风控系统完善
 
 |------|-----------|---------|--------|--------|
-| å
+|
 
 
 
@@ -186,7 +186,7 @@ class AIAssistedDevelopment:
 |------|-----------|---------|--------|--------|
 
 
-#### Week 29-32: å
+#### Week 29-32:
 |------|-----------|---------|--------|--------|
 
 
@@ -204,8 +204,7 @@ class AutomatedTestingStrategy:
     def generate_test_suite(self, module_code: str) -> TestSuite:
         """AI生成测试套件"""
         
-        # 1. åå
-æµè¯
+# 1.
         unit_tests = self._generate_unit_tests(module_code)
         
         # 2. 集成测试
@@ -214,8 +213,7 @@ class AutomatedTestingStrategy:
         # 3. 性能测试
         performance_tests = self._generate_performance_tests(module_code)
         
-        # 4. å®å
-¨æµè¯
+# 4.
         security_tests = self._generate_security_tests(module_code)
         
         return TestSuite(
@@ -277,22 +275,21 @@ jobs:
 
 |--------|---------|-----------|---------|
 | **M1** | Month 2 | 可解释?RAG+策略工厂 | 核心功能可用 |
-| **M3** | Month 6 | å®è§é
-| **M4** | Month 8 | å
+| **M3** | Month 6 |
+| **M4** | Month 8 |
 
 ---
 
-## å
+##
 ### 6.1 人力资源
 
 |------|--------|------|
-| **AIå©æ** | å
-¨ç¨è¾
+| **AI** |
 
 ### 6.2 计算资源
 
 |------|------|------|
-| **LLM API** | Claude/GPT-4 | 200ï¿?ï¿?|
+| **LLM API** | Claude/GPT-4 | 200??|
 
 ---
 
@@ -313,11 +310,11 @@ jobs:
 
 ---
 
-## å
+##
 
 括:
 
-1. **AIè¾
+1. **AI
 
 **核心价?*:
 

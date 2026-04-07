@@ -6,8 +6,8 @@ created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: å
-¨ç³»?
+applicable_scope:
+?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?---
@@ -38,7 +38,7 @@ implementation_status: 进行?---
 | **TECH_STACK.md** | 技术栈选择 | 数据?回测/可视?AI/存储选型 |
 | **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计?个月实施计划、专业机构对?|
 | **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方?| 6个适合个人开发的模块?周实施计划、低成本轻量级方?|
-| **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | å
+| **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** |
 | **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝?| 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
 | **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架?| 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
@@ -52,7 +52,7 @@ implementation_status: 进行?---
 Layer 0: 数据源层 (QMT/iFind/SuperCommand)
 洗/标准?验证)
 Layer 2: Alpha因子?(5700+因子)
-Layer 3: èæ
+Layer 3:
 感/事件) 🆕
 Layer 4: 机器学习?(Qlib Alpha158/LSTM) 🆕
 Layer 5: 策略执行?(信号生成/QMT交易)
@@ -70,7 +70,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 |------|------|
 | **人授权AI执行** | 人做决策，AI执行 |
 | **可回测优?* | 稳定策略才实?|
-| **AIè¾
+| **AI
 助不替?* | AI提供建议，人最终决?|
 
 ---
@@ -104,8 +104,8 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 
 ---
 
-## åãä¸å
-³?
+##
+?
 
 ```
 01_FRAMEWORK (本目?
@@ -114,7 +114,7 @@ Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 ├── HUMAN_AI_FLOW.md   ←→ 04_EXECUTION (执行)
 └── TECH_STACK.md      ←→ 05_IMPLEMENTATION (部署)
 
-³ç³»:
+:
 ├── Layer 0-2: 数据和因??02_FACTOR_LIBRARY
 ├── Layer 3-4: AI能力 ?07_RESEARCH
 ├── Layer 5-6: 交易执行 ?04_EXECUTION

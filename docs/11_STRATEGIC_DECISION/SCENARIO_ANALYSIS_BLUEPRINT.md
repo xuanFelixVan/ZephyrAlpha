@@ -203,7 +203,7 @@ Scenario_Hypothetical = {Factor_Shocks, Correlation_Changes, Volatility_Changes}
 极端情景:
 Scenario_Extreme = {
     Tail_Risk_Level: 99.9%,
-    Factor_Shock_Multiplier: 3×σ,
+Factor_Shock_Multiplier: 3σ,
     Correlation_Shock: +0.3
 }
 
@@ -435,17 +435,17 @@ class ScenarioBuilder:
 蒙特卡洛模拟:
 R_scenario ~ N(μ_scenario, Σ_scenario)
 其中:
-μ_scenario = μ_base + Factor_Exposure × Factor_Shock
-Σ_scenario = Σ_base × Volatility_Multiplier
+μ_scenario = μ_base + Factor_Exposure  Factor_Shock
+Σ_scenario = Σ_base  Volatility_Multiplier
 
 历史模拟:
 R_scenario = Historical_Returns[Scenario_Period]
 
 因子情景模拟:
-R_asset = α + Σ β_i × (F_i + ΔF_i) + ε
+R_asset = α + Σ β_i  (F_i + ΔF_i) + ε
 
 压力测试:
-Impact = Portfolio_Value × Σ (w_i × ΔP_i)
+Impact = Portfolio_Value  Σ (w_i  ΔP_i)
 ```
 
 #### 2.2.2 技术实现
@@ -717,7 +717,7 @@ CVaR_α = E[R | R < VaR_α]
 MaxDD = max(peak - trough) / peak
 
 流动性影响:
-Liquidity_Impact = Σ (Position_i / ADV_i) × Impact_Factor
+Liquidity_Impact = Σ (Position_i / ADV_i)  Impact_Factor
 
 敞口变化:
 Exposure_Change = Σ |w_new_i - w_current_i|

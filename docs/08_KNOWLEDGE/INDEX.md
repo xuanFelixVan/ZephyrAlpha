@@ -194,6 +194,6 @@ implementation_status: 已完?tags: ["知识?, "索引", "导航"]
 **创建日期**: 2026-04-03
 **维护?*: 首席知识?**状?*: ?活跃
 
-- [ZephyrAlphaﻝ۴ﻟﺁﻛﺙ ﮔﺟﻛﺛﻝﺏﭨ](./KNOWLEDGE_TRANSFER_SYSTEM.md) - 系统文档
+- [ZephyrAlphaﻝ۴ﻟﺁﻛﺙﮔﺟﻛﺛﻝﺏﭨ](./KNOWLEDGE_TRANSFER_SYSTEM.md) - 系统文档
 
-- [ZephyrAlphaﻝ۴ﻟﺁﮒﭦﮔ۰ﻛﺝﻝ ﻝ۸?](./KNOWLEDGE_BASE_CASE_STUDIES.md) - 案例研究
+- [ZephyrAlphaﻝ۴ﻟﺁﮒﭦﮔ۰ﻛﺝﻝﻝ۸?](./KNOWLEDGE_BASE_CASE_STUDIES.md) - 案例研究

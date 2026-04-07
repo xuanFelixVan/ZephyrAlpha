@@ -22,14 +22,13 @@ layer: Layer 5.1 (数据处理)
 
 
 > **模块ID**: `HIGH_PERF_PIPELINE_001`
-> **ä¼å
+> **
 > **预期收益**: 提升数据处理性能10倍，降低延迟90%
 
 ## 核心定位
 
 > 核心职责: High Performance Data Pipeline蓝图设计
 > 职责边界: 
-³å
 容
 
 
@@ -103,8 +102,7 @@ layer: Layer 5.1 (数据处理)
 |------|--------|------|
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -120,8 +118,8 @@ layer: Layer 5.1 (数据处理)
 |---------|------|------|------|
 | **Apache Flink** | 1.19+ | 流式数据处理 | [官方文档](https://flink.apache.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -144,12 +142,12 @@ graph LR
 
 
 ```
-â?                                                            â?
-¥å±?(Data Ingestion)                â?  â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?(Data Ingestion)                ?  ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 技术选型
@@ -174,8 +172,8 @@ class ProcessingMode(Enum):
 
 @dataclass
 class StreamConfig:
-    """æµé
-ç½?""
+"""
+?""
     stream_id: str
     source_topic: str
     sink_topic: str
@@ -206,7 +204,7 @@ class StreamProcessingEngine:
         self.processors[stream_id] = processor
     
     def process_stream(self, stream_id: str):
-        """å¤çæµ?""
+"""?""
         stream = self.streams.get(stream_id)
         if not stream:
             raise ValueError(f"Stream {stream_id} not found")
@@ -294,8 +292,7 @@ class BatchProcessingEngine:
             # 合并结果
             output_data = self._merge_results(results)
             
-            # åå
-¥æ°æ®
+#
             self._write_data(job.output_path, output_data)
             
             end_time = datetime.now()
@@ -333,9 +330,8 @@ class BatchProcessingEngine:
         return pd.concat(results, ignore_index=True)
     
     def _write_data(self, path: str, data: pd.DataFrame):
-        """åå
-¥æ°æ®"""
-¥é»è¾
+"""
+"""
         pass
 ```
 
@@ -539,13 +535,13 @@ services:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `pipeline_latency_milliseconds` | Histogram | 处理延迟 |
-| `pipeline_cpu_utilization_ratio` | Gauge | CPUå©ç¨ç?|
-| `pipeline_memory_utilization_ratio` | Gauge | å
+| `pipeline_cpu_utilization_ratio` | Gauge | CPU?|
+| `pipeline_memory_utilization_ratio` | Gauge |
 
 ---
 
@@ -555,9 +551,8 @@ services:
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 - [数据源管理蓝图](./DATA_SOURCE_MANAGEMENT_BLUEPRINT.md)
@@ -575,9 +570,9 @@ services:
 ##### 6.001. High Performance Data Pipeline
 - **模块ID**: HIGH_PERFORMANCE_DATA_PIPELINE_001
 - **蓝图文档**: HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

@@ -150,15 +150,15 @@ graph TB
 **核心功能**:
 - 并行执行
 - 数据传输
-- å
+-
 存管理
 - 错误处理
 
 
 
 **核心功能**:
-ç½?
-- å
+?
+-
 - 数据类型映射
 
 ---
@@ -168,7 +168,7 @@ graph TB
 
 **GitHub**: https://github.com/trinodb/trino
 
-**Staræ?*: 10k+
+**Star?*: 10k+
 
 - 分布式SQL查询
 - 多数据源支持
@@ -294,7 +294,7 @@ class CrossSourceQueryManager:
         
         Args:
             join_conditions: 连接条件
-            select_columns: éæ©å?
+select_columns: ?
         
         Returns:
             DataFrame: 查询结果
@@ -461,7 +461,7 @@ class QueryCache:
         return time.time() - cached_result['timestamp'] < self.ttl
     
     def _evict(self):
-        """æ¸
+"""
 理缓存"""
         import time
         
@@ -485,9 +485,9 @@ class QueryCache:
 
 ---
 
-ç½?
+?
 
-### 4.1 PostgreSQLè¿æ¥å?
+### 4.1 PostgreSQL?
 
 ```yaml
 connector.name: postgresql
@@ -496,7 +496,7 @@ connection-user: postgres
 connection-password: password
 ```
 
-### 4.2 MySQLè¿æ¥å?
+### 4.2 MySQL?
 
 ```yaml
 connector.name: mysql
@@ -505,7 +505,7 @@ connection-user: root
 connection-password: password
 ```
 
-### 4.3 MongoDBè¿æ¥å?
+### 4.3 MongoDB?
 
 ```yaml
 connector.name: mongodb
@@ -611,11 +611,11 @@ print(result)
 **目标**: 实现基础查询能力
 
 **任务**:
-- [ ] é
+- [ ]
 
 - Trino部署
 - 查询引擎
-ç½?
+?
 
 
 **目标**: 实现跨源查询
@@ -634,7 +634,7 @@ print(result)
 ---
 
 
-### 7.1 å
+### 7.1
 
 |------|--------|----------|
 
@@ -642,27 +642,27 @@ print(result)
 
 |------|------|--------|
 | **检查查询性能** | 每天 | 运维人员 |
-| **ä¼åæ
-| **æ¸
+| **
+| **
 
 ---
 
 ## 8. 成本效益分析
 
-### 8.1 å¼åææ?
+### 8.1 ?
 
 |------|--------|------|
-| **核心查询功能** | 12小时 | ¥1,200 |
-| **跨源查询** | 10小时 | ¥1,000 |
-| **性能优化** | 8小时 | ¥800 |
-| **总计** | **30小时** | **¥3,000** |
+| **核心查询功能** | 12小时 | 1,200 |
+| **跨源查询** | 10小时 | 1,000 |
+| **性能优化** | 8小时 | 800 |
+| **总计** | **30小时** | **3,000** |
 
 ### 8.2 收益评估
 
 |--------|----------|
-| **提高查询效率** | ¥20,000 |
-| **降低数据迁移成本** | ¥15,000 |
-| **总计** | **¥45,000** |
+| **提高查询效率** | 20,000 |
+| **降低数据迁移成本** | 15,000 |
+| **总计** | **45,000** |
 
 **ROI**: (45,000 - 3,000) / 3,000 = 1400%
 
@@ -693,13 +693,13 @@ print(result)
 - [ ] 查询推荐
 
 
-- [ ] AIè¾
+- [ ] AI
 助查询
 - [ ] 自适应优化
 
 ---
 
-## 11. åèèµæ?
+## 11. ?
 
 
 - [Trino](https://github.com/trinodb/trino)
@@ -713,5 +713,5 @@ print(result)
 ---
 
 **文档版本**: v1.0.0
-**æåæ´æ?*: 2026-04-07
-å®¡æ ?
+**?*: 2026-04-07
+?

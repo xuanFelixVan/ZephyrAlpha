@@ -396,13 +396,13 @@ class TradeReportGenerator:
 | 指标 | 数值 |
 |------|------|
 | 总交易次数 | {{ summary.total_trades }} |
-| 总交易金额 | ¥{{ "%.2f"|format(summary.total_amount) }} |
-| 总手续费 | ¥{{ "%.2f"|format(summary.total_commission) }} |
+| 总交易金额 | {{ "%.2f"|format(summary.total_amount) }} |
+| 总手续费 | {{ "%.2f"|format(summary.total_commission) }} |
 | 买入次数 | {{ summary.buy_trades }} |
 | 卖出次数 | {{ summary.sell_trades }} |
-| 买入金额 | ¥{{ "%.2f"|format(summary.buy_amount) }} |
-| 卖出金额 | ¥{{ "%.2f"|format(summary.sell_amount) }} |
-| 净买入金额 | ¥{{ "%.2f"|format(summary.net_amount) }} |
+| 买入金额 | {{ "%.2f"|format(summary.buy_amount) }} |
+| 卖出金额 | {{ "%.2f"|format(summary.sell_amount) }} |
+| 净买入金额 | {{ "%.2f"|format(summary.net_amount) }} |
 
 ## 二、交易图表
 

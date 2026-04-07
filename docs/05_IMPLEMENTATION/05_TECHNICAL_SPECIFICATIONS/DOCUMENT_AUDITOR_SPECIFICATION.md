@@ -3,7 +3,7 @@ version: 1.0.0
 standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
 responsibility:
   - 实施指南、部署文档
-compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
@@ -25,17 +25,17 @@ last_updated: 2026-04-02
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝ؟ﮔ 
+### 1.1 ﻝ؟ﮔ
 
 ﮒ؟ﻛﺗﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻙ?
 ### 1.2 ﻠﻝ۷ﻟﮒﺑ
 
-- ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻝﮔ؛ﮔ ﺙﮒﺙﮔ۲ﮔ?- ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
+- ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?- ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
 ---
 
 ## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class DocumentAuditor:
@@ -52,7 +52,7 @@ class DocumentAuditor:
         """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
         
     def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-        """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
+"""ﮔ۲ﮔ۴ﻝﮔ؛ﮔﺙﮒﺙ?""
         
     def check_classification(self, files: List[Path]) -> List[AuditIssue]:
         """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
@@ -81,7 +81,7 @@ class AuditIssue:
 
 ### 3.1 ﻠﺝﮔ۴ﮔ۲ﮔ?
 **ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ­۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒ­ﮒ۷ﮔ?
+- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒﮒ۷ﮔ?
 **ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_links(self, files: List[Path]) -> List[AuditIssue]:
@@ -96,17 +96,17 @@ def check_links(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='broken_link',
                     severity='warning',
-                    message=f'ﻠﺝﮔ۴ﻝ؟ﮔ ﻛﺕﮒ­ﮒ? {link}'
+message=f'ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ? {link}'
                 ))
 ```
 
 ### 3.2 ﻝﮔ؛ﮔ۲ﮔ?
 **ﮔ۲ﮔ۴ﮒﮒ؟?*:
-- ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
+- ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
 **ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-    """ﮔ۲ﮔ۴ﻝﮔ؛ﮔ ﺙﮒﺙ?""
+"""ﮔ۲ﮔ۴ﻝﮔ؛ﮔﺙﮒﺙ?""
     VERSION_PATTERN = re.compile(r'version:\s*["\']?(\d+\.\d+\.\d+)["\']?')
     
     for file in files:
@@ -120,7 +120,7 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='invalid_version',
                     severity='warning',
-                    message=f'ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙﻛﺕﮔ­۲ﻝ۰؟: {version}'
+message=f'ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﻛﺕﮔ۲ﻝ۰؟: {version}'
                 ))
 ```
 
@@ -145,7 +145,7 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
                 file_path=str(file),
                 issue_type='non_standard_category',
                 severity='info',
-                message=f'ﻠﮔ ﮒﮒﻝﺎ? {category}'
+message=f'ﻠﮔﮒﮒﻝﺎ? {category}'
             ))
 ```
 
@@ -153,19 +153,19 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
 
 ## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-### 4.1 ﮔ۶ﻟﺛﮔﮔ 
+### 4.1 ﮔ۶ﻟﺛﮔﮔ
 
-| ﮔﮔ  | ﻟ۵ﮔﺎ |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
 | **ﮔ،ﮔﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
-| **ﮒﮒ­ﻛﺛﺟﻝ۷** | ﻗ?00MB |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﻗ?00MB |
 | **ﮔ۴ﮒﻝﮔ** | ﻗ?ﻝ۶?|
 
-### 4.2 ﻛﺙﮒﻝ­ﻝ۴
+### 4.2 ﻛﺙﮒﻝﻝ۴
 
 - ﻛﺛﺟﻝ۷ﻝﮔﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﻛﭨﭘ
 - ﮒﺗﭘﻟ۰ﮒ۳ﻝﮒ۳ﻛﺕ۹ﮔﻛﭨﭘ
-- ﻝﺙﮒ­ﮔﻛﭨﭘﻝﺑ۱ﮒﺙ
+- ﻝﺙﮒﮔﻛﭨﭘﻝﺑ۱ﮒﺙ
 
 ---
 
@@ -183,9 +183,9 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
 python scripts/document_auditor.py --all
 ```
 
-### 5.2 ﻟﺝﮒﭦﮔ ﺙﮒﺙ
+### 5.2 ﻟﺝﮒﭦﮔﺙﮒﺙ
 
-**JSONﮔ ﺙﮒﺙ**:
+**JSONﮔﺙﮒﺙ**:
 ```json
 {
   "summary": {
@@ -240,10 +240,10 @@ rules:
 ---
 
 ## 7. ﮒﻟﮔﮔ۰?
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔ ﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

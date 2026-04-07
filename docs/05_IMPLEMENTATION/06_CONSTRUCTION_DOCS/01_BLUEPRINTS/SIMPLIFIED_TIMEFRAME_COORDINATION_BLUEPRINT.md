@@ -80,23 +80,23 @@ layer: Layer 5 (策略执行层)
 
 
 ```
-â?                                                                â?
-â?â?            è¾å
-¥å±?                                       â?  â?
-â?                        â?                                      â?
-â?                        â?                                      â?
-â?                        â?                                      â?
-â?                                                                â?
+?                                                                ?
+??
+?                                       ?  ?
+?                        ?                                      ?
+?                        ?                                      ?
+?                        ?                                      ?
+?                                                                ?
 ```
 
 
 ```
 短期信号 + 中期信号 + 市场数据
-    â?
-    â?
+?
+?
 冲突检测（检测信号冲突）
-    â?
-    â?
+?
+?
 ```
 
 ---
@@ -109,7 +109,6 @@ class SimplifiedTimeframeCoordination:
     
     索引: TIMEFRAME_COORD_001-M01
     职责: 实现多时间框架信号融合和冲突解决
-    è¾å
     """
     
     def __init__(self, config: TimeframeConfig):
@@ -213,9 +212,8 @@ class SignalFusion:
 # 信号协同接口
 > **核心职责**: Simplified Timeframe Coordination蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -264,19 +262,17 @@ def resolve_conflicts(
 
 ---
 
-## 5. ä¸å
-³ç³»
+## 5.
 
-³ç³»
 
-| æ¨¡å | å
+|  |
 |------|----------|------|
 | MULTI_TIMEFRAME_ARCHITECTURE | 依赖 | 提供时间框架架构支持 |
 | SIGNAL_GENERATION | 依赖 | 提供信号生成能力 |
 
 ### 5.2 推荐实施路径
 
-1. å
+1.
 
 ---
 
@@ -307,16 +303,16 @@ def resolve_conflicts(
 ##### 6.001. Simplified Timeframe Coordination
 - **模块ID**: SIMPLIFIED_TIMEFRAME_COORDINATION_001
 - **蓝图文档**: SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 7.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Simplified Timeframe Coordination** | å
+| **Simplified Timeframe Coordination** |
 
 ### 7.3 版本管理
 

@@ -43,23 +43,22 @@ parent_document: ../INDEX.md
 - 团队组建
 
 
-## ð ç¸å
-³ææ¡£
+##
 
 - [AI因子挖掘器实施总结](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY.md)
 
 ### AI治理
 - [AI治理框架蓝图](01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md)
-- [AIæéæ¸
+- [AI
 单](01_FRAMEWORK/AI_PERMISSIONS.md)
 - [人机交互蓝图](01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md)
 
 
-³ç³»å?
+?
 ```
 AI虚拟研究团队
 ├── 蓝图设计 (当前目录)
 单
 ---
 
-*æåæ´æ? 2026-04-03*
+*? 2026-04-03*

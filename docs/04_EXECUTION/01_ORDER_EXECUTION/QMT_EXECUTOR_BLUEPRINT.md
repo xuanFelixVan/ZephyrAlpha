@@ -31,7 +31,7 @@ priority: P0
 > - ✅ 本文档负责：Qmt Executor蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> æ¸
+>
 > **版本**: v1.0.0
 实现
 
@@ -40,9 +40,8 @@ priority: P0
 ## 📋 执行摘要
 
 ### 核心目标
-### å
-³é®ææ
-- â?å®æQMTé
+###
+- ?QMT
 ---
 
 ## 1. 项目概述
@@ -59,18 +58,18 @@ priority: P0
 | **模块类别** | 核心交易执行模块 |
 | **上游模块** | StrategyEngine, SignalGenerator |
 | **下游模块** | RiskMonitor, PerformanceTracker |
-| **é
+| **
 
-çº?
-| ä¼å
+?
+|
 |--------|------|----------|------|
-å®ç?|
-å®ç?|
-å?| 25h | â?å¾
-å®ç?|
-å®ç?|
-å®ç?|
-å®ç?|
+?|
+?|
+?| 25h | ?
+?|
+?|
+?|
+?|
 
 ---
 
@@ -84,7 +83,7 @@ priority: P0
 **职责**:
 - 管理与QMT客户端的连接生命周期
 - 处理连接、断开、重连逻辑
-**å
+**
 ```python
 class QMTConnectionManager:
     
@@ -118,7 +117,7 @@ class QMTConnectionManager:
 
 **职责**:
 - 执行交易订单
-**å
+**
 ```python
 class QMTOrderExecutor:
     
@@ -146,17 +145,17 @@ class QMTOrderExecutor:
 **实现要点**:
 4. 订单执行日志完整记录
 
-å?(QMTDataAdapter)
+?(QMTDataAdapter)
 
 **职责**:
-- å°è£
+-
 QMT数据接口
 
 
-**å
+**
 ```python
 class QMTDataAdapter:
-å?""
+?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -180,7 +179,7 @@ class QMTDataAdapter:
         symbols: List[str],
         callback: Callable
     ) -> None:
-        """è®¢é
+"""
 """
         pass
     
@@ -200,7 +199,7 @@ class QMTDataAdapter:
 
 单**:
 - [ ] 实现QMTConnectionManager
-- [ ] å®ç°é
+- [ ]
 - [ ] 解决当前连接失败问题
 
 **验收标准**:
@@ -217,14 +216,12 @@ class QMTDataAdapter:
 单**:
 - [ ] 实现QMTDataAdapter
 数据获取
-è®¢é
 
 - [ ] 实现财务数据获取
 - [ ] 编写数据接口测试用例
 
 **验收标准**:
 
-è¡æ
 单**:
 - [ ] 集成系统风险控制模块
 - [ ] 编写风险控制测试用例
@@ -247,58 +244,57 @@ class QMTDataAdapter:
 ```
 src/
 ├── execution/
-â?  âââ qmt/
-â?  â?  âââ __init__.py
-â?  â?  âââ connection_manager.py
-â?  â?  âââ order_executor.py
-â?  â?  âââ data_adapter.py
-â?  â?  âââ account_manager.py
-â?  â?  âââ position_manager.py
-â?  â?  âââ risk_controller.py
-â?  âââ __init__.py
+?   qmt/
+?  ?   __init__.py
+?  ?   connection_manager.py
+?  ?   order_executor.py
+?  ?   data_adapter.py
+?  ?   account_manager.py
+?  ?   position_manager.py
+?  ?   risk_controller.py
+?   __init__.py
 ```
 
 **命名规范**:
 
 **文档规范**:
-- ææå
-¬å
+-
 须有docstring
 - 使用Google风格docstring
-- å
+-
 含使用示例
 
 ### 4.2 测试规范
 
-- åå
+-
 - 集成测试覆盖核心流程
 **测试文件组织**:
 ```
 tests/
 ├── unit/
-â?  âââ test_qmt_connection_manager.py
-â?  âââ test_qmt_order_executor.py
-â?  âââ test_qmt_data_adapter.py
+?   test_qmt_connection_manager.py
+?   test_qmt_order_executor.py
+?   test_qmt_data_adapter.py
 ├── integration/
-â?  âââ test_qmt_integration.py
+?   test_qmt_integration.py
 └── fixtures/
     └── qmt_test_data.py
 ```
 
-### 4.3 é
+### 4.3
 
-**é
-- `config/qmt_config.yaml`: éææé
-- `.env.qmt.example`: é
+**
+- `config/qmt_config.yaml`:
+- `.env.qmt.example`:
 
-**é
+**
 ```python
 from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 
 class QMTConfig:
-    """QMTé
+"""QMT
     
     def __init__(self):
         self._load_config()
@@ -339,7 +335,6 @@ class QMTConfig:
 ### 6.1 功能验收
 
 - [ ] 能够查询订单状态和持仓信息
-è¡æ
 ### 6.2 性能验收
 
 - [ ] 订单执行延迟 < 100ms
@@ -349,7 +344,7 @@ class QMTConfig:
 
 ### 6.3 质量验收
 
-- [ ] åå
+- [ ]
 - [ ] 代码审查通过
 晰
 
@@ -378,7 +373,7 @@ class QMTConfig:
 
    - 实现主备切换
    - 实现负载均衡
-   - å®ç°æ
+-
 障自动恢复
 
 2. **智能风控**
@@ -386,8 +381,8 @@ class QMTConfig:
 
 ---
 
-## 8. åèææ¡?
-### 8.1 å
+## 8. ?
+### 8.1
 部文档
 
 - [QMT数据接口技术规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
@@ -398,7 +393,7 @@ class QMTConfig:
 ### 8.2 外部文档
 
 - [QMT官方API文档](https://dict.thinktrader.net/nativeApi/start_now.html)
-¸](https://dict.thinktrader.net/dictionary/)
+](https://dict.thinktrader.net/dictionary/)
 - [QMT快速开始指南](https://dict.thinktrader.net/innerApi/start_now.html)
 
 ---
@@ -424,7 +419,7 @@ class QMTConfig:
 - **模块ID**: QMT_EXECUTOR_BLUEPRINT_001
 - **蓝图文档**: [QMT_EXECUTOR_BLUEPRINT.md](04_EXECUTION\01_ORDER_EXECUTION\QMT_EXECUTOR_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: Layer 5 ç­ç¥æ§è¡å±?compliance_level: ä¸ä¸æ å
+- **职责**: Layer 5 ?compliance_level: 
 - **状态**: Active
 ```
 
@@ -432,7 +427,7 @@ class QMTConfig:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Qmt Executor Blueprint** | Layer 5 ç­ç¥æ§è¡å±?compliance_level: ä¸ä¸æ å | **核心模块** |
+| **Qmt Executor Blueprint** | Layer 5 ?compliance_level:  | **核心模块** |
 
 ### 10.3 版本管理
 

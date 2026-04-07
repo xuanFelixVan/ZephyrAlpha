@@ -24,9 +24,8 @@ layer: Layer 5 (策略执行层)
 
 > **核心职责**: Economic Regime Engine蓝图设计
 > **职责边界**: 
-³å
 容
-å®...
+...
 
 
 ## 设计目标
@@ -85,7 +84,6 @@ layer: Layer 5 (策略执行层)
 
 > 核心职责: Economic Regime Engine蓝图设计
 > 职责边界: 
-³å
 容
 
 ## 1. 模块概述
@@ -148,13 +146,11 @@ layer: Layer 5 (策略执行层)
 
 
 ```
-?è¾å
-ç½®æé
+?
 
 步骤:
-ç½®æé
 2. 基于范式概率分布进行加权平均
-   w_asset = Î£ P(regime_i) * w_asset(regime_i)
+w_asset =  P(regime_i) * w_asset(regime_i)
 3. 应用风险约束
    - 杠杆限制（最?倍）
 置建议
@@ -165,13 +161,12 @@ layer: Layer 5 (策略执行层)
 ---
 
 ## 4. 数据流设?
-¥
 - **数据?*: iFinD、Wind、国家统计局
 
 ### 4.2 数据输出
 - **范式概率分布**: 四大经济范式的概率分?- **置信?*: 范式判断的置信度
 - **转换预警**: 范式转换预警信号
-ç½®æ?
+?
 ### 4.3 数据流图
 ```
 置
@@ -192,7 +187,7 @@ class EconomicRegimeEngine:
         获取当前经济范式分析
         
         Returns:
-            RegimeAnalysis: å
+RegimeAnalysis:
 置建?        """
         pass
     
@@ -218,12 +213,11 @@ class EconomicRegimeEngine:
 置建议
         
         Returns:
-ç½®æé
         """
         pass
 ```
 
-### 5.2 é
+### 5.2
 ```yaml
 economic_regime_engine:
   # HMM模型参数
@@ -268,7 +262,7 @@ economic_regime_engine:
 ### 7.3 Phase 3: 应用层开发（Week 5-6?- Day 1-3: 范式转换预警模块
 - Day 6-7: API接口开?
 ### 7.4 Phase 4: 集成与测试（Week 7-8?- Day 1-3: 系统集成
-- Day 4-5: åå
+- Day 4-5:
 ### 7.5 Phase 5: 上线与监控（Week 9?- Day 1-3: 生产环境部署
 - Day 4-5: 监控系统搭建
 - Day 6-7: 文档与培?
@@ -293,8 +287,7 @@ economic_regime_engine:
 
 ---
 
-## 9. ä¾èµå
-³ç³»
+## 9.
 
 ### 9.1 上游依赖
 - Layer 4 数据层：提供宏观经济数据
@@ -309,7 +302,7 @@ economic_regime_engine:
 
 ---
 
-## 10. å
+## 10.
 | 里程?| 时间 | 交付?| 验收标准 |
 |--------|------|--------|----------|
 | **M1: 数据层完?* | Week 2 | 数据采集与预处理模块 | 数据质量?5% |
@@ -334,21 +327,21 @@ economic_regime_engine:
 ### 11.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: å®è§é
-ç½®å±?
+#### Layer 5:
+?
 ##### 6.001. Economic Regime Engine
 - **模块ID**: ECONOMIC_REGIME_ENGINE_001
 - **蓝图文档**: ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 11.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Economic Regime Engine** | å
+| **Economic Regime Engine** |
 
 ### 11.3 版本管理
 

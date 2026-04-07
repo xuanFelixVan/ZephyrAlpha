@@ -4,12 +4,12 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: Sagaﻟ۰۴ﮒﺟﻛﭦﮒ۰ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 ---
@@ -25,14 +25,14 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 > Sagaﮔ۷۰ﮒﺙﻟ۰۴ﮒﺟﻛﭦﮒ۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﻛﺕﮒ؟ﻝﺍﻟ۶ﻟ
 >
-> **ﮔ ﺕﮒﺟﮒﮒ**: ﮒﺗﻝ­ﮔ۶ﻙﮒﺁﻠﻟﺁﮔ۶ﻙﻛﺕﮒ۰ﻟﺁ­ﻛﺗﮒ؟ﮔﺑﮔ?
-> **ﻟ؟ﺝﻟ؟۰ﻝ؟ﮔ **: ﻛﺟﻟﺁﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﺅﺙﮔﺁﮔﻟ۹ﮒ۷ﮔ۱ﮒ۳ﺅﺙﮔﮒﺍﮒﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱
-> **ﮔﮔﺁﮔﭘﮔ?*: ﻠﮒﭦﻟ۰۴ﮒﺟ + ﻝﭘﮔﮔﭦ + ﻠﻟﺁﮔﭦﮒﭘ + ﻝﮔ۶ﮒﻟ­۵
+> **ﮔﺕﮒﺟﮒﮒ**: ﮒﺗﻝﮔ۶ﻙﮒﺁﻠﻟﺁﮔ۶ﻙﻛﺕﮒ۰ﻟﺁﻛﺗﮒ؟ﮔﺑﮔ?
+> **ﻟ؟ﺝﻟ؟۰ﻝ؟ﮔ**: ﻛﺟﻟﺁﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﺅﺙﮔﺁﮔﻟ۹ﮒ۷ﮔ۱ﮒ۳ﺅﺙﮔﮒﺍﮒﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱
+> **ﮔﮔﺁﮔﭘﮔ?*: ﻠﮒﭦﻟ۰۴ﮒﺟ + ﻝﭘﮔﮔﭦ + ﻠﻟﺁﮔﭦﮒﭘ + ﻝﮔ۶ﮒﻟ۵
 
 **ﻝﮔ؛**: v1.0
 **ﮔﺑﮔﺍ**: 2026-04-02
 **Layer**: Layer 4 (ﮔ۶ﻟ۰ﮒﺎ?
-**ﻛﺙﮒﻝﭦ?*: P1 - ﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﮔ ﺕﮒﺟﻛﺟﻠ?
+**ﻛﺙﮒﻝﭦ?*: P1 - ﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﮔﺕﮒﺟﻛﺟﻠ?
 
 ---
 
@@ -40,7 +40,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 ### 1.1 ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﮒ؟ﻛﺗ
 
-**ﻟ۰۴ﮒﺟﻛﭦﮒ۰**ﺅﺙCompensation TransactionﺅﺙﮔﺁSagaﮔ۷۰ﮒﺙﻛﺕ­ﻝﮔ ﺕﮒﺟﮔﭦﮒﭘﺅﺙﻝ۷ﻛﭦﮔ۳ﻠﮒﺓﺎﮔﮒﮔ۶ﻟ۰ﻝﮔ؛ﮒﺍﻛﭦﮒ۰ﺅﺙﻛﺟﻟﺁﮒ۷ﮒﮒﺕﮒﺙﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴ﮔﭘﮔﺍﮔ؟ﻝﻛﺕﻟﺑﮔ۶ﻙ?
+**ﻟ۰۴ﮒﺟﻛﭦﮒ۰**ﺅﺙCompensation TransactionﺅﺙﮔﺁSagaﮔ۷۰ﮒﺙﻛﺕﻝﮔﺕﮒﺟﮔﭦﮒﭘﺅﺙﻝ۷ﻛﭦﮔ۳ﻠﮒﺓﺎﮔﮒﮔ۶ﻟ۰ﻝﮔ؛ﮒﺍﻛﭦﮒ۰ﺅﺙﻛﺟﻟﺁﮒ۷ﮒﮒﺕﮒﺙﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ۴ﮔﭘﮔﺍﮔ؟ﻝﻛﺕﻟﺑﮔ۶ﻙ?
 
 ```python
 class CompensationTransaction:
@@ -60,20 +60,20 @@ class CompensationTransaction:
 
 | ﮒﮒ | ﮔﻟﺟﺍ | ﮒ؟ﻝﺍﻟ۵ﮔﺎ |
 |------|------|----------|
-| **ﮒﺗﻝ­ﮔ?* | ﮒﻛﺕﻟ۰۴ﮒﺟﮔﻛﺛﮔ۶ﻟ۰ﮒ۳ﮔ؛۰ﻝﻝﭨﮔﻝﺕﮒ?| ﻟ۰۴ﮒﺟﮒﮔ۲ﮔ۴ﻝﭘﮔﺅﺙﻠﺟﮒﻠﮒ۳ﻟ۰۴ﮒﺟ |
-| **ﮒﺁﻠﻟﺁﮔ?* | ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴ﮒﮒﺁﮒ؟ﮒ۷ﻠﻟﺁ | ﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔﺍﻠﮒﭘﺅﺙﮔﮔﺍﻠﻠﺟﻝ­ﻝ?|
-| **ﻛﺕﮒ۰ﻟﺁ­ﻛﺗﮒ؟ﮔﺑﮔ?* | ﻟ۰۴ﮒﺟﮔﻛﺛﮒ؟ﮒ۷ﮔ۳ﻠﮒﮔﻛﺛﻝﻛﺕﮒ۰ﮔﮔ | ﮒﮒﮔﻛﺛﻠﭨﻟﺝﮔ­۲ﻝ۰؟ﺅﺙﮔ ﮒﺁﻛﺛﻝ?|
-| **ﮒﮒ­ﮔ?* | ﻟ۰۴ﮒﺟﮔﻛﺛﮔ؛ﻟﭦ،ﮔﺁﮒﮒ­ﻝ | ﮒﻛﺕ۹ﮒﻛﺕﮔﺗﻟ۰۴ﮒﺟﻟ۵ﻛﺗﮔﮒﻟ۵ﻛﺗﮒ۳ﺎﻟﺑ?|
-| **ﮒﺁﻟ۶ﮔﭖﮔ?* | ﻟ۰۴ﮒﺟﻟﺟﻝ۷ﮒ؟ﮒ۷ﮒﺁﻝﮔ?| ﻟﺁ۵ﻝﭨﮔ۴ﮒﺟﻟ؟ﺍﮒﺛﺅﺙﻝﭘﮔﻟﺓﻟﺕ۹ﺅﺙﮔﮔ ﻝﮔ۶ |
+| **ﮒﺗﻝﮔ?* | ﮒﻛﺕﻟ۰۴ﮒﺟﮔﻛﺛﮔ۶ﻟ۰ﮒ۳ﮔ؛۰ﻝﻝﭨﮔﻝﺕﮒ?| ﻟ۰۴ﮒﺟﮒﮔ۲ﮔ۴ﻝﭘﮔﺅﺙﻠﺟﮒﻠﮒ۳ﻟ۰۴ﮒﺟ |
+| **ﮒﺁﻠﻟﺁﮔ?* | ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴ﮒﮒﺁﮒ؟ﮒ۷ﻠﻟﺁ | ﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔﺍﻠﮒﭘﺅﺙﮔﮔﺍﻠﻠﺟﻝﻝ?|
+| **ﻛﺕﮒ۰ﻟﺁﻛﺗﮒ؟ﮔﺑﮔ?* | ﻟ۰۴ﮒﺟﮔﻛﺛﮒ؟ﮒ۷ﮔ۳ﻠﮒﮔﻛﺛﻝﻛﺕﮒ۰ﮔﮔ | ﮒﮒﮔﻛﺛﻠﭨﻟﺝﮔ۲ﻝ۰؟ﺅﺙﮔﮒﺁﻛﺛﻝ?|
+| **ﮒﮒﮔ?* | ﻟ۰۴ﮒﺟﮔﻛﺛﮔ؛ﻟﭦ،ﮔﺁﮒﮒﻝ | ﮒﻛﺕ۹ﮒﻛﺕﮔﺗﻟ۰۴ﮒﺟﻟ۵ﻛﺗﮔﮒﻟ۵ﻛﺗﮒ۳ﺎﻟﺑ?|
+| **ﮒﺁﻟ۶ﮔﭖﮔ?* | ﻟ۰۴ﮒﺟﻟﺟﻝ۷ﮒ؟ﮒ۷ﮒﺁﻝﮔ?| ﻟﺁ۵ﻝﭨﮔ۴ﮒﺟﻟ؟ﺍﮒﺛﺅﺙﻝﭘﮔﻟﺓﻟﺕ۹ﺅﺙﮔﮔﻝﮔ۶ |
 
 ### 1.3 ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﮒﻝﺎﭨ
 
 | ﻝﺎﭨﮒ | ﮒﮔﻛﺛ?| ﻟ۰۴ﮒﺟﮔﻛﺛ | ﮒ۳ﮔﮒﭦ?| ﻠ۲ﻠ۸ |
 |------|--------|----------|--------|------|
-| **ﻝ؟ﮒﮒﮒ?* | ﻟﭖﻠﮒ۱ﮒ  | ﻟﭖﻠﮒﮒﺍ | ﻛﺛ?| ﻛﺛ?|
+| **ﻝ؟ﮒﮒﮒ?* | ﻟﭖﻠﮒ۱ﮒ | ﻟﭖﻠﮒﮒﺍ | ﻛﺛ?| ﻛﺛ?|
 | **ﮒ۳ﮔﮒﮒ** | ﮔﻛﭨﻟﺛ؛ﻝ۶ﭨ | ﮒﮒﮔﻛﭨﻟﺛ؛ﻝ۶ﭨ | ﻛﺕ?| ﻛﺕ?|
 | **ﻝﭘﮔﮔ۱ﮒ۳?* | ﻟ؟۱ﮒﻝﭘﮔﮔﺑﮔ?| ﻝﭘﮔﮒﮔﭨ?| ﻛﺕ?| ﻛﺕ?|
-| **ﮔ ﻟ۰۴ﮒ?* | ﮒ۹ﻟﺁﭨﮔﻛﺛ | ﮔ ﻠﻟ۰۴ﮒﺟ | ﻛﺛ?| ﮔ?|
+| **ﮔﻟ۰۴ﮒ?* | ﮒ۹ﻟﺁﭨﮔﻛﺛ | ﮔﻠﻟ۰۴ﮒﺟ | ﻛﺛ?| ﮔ?|
 
 ---
 
@@ -89,16 +89,16 @@ class CompensationTransaction:
 ﻗ?    ﻗﻗﻗ ﮒﻛﭦﮒ۰ﮒ۳ﺎﻟﺑ?ﻗ?ﮒﻟﺍﮒ۷ﮔ۲ﮔﭖ?ﻗ?ﻝ۰؟ﮒ؟ﻠﻟ۰۴ﮒﺟﮒﻛﺕﮔﺗﮒﻟ۰?         ﻗ?
 ﻗ?                                                            ﻗ?
 ﻗ? 2. ﻠﮒﭦﻟ۰۴ﮒﺟﻟﺍﮒﭦ۵                                            ﻗ?
-ﻗ?    ﻗﻗﻗ ﮔﮔ۶ﻟ۰ﻠ۰ﭦﮒﭦﻠﮒﭦﮔﮒ ﻗ?ﮒﮒﭨﭦﻟ۰۴ﮒﺟﻟ؟۰ﮒ ﻗ?ﮒ­ﮒ۷ﻟ۰۴ﮒﺟﻟ؟۰ﮒ        ﻗ?
+ﻗ?    ﻗﻗﻗ ﮔﮔ۶ﻟ۰ﻠ۰ﭦﮒﭦﻠﮒﭦﮔﮒ ﻗ?ﮒﮒﭨﭦﻟ۰۴ﮒﺟﻟ؟۰ﮒ ﻗ?ﮒﮒ۷ﻟ۰۴ﮒﺟﻟ؟۰ﮒ        ﻗ?
 ﻗ?                                                            ﻗ?
 ﻗ? 3. ﻟ۰۴ﮒﺟﮔ۶ﻟ۰ﮒﺝ۹ﻝﺁ                                            ﻗ?
 ﻗ?    ﻗﻗﻗ ﻟﺓﮒﻛﺕﻛﺕﻛﺕ۹ﮒﻛﺕﮔﺗﻟ۰۴ﮒﺟﻛﭨﭨﮒ۰                            ﻗ?
-ﻗ?    ﻗﻗﻗ ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﮔﻛﺛﺅﺙﮒﺗﻝ­ﮔ۲ﮔ۴ﺅﺙ                            ﻗ?
+ﻗ?    ﻗﻗﻗ ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﮔﻛﺛﺅﺙﮒﺗﻝﮔ۲ﮔ۴ﺅﺙ                            ﻗ?
 ﻗ?    ﻗﻗﻗ ﻟ؟ﺍﮒﺛﻟ۰۴ﮒﺟﻝﭨﮔ                                        ﻗ?
-ﻗ?    ﻗﻗﻗ ﮒ۳ﮔ­ﮔﺁﮒ۵ﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒﺟ                                    ﻗ?
+ﻗ?    ﻗﻗﻗ ﮒ۳ﮔﮔﺁﮒ۵ﻝﭨ۶ﻝﭨﻟ۰۴ﮒﺟ                                    ﻗ?
 ﻗ?                                                            ﻗ?
 ﻗ? 4. ﻟ۰۴ﮒﺟﮒ؟ﮔﮒ۳ﻝ                                            ﻗ?
-ﻗ?    ﻗﻗﻗ ﮔﮔﻟ۰۴ﮒﺟﮔﮒ?ﻗ?ﮔ ﻟ؟ﺍﮒﻛﭦﮒ۰ﻛﺕﭦfailed                   ﻗ?
+ﻗ?    ﻗﻗﻗ ﮔﮔﻟ۰۴ﮒﺟﮔﮒ?ﻗ?ﮔﻟ؟ﺍﮒﻛﭦﮒ۰ﻛﺕﭦfailed                   ﻗ?
 ﻗ?    ﻗﻗﻗ ﻠ۷ﮒﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴ ﻗ?ﻠﻟﺁﮔﭦﮒﭘ                             ﻗ?
 ﻗ?    ﻗﻗﻗ ﻠﻟﺁﮒﻛﭨﮒ۳ﺎﻟﺑ۴ ﻗ?ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱ﮔﭖﻝ۷                         ﻗ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
@@ -145,11 +145,11 @@ class CompensationCoordinator:
         
     def _reverse_participants(self, executed_participants: List[str], failed_at: str) -> List[str]:
         """ﻝ۰؟ﮒ؟ﻠﻟ۵ﻟ۰۴ﮒﺟﻝﮒﻛﺕﮔﺗﮒﻟ۰۷ﺅﺙﻠﮒﭦﺅﺙ?""
-        # ﮔﺝﮒﺍﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﮒ۷ﮒﻟ۰۷ﻛﺕ­ﻝﻛﺛﻝﺛ؟
+# ﮔﺝﮒﺍﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﮒ۷ﮒﻟ۰۷ﻛﺕﻝﻛﺛﻝﺛ؟
         try:
             fail_index = executed_participants.index(failed_at)
         except ValueError:
-            # ﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﻛﺕﮒ۷ﮒﻟ۰۷ﻛﺕ­ﺅﺙﻠ۱ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ۴ﻝ­ﺅﺙ?
+# ﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﻛﺕﮒ۷ﮒﻟ۰۷ﻛﺕﺅﺙﻠ۱ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ۴ﻝﺅﺙ?
             return []
             
         # ﮒﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﻛﺗﮒﻝﮔﮔﮒﻛﺕﮔﺗﺅﺙﮒﮔ؛ﮒ۳ﺎﻟﺑ۴ﮒﻛﺕﮔﺗﺅﺙ?
@@ -172,7 +172,7 @@ class CompensationExecutor:
         self, tx_id: str, participant_id: str
     ) -> CompensationExecutionResult:
         """ﮔ۶ﻟ۰ﮒﻛﺕ۹ﮒﻛﺕﮔﺗﻝﻟ۰۴ﮒﺟ"""
-        # 1. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮒﺓﺎﻟ۰۴ﮒﺟﺅﺙﮒﺗﻝ­ﮔ۶ﺅﺙ
+# 1. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮒﺓﺎﻟ۰۴ﮒﺟﺅﺙﮒﺗﻝﮔ۶ﺅﺙ
         if await self._is_already_compensated(tx_id, participant_id):
             return CompensationExecutionResult.skipped(
                 tx_id, participant_id, "ﮒﺓﺎﻟ۰۴ﮒ?
@@ -182,7 +182,7 @@ class CompensationExecutor:
         original_tx = await self._get_original_transaction(tx_id, participant_id)
         if not original_tx:
             return CompensationExecutionResult.failed(
-                tx_id, participant_id, "ﮒﻛﭦﮒ۰ﻟ؟ﺍﮒﺛﻛﺕﮒ­ﮒ۷"
+tx_id, participant_id, "ﮒﻛﭦﮒ۰ﻟ؟ﺍﮒﺛﻛﺕﮒﮒ۷"
             )
             
         # 3. ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﮔﻛﺛ
@@ -190,7 +190,7 @@ class CompensationExecutor:
             client = self.clients.get(participant_id)
             if not client:
                 return CompensationExecutionResult.failed(
-                    tx_id, participant_id, "ﮒﻛﺕﮔﺗﮒ؟۱ﮔﺓﻝ،ﺁﻛﺕﮒ­ﮒ?
+tx_id, participant_id, "ﮒﻛﺕﮔﺗﮒ؟۱ﮔﺓﻝ،ﺁﻛﺕﮒﮒ?
                 )
                 
             # ﻟﺍﻝ۷ﮒﻛﺕﮔﺗﻟ۰۴ﮒﺟﮔ۴ﮒ?
@@ -237,7 +237,7 @@ class CompensationRetryManager:
         if retry_count >= self.max_retries:
             return None
             
-        # ﻠﮔ۸ﻠﻟﺁﻝ­ﻝ۴
+# ﻠﮔ۸ﻠﻟﺁﻝﻝ۴
         strategy = self.retry_strategies.get(
             error_type, self.retry_strategies["temporary_failure"]
         )
@@ -255,14 +255,14 @@ class CompensationRetryManager:
             last_error=last_error
         )
         
-        # ﮒ­ﮒ۷ﻠﻟﺁﻟ؟۰ﮒ
+# ﮒﮒ۷ﻠﻟﺁﻟ؟۰ﮒ
         await self._store_retry_schedule(schedule)
         
         return schedule
         
     async def execute_retry(self, schedule: RetrySchedule) -> RetryResult:
         """ﮔ۶ﻟ۰ﻠﻟﺁ"""
-        # ﻝ­ﮒﺝﮒﺍﻠﻟﺁﮔﭘﻠ?
+# ﻝﮒﺝﮒﺍﻠﻟﺁﮔﭘﻠ?
         await self._wait_until(schedule.next_retry_time)
         
         # ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﻠﻟﺁ
@@ -303,12 +303,12 @@ class PositionTransferCommand:
         if not source_result.success:
             return TransferResult.failed(f"ﮔﭦﮒﺙﮔﮔ۲ﮒﮒ۳ﺎﻟﺑ? {source_result.error}")
             
-        # 2. ﮒﻝ؟ﮔ ﮒﺙﮔﮒ۱ﮒ ﮔﻛﭨ?
+# 2. ﮒﻝ؟ﮔﮒﺙﮔﮒ۱ﮒﮔﻛﭨ?
         target_result = await self._credit_to_target()
         if not target_result.success:
             # ﻠﻟ۵ﻟ۰۴ﮒﺟﮔﭦﮒﺙﮔ
             await self._compensate_source()
-            return TransferResult.failed(f"ﻝ؟ﮔ ﮒﺙﮔﮒ۱ﮒ ﮒ۳ﺎﻟﺑ۴: {target_result.error}")
+return TransferResult.failed(f"ﻝ؟ﮔﮒﺙﮔﮒ۱ﮒﮒ۳ﺎﻟﺑ۴: {target_result.error}")
             
         return TransferResult.success(
             f"ﮔﻛﭨﻟﺛ؛ﻝ۶ﭨﮔﮒ: {self.quantity} {self.symbol}"
@@ -325,25 +325,25 @@ class PositionTransferCompensation:
         
     async def compensate(self) -> CompensationResult:
         """ﮔ۶ﻟ۰ﮔﻛﭨﻟﺛ؛ﻝ۶ﭨﻟ۰۴ﮒﺟﺅﺙﮒﮒﮔﻛﺛﺅﺙ"""
-        # ﮔ۲ﮔ۴ﮒﺛﮒﻝﭘﮔﺅﺙﮒﺗﻝ­ﮔ۶ﺅﺙ
+# ﮔ۲ﮔ۴ﮒﺛﮒﻝﭘﮔﺅﺙﮒﺗﻝﮔ۶ﺅﺙ
         current_state = await self._check_current_state()
         if current_state.already_compensated:
             return CompensationResult.skipped("ﮒﺓﺎﻟ۰۴ﮒ?)
             
         try:
-            # 1. ﻛﭨﻝ؟ﮔ ﮒﺙﮔﮔ۲ﮒﮔﻛﭨﺅﺙﮒﮒﺅﺙ?
+# 1. ﻛﭨﻝ؟ﮔﮒﺙﮔﮔ۲ﮒﮔﻛﭨﺅﺙﮒﮒﺅﺙ?
             target_debit = await self._debit_from_target()
             if not target_debit.success:
-                return CompensationResult.failed(f"ﻝ؟ﮔ ﮒﺙﮔﮔ۲ﮒﮒ۳ﺎﻟﺑ۴: {target_debit.error}")
+return CompensationResult.failed(f"ﻝ؟ﮔﮒﺙﮔﮔ۲ﮒﮒ۳ﺎﻟﺑ۴: {target_debit.error}")
                 
-            # 2. ﮒﮔﭦﮒﺙﮔﮒ۱ﮒ ﮔﻛﭨﺅﺙﮒﮒﺅﺙ
+# 2. ﮒﮔﭦﮒﺙﮔﮒ۱ﮒﮔﻛﭨﺅﺙﮒﮒﺅﺙ
             source_credit = await self._credit_to_source()
             if not source_credit.success:
                 # ﻠ۷ﮒﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴ﺅﺙﻠﻟ۵ﻟ؟ﺍﮒﺛﻝﭘﮔ?
                 await self._log_partial_compensation()
-                return CompensationResult.failed(f"ﮔﭦﮒﺙﮔﮒ۱ﮒ ﮒ۳ﺎﻟﺑ? {source_credit.error}")
+return CompensationResult.failed(f"ﮔﭦﮒﺙﮔﮒ۱ﮒﮒ۳ﺎﻟﺑ? {source_credit.error}")
                 
-            # 3. ﮔ ﻟ؟ﺍﻟ۰۴ﮒﺟﮒ؟ﮔ
+# 3. ﮔﻟ؟ﺍﻟ۰۴ﮒﺟﮒ؟ﮔ
             await self._mark_compensation_complete()
             
             return CompensationResult.success(
@@ -355,20 +355,20 @@ class PositionTransferCompensation:
             return CompensationResult.failed(f"ﻟ۰۴ﮒﺟﮔ۶ﻟ۰ﮒﺙﮒﺕﺕ: {str(e)}")
 ```
 
-#### 3.1.3 ﻝﭘﮔﮔ۲ﮔ۴ﻛﺕﮒﺗﻝ­ﮔ?
+#### 3.1.3 ﻝﭘﮔﮔ۲ﮔ۴ﻛﺕﮒﺗﻝﮔ?
 ```python
 async def _check_current_state(self) -> CompensationState:
-    """ﮔ۲ﮔ۴ﮒﺛﮒﻟ۰۴ﮒﺟﻝﭘﮔﺅﺙﮒﺗﻝ­ﮔ۶ﻛﺟﻠﺅﺙ"""
+"""ﮔ۲ﮔ۴ﮒﺛﮒﻟ۰۴ﮒﺟﻝﭘﮔﺅﺙﮒﺗﻝﮔ۶ﻛﺟﻠﺅﺙ"""
     # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮒﺓﺎﻟ؟ﺍﮒﺛﻟ۰۴ﮒﺟﮔﮒ
     compensation_record = await self._get_compensation_record()
     if compensation_record and compensation_record.status == "completed":
         return CompensationState(already_compensated=True)
         
-    # ﮔ۲ﮔ۴ﻝ؟ﮔ ﮒﺙﮔﮒﺛﮒﮔﻛﭨ?
+# ﮔ۲ﮔ۴ﻝ؟ﮔﮒﺙﮔﮒﺛﮒﮔﻛﭨ?
     target_position = await self._get_target_position()
     source_position = await self._get_source_position()
     
-    # ﮒ۳ﮔ­ﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒﺟﺅﺙﻛﺕﮒ۰ﻠﭨﻟﺝﮔ۲ﮔ۴ﺅﺙ
+# ﮒ۳ﮔﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒﺟﺅﺙﻛﺕﮒ۰ﻠﭨﻟﺝﮔ۲ﮔ۴ﺅﺙ
     needs_compensation = await self._needs_compensation(
         target_position, source_position
     )
@@ -381,8 +381,8 @@ async def _check_current_state(self) -> CompensationState:
     )
     
 async def _needs_compensation(self, target_pos, source_pos) -> bool:
-    """ﮒ۳ﮔ­ﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒﺟﺅﺙﻛﺕﮒ۰ﻠﭨﻟﺝﺅﺙ?""
-    # ﮒ۵ﮔﻝ؟ﮔ ﮒﺙﮔﮔﻛﭨﻟﭘﺏﮒ۳ﮔ۲ﮒﺅﺙﻛﺕﮔﭦﮒﺙﮔﮔﻝ۸ﭦﻠﺑﮒ۱ﮒ ﺅﺙﮒﻠﻟ۵ﻟ۰۴ﮒ?
+"""ﮒ۳ﮔﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒﺟﺅﺙﻛﺕﮒ۰ﻠﭨﻟﺝﺅﺙ?""
+# ﮒ۵ﮔﻝ؟ﮔﮒﺙﮔﮔﻛﭨﻟﭘﺏﮒ۳ﮔ۲ﮒﺅﺙﻛﺕﮔﭦﮒﺙﮔﮔﻝ۸ﭦﻠﺑﮒ۱ﮒﺅﺙﮒﻠﻟ۵ﻟ۰۴ﮒ?
     target_has_enough = target_pos.available >= self.original.quantity
     source_has_space = source_pos.available + self.original.quantity <= source_pos.max_capacity
     
@@ -448,12 +448,12 @@ class CapitalAdjustmentCompensation:
             return CompensationResult.failed(f"ﻟ۰۴ﮒﺟﮔ۶ﻟ۰ﮒﺙﮒﺕﺕ: {str(e)}")
 ```
 
-### 3.3 ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﻟ۰۴ﮒ?
+### 3.3 ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﻟ۰۴ﮒ?
 
-#### 3.3.1 ﮒﮔﻛﺛﺅﺙﻟ؟۱ﮒﻝﭘﮔﮒﮔ­?
+#### 3.3.1 ﮒﮔﻛﺛﺅﺙﻟ؟۱ﮒﻝﭘﮔﮒﮔ?
 ```python
 class OrderSyncCommand:
-    """ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﮒﺛﻛﭨ?""
+"""ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﮒﺛﻛﭨ?""
     
     def __init__(self, engine_id: str, order_id: str, new_status: str):
         self.engine_id = engine_id
@@ -461,41 +461,41 @@ class OrderSyncCommand:
         self.new_status = new_status  # "filled", "cancelled", "rejected"
         
     async def execute(self) -> SyncResult:
-        """ﮔ۶ﻟ۰ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­?""
-        # ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﮔﺁﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔ ﻠﻟ۰۴ﮒﺟ
-        # ﻛﺛﻠﻟ۵ﻟ؟ﺍﮒﺛﮒﮔ­۴ﮒﮒﺎﺅﺙﻝ۷ﻛﭦﻛﺕﻟﺑﮔ۶ﮔ۲ﮔ?
+"""ﮔ۶ﻟ۰ﻟ؟۱ﮒﻝﭘﮔﮒﮔ?""
+# ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﮔﺁﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔﻠﻟ۰۴ﮒﺟ
+# ﻛﺛﻠﻟ۵ﻟ؟ﺍﮒﺛﮒﮔ۴ﮒﮒﺎﺅﺙﻝ۷ﻛﭦﻛﺕﻟﺑﮔ۶ﮔ۲ﮔ?
         return await self._update_order_status()
 ```
 
-#### 3.3.2 ﻟ۰۴ﮒﺟﮔﻛﺛﺅﺙﮔ ﻠﻟ۰۴ﮒﺟﺅﺙﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙ
+#### 3.3.2 ﻟ۰۴ﮒﺟﮔﻛﺛﺅﺙﮔﻠﻟ۰۴ﮒﺟﺅﺙﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙ
 ```python
 class OrderSyncCompensation:
-    """ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﻟ۰۴ﮒﺟﺅﺙﮔ ﻠﮒ؟ﻠﻟ۰۴ﮒﺟﺅﺙ?""
+"""ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﻟ۰۴ﮒﺟﺅﺙﮔﻠﮒ؟ﻠﻟ۰۴ﮒﺟﺅﺙ?""
     
     def __init__(self, original_command: OrderSyncCommand):
         self.original = original_command
         
     async def compensate(self) -> CompensationResult:
-        """ﻟ؟۱ﮒﮒﮔ­۴ﮔ ﻠﻟ۰۴ﮒﺟﺅﺙﮒ۹ﻟ؟ﺍﮒﺛﻟ۰۴ﮒﺟﮒ؟ﮔ"""
-        # ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﮔﺁﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔﺎ۰ﮔﮒﺁﻛﺛﻝ۷
-        # ﮒ۹ﻠﮔ ﻟ؟ﺍﻟ۰۴ﮒﺟﮒ؟ﮔﺅﺙﮔ ﻠﮒ؟ﻠﮔ۶ﻟ۰ﮒﮒﮔﻛﺛ
+"""ﻟ؟۱ﮒﮒﮔ۴ﮔﻠﻟ۰۴ﮒﺟﺅﺙﮒ۹ﻟ؟ﺍﮒﺛﻟ۰۴ﮒﺟﮒ؟ﮔ"""
+# ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﮔﺁﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔﺎ۰ﮔﮒﺁﻛﺛﻝ۷
+# ﮒ۹ﻠﮔﻟ؟ﺍﻟ۰۴ﮒﺟﮒ؟ﮔﺅﺙﮔﻠﮒ؟ﻠﮔ۶ﻟ۰ﮒﮒﮔﻛﺛ
         await self._log_no_compensation_needed()
         
         return CompensationResult.skipped(
-            "ﻟ؟۱ﮒﻝﭘﮔﮒﮔ­۴ﻛﺕﭦﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔ ﻠﻟ۰۴ﮒﺟ"
+"ﻟ؟۱ﮒﻝﭘﮔﮒﮔ۴ﻛﺕﭦﮒ۹ﻟﺁﭨﮔﻛﺛﺅﺙﮔﻠﻟ۰۴ﮒﺟ"
         )
 ```
 
 ---
 
-## 4. ﮒﺗﻝ­ﮔ۶ﻟ؟ﺝﻟ؟?
+## 4. ﮒﺗﻝﮔ۶ﻟ؟ﺝﻟ؟?
 
-### 4.1 ﮒﺗﻝ­ﮔ۶ﻛﺟﻠﮔﭦﮒ?
+### 4.1 ﮒﺗﻝﮔ۶ﻛﺟﻠﮔﭦﮒ?
 
 #### 4.1.1 ﻟ۰۴ﮒﺟﻝﭘﮔﮔ۲ﮔ?
 ```python
 class IdempotencyChecker:
-    """ﮒﺗﻝ­ﮔ۶ﮔ۲ﮔ۴ﮒ۷"""
+"""ﮒﺗﻝﮔ۶ﮔ۲ﮔ۴ﮒ۷"""
     
     def __init__(self, storage_client):
         self.storage = storage_client
@@ -503,12 +503,12 @@ class IdempotencyChecker:
     async def check_compensation_idempotency(
         self, tx_id: str, participant_id: str
     ) -> IdempotencyCheckResult:
-        """ﮔ۲ﮔ۴ﻟ۰۴ﮒﺟﮔﻛﺛﻝﮒﺗﻝ­ﮔ?""
-        # 1. ﮔ۲ﮔ۴ﻟ۰۴ﮒﺟﻟ؟ﺍﮒﺛﮔﺁﮒ۵ﮒ­ﮒ?
+"""ﮔ۲ﮔ۴ﻟ۰۴ﮒﺟﮔﻛﺛﻝﮒﺗﻝﮔ?""
+# 1. ﮔ۲ﮔ۴ﻟ۰۴ﮒﺟﻟ؟ﺍﮒﺛﮔﺁﮒ۵ﮒﮒ?
         compensation_record = await self._get_compensation_record(tx_id, participant_id)
         
         if compensation_record:
-            # ﻟ؟ﺍﮒﺛﮒ­ﮒ۷ﺅﺙﮔ۲ﮔ۴ﻝﭘﮔ?
+# ﻟ؟ﺍﮒﺛﮒﮒ۷ﺅﺙﮔ۲ﮔ۴ﻝﭘﮔ?
             if compensation_record.status == "completed":
                 return IdempotencyCheckResult.already_compensated(
                     compensation_record.completed_at
@@ -527,7 +527,7 @@ class IdempotencyChecker:
         # 2. ﮔ۲ﮔ۴ﻛﺕﮒ۰ﻝﭘﮔ?
         business_state = await self._check_business_state(tx_id, participant_id)
         
-        # 3. ﮒ۳ﮔ­ﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒ?
+# 3. ﮒ۳ﮔﮔﺁﮒ۵ﻠﻟ۵ﻟ۰۴ﮒ?
         needs_compensation = await self._determine_if_compensation_needed(
             business_state
         )
@@ -546,9 +546,9 @@ async def _check_business_state(self, tx_id: str, participant_id: str) -> Busine
     # ﻟﺓﮒﮒﻛﭦﮒ۰ﻟ؟ﺍﮒﺛ?
     original_tx = await self._get_original_transaction(tx_id, participant_id)
     if not original_tx:
-        return BusinessState.error("ﮒﻛﭦﮒ۰ﻟ؟ﺍﮒﺛﻛﺕﮒ­ﮒ۷")
+return BusinessState.error("ﮒﻛﭦﮒ۰ﻟ؟ﺍﮒﺛﻛﺕﮒﮒ۷")
         
-    # ﮔ ﺗﮔ؟ﮒﺛﻛﭨ۳ﻝﺎﭨﮒﮔ۲ﮔ۴ﻛﺕﮒﻝﻛﺕﮒ۰ﻝﭘﮔ?
+# ﮔﺗﮔ؟ﮒﺛﻛﭨ۳ﻝﺎﭨﮒﮔ۲ﮔ۴ﻛﺕﮒﻝﻛﺕﮒ۰ﻝﭘﮔ?
     if original_tx.command_type == "position_transfer":
         return await self._check_position_transfer_state(original_tx)
     elif original_tx.command_type == "capital_adjustment":
@@ -560,7 +560,7 @@ async def _check_business_state(self, tx_id: str, participant_id: str) -> Busine
         
 async def _check_position_transfer_state(self, original_tx) -> BusinessState:
     """ﮔ۲ﮔ۴ﮔﻛﭨﻟﺛ؛ﻝ۶ﭨﻝﻛﺕﮒ۰ﻝﭘﮔ?""
-    # ﻟﺓﮒﮔﭦﮒﺙﮔﮒﻝ؟ﮔ ﮒﺙﮔﻝﮒﺛﮒﮔﻛﭨ?
+# ﻟﺓﮒﮔﭦﮒﺙﮔﮒﻝ؟ﮔﮒﺙﮔﻝﮒﺛﮒﮔﻛﭨ?
     source_position = await self._get_position(
         original_tx.source_engine, original_tx.symbol
     )
@@ -568,8 +568,8 @@ async def _check_position_transfer_state(self, original_tx) -> BusinessState:
         original_tx.target_engine, original_tx.symbol
     )
     
-    # ﮒ۳ﮔ­ﮒﮔﻛﺛﮔﺁﮒ۵ﮒﺓﺎﻝﮔ
-    # ﮒ۵ﮔﻝ؟ﮔ ﮒﺙﮔﮔﻛﭨﮒ۱ﮒ ﺅﺙﮔﭦﮒﺙﮔﮔﻛﭨﮒﮒﺍﺅﺙﮒﮒﮔﻛﺛﮒﺓﺎﻝﮔ
+# ﮒ۳ﮔﮒﮔﻛﺛﮔﺁﮒ۵ﮒﺓﺎﻝﮔ
+# ﮒ۵ﮔﻝ؟ﮔﮒﺙﮔﮔﻛﭨﮒ۱ﮒﺅﺙﮔﭦﮒﺙﮔﮔﻛﭨﮒﮒﺍﺅﺙﮒﮒﮔﻛﺛﮒﺓﺎﻝﮔ
     target_increased = target_position.available >= original_tx.quantity
     source_decreased = source_position.available <= source_position.original - original_tx.quantity
     
@@ -584,22 +584,22 @@ async def _check_position_transfer_state(self, original_tx) -> BusinessState:
         )
 ```
 
-#### 4.1.3 ﮒﺗﻝ­ﮔ۶ﻛﭨ۳ﻝ?
+#### 4.1.3 ﮒﺗﻝﮔ۶ﻛﭨ۳ﻝ?
 ```python
 class IdempotencyTokenManager:
-    """ﮒﺗﻝ­ﮔ۶ﻛﭨ۳ﻝﻝ؟۰ﻝﮒ۷"""
+"""ﮒﺗﻝﮔ۶ﻛﭨ۳ﻝﻝ؟۰ﻝﮒ۷"""
     
     def __init__(self, redis_client):
         self.redis = redis_client
         
     async def generate_token(self, tx_id: str, participant_id: str) -> str:
-        """ﻝﮔﮒﺗﻝ­ﮔ۶ﻛﭨ۳ﻝ?""
-        # ﻛﭨ۳ﻝﮔ ﺙﮒﺙ: tx_id:participant_id:timestamp:random
+"""ﻝﮔﮒﺗﻝﮔ۶ﻛﭨ۳ﻝ?""
+# ﻛﭨ۳ﻝﮔﺙﮒﺙ: tx_id:participant_id:timestamp:random
         timestamp = int(time.time() * 1000)
         random_str = secrets.token_hex(4)
         token = f"{tx_id}:{participant_id}:{timestamp}:{random_str}"
         
-        # ﮒ­ﮒ۷ﻛﭨ۳ﻝﺅﺙﻟ؟ﺝﻝﺛ؟ﻟﺟﮔﮔﭘﻠﺑﺅﺙ24ﮒﺍﮔﭘﺅﺙ?
+# ﮒﮒ۷ﻛﭨ۳ﻝﺅﺙﻟ؟ﺝﻝﺛ؟ﻟﺟﮔﮔﭘﻠﺑﺅﺙ24ﮒﺍﮔﭘﺅﺙ?
         await self.redis.setex(
             f"idempotency:{token}",
             86400,  # 24ﮒﺍﮔﭘ
@@ -610,13 +610,13 @@ class IdempotencyTokenManager:
         
     async def check_and_consume_token(self, token: str) -> bool:
         """ﮔ۲ﮔ۴ﮒﺗﭘﮔﭘﻟﺑﺗﻛﭨ۳ﻝ"""
-        # ﮔ۲ﮔ۴ﻛﭨ۳ﻝﮔﺁﮒ۵ﮒ­ﮒ۷ﻛﺕﮔ۹ﻛﺛﺟﻝ?
+# ﮔ۲ﮔ۴ﻛﭨ۳ﻝﮔﺁﮒ۵ﮒﮒ۷ﻛﺕﮔ۹ﻛﺛﺟﻝ?
         key = f"idempotency:{token}"
         exists = await self.redis.exists(key)
         if not exists:
             return False
             
-        # ﻛﺛﺟﻝ۷ﮒﮒ­ﮔﻛﺛﮔ ﻟ؟ﺍﻛﭨ۳ﻝﻛﺕﭦﮒﺓﺎﻛﺛﺟﻝ۷
+# ﻛﺛﺟﻝ۷ﮒﮒﮔﻛﺛﮔﻟ؟ﺍﻛﭨ۳ﻝﻛﺕﭦﮒﺓﺎﻛﺛﺟﻝ۷
         # ﻛﺛﺟﻝ۷SETNXﻝ۰؟ﻛﺟﮒ۹ﮔﻝ؛؛ﻛﺕﻛﺕ۹ﮔﭘﻟﺑﺗﮔﮒ?
         used = await self.redis.setnx(f"{key}:used", "1")
         if not used:
@@ -628,20 +628,20 @@ class IdempotencyTokenManager:
         return True
 ```
 
-### 4.2 ﻟ۰۴ﮒﺟﮔﻛﺛﮒﺗﻝ­ﮔ۶ﮒ؟ﻝ?
+### 4.2 ﻟ۰۴ﮒﺟﮔﻛﺛﮒﺗﻝﮔ۶ﮒ؟ﻝ?
 
 #### 4.2.1 ﻟ۰۴ﮒﺟﮔﻛﺛﮒﻟ۲ﮒ?
 ```python
 class IdempotentCompensationWrapper:
-    """ﮒﺗﻝ­ﮔ۶ﻟ۰۴ﮒﺟﮔﻛﺛﮒﻟ۲ﮒ۷"""
+"""ﮒﺗﻝﮔ۶ﻟ۰۴ﮒﺟﮔﻛﺛﮒﻟ۲ﮒ۷"""
     
     def __init__(self, compensation_operation, idempotency_checker):
         self.operation = compensation_operation
         self.checker = idempotency_checker
         
     async def execute(self, tx_id: str, participant_id: str) -> CompensationResult:
-        """ﮔ۶ﻟ۰ﮒﺗﻝ­ﮔ۶ﻟ۰۴ﮒﺟﮔﻛﺛ?""
-        # 1. ﮒﺗﻝ­ﮔ۶ﮔ۲ﮔ?
+"""ﮔ۶ﻟ۰ﮒﺗﻝﮔ۶ﻟ۰۴ﮒﺟﮔﻛﺛ?""
+# 1. ﮒﺗﻝﮔ۶ﮔ۲ﮔ?
         check_result = await self.checker.check_compensation_idempotency(
             tx_id, participant_id
         )
@@ -650,9 +650,9 @@ class IdempotentCompensationWrapper:
             if check_result.already_compensated:
                 return CompensationResult.skipped("ﮒﺓﺎﻟ۰۴ﮒ?)
             elif check_result.currently_executing:
-                return CompensationResult.skipped("ﮔ­۲ﮒ۷ﮔ۶ﻟ۰ﻛﺕ?)
+return CompensationResult.skipped("ﮔ۲ﮒ۷ﮔ۶ﻟ۰ﻛﺕ?)
             else:
-                return CompensationResult.failed(f"ﮒﺗﻝ­ﮔ۶ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ? {check_result.reason}")
+return CompensationResult.failed(f"ﮒﺗﻝﮔ۶ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ? {check_result.reason}")
                 
         # 2. ﻟ؟ﺍﮒﺛﻟ۰۴ﮒﺟﮒﺙﮒ۶?
         await self._log_compensation_start(tx_id, participant_id)
@@ -678,7 +678,7 @@ class IdempotentCompensationWrapper:
 #### 4.2.2 ﻟ۰۴ﮒﺟﮔﻛﺛﻝﭘﮔﮔﭦ
 ```python
 class CompensationStateMachine:
-    """ﻟ۰۴ﮒﺟﮔﻛﺛﻝﭘﮔﮔﭦﺅﺙﻛﺟﻠﮒﺗﻝ­ﮔ۶ﺅﺙ"""
+"""ﻟ۰۴ﮒﺟﮔﻛﺛﻝﭘﮔﮔﭦﺅﺙﻛﺟﻠﮒﺗﻝﮔ۶ﺅﺙ"""
     
     def __init__(self, storage_client):
         self.storage = storage_client
@@ -687,8 +687,8 @@ class CompensationStateMachine:
         self, tx_id: str, participant_id: str, 
         from_state: str, to_state: str
     ) -> bool:
-        """ﻝﭘﮔﻟﺛ؛ﮔ۱ﺅﺙﮒﮒ­ﮔﻛﺛﺅﺙ?""
-        # ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﮒﭦﻛﭦﮒ۰ﻛﺟﻟﺁﻝﭘﮔﻟﺛ؛ﮔ۱ﻝﮒﮒ­ﮔ?
+"""ﻝﭘﮔﻟﺛ؛ﮔ۱ﺅﺙﮒﮒﮔﻛﺛﺅﺙ?""
+# ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﮒﭦﻛﭦﮒ۰ﻛﺟﻟﺁﻝﭘﮔﻟﺛ؛ﮔ۱ﻝﮒﮒﮔ?
         async with self.storage.transaction():
             # ﮔ۲ﮔ۴ﮒﺛﮒﻝﭘﮔ?
             current_state = await self._get_current_state(tx_id, participant_id)
@@ -725,12 +725,12 @@ class CompensationStateMachine:
 
 ## 5. ﻠﻟﺁﮔﭦﮒﭘﻟ؟ﺝﻟ؟۰
 
-### 5.1 ﻠﻟﺁﻝ­ﻝ۴
+### 5.1 ﻠﻟﺁﻝﻝ۴
 
-#### 5.1.1 ﮔﮔﺍﻠﻠﺟﻠﻟﺁﻝ­ﻝ?
+#### 5.1.1 ﮔﮔﺍﻠﻠﺟﻠﻟﺁﻝﻝ?
 ```python
 class ExponentialBackoffRetryStrategy:
-    """ﮔﮔﺍﻠﻠﺟﻠﻟﺁﻝ­ﻝ?""
+"""ﮔﮔﺍﻠﻠﺟﻠﻟﺁﻝﻝ?""
     
     def __init__(self, initial_delay: float = 1.0, multiplier: float = 2.0,
                  max_delay: float = 60.0, jitter: bool = True):
@@ -750,7 +750,7 @@ class ExponentialBackoffRetryStrategy:
         # ﻠﮒﭘﮔﮒ۳۶ﮒﭨﭘﻟﺟ?
         delay = min(delay, self.max_delay)
         
-        # ﮔﺓﭨﮒ ﮔﮒ۷ﺅﺙﻠﺟﮒﮒ۳ﻛﺕ۹ﮒ؟۱ﮔﺓﻝ،ﺁﮒﮔﭘﻠﻟﺁﺅﺙ?
+# ﮔﺓﭨﮒﮔﮒ۷ﺅﺙﻠﺟﮒﮒ۳ﻛﺕ۹ﮒ؟۱ﮔﺓﻝ،ﺁﮒﮔﭘﻠﻟﺁﺅﺙ?
         if self.jitter:
             jitter_amount = delay * 0.1  # 10%ﮔﮒ۷
             delay += random.uniform(-jitter_amount, jitter_amount)
@@ -759,10 +759,10 @@ class ExponentialBackoffRetryStrategy:
         return delay
 ```
 
-#### 5.1.2 ﮒﭦﮒ؟ﮒﭨﭘﻟﺟﻠﻟﺁﻝ­ﻝ۴
+#### 5.1.2 ﮒﭦﮒ؟ﮒﭨﭘﻟﺟﻠﻟﺁﻝﻝ۴
 ```python
 class FixedDelayRetryStrategy:
-    """ﮒﭦﮒ؟ﮒﭨﭘﻟﺟﻠﻟﺁﻝ­ﻝ۴"""
+"""ﮒﭦﮒ؟ﮒﭨﭘﻟﺟﻠﻟﺁﻝﻝ۴"""
     
     def __init__(self, delay: float = 5.0):
         self.delay = delay
@@ -772,24 +772,24 @@ class FixedDelayRetryStrategy:
         return self.delay  # ﮒﭦﮒ؟ﮒﭨﭘﻟﺟ
 ```
 
-#### 5.1.3 ﻟ۹ﻠﮒﭦﻠﻟﺁﻝ­ﻝ۴
+#### 5.1.3 ﻟ۹ﻠﮒﭦﻠﻟﺁﻝﻝ۴
 ```python
 class AdaptiveRetryStrategy:
-    """ﻟ۹ﻠﮒﭦﻠﻟﺁﻝ­ﻝ۴"""
+"""ﻟ۹ﻠﮒﭦﻠﻟﺁﻝﻝ۴"""
     
     def __init__(self):
         self.error_patterns = {}
         self.success_rates = {}
         
     def get_delay(self, retry_count: int, error_type: str) -> float:
-        """ﮔ ﺗﮔ؟ﻠﻟﺁﺁﻝﺎﭨﮒﮒﮒﮒﺎﮔﮒﻝﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ"""
+"""ﮔﺗﮔ؟ﻠﻟﺁﺁﻝﺎﭨﮒﮒﮒﮒﺎﮔﮒﻝﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ"""
         # ﻟﺓﮒﻟﺁ۴ﻝﺎﭨﻠﻟﺁﺁﻝﮒﮒﺎﮔﮒﻝ
         success_rate = self.success_rates.get(error_type, 0.5)
         
-        # ﮔ ﺗﮔ؟ﮔﮒﻝﻟﺍﮔﺑﮒﭨﭘﻟﺟ?
-        if success_rate < 0.3:  # ﮔﮒﻝﻛﺛﺅﺙﮒ۱ﮒ ﮒﭨﭘﻟﺟ?
+# ﮔﺗﮔ؟ﮔﮒﻝﻟﺍﮔﺑﮒﭨﭘﻟﺟ?
+if success_rate < 0.3:  # ﮔﮒﻝﻛﺛﺅﺙﮒ۱ﮒﮒﭨﭘﻟﺟ?
             base_delay = 10.0
-        elif success_rate < 0.7:  # ﮔﮒﻝﻛﺕ­ﻝ­?
+elif success_rate < 0.7:  # ﮔﮒﻝﻛﺕﻝ?
             base_delay = 5.0
         else:  # ﮔﮒﻝﻠ،ﺅﺙﮒﮒﺍﮒﭨﭘﻟﺟ?
             base_delay = 2.0
@@ -828,7 +828,7 @@ class RetryScheduler:
         if retry_count >= self._get_max_retries(error_type):
             return None
             
-        # ﻠﮔ۸ﻠﻟﺁﻝ­ﻝ۴
+# ﻠﮔ۸ﻠﻟﺁﻝﻝ۴
         strategy = self.strategies.get(error_type, self.strategies["temporary_failure"])
         
         # ﻟ؟۰ﻝ؟ﻛﺕﮔ؛۰ﻠﻟﺁﮔﭘﻠﺑ
@@ -845,7 +845,7 @@ class RetryScheduler:
             last_error=last_error
         )
         
-        # ﮒ­ﮒ۷ﻠﻟﺁﻛﭨﭨﮒ۰
+# ﮒﮒ۷ﻠﻟﺁﻛﭨﭨﮒ۰
         await self._store_retry_task(task)
         
         return task
@@ -862,7 +862,7 @@ class RetryExecutor:
         
     async def execute_retry(self, task: RetryTask) -> RetryResult:
         """ﮔ۶ﻟ۰ﻠﻟﺁ"""
-        # ﻝ­ﮒﺝﮒﺍﻟ؟۰ﮒﮔﭘﻠ?
+# ﻝﮒﺝﮒﺍﻟ؟۰ﮒﮔﭘﻠ?
         await self._wait_until(task.scheduled_time)
         
         # ﻟ؟ﺍﮒﺛﻠﻟﺁﮒﺙﮒ۶?
@@ -896,17 +896,17 @@ class RetryExecutor:
             )
 ```
 
-### 5.3 ﻠﻟﺁﻝﮔ۶ﻛﺕﮒﻟ­?
+### 5.3 ﻠﻟﺁﻝﮔ۶ﻛﺕﮒﻟ?
 
-#### 5.3.1 ﻠﻟﺁﻝﮔ۶ﮔﮔ 
+#### 5.3.1 ﻠﻟﺁﻝﮔ۶ﮔﮔ
 ```python
 class RetryMetricsCollector:
-    """ﻠﻟﺁﻝﮔ۶ﮔﮔ ﮔﭘﻠﮒ?""
+"""ﻠﻟﺁﻝﮔ۶ﮔﮔﮔﭘﻠﮒ?""
     
     def __init__(self, prometheus_client):
         self.prometheus = prometheus_client
         
-        # ﮒ؟ﻛﺗﻝﮔ۶ﮔﮔ 
+# ﮒ؟ﻛﺗﻝﮔ۶ﮔﮔ
         self.retry_total = self.prometheus.Counter(
             "saga_compensation_retries_total",
             "Total number of compensation retries",
@@ -938,7 +938,7 @@ class RetryMetricsCollector:
             error_type=error_type
         ).inc()
         
-        # ﻟ؟ﺍﮒﺛﻠﻟﺁﮔﻝﭨ­ﮔﭘﻠﺑ
+# ﻟ؟ﺍﮒﺛﻠﻟﺁﮔﻝﭨﮔﭘﻠﺑ
         self.retry_duration.labels(
             tx_type=tx_type,
             participant=participant
@@ -952,7 +952,7 @@ class RetryMetricsCollector:
             ).inc()
 ```
 
-#### 5.3.2 ﻠﻟﺁﮒﻟ­۵ﻟ۶ﮒ
+#### 5.3.2 ﻠﻟﺁﮒﻟ۵ﻟ۶ﮒ
 ```yaml
 # retry_alerts.yaml
 alerts:
@@ -980,7 +980,7 @@ alerts:
         rate(saga_compensation_retry_duration_seconds_bucket[5m])
       ) > 10
     severity: warning
-    description: "95%ﻝﻟ۰۴ﮒﺟﻠﻟﺁﮔﻝﭨ­ﮔﭘﻠﺑﻟﭘﻟﺟ?0ﻝ۶?
+description: "95%ﻝﻟ۰۴ﮒﺟﻠﻟﺁﮔﻝﭨﮔﭘﻠﺑﻟﭘﻟﺟ?0ﻝ۶?
     summary: "ﻟ۰۴ﮒﺟﻠﻟﺁﮔ۶ﻟﺛﻛﺕﻠ"
 ```
 
@@ -990,10 +990,10 @@ alerts:
 
 ### 6.1 ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴ﮒﻝﺎﭨ
 
-| ﮒ۳ﺎﻟﺑ۴ﻝﺎﭨﮒ | ﮒﮒ  | ﻟ۹ﮒ۷ﮔ۱ﮒ۳ﮒﺁﻟﺛﮔ?| ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱ﻠﮔﺎ?|
+| ﮒ۳ﺎﻟﺑ۴ﻝﺎﭨﮒ | ﮒﮒ | ﻟ۹ﮒ۷ﮔ۱ﮒ۳ﮒﺁﻟﺛﮔ?| ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱ﻠﮔﺎ?|
 |----------|------|----------------|--------------|
 | **ﻛﺕﺑﮔﭘﮔ۶ﮒ۳ﺎﻟﺑ?* | ﻝﺛﻝﭨﮔﮒ۷ﻙﻟﭖﮔﭦﮔﮔﭘﻛﺕﮒﺁﻝ۷ | ﻠ،ﺅﺙﮒﺁﻠﻟﺁﺅﺙ | ﻛﺛ?|
-| **ﻛﺕﮒ۰ﻠﭨﻟﺝﮒ۳ﺎﻟﺑ۴** | ﻛﺕﮒ۰ﻟ۶ﮒﮒﺎﻝ۹ﻙﮔﺍﮔ؟ﻛﺕﻛﺕﻟ?| ﻛﺕ­ﺅﺙﻠﮔ۲ﮔ۴ﺅﺙ | ﻛﺕ?|
+| **ﻛﺕﮒ۰ﻠﭨﻟﺝﮒ۳ﺎﻟﺑ۴** | ﻛﺕﮒ۰ﻟ۶ﮒﮒﺎﻝ۹ﻙﮔﺍﮔ؟ﻛﺕﻛﺕﻟ?| ﻛﺕﺅﺙﻠﮔ۲ﮔ۴ﺅﺙ | ﻛﺕ?|
 | **ﻝﺏﭨﻝﭨﻠﻟﺁﺁ** | ﮔﺍﮔ؟ﮒﭦﮔﻠﻙﮔﮒ۰ﮒ؟ﮔ?| ﻛﺛﺅﺙﻠﻛﺟ؟ﮒ۳ﺅﺙ?| ﻠ،?|
 | **ﮔﺍﮔ؟ﮔﮒ** | ﮔﺍﮔ؟ﻛﺕ۱ﮒ۳ﺎﻙﮔﮒ?| ﮔﻛﺛ | ﻠ،ﺅﺙﻠﮔﺍﮔ؟ﻛﺟ؟ﮒ۳ﺅﺙ?|
 
@@ -1012,7 +1012,7 @@ class ManualInterventionTrigger:
         self, tx_id: str, reason: str, details: Dict
     ) -> InterventionTicket:
         """ﻟ۶۵ﮒﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱"""
-        # 1. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮒﺓﺎﮒ­ﮒ۷ﮒﺗﺎﻠ۱ﮒﺓ۴ﮒ
+# 1. ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮒﺓﺎﮒﮒ۷ﮒﺗﺎﻠ۱ﮒﺓ۴ﮒ
         existing_ticket = await self._get_existing_ticket(tx_id)
         if existing_ticket:
             return existing_ticket
@@ -1027,10 +1027,10 @@ class ManualInterventionTrigger:
             created_at=datetime.now()
         )
         
-        # 3. ﻛﺟﮒ­ﮒﺓ۴ﮒ
+# 3. ﻛﺟﮒﮒﺓ۴ﮒ
         await self._save_ticket(ticket)
         
-        # 4. ﮒﻠﮒﻟ­?
+# 4. ﮒﻠﮒﻟ?
         await self.alert.send_alert(
             f"ﻠﻟ۵ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱? {reason}",
             f"ﻛﭦﮒ۰ {tx_id} ﻠﻟ۵ﻛﭦﭦﮒﺓ۴ﮒﺗﺎﻠ۱ﻙﻟﺁ۵ﮔ? {json.dumps(details)}",
@@ -1050,7 +1050,7 @@ class ManualInterventionTool:
         self.engines = engine_clients
         
     async def diagnose_issue(self, tx_id: str) -> DiagnosisReport:
-        """ﻟﺁﮔ­ﻠ؟ﻠ۱"""
+"""ﻟﺁﮔﻠ؟ﻠ۱"""
         # 1. ﻟﺓﮒﻛﭦﮒ۰ﻟﺁ۵ﮔ
         tx_details = await self._get_transaction_details(tx_id)
         
@@ -1063,7 +1063,7 @@ class ManualInterventionTool:
             engine_state = await self._check_engine_state(participant.engine_id)
             engine_states[participant.engine_id] = engine_state
             
-        # 4. ﻝﮔﻟﺁﮔ­ﮔ۴ﮒ
+# 4. ﻝﮔﻟﺁﮔﮔ۴ﮒ
         report = DiagnosisReport(
             tx_id=tx_id,
             transaction_state=tx_details.status,
@@ -1077,7 +1077,7 @@ class ManualInterventionTool:
         
     async def fix_issue(self, tx_id: str, action: str, parameters: Dict) -> FixResult:
         """ﻛﺟ؟ﮒ۳ﻠ؟ﻠ۱"""
-        # ﮔ ﺗﮔ؟actionﮔ۶ﻟ۰ﻛﺕﮒﻝﻛﺟ؟ﮒ۳ﮔﻛﺛ?
+# ﮔﺗﮔ؟actionﮔ۶ﻟ۰ﻛﺕﮒﻝﻛﺟ؟ﮒ۳ﮔﻛﺛ?
         if action == "force_complete_compensation":
             return await self._force_complete_compensation(tx_id, parameters)
         elif action == "rollback_manually":
@@ -1094,9 +1094,9 @@ class ManualInterventionTool:
 
 ## 7. ﻝﮔ۶ﻛﺕﮒﺁﻟ۶ﮔﭖﮔ?
 
-### 7.1 ﻝﮔ۶ﮔﮔ 
+### 7.1 ﻝﮔ۶ﮔﮔ
 
-#### 7.1.1 ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﮔﮔ 
+#### 7.1.1 ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﮔﮔ
 ```python
 COMPENSATION_METRICS = {
     # ﻟ؟۰ﮔﺍﮒ?
@@ -1113,11 +1113,11 @@ COMPENSATION_METRICS = {
     "compensation_success_rate": "ﻟ۰۴ﮒﺟﮔﮒﻝ?,
     "compensation_retry_rate": "ﻟ۰۴ﮒﺟﻠﻟﺁﻝ?,
     "compensation_pending_count": "ﮒﺝﮒ۳ﻝﻟ۰۴ﮒﺟﮔﺍﻠ?,
-    "compensation_in_progress_count": "ﻟﺟﻟ۰ﻛﺕ­ﻟ۰۴ﮒﺟﮔﺍﻠ?,
+"compensation_in_progress_count": "ﻟﺟﻟ۰ﻛﺕﻟ۰۴ﮒﺟﮔﺍﻠ?,
 }
 ```
 
-#### 7.1.2 ﻛﺕﮒ۰ﮔﮔ 
+#### 7.1.2 ﻛﺕﮒ۰ﮔﮔ
 ```python
 BUSINESS_METRICS = {
     # ﮔﻛﭨﻝﺕﮒﺏ
@@ -1203,7 +1203,7 @@ class CompensationAuditLogger:
             timestamp=datetime.now()
         )
         
-        # ﮒ­ﮒ۷ﮒﺍﮒ؟۰ﻟ؟۰ﻛﺕﻝ۷ﻟ۰۷
+# ﮒﮒ۷ﮒﺍﮒ؟۰ﻟ؟۰ﻛﺕﻝ۷ﻟ۰۷
         await self.storage.insert_audit_record(audit_record)
 ```
 
@@ -1213,13 +1213,13 @@ class CompensationAuditLogger:
 
 ### 8.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 8.1.1 ﮒﺗﻝ­ﮔ۶ﮔﭖﻟﺁ?
+#### 8.1.1 ﮒﺗﻝﮔ۶ﮔﭖﻟﺁ?
 ```python
 class TestIdempotency:
-    """ﮒﺗﻝ­ﮔ۶ﮔﭖﻟﺁ?""
+"""ﮒﺗﻝﮔ۶ﮔﭖﻟﺁ?""
     
     async def test_compensation_idempotency(self):
-        """ﮔﭖﻟﺁﻟ۰۴ﮒﺟﮔﻛﺛﻝﮒﺗﻝ­ﮔ?""
+"""ﮔﭖﻟﺁﻟ۰۴ﮒﺟﮔﻛﺛﻝﮒﺗﻝﮔ?""
         # ﻝ؛؛ﻛﺕﮔ؛۰ﮔ۶ﻟ۰ﻟ۰۴ﮒ?
         result1 = await compensation_executor.execute_compensation(tx_id, participant_id)
         assert result1.success
@@ -1230,11 +1230,11 @@ class TestIdempotency:
         assert "ﮒﺓﺎﻟ۰۴ﮒ? in result2.message
         
     async def test_partial_compensation_idempotency(self):
-        """ﮔﭖﻟﺁﻠ۷ﮒﻟ۰۴ﮒﺟﮒﭦﮔﺁﻝﮒﺗﻝ­ﮔ?""
+"""ﮔﭖﻟﺁﻠ۷ﮒﻟ۰۴ﮒﺟﮒﭦﮔﺁﻝﮒﺗﻝﮔ?""
         # ﮔ۷۰ﮔﻠ۷ﮒﻟ۰۴ﮒﺟﮔﮒﮒﭦﮔﺁ
         await self._setup_partial_compensation_state()
         
-        # ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﺅﺙﮒﭦﻟﺁ۴ﻝﭨ۶ﻝﭨ­ﮒ؟ﮔﮒ۸ﻛﺛﻠ۷ﮒﺅﺙ
+# ﮔ۶ﻟ۰ﻟ۰۴ﮒﺟﺅﺙﮒﭦﻟﺁ۴ﻝﭨ۶ﻝﭨﮒ؟ﮔﮒ۸ﻛﺛﻠ۷ﮒﺅﺙ
         result = await compensation_executor.execute_compensation(tx_id, participant_id)
         assert result.success
 ```
@@ -1257,7 +1257,7 @@ class TestRetryMechanism:
         
     async def test_max_retry_limit(self):
         """ﮔﭖﻟﺁﮔﮒ۳۶ﻠﻟﺁﮔ؛۰ﮔﺍﻠﮒ?""
-        # ﮔ۷۰ﮔﻟﺟﻝﭨ­ﮒ۳ﺎﻟﺑ۴
+# ﮔ۷۰ﮔﻟﺟﻝﭨﮒ۳ﺎﻟﺑ۴
         for i in range(3):
             result = await compensation_executor.execute_compensation(tx_id, participant_id)
             assert result.failed
@@ -1281,7 +1281,7 @@ class TestEndToEndCompensation:
         transfer_result = await position_transfer.execute()
         assert transfer_result.success
         
-        # 2. ﮔ۷۰ﮔﮒﻝﭨ­ﮔﻛﺛﮒ۳ﺎﻟﺑ۴ﺅﺙﻟ۶۵ﮒﻟ۰۴ﮒ?
+# 2. ﮔ۷۰ﮔﮒﻝﭨﮔﻛﺛﮒ۳ﺎﻟﺑ۴ﺅﺙﻟ۶۵ﮒﻟ۰۴ﮒ?
         await self._simulate_subsequent_failure()
         
         # 3. ﻠ۹ﻟﺁﻟ۰۴ﮒﺟﮔ۶ﻟ۰
@@ -1317,7 +1317,7 @@ class TestFaultInjection:
         # 2. ﮔﺏ۷ﮒ۴ﻝﺛﻝﭨﮔﻠ
         await self._inject_network_partition()
         
-        # 3. ﻠ۹ﻟﺁﻟ۰۴ﮒﺟﮔ­۲ﻝ۰؟ﮒ۳ﻝﻝﺛﻝﭨﮔﻠ
+# 3. ﻠ۹ﻟﺁﻟ۰۴ﮒﺟﮔ۲ﻝ۰؟ﮒ۳ﻝﻝﺛﻝﭨﮔﻠ
         try:
             result = await asyncio.wait_for(compensation_task, timeout=5.0)
             # ﮒﭦﻟﺁ۴ﻟﭘﮔﭘﮔﻟﺟﮒﻠﮒﺛﻝﻠﻟﺁ?
@@ -1392,10 +1392,10 @@ class TestCompensationPerformance:
 
 | ﻝﭨﻛﭨﭘ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﻠﻝﺛ؟ﻟ۵ﮔﺎ | ﻠ۷ﻝﺛﺎﮔﺗﮒﺙ |
 |------|----------|----------|----------|
-| **PostgreSQL** | 12+ | ﻠﻟ۵JSONBﮔﺁﮔﺅﺙﻟ؟ﺝﻝﺛ؟ﮒﻝﻟﺟﮔ۴ﮔﺎ  | ﻝ؛ﻝ،ﻠ۷ﻝﺛﺎﮔﻛﭦﮔﮒ۰ |
+| **PostgreSQL** | 12+ | ﻠﻟ۵JSONBﮔﺁﮔﺅﺙﻟ؟ﺝﻝﺛ؟ﮒﻝﻟﺟﮔ۴ﮔﺎ | ﻝ؛ﻝ،ﻠ۷ﻝﺛﺎﮔﻛﭦﮔﮒ۰ |
 | **Redis** | 6.0+ | ﮒﺁﻝ۷Streamsﮒﻟﺛﺅﺙﻠﻝﺛ؟ﮔﻛﺗﮒ | ﻝ؛ﻝ،ﻠ۷ﻝﺛﺎﮔﻛﭦﮔﮒ۰ |
-| **Python** | 3.9+ | ﮒ؟ﻟ۲asyncpg, redis-pyﻝ­ﻛﺝﻟﭖ?| ﮒﭦﻝ۷ﮔﮒ۰ﮒ?|
-| **ﻝﮔ۶ﻝﺏﭨﻝﭨ** | Prometheus 2.0+ | ﻠﻝﺛ؟ﮔﮒﮒﮒﻟ­۵ﻟ۶ﮒ?| ﻝ؛ﻝ،ﻠ۷ﻝﺛﺎ |
+| **Python** | 3.9+ | ﮒ؟ﻟ۲asyncpg, redis-pyﻝﻛﺝﻟﭖ?| ﮒﭦﻝ۷ﮔﮒ۰ﮒ?|
+| **ﻝﮔ۶ﻝﺏﭨﻝﭨ** | Prometheus 2.0+ | ﻠﻝﺛ؟ﮔﮒﮒﮒﻟ۵ﻟ۶ﮒ?| ﻝ؛ﻝ،ﻠ۷ﻝﺛﺎ |
 
 ### 9.2 ﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ
 
@@ -1487,7 +1487,7 @@ redis:
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗ?                          ﻗ?                                 ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?               ﮔﺍﮔ؟ﮒﭦﻛﺕﻝﺙﮒ­ﮒﺎ?                          ﻗ? ﻗ?
+ﻗ? ﻗ?               ﮔﺍﮔ؟ﮒﭦﻛﺕﻝﺙﮒﮒﺎ?                          ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?         ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗPostgreSQLﻗ?                 ﻗ? Redis   ﻗ?         ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗ? ﻠﻝﺝ۳    ﻗ?                 ﻗ? ﻠﻝﺝ۳    ﻗ?         ﻗ? ﻗ?
@@ -1495,7 +1495,7 @@ redis:
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗ?                          ﻗ?                                 ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?               ﻝﮔ۶ﻛﺕﮒﻟ­۵ﮒﺎ                             ﻗ? ﻗ?
+ﻗ? ﻗ?               ﻝﮔ۶ﻛﺕﮒﻟ۵ﮒﺎ                             ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗPrometheusﻗ? ﻗ?Grafana  ﻗ? ﻗ?Alert    ﻗ?          ﻗ? ﻗ?
 ﻗ? ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ﻗ? ﻗ?
@@ -1569,7 +1569,7 @@ class CompensationDataCleaner:
         
     async def archive_data(self, archive_date: str):
         """ﮒﺛﮔ۰۲ﮔﺍﮔ؟"""
-        # ﮒﺍﮔﮒ؟ﮔ۴ﮔﮒﻝﮔﺍﮔ؟ﮒﺛﮔ۰۲ﮒﺍﮒﺓﮒ­ﮒ?
+# ﮒﺍﮔﮒ؟ﮔ۴ﮔﮒﻝﮔﺍﮔ؟ﮒﺛﮔ۰۲ﮒﺍﮒﺓﮒﮒ?
         await self._archive_compensations(archive_date)
         await self._archive_logs(archive_date)
 ```
@@ -1577,10 +1577,10 @@ class CompensationDataCleaner:
 ### 10.2 ﮔﻠﮒ۳ﻝ
 
 #### 10.2.1 ﮒﺕﺕﻟ۶ﮔﻠﮒ۳ﻝ
-| ﮔﻠﻝﺍﻟﺎ۰ | ﮒﺁﻟﺛﮒﮒ  | ﮔﮔ۴ﮔ­۴ﻠ۹۳ | ﻟ۶۲ﮒﺏﮔﺗﮔ۰ |
+| ﮔﻠﻝﺍﻟﺎ۰ | ﮒﺁﻟﺛﮒﮒ | ﮔﮔ۴ﮔ۴ﻠ۹۳ | ﻟ۶۲ﮒﺏﮔﺗﮔ۰ |
 |----------|----------|----------|----------|
-| ﻟ۰۴ﮒﺟﮔﮒﻝﻛﺕﻠ?| ﻝﺛﻝﭨﻠ؟ﻠ۱ﻙﮒﺙﮔﮔﻠ?| 1. ﮔ۲ﮔ۴ﻝﺛﻝﭨﻟﺟﮔ?br>2. ﮔ۲ﮔ۴ﮒﺙﮔﻝﭘﮔ?br>3. ﮔ۴ﻝﻠﻟﺁﺁﮔ۴ﮒﺟ | 1. ﻛﺟ؟ﮒ۳ﻝﺛﻝﭨ<br>2. ﻠﮒﺁﮒﺙﮔ<br>3. ﻟﺍﮔﺑﻠﻟﺁﻝ­ﻝ۴ |
-| ﻟ۰۴ﮒﺟﮒﭨﭘﻟﺟﮒ۱ﮒ  | ﮔﺍﮔ؟ﮒﭦﮔ۶ﻟﺛﻠ؟ﻠ۱ﻙﻟﭖﮔﭦﻛﺕﻟﭘ?| 1. ﮔ۲ﮔ۴ﮔﺍﮔ؟ﮒﭦﮔ۶ﻟﺛ<br>2. ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦ?br>3. ﮒﮔﮔ۱ﮔ۴ﻟﺁ?| 1. ﻛﺙﮒﮔﺍﮔ؟ﮒﭦ?br>2. ﮔ۸ﮒ؟ﺗﻟﭖﮔﭦ<br>3. ﻛﺙﮒﮔ۴ﻟﺁ۱ |
+| ﻟ۰۴ﮒﺟﮔﮒﻝﻛﺕﻠ?| ﻝﺛﻝﭨﻠ؟ﻠ۱ﻙﮒﺙﮔﮔﻠ?| 1. ﮔ۲ﮔ۴ﻝﺛﻝﭨﻟﺟﮔ?br>2. ﮔ۲ﮔ۴ﮒﺙﮔﻝﭘﮔ?br>3. ﮔ۴ﻝﻠﻟﺁﺁﮔ۴ﮒﺟ | 1. ﻛﺟ؟ﮒ۳ﻝﺛﻝﭨ<br>2. ﻠﮒﺁﮒﺙﮔ<br>3. ﻟﺍﮔﺑﻠﻟﺁﻝﻝ۴ |
+| ﻟ۰۴ﮒﺟﮒﭨﭘﻟﺟﮒ۱ﮒ | ﮔﺍﮔ؟ﮒﭦﮔ۶ﻟﺛﻠ؟ﻠ۱ﻙﻟﭖﮔﭦﻛﺕﻟﭘ?| 1. ﮔ۲ﮔ۴ﮔﺍﮔ؟ﮒﭦﮔ۶ﻟﺛ<br>2. ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦ?br>3. ﮒﮔﮔ۱ﮔ۴ﻟﺁ?| 1. ﻛﺙﮒﮔﺍﮔ؟ﮒﭦ?br>2. ﮔ۸ﮒ؟ﺗﻟﭖﮔﭦ<br>3. ﻛﺙﮒﮔ۴ﻟﺁ۱ |
 
 #### 10.2.2 ﻝﺝﻠﺝﮔ۱ﮒ۳
 ```python
@@ -1588,7 +1588,7 @@ class CompensationDisasterRecovery:
     """ﻟ۰۴ﮒﺟﻛﭦﮒ۰ﻝﺝﻠﺝﮔ۱ﮒ۳"""
     
     async def recover_from_failure(self, failure_type: str) -> RecoveryResult:
-        """ﻛﭨﮔﻠﻛﺕ­ﮔ۱ﮒ۳"""
+"""ﻛﭨﮔﻠﻛﺕﮔ۱ﮒ۳"""
         if failure_type == "database_outage":
             return await self._recover_from_database_outage()
         elif failure_type == "redis_outage":
@@ -1600,7 +1600,7 @@ class CompensationDisasterRecovery:
             
     async def _recover_from_database_outage(self) -> RecoveryResult:
         """ﻛﭨﮔﺍﮔ؟ﮒﭦﮔﻠﮔ۱ﮒ۳"""
-        # 1. ﻝ­ﮒﺝﮔﺍﮔ؟ﮒﭦﮔ۱ﮒ۳?
+# 1. ﻝﮒﺝﮔﺍﮔ؟ﮒﭦﮔ۱ﮒ۳?
         await self._wait_for_database_recovery()
         
         # 2. ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻛﺕﻟﺑﮔ?
@@ -1623,22 +1623,22 @@ class CompensationDisasterRecovery:
 1. [ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md](ﮒ۳ﮒﺙﮔﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻟ؟ﺝﻟ؟۰ﮔﺗﮔ۰?md) - ﻛﺕﭨﻟ؟ﺝﻟ؟۰ﮔﮔ۰?
 2. [Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md](Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?md) - ﮔﭖﻝ۷ﮒﺝﮔﮔ۰?
 3.  - ﮒﺙﮔﻠﻠﮒ۷ﻟ؟ﺝﻟ؟?
-4. [STORAGE_TIER.md](05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒ­ﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
+4. [STORAGE_TIER.md](05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md) - ﮒﮒ۷ﮒﺎﻟ؟ﺝﻟ؟?
 
 ---
 
 **ﮔﮔ۰۲ﻝﮔ؛ﮒﮒﺎ**:
 - v1.0.0 (2026-04-02): ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒ؟ﮔﺑﻟ۰۴ﮒﺟﻛﭦﮒ۰ﻟ؟ﺝﻟ؟?
 
-**ﮒ؟۰ﮔ ﺕﻟ؟ﺍﮒﺛ**:
-- ﮔﭘﮔﮒ؟۰ﮔ ﺕ: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
-- ﮔﮔﺁﮒ؟۰ﮔ ? ﮒﺝﮒ؟۰ﮔ ?
-- ﮒ؟ﮒ۷ﮒ؟۰ﮔ ﺕ: ﮒﺝﮒ؟۰ﮔ ?
+**ﮒ؟۰ﮔﺕﻟ؟ﺍﮒﺛ**:
+- ﮔﭘﮔﮒ؟۰ﮔﺕ: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
+- ﮔﮔﺁﮒ؟۰ﮔ? ﮒﺝﮒ؟۰ﮔ?
+- ﮒ؟ﮒ۷ﮒ؟۰ﮔﺕ: ﮒﺝﮒ؟۰ﮔ?
 
 **ﮒﻟ۶ﮔ۶ﮔ۲ﮔ?*:
-- ﻗ?ﮒﺗﻝ­ﮔ۶ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
+- ﻗ?ﮒﺗﻝﮔ۶ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ?
 - ﻗ?ﻠﻟﺁﮔﭦﮒﭘﮒ؟ﮒ
 - ﻗ?ﻠﻟﺁﺁﮒ۳ﻝﮒ۷ﻠ۱
 - ﻗ?ﻝﮔ۶ﮒﺁﻟ۶ﮔﭖﮔ۶ﮒﮒ?
 - ﻗ?ﮔﭖﻟﺁﮔﺗﮔ۰ﮒ؟ﮒ۳
-- ﻗ?ﻝ؛۵ﮒﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ (ﻠ۱ﻟ؟۰ﮒﻟ۶ﻝﻗ۴95%)
+- ﻗ?ﻝ؛۵ﮒﻛﺕﻛﺕﮔﭦﮔﮔﮒ (ﻠ۱ﻟ؟۰ﮒﻟ۶ﻝﻗ۴95%)

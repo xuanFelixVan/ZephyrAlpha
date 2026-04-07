@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 > - **?* = ͼȲο
 
 
-## ?? ĵλõ (v5.3)
+## ?? ĵλ (v5.3)
 
 ### һ?
 
@@ -76,7 +76,7 @@ docs/
 
 ### 
 
-**·?* (30):
+**?* (30):
 1. Ķ [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ?(5)
 2. Ķ [00_OVERVIEW/README.md](API_README.md) - ϵͳ (10)
 3. Ķ [05_IMPLEMENTATION/01_QUICKSTART/README.md](API_README.md) - ٿ?(15)
@@ -84,7 +84,7 @@ docs/
 
 ### Ҫܹ
 
-**ܹѧϰ·** (2Сʱ):
+**ܹѧϰ** (2Сʱ):
 1. Ķ [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - ϵͳͼ (30)
 2. Ķ [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ͳһܹ (30)
 3. Ķ [01_FRAMEWORK/README.md](API_README.md) - ĵ (20)
@@ -93,7 +93,7 @@ docs/
 
 ### Ҫ?
 
-**Կ·?* (4Сʱ):
+**Կ?* (4Сʱ):
 1. Ķ [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - ϵͳͼ (30)
 2. Ķ [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ģ (30)
 3. Ķ [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) -  (20)
@@ -104,7 +104,7 @@ docs/
 
 ### Ҫϵͳ
 
-**·** (3Сʱ):
+**** (3Сʱ):
 1. Ķ [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - ϵͳͼ (30)
 2. Ķ [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 𷽰 (30)
 3. ִвű (2Сʱ)
@@ -112,7 +112,7 @@ docs/
 
 ### ⰲ?
 
-**ȫѧϰ·** (1.5Сʱ):
+**ȫѧϰ** (1.5Сʱ):
 1. Ķ [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ嵥 (20)
 2. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - ȫ淶 (25)
 3. Ķ [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ֤Ȩ (20)
@@ -120,7 +120,7 @@ docs/
 
 ### ?
 
-**Ų·** (30):
+**Ų** (30):
 1. 鿴 [FAQ.md](02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) -  (10)
 2. 鿴 [05_IMPLEMENTATION/07_OPERATIONS/README.md](API_README.md) - άֲ (10)
 3. 鿴 [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - 汾 (5)
@@ -128,7 +128,7 @@ docs/
 
 ### Ҫϵͳ
 
-**ƹ·** (1-2Сʱ):
+**ƹ** (1-2Сʱ):
 1.  [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - Żҳ (5)
 2. ѡģʽ: ģʽ(5)AIģʽ(30)
 3. Ʊ׼ִ? [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - Ʊ׼ (15)
@@ -136,7 +136,7 @@ docs/
 5. Ʊ (30-60)
 
 
-## ?? Ŀ¼?(v5.3)
+## ?? Ŀ?(v5.3)
 
 ### 00_OVERVIEW/ - ϵͳ
 
@@ -160,7 +160,7 @@ docs/
 
 ### 02_FACTOR_LIBRARY/ - ?
 
-| Ŀ¼ | ˵ |
+| Ŀ | ˵ |
 |------|------|
 | 01_STANDARDS/ | о?|
 | 02_ALPHA_FACTORS_INDEX.md | Alpha |
@@ -174,7 +174,7 @@ docs/
 
 ### 03_TRADING_TACTICS/ - ?
 
-| ļ/Ŀ¼ | ˵ |
+| ļ/Ŀ | ˵ |
 |------|------|
 | INDEX.md | Ե |
 | README.md | ĵ |
@@ -190,9 +190,9 @@ docs/
 
 ### 04_EXECUTION/ - ִ
 
-| Ŀ¼ | ˵ |
+| Ŀ | ˵ |
 |------|------|
-| 01_EVENT_ENGINE/ | ¼ |
+| 01_EVENT_ENGINE/ |  |
 | 01_ORDER_EXECUTION/ | ִ |
 | 02_TRADE_EXECUTOR/ | ִ |
 | 03_MONITORING/ | ʵʱ |
@@ -203,7 +203,7 @@ docs/
 
 ### 05_IMPLEMENTATION/ - ʵʩָ
 
-| Ŀ¼ | ˵ |
+| Ŀ | ˵ |
 |------|------|
 | 01_QUICKSTART/ | ٿ?|
 | 02_DEVELOPMENT/ | ?|
@@ -215,7 +215,7 @@ docs/
 
 ### 06_ARCHIVE/ - 鵵
 
-| Ŀ¼/ļ | ˵ |
+| Ŀ/ļ | ˵ |
 |------|------|
 | README.md | 鵵˵v5.3棩 |
 | main/BLUEPRINTS/ | ͼʷ鵵? |
@@ -227,7 +227,7 @@ docs/
 
 ### 07_RESEARCH/ - AIо
 
-| Ŀ¼ | ˵ |
+| Ŀ | ˵ |
 |------|------|
 | 01_ENVIRONMENT/ | о |
 | 02_EXPLORATORY_ANALYSIS/ | ̽Է?|
@@ -236,7 +236,7 @@ docs/
 
 ### 09_AUDIT/ - ϵͳ
 
-| Ŀ¼/ļ | ˵ |
+| Ŀ/ļ | ˵ |
 |------|------|
 | README.md | ϵ |
 | INDEX_AUDIT.md | Żҳ |
@@ -284,7 +284,7 @@ docs/
 
 ### AIо
 
-- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - AIоܣ¼?
+- [BLUEPRINT.md](01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md) - AIоܣ?
 - [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - ʵ׷
 - [KNOWLEDGE_MANAGEMENT.md](02_FACTOR_LIBRARY/10_MANUAL/KNOWLEDGE_MANAGEMENT.md) - ֪ʶ
 

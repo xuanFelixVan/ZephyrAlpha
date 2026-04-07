@@ -23,7 +23,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Mesh蓝图设计
 > **职责边界**: 
-³å
 容
 
 
@@ -86,7 +85,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-æ?
+?
 - 数据团队成为瓶颈
 - 数据质量责任分散
 - 数据发现困难
@@ -100,8 +99,7 @@ layer: Layer 5.1 (数据处理)
 | **数据发现时间** | <5分钟 | 数据发现时间<5分钟 |
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -117,10 +115,10 @@ layer: Layer 5.1 (数据处理)
 |---------|------|------|------|
 | **DataHub** | 0.10+ | 数据产品目录 | [官方文档](https://datahubproject.io/) |
 | **Apache Atlas** | 2.3+ | 数据治理 | [官方文档](https://atlas.apache.org/) |
-| **OpenMetadata** | 1.2+ | å
+| **OpenMetadata** | 1.2+ |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -156,7 +154,7 @@ class DomainType(Enum):
 
 @dataclass
 class DataDomain:
-    """æ°æ®å?""
+"""?""
     domain_id: str
     domain_name: str
     domain_type: DomainType
@@ -193,7 +191,7 @@ class DataDomainManager:
         return list(self.domains.values())
     
     def assign_data_product(self, domain_id: str, product_id: str):
-        """åé
+"""
         domain = self.get_domain(domain_id)
         if domain and product_id not in domain.data_products:
             domain.data_products.append(product_id)
@@ -340,7 +338,7 @@ POST /api/v1/datamesh/domains
 {
   "domain_type": "market_data",
   "owner": "market_data_team",
-³æ°æ?,
+?,
   "quality_sla": {
     "completeness": 0.95,
     "accuracy": 0.98
@@ -427,7 +425,7 @@ volumes:
 
 ---
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -444,9 +442,8 @@ volumes:
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 
@@ -462,9 +459,9 @@ volumes:
 ##### 6.001. Data Mesh
 - **模块ID**: DATA_MESH_001
 - **蓝图文档**: DATA_MESH_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

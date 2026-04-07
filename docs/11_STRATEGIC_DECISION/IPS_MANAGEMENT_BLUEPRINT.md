@@ -817,7 +817,7 @@ class IPSGenerator:
 
 1. 流动性约束:
    - 最低现金比例: {ips.liquidity_constraint.min_cash_ratio:.2%}
-   - 应急资金预留: ¥{ips.liquidity_constraint.emergency_reserve:,.2f}
+   - 应急资金预留: {ips.liquidity_constraint.emergency_reserve:,.2f}
 
 2. 时间期限约束:
    - 投资期限: {ips.time_horizon_constraint.investment_horizon}年

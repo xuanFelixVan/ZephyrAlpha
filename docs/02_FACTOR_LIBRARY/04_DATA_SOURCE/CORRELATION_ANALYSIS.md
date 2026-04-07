@@ -63,7 +63,7 @@ implementation_status: 进行中
 偏相关（Partial Correlation）是指在控制其他变量影响后，两个变量之间的相关程度。
 
 ```
-r_XY|Z = (r_XY - r_XZ * r_YZ) / sqrt((1-r_XZ²)(1-r_YZ²))
+r_XY|Z = (r_XY - r_XZ * r_YZ) / sqrt((1-r_XZ)(1-r_YZ))
 ```
 
 ### 2.2 实现
@@ -243,7 +243,7 @@ class CorrelationTest:
         n = len(x)
         r = x.corr(y)
 
-        # t = r * sqrt(n-2) / sqrt(1-r²)
+# t = r * sqrt(n-2) / sqrt(1-r)
         t_stat = r * np.sqrt(n - 2) / np.sqrt(1 - r ** 2)
 
         from scipy import stats

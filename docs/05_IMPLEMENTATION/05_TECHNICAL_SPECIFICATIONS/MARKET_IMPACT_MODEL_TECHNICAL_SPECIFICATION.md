@@ -147,7 +147,7 @@ class ImpactModelPerformance:
     """冲击模型性能"""
     model_type: ImpactModelType
     mae: float  # 平均绝对误差
-    rmse: float  # 均方根误?    r2_score: float  # R²分数
+    rmse: float  # 均方根误?    r2_score: float  # R分数
     prediction_accuracy: float  # 预测准确?    sample_size: int  # 样本数量
     last_updated: datetime
 

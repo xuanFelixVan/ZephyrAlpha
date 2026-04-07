@@ -112,7 +112,7 @@ class FactorInput:
 @dataclass
 class FactorOutput:
     """因子输出"""
-    factor_values: pd.DataFrame          # 因子?(股票×因子)
+    factor_values: pd.DataFrame          # 因子?(股票因子)
     factor_ic: Dict[str, float]          # 因子IC
     factor_ir: Dict[str, float]          # 因子IR
     factor_correlation: pd.DataFrame     # 因子相关性矩?    selected_factors: List[str]          # 筛选后的因?    alpha_signal: pd.Series              # 合成Alpha信号

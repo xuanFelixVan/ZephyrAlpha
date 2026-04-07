@@ -101,9 +101,9 @@ df -h
 **维护者**: 运维负责人
 **创建日期**: 2026-04-04
 
-- [СИфС║║+AIтю║ТЎ»СИІуџёти«УиЮтЈ»УАїТђДтѕєТъљСИјт«ъТќйуГќуЋЦ](./GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO.md) - 系统文档
+- [СИфС║║+AIтю║ТЎСИІуџётиУиЮтЈУАїТђДтѕєТъљСИјтъТќйуГќуЋЦ](./GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO.md) - 系统文档
 
-- [Minicondaﮒ؟ﻟ۲ﮒﺏﻠ؟ﮔ­۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ?](./MINICONDA_INSTALLATION_CHECKLIST.md) - 系统文档
+- [Minicondaﮒ؟ﻟ۲ﮒﺏﻠ؟ﮔ۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ?](./MINICONDA_INSTALLATION_CHECKLIST.md) - 系统文档
 
 - [QMTш┐ЮцОещЧощвШца╣цЬмхОЯхЫахИЖцЮРф╕ОшзгхЖ│цЦ╣цб?](./QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md) - 系统文档
 

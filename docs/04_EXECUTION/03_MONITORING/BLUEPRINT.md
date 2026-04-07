@@ -32,7 +32,7 @@ status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-02
 standard_type: 专业量化机构蓝图
-applicable_scope: å
+applicable_scope:
 compliance_level: 初始标准
 parent_document: ../README.md
 implementation_status: 设计阶段
@@ -47,7 +47,7 @@ implementation_progress: 0%
 > - ❌ 本文档不负责：其他模块内容
 
 
-> æ¸
+>
 > **索引**: `MON_001`
 
 
@@ -69,11 +69,11 @@ implementation_progress: 0%
 **采用 Grafana + Prometheus + AlertManager 方案**
 
 ```
-                            â?
-                            â?
-â?                     Prometheus çæ§                        â?
-                            â?
-â?  - TradeExecutor / RiskMonitor / DataHub                  â?
+?
+?
+?                     Prometheus                         ?
+?
+?  - TradeExecutor / RiskMonitor / DataHub                  ?
 ```
 
 
@@ -122,7 +122,7 @@ metrics:
   # 因子指标
   - name: factor_ic_value
     type: gauge
-    description: å å­ICå?
+description: IC?
     labels: [factor_id]
 
   - name: factor_calculation_latency
@@ -142,7 +142,7 @@ metrics:
 
   - name: memory_usage_bytes
     type: gauge
-    description: å
+description:
 
   - name: disk_usage_bytes
     type: gauge
@@ -167,7 +167,7 @@ metrics:
 
 ```json
 {
-  "title": "æ¸
+"title": "
 风量化 - 系统概览",
   "panels": [
     {
@@ -246,7 +246,7 @@ groups:
           severity: warning
         annotations:
           summary: "风控违规频繁"
-          description: "5åéå
+description: "5
 
       - alert: RiskExposureHigh
         expr: risk_position_value > 0.8
@@ -273,9 +273,9 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "å
+summary: "
 存使用率高"
-          description: "å
+description: "
 存使用 {{ $value | humanize1024 }}"
 ```
 
@@ -318,7 +318,7 @@ receivers:
 
 
 
-### 6.1 Docker Composeé
+### 6.1 Docker Compose
 置
 
 ```yaml
@@ -386,7 +386,7 @@ signal_latency = Histogram('strategy_signal_latency', '信号生成延迟',
                           ['strategy_id'])
 risk_violation = Counter('risk_violation_count', '风控违规次数',
                        ['rule_id', 'severity'])
-factor_ic = Gauge('factor_ic_value', 'å å­ICå?, ['factor_id'])
+factor_ic = Gauge('factor_ic_value', 'IC?, ['factor_id'])
 
 # 在代码中使用
 class StrategyMonitor:
@@ -421,7 +421,7 @@ start_http_server(8000)
 - **模块ID**: EXE_BLUEPRINT
 - **蓝图文档**: [BLUEPRINT.md](04_EXECUTION\03_MONITORING\BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: äº¤ææ§è¡
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -429,7 +429,7 @@ start_http_server(8000)
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Exe** | äº¤ææ§è¡ | **核心模块** |
+| **Exe** |  | **核心模块** |
 
 ### 9.3 版本管理
 

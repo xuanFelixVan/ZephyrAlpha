@@ -3,7 +3,7 @@ version: 1.0.0
 standard_type: 核心文档
 responsibility:
   - 负责investment philosophy的设计、实现和维护工作
-applicable_scope: å
+applicable_scope:
 parent_document: ../INDEX.md
 module_id: INVESTMENT_PHILOSOPHY
 created_date: 2026-04-02
@@ -23,7 +23,7 @@ layer: Layer 4
 
 
 **文档版本**: 1.0.0
-**æåæ´æ?*: 2026-04-02
+**?*: 2026-04-02
 ---
 
 ## 1. 投资哲学概述
@@ -31,8 +31,8 @@ layer: Layer 4
 ### 1.1 核心信念
 
 
-¨ææ**
-é¢æ¶ç?
+**
+?
 **
    - 相信数据而非直觉
    - 相信统计规律而非个案
@@ -47,10 +47,10 @@ layer: Layer 4
 
 
 
-**ååå
+**
 容**:
 
-**å
+**
 ```python
 # 风险控制规则
 RISK_RULES = {
@@ -61,10 +61,10 @@ RISK_RULES = {
 
 #### 原则2: 因子投资
 
-**ååå
+**
 容**:
 
-**å
+**
 ```python
 # 因子投资框架
 FACTOR_FRAMEWORK = {
@@ -78,10 +78,10 @@ FACTOR_FRAMEWORK = {
 
 #### 原则3: 分散投资
 
-**ååå
+**
 容**:
 - 不要把所有鸡蛋放在一个篮子里
-**å
+**
 ```python
 # 分散投资规则
 DIVERSIFICATION_RULES = {
@@ -89,11 +89,11 @@ DIVERSIFICATION_RULES = {
 
 ---
 
-**ååå
+**
 容**:
-- é¿å
+-
 
-**å
+**
 ```python
     'signal_generation',      # 信号生成
     'order_execution',       # 订单执行
@@ -111,11 +111,11 @@ EXECUTION_RULES = {
 
 #### 原则5: 持续优化
 
-**ååå
+**
 容**:
 - 定期评估投资效果
 - 持续优化投资模型
-**å
+**
 ```python
 # 持续优化计划
 OPTIMIZATION_PLAN = {
@@ -137,16 +137,16 @@ OPTIMIZATION_PLAN = {
 不断学习和适应
    - 市场存在可识别的模式
 3. **市场是竞争性的**
-   - å
+-
 
 ---
 
-### 3.2 æ¶çè§?
+### 3.2 ?
 **对收益的理解**:
 
 然伴随高风险
    - 不存在低风险高收益的机会
-   - å
+-
 ---
 
 **对风险的理解**:
@@ -200,16 +200,16 @@ OPTIMIZATION_PLAN = {
    - 不投资复杂衍生品
 
 
-ç»?
+?
 ---
 
 
 
-çäºæ?*:
+?*:
 
-è¿?%
-è¿?0%
-è¿?0%
+?%
+?0%
+?0%
 
    - 保持仓位稳定
 
@@ -276,13 +276,13 @@ RISK_LIMITS = {
 容**:
 
 **学习方法**:
-- å®æé
+-
 读学术论文
 - 参加行业会议
-- å
+-
 ### 9.2 优化机制
 
-**ä¼åå
+**
 容**:
 **优化方法**:
 - 回测验证
@@ -291,7 +291,7 @@ RISK_LIMITS = {
 
 ---
 
-## 10. åèææ¡?
+## 10. ?
 - [研究方法论](./RESEARCH_METHODOLOGY.md)
 - [风险管理框架](../09_AUDIT/STANDARDS/RISK_MANAGEMENT_FRAMEWORK.md)
 - [投资决策流程](../09_AUDIT/STANDARDS/DECISION_RECORD_STANDARD.md)

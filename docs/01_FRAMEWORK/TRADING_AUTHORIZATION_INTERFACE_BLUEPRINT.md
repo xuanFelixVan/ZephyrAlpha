@@ -217,7 +217,7 @@ class AuthorizationQueue:
                 with col1:
                     st.markdown(f"**{request['symbol']}** {request['direction']}")
                     st.caption(f"数量: {request['quantity']} | 价格: {request['price']}")
-                    st.caption(f"预估成本: ¥{request['estimated_cost']:,.2f}")
+                    st.caption(f"预估成本: {request['estimated_cost']:,.2f}")
                     st.caption(f"AI置信度: {request['ai_confidence']:.1%}")
                 
                 with col2:
@@ -345,19 +345,19 @@ class AuthorizationRules:
         with st.form("authorization_rules"):
             st.markdown("### 金额限制")
             self.rules['max_single_trade'] = st.number_input(
-                "单笔最大交易金额 (¥)",
+                "单笔最大交易金额 ()",
                 value=self.rules['max_single_trade'],
                 step=10000
             )
             
             self.rules['require_approval_above'] = st.number_input(
-                "需审批金额阈值 (¥)",
+                "需审批金额阈值 ()",
                 value=self.rules['require_approval_above'],
                 step=5000
             )
             
             self.rules['auto_approve_below'] = st.number_input(
-                "自动批准金额阈值 (¥)",
+                "自动批准金额阈值 ()",
                 value=self.rules['auto_approve_below'],
                 step=1000
             )
@@ -424,7 +424,7 @@ class TelegramAuthorizationBot:
 方向: {request['direction']}
 数量: {request['quantity']}
 价格: {request['price']}
-预估成本: ¥{request['estimated_cost']:,.2f}
+预估成本: {request['estimated_cost']:,.2f}
 
 AI置信度: {request['ai_confidence']:.1%}
 AI理由: {request['ai_reasoning']}

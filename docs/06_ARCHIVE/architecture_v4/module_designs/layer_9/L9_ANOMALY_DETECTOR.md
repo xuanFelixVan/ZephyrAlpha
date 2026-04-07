@@ -1883,7 +1883,7 @@ class AnomalyDetectionMonitor:
                     alerts.append({
                         'type': 'anomaly_ratio_outlier',
                         'severity': 'warning',
-                        'message': f'异常比例异常: {current_value:.3f} (基准: {baseline["mean"]:.3f}±{baseline["std"]:.3f})',
+                        'message': f'异常比例异常: {current_value:.3f} (基准: {baseline["mean"]:.3f}{baseline["std"]:.3f})',
                         'z_score': z_score,
                         'threshold': 3
                     })
@@ -1899,7 +1899,7 @@ class AnomalyDetectionMonitor:
                         alerts.append({
                             'type': f'{metric_name}_degradation',
                             'severity': 'critical',
-                            'message': f'{metric_name}下降: {current_value:.3f} (基准: {baseline["mean"]:.3f}±{baseline["std"]:.3f})',
+                            'message': f'{metric_name}下降: {current_value:.3f} (基准: {baseline["mean"]:.3f}{baseline["std"]:.3f})',
                             'decrease': baseline['mean'] - current_value,
                             'threshold': 2
                         })

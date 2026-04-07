@@ -633,9 +633,9 @@ class LlamaIndexQA:
 | **LangChain库** | 免费 | MIT License |
 | **LlamaIndex库** | 免费 | MIT License |
 | **ChromaDB** | 免费 | Apache 2.0 |
-| **OpenAI API** | ~¥100/月 | 按使用量计费 |
+| **OpenAI API** | ~100/月 | 按使用量计费 |
 | **开发时间** | 2-3周 | 个人开发+AI辅助 |
-| **总成本** | ~¥100/月 | API调用费用 |
+| **总成本** | ~100/月 | API调用费用 |
 
 ---
 

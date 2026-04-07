@@ -271,11 +271,11 @@ BACKUP_STRATEGY = {
 
 | 层级 | 推荐配置 | 预算参?|
 |------|----------|----------|
-| 热存?| 64GB DDR4 + 500GB NVMe SSD | ¥2000-3000 |
-| 温存?| 2TB SATA SSD | ¥1000-1500 |
-| 冷存?| 4TB HDD (7200? | ¥500-800 |
+| 热存?| 64GB DDR4 + 500GB NVMe SSD | 2000-3000 |
+| 温存?| 2TB SATA SSD | 1000-1500 |
+| 冷存?| 4TB HDD (7200? | 500-800 |
 
-**总预算参?*: ¥3500-5500
+**总预算参?*: 3500-5500
 
 ---
 
@@ -351,7 +351,7 @@ BACKUP_ARCHITECTURE = {
         'provider': '阿里云OSS / 腾讯云COS',
         'frequency': '每日增量',
         'retention': '永久',
-        'cost_estimate': '¥50-100/?(100GB)'
+'cost_estimate': '50-100/?(100GB)'
     },
     'cross_region': {
         'provider': '阿里?+ 腾讯云双?,

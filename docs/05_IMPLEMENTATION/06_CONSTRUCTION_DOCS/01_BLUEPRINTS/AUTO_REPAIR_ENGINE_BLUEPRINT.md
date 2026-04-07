@@ -11,7 +11,7 @@ created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 9 çæ§å±?
+applicable_scope: Layer 9 ?
 compliance_level: 专业标准
 layer: Layer 5 (策略执行层)
 ---
@@ -97,14 +97,13 @@ layer: Layer 5 (策略执行层)
 |------|--------|------|
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ® |
+|
 
 ### 下游依赖
 
@@ -117,8 +116,8 @@ layer: Layer 5 (策略执行层)
 | **Great Expectations** | 0.18+ | 数据验证 | [官方文档](https://docs.greatexpectations.io/) |
 | **Prophet** | 1.1.0+ | 时序预测 | [官方文档](https://facebook.github.io/prophet/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -141,11 +140,11 @@ graph LR
 
 
 ```
-â?                                                            â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 ### 2.2 技术选型
@@ -402,7 +401,7 @@ class RepairStrategyEngine:
         return df[column].mode()[0]
     
     def _knn_imputation(self, df: pd.DataFrame, problem: DataProblem) -> Any:
-        """KNNå¡«å
+"""KNN
 
 """
         numeric_df = df.select_dtypes(include=[np.number])
@@ -496,7 +495,7 @@ class RepairEvaluator:
 ### 4.1 自动修复流程
 
 ```
-                â?
+?
 ```
 
 ### 4.2 知识积累流程
@@ -555,7 +554,7 @@ POST /api/v1/repair/execute
 
 ---
 
-## å
+##
 
 
 ```yaml
@@ -591,7 +590,7 @@ services:
 
 ---
 
-## å
+##
 
 
 |------|------|---------|--------|
@@ -609,8 +608,8 @@ services:
 
 ---
 
-## åãç¸å
-³ææ¡?
+##
+?
 
 - 实时数据质量监控蓝图
 - [质量评分系统蓝图](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md)
@@ -627,9 +626,9 @@ services:
 ##### 6.001. Auto Repair Engine
 - **模块ID**: AUTO_REPAIR_ENGINE_001
 - **蓝图文档**: AUTO_REPAIR_ENGINE_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

@@ -231,9 +231,9 @@ python src/data_lineage/tracker.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **Atlas服务器** | ¥300 |
-| **总计** | **¥800** |
+| **云服务器** | 500 |
+| **Atlas服务器** | 300 |
+| **总计** | **800** |
 
 ---
 
@@ -451,8 +451,8 @@ python src/model_risk/manager.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 3周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -600,8 +600,8 @@ python src/model_fairness/detector.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -715,17 +715,17 @@ class DataSourceCostOptimizer:
 # 数据源成本报告
 
 ## 成本概览
-- 总成本: ¥{cost_analysis['total_cost']:.2f}
+- 总成本: {cost_analysis['total_cost']:.2f}
 
 ## 各数据源成本
 """
         
         for source, cost in cost_analysis['cost_by_source'].items():
-            report += f"- {source}: ¥{cost:.2f}\n"
+report += f"- {source}: {cost:.2f}\n"
         
         report += "\n## 优化机会\n"
         for opportunity in cost_analysis['optimization_opportunities']:
-            report += f"- {opportunity['description']}: ¥{opportunity['potential_savings']:.2f}\n"
+report += f"- {opportunity['description']}: {opportunity['potential_savings']:.2f}\n"
         
         return report
 ```
@@ -748,8 +748,8 @@ python src/data_cost/optimizer.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -910,8 +910,8 @@ python src/data_augmentation/system.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -924,18 +924,18 @@ python src/data_augmentation/system.py
 | 成本项 | 总计 |
 |--------|------|
 | **开发时间** | 3个月 (AI辅助) |
-| **云服务器** | ¥500/月 × 3 = ¥1,500 |
-| **其他成本** | ¥1,500 |
-| **总计** | **¥3,000** |
+| **云服务器** | 500/月  3 = 1,500 |
+| **其他成本** | 1,500 |
+| **总计** | **3,000** |
 
 #### P2级扩展模块 (15个)
 
 | 成本项 | 总计 |
 |--------|------|
 | **开发时间** | 3个月 (AI辅助) |
-| **云服务器** | ¥500/月 × 3 = ¥1,500 |
-| **其他成本** | ¥1,000 |
-| **总计** | **¥2,500** |
+| **云服务器** | 500/月  3 = 1,500 |
+| **其他成本** | 1,000 |
+| **总计** | **2,500** |
 
 ### 3.2 实施优先级
 

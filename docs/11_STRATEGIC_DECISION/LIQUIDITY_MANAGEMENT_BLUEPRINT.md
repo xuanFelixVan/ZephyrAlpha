@@ -186,7 +186,7 @@ Layer 11.8流动性管理系统是清风量化系统的**流动性守护者**，
 
 ```
 流动性评分:
-Liquidity_Score = w1 × Turnover_Score + w2 × Spread_Score + w3 × Depth_Score + w4 × Impact_Score
+Liquidity_Score = w1  Turnover_Score + w2  Spread_Score + w3  Depth_Score + w4  Impact_Score
 
 其中:
 - Turnover_Score: 换手率评分（越高越好）
@@ -435,10 +435,10 @@ class LiquidityAssessmentEngine:
 Max_Position = f(Liquidity_Score, Portfolio_Value, Trading_Days)
 
 交易速度限制:
-Max_Daily_Volume = Avg_Daily_Volume × Participation_Rate
+Max_Daily_Volume = Avg_Daily_Volume  Participation_Rate
 
 流动性成本约束:
-Max_Cost = Target_Return × Cost_Tolerance_Ratio
+Max_Cost = Target_Return  Cost_Tolerance_Ratio
 
 动态约束调整:
 Constraint_Adjustment = f(Market_Volatility, Liquidity_Stress)
@@ -604,10 +604,10 @@ class LiquidityConstraintSystem:
 Liquidity_VaR = f(Holding_Period, Liquidation_Cost, Market_Impact)
 
 极端场景模拟:
-Scenario_Loss = Position × Price_Shock + Liquidation_Cost
+Scenario_Loss = Position  Price_Shock + Liquidation_Cost
 
 流动性危机应对:
-Time_to_Liquidate = Position / (Daily_Volume × Participation_Rate)
+Time_to_Liquidate = Position / (Daily_Volume  Participation_Rate)
 ```
 
 #### 2.3.2 技术实现
@@ -823,10 +823,10 @@ class LiquidityStressTestEngine:
 
 ```
 总流动性预算:
-Total_Liquidity_Budget = Portfolio_Value × Liquidity_Reserve_Ratio
+Total_Liquidity_Budget = Portfolio_Value  Liquidity_Reserve_Ratio
 
 策略流动性预算:
-Strategy_Budget = Total_Budget × Strategy_Weight × Liquidity_Factor
+Strategy_Budget = Total_Budget  Strategy_Weight  Liquidity_Factor
 
 流动性成本优化:
 Optimal_Execution = argmin(Execution_Cost + Market_Impact)

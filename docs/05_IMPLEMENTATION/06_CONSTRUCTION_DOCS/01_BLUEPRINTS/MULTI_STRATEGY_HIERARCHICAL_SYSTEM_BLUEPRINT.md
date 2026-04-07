@@ -85,14 +85,14 @@ layer: Layer 5.2 (组合优化)
 
 ### 2.1 系统架构?
 ```
-ç½®     ? ?åé
+? ?
 
 ### 2.2 模块分层架构
 
 **Layer 1 - 策略绩效评估?*
 - 收益率计算器（绝对收益、相对收益、风险调整收益）
 - 风险指标计算器（VaR、CVaR、最大回撤、夏普比率）
-- ç¸å
+-
 - 容量评估器（策略容量、资金使用效率）
 
 ?*
@@ -103,8 +103,6 @@ layer: Layer 5.2 (组合优化)
 - 置信度加权器（基于历史准确率加权?
 **Layer 4 - 策略协同优化?*
 - 协同效应识别器（识别策略间协同效应）
-ï¼
-ï¼
 - 动态调整器（实时调整策略权重和资源?
 **Layer 5 - 输出与监控层**
 - 权重输出器（输出策略权重方案?- 信号输出器（输出融合后的交易信号?- 绩效报告生成器（生成策略绩效报告?- 预警机制（策略表现异常预警）
@@ -123,7 +121,6 @@ layer: Layer 5.2 (组合优化)
 class StrategyPerformanceEvaluator:
     """策略绩效评估?    
     索引: STRATEGY_HIERARCHY_001-M01
-    è¾å
     输出: 策略绩效评估结果
     """
     
@@ -269,12 +266,12 @@ class StrategyPerformanceEvaluator:
         }
     
     def calculate_correlation_matrix(self, strategy_returns: Dict[str, pd.Series]) -> pd.DataFrame:
-³æ§ç©?        
+?
         Args:
             strategy_returns: 各策略的收益率序?            
         Returns:
-            pd.DataFrame: ç¸å
-³æ§ç©?        """
+pd.DataFrame:
+?        """
         returns_df = pd.DataFrame(strategy_returns)
         correlation_matrix = returns_df.corr()
         
@@ -282,13 +279,12 @@ class StrategyPerformanceEvaluator:
 ```
 
 ?
-æ?
+?
 ```python
 class StrategyLayerWeightAllocator:
 ?    
     索引: STRATEGY_HIERARCHY_001-M02
-æ?    è¾å
-æ¹æ¡
+?
     """
     
     def __init__(self, config: WeightAllocationConfig):
@@ -297,14 +293,13 @@ class StrategyLayerWeightAllocator:
     def allocate_weights(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         current_weights: Dict[str, float]) -> WeightAllocationResult:
-        """åé
+"""
         
         Args:
             strategy_performances: 各策略的绩效评估结果
             
         Returns:
-            WeightAllocationResult: æéåé
-ç»æ
+WeightAllocationResult:
         """
         # 1. 策略分类（核心策?vs 卫星策略?        core_strategies, satellite_strategies = self._classify_strategies(
             strategy_performances
@@ -345,7 +340,7 @@ class StrategyLayerWeightAllocator:
         """策略分类
         
         核心策略：夏普比率≥1.5，最大回撤≤15%
-¶ä»ç­?        """
+?        """
         core_strategies = []
         satellite_strategies = []
         
@@ -364,11 +359,9 @@ class StrategyLayerWeightAllocator:
                                 performances: Dict[str, StrategyPerformance],
                                 correlation_matrix: pd.DataFrame,
                                 layer_weight: float) -> Dict[str, float]:
-        """åé
-å±å
+"""
 权重
         
-æé
         """
         if len(strategies) == 0:
             return {}
@@ -424,11 +417,11 @@ class StrategyLayerWeightAllocator:
                                      correlation_matrix: pd.DataFrame) -> Dict[str, float]:
         """计算风险贡献"""
         # 简化计算：基于权重和波动率
-        # å®é
-³æ§ç©?        
+#
+?
         risk_contributions = {}
         for name, weight in weights.items():
-³?            avg_correlation = correlation_matrix[name].mean()
+?            avg_correlation = correlation_matrix[name].mean()
             risk_contributions[name] = weight * avg_correlation
         
         # 标准?        total_risk = sum(risk_contributions.values())
@@ -464,7 +457,6 @@ class SignalFusionEngine:
     
     索引: STRATEGY_HIERARCHY_001-M03
     职责: 融合多策略信号，解决信号冲突
-    è¾å
     输出: 融合后的最终信?    """
     
     def __init__(self, config: FusionConfig):
@@ -590,7 +582,7 @@ class SignalFusionEngine:
     def _ml_fusion(self, signals: Dict[str, TradingSignal],
                   weights: Dict[str, float]) -> FusedSignal:
         """机器学习融合（简化版?""
-        # å®é
+#
 应使用训练好的ML模型
         # 这里简化为加权平均
         
@@ -605,7 +597,6 @@ class StrategySynergyOptimizer:
     """策略协同优化?    
     索引: STRATEGY_HIERARCHY_001-M04
 
-    è¾å
     """
     
     def __init__(self, config: SynergyConfig):
@@ -618,7 +609,7 @@ class StrategySynergyOptimizer:
         
         Args:
             strategy_performances: 策略绩效
-            correlation_matrix: ç¸å
+correlation_matrix:
             
         Returns:
             SynergyOptimizationResult: 协同优化结果
@@ -655,7 +646,7 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # ä½ç¸å
+#
                     if -0.3 <= corr <= 0.3:
                         synergy_type = 'diversification' if corr >= 0 else 'hedging'
                         synergies.append(StrategySynergy(
@@ -698,7 +689,7 @@ class StrategySynergyOptimizer:
 """
         allocations = {}
         
-èµ?        for name, perf in performances.items():
+?        for name, perf in performances.items():
             base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一?            
             # 协同加成
             synergy_bonus = 0.0
@@ -737,7 +728,7 @@ class StrategySynergyOptimizer:
         
         # 协同建议
         for synergy in synergies[:3]:  # ?个协同效?            recommendations.append(
-                f"?{synergy.strategy1}å{synergy.strategy2}å
+f"?{synergy.strategy1}{synergy.strategy2}
 ?
             )
         
@@ -799,8 +790,8 @@ class SignalConflict:
 
 @dataclass
 class WeightAllocationResult:
-    """æéåé
-ç»æ"""
+"""
+"""
     weights: Dict[str, float]
     core_weights: Dict[str, float]
     satellite_weights: Dict[str, float]
@@ -859,13 +850,13 @@ class IPerformanceEvaluator(ABC):
 
 
 class IWeightAllocator(ABC):
-    """æéåé
-å¨æ¥?""
+"""
+?""
     
     @abstractmethod
     def allocate(self, performances: Dict[str, StrategyPerformance],
                 correlation_matrix: pd.DataFrame) -> Dict[str, float]:
-        """åé
+"""
         pass
 
 
@@ -911,9 +902,9 @@ class MultiStrategyHierarchicalSystem:
         for name, returns in strategy_returns.items():
             performances[name] = self.performance_evaluator.evaluate_strategy(returns)
         
-        # 2. ç¸å
+# 2.
         
-        # 3. æéåé
+# 3.
 
         weight_result = self.weight_allocator.allocate_weights(
             performances, correlation_matrix, current_weights
@@ -949,9 +940,8 @@ class MultiStrategyHierarchicalSystem:
 
 ### 5.1 开发里程碑
 
-ï¼Week 1-2?*
-?- ?å®æåå
-æµè¯
+Week 1-2?*
+?- ?
 
 **Phase 2: 信号融合与协同优化（Week 3-4?*
 - ?实现信号融合引擎
@@ -1015,7 +1005,7 @@ class MultiStrategyHierarchicalSystem:
 ### 7.2 性能验收
 
 - ?权重调整延迟??- ?信号融合延迟??- ?策略夏普比率?.0
-³æ§â¤0.3
+0.3
 
 ### 7.3 质量验收
 
@@ -1038,8 +1028,7 @@ class MultiStrategyHierarchicalSystem:
 2. **Riskfolio-Lib**: https://github.com/dcajasn/Riskfolio-Lib
 3. **scikit-learn**: https://scikit-learn.org/
 
-### 8.3 ç¸å
-³ææ¡£
+### 8.3
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 - PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
@@ -1055,7 +1044,7 @@ class MultiStrategyHierarchicalSystem:
 
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -1070,16 +1059,16 @@ class MultiStrategyHierarchicalSystem:
 ##### 6.001. Multi Strategy Hierarchical System
 - **模块ID**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 - **蓝图文档**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
-åå»?
-- **èè´£**: å
-- **ç¶æ?*: Active
+?
+- ****:
+- **?*: Active
 ```
 
 ### 9.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Multi Strategy Hierarchical System** | å
+| **Multi Strategy Hierarchical System** |
 
 ### 9.3 版本管理
 

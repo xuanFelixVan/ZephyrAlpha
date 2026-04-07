@@ -10,29 +10,29 @@ layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
 index: RISK_ATTRIBUTION_SPEC_001
 estimated_hours: 50h
 review_status: Pending
-reviewer: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
 owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ v1.0
+# ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `RISK_ATTRIBUTION_SPEC_001`
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `RISK_ATTRIBUTION_SPEC_001`
 > **ﮒﺙﮒﮔﭘ?*: 50h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒ ﮒﮔﺅﺙﻟﺁﮒ،ﻠ۲ﻠ۸ﮔ۴ﮔﭦ
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒﮒﮔﺅﺙﻟﺁﮒ،ﻠ۲ﻠ۸ﮔ۴ﮔﭦ
 
 ---
 
@@ -40,25 +40,25 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 ### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
 
-ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮒﮔﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
-- ﮒ ﮒ­ﻠ۲ﻠ۸ﮒﺛﮒ 
-- ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ 
-- ﻟﭖﻛﭦ۶ﻠ۲ﻠ۸ﮒﺛﮒ 
+ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮒﮔﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
+- ﮒﮒﻠ۲ﻠ۸ﮒﺛﮒ
+- ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ
+- ﻟﭖﻛﭦ۶ﻠ۲ﻠ۸ﮒﺛﮒ
 - ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ﮒﭦ۵ﮒ?
 ---
 
 ## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 ﮔ ﺕﮒﺟﻝﺎﭨﮔ۴?
+### 2.1 ﮔﺕﮒﺟﻝﺎﭨﮔ۴?
 ```python
 class RiskAttributionSystem:
     """
-    ﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨﻝﭨﮔ ﺕﮒﺟ?    
-    ﻟﻟﺑ۲: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒ ﮒ?    """
+ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﺕﮒﺟ?
+ﻟﻟﺑ۲: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒﮒ?    """
     
     def __init__(self, barra_model: BarraRiskModel):
         """
-        ﮒﮒ۶ﮒﻠ۲ﻠ۸ﮒﺛﮒ ﻝﺏﭨ?        
+ﮒﮒ۶ﮒﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨ?
         Args:
             barra_model: Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮒ؟ﻛﺝ
         """
@@ -68,39 +68,39 @@ class RiskAttributionSystem:
                       portfolio_weights: pd.Series,
                       returns_data: pd.DataFrame) -> AttributionResult:
         """
-        ﻠ۲ﻠ۸ﮒﺛﮒ ﮒﮔ
+ﻠ۲ﻠ۸ﮒﺛﮒﮒﮔ
         
         Args:
             portfolio_weights: ﻝﭨﮒﮔﻠ
             returns_data: ﮔﭘﻝﻝﮔﺍ?            
         Returns:
-            AttributionResult: ﮒﺛﮒ ﻝﭨﮔ
+AttributionResult: ﮒﺛﮒﻝﭨﮔ
         """
         pass
     
     def factor_attribution(self,
                           portfolio_weights: pd.Series) -> FactorAttribution:
         """
-        ﮒ ﮒ­ﻠ۲ﻠ۸ﮒﺛﮒ 
+ﮒﮒﻠ۲ﻠ۸ﮒﺛﮒ
         
         Args:
             portfolio_weights: ﻝﭨﮒﮔﻠ
             
         Returns:
-            FactorAttribution: ﮒ ﮒ­ﮒﺛﮒ ﻝﭨﮔ
+FactorAttribution: ﮒﮒﮒﺛﮒﻝﭨﮔ
         """
         pass
     
     def industry_attribution(self,
                             portfolio_weights: pd.Series) -> IndustryAttribution:
         """
-        ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ 
+ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ
         
         Args:
             portfolio_weights: ﻝﭨﮒﮔﻠ
             
         Returns:
-            IndustryAttribution: ﻟ۰ﻛﺕﮒﺛﮒ ﻝﭨﮔ
+IndustryAttribution: ﻟ۰ﻛﺕﮒﺛﮒﻝﭨﮔ
         """
         pass
 ```
@@ -110,7 +110,7 @@ class RiskAttributionSystem:
 ```python
 @dataclass
 class AttributionResult:
-    """ﮒﺛﮒ ﻝﭨﮔ"""
+"""ﮒﺛﮒﻝﭨﮔ"""
     factor_attribution: FactorAttribution
     industry_attribution: IndustryAttribution
     asset_attribution: AssetAttribution
@@ -119,14 +119,14 @@ class AttributionResult:
 
 @dataclass
 class FactorAttribution:
-    """ﮒ ﮒ­ﮒﺛﮒ """
-    factor_contributions: pd.Series  # ﮒ ﮒ­ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
-    factor_exposures: pd.Series  # ﮒ ﮒ­ﮔﺑﻠﺎ
+"""ﮒﮒﮒﺛﮒ"""
+factor_contributions: pd.Series  # ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+factor_exposures: pd.Series  # ﮒﮒﮔﺑﻠﺎ
     factor_marginal_contributions: pd.Series  # ﻟﺝﺗﻠﻟﺑ۰ﻝ؟
 
 @dataclass
 class IndustryAttribution:
-    """ﻟ۰ﻛﺕﮒﺛﮒ """
+"""ﻟ۰ﻛﺕﮒﺛﮒ"""
     industry_contributions: pd.Series  # ﻟ۰ﻛﺕﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     industry_weights: pd.Series  # ﻟ۰ﻛﺕﮔﻠ
     industry_marginal_contributions: pd.Series  # ﻟﺝﺗﻠﻟﺑ۰ﻝ؟
@@ -136,7 +136,7 @@ class IndustryAttribution:
 
 ## 3. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
-### 3.1 ﻠ۲ﻠ۸ﮒﺛﮒ ﻝ؟ﮔﺏ
+### 3.1 ﻠ۲ﻠ۸ﮒﺛﮒﻝ؟ﮔﺏ
 
 ```python
 def attribute_risk(
@@ -146,7 +146,7 @@ def attribute_risk(
     factor_covariance: pd.DataFrame
 ) -> AttributionResult:
     """
-    ﻠ۲ﻠ۸ﮒﺛﮒ ﻝ؟ﮔﺏ
+ﻠ۲ﻠ۸ﮒﺛﮒﻝ؟ﮔﺏ
     
     ﮒ؛ﮒﺙ:
     ﺵ_p^2 = w'ﺳ۲w
@@ -154,10 +154,10 @@ def attribute_risk(
     
     Args:
         portfolio_weights: ﻝﭨﮒﮔﻠ
-        covariance_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸?        factor_loadings: ﮒ ﮒ­ﻟﺛﺛﻟﺓ
-        factor_covariance: ﮒ ﮒ­ﮒﮔﺗ?        
+covariance_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸?        factor_loadings: ﮒﮒﻟﺛﺛﻟﺓ
+factor_covariance: ﮒﮒﮒﮔﺗ?
     Returns:
-        AttributionResult: ﮒﺛﮒ ﻝﭨﮔ
+AttributionResult: ﮒﺛﮒﻝﭨﮔ
     """
     # 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﻠ۲ﻠ۸
     portfolio_variance = portfolio_weights @ covariance_matrix @ portfolio_weights
@@ -167,12 +167,12 @@ def attribute_risk(
     marginal_contrib = covariance_matrix @ portfolio_weights
     risk_contrib = portfolio_weights * marginal_contrib / portfolio_risk
     
-    # 3. ﮒ ﮒ­ﮒﺛﮒ 
+# 3. ﮒﮒﮒﺛﮒ
     factor_contrib = calculate_factor_contribution(
         portfolio_weights, factor_loadings, factor_covariance
     )
     
-    # 4. ﻟ۰ﻛﺕﮒﺛﮒ 
+# 4. ﻟ۰ﻛﺕﮒﺛﮒ
     industry_contrib = calculate_industry_contribution(
         portfolio_weights, covariance_matrix
     )
@@ -192,21 +192,21 @@ def attribute_risk(
 
 ```python
 class TestRiskAttribution:
-    """ﻠ۲ﻠ۸ﮒﺛﮒ ﮔﭖﻟﺁ"""
+"""ﻠ۲ﻠ۸ﮒﺛﮒﮔﭖﻟﺁ"""
     
     def test_factor_attribution(self):
-        """ﮔﭖﻟﺁﮒ ﮒ­ﮒﺛﮒ """
+"""ﮔﭖﻟﺁﮒﮒﮒﺛﮒ"""
         # ﮒﮒﭨﭦﮔﭖﻟﺁﮔﺍﮔ؟
         weights = pd.Series([0.3, 0.3, 0.4], index=['A', 'B', 'C'])
         
-        # ﮔ۶ﻟ۰ﮒﺛﮒ 
+# ﮔ۶ﻟ۰ﮒﺛﮒ
         attribution = risk_attribution_system.factor_attribution(weights)
         
         # ﻠ۹ﻟﺁ
         assert attribution.factor_contributions.sum() > 0
-        assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ ?    
+assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ?
     def test_industry_attribution(self):
-        """ﮔﭖﻟﺁﻟ۰ﻛﺕﮒﺛﮒ """
+"""ﮔﭖﻟﺁﻟ۰ﻛﺕﮒﺛﮒ"""
         weights = pd.Series([0.3, 0.3, 0.4], index=['A', 'B', 'C'])
         
         attribution = risk_attribution_system.industry_attribution(weights)
@@ -221,10 +221,10 @@ class TestRiskAttribution:
 
 | ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ |
 |------|---------|---------|
-| **ﻠ۲ﻠ۸ﮒﺛﮒ ** | 1000ﻟﭖﻛﭦ۶ | < 200ms |
-| **ﮒ ﮒ­ﮒﺛﮒ ** | 10ﮒ ﮒ­ | < 100ms |
-| **ﻟ۰ﻛﺕﮒﺛﮒ ** | 28ﻟ۰ﻛﺕ | < 100ms |
+| **ﻠ۲ﻠ۸ﮒﺛﮒ** | 1000ﻟﭖﻛﭦ۶ | < 200ms |
+| **ﮒﮒﮒﺛﮒ** | 10ﮒﮒ | < 100ms |
+| **ﻟ۰ﻛﺕﮒﺛﮒ** | 28ﻟ۰ﻛﺕ | < 100ms |
 
 ---
 
-**ﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?

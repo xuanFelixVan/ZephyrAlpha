@@ -18,14 +18,14 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
   - 因子计算
   - 组合优化
   - 交易执行
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
-compliance_level: ﮒﮒ۶ﮔ ﮒ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
@@ -41,16 +41,16 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 > ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - APIﻟ؟ﺝﻟ؟۰ﻟﮒﺝ
 > **ﻝﺑ۱ﮒﺙ**: `DEV.API.001`
 > **ﮒﺙﮒﮔﭘﻠ?*: 5h
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﮔ۴ﮒ۲ﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒﮒﺎﮔ۷۰ﮒﻟﺛﮔﮔﻛﭦ۳ﻛﭦ
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﻝﭨﻛﺕﮔ۷۰ﮒﻠﺑﻠﻛﺟ۰ﮔ۴ﮒ۲ﺅﺙﻝ۰؟ﻛﺟﻝﺏﭨﻝﭨﮒﮒﺎﮔ۷۰ﮒﻟﺛﮔﮔﻛﭦ۳ﻛﭦ
 
 
 ## 1. APIﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-### 1.1 ﮔ ﺕﮒﺟﮒﮒ
+### 1.1 ﮔﺕﮒﺟﮒﮒ
 
 | ﮒﮒ | ﻟﺁﺑﮔ | ﻛﺙﮒﻝﭦ?|
 |------|------|--------|
-| **ﻛﺕﻟﺑﮔ?* | ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙﻙﻠﻟﺁﺁﻝ ﻙﮒﺛﮒ?| ﮒﺟﻠ۰ﭨ |
+| **ﻛﺕﻟﺑﮔ?* | ﻝﭨﻛﺕﮒﮒﭦﮔﺙﮒﺙﻙﻠﻟﺁﺁﻝﻙﮒﺛﮒ?| ﮒﺟﻠ۰ﭨ |
 | **ﻝ؟ﮔﺑﮔ?* | ﮔ۴ﮒ۲ﻟﻟﺑ۲ﮒﻛﺕﺅﺙﻛﺕﻟﺟﮒﭦ۵ﮒﺍﻟ۲ | ﮒﺟﻠ۰ﭨ |
 | **ﮒﺁﮔﭖﻟﺁ?* | ﮔ۴ﮒ۲ﮒﺁﻝ؛ﻝ،ﻛﭦﻛﺕﮒ۰ﻠﭨﻟﺝﮔﭖﻟﺁ | ﮒﺟﻠ۰ﭨ |
 | **ﻝﮔ؛ﮒ?* | APIﻝﮔ؛ﮔ۶ﮒﭘﺅﺙﮔﺁﮔﮒﺗﺏﮔﭨﮒﻝﭦ?| ﮒﭦﻟﺁ۴ |
@@ -76,7 +76,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ```
 
 
-## 2. ﻝﭨﻛﺕﮒﮒﭦﮔ ﺙﮒﺙ
+## 2. ﻝﭨﻛﺕﮒﮒﭦﮔﺙﮒﺙ
 
 ### 2.1 ﮒﮒﭦﻝﭨﮔ
 
@@ -87,9 +87,9 @@ from pydantic import BaseModel
 T = TypeVar('T')
 
 class APIResponse(BaseModel, Generic[T]):
-    """ﻝﭨﻛﺕAPIﮒﮒﭦﮔ ﺙﮒﺙ"""
+"""ﻝﭨﻛﺕAPIﮒﮒﭦﮔﺙﮒﺙ"""
 
-    code: int = 0                    # ﻝﭘﮔﻝ : 0=ﮔﮒ, >0=ﻠﻟﺁﺁ
+code: int = 0                    # ﻝﭘﮔﻝ: 0=ﮔﮒ, >0=ﻠﻟﺁﺁ
     message: str = "success"          # ﮔﭘﮔﺁﮔﻟﺟﺍ
     data: Optional[T] = None         # ﮒﮒﭦﮔﺍﮔ؟
     request_id: Optional[str] = None # ﻟﺁﺓﮔﺎﻟﺟﺛﻟﺕ۹ID
@@ -105,13 +105,13 @@ class APIResponse(BaseModel, Generic[T]):
         }
 ```
 
-### 2.2 ﻠﻟﺁﺁﻝ ﮒ؟ﻛﺗ?
+### 2.2 ﻠﻟﺁﺁﻝﮒ؟ﻛﺗ?
 
-| ﻠﻟﺁﺁﻝ ?| ﻟﮒﺑ | ﻟﺁﺑﮔ |
+| ﻠﻟﺁﺁﻝ?| ﻟﮒﺑ | ﻟﺁﺑﮔ |
 |--------|------|------|
 | 0 | 0xx | ﮔﮒ |
 | 1000-1999 | 1xxx | ﮔﺍﮔ؟ﻝﺕﮒﺏﻠﻟﺁﺁ |
-| 2000-2999 | 2xxx | ﻝ­ﻝ۴ﻝﺕﮒﺏﻠﻟﺁﺁ |
+| 2000-2999 | 2xxx | ﻝﻝ۴ﻝﺕﮒﺏﻠﻟﺁﺁ |
 | 3000-3999 | 3xxx | ﻠ۲ﮔ۶ﻝﺕﮒﺏﻠﻟﺁﺁ |
 | 4000-4999 | 4xxx | ﮔ۶ﻟ۰ﻝﺕﮒﺏﻠﻟﺁﺁ |
 | 5000-5999 | 5xxx | ﻝﺏﭨﻝﭨﻝﺕﮒﺏﻠﻟﺁﺁ |
@@ -124,7 +124,7 @@ class ErrorCode:
     DATA_TIMEOUT = 1003
     DATA_SOURCE_UNAVAILABLE = 1004
 
-    # ﻝ­ﻝ۴ﻠﻟﺁﺁ (2000-2999)
+# ﻝﻝ۴ﻠﻟﺁﺁ (2000-2999)
     STRATEGY_NOT_FOUND = 2001
     STRATEGY_INVALID = 2002
     STRATEGY_ALREADY_RUNNING = 2003
@@ -157,7 +157,7 @@ from datetime import datetime
 import pandas as pd
 
 class IDataHub(ABC):
-    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲"""
+"""ﮔﺍﮔ؟ﻛﺕﮒﺟﮔ۴ﮒ۲"""
 
     @abstractmethod
     def get_ohlcv(
@@ -170,16 +170,16 @@ class IDataHub(ABC):
         """ﻟﺓﮒOHLCVﮔﺍﮔ؟
 
         ﮒﮔﺍ:
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  (e.g. "000001.SZ")
+symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ (e.g. "000001.SZ")
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?(e.g. "2026-01-01")
             end_date: ﻝﭨﮔﮔ۴ﮔ (e.g. "2026-03-28")
-            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
+fields: ﮒﺁﻠﮒﮔ؟ﭖﮒﻟ۰?
 
         ﻟﺟﮒ:
             DataFrame with columns: date, open, high, low, close, volume
 
         ﮒﺙﮒﺕﺕ:
-            DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?
+DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒﮒ?
             DataTimeoutError: ﮔﺍﮔ؟ﻟﺓﮒﻟﭘﮔﭘ
         """
         pass
@@ -193,11 +193,11 @@ class IDataHub(ABC):
         """ﻟﺓﮒﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ?
 
         ﮒﮔﺍ:
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            fields: ﮒﺁﻠﮒ­ﮔ؟ﭖﮒﻟ۰?
+symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+fields: ﮒﺁﻠﮒﮔ؟ﭖﮒﻟ۰?
 
         ﻟﺟﮒ:
-            ﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ؟ﮒ­ﮒ?
+ﮒﭦﮔ؛ﻠ۱ﮔﺍﮔ؟ﮒﮒ?
         """
         pass
 
@@ -206,10 +206,10 @@ class IDataHub(ABC):
         """ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
 
         ﮒﮔﺍ:
-            market: ﮒﺕﮒﭦﻛﭨ۲ﻝ  (e.g. "A", "HK")
+market: ﮒﺕﮒﭦﻛﭨ۲ﻝ (e.g. "A", "HK")
 
         ﻟﺟﮒ:
-            ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
         """
         pass
 ```
@@ -218,7 +218,7 @@ class IDataHub(ABC):
 
 ```python
 class IFactorCalculator(ABC):
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?""
+"""ﮒﮒﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?""
 
     @abstractmethod
     def calculate(
@@ -228,16 +228,16 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?
+"""ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒﮒﮒ?
 
         ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+factor_name: ﮒﮒﮒﻝ۶ﺍ
+symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             date: ﮔ۴ﮔ
-            params: ﮒ ﮒ­ﮒﮔﺍ
+params: ﮒﮒﮒﮔﺍ
 
         ﻟﺟﮒ:
-            ﮒ ﮒ­ﮒﺙﺅﺙNoneﻟ۰۷ﻝ۳ﭦﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
+ﮒﮒﮒﺙﺅﺙNoneﻟ۰۷ﻝ۳ﭦﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
         """
         pass
 
@@ -250,14 +250,14 @@ class IFactorCalculator(ABC):
         end_date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> pd.DataFrame:
-        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­
+"""ﮔﺗﻠﻟ؟۰ﻝ؟ﮒﮒ
 
         ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
-            symbols: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+factor_name: ﮒﮒﮒﻝ۶ﺍ
+symbols: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?
             end_date: ﻝﭨﮔﮔ۴ﮔ
-            params: ﮒ ﮒ­ﮒﮔﺍ
+params: ﮒﮒﮒﮔﺍ
 
         ﻟﺟﮒ:
             DataFrame with columns: date, symbol, value
@@ -270,10 +270,10 @@ class IFactorCalculator(ABC):
         factor_name: str,
         ic_threshold: float = 0.03
     ) -> Dict[str, Any]:
-        """ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﮔ?
+"""ﻠ۹ﻟﺁﮒﮒﮔﮔﮔ?
 
         ﮒﮔﺍ:
-            factor_name: ﮒ ﮒ­ﮒﻝ۶ﺍ
+factor_name: ﮒﮒﮒﻝ۶ﺍ
             ic_threshold: ICﻠﮒ?
 
         ﻟﺟﮒ:
@@ -286,7 +286,7 @@ class IFactorCalculator(ABC):
 
 ```python
 class IStrategyEngine(ABC):
-    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲"""
+"""ﻝﻝ۴ﮒﺙﮔﮔ۴ﮒ۲"""
 
     @abstractmethod
     def generate_signals(
@@ -298,7 +298,7 @@ class IStrategyEngine(ABC):
         """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
 
         ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
+strategy_id: ﻝﻝ۴ID
             symbols: ﻟ۰ﻝ۴۷ﮒﻟ۰۷
             date: ﮔ۴ﮔ
 
@@ -316,8 +316,8 @@ class IStrategyEngine(ABC):
         """ﻟﺓﮒﮔﻛﭨ
 
         ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+strategy_id: ﻝﻝ۴ID
+symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
 
         ﻟﺟﮒ:
             ﮔﻛﭨﻛﺟ۰ﮔﺁ
@@ -335,10 +335,10 @@ class IStrategyEngine(ABC):
         """ﮔﺑﮔﺍﮔﻛﭨ
 
         ﮒﮔﺍ:
-            strategy_id: ﻝ­ﻝ۴ID
-            symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
-            volume: ﮔﻛﭨﻠﺅﺙﮔ­۲ﻛﺗﺍﮒ۴ﺅﺙﻟﺑﮒﮒﭦﺅﺙ
-            price: ﻛﭨﺓﮔ ﺙ
+strategy_id: ﻝﻝ۴ID
+symbol: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+volume: ﮔﻛﭨﻠﺅﺙﮔ۲ﻛﺗﺍﮒ۴ﺅﺙﻟﺑﮒﮒﭦﺅﺙ
+price: ﻛﭨﺓﮔﺙ
         """
         pass
 ```
@@ -372,14 +372,14 @@ class IRiskManager(ABC):
         positions: List[Position],
         portfolio_value: float
     ) -> RiskMetrics:
-        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ 
+"""ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ
 
         ﮒﮔﺍ:
             positions: ﮔﻛﭨﮒﻟ۰۷
             portfolio_value: ﻝﭨﮒﮒﺕﮒ?
 
         ﻟﺟﮒ:
-            ﻠ۲ﻠ۸ﮔﮔ 
+ﻠ۲ﻠ۸ﮔﮔ
         """
         pass
 
@@ -414,19 +414,19 @@ class IRiskManager(ABC):
 ﻗ?  ﻗﻗﻗ GET  /symbols            # ﻟﺓﮒﻟ۰ﻝ۴۷ﮒﻟ۰۷
 ﻗ?
 ﻗﻗﻗ /factors
-ﻗ?  ﻗﻗﻗ GET  /{factor_name}      # ﻟ؟۰ﻝ؟ﮒ ﮒ­
+ﻗ?  ﻗﻗﻗ GET  /{factor_name}      # ﻟ؟۰ﻝ؟ﮒﮒ
 ﻗ?  ﻗﻗﻗ POST /batch             # ﮔﺗﻠﻟ؟۰ﻝ؟
-ﻗ?  ﻗﻗﻗ GET  /validate/{name}   # ﻠ۹ﻟﺁﮒ ﮒ­
+ﻗ?  ﻗﻗﻗ GET  /validate/{name}   # ﻠ۹ﻟﺁﮒﮒ
 ﻗ?
 ﻗﻗﻗ /strategies
-ﻗ?  ﻗﻗﻗ GET  /                   # ﻝ­ﻝ۴ﮒﻟ۰۷
+ﻗ?  ﻗﻗﻗ GET  /                   # ﻝﻝ۴ﮒﻟ۰۷
 ﻗ?  ﻗﻗﻗ POST /signals           # ﻝﮔﻛﺟ۰ﮒﺓ
 ﻗ?  ﻗﻗﻗ GET  /{id}/positions    # ﻟﺓﮒﮔﻛﭨ
 ﻗ?  ﻗﻗﻗ POST /{id}/orders      # ﻛﺕﮒ
 ﻗ?
 ﻗﻗﻗ /risk
 ﻗ?  ﻗﻗﻗ POST /check_order       # ﻠ۲ﮔ۶ﮔ۲ﮔ?
-ﻗ?  ﻗﻗﻗ GET  /metrics           # ﻠ۲ﻠ۸ﮔﮔ 
+ﻗ?  ﻗﻗﻗ GET  /metrics           # ﻠ۲ﻠ۸ﮔﮔ
 ﻗ?  ﻗﻗﻗ GET  /limits            # ﻠ۲ﻠ۸ﻠﻠ۱
 ﻗ?
 ﻗﻗﻗ /system
@@ -448,7 +448,7 @@ async def get_ohlcv(
     symbol: str,
     start_date: str = Query(..., description="ﮒﺙﮒ۶ﮔ۴ﮔ?),
     end_date: str = Query(..., description="ﻝﭨﮔﮔ۴ﮔ"),
-    fields: Optional[str] = Query(None, description="ﮒ­ﮔ؟ﭖﮒﻟ۰۷ﺅﺙﻠﮒﺓﮒﻠ")
+fields: Optional[str] = Query(None, description="ﮒﮔ؟ﭖﮒﻟ۰۷ﺅﺙﻠﮒﺓﮒﻠ")
 ) -> APIResponse[pd.DataFrame]:
     """ﻟﺓﮒOHLCVﮔﺍﮔ؟"""
 
@@ -473,10 +473,10 @@ async def get_ohlcv(
 /api/v2/data/ohlcv     # v2ﻝﮔ؛
 ```
 
-### 5.2 ﮒﺙﮒ؟ﺗﮔ۶ﻝ­ﻝ?
+### 5.2 ﮒﺙﮒ؟ﺗﮔ۶ﻝﻝ?
 
 ```python
-# v1 ﻗ?v2 ﮒﺙﮒ؟ﺗﻝ­ﻝ۴
+# v1 ﻗ?v2 ﮒﺙﮒ؟ﺗﻝﻝ۴
 class DataAPIV2:
     """v2ﻝﮔ؛ﮔﺍﮔ؟API"""
 
@@ -522,7 +522,7 @@ def custom_openapi():
         routes=app.routes,
     )
 
-    # ﮔﺓﭨﮒ ﻟ؟۳ﻟﺁﻛﺟ۰ﮔﺁ
+# ﮔﺓﭨﮒﻟ؟۳ﻟﺁﻛﺟ۰ﮔﺁ
     openapi_schema["components"]["securitySchemes"] = {
         "Bearer": {
             "type": "http",
@@ -538,7 +538,7 @@ app.openapi = custom_openapi
 ```
 
 
-## 7. ﻛﺕﻛﺕﮔ۴ﮒ۲ﮔ ﮒﺍ
+## 7. ﻛﺕﻛﺕﮔ۴ﮒ۲ﮔﮒﺍ
 
 | ﮔ۴ﮒ۲ | ﻛﺕﮔﺕﺕ(ﻟﺍﻝ۷ﻟ? | ﻛﺕﮔﺕﺕ(ﻟ۱،ﻟﺍﻝ? | ﻝﺑ۱ﮒﺙ |
 |------|-------------|-------------|------|
@@ -553,8 +553,8 @@ app.openapi = custom_openapi
 
 | ﻛﭨﭨﮒ۰ | ﮔﭘﻠﺑ | ﻛﭦ۳ﻛﭨﻝ?|
 |------|------|--------|
-| ﮒﮒﭦﮔ ﺙﮒﺙﮔ ﮒﮒ?| 1h | APIResponseﮒﭦﻝﺎﭨ, ErrorCodeﮒ؟ﻛﺗ |
-| ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ | 2h | IDataHub, IFactorCalculatorﻝ­ﮔ۴ﮒ?|
+| ﮒﮒﭦﮔﺙﮒﺙﮔﮒﮒ?| 1h | APIResponseﮒﭦﻝﺎﭨ, ErrorCodeﮒ؟ﻛﺗ |
+| ﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗ | 2h | IDataHub, IFactorCalculatorﻝﮔ۴ﮒ?|
 | FastAPIﻟﺓﺁﻝﺎ | 1.5h | REST APIﮒ؟ﻝﺍ |
 | ﮔﮔ۰۲ﻠﮔ | 0.5h | OpenAPI/Swaggerﻠﻝﺛ؟ |
 

@@ -161,7 +161,7 @@ class MobileInterfaceBot:
         message = "📊 当前持仓:\n\n"
         for pos in positions:
             message += f"• {pos['symbol']}: {pos['quantity']}股\n"
-            message += f"  盈亏: ¥{pos['pnl']:,.2f} ({pos['pnl_pct']:.2f}%)\n\n"
+            message += f"  盈亏: {pos['pnl']:,.2f} ({pos['pnl_pct']:.2f}%)\n\n"
         
         update.message.reply_text(message)
     
@@ -171,8 +171,8 @@ class MobileInterfaceBot:
         risk_data = self._get_risk_data()
         
         message = "⚠️ 风险监控:\n\n"
-        message += f"• VaR (95%): ¥{risk_data['var']:,.2f}\n"
-        message += f"• ES (95%): ¥{risk_data['es']:,.2f}\n"
+message += f"• VaR (95%): {risk_data['var']:,.2f}\n"
+message += f"• ES (95%): {risk_data['es']:,.2f}\n"
         message += f"• 最大回撤: {risk_data['max_drawdown']:.2f}%\n"
         message += f"• 夏普比率: {risk_data['sharpe']:.2f}\n"
         
@@ -203,7 +203,7 @@ class MobileInterfaceBot:
         message += f"• 股票: {trade['symbol']}\n"
         message += f"• 操作: {trade['action']}\n"
         message += f"• 数量: {trade['quantity']}股\n"
-        message += f"• 价格: ¥{trade['price']:.2f}\n"
+        message += f"• 价格: {trade['price']:.2f}\n"
         message += f"• 原因: {trade['reason']}\n"
         
         update.message.reply_text(message, reply_markup=reply_markup)
@@ -305,10 +305,10 @@ def render_position_view():
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.metric("总资产", "¥1,050,000")
+        st.metric("总资产", "1,050,000")
     
     with col2:
-        st.metric("总盈亏", "¥50,000", "+5.0%")
+        st.metric("总盈亏", "50,000", "+5.0%")
     
     with col3:
         st.metric("持仓数", "15只")

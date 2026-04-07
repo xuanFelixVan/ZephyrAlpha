@@ -4,55 +4,55 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 实施指南、部署文档
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
-applicable_scope: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
-compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰?
 ---
 ---
 
 
-# StrategyEngineﻝ­ﻝ۴ﮒﺙﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵
+# StrategyEngineﻝﻝ۴ﮒﺙﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - StrategyEngineﻝ­ﻝ۴ﮒﺙﮔﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - StrategyEngineﻝﻝ۴ﮒﺙﮔﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?
 > **ﮔ۷۰ﮒID**: `STRATEGY_ENGINE_001`
 > **ﻝﮔ؛**: v1.0.0
-> **ﻝ?*: ?ﮔ­۲ﮒﺙ
+> **ﻝ?*: ?ﮔ۲ﮒﺙ
 
 
 ## 1. ﮔ۵ﻟﺟﺍ
 
 ### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?
-- **ﻛﺕﮒ۰ﻠ?*: ﻝﺏﭨﻝﭨﻠﻟ۵ﻝﭨﻛﺕﻝﻝ­ﻝ۴ﮒﺙﮔﻟﺟﻟ۰ﻝ­ﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
+- **ﻛﺕﮒ۰ﻠ?*: ﻝﺏﭨﻝﭨﻠﻟ۵ﻝﭨﻛﺕﻝﻝﻝ۴ﮒﺙﮔﻟﺟﻟ۰ﻝﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
 - **ﮔﮔﺁﻝ?*: 
-  - ﻝ­ﻝ۴ﻝ؟۰ﻝﮔﺓﺓﻛﺗﺎﺅﺙﻝﺙﭦﻛﺗﻝﭨﻛﺕﻝﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
-  - ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮔﻝﻛﺛﺅﺙﻝ­ﻝ۴ﮔ۶ﻟ۰ﻝﺙﭦﻛﺗﮒﺗﭘﻟ۰ﮒﮒﻛﺙﮒ
-  - ﻝ­ﻝ۴ﻝﮔ۶ﮒﺍﻠﺝﺅﺙﻝﺙﭦﻛﺗﮒ؟ﮔﭘﻝﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
-  - ﻝ­ﻝ۴ﮔ۸ﮒﺎﮔ۶ﮒﺓ؟ﺅﺙﻠﺝﻛﭨ۴ﮒﺟ،ﻠﮔﺓﭨﮒ ﮒﻠ۷ﻝﺛﺎﮔﺍﻝ­?
+- ﻝﻝ۴ﻝ؟۰ﻝﮔﺓﺓﻛﺗﺎﺅﺙﻝﺙﭦﻛﺗﻝﭨﻛﺕﻝﻝﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
+- ﻝﻝ۴ﮔ۶ﻟ۰ﮔﻝﻛﺛﺅﺙﻝﻝ۴ﮔ۶ﻟ۰ﻝﺙﭦﻛﺗﮒﺗﭘﻟ۰ﮒﮒﻛﺙﮒ
+- ﻝﻝ۴ﻝﮔ۶ﮒﺍﻠﺝﺅﺙﻝﺙﭦﻛﺗﮒ؟ﮔﭘﻝﻝﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
+- ﻝﻝ۴ﮔ۸ﮒﺎﮔ۶ﮒﺓ؟ﺅﺙﻠﺝﻛﭨ۴ﮒﺟ،ﻠﮔﺓﭨﮒﮒﻠ۷ﻝﺛﺎﮔﺍﻝ?
 - **ﻠ۱ﮔﻛﭨ?*: 
-  - ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﻝ­ﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
-  - ﮔﮒﻝ­ﻝ۴ﮔ۶ﻟ۰ﮔﻝﮒﮒﺗﭘﻟ۰ﮒﻟﺛﮒ
-  - ﮔﻛﺝﮒ؟ﮔﭘﻝﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
-  - ﮔﺁﮔﻝ­ﻝ۴ﻝ­ﻠ۷ﻝﺛﺎﮒﮒﺟ،ﻠﮔ۸?
+- ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﻝﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
+- ﮔﮒﻝﻝ۴ﮔ۶ﻟ۰ﮔﻝﮒﮒﺗﭘﻟ۰ﮒﻟﺛﮒ
+- ﮔﻛﺝﮒ؟ﮔﭘﻝﻝﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
+- ﮔﺁﮔﻝﻝ۴ﻝﻠ۷ﻝﺛﺎﮒﮒﺟ،ﻠﮔ۸?
 
 ### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?
-- **Layerﮒ؟ﻛﺛ**: Layer 5 - ﻝ­ﻝ۴ﮔ۶ﻟ۰?(ﻝ؛۵ﮒARCHITECTURE.mdﮒ؟ﻛﺗ)
-- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔ ﺕﮒﺟﻝ­ﻝ۴ﮔ۶ﻟ۰ﮔ۷۰ﮒ
-- **ﮔﭘﮔﻟ۶ﻟﺎ**: Layer 5ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮔ ﺕﮒﺟﺅﺙﮒﻟﺍﻝ­ﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
+- **Layerﮒ؟ﻛﺛ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?(ﻝ؛۵ﮒARCHITECTURE.mdﮒ؟ﻛﺗ)
+- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔﺕﮒﺟﻝﻝ۴ﮔ۶ﻟ۰ﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: Layer 5ﻝﻝ۴ﮔ۶ﻟ۰ﮔﺕﮒﺟﺅﺙﮒﻟﺍﻝﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
 
 ### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
 | ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝ?|
 |------|------|------|----------|------|
-| v1.0.0 | 2026-04-02 | ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ | ﮒﮒ۶ﻝﮔ؛ | Active |
+| v1.0.0 | 2026-04-02 | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ | ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
@@ -61,26 +61,26 @@ implementation_status: ﻟﺟﻟ۰?
 ### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?
 ```
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-?                   Layer 5: ﻝ­ﻝ۴ﮔ۶ﻟ۰?                      ?
+?                   Layer 5: ﻝﻝ۴ﮔ۶ﻟ۰?                      ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ?                                                            ?
 ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
-? ?         StrategyEngine (ﻝ­ﻝ۴ﮒﺙﮔﻛﺕﭨﮔ۷۰?               ? ?
-? ? - ﻝ­ﻝ۴ﮔﺏ۷ﮒ                                            ? ?
-? ? - ﻝ­ﻝ۴ﻟﺍﮒﭦ۵                                            ? ?
-? ? - ﻝ­ﻝ۴ﮔ۶ﻟ۰                                            ? ?
-? ? - ﻝ­ﻝ۴ﻝﮔ۶                                            ? ?
+? ?         StrategyEngine (ﻝﻝ۴ﮒﺙﮔﻛﺕﭨﮔ۷۰?               ? ?
+? ? - ﻝﻝ۴ﮔﺏ۷ﮒ                                            ? ?
+? ? - ﻝﻝ۴ﻟﺍﮒﭦ۵                                            ? ?
+? ? - ﻝﻝ۴ﮔ۶ﻟ۰                                            ? ?
+? ? - ﻝﻝ۴ﻝﮔ۶                                            ? ?
 ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
 ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
-? ?         ﮔ ﺕﮒﺟﻝﭨﻛﭨﭘ                                      ? ?
+? ?         ﮔﺕﮒﺟﻝﭨﻛﭨﭘ                                      ? ?
 ? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
 ? ? ﻗStrategyScanner?ﻗStrategyLoader?ﻗStrategyRegistry? ?
-? ? ﻗﻝ­ﻝ۴ﮔ،ﮔﮒ۷     ? ﻗﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ۷   ? ﻗﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰۷   ? ? ?
+? ? ﻗﻝﻝ۴ﮔ،ﮔﮒ۷     ? ﻗﻝﻝ۴ﮒﻟﺛﺛﮒ۷   ? ﻗﻝﻝ۴ﮔﺏ۷ﮒﻟ۰۷   ? ? ?
 ? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
 ? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
 ? ? ﻗStrategyFactory?ﻗParameterMgr ?ﻗEventBus     ? ? ?
-? ? ﻗﻝ­ﻝ۴ﮒﺓ۴?      ? ﻗﮒﮔﺍﻝ؟۰ﻝﮒ۷   ? ﻗﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ     ? ? ?
+? ? ﻗﻝﻝ۴ﮒﺓ۴?      ? ﻗﮒﮔﺍﻝ؟۰ﻝﮒ۷   ? ﻗﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ     ? ? ?
 ? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
 ? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                    ? ?
 ? ? ﻗStateMonitor ?                                    ? ?
@@ -99,24 +99,24 @@ implementation_status: ﻟﺟﻟ۰?
 ```
 
 ### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
-- **Layerﮒﺛﮒﺎ**: Layer 5 - ﻝ­ﻝ۴ﮔ۶ﻟ۰?
-- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻙﻝ­ﻝ۴ﻟﺍﮒﭦ۵ﻙﻝ­ﻝ۴ﮔ۶ﻟ۰ﻙﻝ­ﻝ۴ﻝ?
+- **Layerﮒﺛﮒﺎ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?
+- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﻝﻝ۴ﮔﺏ۷ﮒﻙﻝﻝ۴ﻟﺍﮒﭦ۵ﻙﻝﻝ۴ﮔ۶ﻟ۰ﻙﻝﻝ۴ﻝ?
 - **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
-  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ?(ﮔﻛﺝﻠ۱ﮔﭖﻛﺟ۰ﮒﺓ)
+- ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗ?(ﮔﻛﺝﻠ۱ﮔﭖﻛﺟ۰ﮒﺓ)
   - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 6 ﻝﭨﮒﻛﺙﮒ?(ﮔ۴ﮔﭘﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ)
 
 ### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟?
-- **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻙﻝ­ﻝ۴ﻟﺍﮒﭦ۵ﻙﻝ­ﻝ۴ﮔ۶ﻟ۰ﻙﻝ­ﻝ۴ﻝ?
+- **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﻝﻝ۴ﮔﺏ۷ﮒﻙﻝﻝ۴ﻟﺍﮒﭦ۵ﻙﻝﻝ۴ﮔ۶ﻟ۰ﻙﻝﻝ۴ﻝ?
 - **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
-  - ?ﮔ؛ﮔ۷۰ﮒﻟﺑ? ﻝ­ﻝ۴ﮒ۷ﻝﮒﺛﮒ۷ﮔﻝ؟۰?
-  - ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔﺍﮔ؟ﻟﺓﮒﻙﮒ ﮒ­ﻟ؟۰ﻝ؟ﻙﻠ۲ﻠ۸ﮔ۶ﮒﭘﻙﻛﭦ۳ﮔﮔ۶?
+- ?ﮔ؛ﮔ۷۰ﮒﻟﺑ? ﻝﻝ۴ﮒ۷ﻝﮒﺛﮒ۷ﮔﻝ؟۰?
+- ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔﺍﮔ؟ﻟﺓﮒﻙﮒﮒﻟ؟۰ﻝ؟ﻙﻠ۲ﻠ۸ﮔ۶ﮒﭘﻙﻛﭦ۳ﮔﮔ۶?
 - **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﻝﭨﻛﺕﻝPython APIﮔ۴ﮒ۲
 
 ### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨ
 | ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| threading | ﮒﺙﭦﻛﺝ?| Pythonﮔ ﮒ?| >=3.8 | ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?|
-| queue | ﮒﺙﭦﻛﺝ?| Pythonﮔ ﮒ?| >=3.8 | ﻠﮒﮔﺁﮔ |
+| threading | ﮒﺙﭦﻛﺝ?| Pythonﮔﮒ?| >=3.8 | ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?|
+| queue | ﮒﺙﭦﻛﺝ?| Pythonﮔﮒ?| >=3.8 | ﻠﮒﮔﺁﮔ |
 | yaml | ﮒﺙﭦﻛﺝ?| Python?| >=5.4.0 | ﻠﻝﺛ؟ﻟ۶۲ﮔ |
 | watchdog | ﮒﺁﻠﻛﺝ?| Python?| >=2.1.0 | ﮔﻛﭨﭘﻝﮔ۶ |
 
@@ -140,7 +140,7 @@ import logging
 
 
 class StrategyStatus(Enum):
-    """ﻝ­ﻝ۴ﻝﭘﮔﮔ?""
+"""ﻝﻝ۴ﻝﭘﮔﮔ?""
     REGISTERED = "registered"
     RUNNING = "running"
     PAUSED = "paused"
@@ -150,7 +150,7 @@ class StrategyStatus(Enum):
 
 @dataclass
 class StrategyMetadata:
-    """ﻝ­ﻝ۴ﮒﮔﺍ?""
+"""ﻝﻝ۴ﮒﮔﺍ?""
     strategy_id: str
     name: str
     category: str
@@ -176,7 +176,7 @@ class Signal:
 
 @dataclass
 class StrategyExecutionContext:
-    """ﻝ­ﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
+"""ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
     strategy_id: str
     status: StrategyStatus
     start_time: datetime
@@ -187,11 +187,11 @@ class StrategyExecutionContext:
 
 
 class IStrategy(ABC):
-    """ﻝ­ﻝ۴ﮔ۴ﮒ۲"""
+"""ﻝﻝ۴ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def initialize(self, parameters: Dict[str, Any]) -> None:
-        """ﮒﮒ۶ﮒﻝ­?""
+"""ﮒﮒ۶ﮒﻝ?""
         pass
     
     @abstractmethod
@@ -210,14 +210,14 @@ class IStrategy(ABC):
 
 
 class StrategyScanner:
-    """ﻝ­ﻝ۴ﮔ،ﮔ?""
+"""ﻝﻝ۴ﮔ،ﮔ?""
     
     def __init__(self, strategy_dir: str):
         self.strategy_dir = strategy_dir
         self.logger = logging.getLogger(__name__)
     
     def scan_strategies(self) -> List[str]:
-        """ﮔ،ﮔﻝ­ﻝ۴ﻝ؟ﮒﺛ"""
+"""ﮔ،ﮔﻝﻝ۴ﻝ؟ﮒﺛ"""
         import os
         strategy_files = []
         
@@ -229,20 +229,20 @@ class StrategyScanner:
         return strategy_files
     
     def parse_strategy_config(self, config_file: str) -> Dict[str, Any]:
-        """ﻟ۶۲ﮔﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﻛﭨﭘ"""
+"""ﻟ۶۲ﮔﻝﻝ۴ﻠﻝﺛ؟ﮔﻛﭨﭘ"""
         with open(config_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         return config
 
 
 class StrategyLoader:
-    """ﻝ­ﻝ۴ﮒ ﻟﺛﺛ?""
+"""ﻝﻝ۴ﮒﻟﺛﺛ?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
     def load_strategy(self, strategy_id: str, config: Dict[str, Any]) -> IStrategy:
-        """ﮒ۷ﮔﮒ ﻟﺛﺛﻝ­?""
+"""ﮒ۷ﮔﮒﻟﺛﺛﻝ?""
         module_path = config.get('module')
         class_name = config.get('class')
         
@@ -253,7 +253,7 @@ class StrategyLoader:
         return strategy_class()
     
     def validate_strategy(self, strategy: IStrategy) -> bool:
-        """ﻠ۹ﻟﺁﻝ­ﻝ۴ﮔ۴ﮒ۲"""
+"""ﻠ۹ﻟﺁﻝﻝ۴ﮔ۴ﮒ۲"""
         required_methods = ['initialize', 'generate_signals', 'on_event']
         
         for method in required_methods:
@@ -264,7 +264,7 @@ class StrategyLoader:
 
 
 class StrategyRegistry:
-    """ﻝ­ﻝ۴ﮔﺏ۷ﮒ?""
+"""ﻝﻝ۴ﮔﺏ۷ﮒ?""
     
     def __init__(self):
         self._strategies: Dict[str, StrategyMetadata] = {}
@@ -273,7 +273,7 @@ class StrategyRegistry:
         self.logger = logging.getLogger(__name__)
     
     def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
-        """ﮔﺏ۷ﮒﻝ­ﻝ۴"""
+"""ﮔﺏ۷ﮒﻝﻝ۴"""
         if strategy_id in self._strategies:
             raise ValueError(f"Strategy {strategy_id} already registered")
         
@@ -282,7 +282,7 @@ class StrategyRegistry:
         self.logger.info(f"Registered strategy: {strategy_id}")
     
     def unregister(self, strategy_id: str) -> None:
-        """ﮔﺏ۷ﻠﻝ­ﻝ۴"""
+"""ﮔﺏ۷ﻠﻝﻝ۴"""
         if strategy_id not in self._strategies:
             raise ValueError(f"Strategy {strategy_id} not found")
         
@@ -294,21 +294,21 @@ class StrategyRegistry:
         self.logger.info(f"Unregistered strategy: {strategy_id}")
     
     def get_metadata(self, strategy_id: str) -> StrategyMetadata:
-        """ﻟﺓﮒﻝ­ﻝ۴ﮒﮔﺍ?""
+"""ﻟﺓﮒﻝﻝ۴ﮒﮔﺍ?""
         if strategy_id not in self._strategies:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         return self._strategies[strategy_id]
     
     def get_status(self, strategy_id: str) -> StrategyStatus:
-        """ﻟﺓﮒﻝ­ﻝ۴ﻝ?""
+"""ﻟﺓﮒﻝﻝ۴ﻝ?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         return self._statuses[strategy_id]
     
     def set_status(self, strategy_id: str, status: StrategyStatus) -> None:
-        """ﻟ؟ﺝﻝﺛ؟ﻝ­ﻝ۴ﻝ?""
+"""ﻟ؟ﺝﻝﺛ؟ﻝﻝ۴ﻝ?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
@@ -316,12 +316,12 @@ class StrategyRegistry:
         self.logger.info(f"Strategy {strategy_id} status changed to {status}")
     
     def list_strategies(self) -> List[str]:
-        """ﮒﮒﭦﮔﮔﻝ­?""
+"""ﮒﮒﭦﮔﮔﻝ?""
         return list(self._strategies.keys())
 
 
 class StrategyFactory:
-    """ﻝ­ﻝ۴ﮒﺓ۴ﮒ"""
+"""ﻝﻝ۴ﮒﺓ۴ﮒ"""
     
     def __init__(self, registry: StrategyRegistry, loader: StrategyLoader):
         self.registry = registry
@@ -329,7 +329,7 @@ class StrategyFactory:
         self.logger = logging.getLogger(__name__)
     
     def create_strategy(self, strategy_id: str) -> IStrategy:
-        """ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ"""
+"""ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ"""
         metadata = self.registry.get_metadata(strategy_id)
         
         config = {
@@ -389,7 +389,7 @@ class EventBus:
         self.logger.info("EventBus started")
     
     def stop(self) -> None:
-        """ﮒﮔ­۱ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ"""
+"""ﮒﮔ۱ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ"""
         self._running = False
         if self._thread:
             self._thread.join()
@@ -417,7 +417,7 @@ class EventBus:
 
 
 class StrategyEngine:
-    """ﻝ­ﻝ۴ﮒﺙﮔ"""
+"""ﻝﻝ۴ﮒﺙﮔ"""
     
     def __init__(self, event_bus: EventBus, registry: StrategyRegistry):
         self.event_bus = event_bus
@@ -428,7 +428,7 @@ class StrategyEngine:
         self.logger = logging.getLogger(__name__)
     
     def start_strategy(self, strategy_id: str) -> None:
-        """ﮒﺁﮒ۷ﻝ­ﻝ۴"""
+"""ﮒﺁﮒ۷ﻝﻝ۴"""
         if strategy_id in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} already running")
         
@@ -453,7 +453,7 @@ class StrategyEngine:
         self.logger.info(f"Started strategy: {strategy_id}")
     
     def stop_strategy(self, strategy_id: str) -> None:
-        """ﮒﮔ­۱ﻝ­ﻝ۴"""
+"""ﮒﮔ۱ﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -470,7 +470,7 @@ class StrategyEngine:
         self.logger.info(f"Stopped strategy: {strategy_id}")
     
     def pause_strategy(self, strategy_id: str) -> None:
-        """ﮔﮒﻝ­ﻝ۴"""
+"""ﮔﮒﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -487,7 +487,7 @@ class StrategyEngine:
         self.logger.info(f"Paused strategy: {strategy_id}")
     
     def resume_strategy(self, strategy_id: str) -> None:
-        """ﮔ۱ﮒ۳ﻝ­ﻝ۴"""
+"""ﮔ۱ﮒ۳ﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -558,38 +558,38 @@ class StrategyEngine:
         }
     
     def get_context(self, strategy_id: str) -> StrategyExecutionContext:
-        """ﻟﺓﮒﻝ­ﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
+"""ﻟﺓﮒﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
         return self._running_contexts[strategy_id]
 ```
 
-### 3.2 ﮔ۶ﻟﺛﮔﮔ ﻟ۵ﮔﺎ
-| ﮔ۶ﻟﺛﮔﮔ  | ﻝ؟ﮔ ?| ﮔﭖﻠﮔﺗﮔﺏ |
+### 3.2 ﮔ۶ﻟﺛﮔﮔﻟ۵ﮔﺎ
+| ﮔ۶ﻟﺛﮔﮔ | ﻝ؟ﮔ?| ﮔﭖﻠﮔﺗﮔﺏ |
 |----------|--------|----------|
-| ﻝ­ﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮒﮔ؛۰ﮔﺏ۷ﮒ |
-| ﻝ­ﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮒﮔ؛۰ﮒﺁﮒ۷ |
+| ﻝﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮒﮔ؛۰ﮔﺏ۷ﮒ |
+| ﻝﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮒﮔ؛۰ﮒﺁﮒ۷ |
 | ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 1?| ﮒﮔ؛۰ﻝﮔ |
-| ﮒﺗﭘﮒﻝ­ﻝ۴?| ?10?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
+| ﮒﺗﭘﮒﻝﻝ۴?| ?10?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
 | ﻛﭦﻛﭨﭘﮒ۳ﻝﮒﭨﭘﻟﺟ | < 50ms | ﮒﮔ؛۰ﮒ۳ﻝ |
 
 ### 3.3 ﮒ؟ﮒ۷ﮔﭦﮒﭘ
-- **ﻝ­ﻝ۴ﻠﻝ۵ﭨ**: ﮔﺁﻛﺕ۹ﻝ­ﻝ۴ﻟﺟﻟ۰ﮒ۷ﻝ؛ﻝ،ﻝﻛﺕﻛﺕﮔﻛﺕ­
-- **ﮒﺙﮒﺕﺕﮒ۳ﻝ**: ﻝ­ﻝ۴ﮒﺙﮒﺕﺕﻛﺕﮒﺛﺎﮒﮒﭘﻛﭨﻝ­ﻝ۴ﻟﺟ?
-- **ﻟﭖﮔﭦﻠﮒﭘ**: ﻠﮒﭘﻝ­ﻝ۴ﻝﻟﭖﮔﭦﻛﺛﺟ?
+- **ﻝﻝ۴ﻠﻝ۵ﭨ**: ﮔﺁﻛﺕ۹ﻝﻝ۴ﻟﺟﻟ۰ﮒ۷ﻝ؛ﻝ،ﻝﻛﺕﻛﺕﮔﻛﺕ
+- **ﮒﺙﮒﺕﺕﮒ۳ﻝ**: ﻝﻝ۴ﮒﺙﮒﺕﺕﻛﺕﮒﺛﺎﮒﮒﭘﻛﭨﻝﻝ۴ﻟﺟ?
+- **ﻟﭖﮔﭦﻠﮒﭘ**: ﻠﮒﭘﻝﻝ۴ﻝﻟﭖﮔﭦﻛﺛﺟ?
 
 ---
 
-## 4. ﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ­?
+## 4. ﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ?
 
-### 4.1 ﮔ ﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
+### 4.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
-#### 4.1.1 ﻝ­ﻝ۴ﮒﮔﺍﮔ؟ﮔ۷۰?
+#### 4.1.1 ﻝﻝ۴ﮒﮔﺍﮔ؟ﮔ۷۰?
 ```python
 @dataclass
 class StrategyMetadataData:
-    """ﻝ­ﻝ۴ﮒﮔﺍﮔ؟ﮔﺍﮔ؟ﮔ۷۰?""
+"""ﻝﻝ۴ﮒﮔﺍﮔ؟ﮔﺍﮔ؟ﮔ۷۰?""
     strategy_id: str
     name: str
     category: str
@@ -601,11 +601,11 @@ class StrategyMetadataData:
     created_time: datetime
 ```
 
-#### 4.1.2 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔ۷۰?
+#### 4.1.2 ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔ۷۰?
 ```python
 @dataclass
 class StrategyExecutionContextData:
-    """ﻝ­ﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔﺍﮔ؟ﮔ۷۰?""
+"""ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔﺍﮔ؟ﮔ۷۰?""
     strategy_id: str
     status: StrategyStatus
     start_time: datetime
@@ -629,33 +629,33 @@ class SignalData:
     timestamp: datetime
 ```
 
-### 4.2 ﻝﺙﮒ­ﻝ­ﻝ۴
-| ﻝﺙﮒ­ﻝﺎﭨﮒ | TTL | ﮔﺓﮔﺎﺍﻝ­ﻝ۴ | ﮔﮒ۳۶ﮒ؟ﺗ?|
+### 4.2 ﻝﺙﮒﻝﻝ۴
+| ﻝﺙﮒﻝﺎﭨﮒ | TTL | ﮔﺓﮔﺎﺍﻝﻝ۴ | ﮔﮒ۳۶ﮒ؟ﺗ?|
 |----------|-----|----------|----------|
-| ﻝ­ﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ­ | 30ﮒﻠ | LRU | 50ﻛﺕ۹ﮒ؟?|
-| ﻝ­ﻝ۴ﻠﻝﺛ؟ﻝﺙﮒ­ | 1ﮒﺍﮔﭘ | LRU | 100ﻛﺕ۹ﻠ?|
-| ﻛﺟ۰ﮒﺓﻝﺙﮒ­ | 5ﮒﻠ | LRU | 1000?|
+| ﻝﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ | 30ﮒﻠ | LRU | 50ﻛﺕ۹ﮒ؟?|
+| ﻝﻝ۴ﻠﻝﺛ؟ﻝﺙﮒ | 1ﮒﺍﮔﭘ | LRU | 100ﻛﺕ۹ﻠ?|
+| ﻛﺟ۰ﮒﺓﻝﺙﮒ | 5ﮒﻠ | LRU | 1000?|
 
 ### 4.3 ﮔﺍﮔ؟ﮔﻛﺗ?
-- **ﮔﻛﺗﮒﻠ?*: ﻝ­ﻝ۴ﮒﮔﺍﮔ؟ﻙﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﻠﻟ۵ﮔﻛﺗﮒﮒ­ﮒ۷
-- **ﮒ­ﮒ۷ﮔ ﺙﮒﺙ**: YAMLﻠﻝﺛ؟ﮔﻛﭨﭘ + SQLiteﮔﺍﮔ؟?
+- **ﮔﻛﺗﮒﻠ?*: ﻝﻝ۴ﮒﮔﺍﮔ؟ﻙﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﻠﻟ۵ﮔﻛﺗﮒﮒﮒ۷
+- **ﮒﮒ۷ﮔﺙﮒﺙ**: YAMLﻠﻝﺛ؟ﮔﻛﭨﭘ + SQLiteﮔﺍﮔ؟?
 
 ---
 
 ## 5. ﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﮔ
 
-### 5.1 ﮔ ﺕﮒﺟﻝ؟ﮔﺏ
+### 5.1 ﮔﺕﮒﺟﻝ؟ﮔﺏ
 
-#### 5.1.1 ﻝ­ﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
+#### 5.1.1 ﻝﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
 ```python
 def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
     """
-    ﻝ­ﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
+ﻝﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
     
     ﻝ؟ﮔﺏﮒﻝ:
-    1. ﮔ۲ﮔ۴ﻝ­ﻝ۴ﮔﺁﮒ۵ﮒﺓﺎﮔﺏ۷ﮒ
-    2. ﮒ­ﮒ۷ﻝ­ﻝ۴ﮒﮔﺍ?
-    3. ﮒﮒ۶ﮒﻝ­ﻝ۴ﻝﭘ?
+1. ﮔ۲ﮔ۴ﻝﻝ۴ﮔﺁﮒ۵ﮒﺓﺎﮔﺏ۷ﮒ
+2. ﮒﮒ۷ﻝﻝ۴ﮒﮔﺍ?
+3. ﮒﮒ۶ﮒﻝﻝ۴ﻝﭘ?
     4. ﮒﮒﺕﮔﺏ۷ﮒﻛﭦﻛﭨﭘ
     
     ﮒ۳ﮔ? O(1)
@@ -668,7 +668,7 @@ def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
     self.logger.info(f"Registered strategy: {strategy_id}")
 ```
 
-#### 5.1.2 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
+#### 5.1.2 ﻝﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
 ```python
 def generate_signals(
     self,
@@ -677,17 +677,17 @@ def generate_signals(
     date: str
 ) -> List[Signal]:
     """
-    ﻝ­ﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
+ﻝﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
     
     ﻝ؟ﮔﺏﮒﻝ:
-    1. ﮔ۲ﮔ۴ﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘ?
-    2. ﮒﮒﭨﭦﻝ­ﻝ۴ﮒ؟ﻛﺝ
+1. ﮔ۲ﮔ۴ﻝﻝ۴ﻟﺟﻟ۰ﻝﭘ?
+2. ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ
     3. ﻟﺓﮒﮒﺕﮒﭦﮔﺍﮔ؟
-    4. ﮔ۶ﻟ۰ﻝ­ﻝ۴ﻠﭨﻟﺝ
+4. ﮔ۶ﻟ۰ﻝﻝ۴ﻠﭨﻟﺝ
     5. ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
     6. ﮒﮒﺕﻛﺟ۰ﮒﺓﻛﭦﻛﭨﭘ
     
-    ﮒ۳ﮔ? O(n*m) nﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍﺅﺙmﻛﺕﭦﻝ­ﻝ۴ﮒ۳ﮔﮒﭦ۵
+ﮒ۳ﮔ? O(n*m) nﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍﺅﺙmﻛﺕﭦﻝﻝ۴ﮒ۳ﮔﮒﭦ۵
     """
     if strategy_id not in self._running_contexts:
         raise ValueError(f"Strategy {strategy_id} not running")
@@ -755,14 +755,14 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 
 ---
 
-## 6. ﮒ؟ﮔﺛﮔﮔﺁﮔ 
+## 6. ﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 ﻟﺁ­ﻟ۷ﻛﺕﮔ۰?
+### 6.1 ﻟﺁﻟ۷ﻛﺕﮔ۰?
 | ﮔﮔﺁﻠﮒ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﻝ?| ﻠﮔ۸ﻝﻝﺎ |
 |----------|----------|------|----------|
-| Python | >=3.8 | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁ­ﻟ۷ | ﻠﮒﻝﺏﭨﻝﭨﮔ ﮒﻟﺁ­ﻟ۷ |
-| threading | ﮔ ﮒ?| ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?| Pythonﮒﻝﺛ؟ﺅﺙﻝ۷ﺏﮒ؟ﮒﺁ?|
-| queue | ﮔ ﮒ?| ﻠﮒﮔﺁﮔ | Pythonﮒﻝﺛ؟ﺅﺙﻝﭦﺟﻝ۷ﮒ؟?|
+| Python | >=3.8 | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ | ﻠﮒﻝﺏﭨﻝﭨﮔﮒﻟﺁﻟ۷ |
+| threading | ﮔﮒ?| ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?| Pythonﮒﻝﺛ؟ﺅﺙﻝ۷ﺏﮒ؟ﮒﺁ?|
+| queue | ﮔﮒ?| ﻠﮒﮔﺁﮔ | Pythonﮒﻝﺛ؟ﺅﺙﻝﭦﺟﻝ۷ﮒ؟?|
 | yaml | >=5.4.0 | ﻠﻝﺛ؟ﻟ۶۲ﮔ | ﻛﭦﭦﻝﺎﭨﮒﺁﻟﺁﭨﺅﺙﮔﻛﭦﻝﭨﺑ?|
 
 ### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝ?
@@ -774,15 +774,15 @@ requirements:
 
 ---
 
-## 7. ﮔﭖﻟﺁﻝ­ﻝ۴
+## 7. ﮔﭖﻟﺁﻝﻝ۴
 
 ### 7.1 ﮒﮒﮔﭖﻟﺁ
 | ﮔﭖﻟﺁ?| ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟?|
 |--------|----------|------------|
-| ﻝ­ﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ­۲ﻝ۰؟?| 100% |
-| ﻝ­ﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ­۲ﻝ۰؟?| 100% |
-| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ­۲ﻝ۰؟?| 100% |
-| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ­۲ﻝ۰?| 100% |
+| ﻝﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ۲ﻝ۰؟?| 100% |
+| ﻝﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ۲ﻝ۰؟?| 100% |
+| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ۲ﻝ۰؟?| 100% |
+| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ۲ﻝ۰?| 100% |
 
 ### 7.2 ﻠﮔﮔﭖﻟﺁ
 ```python
@@ -816,52 +816,52 @@ def test_strategy_engine_integration():
 ## 8. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵?
 
 ### 8.1 ﮔﮔﺁﻠ۲?
-| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﻠ۲ﻠ۸ﻝ­ﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﻠ۲ﻠ۸ﻝﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|----------|
-| R001 | ﻝ­ﻝ۴ﮒﺙﮒﺕﺕﮒﺁﺙﻟﺑﮒﺙﮔﮒﺑ۸ﮔﭦ | P1 | ﮒ؟ﻝﺍﮒﺙﮒﺕﺕﻠﻝ۵ﭨﮒﮔ­ﻟﺓﺁﮒ۷ﮔﭦﮒﭘ |
-| R002 | ﻝ­ﻝ۴ﻟﭖﮔﭦﮔﺏﮔﺙ | P1 | ﮒ؟ﻝﺍﻟﭖﮔﭦﻝﮔ۶ﮒﻠﮒﭘﮔﭦ?|
+| R001 | ﻝﻝ۴ﮒﺙﮒﺕﺕﮒﺁﺙﻟﺑﮒﺙﮔﮒﺑ۸ﮔﭦ | P1 | ﮒ؟ﻝﺍﮒﺙﮒﺕﺕﻠﻝ۵ﭨﮒﮔﻟﺓﺁﮒ۷ﮔﭦﮒﭘ |
+| R002 | ﻝﻝ۴ﻟﭖﮔﭦﮔﺏﮔﺙ | P1 | ﮒ؟ﻝﺍﻟﭖﮔﭦﻝﮔ۶ﮒﻠﮒﭘﮔﭦ?|
 | R003 | ﻛﭦﻛﭨﭘﻠﮒﻝ۶ﺁﮒ | P2 | ﮒ؟ﻝﺍﻠﮒﻝﮔ۶ﮒﻟﮒﮔﭦ?|
-| R004 | ﻝ­ﻝ۴ﮒﺎﻝ۹ | P2 | ﮒ؟ﻝﺍﻝ­ﻝ۴ﻠﻝ۵ﭨﮒﻛﺙﮒﻝﭦ۶ﮔﭦﮒﭘ |
+| R004 | ﻝﻝ۴ﮒﺎﻝ۹ | P2 | ﮒ؟ﻝﺍﻝﻝ۴ﻠﻝ۵ﭨﮒﻛﺙﮒﻝﭦ۶ﮔﭦﮒﭘ |
 
 ### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
-- **ﮔﮔﺁﻝﭦ۵?*: ﻛﺝﻟﭖPythonﮔ ﮒﮒﭦﮒﮒﺍﻠﻝ؛؛ﻛﺕﮔﺗﮒﭦ
-- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: ﮒﮒ­ﻛﺛﺟﻝ۷<2GBﺅﺙCPUﻛﺛﺟﻝ۷<50%
+- **ﮔﮔﺁﻝﭦ۵?*: ﻛﺝﻟﭖPythonﮔﮒﮒﭦﮒﮒﺍﻠﻝ؛؛ﻛﺕﮔﺗﮒﭦ
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: ﮒﮒﻛﺛﺟﻝ۷<2GBﺅﺙCPUﻛﺛﺟﻝ۷<50%
 - **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: ﻠ۱ﻟ؟۰ﮒﺙﮒﮔﭘ?0ﮒﺍﮔﭘ
 - **ﻟﺑ۷ﻠﻝﭦ۵ﮔ**: ﮔﭖﻟﺁﻟ۵ﻝﻝﻗ۴90%
 
 ---
 
-## 9. ﻠ۹ﮔﭘﮔ ﮒ
+## 9. ﻠ۹ﮔﭘﮔﮒ
 
-### 9.1 ﮒﻟﺛﻠ۹ﮔﭘﮔ ﮒ
-| ﮒﻟﺛ?| ﻠ۹ﮔﭘﮔ ﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮒﻟﺛ?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |--------|----------|----------|
-| ﻝ­ﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ­۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
-| ﻝ­ﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ­۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
-| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ­۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
-| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ­۲?| ﮒﮒﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ۲?| ﮒﮒﮔﭖﻟﺁ |
 
-### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔ ﮒ
-| ﮔ۶ﻟﺛﮔﮔ  | ﻠ۹ﮔﭘﮔ ﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| ﻝ­ﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
-| ﻝ­ﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 | ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 1?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘﮔ ﮒ
-| ﻟﺑ۷ﻠﮔﮔ  | ﻠ۹ﮔﭘﮔ ﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
+### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘﮔﮒ
+| ﻟﺑ۷ﻠﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
 | ﮔﭖﻟﺁﻟ۵ﻝ?| ?90% | pytest-cov |
-| ﻛﭨ۲ﻝ ﻟﺑ۷ﻠ | ﮔ ﻛﺕ۴ﻠﻠ؟?| pylint |
+| ﻛﭨ۲ﻝﻟﺑ۷ﻠ | ﮔﻛﺕ۴ﻠﻠ؟?| pylint |
 
 ---
 
 ## 10. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
 
-### 10.1 Phase 1: ﮔ ﺕﮒﺟﮒﻟﺛﮒﺙ?(5?
-- **Day 1**: ﻝ­ﻝ۴ﮔ،ﮔﮒ۷ﻙﻝ­ﻝ۴ﮒ ﻟﺛﺛﮒ۷
-- **Day 2**: ﻝ­ﻝ۴ﮔﺏ۷ﮒﻟ۰۷ﻙﻝ­ﻝ۴ﮒﺓ۴?
-- **Day 3**: ﻝ­ﻝ۴ﮒﺙﮔﻙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ
+### 10.1 Phase 1: ﮔﺕﮒﺟﮒﻟﺛﮒﺙ?(5?
+- **Day 1**: ﻝﻝ۴ﮔ،ﮔﮒ۷ﻙﻝﻝ۴ﮒﻟﺛﺛﮒ۷
+- **Day 2**: ﻝﻝ۴ﮔﺏ۷ﮒﻟ۰۷ﻙﻝﻝ۴ﮒﺓ۴?
+- **Day 3**: ﻝﻝ۴ﮒﺙﮔﻙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ
 - **Day 4**: ﻝﭘﮔﻝﮔ۶ﻙﮒﮔﺍﻝ؟۰?
 - **Day 5**: ﻠﮔﮔﭖﻟﺁﻙﻛﺙ?
 
@@ -885,18 +885,18 @@ strategy_engine:
     max_cpu_percent: 50
 ```
 
-### B. ﻠﻟﺁﺁﻝ ﮒ؟?
+### B. ﻠﻟﺁﺁﻝﮒ؟?
 | ﻠﻟﺁﺁ?| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﻠﻟﺁﺁﮔﻟﺟﺍ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|----------|----------|----------|
-| ERR_ENGINE_001 | RegisterError | ﻝ­ﻝ۴ﮔﺏ۷ﮒﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
-| ERR_ENGINE_002 | ExecuteError | ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_ENGINE_001 | RegisterError | ﻝﻝ۴ﮔﺏ۷ﮒﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_ENGINE_002 | ExecuteError | ﻝﻝ۴ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 | ERR_ENGINE_003 | EventError | ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 | ERR_ENGINE_004 | ResourceError | ﻟﭖﮔﭦﻛﺕﻟﭘﺏ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 
 ### C. ﮒﻟﮔ?
 - [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ﻝ­ﻝ۴ﮒﺙﮔﮔ ﺕﮒﺟﻟﮒﺝ](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+- [ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 
 
-**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

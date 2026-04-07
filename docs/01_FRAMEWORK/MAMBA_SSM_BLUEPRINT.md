@@ -68,8 +68,8 @@ Transformer
 
 长序列 |
 
-| **å
-å­** | å
+| **
+** |
 存占用降低 |
 
 
@@ -96,11 +96,11 @@ Transformer
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
-| **è¾å
+| **
 
 
 
@@ -145,7 +145,7 @@ class MambaModel(nn.Module):
 
         Args:
 
-            input_dim: è¾å
+input_dim:
 
             hidden_dim: 隐藏维度
 
@@ -170,8 +170,7 @@ class MambaModel(nn.Module):
 
         Args:
 
-            x: è¾å
-¥åºå
+x:
 
             
 

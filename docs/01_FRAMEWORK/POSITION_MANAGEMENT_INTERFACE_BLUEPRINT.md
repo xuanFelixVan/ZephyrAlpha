@@ -74,10 +74,10 @@ class PositionManagementInterface:
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("总资产", f"¥{self.total_assets:,.2f}")
+            st.metric("总资产", f"{self.total_assets:,.2f}")
         
         with col2:
-            st.metric("总盈亏", f"¥{self.total_pnl:,.2f}")
+            st.metric("总盈亏", f"{self.total_pnl:,.2f}")
         
         with col3:
             st.metric("持仓数量", f"{self.position_count}只")

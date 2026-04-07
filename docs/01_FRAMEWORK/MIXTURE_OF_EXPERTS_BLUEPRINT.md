@@ -94,7 +94,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -145,7 +145,7 @@ class MixtureOfExperts(nn.Module):
 
         Args:
 
-            input_dim: è¾å
+input_dim:
 
             hidden_dim: 隐藏维度
 
@@ -175,8 +175,7 @@ class MixtureOfExperts(nn.Module):
 
         Args:
 
-            x: è¾å
-¥
+x:
 
             
 

@@ -6,8 +6,8 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席架构?
 standard_type: 专业机构级架?
-applicable_scope: å
-¨ç³»?
+applicable_scope:
+?
 compliance_level: 顶级专业标准
 reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two Sigma"]
 parent_document: ../INDEX.md
@@ -39,7 +39,6 @@ responsibility:
 本架构基?*时间框架分离原则**，将投资决策分解为三个独立但协同的时间维度：
 
 ```
-å®è§é
 /分钟/秒级)
 ```
 
@@ -47,8 +46,8 @@ responsibility:
 ?
 交易团??多策略模块协?
 
-### 1.2 æ¶æå
-¨æ¯?
+### 1.2
+?
 
 ```mermaid
 graph TB
@@ -65,7 +64,7 @@ graph TB
     
     subgraph "第三? 微观执行?(专业机构模式)"
         C1[分钟执行优化器] --> C2[智能执行算法库]
-        C2 --> C3[å
+C2 --> C3[
         
         subgraph "专业策略模块集群"
             D1[开盘策略模块]
@@ -80,7 +79,7 @@ graph TB
     subgraph "贯穿支撑系统"
         E1[统一数据基础设施]
         E2[多时间框架风控体系]
-        E3[å
+E3[
         E4[人机协同决策界面]
     end
     
@@ -164,11 +163,11 @@ class EconomicRegimeEngine:
         )
 ```
 
-#### 2.2.2 å
+#### 2.2.2
 
 ```python
 class AllWeatherOptimizer:
-    """å
+"""
     
     def __init__(self):
         self.asset_classes = {
@@ -181,7 +180,7 @@ class AllWeatherOptimizer:
         self.black_litterman = BlackLittermanModel()
         
     def optimize_allocation(self, regime: RegimeAnalysis) -> StrategicAllocation:
-        """ä¼åå
+"""
 ?""
 置
         base_weights = self.risk_parity.optimize(
@@ -393,7 +392,7 @@ class DailyPortfolioOptimizer:
 class StrategySelectionSystem:
     
     集成位置: 中观策略层核心组?
-æ?
+?
 
     参考设? [STRATEGY_SELECTION_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_BLUEPRINT.md)
     """
@@ -402,8 +401,8 @@ class StrategySelectionSystem:
         self.strategy_pool = strategy_pool
         self.evaluator = MultiCriteriaEvaluator()      # TOPSIS多准则评?
         self.weight_optimizer = DynamicWeightOptimizer()  # 动态权重优?
-        self.correlation_analyzer = StrategyCorrelationAnalyzer()  # ç¸å
-³æ§å?
+self.correlation_analyzer = StrategyCorrelationAnalyzer()  #
+?
         
     def select_strategies_by_timeframe(self, market_state: MarketState, 
                                       timeframe: str) -> SelectedStrategies:
@@ -436,8 +435,8 @@ class StrategySelectionSystem:
         criteria_matrix = self._build_criteria_matrix(market_filtered)
         ranking_result = self.evaluator.evaluate(market_filtered, criteria_matrix)
         
-        # 5. ç¸å
-³ç­ç¥)
+# 5.
+)
         correlation_analysis = self.correlation_analyzer.analyze(market_filtered)
         diversified_strategies = self._apply_diversification_filter(
             ranking_result.top_strategies, 
@@ -494,7 +493,7 @@ class StrategySelectionSystem:
         filtered = []
         
         for strategy in strategies:
-³?
+?
             if not filtered:
                 filtered.append(strategy)
                 continue
@@ -504,7 +503,7 @@ class StrategySelectionSystem:
                 for s in filtered if s.id in correlation_analysis.correlation_matrix.index
             )
             
-            # ä»
+#
             if max_correlation < 0.7:
                 filtered.append(strategy)
                 
@@ -516,7 +515,7 @@ class StrategySelectionSystem:
         """生成策略选择理由"""
         reasoning = []
         reasoning.append(f"时间框架: {timeframe}")
-        reasoning.append(f"å¸åºç? {market_state.regime.value}")
+reasoning.append(f"? {market_state.regime.value}")
         reasoning.append(f"选择策略数量: {len(strategies)}")
         
         for i, strategy in enumerate(strategies[:3], 1):
@@ -711,7 +710,7 @@ class RealtimeRiskHedger:
         if not alerts:
             return HedgeActions(actions=[], hedged=False)
         
-·åç­?
+?
         hedge_plan = self._create_hedge_plan(alerts, portfolio, market_data)
         
         # 4. 生成对冲指令
@@ -934,7 +933,7 @@ class MultiTimeframeRiskSystem:
             )
             risk_reports[layer_name] = layer_report
         
-³èå?
+?
         aggregated_risk = self.risk_aggregator.aggregate(risk_reports)
         
         # 风险升级决策
@@ -951,11 +950,11 @@ class MultiTimeframeRiskSystem:
         )
 ```
 
-### 5.3 å
+### 5.3
 
 ```python
 class FullCyclePerformanceAttribution:
-    """å
+"""
     
     def __init__(self):
         self.attribution_methods = {
@@ -969,7 +968,7 @@ class FullCyclePerformanceAttribution:
     def attribute_performance(self, 
                              portfolio_history: PortfolioHistory,
                              benchmark_history: BenchmarkHistory) -> AttributionReport:
-        """è¿è¡å
+"""
         attribution_results = {}
         
         # 多维度归因分?
@@ -988,9 +987,8 @@ class FullCyclePerformanceAttribution:
 
 ---
 
-## å
-­ãç¸å
-³æ?
+##
+?
 
 ### 6.1 P0级核心蓝?
 
@@ -1010,7 +1008,7 @@ class FullCyclePerformanceAttribution:
 | **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | 压力测试系统 - 桥水基金压力测试体系 | 2?|
 | **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | 合规监控系统 - Citadel合规体系 | 2?|
 
-### 6.2 é
+### 6.2
 
 | 文档 | 说明 |
 |------|------|
@@ -1044,7 +1042,7 @@ class FullCyclePerformanceAttribution:
 | **阶段3** | 5-7个月 | 中观策略层增?| 1. 市场状态系统升?br>2. 阿尔法因子工?br>3. 日线组合优化?|
 | **阶段4** | 8-10个月 | 微观执行层建?| 1. 分钟执行优化?br>2. 智能算法?br>3. 实时风险对冲 |
 
-### 6.2 å
+### 6.2
 
 | 组件类别 | 推荐技?| 替代方案 | 选择理由 |
 |----------|----------|----------|----------|
@@ -1061,7 +1059,7 @@ class FullCyclePerformanceAttribution:
 度 |
 |----------|----------|------------|----------|
 | **执行成本** | 0.5-1.0% | 0.1-0.3% | 降低60-80% |
-| **æ¥å
+| **
 机会捕捉** | 20-30% | 80-90% | 提升3-4?|
 | **风险响应速度** | 分钟?| 秒级 | 提升60?|
 | **策略容量** | 10-20个策?| 100+策略 | 提升5-10?|
@@ -1074,15 +1072,14 @@ class FullCyclePerformanceAttribution:
 
 ### 7.1 架构优势总结
 
-¶è
-3. **å
+3. **
 4. **专业模块?*：开盘、盘中、收盘等专业交易模块
 5. **风险分层控制**：战略风险、战术风险、执行风险独立管?
 
 
 
 助实现
-2. **é
+2. **
 3. **模块独立?*：可单独实现和测试每个模?
 4. **渐进式迁?*：可从现有架构逐步迁移，风险可?
 
@@ -1093,6 +1090,6 @@ class FullCyclePerformanceAttribution:
 3. **启动数据基础设施升级**：这是所有层级的基础
 4. **开始宏观层实现**：经济范式判断是最独立的起?
 
-é¡¹ç?
+?
 
 ---

@@ -100,7 +100,6 @@ class TailRiskMetrics:
         
         CVaR = E[R | R <= VaR]
         
-        è¶
         """
         pass
     
@@ -157,40 +156,39 @@ class TailRiskMetrics:
 
 ---
 
-## 3. é
+## 3.
 
 ```yaml
 tail_risk_metrics:
-  # CVaRé
+# CVaR
 置
   cvar:
     alpha: 0.05  # 95%置信水平
     
-  # EVaRé
+# EVaR
 置
   evar:
     alpha: 0.05
     
-  # CDaRé
+# CDaR
 置
   cdar:
     alpha: 0.05
     
-  # åæ¤é
+#
 置
   drawdown:
 ```
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-| [ç»åæ
+| [
 景分析 |
 
 ### 下游依赖
@@ -203,14 +201,14 @@ tail_risk_metrics:
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[VaR/ES监控] --> B[尾部风险指标扩展]
     C[数据质量监控] --> B
-    D[ç»åæ
+D[
 景分析] --> B
     
     B --> E[尾部风险对冲]

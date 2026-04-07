@@ -83,15 +83,15 @@ layer: Layer 5.2 (组合优化)
 ### 2.1 三层优化架构
 
 ```
-â? è¾å
-                              â?
-                              â?
-â? è¾å
-çæé                                  â?
-                              â?
-                              â?
-â? è¾å
-¥: å
+?
+?
+?
+?
+?
+?
+?
+?
+:
 ```
 
 
@@ -130,7 +130,7 @@ class HierarchicalOptimizer:
             group_mapping: 预定义分组映射（可选）
             
         返回:
-            weights: æç»æé?
+weights: ?
             layer_results: 各层优化结果
             diagnostics: 诊断信息
         """
@@ -233,10 +233,8 @@ class CrossLayerConstraintCoordinator:
         layer_structure: Dict
     ) -> List[Dict]:
         """
-        å°å
         
         示例:
-        å
         分解: 
         """
         pass
@@ -283,7 +281,7 @@ class AutoLayeringEngine:
         
         考虑因素:
         - 资产数量
-        - ç¸å
+-
         - 计算资源
         """
         pass
@@ -375,31 +373,27 @@ class OptimizationMethodSelector:
 
 
 ```
-è¾å
-¥æ°æ®
 ├── 资产列表 (List[str])
 ├── 预期收益 (pd.Series)
-âââ å
 └── 分组映射 (Optional[Dict])
-    â?
-    â?
+?
+?
 资产分组
 ├── 自动聚类 (AutoLayeringEngine)
-    â?
-    â?
+?
+?
 约束分解
-âââ å
 └── 跨层约束协调
-    â?
-    â?
+?
+?
 分层优化
-    â?
-    â?
+?
+?
 结果聚合
 ├── 权重聚合 (aggregate_results)
 └── 迭代协调 (IterativeCoordinator)
-    â?
-    â?
+?
+?
 输出结果
 ├── 各层结果 (List[Dict])
 └── 诊断信息 (Dict)
@@ -409,16 +403,15 @@ class OptimizationMethodSelector:
 
 ## 5. 应用场景
 
-### 5.1 å
+### 5.1
 置
 
 ```python
 # 三层优化示例
 > **核心职责**: Hierarchical Optimization Framework蓝图设计
 > **职责边界**: 
-³å
 容
-å®?
+?
 
 
 ## 核心职责
@@ -433,11 +426,11 @@ class OptimizationMethodSelector:
 
 optimizer = HierarchicalOptimizer(n_layers=3)
 
-# Layer 1: åºåå±?
-´å¸å?
+# Layer 1: ?
+?
 
 
-# å
+#
 
 result = optimizer.optimize(
     assets=global_assets,
@@ -456,7 +449,6 @@ result = optimizer.optimize(
 optimizer = HierarchicalOptimizer(n_layers=2)
 
 
-çå
 
 result = optimizer.optimize(
     assets=all_assets,
@@ -468,7 +460,7 @@ result = optimizer.optimize(
 )
 ```
 
-### 5.3 è¡ä¸é
+### 5.3
 置
 
 ```python
@@ -476,7 +468,6 @@ result = optimizer.optimize(
 optimizer = HierarchicalOptimizer(n_layers=2)
 
 
-çå
 
 result = optimizer.optimize(
     assets=all_stocks,
@@ -496,10 +487,9 @@ result = optimizer.optimize(
 
 耗时 |
 |------|--------|-----------|----------|
-| 单层优化 | 500 | O(n³) | ~10s |
-| 双层优化 | 500 | O(n³/k² + k³) | ~2s |
+| 单层优化 | 500 | O(n) | ~10s |
+| 双层优化 | 500 | O(n/k + k) | ~2s |
 
-å
 
 
 ```python
@@ -515,8 +505,7 @@ optimizer = HierarchicalOptimizer(
 
 ## 7. 实施路径
 
-- [ ] åå
-æµè¯
+- [ ]
 
 - [ ] 实现CrossLayerConstraintCoordinator
 
@@ -530,10 +519,10 @@ optimizer = HierarchicalOptimizer(
 ## 8. 文档治理
 
 ### 8.1 索引信息
-- **System_Manifest.md**: å¾
-ç´¢å¼?
-- **INDEX.md**: å¾
-ç´¢å¼?
+- **System_Manifest.md**:
+?
+- **INDEX.md**:
+?
 - **module_id**: HIERARCHICAL_OPTIMIZATION_FRAMEWORK_001
 
 ### 8.2 变更历史
@@ -553,8 +542,7 @@ optimizer = HierarchicalOptimizer(
 
 | 风险 | 等级 | 缓解措施 |
 |------|------|----------|
-ä¼åå
-³é®å±?|
+?|
 晰的接口，逐步集成 |
 
 ---

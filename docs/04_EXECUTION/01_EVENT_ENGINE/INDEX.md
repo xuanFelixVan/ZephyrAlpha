@@ -4,7 +4,7 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзіҐеЉХ
+owner: йЦеЄ≠жЦЗжжЮґжЮДеЄ?standard_type: дЄУдЄЪйЗПеМЦжЬЇжЮДзіҐеЉХ
 responsibility:
   - 索引文档、导航目录
 applicable_scope: дЇЛдїґеЉХжУОзЫЃељХ
@@ -19,19 +19,19 @@ implementation_status: еЈ≤еЃМжИ?---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **зЫЃељХиБМиі£**: дЇЛдїґжАїзЇњгАБдЇЛдїґй©±еК®жЮґжЮ?
+> **зЫЃељХиБМиі**: дЇЛдїґжАїзЇњгАБдЇЛдїґйеКжЮґжЮ?
 ## рЯУБ зЫЃељХзїУжЮД
 
-| жЦЗдїґ | иБМиі£ | зКґжА?|
+| жЦЗдїґ | иБМиі | зКґжА?|
 |------|------|------|
-| [README.md](API_README.md) | дЇЛдїґеЉХжУОж¶Вињ∞ | Active |
-| [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) | дЇЛдїґжАїзЇњиЃЊиЃ° | Active |
+| [README.md](API_README.md) | дЇЛдїґеЉХжУОжВињ∞ | Active |
+| [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) | дЇЛдїґжАїзЇњиЃЊиЃ | Active |
 
-## рЯУЦ ж†ЄењГжЦЗж°£
+## рЯУЦ ж†ЄењГжЦЗж
 
-- [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ°
-- [README.md](API_README.md) - дЇЛдїґеЉХжУОдљњзФ®жМЗеНЧ
+- [EVENT_BUS.md](04_EXECUTION/01_EVENT_ENGINE/EVENT_BUS.md) - дЇЛдїґжАїзЇњж†ЄењГиЃЊиЃ
+- [README.md](API_README.md) - дЇЛдїґеЉХжУОдљњзФжМЗеНЧ
 ---
 
 
-**зіҐеЉХзЙИжЬђ**: v1.0.0 | **еИЫеїЇжЧ•жЬЯ**: 2026-04-03 | **зїіжК§иА?*: й¶ЦеЄ≠жЦЗж°£жЮґжЮДеЄ?
+**зіҐеЉХзЙИжЬђ**: v1.0.0 | **еИЫеїЇжЧ•жЬЯ**: 2026-04-03 | **зїіжКиА?*: йЦеЄ≠жЦЗжжЮґжЮДеЄ?

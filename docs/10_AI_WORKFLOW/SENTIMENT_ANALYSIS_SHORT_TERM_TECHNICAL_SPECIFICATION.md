@@ -92,13 +92,13 @@ python verify_environment.py
 **模块名称**: Alternative Data Integration (另类数据集成)
 **版本**: v1.0.0
 ### 1.2 详细API接口定义
-#### 1.2.1 Twitter APIéé
-å¨æ¥å?
+#### 1.2.1 Twitter API
+?
 **接口名称**: TwitterAPIAdapter
 ```python
 class TwitterAPIAdapter:
-    """Twitter APIéé
-å?
+"""Twitter API
+?
     
     负责从Twitter采集财经相关推文数据
     """
@@ -111,7 +111,7 @@ class TwitterAPIAdapter:
         access_token: str,
         access_token_secret: str
     ):
-å?
+?
         
         Args:
             bearer_token: Twitter Bearer Token
@@ -161,7 +161,7 @@ class TwitterAPIAdapter:
         """添加流式规则
         
         Args:
-            value: è§åå?
+value: ?
             tag: 规则标签
             
         Returns:
@@ -198,7 +198,7 @@ class TwitterAPIAdapter:
 ```
 **请求示例**:
 ```python
-å?
+?
 adapter = TwitterAPIAdapter(
     bearer_token="YOUR_BEARER_TOKEN",
     api_key="YOUR_API_KEY",
@@ -216,7 +216,7 @@ results = adapter.search_tweets(
 )
 # 流式采集
 def process_tweet(tweet):
-    print(f"æ°æ¨æ? {tweet['text']}")
+print(f"? {tweet['text']}")
 adapter.stream_tweets(callback=process_tweet)
 ```
 **响应示例**:
@@ -247,13 +247,13 @@ adapter.stream_tweets(callback=process_tweet)
 }
 ```
 ---
-#### 1.2.2 Reddit APIéé
-å¨æ¥å?
+#### 1.2.2 Reddit API
+?
 **接口名称**: RedditAPIAdapter
 ```python
 class RedditAPIAdapter:
-    """Reddit APIéé
-å?
+"""Reddit API
+?
     
     """
     
@@ -263,7 +263,7 @@ class RedditAPIAdapter:
         client_secret: str,
         user_agent: str
     ):
-å?
+?
         
         Args:
             client_id: Reddit应用客户端ID
@@ -348,7 +348,7 @@ class RedditAPIAdapter:
 ```
 **请求示例**:
 ```python
-å?
+?
 adapter = RedditAPIAdapter(
     client_id="YOUR_CLIENT_ID",
     client_secret="YOUR_CLIENT_SECRET",
@@ -398,19 +398,19 @@ comments = adapter.get_post_comments(
 }
 ```
 ---
-#### 1.2.3 FRED APIéé
-å¨æ¥å?
+#### 1.2.3 FRED API
+?
 **接口名称**: FREDAPIAdapter
 ```python
 class FREDAPIAdapter:
-    """FRED APIéé
-å?
+"""FRED API
+?
     
     负责从FRED采集美国宏观经济数据
     """
     
     def __init__(self, api_key: str):
-å?
+?
         
         Args:
             api_key: FRED API密钥
@@ -492,7 +492,7 @@ class FREDAPIAdapter:
 ```
 **请求示例**:
 ```python
-å?
+?
 adapter = FREDAPIAdapter(api_key="YOUR_FRED_API_KEY")
 # 获取GDP数据
 gdp_data = adapter.get_series(
@@ -535,22 +535,21 @@ series_info = adapter.get_series_info(series_id="GDP")
 }
 ```
 ---
-#### 1.2.4 SEC EDGAR APIéé
-å¨æ¥å?
+#### 1.2.4 SEC EDGAR API
+?
 **接口名称**: SECEdgARAPIAdapter
 ```python
 class SECEdgARAPIAdapter:
-    """SEC EDGAR APIéé
-å?
+"""SEC EDGAR API
+?
     
     负责从SEC EDGAR采集上市公司财务数据
     """
     
     def __init__(self, user_agent: str):
-å?
+?
         
         Args:
-é¡»å
         """
         pass
     
@@ -558,8 +557,8 @@ class SECEdgARAPIAdapter:
         """获取公司财务数据
         
         Args:
-            cik: å
-¬å¸CIKå?
+cik:
+CIK?
             
         Returns:
             公司财务数据
@@ -575,8 +574,8 @@ class SECEdgARAPIAdapter:
         """获取公司特定概念数据
         
         Args:
-            cik: å
-¬å¸CIKå?
+cik:
+CIK?
             concept: 概念名称
             
         Returns:
@@ -594,8 +593,8 @@ class SECEdgARAPIAdapter:
         """获取财报列表
         
         Args:
-            cik: å
-¬å¸CIKå?
+cik:
+CIK?
             form_type: 表格类型 (10-K, 10-Q, 8-K)
             filing_date: 提交日期
             limit: 返回数量限制
@@ -624,8 +623,8 @@ class SECEdgARAPIAdapter:
         """获取公司信息
         
         Args:
-            cik: å
-¬å¸CIKå?
+cik:
+CIK?
             
         Returns:
             公司信息
@@ -650,7 +649,7 @@ class SECEdgARAPIAdapter:
 ```
 **请求示例**:
 ```python
-å?
+?
 adapter = SECEdgARAPIAdapter(
     user_agent="ZephyrAlpha/1.0 (your.email@example.com)"
 )
@@ -704,15 +703,15 @@ companies = adapter.search_companies(
 ---
 ### 2.1 模块概述
 **模块ID**: AIWF_DLSA_001
-æåæå?
+?
 **版本**: v1.0.0
 ### 2.2 详细API接口定义
 **接口名称**: DLSentimentAnalyzer
 ```python
 class DLSentimentAnalyzer:
-æåæå?
+?
     
-æåæ?
+?
     """
     
     def __init__(
@@ -741,8 +740,8 @@ class DLSentimentAnalyzer:
         """分析单条文本情感
         
         Args:
-            text: å¾
-åæææ?
+text:
+?
             return_emotion: 是否返回情绪分析
             return_intensity: 是否返回强度分析
             
@@ -774,12 +773,10 @@ class DLSentimentAnalyzer:
         """详细分析文本情感
         
         Args:
-            text: å¾
-åæææ?
+text:
+?
             
         Returns:
-å«æ
-æãæ
         """
         pass
     
@@ -1061,7 +1058,7 @@ class RealTimeAlertSystem:
 ```python
 alert_system = RealTimeAlertSystem(
     config={
-        "monitoring_interval": 60,  # ç§?
+"monitoring_interval": 60,  # ?
         "max_alerts_per_hour": 100
     },
     pusher_config={
@@ -1083,8 +1080,8 @@ alert_system = RealTimeAlertSystem(
 # 添加预警规则
 rule = AlertRule(
     rule_id="sentiment_negative_spike",
-    rule_name="è´é¢æ
-ææ¿å¢?,
+rule_name="
+?,
     description="负面情感分数突然下降超过20%",
     condition={
         "metric": "sentiment_score",
@@ -1114,9 +1111,9 @@ if alert:
     "alert_id": "alert_20260402_001",
     "rule_id": "sentiment_negative_spike",
     "severity": "high",
-    "title": "è´é¢æ
-    "message": "è´é¢æ
-è¿éå?0%",
+"title": "
+"message": "
+?0%",
     "data": {
         "sentiment_score": 0.3,
         "previous_sentiment_score": 0.6,
@@ -1135,23 +1132,23 @@ if alert:
 | tweet_id | TEXT | 推文ID | "1234567890" |
 | text | TEXT | 推文内容 | "Apple stock surges..." |
 | user_id | TEXT | 用户ID | "987654321" |
-| user_name | TEXT | ç¨æ·å?| "trader_john" |
-| user_followers_count | INTEGER | ç²ä¸æ?| 5000 |
+| user_name | TEXT | ?| "trader_john" |
+| user_followers_count | INTEGER | ?| 5000 |
 | created_at | TIMESTAMP | 创建时间 | "2026-04-02 10:00:00" |
 | lang | TEXT | 语言 | "en" |
 | hashtags | TEXT | 标签列表(JSON) | ["AAPL", "stocks"] |
 | symbols | TEXT | 股票代码(JSON) | ["$AAPL"] |
-| like_count | INTEGER | ç¹èµæ?| 150 |
-| retweet_count | INTEGER | è½¬åæ?| 45 |
-| reply_count | INTEGER | åå¤æ?| 12 |
+| like_count | INTEGER | ?| 150 |
+| retweet_count | INTEGER | ?| 45 |
+| reply_count | INTEGER | ?| 12 |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:05:00" |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | post_id | TEXT | 帖子ID | "abc123" |
 | title | TEXT | 帖子标题 | "AAPL to the moon!" |
 | selftext | TEXT | 帖子内容 | "Apple just reported..." |
-| author | TEXT | ä½è?| "username" |
-| subreddit | TEXT | å­çå?| "wallstreetbets" |
+| author | TEXT | ?| "username" |
+| subreddit | TEXT | ?| "wallstreetbets" |
 | created_utc | TIMESTAMP | 创建时间(UTC) | "2026-04-02 10:00:00" |
 | score | INTEGER | 得分 | 1500 |
 | upvote_ratio | REAL | 点赞比例 | 0.95 |
@@ -1161,14 +1158,14 @@ if alert:
 | series_id | TEXT | 序列ID | "GDP" |
 | title | TEXT | 序列标题 | "Gross Domestic Product" |
 | observation_date | DATE | 观察日期 | "2026-01-01" |
-| value | REAL | æ°å?| 25000.0 |
+| value | REAL | ?| 25000.0 |
 | frequency | TEXT | 频率 | "Quarterly" |
 | units | TEXT | 单位 | "Billions of Dollars" |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
-| cik | TEXT | å
-¬å¸CIKå?| "0000320193" |
+| cik | TEXT |
+CIK?| "0000320193" |
 | company_name | TEXT | 公司名称 | "Apple Inc." |
 | form_type | TEXT | 表格类型 | "10-K" |
 | filed_at | DATE | 提交日期 | "2026-04-02" |
@@ -1177,7 +1174,7 @@ if alert:
 | document_url | TEXT | 文档URL | "https://www.sec.gov/..." |
 | parsed_data | TEXT | 解析数据(JSON) | {...} |
 | collected_at | TIMESTAMP | 采集时间 | "2026-04-02 10:00:00" |
-### 4.5 æ
+### 4.5
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | text_hash | TEXT | 文本哈希 | "a1b2c3d4..." |
@@ -1186,15 +1183,15 @@ if alert:
 | emotion | TEXT | 情绪(JSON) | {"fear": 0.05, ...} |
 | intensity | TEXT | 强度(JSON) | {"label": "strong", ...} |
 | time_horizon | TEXT | 时间维度(JSON) | {"short_term": 0.25, ...} |
-| keywords | TEXT | å
-³é®è¯?JSON) | ["Apple", "revenue"] |
+| keywords | TEXT |
+?JSON) | ["Apple", "revenue"] |
 | entities | TEXT | 实体(JSON) | ["Apple Inc."] |
 | model_name | TEXT | 模型名称 | "ProsusAI/finbert" |
 | analyzed_at | TIMESTAMP | 分析时间 | "2026-04-02 10:00:00" |
 |--------|---------|------|------|
 | id | INTEGER | 主键ID | 1 |
 | rule_id | TEXT | 规则ID | "sentiment_negative_spike" |
-ææ¿å¢? |
+? |
 | description | TEXT | 描述 | "负面情感分数突然下降..." |
 | condition | TEXT | 条件(JSON) | {"metric": "sentiment_score", ...} |
 | severity | TEXT | 严重级别 | "high" |
@@ -1208,8 +1205,8 @@ if alert:
 | severity | TEXT | 严重级别 | "high" |
 | data | TEXT | 数据(JSON) | {...} |
 | triggered_at | TIMESTAMP | 触发时间 | "2026-04-02 10:30:00" |
-| status | TEXT | ç¶æ?| "sent" |
-| sent_at | TIMESTAMP | åéæ¶é?| "2026-04-02 10:30:05" |
+| status | TEXT | ?| "sent" |
+| sent_at | TIMESTAMP | ?| "2026-04-02 10:30:05" |
 | error_message | TEXT | 错误消息 | NULL |
 ---
 ## 五、API接口规范
@@ -1219,7 +1216,7 @@ if alert:
 **资源命名**:
 - 使用复数名词: `/tweets`, `/posts`, `/alerts`
 - 使用小写字母和连字符: `/sentiment-results`
-- é¿å
+-
 **示例**:
 ```
 GET    /api/v1/tweets                    # 获取推文列表
@@ -1286,10 +1283,10 @@ Accept: application/json
 | 201 | Created | 成功创建资源 |
 | 204 | No Content | 成功删除资源 |
 | 400 | Bad Request | 请求参数错误 |
-| 401 | Unauthorized | æªææ?|
+| 401 | Unauthorized | ?|
 | 403 | Forbidden | 禁止访问 |
 | 429 | Too Many Requests | 请求过于频繁 |
-é¨éè¯?|
+?|
 ---
 ### 5.2 WebSocket API设计规范
 #### 5.2.1 连接建立
@@ -1312,7 +1309,7 @@ ws.onerror = function(error) {
     console.error('WebSocket错误:', error);
 };
 ws.onclose = function(event) {
-³é?);
+?);
 };
 ```
 #### 5.2.2 消息格式
@@ -1348,81 +1345,79 @@ ws.onclose = function(event) {
 ## 六、算法流程图
 ### 6.1 数据源扩展模块流程图
 ```
-å¼å§?
-  â?
-å?
-  â?
-é
-  â?
+?
+?
+?
+?
+?
 建立API连接
-  â?
+?
 [连接成功?]
-  ââ æ?â?
-        â?
+??
+?
       [采集模式?]
 洗
 洗
-                â?
-                â?
+?
+?
             数据存储
-                â?
+?
             更新采集统计
-                â?
+?
             [继续采集?]
 ```
 ```
-å¼å§?
-  â?
-  â?
+?
+?
+?
 初始化分词器
-  â?
+?
 接收文本输入
-  â?
+?
   ├─ 去除HTML标签
   ├─ 去除特殊字符
   ├─ 分词
   └─ 编码
-  â?
+?
 模型推理
-  â?
+?
 获取情感分数
-  â?
+?
 感结果
-  ââ æ?â?
+??
         ├─ 情绪分析
         ├─ 强度评估
         ├─ 时间维度
-        ââ å
-          â?
+?
       结果融合
-          â?
+?
       返回详细结果
-          â?
+?
         结束
 ```
 ```
-å¼å§?
-  â?
-  â?
+?
+?
+?
 加载预警规则
-  â?
+?
 启动监控线程
-  â?
+?
 [监控模式?]
-      â?
-      â?
+?
+?
   规则匹配
-      â?
+?
   [触发规则?]
-      ââ æ?â?
+??
           生成预警信息
-              â?
+?
           [预警级别?]
-æ¨é?
-æ¨é?
-                  â?
-                  â?
-              [æ¨éæå?]
+?
+?
+?
+?
+[?]
 ```
 ---
 ## 七、性能指标定义
@@ -1432,14 +1427,14 @@ ws.onclose = function(event) {
 ### 7.2 深度学习情感分析模块性能指标
 |---------|--------|---------|------|
 | 单条分析速度 | < 100ms (GPU) | 记录单次分析耗时 | 平均耗时 |
-| å
-å­?|
+|
+?|
 ### 7.3 实时预警系统模块性能指标
 |---------|--------|---------|------|
 | 监控延迟 | < 1分钟 | 记录数据到监控的时间 | 平均延迟 |
 | 规则执行速度 | < 100ms | 记录规则执行耗时 | 平均耗时 |
 ---
-## å
+##
 ### 8.1 错误分类
 - 模型加载失败
 - API认证失败
@@ -1455,7 +1450,7 @@ ws.onclose = function(event) {
 **P3 - 低优先级错误**:
 - 日志记录失败
 - 统计更新失败
-- éå
+-
 **网络错误**:
 - 连接超时
 - 连接拒绝
@@ -1518,7 +1513,7 @@ def retry_with_backoff(
 **降级示例**:
 ```python
 def analyze_sentiment(text: str) -> Dict[str, Any]:
-    """æ
+"""
     try:
         # 尝试使用GPU
         if torch.cuda.is_available():
@@ -1536,7 +1531,7 @@ def analyze_sentiment(text: str) -> Dict[str, Any]:
 **熔断示例**:
 ```python
 class CircuitBreaker:
-    """çæ­å?""
+"""?""
     
     def __init__(
         self,
@@ -1546,7 +1541,7 @@ class CircuitBreaker:
     ):
         """
         Args:
-            timeout: çæ­è¶
+timeout:
             success_threshold: 成功阈值（半开状态）
         """
         self.failure_threshold = failure_threshold
@@ -1629,7 +1624,7 @@ class CircuitBreaker:
 - `MODEL_LOAD_ERROR`: 模型加载失败
 - `SENTIMENT_ANALYSIS_ERROR`: 情感分析失败
 ---
-## ä¹ãé
+##
 **文件**: `config/data_sources.yaml`
 ```yaml
 # Twitter API配置
@@ -1678,7 +1673,7 @@ fred:
     retry_delay: 5
   series:
     - id: "GDP"
-      name: "å½å
+name: "
       frequency: "q"
     - id: "UNRATE"
       frequency: "m"
@@ -1730,7 +1725,7 @@ analysis:
 performance:
   cache_enabled: true
   cache_size: 10000
-  cache_ttl: 3600  # ç§?
+cache_ttl: 3600  # ?
   parallel_workers: 4
   
 # 微调配置
@@ -1749,11 +1744,11 @@ fine_tuning:
 ```yaml
 # 系统配置
 system:
-  monitoring_interval: 60  # ç§?
+monitoring_interval: 60  # ?
   max_alerts_per_hour: 100
   alert_history_days: 30
   
-ç½?
+?
 pushers:
   email:
     enabled: true
@@ -1785,8 +1780,8 @@ pushers:
 # 默认预警规则
 default_rules:
   - rule_id: "sentiment_negative_spike"
-    rule_name: "è´é¢æ
-ææ¿å¢?
+rule_name: "
+?
     enabled: true
     condition:
       metric: "sentiment_score"

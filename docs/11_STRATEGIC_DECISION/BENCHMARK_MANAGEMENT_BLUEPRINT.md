@@ -188,13 +188,13 @@ Layer 11.11基准管理系统是清风量化系统的**业绩标尺**，负责�
 Benchmark_Standard = Market_Index (e.g., 沪深300)
 
 自定义因子基准:
-Benchmark_Factor = Σ w_i × Factor_Return_i
+Benchmark_Factor = Σ w_i  Factor_Return_i
 
 策略基准:
-Benchmark_Strategy = α + β × Market_Return + ε
+Benchmark_Strategy = α + β  Market_Return + ε
 
 多基准组合:
-Benchmark_Combined = Σ λ_i × Benchmark_i
+Benchmark_Combined = Σ λ_i  Benchmark_i
 其中 Σ λ_i = 1
 
 动态基准:
@@ -370,14 +370,14 @@ class BenchmarkConstructionEngine:
 TE_historical = std(R_portfolio - R_benchmark)
 
 预测跟踪误差:
-TE_predicted = √(w' × Σ × w)
+TE_predicted = √(w'  Σ  w)
 其中 w = 组合权重 - 基准权重
 
 条件跟踪误差:
-TE_conditional = √(w' × Σ_conditional × w)
+TE_conditional = √(w'  Σ_conditional  w)
 
 跟踪误差约束优化:
-min TE = √(w' × Σ × w)
+min TE = √(w'  Σ  w)
 s.t. E[R] ≥ Target_Return
      Σ w_i = 1
      w_i ≥ 0
@@ -592,10 +592,10 @@ IR = E[R_relative] / std(R_relative)
    = Active_Return / Tracking_Error
 
 相对风险分解:
-σ_relative² = Σ (w_p_i - w_b_i)² × σ_i² + Σ Σ (w_p_i - w_b_i)(w_p_j - w_b_j) × σ_ij
+σ_relative = Σ (w_p_i - w_b_i)  σ_i + Σ Σ (w_p_i - w_b_i)(w_p_j - w_b_j)  σ_ij
 
 跟踪误差归因:
-TE² = Σ TE_sector_i² + Σ TE_style_i² + TE_idiosyncratic²
+TE = Σ TE_sector_i + Σ TE_style_i + TE_idiosyncratic
 ```
 
 #### 2.3.2 技术实现

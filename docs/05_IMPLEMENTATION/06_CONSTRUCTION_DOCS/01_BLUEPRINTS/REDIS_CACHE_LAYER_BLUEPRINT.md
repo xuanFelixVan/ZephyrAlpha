@@ -84,7 +84,7 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择Redis
 
-| ç¹æ?| Redis | KeyDB | Dragonfly |
+| ?| Redis | KeyDB | Dragonfly |
 |------|-------|-------|-----------|
 
 ---
@@ -94,11 +94,11 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-â?                                                                â?
-â? â?â?é
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-â?                                                                â?
+?                                                                ?
+? ??
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+?                                                                ?
 ```
 
 ---
@@ -157,7 +157,7 @@ class DistributedLock:
         self.client = client
     
     def acquire(self, lock_name: str, timeout: int = 10, retry_interval: float = 0.1) -> bool:
-        """è·åé?""
+"""?""
         identifier = str(uuid.uuid4())
         lock_key = f"lock:{lock_name}"
         
@@ -170,7 +170,7 @@ class DistributedLock:
         return None
     
     def release(self, lock_name: str, identifier: str) -> bool:
-        """éæ¾é?""
+"""?""
         lock_key = f"lock:{lock_name}"
         
         script = """

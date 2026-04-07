@@ -693,7 +693,7 @@ cost_report = reporter.generate_execution_cost_report(
 print(f"总交易次? {cost_report.execution_metrics.total_trades}")
 print(f"平均滑点: {cost_report.execution_metrics.avg_slippage:.4%}")
 print(f"执行效率: {cost_report.execution_metrics.execution_efficiency:.2%}")
-print(f"总成? ¥{cost_report.execution_metrics.total_cost:,.2f}")
+print(f"总成? {cost_report.execution_metrics.total_cost:,.2f}")
 ```
 
 ### 9.2 成本优化建议
@@ -706,7 +706,7 @@ optimization_report = reporter.analyze_optimization_opportunities(
 
 for opportunity in optimization_report.opportunities:
     print(f"优化? {opportunity.description}")
-    print(f"潜在节省: ¥{opportunity.potential_saving:,.2f}")
+    print(f"潜在节省: {opportunity.potential_saving:,.2f}")
 ```
 
 ### 9.3 最佳实?

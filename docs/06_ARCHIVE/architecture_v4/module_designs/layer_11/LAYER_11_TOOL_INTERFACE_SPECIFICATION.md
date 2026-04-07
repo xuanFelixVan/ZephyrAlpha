@@ -4,11 +4,11 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﮒﺝ
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﮒﺝ
 responsibility:
   - 归档文档、历史版本
 applicable_scope: Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: ./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
@@ -23,26 +23,26 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 
 > ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.2 - ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?> **ﻝﺑ۱ﮒﺙ**: `LAYER_11_TOOL_SPEC_001`
-> **ﮔ ﺕﮒﺟﮒ؟ﻛﺛ**: ﮔﻝ۰؟ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮔﺁﮔﻝﮔﻛﺛﻙﮒﮔﺍﮒﻟﺟﮒﮒﺙﺅﺙﻠﺟﮒﻠﮒ۳ﮔﮒ­ﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮔﻝ۰؟ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮔﺁﮔﻝﮔﻛﺛﻙﮒﮔﺍﮒﻟﺟﮒﮒﺙﺅﺙﻠﺟﮒﻠﮒ۳ﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰
 > **ﮒﺏﻠ؟ﮒﮒ**: Layer 11ﻝﭨﻛﺕﮔﮒﺝﻟﺁﮒ،ﺅﺙﮒﮔ۷۰ﮒﮒ۹ﮔﻛﺝﻝﭦﺁAPIﮔ۴ﮒ۲
 
 
 ## ﻛﺕﻙﻟ؟ﺝﻟ؟۰ﮒﮒ?
-### 1.1 ﮔ ﺕﮒﺟﮒﮒ
+### 1.1 ﮔﺕﮒﺟﮒﮒ
 
 | ﮒﮒ | ﻟﺁﺑﮔ |
 |------|------|
 | **ﮒﻛﺕAIﮒﺎ?* | Layer 11ﻟﺑﻟﺑ۲ﮔﮔﮔﮒﺝﻟﺁﮒ،ﮒﮒﮔﺍﮔﮒ |
 | **ﻝﭦﺁﮔ۶ﻟ۰ﮒﺎ** | ﮒﮔ۷۰ﮒﮒ۹ﮔﻛﺝAPIﮔ۴ﮒ۲ﺅﺙﻛﺕﮒﮒ،AIﻝﻟ۶۲ |
 | **ﮒﺓ۴ﮒﺓﮒﮒﺍﻟ۲?* | ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﺍﻟ۲ﻛﺕﭦﮒﺓ۴ﮒﺓﺅﺙﻠﻟﺟﻝﭨﻛﺕﮔ۴ﮒ۲ﻟﺍﻝ۷ |
-| **ﮔ۴ﮒ۲ﮔ ﮒﮒ?* | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﻟﺝﮒ۴ﻟﺝﮒﭦﮔ ﺙﮒﺙ?|
+| **ﮔ۴ﮒ۲ﮔﮒﮒ?* | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﻟﺝﮒ۴ﻟﺝﮒﭦﮔﺙﮒﺙ?|
 
 ### 1.2 ﻝﭨﮒﮒﺎﮔ؛۰
 
 ```
 
 **ﮒﺏﻠ؟ﻝ?*ﺅﺙ?- ﻗ?Layer 11ﻠﻟ۵ﻝﭨﮒﮔﮒﺝﻟﺁﮒ،ﮒﮒﮔﺍﮔﮒ
-- ﻗ?ﮒﮔ۷۰ﮒﻛﺕﻠﻟ۵ﻝﭨﮒﮔﮒ­ﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?- ﻗ?ﮒﮔ۷۰ﮒﮒ۹ﻠﻟ۵ﮔﻝ۰؟ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ?
+- ﻗ?ﮒﮔ۷۰ﮒﻛﺕﻠﻟ۵ﻝﭨﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?- ﻗ?ﮒﮔ۷۰ﮒﮒ۹ﻠﻟ۵ﮔﻝ۰؟ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ?
 
 ## ﻛﭦﻙﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻝﭨﻛﺕﻟ۶ﻟ
 
@@ -71,31 +71,31 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 ## ﻛﺕﻙP0ﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 3.1 ﻝ­ﻝ۴ﮒﺓ۴ﮒﺓﺅﺙStrategyToolﺅﺙ?
+### 3.1 ﻝﻝ۴ﮒﺓ۴ﮒﺓﺅﺙStrategyToolﺅﺙ?
 **ﮔ۷۰ﮒID**: L11_TOOL_STRATEGY_001
 **ﻛﺙﮒﻝﭦ?*: P0
-**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 5 ﻝ­ﻝ۴ﮔ۶ﻟ۰ﮒﺎ?
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎ?
 #### ﮔﺁﮔﻝﮔﻛﺛ?
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **configure** | ﻠﻝﺛ؟ﮔﺍﻝ­ﻝ?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
-| **start** | ﮒﺁﮒ۷ﻝ­ﻝ۴ | strategy_id | ﮒﺁﮒ۷ﻝﭘﮔ?|
-| **stop** | ﮒﮔ­۱ﻝ­ﻝ۴ | strategy_id | ﮒﮔ­۱ﻝﭘﮔ?|
-| **status** | ﮔ۴ﻟﺁ۱ﻝ­ﻝ۴ﻝﭘﮔ?| strategy_id | ﻝ­ﻝ۴ﻝﭘﮔﻟﺁ۵ﮔ?|
-| **list** | ﮒﮒﭦﮔﮔﻝ­ﻝ?| ﮔ?| ﻝ­ﻝ۴ﮒﻟ۰۷ |
-| **backtest** | ﮒﮔﭖﻝ­ﻝ۴ | strategy_id, start_date, end_date | ﮒﮔﭖﻝﭨﮔ |
-| **optimize** | ﻛﺙﮒﻝ­ﻝ۴ﮒﮔﺍ | strategy_id, param_ranges | ﻛﺙﮒﻝﭨﮔ |
+| **configure** | ﻠﻝﺛ؟ﮔﺍﻝﻝ?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
+| **start** | ﮒﺁﮒ۷ﻝﻝ۴ | strategy_id | ﮒﺁﮒ۷ﻝﭘﮔ?|
+| **stop** | ﮒﮔ۱ﻝﻝ۴ | strategy_id | ﮒﮔ۱ﻝﭘﮔ?|
+| **status** | ﮔ۴ﻟﺁ۱ﻝﻝ۴ﻝﭘﮔ?| strategy_id | ﻝﻝ۴ﻝﭘﮔﻟﺁ۵ﮔ?|
+| **list** | ﮒﮒﭦﮔﮔﻝﻝ?| ﮔ?| ﻝﻝ۴ﮒﻟ۰۷ |
+| **backtest** | ﮒﮔﭖﻝﻝ۴ | strategy_id, start_date, end_date | ﮒﮔﭖﻝﭨﮔ |
+| **optimize** | ﻛﺙﮒﻝﻝ۴ﮒﮔﺍ | strategy_id, param_ranges | ﻛﺙﮒﻝﭨﮔ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.1.1 configureﺅﺙﻠﻝﺛ؟ﻝ­ﻝ۴ﺅﺙ
+##### 3.1.1 configureﺅﺙﻠﻝﺛ؟ﻝﻝ۴ﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "configure",
     "params": {
-        "strategy_type": "momentum",      # ﮒﺟﻠﺅﺙﻝ­ﻝ۴ﻝﺎﭨﮒ?        "holding_period": 5,               # ﮒﺁﻠﺅﺙﮔﻛﭨﮒ۷ﮔﺅﺙﮒ۳۸ﺅﺙ?        "stop_loss": 0.1,                  # ﮒﺁﻠﺅﺙﮔ­۱ﮔﮔﺁﻛﺝ
-        "take_profit": 0.2,                # ﮒﺁﻠﺅﺙﮔ­۱ﻝﮔﺁﻛﺝ
+"strategy_type": "momentum",      # ﮒﺟﻠﺅﺙﻝﻝ۴ﻝﺎﭨﮒ?        "holding_period": 5,               # ﮒﺁﻠﺅﺙﮔﻛﭨﮒ۷ﮔﺅﺙﮒ۳۸ﺅﺙ?        "stop_loss": 0.1,                  # ﮒﺁﻠﺅﺙﮔ۱ﮔﮔﺁﻛﺝ
+"take_profit": 0.2,                # ﮒﺁﻠﺅﺙﮔ۱ﻝﮔﺁﻛﺝ
         "position_size": 0.05,             # ﮒﺁﻠﺅﺙﻛﭨﻛﺛﮒ۳۶ﮒﺍ
         "universe": ["000001.SZ", "600000.SH"]  # ﮒﺁﻠﺅﺙﻟ۰ﻝ۴۷ﮔﺎ?    }
 }
@@ -104,23 +104,23 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒ",
+"message": "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "STRAT_20260402_001",
-        "strategy_name": "ﮒ۷ﻠﻝ­ﻝ۴_5ﮔ۴ﮔﻛﭨ?,
+"strategy_name": "ﮒ۷ﻠﻝﻝ۴_5ﮔ۴ﮔﻛﭨ?,
         "created_at": "2026-04-02T10:30:00Z",
         "status": "configured"
     }
 }
 ```
 
-##### 3.1.2 startﺅﺙﮒﺁﮒ۷ﻝ­ﻝ۴ﺅﺙ
+##### 3.1.2 startﺅﺙﮒﺁﮒ۷ﻝﻝ۴ﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "start",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝ­ﻝ۴ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
@@ -128,7 +128,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﮒﺓﺎﮒﺁﮒ?,
+"message": "ﻝﻝ۴ﮒﺓﺎﮒﺁﮒ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "running",
@@ -137,13 +137,13 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 }
 ```
 
-##### 3.1.3 stopﺅﺙﮒﮔ­۱ﻝ­ﻝ۴ﺅﺙ
+##### 3.1.3 stopﺅﺙﮒﮔ۱ﻝﻝ۴ﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "stop",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝ­ﻝ۴ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
@@ -151,7 +151,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﮒﺓﺎﮒﮔ­?,
+"message": "ﻝﻝ۴ﮒﺓﺎﮒﮔ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "stopped",
@@ -160,13 +160,13 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 }
 ```
 
-##### 3.1.4 statusﺅﺙﮔ۴ﻟﺁ۱ﻝ­ﻝ۴ﻝﭘﮔﺅﺙ
+##### 3.1.4 statusﺅﺙﮔ۴ﻟﺁ۱ﻝﻝ۴ﻝﭘﮔﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "status",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝ­ﻝ۴ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
@@ -174,7 +174,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﻝﭘﮔﮔ۴ﻟﺁ۱ﮔﮒ?,
+"message": "ﻝﻝ۴ﻝﭘﮔﮔ۴ﻟﺁ۱ﮔﮒ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "running",
@@ -192,7 +192,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 }
 ```
 
-##### 3.1.5 listﺅﺙﮒﮒﭦﮔﮔﻝ­ﻝ۴ﺅﺙ
+##### 3.1.5 listﺅﺙﮒﮒﭦﮔﮔﻝﻝ۴ﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
@@ -204,18 +204,18 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﻝ­ﻝ۴ﮒﻟ۰۷ﮔ۴ﻟﺁ۱ﮔﮒ",
+"message": "ﻝﻝ۴ﮒﻟ۰۷ﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "strategies": [
             {
                 "strategy_id": "STRAT_20260402_001",
-                "name": "ﮒ۷ﻠﻝ­ﻝ۴_5ﮔ۴ﮔﻛﭨ?,
+"name": "ﮒ۷ﻠﻝﻝ۴_5ﮔ۴ﮔﻛﭨ?,
                 "status": "running",
                 "created_at": "2026-04-02T10:30:00Z"
             },
             {
                 "strategy_id": "STRAT_20260401_002",
-                "name": "ﮒﮒﺙﮒﮒﺛﻝ­ﻝ?,
+"name": "ﮒﮒﺙﮒﮒﺛﻝﻝ?,
                 "status": "stopped",
                 "created_at": "2026-04-01T09:00:00Z"
             }
@@ -227,28 +227,28 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 ---
 
-### 3.2 ﮒ ﮒ­ﮒﺓ۴ﮒﺓﺅﺙFactorToolﺅﺙ?
+### 3.2 ﮒﮒﮒﺓ۴ﮒﺓﺅﺙFactorToolﺅﺙ?
 **ﮔ۷۰ﮒID**: L11_TOOL_FACTOR_001
 **ﻛﺙﮒﻝﭦ?*: P0
-**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 2 ﮒ ﮒ­ﮒﺎ?
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 2 ﮒﮒﮒﺎ?
 #### ﮔﺁﮔﻝﮔﻛﺛ?
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **query** | ﮔ۴ﻟﺁ۱ﮒ ﮒ­ﮔﺍﮔ؟ | factor_name, start_date, end_date | ﮒ ﮒ­ﮔﺍﮔ؟ |
-| **mine** | AIﮔﮔﮔﺍﮒ ﮒ­?| factor_type, constraints | ﮔﺍﮒ ﮒ­ﮒ؟ﻛﺗ?|
-| **validate** | ﻠ۹ﻟﺁﮒ ﮒ­ﮔﮔﮔ?| factor_id, test_period | ﻠ۹ﻟﺁﻝﭨﮔ |
-| **monitor** | ﻝﮔ۶ﮒ ﮒ­ﮔﺙﻝ۶ﭨ | factor_id, threshold | ﮔﺙﻝ۶ﭨﮔ۴ﮒ |
+| **query** | ﮔ۴ﻟﺁ۱ﮒﮒﮔﺍﮔ؟ | factor_name, start_date, end_date | ﮒﮒﮔﺍﮔ؟ |
+| **mine** | AIﮔﮔﮔﺍﮒﮒ?| factor_type, constraints | ﮔﺍﮒﮒﮒ؟ﻛﺗ?|
+| **validate** | ﻠ۹ﻟﺁﮒﮒﮔﮔﮔ?| factor_id, test_period | ﻠ۹ﻟﺁﻝﭨﮔ |
+| **monitor** | ﻝﮔ۶ﮒﮒﮔﺙﻝ۶ﭨ | factor_id, threshold | ﮔﺙﻝ۶ﭨﮔ۴ﮒ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.2.1 queryﺅﺙﮔ۴ﻟﺁ۱ﮒ ﮒ­ﺅﺙ
+##### 3.2.1 queryﺅﺙﮔ۴ﻟﺁ۱ﮒﮒﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "query",
     "params": {
-        "factor_name": "momentum",         # ﮒﺟﻠﺅﺙﮒ ﮒ­ﮒﻝ۶?        "start_date": "2026-01-01",        # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",          # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
-        "symbols": ["000001.SZ", "600000.SH"]  # ﮒﺁﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ 
+"factor_name": "momentum",         # ﮒﺟﻠﺅﺙﮒﮒﮒﻝ۶?        "start_date": "2026-01-01",        # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",          # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
+"symbols": ["000001.SZ", "600000.SH"]  # ﮒﺁﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
     }
 }
 ```
@@ -256,7 +256,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﮒ ﮒ­ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮔﮒ",
+"message": "ﮒﮒﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "factor_name": "momentum",
         "factor_values": [
@@ -272,12 +272,12 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 }
 ```
 
-##### 3.2.2 mineﺅﺙﮔﮔﮔﺍﮒ ﮒ­ﺅﺙ?
+##### 3.2.2 mineﺅﺙﮔﮔﮔﺍﮒﮒﺅﺙ?
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "mine",
     "params": {
-        "factor_type": "momentum",         # ﮒﺟﻠﺅﺙﮒ ﮒ­ﻝﺎﭨﮒ?        "constraints": {                    # ﮒﺁﻠﺅﺙﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
+"factor_type": "momentum",         # ﮒﺟﻠﺅﺙﮒﮒﻝﺎﭨﮒ?        "constraints": {                    # ﮒﺁﻠﺅﺙﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
             "max_period": 20,
             "min_ic": 0.05
         }
@@ -288,10 +288,10 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﮔﺍﮒ ﮒ­ﮔﮔﮔﮒ?,
+"message": "ﮔﺍﮒﮒﮔﮔﮔﮒ?,
     "data": {
         "factor_id": "FACTOR_20260402_001",
-        "factor_name": "ﮒ۷ﻠﮒ ﮒ­_10ﮔ?,
+"factor_name": "ﮒ۷ﻠﮒﮒ_10ﮔ?,
         "formula": "close.shift(10) / close - 1",
         "ic": 0.08,
         "performance": {
@@ -312,8 +312,8 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
 | **adjust_params** | ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ | max_drawdown, position_limit | ﮔﺑﮔﺍﮒﻝﮒﮔﺍ |
-| **set_stop_loss** | ﻟ؟ﺝﻝﺛ؟ﮔ­۱ﮔ | strategy_id, stop_loss | ﮔ­۱ﮔﻟ؟ﺝﻝﺛ؟ |
-| **set_take_profit** | ﻟ؟ﺝﻝﺛ؟ﮔ­۱ﻝ | strategy_id, take_profit | ﮔ­۱ﻝﻟ؟ﺝﻝﺛ؟ |
+| **set_stop_loss** | ﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔ | strategy_id, stop_loss | ﮔ۱ﮔﻟ؟ﺝﻝﺛ؟ |
+| **set_take_profit** | ﻟ؟ﺝﻝﺛ؟ﮔ۱ﻝ | strategy_id, take_profit | ﮔ۱ﻝﻟ؟ﺝﻝﺛ؟ |
 | **get_risk_report** | ﻟﺓﮒﻠ۲ﻠ۸ﮔ۴ﮒ | ﮔ?| ﻠ۲ﻠ۸ﮔ۴ﮒ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
@@ -342,21 +342,21 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 }
 ```
 
-##### 3.3.2 set_stop_lossﺅﺙﻟ؟ﺝﻝﺛ؟ﮔ­۱ﮔﺅﺙ
+##### 3.3.2 set_stop_lossﺅﺙﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "set_stop_loss",
     "params": {
-        "strategy_id": "STRAT_20260402_001",  # ﮒﺟﻠﺅﺙﻝ­ﻝ۴ID
-        "stop_loss": 0.08                     # ﮒﺟﻠﺅﺙﮔ­۱ﮔﮔﺁﻛﺝ?    }
+"strategy_id": "STRAT_20260402_001",  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
+"stop_loss": 0.08                     # ﮒﺟﻠﺅﺙﮔ۱ﮔﮔﺁﻛﺝ?    }
 }
 ```
 
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﮔ­۱ﮔﻟ؟ﺝﻝﺛ؟ﮔﮒ",
+"message": "ﮔ۱ﮔﻟ؟ﺝﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "stop_loss": 0.08,
@@ -376,7 +376,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 |------|------|------|--------|
 | **confirm** | ﮔﮔﻝ۰؟ﻟ؟۳ | decision_id, approved | ﮔﮔﻝﭨﮔ |
 | **reject** | ﮔﻝﭨﮔﮔ | decision_id, reason | ﮔﻝﭨﻝﭨﮔ |
-| **list_pending** | ﮒﮒﭦﮒﺝﮔﮔﮒﺏﻝ­?| ﮔ?| ﮒﺝﮔﮔﮒﻟ۰?|
+| **list_pending** | ﮒﮒﭦﮒﺝﮔﮔﮒﺏﻝ?| ﮔ?| ﮒﺝﮔﮔﮒﻟ۰?|
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
@@ -386,8 +386,8 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 {
     "action": "confirm",
     "params": {
-        "decision_id": "DEC_20260402_001",  # ﮒﺟﻠﺅﺙﮒﺏﻝ­ID
-        "approved": True,                    # ﮒﺟﻠﺅﺙﮔﺁﮒ۵ﮔﮔ?        "comment": "ﮒﮔﻛﺕﮔﭘﻝ­ﻝ۴"             # ﮒﺁﻠﺅﺙﮒ۳ﮔﺏ۷
+"decision_id": "DEC_20260402_001",  # ﮒﺟﻠﺅﺙﮒﺏﻝID
+"approved": True,                    # ﮒﺟﻠﺅﺙﮔﺁﮒ۵ﮔﮔ?        "comment": "ﮒﮔﻛﺕﮔﭘﻝﻝ۴"             # ﮒﺁﻠﺅﺙﮒ۳ﮔﺏ۷
     }
 }
 ```
@@ -416,7 +416,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
 | **query** | ﮔ۴ﻟﺁ۱ﻟﮔ | symbol, start_date, end_date | ﻟﮔﮔﺍﮔ؟ |
-| **alert** | ﻟﮔﻠ۱ﻟ­۵ | threshold, keywords | ﻠ۱ﻟ­۵ﮒﻟ۰۷ |
+| **alert** | ﻟﮔﻠ۱ﻟ۵ | threshold, keywords | ﻠ۱ﻟ۵ﮒﻟ۰۷ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
@@ -426,7 +426,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 {
     "action": "query",
     "params": {
-        "symbol": "000001.SZ",        # ﮒﺟﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ?        "start_date": "2026-03-01",   # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",     # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
+"symbol": "000001.SZ",        # ﮒﺟﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ?        "start_date": "2026-03-01",   # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",     # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
         "keywords": ["ﻛﺕﻝﭨ۸", "ﮒ۸ﮒ۴ﺛ"]   # ﮒﺁﻠﺅﺙﮒﺏﻠ؟ﻟﺁ?    }
 }
 ```
@@ -455,22 +455,22 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ### 4.2 MLﮒﺓ۴ﮒﺓﺅﺙMLToolﺅﺙ?
 **ﮔ۷۰ﮒID**: L11_TOOL_ML_001
 **ﻛﺙﮒﻝﭦ?*: P1
-**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 4 ﮔﭦﮒ۷ﮒ­۵ﻛﺗ ﮒﺎ?
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎ?
 #### ﮔﺁﮔﻝﮔﻛﺛ?
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **train** | ﻟ؟­ﻝﭨﮔ۷۰ﮒ | model_type, features, target | ﻟ؟­ﻝﭨﻝﭨﮔ |
+| **train** | ﻟ؟ﻝﭨﮔ۷۰ﮒ | model_type, features, target | ﻟ؟ﻝﭨﻝﭨﮔ |
 | **query** | ﮔ۴ﻟﺁ۱ﮔ۷۰ﮒﻟ۰۷ﻝﺍ | model_id | ﮔ۷۰ﮒﻟ۰۷ﻝﺍ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 4.2.1 trainﺅﺙﻟ؟­ﻝﭨﮔ۷۰ﮒﺅﺙ
+##### 4.2.1 trainﺅﺙﻟ؟ﻝﭨﮔ۷۰ﮒﺅﺙ
 
 **ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "train",
     "params": {
-        "model_type": "LSTM",              # ﮒﺟﻠﺅﺙﮔ۷۰ﮒﻝﺎﭨﮒ?        "features": ["momentum", "volume"], # ﮒﺟﻠﺅﺙﻝﺗﮒﺝﮒﻟ۰?        "target": "return_5d",             # ﮒﺟﻠﺅﺙﻝ؟ﮔ ﮒﻠ?        "train_period": "2020-2025"        # ﮒﺁﻠﺅﺙﻟ؟­ﻝﭨﮔﻠﺑ
+"model_type": "LSTM",              # ﮒﺟﻠﺅﺙﮔ۷۰ﮒﻝﺎﭨﮒ?        "features": ["momentum", "volume"], # ﮒﺟﻠﺅﺙﻝﺗﮒﺝﮒﻟ۰?        "target": "return_5d",             # ﮒﺟﻠﺅﺙﻝ؟ﮔﮒﻠ?        "train_period": "2020-2025"        # ﮒﺁﻠﺅﺙﻟ؟ﻝﭨﮔﻠﺑ
     }
 }
 ```
@@ -478,7 +478,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 **ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "ﮔ۷۰ﮒﻟ؟­ﻝﭨﮔﮒ",
+"message": "ﮔ۷۰ﮒﻟ؟ﻝﭨﮔﮒ",
     "data": {
         "model_id": "MODEL_20260402_001",
         "model_type": "LSTM",
@@ -606,7 +606,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 {
     "action": "configure_qmt",
     "params": {
-        "account": "your_account",    # ﮒﺟﻠﺅﺙﻟﺑ۵ﮒ?        "password": "your_password",  # ﮒﺟﻠﺅﺙﮒﺁﻝ ?        "server": "127.0.0.1"         # ﮒﺁﻠﺅﺙﮔﮒ۰ﮒ۷ﮒﺍﮒ
+"account": "your_account",    # ﮒﺟﻠﺅﺙﻟﺑ۵ﮒ?        "password": "your_password",  # ﮒﺟﻠﺅﺙﮒﺁﻝ?        "server": "127.0.0.1"         # ﮒﺁﻠﺅﺙﮔﮒ۰ﮒ۷ﮒﺍﮒ
     }
 }
 ```
@@ -634,7 +634,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 | ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
 | **configure_cleaner** | ﻠﻝﺛ؟ﮔﺕﮔﺑﻟ۶ﮒ | rules | ﻠﻝﺛ؟ﻝﭨﮔ |
-| **configure_normalizer** | ﻠﻝﺛ؟ﮔ ﮒﮒﮔﺗﮔﺏ?| method | ﻠﻝﺛ؟ﻝﭨﮔ |
+| **configure_normalizer** | ﻠﻝﺛ؟ﮔﮒﮒﮔﺗﮔﺏ?| method | ﻠﻝﺛ؟ﻝﭨﮔ |
 | **validate** | ﻠ۹ﻟﺁﮔﺍﮔ؟ﻟﺑ۷ﻠ | dataset | ﻠ۹ﻟﺁﻝﭨﮔ |
 
 #### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
@@ -669,12 +669,12 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ```
 
 
-## ﮒ­ﻙﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ?
+## ﮒﻙﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ?
 ### 6.1 ﮒ؟ﮔﺑﻟﺍﻝ۷ﮔﭖﻝ۷
 
 ```python
 # ﻝ۷ﮔﺓﻟﺝﮒ۴
-user_input = "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﻝ­ﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ­۱ﮔ10%"
+user_input = "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%"
 
 # Layer 11ﮒ۳ﻝﮔﭖﻝ۷
 agent = QuantTradingAgent()
@@ -682,9 +682,9 @@ result = agent.chat(user_input)
 
 # ﮒﻠ۷ﮔﭖﻝ۷
 """
-1. AIﻝﻟ۶۲ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝ­ﻝ۴"
+1. AIﻝﻟ۶۲ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝﻝ۴"
 2. AIﮔﮒﮒﮔﺍ: {strategy_type: "momentum", holding_period: 5, stop_loss: 0.1}
-3. AIﻠﮔ۸ﮒﺓ۴ﮒﺓ: "ﻝ­ﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ"
+3. AIﻠﮔ۸ﮒﺓ۴ﮒﺓ: "ﻝﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ"
 4. ﻟﺍﻝ۷ﮒﺓ۴ﮒﺓ: StrategyTool.execute({
        "action": "configure",
        "params": {
@@ -693,33 +693,33 @@ result = agent.chat(user_input)
            "stop_loss": 0.1
        }
    })
-5. ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰: ﻝ­ﻝ۴ﮒﺙﮔ.configure_strategy(...) (ﮔ AIﺅﺙﻝﺑﮔ۴ﮔ۶ﻟ۰?
-6. AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝ­ﻝ۴ID: STRAT_20260402_001"
+5. ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰: ﻝﻝ۴ﮒﺙﮔ.configure_strategy(...) (ﮔAIﺅﺙﻝﺑﮔ۴ﮔ۶ﻟ۰?
+6. AIﮔﺙﮒﺙﮒﻝﭨﮔ? "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝﻝ۴ID: STRAT_20260402_001"
 """
 
 print(result)
-# ﻟﺝﮒﭦ: "ﻝ­ﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝ­ﻝ۴ID: STRAT_20260402_001"
+# ﻟﺝﮒﭦ: "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝﻝ۴ID: STRAT_20260402_001"
 ```
 
-### 6.2 ﮒ۳ﮔ­۴ﻠ۹۳ﮔﻛﺛﻝ۳ﭦﻛﺝ?
+### 6.2 ﮒ۳ﮔ۴ﻠ۹۳ﮔﻛﺛﻝ۳ﭦﻛﺝ?
 ```python
 # ﻝ۷ﮔﺓﻟﺝﮒ۴
-user_input = "ﮔ۴ﻟﺁ۱ﮒ۷ﻠﮒ ﮒ­ﻝﻟ۰۷ﻝﺍﺅﺙﻝﭘﮒﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻛﺛﺟﻝ۷ﻟﺁ۴ﮒ ﮒ­ﻝﻝ­ﻝ?
+user_input = "ﮔ۴ﻟﺁ۱ﮒ۷ﻠﮒﮒﻝﻟ۰۷ﻝﺍﺅﺙﻝﭘﮒﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻛﺛﺟﻝ۷ﻟﺁ۴ﮒﮒﻝﻝﻝ?
 
 # Layer 11ﮒ۳ﻝﮔﭖﻝ۷
 """
-ﮔ­۴ﻠ۹۳1: ﮔ۴ﻟﺁ۱ﮒ ﮒ­
-- ﮔﮒﺝ: "ﮔ۴ﻟﺁ۱ﮒ ﮒ­"
+ﮔ۴ﻠ۹۳1: ﮔ۴ﻟﺁ۱ﮒﮒ
+- ﮔﮒﺝ: "ﮔ۴ﻟﺁ۱ﮒﮒ"
 - ﮒﮔﺍ: {factor_name: "momentum"}
 - ﻟﺍﻝ۷: FactorTool.execute({"action": "query", "params": {"factor_name": "momentum"}})
-- ﻝﭨﮔ: ﮒ ﮒ­IC=0.12ﺅﺙﻟ۰۷ﻝﺍﻟﺁﮒ۴?
-ﮔ­۴ﻠ۹۳2: ﮒﮒﭨﭦﻝ­ﻝ۴
-- ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝ­ﻝ۴"
+- ﻝﭨﮔ: ﮒﮒIC=0.12ﺅﺙﻟ۰۷ﻝﺍﻟﺁﮒ۴?
+ﮔ۴ﻠ۹۳2: ﮒﮒﭨﭦﻝﻝ۴
+- ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝﻝ۴"
 - ﮒﮔﺍ: {strategy_type: "momentum", factor: "momentum"}
 - ﻟﺍﻝ۷: StrategyTool.execute({"action": "configure", "params": {...}})
-- ﻝﭨﮔ: ﻝ­ﻝ۴ID: STRAT_20260402_001
+- ﻝﭨﮔ: ﻝﻝ۴ID: STRAT_20260402_001
 
-AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅﺙIC=0.12ﺅﺙﺅﺙﮒﺓﺎﮒﮒﭨﭦﻝ­ﻝ۴STRAT_20260402_001"
+AIﮔﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒﮒﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅﺙIC=0.12ﺅﺙﺅﺙﮒﺓﺎﮒﮒﭨﭦﻝﻝ۴STRAT_20260402_001"
 """
 ```
 
@@ -730,12 +730,12 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 
 | ﮒﺓ۴ﮒﺓﮒﻝ۶ﺍ | ﮒﺓ۴ﮒﺓﻝﺎ?| ﻛﺙﮒﻝﭦ?| ﮔﻛﺛﮔﺍﻠ | ﻝﭘﮔ?|
 |---------|--------|--------|---------|------|
-| ﻝ­ﻝ۴ﻝ؟۰ﻝ | StrategyTool | P0 | 7ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
-| ﮒ ﮒ­ﻝ؟۰ﻝ | FactorTool | P0 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﻝﻝ۴ﻝ؟۰ﻝ | StrategyTool | P0 | 7ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮒﮒﻝ؟۰ﻝ | FactorTool | P0 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﻠ۲ﮔ۶ﻝ؟۰ﻝ | RiskControlTool | P0 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﮔﮔﻝ۰؟ﻟ؟۳ | ApprovalTool | P0 | 3ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﻟﮔﮔ۴ﻟﺁ۱ | SentimentTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
-| ﮔ۷۰ﮒﻟ؟­ﻝﭨ | MLTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔ۷۰ﮒﻟ؟ﻝﭨ | MLTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﻝﭨﮒﻛﺙﮒ | PortfolioTool | P1 | 3ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﮔ۴ﮒﮔ۴ﻟﺁ۱ | ReportTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
 | ﮔﺍﮔ؟ﮔﭦﻝ؟۰ﻝ?| DataSourceTool | P2 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
@@ -743,7 +743,7 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 | **ﮔﭨﻟ؟۰** | - | - | **34ﻛﺕ۹ﮔﻛﺛ?* | - |
 
 ### 7.2 ﻛﺙﮒﻝﭦ۶ﮒﮒﺕ?
-| ﻛﺙﮒﻝﭦ?| ﮒﺓ۴ﮒﺓﮔﺍﻠ | ﮔﻛﺛﮔﺍﻠ | ﮒ ﮔﺁ |
+| ﻛﺙﮒﻝﭦ?| ﮒﺓ۴ﮒﺓﮔﺍﻠ | ﮔﻛﺛﮔﺍﻠ | ﮒﮔﺁ |
 |--------|---------|---------|------|
 | P0 | 4ﻛﺕ?| 18ﻛﺕ۹ﮔﻛﺛ?| 53% |
 | P1 | 4ﻛﺕ?| 9ﻛﺕ۹ﮔﻛﺛ?| 26% |
@@ -754,11 +754,11 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 ## ﮒ،ﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
 ### Phase 1ﺅﺙP0ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 1-2ﺅﺙ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔP0ﮒﺓ۴ﮒﺓﮒﺙﮒ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP0ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
 ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
-  1. ﻝ­ﻝ۴ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ7ﻛﺕ۹ﮔﻛﺛﺅﺙ
-  2. ﮒ ﮒ­ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
+1. ﻝﻝ۴ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ7ﻛﺕ۹ﮔﻛﺛﺅﺙ
+2. ﮒﮒﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
   3. ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
   4. ﮔﮔﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ3ﻛﺕ۹ﮔﻛﺛﺅﺙ
 
@@ -767,7 +767,7 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 ```
 
 ### Phase 2ﺅﺙP1ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 3-4ﺅﺙ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔP1ﮒﺓ۴ﮒﺓﮒﺙﮒ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP1ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
 ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
   1. ﻟﮔﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ2ﻛﺕ۹ﮔﻛﺛﺅﺙ
@@ -780,7 +780,7 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 ```
 
 ### Phase 3ﺅﺙP2ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 5-6ﺅﺙ?
-**ﻝ؟ﮔ **: ﮒ؟ﮔP2ﮒﺓ۴ﮒﺓﮒﺙﮒ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP2ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
 ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
   1. ﮔﺍﮔ؟ﮔﭦﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
@@ -797,47 +797,47 @@ AIﮔ ﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒ ﮒ­ﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅ�
 | ﮒﺎﻝﭦ۶ | ﻠﻟ۵ﻝﭨﮒ?| ﻛﺕﻠﻟ۵ﻝﭨﮒ?|
 |------|---------|-----------|
 | **Layer 11** | ﻗ?ﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒﻙﮒﺓ۴ﮒﺓﻟﺓﺁﻝ?| - |
-| **ﮒﮔ۷۰ﮒ?* | ﻗ?ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟﺅﺙﮔﻛﺛﻙﮒﮔﺍﻙﻟﺟﮒﮒﺙﺅﺙ | ﻗ?ﮔﮒ­ﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰ |
+| **ﮒﮔ۷۰ﮒ?* | ﻗ?ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟﺅﺙﮔﻛﺛﻙﮒﮔﺍﻙﻟﺟﮒﮒﺙﺅﺙ | ﻗ?ﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰ |
 
-### 9.2 ﮔ ﺕﮒﺟﻛﺙﮒﺟ
+### 9.2 ﮔﺕﮒﺟﻛﺙﮒﺟ
 
 | ﻛﺙﮒﺟ | ﻟﺁﺑﮔ |
 |------|------|
-| **ﻠﺟﮒﻠﮒ۳** | ﻛﺕﻠﻟ۵ﻛﺕﭦﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒ­ﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?|
-| **ﻝﭨﻛﺕﮔ ﮒ** | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﮔ۴ﮒ۲ﻟ۶ﻟ?|
+| **ﻠﺟﮒﻠﮒ۳** | ﻛﺕﻠﻟ۵ﻛﺕﭦﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?|
+| **ﻝﭨﻛﺕﮔﮒ** | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﮔ۴ﮒ۲ﻟ۶ﻟ?|
 | **ﮔﻛﭦﮔ۸ﮒﺎ** | ﮔﺍﮒ۱ﮔ۷۰ﮒﮒ۹ﻠﮒ؟ﻛﺗﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ |
 | **ﻝﭨﺑﮔ۳ﻝ؟ﮒ?* | ﮒ۹ﻠﻝﭨﺑﮔ۳Layer 11ﻝﮔﮒﺝﻟﺁﮒ،ﻠﭨﻟﺝ |
 
 ### 9.3 ﻛﺕﮒ۵ﻛﺕﻛﺕ۹AIﮔﺗﮔ۰ﻝﮒﺁﺗﮔﺁ?
 | ﮒﺁﺗﮔﺁﻠ۰?| ﮒ۵ﻛﺕﻛﺕ۹AIﮔﺗﮔ۰ | ﮔ؛ﮔﺗﮔ۰?| ﻛﺙﮒﺟ |
 |--------|-------------|--------|------|
-| **ﻝﭨﮒﮔﺗﮒﺙ** | ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒ­ﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?| Layer 11ﻝﭨﻛﺕﮔﮒﺝﻟﺁﮒ، + ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ | ﻗ?ﻠﺟﮒﻠﮒ۳ |
+| **ﻝﭨﮒﮔﺗﮒﺙ** | ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?| Layer 11ﻝﭨﻛﺕﮔﮒﺝﻟﺁﮒ، + ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ | ﻗ?ﻠﺟﮒﻠﮒ۳ |
 | **AIﮒﺎﮔﺍﻠ?* | 29ﻛﺕ۹AIﮒﺎ?| 1ﻛﺕ۹AIﮒﺎ?| ﻗ?ﮒﮒﺍ96.6% |
-| **ﻝﭨﺑﮔ۳ﮔﮔ؛** | ﻠ،ﺅﺙ29ﮒ۴ﻠﭨﻟﺝﺅﺙ?| ﻛﺛﺅﺙﻝﭨﻛﺕﮔ ﮒﺅﺙ?| ﻗ?ﮔﺝﻟﻠﻛﺛ |
+| **ﻝﭨﺑﮔ۳ﮔﮔ؛** | ﻠ،ﺅﺙ29ﮒ۴ﻠﭨﻟﺝﺅﺙ?| ﻛﺛﺅﺙﻝﭨﻛﺕﮔﮒﺅﺙ?| ﻗ?ﮔﺝﻟﻠﻛﺛ |
 | **ﮔ۸ﮒﺎﮔ?* | ﮒﺓ؟ﺅﺙﮔﺍﮒ۱ﮔ۷۰ﮒﻠﮔﺍﮒ۱AIﮒﺎﺅﺙ | ﮒ۴ﺛﺅﺙﮔﺍﮒ۱ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﮒﺏﮒﺁﺅﺙ?| ﻗ?ﮔﺝﻟﮔﮒ |
 
 
 ## ﮒﻙﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?
-### 10.1 ﮔ ﺕﮒﺟﮒﻟﮔﮔ۰?
+### 10.1 ﮔﺕﮒﺟﮒﻟﮔﮔ۰?
 | ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
 | [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔ |
 | [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
-| [ﮔﮒ­ﻠ۸ﺎﮒ۷ﮔ ﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ |
+| [ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ |
 | [ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒ](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agentﮔ۰ﮔﭘ |
 
-### 10.2 ﻛﭨ۲ﻝ ﮒ؟ﻝﺍﻛﺛﻝﺛ؟
+### 10.2 ﻛﭨ۲ﻝﮒ؟ﻝﺍﻛﺛﻝﺛ؟
 
 | ﮔ۷۰ﮒ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |------|------|------|
 | ﮒﺓ۴ﮒﺓﮒﭦﻝﺎﭨ | `src/layer_11/tools/base_tool.py` | ﮒﺓ۴ﮒﺓﮒﭦﻝﺎﭨﮒ؟ﻛﺗ |
-| ﻝ­ﻝ۴ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/strategy_tool.py` | ﻝ­ﻝ۴ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
-| ﮒ ﮒ­ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/factor_tool.py` | ﮒ ﮒ­ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
+| ﻝﻝ۴ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/strategy_tool.py` | ﻝﻝ۴ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
+| ﮒﮒﮒﺓ۴ﮒﺓ | `src/layer_11/tools/factor_tool.py` | ﮒﮒﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
 | ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/risk_control_tool.py` | ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
-| ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕ­ﮒﺟ | `src/layer_11/tools/__init__.py` | ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻝ؟۰ﻝ |
+| ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕﮒﺟ | `src/layer_11/tools/__init__.py` | ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻝ؟۰ﻝ |
 
 ---
 
 **ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02
-**ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+**ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?

@@ -69,13 +69,13 @@ layer: Layer 4 (机器学习层)
 
 |------|------|--------|
 
-| Local | 局部窗?| O(n×w) |
+| Local | 局部窗?| O(nw) |
 
-| Strided | 步长跳跃 | O(n×k) |
+| Strided | 步长跳跃 | O(nk) |
 
-| Global | 全局关键?| O(n×g) |
+| Global | 全局关键?| O(ng) |
 
-| Random | 随机采样 | O(n×r) |
+| Random | 随机采样 | O(nr) |
 
 | Longformer | 滑动窗口+全局 | O(n) |
 

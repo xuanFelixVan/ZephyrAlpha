@@ -86,12 +86,12 @@ layer: Layer 5.4 (交易执行)
 
 
 ```
-â?                                                                â?
-â?                                                                â?
-â?                                                                â?
-                                            â?â?â?
-â?                                                                â?
-â?                                                                â?
+?                                                                ?
+?                                                                ?
+?                                                                ?
+???
+?                                                                ?
+?                                                                ?
 ```
 
 
@@ -221,7 +221,7 @@ def compare_algorithm_costs(symbol, volume, duration, market_data):
 
 ### 3.3 数据模型设计
 
-#### 3.3.1 ä¼åé
+#### 3.3.1
 
 ```python
 class OptimizationConfig:
@@ -252,9 +252,8 @@ class OptimizationResult:
 
 | 优势维度 | 说明 | 评分 |
 |---------|------|------|
-| **å¼æºå
-è´?* | VeighNaå®å
-¨å
+| **
+?* | VeighNa
 
 
 |---------|--------|------|
@@ -264,7 +263,7 @@ class OptimizationResult:
 
 | 成本维度 | 评估结果 | 说明 |
 |---------|---------|------|
-¥ |
+|
 
 ---
 
@@ -273,9 +272,9 @@ class OptimizationResult:
 **目标**: 集成VeighNa algo_trading模块
 
 单**:
-1. â?å®è£
+1. ?
 VeighNa依赖
-5. â?åå
+5. ?
 
 **交付成果**:
 - 算法优化器基础框架
@@ -303,13 +302,13 @@ VeighNa依赖
 
 ---
 
-## å
+##
 
 
 |--------|-----------|---------|
 | **参数优化** | 支持TWAP/VWAP/POV/IS | 功能测试 |
- | åå
-æµè¯ |
+|
+|
 
 ### 6.2 性能要求
 
@@ -327,7 +326,7 @@ VeighNa依赖
 
 
 |--------|---------|---------|
-| **æ¡æ¶å
+| **
 
 
 ### 7.2 实施风险
@@ -338,7 +337,7 @@ VeighNa依赖
 
 ---
 
-## å
+##
 
 ### 8.1 Citadel对标
 
@@ -352,7 +351,7 @@ VeighNa依赖
 
 ---
 
-³ææ¡?
+?
 
 ### 上游依赖
 
@@ -370,8 +369,8 @@ VeighNa依赖
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.11+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -388,8 +387,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### å
-³ææ¡£
+###
 
 | 文档名称 | 说明 |
 |---------|------|
@@ -417,8 +415,8 @@ graph LR
 ##### 6.001. Algorithmic Trading Optimizer
 - **模块ID**: ALGORITHMIC_TRADING_OPTIMIZER_001
 - **蓝图文档**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

@@ -87,7 +87,7 @@ layer: Layer 5.1 (数据处理)
 
 ### 1.1 为什么选择dbt + Great Expectations
 
-| ç¹æ?| dbt + GE | Pandera | Pydantic |
+| ?| dbt + GE | Pandera | Pydantic |
 |------|----------|---------|----------|
 
 ---
@@ -97,10 +97,10 @@ layer: Layer 5.1 (数据处理)
 ### 2.1 整体架构
 
 ```
-â?                                                                â?
-â?        â?                  â?                   â?             â?
-â?                           â?                                   â?
-â?                                                                â?
+?                                                                ?
+?        ?                  ?                   ?             ?
+?                           ?                                   ?
+?                                                                ?
 ```
 
 ---
@@ -122,8 +122,8 @@ class NamingStandardizer:
         "开盘价": "open",
         "最高价": "high",
         "最低价": "low",
-        "æ¶çä»?: "close",
-        "æäº¤é?: "volume",
+"?: "close",
+"?: "volume",
     }
     
     @classmethod
@@ -165,7 +165,7 @@ class FormatStandardizer:
             return value.strftime(format)
         
         if isinstance(value, str):
-            for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Yå¹?mæ?dæ?]:
+for fmt in ["%Y-%m-%d", "%Y/%m/%d", "%Y%m%d", "%Y?m?d?]:
                 try:
                     dt = datetime.strptime(value, fmt)
                     return dt.strftime(format)

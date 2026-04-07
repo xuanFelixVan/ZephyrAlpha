@@ -116,9 +116,9 @@ layer: Layer 5 (策略执行层)
 ### 2.1 新闻数据?
 #### 2.1.1 财联社API
 
-**æ°æ®å
+**
 容**:
-¬å¸æ°?
+?
 **技术方?*:
 ```python
 class CailianNewsDataSource:
@@ -144,9 +144,9 @@ class CailianNewsDataSource:
         return self._parse_news(response.json())
     
     def get_stock_news(self, stock_code, start_date, end_date):
-³æ°é»"""
-        # éè¿å
-³æ°?        pass
+"""
+#
+?        pass
 ```
 
 **数据字段**:
@@ -157,17 +157,17 @@ class CailianNewsDataSource:
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| stock_codes | array | ç¸å
-| sentiment | float | æ
+| stock_codes | array |
+| sentiment | float |
 感得分?1??|
 | event_type | string | 事件类型 |
 
-**ææ¬**: å
+****:
 ---
 
 #### 2.1.2 新浪财经API
 
-**æ°æ®å
+**
 容**:
 **技术方?*:
 ```python
@@ -190,14 +190,14 @@ class SinaFinanceDataSource:
         return self._parse_response(response.json())
 ```
 
-**ææ¬**: å
+****:
 费
 
 ---
 
 #### 2.1.3 东方财富API
 
-**æ°æ®å
+**
 容**:
 **技术方?*:
 ```python
@@ -221,7 +221,7 @@ class EastMoneyDataSource:
         return self._parse_response(response.json())
 ```
 
-**ææ¬**: å
+****:
 费
 
 ---
@@ -229,7 +229,7 @@ class EastMoneyDataSource:
 ### 2.2 社交媒体数据?
 #### 2.2.1 微博API
 
-**æ°æ®å
+**
 容**:
 - 财经大V观点
 ?- 热门话题
@@ -247,7 +247,7 @@ class WeiboDataSource:
         }
         
     def search_stock_posts(self, stock_name, page=1):
-³å¾®å"""
+"""
         params = {
             'containerid': f'100103type=1&q={stock_name}',
             'page_type': 'searchall',
@@ -271,22 +271,21 @@ class WeiboDataSource:
 | post_id | string | 微博ID |
 | user_id | string | 用户ID |
 | user_name | string | 用户?|
-| content | text | å¾®åå
+| content | text |
 容 |
 | publish_time | datetime | 发布时间 |
 | likes | int | 点赞?|
 | comments | int | 评论?|
 | reposts | int | 转发?|
-| sentiment | float | æ
+| sentiment | float |
 感得分 |
 
-**ææ¬**: å
+****:
 ---
 
 #### 2.2.2 雪球网爬?
-**æ°æ®å
+**
 容**:
-æ
 ?- 热门股票
 
 **技术方?*:
@@ -318,12 +317,12 @@ class XueqiuDataSource:
         return self._parse_hot_stocks(response.json())
 ```
 
-**ææ¬**: å
+****:
 ---
 
 #### 2.2.3 东方财富股吧
 
-**æ°æ®å
+**
 容**:
 绪
 
@@ -345,7 +344,7 @@ class GubaDataSource:
         return self._parse_posts(response.text)
 ```
 
-**ææ¬**: å
+****:
 费
 
 ---
@@ -353,7 +352,7 @@ class GubaDataSource:
 ### 2.3 分析师预期数据源
 
 #### 2.3.1 东方财富分析师预?
-**æ°æ®å
+**
 容**:
 - 分析师评?- 目标价预?- 盈利预测
 
@@ -391,21 +390,21 @@ class AnalystExpectationDataSource:
 | eps_forecast | float | EPS预测 |
 | report_date | date | 报告日期 |
 
-**ææ¬**: å
+****:
 费
 
 ---
 
 ## 三、NLP处理流程
 
-### 3.1 æ
+### 3.1
 感分析
 
 **技术方?*: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
-    """æ
+"""
 感分析?""
     
     def __init__(self):
@@ -418,7 +417,6 @@ class SentimentAnalyzer:
 感得分：
         -1表示极度负面?表示中性，1表示极度正面
         
-        æ°é»å
 容：{text}
         
         
@@ -427,7 +425,7 @@ class SentimentAnalyzer:
         return sentiment_score
     
     def batch_analyze(self, texts):
-        """æ¹éæ
+"""
 感分析"""
         results = []
         for text in texts:
@@ -457,15 +455,14 @@ class EventExtractor:
         """提取新闻事件"""
         prompt = f"""
         
-        æ°é»å
 容：{text}
         
         请返回JSON格式?        {{
             "event_type": "事件类型",
             "event_summary": "事件摘要",
-            "related_stocks": ["ç¸å
+"related_stocks": ["
             "impact_level": "影响等级（高/?低）",
-            "sentiment": "æ
+"sentiment": "
 感倾向（正?负面/中性）"
         }}
         """
@@ -491,7 +488,7 @@ class EntityRecognizer:
         """提取股票代码"""
         stock_codes = re.findall(self.stock_pattern, text)
         
-        # 2. GLM-4è¯å«å
+# 2. GLM-4
         prompt = f"""
         
         文本：{text}
@@ -525,7 +522,6 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
         window: 时间窗口（天?    
     Returns:
         因子值（-1??    """
-³æ°é»
     news_list = get_stock_news(stock_code, date-window, date)
     
 感得?    sentiments = [analyze_sentiment(news['content']) for news in news_list]
@@ -619,7 +615,7 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 
 ---
 
-### 4.2 æ
+### 4.2
 绪因子
 
 绪因子
@@ -681,7 +677,7 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
     # 3. 计算讨论热度
     engagement = sum([post['likes'] + post['comments'] + post['reposts'] for post in posts])
     
-    # 4. ç»¼åæ
+# 4.
 绪和热?    avg_sentiment = np.mean(sentiments)
     heat_score = np.log1p(engagement)
     
@@ -753,7 +749,7 @@ def calculate_rating_change_factor(stock_code, date, window=30):
     
     # 2. 计算评级变化
     if len(ratings) >= 2:
-        rating_map = {'ä¹°å
+rating_map = {'
         latest_rating = rating_map.get(ratings[-1]['rating'], 0)
         previous_rating = rating_map.get(ratings[0]['rating'], 0)
         
@@ -771,7 +767,7 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 
 ---
 
-### 4.4 å
+### 4.4
 #### 因子8: 社交媒体热度因子
 
 **计算方法**:
@@ -943,7 +939,7 @@ class VectorStore:
 
 ---
 
-## å
+##
 ### 6.1 时间规划
 
 | 阶段 | 时间 | 任务 | 交付?|
@@ -982,13 +978,13 @@ class VectorStore:
 | **计算资源** | 本地开发机??6G?| 0?|
 | **存储资源** | 本地SSD 500GB | 0?|
 | **API调用** | GLM-4-Flash | ?00??|
-| **æ°æ®?* | å
-¬å¼API | 0?|
+| **?* |
+API | 0?|
 
 **总成?*: ?00??
 ---
 
-## å
+##
 ### 8.1 技术风?
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
@@ -1014,7 +1010,7 @@ class VectorStore:
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
 | **数据采集** | 数据完整?95% | 数据质量检?|
-| **NLPå¤ç** | æ
+| **NLP** |
 感分析准确?80% | 人工标注验证 |
 | **因子计算** | 因子数量??| 功能测试 |
 
@@ -1049,8 +1045,7 @@ class VectorStore:
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -1069,8 +1064,8 @@ class VectorStore:
 | **GLM-4-Flash** | latest | NLP处理 | [官方文档](https://open.bigmodel.cn/) |
 | **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -1092,8 +1087,8 @@ graph LR
 ##### 6.001. Alternative Data Integration
 - **模块ID**: ALTERNATIVE_DATA_INTEGRATION_001
 - **蓝图文档**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

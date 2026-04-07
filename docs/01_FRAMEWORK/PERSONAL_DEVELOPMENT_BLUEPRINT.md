@@ -36,7 +36,7 @@ layer: Layer 2 (Alpha因子层)
 > - ✅ 本文档负责：Personal Development蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> æ¸
+>
 风量化系统 v5.3 - 个人开发版
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
@@ -49,7 +49,6 @@ layer: Layer 2 (Alpha因子层)
 >
 > **选择指南**?> - 如果你是大规模团??参考DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
 
-å
 
 
 ## 📋 一、个人开发模块筛?
@@ -65,33 +64,13 @@ layer: Layer 2 (Alpha因子层)
 ### 1.2 模块可行性评?
 | 模块 | 技术成熟度 | 硬件要求 | 维护成本 | 技能匹?| 实施速度 | 综合评分 | 推荐?|
 |------|------------|----------|----------|----------|----------|----------|--------|
-â
-â
-â
 ?|
-â
-â
-â
 ?|
-â
-â
-â
 ?|
-â
-â
-â
 ?|
-â
-â
-â
 ?|
-â
-â
 ☆?|
-â
 ☆☆?|
-â
-â
 ☆?|
 ☆☆☆?|
 
@@ -107,7 +86,7 @@ layer: Layer 2 (Alpha因子层)
 **实施步骤**?-5天）?
 **Day 1: 环境准备**
 ```bash
-# å®è£
+#
 依赖
 pip install akshare websockets redis asyncio
 
@@ -189,7 +168,7 @@ class PersonalRealtimeFeed:
             if data['action'] == 'subscribe':
                 symbol = data['symbol']
                 self.subscribed_symbols.add(symbol)
-                print(f"è®¢é
+print(f"
 : {symbol}")
                 
                 # 开始推送数?                await self.push_data(websocket, symbol)
@@ -203,7 +182,7 @@ class PersonalRealtimeFeed:
         print(f"实时数据流服务器启动: ws://localhost:{port}")
         
         async with websockets.serve(self.handle_client, "localhost", port):
-            await asyncio.Future()  # æ°¸ä¹
+await asyncio.Future()  #
 运行
     
     def stop(self):
@@ -232,7 +211,7 @@ async def test_client():
     """测试客户?""
     uri = "ws://localhost:8765"
     async with websockets.connect(uri) as websocket:
-        # è®¢é
+#
 股票
         subscribe_msg = {
             'action': 'subscribe',
@@ -438,7 +417,7 @@ if __name__ == "__main__":
     
     # 模拟数据
     data = pd.DataFrame({
-        'price': [10.0, 10.5, 11.0, 10.8, None, 10.2, 100.0],  # å
+'price': [10.0, 10.5, 11.0, 10.8, None, 10.2, 100.0],  #
 含缺失值和异常?        'volume': [1000, 1200, 1100, 1050, 980, 1020, 1500],
         'timestamp': pd.date_range('2026-04-02 09:30:00', periods=7, freq='T')
     })
@@ -473,7 +452,6 @@ if __name__ == "__main__":
 
 ### 2.3 模块3：数据冗余机制（redundancy_manager.py?
 #### 2.3.1 个人开发方?
-è´¹ï¼
 - **切换策略**：自动检测、自动切?
 **硬件要求**?- CPU: 2?- RAM: 4GB
 - 存储: 5GB
@@ -538,7 +516,7 @@ class PersonalRedundancyManager:
             DataFrame: 股票数据
         """
         if not self.pro:
-            logger.warning("Tushareæªé
+logger.warning("Tushare
             return None
         
         try:
@@ -646,7 +624,7 @@ if __name__ == "__main__":
 ```
 
 **Day 2: 测试和优?*
-- æµè¯æ
+-
 障切换逻辑
 - 优化重试策略
 - 添加监控指标
@@ -686,7 +664,7 @@ logger = logging.getLogger(__name__)
 
 class PersonalMacroEngine:
     """个人版宏观经济数据引?    
-    ç¹ç¹?        - å
+?        -
         - 易扩展：模块化设计，方便添加新指?    """
     
     def __init__(self, db_path: str = 'data/macro_data.db'):
@@ -734,7 +712,7 @@ class PersonalMacroEngine:
             df['indicator_name'] = '中国GDP'
             df['country'] = 'China'
             df['frequency'] = 'quarterly'
-            df['unit'] = 'äº¿å
+df['unit'] = '
 '
             df['source'] = 'akshare'
             return df
@@ -867,7 +845,7 @@ class PersonalMacroEngine:
         return df
     
     def close(self):
-        """å
+"""
         self.conn.close()
 
 
@@ -883,7 +861,7 @@ if __name__ == "__main__":
     print("GDP数据:")
     print(gdp_data.head())
     
-    # å
+#
     engine.close()
 ```
 
@@ -893,7 +871,7 @@ if __name__ == "__main__":
 
 **Day 4-5: 文档和部?*
 - 编写README文档
-- é
+-
 - 部署到生产环?
 #### 2.4.2 AI维护要点
 
@@ -906,7 +884,7 @@ if __name__ == "__main__":
 #### 2.5.1 个人开发方?
 **技术选型**?- **NLP模型**：HuggingFace Transformers（开源）
 - **中文分词**：jieba
-- **æ
+- **
 感分析**：预训练模型（如BERT?
 **硬件要求**?- CPU: 4核（推荐GPU，但CPU也可运行?- RAM: 8GB
 - 存储: 20GB（模型文件）
@@ -914,7 +892,7 @@ if __name__ == "__main__":
 **实施步骤**?-7天）?
 **Day 1-2: 环境准备和模型下?*
 ```bash
-# å®è£
+#
 依赖
 pip install transformers torch jieba pandas
 
@@ -966,11 +944,11 @@ class PersonalAIEngine:
 感
         
         Args:
-            text: ææ¬å
+text:
 容
             
         Returns:
-            Dict: æ
+Dict:
 感分析结果
         """
         try:
@@ -980,7 +958,7 @@ class PersonalAIEngine:
                 'score': result['score'],
                 'text': text[:100]  # 只保存前100个字?            }
         except Exception as e:
-            logger.error(f"æ
+logger.error(f"
 感分析失败: {e}")
             return None
     
@@ -991,7 +969,7 @@ class PersonalAIEngine:
             news_list: 新闻列表
             
         Returns:
-            List[Dict]: æ
+List[Dict]:
 感分析结果列表
         """
         results = []
@@ -1003,14 +981,13 @@ class PersonalAIEngine:
         return results
     
     def extract_keywords(self, text: str, top_k: int = 10) -> List[str]:
-        """æåå
+"""
         Args:
-            text: ææ¬å
+text:
 容
-³é®è¯
             
         Returns:
-            List[str]: å
+List[str]:
         import jieba.analyse
         keywords = jieba.analyse.extract_tags(text, topK=top_k, withWeight=True)
         return [kw[0] for kw in keywords]
@@ -1019,7 +996,7 @@ class PersonalAIEngine:
         """文本摘要（简单截断）
         
         Args:
-            text: ææ¬å
+text:
 容
             max_length: 最大长?            
         Returns:
@@ -1035,28 +1012,26 @@ if __name__ == "__main__":
     # 创建AI引擎
     ai_engine = PersonalAIEngine()
     
-    # æµè¯æ
+#
 感分析
     news_list = [
 过预?,
-ææ
-æ
 绪蔓?,
         "央行宣布降准，市场流动性改?
     ]
     
-    print("æ
+print("
 感分析结果:")
     for news in news_list:
         result = ai_engine.analyze_sentiment(news)
         print(f"新闻: {news}")
-        print(f"æ
+print(f"
 感: {result['label']}, 置信? {result['score']:.4f}\n")
     
-    # æµè¯å
+#
     keywords = ai_engine.extract_keywords(text, top_k=5)
-    print(f"å
-³é®? {keywords}")
+print(f"
+? {keywords}")
 ```
 
 **Day 6: 测试和优?*
@@ -1083,10 +1058,10 @@ if __name__ == "__main__":
 - **成本**: 几乎为零
 
 **实施步骤**?-5天）?
-**Day 1: DVCç¯å¢é
+**Day 1: DVC
 置**
 ```bash
-# å®è£
+#
 DVC
 pip install dvc
 
@@ -1094,7 +1069,7 @@ pip install dvc
 cd d:/ZephyrAlpha
 dvc init
 
-# é
+#
 dvc remote add -d myremote /path/to/dvc-storage
 ```
 
@@ -1286,7 +1261,7 @@ class PersonalDataGovernance:
         return lineage
     
     def close(self):
-        """å
+"""
         self.conn.close()
 
 
@@ -1319,7 +1294,7 @@ if __name__ == "__main__":
     for item in lineage:
         print(f"  {item['source_path']} -> {item['target_path']}: {item['transformation']}")
     
-    # å
+#
     governance.close()
 ```
 
@@ -1339,34 +1314,33 @@ if __name__ == "__main__":
 
 | 阶段 | 时间 | 模块 | 预估工时 | 硬件成本 | 软件成本 |
 |------|------|------|----------|----------|----------|
-| **Week 1** | Day 1-3 | 实时数据?| 3?| ¥0 | ¥0 |
-| | Day 4-5 | 数据质量监控 | 2?| ¥0 | ¥0 |
-| **Week 2** | Day 1-3 | 数据冗余机制 | 2?| ¥0 | ¥0 |
-| | Day 4-5 | 宏观数据引擎 | 2?| ¥0 | ¥0 |
-| **Week 3** | Day 1-5 | AI数据引擎 | 5?| ¥0 | ¥0 |
-| **Week 4** | Day 1-3 | 数据治理（简化版?| 3?| ¥0 | ¥0 |
-| | Day 4-5 | 集成测试和文?| 2?| ¥0 | ¥0 |
-| **总计** | **4?* | **6个模?* | **17?* | **¥0** | **¥0** |
+| **Week 1** | Day 1-3 | 实时数据?| 3?| 0 | 0 |
+| | Day 4-5 | 数据质量监控 | 2?| 0 | 0 |
+| **Week 2** | Day 1-3 | 数据冗余机制 | 2?| 0 | 0 |
+| | Day 4-5 | 宏观数据引擎 | 2?| 0 | 0 |
+| **Week 3** | Day 1-5 | AI数据引擎 | 5?| 0 | 0 |
+| **Week 4** | Day 1-3 | 数据治理（简化版?| 3?| 0 | 0 |
+| | Day 4-5 | 集成测试和文?| 2?| 0 | 0 |
+| **总计** | **4?* | **6个模?* | **17?* | **0** | **0** |
 
 ### 3.2 硬件资源需?
-?| æ¨èé
+?|
 |------|----------|----------|--------|------|
-| **开发机** | CPU 2? RAM 4GB | CPU 4? RAM 8GB | ¥50-100 | 云服务器 |
-| **存储** | 50GB SSD | 100GB SSD | ¥10-20 | 云存?|
-| **总计** | - | - | **¥60-120/?* | 可使用个人电?|
+| **开发机** | CPU 2? RAM 4GB | CPU 4? RAM 8GB | 50-100 | 云服务器 |
+| **存储** | 50GB SSD | 100GB SSD | 10-20 | 云存?|
+| **总计** | - | - | **60-120/?* | 可使用个人电?|
 
 ### 3.3 软件资源需?
 |------|------|------|------|
 费 | - |
-| **AKShare** | æ°æ®?| å
-| **Redis** | ç¼å­ | å
-| **SQLite** | æ°æ®?| å
-è´¹ | å
+| **AKShare** | ?|
+| **Redis** |  |
+| **SQLite** | ?|
+|
 置 |
-è´¹ | å¼?|
-| **Transformers** | AIæ¨¡å | å
-è´¹ | å¼?|
-¨é¨å
+| ?|
+| **Transformers** | AI |
+| ?|
 费 |
 
 
@@ -1375,16 +1349,15 @@ if __name__ == "__main__":
 
 | 对比?| 专业机构方案 | 个人开发方?| 节省成本 |
 |--------|-------------|-------------|----------|
-| **硬件成本** | ¥10?/?| ¥1,000/?| 99% |
-| **软件成本** | ¥5?/?| ¥0/?| 100% |
-| **人力成本** | ¥50?/?| ¥0/年（自己开发） | 100% |
-| **维护成本** | ¥10?/?| ¥5,000/?| 95% |
-| **总成?* | **¥75?/?* | **¥6,000/?* | **92%** |
+| **硬件成本** | 10?/?| 1,000/?| 99% |
+| **软件成本** | 5?/?| 0/?| 100% |
+| **人力成本** | 50?/?| 0/年（自己开发） | 100% |
+| **维护成本** | 10?/?| 5,000/?| 95% |
+| **总成?* | **75?/?* | **6,000/?* | **92%** |
 
 ### 4.2 灵活性优?
 1. **快速迭?*：无需团队协调，快速修改和部署
-¨æç
-### 4.3 AIè¾
+### 4.3 AI
 助优势
 
 1. **代码生成**：AI可以生成大部分代?2. **问题诊断**：AI可以快速诊断和解决问题
@@ -1408,13 +1381,12 @@ if __name__ == "__main__":
 |------|------|-----------|
 | **性能优化** | 2小时 | 60% |
 | **功能扩展** | 3小时 | 70% |
-| **å®å
+| **
 | **备份验证** | 0.5小时 | 50% |
 | **总计** | **6.5小时** | **65%** |
 
-·
 
-| å·¥å
+|
 |------|------|----------|
 | **代码审查** | AI审查代码质量 | 50% |
 | **文档生成** | AI生成技术文?| 80% |
@@ -1422,7 +1394,7 @@ if __name__ == "__main__":
 | **性能优化** | AI优化代码性能 | 40% |
 
 
-## ?å
+## ?
 ### 6.1 功能验收
 
 | 模块 | 验收标准 | 验证方法 |
@@ -1462,7 +1434,7 @@ if __name__ == "__main__":
 
 ### 7.2 学习资源
 
-| èµæº | å
+|  |
 容 | 链接 |
 |------|------|------|
 | **AKShare文档** | 数据接口使用 | https://akshare.akfamily.xyz/ |
@@ -1479,23 +1451,23 @@ if __name__ == "__main__":
 | **CSDN** | 中文文档 | https://www.csdn.net/ |
 
 
-## ð¯ å
+##
 
 ### 8.1 核心优势
 
-¥6,000/年，比专业机构节?2%
+6,000/年，比专业机构节?2%
 需2.5小时
 ### 8.2 实施建议
 
-1. **ä¼å
-?*ï¼æç
-å©**ï¼å
+1. **
+?*
+**
 
 ?
 ### 8.3 后续扩展
 
 完成?个模块后，可以考虑?1. **ClickHouse集成**：如果数据量增长，可以集成ClickHouse
-¥Dask
+Dask
 3. **高频数据**：如果有付费数据源，可以开发高频数据处理模?
 ---
 

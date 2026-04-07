@@ -4,26 +4,26 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 组合优化
   - 交易执行
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﮔ ﮒ?
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﮔﮒ?
 applicable_scope: ﮒ۳ﮒﺙﮔﮔ۴ﮒ۲ﻠﮔ?
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: P0-01_Database_Design_Document.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ?
+# ﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﺅﺙ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﻝ؛؛ﻛﺕﮔﺗﮔ۴ﮒ۲ﻠﮔﻟ؟ﺝﻟ؟?
 > **ﻠﮔﮒﺙﮔ**: vn.py, RQAlpha, Backtrader, QMT, Backtesting.py
 > **ﻟ؟ﺝﻟ؟۰ﮒﮒ**: ﮔ۴ﮒ۲ﻝﭨﻛﺕﻙﻠﻠﮒ۷ﮔ۷۰ﮒﺙﻙﮔﺝﻟ۵ﮒﻙﮔﮔ۸ﮒﺎ
 
@@ -92,7 +92,7 @@ class EngineInterface(ABC):
     
     @abstractmethod
     async def disconnect(self) -> bool:
-        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
+"""ﮔﮒﺙﻟﺟﮔ۴"""
         pass
     
     @abstractmethod
@@ -224,7 +224,7 @@ class VnpyAdapter(EngineInterface):
             self.event_engine = EventEngine()
             self.main_engine = MainEngine(self.event_engine)
             
-            # ﮔﺓﭨﮒ ﻝﺛﮒﺏ
+# ﮔﺓﭨﮒﻝﺛﮒﺏ
             if self.gateway_name == 'CTP':
                 from vnpy.trader.gateway import CtpGateway
                 self.main_engine.add_gateway(CtpGateway)
@@ -245,12 +245,12 @@ class VnpyAdapter(EngineInterface):
             return False
     
     async def disconnect(self) -> bool:
-        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
+"""ﮔﮒﺙﻟﺟﮔ۴"""
         try:
             self.main_engine.close()
             return True
         except Exception as e:
-            print(f"vn.pyﮔ­ﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
+print(f"vn.pyﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check(self) -> Dict[str, Any]:
@@ -548,13 +548,13 @@ class RQAlphaAdapter(EngineInterface):
             return False
     
     async def disconnect(self) -> bool:
-        """ﮔ­ﮒﺙﻟﺟﮔ۴"""
+"""ﮔﮒﺙﻟﺟﮔ۴"""
         try:
             if self.env:
                 self.env.stop()
             return True
         except Exception as e:
-            print(f"RQAlphaﮔ­ﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
+print(f"RQAlphaﮔﮒﺙﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check(self) -> Dict[str, Any]:
@@ -788,7 +788,7 @@ class EngineManagerService:
             return False
     
     async def disconnect_engine(self, engine_id: str) -> bool:
-        """ﮔ­ﮒﺙﮒﺙﮔﻟﺟﮔ۴"""
+"""ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴"""
         try:
             engine = self.engines.get(engine_id)
             
@@ -797,7 +797,7 @@ class EngineManagerService:
             
             return await engine.disconnect()
         except Exception as e:
-            print(f"ﮔ­ﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
+print(f"ﮔﮒﺙﮒﺙﮔﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴: {e}")
             return False
     
     async def health_check_engine(self, engine_id: str) -> Dict[str, Any]:
@@ -842,9 +842,9 @@ class EngineManagerService:
 
 ## 5. ﮔ۴ﮒ۲ﻠﮔﻟ۶ﻟ
 
-### 5.1 ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻟﺛ؛ﮔ۱
+### 5.1 ﮔﺍﮔ؟ﮔﺙﮒﺙﻟﺛ؛ﮔ۱
 
-| ﮒ­ﮔ؟ﭖ | ﻝﺏﭨﻝﭨﮔ ﺙﮒﺙ | vn.pyﮔ ﺙﮒﺙ | RQAlphaﮔ ﺙﮒﺙ |
+| ﮒﮔ؟ﭖ | ﻝﺏﭨﻝﭨﮔﺙﮒﺙ | vn.pyﮔﺙﮒﺙ | RQAlphaﮔﺙﮒﺙ |
 |------|----------|-----------|-------------|
 | **ﻛﭦ۳ﮔﮔﺗﮒ** | buy/sell | LONG/SHORT | BUY/SELL |
 | **ﻟ؟۱ﮒﻝﺎﭨﮒ** | limit/market | LIMIT/MARKET | LIMIT/MARKET |
@@ -853,7 +853,7 @@ class EngineManagerService:
 
 ### 5.2 ﻠﻟﺁﺁﮒ۳ﻝ
 
-| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﮒ۳ﻝﮔﺗﮒﺙ | ﻠﻟﺁﻝ­ﻝ۴ |
+| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﮒ۳ﻝﮔﺗﮒﺙ | ﻠﻟﺁﻝﻝ۴ |
 |----------|----------|----------|
 | **ﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠﻟﺁ?| ﻠﻟﺁ3ﮔ؛۰ﺅﺙﻠﺑﻠ5ﻝ۶?|
 | **ﻟ؟۱ﮒﮒ۳ﺎﻟﺑ۴** | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠﻟﺁ?| ﻛﺕﻠﻟﺁ?|
@@ -866,11 +866,11 @@ class EngineManagerService:
 |------|----------|------|
 | **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﻝﺛﻝﭨﮒﭨﭘﻟﺟ |
 | **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﻝﺛﻝﭨﮒﭨﭘﻟﺟ |
-| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
-| **ﮔ۴ﻟﺁ۱ﮔﻛﭨ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
-| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ­ |
+| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ |
+| **ﮔ۴ﻟﺁ۱ﮔﻛﭨ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ |
+| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 300ms | ﮔ؛ﮒﺍﻝﺙﮒ |
 
 ---
 
 **ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-**ﻛﺕﻛﺕﮔ­?*: P0-5 ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+**ﻛﺕﻛﺕﮔ?*: P0-5 ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

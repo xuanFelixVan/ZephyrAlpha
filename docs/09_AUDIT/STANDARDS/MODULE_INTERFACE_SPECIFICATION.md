@@ -1,14 +1,14 @@
 ﻿﻿---
 version: 1.0.0
-standard_type: ﮔﮔﺁﮔ ﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﮔﮔﺁﮔﮒ?applicable_scope: ﮔ۷۰ﮒﮒﺙﮒ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 responsibility:
   - 审计报告、合规检查
 parent_document: ../INDEX.md
-implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?version: 1.0.0
 module_id: MODULE_INTERFACE_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔ ﮒ?, "ﻛﺕﻛﺕﮔ ﮒ"]
+tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔﮒ?, "ﻛﺕﻛﺕﮔﮒ"]
 ---
 ---
 
@@ -21,27 +21,27 @@ tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔ ﮒ?, "�
 
 **ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
 **ﮔﮒﮔﺑﮔ?*: 2026-04-02
-**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻠ۵ﮒﺕ­ﮔﭘﮔﮒﺕ?
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 ---
 
 ## 1. ﻟ۶ﻟﮔ۵ﻟﺟﺍ
 
 ### 1.1 ﻟ۶ﻟﻝ؟ﻝ
 
-ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔ ﮒﺅﺙﻝ۰؟ﻛﺟﮔ۷۰ﮒﻠﺑﮔ۴ﮒ۲ﮔﺕﮔﺍﻙﻟ۶ﻟﻙﮒﺁﻝﭨﺑﮔ۳ﺅﺙﮔﮒﻝﺏﭨﻝﭨﮔ۷۰ﮒﮒﻝ۷ﮒﭦ۵ﮒﮒﺁﮔ۸ﮒﺎﮔ۶ﻙ?
+ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﮔ۷۰ﮒﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔﮒﺅﺙﻝ۰؟ﻛﺟﮔ۷۰ﮒﻠﺑﮔ۴ﮒ۲ﮔﺕﮔﺍﻙﻟ۶ﻟﻙﮒﺁﻝﭨﺑﮔ۳ﺅﺙﮔﮒﻝﺏﭨﻝﭨﮔ۷۰ﮒﮒﻝ۷ﮒﭦ۵ﮒﮒﺁﮔ۸ﮒﺎﮔ۶ﻙ?
 ### 1.2 ﻠﻝ۷ﻟﮒﺑ
 
-ﮔ؛ﮔ ﮒﻠﻝ۷ﻛﭦZephyrAlphaﻝﺏﭨﻝﭨﻛﺕ­ﮔﮔﮔ۷۰ﮒﻝﮔ۴ﮒ۲ﮒ؟ﻛﺗﺅﺙﮒﮔ؛ﻛﺛﻛﺕﻠﻛﭦﺅﺙ
+ﮔ؛ﮔﮒﻠﻝ۷ﻛﭦZephyrAlphaﻝﺏﭨﻝﭨﻛﺕﮔﮔﮔ۷۰ﮒﻝﮔ۴ﮒ۲ﮒ؟ﻛﺗﺅﺙﮒﮔ؛ﻛﺛﻛﺕﻠﻛﭦﺅﺙ
 - ﮔﺍﮔ؟ﮔ۷۰ﮒﮔ۴ﮒ۲
-- ﮒ ﮒ­ﮔ۷۰ﮒﮔ۴ﮒ۲
-- ﻝ­ﻝ۴ﮔ۷۰ﮒﮔ۴ﮒ۲
+- ﮒﮒﮔ۷۰ﮒﮔ۴ﮒ۲
+- ﻝﻝ۴ﮔ۷۰ﮒﮔ۴ﮒ۲
 - ﮔ۶ﻟ۰ﮔ۷۰ﮒﮔ۴ﮒ۲
 - ﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ۴ﮒ۲
 - ﮔ۴ﮒﮔ۷۰ﮒﮔ۴ﮒ۲
 
-### 1.3 ﮔ ﺕﮒﺟﮒﮒ
+### 1.3 ﮔﺕﮒﺟﮒﮒ
 
-1. **ﮔﺕﮔﺍﮔ?*: ﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔﺕﮔﺍﮔﻛﭦﺅﺙﮔﻛﭦﻝﻟ۶?2. **ﻛﺕﻟﺑﮔ?*: ﮔ۴ﮒ۲ﻠ۲ﮔ ﺙﻝﭨﻛﺕﺅﺙﻝ؛۵ﮒﻟ۶ﻟ?3. **ﮒﺁﮔ۸ﮒﺎﮔ?*: ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰ﻟﻟﮔ۹ﮔ۴ﮔ۸ﮒﺎ
+1. **ﮔﺕﮔﺍﮔ?*: ﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔﺕﮔﺍﮔﻛﭦﺅﺙﮔﻛﭦﻝﻟ۶?2. **ﻛﺕﻟﺑﮔ?*: ﮔ۴ﮒ۲ﻠ۲ﮔﺙﻝﭨﻛﺕﺅﺙﻝ؛۵ﮒﻟ۶ﻟ?3. **ﮒﺁﮔ۸ﮒﺎﮔ?*: ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰ﻟﻟﮔ۹ﮔ۴ﮔ۸ﮒﺎ
 4. **ﮒﺁﮔﭖﻟﺁﮔ?*: ﮔ۴ﮒ۲ﮔﻛﭦﮔﭖﻟﺁﮒﻠ۹ﻟﺁ?5. **ﻝﮔ؛ﮒ?*: ﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ
 
 ---
@@ -61,11 +61,11 @@ tags: ["ﮔ۷۰ﮒﮔ۴ﮒ۲", "ﮔ۴ﮒ۲ﮒ؟ﻛﺗ", "ﮔﮔﺁﮔ ﮒ?, "�
 ```python
 # ﻗ?ﮒ۴ﺛﻝﻟ؟ﺝﻟ؟۰
 def calculate_factor(data: pd.DataFrame) -> pd.Series:
-    """ﻟ؟۰ﻝ؟ﮒ ﮒ­"""
+"""ﻟ؟۰ﻝ؟ﮒﮒ"""
     pass
 
 # ﻗ?ﻛﺕﮒ۴ﺛﻝﻟ؟ﺝﻟ؟?def calculate_and_store_factor(data: pd.DataFrame) -> bool:
-    """ﻟ؟۰ﻝ؟ﮒﺗﭘﮒ­ﮒ۷ﮒ ﮒ­?""
+"""ﻟ؟۰ﻝ؟ﮒﺗﭘﮒﮒ۷ﮒﮒ?""
     pass
 ```
 
@@ -85,7 +85,7 @@ def get_factor_data(
     start_date: str,
     end_date: str
 ) -> pd.DataFrame:
-    """ﻟﺓﮒﮒ ﮒ­ﮔﺍﮔ؟"""
+"""ﻟﺓﮒﮒﮒﮔﺍﮔ؟"""
     pass
 
 # ﻗ?ﻛﺕﮒ۴ﺛﻝﻟ؟ﺝﻟ؟?def get_data(
@@ -124,7 +124,7 @@ class FactorCalculator:
     
     def calculate(self, symbol: str) -> pd.Series:
         data = self.data_source.get_data(symbol, '2020-01-01', '2020-12-31')
-        # ﻟ؟۰ﻝ؟ﮒ ﮒ­
+# ﻟ؟۰ﻝ؟ﮒﮒ
         pass
 ```
 
@@ -132,17 +132,17 @@ class FactorCalculator:
 **ﮒﮒ**: ﮔ۴ﮒ۲ﮒﮔﺑﮒﺟﻠ۰ﭨﻝﮔ؛ﮒﺅﺙﻛﺟﻟﺁﮒﮒﮒﺙﮒ؟ﺗ
 
 **ﻟ۵ﮔﺎ**:
-- ﻗ?ﻛﺛﺟﻝ۷ﻟﺁ­ﻛﺗﮒﻝﮔ؛ﮒﺓ
+- ﻗ?ﻛﺛﺟﻝ۷ﻟﺁﻛﺗﮒﻝﮔ؛ﮒﺓ
 - ﻗ?ﮒﭦﮒﺙﮔ۴ﮒ۲ﻠﻟﺟﮔﺕ۰ﮔ?- ﻗ?ﮔﻛﺝﻟﺟﻝ۶ﭨﮔﮒ
 
 ---
 
-## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔ ﮒ
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗﮔﮒ
 
 ### 3.1 ﮔ۴ﮒ۲ﮒﺛﮒﻟ۶ﻟ
 
 **ﮒﺛﮒﻟ۶ﮒ**:
-- ﻛﺛﺟﻝ۷ﮒﺍﮒﮒ­ﮔﺁﮒﻛﺕﮒﻝﭦﺟ
+- ﻛﺛﺟﻝ۷ﮒﺍﮒﮒﮔﺁﮒﻛﺕﮒﻝﭦﺟ
 - ﮒ۷ﻟﺁ+ﮒﻟﺁﻝﭨﮔ
 - ﮔﺕﮔﺍﻟ۰۷ﻟﺝﺝﮒﻟﺛ
 
@@ -150,11 +150,11 @@ class FactorCalculator:
 ```python
 # ﻗ?ﮒ۴ﺛﻝﮒﺛﮒ
 def get_factor_data() -> pd.DataFrame:
-    """ﻟﺓﮒﮒ ﮒ­ﮔﺍﮔ؟"""
+"""ﻟﺓﮒﮒﮒﮔﺍﮔ؟"""
     pass
 
 def calculate_momentum() -> pd.Series:
-    """ﻟ؟۰ﻝ؟ﮒ۷ﻠﮒ ﮒ­"""
+"""ﻟ؟۰ﻝ؟ﮒ۷ﻠﮒﮒ"""
     pass
 
 def execute_order() -> bool:
@@ -173,11 +173,11 @@ def calc() -> pd.Series:
 ### 3.2 ﮒﮔﺍﮒ؟ﻛﺗﻟ۶ﻟ
 
 **ﮒﮔﺍﻝﺎﭨﮒ**:
-- ﮒﺟﻠﮒﮔﺍﺅﺙﮔ ﻠﭨﻟ؟۳ﮒ?- ﮒﺁﻠﮒﮔﺍﺅﺙﮔﻠﭨﻟ؟۳ﮒ?- ﮒﺁﮒﮒﮔﺍﺅﺙﻛﺛﺟﻝ?argsﮒ?*kwargs
+- ﮒﺟﻠﮒﮔﺍﺅﺙﮔﻠﭨﻟ؟۳ﮒ?- ﮒﺁﻠﮒﮔﺍﺅﺙﮔﻠﭨﻟ؟۳ﮒ?- ﮒﺁﮒﮒﮔﺍﺅﺙﻛﺛﺟﻝ?argsﮒ?*kwargs
 
 **ﮒﮔﺍﮒﺛﮒ**:
 - ﻛﺛﺟﻝ۷ﮔﮔﻛﺗﻝﮒﻝ۶ﺍ
-- ﻠﺟﮒﮒﮒ­ﮔﺁﮒﮔﺍﺅﺙﻠ۳ﮒﺝ۹ﻝﺁﮒﻠﺅﺙ
+- ﻠﺟﮒﮒﮒﮔﺁﮒﮔﺍﺅﺙﻠ۳ﮒﺝ۹ﻝﺁﮒﻠﺅﺙ
 - ﻛﺛﺟﻝ۷ﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲
 
 **ﻝ۳ﭦﻛﺝ**:
@@ -191,19 +191,19 @@ def get_factor_data(
     frequency: str = 'daily',                # ﮒﺁﻠﮒﮔ?    fields: Optional[List[str]] = None,      # ﮒﺁﻠﮒﮔ?    **kwargs: Any                            # ﮒﺁﮒﮒﮔﺍ
 ) -> pd.DataFrame:
     """
-    ﻟﺓﮒﮒ ﮒ­ﮔﺍﮔ؟
+ﻟﺓﮒﮒﮒﮔﺍﮔ؟
     
     Args:
-        factor_id: ﮒ ﮒ­ID
-        start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        frequency: ﮔﺍﮔ؟ﻠ۱ﻝﺅﺙdaily/hourly/minuteﺅﺙ?        fields: ﻠﻟ۵ﻝﮒ­ﮔ؟ﭖﮒﻟ۰۷
+factor_id: ﮒﮒID
+start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙYYYY-MM-DDﺅﺙ?        frequency: ﮔﺍﮔ؟ﻠ۱ﻝﺅﺙdaily/hourly/minuteﺅﺙ?        fields: ﻠﻟ۵ﻝﮒﮔ؟ﭖﮒﻟ۰۷
         **kwargs: ﮒﭘﻛﭨﮒﮔﺍ
     
     Returns:
-        ﮒ ﮒ­ﮔﺍﮔ؟DataFrame
+ﮒﮒﮔﺍﮔ؟DataFrame
     
     Raises:
         ValueError: ﮒﮔﺍﻠﻟﺁﺁ
-        DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?    """
+DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒﮒ?    """
     pass
 ```
 
@@ -219,12 +219,12 @@ from typing import Tuple, NamedTuple
 from pydantic import BaseModel
 
 # ﮒﻛﺕﻟﺟﮒﮒ?def calculate_factor() -> pd.Series:
-    """ﻟ؟۰ﻝ؟ﮒ ﮒ­"""
+"""ﻟ؟۰ﻝ؟ﮒﮒ"""
     pass
 
 # ﮒ۳ﻛﺕ۹ﻟﺟﮒﮒﺙﺅﺙﻛﺛﺟﻝ۷Tupleﺅﺙ?def get_factor_info() -> Tuple[str, str, float]:
-    """ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ"""
-    return 'MOMENTUM_001', 'ﮒ۷ﻠﮒ ﮒ­', 0.85
+"""ﻟﺓﮒﮒﮒﻛﺟ۰ﮔﺁ"""
+return 'MOMENTUM_001', 'ﮒ۷ﻠﮒﮒ', 0.85
 
 # ﮒ۳ﻛﺕ۹ﻟﺟﮒﮒﺙﺅﺙﻛﺛﺟﻝ۷NamedTupleﺅﺙ?class FactorInfo(NamedTuple):
     factor_id: str
@@ -232,8 +232,8 @@ from pydantic import BaseModel
     ic: float
 
 def get_factor_info() -> FactorInfo:
-    """ﻟﺓﮒﮒ ﮒ­ﻛﺟ۰ﮔﺁ"""
-    return FactorInfo('MOMENTUM_001', 'ﮒ۷ﻠﮒ ﮒ­', 0.85)
+"""ﻟﺓﮒﮒﮒﻛﺟ۰ﮔﺁ"""
+return FactorInfo('MOMENTUM_001', 'ﮒ۷ﻠﮒﮒ', 0.85)
 
 # ﮒ۳ﮔﻟﺟﮒﮒﺙﺅﺙﻛﺛﺟﻝ۷Pydanticﺅﺙ?class FactorData(BaseModel):
     factor_id: str
@@ -242,24 +242,24 @@ def get_factor_info() -> FactorInfo:
     metadata: Dict[str, Any]
 
 def get_factor_data() -> FactorData:
-    """ﻟﺓﮒﮒ ﮒ­ﮔﺍﮔ؟"""
+"""ﻟﺓﮒﮒﮒﮔﺍﮔ؟"""
     pass
 ```
 
 ### 3.4 ﮒﺙﮒﺕﺕﮒ؟ﻛﺗﻟ۶ﻟ
 
 **ﮒﺙﮒﺕﺕﻝﺎﭨﮒ**:
-- ﻛﺛﺟﻝ۷ﮔ ﮒﮒﺙﮒﺕﺕ
-- ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕﺕﻝﭨ۶ﮔﺟﮔ ﮒﮒﺙﮒﺕ?- ﮒﺙﮒﺕﺕﻛﺟ۰ﮔﺁﮔﺕﮔﺍﮔﻝ۰؟
+- ﻛﺛﺟﻝ۷ﮔﮒﮒﺙﮒﺕﺕ
+- ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕﺕﻝﭨ۶ﮔﺟﮔﮒﮒﺙﮒﺕ?- ﮒﺙﮒﺕﺕﻛﺟ۰ﮔﺁﮔﺕﮔﺍﮔﻝ۰؟
 
 **ﻝ۳ﭦﻛﺝ**:
 ```python
 # ﻟ۹ﮒ؟ﻛﺗﮒﺙﮒﺕ?class FactorError(Exception):
-    """ﮒ ﮒ­ﻝﺕﮒﺏﻠﻟﺁﺁ"""
+"""ﮒﮒﻝﺕﮒﺏﻠﻟﺁﺁ"""
     pass
 
 class DataNotFoundError(FactorError):
-    """ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ۷ﻠﻟﺁ?""
+"""ﮔﺍﮔ؟ﻛﺕﮒﮒ۷ﻠﻟﺁ?""
     pass
 
 class CalculationError(FactorError):
@@ -269,10 +269,10 @@ class CalculationError(FactorError):
 # ﻛﺛﺟﻝ۷ﮒﺙﮒﺕﺕ
 def calculate_factor(data: pd.DataFrame) -> pd.Series:
     """
-    ﻟ؟۰ﻝ؟ﮒ ﮒ­
+ﻟ؟۰ﻝ؟ﮒﮒ
     
     Raises:
-        DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?        CalculationError: ﻟ؟۰ﻝ؟ﻠﻟﺁﺁ
+DataNotFoundError: ﮔﺍﮔ؟ﻛﺕﮒﮒ?        CalculationError: ﻟ؟۰ﻝ؟ﻠﻟﺁﺁ
     """
     if data.empty:
         raise DataNotFoundError("ﮔﺍﮔ؟ﻛﺕﭦﻝ۸ﭦ")
@@ -286,10 +286,10 @@ def calculate_factor(data: pd.DataFrame) -> pd.Series:
 
 ---
 
-## 4. ﮔ۴ﮒ۲ﮔﮔ۰۲ﮔ ﮒ
+## 4. ﮔ۴ﮒ۲ﮔﮔ۰۲ﮔﮒ
 
-### 4.1 ﮔﮔ۰۲ﮒ­ﻝ؛۵ﻛﺕﺎﻟ۶ﻟ?
-**Googleﻠ۲ﮔ ﺙ**:
+### 4.1 ﮔﮔ۰۲ﮒﻝ؛۵ﻛﺕﺎﻟ۶ﻟ?
+**Googleﻠ۲ﮔﺙ**:
 ```python
 def get_factor_data(
     factor_id: str,
@@ -297,21 +297,21 @@ def get_factor_data(
     end_date: str
 ) -> pd.DataFrame:
     """
-    ﻟﺓﮒﮒ ﮒ­ﮔﺍﮔ؟
+ﻟﺓﮒﮒﮒﮔﺍﮔ؟
     
-    ﻛﭨﮔﺍﮔ؟ﮒﭦﻛﺕ­ﻟﺓﮒﮔﮒ؟ﮒ ﮒ­ﮒ۷ﮔﮒ؟ﮔﭘﻠﺑﻟﮒﺑﮒﻝﮔﺍﮔ؟ﻙ?    
+ﻛﭨﮔﺍﮔ؟ﮒﭦﻛﺕﻟﺓﮒﮔﮒ؟ﮒﮒﮒ۷ﮔﮒ؟ﮔﭘﻠﺑﻟﮒﺑﮒﻝﮔﺍﮔ؟ﻙ?
     Args:
-        factor_id: ﮒ ﮒ­IDﺅﺙﻛﺝﮒ۵?MOMENTUM_001'
-        start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙﮔ ﺙﮒﺙﻛﺕﭦYYYY-MM-DD
-        end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙﮔ ﺙﮒﺙﻛﺕﭦYYYY-MM-DD
+factor_id: ﮒﮒIDﺅﺙﻛﺝﮒ۵?MOMENTUM_001'
+start_date: ﮒﺙﮒ۶ﮔ۴ﮔﺅﺙﮔﺙﮒﺙﻛﺕﭦYYYY-MM-DD
+end_date: ﻝﭨﮔﮔ۴ﮔﺅﺙﮔﺙﮒﺙﻛﺕﭦYYYY-MM-DD
     
     Returns:
-        ﮒ ﮒ­ﮔﺍﮔ؟DataFrameﺅﺙﮒﮒ،ﻛﭨ۴ﻛﺕﮒﺅﺙ?        - date: ﮔ۴ﮔ
-        - value: ﮒ ﮒ­ﮒ?        - rank: ﮒ ﮒ­ﮔﮒ
+ﮒﮒﮔﺍﮔ؟DataFrameﺅﺙﮒﮒ،ﻛﭨ۴ﻛﺕﮒﺅﺙ?        - date: ﮔ۴ﮔ
+- value: ﮒﮒﮒ?        - rank: ﮒﮒﮔﮒ
     
     Raises:
-        ValueError: ﮒﮔﺍﮔ ﺙﮒﺙﻠﻟﺁﺁ
-        DataNotFoundError: ﮒ ﮒ­ﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?    
+ValueError: ﮒﮔﺍﮔﺙﮒﺙﻠﻟﺁﺁ
+DataNotFoundError: ﮒﮒﮔﺍﮔ؟ﻛﺕﮒﮒ?
     Example:
         >>> data = get_factor_data('MOMENTUM_001', '2020-01-01', '2020-12-31')
         >>> print(data.head())
@@ -350,14 +350,14 @@ def get_factor_data(
 ## 5. ﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝ
 
 ### 5.1 ﻝﮔ؛ﮒﺓﻟ۶ﮒ?
-**ﻟﺁ­ﻛﺗﮒﻝﮔ؛ﮒﺓ**: MAJOR.MINOR.PATCH
+**ﻟﺁﻛﺗﮒﻝﮔ؛ﮒﺓ**: MAJOR.MINOR.PATCH
 
 - **MAJOR**: ﻛﺕﮒﺙﮒ؟ﺗﻝAPIﮒﮔﺑ
 - **MINOR**: ﮒﮒﮒﺙﮒ؟ﺗﻝﮒﻟﺛﮔﺍﮒ۱?- **PATCH**: ﮒﮒﮒﺙﮒ؟ﺗﻝﻠ؟ﻠ۱ﻛﺟ؟ﮒ۳?
 **ﻝ۳ﭦﻛﺝ**:
 - 1.0.0 ﻗ?1.0.1: Bugﻛﺟ؟ﮒ۳
 - 1.0.0 ﻗ?1.1.0: ﮔﺍﮒ۱ﮒﻟﺛ
-- 1.0.0 ﻗ?2.0.0: ﻝ ﺑﮒﮔ۶ﮒﮔ?
+- 1.0.0 ﻗ?2.0.0: ﻝﺑﮒﮔ۶ﮒﮔ?
 ### 5.2 ﻝﮔ؛ﮒﮔﺑﻟ۶ﻟ
 
 **MAJORﻝﮔ؛ﮒﮔﺑ**:
@@ -372,13 +372,13 @@ def get_factor_data(
 **PATCHﻝﮔ؛ﮒﮔﺑ**:
 - ﮒﮒﮒﺙﮒ؟ﺗ
 - ﮔﺑﮔﺍﮔﮔ۰۲
-- ﮔ ﻠﻠﻝ۴
+- ﮔﻠﻠﻝ۴
 
 ### 5.3 ﮔ۴ﮒ۲ﮒﭦﮒﺙﮔﭖﻝ۷
 
 **ﮒﭦﮒﺙﮔﭖﻝ۷**:
 ```
-ﮔ ﻟ؟ﺍﮒﭦﮒﺙ
+ﮔﻟ؟ﺍﮒﭦﮒﺙ
   ﻗ?ﮔﻛﺝﮔﺟﻛﭨ۲ﮔﺗﮔ۰
   ﻗ?ﻛﺟﻝﻛﺕﮔ؟ﭖﮔﭘﻠﺑﺅﺙﻟﺏﮒﺍ3ﻛﺕ۹ﮔﺅﺙ?  ﻗ?ﻝ۶ﭨﻠ۳ﮔ۴ﮒ۲
 ```
@@ -413,7 +413,7 @@ def new_interface():
 ### 6.1 ﮒﮒﮔﭖﻟﺁﻟ۵ﮔﺎ
 
 **ﮔﭖﻟﺁﻟ۵ﻝ**:
-- ﮔ­۲ﮒﺕﺕﮔﮒﭖﮔﭖﻟﺁ
+- ﮔ۲ﮒﺕﺕﮔﮒﭖﮔﭖﻟﺁ
 - ﻟﺝﺗﻝﮔﮒﭖﮔﭖﻟﺁ
 - ﮒﺙﮒﺕﺕﮔﮒﭖﮔﭖﻟﺁ
 
@@ -423,7 +423,7 @@ import pytest
 import pandas as pd
 
 def test_get_factor_data_normal():
-    """ﮔﭖﻟﺁﮔ­۲ﮒﺕﺕﮔﮒﭖ"""
+"""ﮔﭖﻟﺁﮔ۲ﮒﺕﺕﮔﮒﭖ"""
     data = get_factor_data('MOMENTUM_001', '2020-01-01', '2020-12-31')
     assert isinstance(data, pd.DataFrame)
     assert not data.empty
@@ -436,7 +436,7 @@ def test_get_factor_data_invalid_params():
         get_factor_data('MOMENTUM_001', '2020-13-01', '2020-12-31')
 
 def test_get_factor_data_not_found():
-    """ﮔﭖﻟﺁﮔﺍﮔ؟ﻛﺕﮒ­ﮒ?""
+"""ﮔﭖﻟﺁﮔﺍﮔ؟ﻛﺕﮒﮒ?""
     with pytest.raises(DataNotFoundError):
         get_factor_data('NOT_EXIST', '2020-01-01', '2020-12-31')
 ```
@@ -450,26 +450,26 @@ def test_get_factor_data_not_found():
 ### 6.3 ﮔ۴ﮒ۲ﮔﮔ۰۲ﮔﭖﻟﺁ
 
 **ﮔﮔ۰۲ﮔﭖﻟﺁ**:
-- ﻝ۳ﭦﻛﺝﻛﭨ۲ﻝ ﮒﺁﻟﺟﻟ۰?- ﻟﺝﮒﭦﻝﭨﮔﮔ­۲ﻝ۰؟
-- ﮔﮔ۰۲ﻛﺕﻛﭨ۲ﻝ ﻛﺕﻟ?
+- ﻝ۳ﭦﻛﺝﻛﭨ۲ﻝﮒﺁﻟﺟﻟ۰?- ﻟﺝﮒﭦﻝﭨﮔﮔ۲ﻝ۰؟
+- ﮔﮔ۰۲ﻛﺕﻛﭨ۲ﻝﻛﺕﻟ?
 ---
 
-## 7. ﮔ۴ﮒ۲ﮔ۶ﻟﺛﮔ ﮒ
+## 7. ﮔ۴ﮒ۲ﮔ۶ﻟﺛﮔﮒ
 
-### 7.1 ﮔ۶ﻟﺛﮔﮔ 
+### 7.1 ﮔ۶ﻟﺛﮔﮔ
 
 | ﮔ۴ﮒ۲ﻝﺎﭨﮒ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒﮒﻠ?| ﮒﺗﭘﮒﮔ?|
 |---------|---------|--------|--------|
 | **ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱** | <100ms | >1000 QPS | >100 |
-| **ﮒ ﮒ­ﻟ؟۰ﻝ؟** | <1s | >100 QPS | >10 |
-| **ﻝ­ﻝ۴ﮔ۶ﻟ۰** | <10s | >10 QPS | >5 |
+| **ﮒﮒﻟ؟۰ﻝ؟** | <1s | >100 QPS | >10 |
+| **ﻝﻝ۴ﮔ۶ﻟ۰** | <10s | >10 QPS | >5 |
 | **ﮔ۴ﮒﻝﮔ** | <30s | >1 QPS | >1 |
 
 ### 7.2 ﮔ۶ﻟﺛﻛﺙﮒﮒﭨﭦﻟ؟؟
 
 **ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﻛﺙﮒ**:
 - ﻛﺛﺟﻝ۷ﻝﺑ۱ﮒﺙ
-- ﻝﺙﮒ­ﻝ­ﻝﺗﮔﺍﮔ؟
+- ﻝﺙﮒﻝﻝﺗﮔﺍﮔ؟
 - ﮒﻠ۰ﭖﮔ۴ﻟﺁ۱
 
 **ﻟ؟۰ﻝ؟ﻛﺙﮒ**:
@@ -485,7 +485,7 @@ def test_get_factor_data_not_found():
 **ﻠ۹ﻟﺁﮒﮒ؟ﺗ**:
 - ﮒﮔﺍﻝﺎﭨﮒﻠ۹ﻟﺁ
 - ﮒﮔﺍﻟﮒﺑﻠ۹ﻟﺁ
-- ﮒﮔﺍﮔ ﺙﮒﺙﻠ۹ﻟﺁ
+- ﮒﮔﺍﮔﺙﮒﺙﻠ۹ﻟﺁ
 
 **ﻝ۳ﭦﻛﺝ**:
 ```python
@@ -506,7 +506,7 @@ class FactorRequest(BaseModel):
     def validate_date(cls, v):
         import re
         if not re.match(r'\d{4}-\d{2}-\d{2}', v):
-            raise ValueError('ﮔ۴ﮔﮔ ﺙﮒﺙﮒﺟﻠ۰ﭨﻛﺕﭦYYYY-MM-DD')
+raise ValueError('ﮔ۴ﮔﮔﺙﮒﺙﮒﺟﻠ۰ﭨﻛﺕﭦYYYY-MM-DD')
         return v
 ```
 
@@ -528,18 +528,18 @@ class FactorRequest(BaseModel):
 
 ## 9. ﮔ۴ﮒ۲ﻝﮔ۶ﻟ۶ﻟ
 
-### 9.1 ﻝﮔ۶ﮔﮔ 
+### 9.1 ﻝﮔ۶ﮔﮔ
 
-**ﮒﭦﻝ۰ﮔﮔ **:
+**ﮒﭦﻝ۰ﮔﮔ**:
 - ﻟﺍﻝ۷ﮔ؛۰ﮔﺍ
 - ﮔﮒﻝ?- ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑ
 - ﻠﻟﺁﺁﻝ?
-**ﻛﺕﮒ۰ﮔﮔ **:
+**ﻛﺕﮒ۰ﮔﮔ**:
 - ﮔﺍﮔ؟ﻠ?- ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ
 - ﻟﭖﮔﭦﮔﭘﻟ?
-### 9.2 ﮒﻟ­۵ﻟ۶ﮒ
+### 9.2 ﮒﻟ۵ﻟ۶ﮒ
 
-**ﮒﻟ­۵ﮔ۰ﻛﭨﭘ**:
+**ﮒﻟ۵ﮔ۰ﻛﭨﭘ**:
 - ﻠﻟﺁﺁﻝ?> 5%
 - ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑ > ﻠﮒ?- ﻟﺍﻝ۷ﮔ؛۰ﮔﺍﮒﺙﮒﺕﺕ
 
@@ -547,10 +547,10 @@ class FactorRequest(BaseModel):
 
 ## 10. ﮒﻟﮔﮔ۰?
 - [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﮒ؟ﻛﺗ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔ ﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](./DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 - [Pythonﻝﺎﭨﮒﮔﺏ۷ﻟ۶۲ﮔﮒ](https://docs.python.org/zh-cn/3/library/typing.html)
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-02

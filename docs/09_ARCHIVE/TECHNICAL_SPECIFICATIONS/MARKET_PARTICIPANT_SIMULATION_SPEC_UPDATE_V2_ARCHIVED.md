@@ -4,18 +4,18 @@ version: 2.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: ﻠ۵ﮒﺕ­ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
   - 技术规范、实现标准、接口定义
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
-applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
+applicable_scope: ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ./MARKET_PARTICIPANT_SIMULATION_SPEC.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 ---
 ---
 
 
-# ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔ ﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
+# ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔﺑﮔﺍﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
@@ -24,29 +24,29 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 > **ﻝﮔ؛**: v2.0
 > **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
-> **ﮔﺑﮔﺍﮒﮒ؟ﺗ**: ﮔﺁﻟﺁ­ﮔ ﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?> **ﻛﺝﮔ؟ﮔﮔ۰۲**: MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md
+> **ﮔﺑﮔﺍﮒﮒ؟ﺗ**: ﮔﺁﻟﺁﮔﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?> **ﻛﺝﮔ؟ﮔﮔ۰۲**: MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md
 
 ---
 
-## ﻭ ﻛﺕﻙﮔﺁﻟﺁ­ﮔ ﮒﮒﮔﺑﮔﺍ
+## ﻭ ﻛﺕﻙﮔﺁﻟﺁﮔﮒﮒﮔﺑﮔﺍ
 
-### 1.1 ﮔ ﺕﮒﺟﮔﺁﻟﺁ­ﮔﺟﮔ۱ﮒﺁﺗﻝ۶ﻟ۰?
+### 1.1 ﮔﺕﮒﺟﮔﺁﻟﺁﮔﺟﮔ۱ﮒﺁﺗﻝ۶ﻟ۰?
 
-| ﮒﮔﺁﻟﺁ?| ﮔﺍﮔﺁﻟﺁ­ﺅﺙﻛﺕﻛﺕﮔ ﮒﺅﺙ?| ﻟﺎﮔﮔﺁﻟﺁ­ | ﮔﺟﮔ۱ﻟﮒﺑ |
+| ﮒﮔﺁﻟﺁ?| ﮔﺍﮔﺁﻟﺁﺅﺙﻛﺕﻛﺕﮔﮒﺅﺙ?| ﻟﺎﮔﮔﺁﻟﺁ | ﮔﺟﮔ۱ﻟﮒﺑ |
 |--------|-------------------|---------|---------|
 | ﻛﺕﭨﮒ | **ﮔﭦﮔﻟﭖﻠ** | Institutional Capital | ﮒ۷ﮔﮔ۰?|
 | ﻛﺕﭨﮒﻟﭖﻠ | **ﮔﭦﮔﻟﭖﻠ** | Institutional Capital | ﮒ۷ﮔﮔ۰?|
-| ﻛﺕﭨﮒ/ﮔﺕﺕﻟﭖﮔﭦﻟﺛﻛﺛ?| **ﮔﭦﮔ/ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛ?* | Institutional/Hot Money Agent | ﮔﭦﻟﺛﻛﺛﮒﻝ۶?|
+| ﻛﺕﭨﮒ/ﮔﺕﺕﻟﭖﮔﭦﻟﺛﻛﺛ?| **ﮔﭦﮔ/ﻝﻠﺎﮔﭦﻟﺛﻛﺛ?* | Institutional/Hot Money Agent | ﮔﭦﻟﺛﻛﺛﮒﻝ۶?|
 | ﻛﺕﭨﮒﮔ۶ﻝ | **ﮔﭦﮔﮔ۶ﻝ** | Institutional Control | ﻟ۰ﻛﺕﭦﮔﻟﺟﺍ |
-| ﻛﺕﭨﮒﻟ۰ﻛﺕﭦ | **ﮔﭦﮔﻟﭖﻠﻟ۰ﻛﺕﭦ** | Institutional Capital Behavior | ﻝ ﻝ۸ﭘﻠ۱ﮒ |
-| ﮒﺛﮒ؟ﭘﻠ?| **ﻛﺕﭨﮔﮒﭦﻠ** | Sovereign Funds | ﮒ­۵ﮔﺁﮒﭦﮔﺁ |
-| ﮔﺕﺕﻟﭖ | **ﻝ­ﻠﺎ** | Hot Money | ﻠ۲ﻠ۸ﻝﮔ۶ﮒﭦﮔﺁ |
-| ﮔ۲ﮔﺓ | **ﻠﭘﮒ؟ﮔﻟﭖﻟ?* | Retail Investors | ﮒ­۵ﮔﺁﮒﭦﮔﺁ |
+| ﻛﺕﭨﮒﻟ۰ﻛﺕﭦ | **ﮔﭦﮔﻟﭖﻠﻟ۰ﻛﺕﭦ** | Institutional Capital Behavior | ﻝﻝ۸ﭘﻠ۱ﮒ |
+| ﮒﺛﮒ؟ﭘﻠ?| **ﻛﺕﭨﮔﮒﭦﻠ** | Sovereign Funds | ﮒ۵ﮔﺁﮒﭦﮔﺁ |
+| ﮔﺕﺕﻟﭖ | **ﻝﻠﺎ** | Hot Money | ﻠ۲ﻠ۸ﻝﮔ۶ﮒﭦﮔﺁ |
+| ﮔ۲ﮔﺓ | **ﻠﭘﮒ؟ﮔﻟﭖﻟ?* | Retail Investors | ﮒ۵ﮔﺁﮒﭦﮔﺁ |
 
 ### 1.2 ﮔﭦﻟﺛﻛﺛﮒﺛﮒﻟ۶ﻟ?
 **ﮔﺑﮔﺍﮒﻝﮔﭦﻟﺛﻛﺛﮒﺛﮒﻛﺛﻝﺏ?*ﺅﺙ?
 ```
-ﻛﺕﻝﭦ۶ﮒﻝﺎﭨﺅﺙﮒ­۵ﮔﺁﮔ ﮒﺅﺙﺅﺙ
+ﻛﺕﻝﭦ۶ﮒﻝﺎﭨﺅﺙﮒ۵ﮔﺁﮔﮒﺅﺙﺅﺙ
 ﻗﻗﻗ ﮔﭦﮔﮔﻟﭖﻟﺅﺙInstitutional Investorsﺅﺙ?ﻗ?  ﻗﻗﻗ ﻛﺕﭨﮔﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙSovereign Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.SOVEREIGN_FUND.001
 ﻗ?  ﻗﻗﻗ ﮒ؛ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙMutual Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.MUTUAL_FUND.001
 ﻗ?  ﻗﻗﻗ ﻝ۶ﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙPrivate Equity Agentﺅﺙ?ﻗ?  ﻗ?  ﻗﻗﻗ ﻠﮒﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙQuantitative Fund Agentﺅﺙ?ﻗ?  ﻗ?  ﻗ?  ﻗﻗﻗ ﻛﭨ۲ﮒﺓﺅﺙAGENT.QUANT_FUND.001
@@ -60,7 +60,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 ---
 
-## ﻭ ﻛﭦﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔﮔ ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟?
+## ﻭ ﻛﭦﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔﮔﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟?
 ### 2.1 DDX/DDE/BBDﮔﺍﮔ؟ﻟﺓﮒﮔ۴ﮒ۲
 
 #### 2.1.1 ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
@@ -71,7 +71,7 @@ implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 
 **ﮔﺍﮔ؟ﮔﭦ?*ﺅﺙﮒﻟﺎﻠ۰ﭦiFinD
 
-**ﮔﺑﮔﺍﻠ۱ﻝ**ﺅﺙﮒ؟ﮔﭘﺅﺙﻝﻛﺕ­ﺅﺙﻙﮔ۴ﮒﭦ۵ﺅﺙﻝﮒﺅﺙ?
+**ﮔﺑﮔﺍﻠ۱ﻝ**ﺅﺙﮒ؟ﮔﭘﺅﺙﻝﻛﺕﺅﺙﻙﮔ۴ﮒﭦ۵ﺅﺙﻝﮒﺅﺙ?
 **ﮔ۴ﮒ۲ﻟ۶ﻟ**ﺅﺙ?
 ```python
 from abc import ABC, abstractmethod
@@ -82,34 +82,34 @@ import pandas as pd
 
 @dataclass
 class DDXIndicator:
-    """DDXﮔﮔ ﮔﺍﮔ؟ﻝﭨﮔ
+"""DDXﮔﮔﮔﺍﮔ؟ﻝﭨﮔ
     
     ﻝﺑ۱ﮒﺙ: DATA.DDX.001
-    ﮒ؟ﻛﺗ: ﮒ۳۶ﮒﮒ۷ﮒﮔﮔ 
+ﮒ؟ﻛﺗ: ﮒ۳۶ﮒﮒ۷ﮒﮔﮔ
     ﮒ؛ﮒﺙ: DDX = (ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ + ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴) / ﮔﭖﻠﻝ ﺣ 10000
     """
     stock_code: str
     timestamp: datetime
-    ddx_value: float  # DDXﮒ?    ddx_ma5: float  # 5ﮔ۴ﮒﮒ?    ddx_ma10: float  # 10ﮔ۴ﮒﮒ?    ddx_consecutive_days: int  # ﻟﺟﻝﭨ­ﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ
+ddx_value: float  # DDXﮒ?    ddx_ma5: float  # 5ﮔ۴ﮒﮒ?    ddx_ma10: float  # 10ﮔ۴ﮒﮒ?    ddx_consecutive_days: int  # ﻟﺟﻝﭨﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ
     super_large_net_buy: float  # ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ﺅﺙﻛﺕﮒﺅﺙ
     large_net_buy: float  # ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴ﺅﺙﻛﺕﮒﺅﺙ
     circulation_cap: float  # ﮔﭖﻠﻝﺅﺙﻛﺕﮒﺅﺙ
     confidence: float  # ﮔﺍﮔ؟ﻝﺛ؟ﻛﺟ۰ﮒﭦ?    
 @dataclass
 class DDEIndicator:
-    """DDEﮒﺏﻝ­ﻝﺏﭨﻝﭨﮔﺍﮔ؟ﻝﭨﮔ
+"""DDEﮒﺏﻝﻝﺏﭨﻝﭨﮔﺍﮔ؟ﻝﭨﮔ
     
     ﻝﺑ۱ﮒﺙ: DATA.DDE.001
     ﮒ؟ﻛﺗ: ﮒ۳۶ﮒﮒﻠﻙﮔ۲ﮔﺓﮔﺍﻠﻙﮒ۳۶ﮒﻠﻠ۱?    """
     stock_code: str
     timestamp: datetime
-    large_order_net_ratio: float  # ﮒ۳۶ﮒﮒﻠﺅﺙﮒ ﮔﭖﻠﻝﮔﺁﻝﺅﺙ?    retail_participation: float  # ﮔ۲ﮔﺓﮔﺍﻠﺅﺙﮒﻛﺕﮒﭦ۵ﺅﺙ?    large_order_amount: float  # ﮒ۳۶ﮒﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
+large_order_net_ratio: float  # ﮒ۳۶ﮒﮒﻠﺅﺙﮒﮔﭖﻠﻝﮔﺁﻝﺅﺙ?    retail_participation: float  # ﮔ۲ﮔﺓﮔﺍﻠﺅﺙﮒﻛﺕﮒﭦ۵ﺅﺙ?    large_order_amount: float  # ﮒ۳۶ﮒﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
     net_inflow_amount: float  # ﮒﮔﭖﮒ۴ﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
     confidence: float
 
 @dataclass
 class BBDIndicator:
-    """BBDﮔﮔ ﮔﺍﮔ؟ﻝﭨﮔ
+"""BBDﮔﮔﮔﺍﮔ؟ﻝﭨﮔ
     
     ﻝﺑ۱ﮒﺙ: DATA.BBD.001
     ﮒ؟ﻛﺗ: ﻝﺗﮒ۳۶ﮒﻛﺗﺍﮒﮒﺓ؟ﻠ۱?    ﮒ؛ﮒﺙ: BBD = ﻝﺗﮒ۳۶ﮒﮔﭖﮒ۴ﮒﻠﻠﻠ۱?    """
@@ -131,17 +131,17 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDXIndicator]]:
-        """ﻟﺓﮒDDXﮔﮔ ﮔﺍﮔ؟
+"""ﻟﺓﮒDDXﮔﮔﮔﺍﮔ؟
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷ﺅﺙﮒ۵ ['600519.SH', '000858.SZ']ﺅﺙ?            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷ﺅﺙﮒ۵ ['600519.SH', '000858.SZ']ﺅﺙ?            start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         ﻟﺟﮒ:
-            Dict[str, List[DDXIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> DDXﮔﮔ ﮒﻟ۰۷
+Dict[str, List[DDXIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ -> DDXﮔﮔﮒﻟ۰۷
             
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
             iFinDﮒﺛﮔﺍ: THS_DDX
-            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+ﮒﮔ؟ﭖﮔﮒﺍ:
                 - ddx_value: DDX
                 - super_large_net_buy: ﻟﭘﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴
                 - large_net_buy: ﮒ۳۶ﮒﮒﻛﺗﺍﮒ۴
@@ -153,18 +153,18 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDEIndicator]]:
-        """ﻟﺓﮒDDEﮒﺏﻝ­ﮔﺍﮔ؟
+"""ﻟﺓﮒDDEﮒﺏﻝﮔﺍﮔ؟
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         ﻟﺟﮒ:
-            Dict[str, List[DDEIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> DDEﮔﮔ ﮒﻟ۰۷
+Dict[str, List[DDEIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ -> DDEﮔﮔﮒﻟ۰۷
             
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
             iFinDﮒﺛﮔﺍ: THS_DDE
-            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+ﮒﮔ؟ﭖﮔﮒﺍ:
                 - large_order_net_ratio: ﮒ۳۶ﮒﮒﻠ?                - retail_participation: ﮔ۲ﮔﺓﮔﺍﻠ
                 - large_order_amount: ﮒ۳۶ﮒﻠﻠ۱
         """
@@ -175,34 +175,34 @@ class CapitalFlowDataFetcher(ABC):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[BBDIndicator]]:
-        """ﻟﺓﮒBBDﮔﮔ ﮔﺍﮔ؟
+"""ﻟﺓﮒBBDﮔﮔﮔﺍﮔ؟
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         ﻟﺟﮒ:
-            Dict[str, List[BBDIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> BBDﮔﮔ ﮒﻟ۰۷
+Dict[str, List[BBDIndicator]]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ -> BBDﮔﮔﮒﻟ۰۷
             
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
             iFinDﮒﺛﮔﺍ: THS_BBD
-            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+ﮒﮔ؟ﭖﮔﮒﺍ:
                 - bbd_value: BBDﮒ?                - super_large_inflow: ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?                - super_large_outflow: ﻝﺗﮒ۳۶ﮒﮔﭖﮒ?        """
         pass
     
     @abstractmethod
     def fetch_realtime_capital_flow(self,
                                     stock_codes: List[str]) -> Dict[str, Dict]:
-        """ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
+"""ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕﺅﺙ
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             
         ﻟﺟﮒ:
-            Dict[str, Dict]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  -> ﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟
+Dict[str, Dict]: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ -> ﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟
             
         ﮔﺑﮔﺍﻠ۱ﻝ:
-            ﻝﻛﺕ­: 3ﮒﻠﮒﭨﭘﻟﺟ
+ﻝﻛﺕ: 3ﮒﻠﮒﭨﭘﻟﺟ
             ﻝﮒ: ﮔ۴ﮒﭦ۵ﮔﺑﮔﺍ
         """
         pass
@@ -230,7 +230,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDXIndicator]]:
-        """ﻟﺓﮒDDXﮔﮔ ﮔﺍﮔ؟
+"""ﻟﺓﮒDDXﮔﮔﮔﺍﮔ؟
         
         iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
@@ -281,7 +281,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[DDEIndicator]]:
-        """ﻟﺓﮒDDEﮒﺏﻝ­ﮔﺍﮔ؟
+"""ﻟﺓﮒDDEﮒﺏﻝﮔﺍﮔ؟
         
         iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
@@ -329,7 +329,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
                   stock_codes: List[str],
                   start_date: datetime,
                   end_date: datetime) -> Dict[str, List[BBDIndicator]]:
-        """ﻟﺓﮒBBDﮔﮔ ﮔﺍﮔ؟
+"""ﻟﺓﮒBBDﮔﮔﮔﺍﮔ؟
         
         iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.ED_query(
@@ -378,7 +378,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
     
     def fetch_realtime_capital_flow(self,
                                     stock_codes: List[str]) -> Dict[str, Dict]:
-        """ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
+"""ﻟﺓﮒﮒ؟ﮔﭘﻟﭖﻠﮔﭖﮒﮔﺍﮔ؟ﺅﺙﻝﻛﺕﺅﺙ
         
         iFinDﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ:
             ths.HQ_query(stock_codes, 'ﮔﮔﺍﻛﭨﺓ,ﮔﭘ۷ﻟﺓﮒﺗ?DDX,DDE,BBD')
@@ -392,7 +392,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
             )
             
             for _, row in df.iterrows():
-                stock_code = row['ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ']
+stock_code = row['ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ']
                 result[stock_code] = {
                     'price': row['ﮔﮔﺍﻛﭨﺓ'],
                     'change_pct': row['ﮔﭘ۷ﻟﺓﮒﺗ?],
@@ -416,7 +416,7 @@ class IFindCapitalFlowFetcher(CapitalFlowDataFetcher):
         return values.rolling(window=window).mean().iloc[-1]
     
     def _calculate_consecutive_days(self, ddx_series: pd.Series) -> int:
-        """ﻟ؟۰ﻝ؟DDXﻟﺟﻝﭨ­ﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ"""
+"""ﻟ؟۰ﻝ؟DDXﻟﺟﻝﭨﻝﺟﭨﻝﭦ۱/ﻝﺟﭨﻝﭨﺟﮒ۳۸ﮔﺍ"""
         if len(ddx_series) == 0:
             return 0
         
@@ -448,21 +448,21 @@ class DragonTigerListItem:
     close_price: float
     change_pct: float
     turnover_rate: float
-    reason: str  # ﻛﺕﮔ۵ﮒﮒ 
+reason: str  # ﻛﺕﮔ۵ﮒﮒ
     
-    buy_seats: List[Dict]  # ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛﮒﻟ۰۷
-    sell_seats: List[Dict]  # ﮒﮒﭦﮒﺕ­ﻛﺛﮒﻟ۰۷
+buy_seats: List[Dict]  # ﻛﺗﺍﮒ۴ﮒﺕﻛﺛﮒﻟ۰۷
+sell_seats: List[Dict]  # ﮒﮒﭦﮒﺕﻛﺛﮒﻟ۰۷
     
     net_buy_amount: float  # ﮒﻛﺗﺍﮒ۴ﻠﻠ۱ﺅﺙﻛﺕﮒﺅﺙ
-    institutional_buy_count: int  # ﮔﭦﮔﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛﮔﺍﻠ
-    institutional_sell_count: int  # ﮔﭦﮔﮒﮒﭦﮒﺕ­ﻛﺛﮔﺍﻠ
+institutional_buy_count: int  # ﮔﭦﮔﻛﺗﺍﮒ۴ﮒﺕﻛﺛﮔﺍﻠ
+institutional_sell_count: int  # ﮔﭦﮔﮒﮒﭦﮒﺕﻛﺛﮔﺍﻠ
     
-    hot_money_flag: bool  # ﮔﺁﮒ۵ﮔﻝ۴ﮒﮔﺕﺕﻟﭖ?    institutional_flag: bool  # ﮔﺁﮒ۵ﮔﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ?
+hot_money_flag: bool  # ﮔﺁﮒ۵ﮔﻝ۴ﮒﮔﺕﺕﻟﭖ?    institutional_flag: bool  # ﮔﺁﮒ۵ﮔﮔﭦﮔﻛﺕﻝ۷ﮒﺕﻛﺛ?
 class DragonTigerDataParser(ABC):
     """ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﻟ۶۲ﮔﮒ۷ﮔﺛﻟﺎ۰ﮒﭦﻝﺎﭨ
     
     ﻝﺑ۱ﮒﺙ: INTERFACE.DRAGON_TIGER.001
-    ﻟﻟﺑ۲: ﻟ۶۲ﮔﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﺅﺙﻟﺁﮒ،ﮔﭦﮔﮒﺕ­ﻛﺛﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ?    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinDﻙﻛﭦ۳ﮔﮔﮒ؛ﮒﺙﮔﺍﮔ؟
+ﻟﻟﺑ۲: ﻟ۶۲ﮔﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﺅﺙﻟﺁﮒ،ﮔﭦﮔﮒﺕﻛﺛﮒﮔﺕﺕﻟﭖﮒﺕﻛﺛ?    ﮔﺍﮔ؟ﮔﭦ? ﮒﻟﺎﻠ۰ﭦiFinDﻙﻛﭦ۳ﮔﮔﮒ؛ﮒﺙﮔﺍﮔ؟
     """
     
     @abstractmethod
@@ -473,49 +473,49 @@ class DragonTigerDataParser(ABC):
         """ﻟﺓﮒﻠﺝﻟﮔ۵ﮒﻟ۰?        
         ﮒﮔﺍ:
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
-            reason_filter: ﻛﺕﮔ۵ﮒﮒ ﻟﺟﮔﭨ۳ﺅﺙﮒ۵ ['ﮔﭘ۷ﮒ', 'ﻟﺓﮒ', 'ﮔ۱ﮔﻝﮒﺙﮒﺕ?]ﺅﺙ?            
+reason_filter: ﻛﺕﮔ۵ﮒﮒﻟﺟﮔﭨ۳ﺅﺙﮒ۵ ['ﮔﭘ۷ﮒ', 'ﻟﺓﮒ', 'ﮔ۱ﮔﻝﮒﺙﮒﺕ?]ﺅﺙ?
         ﻟﺟﮒ:
             List[DragonTigerListItem]: ﻠﺝﻟﮔ۵ﮔﺍﮔ؟ﮒﻟ۰?            
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
-            iFinDﮒﺛﮔﺍ: THSﻠﺝﻟﮔ۵?            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
-                - stock_code: ﻟﺁﮒﺕﻛﭨ۲ﻝ 
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
+iFinDﮒﺛﮔﺍ: THSﻠﺝﻟﮔ۵?            ﮒﮔ؟ﭖﮔﮒﺍ:
+- stock_code: ﻟﺁﮒﺕﻛﭨ۲ﻝ
                 - trade_date: ﻛﭦ۳ﮔﮔ۴ﮔ
-                - buy_seats: ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ
-                - sell_seats: ﮒﮒﭦﮒﺕ­ﻛﺛ
+- buy_seats: ﻛﺗﺍﮒ۴ﮒﺕﻛﺛ
+- sell_seats: ﮒﮒﭦﮒﺕﻛﺛ
         """
         pass
     
     @abstractmethod
     def identify_institutional_seats(self,
                                     seats: List[Dict]) -> List[Dict]:
-        """ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ
+"""ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕﻛﺛ
         
         ﮒﮔﺍ:
-            seats: ﮒﺕ­ﻛﺛﮒﻟ۰۷
+seats: ﮒﺕﻛﺛﮒﻟ۰۷
             
         ﻟﺟﮒ:
-            List[Dict]: ﮔﭦﮔﮒﺕ­ﻛﺛﮒﻟ۰۷
+List[Dict]: ﮔﭦﮔﮒﺕﻛﺛﮒﻟ۰۷
             
         ﻟﺁﮒ،ﻟ۶ﮒ:
-            1. ﮒﺕ­ﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮔﭦﮔﻛﺕﻝ۷"
-            2. ﮒﺕ­ﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮒ؛ﮒ"ﻙ?ﻝ۳ﺝﻛﺟ"ﻙ?ﻛﺟﻠ۸"
-            3. ﮒﺕ­ﻛﺛﻛﭨ۲ﻝ ﻝ؛۵ﮒﮔﭦﮔﮒﺕ­ﻛﺛﻝﺙﻝ ﻟ۶ﮒ
+1. ﮒﺕﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮔﭦﮔﻛﺕﻝ۷"
+2. ﮒﺕﻛﺛﮒﻝ۶ﺍﮒﮒ،"ﮒ؛ﮒ"ﻙ?ﻝ۳ﺝﻛﺟ"ﻙ?ﻛﺟﻠ۸"
+3. ﮒﺕﻛﺛﻛﭨ۲ﻝﻝ؛۵ﮒﮔﭦﮔﮒﺕﻛﺛﻝﺙﻝﻟ۶ﮒ
         """
         pass
     
     @abstractmethod
     def identify_hot_money_seats(self,
                                 seats: List[Dict]) -> List[Dict]:
-        """ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ
+"""ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕﻛﺛ
         
         ﮒﮔﺍ:
-            seats: ﮒﺕ­ﻛﺛﮒﻟ۰۷
+seats: ﮒﺕﻛﺛﮒﻟ۰۷
             
         ﻟﺟﮒ:
-            List[Dict]: ﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛﮒﻟ۰۷
+List[Dict]: ﮔﺕﺕﻟﭖﮒﺕﻛﺛﮒﻟ۰۷
             
         ﻟﺁﮒ،ﻟ۶ﮒ:
-            1. ﻝ۴ﮒﮔﺕﺕﻟﭖﻟ۴ﻛﺕﻠ۷ﮒﮒﺅﺙﮒ۵ﺅﺙﮒﻠ،ﻛﺕﮔﭖﺓﮒﮒ؛ﮒﺕﻙﻟﺑ۱ﻠﮔ­ﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻝ­ﺅﺙ?            2. ﮒﮒﺎﮔﻛﺛﻠ۲ﮔ ﺙﮒﺗﻠ
+1. ﻝ۴ﮒﮔﺕﺕﻟﭖﻟ۴ﻛﺕﻠ۷ﮒﮒﺅﺙﮒ۵ﺅﺙﮒﻠ،ﻛﺕﮔﭖﺓﮒﮒ؛ﮒﺕﻙﻟﺑ۱ﻠﮔﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻝﺅﺙ?            2. ﮒﮒﺎﮔﻛﺛﻠ۲ﮔﺙﮒﺗﻠ
         """
         pass
     
@@ -532,7 +532,7 @@ class DragonTigerDataParser(ABC):
             
         ﮒﮔﻝﭨﺑﮒﭦ۵:
             1. ﮔﭦﮔﮒﻛﺗﺍﮒ۴ﻠﻠ۱
-            2. ﮔﭦﮔﻛﺗﺍﮒ۴/ﮒﮒﭦﮒﺕ­ﻛﺛﮔﺍﻠﮒﺁﺗﮔﺁ
+2. ﮔﭦﮔﻛﺗﺍﮒ۴/ﮒﮒﭦﮒﺕﻛﺛﮔﺍﻠﮒﺁﺗﮔﺁ
             3. ﮔﭦﮔﮒﮒﮒﭦ۵ﺅﺙﮒ۳ﮒ؟ﭘﮔﭦﮔﮒﮔﭘﻛﺗﺍﮒ۴ﺅﺙ?            4. ﮔﺕﺕﻟﭖﻛﺕﮔﭦﮔﮒﮒﺙﮔﮒ?        """
         pass
 ```
@@ -552,9 +552,9 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         
         self.known_hot_money_seats = {
             'ﮒﻠ،ﻟﺁﮒﺕﮔﻠﻟﺑ۲ﻛﭨﭨﮒ؛ﮒﺕﻛﺕﮔﭖﺓﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
-            'ﻟﺑ۱ﻠﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﮔ­ﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻟﺁﮒﺕﻟ۴ﻛﺕﻠ۷': 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+'ﻟﺑ۱ﻠﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﮔﮒﺓﻛﺛﻟﺎﮒﭦﻟﺓﺁﻟﺁﮒﺕﻟ۴ﻛﺕﻠ۷': 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
             'ﮒﺛﮔﺏﺍﮒﮒ؟ﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﻛﺕﮔﭖﺓﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
-            'ﻛﺕ­ﮒﺛﻛﺕ­ﻠﻟﺑ۱ﮒﺁﻟﺁﮒﺕﮔﻠﮒ؛ﮒﺕﮒﻛﭦ؛ﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
+'ﻛﺕﮒﺛﻛﺕﻠﻟﺑ۱ﮒﺁﻟﺁﮒﺕﮔﻠﮒ؛ﮒﺕﮒﻛﭦ؛ﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
             'ﮒﮔﺏﺍﻟﺁﮒﺕﻟ۰ﻛﭨﺛﮔﻠﮒ؛ﮒﺕﮔﺓﺎﮒﺏﮒﮒ؛ﮒ?: 'ﻝ۴ﮒﮔﺕﺕﻟﭖ',
         }
     
@@ -567,7 +567,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
             ths.ED_query(
                 'thsﻠﺝﻟﮔ۵?,
                 '',
-                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ ,ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ,ﮒﮒﭦﮒﺕ­ﻛﺛ',
+'ﻟﺁﮒﺕﻛﭨ۲ﻝ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ,ﻛﺗﺍﮒ۴ﮒﺕﻛﺛ,ﮒﮒﭦﮒﺕﻛﺛ',
                 start_date,
                 end_date
             )
@@ -578,17 +578,17 @@ class IFindDragonTigerParser(DragonTigerDataParser):
             df = self.ifs_client.ED_query(
                 'thsﻠﺝﻟﮔ۵?,
                 '',
-                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ ,ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ,ﮒﮒﭦﮒﺕ­ﻛﺛ',
+'ﻟﺁﮒﺕﻛﭨ۲ﻝ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﻛﭦ۳ﮔﮔ۴ﮔ,ﮔﭘﻝﻛﭨ?ﮔﭘ۷ﻟﺓﮒﺗ?ﮔ۱ﮔﻝ?ﻛﺕﮔ۵ﮒﮒ,ﻛﺗﺍﮒ۴ﮒﺕﻛﺛ,ﮒﮒﭦﮒﺕﻛﺛ',
                 start_date.strftime('%Y-%m-%d'),
                 end_date.strftime('%Y-%m-%d')
             )
             
             if reason_filter:
-                df = df[df['ﻛﺕﮔ۵ﮒﮒ '].isin(reason_filter)]
+df = df[df['ﻛﺕﮔ۵ﮒﮒ'].isin(reason_filter)]
             
             for _, row in df.iterrows():
-                buy_seats = self._parse_seats(row['ﻛﺗﺍﮒ۴ﮒﺕ­ﻛﺛ'])
-                sell_seats = self._parse_seats(row['ﮒﮒﭦﮒﺕ­ﻛﺛ'])
+buy_seats = self._parse_seats(row['ﻛﺗﺍﮒ۴ﮒﺕﻛﺛ'])
+sell_seats = self._parse_seats(row['ﮒﮒﭦﮒﺕﻛﺛ'])
                 
                 institutional_buy = self.identify_institutional_seats(buy_seats)
                 institutional_sell = self.identify_institutional_seats(sell_seats)
@@ -600,13 +600,13 @@ class IFindDragonTigerParser(DragonTigerDataParser):
                          sum([seat['ﮒﮒﭦﻠﻠ۱'] for seat in sell_seats])
                 
                 item = DragonTigerListItem(
-                    stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ '],
+stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ'],
                     stock_name=row['ﻟﺁﮒﺕﻝ؟ﻝ۶?],
                     trade_date=row['ﻛﭦ۳ﮔﮔ۴ﮔ'],
                     close_price=row['ﮔﭘﻝﻛﭨ?],
                     change_pct=row['ﮔﭘ۷ﻟﺓﮒﺗ?],
                     turnover_rate=row['ﮔ۱ﮔﻝ?],
-                    reason=row['ﻛﺕﮔ۵ﮒﮒ '],
+reason=row['ﻛﺕﮔ۵ﮒﮒ'],
                     buy_seats=buy_seats,
                     sell_seats=sell_seats,
                     net_buy_amount=net_buy,
@@ -624,7 +624,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         return items
     
     def identify_institutional_seats(self, seats: List[Dict]) -> List[Dict]:
-        """ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕ­ﻛﺛ"""
+"""ﻟﺁﮒ،ﮔﭦﮔﻛﺕﻝ۷ﮒﺕﻛﺛ"""
         institutional_seats = []
         
         for seat in seats:
@@ -640,7 +640,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         return institutional_seats
     
     def identify_hot_money_seats(self, seats: List[Dict]) -> List[Dict]:
-        """ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕ­ﻛﺛ"""
+"""ﻟﺁﮒ،ﻝ۴ﮒﮔﺕﺕﻟﭖﮒﺕﻛﺛ"""
         hot_money_seats = []
         
         for seat in seats:
@@ -682,7 +682,7 @@ class IFindDragonTigerParser(DragonTigerDataParser):
         }
     
     def _parse_seats(self, seats_str: str) -> List[Dict]:
-        """ﻟ۶۲ﮔﮒﺕ­ﻛﺛﮒ­ﻝ؛۵ﻛﺕ?""
+"""ﻟ۶۲ﮔﮒﺕﻛﺛﮒﻝ؛۵ﻛﺕ?""
         seats = []
         
         return seats
@@ -736,7 +736,7 @@ class NorthboundHolding:
     stock_code: str
     stock_name: str
     hold_amount: float  # ﮔﻟ۰ﮔﺍﻠﺅﺙﻛﺕﻟ۰ﺅﺙ
-    hold_value: float  # ﮔﻟ۰ﮒﺕﮒﺙﺅﺙﻛﺕﮒﺅﺙ?    hold_ratio: float  # ﮔﻟ۰ﮒ ﮔﺁﺅﺙ?ﺅﺙ?    change_amount: float  # ﮔﻟ۰ﮒﮒﺅﺙﻛﺕﻟ۰ﺅﺙ
+hold_value: float  # ﮔﻟ۰ﮒﺕﮒﺙﺅﺙﻛﺕﮒﺅﺙ?    hold_ratio: float  # ﮔﻟ۰ﮒﮔﺁﺅﺙ?ﺅﺙ?    change_amount: float  # ﮔﻟ۰ﮒﮒﺅﺙﻛﺕﻟ۰ﺅﺙ
     change_ratio: float  # ﮔﻟ۰ﮒﮒﮔﺁﻛﺝﺅﺙ?ﺅﺙ?
 class NorthboundCapitalMonitor(ABC):
     """ﮒﮒﻟﭖﻠﻝﮔ۶ﮒ۷ﮔﺛﻟﺎ۰ﮒﭦﻝﺎ?    
@@ -756,9 +756,9 @@ class NorthboundCapitalMonitor(ABC):
         ﻟﺟﮒ:
             List[NorthboundCapitalFlow]: ﮔ۴ﮒﭦ۵ﮔﭖﮒﮔﺍﮔ؟ﮒﻟ۰۷
             
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
             iFinDﮒﺛﮔﺍ: THSﮒﮒﻟﭖﻠ
-            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+ﮒﮔ؟ﭖﮔﮒﺍ:
                 - total_net_buy: ﮒﮒﻟﭖﻠﮒﻛﺗﺍﮒ۴
                 - shanghai_connect_net_buy: ﮔﺎ۹ﻟ۰ﻠﮒﻛﺗﺍﮒ۴
                 - shenzhen_connect_net_buy: ﮔﺓﺎﻟ۰ﻠﮒﻛﺗﺍﮒ۴
@@ -772,15 +772,15 @@ class NorthboundCapitalMonitor(ABC):
         """ﻟﺓﮒﮒﮒﻟﭖﻠﮔﻛﭨﮔﻝﭨ
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷ﺅﺙﮒﺁﻠﺅﺙﻠﭨﻟ؟۳ﻟﺟﮒﮒ۷ﻠ۷ﺅﺙ?            top_n: ﻟﺟﮒﮒNﮒ۹ﻟ۰ﻝ۴۷ﺅﺙﻠﭨﻟ؟۳100ﺅﺙ?            
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷ﺅﺙﮒﺁﻠﺅﺙﻠﭨﻟ؟۳ﻟﺟﮒﮒ۷ﻠ۷ﺅﺙ?            top_n: ﻟﺟﮒﮒNﮒ۹ﻟ۰ﻝ۴۷ﺅﺙﻠﭨﻟ؟۳100ﺅﺙ?
         ﻟﺟﮒ:
             List[NorthboundHolding]: ﮔﻛﭨﮔﻝﭨﮒﻟ۰۷
             
-        ﮔﺍﮔ؟ﮔﭦﮔ ﮒﺍ?
+ﮔﺍﮔ؟ﮔﭦﮔﮒﺍ?
             iFinDﮒﺛﮔﺍ: THSﮒﮒﮔﻟ۰
-            ﮒ­ﮔ؟ﭖﮔ ﮒﺍ:
+ﮒﮔ؟ﭖﮔﮒﺍ:
                 - hold_amount: ﮔﻟ۰ﮔﺍﻠ
-                - hold_value: ﮔﻟ۰ﮒﺕﮒ?                - hold_ratio: ﮔﻟ۰ﮒ ﮔﺁ
+- hold_value: ﮔﻟ۰ﮒﺕﮒ?                - hold_ratio: ﮔﻟ۰ﮒﮔﺁ
         """
         pass
     
@@ -810,12 +810,12 @@ class NorthboundCapitalMonitor(ABC):
         
         ﮒﮔﺍ:
             flow_data: ﮔﭖﮒﮔﺍﮔ؟
-            threshold_days: ﻟﺟﻝﭨ­ﮒ۳۸ﮔﺍﻠﮒﺙﺅﺙﻠﭨﻟ؟۳5ﮒ۳۸ﺅﺙ
+threshold_days: ﻟﺟﻝﭨﮒ۳۸ﮔﺍﻠﮒﺙﺅﺙﻠﭨﻟ؟۳5ﮒ۳۸ﺅﺙ
             threshold_amount: ﮒﻛﺗﺍﮒ۴ﻠﻠ۱ﻠﮒﺙﺅﺙﻠﭨﻟ؟۳60ﻛﭦﺟﮒﺅﺙ?            
         ﻟﺟﮒ:
             Dict: ﻟ۹ﮔﻠﺎﻛﺟ۰ﮒ?            
         ﻛﺟ۰ﮒﺓﻟ۶ﮒ:
-            1. ﻟﺟﻝﭨ­5ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ?0ﻛﭦﺟﮒﺅﺙﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒ­ﮔﺟﮒﻟﻝ?0%
+1. ﻟﺟﻝﭨ5ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ?0ﻛﭦﺟﮒﺅﺙﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒﮔﺟﮒﻟﻝ?0%
             2. ﮒﮔ۴ﮒﮔﭖﮒﭦﻟﭘ?0ﻛﭦﺟﮒﺅﺙﻠ،ﻛﺙﺍﮒﺙﮔﭘﻟﺑﺗﻟ۰ﮒﺗﺏﮒﮒﮔ۳5.3%
         """
         pass
@@ -887,7 +887,7 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
             ths.ED_query(
                 'thsﮒﮒﮔﻟ۰',
                 '',
-                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒ ﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
+'ﻟﺁﮒﺕﻛﭨ۲ﻝ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
                 '',
                 ''
             )
@@ -898,23 +898,23 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
             df = self.ifs_client.ED_query(
                 'thsﮒﮒﮔﻟ۰',
                 '',
-                'ﻟﺁﮒﺕﻛﭨ۲ﻝ ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒ ﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
+'ﻟﺁﮒﺕﻛﭨ۲ﻝ,ﻟﺁﮒﺕﻝ؟ﻝ۶?ﮔﻟ۰ﮔﺍﻠ,ﮔﻟ۰ﮒﺕﮒ?ﮔﻟ۰ﮒﮔﺁ,ﮔﻟ۰ﮒﮒ,ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ',
                 '',
                 ''
             )
             
             if stock_codes:
-                df = df[df['ﻟﺁﮒﺕﻛﭨ۲ﻝ '].isin(stock_codes)]
+df = df[df['ﻟﺁﮒﺕﻛﭨ۲ﻝ'].isin(stock_codes)]
             
             df = df.head(top_n)
             
             for _, row in df.iterrows():
                 holding = NorthboundHolding(
-                    stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ '],
+stock_code=row['ﻟﺁﮒﺕﻛﭨ۲ﻝ'],
                     stock_name=row['ﻟﺁﮒﺕﻝ؟ﻝ۶?],
                     hold_amount=row['ﮔﻟ۰ﮔﺍﻠ'],
                     hold_value=row['ﮔﻟ۰ﮒﺕﮒ?],
-                    hold_ratio=row['ﮔﻟ۰ﮒ ﮔﺁ'],
+hold_ratio=row['ﮔﻟ۰ﮒﮔﺁ'],
                     change_amount=row['ﮔﻟ۰ﮒﮒ'],
                     change_ratio=row['ﮔﻟ۰ﮒﮒﮔﺁﻛﺝ']
                 )
@@ -968,9 +968,9 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
                 'total_net_buy': total_buy,
                 'consecutive_days': threshold_days,
                 'confidence': 0.80,
-                'target_sectors': ['ﮔﺍﻟﺛﮔﭦ?, 'ﻝﭖﮒ­'],
+'target_sectors': ['ﮔﺍﻟﺛﮔﭦ?, 'ﻝﭖﮒ'],
                 'expected_win_rate': 0.80,
-                'reasoning': f'ﮒﮒﻟﭖﻠﻟﺟﻝﭨ­{threshold_days}ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ{threshold_amount}ﻛﭦﺟﮒﺅﺙﮒﮒﺎﮔﺍﮔ؟ﮔﺝﻝ۳ﭦﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒ­ﮔﺟﮒﻟﻝﻟﺝﺝ80%'
+'reasoning': f'ﮒﮒﻟﭖﻠﻟﺟﻝﭨ{threshold_days}ﮔ۴ﮒﻛﺗﺍﮒ۴ﻟﭘ{threshold_amount}ﻛﭦﺟﮒﺅﺙﮒﮒﺎﮔﺍﮔ؟ﮔﺝﻝ۳ﭦﮔﺍﻟﺛﮔﭦﻙﻝﭖﮒﮔﺟﮒﻟﻝﻟﺝﺝ80%'
             }
         
         recent_flow = flow_data[-1]
@@ -1004,7 +1004,7 @@ class IFindNorthboundCapitalMonitor(NorthboundCapitalMonitor):
 ### 3.1 ﻛﺕﭨﮔﮒﭦﻠﮔﭦﻟﺛﻛﺛﺅﺙSovereign Fund Agentﺅﺙ?
 **ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.SOVEREIGN_FUND.001
 
-**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮒﺕﮒﭦﻝ۷ﺏﮒ؟ﮒ۷ﺅﺙﮔﺟﻝ­ﻠ۸ﺎﮒ۷
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮒﺕﮒﭦﻝ۷ﺏﮒ؟ﮒ۷ﺅﺙﮔﺟﻝﻠ۸ﺎﮒ۷
 - ETFﻠﻝﺛ؟ﻛﺕﭦﻛﺕﭨﺅﺙﻠﺟﮔﮔﮔ?- ﻛﭨﮒ۷ﮒﺕﮒﭦﮒﺙﮒﺕﺕﮔﺏ۱ﮒ۷ﮔﭘﻛﭨﮒ?
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
@@ -1032,11 +1032,11 @@ sovereign_fund_agent:
     zz500:
       weight: 0.25
       code: "510500.SH"
-      description: "ﻛﺕ­ﻟﺁ500ETF"
+description: "ﻛﺕﻟﺁ500ETF"
     zz1000:
       weight: 0.15
       code: "512100.SH"
-      description: "ﻛﺕ­ﻟﺁ1000ETF"
+description: "ﻛﺕﻟﺁ1000ETF"
   
   position_limit:
     max_single_etf: 0.05
@@ -1050,14 +1050,14 @@ sovereign_fund_agent:
   policy_signal_sources:
     - "ﮒ۳؟ﻟ۰ﮒ؛ﮒ"
     - "ﻟﺁﻝﻛﺙﮒ؛ﮒ?
-    - "ﮒﺛﮒ۰ﻠ۱ﮔﺟﻝ­ﮔﻛﭨ?
+- "ﮒﺛﮒ۰ﻠ۱ﮔﺟﻝﮔﻛﭨ?
     - "ﮔﺍﮒﻝ۳ﺝﻝ۳ﺝﻟ؟?
   
   market_stability_indicators:
     - "ﮒﺕﮒﭦﮔﺏ۱ﮒ۷ﻝ?
-    - "ﮔﭖﮒ۷ﮔ۶ﮔﮔ ?
+- "ﮔﭖﮒ۷ﮔ۶ﮔﮔ?
     - "ﮒﺕﮒﭦﮔﻝﭨ۹ﮔﮔﺍ"
-    - "ﻟﻝ­ﺗﻟ۰ﻟﭖﻠﮔﭖﮒ?
+- "ﻟﻝﺗﻟ۰ﻟﭖﻠﮔﭖﮒ?
   
   reward_function:
     market_stability_weight: 0.50
@@ -1092,8 +1092,8 @@ mutual_fund_agent:
   sector_focus:
     ai_computing:
       weight: 0.35
-      keywords: ["AIﻝ؟ﮒ", "GPU", "ﮔﺍﮔ؟ﻛﺕ­ﮒﺟ"]
-      target_stocks: ["ﮔﭖ۹ﮔﺛ؟ﻛﺟ۰ﮔﺁ", "ﻛﺕ­ﻝ۶ﮔﮒ", "ﮒﺁﮔ­۵ﻝﭦ?]
+keywords: ["AIﻝ؟ﮒ", "GPU", "ﮔﺍﮔ؟ﻛﺕﮒﺟ"]
+target_stocks: ["ﮔﭖ۹ﮔﺛ؟ﻛﺟ۰ﮔﺁ", "ﻛﺕﻝ۶ﮔﮒ", "ﮒﺁﮔ۵ﻝﭦ?]
     
     medical_tech:
       weight: 0.25
@@ -1148,7 +1148,7 @@ mutual_fund_agent:
 
 **ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻛﭨﺓﮒﺙﮔﻟﭖﺅﺙﮔﺟﮒﻟﺛ؟ﮒ۷
 - ﻟ۹ﮔﻠﺎﮔﮒﭦﺅﺙﻠﺟﮔﻠﻝﺛ؟
-- ﮔﺝﮒﺙﻛﺙ ﻝﭨﮔ ﺕﮒﺟﻟﭖﻛﭦ۶ﺅﺙﻟﺛ؛ﮒﻠ،ﮔﻠﺟﮒﭘﻠ?
+- ﮔﺝﮒﺙﻛﺙﻝﭨﮔﺕﮒﺟﻟﭖﻛﭦ۶ﺅﺙﻟﺛ؛ﮒﻠ،ﮔﻠﺟﮒﭘﻠ?
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 foreign_capital_agent:
@@ -1170,7 +1170,7 @@ foreign_capital_agent:
   sector_rotation:
     growth_manufacturing:
       weight: 0.50
-      sectors: ["ﻝﭖﮒ­", "ﮒﭦﻝ۰ﮒﮒﺓ۴", "ﻝﭖﮒﻟ؟ﺝﮒ۳"]
+sectors: ["ﻝﭖﮒ", "ﮒﭦﻝ۰ﮒﮒﺓ۴", "ﻝﭖﮒﻟ؟ﺝﮒ۳"]
     
     traditional_core:
       weight: 0.20
@@ -1178,7 +1178,7 @@ foreign_capital_agent:
     
     scarce_assets:
       weight: 0.30
-      sectors: ["ﻛﺕ­ﻟﺁ", "ﻝﺛﻠ"]
+sectors: ["ﻛﺕﻟﺁ", "ﻝﺛﻠ"]
   
   fx_factors:
     usd_cny_weight: 0.30
@@ -1188,7 +1188,7 @@ foreign_capital_agent:
   smart_money_signal:
     consecutive_buy_days: 5
     net_buy_threshold: 60.0
-    target_sectors: ["ﮔﺍﻟﺛﮔﭦ?, "ﻝﭖﮒ­"]
+target_sectors: ["ﮔﺍﻟﺛﮔﭦ?, "ﻝﭖﮒ"]
     expected_win_rate: 0.80
   
   position_management:
@@ -1217,7 +1217,7 @@ foreign_capital_agent:
 **ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.QUANT_FUND.001
 
 **ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻠ،ﻠ۱ﻛﭦ۳ﮔﺅﺙﻝ؟ﮔﺏﻠ۸ﺎﮒ?- ﮒﮔ۲ﮒﺅﺙﻝﭦ۹ﮒﺝﮔ۶ﮒﺙﭦ
-- ﮔﻛﭨﮔﭘﻠﺑﻝ­ﻟﺏﮔﺁ،ﻝ۶ﻝﭦ?
+- ﮔﻛﭨﮔﭘﻠﺑﻝﻟﺏﮔﺁ،ﻝ۶ﻝﭦ?
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 quantitative_fund_agent:
@@ -1281,15 +1281,15 @@ quantitative_fund_agent:
     data_feed: "level2_realtime"
 ```
 
-### 3.5 ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛﺅﺙHot Money Agentﺅﺙ?
+### 3.5 ﻝﻠﺎﮔﭦﻟﺛﻛﺛﺅﺙHot Money Agentﺅﺙ?
 **ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.HOT_MONEY.001
 
-**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮔﮔﺟﮔﮔﺏﺅﺙﮒﺟ،ﻟﺟﮒﺟ،ﮒ?- ﻠ۱ﮔﻠ۸ﺎﮒ۷ﺅﺙﮔﻝﭨ۹ﮔﺝﮒ۳?- ﮔﻛﭨﮒ۷ﮔﻝ­ﺅﺙﮔ?ﮒ۷ﺅﺙ
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﮔﮔﺟﮔﮔﺏﺅﺙﮒﺟ،ﻟﺟﮒﺟ،ﮒ?- ﻠ۱ﮔﻠ۸ﺎﮒ۷ﺅﺙﮔﻝﭨ۹ﮔﺝﮒ۳?- ﮔﻛﭨﮒ۷ﮔﻝﺅﺙﮔ?ﮒ۷ﺅﺙ
 
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
 hot_money_agent:
-  name: "ﻝ­ﻠﺎﮔﭦﻟﺛﻛﺛ?
+name: "ﻝﻠﺎﮔﭦﻟﺛﻛﺛ?
   type: "speculator"
   
   decision_model:
@@ -1319,7 +1319,7 @@ hot_money_agent:
       - "AI"
       - "ﻛﭦﭦﮒﺛ۱ﮔﭦﮒ۷ﻛﭦ?
       - "ﮔﺍﻟﺛﮔﭦ?
-      - "ﮒﺗﭘﻟﺑ­ﻠﻝﭨ"
+- "ﮒﺗﭘﻟﺑﻠﻝﭨ"
     
     sentiment_threshold: 0.70
     volume_surge_threshold: 2.0
@@ -1416,7 +1416,7 @@ insurance_fund_agent:
 **ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.INDUSTRIAL_CAPITAL.001
 
 **ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻛﺟ۰ﮔﺁﻛﺙﮒﺟﺅﺙﮔﻝ۴ﮒﺕﮒﺎ
-- ﮒ۱ﮔﮒﻟﺑ­ﺅﺙﻛﭨﺓﮒﺙﻟ؟۳ﮒ?- ﻠﺟﮔﮔﮔ
+- ﮒ۱ﮔﮒﻟﺑﺅﺙﻛﭨﺓﮒﺙﻟ؟۳ﮒ?- ﻠﺟﮔﮔﮔ
 
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
 ```yaml
@@ -1440,7 +1440,7 @@ industrial_capital_agent:
     
     market_share_expansion:
       weight: 0.30
-      description: "ﮒﺕﮒﭦﻛﭨﺛﻠ۱ﮔ۸ﮒﺙ "
+description: "ﮒﺕﮒﭦﻛﭨﺛﻠ۱ﮔ۸ﮒﺙ"
   
   buyback_criteria:
     price_below_book: true
@@ -1469,7 +1469,7 @@ industrial_capital_agent:
 ### 3.8 ﻠﭘﮒ؟ﮔﻟﭖﻟﮔﭦﻟﺛﻛﺛﺅﺙRetail Investor Agentﺅﺙ?
 **ﻛﭨ۲ﮒﺓ**ﺅﺙAGENT.RETAIL.001
 
-**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻝﺝﻝﺝ۳ﮔﮒﭦﺅﺙﮔﻝﭨ۹ﻠ۸ﺎﮒ?- ﻟﺟﺛﮔﭘ۷ﮔﻟﺓﺅﺙﻝ­ﮔﮔﮔ
+**ﻟ۰ﻛﺕﭦﻝﺗﮒﺝ**ﺅﺙ?- ﻝﺝﻝﺝ۳ﮔﮒﭦﺅﺙﮔﻝﭨ۹ﻠ۸ﺎﮒ?- ﻟﺟﺛﮔﭘ۷ﮔﻟﺓﺅﺙﻝﮔﮔﮔ
 - ﻛﺟ۰ﮔﺁﮒ۲ﮒﺟ
 
 **ﮒﮔﺍﻠﻝﺛ؟**ﺅﺙ?
@@ -1576,7 +1576,7 @@ class MarketParticipantDataFetcher:
                       end_date: datetime) -> MarketParticipantDataBundle:
         """ﻟﺓﮒﮔﮔﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ?        
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             start_date: ﮒﺙﮒ۶ﮔ۴ﮔ?            end_date: ﻝﭨﮔﮔ۴ﮔ
             
         ﻟﺟﮒ:
@@ -1608,10 +1608,10 @@ class MarketParticipantDataFetcher:
     
     def fetch_realtime_data(self,
                            stock_codes: List[str]) -> MarketParticipantDataBundle:
-        """ﻟﺓﮒﮒ؟ﮔﭘﮔﺍﮔ؟ﺅﺙﻝﻛﺕ­ﺅﺙ
+"""ﻟﺓﮒﮒ؟ﮔﭘﮔﺍﮔ؟ﺅﺙﻝﻛﺕﺅﺙ
         
         ﮒﮔﺍ:
-            stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ ﮒﻟ۰۷
+stock_codes: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﮒﻟ۰۷
             
         ﻟﺟﮒ:
             MarketParticipantDataBundle: ﮒ؟ﮔﭘﮔﺍﮔ؟ﮒ?        """
@@ -1629,7 +1629,7 @@ class MarketParticipantDataFetcher:
         )
 ```
 
-### 4.2 ﮔﺍﮔ؟ﻝﺙﮒ­ﻛﺕﮔﺑﮔﺍﻝ­ﻝ?
+### 4.2 ﮔﺍﮔ؟ﻝﺙﮒﻛﺕﮔﺑﮔﺍﻝﻝ?
 ```python
 from datetime import datetime, timedelta
 from typing import Dict, Optional
@@ -1637,9 +1637,9 @@ import redis
 import json
 
 class DataCacheManager:
-    """ﮔﺍﮔ؟ﻝﺙﮒ­ﻝ؟۰ﻝﮒ?    
+"""ﮔﺍﮔ؟ﻝﺙﮒﻝ؟۰ﻝﮒ?
     ﻝﺑ۱ﮒﺙ: IMPLEMENTATION.CACHE.001
-    ﻟﻟﺑ۲: ﻝ؟۰ﻝﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ؟ﻝﺙﮒ­?    ﻝﺙﮒ­ﻛﭨﻟﺑ۷: Redis
+ﻟﻟﺑ۲: ﻝ؟۰ﻝﮒﺕﮒﭦﮒﻛﺕﻟﮔﺍﮔ؟ﻝﺙﮒ?    ﻝﺙﮒﻛﭨﻟﺑ۷: Redis
     """
     
     def __init__(self, config: Dict):
@@ -1661,13 +1661,13 @@ class DataCacheManager:
     def get_cached_data(self,
                        data_type: str,
                        key: str) -> Optional[Dict]:
-        """ﻟﺓﮒﻝﺙﮒ­ﮔﺍﮔ؟
+"""ﻟﺓﮒﻝﺙﮒﮔﺍﮔ؟
         
         ﮒﮔﺍ:
-            data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙddx_daily, ddx_realtimeﻝ­ﺅﺙ
-            key: ﻝﺙﮒ­ﻠ?            
+data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙddx_daily, ddx_realtimeﻝﺅﺙ
+key: ﻝﺙﮒﻠ?
         ﻟﺟﮒ:
-            Optional[Dict]: ﻝﺙﮒ­ﮔﺍﮔ؟ﺅﺙﻛﺕﮒ­ﮒ۷ﮒﻟﺟﮒNone
+Optional[Dict]: ﻝﺙﮒﮔﺍﮔ؟ﺅﺙﻛﺕﮒﮒ۷ﮒﻟﺟﮒNone
         """
         cache_key = f"{data_type}:{key}"
         cached = self.redis_client.get(cache_key)
@@ -1681,11 +1681,11 @@ class DataCacheManager:
                        data_type: str,
                        key: str,
                        data: Dict) -> None:
-        """ﻟ؟ﺝﻝﺛ؟ﻝﺙﮒ­ﮔﺍﮔ؟
+"""ﻟ؟ﺝﻝﺛ؟ﻝﺙﮒﮔﺍﮔ؟
         
         ﮒﮔﺍ:
             data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒ
-            key: ﻝﺙﮒ­ﻠ?            data: ﮔﺍﮔ؟ﮒﮒ؟ﺗ
+key: ﻝﺙﮒﻠ?            data: ﮔﺍﮔ؟ﮒﮒ؟ﺗ
         """
         cache_key = f"{data_type}:{key}"
         ttl = self.cache_ttl.get(data_type, 3600)
@@ -1697,7 +1697,7 @@ class DataCacheManager:
         )
     
     def clear_cache(self, data_type: Optional[str] = None) -> None:
-        """ﮔﺕﻠ۳ﻝﺙﮒ­
+"""ﮔﺕﻠ۳ﻝﺙﮒ
         
         ﮒﮔﺍ:
             data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙﮒﺁﻠﺅﺙﻛﺕﮔﮒ؟ﮒﮔﺕﻠ۳ﮔﮔﺅﺙ
@@ -1815,10 +1815,10 @@ class TestNorthboundCapitalMonitor(unittest.TestCase):
 
 ---
 
-## ﻭ ﮒ­ﻙﮔﺑﮔﺍﮔ۴ﮒﺟ?
+## ﻭ ﮒﻙﮔﺑﮔﺍﮔ۴ﮒﺟ?
 | ﻝﮔ؛ | ﮔ۴ﮔ | ﮔﺑﮔﺍﮒﮒ؟ﺗ | ﻛﺛﻟ?|
 |------|------|----------|------|
-| v2.0 | 2026-04-03 | ﮔﺁﻟﺁ­ﮔ ﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?| Spec-Approver |
+| v2.0 | 2026-04-03 | ﮔﺁﻟﺁﮔﮒﮒﻙﻟﭖﻠﮔﭖﮒﻝﮔ۶ﮔ۴ﮒ۲ﻙﮔﭦﻟﺛﻛﺛﮒﮔﺍﻠﻝﺛ؟ﻙﮔﺍﮔ؟ﻟﺓﮒﮔ۷۰ﮒ?| Spec-Approver |
 
 ---
 

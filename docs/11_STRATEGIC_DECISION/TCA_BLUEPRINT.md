@@ -211,7 +211,7 @@ Total_Slippage = Market_Impact + Timing_Cost + Spread_Cost
 - Spread_Cost: 买卖价差成本
 
 Implementation Shortfall (IS):
-IS = (实际成交价 - 决策价格) × 交易量
+IS = (实际成交价 - 决策价格)  交易量
 ```
 
 #### 2.1.2 技术实现
@@ -371,10 +371,10 @@ class SlippageAnalysisEngine:
 
 ```
 临时冲击:
-Temporary_Impact = α × (Trade_Size / ADV)^β × σ
+Temporary_Impact = α  (Trade_Size / ADV)^β  σ
 
 永久冲击:
-Permanent_Impact = γ × (Trade_Size / ADV)^δ × σ
+Permanent_Impact = γ  (Trade_Size / ADV)^δ  σ
 
 总冲击:
 Total_Impact = Temporary_Impact + Permanent_Impact
@@ -545,7 +545,7 @@ class MarketImpactEngine:
 
 ```
 VWAP基准:
-VWAP = Σ(Price_i × Volume_i) / Σ Volume_i
+VWAP = Σ(Price_i  Volume_i) / Σ Volume_i
 
 TWAP基准:
 TWAP = Σ Price_i / N
@@ -554,7 +554,7 @@ Arrival Price基准:
 Arrival_Price = 订单到达时的中间价
 
 Implementation Shortfall:
-IS = (Execution_Price - Decision_Price) × Quantity
+IS = (Execution_Price - Decision_Price)  Quantity
    = Market_Impact + Timing_Cost + Opportunity_Cost
 ```
 
@@ -702,16 +702,16 @@ class ExecutionBenchmarkSystem:
 
 ```
 经纪商评分:
-Broker_Score = w1 × Cost_Score + w2 × Fill_Rate + w3 × Speed_Score
+Broker_Score = w1  Cost_Score + w2  Fill_Rate + w3  Speed_Score
 
 成本评分:
-Cost_Score = 100 - (Average_Slippage_Bps / Max_Acceptable_Slippage) × 100
+Cost_Score = 100 - (Average_Slippage_Bps / Max_Acceptable_Slippage)  100
 
 成交率:
 Fill_Rate = Filled_Quantity / Ordered_Quantity
 
 执行速度:
-Speed_Score = 100 - (Execution_Time / Max_Time) × 100
+Speed_Score = 100 - (Execution_Time / Max_Time)  100
 ```
 
 #### 2.4.2 技术实现

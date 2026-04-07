@@ -4,28 +4,28 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 交易执行
   - 文档治理
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟۱ﮒﻝ؟۰ﻝﮔﮒ
 applicable_scope: ﻟ؟۱ﮒﮔﮒ۰ﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: P0-01_Database_Design_Document.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
+# ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﺅﺙ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟ؟۱ﮒﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﻟ؟۱ﮒﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
 > **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻝﭘﮔﮔﭦﮔ۷۰ﮒﺙ + Sagaﻛﭦﮒ۰
-> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
+> **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﻟ؟۱ﮒﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟ؟۱ﮒﮔ۶ﻟ۰ﻙﻟ؟۱ﮒﮔ۴ﻟﺁ?
 
 ## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
@@ -45,7 +45,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         OrderAggregate (ﻟ؟۱ﮒﻟﮒﮔ ?                  ﻗ? ﻗ?
+ﻗ? ﻗ?         OrderAggregate (ﻟ؟۱ﮒﻟﮒﮔ?                  ﻗ? ﻗ?
 ﻗ? ﻗ? - Order (ﻟ؟۱ﮒﮒ؟ﻛﺛ)                                   ﻗ? ﻗ?
 ﻗ? ﻗ? - Trade (ﻛﭦ۳ﮔﻟ؟ﺍﮒﺛﮒ؟ﻛﺛ)                               ﻗ? ﻗ?
 ﻗ? ﻗ? - OrderDomainService (ﻠ۱ﮒﮔﮒ۰)                      ﻗ? ﻗ?
@@ -58,7 +58,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗ? ﻗ?         OrderRepository (ﻟ؟۱ﮒﻛﭨﮒ۷)                   ﻗ? ﻗ?
 ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
-ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ)                                   ﻗ? ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
@@ -67,7 +67,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 ﻟ؟۱ﮒﻟﮒﮔ ?(OrderAggregate)
+### 1.1 ﻟ؟۱ﮒﻟﮒﮔ?(OrderAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -134,7 +134,7 @@ class Order:
             self.order_code = self._generate_order_code()
     
     def _generate_order_code(self) -> str:
-        """ﻝﮔﻟ؟۱ﮒﻝﺙﻝ """
+"""ﻝﮔﻟ؟۱ﮒﻝﺙﻝ"""
         return f"ORD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
     
     def can_submit(self) -> bool:
@@ -263,7 +263,7 @@ class Trade:
             self.trade_code = self._generate_trade_code()
     
     def _generate_trade_code(self) -> str:
-        """ﻝﮔﻛﭦ۳ﮔﻝﺙﻝ """
+"""ﻝﮔﻛﭦ۳ﮔﻝﺙﻝ"""
         return f"TRD_{datetime.now().strftime('%Y%m%d%H%M%S')}_{self.id or 'NEW'}"
 ```
 
@@ -400,9 +400,9 @@ class OrderDomainService:
         available_position: int
     ) -> tuple[bool, Optional[str]]:
         """ﻠ۹ﻟﺁﻟ؟۱ﮒ"""
-        # ﻠ۹ﻟﺁﻟ؟۱ﮒﻛﭨﺓﮔ ﺙ
+# ﻠ۹ﻟﺁﻟ؟۱ﮒﻛﭨﺓﮔﺙ
         if order.order_type == OrderType.LIMIT and order.order_price <= 0:
-            return False, "ﻠﻛﭨﺓﮒﻛﭨﺓﮔ ﺙﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ?"
+return False, "ﻠﻛﭨﺓﮒﻛﭨﺓﮔﺙﮒﺟﻠ۰ﭨﮒ۳۶ﻛﭦ?"
         
         # ﻠ۹ﻟﺁﻟ؟۱ﮒﮔﺍﻠ
         if order.order_quantity <= 0:
@@ -485,7 +485,7 @@ class OrderApplicationService:
         # ﻠ۹ﻟﺁﻟ؟۱ﮒ
         account = await self.account_service.get_account(account_id)
         if not account:
-            raise ValueError(f"ﻟﺑ۵ﮔﺓﻛﺕﮒ­ﮒ? {account_id}")
+raise ValueError(f"ﻟﺑ۵ﮔﺓﻛﺕﮒﮒ? {account_id}")
         
         if direction == 'buy':
             available_balance = Decimal(str(account['available_cash']))
@@ -506,7 +506,7 @@ class OrderApplicationService:
             await self.order_repository.create(order)
             raise ValueError(error_msg)
         
-        # ﻛﺟﮒ­ﻟ؟۱ﮒ
+# ﻛﺟﮒﻟ؟۱ﮒ
         order = await self.order_repository.create(order)
         
         # ﮒﮒﺕﻟ؟۱ﮒﮒﮒﭨﭦﻛﭦﻛﭨﭘ
@@ -540,7 +540,7 @@ class OrderApplicationService:
         order = await self.order_repository.find_by_id(order_id)
         
         if not order:
-            raise ValueError(f"ﻟ؟۱ﮒﻛﺕﮒ­ﮒ? {order_id}")
+raise ValueError(f"ﻟ؟۱ﮒﻛﺕﮒﮒ? {order_id}")
         
         if not order.can_submit():
             raise ValueError(f"ﻟ؟۱ﮒﻝﭘﮔﻛﺕﮒﻟ؟ﺕﮔﻛﭦ۳: {order.status.value}")
@@ -709,16 +709,16 @@ class OrderApplicationService:
 
 ## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 ﮔ۶ﻟﺛﮔﮔ 
+### 5.1 ﮔ۶ﻟﺛﮔﮔ
 
 | ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
 | **ﮒﮒﭨﭦﻟ؟۱ﮒ** | < 200ms | ﮒﮒ،ﻠ۹ﻟﺁﮒﮔﺍﮔ؟ﮒﭦﮒﮒ۴ |
 | **ﮔﻛﭦ۳ﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،Sagaﮒﺁﮒ۷ |
 | **ﮒﮔﭘﻟ؟۱ﮒ** | < 500ms | ﮒﮒ،ﮒﺙﮔﮒﮔﭘ |
-| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 100ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
+| **ﮔ۴ﻟﺁ۱ﻟ؟۱ﮒ** | < 100ms | Redisﻝﺙﮒﮒﺛﻛﺕ |
 
-### 5.2 ﻝﮔ۶ﮔﮔ 
+### 5.2 ﻝﮔ۶ﮔﮔ
 
 ```python
 class OrderMonitor:
@@ -762,7 +762,7 @@ class OrderMonitor:
         )
     
     async def get_metrics(self) -> Dict[str, Any]:
-        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
+"""ﻟﺓﮒﻝﮔ۶ﮔﮔ"""
         return self.metrics
 ```
 

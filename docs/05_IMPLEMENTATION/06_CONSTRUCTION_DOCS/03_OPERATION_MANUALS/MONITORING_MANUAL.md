@@ -2,7 +2,7 @@
 standard_type: ﮔﻛﺛﮔﮒ
 responsibility:
   - 实施指南、部署文档
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ­۲ﮒﺙﮔ ﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﻟﺟﻝﭨﺑﮒ۱ﻠ
 version: 1.0.0
@@ -27,20 +27,20 @@ last_updated: 2026-04-02
 
 ## 1. ﻝﮔ۶ﮔ۵ﻟﺟﺍ
 
-### 1.1 ﻝﮔ۶ﻝ؟ﮔ 
+### 1.1 ﻝﮔ۶ﻝ؟ﮔ
 
 ﮒﭨﭦﻝ،ﮒ۷ﻠ۱ﻝﻝﺏﭨﻝﭨﻝﮔ۶ﻛﺛﻝﺏﭨﺅﺙﻝ۰؟ﻛﺟZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟ﻟﺟﻟ۰ﺅﺙﮒﮔﭘﮒﻝﺍﮒﮒ۳ﻝﮒﺙﮒﺕﺕﮔﮒﭖﻙ?
 ### 1.2 ﻝﮔ۶ﻟﮒﺑ
 
 - ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻝﮔ۶
 - ﮒﭦﻝ۷ﮔ۶ﻟﺛﻝﮔ۶
-- ﻛﺕﮒ۰ﮔﮔ ﻝﮔ۶
+- ﻛﺕﮒ۰ﮔﮔﻝﮔ۶
 - ﮒ؟ﮒ۷ﻛﭦﻛﭨﭘﻝﮔ۶
 - ﮔ۴ﮒﺟﻝﮔ۶
 
 ### 1.3 ﻝﮔ۶ﮒﺓ۴ﮒﺓ
 
-- **Prometheus**: ﮔﮔ ﮔﭘﻠﮒﮒ­ﮒ?- **Grafana**: ﮒﺁﻟ۶ﮒﻝﮔ۶ﻠ۱ﮔ?- **AlertManager**: ﮒﻟ­۵ﻝ؟۰ﻝ
+- **Prometheus**: ﮔﮔﮔﭘﻠﮒﮒﮒ?- **Grafana**: ﮒﺁﻟ۶ﮒﻝﮔ۶ﻠ۱ﮔ?- **AlertManager**: ﮒﻟ۵ﻝ؟۰ﻝ
 - **ELK Stack**: ﮔ۴ﮒﺟﮔﭘﻠﮒﮒﮔ?
 ---
 
@@ -48,9 +48,9 @@ last_updated: 2026-04-02
 
 ### 2.1 CPUﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - CPUﻛﺛﺟﻝ۷ﻝ?- CPUﻟﺑﻟﺛﺛ
-- CPUﮔ ﺕﮒﺟﻛﺛﺟﻝ۷ﻝ?
+- CPUﮔﺕﮒﺟﻛﺛﺟﻝ۷ﻝ?
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
 # CPUﻛﺛﺟﻝ۷ﻝ?100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
@@ -61,7 +61,7 @@ node_load5
 node_load15
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighCPUUsage
   expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
@@ -73,18 +73,18 @@ node_load15
     description: "CPUﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?0%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
-### 2.2 ﮒﮒ­ﻝﮔ۶
+### 2.2 ﮒﮒﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?- ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?- Swapﻛﺛﺟﻝ۷ﻝ?
+**ﻝﮔ۶ﮔﮔ**:
+- ﮒﮒﻛﺛﺟﻝ۷ﻝ?- ﮒﮒﻛﺛﺟﻝ۷ﻠ?- Swapﻛﺛﺟﻝ۷ﻝ?
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+# ﮒﮒﻛﺛﺟﻝ۷ﻝ?(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
 
-# ﮒﮒ­ﻛﺛﺟﻝ۷ﻠ?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
+# ﮒﮒﻛﺛﺟﻝ۷ﻠ?node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighMemoryUsage
   expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
@@ -92,13 +92,13 @@ node_load15
   labels:
     severity: warning
   annotations:
-    summary: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
-    description: "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
+summary: "ﮒﮒﻛﺛﺟﻝ۷ﻝﻟﺟﻠ،?
+description: "ﮒﮒﻛﺛﺟﻝ۷ﻝﻟﭘﻟﺟ?5%ﺅﺙﮒﺛﮒﮒ? {{ $value }}%"
 ```
 
 ### 2.3 ﻝ۲ﻝﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻝ۲ﻝﻛﺛﺟﻝ۷ﻝ?- ﻝ۲ﻝIO
 - ﻝ۲ﻝﻟﺁﭨﮒﻠﮒﭦ۵
 
@@ -111,7 +111,7 @@ irate(node_disk_read_bytes_total[5m])
 irate(node_disk_written_bytes_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighDiskUsage
   expr: (1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})) * 100 > 85
@@ -125,7 +125,7 @@ irate(node_disk_written_bytes_total[5m])
 
 ### 2.4 ﻝﺛﻝﭨﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻝﺛﻝﭨﮔﭖﻠ
 - ﻝﺛﻝﭨﻟﺟﮔ۴ﮔ?- ﻝﺛﻝﭨﻠﻟﺁﺁﻝ?
 **Prometheusﮔ۴ﻟﺁ۱**:
@@ -143,7 +143,7 @@ irate(node_network_transmit_bytes_total[5m])
 
 ### 3.1 APIﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻟﺁﺓﮔﺎﻠﻝ
 - ﮒﮒﭦﮔﭘﻠﺑ
 - ﻠﻟﺁﺁﻝ?- ﮒﺗﭘﮒﻟﺟﮔ۴ﮔ?
@@ -158,7 +158,7 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
 # ﻠﻟﺁﺁﻝ?rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorRate
   expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.1
@@ -180,9 +180,9 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
 ```
 
 ### 3.2 ﮔﺍﮔ؟ﮒﭦﻝﮔ?
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻟﺟﮔ۴ﮔ?- ﮔ۴ﻟﺁ۱ﮔ۶ﻟﺛ
-- ﮔ۱ﮔ۴ﻟﺁ?- ﮔ­ﭨﻠ
+- ﮔ۱ﮔ۴ﻟﺁ?- ﮔﭨﻠ
 
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
@@ -191,7 +191,7 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
 # ﮔ۱ﮔ۴ﻟﺁ?rate(pg_stat_statements_mean_exec_time_seconds[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: TooManyDBConnections
   expr: pg_stat_activity_count > 100
@@ -214,14 +214,14 @@ rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds
 
 ### 3.3 Redisﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﮒﮒ­ﻛﺛﺟﻝ۷
+**ﻝﮔ۶ﮔﮔ**:
+- ﮒﮒﻛﺛﺟﻝ۷
 - ﻟﺟﮔ۴ﮔ?- ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
-- ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
+- ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕﻝ
 
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﮒﮒ­ﻛﺛﺟﻝ۷
+# ﮒﮒﻛﺛﺟﻝ۷
 redis_memory_used_bytes
 
 # ﻟﺟﮔ۴ﮔ?redis_connected_clients
@@ -229,7 +229,7 @@ redis_memory_used_bytes
 # ﮒﺛﻛﭨ۳ﮔ۶ﻟ۰ﻠﻝ
 rate(redis_commands_processed_total[5m])
 
-# ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕ­ﻝ
+# ﻠ؟ﻝ۸ﭦﻠﺑﮒﺛﻛﺕﻝ
 rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))
 ```
 
@@ -239,7 +239,7 @@ rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rat
 
 ### 4.1 ﻛﭦ۳ﮔﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻟ؟۱ﮒﮔﺍﻠ
 - ﮔﻛﭦ۳ﮔﺍﻠ
 - ﮔﻛﭦ۳ﻠﻠ۱
@@ -255,7 +255,7 @@ rate(trade_value_total[5m])
 # ﮔﮒﻝ?rate(orders_rejected_total[5m]) / rate(orders_total[5m])
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighRejectionRate
   expr: rate(orders_rejected_total[5m]) / rate(orders_total[5m]) > 0.05
@@ -267,26 +267,26 @@ rate(trade_value_total[5m])
     description: "ﻟ؟۱ﮒﮔﮒﻝﻟﭘﻟﺟ?%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
-### 4.2 ﻝ­ﻝ۴ﻝﮔ۶
+### 4.2 ﻝﻝ۴ﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
-- ﻝ­ﻝ۴ﻟﺟﻟ۰ﻝﭘﮔ?- ﻝ­ﻝ۴ﮔﭘﻝ
-- ﻝ­ﻝ۴ﮒﮔ۳
-- ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
+**ﻝﮔ۶ﮔﮔ**:
+- ﻝﻝ۴ﻟﺟﻟ۰ﻝﭘﮔ?- ﻝﻝ۴ﮔﭘﻝ
+- ﻝﻝ۴ﮒﮔ۳
+- ﻝﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
-# ﻝ­ﻝ۴ﮔﭘﻝ
+# ﻝﻝ۴ﮔﭘﻝ
 strategy_returns_total
 
-# ﻝ­ﻝ۴ﮒﮔ۳
+# ﻝﻝ۴ﮒﮔ۳
 strategy_drawdown
 
-# ﻝ­ﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
+# ﻝﻝ۴ﮒ۳ﮔ؟ﮔﺁﻝ
 strategy_sharpe_ratio
 ```
 
-**ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: StrategyDrawdown
   expr: strategy_drawdown > 0.1
@@ -294,16 +294,16 @@ strategy_sharpe_ratio
   labels:
     severity: critical
   annotations:
-    summary: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﺟﮒ۳۶"
-    description: "ﻝ­ﻝ۴ﮒﮔ۳ﻟﭘﻟﺟ10%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
+summary: "ﻝﻝ۴ﮒﮔ۳ﻟﺟﮒ۳۶"
+description: "ﻝﻝ۴ﮒﮔ۳ﻟﭘﻟﺟ10%ﺅﺙﮒﺛﮒﮒ? {{ $value | humanizePercentage }}"
 ```
 
 ### 4.3 ﻠ۲ﮔ۶ﻝﮔ۶
 
-**ﻝﮔ۶ﮔﮔ **:
+**ﻝﮔ۶ﮔﮔ**:
 - ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
 - ﻠ۲ﮔ۶ﮔ۵ﮔ۹ﮔ؛۰ﮔﺍ
-- ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺛﻛﺕ­ﻝ?
+- ﻠ۲ﮔ۶ﻟ۶ﮒﮒﺛﻛﺕﻝ?
 **Prometheusﮔ۴ﻟﺁ۱**:
 ```promql
 # ﻠ۲ﮔ۶ﻟ۶۵ﮒﮔ؛۰ﮔﺍ
@@ -348,9 +348,9 @@ level: ERROR
 # ﮔ۴ﮔﺝﮔ۱ﻟﺁﺓﮔﺎ?duration: >1000
 ```
 
-### 5.3 ﮔ۴ﮒﺟﮒﻟ­۵
+### 5.3 ﮔ۴ﮒﺟﮒﻟ۵
 
-**ﻠﻝﺛ؟ﮒﻟ­۵ﻟ۶ﮒ**:
+**ﻠﻝﺛ؟ﮒﻟ۵ﻟ۶ﮒ**:
 ```yaml
 - alert: HighErrorLogRate
   expr: rate(log_entries_total{level="ERROR"}[5m]) > 10
@@ -383,7 +383,7 @@ level: ERROR
       ]
     },
     {
-      "title": "ﮒﮒ­ﻛﺛﺟﻝ۷ﻝ?,
+"title": "ﮒﮒﻛﺛﺟﻝ۷ﻝ?,
       "type": "graph",
       "targets": [
         {
@@ -426,11 +426,11 @@ level: ERROR
 
 ---
 
-## 7. ﮒﻟ­۵ﻝ؟۰ﻝ
+## 7. ﮒﻟ۵ﻝ؟۰ﻝ
 
-### 7.1 ﮒﻟ­۵ﮔﺕ ﻠ
+### 7.1 ﮒﻟ۵ﮔﺕﻠ
 
-**ﻠﻝﺛ؟ﻠﻝ۴ﮔﺕ ﻠ**:
+**ﻠﻝﺛ؟ﻠﻝ۴ﮔﺕﻠ**:
 ```yaml
 # alertmanager.yml
 global:
@@ -458,16 +458,16 @@ receivers:
     channel: '#alerts'
 ```
 
-### 7.2 ﮒﻟ­۵ﮒﻝﭦ۶
+### 7.2 ﮒﻟ۵ﮒﻝﭦ۶
 
-**ﮒﻟ­۵ﻝﭦ۶ﮒ،**:
+**ﮒﻟ۵ﻝﭦ۶ﮒ،**:
 - **Critical**: ﻠﻟ۵ﻝ،ﮒﺏﮒ۳ﻝ?- **Warning**: ﻠﻟ۵ﮒﺏﮔﺏ?- **Info**: ﻛﺟ۰ﮔﺁﻠﻝ۴
 
-**ﮒﻟ­۵ﮒ۳ﻝﮔﭖﻝ۷**:
-1. ﮔ۴ﮔﭘﮒﻟ­۵ﻠﻝ۴
-2. ﻝ۰؟ﻟ؟۳ﮒﻟ­۵ﻝﭦ۶ﮒ،
+**ﮒﻟ۵ﮒ۳ﻝﮔﭖﻝ۷**:
+1. ﮔ۴ﮔﭘﮒﻟ۵ﻠﻝ۴
+2. ﻝ۰؟ﻟ؟۳ﮒﻟ۵ﻝﭦ۶ﮒ،
 3. ﮔ۴ﻝﻝﮔ۶ﻠ۱ﮔﺟ
-4. ﮒﮔﮔ ﺗﮔ؛ﮒﮒ 
+4. ﮒﮔﮔﺗﮔ؛ﮒﮒ
 5. ﮔ۶ﻟ۰ﻛﺟ؟ﮒ۳ﮔ۹ﮔﺛ
 6. ﻠ۹ﻟﺁﻛﺟ؟ﮒ۳ﮔﮔ
 7. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
@@ -478,16 +478,16 @@ receivers:
 
 ### 8.1 ﮔ۴ﮒﺕﺕﮔ۲ﮔ?
 **ﮔﺁﮔ۴ﮔ۲ﮔ۴ﻠ۰ﺗ**:
-- [ ] ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦﻛﺛﺟﻝ۷ﮔﮒ?- [ ] ﮔ۲ﮔ۴ﮒﭦﻝ۷ﻠﻟﺁﺁﮔ۴ﮒﺟ?- [ ] ﮔ۲ﮔ۴ﮒﻟ­۵ﮒﮒ?- [ ] ﮔ۲ﮔ۴ﮒ۳ﻛﭨﺛﻝﭘﮔ?
+- [ ] ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻟﭖﮔﭦﻛﺛﺟﻝ۷ﮔﮒ?- [ ] ﮔ۲ﮔ۴ﮒﭦﻝ۷ﻠﻟﺁﺁﮔ۴ﮒﺟ?- [ ] ﮔ۲ﮔ۴ﮒﻟ۵ﮒﮒ?- [ ] ﮔ۲ﮔ۴ﮒ۳ﻛﭨﺛﻝﭘﮔ?
 ### 8.2 ﮒ؟ﮔﻝﭨﺑﮔ۳
 
 **ﮔﺁﮒ۷ﻝﭨﺑﮔ۳**:
 - ﮔﺕﻝﻟﺟﮔﻝﮔ۶ﮔﺍﮔ؟
-- ﻛﺙﮒﮒﻟ­۵ﻟ۶ﮒ
+- ﻛﺙﮒﮒﻟ۵ﻟ۶ﮒ
 - ﮔﺑﮔﺍﻝﮔ۶ﻠ۱ﮔﺟ
 
 **ﮔﺁﮔﻝﭨﺑﮔ۳**:
-- ﻟﺁﻛﺙﺍﻝﮔ۶ﻟ۵ﻝﻝ?- ﻟﺍﮔﺑﮒﻟ­۵ﻠﮒ?- ﻛﺙﮒﻝﮔ۶ﮔ۶ﻟﺛ
+- ﻟﺁﻛﺙﺍﻝﮔ۶ﻟ۵ﻝﻝ?- ﻟﺍﮔﺑﮒﻟ۵ﻠﮒ?- ﻛﺙﮒﻝﮔ۶ﮔ۶ﻟﺛ
 
 ---
 
@@ -501,20 +501,20 @@ receivers:
 
 # ﮔ۲ﮔ۴ﮔﺍﮔ؟ﻠﻠ?curl http://localhost:9090/api/v1/targets
 
-# ﮔ۲ﮔ۴ﮒ­ﮒ۷ﻝ۸ﭦﻠ?df -h /var/lib/prometheus
+# ﮔ۲ﮔ۴ﮒﮒ۷ﻝ۸ﭦﻠ?df -h /var/lib/prometheus
 ```
 
-**ﻠ؟ﻠ۱2: ﮒﻟ­۵ﮔ۹ﮒﻠ?*
+**ﻠ؟ﻠ۱2: ﮒﻟ۵ﮔ۹ﮒﻠ?*
 ```bash
 # ﮔ۲ﮔ۴AlertManagerﻝﭘﮔ?systemctl status alertmanager
 
-# ﮔ۲ﮔ۴ﮒﻟ­۵ﻟ۶ﮒ?curl http://localhost:9090/api/v1/rules
+# ﮔ۲ﮔ۴ﮒﻟ۵ﻟ۶ﮒ?curl http://localhost:9090/api/v1/rules
 
-# ﮔ۲ﮔ۴ﻠﻝ۴ﮔﺕ ﻠ
+# ﮔ۲ﮔ۴ﻠﻝ۴ﮔﺕﻠ
 curl http://localhost:9093/api/v1/receivers
 ```
 
-**ﻠ؟ﻠ۱3: Grafanaﻠ۱ﮔﺟﮔ ﮔﺏﻟ؟ﺟﻠ؟**
+**ﻠ؟ﻠ۱3: Grafanaﻠ۱ﮔﺟﮔﮔﺏﻟ؟ﺟﻠ؟**
 ```bash
 # ﮔ۲ﮔ۴Grafanaﻝﭘﮔ?systemctl status grafana-server
 
@@ -529,14 +529,14 @@ systemctl restart grafana-server
 ## 10. ﮔﻛﺛﺏﮒ؟ﻟﺓ?
 ### 10.1 ﻝﮔ۶ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **ﮒ۷ﻠ۱ﮔ?*: ﻟ۵ﻝﮔﮔﮒﺏﻠ؟ﮔﮔ ?2. **ﮒﮔﭘﮔ?*: ﮒﺟ،ﻠﮒﻝﺍﮒﮒﮒﭦﻠ؟ﻠ۱
-3. **ﮒﻝ۰؟ﮔ?*: ﻠﺟﮒﻟﺁﺁﮔ۴ﮒﮔﺙﮔ?4. **ﮒﺁﮔﻛﺛﮔ?*: ﮔﻛﺝﮒﺁﮔﻛﺛﻝﮒﻟ­۵ﻛﺟ۰ﮔﺁ
+1. **ﮒ۷ﻠ۱ﮔ?*: ﻟ۵ﻝﮔﮔﮒﺏﻠ؟ﮔﮔ?2. **ﮒﮔﭘﮔ?*: ﮒﺟ،ﻠﮒﻝﺍﮒﮒﮒﭦﻠ؟ﻠ۱
+3. **ﮒﻝ۰؟ﮔ?*: ﻠﺟﮒﻟﺁﺁﮔ۴ﮒﮔﺙﮔ?4. **ﮒﺁﮔﻛﺛﮔ?*: ﮔﻛﺝﮒﺁﮔﻛﺛﻝﮒﻟ۵ﻛﺟ۰ﮔﺁ
 
-### 10.2 ﮒﻟ­۵ﻟ؟ﺝﻟ؟۰ﮒﮒ
+### 10.2 ﮒﻟ۵ﻟ؟ﺝﻟ؟۰ﮒﮒ
 
-1. **ﮒﻝﭦ۶ﻝ؟۰ﻝ**: ﮔ ﺗﮔ؟ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ﮒﻝﭦ۶
-2. **ﻠﺟﮒﮒ۹ﻠﺏ**: ﮒﮒﺍﮔ ﮔﮒﻟ­۵
-3. **ﮔﻛﺝﻛﺕﻛﺕﮔ?*: ﮒﮒ،ﻟﭘﺏﮒ۳ﻝﻟﺁﮔ­ﻛﺟ۰ﮔ?4. **ﮒﺟ،ﻠﮒﮒﭦ?*: ﮒﭨﭦﻝ،ﮒﺟ،ﻠﮒﮒﭦﮔﭦﮒ?
+1. **ﮒﻝﭦ۶ﻝ؟۰ﻝ**: ﮔﺗﮔ؟ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ﮒﻝﭦ۶
+2. **ﻠﺟﮒﮒ۹ﻠﺏ**: ﮒﮒﺍﮔﮔﮒﻟ۵
+3. **ﮔﻛﺝﻛﺕﻛﺕﮔ?*: ﮒﮒ،ﻟﭘﺏﮒ۳ﻝﻟﺁﮔﻛﺟ۰ﮔ?4. **ﮒﺟ،ﻠﮒﮒﭦ?*: ﮒﭨﭦﻝ،ﮒﺟ،ﻠﮒﮒﭦﮔﭦﮒ?
 ---
 
 ## 11. ﮒﻟﮔﮔ۰?
@@ -547,5 +547,5 @@ systemctl restart grafana-server
 
 ---
 
-**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ­۲ﮒﺙﮔ ﮒ
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
 **ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

@@ -4,28 +4,28 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 交易执行
   - 数据源
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﺑ۵ﮔﺓﻝ؟۰ﻝﮔﮒ
 applicable_scope: ﻟﺑ۵ﮔﺓﮔﮒ۰ﮔ۷۰ﮒ
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: P0-01_Database_Design_Document.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
+# ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﺅﺙ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
-> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻟﮒﮔ ﺗﮔ۷۰ﮒﺙ?
-> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟ؟ﺝﻟ؟۰
+> **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: DDDﻠ۱ﮒﻠ۸ﺎﮒ۷ﻟ؟ﺝﻟ؟۰ + ﻟﮒﮔﺗﮔ۷۰ﮒﺙ?
+> **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﻟﺑ۵ﮔﺓﻝﮒﺛﮒ۷ﮔﻝ؟۰ﻝﻙﻟﭖﻠﻝ؟۰ﻝﻙﻟﺑ۵ﮔﺓﮒﺟ،ﻝ?
 
 ## ﻭ ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
@@ -45,7 +45,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ﻗ?                   ﻠ۱ﮒﮒﺎ?(Domain Layer)                     ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
-ﻗ? ﻗ?         AccountAggregate (ﻟﺑ۵ﮔﺓﻟﮒﮔ ?                ﻗ? ﻗ?
+ﻗ? ﻗ?         AccountAggregate (ﻟﺑ۵ﮔﺓﻟﮒﮔ?                ﻗ? ﻗ?
 ﻗ? ﻗ? - Account (ﻟﺑ۵ﮔﺓﮒ؟ﻛﺛ)                                 ﻗ? ﻗ?
 ﻗ? ﻗ? - AccountSnapshot (ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶ﮒ؟ﻛﺛ)                     ﻗ? ﻗ?
 ﻗ? ﻗ? - AccountDomainService (ﻠ۱ﮒﮔﮒ۰)                    ﻗ? ﻗ?
@@ -57,7 +57,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗ? ﻗ?         AccountRepository (ﻟﺑ۵ﮔﺓﻛﭨﮒ۷)                 ﻗ? ﻗ?
 ﻗ? ﻗ? - PostgreSQL (ﻛﺕﭨﮔﺍﮔ؟ﮒﭦ)                              ﻗ? ﻗ?
-ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ­)                                   ﻗ? ﻗ?
+ﻗ? ﻗ? - Redis (ﮒ؟ﮔﭘﻝﺙﮒ)                                   ﻗ? ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗ?
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
@@ -66,7 +66,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ## 1. ﻠ۱ﮒﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰
 
-### 1.1 ﻟﺑ۵ﮔﺓﻟﮒﮔ ?(AccountAggregate)
+### 1.1 ﻟﺑ۵ﮔﺓﻟﮒﮔ?(AccountAggregate)
 
 ```python
 from dataclasses import dataclass, field
@@ -84,7 +84,7 @@ class AccountStatus(Enum):
     """ﻟﺑ۵ﮔﺓﻝﭘﮔ?""
     ACTIVE = 'active'         # ﮔﺑﭨﻟﺓ
     FROZEN = 'frozen'         # ﮒﭨﻝﭨ
-    CLOSED = 'closed'         # ﮒﺏﻠ­
+CLOSED = 'closed'         # ﮒﺏﻠ
 
 @dataclass
 class Account:
@@ -112,7 +112,7 @@ class Account:
             self.account_code = self._generate_account_code()
     
     def _generate_account_code(self) -> str:
-        """ﻝﮔﻟﺑ۵ﮔﺓﻝﺙﻝ """
+"""ﻝﮔﻟﺑ۵ﮔﺓﻝﺙﻝ"""
         return f"ACC_{datetime.now().strftime('%Y%m%d')}_{self.id or 'NEW'}"
     
     def freeze_cash(self, amount: Decimal) -> bool:
@@ -187,7 +187,7 @@ class Account:
         return True
     
     def close_account(self) -> bool:
-        """ﮒﺏﻠ­ﻟﺑ۵ﮔﺓ"""
+"""ﮒﺏﻠﻟﺑ۵ﮔﺓ"""
         if self.status == AccountStatus.CLOSED:
             return False
         
@@ -312,7 +312,7 @@ class AccountDomainService:
         # ﻟ؟۰ﻝ؟ﮒﺗﺏﮒﮔﭘﻝﻝ?
         avg_return = sum(daily_returns) / len(daily_returns)
         
-        # ﻟ؟۰ﻝ؟ﮔ ﮒﮒﺓ?
+# ﻟ؟۰ﻝ؟ﮔﮒﮒﺓ?
         variance = sum((r - avg_return) ** 2 for r in daily_returns) / len(daily_returns)
         std_dev = variance ** Decimal('0.5')
         
@@ -383,7 +383,7 @@ class AccountApplicationService:
             broker=broker
         )
         
-        # ﻛﺟﮒ­ﻟﺑ۵ﮔﺓ
+# ﻛﺟﮒﻟﺑ۵ﮔﺓ
         account = await self.account_repository.create(account)
         
         # ﮒﮒﺕﻟﺑ۵ﮔﺓﮒﮒﭨﭦﻛﭦﻛﭨﭘ
@@ -564,7 +564,7 @@ class AccountApplicationService:
             snapshot_date
         )
         
-        # ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ 
+# ﻟ؟۰ﻝ؟ﮒﻠ۰ﺗﮔﮔ
         daily_pnl = await self.domain_service.calculate_daily_pnl(
             account,
             previous_snapshot
@@ -592,7 +592,7 @@ class AccountApplicationService:
             max_drawdown=account.max_drawdown
         )
         
-        # ﻛﺟﮒ­ﮒﺟ،ﻝ۶
+# ﻛﺟﮒﮒﺟ،ﻝ۶
         snapshot = await self.account_repository.create_snapshot(snapshot)
         
         return {
@@ -704,14 +704,14 @@ class AccountRepositoryImpl:
             account.id = row['id']
             account.account_code = row['account_code']
             
-            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
+# ﻝﺙﮒﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
     
     async def find_by_id(self, account_id: int) -> Optional[Account]:
-        """ﮔ ﺗﮔ؟IDﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
-        # ﮒﮔ۴ﻝﺙﮒ­
+"""ﮔﺗﮔ؟IDﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ"""
+# ﮒﮔ۴ﻝﺙﮒ
         cached = await self._get_cached_account(account_id)
         if cached:
             return cached
@@ -730,7 +730,7 @@ class AccountRepositoryImpl:
             
             account = self._row_to_account(row)
             
-            # ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
+# ﻝﺙﮒﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ
             await self._cache_account(account)
             
             return account
@@ -807,7 +807,7 @@ class AccountRepositoryImpl:
                 account.metadata
             )
             
-            # ﮔﺑﮔﺍﻝﺙﮒ­
+# ﮔﺑﮔﺍﻝﺙﮒ
             await self._cache_account(account)
             
             return account
@@ -845,7 +845,7 @@ class AccountRepositoryImpl:
             return snapshot
     
     async def _cache_account(self, account: Account) -> None:
-        """ﻝﺙﮒ­ﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ"""
+"""ﻝﺙﮒﻟﺑ۵ﮔﺓﻛﺟ۰ﮔﺁ"""
         key = f"account:{account.id}"
         await self.redis_client.setex(
             key,
@@ -862,12 +862,12 @@ class AccountRepositoryImpl:
         )
     
     async def _get_cached_account(self, account_id: int) -> Optional[Account]:
-        """ﻟﺓﮒﻝﺙﮒ­ﻝﻟﺑ۵ﮔﺓﻛﺟ۰ﮔ?""
+"""ﻟﺓﮒﻝﺙﮒﻝﻟﺑ۵ﮔﺓﻛﺟ۰ﮔ?""
         key = f"account:{account_id}"
         cached = await self.redis_client.get(key)
         
         if cached:
-            # TODO: ﮒﮒﭦﮒﮒﻝﺙﮒ­ﮔﺍﮔ؟
+# TODO: ﮒﮒﭦﮒﮒﻝﺙﮒﮔﺍﮔ؟
             return None
         
         return None
@@ -898,24 +898,24 @@ class AccountRepositoryImpl:
 
 ## 5. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 5.1 ﮔ۶ﻟﺛﮔﮔ 
+### 5.1 ﮔ۶ﻟﺛﮔﮔ
 
 | ﮔﻛﺛ | ﮒﮒﭦﮔﭘﻠﺑ | ﮒ۳ﮔﺏ۷ |
 |------|----------|------|
 | **ﮒﮒﭨﭦﻟﺑ۵ﮔﺓ** | < 300ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮒﮒ?|
-| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 50ms | Redisﻝﺙﮒ­ﮒﺛﻛﺕ­ |
+| **ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓ** | < 50ms | Redisﻝﺙﮒﮒﺛﻛﺕ |
 | **ﮔﺑﮔﺍﻟﭖﻠ** | < 200ms | ﮒﮒ،ﮔﺍﮔ؟ﮒﭦﮔﺑﮔ?|
-| **ﮒﮒﭨﭦﮒﺟ،ﻝ۶** | < 500ms | ﮒﮒ،ﮔﮔ ﻟ؟۰ﻝ؟ |
+| **ﮒﮒﭨﭦﮒﺟ،ﻝ۶** | < 500ms | ﮒﮒ،ﮔﮔﻟ؟۰ﻝ؟ |
 
-### 5.2 ﻝﺙﮒ­ﻝ­ﻝ۴
+### 5.2 ﻝﺙﮒﻝﻝ۴
 
-| ﮔﺍﮔ؟ﻝﺎﭨﮒ | ﻝﺙﮒ­ﮔﭘﻠﺑ | ﻝﺙﮒ­ﻝ­ﻝ۴ |
+| ﮔﺍﮔ؟ﻝﺎﭨﮒ | ﻝﺙﮒﮔﭘﻠﺑ | ﻝﺙﮒﻝﻝ۴ |
 |----------|----------|----------|
-| **ﻟﺑ۵ﮔﺓﮒﭦﮔ؛ﻛﺟ۰ﮔﺁ** | 5ﮒﻠ | Redisﻝﺙﮒ­ |
-| **ﻟﺑ۵ﮔﺓﻟﭖﻠﻛﺟ۰ﮔﺁ** | 1ﮒﻠ | Redisﻝﺙﮒ­ |
-| **ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶** | ﻛﺕﻝﺙﮒ­?| ﮒ؟ﮔﭘﮔ۴ﻟﺁ۱ |
+| **ﻟﺑ۵ﮔﺓﮒﭦﮔ؛ﻛﺟ۰ﮔﺁ** | 5ﮒﻠ | Redisﻝﺙﮒ |
+| **ﻟﺑ۵ﮔﺓﻟﭖﻠﻛﺟ۰ﮔﺁ** | 1ﮒﻠ | Redisﻝﺙﮒ |
+| **ﻟﺑ۵ﮔﺓﮒﺟ،ﻝ۶** | ﻛﺕﻝﺙﮒ?| ﮒ؟ﮔﭘﮔ۴ﻟﺁ۱ |
 
 ---
 
 **ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-**ﻛﺕﻛﺕﮔ­?*: P0-7 ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+**ﻛﺕﻛﺕﮔ?*: P0-7 ﻟ؟۱ﮒﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰

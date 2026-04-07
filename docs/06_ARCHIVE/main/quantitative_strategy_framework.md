@@ -187,7 +187,7 @@ Layer 5 ?风控预警R(t) ?Layer 6 ?归因分析 ?Layer 7 ?策略迭代
 |------|----------|----------|----------|----------|
 | Layer 0 | 状态识别准确率 | >70% | 日频 | $Accuracy = \frac{\sum I(\hat{S}_t = S_t)}{T}$ |
 | Layer 1 | 因子IC?| >0.05 | 周频 | $IC = Corr(f_{i,t}, R_{i,t+1})$ |
-| Layer 2 | 风险模型R² | >0.8 | 月频 | $R^2 = 1 - \frac{Var(\epsilon)}{Var(R)}$ |
+| Layer 2 | 风险模型R | >0.8 | 月频 | $R^2 = 1 - \frac{Var(\epsilon)}{Var(R)}$ |
 | Layer 3 | 组合夏普比率 | >1.5 | 日频 | $Sharpe = \frac{E[R_p] - r_f}{\sigma_p}$ |
 | Layer 4 | 执行滑点 | <0.2% | 实时 | $Slippage = \frac{P_{exec} - P_{bench}}{P_{bench}}$ |
 | Layer 5 | VaR限额遵守?| 100% | 实时 | $VaR_{95} = F^{-1}_{R}(0.05)$ |

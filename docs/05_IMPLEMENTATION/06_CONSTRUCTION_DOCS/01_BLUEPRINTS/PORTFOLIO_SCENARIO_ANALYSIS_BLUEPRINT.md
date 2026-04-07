@@ -8,12 +8,12 @@ owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - åå²æ
+-
 景回放
-  - åè®¾æ
+-
 景分析
-  - æ
-  - æ
+-
+-
 景报告生成
 layer: Layer 5.2 (组合优化)
 ---
@@ -23,7 +23,7 @@ layer: Layer 5.2 (组合优化)
 
 负责投资组合情景分析的设计与实现，基于情景模拟，评估组合在不同市场环境下的表现，支持风险管理。
 
-# ç»åæ
+#
 景分析模块蓝图
 
 > **职责边界**: 
@@ -91,12 +91,12 @@ layer: Layer 5.2 (组合优化)
 ### 1.1 模块定位
 
 
-- åå²æ
+-
 等）
-- åè®¾æ
+-
 - 敏感性分析（参数敏感性、模型敏感性）
-- æ
-- æ
+-
+-
 景报告生成
 
 - 支持风险管理决策
@@ -118,8 +118,8 @@ import pandas as pd
 import numpy as np
 
 class ScenarioAnalyzer:
-    """ç»åæ
-æ¯åæå?""
+"""
+?""
     
     def __init__(self):
         self.scenario_library = {}
@@ -131,17 +131,15 @@ class ScenarioAnalyzer:
         scenario_dates: tuple
     ) -> dict:
         """
-        åå²æ
 景回放
         
         Args:
             portfolio_weights: 组合权重
-            scenario_name: æ
-            scenario_dates: æ
+scenario_name:
+scenario_dates:
 景日期范围
             
         Returns:
-            æ
 景分析结果
         """
         pass
@@ -152,7 +150,6 @@ class ScenarioAnalyzer:
         shock_params: Dict[str, float]
     ) -> dict:
         """
-        åè®¾æ
 景分析
         
         Args:
@@ -160,7 +157,6 @@ class ScenarioAnalyzer:
             shock_params: 冲击参数，如 {'equity_shock': -0.2, 'rate_shock': 0.02}
             
         Returns:
-            æ
 景分析结果
         """
         pass
@@ -187,11 +183,10 @@ class ScenarioAnalyzer:
         scenario_results: List[dict]
     ) -> str:
         """
-        çææ
 景分析报告
         
         Args:
-            scenario_results: æ
+scenario_results:
 景分析结果列表
             
         Returns:
@@ -202,12 +197,12 @@ class ScenarioAnalyzer:
 
 景库
 
-| æ
+|
 景类型 | 日期范围 | 描述 |
 |---------|---------|---------|------|
-æ¯ | 2008-09-01 ~ 2009-03-31 | å
-| **2020ç«æ
-æ¯ | 2020-02-01 ~ 2020-04-30 | COVID-19ç«æ
+| 2008-09-01 ~ 2009-03-31 |
+| **2020
+| 2020-02-01 ~ 2020-04-30 | COVID-19
  |
 景 | 2015-06-01 ~ 2015-08-31 | 中国股市崩盘 |
 景 | - | 利率冲击 |
@@ -218,7 +213,7 @@ class ScenarioAnalyzer:
 
 ```python
 class ScenarioAPI:
-    """æ
+"""
 景分析API"""
     
     @endpoint("/api/v1/scenario/historical")
@@ -227,7 +222,7 @@ class ScenarioAPI:
         portfolio_id: str,
         scenario_name: str
     ) -> ScenarioResult:
-        """åå²æ
+"""
 景回放"""
         
     @endpoint("/api/v1/scenario/hypothetical")
@@ -236,7 +231,7 @@ class ScenarioAPI:
         portfolio_id: str,
         shock_params: dict
     ) -> ScenarioResult:
-        """åè®¾æ
+"""
 景分析"""
         
     @endpoint("/api/v1/scenario/sensitivity")
@@ -253,7 +248,7 @@ class ScenarioAPI:
         portfolio_id: str,
         scenarios: List[str]
     ) -> ReportResult:
-        """çææ
+"""
 景报告"""
 ```
 
@@ -263,8 +258,8 @@ class ScenarioAPI:
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | åå²æ
-| Phase 2 | åè®¾æ
+| Phase 1 |
+| Phase 2 |
 
 ---
 
@@ -272,7 +267,7 @@ class ScenarioAPI:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---
@@ -287,8 +282,8 @@ class ScenarioAPI:
 ##### 6.001. Portfolio Scenario Analysis
 - **模块ID**: PORTFOLIO_SCENARIO_ANALYSIS_001
 - **蓝图文档**: PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md
-åå»?
-- **ç¶æ?*: Active
+?
+- **?*: Active
 ```
 
 ### 5.2 模块职责边界

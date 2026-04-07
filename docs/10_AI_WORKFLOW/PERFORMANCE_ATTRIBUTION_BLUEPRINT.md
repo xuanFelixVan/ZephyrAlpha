@@ -257,9 +257,9 @@ class PerformanceAttribution:
 **原理**：将超额收益分解为选股效应、择时效应和交互效应
 
 **公式**：
-- 选股效应 = Σ(w_p - w_b) × r_b
-- 择时效应 = Σw_b × (r_p - r_b)
-- 交互效应 = Σ(w_p - w_b) × (r_p - r_b)
+- 选股效应 = Σ(w_p - w_b)  r_b
+- 择时效应 = Σw_b  (r_p - r_b)
+- 交互效应 = Σ(w_p - w_b)  (r_p - r_b)
 
 **优势**：
 - 业界标准
@@ -276,8 +276,8 @@ class PerformanceAttribution:
 **原理**：基于因子模型分析因子对收益的贡献
 
 **公式**：
-- r_p = α + Σβ_i × f_i + ε
-- 因子贡献 = β_i × f_i
+- r_p = α + Σβ_i  f_i + ε
+- 因子贡献 = β_i  f_i
 
 **优势**：
 - 识别因子暴露
@@ -339,7 +339,7 @@ class FactorAttributionResult:
     factor_contributions: Dict[str, float]  # 因子贡献
     alpha: float  # Alpha
     residual: float  # 残差
-    r_squared: float  # R²
+r_squared: float  # R
     created_at: datetime
     metadata: Dict[str, Any]
 
@@ -665,9 +665,9 @@ class PerformanceAnalyzer:
 |------|------|------|
 | **PyPortfolioOpt** | 免费 | MIT License |
 | **pyfolio-reloaded** | 免费 | MIT License |
-| **计算资源** | ¥0 | 使用现有服务器 |
+| **计算资源** | 0 | 使用现有服务器 |
 | **开发时间** | 2-3周 | 个人开发+AI辅助 |
-| **总成本** | ¥0 | 完全免费 |
+| **总成本** | 0 | 完全免费 |
 
 ---
 

@@ -6,7 +6,7 @@ created_date: 2026-04-03
 last_updated: 2026-04-03
 responsibility:
   - 归档文档、历史版本、审计状态追踪
-compliance_level: Σ╕ףΣ╕תµáחσחז
+compliance_level: Σ╕ףΣ╕תחσחז
 parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
 ---
 ---
@@ -17,88 +17,88 @@ parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> **µצ╣µíטτ╝צσן╖**: FLATTEN_001
-> **σט¢σ╗║µקÑµ£ƒ**: 2026-04-03
+> **צ╣טτ╝צσן╖**: FLATTEN_001
+> **σטσ╗║קƒ**: 2026-04-03
 ---
 
-## ≡ƒףכ Θק«Θóרσטזµ₧נ
+## ≡ƒףכ ΘקΘרσטז₧נ
 
-### σ╜ףσיםτ¢«σ╜ץτ╗ףµ₧הΘק«Θóר
+### σ╜ףσיםτσ╜ץτ╗ף₧הΘקΘר
 
 
 |---------|---------|---------|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/web_interface/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/data_consistency/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/trading_costs/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/a_stock_rules/` | 6σ▒?| σ╡לσÑקΦ┐חµ╖▒∩╝לΘת╛Σ╗Ñσ»╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/web_interface/` | 6σ▒?| σ╡לσקΦ┐ח╖▒∩╝לΘת╛Σ╗σ╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/` | 6σ▒?| σ╡לσקΦ┐ח╖▒∩╝לΘת╛Σ╗σ╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/data_consistency/` | 6σ▒?| σ╡לσקΦ┐ח╖▒∩╝לΘת╛Σ╗σ╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/trading_costs/` | 6σ▒?| σ╡לσקΦ┐ח╖▒∩╝לΘת╛Σ╗σ╝Φט?|
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/a_stock_rules/` | 6σ▒?| σ╡לσקΦ┐ח╖▒∩╝לΘת╛Σ╗σ╝Φט?|
 
-### σ╜▒σףםΦ»הΣ╝░
+### σ╜▒σףםΦהΣ╝░
 
-**Φ┤ƒΘ¥óσ╜▒σףם**:
+**Φ┤ƒΘσ╜▒σףם**:
 ---
 
 
 |------|------|------|
-| **σ╣│σ¥חτ¢«σ╜ץµ╖▒σ║ª** | 5σ▒?| 3σ▒?|
+| **σ╣│σחτσ╜ץ╖▒σ║** | 5σ▒?| 3σ▒?|
 
-### µיבσ╣│σלצσמƒσט?
+### יבσ╣│σלצσמƒσט?
 ---
 
-## ≡ƒףנ µיבσ╣│σלצµצ╣µí?
+## ≡ƒףנ יבσ╣│σלצצ╣?
 
-#### 1. web_interfaceτ¢«σ╜ץµיבσ╣│σל?
-**σ╜ףσיםτ╗ףµ₧ה**:
+#### 1. web_interfaceτσ╜ץיבσ╣│σל?
+**σ╜ףσיםτ╗ף₧ה**:
 ```
 design/
-Γפ£ΓפאΓפא web_interface/
-Γפ?  Γפ£ΓפאΓפא API_INTERFACE_SPECIFICATION.md
-Γפ?  Γפ£ΓפאΓפא FRONTEND_COMPONENT_STRUCTURE.md
+ΓפΓפאΓפא web_interface/
+Γפ?  ΓפΓפאΓפא API_INTERFACE_SPECIFICATION.md
+Γפ?  ΓפΓפאΓפא FRONTEND_COMPONENT_STRUCTURE.md
 Γפ?  ΓפפΓפאΓפא T.06.UI001.web_management_interface_architecture_design.md
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 design/
-Γפ£ΓפאΓפא WEB_INTERFACE_API_SPECIFICATION.md
-Γפ£ΓפאΓפא WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md
+ΓפΓפאΓפא WEB_INTERFACE_API_SPECIFICATION.md
+ΓפΓפאΓפא WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md
 ΓפפΓפאΓפא WEB_INTERFACE_ARCHITECTURE_DESIGN.md
 ```
 
-**µצחΣ╗╢Θחםσס╜σנ?*:
+**צחΣ╗╢Θחםσס╜σנ?*:
 - `API_INTERFACE_SPECIFICATION.md` Γז?`WEB_INTERFACE_API_SPECIFICATION.md`
 - `FRONTEND_COMPONENT_STRUCTURE.md` Γז?`WEB_INTERFACE_FRONTEND_COMPONENT_STRUCTURE.md`
 - `T.06.UI001.web_management_interface_architecture_design.md` Γז?`WEB_INTERFACE_ARCHITECTURE_DESIGN.md`
 
-#### 2. databaseτ¢«σ╜ץµיבσ╣│σל?
-**σ╜ףσיםτ╗ףµ₧ה**:
+#### 2. databaseτσ╜ץיבσ╣│σל?
+**σ╜ףσיםτ╗ף₧ה**:
 ```
 design/
-Γפ£ΓפאΓפא database/
-Γפ?  Γפ£ΓפאΓפא P0-01_Database_Design_Document.md
-Γפ?  Γפ£ΓפאΓפא P0-01_Database_Design_Review_Report.md
-Γפ?  Γפ£ΓפאΓפא P0-02_Data_Dictionary.md
-Γפ?  Γפ£ΓפאΓפא P0-03_Internal_Service_Interface_Design.md
-Γפ?  Γפ£ΓפאΓפא P0-04_Third_Party_Interface_Integration_Design.md
-Γפ?  Γפ£ΓפאΓפא P0-05_Multi_Engine_Coordinator_Design.md
-Γפ?  Γפ£ΓפאΓפא P0-06_Account_Management_Detailed_Design.md
+ΓפΓפאΓפא database/
+Γפ?  ΓפΓפאΓפא P0-01_Database_Design_Document.md
+Γפ?  ΓפΓפאΓפא P0-01_Database_Design_Review_Report.md
+Γפ?  ΓפΓפאΓפא P0-02_Data_Dictionary.md
+Γפ?  ΓפΓפאΓפא P0-03_Internal_Service_Interface_Design.md
+Γפ?  ΓפΓפאΓפא P0-04_Third_Party_Interface_Integration_Design.md
+Γפ?  ΓפΓפאΓפא P0-05_Multi_Engine_Coordinator_Design.md
+Γפ?  ΓפΓפאΓפא P0-06_Account_Management_Detailed_Design.md
 Γפ?  ΓפפΓפאΓפא P0-07_Order_Management_Detailed_Design.md
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 design/
-Γפ£ΓפאΓפא DATABASE_DESIGN_DOCUMENT.md
-Γפ£ΓפאΓפא DATABASE_DESIGN_REVIEW_REPORT.md
-Γפ£ΓפאΓפא DATABASE_DATA_DICTIONARY.md
-Γפ£ΓפאΓפא DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md
-Γפ£ΓפאΓפא DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md
-Γפ£ΓפאΓפא DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md
-Γפ£ΓפאΓפא DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md
+ΓפΓפאΓפא DATABASE_DESIGN_DOCUMENT.md
+ΓפΓפאΓפא DATABASE_DESIGN_REVIEW_REPORT.md
+ΓפΓפאΓפא DATABASE_DATA_DICTIONARY.md
+ΓפΓפאΓפא DATABASE_INTERNAL_SERVICE_INTERFACE_DESIGN.md
+ΓפΓפאΓפא DATABASE_THIRD_PARTY_INTERFACE_INTEGRATION_DESIGN.md
+ΓפΓפאΓפא DATABASE_MULTI_ENGINE_COORDINATOR_DESIGN.md
+ΓפΓפאΓפא DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md
 ΓפפΓפאΓפא DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md
 ```
 
-**µצחΣ╗╢Θחםσס╜σנ?*:
+**צחΣ╗╢Θחםσס╜σנ?*:
 - `P0-01_Database_Design_Document.md` Γז?`DATABASE_DESIGN_DOCUMENT.md`
 - `P0-01_Database_Design_Review_Report.md` Γז?`DATABASE_DESIGN_REVIEW_REPORT.md`
 - `P0-02_Data_Dictionary.md` Γז?`DATABASE_DATA_DICTIONARY.md`
@@ -108,75 +108,75 @@ design/
 - `P0-06_Account_Management_Detailed_Design.md` Γז?`DATABASE_ACCOUNT_MANAGEMENT_DETAILED_DESIGN.md`
 - `P0-07_Order_Management_Detailed_Design.md` Γז?`DATABASE_ORDER_MANAGEMENT_DETAILED_DESIGN.md`
 
-#### 3. data_consistencyτ¢«σ╜ץµיבσ╣│σל?
-**σ╜ףσיםτ╗ףµ₧ה**:
+#### 3. data_consistencyτσ╜ץיבσ╣│σל?
+**σ╜ףσיםτ╗ף₧ה**:
 ```
 design/
-Γפ£ΓפאΓפא data_consistency/
-Γפ?  Γפ£ΓפאΓפא COMPENSATING_TRANSACTION_DESIGN.md
-Γפ?  Γפ£ΓפאΓפא MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
+ΓפΓפאΓפא data_consistency/
+Γפ?  ΓפΓפאΓפא COMPENSATING_TRANSACTION_DESIGN.md
+Γפ?  ΓפΓפאΓפא MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md
 Γפ?  ΓפפΓפאΓפא SAGA_IMPLEMENTATION_FLOWCHART.md
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 design/
-Γפ£ΓפאΓפא DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md
-Γפ£ΓפאΓפא DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md
+ΓפΓפאΓפא DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md
+ΓפΓפאΓפא DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md
 ΓפפΓפאΓפא DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md
 ```
 
-**µצחΣ╗╢Θחםσס╜σנ?*:
+**צחΣ╗╢Θחםσס╜σנ?*:
 - `COMPENSATING_TRANSACTION_DESIGN.md` Γז?`DATA_CONSISTENCY_COMPENSATING_TRANSACTION_DESIGN.md`
 - `MULTI_ENGINE_DATA_CONSISTENCY_DESIGN.md` Γז?`DATA_CONSISTENCY_MULTI_ENGINE_DESIGN.md`
 - `SAGA_IMPLEMENTATION_FLOWCHART.md` Γז?`DATA_CONSISTENCY_SAGA_IMPLEMENTATION_FLOWCHART.md`
 
-#### 4. trading_costsτ¢«σ╜ץµיבσ╣│σל?
-**σ╜ףσיםτ╗ףµ₧ה**:
+#### 4. trading_costsτσ╜ץיבσ╣│σל?
+**σ╜ףσיםτ╗ף₧ה**:
 ```
 design/
-Γפ£ΓפאΓפא trading_costs/
-Γפ?  Γפ£ΓפאΓפא T.05.TE001.trading_cost_model_algorithm_document.md
-Γפ?  Γפ£ΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
+ΓפΓפאΓפא trading_costs/
+Γפ?  ΓפΓפאΓפא T.05.TE001.trading_cost_model_algorithm_document.md
+Γפ?  ΓפΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
 Γפ?  ΓפפΓפאΓפא trading_cost_config_template.yaml
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 design/
-Γפ£ΓפאΓפא TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md
-Γפ£ΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
+ΓפΓפאΓפא TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md
+ΓפΓפאΓפא TRADING_COST_TEST_CASE_DESIGN.md
 ΓפפΓפאΓפא TRADING_COST_CONFIG_TEMPLATE.yaml
 ```
 
-**µצחΣ╗╢Θחםσס╜σנ?*:
+**צחΣ╗╢Θחםσס╜σנ?*:
 - `T.05.TE001.trading_cost_model_algorithm_document.md` Γז?`TRADING_COST_MODEL_ALGORITHM_DOCUMENT.md`
-- `TRADING_COST_TEST_CASE_DESIGN.md` Γז?`TRADING_COST_TEST_CASE_DESIGN.md` (Σ┐¥µלבΣ╕םσןר)
+- `TRADING_COST_TEST_CASE_DESIGN.md` Γז?`TRADING_COST_TEST_CASE_DESIGN.md` (Σ┐לבΣ╕םσןר)
 - `trading_cost_config_template.yaml` Γז?`TRADING_COST_CONFIG_TEMPLATE.yaml`
 
-#### 5. a_stock_rulesτ¢«σ╜ץµיבσ╣│σל?
-**σ╜ףσיםτ╗ףµ₧ה**:
+#### 5. a_stock_rulesτσ╜ץיבσ╣│σל?
+**σ╜ףσיםτ╗ף₧ה**:
 ```
 design/
-Γפ£ΓפאΓפא a_stock_rules/
-Γפ?  Γפ£ΓפאΓפא T.08.AR001.a_stock_rule_engine_design.md
+ΓפΓפאΓפא a_stock_rules/
+Γפ?  ΓפΓפאΓפא T.08.AR001.a_stock_rule_engine_design.md
 Γפ?  ΓפפΓפאΓפא a_stock_rules_config.yaml
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 design/
-Γפ£ΓפאΓפא A_STOCK_RULE_ENGINE_DESIGN.md
+ΓפΓפאΓפא A_STOCK_RULE_ENGINE_DESIGN.md
 ΓפפΓפאΓפא A_STOCK_RULES_CONFIG.yaml
 ```
 
-**µצחΣ╗╢Θחםσס╜σנ?*:
+**צחΣ╗╢Θחםσס╜σנ?*:
 - `T.08.AR001.a_stock_rule_engine_design.md` Γז?`A_STOCK_RULE_ENGINE_DESIGN.md`
 - `a_stock_rules_config.yaml` Γז?`A_STOCK_RULES_CONFIG.yaml`
 
 ---
 
-## ≡ƒףך µיבσ╣│σלצµץטµ₧£Φ»הΣ╝?
+## ≡ƒףך יבσ╣│σלצץט₧ΦהΣ╝?
 
 |------|---------|---------|------|
 | **web_interface** | 6σ▒?| 5σ▒?| -1σ▒?|
@@ -185,53 +185,53 @@ design/
 | **trading_costs** | 6σ▒?| 5σ▒?| -1σ▒?|
 | **a_stock_rules** | 6σ▒?| 5σ▒?| -1σ▒?|
 
-### µצחΣ╗╢µץ░Θחןτ╗ƒΦ«í
+### צחΣ╗╢ץ░Θחןτ╗ƒΦ
 
-| µףםΣ╜£ | µץ░Θחן |
+| ףםΣ╜ | ץ░Θחן |
 |------|------|
-| **τº╗σך¿µצחΣ╗╢** | 19Σ╕?|
-| **Θחםσס╜σנםµצחΣ╗?* | 16Σ╕?|
-| **σטáΘשñτ¢«σ╜ץ** | 5Σ╕?|
+| **τ╗σךצחΣ╗╢** | 19Σ╕?|
+| **Θחםσס╜σנםצחΣ╗?* | 16Σ╕?|
+| **σטΘשτσ╜ץ** | 5Σ╕?|
 
 ---
 
-## Γתá∩╕ן ΘúמΘש⌐Φ»הΣ╝░
+## Γת∩╕ן ΘמΘש⌐ΦהΣ╝░
 
-### µ╜£σ£¿ΘúמΘש⌐
+### ╜σΘמΘש⌐
 
 |------|------|---------|
-| **Gitσמזσן▓Σ╕óσñ▒** | Σ╕?| Σ╜┐τפ¿git mvΣ┐¥τץשσמזσן▓ |
+| **Gitσמזσן▓Σ╕σ▒** | Σ╕?| Σ╜┐τפgit mvΣ┐τץשσמזσן▓ |
 
-### τ╝ףΦºúµמ¬µצ╜
+### τ╝ףΦמצ╜
 
 
 ---
 
-## ≡ƒףו σ«₧µצ╜Φ«íσטע
+## ≡ƒףו σ₧צ╜Φσטע
 
-1. **σט¢σ╗║σñחΣ╗╜σטזµפ»**:
+1. **σטσ╗║σחΣ╗╜σטזפ**:
    ```bash
    git checkout -b backup-before-flattening-20260403
    git add .
    ```
 
-2. **µי½µןןσ╝ץτפ¿**:
+2. **יןןσ╝ץτפ**:
 
-1. **τº╗σך¿µצחΣ╗╢**:
-   - Σ╜┐τפ¿git mvτº╗σך¿µצחΣ╗╢
-   - Σ┐¥τץשGitσמזσן▓
+1. **τ╗σךצחΣ╗╢**:
+- Σ╜┐τפgit mvτ╗σךצחΣ╗╢
+- Σ┐τץשGitσמזσן▓
 
-2. **Θחםσס╜σנםµצחΣ╗?*:
-   - Σ╜┐τפ¿git mvΘחםσס╜σנםµצחΣ╗?   - τ¼ªσנטσס╜σנםΦºהΦלד
+2. **Θחםσס╜σנםצחΣ╗?*:
+- Σ╜┐τפgit mvΘחםσס╜σנםצחΣ╗?   - τσנטσס╜σנםΦהΦלד
 
-3. **σטáΘשñτ⌐║τ¢«σ╜?*:
-   - σטáΘשñµיבσ╣│σלצσנמτתהτ⌐║τ¢«σ╜ץ
+3. **σטΘשτ⌐║τσ╜?*:
+- σטΘשיבσ╣│σלצσנמτתהτ⌐║τσ╜ץ
 
-1. **µ¢┤µצ░σ╝ץτפ¿**:
+1. **┤צ░σ╝ץτפ**:
 
-2. **Θ¬לΦ»בΘף╛µמÑ**:
+2. **ΘלΦבΘף╛מ**:
 
-3. **µןנΣ║ñµ¢┤µפ╣**:
+3. **ןנΣ║┤פ╣**:
    ```bash
    git add .
    ```
@@ -239,40 +239,40 @@ design/
 ---
 
 
-### τ¢«σ╜ץτ╗ףµ₧הΣ╝רσלצ
+### τσ╜ץτ╗ף₧הΣ╝רσלצ
 
-**µיבσ╣│σלצσים**:
+**יבσ╣│σלצσים**:
 ```
 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/
-Γפ£ΓפאΓפא web_interface/ (6σ▒?
-Γפ£ΓפאΓפא database/ (6σ▒?
-Γפ£ΓפאΓפא data_consistency/ (6σ▒?
-Γפ£ΓפאΓפא trading_costs/ (6σ▒?
+ΓפΓפאΓפא web_interface/ (6σ▒?
+ΓפΓפאΓפא database/ (6σ▒?
+ΓפΓפאΓפא data_consistency/ (6σ▒?
+ΓפΓפאΓפא trading_costs/ (6σ▒?
 ΓפפΓפאΓפא a_stock_rules/ (6σ▒?
 ```
 
-**µיבσ╣│σלצσנמ**:
+**יבσ╣│σלצσנמ**:
 ```
 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/ (5σ▒?
-Γפ£ΓפאΓפא WEB_INTERFACE_*.md
-Γפ£ΓפאΓפא DATABASE_*.md
-Γפ£ΓפאΓפא DATA_CONSISTENCY_*.md
-Γפ£ΓפאΓפא TRADING_COST_*.md
+ΓפΓפאΓפא WEB_INTERFACE_*.md
+ΓפΓפאΓפא DATABASE_*.md
+ΓפΓפאΓפא DATA_CONSISTENCY_*.md
+ΓפΓפאΓפא TRADING_COST_*.md
 ΓפפΓפאΓפא A_STOCK_*.md
 ```
 
-### Φ┤¿Θחןµלחµáחµןנσםח
+### Φ┤Θחןלחחןנσםח
 
 |------|---------|---------|------|
-| **σ╣│σ¥חτ¢«σ╜ץµ╖▒σ║ª** | 5σ▒?| 4σ▒?| -1σ▒?|
+| **σ╣│σחτσ╜ץ╖▒σ║** | 5σ▒?| 4σ▒?| -1σ▒?|
 
 ---
 
-## ≡ƒף¥ σנמτ╗¡σ╗║Φ««
+## ≡ƒף σנמτ╗σ╗║Φ
 
-### τ½כσם│Φíלσך¿
+### τכσם│Φלσך
 
-### µלבτ╗¡µפ╣Φ┐¢
+### לבτ╗פ╣Φ┐
 
 
 ---

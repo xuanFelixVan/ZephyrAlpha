@@ -53,13 +53,12 @@ related_documents:
 ### 1.1 蓝图定位
 
 
-³æ?
+?
 
 
 2. **风险分散**: 通过组合优化降低整体风险
 
 1. **风险控制**: 通过组合分散降低风险
-æç
 
 ### 1.3 Layer定位
 
@@ -74,17 +73,17 @@ related_documents:
 ### 2.1 整体架构
 
 ```
-â?                                                            â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                         â?                                 â?
-â?                                                            â?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
 
 ```
-    â?                                                                       â?
+?                                                                       ?
 ```
 
 ---
@@ -183,17 +182,17 @@ class MultiStrategyOptimizer:
         self,
         strategies: List[StrategyMetrics]
     ) -> Dict:
-³æ?""
+?""
         correlation_matrix = self._build_correlation_matrix(strategies)
         
-³æ?
+?
         avg_correlation = np.mean(correlation_matrix[np.triu_indices(len(strategies), k=1)])
         
         high_correlation_pairs = []
         for i in range(len(strategies)):
             for j in range(i+1, len(strategies)):
-                if correlation_matrix[i, j] > 0.7:  # é«ç¸å
-³æ§éå?
+if correlation_matrix[i, j] > 0.7:  #
+?
                     high_correlation_pairs.append({
                         'strategy_1': strategies[i].strategy_id,
                         'strategy_2': strategies[j].strategy_id,
@@ -214,7 +213,7 @@ class MultiStrategyOptimizer:
         strategies: List[StrategyMetrics],
         total_risk_budget: float
     ) -> Dict[str, float]:
-        """åé
+"""
         strategy_risks = [s.volatility for s in strategies]
         total_risk = sum(strategy_risks)
         
@@ -352,7 +351,7 @@ class MultiAssetOptimizer:
 置"""
         asset_weights = self.asset_allocator.optimize(assets, objective)
         
-        # 2. è¡ä¸é
+# 2.
         sector_weights = self.sector_allocator.optimize(assets, asset_weights)
         
         style_weights = self.style_allocator.optimize(assets, asset_weights)
@@ -517,7 +516,7 @@ class PortfolioRiskController:
         """计算组合VaR"""
         historical_var = self._historical_var(portfolio, confidence_level)
         
-        # 2. åæ°æ³?
+# 2. ?
         parametric_var = self._parametric_var(portfolio, confidence_level)
         
         # 3. 蒙特卡洛模拟
@@ -542,7 +541,7 @@ class PortfolioRiskController:
         # 1. 计算当前回撤
         current_drawdown = self._calculate_current_drawdown(portfolio)
         
-è¿éå?
+?
         is_exceeded = current_drawdown > max_drawdown
         
         # 3. 生成控制措施
@@ -675,19 +674,17 @@ class PortfolioOptimizationTextInterface:
 
 
 
-ç¸å
-³ï¼?
-³ï¼
-³ï¼?
+?
+?
 
-ââ Betaï¼?.85
+Beta?.85
 
 是否应用新权重？"
 ```
 
 ---
 
-## å
+##
 
 ### 6.1 实施计划
 
@@ -717,22 +714,22 @@ class PortfolioOptimizationTextInterface:
 ### 7.1 测试标准
 
 |--------|------|---------|
-æµè¯ |
+|
 
 ### 7.2 监控指标
 
 |------|--------|---------|
-³æ?| â?.5 | >0.7 |
-| ç»åVaR | â?% | >5% |
+?| ?.5 | >0.7 |
+| VaR | ?% | >5% |
 
 ---
 
-## å
+##
 
 ### 8.1 文档索引
 
-- **ç¶ææ¡?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
-- **å
+- **?*: [STRATEGY_AI_MODULES_ANALYSIS.md](03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- **
   - [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
   - [AI_WORKFLOW_LOGGER_BLUEPRINT.md](../../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md)
@@ -756,7 +753,7 @@ class PortfolioOptimizationTextInterface:
 - **模块ID**: PORTFOLIO_OPTIMIZATION_AI_001
 - **蓝图文档**: [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](03_TRADING_TACTICS\01_STRATEGY_FRAMEWORK\PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md)
 - **技术规格书**: 待创建
-- **职责**: ç»åä¼åç®¡ç
+- **职责**: 
 - **状态**: Active
 ```
 
@@ -764,7 +761,7 @@ class PortfolioOptimizationTextInterface:
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Portfolio Optimization Ai** | ç»åä¼åç®¡ç | **核心模块** |
+| **Portfolio Optimization Ai** |  | **核心模块** |
 
 ### 1.3 版本管理
 

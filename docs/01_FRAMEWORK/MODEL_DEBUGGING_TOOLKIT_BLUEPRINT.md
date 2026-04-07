@@ -22,7 +22,6 @@ layer: Layer 4 (机器学习层)
 ---
 ---
 ---
-·èå¾
 > **核心职责**: 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Model Debugging Toolkit蓝图设计相关内容
@@ -35,7 +34,7 @@ layer: Layer 4 (机器学习层)
 
 > **创建日期**: 2026-04-04
 
-çº?*: P0 (å¿
+?*: P0 (
 
 )
 
@@ -94,7 +93,7 @@ layer: Layer 4 (机器学习层)
 
 
 
-¥ | è¾åº |
+|  |
 
 |------|------|------|------|
 
@@ -121,7 +120,7 @@ layer: Layer 4 (机器学习层)
 
 class ModelDebugger:
 
-·"""
+"""
 
     
 
@@ -141,7 +140,7 @@ class ModelDebugger:
 
         Args:
 
-            model: å¾
+model:
 
         """
 
@@ -192,7 +191,7 @@ class ModelDebugger:
 
         Args:
 
-            input_sample: è¾å
+input_sample:
 
             
 
@@ -217,7 +216,7 @@ class ModelDebugger:
 
         Args:
 
-            input_sample: è¾å
+input_sample:
 
             
 
@@ -242,7 +241,7 @@ class ModelDebugger:
 
         Args:
 
-            threshold: éå?            
+threshold: ?
 
         Returns:
 
@@ -265,7 +264,7 @@ class ModelDebugger:
 
         Args:
 
-            threshold: éå?            
+threshold: ?
 
         Returns:
 
@@ -291,12 +290,11 @@ class ModelDebugger:
 
         Args:
 
-            input_sample: è¾å
+input_sample:
 
 
         Returns:
 
-æ¯ä¾
 
         """
 
@@ -511,10 +509,10 @@ captum>=0.7.0
 
 - 计算热点
 
-- å
+-
 存分析
 
-- GPUå©ç¨ç?
+- GPU?
 
 
 

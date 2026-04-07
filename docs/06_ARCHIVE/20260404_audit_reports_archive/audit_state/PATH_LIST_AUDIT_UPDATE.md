@@ -110,7 +110,7 @@ implementation_status: 进行?---
 ### 2. 合规性问题分?
 
 #### 2.1 中文命名违规 (5?
-根据开发标?§4.2.1，中文目录名和文件名禁止使用?
+根据开发标?4.2.1，中文目录名和文件名禁止使用?
 
 | 违规?| 类型 | 当前名称 | 建议英文名称 | 引用文件?|
 |--------|------|----------|--------------|------------|
@@ -123,7 +123,7 @@ implementation_status: 进行?---
 **影响范围**: 22个文件引用需要更?
 
 #### 2.2 缓存目录管理问题 (2?
-根据开发标?§4.2.2，缓存目录应被正确忽略：
+根据开发标?4.2.2，缓存目录应被正确忽略：
 
 | 目录 | 问题 | 标准要求 | 当前?|
 |------|------|----------|----------|
@@ -346,7 +346,7 @@ grep "中文模式"  # 检查中文引?
 4. .gitignore当前状态记?
 
 ### 3. 参考标?
-1. [开发标准](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) §4.2.1-4.2.4
+1. [开发标准](05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) 4.2.1-4.2.4
 2. [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 3. [审计质量标准 v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 

@@ -308,7 +308,7 @@ class RiskfolioLibIntegration:
 ```
 输入数据流:
 ┌─────────────┐
-│ 历史收益率  │ → returns: pd.DataFrame (资产 × 时间)
+│ 历史收益率  │ → returns: pd.DataFrame (资产  时间)
 └─────────────┘
 ┌─────────────┐
 │ 风险参数    │ → risk_free_rate, risk_measure, constraints

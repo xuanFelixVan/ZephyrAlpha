@@ -20,7 +20,7 @@ status: Active
 created_date: 2026-04-01
 last_updated: '2026-04-06'
 standard_type: 专业量化机构蓝图
-applicable_scope: å
+applicable_scope:
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -34,11 +34,11 @@ layer: Layer 5.2 (组合优化)
 
 # 策略组合优化系统技术蓝?
 
-> æ¸
+>
 风量化交易系统 v5.3 - 策略组合优化系统详细技术设?
 > **索引**: `PORTFOLIO_OPTIMIZATION_001`
 > **开发周?*: 140小时（胶合代码开发）
-> **è¡¥å
+> **
 
 文档**: 本蓝图是[STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md)的后续组件，专注于多策略组合构建与优?
 
@@ -102,13 +102,13 @@ layer: Layer 5.2 (组合优化)
 
 ### 1.1 核心设计目标
 
-?| ææ¯å®?|
+?| ?|
 |------|--------|----------|
-ç®?|
+?|
 | **风险预算管理** | P1 | 多层次风险预算体系，支持策略层、资产层、因子层风险控制 |
 | **动态调仓逻辑** | P1 | 基于市场状态、策略表现、风险指标的动态调仓决策系?|
 | **实时组合监控** | P2 | 组合风险敞口、绩效归因、风格漂移实时监控与预警 |
-| **AIè¾
+| **AI
 
 ### 1.2 技术约束与原则
 
@@ -130,10 +130,10 @@ layer: Layer 5.2 (组合优化)
 
 ```mermaid
 graph TB
-    subgraph "è¾å
-¥?
+subgraph "
+?
         A[策略排名结果] --> B(策略绩效数据)
-³æ§ç©?
+?
     end
     
     subgraph "核心优化引擎"
@@ -169,7 +169,7 @@ graph TB
 
 **Layer 1 - 数据准备?*
 - 策略绩效数据提取?
-- ç¸å
+-
 - 风险预算解析?
 
 **Layer 2 - 核心优化?*
@@ -326,7 +326,7 @@ class MeanVarianceOptimizer:
         elif constraints.optimization_target == 'efficient_return':
             weights = ef.efficient_return(target_return=constraints.target_return)
         
-        # æ¸
+#
         cleaned_weights = ef.clean_weights()
         
         return pd.Series(cleaned_weights)
@@ -382,7 +382,7 @@ class RiskParityOptimizer:
         port.assets_stats(method_mu='hist', method_cov='hist')
         
         # 设置优化问题
-        model = 'Classic'  # ç»å
+model = 'Classic'  #
         rm = self.risk_measure  # 风险度量方法
         obj = 'Risk'  # 目标函数：最小化风险
         hist = True  # 使用历史数据
@@ -463,14 +463,13 @@ class ConstraintProcessor:
         
         Args:
             raw_weights: 理论优化权重
-¸
             
         Returns:
             pd.Series: 调整后的实盘可行权重
         """
         adjusted_weights = raw_weights.copy()
         
-        # æä¼å
+#
         constraint_priority = [
             'position_limit',      # 仓位限制（监管要求）
             'liquidity_constraint', # 流动性约?
@@ -548,7 +547,7 @@ class ConstraintProcessor:
 过日成交量的5%?
                 max_daily_trade = daily_volume * 0.05
                 if position_value > max_daily_trade * 3:  # ?天建?
-è®¸è?
+?
                     adjusted_weights[strategy_id] = (max_daily_trade * 3) / portfolio_value
         
         return adjusted_weights
@@ -669,7 +668,7 @@ class RLRebalancer:
             risk_features
         ])
         
-        # å¡«å
+#
 
 或截断至固定维度
         if len(observation) < self.state_dim:
@@ -686,7 +685,7 @@ class RLRebalancer:
 ### 4.1 PyPortfolioOpt集成
 
 ```yaml
-# é
+#
 ?
 pypfopt_config:
   optimization_methods:
@@ -720,7 +719,7 @@ pypfopt_config:
 ### 4.2 Riskfolio-Lib集成
 
 ```yaml
-# é
+#
 置
 riskfolio_config:
   risk_measures:
@@ -741,7 +740,7 @@ riskfolio_config:
   
   optimization_models:
     - name: "Classic"
-      description: "ç»å
+description: "
     
     - name: "BL"
       description: "Black-Litterman模型"
@@ -790,8 +789,8 @@ class MinDrawdownOptimizer:
         # 约束条件
         constraints = [
             cp.sum(w) == 1,  # 权重和为1
-            w >= 0,  # ä¸å
-è®¸å?
+w >= 0,  #
+?
             w <= 0.3,  # 单资产最大权?0%
             cp.norm(w, 0) <= max_positions  # 最多持有max_positions个策?
         ]
@@ -804,7 +803,7 @@ class MinDrawdownOptimizer:
 ```
 
 
-## äºãé
+##
 
 ### 5.1 完整优化流程示例
 
@@ -827,14 +826,14 @@ async def run_complete_portfolio_optimization():
         lookback_period=252  # 一年数?
     )
     
-    # 3. é
+# 3.
     optimization_config = {
         'optimization_method': 'mean_variance',
         'optimization_target': 'max_sharpe',
         'risk_budget': {
 过15%
 过20%
-            'var_limit': 0.05,  # 95% VaRä¸è¶
+'var_limit': 0.05,  # 95% VaR
 ?%
             'strategy_risk_limits': {
                 strategy_id: {'max_risk_contribution': 0.25}
@@ -867,7 +866,7 @@ async def run_complete_portfolio_optimization():
     print("组合优化结果")
     print("=" * 60)
     
-    print(f"\næéåé
+print(f"\n
 :")
     for strategy_id, weight in result.weights.items():
         print(f"  {strategy_id}: {weight:.2%}")
@@ -926,13 +925,12 @@ python portfolio_optimizer.py batch-optimize \
   --output-dir results/batch_optimization/
 ```
 
-### 5.3 YAMLé
+### 5.3 YAML
 
 ```yaml
 # configs/portfolio_optimization.yaml
 portfolio_optimization:
-  # è¾å
-¥é
+#
 置
   input:
     strategy_source: "strategy_selection_system"
@@ -951,9 +949,9 @@ portfolio_optimization:
   risk_budget:
 过15%
 过20%
-    var_95_limit: 0.05  # 95% VaRä¸è¶
+var_95_limit: 0.05  # 95% VaR
 ?%
-    cvar_95_limit: 0.07  # 95% CVaRä¸è¶
+cvar_95_limit: 0.07  # 95% CVaR
 ?%
     
     strategy_limits:
@@ -977,7 +975,7 @@ portfolio_optimization:
         high_frequency_strategy: 0.002
         options_strategy: 0.003
   
-  # è¾åºé
+#
 置
   output:
     generate_report: true
@@ -987,22 +985,22 @@ portfolio_optimization:
     visualize_results: true
     create_performance_charts: true
     
-  # çæ§é
+#
 置
   monitoring:
     rebalance_frequency: "weekly"  # 每周调仓
     performance_check_frequency: "daily"  # 每日检查绩?
-    risk_monitoring_frequency: "intraday"  # æ¥å
+risk_monitoring_frequency: "intraday"  #
 风险监控
     alert_thresholds:
-      drawdown_alert: 0.08  # åæ¤è¶
+drawdown_alert: 0.08  #
 过8%预警
 ?8%预警
 ?5%预警
 ```
 
 
-## å
+##
 
 ### 6.1 开发阶段划?
 
@@ -1030,7 +1028,7 @@ portfolio_optimization:
 存管?
 - 容错机制与监控告?
 
-### 6.2 å
+### 6.2
 
 | 里程?| 预计完成时间 | 交付?| 成功标准 |
 |--------|--------------|--------|----------|
@@ -1065,8 +1063,8 @@ portfolio_optimization:
    - 特点：强大的凸优化求解器，支持自定义优化问题
    - 集成方式：用于实现特殊优化目标（如最小化回撤?
 
-### 7.2 è¾
-·?
+### 7.2
+?
 
 4. **Stable-Baselines3** - 强化学习?
    - GitHub: https://github.com/DLR-RM/stable-baselines3
@@ -1085,7 +1083,7 @@ portfolio_optimization:
 
 ### 7.3 数据与可视化
 
-7. **yfinance** - é
+7. **yfinance** -
 虎财经数据接口
    - GitHub: https://github.com/ranaroussi/yfinance
    - 集成方式：用于获取实时市场数?
@@ -1108,7 +1106,7 @@ portfolio_optimization:
     - 参考价值：实盘集成、风险管?
 
 
-## å
+##
 
 
 ，支持灵活组合和扩展
@@ -1119,7 +1117,7 @@ portfolio_optimization:
 
 （不懂编程）而言，本系统的主要开发工作将是：
 - **胶合代码编写**：将各开源模块集成到统一框架中（?0%工作量）
-- **é
+- **
 - **测试验证**：验证优化结果的有效性和稳定性（?0%工作量）
 - **文档与界?*：创建用户友好的命令行和Web界面（约10%工作量）
 
@@ -1130,7 +1128,7 @@ portfolio_optimization:
 ## 变更历史
 
 |------|------|----------|--------|
-| v1.0.1 | 2026-04-06 | è¡¥å
+| v1.0.1 | 2026-04-06 |
 
 
 ---

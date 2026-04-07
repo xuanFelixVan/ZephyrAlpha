@@ -64,7 +64,6 @@ PyPortfolioOpt功能
             constraints: 约束条件
             
         返回:
-¸
         """
         pass
     
@@ -84,7 +83,6 @@ PyPortfolioOpt功能
         total_value: float
     ) -> Tuple[Dict[str, int], float]:
         """
-æ¹æ¡
         """
         pass
 ```
@@ -164,7 +162,7 @@ class EfficientFrontierPoint:
     weights: np.ndarray
 ```
 
-### 3.3 é
+### 3.3
 
 ```yaml
 mean_variance_optimization:
@@ -174,25 +172,24 @@ mean_variance_optimization:
     ema_span: 500
     capm_benchmark: 'SPY'
     
-ç½?
+?
   covariance:
     method: 'ledoit_wolf'  # sample, exp, ledoit_wolf, semicov
     exp_span: 180
     shrinkage_target: 'single_factor'
     
-  # ä¼åé
+#
 置
   optimization:
     objective: 'max_sharpe'
     risk_free_rate: 0.02
     frequency: 252
     
-  # çº¦æé
+#
 置
   constraints:
-    min_weight: 0.0  # ä¸å
+min_weight: 0.0  #
     
-é
 置
   discrete_allocation:
     method: 'greedy'
@@ -207,8 +204,8 @@ from pypfopt.discrete_allocation import DiscreteAllocation
 
 class PyPortfolioOptAdapter(MeanVarianceOptimizer):
     """
-    PyPortfolioOptéé
-å?
+PyPortfolioOpt
+?
     
     """
     
@@ -250,8 +247,7 @@ class PyPortfolioOptAdapter(MeanVarianceOptimizer):
 
 ## 5. 测试规格
 
-### 5.1 åå
-æµè¯
+### 5.1
 
 ```python
 class TestMeanVarianceOptimizer:
@@ -299,7 +295,7 @@ class TestIntegration:
 ### 6.1 计算性能
 
 |------|--------|----------|
-| å
+|
 存监控 |
 
 

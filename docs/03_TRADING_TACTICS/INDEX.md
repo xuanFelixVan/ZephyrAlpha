@@ -239,7 +239,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 - [AI监督集成方案 - 专业机构级设?](./AI_SUPERVISION_INTEGRATION_PLAN.md) - 系统文档
 
-- [36ﻝﺁﻟﮒﺏﻝ­ﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ](./99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md) - 系统文档
+- [36ﻝﺁﻟﮒﺏﻝﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ](./99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md) - 系统文档
 
 - [ﻝ۴ﻝﭨﻝﺛﻝﭨﻠﮔﮔﺗﮔ۰ (NEURAL_NETWORK_INTEGRATION_PLAN)](./NEURAL_NETWORK_INTEGRATION_PLAN.md) - 系统文档
 

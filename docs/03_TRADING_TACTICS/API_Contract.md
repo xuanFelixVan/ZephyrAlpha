@@ -18,8 +18,8 @@ version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: ﻠ۵ﮒﺕ­ﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
-applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔ ﮒ
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
@@ -36,18 +36,18 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ## 1. ﻠﻛﺟ۰ﮒﮒ
 
-- **ﮔ ﺙﮒﺙ**: JSON
-- **ﻝﺙﻝ **: UTF-8
-- **ﮔﭘﻠﺑﮔ?*: ISO 8601 ﮔ ﺙﮒﺙﺅﺙUTCﺅﺙ?- **ﮔﺍﮒﺙﻝﺎﺝﮒﭦ?*: float64ﺅﺙ?ﮒ­ﻟﮔﭖ؟ﻝﺗﮔﺍﺅﺙ
-- **ﻠﻟﺁﺁﮒ۳ﻝ**: ﻟﺟﮒ `error` ﮒ­ﮔ؟ﭖﺅﺙﮒﮒ،ﻠﻟﺁﺁﻝ ﮒﮔﭘﮔ?
+- **ﮔﺙﮒﺙ**: JSON
+- **ﻝﺙﻝ**: UTF-8
+- **ﮔﭘﻠﺑﮔ?*: ISO 8601 ﮔﺙﮒﺙﺅﺙUTCﺅﺙ?- **ﮔﺍﮒﺙﻝﺎﺝﮒﭦ?*: float64ﺅﺙ?ﮒﻟﮔﭖ؟ﻝﺗﮔﺍﺅﺙ
+- **ﻠﻟﺁﺁﮒ۳ﻝ**: ﻟﺟﮒ `error` ﮒﮔ؟ﭖﺅﺙﮒﮒ،ﻠﻟﺁﺁﻝﮒﮔﭘﮔ?
 
-## 2. ﮔ ﺕﮒﺟﮔ۴ﮒ۲ﮒ؟ﻛﺗ
+## 2. ﮔﺕﮒﺟﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
 ### 2.1 DataHub ﻗ?FactorCalculator
 
-**ﮒﻟﺛ**: ﻛﺙ ﻠﮔ ﮒﮒﮒﺕﮒﭦﮔﺍﮔ؟
+**ﮒﻟﺛ**: ﻛﺙﻠﮔﮒﮒﮒﺕﮒﭦﮔﺍﮔ؟
 
-**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
+**ﻟﺁﺓﮔﺎﮔﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -72,7 +72,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 }
 ```
 
-**ﮒﮒﭦﮔ ﺙﮒﺙ**:
+**ﮒﮒﭦﮔﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -96,8 +96,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ### 2.2 FactorCalculator ﻗ?StrategyEngine
 
-**ﮒﻟﺛ**: ﻛﺙ ﻠﻟ؟۰ﻝ؟ﮒﻝﮒ ﮒ­ﮒ?
-**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
+**ﮒﻟﺛ**: ﻛﺙﻠﻟ؟۰ﻝ؟ﮒﻝﮒﮒﮒ?
+**ﻟﺁﺓﮔﺎﮔﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -124,7 +124,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 }
 ```
 
-**ﮒﮒﭦﮔ ﺙﮒﺙ**:
+**ﮒﮒﭦﮔﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -138,9 +138,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ### 2.3 StrategyEngine ﻗ?RiskManager
 
-**ﮒﻟﺛ**: ﻛﺙ ﻠﻝ­ﻝ۴ﻛﺟ۰ﮒﺓﮒﮒ۳ﺑﮒﺁﺕﻛﺟ۰ﮔﺁ
+**ﮒﻟﺛ**: ﻛﺙﻠﻝﻝ۴ﻛﺟ۰ﮒﺓﮒﮒ۳ﺑﮒﺁﺕﻛﺟ۰ﮔﺁ
 
-**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
+**ﻟﺁﺓﮔﺎﮔﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -166,7 +166,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 }
 ```
 
-**ﮒﮒﭦﮔ ﺙﮒﺙ**:
+**ﮒﮒﭦﮔﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -196,8 +196,8 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ### 2.4 RiskManager ﻗ?TradeExecutor
 
-**ﮒﻟﺛ**: ﻛﺙ ﻠﮒﺓﺎﮔﺗﮒﻝﻛﭦ۳ﮔﻟ؟۱ﮒ?
-**ﻟﺁﺓﮔﺎﮔ ﺙﮒﺙ**:
+**ﮒﻟﺛ**: ﻛﺙﻠﮒﺓﺎﮔﺗﮒﻝﻛﭦ۳ﮔﻟ؟۱ﮒ?
+**ﻟﺁﺓﮔﺎﮔﺙﮒﺙ**:
 ```json
 {
   "timestamp": "2026-03-28T10:00:00Z",
@@ -216,7 +216,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 }
 ```
 
-**ﮒﮒﭦﮔ ﺙﮒﺙ**:
+**ﮒﮒﭦﮔﺙﮒﺙ**:
 ```json
 {
   "status": "success",
@@ -231,15 +231,15 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ```
 
 
-## 3. ﻠﻟﺁﺁﻝ ﻟ۶ﻟ?
-| ﻠﻟﺁﺁﻝ ?| ﮒ،ﻛﺗ | ﮒ۳ﻝﮔﺗﮒﺙ |
+## 3. ﻠﻟﺁﺁﻝﻟ۶ﻟ?
+| ﻠﻟﺁﺁﻝ?| ﮒ،ﻛﺗ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|------|---------|
-| DATA_001 | ﮔﺍﮔ؟ﮔ ﺙﮒﺙﻠﻟﺁﺁ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ |
+| DATA_001 | ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺓﺏﻟﺟﻟﺁ۴ﮔﺍﮔ؟ |
 | DATA_002 | ﮔﺍﮔ؟ﻝﺙﭦﮒ۳ﺎ | ﻛﺛﺟﻝ۷ﮒﮒﮒ۰،ﮒ |
-| FACTOR_001 | ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | ﻛﺛﺟﻝ۷ﮒ۳ﻠﮒ ﮒ­?|
+| FACTOR_001 | ﮒﮒﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | ﻛﺛﺟﻝ۷ﮒ۳ﻠﮒﮒ?|
 | SIGNAL_001 | ﻛﺟ۰ﮒﺓﻝﮔﮒ۳ﺎﻟﺑ۴ | ﻛﺕﮒﮒﭦﻛﭦ۳ﮔﻛﺟ۰ﮒ?|
 | RISK_001 | ﻠ۲ﻠ۸ﮔ۲ﮔ۴ﮒ۳ﺎﻟﺑ?| ﮔﻝﭨﻛﭦ۳ﮔ |
-| EXEC_001 | ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ­?|
+| EXEC_001 | ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻠﻟﺁ3ﮔ؛۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﮒﮒﻟ?|
 
 
 ## 4. ﮔﺍﮔ؟ﻝﺎﭨﮒﻟ۶ﻟ
@@ -249,10 +249,10 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 | ﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﻝ۳ﭦﻛﺝ |
 |------|------|------|
 | timestamp | ISO 8601 UTCﮔﭘﻠﺑ | "2026-03-28T10:00:00Z" |
-| symbol | ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ  | "000001.SZ" |
+| symbol | ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ | "000001.SZ" |
 | float | ﮔﭖ؟ﻝﺗﮔ?| 101.5 |
 | int | ﮔﺑﮔﺍ | 1000 |
-| string | ﮒ­ﻝ؛۵ﻛﺕ?| "BUY" |
+| string | ﮒﻝ؛۵ﻛﺕ?| "BUY" |
 | boolean | ﮒﺕﮒﺍﮒ?| true/false |
 
 ### ﮒ۳ﮒﻝﺎﭨﮒ
@@ -266,7 +266,7 @@ class OHLCV:
     close: float
     volume: int
 
-# ﮒ ﮒ­ﮒ?class FactorValue:
+# ﮒﮒﮒ?class FactorValue:
     value: float
     signal: str  # "BUY" / "SELL" / "HOLD"
     confidence: float  # 0.0 - 1.0
@@ -283,12 +283,12 @@ class TradeSignal:
 
 ## 5. ﻝﮔ؛ﮒﮒ
 
-### ﻝﮔ؛ﮒﺓﮔ ﺙﮒﺙ?```
+### ﻝﮔ؛ﮒﺓﮔﺙﮒﺙ?```
 {major}.{minor}.{patch}
 ```
 
 ### ﮒﺙﮒ؟ﺗﮔ۶ﻟ۶ﮒ?- **ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺙﮒ؟ﺗ**: ﮔ۴ﮒ۲ﻝﭨﮔﮔﺗﮒ
-- **ﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟?*: ﮔﺍﮒ۱ﮒﺁﻠﮒ­ﮔ؟?- **ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ**: Bugﻛﺟ؟ﮒ۳
+- **ﮔ؛۰ﻝﮔ؛ﮒﮒﮒﺙﮒ؟?*: ﮔﺍﮒ۱ﮒﺁﻠﮒﮔ؟?- **ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﮒﮒﺙﮒ؟ﺗ**: Bugﻛﺟ؟ﮒ۳
 
 ### ﻝﮔ؛ﮔ۲ﮔ?```json
 {
@@ -303,17 +303,17 @@ class TradeSignal:
 | ﮔﻛﺛ | ﻟﭘﮔﭘﮔﭘﻠﺑ | ﻟﺁﺑﮔ |
 |------|----------|------|
 | ﮔﺍﮔ؟ﻠﻠ | 30s | ﮒﮔ؛۰APIﻟﺍﻝ۷ |
-| ﮒ ﮒ­ﻟ؟۰ﻝ؟ | 5s | ﮒﻛﺕ۹ﮒ ﮒ­ |
-| ﻝ­ﻝ۴ﻛﺟ۰ﮒﺓ | 2s | ﮒﻛﺕ۹ﻝ­ﻝ۴ |
+| ﮒﮒﻟ؟۰ﻝ؟ | 5s | ﮒﻛﺕ۹ﮒﮒ |
+| ﻝﻝ۴ﻛﺟ۰ﮒﺓ | 2s | ﮒﻛﺕ۹ﻝﻝ۴ |
 | ﻠ۲ﻠ۸ﮔ۲ﮔ?| 1s | ﻠ۲ﮔ۶ﮒ؟۰ﮔﺗ |
 | ﻛﭦ۳ﮔﮔ۶ﻟ۰ | 10s | ﻟ؟۱ﮒﮔﻛﭦ۳ |
 
 
-## 7. ﻠﻟﺁﻝ­ﻝ۴
+## 7. ﻠﻟﺁﻝﻝ۴
 
 ```
 ﻠﻟﺁﮔ۰ﻛﭨﭘ: ﻝﺛﻝﭨﻠﻟﺁﺁﻙﻟﭘﮔﭘﻙﻛﺕﺑﮔﭘﮔﮒ۰ﻛﺕﮒﺁﻝ۷
-ﻠﻟﺁﮔ؛۰ﮔﺍ: ﮔﮒ۳?ﮔ؛?ﻠﻟﺁﻠﺑﻠ: ﮔﮔﺍﻠﻠﺟﺅﺙ1s, 2s, 4sﺅﺙ?ﮔﮒ۳۶ﻝ­ﮒﺝ? 7s
+ﻠﻟﺁﮔ؛۰ﮔﺍ: ﮔﮒ۳?ﮔ؛?ﻠﻟﺁﻠﺑﻠ: ﮔﮔﺍﻠﻠﺟﺅﺙ1s, 2s, 4sﺅﺙ?ﮔﮒ۳۶ﻝﮒﺝ? 7s
 ```
 
 
@@ -337,7 +337,7 @@ class TradeSignal:
 
 ```python
 class IDataHub(ABC):
-    """ﮔﺍﮔ؟ﻛﺕ­ﮒﺟﮔ۴ﮒ۲
+"""ﮔﺍﮔ؟ﻛﺕﮒﺟﮔ۴ﮒ۲
 
     ﻝﺑ۱ﮒﺙ: API.DH.001
     Layer: Layer 0
@@ -376,7 +376,7 @@ class IDataHub(ABC):
 
 ```python
 class IFactorCalculator(ABC):
-    """ﮒ ﮒ­ﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?
+"""ﮒﮒﻟ؟۰ﻝ؟ﮒ۷ﮔ۴ﮒ?
     ﻝﺑ۱ﮒﺙ: API.FC.001
     Layer: Layer 2
     ﻛﺕﮔﺕﺕ: DataHub
@@ -391,7 +391,7 @@ class IFactorCalculator(ABC):
         date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> Optional[float]:
-        """ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒ ﮒ­ﮒ?""
+"""ﻟ؟۰ﻝ؟ﮒﻛﺕ۹ﮒﮒﮒ?""
         pass
 
     @abstractmethod
@@ -403,7 +403,7 @@ class IFactorCalculator(ABC):
         end_date: str,
         params: Optional[Dict[str, Any]] = None
     ) -> pd.DataFrame:
-        """ﮔﺗﻠﻟ؟۰ﻝ؟ﮒ ﮒ­"""
+"""ﮔﺗﻠﻟ؟۰ﻝ؟ﮒﮒ"""
         pass
 ```
 
@@ -411,7 +411,7 @@ class IFactorCalculator(ABC):
 
 ```python
 class IStrategyEngine(ABC):
-    """ﻝ­ﻝ۴ﮒﺙﮔﮔ۴ﮒ۲
+"""ﻝﻝ۴ﮒﺙﮔﮔ۴ﮒ۲
 
     ﻝﺑ۱ﮒﺙ: API.SE.001
     Layer: Layer 3
@@ -465,7 +465,7 @@ class IRiskManager(ABC):
         positions: List[Position],
         portfolio_value: float
     ) -> RiskMetrics:
-        """ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ """
+"""ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﮔﮔ"""
         pass
 ```
 

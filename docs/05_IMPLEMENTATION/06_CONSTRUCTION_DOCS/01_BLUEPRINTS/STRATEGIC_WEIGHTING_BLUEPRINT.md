@@ -11,7 +11,7 @@ responsibility:
 
 置
   - 长期权重优化
-  - æç¥é
+-
 layer: Layer 5 (策略执行层)
 ---
 
@@ -20,11 +20,10 @@ layer: Layer 5 (策略执行层)
 
 负责战略权重的设计与实现，基于战略配置目标，提供资产权重分配方案，支持战略配置实施。
 
-èå¾
 
-ç½?
+?
 > **职责边界**: 
-ãæç¥...
+...
 
 
 ## 设计目标
@@ -94,11 +93,11 @@ layer: Layer 5 (策略执行层)
 
 ```mermaid
 graph TB
-ç³»ç»]
+]
     C[市场状态识别] --> B
     D[风险预算] --> B
     
-    B --> E{é
+B --> E{
     
     E -->|经济扩张| F[风险平价模型]
 置]
@@ -111,12 +110,12 @@ graph TB
     I --> J
     
     J --> K[约束优化]
-    K --> L[æç»é
+K --> L[
 ```
 
 ---
 
-## ð§ å
+##
 
 ### 1. 风险平价模型
 
@@ -162,7 +161,7 @@ class RiskParityModel:
         # 约束条件
         constraints = [
             cp.sum(weights) == 1,  # 权重和为1
-            weights >= 0,  # ä¸å
+weights >= 0,  #
         ]
         
         # 求解
@@ -179,7 +178,7 @@ class RiskParityModel:
 
 
 class AllWeatherModel:
-    """å
+"""
     
     def __init__(self):
         # 四种经济环境
@@ -220,7 +219,7 @@ class AllWeatherModel:
     def allocate(self,
                 economic_regime: str,
                 regime_probability: float) -> Dict[str, float]:
-æé"""
+"""
         # 获取基准权重
         base_weights = self.environment_weights.get(economic_regime, 
                                                    self.environment_weights['GROWTH'])
@@ -230,7 +229,7 @@ class AllWeatherModel:
         for asset, weight in base_weights.items():
             adjusted_weights[asset] = weight * regime_probability
         
-        # å½ä¸å?
+# ?
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -375,7 +374,7 @@ class ConstraintHandler:
                 # adjusted_weights[asset] = ...
                 pass
         
-        # å½ä¸å?
+# ?
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -392,14 +391,12 @@ class ConstraintHandler:
 
 
 **任务**:
-ç½?
-æµè¯
+?
 
 ---
 
 
 **任务**:
-æµè¯
 
 ---
 
@@ -410,16 +407,15 @@ class ConstraintHandler:
 
 ## 📈 性能指标
 
-### é
+###
 
 |------|--------|
 | **夏普比率提升** | > 0.2 |
-| **åæ£åº?* | > 0.7 |
+| **?* | > 0.7 |
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -436,8 +432,8 @@ class ConstraintHandler:
 | **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
 | **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
@@ -454,7 +450,7 @@ graph LR
     style C fill:#45b7d1
 ```
 
-### ç¸å
+###
 
 - [季度调仓决策系统蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
@@ -474,21 +470,21 @@ graph LR
 ### 1.1 System_Manifest.md索引
 
 ```markdown
-#### Layer 5: å®è§é
-ç½®å±?
+#### Layer 5:
+?
 ##### 6.001. Strategic Weighting
 - **模块ID**: STRATEGIC_WEIGHTING_001
 - **蓝图文档**: STRATEGIC_WEIGHTING_BLUEPRINT.md
-åå»?
-ç½?
-- **ç¶æ?*: Active
+?
+?
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
 
 | 模块 | 职责 | 边界 |
 |------|------|------|
-| **Strategic Weighting** | å®è§é
+| **Strategic Weighting** |
 
 ### 1.3 版本管理
 

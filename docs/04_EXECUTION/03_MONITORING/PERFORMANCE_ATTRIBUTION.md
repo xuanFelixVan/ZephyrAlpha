@@ -240,7 +240,7 @@ class RiskAttribution:
         risk_contributions = {}
 
         for factor in factor_names:
-            # 因子风险贡献 = 暴露² × 因子方差
+            # 因子风险贡献 = 暴露  因子方差
             factor_var = factor_returns[factor].var()
             contribution = (exposures[factor] ** 2) * factor_var
             risk_contributions[factor] = contribution / total_risk
@@ -257,7 +257,7 @@ class RiskAttribution:
         portfolio_returns: pd.Series,
         factor_returns: pd.DataFrame
     ) -> float:
-        """计算R²"""
+        """计算R"""
         from scipy import stats
         X = factor_returns.values
         y = portfolio_returns.values

@@ -85,7 +85,7 @@ layer: Layer 5.1 (数据处理)
 
 
 **当前痛点**:
-æ?
+?
 - 存储成本持续增长
 - 数据归档和删除不规范
 
@@ -376,7 +376,7 @@ GET /api/v1/lifecycle/tiers/statistics
 ```
 
 
-## å
+##
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
@@ -392,9 +392,8 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ---
 
-## å
-«ãç¸å
-³ææ¡?
+##
+?
 
 - [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
@@ -412,9 +411,9 @@ GET /api/v1/lifecycle/tiers/statistics
 ##### 6.001. Data Lifecycle Management
 - **模块ID**: DATA_LIFECYCLE_MANAGEMENT_001
 - **蓝图文档**: DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界
@@ -433,14 +432,13 @@ GET /api/v1/lifecycle/tiers/statistics
 
 ---
 
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ?|
+?|
 
 ### 下游依赖
 
@@ -450,8 +448,8 @@ GET /api/v1/lifecycle/tiers/statistics
 
 |---------|------|------|------|
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR

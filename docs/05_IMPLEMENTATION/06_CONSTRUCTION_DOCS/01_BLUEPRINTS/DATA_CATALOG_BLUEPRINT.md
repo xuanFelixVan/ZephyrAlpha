@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
   - 数据目录
-  - å
+-
   - 数据发现
 layer: Layer 5.1 (数据处理)
 ---
@@ -23,7 +23,6 @@ layer: Layer 5.1 (数据处理)
 
 > **核心职责**: Data Catalog蓝图设计
 > **职责边界**: 
-³å
 容
 
 
@@ -89,19 +88,18 @@ layer: Layer 5.1 (数据处理)
 
 **业务目标**:
 - 建立统一的数据资产目录，支持快速搜索和发现
-- å®åå
-ä¿¡æ?
-³ç³?
+-
+?
+?
 括敏感数据标记和生命周期管理
 
 
 |------|--------|------|
-| **å
-æ°æ® |
+| **
+|
 
 ---
-## ð ç¸å
-³ææ¡£
+##
 
 ### 上游依赖
 
@@ -112,22 +110,22 @@ layer: Layer 5.1 (数据处理)
 
 | 文档名称 | module_id | 依赖类型 | 说明 |
 |---------|-----------|---------|------|
-æ°æ® |
-æ°æ?|
+|
+?|
 
 
 |---------|------|------|------|
-| **OpenMetadata** | 1.2+ | å
+| **OpenMetadata** | 1.2+ |
 | **Elasticsearch** | 8.0+ | 搜索引擎 | [官方文档](https://www.elastic.co/) |
 | **Neo4j** | 5.0+ | 图数据库 | [官方文档](https://neo4j.com/) |
 
-### å¼ç¨å
-³ç³»å?
+###
+?
 
 ```mermaid
 graph LR
     A[数据源管理] --> B[数据目录]
-¨åè§] --> B
+] --> B
     
     B --> D[数据血缘追踪]
     B --> E[数据可观测性]
@@ -141,9 +139,8 @@ graph LR
 
 
 
-### 3.1 å
+### 3.1
 
-æ°æ®
 
 ```python
 from dataclasses import dataclass, field
@@ -161,8 +158,8 @@ class DataSourceType(Enum):
 
 @dataclass
 class TableMetadata:
-    """è¡¨å
-æ°æ®"""
+"""
+"""
     table_id: str
     table_name: str
     database_name: str
@@ -178,8 +175,8 @@ class TableMetadata:
 
 @dataclass
 class ColumnMetadata:
-    """åå
-æ°æ®"""
+"""
+"""
     column_name: str
     data_type: str
     description: str
@@ -190,7 +187,7 @@ class ColumnMetadata:
     tags: List[str] = field(default_factory=list)
 
 class MetadataCollector:
-    """å
+"""
     
     def __init__(self, source_config: Dict[str, Any]):
         self.source_config = source_config
@@ -201,7 +198,7 @@ class MetadataCollector:
         self.connectors[source_type] = connector
     
     def collect_table_metadata(self, source_type: DataSourceType, database: str, table: str) -> TableMetadata:
-æ°æ®"""
+"""
         connector = self.connectors.get(source_type)
         if not connector:
             raise ValueError(f"未找到数据源类型 {source_type} 的连接器")
@@ -209,7 +206,7 @@ class MetadataCollector:
         return connector.get_table_metadata(database, table)
     
     def collect_all_tables(self, source_type: DataSourceType, database: str) -> List[TableMetadata]:
-æ°æ®"""
+"""
         connector = self.connectors.get(source_type)
         if not connector:
             raise ValueError(f"未找到数据源类型 {source_type} 的连接器")
@@ -261,8 +258,8 @@ class DataDiscoveryService:
         return self.search(request)
     
     def search_by_owner(self, owner: str) -> List[SearchResult]:
-        """æææè
-æç´?""
+"""
+?""
         request = SearchRequest(query="*", filters={"owner": owner})
         return self.search(request)
     
@@ -377,8 +374,8 @@ from datetime import datetime
 
 class DataClassification(Enum):
     """数据分类"""
-    PUBLIC = "public"           # å
-    INTERNAL = "internal"       # å
+PUBLIC = "public"           #
+INTERNAL = "internal"       #
 部数据
     CONFIDENTIAL = "confidential"  # 机密数据
 
@@ -613,7 +610,7 @@ class OpenMetadataClient:
         return service
     
     def ingest_metadata(self, config_path: str):
-        """æ§è¡å
+"""
         workflow = Workflow.create(config_path)
         workflow.execute()
         workflow.raise_from_status()
@@ -664,7 +661,7 @@ class CatalogLineageIntegration:
             self.catalog_client.update_table_lineage(table.id, lineage)
     
     def enrich_metadata_with_lineage(self, table_id: str):
-æ°æ®"""
+"""
         lineage = self.lineage_service.get_lineage(table_id)
         
         upstream_tables = [n for n in lineage.nodes if n in lineage.edges]
@@ -705,19 +702,19 @@ class CatalogQualityIntegration:
 
 ---
 
-## å
+##
 
-ç½?
-
-|------|---------|--------|--------|
-| é
-§ |
-| é
-ç½?|
-
+?
 
 |------|---------|--------|--------|
-| é
+|
+|
+|
+?|
+
+
+|------|---------|--------|--------|
+|
 
 ---
 
@@ -726,21 +723,21 @@ class CatalogQualityIntegration:
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| å
+|
 | 数据治理 | 敏感数据自动标记 | 功能测试 |
 
 ### 7.2 性能验收
 
 |------|--------|---------|
-| å
+|
 
 ---
 
-## å
+##
 
 | 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|---------|
-| å
+|
 
 ---
 
@@ -768,9 +765,9 @@ class CatalogQualityIntegration:
 ##### 6.001. Data Catalog
 - **模块ID**: DATA_CATALOG_001
 - **蓝图文档**: DATA_CATALOG_BLUEPRINT.md
-åå»?
+?
 - **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
-- **ç¶æ?*: Active
+- **?*: Active
 ```
 
 ### 1.2 模块职责边界

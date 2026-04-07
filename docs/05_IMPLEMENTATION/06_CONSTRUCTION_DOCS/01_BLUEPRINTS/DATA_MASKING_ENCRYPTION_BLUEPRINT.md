@@ -71,7 +71,7 @@ layer: Layer 5.1 (数据处理)
 
 ## 核心定位
 
-¨åè§ã?
+?
 
 
 ### 1.1 专业机构标准要求
@@ -88,17 +88,17 @@ layer: Layer 5.1 (数据处理)
 
 
 ```
-â?                                                                        â?
-¥å±?                                 â? â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                             â?                                         â?
-â?                                                                        â?
+?                                                                        ?
+?                                 ? ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                             ?                                         ?
+?                                                                        ?
 ```
 
 
@@ -200,8 +200,8 @@ class DataMasker:
     MASKING_STRATEGIES = {
         "hash": "哈希脱敏（不可逆）",
         "encrypt": "加密脱敏（可逆）",
-        "redact": "å®å
-¨å é¤",
+"redact": "
+",
     }
     
     def __init__(self):
@@ -337,12 +337,12 @@ class EncryptionEngine:
         return self.fernet.decrypt(encrypted_data).decode()
     
     def encrypt_dict(self, data: dict) -> str:
-¸"""
+"""
         json_str = json.dumps(data, ensure_ascii=False)
         return self.encrypt(json_str)
     
     def decrypt_dict(self, encrypted_data: str) -> dict:
-¸"""
+"""
         json_str = self.decrypt(encrypted_data)
         return json.loads(json_str)
     
@@ -676,14 +676,14 @@ class KeyManagementService:
         self.metadata = self._load_metadata()
     
     def _load_metadata(self) -> Dict:
-æ°æ?""
+?""
         if self.key_metadata_file.exists():
             with open(self.key_metadata_file, 'r') as f:
                 return json.load(f)
         return {"keys": {}}
     
     def _save_metadata(self):
-æ°æ?""
+?""
         with open(self.key_metadata_file, 'w') as f:
             json.dump(self.metadata, f, indent=2)
     
@@ -767,9 +767,9 @@ class KeyManagementService:
 
 ---
 
-ç½?
+?
 
-### 4.1 Docker Composeé
+### 4.1 Docker Compose
 置
 
 ```yaml
@@ -799,7 +799,7 @@ networks:
     external: true
 ```
 
-### 4.2 é
+### 4.2
 
 ```yaml
 data_masking:
@@ -854,7 +854,7 @@ pii_list = identifier.scan(text)
 print(f"发现PII: {pii_list}")
 
 masked_text = masker.anonymize_text(text, pii_list)
-print(f"è±æå? {masked_text}")
+print(f"? {masked_text}")
 ```
 
 ### 5.2 数据加密
@@ -865,7 +865,7 @@ from data_masking import EncryptionEngine, FieldLevelEncryption
 engine = EncryptionEngine()
 
 encrypted = engine.encrypt("敏感数据")
-print(f"å å¯å? {encrypted}")
+print(f"? {encrypted}")
 
 decrypted = engine.decrypt(encrypted)
 
@@ -907,7 +907,7 @@ anomalies = audit.detect_anomalies(hours=24)
 
 ---
 
-## ð å
+##
 
 ### 6.1 性能基准
 
@@ -915,14 +915,14 @@ anomalies = audit.detect_anomalies(hours=24)
 | PII扫描 | 1MB文本 | 50ms | 20MB/s |
 | 数据加密 | 1MB数据 | 30ms | 33MB/s |
 | 数据解密 | 1MB数据 | 30ms | 33MB/s |
-¥ | 1000æ?| 50ms | 20Kæ?s |
+| 1000?| 50ms | 20K?s |
 
 ### 6.2 资源占用
 
 置 |
 |------|---------|---------|
-| CPU | 1æ ?| 2æ ?|
-| å
+| CPU | 1?| 2?|
+|
 存 | 512MB | 1GB |
 | 存储 | 1GB | 5GB |
 
@@ -931,7 +931,7 @@ anomalies = audit.detect_anomalies(hours=24)
 
 ### 7.1 密钥管理
 
-2. **å®å
+2. **
 3. **备份策略**: 加密备份密钥文件
 4. **访问控制**: 限制密钥访问权限
 
@@ -943,11 +943,11 @@ anomalies = audit.detect_anomalies(hours=24)
 | 法规 | 要求 | 实现方式 |
 |------|------|---------|
 | GDPR | 数据最小化 | PII识别+脱敏 |
-¨ | å
+|
 
 ---
 
-## ð å
+##
 
 
 - [x] PII识别引擎部署
@@ -969,12 +969,11 @@ anomalies = audit.detect_anomalies(hours=24)
 |------|------|------|
 | HashiCorp Vault | https://github.com/hashicorp/vault | 密钥管理 |
 
-### 9.2 ç¸å
-³ææ¡£
+### 9.2
 
 - [GDPR合规指南](https://gdpr.eu/)
 - [PCI DSS标准](https://www.pcisecuritystandards.org/)
-¨æ³](http://www.npc.gov.cn/)
+](http://www.npc.gov.cn/)
 
 ---
 

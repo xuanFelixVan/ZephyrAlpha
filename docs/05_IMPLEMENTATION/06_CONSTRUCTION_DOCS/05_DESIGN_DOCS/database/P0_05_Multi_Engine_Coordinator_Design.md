@@ -4,28 +4,28 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: ﻠ۵ﮒﺕ­ﻟﮒﺝﮔﭘﮔﮒﺕ?
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
   - 实施指南、部署文档
   - 文档治理
   - 日志系统
-standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﮔ ﮒ
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﮔﮒ
 applicable_scope: ﮒ۳ﮒﺙﮔﻛﭦﮒ۰ﮒﻟﺍ?
-compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔ ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: P0-01_Database_Design_Document.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﺅﺙ
+# ﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰ﺅﺙﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﺅﺙ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
 
 
-> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔ ﮒﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟ؟ﺝﻟ؟۰
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.0 - ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮒﮒ۳ﮒﺙﮔﮒﮒﮒ۷ﻟ؟ﺝﻟ؟۰
 > **ﻟ؟ﺝﻟ؟۰ﮔ۷۰ﮒﺙ**: Sagaﮒﮒﺕﮒﺙﻛﭦﮒ۰ﮔ۷۰ﮒﺙ?+ ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷ﮔﭘﮔ
-> **ﮔ ﺕﮒﺟﻟﻟﺑ۲**: ﮒ۳ﮒﺙﮔﻛﭦﮒ۰ﮒﻟﺍﻙﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻛﺟﻠﻙﮔﻠﮔ۱ﮒ۳?
+> **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﮒ۳ﮒﺙﮔﻛﭦﮒ۰ﮒﻟﺍﻙﮔﺍﮔ؟ﻛﺕﻟﺑﮔ۶ﻛﺟﻠﻙﮔﻠﮔ۱ﮒ۳?
 
 ## ﻭ ﮒﮒﮒ۷ﮔ۵ﻟﺟ?
 
@@ -43,7 +43,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
                             ﻗ?ﻛﭦﻛﭨﭘﻠ۸ﺎﮒ۷
 ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
-ﻗ?                   Sagaﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳                              ﻗ?
+ﻗ?                   Sagaﮔ۶ﻟ۰ﮔ۴ﻠ۹۳                              ﻗ?
 ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?     ﻗ?
 ﻗ? ﻗStep 1    ﻗ?ﻗStep 2    ﻗ?ﻗStep 3    ﻗ?ﻗStep 4    ﻗ?     ﻗ?
 ﻗ? ﻗﮒﮒﭨﭦﻟ؟۱ﮒ? ﻗﻗﻗﮒﭨﻝﭨﻟﭖﻠ? ﻗﻗﻗﮔﻛﭦ۳ﮒﺙﮔ? ﻗﻗﻗﮔﺑﮔﺍﮔﻛﭨ? ﻗ?     ﻗ?
@@ -56,7 +56,7 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 ---
 
-## 1. Sagaﮒﻟﺍﮒ۷ﮔ ﺕﮒﺟﻟ؟ﺝﻟ؟?
+## 1. Sagaﮒﻟﺍﮒ۷ﮔﺕﮒﺟﻟ؟ﺝﻟ؟?
 
 ### 1.1 Sagaﻝﭘﮔﮔﭦ
 
@@ -77,7 +77,7 @@ class SagaStatus(Enum):
     FAILED = 'failed'             # ﮒ۳ﺎﻟﺑ۴
 
 class StepStatus(Enum):
-    """ﮔ­۴ﻠ۹۳ﻝﭘﮔ?""
+"""ﮔ۴ﻠ۹۳ﻝﭘﮔ?""
     PENDING = 'pending'           # ﮒﺝﮔ۶ﻟ۰?
     RUNNING = 'running'           # ﮔ۶ﻟ۰ﻛﺕ?
     COMPLETED = 'completed'       # ﮒﺓﺎﮒ؟ﮔ?
@@ -86,7 +86,7 @@ class StepStatus(Enum):
     FAILED = 'failed'             # ﮒ۳ﺎﻟﺑ۴
 
 class SagaStep:
-    """Sagaﮔ­۴ﻠ۹۳"""
+"""Sagaﮔ۴ﻠ۹۳"""
     
     def __init__(
         self,
@@ -108,12 +108,12 @@ class SagaStep:
         self.completed_at: Optional[datetime] = None
     
     async def execute(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳"""
+"""ﮔ۶ﻟ۰ﮔ۴ﻠ۹۳"""
         self.status = StepStatus.RUNNING
         self.started_at = datetime.now()
         
         try:
-            # ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳ﺅﺙﮒﺕ۵ﻟﭘﮔﭘﮔ۶ﮒﭘ
+# ﮔ۶ﻟ۰ﮔ۴ﻠ۹۳ﺅﺙﮒﺕ۵ﻟﭘﮔﭘﮔ۶ﮒﭘ
             result = await asyncio.wait_for(
                 self.execute_func(context),
                 timeout=self.timeout
@@ -126,7 +126,7 @@ class SagaStep:
             return result
         except asyncio.TimeoutError:
             self.status = StepStatus.FAILED
-            self.error = f"ﮔ­۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
+self.error = f"ﮔ۴ﻠ۹۳ﮔ۶ﻟ۰ﻟﭘﮔﭘ: {self.timeout}ﻝ۶?
             raise Exception(self.error)
         except Exception as e:
             self.status = StepStatus.FAILED
@@ -134,7 +134,7 @@ class SagaStep:
             raise
     
     async def compensate(self, context: Dict[str, Any]) -> bool:
-        """ﻟ۰۴ﮒﺟﮔ­۴ﻠ۹۳"""
+"""ﻟ۰۴ﮒﺟﮔ۴ﻠ۹۳"""
         self.status = StepStatus.COMPENSATING
         
         try:
@@ -165,7 +165,7 @@ class Saga:
         self.updated_at = datetime.now()
     
     def add_step(self, step: SagaStep) -> None:
-        """ﮔﺓﭨﮒ ﮔ­۴ﻠ۹۳"""
+"""ﮔﺓﭨﮒﮔ۴ﻠ۹۳"""
         self.steps.append(step)
     
     async def execute(self) -> bool:
@@ -174,18 +174,18 @@ class Saga:
         self.updated_at = datetime.now()
         
         try:
-            # ﻠ۰ﭦﮒﭦﮔ۶ﻟ۰ﮔﮔﮔ­۴ﻠ۹?
+# ﻠ۰ﭦﮒﭦﮔ۶ﻟ۰ﮔﮔﮔ۴ﻠ۹?
             for i, step in enumerate(self.steps):
                 self.current_step_index = i
                 
-                # ﮔ۶ﻟ۰ﮔ­۴ﻠ۹۳
+# ﮔ۶ﻟ۰ﮔ۴ﻠ۹۳
                 result = await step.execute(self.context)
                 
                 # ﮔﺑﮔﺍﻛﺕﻛﺕﮔ?
                 self.context.update(result)
                 self.updated_at = datetime.now()
             
-            # ﮔﮔﮔ­۴ﻠ۹۳ﮔ۶ﻟ۰ﮔﮒ?
+# ﮔﮔﮔ۴ﻠ۹۳ﮔ۶ﻟ۰ﮔﮒ?
             self.status = SagaStatus.COMPLETED
             self.updated_at = datetime.now()
             return True
@@ -202,16 +202,16 @@ class Saga:
         self.updated_at = datetime.now()
         
         try:
-            # ﻠﮒﭦﻟ۰۴ﮒﺟﮒﺓﺎﮒ؟ﮔﻝﮔ­۴ﻠ۹۳
+# ﻠﮒﭦﻟ۰۴ﮒﺟﮒﺓﺎﮒ؟ﮔﻝﮔ۴ﻠ۹۳
             for i in range(self.current_step_index, -1, -1):
                 step = self.steps[i]
                 
                 if step.status == StepStatus.COMPLETED:
-                    # ﻟ۰۴ﮒﺟﮔ­۴ﻠ۹۳
+# ﻟ۰۴ﮒﺟﮔ۴ﻠ۹۳
                     success = await step.compensate(self.context)
                     
                     if not success:
-                        print(f"ﮔ­۴ﻠ۹۳ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {step.step_name}")
+print(f"ﮔ۴ﻠ۹۳ﻟ۰۴ﮒﺟﮒ۳ﺎﻟﺑ۴: {step.step_name}")
             
             self.status = SagaStatus.COMPENSATED
             self.updated_at = datetime.now()
@@ -228,7 +228,7 @@ class Saga:
 
 ## 2. ﻟ؟۱ﮒSagaﻟ؟ﺝﻟ؟۰
 
-### 2.1 ﻟ؟۱ﮒSagaﮔ­۴ﻠ۹۳
+### 2.1 ﻟ؟۱ﮒSagaﮔ۴ﻠ۹۳
 
 ```python
 class OrderSaga:
@@ -289,7 +289,7 @@ class OrderSaga:
             timeout=10
         )
         
-        # ﮔﺓﭨﮒ ﮔ­۴ﻠ۹۳
+# ﮔﺓﭨﮒﮔ۴ﻠ۹۳
         saga.add_step(step1)
         saga.add_step(step2)
         saga.add_step(step3)
@@ -381,7 +381,7 @@ class OrderSaga:
         engine = self.engine_manager.get_engine(order['engine_id'])
         
         if not engine:
-            raise Exception(f"ﮒﺙﮔﻛﺕﮒ­ﮒ? {order['engine_id']}")
+raise Exception(f"ﮒﺙﮔﻛﺕﮒﮒ? {order['engine_id']}")
         
         # ﮔﻛﭦ۳ﻟ؟۱ﮒﮒﺍﮒﺙﮔ?
         result = await engine.create_order(
@@ -430,7 +430,7 @@ class OrderSaga:
         
         # ﮔﺑﮔﺍﮔﻛﭨ
         if order['direction'] == 'buy':
-            # ﻛﺗﺍﮒ۴ﺅﺙﮒ۱ﮒ ﮔﻛﭨ?
+# ﻛﺗﺍﮒ۴ﺅﺙﮒ۱ﮒﮔﻛﭨ?
             position = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -467,7 +467,7 @@ class OrderSaga:
                 price=position['avg_cost']
             )
         else:
-            # ﮒﮒﭦﮒﮔﭨﺅﺙﮒ۱ﮒ ﮔﻛﭨ?
+# ﮒﮒﭦﮒﮔﭨﺅﺙﮒ۱ﮒﮔﻛﭨ?
             success = await self.position_service.increase_position(
                 account_id=order['account_id'],
                 stock_code=order['stock_code'],
@@ -498,13 +498,13 @@ class SagaCoordinator:
     
     async def start_saga(self, saga: Saga) -> str:
         """ﮒﺁﮒ۷Saga"""
-        # ﻛﺟﮒ­Saga
+# ﻛﺟﮒSaga
         await self.saga_repository.save_saga(saga)
         
-        # ﮔﺓﭨﮒ ﮒﺍﮔﺑﭨﻟﺓﮒﻟ۰?
+# ﮔﺓﭨﮒﮒﺍﮔﺑﭨﻟﺓﮒﻟ۰?
         self.active_sagas[saga.saga_id] = saga
         
-        # ﮒﺙﮔ­۴ﮔ۶ﻟ۰Saga
+# ﮒﺙﮔ۴ﮔ۶ﻟ۰Saga
         asyncio.create_task(self._execute_saga(saga))
         
         return saga.saga_id
@@ -616,7 +616,7 @@ CREATE TABLE saga_transactions (
     error_message TEXT
 );
 
--- Sagaﮔ­۴ﻠ۹۳ﻟ۰?
+-- Sagaﮔ۴ﻠ۹۳ﻟ۰?
 CREATE TABLE saga_steps (
     id BIGSERIAL PRIMARY KEY,
     saga_id VARCHAR(100) NOT NULL,
@@ -669,12 +669,12 @@ class SagaRecoveryService:
         if not saga:
             return False
         
-        # ﮔ ﺗﮔ؟ﻝﭘﮔﮒﺏﮒ؟ﮔ۱ﮒ۳ﻝ­ﻝ?
+# ﮔﺗﮔ؟ﻝﭘﮔﮒﺏﮒ؟ﮔ۱ﮒ۳ﻝﻝ?
         if saga['status'] == SagaStatus.RUNNING.value:
-            # ﮔ۶ﻟ۰ﻛﺕ­ﻝSagaﺅﺙﻠﮔﺍﮔ۶ﻟ۰?
+# ﮔ۶ﻟ۰ﻛﺕﻝSagaﺅﺙﻠﮔﺍﮔ۶ﻟ۰?
             return await self._retry_saga(saga)
         elif saga['status'] == SagaStatus.COMPENSATING.value:
-            # ﻟ۰۴ﮒﺟﻛﺕ­ﻝSagaﺅﺙﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒ?
+# ﻟ۰۴ﮒﺟﻛﺕﻝSagaﺅﺙﻝﭨ۶ﻝﭨﻟ۰۴ﮒ?
             return await self._continue_compensate(saga)
         elif saga['status'] == SagaStatus.FAILED.value:
             # ﮒ۳ﺎﻟﺑ۴ﻝSagaﺅﺙﮔﮒ۷ﮒ۳ﻝ?
@@ -688,8 +688,8 @@ class SagaRecoveryService:
         return False
     
     async def _continue_compensate(self, saga: Dict[str, Any]) -> bool:
-        """ﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒﺟ"""
-        # TODO: ﮒ؟ﻝﺍﻝﭨ۶ﻝﭨ­ﻟ۰۴ﮒﺟﻠﭨﻟﺝ
+"""ﻝﭨ۶ﻝﭨﻟ۰۴ﮒﺟ"""
+# TODO: ﮒ؟ﻝﺍﻝﭨ۶ﻝﭨﻟ۰۴ﮒﺟﻠﭨﻟﺝ
         return False
     
     async def _manual_recovery(self, saga: Dict[str, Any]) -> bool:
@@ -702,16 +702,16 @@ class SagaRecoveryService:
 
 ## 6. ﮔ۶ﻟﺛﻛﺕﻝﮔ?
 
-### 6.1 ﮔ۶ﻟﺛﮔﮔ 
+### 6.1 ﮔ۶ﻟﺛﮔﮔ
 
-| ﮔﮔ  | ﻝ؟ﮔ ﮒ?| ﮒ۳ﮔﺏ۷ |
+| ﮔﮔ | ﻝ؟ﮔﮒ?| ﮒ۳ﮔﺏ۷ |
 |------|--------|------|
-| **Sagaﮔ۶ﻟ۰ﮔﭘﻠﺑ** | < 5ﻝ۶?| ﮒﮒ،ﮔﮔﮔ­۴ﻠ۹?|
-| **ﻟ۰۴ﮒﺟﮔﭘﻠﺑ** | < 10ﻝ۶?| ﮒﮒ،ﮔﮔﻟ۰۴ﮒﺟﮔ­۴ﻠ۹?|
+| **Sagaﮔ۶ﻟ۰ﮔﭘﻠﺑ** | < 5ﻝ۶?| ﮒﮒ،ﮔﮔﮔ۴ﻠ۹?|
+| **ﻟ۰۴ﮒﺟﮔﭘﻠﺑ** | < 10ﻝ۶?| ﮒﮒ،ﮔﮔﻟ۰۴ﮒﺟﮔ۴ﻠ۹?|
 | **ﮒﺗﭘﮒSagaﮔ?* | 100 | ﮒﮔﭘﮔ۶ﻟ۰ﻝSagaﮔﺍﻠ |
 | **ﮔﮒﻝ?* | ﻗ?99% | Sagaﮔﮒﮒ؟ﮔﻝ?|
 
-### 6.2 ﻝﮔ۶ﮔﮔ 
+### 6.2 ﻝﮔ۶ﮔﮔ
 
 ```python
 class SagaMonitor:
@@ -749,7 +749,7 @@ class SagaMonitor:
         )
     
     async def get_metrics(self) -> Dict[str, Any]:
-        """ﻟﺓﮒﻝﮔ۶ﮔﮔ """
+"""ﻟﺓﮒﻝﮔ۶ﮔﮔ"""
         return {
             **self.metrics,
             'success_rate': (
@@ -762,4 +762,4 @@ class SagaMonitor:
 ---
 
 **ﻝﮔ؛**: 1.0.0 | **ﮔﺑﮔﺍﮔ۴ﮔ**: 2026-04-02 | **ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
-**ﻛﺕﻛﺕﮔ­?*: P0-6 ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
+**ﻛﺕﻛﺕﮔ?*: P0-6 ﻟﺑ۵ﮔﺓﻝ؟۰ﻝﻟﺁ۵ﻝﭨﻟ؟ﺝﻟ؟۰
