@@ -9,7 +9,7 @@ standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 1 æ°æ®é¢å¤çå±
 compliance_level: ä¸ä¸æ å
 priority: P1
-layer: "Layer 1 (æ°æ®é¢å¤çå±)"
+layer: Layer 5.1 (数据处理)
 responsibility: CDCåæ´æ°æ®æè·ä¸å¢éåæ­?
 ---
 

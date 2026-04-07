@@ -1,80 +1,80 @@
 ---
 responsibility:
-  - 简化版风险预算系统
-  - 风险预算分配
-  - 动态风险调�?
-  - 风险预算优化
+  - ç®åçé£é©é¢ç®ç³»ç»
+  - é£é©é¢ç®åé
+  - å¨æé£é©è°æ?
+  - é£é©é¢ç®ä¼å
 
 module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.3 (风险管理)
 ---
 
-# 简化版动态风险预算系统蓝�?
+# ç®åçå¨æé£é©é¢ç®ç³»ç»èå?
 
-> **核心职责**: 基于VaR的风险预�?+ 动态风险预算调�?
-> **职责边界**: 
-> - �?本文档负责：风险预算、动态调整、VaR计算
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: åºäºVaRçé£é©é¢ç®?+ å¨æé£é©é¢ç®è°æ?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼é£é©é¢ç®ãå¨æè°æ´ãVaRè®¡ç®
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-负责Simplified Risk Budget System的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
+è´è´£Simplified Risk Budget Systemçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 1. 概述
+## 1. æ¦è¿°
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 6 - 组合优化层（风险预算模块�?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼é£é©é¢ç®æ¨¡åï¼?
 
-**核心价�?*:
-- 基于VaR的风险预算分�?
-- 动态风险预算调�?
-- 风险预算使用监控
-- 风险预算预警机制
+**æ ¸å¿ä»·å?*:
+- åºäºVaRçé£é©é¢ç®åé?
+- å¨æé£é©é¢ç®è°æ?
+- é£é©é¢ç®ä½¿ç¨çæ§
+- é£é©é¢ç®é¢è­¦æºå¶
 
-**业务价�?*:
-- 实现风险预算动态化
-- 基于VaR的风险贡献预�?
-- 风险预算精细化管�?
-- 风险预算使用率提�?
+**ä¸å¡ä»·å?*:
+- å®ç°é£é©é¢ç®å¨æå
+- åºäºVaRçé£é©è´¡ç®é¢ç®?
+- é£é©é¢ç®ç²¾ç»åç®¡ç?
+- é£é©é¢ç®ä½¿ç¨çæå?
 
-### 1.2 版本信息
+### 1.2 çæ¬ä¿¡æ¯
 
-| 项目 | 内容 |
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 |
-| **版本** | v1.0.0 |
-| **开源依�?* | PyPortfolioOpt, Riskfolio-Lib |
-| **预计工时** | 60h（约1.5周） |
+| **æ¨¡åID** | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 |
+| **çæ¬** | v1.0.0 |
+| **å¼æºä¾èµ?* | PyPortfolioOpt, Riskfolio-Lib |
+| **é¢è®¡å·¥æ¶** | 60hï¼çº¦1.5å¨ï¼ |
 
-### 1.3 与其他风险预算模块的关系
+### 1.3 ä¸å¶ä»é£é©é¢ç®æ¨¡åçå³ç³»
 
-本模块是风险预算体系中的**简化版�?*，适用于个人开发和快速实现：
+æ¬æ¨¡åæ¯é£é©é¢ç®ä½ç³»ä¸­ç**ç®åçæ?*ï¼éç¨äºä¸ªäººå¼ååå¿«éå®ç°ï¼
 
-| 模块 | 核心定位 | 适用场景 | 关系说明 |
+| æ¨¡å | æ ¸å¿å®ä½ | éç¨åºæ¯ | å³ç³»è¯´æ |
 |------|----------|----------|----------|
-| **RISK_CONTRIBUTION_ANALYSIS** | 风险贡献分析 | 基础分析能力 | 本模块依赖其计算风险贡献 |
-| **SIMPLIFIED_RISK_BUDGET_SYSTEM** (本模�? | 简化风险预�?| 个人开发、快速实�?| 简化版本，核心功能完整 |
-| **HIERARCHICAL_RISK_BUDGET** | 层级风险预算 | 多层级复杂组�?| 本模块的高级扩展版本 |
+| **RISK_CONTRIBUTION_ANALYSIS** | é£é©è´¡ç®åæ | åºç¡åæè½å | æ¬æ¨¡åä¾èµå¶è®¡ç®é£é©è´¡ç® |
+| **SIMPLIFIED_RISK_BUDGET_SYSTEM** (æ¬æ¨¡å? | ç®åé£é©é¢ç®?| ä¸ªäººå¼åãå¿«éå®ç?| ç®åçæ¬ï¼æ ¸å¿åè½å®æ´ |
+| **HIERARCHICAL_RISK_BUDGET** | å±çº§é£é©é¢ç® | å¤å±çº§å¤æç»å?| æ¬æ¨¡åçé«çº§æ©å±çæ¬ |
 
-**推荐实施路径**:
-1. 先实�?RISK_CONTRIBUTION_ANALYSIS (2-3�? - 基础分析能力
-2. 再实现本模块 (60h) - 简化版�?
-3. 最后实�?HIERARCHICAL_RISK_BUDGET (5-7�? - 高级多层�?
+**æ¨èå®æ½è·¯å¾**:
+1. åå®ç?RISK_CONTRIBUTION_ANALYSIS (2-3å¤? - åºç¡åæè½å
+2. åå®ç°æ¬æ¨¡å (60h) - ç®åçæ?
+3. æåå®ç?HIERARCHICAL_RISK_BUDGET (5-7å¤? - é«çº§å¤å±çº?
 
 ---
-## 2. 技术实�?
+## 2. ææ¯å®ç?
 
-### 2.1 核心API
+### 2.1 æ ¸å¿API
 
 ```python
 from dataclasses import dataclass
@@ -84,14 +84,14 @@ import pandas as pd
 
 @dataclass
 class RiskBudgetConfig:
-    """风险预算配置"""
-    total_risk_budget: float  # 总风险预算（VaR限额�?
-    asset_budgets: Dict[str, float]  # 各资产风险预�?
-    rebalance_threshold: float  # 再平衡阈�?
-    lookback_period: int  # 回溯�?
+    """é£é©é¢ç®éç½®"""
+    total_risk_budget: float  # æ»é£é©é¢ç®ï¼VaRéé¢ï¼?
+    asset_budgets: Dict[str, float]  # åèµäº§é£é©é¢ç®?
+    rebalance_threshold: float  # åå¹³è¡¡éå?
+    lookback_period: int  # åæº¯æ?
 
 class SimplifiedRiskBudgetSystem:
-    """简化版动态风险预算系�?""
+    """ç®åçå¨æé£é©é¢ç®ç³»ç»?""
     
     def __init__(self, config: RiskBudgetConfig):
         self.config = config
@@ -105,15 +105,15 @@ class SimplifiedRiskBudgetSystem:
         confidence_level: float = 0.95
     ) -> Dict[str, float]:
         """
-        计算基于VaR的风险预�?
+        è®¡ç®åºäºVaRçé£é©é¢ç®?
         
         Args:
-            weights: 组合权重
-            returns: 收益率数�?
-            confidence_level: 置信水平
+            weights: ç»åæé
+            returns: æ¶ççæ°æ?
+            confidence_level: ç½®ä¿¡æ°´å¹³
             
         Returns:
-            各资产的VaR风险预算
+            åèµäº§çVaRé£é©é¢ç®
         """
         pass
     
@@ -123,14 +123,14 @@ class SimplifiedRiskBudgetSystem:
         market_conditions: Dict[str, float]
     ) -> Dict[str, float]:
         """
-        动态调整风险预�?
+        å¨æè°æ´é£é©é¢ç®?
         
         Args:
-            current_budget: 当前风险预算
-            market_conditions: 市场条件（波动率、相关性等�?
+            current_budget: å½åé£é©é¢ç®
+            market_conditions: å¸åºæ¡ä»¶ï¼æ³¢å¨çãç¸å³æ§ç­ï¼?
             
         Returns:
-            调整后的风险预算
+            è°æ´åçé£é©é¢ç®
         """
         pass
     
@@ -140,26 +140,26 @@ class SimplifiedRiskBudgetSystem:
         cov_matrix: np.ndarray
     ) -> Dict[str, float]:
         """
-        监控风险预算使用情况
+        çæ§é£é©é¢ç®ä½¿ç¨æåµ
         
         Returns:
-            各资产的风险预算使用�?
+            åèµäº§çé£é©é¢ç®ä½¿ç¨ç?
         """
         pass
 ```
 
-### 2.2 VaR计算�?
+### 2.2 VaRè®¡ç®å?
 
 ```python
 class VaRCalculator:
-    """VaR计算�?""
+    """VaRè®¡ç®å?""
     
     def historical_var(
         self,
         returns: pd.DataFrame,
         confidence_level: float = 0.95
     ) -> float:
-        """历史模拟法VaR"""
+        """åå²æ¨¡ææ³VaR"""
         pass
     
     def parametric_var(
@@ -168,7 +168,7 @@ class VaRCalculator:
         sigma: np.ndarray,
         confidence_level: float = 0.95
     ) -> float:
-        """参数法VaR"""
+        """åæ°æ³VaR"""
         pass
     
     def monte_carlo_var(
@@ -177,17 +177,17 @@ class VaRCalculator:
         n_simulations: int = 10000,
         confidence_level: float = 0.95
     ) -> float:
-        """蒙特卡洛VaR"""
+        """èç¹å¡æ´VaR"""
         pass
 ```
 
 ---
 
-## 3. 接口定义
+## 3. æ¥å£å®ä¹
 
 ```python
 class SimplifiedRiskBudgetAPI:
-    """简化版风险预算API"""
+    """ç®åçé£é©é¢ç®API"""
     
     @endpoint("/api/v1/risk_budget/calculate")
     async def calculate_budget(
@@ -196,7 +196,7 @@ class SimplifiedRiskBudgetAPI:
         returns: List[List[float]],
         confidence_level: float = 0.95
     ) -> BudgetResult:
-        """计算风险预算"""
+        """è®¡ç®é£é©é¢ç®"""
         
     @endpoint("/api/v1/risk_budget/adjust")
     async def adjust_budget(
@@ -204,7 +204,7 @@ class SimplifiedRiskBudgetAPI:
         current_budget: Dict[str, float],
         market_conditions: Dict[str, float]
     ) -> AdjustResult:
-        """动态调整风险预�?""
+        """å¨æè°æ´é£é©é¢ç®?""
         
     @endpoint("/api/v1/risk_budget/monitor")
     async def monitor_usage(
@@ -212,88 +212,88 @@ class SimplifiedRiskBudgetAPI:
         weights: List[float],
         cov_matrix: List[List[float]]
     ) -> MonitorResult:
-        """监控风险预算使用"""
+        """çæ§é£é©é¢ç®ä½¿ç¨"""
 ```
 
 ---
 
-## 4. 实施路径
+## 4. å®æ½è·¯å¾
 
-| 阶段 | 任务 | 工时 |
+| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
 |------|------|------|
-| Phase 1 | VaR计算器实�?| 16h |
-| Phase 2 | 风险预算分配算法 | 20h |
-| Phase 3 | 动态调整机�?| 12h |
-| Phase 4 | API、测试、文�?| 12h |
+| Phase 1 | VaRè®¡ç®å¨å®ç?| 16h |
+| Phase 2 | é£é©é¢ç®åéç®æ³ | 20h |
+| Phase 3 | å¨æè°æ´æºå?| 12h |
+| Phase 4 | APIãæµè¯ãææ¡?| 12h |
 
 ---
 
-## 5. 与其他模块的关系
+## 5. ä¸å¶ä»æ¨¡åçå³ç³»
 
-### 5.1 上游依赖
+### 5.1 ä¸æ¸¸ä¾èµ
 
-| 模块 | 依赖关系 | 说明 |
+| æ¨¡å | ä¾èµå³ç³» | è¯´æ |
 |------|----------|------|
-| RISK_CONTRIBUTION_ANALYSIS | 强依�?| 提供风险贡献计算能力 |
+| RISK_CONTRIBUTION_ANALYSIS | å¼ºä¾èµ?| æä¾é£é©è´¡ç®è®¡ç®è½å |
 
-### 5.2 下游服务
+### 5.2 ä¸æ¸¸æå¡
 
-| 模块 | 服务关系 | 说明 |
+| æ¨¡å | æå¡å³ç³» | è¯´æ |
 |------|----------|------|
-| HIERARCHICAL_RISK_BUDGET | 扩展关系 | 本模块的高级版本 |
-| PORTFOLIO_REBALANCING | 输入关系 | 提供风险预算约束 |
+| HIERARCHICAL_RISK_BUDGET | æ©å±å³ç³» | æ¬æ¨¡åçé«çº§çæ¬ |
+| PORTFOLIO_REBALANCING | è¾å¥å³ç³» | æä¾é£é©é¢ç®çº¦æ |
 
 ---
 
-## 6. 质量指标
+## 6. è´¨éææ 
 
-| 指标 | 目标�?| 测量方法 |
+| ææ  | ç®æ å?| æµéæ¹æ³ |
 |------|--------|----------|
-| 风险预算使用�?| 90% | 功能测试 |
-| VaR计算准确�?| 95% | 回测验证 |
-| 动态调整响应时�?| <100ms | 性能测试 |
+| é£é©é¢ç®ä½¿ç¨ç?| 90% | åè½æµè¯ |
+| VaRè®¡ç®åç¡®åº?| 95% | åæµéªè¯ |
+| å¨æè°æ´ååºæ¶é?| <100ms | æ§è½æµè¯ |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active | **合规�?*: 100%
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active | **åè§ç?*: 100%
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active
 ---
 
-## 7. 文档治理
+## 7. ææ¡£æ²»ç
 
-### 7.1 System_Manifest.md索引
+### 7.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Simplified Risk Budget System
-- **模块ID**: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
-- **蓝图文档**: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 6 组合优化�?
-- **状�?*: Active
+- **æ¨¡åID**: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
+- **èå¾ææ¡£**: SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 6 ç»åä¼åå±?
+- **ç¶æ?*: Active
 ```
 
-### 7.2 模块职责边界
+### 7.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Simplified Risk Budget System** | Layer 6 组合优化�?| **核心模块** |
+| **Simplified Risk Budget System** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 7.3 版本管理
+### 7.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Active

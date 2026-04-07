@@ -4,82 +4,82 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 数据源管�?
-  - 数据源接�?
-  - 数据源监�?
-  - 数据源配�?
-layer: "Layer 1 (数据�?"
+  - æ°æ®æºç®¡ç?
+  - æ°æ®æºæ¥å?
+  - æ°æ®æºçæ?
+  - æ°æ®æºéç½?
+layer: Layer 5.1 (数据处理)
 ---
 
 # DATA SOURCE MANAGEMENT BLUEPRINT
 
-> **核心职责**: Data Source Management蓝图设计
-> **职责边界**: 
-> - �?本文档负责：Data Source Management蓝图设计相关内容
-> - �?本文档不负责：其他模块内�?
+> **æ ¸å¿èè´£**: Data Source Managementèå¾è®¾è®¡
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼Data Source Managementèå¾è®¾è®¡ç¸å³åå®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
 
-�?--
+ï»?--
 module_id: DATASOURCEMANAGEMENTBLUEPRI_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
+owner: å®æ½å¢é
 responsibility:
-  - 因子计算
-  - 组合优化
-  - 数据�?
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系�?
-compliance_level: 专业标准
-layer: "Layer 1 (数据源层)"
-�? 数据源管理蓝�?
+  - å å­è®¡ç®
+  - ç»åä¼å
+  - æ°æ®æº?
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: å¨ç³»ç»?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.1 (数据处理)
+ï»? æ°æ®æºç®¡çèå?
 
-> **核心定位**: 数据源管理蓝图的核心功能实现
+> **æ ¸å¿å®ä½**: æ°æ®æºç®¡çèå¾çæ ¸å¿åè½å®ç°
 
 
-> **模块ID**: `DATA_SOURCE_MGMT_001`
-> **实施周期**: Week 33-34�?周）
-> **优先�?*: P2（优化）
-> **预期收益**: 提升数据源管理效�?0%，降低数据源故障影响90%
+> **æ¨¡åID**: `DATA_SOURCE_MGMT_001`
+> **å®æ½å¨æ**: Week 33-34ï¼?å¨ï¼
+> **ä¼åçº?*: P2ï¼ä¼åï¼
+> **é¢ææ¶ç**: æåæ°æ®æºç®¡çæç?0%ï¼éä½æ°æ®æºæéå½±å90%
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-构建DATA SOURCE MANAGEMENT的设计与实现，基于Delta Lake技术，优化核心功能，确保数据质量合规�?
+æå»ºDATA SOURCE MANAGEMENTçè®¾è®¡ä¸å®ç°ï¼åºäºDelta Lakeææ¯ï¼ä¼åæ ¸å¿åè½ï¼ç¡®ä¿æ°æ®è´¨éåè§ã?
 
-## 一、设计背景与目标
+## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
 
-### 1.1 业务需�?
+### 1.1 ä¸å¡éæ±?
 
-**当前痛点**:
-- 数据源配置分�?
-- 数据源状态不透明
-- 数据源故障影响大
-- 数据源权限管理混�?
+**å½åçç¹**:
+- æ°æ®æºéç½®åæ?
+- æ°æ®æºç¶æä¸éæ
+- æ°æ®æºæéå½±åå¤§
+- æ°æ®æºæéç®¡çæ··ä¹?
 
-**业务目标**:
-- 建立统一数据源管理平�?
-- 实时监控数据源状�?
-- 快速响应数据源故障
-- 规范数据源权限管�?
+**ä¸å¡ç®æ **:
+- å»ºç«ç»ä¸æ°æ®æºç®¡çå¹³å?
+- å®æ¶çæ§æ°æ®æºç¶æ?
+- å¿«éååºæ°æ®æºæé
+- è§èæ°æ®æºæéç®¡ç?
 
-### 1.2 技术目�?
+### 1.2 ææ¯ç®æ ?
 
-| 指标 | 目标�?| 说明 |
+| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **数据源监控覆盖率** | 100% | 所有数据源被监�?|
-| **故障发现时间** | <1分钟 | 故障发现时间<1分钟 |
-| **故障恢复时间** | <10分钟 | 故障恢复时间<10分钟 |
-| **权限管理准确�?* | 100% | 权限管理准确�?00% |
+| **æ°æ®æºçæ§è¦çç** | 100% | æææ°æ®æºè¢«çæ?|
+| **æéåç°æ¶é´** | <1åé | æéåç°æ¶é´<1åé |
+| **æéæ¢å¤æ¶é´** | <10åé | æéæ¢å¤æ¶é´<10åé |
+| **æéç®¡çåç¡®ç?* | 100% | æéç®¡çåç¡®ç?00% |
 
-## 三、核心模块设�?
+## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 数据源注册器 (SourceRegistry)
+### 3.1 æ°æ®æºæ³¨åå¨ (SourceRegistry)
 
 ```python
 from dataclasses import dataclass, field
@@ -88,7 +88,7 @@ from datetime import datetime
 from enum import Enum
 
 class SourceType(Enum):
-    """数据源类�?""
+    """æ°æ®æºç±»å?""
     DATABASE = "database"
     API = "api"
     FILE = "file"
@@ -96,7 +96,7 @@ class SourceType(Enum):
     CLOUD_STORAGE = "cloud_storage"
 
 class SourceStatus(Enum):
-    """数据源状�?""
+    """æ°æ®æºç¶æ?""
     ACTIVE = "active"
     INACTIVE = "inactive"
     ERROR = "error"
@@ -104,7 +104,7 @@ class SourceStatus(Enum):
 
 @dataclass
 class DataSource:
-    """数据�?""
+    """æ°æ®æº?""
     source_id: str
     source_name: str
     source_type: SourceType
@@ -116,13 +116,13 @@ class DataSource:
     tags: List[str] = field(default_factory=list)
 
 class SourceRegistry:
-    """数据源注册器"""
+    """æ°æ®æºæ³¨åå¨"""
     
     def __init__(self):
         self.sources: Dict[str, DataSource] = {}
     
     def register_source(self, source_config: Dict[str, Any]) -> DataSource:
-        """注册数据�?""
+        """æ³¨åæ°æ®æº?""
         source = DataSource(
             source_id=source_config['source_id'],
             source_name=source_config['source_name'],
@@ -136,12 +136,12 @@ class SourceRegistry:
         return source
     
     def get_source(self, source_id: str) -> Optional[DataSource]:
-        """获取数据�?""
+        """è·åæ°æ®æº?""
         return self.sources.get(source_id)
     
     def update_source(self, source_id: str,
                       updates: Dict[str, Any]) -> Optional[DataSource]:
-        """更新数据�?""
+        """æ´æ°æ°æ®æº?""
         source = self.get_source(source_id)
         if not source:
             return None
@@ -154,25 +154,25 @@ class SourceRegistry:
         return source
     
     def list_sources(self, source_type: SourceType = None) -> List[DataSource]:
-        """列出数据�?""
+        """ååºæ°æ®æº?""
         if source_type:
             return [s for s in self.sources.values() if s.source_type == source_type]
         return list(self.sources.values())
     
     def test_connection(self, source_id: str) -> Dict[str, Any]:
-        """测试连接"""
+        """æµè¯è¿æ¥"""
         source = self.get_source(source_id)
         if not source:
             return {"success": False, "error": "Source not found"}
         
         try:
-            # 实现连接测试逻辑
+            # å®ç°è¿æ¥æµè¯é»è¾
             return {"success": True, "latency_ms": 50}
         except Exception as e:
             return {"success": False, "error": str(e)}
 ```
 
-### 3.2 数据源监控器 (SourceMonitor)
+### 3.2 æ°æ®æºçæ§å¨ (SourceMonitor)
 
 ```python
 from typing import Dict, List, Any
@@ -181,7 +181,7 @@ import time
 
 @dataclass
 class SourceHealth:
-    """数据源健康状�?""
+    """æ°æ®æºå¥åº·ç¶æ?""
     source_id: str
     is_healthy: bool
     latency_ms: float
@@ -190,14 +190,14 @@ class SourceHealth:
     details: Dict[str, Any]
 
 class SourceMonitor:
-    """数据源监控器"""
+    """æ°æ®æºçæ§å¨"""
     
     def __init__(self, registry: SourceRegistry):
         self.registry = registry
         self.health_records: Dict[str, SourceHealth] = {}
     
     def check_source_health(self, source_id: str) -> SourceHealth:
-        """检查数据源健康状�?""
+        """æ£æ¥æ°æ®æºå¥åº·ç¶æ?""
         source = self.registry.get_source(source_id)
         if not source:
             return SourceHealth(
@@ -243,7 +243,7 @@ class SourceMonitor:
             return health
     
     def check_all_sources(self) -> Dict[str, SourceHealth]:
-        """检查所有数据源"""
+        """æ£æ¥æææ°æ®æº"""
         results = {}
         
         for source_id in self.registry.sources.keys():
@@ -253,12 +253,12 @@ class SourceMonitor:
     
     def get_health_history(self, source_id: str,
                            hours: int = 24) -> List[SourceHealth]:
-        """获取健康历史"""
-        # 实现健康历史查询逻辑
+        """è·åå¥åº·åå²"""
+        # å®ç°å¥åº·åå²æ¥è¯¢é»è¾
         return []
 ```
 
-### 3.3 故障管理�?(FailureManager)
+### 3.3 æéç®¡çå?(FailureManager)
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -266,7 +266,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class FailureSeverity(Enum):
-    """故障严重程度"""
+    """æéä¸¥éç¨åº¦"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -274,7 +274,7 @@ class FailureSeverity(Enum):
 
 @dataclass
 class FailureEvent:
-    """故障事件"""
+    """æéäºä»¶"""
     event_id: str
     source_id: str
     severity: FailureSeverity
@@ -285,19 +285,19 @@ class FailureEvent:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class FailureManager:
-    """故障管理�?""
+    """æéç®¡çå?""
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
         self.alert_handlers: List[callable] = []
     
     def register_alert_handler(self, handler: callable):
-        """注册告警处理�?""
+        """æ³¨ååè­¦å¤çå?""
         self.alert_handlers.append(handler)
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-        """检测故�?""
+        """æ£æµæé?""
         if health.is_healthy:
             return None
         
@@ -319,7 +319,7 @@ class FailureManager:
         return failure
     
     def _determine_severity(self, health: SourceHealth) -> FailureSeverity:
-        """确定故障严重程度"""
+        """ç¡®å®æéä¸¥éç¨åº¦"""
         if health.error_rate >= 0.9:
             return FailureSeverity.CRITICAL
         elif health.error_rate >= 0.5:
@@ -330,7 +330,7 @@ class FailureManager:
             return FailureSeverity.LOW
     
     def _send_alerts(self, failure: FailureEvent):
-        """发送告�?""
+        """åéåè­?""
         for handler in self.alert_handlers:
             try:
                 handler(failure)
@@ -339,7 +339,7 @@ class FailureManager:
     
     def resolve_failure(self, event_id: str,
                         resolution: str) -> Optional[FailureEvent]:
-        """解决故障"""
+        """è§£å³æé"""
         failure = next((f for f in self.failures if f.event_id == event_id), None)
         
         if not failure:
@@ -351,22 +351,22 @@ class FailureManager:
         return failure
     
     def get_active_failures(self) -> List[FailureEvent]:
-        """获取活跃故障"""
+        """è·åæ´»è·æé"""
         return [f for f in self.failures if not f.resolved_at]
 ```
 
 ---
-## 四、接口设�?
+## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
-#### 4.1.1 注册数据�?
+#### 4.1.1 æ³¨åæ°æ®æº?
 
 ```http
 POST /api/v1/sources
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```json
 {
   "source_name": "Wind Financial Database",
@@ -380,13 +380,13 @@ POST /api/v1/sources
 }
 ```
 
-#### 4.1.2 获取数据源健康状�?
+#### 4.1.2 è·åæ°æ®æºå¥åº·ç¶æ?
 
 ```http
 GET /api/v1/sources/{source_id}/health
 ```
 
-**响应示例**:
+**ååºç¤ºä¾**:
 ```json
 {
   "source_id": "wind_financial_db",
@@ -399,7 +399,7 @@ GET /api/v1/sources/{source_id}/health
 
 ---
 
-## 五、部署架�?
+## äºãé¨ç½²æ¶æ?
 
 ```yaml
 version: '3.8'
@@ -429,92 +429,92 @@ services:
 
 ---
 
-## 六、监控指�?
+## å­ãçæ§ææ ?
 
-| 指标名称 | 指标类型 | 说明 |
+| ææ åç§° | ææ ç±»å | è¯´æ |
 |---------|---------|------|
-| `source_total_sources` | Gauge | 数据源总数 |
-| `source_healthy_sources` | Gauge | 健康数据源数�?|
-| `source_latency_milliseconds` | Histogram | 数据源延�?|
-| `source_failures_total` | Counter | 故障总数 |
+| `source_total_sources` | Gauge | æ°æ®æºæ»æ° |
+| `source_healthy_sources` | Gauge | å¥åº·æ°æ®æºæ°é?|
+| `source_latency_milliseconds` | Histogram | æ°æ®æºå»¶è¿?|
+| `source_failures_total` | Counter | æéæ»æ° |
 
 ---
 
-## 七、实施计�?
+## ä¸ãå®æ½è®¡å?
 
-| 阶段 | 任务 | 预计时间 |
+| é¶æ®µ | ä»»å¡ | é¢è®¡æ¶é´ |
 |------|------|---------|
-| **阶段1** | 搭建Airflow和Vault | 2�?|
-| **阶段2** | 开发数据源注册�?| 3�?|
-| **阶段3** | 开发数据源监控�?| 3�?|
-| **阶段4** | 开发故障管理器 | 2�?|
-| **阶段5** | 测试和优�?| 2�?|
+| **é¶æ®µ1** | æ­å»ºAirflowåVault | 2å¤?|
+| **é¶æ®µ2** | å¼åæ°æ®æºæ³¨åå?| 3å¤?|
+| **é¶æ®µ3** | å¼åæ°æ®æºçæ§å?| 3å¤?|
+| **é¶æ®µ4** | å¼åæéç®¡çå¨ | 2å¤?|
+| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
-## 八、相关文�?
+## å«ãç¸å³ææ¡?
 
-- 数据血缘追踪蓝�?
-- [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
-- [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
+- æ°æ®è¡ç¼è¿½è¸ªèå?
+- [æ°æ®æ²»çå¹³å°èå¾](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
+- [é«æ§è½æ°æ®ç®¡éèå¾](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
 
 ---
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
+**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
 ---
 
-## 1. 文档治理
+## 1. ææ¡£æ²»ç
 
-### 1.1 System_Manifest.md索引
+### 1.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Source Management
-- **模块ID**: DATA_SOURCE_MANAGEMENT_001
-- **蓝图文档**: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **状�?*: Active
+- **æ¨¡åID**: DATA_SOURCE_MANAGEMENT_001
+- **èå¾ææ¡£**: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **ç¶æ?*: Active
 ```
 
-### 1.2 模块职责边界
+### 1.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Data Source Management** | Layer 0数据源层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
+| **Data Source Management** | Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
 
-### 1.3 版本管理
+### 1.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 
 
 ---
 
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供数据源元数据 |
-| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据源连�?|
-| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | 强依�?| 提供数据源连�?|
-| [ALTERNATIVE DATA INTEGRATION BLUEPRINT](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) | ALTERNATIVE_DATA_INTEGRATION__001 | 强依�?| 提供数据源配�?|
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾æ°æ®æºåæ°æ® |
+| [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ?|
+| [HIGH PERFORMANCE DATA PIPELINE BLUEPRINT](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md) | HIGH_PERFORMANCE_DATA_PIPELINE_001 | å¼ºä¾èµ?| æä¾æ°æ®æºè¿æ?|
+| [ALTERNATIVE DATA INTEGRATION BLUEPRINT](./ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md) | ALTERNATIVE_DATA_INTEGRATION__001 | å¼ºä¾èµ?| æä¾æ°æ®æºéç½?|
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
-| **Redis** | 7.0+ | 连接池管�?| [官方文档](https://redis.io/) |
+| **Apache Airflow** | 2.7+ | ä»»å¡è°åº¦ | [å®æ¹ææ¡£](https://airflow.apache.org/) |
+| **Redis** | 7.0+ | è¿æ¥æ± ç®¡ç?| [å®æ¹ææ¡£](https://redis.io/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
@@ -528,13 +528,13 @@ graph LR
     style D0 fill:#45b7d1
 ```
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | å®æ½å¢é |
 
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

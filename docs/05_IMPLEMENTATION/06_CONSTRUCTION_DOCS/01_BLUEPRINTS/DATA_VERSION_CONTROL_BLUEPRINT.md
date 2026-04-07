@@ -4,70 +4,70 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 1 数据�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 1 æ°æ®å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 数据版本管理
-  - 数据回溯
-  - 数据审计
-  - 版本控制
-layer: "Layer 1 (数据�?"
+  - æ°æ®çæ¬ç®¡ç
+  - æ°æ®åæº¯
+  - æ°æ®å®¡è®¡
+  - çæ¬æ§å¶
+layer: Layer 5.1 (数据处理)
 ---
 
-# 数据版本控制蓝图
+# æ°æ®çæ¬æ§å¶èå¾
 
-> **核心职责**: 数据版本控制，管理数据集版本，支持数据回溯和审计
-> **职责边界**: 
-> - �?本文档负责：数据版本管理、数据回溯、数据审计、版本控�?
-> - �?本文档不负责：数据存储、数据处理、数据质量监�?
+> **æ ¸å¿èè´£**: æ°æ®çæ¬æ§å¶ï¼ç®¡çæ°æ®éçæ¬ï¼æ¯ææ°æ®åæº¯åå®¡è®¡
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼æ°æ®çæ¬ç®¡çãæ°æ®åæº¯ãæ°æ®å®¡è®¡ãçæ¬æ§å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®å­å¨ãæ°æ®å¤çãæ°æ®è´¨éçæ?
 
-> **核心定位**: 数据版本控制蓝图的核心功能实�?
-
-
-> 清风量化系统 v5.3 - 数据版本控制系统详细设计
-> **模块ID**: `DATA_VERSION_CTRL_001`
-> **实施周期**: Week 29-30�?周）
-> **优先�?*: P2（优化）
-> **预期收益**: 提升数据可追溯�?5%，支持数据回滚和审计
-
-## 核心定位
-
-> 核心职责: 数据版本控制，管理数据集版本，支持数据回溯和审计
-> 职责边界: 
-> - �?本文档负责：数据版本管理、数据回溯、数据审计、版本控�?
-> - �?本文档不负责：数据存储、数据处理、数据质量监控，确保系统功能的稳定运行和高效执行�?
+> **æ ¸å¿å®ä½**: æ°æ®çæ¬æ§å¶èå¾çæ ¸å¿åè½å®ç?
 
 
-## 一、设计背景与目标
+> æ¸é£éåç³»ç» v5.3 - æ°æ®çæ¬æ§å¶ç³»ç»è¯¦ç»è®¾è®¡
+> **æ¨¡åID**: `DATA_VERSION_CTRL_001`
+> **å®æ½å¨æ**: Week 29-30ï¼?å¨ï¼
+> **ä¼åçº?*: P2ï¼ä¼åï¼
+> **é¢ææ¶ç**: æåæ°æ®å¯è¿½æº¯æ?5%ï¼æ¯ææ°æ®åæ»åå®¡è®¡
 
-### 1.1 业务需�?
+## æ ¸å¿å®ä½
 
-**当前痛点**:
-- 数据变更无法追溯
-- 数据回滚困难
-- 数据审计支持不足
-- 数据协作冲突
+> æ ¸å¿èè´£: æ°æ®çæ¬æ§å¶ï¼ç®¡çæ°æ®éçæ¬ï¼æ¯ææ°æ®åæº¯åå®¡è®¡
+> èè´£è¾¹ç: 
+> - â?æ¬ææ¡£è´è´£ï¼æ°æ®çæ¬ç®¡çãæ°æ®åæº¯ãæ°æ®å®¡è®¡ãçæ¬æ§å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼æ°æ®å­å¨ãæ°æ®å¤çãæ°æ®è´¨éçæ§ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
-**业务目标**:
-- 建立数据版本控制系统
-- 支持数据快照和回�?
-- 提供数据变更历史
-- 支持数据协作和分支管�?
 
-### 1.2 技术目�?
+## ä¸ãè®¾è®¡èæ¯ä¸ç®æ 
 
-| 指标 | 目标�?| 说明 |
+### 1.1 ä¸å¡éæ±?
+
+**å½åçç¹**:
+- æ°æ®åæ´æ æ³è¿½æº¯
+- æ°æ®åæ»å°é¾
+- æ°æ®å®¡è®¡æ¯æä¸è¶³
+- æ°æ®åä½å²çª
+
+**ä¸å¡ç®æ **:
+- å»ºç«æ°æ®çæ¬æ§å¶ç³»ç»
+- æ¯ææ°æ®å¿«ç§ååæ»?
+- æä¾æ°æ®åæ´åå²
+- æ¯ææ°æ®åä½ååæ¯ç®¡ç?
+
+### 1.2 ææ¯ç®æ ?
+
+| ææ  | ç®æ å?| è¯´æ |
 |------|--------|------|
-| **版本快照速度** | <10�?| 数据快照创建速度<10�?|
-| **版本回滚速度** | <30�?| 数据回滚速度<30�?|
-| **版本历史保留** | �?�?| 保留至少1年的版本历史 |
-| **版本冲突�?* | <5% | 版本冲突�?5% |
+| **çæ¬å¿«ç§éåº¦** | <10ç§?| æ°æ®å¿«ç§åå»ºéåº¦<10ç§?|
+| **çæ¬åæ»éåº¦** | <30ç§?| æ°æ®åæ»éåº¦<30ç§?|
+| **çæ¬åå²ä¿ç** | â?å¹?| ä¿çè³å°1å¹´ççæ¬åå² |
+| **çæ¬å²çªç?* | <5% | çæ¬å²çªç?5% |
 
-## 三、核心模块设�?
+## ä¸ãæ ¸å¿æ¨¡åè®¾è®?
 
-### 3.1 版本管理�?(VersionManager)
+### 3.1 çæ¬ç®¡çå?(VersionManager)
 
 ```python
 from dataclasses import dataclass, field
@@ -76,14 +76,14 @@ from datetime import datetime
 from enum import Enum
 
 class VersionStatus(Enum):
-    """版本状�?""
+    """çæ¬ç¶æ?""
     ACTIVE = "active"
     DEPRECATED = "deprecated"
     ARCHIVED = "archived"
 
 @dataclass
 class DataVersion:
-    """数据版本"""
+    """æ°æ®çæ¬"""
     version_id: str
     table_name: str
     version_number: int
@@ -95,14 +95,14 @@ class DataVersion:
 
 @dataclass
 class VersionTag:
-    """版本标签"""
+    """çæ¬æ ç­¾"""
     tag_name: str
     version_id: str
     description: str
     created_at: datetime = field(default_factory=datetime.now)
 
 class VersionManager:
-    """版本管理�?""
+    """çæ¬ç®¡çå?""
     
     def __init__(self):
         self.versions: Dict[str, DataVersion] = {}
@@ -111,7 +111,7 @@ class VersionManager:
     
     def create_version(self, table_name: str, commit_message: str,
                        author: str, metadata: Dict[str, Any] = None) -> DataVersion:
-        """创建版本"""
+        """åå»ºçæ¬"""
         version_number = self._get_next_version_number(table_name)
         
         version = DataVersion(
@@ -127,7 +127,7 @@ class VersionManager:
         return version
     
     def _get_next_version_number(self, table_name: str) -> int:
-        """获取下一个版本号"""
+        """è·åä¸ä¸ä¸ªçæ¬å·"""
         table_versions = [v for v in self.versions.values() if v.table_name == table_name]
         
         if not table_versions:
@@ -137,7 +137,7 @@ class VersionManager:
     
     def create_tag(self, tag_name: str, version_id: str,
                    description: str) -> VersionTag:
-        """创建标签"""
+        """åå»ºæ ç­¾"""
         tag = VersionTag(
             tag_name=tag_name,
             version_id=version_id,
@@ -148,11 +148,11 @@ class VersionManager:
         return tag
     
     def get_version(self, version_id: str) -> Optional[DataVersion]:
-        """获取版本"""
+        """è·åçæ¬"""
         return self.versions.get(version_id)
     
     def get_version_by_tag(self, tag_name: str) -> Optional[DataVersion]:
-        """通过标签获取版本"""
+        """éè¿æ ç­¾è·åçæ¬"""
         tag = self.tags.get(tag_name)
         if not tag:
             return None
@@ -160,13 +160,13 @@ class VersionManager:
         return self.versions.get(tag.version_id)
     
     def list_versions(self, table_name: str = None) -> List[DataVersion]:
-        """列出版本"""
+        """ååºçæ¬"""
         if table_name:
             return [v for v in self.versions.values() if v.table_name == table_name]
         return list(self.versions.values())
 ```
 
-### 3.2 变更追踪�?(ChangeTracker)
+### 3.2 åæ´è¿½è¸ªå?(ChangeTracker)
 
 ```python
 from typing import Dict, List, Any, Tuple
@@ -175,7 +175,7 @@ from datetime import datetime
 
 @dataclass
 class DataChange:
-    """数据变更"""
+    """æ°æ®åæ´"""
     change_id: str
     version_id: str
     change_type: str
@@ -185,14 +185,14 @@ class DataChange:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class ChangeTracker:
-    """变更追踪�?""
+    """åæ´è¿½è¸ªå?""
     
     def __init__(self):
         self.changes: List[DataChange] = []
     
     def detect_changes(self, old_df: pd.DataFrame,
                        new_df: pd.DataFrame) -> DataChange:
-        """检测变�?""
+        """æ£æµåæ?""
         row_count_change = len(new_df) - len(old_df)
         
         old_columns = set(old_df.columns)
@@ -223,7 +223,7 @@ class ChangeTracker:
     
     def compare_versions(self, version1: DataVersion,
                          version2: DataVersion) -> Dict[str, Any]:
-        """对比版本"""
+        """å¯¹æ¯çæ¬"""
         df1 = self._load_version_data(version1)
         df2 = self._load_version_data(version2)
         
@@ -239,14 +239,14 @@ class ChangeTracker:
         }
     
     def _load_version_data(self, version: DataVersion) -> pd.DataFrame:
-        """加载版本数据"""
-        # 实现版本数据加载逻辑
+        """å è½½çæ¬æ°æ®"""
+        # å®ç°çæ¬æ°æ®å è½½é»è¾
         return pd.DataFrame()
     
     def get_change_history(self, table_name: str,
                            start_time: datetime = None,
                            end_time: datetime = None) -> List[DataChange]:
-        """获取变更历史"""
+        """è·ååæ´åå²"""
         filtered_changes = self.changes
         
         if start_time:
@@ -258,7 +258,7 @@ class ChangeTracker:
         return filtered_changes
 ```
 
-### 3.3 版本回滚引擎 (VersionRollbackEngine)
+### 3.3 çæ¬åæ»å¼æ (VersionRollbackEngine)
 
 ```python
 from typing import Dict, Any, Optional
@@ -268,14 +268,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 class VersionRollbackEngine:
-    """版本回滚引擎"""
+    """çæ¬åæ»å¼æ"""
     
     def __init__(self, version_manager: VersionManager):
         self.version_manager = version_manager
     
     def rollback_to_version(self, table_name: str,
                             version_id: str) -> bool:
-        """回滚到指定版�?""
+        """åæ»å°æå®çæ?""
         version = self.version_manager.get_version(version_id)
         
         if not version:
@@ -299,7 +299,7 @@ class VersionRollbackEngine:
     
     def rollback_to_tag(self, table_name: str,
                         tag_name: str) -> bool:
-        """回滚到指定标�?""
+        """åæ»å°æå®æ ç­?""
         version = self.version_manager.get_version_by_tag(tag_name)
         
         if not version:
@@ -309,43 +309,43 @@ class VersionRollbackEngine:
         return self.rollback_to_version(table_name, version.version_id)
     
     def _load_version_data(self, version: DataVersion) -> pd.DataFrame:
-        """加载版本数据"""
-        # 实现版本数据加载逻辑
+        """å è½½çæ¬æ°æ®"""
+        # å®ç°çæ¬æ°æ®å è½½é»è¾
         return pd.DataFrame()
     
     def _apply_version_data(self, table_name: str, data: pd.DataFrame):
-        """应用版本数据"""
-        # 实现版本数据应用逻辑
+        """åºç¨çæ¬æ°æ®"""
+        # å®ç°çæ¬æ°æ®åºç¨é»è¾
         pass
 ```
 
 ---
-## 四、接口设�?
+## åãæ¥å£è®¾è®?
 
 ### 4.1 RESTful API
 
-#### 4.1.1 创建版本
+#### 4.1.1 åå»ºçæ¬
 
 ```http
 POST /api/v1/version/create
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```json
 {
   "table_name": "stock_prices",
-  "commit_message": "更新2026-04-06数据",
+  "commit_message": "æ´æ°2026-04-06æ°æ®",
   "author": "data_team"
 }
 ```
 
-#### 4.1.2 回滚版本
+#### 4.1.2 åæ»çæ¬
 
 ```http
 POST /api/v1/version/rollback
 ```
 
-**请求示例**:
+**è¯·æ±ç¤ºä¾**:
 ```json
 {
   "table_name": "stock_prices",
@@ -353,7 +353,7 @@ POST /api/v1/version/rollback
 }
 ```
 
-#### 4.1.3 对比版本
+#### 4.1.3 å¯¹æ¯çæ¬
 
 ```http
 GET /api/v1/version/compare?version1=stock_prices_v122&version2=stock_prices_v123
@@ -361,7 +361,7 @@ GET /api/v1/version/compare?version1=stock_prices_v122&version2=stock_prices_v12
 
 ---
 
-## 五、部署架�?
+## äºãé¨ç½²æ¶æ?
 
 ```yaml
 version: '3.8'
@@ -392,66 +392,66 @@ volumes:
 
 ---
 
-## 六、监控指�?
+## å­ãçæ§ææ ?
 
-| 指标名称 | 指标类型 | 说明 |
+| ææ åç§° | ææ ç±»å | è¯´æ |
 |---------|---------|------|
-| `version_total_versions` | Gauge | 版本总数 |
-| `version_creates_total` | Counter | 创建版本总数 |
-| `version_rollbacks_total` | Counter | 回滚总数 |
-| `version_size_bytes` | Gauge | 版本存储大小 |
+| `version_total_versions` | Gauge | çæ¬æ»æ° |
+| `version_creates_total` | Counter | åå»ºçæ¬æ»æ° |
+| `version_rollbacks_total` | Counter | åæ»æ»æ° |
+| `version_size_bytes` | Gauge | çæ¬å­å¨å¤§å° |
 
 ---
 
-## 七、实施计�?
+## ä¸ãå®æ½è®¡å?
 
-| 阶段 | 任务 | 预计时间 |
+| é¶æ®µ | ä»»å¡ | é¢è®¡æ¶é´ |
 |------|------|---------|
-| **阶段1** | 搭建LakeFS平台 | 2�?|
-| **阶段2** | 开发版本管理器 | 3�?|
-| **阶段3** | 开发变更追踪器 | 3�?|
-| **阶段4** | 开发回滚引�?| 2�?|
-| **阶段5** | 测试和优�?| 2�?|
+| **é¶æ®µ1** | æ­å»ºLakeFSå¹³å° | 2å¤?|
+| **é¶æ®µ2** | å¼åçæ¬ç®¡çå¨ | 3å¤?|
+| **é¶æ®µ3** | å¼ååæ´è¿½è¸ªå¨ | 3å¤?|
+| **é¶æ®µ4** | å¼ååæ»å¼æ?| 2å¤?|
+| **é¶æ®µ5** | æµè¯åä¼å?| 2å¤?|
 
 ---
 
-## 八、相关文�?
+## å«ãç¸å³ææ¡?
 
-- [实时数据湖蓝图](./REALTIME_DATA_LAKE_BLUEPRINT.md)
-- 数据血缘追踪蓝�?
-- [数据生命周期管理蓝图](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
-
----
-
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护�?*: 首席蓝图架构�?
----
-
+- [å®æ¶æ°æ®æ¹èå¾](./REALTIME_DATA_LAKE_BLUEPRINT.md)
+- æ°æ®è¡ç¼è¿½è¸ªèå?
+- [æ°æ®çå½å¨æç®¡çèå¾](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md)
 
 ---
 
-## 📚 相关文档
+**ææ¡£çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç»´æ¤è?*: é¦å¸­èå¾æ¶æå¸?
+---
 
-### 上游依赖
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+---
+
+## ð ç¸å³ææ¡£
+
+### ä¸æ¸¸ä¾èµ
+
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 中依�?| 获取数据资产信息 |
+| [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | ä¸­ä¾èµ?| è·åæ°æ®èµäº§ä¿¡æ¯ |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | 中依�?| 提供版本管理支持 |
+| [DATA GOVERNANCE PLATFORM BLUEPRINT](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md) | DATA_GOVERNANCE_PLATFORM_001 | ä¸­ä¾èµ?| æä¾çæ¬ç®¡çæ¯æ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **DVC** | 3.0+ | 数据版本控制 | [官方文档](https://dvc.org/) |
-| **Git** | 2.40+ | 版本管理 | [官方文档](https://git-scm.com/) |
-| **LakeFS** | 1.0+ | 数据湖版本控�?| [官方文档](https://lakefs.io/) |
+| **DVC** | 3.0+ | æ°æ®çæ¬æ§å¶ | [å®æ¹ææ¡£](https://dvc.org/) |
+| **Git** | 2.40+ | çæ¬ç®¡ç | [å®æ¹ææ¡£](https://git-scm.com/) |
+| **LakeFS** | 1.0+ | æ°æ®æ¹çæ¬æ§å?| [å®æ¹ææ¡£](https://lakefs.io/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
@@ -464,32 +464,32 @@ graph LR
     style D0 fill:#45b7d1
 ```
 
-## 1. 文档治理
+## 1. ææ¡£æ²»ç
 
-### 1.1 System_Manifest.md索引
+### 1.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Data Version Control
-- **模块ID**: DATA_VERSION_CONTROL_001
-- **蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
-- **状�?*: Active
+- **æ¨¡åID**: DATA_VERSION_CONTROL_001
+- **èå¾ææ¡£**: DATA_VERSION_CONTROL_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
+- **ç¶æ?*: Active
 ```
 
-### 1.2 模块职责边界
+### 1.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Data Version Control** | Layer 0数据源层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
+| **Data Version Control** | Layer 0æ°æ®æºå± | ä¸å¡æ¶æ: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ | **æ ¸å¿æ¨¡å** |
 
-### 1.3 版本管理
+### 1.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

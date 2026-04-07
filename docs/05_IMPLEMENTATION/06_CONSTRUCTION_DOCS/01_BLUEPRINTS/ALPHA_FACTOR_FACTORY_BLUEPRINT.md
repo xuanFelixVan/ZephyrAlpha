@@ -4,84 +4,84 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发�?
-standard_type: 专业量化机构文档
+owner: ä¸ªäººå¼åè?
+standard_type: ä¸ä¸éåæºæææ¡£
 responsibility:
-  - 市场状态识�?(Layer 4)
+  - å¸åºç¶æè¯å?(Layer 4)
 
-layer: "Layer 2 (Alpha因子�?"
+layer: Layer 5 (策略执行层)
 ---
 
 # ALPHA FACTOR FACTORY BLUEPRINT
 
-> **核心职责**: Alpha Factor Factory蓝图设计
-> **职责边界**: 
-> - �?本文档负责：Alpha Factor Factory蓝图设计相关内容
-> - �?本文档不负责：其他模块内�?
+> **æ ¸å¿èè´£**: Alpha Factor Factoryèå¾è®¾è®¡
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼Alpha Factor Factoryèå¾è®¾è®¡ç¸å³åå®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®?
 
-�? 📋 执行摘要
+ï»? ð æ§è¡æè¦
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **核心定位**: 为中观策略层提供系统化的因子生产和管理能�?
-> **索引**: `ALPHA_FACTOR_FACTORY_001`
-> **开发周�?*: 3�?
+> **çæ¬**: v1.0
+> **åå»ºæ¥æ**: 2026-04-06
+> **æ ¸å¿å®ä½**: ä¸ºä¸­è§ç­ç¥å±æä¾ç³»ç»åçå å­çäº§åç®¡çè½å?
+> **ç´¢å¼**: `ALPHA_FACTOR_FACTORY_001`
+> **å¼åå¨æ?*: 3å?
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-负责Alpha Factor Factory的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
+è´è´£Alpha Factor Factoryçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 🎯 模块定位与职�?
+## ð¯ æ¨¡åå®ä½ä¸èè´?
 
-### 核心职责
+### æ ¸å¿èè´£
 
-| 职责类别 | 具体职责 | 输出产物 |
+| èè´£ç±»å« | å·ä½èè´£ | è¾åºäº§ç© |
 |---------|---------|---------|
-| **因子计算** | 计算各类阿尔法因�?| 因子值序�?|
-| **因子评估** | 评估因子有效�?| 因子评估报告 |
-| **因子存储** | 存储因子数据 | 因子�?|
-| **因子更新** | 定期更新因子 | 更新日志 |
-| **因子筛�?* | 筛选有效因�?| 精选因子池 |
+| **å å­è®¡ç®** | è®¡ç®åç±»é¿å°æ³å å­?| å å­å¼åºå?|
+| **å å­è¯ä¼°** | è¯ä¼°å å­æææ?| å å­è¯ä¼°æ¥å |
+| **å å­å­å¨** | å­å¨å å­æ°æ® | å å­åº?|
+| **å å­æ´æ°** | å®ææ´æ°å å­ | æ´æ°æ¥å¿ |
+| **å å­ç­é?* | ç­éææå å­?| ç²¾éå å­æ±  |
 
 ---
 
-## 🏗�?架构设计
+## ðï¸?æ¶æè®¾è®¡
 
-### 整体架构
+### æ´ä½æ¶æ
 
 ```mermaid
 graph TB
-    subgraph "数据输入�?
-        A1[日频行情数据]
-        A2[财务数据]
-        A3[分析师预期]
-        A4[另类数据]
+    subgraph "æ°æ®è¾å¥å±?
+        A1[æ¥é¢è¡ææ°æ®]
+        A2[è´¢å¡æ°æ®]
+        A3[åæå¸é¢æ]
+        A4[å¦ç±»æ°æ®]
     end
     
-    subgraph "因子计算�?
-        B1[动量因子计算器]
-        B2[价值因子计算器]
-        B3[质量因子计算器]
-        B4[成长因子计算器]
-        B5[情绪因子计算器]
-        B6[技术因子计算器]
+    subgraph "å å­è®¡ç®å±?
+        B1[å¨éå å­è®¡ç®å¨]
+        B2[ä»·å¼å å­è®¡ç®å¨]
+        B3[è´¨éå å­è®¡ç®å¨]
+        B4[æé¿å å­è®¡ç®å¨]
+        B5[æç»ªå å­è®¡ç®å¨]
+        B6[ææ¯å å­è®¡ç®å¨]
     end
     
-    subgraph "因子评估�?
-        C1[IC分析]
-        C2[收益率分析]
-        C3[换手率分析]
-        C4[因子正交化]
+    subgraph "å å­è¯ä¼°å±?
+        C1[ICåæ]
+        C2[æ¶ççåæ]
+        C3[æ¢æçåæ]
+        C4[å å­æ­£äº¤å]
     end
     
-    subgraph "因子管理�?
-        D1[因子库]
-        D2[因子版本管理]
-        D3[因子元数据]
+    subgraph "å å­ç®¡çå±?
+        D1[å å­åº]
+        D2[å å­çæ¬ç®¡ç]
+        D3[å å­åæ°æ®]
     end
     
-    subgraph "应用�?
-        E1[多因子合成引擎]
+    subgraph "åºç¨å±?
+        E1[å¤å å­åæå¼æ]
     end
     
     A1 --> B1
@@ -111,9 +111,9 @@ graph TB
 
 ---
 
-## 🔧 关键组件设计
+## ð§ å³é®ç»ä»¶è®¾è®¡
 
-### 1. 因子基类 (Factor Base Class)
+### 1. å å­åºç±» (Factor Base Class)
 
 ```python
 from abc import ABC, abstractmethod
@@ -122,7 +122,7 @@ import pandas as pd
 import numpy as np
 
 class AlphaFactor(ABC):
-    """阿尔法因子基�?""
+    """é¿å°æ³å å­åºç±?""
     
     def __init__(self, factor_name: str, factor_category: str):
         self.factor_name = factor_name
@@ -131,11 +131,11 @@ class AlphaFactor(ABC):
         
     @abstractmethod
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算因子�?""
+        """è®¡ç®å å­å?""
         pass
     
     def get_factor_info(self) -> Dict[str, Any]:
-        """获取因子信息"""
+        """è·åå å­ä¿¡æ¯"""
         return {
             'factor_name': self.factor_name,
             'factor_category': self.factor_category,
@@ -144,44 +144,44 @@ class AlphaFactor(ABC):
 
 
 class MomentumFactor(AlphaFactor):
-    """动量因子"""
+    """å¨éå å­"""
     
     def __init__(self):
         super().__init__('Momentum', 'Momentum')
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算动量因子"""
+        """è®¡ç®å¨éå å­"""
         returns = data['close'].pct_change(self.lookback_period)
         return returns
 
 
 class ValueFactor(AlphaFactor):
-    """价值因�?""
+    """ä»·å¼å å­?""
     
     def __init__(self):
         super().__init__('Value', 'Value')
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算价值因子（PE倒数�?""
+        """è®¡ç®ä»·å¼å å­ï¼PEåæ°ï¼?""
         if 'pe_ttm' in data.columns:
             return 1 / data['pe_ttm']
         return pd.Series(index=data.index)
 
 
 class QualityFactor(AlphaFactor):
-    """质量因子"""
+    """è´¨éå å­"""
     
     def __init__(self):
         super().__init__('Quality', 'Quality')
         
     def calculate(self, data: pd.DataFrame) -> pd.Series:
-        """计算质量因子（ROE�?""
+        """è®¡ç®è´¨éå å­ï¼ROEï¼?""
         if 'roe' in data.columns:
             return data['roe']
         return pd.Series(index=data.index)
 ```
 
-### 2. 因子评估�?(Factor Evaluator)
+### 2. å å­è¯ä¼°å?(Factor Evaluator)
 
 ```python
 from typing import Dict, Any
@@ -190,24 +190,24 @@ import numpy as np
 from scipy import stats
 
 class FactorEvaluator:
-    """因子评估�?""
+    """å å­è¯ä¼°å?""
     
     def evaluate(self,
                 factor_values: pd.Series,
                 forward_returns: pd.Series) -> Dict[str, Any]:
-        """评估因子有效�?""
-        # IC分析
+        """è¯ä¼°å å­æææ?""
+        # ICåæ
         ic = self._calculate_ic(factor_values, forward_returns)
         
-        # IC均值、IC标准差、ICIR
+        # ICåå¼ãICæ åå·®ãICIR
         ic_mean = ic.mean()
         ic_std = ic.std()
         icir = ic_mean / ic_std if ic_std != 0 else 0
         
-        # 分组收益分析
+        # åç»æ¶çåæ
         group_returns = self._calculate_group_returns(factor_values, forward_returns)
         
-        # 单调性检�?
+        # åè°æ§æ£éª?
         monotonicity = self._test_monotonicity(group_returns)
         
         return {
@@ -222,8 +222,8 @@ class FactorEvaluator:
     def _calculate_ic(self,
                      factor_values: pd.Series,
                      forward_returns: pd.Series) -> pd.Series:
-        """计算IC序列"""
-        # Spearman秩相关系�?
+        """è®¡ç®ICåºå"""
+        # Spearmanç§©ç¸å³ç³»æ?
         ic = factor_values.rolling(1).corr(forward_returns, method='spearman')
         return ic
     
@@ -231,44 +231,44 @@ class FactorEvaluator:
                                 factor_values: pd.Series,
                                 forward_returns: pd.Series,
                                 n_groups: int = 5) -> pd.Series:
-        """计算分组收益"""
-        # 按因子值分�?
+        """è®¡ç®åç»æ¶ç"""
+        # æå å­å¼åç»?
         factor_rank = factor_values.rank(pct=True)
         group_labels = pd.cut(factor_rank, bins=n_groups, labels=False)
         
-        # 计算各组平均收益
+        # è®¡ç®åç»å¹³åæ¶ç
         group_returns = forward_returns.groupby(group_labels).mean()
         
         return group_returns
     
     def _test_monotonicity(self, group_returns: pd.Series) -> float:
-        """检验单调�?""
-        # 计算趋势
+        """æ£éªåè°æ?""
+        # è®¡ç®è¶å¿
         x = np.arange(len(group_returns))
         slope, _, r_value, _, _ = stats.linregress(x, group_returns.values)
         
         return r_value ** 2
 ```
 
-### 3. 因子工厂 (Factor Factory)
+### 3. å å­å·¥å (Factor Factory)
 
 ```python
 from typing import Dict, Any, List
 import pandas as pd
 
 class AlphaFactorFactory:
-    """阿尔法因子工�?""
+    """é¿å°æ³å å­å·¥å?""
     
     def __init__(self):
         self.factors: Dict[str, AlphaFactor] = {}
         self.evaluator = FactorEvaluator()
         
     def register_factor(self, factor: AlphaFactor) -> None:
-        """注册因子"""
+        """æ³¨åå å­"""
         self.factors[factor.factor_name] = factor
         
     def calculate_all_factors(self, data: pd.DataFrame) -> pd.DataFrame:
-        """计算所有因�?""
+        """è®¡ç®ææå å­?""
         factor_values = pd.DataFrame(index=data.index)
         
         for factor_name, factor in self.factors.items():
@@ -279,7 +279,7 @@ class AlphaFactorFactory:
     def evaluate_all_factors(self,
                             factor_values: pd.DataFrame,
                             forward_returns: pd.Series) -> Dict[str, Dict[str, Any]]:
-        """评估所有因�?""
+        """è¯ä¼°ææå å­?""
         evaluation_results = {}
         
         for factor_name in factor_values.columns:
@@ -293,8 +293,8 @@ class AlphaFactorFactory:
     def select_best_factors(self,
                            evaluation_results: Dict[str, Dict[str, Any]],
                            top_n: int = 10) -> List[str]:
-        """选择最佳因�?""
-        # 按ICIR排序
+        """éæ©æä½³å å­?""
+        # æICIRæåº
         sorted_factors = sorted(
             evaluation_results.items(),
             key=lambda x: abs(x[1]['icir']),
@@ -306,121 +306,121 @@ class AlphaFactorFactory:
 
 ---
 
-## 📊 因子库设�?
+## ð å å­åºè®¾è®?
 
-### 因子分类体系
+### å å­åç±»ä½ç³»
 
-| 因子类别 | 因子名称 | 因子描述 | 计算公式 |
+| å å­ç±»å« | å å­åç§° | å å­æè¿° | è®¡ç®å¬å¼ |
 |---------|---------|---------|---------|
-| **动量因子** | MOM_1M | 1月动�?| (P_t - P_{t-20}) / P_{t-20} |
-| **动量因子** | MOM_3M | 3月动�?| (P_t - P_{t-60}) / P_{t-60} |
-| **动量因子** | MOM_6M | 6月动�?| (P_t - P_{t-120}) / P_{t-120} |
-| **价值因�?* | PE | 市盈率倒数 | 1 / PE_TTM |
-| **价值因�?* | PB | 市净率倒数 | 1 / PB |
-| **价值因�?* | PS | 市销率倒数 | 1 / PS_TTM |
-| **质量因子** | ROE | 净资产收益�?| Net Income / Equity |
-| **质量因子** | ROA | 总资产收益率 | Net Income / Assets |
-| **质量因子** | GrossMargin | 毛利�?| (Revenue - COGS) / Revenue |
-| **成长因子** | Revenue_Growth | 营收增长�?| (Revenue_t - Revenue_{t-1}) / Revenue_{t-1} |
-| **成长因子** | Earnings_Growth | 盈利增长�?| (EPS_t - EPS_{t-1}) / EPS_{t-1} |
-| **技术因�?* | RSI | 相对强弱指标 | 标准RSI计算 |
-| **技术因�?* | MACD | 指数平滑异同移动平均�?| 标准MACD计算 |
-| **情绪因子** | Sentiment_Score | 情绪评分 | 综合情绪指标 |
+| **å¨éå å­** | MOM_1M | 1æå¨é?| (P_t - P_{t-20}) / P_{t-20} |
+| **å¨éå å­** | MOM_3M | 3æå¨é?| (P_t - P_{t-60}) / P_{t-60} |
+| **å¨éå å­** | MOM_6M | 6æå¨é?| (P_t - P_{t-120}) / P_{t-120} |
+| **ä»·å¼å å­?* | PE | å¸ççåæ° | 1 / PE_TTM |
+| **ä»·å¼å å­?* | PB | å¸åçåæ° | 1 / PB |
+| **ä»·å¼å å­?* | PS | å¸éçåæ° | 1 / PS_TTM |
+| **è´¨éå å­** | ROE | åèµäº§æ¶çç?| Net Income / Equity |
+| **è´¨éå å­** | ROA | æ»èµäº§æ¶çç | Net Income / Assets |
+| **è´¨éå å­** | GrossMargin | æ¯å©ç?| (Revenue - COGS) / Revenue |
+| **æé¿å å­** | Revenue_Growth | è¥æ¶å¢é¿ç?| (Revenue_t - Revenue_{t-1}) / Revenue_{t-1} |
+| **æé¿å å­** | Earnings_Growth | çå©å¢é¿ç?| (EPS_t - EPS_{t-1}) / EPS_{t-1} |
+| **ææ¯å å­?* | RSI | ç¸å¯¹å¼ºå¼±ææ  | æ åRSIè®¡ç® |
+| **ææ¯å å­?* | MACD | ææ°å¹³æ»å¼åç§»å¨å¹³åçº?| æ åMACDè®¡ç® |
+| **æç»ªå å­** | Sentiment_Score | æç»ªè¯å | ç»¼åæç»ªææ  |
 
 ---
 
-## 🚀 实施要点
+## ð å®æ½è¦ç¹
 
-### 阶段1：因子基类开发（�?周）
+### é¶æ®µ1ï¼å å­åºç±»å¼åï¼ç¬?å¨ï¼
 
-**任务**:
-1. �?实现因子基类
-2. �?实现动量因子
-3. �?实现价值因�?
-4. �?实现质量因子
-5. �?编写单元测试
-
----
-
-### 阶段2：因子评估器开发（�?周）
-
-**任务**:
-1. �?实现IC分析
-2. �?实现分组收益分析
-3. �?实现因子正交�?
-4. �?编写单元测试
+**ä»»å¡**:
+1. â?å®ç°å å­åºç±»
+2. â?å®ç°å¨éå å­
+3. â?å®ç°ä»·å¼å å­?
+4. â?å®ç°è´¨éå å­
+5. â?ç¼åååæµè¯
 
 ---
 
-### 阶段3：因子工厂开发（�?周）
+### é¶æ®µ2ï¼å å­è¯ä¼°å¨å¼åï¼ç¬?å¨ï¼
 
-**任务**:
-1. �?实现因子注册和管�?
-2. �?实现因子批量计算
-3. �?实现因子筛�?
-4. �?集成测试
+**ä»»å¡**:
+1. â?å®ç°ICåæ
+2. â?å®ç°åç»æ¶çåæ
+3. â?å®ç°å å­æ­£äº¤å?
+4. â?ç¼åååæµè¯
 
 ---
 
-## 📈 性能指标
+### é¶æ®µ3ï¼å å­å·¥åå¼åï¼ç¬?å¨ï¼
 
-### 因子质量要求
+**ä»»å¡**:
+1. â?å®ç°å å­æ³¨ååç®¡ç?
+2. â?å®ç°å å­æ¹éè®¡ç®
+3. â?å®ç°å å­ç­é?
+4. â?éææµè¯
 
-| 指标 | 目标�?|
+---
+
+## ð æ§è½ææ 
+
+### å å­è´¨éè¦æ±
+
+| ææ  | ç®æ å?|
 |------|--------|
-| **IC均�?* | |IC| > 0.03 |
+| **ICåå?* | |IC| > 0.03 |
 | **ICIR** | > 0.5 |
-| **单调性R²** | > 0.8 |
-| **因子覆盖�?* | > 95% |
+| **åè°æ§RÂ²** | > 0.8 |
+| **å å­è¦çç?* | > 95% |
 
 ---
 
-## 🔗 相关文档
+## ð ç¸å³ææ¡£
 
-- [市场状态识别系统蓝图](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
-- 多因子合成引擎蓝�?
-- 专业多时间框架策略架�?
+- [å¸åºç¶æè¯å«ç³»ç»èå¾](./MARKET_REGIME_DETECTION_BLUEPRINT.md)
+- å¤å å­åæå¼æèå?
+- ä¸ä¸å¤æ¶é´æ¡æ¶ç­ç¥æ¶æ?
 
 ---
 
-## 📝 变更历史
+## ð åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 作�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | ä½è?|
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­æ¶æå¸?|
 
 ---
 
-**蓝图状�?*: �?设计完成
-**下一�?*: 开始实施阶�? - 因子基类开�?
+**èå¾ç¶æ?*: â?è®¾è®¡å®æ
+**ä¸ä¸æ­?*: å¼å§å®æ½é¶æ®? - å å­åºç±»å¼å?
 ---
 
-## 1. 文档治理
+## 1. ææ¡£æ²»ç
 
-### 1.1 System_Manifest.md索引
+### 1.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 3: 中观策略�?
+#### Layer 3: ä¸­è§ç­ç¥å±?
 ##### 6.001. Alpha Factor Factory
-- **模块ID**: ALPHA_FACTOR_FACTORY_001
-- **蓝图文档**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: 中观策略层因子生�?
-- **状�?*: Active
+- **æ¨¡åID**: ALPHA_FACTOR_FACTORY_001
+- **èå¾ææ¡£**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: ä¸­è§ç­ç¥å±å å­çäº?
+- **ç¶æ?*: Active
 ```
 
-### 1.2 模块职责边界
+### 1.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Alpha Factor Factory** | 中观策略层因子生�?| **核心模块** |
+| **Alpha Factor Factory** | ä¸­è§ç­ç¥å±å å­çäº?| **æ ¸å¿æ¨¡å** |
 
-### 1.3 版本管理
+### 1.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

@@ -4,118 +4,118 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 多策略分层系�?
-  - 策略权重分配
-  - 信号融合
-  - 策略协同优化
-layer: "Layer 6 (组合优化�?"
+  - å¤ç­ç¥åå±ç³»ç»?
+  - ç­ç¥æéåé
+  - ä¿¡å·èå
+  - ç­ç¥ååä¼å
+layer: Layer 5.2 (组合优化)
 ---
 
-# 多策略分层系统蓝�?
-## 核心定位
+# å¤ç­ç¥åå±ç³»ç»èå?
+## æ ¸å¿å®ä½
 
-构建多策略分层系统的设计与实现，基于策略组合和风险预算技术，实现多策略的分层管理和动态配置，提升投资组合稳定性�?
+æå»ºå¤ç­ç¥åå±ç³»ç»çè®¾è®¡ä¸å®ç°ï¼åºäºç­ç¥ç»ååé£é©é¢ç®ææ¯ï¼å®ç°å¤ç­ç¥çåå±ç®¡çåå¨æéç½®ï¼æåæèµç»åç¨³å®æ§ã?
 
 ---
 
 
-> **核心职责**: 多策略分层系统，策略分层权重分配和信号融�?
-> **职责边界**: 
-> - �?本文档负责：多策略分层系统、策略权重分配、信号融合、策略协同优�?
-> - �?本文档不负责：单一策略执行、风险控制、订单管�?
-�? 模块概述
+> **æ ¸å¿èè´£**: å¤ç­ç¥åå±ç³»ç»ï¼ç­ç¥åå±æéåéåä¿¡å·èå?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼å¤ç­ç¥åå±ç³»ç»ãç­ç¥æéåéãä¿¡å·èåãç­ç¥ååä¼å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼åä¸ç­ç¥æ§è¡ãé£é©æ§å¶ãè®¢åç®¡ç?
+ï»? æ¨¡åæ¦è¿°
 
-> **开发时?*: 160h
-> **核心定位**: 实现策略分层权重分配、信号融合机制、策略协同优化，构建多策略协同的专业量化系统
+> **å¼åæ¶?*: 160h
+> **æ ¸å¿å®ä½**: å®ç°ç­ç¥åå±æéåéãä¿¡å·èåæºå¶ãç­ç¥ååä¼åï¼æå»ºå¤ç­ç¥ååçä¸ä¸éåç³»ç»
 
-## 2. 架构设计
+## 2. æ¶æè®¾è®¡
 
-### 2.1 系统架构?
+### 2.1 ç³»ç»æ¶æ?
 ```
-┌─────────────────────────────────────────────────────────────────??                   多策略分层系统架?                            ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略绩效评估?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?收益?  ? ?风险指标 ? ?相关?  ? ?容量评估 ?? ?? ? ?计算     ? ?计算     ? ?计算     ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略分层权重分配?                           ? ?? ? ┌──────────────────?     ┌──────────────────?        ? ?? ? ? 核心策略?      ?     ? 卫星策略?     ?        ? ?? ? ? ┌────────────? ?     ? ┌────────────? ?        ? ?? ? ? ?趋势跟踪   ? ?     ? ?套利策略   ? ?        ? ?? ? ? ?(40%)      ? ?     ? ?(20%)      ? ?        ? ?? ? ? └────────────? ?     ? └────────────? ?        ? ?? ? ? ┌────────────? ?     ? ┌────────────? ?        ? ?? ? ? ?均值回?  ? ?     ? ?事件驱动   ? ?        ? ?? ? ? ?(30%)      ? ?     ? ?(10%)      ? ?        ? ?? ? ? └────────────? ?     ? └────────────? ?        ? ?? ? └──────────────────?     └──────────────────?        ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             信号融合机制?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?信号收集 ? ?冲突检?? ?融合算法 ? ?置信?  ?? ?? ? ?         ? ?         ? ?         ? ?加权     ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略协同优化?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?协同效应 ? ?资源优化 ? ?风险预算 ? ?动态调??? ?? ? ?识别     ? ?配置     ? ?分配     ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             输出与监控层                                  ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?权重输出 ? ?信号输出 ? ?绩效报告 ? ?预警机制 ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   å¤ç­ç¥åå±ç³»ç»æ¶?                            ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ç­ç¥ç»©æè¯ä¼°?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æ¶ç?  ? ?é£é©ææ  ? ?ç¸å³?  ? ?å®¹éè¯ä¼° ?? ?? ? ?è®¡ç®     ? ?è®¡ç®     ? ?è®¡ç®     ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ç­ç¥åå±æéåé?                           ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? ? ? æ ¸å¿ç­ç¥?      ?     ? å«æç­ç¥?     ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? ?è¶å¿è·è¸ª   ? ?     ? ?å¥å©ç­ç¥   ? ?        ? ?? ? ? ?(40%)      ? ?     ? ?(20%)      ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? ? ?åå¼å?  ? ?     ? ?äºä»¶é©±å¨   ? ?        ? ?? ? ? ?(30%)      ? ?     ? ?(10%)      ? ?        ? ?? ? ? âââââââââââââ? ?     ? âââââââââââââ? ?        ? ?? ? âââââââââââââââââââ?     âââââââââââââââââââ?        ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ä¿¡å·èåæºå¶?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?ä¿¡å·æ¶é ? ?å²çªæ£?? ?èåç®æ³ ? ?ç½®ä¿¡?  ?? ?? ? ?         ? ?         ? ?         ? ?å æ     ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ç­ç¥ååä¼å?                               ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?ååæåº ? ?èµæºä¼å ? ?é£é©é¢ç® ? ?å¨æè°??? ?? ? ?è¯å«     ? ?éç½®     ? ?åé     ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾åºä¸çæ§å±                                  ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?æéè¾åº ? ?ä¿¡å·è¾åº ? ?ç»©ææ¥å ? ?é¢è­¦æºå¶ ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 模块分层架构
+### 2.2 æ¨¡ååå±æ¶æ
 
-**Layer 1 - 策略绩效评估?*
-- 收益率计算器（绝对收益、相对收益、风险调整收益）
-- 风险指标计算器（VaR、CVaR、最大回撤、夏普比率）
-- 相关性计算器（策略间相关性矩阵）
-- 容量评估器（策略容量、资金使用效率）
+**Layer 1 - ç­ç¥ç»©æè¯ä¼°?*
+- æ¶ççè®¡ç®å¨ï¼ç»å¯¹æ¶çãç¸å¯¹æ¶çãé£é©è°æ´æ¶çï¼
+- é£é©ææ è®¡ç®å¨ï¼VaRãCVaRãæå¤§åæ¤ãå¤æ®æ¯çï¼
+- ç¸å³æ§è®¡ç®å¨ï¼ç­ç¥é´ç¸å³æ§ç©éµï¼
+- å®¹éè¯ä¼°å¨ï¼ç­ç¥å®¹éãèµéä½¿ç¨æçï¼
 
-**Layer 2 - 策略分层权重分配?*
-- 核心策略层权重分配器（趋势跟踪、均值回归等核心策略?- 卫星策略层权重分配器（套利策略、事件驱动等卫星策略?- 动态权重调整器（基于绩效动态调整权重）
-- 权重约束处理器（权重上下限、风险约束）
+**Layer 2 - ç­ç¥åå±æéåé?*
+- æ ¸å¿ç­ç¥å±æéåéå¨ï¼è¶å¿è·è¸ªãåå¼åå½ç­æ ¸å¿ç­ç¥?- å«æç­ç¥å±æéåéå¨ï¼å¥å©ç­ç¥ãäºä»¶é©±å¨ç­å«æç­ç¥?- å¨ææéè°æ´å¨ï¼åºäºç»©æå¨æè°æ´æéï¼
+- æéçº¦æå¤çå¨ï¼æéä¸ä¸éãé£é©çº¦æï¼
 
-**Layer 3 - 信号融合机制?*
-- 信号收集器（收集各策略的交易信号?- 冲突检测器（检测信号冲突和矛盾?- 融合算法引擎（投票法、加权平均、机器学习融合）
-- 置信度加权器（基于历史准确率加权?
-**Layer 4 - 策略协同优化?*
-- 协同效应识别器（识别策略间协同效应）
-- 资源优化配置器（优化资金和风险资源分配）
-- 风险预算分配器（策略级风险预算分配）
-- 动态调整器（实时调整策略权重和资源?
-**Layer 5 - 输出与监控层**
-- 权重输出器（输出策略权重方案?- 信号输出器（输出融合后的交易信号?- 绩效报告生成器（生成策略绩效报告?- 预警机制（策略表现异常预警）
+**Layer 3 - ä¿¡å·èåæºå¶?*
+- ä¿¡å·æ¶éå¨ï¼æ¶éåç­ç¥çäº¤æä¿¡å·?- å²çªæ£æµå¨ï¼æ£æµä¿¡å·å²çªåçç¾?- èåç®æ³å¼æï¼æç¥¨æ³ãå æå¹³åãæºå¨å­¦ä¹ èåï¼
+- ç½®ä¿¡åº¦å æå¨ï¼åºäºåå²åç¡®çå æ?
+**Layer 4 - ç­ç¥ååä¼å?*
+- ååæåºè¯å«å¨ï¼è¯å«ç­ç¥é´ååæåºï¼
+- èµæºä¼åéç½®å¨ï¼ä¼åèµéåé£é©èµæºåéï¼
+- é£é©é¢ç®åéå¨ï¼ç­ç¥çº§é£é©é¢ç®åéï¼
+- å¨æè°æ´å¨ï¼å®æ¶è°æ´ç­ç¥æéåèµæº?
+**Layer 5 - è¾åºä¸çæ§å±**
+- æéè¾åºå¨ï¼è¾åºç­ç¥æéæ¹æ¡?- ä¿¡å·è¾åºå¨ï¼è¾åºèååçäº¤æä¿¡å·?- ç»©ææ¥åçæå¨ï¼çæç­ç¥ç»©ææ¥å?- é¢è­¦æºå¶ï¼ç­ç¥è¡¨ç°å¼å¸¸é¢è­¦ï¼
 
-### 2.3 数据流设?
+### 2.3 æ°æ®æµè®¾?
 ```
-策略信号 ?绩效评估 ?权重分配 ?信号融合 ?协同优化
-    ?          ?          ?          ?          ?信号收集   指标计算   分层分配   冲突检?  资源优化
-    ?          ?          ?          ?          ?信号验证   风险评估   权重约束   融合决策   动态调?```
+ç­ç¥ä¿¡å· ?ç»©æè¯ä¼° ?æéåé ?ä¿¡å·èå ?ååä¼å
+    ?          ?          ?          ?          ?ä¿¡å·æ¶é   ææ è®¡ç®   åå±åé   å²çªæ£?  èµæºä¼å
+    ?          ?          ?          ?          ?ä¿¡å·éªè¯   é£é©è¯ä¼°   æéçº¦æ   èåå³ç­   å¨æè°?```
 
 ---
 
-## 3. 核心组件详细设计
+## 3. æ ¸å¿ç»ä»¶è¯¦ç»è®¾è®¡
 
-### 3.1 策略绩效评估?
-**设计目标**: 全面评估策略绩效，为权重分配提供依据
+### 3.1 ç­ç¥ç»©æè¯ä¼°?
+**è®¾è®¡ç®æ **: å¨é¢è¯ä¼°ç­ç¥ç»©æï¼ä¸ºæéåéæä¾ä¾æ®
 
 ```python
 class StrategyPerformanceEvaluator:
-    """策略绩效评估?    
-    索引: STRATEGY_HIERARCHY_001-M01
-    职责: 评估策略的收益率、风险指标、相关性等绩效指标
-    输入: 策略历史收益率、基准收益率
-    输出: 策略绩效评估结果
+    """ç­ç¥ç»©æè¯ä¼°?    
+    ç´¢å¼: STRATEGY_HIERARCHY_001-M01
+    èè´£: è¯ä¼°ç­ç¥çæ¶ççãé£é©ææ ãç¸å³æ§ç­ç»©æææ 
+    è¾å¥: ç­ç¥åå²æ¶ççãåºåæ¶çç
+    è¾åº: ç­ç¥ç»©æè¯ä¼°ç»æ
     """
     
     def __init__(self, config: PerformanceConfig):
         self.config = config
-        self.risk_free_rate = config.risk_free_rate  # 无风险利?        
+        self.risk_free_rate = config.risk_free_rate  # æ é£é©å©?        
     def evaluate_strategy(self, strategy_returns: pd.Series,
                          benchmark_returns: Optional[pd.Series] = None,
                          strategy_name: str = '') -> StrategyPerformance:
-        """评估策略绩效
+        """è¯ä¼°ç­ç¥ç»©æ
         
         Args:
-            strategy_returns: 策略历史收益?            benchmark_returns: 基准收益率（可选）
-            strategy_name: 策略名称
+            strategy_returns: ç­ç¥åå²æ¶ç?            benchmark_returns: åºåæ¶ççï¼å¯éï¼
+            strategy_name: ç­ç¥åç§°
             
         Returns:
-            StrategyPerformance: 策略绩效评估结果
+            StrategyPerformance: ç­ç¥ç»©æè¯ä¼°ç»æ
         """
-        # 1. 计算收益率指?        return_metrics = self._calculate_return_metrics(strategy_returns)
+        # 1. è®¡ç®æ¶ççæ?        return_metrics = self._calculate_return_metrics(strategy_returns)
         
-        # 2. 计算风险指标
+        # 2. è®¡ç®é£é©ææ 
         risk_metrics = self._calculate_risk_metrics(strategy_returns)
         
-        # 3. 计算风险调整收益指标
+        # 3. è®¡ç®é£é©è°æ´æ¶çææ 
         risk_adjusted_metrics = self._calculate_risk_adjusted_metrics(
             strategy_returns, risk_metrics
         )
         
-        # 4. 计算相对指标（如果有基准?        relative_metrics = {}
+        # 4. è®¡ç®ç¸å¯¹ææ ï¼å¦ææåºå?        relative_metrics = {}
         if benchmark_returns is not None:
             relative_metrics = self._calculate_relative_metrics(
                 strategy_returns, benchmark_returns
             )
         
-        # 5. 计算容量指标
+        # 5. è®¡ç®å®¹éææ 
         capacity_metrics = self._calculate_capacity_metrics(strategy_returns)
         
         return StrategyPerformance(
@@ -128,7 +128,7 @@ class StrategyPerformanceEvaluator:
         )
     
     def _calculate_return_metrics(self, returns: pd.Series) -> Dict[str, float]:
-        """计算收益率指?""
+        """è®¡ç®æ¶ççæ?""
         return {
             'total_return': (1 + returns).prod() - 1,
             'annual_return': returns.mean() * 252,
@@ -139,19 +139,19 @@ class StrategyPerformanceEvaluator:
         }
     
     def _calculate_risk_metrics(self, returns: pd.Series) -> Dict[str, float]:
-        """计算风险指标"""
-        # VaR (95%置信?
+        """è®¡ç®é£é©ææ """
+        # VaR (95%ç½®ä¿¡?
         var_95 = np.percentile(returns, 5)
         
-        # CVaR (条件风险?
+        # CVaR (æ¡ä»¶é£é©?
         cvar_95 = returns[returns <= var_95].mean()
         
-        # 最大回?        cumulative = (1 + returns).cumprod()
+        # æå¤§å?        cumulative = (1 + returns).cumprod()
         running_max = cumulative.cummax()
         drawdown = (cumulative - running_max) / running_max
         max_drawdown = drawdown.min()
         
-        # 下行风险
+        # ä¸è¡é£é©
         negative_returns = returns[returns < 0]
         downside_risk = negative_returns.std() * np.sqrt(252) if len(negative_returns) > 0 else 0
         
@@ -165,41 +165,41 @@ class StrategyPerformanceEvaluator:
     
     def _calculate_risk_adjusted_metrics(self, returns: pd.Series,
                                         risk_metrics: Dict[str, float]) -> Dict[str, float]:
-        """计算风险调整收益指标"""
+        """è®¡ç®é£é©è°æ´æ¶çææ """
         annual_return = returns.mean() * 252
         volatility = risk_metrics['volatility']
         max_drawdown = risk_metrics['max_drawdown']
         downside_risk = risk_metrics['downside_risk']
         
-        # Sharpe比率
+        # Sharpeæ¯ç
         sharpe_ratio = (annual_return - self.risk_free_rate) / volatility if volatility > 0 else 0
         
-        # Sortino比率
+        # Sortinoæ¯ç
         sortino_ratio = (annual_return - self.risk_free_rate) / downside_risk if downside_risk > 0 else 0
         
-        # Calmar比率
+        # Calmaræ¯ç
         calmar_ratio = annual_return / max_drawdown if max_drawdown > 0 else 0
         
         return {
             'sharpe_ratio': sharpe_ratio,
             'sortino_ratio': sortino_ratio,
             'calmar_ratio': calmar_ratio,
-            'information_ratio': sharpe_ratio  # 简化处?        }
+            'information_ratio': sharpe_ratio  # ç®åå¤?        }
     
     def _calculate_relative_metrics(self, strategy_returns: pd.Series,
                                    benchmark_returns: pd.Series) -> Dict[str, float]:
-        """计算相对指标"""
-        # Alpha和Beta
+        """è®¡ç®ç¸å¯¹ææ """
+        # AlphaåBeta
         covariance = np.cov(strategy_returns, benchmark_returns)[0, 1]
         benchmark_variance = benchmark_returns.var()
         
         beta = covariance / benchmark_variance if benchmark_variance > 0 else 0
         alpha = strategy_returns.mean() - beta * benchmark_returns.mean()
         
-        # 跟踪误差
+        # è·è¸ªè¯¯å·®
         tracking_error = (strategy_returns - benchmark_returns).std() * np.sqrt(252)
         
-        # 信息比率
+        # ä¿¡æ¯æ¯ç
         excess_return = (strategy_returns.mean() - benchmark_returns.mean()) * 252
         information_ratio = excess_return / tracking_error if tracking_error > 0 else 0
         
@@ -211,13 +211,13 @@ class StrategyPerformanceEvaluator:
         }
     
     def _calculate_capacity_metrics(self, returns: pd.Series) -> Dict[str, float]:
-        """计算容量指标"""
-        # 平均持仓时间
-        avg_holding_period = 5  # 简化：假设平均持仓5?        
-        # 资金周转?        turnover_rate = 252 / avg_holding_period
+        """è®¡ç®å®¹éææ """
+        # å¹³åæä»æ¶é´
+        avg_holding_period = 5  # ç®åï¼åè®¾å¹³åæä»5?        
+        # èµéå¨è½¬?        turnover_rate = 252 / avg_holding_period
         
-        # 策略容量（简化估算）
-        # 基于收益率波动和流动性估?        capacity = 1e8 * (1 / returns.std())  # 简化：波动率越小，容量越大
+        # ç­ç¥å®¹éï¼ç®åä¼°ç®ï¼
+        # åºäºæ¶ççæ³¢å¨åæµå¨æ§ä¼°?        capacity = 1e8 * (1 / returns.std())  # ç®åï¼æ³¢å¨çè¶å°ï¼å®¹éè¶å¤§
         
         return {
             'avg_holding_period': avg_holding_period,
@@ -226,62 +226,62 @@ class StrategyPerformanceEvaluator:
         }
     
     def calculate_correlation_matrix(self, strategy_returns: Dict[str, pd.Series]) -> pd.DataFrame:
-        """计算策略间相关性矩?        
+        """è®¡ç®ç­ç¥é´ç¸å³æ§ç©?        
         Args:
-            strategy_returns: 各策略的收益率序?            
+            strategy_returns: åç­ç¥çæ¶ççåº?            
         Returns:
-            pd.DataFrame: 相关性矩?        """
+            pd.DataFrame: ç¸å³æ§ç©?        """
         returns_df = pd.DataFrame(strategy_returns)
         correlation_matrix = returns_df.corr()
         
         return correlation_matrix
 ```
 
-### 3.2 策略分层权重分配?
-**设计目标**: 基于策略绩效和风险贡献动态分配权?
+### 3.2 ç­ç¥åå±æéåé?
+**è®¾è®¡ç®æ **: åºäºç­ç¥ç»©æåé£é©è´¡ç®å¨æåéæ?
 ```python
 class StrategyLayerWeightAllocator:
-    """策略分层权重分配?    
-    索引: STRATEGY_HIERARCHY_001-M02
-    职责: 基于策略绩效、风险贡献、相关性动态分配权?    输入: 策略绩效评估结果、相关性矩?    输出: 策略权重分配方案
+    """ç­ç¥åå±æéåé?    
+    ç´¢å¼: STRATEGY_HIERARCHY_001-M02
+    èè´£: åºäºç­ç¥ç»©æãé£é©è´¡ç®ãç¸å³æ§å¨æåéæ?    è¾å¥: ç­ç¥ç»©æè¯ä¼°ç»æãç¸å³æ§ç©?    è¾åº: ç­ç¥æéåéæ¹æ¡
     """
     
     def __init__(self, config: WeightAllocationConfig):
         self.config = config
-        self.core_strategy_weight = config.core_strategy_weight  # 核心策略层权重（?0%?        self.satellite_strategy_weight = config.satellite_strategy_weight  # 卫星策略层权重（?0%?        
+        self.core_strategy_weight = config.core_strategy_weight  # æ ¸å¿ç­ç¥å±æéï¼?0%?        self.satellite_strategy_weight = config.satellite_strategy_weight  # å«æç­ç¥å±æéï¼?0%?        
     def allocate_weights(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         current_weights: Dict[str, float]) -> WeightAllocationResult:
-        """分配策略权重
+        """åéç­ç¥æé
         
         Args:
-            strategy_performances: 各策略的绩效评估结果
-            correlation_matrix: 策略间相关性矩?            current_weights: 当前权重
+            strategy_performances: åç­ç¥çç»©æè¯ä¼°ç»æ
+            correlation_matrix: ç­ç¥é´ç¸å³æ§ç©?            current_weights: å½åæé
             
         Returns:
-            WeightAllocationResult: 权重分配结果
+            WeightAllocationResult: æéåéç»æ
         """
-        # 1. 策略分类（核心策?vs 卫星策略?        core_strategies, satellite_strategies = self._classify_strategies(
+        # 1. ç­ç¥åç±»ï¼æ ¸å¿ç­?vs å«æç­ç¥?        core_strategies, satellite_strategies = self._classify_strategies(
             strategy_performances
         )
         
-        # 2. 核心策略层权重分?        core_weights = self._allocate_layer_weights(
+        # 2. æ ¸å¿ç­ç¥å±æéå?        core_weights = self._allocate_layer_weights(
             core_strategies, strategy_performances, correlation_matrix,
             self.core_strategy_weight
         )
         
-        # 3. 卫星策略层权重分?        satellite_weights = self._allocate_layer_weights(
+        # 3. å«æç­ç¥å±æéå?        satellite_weights = self._allocate_layer_weights(
             satellite_strategies, strategy_performances, correlation_matrix,
             self.satellite_strategy_weight
         )
         
-        # 4. 合并权重
+        # 4. åå¹¶æé
         final_weights = {**core_weights, **satellite_weights}
         
-        # 5. 应用权重约束
+        # 5. åºç¨æéçº¦æ
         final_weights = self._apply_weight_constraints(final_weights, current_weights)
         
-        # 6. 计算风险贡献
+        # 6. è®¡ç®é£é©è´¡ç®
         risk_contributions = self._calculate_risk_contributions(
             final_weights, correlation_matrix
         )
@@ -297,10 +297,10 @@ class StrategyLayerWeightAllocator:
         )
     
     def _classify_strategies(self, performances: Dict[str, StrategyPerformance]) -> Tuple[List[str], List[str]]:
-        """策略分类
+        """ç­ç¥åç±»
         
-        核心策略：夏普比率≥1.5，最大回撤≤15%
-        卫星策略：其他策?        """
+        æ ¸å¿ç­ç¥ï¼å¤æ®æ¯çâ¥1.5ï¼æå¤§åæ¤â¤15%
+        å«æç­ç¥ï¼å¶ä»ç­?        """
         core_strategies = []
         satellite_strategies = []
         
@@ -319,20 +319,20 @@ class StrategyLayerWeightAllocator:
                                 performances: Dict[str, StrategyPerformance],
                                 correlation_matrix: pd.DataFrame,
                                 layer_weight: float) -> Dict[str, float]:
-        """分配层内权重
+        """åéå±åæé
         
-        使用风险平价方法分配权重
+        ä½¿ç¨é£é©å¹³ä»·æ¹æ³åéæé
         """
         if len(strategies) == 0:
             return {}
         
-        # 计算各策略的风险贡献
+        # è®¡ç®åç­ç¥çé£é©è´¡ç®
         strategy_risks = {}
         for name in strategies:
             perf = performances[name]
             strategy_risks[name] = perf.risk_metrics['volatility']
         
-        # 风险平价权重
+        # é£é©å¹³ä»·æé
         inv_risks = {name: 1.0 / risk for name, risk in strategy_risks.items()}
         total_inv_risk = sum(inv_risks.values())
         
@@ -345,19 +345,19 @@ class StrategyLayerWeightAllocator:
     
     def _apply_weight_constraints(self, weights: Dict[str, float],
                                  current_weights: Dict[str, float]) -> Dict[str, float]:
-        """应用权重约束"""
-        # 权重下限
+        """åºç¨æéçº¦æ"""
+        # æéä¸é
         min_weight = self.config.min_weight
         weights = {k: max(v, min_weight) for k, v in weights.items()}
         
-        # 权重上限
+        # æéä¸é
         max_weight = self.config.max_weight
         weights = {k: min(v, max_weight) for k, v in weights.items()}
         
-        # 权重归一?        total_weight = sum(weights.values())
+        # æéå½ä¸?        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
         
-        # 单日调整幅度限制
+        # åæ¥è°æ´å¹åº¦éå¶
         max_adjustment = self.config.max_daily_adjustment
         for name in weights:
             if name in current_weights:
@@ -368,22 +368,22 @@ class StrategyLayerWeightAllocator:
                     else:
                         weights[name] = current_weights[name] - max_adjustment
         
-        # 再次归一?        total_weight = sum(weights.values())
+        # åæ¬¡å½ä¸?        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
         
         return weights
     
     def _calculate_risk_contributions(self, weights: Dict[str, float],
                                      correlation_matrix: pd.DataFrame) -> Dict[str, float]:
-        """计算风险贡献"""
-        # 简化计算：基于权重和波动率
-        # 实际应考虑相关性矩?        
+        """è®¡ç®é£é©è´¡ç®"""
+        # ç®åè®¡ç®ï¼åºäºæéåæ³¢å¨ç
+        # å®éåºèèç¸å³æ§ç©?        
         risk_contributions = {}
         for name, weight in weights.items():
-            # 简化：风险贡献 = 权重 * 平均相关?            avg_correlation = correlation_matrix[name].mean()
+            # ç®åï¼é£é©è´¡ç® = æé * å¹³åç¸å³?            avg_correlation = correlation_matrix[name].mean()
             risk_contributions[name] = weight * avg_correlation
         
-        # 标准?        total_risk = sum(risk_contributions.values())
+        # æ å?        total_risk = sum(risk_contributions.values())
         if total_risk > 0:
             risk_contributions = {k: v / total_risk for k, v in risk_contributions.items()}
         
@@ -391,51 +391,51 @@ class StrategyLayerWeightAllocator:
     
     def _generate_adjustment_reason(self, current_weights: Dict[str, float],
                                    new_weights: Dict[str, float]) -> str:
-        """生成调整理由"""
+        """çæè°æ´çç±"""
         adjustments = []
         
         for name in new_weights:
             if name in current_weights:
                 adjustment = new_weights[name] - current_weights[name]
                 if abs(adjustment) > 0.01:
-                    direction = "提高" if adjustment > 0 else "降低"
-                    adjustments.append(f"{direction}{name}权重{abs(adjustment):.2%}")
+                    direction = "æé«" if adjustment > 0 else "éä½"
+                    adjustments.append(f"{direction}{name}æé{abs(adjustment):.2%}")
         
         if adjustments:
-            return "基于绩效评估和风险贡献调? " + ", ".join(adjustments)
+            return "åºäºç»©æè¯ä¼°åé£é©è´¡ç®è°? " + ", ".join(adjustments)
         else:
-            return "维持当前权重分配"
+            return "ç»´æå½åæéåé"
 ```
 
-### 3.3 信号融合引擎
+### 3.3 ä¿¡å·èåå¼æ
 
-**设计目标**: 融合多策略信号，解决信号冲突，输出最终交易信?
+**è®¾è®¡ç®æ **: èåå¤ç­ç¥ä¿¡å·ï¼è§£å³ä¿¡å·å²çªï¼è¾åºæç»äº¤æä¿¡?
 ```python
 class SignalFusionEngine:
-    """信号融合引擎
+    """ä¿¡å·èåå¼æ
     
-    索引: STRATEGY_HIERARCHY_001-M03
-    职责: 融合多策略信号，解决信号冲突
-    输入: 各策略的交易信号
-    输出: 融合后的最终信?    """
+    ç´¢å¼: STRATEGY_HIERARCHY_001-M03
+    èè´£: èåå¤ç­ç¥ä¿¡å·ï¼è§£å³ä¿¡å·å²çª
+    è¾å¥: åç­ç¥çäº¤æä¿¡å·
+    è¾åº: èååçæç»ä¿¡?    """
     
     def __init__(self, config: FusionConfig):
         self.config = config
-        self.fusion_method = config.fusion_method  # 融合方法（voting/weighted/ml?        
+        self.fusion_method = config.fusion_method  # èåæ¹æ³ï¼voting/weighted/ml?        
     def fuse_signals(self, strategy_signals: Dict[str, TradingSignal],
                     strategy_weights: Dict[str, float],
                     historical_accuracy: Dict[str, float]) -> FusedSignal:
-        """融合多策略信?        
+        """èåå¤ç­ç¥ä¿¡?        
         Args:
-            strategy_signals: 各策略的交易信号
-            strategy_weights: 策略权重
-            historical_accuracy: 各策略的历史准确?            
+            strategy_signals: åç­ç¥çäº¤æä¿¡å·
+            strategy_weights: ç­ç¥æé
+            historical_accuracy: åç­ç¥çåå²åç¡®?            
         Returns:
-            FusedSignal: 融合后的信号
+            FusedSignal: èååçä¿¡å·
         """
-        # 1. 检测信号冲?        conflicts = self._detect_conflicts(strategy_signals)
+        # 1. æ£æµä¿¡å·å²?        conflicts = self._detect_conflicts(strategy_signals)
         
-        # 2. 根据融合方法融合信号
+        # 2. æ ¹æ®èåæ¹æ³èåä¿¡å·
         if self.fusion_method == 'voting':
             fused_signal = self._voting_fusion(strategy_signals, strategy_weights)
         elif self.fusion_method == 'weighted':
@@ -449,28 +449,28 @@ class SignalFusionEngine:
                 strategy_signals, strategy_weights, historical_accuracy
             )
         
-        # 3. 添加冲突信息
+        # 3. æ·»å å²çªä¿¡æ¯
         fused_signal.conflicts = conflicts
         
         return fused_signal
     
     def _detect_conflicts(self, signals: Dict[str, TradingSignal]) -> List[SignalConflict]:
-        """检测信号冲?""
+        """æ£æµä¿¡å·å²?""
         conflicts = []
         
-        # 检测方向冲?        directions = [sig.direction for sig in signals.values()]
+        # æ£æµæ¹åå²?        directions = [sig.direction for sig in signals.values()]
         if 'long' in directions and 'short' in directions:
             conflicts.append(SignalConflict(
                 conflict_type='direction',
-                description='多空方向冲突',
+                description='å¤ç©ºæ¹åå²çª',
                 strategies=[name for name, sig in signals.items() if sig.direction in ['long', 'short']]
             ))
         
-        # 检测强度冲?        strengths = [sig.strength for sig in signals.values()]
+        # æ£æµå¼ºåº¦å²?        strengths = [sig.strength for sig in signals.values()]
         if max(strengths) - min(strengths) > 0.5:
             conflicts.append(SignalConflict(
                 conflict_type='strength',
-                description='信号强度差异过大',
+                description='ä¿¡å·å¼ºåº¦å·®å¼è¿å¤§',
                 strategies=list(signals.keys())
             ))
         
@@ -478,15 +478,15 @@ class SignalFusionEngine:
     
     def _voting_fusion(self, signals: Dict[str, TradingSignal],
                       weights: Dict[str, float]) -> FusedSignal:
-        """投票法融?""
-        # 统计各方向的加权票数
+        """æç¥¨æ³è?""
+        # ç»è®¡åæ¹åçå æç¥¨æ°
         votes = {'long': 0.0, 'short': 0.0, 'neutral': 0.0}
         
         for name, signal in signals.items():
             weight = weights.get(name, 1.0 / len(signals))
             votes[signal.direction] += weight
         
-        # 选择票数最多的方向
+        # éæ©ç¥¨æ°æå¤çæ¹å
         final_direction = max(votes, key=votes.get)
         final_strength = votes[final_direction] / sum(votes.values())
         
@@ -501,30 +501,30 @@ class SignalFusionEngine:
     def _weighted_fusion(self, signals: Dict[str, TradingSignal],
                         weights: Dict[str, float],
                         accuracy: Dict[str, float]) -> FusedSignal:
-        """加权平均融合"""
-        # 计算综合权重（策略权?* 历史准确率）
+        """å æå¹³åèå"""
+        # è®¡ç®ç»¼åæéï¼ç­ç¥æ?* åå²åç¡®çï¼
         composite_weights = {}
         for name in signals:
             strategy_weight = weights.get(name, 1.0 / len(signals))
             strategy_accuracy = accuracy.get(name, 0.5)
             composite_weights[name] = strategy_weight * strategy_accuracy
         
-        # 归一?        total_weight = sum(composite_weights.values())
+        # å½ä¸?        total_weight = sum(composite_weights.values())
         composite_weights = {k: v / total_weight for k, v in composite_weights.items()}
         
-        # 加权平均信号强度
+        # å æå¹³åä¿¡å·å¼ºåº¦
         weighted_strength = 0.0
         weighted_direction = 0.0
         
         for name, signal in signals.items():
             weight = composite_weights[name]
             
-            # 方向转换为数值（long=1, neutral=0, short=-1?            direction_value = {'long': 1, 'neutral': 0, 'short': -1}[signal.direction]
+            # æ¹åè½¬æ¢ä¸ºæ°å¼ï¼long=1, neutral=0, short=-1?            direction_value = {'long': 1, 'neutral': 0, 'short': -1}[signal.direction]
             
             weighted_direction += weight * direction_value * signal.strength
             weighted_strength += weight * signal.strength
         
-        # 确定最终方?        if weighted_direction > 0.1:
+        # ç¡®å®æç»æ¹?        if weighted_direction > 0.1:
             final_direction = 'long'
         elif weighted_direction < -0.1:
             final_direction = 'short'
@@ -541,22 +541,22 @@ class SignalFusionEngine:
     
     def _ml_fusion(self, signals: Dict[str, TradingSignal],
                   weights: Dict[str, float]) -> FusedSignal:
-        """机器学习融合（简化版?""
-        # 实际应使用训练好的ML模型
-        # 这里简化为加权平均
+        """æºå¨å­¦ä¹ èåï¼ç®åç?""
+        # å®éåºä½¿ç¨è®­ç»å¥½çMLæ¨¡å
+        # è¿éç®åä¸ºå æå¹³å
         
         return self._weighted_fusion(signals, weights, {})
 ```
 
-### 3.4 策略协同优化?
-**设计目标**: 识别策略间协同效应，优化资源分配
+### 3.4 ç­ç¥ååä¼å?
+**è®¾è®¡ç®æ **: è¯å«ç­ç¥é´ååæåºï¼ä¼åèµæºåé
 
 ```python
 class StrategySynergyOptimizer:
-    """策略协同优化?    
-    索引: STRATEGY_HIERARCHY_001-M04
-    职责: 识别策略间协同效应，优化资源分配
-    输入: 策略绩效、相关性矩阵、资源约?    输出: 协同优化方案
+    """ç­ç¥ååä¼å?    
+    ç´¢å¼: STRATEGY_HIERARCHY_001-M04
+    èè´£: è¯å«ç­ç¥é´ååæåºï¼ä¼åèµæºåé
+    è¾å¥: ç­ç¥ç»©æãç¸å³æ§ç©éµãèµæºçº¦?    è¾åº: ååä¼åæ¹æ¡
     """
     
     def __init__(self, config: SynergyConfig):
@@ -565,27 +565,27 @@ class StrategySynergyOptimizer:
     def optimize_synergy(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         resource_constraints: ResourceConstraints) -> SynergyOptimizationResult:
-        """优化策略协同
+        """ä¼åç­ç¥åå
         
         Args:
-            strategy_performances: 策略绩效
-            correlation_matrix: 相关性矩?            resource_constraints: 资源约束
+            strategy_performances: ç­ç¥ç»©æ
+            correlation_matrix: ç¸å³æ§ç©?            resource_constraints: èµæºçº¦æ
             
         Returns:
-            SynergyOptimizationResult: 协同优化结果
+            SynergyOptimizationResult: ååä¼åç»æ
         """
-        # 1. 识别协同效应
+        # 1. è¯å«ååæåº
         synergies = self._identify_synergies(correlation_matrix)
         
-        # 2. 识别冲突策略
+        # 2. è¯å«å²çªç­ç¥
         conflicts = self._identify_conflicts(correlation_matrix)
         
-        # 3. 优化资源分配
+        # 3. ä¼åèµæºåé
         resource_allocation = self._optimize_resources(
             strategy_performances, synergies, conflicts, resource_constraints
         )
         
-        # 4. 生成优化建议
+        # 4. çæä¼åå»ºè®®
         recommendations = self._generate_recommendations(synergies, conflicts)
         
         return SynergyOptimizationResult(
@@ -596,9 +596,9 @@ class StrategySynergyOptimizer:
         )
     
     def _identify_synergies(self, correlation_matrix: pd.DataFrame) -> List[StrategySynergy]:
-        """识别协同效应
+        """è¯å«ååæåº
         
-        协同效应：相关性在[-0.3, 0.3]之间的策略组?        """
+        ååæåºï¼ç¸å³æ§å¨[-0.3, 0.3]ä¹é´çç­ç¥ç»?        """
         synergies = []
         
         strategies = correlation_matrix.columns
@@ -607,7 +607,7 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 低相关性或负相?= 协同效应
+                    # ä½ç¸å³æ§æè´ç¸?= ååæåº
                     if -0.3 <= corr <= 0.3:
                         synergy_type = 'diversification' if corr >= 0 else 'hedging'
                         synergies.append(StrategySynergy(
@@ -615,15 +615,15 @@ class StrategySynergyOptimizer:
                             strategy2=strat2,
                             correlation=corr,
                             synergy_type=synergy_type,
-                            benefit='风险分散' if synergy_type == 'diversification' else '风险对冲'
+                            benefit='é£é©åæ£' if synergy_type == 'diversification' else 'é£é©å¯¹å²'
                         ))
         
         return synergies
     
     def _identify_conflicts(self, correlation_matrix: pd.DataFrame) -> List[StrategyConflict]:
-        """识别冲突策略
+        """è¯å«å²çªç­ç¥
         
-        冲突策略：相?0.7的策略组?        """
+        å²çªç­ç¥ï¼ç¸?0.7çç­ç¥ç»?        """
         conflicts = []
         
         strategies = correlation_matrix.columns
@@ -632,14 +632,14 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 高相?= 冲突
+                    # é«ç¸?= å²çª
                     if corr > 0.7:
                         conflicts.append(StrategyConflict(
                             strategy1=strat1,
                             strategy2=strat2,
                             correlation=corr,
                             conflict_type='high_correlation',
-                            recommendation='考虑降低其中一个策略的权重'
+                            recommendation='èèéä½å¶ä¸­ä¸ä¸ªç­ç¥çæé'
                         ))
         
         return conflicts
@@ -648,26 +648,26 @@ class StrategySynergyOptimizer:
                            synergies: List[StrategySynergy],
                            conflicts: List[StrategyConflict],
                            constraints: ResourceConstraints) -> Dict[str, ResourceAllocation]:
-        """优化资源分配"""
+        """ä¼åèµæºåé"""
         allocations = {}
         
-        # 基于绩效和协同效应分配资?        for name, perf in performances.items():
-            # 基础分配：基于Sharpe比率
-            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一?            
-            # 协同加成
+        # åºäºç»©æåååæåºåéèµ?        for name, perf in performances.items():
+            # åºç¡åéï¼åºäºSharpeæ¯ç
+            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # å½ä¸?            
+            # ååå æ
             synergy_bonus = 0.0
             for synergy in synergies:
                 if name in [synergy.strategy1, synergy.strategy2]:
                     synergy_bonus += 0.1
             
-            # 冲突惩罚
+            # å²çªæ©ç½
             conflict_penalty = 0.0
             for conflict in conflicts:
                 if name in [conflict.strategy1, conflict.strategy2]:
                     conflict_penalty += 0.1
             
-            # 最终分?            final_allocation = base_allocation + synergy_bonus - conflict_penalty
-            final_allocation = max(0.1, min(1.0, final_allocation))  # 限制在[0.1, 1.0]
+            # æç»å?            final_allocation = base_allocation + synergy_bonus - conflict_penalty
+            final_allocation = max(0.1, min(1.0, final_allocation))  # éå¶å¨[0.1, 1.0]
             
             allocations[name] = ResourceAllocation(
                 strategy_name=name,
@@ -676,7 +676,7 @@ class StrategySynergyOptimizer:
                 risk_budget=constraints.total_risk_budget * final_allocation
             )
         
-        # 归一?        total_allocation = sum(a.allocation_ratio for a in allocations.values())
+        # å½ä¸?        total_allocation = sum(a.allocation_ratio for a in allocations.values())
         for name in allocations:
             allocations[name].allocation_ratio /= total_allocation
             allocations[name].capital_allocation = constraints.total_capital * allocations[name].allocation_ratio
@@ -686,17 +686,17 @@ class StrategySynergyOptimizer:
     
     def _generate_recommendations(self, synergies: List[StrategySynergy],
                                  conflicts: List[StrategyConflict]) -> List[str]:
-        """生成优化建议"""
+        """çæä¼åå»ºè®®"""
         recommendations = []
         
-        # 协同建议
-        for synergy in synergies[:3]:  # ?个协同效?            recommendations.append(
-                f"?{synergy.strategy1}和{synergy.strategy2}具有{synergy.benefit}效应，建议增加配?
+        # ååå»ºè®®
+        for synergy in synergies[:3]:  # ?ä¸ªååæ?            recommendations.append(
+                f"?{synergy.strategy1}å{synergy.strategy2}å·æ{synergy.benefit}æåºï¼å»ºè®®å¢å é?
             )
         
-        # 冲突建议
-        for conflict in conflicts[:3]:  # ?个冲?            recommendations.append(
-                f"⚠️ {conflict.strategy1}和{conflict.strategy2}相关性过?{conflict.correlation:.2f})，{conflict.recommendation}"
+        # å²çªå»ºè®®
+        for conflict in conflicts[:3]:  # ?ä¸ªå²?            recommendations.append(
+                f"â ï¸ {conflict.strategy1}å{conflict.strategy2}ç¸å³æ§è¿?{conflict.correlation:.2f})ï¼{conflict.recommendation}"
             )
         
         return recommendations
@@ -704,9 +704,9 @@ class StrategySynergyOptimizer:
 
 ---
 
-## 4. 接口定义
+## 4. æ¥å£å®ä¹
 
-### 4.1 核心接口
+### 4.1 æ ¸å¿æ¥å£
 
 ```python
 from abc import ABC, abstractmethod
@@ -717,7 +717,7 @@ import pandas as pd
 
 @dataclass
 class StrategyPerformance:
-    """策略绩效"""
+    """ç­ç¥ç»©æ"""
     strategy_name: str
     return_metrics: Dict[str, float]
     risk_metrics: Dict[str, float]
@@ -727,7 +727,7 @@ class StrategyPerformance:
 
 @dataclass
 class TradingSignal:
-    """交易信号"""
+    """äº¤æä¿¡å·"""
     strategy_name: str
     direction: str          # long/short/neutral
     strength: float         # 0-1
@@ -736,7 +736,7 @@ class TradingSignal:
 
 @dataclass
 class FusedSignal:
-    """融合信号"""
+    """èåä¿¡å·"""
     direction: str
     strength: float
     confidence: float
@@ -746,14 +746,14 @@ class FusedSignal:
 
 @dataclass
 class SignalConflict:
-    """信号冲突"""
+    """ä¿¡å·å²çª"""
     conflict_type: str
     description: str
     strategies: List[str]
 
 @dataclass
 class WeightAllocationResult:
-    """权重分配结果"""
+    """æéåéç»æ"""
     weights: Dict[str, float]
     core_weights: Dict[str, float]
     satellite_weights: Dict[str, float]
@@ -762,7 +762,7 @@ class WeightAllocationResult:
 
 @dataclass
 class StrategySynergy:
-    """策略协同"""
+    """ç­ç¥åå"""
     strategy1: str
     strategy2: str
     correlation: float
@@ -771,7 +771,7 @@ class StrategySynergy:
 
 @dataclass
 class StrategyConflict:
-    """策略冲突"""
+    """ç­ç¥å²çª"""
     strategy1: str
     strategy2: str
     correlation: float
@@ -780,7 +780,7 @@ class StrategyConflict:
 
 @dataclass
 class ResourceAllocation:
-    """资源分配"""
+    """èµæºåé"""
     strategy_name: str
     allocation_ratio: float
     capital_allocation: float
@@ -788,14 +788,14 @@ class ResourceAllocation:
 
 @dataclass
 class ResourceConstraints:
-    """资源约束"""
+    """èµæºçº¦æ"""
     total_capital: float
     total_risk_budget: float
     max_strategies: int
 
 @dataclass
 class SynergyOptimizationResult:
-    """协同优化结果"""
+    """ååä¼åç»æ"""
     synergies: List[StrategySynergy]
     conflicts: List[StrategyConflict]
     resource_allocation: Dict[str, ResourceAllocation]
@@ -803,41 +803,41 @@ class SynergyOptimizationResult:
 
 
 class IPerformanceEvaluator(ABC):
-    """绩效评估器接?""
+    """ç»©æè¯ä¼°å¨æ¥?""
     
     @abstractmethod
     def evaluate(self, returns: pd.Series, benchmark: Optional[pd.Series] = None) -> StrategyPerformance:
-        """评估策略绩效"""
+        """è¯ä¼°ç­ç¥ç»©æ"""
         pass
 
 
 class IWeightAllocator(ABC):
-    """权重分配器接?""
+    """æéåéå¨æ¥?""
     
     @abstractmethod
     def allocate(self, performances: Dict[str, StrategyPerformance],
                 correlation_matrix: pd.DataFrame) -> Dict[str, float]:
-        """分配策略权重"""
+        """åéç­ç¥æé"""
         pass
 
 
 class ISignalFusion(ABC):
-    """信号融合接口"""
+    """ä¿¡å·èåæ¥å£"""
     
     @abstractmethod
     def fuse(self, signals: Dict[str, TradingSignal],
             weights: Dict[str, float]) -> FusedSignal:
-        """融合信号"""
+        """èåä¿¡å·"""
         pass
 ```
 
-### 4.2 主接?
+### 4.2 ä¸»æ¥?
 ```python
 class MultiStrategyHierarchicalSystem:
-    """多策略分层系统主接口
+    """å¤ç­ç¥åå±ç³»ç»ä¸»æ¥å£
     
-    索引: STRATEGY_HIERARCHY_001-MAIN
-    职责: 协调策略绩效评估、权重分配、信号融合、协同优?    """
+    ç´¢å¼: STRATEGY_HIERARCHY_001-MAIN
+    èè´£: åè°ç­ç¥ç»©æè¯ä¼°ãæéåéãä¿¡å·èåãååä¼?    """
     
     def __init__(self, config: HierarchicalSystemConfig):
         self.config = config
@@ -850,28 +850,28 @@ class MultiStrategyHierarchicalSystem:
                          strategy_signals: Dict[str, TradingSignal],
                          current_weights: Dict[str, float],
                          resource_constraints: ResourceConstraints) -> ManagementResult:
-        """管理多策?        
+        """ç®¡çå¤ç­?        
         Args:
-            strategy_returns: 各策略的历史收益?            strategy_signals: 各策略的当前信号
-            current_weights: 当前权重
-            resource_constraints: 资源约束
+            strategy_returns: åç­ç¥çåå²æ¶ç?            strategy_signals: åç­ç¥çå½åä¿¡å·
+            current_weights: å½åæé
+            resource_constraints: èµæºçº¦æ
             
         Returns:
-            ManagementResult: 管理结果
+            ManagementResult: ç®¡çç»æ
         """
-        # 1. 绩效评估
+        # 1. ç»©æè¯ä¼°
         performances = {}
         for name, returns in strategy_returns.items():
             performances[name] = self.performance_evaluator.evaluate_strategy(returns)
         
-        # 2. 相关性计?        correlation_matrix = self.performance_evaluator.calculate_correlation_matrix(strategy_returns)
+        # 2. ç¸å³æ§è®¡?        correlation_matrix = self.performance_evaluator.calculate_correlation_matrix(strategy_returns)
         
-        # 3. 权重分配
+        # 3. æéåé
         weight_result = self.weight_allocator.allocate_weights(
             performances, correlation_matrix, current_weights
         )
         
-        # 4. 信号融合
+        # 4. ä¿¡å·èå
         historical_accuracy = {
             name: 0.5 + perf.risk_adjusted_metrics['sharpe_ratio'] / 10.0
             for name, perf in performances.items()
@@ -881,7 +881,7 @@ class MultiStrategyHierarchicalSystem:
             strategy_signals, weight_result.weights, historical_accuracy
         )
         
-        # 5. 协同优化
+        # 5. ååä¼å
         synergy_result = self.synergy_optimizer.optimize_synergy(
             performances, correlation_matrix, resource_constraints
         )
@@ -897,100 +897,100 @@ class MultiStrategyHierarchicalSystem:
 
 ---
 
-## 5. 实施计划
+## 5. å®æ½è®¡å
 
-### 5.1 开发里程碑
+### 5.1 å¼åéç¨ç¢
 
-**Phase 1: 绩效评估与权重分配（Week 1-2?*
-- ?实现策略绩效评估?- ?实现策略分层权重分配?- ?完成单元测试
+**Phase 1: ç»©æè¯ä¼°ä¸æéåéï¼Week 1-2?*
+- ?å®ç°ç­ç¥ç»©æè¯ä¼°?- ?å®ç°ç­ç¥åå±æéåé?- ?å®æååæµè¯
 
-**Phase 2: 信号融合与协同优化（Week 3-4?*
-- ?实现信号融合引擎
-- ?实现策略协同优化?- ?完成集成测试
+**Phase 2: ä¿¡å·èåä¸ååä¼åï¼Week 3-4?*
+- ?å®ç°ä¿¡å·èåå¼æ
+- ?å®ç°ç­ç¥ååä¼å?- ?å®æéææµè¯
 
-**Phase 3: 系统集成与优化（Week 5-6?*
-- ?集成到组合优化层
-- ?实现实时监控接口
-- ?完成性能优化
-- ?完成回测验证
+**Phase 3: ç³»ç»éæä¸ä¼åï¼Week 5-6?*
+- ?éæå°ç»åä¼åå±
+- ?å®ç°å®æ¶çæ§æ¥å£
+- ?å®ææ§è½ä¼å
+- ?å®æåæµéªè¯
 
-**Phase 4: 生产部署（Week 7-8?*
-- ?生产环境部署
-- ?监控系统集成
-- ?文档完善
-- ?用户培训
+**Phase 4: çäº§é¨ç½²ï¼Week 7-8?*
+- ?çäº§ç¯å¢é¨ç½²
+- ?çæ§ç³»ç»éæ
+- ?ææ¡£å®å
+- ?ç¨æ·å¹è®­
 
-### 5.2 技术栈
+### 5.2 ææ¯æ 
 
-| 组件 | 技术选型 | 版本要求 |
+| ç»ä»¶ | ææ¯éå | çæ¬è¦æ± |
 |------|----------|----------|
-| **优化引擎** | CVXPY, scipy | ?.2, ?.7 |
-| **数据分析** | numpy, pandas | ?.21, ?.3 |
-| **机器学习** | scikit-learn | ?.0 |
-| **可视?* | matplotlib, plotly | ?.5, ?.0 |
-| **监控** | Prometheus, Grafana | ?.0, ?.0 |
+| **ä¼åå¼æ** | CVXPY, scipy | ?.2, ?.7 |
+| **æ°æ®åæ** | numpy, pandas | ?.21, ?.3 |
+| **æºå¨å­¦ä¹ ** | scikit-learn | ?.0 |
+| **å¯è§?* | matplotlib, plotly | ?.5, ?.0 |
+| **çæ§** | Prometheus, Grafana | ?.0, ?.0 |
 
-### 5.3 性能指标
+### 5.3 æ§è½ææ 
 
-| 指标 | 目标?| 验证方法 |
+| ææ  | ç®æ ?| éªè¯æ¹æ³ |
 |------|--------|----------|
-| **权重调整延迟** | ??| 性能测试 |
-| **信号融合延迟** | ??| 性能测试 |
-| **策略夏普比率** | ?.0 | 回测验证 |
-| **策略相关?* | ?.3 | 统计分析 |
+| **æéè°æ´å»¶è¿** | ??| æ§è½æµè¯ |
+| **ä¿¡å·èåå»¶è¿** | ??| æ§è½æµè¯ |
+| **ç­ç¥å¤æ®æ¯ç** | ?.0 | åæµéªè¯ |
+| **ç­ç¥ç¸å³?* | ?.3 | ç»è®¡åæ |
 
 ---
 
-## 6. 风险与约?
-### 6.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+## 6. é£é©ä¸çº¦?
+### 6.1 ææ¯é£?
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|----------|----------|
-| **策略过拟?* | P1 | 样本外验证、交叉验?|
-| **信号冲突频繁** | P2 | 优化融合算法、增加冲突解决机?|
-| **权重调整滞后** | P2 | 实时监控、快速响?|
-| **系统复杂?* | P2 | 模块化设计、充分测?|
+| **ç­ç¥è¿æ?* | P1 | æ ·æ¬å¤éªè¯ãäº¤åéª?|
+| **ä¿¡å·å²çªé¢ç¹** | P2 | ä¼åèåç®æ³ãå¢å å²çªè§£å³æº?|
+| **æéè°æ´æ»å** | P2 | å®æ¶çæ§ãå¿«éå?|
+| **ç³»ç»å¤æ?* | P2 | æ¨¡ååè®¾è®¡ãååæµ?|
 
-### 6.2 实施约束
+### 6.2 å®æ½çº¦æ
 
-1. **数据约束**: 需要足够长的历史数据支持绩效评?2. **计算约束**: 需要高性能计算资源支持实时优化
-3. **策略约束**: 需要足够多的策略支持分层管?4. **风控约束**: 需要严格的风控审批流程
-
----
-
-## 7. 验收标准
-
-### 7.1 功能验收
-
-- ?支持策略绩效全面评估（收益率、风险、风险调整收益）
-- ?支持策略分层权重动态分?- ?支持多策略信号融合和冲突解决
-- ?支持策略协同效应识别和优?
-### 7.2 性能验收
-
-- ?权重调整延迟??- ?信号融合延迟??- ?策略夏普比率?.0
-- ?策略平均相关性≤0.3
-
-### 7.3 质量验收
-
-- ?代码覆盖率≥85%
-- ?文档完整度≥95%
-- ?符合API契约规范
-- ?通过代码审查
+1. **æ°æ®çº¦æ**: éè¦è¶³å¤é¿çåå²æ°æ®æ¯æç»©æè¯?2. **è®¡ç®çº¦æ**: éè¦é«æ§è½è®¡ç®èµæºæ¯æå®æ¶ä¼å
+3. **ç­ç¥çº¦æ**: éè¦è¶³å¤å¤çç­ç¥æ¯æåå±ç®¡?4. **é£æ§çº¦æ**: éè¦ä¸¥æ ¼çé£æ§å®¡æ¹æµç¨
 
 ---
 
-## 8. 参考资?
-### 8.1 学术论文
+## 7. éªæ¶æ å
+
+### 7.1 åè½éªæ¶
+
+- ?æ¯æç­ç¥ç»©æå¨é¢è¯ä¼°ï¼æ¶ççãé£é©ãé£é©è°æ´æ¶çï¼
+- ?æ¯æç­ç¥åå±æéå¨æå?- ?æ¯æå¤ç­ç¥ä¿¡å·èååå²çªè§£å³
+- ?æ¯æç­ç¥ååæåºè¯å«åä¼?
+### 7.2 æ§è½éªæ¶
+
+- ?æéè°æ´å»¶è¿??- ?ä¿¡å·èåå»¶è¿??- ?ç­ç¥å¤æ®æ¯ç?.0
+- ?ç­ç¥å¹³åç¸å³æ§â¤0.3
+
+### 7.3 è´¨ééªæ¶
+
+- ?ä»£ç è¦ççâ¥85%
+- ?ææ¡£å®æ´åº¦â¥95%
+- ?ç¬¦åAPIå¥çº¦è§è
+- ?éè¿ä»£ç å®¡æ¥
+
+---
+
+## 8. åèèµ?
+### 8.1 å­¦æ¯è®ºæ
 
 1. **Risk Parity**: Qian, E. (2005). "Risk Parity Portfolios"
 2. **Multi-Strategy**: Asness, C., et al. (2013). "Value and Momentum Everywhere"
 3. **Signal Fusion**: Qin, Z., et al. (2008). "Multi-Source Information Fusion"
 
-### 8.2 开源项?
+### 8.2 å¼æºé¡¹?
 1. **PyPortfolioOpt**: https://github.com/robertmartin8/PyPortfolioOpt
 2. **Riskfolio-Lib**: https://github.com/dcajasn/Riskfolio-Lib
 3. **scikit-learn**: https://scikit-learn.org/
 
-### 8.3 相关文档
+### 8.3 ç¸å³ææ¡£
 
 - PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 - PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
@@ -998,48 +998,48 @@ class MultiStrategyHierarchicalSystem:
 
 ---
 
-**文档版本**: v1.0
-**最后更?*: 2026-04-02
-**审核?*: 待审?**下一?*: 提交技术评审官审核
+**ææ¡£çæ¬**: v1.0
+**æåæ´?*: 2026-04-02
+**å®¡æ ¸?*: å¾å®¡?**ä¸ä¸?*: æäº¤ææ¯è¯å®¡å®å®¡æ ¸
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active
 ---
 
-## 9. 文档治理
+## 9. ææ¡£æ²»ç
 
-### 9.1 System_Manifest.md索引
+### 9.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Multi Strategy Hierarchical System
-- **模块ID**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-- **蓝图文档**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: 全系�?
-- **状�?*: Active
+- **æ¨¡åID**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
+- **èå¾ææ¡£**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: å¨ç³»ç»?
+- **ç¶æ?*: Active
 ```
 
-### 9.2 模块职责边界
+### 9.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Multi Strategy Hierarchical System** | 全系�?| **核心模块** |
+| **Multi Strategy Hierarchical System** | å¨ç³»ç»?| **æ ¸å¿æ¨¡å** |
 
-### 9.3 版本管理
+### 9.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-02 | **ç¶æ?*: Active

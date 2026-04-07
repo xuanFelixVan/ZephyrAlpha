@@ -13,7 +13,7 @@ responsibility:
   - ç»æµç¶æè¯å?
   - å®è§ç¯å¢åæ
   - å¨æé¢æµ
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5 (策略执行层)
 ---
 
 # ECONOMIC REGIME ENGINE BLUEPRINT
@@ -40,7 +40,7 @@ standard_type: ä¸ä¸éåæºæææ¡£
 responsibility:
   - æ°æ®è´¨é (Layer 1)
 
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5 (策略执行层)
 ---
 ï»? çæ¬æ¼è¿è¯´æ
 

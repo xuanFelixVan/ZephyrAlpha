@@ -1,66 +1,66 @@
 ---
 responsibility:
-  - 约束建模
-  - 求解算法
-  - 优化引擎
-  - 约束验证
+  - çº¦æå»ºæ¨¡
+  - æ±è§£ç®æ³
+  - ä¼åå¼æ
+  - çº¦æéªè¯
 
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.2 (组合优化)
 ---
 
-# 约束求解器蓝�?
-## 核心定位
+# çº¦ææ±è§£å¨èå?
+## æ ¸å¿å®ä½
 
-构建约束求解器的设计与实现，基于优化算法技术，处理投资组合约束条件，支持复杂约束下的优化求解，确保投资组合符合监管和业务要求�?
+æå»ºçº¦ææ±è§£å¨çè®¾è®¡ä¸å®ç°ï¼åºäºä¼åç®æ³ææ¯ï¼å¤çæèµç»åçº¦ææ¡ä»¶ï¼æ¯æå¤æçº¦æä¸çä¼åæ±è§£ï¼ç¡®ä¿æèµç»åç¬¦åçç®¡åä¸å¡è¦æ±ã?
 
 ---
 
 
-> **核心职责**: 组合优化约束处理
-> **职责边界**: 
-> - �?本文档负责：约束建模、求解算法、优化引擎、约束验�?
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: ç»åä¼åçº¦æå¤ç
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼çº¦æå»ºæ¨¡ãæ±è§£ç®æ³ãä¼åå¼æãçº¦æéªè¯?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
-## 概述
+## æ¦è¿°
 
-> **开发时?*: 60h（约1.5周）
-> **核心定位**: 组合优化约束处理，支持复杂约束条件的凸优化求?> **对标机构**: 专业量化机构标准配置
-> **个人开发可?*: ⭐⭐⭐⭐?完全可行
-> **AI维护难度**: ?
-## 2. 架构设计
+> **å¼åæ¶?*: 60hï¼çº¦1.5å¨ï¼
+> **æ ¸å¿å®ä½**: ç»åä¼åçº¦æå¤çï¼æ¯æå¤æçº¦ææ¡ä»¶çå¸ä¼åæ±?> **å¯¹æ æºæ**: ä¸ä¸éåæºææ åéç½®
+> **ä¸ªäººå¼åå¯?*: â­â­â­â­?å®å¨å¯è¡
+> **AIç»´æ¤é¾åº¦**: ?
+## 2. æ¶æè®¾è®¡
 
-### 2.1 系统架构?
+### 2.1 ç³»ç»æ¶æ?
 ```
-┌─────────────────────────────────────────────────────────────────??                   约束求解器系统架?                             ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             输入?                                       ? ?? ? ┌──────────────────────? ┌──────────────────────?    ? ?? ? ?优化目标              ? ?约束条件              ?    ? ?? ? ?- 目标函数            ? ?- 线性约?           ?    ? ?? ? ?- 风险模型            ? ?- 二次约束            ?    ? ?? ? ?- 收益预期            ? ?- 整数约束            ?    ? ?? ? └──────────────────────? └──────────────────────?    ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             约束验证?                                   ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Constraint Validator                              ? ? ?? ? ? - 约束可行性检?                                  ? ? ?? ? ? - 约束一致性检?                                  ? ? ?? ? ? - 约束冲突检?                                    ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             约束求解?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?凸优?  ? ?二次规划 ? ?整数规划 ?              ? ?? ? ?求解?  ? ?求解?  ? ?求解?  ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             约束松弛?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?约束松弛 ? ?优先?  ? ?冲突解决 ?              ? ?? ? ?策略     ? ?管理     ? ?机制     ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             输出?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?优化结果 ? ?约束?? ?求解报告 ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   çº¦ææ±è§£å¨ç³»ç»æ¶?                             ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾å¥?                                       ? ?? ? âââââââââââââââââââââââ? âââââââââââââââââââââââ?    ? ?? ? ?ä¼åç®æ               ? ?çº¦ææ¡ä»¶              ?    ? ?? ? ?- ç®æ å½æ°            ? ?- çº¿æ§çº¦?           ?    ? ?? ? ?- é£é©æ¨¡å            ? ?- äºæ¬¡çº¦æ            ?    ? ?? ? ?- æ¶çé¢æ            ? ?- æ´æ°çº¦æ            ?    ? ?? ? âââââââââââââââââââââââ? âââââââââââââââââââââââ?    ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             çº¦æéªè¯?                                   ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Constraint Validator                              ? ? ?? ? ? - çº¦æå¯è¡æ§æ£?                                  ? ? ?? ? ? - çº¦æä¸è´æ§æ£?                                  ? ? ?? ? ? - çº¦æå²çªæ£?                                    ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             çº¦ææ±è§£?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?å¸ä¼?  ? ?äºæ¬¡è§å ? ?æ´æ°è§å ?              ? ?? ? ?æ±è§£?  ? ?æ±è§£?  ? ?æ±è§£?  ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             çº¦ææ¾å¼?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?çº¦ææ¾å¼ ? ?ä¼å?  ? ?å²çªè§£å³ ?              ? ?? ? ?ç­ç¥     ? ?ç®¡ç     ? ?æºå¶     ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             è¾åº?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?ä¼åç»æ ? ?çº¦æ?? ?æ±è§£æ¥å ?              ? ?? ? ?         ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 核心数据?
+### 2.2 æ ¸å¿æ°æ®?
 ```
-优化目标 + 约束条件
-    ?约束验证（可行性、一致性、冲突检测）
-    ?约束求解（凸优化、二次规划、整数规划）
-    ?约束松弛（如有冲突）
-    ?输出：优化结果、约束状态、求解报?```
+ä¼åç®æ  + çº¦ææ¡ä»¶
+    ?çº¦æéªè¯ï¼å¯è¡æ§ãä¸è´æ§ãå²çªæ£æµï¼
+    ?çº¦ææ±è§£ï¼å¸ä¼åãäºæ¬¡è§åãæ´æ°è§åï¼
+    ?çº¦ææ¾å¼ï¼å¦æå²çªï¼
+    ?è¾åºï¼ä¼åç»æãçº¦æç¶æãæ±è§£æ¥?```
 
 ---
-## 3. 核心模块设计
+## 3. æ ¸å¿æ¨¡åè®¾è®¡
 
-### 3.1 约束求解器核心类（ConstraintSolver?
+### 3.1 çº¦ææ±è§£å¨æ ¸å¿ç±»ï¼ConstraintSolver?
 ```python
 class ConstraintSolver:
     """
-    约束求解器核心类
+    çº¦ææ±è§£å¨æ ¸å¿ç±»
     
-    索引: CONSTRAINT_SOLVER_001-M01
-    职责: 处理复杂约束条件，求解约束优化问?    输入: 优化目标、约束条?    输出: 优化结果、约束状态、求解报?    """
+    ç´¢å¼: CONSTRAINT_SOLVER_001-M01
+    èè´£: å¤çå¤æçº¦ææ¡ä»¶ï¼æ±è§£çº¦æä¼åé®?    è¾å¥: ä¼åç®æ ãçº¦ææ¡?    è¾åº: ä¼åç»æãçº¦æç¶æãæ±è§£æ¥?    """
     
     def __init__(self, config: SolverConfig):
         self.config = config
@@ -74,38 +74,38 @@ class ConstraintSolver:
              constraints: List[Constraint],
              variables: Variables) -> SolverResult:
         """
-        求解约束优化问题
+        æ±è§£çº¦æä¼åé®é¢
         
         Args:
-            objective: 优化目标
-            constraints: 约束条件列表
-            variables: 优化变量
+            objective: ä¼åç®æ 
+            constraints: çº¦ææ¡ä»¶åè¡¨
+            variables: ä¼ååé
             
         Returns:
-            SolverResult: 求解结果
+            SolverResult: æ±è§£ç»æ
         """
-        # 1. 约束验证
+        # 1. çº¦æéªè¯
         validation_result = self.constraint_validator.validate(constraints, variables)
         
         if not validation_result.is_feasible:
-            # 约束不可行，进行约束松弛
+            # çº¦æä¸å¯è¡ï¼è¿è¡çº¦ææ¾å¼
             relaxed_constraints = self.constraint_relaxer.relax(
                 constraints, validation_result.conflicts
             )
             constraints = relaxed_constraints
         
-        # 2. 构建优化问题
+        # 2. æå»ºä¼åé®é¢
         problem = self._build_problem(objective, constraints, variables)
         
-        # 3. 求解优化问题
+        # 3. æ±è§£ä¼åé®é¢
         solution = self.convex_optimizer.solve(problem)
         
-        # 4. 验证解的可行?        if not self._is_feasible(solution, constraints):
-            # 解不可行，尝试约束松?            solution = self._solve_with_relaxation(
+        # 4. éªè¯è§£çå¯è¡?        if not self._is_feasible(solution, constraints):
+            # è§£ä¸å¯è¡ï¼å°è¯çº¦ææ¾?            solution = self._solve_with_relaxation(
                 objective, constraints, variables
             )
         
-        # 5. 生成求解报告
+        # 5. çææ±è§£æ¥å
         report = self._generate_report(solution, constraints, validation_result)
         
         return SolverResult(
@@ -121,27 +121,27 @@ class ConstraintSolver:
                              variables: Variables,
                              priorities: Dict[str, int]) -> SolverResult:
         """
-        带优先级的约束求?        
+        å¸¦ä¼åçº§ççº¦ææ±?        
         Args:
-            objective: 优化目标
-            constraints: 约束条件列表
-            variables: 优化变量
-            priorities: 约束优先级（约束名称 -> 优先级）
+            objective: ä¼åç®æ 
+            constraints: çº¦ææ¡ä»¶åè¡¨
+            variables: ä¼ååé
+            priorities: çº¦æä¼åçº§ï¼çº¦æåç§° -> ä¼åçº§ï¼
             
         Returns:
-            SolverResult: 求解结果
+            SolverResult: æ±è§£ç»æ
         """
-        # 1. 按优先级排序约束
+        # 1. æä¼åçº§æåºçº¦æ
         sorted_constraints = self.priority_manager.sort_by_priority(
             constraints, priorities
         )
         
-        # 2. 逐步求解（从高优先级到低优先级）
+        # 2. éæ­¥æ±è§£ï¼ä»é«ä¼åçº§å°ä½ä¼åçº§ï¼
         solution = None
         satisfied_constraints = []
         
         for constraint in sorted_constraints:
-            # 尝试添加约束
+            # å°è¯æ·»å çº¦æ
             current_constraints = satisfied_constraints + [constraint]
             
             result = self.solve(objective, current_constraints, variables)
@@ -150,7 +150,7 @@ class ConstraintSolver:
                 solution = result.solution
                 satisfied_constraints.append(constraint)
             else:
-                # 约束冲突，记录并跳过
+                # çº¦æå²çªï¼è®°å½å¹¶è·³è¿
                 self._log_conflict(constraint, result)
         
         return SolverResult(
@@ -164,17 +164,17 @@ class ConstraintSolver:
                        objective: Objective,
                        constraints: List[Constraint],
                        variables: Variables) -> cp.Problem:
-        """构建CVXPY优化问题"""
-        # 定义变量
+        """æå»ºCVXPYä¼åé®é¢"""
+        # å®ä¹åé
         x = cp.Variable(variables.size, name=variables.name)
         
-        # 定义目标函数
+        # å®ä¹ç®æ å½æ°
         if objective.type == 'maximize':
             objective_expr = cp.Maximize(objective.expression(x))
         else:
             objective_expr = cp.Minimize(objective.expression(x))
         
-        # 定义约束条件
+        # å®ä¹çº¦ææ¡ä»¶
         constraint_exprs = []
         for constraint in constraints:
             constraint_exprs.extend(constraint.to_cvxpy(x))
@@ -184,7 +184,7 @@ class ConstraintSolver:
     def _is_feasible(self,
                     solution: np.ndarray,
                     constraints: List[Constraint]) -> bool:
-        """验证解的可行?""
+        """éªè¯è§£çå¯è¡?""
         for constraint in constraints:
             if not constraint.is_satisfied(solution):
                 return False
@@ -194,47 +194,47 @@ class ConstraintSolver:
                                objective: Objective,
                                constraints: List[Constraint],
                                variables: Variables) -> np.ndarray:
-        """带约束松弛的求解"""
-        # 识别冲突约束
+        """å¸¦çº¦ææ¾å¼çæ±è§£"""
+        # è¯å«å²çªçº¦æ
         conflicts = self.constraint_validator.detect_conflicts(constraints)
         
-        # 松弛冲突约束
+        # æ¾å¼å²çªçº¦æ
         relaxed_constraints = self.constraint_relaxer.relax(constraints, conflicts)
         
-        # 重新求解
+        # éæ°æ±è§£
         problem = self._build_problem(objective, relaxed_constraints, variables)
         solution = self.convex_optimizer.solve(problem)
         
         return solution
 ```
 
-### 3.2 约束验证器（ConstraintValidator?
+### 3.2 çº¦æéªè¯å¨ï¼ConstraintValidator?
 ```python
 class ConstraintValidator:
     """
-    约束验证?    
-    索引: CONSTRAINT_SOLVER_001-M02
-    职责: 验证约束的可行性、一致性和冲突
+    çº¦æéªè¯?    
+    ç´¢å¼: CONSTRAINT_SOLVER_001-M02
+    èè´£: éªè¯çº¦æçå¯è¡æ§ãä¸è´æ§åå²çª
     """
     
     def validate(self,
                 constraints: List[Constraint],
                 variables: Variables) -> ValidationResult:
         """
-        验证约束
+        éªè¯çº¦æ
         
         Args:
-            constraints: 约束条件列表
-            variables: 优化变量
+            constraints: çº¦ææ¡ä»¶åè¡¨
+            variables: ä¼ååé
             
         Returns:
-            ValidationResult: 验证结果
+            ValidationResult: éªè¯ç»æ
         """
-        # 1. 可行性检?        is_feasible = self._check_feasibility(constraints, variables)
+        # 1. å¯è¡æ§æ£?        is_feasible = self._check_feasibility(constraints, variables)
         
-        # 2. 一致性检?        is_consistent = self._check_consistency(constraints)
+        # 2. ä¸è´æ§æ£?        is_consistent = self._check_consistency(constraints)
         
-        # 3. 冲突检?        conflicts = self.detect_conflicts(constraints)
+        # 3. å²çªæ£?        conflicts = self.detect_conflicts(constraints)
         
         return ValidationResult(
             is_feasible=is_feasible and is_consistent,
@@ -245,16 +245,16 @@ class ConstraintValidator:
     
     def detect_conflicts(self, constraints: List[Constraint]) -> List[Conflict]:
         """
-        检测约束冲?        
+        æ£æµçº¦æå²?        
         Args:
-            constraints: 约束条件列表
+            constraints: çº¦ææ¡ä»¶åè¡¨
             
         Returns:
-            List[Conflict]: 冲突列表
+            List[Conflict]: å²çªåè¡¨
         """
         conflicts = []
         
-        # 检查两两约束之间的冲突
+        # æ£æ¥ä¸¤ä¸¤çº¦æä¹é´çå²çª
         for i, c1 in enumerate(constraints):
             for j, c2 in enumerate(constraints[i+1:], i+1):
                 if self._are_conflicting(c1, c2):
@@ -270,8 +270,8 @@ class ConstraintValidator:
     def _check_feasibility(self,
                           constraints: List[Constraint],
                           variables: Variables) -> bool:
-        """检查约束可?""
-        # 使用线性规划检查可?        # min 0
+        """æ£æ¥çº¦æå¯?""
+        # ä½¿ç¨çº¿æ§è§åæ£æ¥å¯?        # min 0
         # s.t. constraints
         
         x = cp.Variable(variables.size)
@@ -289,36 +289,36 @@ class ConstraintValidator:
             return False
     
     def _check_consistency(self, constraints: List[Constraint]) -> bool:
-        """检查约束一?""
-        # 检查是否存在矛盾的约束
+        """æ£æ¥çº¦æä¸?""
+        # æ£æ¥æ¯å¦å­å¨çç¾ççº¦æ
         for constraint in constraints:
             if not constraint.is_consistent():
                 return False
         return True
     
     def _are_conflicting(self, c1: Constraint, c2: Constraint) -> bool:
-        """判断两个约束是否冲突"""
-        # 简化实现：检查约束范围是否有交集
-        # 实际实现需要更复杂的逻辑
+        """å¤æ­ä¸¤ä¸ªçº¦ææ¯å¦å²çª"""
+        # ç®åå®ç°ï¼æ£æ¥çº¦æèå´æ¯å¦æäº¤é
+        # å®éå®ç°éè¦æ´å¤æçé»è¾
         return False
     
     def _classify_conflict(self, c1: Constraint, c2: Constraint) -> str:
-        """分类冲突类型"""
+        """åç±»å²çªç±»å"""
         return 'range_conflict'
     
     def _assess_severity(self, c1: Constraint, c2: Constraint) -> str:
-        """评估冲突严重程度"""
+        """è¯ä¼°å²çªä¸¥éç¨åº¦"""
         return 'high'
 ```
 
-### 3.3 凸优化求解器（ConvexOptimizer?
+### 3.3 å¸ä¼åæ±è§£å¨ï¼ConvexOptimizer?
 ```python
 class ConvexOptimizer:
     """
-    凸优化求解器
+    å¸ä¼åæ±è§£å¨
     
-    索引: CONSTRAINT_SOLVER_001-M03
-    职责: 使用CVXPY求解凸优化问?    """
+    ç´¢å¼: CONSTRAINT_SOLVER_001-M03
+    èè´£: ä½¿ç¨CVXPYæ±è§£å¸ä¼åé®?    """
     
     def __init__(self, config: ConvexConfig):
         self.config = config
@@ -326,24 +326,24 @@ class ConvexOptimizer:
         
     def solve(self, problem: cp.Problem) -> np.ndarray:
         """
-        求解凸优化问?        
+        æ±è§£å¸ä¼åé®?        
         Args:
-            problem: CVXPY问题对象
+            problem: CVXPYé®é¢å¯¹è±¡
             
         Returns:
-            np.ndarray: 优化?        """
-        # 求解问题
+            np.ndarray: ä¼å?        """
+        # æ±è§£é®é¢
         problem.solve(solver=self.solver)
         
-        # 检查求解状?        if problem.status not in ['optimal', 'optimal_inaccurate']:
-            raise SolverError(f"求解失败: {problem.status}")
+        # æ£æ¥æ±è§£ç¶?        if problem.status not in ['optimal', 'optimal_inaccurate']:
+            raise SolverError(f"æ±è§£å¤±è´¥: {problem.status}")
         
-        # 提取?        solution = problem.variables()[0].value
+        # æå?        solution = problem.variables()[0].value
         
         return solution
     
     def _select_solver(self, solver_type: str):
-        """选择求解?""
+        """éæ©æ±è§£?""
         solver_map = {
             'ecos': cp.ECOS,
             'scs': cp.SCS,
@@ -354,13 +354,13 @@ class ConvexOptimizer:
         return solver_map.get(solver_type, cp.ECOS)
 ```
 
-### 3.4 约束松弛器（ConstraintRelaxer?
+### 3.4 çº¦ææ¾å¼å¨ï¼ConstraintRelaxer?
 ```python
 class ConstraintRelaxer:
     """
-    约束松弛?    
-    索引: CONSTRAINT_SOLVER_001-M04
-    职责: 松弛冲突约束以获得可行解
+    çº¦ææ¾å¼?    
+    ç´¢å¼: CONSTRAINT_SOLVER_001-M04
+    èè´£: æ¾å¼å²çªçº¦æä»¥è·å¾å¯è¡è§£
     """
     
     def __init__(self, config: RelaxConfig):
@@ -375,25 +375,25 @@ class ConstraintRelaxer:
              constraints: List[Constraint],
              conflicts: List[Conflict]) -> List[Constraint]:
         """
-        松弛约束
+        æ¾å¼çº¦æ
         
         Args:
-            constraints: 约束条件列表
-            conflicts: 冲突列表
+            constraints: çº¦ææ¡ä»¶åè¡¨
+            conflicts: å²çªåè¡¨
             
         Returns:
-            List[Constraint]: 松弛后的约束
+            List[Constraint]: æ¾å¼åççº¦æ
         """
         relaxed_constraints = constraints.copy()
         
         for conflict in conflicts:
-            # 选择松弛方法
+            # éæ©æ¾å¼æ¹æ³
             method = self._select_relaxation_method(conflict)
             
-            # 松弛冲突约束
+            # æ¾å¼å²çªçº¦æ
             relaxed = self.relaxation_methodsmethod
             
-            # 替换原约?            relaxed_constraints = self._replace_constraints(
+            # æ¿æ¢åçº¦?            relaxed_constraints = self._replace_constraints(
                 relaxed_constraints, [conflict.constraint1, conflict.constraint2], relaxed
             )
         
@@ -402,12 +402,12 @@ class ConstraintRelaxer:
     def _slack_relaxation(self,
                          c1: Constraint,
                          c2: Constraint) -> List[Constraint]:
-        """松弛变量?""
-        # 添加松弛变量
-        # 例如：w >= 0.05 变为 w >= 0.05 - s, s >= 0
+        """æ¾å¼åé?""
+        # æ·»å æ¾å¼åé
+        # ä¾å¦ï¼w >= 0.05 åä¸º w >= 0.05 - s, s >= 0
         relaxed = []
         
-        # 简化实现：放宽约束边界
+        # ç®åå®ç°ï¼æ¾å®½çº¦æè¾¹ç
         if hasattr(c1, 'lower_bound'):
             c1.lower_bound -= self.config.slack_amount
         if hasattr(c1, 'upper_bound'):
@@ -420,22 +420,22 @@ class ConstraintRelaxer:
     def _penalty_relaxation(self,
                            c1: Constraint,
                            c2: Constraint) -> List[Constraint]:
-        """惩罚函数?""
-        # 将约束转化为目标函数中的惩罚?        # 这里返回软约?        return self._soft_constraint(c1, c2)
+        """æ©ç½å½æ°?""
+        # å°çº¦æè½¬åä¸ºç®æ å½æ°ä¸­çæ©ç½?        # è¿éè¿åè½¯çº¦?        return self._soft_constraint(c1, c2)
     
     def _soft_constraint(self,
                         c1: Constraint,
                         c2: Constraint) -> List[Constraint]:
-        """软约?""
-        # 将硬约束转化为软约束
-        # 允许一定程度的违反
+        """è½¯çº¦?""
+        # å°ç¡¬çº¦æè½¬åä¸ºè½¯çº¦æ
+        # åè®¸ä¸å®ç¨åº¦çè¿å
         c1.is_soft = True
         c2.is_soft = True
         
         return [c1, c2]
     
     def _select_relaxation_method(self, conflict: Conflict) -> str:
-        """选择松弛方法"""
+        """éæ©æ¾å¼æ¹æ³"""
         if conflict.severity == 'high':
             return 'slack'
         elif conflict.severity == 'medium':
@@ -447,7 +447,7 @@ class ConstraintRelaxer:
                             constraints: List[Constraint],
                             old_constraints: List[Constraint],
                             new_constraints: List[Constraint]) -> List[Constraint]:
-        """替换约束"""
+        """æ¿æ¢çº¦æ"""
         result = []
         for c in constraints:
             if c not in old_constraints:
@@ -456,10 +456,10 @@ class ConstraintRelaxer:
         return result
 ```
 
-### 3.5 约束类定?
+### 3.5 çº¦æç±»å®?
 ```python
 class Constraint:
-    """约束基类"""
+    """çº¦æåºç±»"""
     
     def __init__(self, name: str, priority: int = 0):
         self.name = name
@@ -467,19 +467,19 @@ class Constraint:
         self.is_soft = False
         
     def to_cvxpy(self, x: cp.Variable) -> List[cp.Constraint]:
-        """转换为CVXPY约束"""
+        """è½¬æ¢ä¸ºCVXPYçº¦æ"""
         raise NotImplementedError
         
     def is_satisfied(self, solution: np.ndarray) -> bool:
-        """检查约束是否满?""
+        """æ£æ¥çº¦ææ¯å¦æ»¡?""
         raise NotImplementedError
         
     def is_consistent(self) -> bool:
-        """检查约束是否一?""
+        """æ£æ¥çº¦ææ¯å¦ä¸?""
         return True
 
 class LinearConstraint(Constraint):
-    """线性约?""
+    """çº¿æ§çº¦?""
     
     def __init__(self,
                  name: str,
@@ -515,7 +515,7 @@ class LinearConstraint(Constraint):
         return True
 
 class QuadraticConstraint(Constraint):
-    """二次约束"""
+    """äºæ¬¡çº¦æ"""
     
     def __init__(self,
                  name: str,
@@ -538,7 +538,7 @@ class QuadraticConstraint(Constraint):
         return value <= self.upper_bound
 
 class BoxConstraint(Constraint):
-    """边界约束"""
+    """è¾¹ççº¦æ"""
     
     def __init__(self,
                  name: str,
@@ -559,68 +559,68 @@ class BoxConstraint(Constraint):
         return np.all(solution >= self.lower_bounds) and np.all(solution <= self.upper_bounds)
 ```
 
-### 3.6 配置类定?
+### 3.6 éç½®ç±»å®?
 ```python
 @dataclass
 class SolverConfig:
-    """求解器配?""
+    """æ±è§£å¨é?""
     convex_config: ConvexConfig
     relax_config: RelaxConfig
     
 @dataclass
 class ConvexConfig:
-    """凸优化配?""
+    """å¸ä¼åé?""
     solver_type: str = 'ecos'  # 'ecos', 'scs', 'osqp', 'cvxopt'
     max_iter: int = 1000
     tolerance: float = 1e-6
     
 @dataclass
 class RelaxConfig:
-    """约束松弛配置"""
-    slack_amount: float = 0.01  # 松弛?    penalty_weight: float = 100.0  # 惩罚权重
-    max_relax_iterations: int = 10  # 最大松弛迭代次?```
+    """çº¦ææ¾å¼éç½®"""
+    slack_amount: float = 0.01  # æ¾å¼?    penalty_weight: float = 100.0  # æ©ç½æé
+    max_relax_iterations: int = 10  # æå¤§æ¾å¼è¿­ä»£æ¬¡?```
 
 ---
 
-## 4. 数据模型定义
+## 4. æ°æ®æ¨¡åå®ä¹
 
-### 4.1 输入数据模型
+### 4.1 è¾å¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
 class Objective:
-    """优化目标"""
+    """ä¼åç®æ """
     type: str  # 'maximize' or 'minimize'
     expression: Callable[[cp.Variable], cp.Expression]
     
 @dataclass
 class Variables:
-    """优化变量"""
+    """ä¼ååé"""
     name: str
     size: int
     lower_bound: float = None
     upper_bound: float = None
 ```
 
-### 4.2 输出数据模型
+### 4.2 è¾åºæ°æ®æ¨¡å
 
 ```python
 @dataclass
 class SolverResult:
-    """求解结果"""
-    solution: np.ndarray  # 优化?    constraint_status: Dict[str, bool]  # 约束满足?    report: SolverReport  # 求解报告
+    """æ±è§£ç»æ"""
+    solution: np.ndarray  # ä¼å?    constraint_status: Dict[str, bool]  # çº¦ææ»¡è¶³?    report: SolverReport  # æ±è§£æ¥å
     timestamp: datetime
     
 @dataclass
 class ValidationResult:
-    """验证结果"""
-    is_feasible: bool  # 是否可行
-    is_consistent: bool  # 是否一?    conflicts: List[Conflict]  # 冲突列表
-    recommendations: List[str]  # 建议
+    """éªè¯ç»æ"""
+    is_feasible: bool  # æ¯å¦å¯è¡
+    is_consistent: bool  # æ¯å¦ä¸?    conflicts: List[Conflict]  # å²çªåè¡¨
+    recommendations: List[str]  # å»ºè®®
     
 @dataclass
 class Conflict:
-    """约束冲突"""
+    """çº¦æå²çª"""
     constraint1: Constraint
     constraint2: Constraint
     conflict_type: str  # 'range_conflict', 'logic_conflict', etc.
@@ -628,21 +628,21 @@ class Conflict:
     
 @dataclass
 class SolverReport:
-    """求解报告"""
+    """æ±è§£æ¥å"""
     solver_status: str  # 'optimal', 'infeasible', etc.
-    solve_time: float  # 求解时间（秒?    num_iterations: int  # 迭代次数
-    objective_value: float  # 目标函数?    constraint_violations: Dict[str, float]  # 约束违反程度
+    solve_time: float  # æ±è§£æ¶é´ï¼ç§?    num_iterations: int  # è¿­ä»£æ¬¡æ°
+    objective_value: float  # ç®æ å½æ°?    constraint_violations: Dict[str, float]  # çº¦æè¿åç¨åº¦
 ```
 
 ---
 
-## 5. 集成方案
+## 5. éææ¹æ¡
 
-### 5.1 与组合优化器集成
+### 5.1 ä¸ç»åä¼åå¨éæ
 
 ```python
 class PortfolioOptimizer:
-    """组合优化器（集成约束求解器）"""
+    """ç»åä¼åå¨ï¼éæçº¦ææ±è§£å¨ï¼"""
     
     def __init__(self, constraint_solver: ConstraintSolver):
         self.constraint_solver = constraint_solver
@@ -651,16 +651,16 @@ class PortfolioOptimizer:
                                  expected_returns: pd.Series,
                                  covariance_matrix: pd.DataFrame,
                                  constraints: List[Constraint]) -> pd.Series:
-        """带约束的组合优化"""
-        # 1. 定义优化目标（最大化夏普比率?        def objective(x):
+        """å¸¦çº¦æçç»åä¼å"""
+        # 1. å®ä¹ä¼åç®æ ï¼æå¤§åå¤æ®æ¯ç?        def objective(x):
             portfolio_return = expected_returns.values @ x
             portfolio_risk = cp.sqrt(cp.quad_form(x, covariance_matrix.values))
             return portfolio_return / portfolio_risk
         
-        # 2. 定义变量
+        # 2. å®ä¹åé
         variables = Variables(name='weights', size=len(expected_returns))
         
-        # 3. 求解
+        # 3. æ±è§£
         result = self.constraint_solver.solve(
             objective=Objective(type='maximize', expression=objective),
             constraints=constraints,
@@ -670,11 +670,11 @@ class PortfolioOptimizer:
         return pd.Series(result.solution, index=expected_returns.index)
 ```
 
-### 5.2 与Barra风险模型集成
+### 5.2 ä¸Barraé£é©æ¨¡åéæ
 
 ```python
 class BarraRiskModel:
-    """Barra风险模型（集成约束求解器?""
+    """Barraé£é©æ¨¡åï¼éæçº¦ææ±è§£å¨?""
     
     def __init__(self, constraint_solver: ConstraintSolver):
         self.constraint_solver = constraint_solver
@@ -683,8 +683,8 @@ class BarraRiskModel:
                                         expected_returns: pd.Series,
                                         factor_loadings: pd.DataFrame,
                                         factor_exposure_limits: Dict[str, Tuple[float, float]]) -> pd.Series:
-        """带因子约束的优化"""
-        # 1. 构建因子暴露约束
+        """å¸¦å å­çº¦æçä¼å"""
+        # 1. æå»ºå å­æ´é²çº¦æ
         factor_constraints = []
         for factor, (lower, upper) in factor_exposure_limits.items():
             factor_constraints.append(
@@ -696,7 +696,7 @@ class BarraRiskModel:
                 )
             )
         
-        # 2. 优化
+        # 2. ä¼å
         optimizer = PortfolioOptimizer(self.constraint_solver)
         return optimizer.optimize_with_constraints(
             expected_returns, 
@@ -707,57 +707,57 @@ class BarraRiskModel:
 
 ---
 
-## 6. 实施路线?
-### 6.1 开发阶段（1.5周）
+## 6. å®æ½è·¯çº¿?
+### 6.1 å¼åé¶æ®µï¼1.5å¨ï¼
 
-**Week 1: 核心模块开?*
-- Day 1-2: 约束验证?- Day 3-4: 凸优化求解器
-- Day 5: 约束松弛?
-**Week 2: 集成与测?*
-- Day 1-2: 与组合优化器集成
-- Day 3: 单元测试
-- Day 4: 集成测试
-- Day 5: 文档编写
+**Week 1: æ ¸å¿æ¨¡åå¼?*
+- Day 1-2: çº¦æéªè¯?- Day 3-4: å¸ä¼åæ±è§£å¨
+- Day 5: çº¦ææ¾å¼?
+**Week 2: éæä¸æµ?*
+- Day 1-2: ä¸ç»åä¼åå¨éæ
+- Day 3: ååæµè¯
+- Day 4: éææµè¯
+- Day 5: ææ¡£ç¼å
 
-### 6.2 里程?
-| 里程?| 时间 | 交付?| 验收标准 |
+### 6.2 éç¨?
+| éç¨?| æ¶é´ | äº¤ä»?| éªæ¶æ å |
 |--------|------|--------|----------|
-| **M1: 约束验证完成** | Day 2 | 约束验证?| 验证正确 |
-| **M2: 求解器完?* | Day 4 | 凸优化求解器 | 求解成功 |
-| **M3: 松弛器完?* | Day 5 | 约束松弛?| 松弛有效 |
-| **M4: 集成完成** | Day 7 | 完整系统 | 所有接口正?|
-| **M5: 测试通过** | Day 9 | 测试报告 | 所有测试通过 |
+| **M1: çº¦æéªè¯å®æ** | Day 2 | çº¦æéªè¯?| éªè¯æ­£ç¡® |
+| **M2: æ±è§£å¨å®?* | Day 4 | å¸ä¼åæ±è§£å¨ | æ±è§£æå |
+| **M3: æ¾å¼å¨å®?* | Day 5 | çº¦ææ¾å¼?| æ¾å¼ææ |
+| **M4: éæå®æ** | Day 7 | å®æ´ç³»ç» | æææ¥å£æ­£?|
+| **M5: æµè¯éè¿** | Day 9 | æµè¯æ¥å | æææµè¯éè¿ |
 
 ---
 
-## 7. 预期收益评估
+## 7. é¢ææ¶çè¯ä¼°
 
-### 7.1 定量收益
+### 7.1 å®éæ¶ç
 
-| 指标 | 当前水平 | 目标水平 | 提升幅度 |
+| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹åº¦ |
 |------|---------|---------|---------|
-| **约束处理能力** | 简单约?| 复杂约束 | 质的飞跃 |
-| **优化可行?* | 70% | 98% | +28% |
-| **实盘可执?* | 75% | 98% | +23% |
-| **约束冲突解决** | ?| 自动 | 新增能力 |
+| **çº¦æå¤çè½å** | ç®åçº¦?| å¤æçº¦æ | è´¨çé£è· |
+| **ä¼åå¯è¡?* | 70% | 98% | +28% |
+| **å®çå¯æ§?* | 75% | 98% | +23% |
+| **çº¦æå²çªè§£å³** | ?| èªå¨ | æ°å¢è½å |
 
-### 7.2 定性收?
-- ?支持复杂约束条件
-- ?自动检测和解决约束冲突
-- ?提升优化可行?- ?提升实盘可执?- ?支持约束优先级管?
+### 7.2 å®æ§æ¶?
+- ?æ¯æå¤æçº¦ææ¡ä»¶
+- ?èªå¨æ£æµåè§£å³çº¦æå²çª
+- ?æåä¼åå¯è¡?- ?æåå®çå¯æ§?- ?æ¯æçº¦æä¼åçº§ç®¡?
 ---
 
-## 8. 技术栈选择
+## 8. ææ¯æ éæ©
 
-### 8.1 核心依赖?
-| 库名 | 版本 | ?| 必要?|
+### 8.1 æ ¸å¿ä¾èµ?
+| åºå | çæ¬ | ?| å¿è¦?|
 |------|------|------|--------|
-| **CVXPY** | ?.3 | 凸优化建模与求解 | 必需 |
-| **scipy** | ?.7 | 科学计算 | 必需 |
-| **numpy** | ?.21 | 数值计?| 必需 |
-| **pandas** | ?.5 | 数据处理 | 必需 |
+| **CVXPY** | ?.3 | å¸ä¼åå»ºæ¨¡ä¸æ±è§£ | å¿é |
+| **scipy** | ?.7 | ç§å­¦è®¡ç® | å¿é |
+| **numpy** | ?.21 | æ°å¼è®¡?| å¿é |
+| **pandas** | ?.5 | æ°æ®å¤ç | å¿é |
 
-### 8.2 安装命令
+### 8.2 å®è£å½ä»¤
 
 ```bash
 pip install cvxpy>=1.3
@@ -768,78 +768,78 @@ pip install pandas>=1.5
 
 ---
 
-## 9. 风险评估
+## 9. é£é©è¯ä¼°
 
-### 9.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+### 9.1 ææ¯é£?
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **求解器性能** | ?| 选择合适的求解器、优化问题规?|
-| **约束冲突复杂** | ?| 完善的冲突检测和松弛策略 |
-| **数值稳?* | ?| 使用稳定的数值算?|
+| **æ±è§£å¨æ§è½** | ?| éæ©åéçæ±è§£å¨ãä¼åé®é¢è§?|
+| **çº¦æå²çªå¤æ** | ?| å®åçå²çªæ£æµåæ¾å¼ç­ç¥ |
+| **æ°å¼ç¨³?* | ?| ä½¿ç¨ç¨³å®çæ°å¼ç®?|
 
-### 9.2 实施风险
+### 9.2 å®æ½é£é©
 
-| 风险?| 风险等级 | 缓解措施 |
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **开发时间超?* | ?| 分阶段实施、里程碑管理 |
-| **集成困难** | ?| 充分测试、接口文档完?|
-| **性能不达?* | ?| 性能优化、算法改?|
+| **å¼åæ¶é´è¶?* | ?| åé¶æ®µå®æ½ãéç¨ç¢ç®¡ç |
+| **éæå°é¾** | ?| ååæµè¯ãæ¥å£ææ¡£å®?|
+| **æ§è½ä¸è¾¾?* | ?| æ§è½ä¼åãç®æ³æ¹?|
 
 ---
 
-## 10. 文档治理
+## 10. ææ¡£æ²»ç
 
-### 10.1 System_Manifest.md索引
+### 10.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化?
-##### 6.5 约束求解?- **模块ID**: CONSTRAINT_SOLVER_001
-- **蓝图文档**: CONSTRAINT_SOLVER_BLUEPRINT.md
-- **技术规格书**: 待创?- **职责**: 约束处理、凸优化求解、约束冲突解?- **?*: 设计阶段
+#### Layer 6: ç»åä¼å?
+##### 6.5 çº¦ææ±è§£?- **æ¨¡åID**: CONSTRAINT_SOLVER_001
+- **èå¾ææ¡£**: CONSTRAINT_SOLVER_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾å?- **èè´£**: çº¦æå¤çãå¸ä¼åæ±è§£ãçº¦æå²çªè§£?- **?*: è®¾è®¡é¶æ®µ
 ```
 
-### 10.2 模块职责边界
+### 10.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **约束求解?* | 约束处理、优化求?| **求解器层?* |
-| **组合优化?* | 组合权重优化 | 使用约束求解?|
-| **Barra风险模型** | 风险模型、风险约?| 提供风险约束 |
+| **çº¦ææ±è§£?* | çº¦æå¤çãä¼åæ±?| **æ±è§£å¨å±?* |
+| **ç»åä¼å?* | ç»åæéä¼å | ä½¿ç¨çº¦ææ±è§£?|
+| **Barraé£é©æ¨¡å** | é£é©æ¨¡åãé£é©çº¦?| æä¾é£é©çº¦æ |
 
 ---
 
-## 附录
+## éå½
 
-### A. 参考文?
-1. **凸优化理?*:
+### A. åèæ?
+1. **å¸ä¼åç?*:
    - Boyd, S. and Vandenberghe, L. (2004). "Convex Optimization"
    - Nocedal, J. and Wright, S.J. (2006). "Numerical Optimization"
 
-2. **约束处理**:
+2. **çº¦æå¤ç**:
    - CVXPY Documentation: https://www.cvxpy.org/
    - ECOS Solver: https://github.com/embotech/ecos
 
-3. **组合优化**:
+3. **ç»åä¼å**:
    - Grinold, R.C. and Kahn, R.N. (2000). "Active Portfolio Management"
 
-### B. 术语�?
+### B. æ¯è¯­è¡?
 
-| 术语 | 定义 | 上下�?|
+| æ¯è¯­ | å®ä¹ | ä¸ä¸æ?|
 |------|------|--------|
-| **凸优�?* | 目标函数和约束都是凸的优化问�?| 优化方法 |
-| **约束松弛** | 放宽约束条件以获得可行解 | 冲突解决 |
-| **软约�?* | 允许一定违反的约束 | 约束类型 |
-| **优先�?* | 约束的重要程度排�?| 约束管理 |
+| **å¸ä¼å?* | ç®æ å½æ°åçº¦æé½æ¯å¸çä¼åé®é¢?| ä¼åæ¹æ³ |
+| **çº¦ææ¾å¼** | æ¾å®½çº¦ææ¡ä»¶ä»¥è·å¾å¯è¡è§£ | å²çªè§£å³ |
+| **è½¯çº¦æ?* | åè®¸ä¸å®è¿åççº¦æ | çº¦æç±»å |
+| **ä¼åçº?* | çº¦æçéè¦ç¨åº¦æåº?| çº¦æç®¡ç |
 
 ---
 
-## 11. 变更历史
+## 11. åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段（open_source_dependency, priority�?| 审计系统 |
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µï¼open_source_dependency, priorityï¼?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 技术规格书编写
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **ç¶æ?*: Final | **ä¸ä¸æ­?*: ææ¯è§æ ¼ä¹¦ç¼å

@@ -14,7 +14,7 @@ owner: å®æ½å¢é
 standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 3 ç­ç¥å±?
 compliance_level: ä¸ä¸æ å
-layer: "Layer 3 (ç­ç¥å±?"
+layer: Layer 5 (策略执行层)
 ---
 
 # ç­ç¥æåä¸éæ©ç³»ç»ææ¯èå?

@@ -3,7 +3,7 @@ module_id: SENTIMENT_ANALYSIS_LONG_TERM_TS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 responsibility:
@@ -15,7 +15,6 @@ parent_document: INDEX.md
 applicable_modules:
   - 多模态分析
   - AI虚拟研究团队
----
 ---
 
 
@@ -42,9 +41,9 @@ applicable_modules:
 
 ## 📋 文档目录
 
-1. [多模态分析模块技术规格](#一多模态分析模块技术规
-2. [AI虚拟研究团队技术规格](#二ai虚拟研究团队技术规
-3. [数据字典](#三数据字
+1. [多模态分析模块技术规格](#一多模态分析模块技术规格)
+2. [AI虚拟研究团队技术规格](#二ai虚拟研究团队技术规格)
+3. [数据字典](#三数据字典)
 4. [API接口规范](#四api接口规范)
 5. [算法流程图](#五算法流程图)
 6. [性能指标定义](#六性能指标定义)

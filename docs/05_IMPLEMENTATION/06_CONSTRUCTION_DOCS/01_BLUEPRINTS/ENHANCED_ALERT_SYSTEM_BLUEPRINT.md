@@ -13,7 +13,7 @@ responsibility:
   - æºè½åè­¦
   - åè­¦èå
   - åè­¦åçº§
-layer: "Layer 9 (çæ§å±?"
+layer: Layer 5 (策略执行层)
 ---
 
 # ENHANCED ALERT SYSTEM BLUEPRINT
@@ -40,7 +40,7 @@ standard_type: ä¸ä¸éåæºæææ¡£
 responsibility:
   - æ°æ®è´¨é (Layer 1)
 
-layer: "Layer 9 (çæ§å±?"
+layer: Layer 5 (策略执行层)
 ---
 ï»? å®æ¶åè­¦ç³»ç»å¢å¼ºèå¾
 

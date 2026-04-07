@@ -13,7 +13,7 @@ responsibility:
   - æ ææ°´å¹³è°æ´
   - é£é©æ§å¶
   - æ æä¼å
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5.3 (风险管理)
 ---
 
 # DYNAMIC LEVERAGE MANAGEMENT BLUEPRINT
@@ -46,7 +46,7 @@ standard_type: ä¸ä¸éåæºæææ¡£
 responsibility:
   - é£é©é¢ç® (Layer 11)
 
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5.3 (风险管理)
 ---
 ï»? æ¨¡åæ¦è¿°
 

@@ -1,41 +1,41 @@
 ---
 responsibility:
-  - 周转率控�?
-  - 交易成本优化
-  - 换手率管�?
-  - 成本约束
+  - å¨è½¬çæ§å?
+  - äº¤æææ¬ä¼å
+  - æ¢æçç®¡ç?
+  - ææ¬çº¦æ
 
 module_id: TURNOVER_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.4 (交易执行)
 ---
 
-# 组合周转率控制蓝�?
+# ç»åå¨è½¬çæ§å¶èå?
 
-> **核心职责**: 控制组合周转率，降低交易成本
-> **职责边界**: 
-> - �?本文档负责：周转率控制、交易成本优�?
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: æ§å¶ç»åå¨è½¬çï¼éä½äº¤æææ¬
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼å¨è½¬çæ§å¶ãäº¤æææ¬ä¼å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-负责TURNOVER CONTROL的设计与实现，保障核心功能，优化用户体验。支持业务需求，确保系统稳定运行�?
+è´è´£TURNOVER CONTROLçè®¾è®¡ä¸å®ç°ï¼ä¿éæ ¸å¿åè½ï¼ä¼åç¨æ·ä½éªãæ¯æä¸å¡éæ±ï¼ç¡®ä¿ç³»ç»ç¨³å®è¿è¡ã?
 
-## 2. 功能设计
+## 2. åè½è®¾è®¡
 
-### 2.1 核心功能
+### 2.1 æ ¸å¿åè½
 
 ```python
 class TurnoverController:
     """
-    周转率控制器
+    å¨è½¬çæ§å¶å¨
     """
     
     def set_turnover_constraint(
@@ -44,11 +44,11 @@ class TurnoverController:
         max_turnover: float = 0.3
     ) -> None:
         """
-        设置周转率约�?
+        è®¾ç½®å¨è½¬ççº¦æ?
         
-        参数:
-            current_weights: 当前权重
-            max_turnover: 最大周转率（如0.3表示30%�?
+        åæ°:
+            current_weights: å½åæé
+            max_turnover: æå¤§å¨è½¬çï¼å¦0.3è¡¨ç¤º30%ï¼?
         """
         pass
     
@@ -58,7 +58,7 @@ class TurnoverController:
         target_weights: np.ndarray
     ) -> float:
         """
-        计算周转�?
+        è®¡ç®å¨è½¬ç?
         
         Turnover = 0.5 * sum(|w_target - w_current|)
         """
@@ -72,67 +72,67 @@ class TurnoverController:
         max_turnover: float
     ) -> Dict:
         """
-        带周转率约束的优�?
+        å¸¦å¨è½¬ççº¦æçä¼å?
         """
         pass
 ```
 
 ---
 
-## 3. 配置参数
+## 3. éç½®åæ°
 
 ```yaml
 turnover_control:
-  # 周转率约�?
-  max_turnover: 0.3  # 年化30%
+  # å¨è½¬ççº¦æ?
+  max_turnover: 0.3  # å¹´å30%
   
-  # 交易频率
-  min_holding_period: 5  # 最小持仓天�?
+  # äº¤æé¢ç
+  min_holding_period: 5  # æå°æä»å¤©æ?
   
-  # 成本考虑
-  transaction_cost_rate: 0.001  # 交易成本�?
+  # ææ¬èè
+  transaction_cost_rate: 0.001  # äº¤æææ¬ç?
 ```
 
 ---
 
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
-| [交易成本分析引擎蓝图](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | 中依�?| 提供成本分析 |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
+| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
+| [äº¤æææ¬åæå¼æèå¾](./TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md) | TRANSACTION_COST_ANALYSIS_ENGINE_001 | ä¸­ä¾èµ?| æä¾ææ¬åæ |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合再平衡蓝图](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 强依�?| 组合再平�?|
-| [季度调仓蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | 中依�?| 季度调仓决策 |
-| [税损收割蓝图](./TAX_LOSS_HARVESTING_BLUEPRINT.md) | TAX_LOSS_HARVESTING_001 | 中依�?| 税损收割策略 |
+| [ç»ååå¹³è¡¡èå¾](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | å¼ºä¾èµ?| ç»ååå¹³è¡?|
+| [å­£åº¦è°ä»èå¾](./QUARTERLY_REBALANCE_BLUEPRINT.md) | QUARTERLY_REBALANCE_001 | ä¸­ä¾èµ?| å­£åº¦è°ä»å³ç­ |
+| [ç¨ææ¶å²èå¾](./TAX_LOSS_HARVESTING_BLUEPRINT.md) | TAX_LOSS_HARVESTING_001 | ä¸­ä¾èµ?| ç¨ææ¶å²ç­ç¥ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **Riskfolio-Lib** | 7.0+ | 周转率约�?| [官方文档](https://riskfolio-lib.readthedocs.io/) |
-| **PyPortfolioOpt** | 1.5+ | 约束系统 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **Riskfolio-Lib** | 7.0+ | å¨è½¬ççº¦æ?| [å®æ¹ææ¡£](https://riskfolio-lib.readthedocs.io/) |
+| **PyPortfolioOpt** | 1.5+ | çº¦æç³»ç» | [å®æ¹ææ¡£](https://pyportfolioopt.readthedocs.io/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[组合优化引擎] --> B[周转率控制]
-    C[数据质量监控] --> B
-    D[交易成本分析引擎] --> B
+    A[ç»åä¼åå¼æ] --> B[å¨è½¬çæ§å¶]
+    C[æ°æ®è´¨éçæ§] --> B
+    D[äº¤æææ¬åæå¼æ] --> B
     
-    B --> E[组合再平衡]
-    B --> F[季度调仓]
-    B --> G[税损收割]
+    B --> E[ç»ååå¹³è¡¡]
+    B --> F[å­£åº¦è°ä»]
+    B --> G[ç¨ææ¶å²]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -141,38 +141,38 @@ graph LR
 
 ---
 
-## 4. 变更历史
+## 4. åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 文档索引
+### 5.1 ææ¡£ç´¢å¼
 
-**本文档在系统中的位置**:
-- **所属层�?*: Layer 6 (组合优化�?
-- **模块索引**: 001
-- **模块名称**: TURNOVER_CONTROL
-- **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**:
+- **æå±å±çº?*: Layer 6 (ç»åä¼åå±?
+- **æ¨¡åç´¢å¼**: 001
+- **æ¨¡ååç§°**: TURNOVER_CONTROL
+- **ææ¡£è·¯å¾**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 
-### 5.2 版本管理
+### 5.2 çæ¬ç®¡ç
 
-**版本历史**:
-- v1.0.0 (2026-04-07): 初始版本
+**çæ¬åå²**:
+- v1.0.0 (2026-04-07): åå§çæ¬
 
-### 5.3 维护责任
+### 5.3 ç»´æ¤è´£ä»»
 
-**文档维护**:
-- **责任模块**: TURNOVER_CONTROL
-- **维护周期**: 每季度审�?
-- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
+**ææ¡£ç»´æ¤**:
+- **è´£ä»»æ¨¡å**: TURNOVER_CONTROL
+- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
+- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

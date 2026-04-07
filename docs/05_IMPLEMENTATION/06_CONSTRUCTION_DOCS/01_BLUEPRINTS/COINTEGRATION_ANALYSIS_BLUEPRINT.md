@@ -4,71 +4,71 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 2 Alphaå å­å±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 协整分析
-  - 协整关系检�?
-  - 配对交易识别
-  - 统计套利
-layer: "Layer 2 (Alpha因子�?"
+  - åæ´åæ
+  - åæ´å³ç³»æ£éª?
+  - éå¯¹äº¤æè¯å«
+  - ç»è®¡å¥å©
+layer: Layer 5 (策略执行层)
 ---
 
 # COINTEGRATION ANALYSIS BLUEPRINT
-  - 因子计算
-  - 组合优化
-standard_type: 专业量化机构文档
-layer: "Layer 2 (Alpha因子�?"
-�? 协整分析蓝图
+  - å å­è®¡ç®
+  - ç»åä¼å
+standard_type: ä¸ä¸éåæºæææ¡£
+layer: Layer 5 (策略执行层)
+ï»? åæ´åæèå¾
 
-> **核心定位**: 协整分析蓝图的核心功能实�?
-
-
-> **索引**: `COINTEGRATION_ANALYSIS_001`
-> **开发周�?*: 2-3�?
-> **核心定位**: 识别资产间的长期均衡关系，支持配对交易和统计套利策略
-> **参考开�?*: statsmodels
-
-## 核心定位
-
-> 核心职责: Cointegration Analysis蓝图设计
-> 职责边界: 
-> - �?本文档负责：Cointegration Analysis蓝图设计相关内容
-> - �?本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行�?
+> **æ ¸å¿å®ä½**: åæ´åæèå¾çæ ¸å¿åè½å®ç?
 
 
-## 1. 概述
+> **ç´¢å¼**: `COINTEGRATION_ANALYSIS_001`
+> **å¼åå¨æ?*: 2-3å¤?
+> **æ ¸å¿å®ä½**: è¯å«èµäº§é´çé¿æåè¡¡å³ç³»ï¼æ¯æéå¯¹äº¤æåç»è®¡å¥å©ç­ç¥
+> **åèå¼æº?*: statsmodels
 
-### 1.1 模块定位
+## æ ¸å¿å®ä½
 
-**Layer定位**: Layer 6 - 组合优化层（相关性建模模块）
+> æ ¸å¿èè´£: Cointegration Analysisèå¾è®¾è®¡
+> èè´£è¾¹ç: 
+> - â?æ¬ææ¡£è´è´£ï¼Cointegration Analysisèå¾è®¾è®¡ç¸å³åå®¹
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å¶ä»æ¨¡ååå®¹ï¼ç¡®ä¿ç³»ç»åè½çç¨³å®è¿è¡åé«ææ§è¡ã?
 
-**核心价�?*:
-- 检验资产间的协整关系（长期均衡�?
-- 支持Engle-Granger两步法、Johansen检�?
-- 为配对交易策略提供基础
-- 区别于相关性，协整关系更稳�?
 
-**业务价�?*:
-- 发现统计套利机会
-- 构建均值回归策�?
-- 提升组合分散化效�?
+## 1. æ¦è¿°
 
-### 1.2 版本信息
+### 1.1 æ¨¡åå®ä½
 
-| 项目 | 内容 |
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼ç¸å³æ§å»ºæ¨¡æ¨¡åï¼
+
+**æ ¸å¿ä»·å?*:
+- æ£éªèµäº§é´çåæ´å³ç³»ï¼é¿æåè¡¡ï¼?
+- æ¯æEngle-Grangerä¸¤æ­¥æ³ãJohansenæ£éª?
+- ä¸ºéå¯¹äº¤æç­ç¥æä¾åºç¡
+- åºå«äºç¸å³æ§ï¼åæ´å³ç³»æ´ç¨³å®?
+
+**ä¸å¡ä»·å?*:
+- åç°ç»è®¡å¥å©æºä¼
+- æå»ºåå¼åå½ç­ç?
+- æåç»ååæ£åææ?
+
+### 1.2 çæ¬ä¿¡æ¯
+
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | COINTEGRATION_ANALYSIS_001 |
-| **版本** | v1.0.0 |
-| **开源依�?* | statsmodels |
-| **预计工时** | 2-3�?|
+| **æ¨¡åID** | COINTEGRATION_ANALYSIS_001 |
+| **çæ¬** | v1.0.0 |
+| **å¼æºä¾èµ?* | statsmodels |
+| **é¢è®¡å·¥æ¶** | 2-3å¤?|
 
 ---
-## 2. 技术实�?
+## 2. ææ¯å®ç?
 
-### 2.1 核心API
+### 2.1 æ ¸å¿API
 
 ```python
 from statsmodels.tsa.stattools import coint, adfuller
@@ -77,7 +77,7 @@ import numpy as np
 import pandas as pd
 
 class CointegrationAnalyzer:
-    """协整分析�?""
+    """åæ´åæå?""
     
     def engle_granger_test(
         self,
@@ -85,7 +85,7 @@ class CointegrationAnalyzer:
         series2: np.ndarray
     ) -> dict:
         """
-        Engle-Granger两步法协整检�?
+        Engle-Grangerä¸¤æ­¥æ³åæ´æ£éª?
         
         Returns:
             {'cointegrated': bool, 'pvalue': float, 'hedge_ratio': float}
@@ -110,18 +110,18 @@ class CointegrationAnalyzer:
         k_ar_diff: int = 1
     ) -> dict:
         """
-        Johansen协整检�?
+        Johansenåæ´æ£éª?
         
         Args:
-            data: 多变量时间序�?
-            det_order: 确定性趋势项
-                -1: 无确定性趋�?
-                0: 常数�?
-                1: 常数项和趋势�?
-            k_ar_diff: 滞后阶数
+            data: å¤åéæ¶é´åºå?
+            det_order: ç¡®å®æ§è¶å¿é¡¹
+                -1: æ ç¡®å®æ§è¶å?
+                0: å¸¸æ°é¡?
+                1: å¸¸æ°é¡¹åè¶å¿é¡?
+            k_ar_diff: æ»åé¶æ°
             
         Returns:
-            协整检验结�?
+            åæ´æ£éªç»æ?
         """
         result = coint_johansen(data, det_order, k_ar_diff)
         
@@ -151,10 +151,10 @@ class CointegrationAnalyzer:
         pvalue_threshold: float = 0.05
     ) -> List[dict]:
         """
-        扫描所有资产对，找出协整对
+        æ«æææèµäº§å¯¹ï¼æ¾åºåæ´å¯¹
         
         Returns:
-            协整对列�?
+            åæ´å¯¹åè¡?
         """
         n_assets = price_data.shape[1]
         cointegrated_pairs = []
@@ -179,11 +179,11 @@ class CointegrationAnalyzer:
 
 ---
 
-## 3. 接口定义
+## 3. æ¥å£å®ä¹
 
 ```python
 class CointegrationAPI:
-    """协整分析API"""
+    """åæ´åæAPI"""
     
     @endpoint("/api/v1/cointegration/test_pair")
     async def test_pair(
@@ -193,7 +193,7 @@ class CointegrationAPI:
         start_date: str,
         end_date: str
     ) -> CointegrationResult:
-        """检验资产对协整关系"""
+        """æ£éªèµäº§å¯¹åæ´å³ç³»"""
         
     @endpoint("/api/v1/cointegration/scan")
     async def scan_pairs(
@@ -201,7 +201,7 @@ class CointegrationAPI:
         assets: List[str],
         pvalue_threshold: float = 0.05
     ) -> List[CointegratedPair]:
-        """扫描协整�?""
+        """æ«æåæ´å¯?""
         
     @endpoint("/api/v1/cointegration/johansen")
     async def johansen_test(
@@ -209,48 +209,48 @@ class CointegrationAPI:
         assets: List[str],
         det_order: int = 0
     ) -> JohansenResult:
-        """Johansen多变量协整检�?""
+        """Johansenå¤åéåæ´æ£éª?""
 ```
 
 ---
 
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
-| [数据目录蓝图](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | 强依�?| 提供资产元数�?|
-| [动态相关性建模蓝图](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | 中依�?| 提供相关性分�?|
+| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
+| [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md) | DATA_CATALOG_001 | å¼ºä¾èµ?| æä¾èµäº§åæ°æ?|
+| [å¨æç¸å³æ§å»ºæ¨¡èå¾](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) | DYNAMIC_CORRELATION_MODELING_001 | ä¸­ä¾èµ?| æä¾ç¸å³æ§åæ?|
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [统计套利模块蓝图](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | STATISTICAL_ARBITRAGE_MODULE_001 | 强依�?| 统计套利策略 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 中依�?| 组合优化 |
-| [风险平价策略蓝图](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 中依�?| 风险平价策略 |
+| [ç»è®¡å¥å©æ¨¡åèå¾](./STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md) | STATISTICAL_ARBITRAGE_MODULE_001 | å¼ºä¾èµ?| ç»è®¡å¥å©ç­ç¥ |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | ä¸­ä¾èµ?| ç»åä¼å |
+| [é£é©å¹³ä»·ç­ç¥èå¾](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | ä¸­ä¾èµ?| é£é©å¹³ä»·ç­ç¥ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **statsmodels** | 0.14+ | 统计建模 | [官方文档](https://www.statsmodels.org/) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **statsmodels** | 0.14+ | ç»è®¡å»ºæ¨¡ | [å®æ¹ææ¡£](https://www.statsmodels.org/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[数据质量监控] --> B[协整分析]
-    C[数据目录] --> B
-    D[动态相关性建模] --> B
+    A[æ°æ®è´¨éçæ§] --> B[åæ´åæ]
+    C[æ°æ®ç®å½] --> B
+    D[å¨æç¸å³æ§å»ºæ¨¡] --> B
     
-    B --> E[统计套利模块]
-    B --> F[组合优化引擎]
-    B --> G[风险平价策略]
+    B --> E[ç»è®¡å¥å©æ¨¡å]
+    B --> F[ç»åä¼åå¼æ]
+    B --> G[é£é©å¹³ä»·ç­ç¥]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -259,55 +259,55 @@ graph LR
 
 ---
 
-## 4. 实施路径
+## 4. å®æ½è·¯å¾
 
-| 阶段 | 任务 | 工时 |
+| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
 |------|------|------|
-| Phase 1 | Engle-Granger检验实�?| 8h |
-| Phase 2 | Johansen检验、配对扫�?| 8h |
-| Phase 3 | API、测试、文�?| 8h |
+| Phase 1 | Engle-Grangeræ£éªå®ç?| 8h |
+| Phase 2 | Johansenæ£éªãéå¯¹æ«æ?| 8h |
+| Phase 3 | APIãæµè¯ãææ¡?| 8h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 System_Manifest.md索引
+### 5.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Cointegration Analysis
-- **模块ID**: COINTEGRATION_ANALYSIS_001
-- **蓝图文档**: COINTEGRATION_ANALYSIS_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 6 组合优化�?
-- **状�?*: Active
+- **æ¨¡åID**: COINTEGRATION_ANALYSIS_001
+- **èå¾ææ¡£**: COINTEGRATION_ANALYSIS_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 6 ç»åä¼åå±?
+- **ç¶æ?*: Active
 ```
 
-### 5.2 模块职责边界
+### 5.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Cointegration Analysis** | Layer 6 组合优化�?| **核心模块** |
+| **Cointegration Analysis** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 5.3 版本管理
+### 5.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

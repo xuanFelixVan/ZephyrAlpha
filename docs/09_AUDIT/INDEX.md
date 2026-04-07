@@ -3,7 +3,7 @@ module_id: INDEX_AUDIT_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-04
+last_updated: 2026-04-07
 owner: 审计系统架构�?standard_type: 专业量化机构目录索引
 responsibility:
   - 审计报告、合规检查

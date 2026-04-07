@@ -9,7 +9,7 @@ standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 1 æ°æ®é¢å¤çå±å®æ´æ¶æ
 compliance_level: ä¸ä¸æ å
 priority: P0
-layer: "Layer 1 (æ°æ®é¢å¤çå±)"
+layer: Layer 5 (策略执行层)
 responsibility: Layer 1å®æ´æ¶æèå¾æ±æ»ä¸å®æ½æå
 ---
 

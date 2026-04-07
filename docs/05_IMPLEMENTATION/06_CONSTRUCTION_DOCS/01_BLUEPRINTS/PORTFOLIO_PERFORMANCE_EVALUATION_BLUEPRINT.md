@@ -1,115 +1,115 @@
 ---
 responsibility:
-  - 组合绩效评估
-  - 绩效指标计算
-  - 绩效归因分析
-  - 绩效报告生成
+  - ç»åç»©æè¯ä¼°
+  - ç»©æææ è®¡ç®
+  - ç»©æå½å åæ
+  - ç»©ææ¥åçæ
 
 module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.2 (组合优化)
 ---
 
-# 组合绩效评估模块蓝图
-## 核心定位
+# ç»åç»©æè¯ä¼°æ¨¡åèå¾
+## æ ¸å¿å®ä½
 
-构建投资组合绩效评估的设计与实现，基于多维度绩效归因技术，评估投资组合收益来源和风险暴露，支持投资决策优化�?
+æå»ºæèµç»åç»©æè¯ä¼°çè®¾è®¡ä¸å®ç°ï¼åºäºå¤ç»´åº¦ç»©æå½å ææ¯ï¼è¯ä¼°æèµç»åæ¶çæ¥æºåé£é©æ´é²ï¼æ¯ææèµå³ç­ä¼åã?
 
 ---
 
 
-> **核心职责**: 计算和评估投资组合的风险调整收益
-> **职责边界**: 
-> - �?本文档负责：绩效评估、风险调整收益、基准对�?
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: è®¡ç®åè¯ä¼°æèµç»åçé£é©è°æ´æ¶ç
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼ç»©æè¯ä¼°ãé£é©è°æ´æ¶çãåºåå¯¹æ¯?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
-## 1. 概述
+## 1. æ¦è¿°
 
-### 1.1 模块定位与目�?
+### 1.1 æ¨¡åå®ä½ä¸ç®æ ?
 
-**Layer定位**: Layer 6 - 组合优化层（绩效评估模块�?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼ç»©æè¯ä¼°æ¨¡åï¼?
 
-**核心价�?*:
-- 提供专业级组合绩效评估指�?
-- 支持多维度风险调整收益分�?
-- 基准对比和绩效归�?
-- 滚动绩效指标计算
-- 可视化绩效报告生�?
+**æ ¸å¿ä»·å?*:
+- æä¾ä¸ä¸çº§ç»åç»©æè¯ä¼°ææ ?
+- æ¯æå¤ç»´åº¦é£é©è°æ´æ¶çåæ?
+- åºåå¯¹æ¯åç»©æå½å?
+- æ»å¨ç»©æææ è®¡ç®
+- å¯è§åç»©ææ¥åçæ?
 
-**业务价�?*:
-- 量化评估策略表现
-- 支持投资决策
-- 满足合规报告要求
-- 提升投资透明�?
+**ä¸å¡ä»·å?*:
+- éåè¯ä¼°ç­ç¥è¡¨ç°
+- æ¯ææèµå³ç­
+- æ»¡è¶³åè§æ¥åè¦æ±
+- æåæèµéæåº?
 
-### 1.2 版本信息
+### 1.2 çæ¬ä¿¡æ¯
 
-| 项目 | 内容 |
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | PORTFOLIO_PERFORMANCE_EVALUATION_001 |
-| **版本** | v1.0.0 |
-| **状�?* | Active |
-| **创建日期** | 2026-04-06 |
-| **最后更�?* | 2026-04-06 |
-| **开源依�?* | pyfolio, QuantStats |
-| **预计工时** | 2-3�?|
+| **æ¨¡åID** | PORTFOLIO_PERFORMANCE_EVALUATION_001 |
+| **çæ¬** | v1.0.0 |
+| **ç¶æ?* | Active |
+| **åå»ºæ¥æ** | 2026-04-06 |
+| **æåæ´æ?* | 2026-04-06 |
+| **å¼æºä¾èµ?* | pyfolio, QuantStats |
+| **é¢è®¡å·¥æ¶** | 2-3å¤?|
 
-### 1.3 与现有模块关�?
+### 1.3 ä¸ç°ææ¨¡åå³ç³?
 
-| 关系类型 | 模块名称 | module_id | 集成方式 |
+| å³ç³»ç±»å | æ¨¡ååç§° | module_id | éææ¹å¼ |
 |---------|---------|-----------|---------|
-| **输入依赖** | 策略引擎 | STRAT_ENGINE_001 | 获取策略收益�?|
-| **输入依赖** | 回测执行模块 | Backtrader集成 | 获取回测结果 |
-| **输出目标** | AI报告�?| Layer 7 | 提供绩效报告 |
-| **协同工作** | 组合归因分析 | PORTFOLIO_ATTRIBUTION_001 | 绩效归因分析 |
+| **è¾å¥ä¾èµ** | ç­ç¥å¼æ | STRAT_ENGINE_001 | è·åç­ç¥æ¶çç?|
+| **è¾å¥ä¾èµ** | åæµæ§è¡æ¨¡å | Backtraderéæ | è·ååæµç»æ |
+| **è¾åºç®æ ** | AIæ¥åå±?| Layer 7 | æä¾ç»©ææ¥å |
+| **ååå·¥ä½** | ç»åå½å åæ | PORTFOLIO_ATTRIBUTION_001 | ç»©æå½å åæ |
 
 ---
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合归因分析蓝图](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) | PORTFOLIO_ATTRIBUTION_001 | 强依�?| 提供归因分析结果 |
-| [VaR/ES监控蓝图](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 强依�?| 提供风险指标数据 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供组合权重数据 |
+| [ç»åå½å åæèå¾](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) | PORTFOLIO_ATTRIBUTION_001 | å¼ºä¾èµ?| æä¾å½å åæç»æ |
+| [VaR/ESçæ§èå¾](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | å¼ºä¾èµ?| æä¾é£é©ææ æ°æ® |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ç»åæéæ°æ® |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [SYSTEM_INTEGRATION_BLUEPRINT.md](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | 强依�?| 系统集成报告 |
-| [MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | 中依�?| 监控仪表板增�?|
-| [QUALITY_REPORT_AUTOMATION_BLUEPRINT.md](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | 中依�?| 质量报告自动�?|
+| [SYSTEM_INTEGRATION_BLUEPRINT.md](./SYSTEM_INTEGRATION_BLUEPRINT.md) | SYSTEM_INTEGRATION_001 | å¼ºä¾èµ?| ç³»ç»éææ¥å |
+| [MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md](./MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md) | MONITORING_DASHBOARD_ENHANCEMENT_001 | ä¸­ä¾èµ?| çæ§ä»ªè¡¨æ¿å¢å¼?|
+| [QUALITY_REPORT_AUTOMATION_BLUEPRINT.md](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) | QUALITY_REPORT_AUTOMATION_001 | ä¸­ä¾èµ?| è´¨éæ¥åèªå¨å?|
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **pyfolio** | 0.9+ | 组合分析 | [GitHub](https://github.com/quantopian/pyfolio) |
-| **QuantStats** | 0.0.62+ | 绩效分析 | [GitHub](https://github.com/ranaroussi/quantstats) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **pyfolio** | 0.9+ | ç»ååæ | [GitHub](https://github.com/quantopian/pyfolio) |
+| **QuantStats** | 0.0.62+ | ç»©æåæ | [GitHub](https://github.com/ranaroussi/quantstats) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[组合归因分析] --> B[组合绩效评估]
-    C[VaR/ES监控] --> B
-    D[组合优化引擎] --> B
+    A[ç»åå½å åæ] --> B[ç»åç»©æè¯ä¼°]
+    C[VaR/ESçæ§] --> B
+    D[ç»åä¼åå¼æ] --> B
     
-    B --> E[系统集成]
-    B --> F[监控仪表板]
-    B --> G[质量报告自动化]
+    B --> E[ç³»ç»éæ]
+    B --> F[çæ§ä»ªè¡¨æ¿]
+    B --> G[è´¨éæ¥åèªå¨å]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -118,60 +118,60 @@ graph LR
 
 ---
 
-## 2. 架构设计
+## 2. æ¶æè®¾è®¡
 
-### 2.1 Layer定位与职责边�?
+### 2.1 Layerå®ä½ä¸èè´£è¾¹ç?
 
-**Layer 6 - 组合优化层架�?*:
+**Layer 6 - ç»åä¼åå±æ¶æ?*:
 
 ```
-Layer 6: 组合优化�?
-├── 6.1 组合构建模块
-�?  ├── 组合优化�?(PORTFOLIO_OPTIMIZATION_001)
-�?  ├── Black-Litterman模型 (BLACK_LITTERMAN_MODEL_001)
-�?  └── 风险平价策略 (RISK_PARITY_STRATEGY_001)
-├── 6.2 约束求解模块
-�?  └── 约束求解�?(CONSTRAINT_SOLVER_001)
-├── 6.3 风险预算模块
-�?  └── 风险预算系统 (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
-├── 6.4 绩效评估模块 �?本模�?
-�?  └── 组合绩效评估 (PORTFOLIO_PERFORMANCE_EVALUATION_001)
-└── 6.5 归因分析模块
-    └── 组合归因分析 (PORTFOLIO_ATTRIBUTION_001)
+Layer 6: ç»åä¼åå±?
+âââ 6.1 ç»åæå»ºæ¨¡å
+â?  âââ ç»åä¼åå?(PORTFOLIO_OPTIMIZATION_001)
+â?  âââ Black-Littermanæ¨¡å (BLACK_LITTERMAN_MODEL_001)
+â?  âââ é£é©å¹³ä»·ç­ç¥ (RISK_PARITY_STRATEGY_001)
+âââ 6.2 çº¦ææ±è§£æ¨¡å
+â?  âââ çº¦ææ±è§£å?(CONSTRAINT_SOLVER_001)
+âââ 6.3 é£é©é¢ç®æ¨¡å
+â?  âââ é£é©é¢ç®ç³»ç» (SIMPLIFIED_RISK_BUDGET_SYSTEM_001)
+âââ 6.4 ç»©æè¯ä¼°æ¨¡å â?æ¬æ¨¡å?
+â?  âââ ç»åç»©æè¯ä¼° (PORTFOLIO_PERFORMANCE_EVALUATION_001)
+âââ 6.5 å½å åææ¨¡å
+    âââ ç»åå½å åæ (PORTFOLIO_ATTRIBUTION_001)
 ```
 
-**职责边界**:
-- �?**负责**: 绩效指标计算、基准对比、可视化报告
-- �?**不负�?*: 归因分析（归因分析模块负责）、风险预算（风险预算模块负责�?
+**èè´£è¾¹ç**:
+- â?**è´è´£**: ç»©æææ è®¡ç®ãåºåå¯¹æ¯ãå¯è§åæ¥å
+- â?**ä¸è´è´?*: å½å åæï¼å½å åææ¨¡åè´è´£ï¼ãé£é©é¢ç®ï¼é£é©é¢ç®æ¨¡åè´è´£ï¼?
 
-### 2.2 核心组件架构
+### 2.2 æ ¸å¿ç»ä»¶æ¶æ
 
 ```mermaid
 graph TB
-    subgraph "数据输入"
-        A[策略收益率] --> D[绩效评估引擎]
-        B[基准收益率] --> D
-        C[无风险利率] --> D
+    subgraph "æ°æ®è¾å¥"
+        A[ç­ç¥æ¶çç] --> D[ç»©æè¯ä¼°å¼æ]
+        B[åºåæ¶çç] --> D
+        C[æ é£é©å©ç] --> D
     end
     
-    subgraph "pyfolio核心"
-        D --> E[风险指标计算]
-        E --> F[夏普比率]
-        E --> G[最大回撤]
-        E --> H[波动率]
+    subgraph "pyfolioæ ¸å¿"
+        D --> E[é£é©ææ è®¡ç®]
+        E --> F[å¤æ®æ¯ç]
+        E --> G[æå¤§åæ¤]
+        E --> H[æ³¢å¨ç]
         E --> I[Alpha/Beta]
     end
     
-    subgraph "QuantStats扩展"
-        D --> J[高级指标]
-        J --> K[Sortino比率]
-        J --> L[Calmar比率]
-        J --> M[信息比率]
-        J --> N[滚动指标]
+    subgraph "QuantStatsæ©å±"
+        D --> J[é«çº§ææ ]
+        J --> K[Sortinoæ¯ç]
+        J --> L[Calmaræ¯ç]
+        J --> M[ä¿¡æ¯æ¯ç]
+        J --> N[æ»å¨ææ ]
     end
     
-    subgraph "可视化报�?
-        F --> O[绩效报告生成]
+    subgraph "å¯è§åæ¥å?
+        F --> O[ç»©ææ¥åçæ]
         G --> O
         H --> O
         I --> O
@@ -179,33 +179,33 @@ graph TB
         L --> O
         M --> O
         N --> O
-        O --> P[HTML报告]
-        O --> Q[PDF报告]
-        O --> R[交互式仪表板]
+        O --> P[HTMLæ¥å]
+        O --> Q[PDFæ¥å]
+        O --> R[äº¤äºå¼ä»ªè¡¨æ¿]
     end
 ```
 
-### 2.3 数据流设�?
+### 2.3 æ°æ®æµè®¾è®?
 
-**核心数据�?*:
+**æ ¸å¿æ°æ®æµ?*:
 
 ```
-策略收益率序�?�?pyfolio/QuantStats �?绩效指标计算
-                                            �?
-                                    基准对比分析
-                                            �?
-                                    滚动指标计算
-                                            �?
-                                    可视化报告生�?
+ç­ç¥æ¶ççåºå?â?pyfolio/QuantStats â?ç»©æææ è®¡ç®
+                                            â?
+                                    åºåå¯¹æ¯åæ
+                                            â?
+                                    æ»å¨ææ è®¡ç®
+                                            â?
+                                    å¯è§åæ¥åçæ?
 ```
 
 ---
 
-## 3. 技术实�?
+## 3. ææ¯å®ç?
 
-### 3.1 pyfolio集成（核心）
+### 3.1 pyfolioéæï¼æ ¸å¿ï¼
 
-**核心API**:
+**æ ¸å¿API**:
 
 ```python
 import pyfolio as pf
@@ -214,12 +214,12 @@ import numpy as np
 
 class PortfolioPerformanceEvaluator:
     """
-    组合绩效评估�?
+    ç»åç»©æè¯ä¼°å?
     
-    索引: PORTFOLIO_PERF_001-M01
-    职责: 基于pyfolio实现专业级绩效评�?
-    输入: 策略收益率、基准收益率、无风险利率
-    输出: 绩效指标、风险指标、可视化报告
+    ç´¢å¼: PORTFOLIO_PERF_001-M01
+    èè´£: åºäºpyfolioå®ç°ä¸ä¸çº§ç»©æè¯ä¼?
+    è¾å¥: ç­ç¥æ¶ççãåºåæ¶ççãæ é£é©å©ç
+    è¾åº: ç»©æææ ãé£é©ææ ãå¯è§åæ¥å
     """
     
     def __init__(self, risk_free_rate: float = 0.02):
@@ -231,14 +231,14 @@ class PortfolioPerformanceEvaluator:
         benchmark_returns: pd.Series = None
     ) -> dict:
         """
-        计算绩效指标
+        è®¡ç®ç»©æææ 
         
         Args:
-            returns: 策略收益率序�?
-            benchmark_returns: 基准收益率序�?
+            returns: ç­ç¥æ¶ççåºå?
+            benchmark_returns: åºåæ¶ççåºå?
             
         Returns:
-            绩效指标字典
+            ç»©æææ å­å¸
         """
         perf_stats = pf.timeseries.perf_stats(
             returns,
@@ -260,13 +260,13 @@ class PortfolioPerformanceEvaluator:
         returns: pd.Series
     ) -> dict:
         """
-        计算风险指标
+        è®¡ç®é£é©ææ 
         
         Args:
-            returns: 策略收益率序�?
+            returns: ç­ç¥æ¶ççåºå?
             
         Returns:
-            风险指标字典
+            é£é©ææ å­å¸
         """
         return {
             'volatility': pf.timeseries.annual_volatility(returns),
@@ -282,14 +282,14 @@ class PortfolioPerformanceEvaluator:
         benchmark_returns: pd.Series
     ) -> dict:
         """
-        计算Alpha和Beta
+        è®¡ç®AlphaåBeta
         
         Args:
-            returns: 策略收益率序�?
-            benchmark_returns: 基准收益率序�?
+            returns: ç­ç¥æ¶ççåºå?
+            benchmark_returns: åºåæ¶ççåºå?
             
         Returns:
-            Alpha和Beta字典
+            AlphaåBetaå­å¸
         """
         alpha, beta = pf.timeseries.alpha_beta(
             returns,
@@ -314,16 +314,16 @@ class PortfolioPerformanceEvaluator:
         transactions: pd.DataFrame = None
     ):
         """
-        生成完整绩效报告（Tearsheet�?
+        çæå®æ´ç»©ææ¥åï¼Tearsheetï¼?
         
         Args:
-            returns: 策略收益率序�?
-            benchmark_returns: 基准收益率序�?
-            positions: 持仓数据
-            transactions: 交易数据
+            returns: ç­ç¥æ¶ççåºå?
+            benchmark_returns: åºåæ¶ççåºå?
+            positions: æä»æ°æ®
+            transactions: äº¤ææ°æ®
             
         Returns:
-            完整的绩效分析报�?
+            å®æ´çç»©æåææ¥å?
         """
         pf.create_full_tear_sheet(
             returns,
@@ -333,19 +333,19 @@ class PortfolioPerformanceEvaluator:
         )
 ```
 
-### 3.2 QuantStats集成（扩展）
+### 3.2 QuantStatséæï¼æ©å±ï¼
 
-**核心API**:
+**æ ¸å¿API**:
 
 ```python
 import quantstats as qs
 
 class QuantStatsEvaluator:
     """
-    QuantStats绩效评估�?
+    QuantStatsç»©æè¯ä¼°å?
     
-    索引: PORTFOLIO_PERF_001-M02
-    职责: 使用QuantStats提供扩展的绩效评估功�?
+    ç´¢å¼: PORTFOLIO_PERF_001-M02
+    èè´£: ä½¿ç¨QuantStatsæä¾æ©å±çç»©æè¯ä¼°åè?
     """
     
     def calculate_extended_metrics(
@@ -354,14 +354,14 @@ class QuantStatsEvaluator:
         benchmark_returns: pd.Series = None
     ) -> dict:
         """
-        计算扩展绩效指标
+        è®¡ç®æ©å±ç»©æææ 
         
         Args:
-            returns: 策略收益率序�?
-            benchmark_returns: 基准收益率序�?
+            returns: ç­ç¥æ¶ççåºå?
+            benchmark_returns: åºåæ¶ççåºå?
             
         Returns:
-            扩展绩效指标字典
+            æ©å±ç»©æææ å­å¸
         """
         return {
             'sharpe': qs.stats.sharpe(returns),
@@ -382,12 +382,12 @@ class QuantStatsEvaluator:
         output_path: str = 'performance_report.html'
     ):
         """
-        生成HTML绩效报告
+        çæHTMLç»©ææ¥å
         
         Args:
-            returns: 策略收益率序�?
-            benchmark_returns: 基准收益率序�?
-            output_path: 输出文件路径
+            returns: ç­ç¥æ¶ççåºå?
+            benchmark_returns: åºåæ¶ççåºå?
+            output_path: è¾åºæä»¶è·¯å¾
         """
         qs.reports.html(
             returns,
@@ -397,7 +397,7 @@ class QuantStatsEvaluator:
         )
 ```
 
-### 3.3 滚动绩效指标
+### 3.3 æ»å¨ç»©æææ 
 
 ```python
 def calculate_rolling_metrics(
@@ -405,14 +405,14 @@ def calculate_rolling_metrics(
     window: int = 252
 ) -> pd.DataFrame:
     """
-    计算滚动绩效指标
+    è®¡ç®æ»å¨ç»©æææ 
     
     Args:
-        returns: 策略收益率序�?
-        window: 滚动窗口（天数）
+        returns: ç­ç¥æ¶ççåºå?
+        window: æ»å¨çªå£ï¼å¤©æ°ï¼
         
     Returns:
-        滚动指标DataFrame
+        æ»å¨ææ DataFrame
     """
     rolling_sharpe = returns.rolling(window).apply(
         lambda x: np.sqrt(252) * np.mean(x) / np.std(x)
@@ -431,25 +431,25 @@ def calculate_rolling_metrics(
     })
 ```
 
-### 3.4 性能要求
+### 3.4 æ§è½è¦æ±
 
-| 性能指标 | 目标�?| 说明 |
+| æ§è½ææ  | ç®æ å?| è¯´æ |
 |---------|--------|------|
-| **指标计算时间** | <500ms | 单次计算 |
-| **报告生成时间** | <5s | 完整Tearsheet |
-| **内存占用** | <100MB | 单次分析 |
-| **并发支持** | 10 QPS | 支持多策略并行分�?|
+| **ææ è®¡ç®æ¶é´** | <500ms | åæ¬¡è®¡ç® |
+| **æ¥åçææ¶é´** | <5s | å®æ´Tearsheet |
+| **åå­å ç¨** | <100MB | åæ¬¡åæ |
+| **å¹¶åæ¯æ** | 10 QPS | æ¯æå¤ç­ç¥å¹¶è¡åæ?|
 
 ---
 
-## 4. 数据模型
+## 4. æ°æ®æ¨¡å
 
-### 4.1 输入数据结构
+### 4.1 è¾å¥æ°æ®ç»æ
 
 ```python
 @dataclass
 class PerformanceInput:
-    """绩效评估输入数据"""
+    """ç»©æè¯ä¼°è¾å¥æ°æ®"""
     returns: pd.Series
     benchmark_returns: Optional[pd.Series] = None
     risk_free_rate: float = 0.02
@@ -457,12 +457,12 @@ class PerformanceInput:
     transactions: Optional[pd.DataFrame] = None
 ```
 
-### 4.2 输出数据结构
+### 4.2 è¾åºæ°æ®ç»æ
 
 ```python
 @dataclass
 class PerformanceResult:
-    """绩效评估结果"""
+    """ç»©æè¯ä¼°ç»æ"""
     performance_metrics: Dict[str, float]
     risk_metrics: Dict[str, float]
     alpha_beta: Optional[Dict[str, float]]
@@ -471,7 +471,7 @@ class PerformanceResult:
     timestamp: datetime
 ```
 
-### 4.3 数据库表设计
+### 4.3 æ°æ®åºè¡¨è®¾è®¡
 
 ```sql
 CREATE TABLE IF NOT EXISTS performance_metrics (
@@ -496,13 +496,13 @@ CREATE TABLE IF NOT EXISTS performance_history (
 
 ---
 
-## 5. 接口定义
+## 5. æ¥å£å®ä¹
 
-### 5.1 API接口
+### 5.1 APIæ¥å£
 
 ```python
 class PerformanceAPI:
-    """绩效评估API接口"""
+    """ç»©æè¯ä¼°APIæ¥å£"""
     
     @endpoint("/api/v1/performance/calculate")
     async def calculate_metrics(
@@ -510,13 +510,13 @@ class PerformanceAPI:
         request: PerformanceRequest
     ) -> PerformanceResponse:
         """
-        计算绩效指标
+        è®¡ç®ç»©æææ 
         
         Args:
-            request: 绩效计算请求
+            request: ç»©æè®¡ç®è¯·æ±
             
         Returns:
-            绩效指标结果
+            ç»©æææ ç»æ
         """
         pass
     
@@ -528,15 +528,15 @@ class PerformanceAPI:
         end_date: str
     ) -> TearsheetResponse:
         """
-        生成完整绩效报告
+        çæå®æ´ç»©ææ¥å
         
         Args:
-            strategy_id: 策略ID
-            start_date: 开始日�?
-            end_date: 结束日期
+            strategy_id: ç­ç¥ID
+            start_date: å¼å§æ¥æ?
+            end_date: ç»ææ¥æ
             
         Returns:
-            绩效报告路径
+            ç»©ææ¥åè·¯å¾
         """
         pass
     
@@ -548,136 +548,136 @@ class PerformanceAPI:
         end_date: str
     ) -> ComparisonResponse:
         """
-        对比多个策略绩效
+        å¯¹æ¯å¤ä¸ªç­ç¥ç»©æ
         
         Args:
-            strategy_ids: 策略ID列表
-            start_date: 开始日�?
-            end_date: 结束日期
+            strategy_ids: ç­ç¥IDåè¡¨
+            start_date: å¼å§æ¥æ?
+            end_date: ç»ææ¥æ
             
         Returns:
-            策略对比结果
+            ç­ç¥å¯¹æ¯ç»æ
         """
         pass
 ```
 
 ---
 
-## 6. 实施路径
+## 6. å®æ½è·¯å¾
 
-### 6.1 Phase 1: 核心功能实现�?周）
+### 6.1 Phase 1: æ ¸å¿åè½å®ç°ï¼?å¨ï¼
 
-| 任务 | 工时 | 交付�?|
+| ä»»å¡ | å·¥æ¶ | äº¤ä»ç?|
 |------|------|--------|
-| pyfolio集成 | 4h | 集成代码、单元测�?|
-| QuantStats集成 | 4h | 扩展功能 |
-| 指标计算模块 | 4h | 计算模块 |
-| 数据库表创建 | 2h | SQL脚本 |
+| pyfolioéæ | 4h | éæä»£ç ãååæµè¯?|
+| QuantStatséæ | 4h | æ©å±åè½ |
+| ææ è®¡ç®æ¨¡å | 4h | è®¡ç®æ¨¡å |
+| æ°æ®åºè¡¨åå»º | 2h | SQLèæ¬ |
 
-### 6.2 Phase 2: 功能增强�?.5周）
+### 6.2 Phase 2: åè½å¢å¼ºï¼?.5å¨ï¼
 
-| 任务 | 工时 | 交付�?|
+| ä»»å¡ | å·¥æ¶ | äº¤ä»ç?|
 |------|------|--------|
-| 滚动指标计算 | 4h | 滚动分析模块 |
-| API接口开�?| 4h | REST API |
-| 可视化报�?| 4h | HTML报告生成 |
+| æ»å¨ææ è®¡ç® | 4h | æ»å¨åææ¨¡å |
+| APIæ¥å£å¼å?| 4h | REST API |
+| å¯è§åæ¥å?| 4h | HTMLæ¥åçæ |
 
-### 6.3 Phase 3: 测试与文档（0.5周）
+### 6.3 Phase 3: æµè¯ä¸ææ¡£ï¼0.5å¨ï¼
 
-| 任务 | 工时 | 交付�?|
+| ä»»å¡ | å·¥æ¶ | äº¤ä»ç?|
 |------|------|--------|
-| 单元测试 | 4h | 测试代码 |
-| 集成测试 | 4h | 测试报告 |
-| 文档编写 | 4h | 用户手册、API文档 |
+| ååæµè¯ | 4h | æµè¯ä»£ç  |
+| éææµè¯ | 4h | æµè¯æ¥å |
+| ææ¡£ç¼å | 4h | ç¨æ·æåãAPIææ¡£ |
 
 ---
 
-## 7. 文档治理
+## 7. ææ¡£æ²»ç
 
-### 7.1 System_Manifest.md索引
+### 7.1 System_Manifest.mdç´¢å¼
 
-**索引位置**: Layer 6 - 组合优化�?- 绩效评估模块
+**ç´¢å¼ä½ç½®**: Layer 6 - ç»åä¼åå±?- ç»©æè¯ä¼°æ¨¡å
 
-### 7.2 模块职责边界
+### 7.2 æ¨¡åèè´£è¾¹ç
 
-**与组合归因分析边�?*:
-- 绩效评估负责计算绩效指标
-- 归因分析负责分解收益来源
+**ä¸ç»åå½å åæè¾¹ç?*:
+- ç»©æè¯ä¼°è´è´£è®¡ç®ç»©æææ 
+- å½å åæè´è´£åè§£æ¶çæ¥æº
 
-**与AI报告层边�?*:
-- 绩效评估负责生成绩效数据
-- AI报告层负责生成自然语言报告
+**ä¸AIæ¥åå±è¾¹ç?*:
+- ç»©æè¯ä¼°è´è´£çæç»©ææ°æ®
+- AIæ¥åå±è´è´£çæèªç¶è¯­è¨æ¥å
 
 ---
 
-## 8. 风险评估
+## 8. é£é©è¯ä¼°
 
-### 8.1 技术风�?
+### 8.1 ææ¯é£é?
 
-| 风险�?| 风险等级 | 影响范围 | 缓解措施 |
+| é£é©é¡?| é£é©ç­çº§ | å½±åèå´ | ç¼è§£æªæ½ |
 |--------|---------|---------|---------|
-| pyfolio依赖冲突 | P2 | 集成失败 | 虚拟环境、版本锁�?|
-| 数据格式不兼�?| P1 | 计算错误 | 数据验证、格式转�?|
-| 性能瓶颈 | P2 | 响应�?| 异步处理、缓�?|
+| pyfolioä¾èµå²çª | P2 | éæå¤±è´¥ | èæç¯å¢ãçæ¬éå®?|
+| æ°æ®æ ¼å¼ä¸å¼å®?| P1 | è®¡ç®éè¯¯ | æ°æ®éªè¯ãæ ¼å¼è½¬æ?|
+| æ§è½ç¶é¢ | P2 | ååºæ?| å¼æ­¥å¤çãç¼å­?|
 
-### 8.2 实施风险
+### 8.2 å®æ½é£é©
 
-| 风险�?| 风险等级 | 影响范围 | 缓解措施 |
+| é£é©é¡?| é£é©ç­çº§ | å½±åèå´ | ç¼è§£æªæ½ |
 |--------|---------|---------|---------|
-| 开源项目API变更 | P2 | 集成失败 | 锁定版本、定期更�?|
-| 数据质量问题 | P1 | 计算错误 | 数据清洗、异常检�?|
+| å¼æºé¡¹ç®APIåæ´ | P2 | éæå¤±è´¥ | éå®çæ¬ãå®ææ´æ?|
+| æ°æ®è´¨éé®é¢ | P1 | è®¡ç®éè¯¯ | æ°æ®æ¸æ´ãå¼å¸¸æ£æµ?|
 
 ---
 
-## 9. 质量保证
+## 9. è´¨éä¿è¯
 
-### 9.1 测试策略
+### 9.1 æµè¯ç­ç¥
 
-| 测试类型 | 覆盖率目�?| 测试工具 |
+| æµè¯ç±»å | è¦ççç®æ ?| æµè¯å·¥å· |
 |---------|-----------|---------|
-| 单元测试 | �?0% | pytest |
-| 集成测试 | �?0% | pytest + mock |
-| 性能测试 | 关键路径 | pytest-benchmark |
+| ååæµè¯ | â?0% | pytest |
+| éææµè¯ | â?0% | pytest + mock |
+| æ§è½æµè¯ | å³é®è·¯å¾ | pytest-benchmark |
 
-### 9.2 验收标准
+### 9.2 éªæ¶æ å
 
-| 验收�?| 标准 | 验证方法 |
+| éªæ¶é¡?| æ å | éªè¯æ¹æ³ |
 |--------|------|---------|
-| 功能完整�?| 所有API正常工作 | 单元测试 |
-| 性能达标 | 指标计算<500ms | 性能测试 |
-| 报告质量 | 报告清晰完整 | 人工审查 |
+| åè½å®æ´æ?| ææAPIæ­£å¸¸å·¥ä½ | ååæµè¯ |
+| æ§è½è¾¾æ  | ææ è®¡ç®<500ms | æ§è½æµè¯ |
+| æ¥åè´¨é | æ¥åæ¸æ°å®æ´ | äººå·¥å®¡æ¥ |
 
 ---
 
-## 10. 参考资�?
+## 10. åèèµæ?
 
-### 10.1 学术论文
+### 10.1 å­¦æ¯è®ºæ
 
 1. Sharpe, W. F. (1966). "Mutual Fund Performance". Journal of Business.
 2. Sortino, F. A., & Price, L. N. (1994). "Performance Measurement in a Downside Risk Framework". Journal of Investing.
 
-### 10.2 开源项目文�?
+### 10.2 å¼æºé¡¹ç®ææ¡?
 
 1. pyfolio Documentation: https://pyfolio.ml4trading.io/
 2. QuantStats Documentation: https://github.com/ranaroussi/quantstats
 3. Quantopian Lectures: https://www.quantopian.com/lectures
 
-### 10.3 相关蓝图
+### 10.3 ç¸å³èå¾
 
-- [组合归因分析蓝图](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md)
-- [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
+- [ç»åå½å åæèå¾](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md)
+- [é£é©è´¡ç®åæèå¾](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

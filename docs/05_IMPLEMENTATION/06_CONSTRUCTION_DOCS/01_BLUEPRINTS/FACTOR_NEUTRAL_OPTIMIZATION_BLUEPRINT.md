@@ -8,7 +8,7 @@ owner: å®æ½å¢é
 standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: ä¸ä¸æ å
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5.2 (组合优化)
 responsibility:
   - å å­ä¸­æ§ä¼å?
   - å å­æ´é²çº¦æ

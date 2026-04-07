@@ -14,7 +14,7 @@ owner: å®æ½å¢é
 standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 7 é£é©ç®¡çå±?
 compliance_level: ä¸ä¸æ å
-layer: "Layer 7 (é£é©ç®¡çå±?"
+layer: Layer 5.3 (风险管理)
 ---
 
 # ååæµè¯ç³»ç»èå¾

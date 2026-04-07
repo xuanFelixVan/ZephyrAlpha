@@ -3,7 +3,7 @@ module_id: INDEX_FRAMEWORK_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-04
+last_updated: 2026-04-07
 owner: 系统架构�?standard_type: 专业量化机构目录索引
 applicable_scope: 01_FRAMEWORK目录
 compliance_level: 专业标准

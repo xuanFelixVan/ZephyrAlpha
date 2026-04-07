@@ -4,51 +4,51 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 鲁棒优化
-  - 参数不确定性处�?
-  - 最坏情况优�?
-  - 稳定性增�?
-layer: "Layer 6 (组合优化�?"
+  - é²æ£ä¼å
+  - åæ°ä¸ç¡®å®æ§å¤ç?
+  - æåæåµä¼å?
+  - ç¨³å®æ§å¢å¼?
+layer: Layer 5.2 (组合优化)
 ---
 
-# 鲁棒优化蓝图
+# é²æ£ä¼åèå¾
 
-> **核心职责**: 鲁棒优化，处理参数不确定性，提供最坏情况下的最优组�?
-> **职责边界**: 
-> - �?本文档负责：鲁棒优化、参数不确定性处理、最坏情况优化、稳定性增�?
-> - �?本文档不负责：均值方差优化、风险平价、约束求�?
-�? 鲁棒优化蓝图
+> **æ ¸å¿èè´£**: é²æ£ä¼åï¼å¤çåæ°ä¸ç¡®å®æ§ï¼æä¾æåæåµä¸çæä¼ç»å?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼é²æ£ä¼åãåæ°ä¸ç¡®å®æ§å¤çãæåæåµä¼åãç¨³å®æ§å¢å¼?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼åå¼æ¹å·®ä¼åãé£é©å¹³ä»·ãçº¦ææ±è§?
+ï»? é²æ£ä¼åèå¾
 
-> **核心定位**: 鲁棒优化蓝图的核心功能实�?
+> **æ ¸å¿å®ä½**: é²æ£ä¼åèå¾çæ ¸å¿åè½å®ç?
 
 
-> **模块ID**: ROBUST_OPTIMIZATION_001
-> **创建日期**: 2026-04-07
-> **核心定位**: 处理参数不确定性，提供最坏情况下的最优组合，增强优化结果的稳定�?
-> **索引**: `ROBUST_OPTIMIZATION_001`
-> **开发周�?*: 1.5�?
+> **æ¨¡åID**: ROBUST_OPTIMIZATION_001
+> **åå»ºæ¥æ**: 2026-04-07
+> **æ ¸å¿å®ä½**: å¤çåæ°ä¸ç¡®å®æ§ï¼æä¾æåæåµä¸çæä¼ç»åï¼å¢å¼ºä¼åç»æçç¨³å®æ?
+> **ç´¢å¼**: `ROBUST_OPTIMIZATION_001`
+> **å¼åå¨æ?*: 1.5å?
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-设计ROBUST OPTIMIZATION的设计与实现，基于因子投资技术，调整核心功能，提升收益风险比�?
+è®¾è®¡ROBUST OPTIMIZATIONçè®¾è®¡ä¸å®ç°ï¼åºäºå å­æèµææ¯ï¼è°æ´æ ¸å¿åè½ï¼æåæ¶çé£é©æ¯ã?
 
-## 2. 功能设计
+## 2. åè½è®¾è®¡
 
-### 2.1 核心功能
+### 2.1 æ ¸å¿åè½
 
-#### 2.1.1 不确定性集合构�?
+#### 2.1.1 ä¸ç¡®å®æ§éåæå»?
 
 ```python
 class UncertaintySetBuilder:
     """
-    不确定性集合构建器
+    ä¸ç¡®å®æ§éåæå»ºå¨
     
-    开源依�? Skfolio.uncertainty_set
+    å¼æºä¾èµ? Skfolio.uncertainty_set
     """
     
     def build_return_uncertainty(
@@ -58,16 +58,16 @@ class UncertaintySetBuilder:
         confidence: float = 0.95
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
-        构建预期收益不确定性集�?
+        æå»ºé¢ææ¶çä¸ç¡®å®æ§éå?
         
-        参数:
-            expected_returns: 点估计收�?
-            method: 方法 ('bootstrap', 'elliptical', 'box')
-            confidence: 置信水平
+        åæ°:
+            expected_returns: ç¹ä¼°è®¡æ¶ç?
+            method: æ¹æ³ ('bootstrap', 'elliptical', 'box')
+            confidence: ç½®ä¿¡æ°´å¹³
             
-        返回:
-            lower_bound: 下界
-            upper_bound: 上界
+        è¿å:
+            lower_bound: ä¸ç
+            upper_bound: ä¸ç
         """
         pass
     
@@ -78,24 +78,24 @@ class UncertaintySetBuilder:
         n_samples: int = 1000
     ) -> List[np.ndarray]:
         """
-        构建协方差矩阵不确定性集�?
+        æå»ºåæ¹å·®ç©éµä¸ç¡®å®æ§éå?
         
-        返回协方差矩阵样本集�?
+        è¿ååæ¹å·®ç©éµæ ·æ¬éå?
         """
         pass
 ```
 
-#### 2.1.2 最坏情况优�?
+#### 2.1.2 æåæåµä¼å?
 
 ```python
 class WorstCaseOptimizer:
     """
-    最坏情况优化器
+    æåæåµä¼åå¨
     
-    min max f(w, θ)
-    w  θ∈U
+    min max f(w, Î¸)
+    w  Î¸âU
     
-    在最坏参数下优化
+    å¨æååæ°ä¸ä¼å
     """
     
     def optimize_worst_case(
@@ -105,27 +105,27 @@ class WorstCaseOptimizer:
         risk_aversion: float = 1.0
     ) -> Dict:
         """
-        最坏情况优�?
+        æåæåµä¼å?
         
-        参数:
-            return_uncertainty: 收益不确定性集�?
-            cov_uncertainty: 协方差不确定性集�?
-            risk_aversion: 风险厌恶系数
+        åæ°:
+            return_uncertainty: æ¶çä¸ç¡®å®æ§éå?
+            cov_uncertainty: åæ¹å·®ä¸ç¡®å®æ§éå?
+            risk_aversion: é£é©åæ¶ç³»æ°
             
-        返回:
-            最优权重和最坏情况统�?
+        è¿å:
+            æä¼æéåæåæåµç»è®?
         """
         pass
 ```
 
-#### 2.1.3 分布鲁棒优化
+#### 2.1.3 åå¸é²æ£ä¼å
 
 ```python
 class DistributionallyRobustOptimizer:
     """
-    分布鲁棒优化�?
+    åå¸é²æ£ä¼åå?
     
-    开源依�? Skfolio Distributionally Robust CVaR
+    å¼æºä¾èµ? Skfolio Distributionally Robust CVaR
     """
     
     def optimize_dro_cvar(
@@ -135,27 +135,27 @@ class DistributionallyRobustOptimizer:
         wasserstein_radius: float = 0.1
     ) -> Dict:
         """
-        分布鲁棒CVaR优化
+        åå¸é²æ£CVaRä¼å
         
-        参数:
-            returns: 历史收益
-            alpha: CVaR置信水平
-            wasserstein_radius: Wasserstein距离半径
+        åæ°:
+            returns: åå²æ¶ç
+            alpha: CVaRç½®ä¿¡æ°´å¹³
+            wasserstein_radius: Wassersteinè·ç¦»åå¾
             
-        返回:
-            最优权重和鲁棒CVaR
+        è¿å:
+            æä¼æéåé²æ£CVaR
         """
         pass
 ```
 
-#### 2.1.4 敏感性分�?
+#### 2.1.4 æææ§åæ?
 
 ```python
 class SensitivityAnalyzer:
     """
-    敏感性分析器
+    æææ§åæå¨
     
-    分析优化结果对参数变化的敏感�?
+    åæä¼åç»æå¯¹åæ°ååçæææ?
     """
     
     def analyze_return_sensitivity(
@@ -165,15 +165,15 @@ class SensitivityAnalyzer:
         perturbation_range: float = 0.1
     ) -> pd.DataFrame:
         """
-        收益敏感性分�?
+        æ¶çæææ§åæ?
         
-        参数:
-            base_weights: 基准权重
-            expected_returns: 基准收益
-            perturbation_range: 扰动范围�?�?
+        åæ°:
+            base_weights: åºåæé
+            expected_returns: åºåæ¶ç
+            perturbation_range: æ°å¨èå´ï¼?ï¼?
             
-        返回:
-            敏感性矩�?
+        è¿å:
+            æææ§ç©é?
         """
         pass
     
@@ -184,22 +184,22 @@ class SensitivityAnalyzer:
         perturbation_method: str = 'shrinkage'
     ) -> pd.DataFrame:
         """
-        协方差敏感性分�?
+        åæ¹å·®æææ§åæ?
         """
         pass
 ```
 
 ---
-## 3. 技术规�?
+## 3. ææ¯è§æ ?
 
-### 3.1 接口设计
+### 3.1 æ¥å£è®¾è®¡
 
 ```python
 class RobustOptimizer:
     """
-    鲁棒优化�?
+    é²æ£ä¼åå?
     
-    主要接口�?
+    ä¸»è¦æ¥å£ç±?
     """
     
     def __init__(
@@ -208,11 +208,11 @@ class RobustOptimizer:
         robust_method: str = 'worst_case'
     ):
         """
-        初始�?
+        åå§å?
         
-        参数:
-            uncertainty_method: 不确定性建模方�?
-            robust_method: 鲁棒优化方法
+        åæ°:
+            uncertainty_method: ä¸ç¡®å®æ§å»ºæ¨¡æ¹æ³?
+            robust_method: é²æ£ä¼åæ¹æ³
         """
         self.uncertainty_builder = UncertaintySetBuilder()
         self.worst_case_optimizer = WorstCaseOptimizer()
@@ -228,27 +228,27 @@ class RobustOptimizer:
         **kwargs
     ) -> Dict:
         """
-        执行鲁棒优化
+        æ§è¡é²æ£ä¼å
         """
         pass
 ```
 
-### 3.2 配置参数
+### 3.2 éç½®åæ°
 
 ```yaml
 robust_optimization:
-  # 不确定性建�?
+  # ä¸ç¡®å®æ§å»ºæ¨?
   uncertainty:
     method: 'bootstrap'  # bootstrap, elliptical, box
     confidence: 0.95
     n_samples: 1000
     
-  # 鲁棒优化方法
+  # é²æ£ä¼åæ¹æ³
   robust_method:
     type: 'worst_case'  # worst_case, dro_cvar, dro_mean_variance
     wasserstein_radius: 0.1
     
-  # 敏感性分�?
+  # æææ§åæ?
   sensitivity:
     enabled: true
     perturbation_range: 0.1
@@ -256,38 +256,38 @@ robust_optimization:
 
 ---
 
-## 4. 变更历史
+## 4. åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-07 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 文档索引
+### 5.1 ææ¡£ç´¢å¼
 
-**本文档在系统中的位置**:
-- **所属层�?*: Layer 6 (组合优化�?
-- **模块索引**: 001
-- **模块名称**: ROBUST_OPTIMIZATION
-- **文档路径**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
+**æ¬ææ¡£å¨ç³»ç»ä¸­çä½ç½®**:
+- **æå±å±çº?*: Layer 6 (ç»åä¼åå±?
+- **æ¨¡åç´¢å¼**: 001
+- **æ¨¡ååç§°**: ROBUST_OPTIMIZATION
+- **ææ¡£è·¯å¾**: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 
-### 5.2 版本管理
+### 5.2 çæ¬ç®¡ç
 
-**版本历史**:
-- v1.0.0 (2026-04-07): 初始版本
+**çæ¬åå²**:
+- v1.0.0 (2026-04-07): åå§çæ¬
 
-### 5.3 维护责任
+### 5.3 ç»´æ¤è´£ä»»
 
-**文档维护**:
-- **责任模块**: ROBUST_OPTIMIZATION
-- **维护周期**: 每季度审�?
-- **变更流程**: 提交变更申请 �?技术评�?�?更新文档
+**ææ¡£ç»´æ¤**:
+- **è´£ä»»æ¨¡å**: ROBUST_OPTIMIZATION
+- **ç»´æ¤å¨æ**: æ¯å­£åº¦å®¡æ?
+- **åæ´æµç¨**: æäº¤åæ´ç³è¯· â?ææ¯è¯å®?â?æ´æ°ææ¡£
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-07 | **ç¶æ?*: Active

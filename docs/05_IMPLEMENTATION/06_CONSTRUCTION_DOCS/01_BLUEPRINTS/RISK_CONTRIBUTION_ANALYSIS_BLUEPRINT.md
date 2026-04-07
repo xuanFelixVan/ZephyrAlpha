@@ -13,7 +13,7 @@ responsibility:
   - 风险分解
   - 风险预算管理
   - 风险归因
-layer: "Layer 6 (组合优化层)"
+layer: Layer 5.3 (风险管理)
 ---
 
 # 风险贡献分析蓝图

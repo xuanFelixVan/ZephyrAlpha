@@ -4,58 +4,58 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
 responsibility:
-  - 多资产配�?
-  - 跨资产优�?
-  - 相关性建�?
-  - 资产类别权重分配
-layer: "Layer 6 (组合优化�?"
+  - å¤èµäº§éç½?
+  - è·¨èµäº§ä¼å?
+  - ç¸å³æ§å»ºæ¨?
+  - èµäº§ç±»å«æéåé
+layer: Layer 5.2 (组合优化)
 ---
 
-# 多资产配置蓝�?
-## 核心定位
+# å¤èµäº§éç½®èå?
+## æ ¸å¿å®ä½
 
-构建多资产配置的设计与实现，基于跨资产类别优化技术，实现股票、债券、商品等多资产配置，优化投资组合风险分散效果�?
+æå»ºå¤èµäº§éç½®çè®¾è®¡ä¸å®ç°ï¼åºäºè·¨èµäº§ç±»å«ä¼åææ¯ï¼å®ç°è¡ç¥¨ãåºå¸ãååç­å¤èµäº§éç½®ï¼ä¼åæèµç»åé£é©åæ£ææã?
 
 ---
 
 
-> **核心职责**: 多资产配置，跨资产类别配置优�?
-> **职责边界**: 
-> - �?本文档负责：多资产配置、跨资产优化、相关性建模、资产类别权重分�?
-> - �?本文档不负责：单一资产优化、风险控制、订单执�?
-�? 概述
+> **æ ¸å¿èè´£**: å¤èµäº§éç½®ï¼è·¨èµäº§ç±»å«éç½®ä¼å?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼å¤èµäº§éç½®ãè·¨èµäº§ä¼åãç¸å³æ§å»ºæ¨¡ãèµäº§ç±»å«æéåé?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼åä¸èµäº§ä¼åãé£é©æ§å¶ãè®¢åæ§è¡?
+ï»? æ¦è¿°
 
-> **开发时?*: 120h（约3周）
-> **核心定位**: 跨资产类别配置优化，支持股票、债券、商品、外汇等多资?> **对标机构**: 桥水基金（全天候策略）、AQR（多资产策略?> **个人开发可?*: ⭐⭐⭐⭐ 完全可行
-> **AI维护难度**: ?
-## 2. 架构设计
+> **å¼åæ¶?*: 120hï¼çº¦3å¨ï¼
+> **æ ¸å¿å®ä½**: è·¨èµäº§ç±»å«éç½®ä¼åï¼æ¯æè¡ç¥¨ãåºå¸ãååãå¤æ±ç­å¤èµ?> **å¯¹æ æºæ**: æ¡¥æ°´åºéï¼å¨å¤©åç­ç¥ï¼ãAQRï¼å¤èµäº§ç­ç¥?> **ä¸ªäººå¼åå¯?*: â­â­â­â­ å®å¨å¯è¡
+> **AIç»´æ¤é¾åº¦**: ?
+## 2. æ¶æè®¾è®¡
 
-### 2.1 系统架构?
+### 2.1 ç³»ç»æ¶æ?
 ```
-┌─────────────────────────────────────────────────────────────────??                   多资产类别配置系统架?                       ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             数据?                                       ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?股票数据 ? ?债券数据 ? ?商品数据 ? ?外汇数据 ?? ?? ? ?         ? ?         ? ?         ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             相关性建模层                                  ? ?? ? ┌────────────────────────────────────────────────────? ? ?? ? ? Cross-Asset Correlation Model                     ? ? ?? ? ? - 动态相关性矩阵估?                              ? ? ?? ? ? - DCC-GARCH模型                                   ? ? ?? ? ? - 相关性预?                                      ? ? ?? ? └────────────────────────────────────────────────────? ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             配置优化?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?风险平价 ? ?均值方?? ?黑箱优化 ?              ? ?? ? ?优化     ? ?优化     ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             风险监控?                                   ? ?? ? ┌──────────? ┌──────────? ┌──────────?              ? ?? ? ?风险预算 ? ?风险归因 ? ?预警系统 ?              ? ?? ? ?监控     ? ?         ? ?         ?              ? ?? ? └──────────? └──────────? └──────────?              ? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                   å¤èµäº§ç±»å«éç½®ç³»ç»æ¶?                       ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ??                                                                ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             æ°æ®?                                       ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? ? ?è¡ç¥¨æ°æ® ? ?åºå¸æ°æ® ? ?ååæ°æ® ? ?å¤æ±æ°æ® ?? ?? ? ?         ? ?         ? ?         ? ?         ?? ?? ? âââââââââââ? âââââââââââ? âââââââââââ? âââââââââââ?? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             ç¸å³æ§å»ºæ¨¡å±                                  ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? ? ? Cross-Asset Correlation Model                     ? ? ?? ? ? - å¨æç¸å³æ§ç©éµä¼°?                              ? ? ?? ? ? - DCC-GARCHæ¨¡å                                   ? ? ?? ? ? - ç¸å³æ§é¢?                                      ? ? ?? ? âââââââââââââââââââââââââââââââââââââââââââââââââââââ? ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             éç½®ä¼å?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?é£é©å¹³ä»· ? ?åå¼æ¹?? ?é»ç®±ä¼å ?              ? ?? ? ?ä¼å     ? ?ä¼å     ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ??                         ?                                     ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?? ?             é£é©çæ§?                                   ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? ? ?é£é©é¢ç® ? ?é£é©å½å  ? ?é¢è­¦ç³»ç» ?              ? ?? ? ?çæ§     ? ?         ? ?         ?              ? ?? ? âââââââââââ? âââââââââââ? âââââââââââ?              ? ?? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? ?ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
 
-### 2.2 核心数据?
+### 2.2 æ ¸å¿æ°æ®?
 ```
-多资产数据（股票/债券/商品/外汇?    ?跨资产相关性建模（DCC-GARCH?    ?资产类别权重优化（风险平?均值方差）
-    ?跨资产风险监?    ?输出：资产配置权重、风险预算、监控报?```
+å¤èµäº§æ°æ®ï¼è¡ç¥¨/åºå¸/åå/å¤æ±?    ?è·¨èµäº§ç¸å³æ§å»ºæ¨¡ï¼DCC-GARCH?    ?èµäº§ç±»å«æéä¼åï¼é£é©å¹³?åå¼æ¹å·®ï¼
+    ?è·¨èµäº§é£é©ç?    ?è¾åºï¼èµäº§éç½®æéãé£é©é¢ç®ãçæ§æ¥?```
 
 ---
 
-## 3. 核心模块设计
+## 3. æ ¸å¿æ¨¡åè®¾è®¡
 
-### 3.1 多资产配置系统核心类（MultiAssetAllocator?
+### 3.1 å¤èµäº§éç½®ç³»ç»æ ¸å¿ç±»ï¼MultiAssetAllocator?
 ```python
 class MultiAssetAllocator:
     """
-    多资产配置系统核心类
+    å¤èµäº§éç½®ç³»ç»æ ¸å¿ç±»
     
-    索引: MULTI_ASSET_001-M01
-    职责: 跨资产类别配置优?    输入: 多资产数据、风险模?    输出: 资产配置权重、风险预?    """
+    ç´¢å¼: MULTI_ASSET_001-M01
+    èè´£: è·¨èµäº§ç±»å«éç½®ä¼?    è¾å¥: å¤èµäº§æ°æ®ãé£é©æ¨¡?    è¾åº: èµäº§éç½®æéãé£é©é¢?    """
     
     def __init__(self, config: MultiAssetConfig):
         self.config = config
@@ -70,19 +70,19 @@ class MultiAssetAllocator:
                 optimization_method: str = 'risk_parity',
                 risk_budget: Optional[Dict[str, float]] = None) -> AllocationResult:
         """
-        执行多资产配?        
+        æ§è¡å¤èµäº§é?        
         Args:
-            asset_classes: 资产类别列表
-            optimization_method: 优化方法?risk_parity', 'mean_variance', 'black_litterman'?            risk_budget: 风险预算分配（可选）
+            asset_classes: èµäº§ç±»å«åè¡¨
+            optimization_method: ä¼åæ¹æ³?risk_parity', 'mean_variance', 'black_litterman'?            risk_budget: é£é©é¢ç®åéï¼å¯éï¼
             
         Returns:
-            AllocationResult: 配置结果
+            AllocationResult: éç½®ç»æ
         """
-        # 1. 获取多资产数?        asset_data = self.data_manager.get_asset_data(asset_classes)
+        # 1. è·åå¤èµäº§æ°?        asset_data = self.data_manager.get_asset_data(asset_classes)
         
-        # 2. 估计跨资产相?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
+        # 2. ä¼°è®¡è·¨èµäº§ç¸?        correlation_matrix = self.correlation_modeler.estimate_correlation(asset_data)
         
-        # 3. 选择优化方法
+        # 3. éæ©ä¼åæ¹æ³
         if optimization_method == 'risk_parity':
             allocation = self.risk_parity_optimizer.optimize(
                 asset_data, correlation_matrix, risk_budget
@@ -94,7 +94,7 @@ class MultiAssetAllocator:
         else:
             raise ValueError(f"Unknown optimization method: {optimization_method}")
         
-        # 4. 风险监控
+        # 4. é£é©çæ§
         risk_report = self.risk_monitor.monitor(allocation, correlation_matrix)
         
         return AllocationResult(
@@ -108,35 +108,35 @@ class MultiAssetAllocator:
                                economic_regime: str,
                                regime_probability: float) -> AllocationResult:
         """
-        桥水全天候配?        
+        æ¡¥æ°´å¨å¤©åé?        
         Args:
-            economic_regime: 经济范式?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: 范式概率
+            economic_regime: ç»æµèå¼?expansion', 'stagflation', 'recession', 'recovery'?            regime_probability: èå¼æ¦ç
             
         Returns:
-            AllocationResult: 配置结果
+            AllocationResult: éç½®ç»æ
         """
-        # 1. 定义全天候资产类?        asset_classes = ['equity', 'bond', 'commodity', 'currency']
+        # 1. å®ä¹å¨å¤©åèµäº§ç±»?        asset_classes = ['equity', 'bond', 'commodity', 'currency']
         
-        # 2. 根据经济范式调整风险预算
+        # 2. æ ¹æ®ç»æµèå¼è°æ´é£é©é¢ç®
         risk_budget = self._adjust_risk_budget_by_regime(
             economic_regime, regime_probability
         )
         
-        # 3. 执行风险平价配置
+        # 3. æ§è¡é£é©å¹³ä»·éç½®
         return self.allocate(asset_classes, 'risk_parity', risk_budget)
     
     def _adjust_risk_budget_by_regime(self,
                                       economic_regime: str,
                                       regime_probability: float) -> Dict[str, float]:
-        """根据经济范式调整风险预算"""
-        # 桥水全天候风险预算模?        base_budget = {
+        """æ ¹æ®ç»æµèå¼è°æ´é£é©é¢ç®"""
+        # æ¡¥æ°´å¨å¤©åé£é©é¢ç®æ¨¡?        base_budget = {
             'equity': 0.30,
             'bond': 0.40,
             'commodity': 0.20,
             'currency': 0.10
         }
         
-        # 根据经济范式调整
+        # æ ¹æ®ç»æµèå¼è°æ´
         regime_adjustments = {
             'expansion': {'equity': 1.2, 'bond': 0.8, 'commodity': 1.1, 'currency': 0.9},
             'stagflation': {'equity': 0.7, 'bond': 0.8, 'commodity': 1.3, 'currency': 1.2},
@@ -151,20 +151,20 @@ class MultiAssetAllocator:
             adj_factor = adjustment.get(asset, 1.0)
             adjusted_budget[asset] = budget * adj_factor
         
-        # 归一?        total = sum(adjusted_budget.values())
+        # å½ä¸?        total = sum(adjusted_budget.values())
         adjusted_budget = {k: v/total for k, v in adjusted_budget.items()}
         
         return adjusted_budget
 ```
 
-### 3.2 多资产数据管理器（MultiAssetDataManager?
+### 3.2 å¤èµäº§æ°æ®ç®¡çå¨ï¼MultiAssetDataManager?
 ```python
 class MultiAssetDataManager:
     """
-    多资产数据管理器
+    å¤èµäº§æ°æ®ç®¡çå¨
     
-    索引: MULTI_ASSET_001-M02
-    职责: 管理股票、债券、商品、外汇数?    """
+    ç´¢å¼: MULTI_ASSET_001-M02
+    èè´£: ç®¡çè¡ç¥¨ãåºå¸ãååãå¤æ±æ°?    """
     
     def __init__(self, config: DataConfig):
         self.config = config
@@ -177,12 +177,12 @@ class MultiAssetDataManager:
         
     def get_asset_data(self, asset_classes: List[str]) -> Dict[str, AssetData]:
         """
-        获取多资产数?        
+        è·åå¤èµäº§æ°?        
         Args:
-            asset_classes: 资产类别列表
+            asset_classes: èµäº§ç±»å«åè¡¨
             
         Returns:
-            Dict[str, AssetData]: 资产数据字典
+            Dict[str, AssetData]: èµäº§æ°æ®å­å¸
         """
         asset_data = {}
         
@@ -193,7 +193,7 @@ class MultiAssetDataManager:
         return asset_data
     
     def get_returns(self, asset_classes: List[str]) -> pd.DataFrame:
-        """获取多资产收益率"""
+        """è·åå¤èµäº§æ¶çç"""
         asset_data = self.get_asset_data(asset_classes)
         
         returns = pd.DataFrame()
@@ -203,7 +203,7 @@ class MultiAssetDataManager:
         return returns
     
     def get_volatility(self, asset_classes: List[str]) -> pd.Series:
-        """获取多资产波动率"""
+        """è·åå¤èµäº§æ³¢å¨ç"""
         asset_data = self.get_asset_data(asset_classes)
         
         volatility = pd.Series()
@@ -213,14 +213,14 @@ class MultiAssetDataManager:
         return volatility
 ```
 
-### 3.3 跨资产相关性建模器（CrossAssetCorrelationModeler?
+### 3.3 è·¨èµäº§ç¸å³æ§å»ºæ¨¡å¨ï¼CrossAssetCorrelationModeler?
 ```python
 class CrossAssetCorrelationModeler:
     """
-    跨资产相关性建模器
+    è·¨èµäº§ç¸å³æ§å»ºæ¨¡å¨
     
-    索引: MULTI_ASSET_001-M03
-    职责: 估计跨资产动态相?    """
+    ç´¢å¼: MULTI_ASSET_001-M03
+    èè´£: ä¼°è®¡è·¨èµäº§å¨æç¸?    """
     
     def __init__(self, config: CorrelationConfig):
         self.config = config
@@ -228,20 +228,20 @@ class CrossAssetCorrelationModeler:
         
     def estimate_correlation(self, asset_data: Dict[str, AssetData]) -> pd.DataFrame:
         """
-        估计跨资产相关性矩?        
+        ä¼°è®¡è·¨èµäº§ç¸å³æ§ç©?        
         Args:
-            asset_data: 资产数据字典
+            asset_data: èµäº§æ°æ®å­å¸
             
         Returns:
-            pd.DataFrame: 相关性矩?        """
-        # 1. 提取收益?        returns = pd.DataFrame()
+            pd.DataFrame: ç¸å³æ§ç©?        """
+        # 1. æåæ¶ç?        returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
         
-        # 2. 使用DCC-GARCH估计动态相?        if self.config.use_dcc_garch:
+        # 2. ä½¿ç¨DCC-GARCHä¼°è®¡å¨æç¸?        if self.config.use_dcc_garch:
             correlation_matrix = self.dcc_garch.estimate(returns)
         else:
-            # 使用历史相关?            correlation_matrix = returns.corr()
+            # ä½¿ç¨åå²ç¸å³?            correlation_matrix = returns.corr()
         
         return correlation_matrix
     
@@ -249,13 +249,13 @@ class CrossAssetCorrelationModeler:
                            asset_data: Dict[str, AssetData],
                            horizon: int = 1) -> pd.DataFrame:
         """
-        预测未来相关?        
+        é¢æµæªæ¥ç¸å³?        
         Args:
-            asset_data: 资产数据字典
-            horizon: 预测期数
+            asset_data: èµäº§æ°æ®å­å¸
+            horizon: é¢æµææ°
             
         Returns:
-            pd.DataFrame: 预测相关性矩?        """
+            pd.DataFrame: é¢æµç¸å³æ§ç©?        """
         returns = pd.DataFrame()
         for asset_class, data in asset_data.items():
             returns[asset_class] = data.returns
@@ -266,13 +266,13 @@ class CrossAssetCorrelationModeler:
             return returns.corr()
 ```
 
-### 3.4 风险平价优化器（RiskParityOptimizer?
+### 3.4 é£é©å¹³ä»·ä¼åå¨ï¼RiskParityOptimizer?
 ```python
 class RiskParityOptimizer:
     """
-    风险平价优化?    
-    索引: MULTI_ASSET_001-M04
-    职责: 实现跨资产风险平价配?    """
+    é£é©å¹³ä»·ä¼å?    
+    ç´¢å¼: MULTI_ASSET_001-M04
+    èè´£: å®ç°è·¨èµäº§é£é©å¹³ä»·é?    """
     
     def __init__(self, config: RiskParityConfig):
         self.config = config
@@ -282,25 +282,25 @@ class RiskParityOptimizer:
                 correlation_matrix: pd.DataFrame,
                 risk_budget: Optional[Dict[str, float]] = None) -> pd.Series:
         """
-        风险平价优化
+        é£é©å¹³ä»·ä¼å
         
         Args:
-            asset_data: 资产数据字典
-            correlation_matrix: 相关性矩?            risk_budget: 风险预算分配
+            asset_data: èµäº§æ°æ®å­å¸
+            correlation_matrix: ç¸å³æ§ç©?            risk_budget: é£é©é¢ç®åé
             
         Returns:
-            pd.Series: 资产配置权重
+            pd.Series: èµäº§éç½®æé
         """
-        # 1. 提取波动?        volatility = pd.Series()
+        # 1. æåæ³¢å¨?        volatility = pd.Series()
         for asset_class, data in asset_data.items():
             volatility[asset_class] = data.volatility
         
-        # 2. 构建协方差矩?        covariance_matrix = self._build_covariance_matrix(volatility, correlation_matrix)
+        # 2. æå»ºåæ¹å·®ç©?        covariance_matrix = self._build_covariance_matrix(volatility, correlation_matrix)
         
-        # 3. 设置风险预算（默认等风险预算?        if risk_budget is None:
+        # 3. è®¾ç½®é£é©é¢ç®ï¼é»è®¤ç­é£é©é¢ç®?        if risk_budget is None:
             risk_budget = {asset: 1.0/len(asset_data) for asset in asset_data.keys()}
         
-        # 4. 求解风险平价权重
+        # 4. æ±è§£é£é©å¹³ä»·æé
         weights = self._solve_risk_parity(covariance_matrix, risk_budget)
         
         return pd.Series(weights, index=asset_data.keys())
@@ -308,9 +308,9 @@ class RiskParityOptimizer:
     def _build_covariance_matrix(self,
                                  volatility: pd.Series,
                                  correlation_matrix: pd.DataFrame) -> pd.DataFrame:
-        """构建协方差矩?""
-        # Σ = D * C * D
-        # D = diag(σ)
+        """æå»ºåæ¹å·®ç©?""
+        # Î£ = D * C * D
+        # D = diag(Ï)
         D = np.diag(volatility.values)
         C = correlation_matrix.values
         covariance = D @ C @ D
@@ -323,11 +323,11 @@ class RiskParityOptimizer:
                           covariance_matrix: pd.DataFrame,
                           risk_budget: Dict[str, float]) -> np.ndarray:
         """
-        求解风险平价权重
+        æ±è§£é£é©å¹³ä»·æé
         
-        使用凸优化求解：
-        min Σ_i Σ_j (w_i * (Σw)_i / b_i - w_j * (Σw)_j / b_j)^2
-        s.t. Σ w_i = 1, w_i >= 0
+        ä½¿ç¨å¸ä¼åæ±è§£ï¼
+        min Î£_i Î£_j (w_i * (Î£w)_i / b_i - w_j * (Î£w)_j / b_j)^2
+        s.t. Î£ w_i = 1, w_i >= 0
         """
         import cvxpy as cp
         
@@ -336,36 +336,36 @@ class RiskParityOptimizer:
         b = np.array(list(risk_budget.values()))
         Sigma = covariance_matrix.values
         
-        # 风险贡献
+        # é£é©è´¡ç®
         portfolio_risk = cp.sqrt(cp.quad_form(w, Sigma))
         marginal_risk_contribution = Sigma @ w
         risk_contribution = cp.multiply(w, marginal_risk_contribution) / portfolio_risk
         
-        # 目标：风险贡献与风险预算一?        objective = cp.Minimize(
+        # ç®æ ï¼é£é©è´¡ç®ä¸é£é©é¢ç®ä¸?        objective = cp.Minimize(
             cp.sum_squares(risk_contribution / b - portfolio_risk / np.sum(b))
         )
         
-        # 约束
+        # çº¦æ
         constraints = [
             cp.sum(w) == 1,
             w >= 0
         ]
         
-        # 求解
+        # æ±è§£
         problem = cp.Problem(objective, constraints)
         problem.solve()
         
         return w.value
 ```
 
-### 3.5 跨资产风险监控器（CrossAssetRiskMonitor?
+### 3.5 è·¨èµäº§é£é©çæ§å¨ï¼CrossAssetRiskMonitor?
 ```python
 class CrossAssetRiskMonitor:
     """
-    跨资产风险监控器
+    è·¨èµäº§é£é©çæ§å¨
     
-    索引: MULTI_ASSET_001-M05
-    职责: 监控跨资产风?    """
+    ç´¢å¼: MULTI_ASSET_001-M05
+    èè´£: çæ§è·¨èµäº§é£?    """
     
     def __init__(self, config: MonitorConfig):
         self.config = config
@@ -374,22 +374,22 @@ class CrossAssetRiskMonitor:
                allocation: pd.Series,
                correlation_matrix: pd.DataFrame) -> RiskReport:
         """
-        监控跨资产风?        
+        çæ§è·¨èµäº§é£?        
         Args:
-            allocation: 资产配置权重
-            correlation_matrix: 相关性矩?            
+            allocation: èµäº§éç½®æé
+            correlation_matrix: ç¸å³æ§ç©?            
         Returns:
-            RiskReport: 风险报告
+            RiskReport: é£é©æ¥å
         """
-        # 1. 计算组合风险
+        # 1. è®¡ç®ç»åé£é©
         portfolio_risk = self._calculate_portfolio_risk(allocation, correlation_matrix)
         
-        # 2. 计算风险贡献
+        # 2. è®¡ç®é£é©è´¡ç®
         risk_contribution = self._calculate_risk_contribution(allocation, correlation_matrix)
         
-        # 3. 检测相关性突?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
+        # 3. æ£æµç¸å³æ§çª?        correlation_breakdown = self._detect_correlation_breakdown(correlation_matrix)
         
-        # 4. 生成预警信号
+        # 4. çæé¢è­¦ä¿¡å·
         alerts = self._generate_alerts(risk_contribution, correlation_breakdown)
         
         return RiskReport(
@@ -403,8 +403,8 @@ class CrossAssetRiskMonitor:
     def _calculate_portfolio_risk(self,
                                   allocation: pd.Series,
                                   correlation_matrix: pd.DataFrame) -> float:
-        """计算组合风险"""
-        # 简化实现：假设波动率已?        # 实际应从数据中获?        volatility = pd.Series({
+        """è®¡ç®ç»åé£é©"""
+        # ç®åå®ç°ï¼åè®¾æ³¢å¨çå·²?        # å®éåºä»æ°æ®ä¸­è·?        volatility = pd.Series({
             'equity': 0.20,
             'bond': 0.08,
             'commodity': 0.25,
@@ -423,7 +423,7 @@ class CrossAssetRiskMonitor:
     def _calculate_risk_contribution(self,
                                     allocation: pd.Series,
                                     correlation_matrix: pd.DataFrame) -> pd.Series:
-        """计算风险贡献"""
+        """è®¡ç®é£é©è´¡ç®"""
         volatility = pd.Series({
             'equity': 0.20,
             'bond': 0.08,
@@ -442,42 +442,42 @@ class CrossAssetRiskMonitor:
         return pd.Series(risk_contribution, index=allocation.index)
     
     def _detect_correlation_breakdown(self, correlation_matrix: pd.DataFrame) -> bool:
-        """检测相关性突?""
-        # 简化实现：检查相关性是否异常高
-        # 实际应使用历史相关性对?        mean_correlation = correlation_matrix.values[np.triu_indices(len(correlation_matrix), k=1)].mean()
+        """æ£æµç¸å³æ§çª?""
+        # ç®åå®ç°ï¼æ£æ¥ç¸å³æ§æ¯å¦å¼å¸¸é«
+        # å®éåºä½¿ç¨åå²ç¸å³æ§å¯¹?        mean_correlation = correlation_matrix.values[np.triu_indices(len(correlation_matrix), k=1)].mean()
         
         return mean_correlation > 0.8
     
     def _generate_alerts(self,
                         risk_contribution: pd.Series,
                         correlation_breakdown: bool) -> List[Dict]:
-        """生成预警信号"""
+        """çæé¢è­¦ä¿¡å·"""
         alerts = []
         
-        # 1. 风险集中预警
+        # 1. é£é©éä¸­é¢è­¦
         max_risk_contribution = risk_contribution.max()
         if max_risk_contribution > 0.5:
             alerts.append({
                 'type': 'risk_concentration',
                 'severity': 'high',
-                'message': f'风险过度集中：{risk_contribution.idxmax()}贡献{max_risk_contribution:.2%}风险'
+                'message': f'é£é©è¿åº¦éä¸­ï¼{risk_contribution.idxmax()}è´¡ç®{max_risk_contribution:.2%}é£é©'
             })
         
-        # 2. 相关性突变预?        if correlation_breakdown:
+        # 2. ç¸å³æ§çªåé¢?        if correlation_breakdown:
             alerts.append({
                 'type': 'correlation_breakdown',
                 'severity': 'medium',
-                'message': '资产相关性异常升高，分散化效果下?
+                'message': 'èµäº§ç¸å³æ§å¼å¸¸åé«ï¼åæ£åææä¸?
             })
         
         return alerts
 ```
 
-### 3.6 配置类定?
+### 3.6 éç½®ç±»å®?
 ```python
 @dataclass
 class MultiAssetConfig:
-    """多资产配?""
+    """å¤èµäº§é?""
     data_config: DataConfig
     corr_config: CorrelationConfig
     rp_config: RiskParityConfig
@@ -486,7 +486,7 @@ class MultiAssetConfig:
     
 @dataclass
 class DataConfig:
-    """数据配置"""
+    """æ°æ®éç½®"""
     equity_config: EquityDataConfig
     bond_config: BondDataConfig
     commodity_config: CommodityDataConfig
@@ -494,85 +494,85 @@ class DataConfig:
     
 @dataclass
 class CorrelationConfig:
-    """相关性配?""
+    """ç¸å³æ§é?""
     use_dcc_garch: bool = True
     dcc_config: DCCGARCHConfig = None
     
 @dataclass
 class RiskParityConfig:
-    """风险平价配置"""
-    max_weight: float = 0.60  # 单资产最大权?    min_weight: float = 0.05  # 单资产最小权?```
+    """é£é©å¹³ä»·éç½®"""
+    max_weight: float = 0.60  # åèµäº§æå¤§æ?    min_weight: float = 0.05  # åèµäº§æå°æ?```
 
 ---
 
-## 4. 数据模型定义
+## 4. æ°æ®æ¨¡åå®ä¹
 
-### 4.1 输入数据模型
+### 4.1 è¾å¥æ°æ®æ¨¡å
 
 ```python
 @dataclass
 class AssetData:
-    """资产数据"""
-    asset_class: str  # 资产类别
-    returns: pd.Series  # 收益率序?    volatility: float  # 波动?    liquidity: float  # 流动?```
+    """èµäº§æ°æ®"""
+    asset_class: str  # èµäº§ç±»å«
+    returns: pd.Series  # æ¶ççåº?    volatility: float  # æ³¢å¨?    liquidity: float  # æµå¨?```
 
-### 4.2 输出数据模型
+### 4.2 è¾åºæ°æ®æ¨¡å
 
 ```python
 @dataclass
 class AllocationResult:
-    """配置结果"""
-    allocation: pd.Series  # 资产配置权重
-    correlation_matrix: pd.DataFrame  # 相关性矩?    risk_report: RiskReport  # 风险报告
+    """éç½®ç»æ"""
+    allocation: pd.Series  # èµäº§éç½®æé
+    correlation_matrix: pd.DataFrame  # ç¸å³æ§ç©?    risk_report: RiskReport  # é£é©æ¥å
     timestamp: datetime
     
 @dataclass
 class RiskReport:
-    """风险报告"""
-    portfolio_risk: float  # 组合风险
-    risk_contribution: pd.Series  # 风险贡献
-    correlation_breakdown: bool  # 相关性突?    alerts: List[Dict]  # 预警信号
+    """é£é©æ¥å"""
+    portfolio_risk: float  # ç»åé£é©
+    risk_contribution: pd.Series  # é£é©è´¡ç®
+    correlation_breakdown: bool  # ç¸å³æ§çª?    alerts: List[Dict]  # é¢è­¦ä¿¡å·
     timestamp: datetime
 ```
 
 ---
 
-## 5. 集成方案
+## 5. éææ¹æ¡
 
-### 5.1 与经济范式引擎集?
+### 5.1 ä¸ç»æµèå¼å¼æé?
 ```python
 class EconomicRegimeEngine:
-    """经济范式引擎（集成多资产配置?""
+    """ç»æµèå¼å¼æï¼éæå¤èµäº§éç½®?""
     
     def __init__(self, multi_asset_allocator: MultiAssetAllocator):
         self.multi_asset_allocator = multi_asset_allocator
         
     def allocate_by_regime(self, market_data: pd.DataFrame) -> AllocationResult:
-        """根据经济范式配置"""
-        # 1. 识别经济范式
+        """æ ¹æ®ç»æµèå¼éç½®"""
+        # 1. è¯å«ç»æµèå¼
         regime, probability = self.identify_regime(market_data)
         
-        # 2. 执行全天候配?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
+        # 2. æ§è¡å¨å¤©åé?        return self.multi_asset_allocator.all_weather_allocation(regime, probability)
 ```
 
-### 5.2 与Barra风险模型集成
+### 5.2 ä¸Barraé£é©æ¨¡åéæ
 
 ```python
 class BarraRiskModel:
-    """Barra风险模型（集成多资产配置?""
+    """Barraé£é©æ¨¡åï¼éæå¤èµäº§éç½®?""
     
     def __init__(self, multi_asset_allocator: MultiAssetAllocator):
         self.multi_asset_allocator = multi_asset_allocator
         
     def multi_asset_risk_budget(self,
                                 asset_classes: List[str]) -> Dict[str, float]:
-        """跨资产风险预?""
-        # 1. 执行风险平价配置
+        """è·¨èµäº§é£é©é¢?""
+        # 1. æ§è¡é£é©å¹³ä»·éç½®
         allocation_result = self.multi_asset_allocator.allocate(
             asset_classes, 'risk_parity'
         )
         
-        # 2. 提取风险预算
+        # 2. æåé£é©é¢ç®
         risk_budget = allocation_result.allocation.to_dict()
         
         return risk_budget
@@ -580,63 +580,63 @@ class BarraRiskModel:
 
 ---
 
-## 6. 实施路线?
-### 6.1 开发阶段（3周）
+## 6. å®æ½è·¯çº¿?
+### 6.1 å¼åé¶æ®µï¼3å¨ï¼
 
-**Week 1: 数据层开?*
-- Day 1-2: 多资产数据管理器
-- Day 3-4: 数据源接入（股票、债券、商品、外汇）
-- Day 5: 数据测试
+**Week 1: æ°æ®å±å¼?*
+- Day 1-2: å¤èµäº§æ°æ®ç®¡çå¨
+- Day 3-4: æ°æ®æºæ¥å¥ï¼è¡ç¥¨ãåºå¸ãååãå¤æ±ï¼
+- Day 5: æ°æ®æµè¯
 
-**Week 2: 核心算法开?*
-- Day 1-2: 跨资产相关性建模器
-- Day 3-4: 风险平价优化?- Day 5: 优化器测?
-**Week 3: 集成与测?*
-- Day 1-2: 跨资产风险监控器
-- Day 3: 系统集成
-- Day 4: 集成测试
-- Day 5: 文档编写
+**Week 2: æ ¸å¿ç®æ³å¼?*
+- Day 1-2: è·¨èµäº§ç¸å³æ§å»ºæ¨¡å¨
+- Day 3-4: é£é©å¹³ä»·ä¼å?- Day 5: ä¼åå¨æµ?
+**Week 3: éæä¸æµ?*
+- Day 1-2: è·¨èµäº§é£é©çæ§å¨
+- Day 3: ç³»ç»éæ
+- Day 4: éææµè¯
+- Day 5: ææ¡£ç¼å
 
-### 6.2 里程?
-| 里程?| 时间 | 交付?| 验收标准 |
+### 6.2 éç¨?
+| éç¨?| æ¶é´ | äº¤ä»?| éªæ¶æ å |
 |--------|------|--------|----------|
-| **M1: 数据层完?* | Week 1 | 多资产数据管理器 | 数据接入正常 |
-| **M2: 相关性建模完?* | Week 2 Day 2 | 跨资产相关性建模器 | 相关性估计准?|
-| **M3: 优化器完?* | Week 2 Day 4 | 风险平价优化?| 优化结果合理 |
-| **M4: 监控器完?* | Week 3 Day 2 | 跨资产风险监控器 | 监控有效 |
-| **M5: 测试通过** | Week 3 Day 4 | 测试报告 | 所有测试通过 |
+| **M1: æ°æ®å±å®?* | Week 1 | å¤èµäº§æ°æ®ç®¡çå¨ | æ°æ®æ¥å¥æ­£å¸¸ |
+| **M2: ç¸å³æ§å»ºæ¨¡å®?* | Week 2 Day 2 | è·¨èµäº§ç¸å³æ§å»ºæ¨¡å¨ | ç¸å³æ§ä¼°è®¡å?|
+| **M3: ä¼åå¨å®?* | Week 2 Day 4 | é£é©å¹³ä»·ä¼å?| ä¼åç»æåç |
+| **M4: çæ§å¨å®?* | Week 3 Day 2 | è·¨èµäº§é£é©çæ§å¨ | çæ§ææ |
+| **M5: æµè¯éè¿** | Week 3 Day 4 | æµè¯æ¥å | æææµè¯éè¿ |
 
 ---
 
-## 7. 预期收益评估
+## 7. é¢ææ¶çè¯ä¼°
 
-### 7.1 定量收益
+### 7.1 å®éæ¶ç
 
-| 指标 | 当前水平 | 目标水平 | 提升幅度 |
+| ææ  | å½åæ°´å¹³ | ç®æ æ°´å¹³ | æåå¹åº¦ |
 |------|---------|---------|---------|
-| **资产配置多样?* | 50% | 100% | +50% |
-| **系统性风险分?* | 60% | 100% | +40% |
-| **桥水模式完整?* | 85% | 95% | +10% |
-| **跨资产配置能?* | ?| ?| 新增能力 |
+| **èµäº§éç½®å¤æ ·?* | 50% | 100% | +50% |
+| **ç³»ç»æ§é£é©å?* | 60% | 100% | +40% |
+| **æ¡¥æ°´æ¨¡å¼å®æ´?* | 85% | 95% | +10% |
+| **è·¨èµäº§éç½®è½?* | ?| ?| æ°å¢è½å |
 
-### 7.2 定性收?
-- ?实现桥水全天候策略核心能?- ?支持股票、债券、商品、外汇四大资产类?- ?实现真正的跨资产风险平价
-- ?提升系统性风险分散能?- ?为多策略配置提供基础
+### 7.2 å®æ§æ¶?
+- ?å®ç°æ¡¥æ°´å¨å¤©åç­ç¥æ ¸å¿è½?- ?æ¯æè¡ç¥¨ãåºå¸ãååãå¤æ±åå¤§èµäº§ç±»?- ?å®ç°çæ­£çè·¨èµäº§é£é©å¹³ä»·
+- ?æåç³»ç»æ§é£é©åæ£è½?- ?ä¸ºå¤ç­ç¥éç½®æä¾åºç¡
 
 ---
 
-## 8. 技术栈选择
+## 8. ææ¯æ éæ©
 
-### 8.1 核心依赖?
-| 库名 | 版本 | ?| 必要?|
+### 8.1 æ ¸å¿ä¾èµ?
+| åºå | çæ¬ | ?| å¿è¦?|
 |------|------|------|--------|
-| **pandas** | ?.5 | 数据处理 | 必需 |
-| **numpy** | ?.21 | 数值计?| 必需 |
-| **cvxpy** | ?.3 | 凸优?| 必需 |
-| **scipy** | ?.7 | 科学计算 | 必需 |
-| **arch** | ?.0 | GARCH模型 | 必需 |
+| **pandas** | ?.5 | æ°æ®å¤ç | å¿é |
+| **numpy** | ?.21 | æ°å¼è®¡?| å¿é |
+| **cvxpy** | ?.3 | å¸ä¼?| å¿é |
+| **scipy** | ?.7 | ç§å­¦è®¡ç® | å¿é |
+| **arch** | ?.0 | GARCHæ¨¡å | å¿é |
 
-### 8.2 安装命令
+### 8.2 å®è£å½ä»¤
 
 ```bash
 pip install pandas>=1.5
@@ -648,90 +648,90 @@ pip install arch>=5.0
 
 ---
 
-## 9. 风险评估
+## 9. é£é©è¯ä¼°
 
-### 9.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+### 9.1 ææ¯é£?
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **数据源接入困?* | ?| 使用成熟数据源API |
-| **相关性建模精?* | ?| 使用DCC-GARCH等先进模?|
-| **优化求解稳定?* | ?| 使用成熟优化?|
+| **æ°æ®æºæ¥å¥å°?* | ?| ä½¿ç¨æçæ°æ®æºAPI |
+| **ç¸å³æ§å»ºæ¨¡ç²¾?* | ?| ä½¿ç¨DCC-GARCHç­åè¿æ¨¡?|
+| **ä¼åæ±è§£ç¨³å®?* | ?| ä½¿ç¨æçä¼å?|
 
-### 9.2 实施风险
+### 9.2 å®æ½é£é©
 
-| 风险?| 风险等级 | 缓解措施 |
+| é£é©?| é£é©ç­çº§ | ç¼è§£æªæ½ |
 |--------|---------|---------|
-| **开发时间超?* | ?| 分阶段实施、里程碑管理 |
-| **数据质量问题** | ?| 数据清洗和验?|
-| **性能不达?* | ?| 性能优化 |
+| **å¼åæ¶é´è¶?* | ?| åé¶æ®µå®æ½ãéç¨ç¢ç®¡ç |
+| **æ°æ®è´¨éé®é¢** | ?| æ°æ®æ¸æ´åéª?|
+| **æ§è½ä¸è¾¾?* | ?| æ§è½ä¼å |
 
 ---
 
-## 10. 文档治理
+## 10. ææ¡£æ²»ç
 
-### 10.1 System_Manifest.md索引
+### 10.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化?
-##### 6.7 多资产类别配?- **模块ID**: MULTI_ASSET_001
-- **蓝图文档**: MULTI_ASSET_ALLOCATION_BLUEPRINT.md
-- **技术规格书**: 待创?- **职责**: 跨资产配置、风险平价优化、跨资产风险监控
-- **?*: 设计阶段
+#### Layer 6: ç»åä¼å?
+##### 6.7 å¤èµäº§ç±»å«é?- **æ¨¡åID**: MULTI_ASSET_001
+- **èå¾ææ¡£**: MULTI_ASSET_ALLOCATION_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾å?- **èè´£**: è·¨èµäº§éç½®ãé£é©å¹³ä»·ä¼åãè·¨èµäº§é£é©çæ§
+- **?*: è®¾è®¡é¶æ®µ
 ```
 
-### 10.2 模块职责边界
+### 10.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **多资产配置系?* | 跨资产配置优?| **资产类别层面** |
-| **经济范式引擎** | 经济范式识别 | 提供经济范式信号 |
-| **Barra风险模型** | 风险模型 | 提供风险模型数据 |
-| **组合优化?* | 单资产优?| 资产内部优化 |
+| **å¤èµäº§éç½®ç³»?* | è·¨èµäº§éç½®ä¼?| **èµäº§ç±»å«å±é¢** |
+| **ç»æµèå¼å¼æ** | ç»æµèå¼è¯å« | æä¾ç»æµèå¼ä¿¡å· |
+| **Barraé£é©æ¨¡å** | é£é©æ¨¡å | æä¾é£é©æ¨¡åæ°æ® |
+| **ç»åä¼å?* | åèµäº§ä¼?| èµäº§åé¨ä¼å |
 
 ---
 
-## 附录
+## éå½
 
-### A. 参考文?
-1. **风险平价理论**:
+### A. åèæ?
+1. **é£é©å¹³ä»·çè®º**:
    - Qian, E. (2005). "Risk Parity Portfolios"
    - Asness, C., Frazzini, A., and Pedersen, L.H. (2012). "Leverage Aversion and Risk Parity"
 
-2. **全天候策?*:
+2. **å¨å¤©åç­?*:
    - Bridgewater Associates. "The All Weather Story"
    - Dalio, R. (2017). "Principles for Dealing with the Changing World Order"
 
-3. **多资产配?*:
+3. **å¤èµäº§é?*:
    - Ang, A. (2014). "Asset Management: A Systematic Approach to Factor Investing"
 
-### B. 术语�?
+### B. æ¯è¯­è¡?
 
-| 术语 | 定义 | 上下�?|
+| æ¯è¯­ | å®ä¹ | ä¸ä¸æ?|
 |------|------|--------|
-| **风险平价** | 基于风险贡献度的资产配置方法 | 配置策略 |
-| **全天候策�?* | 桥水基金的风险平价策�?| 资产配置 |
-| **跨资产相关�?* | 不同资产类别之间的相关�?| 相关性建�?|
-| **资产类别** | 股票、债券、商品、外汇等大类资产 | 资产分类 |
+| **é£é©å¹³ä»·** | åºäºé£é©è´¡ç®åº¦çèµäº§éç½®æ¹æ³ | éç½®ç­ç¥ |
+| **å¨å¤©åç­ç?* | æ¡¥æ°´åºéçé£é©å¹³ä»·ç­ç?| èµäº§éç½® |
+| **è·¨èµäº§ç¸å³æ?* | ä¸åèµäº§ç±»å«ä¹é´çç¸å³æ?| ç¸å³æ§å»ºæ¨?|
+| **èµäº§ç±»å«** | è¡ç¥¨ãåºå¸ãååãå¤æ±ç­å¤§ç±»èµäº§ | èµäº§åç±» |
 
 ---
 
-## 11. 变更历史
+## 11. åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本创建 | 组合优化层负责人 |
+| v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | ç»åä¼åå±è´è´£äºº |
 
 ---
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-03 | 初始版本，创建多资产配置蓝图 | 首席架构�?|
-| v1.0.1 | 2026-04-06 | 更新文档元数据，添加变更历史章节 | 文档管理�?|
+| v1.0.0 | 2026-04-03 | åå§çæ¬ï¼åå»ºå¤èµäº§éç½®èå¾ | é¦å¸­æ¶æå¸?|
+| v1.0.1 | 2026-04-06 | æ´æ°ææ¡£åæ°æ®ï¼æ·»å åæ´åå²ç« è | ææ¡£ç®¡çå?|
 
 ---
 
-**文档版本**: v1.0.1 | **创建日期**: 2026-04-03 | **最后更�?*: 2026-04-06
+**ææ¡£çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-03 | **æåæ´æ?*: 2026-04-06
 
 ```

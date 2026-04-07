@@ -1,113 +1,113 @@
 ---
 responsibility:
-  - 层级风险预算
-  - 风险预算分配
-  - 风险层级管理
-  - 风险预算优化
+  - å±çº§é£é©é¢ç®
+  - é£é©é¢ç®åé
+  - é£é©å±çº§ç®¡ç
+  - é£é©é¢ç®ä¼å
 
 module_id: HIERARCHICAL_RISK_BUDGET_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.2 (组合优化)
 ---
 
-# 层级风险预算蓝图
+# å±çº§é£é©é¢ç®èå¾
 
-> **核心职责**: 多层级风险预算分�?
-> **职责边界**: 
-> - �?本文档负责：层级风险预算、多维度风险控制
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: å¤å±çº§é£é©é¢ç®åé?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼å±çº§é£é©é¢ç®ãå¤ç»´åº¦é£é©æ§å¶
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-负责Hierarchical Risk Budget的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行�?
+è´è´£Hierarchical Risk Budgetçè®¾è®¡ãå®ç°åç»´æ¤ï¼æä¾æ ¸å¿åè½æ¯æï¼ç¡®ä¿ç³»ç»æ¨¡åçç¨³å®è¿è¡åé«ææ§è¡ã?
 
-## 1. 概述
+## 1. æ¦è¿°
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 6 - 组合优化层（风险预算模块�?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼é£é©é¢ç®æ¨¡åï¼?
 
-**核心价�?*:
-- 支持多层级风险预算分配（资产类→策略→因子）
-- 实现层级间的风险传导和汇�?
-- 提供灵活的风险预算配�?
+**æ ¸å¿ä»·å?*:
+- æ¯æå¤å±çº§é£é©é¢ç®åéï¼èµäº§ç±»âç­ç¥âå å­ï¼
+- å®ç°å±çº§é´çé£é©ä¼ å¯¼åæ±æ?
+- æä¾çµæ´»çé£é©é¢ç®éç½?
 
-**业务价�?*:
-- 精细化风险管�?
-- 支持复杂组合结构
-- 提升风险控制透明�?
+**ä¸å¡ä»·å?*:
+- ç²¾ç»åé£é©ç®¡ç?
+- æ¯æå¤æç»åç»æ
+- æåé£é©æ§å¶éæåº?
 
-### 1.2 版本信息
+### 1.2 çæ¬ä¿¡æ¯
 
-| 项目 | 内容 |
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | HIERARCHICAL_RISK_BUDGET_001 |
-| **版本** | v1.0.0 |
-| **开源依�?* | Riskfolio-Lib, skfolio |
-| **预计工时** | 5-7�?|
+| **æ¨¡åID** | HIERARCHICAL_RISK_BUDGET_001 |
+| **çæ¬** | v1.0.0 |
+| **å¼æºä¾èµ?* | Riskfolio-Lib, skfolio |
+| **é¢è®¡å·¥æ¶** | 5-7å¤?|
 
-### 1.3 与其他风险预算模块的关系
+### 1.3 ä¸å¶ä»é£é©é¢ç®æ¨¡åçå³ç³»
 
-本模块是风险预算体系中的**高级多层级模�?*，与其他模块形成层级关系�?
+æ¬æ¨¡åæ¯é£é©é¢ç®ä½ç³»ä¸­ç**é«çº§å¤å±çº§æ¨¡å?*ï¼ä¸å¶ä»æ¨¡åå½¢æå±çº§å³ç³»ï¼?
 
-| 模块 | 核心定位 | 适用场景 | 关系说明 |
+| æ¨¡å | æ ¸å¿å®ä½ | éç¨åºæ¯ | å³ç³»è¯´æ |
 |------|----------|----------|----------|
-| **RISK_CONTRIBUTION_ANALYSIS** | 风险贡献分析 | 基础分析能力 | 本模块依赖其计算风险贡献 |
-| **SIMPLIFIED_RISK_BUDGET_SYSTEM** | 简化风险预�?| 个人开发、快速实�?| 本模块是其高级扩展版�?|
-| **HIERARCHICAL_RISK_BUDGET** (本模�? | 层级风险预算 | 多层级复杂组�?| 支持资产类→策略→因子多层级 |
+| **RISK_CONTRIBUTION_ANALYSIS** | é£é©è´¡ç®åæ | åºç¡åæè½å | æ¬æ¨¡åä¾èµå¶è®¡ç®é£é©è´¡ç® |
+| **SIMPLIFIED_RISK_BUDGET_SYSTEM** | ç®åé£é©é¢ç®?| ä¸ªäººå¼åãå¿«éå®ç?| æ¬æ¨¡åæ¯å¶é«çº§æ©å±çæ?|
+| **HIERARCHICAL_RISK_BUDGET** (æ¬æ¨¡å? | å±çº§é£é©é¢ç® | å¤å±çº§å¤æç»å?| æ¯æèµäº§ç±»âç­ç¥âå å­å¤å±çº§ |
 
-**推荐实施路径**:
-1. 先实�?RISK_CONTRIBUTION_ANALYSIS (2-3�? - 基础分析能力
-2. 再实�?SIMPLIFIED_RISK_BUDGET_SYSTEM (60h) - 简化版�?
-3. 最后实�?HIERARCHICAL_RISK_BUDGET (5-7�? - 高级多层�?
+**æ¨èå®æ½è·¯å¾**:
+1. åå®ç?RISK_CONTRIBUTION_ANALYSIS (2-3å¤? - åºç¡åæè½å
+2. åå®ç?SIMPLIFIED_RISK_BUDGET_SYSTEM (60h) - ç®åçæ?
+3. æåå®ç?HIERARCHICAL_RISK_BUDGET (5-7å¤? - é«çº§å¤å±çº?
 
 ---
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [风险贡献分析蓝图](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 强依�?| 提供风险贡献计算 |
-| [简化风险预算系统蓝图](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | 强依�?| 提供简化版本基础 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
+| [é£é©è´¡ç®åæèå¾](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | å¼ºä¾èµ?| æä¾é£é©è´¡ç®è®¡ç® |
+| [ç®åé£é©é¢ç®ç³»ç»èå¾](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | å¼ºä¾èµ?| æä¾ç®åçæ¬åºç¡ |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | 强依�?| 风险平价策略 |
-| [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | 中依�?| 策略选择 |
-| [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | 中依�?| 组合再平�?|
+| [RISK_PARITY_STRATEGY_BLUEPRINT.md](./RISK_PARITY_STRATEGY_BLUEPRINT.md) | RISK_PARITY_STRATEGY_001 | å¼ºä¾èµ?| é£é©å¹³ä»·ç­ç¥ |
+| [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SELECTION_BLUEPRINT.md) | STRATEGY_SELECTION_001 | ä¸­ä¾èµ?| ç­ç¥éæ© |
+| [PORTFOLIO_REBALANCING_BLUEPRINT.md](./PORTFOLIO_REBALANCING_BLUEPRINT.md) | PORTFOLIO_REBALANCING_001 | ä¸­ä¾èµ?| ç»ååå¹³è¡?|
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
-| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **Riskfolio-Lib** | 5.0+ | é£é©ä¼å | [å®æ¹ææ¡£](https://riskfolio-lib.readthedocs.io/) |
+| **skfolio** | 1.0+ | ç»åå­¦ä¹  | [å®æ¹ææ¡£](https://skfolio.org/) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[风险贡献分析] --> B[层级风险预算]
-    C[简化风险预算] --> B
-    D[组合优化引擎] --> B
+    A[é£é©è´¡ç®åæ] --> B[å±çº§é£é©é¢ç®]
+    C[ç®åé£é©é¢ç®] --> B
+    D[ç»åä¼åå¼æ] --> B
     
-    B --> E[风险平价策略]
-    B --> F[策略选择]
-    B --> G[组合再平衡]
+    B --> E[é£é©å¹³ä»·ç­ç¥]
+    B --> F[ç­ç¥éæ©]
+    B --> G[ç»ååå¹³è¡¡]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -116,9 +116,9 @@ graph LR
 
 ---
 
-## 2. 技术实�?
+## 2. ææ¯å®ç?
 
-### 2.1 核心API
+### 2.1 æ ¸å¿API
 
 ```python
 from dataclasses import dataclass
@@ -127,13 +127,13 @@ import numpy as np
 
 @dataclass
 class RiskBudgetLevel:
-    """风险预算层级"""
+    """é£é©é¢ç®å±çº§"""
     level_name: str
     budget: float
     children: List['RiskBudgetLevel']
 
 class HierarchicalRiskBudgetManager:
-    """层级风险预算管理�?""
+    """å±çº§é£é©é¢ç®ç®¡çå?""
     
     def __init__(self, hierarchy: RiskBudgetLevel):
         self.hierarchy = hierarchy
@@ -145,15 +145,15 @@ class HierarchicalRiskBudgetManager:
         level_mapping: Dict[str, List[int]]
     ) -> Dict[str, np.ndarray]:
         """
-        分配层级风险预算
+        åéå±çº§é£é©é¢ç®
         
         Args:
-            total_risk_budget: 总风险预�?
-            cov_matrix: 协方差矩�?
-            level_mapping: 层级到资产的映射
+            total_risk_budget: æ»é£é©é¢ç®?
+            cov_matrix: åæ¹å·®ç©é?
+            level_mapping: å±çº§å°èµäº§çæ å°
             
         Returns:
-            各层级的权重分配
+            åå±çº§çæéåé
         """
         pass
     
@@ -164,21 +164,21 @@ class HierarchicalRiskBudgetManager:
         level_mapping: Dict[str, List[int]]
     ) -> Dict[str, float]:
         """
-        汇总各层级风险贡献
+        æ±æ»åå±çº§é£é©è´¡ç®
         
         Returns:
-            各层级的风险贡献
+            åå±çº§çé£é©è´¡ç®
         """
         pass
 ```
 
 ---
 
-## 3. 接口定义
+## 3. æ¥å£å®ä¹
 
 ```python
 class HierarchicalRiskBudgetAPI:
-    """层级风险预算API"""
+    """å±çº§é£é©é¢ç®API"""
     
     @endpoint("/api/v1/hierarchical_risk_budget/allocate")
     async def allocate(
@@ -186,7 +186,7 @@ class HierarchicalRiskBudgetAPI:
         hierarchy: RiskBudgetLevel,
         cov_matrix: List[List[float]]
     ) -> AllocationResult:
-        """分配层级风险预算"""
+        """åéå±çº§é£é©é¢ç®"""
         
     @endpoint("/api/v1/hierarchical_risk_budget/aggregate")
     async def aggregate(
@@ -195,61 +195,61 @@ class HierarchicalRiskBudgetAPI:
         cov_matrix: List[List[float]],
         level_mapping: Dict[str, List[int]]
     ) -> AggregationResult:
-        """汇总风险贡�?""
+        """æ±æ»é£é©è´¡ç?""
 ```
 
 ---
 
-## 4. 实施路径
+## 4. å®æ½è·¯å¾
 
-| 阶段 | 任务 | 工时 |
+| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
 |------|------|------|
-| Phase 1 | 层级结构设计 | 12h |
-| Phase 2 | 预算分配算法实现 | 16h |
-| Phase 3 | API、测试、文�?| 12h |
+| Phase 1 | å±çº§ç»æè®¾è®¡ | 12h |
+| Phase 2 | é¢ç®åéç®æ³å®ç° | 16h |
+| Phase 3 | APIãæµè¯ãææ¡?| 12h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 System_Manifest.md索引
+### 5.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Hierarchical Risk Budget
-- **模块ID**: HIERARCHICAL_RISK_BUDGET_001
-- **蓝图文档**: HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 6 组合优化�?
-- **状�?*: Active
+- **æ¨¡åID**: HIERARCHICAL_RISK_BUDGET_001
+- **èå¾ææ¡£**: HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 6 ç»åä¼åå±?
+- **ç¶æ?*: Active
 ```
 
-### 5.2 模块职责边界
+### 5.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Hierarchical Risk Budget** | Layer 6 组合优化�?| **核心模块** |
+| **Hierarchical Risk Budget** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 5.3 版本管理
+### 5.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

@@ -9,7 +9,7 @@ standard_type: 专业量化机构蓝图
 applicable_scope: Layer 1 数据预处理层完整架构
 compliance_level: 专业标准
 priority: P0
-layer: "Layer 1 (数据预处理层)"
+layer: Layer 5.1 (数据处理)
 responsibility: Layer 1完整架构蓝图汇总与实施指南
 ---
 

@@ -1,99 +1,99 @@
 ---
 responsibility:
-  - 组合归因分析
-  - 收益归因
-  - 风险归因
-  - 归因报告
+  - ç»åå½å åæ
+  - æ¶çå½å 
+  - é£é©å½å 
+  - å½å æ¥å
 
 module_id: PORTFOLIO_ATTRIBUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 实施团队
-standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化�?
-compliance_level: 专业标准
-layer: "Layer 6 (组合优化�?"
+owner: å®æ½å¢é
+standard_type: ä¸ä¸éåæºæèå¾
+applicable_scope: Layer 6 ç»åä¼åå±?
+compliance_level: ä¸ä¸æ å
+layer: Layer 5.2 (组合优化)
 ---
 
-# 组合归因分析模块蓝图
+# ç»åå½å åææ¨¡åèå¾
 
-> **核心职责**: 分解投资组合收益来源，评估策略贡�?
-> **职责边界**: 
-> - �?本文档负责：Brinson归因、因子归因、风险归�?
-> - �?本文档不负责：因子计算（由因子模块负责）
+> **æ ¸å¿èè´£**: åè§£æèµç»åæ¶çæ¥æºï¼è¯ä¼°ç­ç¥è´¡ç?
+> **èè´£è¾¹ç**: 
+> - â?æ¬ææ¡£è´è´£ï¼Brinsonå½å ãå å­å½å ãé£é©å½å?
+> - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å­æ¨¡åè´è´£ï¼
 
 
-## 核心定位
+## æ ¸å¿å®ä½
 
-构建PORTFOLIO ATTRIBUTION的设计与实现，基于Black-Litterman技术，调整核心功能，优化投资组合�?
+æå»ºPORTFOLIO ATTRIBUTIONçè®¾è®¡ä¸å®ç°ï¼åºäºBlack-Littermanææ¯ï¼è°æ´æ ¸å¿åè½ï¼ä¼åæèµç»åã?
 
-## 1. 概述
+## 1. æ¦è¿°
 
-### 1.1 模块定位
+### 1.1 æ¨¡åå®ä½
 
-**Layer定位**: Layer 6 - 组合优化层（归因分析模块�?
+**Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼å½å åææ¨¡åï¼?
 
-**核心价�?*:
-- Brinson归因模型（配置效应、选择效应、交互效应）
-- 因子归因分析
-- 风险归因分析
-- 多期归因链接
+**æ ¸å¿ä»·å?*:
+- Brinsonå½å æ¨¡åï¼éç½®æåºãéæ©æåºãäº¤äºæåºï¼
+- å å­å½å åæ
+- é£é©å½å åæ
+- å¤æå½å é¾æ¥
 
-**业务价�?*:
-- 理解收益来源
-- 评估投资决策
-- 支持投资优化
+**ä¸å¡ä»·å?*:
+- çè§£æ¶çæ¥æº
+- è¯ä¼°æèµå³ç­
+- æ¯ææèµä¼å
 
-### 1.2 版本信息
+### 1.2 çæ¬ä¿¡æ¯
 
-| 项目 | 内容 |
+| é¡¹ç® | åå®¹ |
 |------|------|
-| **模块ID** | PORTFOLIO_ATTRIBUTION_001 |
-| **版本** | v1.0.0 |
-| **开源依�?* | brinson_attribution, QuantFAA |
-| **预计工时** | 3-5�?|
+| **æ¨¡åID** | PORTFOLIO_ATTRIBUTION_001 |
+| **çæ¬** | v1.0.0 |
+| **å¼æºä¾èµ?* | brinson_attribution, QuantFAA |
+| **é¢è®¡å·¥æ¶** | 3-5å¤?|
 
 ---
-## 📚 相关文档
+## ð ç¸å³ææ¡£
 
-### 上游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [组合情景分析蓝图](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | 强依�?| 提供情景分析结果 |
-| [组合优化引擎集成蓝图](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | 强依�?| 提供优化器基础接口 |
-| [数据质量监控蓝图](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | 强依�?| 提供数据质量指标 |
+| [ç»åææ¯åæèå¾](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) | PORTFOLIO_SCENARIO_ANALYSIS_001 | å¼ºä¾èµ?| æä¾ææ¯åæç»æ |
+| [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md) | PORTFOLIO_OPTIMIZER_INTEGRATION_001 | å¼ºä¾èµ?| æä¾ä¼åå¨åºç¡æ¥å£ |
+| [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | DATA_QUALITY_MONITORING_001 | å¼ºä¾èµ?| æä¾æ°æ®è´¨éææ  |
 
-### 下游依赖
+### ä¸æ¸¸ä¾èµ
 
-| 文档名称 | module_id | 依赖类型 | 说明 |
+| ææ¡£åç§° | module_id | ä¾èµç±»å | è¯´æ |
 |---------|-----------|---------|------|
-| [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | 强依�?| 组合绩效评估 |
-| [VAR_ES_MONITORING_BLUEPRINT.md](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | 中依�?| 风险监控 |
-| [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | 中依�?| 风险贡献分析 |
+| [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) | PORTFOLIO_PERFORMANCE_EVALUATION_001 | å¼ºä¾èµ?| ç»åç»©æè¯ä¼° |
+| [VAR_ES_MONITORING_BLUEPRINT.md](./VAR_ES_MONITORING_BLUEPRINT.md) | VAR_ES_MONITORING_001 | ä¸­ä¾èµ?| é£é©çæ§ |
+| [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) | RISK_CONTRIBUTION_ANALYSIS_001 | ä¸­ä¾èµ?| é£é©è´¡ç®åæ |
 
-### 技术依�?
+### ææ¯ä¾èµ?
 
-| 技术组�?| 版本 | 用�?| 文档 |
+| ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |
 |---------|------|------|------|
-| **brinson_attribution** | 0.1+ | Brinson归因 | [GitHub](https://github.com/ranaroussi/brinson-attribution) |
-| **QuantFAA** | 1.0+ | 因子归因 | [GitHub](https://github.com/quantfaa) |
-| **NumPy** | 1.24+ | 数值计�?| [官方文档](https://numpy.org/) |
-| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **brinson_attribution** | 0.1+ | Brinsonå½å  | [GitHub](https://github.com/ranaroussi/brinson-attribution) |
+| **QuantFAA** | 1.0+ | å å­å½å  | [GitHub](https://github.com/quantfaa) |
+| **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£](https://numpy.org/) |
+| **Pandas** | 2.0+ | æ°æ®å¤ç | [å®æ¹ææ¡£](https://pandas.pydata.org/) |
 
-### 引用关系�?
+### å¼ç¨å³ç³»å?
 
 ```mermaid
 graph LR
-    A[组合情景分析] --> B[组合归因分析]
-    C[组合优化引擎] --> B
-    D[数据质量监控] --> B
+    A[ç»åææ¯åæ] --> B[ç»åå½å åæ]
+    C[ç»åä¼åå¼æ] --> B
+    D[æ°æ®è´¨éçæ§] --> B
     
-    B --> E[组合绩效评估]
-    B --> F[风险监控]
-    B --> G[风险贡献分析]
+    B --> E[ç»åç»©æè¯ä¼°]
+    B --> F[é£é©çæ§]
+    B --> G[é£é©è´¡ç®åæ]
     
     style B fill:#ff6b6b
     style A fill:#4ecdc4
@@ -102,9 +102,9 @@ graph LR
 
 ---
 
-## 2. 技术实�?
+## 2. ææ¯å®ç?
 
-### 2.1 核心API
+### 2.1 æ ¸å¿API
 
 ```python
 from brinson_attribution import BrinsonModel
@@ -112,7 +112,7 @@ import pandas as pd
 import numpy as np
 
 class PortfolioAttributionAnalyzer:
-    """组合归因分析�?""
+    """ç»åå½å åæå?""
     
     def __init__(self):
         pass
@@ -125,20 +125,20 @@ class PortfolioAttributionAnalyzer:
         benchmark_returns: pd.DataFrame
     ) -> dict:
         """
-        Brinson归因分析
+        Brinsonå½å åæ
         
         Args:
-            portfolio_weights: 组合权重（按行业/资产类别�?
-            portfolio_returns: 组合收益�?
-            benchmark_weights: 基准权重
-            benchmark_returns: 基准收益�?
+            portfolio_weights: ç»åæéï¼æè¡ä¸/èµäº§ç±»å«ï¼?
+            portfolio_returns: ç»åæ¶çç?
+            benchmark_weights: åºåæé
+            benchmark_returns: åºåæ¶çç?
             
         Returns:
             {
-                'allocation_effect': 配置效应,
-                'selection_effect': 选择效应,
-                'interaction_effect': 交互效应,
-                'total_excess_return': 总超额收�?
+                'allocation_effect': éç½®æåº,
+                'selection_effect': éæ©æåº,
+                'interaction_effect': äº¤äºæåº,
+                'total_excess_return': æ»è¶é¢æ¶ç?
             }
         """
         model = BrinsonModel(
@@ -162,15 +162,15 @@ class PortfolioAttributionAnalyzer:
         factor_exposures: pd.DataFrame
     ) -> dict:
         """
-        因子归因分析
+        å å­å½å åæ
         
         Args:
-            portfolio_returns: 组合收益率序�?
-            factor_returns: 因子收益�?
-            factor_exposures: 因子暴露
+            portfolio_returns: ç»åæ¶ççåºå?
+            factor_returns: å å­æ¶çç?
+            factor_exposures: å å­æ´é²
             
         Returns:
-            因子归因结果
+            å å­å½å ç»æ
         """
         pass
     
@@ -181,40 +181,40 @@ class PortfolioAttributionAnalyzer:
         factor_cov: np.ndarray = None
     ) -> dict:
         """
-        风险归因分析
+        é£é©å½å åæ
         
         Args:
-            portfolio_weights: 组合权重
-            cov_matrix: 协方差矩�?
-            factor_cov: 因子协方差矩�?
+            portfolio_weights: ç»åæé
+            cov_matrix: åæ¹å·®ç©é?
+            factor_cov: å å­åæ¹å·®ç©é?
             
         Returns:
-            风险归因结果
+            é£é©å½å ç»æ
         """
         pass
 ```
 
-### 2.2 Brinson模型核心公式
+### 2.2 Brinsonæ¨¡åæ ¸å¿å¬å¼
 
 ```
-配置效应 = Σ (w_p - w_b) × r_b
-选择效应 = Σ w_b × (r_p - r_b)
-交互效应 = Σ (w_p - w_b) × (r_p - r_b)
+éç½®æåº = Î£ (w_p - w_b) Ã r_b
+éæ©æåº = Î£ w_b Ã (r_p - r_b)
+äº¤äºæåº = Î£ (w_p - w_b) Ã (r_p - r_b)
 
-其中:
-- w_p: 组合权重
-- w_b: 基准权重
-- r_p: 组合收益�?
-- r_b: 基准收益�?
+å¶ä¸­:
+- w_p: ç»åæé
+- w_b: åºåæé
+- r_p: ç»åæ¶çç?
+- r_b: åºåæ¶çç?
 ```
 
 ---
 
-## 3. 接口定义
+## 3. æ¥å£å®ä¹
 
 ```python
 class AttributionAPI:
-    """归因分析API"""
+    """å½å åæAPI"""
     
     @endpoint("/api/v1/attribution/brinson")
     async def brinson_analysis(
@@ -224,7 +224,7 @@ class AttributionAPI:
         start_date: str,
         end_date: str
     ) -> BrinsonResult:
-        """Brinson归因分析"""
+        """Brinsonå½å åæ"""
         
     @endpoint("/api/v1/attribution/factor")
     async def factor_analysis(
@@ -234,68 +234,68 @@ class AttributionAPI:
         start_date: str,
         end_date: str
     ) -> FactorAttributionResult:
-        """因子归因分析"""
+        """å å­å½å åæ"""
         
     @endpoint("/api/v1/attribution/risk")
     async def risk_analysis(
         self,
         portfolio_id: str
     ) -> RiskAttributionResult:
-        """风险归因分析"""
+        """é£é©å½å åæ"""
 ```
 
 ---
 
-## 4. 实施路径
+## 4. å®æ½è·¯å¾
 
-| 阶段 | 任务 | 工时 |
+| é¶æ®µ | ä»»å¡ | å·¥æ¶ |
 |------|------|------|
-| Phase 1 | brinson_attribution集成 | 12h |
-| Phase 2 | 因子归因、风险归因实�?| 16h |
-| Phase 3 | API、测试、文�?| 12h |
+| Phase 1 | brinson_attributionéæ | 12h |
+| Phase 2 | å å­å½å ãé£é©å½å å®ç?| 16h |
+| Phase 3 | APIãæµè¯ãææ¡?| 12h |
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active | **合规�?*: 100% �?
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active | **åè§ç?*: 100% â?
 
-## 变更历史
+## åæ´åå²
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历�?| 审计系统 |
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
+| v1.0.1 | 2026-04-06 | è¡¥åYAMLå¤´é¨å­æ®µååæ´åå?| å®¡è®¡ç³»ç» |
 
 ---
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.1 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active
 ---
 
-## 5. 文档治理
+## 5. ææ¡£æ²»ç
 
-### 5.1 System_Manifest.md索引
+### 5.1 System_Manifest.mdç´¢å¼
 
 ```markdown
-#### Layer 6: 组合优化�?
+#### Layer 6: ç»åä¼åå±?
 ##### 6.001. Portfolio Attribution
-- **模块ID**: PORTFOLIO_ATTRIBUTION_001
-- **蓝图文档**: PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
-- **技术规格书**: 待创�?
-- **职责**: Layer 6 组合优化�?
-- **状�?*: Active
+- **æ¨¡åID**: PORTFOLIO_ATTRIBUTION_001
+- **èå¾ææ¡£**: PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
+- **ææ¯è§æ ¼ä¹¦**: å¾åå»?
+- **èè´£**: Layer 6 ç»åä¼åå±?
+- **ç¶æ?*: Active
 ```
 
-### 5.2 模块职责边界
+### 5.2 æ¨¡åèè´£è¾¹ç
 
-| 模块 | 职责 | 边界 |
+| æ¨¡å | èè´£ | è¾¹ç |
 |------|------|------|
-| **Portfolio Attribution** | Layer 6 组合优化�?| **核心模块** |
+| **Portfolio Attribution** | Layer 6 ç»åä¼åå±?| **æ ¸å¿æ¨¡å** |
 
-### 5.3 版本管理
+### 5.3 çæ¬ç®¡ç
 
-| 版本 | 日期 | 变更内容 | 变更�?|
+| çæ¬ | æ¥æ | åæ´åå®¹ | åæ´äº?|
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构�?|
+| v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸­èå¾æ¶æå¸?|
 
 ---
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状�?*: Active
+**èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-04-06 | **ç¶æ?*: Active

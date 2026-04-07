@@ -14,7 +14,7 @@ owner: å®æ½å¢é
 standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: ä¸ä¸æ å
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5.2 (组合优化)
 ---
 
 # Mean Variance Optimization
@@ -51,7 +51,7 @@ layer: "Layer 6 (ç»åä¼åå±?"
 
 | åºå | çæ¬ | ç¨é?| GitHub Stars |
 |
-layer: "Layer 6 (ç»åä¼åå±?"
+layer: Layer 5.2 (组合优化)
 ## 2. åè½è®¾è®¡
 
 ### 2.1 æ ¸å¿åè½
