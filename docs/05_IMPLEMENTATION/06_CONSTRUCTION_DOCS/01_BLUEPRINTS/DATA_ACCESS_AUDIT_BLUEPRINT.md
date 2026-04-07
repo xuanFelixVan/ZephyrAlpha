@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: DATA-ACCESS-AUDIT-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 module_id: DATA_ACCESS_AUDIT_001
 version: 1.0.0

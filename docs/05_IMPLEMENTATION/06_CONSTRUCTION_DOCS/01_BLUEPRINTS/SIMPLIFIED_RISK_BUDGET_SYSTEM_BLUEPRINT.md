@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: SIMPLIFIED-RISK-BUDGET-SYSTEM-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 responsibility:
   - VaR风险预算

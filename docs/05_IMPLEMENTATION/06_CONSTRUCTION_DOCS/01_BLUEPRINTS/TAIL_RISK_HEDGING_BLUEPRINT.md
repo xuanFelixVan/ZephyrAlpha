@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: TAIL-RISK-HEDGING-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 module_id: TAIL_RISK_HEDGING_001
 version: 1.0.0

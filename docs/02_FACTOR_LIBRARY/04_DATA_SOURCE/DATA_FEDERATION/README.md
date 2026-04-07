@@ -1,4 +1,17 @@
-﻿﻿---
+﻿---
+module_id: README
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+standard_type: 说明文件
+applicable_scope: 02_FACTOR_LIBRARY\04_DATA_SOURCE\DATA_FEDERATION
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
+﻿---
 module_id: DATA_FEDERATION_README_001
 version: 1.0.0
 status: Active

@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: UNIFIED-DATA-INFRASTRUCTURE-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 module_id: UNIFIED_DATA_INFRASTRUCTURE__001
 version: 1.0.0

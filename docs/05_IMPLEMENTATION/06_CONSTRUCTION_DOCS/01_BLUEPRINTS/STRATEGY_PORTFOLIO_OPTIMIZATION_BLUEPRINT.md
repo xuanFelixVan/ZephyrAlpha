@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: STRATEGY-PORTFOLIO-OPTIMIZATION-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 responsibility:
   - 策略组合优化

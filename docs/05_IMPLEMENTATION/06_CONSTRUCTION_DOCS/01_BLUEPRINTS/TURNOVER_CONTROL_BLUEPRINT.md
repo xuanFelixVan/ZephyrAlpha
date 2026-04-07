@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: TURNOVER-CONTROL-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 responsibility:
   - 交易成本优化

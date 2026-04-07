@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: PORTFOLIO-OPTIMIZATION-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿---
 module_id: PORTFOLIO_OPTIMIZATION_BLUEPRINT
 version: 1.0.0

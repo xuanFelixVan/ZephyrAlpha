@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: TRANSACTION-COST-ANALYSIS-ENGINE-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 module_id: TRANSACTION_COST_ANALYSIS_ENGINE__001
 version: 1.0.0

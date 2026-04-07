@@ -1,4 +1,17 @@
-﻿﻿---
+﻿---
+module_id: INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+standard_type: 索引文件
+applicable_scope: 01_FRAMEWORK\LAYER4_ML
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+---
+
+﻿---
 responsibility:
   - 目录导航、文档索引
 module_id: INDEX_LAYER4_ML_20260407124048

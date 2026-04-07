@@ -1,3 +1,12 @@
+---
+version: 1.0.0
+module_id: DATA-SOURCE-HEALTH-MONITOR-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
 ﻿﻿---
 module_id: DATA_SOURCE_HEALTH_MONITOR__001
 version: 1.0.0

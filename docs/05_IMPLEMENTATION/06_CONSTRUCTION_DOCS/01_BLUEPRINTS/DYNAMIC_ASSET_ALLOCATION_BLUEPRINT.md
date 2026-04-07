@@ -1,4 +1,13 @@
 ---
+version: 1.0.0
+module_id: DYNAMIC-ASSET-ALLOCATION-BLUEPRINT
+layer: Layer5
+created: 2026-04-07
+updated: 2026-04-07
+status: active
+---
+
+﻿---
 module_id: DYNAMIC_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
