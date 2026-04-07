@@ -1,16 +1,19 @@
 ---
-module_id: DATA_QUALITY_MONITORING_IMPL_001
+module_id: DATA_QUALITY_MONITORING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
-layer: "Layer 1 (数据源层)"
----
+  - 数据质量监控
+  - 质量规则验证
+  - 质量报告
+  - 质量预警
+layer: "Layer 1 (数据层)"
 ---
 
 # DATA QUALITY MONITORING BLUEPRINT

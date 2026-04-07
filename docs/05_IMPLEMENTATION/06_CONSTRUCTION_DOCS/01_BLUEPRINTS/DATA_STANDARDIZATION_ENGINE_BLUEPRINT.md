@@ -1,16 +1,19 @@
 ---
-module_id: DATA_STANDARDIZATION_ENGINE_BLUEPRINT_001
+module_id: DATA_STANDARDIZATION_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 数据标准化引擎
   - 数据格式统一
-  - 数据验证
-layer: "Layer 1 (数据预处理层)"
+  - 数据标准化
+  - 数据类型转换
+layer: "Layer 1 (数据层)"
 ---
 
 # 数据标准化引擎蓝图

@@ -1,16 +1,19 @@
 ---
-module_id: DISTRIBUTED_QUERY_ENGINE_BLUEPRINT_001
+module_id: DISTRIBUTED_QUERY_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
+  - 分布式查询引擎
   - 分布式查询
   - 数据联邦
-layer: "Layer 1 (数据预处理层)"
+  - 跨源查询
+layer: "Layer 1 (数据层)"
 ---
 
 # 分布式查询引擎蓝图

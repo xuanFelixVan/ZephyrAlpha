@@ -27,7 +27,7 @@ layer: "Layer 3 (策略层)"
 
 ## 核心定位
 
-负责Strategy Portfolio Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+管理STRATEGY PORTFOLIO OPTIMIZATION的设计与实现，基于Black-Litterman技术，优化核心功能，提升收益风险比。
 
 ## 1. 概述
 

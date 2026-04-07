@@ -27,7 +27,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-负责Portfolio Optimizer Integration的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+构建PORTFOLIO OPTIMIZER INTEGRATION的设计与实现，基于因子投资技术，调整核心功能，提升收益风险比。
 
 ## 1. 概述
 

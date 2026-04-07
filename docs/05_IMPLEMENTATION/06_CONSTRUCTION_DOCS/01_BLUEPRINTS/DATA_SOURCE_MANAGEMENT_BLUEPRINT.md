@@ -1,14 +1,19 @@
 ---
-module_id: DATA_SOURCE_MANAGEMENT_BLUEPRINT_001
+module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 1 数据层
+compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档
-
+  - 数据源管理
+  - 数据源接入
+  - 数据源监控
+  - 数据源配置
+layer: "Layer 1 (数据层)"
 ---
 
 # DATA SOURCE MANAGEMENT BLUEPRINT
@@ -45,11 +50,7 @@ layer: "Layer 1 (数据源层)"
 
 ## 核心定位
 
-> 核心职责: Data Source Management蓝图设计
-> 职责边界: 
-> - ✅ 本文档负责：Data Source Management蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容，确保系统功能的稳定运行和高效执行。
-
+构建DATA SOURCE MANAGEMENT的设计与实现，基于Delta Lake技术，优化核心功能，确保数据质量合规。
 
 ## 一、设计背景与目标
 

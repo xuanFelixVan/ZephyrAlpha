@@ -29,7 +29,7 @@ priority: P0
 
 ## 核心定位
 
-负责Portfolio Optimization的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+实现PORTFOLIO OPTIMIZATION的设计与实现，基于Black-Litterman技术，评估核心功能，实现投资目标。
 
 ## 一、设计目标与约束
 

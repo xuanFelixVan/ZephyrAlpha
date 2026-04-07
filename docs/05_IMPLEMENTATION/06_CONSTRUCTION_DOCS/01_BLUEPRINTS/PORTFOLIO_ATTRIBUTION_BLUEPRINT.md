@@ -27,7 +27,7 @@ layer: "Layer 6 (组合优化层)"
 
 ## 核心定位
 
-负责Portfolio Attribution的设计、实现和维护，提供核心功能支持，确保系统模块的稳定运行和高效执行。
+构建PORTFOLIO ATTRIBUTION的设计与实现，基于Black-Litterman技术，调整核心功能，优化投资组合。
 
 ## 1. 概述
 
