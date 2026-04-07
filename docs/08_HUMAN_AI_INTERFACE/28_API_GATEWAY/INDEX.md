@@ -1,12 +1,14 @@
 ---
 
-module_id: 08_HUMAN_AI_INTERFACE_INDEX
+module_id: 08_HUMAN_AI_INTERFACE_28_API_GATEWAY_INDEX
 ## 📄 文档列表
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
 | API_GATEWAY_BLUEPRINT.md | 蓝图 | 活跃 | 统一API管理平台，支持API路由、版本控制、文档生成和性能监控 |
 
+responsibility:
+  - 系统模块设计与实施方案与优化维护
 ---
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新

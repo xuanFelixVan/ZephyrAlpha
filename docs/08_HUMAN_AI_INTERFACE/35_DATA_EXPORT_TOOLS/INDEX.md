@@ -1,12 +1,14 @@
 ---
 
-module_id: 08_HUMAN_AI_INTERFACE_INDEX
+module_id: 08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_INDEX
 ## 📄 文档列表
 
 | 文档名称 | 类型 | 状态 | 说明 |
 |---------|------|------|------|
 | DATA_EXPORT_TOOLS_BLUEPRINT.md | 蓝图 | 活跃 | 数据导出工具集，支持多格式导出、批量导出和任务管理 |
 
+responsibility:
+  - 系统模块设计与实施方案与优化维护
 ---
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新
