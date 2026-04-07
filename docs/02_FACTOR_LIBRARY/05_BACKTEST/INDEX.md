@@ -29,8 +29,8 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- BACKTEST_REORGANIZATION.md - 回测重组方案
-- README.md - 回测系统概述
+- [BACKTEST_REORGANIZATION](./BACKTEST_REORGANIZATION.md)
+- [README](./README.md)
 
 ---
 

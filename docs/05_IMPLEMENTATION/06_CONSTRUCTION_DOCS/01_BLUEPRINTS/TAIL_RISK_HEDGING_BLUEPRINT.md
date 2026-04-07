@@ -86,7 +86,7 @@ responsibility:
 
 > **索引**: `TAIL_RISK__001`
 > **开发时间: 60h
-> **核心定位**: 期权对冲、尾部风险保?
+> **核心定位**: 期权对冲、尾部风险保护
 ## 2. 对冲策略
 
 ### 2.1 期权对冲
@@ -96,7 +96,8 @@ responsibility:
 
 ### 2.2 VIX对冲
 
-- **VIX期货**: 直接对冲波动?- **VIX期权**: 非线性对接
+- **VIX期货**: 直接对冲波动率
+- **VIX期权**: 非线性对冲
 
 
 ## 3. 核心算法
@@ -110,7 +111,8 @@ def calculate_hedge_ratio(portfolio_var: float,
     
     Args:
         portfolio_var: 组合方差
-        vix_beta: VIX敏感?        target_protection: 目标保护比例
+        vix_beta: VIX敏感度
+        target_protection: 目标保护比例
         
     Returns:
         float: 对冲合约数量

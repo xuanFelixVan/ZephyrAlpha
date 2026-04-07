@@ -1,3 +1,14 @@
+---
+module_id: ALPHA_FACTOR_P1_P2_FIX_REPORT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 文档管理相关文档
+---
+
 # Alpha因子层P1/P2级别问题修复报告
 
 ## 执行概要

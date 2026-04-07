@@ -29,8 +29,8 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- FAQ.md - 常见问题解答
-- README.md - 使用手册概述
+- [FAQ](./FAQ.md)
+- [README](./README.md)
 
 ---
 

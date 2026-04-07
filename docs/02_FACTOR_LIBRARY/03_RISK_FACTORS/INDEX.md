@@ -29,8 +29,8 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- README.md - 风险因子概述
-- INDEX.md - 风险因子索引
+- [OVERVIEW](./OVERVIEW.md)
+- [README](./README.md)
 
 ---
 

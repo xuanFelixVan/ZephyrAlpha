@@ -118,7 +118,9 @@ graph LR
 
 ### 2.1 融资渠道
 
-- **券商融资**: 便捷但成本较?- **银行融资**: 成本较低但审批复?- **回购协议**: 灵活性高
+- **券商融资**: 便捷但成本较高
+- **银行融资**: 成本较低但审批复杂
+- **回购协议**: 灵活性高
 
 ### 2.2 成本优化
 
@@ -139,7 +141,8 @@ def optimize_financing(capital_needed: float,
         risk_limits: 风险限制 {渠道: 限制}
         
     Returns:
-        Dict[str, float]: 最优融资组?    """
+        Dict[str, float]: 最优融资组合
+    """
     optimal_mix = {}
     for channel, cost in financing_options.items():
         if cost < min(financing_options.values()):

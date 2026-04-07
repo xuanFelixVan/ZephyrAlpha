@@ -128,10 +128,42 @@ compliance_level: 专业标准
 | [SENTIMENT_BACKTEST_SYSTEM_BLUEPRINT.md](./SENTIMENT_BACKTEST_SYSTEM_BLUEPRINT.md) | 舆情回测系统蓝图（Backtrader集成） | P0 | ⭐⭐⭐⭐⭐ |
 | [SENTIMENT_LAYER_SUPPLEMENTARY_MODULES_BLUEPRINT.md](./SENTIMENT_LAYER_SUPPLEMENTARY_MODULES_BLUEPRINT.md) | 舆情分析层补充模块综合蓝图（P1+P2级） | P1/P2 | ⭐⭐⭐⭐ |
 
-**补充模块清单**:
+**补充模块清单（第一轮）**:
 - **P0级（阻断性，3个）**: 数据标注平台、A/B测试框架、回测系统
 - **P1级（重要，5个）**: 归因分析、事件时间线、数据血缘、数据质量、模型监控
 - **P2级（优化，4个）**: 特征工程、模型压缩、数据缓存、API网关
+
+### 舆情分析层第二轮补充蓝图文档（深度专业机构级）
+
+| 文档名称 | 说明 | 优先级 | 重要度 |
+|---------|------|--------|--------|
+| [SENTIMENT_LAYER_DEEP_PROFESSIONAL_ASSESSMENT.md](./SENTIMENT_LAYER_DEEP_PROFESSIONAL_ASSESSMENT.md) | 舆情分析层深度专业机构级评估报告 | P0 | ⭐⭐⭐⭐⭐ |
+| [SENTIMENT_LAYER_SECOND_ROUND_SUPPLEMENTARY_MODULES_BLUEPRINT.md](./SENTIMENT_LAYER_SECOND_ROUND_SUPPLEMENTARY_MODULES_BLUEPRINT.md) | 舆情分析层第二轮补充模块蓝图 | P0/P1/P2 | ⭐⭐⭐⭐⭐ |
+
+**补充模块清单（第二轮）**:
+- **P0级（架构级，3个）**: 实时数据流处理、知识图谱构建、事件驱动架构
+- **P1级（功能级，4个）**: 多模态舆情分析、舆情传播分析、跨市场关联分析、实时特征工程
+- **P2级（优化级，3个）**: 模型压缩部署、智能标注辅助、因子库管理
+
+**总计**: 两轮共补充22个模块，1270小时工作量
+
+### 舆情分析层最终完整专业方案蓝图
+
+| 文档名称 | 说明 | 优先级 | 重要度 |
+|---------|------|--------|--------|
+| [SENTIMENT_LAYER_FINAL_PROFESSIONAL_SOLUTION_BLUEPRINT.md](./SENTIMENT_LAYER_FINAL_PROFESSIONAL_SOLUTION_BLUEPRINT.md) | 舆情分析层最终完整专业方案蓝图 | P0 | ⭐⭐⭐⭐⭐ |
+
+**最终方案特点**:
+- **完整性**: 25个模块（两轮22个 + 高级能力3个）
+- **专业性**: 100%符合专业量化机构标准
+- **开源优先**: 22个成熟开源项目，覆盖率88%
+- **个人友好**: 适合个人开发、AI维护、个人使用
+- **成本优势**: 相比专业机构节省99%+成本
+
+**高级能力模块（新增3个）**:
+- **P3级（推荐，3个）**: 自动化报告生成、舆情热力图、舆情事件关联
+
+**总计**: 三轮共补充25个模块，1440小时工作量，12-18个月实施周期
 
 ### 报告文档
 

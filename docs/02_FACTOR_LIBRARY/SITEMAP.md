@@ -55,7 +55,7 @@ INDEX.md (?
      00_OVERVIEW/ (ϵͳ)
     ?
      01_FRAMEWORK/ (ܶ)
-    ?   ARCHITECTURE.md (Layer 0-11)
+    ?   ARCHITECTURE.md (系统架构层级)
     ?
      BLUEPRINT.md (ϵͳͼ)
     ?

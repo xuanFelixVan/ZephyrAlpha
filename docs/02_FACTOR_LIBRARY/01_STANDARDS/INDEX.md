@@ -29,8 +29,8 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- FACTOR_REGISTRY.md - 因子注册表
-- FACTOR_TAXONOMY.md - 因子分类体系
+- [FACTOR_REGISTRY](./FACTOR_REGISTRY.md)
+- [FACTOR_TAXONOMY](./FACTOR_TAXONOMY.md)
 
 ---
 

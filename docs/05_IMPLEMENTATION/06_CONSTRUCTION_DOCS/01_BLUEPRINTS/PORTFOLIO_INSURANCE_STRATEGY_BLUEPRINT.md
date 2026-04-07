@@ -1,4 +1,4 @@
----
+﻿---
 module_id: PORTFOLIO_INSURANCE_STRATEGY_001
 version: 1.0.0
 status: Active
@@ -87,13 +87,14 @@ layer: Layer 5.2 (组合优化)
 
 ### 1.1 模块定位
 
-组合保险策略模块负责?- CPPI（固定比例组合保险）
+组合保险策略模块负责：
+- CPPI（固定比例组合保险）
 - OBPI（期权组合保险）
 - 保本底线管理
-- 动态风险控?
-### 1.2 技术目?
-- **灵活?*: 参与市场上涨
-- **透明?*: 风险可控
+- 动态风险控制
+### 1.2 技术目标
+- **灵活性: 参与市场上涨
+- **透明度: 风险可控
 
 ## 3. 核心算法
 
@@ -105,11 +106,11 @@ def cppi_adjust(portfolio_value: float,
               multiplier: float,
               risk_asset_value: float) -> float:
     """
-    CPPI动态调?    
+    CPPI 动态调整    
     Args:
         multiplier: 风险乘数
     Returns:
-        float: 新的风险资产投资?    """
+        float: 新的风险资产投资额    """
     cushion = portfolio_value - floor_value
     new_risk_asset = min(cushion * multiplier, risk_asset_value)
     return new_risk_asset

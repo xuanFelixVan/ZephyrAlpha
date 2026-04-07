@@ -29,7 +29,8 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- README.md - 治理框架概述
+- [OVERVIEW](./OVERVIEW.md)
+- [README](./README.md)
 
 ---
 

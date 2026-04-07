@@ -84,7 +84,7 @@ layer: Layer 6 (组合优化层)
 ### 职责边界
 
 
-情感分析、事件提取、实体识别）
+情情情情感分析、事件提取、实体识别）
 - 因子管理与验证（存储、IC验证、监控）
 
 - 传统市场数据采集
@@ -94,6 +94,45 @@ layer: Layer 6 (组合优化层)
 ## 一、项目架构设计
 ### 1.1 整体架构
 
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
 ```mermaid
 graph TB
   subgraph Sources[数据源]
@@ -263,24 +302,24 @@ class WeiboDataSource:
 |--------|------|------|
 | post_id | string | 微博ID |
 | user_id | string | 用户ID |
-| user_name | string | 用户?|
+| user_name | string | 用户名 |
 | publish_time | datetime | 发布时间 |
-| likes | int | 点赞?|
-| comments | int | 评论?|
-| reposts | int | 转发?|
+| likes | int | 点赞数 |
+| comments | int | 评论数 |
+| reposts | int | 转发数 |
 | sentiment | float | 
 感得分 |
 
 
 
-#### 2.2.2 雪球网爬?
+#### 2.2.2 雪球网爬虫
 
-?- 热门股票
+- 热门股票
 
 **技术方案**:
 ```python
 class XueqiuDataSource:
-    """雪球数据?""
+    """雪球数据源"""
     
     def __init__(self, config):
         self.base_url = "https://xueqiu.com"
@@ -314,13 +353,13 @@ class XueqiuDataSource:
 **技术方案**:
 ```python
 class GubaDataSource:
-    """东方财富股吧数据?""
+    """东方财富股吧数据源"""
     
     def __init__(self, config):
         self.base_url = "https://guba.eastmoney.com"
         
     def get_stock_posts(self, stock_code, page=1):
-        """获取股票吧帖?""
+        """获取股票吧帖子"""
         url = f"{self.base_url}/list,{stock_code}.html"
         params = {
             'pageindex': page
@@ -379,14 +418,14 @@ class AnalystExpectationDataSource:
 ## 三、NLP处理流程
 
 ### 3.1 
-情感分析
+情情情情感分析
 
 **技术方案**: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
     """
-情情感分析""
+情情情情情感分析""
     
     def __init__(self):
         self.model = "glm-4-flash"
@@ -406,7 +445,7 @@ class SentimentAnalyzer:
         return sentiment_score
     
     def batch_analyze(self, texts):
-情感分析"""
+情情情情感分析"""
         results = []
         for text in texts:
             sentiment = self.analyze_sentiment(text)
@@ -414,7 +453,7 @@ class SentimentAnalyzer:
         return results
 ```
 
-**成本**: 0.1?百万tokens
+**成本**: 约 0.1 元/百万 tokens
 
 
 
@@ -455,7 +494,7 @@ class EventExtractor:
 
 ### 3.3 实体识别
 
-**技术方案**: GLM-4-Flash + 正则表达?
+**技术方案**: GLM-4-Flash + 正则表达式
 ```python
 class EntityRecognizer:
     """实体识别""
@@ -485,14 +524,14 @@ class EntityRecognizer:
 ## 四、因子构建方案
 ### 4.1 新闻因子
 
-情感因子
+情情情情感因子
 
-情基于情感分析构建的因子
+情基于情情情情感分析构建的因子
 **计算方法**:
 ```python
 def calculate_news_sentiment_factor(stock_code, date, window=7):
     """
-情感因子
+情情情情感因子
     
     Args:
         stock_code: 股票代码
@@ -514,9 +553,9 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-情绪因子
+情情情情绪因子
 - 更新频率: 日频
-- 数据窗口: 7?- IC预期: 0.03-0.05
+- 数据窗口: 7 天 - IC预期: 0.03-0.05
 
 
 
@@ -557,7 +596,7 @@ def calculate_event_driven_factor(stock_code, date):
 **因子特征**:
 - 因子类型: 事件因子
 - 更新频率: 日频
-- 数据窗口: 30?- IC预期: 0.04-0.06
+- 数据窗口: 30 天 - IC预期: 0.04-0.06
 
 
 
@@ -589,21 +628,21 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- 数据窗口: 7?- IC预期: 0.02-0.04
+- 数据窗口: 7 天 - IC预期: 0.02-0.04
 
 
 
 ### 4.2 
-情绪因子
+情情情情绪因子
 
-情绪因子
+情情情情绪因子
 
-情绪因子
+情情情情绪因子
 **计算方法**:
 ```python
 def calculate_market_sentiment_factor(date):
     """
-情绪因子
+情情情情绪因子
     
     Args:
         date: 计算日期
@@ -626,19 +665,19 @@ def calculate_market_sentiment_factor(date):
 ```
 
 **因子特征**:
-情绪因子
+情情情情绪因子
 - 更新频率: 日频
 
 
 
-情绪因子
+情情情情绪因子
 
-情绪因子
+情情情情绪因子
 **计算方法**:
 ```python
 def calculate_stock_sentiment_factor(stock_code, date, window=7):
     """
-情绪因子
+情情情情绪因子
     
     Args:
         stock_code: 股票代码
@@ -664,9 +703,9 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-情绪因子
+情情情情绪因子
 - 更新频率: 日频
-- 数据窗口: 7?- IC预期: 0.03-0.05
+- 数据窗口: 7 天 - IC预期: 0.03-0.05
 
 
 
@@ -688,7 +727,7 @@ def calculate_expectation_gap_factor(stock_code, date):
         因子值（预期差异得分）    """
     # 1. 获取分析师一致预期    consensus = get_consensus_forecast(stock_code, date)
     
-?    actual = get_actual_eps(stock_code, date)
+    actual = get_actual_eps(stock_code, date)
     
     # 3. 计算预期差异
     if consensus and actual:
@@ -739,7 +778,7 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 **因子特征**:
 - 因子类型: 预期因子
 - 更新频率: 日频
-- 数据窗口: 30?- IC预期: 0.03-0.05
+- 数据窗口: 30 天 - IC预期: 0.03-0.05
 
 
 
@@ -758,7 +797,7 @@ def calculate_social_heat_factor(stock_code, date, window=7):
         window: 时间窗口（天）    
     Returns:
         因子值（热度得分）    """
-    # 1. 获取社交媒体讨论?    posts = get_stock_posts(stock_code, date-window, date)
+    # 1. 获取社交媒体讨论帖    posts = get_stock_posts(stock_code, date-window, date)
     
     # 2. 计算总互动量
     total_engagement = sum([
@@ -766,18 +805,18 @@ def calculate_social_heat_factor(stock_code, date, window=7):
         for post in posts
     ])
     
-    # 3. 计算讨论?    post_count = len(posts)
+    # 3. 计算讨论量    post_count = len(posts)
     
     # 4. 综合热度得分
     heat_score = np.log1p(total_engagement) + 0.5 * np.log1p(post_count)
     
-    # 5. 标准?    factor_value = heat_score / 10  # 简单标准化
+    # 5. 标准化    factor_value = heat_score / 10  # 简单标准化
     
     return factor_value
 ```
 
 **因子特征**:
-- 数据窗口: 7?- IC预期: 0.02-0.04
+- 数据窗口: 7 天 - IC预期: 0.02-0.04
 
 
 
@@ -920,52 +959,52 @@ class VectorStore:
 
 | 阶段 | 时间 | 任务 | 交付物 |
 |------|------|------|--------|
-情情感分析、事件提取、实体识别模块 | NLP处理模块、API集成 |
-| **Phase 3: 因子构建** | Week 6-7 | 构建8个另类数据因?| 因子计算模块、因子数?|
-| **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测?| 测试报告、验收文?|
+情情情情情感分析、事件提取、实体识别模块 | NLP处理模块、API集成 |
+| **Phase 3: 因子构建** | Week 6-7 | 构建 8 个另类数据因子 | 因子计算模块、因子数据 |
+| **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测试 | 测试报告、验收文档 |
 
 
 
-### 6.2 里程?
-| 里程?| 时间 | 验收标准 |
+### 6.2 里程碑
+| 里程碑 | 时间 | 验收标准 |
 |--------|------|---------|
-情感分析准确?80%，事件提取完?|
-| **M4: 项目验收** | Week 8 | 所有测试通过，文档完?|
+情情情情感分析准确率 ≥80%，事件提取完整率 ≥90% |
+| **M4: 项目验收** | Week 8 | 所有测试通过，文档完整性|
 
 
 
-## 七、资源分?
+## 七、资源分配
 ### 7.1 人力资源
 
-| 角色 | 职责 | 工作?|
+| 角色 | 职责 | 工作量 |
 |------|------|--------|
-| **项目负责?* | 整体协调、进度管?| 20% |
-情感分析、事件提?| 40% |
-| **因子研究?* | 因子构建、IC验证 | 40% |
-| **测试工程?* | 系统测试、质量保?| 20% |
+| **项目负责人 | 整体协调、进度管理 | 20% |
+情情情情感分析、事件提取 | 40% |
+| **因子研究员 | 因子构建、IC验证 | 40% |
+| **测试工程师 | 系统测试、质量保障 | 20% |
 
-**总工作量**: ?80人时
+****总工作量**: 180 人时
 
 
 
-### 7.2 技术资?
+### 7.2 技术资源
 | 资源类型 | 规格 | 成本 |
 |---------|------|------|
-| **计算资源** | 本地开发机??6G?| 0?|
-| **存储资源** | 本地SSD 500GB | 0?|
-| **API调用** | GLM-4-Flash | ?00??|
+| **计算资源** | 本地开发机（16GB 内存） | 0 ||
+| **存储资源** | 本地SSD 500GB | 0 ||
+| **API调用** | GLM-4-Flash | （待补充） | （待补充） |
 
-**总成?*: ?00??
+**总成本**: （待补充）
 
 
 ## 
-### 8.1 技术风?
+### 8.1 技术风险
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **API频率限制** | ?| ?| 实现请求队列、多账号轮换 |
+| **API频率限制** | 中 | 中 | 实现请求队列、多账号轮换 |
 洗、异常检查|
-| **NLP准确率不?* | ?| ?| 模型优化、人工标注验证|
-| **系统性能瓶颈** | ?| ?| 异步处理、缓存优?|
+| **NLP准确率不达标** | 中 | 中 | 模型优化、人工标注验证 |
+| **系统性能瓶颈** | 中 | 中 | 异步处理、缓存优化 |
 
 
 
@@ -973,35 +1012,34 @@ class VectorStore:
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **进度延期** | ?| ?| 预留缓冲时间、并行开?|
-| **需求变?* | ?| ?| 需求冻结、变更控?|
+| **进度延期** | 中 | 中 | 预留缓冲时间、并行开发 |
+| **需求变更** | 中 | 中 | 需求冻结、变更控制 |
 
 
 
-## 九、验收标?
+## 九、验收标准
 ### 9.1 功能验收
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| **数据采集** | 数据完整?95% | 数据质量检查|
-情感分析准确?80% | 人工标注验证 |
-| **因子计算** | 因子数量??| 功能测试 |
+| **数据采集** | 数据完整率 ≥95% | 数据质量检查|
+情情情情感分析准确率 ≥80% | 人工标注验证 |
+| **因子计算** | 因子数量（待补充）| 功能测试 |
 
 
 
 ### 9.2 性能验收
 
-| 指标 | 目标?| 测试方法 |
+| 指标 | 目标值 | 测试方法 |
 |------|--------|---------|
 | **数据采集延迟** | <5分钟 | 性能测试 |
-| **因子计算延迟** | <10?| 性能测试 |
-| **系统可用?* | >99% | 监控统计 |
+| **因子计算延迟** | <10s | 性能测试 |
+| **系统可用性** | >99% | 监控统计 |
 
 
 
-## 十、项目文?
-### 10.1 已生成文?
-制?
+## 十、项目文档
+### 10.1 已生成文档
 
 
 **蓝图版本**: v1.0  

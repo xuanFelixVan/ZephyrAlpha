@@ -1,4 +1,4 @@
----
+﻿---
 module_id: STATISTICAL_ARBITRAGE_001
 version: 1.0.0
 status: Active
@@ -83,10 +83,10 @@ layer: Layer 5 (策略执行层)
 
 ## 2. 架构设计
 
-### 2.1 系统架构?
+### 2.1 系统架构
 ```
 
-### 2.2 核心子系统设?
+### 2.2 核心子系统设计
 #### 2.2.1
 ```python
 class PairSelectionEngine:
@@ -109,10 +109,10 @@ class PairSelectionEngine:
 
 
 class CointegrationAnalyzer:
-    """协整分析?""
+    """协整分析器"""
     
     def __init__(self):
-        self.adf_critical_value = 0.05  # ADF检验临?        self.min_half_life = 5          # 最小半衰期（天?        self.max_half_life = 60         # 最大半衰期（天?        
+        self.adf_critical_value = 0.05  # ADF检验临界值 self.min_half_life = 5          # 最小半衰期（天）        self.max_half_life = 60         # 最大半衰期（天）        
     def test_cointegration(
         self, 
         series_a: pd.Series,
@@ -120,8 +120,8 @@ class CointegrationAnalyzer:
     ) -> CointegrationResult:
         """
         协整检查        
-        使用Engle-Granger两步?
-        1. 对价格序列进行线性回?        2. 对残差序列进行ADF检查        3. 计算半衰?        
+        使用 Engle-Granger 两步法：
+        1. 对价格序列进行线性回归        2. 对残差序列进行ADF检查        3. 计算半衰期        
         Returns:
             CointegrationResult: 
         """
@@ -134,7 +134,7 @@ class SpreadTradingEngine:
     """价差交易引擎"""
     
     def __init__(self):
-        self.entry_zscore = 2.0   # 开仓Z-score?        self.exit_zscore = 0.5    # 平仓Z-score?        self.stop_loss = 0.05     # 止损比例
+        self.entry_zscore = 2.0   # 开仓 Z-score self.exit_zscore = 0.5    # 平仓 Z-score self.stop_loss = 0.05     # 止损比例
         
     def generate_signal(
         self,
@@ -145,30 +145,30 @@ class SpreadTradingEngine:
         """
         生成交易信号
         
-        基于Z-score的价差交易策?
+        基于 Z-score 的价差交易策略：
         1. 计算价差: spread = price_a - hedge_ratio * price_b
         2. 计算Z-score: z = (spread - mean) / std
         3. 生成信号:
-           - z > 2: 做空价差（做空A，做多B?           - z < -2: 做多价差（做多A，做空B?           - |z| < 0.5: 平仓
+           - z > 2: 做空价差（做空A，做多B）           - z < -2: 做多价差（做多A，做空B）           - |z| < 0.5: 平仓
         
         Returns:
             TradingSignal: 
-含信号类型、Z-score、仓位比?        """
+包含信号类型、Z-score、仓位比例        """
         pass
 
 
 class SignalQualityFilter:
-    """信号质量过滤?""
+    """信号质量过滤器"""
     
     def __init__(self):
-        self.min_signal_strength = 0.5  # 最小信号强?        self.max_signals_per_day = 20   # 每日最大信号数
+        self.min_signal_strength = 0.5  # 最小信号强度        self.max_signals_per_day = 20   # 每日最大信号数
         
     def filter_signals(
         self, 
         signals: List[TradingSignal]
     ) -> List[TradingSignal]:
         """
-        过滤低质量信?        
+        过滤低质量信号        
         过滤标准:
         1. 信号强度（Z-score绝对值）
         """
@@ -181,26 +181,26 @@ class MarketNeutralPortfolioConstructor:
     """市场中性组合构建器"""
     
     def __init__(self):
-        self.industry_neutral = True   # 行业?        self.style_neutral = True      # 风格?        self.max_leverage = 2.0        # 最大杠?        
+        self.industry_neutral = True   # 行业中性        self.style_neutral = True      # 风格中性        self.max_leverage = 2.0        # 最大杠杆        
     def construct_portfolio(
         self,
         signals: List[TradingSignal],
         constraints: PortfolioConstraints
     ) -> PortfolioAllocation:
         """
-        构建市场中性组?        
+        构建市场中性组合        
         步骤:
-        1. 多空优化：优化多空头?        2. 行业中性：确保行业暴露为零
+        1. 多空优化：优化多空头寸        2. 行业中性：确保行业暴露为零
         3. 风格中性：确保风格因子暴露为零
-        4. 杠杆控制：限制总杠?        
+        4. 杠杆控制：限制总杠杆        
         Returns:
             PortfolioAllocation: 
-含多空头寸、净敞口、总敞?        """
+包含多空头寸、净敞口、总敞口        """
         pass
 
 
 class IndustryNeutralizer:
-    """行业中性化?""
+    """行业中性化器"""
     
     def neutralize(
         self, 
@@ -210,14 +210,14 @@ class IndustryNeutralizer:
         """
         行业中性化
         
-        确保组合在各行业的暴露为?
+        确保组合在各行业的暴露为 0：
 w_long_i - w_short_i = 0 (for each industry)
         """
         pass
 
 
 class StyleNeutralizer:
-    """风格中性化?""
+    """风格中性化器"""
     
     def neutralize(
         self, 
@@ -227,7 +227,7 @@ class StyleNeutralizer:
         """
         风格中性化
         
-        确保组合在各风格因子的暴露为?
+        确保组合在各风格因子的暴露为 0：
 w_i * factor_i = 0 (for each factor)
         """
         pass
@@ -236,7 +236,7 @@ w_i * factor_i = 0 (for each factor)
 #### 2.2.4 风险管理与监控子系统
 ```python
 class RiskManager:
-    """风险管理?""
+    """风险管理器"""
     
     def __init__(self):
     def apply_risk_controls(
@@ -247,13 +247,13 @@ class RiskManager:
         应用风险控制
         
         控制措施:
-        2. 总仓位限?        3. 止损机制
+        2. 总仓位限制        3. 止损机制
         4. 流动性约束        """
         pass
 
 
 class RealTimeMonitor:
-    """实时监控?""
+    """实时监控器"""
     
     def monitor_positions(
         self, 
@@ -271,19 +271,19 @@ class RealTimeMonitor:
 
 ## 3. 核心功能详细设计
 
-### 3.1 协整检验算?
+### 3.1 协整检验算法
 ```
 步骤:
-1. 线性回?   - 对价格序列进行OLS回归: y = α + βx + ε
+1. 线性回归   - 对价格序列进行OLS回归: y = α + βx + ε
    - 计算对冲比例β
 
-2. ADF检查   - 对残差序列ε进行ADF检查   - 检验残差的平稳?
+2. ADF 检查   - 对残差序列ε进行ADF检查   - 检验残差的平稳性
 3. 半衰期计划   - 计算价差的半衰期
-   - 半衰?= -ln(2) / λ
+   - 半衰期 = -ln(2) / λ
    - λ为均值回归速度参数
 
 4. 协整判断
-   - 如果ADF检验p?< 0.05
+   - 如果 ADF 检验 p < 0.05
    - 且半衰期在合理范围（5-60天）
 时间复杂度 O(T)，T 为时间序列长度  
 空间复杂度 O(T)
@@ -373,9 +373,9 @@ class StatisticalArbitrageModule:
         stock_pool: Optional[List[str]] = None
     ) -> List[CointegratedPair]:
         """
-        寻找协整股票?        
+        寻找协整股票对        
         Returns:
-            List[CointegratedPair]: 协整股票对列?        """
+            List[CointegratedPair]: 协整股票对列表        """
         pass
     
     def generate_trading_signals(
@@ -454,34 +454,38 @@ statistical_arbitrage:
 ## 7. 实施计划
 
 ### 7.1 Phase 1: 基础能力
-- Day 4-5: 协整检验算法实?- Day 6-7: 价差交易策略实现
+- Day 4-5: 协整检验算法实现- Day 6-7: 价差交易策略实现
 
-### 7.2 Phase 2: 市场中性组合构建（Week 3-4?- Day 1-3: 多空优化算法实现
+### 7.2 Phase 2: 市场中性组合构建（Week 3-4）
+- Day 1-3: 多空优化算法实现
 - Day 4-5: 行业中性化实现
 - Day 6-7: 风格中性化实现
 
-### 7.3 Phase 3: 信号生成与风险管理（Week 5-6?- Day 1-3: 信号生成模块实现
+### 7.3 Phase 3: 信号生成与风险管理（Week 5-6）
+- Day 1-3: 信号生成模块实现
 - Day 4-5: 风险控制模块实现
 - Day 6-7: 实时监控模块实现
 
-### 7.4 Phase 4: 集成与测试（Week 7-8?- Day 1-3: 系统集成
+### 7.4 Phase 4: 集成与测试（Week 7-8）
+- Day 1-3: 系统集成
 
 
 ## 8. 验收标准
 
 ### 8.1 功能验收
-- ?能够构建市场中性组?- ?能够生成统计套利信号
+- 能够构建市场中性组合
+- 能够生成统计套利信号
 
 ### 8.2 性能验收
-- ?
-- ?信号胜率 ?55%
-- ?组合夏普比率 ?1.5
-- ?最大回??10%
+- （待补充）
+- 信号胜率 ≥ 55%
+- 组合夏普比率 ≥ 1.5
+- 最大回撤 ≤ 10%
 
 ### 8.3 质量验收
-- ?代码覆盖??80%
-- ?文档完整??95%
-- ?架构合规?100%
+- 代码覆盖率 ≥ 80%
+- 文档完整率 ≥ 95%
+- 架构合规度 100%
 
 
 

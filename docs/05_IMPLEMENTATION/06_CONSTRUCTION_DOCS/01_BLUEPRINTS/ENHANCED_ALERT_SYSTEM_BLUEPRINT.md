@@ -1,4 +1,4 @@
----
+﻿---
 module_id: ENHANCED_ALERT_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -87,23 +87,23 @@ layer: Layer 5 (策略执行层)
 
 ## 一、设计背景与目标
 
-### 1.1 业务需?
+### 1.1 业务需求
 **当前痛点**:
-- ?告警渠道单一
-- ?告警噪音?- ?缺少告警聚合和抑?
+- 告警渠道单一
+- 告警噪音- 缺少告警聚合和抑制
 **业务目标**:
-- ?多渠道告警（邮件、短信、Slack、Webhook?- ?告警聚合和抑?- ?告警趋势分析
+- 多渠道告警（邮件、短信、Slack、Webhook）- 告警聚合和抑制- 告警趋势分析
 
-### 1.2 技术目?
-| 指标 | 目指标| 说明 |
+### 1.2 技术目标
+| 指标 | 目标值 | 说明 |
 |------|--------|------|
-| **告警覆盖?* | ?5% | 95%以上的问题能触发告警 |
-| **告警聚合准确?* | ?0% | 相似告警聚合准确率≥90% |
+| **告警覆盖率 | 95% | 95%以上的问题能触发告警 |
+| **告警聚合准确率 | 90% | 相似告警聚合准确率≥90% |
 | **告警响应时间** | <1分钟 | 告警响应时间<1分钟 |
 
 
 ## 三、核心模块设计
-### 3.1 告警聚合?(AlertAggregator)
+### 3.1 告警聚合（AlertAggregator）
 
 ```python
 from dataclasses import dataclass, field
@@ -139,7 +139,7 @@ class AggregatedAlert:
     message: str = ""
 
 class AlertAggregator:
-    """告警聚合?""
+    """告警聚合器"""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -156,9 +156,9 @@ config:
         # 聚合字段
         self.group_by = config.get('group_by', ['alertname', 'severity'])
         
-时间（秒?        self.group_wait = config.get('group_wait', 30)
+时间（秒）        self.group_wait = config.get('group_wait', 30)
         
-        # 聚合间隔（秒?        self.group_interval = config.get('group_interval', 300)
+        # 聚合间隔（秒）        self.group_interval = config.get('group_interval', 300)
         
         # 聚合缓存
         self.aggregation_cache: Dict[str, AggregatedAlert] = {}
@@ -176,7 +176,7 @@ config:
         Returns:
             Optional[AggregatedAlert]: 聚合告警（如果达到聚合条件）
         """
-        # 生成聚合?        aggregation_key = self._generate_aggregation_key(alert)
+        # 生成聚合键        aggregation_key = self._generate_aggregation_key(alert)
         
         # 检查是否已存在聚合
         if aggregation_key in self.aggregation_cache:
@@ -186,10 +186,12 @@ config:
             aggregated.last_occurrence = alert.starts_at
             aggregated.alerts.append(alert)
             
-            # 检查是否达到聚合条?            if self._should_send_aggregated_alert(aggregated):
+            # 检查是否达到聚合条件
+            if self._should_send_aggregated_alert(aggregated):
                 return aggregated
         else:
-            # 创建新聚?            aggregated = AggregatedAlert(
+            # 创建新聚合
+            aggregated = AggregatedAlert(
                 aggregation_id=aggregation_key,
                 alert_name=alert.alert_name,
                 severity=alert.severity,
@@ -203,7 +205,8 @@ config:
             
             self.aggregation_cache[aggregation_key] = aggregated
             
-            # 检查是否达到聚合条?            if self._should_send_aggregated_alert(aggregated):
+            # 检查是否达到聚合条件
+            if self._should_send_aggregated_alert(aggregated):
                 return aggregated
         
         return None
@@ -213,12 +216,13 @@ config:
         alert: Alert
     ) -> str:
         """
-        生成聚合?        
+        生成聚合键        
         Args:
             alert: 告警
             
         Returns:
-            str: 聚合?        """
+            str: 聚合键
+        """
         key_parts = []
         
         for field in self.group_by:
@@ -236,18 +240,18 @@ config:
         aggregated: AggregatedAlert
     ) -> bool:
         """
-        判断是否应该发送聚合告?        
+        判断是否应该发送聚合告警        
         Args:
             aggregated: 聚合告警
             
         Returns:
-            bool: 是否应该?        """
-时?        time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
+            bool: 是否应该发送        """
+        time_since_first = (datetime.now() - aggregated.first_occurrence).total_seconds()
         
         if time_since_first >= self.group_wait:
             return True
         
-        # 检查聚合间?        if aggregated.count > 1:
+        # 检查聚合间隔        if aggregated.count > 1:
             time_since_last = (datetime.now() - aggregated.last_occurrence).total_seconds()
             if time_since_last >= self.group_interval:
                 return True
@@ -255,13 +259,13 @@ config:
         return False
 ```
 
-### 3.2 告警抑制?(AlertInhibitor)
+### 3.2 告警抑制（AlertInhibitor）
 
 ```python
 from typing import Dict, List, Any
 
 class AlertInhibitor:
-    """告警抑制?""
+    """告警抑制器"""
     
     def __init__(self, config: Dict[str, Any]):
         """
@@ -342,18 +346,18 @@ config:
         return self._match_source(alert, target_match)
 ```
 
-### 3.3 多渠道通知?(MultiChannelNotifier)
+### 3.3 多渠道通知（MultiChannelNotifier）
 
 ```python
 import requests
 from typing import Dict, List, Any
 
 class MultiChannelNotifier:
-    """多渠道通知?""
+    """多渠道通知器"""
     
     def __init__(self, config: Dict[str, Any]):
         """
-        初始化多渠道通知?        
+        初始化多渠道通知器        
         Args:
 config:
 - slack: Slack
@@ -371,12 +375,12 @@ config:
         发送邮件通知
         
         Args:
-            to_addresses: 收件人列?            subject: 邮件主题
+            to_addresses: 收件人列表            subject: 邮件主题
             
         Returns:
             bool: 是否成功
         """
-        # 使用SMTP发送邮?        pass
+        # 使用 SMTP 发送邮件        pass
     
     def send_sms(
         self,
@@ -391,7 +395,7 @@ config:
         Returns:
             bool: 是否成功
         """
-        # 使用Twilio API发送短?        twilio_config = self.config.get('sms', {})
+        # 使用 Twilio API 发送短信        twilio_config = self.config.get('sms', {})
         
         try:
             from twilio.rest import Client
@@ -410,7 +414,7 @@ config:
             
             return True
         except Exception as e:
-            print(f"发送短信失? {e}")
+            print(f"发送短信失败： {e}")
             return False
     
     def send_slack(
@@ -482,7 +486,7 @@ config:
             channels: 通知渠道列表
             
         Returns:
-            Dict[str, bool]: 各渠道发送结?        """
+            Dict[str, bool]: 各渠道发送结果        """
         results = {}
         
         for channel in channels:
@@ -529,16 +533,17 @@ config:
 ## 四、实施步骤
 ### 4.1 Week 12: 实时告警系统增强实施
 
-#### Day 1-2: 告警聚合和抑?
+#### Day 1-2: 告警聚合和抑制
 **任务**:
 
 #### Day 3-4: 多渠道通知
 
 **任务**:
-1. 实现MultiChannelNotifier多渠道通知?2. 集成邮件、短信、Slack、Webhook
+1. 实现MultiChannelNotifier多渠道通知器
+2. 集成邮件、短信、Slack、Webhook
 3. 测试通知功能
 
-#### Day 5: 告警分析和优?
+#### Day 5: 告警分析和优化
 **任务**:
 1. 实现告警趋势分析
 2. 实现告警统计分析
@@ -549,10 +554,10 @@ config:
 ## 五、验收指标
 ### 5.1 功能验收
 
-| 验收?| 验收标准 | 验收方法 |
+| 验收项 | 验收标准 | 验收方法 |
 |--------|---------|---------|
-| **告警覆盖?* | ?5% | 功能测试 |
-| **告警聚合准确?* | ?0% | 功能测试 |
+| **告警覆盖率** | 95% | 功能测试 |
+| **告警聚合准确率** | 90% | 功能测试 |
 | **告警响应时间** | <1分钟 | 性能测试 |
 
 
@@ -597,7 +602,7 @@ graph LR
 - v1.0.0 (2026-04-02): 初始版本，完成实时告警系统增强设计
 
 
-**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **?*: ?正式 | **维护?*: ZephyrAlpha技术团?
+**蓝图版本**: v1.0 | **创建日期**: 2026-04-02 | **状态**: 正式 | **维护团队: ZephyrAlpha 技术团队
 
 
 ## 1. 文档治理

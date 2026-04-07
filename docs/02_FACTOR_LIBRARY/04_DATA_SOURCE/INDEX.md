@@ -30,6 +30,12 @@ parent_document: ../INDEX.md
 
 ## 📂 目录结构
 
+### 本目录文档
+
+- [README](./README.md) - 数据源层整体说明
+- [OVERVIEW](./OVERVIEW.md) - 数据源层概览
+- [INDEX](./INDEX.md) - 本文档，数据源目录索引
+
 ### 核心数据模块
 
 - [02_SCHEDULER](./02_SCHEDULER/) - 数据调度器
