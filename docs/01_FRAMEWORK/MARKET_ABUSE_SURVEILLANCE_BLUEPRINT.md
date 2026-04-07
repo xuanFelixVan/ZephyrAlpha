@@ -11,11 +11,11 @@ applicable_scope: 市场滥用监控系统架构设计
 compliance_level: 顶级专业标准
 reference_models: ["FCA Market Abuse Regulation (MAR)", "LSEG Surveillance Guide", "Citadel Market Surveillance", "Two Sigma Market Abuse Detection"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: EquiAnalytics
@@ -810,7 +810,7 @@ class TestMarketAbuseSurveillance:
 
 | 文档 | 说明 |
 |------|------|
-| [LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
+| [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | Layer 10总体架构 |
 | [COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md) | 合规监控系统 |
 | [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统 |

@@ -15,7 +15,7 @@ related_documents:
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md
   - CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: Open Quantum Safe

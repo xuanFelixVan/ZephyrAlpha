@@ -15,7 +15,7 @@ reference_models: ["MLflow", "SR 11-7", "个人开发最佳实践"]
 related_documents:
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
   - P0_MODULES_IMPLEMENTATION_PLAN.md
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
 implementation_status: 实施就绪
 ---

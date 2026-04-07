@@ -42,12 +42,6 @@ layer: "Layer 6 (组合优化层)"
 
 **模块类别**: 支持模块（P2级）
 
-**与RL_REBALANCING的关系**:
-- 本文档是**基础再平衡模块**，使用传统触发机制（定期、阈值、风险）
-- [RL_REBALANCING_SYSTEM_BLUEPRINT.md](./RL_REBALANCING_SYSTEM_BLUEPRINT.md)是**高级强化学习调仓模块**，使用PPO/SAC算法
-- **职责边界**: 本文档负责基础触发机制和交易成本优化，RL模块负责AI增强的智能决策
-- **推荐实施路径**: 先实现本文档（40h），再实施RL增强（200h）
-
 **与TRANSACTION_COST_AWARE_REBALANCING的关系**:
 - 本文档是**基础再平衡框架**，提供触发机制和决策引擎
 - [TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md](./TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md)是**高级成本感知再平衡模块**，在再平衡决策中显式考虑交易成本

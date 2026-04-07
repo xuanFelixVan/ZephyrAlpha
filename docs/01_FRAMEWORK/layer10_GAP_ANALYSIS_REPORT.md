@@ -11,7 +11,7 @@ applicable_scope: Layer 10治理与合规层完整性评估
 compliance_level: 顶级专业标准
 reference_models: ["Citadel", "Two Sigma", "Bridgewater", "Renaissance Technologies", "D.E. Shaw"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - ARCHITECTURE.md
 parent_document: ../System_Manifest.md
 implementation_status: 评估阶段
@@ -534,6 +534,6 @@ Week 9-10: 系统集成测试和优化
 ---
 
 **参考文档**:
-- [Layer 10治理与合规层索引](d:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md)
+- [Layer 10治理与合规层索引](d:\ZephyrAlpha\docs\01_FRAMEWORK\layer10_GOVERNANCE_COMPLIANCE_INDEX.md)
 - [Layer 10完整实施路线图](d:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md)
 - [系统架构文档](d:\ZephyrAlpha\docs\01_FRAMEWORK\ARCHITECTURE.md)

@@ -11,12 +11,12 @@ applicable_scope: Kill Switch紧急停止系统架构设计
 compliance_level: 顶级专业标准
 reference_models: ["Citadel Kill Switch Protocol", "Two Sigma Emergency Stop", "Bridgewater Risk Control", "D.E. Shaw Circuit Breaker"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   - CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md
   - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md
   - STOP_LOSS_MANAGEMENT_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: NautilusTrader
@@ -521,7 +521,7 @@ alerts:
 
 | 文档 | 说明 |
 |------|------|
-| [LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
+| [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
 | [CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md](./CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md) | 熔断机制系统蓝图 |
 | [RISK_LIMIT_MANAGEMENT_BLUEPRINT.md](./RISK_LIMIT_MANAGEMENT_BLUEPRINT.md) | 风险限额管理系统蓝图 |
 | [STOP_LOSS_MANAGEMENT_BLUEPRINT.md](./STOP_LOSS_MANAGEMENT_BLUEPRINT.md) | 止损管理系统蓝图 |

@@ -1,37 +1,26 @@
 ---
-module_id: TAIL_RISK_METRICS_EXTENSION_BLUEPRINT_001
+module_id: TAIL_RISK_METRICS_EXTENSION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 扩展功能、辅助模块
----
----
-
-# TAIL RISK METRICS EXTENSION BLUEPRINT
-
-> **核心职责**: Tail Risk Metrics Extension蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Tail Risk Metrics Extension蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: TAIL_RISK_METRICS_EXTENSION_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
+responsibility:
+  - 尾部风险度量
+  - CVaR/EVaR/CDaR计算
+  - 高级风险指标
 ---
-﻿# 尾部风险度量扩展蓝图
+
+# 尾部风险度量扩展蓝图
+
+> **核心职责**: 扩展尾部风险度量，支持CVaR、EVaR、CDaR等高级风险指标
+> **职责边界**: 
+> - ✅ 本文档负责：尾部风险度量、CVaR/EVaR/CDaR计算、高级风险指标
+> - ❌ 本文档不负责：尾部风险对冲策略（由TAIL_RISK_HEDGING负责）
 
 > **核心定位**: 尾部风险度量扩展蓝图的核心功能实现
 

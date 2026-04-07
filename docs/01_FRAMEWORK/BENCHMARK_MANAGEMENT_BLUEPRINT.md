@@ -13,7 +13,7 @@ reference_models: ["Bridgewater Benchmark Management", "Citadel Performance Anal
 related_documents:
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: pyfolio

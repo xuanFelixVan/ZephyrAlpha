@@ -11,11 +11,11 @@ applicable_scope: 最佳执行监控系统架构设计
 compliance_level: 顶级专业标准
 reference_models: ["FINRA Best Execution Requirements", "MiFID II Best Execution", "Citadel Execution Quality", "Two Sigma Execution Monitoring"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: NexusTrader
@@ -1008,7 +1008,7 @@ class TestBestExecutionMonitoring:
 
 | 文档 | 说明 |
 |------|------|
-| [LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
+| [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | Layer 10总体架构 |
 | [TRANSACTION_COST_ANALYSIS_BLUEPRINT.md](./TRANSACTION_COST_ANALYSIS_BLUEPRINT.md) | 交易成本分析 |
 | [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统 |

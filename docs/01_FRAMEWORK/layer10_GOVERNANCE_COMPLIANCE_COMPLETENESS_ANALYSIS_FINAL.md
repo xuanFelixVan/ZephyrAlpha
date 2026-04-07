@@ -14,7 +14,7 @@ applicable_scope: Layer 10治理与合规层完整性评估与补充
 compliance_level: 顶级专业标准
 reference_models: ["Two Sigma", "Citadel", "Bridgewater", "D.E. Shaw", "G7 Cyber Expert Group", "FCA", "SEC"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN.md
   - MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md
 parent_document: ../System_Manifest.md
@@ -23,7 +23,7 @@ responsibility_boundary: |
   **本文档职责（Layer 10完整性分析）**：
   
   **与本文档职责边界**：
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10蓝图索引
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10蓝图索引
   - BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN.md: 蓝图阶段完整补充方案
   - MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md: 缺失模块蓝图补充
 ---

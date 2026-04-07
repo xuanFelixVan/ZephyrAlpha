@@ -13,7 +13,7 @@ applicable_scope: P0高优先级模块实施
 compliance_level: 顶级专业标准
 reference_models: ["TigerBeetle", "MLflow", "FINOS CDM", "专业机构开发流程"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
   - REGULATORY_REPORTING_BLUEPRINT.md
@@ -519,7 +519,7 @@ networks:
 
 | 文档 | 说明 |
 |------|------|
-| [Layer 10治理与合规层索引](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
+| [Layer 10治理与合规层索引](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
 | [审计追踪系统蓝图](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统详细设计 |
 | [模型风险管理系统蓝图](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理详细设计 |
 | [监管报告自动化系统蓝图](./REGULATORY_REPORTING_BLUEPRINT.md) | 监管报告自动化详细设计 |

@@ -9,7 +9,7 @@ layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级分析报告
 applicable_scope: Layer 10治理与合规层完整性最终分析
 compliance_level: 顶级专业标准
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 分析完成
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
@@ -19,7 +19,7 @@ responsibility_boundary: |
   - 实施优先级排序
   
   **与本文档职责边界**：
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
   - System_Manifest.md: 系统总清单
 ---
 
@@ -344,7 +344,7 @@ responsibility_boundary: |
 
 | 文档 | 说明 |
 |------|------|
-| [LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
+| [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
 | [System_Manifest.md](../System_Manifest.md) | 系统总清单 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-8统一架构定义 |
 

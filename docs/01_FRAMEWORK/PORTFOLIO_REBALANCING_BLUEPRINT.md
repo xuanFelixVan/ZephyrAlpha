@@ -13,7 +13,7 @@ reference_models: ["Bridgewater Portfolio Rebalancing", "Citadel Smart Rebalanci
 related_documents:
   - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md
   - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: PyPortfolioOpt

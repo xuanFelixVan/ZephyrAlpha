@@ -14,7 +14,7 @@ related_documents:
   - REALTIME_RISK_MONITORING_BLUEPRINT.md
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: Riskfolio-Lib

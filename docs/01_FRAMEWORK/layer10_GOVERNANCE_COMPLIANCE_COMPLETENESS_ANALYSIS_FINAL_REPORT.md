@@ -14,7 +14,7 @@ applicable_scope: Layer 10治理与合规层完整性评估
 compliance_level: 顶级专业标准
 reference_models: ["FCA Algorithmic Trading Controls Review 2025", "FINRA Best Execution Requirements", "Citadel Governance Framework", "Two Sigma Compliance System"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   - System_Manifest.md
 parent_document: ../System_Manifest.md
@@ -23,7 +23,7 @@ responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
   
   **与本文档职责边界**：
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构
   - System_Manifest.md: 系统总清单
 ---

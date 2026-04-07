@@ -15,7 +15,7 @@ reference_models: ["FINOS CDM", "监管报告标准", "个人开发最佳实践"
 related_documents:
   - REGULATORY_REPORTING_BLUEPRINT.md
   - P0_MODULES_IMPLEMENTATION_PLAN.md
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
 implementation_status: 实施就绪
 ---
@@ -1149,7 +1149,7 @@ pause
 |------|------|
 | [监管报告自动化系统蓝图](./REGULATORY_REPORTING_BLUEPRINT.md) | 监管报告自动化详细设计 |
 | [P0模块实施计划](./P0_MODULES_IMPLEMENTATION_PLAN.md) | P0模块完整实施计划 |
-| [Layer 10治理与合规层索引](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
+| [Layer 10治理与合规层索引](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | 完整的蓝图索引 |
 
 ---
 

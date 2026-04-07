@@ -12,7 +12,7 @@ compliance_level: 顶级专业标准
 reference_models: ["Two Sigma Data Governance", "Citadel Data Validation", "Bridgewater Data Quality", "Great Expectations"]
 related_documents:
   - ARCHITECTURE.md
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段

@@ -35,8 +35,8 @@ compliance_level: 专业标准
 
 ## 📊 文档统计
 
-- **总文档数**: 92
-- **Active文档**: 92
+- **总文档数**: 90
+- **Active文档**: 90
 - **更新日期**: 2026-04-07
 
 ---
@@ -89,11 +89,10 @@ compliance_level: 专业标准
 
 ## 4. Layer 4 (机器学习层)
 
-**文档数**: 5
+**文档数**: 4
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| AI增强项目集成蓝图 | AI_012 | 1.0.0 | Active | 2026-04-07 | [链接](./AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md) |
 | AI模式识别引擎蓝图 v1.0 | AI_V_001 | 1.0.0 | Active | 2026-04-07 | [链接](./AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md) |
 | 自动化数据修复引擎蓝图 | AUTOREPAIRENGINEBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./AUTO_REPAIR_ENGINE_BLUEPRINT.md) |
 | 约束求解器蓝?v1.0 | V_014 | 1.0.0 | Active | 2026-04-07 | [链接](./CONSTRAINT_SOLVER_BLUEPRINT.md) |
@@ -138,7 +137,6 @@ compliance_level: 专业标准
 | 质量报告自动化蓝图 | QUALITYREPORTAUTOMATIONBLUE_001 | 1.0.0 | Active | 2026-04-07 | [链接](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md) |
 | 数据质量评分系统蓝图 | QUALITYSCORINGSYSTEMBLUEPRI_001 | 1.0.0 | Active | 2026-04-07 | [链接](./QUALITY_SCORING_SYSTEM_BLUEPRINT.md) |
 | 季度调仓决策系统蓝图 v1.0 | V_029 | 1.0.0 | Active | 2026-04-07 | [链接](./QUARTERLY_REBALANCE_BLUEPRINT.md) |
-| 强化学习调仓系统蓝图 v1.0 | V_033 | 1.0.0 | Active | 2026-04-07 | [链接](./RL_REBALANCING_SYSTEM_BLUEPRINT.md) |
 | 鲁棒优化蓝图 | ROBUSTOPTIMIZATIONBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./ROBUST_OPTIMIZATION_BLUEPRINT.md) |
 | 简化版多时间框架协同优化蓝图 v1.0 | V_034 | 1.0.0 | Active | 2026-04-07 | [链接](./SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md) |
 | 智能订单路由器蓝图 | SMARTORDERROUTERBLUEPRINT_001 | 1.0.0 | Active | 2026-04-07 | [链接](./SMART_ORDER_ROUTER_BLUEPRINT.md) |

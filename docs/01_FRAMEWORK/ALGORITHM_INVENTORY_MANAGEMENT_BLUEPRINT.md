@@ -11,11 +11,11 @@ applicable_scope: 算法清单管理系统架构设计
 compliance_level: 顶级专业标准
 reference_models: ["FCA Algorithmic Trading Controls Review 2025", "Citadel Algorithm Inventory", "Two Sigma Strategy Management", "D.E. Shaw Algorithm Registry"]
 related_documents:
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: NautilusTrader
@@ -832,7 +832,7 @@ class TestAlgorithmInventory:
 
 | 文档 | 说明 |
 |------|------|
-| [LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md](./LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
+| [layer10_GOVERNANCE_COMPLIANCE_INDEX.md](./layer10_GOVERNANCE_COMPLIANCE_INDEX.md) | Layer 10模块索引 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | Layer 10总体架构 |
 | [AUDIT_TRAIL_SYSTEM_BLUEPRINT.md](./AUDIT_TRAIL_SYSTEM_BLUEPRINT.md) | 审计追踪系统 |
 | [MODEL_RISK_MANAGEMENT_BLUEPRINT.md](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理 |

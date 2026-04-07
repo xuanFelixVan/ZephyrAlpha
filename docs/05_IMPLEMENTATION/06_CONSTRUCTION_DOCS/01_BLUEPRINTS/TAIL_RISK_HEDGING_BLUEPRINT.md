@@ -1,36 +1,28 @@
 ---
-module_id: TAIL_RISK_HEDGING_BLUEPRINT_001
+module_id: TAIL_RISK_HEDGING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 因子计算
----
-
-# TAIL RISK HEDGING BLUEPRINT
-
-> **核心职责**: Tail Risk Hedging蓝图设计
-> **职责边界**: 
-> - ✅ 本文档负责：Tail Risk Hedging蓝图设计相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-﻿---
-module_id: TAIL_RISK_HEDGING_BLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 数据质量 (Layer 1)
-
+owner: 实施团队
+standard_type: 专业量化机构蓝图
+applicable_scope: Layer 7 风险管理层
+compliance_level: 专业标准
 layer: "Layer 7 (风险管理层)"
+responsibility:
+  - 尾部风险对冲
+  - 期权对冲策略
+  - VIX对冲
 ---
-﻿# 概述
+
+# 尾部风险对冲蓝图
+
+> **核心职责**: 期权对冲、尾部风险保护
+> **职责边界**: 
+> - ✅ 本文档负责：尾部风险对冲策略、期权对冲、VIX对冲
+> - ❌ 本文档不负责：尾部风险度量（由TAIL_RISK_METRICS_EXTENSION负责）
+
+## 概述
 
 > **索引**: `TAIL_RISK_BLUEPRINT_001`
 > **开发时?*: 60h

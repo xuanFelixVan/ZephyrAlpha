@@ -13,13 +13,13 @@ standard_type: 专业量化机构级完整性分析报告
 applicable_scope: Layer 10治理与合规层最终差距分析
 compliance_level: 顶级专业标准
 reference_models: ["Citadel Risk Management", "Two Sigma Governance", "Bridgewater Principles", "D.E. Shaw Risk Control"]
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图阶段完整性分析
 responsibility_boundary: |
   **本文档职责（Layer 10 治理与合规层）**：
   
   **与本文档职责边界**：
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
+  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md: Layer 10模块索引
   - System_Manifest.md: 系统总索引
   - ARCHITECTURE.md: 系统架构定义
 ---

@@ -19,7 +19,7 @@ related_documents:
   - TRADE_ERROR_CORRECTION_BLUEPRINT.md
   - RISK_EVENT_TRACKING_BLUEPRINT.md
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
   - name: Jupyter Notebook
