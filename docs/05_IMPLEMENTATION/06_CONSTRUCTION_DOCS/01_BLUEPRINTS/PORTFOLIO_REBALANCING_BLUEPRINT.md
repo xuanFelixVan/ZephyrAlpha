@@ -14,7 +14,7 @@ owner: å®æ½å¢é
 standard_type: ä¸ä¸éåæºæèå¾
 applicable_scope: Layer 6 ç»åä¼åå±?
 compliance_level: ä¸ä¸æ å
-layer: Layer 5.2 (组合优化)
+layer: Layer 6 (组合优化层)
 ---
 
 # ç»ååå¹³è¡¡èå?
