@@ -17,6 +17,12 @@ layer: "Layer 6 (组合优化层)"
 ---
 
 # DYNAMIC LEVERAGE MANAGEMENT BLUEPRINT
+## 核心定位
+
+构建动态杠杆管理的设计与实现，基于风险平价和杠杆优化技术，动态调整投资组合杠杆水平，优化风险收益特征，确保资金使用效率。
+
+---
+
 
 > **核心职责**: Dynamic Leverage Management蓝图设计
 > **职责边界**: 
