@@ -177,3 +177,4 @@ related_documents:
 | 2026-04-08 | `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`、`docs/04_EXECUTION/INDEX.md`、`docs/INDEX.md` | 持续合入：Layer 10 子目录直链、执行层 2 篇、`module_designs` L0_QMT 根索引入口 |
 | 2026-04-08 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md` | 遗留路径 `docs/06_CONSTRUCTION_DOCS/`：从 canonical 建设索引挂 `01_BLUEPRINTS` 与 `A_STOCK_DATA_PROCESSING_BLUEPRINT`（相对路径 `../../06_CONSTRUCTION_DOCS/...`）；**L1：Invalid links = 0**；`STRICT_ORPHAN_FILES_LIST_REGEN_20260408.txt` 供与 `STRICT_ORPHAN_FILES_LIST_20260408.txt` 基线 diff |
 | （既有） | `docs/01_FRAMEWORK/INDEX.md`、`docs/03_TRADING_TACTICS/INDEX.md`、`docs/05_IMPLEMENTATION/INDEX.md`、`docs/07_RESEARCH/INDEX.md` | 主干域分批挂接（见各索引内「严格孤儿」小节） |
+| 2026-04-09 | `01_BLUEPRINTS/` 4 篇未入台账蓝图 | Trae GLM-5.1 自主窗口：全量对账发现 9 篇未在台账批次的蓝图，其中 4 篇补齐 §0.1 职责边界（OPENING_STRATEGY / OBJECT_STORAGE_INTEGRATION / MULTI_STRATEGY_HIERARCHICAL_SYSTEM / MULTI_PERIOD_DYNAMIC_OPTIMIZATION），5 篇已合规无需修改；**L1：Invalid links = 0**；REGEN 孤儿 532 篇 |
