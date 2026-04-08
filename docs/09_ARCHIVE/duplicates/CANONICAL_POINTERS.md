@@ -83,6 +83,8 @@ compliance_level: 专业标准
 | `duplicates/HANDOVER.md` | `docs/09_AUDIT/REPORTS/ISSUE_HANDOVER_DOCUMENT_20260407.md` | retain_trace | 交接类文档以审计报告中的 issue handover 为准 |
 | `duplicates/CANONICAL_POINTERS.md` | `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md` | keep_index | 本文件即 duplicates 池的权威 canonical 台账真源（自指）；与 INDEX 联合作为入口 |
 | `duplicates/INDEX.md` | `duplicates/CANONICAL_POINTERS.md` | keep_index | 将本目录入口收敛到台账 |
+| `06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` | `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md` | retain_trace | overlap 副本；module_id 已改为 FACTOR_GUIDE_001_OVERLAP_ARCHIVE（ADR-OC-003，2026-04-09） |
+| `09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` | `docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` | retain_trace | 原始版已被 REGEN 取代；module_id 已改为 _ORIG（ADR-OC-003，2026-04-09） |
 
 ## 3) 相关标准与入口
 
