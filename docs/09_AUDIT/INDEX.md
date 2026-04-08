@@ -3,7 +3,7 @@ module_id: 09_AUDIT_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - 09_AUDIT目录索引
@@ -14,7 +14,7 @@ module_id: 09_AUDIT_INDEX_AUDIT_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 审计系统架构?standard_type: 专业量化机构目录索引
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -90,6 +90,38 @@ implementation_status: 活跃维护
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
 | [文档治理培训手册](./TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md) | 文档治理培训手册 | ⭐⭐⭐⭐?|
+
+---
+
+## 📌 文档治理 Playbook 与报告分流（执行中）
+
+| 文档 | 说明 |
+|------|------|
+| [全库孤儿与重复/重叠治理方案（Playbook）](./STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) | 孤儿分桶、重复裁决、门禁与批次节奏（总册） |
+| [严格孤儿报告（当期）](./STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md) | 严格孤儿与 A/B/C 分桶 |
+| [严格孤儿纯路径清单（基线）](./STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt) | 每行一个路径，供批处理与对账 |
+| [蓝图阶段文档彻底清洁总案](./PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) | P0–P3 分阶段 + 三条工作流 + 退出标准 |
+| [工作交接：蓝图阶段清洁接力（STATE）](./STATE/HANDOFF_ORPHAN_GOVERNANCE_20260408.md) | **v2.0 整册**：§0 目录；**§15** Git 备份；**§16** 防幻觉；**§17** Trae×GLM-5.1 八小时方案；**§18** 重复与 Layer→蓝图导航；§11～§14 清洁/门禁/IA；终点 **第 2 阶段放行证据链** |
+| [审计门户 INDEX_AUDIT](./INDEX_AUDIT.md) | 审计快速入口与既有「严格孤儿」分流 |
+
+### REPORTS 长列表入口
+
+| 入口 | 说明 |
+|------|------|
+| [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_20260408.md) | 大量报告按分组可点 |
+| [REPORTS/INDEX](./REPORTS/INDEX.md) | 报告目录索引 |
+
+### Playbook 执行批次：根目录补充入口
+
+> 从本页主索引直达（与 `INDEX_AUDIT` 并列）；仅增加链接，不改正文。
+
+- [架构分析报告](./ARCHITECTURE_ANALYSIS_REPORT.md)
+- [大规模文件体系深度审计框架](./MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
+- [周期性审计流程](./PERIODIC_AUDIT_PROCESS.md)
+- [持续监控配置](./AUTOMATION/CONTINUOUS_MONITORING_CONFIG.md)
+- [定时审计配置](./CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [代码变更文档化指南](./GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
+- [定时任务部署指南](./GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
 
 ---
 
