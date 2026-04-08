@@ -67,12 +67,26 @@ source_locations:
 
 ### audit_state/ 主要文件
 
-- `DEEP_SYSTEM_AUDIT_REPORT_20260404_V2.md` - 深度系统审计报告
-- `COMPREHENSIVE_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260403.md` - 综合文档治理审计
-- `LAYER4_MACHINE_LEARNING_DEEP_AUDIT_REPORT_*.md` - Layer 4 ML审计报告
-- `LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_*.md` - Layer 5文档治理审计
-- `P0/P1/P2_ISSUES_REMEDIATION_REPORT*.md` - 问题修复报告
-- 以及更多...
+- [ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403](audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403.md) - 归档文档恢复报告
+- [ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404](audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404.md) - 归档文档恢复报告 V2
+- [AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT](audit_state/AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT.md) - 审计哨兵 MCP 工具验证报告
+- [AUDIT_STRATEGY_ADJUSTMENT](audit_state/AUDIT_STRATEGY_ADJUSTMENT.md) - 审计策略调整
+- [BLOCK_D1_findings](audit_state/BLOCK_D1_findings.md) - D1 区块发现
+- [BLOCK_D2_findings](audit_state/BLOCK_D2_findings.md) - D2 区块发现
+- [BLOCK_D3_findings](audit_state/BLOCK_D3_findings.md) - D3 区块发现
+- [BLOCK_D4_findings](audit_state/BLOCK_D4_findings.md) - D4 区块发现
+- [BLOCK_E1_findings](audit_state/BLOCK_E1_findings.md) - E1 区块发现
+- [BLOCK_E2_findings](audit_state/BLOCK_E2_findings.md) - E2 区块发现
+- [BLOCK_U1_findings](audit_state/BLOCK_U1_findings.md) - U1 区块发现
+- [BLOCK_U2_findings](audit_state/BLOCK_U2_findings.md) - U2 区块发现
+- [COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2](audit_state/COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2.md) - 综合深度审计报告 V2
+- [COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT](audit_state/COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT.md) - 综合系统精简审计报告
+- [CONSTRUCTION_DOCS_AUDIT_REPORT_2026_04_03](audit_state/CONSTRUCTION_DOCS_AUDIT_REPORT_2026_04_03.md) - 建设文档审计报告
+- [DEEP_AUDIT_CODE_AND_TEMP_20260403](audit_state/DEEP_AUDIT_CODE_AND_TEMP_20260403.md) - 代码与临时文件深度审计
+- [DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403](audit_state/DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403.md) - 指定目录深度审计报告
+- [DEEP_CONTENT_AUDIT_REPORT_20260403](audit_state/DEEP_CONTENT_AUDIT_REPORT_20260403.md) - 内容深度审计报告
+- [DEEP_SYSTEM_AUDIT_REPORT_20260404](audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404.md) - 深度系统审计报告
+- [DEEP_SYSTEM_AUDIT_REPORT_20260404_V2](audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404_V2.md) - 深度系统审计报告 V2
 
 ### technical_reviews/ 主要文件
 
