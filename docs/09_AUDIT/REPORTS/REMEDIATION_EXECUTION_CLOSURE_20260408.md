@@ -16,7 +16,7 @@
 | EC-4 | 重复 `module_id` 为 0 | **未完全满足** | `dedupe_module_id_frontmatter.py` 已处理首道 front matter 内重复 **166** 篇；L1 仍报 **约 130** 组重复（正文/多 `module_id` 行/占位符等，需下一轮专项或增强扫描规则） |
 | EC-5 | `audit_state` 唯一权威目录 | **已满足** | `07_OPERATIONS/audit_state` 下 **109** 个文件已迁入 `04_OPERATIONS/audit_state`；07 侧仅留 `README.md` 跳转说明；`docs/**` 内 **55** 个文件路径已替换 |
 | EC-6 | L1 回归报告存档 | **已满足** | `docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` / `.json` |
-| EC-7 | Git 分支与 tag | **已满足** | 分支 `docs/remediation-openclaw-20260408`；commits `6aa5e7ee`（主整改）、`594e3c56`（pre-commit 记录）；tags：`remediation-p0a-complete`、`remediation-p0b-complete`、`remediation-p1a-complete`、`remediation-p1b-complete`、`remediation-cycle-20260408-closed` |
+| EC-7 | Git 分支与 tag | **已满足** | 分支 `docs/remediation-openclaw-20260408`；commits `6aa5e7ee`（主整改）、`594e3c56`（pre-commit 记录）、`63785f63`（收口表更新）；tags：`remediation-p0a-complete`…`remediation-p1b-complete`、`remediation-cycle-20260408-closed` |
 
 ---
 
