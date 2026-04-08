@@ -32,7 +32,8 @@ last_updated: '2026-04-07'
 ### 1.1 评审对象
 | 项目 | 内容 |
 |
-------|------|
+|
+---
 | **模块名称** | BarraRiskModel风险模型模块 |
 | **模块ID** | BARRA_RISK_MODEL_001 |
 | **技术规格书** | BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION.md |

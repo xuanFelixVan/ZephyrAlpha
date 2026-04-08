@@ -30,7 +30,8 @@ dependencies:
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
 |
-------|------|------|------|
+|
+---
 | 差距分析V2 | ./DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md | 上层分析 | 架构缺失分析 |
 | 数据源索引 | [../INDEX.md](../INDEX.md) | 上级索引 | 数据源模块总索引 |
 | 数据安全隐私 | `../DATA_SECURITY_PRIVACY/` | 协同模块 | 数据安全保护 |

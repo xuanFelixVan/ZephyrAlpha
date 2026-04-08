@@ -60,7 +60,7 @@ responsibility:
     - **开源项目推?*?
       | 项目名称 | 一句话介绍 | GitHub地址 |
       |
----------|------------|------------|
+---|------------|------------|
       | Docker | 开源容器化平台 | `https://github.com/docker/docker-ce` |
       | Anaconda | 开源Python/R发行?| `https://github.com/ContinuumIO/anaconda-project` |
     - **最佳实?*：使用Docker Compose定义环境配置，便于版本控制和共享

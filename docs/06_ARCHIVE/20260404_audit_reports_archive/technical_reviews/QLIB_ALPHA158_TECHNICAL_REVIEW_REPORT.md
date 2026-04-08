@@ -32,7 +32,8 @@ responsibility:
 ### 1.1 评审对象
 | 项目 | 内容 |
 |
-------|------|
+|
+---
 | **模块名称** | QlibAlpha158因子模型模块 |
 | **模块ID** | QLIB_ALPHA158_001 |
 | **技术规格书** | QLIB_ALPHA158_TECHNICAL_SPECIFICATION.md |

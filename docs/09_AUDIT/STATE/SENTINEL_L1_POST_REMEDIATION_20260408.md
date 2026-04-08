@@ -1,20 +1,16 @@
----
-module_id: SENTINEL_L1_POST_REMEDIATION_20260408
----
-
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260408T033030Z
-> **Markdown 文件数**: 3131
+> **UTC 时间**: 20260408T211826Z
+> **Markdown 文件数**: 3168
 
 ## 链接统计
 
 | 指标 | 数值 |
 |------|------|
-| 扫描文件 | 3131 |
-| Markdown 内链（非 http/锚点等已排除） | 4567 |
-| 跳过（外链/锚点等） | 992 |
-| 判定有效 | 3575 |
+| 扫描文件 | 3168 |
+| Markdown 内链（非 http/锚点等已排除） | 6453 |
+| 跳过（外链/锚点等） | 987 |
+| 判定有效 | 5466 |
 | 判定无效 | 0 |
 
 ### 无效链接样本（最多 800 条）
@@ -22,9 +18,9 @@ module_id: SENTINEL_L1_POST_REMEDIATION_20260408
 
 ## module_id
 
-- 唯一 module_id 数: **2722**
+- 唯一 module_id 数: **3064**
 - 重复 id 数: **0**
-- 首道 front matter 无 `module_id` 的文件数: **398**
+- 首道 front matter 无 `module_id` 的文件数: **93**
 
 ### 重复模块（前 20 个）
 

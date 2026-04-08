@@ -32,7 +32,8 @@ responsibility:
 ### 1.1 评审对象
 | 项目 | 内容 |
 |
-------|------|
+|
+---
 | **模块名称** | TransformerModel变换器模型模?|
 | **模块ID** | TRANSFORMER_MODEL_001 |
 | **技术规格书** | TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md |

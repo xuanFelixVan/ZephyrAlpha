@@ -9,8 +9,6 @@ standard_type: 专业量化机构文档
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
 ---
----
-
 ## 💻 实现代码示例
 
 ```python

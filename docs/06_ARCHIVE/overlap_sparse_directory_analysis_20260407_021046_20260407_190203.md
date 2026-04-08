@@ -30,7 +30,7 @@ standard_type: 专业量化机构文档
 
 | 目录路径 | 文件数 | 文件列表 |
 |
-----------|--------|----------|
+----|--------|----------|
 | 00_RESOURCES | 2 | INDEX.md, README.md |
 | 00_RESOURCES\04_PLATFORM_DOCS | 2 | INDEX.md, README.md |
 | 01_FRAMEWORK\ARCHITECTURE_DECISIONS | 2 | INDEX.md, README.md |

@@ -32,7 +32,8 @@ last_updated: '2026-04-07'
 ### 1.1 шпДхобхп╣ш▒б
 | щб╣чЫо | хЖЕхо╣ |
 |
-------|------|
+|
+---
 | **цибхЭЧхРНчз░** | StrategyEngineчнЦчХех╝ХцУОцибхЭЧ |
 | **цибхЭЧID** | STRATEGY_ENGINE_001 |
 | **цКАцЬпшзДца╝ф╣ж** | STRATEGY_ENGINE_TECHNICAL_SPECIFICATION.md |

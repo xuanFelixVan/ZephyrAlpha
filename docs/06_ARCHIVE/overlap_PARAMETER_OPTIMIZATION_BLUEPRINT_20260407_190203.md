@@ -9,8 +9,6 @@ standard_type: 专业量化机构文档
 responsibility:
 - 系统优化方案设计与实施指导与实施指导
 ---
----
-
 ## 💻 实现代码示例
 
 ```python

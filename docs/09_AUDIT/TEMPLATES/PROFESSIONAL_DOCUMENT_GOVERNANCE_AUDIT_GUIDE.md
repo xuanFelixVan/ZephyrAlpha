@@ -127,7 +127,8 @@ responsibility:
 
 | 目录 | 英文名称 | 职责范围 | 文件类型 | 命名规范 |
 |
-------|----------|----------|----------|----------|
+|
+---
 | **docs/** | Documentation | 所有系统文档| .md, .yaml, .json | 英文+编号+职责 |
 | **src/** | Source Code | 所有源代码 | .py, .pyx, .so | 模块+功能 |
 | **tests/** | Tests | 所有测试代码| .py, .json, .yaml | test_+模块名|

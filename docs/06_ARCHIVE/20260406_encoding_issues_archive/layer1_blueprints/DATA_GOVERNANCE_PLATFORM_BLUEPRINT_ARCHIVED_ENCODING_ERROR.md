@@ -53,7 +53,8 @@ responsibility:
 
 | 支柱 | 核心能力 | 清风系统实现 |
 |
-------|---------|-------------|
+|
+---
 | **数据质量** | 准确性、完整性、一致性、时效性 | DATA_QUALITY_BLUEPRINT |
 | **数据安全与隐私** | 分类分级、访问控制、脱敏加密 | DATA_SECURITY_COMPLIANCE_BLUEPRINT |
 | **数据血缘与元数据** | 数据发现、血缘追踪、影响分析 | DATA_CATALOG_BLUEPRINT |
