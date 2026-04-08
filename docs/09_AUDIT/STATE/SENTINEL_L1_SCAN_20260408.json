@@ -1,28 +1,26 @@
 {
-  "scan_time_utc": "20260408T063959Z",
+  "scan_time_utc": "20260408T065023Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 3145,
   "links": {
     "stats": {
       "total_files_scanned": 3145,
-      "total_md_links": 5056,
+      "total_md_links": 5063,
       "skipped_external": 991,
-      "valid": 4065,
+      "valid": 4072,
       "invalid": 0
     },
     "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 2731,
+    "unique_module_ids": 2733,
     "duplicate_ids_count": 0,
     "duplicates": {},
     "files_without_module_id_sample": [
       "05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_DEEP_AUDIT_REPORT_20260408.md",
       "data/assessments/economic_regime/economic_regime_assessment_report.md",
       "data/assessments/smart_execution/smart_execution_assessment_report.md",
-      "docs/01_FRAMEWORK/ARCHITECTURE.md",
-      "docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md",
       "docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
       "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205005.md",
       "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205249.md",
@@ -422,7 +420,7 @@
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md"
     ],
-    "no_id_total": 403
+    "no_id_total": 401
   },
   "path_depth": {
     "deepest_30": [
