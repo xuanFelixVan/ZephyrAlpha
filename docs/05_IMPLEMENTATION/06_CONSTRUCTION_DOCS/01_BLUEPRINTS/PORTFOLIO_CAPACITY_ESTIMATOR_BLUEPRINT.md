@@ -401,7 +401,7 @@ class CapacityResult:
 | 市场冲击超预期 | 中 | 设置安全边际 |
 | 规模失控 | 低 | 设置容量上限 |
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -422,7 +422,7 @@ class CapacityResult:
 - 输出格式: Dict (total_capacity, capacity_constraints, bottleneck_asset)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 

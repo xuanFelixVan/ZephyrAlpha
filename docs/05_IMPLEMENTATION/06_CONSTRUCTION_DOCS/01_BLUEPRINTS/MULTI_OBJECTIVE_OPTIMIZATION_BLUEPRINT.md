@@ -245,7 +245,7 @@ class MultiObjectiveAPI:
 
 
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -266,7 +266,7 @@ class MultiObjectiveAPI:
 - 输出格式: Dict (weights, pareto_front, tradeoff_analysis)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 

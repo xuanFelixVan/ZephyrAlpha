@@ -256,7 +256,7 @@ class ConstraintAPI:
 
 
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -277,7 +277,7 @@ class ConstraintAPI:
 - 输出格式: List[Dict] (conflicts), EfficientFrontier对象
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 

@@ -273,7 +273,7 @@ class AttributionAPI:
 
 
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -294,7 +294,7 @@ class AttributionAPI:
 - 输出格式: Dict (allocation_effect, selection_effect, interaction_effect)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 

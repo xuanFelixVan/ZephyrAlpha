@@ -516,7 +516,7 @@ class ComparisonResult:
 | 偏好设置不当 | 中 | 提供默认设置 |
 | 决策失误 | 低 | 人工复核机制 |
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -537,7 +537,7 @@ class ComparisonResult:
 - 输出格式: Dict (scores, recommendation, analysis)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 

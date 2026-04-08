@@ -177,7 +177,7 @@ class CorrelationOutput:
 - [ ] 回测验证
 - [ ] 文档完善
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -198,7 +198,7 @@ class CorrelationOutput:
 - 输出格式: Dict (corr_matrix, tail_dependence, copula_params)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 | 标准 | 指标 |
 |------|------|

@@ -564,7 +564,7 @@ class PerformanceReportGenerator:
 - CI/CD集成配置
 - 集成测试覆盖率≥70%
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 ### API契约索引
 
@@ -585,7 +585,7 @@ class PerformanceReportGenerator:
 - 输出格式: JSON (性能报告), HTML (可视化报告)
 - 时间戳格式: ISO 8601 UTC
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 
