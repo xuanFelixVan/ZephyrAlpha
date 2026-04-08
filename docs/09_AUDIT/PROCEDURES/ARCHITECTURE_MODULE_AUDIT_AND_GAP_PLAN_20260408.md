@@ -158,6 +158,10 @@
   - `ARCHITECTURE.md`：Layer 11 节互链对照表；修复重要更新块、§4.2～§4.3、相关文档表等乱码。  
   - 登记表 G-013 关闭（TBD 随新蓝图迭代）；G-015 部分推进。  
 
+- **批次 E（Layer 11 TBD → Draft 蓝图）**  
+  - 新增 `BENCHMARK_MANAGEMENT_BLUEPRINT.md`、`ESG_INVESTMENT_SYSTEM_BLUEPRINT.md`、`IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md`（`01_BLUEPRINTS`，v0.1 Draft）。  
+  - 更新 Layer11 对照表至 **v1.1**，**22/22** 全覆盖；`generate_01_blueprints_index.py` 重跑。  
+
 - **详细行项目**：见 [`../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。
 
 ---

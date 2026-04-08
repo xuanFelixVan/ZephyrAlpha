@@ -1,6 +1,6 @@
 ---
 module_id: 09_AUDIT_STATE_ARCH_MODULE_GAP_REGISTER_20260408
-version: 1.3.0
+version: 1.4.0
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-08'
@@ -30,7 +30,7 @@ applicable_scope: 架构与模块缺口登记
 | G-010 | G2 | `module_id` 唯一 | `ARCHITECTURE.md` | Sentinel 首道 FM | 混用 ARCHITECTURE / ARCHITECTURE_001 | P1 | 统一为 `ARCHITECTURE_001` | **已修正**（随 G-002） |
 | G-011 | G5 | 因子库 ↔ 蓝图文件 | `MODULE_RESPONSIBILITY_BOUNDARIES.md` | FACTOR_BACKTEST_001 | ID 与文件未互链 | P2 | 链 ALPHA_FACTOR_FACTORY + 集成蓝图 | **已修正**（2026-04-08） |
 | G-012 | G1 | 双轨裁决 | `module_designs` vs `01_FRAMEWORK` | 权威栈 | 未写明 | P2 | 边界文档「双轨说明」 | **已修正**（2026-04-08） |
-| G-013 | G4 | Layer 11 子能力映射 | `ARCHITECTURE.md` §Layer 11 | 逐项↔蓝图 | 已建对照表；3 项 TBD | P2 | [LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md](./LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) | **已修正**（批次 D；TBD 待补蓝图） |
+| G-013 | G4 | Layer 11 子能力映射 | `ARCHITECTURE.md` §Layer 11 | 逐项↔蓝图 | 对照表 22/22；原 TBD 已用 Draft 蓝图闭合 | P2 | 见 [LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md](./LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) v1.1 | **已修正**（批次 E 清零 TBD） |
 | G-014 | G5 | 舆情 vs 策略 | `MODULE_RESPONSIBILITY_BOUNDARIES.md` | 读者理解 | 易混淆 | P2 | Layer3→5 段 + API_Contract | **已修正**（2026-04-08） |
 | G-015 | G2 | 正文乱码 | `ARCHITECTURE.md` 等 | 可读性 | 已修文首、§4.2～4.3、Layer11 导语等 | P1 | 余下 ASCII 图与旧表逐段修 | **部分完成**（批次 D 推进） |
 
