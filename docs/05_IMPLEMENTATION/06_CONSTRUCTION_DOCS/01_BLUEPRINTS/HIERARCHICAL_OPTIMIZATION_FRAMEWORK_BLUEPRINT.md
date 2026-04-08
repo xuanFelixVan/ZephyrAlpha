@@ -525,7 +525,7 @@ optimizer = HierarchicalOptimizer(
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 组合优化层负责人 |
 
-## 接口与契约
+## 接口与契约（蓝图终稿）
 
 本模块接口规范遵循 [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md) 定义的标准。
 
@@ -539,7 +539,7 @@ optimizer = HierarchicalOptimizer(
 - 格式: JSON, UTF-8编码
 - 时间戳: ISO 8601格式
 
-## 验收标准
+## 验收标准（可检查）
 
 ### 功能验收
 1. ✅ 支持三层优化架构,能够处理500+资产规模的组合优化
