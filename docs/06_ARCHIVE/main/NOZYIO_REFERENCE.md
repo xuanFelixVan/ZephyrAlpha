@@ -12,10 +12,6 @@ applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # NozyIO可视化编辑系统参?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 本文档归档旧系统3.0中的NozyIO四层可视化编辑系统架构，仅供参?
-
 ---
 
 ## 1. 系统概述

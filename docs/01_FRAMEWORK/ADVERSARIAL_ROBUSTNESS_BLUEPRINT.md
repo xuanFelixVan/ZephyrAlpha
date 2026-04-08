@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的对抗鲁棒�
   '
 layer: Layer 2 (Alpha因子层)
 owner: 首席文档架构师
----
----
-
-
-
-
 > **核心职责**: 提供adversarial robustness blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Adversarial Robustness蓝图设计相关内容
@@ -45,7 +39,6 @@ owner: 首席文档架构师
 ## 已知限制
 
 - 正文存在历史导入导致的排版断裂与孤立符号；以本节前述「接口与契约」「验收标准」为门禁，全文重排留待实现阶段前统一修复。
-
 ---
 
 

@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 开发规?(Development Standards)
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
@@ -25,7 +21,6 @@ implementation_status: 进行?
 
 > **适用**: 个人开发? 
 > **状?*: 必须遵守核心规范
-
 ---
 
 ##  文档导航

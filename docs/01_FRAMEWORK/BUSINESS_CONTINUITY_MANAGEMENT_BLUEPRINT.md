@@ -61,9 +61,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md: 网络安全事件响应（事件处理）'
 responsibility:
 - BUSINESS_CONTINUITY_MANAGEMENT蓝图设计
----
----
-
 # 业务连续性管理系统蓝图
 > **核心职责**: Business Continuity Management蓝图设计
 > **职责边界**: 
@@ -87,7 +84,6 @@ responsibility:
 ## 已知限制
 
 - 具体备份介质、恢复时间目标（RTO/RPO）需在施工文档阶段按资源约束落定；以本节门禁为准。
-
 ---
 
 ## 1. 概述

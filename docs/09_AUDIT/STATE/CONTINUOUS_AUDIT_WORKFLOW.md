@@ -10,10 +10,6 @@ responsibility:
 standard_type: 审计流程文档
 applicable_scope: 全系统持续审计
 compliance_level: 专业标准
----
----
-
-
 # 持续审计流程
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -25,7 +21,6 @@ compliance_level: 专业标准
 > **创建日期**: 2026-04-07
 > **核心定位**: 建立系统化的持续审计机制
 > **索引**: `CONTINUOUS_AUDIT_WORKFLOW_001`
-
 ---
 
 ## 📋 审计流程概览

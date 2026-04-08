@@ -9,17 +9,10 @@ responsibility:
 compliance_level: غ╕غ╕أبف
 parent_document: ../INDEX.md
 owner: 首席文档架构师
----
----
-
-
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
 > - ✅ 本文档负责：分析报告和评估结果相关内容
 > - ❌ 本文档不负责：其他模块内容
-
-
-
 ---
 
 

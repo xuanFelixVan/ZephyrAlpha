@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 文档模板设计与标准化管理与优化维护
----
----
 title: "ТюђСй│тъУихТеАТЮ?
 type: "best_practice"
 created_date: "YYYY-MM-DD"
@@ -26,7 +24,8 @@ implementation_status: УЙУАжўХТх
 owner: тъТќйУ┤ЪУ┤БС║?
 responsibility:
   - 文档模板设计与标准化管理与优化维护
-module_id: IMP_BEST_PRACTICES_TEMPL---
+module_id: IMP_BEST_PRACTICES_TEMPL
+---
 
 
 # [СИ╗жбў]ТюђСй│тъУи?

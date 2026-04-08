@@ -12,10 +12,6 @@ applicable_scope: 文档模板与规范
 compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 模块设计模板
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -27,7 +23,6 @@ implementation_status: 进行?
 > **创建日期**: 2026-04-01
 > **适用对象**: Layer 0-11 所有模块
 > **模板目的**: 确保所有模块设计的一致性和完整?
-
 ---
 
 ## 📋 模块基本信息

@@ -61,9 +61,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 数据质量治理'
 responsibility:
 - DATA_SOVEREIGNTY_COMPLIANCE蓝图设计
----
----
-
 # 数据主权合规系统蓝图
 > **核心职责**: Data Sovereignty Compliance蓝图设计
 > **职责边界**: 
@@ -75,7 +72,6 @@ responsibility:
 > **创建日期**: 2026-04-07  
 > **状态**: 活跃  
 > **对标机构**: Citadel, Two Sigma, Bridgewater, D.E. Shaw
-
 ---
 
 ## 1. 概述

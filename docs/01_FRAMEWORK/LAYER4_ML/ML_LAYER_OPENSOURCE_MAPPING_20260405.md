@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 机器学习层开源项目映射指南
 > **核心职责**: 负责ml layer opensource mapping v1 20260405的设计、实现和维护工作
 > **职责边界**: 
@@ -25,7 +21,6 @@ compliance_level: 专业标准
 > **创建日期**: 2026-04-05
 > **适用范围**: Layer 4 机器学习层
 > **目标**: 最小化自研，最大化开源复用
-
 ---
 
 ## 1. 核心原则

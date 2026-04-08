@@ -12,10 +12,6 @@ applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 信号生成系统
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -28,7 +24,6 @@ implementation_status: 进行?
 > **版本**: v1.0
 > **更新**: 2026-03-28
 > **优先?*: P0 - 核心系统
-
 ---
 
 ## 1. 概述

@@ -8,9 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 提供ai pattern recognition engine blueprint的架构设计和实施蓝图
----
----
-
 # AI PATTERN RECOGNITION ENGINE BLUEPRINT
 
 > **核心职责**: Ai Pattern Recognition Engine蓝图设计
@@ -18,7 +15,8 @@ responsibility:
 > - ✅ 本文档负责：Ai Pattern Recognition Engine蓝图设计相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-﻿---
+﻿
+---
 module_id: AI_PATTERN_RECOGNITION_ENGINE_001
 version: 1.0.0
 status: Active

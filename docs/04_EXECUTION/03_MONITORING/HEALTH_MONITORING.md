@@ -12,10 +12,6 @@ applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 系统健康监控
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -29,7 +25,6 @@ implementation_status: 进行?
 **更新**: 2026-03-29
 **Layer**: Layer 5 (监控?
 **优先?*: P2 - 可选（1?AI简化版?
-
 ---
 
 ## 1. 为什么需要健康监控

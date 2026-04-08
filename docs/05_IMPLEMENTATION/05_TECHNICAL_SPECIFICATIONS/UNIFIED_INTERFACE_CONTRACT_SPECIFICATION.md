@@ -10,10 +10,6 @@ responsibility:
 standard_type: ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ
 applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
----
----
-
-
 # ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 

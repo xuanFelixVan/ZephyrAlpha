@@ -9,8 +9,6 @@ standard_type: 专业量化机构文档
 responsibility:
 - 负责ai permissions的设计、实现和维护工作
 layer: Layer 4
----
----
 module_id: AI_PERMISSIONS_001
 version: 5.3.1
 status: Active
@@ -25,7 +23,8 @@ standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 

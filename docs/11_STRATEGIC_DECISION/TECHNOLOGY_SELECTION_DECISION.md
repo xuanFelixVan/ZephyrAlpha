@@ -17,9 +17,6 @@ related_documents:
 - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
 - 11 STRATEGIC DECISION模块文档管理与维护
----
----
-
 # Layer 11技术选型决策文档
 > **核心职责**: 技术选型决策
 > **职责边界**: 
@@ -60,7 +57,6 @@ responsibility:
 **下游模块**：
 - 开源集成蓝图
 - 各模块蓝图
-
 ---
 
 > **版本**: v1.0

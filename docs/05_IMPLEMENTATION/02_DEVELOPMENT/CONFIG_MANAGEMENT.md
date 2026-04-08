@@ -12,10 +12,6 @@ applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
 compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
----
-
-
 # ﻠﻝﺛ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 > ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮒﺎ? ﻠﻛﺕﮒﺙﻠﻝﺛ؟ﻙﮒ۷ﮔﮔﺑﮔﺍﻙﻝﮔ؛ﮔ۶ﮒ?
-
 ---
 
 ## 1. ﻟ؟ﺝﻟ؟۰ﮔ۵ﻟﺟﺍ

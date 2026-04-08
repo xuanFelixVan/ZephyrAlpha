@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # Layer 7 AI报告层深度审计报?
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 

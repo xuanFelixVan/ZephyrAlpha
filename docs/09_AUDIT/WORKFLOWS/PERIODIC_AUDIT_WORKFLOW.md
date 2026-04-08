@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构工作流
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﮔﭖﻝ۷ﺅﺙﻛﺙﮒﻝﺅﺙ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

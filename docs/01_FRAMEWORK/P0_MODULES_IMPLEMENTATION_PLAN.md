@@ -23,10 +23,6 @@ related_documents:
 - REGULATORY_REPORTING_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 实施规划阶段
----
----
-
-
 # P0模块完整实施方案
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -38,7 +34,6 @@ implementation_status: 实施规划阶段
 > **创建日期**: 2026-04-06
 > **目标**: 提供完整的、适合个人开发、AI维护、个人使用的P0模块实施方案
 > **核心原则**: 尽量使用GitHub成熟开源项目，避免自研开发
-
 ---
 
 ## 接口与契约（蓝图终稿）

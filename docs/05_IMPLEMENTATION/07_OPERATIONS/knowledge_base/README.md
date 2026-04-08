@@ -12,9 +12,6 @@ module_id: IMP_README
 created_date: 2026-04-02
 last_updated: '2026-04-07'
 status: Active
----
----
-
 # ﮔﮔﺁﻟﺁﮒ؟۰ﻝ۴ﻟﺁﮒﭦ
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 

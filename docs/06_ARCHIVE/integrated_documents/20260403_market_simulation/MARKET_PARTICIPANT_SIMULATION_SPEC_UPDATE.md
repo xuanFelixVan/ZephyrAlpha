@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # ﮒﺕﮒﭦﮒﻛﺕﻟﻟ۰ﻛﺕﭦﮔ۷۰ﮔﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟ۰۴ﮒﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -25,7 +21,6 @@ compliance_level: 专业标准
 **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03  
 **ﮔﺑﮔﺍﮒﮒ؟ﺗ**: ﮔﺍﮒ۱ﮒ۳ﻟﭖﮔﭦﻟﺛﻛﺛﮒﻛﺟﻠ۸ﻟﭖﻠﮔﭦﻟﺛﻛﺛ? 
 **ﮒﻟﮔﮔ۰?*: MARKET_PARTICIPANT_SIMULATION_SPEC.md v1.0
-
 ---
 
 ## ﻭ ﻛﺕﻙﮔﺑﮔﺍﮔ۵ﻟﺟ?

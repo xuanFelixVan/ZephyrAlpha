@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构指南
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 文档治理章节维护指南
 > **核心职责**: 审计报告和审计记录
 > **职责边界**: 
@@ -24,7 +20,6 @@ compliance_level: 专业标准
 ## 📋 概述
 
 本文档提供文档治理章节的维护指南，确保持续保持100%覆盖率。
-
 ---
 
 ## 🎯 目标

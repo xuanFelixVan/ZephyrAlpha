@@ -95,7 +95,7 @@ related_documents:
 - [x] **T0037** （META）复跑 `python scripts/strict_orphan_inbound_scan.py`，更新 REGEN 列表与报告；与基线 tag `doc-baseline-20260409`（若存在）对比记录严格孤儿数变化
 - [x] **T0038** （META）复跑 `python scripts/sentinel_l1_governance_scan.py`，确认 Invalid links = 0；将 module_id 重复数与 no_id_total 写入台账或 Playbook §10
 - [x] **T0039** （META）对 DEDUP 两簇按 `GOVERNANCE_DECISIONS_LOCKED_20260408.md` ADR-OC-003 处理（canonical、后缀、互链）
-- [ ] **T0040** （META）401 篇缺首道 module_id 按目录分批（每批 ≤50）补最小 front matter 或登记豁免（路径见本清单 D 段）
+- [x] **T0040** （META）401 篇缺首道 module_id 按目录分批（每批 ≤50）补最小 front matter 或登记豁免（路径见本清单 D 段）
 - [x] **T0041** （DEDUP）解决 `module_id: FACTOR_GUIDE_001` 重复：canonical `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`；`docs/06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` 按 ADR 改后缀并互链
 - [x] **T0042** （DEDUP）解决 `module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` 重复：`STRICT_ORPHAN_FILES_REPORT_20260408.md` 与 `STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` 择一 canonical，另一改 module_id（如 `_REGEN`）并互链
 
@@ -634,7 +634,7 @@ related_documents:
 - [x] **T0571** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_preprocessing.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0572** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_return_analysis.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0573** （ORPHAN）`docs/09_ARCHIVE/duplicates/research_management.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0574** （ORPHAN）`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0574** （ORPHAN）`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 
 ---
 

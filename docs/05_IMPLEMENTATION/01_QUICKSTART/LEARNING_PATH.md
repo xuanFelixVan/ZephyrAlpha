@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 新手学习路线?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 清风量化系统 v5.0 - 从零到跑通的完整学习路径
-
 ---
 
 ## 学习前提

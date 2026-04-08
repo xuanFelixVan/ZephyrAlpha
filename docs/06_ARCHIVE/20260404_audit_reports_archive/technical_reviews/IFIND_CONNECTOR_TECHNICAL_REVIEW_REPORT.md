@@ -12,10 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本、技术评审
----
----
-
-
 # iFind连接器技术方案评审报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -33,7 +29,8 @@ responsibility:
 
 ### 1.1 评审对象信息
 | 项目 | 内容 |
-|------|------|
+|
+------|------|
 | **模块名称** | iFind连接?|
 | **模块ID** | DATA_IFIND_001 |
 | **所属Layer** | Layer 0: 数据源层 |

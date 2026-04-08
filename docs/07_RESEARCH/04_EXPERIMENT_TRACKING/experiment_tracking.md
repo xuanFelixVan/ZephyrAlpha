@@ -12,10 +12,6 @@ applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 实验追踪系统
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -30,7 +26,6 @@ implementation_status: 进行?
 > **优先?*: P2
 > **Layer**: Layer 0 (研究支持?
 > **索引**: R.04.EXP.001
-
 ---
 
 ## 1. 概述

@@ -12,10 +12,6 @@ applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # Docker 研究环境设置
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 容器化研究环境，确保环境一致性和隔离?
-
 ---
 
 ## 1. 设计目标

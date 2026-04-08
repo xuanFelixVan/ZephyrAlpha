@@ -11,9 +11,6 @@ standard_type: 审计报告
 applicable_scope: 数据源层删除文件评估
 compliance_level: 专业标准
 parent_document: ../INDEX.md
----
----
-
 # 数据源层删除文件评估报告
 
 > **核心职责**: 分析报告和评估结果
@@ -32,7 +29,8 @@ parent_document: ../INDEX.md
 
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
-|------|------|------|------|
+|
+------|------|------|------|
 | 数据源索引 | ../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md | 审计对象 | 数据源层索引 |
 | 审计标准 | ../STANDARDS/AUDIT_STANDARDS_v5.1.md | 审计标准 | 审计质量标准 |
 

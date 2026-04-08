@@ -8,9 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
   - 系统架构蓝图设计与实施指导与实施方案
----
-
----
 module_id: AUTH_SYSTEM_001
 version: 1.0.0
 status: Active
@@ -35,7 +32,8 @@ responsibility:
 ### 1.2 核心功能
 
 | 功能 | 说明 | 优先级 |
-|------|------|--------|
+|
+------|------|--------|
 | 用户注册 | 邮箱注册 | P0 |
 | 用户登录 | JWT认证 | P0 |
 | 权限管理 | 角色权限控制 | P0 |

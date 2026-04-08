@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 机器学习层深度文档治理审计报告
 > **核心职责**: 执行Layer 4机器学习层治理合规第2轮审计，重点检查文档治理合规性
 > **职责边界**: 
@@ -26,7 +22,6 @@ compliance_level: 专业标准
 **审计标准**: 专业量化机构五大原则 + 三层审计标准
 **审计工具**: duplicate_detector.py, blueprint_validator.py, 人工审查
 **Git备份**: backup-before-deep-audit-v5-20260405
-
 ---
 
 ## 📊 执行摘要

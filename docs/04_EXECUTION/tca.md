@@ -12,10 +12,6 @@ applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 交易成本分析 (TCA)
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 交易成本分析、执行算法与性能评估
-
 ---
 
 ## 1. 交易成本组成

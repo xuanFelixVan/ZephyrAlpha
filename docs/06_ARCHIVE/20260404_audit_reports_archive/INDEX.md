@@ -121,6 +121,8 @@ source_locations:
 - [TEMP_FILE_AUDIT_REPORT](audit_state/TEMP_FILE_AUDIT_REPORT.md) - 临时文件审计报告
 - [VERIFICATION_AUDIT_CODE_AND_TEMP_20260403](audit_state/VERIFICATION_AUDIT_CODE_AND_TEMP_20260403.md) - 代码与临时验证审计
 - [VERIFICATION_AUDIT_REPORT_20260403](audit_state/VERIFICATION_AUDIT_REPORT_20260403.md) - 验证审计报告
+- [monthly_summary_20260402](audit_state/monthly_summary_20260402.md) - 月度摘要
+- [sample_audit_report](audit_state/sample_audit_report.md) - 审计报告示例
 
 ### technical_reviews/ 主要文件
 

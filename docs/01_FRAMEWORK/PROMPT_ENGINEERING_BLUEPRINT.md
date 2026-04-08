@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的提示工程�
   '
 layer: Layer 3 (策略层)
 owner: 首席文档架构师
----
----
-
-
-
-
 # 提示工程蓝图
 > **核心职责**: 提供prompt engineering blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -36,9 +30,6 @@ owner: 首席文档架构师
 
 
 > **预计工时**: 60h
-
-
-
 ---
 
 

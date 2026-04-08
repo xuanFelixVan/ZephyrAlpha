@@ -10,9 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
 - 归档文档、历史版本、技术评审
----
----
-
 # Layer 7 AI报告层增强蓝?- 技术评审报?
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -25,7 +22,6 @@ responsibility:
 **评审标准**: v5.3
 **评审?*: 审批智能?(@spec-approver)
 **评审结论**: ?**有条件批?*
-
 ---
 
 ## 一、评审基本信?

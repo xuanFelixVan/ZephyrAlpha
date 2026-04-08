@@ -11,10 +11,6 @@ applicable_scope: 数据源层文档命名
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已完成
----
----
-
-
 # 数据源层文档命名规范
 
 > **核心职责**: 数据源层文档命名规范的定义和实现
@@ -39,7 +35,6 @@ implementation_status: 已完成
 > **版本**: v1.0.0
 > **创建日期**: 2026-04-05
 > **适用范围**: docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/
-
 ---
 
 ## 1. 命名原则

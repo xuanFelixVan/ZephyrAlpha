@@ -23,11 +23,6 @@ related_documents:
 - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 - TECH_STACK.md
 - OPEN_SOURCE_MODULE_SOLUTION.md
----
----
-
-
-
 ## 文档职责说明
 
 **本文档职责**: 开源项目集成方案蓝图
@@ -49,7 +44,6 @@ related_documents:
 > **实施周期**: 3
 > **核心定位**: 借力开源生加速系统建
 > **技术栈**: MLflow + Qlib + QuantHedgeFund
-
 ---
 ## 一、概
 

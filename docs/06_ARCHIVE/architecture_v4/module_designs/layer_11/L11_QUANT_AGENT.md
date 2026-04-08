@@ -16,10 +16,6 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
----
-
-
 # L11_QUANT_AGENT: ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -32,7 +28,6 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 > **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒﻠ۸ﺎﮒ۷ﮒﺎ?
 > **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
 > **ﻛﺙﮒﻝﭦ?*: P0 (ﮔﺕﮒﺟﮔ۷۰ﮒ)
-
 ---
 
 ## ﻭ ﻝ؟ﮒﺛ

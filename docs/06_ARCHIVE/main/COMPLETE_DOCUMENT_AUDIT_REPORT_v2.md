@@ -12,10 +12,6 @@ applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 清风量化系统 v5.0 完整文档审计报告
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -26,7 +22,6 @@ implementation_status: 进行?
 > **审查日期**: 2026-03-30
 > **审查范围**: docs/, src/, tests/, config/, scripts/, data/
 > **审查深度**: 全面审查（交叉验证）
-
 ---
 
 ## 一、审查总览

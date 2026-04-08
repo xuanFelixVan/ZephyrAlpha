@@ -31,10 +31,6 @@ responsibility_boundary: '本文档负责审计日志查看器设计，包括：
   '
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
----
----
-
-
 # 审计日志查看器蓝图
 > **核心职责**: Audit Log Viewer蓝图设计
 > **职责边界**: 
@@ -58,7 +54,6 @@ implementation_status: 蓝图设计完成
 ## 已知限制
 
 - 文中界面与图表仅为蓝图级示意；实现细节在施工文档阶段再落定。
-
 ---
 
 ## 📋 执行摘要

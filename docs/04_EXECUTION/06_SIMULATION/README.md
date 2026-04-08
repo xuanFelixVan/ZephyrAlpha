@@ -12,10 +12,6 @@ applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 模拟交易系统
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > Layer 5: 交易执行 - 模拟环境、订单模拟、持仓管理、成交回?
-
 ---
 
 ## 1. 系统架构

@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的多任务学�
   '
 layer: Layer 2 (Alpha因子层)
 owner: 首席文档架构师
----
----
-
-
-
-
 > **核心职责**: 提供multi task learning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Multi Task Learning蓝图设计相关内容
@@ -33,9 +27,6 @@ owner: 首席文档架构师
 )
 
 > **预计工时**: 50h
-
-
-
 ---
 
 

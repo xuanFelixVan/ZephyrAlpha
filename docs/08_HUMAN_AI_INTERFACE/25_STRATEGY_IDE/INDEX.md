@@ -8,7 +8,8 @@ last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
   - STRATEGY_IDE模块目录导航与文档索引管理
----------|------|------|------|
+
+---|------|------|------|
 | STRATEGY_IDE_BLUEPRINT.md | 蓝图 | 活跃 | 集成开发环境，支持策略代码编写、调试、回测和部署 |
 
 responsibility:

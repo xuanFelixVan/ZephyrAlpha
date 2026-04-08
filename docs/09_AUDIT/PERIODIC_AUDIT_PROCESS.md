@@ -13,9 +13,6 @@ applicable_scope: 全系统文档治理
 compliance_level: 顶级专业标准
 parent_document: ../09_AUDIT/INDEX.md
 implementation_status: 活跃维护
----
----
-
 # 文档治理定期审计流程
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -26,8 +23,7 @@ implementation_status: 活跃维护
 > **版本**: v1.0  
 > **创建日期**: 2026-04-07  
 > **维护者**: 系统架构师  
-> **审计周期**: 每周/每月/每季度  
-
+> **审计周期**: 每周/每月/每季度
 ---
 
 ## 📋 流程概述

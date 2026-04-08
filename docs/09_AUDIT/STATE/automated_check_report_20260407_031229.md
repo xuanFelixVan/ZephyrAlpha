@@ -11,8 +11,6 @@ standard_type: 自动化检查报告
 applicable_scope: 全系统文档治理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
----
----
 # 自动化检查报告
 
 > **核心职责**: 文档内容说明
@@ -27,7 +25,6 @@ parent_document: ../INDEX.md
 **检查范围**: 全系统文档  
 **检查方法**: 自动化扫描  
 **检查结论**: 总体合规率 97.4%
-
 ---
 
 ## 📈 合规率统计

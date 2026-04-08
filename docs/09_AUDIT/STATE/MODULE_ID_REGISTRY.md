@@ -10,9 +10,6 @@ applicable_scope: 全系统module_id管理
 compliance_level: 专业标准
 responsibility:
 - 审计体系设计与质量监控与实施指导
----
----
-
 # Module ID 注册表
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +21,6 @@ responsibility:
 > **创建日期**: 2026-04-06
 > **核心定位**: 全系统module_id唯一性管理和查询
 > **索引**: `MODULE_ID_REGISTRY_001`
-
 ---
 
 ## 📋 注册表概览

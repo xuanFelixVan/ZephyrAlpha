@@ -10,10 +10,6 @@ responsibility:
 standard_type: API接口文档
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准
----
----
-
-
 # Layer 7 AI报告层 - 统一API接口文档
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 

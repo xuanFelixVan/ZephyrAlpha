@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 交易策略设计与实施管理与优化维护
----
----
 module_id: TACTICS_YOUZI_OTHER_G_001
 version: 1.0.1
 status: Active
@@ -22,7 +20,8 @@ standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 # 游资量化策略?- 第七部分

@@ -12,10 +12,6 @@ applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # P0优先级问题修复完成报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -90,7 +86,8 @@ bandit -r src/modules/alert_manager.py -f json
 根据用户要求，以下问题暂缓执行：
 
 | 问题类型 | 数量 | 位置 | 处理策略 |
-|----------|------|------|----------|
+|
+----------|------|------|----------|
 | **代码质量问题** | 12?| `factor_calculator.py` | 用户按需处理 |
 | **文档格式问题** | 35+?| 多个Markdown文档 | 用户按需处理 |
 | **未索引文?* | 5?| 未添加到系统索引 | 用户按需处理 |

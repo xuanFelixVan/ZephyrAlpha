@@ -12,10 +12,6 @@ applicable_scope: 全系统标准规范
 compliance_level: 标准规范
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 用户体验设计规范
 
 ## 核心定位
@@ -30,7 +26,6 @@ implementation_status: 进行?
 
 
 > 清风量化系统 v4.0 的用户体验设计指标
-
 ---
 
 

@@ -12,9 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 07 RESEARCH模块文档管理与维护
----
----
-
 # 探索性分析工?
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
@@ -28,7 +25,6 @@ responsibility:
 **更新**: 2026-03-29
 **Layer**: Layer -1
 **索引**: 07_RESEARCH/02_EXPLORATORY_ANALYSIS
-
 ---
 
 ## 1. 统计分析工具

@@ -17,11 +17,6 @@ estimated_effort: 50h
 integrated_modules:
 - AIWF_MPM_001
 - AIWF_MVM_001
----
----
-
-
-
 ## 文档职责说明
 
 **本文档职责**: 模型性能与版本管理模块蓝图
@@ -42,7 +37,6 @@ integrated_modules:
 > **优先*: P0 (阻断
 > **预计工作*: 50小时
 > **整合模块**: AIWF_MPM_001 (模型性能监控) + AIWF_MVM_001 (模型版本管理)
-
 ---
 
 ## 一、模块概述

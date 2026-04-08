@@ -12,9 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 系统框架设计与核心架构管理与优化维护
----
----
-
 # 技术栈选择 (TECH STACK)
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -27,7 +24,6 @@ responsibility:
 > **Layer**: 通用
 > **职责**: 技术选型、替代方案对比、关键技术决?
 > **父文?*: README.md
-
 ---
 
 ## 1. 数据源选择

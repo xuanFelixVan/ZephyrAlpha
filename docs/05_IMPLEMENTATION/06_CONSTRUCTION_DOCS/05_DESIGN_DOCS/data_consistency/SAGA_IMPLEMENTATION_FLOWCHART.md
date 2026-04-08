@@ -12,10 +12,6 @@ applicable_scope: Sagaﮔ۷۰ﮒﺙﮔﭖﻝ۷ﮒﺝﻛﺕﻝﭘﮔﮔﭦ
 compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
----
-
-
 # Sagaﮔ۷۰ﮒﺙﮒ؟ﻝﺍﮔﭖﻝ۷ﮒ?
 
 ## 核心定位
@@ -39,7 +35,6 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 **ﮔﺑﮔﺍ**: 2026-04-02
 **Layer**: Layer 4 (ﮔ۶ﻟ۰ﮒﺎ?
 **ﻛﺙﮒﻝﭦ?*: P1 - ﮔﭘﮔﻝﻟ۶۲ﮔﺕﮒﺟ
-
 ---
 
 

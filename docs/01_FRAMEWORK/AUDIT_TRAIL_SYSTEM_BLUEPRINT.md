@@ -43,10 +43,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
 
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成'
----
----
-
-
 # 审计追踪系统蓝图
 > **核心职责**: Audit Trail System蓝图设计
 > **职责边界**: 
@@ -70,7 +66,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 ## 已知限制
 
 - 具体存储实现（如 TigerBeetle / EventStoreDB / SQLite-WAL）以施工文档阶段落定；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

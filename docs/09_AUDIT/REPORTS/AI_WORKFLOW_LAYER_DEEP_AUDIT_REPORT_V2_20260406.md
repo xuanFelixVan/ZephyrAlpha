@@ -10,10 +10,6 @@ responsibility:
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # AI工作流层深度审计报告
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -24,7 +20,8 @@ compliance_level: 专业标准
 ## 1. 审计概要
 
 | 项目 | 内容 |
-|------|------|
+|
+------|------|
 | **审计目标** | docs/10_AI_WORKFLOW/ 目录下所有文档 |
 | **审计范围** | 29个Markdown文档 |
 | **审计方法** | 三层审计标准 (L1-L3) |

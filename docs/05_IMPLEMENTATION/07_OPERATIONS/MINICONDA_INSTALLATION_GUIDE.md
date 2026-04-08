@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构指南
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -33,7 +29,6 @@ compliance_level: 专业标准
    Miniconda3 Windows 64-bit
    ```
    ﮔﻛﭨﭘﮒﻝﺎﭨﻛﺙﺙﺅﺙ`Miniconda3-latest-Windows-x86_64.exe`
-
 ---
 
 ### ﮔ۴ﻠ۹۳2: ﮒ؟ﻟ۲Minicondaﺅﺙ?ﮒﻠﺅﺙ?

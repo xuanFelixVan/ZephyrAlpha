@@ -17,7 +17,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|------|------|
+|
+------|------|------|
 | 数据需求清单 | [DATA_REQUIREMENTS.md](./DATA_REQUIREMENTS.md) | 上游规格 | 定义需要采集的数据规格 |
 | 数据清洗引擎 | `03_CLEANING/` | 下游处理 | 数据清洗和质量检查 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |

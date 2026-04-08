@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统审计分析与质量评估报告与改进建议
----
----
 module_id: AUDIT_INDEX_AUDIT_001
 version: 1.0.1
 status: Active
@@ -18,7 +16,8 @@ last_updated: 2026-04-01
 owner: 首席文档架构?standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 # 审计门户首页

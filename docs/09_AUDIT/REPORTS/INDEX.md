@@ -10,10 +10,6 @@ responsibility:
 standard_type: 索引文档
 applicable_scope: 报告文档管理
 compliance_level: 专业标准
----
----
-
-
 # Reports索引
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
@@ -25,7 +21,6 @@ compliance_level: 专业标准
 > **创建日期**: 2026-04-07
 > **核心定位**: 报告文档管理
 > **索引**: `INDEX_REPORTS_001`
-
 ---
 
 ## 📋 目录概览

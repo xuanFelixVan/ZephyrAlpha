@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 交易策略、战术执行
----
----
 module_id: TACTICS_ARCHIVED_MARKER_001
 version: 0.1.2
 status: Archived
@@ -26,7 +24,8 @@ implementation_status: ﮒﺓﺎﮒﺛﮔ۰?
 archive_reason: 36ﻛﺕ۹ﻝﺁﻟﻟﺟﻛﭦﮒ۳ﮔﺅﺙﮒﻛﭦﭦﮔﮔﺏﻝﭨﺑﮔ۳
 archive_date: 2026-03-28
 archive_location: 99_ARCHIVE/36_DECISION_FRAMEWORK_ARCHIVED.md
-duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛﺅﺙﻛﺟﻝﮔ۳ﮔﻛﭨﭘﻛﺛﻛﺕﭦﮒﮒﺎﻟ؟ﺍﮒﺛ?---
+duplicate_note: ﮔ؛ﮔﮔ۰۲ﮒﮒ؟ﺗﮒﺓﺎﮒ۳ﮒﭘﮒﺍﮒﺛﮔ۰۲ﻝ؟ﮒﺛﺅﺙﻛﺟﻝﮔ۳ﮔﻛﭨﭘﻛﺛﻛﺕﭦﮒﮒﺎﻟ؟ﺍﮒﺛ?
+---
 
 
 

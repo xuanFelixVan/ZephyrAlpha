@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # QMTﻝﺁﮒ۱ﻠﻝﺛ؟ﮒ؟ﮔﮔﭨﻝﭨ
 > **核心职责**: 文档内容说明
 > **职责边界**: 

@@ -41,10 +41,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库'
 responsibility:
 - COUNTERPARTY_RISK蓝图设计
----
----
-
-
 # 交易对手风险管理系统蓝图
 > **核心职责**: Counterparty Risk蓝图设计
 > **职责边界**: 
@@ -68,7 +64,6 @@ responsibility:
 ## 已知限制
 
 - 定价模型与参数口径需在施工文档阶段与风控引擎对齐；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

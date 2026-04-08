@@ -20,10 +20,6 @@ related_documents:
 - P0_MODULES_IMPLEMENTATION_PLAN.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
----
----
-
-
 # 交易对手风险系统ORE集成实施方案
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -36,7 +32,6 @@ implementation_status: 设计阶段
 > **实施周期**: 1周
 > **开源项目**: Open Source Risk Engine (ORE)
 > **目标**: 构建专业级交易对手风险管理系统，避免自研开发
-
 ---
 
 ## 📋 执行摘要

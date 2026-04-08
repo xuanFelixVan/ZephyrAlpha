@@ -46,9 +46,6 @@ responsibility_boundary: '**本文档职责（Layer 10 顶层治理）**：
   '
 responsibility:
 - 数据管理架构设计与实施规范与优化维护
----
----
-
 # 数据质量治理体系蓝图
 > **核心职责**: Data Quality Governance蓝图设计
 > **职责边界**: 
@@ -72,7 +69,6 @@ responsibility:
 ## 已知限制
 
 - 不同层的质量指标口径可能存在历史差异；以本节门禁为准，统一口径在施工文档阶段落定。
-
 ---
 
 ## 📋 执行摘要

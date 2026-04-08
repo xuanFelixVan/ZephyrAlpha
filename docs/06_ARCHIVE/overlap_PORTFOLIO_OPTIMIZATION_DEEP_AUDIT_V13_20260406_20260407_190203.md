@@ -10,9 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
 - 实施指南、部署文档、审计状态追踪
----
----
-
 # 组合优化层深度审计报告 V13
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -25,7 +22,6 @@ responsibility:
 **审计范围**: 组合优化层（Layer 6）所有文档
 **审计标准**: 专业量化机构五大原则 + 三层审计标准 v5.1
 **审计员**: Audit Sentinel
-
 ---
 
 ## 1. 审计概要

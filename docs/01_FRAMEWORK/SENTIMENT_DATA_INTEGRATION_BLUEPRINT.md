@@ -15,9 +15,6 @@ reference_models:
 - Wind
 responsibility:
 - 数据管理架构设计与实施规范与优化维护
----
----
-
 # 舆情数据源集成蓝图
 > **核心职责**: Sentiment Data Integration蓝图设计
 > **职责边界**: 
@@ -29,7 +26,6 @@ responsibility:
 > **创建日期**: 2026-04-07  
 > **优先级**: P0级核心模块  
 > **实施周期**: 2周
-
 ---
 
 ## 一、模块概述

@@ -61,9 +61,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md: 业务连续性管理（灾难恢复）'
 responsibility:
 - CYBERSECURITY_INCIDENT_RESPONSE蓝图设计
----
----
-
 # 网络安全事件响应系统蓝图
 > **核心职责**: Cybersecurity Incident Response蓝图设计
 > **职责边界**: 
@@ -87,7 +84,6 @@ responsibility:
 ## 已知限制
 
 - 与具体 SIEM/告警平台的集成细节需在施工文档阶段落定；以本节门禁为准。
-
 ---
 
 ## 1. 概述

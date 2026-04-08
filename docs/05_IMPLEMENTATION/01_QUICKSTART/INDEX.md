@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 目录导航与文档索引管理与优化维护
----
----
 module_id: 05_IMPLEMENTATION_01_QUICKSTART_INDEX_QUICKSTART
 version: 1.0.0
 status: Active
@@ -20,7 +18,8 @@ responsibility:
   - 目录导航与文档索引管理与优化维护
 applicable_scope: т┐ФжђЪтЁЦжЌеуЏ№┐?compliance_level: СИЊСИџТаЄтЄє
 parent_document: ../INDEX.md
-implementation_status: ти▓тї№┐?---
+implementation_status: ти▓тї№┐?
+---
 
 # т┐ФжђЪтЁЦжЌеуЏтйЋу┤б№┐?
 > **核心职责**: 目录导航和文档索引

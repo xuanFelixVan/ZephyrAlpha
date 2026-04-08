@@ -12,10 +12,6 @@ applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 参数管理
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -30,7 +26,6 @@ implementation_status: 进行?
 > **优先?*: P1 - 核心模块
 > **Layer**: Layer 3 (策略?
 > **索引**: S.03.PRM.001
-
 ---
 
 ## 1. 概述

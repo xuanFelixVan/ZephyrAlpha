@@ -18,9 +18,6 @@ parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
 - 11 STRATEGIC DECISION模块文档管理与维护
----
----
-
 # 风险预算方法蓝图
 > **核心职责**: 风险预算方法设计
 > **职责边界**: 
@@ -38,7 +35,6 @@ responsibility:
 > **优先级**: 🟡 P1 - 重要支持模块
 > **开源方案**: Riskfolio-Lib, PyPortfolioOpt
 > **目标**: 定义风险预算计算方法，适合个人开发、AI维护、个人使用
-
 ---
 
 ## 📋 文档职责说明

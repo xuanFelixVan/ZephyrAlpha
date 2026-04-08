@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统文档管理与维护与优化维护
----
----
 module_id: DOC_ZEPHYRALPHA_API文档_001
 version: 1.0.0
 status: Active
@@ -20,7 +18,8 @@ responsibility:
   - 系统文档管理与维护与优化维护
 standard_type: 说明文档
 applicable_scope: 全系统
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
 
 
 # ZephyrAlpha API文档

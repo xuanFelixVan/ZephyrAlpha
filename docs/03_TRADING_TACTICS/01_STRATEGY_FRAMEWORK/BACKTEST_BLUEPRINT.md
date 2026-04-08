@@ -10,8 +10,7 @@ responsibility:
 layer: Layer 3 (策略层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准---
----
+compliance_level: 专业标准
 module_id: TACTICS_BACKTEST_BP_001
 version: 1.0.1
 status: Active

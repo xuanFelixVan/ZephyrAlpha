@@ -13,10 +13,6 @@ compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
 implementation_status: ﻝ،ﮒﺏﻛﺟ؟ﮒ۳
 priority: P0
----
----
-
-
 # ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔP0ﻝﭦ۶ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

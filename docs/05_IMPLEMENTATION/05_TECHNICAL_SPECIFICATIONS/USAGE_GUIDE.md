@@ -10,10 +10,6 @@ responsibility:
 standard_type: 使用指南
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准
----
----
-
-
 # Layer 7 AI报告层 - 使用示例与最佳实践
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -23,7 +19,8 @@ compliance_level: 专业标准
 **文档ID**: LAYER7_USAGE_GUIDE_001
 **版本**: v1.0.0
 **创建日期**: 2026-04-02
-**适用对象**: 开发者、量化研究员、运维人?---
+**适用对象**: 开发者、量化研究员、运维人?
+---
 
 ## 一、快速开发
 ### 1.1 环境准备

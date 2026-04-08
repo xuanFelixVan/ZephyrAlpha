@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 文档治理持续改进机制
 
 > **核心职责**: 文档内容说明
@@ -31,7 +27,8 @@ compliance_level: 专业标准
 
 **相关文档引用**:
 | 文档 | 路径 | 关系 | 说明 |
-|------|------|------|------|
+|
+------|------|------|------|
 | 审计标准v5.1 | ../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md | 审计标准 | 审计质量标准 |
 | 文档治理审计检查清单 | [../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) | 审计工具 | 审计检查清单 |
 

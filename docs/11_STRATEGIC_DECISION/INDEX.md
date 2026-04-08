@@ -12,16 +12,12 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
 - 目录导航与文档索引管理与优化维护
----
----
-
 # Layer 11: 战略决策层目录索引
 
 > **版本**: v2.0
 > **架构**: Layer 11 - 战略决策层
 > **最后更新**: 2026-04-08
 > **维护者**: 系统架构师
-
 ---
 
 ## 📋 文档职责说明

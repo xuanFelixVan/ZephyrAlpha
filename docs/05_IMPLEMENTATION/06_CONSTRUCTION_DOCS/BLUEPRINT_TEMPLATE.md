@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构模板
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 蓝图文档模板
 
 ## 核心定位
@@ -28,7 +24,6 @@ compliance_level: 专业标准
 
 
 **版本**: v1.0.0 | **更新日期**: 2026-04-07 | **状态**: Active
-
 ---
 
 ## 📋 模板说明

@@ -32,9 +32,6 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1周
 open_source_solution: Apache Kafka + Debezium + Apache Airflow
----
----
-
 # 多数据源协同管理蓝图
 > **核心职责**: Multi Data Source Coordination蓝图设计
 > **职责边界**: 
@@ -46,7 +43,6 @@ open_source_solution: Apache Kafka + Debezium + Apache Airflow
 > **创建日期**: 2026-04-07
 > **优先级**: P0 (最高优先级)
 > **目的**: 统一管理多个数据源，实现数据源间的协同和智能切换
-
 ---
 
 ## 📋 一、概述

@@ -12,10 +12,6 @@ applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # retail-strategies-k.md
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -33,7 +29,6 @@ implementation_status: 进行?
 >
 > **配套文档**?
 > -  - 量能周期
-
 ---
 
 ## 1. 欢乐海岸妖股战法 (S091)

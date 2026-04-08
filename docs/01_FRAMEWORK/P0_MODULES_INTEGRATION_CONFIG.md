@@ -23,10 +23,6 @@ related_documents:
 - REGULATORY_REPORTING_CDM_IMPLEMENTATION.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
 implementation_status: 配置就绪
----
----
-
-
 # P0模块统一集成配置文件
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -37,7 +33,6 @@ implementation_status: 配置就绪
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  
 > **目标**: 提供P0模块的统一集成配置，适合个人开发、AI维护、个人使用
-
 ---
 
 ## 接口与契约（蓝图终稿）

@@ -12,10 +12,6 @@ applicable_scope: 全系?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # L4_FEATURE_ENG: 自动化特征工程模块设?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -31,7 +27,6 @@ implementation_status: 进行?
 > **设计状?*: 🟡 设计? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: `BLUEPRINT.md`
-
 ---
 
 ## 📋 模块概述

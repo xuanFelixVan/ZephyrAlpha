@@ -18,8 +18,6 @@ parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
 - 系统框架设计与核心架构管理与优化维护
----
----
 # 风险预算框架蓝图
 > **核心职责**: 风险预算框架设计
 > **职责边界**: 
@@ -38,7 +36,6 @@ responsibility:
 > **优先级**: 🔴 P0 - 核心战略模块
 > **开源方案**: Riskfolio-Lib, PyPortfolioOpt
 > **目标**: 构建专业级风险预算框架，适合个人开发、AI维护、个人使用
-
 ---
 
 ## 📋 文档职责说明

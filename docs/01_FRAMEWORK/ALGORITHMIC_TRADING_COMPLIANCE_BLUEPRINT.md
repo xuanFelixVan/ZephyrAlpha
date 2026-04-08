@@ -61,9 +61,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准'
 responsibility:
 - ALGORITHMIC_TRADING_COMPLIANCE蓝图设计
----
----
-
 # 算法交易合规系统蓝图
 > **核心职责**: Algorithmic Trading Compliance蓝图设计
 > **职责边界**: 
@@ -87,7 +84,6 @@ responsibility:
 ## 已知限制
 
 - 合规条款与监控口径需在施工文档阶段按实际交易场景细化；以本节门禁为准。
-
 ---
 
 ## 1. 概述

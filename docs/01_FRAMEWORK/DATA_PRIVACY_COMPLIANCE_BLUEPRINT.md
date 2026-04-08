@@ -42,10 +42,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查'
 responsibility:
 - DATA_PRIVACY_COMPLIANCE蓝图设计
----
----
-
-
 # 数据隐私合规系统蓝图
 > **核心职责**: Data Privacy Compliance蓝图设计
 > **职责边界**: 
@@ -69,7 +65,6 @@ responsibility:
 ## 已知限制
 
 - 具体加密/差分隐私参数口径需在施工文档阶段与数据层实现对齐；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

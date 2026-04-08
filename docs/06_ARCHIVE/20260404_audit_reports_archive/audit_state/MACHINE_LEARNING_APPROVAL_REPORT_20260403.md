@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # Layer 4 机器学习层审批报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -23,7 +19,6 @@ compliance_level: 专业标准
 > **审批编号**: APPROVAL-L4-ML-20260403-001
 > **审批日期**: 2026-04-03
 > **审批范围**: Layer 4 机器学习层所有技术规格文?> **审批标准**: 专业量化机构五大原则 + 三层审计标准
-
 ---
 
 ## 1. 审批概要

@@ -54,9 +54,6 @@ responsibility_boundary: '**本文档职责（Layer 10 执行层）**：
   '
 responsibility:
 - 数据管理架构设计与实施规范与优化维护
----
----
-
 # 数据质量管理系统蓝图
 > **核心职责**: Data Quality Management蓝图设计
 > **职责边界**: 
@@ -80,7 +77,6 @@ responsibility:
 ## 已知限制
 
 - 规则集的命名空间与版本策略需在施工文档阶段统一；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

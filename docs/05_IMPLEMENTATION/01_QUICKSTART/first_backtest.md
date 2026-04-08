@@ -12,16 +12,11 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 ? 第一次回?(10 分钟)
 
 > **目标**: 完成你的第一次策略回? 
 > **时间**: 10 分钟  
-> **难度**: 
-
+> **难度**:
 ---
 
 ##  目标

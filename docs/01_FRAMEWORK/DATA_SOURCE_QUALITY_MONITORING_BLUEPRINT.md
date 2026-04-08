@@ -37,9 +37,6 @@ responsibility_boundary: '**本文档职责（Layer 0 数据源层）**：
   '
 responsibility:
 - 数据管理架构设计与实施规范与优化维护
----
----
-
 # 数据源质量监控蓝图
 > **核心职责**: Data Source Quality Monitoring蓝图设计
 > **职责边界**: 
@@ -51,7 +48,6 @@ responsibility:
 > **创建日期**: 2026-04-06  
 > **实施周期**: 1周  
 > **目标**: 构建专业级数据源质量监控体系，对标Two Sigma、Citadel数据质量标准
-
 ---
 
 ## 📋 执行摘要

@@ -13,8 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的AutoML流水�
   '
 layer: Layer 4 (机器学习层)
 owner: 首席文档架构师
----
----
 > **核心职责**: 提供automl pipeline blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Automl Pipeline蓝图设计相关内容
@@ -41,7 +39,6 @@ owner: 首席文档架构师
 ## 已知限制
 
 - 正文存在历史导入导致的占位与排版断裂；以本节门禁为准，结构清理留待专项批次统一修复。
-
 ---
 
 

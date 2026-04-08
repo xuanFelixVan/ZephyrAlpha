@@ -10,11 +10,6 @@ responsibility:
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
-
 # AI因子管家 (Alpha Factor Agent)
 > **核心职责**: AI因子代理设计和实现，涉及因子管家
 > **职责边界**: 
@@ -27,7 +22,6 @@ compliance_level: 专业标准
 > **Layer**: Layer 2 (因子? + AI增强
 > **定位**: 全自动因子管理（自动发现/自动淘汰/自动报告?
 > **索引**: F.05.MON.002
-
 ---
 
 ## 1. 概述

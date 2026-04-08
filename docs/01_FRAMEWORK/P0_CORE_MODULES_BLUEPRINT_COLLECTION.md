@@ -22,9 +22,6 @@ parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
-
 # P0级核心模块蓝图汇总
 > **核心职责**: P0 Core Modules Blueprint Collection.Md蓝图设计
 > **职责边界**: 
@@ -36,7 +33,6 @@ responsibility:
 > **创建日期**: 2026-04-06  
 > **实施周期**: 3个月  
 > **目标**: 为所有P0级核心缺失模块提供完整蓝图,对标专业量化机构标准
-
 ---
 
 ## 接口与契约（蓝图终稿）

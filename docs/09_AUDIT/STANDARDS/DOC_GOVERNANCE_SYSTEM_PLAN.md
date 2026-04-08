@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构标准
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # ТќЄТАБТ▓╗уљєСйЊу│╗тїтќёУАтѕњ
 > **核心职责**: 标准规范制定
 > **职责边界**: 

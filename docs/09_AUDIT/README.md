@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 审计体系设计与质量监控与实施指导
----
----
 module_id: AUDIT_README_001
 version: 1.0.0
 status: Active
@@ -18,7 +16,8 @@ last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟۰ﻟ؟۰ﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﻟﺑ۷ﻠﻝﮔ?compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+---
 
 
 # ﮒ؟۰ﻟ؟۰ﻛﺛﻝﺏﭨﻝ؟ﮒﺛ

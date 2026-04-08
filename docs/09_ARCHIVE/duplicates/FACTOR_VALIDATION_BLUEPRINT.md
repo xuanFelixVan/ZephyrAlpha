@@ -15,7 +15,8 @@ status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
-------|------|------|
+|
+------|------|
 | **Factor Blueprint** | 全系统架构设计 | **核心模块** |
 
 ### 11.3 版本管理

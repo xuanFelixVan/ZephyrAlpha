@@ -32,9 +32,6 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 2周
 open_source_solution: AutoGluon + MLflow + Optuna
----
----
-
 # AutoML自动化机器学习蓝图
 > **核心职责**: 提供automl automation blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -58,7 +55,6 @@ open_source_solution: AutoGluon + MLflow + Optuna
 ## 已知限制
 
 - 具体 AutoML 引擎与指标口径需在施工文档阶段落定；以本节门禁为准。
-
 ---
 
 ## 📋 一、概述

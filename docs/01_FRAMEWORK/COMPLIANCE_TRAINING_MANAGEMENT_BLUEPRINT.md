@@ -58,9 +58,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控'
 responsibility:
 - COMPLIANCE_TRAINING_MANAGEMENT蓝图设计
----
----
-
 # 合规培训管理系统蓝图
 > **核心职责**: Compliance Training Management蓝图设计
 > **职责边界**: 
@@ -84,7 +81,6 @@ responsibility:
 ## 已知限制
 
 - 课程内容颗粒度与频率需在施工文档阶段结合资源约束落定；以本节门禁为准。
-
 ---
 
 ## 1. 概述

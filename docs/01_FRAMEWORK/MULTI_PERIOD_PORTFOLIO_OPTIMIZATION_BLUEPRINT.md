@@ -32,9 +32,6 @@ implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 2周
 open_source_solution: CVXPY + PyPortfolioOpt + Riskfolio-Lib
----
----
-
 # 多周期组合优化蓝图
 > **核心职责**: Multi Period Portfolio Optimization蓝图设计
 > **职责边界**: 
@@ -46,7 +43,6 @@ open_source_solution: CVXPY + PyPortfolioOpt + Riskfolio-Lib
 > **创建日期**: 2026-04-07
 > **优先级**: P0 (最高优先级)
 > **目的**: 支持多时间周期的组合优化
-
 ---
 
 ## 📋 一、概述

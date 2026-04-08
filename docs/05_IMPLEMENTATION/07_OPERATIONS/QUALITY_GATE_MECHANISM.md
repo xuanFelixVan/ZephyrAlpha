@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统实施与部署管理与优化维护
----
----
 standard_type: цКАцЬпцЦЗ?
 applicable_scope: ч│╗ч╗ЯхоЮцЦ╜
 compliance_level: хИЭхзЛцаЗхЗЖ
@@ -21,7 +19,8 @@ responsibility:
 version: 1.0.0
 module_id: IMP_QUALITY_GATE_MECHANI
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
 
 # ш┤ищЗПщЧичжБцЬ║хИ╢ v1.0
 > **核心职责**: 文档内容说明

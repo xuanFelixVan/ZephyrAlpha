@@ -42,10 +42,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）'
 responsibility:
 - BENCHMARK_MANAGEMENT蓝图设计
----
----
-
-
 # 基准管理系统蓝图（蓝图阶段）
 > **核心职责**: Benchmark Management蓝图设计
 > **职责边界**: 
@@ -58,7 +54,6 @@ responsibility:
 > **阶段**: 蓝图设计阶段
 > **实施周期**: 2天
 > **开源项目**: pyfolio + empyrical
-
 ---
 
 ## 📋 执行摘要

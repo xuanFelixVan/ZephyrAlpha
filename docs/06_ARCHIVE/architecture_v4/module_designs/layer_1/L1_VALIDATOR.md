@@ -12,9 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本
----
----
-
 # L1_VALIDATOR 数据校验器模块设?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -28,7 +25,6 @@ responsibility:
 > **设计状?*: 🔵 设计进行?
 > **优先?*: P0 (核心)
 > **预计开发时?*: 8小时
-
 ---
 
 ## 📋 模块基本信息

@@ -9,8 +9,6 @@ standard_type: 专业量化机构文档
 responsibility:
 - 归档文档、历史版本、审计状态追踪
 - 审计系统
----
----
 module_id: MONTHLYSUMMARY20260402_001
 version: 1.0.0
 status: Active
@@ -22,7 +20,8 @@ responsibility:
   - 审计系统
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
-compliance_level: 专业标准---
+compliance_level: 专业标准
+---
 
 
 # 月度文档审计摘要报告

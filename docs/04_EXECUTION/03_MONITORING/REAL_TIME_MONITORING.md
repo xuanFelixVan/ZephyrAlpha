@@ -12,10 +12,6 @@ applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 实时监控系统
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 策略运行状态、性能追踪、异常检查
-
 ---
 
 ## 1. 实时监控架构

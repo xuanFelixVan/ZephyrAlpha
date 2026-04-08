@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 操作指南编写与使用说明与系统维护管理
----
----
 standard_type: ﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
 compliance_level: ﮒﮒ۶ﮔﮒ
@@ -21,7 +19,8 @@ responsibility:
 version: 1.0.0
 module_id: IMP_SPEC_APPROVER_TOOL_G
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
 
 # ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?v1.0
 > **核心职责**: 文档内容说明

@@ -12,10 +12,6 @@ applicable_scope: 文档模板与规范
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 策略模板?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 标准化策略开发模板，覆盖趋势跟踪、均值回归、市场中性、事件驱动等策略类型
-
 ---
 
 ## 1. 策略分类体系

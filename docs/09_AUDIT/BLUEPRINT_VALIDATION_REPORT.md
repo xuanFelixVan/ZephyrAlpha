@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
 module_id: AUDIT_BLUEPRINT_VALIDATION_001
 version: 5.3.1
 status: Active
@@ -20,7 +18,8 @@ responsibility:
   - 系统架构蓝图设计与实施指导与实施方案
 applicable_scope: 全系统架构设?compliance_level: 架构标准
 parent_document: ../INDEX.md
-implementation_status: 设计阶段---
+implementation_status: 设计阶段
+---
 
 
 # 蓝图质量验证报告

@@ -39,10 +39,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成'
 responsibility:
 - ALGORITHM_PERFORMANCE_BENCHMARK蓝图设计
----
----
-
-
 # 算法性能基准库蓝图
 > **核心职责**: Algorithm Performance Benchmark蓝图设计
 > **职责边界**: 
@@ -66,7 +62,6 @@ responsibility:
 ## 已知限制
 
 - 文中部分指标口径可能依赖后续统一的绩效计算标准；以本节门禁为准，口径统一在施工文档阶段落定。
-
 ---
 
 ## 📋 执行摘要

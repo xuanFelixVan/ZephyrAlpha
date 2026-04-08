@@ -10,8 +10,6 @@ responsibility:
 - 交易策略、战术执行
 - 交易执行
 - 系统架构
----
----
 module_id: TACTICS_ARCH_TECH_INDICATORS_001
 version: 1.0.1
 status: Active
@@ -26,7 +24,8 @@ standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 # 技术指标参数体系

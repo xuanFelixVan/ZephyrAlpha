@@ -12,10 +12,6 @@ applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 研究报告自动生成
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -30,7 +26,6 @@ implementation_status: 进行?
 > **优先?*: P2
 > **Layer**: Layer -1 (研究?
 > **索引**: R.02.RPT.001
-
 ---
 
 ## 1. 概述

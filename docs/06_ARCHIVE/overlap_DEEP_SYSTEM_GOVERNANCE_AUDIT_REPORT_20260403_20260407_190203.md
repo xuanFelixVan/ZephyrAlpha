@@ -9,15 +9,10 @@ responsibility:
 parent_document: ../INDEX.md
 implementation_status: ف╖▓ف?
 owner: 文档管理团队
----
----
-
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
-
-
 ---
 
 

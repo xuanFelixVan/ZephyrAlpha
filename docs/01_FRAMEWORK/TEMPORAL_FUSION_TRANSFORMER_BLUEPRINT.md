@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的时间融合Tr
   '
 layer: Layer 2 (Alpha因子层)
 owner: 首席文档架构师
----
----
-
-
-
-
 # Temporal Fusion Transformer 蓝图
 > **核心职责**: Temporal Fusion Transformer蓝图设计
 > **职责边界**: 
@@ -36,9 +30,6 @@ owner: 首席文档架构师
 )
 
 > **预计工时**: 50h
-
-
-
 ---
 
 

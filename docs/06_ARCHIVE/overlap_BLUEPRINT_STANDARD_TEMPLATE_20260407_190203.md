@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 蓝图文件标准模板
 > **核心职责**: Blueprint Standard Template.Md蓝图设计
 > **职责边界**: 
@@ -22,7 +18,6 @@ compliance_level: 专业标准
 
 
 > 本模板定义了专业量化机构蓝图文件的标准格式，确保文档治理的一致性和可维护性。
-
 ---
 
 ## 标准YAML头部

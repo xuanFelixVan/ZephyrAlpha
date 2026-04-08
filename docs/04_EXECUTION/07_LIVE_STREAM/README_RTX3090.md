@@ -12,9 +12,6 @@ module_id: EXE_README_RTX3090
 created_date: 2026-04-02
 last_updated: '2026-04-07'
 status: Active
----
----
-
 # ﮒ۳ﻛﺕﭨﮔﻝﺑﮔﻠﻟﮒﮔﻝﺏﭨﻝﭨ?- RTX 3090 ﻠﻝﺛ؟
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -23,7 +20,6 @@ status: Active
 
 
 > **ﮒﺟ،ﻠﮒﺙﮒ۶ﮔﮒ?* | RTX 3090 24GB + 64GB RAM + i7-12700KF
-
 ---
 
 ## ﻭﺁ ﮔ۷ﻝﻠﻝﺛ؟

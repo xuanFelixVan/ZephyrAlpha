@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统实施与部署管理与优化维护
----
----
 module_id: ARCHIVE_NOZYIO_UX_DOC_001
 version: 0.1.1
 status: Active
@@ -22,7 +20,8 @@ standard_type: 专业量化机构文档
 applicable_scope: 全系?
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 

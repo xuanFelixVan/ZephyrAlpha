@@ -12,10 +12,6 @@ applicable_scope: 策略工厂模块实施
 compliance_level: 专业标准
 parent_document: ../README.md
 implementation_status: 进行?
----
----
-
-
 # 策略工厂实施指南
 
 ## 核心定位
@@ -34,7 +30,6 @@ implementation_status: 进行?
 > **职责**: 指导策略工厂模块的实施和部署
 > **实施周期**: 2周（Week 1-2?
 > **优先?*: P0
-
 ---
 
 

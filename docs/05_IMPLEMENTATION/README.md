@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 实施指南 (个人开发者版)
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
@@ -26,7 +22,6 @@ implementation_status: 进行?
 > **版本**: v5.3
 > **更新日期**: 2026-03-31
 > **适用**: 个人开发、个人维护、个人使?
-
 ---
 
 ##  实施计划

@@ -12,10 +12,6 @@ applicable_scope: 全系统架构设?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # AI辅助研究框架
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -29,7 +25,6 @@ implementation_status: 进行?
 > **最后更?*: 2026-03-28
 > **设计原则**: 简单直接，拒绝过度工程?
 > **索引**: `AI.RESEARCH.001`
-
 ---
 
 ## 一、设计原?

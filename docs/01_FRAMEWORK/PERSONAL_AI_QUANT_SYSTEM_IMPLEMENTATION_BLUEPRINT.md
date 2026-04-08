@@ -15,9 +15,6 @@ reference_models:
 - Citadel Technology
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
-
 # 个人开发+AI维护量化系统完整实施方案
 > **核心职责**: Personal Ai Quant System Implementation蓝图设计
 > **职责边界**: 
@@ -29,7 +26,6 @@ responsibility:
 > **创建日期**: 2026-04-06  
 > **实施周期**: 12个月  
 > **目标**: 构建适合个人开发+AI维护的专业级量化交易系统
-
 ---
 
 ## 📋 执行摘要

@@ -35,10 +35,6 @@ responsibility_boundary: '本文档负责全系统灾备体系设计，包括：
   机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md'
 responsibility:
 - DISASTER_RECOVERY蓝图设计
----
----
-
-
 # 灾备体系蓝图
 > **核心职责**: Disaster Recovery蓝图设计
 > **职责边界**: 
@@ -49,7 +45,6 @@ responsibility:
 > 清风量化系统灾备体系设计文档
 >
 > **定位**: 个人量化系统的简化灾备方案，未来开发预留
-
 ---
 
 ## 📌 文档定位

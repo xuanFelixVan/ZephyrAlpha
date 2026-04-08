@@ -10,9 +10,6 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
 - 系统实施与部署管理与优化维护
----
----
-
 # 模块注册中心 v1.0
 > **核心职责**: 文档内容说明
 > **职责边界**: 

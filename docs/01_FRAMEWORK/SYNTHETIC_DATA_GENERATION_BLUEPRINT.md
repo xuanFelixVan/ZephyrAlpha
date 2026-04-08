@@ -13,8 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的合成数据�
   '
 layer: Layer 4 (机器学习层)
 owner: 首席文档架构师
----
----
 # 合成数据生成蓝图
 > **核心职责**: 提供synthetic data generation blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -33,9 +31,6 @@ owner: 首席文档架构师
 JPMorgan
 
 > **预计工时**: 70h
-
-
-
 ---
 
 

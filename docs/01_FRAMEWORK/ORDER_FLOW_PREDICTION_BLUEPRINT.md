@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的订单流预�
   '
 layer: Layer 2 (Alpha因子层)
 owner: 首席文档架构师
----
----
-
-
-
-
 > **核心职责**: 提供order flow prediction blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Order Flow Prediction蓝图设计相关内容
@@ -32,9 +26,6 @@ owner: 首席文档架构师
 
 
 > **预计工时**: 100h
-
-
-
 ---
 
 

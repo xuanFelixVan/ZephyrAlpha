@@ -17,7 +17,8 @@ responsibility:
 API文档系统基于FastAPI内置的Swagger UI和ReDoc，提供完整的API文档和交互式测试功能。
 | 功能 | 说明 | 状态 |
 |
-------|------|------|
+|
+------|------|
 | Swagger UI | 交互式API文档 | ✅ |
 | ReDoc | 美观的API文档 | ✅ |
 | OpenAPI规范 | 完整的API规范 | ✅ |

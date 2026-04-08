@@ -30,9 +30,6 @@ open_source_solution:
   cost: 完全免费
 responsibility:
 - 提供model drift detection blueprint的架构设计和实施蓝图
----
----
-
 ## 文档职责说明
 
 **本文档职责**: 模型漂移检测系统蓝图
@@ -45,7 +42,6 @@ responsibility:
 > **实施周期**: 2-3周
 > **核心定位**: 实时监控模型性能变化，及时发现模型失效
 > **技术栈**: Evidently AI + Python + Streamlit
-
 ---
 
 ## 1. 概述

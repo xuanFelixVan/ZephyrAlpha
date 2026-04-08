@@ -12,9 +12,6 @@ applicable_scope: 因子研究与管理
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行中
----
----
-
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
 > **canonical_path**：`docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`  
 > **处置建议**：保留追溯（retain_trace）；如后续归档清理，可转移到 duplicates 池或合并后删除。
@@ -33,7 +30,6 @@ implementation_status: 进行中
 > **Layer**: Layer 2 (因子层)
 > **专业机构标准**: 因子生命周期管理 / 因子分层 / IC阈值体系
 > **索引**: F.02.METHOD.007
-
 ---
 
 ## 1. 概述

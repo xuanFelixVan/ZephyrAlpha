@@ -43,9 +43,6 @@ responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
   '
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
-
 # 自然语言报告生成系统蓝图
 
 > **核心职责**: 蓝图设计和架构规划
@@ -58,7 +55,6 @@ responsibility:
 > **创建日期**: 2026-04-07  
 > **实施周期**: 2周  
 > **开源项目**: LangChain + GPT-4 + ReportLab
-
 ---
 
 ## 📋 一、概述

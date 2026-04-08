@@ -26,9 +26,6 @@ responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
   '
 responsibility:
 - 交易策略框架设计与实施指导与实施指导
----
----
-
 # 多策略动态配置系统蓝图
 > **核心职责**: Multi Strategy Dynamic Allocation蓝图设计
 > **职责边界**: 
@@ -40,7 +37,6 @@ responsibility:
 > **创建日期**: 2026-04-07
 > **实施周期**: 2周
 > **开源项目**: Optimization Algorithm + AI Recommendation
-
 ---
 
 ## 📋 一、概述

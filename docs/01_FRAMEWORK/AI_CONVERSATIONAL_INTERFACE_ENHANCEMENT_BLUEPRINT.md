@@ -34,9 +34,6 @@ responsibility_boundary: '本文档负责AI对话式交互增强设计，包括�
   '
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
-
 # AI对话式交互增强蓝图
 
 > **核心职责**: Ai Conversational Interface Enhancement蓝图设计
@@ -62,7 +59,6 @@ responsibility:
 ## 已知限制
 
 - 正文存在历史导入导致的排版问题；以本节前述「接口与契约」「验收标准」为门禁，全文重排留待实现阶段前统一修复。
-
 ---
 
 ## 📋 一、概述

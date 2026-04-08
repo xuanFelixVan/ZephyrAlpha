@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 文档模板设计与标准化管理与优化维护
----
----
 title: "όκΙϊ╛ΜύιΦύσ╢όρκόζ┐"
 type: "case_study"
 created_date: "YYYY-MM-DD"
@@ -26,7 +24,8 @@ implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: ίχηόΨ╜ϋ┤θϋ┤μ?
 responsibility:
   - 文档模板设计与标准化管理与优化维护
-module_id: IMP_CASE_STUDY_TEMPLATE---
+module_id: IMP_CASE_STUDY_TEMPLATE
+---
 
 
 # [όρκίζΩίΡΞύπ░]όΛΑόεψϋψΕίχκόκΙϊ╛ΜύιΦ?

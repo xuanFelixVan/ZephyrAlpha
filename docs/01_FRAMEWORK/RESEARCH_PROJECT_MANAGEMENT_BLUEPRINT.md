@@ -15,10 +15,6 @@ reference_models:
 - Two Sigma Research
 - Citadel Research
 - Jane Street Research
----
----
-
-
 # 研究项目管理蓝图
 > **核心职责**: Research Project Management蓝图设计
 > **职责边界**: 
@@ -30,7 +26,6 @@ reference_models:
 > **创建日期**: 2026-04-07  
 > **优先级**: P0级核心模块  
 > **实施周期**: 2周
-
 ---
 
 ## 一、模块概述

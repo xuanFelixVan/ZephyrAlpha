@@ -12,9 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 规划中
 responsibility:
 - 目录导航与文档索引管理与优化维护
----
----
-
 # 战略资产配置目录索引
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
@@ -26,7 +23,6 @@ responsibility:
 > **架构**: Layer 11 - 战略决策层  
 > **最后更新**: 2026-04-04  
 > **维护者**: 系统架构师
-
 ---
 
 ## 🎯 目录职责

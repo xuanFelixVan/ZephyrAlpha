@@ -58,9 +58,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成'
 responsibility:
 - COMPLIANCE_DOCUMENT_MANAGEMENT蓝图设计
----
----
-
 # 合规文档管理系统蓝图
 > **核心职责**: Compliance Document Management蓝图设计
 > **职责边界**: 
@@ -84,7 +81,6 @@ responsibility:
 ## 已知限制
 
 - 最终存储形态（对象存储/网盘/数据库）在施工文档阶段落定；以本节门禁为准。
-
 ---
 
 ## 1. 概述

@@ -16,10 +16,6 @@ estimated_effort: 2周
 priority: P0
 responsibility:
 - 归档文档、历史版本、蓝图设计
----
----
-
-
 # ʵʱϵͳͼ
 > **核心职责**: Realtime Quality Monitor Blueprint Archived Encoding Error.Md蓝图设计
 > **职责边界**: 
@@ -48,7 +44,8 @@ responsibility:
 
 ### 1.2 Ŀ?
 | ָ | Ŀ?| ˵ |
-|------|--------|------|
+|
+------|--------|------|
 | **ظ?* | ?0% | 90%ϵʵʱ |
 | **澯ʱ?* | <30?| ⷢ?0ڸ澯 |
 | **澯׼ȷ?* | ?5% | 95%ϵĸ澯Ϊʵ |

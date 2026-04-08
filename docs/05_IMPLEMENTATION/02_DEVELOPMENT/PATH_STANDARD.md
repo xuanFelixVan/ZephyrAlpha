@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 已完整
----
----
-
-
 # 路径处理规范 (PATH_STANDARD.md)
 > **核心职责**: 标准规范制定
 > **职责边界**: 
@@ -27,7 +23,6 @@ implementation_status: 已完整
 >
 > **版本**：v1.0
 > **更新日期**?026-04-02
-
 ---
 
 ## 1. 命名规范

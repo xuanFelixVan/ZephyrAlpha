@@ -50,10 +50,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）'
 responsibility:
 - CIRCUIT_BREAKER_SYSTEM蓝图设计
----
----
-
-
 # 熔断机制系统蓝图
 > **核心职责**: Circuit Breaker System蓝图设计
 > **职责边界**: 
@@ -78,7 +74,6 @@ responsibility:
 ## 已知限制
 
 - 触发阈值与交易所规则映射需在施工文档阶段细化；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

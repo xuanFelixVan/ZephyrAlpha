@@ -15,9 +15,6 @@ tags:
 layer: Layer 4
 status: Active
 owner: 首席文档架构师
----
----
-
 # ZephyrAlpha投资哲学
 > **核心职责**: 负责investment philosophy的设计、实现和维护工作
 > **职责边界**: 

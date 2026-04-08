@@ -12,10 +12,6 @@ applicable_scope: 全系统数据存?
 compliance_level: 专业机构标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 数据库设计文?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -33,7 +29,8 @@ implementation_status: 进行?
 ### 1.1 技术选型
 
 | 维度 | 技术选型 | 选型理由 |
-|------|----------|----------|
+|
+------|----------|----------|
 | **主数据库** | PostgreSQL 15 | 1. ACID事务保证<br>2. 强大的JSON支持<br>3. 优秀的查询性能<br>4. 丰富的索引类?br>5. 分区表支?|
 | **实时缓存** | Redis 7 | 1. 高性能内存存储<br>2. Streams事件?br>3. Pub/Sub消息<br>4. 数据结构丰富 |
 | **时序数据** | ClickHouse | 1. 高压缩比<br>2. 列式存储<br>3. 时序查询优化<br>4. 海量数据支持 |

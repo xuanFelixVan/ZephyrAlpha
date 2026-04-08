@@ -30,8 +30,6 @@ responsibility_boundary: '
 
 
   机器学习层架构请参考：MACHINE_LEARNING_LAYER_BLUEPRINT.md'
----
----
 # 可信执行环境(TEE)蓝图
 > **核心职责**: Trusted Execution Environment蓝图设计
 > **职责边界**: 
@@ -46,9 +44,6 @@ responsibility_boundary: '
 > **创建日期**: 2026-04-04
 
 > **Layer**: Layer 4 - 机器学习?> **优先?*: P2 (建议补充)
-
-
-
 ---
 
 

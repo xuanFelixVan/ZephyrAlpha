@@ -61,9 +61,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）'
 responsibility:
 - AML_MONITORING_SYSTEM蓝图设计
----
----
-
 # 反洗钱监控系统蓝图
 > **核心职责**: Aml Monitoring System蓝图设计
 > **职责边界**: 
@@ -87,7 +84,6 @@ responsibility:
 ## 已知限制
 
 - 具体规则库与制裁名单来源需在施工文档阶段落定；以本节门禁为准。
-
 ---
 
 ## 1. 概述

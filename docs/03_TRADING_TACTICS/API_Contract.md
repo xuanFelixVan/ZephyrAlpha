@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 交易策略设计与实施管理与优化维护
----
----
 module_id: DOC_API_CONTRACT_001
 version: 5.3.0
 status: Active
@@ -18,7 +16,8 @@ last_updated: 2026-04-01
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: INDEX.md
-implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+---
 
 
 # API_Contract.md - ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵

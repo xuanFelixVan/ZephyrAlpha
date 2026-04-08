@@ -10,8 +10,6 @@ responsibility:
 - 归档文档、历史版本、审计状态追踪
 - 因子计算
 - 交易执行
----
----
 module_id: ARCHIVE_DOC_GOV_AUDIT_001
 version: 2026.04.02
 status: Active
@@ -26,7 +24,8 @@ standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 

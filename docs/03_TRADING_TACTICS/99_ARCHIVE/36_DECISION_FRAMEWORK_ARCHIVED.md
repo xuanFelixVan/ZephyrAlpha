@@ -10,8 +10,6 @@ responsibility:
 - 交易策略、战术执行
 - 交易执行
 - 回测系统
----
----
 module_id: TACTICS_ARCH_DECISION_FRAMEWORK_001
 version: 0.1.1
 status: Archived
@@ -25,7 +23,8 @@ responsibility:
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 已归?archive_reason: 36个环节过于复杂，单人无法维护
-archive_date: 2026-03-28---
+archive_date: 2026-03-28
+---
 
 
 

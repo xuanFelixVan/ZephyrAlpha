@@ -30,8 +30,6 @@ responsibility_boundary: '
 
 
   数据预处理增强请参考：DATA_PREPROCESSING_LAYER_BLUEPRINT.md'
----
----
 # 数据增强系统蓝图
 > **核心职责**: 提供data augmentation blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -58,7 +56,6 @@ responsibility_boundary: '
 ## 已知限制
 
 - 增强策略的适用范围需在施工文档阶段与训练管线对齐；以本节门禁为准。
-
 ---
 
 

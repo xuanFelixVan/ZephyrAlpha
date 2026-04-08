@@ -10,8 +10,6 @@ responsibility:
 - 归档文档、历史版本
 - 交易执行
 - 数据源
----
----
 module_id: ARCHIVE_IFIND_FACTORS_001
 version: 1.0.1
 status: Active
@@ -26,7 +24,8 @@ standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 # iFind因子列表

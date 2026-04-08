@@ -26,9 +26,6 @@ responsibility_boundary: '本文档职责（Layer 5 策略执行层）：
   '
 responsibility:
 - 系统优化方案设计与实施指导与实施指导
----
----
-
 # 交易执行智能优化系统蓝图
 > **核心职责**: Trading Execution Intelligent Optimization蓝图设计
 > **职责边界**: 
@@ -40,7 +37,6 @@ responsibility:
 > **创建日期**: 2026-04-07
 > **实施周期**: 2周
 > **开源项目**: Ray RLLib + Optimization
-
 ---
 
 ## 📋 一、概述

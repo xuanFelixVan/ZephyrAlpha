@@ -10,8 +10,6 @@ responsibility:
 - 归档文档、历史版本、审计状态追踪
 - 交易执行
 - 回测系统
----
----
 module_id: ARCHIVE_P1_FIXES_COMPLETED_001
 version: 5.3.1
 status: Active
@@ -26,7 +24,8 @@ standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?---
+implementation_status: 进行?
+---
 
 
 

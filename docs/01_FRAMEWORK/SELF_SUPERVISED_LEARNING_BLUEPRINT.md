@@ -13,8 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的自监督学�
   '
 layer: Layer 4 (机器学习层)
 owner: 首席文档架构师
----
----
 > **核心职责**: 提供self supervised learning blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
 > - ✅ 本文档负责：Self Supervised Learning蓝图设计相关内容
@@ -30,9 +28,6 @@ owner: 首席文档架构师
 DeepMind
 
 > **预计工时**: 80h
-
-
-
 ---
 
 

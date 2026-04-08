@@ -8,7 +8,8 @@ last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
   - THEME_CUSTOMIZATION模块目录导航与文档索引管理
----------|------|------|------|
+
+---|------|------|------|
 | THEME_CUSTOMIZATION_BLUEPRINT.md | 蓝图 | 活跃 | 主题定制和管理系统，支持主题切换、自定义配置和预览 |
 
 responsibility:

@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 日志记录规范 (LOGGING_STANDARD.md)
 > **核心职责**: 标准规范制定
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 本文档定义了清风量化交易系统4.0的日志记录标准，包括日志级别、格式规范、输出目标、命名规范等?
-
 ---
 
 ## 1. 日志级别定义

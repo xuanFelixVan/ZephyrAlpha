@@ -10,10 +10,6 @@ responsibility:
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 技术评审报?- 最终综合报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -25,7 +21,6 @@ compliance_level: 专业标准
 > **评审对象**: 新建AI工作流模块（合规监控、实盘监控、性能分析?
 > **评审标准**: v5.3
 > **评审?*: 首席技术评审官 (@spec-approver)
-
 ---
 
 ## 📋 评审概述

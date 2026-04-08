@@ -26,9 +26,6 @@ responsibility_boundary: '本文档职责（Layer 3 舆情分析层）：
   '
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
----
-
 # 舆情事件影响评估系统蓝图
 > **核心职责**: Sentiment Event Impact Assessment蓝图设计
 > **职责边界**: 
@@ -40,7 +37,6 @@ responsibility:
 > **创建日期**: 2026-04-07
 > **实施周期**: 1.5周
 > **开源项目**: Transformers + Event Study
-
 ---
 
 ## 📋 一、概述

@@ -10,11 +10,6 @@ responsibility:
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
-
 # 因子实时监控系统
 > **核心职责**: 因子监控系统和预警机制，涉及因子监控
 > **职责边界**: 
@@ -29,7 +24,6 @@ compliance_level: 专业标准
 > **优先?*: P1 - 核心模块
 > **Layer**: Layer 2 (因子?
 > **索引**: F.05.MON.001
-
 ---
 
 ## 1. 概述

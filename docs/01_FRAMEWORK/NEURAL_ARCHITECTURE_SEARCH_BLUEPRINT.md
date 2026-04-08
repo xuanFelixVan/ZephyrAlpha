@@ -13,12 +13,6 @@ responsibility_boundary: '本文档负责Layer 4机器学习层的神经架构�
   '
 layer: Layer 3 (策略层)
 owner: 首席文档架构师
----
----
-
-
-
-
 # 神经架构搜索蓝图
 > **核心职责**: Neural Architecture Search蓝图设计
 > **职责边界**: 
@@ -36,9 +30,6 @@ owner: 首席文档架构师
 )
 
 > **预计工时**: 120h
-
-
-
 ---
 
 

@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 测试规范 (TESTING_STANDARD.md)
 > **核心职责**: 标准规范制定
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 本文档定义了清风量化交易系统4.0的测试标准，包括单元测试、集成测试、回测验证、策略验证等测试规范围
-
 ---
 
 ## 1. 测试分层架构

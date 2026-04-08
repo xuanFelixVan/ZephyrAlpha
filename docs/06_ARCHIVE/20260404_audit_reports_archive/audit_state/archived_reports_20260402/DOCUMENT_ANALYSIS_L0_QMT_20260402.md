@@ -10,17 +10,11 @@ responsibility:
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
----
----
-
-
 # 文档分析记录 - L0_QMT.md
 > **核心职责**: 文档内容说明
 > **职责边界**: 
 > - ✅ 本文档负责：文档内容说明相关内容
 > - ❌ 本文档不负责：其他模块内容
-
-
 ---
 
 ## 📋 基本信息

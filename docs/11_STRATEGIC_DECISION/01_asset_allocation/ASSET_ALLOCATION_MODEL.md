@@ -18,9 +18,6 @@ parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
 - 11 STRATEGIC DECISION模块文档管理与维护
----
----
-
 # 资产配置模型蓝图
 > **核心职责**: 资产配置模型设计
 > **职责边界**: 
@@ -38,7 +35,6 @@ responsibility:
 > **优先级**: 🔴 P0 - 核心战略模块
 > **开源方案**: PyPortfolioOpt, Riskfolio-Lib
 > **目标**: 构建专业级战略资产配置模型，适合个人开发、AI维护、个人使用
-
 ---
 
 ## 📋 文档职责说明

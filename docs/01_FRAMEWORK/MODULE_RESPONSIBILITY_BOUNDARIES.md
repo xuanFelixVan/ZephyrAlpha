@@ -13,10 +13,6 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 layer: Layer 4
----
----
-
-
 # 模块职责边界定义
 > **核心职责**: 负责module responsibility boundaries的设计、实现和维护工作
 > **职责边界**: 
@@ -30,7 +26,6 @@ layer: Layer 4
 > **创建日期**: 2026-04-01
 > **维护?*: 架构治理委员?
 > **定位**: 明确系统各模块的核心职责边界，消除职责重?
-
 ---
 
 ## 接口与契约（蓝图终稿）

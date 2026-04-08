@@ -8,8 +8,6 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 系统审计分析与质量评估报告与改进建议
----
----
 standard_type: хобшобцКехСК
 applicable_scope: хобшобш┤ищЗП
 compliance_level: хИЭхзЛцаЗхЗЖ
@@ -20,7 +18,8 @@ responsibility:
   - 系统审计分析与质量评估报告与改进建议
 module_id: DOC_ARCHITECTURE_ANALYSI
 created_date: 2026-04-02
-last_updated: 2026-04-02---
+last_updated: 2026-04-02
+---
 
 # цЮ╢цЮДхИЖцЮРцКехСК
 > **核心职责**: 审计报告和审计记录

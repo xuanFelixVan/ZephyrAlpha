@@ -27,8 +27,6 @@ responsibility_boundary: '
 
 
   研究级实验追踪（wandb.ai方案）请参考：docs/07_RESEARCH/EXPERIMENT_TRACKING.md'
----
----
 # 实验追踪系统蓝图
 > **核心职责**: 提供experiment tracking blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -45,9 +43,6 @@ responsibility_boundary: '
 > **Layer**: Layer 4 - 机器学习?> **优先?*: P0 (必须补充)
 
 > **参考机?*: 所有专业量化机?> **预计工时**: 60h
-
-
-
 ---
 
 

@@ -12,8 +12,7 @@ responsibility:
 layer: Layer 9 (治理层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
-compliance_level: 专业标准---
----
+compliance_level: 专业标准
 module_id: ARCHIVE_SECURITY_BLUEPRINT_001
 version: 1.0.1
 status: Active

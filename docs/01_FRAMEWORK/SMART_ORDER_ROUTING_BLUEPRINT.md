@@ -15,10 +15,6 @@ reference_models:
 - Citadel
 - Two Sigma
 - Jump Trading
----
----
-
-
 # 智能订单路由蓝图
 > **核心职责**: Smart Order Routing蓝图设计
 > **职责边界**: 
@@ -30,7 +26,6 @@ reference_models:
 > **创建日期**: 2026-04-07  
 > **优先级**: P0级核心模块  
 > **实施周期**: 3周
-
 ---
 
 ## 一、模块概述

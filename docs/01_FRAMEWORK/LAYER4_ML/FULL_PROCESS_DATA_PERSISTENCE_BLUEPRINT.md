@@ -21,10 +21,6 @@ related_documents:
 - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
 - 提供full process data persistence blueprint的架构设计和实施蓝图
----
----
-
-
 ## 文档职责说明
 
 **本文档职责**: 全流程数据保存机制蓝图
@@ -37,7 +33,6 @@ responsibility:
 > **实施周期**: 1
 > **核心定位**: 系统数据持久化的基础设施
 > **技术栈**: MLflow + SQLite + Parquet
-
 ---
 
 ## 一、概

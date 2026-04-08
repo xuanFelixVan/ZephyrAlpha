@@ -12,10 +12,6 @@ applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 研究环境与容器化
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
@@ -29,7 +25,6 @@ implementation_status: 进行?
 **更新**: 2026-03-29
 **Layer**: Layer -1
 **索引**: 07_RESEARCH/01_ENVIRONMENT
-
 ---
 
 ## 1. Docker研究环境

@@ -8,8 +8,6 @@ created_date: 2026-04-07
 last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
----
----
 # 稀疏目录分析报告
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 
@@ -31,7 +29,8 @@ standard_type: 专业量化机构文档
 ## 🔍 稀疏目录列表
 
 | 目录路径 | 文件数 | 文件列表 |
-|----------|--------|----------|
+|
+----------|--------|----------|
 | 00_RESOURCES | 2 | INDEX.md, README.md |
 | 00_RESOURCES\04_PLATFORM_DOCS | 2 | INDEX.md, README.md |
 | 01_FRAMEWORK\ARCHITECTURE_DECISIONS | 2 | INDEX.md, README.md |

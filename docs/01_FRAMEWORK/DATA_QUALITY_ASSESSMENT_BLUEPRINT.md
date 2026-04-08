@@ -36,9 +36,6 @@ responsibility_boundary: '**本文档职责（Layer 1 数据层）**：
   '
 responsibility:
 - 数据管理架构设计与实施规范与优化维护
----
----
-
 # 数据质量评估蓝图
 > **核心职责**: Data Quality Assessment蓝图设计
 > **职责边界**: 
@@ -62,7 +59,6 @@ responsibility:
 ## 已知限制
 
 - 质量评分口径与阈值需在施工文档阶段与监控/治理模块统一；以本节门禁为准。
-
 ---
 
 ## 📋 执行摘要

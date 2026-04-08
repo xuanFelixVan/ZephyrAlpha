@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # 安全规范 (SECURITY.md)
 > **核心职责**: 标准规范制定
 > **职责边界**: 
@@ -24,7 +20,6 @@ implementation_status: 进行?
 
 
 > 本文档定义了清风量化交易系统4.0的安全规范，包括敏感信息管理、权限控制、API密钥保护等安全相关的标准和最佳实践?
-
 ---
 
 ## 1. 敏感信息管理

@@ -12,10 +12,6 @@ applicable_scope: ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﮒ؟ﮔﺛ
 compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../README.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
----
----
-
-
 # ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮒ؟ﮔﺛﮔﮒ
 
 ## 核心定位
@@ -34,7 +30,6 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 > **ﻟﻟﺑ۲**: ﮔﮒﺁﺙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟﮔ۷۰ﮒﻝﮒ؟ﮔﺛﮒﻠ۷ﻝﺛﺎ
 > **ﮒ؟ﮔﺛﮒ۷ﮔ**: 2ﮒ۷ﺅﺙWeek 1-2ﺅﺙ?
 > **ﻛﺙﮒﻝﭦ?*: P0
-
 ---
 
 

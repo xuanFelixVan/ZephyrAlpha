@@ -41,10 +41,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
 
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪'
----
----
-
-
 # ESG合规监控系统蓝图
 > **核心职责**: Esg Compliance Monitoring蓝图设计
 > **职责边界**: 
@@ -56,7 +52,6 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 > **创建日期**: 2026-04-06
 > **实施周期**: 2周
 > **目标**: 构建专业级ESG合规监控体系，对标国际ESG标准
-
 ---
 
 ## 📋 执行摘要

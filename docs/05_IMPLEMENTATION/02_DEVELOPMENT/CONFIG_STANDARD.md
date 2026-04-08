@@ -12,10 +12,6 @@ applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
----
----
-
-
 # CONFIG_STANDARD.md - 配置文件标准
 > **核心职责**: 标准规范制定
 > **职责边界**: 
@@ -26,7 +22,6 @@ implementation_status: 进行?
 > **版本**：v4.0
 > **更新日期**?026-03-28
 > **状?*：已制定
-
 ---
 
 ## 1. 配置文件目录结构

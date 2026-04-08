@@ -8,7 +8,8 @@ last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
   - CAPITAL_MANAGEMENT模块目录导航与文档索引管理
----------|------|------|------|
+
+---|------|------|------|
 | CAPITAL_MANAGEMENT_BLUEPRINT.md | 蓝图 | 活跃 | 资金管理和监控界面，支持资金账户管理、调拨记录和风险预警 |
 
 responsibility:

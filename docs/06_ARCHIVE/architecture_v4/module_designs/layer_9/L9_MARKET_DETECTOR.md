@@ -12,9 +12,6 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本
----
----
-
 # L9_MARKET_DETECTOR: AI市场状态识别模块设?
 > **核心职责**: 文档内容说明
 > **职责边界**: 
@@ -30,7 +27,6 @@ responsibility:
 > **设计状?*: 🟡 设计? 
 > **设计日期**: 2026-04-01  
 > **关联蓝图**: AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
-
 ---
 
 ## 📋 模块概述
