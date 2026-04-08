@@ -91,78 +91,78 @@ related_documents:
 
 ## B. 元任务与 module_id 去重
 
-- [ ] **T0036** （META）将 9 篇曾未入台账的 `01_BLUEPRINTS` 蓝图补入 `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` §3.1（新批次号自洽，每篇一行）
-- [ ] **T0037** （META）复跑 `python scripts/strict_orphan_inbound_scan.py`，更新 REGEN 列表与报告；与基线 tag `doc-baseline-20260409`（若存在）对比记录严格孤儿数变化
-- [ ] **T0038** （META）复跑 `python scripts/sentinel_l1_governance_scan.py`，确认 Invalid links = 0；将 module_id 重复数与 no_id_total 写入台账或 Playbook §10
-- [ ] **T0039** （META）对 DEDUP 两簇按 `GOVERNANCE_DECISIONS_LOCKED_20260408.md` ADR-OC-003 处理（canonical、后缀、互链）
+- [x] **T0036** （META）将 9 篇曾未入台账的 `01_BLUEPRINTS` 蓝图补入 `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` §3.1（新批次号自洽，每篇一行）
+- [x] **T0037** （META）复跑 `python scripts/strict_orphan_inbound_scan.py`，更新 REGEN 列表与报告；与基线 tag `doc-baseline-20260409`（若存在）对比记录严格孤儿数变化
+- [x] **T0038** （META）复跑 `python scripts/sentinel_l1_governance_scan.py`，确认 Invalid links = 0；将 module_id 重复数与 no_id_total 写入台账或 Playbook §10
+- [x] **T0039** （META）对 DEDUP 两簇按 `GOVERNANCE_DECISIONS_LOCKED_20260408.md` ADR-OC-003 处理（canonical、后缀、互链）
 - [ ] **T0040** （META）401 篇缺首道 module_id 按目录分批（每批 ≤50）补最小 front matter 或登记豁免（路径见本清单 D 段）
-- [ ] **T0041** （DEDUP）解决 `module_id: FACTOR_GUIDE_001` 重复：canonical `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`；`docs/06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` 按 ADR 改后缀并互链
-- [ ] **T0042** （DEDUP）解决 `module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` 重复：`STRICT_ORPHAN_FILES_REPORT_20260408.md` 与 `STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` 择一 canonical，另一改 module_id（如 `_REGEN`）并互链
+- [x] **T0041** （DEDUP）解决 `module_id: FACTOR_GUIDE_001` 重复：canonical `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`；`docs/06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` 按 ADR 改后缀并互链
+- [x] **T0042** （DEDUP）解决 `module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` 重复：`STRICT_ORPHAN_FILES_REPORT_20260408.md` 与 `STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` 择一 canonical，另一改 module_id（如 `_REGEN`）并互链
 
 ---
 
 ## C. 严格 inbound 孤儿（逐文件 · REGEN）
 
-- [ ] **T0043** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0044** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0045** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0046** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/AUDIT_STRATEGY_ADJUSTMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0047** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0048** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0049** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D3_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0050** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D4_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0051** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_E1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0052** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_E2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0053** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_U1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0054** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_U2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0055** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0056** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0057** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/CONSTRUCTION_DOCS_AUDIT_REPORT_2026_04_03.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0058** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_AUDIT_CODE_AND_TEMP_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0059** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0060** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_CONTENT_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0061** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0062** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0063** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0064** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0065** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0066** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0067** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V5_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0068** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_OPTIMIZATION_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0069** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0070** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_AUDIT_SUMMARY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0071** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0072** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0073** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FINAL_VERIFICATION_AUDIT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0074** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/GOVERNANCE_IMPROVEMENT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0075** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/IMMEDIATE_ACTION_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0076** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_APPROVAL_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0077** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_APPROVAL_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0078** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0079** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0080** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_V3_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0081** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0082** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V3_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0083** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V4_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0084** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_GAP_ANALYSIS_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0085** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/OPTIMIZATION_SUMMARY_REPORT_ROUND5_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0086** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P0_FIXES_COMPLETED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0087** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P1_FIXES_COMPLETED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0088** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_ISSUES_REMEDIATION_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0089** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_ISSUES_REMEDIATION_REPORT_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0090** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_P3_ISSUES_RESOLUTION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0091** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PATH_LIST_AUDIT_UPDATE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0092** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0093** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0094** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/TEMP_FILE_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0095** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/VERIFICATION_AUDIT_CODE_AND_TEMP_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0096** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/VERIFICATION_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0097** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/ARCHITECTURE_CLEANUP_PROGRESS_REPORT_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0098** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0099** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/DOCUMENT_GOVERNANCE_FIX_REPORT_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0100** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND10_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0101** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0102** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0043** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0044** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0045** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/AUDIT_SENTINEL_MCP_TOOLS_VALIDATION_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0046** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/AUDIT_STRATEGY_ADJUSTMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0047** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0048** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0049** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D3_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0050** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_D4_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0051** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_E1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0052** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_E2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0053** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_U1_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0054** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/BLOCK_U2_findings.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0055** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/COMPREHENSIVE_DEEP_AUDIT_REPORT_20260403_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0056** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/COMPREHENSIVE_SYSTEM_SLIM_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0057** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/CONSTRUCTION_DOCS_AUDIT_REPORT_2026_04_03.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0058** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_AUDIT_CODE_AND_TEMP_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0059** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0060** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_CONTENT_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0061** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0062** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0063** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0064** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0065** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0066** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0067** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V5_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0068** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_OPTIMIZATION_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0069** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0070** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_AUDIT_SUMMARY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0071** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0072** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0073** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/FINAL_VERIFICATION_AUDIT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0074** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/GOVERNANCE_IMPROVEMENT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0075** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/IMMEDIATE_ACTION_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0076** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_APPROVAL_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0077** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_APPROVAL_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0078** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0079** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0080** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/MACHINE_LEARNING_DEEP_AUDIT_REPORT_V3_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0081** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0082** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V3_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0083** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_COMPREHENSIVE_GAP_ANALYSIS_V4_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0084** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/ML_GAP_ANALYSIS_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0085** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/OPTIMIZATION_SUMMARY_REPORT_ROUND5_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0086** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P0_FIXES_COMPLETED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0087** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P1_FIXES_COMPLETED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0088** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_ISSUES_REMEDIATION_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0089** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_ISSUES_REMEDIATION_REPORT_V2_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0090** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/P2_P3_ISSUES_RESOLUTION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0091** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PATH_LIST_AUDIT_UPDATE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0092** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0093** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0094** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/TEMP_FILE_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0095** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/VERIFICATION_AUDIT_CODE_AND_TEMP_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0096** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/VERIFICATION_AUDIT_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0097** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/ARCHITECTURE_CLEANUP_PROGRESS_REPORT_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0098** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/COMPREHENSIVE_AUDIT_REPORT_2026_04_02.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0099** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/DOCUMENT_GOVERNANCE_FIX_REPORT_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0100** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND10_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0101** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND2_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0102** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND3_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0103** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND4_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0104** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND5_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0105** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/FINAL_OPTIMIZATION_REPORT_ROUND6_20260402.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
