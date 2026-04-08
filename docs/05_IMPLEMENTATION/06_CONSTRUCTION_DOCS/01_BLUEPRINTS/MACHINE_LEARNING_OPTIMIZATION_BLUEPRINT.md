@@ -817,6 +817,73 @@ def parallel_grid_search(
 | 集成困难 | 低 | 标准API，单元测试 |
 | 维护成本高 | 低 | AI友好的代码结构 |
 
+## 接口与契约
+
+### API契约索引
+
+本模块遵循系统统一接口规范，详见 [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md)。
+
+### 核心接口定义
+
+| 接口名称 | 索引 | 说明 |
+|----------|------|------|
+| 模型训练 | API.ML.001 | fit接口 |
+| 网格搜索 | API.ML.002 | grid_search接口 |
+| 交叉验证 | API.ML.003 | cross_validate接口 |
+| 权重预测 | API.ML.004 | predict接口 |
+| 模型选择 | API.ML.005 | auto_select接口 |
+
+### 数据格式规范
+
+- 输入格式: pandas DataFrame (prices), Dict (param_grid)
+- 输出格式: Dict (weights, portfolio, best_params, cv_scores)
+- 时间戳格式: ISO 8601 UTC
+
+## 验收标准
+
+### 功能验收
+
+1. **模型训练**: MeanRisk、RiskBudgeting、MaximumDiversification、HierarchicalRiskParity四种模型均能正确训练
+2. **网格搜索**: 参数网格搜索能够找到最优参数组合，搜索结果包含best_params和best_score
+3. **交叉验证**: WalkForward和KFold两种交叉验证方法均能正确执行，输出mean_score和std_score
+4. **权重预测**: 训练后的模型能够正确预测权重向量，权重和为1.0
+
+### 性能验收
+
+| 指标 | 目标值 | 验证方法 |
+|------|--------|----------|
+| 优化时间 | <1s (10资产) | 性能测试 |
+| 网格搜索时间 | <30s (50组合) | 性能测试 |
+| 交叉验证时间 | <60s (5折) | 性能测试 |
+| 内存占用 | <500MB (100资产) | 资源监控 |
+
+### 质量验收
+
+| 标准 | 要求 | 验证方法 |
+|------|------|----------|
+| 代码覆盖率 | ≥80% | pytest-cov |
+| 文档完整性 | 100% | 文档审查 |
+| 代码规范 | 符合PEP8 | pylint |
+
+## 已知限制
+
+### 技术限制
+
+1. **库依赖**: skfolio库较新，API可能存在变化，建议版本锁定
+2. **计算资源**: 大规模网格搜索需要较多计算资源，建议使用并行计算
+3. **内存限制**: 大规模优化(>500资产)需要≥8GB内存
+4. **求解器依赖**: 部分优化方法需要cvxpy求解器支持
+
+### 功能限制
+
+1. **风险度量**: 当前支持variance、semi_variance、cvar、evar等，部分高级风险度量待扩展
+2. **集成方法**: StackingOptimization需要多个基础模型，配置较复杂
+3. **动态调优**: 不支持在线学习和动态参数调整
+
+### 待补充项
+
+- 无TBD项，所有核心功能已明确定义
+
 ## 变更历史
 
 | 版本 | 日期 | 变更内容 | 变更人 |
