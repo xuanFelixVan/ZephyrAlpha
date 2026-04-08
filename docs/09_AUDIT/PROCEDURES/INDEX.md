@@ -1,27 +1,17 @@
 ---
 module_id: 09_AUDIT_PROCEDURES_INDEX
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-08
+last_updated: '2026-04-08'
 owner: 首席文档架构师
-responsibility:
-  - PROCEDURES目录索引
----
-
-﻿---
-module_id: 09_AUDIT_PROCEDURES_INDEX_PROCEDURES_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-08
-owner: 文档治理系统
-responsibility:
-  - 目录导航与文档索引管理与优化维护
 standard_type: 索引文档
-applicable_scope: 文档索引导航
-compliance_level: 专业标准---
-
+applicable_scope: docs/09_AUDIT/PROCEDURES
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+responsibility:
+  - PROCEDURES 目录导航与程序性文档索引
+---
 
 # Procedures索引
 > **核心职责**: 目录导航和文档索引
@@ -30,10 +20,10 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.0
+> **版本**: v1.1.0
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
-> **索引**: `INDEX_PROCEDURES_001`
+> **索引**: `09_AUDIT_PROCEDURES_INDEX`
 
 ---
 
@@ -96,14 +86,15 @@ compliance_level: 专业标准---
 | v1.0.4 | 2026-04-08 | 增加文档整改详细任务指令索引 | 系统维护者 |
 | v1.0.5 | 2026-04-08 | 增加架构/模块审核与补缺方案及缺口登记表索引 | 系统维护者 |
 | v1.0.6 | 2026-04-08 | 增加 Layer 11 能力↔蓝图对照表索引 | 系统维护者 |
+| v1.1.0 | 2026-04-08 | 合并双 YAML 头为单一 front matter；修正相关文档相对路径 | 系统维护者 |
 
 ---
 
 ## 🔗 相关文档
 
-- [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
-- [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- [Module ID 注册表](../STATE/MODULE_ID_REGISTRY.md)
+- [职责边界地图](../STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
+- [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 
 ---
 

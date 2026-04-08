@@ -59,3 +59,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: 根 `README.md` 导航与 `parent_document` 对齐 INDEX；L1 复扫；`P1C_DEFERRED` 记录 P1-4；留存 `SENTINEL_L1_P1C_README_20260408.*`
+
+## 2026-04-08 — P1-C：PROCEDURES INDEX 单 YAML + 交接书 Layer8 路径
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `docs/09_AUDIT/PROCEDURES/INDEX.md` 合并双头、v1.1.0；`ISSUE_HANDOVER_DOCUMENT_20260407.md` 中 audit_state 文件名对齐 AUDIT8_*；L1 复扫

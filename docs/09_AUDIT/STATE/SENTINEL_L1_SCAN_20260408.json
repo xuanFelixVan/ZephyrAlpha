@@ -1,10 +1,10 @@
 {
-  "scan_time_utc": "20260408T041615Z",
+  "scan_time_utc": "20260408T041939Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3139,
+  "md_file_count": 3140,
   "links": {
     "stats": {
-      "total_files_scanned": 3139,
+      "total_files_scanned": 3140,
       "total_md_links": 5021,
       "skipped_external": 991,
       "valid": 4030,
@@ -410,6 +410,7 @@
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_P1C_AUDIT_STATE_INDEX_20260408.md",
+      "docs/09_AUDIT/STATE/SENTINEL_L1_P1C_README_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408.md",
@@ -419,7 +420,7 @@
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md"
     ],
-    "no_id_total": 400
+    "no_id_total": 401
   },
   "path_depth": {
     "deepest_30": [
