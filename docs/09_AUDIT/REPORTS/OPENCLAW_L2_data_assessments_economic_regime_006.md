@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DATA_ASSESSMENTS_ECONOMIC_REGIME_006
+---
+
 # OpenClaw L2 深度审计 — 批次: data/assessments/economic_regime
 
 > **批次ID**: 006

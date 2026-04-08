@@ -1,3 +1,7 @@
+---
+module_id: ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408
+---
+
 # 架构 / 模块审核与补缺方案
 
 > **适用阶段**：蓝图为主、尚未进入全系统「按图施工」  

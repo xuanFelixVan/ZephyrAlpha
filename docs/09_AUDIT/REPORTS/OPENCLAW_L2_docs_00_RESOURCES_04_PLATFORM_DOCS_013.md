@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_00_RESOURCES_04_PLATFORM_DOCS_013
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/00_RESOURCES/04_PLATFORM_DOCS
 
 > **批次ID**: 013

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_DELETED_REVIEW
+---
+
 # OpenClaw Git 误删文件审查报告
 
 > **run_id**: OPENCLAW_20260408_033500

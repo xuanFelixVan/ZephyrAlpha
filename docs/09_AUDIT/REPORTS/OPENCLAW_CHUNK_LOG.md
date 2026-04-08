@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_CHUNK_LOG
+---
+
 # OpenClaw 分块审计日志
 
 > 每完成一批目录追加一节

@@ -1,3 +1,7 @@
+---
+module_id: LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456
+---
+
 # Layer 6 组合优化层全面深度审计报告
 
 ## 1. 审计概要

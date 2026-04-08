@@ -1,3 +1,7 @@
+---
+module_id: DOC_REMEDIATION_TASK_DIRECTIVE_20260408
+---
+
 # ZephyrAlpha 文档整改 — 详细任务指令（可复制给执行者 / AI）
 
 > **仓库根**: `D:\ZephyrAlpha`（执行时 `cd` 到该目录）  

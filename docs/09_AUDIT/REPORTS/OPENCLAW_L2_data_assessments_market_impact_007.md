@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DATA_ASSESSMENTS_MARKET_IMPACT_007
+---
+
 # OpenClaw L2 深度审计 — 批次: data/assessments/market_impact
 
 > **批次ID**: 007

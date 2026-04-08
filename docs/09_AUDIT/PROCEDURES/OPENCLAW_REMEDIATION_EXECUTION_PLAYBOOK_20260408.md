@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408
+---
+
 # OpenClaw 文档整改 — 执行手册（机构流程 · 单人可用）
 
 > **你要做的事**：按下面**顺序**做完每一阶段；每阶段有**完成标准**。  

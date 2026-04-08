@@ -1,3 +1,7 @@
+---
+module_id: LAYER8_DEEP_AUDIT_REPORT_20260408
+---
+
 
 # Layer 8人机交互层深度审计报告
 

@@ -1,4 +1,5 @@
----
+---module_id: LAYER8_GIT_DELETED_CONTENT_DEEP_CHECK_20260408
+
 report_type: Git删除内容深度检查报告
 version: 2.0.0
 created_date: 2026-04-08

@@ -1,3 +1,7 @@
+---
+module_id: LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733
+---
+
 # Layer 5 全面深度审计报告
 
 > **审计时间**: 2026-04-07 20:57:33

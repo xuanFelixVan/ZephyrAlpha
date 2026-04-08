@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_.TRAE_SKILLS_AUDIT-SENTINEL_003
+---
+
 # OpenClaw L2 深度审计 — 批次: .trae/skills/audit-sentinel
 
 > **批次ID**: 003

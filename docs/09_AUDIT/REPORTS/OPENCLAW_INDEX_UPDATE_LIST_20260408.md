@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_INDEX_UPDATE_LIST_20260408
+---
+
 # OpenClaw 索引更新清单
 
 > **run_id**: OPENCLAW_20260408_033500

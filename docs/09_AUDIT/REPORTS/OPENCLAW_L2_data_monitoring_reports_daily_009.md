@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DATA_MONITORING_REPORTS_DAILY_009
+---
+
 # OpenClaw L2 深度审计 — 批次: data/monitoring/reports/daily
 
 > **批次ID**: 009

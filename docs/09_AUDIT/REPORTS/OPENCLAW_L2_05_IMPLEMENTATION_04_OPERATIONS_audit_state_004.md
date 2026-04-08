@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_004
+---
+
 # OpenClaw L2 深度审计 — 批次: 05_IMPLEMENTATION/04_OPERATIONS/audit_state
 
 > **批次ID**: 004

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_DOC_CODE_DRIFT_SAMPLE
+---
+
 # OpenClaw 文档与代码一致性抽样报告
 
 > **run_id**: OPENCLAW_20260408_033500

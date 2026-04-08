@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DATA_ASSESSMENTS_005
+---
+
 # OpenClaw L2 深度审计 — 批次: data/assessments
 
 > **批次ID**: 005

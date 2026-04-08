@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_.TRAE_002
+---
+
 # OpenClaw L2 深度审计 — 批次: .trae
 
 > **批次ID**: 002

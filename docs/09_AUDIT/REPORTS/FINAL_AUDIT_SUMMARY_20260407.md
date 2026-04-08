@@ -1,3 +1,7 @@
+---
+module_id: FINAL_AUDIT_SUMMARY_20260407
+---
+
 # 文档治理最终审计总结报告
 
 ## 📋 审计概要

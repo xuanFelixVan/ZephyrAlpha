@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_010
+---
+
 # OpenClaw L2 深度审计 — 批次: docs
 
 > **批次ID**: 010

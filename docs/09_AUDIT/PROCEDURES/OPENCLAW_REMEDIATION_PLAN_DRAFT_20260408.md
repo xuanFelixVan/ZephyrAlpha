@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408
+---
+
 # OpenClaw 文档整改方案（草稿）
 
 > **状态**: 执行就绪 — **具体顺序、验收打勾、质量门**以执行手册为准（见下「必读三件套」）  

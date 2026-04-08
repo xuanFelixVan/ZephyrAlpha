@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DATA_ASSESSMENTS_SMART_EXECUTION_008
+---
+
 # OpenClaw L2 深度审计 — 批次: data/assessments/smart_execution
 
 > **批次ID**: 008

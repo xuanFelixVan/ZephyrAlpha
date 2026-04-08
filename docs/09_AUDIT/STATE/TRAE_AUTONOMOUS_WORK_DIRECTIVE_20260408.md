@@ -1,9 +1,9 @@
 ---
 module_id: TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408
-version: 1.1.0
+version: 1.2.2
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-08'
+last_updated: '2026-04-09'
 owner: 仓库 Owner
 standard_type: 执行指令（Trae 专用）
 applicable_scope: Trae（GLM 等）无人值守长跑；蓝图清洁至第 2 阶段放行证据链
@@ -11,6 +11,11 @@ parent_document: ./HANDOFF_ORPHAN_GOVERNANCE_20260408.md
 related_documents:
   - ./HANDOFF_ORPHAN_GOVERNANCE_20260408.md
   - ./TRAE_BLUEPRINT_TASK_LEDGER_20260408.md
+  - ./TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md
+  - ./TRAE_LINE_TASK_INDEX_20260409.md
+  - ./TRAE_LINE_TASK_BACKLOG_20260409.md
+  - ./TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md
+  - ./MODULE_ID_MISSING_FILES_LIST_20260409.txt
   - ./CONSTRUCTION_GATE_CRITERIA_20260408.md
 responsibility:
   - 约束 Trae：不中断询问 Owner；自解问题；证据驱动
@@ -71,6 +76,41 @@ responsibility:
 
 ---
 
+## 4.1 逐条任务真源（Trae 中断后可续跑）
+
+> **单一主清单（推荐）**：`docs/09_AUDIT/STATE/TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md` — **全量合并** Directive/HANDOFF 框架要点、532 孤儿、401 缺 `module_id`、目录普查、审计批次、整改与门禁拆条；**全局编号 T0001～T1062**，一条文档即可勾选续跑。再生成：`python scripts/generate_trae_master_execution_checklist.py`。  
+> **分卷（机器生成，与主清单内容对齐、无独立编号）**：Part A / Part B 仍保留，便于 diff 或只读片段；**以主清单编号为准**。
+
+1. **主执行清单（唯一编号真源）**：`docs/09_AUDIT/STATE/TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md`
+
+2. **总索引（分卷说明）**：`docs/09_AUDIT/STATE/TRAE_LINE_TASK_INDEX_20260409.md`
+
+3. **Part A — 文件级 backlog**：`docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_20260409.md`  
+   - **§0** 元任务（台账补 9 篇蓝图、复跑扫描、DEDUP 两簇等）  
+   - **§1** `module_id` 重复 2 簇（`DEDUP-01` / `DEDUP-02`）  
+   - **§2** 严格 inbound 孤儿：**532** 条，与 `STRICT_ORPHAN_FILES_LIST_REGEN_20260408.txt` 一一对应  
+   - **§3** 首道 YAML 无 `module_id`：**401** 条，与 `MODULE_ID_MISSING_FILES_LIST_20260409.txt` 一一对应  
+
+4. **Part B — 目录 / 审计批次 / 交接拆条**：`docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md`  
+   - **§4** 每个 `docs/*/` 一级目录一条 **DIR** 普查（归档候选、INDEX、职责摘要）  
+   - **§5** `review_materials_package`、`notebooks`、`data`、根 `README`  
+   - **§6** 全库审计方案批次 **A1～I3**（各一条 **AUDIT-BATCH**）  
+   - **§7～§9** HANDOFF 检查项、**DOC_REMEDIATION** 阶段条、**CONSTRUCTION_GATE §3** 块级条  
+   - **§10** `05_IMPLEMENTATION` / `06_ARCHIVE` 二级热点子树  
+
+5. **纯路径清单（便于脚本/检索）**  
+   - 孤儿：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_REGEN_20260408.txt`  
+   - 缺 `module_id`：`docs/09_AUDIT/STATE/MODULE_ID_MISSING_FILES_LIST_20260409.txt`  
+
+6. **再生成**  
+   - **主清单（推荐）**：`python scripts/generate_trae_master_execution_checklist.py`  
+   - Part A：`python scripts/generate_trae_line_task_backlog.py`  
+   - Part B（`docs/` 子目录有增删时）：`python scripts/generate_trae_line_task_backlog_partb.py`  
+
+7. **执行顺序建议**（仍禁止问 Owner）：使用主清单时按 **T0001→…** 最小未勾选编号推进（A 段框架须先勾选/遵守）；实务上 **B 元任务与 DEDUP** → **C 孤儿每批 ≤20** → **D NO-MID 每批 ≤50** → **E～K** 穿插。蓝图台账与孤儿/NO-MID 同路径冲突时，**以台账白名单为准**。
+
+---
+
 ## 5. 完成定义（Definition of Done）——「彻底完成」在本指令中的含义
 
 **「彻底」= 在当前连续作业窗口内，把下列项做到穷尽或登记为「下一窗口」——不得停在「未验证的自称完成」。**
@@ -83,7 +123,7 @@ responsibility:
 | **重复** | 本窗口内动过的重复簇：`CANONICAL_POINTERS.md` **无新增悬空 TBD**（或已写 Owner 指派与日期）。 |
 | **收工文** | 更新 `DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` **§10** 一行 + 台账 §6 摘要。 |
 
-若时间/步数用尽仍未清空全部 §0.2 蓝图：**不属失败**；须在收工文中写明 **剩余篇目清单路径**（如 REGEN 或台账下一批）。
+若时间/步数用尽仍未清空全部 §0.2 蓝图：**不属失败**；须在收工文中写明 **剩余任务编号范围**（如 `TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md` 自 T0xxx 起未勾选）、或 REGEN 列表、或台账下一批。
 
 ---
 
@@ -135,8 +175,12 @@ Use **repository-relative paths** below. Repo root example: `d:\ZephyrAlpha`.
 [MUST READ FIRST, IN ORDER]
 1) docs/09_AUDIT/STATE/HANDOFF_ORPHAN_GOVERNANCE_20260408.md — full playbook; prioritize §0, §15–§18, §16 anti-hallucination.
 2) docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md — batch scope and boundaries.
-3) docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md — §0.1 and §0.2.
-4) docs/03_TRADING_TACTICS/API_Contract.md — contract anchor for blueprint interface clauses.
+3) docs/09_AUDIT/STATE/TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md — SINGLE numbered checklist T0001+ (all tasks merged; resume after interruption).
+4) docs/09_AUDIT/STATE/TRAE_LINE_TASK_INDEX_20260409.md — optional: explains split Part A/B backlogs vs master.
+5) docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_20260409.md — split Part A (regenerate from script; no global IDs).
+6) docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md — split Part B.
+7) docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md — §0.1 and §0.2.
+8) docs/03_TRADING_TACTICS/API_Contract.md — contract anchor for blueprint interface clauses.
 
 [HARD RULES]
 - Never invent paths under docs/. Verify with file tools (glob/read) before claiming existence.

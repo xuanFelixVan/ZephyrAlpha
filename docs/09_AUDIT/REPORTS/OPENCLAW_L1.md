@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L1
+---
+
 # OpenClaw L1 文件系统层审计报告
 
 > **run_id**: OPENCLAW_20260408_033500

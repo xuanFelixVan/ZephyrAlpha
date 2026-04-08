@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_AUDIT_SUMMARY_20260408
+---
+
 # OpenClaw 全库文档治理审计总结报告
 
 > **run_id**: OPENCLAW_20260408_033500

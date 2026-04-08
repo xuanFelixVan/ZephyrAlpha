@@ -1,3 +1,7 @@
+---
+module_id: SMART_EXECUTION_ASSESSMENT_REPORT
+---
+
 # 综合评估报告
 
 生成时间: 2026-04-02 21:48:30

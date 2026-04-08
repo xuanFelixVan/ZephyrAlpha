@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_00_OVERVIEW_011
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/00_OVERVIEW
 
 > **批次ID**: 011

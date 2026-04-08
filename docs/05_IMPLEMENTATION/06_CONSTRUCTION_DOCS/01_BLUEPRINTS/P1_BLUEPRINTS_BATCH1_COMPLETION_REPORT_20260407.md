@@ -1,4 +1,5 @@
----
+---module_id: P1_BLUEPRINTS_BATCH1_COMPLETION_REPORT_20260407
+
 report_type: P1级别蓝图第一批完成报告
 created_date: 2026-04-07
 status: Active

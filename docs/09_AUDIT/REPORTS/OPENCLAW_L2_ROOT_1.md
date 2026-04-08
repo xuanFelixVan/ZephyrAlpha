@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_ROOT_1
+---
+
 # OpenClaw L2 深度审计 — 批次: 仓库根目录 `.`
 
 > **批次序号**: 1
