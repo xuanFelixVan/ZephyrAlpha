@@ -130,6 +130,12 @@ related_documents:
 | C4 | `docs/01_FRAMEWORK/ARBITRAGE_DETECTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C4 | `docs/01_FRAMEWORK/AUDIT_LOG_VIEWER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C4 | `docs/01_FRAMEWORK/AUDIT_TRAIL_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/AUTOML_AUTOMATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/AUTOML_PIPELINE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/BACKDOOR_DETECTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/BACKTEST_RESULT_VIEWER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C5 | `docs/01_FRAMEWORK/BEST_EXECUTION_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
