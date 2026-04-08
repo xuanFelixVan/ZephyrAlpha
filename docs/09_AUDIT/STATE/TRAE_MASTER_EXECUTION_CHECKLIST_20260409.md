@@ -1121,24 +1121,24 @@ related_documents:
 
 ## H. HANDOFF 拆条（证据驱动）
 
-- [ ] **T1036** （HO）通读 HANDOFF §0 目录；确认 §15/§16/§17 已读并摘录 3 条硬禁令到 Playbook 或台账
-- [ ] **T1037** （HO）`DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` §10：本窗口有动作则补一行摘要
-- [ ] **T1038** （HO）对照 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md`；与当前 backlog 冲突则登记 ARCH gap
-- [ ] **T1039** （HO）运行 `strict_orphan_inbound_scan.py`；保留 REGEN 与基线 diff 说明
-- [ ] **T1040** （HO）`CANONICAL_POINTERS.md`：无悬空 TBD；新簇已 disposition
-- [ ] **T1041** （HO）`INDEX_GROUPED_20260408.md`（STATE 与 REPORTS）：长列表入站是否足够
-- [ ] **T1042** （HO）`docs/09_AUDIT/INDEX_AUDIT.md`：门户链可达真源
-- [ ] **T1043** （HO）`OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`：节奏或 defer
-- [ ] **T1044** （HO）Git：长时作业前基线 tag；窗口结束 milestone tag 或书面说明跳过
-- [ ] **T1045** （HO）防幻觉：声称须附 Glob/Read 或脚本片段
-- [ ] **T1046** （HO）HANDOFF §18：本轮涉及重复簇 canonical 与互链
+- [x] **T1036** （HO）通读 HANDOFF §0 目录；确认 §15/§16/§17 已读并摘录 3 条硬禁令到 Playbook 或台账
+- [x] **T1037** （HO）`DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` §10：本窗口有动作则补一行摘要
+- [x] **T1038** （HO）对照 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md`；与当前 backlog 冲突则登记 ARCH gap
+- [x] **T1039** （HO）运行 `strict_orphan_inbound_scan.py`；保留 REGEN 与基线 diff 说明
+- [x] **T1040** （HO）`CANONICAL_POINTERS.md`：无悬空 TBD；新簇已 disposition
+- [x] **T1041** （HO）`INDEX_GROUPED_20260408.md`（STATE 与 REPORTS）：长列表入站是否足够
+- [x] **T1042** （HO）`docs/09_AUDIT/INDEX_AUDIT.md`：门户链可达真源
+- [x] **T1043** （HO）`OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`：节奏或 defer
+- [x] **T1044** （HO）Git：长时作业前基线 tag；窗口结束 milestone tag 或书面说明跳过
+- [x] **T1045** （HO）防幻觉：声称须附 Glob/Read 或脚本片段
+- [x] **T1046** （HO）HANDOFF §18：本轮涉及重复簇 canonical 与互链
 
 ---
 
 ## I. 文档整改指令（DOC_REMEDIATION）
 
-- [ ] **T1047** （REM）P0-A：`temp_*.md` + 蓝图双重路径 + `[模块ID]` 占位 — 指令 §4
-- [ ] **T1048** （REM）P0-B：双 YAML 50 文件 dry-run 审阅后再分批写回 — 指令 §5 / ADR-OC-001
+- [x] **T1047** （REM）P0-A：`temp_*.md` + 蓝图双重路径 + `[模块ID]` 占位 — 指令 §4
+- [x] **T1048** （REM）P0-B：双 YAML 50 文件 dry-run 审阅后再分批写回 — 指令 §5 / ADR-OC-001
 - [ ] **T1049** （REM）P1-A：module_id 去重 + 缺省 + registry — 指令 §6
 - [ ] **T1050** （REM）P1-B：audit_state 权威目录合并 — 指令 §7 / ADR-OC-002
 - [ ] **T1051** （REM）P1-C：P1 余项 — 指令 §8 与 P1C_DEFERRED

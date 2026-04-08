@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STATE_MODULE_ID_REGISTRY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: '2026-04-07'
+last_updated: '2026-04-09'
 owner: 审计系统
 standard_type: 审计管理文档
 applicable_scope: 全系统module_id管理
@@ -29,8 +29,8 @@ responsibility:
 
 | 指标 | 数值 |
 |------|------|
-| **总module_id数** | 903 |
-| **活跃文档** | 903 |
+| **总module_id数** | 3054 |
+| **活跃文档** | 3054 |
 | **归档文档** | 排除 |
 | **重复ID** | 0 ✅（与 Sentinel L1 **首道 front matter** `module_id` 口径一致；`dedupe_module_id_frontmatter.py --dry-run` 重复组 0） |
 
