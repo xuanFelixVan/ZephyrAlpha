@@ -1,6 +1,6 @@
 ﻿---
 module_id: ARCHITECTURE_001
-version: 5.5.0
+version: 5.6.0
 status: Active
 created_date: 2026-04-01
 last_updated: '2026-04-08'
@@ -22,7 +22,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v5.3
+> **版本**: v5.6
 > **创建日期**: 2026-03-30
 > **Layer**: Layer 0-11
 > **职责**: Layer 0-11 技术架构定义  
@@ -51,26 +51,42 @@ responsibility:
 ## 1. 双重架构关系
 
 本系统采用 **双层架构** 设计。
-```
-┌─────────────────────────────────────────────────────────────────────────────??                  终极蓝图架构 (Layer 0-11 + AI增强)                        ??                                                                            ??Layer 11: 战略决策?────── 🆕 战略资产配置+风险预算分配                    ??Layer 10: 治理与合规层 ──── 🆕 内部控制+合规监控                            ??Layer 9: 研究与创新层 ───── 🆕 AI虚拟研究实验?创新孵化?                 ??Layer 8: 人机交互?─────── 🆕 新增: 授权/监控/报告                         ??Layer 7: AI报告?───────── 🆕 原Layer 7绩效层增?                         ??Layer 6: 组合优化?─────── 🆕 原Layer 4组合层增?                         ??Layer 5: 策略执行?─────── 🆕 原Layer 5执行?                             ??Layer 4: 机器学习?─────── 🆕 新增: ML Pipeline                            ??Layer 3: 舆情分析?─────── 🆕 新增: 新闻/情感/事件                         ??Layer 2: Alpha因子?────── 🆕 原Layer 2 Alpha?                           ??Layer 1: 数据预处理层 ──── 🆕 原Layer 1前置?                              ??Layer 0: 数据源层 ──────── 🆕 原Layer 0数据?                              ??                                                                            ?└─────────────────────────────────────────────────────────────────────────────?```
+
+以下是 **Layer 0-11** 自底向上栈位（与下表「架构对应关系」一致）：
+
+| Layer | 名称 | 要点 |
+|-------|------|------|
+| 11 | 战略决策层 | 战略资产配置、风险预算 |
+| 10 | 治理与合规层 | 内控与合规监控 |
+| 9 | 研究与创新层 | AI 研究、创新孵化 |
+| 8 | 人机交互层 | 授权、监控、报告 |
+| 7 | AI 报告层 | 绩效与自动报告 |
+| 6 | 组合优化层 | Barra、CVXPY 等 |
+| 5 | 策略执行层 | 含 QMT 等执行通道 |
+| 4 | 机器学习层 | ML Pipeline |
+| 3 | 舆情分析层 | 新闻、情感、事件 |
+| 2 | Alpha 因子层 | 大规模因子库 |
+| 1 | 数据预处理层 | 清洗与对齐 |
+| 0 | 数据源层 | iFind、SuperCommand 等 |
 
 ### 架构对应关系
+
 | 旧层架构 | 终极蓝图架构 | 变化说明 |
 |-----------|-------------|----------|
-| Layer 0: 数据?| Layer 0: 数据源层 | 名称优化 + iFind/SuperCommand |
-| Layer 1: 前置?| Layer 1: 数据预处理层 | 名称优化 |
-| Layer 2: Alpha?| Layer 2: Alpha因子?| 名称优化 + 5700+因子 |
-| Layer 3: 风险?| (融入各层) | 重构为风险模?|
-| Layer 4: 组合?| Layer 6: 组合优化?| 升级 + Barra+CVXPY |
-| Layer 5: 执行?| Layer 5: 策略执行?| QMT API |
-| Layer 6: 风控?| (融入各层) | 重构为风控贯?|
-| Layer 7: 绩效?| Layer 7: AI报告?| 升级为AI自动报告 |
-| **新增** | Layer 3: 舆情分析?| 🆕 新增核心差异?|
-| **新增** | Layer 4: 机器学习?| 🆕 新增AI能力 |
-| **新增** | Layer 8: 人机交互?| 🆕 新增授权/监控 |
-| **新增** | Layer 9: 研究与创新层 | 🆕 新增研究能力 |
-| **新增** | Layer 10: 治理与合规层 | 🆕 新增治理能力 |
-| **新增** | Layer 11: 战略决策?| 🆕 新增战略能力 |
+| Layer 0: 数据源（旧称） | Layer 0: 数据源层 | 名称优化 + iFind/SuperCommand |
+| Layer 1: 前置（旧称） | Layer 1: 数据预处理层 | 名称优化 |
+| Layer 2: Alpha（旧称） | Layer 2: Alpha 因子层 | 名称优化 + 5700+ 因子 |
+| Layer 3: 风险（旧称） | （融入各层） | 重构为风险模型并贯穿各层 |
+| Layer 4: 组合（旧称） | Layer 6: 组合优化层 | 升级 + Barra + CVXPY |
+| Layer 5: 执行（旧称） | Layer 5: 策略执行层 | QMT API |
+| Layer 6: 风控（旧称） | （融入各层） | 重构为风控贯穿各层 |
+| Layer 7: 绩效（旧称） | Layer 7: AI 报告层 | 升级为 AI 自动报告 |
+| **新增** | Layer 3: 舆情分析层 | 新闻 / 情感 / 事件 |
+| **新增** | Layer 4: 机器学习层 | ML Pipeline |
+| **新增** | Layer 8: 人机交互层 | 授权 / 监控 / 报告 |
+| **新增** | Layer 9: 研究与创新层 | 研究能力 |
+| **新增** | Layer 10: 治理与合规层 | 治理能力 |
+| **新增** | Layer 11: 战略决策层 | 战略能力 |
 
 ---
 
@@ -78,17 +94,17 @@ responsibility:
 
 ```
 Layer 0: 数据源层 (Data Sources)
-    ?Layer 1: 数据预处理层 (Preprocessing)
-    ?Layer 2: Alpha因子?(Alpha Factors)
-    ?Layer 3: 舆情分析?(Sentiment & Events) 🆕
-    ?Layer 4: 机器学习?(Machine Learning) 🆕
-    ?Layer 5: 策略执行?(Strategy Execution)
-    ?Layer 6: 组合优化?(Portfolio Optimization)
-    ?Layer 7: AI报告?(AI Reporting)
-    ?Layer 8: 人机交互?(Human-AI Interface)
-    ?Layer 9: 研究与创新层 (Research & Innovation) 🆕
-    ?Layer 10: 治理与合规层 (Governance & Compliance) 🆕
-    ?Layer 11: 战略决策?(Strategic Decision) 🆕
+  └─ Layer 1: 数据预处理层 (Preprocessing)
+  └─ Layer 2: Alpha 因子层 (Alpha Factors)
+  └─ Layer 3: 舆情分析层 (Sentiment & Events) 🆕
+  └─ Layer 4: 机器学习层 (Machine Learning) 🆕
+  └─ Layer 5: 策略执行层 (Strategy Execution)
+  └─ Layer 6: 组合优化层 (Portfolio Optimization)
+  └─ Layer 7: AI 报告层 (AI Reporting)
+  └─ Layer 8: 人机交互层 (Human-AI Interface)
+  └─ Layer 9: 研究与创新层 (Research & Innovation) 🆕
+  └─ Layer 10: 治理与合规层 (Governance & Compliance) 🆕
+  └─ Layer 11: 战略决策层 (Strategic Decision) 🆕
 ```
 
 ---
@@ -97,21 +113,24 @@ Layer 0: 数据源层 (Data Sources)
 
 ### Layer 0-11: 技术实现层
 
-详细内容请参考文档前半部分?
+详细内容见本文第 1～2 节分层表与下文各 Layer 小节。
 ---
 
 ### Layer 9: 研究与创新层 🆕
 
-**设计理由**: 
-- **持续创新**: 量化市场快速变化，需要持续研究新因子、新策略
-- **AI辅助研究**: AI可模拟研究团队，进行文献追踪、想法验?- **知识积累**: 研究成果需要系统化管理，避免重复造轮?- **个人优势**: 个人开发者可通过AI弥补团队规模劣势
+**设计理由**：
 
-| 模块 | 功能 | 技术方?|
+- **持续创新**：量化市场快速变化，需要持续研究新因子、新策略。  
+- **AI 辅助研究**：AI 可模拟研究团队，进行文献追踪与想法验证。  
+- **知识积累**：研究成果需要系统化管理，避免重复造轮子。  
+- **个人优势**：个人开发者可通过 AI 弥补团队规模劣势。  
+
+| 模块 | 功能 | 技术方案 |
 |------|------|----------|
-| AI虚拟研究实验?| 模拟研究团队协作 | GLM-4.7-Flash多角?|
-| 创新孵化?| 新想法快速验?| 回测框架+AI评估 |
-| 学术前沿追踪 | 论文自动检索解?| arXiv API+GLM-4 |
-| 研究知识管理 | RAG知识?| ChromaDB+Embedding |
+| AI 虚拟研究实验室 | 模拟研究团队协作 | GLM-4.7-Flash 多角色 |
+| 创新孵化器 | 新想法快速验证 | 回测框架 + AI 评估 |
+| 学术前沿追踪 | 论文自动检索解析 | arXiv API + GLM-4 |
+| 研究知识管理 | RAG 知识库 | ChromaDB + Embedding |
 
 **详细蓝图**: [RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)
 
@@ -119,18 +138,19 @@ Layer 0: 数据源层 (Data Sources)
 
 ### Layer 10: 治理与合规层 🆕
 
-**设计理由**:
-- **风险控制**: 金融交易风险高，需要完善的内部控制机制
-- **合规要求**: 即使个人交易也需遵循基本合规原则
-- **决策审计**: 所有AI决策需要可追溯、可解释
-- **专业标准**: 对标专业机构治理标准
+**设计理由**：
 
-| 模块 | 功能 | 技术方?|
+- **风险控制**：金融交易风险高，需要完善的内部控制机制。  
+- **合规要求**：即使个人交易也需遵循基本合规原则。  
+- **决策审计**：所有 AI 决策需要可追溯、可解释。  
+- **专业标准**：对标专业机构治理标准。  
+
+| 模块 | 功能 | 技术方案 |
 |------|------|----------|
-| 内部控制系统 | 交易授权、操作审?| 规则引擎+AI审核 |
-| 合规监控系统 | 合规检查、预?| 规则引擎+实时监控 |
-| 决策审计追踪 | AI决策记录、解?| 日志系统+可解释AI |
-| 风险治理框架 | 风险评估、预算管?| 风险模型+AI评估 |
+| 内部控制系统 | 交易授权、操作审计 | 规则引擎 + AI 审核 |
+| 合规监控系统 | 合规检查、预警 | 规则引擎 + 实时监控 |
+| 决策审计追踪 | AI 决策记录、解释 | 日志系统 + 可解释 AI |
+| 风险治理框架 | 风险评估、预算管理 | 风险模型 + AI 评估 |
 
 **详细蓝图**: [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)
 
@@ -169,18 +189,34 @@ Layer 0: 数据源层 (Data Sources)
 | 资本配置系统 | 资本分配、效率优化 | Riskfolio-Lib |
 | 投资决策审计 | 决策追溯、复盘分析 | 审计日志系统 |
 
-**详细蓝图**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)
+**详细蓝图**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md) · 宏观因子专篇：[MACRO_FACTOR_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md)
 
-**能力与实施蓝图对照（审计维护）**：[LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md](../09_AUDIT/STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md)（上表各模块 ↔ `01_BLUEPRINTS` / 战略决策卷；含 TBD 项）。
+**能力与实施蓝图对照（审计维护）**：[LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md](../09_AUDIT/STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md)（上表各模块 ↔ `01_BLUEPRINTS` / 战略决策卷；22 项均已链到具体蓝图）。
 
 ---
 
 ## 4. 跨层级数据流
 
-### 4.1 核心数据流图
+### 4.1 核心数据流（Layer 0–11 纵览）
 
-```
-┌─────────────────────────────────────────────────────────────────────────────??                         Layer 0-11 数据流总览                              ?├─────────────────────────────────────────────────────────────────────────────??                                                                            ??Layer 0: 数据源层                                                           ??    ?                                                                      ??    ↓原始数?(OHLCV、财务、新?                                           ??Layer 1: 数据预处理层                                                       ??    ?                                                                      ??    ↓清洗后数据(标准化、对齐、验证                                         ??Layer 2: Alpha因子?                                                       ??    ?                                                                      ??    ↓因子库(5700+个因?                                                    ??Layer 3: 舆情分析?←─────?                                                ??    ?                     ?                                               ??    ↓舆情信?             │新?情感数据                                     ??Layer 4: 机器学习?     ?                                                ??    ?                     ?                                               ??    ↓预测信?AI因子       ?                                               ??Layer 5: 策略执行?──────?                                                ??    ?                     ?                                               ??    ↓交易信?             │风险检查结束                                    ??Layer 6: 组合优化?←─────?                                                ??    ?                     │持?风险约束                                     ??    ↓优化后组合            ?                                               ??Layer 7: AI报告?       ?                                                ??    ?                     │绩效数据                                         ??    ↓分析报告             ?                                               ??Layer 8: 人机交互?←─────?                                                ??    ?                     ?                                               ??    ↓可视化/告警/授权     │人工指?反馈                                       ??Layer 9: 研究与创新层    ?                                                ??    ?                     │研究成?新策略                                   ??    ↓研究决?             ?                                               ??Layer 10: 治理与合规层   ?                                                ??    ?                     │合规检?审计记录                                  ??    ↓治理决?             ?                                               ??Layer 11: 战略决策略    ?                                                ??    ?                     │战略配?风险预算                                   ??   决策反馈 ───────────?                                                ??                                                                            ?└─────────────────────────────────────────────────────────────────────────────?```
+> 下图以**表格**替代旧版损坏的 ASCII 示意图；跨层接口细节见 **§4.2** 与 [API 接口契约](../03_TRADING_TACTICS/API_Contract.md)。
+
+| Layer | 名称 | 主要产出 / 向下游传递 |
+|-------|------|------------------------|
+| 0 | 数据源层 | 原始数据（OHLCV、财务、新闻等） |
+| 1 | 数据预处理层 | 清洗、标准化、对齐与校验后的数据 |
+| 2 | Alpha 因子层 | 因子库与因子矩阵 |
+| 3 | 舆情分析层 | 舆情信号与事件标签（→ Layer 5） |
+| 4 | 机器学习层 | 预测信号、AI 因子（→ Layer 2 / 5） |
+| 5 | 策略执行层 | 交易信号与目标仓位（与 Layer 6 往返风控与优化） |
+| 6 | 组合优化层 | 满足约束的权重与组合方案 |
+| 7 | AI 报告层 | 绩效与归因类分析报告 |
+| 8 | 人机交互层 | 可视化、告警与人工授权/反馈（→ 各层） |
+| 9 | 研究与创新层 | 新因子、新策略假设（→ Layer 2 / 5） |
+| 10 | 治理与合规层 | 合规状态与审计记录（→ 各层） |
+| 11 | 战略决策层 | 资产配置与风险预算（→ Layer 6 等） |
+
+**反馈闭环**：Layer 8 人工输入、Layer 10 合规结论、Layer 11 战略调整均可反向影响上游执行与参数；具体以契约与蓝图为准。
 
 ### 4.2 关键数据接口
 
@@ -245,34 +281,34 @@ Layer 0: 数据源层 (Data Sources)
 
 | 文档 | 说明 |
 |------|------|
-| **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | **🆕 P0?* AI可解释性工具蓝?|
-| **[RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](#)** | **🆕 P0?* RAG知识系统蓝图 |
-| **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | **🆕 P0?* 统一自适应模型蓝图 |
-| **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | **🆕 P0?* 实施加速方案蓝?|
+| **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | **🆕 P0** AI 可解释性工具蓝图 |
+| **[RAG_SYSTEM_BLUEPRINT.md](./RAG_SYSTEM_BLUEPRINT.md)** | **🆕 P0** RAG 知识系统（原 RAG_KNOWLEDGE 条目合并指向本蓝图） |
+| **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 统一自适应模型蓝图 |
+| **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | **🆕 P0** 实施加速方案蓝图 |
 
 #### 核心监控体系
 
 | 文档 | 说明 |
 |------|------|
-| **DATA_QUALITY_MONITORING_BLUEPRINT.md** | **🆕 P0?* 数据质量监控蓝图 |
-| **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0?* 实时风险监控蓝图 |
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0?* 压力测试系统蓝图 |
-| **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0?* 合规监控系统蓝图 |
+| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md)** | **🆕 P0** 数据质量监控蓝图 |
+| **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0** 实时风险监控蓝图 |
+| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 压力测试系统蓝图 |
+| **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 合规监控系统蓝图 |
 
 #### 顶层架构体系 (Layer 9-11)
 
 | 文档 | 说明 |
 |------|------|
-| **[RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)** | **🆕 Layer 9** 研究与创新层蓝图 - AI虚拟研究实验?创新孵化?|
-| **[GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)** | **🆕 Layer 10** 治理与合规层蓝图 - 内部控制体系+合规监控 |
-| **[STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)** | **🆕 Layer 11** 战略决策层蓝?- 战略资产配置+风险预算分配 |
+| **[RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)** | **🆕 Layer 9** 研究与创新层蓝图：AI 虚拟研究实验与创新孵化 |
+| **[GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)** | **🆕 Layer 10** 治理与合规层蓝图：内部控制体系与合规监控 |
+| **[STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)** | **🆕 Layer 11** 战略决策层蓝图：战略资产配置与风险预算分配 |
 
 #### 横向支撑体系
 
 | 文档 | 说明 |
 |------|------|
-| **[DISASTER_RECOVERY_BLUEPRINT.md](./DISASTER_RECOVERY_BLUEPRINT.md)** | **📋 规划?* 灾备体系蓝图 - 数据备份+故障恢复+异地容灾 |
+| **[DISASTER_RECOVERY_BLUEPRINT.md](./DISASTER_RECOVERY_BLUEPRINT.md)** | **📋 规划** 灾备体系蓝图：数据备份、故障恢复与异地容灾 |
 
 ---
 
-**版本**: v5.5 | **更新**: 2026-04-06 | **状?*: ?活跃
+**版本**: v5.6 | **更新**: 2026-04-08 | **状态**: 活跃

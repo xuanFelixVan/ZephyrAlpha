@@ -162,6 +162,12 @@
   - 新增 `BENCHMARK_MANAGEMENT_BLUEPRINT.md`、`ESG_INVESTMENT_SYSTEM_BLUEPRINT.md`、`IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md`（`01_BLUEPRINTS`，v0.1 Draft）。  
   - 更新 Layer11 对照表至 **v1.1**，**22/22** 全覆盖；`generate_01_blueprints_index.py` 重跑。  
 
+- **批次 F（宏观因子专篇 + Layer 10 表 + L11 对照 v1.2 + ARCHITECTURE 乱码收口）**  
+  - 新增 `MACRO_FACTOR_SYSTEM_BLUEPRINT.md`（Draft v0.1），作为 Layer 11「宏观因子系统」主入口；`ARCHITECTURE.md` Layer 11 节增加该链。  
+  - `ARCHITECTURE.md`：Layer 10 模块表修复；**§4.1** 数据流改为 Markdown 表（替换损坏 ASCII）；**§5** P0 蓝图表与页脚去 `?`；RAG 行改链 `RAG_SYSTEM_BLUEPRINT.md`；版本 **v5.6**。  
+  - [`LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`](../STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) 升至 **v1.2**（第 15 行主链 MACRO；弱匹配清零）。  
+  - `generate_01_blueprints_index.py` 重跑（**175** 条）；L1 **无效内链 0**；登记表 **G-015**（`ARCHITECTURE.md` 范围）关闭，登记表 **v1.6**。  
+
 - **详细行项目**：见 [`../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。
 
 ---

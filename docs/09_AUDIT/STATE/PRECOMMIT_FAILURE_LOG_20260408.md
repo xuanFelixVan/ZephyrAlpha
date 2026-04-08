@@ -44,3 +44,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: BENCHMARK / ESG / IPS 三蓝图；Layer11 对照表 v1.1（22/22）；01_BLUEPRINTS INDEX 174；登记表 v1.4
+
+## 2026-04-08 — 宏观因子专篇 + ARCHITECTURE v5.6 + L11 对照 v1.2（批次 F）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `MACRO_FACTOR_SYSTEM_BLUEPRINT.md`；Layer11 对照 v1.2；ARCHITECTURE §4.1/§5/Layer10 与 G-015 收口；01_BLUEPRINTS INDEX 175；登记表 v1.6；L1 无效链 0
