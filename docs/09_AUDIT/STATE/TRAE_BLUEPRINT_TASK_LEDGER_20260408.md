@@ -224,6 +224,8 @@ related_documents:
 
 | T2-13 | （无） | Trae-?? | 已完成 | 2026-04-08 | 0 | 统筹-A 验收：工作区 clean，无新增可提交 diff；说明该批次目标文件在仓库现态已满足 §0.1 门禁三段；L1 扫描时间戳 20260408T094254Z，Invalid links=0；无 commit（避免空提交） |
 
+| T2-GLOBAL | （全库蓝图阶段最终放行） | Cursor-01 | 已完成 | 2026-04-08 | 0 | 全局收敛验收：复跑 `python scripts/sentinel_l1_governance_scan.py`；UTC=20260408T101606Z；Invalid links=0；module_id duplicates=0；扫描产物 `SENTINEL_L1_SCAN_20260408.*` 已 `git restore` 不入库 |
+
 | T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 仓库落盘提交 `a1541752` 为混批（夹带非本批文件）；统筹-A 以拆账方式验收，并统一门禁标题为（接口与契约（蓝图终稿）/验收标准（可检查）/已知限制）；L1=0 |
 | T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PERFORMANCE_TESTING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
