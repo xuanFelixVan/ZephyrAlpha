@@ -1,23 +1,12 @@
 ---
-module_id: 09_RESEARCH_INNOVATION_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 09_RESEARCH_INNOVATION目录索引
----
-
-﻿---
 module_id: 09_RESEARCH_INNOVATION_INDEX_RESEARCH_INNOVATION_001
 version: 2.1.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 系统架构师
 responsibility:
-  - 负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
+- 负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
 standard_type: 专业量化机构目录索引
 applicable_scope: Layer 9 - 研究与创新层
 compliance_level: 专业标准

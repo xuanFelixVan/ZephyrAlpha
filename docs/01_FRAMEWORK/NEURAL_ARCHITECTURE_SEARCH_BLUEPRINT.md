@@ -1,35 +1,18 @@
 ---
-module_id: NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - NEURAL_ARCHITECTURE_SEARCH蓝图设计
----
-
-﻿---
 module_id: NEURAL_ARCHITECTURE_SEARCH_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
-last_updated: 2026-04-03
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供neural architecture search blueprint的架构设计和实施蓝图
-
+- 提供neural architecture search blueprint的架构设计和实施蓝图
 standard_type: 高层架构蓝图
-
 priority: P2
+responsibility_boundary: '本文档负责Layer 4机器学习层的神经架构搜索设计，包括搜索空间、搜索策略、性能评估等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的神经架构搜索设计，包括搜索空间、搜索策略、性能评估等核心功能。
+  '
 layer: Layer 3 (策略层)
+owner: 首席文档架构师
 ---
 ---
 

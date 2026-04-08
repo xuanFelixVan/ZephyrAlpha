@@ -1,23 +1,12 @@
 ---
-module_id: 09_AUDIT_STANDARDS_DOC_GOVERNANCE_MECHANISM
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - όΨΘόκμόύΡΗώΧόΧΙόείΙ文档
----
-
-﻿---
 module_id: DOCGOVERNANCEMECHANISM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计团队
 responsibility:
-  - 治理合规框架设计与实施与实施指导
+- 治理合规框架设计与实施与实施指导
 standard_type: 专业量化机构标准
 applicable_scope: 全系统
 compliance_level: 专业标准

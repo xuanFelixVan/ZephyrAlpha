@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_DECISIONS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - чЙИцЬмчобчРЖхЖчнЦшохХ文档
----
-
-﻿---
 module_id: OPS_DECISION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: щжЦх╕нцЦЗцбгцЮ╢цЮД?
 responsibility:
-  - 实施指南、部署文档
+- 实施指南、部署文档
 decision_type: цКАцЬпцЮ╢цЮДхЖ│?
 decision_status: х╖▓щЗЗ?
 implementation_status: хоЮцЦ╜?

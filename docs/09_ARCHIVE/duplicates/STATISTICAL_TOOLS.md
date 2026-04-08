@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_11
 ```python
 class QuantileAnalysis:
 """分位数分析"""

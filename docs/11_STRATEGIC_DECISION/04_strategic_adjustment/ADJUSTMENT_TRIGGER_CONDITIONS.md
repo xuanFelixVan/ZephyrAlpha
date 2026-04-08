@@ -1,15 +1,4 @@
 ---
-module_id: ADJUSTMENT_TRIGGER_CONDITIONS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 调整触发条件蓝图文档
----
-
-﻿---
 module_id: ADJUSTMENT_TRIGGER_CONDITIONS_001
 version: 1.0.0
 status: Active
@@ -18,9 +7,9 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
+- 11 STRATEGIC DECISION模块文档管理与维护
+last_updated: 2026-04-07
 ---
-
 # 调整触发条件蓝图
 > **核心职责**: 调整触发条件设计
 > **职责边界**: 

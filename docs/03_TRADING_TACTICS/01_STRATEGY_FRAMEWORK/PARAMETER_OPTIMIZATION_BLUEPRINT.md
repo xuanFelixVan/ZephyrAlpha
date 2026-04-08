@@ -1,32 +1,17 @@
-﻿---
-module_id: PARAMETER_OPTIMIZATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PARAMETER_OPTIMIZATION蓝图设计
 ---
-
-﻿---
 module_id: PARAMETEROPTIMIZATIONBLUEPRI_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 交易策略团队
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+- 系统优化方案设计与实施指导与实施指导
 layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
----
-
-
-﻿---
 module_id: TACTICS_PARAM_OPT_BP_001
 version: 1.0.1
 status: Active

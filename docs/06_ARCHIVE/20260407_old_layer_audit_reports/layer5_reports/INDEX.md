@@ -1,28 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260407_OLD_LAYER_AUDIT_REPORTS_INDEX_5
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - layer5_reports目录索引
----
-
-﻿---
 module_id: ARCHIVE_LAYER5_REPORTS_INDEX_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理团队
 standard_type: 专业量化机构归档索引
 applicable_scope: Layer 5审计报告归档
 compliance_level: 专业标准
 responsibility:
-  - 归档索引、文件追溯
+- 归档索引、文件追溯
 ---
-
 # Layer 5审计报告归档索引
 
 ## 📋 归档概要
@@ -49,7 +37,7 @@ responsibility:
 所有归档文件可通过Git历史追溯至原始位置：
 
 ```bash
-git log --all --full-history -- "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/LAYER5*.md"
+git log --all --full-history -- "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER5*.md"
 ```
 
 ---

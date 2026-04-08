@@ -1,5 +1,5 @@
 ---
-module_id: DATA_CATALOG_001
+module_id: DATA_CATALOG_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

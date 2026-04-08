@@ -1,0 +1,25 @@
+# OpenClaw L2 深度审计 — 批次: docs/02_FACTOR_LIBRARY/07_FACTOR_MONITORING
+
+> **批次ID**: 052
+> **目录**: `docs/02_FACTOR_LIBRARY/07_FACTOR_MONITORING`
+> **文件数**: 3
+> **审计时间**: 2026-04-08T03:47
+
+---
+
+## 审计汇总表
+
+| 文件 | 标题 | module_id | 问题 | 严重度 |
+|------|------|-----------|------|--------|
+| `INDEX.md` | 07_FACTOR_MONITORING 因子监控 | FACTOR_LIBRARY_07_FACTOR_MONITORING_INDEX | 无 | P2 |
+| `OVERVIEW.md` | 因子监控概览 | FACTOR_LIBRARY_07_FACTOR_MONITORING_OVERVIEW | 无 | P2 |
+| `README.md` | 07_FACTOR_MONITORING | 02_FACTOR_LIBRARY_07_FACTOR_MONITORING_001 | 无 | P2 |
+
+## 统计
+
+- P0: 0 篇
+- P1: 0 篇
+- P2: 3 篇
+
+## 目录级结论
+

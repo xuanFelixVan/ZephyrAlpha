@@ -717,7 +717,7 @@ class ServiceRegistration(BaseModel):
 
 ##### 服务发现模块
 - **模块ID**: SERVICE_DISCOVERY_001
-- **文档**: [服务发现蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SERVICE_DISCOVERY_BLUEPRINT.md)
+- **文档**: [服务发现蓝图](./SERVICE_DISCOVERY_BLUEPRINT.md)
 - **职责**: 服务注册、服务发现、健康检查、负载均衡
 - **开源方案**: Consul
 - **状态**: Active

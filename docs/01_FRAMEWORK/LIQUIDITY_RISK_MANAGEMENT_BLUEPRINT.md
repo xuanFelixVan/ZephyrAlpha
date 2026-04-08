@@ -1,52 +1,50 @@
 ---
-module_id: LIQUIDITY_RISK_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - LIQUIDITY_RISK_MANAGEMENT蓝图设计
----
-
-﻿---
 module_id: LIQUIDITY_RISK_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 流动性风险管理系统架构设计
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Liquidity Management", "Citadel Liquidity Monitoring"]
+reference_models:
+- Bridgewater Liquidity Management
+- Citadel Liquidity Monitoring
 related_documents:
-  - REALTIME_RISK_MONITORING_BLUEPRINT.md
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md
+- REALTIME_RISK_MONITORING_BLUEPRINT.md
+- STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: Riskfolio-Lib
-    url: https://github.com/dcajasn/Riskfolio-Lib
-    features: 流动性风险指标、流动性约束优化
-  - name: PyPortfolioOpt
-    url: https://github.com/robertmartin8/PyPortfolioOpt
-    features: 流动性约束优化、交易成本模型
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
-  - 流动性风险监控（市场流动性、持仓流动性）
-  - 流动性压力测试（极端场景流动性评估）
-  - 流动性预警机制（流动性不足预警）
-  - 流动性报告生成（日报、周报、月报）
-  
-  **与本文档职责边界**：
-  - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控（包含流动性风险监控）
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库（包含流动性压力测试场景）
-responsibility:
-  - 风险管理框架设计与实施方案与优化维护
----
+- name: Riskfolio-Lib
+  url: https://github.com/dcajasn/Riskfolio-Lib
+  features: 流动性风险指标、流动性约束优化
+- name: PyPortfolioOpt
+  url: https://github.com/robertmartin8/PyPortfolioOpt
+  features: 流动性约束优化、交易成本模型
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
 
+  - 流动性风险监控（市场流动性、持仓流动性）
+
+  - 流动性压力测试（极端场景流动性评估）
+
+  - 流动性预警机制（流动性不足预警）
+
+  - 流动性报告生成（日报、周报、月报）
+
+
+  **与本文档职责边界**：
+
+  - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控（包含流动性风险监控）
+
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库（包含流动性压力测试场景）
+
+  '
+responsibility:
+- 风险管理框架设计与实施方案与优化维护
+---
 # 流动性风险管理系统蓝图（蓝图阶段）
 > **核心职责**: Liquidity Risk Management蓝图设计
 > **职责边界**: 

@@ -1,28 +1,13 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_AUTOMATION_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - VERSION_MANAGEMENT_AUTOMATION操作指南
----
-
-﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 实施指南、部署文档
-
----
----
-
+- 实施指南、部署文档
 ---
 module_id: IMPL_OPS_VERSION_AUTO_GUIDE_001
 version: 1.0.1

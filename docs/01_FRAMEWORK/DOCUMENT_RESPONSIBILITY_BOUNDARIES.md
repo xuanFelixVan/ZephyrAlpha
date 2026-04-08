@@ -1,33 +1,17 @@
 ---
-module_id: DOCUMENT_RESPONSIBILITY_BOUNDARIES
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 文档职责边界定义文档
----
-
-﻿---
 module_id: DOCUMENT_RESPONSIBILITY_BOUNDARIES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 负责document responsibility boundaries的设计、实现和维护工作
+- 负责document responsibility boundaries的设计、实现和维护工作
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 layer: Layer 4
 ---
----
----
----
----
-
 
 # 文档职责边界定义
 > **核心职责**: 负责document responsibility boundaries的设计、实现和维护工作

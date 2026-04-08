@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_3
 > **核心职责**: 数据需求规格定义和数据质量标准，涉及数据需求清单
 > **职责边界**:
 > - ✅ 本文档负责：数据需求规格定义和数据质量标准

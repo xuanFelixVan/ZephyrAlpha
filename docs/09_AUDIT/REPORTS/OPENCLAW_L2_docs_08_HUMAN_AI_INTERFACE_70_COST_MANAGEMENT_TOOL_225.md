@@ -1,0 +1,23 @@
+# OpenClaw L2 深度审计 — 批次: docs/08_HUMAN_AI_INTERFACE/70_COST_MANAGEMENT_TOOL
+
+> **批次ID**: 225
+> **目录**: `docs/08_HUMAN_AI_INTERFACE/70_COST_MANAGEMENT_TOOL`
+> **文件数**: 1
+> **审计时间**: 2026-04-08T05:16
+
+---
+
+## 审计汇总表
+
+| 文件 | 标题 | module_id | 问题 | 严重度 |
+|------|------|-----------|------|--------|
+| `COST_MANAGEMENT_TOOL_BLUEPRINT.md` | 模块70: 成本管理工具 (COST_MANAGEMENT_TOOL) | 08_HUMAN_AI_INTERFACE_70_COST_MANAGEMENT_TOOL | 无 | P2 |
+
+## 统计
+
+- P0: 0 篇
+- P1: 0 篇
+- P2: 1 篇
+
+## 目录级结论
+

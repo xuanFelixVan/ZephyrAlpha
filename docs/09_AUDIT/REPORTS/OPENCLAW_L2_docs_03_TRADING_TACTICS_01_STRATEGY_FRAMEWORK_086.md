@@ -1,0 +1,39 @@
+# OpenClaw L2 深度审计 — 批次: docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK
+
+> **批次ID**: 086
+> **目录**: `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK`
+> **文件数**: 16
+> **审计时间**: 2026-04-08T03:47
+
+---
+
+## 审计汇总表
+
+| 文件 | 标题 | module_id | 问题 | 严重度 |
+|------|------|-----------|------|--------|
+| `BACKTEST_BLUEPRINT.md` | Backtrader回测蓝图 | TACTICS_BACKTEST_BP_001 | 双YAML头(3块) | P2 |
+| `BATCH_EVALUATION_BLUEPRINT.md` | 批量策略评估系统技术蓝图 | BATCHEVALUATIONBLUEPRINT_001 | 双YAML头(2块) | P2 |
+| `INDEX.md` | чнЦчХецбЖцЮ╢чЫох╜Хч┤вх╝Х | 03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_INDEX_STRATEGY_FRAMEWORK | 双YAML头(2块) | P2 |
+| `PARAMETER_OPTIMIZATION_BLUEPRINT.md` | 参数优化系统技术蓝图 | PARAMETEROPTIMIZATIONBLUEPRI_001 | 双YAML头(2块) | P2 |
+| `PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md` | 组合优化AI蓝图 | AI_007 | 双YAML头(2块) | P2 |
+| `PRODUCTION_MONITORING_BLUEPRINT.md` | 初始化各模块 | PRODUCTIONMONITORINGBLUEPRIN_001 | 双YAML头(2块) | P2 |
+| `RISK_CONTROL_AI_BLUEPRINT.md` | 风险控制AI蓝图 | AI_008 | 双YAML头(2块) | P2 |
+| `STRATEGY_AI_MODULES_ANALYSIS.md` | ﻝﻝ۴ﮒﺎAIﮔ۷۰ﮒﻠﮔﺎﮒﮔﮔ۴ﮒ? | STRATEGY_AI_MODULES_ANALYSIS_001 | 双YAML头(2块) | P2 |
+| `STRATEGY_ENGINE_BLUEPRINT.md` | 个人AI辅助量化系统开发蓝图 | AI_009 | 双YAML头(3块) | P2 |
+| `STRATEGY_ENGINE_CORE_BLUEPRINT.md` | 使用watchdog监控文件变化 | STRATEGYENGINECOREBLUEPRINT_001 | 双YAML头(2块) | P2 |
+| `STRATEGY_LIFECYCLE_AI_BLUEPRINT.md` | 策略生命周期管理AI蓝图 | AI_010 | 双YAML头(2块) | P2 |
+| `STRATEGY_SELECTION_BLUEPRINT.md` | 策略排名与选择系统技术蓝图 | STRATEGYSELECTIONBLUEPRINT_001 | 双YAML头(2块) | P2 |
+| `STRATEGY_TEMPLATES.md` | 策略模板? | TACTICS_STRATEGY_TEMPLATES_001 | 双YAML头(3块) | P2 |
+| `classification.md` | 策略分类体系 | TACTICS_STRATEGY_CLASSIFICATION_001 | 双YAML头(3块) | P2 |
+| `lifecycle.md` | 策略生命周期管理 | TACTICS_STRATEGY_LIFECYCLE_001 | 双YAML头(2块) | P2 |
+| `overview.md` | 策略体系概述 | TACTICS_STRATEGY_OVERVIEW_001 | 双YAML头(2块) | P2 |
+
+## 统计
+
+- P0: 0 篇
+- P1: 0 篇
+- P2: 16 篇
+
+## 目录级结论
+
+- **双YAML头**: 16 篇

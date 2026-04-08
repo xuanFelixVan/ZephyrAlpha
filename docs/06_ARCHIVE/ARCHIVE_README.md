@@ -1,25 +1,13 @@
 ---
-module_id: ARCHIVE_README
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 编码问题文档归档说明文档
----
-
-﻿---
 module_id: 06_ARCHIVE_ARCHIVE_README_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 归档文档、历史版本
-
+- 归档文档、历史版本
 ---
 ---
 

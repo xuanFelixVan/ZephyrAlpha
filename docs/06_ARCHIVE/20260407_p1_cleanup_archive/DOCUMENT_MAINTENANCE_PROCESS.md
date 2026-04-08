@@ -1,32 +1,19 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_MAINTENANCE_PROCESS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - 文档维护流程文档
----
-
-﻿---
-responsibility:
-  - 扩展功能、辅助模块、支撑文档
-  - 风险预算
-  - 数据质量
-
+- 扩展功能、辅助模块、支撑文档
+- 风险预算
+- 数据质量
 module_id: 10_GOVERNANCE_COMPLIANCE_DOCUMENT_MAINTENANCE_PROCESS_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构治理流程文档
 applicable_scope: 全系统文档维护流程
 compliance_level: 专业标准
 ---
-
 # 文档维护流程
 
 > **核心职责**: 文档内容说明

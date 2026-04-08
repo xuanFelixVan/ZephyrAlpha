@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - VERSION_MANAGEMENT标准规范
----
-
-﻿---
-module_id: DEV_STD_006
+module_id: DEV_STD_006_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
 responsibility:
-  - 实施指南、部署文档
+- 实施指南、部署文档
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒﺙﮒﮔ?
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﻝﮔ؛ﻝ؟۰?
 compliance_level: ﮒﺙﮒﮔ?

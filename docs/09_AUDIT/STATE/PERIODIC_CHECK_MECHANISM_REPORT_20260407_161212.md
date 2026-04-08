@@ -3,25 +3,15 @@ module_id: PERIODIC_CHECK_MECHANISM_REPORT_20260407_161212
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PERIODIC_CHECK_MECHANISM_20260407_161212报告文档
----
-
-﻿---
-module_id: PERIODIC_CHECK_MECHANISM_REPORT_20260407_161212
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 机制报告
 applicable_scope: 定期检查机制建立
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- PERIODIC_CHECK_MECHANISM_20260407_161212报告文档
 ---
-
 # 定期检查机制建立报告
 
 > **核心职责**: 记录定期检查机制建立的过程和结果

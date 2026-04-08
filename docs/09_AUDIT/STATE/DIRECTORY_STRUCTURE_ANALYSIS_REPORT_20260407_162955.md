@@ -3,25 +3,15 @@ module_id: DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260407_162955
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DIRECTORY_STRUCTURE_ANALYSIS_20260407_162955报告文档
----
-
-﻿---
-module_id: DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260407_162955
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 分析报告
 applicable_scope: 目录结构分析
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- DIRECTORY_STRUCTURE_ANALYSIS_20260407_162955报告文档
 ---
-
 # 目录结构分析报告
 
 > **核心职责**: 记录目录结构分析的过程和结果

@@ -1,28 +1,17 @@
 ---
-module_id: 10_AI_WORKFLOW_INTELLIGENT_SCHEDULER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 智能调度器蓝图 (Intelligent Scheduler Blueprint)文档
----
-
-﻿---
 module_id: INTELLIGENT_SCHEDULER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: AI工作流团队
-responsibility: 
+responsibility:
+- 智能调度器蓝图 (Intelligent Scheduler Blueprint)文档
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 10 - AI工作流层
 compliance_level: 专业标准
 layer: Layer 10 (AI工作流)
 ---
-
 ## 核心定位
 
 负责智能调度器的设计与实现，提供任务调度、资源优化和调度策略管理功能，支持AI工作流的高效执行。

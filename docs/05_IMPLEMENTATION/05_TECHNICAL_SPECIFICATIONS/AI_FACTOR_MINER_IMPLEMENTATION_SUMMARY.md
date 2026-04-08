@@ -1,23 +1,12 @@
 ---
-module_id: AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - AIтЏатГљТїќТјўТеАтЮЌтъТќйТђуЊТіЦтЉі文档
----
-
-﻿---
 module_id: AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 owner: ждќтИГТіђТюУётАтў
 responsibility:
-  - 因子研究与管理框架设计与优化维护
+- 因子研究与管理框架设计与优化维护
 standard_type: тъТќйТђ╗у╗ЊТіЦтЉі
 applicable_scope: AIтЏатГљТїќТјўТеАтЮЌ
 compliance_level: СИЊСИџТаЄтЄє

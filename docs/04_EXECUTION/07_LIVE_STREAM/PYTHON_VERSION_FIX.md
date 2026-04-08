@@ -1,22 +1,13 @@
 ---
-module_id: PYTHON_VERSION_FIX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - CUDA 121 pytorchcuda121文档
----
-
-﻿---
 parent_document: ../INDEX.md
 responsibility:
-  - 交易执行系统设计与优化与实施指导
+- 交易执行系统设计与优化与实施指导
 version: 1.0.0
 module_id: EXE_PYTHON_VERSION_FIX
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
+owner: 首席文档架构师
 ---
 ---
 

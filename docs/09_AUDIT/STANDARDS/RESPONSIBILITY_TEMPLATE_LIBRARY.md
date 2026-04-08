@@ -1,28 +1,16 @@
 ---
-module_id: 09_AUDIT_STANDARDS_RESPONSIBILITY_TEMPLATE_LIBRARY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 职责描述模板库文档
----
-
-﻿---
 module_id: RESPONSIBILITY_TEMPLATE_LIBRARY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理系统
 responsibility:
-  - 文档模板设计与标准化管理与优化维护
+- 文档模板设计与标准化管理与优化维护
 standard_type: 标准文档
 applicable_scope: 全系统文档治理
 compliance_level: 专业标准
 ---
-
 # 职责描述模板库
 
 > **核心职责**: 提供标准化的职责描述模板，确保文档职责清晰、无重叠

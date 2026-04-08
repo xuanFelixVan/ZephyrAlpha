@@ -1,26 +1,14 @@
 ---
-module_id: 09_AUDIT_AUTOMATION_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - AUTOMATION目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 module_id: 09_AUDIT_AUTOMATION_INDEX_AUTOMATION_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # AUTOMATION 目录索引
 
 > **核心职责**: 提供AUTOMATION目录下的文档导航

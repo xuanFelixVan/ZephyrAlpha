@@ -1,20 +1,9 @@
 ---
-module_id: DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V5_20260405
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_SOURCE_LAYER_DEEP_AUDIT_V5_20260405报告文档
----
-
-﻿---
 module_id: DATA_SOURCE_LAYER_AUDIT_REPORT_V5_001
 version: 5.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 深度审计报告
 applicable_scope: 数据源层文档体系
@@ -23,8 +12,7 @@ parent_document: ../INDEX.md
 audit_type: 第五次深度审计
 audit_date: 2026-04-05
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
-
+- 系统审计分析与质量评估报告与改进建议
 ---
 ---
 

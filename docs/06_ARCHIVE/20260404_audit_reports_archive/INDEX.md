@@ -21,7 +21,7 @@ applicable_scope: 审计报告归档
 archive_date: 2026-04-04
 archive_reason: 整理分散的审计报告，统一归档管理
 source_locations:
-  - 05_IMPLEMENTATION/07_OPERATIONS/audit_state/
+  - 05_IMPLEMENTATION/04_OPERATIONS/audit_state/
   - 05_IMPLEMENTATION/07_OPERATIONS/review_reports/
 ---
 ---

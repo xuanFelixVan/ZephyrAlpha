@@ -1,46 +1,46 @@
 ---
-module_id: HIGH_FREQUENCY_TRADING_ENGINE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - HIGH_FREQUENCY_TRADING_ENGINE蓝图设计
----
-
-﻿---
 module_id: HIGH_FREQUENCY_TRADING_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 5 (策略执行层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 高频交易执行
 compliance_level: 顶级专业标准
-reference_models: ["Citadel Securities", "Two Sigma", "Jump Trading"]
+reference_models:
+- Citadel Securities
+- Two Sigma
+- Jump Trading
 related_documents:
-  - ORDER_EXECUTION_BLUEPRINT.md
-  - SMART_ORDER_ROUTING_BLUEPRINT.md
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责高频交易执行引擎，包括：
+- ORDER_EXECUTION_BLUEPRINT.md
+- SMART_ORDER_ROUTING_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+responsibility_boundary: '本文档负责高频交易执行引擎，包括：
+
   - 低延迟订单执行
+
   - 高频策略实现
+
   - 市场数据实时处理
+
   - 订单簿管理
-  
+
+
   订单执行请参考：ORDER_EXECUTION_BLUEPRINT.md
+
   智能订单路由请参考：SMART_ORDER_ROUTING_BLUEPRINT.md
+
+  '
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 3周
 open_source_solution: 自研低延迟框架 + QuickFIX + ZeroMQ
+responsibility:
+- HIGH_FREQUENCY_TRADING_ENGINE蓝图设计
 ---
-
 # 高频交易执行引擎蓝图
 > **核心职责**: High Frequency Trading Engine蓝图设计
 > **职责边界**: 

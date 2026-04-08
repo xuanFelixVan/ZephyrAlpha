@@ -1,32 +1,17 @@
 ---
-module_id: A_STOCK_DATA_PROCESSING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - A_STOCK_DATA_PROCESSING蓝图设计
----
-
-﻿---
 module_id: A_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档管理员
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+- 数据管理架构设计与实施规范与优化维护
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
----
-
-
-﻿---
 standard_type: 蓝图标准
 applicable_scope:
 compliance_level: 初始标准

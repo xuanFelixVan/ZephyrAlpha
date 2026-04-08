@@ -1,23 +1,11 @@
 ---
-module_id: DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - Layer 9文档治理维护总结文档
----
-
-﻿---
-responsibility:
-  - 负责提供Layer 9研究与创新层文档治理维护的摘要报告，总结维护工作、维护效果和改进建议，为维护工作提供总结，确保维护工作的有效性和持续性。
-
+- 负责提供Layer 9研究与创新层文档治理维护的摘要报告，总结维护工作、维护效果和改进建议，为维护工作提供总结，确保维护工作的有效性和持续性。
 module_id: LAYER9_DOCUMENT_GOVERNANCE_MAINTENANCE_SUMMARY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: 文档治理维护总结
 applicable_scope: Layer 9 - 研究与创新层文档维护总结

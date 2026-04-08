@@ -1,23 +1,12 @@
 ---
-module_id: SYSTEM_WIDE_APPROVAL_PLAN
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﮒ۷ﮔ۷۰ﮒﮔﺓﺎﮒﭦ۵ﮒ۰ﮔﺗﮔﺗ文档
----
-
-﻿---
 module_id: APPROVAL_PLAN_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟۰ﮔﺗﮔﺗﮔ۰
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔ۷۰ﮒﮒ؟۰?
 compliance_level: ﻛﺕﻛﺕﮔﮒ

@@ -455,7 +455,7 @@ Write工具:
 1. 确认系统路径: D:\ZephyrAlpha\
 2. 确认审计标准版本: v5.3
 3. 确认专业指南版本: 1.0
-4. 确认输出目录: docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/
+4. 确认输出目录: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
 ```
 
 **资源加载**:

@@ -1,15 +1,4 @@
 ---
-module_id: DOCUMENT_QUALITY_GATE_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENT_QUALITY_GATE标准规范
----
-
-﻿---
 standard_type: ﻝ؟۰ﻝﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
 compliance_level: ﮒﮒ۶ﮔﮒ
@@ -17,11 +6,12 @@ parent_document: ../INDEX.md
 implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
 owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲?
 responsibility:
-  - 技术标准制定与规范管理与优化维护
+- 技术标准制定与规范管理与优化维护
 version: 1.0.0
 module_id: IMP_DOCUMENT_QUALITY_GAT
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 

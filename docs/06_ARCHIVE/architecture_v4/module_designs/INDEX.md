@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_2
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - module_designs目录索引
----
-
-﻿---
 module_id: 06_ARCHIVE_ARCHITECTURE_V4_INDEX_2_LAYER_4_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理系统
 responsibility:
-  - 归档文档、历史版本
+- 归档文档、历史版本
 standard_type: 索引文档
 applicable_scope: 文档索引导航
 compliance_level: 专业标准

@@ -1,26 +1,14 @@
 ---
-module_id: ML_COMPREHENSIVE_AUDIT_V5_20260404
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 4 机器学习层完整性审计报告 v50文档
----
-
-﻿---
 module_id: LAYER4_ML_COMPREHENSIVE_AUDIT_V5
 version: 5.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: Layer 4 (机器学习层)
 standard_type: 完整性审计报告
 responsibility:
-  - 执行文档治理审计，生成审计报告和改进建议
-
+- 执行文档治理审计，生成审计报告和改进建议
 ---
 ---
 

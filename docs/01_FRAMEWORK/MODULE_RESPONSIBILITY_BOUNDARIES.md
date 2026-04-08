@@ -1,31 +1,18 @@
-﻿---
-module_id: MODULE_RESPONSIBILITY_BOUNDARIES
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 模块职责边界定义文档
 ---
-
-﻿---
 module_id: MODULE_RESPONSIBILITY_BOUNDARIES_FRAMEWORK_001
 version: 5.3.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 负责module responsibility boundaries的设计、实现和维护工作
+- 负责module responsibility boundaries的设计、实现和维护工作
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 layer: Layer 4
----
----
 ---
 ---
 

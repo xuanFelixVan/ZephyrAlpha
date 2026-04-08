@@ -1,23 +1,12 @@
 ---
-module_id: GAP_ANALYSIS_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - GAP_ANALYSIS报告文档
----
-
-﻿---
 module_id: LAYER1_GAP_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ждќтИГТіђТюУётАтў
 responsibility:
-  - 归档文档、历史版本、技术评审
+- 归档文档、历史版本、技术评审
 standard_type: СИЊСИџжЄЈтїќТю║ТъётиУиЮтѕєТъљТіЦтЉі
 applicable_scope: Layer 1ТЋ░ТЇжбётцёуљєт▒ѓ
 compliance_level: СИЊСИџТаЄтЄє

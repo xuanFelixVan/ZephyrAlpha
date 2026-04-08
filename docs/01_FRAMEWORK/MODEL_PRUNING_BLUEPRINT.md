@@ -1,37 +1,18 @@
 ---
-module_id: MODEL_PRUNING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MODEL_PRUNING蓝图设计
----
-
-﻿---
 module_id: MODEL_PRUNING_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
-last_updated: 2026-04-03
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供model pruning blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供model pruning blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
-
 priority: P2
+responsibility_boundary: '本文档负责Layer 4机器学习层的模型剪枝系统设计，包括剪枝算法、稀疏优化、压缩加速等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的模型剪枝系统设计，包括剪枝算法、稀疏优化、压缩加速等核心功能。
+  '
 layer: Layer 4 (机器学习层)
----
----
+owner: 首席文档架构师
 ---
 # 模型剪枝蓝图
 > **核心职责**: 提供model pruning blueprint的完整架构设计、技术选型和实施路径规划

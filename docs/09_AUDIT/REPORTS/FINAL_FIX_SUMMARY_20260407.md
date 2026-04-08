@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_REPORTS_001
+module_id: 09_AUDIT_REPORTS_001_ARCHIVED_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -3,25 +3,15 @@ module_id: WEEKLY_LONGTERM_OPTIMIZATION_REPORT_20260407_142449
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - WEEKLY_LONGTERM_OPTIMIZATION_20260407_142449报告文档
----
-
-﻿---
-module_id: WEEKLY_LONGTERM_OPTIMIZATION_REPORT_20260407_142449
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 优化报告
 applicable_scope: 本周和长期优化任务
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- WEEKLY_LONGTERM_OPTIMIZATION_20260407_142449报告文档
 ---
-
 # 本周和长期优化任务执行报告
 
 > **核心职责**: 记录本周和长期优化任务的执行过程和结果

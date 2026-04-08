@@ -1,23 +1,12 @@
 ---
-module_id: T_06_UI001_WEB_MANAGEMENT_INTERFACE_ARCHITECTURE_DESIGN
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Webﻝ۰ﻝﻝﻠ۱ﮔﭘﮔﻟﺝﻟ۰文档
----
-
-﻿---
 module_id: T.06.UI001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
-  - 系统架构设计与技术选型与实施指导
+- 系统架构设计与技术选型与实施指导
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮒ
 applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱ﮔﭘﮔﻟ؟ﺝﻟ؟۰
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰

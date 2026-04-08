@@ -1,23 +1,12 @@
-﻿---
-module_id: P0_01_DATABASE_DESIGN_DOCUMENT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 数据库设计文档专业量化机构标准优化版文档
 ---
-
-﻿---
 module_id: IMPL_DB_DESIGN_DOC_001
 version: 2.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席蓝图架构?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: 专业量化机构数据库设计指标
 applicable_scope: 全系统数据存?
 compliance_level: 专业机构标准

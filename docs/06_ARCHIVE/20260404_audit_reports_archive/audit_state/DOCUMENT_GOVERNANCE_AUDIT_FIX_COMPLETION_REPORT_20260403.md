@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - цЦЗцбгц▓╗чРЖхобшобф┐охдНхоМцИРцКехСК文档
----
-
-﻿﻿---
 module_id: DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 owner: хобшобч│╗ч╗Я
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 standard_type: цЦЗцбгц▓╗чРЖф┐охдНхоМцИРцКехСК
 applicable_scope: docs/чЫох╜ХцЦЗцбгц▓╗чРЖф┐охдН
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

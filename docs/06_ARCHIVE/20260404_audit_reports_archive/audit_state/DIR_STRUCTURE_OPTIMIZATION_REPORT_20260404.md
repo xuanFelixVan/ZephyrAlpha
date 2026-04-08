@@ -1,28 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DIR_STRUCTURE_OPTIMIZATION_REPORT_20260404
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - Alpha因子层目录结构优化报?文档
----
-
-﻿﻿---
 module_id: ALPHA_008
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档管理员
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+- 数据质量 (Layer 1)
 ---
-
 # Alpha因子层目录结构优化报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

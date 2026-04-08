@@ -1,28 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260407_OLD_LAYER_AUDIT_REPORTS_INDEX_3
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - layer11_reports目录索引
----
-
-﻿---
 module_id: ARCHIVE_LAYER11_REPORTS_INDEX_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理团队
 standard_type: 专业量化机构归档索引
 applicable_scope: Layer 11审计报告归档
 compliance_level: 专业标准
 responsibility:
-  - 归档索引、文件追溯
+- 归档索引、文件追溯
 ---
-
 # Layer 11审计报告归档索引
 
 ## 📋 归档概要

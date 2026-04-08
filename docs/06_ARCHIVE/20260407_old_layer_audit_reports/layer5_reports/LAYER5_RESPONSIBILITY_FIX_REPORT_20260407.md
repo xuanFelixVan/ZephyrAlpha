@@ -1,18 +1,13 @@
 ---
-module_id: LAYER5_RESPONSIBILITY_FIX_REPORT_20260407
 version: 1.0.0
+module_id: LAYER5_RESPONSIBILITY_FIX_REPORT_20260407
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - LAYER5_RESPONSIBILITY_FIX_20260407报告文档
+- LAYER5_RESPONSIBILITY_FIX_20260407报告文档
 ---
-
-﻿---
-version: 1.0.0
----
-
 # Layer 5 策略执行层职责描述修复报告
 
 > **修复时间**: 2026-04-07 13:59:17

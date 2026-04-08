@@ -1,23 +1,12 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_BLUEPRINT_GOVERNANCE_OPTIMIZATION_REPORT_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 蓝图文件治理优化报告文档
----
-
-﻿﻿---
 module_id: BLUEPRINTGOVERNANCEOPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 responsibility:
-  - 系统优化方案设计与实施指导与实施指导
+- 系统优化方案设计与实施指导与实施指导
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
@@ -140,7 +129,7 @@ def get_document_type(self, filename: str) -> str:
 **YAML头部标准**：
 ```yaml
 ---
-module_id: [模块ID]_[序号]
+module_id: EXAMPLE_PLACEHOLDER_0D10ACEC80
 version: [版本号]
 status: [状态]
 created_date: [创建日期]

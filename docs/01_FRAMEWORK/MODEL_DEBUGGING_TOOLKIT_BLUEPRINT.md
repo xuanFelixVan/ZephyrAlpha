@@ -1,37 +1,18 @@
 ---
-module_id: MODEL_DEBUGGING_TOOLKIT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MODEL_DEBUGGING_TOOLKIT蓝图设计
----
-
-﻿---
 module_id: MODEL_DEBUGGING_TOOLKIT_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
-
 priority: P0
+responsibility_boundary: '本文档负责Layer 4机器学习层的模型调试工具包设计，包括梯度分析、激活值分析、权重分析等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的模型调试工具包设计，包括梯度分析、激活值分析、权重分析等核心功能。
+  '
 layer: Layer 4 (机器学习层)
----
----
+owner: 首席文档架构师
 ---
 > **核心职责**: 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 

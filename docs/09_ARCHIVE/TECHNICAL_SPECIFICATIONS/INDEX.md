@@ -1,23 +1,12 @@
 ---
-module_id: 09_ARCHIVE_TECHNICAL_SPECIFICATIONS_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TECHNICAL_SPECIFICATIONS目录索引
----
-
-﻿---
 module_id: 09_ARCHIVE_TECHNICAL_SPECIFICATIONS_INDEX_TECHNICAL_SPECIFICATIONS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理系统
 responsibility:
-  - 索引文档、导航目录
+- 索引文档、导航目录
 standard_type: 索引文档
 applicable_scope: 文档索引导航
 compliance_level: 专业标准

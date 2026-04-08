@@ -1,23 +1,12 @@
-﻿---
-module_id: 07_RESEARCH_04_EXPERIMENT_TRACKING_EXPERIMENT_TRACKING
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 实验追踪系统文档
 ---
-
-﻿---
 module_id: RESEARCH_EXP_TRACKING_SUB_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 07 RESEARCH模块文档管理与维护
+- 07 RESEARCH模块文档管理与维护
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准

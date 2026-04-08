@@ -1,29 +1,17 @@
 ---
-module_id: PERIODIC_CHECK_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PERIODIC_CHECK操作指南
----
-
-﻿---
 module_id: PERIODIC_CHECK_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 standard_type: 操作指南
 applicable_scope: 全系统文档定期检查
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 文档治理定期检查指南
 
 > **核心职责**: 建立文档治理定期检查机制

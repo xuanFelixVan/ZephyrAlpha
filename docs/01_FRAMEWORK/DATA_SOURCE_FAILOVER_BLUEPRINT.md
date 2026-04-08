@@ -1,32 +1,21 @@
 ---
-module_id: DATA_SOURCE_FAILOVER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_SOURCE_FAILOVER蓝图设计
----
-
-﻿---
 module_id: DATA_SOURCE_FAILOVER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
+- 数据管理架构设计与实施规范与优化维护
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据源故障转移模块
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg", "Reuters", "Wind"]
+reference_models:
+- Bloomberg
+- Reuters
+- Wind
 ---
----
----
-
 
 # 数据源故障转移蓝图
 > **核心职责**: Data Source Failover蓝图设计

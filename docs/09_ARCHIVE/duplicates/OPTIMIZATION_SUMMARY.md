@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_001
+module_id: 02_FACTOR_LIBRARY_001_ARCHIVED_1
 **升级完成!**
 感谢使用清风量化交易系统因子?v4.0 专业机构?
 responsibility:

@@ -1,32 +1,19 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_DISTRIBUTED_QUERY_ENGINE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 未命名文档文档
----
-
-﻿---
 module_id: DISTRIBUTED_QUERY_ENGINE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 分布式查询引擎
-  - 查询优化
-  - 并行执行
-  - 结果聚合
-
+- 分布式查询引擎
+- 查询优化
+- 并行执行
+- 结果聚合
 layer: Layer 5.1 (数据处理)
 ---
-
 
 ## 核心定位
 

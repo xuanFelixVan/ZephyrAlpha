@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_2
 > **核心职责**: 数据采集架构设计和多数据源接入方案，涉及数据采集蓝图
 > **职责边界**:
 > - ✅ 本文档负责：数据采集架构设计和多数据源接入方案

@@ -1,23 +1,12 @@
 ---
-module_id: PERSONAL_TECH_DECISION_CHECKLIST
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﻛﺕ۹ﻛﭦﭦﮔﮔﺁﮒﺏﻝﻝ۰ﻟ۳ﮔﺕ文档
----
-
-﻿---
 module_id: PERSONAL_DECISION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻝﺏﭨﻝﭨﮒﺙﮒ?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﻛﺕ۹ﻛﭦﭦﻠ۰ﺗﻝ؟ﮒﺏﻝﮔﭖﻝ۷
 applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮒ؟ﻝ۷ﮔﮒ

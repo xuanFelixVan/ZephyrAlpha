@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_13
 > **维护部门**: 清风量化研究部
 > **最后更新**: 2026-04-06
 > **索引版本**: v1.0

@@ -1,33 +1,17 @@
 ---
-module_id: 11_STRATEGIC_DECISION_STRATEGIC_DECISION_DEEP_REVIEW_20260407
 version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 战略决策层深度架构审查报告文档
----
-
-﻿---
 module_id: STRATEGIC_DECISION_DEEP_REVIEW_20260407
-version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
+- 11 STRATEGIC DECISION模块文档管理与维护
 standard_type: 标准文档
 applicable_scope: 记录战略决策的深度审查结果
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
-﻿---
-version: 1.0.0
----
-
 # 战略决策层深度架构审查报告
 
 > **版本**: v1.0  

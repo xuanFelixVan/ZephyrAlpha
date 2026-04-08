@@ -1,30 +1,17 @@
 ---
-module_id: 10_GOVERNANCE_COMPLIANCE_GOVERNANCE_PROCESSES_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - GOVERNANCE_PROCESSES目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航与文档索引管理与优化维护
-
+- 目录导航与文档索引管理与优化维护
 module_id: GOVERNANCE_PROCESSES_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构治理流程索引
 applicable_scope: 全系统治理流程索引
 compliance_level: 专业标准
 ---
-
 # 文档治理流程索引
 
 > **核心职责**: 目录导航和文档索引

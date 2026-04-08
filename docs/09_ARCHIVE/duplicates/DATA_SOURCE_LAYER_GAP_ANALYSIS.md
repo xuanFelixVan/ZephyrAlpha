@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_5
 **版本**: 2.0
 **创建日期**: 2026-04-06
 **状态**: Active

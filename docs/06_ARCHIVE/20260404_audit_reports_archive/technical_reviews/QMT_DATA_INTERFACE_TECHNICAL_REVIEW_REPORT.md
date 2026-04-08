@@ -1,23 +1,12 @@
 ---
-module_id: QMT_DATA_INTERFACE_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QMT_DATA_INTERFACE_TECHNICAL_REVIEW报告文档
----
-
-﻿---
 module_id: DATA_QMT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: щжЦх╕нцКАцЬпшпДхобхоШ
 responsibility:
-  - 归档文档、历史版本、技术评审
+- 归档文档、历史版本、技术评审
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшпДхобцКехСК
 applicable_scope: Layer 0цХ░цНоц║Рх▒В
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ

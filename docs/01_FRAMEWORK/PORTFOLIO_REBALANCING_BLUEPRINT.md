@@ -1,52 +1,50 @@
 ---
-module_id: PORTFOLIO_REBALANCING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PORTFOLIO_REBALANCING蓝图设计
----
-
-﻿---
 module_id: PORTFOLIO_REBALANCING_FRAMEWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 组合再平衡系统架构设计
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Portfolio Rebalancing", "Citadel Smart Rebalancing"]
+reference_models:
+- Bridgewater Portfolio Rebalancing
+- Citadel Smart Rebalancing
 related_documents:
-  - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: PyPortfolioOpt
-    url: https://github.com/robertmartin8/PyPortfolioOpt
-    features: 组合优化、再平衡、交易成本优化
-  - name: Riskfolio-Lib
-    url: https://github.com/dcajasn/Riskfolio-Lib
-    features: 组合再平衡优化、风险预算优化
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
-  - 再平衡触发（阈值触发、时间触发、事件触发）
-  - 再平衡优化（成本优化、风险优化、税务优化）
-  - 再平衡执行（交易执行、持仓调整、记录追踪）
-  - 再平衡报告（执行报告、效果评估、改进建议）
-  
-  **与本文档职责边界**：
-  - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析（包含再平衡成本分析）
-responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
----
+- name: PyPortfolioOpt
+  url: https://github.com/robertmartin8/PyPortfolioOpt
+  features: 组合优化、再平衡、交易成本优化
+- name: Riskfolio-Lib
+  url: https://github.com/dcajasn/Riskfolio-Lib
+  features: 组合再平衡优化、风险预算优化
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
 
+  - 再平衡触发（阈值触发、时间触发、事件触发）
+
+  - 再平衡优化（成本优化、风险优化、税务优化）
+
+  - 再平衡执行（交易执行、持仓调整、记录追踪）
+
+  - 再平衡报告（执行报告、效果评估、改进建议）
+
+
+  **与本文档职责边界**：
+
+  - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
+
+  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析（包含再平衡成本分析）
+
+  '
+responsibility:
+- 投资组合优化蓝图设计与实施指导与实施方案
+---
 # 组合再平衡系统蓝图（蓝图阶段）
 > **核心职责**: Portfolio Rebalancing蓝图设计
 > **职责边界**: 

@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001_ARCHIVED_10
 **版本**: 1.0 | **更新**: 2026-03-28
 responsibility:
 - 管理因子库

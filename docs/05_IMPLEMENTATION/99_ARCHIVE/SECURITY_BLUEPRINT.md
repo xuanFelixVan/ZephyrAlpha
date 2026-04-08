@@ -1,32 +1,19 @@
-﻿---
-module_id: SECURITY_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SECURITY蓝图设计
 ---
-
-﻿---
 module_id: SECURITY_BLUEPRINT_MD_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 responsibility:
-  - 实施指南、部署文档
-  - 系统架构
-  - 文档治理
+- 实施指南、部署文档
+- 系统架构
+- 文档治理
 layer: Layer 9 (治理层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准---
-
-
-﻿---
+---
 module_id: ARCHIVE_SECURITY_BLUEPRINT_001
 version: 1.0.1
 status: Active

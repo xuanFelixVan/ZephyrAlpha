@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_FACTOR_MANAGEMENT_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - FACTOR_MANAGEMENT标准规范
----
-
-﻿---
 module_id: FACTOR_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 因子计算、因子库管理
+- 因子计算、因子库管理
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 初始标准

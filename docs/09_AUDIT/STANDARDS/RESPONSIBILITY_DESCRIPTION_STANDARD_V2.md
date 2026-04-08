@@ -1,29 +1,17 @@
 ---
-module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_V2
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - RESPONSIBILITY_DESCRIPTION_V2标准规范
----
-
-﻿---
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_V2_001
 version: 2.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 技术标准制定与规范管理与优化维护
+- 技术标准制定与规范管理与优化维护
 standard_type: 文档治理规范
 applicable_scope: 全系统职责描述规范
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 职责描述规范标准 v2.0
 
 > **核心职责**: 定义职责描述的标准格式、审查流程和质量要求

@@ -317,7 +317,7 @@ docs/
 
 **цЙзшбМхС╜ф╗д**:
 ```bash
-python scripts/metadata_enhancer.py --enhance --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/metadata_enhancement.json"
+python scripts/metadata_enhancer.py --enhance --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_enhancement.json"
 ```
 
 **щвДцЬЯцИРцЮЬ**:
@@ -328,7 +328,7 @@ python scripts/metadata_enhancer.py --enhance --output "docs/05_IMPLEMENTATION/0
 
 **цЙзшбМхС╜ф╗д**:
 ```bash
-python scripts/document_classifier.py --move --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/document_classification.json"
+python scripts/document_classifier.py --move --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/document_classification.json"
 ```
 
 **щвДцЬЯцИРцЮЬ**:

@@ -1,28 +1,20 @@
 ---
-module_id: RESEARCH_PROJECT_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - RESEARCH_PROJECT_MANAGEMENT蓝图设计
----
-
-﻿---
 module_id: RESEARCH_PROJECT_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+- 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 9 (治理层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 研究项目管理模块
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Research", "Citadel Research", "Jane Street Research"]
+reference_models:
+- Two Sigma Research
+- Citadel Research
+- Jane Street Research
 ---
 ---
 

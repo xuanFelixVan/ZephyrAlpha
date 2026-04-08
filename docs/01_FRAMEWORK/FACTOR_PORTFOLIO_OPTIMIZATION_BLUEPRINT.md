@@ -1,47 +1,38 @@
 ---
-module_id: FACTOR_PORTFOLIO_OPTIMIZATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - FACTOR_PORTFOLIO_OPTIMIZATION蓝图设计
----
-
-﻿---
-responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
-
+- 投资组合优化蓝图设计与实施指导与实施方案
 module_id: FACTOR_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 因子组合优化
 compliance_level: 顶级专业标准
-reference_models: ["AQR Capital Management", "Two Sigma", "Citadel"]
+reference_models:
+- AQR Capital Management
+- Two Sigma
+- Citadel
 related_documents:
-  - ALPHA_FACTOR_LAYER_BLUEPRINT.md
-  - FACTOR_MINING_AUTOMATION_BLUEPRINT.md
-  - FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责因子组合优化，包括：
-  
+- ALPHA_FACTOR_LAYER_BLUEPRINT.md
+- FACTOR_MINING_AUTOMATION_BLUEPRINT.md
+- FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md
+responsibility_boundary: '本文档负责因子组合优化，包括：
+
+
   因子挖掘请参考：FACTOR_MINING_AUTOMATION_BLUEPRINT.md
+
   因子回测请参考：FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md
+
+  '
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
 estimated_effort: 1.5周
 open_source_solution: PyPortfolioOpt + CVXPY + Riskfolio-Lib
 ---
----
----
-
 # 因子组合优化蓝图
 > **核心职责**: Factor Portfolio Optimization蓝图设计
 > **职责边界**: 

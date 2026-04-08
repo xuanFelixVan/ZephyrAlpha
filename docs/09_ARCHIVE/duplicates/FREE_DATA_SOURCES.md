@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_6
 **版本**: v3.0 | **更新**: 2026-04-05 | **状态**: ✅ 活跃
 responsibility:
 - 管理因子库

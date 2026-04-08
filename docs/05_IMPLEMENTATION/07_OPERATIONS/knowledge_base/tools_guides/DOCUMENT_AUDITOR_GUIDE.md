@@ -170,7 +170,7 @@ results = auditor.check_metadata()
 ```yaml
 audit:
   project_root: "."
-  output_dir: "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state"
+  output_dir: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
   
   checks:
     links: true
@@ -190,7 +190,7 @@ audit:
 **ﻠﻝﺛ؟ﮒﺟﺛﻝ۴ﻟ۶ﮒ**:
 ```yaml
 ignore_rules:
-  - pattern: "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/**"
+  - pattern: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/**"
     reason: "ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔﻛﭨﭘ"
   - pattern: "docs/06_ARCHIVE/**"
     reason: "ﮒﺛﮔ۰۲ﮔﻛﭨﭘ"

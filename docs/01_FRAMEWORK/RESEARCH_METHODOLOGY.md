@@ -1,24 +1,15 @@
 ---
-module_id: RESEARCH_METHODOLOGY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 数据处理标准流程文档
----
-
-﻿---
 version: 1.0.0
 standard_type: 核心文档
 responsibility:
-  - 系统框架设计与核心架构管理与优化维护
-applicable_scope:
+- 系统框架设计与核心架构管理与优化维护
+applicable_scope: null
 parent_document: ../INDEX.md
 module_id: RESEARCH_METHODOLOGY
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
+owner: 首席文档架构师
 ---
 ---
 

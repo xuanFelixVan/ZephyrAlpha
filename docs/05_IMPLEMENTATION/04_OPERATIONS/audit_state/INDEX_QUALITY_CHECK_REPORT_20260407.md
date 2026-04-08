@@ -1,26 +1,16 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX_QUALITY_CHECK_REPORT_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 索引质量检查报告文档
----
-
-﻿﻿---
 module_id: INDEX_QUALITY_CHECK_REPORT_20260407
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构索引质量检查报告
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
+responsibility:
+- 索引质量检查报告文档
 ---
-
 # 索引质量检查报告
 
 > **版本**: v1.0

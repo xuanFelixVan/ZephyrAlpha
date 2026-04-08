@@ -1,27 +1,15 @@
 ---
-module_id: MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_20260407报告文档
----
-
-﻿---
 module_id: AUDIT_LAYER_4机器学习层文档治理深度审计报告_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计系统
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 执行文档治理审计，生成审计报告和改进建议
-
+- 执行文档治理审计，生成审计报告和改进建议
 ---
 ---
 

@@ -1,20 +1,9 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_BLUEPRINT_4
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - BLUEPRINT蓝图设计
----
-
-﻿---
 module_id: CONFIG_MANAGEMENT_BP_001
 version: 1.0.0
 status: Blueprint
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility: 配置管理系统设计与环境管理
 standard_type: 模块蓝图

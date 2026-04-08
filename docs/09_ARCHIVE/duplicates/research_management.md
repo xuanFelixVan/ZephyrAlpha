@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001_ARCHIVED_17
 **设计原则**: 工具简单、流程清晰、持续积?
 **维护?*: 清风量化系统
 **版本**: v1.0

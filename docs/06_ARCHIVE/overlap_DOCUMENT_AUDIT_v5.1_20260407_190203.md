@@ -1,15 +1,4 @@
 ---
-module_id: DOCUMENT_AUDIT_V5_1
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - όΖώμΟώΘΠίΝΨύύθ v51 όΨΘόκμίχκόθξόΛξίΣΛ文档
----
-
-﻿---
 standard_type: όΛΑόεψόΨΘόκ?
 applicable_scope: ίΖρύ│╗ύ╗?
 compliance_level: ίΙζίπΜόιΘίΘΗ
@@ -17,11 +6,12 @@ parent_document: ../INDEX.md
 implementation_status: ϋχ╛ϋχκώα╢όχ╡
 owner: όΨΘόκμύ╗┤όΛνϋΑ?
 responsibility:
-  - 审计报告、合规检查
+- 审计报告、合规检查
 version: 5.0.0
-module_id: DOC_DOCUMENT_AUDIT_V5.1
+module_id: DOC_DOCUMENT_AUDIT_V5.1_ARCHIVED_1
 created_date: 2026-03-31
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 

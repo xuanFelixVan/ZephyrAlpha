@@ -1,38 +1,32 @@
 ---
-module_id: MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - MULTI_DATA_SOURCE_COORDINATION蓝图设计
----
-
-﻿---
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
-
+- 数据管理架构设计与实施规范与优化维护
 module_id: MULTI_DATA_SOURCE_COORDINATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 多数据源协同管理
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg Terminal", "Reuters Eikon", "Wind Terminal"]
+reference_models:
+- Bloomberg Terminal
+- Reuters Eikon
+- Wind Terminal
 related_documents:
-  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_SOURCE_FAILOVER_BLUEPRINT.md
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责多数据源协同管理，包括：
-  
+- DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
+- DATA_SOURCE_FAILOVER_BLUEPRINT.md
+- DATA_LINEAGE_TRACKING_BLUEPRINT.md
+responsibility_boundary: '本文档负责多数据源协同管理，包括：
+
+
   数据源质量监控请参考：DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
+
   数据源故障转移请参考：DATA_SOURCE_FAILOVER_BLUEPRINT.md
+
+  '
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)

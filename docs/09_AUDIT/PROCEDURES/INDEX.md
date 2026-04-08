@@ -59,6 +59,10 @@ compliance_level: 专业标准---
 - [全系统文档审计方案（分批目录）](./FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) - `AUDIT_PLAN_FULL_SYSTEM_20260408`
 - [全系统文档审计全案（含重复处理办法 + 清单引用）](./FULL_SYSTEM_AUDIT_COMPLETE_CASE_20260408.md) - `AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408`
 - [Sentinel 自动治理运行报告](../REPORTS/SENTINEL_AUTONOMOUS_GOVERNANCE_RUN_20260408.md) - `SENTINEL_AUTONOMOUS_RUN_20260408`
+- [OpenClaw 文档整改方案（草稿）](./OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408.md) - `OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408`
+- [OpenClaw 整改执行手册（顺序与验收）](./OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md) - `OPENCLAW_REMEDIATION_PLAYBOOK_20260408`
+- [文档治理裁决书（已锁定）](../STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md) - `GOVERNANCE_DECISIONS_LOCKED_20260408`
+- [文档整改详细任务指令（可复制给 AI）](./DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) - `DOC_REMEDIATION_TASK_DIRECTIVE_20260408`
 
 ---
 
@@ -84,6 +88,9 @@ compliance_level: 专业标准---
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
 | v1.0.1 | 2026-04-08 | 增加审计全案与子目录文件清单引用 | 系统维护者 |
+| v1.0.2 | 2026-04-08 | 增加 OpenClaw 整改方案草稿索引 | 系统维护者 |
+| v1.0.3 | 2026-04-08 | 增加整改执行手册与已锁定裁决书索引 | 系统维护者 |
+| v1.0.4 | 2026-04-08 | 增加文档整改详细任务指令索引 | 系统维护者 |
 
 ---
 

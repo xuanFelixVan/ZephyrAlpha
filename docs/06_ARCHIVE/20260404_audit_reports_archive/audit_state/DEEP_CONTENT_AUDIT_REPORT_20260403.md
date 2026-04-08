@@ -80,7 +80,7 @@ implementation_status: х╖▓хоМ?
 **хПСчО░**: щГихИЖчЫох╜Хх╡МхеЧш╢Еш┐З4?
 | чЫох╜Хш╖пх╛Д | х▒Вч║з | щЧощвШ |
 |---------|------|------|
-| `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/` | 5?| хобшобцКехСКхнШхВиш┐Зц╖▒ |
+| `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/` | 5?| хобшобцКехСКхнШхВиш┐Зц╖▒ |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/` | 5?| шУЭхЫ╛цЦЗцбгхнШхВиш┐Зц╖▒ |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/financial_statements/` | 6?| цХ░цНоц║РцЦЗцбгш┐З?|
 

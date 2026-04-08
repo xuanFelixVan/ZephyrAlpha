@@ -1,15 +1,4 @@
 ---
-module_id: CONSTRAINTS_SOLVER_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - CONSTRAINTS_SOLVER_TECHNICAL_REVIEW报告文档
----
-
-﻿---
 module_id: ARCHIVE_CONSTRAINTS_TECH_REVIEW_001
 review_id: TR-2026-04-02-CONST
 version: 1.0.1
@@ -23,8 +12,8 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
 responsibility:
-  - 归档文档、历史版本、技术评审
-last_updated: 2026-04-02
+- 归档文档、历史版本、技术评审
+last_updated: '2026-04-07'
 ---
 ---
 

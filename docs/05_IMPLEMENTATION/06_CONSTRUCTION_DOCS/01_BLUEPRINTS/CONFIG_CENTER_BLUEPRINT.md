@@ -636,7 +636,7 @@ zephyr/
 
 ##### 配置中心模块
 - **模块ID**: CONFIG_CENTER_001
-- **文档**: [配置中心蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONFIG_CENTER_BLUEPRINT.md)
+- **文档**: [配置中心蓝图](./CONFIG_CENTER_BLUEPRINT.md)
 - **职责**: 配置管理、版本控制、热更新、环境隔离
 - **开源方案**: Consul
 - **状态**: Active

@@ -1,21 +1,10 @@
 ---
-module_id: MARGIN_CALL_MONITOR_TECHNICAL_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MARGIN_CALL_MONITOR_TECHNICAL技术规范
----
-
-﻿---
 module_id: MARGIN_CALL_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARGIN_CALL_MONITOR_BLUEPRINT.md
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 created_date: 2026-04-05
 layer: Layer 6 (组合优化层 - 风险管理层)
 index: MARGIN_CALL_SPEC_001
@@ -30,8 +19,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 技术规格定义与实施标准制定与实施标准
-
+- 技术规格定义与实施标准制定与实施标准
 ---
 ---
 

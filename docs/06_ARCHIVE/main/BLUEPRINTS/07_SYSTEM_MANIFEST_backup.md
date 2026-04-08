@@ -1,20 +1,9 @@
 ---
-module_id: 07_SYSTEM_MANIFEST_BACKUP
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - System_Manifestmd  系统清单文档
----
-
-﻿---
 module_id: ARCHIVE_BP_MANIFEST_BAK_001
 version: 5.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设?
@@ -22,8 +11,7 @@ compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 归档文档、历史版本
-
+- 归档文档、历史版本
 ---
 ---
 

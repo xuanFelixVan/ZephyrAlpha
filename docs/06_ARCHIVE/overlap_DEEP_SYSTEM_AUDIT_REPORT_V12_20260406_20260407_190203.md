@@ -1,20 +1,9 @@
 ---
-module_id: DEEP_SYSTEM_AUDIT_REPORT_V12_20260406
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DEEP_SYSTEM_AUDIT_V12_20260406报告文档
----
-
-﻿---
 module_id: DEEP_SYSTEM_AUDIT_REPORT_V12_20260406_001
 version: 12.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 审计系统
 standard_type: 专业量化机构审计报告
 applicable_scope: 全系统深度文档治理审计
@@ -24,8 +13,7 @@ audit_type: 三层深度审计 (L1/L2/L3)
 audit_date: 2026-04-06
 audit_scope: 全系统所有文档文件
 responsibility:
-  - 审计报告、合规检查
-
+- 审计报告、合规检查
 ---
 ---
 

@@ -1,45 +1,47 @@
 ---
-module_id: SYSTEM_HEALTH_CHECK_INTERFACE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SYSTEM_HEALTH_CHECK_INTERFACE蓝图设计
----
-
-﻿---
 module_id: SYSTEM_HEALTH_CHECK_INTERFACE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 系统健康检查界面
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater System Health", "Renaissance Health Monitor", "Two Sigma Health Dashboard"]
+reference_models:
+- Bridgewater System Health
+- Renaissance Health Monitor
+- Two Sigma Health Dashboard
 related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - GRAFANA_MONITORING_BLUEPRINT.md
-  - DISASTER_RECOVERY_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责系统健康检查界面设计，包括：
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
+- GRAFANA_MONITORING_BLUEPRINT.md
+- DISASTER_RECOVERY_BLUEPRINT.md
+responsibility_boundary: '本文档负责系统健康检查界面设计，包括：
+
   - 系统组件状态检查
+
   - 服务健康监控
+
   - 资源使用监控
+
   - 告警状态展示
+
   - 快速诊断功能
-  
+
+
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
+
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
+
   灾备体系请参考：DISASTER_RECOVERY_BLUEPRINT.md
+
+  '
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+- SYSTEM_HEALTH_CHECK_INTERFACE蓝图设计
 ---
-
 # 系统健康检查界面蓝图
 > **核心职责**: System Health Check Interface蓝图设计
 > **职责边界**: 

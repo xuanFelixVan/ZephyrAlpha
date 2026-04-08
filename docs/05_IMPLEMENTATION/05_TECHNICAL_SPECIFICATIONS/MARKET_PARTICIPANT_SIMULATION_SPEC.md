@@ -1,30 +1,15 @@
-﻿---
-module_id: MARKET_PARTICIPANT_SIMULATION_SPEC
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MARKET_PARTICIPANT_SIMULATION技术规范
 ---
-
-﻿---
 module_id: IMPL_市场参与者行为模拟系统技术规格书_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 技术规格书
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 系统实施与部署管理与优化维护
-
----
----
-
+- 系统实施与部署管理与优化维护
 ---
 module_id: TECH_SPEC_MARKET_PARTICIPANT_SIM_001
 version: 1.0.0

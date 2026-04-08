@@ -1,22 +1,13 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_ENCODING_CHECK_REPORT_20260407
 version: 1.0.0
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_ENCODING_CHECK_REPORT_20260407_20260407180137
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - 文档编码检查报告文档
+- 文档编码检查报告文档
 ---
-
-﻿---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_ENCODING_CHECK_REPORT_20260407_20260407180137
----
-
-﻿---
-version: 1.0.0
----
-
 # 文档编码检查报告
 
 > **检查时间**: 2026-04-07T13:56:31.133922

@@ -1,40 +1,29 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_MODEL_RISK_MLFLOW_IMPLEMENTATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 模型风险管理系统MLflow集成实施方案文档
----
-
-﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_MODEL_RISK_MLFLOW_IMPLEMENTATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - MLflow集成实施
-  - 模型风险管理系统部署
-  - SR 11-7标准实现
+- MLflow集成实施
+- 模型风险管理系统部署
+- SR 11-7标准实现
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级实施方案
 applicable_scope: 模型风险管理系统MLflow集成
 compliance_level: 顶级专业标准
-reference_models: ["MLflow", "SR 11-7", "个人开发最佳实践"]
+reference_models:
+- MLflow
+- SR 11-7
+- 个人开发最佳实践
 related_documents:
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
-  - P0_MODULES_IMPLEMENTATION_PLAN.md
-  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
+- MODEL_RISK_MANAGEMENT_BLUEPRINT.md
+- P0_MODULES_IMPLEMENTATION_PLAN.md
+- layer10_GOVERNANCE_COMPLIANCE_INDEX.md
 parent_document: P0_MODULES_IMPLEMENTATION_PLAN.md
 implementation_status: 实施就绪
 ---
----
----
-
 
 # 模型风险管理系统MLflow集成实施方案
 > **核心职责**: 文档内容说明

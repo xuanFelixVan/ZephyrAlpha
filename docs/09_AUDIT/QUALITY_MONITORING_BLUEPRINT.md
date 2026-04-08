@@ -1,20 +1,9 @@
-﻿---
-module_id: QUALITY_MONITORING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QUALITY_MONITORING蓝图设计
 ---
-
-﻿---
 module_id: AUDIT_QUALITY_MONITORING_BP_001
 version: 5.3.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 专业量化机构蓝图
 layer: Layer 5 (执行层)
@@ -23,8 +12,7 @@ compliance_level: 架构标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-  - 系统监控架构设计与实施方案与实施指导
-
+- 系统监控架构设计与实施方案与实施指导
 ---
 ---
 

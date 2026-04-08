@@ -1,32 +1,23 @@
 ---
-module_id: ASSET_CLASS_DEFINITION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 资产类别定义蓝图文档
----
-
-﻿---
 module_id: ASSET_CLASS_DEFINITION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 11.7 - 资产类别定义
 compliance_level: 顶级专业标准
-reference_models: ["MSCI Asset Classification", "Bloomberg Asset Classes", "FTSE Russell Classification"]
-open_source_solution: "yfinance + pandas-datareader"
+reference_models:
+- MSCI Asset Classification
+- Bloomberg Asset Classes
+- FTSE Russell Classification
+open_source_solution: yfinance + pandas-datareader
 priority: P1
 parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
-
+- 11 STRATEGIC DECISION模块文档管理与维护
 ---
 ---
 

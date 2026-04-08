@@ -1,5 +1,5 @@
 ---
-module_id: FULL_SYSTEM_AUDIT_V12_001
+module_id: FULL_SYSTEM_AUDIT_V12_001_ARCHIVED_1
 version: 12.0.0
 status: Active
 created_date: 2026-04-07

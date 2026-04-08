@@ -1,27 +1,15 @@
 ---
-module_id: TODO_CLEANUP_ANALYSIS_20260406
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TODO标记清理分析报告文档
----
-
-﻿---
 module_id: TODO_CLEANUP_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: Audit Sentinel
 standard_type: TODO清理分析报告
 applicable_scope: 活跃文档TODO标记
 compliance_level: 专业标准
 responsibility:
-  - 审计体系设计与质量监控与实施指导
-
+- 审计体系设计与质量监控与实施指导
 ---
 ---
 

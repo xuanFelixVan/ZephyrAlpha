@@ -1,28 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_TEMP_FILE_AUDIT_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 临时文件专项审计报告文档
----
-
-﻿﻿---
 module_id: TEMP_FILE_AUDIT_REPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
-  - 交易执行
-  - 回测系统
+- 归档文档、历史版本、审计状态追踪
+- 交易执行
+- 回测系统
 ---
-
 ---
 module_id: ARCHIVE_TEMP_FILE_AUDIT_001
 version: 2026.04.02

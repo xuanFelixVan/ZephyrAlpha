@@ -1,21 +1,10 @@
 ---
-module_id: MEAN_VARIANCE_OPTIMIZATION_TECHNICAL_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MEAN_VARIANCE_OPTIMIZATION_TECHNICAL技术规范
----
-
-﻿---
 module_id: MEAN_VARIANCE_OPTIMIZATION_TECH_SPEC_001
 version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 created_date: 2026-04-07
 layer: Layer 6 (组合优化层)
 index: MEAN_VARIANCE_OPTIMIZATION_TECH_SPEC_001
@@ -25,14 +14,13 @@ reviewer: 首席技术评审官
 review_date: 2026-04-07
 owner: 实施团队
 responsibility:
-  - 技术规格定义与实施标准制定与实施标准
+- 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 待实施
 ---
-
 # Mean Variance Optimization技术规格书 v1.0
 
 > **核心职责**: 均值方差优化详细技术实现规范

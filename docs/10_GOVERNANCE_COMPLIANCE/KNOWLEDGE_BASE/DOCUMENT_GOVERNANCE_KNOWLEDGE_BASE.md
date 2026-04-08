@@ -1,29 +1,17 @@
 ---
-module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 文档治理知识库文档
----
-
-﻿---
 module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 治理合规框架设计与实施与实施指导
+- 治理合规框架设计与实施与实施指导
 standard_type: 知识库
 applicable_scope: 全系统文档治理知识积累
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 文档治理知识库
 
 > **核心职责**: 积累文档治理典型问题和解决方案，提供最佳实践指导
@@ -199,7 +187,7 @@ python scripts/fix_yaml_missing.py
 **方法2: 手动添加**
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_9BC686DF65
 version: 1.0.0
 status: Active
 created_date: [创建日期]

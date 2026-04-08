@@ -1,27 +1,14 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_ARCHIVED
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 36ﻝﺁﻟﮒﺏﻝﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ文档
----
-
-﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_ARCHIVED_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 交易策略、战术执行
-
+- 交易策略、战术执行
 ---
-
 ---
 module_id: TACTICS_ARCHIVED_MARKER_001
 version: 0.1.2

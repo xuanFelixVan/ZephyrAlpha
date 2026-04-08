@@ -1,25 +1,16 @@
 ---
-module_id: CODE_CHANGE_DOCUMENTATION_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - CODE_CHANGE_DOCUMENTATION操作指南
----
-
-﻿---
 standard_type: ه‍و–وŒ‡هچ—
 compliance_level: وهڈو‡ه‡†
 parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ههŒوˆ?
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 version: 1.0.0
 module_id: CODE_CHANGE_DOC_GUIDE
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
+owner: 首席文档架构师
 ---
 ---
 

@@ -139,8 +139,8 @@ python scripts/generate_index.py docs/ --output docs/INDEX.md
 | ТќЄС╗Ху▒╗тъІ | ТЋ░жЄЈ | УитЙё |
 |---------|------|------|
 | **УЄфтіетїќУёџТю?* | 3СИ?| scripts/ |
-| **тАУАТіЦтЉі** | 1СИ?| docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/ |
-| **Тќ╣ТАѕТќЄТАБ** | 1СИ?| docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/ |
+| **тАУАТіЦтЉі** | 1СИ?| docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
+| **Тќ╣ТАѕТќЄТАБ** | 1СИ?| docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
 | **Тђ╗УА** | 5СИ?| - |
 
 ### УЄфтіетїќтиЦтЁитіЪУЃйу╗ЪУ?

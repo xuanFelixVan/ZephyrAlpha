@@ -1,20 +1,9 @@
 ---
-module_id: RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT
+module_id: RESEARCH_WORKFLOW_MANAGEMENT_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - RESEARCH_WORKFLOW_MANAGEMENT蓝图设计
----
-
-﻿---
-module_id: RESEARCH_WORKFLOW_MANAGEMENT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
@@ -23,18 +12,17 @@ compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
 reference_models:
-  - MLflow Projects
-  - DVC Pipelines
-  - Jupyter Lab
-open_source_solution: "MLflow + DVC + Jupyter"
+- MLflow Projects
+- DVC Pipelines
+- Jupyter Lab
+open_source_solution: MLflow + DVC + Jupyter
 priority: P2
 responsibility:
-  - 研究项目管理
-  - 实验版本控制
-  - 研究成果归档
-  - 协作流程管理
+- 研究项目管理
+- 实验版本控制
+- 研究成果归档
+- 协作流程管理
 ---
-
 ## 文档职责说明
 
 **本文档职责**: 研究工作流管理蓝图

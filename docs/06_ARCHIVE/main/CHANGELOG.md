@@ -1,26 +1,16 @@
 ---
-module_id: 06_ARCHIVE_MAIN_CHANGELOG
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - نووˆوœهژهڈ文档
----
-
-﻿---
 module_id: ARCHIVE_CHANGELOG_001
 version: 3.1.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 responsibility:
-  - 归档文档、历史版本
+- 归档文档、历史版本
 standard_type: ن“نڑ‡ڈهŒ–وœ؛و‍„و–‡و،
 compliance_level: ن“نڑو‡ه‡†
 parent_document: ../INDEX.md
 implementation_status: ؟›،Œن?
+owner: 首席文档架构师
 ---
 ---
 

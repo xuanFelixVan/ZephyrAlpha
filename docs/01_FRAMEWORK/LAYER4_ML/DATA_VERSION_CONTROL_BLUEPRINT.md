@@ -1,29 +1,17 @@
 ---
-module_id: DATA_VERSION_CONTROL_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_VERSION_CONTROL蓝图设计
----
-
-﻿---
 module_id: DATA_VERSION_CONTROL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 系统架构师
 responsibility:
-  - 提供数据版本控制的完整架构设计和技术选型
+- 提供数据版本控制的完整架构设计和技术选型
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图文档
 priority: P0核心
 estimated_hours: 20
 ---
-
 # 数据版本控制蓝图
 
 > **核心职责**: 提供数据版本控制的完整架构设计，实现数据集版本管理、数据血缘追踪和数据复现能力

@@ -1,30 +1,17 @@
 ---
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
 module_id: EARLY_WARNING_REPORT_20260407_113727
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 预警系统报告文档
----
-
-﻿---
-responsibility:
-  - 系统审计分析与质量评估报告与改进建议
-
-module_id: EARLY_WARNING_REPORT_20260407_113727
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 预警报告
 applicable_scope: 全系统文档治理预警
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 预警系统报告
 
 ## 📊 预警概要

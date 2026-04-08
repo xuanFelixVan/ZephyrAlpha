@@ -1,27 +1,17 @@
 ---
-module_id: 10_GOVERNANCE_COMPLIANCE_BEST_PRACTICES_DOCUMENT_GOVERNANCE_BEST_PRACTICES
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 文档治理最佳实践库文档
----
-
-﻿---
 module_id: 10_GOVERNANCE_COMPLIANCE_BEST_PRACTICES_DOCUMENT_GOVERNANCE_BEST_PRACTICES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 最佳实践
 applicable_scope: 全系统文档治理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- 文档治理最佳实践库文档
 ---
-
 # 文档治理最佳实践库
 
 > **核心职责**: 汇总文档治理的最佳实践和经验教训

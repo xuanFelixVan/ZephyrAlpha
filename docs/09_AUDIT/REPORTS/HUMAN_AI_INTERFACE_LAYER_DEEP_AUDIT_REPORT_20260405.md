@@ -1,18 +1,6 @@
 ---
-module_id: HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_REPORT_20260405
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_20260405报告文档
----
-
-﻿---
 version: 1.0.0
 module_id: HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_REPORT_20260405_001
-
 audit_id: HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_002
 audit_type: 深度审计
 audit_date: 2026-04-05
@@ -21,9 +9,11 @@ audit_standard: v5.1
 auditor: AI审计系统
 status: 完成
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
+- 系统审计分析与质量评估报告与改进建议
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
 ---
-
 
 # 人机交互层深度审计报告 v2
 > **核心职责**: 分析报告和评估结果

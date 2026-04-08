@@ -3,25 +3,15 @@ module_id: QUALITY_METRICS_REPORT_20260407_163313
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QUALITY_METRICS_20260407_163313报告文档
----
-
-﻿---
-module_id: QUALITY_METRICS_REPORT_20260407_163313
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 质量报告
 applicable_scope: 文档质量指标监控
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- QUALITY_METRICS_20260407_163313报告文档
 ---
-
 # 文档质量指标监控报告
 
 > **核心职责**: 记录文档质量指标监控的结果

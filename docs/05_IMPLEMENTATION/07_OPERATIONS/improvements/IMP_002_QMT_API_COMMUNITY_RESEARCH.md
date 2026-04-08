@@ -1,15 +1,4 @@
-﻿---
-module_id: IMP_002_QMT_API_COMMUNITY_RESEARCH
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QMT API社区资源与最佳实践调研报文档
 ---
-
-﻿---
 improvement_id: IMP-002
 module_id: IMPL_OPS_IMP_002_QMT_RESEARCH_001
 priority: P0
@@ -23,11 +12,10 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 version: 1.0.0
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 ---
-
 
 # QMT API社区资源与最佳实践调研报告
 > **核心职责**: 文档内容说明

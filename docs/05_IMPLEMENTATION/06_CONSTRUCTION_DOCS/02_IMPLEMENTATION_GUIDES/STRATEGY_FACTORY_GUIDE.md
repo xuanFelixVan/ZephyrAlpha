@@ -1,23 +1,12 @@
-﻿---
-module_id: STRATEGY_FACTORY_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STRATEGY_FACTORY操作指南
 ---
-
-﻿---
 module_id: IMPL_STRATEGY_FACTORY_GUIDE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席架构?
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 standard_type: 专业量化机构实施指南
 applicable_scope: 策略工厂模块实施
 compliance_level: 专业标准

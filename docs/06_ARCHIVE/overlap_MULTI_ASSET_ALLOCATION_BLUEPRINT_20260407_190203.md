@@ -1,31 +1,19 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_MULTI_ASSET_ALLOCATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 未命名文档文档
----
-
-﻿---
 module_id: MULTI_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
-  - 多资产配置
-  - 跨资产优化
-  - 资产相关性建模
-  - 配置权重分配
+- 多资产配置
+- 跨资产优化
+- 资产相关性建模
+- 配置权重分配
 layer: Layer 5.2 (组合优化)
 ---
-
 > **职责边界**: 
 > - ✅ 本文档负责：多资产配置、跨资产优化、资产相关性建模
 > - ❌ 本文档不负责：单资产优化（由均值方差优化模块负责）

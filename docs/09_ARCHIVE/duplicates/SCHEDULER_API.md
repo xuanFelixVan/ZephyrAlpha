@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001_ARCHIVED_1
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-04 | **维护者**: 首席文档架构师
 responsibility:
 - 定义API接口

@@ -1,23 +1,12 @@
 ---
-module_id: T_08_AR001_A_STOCK_RULE_ENGINE_DESIGN
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Aﻟ۰ﻟ۶ﮒﮒﺙﮔﻟﺝﻟ۰ﮔﮔ۰文档
----
-
-﻿---
 module_id: DESIGN_DOC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
 applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮔﭘﮔﮔﮒ

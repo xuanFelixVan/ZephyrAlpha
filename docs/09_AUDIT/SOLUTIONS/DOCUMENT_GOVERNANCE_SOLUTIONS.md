@@ -1,15 +1,4 @@
 ---
-module_id: DOCUMENT_GOVERNANCE_SOLUTIONS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﮔﮔ۰۲ﮔﺎﭨﻝﮒﺕﮒﻠﻠ۱ﻟ۶۲ﮒﺏﮔﺗﮔ۰ﮒﭦ文档
----
-
-﻿---
 standard_type: ﻝ۴ﻟﺁﮒﭦ?
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﮔ۲ﮒﺙﮔﮒ
@@ -17,11 +6,12 @@ parent_document: ../INDEX.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 responsibility:
-  - 治理合规框架设计与实施与实施指导
+- 治理合规框架设计与实施与实施指导
 version: 1.0.0
 module_id: DOC_GOVERNANCE_SOLUTIONS
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 

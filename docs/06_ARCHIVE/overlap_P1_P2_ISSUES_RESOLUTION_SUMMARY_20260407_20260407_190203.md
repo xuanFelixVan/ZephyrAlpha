@@ -1,18 +1,13 @@
 ---
-module_id: P1_P2_ISSUES_RESOLUTION_SUMMARY_20260407
 version: 1.0.0
+module_id: P1_P2_ISSUES_RESOLUTION_SUMMARY_20260407
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - P1和P2级问题处理总结报告文档
+- P1和P2级问题处理总结报告文档
 ---
-
-﻿---
-version: 1.0.0
----
-
 # P1和P2级问题处理总结报告
 
 > **处理时间**: 2026-04-07

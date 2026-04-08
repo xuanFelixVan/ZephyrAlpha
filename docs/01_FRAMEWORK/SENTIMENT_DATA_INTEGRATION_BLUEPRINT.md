@@ -1,29 +1,20 @@
 ---
-module_id: SENTIMENT_DATA_INTEGRATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_DATA_INTEGRATION蓝图设计
----
-
-﻿---
 module_id: SENTIMENT_DATA_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 3 (策略层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 舆情数据源集成模块
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg Terminal", "Refinitiv", "Wind"]
+reference_models:
+- Bloomberg Terminal
+- Refinitiv
+- Wind
 responsibility:
-  - 数据管理架构设计与实施规范与优化维护
-
+- 数据管理架构设计与实施规范与优化维护
 ---
 ---
 

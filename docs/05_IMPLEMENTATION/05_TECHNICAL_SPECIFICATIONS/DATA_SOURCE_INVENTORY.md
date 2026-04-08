@@ -1,28 +1,16 @@
-﻿---
-module_id: DATA_SOURCE_INVENTORY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 清风量化系统数据接口清单文档
 ---
-
-﻿---
 module_id: DATA_SOURCE_INVENTORY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 standard_type: 数据接口清单
 applicable_scope: 全系统数据源管理
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 responsibility:
-  - 系统实施与部署管理与优化维护
-
+- 系统实施与部署管理与优化维护
 ---
 ---
 

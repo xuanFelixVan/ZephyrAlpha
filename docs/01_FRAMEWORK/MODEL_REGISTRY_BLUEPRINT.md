@@ -1,50 +1,26 @@
 ---
-module_id: MODEL_REGISTRY_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MODEL_REGISTRY蓝图设计
----
-
-﻿---
-module_id: MODELREGISTRYBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-responsibility:
-  - 提供model registry blueprint的完整架构设计、技术选型和实施路径规划
-layer: Layer 4 (机器学习层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
----
----
----
-
-
-﻿---
 module_id: MODEL_REGISTRY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: 跨层系统
 standard_type: 专业量化机构级蓝图
 applicable_scope: 模型注册中心
 compliance_level: 顶级专业标准
-reference_models: ["MLflow Model Registry", "AWS SageMaker Model Registry", "Azure ML Model Registry"]
+reference_models:
+- MLflow Model Registry
+- AWS SageMaker Model Registry
+- Azure ML Model Registry
 related_documents:
-  - ARCHITECTURE.md
-  - MACHINE_LEARNING_LAYER_BLUEPRINT.md
-  - MODEL_VERSIONING_BLUEPRINT.md
+- ARCHITECTURE.md
+- MACHINE_LEARNING_LAYER_BLUEPRINT.md
+- MODEL_VERSIONING_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+- 提供model registry blueprint的完整架构设计、技术选型和实施路径规划
 ---
 # 模型注册中心蓝图
 > **核心职责**: 提供model registry blueprint的完整架构设计、技术选型和实施路径规划

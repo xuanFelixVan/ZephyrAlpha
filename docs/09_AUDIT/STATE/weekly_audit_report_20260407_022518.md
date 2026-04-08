@@ -1,23 +1,11 @@
 ---
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
 module_id: WEEKLY_AUDIT_REPORT_20260407_022518
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 每周文档治理审计报告文档
----
-
-﻿---
-responsibility:
-  - 系统审计分析与质量评估报告与改进建议
-
-module_id: WEEKLY_AUDIT_REPORT_20260407_022518
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 定期审计报告
 applicable_scope: 全系统文档治理

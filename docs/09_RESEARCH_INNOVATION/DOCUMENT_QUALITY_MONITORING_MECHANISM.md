@@ -1,23 +1,12 @@
 ---
-module_id: DOCUMENT_QUALITY_MONITORING_MECHANISM
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 9 文档质量监控机制文档
----
-
-﻿---
 module_id: DOCUMENT_QUALITY_MONITORING_MECHANISM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 负责建立和维护Layer 9研究与创新层的文档质量监控机制，定义质量指标、监控流程和告警机制，确保文档持续符合专业量化机构标准，为文档治理提供自动化监控支持。
+- 负责建立和维护Layer 9研究与创新层的文档质量监控机制，定义质量指标、监控流程和告警机制，确保文档持续符合专业量化机构标准，为文档治理提供自动化监控支持。
 ---
 # Layer 9 文档质量监控机制
 
@@ -181,7 +170,7 @@ python scripts/layer9_weekly_monitor.py
 - 生成告警报告文件
 - 记录到审计日志
 
-**告警报告位置**: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
+**告警报告位置**: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
 
 ---
 

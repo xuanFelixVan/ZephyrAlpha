@@ -1,15 +1,4 @@
 ---
-module_id: QLIB_ALPHA158_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QLIB_ALPHA158_TECHNICAL_REVIEW报告文档
----
-
-﻿---
 module_id: ARCHIVE_QLIB_ALPHA158_TECH_REVIEW_001
 review_id: TR-2026-04-02-QLIB
 version: 1.0.1
@@ -22,10 +11,9 @@ applicable_scope: 系统实施
 parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 responsibility:
-  - 归档文档、历史版本、技术评审
-
+- 归档文档、历史版本、技术评审
 ---
 ---
 

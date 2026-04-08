@@ -1,30 +1,19 @@
 ---
-module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 舆情分析层长期改进模块详细技术规格书文档
----
-
-﻿---
 module_id: SENTIMENT_ANALYSIS_LONG_TERM_TS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
-responsibility: 
+responsibility:
+- 舆情分析层长期改进模块详细技术规格书文档
 layer: Layer 3 (舆情分析层)
 standard_type: 技术规格书
 applicable_scope: 舆情分析层长期改进模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-applicable_modules: 
+applicable_modules: null
 ---
-
 
 
 ## 文档职责说明

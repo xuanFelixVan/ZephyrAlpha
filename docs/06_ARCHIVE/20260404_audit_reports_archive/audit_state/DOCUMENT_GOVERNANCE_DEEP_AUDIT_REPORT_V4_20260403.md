@@ -1,30 +1,19 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - Layer 5чнЦчХецЙзшбМх▒ВцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехС?V4文档
----
-
-﻿﻿---
 module_id: LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403_001
-
 audit_id: LAYER5_DOCUMENT_GOVERNANCE_DEEP_AUDIT_V4_001
 version: 4.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 auditor: Audit Sentinel
 standard_type: ф╕Уф╕ЪцЦЗцбгц▓╗чРЖц╖▒х║жхобшобцКехСК
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
 applicable_scope: Layer 5чнЦчХецЙзшбМх▒ВхЕич│╗ч╗ЯцЦЗцбг
 parent_document: ../AUDIT_STANDARDS_v5.1.md
 implementation_status: х╖▓хоМцИ?
+owner: 文档管理团队
 ---
 ---
 

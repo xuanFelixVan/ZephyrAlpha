@@ -1,31 +1,18 @@
 ---
-module_id: MASTER_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 4 机器学习层  文档总索引文档
----
-
-﻿---
 module_id: LAYER4_MASTER_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 系统架构师
 responsibility:
-  - 负责master index的设计、实现和维护工作
+- 负责master index的设计、实现和维护工作
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构级索引文档
 applicable_scope: Layer 4全系统文档
 compliance_level: 顶级专业标准
 parent_document: ../01_FRAMEWORK/INDEX.md
 implementation_status: 活跃维护
----
----
 ---
 ---
 

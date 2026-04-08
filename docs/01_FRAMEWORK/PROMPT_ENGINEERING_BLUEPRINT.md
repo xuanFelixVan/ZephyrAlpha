@@ -1,35 +1,18 @@
 ---
-module_id: PROMPT_ENGINEERING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PROMPT_ENGINEERING蓝图设计
----
-
-﻿---
 module_id: PROMPT_ENGINEERING_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供prompt engineering blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供prompt engineering blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
-
 priority: P1
+responsibility_boundary: '本文档负责Layer 4机器学习层的提示工程系统设计，包括提示模板、Few-shot学习、Chain-of-Thought等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的提示工程系统设计，包括提示模板、Few-shot学习、Chain-of-Thought等核心功能。
+  '
 layer: Layer 3 (策略层)
+owner: 首席文档架构师
 ---
 ---
 

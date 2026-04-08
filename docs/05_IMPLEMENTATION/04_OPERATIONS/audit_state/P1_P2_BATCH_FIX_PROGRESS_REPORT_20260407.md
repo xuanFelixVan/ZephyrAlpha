@@ -1,22 +1,13 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_P1_P2_BATCH_FIX_PROGRESS_REPORT_20260407
 version: 1.0.0
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_P1_P2_BATCH_FIX_PROGRESS_REPORT_20260407_20260407180137
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 文档管理团队
 responsibility:
-  - P1/P2批量修复进度报告文档
+- P1/P2批量修复进度报告文档
 ---
-
-﻿---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_P1_P2_BATCH_FIX_PROGRESS_REPORT_20260407_20260407180137
----
-
-﻿---
-version: 1.0.0
----
-
 # P1/P2批量修复进度报告
 
 **修复时间**: 2026-04-07  

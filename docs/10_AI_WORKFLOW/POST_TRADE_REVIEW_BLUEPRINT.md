@@ -1,32 +1,21 @@
 ---
-module_id: 10_AI_WORKFLOW_POST_TRADE_REVIEW_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 复盘模块蓝图文档
----
-
-﻿---
 module_id: POST_TRADE_REVIEW_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席架构师
-responsibility: 
+responsibility:
+- 复盘模块蓝图文档
 layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 交易复盘分析
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
-reference_models: 
-related_documents: 
+reference_models: null
+related_documents: null
 ---
-
 
 ## 文档职责说明
 

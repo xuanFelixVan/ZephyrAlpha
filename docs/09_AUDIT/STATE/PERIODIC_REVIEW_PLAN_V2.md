@@ -1,27 +1,17 @@
 ---
-module_id: PERIODIC_REVIEW_PLAN_V2
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 定期审查计划 V20文档
----
-
-﻿---
 module_id: PERIODIC_REVIEW_PLAN_V2_001
 version: 2.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 审查计划
 applicable_scope: 全系统定期审查
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- 定期审查计划 V20文档
 ---
-
 # 定期审查计划 V2.0
 
 > **核心职责**: 定义定期审查的流程、频率和责任分工

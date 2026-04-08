@@ -1,32 +1,17 @@
 ---
-module_id: PRODUCTION_MONITORING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PRODUCTION_MONITORING蓝图设计
----
-
-﻿---
 module_id: PRODUCTIONMONITORINGBLUEPRIN_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 交易策略团队
 responsibility:
-  - 系统监控架构设计与实施方案与实施指导
+- 系统监控架构设计与实施方案与实施指导
 layer: Layer 7 (风控层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
----
-
-
-﻿---
 module_id: STRAT_PROD_MON_001
 version: 1.0.0
 status: Active

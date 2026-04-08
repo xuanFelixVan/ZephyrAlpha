@@ -1,30 +1,17 @@
 ---
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
 module_id: AUTOMATED_WORKFLOW_REPORT_20260407_113557
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 自动化工作流报告文档
----
-
-﻿---
-responsibility:
-  - 系统审计分析与质量评估报告与改进建议
-
-module_id: AUTOMATED_WORKFLOW_REPORT_20260407_113557
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 自动化工作流报告
 applicable_scope: 全系统文档治理自动化
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 自动化工作流报告
 
 ## 📊 执行概要

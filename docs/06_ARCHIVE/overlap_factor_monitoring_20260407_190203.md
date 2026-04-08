@@ -1,23 +1,12 @@
 ---
-module_id: FACTOR_MONITORING
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 因子监控文档
----
-
-﻿---
 module_id: FACTOR_MONITORING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 因子工程团队
 responsibility:
-  - 因子研究与管理框架设计与优化维护
+- 因子研究与管理框架设计与优化维护
 standard_type: 通用文档
 applicable_scope: 全系统
 compliance_level: 专业标准

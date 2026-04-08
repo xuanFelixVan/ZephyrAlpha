@@ -1,24 +1,13 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DOCUMENT_GOVERNANCE_REMEDIATION_SUMMARY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 未命名文档文档
----
-
-﻿﻿---
 module_id: DOCUMENT_GOVERNANCE_REMEDIATION_SUMMARY_001
-
 summary_id: DOCUMENT_GOVERNANCE_REMEDIATION_SUMMARY_001
 version: 1.0.0
 status: Completed
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
+owner: 文档管理团队
 ---
 ---
 

@@ -220,7 +220,7 @@ deep_audit:
 **х╗║шоо2: хвЮхКах┐╜чХешзДхИЩ**
 ```yaml
 # х╗║шооц╖╗хКачЪДщЕНч╜?ignore_rules:
-  - pattern: "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/**"
+  - pattern: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/**"
     reason: "хобшобцКехСКцЦЗф╗╢"
   - pattern: "docs/06_ARCHIVE/**"
     reason: "х╜ТцбгцЦЗф╗╢"

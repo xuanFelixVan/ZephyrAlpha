@@ -1,23 +1,12 @@
 ---
-module_id: BLUEPRINT_STANDARD_TEMPLATE
+module_id: AUDIT_蓝图文件标准模板_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - BLUEPRINT_STANDARD_TEMPLATE蓝图设计
----
-
-﻿---
-module_id: AUDIT_蓝图文件标准模板_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计系统
 responsibility:
-  - 审计报告、合规检查
+- 审计报告、合规检查
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准

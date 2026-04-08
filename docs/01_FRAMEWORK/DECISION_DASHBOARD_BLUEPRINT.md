@@ -1,34 +1,17 @@
 ---
-module_id: DECISION_DASHBOARD_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DECISION_DASHBOARD蓝图设计
----
-
-﻿---
 module_id: DECISIONDASHBOARDBLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
+- 系统架构蓝图设计与实施指导与实施方案
 ---
----
----
----
-
-﻿---
 module_id: DECISION_DASHBOARD_001
 version: 1.0.0
 status: Active

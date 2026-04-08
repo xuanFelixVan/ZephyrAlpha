@@ -1,23 +1,12 @@
 ---
-module_id: REAL_TIME_MONITORING
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 实时监控系统文档
----
-
-﻿---
 module_id: EXEC_REAL_TIME_MONITORING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 交易执行系统设计与优化与实施指导
+- 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
 applicable_scope: 交易执行与监控
 compliance_level: 初始标准

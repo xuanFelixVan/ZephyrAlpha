@@ -1,23 +1,12 @@
-﻿---
-module_id: USAGE_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - USAGE操作指南
 ---
-
-﻿---
 module_id: LAYER7_USAGE_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 standard_type: 使用指南
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准

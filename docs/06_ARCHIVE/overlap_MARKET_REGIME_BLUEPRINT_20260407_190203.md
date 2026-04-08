@@ -1,33 +1,24 @@
 ---
-module_id: MARKET_REGIME_BLUEPRINT
+module_id: MARKET_REGIME_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MARKET_REGIME蓝图设计
----
-
-﻿---
-module_id: MARKET_REGIME_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 11.5 - 市场状态识别
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Market Regime", "AQR Regime Detection", "Citadel Market State"]
-open_source_solution: "hmmlearn + statsmodels + scikit-learn"
+reference_models:
+- Two Sigma Market Regime
+- AQR Regime Detection
+- Citadel Market State
+open_source_solution: hmmlearn + statsmodels + scikit-learn
 priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+- 系统架构蓝图设计与实施指导与实施方案
 ---
-
 # 市场状态识别蓝图
 > **核心职责**: 市场状态识别系统蓝图设计
 > **职责边界**: 

@@ -1,20 +1,9 @@
-﻿---
-module_id: RETAIL_STRATEGIES_C
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 游资量化策略 第三部分文档
 ---
-
-﻿---
 module_id: TACTICS_YOUZI_OTHER_C_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
@@ -22,9 +11,8 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 交易策略设计与实施管理与优化维护
+- 交易策略设计与实施管理与优化维护
 ---
-
 # 游资量化策略?- 第三部分
 > **核心职责**: 文档内容说明
 > **职责边界**: 

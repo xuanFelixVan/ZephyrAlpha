@@ -1,26 +1,14 @@
 ---
-module_id: DATA_PREPROCESSING_OPENSOURCE_INTEGRATION_GUIDE_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_PREPROCESSING_OPENSOURCE_INTEGRATION_20260407操作指南
----
-
-﻿---
 module_id: DATA_PREPROCESSING_OPENSOURCE_INTEGRATION_GUIDE_20260407_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 ---
-
 # Layer 1 开源项目集成指南
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 

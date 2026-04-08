@@ -1,50 +1,32 @@
-﻿---
-module_id: EXPERIMENT_TRACKING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - EXPERIMENT_TRACKING蓝图设计
 ---
-
-﻿---
 module_id: EXPERIMENT_TRACKING_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-07
-
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 responsibility:
-  - 提供experiment tracking blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供experiment tracking blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4 (机器学习层)
-
 standard_type: 高层架构蓝图
-
 priority: P0
-
-responsibility_boundary: |
+responsibility_boundary: '
 
   本文档负责Layer 4机器学习层的生产级实验追踪系统设计，包括：
 
+
   - MLflow + 自研方案的架构设计
+
 
   - 生产环境实验追踪和模型管理
 
+
   - 团队协作和审计支持
 
-  
 
-  研究级实验追踪（wandb.ai方案）请参考：docs/07_RESEARCH/EXPERIMENT_TRACKING.md
----
----
+
+
+  研究级实验追踪（wandb.ai方案）请参考：docs/07_RESEARCH/EXPERIMENT_TRACKING.md'
 ---
 ---
 # 实验追踪系统蓝图

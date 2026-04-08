@@ -2,22 +2,11 @@
 module_id: ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔP0ﻝﭦ۶ﮒﮒ۷ﻠ۲ﻠ۸ﻛﺟﮒ۳ﻟ۰۴ﻛﺕ文档
----
-
-﻿---
-module_id: ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001
-version: 1.0.0
-status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 归档文档、历史版本
+- 归档文档、历史版本
 standard_type: ﮒ؟ﮒ۷ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ
 applicable_scope: ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ
 compliance_level: ﻛﺕﻛﺕﮔﮒ

@@ -1,20 +1,9 @@
 ---
-module_id: TECHNICAL_REVIEW_REPORT_TEMPLATE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TECHNICAL_REVIEW_TEMPLATE报告文档
----
-
-﻿---
 module_id: ARCHIVE_TECH_REVIEW_TEMPLATE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构实施标准
 applicable_scope: 系统实施与部?
@@ -22,9 +11,8 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 数据质量 (Layer 1)
+- 数据质量 (Layer 1)
 ---
-
 
 # [模块名称]技术方案评审报?
 > **核心职责**: 文档内容说明

@@ -1,52 +1,28 @@
 ---
-module_id: DATA_SOURCE_LAYER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_SOURCE_LAYER蓝图设计
----
-
-﻿---
-module_id: LAYER_002
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
-layer: Layer 0 (数据源层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
-responsibility:
-  - 数据管理架构设计与实施规范与优化维护
-
----
----
----
-
-﻿---
 module_id: DATA_SOURCE_LAYER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 0 - 数据源层
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg Terminal", "Wind Financial Terminal", "Reuters Eikon", "Citadel Data Infrastructure"]
+reference_models:
+- Bloomberg Terminal
+- Wind Financial Terminal
+- Reuters Eikon
+- Citadel Data Infrastructure
 related_documents:
-  - ARCHITECTURE.md
-  - DATA_PREPROCESSING_LAYER_BLUEPRINT.md
-  - DATA_QUALITY_MONITORING_BLUEPRINT.md
+- ARCHITECTURE.md
+- DATA_PREPROCESSING_LAYER_BLUEPRINT.md
+- DATA_QUALITY_MONITORING_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+- 数据管理架构设计与实施规范与优化维护
 ---
-
 # Layer 0: 数据源层蓝图
 > **核心职责**: Data Source Layer蓝图设计
 > **职责边界**: 

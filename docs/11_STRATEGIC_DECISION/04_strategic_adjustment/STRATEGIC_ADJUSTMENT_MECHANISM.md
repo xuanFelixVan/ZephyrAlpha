@@ -1,33 +1,24 @@
 ---
-module_id: STRATEGIC_ADJUSTMENT_MECHANISM
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 战略调整机制蓝图文档
----
-
-﻿---
 module_id: STRATEGIC_ADJUSTMENT_MECHANISM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 11.6 - 战略调整机制
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Dynamic Adjustment", "AQR Tactical Allocation", "BlackRock Strategic Adjustment"]
-open_source_solution: "AI-Hedge-Fund + XQRiskCore"
+reference_models:
+- Bridgewater Dynamic Adjustment
+- AQR Tactical Allocation
+- BlackRock Strategic Adjustment
+open_source_solution: AI-Hedge-Fund + XQRiskCore
 priority: P0
 parent_document: ../INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
+- 11 STRATEGIC DECISION模块文档管理与维护
 ---
-
 # 战略调整机制蓝图
 > **核心职责**: 战略调整机制设计
 > **职责边界**: 

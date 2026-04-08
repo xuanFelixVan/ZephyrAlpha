@@ -1,39 +1,31 @@
 ---
-module_id: MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MULTI_STRATEGY_DYNAMIC_ALLOCATION蓝图设计
----
-
-﻿---
 module_id: MULTI_STRATEGY_DYNAMIC_ALLOCATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 多策略动态配置
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Multi-Strategy", "Renaissance Technologies", "Citadel Multi-Manager"]
+reference_models:
+- Bridgewater Multi-Strategy
+- Renaissance Technologies
+- Citadel Multi-Manager
 related_documents:
-  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+- STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+- PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
 parent_document: ./STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: Optimization Algorithm + AI Recommendation
-    features: 优化算法、AI推荐、动态配置
-responsibility_boundary: |
-  本文档职责（Layer 11 战略决策层）：
-responsibility:
-  - 交易策略框架设计与实施指导与实施指导
+- name: Optimization Algorithm + AI Recommendation
+  features: 优化算法、AI推荐、动态配置
+responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
 
+  '
+responsibility:
+- 交易策略框架设计与实施指导与实施指导
 ---
 ---
 

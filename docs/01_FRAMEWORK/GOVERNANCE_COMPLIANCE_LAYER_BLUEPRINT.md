@@ -1,46 +1,42 @@
 ---
-module_id: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - GOVERNANCE_COMPLIANCE_LAYER蓝图设计
----
-
-﻿---
 module_id: GOVERNANCE_COMPLIANCE_LAYER_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 10 - 治理与合规层
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Governance", "Citadel Compliance", "Two Sigma Risk Governance", "SEC/CFA Institute Standards"]
+reference_models:
+- Bridgewater Governance
+- Citadel Compliance
+- Two Sigma Risk Governance
+- SEC/CFA Institute Standards
 related_documents:
-  - ARCHITECTURE.md
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-  - AI_DECISION_AUDIT_BLUEPRINT.md
+- ARCHITECTURE.md
+- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+- AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 layer: Layer 10 (治理与合规层)
-responsibility_boundary: |
-  **本文档职责（Layer 10 总体架构）**：
-  
-  **与本文档职责边界**：
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 负责合规监控系统的具体实现
-  - AI_GOVERNANCE_BLUEPRINT.md: 负责AI治理框架的具体实现
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 负责审计追踪系统的具体实现
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 负责模型风险管理系统的具体实现
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
----
----
----
+responsibility_boundary: '**本文档职责（Layer 10 总体架构）**：
 
+
+  **与本文档职责边界**：
+
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 负责合规监控系统的具体实现
+
+  - AI_GOVERNANCE_BLUEPRINT.md: 负责AI治理框架的具体实现
+
+  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 负责审计追踪系统的具体实现
+
+  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 负责模型风险管理系统的具体实现
+
+  '
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
 # Layer 10: 治理与合规层蓝图
 > **核心职责**: Governance Compliance Layer蓝图设计
 > **职责边界**: 

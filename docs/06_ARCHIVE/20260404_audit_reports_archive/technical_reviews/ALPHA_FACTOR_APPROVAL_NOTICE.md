@@ -1,28 +1,16 @@
 ---
-module_id: ALPHA_FACTOR_APPROVAL_NOTICE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 2 Alpha因子层审批决定通知文档
----
-
-﻿---
 module_id: LAYER_ALPHA_003
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档管理员
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 数据质量 (Layer 1)
+- 数据质量 (Layer 1)
 ---
-
 # Layer 2 Alpha因子层审批决定通知?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

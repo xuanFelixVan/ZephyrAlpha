@@ -1,23 +1,12 @@
-﻿---
-module_id: API_REFERENCE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 7 AI报告层  统一API接口文档文档
 ---
-
-﻿---
 module_id: LAYER7_API_REFERENCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: API接口文档
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准

@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ARCHITECTURE_VERSION_CONFLICT_AUDIT_REPORT_20260402
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - ﮔﭘﮔﻝﮔ؛ﮒﺎﻝ۹ﻛﺕﻠ۰ﺗﮒ؟۰ﻟ؟۰ﮔ۴ﮒ文档
----
-
-﻿﻿---
 module_id: AUDIT_REPORT_ARCH_VERSION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: Audit Sentinel
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﭘﮔﻝﮔ؛ﮒﺎﻝ۹ﮒ؟۰ﻟ؟۰
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﭘﮔﻛﺕﻟ?
 compliance_level: ﻠ۰ﭘﻝﭦ۶ﻛﺕﻛﺕﮔﮒ

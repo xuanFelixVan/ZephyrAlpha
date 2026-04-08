@@ -1,15 +1,4 @@
 ---
-module_id: SCHEDULED_AUDIT_CONFIGURATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﮒﮔﮒ۰ﻟ۰ﻛﭨﭨﮒ۰ﻠﻝﺛ文档
----
-
-﻿---
 standard_type: ﻠﻝﺛ؟ﮔﮒ
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
 compliance_level: ﮔ۲ﮒﺙﮔﮒ
@@ -17,11 +6,12 @@ parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: ﮒﺓﺎﮒ؟ﮔ?
 owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
+- 系统审计分析与质量评估报告与改进建议
 version: 1.0.0
 module_id: SCHEDULED_AUDIT_CONFIG
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 
@@ -73,19 +63,19 @@ crontab -e
 # ZephyrAlphaﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰
 
 # ﮒﺟ،ﻠﮒ؟۰ﻟ؟?- ﮔﺁﮒ۷ﻛﺕﮒﮔ۷2:00ﮔ۶ﻟ۰
-0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+0 2 * * 1 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --quick --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
 # ﮔﮒﮒ؟۰ﻟ؟۰ - ﮔﺁﮔ1ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
-0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+0 3 1 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --all --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
 # ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ - ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰ﺅﺙ?ﮔﻙ?ﮔﻙ?ﮔﻙ?0ﮔﺅﺙ
-0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+0 3 1 1,4,7,10 * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_auditor.py --deep --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quarterly_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
 # ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮔﺁﮒ۷ﮔ۴ﮒﮔ?:30ﮔ۶ﻟ۰
-30 2 * * 0 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/metadata_enhancer.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/metadata_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+30 2 * * 0 cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/metadata_enhancer.py --scan --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/metadata_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 
 # ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮔﺁﮔ15ﮔ۴ﮒﮔ?:00ﮔ۶ﻟ۰
-0 3 15 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_classifier.py --scan --output "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/classification_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
+0 3 15 * * cd /path/to/ZephyrAlpha && /usr/bin/python3 scripts/document_classifier.py --scan --output "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/classification_$(date +\%Y\%m\%d).json" >> logs/audit.log 2>&1
 ```
 
 ### 2.2 Windowsﻝﺏﭨﻝﭨﺅﺙﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﺅﺙ
@@ -168,7 +158,7 @@ def run_quick_audit():
         
         # ﻝﮔﮔ۴ﮒﮔﻛﭨﭘﮒ?
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_{timestamp}.json'
         
 # ﻛﺟﮒﮔ۴ﮒ
         with open(output_file, 'w', encoding='utf-8') as f:
@@ -241,7 +231,7 @@ logger.info("ﮒﺙﮒ۶ﮔﮒﮒ؟۰ﻟ؟?..")
         results = auditor.full_audit()
         
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_{timestamp}.json'
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
@@ -259,7 +249,7 @@ logger.error(f"ﮔﮒﮒ؟۰ﻟ؟۰ﮒ۳ﺎﻟﺑ۴: {str(e)}")
 
 def generate_summary_report(results, timestamp):
     """ﻝﮔﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ"""
-    summary_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
+    summary_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/monthly_summary_{timestamp}.md'
     
     with open(summary_file, 'w', encoding='utf-8') as f:
         f.write(f"# ﮔﮒﭦ۵ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ\n\n")
@@ -345,7 +335,7 @@ def run_deep_audit():
         }
         
         timestamp = datetime.now().strftime('%Y%m%d')
-        output_file = f'docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/quarterly_{timestamp}.json'
+        output_file = f'docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/quarterly_{timestamp}.json'
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
@@ -431,7 +421,7 @@ from pathlib import Path
 
 def cleanup_old_reports():
     """ﮔﺕﻝﻟﺟﮔﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?""
-    base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
+    base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
     
     # ﮔﺕﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺅﺙﻛﺟﻝ3ﻛﺕ۹ﮔﺅﺙ?
     weekly_path = base_path / 'weekly'
@@ -533,7 +523,7 @@ from pathlib import Path
 
 def check_audit_status():
     """ﮔ۲ﮔ۴ﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻝﭘﮔ?""
-    base_path = Path('docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state')
+    base_path = Path('docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state')
     
     # ﮔ۲ﮔ۴ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮒﭦﻟﺁ۴ﮔﺁﮒ۷ﮔ۶ﻟ۰ﺅﺙ?
     latest_weekly = get_latest_report(base_path / 'weekly')

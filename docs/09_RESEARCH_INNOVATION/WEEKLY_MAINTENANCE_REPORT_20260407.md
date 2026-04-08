@@ -1,23 +1,11 @@
 ---
-module_id: WEEKLY_MAINTENANCE_REPORT_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - WEEKLY_MAINTENANCE_20260407报告文档
----
-
-﻿---
-responsibility:
-  - 负责记录Layer 9研究与创新层文档治理的周维护情况，详细记录本周维护工作、发现问题和处理结果，为文档治理维护提供周度记录，确保维护工作的及时性和有效性。
-
+- 负责记录Layer 9研究与创新层文档治理的周维护情况，详细记录本周维护工作、发现问题和处理结果，为文档治理维护提供周度记录，确保维护工作的及时性和有效性。
 module_id: LAYER9_WEEKLY_MAINTENANCE_REPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: 文档治理周维护报告
 applicable_scope: Layer 9 - 研究与创新层文档周维护

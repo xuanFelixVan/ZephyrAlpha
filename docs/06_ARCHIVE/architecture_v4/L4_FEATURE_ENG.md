@@ -1,23 +1,12 @@
 ---
-module_id: L4_FEATURE_ENG
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - L4_FEATURE_ENG 自动化特征工程模块设文档
----
-
-﻿---
 module_id: ARCHIVE_L4_FEATURE_ENG_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 归档文档、历史版本
+- 归档文档、历史版本
 standard_type: 专业量化机构文档
 applicable_scope: 全系?
 compliance_level: 初始标准

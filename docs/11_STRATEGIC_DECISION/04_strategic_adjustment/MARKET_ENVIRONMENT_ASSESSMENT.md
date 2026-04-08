@@ -1,15 +1,4 @@
 ---
-module_id: MARKET_ENVIRONMENT_ASSESSMENT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 市场环境评估蓝图文档
----
-
-﻿---
 module_id: MARKET_ENVIRONMENT_EVALUATION_001
 version: 1.0.0
 status: Active
@@ -18,8 +7,8 @@ owner: 首席架构师
 priority: P1
 implementation_status: 蓝图阶段
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
-
+- 11 STRATEGIC DECISION模块文档管理与维护
+last_updated: 2026-04-07
 ---
 ---
 

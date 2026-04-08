@@ -1,20 +1,9 @@
 ---
-module_id: STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT
+module_id: STRATEGY_LIFECYCLE_MANAGEMENT_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STRATEGY_LIFECYCLE_MANAGEMENT蓝图设计
----
-
-﻿---
-module_id: STRATEGY_LIFECYCLE_MANAGEMENT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
@@ -23,18 +12,17 @@ compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
 reference_models:
-  - MLflow Lifecycle
-  - Prefect Workflows
-open_source_solution: "MLflow + Prefect + transitions"
+- MLflow Lifecycle
+- Prefect Workflows
+open_source_solution: MLflow + Prefect + transitions
 priority: P0
 responsibility:
-  - 策略研发管理
-  - 策略测试验证
-  - 策略上线部署
-  - 策略监控告警
-  - 策略下线归档
+- 策略研发管理
+- 策略测试验证
+- 策略上线部署
+- 策略监控告警
+- 策略下线归档
 ---
-
 ## 文档职责说明
 
 **本文档职责**: 策略生命周期管理蓝图

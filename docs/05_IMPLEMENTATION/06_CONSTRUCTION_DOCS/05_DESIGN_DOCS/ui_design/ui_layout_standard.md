@@ -1,23 +1,12 @@
-﻿---
-module_id: UI_LAYOUT_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 用户体验设计规范文档
 ---
-
-﻿---
 module_id: IMPL_UI_LAYOUT_STANDARD_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 技术标准制定与规范管理与优化维护
+- 技术标准制定与规范管理与优化维护
 standard_type: 专业量化机构标准
 applicable_scope: 全系统标准规范
 compliance_level: 标准规范

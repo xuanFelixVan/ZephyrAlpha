@@ -1,27 +1,15 @@
 ---
-module_id: PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V13_20260406
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 组合优化层深度审计报告 V13文档
----
-
-﻿---
-module_id: V_003
+module_id: V_003_ARCHIVED_1
 version: 13.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 实施指南、部署文档、审计状态追踪
-
+- 实施指南、部署文档、审计状态追踪
 ---
 ---
 

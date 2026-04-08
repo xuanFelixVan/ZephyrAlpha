@@ -1,28 +1,16 @@
 ---
-module_id: 01_FRAMEWORK_LAYER4_ML_P1_P2_MODULES_BLUEPRINT_COLLECTION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - P1_P2_MODULES_COLLECTION蓝图设计
----
-
-﻿---
 module_id: LAYER4_P1_P2_MODULES_BLUEPRINT_COLLECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 系统架构师
 responsibility:
-  - 提供Layer 4机器学习层P1和P2优先级模块的完整蓝图集合
+- 提供Layer 4机器学习层P1和P2优先级模块的完整蓝图集合
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图集合文档
 priority: P1/P2
 ---
-
 # Layer 4机器学习层P1/P2模块蓝图集合
 
 > **核心职责**: 提供Layer 4机器学习层P1中优先级和P2低优先级模块的完整蓝图集合

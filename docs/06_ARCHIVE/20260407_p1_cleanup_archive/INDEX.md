@@ -1,28 +1,13 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_INDEX
+module_id: 03_TRADING_TACTICS_INDEX_20260407124139_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 20260407_p1_cleanup_archive目录索引
----
-
-﻿---
-module_id: 03_TRADING_TACTICS_INDEX_20260407124139
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 交易策略、战术执行
-
----
----
-
+- 交易策略、战术执行
 ---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_INDEX_TACTICS_001
 version: 5.3.0

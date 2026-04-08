@@ -1,24 +1,14 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DIRECTORY_FLATTENING_PLAN_20260403
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 未命名文档文档
----
-
-﻿﻿---
 module_id: DIRECTORY_FLATTENING_PLAN_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 compliance_level: Σ╕ףΣ╕תחσחז
 parent_document: ../DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md
+owner: 文档管理团队
 ---
 ---
 

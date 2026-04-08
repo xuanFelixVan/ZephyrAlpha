@@ -1,23 +1,12 @@
 ---
-module_id: L11_QUANT_AGENT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - L11_QUANT_AGENT ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒﻟﺝﻟ۰ﮔﮔ۰۲文档
----
-
-﻿---
 module_id: L11_QUANT_AGENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 归档文档、历史版本
+- 归档文档、历史版本
 layer: Layer 11
 module_type: ﮔﺕﮒﺟﮔ۷۰ﮒ
 priority: P0

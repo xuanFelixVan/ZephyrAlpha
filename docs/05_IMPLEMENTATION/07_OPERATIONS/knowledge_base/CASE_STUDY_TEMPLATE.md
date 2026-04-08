@@ -1,27 +1,14 @@
 ---
-module_id: CASE_STUDY_TEMPLATE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - CASE_STUDY模板文档
----
-
-﻿---
 module_id: CASE_STUDY_TEMPLATE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 文档模板设计与标准化管理与优化维护
-
+- 文档模板设计与标准化管理与优化维护
 ---
-
 ---
 title: "όκΙϊ╛ΜύιΦύσ╢όρκόζ┐"
 type: "case_study"

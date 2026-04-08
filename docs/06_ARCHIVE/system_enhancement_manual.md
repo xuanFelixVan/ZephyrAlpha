@@ -1,28 +1,13 @@
 ---
-module_id: SYSTEM_ENHANCEMENT_MANUAL
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 系统增强手册 v10文档
----
-
-﻿---
 module_id: SYSTEM_ENHANCEMENT_MANUAL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 归档文档、历史版本
-
----
----
-
+- 归档文档、历史版本
 ---
 module_id: ARCHIVE_SYS_ENHANCE_001
 version: 1.0.1

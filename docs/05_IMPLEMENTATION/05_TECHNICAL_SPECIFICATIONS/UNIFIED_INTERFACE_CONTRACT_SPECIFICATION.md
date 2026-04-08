@@ -1,23 +1,12 @@
 ---
-module_id: UNIFIED_INTERFACE_CONTRACT_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - UNIFIED_INTERFACE_CONTRACT技术规范
----
-
-﻿---
 module_id: UNIFIED_INTERFACE_CONTRACT_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ
 applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
 compliance_level: ﻛﺕﻛﺕﮔﮒ

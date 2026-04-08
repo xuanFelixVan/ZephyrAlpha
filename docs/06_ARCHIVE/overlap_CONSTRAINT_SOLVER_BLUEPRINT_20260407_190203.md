@@ -1,32 +1,19 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_CONSTRAINT_SOLVER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
 responsibility:
-  - 未命名文档文档
----
-
-﻿---
-responsibility:
-  - 约束建模
-  - 求解算法
-  - 优化引擎
-  - 约束求解验证
-
+- 约束建模
+- 求解算法
+- 优化引擎
+- 约束求解验证
 module_id: CONSTRAINT_SOLVER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: Layer 5.2 (组合优化)
 ---
-
 
 ## 核心定位
 

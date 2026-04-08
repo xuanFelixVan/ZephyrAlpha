@@ -1,20 +1,9 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_AUDIT_WORKFLOW
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  -  文档与代码审查工作流文档
----
-
-﻿---
 module_id: IMPL_OPS_AUDIT_WORKFLOW_001
 version: 1.0.12.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
@@ -22,8 +11,7 @@ compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 实施指南、部署文档
-
+- 实施指南、部署文档
 ---
 ---
 
@@ -546,7 +534,7 @@ docs/
 
 **审计状态文件结?*?
 ```
-docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/
+docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
 ├── AUDIT_SESSION_YYYYMMDD.md    # 审计会话记录
 ├── BLOCK_U1_findings.md         # U1块发?
 ├── BLOCK_U2_findings.md         # U2块发?
@@ -619,7 +607,7 @@ docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/
 3. 进度可视化：每块完成后更新会话记?
 
 请按以下步骤执行?
-1. 首先读取当前审计会话记录 (docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/AUDIT_SESSION_YYYYMMDD.md)
+1. 首先读取当前审计会话记录 (docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT_SESSION_YYYYMMDD.md)
 2. 确定当前应审查的块编?
 3. 执行该块的审?
 4. 将发现实时写入对应的 BLOCK_XX_findings.md 文件
@@ -644,7 +632,7 @@ docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/
 5. 识别文件漂移和职责越?
 6. 记录重复内容
 
-发现实时写入: docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/BLOCK_[XX]_findings.md
+发现实时写入: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLOCK_[XX]_findings.md
 
 请开始审?
 ```

@@ -1,16 +1,5 @@
 ---
-module_id: STRATEGY_ENGINE_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STRATEGY_ENGINE_TECHNICAL_REVIEW报告文档
----
-
-﻿---
-module_id: STRATEGY_ENGINE_001
+module_id: STRATEGY_ENGINE_001_ARCHIVED_1
 review_id: TR-2026-04-02-ENGINE
 version: 1.0.0
 status: Active
@@ -23,8 +12,8 @@ parent_document: ../INDEX.md
 implementation_status: ш┐ЫшбМ?
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 归档文档、历史版本、技术评审
-last_updated: 2026-04-02
+- 归档文档、历史版本、技术评审
+last_updated: '2026-04-07'
 ---
 ---
 

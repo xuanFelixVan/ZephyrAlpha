@@ -1,23 +1,12 @@
 ---
-module_id: TECHNICAL_REVIEW_MEETING_AGENDA
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - цКАцЬпцЦцбИшпДхобфЪшоошоо文档
----
-
-﻿---
 module_id: REVIEW_AGENDA_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: щжЦх╕ншУЭхЫ╛цЮ╢цЮД?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДшпДхобцЭРцЦЩ
 applicable_scope: цибцЛЯф║дцШУч│╗ч╗Я
 compliance_level: шпДхобцаЗхЗЖ

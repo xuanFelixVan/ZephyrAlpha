@@ -1,48 +1,47 @@
 ---
-module_id: BENCHMARK_MANAGEMENT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - BENCHMARK_MANAGEMENT蓝图设计
----
-
-﻿---
 module_id: BENCHMARK_MANAGEMENT_FRAMEWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 基准管理系统架构设计
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Benchmark Management", "Citadel Performance Analytics"]
+reference_models:
+- Bridgewater Benchmark Management
+- Citadel Performance Analytics
 related_documents:
-  - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
+- STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
+- ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: pyfolio
-    url: https://github.com/quantopian/pyfolio
-    features: 基准对比、基准归因、绩效分析
-  - name: empyrical
-    url: https://github.com/quantopian/empyrical
-    features: 基准指标计算、风险指标、收益指标
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+- name: pyfolio
+  url: https://github.com/quantopian/pyfolio
+  features: 基准对比、基准归因、绩效分析
+- name: empyrical
+  url: https://github.com/quantopian/empyrical
+  features: 基准指标计算、风险指标、收益指标
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - 基准定义（基准指数定义、基准组合定义）
+
   - 基准对比（策略与基准对比、超额收益计算）
+
   - 基准归因（基准归因分析、收益来源分析）
+
   - 基准报告（基准报告生成、报告展示）
-  
+
+
   **与本文档职责边界**：
+
   - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因（包含基准归因）
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）
+
+  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准（包含基准定义）'
+responsibility:
+- BENCHMARK_MANAGEMENT蓝图设计
 ---
 ---
 

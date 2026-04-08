@@ -1,27 +1,15 @@
 ---
-module_id: NATURAL_LANGUAGE_INTERFACE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - NATURAL_LANGUAGE_INTERFACE蓝图设计
----
-
-﻿---
 module_id: NATURAL_LANGUAGE_INTERFACE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业机构标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
+- 系统架构蓝图设计与实施指导与实施方案
 ---
 # 自然语言交互界面蓝图
 

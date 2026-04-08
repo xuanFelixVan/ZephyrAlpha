@@ -1,41 +1,31 @@
 ---
-module_id: GOVERNANCE_DECISION_SUPPORT_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - GOVERNANCE_DECISION_SUPPORT蓝图设计
----
-
-﻿---
 module_id: GOVERNANCE_DECISION_SUPPORT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 治理决策支持
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Governance", "Citadel Compliance", "Two Sigma Risk"]
+reference_models:
+- Bridgewater Governance
+- Citadel Compliance
+- Two Sigma Risk
 related_documents:
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - GOVERNANCE_DASHBOARD_BLUEPRINT.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- GOVERNANCE_DASHBOARD_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: Decision Tree + AI Recommendation
-    features: 决策树、AI推荐、决策支持
-responsibility_boundary: |
-  本文档职责（Layer 10 治理与合规层）：
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+- name: Decision Tree + AI Recommendation
+  features: 决策树、AI推荐、决策支持
+responsibility_boundary: '本文档职责（Layer 10 治理与合规层）：
 
----
----
+  '
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
 ---
 ---
 

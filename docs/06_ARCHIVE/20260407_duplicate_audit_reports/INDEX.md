@@ -26,7 +26,7 @@ responsibility:
 
 ### 1. STRATEGY_EXECUTION_DEEP_AUDIT_SUMMARY_20260407.md
 
-**原路径**: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
+**原路径**: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
 **归档原因**: 旧版本审计报告，被更新版本替代
 **审计时间**: 2026-04-07 15:06:59
 **发现问题**: 179个
@@ -34,7 +34,7 @@ responsibility:
 
 **替代文件**:
 - 文件名: `LAYER5_DEEP_AUDIT_SUMMARY_20260407.md`
-- 路径: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
+- 路径: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
 - 审计时间: 2026-04-07 16:14:06
 - 发现问题: 2463个
 - 审计方法: 深度内容审计（逐文档逐内容）
@@ -47,7 +47,7 @@ responsibility:
 
 ### 2. STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md
 
-**原路径**: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
+**原路径**: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
 **归档原因**: 旧版本修复报告，被更新版本替代
 **修复时间**: 2026-04-07 14:50:09
 **修复文档数**: 10个
@@ -55,7 +55,7 @@ responsibility:
 
 **替代文件**:
 - 文件名: `STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md`
-- 路径: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/`
+- 路径: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`
 - 修复时间: 2026-04-07 16:26:53
 - 修复文档数: 49个
 - 修复目的: Layer 5 职责描述缺失修复

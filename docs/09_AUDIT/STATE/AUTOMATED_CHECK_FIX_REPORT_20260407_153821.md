@@ -3,25 +3,15 @@ module_id: AUTOMATED_CHECK_FIX_REPORT_20260407_153821
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - AUTOMATED_CHECK_FIX_20260407_153821报告文档
----
-
-﻿---
-module_id: AUTOMATED_CHECK_FIX_REPORT_20260407_153821
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 修复报告
 applicable_scope: 自动化检查问题修复
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- AUTOMATED_CHECK_FIX_20260407_153821报告文档
 ---
-
 # 自动化检查问题修复报告
 
 > **核心职责**: 记录自动化检查问题修复的过程和结果

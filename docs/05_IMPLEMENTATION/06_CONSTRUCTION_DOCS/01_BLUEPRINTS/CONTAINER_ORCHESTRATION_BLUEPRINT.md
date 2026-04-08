@@ -752,7 +752,7 @@ class DeploymentConfig(BaseModel):
 
 ##### 容器编排模块
 - **模块ID**: CONTAINER_ORCHESTRATION_001
-- **文档**: [容器编排蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONTAINER_ORCHESTRATION_BLUEPRINT.md)
+- **文档**: [容器编排蓝图](./CONTAINER_ORCHESTRATION_BLUEPRINT.md)
 - **职责**: 容器编排、服务部署、资源管理、网络管理
 - **开源方案**: Docker Compose
 - **状态**: Active

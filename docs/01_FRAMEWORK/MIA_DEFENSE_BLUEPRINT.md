@@ -1,37 +1,18 @@
 ---
-module_id: MIA_DEFENSE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MIA_DEFENSE蓝图设计
----
-
-﻿---
 module_id: MIA_DEFENSE_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供mia defense blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供mia defense blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
-
 priority: P2
+responsibility_boundary: '本文档负责Layer 4机器学习层的成员推理攻击防御设计，包括攻击检测、防御策略、隐私保护等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的成员推理攻击防御设计，包括攻击检测、防御策略、隐私保护等核心功能。
+  '
 layer: Layer 4 (机器学习层)
----
----
+owner: 首席文档架构师
 ---
 # MIA防御蓝图
 > **核心职责**: 提供mia defense blueprint的完整架构设计、技术选型和实施路径规划

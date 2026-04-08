@@ -1,23 +1,11 @@
 ---
-module_id: RESPONSIBILITY_DESCRIPTION_BEST_PRACTICES
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - 职责描述最佳实践指南文档
----
-
-﻿---
-responsibility:
-  - 治理合规框架设计与实施与实施指导
-
+- 治理合规框架设计与实施与实施指导
 module_id: RESPONSIBILITY_DESCRIPTION_BEST_PRACTICES_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构知识库文档

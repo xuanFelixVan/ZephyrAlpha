@@ -1,28 +1,16 @@
 ---
-module_id: DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 文档索引体系优化方案文档
----
-
-﻿---
 module_id: DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构文档索引体系优化方案
 applicable_scope: 全系统文档索引
 compliance_level: 顶级专业标准
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 ---
-
 # 文档索引体系优化方案
 
 > **核心职责**: 目录导航和文档索引

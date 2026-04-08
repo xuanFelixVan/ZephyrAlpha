@@ -683,7 +683,7 @@ class SecurityReport(BaseModel):
 
 ##### 安全扫描模块
 - **模块ID**: SECURITY_SCANNING_001
-- **文档**: [安全扫描蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SECURITY_SCANNING_BLUEPRINT.md)
+- **文档**: [安全扫描蓝图](./SECURITY_SCANNING_BLUEPRINT.md)
 - **职责**: 安全扫描、漏洞检测、配置审计、合规检查
 - **开源方案**: Trivy
 - **状态**: Active

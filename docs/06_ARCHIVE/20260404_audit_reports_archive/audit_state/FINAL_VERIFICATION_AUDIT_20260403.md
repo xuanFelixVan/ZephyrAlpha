@@ -134,10 +134,10 @@ implementation_status: х╖▓хоМцИ?
 
 | цКехСК | ф╜Нч╜о |
 |------|------|
-| ц╖▒х║жхобшобцКехСК | `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/DEEP_AUDIT_CODE_AND_TEMP_20260403.md` |
-| щкМшпБхобшобцКехСК | `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/VERIFICATION_AUDIT_CODE_AND_TEMP_20260403.md` |
-| цМЗхоЪчЫох╜ХхобшобцКехСК | `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403.md` |
-| цЬАч╗ИщкМшпБцКехС?| `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/FINAL_VERIFICATION_AUDIT_20260403.md` |
+| ц╖▒х║жхобшобцКехСК | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DEEP_AUDIT_CODE_AND_TEMP_20260403.md` |
+| щкМшпБхобшобцКехСК | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/VERIFICATION_AUDIT_CODE_AND_TEMP_20260403.md` |
+| цМЗхоЪчЫох╜ХхобшобцКехСК | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DEEP_AUDIT_REPORT_SPECIFIED_DIRECTORIES_20260403.md` |
+| цЬАч╗ИщкМшпБцКехС?| `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/FINAL_VERIFICATION_AUDIT_20260403.md` |
 
 
 ## 7. ш┤ищЗПхг░цШО

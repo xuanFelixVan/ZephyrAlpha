@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001_ARCHIVED_6
 | 需?| 路径 |
 |responsibility:
 - 管理因子库

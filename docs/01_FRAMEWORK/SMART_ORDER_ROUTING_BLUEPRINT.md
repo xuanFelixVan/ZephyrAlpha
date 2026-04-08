@@ -1,28 +1,20 @@
 ---
-module_id: SMART_ORDER_ROUTING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SMART_ORDER_ROUTING蓝图设计
----
-
-﻿---
 module_id: SMART_ORDER_ROUTING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+- 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 5 (执行层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 智能订单路由模块
 compliance_level: 顶级专业标准
-reference_models: ["Citadel", "Two Sigma", "Jump Trading"]
+reference_models:
+- Citadel
+- Two Sigma
+- Jump Trading
 ---
 ---
 

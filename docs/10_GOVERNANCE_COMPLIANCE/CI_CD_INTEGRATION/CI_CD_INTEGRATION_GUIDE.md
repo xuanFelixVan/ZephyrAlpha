@@ -1,29 +1,17 @@
 ---
-module_id: CI_CD_INTEGRATION_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - CI_CD_INTEGRATION操作指南
----
-
-﻿---
 module_id: CI_CD_INTEGRATION_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: DevOps团队
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
+- 操作指南编写与使用说明与系统维护管理
 standard_type: 集成指南
 applicable_scope: 全系统CI/CD集成
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # CI/CD集成指南
 
 > **核心职责**: 定义CI/CD集成方案，实现自动化审计集成到开发流程

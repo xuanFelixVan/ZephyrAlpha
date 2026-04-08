@@ -1,5 +1,5 @@
 ﻿---
-module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001
+module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001_ARCHIVED_2
 > **核心职责**: 申万行业因子体系定义，涉及申万行业因子
 > **职责边界**:
 > - ✅ 本文档负责：申万行业因子体系定义相关内容

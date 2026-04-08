@@ -1,37 +1,18 @@
 ---
-module_id: DEEPAR_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DEEPAR蓝图设计
----
-
-﻿---
 module_id: DEEPAR_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
-last_updated: 2026-04-03
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
-
+- 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
-
 priority: P1
+responsibility_boundary: '本文档负责Layer 4机器学习层的DeepAR时序模型设计，包括概率预测、自回归结构、不确定性建模等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的DeepAR时序模型设计，包括概率预测、自回归结构、不确定性建模等核心功能。
+  '
 layer: Layer 4 (机器学习层)
----
----
+owner: 首席文档架构师
 ---
 ---
 # DeepAR 蓝图

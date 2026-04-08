@@ -1,27 +1,14 @@
 ---
-module_id: SPARSE_DIRECTORY_INTEGRATION_GUIDE_20260407_025756
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 稀疏目录整合指南文档
----
-
-﻿---
 module_id: SPARSE_DIRECTORY_INTEGRATION_GUIDE_20260407_025756_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
-
+- 操作指南编写与使用说明与系统维护管理
 ---
-
 # 稀疏目录整合指南
 > **核心职责**: 使用指南和教程
 > **职责边界**: 

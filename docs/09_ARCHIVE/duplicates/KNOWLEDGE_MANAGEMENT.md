@@ -1,5 +1,5 @@
 ﻿---
-module_id: 02_FACTOR_LIBRARY_10_MANUAL_001
+module_id: 02_FACTOR_LIBRARY_10_MANUAL_001_ARCHIVED_2
 > **核心职责**: 知识管理体系和方法论，涉及知识管理蓝图
 > **职责边界**:
 > - ✅ 本文档负责：知识管理体系和方法论相关内容

@@ -1,58 +1,59 @@
 ---
-module_id: STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STRATEGY_PERFORMANCE_ATTRIBUTION蓝图设计
----
-
-﻿---
 module_id: STRATEGY_PERFORMANCE_ATTRIBUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 策略绩效归因分析
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Attribution", "Citadel Performance Analytics", "Two Sigma Attribution"]
+reference_models:
+- Bridgewater Attribution
+- Citadel Performance Analytics
+- Two Sigma Attribution
 related_documents:
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
-  - AI_DECISION_AUDIT_BLUEPRINT.md
+- ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: pyfolio
-    url: https://github.com/quantopian/pyfolio
-    features: 绩效分析、风险分析、归因分析
-  - name: empyrical
-    url: https://github.com/quantopian/empyrical
-    features: 风险指标、收益指标、绩效指标
-  - name: alphalens
-    url: https://github.com/quantopian/alphalens
-    features: 因子分析、IC分析、收益归因
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
-  - 策略绩效归因（收益来源分析、风险来源分析）
-  - 因子绩效分析（因子IC、因子收益、因子风险）
-  - 策略对比评估（策略排名、策略相关性）
-  - 绩效报告生成（日报、周报、月报）
-  
-  **与本文档职责边界**：
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
-  - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
-responsibility:
-  - 交易策略框架设计与实施指导与实施指导
----
+- name: pyfolio
+  url: https://github.com/quantopian/pyfolio
+  features: 绩效分析、风险分析、归因分析
+- name: empyrical
+  url: https://github.com/quantopian/empyrical
+  features: 风险指标、收益指标、绩效指标
+- name: alphalens
+  url: https://github.com/quantopian/alphalens
+  features: 因子分析、IC分析、收益归因
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
 
+  - 策略绩效归因（收益来源分析、风险来源分析）
+
+  - 因子绩效分析（因子IC、因子收益、因子风险）
+
+  - 策略对比评估（策略排名、策略相关性）
+
+  - 绩效报告生成（日报、周报、月报）
+
+
+  **与本文档职责边界**：
+
+  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
+  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
+
+  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
+
+  - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
+
+  '
+responsibility:
+- 交易策略框架设计与实施指导与实施指导
+---
 # 策略绩效归因系统蓝图
 > **核心职责**: Strategy Performance Attribution蓝图设计
 > **职责边界**: 

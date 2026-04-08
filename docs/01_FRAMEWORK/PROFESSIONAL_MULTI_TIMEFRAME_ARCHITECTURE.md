@@ -1,31 +1,22 @@
-﻿---
-module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 专业多时间框架策略架文档
 ---
-
-﻿---
 module_id: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席架构?
 standard_type: 专业机构级架?
-applicable_scope:
-?
+applicable_scope: null
+null: null
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater All-Weather", "Renaissance Technologies", "Two Sigma"]
+reference_models:
+- Bridgewater All-Weather
+- Renaissance Technologies
+- Two Sigma
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 系统架构设计与技术选型与实施指导
-
+- 系统架构设计与技术选型与实施指导
 ---
 ---
 

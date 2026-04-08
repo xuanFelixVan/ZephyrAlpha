@@ -1,0 +1,25 @@
+# OpenClaw L2 深度审计 — 批次: docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_LIFECYCLE_MANAGEMENT
+
+> **批次ID**: 035
+> **目录**: `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_LIFECYCLE_MANAGEMENT`
+> **文件数**: 3
+> **审计时间**: 2026-04-08T03:47
+
+---
+
+## 审计汇总表
+
+| 文件 | 标题 | module_id | 问题 | 严重度 |
+|------|------|-----------|------|--------|
+| `INDEX.md` | 数据生命周期管理索引 | FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LIFECYCLE_MANAGEMENT_INDEX | 无 | P2 |
+| `OVERVIEW.md` | 数据生命周期管理概览 | FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LIFECYCLE_MANAGEMENT_OVERVIEW | 无 | P2 |
+| `README.md` | Data Lifecycle Management | DATA_LIFECYCLE_MANAGEMENT_001 | 无 | P2 |
+
+## 统计
+
+- P0: 0 篇
+- P1: 0 篇
+- P2: 3 篇
+
+## 目录级结论
+

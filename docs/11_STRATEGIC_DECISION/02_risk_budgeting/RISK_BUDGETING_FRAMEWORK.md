@@ -1,32 +1,23 @@
 ---
-module_id: RISK_BUDGETING_FRAMEWORK
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 风险预算框架蓝图文档
----
-
-﻿---
 module_id: RISK_BUDGETING_FRAMEWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 11.3 - 风险预算框架
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Risk Parity", "AQR Risk Budgeting", "BlackRock Risk Management"]
-open_source_solution: "Riskfolio-Lib + PyPortfolioOpt"
+reference_models:
+- Bridgewater Risk Parity
+- AQR Risk Budgeting
+- BlackRock Risk Management
+open_source_solution: Riskfolio-Lib + PyPortfolioOpt
 priority: P0
 parent_document: ./INDEX.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 系统框架设计与核心架构管理与优化维护
-
+- 系统框架设计与核心架构管理与优化维护
 ---
 ---
 # 风险预算框架蓝图

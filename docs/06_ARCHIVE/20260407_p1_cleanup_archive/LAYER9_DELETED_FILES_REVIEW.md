@@ -1,29 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_LAYER9_DELETED_FILES_REVIEW
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 9研究与创新层删除文件审查报告文档
----
-
-﻿---
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_LAYER9_DELETED_FILES_REVIEW_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: Layer 9删除文件审查报告
 applicable_scope: Layer 9 - 研究与创新层删除文件价值评估
 compliance_level: 专业机构标准
 responsibility:
-  - 负责审查Layer 9研究与创新层在git历史中被删除的文件，评估删除内容的合理性和价值，识别是否存在误删或高价值内容，为文档治理决策提供依据。
-
+- 负责审查Layer 9研究与创新层在git历史中被删除的文件，评估删除内容的合理性和价值，识别是否存在误删或高价值内容，为文档治理决策提供依据。
 ---
-
 # Layer 9研究与创新层删除文件审查报告
 
 > **核心职责**: 删除文件价值评估和合理性审查

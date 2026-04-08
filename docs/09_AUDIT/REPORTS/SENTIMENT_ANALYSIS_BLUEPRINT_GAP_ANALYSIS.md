@@ -1,27 +1,15 @@
 ---
-module_id: SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_ANALYSIS_GAP_ANALYSIS蓝图设计
----
-
-﻿---
 module_id: SENTIMENTANALYSISBLUEPRINTG_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计团队
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
+- 系统架构蓝图设计与实施指导与实施方案
 ---
 ---
 

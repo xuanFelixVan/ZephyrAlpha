@@ -1,38 +1,32 @@
 ---
-module_id: MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - MULTI_PERIOD_PORTFOLIO_OPTIMIZATION蓝图设计
----
-
-﻿---
-responsibility:
-  - 投资组合优化蓝图设计与实施指导与实施方案
-
+- 投资组合优化蓝图设计与实施指导与实施方案
 module_id: MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 多周期组合优化
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Associates", "AQR Capital", "BlackRock"]
+reference_models:
+- Bridgewater Associates
+- AQR Capital
+- BlackRock
 related_documents:
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
-  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
-  - PORTFOLIO_REBALANCING_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责多周期组合优化，包括：
-  
+- PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+- DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
+- PORTFOLIO_REBALANCING_BLUEPRINT.md
+responsibility_boundary: '本文档负责多周期组合优化，包括：
+
+
   动态风险预算请参考：DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
+
   组合再平衡请参考：PORTFOLIO_REBALANCING_BLUEPRINT.md
+
+  '
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)

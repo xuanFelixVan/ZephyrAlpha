@@ -1,17 +1,5 @@
 ---
-module_id: DOCUMENT_FORMAT_FIX_REPORT_20260407
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENT_FORMAT_FIX_20260407报告文档
----
-
-﻿---
 module_id: DOCUMENT_FORMAT_FIX_REPORT_20260407_001
-
 fix_id: DOCUMENT_FORMAT_FIX_REPORT_20260407
 version: 1.0.0
 status: Active
@@ -22,9 +10,8 @@ standard_type: 专业量化机构修复报告
 applicable_scope: 文档格式修复和改进建议
 compliance_level: 专业标准
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
+- 系统审计分析与质量评估报告与改进建议
 ---
-
 # 文档格式修复和改进建议报告
 > **核心职责**: 分析报告和评估结果
 > **职责边界**: 

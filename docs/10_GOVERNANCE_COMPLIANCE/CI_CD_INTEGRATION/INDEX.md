@@ -1,26 +1,14 @@
 ---
-module_id: 10_GOVERNANCE_COMPLIANCE_CI_CD_INTEGRATION_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - CI_CD_INTEGRATION目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 module_id: 10_GOVERNANCE_COMPLIANCE_CI_CD_INTEGRATION_INDEX_CI_CD_INTEGRATION_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # CI_CD_INTEGRATION 目录索引
 
 > **核心职责**: 提供CI_CD_INTEGRATION目录下的文档导航

@@ -1,34 +1,14 @@
 ---
-module_id: ACCEPTANCE_CRITERIA_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ACCEPTANCE_CRITERIA蓝图设计
----
-
-﻿---
 module_id: ACCEPTANCE_CRITERIA_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
-last_updated: 2026-04-02
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
+- 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4
+owner: 首席文档架构师
 ---
----
----
----
----
-
 applicable_scope: 系统验收标准
 
 compliance_level: 顶级专业标准

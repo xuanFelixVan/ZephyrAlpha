@@ -1,20 +1,9 @@
 ---
-module_id: NEURAL_NETWORK_INTEGRATION_PLAN
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﻝ۴ﻝﭨﻝﺛﻝﭨﻠﮔﮔﺗﮔ۰ NEURAL_NETWORK_INTEGRATION_PLAN文档
----
-
-﻿---
 module_id: DOC_NEURAL_NETWORK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﭘﮔﮒﺕ?
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮒ?
 applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨAIﮒ۱ﮒﺙﭦ
@@ -22,8 +11,7 @@ compliance_level: ﮔﭘﮔﮔﮒ
 parent_document: INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 responsibility:
-  - 交易策略设计与实施管理与优化维护
-
+- 交易策略设计与实施管理与优化维护
 ---
 ---
 

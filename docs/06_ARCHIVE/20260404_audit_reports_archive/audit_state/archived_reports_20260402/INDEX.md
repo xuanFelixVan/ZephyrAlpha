@@ -1,26 +1,14 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_2
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
 responsibility:
-  - archived_reports_20260402 目录索引文档
----
-
-﻿﻿---
-responsibility:
-  - 目录导航、文档索引
+- 目录导航、文档索引
 module_id: INDEX_ARCHIVED_REPORTS_20260402_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # archived_reports_20260402 目录索引
 
 > **核心职责**: 提供archived_reports_20260402目录下的文档导航

@@ -1,28 +1,20 @@
 ---
-module_id: INVESTMENT_PHILOSOPHY
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ZephyrAlpha投资哲学文档
----
-
-﻿---
 version: 1.0.0
 standard_type: 核心文档
 responsibility:
-  - 负责investment philosophy的设计、实现和维护工作
-applicable_scope:
+- 负责investment philosophy的设计、实现和维护工作
+applicable_scope: null
 parent_document: ../INDEX.md
 module_id: INVESTMENT_PHILOSOPHY
 created_date: 2026-04-02
-last_updated: 2026-04-02
-tags: ["投资哲学", "核心理念", "投资原则"]
+last_updated: '2026-04-07'
+tags:
+- 投资哲学
+- 核心理念
+- 投资原则
 layer: Layer 4
----
----
+status: Active
+owner: 首席文档架构师
 ---
 ---
 

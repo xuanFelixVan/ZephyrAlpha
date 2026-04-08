@@ -656,7 +656,7 @@ class InstanceStatus(BaseModel):
 
 ##### 负载均衡模块
 - **模块ID**: LOAD_BALANCING_001
-- **文档**: [负载均衡蓝图](05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LOAD_BALANCING_BLUEPRINT.md)
+- **文档**: [负载均衡蓝图](./LOAD_BALANCING_BLUEPRINT.md)
 - **职责**: 负载均衡、请求路由、流量控制、健康检查
 - **开源方案**: Traefik
 - **状态**: Active

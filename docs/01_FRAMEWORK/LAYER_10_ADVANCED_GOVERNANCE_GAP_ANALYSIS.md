@@ -1,35 +1,27 @@
 ---
-module_id: LAYER_10_ADVANCED_GOVERNANCE_GAP_ANALYSIS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 10高级治理模块差距分析报告文档
----
-
-﻿---
 module_id: LAYER_10_ADVANCED_GOVERNANCE_GAP_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级差距分析
 applicable_scope: Layer 10高级治理模块差距分析
 compliance_level: 顶级专业标准
-reference_models: ["FCA 2025 Review", "Citadel Governance", "Bridgewater Code of Ethics", "GRC Framework"]
+reference_models:
+- FCA 2025 Review
+- Citadel Governance
+- Bridgewater Code of Ethics
+- GRC Framework
 related_documents:
-  - LAYER_10_MISSING_MODULES_IMPLEMENTATION_PLAN.md
-  - LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+- LAYER_10_MISSING_MODULES_IMPLEMENTATION_PLAN.md
+- LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
 implementation_status: 差距分析完成
 responsibility:
-  - 系统框架设计与核心架构管理与优化维护
+- 系统框架设计与核心架构管理与优化维护
 ---
-
 # Layer 10高级治理模块差距分析报告
 
 > **核心职责**: Layer 10高级治理模块差距分析

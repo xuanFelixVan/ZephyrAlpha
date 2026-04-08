@@ -6,7 +6,7 @@ parent_document: ../INDEX.md
 implementation_status: 设计阶段
 owner: 文档维护者
 version: 1.0.0
-module_id: DOC_README
+module_id: DOC_README_ARCHIVED_2
 created_date: 2026-04-01
 last_updated: 2026-04-02
 responsibility:

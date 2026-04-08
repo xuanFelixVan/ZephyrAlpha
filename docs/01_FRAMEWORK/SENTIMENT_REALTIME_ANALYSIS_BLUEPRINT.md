@@ -1,38 +1,32 @@
 ---
-module_id: SENTIMENT_REALTIME_ANALYSIS_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - SENTIMENT_REALTIME_ANALYSIS蓝图设计
----
-
-﻿---
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
-
+- 系统架构蓝图设计与实施指导与实施方案
 module_id: SENTIMENT_REALTIME_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 3 (舆情分析层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 舆情实时分析
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg Terminal", "Refinitiv", "RavenPack"]
+reference_models:
+- Bloomberg Terminal
+- Refinitiv
+- RavenPack
 related_documents:
-  - SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md
-  - SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md
-  - DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责舆情实时分析，包括：
-  
+- SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md
+- SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md
+- DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
+responsibility_boundary: '本文档负责舆情实时分析，包括：
+
+
   舆情数据集成请参考：SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md
+
   深度学习情感分析请参考：DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
+
+  '
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)

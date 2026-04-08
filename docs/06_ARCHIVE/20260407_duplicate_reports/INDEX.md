@@ -20,7 +20,7 @@ responsibility:
 
 | 文件名 | 原路径 | 归档原因 | 保留版本位置 |
 |--------|--------|----------|--------------|
-| STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md | 05_IMPLEMENTATION/07_OPERATIONS/audit_state/ | 旧版本审计报告 | LAYER5_DEEP_AUDIT_REPORT_v4_20260407.md |
+| STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md | 05_IMPLEMENTATION/04_OPERATIONS/audit_state/ | 旧版本审计报告 | LAYER5_DEEP_AUDIT_REPORT_v4_20260407.md |
 
 ---
 
@@ -45,11 +45,11 @@ responsibility:
 如需恢复归档文件，请使用以下命令：
 
 ```bash
-git checkout HEAD~1 -- docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md
+git checkout HEAD~1 -- docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md
 ```
 
 或从归档目录复制：
 
 ```bash
-cp docs/06_ARCHIVE/20260407_duplicate_reports/STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/
+cp docs/06_ARCHIVE/20260407_duplicate_reports/STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
 ```

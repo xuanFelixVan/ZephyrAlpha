@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001
+module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001_ARCHIVED_2
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 2 (Alpha因子计算)

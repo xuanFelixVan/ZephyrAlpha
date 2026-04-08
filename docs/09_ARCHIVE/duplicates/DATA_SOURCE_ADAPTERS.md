@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001
+module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001_ARCHIVED_4
 **维护者**: 首席文档架构师
 **索引**: `DATA_ADAPTERS_001`
 responsibility:

@@ -1,30 +1,17 @@
 ---
-module_id: 01_FRAMEWORK_LAYER4_ML_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-standard_type: 索引文件
-applicable_scope: 01_FRAMEWORK\LAYER4_ML
-compliance_level: 专业标准
-parent_document: ../INDEX.md
 responsibility:
-  - LAYER4_ML目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 module_id: 01_FRAMEWORK_LAYER4_ML_INDEX_LAYER4_ML_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
+applicable_scope: 01_FRAMEWORK\LAYER4_ML
+compliance_level: 专业标准
+parent_document: ../INDEX.md
 ---
-
 # LAYER4_ML 目录索引
 
 > **核心职责**: 提供Layer 4机器学习层的快速导航索引，列出核心模块和关键文档入口

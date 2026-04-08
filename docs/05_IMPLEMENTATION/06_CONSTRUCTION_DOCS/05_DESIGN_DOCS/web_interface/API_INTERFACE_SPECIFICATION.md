@@ -1,23 +1,12 @@
 ---
-module_id: API_INTERFACE_SPECIFICATION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - API_INTERFACE技术规范
----
-
-﻿---
 module_id: T.06.UI003
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔ?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟ؟ﺝﻟ؟۰ﮔﮒ
 applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰

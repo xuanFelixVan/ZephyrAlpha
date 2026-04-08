@@ -3,25 +3,15 @@ module_id: PATH_REFERENCE_HUMAN_REVIEW_20260407_151929
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 路径引用人工审查报告文档
----
-
-﻿---
-module_id: PATH_REFERENCE_HUMAN_REVIEW_20260407_151929
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 人工审查报告
 applicable_scope: 路径引用审查
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- 路径引用人工审查报告文档
 ---
-
 # 路径引用人工审查报告
 
 > **核心职责**: 记录路径引用人工审查的结果和建议

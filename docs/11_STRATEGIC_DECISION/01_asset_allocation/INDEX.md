@@ -1,20 +1,9 @@
 ---
-module_id: 11_STRATEGIC_DECISION_01_ASSET_ALLOCATION_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 01_asset_allocation目录索引
----
-
-﻿---
 module_id: 11_STRATEGIC_DECISION_01_ASSET_ALLOCATION_INDEX_ASSET_ALLOCATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 系统架构师
 standard_type: 专业量化机构文档
 applicable_scope: 战略资产配置
@@ -22,8 +11,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 规划中
 responsibility:
-  - 目录导航与文档索引管理与优化维护
-
+- 目录导航与文档索引管理与优化维护
 ---
 ---
 

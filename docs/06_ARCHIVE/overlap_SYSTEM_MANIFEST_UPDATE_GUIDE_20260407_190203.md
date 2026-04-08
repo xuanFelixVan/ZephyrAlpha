@@ -1,23 +1,12 @@
 ---
-module_id: SYSTEM_MANIFEST_UPDATE_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SYSTEM_MANIFEST_UPDATE操作指南
----
-
-﻿---
-module_id: SYSTEM_MANIFEST_LAYER9_UPDATE_001
+module_id: SYSTEM_MANIFEST_LAYER9_UPDATE_001_ARCHIVED_1
 version: 1.0.0
 status: Archived
 created_date: 2026-04-06
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 负责提供Layer 9研究与创新层的系统清单更新指南，详细说明更新流程、更新标准和更新要求，为系统清单维护提供指导，确保系统清单的准确性和时效性。
+- 负责提供Layer 9研究与创新层的系统清单更新指南，详细说明更新流程、更新标准和更新要求，为系统清单维护提供指导，确保系统清单的准确性和时效性。
 standard_type: 系统清单索引更新
 applicable_scope: System_Manifest.md Layer 9索引补充
 ---

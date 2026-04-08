@@ -1,15 +1,4 @@
 ---
-module_id: PORTFOLIO_OPTIMIZER_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - PORTFOLIO_OPTIMIZER_TECHNICAL_REVIEW报告文档
----
-
-﻿---
 module_id: ARCHIVE_PORTFOLIO_OPT_TECH_REVIEW_001
 review_id: TR-2026-04-02-PORT-OPT
 version: 1.0.1
@@ -22,11 +11,10 @@ applicable_scope: 系统实施
 parent_document: ../INDEX.md
 implementation_status: 进行?
 owner: 实施负责?
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 responsibility:
-  - 风险预算 (Layer 11)
+- 风险预算 (Layer 11)
 ---
-
 # PortfolioOptimizer组合优化器模块技术评审报?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

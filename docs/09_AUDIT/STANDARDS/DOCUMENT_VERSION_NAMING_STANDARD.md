@@ -1,36 +1,19 @@
 ---
-module_id: 09_AUDIT_STANDARDS_DOCUMENT_VERSION_NAMING_STANDARD
 version: 1.0.0
+module_id: DOC_VERSION_NAMING_STANDARD
+responsibility_boundary: 文档版本号命名规范定义
+layer: Layer 10 (治理与合规层)
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 文档版本号命名规范文档
----
-
-﻿---
-module_id: DOCUMENT_VERSION_NAMING_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 技术标准制定与规范管理与优化维护
+- 技术标准制定与规范管理与优化维护
 standard_type: 标准文档
 applicable_scope: 定义文档版本号的命名规范
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
-﻿---
-version: 1.0.0
-module_id: DOC_VERSION_NAMING_STANDARD
-responsibility_boundary: 文档版本号命名规范定义
-layer: Layer 10 (治理与合规层)
----
-
 # 文档版本号命名规范
 
 > **文档类型**: 标准

@@ -1,52 +1,48 @@
 ---
-module_id: STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STRATEGIC_DECISION_AI_ASSISTANCE蓝图设计
----
-
-﻿---
 module_id: STRATEGIC_DECISION_AI_ASSISTANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 战略决策AI辅助
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Investment Committee", "Renaissance Technologies Decision Framework", "Two Sigma Strategic Planning"]
+reference_models:
+- Bridgewater Investment Committee
+- Renaissance Technologies Decision Framework
+- Two Sigma Strategic Planning
 related_documents:
-  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md
-  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+- STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+- DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
+- PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
 parent_document: ./STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: Ray RLLib
-    url: https://github.com/ray-project/ray
-    features: 强化学习、决策优化、策略训练
-  - name: Stable Baselines3
-    url: https://github.com/DLR-RM/stable-baselines3
-    features: 强化学习算法、策略优化
-  - name: SHAP
-    url: https://github.com/slundberg/shap
-    features: 决策解释、特征重要性分析
-responsibility_boundary: |
-  本文档职责（Layer 11 战略决策层）：
-  
-  与其他文档职责边界：
-  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md: Layer 11总体架构设计
-  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md: 动态风险预算
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md: 组合优化层
-responsibility:
-  - 系统架构蓝图设计与实施指导与实施方案
+- name: Ray RLLib
+  url: https://github.com/ray-project/ray
+  features: 强化学习、决策优化、策略训练
+- name: Stable Baselines3
+  url: https://github.com/DLR-RM/stable-baselines3
+  features: 强化学习算法、策略优化
+- name: SHAP
+  url: https://github.com/slundberg/shap
+  features: 决策解释、特征重要性分析
+responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
 
+
+  与其他文档职责边界：
+
+  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md: Layer 11总体架构设计
+
+  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md: 动态风险预算
+
+  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md: 组合优化层
+
+  '
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
 ---
 ---
 

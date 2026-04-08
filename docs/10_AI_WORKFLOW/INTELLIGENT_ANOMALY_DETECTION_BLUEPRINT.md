@@ -1,33 +1,22 @@
 ---
-module_id: 10_AI_WORKFLOW_INTELLIGENT_ANOMALY_DETECTION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 智能异常检测蓝图 (INTELLIGENT_ANOMALY_DETECTION)文档
----
-
-﻿---
 module_id: INTELLIGENT_ANOMALY_DETECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
-responsibility: 
+responsibility:
+- 智能异常检测蓝图 (INTELLIGENT_ANOMALY_DETECTION)文档
 layer: Layer 7 (AI报告层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 智能异常检测与预警
 compliance_level: 顶级专业标准
 parent_document: INDEX.md
 implementation_status: 蓝图阶段
-reference_models: 
-open_source_solution: "PyOD + Alibi Detect"
+reference_models: null
+open_source_solution: PyOD + Alibi Detect
 priority: P1
 ---
-
 ## 文档职责说明
 
 **本文档职责**: 智能异常检测蓝图

@@ -1,46 +1,46 @@
 ---
-module_id: ESG_COMPLIANCE_MONITORING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ESG_COMPLIANCE_MONITORING蓝图设计
----
-
-﻿---
 module_id: ESG_COMPLIANCE_MONITORING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 系统监控架构设计与实施方案与实施指导
+- 系统监控架构设计与实施方案与实施指导
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: ESG合规监控系统
 compliance_level: 顶级专业标准
-reference_models: ["ESG Reporting Standards", "SFDR", "EU Taxonomy"]
+reference_models:
+- ESG Reporting Standards
+- SFDR
+- EU Taxonomy
 related_documents:
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - REGULATORY_REPORTING_BLUEPRINT.md
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- REGULATORY_REPORTING_BLUEPRINT.md
+- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - ESG数据采集（环境、社会、治理数据）
+
   - ESG评分计算（ESG综合评分、分项评分）
+
   - ESG合规检查（ESG披露要求、投资限制）
+
   - ESG报告生成（ESG报告、可持续投资报告）
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
+
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪'
 ---
 ---
 

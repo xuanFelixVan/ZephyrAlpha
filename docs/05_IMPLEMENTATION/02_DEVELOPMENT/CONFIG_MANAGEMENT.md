@@ -1,23 +1,12 @@
 ---
-module_id: CONFIG_MANAGEMENT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﻠﻝﺛﻝ۰ﻝﻝﺏﭨﻝﭨ文档
----
-
-﻿---
 module_id: IMPL_CONFIG_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮒ؟ﮔﺛﮔﮒ
 applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛﻛﺕﻠ۷ﻝﺛ?
 compliance_level: ﮒﮒ۶ﮔﮒ

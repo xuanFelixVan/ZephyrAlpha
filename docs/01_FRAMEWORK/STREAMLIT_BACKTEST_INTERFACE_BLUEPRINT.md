@@ -1,40 +1,36 @@
 ---
-module_id: STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - STREAMLIT_BACKTEST_INTERFACE蓝图设计
----
-
-﻿---
 module_id: STREAMLIT_BACKTEST_INTERFACE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 系统架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - Streamlit交互式回测界面
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Research Platform", "Citadel Quant Dashboard", "Renaissance Backtest Interface"]
+reference_models:
+- Two Sigma Research Platform
+- Citadel Quant Dashboard
+- Renaissance Backtest Interface
 related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - GRAFANA_MONITORING_BLUEPRINT.md
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
+- GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
-responsibility_boundary: |
-  本文档负责Streamlit交互式回测界面设计，包括：
-  - 交互式回测界面
-  - 回测参数配置
-  - 回测结果可视化
-  
-  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
----
+responsibility_boundary: '本文档负责Streamlit交互式回测界面设计，包括：
 
+  - 交互式回测界面
+
+  - 回测参数配置
+
+  - 回测结果可视化
+
+
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md'
+responsibility:
+- STREAMLIT_BACKTEST_INTERFACE蓝图设计
+---
 # Streamlit交互式回测界面蓝图
 > **核心职责**: Streamlit Backtest Interface蓝图设计
 > **职责边界**: 

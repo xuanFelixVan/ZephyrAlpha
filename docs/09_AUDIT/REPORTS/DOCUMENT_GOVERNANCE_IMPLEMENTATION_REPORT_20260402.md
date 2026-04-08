@@ -1,15 +1,4 @@
 ---
-module_id: DOCUMENT_GOVERNANCE_IMPLEMENTATION_REPORT_20260402
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENT_GOVERNANCE_IMPLEMENTATION_20260402报告文档
----
-
-﻿---
 standard_type: хоЮцЦ╜цКехСК
 applicable_scope: хЕич│╗ч╗?
 compliance_level: цнгх╝ПцаЗхЗЖ
@@ -17,11 +6,12 @@ parent_document: ../INDEX.md
 implementation_status: х╖▓хоМцИ?
 owner: щжЦх╕нцЮ╢цЮДх╕?
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
+- 系统审计分析与质量评估报告与改进建议
 version: 1.0.0
 module_id: DOC_GOVERNANCE_IMPLEMENTATION_REPORT
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 
@@ -157,7 +147,7 @@ last_updated: 2026-04-02
 - щЧощвШч▒╗хЮЛ: цНЯхЭПщУ╛цОе
 - щЧощвШф╕ещЗНцА? шнжхСК
 
-**хобшобцКехСКф╜Нч╜о**: `docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/weekly_20260402.json`
+**хобшобцКехСКф╜Нч╜о**: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/weekly_20260402.json`
 
 **ф╕╗шжБщЧощвШ**:
 1. щГихИЖцЦЗцбгф╕нчЪДщУ╛цОеш╖пх╛Дф╕Нцнгчб?

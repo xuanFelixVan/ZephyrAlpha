@@ -1,27 +1,15 @@
 ---
-module_id: DOCUMENT_REVIEW_PROCESS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 文档审核流程文档
----
-
-﻿---
 module_id: DOCUMENT_REVIEW_PROCESS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 responsibility:
-  - 治理合规框架设计与实施与实施指导
+- 治理合规框架设计与实施与实施指导
 layer: Layer 10 (治理合规层)
 standard_type: 专业量化机构文档
 ---
-
 # 文档审核流程
 
 > **核心职责**: 文档审核流程管理

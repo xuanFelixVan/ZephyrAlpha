@@ -1,18 +1,13 @@
 ---
+version: 5.0.0
 module_id: LAYER5_DEEP_AUDIT_REPORT_V5_20260407
-version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - LAYER5_DEEP_AUDIT_v5_20260407报告文档
+- LAYER5_DEEP_AUDIT_v5_20260407报告文档
 ---
-
-﻿---
-version: 5.0.0
----
-
 # Layer 5 策略执行层深度审计报告 v5.0
 
 > **审计时间**: 2026-04-07 13:35:00

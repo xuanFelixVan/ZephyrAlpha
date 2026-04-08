@@ -1,28 +1,16 @@
 ---
-module_id: IFIND_FACTORS_LIST
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - iFind因子列表文档
----
-
-﻿---
 module_id: IFIND_FACTORS_LIST_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 归档文档、历史版本
-  - 交易执行
-  - 数据源
+- 归档文档、历史版本
+- 交易执行
+- 数据源
 ---
-
 ---
 module_id: ARCHIVE_IFIND_FACTORS_001
 version: 1.0.1

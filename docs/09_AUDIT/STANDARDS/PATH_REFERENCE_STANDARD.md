@@ -293,7 +293,7 @@ python scripts/link_checker.py --all
 1. [ﮔﮔﻠﺝﮔ۴] docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_ENGINE_BLUEPRINT.md:45
    - ﻠﺝﮔ۴: ../NON_EXISTENT.md
 - ﮒﭨﭦﻟ؟؟: ﮔ۲ﮔ۴ﮔﮔ۰۲ﮔﺁﮒ۵ﮒﮒ?
-2. [ﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶ﻟﭘﻠ] docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/BLOCK_D1_findings.md:159
+2. [ﻟﺓﺁﮒﺝﮒﺎﻝﭦ۶ﻟﭘﻠ] docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLOCK_D1_findings.md:159
    - ﻠﺝﮔ۴: ../../../../README.md
    - ﮒﭨﭦﻟ؟؟: ﻛﺛﺟﻝ۷docs/ﮒﺙﮒ۳ﺑﻝﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝ
 ```

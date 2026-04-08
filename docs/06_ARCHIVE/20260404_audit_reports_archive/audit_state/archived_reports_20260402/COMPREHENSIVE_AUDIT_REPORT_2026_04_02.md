@@ -1,15 +1,4 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_COMPREHENSIVE_AUDIT_REPORT_2026_04_02
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - ф╕Уф╕ЪцЦЗцбгц▓╗чРЖхобшобцКехСК文档
----
-
-﻿﻿---
 standard_type: хобшобцКехСК
 applicable_scope: ч│╗ч╗ЯхоЮцЦ╜
 compliance_level: хИЭхзЛцаЗхЗЖ
@@ -17,11 +6,12 @@ parent_document: ../INDEX.md
 implementation_status: шо╛шобщШ╢цо╡
 owner: хоЮцЦ╜ш┤Яш┤г?
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 version: 1.0.0
 module_id: IMP_COMPREHENSIVE_AUDIT_
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 

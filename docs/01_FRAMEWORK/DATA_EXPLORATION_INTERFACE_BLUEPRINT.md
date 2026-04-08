@@ -1,45 +1,47 @@
 ---
-module_id: DATA_EXPLORATION_INTERFACE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATA_EXPLORATION_INTERFACE蓝图设计
----
-
-﻿---
 module_id: DATA_EXPLORATION_INTERFACE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 数据探索界面
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Data Explorer", "Renaissance Data Platform", "Two Sigma Data Studio"]
+reference_models:
+- Bridgewater Data Explorer
+- Renaissance Data Platform
+- Two Sigma Data Studio
 related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
-  - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
-responsibility_boundary: |
-  本文档负责数据探索界面设计，包括：
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
+- STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
+- PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
+responsibility_boundary: '本文档负责数据探索界面设计，包括：
+
   - 数据浏览和查询界面
+
   - 数据可视化分析界面
+
   - 数据导出和下载界面
+
   - 数据统计概览界面
+
   - 数据关系探索界面
-  
+
+
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
+
   回测界面请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
+
   性能分析请参考：PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
+
+  '
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
+responsibility:
+- DATA_EXPLORATION_INTERFACE蓝图设计
 ---
-
 # 数据探索界面蓝图
 > **核心职责**: Data Exploration Interface蓝图设计
 > **职责边界**: 

@@ -1,20 +1,9 @@
 ---
-module_id: 09_AUDIT_DECISION_RECORDS_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DECISION_RECORDS目录索引
----
-
-﻿---
 module_id: 09_AUDIT_DECISION_RECORDS_INDEX_AUDIT_DECISION_RECORDS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计系统架构师
 standard_type: 专业量化机构目录索引
 applicable_scope: 09_AUDIT/DECISION_RECORDS目录
@@ -22,9 +11,8 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
 responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 ---
-
 # 决策记录目录索引
 
 > **版本**: v1.0

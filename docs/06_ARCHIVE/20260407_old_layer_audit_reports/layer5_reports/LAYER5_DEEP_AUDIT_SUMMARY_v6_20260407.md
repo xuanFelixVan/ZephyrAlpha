@@ -1,18 +1,13 @@
 ---
+version: 6.0.0
 module_id: LAYER5_DEEP_AUDIT_SUMMARY_V6_20260407
-version: 1.0.0
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - Layer 5 策略执行层深度审计摘要 v60文档
+- Layer 5 策略执行层深度审计摘要 v60文档
 ---
-
-﻿---
-version: 6.0.0
----
-
 # Layer 5 策略执行层深度审计摘要 v6.0
 
 > **审计时间**: 2026-04-07 13:59:39

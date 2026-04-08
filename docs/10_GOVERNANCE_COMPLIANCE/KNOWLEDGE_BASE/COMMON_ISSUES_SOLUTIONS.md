@@ -1,23 +1,11 @@
 ---
-module_id: COMMON_ISSUES_SOLUTIONS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - 文档治理常见问题解决方案文档
----
-
-﻿---
-responsibility:
-  - 治理合规框架设计与实施与实施指导
-
+- 治理合规框架设计与实施与实施指导
 module_id: COMMON_ISSUES_SOLUTIONS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构知识库文档
@@ -203,7 +191,7 @@ python scripts/responsibility_format_validator.py
 **方案1: 添加标准YAML头部**
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_8D96BADA4C
 version: [版本号]
 status: [状态]
 created_date: [创建日期]

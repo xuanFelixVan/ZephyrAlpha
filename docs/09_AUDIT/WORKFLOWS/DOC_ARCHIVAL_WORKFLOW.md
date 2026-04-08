@@ -1,23 +1,12 @@
 ---
-module_id: 09_AUDIT_WORKFLOWS_DOC_ARCHIVAL_WORKFLOW
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ﮔﮔ۰۲ﮒﺛﮔ۰۲ﮔﭖﻝ۷ﺅﺙﻛﺙﮒﻝﺅﺙ文档
----
-
-﻿---
 module_id: DOCARCHIVALWORKFLOW_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计团队
 responsibility:
-  - 工作流程设计与优化管理与优化维护
+- 工作流程设计与优化管理与优化维护
 standard_type: 专业量化机构工作流
 applicable_scope: 全系统
 compliance_level: 专业标准

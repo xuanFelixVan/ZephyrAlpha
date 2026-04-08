@@ -1,35 +1,18 @@
 ---
-module_id: TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - TEMPORAL_FUSION_TRANSFORMER蓝图设计
----
-
-﻿---
 module_id: TEMPORAL_FUSION_TRANSFORMER_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
-last_updated: 2026-04-03
-
+last_updated: '2026-04-07'
 responsibility:
-  - 提供temporal fusion transformer blueprint的架构设计和实施蓝图
-
+- 提供temporal fusion transformer blueprint的架构设计和实施蓝图
 standard_type: 高层架构蓝图
-
 priority: P1
+responsibility_boundary: '本文档负责Layer 4机器学习层的时间融合Transformer设计，包括时序特征融合、注意力机制、多尺度建模等核心功能。
 
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的时间融合Transformer设计，包括时序特征融合、注意力机制、多尺度建模等核心功能。
+  '
 layer: Layer 2 (Alpha因子层)
+owner: 首席文档架构师
 ---
 ---
 

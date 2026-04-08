@@ -1,31 +1,15 @@
-﻿---
-module_id: AI_PERMISSIONS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - AI_Permissionsmd  AI权限清单文档
 ---
-
-﻿---
 module_id: AI_PERMISSIONS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 负责ai permissions的设计、实现和维护工作
+- 负责ai permissions的设计、实现和维护工作
 layer: Layer 4
 ---
----
----
----
----
-
 ---
 module_id: AI_PERMISSIONS_001
 version: 5.3.1

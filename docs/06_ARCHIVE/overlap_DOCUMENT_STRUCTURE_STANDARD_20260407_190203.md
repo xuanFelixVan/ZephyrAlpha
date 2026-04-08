@@ -1,23 +1,11 @@
 ---
-module_id: DOCUMENT_STRUCTURE_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - DOCUMENT_STRUCTURE标准规范
----
-
-﻿---
-responsibility:
-  - 技术标准制定与规范管理与优化维护
-
+- 技术标准制定与规范管理与优化维护
 module_id: DOCUMENT_STRUCTURE_STANDARD_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构文档治理标准
@@ -68,7 +56,7 @@ compliance_level: 专业标准
 **蓝图文档标准结构**:
 ```markdown
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_93A76C8F79
 version: [版本号]
 status: [状态]
 created_date: [创建日期]
@@ -113,7 +101,7 @@ compliance_level: [合规级别]
 **YAML头部**（必需）:
 ```yaml
 ---
-module_id: [模块ID]              # 必需：唯一标识符
+module_id: EXAMPLE_PLACEHOLDER_93A76C8F79              # 必需：唯一标识符
 version: [版本号]                # 必需：文档版本
 status: [状态]                   # 必需：Active/Draft/Archived
 created_date: [创建日期]         # 必需：创建日期

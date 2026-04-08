@@ -1,18 +1,13 @@
 ---
-module_id: VERSION_CONSISTENCY_REPORT_20260407
 version: 1.0.0
+module_id: VERSION_CONSISTENCY_REPORT_20260407
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
-  - VERSION_CONSISTENCY_20260407报告文档
+- VERSION_CONSISTENCY_20260407报告文档
 ---
-
-﻿---
-version: 1.0.0
----
-
 # 文档版本一致性检查报告
 
 > **检查时间**: 2026-04-07T14:00:16.658564

@@ -1,15 +1,4 @@
 ---
-module_id: DOCUMENT_GOVERNANCE_TRAINING_MANUAL
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - цЦЗцбгцчРЖхЯшонцЙЛхЖМ文档
----
-
-﻿---
 standard_type: хЯ╣шонцЭРцЦЩ
 applicable_scope: хЕич│╗ч╗?
 compliance_level: цнгх╝ПцаЗхЗЖ
@@ -17,11 +6,12 @@ parent_document: DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md
 implementation_status: х╖▓хоМцИ?
 owner: щжЦх╕нцЮ╢цЮДх╕?
 responsibility:
-  - 治理合规框架设计与实施与实施指导
+- 治理合规框架设计与实施与实施指导
 version: 1.0.0
 module_id: DOC_GOVERNANCE_TRAINING
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
 ---
 

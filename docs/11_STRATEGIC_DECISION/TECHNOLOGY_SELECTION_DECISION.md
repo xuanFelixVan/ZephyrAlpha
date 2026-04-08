@@ -1,20 +1,9 @@
 ---
-module_id: TECHNOLOGY_SELECTION_DECISION
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - Layer 11技术选型决策文档文档
----
-
-﻿---
 module_id: TECH_SELECTION_DECISION_001
 version: 1.1.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 技术选型决策文档
@@ -23,12 +12,11 @@ compliance_level: 专业标准
 parent_document: OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 implementation_status: 决策阶段
 related_documents:
-  - ARCHITECTURE.md
-  - BLUEPRINT.md
-  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+- ARCHITECTURE.md
+- BLUEPRINT.md
+- OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 responsibility:
-  - 11 STRATEGIC DECISION模块文档管理与维护
-
+- 11 STRATEGIC DECISION模块文档管理与维护
 ---
 ---
 

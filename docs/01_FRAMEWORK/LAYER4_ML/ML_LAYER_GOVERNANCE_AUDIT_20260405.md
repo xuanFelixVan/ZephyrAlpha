@@ -1,27 +1,15 @@
 ---
-module_id: ML_LAYER_GOVERNANCE_AUDIT_V1_20260405
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 机器学习层文档治理审计报告文档
----
-
-﻿---
 module_id: MLLAYERGOVERNANCEAUDITV12_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 实施团队
 standard_type: 专业量化机构文档
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 执行文档治理审计，生成审计报告和改进建议
-
+- 执行文档治理审计，生成审计报告和改进建议
 ---
 ---
 

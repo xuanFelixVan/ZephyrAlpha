@@ -1,27 +1,15 @@
 ---
-module_id: ARCHITECTURE_REVIEW_REPORT_20260406
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - ARCHITECTURE_REVIEW_20260406报告文档
----
-
-﻿---
 module_id: AUDIT_LAYER_6架构完整性审查报告_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计系统
 standard_type: 审计报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
-
+- 系统审计分析与质量评估报告与改进建议
 ---
 ---
 

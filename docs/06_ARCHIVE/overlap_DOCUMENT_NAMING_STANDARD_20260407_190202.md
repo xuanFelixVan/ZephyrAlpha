@@ -1,20 +1,9 @@
 ---
-module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_DOCUMENT_NAMING_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENT_NAMING标准规范
----
-
-﻿---
-module_id: DATA_NAMING_STANDARD_001
+module_id: DATA_NAMING_STANDARD_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility: 文档命名规范与标准化指南
 standard_type: 文档治理标准

@@ -1,29 +1,17 @@
 ---
-module_id: 09_AUDIT_STANDARDS_DOCUMENT_METADATA_TEMPLATE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 文档元数据模板标准文档
----
-
-﻿---
 module_id: DOCUMENT_METADATA_TEMPLATE
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility:
-  - 文档模板设计与标准化管理与优化维护
+- 文档模板设计与标准化管理与优化维护
 standard_type: 模板
 applicable_scope: 全系统文档元数据标准
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 ---
-
 # 文档元数据模板标准
 
 > **核心职责**: 定义文档元数据的标准化模板
@@ -68,7 +56,7 @@ parent_document: ../INDEX.md
 
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F
 version: 1.0.0
 status: Active
 created_date: YYYY-MM-DD
@@ -81,7 +69,7 @@ owner: [负责人]
 
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F
 version: 1.0.0
 status: Active
 created_date: YYYY-MM-DD

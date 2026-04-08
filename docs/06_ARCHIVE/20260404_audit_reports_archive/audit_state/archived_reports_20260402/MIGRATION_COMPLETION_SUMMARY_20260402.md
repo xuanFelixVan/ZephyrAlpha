@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_MIGRATION_COMPLETION_SUMMARY_20260402
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - L0_QMT.md 迁移完成总结报告文档
----
-
-﻿﻿---
 module_id: L_QMT_MD_002
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档管理员
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
@@ -264,13 +253,13 @@ compliance_level: 专业标准
 ### 审计文档
 
 3. **文档分析记录**: [DOCUMENT_ANALYSIS_L0_QMT_20260402.md](./DOCUMENT_ANALYSIS_L0_QMT_20260402.md)
-   - 路径: docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/DOCUMENT_ANALYSIS_L0_QMT_20260402.md
+   - 路径: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DOCUMENT_ANALYSIS_L0_QMT_20260402.md
    - 内容: 详细的文档分析和价值评?
 4. **迁移日志**: [MIGRATION_LOG_L0_QMT_20260402.md](./MIGRATION_LOG_L0_QMT_20260402.md)
-   - 路径: docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/MIGRATION_LOG_L0_QMT_20260402.md
+   - 路径: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/MIGRATION_LOG_L0_QMT_20260402.md
    - 内容: 完整的迁移执行记?
 5. **迁移完成总结报告**: [MIGRATION_COMPLETION_SUMMARY_20260402.md](./MIGRATION_COMPLETION_SUMMARY_20260402.md)
-   - 路径: docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/MIGRATION_COMPLETION_SUMMARY_20260402.md
+   - 路径: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/MIGRATION_COMPLETION_SUMMARY_20260402.md
    - 内容: 本报?
 ---
 

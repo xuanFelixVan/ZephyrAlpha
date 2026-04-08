@@ -1,23 +1,12 @@
 ---
-module_id: EVENT_DETECTOR_TECHNICAL_REVIEW_REPORT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - EVENT_DETECTOR_TECHNICAL_REVIEW报告文档
----
-
-﻿---
 module_id: ARCHIVE_EVENT_DETECTOR_TECH_REVIEW_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 responsibility:
-  - 归档文档、历史版本、技术评审
+- 归档文档、历史版本、技术评审
 standard_type: 专业量化机构评审报告
 applicable_scope: Layer 3 舆情分析?
 compliance_level: 专业标准

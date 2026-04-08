@@ -1,28 +1,16 @@
-﻿---
-module_id: 03_TRADING_TACTICS_99_ARCHIVE_TECHNICAL_INDICATORS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 技术指标参数体文档
 ---
-
-﻿---
 module_id: 03_TRADING_TACTICS_99_ARCHIVE_TECHNICAL_INDICATORS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 交易策略、战术执行
-  - 交易执行
-  - 系统架构
+- 交易策略、战术执行
+- 交易执行
+- 系统架构
 ---
-
 ---
 module_id: TACTICS_ARCH_TECH_INDICATORS_001
 version: 1.0.1

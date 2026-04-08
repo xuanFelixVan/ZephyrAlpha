@@ -1,27 +1,15 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_DELETED_FILES_RECOVERY_REPORT_20260404
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - Alpha因子层被删除文件恢复报告文档
----
-
-﻿﻿---
 module_id: ALPHA_007
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档管理员
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
-
+- 归档文档、历史版本、审计状态追踪
 ---
 ---
 

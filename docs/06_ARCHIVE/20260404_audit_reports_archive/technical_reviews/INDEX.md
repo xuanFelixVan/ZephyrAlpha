@@ -1,26 +1,14 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_4
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - technical_reviews目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航、文档索引
+- 目录导航、文档索引
 module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_4_TECHNICAL_REVIEWS_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # technical_reviews 目录索引
 
 > **核心职责**: 提供technical_reviews目录下的文档导航

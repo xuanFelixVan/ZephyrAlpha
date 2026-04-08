@@ -1,62 +1,66 @@
 ---
-module_id: MARKET_ABUSE_SURVEILLANCE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - MARKET_ABUSE_SURVEILLANCE蓝图设计
----
-
-﻿---
 module_id: MARKET_ABUSE_SURVEILLANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 市场滥用监控系统架构设计
 compliance_level: 顶级专业标准
-reference_models: ["FCA Market Abuse Regulation (MAR)", "LSEG Surveillance Guide", "Citadel Market Surveillance", "Two Sigma Market Abuse Detection"]
+reference_models:
+- FCA Market Abuse Regulation (MAR)
+- LSEG Surveillance Guide
+- Citadel Market Surveillance
+- Two Sigma Market Abuse Detection
 related_documents:
-  - layer10_GOVERNANCE_COMPLIANCE_INDEX.md
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
+- layer10_GOVERNANCE_COMPLIANCE_INDEX.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+- AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
-  - name: EquiAnalytics
-    url: https://github.com/SrabanaBaidya/EquiAnalytics
-    features: SQL基础市场滥用检测、内幕交易识别、洗售检测、欺骗检测
-    license: MIT
-    personal_fit: ⭐⭐⭐⭐
-  - name: TradingHub (商业)
-    url: https://tradinghub.com/
-    features: 专业市场监控、低误报率、多资产类别支持
-    license: 商业许可
-    personal_fit: ⭐⭐⭐
-  - name: Trapets (商业)
-    url: https://www.trapets.com/
-    features: AML和MAR合规、实时监控、智能分析
-    license: 商业许可
-    personal_fit: ⭐⭐⭐
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+- name: EquiAnalytics
+  url: https://github.com/SrabanaBaidya/EquiAnalytics
+  features: SQL基础市场滥用检测、内幕交易识别、洗售检测、欺骗检测
+  license: MIT
+  personal_fit: ⭐⭐⭐⭐
+- name: TradingHub (商业)
+  url: https://tradinghub.com/
+  features: 专业市场监控、低误报率、多资产类别支持
+  license: 商业许可
+  personal_fit: ⭐⭐⭐
+- name: Trapets (商业)
+  url: https://www.trapets.com/
+  features: AML和MAR合规、实时监控、智能分析
+  license: 商业许可
+  personal_fit: ⭐⭐⭐
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - 市场滥用监控系统架构设计
+
   - 市场操纵行为检测
+
   - 内幕交易识别
+
   - 可疑交易报告生成
+
   - 监控规则管理
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 交易合规监控
+
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
-  - AML_MONITORING_SYSTEM_BLUEPRINT.md: 反洗钱监控（AML特定）
+
+  - AML_MONITORING_SYSTEM_BLUEPRINT.md: 反洗钱监控（AML特定）'
+responsibility:
+- MARKET_ABUSE_SURVEILLANCE蓝图设计
 ---
 # 市场滥用监控系统蓝图
 

@@ -1,28 +1,17 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - уГќуЋЦТЅДУАїт▒ѓтйњТАБТќЄТАБТЂбтцЇУёС╝░ТіЦтЉ?V2文档
----
-
-﻿﻿---
 module_id: LAYER5_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_V2_20260404_001
-
 report_id: LAYER5_ARCHIVED_DOCUMENTS_RECOVERY_REPORT_002
 version: 1.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 auditor: Audit Sentinel
 standard_type: СИЊСИџТќЄТАБТ▓╗уљєтАУАТіЦтЉі
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 applicable_scope: уГќуЋЦТЅДУАїт▒?Layer 5)тйњТАБТќЄТАБТЂбтцЇУёС╝░
 compliance_level: СИЊСИџТаЄтЄє
+owner: 文档管理团队
 ---
 ---
 

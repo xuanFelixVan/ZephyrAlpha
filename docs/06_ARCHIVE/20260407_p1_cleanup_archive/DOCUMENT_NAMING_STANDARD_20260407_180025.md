@@ -1,20 +1,9 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DOCUMENT_NAMING_STANDARD_20260407_180025
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DOCUMENT_NAMING_20260407_180025标准规范
----
-
-﻿---
 module_id: DATA_NAMING_STANDARD_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 responsibility: 文档命名规范与标准化指南
 standard_type: 文档治理标准

@@ -1,32 +1,17 @@
 ---
-module_id: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_ANALYSIS_LAYER蓝图设计
----
-
-﻿---
 module_id: LAYER_008
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席架构师
 responsibility:
-  - 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
+- 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4 (机器学习层)
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 compliance_level: 专业标准
 ---
----
-
-
-﻿---
 module_id: SENTIMENT_ANALYSIS_LAYER_001
 version: 1.0.0
 status: Active

@@ -1,23 +1,12 @@
 ---
-module_id: SENTIMENT_ANALYSIS_COMPREHENSIVE_AUDIT_REPORT_V3
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - SENTIMENT_ANALYSIS_COMPREHENSIVE_AUDIT_V3报告文档
----
-
-﻿---
 module_id: V_042
 version: 3.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 审计团队
 responsibility:
-  - 系统审计分析与质量评估报告与改进建议
+- 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准

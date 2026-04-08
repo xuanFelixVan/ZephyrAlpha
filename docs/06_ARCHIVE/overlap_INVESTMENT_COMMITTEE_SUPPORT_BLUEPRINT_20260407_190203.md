@@ -1,33 +1,23 @@
 ---
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_INVESTMENT_COMMITTEE_SUPPORT_BLUEPRINT
+module_id: INVESTMENT_COMMITTEE_SUPPORT_001_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - INVESTMENT_COMMITTEE_SUPPORT蓝图设计
----
-
-﻿---
-module_id: INVESTMENT_COMMITTEE_SUPPORT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 系统架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 11 - 战略决策层
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater Investment Committee", "Two Sigma Decision Process", "Citadel Investment Committee"]
+reference_models:
+- Bridgewater Investment Committee
+- Two Sigma Decision Process
+- Citadel Investment Committee
 parent_document: ./BLUEPRINT.md
 implementation_status: 蓝图阶段
 responsibility:
-  - 投资委员会决策支持系统设计
-  - 决策流程管理
-
+- 投资委员会决策支持系统设计
+- 决策流程管理
 ---
-
 # 投资委员会决策支持系统蓝图
 
 > **核心职责**: 投资委员会决策支持系统蓝图设计

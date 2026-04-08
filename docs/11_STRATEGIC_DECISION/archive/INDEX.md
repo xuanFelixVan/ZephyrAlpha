@@ -1,26 +1,14 @@
 ---
-module_id: 11_STRATEGIC_DECISION_ARCHIVE_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
 responsibility:
-  - archive目录索引
----
-
-﻿---
-responsibility:
-  - 目录导航、文档索引
+- 目录导航、文档索引
 module_id: 11_STRATEGIC_DECISION_ARCHIVE_INDEX_ARCHIVE_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # archive 目录索引
 
 > **核心职责**: 提供archive目录下的文档导航

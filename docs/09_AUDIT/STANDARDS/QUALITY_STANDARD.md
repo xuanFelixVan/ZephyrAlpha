@@ -1,27 +1,17 @@
 ---
-module_id: QUALITY_STANDARD
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - QUALITY标准规范
----
-
-﻿---
 module_id: QUALITY_STANDARD_V3_001
 version: 3.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 首席文档架构师
 standard_type: 质量标准
 applicable_scope: 全系统文档质量
 compliance_level: 专业标准
 parent_document: ../INDEX.md
+responsibility:
+- QUALITY标准规范
 ---
-
 # 文档质量标准 V3.0
 
 > **核心职责**: 定义文档质量的标准、指标和评估方法

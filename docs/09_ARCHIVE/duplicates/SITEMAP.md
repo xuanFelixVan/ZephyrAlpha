@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_001
+module_id: 02_FACTOR_LIBRARY_001_ARCHIVED_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

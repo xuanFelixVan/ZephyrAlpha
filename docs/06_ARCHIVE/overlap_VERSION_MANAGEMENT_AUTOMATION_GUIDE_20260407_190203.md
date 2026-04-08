@@ -1,28 +1,13 @@
 ---
-module_id: VERSION_MANAGEMENT_AUTOMATION_GUIDE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - VERSION_MANAGEMENT_AUTOMATION操作指南
----
-
-﻿---
 module_id: VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 操作指南编写与使用说明与系统维护管理
-
----
----
-
+- 操作指南编写与使用说明与系统维护管理
 ---
 module_id: IMPL_OPS_VERSION_AUTO_GUIDE_001
 version: 1.0.1

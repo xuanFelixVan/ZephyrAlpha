@@ -1,26 +1,14 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_ARCHIVED
+module_id: 05_IMPLEMENTATION_ARCHIVED_20260407124139_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - NozyIO可视化编辑系统归档文档
----
-
-﻿---
-module_id: 05_IMPLEMENTATION_ARCHIVED_20260407124139
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
-  - 系统实施与部署管理与优化维护
+- 系统实施与部署管理与优化维护
 ---
-
 ---
 module_id: ARCHIVE_NOZYIO_UX_DOC_001
 version: 0.1.1

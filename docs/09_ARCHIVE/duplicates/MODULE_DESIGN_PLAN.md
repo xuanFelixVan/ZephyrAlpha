@@ -1,5 +1,5 @@
 ---
-module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
+module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001_ARCHIVED_9
 1. **创建设计库目?*
 ```bash
 mkdir -p docs/module_designs/layer_{0..8}

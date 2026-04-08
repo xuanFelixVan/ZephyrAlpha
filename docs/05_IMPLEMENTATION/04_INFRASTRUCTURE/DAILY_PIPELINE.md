@@ -1,20 +1,9 @@
-﻿---
-module_id: DAILY_PIPELINE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 每日数据流水文档
 ---
-
-﻿---
 module_id: IMPL_INFRA_DAILY_PIPELINE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构实施标准
 applicable_scope: 系统实施与部?
@@ -22,8 +11,7 @@ compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
-  - 系统实施与部署管理与优化维护
-
+- 系统实施与部署管理与优化维护
 ---
 ---
 

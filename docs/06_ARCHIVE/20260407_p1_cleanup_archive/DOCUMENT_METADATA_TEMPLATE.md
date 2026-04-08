@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_METADATA_TEMPLATE
+module_id: DOCUMENT_METADATA_TEMPLATE_ARCHIVED_1
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -58,7 +58,7 @@ parent_document: ../INDEX.md
 
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E
 version: 1.0.0
 status: Active
 created_date: YYYY-MM-DD
@@ -71,7 +71,7 @@ owner: [负责人]
 
 ```yaml
 ---
-module_id: [模块ID]
+module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E
 version: 1.0.0
 status: Active
 created_date: YYYY-MM-DD

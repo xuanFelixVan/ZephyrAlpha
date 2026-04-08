@@ -1,23 +1,12 @@
 ---
-module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_D4_FINDINGS
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - BLOCK_D4_findings.md - D4块审计发?文档
----
-
-﻿﻿---
 module_id: ARCHIVE_BLOCK_D4_FINDINGS_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 responsibility:
-  - 归档文档、历史版本、审计状态追踪
+- 归档文档、历史版本、审计状态追踪
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准

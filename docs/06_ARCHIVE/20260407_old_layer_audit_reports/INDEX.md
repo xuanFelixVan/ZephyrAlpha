@@ -1,28 +1,16 @@
 ---
-module_id: 06_ARCHIVE_20260407_OLD_LAYER_AUDIT_REPORTS_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 20260407_old_layer_audit_reports目录索引
----
-
-﻿---
 module_id: ARCHIVE_OLD_LAYER_REPORTS_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 文档治理团队
 standard_type: 专业量化机构归档文档
 applicable_scope: 旧架构命名审计报告归档
 compliance_level: 专业标准
 responsibility:
-  - 文档归档、历史追溯
+- 文档归档、历史追溯
 ---
-
 # 旧架构命名审计报告归档索引
 
 ## 📋 归档概要
@@ -109,9 +97,9 @@ git checkout <commit_hash> -- docs/05_IMPLEMENTATION/*/audit_state/<filename>
 
 | 归档文件 | 原始位置 |
 |----------|----------|
-| LAYER5_*.md | docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/ |
+| LAYER5_*.md | docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
 | LAYER6_*.md | docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
-| LAYER9_*.md | docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/ |
+| LAYER9_*.md | docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
 | LAYER_10_*.md | docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
 | LAYER_11_*.md | docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/ |
 

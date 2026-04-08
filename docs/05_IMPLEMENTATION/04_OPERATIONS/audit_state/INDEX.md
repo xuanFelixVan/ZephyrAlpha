@@ -1,26 +1,14 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
 responsibility:
-  - audit_state 目录索引文档
----
-
-﻿﻿---
-responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 module_id: INDEX_AUDIT_STATE_20260407124048
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-07'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
-
 # audit_state 目录索引
 
 > **核心职责**: 提供audit_state目录下的文档导航
