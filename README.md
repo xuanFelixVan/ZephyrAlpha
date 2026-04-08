@@ -2,13 +2,13 @@
 standard_type: 技术文档
 applicable_scope: 全系统
 compliance_level: 初始标准
-parent_document: ../INDEX.md
+parent_document: docs/INDEX.md
 implementation_status: 设计阶段
 owner: 文档维护者
-version: 1.0.0
+version: 1.0.1
 module_id: DOC_README
 created_date: 2026-03-28
-last_updated: 2026-04-02
+last_updated: 2026-04-08
 ---
 # 清风量化交易系统 v5.1
 
@@ -41,13 +41,16 @@ python -m src.main
 
 ## 核心文档
 
+> 全库文档的**统一入口**为 **[文档索引 `docs/INDEX.md`](docs/INDEX.md)**；下表为常用直达链接（接口与策略规格仍位于 `03_TRADING_TACTICS`，与仓库目录结构一致）。
+
 | 文档 | 说明 |
 |------|------|
-| [系统蓝图](docs/05_IMPLEMENTATION/SITEMAP.md) | 实施层站点图与导航 |
-| [文档索引](docs/INDEX.md) | 文档索引 |
-| [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | 接口规范 |
-| [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略定义 |
-| [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | 常见问题 |
+| [文档索引](docs/INDEX.md) | 全库导航与分类（推荐首访） |
+| [统一架构](docs/01_FRAMEWORK/ARCHITECTURE.md) | Layer 0–11 权威分层 |
+| [系统站点图](docs/05_IMPLEMENTATION/SITEMAP.md) | 实施层站点图与导航 |
+| [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | API 契约 |
+| [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 示例策略规格 |
+| [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | FAQ |
 
 ---
 
@@ -93,11 +96,11 @@ ZephyrAlpha/
 
 ## 相关资源
 
-- **文档中心**: [docs/](docs/)
+- **文档导航入口**: [docs/INDEX.md](docs/INDEX.md)
 - **因子库**: [docs/02_FACTOR_LIBRARY/](docs/02_FACTOR_LIBRARY/)
-- **策略池**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
+- **策略与执行（战术层目录）**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
 - **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](docs/06_ARCHIVE/CHANGELOG.md)
 
 ---
 
-**版本**: v5.0 | **更新**: 2026-03-31
+**版本**: v5.1 | **更新**: 2026-04-08

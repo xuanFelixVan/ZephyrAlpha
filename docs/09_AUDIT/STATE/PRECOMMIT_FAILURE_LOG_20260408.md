@@ -54,3 +54,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: 新增 `scripts/generate_audit_state_index.py`；`audit_state/INDEX.md` 343 条 `./xxx.md` 链接；`REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN.md` 去除重复 `---`；`P1C_DEFERRED` 勾选 P1-2；L1 留存 `SENTINEL_L1_P1C_AUDIT_STATE_INDEX_20260408.*`
+
+## 2026-04-08 — P1-C：README 以 docs/INDEX 为文档入口（Backlog P1-4）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: 根 `README.md` 导航与 `parent_document` 对齐 INDEX；L1 复扫；`P1C_DEFERRED` 记录 P1-4；留存 `SENTINEL_L1_P1C_README_20260408.*`
