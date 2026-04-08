@@ -1,0 +1,4779 @@
+{
+  "timestamp": "2026-04-07T02:02:46.612879",
+  "stats": {
+    "total_files": 1637,
+    "total_dirs": 222,
+    "total_issues": 0
+  },
+  "issues": {
+    "L1_file_system": [
+      {
+        "type": "目录稀疏",
+        "path": "00_RESOURCES",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "01_FRAMEWORK\\ARCHITECTURE_DECISIONS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\05_BACKTEST\\ic_reports",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\05_BACKTEST\\strategy_reports",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\06_REGISTRY",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "02_FACTOR_LIBRARY\\10_MANUAL",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "03_TRADING_TACTICS\\02_CORE_STRATEGIES",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\02_TACTICS_MERGED",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\05_STRATEGY_POOL",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\06_POSITION_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "04_EXECUTION\\02_TRADE_EXECUTOR",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "04_EXECUTION\\04_AI_COMMITTEE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "04_EXECUTION\\05_RISK_ENGINE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design\\01_UI_DESIGN",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_PROGRESS_TRACKING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\alternative_assessments",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\lessons_learned",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\risk_management",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\security_patches",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\training_plans",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\05_IMPLEMENTATION\\database",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\sample_validation_2026-04-02",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录层级过深",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\docs\\06_ARCHIVE\\duplicate_documents",
+        "description": "嵌套超过4层（5层），难以导航",
+        "severity": "中"
+      },
+      {
+        "type": "空目录",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\docs\\06_ARCHIVE\\duplicate_documents",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_4",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_blueprint_spec_audit",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_governance_audit",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer1_infrastructure_audit",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer7_audit",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_portfolio_optimization_duplicate",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260405_data_catalog_metadata_duplicate",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "06_CONSTRUCTION_DOCS\\01_BLUEPRINTS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "07_AI_REPORTING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "08_HUMAN_AI_INTERFACE\\01_MOBILE_PUSH",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\01_MONITORING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\02_ALERTING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "08_HUMAN_AI_INTERFACE\\02_MONITORING",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\03_AUTH",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "08_HUMAN_AI_INTERFACE\\03_AUTHENTICATION",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\04_API_DOCS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "空目录",
+        "path": "08_HUMAN_AI_INTERFACE\\04_BACKTEST_INTERFACE",
+        "description": "目录存在但无内容",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\05_BACKTEST_UI",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\06_REPORTING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\07_AUDIT_LOG",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\08_MOBILE_PUSH",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\09_TRADING_JOURNAL",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\10_CONFIG_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\11_USER_PREFERENCES",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\12_SYSTEM_STATUS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\13_DATA_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\14_STRATEGY_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\15_PERMISSION_MANAGEMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\16_API_RATE_LIMITING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\17_DOCUMENTATION_CENTER",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\18_KNOWLEDGE_BASE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\19_CI_CD_INTEGRATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\20_DATA_BACKUP",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\21_ONLINE_RESEARCH_ENVIRONMENT",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\22_PARAMETER_OPTIMIZATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "08_HUMAN_AI_INTERFACE\\23_LIVE_TRADING_INTERFACE",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\BEST_PRACTICES",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\CASE_STUDIES",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\CONFIGURATION",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\DECISION_RECORDS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\RESEARCH_MEMOS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\SOLUTIONS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\TOOLS",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_AUDIT\\TRAINING",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "09_RESEARCH_INNOVATION\\01_ai_research_lab",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "10_GOVERNANCE_COMPLIANCE\\01_internal_controls",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "11_STRATEGIC_DECISION\\03_strategy_selection",
+        "description": "目录下文件过少（2个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "目录稀疏",
+        "path": "11_STRATEGIC_DECISION\\archive\\2026-Q1",
+        "description": "目录下文件过少（1个），应整合",
+        "severity": "低"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\DATA_LAYER_INDEX.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\DATA_SOURCE_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_BLUEPRINT_STAGE_FINAL_CONFIRMATION_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_BLUEPRINT_STAGE_FINAL_SUPPLEMENT_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_COMPLETE_SUPPLEMENT_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_DEEP_AUDIT_REPORT_FINAL.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_AND_SUPPLEMENT_PLAN.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_SECOND_ROUND_COMPLETE_SUPPLEMENT_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_SECOND_ROUND_GAP_ANALYSIS.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\LAYER_10_THIRD_ROUND_PROFESSIONAL_INSTITUTION_STANDARD_GAP_ANALYSIS.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\RESEARCH_INNOVATION_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\STRATEGIC_DECISION_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "01_FRAMEWORK\\STRATEGY_EXECUTION_LAYER_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_20260407_V2.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V3_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_SECOND_ROUND_AUDIT_REPORT_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V10_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V11_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V4_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V5_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V6_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V7_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V8_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V9_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_BLUEPRINT_COMPLETION_PLAN_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_DEEP_AUDIT_REPORT_V2_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_MISSING_MODULES_BLUEPRINT_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_P0_RECTIFICATION_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_P1_RECTIFICATION_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_SHORT_TERM_IMPROVEMENT_PLAN_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_STRATEGIC_DECISION_DEEP_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_7_11_DIRECTORY_REORGANIZATION_REPORT_20260404.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_7_11_DIRECTORY_RESTRUCTURE_REPORT_20260404.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_7_11_EXTENSION_OPTIMIZATION_REPORT_20260404.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_DEEP_GOVERNANCE_AUDIT_V2_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_GOVERNANCE_FIX_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_OPENSOURCE_MAPPING_V1_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V10_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V11_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V7_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V8_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_COMPLETENESS_AUDIT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_DEEP_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_DEEP_AUDIT_REPORT_V2_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_FINAL_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\DATA_LAYER_BLUEPRINT_GAP_ANALYSIS.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\DATA_LAYER_RESOURCE_PREPARATION_CHECKLIST.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\DATA_LAYER_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\MESO_STRATEGY_LAYER_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\LAYER_11_ARCHITECTURE.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_11\\LAYER_11_TOOL_INTERFACE_SPECIFICATION.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_CONFIRMATION_AUDIT_REPORT_V5_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V2_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V3_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V6_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_FINAL_AUDIT_REPORT_V4_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\BATCH_ADD_LAYER_FIELDS_REPORT_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_LAYER_DEEP_AUDIT_REPORT_V2_20260403.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_LAYER_DEEP_AUDIT_REPORT_V3_20260403.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_LAYER_DOCUMENT_AUDIT_REPORT_20260403.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V1_20260404.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260404.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V5_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V6_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260403.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_REPORT_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_EIGHTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_FIFTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_FOURTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_NINTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_REAUDIT_REPORT_20260405.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_SEVENTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_SIXTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_TENTH_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_THIRD_AUDIT_REPORT_20260406.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\LAYER_7_AUDIT_COMPLETION_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\LAYER_7_DEEP_AUDIT_REPORT_V7_20260407.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "09_AUDIT\\REPORTS\\WEEKLY_LAYER_CHECK_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "10_AI_WORKFLOW\\LAYER_7_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT.md",
+        "description": "文件名包含旧架构关键词: LAYER_",
+        "severity": "中"
+      }
+    ],
+    "L2_content": [
+      {
+        "type": "YAML头部缺失",
+        "path": "API_README.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "System_Manifest.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "01_FRAMEWORK\\AI_PERMISSIONS.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\ARCHITECTURE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_EXPLORATION_INTERFACE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_LINEAGE_TRACKING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_QUALITY_ASSESSMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_QUALITY_GOVERNANCE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_QUALITY_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_SOURCE_LAYER_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DECISION_DASHBOARD_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DOCUMENT_NAMING_STANDARD.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\DYNAMIC_RISK_BUDGETING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\EXTREME_MARKET_RESPONSE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\FEATURE_STORE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER4_MACHINE_LEARNING_COMPREHENSIVE_ANALYSIS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER4_P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_BLUEPRINT_STAGE_FINAL_CONFIRMATION_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_COMPLETE_SUPPLEMENT_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_DEEP_AUDIT_REPORT_FINAL.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_AND_SUPPLEMENT_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_SECOND_ROUND_COMPLETE_SUPPLEMENT_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LAYER_10_SECOND_ROUND_GAP_ANALYSIS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\LIQUIDITY_RISK_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\MARKET_REGIME.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\NEWLY_DISCOVERED_MODULES_BLUEPRINT_COLLECTION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\P1_P2_MODULES_BLUEPRINT_COLLECTION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\PORTFOLIO_REBALANCING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\REINFORCEMENT_LEARNING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\RESEARCH_INNOVATION_LAYER_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\SETTINGS_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\SYSTEM_ARCHITECTURE_DIAGRAM.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\SYSTEM_HEALTH_CHECK_INTERFACE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "01_FRAMEWORK\\TRADING_AUTHORIZATION_INTERFACE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "02_FACTOR_LIBRARY\\05_BACKTEST_REORGANIZATION.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\FAQ.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\KNOWLEDGE_MANAGEMENT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "02_FACTOR_LIBRARY\\SITEMAP.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_VALIDATION_GUIDE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND_CONNECTOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\SUPERCMD_CONNECTOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\AI_SUPERVISION_INTEGRATION_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\NEURAL_NETWORK_INTEGRATION_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\Strategy_Spec_S001.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\overview.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_ENGINE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\STRATEGY_SELECTION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\02_TACTICS_MERGED\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-c.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\05_STRATEGY_POOL\\index.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK\\ARCHIVED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\09_RISK_RULES\\RISK_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\36_DECISION_FRAMEWORK_ARCHIVED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\ai-integration.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\interface-standard.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\manager.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\pattern-recognition.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\technical-indicators.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "04_EXECUTION\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "04_EXECUTION\\04_AI_COMMITTEE\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "04_EXECUTION\\06_SIMULATION\\MULTI_ENGINE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\CODE_EXAMPLES.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\QUICK_REFERENCE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\VERSIONING.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\01_QUICKSTART\\INDEX.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\API_DESIGN.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\AUTH.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DESIGN_PRINCIPLES.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPER_RULES.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_STANDARDS.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_WORKFLOW.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\ERROR_HANDLING.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\TEST_FRAMEWORK.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\03_DEPLOYMENT\\DEPLOYMENT_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_INFRASTRUCTURE\\DAILY_PIPELINE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_20260407_V2.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DRIFT_DIRECTORY_INTEGRATION_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\GIT_CORRUPTED_FILE_RECOVERY_HANDOVER_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_DEEP_AUDIT_REPORT_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_DEEP_AUDIT_V6_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V12_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V13_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V14_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V15_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V16_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V17_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V18_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V11_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V4_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V5_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V6_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V7_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_P0_RECTIFICATION_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_11_P1_RECTIFICATION_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_7_11_DIRECTORY_RESTRUCTURE_REPORT_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ML_LAYER_GOVERNANCE_FIX_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P1_P2_OPTIMIZATION_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_011229.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012052.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012329.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012447.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012731.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012859.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\ASHARE_HISTORICAL_DATA_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATACLEANER_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATAVALIDATOR_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATA_PREPROCESSING_IMPROVEMENT_PLAN.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\DATA_SOURCE_INVENTORY.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FACTOR_STORE_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\FEATURE_STORE_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\MARGIN_CALL_MONITOR_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\MODEL_GOVERNANCE_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\MODULE_REGISTRY.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\NEWS_CRAWLER_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\PORTFOLIO_OPTIMIZER_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\trading_costs\\T.05.TE001.trading_cost_model_algorithm_document.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\trading_costs\\TRADING_COST_TEST_CASE_DESIGN.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design\\04_NOZYIO\\ARCHIVED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\AUDIT_CHECKLIST_TEMPLATE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\DOCUMENT_AUDIT_WORKFLOW.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\PERFORMANCE_MONITORING.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\BLUEPRINT_COMPLETENESS_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\COMPREHENSIVE_IMPLEMENTATION_SOLUTION_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\DELETED_FILES_RECOVERY_ASSESSMENT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER4_ML_COMPREHENSIVE_AUDIT_V5_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_V9_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_DEEP_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\STRATEGY_EXECUTION_LAYER_FINAL_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\improvements\\IMP_002_QMT_API_COMMUNITY_RESEARCH.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\improvements\\IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\CASE_STUDY_TEMPLATE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "05_IMPLEMENTATION\\99_ARCHIVE\\MODULE_ARCHIVE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\CHANGELOG.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\strategy_pool.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\system_enhancement_manual.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\technical_documentation.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\BLOCK_D2_findings.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\DELETED_FILES_EVALUATION_REPORT_20260403.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\DELETED_FILES_RECOVERY_REPORT_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\DIR_STRUCTURE_OPTIMIZATION_REPORT_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FULL_SYSTEM_AUDIT_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\monthly_summary_20260402.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\P1_FIXES_COMPLETED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PATH_LIST_AUDIT_UPDATE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\TEMP_FILE_AUDIT_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\ASHARE_HISTORICAL_DATA_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\BAOSTOCK_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\DATACLEANER_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\DATAVALIDATOR_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\FACTOR_STORE_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\FEATURE_ENGINEERING_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\LAYER2_ALPHA_FACTOR_APPROVAL_NOTICE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\LAYER2_ALPHA_FACTOR_P0_RESOLUTION_REPORT_V3_20260403.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\NEWS_CRAWLER_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\PORTFOLIO_OPTIMIZATION_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\PORTFOLIO_OPTIMIZER_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QLIB_ALPHA158_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\SUPERCOMMAND_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\TECHNICAL_REVIEW_REPORT_TEMPLATE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260405_economic_regime_cleanup\\ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\DATA_FABRIC_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\DATA_GOVERNANCE_PLATFORM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\DATA_MESH_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\DATA_OBSERVABILITY_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\DATA_SECURITY_COMPLIANCE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\QUALITY_REPORT_AUTOMATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\QUALITY_SCORING_SYSTEM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\REALTIME_DATA_LAKE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints\\REALTIME_QUALITY_MONITOR_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_1\\L1_CLEANER.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_1\\L1_NORMALIZER.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_1\\L1_VALIDATOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_9\\L9_ANOMALY_DETECTOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\architecture_v4\\module_designs\\layer_9\\L9_MARKET_DETECTOR.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer1_infrastructure_audit\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\factor-library\\ifind_factors_list.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete\\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete\\STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\main\\BLUEPRINTS\\01_ULTIMATE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\README.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\ARCHITECTURE_ANALYSIS_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\BLUEPRINT_CHECKLIST.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\BLUEPRINT_VALIDATION_REPORT.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\QUALITY_MONITORING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\RISK_MANAGEMENT_DOCUMENT_INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_CONFIRMATION_AUDIT_REPORT_V5_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V3_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V6_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\AI_WORKFLOW_LAYER_FINAL_AUDIT_REPORT_V4_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\ALERT_RESPONSIBILITY_OVERLAP_FIX_REPORT_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\BATCH_ADD_LAYER_FIELDS_REPORT_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\CRITICAL_ENCODING_ISSUES_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V1_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260404.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V5_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V6_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_CLASSIFICATION_OPTIMIZATION_REPORT_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_FORMAT_FIX_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\ENCODING_ISSUES_REBUILD_FINAL_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_FINAL_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\GITHUB_ISSUE_CREATION_LIST_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DATA_PREPROCESSING_DEEP_AUDIT_REPORT_20260404_V5.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260403_V2.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260404_V4.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260405_V6.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_20260403.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_REMEDIATION_FINAL_REPORT_20260403.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_P2_CROSS_REFERENCE_COMPLETION_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_P2_CROSS_REFERENCE_PROGRESS_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V3_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V5_20260407.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER6_ARCHITECTURE_REVIEW_REPORT_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V7.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LAYER_7_DEEP_AUDIT_REPORT_V7_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\LINK_VALIDATION_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_COMPREHENSIVE_SUMMARY_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_CORE_DOCS_COMPLETION_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_P2_BATCH1_COMPLETION_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\SENTIMENT_ANALYSIS_BLUEPRINT_GAP_ANALYSIS.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\SHORT_TERM_IMPROVEMENT_PLAN_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\SHORT_TERM_IMPROVEMENT_PROGRESS_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\REPORTS\\TODO_CLEANUP_ANALYSIS_20260406.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\TEMPLATES\\AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\TEMPLATES\\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
+        "description": "文档缺少YAML元数据头部",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_AUDIT\\TEMPLATES\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_RESEARCH_INNOVATION\\IMPLEMENTATION_GUIDE.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_RESEARCH_INNOVATION\\_archive\\COMPLETE_BLUEPRINT_V3.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_RESEARCH_INNOVATION\\_archive\\COMPLETE_SUPPLEMENT_v2.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_RESEARCH_INNOVATION\\_archive\\CRITICAL_MISSING_V4.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "09_RESEARCH_INNOVATION\\_archive\\MISSING_MODULES_SUPPLEMENT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\AI_DECISION_EXPLANATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\AUTO_REPORT_GENERATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\DATA_SOURCE_EXTENSION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\INTELLIGENT_QA_SYSTEM_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\MODEL_DRIFT_DETECTION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\PERFORMANCE_ANALYSIS_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\PERFORMANCE_ATTRIBUTION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\POST_TRADE_REVIEW_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\REAL_TIME_RISK_MONITOR_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_AI_WORKFLOW\\SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_GOVERNANCE_COMPLIANCE\\BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "10_GOVERNANCE_COMPLIANCE\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\BENCHMARK_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\BLUEPRINT_INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\BLUEPRINT_PROGRESS_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\CAPITAL_ALLOCATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\DECISION_AUDIT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\ESG_INVESTING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\IPS_MANAGEMENT_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\MACRO_FACTOR_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\MULTI_STRATEGY_COORDINATION_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\P1_BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\PORTFOLIO_INSURANCE_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\REBALANCING_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\SCENARIO_ANALYSIS_BLUEPRINT.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\01_asset_allocation\\INDEX.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\01_asset_allocation\\资产类别定义.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\01_asset_allocation\\配置优化方法.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\02_risk_budgeting\\风险调整机制.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责不清",
+        "path": "11_STRATEGIC_DECISION\\02_risk_budgeting\\风险预算方法.md",
+        "description": "文档缺少明确的职责描述",
+        "severity": "高"
+      },
+      {
+        "type": "职责重叠",
+        "path": "因子计算",
+        "description": "职责 '因子计算' 涉及 643 个文件",
+        "severity": "中",
+        "files": [
+          "SITEMAP.md",
+          "00_OVERVIEW\\DATA_FLOW.md",
+          "00_OVERVIEW\\INDEX.md",
+          "00_OVERVIEW\\README.md",
+          "00_RESOURCES\\README.md",
+          "00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+          "01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "交易执行",
+        "description": "职责 '交易执行' 涉及 405 个文件",
+        "severity": "中",
+        "files": [
+          "SITEMAP.md",
+          "00_OVERVIEW\\DATA_FLOW.md",
+          "00_RESOURCES\\README.md",
+          "00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+          "01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+          "01_FRAMEWORK\\API_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\AUDIT_LOG_VIEWER_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "回测系统",
+        "description": "职责 '回测系统' 涉及 145 个文件",
+        "severity": "中",
+        "files": [
+          "SITEMAP.md",
+          "00_OVERVIEW\\DATA_FLOW.md",
+          "00_RESOURCES\\04_PLATFORM_DOCS\\README.md",
+          "01_FRAMEWORK\\BACKTEST_RESULT_VIEWER_BLUEPRINT.md",
+          "01_FRAMEWORK\\DISASTER_RECOVERY_BLUEPRINT.md",
+          "01_FRAMEWORK\\RESEARCH_METHODOLOGY.md",
+          "01_FRAMEWORK\\STRATEGY_CONFIGURATION_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\TRANSACTION_COST_ANALYSIS_BLUEPRINT.md",
+          "01_FRAMEWORK\\AI_VIRTUAL_RESEARCH_TEAM\\AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "系统架构",
+        "description": "职责 '系统架构' 涉及 313 个文件",
+        "severity": "中",
+        "files": [
+          "00_OVERVIEW\\INDEX.md",
+          "00_RESOURCES\\04_PLATFORM_DOCS\\INDEX.md",
+          "01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARCHITECTURE_EVOLUTION_HISTORY.md",
+          "01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",
+          "01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "文档治理",
+        "description": "职责 '文档治理' 涉及 296 个文件",
+        "severity": "中",
+        "files": [
+          "00_OVERVIEW\\INDEX.md",
+          "00_OVERVIEW\\README.md",
+          "00_RESOURCES\\INDEX.md",
+          "00_RESOURCES\\04_PLATFORM_DOCS\\INDEX.md",
+          "01_FRAMEWORK\\ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md",
+          "01_FRAMEWORK\\COMPLIANCE_REPORT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md",
+          "01_FRAMEWORK\\DIFFUSION_MODEL_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "机器学习",
+        "description": "职责 '机器学习' 涉及 286 个文件",
+        "severity": "中",
+        "files": [
+          "00_OVERVIEW\\README.md",
+          "01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+          "01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+          "01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+          "01_FRAMEWORK\\AUDIT_LOG_VIEWER_BLUEPRINT.md",
+          "01_FRAMEWORK\\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "数据源",
+        "description": "职责 '数据源' 涉及 278 个文件",
+        "severity": "中",
+        "files": [
+          "00_RESOURCES\\README.md",
+          "01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+          "01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+          "01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md",
+          "01_FRAMEWORK\\API_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARCHITECTURE_EVOLUTION_HISTORY.md",
+          "01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+          "01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "审计系统",
+        "description": "职责 '审计系统' 涉及 119 个文件",
+        "severity": "中",
+        "files": [
+          "00_RESOURCES\\04_PLATFORM_DOCS\\INDEX.md",
+          "01_FRAMEWORK\\ARCHITECTURE_DECISIONS\\INDEX.md",
+          "03_TRADING_TACTICS\\02_TACTICS_MERGED\\INDEX.md",
+          "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\INDEX.md",
+          "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\INDEX.md",
+          "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\INDEX.md",
+          "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\INDEX.md",
+          "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\INDEX.md",
+          "03_TRADING_TACTICS\\06_POSITION_MANAGEMENT\\INDEX.md",
+          "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK\\INDEX.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "绩效分析",
+        "description": "职责 '绩效分析' 涉及 40 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+          "01_FRAMEWORK\\BACKTEST_RESULT_VIEWER_BLUEPRINT.md",
+          "01_FRAMEWORK\\DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md",
+          "01_FRAMEWORK\\DATA_LAYER_INDEX.md",
+          "01_FRAMEWORK\\MODEL_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+          "01_FRAMEWORK\\MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+          "01_FRAMEWORK\\MODEL_ROLLBACK_BLUEPRINT.md",
+          "01_FRAMEWORK\\PERFORMANCE_BENCHMARK_FRAMEWORK.md",
+          "01_FRAMEWORK\\TRANSFER_LEARNING_BLUEPRINT.md",
+          "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "特征工程",
+        "description": "职责 '特征工程' 涉及 47 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md",
+          "01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",
+          "01_FRAMEWORK\\BENCHMARK_MANAGEMENT_BLUEPRINT.md",
+          "01_FRAMEWORK\\CURRICULUM_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\DATA_AUGMENTATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\DEEPAR_BLUEPRINT.md",
+          "01_FRAMEWORK\\FAIRNESS_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\GRAPH_NEURAL_NETWORK_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "风险预算",
+        "description": "职责 '风险预算' 涉及 118 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md",
+          "01_FRAMEWORK\\BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
+          "01_FRAMEWORK\\CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md",
+          "01_FRAMEWORK\\COUNTERPARTY_RISK_BLUEPRINT.md",
+          "01_FRAMEWORK\\COUNTERPARTY_RISK_ORE_IMPLEMENTATION.md",
+          "01_FRAMEWORK\\EVENT_DRIVEN_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\EVENT_SOURCING_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "组合优化",
+        "description": "职责 '组合优化' 涉及 170 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\ARCHITECTURE_AUDIT_REPORT.md",
+          "01_FRAMEWORK\\BLUEPRINT_ARCHITECTURE_MAPPING.md",
+          "01_FRAMEWORK\\BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
+          "01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\DEEPAR_BLUEPRINT.md",
+          "01_FRAMEWORK\\FACTOR_ENGINE_DETAILED_DESIGN.md",
+          "01_FRAMEWORK\\FACTOR_MINING_AUTOMATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\GOVERNANCE_DASHBOARD_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "市场状态识别",
+        "description": "职责 '市场状态识别' 涉及 68 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\ARCHITECTURE_AUDIT_REPORT.md",
+          "01_FRAMEWORK\\BLUEPRINT_ARCHITECTURE_MAPPING.md",
+          "01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\ENSEMBLE_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\IMPLEMENTATION_ACCELERATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\INTERFACE_CONTRACT_BLUEPRINT.md",
+          "01_FRAMEWORK\\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\README.md",
+          "03_TRADING_TACTICS\\API_Contract.md",
+          "03_TRADING_TACTICS\\INDEX.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "数据质量",
+        "description": "职责 '数据质量' 涉及 124 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md",
+          "01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\COUNTERPARTY_RISK_ORE_IMPLEMENTATION.md",
+          "01_FRAMEWORK\\DATA_SOURCE_FAILOVER_BLUEPRINT.md",
+          "01_FRAMEWORK\\FACTOR_MINING_AUTOMATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\GOVERNANCE_DASHBOARD_BLUEPRINT.md",
+          "01_FRAMEWORK\\GRAFANA_MONITORING_BLUEPRINT.md",
+          "01_FRAMEWORK\\INTERFACE_CONTRACT_BLUEPRINT.md",
+          "01_FRAMEWORK\\LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md",
+          "01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "市场状态识别 (Layer 4)",
+        "description": "职责 '市场状态识别 (Layer 4)' 涉及 44 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\DRIFT_DETECTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\HUMAN_AI_INTEGRATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\INDEX.md",
+          "01_FRAMEWORK\\NATURAL_LANGUAGE_MODULE_ANALYSIS.md",
+          "01_FRAMEWORK\\ONLINE_LEARNING_BLUEPRINT.md",
+          "01_FRAMEWORK\\PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\PRINCIPLE_CODIFIER_BLUEPRINT.md",
+          "01_FRAMEWORK\\TECH_STACK.md",
+          "02_FACTOR_LIBRARY\\MODULE_DESIGN_PLAN.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "风险预算 (Layer 11)",
+        "description": "职责 '风险预算 (Layer 11)' 涉及 73 个文件",
+        "severity": "中",
+        "files": [
+          "01_FRAMEWORK\\HUMAN_AI_INTEGRATION_BLUEPRINT.md",
+          "01_FRAMEWORK\\HUMAN_AI_INTERACTION_BLUEPRINT.md",
+          "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md",
+          "01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md",
+          "01_FRAMEWORK\\INDEX.md",
+          "01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_REPORT.md",
+          "01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_REPORT.md",
+          "01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md",
+          "01_FRAMEWORK\\LAYER_10_THIRD_ROUND_PROFESSIONAL_INSTITUTION_STANDARD_GAP_ANALYSIS.md",
+          "01_FRAMEWORK\\MISSING_MODULES_BLUEPRINT_COLLECTION.md"
+        ]
+      },
+      {
+        "type": "职责重叠",
+        "path": "数据质量 (Layer 1)",
+        "description": "职责 '数据质量 (Layer 1)' 涉及 36 个文件",
+        "severity": "中",
+        "files": [
+          "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+          "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_014237.md",
+          "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_014935.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\AI_PATTERN_RECOGNITION_ENGINE_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_CATALOG_METADATA_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md",
+          "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "03_TRADING_TACTICS\\05_STRATEGY_POOL",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\04_CONFIG_TEMPLATES",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_json_reports_20260402",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_reports_20260402",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\sample_validation_2026-04-02",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QMT_DATA_INTERFACE",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\20260406_encoding_issues_archive\\layer1_blueprints",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "06_ARCHIVE\\encoding_backups\\20260406_ai_workflow",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "08_HUMAN_AI_INTERFACE",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "09_RESEARCH_INNOVATION\\_archive",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "子目录缺索引",
+        "path": "11_STRATEGIC_DECISION\\archive\\2026-Q1",
+        "description": "子目录缺少INDEX.md导航文件",
+        "severity": "中"
+      },
+      {
+        "type": "重复文档",
+        "path": "01_FRAMEWORK\\RESEARCH_INNOVATION_LAYER_BLUEPRINT.md",
+        "description": "发现 2 个内容相似的文档",
+        "severity": "高",
+        "files": [
+          "01_FRAMEWORK\\RESEARCH_INNOVATION_LAYER_BLUEPRINT.md",
+          "09_RESEARCH_INNOVATION\\BLUEPRINT.md"
+        ]
+      },
+      {
+        "type": "重复文档",
+        "path": "06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+        "description": "发现 2 个内容相似的文档",
+        "severity": "高",
+        "files": [
+          "06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST.md",
+          "06_ARCHIVE\\main\\BLUEPRINTS\\07_SYSTEM_MANIFEST_backup.md"
+        ]
+      }
+    ],
+    "L3_standard": [
+      {
+        "type": "五大原则符合性",
+        "path": "职责驱动",
+        "description": "违反职责驱动原则的问题: 325个",
+        "severity": "高"
+      },
+      {
+        "type": "五大原则符合性",
+        "path": "索引完备",
+        "description": "违反索引完备原则的问题: 17个",
+        "severity": "高"
+      },
+      {
+        "type": "五大原则符合性",
+        "path": "版本隔离",
+        "description": "违反版本隔离原则的问题: 2个",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "01_FRAMEWORK\\DOCUMENT_NAMING_STANDARD.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "01_FRAMEWORK\\LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "05_IMPLEMENTATION\\05_TECHNICAL_SPECIFICATIONS\\INDEX.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_V10_20260405.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_V8_20260404.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_AUDIT_REPORT_V9_20260405.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260403_portfolio_optimization_duplicate\\README.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "06_ARCHIVE\\duplicate_documents\\20260405_data_catalog_metadata_duplicate\\README.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete\\README.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\ALERT_RESPONSIBILITY_OVERLAP_FIX_REPORT_20260404.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_FORMAT_FIX_REPORT_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_GOVERNANCE_P2_ISSUES_REMEDIATION_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\DOC_RECREATION_EVALUATION_REPORT_20260404.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\DUPLICATE_DOCUMENT_ARCHIVE_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERACTION_LAYER_DEEP_AUDIT_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_DEEP_AUDIT_REPORT_20260405.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_EIGHTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_FIFTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_FOURTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_NINTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_REAUDIT_REPORT_20260405.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_SEVENTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_SIXTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_TENTH_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\HUMAN_AI_INTERFACE_LAYER_THIRD_AUDIT_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\IMMEDIATE_ACTION_EXECUTION_REPORT_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\INCOMPLETE_BLUEPRINT_ARCHIVE_REPORT_20260404.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DATA_PREPROCESSING_DEEP_AUDIT_REPORT_20260404_V5.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260403_V2.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260404_V3.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260404_V4.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260405_V5.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DEEP_AUDIT_REPORT_20260405_V6.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_REMEDIATION_FINAL_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_DOCUMENT_GOVERNANCE_REMEDIATION_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_P2_CROSS_REFERENCE_COMPLETION_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER1_P2_CROSS_REFERENCE_PROGRESS_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V6.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER6_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_20260405_V7.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\LINK_VALIDATION_REPORT_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\MODULE_ID_DUPLICATION_REMEDIATION_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_COMPREHENSIVE_SUMMARY_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_CORE_DOCS_COMPLETION_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_CROSS_REFERENCE_EXECUTION_PLAN_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_CURRENT_PROGRESS_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_DAILY_SUMMARY_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_P2_BATCH1_COMPLETION_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_P2_BATCH2_COMPLETION_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\PHASE3_P2_PROGRESS_20260407.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\SHORT_TERM_IMPROVEMENT_PLAN_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\SHORT_TERM_IMPROVEMENT_PROGRESS_20260406.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\REPORTS\\SHORT_TERM_OPTIMIZATION_COMPLETION_REPORT_20260403.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\STANDARDS\\DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号缺失",
+        "path": "09_AUDIT\\TOOLS\\MARKDOWN_LINK_VALIDATOR.md",
+        "description": "文档缺少module_id",
+        "severity": "高"
+      },
+      {
+        "type": "编号重复",
+        "path": "AUTO_GENERATED_001",
+        "description": "module_id 'AUTO_GENERATED_001' 重复使用",
+        "severity": "高",
+        "files": [
+          "03_TRADING_TACTICS\\API_Contract.md",
+          "03_TRADING_TACTICS\\INDEX.md",
+          "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLUEPRINT_AUDIT_V8_20260407.md",
+          "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DOCUMENT_GOVERNANCE_WEEKLY_REPORT.md",
+          "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\SPARSE_DIRECTORY_GOVERNANCE_REPORT.md",
+          "06_ARCHIVE\\20260406_encoding_issues_archive\\ARCHIVE_README.md",
+          "09_AUDIT\\INDEX_AUDIT.md",
+          "09_AUDIT\\README.md",
+          "09_AUDIT\\PROCEDURES\\AI_AUDIT_GUIDELINES.md",
+          "09_AUDIT\\PROCEDURES\\PERSONAL_AUDIT_WORKFLOW.md",
+          "09_AUDIT\\REPORTS\\WEEKLY_LAYER_CHECK_REPORT.md",
+          "09_AUDIT\\STANDARDS\\AUDIT_STANDARDS.md",
+          "09_AUDIT\\STATE\\deep_document_audit_report_20260407_015907.md"
+        ]
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "API_README.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "01_FRAMEWORK\\AI_PERMISSIONS.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "02_FACTOR_LIBRARY\\05_BACKTEST_REORGANIZATION.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "02_FACTOR_LIBRARY\\SITEMAP.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\classification.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\limit-up-analysis.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\market-cycles.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\03_ADVANCED_TACTICS\\wave-trading.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking\\retail-strategies-a.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia\\retail-strategies-b.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-d.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-e.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-f.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail-strategies-g.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK\\ARCHIVED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\09_RISK_RULES\\RISK_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\36_DECISION_FRAMEWORK_ARCHIVED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\ai-integration.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\pattern-recognition.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "03_TRADING_TACTICS\\99_ARCHIVE\\technical-indicators.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\CODE_EXAMPLES.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\QUICK_REFERENCE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\VERSIONING.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\01_QUICKSTART\\INDEX.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\AI_AGENT_CALL_PROTOCOL.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\API_DESIGN.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\AUTH.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPER_RULES.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_STANDARDS.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\DEVELOPMENT_WORKFLOW.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\02_DEVELOPMENT\\TEST_FRAMEWORK.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_DEEP_AUDIT_REPORT_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\trading_costs\\T.05.TE001.trading_cost_model_algorithm_document.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\trading_costs\\TRADING_COST_TEST_CASE_DESIGN.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design\\04_NOZYIO\\ARCHIVED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\PERFORMANCE_MONITORING.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\QUALITY_GATE_MECHANISM.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\SPEC_APPROVER_TOOL_GUIDE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\VERSION_MANAGEMENT_AUTOMATION_GUIDE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\BEST_PRACTICES_TEMPLATE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\CASE_STUDY_TEMPLATE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\CHANGELOG.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\system_enhancement_manual.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FACTOR_BACKTEST_INTEGRATION_AUDIT_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\FULL_SYSTEM_AUDIT_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\monthly_summary_20260402.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\P1_FIXES_COMPLETED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PATH_LIST_AUDIT_UPDATE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_EXAMPLE.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\TEMP_FILE_AUDIT_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\factor-library\\ifind_factors_list.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete\\PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete\\STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\ARCHITECTURE_ANALYSIS_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\BLUEPRINT_VALIDATION_REPORT.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\BATCH_ADD_LAYER_FIELDS_REPORT_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\DOCUMENT_CLASSIFICATION_OPTIMIZATION_REPORT_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V3_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V4_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V5_20260407.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      },
+      {
+        "type": "YAML头部缺失",
+        "path": "09_AUDIT\\TEMPLATES\\DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
+        "description": "文档缺少标准YAML元数据",
+        "severity": "高"
+      }
+    ]
+  },
+  "summary": {
+    "total_issues": 755,
+    "L1_issues": 205,
+    "L2_issues": 425,
+    "L3_issues": 125
+  }
+}

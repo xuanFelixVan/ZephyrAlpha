@@ -1,4 +1,5 @@
 ---
+module_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT_001
 audit_id: LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_001
 version: 1.0.0
 status: Active
@@ -7,9 +8,18 @@ auditor: 首席架构师
 audit_scope: Layer 10治理与合规层所有文档
 audit_standard: 专业量化机构五大原则 + 三层审计标准
 compliance_level: 顶级专业标准
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
 ---
-
 # Layer 10治理与合规层文档治理审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计日期**: 2026-04-06
 > **审计范围**: Layer 10治理与合规层所有文档（25个文档）
@@ -33,7 +43,7 @@ compliance_level: 顶级专业标准
 
 ✅ **优点**:
 - 文档覆盖度达到100%，所有模块都有对应蓝图
-- 索引文档完整，LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md清晰列出所有模块
+- 索引文档完整，layer10_GOVERNANCE_COMPLIANCE_INDEX.md清晰列出所有模块
 - 开源项目集成方案完善，提供了详细的实施路径
 
 ❌ **主要问题**:
@@ -136,7 +146,7 @@ compliance_level: 顶级专业标准
 
 | 问题类型 | 具体表现 | 影响文档 | 风险等级 | 建议措施 |
 |---------|---------|---------|---------|---------|
-| **索引不完整** | 索引未列出所有活跃文档 | LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md | 🟡 P1 | 补充缺失文档 |
+| **索引不完整** | 索引未列出所有活跃文档 | layer10_GOVERNANCE_COMPLIANCE_INDEX.md | 🟡 P1 | 补充缺失文档 |
 
 **详细分析**:
 - 索引文档未列出以下文档：
@@ -236,7 +246,7 @@ compliance_level: 顶级专业标准
 | P1-001 | 数据质量文档职责混乱 | 4个数据质量文档 | 合并为统一蓝图 | 2小时 |
 | P1-002 | 目录漂移 | 3个数据质量文档 | 移动到正确Layer目录 | 10分钟 |
 | P1-003 | 命名相似度过高 | 4个数据质量文档 | 重新命名 | 30分钟 |
-| P1-004 | 索引不完整 | LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md | 补充缺失文档 | 15分钟 |
+| P1-004 | 索引不完整 | layer10_GOVERNANCE_COMPLIANCE_INDEX.md | 补充缺失文档 | 15分钟 |
 | P1-005 | 重复文档 | 4个数据质量文档 | 合并重复内容 | 1小时 |
 | P1-006 | 职责分散 | 4个数据质量文档 | 整合为统一文档 | 2小时 |
 | P1-007 | 索引层级混乱 | 部分索引文档 | 重新组织索引结构 | 30分钟 |
@@ -270,7 +280,7 @@ compliance_level: 顶级专业标准
 2. **修正编号不规范** (5分钟)
    ```bash
    # 文件: AI_GOVERNANCE_BLUEPRINT.md
-   # 修改: module_id: AI_GOVERNANCE_001 → module_id: AI_GOVERNANCE_BLUEPRINT_001
+   # 修改: module_id: AI_GOVERNANCE_001 → module_id: AI_GOVERNANCE_001
    ```
 
 3. **明确职责边界** (30分钟)
@@ -362,7 +372,7 @@ Layer 10治理与合规层的文档治理水平达到**专业量化机构标准�
 ### A. 审计文档清单
 
 **Layer 10核心文档** (25个):
-1. LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+1. layer10_GOVERNANCE_COMPLIANCE_INDEX.md
 2. LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md
 3. LAYER_10_GAP_ANALYSIS_REPORT.md
 4. GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md ❌ Layer标记错误

@@ -4,7 +4,7 @@ version: 1.0.0
 spec_version: 1.0
 status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARGIN_CALL_MONITOR_BLUEPRINT.md
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 created_date: 2026-04-05
 layer: Layer 6 (组合优化层 - 风险管理层)
 index: MARGIN_CALL_SPEC_001
@@ -18,6 +18,9 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+- 技术规格定义与实施标准制定与实施标准
+---
 ---
 
 # 爆仓线监控技术规格书 v1.0
@@ -570,7 +573,7 @@ CREATE TABLE IF NOT EXISTS alert_configurations (
 
 价格路径模拟（几何布朗运动）:
 ```
-S(t+dt) = S(t) * exp((r - 0.5*σ²)*dt + σ*√dt*Z)
+S(t+dt) = S(t) * exp((r - 0.5*σ)*dt + σ*√dt*Z)
 ```
 
 其中:
@@ -637,7 +640,7 @@ L_market = Σ (L_i * W_i)
 
 杠杆集中度（HHI指数）:
 ```
-HHI = Σ (W_i)²
+HHI = Σ (W_i)
 ```
 
 连锁爆仓概率:
@@ -645,7 +648,7 @@ HHI = Σ (W_i)²
 P_cascade = Σ P(margin_call_i) * P(contagion_i→j)
 ```
 
-**时间复杂度**: O(n²)
+**时间复杂度**: O(n)
 - n: 市场参与者数量
 
 **空间复杂度**: O(n)
@@ -656,7 +659,7 @@ P_cascade = Σ P(margin_call_i) * P(contagion_i→j)
 |------|------------|------------|------|
 | 雪球敲入概率计算 | O(N*M) | O(N*M) | N=10000路径，M=到期天数 |
 | 融资盘爆仓监控 | O(n) | O(1) | n=持仓数量 |
-| 市场杠杆风险评估 | O(n²) | O(n) | n=市场参与者数量 |
+| 市场杠杆风险评估 | O(n) | O(n) | n=市场参与者数量 |
 | 预警信号生成 | O(1) | O(1) | 常数时间 |
 | 风险面板查询 | O(k) | O(k) | k=监控对象数量 |
 
@@ -1200,16 +1203,16 @@ performance_benchmarks:
 
 ### 10.4 资源评估
 
-- **开发人力**: 1人 × 6周 = 240人时
-- **测试人力**: 0.5人 × 2周 = 40人时
+- **开发人力**: 1人  6周 = 240人时
+- **测试人力**: 0.5人  2周 = 40人时
 - **环境资源**: 
   - 开发服务器: 1台（8核16GB）
   - 测试服务器: 1台（8核16GB）
   - 生产服务器: 2台（8核16GB，主备）
 - **预算评估**: 
-  - 人力成本: 280人时 × 500元/人时 = 14万元
-  - 硬件成本: 3台服务器 × 2万元/台 = 6万元
-  - 软件成本: Redis企业版 × 5万元 = 5万元
+  - 人力成本: 280人时  500元/人时 = 14万元
+  - 硬件成本: 3台服务器  2万元/台 = 6万元
+  - 软件成本: Redis企业版  5万元 = 5万元
   - **总预算**: 25万元
 
 ---
@@ -1232,11 +1235,11 @@ performance_benchmarks:
 
 ### B. 参考文献
 
-1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-8架构定义
+1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构定义
 2. [MODULE_RESPONSIBILITY_BOUNDARIES.md](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md) - 模块职责边界
-3. [MARGIN_CALL_MONITOR_BLUEPRINT.md](../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARGIN_CALL_MONITOR_BLUEPRINT.md) - 爆仓线监控蓝图
-4. [DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md](../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md) - 动态杠杆管理蓝图
-5. [STRESS_TESTING_SYSTEM_BLUEPRINT.md](../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md) - 压力测试系统蓝图
+3. MARGIN_CALL_MONITOR_BLUEPRINT.md - 爆仓线监控蓝图
+4. DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md - 动态杠杆管理蓝图
+5. STRESS_TESTING_SYSTEM_BLUEPRINT.md - 压力测试系统蓝图
 
 ### C. 变更记录
 

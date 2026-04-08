@@ -3,16 +3,25 @@ module_id: ARCHIVE_BLOCK_U2_FINDINGS_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
+responsibility:
+- 归档文档、历史版本、审计状态追踪
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 ---
+---
+
 
 # U2块审计发?- 根目录其他文?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计时间**: 2026-03-31
 > **审计范围**: 根目录非核心索引文档
@@ -23,17 +32,17 @@ implementation_status: 进行?
 
 ## 📊 审计摘要
 
-| 指标 | �?| 说明 |
+| 指标 | ?| 说明 |
 |------|------|------|
 | **审查文件?* | 9?| README, DOCUMENT_AUDIT_v5.3, pyproject.toml, requirements.txt, .env.example, .gitignore, .trae.ignore, main.py |
 | **发现问题?* | 待计?| P0/P1/P2分类统计 |
-| **版本一�?* | 待验?| 多文件版本标识不一?|
+| **版本一?* | 待验?| 多文件版本标识不一?|
 
 ---
 
 ## 🔍 文件存在性检?
 
-| 文件 | 位置 | �?| 说明 |
+| 文件 | 位置 | ?| 说明 |
 |------|------|------|------|
 | README.md | 根目?| ?存在 | 项目入口文档 |
 | DOCUMENT_AUDIT_v5.3.md | 根目?| ?存在 | 审计报告文档 |
@@ -56,7 +65,7 @@ implementation_status: 进行?
 **发现位置**: `README.md` ??
 **问题描述**: README.md标识系统版本为v5.0，但系统实际版本为v5.3
 
-| 文件 | 版本标识 | 系统版本 | �?|
+| 文件 | 版本标识 | 系统版本 | ?|
 |------|----------|----------|------|
 | README.md | v5.0 | v5.3 | ⚠️ 不一?|
 | src/main.py | v5.0 | v5.3 | ⚠️ 不一?|
@@ -153,7 +162,7 @@ implementation_status: 进行?
 
 ### 2026-03-31 U2块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | U2-P1-001 | README.md版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | U2-P1-002 | src/main.py版本v5.0 ?v5.3?处） | ?已修?| 2026-03-31 |

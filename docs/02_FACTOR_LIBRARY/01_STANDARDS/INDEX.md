@@ -1,51 +1,48 @@
 ---
-module_id: INDEX_STANDARDS_001
-version: 1.0.1
+module_id: FACTOR_LIBRARY_01_STANDARDS_INDEX
+version: 1.0.0
 status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-04
-owner: 首席文档架构�?standard_type: 专业量化机构索引
-applicable_scope: 因子方法论目�?compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已完�?---
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 目录导航
+  - 模块索引
+  - 职责协调
+standard_type: 索引文档
+applicable_scope: 因子库
+compliance_level: 专业标准
+---
+# 01_STANDARDS 标准文档
 
-# 因子方法论目录索�?
-> **目录职责**: 因子计算框架、因子管理标准、因子筛选策�?
-## 📁 目录结构
-
-| 文件 | 职责 | 状�?|
-|------|------|------|
-| [README.md](README.md) | 方法论概�?| Active |
-| [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) | 因子注册�?| Active |
-| [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) | 因子计算框架 | Active |
-| [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准（含筛选策略） | Active |
-| [FACTOR_MINING_GUIDE.md](FACTOR_MINING_GUIDE.md) | 因子挖掘指南 | Active |
-| [FACTOR_VALIDATION_GUIDE.md](FACTOR_VALIDATION_GUIDE.md) | 因子验证指南 | Active |
-| [TECHNICAL_INDICATORS.md](TECHNICAL_INDICATORS.md) | 技术指�?| Active |
-| [FUTURE_FACTOR_TOOLS.md](FUTURE_FACTOR_TOOLS.md) | 未来因子工具 | Active |
-| [FACTOR_PREPROCESSING.md](FACTOR_PREPROCESSING.md) | 因子预处�?| Active |
-| [FACTOR_NEUTRALIZATION.md](FACTOR_NEUTRALIZATION.md) | 因子中性化 | Active |
-| [FACTOR_SYNTHESIS.md](FACTOR_SYNTHESIS.md) | 因子合成 | Active |
-| [FACTOR_RETURN_ANALYSIS.md](FACTOR_RETURN_ANALYSIS.md) | 因子收益分析 | Active |
-| [IC_ANALYSIS.md](IC_ANALYSIS.md) | IC分析 | Active |
-| [BACKTEST_STANDARDS.md](BACKTEST_STANDARDS.md) | 回测标准 | Active |
-| [RESEARCH_MANAGEMENT.md](RESEARCH_MANAGEMENT.md) | 研究管理 | Active |
-| [T.02.FE001.factor_definition.md](T.02.FE001.factor_definition.md) | 因子定义模板 | Active |
-
-## 📖 核心文档
-
-### 因子框架
-- [FACTOR_TAXONOMY.md](FACTOR_TAXONOMY.md) - 因子分类�?- [FACTOR_CALCULATION_FRAMEWORK.md](FACTOR_CALCULATION_FRAMEWORK.md) - 因子计算框架
-- [FACTOR_MANAGEMENT_STANDARD.md](FACTOR_MANAGEMENT_STANDARD.md) - 因子管理标准
-
-### 因子研究与验�?- [FACTOR_MINING_GUIDE.md](FACTOR_MINING_GUIDE.md) - 因子挖掘指南
-- [FACTOR_VALIDATION_GUIDE.md](FACTOR_VALIDATION_GUIDE.md) - 因子验证指南
-
-### 因子分析
-- [IC_ANALYSIS.md](IC_ANALYSIS.md) - IC分析
-- [FACTOR_RETURN_ANALYSIS.md](FACTOR_RETURN_ANALYSIS.md) - 因子收益分析
-- [FACTOR_NEUTRALIZATION.md](FACTOR_NEUTRALIZATION.md) - 因子中性化
+> **核心职责**: 因子定义、分类、注册等标准规范
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航、模块索引、职责协调
+> - ❌ 本文档不负责：具体实现细节、其他模块内容
 
 ---
 
-**索引版本**: v1.0.0 | **创建日期**: 2026-04-03 | **维护�?*: 首席文档架构�?
+## 📋 概述
+
+因子定义、分类、注册等标准规范
+
+## 📂 目录结构
+
+- [FACTOR_REGISTRY](./FACTOR_REGISTRY.md)
+- [FACTOR_TAXONOMY](./FACTOR_TAXONOMY.md)
+
+---
+
+## 🎯 核心职责
+
+1. **因子定义标准**
+2. **因子分类体系**
+3. **因子注册规范**
+
+---
+
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |

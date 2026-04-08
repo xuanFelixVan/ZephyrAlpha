@@ -1,5 +1,18 @@
 ---
-module_id: TCA_BLUEPRINT_001
+module_id: LAYER_TCA_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 5 (执行层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: TCA_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
@@ -19,6 +32,47 @@ open_source_solution: tcapy
 ---
 
 # Layer 11.9: 交易成本分析系统蓝图 (TCA)
+> **核心职责**: 交易成本分析系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：交易成本分析系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Tca蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Tca蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**交易成本分析系统蓝图，负责交易成本测量和优化**。
+
+### 职责边界
+
+**负责**：
+- ✅ 交易成本测量（显性/隐性成本）
+- ✅ 成本归因分析（成本来源分析）
+- ✅ 成本优化建议（成本优化方案）
+- ✅ TCA报告生成（成本分析报告）
+
+**不负责**：
+- ❌ 资产配置决策（由战略资产配置模块负责）
+- ❌ 风险预算分配（由风险预算分配模块负责）
+- ❌ 具体交易执行（由Layer 6组合优化层负责）
+
+### 对接模块
+
+**上游模块**：
+- Layer 6 组合优化层
+- Layer 7 风险管理层
+
+**下游模块**：
+- Layer 8 报告层
+- Layer 10 质量保证层
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  
@@ -153,7 +207,7 @@ Total_Slippage = Market_Impact + Timing_Cost + Spread_Cost
 - Spread_Cost: 买卖价差成本
 
 Implementation Shortfall (IS):
-IS = (实际成交价 - 决策价格) × 交易量
+IS = (实际成交价 - 决策价格)  交易量
 ```
 
 #### 2.1.2 技术实现
@@ -313,10 +367,10 @@ class SlippageAnalysisEngine:
 
 ```
 临时冲击:
-Temporary_Impact = α × (Trade_Size / ADV)^β × σ
+Temporary_Impact = α  (Trade_Size / ADV)^β  σ
 
 永久冲击:
-Permanent_Impact = γ × (Trade_Size / ADV)^δ × σ
+Permanent_Impact = γ  (Trade_Size / ADV)^δ  σ
 
 总冲击:
 Total_Impact = Temporary_Impact + Permanent_Impact
@@ -487,7 +541,7 @@ class MarketImpactEngine:
 
 ```
 VWAP基准:
-VWAP = Σ(Price_i × Volume_i) / Σ Volume_i
+VWAP = Σ(Price_i  Volume_i) / Σ Volume_i
 
 TWAP基准:
 TWAP = Σ Price_i / N
@@ -496,7 +550,7 @@ Arrival Price基准:
 Arrival_Price = 订单到达时的中间价
 
 Implementation Shortfall:
-IS = (Execution_Price - Decision_Price) × Quantity
+IS = (Execution_Price - Decision_Price)  Quantity
    = Market_Impact + Timing_Cost + Opportunity_Cost
 ```
 
@@ -644,16 +698,16 @@ class ExecutionBenchmarkSystem:
 
 ```
 经纪商评分:
-Broker_Score = w1 × Cost_Score + w2 × Fill_Rate + w3 × Speed_Score
+Broker_Score = w1  Cost_Score + w2  Fill_Rate + w3  Speed_Score
 
 成本评分:
-Cost_Score = 100 - (Average_Slippage_Bps / Max_Acceptable_Slippage) × 100
+Cost_Score = 100 - (Average_Slippage_Bps / Max_Acceptable_Slippage)  100
 
 成交率:
 Fill_Rate = Filled_Quantity / Ordered_Quantity
 
 执行速度:
-Speed_Score = 100 - (Execution_Time / Max_Time) × 100
+Speed_Score = 100 - (Execution_Time / Max_Time)  100
 ```
 
 #### 2.4.2 技术实现
@@ -1119,7 +1173,7 @@ class CallAuctionTCA:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [LIQUIDITY_MANAGEMENT_BLUEPRINT.md](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md) | 流动性管理系统 |
 | [tcapy GitHub](https://github.com/cuemacro/tcapy) | tcapy开源项目 |
@@ -1137,3 +1191,34 @@ class CallAuctionTCA:
 **文档状态**: ✅ 设计完成  
 **开源方案**: tcapy  
 **下一步**: 创建再平衡决策系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Tca Blueprint
+- **模块ID**: TCA_BLUEPRINT_001
+- **蓝图文档**: TCA_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.9 - 交易成本分析系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Tca Blueprint** | Layer 11.9 - 交易成本分析系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

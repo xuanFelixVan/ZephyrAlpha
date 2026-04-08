@@ -1,0 +1,49 @@
+--- a/docs__01_FRAMEWORK__COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md
++++ b/docs__01_FRAMEWORK__COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md
+@@ -1,36 +1,27 @@
+ ---
+-module_id: COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT
+-version: 1.0.0
+-status: Active
+-created_date: 2026-04-07
+-last_updated: 2026-04-07
+-owner: 首席文档架构师
+-responsibility:
+-  - COMPLIANCE_KNOWLEDGE_BASE蓝图设计
+----
+-
+-﻿---
+ module_id: COMPLIANCE_KNOWLEDGE_BASE_001
+ version: 1.0.0
+ status: Active
+ created_date: 2026-04-07
+-last_updated: 2026-04-07
++last_updated: '2026-04-07'
+ owner: 首席架构师
+ layer: Layer 10 (治理与合规层)
+ standard_type: 专业量化机构蓝图
+ applicable_scope: 合规知识管理、法规查询、最佳实践库
+ compliance_level: 顶级专业标准
+-reference_models: ["Claude Skills for GRC", "Unicis Platform", "Open Source GRC"]
++reference_models:
++- Claude Skills for GRC
++- Unicis Platform
++- Open Source GRC
+ related_documents:
+-  - REGULATORY_CHANGE_TRACKING_BLUEPRINT.md
+-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+-  - AI_GOVERNANCE_BLUEPRINT.md
++- REGULATORY_CHANGE_TRACKING_BLUEPRINT.md
++- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
++- AI_GOVERNANCE_BLUEPRINT.md
+ parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
+ implementation_status: 蓝图设计完成
+ responsibility:
+-  - 系统架构蓝图设计与实施指导与实施方案
+----
+-
++- 系统架构蓝图设计与实施指导与实施方案
++---
+ # 合规知识库管理系统蓝图
+ 
+ > **核心职责**: 合规知识库管理系统设计

@@ -95,7 +95,7 @@ YYYYMMDD_因子名称_v版本.py
 | [../README.md](../README.md) | 研发笔记规范总览 |
 | [../INDEX.md](../INDEX.md) | 研发笔记目录索引 |
 | [../00_TEMPLATES/02_FACTOR_TEMPLATE_v1.0.0.py](../00_TEMPLATES/02_FACTOR_TEMPLATE_v1.0.0.py) | 因子开发模板文件 |
-| [../../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](../../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 |
+| [因子库标准索引](../../docs/02_FACTOR_LIBRARY/01_STANDARDS/INDEX.md) | 因子标准与索引 |
 
 ---
 

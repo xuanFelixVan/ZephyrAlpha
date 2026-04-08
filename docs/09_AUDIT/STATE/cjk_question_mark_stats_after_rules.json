@@ -1,0 +1,46 @@
+{
+  "files": 385,
+  "hits": 24143,
+  "top10": [
+    [
+      "docs/02_FACTOR_LIBRARY/10_MANUAL/FACTOR_LIBRARY_MANUAL.md",
+      924
+    ],
+    [
+      "docs/01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+      415
+    ],
+    [
+      "docs/01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md",
+      393
+    ],
+    [
+      "docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+      382
+    ],
+    [
+      "docs/04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md",
+      372
+    ],
+    [
+      "docs/01_FRAMEWORK/NATURAL_LANGUAGE_MODULE_ANALYSIS.md",
+      295
+    ],
+    [
+      "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md",
+      266
+    ],
+    [
+      "docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md",
+      254
+    ],
+    [
+      "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_l.md",
+      201
+    ],
+    [
+      "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+      201
+    ]
+  ]
+}

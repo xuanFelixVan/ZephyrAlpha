@@ -1,0 +1,483 @@
+{
+  "fix_time": "1775499240.639156",
+  "total_docs": 69,
+  "fixed_count": 65,
+  "error_count": 0,
+  "results": [
+    {
+      "doc": "docs/10_AI_WORKFLOW/OPEN_SOURCE_INTEGRATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 风险预算",
+      "new_responsibility": "风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/08_HUMAN_AI_INTERFACE/10_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/08_HUMAN_AI_INTERFACE/06_REPORTING/REPORTING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/08_HUMAN_AI_INTERFACE/02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md",
+      "status": "error",
+      "message": "未找到YAML头部"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_BLUEPRINT.md",
+      "status": "error",
+      "message": "未找到YAML头部"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AUTO_REPAIR_ENGINE_BLUEPRINT.md",
+      "status": "error",
+      "message": "未找到YAML头部"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+      "status": "error",
+      "message": "未找到YAML头部"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/PROBABILISTIC_FORECASTING_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 风险预算",
+      "new_responsibility": "风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_MONITORING_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MODEL_INTERPRETABILITY_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 风险预算",
+      "new_responsibility": "风险预算管理与分配，包括风险限额设定、预算动态调整、风险预算监控与预警",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MLOPS_PLATFORM_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DRIFT_DETECTION_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "因子计算与特征工程，包括因子挖掘、因子预处理、因子有效性检验、因子组合优化",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/CAUSAL_INFERENCE_TECHNICAL_SPECIFICATION.md",
+      "status": "success",
+      "old_responsibility": "- 市场状态识别",
+      "new_responsibility": "市场状态识别与分类，包括市场环境判断、状态转换检测、状态预测模型",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 交易执行",
+      "new_responsibility": "本文档负责可信执行环境(TEE)设计，包括：",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/VOLATILITY_PREDICTION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的波动率预测模型设计，包括波动率建模、GARCH模型、神经网络预测等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/TEXT_ENCODER_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的文本编码器设计，包括文本向量化、语义编码、多语言支持等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/TAIL_RISK_PREDICTION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 风险预算",
+      "new_responsibility": "本文档负责Layer 4机器学习层的尾部风险预测模型设计，包括极端事件预测、尾部风险建模、压力测试等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/SYNTHETIC_DATA_GENERATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的合成数据生成系统设计，包括GAN生成、VAE生成、Diffusion模型等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/SPARSE_ATTENTION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的稀疏注意力机制设计，包括稀疏注意力计算、长序列处理、内存优化等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/SELF_SUPERVISED_LEARNING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 特征工程",
+      "new_responsibility": "本文档负责Layer 4机器学习层的自监督学习设计，包括对比学习、掩码预测、自监督预训练等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的安全多方计算设计，包括隐私计算、联邦学习、安全聚合等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/RAG_SYSTEM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的RAG检索增强生成系统设计，包括文档检索、知识库构建、答案生成等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/NEURAL_ODE_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据源",
+      "new_responsibility": "本文档负责Layer 4机器学习层的神经ODE设计，包括连续时间建模、微分方程求解、动态系统建模等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/NBEATS_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的N-BEATS时序模型设计，包括时序分解、趋势预测、季节性建模等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_WATERMARK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型水印系统设计，包括水印嵌入、水印检测、版权保护等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_VERSIONING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型版本管理系统设计，包括版本控制、变更追踪、回滚机制等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_SERVING_FRAMEWORK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据源",
+      "new_responsibility": "数据源管理与数据接入，包括数据采集、数据清洗、数据存储、数据服务",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_REGISTRY_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "数据质量监控与治理，包括数据完整性检查、一致性验证、异常检测、数据修复",
+      "source": "generated"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_QUANTIZATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型量化系统设计，包括量化算法、精度优化、推理加速等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_PRUNING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型剪枝系统设计，包括剪枝算法、稀疏优化、压缩加速等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型性能基准测试设计，包括基准定义、性能测试、对比分析等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_MONITORING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型监控系统设计，包括性能监控、漂移检测、告警机制等核心功能。---",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型调试工具包设计，包括梯度分析、激活值分析、权重分析等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_AB_TESTING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型A/B测试系统设计，包括实验设计、流量分配、统计分析等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MODEL_CARD_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的模型卡片系统设计，包括模型描述、性能指标、使用限制等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MLOPS_PLATFORM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "本文档负责Layer 4机器学习层的MLOps平台设计，包括流水线管理、实验跟踪、模型部署等核心功能。---",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MIXED_PRECISION_TRAINING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的混合精度训练设计，包括精度优化、内存管理、训练加速等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MIXTURE_OF_EXPERTS_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的混合专家模型设计，包括专家路由、负载均衡、模型并行等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MIA_DEFENSE_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的成员推理攻击防御设计，包括攻击检测、防御策略、隐私保护等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MEMORY_AUGMENTED_NN_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的记忆增强神经网络设计，包括外部记忆、读写机制、推理能力等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 交易执行",
+      "new_responsibility": "本文档负责Layer 4机器学习层的市场微观结构模型设计，包括订单簿建模、价格发现、流动性分析等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MAMBA_SSM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的Mamba状态空间模型设计，包括序列建模、长距离依赖、高效推理等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/MACHINE_LEARNING_LAYER_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "本文档负责Layer 4机器学习层的整体架构设计，包括模块划分、接口定义、技术选型等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/LIQUID_NEURAL_NETWORK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的液态神经网络设计，包括连续时间动力学、自适应结构、实时学习等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/INFERENCE_ACCELERATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的推理加速系统设计，包括推理优化、批处理加速、硬件加速等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的同态加密机器学习设计，包括加密计算、隐私保护、安全推理等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/GRAPH_NEURAL_NETWORK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 交易执行",
+      "new_responsibility": "本文档负责Layer 4机器学习层的图神经网络设计，包括图结构建模、消息传递、节点分类等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/GRADIENT_CHECKPOINTING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的梯度检查点设计，包括内存优化、计算重用、训练加速等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/GRADIENT_ACCUMULATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的梯度累积设计，包括批次模拟、内存优化、训练稳定性等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/FEDERATED_LEARNING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的联邦学习系统设计，包括分布式训练、隐私保护、模型聚合等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/EXPERIMENT_TRACKING_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 因子计算",
+      "new_responsibility": "本文档负责Layer 4机器学习层的生产级实验追踪系统设计，包括：",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DIFFUSION_MODEL_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的扩散模型设计，包括扩散过程、去噪网络、生成采样等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的差分隐私机器学习设计，包括噪声添加、隐私预算、隐私保护等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DEEPAR_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 组合优化",
+      "new_responsibility": "本文档负责Layer 4机器学习层的DeepAR时序模型设计，包括概率预测、自回归结构、不确定性建模等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DATA_AUGMENTATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 特征工程",
+      "new_responsibility": "本文档负责Layer 4机器学习层的数据增强系统设计，包括：",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DATA_ANNOTATION_PLATFORM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据源",
+      "new_responsibility": "本文档负责Layer 4机器学习层的数据标注平台设计，包括标注工具、质量控制、标注流程等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/CODE_GENERATION_MODEL_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的代码生成模型设计，包括代码理解、代码生成、代码补全等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/BACKDOOR_DETECTION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据质量",
+      "new_responsibility": "本文档负责Layer 4机器学习层的后门检测系统设计，包括后门检测、防御策略、安全审计等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 机器学习",
+      "new_responsibility": "本文档负责Layer 4机器学习层的批处理推理优化设计，包括批处理策略、推理加速、资源优化等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/AUTOML_PIPELINE_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 特征工程",
+      "new_responsibility": "本文档负责Layer 4机器学习层的AutoML流水线设计，包括自动特征工程、自动模型选择、自动调参等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 交易执行",
+      "new_responsibility": "本文档负责Layer 4机器学习层的AI智能体框架设计，包括智能体架构、任务规划、工具调用等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "- 数据源",
+      "new_responsibility": "本文档负责Layer 4机器学习层的验收标准设计，包括功能验收、性能验收、安全验收等核心功能。---",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "风险预算",
+      "new_responsibility": "本文档负责Layer 4机器学习层的数据流架构设计，包括流式处理、批处理、混合处理等核心功能。",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/AI_TRUST_CALIBRATION_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "风险预算",
+      "new_responsibility": "本文档负责AI信任动态校准体系设计，包括：\n四维校准架构（历史表现、市场状态、置信度、风险贡献）\n五级信任等级体系\n信任等级动态调整机制\n表现追踪与评估系统\n  \n  战略级定义请参考以下文档：\n风险分级战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md\n人机协作边界战略定义：HUMAN_AI_INTERACTION_BLUEPRINT.md\n--",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "市场状态识别",
+      "new_responsibility": "**本文档职责（Layer 10 治理与合规层）**：\nAI能力差距分析（对标专业机构能力）\nAI能力补充计划（补齐能力短板）\nAI能力提升路径（从85%到95%完整度）\nAI能力评估体系（能力成熟度评估）\n  \n  **与本文档职责边界**：\nGOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计\nAI_GOVERNANCE_BLUEPRINT.md: AI行为准则与治理机制\nAI_STRATEGY_AUTOMATION_BLUEPRINT.md: AI策略自动化\nMODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理\n--",
+      "source": "responsibility_boundary"
+    },
+    {
+      "doc": "docs/01_FRAMEWORK/ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+      "status": "success",
+      "old_responsibility": "市场状态识别",
+      "new_responsibility": "本文档负责Layer 4机器学习层的自适应模型系统设计，包括在线适应、概念漂移、模型更新等核心功能。",
+      "source": "responsibility_boundary"
+    }
+  ]
+}

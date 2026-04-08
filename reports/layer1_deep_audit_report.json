@@ -1,0 +1,275 @@
+{
+  "scan_time": "2026-04-07T02:06:44.741800",
+  "layer": "Layer 1 (数据预处理层)",
+  "summary": {
+    "total_documents": 16,
+    "total_issues": 32,
+    "high_severity_issues": 16,
+    "responsibility_issues": 16,
+    "duplicate_groups": 2,
+    "yaml_issues": 0,
+    "structure_issues": 14,
+    "overlap_count": 0,
+    "compliance_rate": "80.00%"
+  },
+  "issues": [],
+  "duplicates": [
+    {
+      "type": "功能相似",
+      "severity": "中",
+      "documents": [
+        "ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+        "DATA_QUALITY_MONITORING_BLUEPRINT.md"
+      ],
+      "description": "2个文档关键词高度相似: 数据清洗, 数据源, 数据质量",
+      "recommendation": "检查是否需要合并或明确区分"
+    },
+    {
+      "type": "功能相似",
+      "severity": "中",
+      "documents": [
+        "DATA_CATALOG_BLUEPRINT.md",
+        "DATA_CATALOG_METADATA_BLUEPRINT.md",
+        "HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md"
+      ],
+      "description": "3个文档关键词高度相似: 数据源, 数据质量, 数据预处理",
+      "recommendation": "检查是否需要合并或明确区分"
+    }
+  ],
+  "responsibility_overlap": [],
+  "yaml_issues": [],
+  "structure_issues": [
+    {
+      "document": "ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "缺少概述章节",
+      "severity": "中",
+      "description": "文档缺少概述或核心定位章节",
+      "recommendation": "添加概述章节，说明模块的核心功能"
+    },
+    {
+      "document": "ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_CATALOG_METADATA_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_COST_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_FABRIC_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_QUALITY_MONITORING_BLUEPRINT.md",
+      "issue_type": "缺少概述章节",
+      "severity": "中",
+      "description": "文档缺少概述或核心定位章节",
+      "recommendation": "添加概述章节，说明模块的核心功能"
+    },
+    {
+      "document": "DATA_SECURITY_COMPLIANCE_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_SOURCE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "DATA_VERSION_CONTROL_BLUEPRINT.md",
+      "issue_type": "缺少变更历史",
+      "severity": "低",
+      "description": "文档缺少变更历史章节",
+      "recommendation": "添加变更历史章节，记录文档变更"
+    },
+    {
+      "document": "DATA_VERSION_CONTROL_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "REALTIME_DATA_LAKE_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    },
+    {
+      "document": "UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md",
+      "issue_type": "缺少概述章节",
+      "severity": "中",
+      "description": "文档缺少概述或核心定位章节",
+      "recommendation": "添加概述章节，说明模块的核心功能"
+    },
+    {
+      "document": "UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md",
+      "issue_type": "缺少交叉引用",
+      "severity": "中",
+      "description": "文档缺少交叉引用章节",
+      "recommendation": "添加相关文档章节，说明上下游依赖"
+    }
+  ],
+  "recommendations": [
+    "## 🔴 高优先级建议",
+    "",
+    "### 1. 处理重复文档",
+    "- 识别并删除完全重复的文档",
+    "- 合并职责相似的文档",
+    "- 明确区分功能相似但职责不同的文档",
+    "",
+    "### 2. 明确职责定义",
+    "- 为缺少职责描述的文档添加清晰的职责说明",
+    "- 扩充过短的职责描述",
+    "- 添加职责边界章节，明确文档范围",
+    "",
+    "### 4. 规范文档结构",
+    "- 添加缺失的概述章节",
+    "- 添加变更历史记录",
+    "- 添加文档治理章节",
+    "- 添加交叉引用章节",
+    ""
+  ],
+  "responsibility_issues": [
+    {
+      "document": "ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_CATALOG_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_CATALOG_METADATA_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_COST_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_FABRIC_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_MESH_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_OBSERVABILITY_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_QUALITY_MONITORING_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_SECURITY_COMPLIANCE_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_SOURCE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "DATA_VERSION_CONTROL_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "REALTIME_DATA_LAKE_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    },
+    {
+      "document": "UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md",
+      "issue_type": "职责缺失",
+      "severity": "高",
+      "description": "文档缺少明确的职责描述",
+      "recommendation": "添加清晰的职责描述，说明文档的核心功能"
+    }
+  ]
+}

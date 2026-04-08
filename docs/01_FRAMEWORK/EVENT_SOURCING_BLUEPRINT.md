@@ -1,5 +1,18 @@
 ---
-module_id: EVENT_SOURCING_BLUEPRINT_001
+module_id: EVENTSOURCINGBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 首席架构师
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+layer: Layer 5 (执行层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+module_id: EVENT_SOURCING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -19,6 +32,11 @@ implementation_status: 设计阶段
 ---
 
 # 事件溯源系统蓝图
+> **核心职责**: Event Sourcing蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Event Sourcing蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-05
@@ -428,7 +446,7 @@ class EventReplayer:
         
         for event in events:
             if event.event_type in self.handlers:
-                state = self.handlers[event.event_type](state, event)
+                state = self.handlersevent.event_type
         
         return state
     
@@ -468,7 +486,7 @@ class EventReplayer:
             )
             
             if event.event_type in self.handlers:
-                state = self.handlers[event.event_type](state, event)
+                state = self.handlersevent.event_type
         
         return state
 ```
@@ -563,9 +581,40 @@ class Subscription:
 | 文档 | 说明 |
 |------|------|
 | [STRATEGY_EXECUTION_LAYER_BLUEPRINT.md](./STRATEGY_EXECUTION_LAYER_BLUEPRINT.md) | 策略执行层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| RISK_MANAGEMENT_LAYER_BLUEPRINT.md | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Event Sourcing Blueprint
+- **模块ID**: EVENT_SOURCING_BLUEPRINT_001
+- **蓝图文档**: EVENT_SOURCING_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 事件溯源系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Event Sourcing Blueprint** | 事件溯源系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

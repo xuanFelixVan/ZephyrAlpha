@@ -1,24 +1,34 @@
 ---
-module_id: DATA_SOURCE_LAYER_BLUEPRINT_001
+module_id: DATA_SOURCE_LAYER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 0 (数据源层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 0 - 数据源层
 compliance_level: 顶级专业标准
-reference_models: ["Bloomberg Terminal", "Wind Financial Terminal", "Reuters Eikon", "Citadel Data Infrastructure"]
+reference_models:
+- Bloomberg Terminal
+- Wind Financial Terminal
+- Reuters Eikon
+- Citadel Data Infrastructure
 related_documents:
-  - ARCHITECTURE.md
-  - DATA_PREPROCESSING_LAYER_BLUEPRINT.md
-  - DATA_QUALITY_MONITORING_BLUEPRINT.md
+- ARCHITECTURE.md
+- DATA_PREPROCESSING_LAYER_BLUEPRINT.md
+- DATA_QUALITY_MONITORING_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+- 数据管理架构设计与实施规范与优化维护
 ---
-
 # Layer 0: 数据源层蓝图
+> **核心职责**: Data Source Layer蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Source Layer蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-05
@@ -884,9 +894,40 @@ class NewsData:
 | 文档 | 说明 |
 |------|------|
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
-| [DATA_QUALITY_MONITORING_BLUEPRINT.md](./DATA_QUALITY_MONITORING_BLUEPRINT.md) | 数据质量监控蓝图 |
+| DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量监控蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 数据源层
+##### 0.001. Data Source Layer Blueprint
+- **模块ID**: DATA_SOURCE_LAYER_BLUEPRINT_001
+- **蓝图文档**: DATA_SOURCE_LAYER_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 0 - 数据源层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Data Source Layer Blueprint** | Layer 0 - 数据源层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

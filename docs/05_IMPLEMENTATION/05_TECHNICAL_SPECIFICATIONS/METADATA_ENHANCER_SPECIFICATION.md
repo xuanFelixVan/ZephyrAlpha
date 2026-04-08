@@ -1,86 +1,105 @@
 ---
-standard_type: 技术规�?applicable_scope: 元数据管理系�?compliance_level: 正式标准
+module_id: METADATA_ENHANCER_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - METADATA_ENHANCER技术规范
+---
+
+﻿---
+version: 1.0.0
+standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮒﮔﺍﮔ؟ﻝ؟۰ﻝﻝﺏﭨﻝﭨ?compliance_level: ﮔ۲ﮒﺙﮔﮒ
+responsibility:
+  - 系统实施与部署管理与优化维护
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: METADATA_ENHANCER_SPECIFICATION
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
-# 元数据增强工具技术规�?
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
----
+last_updated: 2026-04-02---
 
-## 1. 概述
+# ﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 目标
-
-定义元数据增强工具的技术规范，确保工具能够有效增强文档元数据�?
-### 1.2 适用范围
-
-- 元数据自动推�?- 元数据完整性检�?- 元数据格式标准化
-
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 ---
 
-## 2. 架构设计
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 2.1 核心组件
+### 1.1 ﻝ؟ﮔ
+
+ﮒ؟ﻛﺗﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮒ۱ﮒﺙﭦﮔﮔ۰۲ﮒﮔﺍﮔ؟ﻙ?
+### 1.2 ﻠﻝ۷ﻟﮒﺑ
+
+- ﮒﮔﺍﮔ؟ﻟ۹ﮒ۷ﮔ۷ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮔﺙﮒﺙﮔﮒﮒ
+
+---
+
+## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class MetadataEnhancer:
-    """元数据增强器"""
+    """ﮒﮔﺍﮔ؟ﮒ۱ﮒﺙﭦﮒ۷"""
     
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
         
     def enhance_metadata(self, file: Path) -> Dict:
-        """增强元数�?""
+        """ﮒ۱ﮒﺙﭦﮒﮔﺍﮔ?""
         
     def infer_metadata(self, file: Path) -> Dict:
-        """推断元数�?""
+"""ﮔ۷ﮔﮒﮔﺍﮔ?""
         
     def validate_metadata(self, metadata: Dict) -> List[str]:
-        """验证元数�?""
+        """ﻠ۹ﻟﺁﮒﮔﺍﮔ?""
 ```
 
 ---
 
-## 3. 功能规范
+## 3. ﮒﻟﺛﻟ۶ﻟ
 
-### 3.1 元数据推�?
-**推断规则**:
-- 从文件路径推断module_id
-- 从文件名推断标题
-- 从目录结构推断分�?
-### 3.2 元数据验�?
-**必需字段**:
+### 3.1 ﮒﮔﺍﮔ؟ﮔ۷ﮔ?
+**ﮔ۷ﮔﻟ۶ﮒ**:
+- ﻛﭨﮔﻛﭨﭘﻟﺓﺁﮒﺝﮔ۷ﮔmodule_id
+- ﻛﭨﮔﻛﭨﭘﮒﮔ۷ﮔﮔﻠ۱
+- ﻛﭨﻝ؟ﮒﺛﻝﭨﮔﮔ۷ﮔﮒﻝﺎ?
+### 3.2 ﮒﮔﺍﮔ؟ﻠ۹ﻟﺁ?
+**ﮒﺟﻠﮒﮔ؟ﭖ**:
 - owner
 - version
 - module_id
 - created_date
 - last_updated
 
-**推荐字段**:
+**ﮔ۷ﻟﮒﮔ؟ﭖ**:
 - standard_type
 - applicable_scope
 - compliance_level
 
 ---
 
-## 4. 性能要求
+## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| 指标 | 要求 |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
-| **处理速度** | �?00文件/分钟 |
-| **内存使用** | �?00MB |
+| **ﮒ۳ﻝﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﻗ?00MB |
 
 ---
 
-## 5. 参考文�?
-- [文档治理流程标准](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+## 5. ﮒﻟﮔﮔ۰?
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

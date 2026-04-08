@@ -1,59 +1,75 @@
 ---
+module_id: AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL技术规范
+---
+
+﻿---
 module_id: AI_VIRTUAL_RESEARCH_TEAM_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 9 - AI创新�?| 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 9 - AIﮒﮔﺍﺅﺟ?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md
-implementation_status: 规划阶段
+implementation_status: ﻟ۶ﮒﻠﭘﮔ؟ﭖ---
+
+
+# AIﻟﮔﻝﻝ۸ﭘﮒ۱ﻠﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺙﺅﺟ?*: SPEC-AI-TEAM-2026-001
+> **ﻟ۶ﮔﺙﻛﺗ۵ﻝﺅﺟ?*: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
+> **ﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟**: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+> **ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?
 ---
 
-# AI虚拟研究团队技术规格书
+## ﻭ ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۵ﻟﺟﺍ
 
-> **规格书编�?*: SPEC-AI-TEAM-2026-001
-> **规格书版�?*: v1.0
-> **创建日期**: 2026-04-03
-> **技术评审官**: 首席技术评审官
-> **评审状�?*: �?已批�?
+### ﮔﮔ۰۲ﻝ؟ﻝ
+
+ﮔ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗﻛﭦAIﻟﮔﻝﻝ۸ﭘﮒ۱ﻠﻠ۰ﺗﻝ؟ﻝﮔﮔﮔﮔﺁﻝﭨﻟﺅﺙﮒﮔ؛ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﻙﮔ۴ﮒ۲ﮒ؟ﻛﺗﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻙﮔﭖﻟﺁﻝﻝ۴ﻝﺅﺙﻛﺕﭦﮒﺙﮒﮒ۱ﻠﮔﻛﺝﮒ؟ﮔﺑﻝﮔﮔﺁﮔﮒﺁﺙﺅﺟﺛ?
 ---
 
-## 📋 技术规格书概述
+## ﻛﺕﻙﮔ۵ﺅﺟ?
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁ
 
-### 文档目的
+### 1.2 ﮔﮔﺁﮒ؟ﺅﺟ?
+**Layerﮒ؟ﻛﺛ**: Layer 9 - AIﮒﮔﺍﺅﺟ?
+**ﮔﮔﺁﮔﻝﮒﭦ۵**: ﮔﻝﺅﺙﮒﭦﻛﭦGLM-4ﮒ۳۶ﮔ۷۰ﮒﺅﺙ
 
-本技术规格书详细定义了AI虚拟研究团队项目的所有技术细节，包括架构设计、接口定义、数据模型、算法实现、测试策略等，为开发团队提供完整的技术指导�?
----
+**ﮒ؟ﮔﺛﮒ۳ﮔﺅﺟ?*: ﻛﺕﻝﺅﺙﻠﻟ۵ﮒ۳AIﮒﻛﺛﮒﻝ۴ﻟﺁﮒﭦﻠﮔﺅﺟ?
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
 
-## 一、概�?
-### 1.1 设计背景
-
-根据Layer 2 Alpha因子层技术评审结果，**研究深度不足**是P1级高风险。当前系统缺少专业研究团队，个人开发者无法像桥水、文艺复兴那样拥�?00+博士和经济学家的研究团队。AI虚拟研究团队可以通过GLM-4等大模型弥补60-70%的团队能力差距�?
-### 1.2 技术定�?
-**Layer定位**: Layer 9 - AI创新�?
-**技术成熟度**: 成熟（基于GLM-4大模型）
-
-**实施复杂�?*: 中等（需要多AI协作和知识库集成�?
-### 1.3 版本信息
-
-| 版本 | 日期 | 变更说明 | 作�?|
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﻟﺁﺑﮔ | ﻛﺛﺅﺟﺛ?|
 |------|------|---------|------|
-| v1.0 | 2026-04-03 | 初始版本 | 首席技术评审官 |
+| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ |
 
 ---
 
-## 二、详细架构设�?
-### 2.1 整体架构�?
+## ﻛﭦﻙﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﺅﺟ?
+### 2.1 ﮔﺑﻛﺛﮔﭘﮔﺅﺟ?
 ```
-┌─────────────────────────────────────────────────────────────────────�?�?                   AI虚拟研究团队架构                                 �?├─────────────────────────────────────────────────────────────────────�?�?                                                                    �?�? Layer 1: 研究管理�?(Research Management)                          �?�? ├── ResearchDirector (研究主管 - GLM-4)                            �?�? �?  ├── 研究方向规划                                               �?�? �?  ├── 任务分配与调�?                                            �?�? �?  ├── 成果评估与反�?                                            �?�? �?  └── 研究质量控制                                               �?�? └── TaskScheduler (任务调度�?- Apache Airflow)                    �?�?     ├── 任务生成                                                   �?�?     ├── 优先级排�?                                                �?�?     ├── 进度跟踪                                                   �?�?     └── 结果收集                                                   �?�?                                                                    �?�? Layer 2: 研究执行�?(Research Execution)                           �?�? ├── FactorResearcher (因子研究�?- GLM-4)                          �?�? �?  ├── 因子挖掘（基于AI因子挖掘模块�?                            �?�? �?  ├── 因子验证（IC检验、分层回测）                               �?�? �?  ├── 因子优化（参数调优、组合优化）                             �?�? �?  └── 因子报告生成                                               �?�? ├── StrategyResearcher (策略研究�?- GLM-4)                        �?�? �?  ├── 策略设计（多因子组合、风险模型）                           �?�? �?  ├── 策略回测（历史表现、风险评估）                             �?�? �?  ├── 策略优化（参数优化、风控优化）                             �?�? �?  └── 策略报告生成                                               �?�? └── MarketAnalyst (市场分析�?- GLM-4)                             �?�?     ├── 市场分析（趋势判断、风格识别）                             �?�?     ├── 新闻解读（事件提取、影响评估）                             �?�?     ├── 情绪分析（市场情绪、板块情绪）                             �?�?     └── 市场报告生成                                               �?�?                                                                    �?�? Layer 3: 知识管理�?(Knowledge Management)                         �?�? ├── KnowledgeManager (知识管理�?- GLM-4)                          �?�? �?  ├── 知识提取（从研究成果中提取知识）                           �?�? �?  ├── 知识入库（自动分类、向量化存储�?                          �?�? �?  ├── 知识检索（语义搜索、智能推荐）                             �?�? �?  └── 知识更新（定期更新、版本管理）                             �?�? └── KnowledgeBase (知识�?- ChromaDB + SQLite)                     �?�?     ├── 因子知识�?                                                �?�?     ├── 策略知识�?                                                �?�?     ├── 市场知识�?                                                �?�?     └── 经验教训�?                                                �?�?                                                                    �?�? Layer 4: 协作与通信�?(Collaboration & Communication)              �?�? ├── CollaborationHub (协作中心)                                    �?�? �?  ├── 多AI协作（任务分配、结果汇总）                             �?�? �?  ├── 人机协作（人类指导、AI执行�?                              �?�? �?  ├── 研究讨论（观点碰撞、方案优化）                             �?�? �?  └── 成果共享（知识共享、经验传承）                             �?�? └── NotificationSystem (通知系统)                                  �?�?     ├── 研究进度通知                                               �?�?     ├── 重要发现提醒                                               �?�?     ├── 系统异常告警                                               �?�?     └── 定期报告推�?                                              �?�?                                                                    �?�? Layer 5: 接口与集成层 (Interface & Integration)                    �?�? ├── APIGateway (API网关 - FastAPI)                                 �?�? �?  ├── RESTful API                                                �?�? �?  ├── WebSocket实时通信                                          �?�? �?  └── 认证与授�?                                                �?�? └── SystemIntegration (系统集成)                                   �?�?     ├── 与AI因子挖掘模块集成                                       �?�?     ├── 与因子库系统集成                                           �?�?     ├── 与回测系统集�?                                            �?�?     └── 与知识库系统集成                                           �?�?                                                                    �?└─────────────────────────────────────────────────────────────────────�?```
 
 ---
 
-## 三、接口定�?
-### 3.1 研究主管接口
+## ﻛﺕﻙﮔ۴ﮒ۲ﮒ؟ﺅﺟ?
+### 3.1 ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲
 
 ```python
 from abc import ABC, abstractmethod
@@ -61,51 +77,51 @@ from typing import List, Dict, Optional
 from datetime import datetime
 
 class ResearchDirectorInterface(ABC):
-    """研究主管接口"""
+"""ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def plan_research_direction(self, market_state: Dict) -> List[str]:
         """
-        规划研究方向
+ﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒ
         
         Args:
-            market_state: 市场状态信�?            
+            market_state: ﮒﺕﮒﭦﻝﭘﮔﻛﺟ۰ﺅﺟ?            
         Returns:
-            研究方向列表
+ﻝﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷
         """
         pass
     
     @abstractmethod
     def generate_tasks(self, research_direction: Dict) -> List[Dict]:
         """
-        生成研究任务
+ﻝﮔﻝﻝ۸ﭘﻛﭨﭨﮒ۰
         
         Args:
-            research_direction: 研究方向
+research_direction: ﻝﻝ۸ﭘﮔﺗﮒ
             
         Returns:
-            任务列表
+            ﻛﭨﭨﮒ۰ﮒﻟ۰۷
         """
         pass
     
     @abstractmethod
     def evaluate_result(self, task: Dict) -> Dict:
         """
-        评估研究成果
+ﻟﺁﻛﺙﺍﻝﻝ۸ﭘﮔﮔ
         
         Args:
-            task: 研究任务
+task: ﻝﻝ۸ﭘﻛﭨﭨﮒ۰
             
         Returns:
-            评估结果
+            ﻟﺁﻛﺙﺍﻝﭨﮔ
         """
         pass
 ```
 
-### 3.2 因子研究员接�?
+### 3.2 ﮒﮒﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?
 ```python
 class FactorResearcherInterface(ABC):
-    """因子研究员接�?""
+"""ﮒﮒﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def mine_factors(self, 
@@ -113,14 +129,14 @@ class FactorResearcherInterface(ABC):
                     target: pd.Series,
                     factor_type: str = 'all') -> List[Dict]:
         """
-        挖掘因子
+ﮔﮔﮒﮒ
         
         Args:
-            data: 原始特征数据
-            target: 目标收益�?            factor_type: 因子类型
+            data: ﮒﮒ۶ﻝﺗﮒﺝﮔﺍﮔ؟
+target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?            factor_type: ﮒﮒﻝﺎﭨﮒ
             
         Returns:
-            因子列表
+ﮒﮒﮒﻟ۰۷
         """
         pass
     
@@ -130,61 +146,61 @@ class FactorResearcherInterface(ABC):
                        data: pd.DataFrame,
                        target: pd.Series) -> Dict:
         """
-        验证因子有效�?        
+ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?
         Args:
-            factor: 因子信息
-            data: 数据
-            target: 目标收益�?            
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
+            data: ﮔﺍﮔ؟
+target: ﻝ؟ﮔﮔﭘﻝﺅﺟ?
         Returns:
-            验证结果
+            ﻠ۹ﻟﺁﻝﭨﮔ
         """
         pass
     
     @abstractmethod
     def optimize_factor(self, factor: Dict, data: pd.DataFrame) -> Dict:
         """
-        优化因子
+ﻛﺙﮒﮒﮒ
         
         Args:
-            factor: 因子信息
-            data: 数据
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
+            data: ﮔﺍﮔ؟
             
         Returns:
-            优化后的因子
+ﻛﺙﮒﮒﻝﮒﮒ
         """
         pass
     
     @abstractmethod
     def generate_report(self, factor: Dict) -> str:
         """
-        生成因子研究报告
+ﻝﮔﮒﮒﻝﻝ۸ﭘﮔ۴ﮒ
         
         Args:
-            factor: 因子信息
+factor: ﮒﮒﻛﺟ۰ﮔﺁ
             
         Returns:
-            报告内容
+            ﮔ۴ﮒﮒﮒ؟ﺗ
         """
         pass
 ```
 
-### 3.3 策略研究员接�?
+### 3.3 ﻝﻝ۴ﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?
 ```python
 class StrategyResearcherInterface(ABC):
-    """策略研究员接�?""
+"""ﻝﻝ۴ﻝﻝ۸ﭘﮒﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def design_strategy(self, 
                        factors: List[Dict],
                        market_state: Dict) -> Dict:
         """
-        设计策略
+ﻟ؟ﺝﻟ؟۰ﻝﻝ۴
         
         Args:
-            factors: 因子列表
-            market_state: 市场状�?            
+factors: ﮒﮒﮒﻟ۰۷
+            market_state: ﮒﺕﮒﭦﻝﭘﺅﺟﺛ?            
         Returns:
-            策略设计
+ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
         """
         pass
     
@@ -193,14 +209,14 @@ class StrategyResearcherInterface(ABC):
                          strategy: Dict,
                          historical_data: pd.DataFrame) -> Dict:
         """
-        回测策略
+ﮒﮔﭖﻝﻝ۴
         
         Args:
-            strategy: 策略设计
-            historical_data: 历史数据
+strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
+            historical_data: ﮒﮒﺎﮔﺍﮔ؟
             
         Returns:
-            回测结果
+            ﮒﮔﭖﻝﭨﮔ
         """
         pass
     
@@ -209,113 +225,113 @@ class StrategyResearcherInterface(ABC):
                          strategy: Dict,
                          backtest_result: Dict) -> Dict:
         """
-        优化策略
+ﻛﺙﮒﻝﻝ۴
         
         Args:
-            strategy: 策略设计
-            backtest_result: 回测结果
+strategy: ﻝﻝ۴ﻟ؟ﺝﻟ؟۰
+            backtest_result: ﮒﮔﭖﻝﭨﮔ
             
         Returns:
-            优化后的策略
+ﻛﺙﮒﮒﻝﻝﻝ۴
         """
         pass
 ```
 
-### 3.4 市场分析师接�?
+### 3.4 ﮒﺕﮒﭦﮒﮔﮒﺕﮔ۴ﺅﺟ?
 ```python
 class MarketAnalystInterface(ABC):
-    """市场分析师接�?""
+    """ﮒﺕﮒﭦﮒﮔﮒﺕﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def analyze_market(self, market_data: Dict) -> Dict:
         """
-        分析市场状�?        
+        ﮒﮔﮒﺕﮒﭦﻝﭘﺅﺟﺛ?        
         Args:
-            market_data: 市场数据
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
             
         Returns:
-            市场分析结果
+            ﮒﺕﮒﭦﮒﮔﻝﭨﮔ
         """
         pass
     
     @abstractmethod
     def interpret_news(self, news: Dict) -> Dict:
         """
-        解读新闻
+        ﻟ۶۲ﻟﺁﭨﮔﺍﻠﭨ
         
         Args:
-            news: 新闻信息
+            news: ﮔﺍﻠﭨﻛﺟ۰ﮔﺁ
             
         Returns:
-            新闻解读结果
+            ﮔﺍﻠﭨﻟ۶۲ﻟﺁﭨﻝﭨﮔ
         """
         pass
     
     @abstractmethod
     def analyze_sentiment(self, social_data: Dict) -> Dict:
         """
-        分析市场情绪
+        ﮒﮔﮒﺕﮒﭦﮔﻝﭨ۹
         
         Args:
-            social_data: 社交媒体数据
+            social_data: ﻝ۳ﺝﻛﭦ۳ﮒ۹ﻛﺛﮔﺍﮔ؟
             
         Returns:
-            情绪分析结果
+            ﮔﻝﭨ۹ﮒﮔﻝﭨﮔ
         """
         pass
 ```
 
-### 3.5 知识管理员接�?
+### 3.5 ﻝ۴ﻟﺁﻝ؟۰ﻝﮒﮔ۴ﺅﺟ?
 ```python
 class KnowledgeManagerInterface(ABC):
-    """知识管理员接�?""
+    """ﻝ۴ﻟﺁﻝ؟۰ﻝﮒﮔ۴ﺅﺟ?""
     
     @abstractmethod
     def extract_knowledge(self, research_result: Dict) -> Dict:
         """
-        从研究成果中提取知识
+ﻛﭨﻝﻝ۸ﭘﮔﮔﻛﺕﮔﮒﻝ۴ﻟﺁ
         
         Args:
-            research_result: 研究成果
+research_result: ﻝﻝ۸ﭘﮔﮔ
             
         Returns:
-            提取的知�?        """
+            ﮔﮒﻝﻝ۴ﺅﺟ?        """
         pass
     
     @abstractmethod
     def store_knowledge(self, knowledge: Dict) -> str:
         """
-        存储知识到知识库
+ﮒﮒ۷ﻝ۴ﻟﺁﮒﺍﻝ۴ﻟﺁﮒﭦ
         
         Args:
-            knowledge: 知识信息
+            knowledge: ﻝ۴ﻟﺁﻛﺟ۰ﮔﺁ
             
         Returns:
-            知识ID
+            ﻝ۴ﻟﺁID
         """
         pass
     
     @abstractmethod
     def retrieve_knowledge(self, query: str, top_k: int = 5) -> List[Dict]:
         """
-        检索知�?        
+        ﮔ۲ﻝﺑ۱ﻝ۴ﺅﺟ?        
         Args:
-            query: 查询文本
-            top_k: 返回数量
+            query: ﮔ۴ﻟﺁ۱ﮔﮔ؛
+            top_k: ﻟﺟﮒﮔﺍﻠ
             
         Returns:
-            知识列表
+            ﻝ۴ﻟﺁﮒﻟ۰۷
         """
         pass
 ```
 
 ---
 
-## 四、数据模型与存储
+## ﮒﻙﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒﮒ۷
 
-### 4.1 数据库表结构
+### 4.1 ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔ
 
-#### 4.1.1 研究任务�?
+#### 4.1.1 ﻝﻝ۸ﭘﻛﭨﭨﮒ۰ﺅﺟ?
 ```sql
 CREATE TABLE research_tasks (
     task_id TEXT PRIMARY KEY,
@@ -336,7 +352,7 @@ CREATE INDEX idx_task_assigned ON research_tasks(assigned_to);
 CREATE INDEX idx_task_deadline ON research_tasks(deadline);
 ```
 
-#### 4.1.2 研究成果�?
+#### 4.1.2 ﻝﻝ۸ﭘﮔﮔﺅﺟ?
 ```sql
 CREATE TABLE research_results (
     result_id TEXT PRIMARY KEY,
@@ -352,7 +368,7 @@ CREATE INDEX idx_result_task ON research_results(task_id);
 CREATE INDEX idx_result_type ON research_results(result_type);
 ```
 
-#### 4.1.3 知识库表
+#### 4.1.3 ﻝ۴ﻟﺁﮒﭦﻟ۰۷
 
 ```sql
 CREATE TABLE knowledge_base (
@@ -373,37 +389,37 @@ CREATE INDEX idx_knowledge_created ON knowledge_base(created_at);
 
 ---
 
-## 五、算法实现说�?
-### 5.1 研究方向规划算法
+## ﻛﭦﻙﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﺅﺟ?
+### 5.1 ﻝﻝ۸ﭘﮔﺗﮒﻟ۶ﮒﻝ؟ﮔﺏ
 
-#### 5.1.1 算法原理
+#### 5.1.1 ﻝ؟ﮔﺏﮒﻝ
 
-使用GLM-4大模型，通过Prompt Engineering引导模型根据市场状态规划研究方向�?
-#### 5.1.2 实现代码
+ﻛﺛﺟﻝ۷GLM-4ﮒ۳۶ﮔ۷۰ﮒﺅﺙﻠﻟﺟPrompt Engineeringﮒﺙﮒﺁﺙﮔ۷۰ﮒﮔﺗﮔ؟ﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒﺅﺟﺛ?
+#### 5.1.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 def plan_research_direction(self, market_state: Dict) -> List[str]:
     """
-    规划研究方向
+ﻟ۶ﮒﻝﻝ۸ﭘﮔﺗﮒ
     
-    算法步骤�?    1. 构建市场状态描�?    2. 调用GLM-4生成研究方向
-    3. 解析和验证研究方�?    """
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?    1. ﮔﮒﭨﭦﮒﺕﮒﭦﻝﭘﮔﮔﺅﺟ?    2. ﻟﺍﻝ۷GLM-4ﻝﮔﻝﻝ۸ﭘﮔﺗﮒ
+3. ﻟ۶۲ﮔﮒﻠ۹ﻟﺁﻝﻝ۸ﭘﮔﺗﺅﺟ?    """
     prompt = f"""
-    作为量化研究主管，请根据当前市场状态规划未来一周的研究方向�?    
-    市场状态：
-    - 市场趋势：{market_state.get('trend', 'unknown')}
-    - 波动率：{market_state.get('volatility', 'unknown')}
-    - 市场情绪：{market_state.get('sentiment', 'unknown')}
-    - 近期事件：{market_state.get('recent_events', [])}
+ﻛﺛﻛﺕﭦﻠﮒﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﺅﺙﻟﺁﺓﮔﺗﮔ؟ﮒﺛﮒﮒﺕﮒﭦﻝﭘﮔﻟ۶ﮒﮔ۹ﮔ۴ﻛﺕﮒ۷ﻝﻝﻝ۸ﭘﮔﺗﮒﺅﺟ?
+    ﮒﺕﮒﭦﻝﭘﮔﺅﺙ
+    - ﮒﺕﮒﭦﻟﭘﮒﺟﺅﺙ{market_state.get('trend', 'unknown')}
+    - ﮔﺏ۱ﮒ۷ﻝﺅﺙ{market_state.get('volatility', 'unknown')}
+    - ﮒﺕﮒﭦﮔﻝﭨ۹ﺅﺙ{market_state.get('sentiment', 'unknown')}
+    - ﻟﺟﮔﻛﭦﻛﭨﭘﺅﺙ{market_state.get('recent_events', [])}
     
-    请返回JSON格式的研究方向列表：
+ﻟﺁﺓﻟﺟﮒJSONﮔﺙﮒﺙﻝﻝﻝ۸ﭘﮔﺗﮒﮒﻟ۰۷ﺅﺙ
     {{
         "research_directions": [
             {{
-                "direction": "研究方向名称",
-                "priority": 优先�?1-5),
-                "reason": "选择理由",
-                "expected_outcome": "预期成果"
+"direction": "ﻝﻝ۸ﭘﮔﺗﮒﮒﻝ۶ﺍ",
+                "priority": ﻛﺙﮒﺅﺟ?1-5),
+                "reason": "ﻠﮔ۸ﻝﻝﺎ",
+                "expected_outcome": "ﻠ۱ﮔﮔﮔ"
             }}
         ]
     }}
@@ -417,12 +433,11 @@ def plan_research_direction(self, market_state: Dict) -> List[str]:
 
 ---
 
-### 5.2 因子挖掘算法
+### 5.2 ﮒﮒﮔﮔﻝ؟ﮔﺏ
 
-#### 5.2.1 算法原理
+#### 5.2.1 ﻝ؟ﮔﺏﮒﻝ
 
-使用AI因子挖掘模块（深度学�?强化学习+遗传算法）挖掘新因子�?
-#### 5.2.2 实现代码
+#### 5.2.2 ﮒ؟ﻝﺍﻛﭨ۲ﻝ
 
 ```python
 def mine_factors(self, 
@@ -430,11 +445,11 @@ def mine_factors(self,
                 target: pd.Series,
                 factor_type: str = 'all') -> List[Dict]:
     """
-    挖掘因子
+ﮔﮔﮒﮒ
     
-    算法步骤�?    1. 调用AI因子挖掘模块
-    2. 验证因子有效�?    3. 返回验证通过的因�?    """
-    # 1. 使用AI因子挖掘模块挖掘因子
+ﻝ؟ﮔﺏﮔ۴ﻠ۹۳ﺅﺟ?    1. ﻟﺍﻝ۷AIﮒﮒﮔﮔﮔ۷۰ﮒ
+2. ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?    3. ﻟﺟﮒﻠ۹ﻟﺁﻠﻟﺟﻝﮒﺅﺟ?    """
+# 1. ﻛﺛﺟﻝ۷AIﮒﮒﮔﮔﮔ۷۰ﮒﮔﮔﮒﮒ
     factors = self.ai_factor_miner.mine_factors(
         data=data,
         target=target,
@@ -443,7 +458,7 @@ def mine_factors(self,
         max_factors=20
     )
     
-    # 2. 验证因子有效�?    validated_factors = []
+# 2. ﻠ۹ﻟﺁﮒﮒﮔﮔﺅﺟ?    validated_factors = []
     for factor in factors:
         validation_result = self.validate_factor(factor, data, target)
         if validation_result['is_valid']:
@@ -455,51 +470,51 @@ def mine_factors(self,
 
 ---
 
-## 六、实施技术栈
+## ﮒﻙﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 编程语言和框�?
-| 技术领�?| 技术选型 | 版本 | 说明 |
+### 6.1 ﻝﺙﻝ۷ﻟﺁﻟ۷ﮒﮔ۰ﺅﺟ?
+| ﮔﮔﺁﻠ۱ﺅﺟ?| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ | ﻟﺁﺑﮔ |
 |---------|---------|------|------|
-| **编程语言** | Python | 3.9+ | 主要开发语言 |
-| **AI模型** | GLM-4-Flash | Latest | 研究助手核心 |
-| **任务调度** | Apache Airflow | 2.7+ | 任务调度 |
-| **Web框架** | FastAPI | 0.104+ | API服务 |
-| **向量数据�?* | ChromaDB | 0.4+ | 知识存储 |
-| **关系数据�?* | SQLite | 3.40+ | 数据存储 |
+| **ﻝﺙﻝ۷ﻟﺁﻟ۷** | Python | 3.9+ | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ |
+| **AIﮔ۷۰ﮒ** | GLM-4-Flash | Latest | ﻝﻝ۸ﭘﮒ۸ﮔﮔﺕﮒﺟ |
+| **ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵** | Apache Airflow | 2.7+ | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ |
+| **Webﮔ۰ﮔﭘ** | FastAPI | 0.104+ | APIﮔﮒ۰ |
+| **ﮒﻠﮔﺍﮔ؟ﺅﺟ?* | ChromaDB | 0.4+ | ﻝ۴ﻟﺁﮒﮒ۷ |
+| **ﮒﺏﻝﺏﭨﮔﺍﮔ؟ﺅﺟ?* | SQLite | 3.40+ | ﮔﺍﮔ؟ﮒﮒ۷ |
 
-### 6.2 第三方依�?
-| 依赖�?| 版本 | 用�?|
+### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝﺅﺟ?
+| ﻛﺝﻟﭖﺅﺟ?| ﻝﮔ؛ | ﻝ۷ﺅﺟﺛ?|
 |--------|------|------|
 | **zhipuai** | 2.0+ | GLM-4 API |
-| **langchain** | 0.1+ | AI工作�?|
-| **pandas** | 2.1+ | 数据处理 |
-| **numpy** | 1.26+ | 数值计�?|
+| **langchain** | 0.1+ | AIﮒﺓ۴ﻛﺛﺅﺟ?|
+| **pandas** | 2.1+ | ﮔﺍﮔ؟ﮒ۳ﻝ |
+| **numpy** | 1.26+ | ﮔﺍﮒﺙﻟ؟۰ﺅﺟ?|
 
 ---
 
-## 七、测试策�?
-### 7.1 单元测试
+## ﻛﺕﻙﮔﭖﻟﺁﻝﺅﺟ?
+### 7.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 7.1.1 测试范围
+#### 7.1.1 ﮔﭖﻟﺁﻟﮒﺑ
 
-| 模块 | 测试内容 | 覆盖率目�?|
+| ﮔ۷۰ﮒ | ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟ﺅﺟ?|
 |------|---------|-----------|
-| **研究主管** | 任务生成、评�?| >85% |
-| **因子研究�?* | 因子挖掘、验�?| >80% |
-| **策略研究�?* | 策略设计、回�?| >80% |
-| **市场分析�?* | 市场分析、情绪分�?| >80% |
-| **知识管理�?* | 知识提取、检�?| >85% |
+| **ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰** | ﻛﭨﭨﮒ۰ﻝﮔﻙﻟﺁﺅﺟ?| >85% |
+| **ﮒﮒﻝﻝ۸ﭘﺅﺟ?* | ﮒﮒﮔﮔﻙﻠ۹ﺅﺟ?| >80% |
+| **ﻝﻝ۴ﻝﻝ۸ﭘﺅﺟ?* | ﻝﻝ۴ﻟ؟ﺝﻟ؟۰ﻙﮒﺅﺟ?| >80% |
+| **ﮒﺕﮒﭦﮒﮔﺅﺟ?* | ﮒﺕﮒﭦﮒﮔﻙﮔﻝﭨ۹ﮒﺅﺟ?| >80% |
+| **ﻝ۴ﻟﺁﻝ؟۰ﻝﺅﺟ?* | ﻝ۴ﻟﺁﮔﮒﻙﮔ۲ﺅﺟ?| >85% |
 
-#### 7.1.2 测试用例示例
+#### 7.1.2 ﮔﭖﻟﺁﻝ۷ﻛﺝﻝ۳ﭦﻛﺝ
 
 ```python
 import pytest
 
 class TestResearchDirector:
-    """研究主管测试"""
+"""ﻝﻝ۸ﭘﻛﺕﭨﻝ؟۰ﮔﭖﻟﺁ"""
     
     def test_plan_research_direction(self):
-        """测试研究方向规划"""
+"""ﮔﭖﻟﺁﻝﻝ۸ﭘﮔﺗﮒﻟ۶ﮒ"""
         director = ResearchDirector(api_key="test_key")
         
         market_state = {
@@ -517,94 +532,94 @@ class TestResearchDirector:
 
 ---
 
-## 八、风险与约束
+## ﮒ،ﻙﻠ۲ﻠ۸ﻛﺕﻝﭦ۵ﮔ
 
-### 8.1 技术风�?
-| 风险 | 影响 | 概率 | 缓解措施 |
+### 8.1 ﮔﮔﺁﻠ۲ﺅﺟ?
+| ﻠ۲ﻠ۸ | ﮒﺛﺎﮒ | ﮔ۵ﻝ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |------|------|------|---------|
-| **GLM-4 API限制** | �?| �?| 请求队列、错误重�?|
-| **知识库性能** | �?| �?| 优化索引、缓存机�?|
-| **AI协作复杂�?* | �?| �?| 简化协作流程、明确职�?|
+| **GLM-4 APIﻠﮒﭘ** | ﺅﺟ?| ﺅﺟ?| ﻟﺁﺓﮔﺎﻠﮒﻙﻠﻟﺁﺁﻠﺅﺟ?|
+| **ﻝ۴ﻟﺁﮒﭦﮔ۶ﻟﺛ** | ﺅﺟ?| ﺅﺟ?| ﻛﺙﮒﻝﺑ۱ﮒﺙﻙﻝﺙﮒﮔﭦﺅﺟ?|
+| **AIﮒﻛﺛﮒ۳ﮔﺅﺟ?* | ﺅﺟ?| ﺅﺟ?| ﻝ؟ﮒﮒﻛﺛﮔﭖﻝ۷ﻙﮔﻝ۰؟ﻟﺅﺟ?|
 
-### 8.2 约束条件
+### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
 
-1. **API成本约束**: 月成�?300�?2. **时间约束**: 8周内完成
-3. **技术约�?*: 使用GLM-4大模�?
+1. **APIﮔﮔ؛ﻝﭦ۵ﮔ**: ﮔﮔﺅﺟ?300ﺅﺟ?2. **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: 8ﮒ۷ﮒﮒ؟ﮔ
+3. **ﮔﮔﺁﻝﭦ۵ﺅﺟ?*: ﻛﺛﺟﻝ۷GLM-4ﮒ۳۶ﮔ۷۰ﺅﺟ?
 ---
 
-## 九、验收标�?
-### 9.1 功能验收
+## ﻛﺗﻙﻠ۹ﮔﭘﮔﺅﺟ?
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘ
 
-| 功能 | 验收标准 |
+| ﮒﻟﺛ | ﻠ۹ﮔﭘﮔﮒ |
 |------|---------|
-| **AI研究助手** | 5个AI角色可用 |
-| **任务管理** | 任务调度正常 |
-| **知识库集�?* | 知识自动入库�?90% |
-| **研究效率** | 效率提升>200% |
+| **AIﻝﻝ۸ﭘﮒ۸ﮔ** | 5ﻛﺕ۹AIﻟ۶ﻟﺎﮒﺁﻝ۷ |
+| **ﻛﭨﭨﮒ۰ﻝ؟۰ﻝ** | ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ۲ﮒﺕﺕ |
+| **ﻝ۴ﻟﺁﮒﭦﻠﺅﺟ?* | ﻝ۴ﻟﺁﻟ۹ﮒ۷ﮒ۴ﮒﭦﺅﺟ?90% |
+| **ﻝﻝ۸ﭘﮔﻝ** | ﮔﻝﮔﮒ>200% |
 
-### 9.2 性能验收
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘ
 
-| 指标 | 目标�?|
+| ﮔﮔ | ﻝ؟ﮔﺅﺟ?|
 |------|--------|
-| **任务响应时间** | <5�?|
-| **知识检索速度** | <1�?|
-| **系统可用�?* | >99% |
+| **ﻛﭨﭨﮒ۰ﮒﮒﭦﮔﭘﻠﺑ** | <5ﺅﺟ?|
+| **ﻝ۴ﻟﺁﮔ۲ﻝﺑ۱ﻠﮒﭦ۵** | <1ﺅﺟ?|
+| **ﻝﺏﭨﻝﭨﮒﺁﻝ۷ﺅﺟ?* | >99% |
 
 ---
 
-## 十、实施路线图
+## ﮒﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
-### 10.1 Phase 1: AI研究助手开发（Week 1-2�?
-**目标**: 完成5个AI研究助手开�?
-**关键任务**:
-1. 研究主管开�?2. 因子研究员开�?3. 策略研究员开�?4. 市场分析师开�?5. 知识管理员开�?
-**验收标准**:
-- 5个AI角色可用
-- 基本功能正常
-
----
-
-### 10.2 Phase 2: 任务管理系统开发（Week 3-4�?
-**目标**: 完成任务调度系统
-
-**关键任务**:
-1. 任务生成模块
-2. 任务调度模块
-3. 进度跟踪模块
-4. 结果收集模块
-
-**验收标准**:
-- 任务调度正常
-- 进度跟踪准确
+### 10.1 Phase 1: AIﻝﻝ۸ﭘﮒ۸ﮔﮒﺙﮒﺅﺙWeek 1-2ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔ5ﻛﺕ۹AIﻝﻝ۸ﭘﮒ۸ﮔﮒﺙﺅﺟ?
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+**ﻠ۹ﮔﭘﮔﮒ**:
+- 5ﻛﺕ۹AIﻟ۶ﻟﺎﮒﺁﻝ۷
+- ﮒﭦﮔ؛ﮒﻟﺛﮔ۲ﮒﺕﺕ
 
 ---
 
-### 10.3 Phase 3: 知识库集成（Week 5-6�?
-**目标**: 完成知识库集�?
-**关键任务**:
-1. 知识提取模块
-2. 知识入库模块
-3. 知识检索模�?4. 知识更新模块
+### 10.2 Phase 2: ﻛﭨﭨﮒ۰ﻝ؟۰ﻝﻝﺏﭨﻝﭨﮒﺙﮒﺅﺙWeek 3-4ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﻝﺏﭨﻝﭨ
 
-**验收标准**:
-- 知识自动入库�?90%
-- 检索速度<1�?
----
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﻛﭨﭨﮒ۰ﻝﮔﮔ۷۰ﮒ
+2. ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ۷۰ﮒ
+3. ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹ﮔ۷۰ﮒ
+4. ﻝﭨﮔﮔﭘﻠﮔ۷۰ﮒ
 
-### 10.4 Phase 4: 测试和优化（Week 7-8�?
-**目标**: 完成系统测试和优�?
-**关键任务**:
-1. 单元测试
-2. 集成测试
-3. 性能测试
-4. 系统优化
-
-**验收标准**:
-- 所有测试通过
-- 系统性能达标
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻛﭨﭨﮒ۰ﻟﺍﮒﭦ۵ﮔ۲ﮒﺕﺕ
+- ﻟﺟﮒﭦ۵ﻟﺓﻟﺕ۹ﮒﻝ۰؟
 
 ---
 
-**技术规格书版本**: v1.0  
-**创建日期**: 2026-04-03  
-**评审状�?*: �?已批�?
+### 10.3 Phase 3: ﻝ۴ﻟﺁﮒﭦﻠﮔﺅﺙWeek 5-6ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻝ۴ﻟﺁﮒﭦﻠﺅﺟ?
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﻝ۴ﻟﺁﮔﮒﮔ۷۰ﮒ
+2. ﻝ۴ﻟﺁﮒ۴ﮒﭦﮔ۷۰ﮒ
+3. ﻝ۴ﻟﺁﮔ۲ﻝﺑ۱ﮔ۷۰ﺅﺟ?4. ﻝ۴ﻟﺁﮔﺑﮔﺍﮔ۷۰ﮒ
+
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﻝ۴ﻟﺁﻟ۹ﮒ۷ﮒ۴ﮒﭦﺅﺟ?90%
+- ﮔ۲ﻝﺑ۱ﻠﮒﭦ۵<1ﺅﺟ?
+---
+
+### 10.4 Phase 4: ﮔﭖﻟﺁﮒﻛﺙﮒﺅﺙWeek 7-8ﺅﺟ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭖﻟﺁﮒﻛﺙﺅﺟ?
+**ﮒﺏﻠ؟ﻛﭨﭨﮒ۰**:
+1. ﮒﮒﮔﭖﻟﺁ
+2. ﻠﮔﮔﭖﻟﺁ
+3. ﮔ۶ﻟﺛﮔﭖﻟﺁ
+4. ﻝﺏﭨﻝﭨﻛﺙﮒ
+
+**ﻠ۹ﮔﭘﮔﮒ**:
+- ﮔﮔﮔﭖﻟﺁﻠﻟﺟ
+- ﻝﺏﭨﻝﭨﮔ۶ﻟﺛﻟﺝﺝﮔ
+
+---
+
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03  
+**ﻟﺁﮒ؟۰ﻝﭘﺅﺟﺛ?*: ﺅﺟ?ﮒﺓﺎﮔﺗﺅﺟ?
+```

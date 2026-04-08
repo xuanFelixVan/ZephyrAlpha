@@ -1,0 +1,187 @@
+{
+  "stats": {
+    "total_files": 47,
+    "total_dirs": 23,
+    "md_files": 47,
+    "blueprint_files": 23,
+    "index_files": 24
+  },
+  "issues": {
+    "L1_文件系统层": [
+      {
+        "type": "死链接",
+        "severity": "P2",
+        "location": "03_AUTH\\AUTH_SYSTEM_BLUEPRINT.md",
+        "description": "死链接: [User, int](\n    get_user_manager,\n    [auth_backend],\n)",
+        "suggestion": "修复或删除链接"
+      }
+    ],
+    "L2_文档内容层": [],
+    "L3_专业标准层": [
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "01_MONITORING\\MONITORING_DASHBOARD_BLUEPRINT.md",
+        "description": "检测到17个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "02_ALERTING\\ALERTING_SYSTEM_BLUEPRINT.md",
+        "description": "检测到17个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "03_AUTH\\AUTH_SYSTEM_BLUEPRINT.md",
+        "description": "检测到15个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "04_API_DOCS\\API_DOCS_BLUEPRINT.md",
+        "description": "检测到10个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "06_REPORTING\\REPORTING_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "07_AUDIT_LOG\\AUDIT_LOG_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "08_MOBILE_PUSH\\MOBILE_PUSH_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "09_TRADING_JOURNAL\\TRADING_JOURNAL_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "10_CONFIG_MANAGEMENT\\CONFIG_MANAGEMENT_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "11_USER_PREFERENCES\\USER_PREFERENCES_BLUEPRINT.md",
+        "description": "检测到14个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "12_SYSTEM_STATUS\\SYSTEM_STATUS_BLUEPRINT.md",
+        "description": "检测到14个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "13_DATA_MANAGEMENT\\DATA_MANAGEMENT_BLUEPRINT.md",
+        "description": "检测到14个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "14_STRATEGY_MANAGEMENT\\STRATEGY_MANAGEMENT_BLUEPRINT.md",
+        "description": "检测到14个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "15_PERMISSION_MANAGEMENT\\PERMISSION_MANAGEMENT_BLUEPRINT.md",
+        "description": "检测到12个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "16_API_RATE_LIMITING\\API_RATE_LIMITING_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "17_DOCUMENTATION_CENTER\\DOCUMENTATION_CENTER_BLUEPRINT.md",
+        "description": "检测到13个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "18_KNOWLEDGE_BASE\\KNOWLEDGE_BASE_BLUEPRINT.md",
+        "description": "检测到20个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "19_CI_CD_INTEGRATION\\CI_CD_INTEGRATION_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "20_DATA_BACKUP\\DATA_BACKUP_BLUEPRINT.md",
+        "description": "检测到18个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "21_ONLINE_RESEARCH_ENVIRONMENT\\ONLINE_RESEARCH_ENVIRONMENT_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "22_PARAMETER_OPTIMIZATION\\PARAMETER_OPTIMIZATION_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      },
+      {
+        "type": "双YAML头部",
+        "severity": "P1",
+        "location": "23_LIVE_TRADING_INTERFACE\\LIVE_TRADING_INTERFACE_BLUEPRINT.md",
+        "description": "检测到16个YAML分隔符",
+        "suggestion": "合并为单一YAML头部"
+      }
+    ]
+  },
+  "total_issues": 24,
+  "p1_issues": 23,
+  "p2_issues": 1
+}

@@ -3,18 +3,27 @@ module_id: IMPL_DEV_SECURITY_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 系统实施与部署管理与优化维护
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
+---
 ---
 
-# 安全规范 (SECURITY.md)
 
-> 本文档定义了清风量化交易系统4.0的安全规范，包括敏感信息管理、权限控制、API密钥保护等安全相关的标准和最佳实践�?
+# 安全规范 (SECURITY.md)
+> **核心职责**: 标准规范制定
+> **职责边界**: 
+> - ✅ 本文档负责：标准规范制定相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> 本文档定义了清风量化交易系统4.0的安全规范，包括敏感信息管理、权限控制、API密钥保护等安全相关的标准和最佳实践?
 
 ---
 
@@ -22,32 +31,32 @@ implementation_status: 进行�?
 
 ### 1.1 敏感信息定义
 
-以下信息被视为敏感信息，必须严格保护�?
+以下信息被视为敏感信息，必须严格保护?
 
 | 类别 | 示例 | 风险等级 |
 |------|------|----------|
-| 认证凭证 | API密钥、Token、密�?| 🔴 极高 |
-| 金融数据 | 交易账户、持仓信息、资�?| 🔴 极高 |
-| 个人隐私 | 身份证号、手机号、地址 | 🟠 �?|
+| 认证凭证 | API密钥、Token、密?| 🔴 极高 |
+| 金融数据 | 交易账户、持仓信息、资?| 🔴 极高 |
+| 个人隐私 | 身份证号、手机号、地址 | 🟠 ?|
 | 配置凭证 | 数据库连接串、Redis密码 | 🔴 极高 |
-| 策略敏感 | 策略参数、因子权�?| 🟡 �?|
+| 策略敏感 | 策略参数、因子权限| 🟡 ?|
 
 ### 1.2 敏感信息保护原则
 
 ```
-原则1: 最小暴�?
-  - 只在必要时提供敏感信�?
+原则1: 最小暴?
+  - 只在必要时提供敏感信?
   - 敏感信息不应出现在代码仓库中
   - 敏感信息不应出现在日志中
 
 原则2: 分级存储
   - 生产环境: 专用密钥管理系统 (AWS KMS / HashiCorp Vault)
-  - 开发环�? 本地 .env 文件 (不提交到版本控制)
+  - 开发环? 本地 .env 文件 (不提交到版本控制)
   - 测试环境: 脱敏后的测试数据
 
 原则3: 审计追溯
   - 所有敏感信息访问必须有日志记录
-  - 日志中不记录敏感信息的实际�?
+  - 日志中不记录敏感信息的实际?
   - 支持审计查询
 ```
 
@@ -57,11 +66,11 @@ implementation_status: 进行�?
 
 ### 2.1 密钥分类
 
-| 密钥类型 | 用�?| 安全要求 |
+| 密钥类型 | 用?| 安全要求 |
 |----------|------|----------|
-| `DATA_API_KEY` | 行情数据API | 每日使用量限�?|
-| `TRADE_API_KEY` | 交易API (模拟/实盘) | 最高安全等�?|
-| `DATABASE_KEY` | 数据库连�?| 定期轮换 |
+| `DATA_API_KEY` | 行情数据API | 每日使用量限?|
+| `TRADE_API_KEY` | 交易API (模拟/实盘) | 最高安全等?|
+| `DATABASE_KEY` | 数据库连?| 定期轮换 |
 | `ENCRYPTION_KEY` | 数据加密密钥 | 独立存储 |
 
 ### 2.2 密钥配置规范
@@ -100,7 +109,7 @@ class SecretConfig:
     database_key: Optional[str] = None
 
 class SecretManager:
-    """敏感信息管理�?""
+    """敏感信息管理?""
 
     REQUIRED_ENV_VARS = [
         "THS_API_KEY",
@@ -123,7 +132,7 @@ class SecretManager:
     def validate(self) -> bool:
         missing = [v for v in self.REQUIRED_ENV_VARS if v not in self._secrets]
         if missing:
-            raise SecurityError(f"缺少必需的環境變�? {', '.join(missing)}")
+            raise SecurityError(f"缺少必需的環境變? {', '.join(missing)}")
         return True
 
 class SecurityError(Exception):
@@ -131,22 +140,22 @@ class SecurityError(Exception):
     pass
 ```
 
-### 2.4 禁止的行�?
+### 2.4 禁止的行?
 
 ```markdown
-�?禁止在代码中硬编码密�?
+?禁止在代码中硬编码密?
    BAD:  api_key = "ak_live_xxxxx123456"
 
-�?禁止在注释中记录密钥
+?禁止在注释中记录密钥
    BAD:  # API Key: ak_live_xxxxx123456
 
-�?禁止在日志中输出密钥
+?禁止在日志中输出密钥
    BAD:  logger.info(f"Using API key: {api_key}")
 
-�?禁止将密钥提交到版本控制
+?禁止将密钥提交到版本控制
    BAD:  .git commit -m "Add API key" config/secrets.yaml
 
-�?禁止在错误信息中暴露密钥
+?禁止在错误信息中暴露密钥
    BAD:  raise ValueError(f"Invalid API key: {api_key}")
 ```
 
@@ -158,10 +167,10 @@ class SecurityError(Exception):
 
 | 角色 | 权限范围 | 典型用户 |
 |------|----------|----------|
-| `ADMIN` | 系统配置、用户管理、回测执�?| 系统管理�?|
-| `TRADER` | 策略执行、持仓查询、资金查�?| 交易�?|
-| `RESEARCHER` | 因子研究、回测分析、策略开�?| 研究�?|
-| `VIEWER` | 只读数据访问 | 观察�?|
+| `ADMIN` | 系统配置、用户管理、回测执?| 系统管理?|
+| `TRADER` | 策略执行、持仓查询、资金查?| 交易?|
+| `RESEARCHER` | 因子研究、回测分析、策略开发| 研究?|
+| `VIEWER` | 只读数据访问 | 观察?|
 
 ### 3.2 数据访问控制
 
@@ -234,7 +243,7 @@ import re
 from typing import Any, Dict
 
 class LogSanitizer:
-    """日志脱敏处理�?""
+    """日志脱敏处理?""
 
     SENSITIVE_PATTERNS = {
         "api_key": re.compile(r'(api[_-]?key["\']?\s*[:=]\s*["\']?)([a-zA-Z0-9_/-]+)',
@@ -249,7 +258,7 @@ class LogSanitizer:
 
     @classmethod
     def sanitize(cls, message: str) -> str:
-        """对日志消息进行脱敏处�?""
+        """对日志消息进行脱敏处?""
         result = message
         for name, pattern in cls.SENSITIVE_PATTERNS.items():
             result = pattern.sub(r'\1[REDACTED]', result)
@@ -257,7 +266,7 @@ class LogSanitizer:
 
     @classmethod
     def sanitize_dict(cls, data: Dict[str, Any]) -> Dict[str, Any]:
-        """对字典数据进行脱敏处�?""
+        """对字典数据进行脱敏处?""
         result = {}
         for key, value in data.items():
             if cls._is_sensitive_key(key):
@@ -278,11 +287,11 @@ class LogSanitizer:
 
 | 级别 | 使用场景 | 示例 |
 |------|----------|------|
-| `DEBUG` | 开发调试信�?| 函数入参、中间变�?|
-| `INFO` | 正常业务流程 | 策略信号、执行结�?|
-| `WARNING` | 异常但可处理 | 数据缺失、配置警�?|
-| `ERROR` | 错误需要处�?| API失败、计算异�?|
-| `CRITICAL` | 系统级严重问�?| 资金风险、认证失�?|
+| `DEBUG` | 开发调试信?| 函数入参、中间变?|
+| `INFO` | 正常业务流程 | 策略信号、执行结束|
+| `WARNING` | 异常但可处理 | 数据缺失、配置警?|
+| `ERROR` | 错误需要处?| API失败、计算异?|
+| `CRITICAL` | 系统级严重问?| 资金风险、认证失?|
 
 ---
 
@@ -293,7 +302,7 @@ class LogSanitizer:
 ```markdown
 ## 目录权限矩阵
 
-| 目录 | 所有�?| 所属组 | 权限 | 说明 |
+| 目录 | 所有?| 所属组 | 权限 | 说明 |
 |------|--------|--------|------|------|
 | src/ | user | quant | 755 | 代码目录 |
 | config/ | user | quant | 750 | 配置目录 |
@@ -302,14 +311,14 @@ class LogSanitizer:
 | temp/ | user | quant | 777 | 临时目录 |
 ```
 
-### 5.2 禁止的可执行文件扩展�?
+### 5.2 禁止的可执行文件扩展?
 
 ```
 禁止上传或执行以下类型的文件:
 
 .exe  .bat  .cmd  .sh  .ps1  .vbs  .js  .jar  .dll  .so
 
-例外: 已在版本控制中明确管理的可执行脚�?
+例外: 已在版本控制中明确管理的可执行脚?
 ```
 
 ---
@@ -330,7 +339,7 @@ from dataclasses import dataclass
 class APIRateLimit:
     """API调用频率限制"""
     max_calls: int
-    time_window: int  # �?
+    time_window: int  # ?
 
     def __init__(self, max_calls: int, time_window: int):
         self.max_calls = max_calls
@@ -346,7 +355,7 @@ class APIRateLimit:
         self._calls.append(time.time())
 
 class APISecurity:
-    """API安全处理�?""
+    """API安全处理?""
 
     RATE_LIMITS = {
         "ths": APIRateLimit(max_calls=100, time_window=60),
@@ -390,21 +399,21 @@ audit_log:
   - 权限变更
 ```
 
-### 7.2 安全检查清�?
+### 7.2 安全检查清单
 
 ```markdown
-## 上线前安全检�?
+## 上线前安全检?
 
-�?所有API密钥已移至环境变量或密钥管理系统
-�?敏感信息未出现在代码仓库�?
-�?日志脱敏规则已启�?
-�?权限控制已正确配�?
-�?审计日志已启�?
-�?频率限制已配�?
-�?错误信息不暴露敏感信�?
-�?目录权限已正确设�?
-�?无禁止的可执行文�?
-�?依赖项无已知安全漏洞
+?所有API密钥已移至环境变量或密钥管理系统
+?敏感信息未出现在代码仓库?
+?日志脱敏规则已启?
+?权限控制已正确配?
+?审计日志已启?
+?频率限制已配?
+?错误信息不暴露敏感信?
+?目录权限已正确设?
+?无禁止的可执行文?
+?依赖项无已知安全漏洞
 ```
 
 ---
@@ -414,15 +423,15 @@ audit_log:
 ### 8.1 依赖审计
 
 ```bash
-# 定期执行依赖安全检�?
+# 定期执行依赖安全检?
 
 # Python 依赖审计
 pip audit
 
-# 或使�?safety
+# 或使?safety
 safety check
 
-# 检查过期依�?
+# 检查过期依?
 pip list --outdated
 ```
 
@@ -438,7 +447,7 @@ numpy>=1.23.0
 scipy>=1.9.0
 scikit-learn>=1.2.0
 
-# 数据�?(锁定版本)
+# 数据?(锁定版本)
 efinance>=0.5.0
 akshare>=1.12.0
 tushare>=1.3.0
@@ -462,5 +471,5 @@ python-dotenv>=1.0.0
 ---
 
 **版本**: v1.0
-**最后更�?*: 2026-03-28
-**维护�?*: Security Team
+**最后更?*: 2026-03-28
+**维护?*: Security Team

@@ -3,7 +3,7 @@ module_id: IMPL_AUTO_REPAIR_ENGINE_BP_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席技术评审官
 standard_type: 专业量化机构蓝图
 applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
@@ -14,10 +14,18 @@ implementation_progress: 0%
 open_source_dependency: pandas, numpy
 estimated_effort: 2周
 priority: P0
+responsibility:
+- 归档文档、历史版本、蓝图设计
+---
 ---
 
 
 # 自动化数据修复引擎蓝?
+> **核心职责**: Auto Repair Engine Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Auto Repair Engine Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化系统 v5.3 - 自动化数据修复引擎详细设?> **模块ID**: `AUTO_REPAIR_ENGINE_001`
 > **实施周期**: Week 5-7?周）
 > **优先?*: P0（核心）
@@ -1459,10 +1467,10 @@ src/
 ### 9.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
+- **父文?*: LAYER1_GAP_ANALYSIS_REPORT.md
 - **关联文档**:
-  - [DATACLEANER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md)
-  - [REALTIME_QUALITY_MONITOR_BLUEPRINT.md](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
+  - DATACLEANER_TECHNICAL_SPECIFICATION.md
+  - REALTIME_QUALITY_MONITOR_BLUEPRINT.md
 
 ### 9.2 版本管理
 

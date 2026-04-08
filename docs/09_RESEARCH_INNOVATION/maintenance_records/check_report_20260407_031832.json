@@ -1,0 +1,23 @@
+{
+  "check_time": "2026-04-07T03:18:32.100749",
+  "layer_path": "D:\\ZephyrAlpha\\docs\\09_RESEARCH_INNOVATION",
+  "stats": {
+    "total_docs": 17,
+    "docs_with_issues": 0,
+    "total_issues": 1,
+    "p0_issues": 1,
+    "p1_issues": 0,
+    "p2_issues": 0
+  },
+  "compliance_rate": 94.11764705882352,
+  "issues": [
+    {
+      "file_path": "09_RESEARCH_INNOVATION\\LAYER9_DOCUMENT_GOVERNANCE_FINAL_AUDIT_REPORT.md",
+      "issue_type": "YAML头部重复",
+      "description": "发现3个YAML头部，应该只有1个",
+      "severity": "P0",
+      "suggestion": "删除多余的YAML头部，只保留一个",
+      "timestamp": "2026-04-07T03:18:32.094673"
+    }
+  ]
+}

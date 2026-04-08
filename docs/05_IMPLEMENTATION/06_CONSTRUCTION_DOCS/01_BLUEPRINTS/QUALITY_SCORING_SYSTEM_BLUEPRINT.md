@@ -2,119 +2,99 @@
 module_id: QUALITY_SCORING_SYSTEM_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: great_expectations, dbt
-estimated_effort: 1周
-priority: P1
+responsibility:
+- 质量评分系统
+- 评分模型
+- 质量指标
+- 评分报告
+layer: Layer 5 (策略执行层)
 ---
+
 
 # 数据质量评分系统蓝图
 
-> 清风量化系统 v5.3 - 数据质量评分系统详细设计
+> **核心职责**: 数据质量评分，计算和评定数据质量等级
+> **职责边界**: 
+
+
+
 > **模块ID**: `QUALITY_SCORING_001`
-> **实施周期**: Week 8-9（1周）
-> **优先级**: P1（重要）
 > **预期收益**: 提升数据质量透明度，降低数据问题风险50%
+
+## 核心定位
+
+质量评分系统，对数据、模型、策略等进行质量评分，建立质量评估体系和评分标准，支持质量监控和质量改进。
+## 设计目标
+
+### 主要目标
+
+1. **功能完整性**: 确保QUALITY SCORING SYSTEM功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用QUALITY SCORING SYSTEM化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
 
 **当前痛点**:
-- 缺少统一的数据质量评分标准
 - 无法量化评估数据质量水平
-- 数据质量问题难以追踪和改进
 - 缺少数据质量趋势分析
 
 **业务目标**:
-- 建立多维度数据质量评分体系
-- 提供实时数据质量评分和趋势分析
 - 支持数据质量改进追踪
 - 生成数据质量报告和可视化
 
-### 1.2 技术目标
 
-| 指标 | 目标值 | 说明 |
 |------|--------|------|
-| **评分维度** | ≥6个 | 至少覆盖6个质量维度 |
-| **评分实时性** | <30秒 | 评分计算响应时间<30秒 |
-| **评分准确性** | ≥95% | 评分结果准确率≥95% |
-| **历史数据保留** | ≥1年 | 保留至少1年的历史评分数据 |
 
----
-
-## 二、系统架构设计
-
-### 2.1 整体架构图
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                数据质量评分系统架构                           │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           评分维度层 (Scoring Dimensions)            │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │完整性评分   │ │准确性评分   │ │时效性评分   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │一致性评分   │ │唯一性评分   │ │有效性评分   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           评分计算层 (Score Calculation)             │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │维度评分器   │ │权重管理器   │ │综合评分器   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           评分存储层 (Score Storage)                 │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │评分记录存储 │ │历史评分存储 │ │趋势数据存储 │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           评分服务层 (Score Service)                 │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │评分查询API  │ │趋势分析API  │ │报告生成API  │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 2.2 技术选型
-
-| 组件 | 技术方案 | 版本要求 | 选型理由 |
-|------|---------|---------|---------|
-| **数据验证** | Great Expectations | 0.18.0+ | 成熟的数据验证框架 |
-| **数据转换** | dbt | 1.7.0+ | 数据转换和文档生成 |
-| **数据库** | PostgreSQL | 15.0+ | 存储评分历史数据 |
-| **缓存** | Redis | 7.0+ | 缓存评分结果 |
-| **可视化** | Grafana | 10.0+ | 评分趋势可视化 |
-
-### 2.3 Layer定位
-
-- **Layer归属**: Layer 1 - 数据预处理层
-- **职责范围**: 数据质量评分、评分趋势分析、质量报告生成
-- **上下层接口**:
-  - 上层依赖: Layer 2-8（提供质量评分查询）
-  - 下层依赖: Layer 0-1（接收数据质量指标）
-
----
-
-## 三、核心模块设计
 
 ### 3.1 评分维度定义 (QualityDimensions)
 
@@ -147,7 +127,6 @@ class DimensionScore:
     calculated_at: datetime = field(default_factory=datetime.now)
 
 class QualityScorer:
-    """质量评分器"""
     
     def __init__(self):
         self.dimension_weights = {
@@ -160,7 +139,6 @@ class QualityScorer:
         }
     
     def calculate_completeness_score(self, df: pd.DataFrame) -> DimensionScore:
-        """计算完整性评分"""
         total_cells = df.size
         missing_cells = df.isnull().sum().sum()
         completeness = 1 - (missing_cells / total_cells)
@@ -181,7 +159,6 @@ class QualityScorer:
     
     def calculate_accuracy_score(self, df: pd.DataFrame, 
                                   rules: Dict[str, Any]) -> DimensionScore:
-        """计算准确性评分"""
         accuracy_scores = []
         
         for column, rule in rules.items():
@@ -213,7 +190,6 @@ class QualityScorer:
     def calculate_timeliness_score(self, df: pd.DataFrame,
                                     timestamp_column: str,
                                     expected_frequency: str) -> DimensionScore:
-        """计算时效性评分"""
         if timestamp_column not in df.columns:
             return DimensionScore(
                 dimension=QualityDimension.TIMELINESS,
@@ -254,7 +230,6 @@ class QualityScorer:
     
     def calculate_consistency_score(self, df: pd.DataFrame,
                                      consistency_rules: List[Dict]) -> DimensionScore:
-        """计算一致性评分"""
         consistency_scores = []
         
         for rule in consistency_rules:
@@ -288,7 +263,6 @@ class QualityScorer:
     
     def calculate_uniqueness_score(self, df: pd.DataFrame,
                                     unique_columns: List[str]) -> DimensionScore:
-        """计算唯一性评分"""
         uniqueness_scores = []
         
         for column in unique_columns:
@@ -315,7 +289,6 @@ class QualityScorer:
     
     def calculate_validity_score(self, df: pd.DataFrame,
                                   validity_rules: Dict[str, Any]) -> DimensionScore:
-        """计算有效性评分"""
         validity_scores = []
         
         for column, rule in validity_rules.items():
@@ -350,7 +323,6 @@ class QualityScorer:
         )
 ```
 
-### 3.2 综合评分计算器 (OverallScoreCalculator)
 
 **职责**: 计算综合质量评分
 
@@ -370,7 +342,6 @@ class OverallQualityScore:
     metadata: Dict[str, Any]
 
 class OverallScoreCalculator:
-    """综合评分计算器"""
     
     def __init__(self):
         self.grade_thresholds = {
@@ -409,7 +380,6 @@ class OverallScoreCalculator:
         return "F"
 ```
 
-### 3.3 评分历史管理器 (ScoreHistoryManager)
 
 **职责**: 管理评分历史数据
 
@@ -419,7 +389,6 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 class ScoreHistoryManager:
-    """评分历史管理器"""
     
     def __init__(self, db_connection):
         self.db = db_connection
@@ -486,25 +455,22 @@ class ScoreHistoryManager:
         }
 ```
 
----
+
 
 ## 四、数据流设计
 
 ### 4.1 评分计算流程
 
 ```
-数据表 → 维度评分计算 → 权重加权 → 综合评分 → 等级判定 → 存储
 ```
 
 ### 4.2 趋势分析流程
 
 ```
-历史评分 → 趋势计算 → 变化检测 → 趋势报告 → 可视化
 ```
 
----
 
-## 五、接口设计
+
 
 ### 5.1 RESTful API
 
@@ -553,11 +519,10 @@ GET /api/v1/quality/trend/{table_name}?days=30
 }
 ```
 
----
 
-## 六、部署架构
 
-### 6.1 容器化部署
+## 
+
 
 ```yaml
 version: '3.8'
@@ -591,61 +556,102 @@ volumes:
   redis-data:
 ```
 
----
 
-## 七、监控指标
+
 
 ### 7.1 核心指标
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `quality_score_overall` | Gauge | 综合质量评分 |
-| `quality_score_dimension` | Gauge | 各维度质量评分 |
 | `quality_score_calculation_duration_seconds` | Histogram | 评分计算耗时 |
-| `quality_score_history_count` | Gauge | 历史评分记录数 |
 
----
 
-## 八、实施计划
 
-### 8.1 开发阶段
+## 
 
-| 阶段 | 任务 | 预计时间 | 负责人 |
+
 |------|------|---------|--------|
-| **阶段1** | 开发评分维度计算器 | 2天 | 后端工程师 |
-| **阶段2** | 开发综合评分计算器 | 1天 | 后端工程师 |
-| **阶段3** | 开发历史管理器 | 1天 | 后端工程师 |
-| **阶段4** | 开发API接口 | 1天 | 后端工程师 |
-| **阶段5** | 集成测试和部署 | 1天 | QA工程师 |
 
 ### 8.2 验收标准
 
-- [ ] 支持6个质量维度评分
-- [ ] 评分计算响应时间<30秒
 - [ ] 评分准确率≥95%
-- [ ] 历史数据保留≥1年
 - [ ] 趋势分析功能正常
 
----
 
-## 九、风险管理
 
-### 9.1 技术风险
+
 
 | 风险 | 影响 | 缓解措施 |
 |------|------|---------|
-| 评分规则不合理 | 高 | 业务专家审核，持续优化 |
-| 评分计算性能瓶颈 | 中 | 缓存机制，异步计算 |
-| 历史数据存储膨胀 | 低 | 数据压缩，定期归档 |
 
----
 
-## 十、相关文档
 
-- [实时数据质量监控蓝图](./REALTIME_QUALITY_MONITOR_BLUEPRINT.md)
-- [质量报告自动化蓝图](./QUALITY_REPORT_AUTOMATION_BLUEPRINT.md)
-- [自动化数据修复引擎蓝图](./AUTO_REPAIR_ENGINE_BLUEPRINT.md)
 
----
+### 上游依赖
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **Redis** | 7.0+ | 缓存系统 | [官方文档](https://redis.io/) |
+
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[质量评分系统]
+    C[质量报告自动化] --> B
+    D[数据目录] --> B
+    
+    B --> E[自动化数据修复引擎]
+    B --> F[增强告警系统]
+    B --> G[监控仪表板增强]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+
+
+
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Quality Scoring System
+- **模块ID**: QUALITY_SCORING_SYSTEM_001
+- **蓝图文档**: QUALITY_SCORING_SYSTEM_BLUEPRINT.md
+- **职责**: Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Quality Scoring System** | Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
+
+### 1.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+
+## 变更历史
+
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+
+

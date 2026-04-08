@@ -3,18 +3,27 @@ module_id: EXEC_SIMULATION_README_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
+---
 ---
 
-# 模拟交易系统
 
-> Layer 5: 交易执行 - 模拟环境、订单模拟、持仓管理、成交回�?
+# 模拟交易系统
+> **核心职责**: 模块说明和快速入门指南
+> **职责边界**: 
+> - ✅ 本文档负责：模块说明和快速入门指南相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> Layer 5: 交易执行 - 模拟环境、订单模拟、持仓管理、成交回?
 
 ---
 
@@ -22,27 +31,27 @@ implementation_status: 进行�?
 
 ```
 模拟交易系统
-├── 模拟环境管理�?(Simulation Environment)
-�?  ├── 市场模拟�?
-�?  ├── 订单模拟�?
-�?  ├── 成交模拟�?
-�?  └── 滑点模型
+├── 模拟环境管理?(Simulation Environment)
+?  ├── 市场模拟?
+?  ├── 订单模拟?
+?  ├── 成交模拟?
+?  └── 滑点模型
 ├── 持仓管理系统 (Position Manager)
-�?  ├── 持仓跟踪
-�?  ├── 成本计算
-�?  ├── 盈亏计算
-�?  └── 保证金计�?
+?  ├── 持仓跟踪
+?  ├── 成本计算
+?  ├── 盈亏计算
+?  └── 保证金计?
 ├── 订单执行模拟 (Order Execution)
-�?  ├── 市价单模�?
-�?  ├── 限价单模�?
-�?  ├── 条件单模�?
-�?  └── 冰山订单模拟
+?  ├── 市价单模?
+?  ├── 限价单模?
+?  ├── 条件单模?
+?  └── 冰山订单模拟
 ├── 交易成本模型 (Cost Model)
-�?  ├── 佣金计算
-�?  ├── 印花税计�?
-�?  ├── 滑点计算
-�?  └── 冲击成本模型
-└── 结果记录�?(Result Logger)
+?  ├── 佣金计算
+?  ├── 印花税计?
+?  ├── 滑点计算
+?  └── 冲击成本模型
+└── 结果记录?(Result Logger)
     ├── 成交记录
     ├── 持仓快照
     └── 每日结算
@@ -64,10 +73,10 @@ import numpy as np
 
 class OrderType(Enum):
     """订单类型"""
-    MARKET = "market"           # 市价�?
-    LIMIT = "limit"            # 限价�?
-    STOP = "stop"             # 止损�?
-    STOP_LIMIT = "stop_limit"  # 止损限价�?
+    MARKET = "market"           # 市价?
+    LIMIT = "limit"            # 限价?
+    STOP = "stop"             # 止损?
+    STOP_LIMIT = "stop_limit"  # 止损限价?
 
 
 class OrderSide(Enum):
@@ -77,21 +86,21 @@ class OrderSide(Enum):
 
 
 class OrderStatus(Enum):
-    """订单状�?""
-    PENDING = "pending"       # 待成�?
+    """订单状?""
+    PENDING = "pending"       # 待成?
     PARTIAL = "partial"       # 部分成交
     FILLED = "filled"         # 全部成交
-    CANCELLED = "cancelled"   # 已取�?
-    REJECTED = "rejected"     # 已拒�?
-    EXPIRED = "expired"       # 已过�?
+    CANCELLED = "cancelled"   # 已取?
+    REJECTED = "rejected"     # 已拒?
+    EXPIRED = "expired"       # 已过?
 
 
 class TimeInForce(Enum):
-    """有效�?""
+    """有效?""
     DAY = "day"               # 当日有效
-    GTC = "gtc"              # 取消前有�?
-    IOC = "ioc"              # 立即成交或取�?
-    FOK = "fok"              # 全数成交或取�?
+    GTC = "gtc"              # 取消前有?
+    IOC = "ioc"              # 立即成交或取?
+    FOK = "fok"              # 全数成交或取?
 
 
 @dataclass
@@ -102,7 +111,7 @@ class SimulatedOrder:
     side: OrderSide
     order_type: OrderType
     quantity: int
-    price: Optional[float] = None           # 限价单价�?
+    price: Optional[float] = None           # 限价单价?
     stop_price: Optional[float] = None       # 止损价格
     filled_quantity: int = 0
     avg_fill_price: float = 0
@@ -151,10 +160,10 @@ class SimulatedAccount:
 class SimulationConfig:
     """模拟配置"""
     initial_cash: float = 1000000
-    commission_rate: float = 0.0003      # 佣金万分�?
+    commission_rate: float = 0.0003      # 佣金万分?
     stamp_tax_rate: float = 0.001        # 印花税千分之1
     slippage_model: str = "percentage"   # 滑点模型
-    slippage_rate: float = 0.0005        # 滑点�?.05%
+    slippage_rate: float = 0.0005        # 滑点?.05%
     market_impact_model: str = "square_root"  # 市场冲击模型
     fill_probability: float = 0.99       # 成交概率
     partial_fill_ratio: float = 0.5      # 部分成交比例
@@ -165,13 +174,13 @@ class SimulationConfig:
 
 ---
 
-## 3. 市场模拟�?
+## 3. 市场模拟?
 
-### 3.1 市场模拟器核�?
+### 3.1 市场模拟器核?
 
 ```python
 class MarketSimulator:
-    """市场模拟�?""
+    """市场模拟?""
 
     def __init__(self, config: SimulationConfig):
         self.config = config
@@ -199,7 +208,7 @@ class MarketSimulator:
             self._update_market_status(symbol)
 
     def _update_market_status(self, symbol: str):
-        """更新市场状�?""
+        """更新市场状?""
         data = self.market_data.get(symbol)
 
         if data is None or len(data) == 0:
@@ -236,13 +245,13 @@ class MarketSimulator:
         return price - spread / 2, price + spread / 2
 
     def can_trade(self, symbol: str, side: OrderSide) -> tuple:
-        """检查是否可以交�?
+        """检查是否可以交?
 
         返回:
             (can_trade, reason)
         """
         if symbol not in self.current_price:
-            return False, "无市场数�?
+            return False, "无市场数?
 
         if self.is_halted.get(symbol, False):
             return False, "股票停牌"
@@ -293,14 +302,14 @@ class MarketSimulator:
         fill_prob = self.config.fill_probability
 
         if np.random.random() > fill_prob:
-            return 0, 0, OrderStatus.PENDING, "成交概率未满�?
+            return 0, 0, OrderStatus.PENDING, "成交概率未满?
 
         if np.random.random() < self.config.partial_fill_ratio:
             filled_qty = int(requested_quantity * np.random.uniform(0.3, 0.7))
             if filled_qty > 0:
                 return filled_qty, fill_price, OrderStatus.PARTIAL, ""
             else:
-                return 0, 0, OrderStatus.PENDING, "部分成交数量�?"
+                return 0, 0, OrderStatus.PENDING, "部分成交数量?"
 
         return requested_quantity, fill_price, OrderStatus.FILLED, ""
 
@@ -320,11 +329,11 @@ class MarketSimulator:
 
 ## 4. 订单执行模拟
 
-### 4.1 订单模拟�?
+### 4.1 订单模拟?
 
 ```python
 class OrderSimulator:
-    """订单模拟�?""
+    """订单模拟?""
 
     def __init__(
         self,
@@ -379,7 +388,7 @@ class OrderSimulator:
         return True
 
     def process_pending_orders(self, timestamp: datetime = None):
-        """处理待成交订�?""
+        """处理待成交订?""
         if timestamp is None:
             timestamp = datetime.now()
 
@@ -427,7 +436,7 @@ class OrderSimulator:
         return self.pending_orders.get(order_id) or self.filled_orders.get(order_id)
 
     def get_pending_orders(self, symbol: str = None) -> List[SimulatedOrder]:
-        """获取待成交订�?""
+        """获取待成交订?""
         orders = list(self.pending_orders.values())
 
         if symbol:
@@ -440,11 +449,11 @@ class OrderSimulator:
 
 ## 5. 持仓管理
 
-### 5.1 持仓管理�?
+### 5.1 持仓管理?
 
 ```python
 class PositionManager:
-    """持仓管理�?""
+    """持仓管理?""
 
     def __init__(self, config: SimulationConfig):
         self.config = config
@@ -521,14 +530,14 @@ class PositionManager:
             del self.positions[symbol]
 
     def update_market_value(self, symbol: str, current_price: float):
-        """更新市�?""
+        """更新市?""
         if symbol in self.positions:
             pos = self.positions[symbol]
             pos.market_value = pos.quantity * current_price
             pos.unrealized_pnl = pos.market_value - pos.total_cost
 
     def update_all_market_values(self, prices: Dict[str, float]):
-        """更新所有持仓市�?""
+        """更新所有持仓市?""
         for symbol, price in prices.items():
             self.update_market_value(symbol, price)
 
@@ -537,11 +546,11 @@ class PositionManager:
         return self.positions.get(symbol)
 
     def get_all_positions(self) -> Dict[str, SimulatedPosition]:
-        """获取所有持�?""
+        """获取所有持?""
         return self.positions.copy()
 
     def get_total_market_value(self) -> float:
-        """获取总市�?""
+        """获取总市?""
         return sum(pos.market_value for pos in self.positions.values())
 
     def get_total_realized_pnl(self) -> float:
@@ -549,7 +558,7 @@ class PositionManager:
         return sum(pos.realized_pnl for pos in self.positions.values())
 
     def calculate_position_summary(self) -> Dict:
-        """计算持仓汇�?""
+        """计算持仓汇?""
         positions_list = []
 
         for symbol, pos in self.positions.items():
@@ -575,11 +584,11 @@ class PositionManager:
 
 ## 6. 交易成本计算
 
-### 6.1 成本计算�?
+### 6.1 成本计算?
 
 ```python
 class CostCalculator:
-    """交易成本计算�?""
+    """交易成本计算?""
 
     def __init__(self, config: SimulationConfig):
         self.config = config
@@ -605,7 +614,7 @@ class CostCalculator:
         quantity: int,
         price: float
     ) -> float:
-        """计算印花税（仅卖出时收取�?""
+        """计算印花税（仅卖出时收取?""
         if side == OrderSide.BUY:
             return 0
 
@@ -657,7 +666,7 @@ class CostCalculator:
         price: float,
         daily_volume: int = 0
     ) -> Dict[str, float]:
-        """计算总成�?""
+        """计算总成?""
         commission = self.calculate_commission(side, quantity, price)
         stamp_tax = self.calculate_stamp_tax(side, quantity, price)
         slippage = self.calculate_slippage(side, quantity, price)
@@ -680,7 +689,7 @@ class CostCalculator:
 
 ## 7. 模拟交易引擎
 
-### 7.1 主引�?
+### 7.1 主引?
 
 ```python
 class SimulationEngine:
@@ -760,7 +769,7 @@ class SimulationEngine:
                 })
 
     def _update_account_value(self):
-        """更新账户价�?""
+        """更新账户价?""
         for symbol, pos in self.position_manager.positions.items():
             price = self.market.get_current_price(symbol)
             self.position_manager.update_market_value(symbol, price)
@@ -802,24 +811,24 @@ class SimulationEngine:
             "=" * 80,
             "",
             "账户概况:",
-            f"  总资�? {account.total_value:,.2f}",
+            f"  总资? {account.total_value:,.2f}",
             f"  现金: {account.cash:,.2f}",
-            f"  持仓市�? {account.market_value:,.2f}",
-            f"  总盈�? {account.total_pnl:,.2f} ({account.total_pnl_pct:.2%})",
+            f"  持仓市? {account.market_value:,.2f}",
+            f"  总盈? {account.total_pnl:,.2f} ({account.total_pnl_pct:.2%})",
             "",
             "持仓明细:",
         ]
 
         for symbol, pos in account.positions.items():
             lines.append(
-                f"  {symbol}: {pos.quantity}�? "
+                f"  {symbol}: {pos.quantity}? "
                 f"成本价{pos.avg_cost:.2f}, "
                 f"现价{self.market.get_current_price(symbol):.2f}, "
                 f"浮盈{pos.unrealized_pnl:,.2f}"
             )
 
         lines.append("")
-        lines.append(f"今日成交: {len(day_trades)}�?)
+        lines.append(f"今日成交: {len(day_trades)}?)
 
         return "\n".join(lines)
 ```
@@ -863,8 +872,8 @@ def example_simulation():
 
     account = engine.get_account_summary()
 
-    print(f"总资�? {account.total_value:,.2f}")
-    print(f"总盈�? {account.total_pnl:,.2f} ({account.total_pnl_pct:.2%})")
+    print(f"总资? {account.total_value:,.2f}")
+    print(f"总盈? {account.total_pnl:,.2f} ({account.total_pnl_pct:.2%})")
 ```
 
 ---
@@ -872,45 +881,45 @@ def example_simulation():
 **版本**: 1.0
 **更新**: 2026-03-28
 **Layer**: Layer 5 (交易执行)
-**索引**: BLUEPRINTS.md �?模拟交易蓝图
+**索引**: BLUEPRINTS.md ?模拟交易蓝图
 **上游接口**: StrategyEngine (M03), BacktestEngine (M15)
 **下游接口**: RiskMonitor (M07), TradeExecutor (M06)
 
 ---
 
-## 9. 多引擎架构扩�?
+## 9. 多引擎架构扩?
 
 为满足不同场景的模拟交易需求，系统设计了多引擎架构，支持三种主流开源交易引擎：
 
-### 9.1 支持的引�?
+### 9.1 支持的引?
 
 | 引擎 | 定位 | 适用场景 | 详细设计 |
 |------|------|----------|----------|
-| **vn.py** | 生产级主引擎 | A股实�?模拟、机构级交易 |  |
-| **RQAlpha** | 专业回测引擎 | A股深度回测、策略研�?|  |
-| **Backtrader** | 功能补充引擎 | 多资产测试、高级订单类�?|  |
+| **vn.py** | 生产级主引擎 | A股实?模拟、机构级交易 |  |
+| **RQAlpha** | 专业回测引擎 | A股深度回测、策略研?|  |
+| **Backtrader** | 功能补充引擎 | 多资产测试、高级订单类别|  |
 
 ### 9.2 统一接口设计
 
-所有引擎通过统一接口层进行适配，提供一致的API�?
+所有引擎通过统一接口层进行适配，提供一致的API?
 - 统一订单模型 (`UnifiedOrder`)
 - 抽象引擎接口 (`BaseEngineAdapter`)
 - 引擎工厂模式 (`EngineFactory`)
 - 多引擎协同器 (`MultiEngine`)
 
-详细设计参见�?
+详细设计参见?
 
 ### 9.3 引擎切换策略
 
 系统支持动态引擎切换，根据场景自动选择最佳引擎：
-- **A股实盘模�?*: vn.py仿真引擎（默认）
+- **A股实盘模?*: vn.py仿真引擎（默认）
 - **策略研究回测**: RQAlpha专业回测引擎
-- **多资产测�?*: Backtrader引擎
-- **故障转移**: 主引擎失败时自动切换到备份引�?
+- **多资产测?*: Backtrader引擎
+- **故障转移**: 主引擎失败时自动切换到备份引?
 
-详细配置参见�?
+详细配置参见?
 
-### 9.4 完整多引擎蓝�?
+### 9.4 完整多引擎蓝图
 
-完整的多引擎架构设计、实施路线图、性能测试方案详见�?
-**[MULTI_ENGINE_BLUEPRINT.md](MULTI_ENGINE_BLUEPRINT.md)**
+完整的多引擎架构设计、实施路线图、性能测试方案详见?
+**MULTI_ENGINE_BLUEPRINT.md**

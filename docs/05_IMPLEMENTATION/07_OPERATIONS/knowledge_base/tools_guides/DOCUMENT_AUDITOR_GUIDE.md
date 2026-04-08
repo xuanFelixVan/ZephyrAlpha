@@ -1,39 +1,60 @@
 ---
-standard_type: 工具指南
-applicable_scope: 文档审计
-compliance_level: 正式标准
+module_id: DOCUMENT_AUDITOR_GUIDE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - DOCUMENT_AUDITOR操作指南
+---
+
+﻿---
+version: 1.0.0
+standard_type: ﮒﺓ۴ﮒﺓﮔﮒ
+responsibility:
+  - 系统审计分析与质量评估报告与改进建议
+applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["工具指南", "文档审计", "自动�?, "使用手册"]
+tags: ["ﮒﺓ۴ﮒﺓﮔﮒ", "ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰", "ﻟ۹ﮒ۷ﮒ?, "ﻛﺛﺟﻝ۷ﮔﮒ"]
 ---
-# 文档审计工具使用指南
-
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
 ---
 
-## 1. 工具概述
+# ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 工具简�?
-文档审计工具是ZephyrAlpha量化交易系统的核心质量保证工具，用于自动检查文档质量，发现潜在问题�?
-### 1.2 主要功能
 
-- �?链接有效性检�?- �?版本格式检�?- �?文档分类检�?- �?元数据完整性检�?- �?自动生成审计报告
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
+---
+
+## 1. ﮒﺓ۴ﮒﺓﮔ۵ﻟﺟﺍ
+
+### 1.1 ﮒﺓ۴ﮒﺓﻝ؟ﻛﭨ?
+ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝﮔﺕﮒﺟﻟﺑ۷ﻠﻛﺟﻟﺁﮒﺓ۴ﮒﺓﺅﺙﻝ۷ﻛﭦﻟ۹ﮒ۷ﮔ۲ﮔ۴ﮔﮔ۰۲ﻟﺑ۷ﻠﺅﺙﮒﻝﺍﮔﺛﮒ۷ﻠ؟ﻠ۱ﻙ?
+### 1.2 ﻛﺕﭨﻟ۵ﮒﻟﺛ
+
+- ﻗ?ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻗ?ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?- ﻗ?ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﻗ?ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?- ﻗ?ﻟ۹ﮒ۷ﻝﮔﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 
 ---
 
-## 2. 快速开�?
-### 2.1 安装要求
+## 2. ﮒﺟ،ﻠﮒﺙﮒ۶?
+### 2.1 ﮒ؟ﻟ۲ﻟ۵ﮔﺎ
 
-**系统要求**:
+**ﻝﺏﭨﻝﭨﻟ۵ﮔﺎ**:
 - Python 3.8+
 - Windows/Linux/macOS
 
-**依赖�?*:
+**ﻛﺝﻟﭖﮒ?*:
 ```bash
 pip install pathlib
 pip install typing
@@ -41,31 +62,31 @@ pip install logging
 pip install dataclasses
 ```
 
-### 2.2 基本使用
+### 2.2 ﮒﭦﮔ؛ﻛﺛﺟﻝ۷
 
-**快速审计（周度�?*:
+**ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﺅﺙﮒ۷ﮒﭦ۵ﺅﺙ?*:
 ```bash
 python scripts/scheduled_quick_audit.py
 ```
 
-**标准审计（月度）**:
+**ﮔﮒﮒ؟۰ﻟ؟۰ﺅﺙﮔﮒﭦ۵ﺅﺙ**:
 ```bash
 python scripts/scheduled_standard_audit.py
 ```
 
-**深度审计（季度）**:
+**ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﺅﺙﮒ۲ﮒﭦ۵ﺅﺙ**:
 ```bash
 python scripts/scheduled_deep_audit.py
 ```
 
 ---
 
-## 3. 功能详解
+## 3. ﮒﻟﺛﻟﺁ۵ﻟ۶۲
 
-### 3.1 链接有效性检�?
-**检查内�?*:
-- 内部链接有效�?- 相对路径正确�?- 文件存在�?
-**使用方法**:
+### 3.1 ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒﮒ۷ﮔ?
+**ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 from scripts.document_auditor import DocumentAuditor
 
@@ -73,7 +94,7 @@ auditor = DocumentAuditor(project_root='.')
 results = auditor.check_links()
 ```
 
-**输出示例**:
+**ﻟﺝﮒﭦﻝ۳ﭦﻛﺝ**:
 ```json
 {
   "total_links": 1234,
@@ -83,15 +104,15 @@ results = auditor.check_links()
 }
 ```
 
-### 3.2 版本格式检�?
-**检查内�?*:
-- 版本号格式（MAJOR.MINOR.PATCH�?- 版本一致�?
-**使用方法**:
+### 3.2 ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
+**ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 results = auditor.check_versions()
 ```
 
-**输出示例**:
+**ﻟﺝﮒﭦﻝ۳ﭦﻛﺝ**:
 ```json
 {
   "total_documents": 543,
@@ -101,15 +122,15 @@ results = auditor.check_versions()
 }
 ```
 
-### 3.3 文档分类检�?
-**检查内�?*:
-- 文档分类规范�?- 目录结构一致�?
-**使用方法**:
+### 3.3 ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔ?- ﻝ؟ﮒﺛﻝﭨﮔﻛﺕﻟﺑﮔ?
+**ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 results = auditor.check_classification()
 ```
 
-**输出示例**:
+**ﻟﺝﮒﭦﻝ۳ﭦﻛﺝ**:
 ```json
 {
   "total_documents": 543,
@@ -119,15 +140,15 @@ results = auditor.check_classification()
 }
 ```
 
-### 3.4 元数据完整性检�?
-**检查内�?*:
-- 必需字段完整�?- 推荐字段完整�?
-**使用方法**:
+### 3.4 ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮒﺟﻠﮒﮔ؟ﭖﮒ؟ﮔﺑﮔ?- ﮔ۷ﻟﮒﮔ؟ﭖﮒ؟ﮔﺑﮔ?
+**ﻛﺛﺟﻝ۷ﮔﺗﮔﺏ**:
 ```python
 results = auditor.check_metadata()
 ```
 
-**输出示例**:
+**ﻟﺝﮒﭦﻝ۳ﭦﻛﺝ**:
 ```json
 {
   "total_documents": 543,
@@ -139,17 +160,17 @@ results = auditor.check_metadata()
 
 ---
 
-## 4. 配置选项
+## 4. ﻠﻝﺛ؟ﻠﻠ۰ﺗ
 
-### 4.1 审计配置
+### 4.1 ﮒ؟۰ﻟ؟۰ﻠﻝﺛ؟
 
-**配置文件**: `docs/09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md`
+**ﻠﻝﺛ؟ﮔﻛﭨﭘ**: `docs/09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md`
 
-**主要配置�?*:
+**ﻛﺕﭨﻟ۵ﻠﻝﺛ؟ﻠ۰?*:
 ```yaml
 audit:
   project_root: "."
-  output_dir: "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state"
+  output_dir: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
   
   checks:
     links: true
@@ -164,24 +185,24 @@ audit:
     metadata_completeness: 95%
 ```
 
-### 4.2 忽略规则
+### 4.2 ﮒﺟﺛﻝ۴ﻟ۶ﮒ
 
-**配置忽略规则**:
+**ﻠﻝﺛ؟ﮒﺟﺛﻝ۴ﻟ۶ﮒ**:
 ```yaml
 ignore_rules:
-  - pattern: "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state/**"
-    reason: "审计报告文件"
+  - pattern: "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/**"
+    reason: "ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔﻛﭨﭘ"
   - pattern: "docs/06_ARCHIVE/**"
-    reason: "归档文件"
+    reason: "ﮒﺛﮔ۰۲ﮔﻛﭨﭘ"
 ```
 
 ---
 
-## 5. 报告解读
+## 5. ﮔ۴ﮒﻟ۶۲ﻟﺁﭨ
 
-### 5.1 报告结构
+### 5.1 ﮔ۴ﮒﻝﭨﮔ
 
-**JSON报告**:
+**JSONﮔ۴ﮒ**:
 ```json
 {
   "summary": {
@@ -204,127 +225,127 @@ ignore_rules:
 }
 ```
 
-### 5.2 问题分级
+### 5.2 ﻠ؟ﻠ۱ﮒﻝﭦ۶
 
-**严重程度**:
-- **Critical**: 阻塞性问题，必须立即修复
-- **Warning**: 警告问题，建议尽快修�?- **Info**: 信息提示，可选修�?
-**优先�?*:
-- **P0**: 立即处理�?4小时内）
-- **P1**: 紧急处理（本周内）
-- **P2**: 正常处理（本月内�?- **P3**: 低优先级（有空时�?
+**ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵**:
+- **Critical**: ﻠﭨﮒ۰ﮔ۶ﻠ؟ﻠ۱ﺅﺙﮒﺟﻠ۰ﭨﻝ،ﮒﺏﻛﺟ؟ﮒ۳
+- **Warning**: ﻟ۵ﮒﻠ؟ﻠ۱ﺅﺙﮒﭨﭦﻟ؟؟ﮒﺍﺛﮒﺟ،ﻛﺟ؟ﮒ۳?- **Info**: ﻛﺟ۰ﮔﺁﮔﻝ۳ﭦﺅﺙﮒﺁﻠﻛﺟ؟ﮒ۳?
+**ﻛﺙﮒﻝﭦ?*:
+- **P0**: ﻝ،ﮒﺏﮒ۳ﻝﺅﺙ?4ﮒﺍﮔﭘﮒﺅﺙ
+- **P1**: ﻝﺑ۶ﮔ۴ﮒ۳ﻝﺅﺙﮔ؛ﮒ۷ﮒﺅﺙ
+- **P2**: ﮔ۲ﮒﺕﺕﮒ۳ﻝﺅﺙﮔ؛ﮔﮒﺅﺙ?- **P3**: ﻛﺛﻛﺙﮒﻝﭦ۶ﺅﺙﮔﻝ۸ﭦﮔﭘﺅﺙ?
 ---
 
-## 6. 常见问题
+## 6. ﮒﺕﺕﻟ۶ﻠ؟ﻠ۱
 
-### 6.1 工具运行问题
+### 6.1 ﮒﺓ۴ﮒﺓﻟﺟﻟ۰ﻠ؟ﻠ۱
 
-**问题1: 找不到模�?*
+**ﻠ؟ﻠ۱1: ﮔﺝﻛﺕﮒﺍﮔ۷۰ﮒ?*
 
-**错误信息**:
+**ﻠﻟﺁﺁﻛﺟ۰ﮔﺁ**:
 ```
 ModuleNotFoundError: No module named 'document_auditor'
 ```
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```bash
-# 确保在项目根目录运行
+# ﻝ۰؟ﻛﺟﮒ۷ﻠ۰ﺗﻝ؟ﮔﺗﻝ؟ﮒﺛﻟﺟﻟ۰
 cd D:\ZephyrAlpha
 python scripts/scheduled_quick_audit.py
 ```
 
 ---
 
-**问题2: 权限不足**
+**ﻠ؟ﻠ۱2: ﮔﻠﻛﺕﻟﭘﺏ**
 
-**错误信息**:
+**ﻠﻟﺁﺁﻛﺟ۰ﮔﺁ**:
 ```
 PermissionError: [Errno 13] Permission denied
 ```
 
-**解决方案**:
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
 ```bash
-# 以管理员身份运行
-# Windows: 右键 �?以管理员身份运行
+# ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰
+# Windows: ﮒﺏﻠ؟ ﻗ?ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰
 # Linux/macOS: sudo python scripts/scheduled_quick_audit.py
 ```
 
-### 6.2 报告解读问题
+### 6.2 ﮔ۴ﮒﻟ۶۲ﻟﺁﭨﻠ؟ﻠ۱
 
-**问题1: 问题数量突然增加**
+**ﻠ؟ﻠ۱1: ﻠ؟ﻠ۱ﮔﺍﻠﻝ۹ﻝﭘﮒ۱ﮒ**
 
-**可能原因**:
-- 扫描了更多文�?- 新增了文�?- 检测规则变�?
-**解决方案**:
-- 查看扫描文件数变�?- 检查新增文�?- 对比历史报告
+**ﮒﺁﻟﺛﮒﮒ**:
+- ﮔ،ﮔﻛﭦﮔﺑﮒ۳ﮔﻛﭨ?- ﮔﺍﮒ۱ﻛﭦﮔﮔ۰?- ﮔ۲ﮔﭖﻟ۶ﮒﮒﮒ?
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
+- ﮔ۴ﻝﮔ،ﮔﮔﻛﭨﭘﮔﺍﮒﮒ?- ﮔ۲ﮔ۴ﮔﺍﮒ۱ﮔﮔ۰?- ﮒﺁﺗﮔﺁﮒﮒﺎﮔ۴ﮒ
 
 ---
 
-**问题2: 报告文件过大**
+**ﻠ؟ﻠ۱2: ﮔ۴ﮒﮔﻛﭨﭘﻟﺟﮒ۳۶**
 
-**可能原因**:
-- 扫描文件数过�?- 问题数量过多
+**ﮒﺁﻟﺛﮒﮒ**:
+- ﮔ،ﮔﮔﻛﭨﭘﮔﺍﻟﺟﮒ۳?- ﻠ؟ﻠ۱ﮔﺍﻠﻟﺟﮒ۳
 
-**解决方案**:
-- 配置忽略规则
-- 分批处理
-- 定期清理旧报�?
+**ﻟ۶۲ﮒﺏﮔﺗﮔ۰**:
+- ﻠﻝﺛ؟ﮒﺟﺛﻝ۴ﻟ۶ﮒ
+- ﮒﮔﺗﮒ۳ﻝ
+- ﮒ؟ﮔﮔﺕﻝﮔ۶ﮔ۴ﮒ?
 ---
 
-## 7. 最佳实�?
-### 7.1 定期审计
+## 7. ﮔﻛﺛﺏﮒ؟ﻟﺓ?
+### 7.1 ﮒ؟ﮔﮒ؟۰ﻟ؟۰
 
-**推荐频率**:
-- **快速审�?*: 每周一
-- **标准审计**: 每月1�?- **深度审计**: 每季度首�?
-**自动化配�?*:
+**ﮔ۷ﻟﻠ۱ﻝ**:
+- **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?*: ﮔﺁﮒ۷ﻛﺕ
+- **ﮔﮒﮒ؟۰ﻟ؟۰**: ﮔﺁﮔ1ﮔ?- **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰**: ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ?
+**ﻟ۹ﮒ۷ﮒﻠﻝﺛ?*:
 ```powershell
-# Windows任务计划程序
-# 每周一 09:00 执行快速审�?schtasks /create /tn "ZephyrAlpha_Quick_Audit" /tr "python D:\ZephyrAlpha\scripts\scheduled_quick_audit.py" /sc weekly /d MON /st 09:00
+# Windowsﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦ
+# ﮔﺁﮒ۷ﻛﺕ 09:00 ﮔ۶ﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?schtasks /create /tn "ZephyrAlpha_Quick_Audit" /tr "python D:\ZephyrAlpha\scripts\scheduled_quick_audit.py" /sc weekly /d MON /st 09:00
 ```
 
-### 7.2 问题处理
+### 7.2 ﻠ؟ﻠ۱ﮒ۳ﻝ
 
-**处理流程**:
+**ﮒ۳ﻝﮔﭖﻝ۷**:
 ```
-1. 查看审计报告
-   �?2. 确认问题优先�?   �?3. 修复高优先级问题
-   �?4. 验证修复效果
-   �?5. 记录处理过程
+1. ﮔ۴ﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+   ﻗ?2. ﻝ۰؟ﻟ؟۳ﻠ؟ﻠ۱ﻛﺙﮒﻝﭦ?   ﻗ?3. ﻛﺟ؟ﮒ۳ﻠ،ﻛﺙﮒﻝﭦ۶ﻠ؟ﻠ۱
+   ﻗ?4. ﻠ۹ﻟﺁﻛﺟ؟ﮒ۳ﮔﮔ
+   ﻗ?5. ﻟ؟ﺍﮒﺛﮒ۳ﻝﻟﺟﻝ۷
 ```
 
-### 7.3 持续改进
+### 7.3 ﮔﻝﭨﮔﺗﻟﺟ
 
-**改进措施**:
-- 定期优化审计规则
-- 更新忽略规则
-- 完善自动化工�?- 积累最佳实�?
+**ﮔﺗﻟﺟﮔ۹ﮔﺛ**:
+- ﮒ؟ﮔﻛﺙﮒﮒ؟۰ﻟ؟۰ﻟ۶ﮒ
+- ﮔﺑﮔﺍﮒﺟﺛﻝ۴ﻟ۶ﮒ
+- ﮒ؟ﮒﻟ۹ﮒ۷ﮒﮒﺓ۴ﮒ?- ﻝ۶ﺁﻝﺑﺁﮔﻛﺛﺏﮒ؟ﻟﺓ?
 ---
 
-## 8. 高级用法
+## 8. ﻠ،ﻝﭦ۶ﻝ۷ﮔﺏ
 
-### 8.1 自定义审计规�?
-**创建自定义规�?*:
+### 8.1 ﻟ۹ﮒ؟ﻛﺗﮒ؟۰ﻟ؟۰ﻟ۶ﮒ?
+**ﮒﮒﭨﭦﻟ۹ﮒ؟ﻛﺗﻟ۶ﮒ?*:
 ```python
 class CustomAuditRule:
-    """自定义审计规�?""
+    """ﻟ۹ﮒ؟ﻛﺗﮒ؟۰ﻟ؟۰ﻟ۶ﮒ?""
     
     def check(self, file: Path) -> List[AuditIssue]:
-        """执行检�?""
+        """ﮔ۶ﻟ۰ﮔ۲ﮔ?""
         issues = []
         
-        # 自定义检查逻辑
+        # ﻟ۹ﮒ؟ﻛﺗﮔ۲ﮔ۴ﻠﭨﻟﺝ
         # ...
         
         return issues
 
-# 注册规则
+# ﮔﺏ۷ﮒﻟ۶ﮒ
 auditor.register_rule(CustomAuditRule())
 ```
 
-### 8.2 集成到CI/CD
+### 8.2 ﻠﮔﮒﺍCI/CD
 
-**GitHub Actions配置**:
+**GitHub Actionsﻠﻝﺛ؟**:
 ```yaml
 name: Document Audit
 
@@ -350,12 +371,12 @@ jobs:
 
 ---
 
-## 9. 参考文�?
-- [文档审计工具技术规范](../../05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md)
-- [定期审计任务配置](../../09_AUDIT/CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [文档治理流程标准](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+## 9. ﮒﻟﮔﮔ۰?
+- ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ
+- ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
 
 ---
 
-**文档状�?*: 正式标准
-**下次更新**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
+**ﻛﺕﮔ؛۰ﮔﺑﮔﺍ**: 2026-07-02

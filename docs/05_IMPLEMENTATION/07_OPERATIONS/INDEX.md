@@ -1,17 +1,35 @@
 ---
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_2
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 07_OPERATIONS目录索引
+---
+
+﻿---
 module_id: IMPL_INDEX_OPERATIONS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 目录导航与文档索引管理与优化维护
 standard_type: 专业量化机构索引文档
 applicable_scope: 07_OPERATIONS目录
 compliance_level: 专业标准
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # 07_OPERATIONS 运维手册索引
+> **核心职责**: 目录导航和文档索引
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航和文档索引相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **目录职责**: 系统运维、监控、审计、知识管理
 > **文档数量**: 20+个
@@ -23,8 +41,8 @@ parent_document: ../INDEX.md
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](./README.md) | 运维手册概述 | Active |
-| [DOCUMENT_AUDIT_WORKFLOW.md](./DOCUMENT_AUDIT_WORKFLOW.md) | 文档审查工作流程 | Active |
+| README.md | 运维手册概述 | Active |
+| `DOCUMENT_AUDIT_WORKFLOW.md` | 文档审查工作流程 | Active |
 | [AUDIT_CHECKLIST_TEMPLATE.md](./AUDIT_CHECKLIST_TEMPLATE.md) | 审查检查清单模板 | Active |
 | [QUALITY_GATE_MECHANISM.md](./QUALITY_GATE_MECHANISM.md) | 质量门机制 | Active |
 | [PERFORMANCE_MONITORING.md](./PERFORMANCE_MONITORING.md) | 性能监控 | Active |
@@ -37,8 +55,8 @@ parent_document: ../INDEX.md
 ### audit_state/ - 审计状态
 | 文档 | 职责 |
 |------|------|
-| [LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md](./audit_state/LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md) | Layer5深度审计报告 |
-| [LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md](./audit_state/LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V6_20260404.md) | Layer2因子审计报告 |
+
+
 
 ### knowledge_base/ - 知识库
 | 文档 | 职责 |
@@ -91,3 +109,31 @@ df -h
 
 **维护者**: 运维负责人
 **创建日期**: 2026-04-04
+
+- [СИфС║║+AIтю║ТЎСИІуџётиУиЮтЈУАїТђДтѕєТъљСИјтъТќйуГќуЋЦ](./GAP_FEASIBILITY_ANALYSIS_PERSONAL_AI_SCENARIO.md) - 系统文档
+
+- [Minicondaﮒ؟ﻟ۲ﮒﺏﻠ؟ﮔ۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ?](./MINICONDA_INSTALLATION_CHECKLIST.md) - 系统文档
+
+- [QMTш┐ЮцОещЧощвШца╣цЬмхОЯхЫахИЖцЮРф╕ОшзгхЖ│цЦ╣цб?](./QMT_CONNECTION_ROOT_CAUSE_ANALYSIS.md) - 系统文档
+
+- [QMTф║дцШУцОехПгш┐ЮцОещЧощвШцОТцЯецМЗхНЧ](./QMT_CONNECTION_TROUBLESHOOTING.md) - 系统文档
+
+- [ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﮒ۷ﮔ۷۰ﮒﮔﺓﺎﮒﭦ۵ﮒ؟۰ﮔﺗﮔﺗ?](./SYSTEM_WIDE_APPROVAL_PLAN.md) - 系统文档
+
+- `чЙИцЬмчобчРЖхЖ│чнЦшо░х╜Х` - 系统文档
+
+- `版本管理优化方案` - 系统文档
+
+- [Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?](./MINICONDA_INSTALLATION_GUIDE.md) - 实施指南文档
+
+- [QMT Final Setup Guide](./QMT_FINAL_SETUP_GUIDE.md) - 实施指南文档
+
+- [QMT MiniQMTﮔ۷۰ﮒﺙﻝﭨﮒﺛﮔﮒ](./QMT_MINIQMT_LOGIN_GUIDE.md) - 实施指南文档
+
+- `版本管理自动化集成指?` - 实施指南文档
+
+- [P1ﻝﭦ۶ﻠ۲ﻠ۸ﻝﺙﻟ۶۲ﮔﺗﮔ۰ﻟ؟ﺝﻟ؟۰ﮔﮔ۰?](./P1_RISK_MITIGATION_DESIGN.md) - 设计文档
+
+- [ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?v1.0](./SPEC_APPROVER_TOOL_GUIDE.md) - 技术规格说明
+
+- [HMMцибхЮЛцКАцЬпхЯ╣шоншобхИ?](./HMM_TRAINING_PLAN_001.md) - 培训材料

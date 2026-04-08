@@ -1,58 +1,77 @@
 ---
-standard_type: 技术规�?applicable_scope: 文档分类系统
-compliance_level: 正式标准
+module_id: DOCUMENT_CLASSIFIER_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - DOCUMENT_CLASSIFIER技术规范
+---
+
+﻿---
+version: 1.0.0
+standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒﻝﺎﭨﻝﺏﭨﻝﭨ
+responsibility:
+  - 系统实施与部署管理与优化维护
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_CLASSIFIER_SPECIFICATION
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
-# 文档分类工具技术规�?
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
----
+last_updated: 2026-04-02---
 
-## 1. 概述
+# ﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 目标
-
-定义文档分类工具的技术规范，确保工具能够有效分类和管理文档�?
-### 1.2 适用范围
-
-- 文档自动分类
-- 分类规范性检�?- 分类统计报告
-
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 ---
 
-## 2. 架构设计
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 2.1 核心组件
+### 1.1 ﻝ؟ﮔ
+
+ﮒ؟ﻛﺗﮔﮔ۰۲ﮒﻝﺎﭨﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮒﻝﺎﭨﮒﻝ؟۰ﻝﮔﮔ۰۲ﻙ?
+### 1.2 ﻠﻝ۷ﻟﮒﺑ
+
+- ﮔﮔ۰۲ﻟ۹ﮒ۷ﮒﻝﺎﭨ
+- ﮒﻝﺎﭨﻟ۶ﻟﮔ۶ﮔ۲ﮔ?- ﮒﻝﺎﭨﻝﭨﻟ؟۰ﮔ۴ﮒ
+
+---
+
+## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class DocumentClassifier:
-    """文档分类�?""
+    """ﮔﮔ۰۲ﮒﻝﺎﭨﮒ?""
     
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
         
     def classify_document(self, file: Path) -> str:
-        """分类文档"""
+        """ﮒﻝﺎﭨﮔﮔ۰۲"""
         
     def validate_classification(self, file: Path) -> bool:
-        """验证分类"""
+        """ﻠ۹ﻟﺁﮒﻝﺎﭨ"""
         
     def generate_classification_report(self) -> Dict:
-        """生成分类报告"""
+        """ﻝﮔﮒﻝﺎﭨﮔ۴ﮒ"""
 ```
 
 ---
 
-## 3. 功能规范
+## 3. ﮒﻟﺛﻟ۶ﻟ
 
-### 3.1 分类标准
+### 3.1 ﮒﻝﺎﭨﮔﮒ
 
-**标准分类**:
+**ﮔﮒﮒﻝﺎﭨ**:
 - 01_FRAMEWORK
 - 02_FACTOR_LIBRARY
 - 03_TRADING_TACTICS
@@ -63,26 +82,26 @@ class DocumentClassifier:
 - 08_AI_GOVERNANCE
 - 09_AUDIT
 
-### 3.2 分类规则
+### 3.2 ﮒﻝﺎﭨﻟ۶ﮒ
 
-- 基于目录路径
-- 基于文件内容
-- 基于元数�?
+- ﮒﭦﻛﭦﻝ؟ﮒﺛﻟﺓﺁﮒﺝ
+- ﮒﭦﻛﭦﮔﻛﭨﭘﮒﮒ؟ﺗ
+- ﮒﭦﻛﭦﮒﮔﺍﮔ?
 ---
 
-## 4. 性能要求
+## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| 指标 | 要求 |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
-| **分类速度** | �?00文件/分钟 |
-| **准确�?* | �?5% |
+| **ﮒﻝﺎﭨﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
+| **ﮒﻝ۰؟ﻝ?* | ﻗ?5% |
 
 ---
 
-## 5. 参考文�?
-- [文档分类标准](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
+## 5. ﮒﻟﮔﮔ۰?
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

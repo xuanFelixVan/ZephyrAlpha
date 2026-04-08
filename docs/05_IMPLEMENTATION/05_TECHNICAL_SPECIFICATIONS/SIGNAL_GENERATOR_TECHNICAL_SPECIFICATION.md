@@ -1,118 +1,138 @@
 ---
+module_id: SIGNAL_GENERATOR_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - SIGNAL_GENERATOR_TECHNICAL技术规范
+---
+
+﻿---
 module_id: SIGNAL_GENERATOR_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 5 策略执行?| 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行?
+implementation_status: ﻟﺟﻟ۰?
+---
 ---
 
-# SignalGenerator信号生成器模块技术规格书
 
-> 清风量化系统 v5.3 - SignalGenerator信号生成器模块详细技术设?
-> **模块ID**: `SIGNAL_GENERATOR_001`
-> **版本**: v1.0.0
-> **�?*: ?正式
+# SignalGeneratorﻛﺟ۰ﮒﺓﻝﮔﮒ۷ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
 
-## 1. 概述
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - SignalGeneratorﻛﺟ۰ﮒﺓﻝﮔﮒ۷ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?
+> **ﮔ۷۰ﮒID**: `SIGNAL_GENERATOR_001`
+> **ﻝﮔ؛**: v1.0.0
+> **ﻝ?*: ?ﮔ۲ﮒﺙ
 
-### 1.1 设计背景与业务目?
-- **业务需?*: 系统需要将策略产生的因子信号转化为可执行的交易信号
-- **技术痛?*: 
-  - 信号质量不稳定：因子信号缺乏标准化和验证
-  - 信号过滤缺失：缺乏有效的信号过滤和确认机?
-  - 信号合成困难：多因子信号合成缺乏统一方法
-  - 信号衰减处理不当：信号时效性管理不?
-- **预期�?*: 
-  - 建立统一的信号生成和标准化机?
-  - 提供有效的信号过滤和确认机制
-  - 支持多因子信号合成和优化
-  - 实现信号衰减和时效性管?
 
-### 1.2 技术定位与架构层归?
-- **Layer定位**: Layer 5 - 策略执行?(符合ARCHITECTURE.md定义)
-- **模块类别**: 核心信号生成模块
-- **架构角色**: Layer 5策略执行核心，连接策略引擎与交易执行
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.3 版本信息
-| 版本 | 日期 | �?| 变更说明 | �?|
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?
+- **ﻛﺕﮒ۰ﻠ?*: ﻝﺏﭨﻝﭨﻠﻟ۵ﮒﺍﻝﻝ۴ﻛﭦ۶ﻝﻝﮒﮒﻛﺟ۰ﮒﺓﻟﺛ؛ﮒﻛﺕﭦﮒﺁﮔ۶ﻟ۰ﻝﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
+- **ﮔﮔﺁﻝ?*: 
+- ﻛﺟ۰ﮒﺓﻟﺑ۷ﻠﻛﺕﻝ۷ﺏﮒ؟ﺅﺙﮒﮒﻛﺟ۰ﮒﺓﻝﺙﭦﻛﺗﮔﮒﮒﮒﻠ۹ﻟﺁ
+  - ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﻝﺙﭦﮒ۳ﺎﺅﺙﻝﺙﭦﻛﺗﮔﮔﻝﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮒﻝ۰؟ﻟ؟۳ﮔﭦ?
+- ﻛﺟ۰ﮒﺓﮒﮔﮒﺍﻠﺝﺅﺙﮒ۳ﮒﮒﻛﺟ۰ﮒﺓﮒﮔﻝﺙﭦﻛﺗﻝﭨﻛﺕﮔﺗﮔﺏ
+  - ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﮒ۳ﻝﻛﺕﮒﺛﺅﺙﻛﺟ۰ﮒﺓﮔﭘﮔﮔ۶ﻝ؟۰ﻝﻛﺕ?
+- **ﻠ۱ﮔﻛﭨ?*: 
+- ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﻛﺟ۰ﮒﺓﻝﮔﮒﮔﮒﮒﮔﭦ?
+  - ﮔﻛﺝﮔﮔﻝﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮒﻝ۰؟ﻟ؟۳ﮔﭦﮒﭘ
+- ﮔﺁﮔﮒ۳ﮒﮒﻛﺟ۰ﮒﺓﮒﮔﮒﻛﺙﮒ
+  - ﮒ؟ﻝﺍﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﮒﮔﭘﮔﮔ۶ﻝ؟۰?
+
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?
+- **Layerﮒ؟ﻛﺛ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?(ﻝ؛۵ﮒARCHITECTURE.mdﮒ؟ﻛﺗ)
+- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔﺕﮒﺟﻛﺟ۰ﮒﺓﻝﮔﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: Layer 5ﻝﻝ۴ﮔ۶ﻟ۰ﮔﺕﮒﺟﺅﺙﻟﺟﮔ۴ﻝﻝ۴ﮒﺙﮔﻛﺕﻛﭦ۳ﮔﮔ۶ﻟ۰
+
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝ?|
 |------|------|------|----------|------|
-| v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+| v1.0.0 | 2026-04-02 | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ | ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
-## 2. 详细架构设计
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 系统架构?
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?
 ```
-┌─────────────────────────────────────────────────────────────?
-?                   Layer 5: 策略执行?                      ?
-├─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+?                   Layer 5: ﻝﻝ۴ﮔ۶ﻟ۰?                      ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ?                                                            ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?       SignalGenerator (信号生成器主模块)              ? ?
-? ? - 信号生成                                            ? ?
-? ? - 信号过滤                                            ? ?
-? ? - 信号确认                                            ? ?
-? ? - 信号合成                                            ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?       SignalGenerator (ﻛﺟ۰ﮒﺓﻝﮔﮒ۷ﻛﺕﭨﮔ۷۰ﮒ)              ? ?
+? ? - ﻛﺟ۰ﮒﺓﻝﮔ                                            ? ?
+? ? - ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳                                            ? ?
+? ? - ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳                                            ? ?
+? ? - ﻛﺟ۰ﮒﺓﮒﮔ                                            ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         核心组件                                      ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │RawSignalCalc?│SignalFilter ?│SignalConfirm ? ? ?
-? ? │原始信号计?  ? │信号过滤器   ? │信号确认器   ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │SignalSynth  ?│SignalDecay  ?│QualityAssess? ? ?
-? ? │信号合成器    ? │信号衰减器   ? │质量评估器   ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺕﮒﺟﻝﭨﻛﭨﭘ                                      ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗRawSignalCalc?ﻗSignalFilter ?ﻗSignalConfirm ? ? ?
+? ? ﻗﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰?  ? ﻗﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮒ۷   ? ﻗﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﮒ۷   ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗSignalSynth  ?ﻗSignalDecay  ?ﻗQualityAssess? ? ?
+? ? ﻗﻛﺟ۰ﮒﺓﮒﮔﮒ۷    ? ﻗﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﮒ۷   ? ﻗﻟﺑ۷ﻠﻟﺁﻛﺙﺍﮒ۷   ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         支撑服务                                     ? ?
-? ? - 配置服务 (Config Service)                         ? ?
-? ? - 日志服务 (Log Service)                           ? ?
-? ? - 监控服务 (Monitor Service)                       ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺁﮔﮔﮒ۰                                     ? ?
+? ? - ﻠﻝﺛ؟ﮔﮒ۰ (Config Service)                         ? ?
+? ? - ﮔ۴ﮒﺟﮔﮒ۰ (Log Service)                           ? ?
+? ? - ﻝﮔ۶ﮔﮒ۰ (Monitor Service)                       ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                                                            ?
-└─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 5 - 策略执行?
-- **职责范围**: 信号生成、信号过滤、信号确认、信号合?
-- **上下层接?*: 
-  - 上层依赖: Layer 2 Alpha因子?(提供因子信号)
-  - 下层依赖: Layer 6 组合优化?(接收交易信号)
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
+- **Layerﮒﺛﮒﺎ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?
+- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﻛﺟ۰ﮒﺓﻝﮔﻙﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﻙﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﻙﻛﺟ۰ﮒﺓﮒ?
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 2 Alphaﮒﮒ?(ﮔﻛﺝﮒﮒﻛﺟ۰ﮒﺓ)
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 6 ﻝﭨﮒﻛﺙﮒ?(ﮔ۴ﮔﭘﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ)
 
-### 2.3 模块职责与边界定?
-- **核心职责**: 将因子信号转化为可执行的交易信号
-- **职责边界**: 
-  - ?本模块负? 信号生成、过滤、确认、合成、衰?
-  - ?本模块不负责: 因子计算、策略执行、交易执行、风险控?
-- **接口契约**: 提供统一的Python API接口
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟?
+- **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﮒﺍﮒﮒﻛﺟ۰ﮒﺓﻟﺛ؛ﮒﻛﺕﭦﮒﺁﮔ۶ﻟ۰ﻝﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+  - ?ﮔ؛ﮔ۷۰ﮒﻟﺑ? ﻛﺟ۰ﮒﺓﻝﮔﻙﻟﺟﮔﭨ۳ﻙﻝ۰؟ﻟ؟۳ﻙﮒﮔﻙﻟ۰ﺍ?
+- ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮒﮒﻟ؟۰ﻝ؟ﻙﻝﻝ۴ﮔ۶ﻟ۰ﻙﻛﭦ۳ﮔﮔ۶ﻟ۰ﻙﻠ۲ﻠ۸ﮔ۶?
+- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﻝﭨﻛﺕﻝPython APIﮔ۴ﮒ۲
 
-### 2.4 依赖关系
-| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| pandas | 强依?| Python?| >=1.3.0 | 数据处理 |
-| numpy | 强依?| Python?| >=1.21.0 | 数值计?|
-| scipy | 强依?| Python?| >=1.7.0 | 统计分析 |
+| pandas | ﮒﺙﭦﻛﺝ?| Python?| >=1.3.0 | ﮔﺍﮔ؟ﮒ۳ﻝ |
+| numpy | ﮒﺙﭦﻛﺝ?| Python?| >=1.21.0 | ﮔﺍﮒﺙﻟ؟۰?|
+| scipy | ﮒﺙﭦﻛﺝ?| Python?| >=1.7.0 | ﻝﭨﻟ؟۰ﮒﮔ |
 
 ---
 
-## 3. 接口定义
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 API接口规范
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
-#### 3.1.1 主接口类
+#### 3.1.1 ﻛﺕﭨﮔ۴ﮒ۲ﻝﺎﭨ
 ```python
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
@@ -125,7 +145,7 @@ import logging
 
 
 class SignalType(Enum):
-    """信号类型枚举"""
+    """ﻛﺟ۰ﮒﺓﻝﺎﭨﮒﮔﻛﺕﺝ"""
     BUY = "BUY"
     SELL = "SELL"
     HOLD = "HOLD"
@@ -134,7 +154,7 @@ class SignalType(Enum):
 
 
 class SignalStrength(Enum):
-    """信号强度枚举"""
+    """ﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵ﮔﻛﺕﺝ"""
     STRONG_BUY = "STRONG_BUY"
     BUY = "BUY"
     NEUTRAL = "NEUTRAL"
@@ -144,7 +164,7 @@ class SignalStrength(Enum):
 
 @dataclass
 class Signal:
-    """交易信号"""
+    """ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
     signal_id: str
     symbol: str
     signal_type: SignalType
@@ -156,7 +176,7 @@ class Signal:
 
 @dataclass
 class SignalOutput:
-    """信号输出"""
+    """ﻛﺟ۰ﮒﺓﻟﺝﮒﭦ"""
     signal: pd.DataFrame
     strength: pd.DataFrame
     direction: pd.DataFrame
@@ -166,7 +186,7 @@ class SignalOutput:
 
 @dataclass
 class SignalConfig:
-    """信号配置"""
+    """ﻛﺟ۰ﮒﺓﻠﻝﺛ؟"""
     min_signal_strength: float = 0.5
     confirmation_enabled: bool = True
     volume_filter_enabled: bool = True
@@ -176,7 +196,7 @@ class SignalConfig:
 
 
 class RawSignalCalculator:
-    """原始信号计算?""
+    """ﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -186,14 +206,14 @@ class RawSignalCalculator:
         factor_signals: pd.DataFrame,
         method: str = "zscore"
     ) -> pd.DataFrame:
-        """计算原始信号
+        """ﻟ؟۰ﻝ؟ﮒﮒ۶ﻛﺟ۰ﮒﺓ
         
-        参数:
-            factor_signals: 因子信号矩阵 (date x stock)
-            method: 标准化方?(zscore, minmax, rank)
+        ﮒﮔﺍ:
+factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ (date x stock)
+method: ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
             
-        返回:
-            标准化后的信号矩?
+        ﻟﺟﮒ:
+ﮔﮒﮒﮒﻝﻛﺟ۰ﮒﺓﻝ۸?
         """
         if method == "zscore":
             normalized = (factor_signals - factor_signals.mean()) / factor_signals.std()
@@ -209,13 +229,13 @@ class RawSignalCalculator:
             raise ValueError(f"Unknown method: {method}")
     
     def classify_strength(self, signal_value: float) -> SignalStrength:
-        """分类信号强度
+        """ﮒﻝﺎﭨﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵
         
-        参数:
-            signal_value: 信号?[-1, 1]
+        ﮒﮔﺍ:
+            signal_value: ﻛﺟ۰ﮒﺓ?[-1, 1]
             
-        返回:
-            信号强度枚举
+        ﻟﺟﮒ:
+            ﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵ﮔﻛﺕﺝ
         """
         if signal_value >= 0.8:
             return SignalStrength.STRONG_BUY
@@ -230,7 +250,7 @@ class RawSignalCalculator:
 
 
 class SignalFilter:
-    """信号过滤?""
+    """ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳?""
     
     def __init__(self, config: SignalConfig):
         self.config = config
@@ -241,14 +261,14 @@ class SignalFilter:
         signals: pd.DataFrame,
         market_data: Dict[str, Any]
     ) -> pd.DataFrame:
-        """流动性过?
+        """ﮔﭖﮒ۷ﮔ۶ﻟﺟ?
         
-        参数:
-            signals: 信号矩阵
-            market_data: 市场数据
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
             
-        返回:
-            过滤后的信号矩阵
+        ﻟﺟﮒ:
+            ﻟﺟﮔﭨ۳ﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         if not self.config.volume_filter_enabled:
             return signals
@@ -271,16 +291,16 @@ class SignalFilter:
         min_vol: float = 0.01,
         max_vol: float = 0.5
     ) -> pd.DataFrame:
-        """波动率过?
+        """ﮔﺏ۱ﮒ۷ﻝﻟﺟ?
         
-        参数:
-            signals: 信号矩阵
-            market_data: 市场数据
-            min_vol: 最小波动率
-            max_vol: 最大波动率
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
+            min_vol: ﮔﮒﺍﮔﺏ۱ﮒ۷ﻝ
+            max_vol: ﮔﮒ۳۶ﮔﺏ۱ﮒ۷ﻝ
             
-        返回:
-            过滤后的信号矩阵
+        ﻟﺟﮒ:
+            ﻟﺟﮔﭨ۳ﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         filtered = signals.copy()
         
@@ -298,14 +318,14 @@ class SignalFilter:
         signals: pd.DataFrame,
         min_strength: Optional[float] = None
     ) -> pd.DataFrame:
-        """信号强度过滤
+        """ﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵ﻟﺟﮔﭨ۳
         
-        参数:
-            signals: 信号矩阵
-            min_strength: 最小信号强?
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            min_strength: ﮔﮒﺍﻛﺟ۰ﮒﺓﮒﺙﭦ?
             
-        返回:
-            过滤后的信号矩阵
+        ﻟﺟﮒ:
+            ﻟﺟﮔﭨ۳ﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         threshold = min_strength or self.config.min_signal_strength
         
@@ -316,7 +336,7 @@ class SignalFilter:
 
 
 class SignalConfirmator:
-    """信号确认?""
+    """ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳?""
     
     def __init__(self, config: SignalConfig):
         self.config = config
@@ -328,15 +348,15 @@ class SignalConfirmator:
         market_data: Dict[str, Any],
         volume_threshold: float = 1.5
     ) -> pd.DataFrame:
-        """成交量确?
+        """ﮔﻛﭦ۳ﻠﻝ۰؟?
         
-        参数:
-            signals: 信号矩阵
-            market_data: 市场数据
-            volume_threshold: 成交量放大阈?
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
+            volume_threshold: ﮔﻛﭦ۳ﻠﮔﺝﮒ۳۶ﻠ?
             
-        返回:
-            确认后的信号矩阵
+        ﻟﺟﮒ:
+            ﻝ۰؟ﻟ؟۳ﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         if not self.config.confirmation_enabled:
             return signals
@@ -357,14 +377,14 @@ class SignalConfirmator:
         signals: pd.DataFrame,
         market_data: Dict[str, Any]
     ) -> pd.DataFrame:
-        """趋势确认
+        """ﻟﭘﮒﺟﻝ۰؟ﻟ؟۳
         
-        参数:
-            signals: 信号矩阵
-            market_data: 市场数据
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
             
-        返回:
-            确认后的信号矩阵
+        ﻟﺟﮒ:
+            ﻝ۰؟ﻟ؟۳ﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         if not self.config.confirmation_enabled:
             return signals
@@ -386,7 +406,7 @@ class SignalConfirmator:
 
 
 class SignalSynthesizer:
-    """信号合成?""
+    """ﻛﺟ۰ﮒﺓﮒﮔ?""
     
     def __init__(self, config: SignalConfig):
         self.config = config
@@ -397,14 +417,14 @@ class SignalSynthesizer:
         factor_signals: Dict[str, pd.DataFrame],
         weights: Dict[str, float]
     ) -> pd.DataFrame:
-        """加权合成
+"""ﮒﮔﮒﮔ
         
-        参数:
-            factor_signals: 因子信号字典 {factor_name: signal_matrix}
-            weights: 权重字典 {factor_name: weight}
+        ﮒﮔﺍ:
+factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﮒﮒﺕ {factor_name: signal_matrix}
+weights: ﮔﻠﮒﮒﺕ {factor_name: weight}
             
-        返回:
-            合成后的信号矩阵
+        ﻟﺟﮒ:
+            ﮒﮔﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         synthesized = pd.DataFrame(
             0,
@@ -425,14 +445,14 @@ class SignalSynthesizer:
         factor_signals: Dict[str, pd.DataFrame],
         factor_ic: Dict[str, float]
     ) -> pd.DataFrame:
-        """动态权重合?
+        """ﮒ۷ﮔﮔﻠﮒ?
         
-        参数:
-            factor_signals: 因子信号字典
-            factor_ic: 因子IC字典
+        ﮒﮔﺍ:
+factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﮒﮒﺕ
+factor_ic: ﮒﮒICﮒﮒﺕ
             
-        返回:
-            合成后的信号矩阵
+        ﻟﺟﮒ:
+            ﮒﮔﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         synthesized = pd.DataFrame(
             0,
@@ -451,7 +471,7 @@ class SignalSynthesizer:
 
 
 class SignalDecayManager:
-    """信号衰减管理?""
+    """ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﻝ؟۰ﻝ?""
     
     def __init__(self, config: SignalConfig):
         self.config = config
@@ -463,14 +483,14 @@ class SignalDecayManager:
         signals: pd.DataFrame,
         current_date: datetime
     ) -> pd.DataFrame:
-        """应用信号衰减
+        """ﮒﭦﻝ۷ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒ
         
-        参数:
-            signals: 信号矩阵
-            current_date: 当前日期
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            current_date: ﮒﺛﮒﮔ۴ﮔ
             
-        返回:
-            衰减后的信号矩阵
+        ﻟﺟﮒ:
+            ﻟ۰ﺍﮒﮒﻝﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
         """
         if not self.config.decay_enabled:
             return signals
@@ -496,10 +516,10 @@ class SignalDecayManager:
         return decayed
     
     def clear_expired(self, current_date: datetime) -> None:
-        """清理过期信号
+        """ﮔﺕﻝﻟﺟﮔﻛﺟ۰ﮒﺓ
         
-        参数:
-            current_date: 当前日期
+        ﮒﮔﺍ:
+            current_date: ﮒﺛﮒﮔ۴ﮔ
         """
         expired_stocks = []
         
@@ -519,7 +539,7 @@ class SignalDecayManager:
 
 
 class SignalQualityAssessor:
-    """信号质量评估?""
+    """ﻛﺟ۰ﮒﺓﻟﺑ۷ﻠﻟﺁﻛﺙﺍ?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -529,14 +549,14 @@ class SignalQualityAssessor:
         signals: pd.DataFrame,
         returns: pd.DataFrame
     ) -> Dict[str, float]:
-        """评估信号质量
+        """ﻟﺁﻛﺙﺍﻛﺟ۰ﮒﺓﻟﺑ۷ﻠ
         
-        参数:
-            signals: 信号矩阵
-            returns: 收益率矩?
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            returns: ﮔﭘﻝﻝﻝ۸?
             
-        返回:
-            质量指标字典
+        ﻟﺟﮒ:
+ﻟﺑ۷ﻠﮔﮔﮒﮒﺕ
         """
         quality_metrics = {}
         
@@ -564,7 +584,7 @@ class SignalQualityAssessor:
 
 
 class SignalGenerator:
-    """信号生成?""
+    """ﻛﺟ۰ﮒﺓﻝﮔ?""
     
     def __init__(self, config: SignalConfig):
         self.config = config
@@ -584,15 +604,15 @@ class SignalGenerator:
         market_data: Dict[str, Any],
         current_date: Optional[datetime] = None
     ) -> SignalOutput:
-        """生成交易信号
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
         
-        参数:
-            factor_signals: 因子信号矩阵
-            market_data: 市场数据
-            current_date: 当前日期
+        ﮒﮔﺍ:
+factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
+            current_date: ﮒﺛﮒﮔ۴ﮔ
             
-        返回:
-            SignalOutput: 信号输出
+        ﻟﺟﮒ:
+            SignalOutput: ﻛﺟ۰ﮒﺓﻟﺝﮒﭦ
         """
         start_time = datetime.now()
         
@@ -634,29 +654,29 @@ class SignalGenerator:
         market_data: Dict[str, Any],
         current_date: Optional[datetime] = None
     ) -> SignalOutput:
-        """多因子信号生?
+"""ﮒ۳ﮒﮒﻛﺟ۰ﮒﺓﻝ?
         
-        参数:
-            factor_signals: 因子信号字典
-            weights: 权重字典
-            market_data: 市场数据
-            current_date: 当前日期
+        ﮒﮔﺍ:
+factor_signals: ﮒﮒﻛﺟ۰ﮒﺓﮒﮒﺕ
+weights: ﮔﻠﮒﮒﺕ
+            market_data: ﮒﺕﮒﭦﮔﺍﮔ؟
+            current_date: ﮒﺛﮒﮔ۴ﮔ
             
-        返回:
-            SignalOutput: 信号输出
+        ﻟﺟﮒ:
+            SignalOutput: ﻛﺟ۰ﮒﺓﻟﺝﮒﭦ
         """
         synthesized = self.synthesizer.synthesize_weighted(factor_signals, weights)
         
         return self.generate(synthesized, market_data, current_date)
     
     def _determine_direction(self, signals: pd.DataFrame) -> pd.DataFrame:
-        """确定信号方向
+        """ﻝ۰؟ﮒ؟ﻛﺟ۰ﮒﺓﮔﺗﮒ
         
-        参数:
-            signals: 信号矩阵
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
             
-        返回:
-            方向矩阵
+        ﻟﺟﮒ:
+            ﮔﺗﮒﻝ۸ﻠﭖ
         """
         direction = pd.DataFrame(index=signals.index, columns=signals.columns)
         
@@ -678,43 +698,43 @@ class SignalGenerator:
         signals: pd.DataFrame,
         returns: pd.DataFrame
     ) -> Dict[str, float]:
-        """评估信号质量
+        """ﻟﺁﻛﺙﺍﻛﺟ۰ﮒﺓﻟﺑ۷ﻠ
         
-        参数:
-            signals: 信号矩阵
-            returns: 收益率矩?
+        ﮒﮔﺍ:
+            signals: ﻛﺟ۰ﮒﺓﻝ۸ﻠﭖ
+            returns: ﮔﭘﻝﻝﻝ۸?
             
-        返回:
-            质量指标字典
+        ﻟﺟﮒ:
+ﻟﺑ۷ﻠﮔﮔﮒﮒﺕ
         """
         return self.quality_assessor.assess_quality(signals, returns)
 ```
 
-### 3.2 性能指标要求
-| 性能指标 | 目标?| 测量方法 |
+### 3.2 ﮔ۶ﻟﺛﮔﮔﻟ۵ﮔﺎ
+| ﮔ۶ﻟﺛﮔﮔ | ﻝ؟ﮔ?| ﮔﭖﻠﮔﺗﮔﺏ |
 |----------|--------|----------|
-| 信号生成时间 | < 500ms | 单次生成 |
-| 信号过滤时间 | < 200ms | 单次过滤 |
-| 信号确认时间 | < 200ms | 单次确认 |
-| 信号合成时间 | < 300ms | 单次合成 |
-| 并发处理能力 | ?100只股?| 并发测试 |
+| ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 500ms | ﮒﮔ؛۰ﻝﮔ |
+| ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮔﭘﻠﺑ | < 200ms | ﮒﮔ؛۰ﻟﺟﮔﭨ۳ |
+| ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﮔﭘﻠﺑ | < 200ms | ﮒﮔ؛۰ﻝ۰؟ﻟ؟۳ |
+| ﻛﺟ۰ﮒﺓﮒﮔﮔﭘﻠﺑ | < 300ms | ﮒﮔ؛۰ﮒﮔ |
+| ﮒﺗﭘﮒﮒ۳ﻝﻟﺛﮒ | ?100ﮒ۹ﻟ۰?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
 
-### 3.3 安全机制
-- **信号验证**: 对输入信号进行有效性验?
-- **异常处理**: 信号生成异常不影响系统稳�?
-- **质量监控**: 实时监控信号质量指标
+### 3.3 ﮒ؟ﮒ۷ﮔﭦﮒﭘ
+- **ﻛﺟ۰ﮒﺓﻠ۹ﻟﺁ**: ﮒﺁﺗﻟﺝﮒ۴ﻛﺟ۰ﮒﺓﻟﺟﻟ۰ﮔﮔﮔ۶ﻠ۹?
+- **ﮒﺙﮒﺕﺕﮒ۳ﻝ**: ﻛﺟ۰ﮒﺓﻝﮔﮒﺙﮒﺕﺕﻛﺕﮒﺛﺎﮒﻝﺏﭨﻝﭨﻝ۷ﺏﮒ؟?
+- **ﻟﺑ۷ﻠﻝﮔ۶**: ﮒ؟ﮔﭘﻝﮔ۶ﻛﺟ۰ﮒﺓﻟﺑ۷ﻠﮔﮔ
 
 ---
 
-## 4. 数据模型与存?
+## 4. ﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ?
 
-### 4.1 核心数据结构
+### 4.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
-#### 4.1.1 交易信号模型
+#### 4.1.1 ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓﮔ۷۰ﮒ
 ```python
 @dataclass
 class SignalData:
-    """交易信号数据模型"""
+    """ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     signal_id: str
     symbol: str
     signal_type: SignalType
@@ -724,11 +744,11 @@ class SignalData:
     metadata: Dict[str, Any]
 ```
 
-#### 4.1.2 信号输出模型
+#### 4.1.2 ﻛﺟ۰ﮒﺓﻟﺝﮒﭦﮔ۷۰ﮒ
 ```python
 @dataclass
 class SignalOutputData:
-    """信号输出数据模型"""
+    """ﻛﺟ۰ﮒﺓﻟﺝﮒﭦﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     signal: pd.DataFrame
     strength: pd.DataFrame
     direction: pd.DataFrame
@@ -736,24 +756,24 @@ class SignalOutputData:
     metadata: Dict[str, Any]
 ```
 
-### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容?|
+### 4.2 ﻝﺙﮒﻝﻝ۴
+| ﻝﺙﮒﻝﺎﭨﮒ | TTL | ﮔﺓﮔﺎﺍﻝﻝ۴ | ﮔﮒ۳۶ﮒ؟ﺗ?|
 |----------|-----|----------|----------|
-| 信号历史缓存 | 1?| LRU | 1000只股?|
-| 因子信号缓存 | 1小时 | LRU | 50个因?|
-| 市场数据缓存 | 5分钟 | LRU | 100只股?|
+| ﻛﺟ۰ﮒﺓﮒﮒﺎﻝﺙﮒ | 1?| LRU | 1000ﮒ۹ﻟ۰?|
+| ﮒﮒﻛﺟ۰ﮒﺓﻝﺙﮒ | 1ﮒﺍﮔﭘ | LRU | 50ﻛﺕ۹ﮒ?|
+| ﮒﺕﮒﭦﮔﺍﮔ؟ﻝﺙﮒ | 5ﮒﻠ | LRU | 100ﮒ۹ﻟ۰?|
 
-### 4.3 数据持久?
-- **持久化需?*: 信号历史、质量指标需要持久化存储
-- **存储格式**: Parquet文件 + SQLite数据?
+### 4.3 ﮔﺍﮔ؟ﮔﻛﺗ?
+- **ﮔﻛﺗﮒﻠ?*: ﻛﺟ۰ﮒﺓﮒﮒﺎﻙﻟﺑ۷ﻠﮔﮔﻠﻟ۵ﮔﻛﺗﮒﮒﮒ۷
+- **ﮒﮒ۷ﮔﺙﮒﺙ**: Parquetﮔﻛﭨﭘ + SQLiteﮔﺍﮔ؟?
 
 ---
 
-## 5. 算法实现说明
+## 5. ﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﮔ
 
-### 5.1 核心算法
+### 5.1 ﮔﺕﮒﺟﻝ؟ﮔﺏ
 
-#### 5.1.1 原始信号计算算法
+#### 5.1.1 ﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 ```python
 def calculate(
     self,
@@ -761,14 +781,14 @@ def calculate(
     method: str = "zscore"
 ) -> pd.DataFrame:
     """
-    原始信号计算算法
+    ﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 选择标准化方?(zscore, minmax, rank)
-    2. 对因子信号进行标准化
-    3. 将信号值限制在[-1, 1]区间
+    ﻝ؟ﮔﺏﮒﻝ:
+1. ﻠﮔ۸ﮔﮒﮒﮔﺗ?(zscore, minmax, rank)
+2. ﮒﺁﺗﮒﮒﻛﺟ۰ﮒﺓﻟﺟﻟ۰ﮔﮒﮒ
+    3. ﮒﺍﻛﺟ۰ﮒﺓﮒﺙﻠﮒﭘﮒ۷[-1, 1]ﮒﭦﻠﺑ
     
-    复杂? O(n*m) n为日期数，m为股票数
+    ﮒ۳ﮔ? O(n*m) nﻛﺕﭦﮔ۴ﮔﮔﺍﺅﺙmﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍ
     """
     if method == "zscore":
         normalized = (factor_signals - factor_signals.mean()) / factor_signals.std()
@@ -784,7 +804,7 @@ def calculate(
         raise ValueError(f"Unknown method: {method}")
 ```
 
-#### 5.1.2 信号过滤算法
+#### 5.1.2 ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﻝ؟ﮔﺏ
 ```python
 def filter_by_strength(
     self,
@@ -792,14 +812,14 @@ def filter_by_strength(
     min_strength: Optional[float] = None
 ) -> pd.DataFrame:
     """
-    信号强度过滤算法
+    ﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵ﻟﺟﮔﭨ۳ﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 确定最小信号强度阈?
-    2. 过滤掉强度低于阈值的信号
-    3. 保留强度足够的信?
+    ﻝ؟ﮔﺏﮒﻝ:
+    1. ﻝ۰؟ﮒ؟ﮔﮒﺍﻛﺟ۰ﮒﺓﮒﺙﭦﮒﭦ۵ﻠ?
+    2. ﻟﺟﮔﭨ۳ﮔﮒﺙﭦﮒﭦ۵ﻛﺛﻛﭦﻠﮒﺙﻝﻛﺟ۰ﮒﺓ
+    3. ﻛﺟﻝﮒﺙﭦﮒﭦ۵ﻟﭘﺏﮒ۳ﻝﻛﺟ۰?
     
-    复杂? O(n*m) n为日期数，m为股票数
+    ﮒ۳ﮔ? O(n*m) nﻛﺕﭦﮔ۴ﮔﮔﺍﺅﺙmﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍ
     """
     threshold = min_strength or self.config.min_signal_strength
     
@@ -809,7 +829,7 @@ def filter_by_strength(
     return filtered
 ```
 
-#### 5.1.3 信号衰减算法
+#### 5.1.3 ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﻝ؟ﮔﺏ
 ```python
 def apply_decay(
     self,
@@ -817,15 +837,15 @@ def apply_decay(
     current_date: datetime
 ) -> pd.DataFrame:
     """
-    信号衰减算法
+    ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 检查信号历?
-    2. 计算持有天数
-    3. 应用指数衰减
-    4. 更新信号历史
+    ﻝ؟ﮔﺏﮒﻝ:
+    1. ﮔ۲ﮔ۴ﻛﺟ۰ﮒﺓﮒ?
+    2. ﻟ؟۰ﻝ؟ﮔﮔﮒ۳۸ﮔﺍ
+    3. ﮒﭦﻝ۷ﮔﮔﺍﻟ۰ﺍﮒ
+    4. ﮔﺑﮔﺍﻛﺟ۰ﮒﺓﮒﮒﺎ
     
-    复杂? O(m) m为股票数
+    ﮒ۳ﮔ? O(m) mﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍ
     """
     if not self.config.decay_enabled:
         return signals
@@ -853,17 +873,17 @@ def apply_decay(
 
 ---
 
-## 6. 实施技术栈
+## 6. ﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 语言与框?
-| 技术选型 | 版本要求 | �?| 选择理由 |
+### 6.1 ﻟﺁﻟ۷ﻛﺕﮔ۰?
+| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﻝ?| ﻠﮔ۸ﻝﻝﺎ |
 |----------|----------|------|----------|
-| Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
-| pandas | >=1.3.0 | 数据处理 | 强大的数据处理能?|
-| numpy | >=1.21.0 | 数值计?| 高性能数值计?|
-| scipy | >=1.7.0 | 统计分析 | 丰富的统计函?|
+| Python | >=3.8 | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ | ﻠﮒﻝﺏﭨﻝﭨﮔﮒﻟﺁﻟ۷ |
+| pandas | >=1.3.0 | ﮔﺍﮔ؟ﮒ۳ﻝ | ﮒﺙﭦﮒ۳۶ﻝﮔﺍﮔ؟ﮒ۳ﻝﻟﺛ?|
+| numpy | >=1.21.0 | ﮔﺍﮒﺙﻟ؟۰?| ﻠ،ﮔ۶ﻟﺛﮔﺍﮒﺙﻟ؟۰?|
+| scipy | >=1.7.0 | ﻝﭨﻟ؟۰ﮒﮔ | ﻛﺕﺍﮒﺁﻝﻝﭨﻟ؟۰ﮒﺛ?|
 
-### 6.2 第三方依?
+### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝ?
 ```yaml
 requirements:
   - pandas>=1.3.0
@@ -873,21 +893,21 @@ requirements:
 
 ---
 
-## 7. 测试策略
+## 7. ﮔﭖﻟﺁﻝﻝ۴
 
-### 7.1 单元测试
-| 测试?| 测试内容 | 覆盖率目?|
+### 7.1 ﮒﮒﮔﭖﻟﺁ
+| ﮔﭖﻟﺁ?| ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟?|
 |--------|----------|------------|
-| 原始信号计算 | 计算正确?| 100% |
-| 信号过滤 | 过滤正确?| 100% |
-| 信号确认 | 确认正确?| 100% |
-| 信号合成 | 合成正确?| 100% |
-| 信号衰减 | 衰减正确?| 100% |
+| ﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟ | ﻟ؟۰ﻝ؟ﮔ۲ﻝ۰؟?| 100% |
+| ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ | ﻟﺟﮔﭨ۳ﮔ۲ﻝ۰؟?| 100% |
+| ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ | ﻝ۰؟ﻟ؟۳ﮔ۲ﻝ۰؟?| 100% |
+| ﻛﺟ۰ﮒﺓﮒﮔ | ﮒﮔﮔ۲ﻝ۰؟?| 100% |
+| ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒ | ﻟ۰ﺍﮒﮔ۲ﻝ۰؟?| 100% |
 
-### 7.2 集成测试
+### 7.2 ﻠﮔﮔﭖﻟﺁ
 ```python
 def test_signal_generator_integration():
-    """集成测试示例"""
+    """ﻠﮔﮔﭖﻟﺁﻝ۳ﭦﻛﺝ"""
     config = SignalConfig()
     generator = SignalGenerator(config)
     
@@ -912,62 +932,62 @@ def test_signal_generator_integration():
 
 ---
 
-## 8. 风险与约?
+## 8. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵?
 
-### 8.1 技术风?
-| 风险ID | 风险描述 | 风险等级 | 缓解措施 |
+### 8.1 ﮔﮔﺁﻠ۲?
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﻠ۲ﻠ۸ﻝﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|----------|
-| R001 | 信号质量不稳?| P1 | 实现信号质量监控和告?|
-| R002 | 信号过滤过度 | P2 | 实现过滤参数动态调?|
-| R003 | 信号衰减过快 | P2 | 实现衰减参数优化 |
-| R004 | 多因子信号冲?| P2 | 实现信号合成优化 |
+| R001 | ﻛﺟ۰ﮒﺓﻟﺑ۷ﻠﻛﺕﻝ۷ﺏ?| P1 | ﮒ؟ﻝﺍﻛﺟ۰ﮒﺓﻟﺑ۷ﻠﻝﮔ۶ﮒﮒ?|
+| R002 | ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﻟﺟﮒﭦ۵ | P2 | ﮒ؟ﻝﺍﻟﺟﮔﭨ۳ﮒﮔﺍﮒ۷ﮔﻟﺍ?|
+| R003 | ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﻟﺟﮒﺟ، | P2 | ﮒ؟ﻝﺍﻟ۰ﺍﮒﮒﮔﺍﻛﺙﮒ |
+| R004 | ﮒ۳ﮒﮒﻛﺟ۰ﮒﺓﮒﺎ?| P2 | ﮒ؟ﻝﺍﻛﺟ۰ﮒﺓﮒﮔﻛﺙﮒ |
 
-### 8.2 约束条件
-- **技术约?*: 依赖pandas、numpy、scipy?
-- **资源约束**: 内存使用<1GB，CPU使用<30%
-- **时间约束**: 预计开发时?5小时
-- **质量约束**: 测试覆盖率≥90%
+### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
+- **ﮔﮔﺁﻝﭦ۵?*: ﻛﺝﻟﭖpandasﻙnumpyﻙscipy?
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: ﮒﮒﻛﺛﺟﻝ۷<1GBﺅﺙCPUﻛﺛﺟﻝ۷<30%
+- **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: ﻠ۱ﻟ؟۰ﮒﺙﮒﮔﭘ?5ﮒﺍﮔﭘ
+- **ﻟﺑ۷ﻠﻝﭦ۵ﮔ**: ﮔﭖﻟﺁﻟ۵ﻝﻝﻗ۴90%
 
 ---
 
-## 9. 验收标准
+## 9. ﻠ۹ﮔﭘﮔﮒ
 
-### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮒﻟﺛ?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |--------|----------|----------|
-| 信号生成 | 生成正确 | 单元测试 |
-| 信号过滤 | 过滤正确 | 单元测试 |
-| 信号确认 | 确认正确 | 单元测试 |
-| 信号合成 | 合成正确 | 单元测试 |
+| ﻛﺟ۰ﮒﺓﻝﮔ | ﻝﮔﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ | ﻟﺟﮔﭨ۳ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ | ﻝ۰؟ﻟ؟۳ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﮒﮔ | ﮒﮔﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
 
-### 9.2 性能验收标准
-| 性能指标 | 验收标准 | 验证方法 |
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 信号生成时间 | < 500ms | 性能测试 |
-| 信号过滤时间 | < 200ms | 性能测试 |
-| 信号确认时间 | < 200ms | 性能测试 |
+| ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 500ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮔﭘﻠﺑ | < 200ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﮔﭘﻠﺑ | < 200ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 9.3 质量验收标准
-| 质量指标 | 验收标准 | 验证方法 |
+### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘﮔﮒ
+| ﻟﺑ۷ﻠﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 测试覆盖?| ?90% | pytest-cov |
-| 代码质量 | 无严重问?| pylint |
+| ﮔﭖﻟﺁﻟ۵ﻝ?| ?90% | pytest-cov |
+| ﻛﭨ۲ﻝﻟﺑ۷ﻠ | ﮔﻛﺕ۴ﻠﻠ؟?| pylint |
 
 ---
 
-## 10. 实施路线?
+## 10. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
 
-### 10.1 Phase 1: 核心功能开?(4?
-- **Day 1**: 原始信号计算、信号过滤器
-- **Day 2**: 信号确认器、信号合成器
-- **Day 3**: 信号衰减管理、质量评?
-- **Day 4**: 集成测试、优?
+### 10.1 Phase 1: ﮔﺕﮒﺟﮒﻟﺛﮒﺙ?(4?
+- **Day 1**: ﮒﮒ۶ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟ﻙﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮒ۷
+- **Day 2**: ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﮒ۷ﻙﻛﺟ۰ﮒﺓﮒﮔﮒ۷
+- **Day 3**: ﻛﺟ۰ﮒﺓﻟ۰ﺍﮒﻝ؟۰ﻝﻙﻟﺑ۷ﻠﻟﺁ?
+- **Day 4**: ﻠﮔﮔﭖﻟﺁﻙﻛﺙ?
 
 ---
 
-## 附录
+## ﻠﮒﺛ
 
-### A. 配置示例
+### A. ﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ
 ```yaml
 signal_generation:
   min_signal_strength: 0.5
@@ -997,18 +1017,18 @@ signal_generation:
     max_holding_days: 10
 ```
 
-### B. 错误码定?
-| 错误?| 错误类型 | 错误描述 | 处理方式 |
+### B. ﻠﻟﺁﺁﻝﮒ؟?
+| ﻠﻟﺁﺁ?| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﻠﻟﺁﺁﮔﻟﺟﺍ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|----------|----------|----------|
-| ERR_SIGNAL_001 | CalculateError | 信号计算失败 | 记录日志，返回错?|
-| ERR_SIGNAL_002 | FilterError | 信号过滤失败 | 记录日志，返回错?|
-| ERR_SIGNAL_003 | ConfirmError | 信号确认失败 | 记录日志，返回错?|
-| ERR_SIGNAL_004 | SynthesisError | 信号合成失败 | 记录日志，返回错?|
+| ERR_SIGNAL_001 | CalculateError | ﻛﺟ۰ﮒﺓﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_SIGNAL_002 | FilterError | ﻛﺟ۰ﮒﺓﻟﺟﮔﭨ۳ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_SIGNAL_003 | ConfirmError | ﻛﺟ۰ﮒﺓﻝ۰؟ﻟ؟۳ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_SIGNAL_004 | SynthesisError | ﻛﺟ۰ﮒﺓﮒﮔﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 
-### C. 参考文?
-- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [信号生成系统](../../04_EXECUTION/signal_generation.md)
+### C. ﮒﻟﮔ?
+- [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
+- [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- [ﻛﺟ۰ﮒﺓﻝﮔﻝﺏﭨﻝﭨ](../../04_EXECUTION/signal_generation.md)
 
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 策略执行层负责人
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

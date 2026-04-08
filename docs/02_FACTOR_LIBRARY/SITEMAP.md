@@ -1,370 +1,106 @@
 ---
-module_id: DOC_SITEMAP_001
-version: 5.3.0
+module_id: FACTOR_LIBRARY_SITEMAP
+version: 1.0.0
 status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-04
-owner: ��ϯ�ĵ��ܹ�ʦ
-standard_type: רҵ���������ĵ�
-applicable_scope: ȫϵͳ
-compliance_level: רҵ��׼
-parent_document: INDEX.md
-implementation_status: ������
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 因子库站点地图
+  - 文档导航索引
+  - 阅读路径指引
+---
+# SITEMAP
+
+## 📋 概述
+
+提供因子库所有文档的站点地图和导航索引，帮助用户快速定位所需文档。
+
+
+| ĵ | 6?| ض |
+| ļ | 2?|  |
+| һĿ?| 8?|  |
+| **?* | **~80+ĵ** | v5.0?0?|
+
+## ?? ƼĶ˳
+
+### ??(2Сʱ)
+
+1. INDEX.md (5)
+2. 00_OVERVIEW/README.md (10)
+3. BLUEPRINT.md (30)
+4. 01_FRAMEWORK/ARCHITECTURE.md (30)
+5. 05_IMPLEMENTATION/01_QUICKSTART/README.md (15)
+
+### ??(2Сʱ)
+
+1. AI_Permissions.md (20)
+2. API_Contract.md (15)
+3. Strategy_Spec_S001.md (30)
+4. 03_TRADING_TACTICS/INDEX.md (20)
+5. FAQ.md (15)
+
+### ??(2Сʱ)
+
+1. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md (30)
+2. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md (30)
+3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30)
+4. CHANGELOG.md (15)
+
+## ?? ĵϵ?
+
+```
+INDEX.md (?
+    ?
+     00_OVERVIEW/ (ϵͳ)
+    ?
+     01_FRAMEWORK/ (ܶ)
+    ?   ARCHITECTURE.md (系统架构层级)
+    ?
+     BLUEPRINT.md (ϵͳͼ)
+    ?
+     02_FACTOR_LIBRARY/ (?
+    ?   01_STANDARDS/ (?
+    ?  ?   FACTOR_MANAGEMENT_STANDARD.md (ӹ׼)
+    ?  ?   FACTOR_SCREENING_STRATEGY.md (ɸѡ?
+    ?   02_ALPHA_FACTORS_INDEX.md ()
+    ?
+     03_TRADING_TACTICS/ (ײ)
+    ?   Strategy_Spec_S001.md (ģ)
+    ?
+     04_EXECUTION/ (ִ)
+    ?
+     05_IMPLEMENTATION/ (ʵʩָ)
+    ?   01_QUICKSTART/
+    ?   02_DEVELOPMENT/
+    ?   03_DEPLOYMENT/
+    ?   07_OPERATIONS/
+    ?
+     06_ARCHIVE/ (鵵)
+    ?   main/BLUEPRINTS/ (ʷͼ)
+    ?
+     07_RESEARCH/ (AIо)
+    ?
+     09_AUDIT/ (ϵͳ)
+```
+
+## ?? ƶ˷?
+
+ĵ֧Markdownʽƽ̨?
+- GitHub (߲鿴)
+- GitLab (߲鿴)
+- ر༭?(VS CodeSublime?
+- MarkdownĶ?(TyporaObsidian?
+
+**?*: 2026-03-31
+**ά?*: ϵͳ
+**汾**: v5.3
+
 ---
 
-
-# �ĵ���ͼ (SITEMAP)
-
-> �������ϵͳ v5.3 �������ĵ�������?
->
-> **ְ������**:
-> - [INDEX.md](../03_TRADING_TACTICS/INDEX.md) = ������ڣ�5���ӵ���?
-> - **����?* = ������ͼ����Ȳο���
-
-
-## ?? �ĵ�λ�õ��� (v5.3)
-
-### һ����?
-
-```
-docs/
-������ �����ĵ� (6?
-?  ������ INDEX.md                   # ������?������������������������������?
-?  ������ BLUEPRINT.md               # ��ͼ����                  ?
-?  ������ API_Contract.md            # �ӿ���Լ                  ?
-?  ������ AI_Permissions.md          # AIȨ���嵥               ?
-?  ������ BLUEPRINT_CHECKLIST.md     # ��ͼ�����?             ?
-?  ������ CHANGELOG.md               # �����־                   ?
-?                                                           ?
-������ 00_OVERVIEW/                   # ϵͳ����                  ?
-������ 01_FRAMEWORK/                   # ��ܶ��� (Layer 0-11)    ?
-������ 02_FACTOR_LIBRARY/            # ����?(128+����)         ?
-������ 03_TRADING_TACTICS/           # ���ײ���?                ?
-������ 04_EXECUTION/                   # ִ������                  ?
-������ 05_IMPLEMENTATION/            # ʵʩָ��                  ?
-������ 06_ARCHIVE/                    # �鵵                     ?
-������ 07_RESEARCH/                   # AI�о�                   ?
-������ 09_AUDIT/                      # ϵͳ�������              ?
-                                                            ?
-���������������������������������������������������������� ������?/ ������ͼ ����������������������?
-```
-
-
-## ???����;��?
-
-### ��������
-
-**��������·?* (30����):
-1. �Ķ� [INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ������?(5����)
-2. �Ķ� [00_OVERVIEW/README.md](../../README.md) - ϵͳ���� (10����)
-3. �Ķ� [05_IMPLEMENTATION/01_QUICKSTART/README.md](../../README.md) - ���ٿ�?(15����)
-
-
-### ��Ҫ����ܹ�
-
-**�ܹ�ѧϰ·��** (2Сʱ):
-1. �Ķ� [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ϵͳ��ͼ (30����)
-2. �Ķ� [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ͳһ�ܹ� (30����)
-3. �Ķ� [01_FRAMEWORK/README.md](../../README.md) - ����ĵ����� (20����)
-4. �Ķ� [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ���嵥 (20����)
-
-
-### ��Ҫ������?
-
-**���Կ���·?* (4Сʱ):
-1. �Ķ� [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ϵͳ��ͼ (30����)
-2. �Ķ� [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ����ģ�� (30����)
-3. �Ķ� [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - �������� (20����)
-4. �Ķ� [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - ����?(30����)
-5. �Ķ�  - ������?(1Сʱ)
-6. ʵ����д���Դ��� (1.5Сʱ)
-
-
-### ��Ҫ����ϵͳ
-
-**����·��** (3Сʱ):
-1. �Ķ� [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ϵͳ��ͼ (30����)
-2. �Ķ� [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ���𷽰� (30����)
-3. ִ�в���ű� (2Сʱ)
-
-
-### �����ⰲ?
-
-**��ȫѧϰ·��** (1.5Сʱ):
-1. �Ķ� [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ���嵥 (20����)
-2. �Ķ� [05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md](../05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md) - ��ȫ�淶 (25����)
-3. �Ķ� [05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md](../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md) - ��֤��Ȩ (20����)
-
-
-### ��������?
-
-**�����Ų�·��** (30����):
-1. �鿴 [FAQ.md](./FAQ.md) - �������� (10����)
-2. �鿴 [05_IMPLEMENTATION/07_OPERATIONS/README.md](../../README.md) - ��ά�ֲ� (10����)
-3. �鿴 [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - �汾��� (5����)
-4. �鿴ϵͳ��־ (5����)
-
-### ��Ҫ���ϵͳ
-
-**��ƹ���·��** (1-2Сʱ):
-1. ���� [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - ����Ż���ҳ (5����)
-2. ѡ�����ģʽ: ����ģʽ(5����)��AIģʽ(30����)
-3. ����Ʊ�׼ִ? [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - ��Ʊ�׼ (15����)
-4. ��ѭ��������: [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - ����������� (10����)
-5. ������Ʊ��� (30-60����)
-
-
-## ?? ��Ŀ¼��?(v5.3)
-
-### 00_OVERVIEW/ - ϵͳ����
-
-| �ļ� | ˵�� | �Ķ�ʱ�� |
-|------|------|----------|
-| README.md | ϵͳ��?| 10���� |
-|  | ��������ģ������ | 15���� |
-| CHANGELOG.md | �汾��ʷ���Ѻϲ�?| 5���� |
-
-
-### 01_FRAMEWORK/ - ��ܶ���
-
-| �ļ� | ˵�� | �Ķ�ʱ�� |
-|------|------|----------|
-| README.md | ����ĵ����� | 10���� |
-| ARCHITECTURE.md | Layer 0-11ͳһ�ܹ� | 30���� |
-| MARKET_REGIME.md | �г�״̬ʶ?| 20���� |
-| HUMAN_AI_FLOW.md | �˻�Э������ | 15���� |
-| TECH_STACK.md | ����ջѡ�� | 15���� |
-
-
-### 02_FACTOR_LIBRARY/ - ����?
-
-| Ŀ¼ | ˵�� |
-|------|------|
-| 00_GOVERNANCE/ | ����������� |
-| 00_INDEX/ | ���ӷ��ർ�� |
-| 01_STANDARDS/ | �����о�����?|
-| 02_ALPHA_FACTORS_INDEX.md | Alpha�������� |
-| 03_RISK_FACTORS/ | �������� |
-| 04_DATA_SOURCE/ | ����Դ˵?|
-| 05_BACKTEST/ | �زⱨ�� |
-| 06_REGISTRY/ | ����ע�� |
-| 07_FACTOR_MONITORING/ | ������� |
-| 10_MANUAL/ | ���ӿ���?|
-
-
-### 03_TRADING_TACTICS/ - ����?
-
-| �ļ�/Ŀ¼ | ˵�� |
-|------|------|
-| INDEX.md | ���Ե��� |
-| README.md | �����ĵ����� |
-| Strategy_Spec_S001.md | ����ģ�� |
-| 01_STRATEGY_FRAMEWORK/ | ���Կ�� |
-| 03_ADVANCED_TACTICS/ | �߼�ս�� |
-| 04_YOUZI_STRATEGIES/ | ���ʲ��� |
-| 05_STRATEGY_POOL/ | ���Գ���?|
-| 06_POSITION_MANAGEMENT/ | ��λ���� |
-| 07_ORDER_GENERATION/ | �������� |
-| 09_RISK_RULES/ | ���չ��� |
-
-
-### 04_EXECUTION/ - ִ������
-
-| Ŀ¼ | ˵�� |
-|------|------|
-| 01_EVENT_ENGINE/ | �¼��������� |
-| 01_ORDER_EXECUTION/ | ����ִ�� |
-| 02_TRADE_EXECUTOR/ | ����ִ�� |
-| 03_MONITORING/ | ʵʱ��� |
-| 04_AI_COMMITTEE/ | AIίԱ?|
-| 05_RISK_ENGINE/ | �������� |
-| 06_SIMULATION/ | ������� |
-
-
-### 05_IMPLEMENTATION/ - ʵʩָ��
-
-| Ŀ¼ | ˵�� |
-|------|------|
-| 01_QUICKSTART/ | ���ٿ�?|
-| 02_DEVELOPMENT/ | ������?|
-| 03_DEPLOYMENT/ | ����ָ�� |
-| 04_INFRASTRUCTURE/ | ������ʩ |
-| 07_OPERATIONS/ | ��ά�ֲ� |
-| 99_ARCHIVE/ | �鵵 |
-
-
-### 06_ARCHIVE/ - �鵵
-
-| Ŀ¼/�ļ� | ˵�� |
-|------|------|
-| README.md | �鵵˵����v5.3����棩 |
-| main/BLUEPRINTS/ | ��ͼ��ʷ�鵵?���� |
-| main/v4_development/ | v4.0�����ĵ�������?���� |
-| factor-library/ | ���ӿ���?|
-| tactics_manual.md | v1.0ս���ֲ� |
-| technical_documentation.md | v1.0������?|
-
-
-### 07_RESEARCH/ - AI�о�
-
-| Ŀ¼ | ˵�� |
-|------|------|
-| 01_ENVIRONMENT/ | �о����� |
-| 02_EXPLORATORY_ANALYSIS/ | ̽���Է�?|
-| 03_PATTERN_RECOGNITION/ | ģʽʶ�� |
-| 04_EXPERIMENT_TRACKING/ | ʵ��׷�� |
-
-### 09_AUDIT/ - ϵͳ�������
-
-| Ŀ¼/�ļ� | ˵�� |
-|------|------|
-| README.md | �����ϵ���� |
-| INDEX_AUDIT.md | ����Ż���ҳ |
-| STANDARDS/ | ��Ʊ�׼ |
-| PROCEDURES/ | ��Ƴ��� |
-
-
-## ?? ���ؼ��ʲ���
-
-### �ܹ����
-
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ϵͳ��ͼ
-- [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11�ܹ�
-- [01_FRAMEWORK/MARKET_REGIME.md](../01_FRAMEWORK/MARKET_REGIME.md) - �г�״̬ʶ?
-
-### ģ�����
-
-- [API_Contract.md](../03_TRADING_TACTICS/API_Contract.md) - �ӿ���Լ
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ģ����ͼ
-- [AI_Permissions.md](../01_FRAMEWORK/AI_PERMISSIONS.md) - AIȨ��
-
-### �������
-
-- [Strategy_Spec_S001.md](../03_TRADING_TACTICS/Strategy_Spec_S001.md) - ����ģ��
-- [03_TRADING_TACTICS/INDEX.md](../03_TRADING_TACTICS/INDEX.md) - ��������
-- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - ����?
-
-### �������
-
-- [02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md](02_ALPHA_FACTORS_INDEX.md) - Alpha����
--  - ��������
--  - ���ӷ���?
-- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) - ���ӹ�����׼
-- [02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md](01_STANDARDS/FACTOR_SCREENING_STRATEGY.md) - ����ɸѡ��?
-
-### �������
-
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - ϵͳ��ͼ
-- [05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md](../05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ���𷽰�
-
-### ������?
-
--  - ������?
-- [CHANGELOG.md](../06_ARCHIVE/CHANGELOG.md) - �����־
-
-### AI�о����
-
-- [BLUEPRINT.md](04_DATA_SOURCE/02_SCHEDULER/BLUEPRINT.md) - AI�о���ܣ�����¼?
-- [EXPERIMENT_TRACKING.md](../07_RESEARCH/EXPERIMENT_TRACKING.md) - ʵ��׷��
-- [KNOWLEDGE_MANAGEMENT.md](./KNOWLEDGE_MANAGEMENT.md) - ֪ʶ����
-
-### ��ά���
-
--  - ��ά�ֲ�
-- [FAQ.md](./FAQ.md) - ��������
-
-### ������
-
-- [09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - ����Ż���ҳ
-- [09_AUDIT/STANDARDS/AUDIT_STANDARDS.md](../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) - ��Ʊ�׼
-- [09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md](../09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md) - AI���ָ��
-- [09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md](../09_AUDIT/PROCEDURES/PERSONAL_AUDIT_WORKFLOW.md) - �����������
-
-
-## ?? �ĵ�ͳ�� (v5.3)
-
-| ���� | ���� | ˵�� |
-|------|------|------|
-| �����ĵ� | 6?| �ض� |
-| �����ļ� | 2?| ���� |
-| һ��Ŀ?| 8?| ���� |
-| **����?* | **~80+�ĵ�** | ��v5.0����?0?|
-
-
-## ?? �Ƽ��Ķ�˳��
-
-### ??(2Сʱ)
-
-1. INDEX.md (5����)
-2. 00_OVERVIEW/README.md (10����)
-3. BLUEPRINT.md (30����)
-4. 01_FRAMEWORK/ARCHITECTURE.md (30����)
-5. 05_IMPLEMENTATION/01_QUICKSTART/README.md (15����)
-
-### ??(2Сʱ)
-
-1. AI_Permissions.md (20����)
-2. API_Contract.md (15����)
-3. Strategy_Spec_S001.md (30����)
-4. 03_TRADING_TACTICS/INDEX.md (20����)
-5. FAQ.md (15����)
-
-### ??(2Сʱ)
-
-1. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md (30����)
-2. 02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_SCREENING_STRATEGY.md (30����)
-3. 05_IMPLEMENTATION/03_DEPLOYMENT/DEPLOYMENT_PLAN.md (30����)
-4. CHANGELOG.md (15����)
-
-
-## ?? �ĵ���ϵ?
-
-```
-INDEX.md (������?
-    ?
-    ���� 00_OVERVIEW/ (ϵͳ����)
-    ?
-    ���� 01_FRAMEWORK/ (��ܶ���)
-    ?  ���� ARCHITECTURE.md (Layer 0-11)
-    ?
-    ���� BLUEPRINT.md (ϵͳ��ͼ)
-    ?
-    ���� 02_FACTOR_LIBRARY/ (����?
-    ?  ���� 01_STANDARDS/ (����?
-    ?  ?  ���� FACTOR_MANAGEMENT_STANDARD.md (���ӹ�����׼)
-    ?  ?  ���� FACTOR_SCREENING_STRATEGY.md (ɸѡ��?
-    ?  ���� 02_ALPHA_FACTORS_INDEX.md (��������)
-    ?
-    ���� 03_TRADING_TACTICS/ (���ײ���)
-    ?  ���� Strategy_Spec_S001.md (����ģ��)
-    ?
-    ���� 04_EXECUTION/ (ִ������)
-    ?
-    ���� 05_IMPLEMENTATION/ (ʵʩָ��)
-    ?  ���� 01_QUICKSTART/
-    ?  ���� 02_DEVELOPMENT/
-    ?  ���� 03_DEPLOYMENT/
-    ?  ���� 07_OPERATIONS/
-    ?
-    ���� 06_ARCHIVE/ (�鵵)
-    ?  ���� main/BLUEPRINTS/ (��ʷ��ͼ)
-    ?
-    ���� 07_RESEARCH/ (AI�о�)
-    ?
-    ���� 09_AUDIT/ (ϵͳ�������)
-```
-
-
-## ?? �ƶ��˷�?
-
-�����ĵ���֧��Markdown��ʽ����������ƽ̨��?
-- GitHub (���߲鿴)
-- GitLab (���߲鿴)
-- ���ر༭?(VS Code��Sublime?
-- Markdown�Ķ�?(Typora��Obsidian?
-
-
-**����?*: 2026-03-31
-**ά��?*: �������ϵͳ
-**�汾**: v5.3
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
 

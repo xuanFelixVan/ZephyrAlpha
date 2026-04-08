@@ -132,8 +132,8 @@ module_id: TEMPLATE_[类型]
 | 文档 | 说明 |
 |------|------|
 | [../README.md](../README.md) | 研发笔记规范总览 |
-| [01_EDA_TEMPLATE.py](./01_EDA_TEMPLATE.py) | EDA模板详细文档 |
-| [02_FACTOR_TEMPLATE.py](./02_FACTOR_TEMPLATE.py) | 因子开发模板详细文档 |
+| [01_EDA_TEMPLATE_v1.0.0.py](./01_EDA_TEMPLATE_v1.0.0.py) | EDA 模板脚本 |
+| [02_FACTOR_TEMPLATE_v1.0.0.py](./02_FACTOR_TEMPLATE_v1.0.0.py) | 因子开发模板脚本 |
 
 ---
 

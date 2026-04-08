@@ -1,0 +1,22 @@
+{
+  "check_time": "2026-04-07 02:02:12",
+  "total_blueprints": 370,
+  "with_layer": 370,
+  "missing_layer": 0,
+  "coverage_rate": 100.0,
+  "layer_stats": {
+    "Layer 4": 75,
+    "Layer 3": 44,
+    "Layer 2": 42,
+    "Layer 11": 15,
+    "Layer 10": 27,
+    "Layer 7": 16,
+    "Layer 8": 45,
+    "Layer 0": 8,
+    "Layer 6": 52,
+    "Layer 1": 17,
+    "Layer 5": 14,
+    "Layer 9": 7
+  },
+  "missing_list": []
+}

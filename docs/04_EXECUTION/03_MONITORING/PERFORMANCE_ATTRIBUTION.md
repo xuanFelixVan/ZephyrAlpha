@@ -1,18 +1,36 @@
 ---
+module_id: PERFORMANCE_ATTRIBUTION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 业绩归因分析文档
+---
+
+﻿---
 module_id: EXEC_PERF_ATTRIBUTION_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
+responsibility:
+  - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
----
+implementation_status: 进行?---
+
 
 # 业绩归因分析
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 量化策略的收益来源分解、风险贡献分析、Brinson归因模型
 
@@ -23,17 +41,17 @@ implementation_status: 进行�?
 ```
 业绩归因分析
 ├── 收益归因
-�?  ├── 单期归因（单次交易）
-�?  ├── 区间归因（日/�?�?年）
-�?  └── 超额收益分解
+?  ├── 单期归因（单次交易）
+?  ├── 区间归因（日/??年）
+?  └── 超额收益分解
 ├── 风险归因
-�?  ├── 波动率归�?
-�?  ├── 最大回撤归�?
-�?  └── 风险因子暴露
+?  ├── 波动率归?
+?  ├── 最大回撤归?
+?  └── 风险因子暴露
 ├── Brinson归因
-�?  ├── 配置效应
-�?  ├── 选择效应
-�?  └── 交互效应
+?  ├── 配置效应
+?  ├── 选择效应
+?  └── 交互效应
 └── 因子归因
     ├── 因子暴露
     ├── 因子收益贡献
@@ -58,10 +76,10 @@ class ReturnAttribution:
         self,
         portfolio_value: pd.Series
     ) -> pd.DataFrame:
-        """计算收益率序�?
+        """计算收益率序?
 
         参数:
-            portfolio_value: 组合净值序�?
+            portfolio_value: 组合净值序?
         """
         returns = portfolio_value.pct_change()
         cumulative_return = (1 + returns).cumprod() - 1
@@ -113,7 +131,7 @@ class ReturnAttribution:
     ) -> Dict[str, float]:
         """分解超额收益
 
-        超额收益 = 管理人收�?- 基准收益
+        超额收益 = 管理人收?- 基准收益
 
         参数:
             portfolio_returns: 组合收益序列
@@ -136,7 +154,7 @@ class ReturnAttribution:
         beta = covariance / benchmark_variance if benchmark_variance > 0 else 1
 
         # Alpha
-        risk_free_rate = 0.03  # 假设无风险利�?
+        risk_free_rate = 0.03  # 假设无风险利?
         alpha = portfolio_cumulative - (risk_free_rate + beta * (benchmark_cumulative - risk_free_rate))
 
         return {
@@ -154,7 +172,7 @@ class ReturnAttribution:
 
 ## 3. 风险归因
 
-### 3.1 波动率归�?
+### 3.1 波动率归?
 
 ```python
 class RiskAttribution:
@@ -165,13 +183,13 @@ class RiskAttribution:
         returns: pd.Series,
         weights: pd.Series = None
     ) -> Dict[str, float]:
-        """计算波动率贡�?
+        """计算波动率贡?
 
         参数:
             returns: 收益序列
             weights: 持仓权重
         """
-        # 年化波动�?
+        # 年化波动?
         annual_vol = returns.std() * np.sqrt(252)
 
         # VaR (Value at Risk)
@@ -182,7 +200,7 @@ class RiskAttribution:
         cvar_95 = returns[returns <= var_95].mean()
         cvar_99 = returns[returns <= var_99].mean()
 
-        # 最大回�?
+        # 最大回?
         cumulative = (1 + returns).cumprod()
         rolling_max = cumulative.cummax()
         drawdown = (cumulative - rolling_max) / rolling_max
@@ -211,7 +229,7 @@ class RiskAttribution:
 
         参数:
             portfolio_returns: 组合收益
-            factor_returns: 因子收益（包含各因子�?
+            factor_returns: 因子收益（包含各因子?
         """
         # 回归分析
         from scipy import stats
@@ -220,7 +238,7 @@ class RiskAttribution:
         factor_names = factor_returns.columns
 
         for factor in factor_names:
-            # 计算因子暴露（协方差 / 因子方差�?
+            # 计算因子暴露（协方差 / 因子方差?
             factor_var = factor_returns[factor].var()
             covariance = portfolio_returns.cov(factor_returns[factor])
             exposure = covariance / factor_var if factor_var > 0 else 0
@@ -231,7 +249,7 @@ class RiskAttribution:
         risk_contributions = {}
 
         for factor in factor_names:
-            # 因子风险贡献 = 暴露² × 因子方差
+            # 因子风险贡献 = 暴露  因子方差
             factor_var = factor_returns[factor].var()
             contribution = (exposures[factor] ** 2) * factor_var
             risk_contributions[factor] = contribution / total_risk
@@ -248,12 +266,12 @@ class RiskAttribution:
         portfolio_returns: pd.Series,
         factor_returns: pd.DataFrame
     ) -> float:
-        """计算R²"""
+        """计算R"""
         from scipy import stats
         X = factor_returns.values
         y = portfolio_returns.values
 
-        # 添加常数�?
+        # 添加常数?
         X = np.column_stack([np.ones(len(y)), X])
 
         # OLS回归
@@ -299,15 +317,15 @@ class BrinsonAttribution:
         参数:
             benchmark_weights: 基准配置权重
             portfolio_weights: 组合配置权重
-            asset_returns: 各资产收�?
+            asset_returns: 各资产收?
 
         返回:
-            配置效应、选择效应、交互效�?
+            配置效应、选择效应、交互效?
         """
         # 资产类别收益
         asset_returns = asset_returns.mean()  # 区间收益
 
-        # 总收�?
+        # 总收?
         benchmark_total = (benchmark_weights * asset_returns).sum()
         portfolio_total = (portfolio_weights * asset_returns).sum()
 
@@ -345,7 +363,7 @@ class BrinsonAttribution:
         参数:
             benchmark_weights: 基准行业权重
             portfolio_weights: 组合行业权重
-            sector_returns: 各行业收�?
+            sector_returns: 各行业收?
         """
         attribution_data = []
 
@@ -356,7 +374,7 @@ class BrinsonAttribution:
             pw = portfolio_weights[sector]
             sr = sector_returns[sector]
 
-            # 各行业贡�?
+            # 各行业贡?
             benchmark_contribution = bw * sr
             portfolio_contribution = pw * sr
 
@@ -421,7 +439,7 @@ class BarraFactorAttribution:
         """计算因子暴露贡献
 
         参数:
-            portfolio_exposures: 组合在各因子的暴�?
+            portfolio_exposures: 组合在各因子的暴?
             factor_returns: 各因子的收益
         """
         contributions = {}
@@ -434,7 +452,7 @@ class BarraFactorAttribution:
 
         total_return = sum(contributions.values())
 
-        # 归一化为百分�?
+        # 归一化为百分?
         contribution_pct = {
             k: v / total_return * 100 if total_return != 0 else 0
             for k, v in contributions.items()
@@ -453,7 +471,7 @@ class BarraFactorAttribution:
 
 ```python
 class AttributionReport:
-    """归因报告生成�?""
+    """归因报告生成?""
 
     def generate_report(
         self,
@@ -465,8 +483,8 @@ class AttributionReport:
         """生成完整归因报告
 
         参数:
-            portfolio_value: 组合净�?
-            benchmark_value: 基准净�?
+            portfolio_value: 组合净?
+            benchmark_value: 基准净?
             positions: 持仓明细
             factor_returns: 因子收益（可选）
         """
@@ -483,7 +501,7 @@ class AttributionReport:
         risk_attr = RiskAttribution()
         risk_analysis = risk_attr.calculate_volatility_contribution(returns)
 
-        # 3. Brinson归因（如果有持仓�?
+        # 3. Brinson归因（如果有持仓?
         brinson_result = None
         if positions is not None and len(positions) > 0:
             brinson = BrinsonAttribution()
@@ -493,11 +511,11 @@ class AttributionReport:
                 'active_return': returns_analysis['excess_return']
             }
 
-        # 4. 因子归因（如果有因子数据�?
+        # 4. 因子归因（如果有因子数据?
         factor_result = None
         if factor_returns is not None:
             barra = BarraFactorAttribution()
-            # 简化处�?
+            # 简化处?
 
         return {
             'period': {
@@ -528,8 +546,8 @@ class AttributionReport:
         信息比率: {returns_analysis['information_ratio']:.2f}
         Alpha: {returns_analysis['alpha']:.2%}
 
-        年化波动�? {risk_analysis['annual_volatility']:.2%}
-        最大回�? {risk_analysis['max_drawdown']:.2%}
+        年化波动? {risk_analysis['annual_volatility']:.2%}
+        最大回? {risk_analysis['max_drawdown']:.2%}
         Calmar比率: {risk_analysis['calmar_ratio']:.2f}
         """
         return summary
@@ -544,7 +562,7 @@ class AttributionReport:
 | 超额收益 | 组合收益 - 基准收益 | 主动管理收益 |
 | 信息比率 | 超额收益 / 跟踪误差 | 主动收益效率 |
 | Alpha | $R_p - (R_f + \beta(R_m - R_f))$ | 主动选股能力 |
-| Beta | $\cov(R_p, R_m) / \var(R_m)$ | 市场敏感�?|
+| Beta | $\cov(R_p, R_m) / \var(R_m)$ | 市场敏感?|
 | 配置效应 | $\sum(w_p - w_b) \times R_i$ | 权重贡献 |
 | 选择效应 | $\sum w_b \times (R_{p,i} - R_{b,i})$ | 选股贡献 |
 | 跟踪误差 | $std(R_p - R_b) \times \sqrt{252}$ | 主动风险 |

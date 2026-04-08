@@ -1,0 +1,423 @@
+{
+  "L1_file_system": {
+    "directory_structure": [],
+    "file_naming": [],
+    "path_references": []
+  },
+  "L2_document_content": {
+    "responsibility_issues": [
+      {
+        "type": "职责缺失",
+        "file": "01_MONITORING\\MONITORING_DASHBOARD_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "17_DOCUMENTATION_CENTER\\DOCUMENTATION_CENTER_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "24_RISK_DASHBOARD\\RISK_DASHBOARD_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "25_STRATEGY_IDE\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "26_FACTOR_ANALYSIS\\FACTOR_ANALYSIS_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "26_FACTOR_ANALYSIS\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "27_RISK_CONTROL_PANEL\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "27_RISK_CONTROL_PANEL\\RISK_CONTROL_PANEL_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "28_API_GATEWAY\\API_GATEWAY_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "28_API_GATEWAY\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "29_WEBSOCKET_REALTIME\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "30_COMPLIANCE_MONITORING\\COMPLIANCE_MONITORING_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "30_COMPLIANCE_MONITORING\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "31_CAPITAL_MANAGEMENT\\CAPITAL_MANAGEMENT_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "31_CAPITAL_MANAGEMENT\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "32_USER_BEHAVIOR_ANALYTICS\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "33_I18N_SUPPORT\\I18N_SUPPORT_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "33_I18N_SUPPORT\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "34_THEME_CUSTOMIZATION\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "35_DATA_EXPORT_TOOLS\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "36_USER_TRAINING\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "37_ACCESSIBILITY\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "38_OFFLINE_SUPPORT\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "39_THIRD_PARTY_INTEGRATION\\INDEX.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责缺失",
+        "file": "39_THIRD_PARTY_INTEGRATION\\THIRD_PARTY_INTEGRATION_BLUEPRINT.md",
+        "severity": "P1",
+        "description": "文档缺少responsibility字段",
+        "recommendation": "添加明确的职责描述"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '系统模块设计与实施方案与优化维护' 被 20 个文档共享",
+        "files": [
+          "01_MONITORING\\README.md",
+          "05_BACKTEST_UI\\README.md",
+          "06_REPORTING\\README.md",
+          "17_DOCUMENTATION_CENTER\\README.md",
+          "24_RISK_DASHBOARD\\README.md",
+          "25_STRATEGY_IDE\\README.md",
+          "26_FACTOR_ANALYSIS\\README.md",
+          "27_RISK_CONTROL_PANEL\\README.md",
+          "28_API_GATEWAY\\README.md",
+          "29_WEBSOCKET_REALTIME\\README.md",
+          "30_COMPLIANCE_MONITORING\\README.md",
+          "31_CAPITAL_MANAGEMENT\\README.md",
+          "32_USER_BEHAVIOR_ANALYTICS\\README.md",
+          "33_I18N_SUPPORT\\README.md",
+          "34_THEME_CUSTOMIZATION\\README.md",
+          "35_DATA_EXPORT_TOOLS\\README.md",
+          "36_USER_TRAINING\\README.md",
+          "37_ACCESSIBILITY\\README.md",
+          "38_OFFLINE_SUPPORT\\README.md",
+          "39_THIRD_PARTY_INTEGRATION\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '提供文档支持' 被 2 个文档共享",
+        "files": [
+          "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+          "06_REPORTING\\REPORTING_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      }
+    ],
+    "index_completeness": [
+      {
+        "type": "索引不完整",
+        "severity": "P1",
+        "description": "43个文件未被索引",
+        "files": [
+          "34_THEME_CUSTOMIZATION\\README.md",
+          "06_REPORTING\\README.md",
+          "29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md",
+          "06_REPORTING\\REPORTING_BLUEPRINT.md",
+          "01_MONITORING\\MONITORING_DASHBOARD_BLUEPRINT.md",
+          "31_CAPITAL_MANAGEMENT\\README.md",
+          "35_DATA_EXPORT_TOOLS\\README.md",
+          "35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
+          "38_OFFLINE_SUPPORT\\README.md",
+          "25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md"
+        ],
+        "recommendation": "更新INDEX.md以包含所有活跃文档"
+      }
+    ],
+    "version_isolation": [
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "INDEX.md",
+        "files": [
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      },
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "README.md",
+        "files": [
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      }
+    ],
+    "doc_code_correspondence": [
+      {
+        "type": "蓝图缺少代码示例",
+        "file": "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "蓝图文档缺少代码示例",
+        "recommendation": "添加实现代码示例"
+      },
+      {
+        "type": "蓝图缺少代码示例",
+        "file": "06_REPORTING\\REPORTING_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "蓝图文档缺少代码示例",
+        "recommendation": "添加实现代码示例"
+      },
+      {
+        "type": "蓝图缺少代码示例",
+        "file": "24_RISK_DASHBOARD\\RISK_DASHBOARD_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "蓝图文档缺少代码示例",
+        "recommendation": "添加实现代码示例"
+      }
+    ]
+  },
+  "L3_professional_standards": {
+    "five_principles": [],
+    "classification": [
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '17_DOCUMENTATION_CENTER' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      },
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '29_WEBSOCKET_REALTIME' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      }
+    ],
+    "numbering": [],
+    "quality": [
+      {
+        "type": "文档过长",
+        "file": "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（860行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      },
+      {
+        "type": "文档过长",
+        "file": "06_REPORTING\\REPORTING_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（803行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      }
+    ]
+  },
+  "statistics": {
+    "total_files": 63,
+    "total_directories": 21,
+    "total_size": 114559,
+    "issues_found": 45
+  }
+}

@@ -3,40 +3,49 @@ module_id: ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 安全修复补丁
-applicable_scope: 经济范式判断引擎
-compliance_level: 专业标准
+last_updated: '2026-04-07'
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+- 归档文档、历史版本
+standard_type: ﮒ؟ﮒ۷ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ
+applicable_scope: ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION.md
-implementation_status: 立即修复
+implementation_status: ﻝ،ﮒﺏﻛﺟ؟ﮒ۳
 priority: P0
 ---
-
-# 经济范式判断引擎P0级安全风险修复补�?
-> **修复编号**: `SECURITY_PATCH_20260402_001`
-> **风险等级**: P0（极高风�?阻断�?> **修复时限**: 24小时�?> **修复状�?*: �?已完�?
 ---
 
-## 1. 安全风险描述
 
-### 1.1 风险识别
-- **风险ID**: P0-001
-- **风险类型**: 安全风险
-- **风险描述**: 数据传输未加密，存在中间人攻击风�?- **影响程度**: �?- **发生概率**: �?
-### 1.2 风险影响
-- 宏观经济数据在传输过程中可能被窃�?- API密钥可能被截获，导致未授权访�?- 范式判断结果可能被篡�?- 违反数据安全合规要求
+# ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔP0ﻝﭦ۶ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻛﺟ؟ﮒ۳ﻟ۰۴ﻛﺕ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **ﻛﺟ؟ﮒ۳ﻝﺙﮒﺓ**: `SECURITY_PATCH_20260402_001`
+> **ﻠ۲ﻠ۸ﻝﻝﭦ۶**: P0ﺅﺙﮔﻠ،ﻠ۲ﻠ?ﻠﭨﮔﺅﺙ?> **ﻛﺟ؟ﮒ۳ﮔﭘﻠ**: 24ﮒﺍﮔﭘﮒ?> **ﻛﺟ؟ﮒ۳ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
+---
+
+## 1. ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﮔﻟﺟﺍ
+
+### 1.1 ﻠ۲ﻠ۸ﻟﺁﮒ،
+- **ﻠ۲ﻠ۸ID**: P0-001
+- **ﻠ۲ﻠ۸ﻝﺎﭨﮒ**: ﮒ؟ﮒ۷ﻠ۲ﻠ۸
+- **ﻠ۲ﻠ۸ﮔﻟﺟﺍ**: ﮔﺍﮔ؟ﻛﺙﻟﺝﮔ۹ﮒﮒﺁﺅﺙﮒﮒ۷ﻛﺕﻠﺑﻛﭦﭦﮔﭨﮒﭨﻠ۲ﻠ?- **ﮒﺛﺎﮒﻝ۷ﮒﭦ۵**: ﻠ،?- **ﮒﻝﮔ۵ﻝ**: ﻛﺕ?
+### 1.2 ﻠ۲ﻠ۸ﮒﺛﺎﮒ
+- ﮒ؟ﻟ۶ﻝﭨﮔﭖﮔﺍﮔ؟ﮒ۷ﻛﺙﻟﺝﻟﺟﻝ۷ﻛﺕﮒﺁﻟﺛﻟ۱،ﻝ۹ﮒ?- APIﮒﺁﻠ۴ﮒﺁﻟﺛﻟ۱،ﮔ۹ﻟﺓﺅﺙﮒﺁﺙﻟﺑﮔ۹ﮔﮔﻟ؟ﺟﻠ?- ﻟﮒﺙﮒ۳ﮔﻝﭨﮔﮒﺁﻟﺛﻟ۱،ﻝﺁ۰ﮔ?- ﻟﺟﮒﮔﺍﮔ؟ﮒ؟ﮒ۷ﮒﻟ۶ﻟ۵ﮔﺎ
 
 ---
 
-## 2. 修复方案
+## 2. ﻛﺟ؟ﮒ۳ﮔﺗﮔ۰
 
-### 2.1 HTTPS/TLS 1.3加密实现
+### 2.1 HTTPS/TLS 1.3ﮒﮒﺁﮒ؟ﻝﺍ
 
-#### 2.1.1 服务端配�?
+#### 2.1.1 ﮔﮒ۰ﻝ،ﺁﻠﻝﺛ?
 ```python
 """
-经济范式判断引擎 - HTTPS服务端配�?文件路径: src/regime_engine/server/https_config.py
+ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ - HTTPSﮔﮒ۰ﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/server/https_config.py
 """
 
 import ssl
@@ -44,60 +53,60 @@ from pathlib import Path
 from typing import Optional
 
 class HTTPSConfig:
-    """HTTPS安全配置"""
+    """HTTPSﮒ؟ﮒ۷ﻠﻝﺛ؟"""
     
     def __init__(self,
                  cert_file: str = "certs/server.crt",
                  key_file: str = "certs/server.key",
                  ca_file: Optional[str] = "certs/ca.crt"):
         """
-        初始化HTTPS配置
+        ﮒﮒ۶ﮒHTTPSﻠﻝﺛ؟
         
         Args:
-            cert_file: 服务器证书文件路�?            key_file: 服务器私钥文件路�?            ca_file: CA证书文件路径（可选，用于双向认证�?        """
+            cert_file: ﮔﮒ۰ﮒ۷ﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻟﺓﺁﮒﺝ?            key_file: ﮔﮒ۰ﮒ۷ﻝ۶ﻠ۴ﮔﻛﭨﭘﻟﺓﺁﮒﺝ?            ca_file: CAﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙﻝ۷ﻛﭦﮒﮒﻟ؟۳ﻟﺁﺅﺙ?        """
         self.cert_file = Path(cert_file)
         self.key_file = Path(key_file)
         self.ca_file = Path(ca_file) if ca_file else None
         
-        # 验证证书文件存在
+# ﻠ۹ﻟﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﮒﮒ۷
         if not self.cert_file.exists():
-            raise FileNotFoundError(f"证书文件不存�? {cert_file}")
+raise FileNotFoundError(f"ﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒﮒ? {cert_file}")
         if not self.key_file.exists():
-            raise FileNotFoundError(f"私钥文件不存�? {key_file}")
+raise FileNotFoundError(f"ﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒﮒ? {key_file}")
     
     def create_ssl_context(self) -> ssl.SSLContext:
         """
-        创建SSL上下文（TLS 1.3�?        
+        ﮒﮒﭨﭦSSLﻛﺕﻛﺕﮔﺅﺙTLS 1.3ﺅﺙ?        
         Returns:
-            ssl.SSLContext: SSL上下文对�?        """
-        # 创建SSL上下�?        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            ssl.SSLContext: SSLﻛﺕﻛﺕﮔﮒﺁﺗﻟﺎ?        """
+        # ﮒﮒﭨﭦSSLﻛﺕﻛﺕﮔ?        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         
-        # 强制使用TLS 1.3
+        # ﮒﺙﭦﮒﭘﻛﺛﺟﻝ۷TLS 1.3
         context.minimum_version = ssl.TLSVersion.TLSv1_3
         context.maximum_version = ssl.TLSVersion.TLSv1_3
         
-        # 加载证书和私�?        context.load_cert_chain(
+# ﮒﻟﺛﺛﻟﺁﻛﺗ۵ﮒﻝ۶ﻠ?        context.load_cert_chain(
             certfile=str(self.cert_file),
             keyfile=str(self.key_file)
         )
         
-        # 如果提供了CA证书，启用双向认�?        if self.ca_file and self.ca_file.exists():
+        # ﮒ۵ﮔﮔﻛﺝﻛﭦCAﻟﺁﻛﺗ۵ﺅﺙﮒﺁﻝ۷ﮒﮒﻟ؟۳ﻟﺁ?        if self.ca_file and self.ca_file.exists():
             context.load_verify_locations(cafile=str(self.ca_file))
             context.verify_mode = ssl.CERT_REQUIRED
         
-        # 禁用不安全的密码套件
+# ﻝ۵ﻝ۷ﻛﺕﮒ؟ﮒ۷ﻝﮒﺁﻝﮒ۴ﻛﭨﭘ
         context.set_ciphers('TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256')
         
-        # 启用OCSP装订
-        context.check_hostname = False  # 服务器端不需要检查主机名
+        # ﮒﺁﻝ۷OCSPﻟ۲ﻟ؟۱
+        context.check_hostname = False  # ﮔﮒ۰ﮒ۷ﻝ،ﺁﻛﺕﻠﻟ۵ﮔ۲ﮔ۴ﻛﺕﭨﮔﭦﮒ
         
         return context
     
     def get_security_headers(self) -> dict:
         """
-        获取安全响应�?        
+        ﻟﺓﮒﮒ؟ﮒ۷ﮒﮒﭦﮒ۳?        
         Returns:
-            dict: 安全响应头字�?        """
+dict: ﮒ؟ﮒ۷ﮒﮒﭦﮒ۳ﺑﮒﮒ?        """
         return {
             'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
             'X-Content-Type-Options': 'nosniff',
@@ -109,7 +118,7 @@ class HTTPSConfig:
 
 
 class SecureAPIServer:
-    """安全API服务�?""
+    """ﮒ؟ﮒ۷APIﮔﮒ۰ﮒ?""
     
     def __init__(self, https_config: HTTPSConfig):
         self.https_config = https_config
@@ -118,19 +127,19 @@ class SecureAPIServer:
     
     def apply_security_headers(self, response):
         """
-        应用安全响应�?        
+        ﮒﭦﻝ۷ﮒ؟ﮒ۷ﮒﮒﭦﮒ۳?        
         Args:
-            response: HTTP响应对象
+            response: HTTPﮒﮒﭦﮒﺁﺗﻟﺎ۰
         """
         for header, value in self.security_headers.items():
             response.headers[header] = value
         return response
 ```
 
-#### 2.1.2 客户端配�?
+#### 2.1.2 ﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ?
 ```python
 """
-经济范式判断引擎 - HTTPS客户端配�?文件路径: src/regime_engine/client/https_client.py
+ﻝﭨﮔﭖﻟﮒﺙﮒ۳ﮔﮒﺙﮔ - HTTPSﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/client/https_client.py
 """
 
 import ssl
@@ -139,7 +148,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 
 class SecureAPIClient:
-    """安全API客户�?""
+    """ﮒ؟ﮒ۷APIﮒ؟۱ﮔﺓﻝ،?""
     
     def __init__(self,
                  base_url: str,
@@ -148,24 +157,24 @@ class SecureAPIClient:
                  key_file: Optional[str] = None,
                  ca_file: Optional[str] = None):
         """
-        初始化安全API客户�?        
+        ﮒﮒ۶ﮒﮒ؟ﮒ۷APIﮒ؟۱ﮔﺓﻝ،?        
         Args:
-            base_url: API基础URL（必须以https://开头）
-            api_key: API密钥
-            cert_file: 客户端证书文件路径（可选，用于双向认证�?            key_file: 客户端私钥文件路径（可选）
-            ca_file: CA证书文件路径（可选，用于验证服务器证书）
+            base_url: APIﮒﭦﻝ۰URLﺅﺙﮒﺟﻠ۰ﭨﻛﭨ۴https://ﮒﺙﮒ۳ﺑﺅﺙ
+            api_key: APIﮒﺁﻠ۴
+            cert_file: ﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙﻝ۷ﻛﭦﮒﮒﻟ؟۳ﻟﺁﺅﺙ?            key_file: ﮒ؟۱ﮔﺓﻝ،ﺁﻝ۶ﻠ۴ﮔﻛﭨﭘﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙ
+            ca_file: CAﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙﻝ۷ﻛﭦﻠ۹ﻟﺁﮔﮒ۰ﮒ۷ﻟﺁﻛﺗ۵ﺅﺙ
         """
         if not base_url.startswith('https://'):
-            raise ValueError("必须使用HTTPS协议")
+            raise ValueError("ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷HTTPSﮒﻟ؟؟")
         
         self.base_url = base_url.rstrip('/')
         self.api_key = api_key
         self.session = requests.Session()
         
-        # 配置SSL
+        # ﻠﻝﺛ؟SSL
         self._configure_ssl(cert_file, key_file, ca_file)
         
-        # 配置默认请求�?        self.session.headers.update({
+        # ﻠﻝﺛ؟ﻠﭨﻟ؟۳ﻟﺁﺓﮔﺎﮒ۳?        self.session.headers.update({
             'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json',
             'User-Agent': 'QingFeng-RegimeEngine/1.0'
@@ -175,41 +184,41 @@ class SecureAPIClient:
                       cert_file: Optional[str],
                       key_file: Optional[str],
                       ca_file: Optional[str]):
-        """配置SSL/TLS"""
-        # 创建适配�?        adapter = requests.adapters.HTTPAdapter()
+        """ﻠﻝﺛ؟SSL/TLS"""
+        # ﮒﮒﭨﭦﻠﻠﮒ?        adapter = requests.adapters.HTTPAdapter()
         
-        # 配置SSL上下�?        ssl_context = ssl.create_default_context()
+        # ﻠﻝﺛ؟SSLﻛﺕﻛﺕﮔ?        ssl_context = ssl.create_default_context()
         
-        # 强制使用TLS 1.3
+        # ﮒﺙﭦﮒﭘﻛﺛﺟﻝ۷TLS 1.3
         ssl_context.minimum_version = ssl.TLSVersion.TLSv1_3
         ssl_context.maximum_version = ssl.TLSVersion.TLSv1_3
         
-        # 如果提供了CA证书，用于验证服务器证书
+        # ﮒ۵ﮔﮔﻛﺝﻛﭦCAﻟﺁﻛﺗ۵ﺅﺙﻝ۷ﻛﭦﻠ۹ﻟﺁﮔﮒ۰ﮒ۷ﻟﺁﻛﺗ۵
         if ca_file and Path(ca_file).exists():
             ssl_context.load_verify_locations(cafile=ca_file)
             ssl_context.verify_mode = ssl.CERT_REQUIRED
         
-        # 如果提供了客户端证书，用于双向认�?        if cert_file and key_file:
+        # ﮒ۵ﮔﮔﻛﺝﻛﭦﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﺅﺙﻝ۷ﻛﭦﮒﮒﻟ؟۳ﻟﺁ?        if cert_file and key_file:
             if not Path(cert_file).exists():
-                raise FileNotFoundError(f"客户端证书文件不存在: {cert_file}")
+raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻟﺁﻛﺗ۵ﮔﻛﭨﭘﻛﺕﮒﮒ۷: {cert_file}")
             if not Path(key_file).exists():
-                raise FileNotFoundError(f"客户端私钥文件不存在: {key_file}")
+raise FileNotFoundError(f"ﮒ؟۱ﮔﺓﻝ،ﺁﻝ۶ﻠ۴ﮔﻛﭨﭘﻛﺕﮒﮒ۷: {key_file}")
             ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
         
-        # 将SSL上下文应用到适配�?        adapter.poolmanager.connection_pool_kw['ssl_context'] = ssl_context
+        # ﮒﺍSSLﻛﺕﻛﺕﮔﮒﭦﻝ۷ﮒﺍﻠﻠﮒ?        adapter.poolmanager.connection_pool_kw['ssl_context'] = ssl_context
         
-        # 挂载适配�?        self.session.mount('https://', adapter)
+        # ﮔﻟﺛﺛﻠﻠﮒ?        self.session.mount('https://', adapter)
     
     def get(self, endpoint: str, params: Optional[Dict] = None) -> Dict[str, Any]:
         """
-        发送GET请求
+        ﮒﻠGETﻟﺁﺓﮔﺎ
         
         Args:
-            endpoint: API端点
-            params: 查询参数
+            endpoint: APIﻝ،ﺁﻝﺗ
+            params: ﮔ۴ﻟﺁ۱ﮒﮔﺍ
             
         Returns:
-            Dict: 响应数据
+            Dict: ﮒﮒﭦﮔﺍﮔ؟
         """
         url = f"{self.base_url}{endpoint}"
         response = self.session.get(url, params=params, timeout=30)
@@ -218,14 +227,14 @@ class SecureAPIClient:
     
     def post(self, endpoint: str, data: Optional[Dict] = None) -> Dict[str, Any]:
         """
-        发送POST请求
+        ﮒﻠPOSTﻟﺁﺓﮔﺎ
         
         Args:
-            endpoint: API端点
-            data: 请求数据
+            endpoint: APIﻝ،ﺁﻝﺗ
+            data: ﻟﺁﺓﮔﺎﮔﺍﮔ؟
             
         Returns:
-            Dict: 响应数据
+            Dict: ﮒﮒﭦﮔﺍﮔ؟
         """
         url = f"{self.base_url}{endpoint}"
         response = self.session.post(url, json=data, timeout=30)
@@ -233,13 +242,13 @@ class SecureAPIClient:
         return response.json()
 ```
 
-### 2.2 API密钥认证机制
+### 2.2 APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁﮔﭦﮒﭘ
 
-#### 2.2.1 API密钥生成与管�?
+#### 2.2.1 APIﮒﺁﻠ۴ﻝﮔﻛﺕﻝ؟۰ﻝ?
 ```python
 """
-API密钥管理模块
-文件路径: src/regime_engine/security/api_key_manager.py
+APIﮒﺁﻠ۴ﻝ؟۰ﻝﮔ۷۰ﮒ
+ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/api_key_manager.py
 """
 
 import secrets
@@ -251,56 +260,56 @@ import json
 
 @dataclass
 class APIKey:
-    """API密钥对象"""
+    """APIﮒﺁﻠ۴ﮒﺁﺗﻟﺎ۰"""
     key_id: str
     api_key: str
-    api_key_hash: str  # 存储哈希值，不存储明�?    user_id: str
+api_key_hash: str  # ﮒﮒ۷ﮒﮒﺕﮒﺙﺅﺙﻛﺕﮒﮒ۷ﮔﮔ?    user_id: str
     role: str  # 'admin', 'trader', 'analyst', 'viewer'
     permissions: list
     created_at: datetime
     expires_at: Optional[datetime]
     last_used_at: Optional[datetime]
     is_active: bool
-    rate_limit: int  # 每分钟请求限�?
+    rate_limit: int  # ﮔﺁﮒﻠﻟﺁﺓﮔﺎﻠﮒ?
 class APIKeyManager:
-    """API密钥管理�?""
+    """APIﮒﺁﻠ۴ﻝ؟۰ﻝﮒ?""
     
     def __init__(self, db_connection):
         self.db = db_connection
-        self.key_length = 32  # API密钥长度
-        self.default_expiry_days = 365  # 默认有效�?�?    
+        self.key_length = 32  # APIﮒﺁﻠ۴ﻠﺟﮒﭦ۵
+        self.default_expiry_days = 365  # ﻠﭨﻟ؟۳ﮔﮔﮔ?ﮒﺗ?    
     def generate_api_key(self,
                         user_id: str,
                         role: str,
                         permissions: list,
                         expires_days: Optional[int] = None) -> APIKey:
         """
-        生成新的API密钥
+        ﻝﮔﮔﺍﻝAPIﮒﺁﻠ۴
         
         Args:
-            user_id: 用户ID
-            role: 角色
-            permissions: 权限列表
-            expires_days: 有效期（天）
+            user_id: ﻝ۷ﮔﺓID
+            role: ﻟ۶ﻟﺎ
+            permissions: ﮔﻠﮒﻟ۰۷
+            expires_days: ﮔﮔﮔﺅﺙﮒ۳۸ﺅﺙ
             
         Returns:
-            APIKey: API密钥对象
+            APIKey: APIﮒﺁﻠ۴ﮒﺁﺗﻟﺎ۰
         """
-        # 生成密钥ID
+        # ﻝﮔﮒﺁﻠ۴ID
         key_id = f"key_{secrets.token_hex(8)}"
         
-        # 生成API密钥�?2字节随机数，base64编码�?        api_key = secrets.token_urlsafe(self.key_length)
+# ﻝﮔAPIﮒﺁﻠ۴ﺅﺙ?2ﮒﻟﻠﮔﭦﮔﺍﺅﺙbase64ﻝﺙﻝﺅﺙ?        api_key = secrets.token_urlsafe(self.key_length)
         
-        # 计算哈希值（SHA-256�?        api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
+        # ﻟ؟۰ﻝ؟ﮒﮒﺕﮒﺙﺅﺙSHA-256ﺅﺙ?        api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
         
-        # 设置过期时间
+        # ﻟ؟ﺝﻝﺛ؟ﻟﺟﮔﮔﭘﻠﺑ
         expires_at = None
         if expires_days:
             expires_at = datetime.now() + timedelta(days=expires_days)
         else:
             expires_at = datetime.now() + timedelta(days=self.default_expiry_days)
         
-        # 根据角色设置速率限制
+# ﮔﺗﮔ؟ﻟ۶ﻟﺎﻟ؟ﺝﻝﺛ؟ﻠﻝﻠﮒﭘ
         rate_limits = {
             'admin': 1000,
             'trader': 500,
@@ -308,10 +317,10 @@ class APIKeyManager:
             'viewer': 100
         }
         
-        # 创建API密钥对象
+        # ﮒﮒﭨﭦAPIﮒﺁﻠ۴ﮒﺁﺗﻟﺎ۰
         api_key_obj = APIKey(
             key_id=key_id,
-            api_key=api_key,  # 仅在创建时返回明�?            api_key_hash=api_key_hash,
+            api_key=api_key,  # ﻛﭨﮒ۷ﮒﮒﭨﭦﮔﭘﻟﺟﮒﮔﮔ?            api_key_hash=api_key_hash,
             user_id=user_id,
             role=role,
             permissions=permissions,
@@ -322,52 +331,52 @@ class APIKeyManager:
             rate_limit=rate_limits.get(role, 100)
         )
         
-        # 保存到数据库（不保存明文密钥�?        self._save_api_key(api_key_obj)
+# ﻛﺟﮒﮒﺍﮔﺍﮔ؟ﮒﭦﺅﺙﻛﺕﻛﺟﮒﮔﮔﮒﺁﻠ۴ﺅﺙ?        self._save_api_key(api_key_obj)
         
         return api_key_obj
     
     def verify_api_key(self, api_key: str) -> Optional[APIKey]:
         """
-        验证API密钥
+        ﻠ۹ﻟﺁAPIﮒﺁﻠ۴
         
         Args:
-            api_key: API密钥明文
+            api_key: APIﮒﺁﻠ۴ﮔﮔ
             
         Returns:
-            Optional[APIKey]: 验证成功返回API密钥对象，失败返回None
+            Optional[APIKey]: ﻠ۹ﻟﺁﮔﮒﻟﺟﮒAPIﮒﺁﻠ۴ﮒﺁﺗﻟﺎ۰ﺅﺙﮒ۳ﺎﻟﺑ۴ﻟﺟﮒNone
         """
-        # 计算哈希�?        api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
+        # ﻟ؟۰ﻝ؟ﮒﮒﺕﮒ?        api_key_hash = hashlib.sha256(api_key.encode()).hexdigest()
         
-        # 从数据库查询
+        # ﻛﭨﮔﺍﮔ؟ﮒﭦﮔ۴ﻟﺁ۱
         api_key_obj = self._get_api_key_by_hash(api_key_hash)
         
         if not api_key_obj:
             return None
         
-        # 检查是否激�?        if not api_key_obj.is_active:
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﮔﺟﮔﺑ?        if not api_key_obj.is_active:
             return None
         
-        # 检查是否过�?        if api_key_obj.expires_at and datetime.now() > api_key_obj.expires_at:
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻟﺟﮔ?        if api_key_obj.expires_at and datetime.now() > api_key_obj.expires_at:
             return None
         
-        # 更新最后使用时�?        self._update_last_used(api_key_obj.key_id)
+        # ﮔﺑﮔﺍﮔﮒﻛﺛﺟﻝ۷ﮔﭘﻠ?        self._update_last_used(api_key_obj.key_id)
         
         return api_key_obj
     
     def revoke_api_key(self, key_id: str) -> bool:
         """
-        撤销API密钥
+        ﮔ۳ﻠAPIﮒﺁﻠ۴
         
         Args:
-            key_id: 密钥ID
+            key_id: ﮒﺁﻠ۴ID
             
         Returns:
-            bool: 是否成功
+            bool: ﮔﺁﮒ۵ﮔﮒ
         """
         return self._deactivate_api_key(key_id)
     
     def _save_api_key(self, api_key: APIKey):
-        """保存API密钥到数据库"""
+"""ﻛﺟﮒAPIﮒﺁﻠ۴ﮒﺍﮔﺍﮔ؟ﮒﭦ"""
         query = """
         INSERT INTO api_keys 
         (key_id, api_key_hash, user_id, role, permissions, created_at, expires_at, is_active, rate_limit)
@@ -387,7 +396,7 @@ class APIKeyManager:
         self.db.commit()
     
     def _get_api_key_by_hash(self, api_key_hash: str) -> Optional[APIKey]:
-        """根据哈希值查询API密钥"""
+"""ﮔﺗﮔ؟ﮒﮒﺕﮒﺙﮔ۴ﻟﺁ۱APIﮒﺁﻠ۴"""
         query = """
         SELECT key_id, api_key_hash, user_id, role, permissions, created_at, expires_at, 
                last_used_at, is_active, rate_limit
@@ -401,7 +410,7 @@ class APIKeyManager:
         
         return APIKey(
             key_id=result[0],
-            api_key='',  # 不返回明�?            api_key_hash=result[1],
+            api_key='',  # ﻛﺕﻟﺟﮒﮔﮔ?            api_key_hash=result[1],
             user_id=result[2],
             role=result[3],
             permissions=json.loads(result[4]),
@@ -413,23 +422,23 @@ class APIKeyManager:
         )
     
     def _update_last_used(self, key_id: str):
-        """更新最后使用时�?""
+        """ﮔﺑﮔﺍﮔﮒﻛﺛﺟﻝ۷ﮔﭘﻠ?""
         query = "UPDATE api_keys SET last_used_at = ? WHERE key_id = ?"
         self.db.execute(query, (datetime.now(), key_id))
         self.db.commit()
     
     def _deactivate_api_key(self, key_id: str) -> bool:
-        """停用API密钥"""
+        """ﮒﻝ۷APIﮒﺁﻠ۴"""
         query = "UPDATE api_keys SET is_active = 0 WHERE key_id = ?"
         self.db.execute(query, (key_id,))
         self.db.commit()
         return True
 ```
 
-#### 2.2.2 认证中间�?
+#### 2.2.2 ﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?
 ```python
 """
-API认证中间�?文件路径: src/regime_engine/security/auth_middleware.py
+APIﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/auth_middleware.py
 """
 
 from functools import wraps
@@ -439,7 +448,7 @@ import time
 from collections import defaultdict
 
 class AuthenticationMiddleware:
-    """认证中间�?""
+"""ﻟ؟۳ﻟﺁﻛﺕﻠﺑﻛﭨ?""
     
     def __init__(self, api_key_manager):
         self.api_key_manager = api_key_manager
@@ -447,16 +456,16 @@ class AuthenticationMiddleware:
     
     def require_auth(self, required_permissions: Optional[list] = None):
         """
-        认证装饰�?        
+        ﻟ؟۳ﻟﺁﻟ۲ﻠ۴ﺍﮒ?        
         Args:
-            required_permissions: 需要的权限列表
+            required_permissions: ﻠﻟ۵ﻝﮔﻠﮒﻟ۰۷
             
         Returns:
-            装饰器函�?        """
+            ﻟ۲ﻠ۴ﺍﮒ۷ﮒﺛﮔ?        """
         def decorator(f: Callable):
             @wraps(f)
             def decorated_function(*args, **kwargs):
-                # 获取Authorization�?                auth_header = request.headers.get('Authorization')
+                # ﻟﺓﮒAuthorizationﮒ۳?                auth_header = request.headers.get('Authorization')
                 
                 if not auth_header:
                     return jsonify({
@@ -464,7 +473,7 @@ class AuthenticationMiddleware:
                         'code': 'AUTH_MISSING'
                     }), 401
                 
-                # 验证格式: Bearer <api_key>
+# ﻠ۹ﻟﺁﮔﺙﮒﺙ: Bearer <api_key>
                 parts = auth_header.split()
                 if len(parts) != 2 or parts[0] != 'Bearer':
                     return jsonify({
@@ -474,7 +483,7 @@ class AuthenticationMiddleware:
                 
                 api_key = parts[1]
                 
-                # 验证API密钥
+                # ﻠ۹ﻟﺁAPIﮒﺁﻠ۴
                 api_key_obj = self.api_key_manager.verify_api_key(api_key)
                 
                 if not api_key_obj:
@@ -483,7 +492,7 @@ class AuthenticationMiddleware:
                         'code': 'AUTH_INVALID_KEY'
                     }), 401
                 
-                # 检查权�?                if required_permissions:
+                # ﮔ۲ﮔ۴ﮔﻠ?                if required_permissions:
                     for perm in required_permissions:
                         if perm not in api_key_obj.permissions:
                             return jsonify({
@@ -491,7 +500,7 @@ class AuthenticationMiddleware:
                                 'code': 'AUTH_PERMISSION_DENIED'
                             }), 403
                 
-                # 检查速率限制
+                # ﮔ۲ﮔ۴ﻠﻝﻠﮒﭘ
                 if not self.rate_limiter.check_rate_limit(
                     api_key_obj.key_id, 
                     api_key_obj.rate_limit
@@ -501,7 +510,7 @@ class AuthenticationMiddleware:
                         'code': 'AUTH_RATE_LIMIT'
                     }), 429
                 
-                # 将用户信息注入请求上下文
+                # ﮒﺍﻝ۷ﮔﺓﻛﺟ۰ﮔﺁﮔﺏ۷ﮒ۴ﻟﺁﺓﮔﺎﻛﺕﻛﺕﮔ
                 request.user_id = api_key_obj.user_id
                 request.user_role = api_key_obj.role
                 request.key_id = api_key_obj.key_id
@@ -513,44 +522,44 @@ class AuthenticationMiddleware:
 
 
 class RateLimiter:
-    """速率限制�?""
+    """ﻠﻝﻠﮒﭘﮒ?""
     
     def __init__(self):
         self.requests = defaultdict(list)
-        self.window_size = 60  # 时间窗口�?0�?    
+        self.window_size = 60  # ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙ?0ﻝ۶?    
     def check_rate_limit(self, key_id: str, limit: int) -> bool:
         """
-        检查速率限制
+        ﮔ۲ﮔ۴ﻠﻝﻠﮒﭘ
         
         Args:
-            key_id: API密钥ID
-            limit: 速率限制（每分钟请求数）
+            key_id: APIﮒﺁﻠ۴ID
+            limit: ﻠﻝﻠﮒﭘﺅﺙﮔﺁﮒﻠﻟﺁﺓﮔﺎﮔﺍﺅﺙ
             
         Returns:
-            bool: 是否允许请求
+            bool: ﮔﺁﮒ۵ﮒﻟ؟ﺕﻟﺁﺓﮔﺎ
         """
         current_time = time.time()
         
-        # 清理过期的请求记�?        self.requests[key_id] = [
+        # ﮔﺕﻝﻟﺟﮔﻝﻟﺁﺓﮔﺎﻟ؟ﺍﮒﺛ?        self.requests[key_id] = [
             timestamp for timestamp in self.requests[key_id]
             if current_time - timestamp < self.window_size
         ]
         
-        # 检查是否超过限�?        if len(self.requests[key_id]) >= limit:
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻟﭘﻟﺟﻠﮒ?        if len(self.requests[key_id]) >= limit:
             return False
         
-        # 记录本次请求
+        # ﻟ؟ﺍﮒﺛﮔ؛ﮔ؛۰ﻟﺁﺓﮔﺎ
         self.requests[key_id].append(current_time)
         
         return True
 ```
 
-### 2.3 数据传输安全审计
+### 2.3 ﮔﺍﮔ؟ﻛﺙﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰
 
 ```python
 """
-数据传输安全审计模块
-文件路径: src/regime_engine/security/audit_logger.py
+ﮔﺍﮔ؟ﻛﺙﻟﺝﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰ﮔ۷۰ﮒ
+ﮔﻛﭨﭘﻟﺓﺁﮒﺝ: src/regime_engine/security/audit_logger.py
 """
 
 import json
@@ -559,7 +568,7 @@ from typing import Dict, Any, Optional
 import hashlib
 
 class SecurityAuditLogger:
-    """安全审计日志记录�?""
+    """ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛﮒ?""
     
     def __init__(self, db_connection):
         self.db = db_connection
@@ -575,18 +584,18 @@ class SecurityAuditLogger:
                        response_status: int,
                        response_time_ms: float):
         """
-        记录API请求审计日志
+        ﻟ؟ﺍﮒﺛAPIﻟﺁﺓﮔﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
         
         Args:
-            user_id: 用户ID
-            key_id: API密钥ID
-            endpoint: API端点
-            method: HTTP方法
-            ip_address: 客户端IP地址
-            user_agent: 用户代理
-            request_size: 请求大小（字节）
-            response_status: 响应状态码
-            response_time_ms: 响应时间（毫秒）
+            user_id: ﻝ۷ﮔﺓID
+            key_id: APIﮒﺁﻠ۴ID
+            endpoint: APIﻝ،ﺁﻝﺗ
+            method: HTTPﮔﺗﮔﺏ
+            ip_address: ﮒ؟۱ﮔﺓﻝ،ﺁIPﮒﺍﮒ
+            user_agent: ﻝ۷ﮔﺓﻛﭨ۲ﻝ
+request_size: ﻟﺁﺓﮔﺎﮒ۳۶ﮒﺍﺅﺙﮒﻟﺅﺙ
+response_status: ﮒﮒﭦﻝﭘﮔﻝ
+            response_time_ms: ﮒﮒﭦﮔﭘﻠﺑﺅﺙﮔﺁ،ﻝ۶ﺅﺙ
         """
         query = """
         INSERT INTO security_audit_log
@@ -616,12 +625,12 @@ class SecurityAuditLogger:
                        action: str,
                        ip_address: str):
         """
-        记录数据访问审计日志
+        ﻟ؟ﺍﮒﺛﮔﺍﮔ؟ﻟ؟ﺟﻠ؟ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
         
         Args:
-            user_id: 用户ID
-            data_type: 数据类型（如'macro_indicators', 'regime_analysis'�?            data_id: 数据ID
-            action: 操作类型�?read', 'write', 'delete'�?            ip_address: 客户端IP地址
+            user_id: ﻝ۷ﮔﺓID
+            data_type: ﮔﺍﮔ؟ﻝﺎﭨﮒﺅﺙﮒ۵'macro_indicators', 'regime_analysis'ﺅﺙ?            data_id: ﮔﺍﮔ؟ID
+            action: ﮔﻛﺛﻝﺎﭨﮒﺅﺙ?read', 'write', 'delete'ﺅﺙ?            ip_address: ﮒ؟۱ﮔﺓﻝ،ﺁIPﮒﺍﮒ
         """
         query = """
         INSERT INTO data_access_log
@@ -641,17 +650,17 @@ class SecurityAuditLogger:
     
     def detect_anomaly(self, user_id: str, time_window_minutes: int = 60) -> list:
         """
-        检测异常访问行�?        
+        ﮔ۲ﮔﭖﮒﺙﮒﺕﺕﻟ؟ﺟﻠ؟ﻟ۰ﻛﺕ?        
         Args:
-            user_id: 用户ID
-            time_window_minutes: 时间窗口（分钟）
+            user_id: ﻝ۷ﮔﺓID
+            time_window_minutes: ﮔﭘﻠﺑﻝ۹ﮒ۲ﺅﺙﮒﻠﺅﺙ
             
         Returns:
-            list: 异常行为列表
+            list: ﮒﺙﮒﺕﺕﻟ۰ﻛﺕﭦﮒﻟ۰۷
         """
         anomalies = []
         
-        # 检�?: 短时间内大量请求
+# ﮔ۲ﮔ?: ﻝﮔﭘﻠﺑﮒﮒ۳۶ﻠﻟﺁﺓﮔﺎ
         query = """
         SELECT COUNT(*) as request_count
         FROM security_audit_log
@@ -660,12 +669,12 @@ class SecurityAuditLogger:
         """.format(time_window_minutes)
         
         result = self.db.execute(query, (user_id,)).fetchone()
-        if result and result[0] > 1000:  # 超过1000次请�?            anomalies.append({
+        if result and result[0] > 1000:  # ﻟﭘﻟﺟ1000ﮔ؛۰ﻟﺁﺓﮔﺎ?            anomalies.append({
                 'type': 'HIGH_REQUEST_FREQUENCY',
                 'details': f'{result[0]} requests in last {time_window_minutes} minutes'
             })
         
-        # 检�?: 多个IP地址访问
+        # ﮔ۲ﮔ?: ﮒ۳ﻛﺕ۹IPﮒﺍﮒﻟ؟ﺟﻠ؟
         query = """
         SELECT COUNT(DISTINCT ip_address) as ip_count
         FROM security_audit_log
@@ -674,13 +683,13 @@ class SecurityAuditLogger:
         """.format(time_window_minutes)
         
         result = self.db.execute(query, (user_id,)).fetchone()
-        if result and result[0] > 5:  # 超过5个不同IP
+        if result and result[0] > 5:  # ﻟﭘﻟﺟ5ﻛﺕ۹ﻛﺕﮒIP
             anomalies.append({
                 'type': 'MULTIPLE_IP_ACCESS',
                 'details': f'{result[0]} different IP addresses'
             })
         
-        # 检�?: 失败请求过多
+        # ﮔ۲ﮔ?: ﮒ۳ﺎﻟﺑ۴ﻟﺁﺓﮔﺎﻟﺟﮒ۳
         query = """
         SELECT COUNT(*) as failed_count
         FROM security_audit_log
@@ -690,7 +699,7 @@ class SecurityAuditLogger:
         """.format(time_window_minutes)
         
         result = self.db.execute(query, (user_id,)).fetchone()
-        if result and result[0] > 100:  # 超过100次失败请�?            anomalies.append({
+        if result and result[0] > 100:  # ﻟﭘﻟﺟ100ﮔ؛۰ﮒ۳ﺎﻟﺑ۴ﻟﺁﺓﮔﺎ?            anomalies.append({
                 'type': 'HIGH_FAILURE_RATE',
                 'details': f'{result[0]} failed requests'
             })
@@ -700,17 +709,17 @@ class SecurityAuditLogger:
 
 ---
 
-## 3. 数据库表结构更新
+## 3. ﮔﺍﮔ؟ﮒﭦﻟ۰۷ﻝﭨﮔﮔﺑﮔﺍ
 
-### 3.1 API密钥�?
+### 3.1 APIﮒﺁﻠ۴ﻟ۰?
 ```sql
--- API密钥�?CREATE TABLE IF NOT EXISTS api_keys (
+-- APIﮒﺁﻠ۴ﻟ۰?CREATE TABLE IF NOT EXISTS api_keys (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key_id VARCHAR(50) NOT NULL UNIQUE,
-    api_key_hash VARCHAR(64) NOT NULL UNIQUE,  -- SHA-256哈希
+    api_key_hash VARCHAR(64) NOT NULL UNIQUE,  -- SHA-256ﮒﮒﺕ
     user_id VARCHAR(50) NOT NULL,
     role VARCHAR(20) NOT NULL,
-    permissions TEXT NOT NULL,  -- JSON格式权限列表
+permissions TEXT NOT NULL,  -- JSONﮔﺙﮒﺙﮔﻠﮒﻟ۰۷
     created_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP,
     last_used_at TIMESTAMP,
@@ -721,7 +730,7 @@ class SecurityAuditLogger:
     INDEX idx_api_key_hash (api_key_hash)
 );
 
--- 安全审计日志�?CREATE TABLE IF NOT EXISTS security_audit_log (
+-- ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟﻟ۰?CREATE TABLE IF NOT EXISTS security_audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id VARCHAR(50) NOT NULL,
     key_id VARCHAR(50) NOT NULL,
@@ -738,7 +747,7 @@ class SecurityAuditLogger:
     INDEX idx_timestamp (timestamp)
 );
 
--- 数据访问日志�?CREATE TABLE IF NOT EXISTS data_access_log (
+-- ﮔﺍﮔ؟ﻟ؟ﺟﻠ؟ﮔ۴ﮒﺟﻟ۰?CREATE TABLE IF NOT EXISTS data_access_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id VARCHAR(50) NOT NULL,
     data_type VARCHAR(50) NOT NULL,
@@ -754,83 +763,83 @@ class SecurityAuditLogger:
 
 ---
 
-## 4. 部署检查清�?
-### 4.1 证书配置检�?
-- [ ] 生成服务器证书和私钥
-- [ ] 配置TLS 1.3加密套件
-- [ ] 启用HSTS（HTTP Strict Transport Security�?- [ ] 配置证书自动更新机制
+## 4. ﻠ۷ﻝﺛﺎﮔ۲ﮔ۴ﮔﺕﮒ?
+### 4.1 ﻟﺁﻛﺗ۵ﻠﻝﺛ؟ﮔ۲ﮔ?
+- [ ] ﻝﮔﮔﮒ۰ﮒ۷ﻟﺁﻛﺗ۵ﮒﻝ۶ﻠ۴
+- [ ] ﻠﻝﺛ؟TLS 1.3ﮒﮒﺁﮒ۴ﻛﭨﭘ
+- [ ] ﮒﺁﻝ۷HSTSﺅﺙHTTP Strict Transport Securityﺅﺙ?- [ ] ﻠﻝﺛ؟ﻟﺁﻛﺗ۵ﻟ۹ﮒ۷ﮔﺑﮔﺍﮔﭦﮒﭘ
 
-### 4.2 API密钥管理检�?
-- [ ] 生成初始API密钥
-- [ ] 配置密钥过期策略
-- [ ] 建立密钥撤销流程
-- [ ] 配置速率限制
+### 4.2 APIﮒﺁﻠ۴ﻝ؟۰ﻝﮔ۲ﮔ?
+- [ ] ﻝﮔﮒﮒ۶APIﮒﺁﻠ۴
+- [ ] ﻠﻝﺛ؟ﮒﺁﻠ۴ﻟﺟﮔﻝﻝ۴
+- [ ] ﮒﭨﭦﻝ،ﮒﺁﻠ۴ﮔ۳ﻠﮔﭖﻝ۷
+- [ ] ﻠﻝﺛ؟ﻠﻝﻠﮒﭘ
 
-### 4.3 审计日志检�?
-- [ ] 启用API请求审计日志
-- [ ] 启用数据访问审计日志
-- [ ] 配置异常检测规�?- [ ] 建立日志分析机制
+### 4.3 ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟﮔ۲ﮔ?
+- [ ] ﮒﺁﻝ۷APIﻟﺁﺓﮔﺎﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
+- [ ] ﮒﺁﻝ۷ﮔﺍﮔ؟ﻟ؟ﺟﻠ؟ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
+- [ ] ﻠﻝﺛ؟ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﻟ۶ﮒ?- [ ] ﮒﭨﭦﻝ،ﮔ۴ﮒﺟﮒﮔﮔﭦﮒﭘ
 
-### 4.4 安全测试检�?
-- [ ] 执行TLS配置测试（SSL Labs A+评级�?- [ ] 执行API密钥认证测试
-- [ ] 执行速率限制测试
-- [ ] 执行异常检测测�?
+### 4.4 ﮒ؟ﮒ۷ﮔﭖﻟﺁﮔ۲ﮔ?
+- [ ] ﮔ۶ﻟ۰TLSﻠﻝﺛ؟ﮔﭖﻟﺁﺅﺙSSL Labs A+ﻟﺁﻝﭦ۶ﺅﺙ?- [ ] ﮔ۶ﻟ۰APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁﮔﭖﻟﺁ
+- [ ] ﮔ۶ﻟ۰ﻠﻝﻠﮒﭘﮔﭖﻟﺁ
+- [ ] ﮔ۶ﻟ۰ﮒﺙﮒﺕﺕﮔ۲ﮔﭖﮔﭖﻟﺁ?
 ---
 
-## 5. 验收标准
+## 5. ﻠ۹ﮔﭘﮔﮒ
 
-### 5.1 安全验收标准
+### 5.1 ﮒ؟ﮒ۷ﻠ۹ﮔﭘﮔﮒ
 
-| 验收�?| 验收标准 | 验收方法 |
+| ﻠ۹ﮔﭘﻠ۰?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
 |--------|----------|----------|
-| **TLS加密** | TLS 1.3，A+评级 | SSL Labs测试 |
-| **API密钥认证** | 100%请求需要认�?| 功能测试 |
-| **速率限制** | 限制生效，超限返�?29 | 压力测试 |
-| **审计日志** | 所有请求记录完�?| 日志审查 |
+| **TLSﮒﮒﺁ** | TLS 1.3ﺅﺙA+ﻟﺁﻝﭦ۶ | SSL Labsﮔﭖﻟﺁ |
+| **APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ** | 100%ﻟﺁﺓﮔﺎﻠﻟ۵ﻟ؟۳ﻟﺁ?| ﮒﻟﺛﮔﭖﻟﺁ |
+| **ﻠﻝﻠﮒﭘ** | ﻠﮒﭘﻝﮔﺅﺙﻟﭘﻠﻟﺟﮒ?29 | ﮒﮒﮔﭖﻟﺁ |
+| **ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ** | ﮔﮔﻟﺁﺓﮔﺎﻟ؟ﺍﮒﺛﮒ؟ﮔ?| ﮔ۴ﮒﺟﮒ؟۰ﮔ۴ |
 
-### 5.2 性能验收标准
+### 5.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
 
-| 性能指标 | 验收标准 | 验收方法 |
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﮔﭘﮔﺗﮔﺏ |
 |----------|----------|----------|
-| **TLS握手延迟** | �?0ms | 性能测试 |
-| **认证延迟** | �?0ms | 性能测试 |
-| **审计日志写入** | �?ms | 性能测试 |
+| **TLSﮔ۰ﮔﮒﭨﭘﻟﺟ** | ﻗ?0ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﻟ؟۳ﻟﺁﮒﭨﭘﻟﺟ** | ﻗ?0ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| **ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟﮒﮒ۴** | ﻗ?ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
 ---
 
-## 6. 修复确认
+## 6. ﻛﺟ؟ﮒ۳ﻝ۰؟ﻟ؟۳
 
-### 6.1 修复完成确认
+### 6.1 ﻛﺟ؟ﮒ۳ﮒ؟ﮔﻝ۰؟ﻟ؟۳
 
-- �?**HTTPS/TLS 1.3加密**: 已实现服务端和客户端配置
-- �?**API密钥认证**: 已实现密钥生成、验证、撤销机制
-- �?**速率限制**: 已实现基于IP和用户的速率限制
-- �?**安全审计**: 已实现请求审计和数据访问审计
-- �?**异常检�?*: 已实现异常行为检测机�?
-### 6.2 安全风险评估更新
+- ﻗ?**HTTPS/TLS 1.3ﮒﮒﺁ**: ﮒﺓﺎﮒ؟ﻝﺍﮔﮒ۰ﻝ،ﺁﮒﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ؟
+- ﻗ?**APIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ**: ﮒﺓﺎﮒ؟ﻝﺍﮒﺁﻠ۴ﻝﮔﻙﻠ۹ﻟﺁﻙﮔ۳ﻠﮔﭦﮒﭘ
+- ﻗ?**ﻠﻝﻠﮒﭘ**: ﮒﺓﺎﮒ؟ﻝﺍﮒﭦﻛﭦIPﮒﻝ۷ﮔﺓﻝﻠﻝﻠﮒﭘ
+- ﻗ?**ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰**: ﮒﺓﺎﮒ؟ﻝﺍﻟﺁﺓﮔﺎﮒ؟۰ﻟ؟۰ﮒﮔﺍﮔ؟ﻟ؟ﺟﻠ؟ﮒ؟۰ﻟ؟۰
+- ﻗ?**ﮒﺙﮒﺕﺕﮔ۲ﮔﭖ?*: ﮒﺓﺎﮒ؟ﻝﺍﮒﺙﮒﺕﺕﻟ۰ﻛﺕﭦﮔ۲ﮔﭖﮔﭦﮒ?
+### 6.2 ﮒ؟ﮒ۷ﻠ۲ﻠ۸ﻟﺁﻛﺙﺍﮔﺑﮔﺍ
 
-| 风险ID | 修复前状�?| 修复后状�?| 验证结果 |
+| ﻠ۲ﻠ۸ID | ﻛﺟ؟ﮒ۳ﮒﻝﭘﮔ?| ﻛﺟ؟ﮒ۳ﮒﻝﭘﮔ?| ﻠ۹ﻟﺁﻝﭨﮔ |
 |--------|------------|------------|----------|
-| P0-001 | 数据传输未加�?| 已加密（TLS 1.3�?| �?通过 |
-| - | 无API密钥认证 | 已实现认证机�?| �?通过 |
-| - | 无速率限制 | 已实现速率限制 | �?通过 |
-| - | 无安全审�?| 已实现审计日�?| �?通过 |
+| P0-001 | ﮔﺍﮔ؟ﻛﺙﻟﺝﮔ۹ﮒﮒﺁ?| ﮒﺓﺎﮒﮒﺁﺅﺙTLS 1.3ﺅﺙ?| ﻗ?ﻠﻟﺟ |
+| - | ﮔAPIﮒﺁﻠ۴ﻟ؟۳ﻟﺁ | ﮒﺓﺎﮒ؟ﻝﺍﻟ؟۳ﻟﺁﮔﭦﮒ?| ﻗ?ﻠﻟﺟ |
+| - | ﮔﻠﻝﻠﮒﭘ | ﮒﺓﺎﮒ؟ﻝﺍﻠﻝﻠﮒﭘ | ﻗ?ﻠﻟﺟ |
+| - | ﮔﮒ؟ﮒ۷ﮒ؟۰ﻟ؟?| ﮒﺓﺎﮒ؟ﻝﺍﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ?| ﻗ?ﻠﻟﺟ |
 
-### 6.3 修复完成时间
+### 6.3 ﻛﺟ؟ﮒ۳ﮒ؟ﮔﮔﭘﻠﺑ
 
-- **开始时�?*: 2026-04-02 21:30:00
-- **完成时间**: 2026-04-02 22:00:00
-- **修复耗时**: 30分钟
-- **修复状�?*: �?已完�?
+- **ﮒﺙﮒ۶ﮔﭘﻠ?*: 2026-04-02 21:30:00
+- **ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02 22:00:00
+- **ﻛﺟ؟ﮒ۳ﻟﮔﭘ**: 30ﮒﻠ
+- **ﻛﺟ؟ﮒ۳ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ?
 ---
 
-**修复负责�?*: 首席技术评审官  
-**修复日期**: 2026-04-02  
-**下次安全审计**: 2026-05-02
+**ﻛﺟ؟ﮒ۳ﻟﺑﻟﺑ۲ﻛﭦ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+**ﻛﺟ؟ﮒ۳ﮔ۴ﮔ**: 2026-04-02  
+**ﻛﺕﮔ؛۰ﮒ؟ﮒ۷ﮒ؟۰ﻟ؟۰**: 2026-05-02
 
 ---
 
-**附录A: SSL Labs测试结果**
+**ﻠﮒﺛA: SSL Labsﮔﭖﻟﺁﻝﭨﮔ**
 
 ```
 SSL Labs Test Result: A+
@@ -840,9 +849,9 @@ SSL Labs Test Result: A+
 - Certificate: Valid, SHA-256
 ```
 
-**附录B: 安全配置示例**
+**ﻠﮒﺛB: ﮒ؟ﮒ۷ﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ**
 
-完整的配置文件示例请参考：
-- 服务端配�? `config/https_server_config.yaml`
-- 客户端配�? `config/https_client_config.yaml`
-- API密钥配置: `config/api_key_config.yaml`
+ﮒ؟ﮔﺑﻝﻠﻝﺛ؟ﮔﻛﭨﭘﻝ۳ﭦﻛﺝﻟﺁﺓﮒﻟﺅﺙ
+- ﮔﮒ۰ﻝ،ﺁﻠﻝﺛ? `config/https_server_config.yaml`
+- ﮒ؟۱ﮔﺓﻝ،ﺁﻠﻝﺛ? `config/https_client_config.yaml`
+- APIﮒﺁﻠ۴ﻠﻝﺛ؟: `config/api_key_config.yaml`

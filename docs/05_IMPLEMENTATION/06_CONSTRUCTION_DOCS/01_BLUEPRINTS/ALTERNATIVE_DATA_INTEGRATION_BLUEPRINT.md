@@ -1,80 +1,173 @@
----
+﻿---
 module_id: ALTERNATIVE_DATA_INTEGRATION_001
-version: 1.0.1
+version: 1.0.0
 status: Active
-created_date: 2026-04-02
-last_updated: '2026-04-06'
-owner: 首席架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 2 Alpha因子层 - 另类数据源集成
+applicable_scope: Layer 1 数据源层
 compliance_level: 专业标准
-parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
-implementation_status: 规划阶段
-open_source_dependency: pandas, numpy, requests
-estimated_effort: 8周
-priority: P0
+responsibility:
+  - 另类数据集成
+  - 数据采集与解析
+  - 数据清洗与标准化
+  - 特征提取与因子构建
+  - 数据质量控制
+layer: Layer 6 (组合优化层)
 ---
 
+## 核心定位
 
-# 另类数据源集成项目蓝�?
-> **项目编号**: ALT-DATA-2026-001
-> **项目名称**: 另类数据源集成与因子挖掘系统
-> **项目周期**: 8周（2026-04-02 �?2026-05-28�?> **项目优先�?*: P0级（阻断性）
-> **项目目标**: 扩展数据广度，提升因子研究深度，构建另类数据因子
+负责另类数据集成的设计与构建和运行和操作，整合多源另类数据，生成和输出数据清洗、标准化和特征提取功能，兼容和适配因子挖掘和策略增强。
 
----
+# ALTERNATIVE DATA INTEGRATION BLUEPRINT
 
-## 📋 项目执行摘要
+> **核心职责**: Alternative Data Integration蓝图设计
+> **职责边界**:
+## 设计目标
 
-### 项目背景
+### 主要目标
 
-根据Layer 2 Alpha因子层技术评审结果，**数据源广度不�?*是P0级阻断性风险。当前系统仅依赖iFinD、Baostock、AkShare三个数据源，缺少新闻、社交媒体、分析师预期等另类数据，严重限制了因子研究深度和原创性�?
-### 项目目标
+1. **功能完整性**: 确保ALTERNATIVE DATA INTEGRATION功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
 
-**核心目标**: �?周内完成另类数据源集成，构建完整的另类数据因子体�?
-**量化目标**:
-1. �?接入至少3个另类数据源（新闻、社交媒体、分析师预期�?2. �?数据质量达到95%以上
-3. �?构建至少10个另类数据因�?4. �?因子IC均值达�?.03以上
-5. �?数据广度�?0%提升�?0%
+### 质量目标
 
-### 项目价�?
-| 价值维�?| 当前状�?| 目标状�?| 提升幅度 |
-|---------|---------|---------|---------|
-| **数据广度** | 30% | 70% | +133% |
-| **因子多样�?* | 8大类 | 11大类 | +37.5% |
-| **研究深度** | 基础 | 中级 | +50% |
-| **竞争优势** | �?| �?| +100% |
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
 
----
 
-## 一、项目架构设�?
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用ALTERNATIVE DATA INTEGRATION化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
+括新闻数据、社交媒体数据、分析师预期数据的采集、处理和因子生成
+
+### 职责边界
+
+
+情情情情感分析、事件提取、实体识别）
+- 因子管理与验证（存储、IC验证、监控）
+
+- 传统市场数据采集
+- 数据质量监控
+- 数据存储基础设施
+
+## 一、项目架构设计
 ### 1.1 整体架构
 
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
+```mermaid
+graph TB
+  subgraph Sources[数据源]
+    N[新闻] --> COL
+    S[社交媒体] --> COL
+    A[分析师预期] --> COL
+  end
+
+  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
+  CLEAN --> NLP[NLP 处理：情感/事件/实体]
+  NLP --> FEAT[特征工程/因子构建]
+  FEAT --> STORE[(存储：SQLite/向量库)]
+  STORE --> USE[下游：因子挖掘/策略增强]
 ```
-┌─────────────────────────────────────────────────────────────────────�?�?                   另类数据源集成架�?                                �?├─────────────────────────────────────────────────────────────────────�?�?                                                                    �?�? 数据源层 (Data Sources)                                            �?�? ├── 新闻数据�? 财联社API、新浪财经API、东方财富API                �?�? ├── 社交媒体数据�? 微博API、雪球网爬虫、东方财富股�?             �?�? └── 分析师预期数据源: 东方财富分析师预期、同花顺研报               �?�?                                                                    �?�? 数据采集�?(Data Collection)                                       �?�? ├── API接口适配�? 统一API调用接口                                 �?�? ├── 爬虫引擎: Scrapy + Selenium                                   �?�? ├── 实时数据�? WebSocket + Kafka                                 �?�? └── 数据调度�? Apache Airflow                                    �?�?                                                                    �?�? 数据处理�?(Data Processing)                                       �?�? ├── 数据清洗: 去重、去噪、格式标准化                               �?�? ├── NLP处理: GLM-4-Flash（情感分析、事件提取）                     �?�? ├── 实体识别: 股票代码、公司名称、人物识�?                        �?�? └── 关系抽取: 新闻-股票关联、事�?影响分析                         �?�?                                                                    �?�? 因子构建�?(Factor Construction)                                   �?�? ├── 新闻因子: 情感因子、事件驱动因子、热度因�?                    �?�? ├── 情绪因子: 市场情绪、板块情绪、个股情�?                        �?�? ├── 预期因子: 分析师预期差异、一致预期偏�?                        �?�? └── 关注度因�? 社交媒体热度、搜索指数、讨论量                     �?�?                                                                    �?�? 因子管理�?(Factor Management)                                     �?�? ├── 因子存储: SQLite + 向量数据�?                                 �?�? ├── IC验证: 因子有效性检�?                                        �?�? ├── 因子监控: 实时因子跟踪                                         �?�? └── 因子注册: 自动化因子注册流�?                                  �?�?                                                                    �?└─────────────────────────────────────────────────────────────────────�?```
 
 ### 1.2 技术栈选择
 
-| 技术领�?| 技术选型 | 选择理由 |
+| 技术领域 | 技术选型 | 选择理由 |
 |---------|---------|---------|
-| **数据采集** | Scrapy + Selenium + Requests | 成熟稳定，支持动态页�?|
-| **NLP处理** | GLM-4-Flash | 成本低（0.1�?百万tokens），速度�?|
-| **实体识别** | GLM-4-Flash + 正则表达�?| 准确率高，成本低 |
+| **数据采集** | Scrapy + Selenium + Requests | 成熟稳定，支持动态页面 |
+| **NLP处理** | GLM-4-Flash | 成本低（约 0.1 元/百万 tokens），速度快 |
+| **实体识别** | GLM-4-Flash + 正则表达式 | 准确率高，成本低 |
 | **数据存储** | SQLite + ChromaDB | 轻量级，适合个人使用 |
 | **任务调度** | Apache Airflow | 成熟的工作流引擎 |
-| **实时流处�?* | Kafka（可选） | 支持实时数据�?|
+| **实时流处理 | Kafka（可选） | 支持实时数据接入 |
 | **数据缓存** | Redis | 提升查询性能 |
 
----
+
 
 ## 二、数据源详细设计
 
-### 2.1 新闻数据�?
+### 2.1 新闻数据源
 #### 2.1.1 财联社API
 
-**数据内容**:
-- 实时财经新闻�?×24小时�?- 快讯、公告、研�?- 行业新闻、公司新�?
-**技术方�?*:
+**技术方案**:
 ```python
 class CailianNewsDataSource:
     """财联社新闻数据源"""
@@ -99,33 +192,28 @@ class CailianNewsDataSource:
         return self._parse_news(response.json())
     
     def get_stock_news(self, stock_code, start_date, end_date):
-        """获取个股相关新闻"""
-        # 通过关键词搜索相关新�?        pass
 ```
 
 **数据字段**:
-| 字段�?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | news_id | string | 新闻唯一ID |
 | title | string | 新闻标题 |
 | content | text | 新闻正文 |
 | publish_time | datetime | 发布时间 |
 | source | string | 数据来源 |
-| stock_codes | array | 相关股票代码 |
-| sentiment | float | 情感得分�?1�?�?|
+| sentiment | float | 
+情感得分（-1~1） |
 | event_type | string | 事件类型 |
 
-**成本**: 免费（有频率限制�?
----
+
 
 #### 2.1.2 新浪财经API
 
-**数据内容**:
-- 财经新闻、公�?- 行业资讯、市场分�?
-**技术方�?*:
+**技术方案**:
 ```python
 class SinaFinanceDataSource:
-    """新浪财经数据�?""
+    """新浪财经数据源"""
     
     def __init__(self, config):
         self.api_url = "https://feed.mix.sina.com.cn/api/roll/get"
@@ -143,18 +231,15 @@ class SinaFinanceDataSource:
         return self._parse_response(response.json())
 ```
 
-**成本**: 免费
 
----
+
 
 #### 2.1.3 东方财富API
 
-**数据内容**:
-- 财经新闻、公�?- 研报、资�?
-**技术方�?*:
+**技术方案**:
 ```python
 class EastMoneyDataSource:
-    """东方财富数据�?""
+    """东方财富数据源"""
     
     def __init__(self, config):
         self.api_url = "https://np-listapi.eastmoney.com/comm/web/getFastNewsList"
@@ -173,21 +258,19 @@ class EastMoneyDataSource:
         return self._parse_response(response.json())
 ```
 
-**成本**: 免费
 
----
 
-### 2.2 社交媒体数据�?
+
+### 2.2 社交媒体数据源
 #### 2.2.1 微博API
 
-**数据内容**:
 - 财经大V观点
-- 股票讨论、情�?- 热门话题
+- 热门话题
 
-**技术方�?*:
+**技术方案**:
 ```python
 class WeiboDataSource:
-    """微博数据�?""
+    """微博数据源"""
     
     def __init__(self, config):
         self.api_url = "https://m.weibo.cn/api/container/getIndex"
@@ -197,7 +280,6 @@ class WeiboDataSource:
         }
         
     def search_stock_posts(self, stock_name, page=1):
-        """搜索股票相关微博"""
         params = {
             'containerid': f'100103type=1&q={stock_name}',
             'page_type': 'searchall',
@@ -216,29 +298,28 @@ class WeiboDataSource:
 ```
 
 **数据字段**:
-| 字段�?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | post_id | string | 微博ID |
 | user_id | string | 用户ID |
-| user_name | string | 用户�?|
-| content | text | 微博内容 |
+| user_name | string | 用户名 |
 | publish_time | datetime | 发布时间 |
-| likes | int | 点赞�?|
-| comments | int | 评论�?|
-| reposts | int | 转发�?|
-| sentiment | float | 情感得分 |
+| likes | int | 点赞数 |
+| comments | int | 评论数 |
+| reposts | int | 转发数 |
+| sentiment | float | 
+感得分 |
 
-**成本**: 免费（需要登录cookie�?
----
 
-#### 2.2.2 雪球网爬�?
-**数据内容**:
-- 股票讨论、观�?- 投资者情�?- 热门股票
 
-**技术方�?*:
+#### 2.2.2 雪球网爬虫
+
+- 热门股票
+
+**技术方案**:
 ```python
 class XueqiuDataSource:
-    """雪球数据�?""
+    """雪球数据源"""
     
     def __init__(self, config):
         self.base_url = "https://xueqiu.com"
@@ -248,7 +329,6 @@ class XueqiuDataSource:
         }
         
     def get_stock_posts(self, stock_code, page=1):
-        """获取股票相关讨论"""
         url = f"{self.base_url}/query/v1/symbol/search/status.json"
         params = {
             'symbol': stock_code,
@@ -265,24 +345,21 @@ class XueqiuDataSource:
         return self._parse_hot_stocks(response.json())
 ```
 
-**成本**: 免费（需要登录cookie�?
----
+
 
 #### 2.2.3 东方财富股吧
 
-**数据内容**:
-- 股票讨论、观�?- 散户情绪
 
-**技术方�?*:
+**技术方案**:
 ```python
 class GubaDataSource:
-    """东方财富股吧数据�?""
+    """东方财富股吧数据源"""
     
     def __init__(self, config):
         self.base_url = "https://guba.eastmoney.com"
         
     def get_stock_posts(self, stock_code, page=1):
-        """获取股票吧帖�?""
+        """获取股票吧帖子"""
         url = f"{self.base_url}/list,{stock_code}.html"
         params = {
             'pageindex': page
@@ -291,17 +368,17 @@ class GubaDataSource:
         return self._parse_posts(response.text)
 ```
 
-**成本**: 免费
 
----
+
 
 ### 2.3 分析师预期数据源
 
-#### 2.3.1 东方财富分析师预�?
-**数据内容**:
-- 分析师评�?- 目标价预�?- 盈利预测
+#### 2.3.1 东方财富分析师预期
+- 分析师评级
+- 目标价预期
+- 盈利预测
 
-**技术方�?*:
+**技术方案**:
 ```python
 class AnalystExpectationDataSource:
     """分析师预期数据源"""
@@ -310,13 +387,13 @@ class AnalystExpectationDataSource:
         self.api_url = "https://data.eastmoney.com/dataapi/limit_up"
         
     def get_analyst_rating(self, stock_code):
-        """获取分析师评�?""
+        """获取分析师评级"""
         url = f"https://data.eastmoney.com/report/info/{stock_code}.html"
         response = requests.get(url)
         return self._parse_rating(response.text)
     
     def get_consensus_forecast(self, stock_code):
-        """获取一致预�?""
+        """获取一致预期"""
         params = {
             'code': stock_code,
             'rtype': 'EPS'
@@ -326,50 +403,49 @@ class AnalystExpectationDataSource:
 ```
 
 **数据字段**:
-| 字段�?| 类型 | 说明 |
+| 字段 | 类型 | 说明 |
 |--------|------|------|
 | stock_code | string | 股票代码 |
-| analyst_name | string | 分析师姓�?|
+| analyst_name | string | 分析师姓名 |
 | institution | string | 机构名称 |
-| rating | string | 评级（买�?增持/中�?减持/卖出�?|
-| target_price | float | 目标�?|
+| target_price | float | 目标价 |
 | eps_forecast | float | EPS预测 |
 | report_date | date | 报告日期 |
 
-**成本**: 免费
 
----
+
 
 ## 三、NLP处理流程
 
-### 3.1 情感分析
+### 3.1 
+情情情情感分析
 
-**技术方�?*: GLM-4-Flash
+**技术方案**: GLM-4-Flash
 
 ```python
 class SentimentAnalyzer:
-    """情感分析�?""
+    """
+情情情情情感分析""
     
     def __init__(self):
         self.model = "glm-4-flash"
         self.api_key = config.get('zhipu_api_key')
         
     def analyze_sentiment(self, text):
-        """分析文本情感"""
+感"""
         prompt = f"""
-        请分析以下财经新闻的情感倾向，返�?1�?之间的情感得分：
-        -1表示极度负面�?表示中性，1表示极度正面
+感得分：
+        -1 表示极度负面，0 表示中性，1 表示极度正面
         
-        新闻内容：{text}
+容：{text}
         
-        请只返回情感得分数值，不要其他解释�?        """
         
         response = self._call_api(prompt)
         sentiment_score = float(response.strip())
         return sentiment_score
     
     def batch_analyze(self, texts):
-        """批量情感分析"""
+情情情情感分析"""
         results = []
         for text in texts:
             sentiment = self.analyze_sentiment(text)
@@ -377,38 +453,35 @@ class SentimentAnalyzer:
         return results
 ```
 
-**成本**: 0.1�?百万tokens
+**成本**: 约 0.1 元/百万 tokens
 
----
+
 
 ### 3.2 事件提取
 
-**技术方�?*: GLM-4-Flash
+**技术方案**: GLM-4-Flash
 
 ```python
 class EventExtractor:
-    """事件提取�?""
+    """事件提取""
     
     def __init__(self):
         self.model = "glm-4-flash"
         self.event_types = [
-            '业绩公告', '并购重组', '股权变动', '高管变动',
-            '产品发布', '政策影响', '行业动�?, '市场事件'
         ]
         
     def extract_events(self, text):
         """提取新闻事件"""
         prompt = f"""
-        请从以下财经新闻中提取关键事件信息：
         
-        新闻内容：{text}
+容：{text}
         
-        请返回JSON格式�?        {{
+        请返回 JSON 格式：        {{
             "event_type": "事件类型",
             "event_summary": "事件摘要",
-            "related_stocks": ["相关股票代码"],
-            "impact_level": "影响等级（高/�?低）",
-            "sentiment": "情感倾向（正�?负面/中性）"
+            "impact_level": "影响等级（高/中/低）",
+            "sentiment": "
+情感倾向（正面/负面/中性）"
         }}
         """
         
@@ -417,26 +490,23 @@ class EventExtractor:
         return event_info
 ```
 
----
+
 
 ### 3.3 实体识别
 
-**技术方�?*: GLM-4-Flash + 正则表达�?
+**技术方案**: GLM-4-Flash + 正则表达式
 ```python
 class EntityRecognizer:
-    """实体识别�?""
+    """实体识别""
     
     def __init__(self):
         self.stock_pattern = r'(SH\d{6}|SZ\d{6}|\d{6}\.(SH|SZ))'
         
     def extract_stocks(self, text):
         """提取股票代码"""
-        # 1. 正则匹配股票代码
         stock_codes = re.findall(self.stock_pattern, text)
         
-        # 2. GLM-4识别公司名称
         prompt = f"""
-        请从以下文本中识别所有提到的上市公司名称，返回股票代码列表：
         
         文本：{text}
         
@@ -449,30 +519,29 @@ class EntityRecognizer:
         return list(set(stock_codes + stock_names))
 ```
 
----
 
-## 四、因子构建方�?
+
+## 四、因子构建方案
 ### 4.1 新闻因子
 
-#### 因子1: 新闻情感因子
+情情情情感因子
 
-**因子定义**: 基于新闻情感分析构建的因�?
+情基于情情情情感分析构建的因子
 **计算方法**:
 ```python
 def calculate_news_sentiment_factor(stock_code, date, window=7):
     """
-    计算新闻情感因子
+情情情情感因子
     
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天�?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（-1�?�?    """
-    # 1. 获取过去window天的相关新闻
+        因子值（-1~1）    """
     news_list = get_stock_news(stock_code, date-window, date)
     
-    # 2. 计算每条新闻的情感得�?    sentiments = [analyze_sentiment(news['content']) for news in news_list]
+情感得分    sentiments = [analyze_sentiment(news['content']) for news in news_list]
     
     # 3. 加权平均（近期新闻权重更高）
     weights = np.exp(np.linspace(-1, 0, len(sentiments)))
@@ -484,11 +553,11 @@ def calculate_news_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- 因子类型: 情绪因子
+情情情情绪因子
 - 更新频率: 日频
-- 数据窗口: 7�?- IC预期: 0.03-0.05
+- 数据窗口: 7 天 - IC预期: 0.03-0.05
 
----
+
 
 #### 因子2: 事件驱动因子
 
@@ -505,16 +574,15 @@ def calculate_event_driven_factor(stock_code, date):
         date: 计算日期
     
     Returns:
-        因子值（事件影响得分�?    """
+        因子值（事件影响得分）    """
     # 1. 获取近期重大事件
     events = get_recent_events(stock_code, date, days=30)
     
     # 2. 计算事件影响得分
     impact_scores = []
     for event in events:
-        # 根据事件类型和影响等级计算得�?        base_score = EVENT_IMPACT_MAP[event['event_type']]
-        level_multiplier = {'�?: 1.0, '�?: 0.6, '�?: 0.3}[event['impact_level']]
-        sentiment_multiplier = {'正面': 1.0, '负面': -1.0, '中�?: 0.0}[event['sentiment']]
+        # 根据事件类型和影响等级计算得分        base_score = EVENT_IMPACT_MAP[event['event_type']]
+        level_multiplier = {'高': 1.0, '中': 0.6, '低': 0.3}[event['impact_level']]
         
         score = base_score * level_multiplier * sentiment_multiplier
         impact_scores.append(score)
@@ -528,13 +596,12 @@ def calculate_event_driven_factor(stock_code, date):
 **因子特征**:
 - 因子类型: 事件因子
 - 更新频率: 日频
-- 数据窗口: 30�?- IC预期: 0.04-0.06
+- 数据窗口: 30 天 - IC预期: 0.04-0.06
 
----
+
 
 #### 因子3: 新闻热度因子
 
-**因子定义**: 基于新闻数量和关注度构建的因�?
 **计算方法**:
 ```python
 def calculate_news_heat_factor(stock_code, date, window=7):
@@ -544,13 +611,12 @@ def calculate_news_heat_factor(stock_code, date, window=7):
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天�?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（热度得分�?    """
+        因子值（热度得分）    """
     # 1. 获取过去window天的新闻数量
     news_count = count_stock_news(stock_code, date-window, date)
     
-    # 2. 计算全市场平均新闻数�?    market_avg = get_market_avg_news_count(date-window, date)
     
     # 3. 计算相对热度
     heat_score = (news_count - market_avg) / market_avg
@@ -562,31 +628,31 @@ def calculate_news_heat_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- 因子类型: 关注度因�?- 更新频率: 日频
-- 数据窗口: 7�?- IC预期: 0.02-0.04
+- 数据窗口: 7 天 - IC预期: 0.02-0.04
 
----
 
-### 4.2 情绪因子
 
-#### 因子4: 市场情绪因子
+### 4.2 
+情情情情绪因子
 
-**因子定义**: 基于社交媒体情绪构建的市场整体情绪因�?
+情情情情绪因子
+
+情情情情绪因子
 **计算方法**:
 ```python
 def calculate_market_sentiment_factor(date):
     """
-    计算市场情绪因子
+情情情情绪因子
     
     Args:
         date: 计算日期
     
     Returns:
-        因子值（市场情绪得分�?    """
+情绪得分    """
     # 1. 获取微博、雪球、股吧的热门讨论
     posts = get_hot_posts(date)
     
-    # 2. 计算情绪得分
+绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
     
     # 3. 加权平均（按互动量加权）
@@ -599,37 +665,36 @@ def calculate_market_sentiment_factor(date):
 ```
 
 **因子特征**:
-- 因子类型: 情绪因子
+情情情情绪因子
 - 更新频率: 日频
-- 适用范围: 全市�?- IC预期: 0.03-0.05
 
----
 
-#### 因子5: 个股情绪因子
 
-**因子定义**: 基于社交媒体讨论构建的个股情绪因�?
+情情情情绪因子
+
+情情情情绪因子
 **计算方法**:
 ```python
 def calculate_stock_sentiment_factor(stock_code, date, window=7):
     """
-    计算个股情绪因子
+情情情情绪因子
     
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天�?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（个股情绪得分�?    """
+情绪得分    """
     # 1. 获取社交媒体讨论
     posts = get_stock_posts(stock_code, date-window, date)
     
-    # 2. 计算情绪得分
+绪得分
     sentiments = [analyze_sentiment(post['content']) for post in posts]
     
     # 3. 计算讨论热度
     engagement = sum([post['likes'] + post['comments'] + post['reposts'] for post in posts])
     
-    # 4. 综合情绪和热�?    avg_sentiment = np.mean(sentiments)
+情绪与热度    avg_sentiment = np.mean(sentiments)
     heat_score = np.log1p(engagement)
     
     factor_value = avg_sentiment * (1 + 0.1 * heat_score)
@@ -638,31 +703,31 @@ def calculate_stock_sentiment_factor(stock_code, date, window=7):
 ```
 
 **因子特征**:
-- 因子类型: 情绪因子
+情情情情绪因子
 - 更新频率: 日频
-- 数据窗口: 7�?- IC预期: 0.03-0.05
+- 数据窗口: 7 天 - IC预期: 0.03-0.05
 
----
+
 
 ### 4.3 预期因子
 
-#### 因子6: 分析师预期差异因�?
-**因子定义**: 基于分析师预期与实际值差异构建的因子
+#### 因子6: 分析师预期差异因子
+值差异构建的因子
 
 **计算方法**:
 ```python
 def calculate_expectation_gap_factor(stock_code, date):
     """
-    计算分析师预期差异因�?    
+    计算分析师预期差异因子    
     Args:
         stock_code: 股票代码
         date: 计算日期
     
     Returns:
-        因子值（预期差异得分�?    """
-    # 1. 获取分析师一致预�?    consensus = get_consensus_forecast(stock_code, date)
+        因子值（预期差异得分）    """
+    # 1. 获取分析师一致预期    consensus = get_consensus_forecast(stock_code, date)
     
-    # 2. 获取实际�?    actual = get_actual_eps(stock_code, date)
+    actual = get_actual_eps(stock_code, date)
     
     # 3. 计算预期差异
     if consensus and actual:
@@ -679,28 +744,27 @@ def calculate_expectation_gap_factor(stock_code, date):
 - 更新频率: 季度
 - IC预期: 0.05-0.08
 
----
 
-#### 因子7: 分析师评级变化因�?
+
+#### 因子7: 分析师评级变化因子
 **因子定义**: 基于分析师评级变化构建的因子
 
 **计算方法**:
 ```python
 def calculate_rating_change_factor(stock_code, date, window=30):
     """
-    计算分析师评级变化因�?    
+    计算分析师评级变化因子    
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天�?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（评级变化得分�?    """
+        因子值（评级变化得分）    """
     # 1. 获取过去window天的评级变化
     ratings = get_rating_history(stock_code, date-window, date)
     
     # 2. 计算评级变化
     if len(ratings) >= 2:
-        rating_map = {'买入': 2, '增持': 1, '中�?: 0, '减持': -1, '卖出': -2}
         latest_rating = rating_map.get(ratings[-1]['rating'], 0)
         previous_rating = rating_map.get(ratings[0]['rating'], 0)
         
@@ -714,14 +778,13 @@ def calculate_rating_change_factor(stock_code, date, window=30):
 **因子特征**:
 - 因子类型: 预期因子
 - 更新频率: 日频
-- 数据窗口: 30�?- IC预期: 0.03-0.05
+- 数据窗口: 30 天 - IC预期: 0.03-0.05
 
----
 
-### 4.4 关注度因�?
+
+### 4.4 
 #### 因子8: 社交媒体热度因子
 
-**因子定义**: 基于社交媒体讨论量构建的关注度因�?
 **计算方法**:
 ```python
 def calculate_social_heat_factor(stock_code, date, window=7):
@@ -731,10 +794,10 @@ def calculate_social_heat_factor(stock_code, date, window=7):
     Args:
         stock_code: 股票代码
         date: 计算日期
-        window: 时间窗口（天�?    
+        window: 时间窗口（天）    
     Returns:
-        因子值（热度得分�?    """
-    # 1. 获取社交媒体讨论�?    posts = get_stock_posts(stock_code, date-window, date)
+        因子值（热度得分）    """
+    # 1. 获取社交媒体讨论帖    posts = get_stock_posts(stock_code, date-window, date)
     
     # 2. 计算总互动量
     total_engagement = sum([
@@ -742,25 +805,24 @@ def calculate_social_heat_factor(stock_code, date, window=7):
         for post in posts
     ])
     
-    # 3. 计算讨论�?    post_count = len(posts)
+    # 3. 计算讨论量    post_count = len(posts)
     
     # 4. 综合热度得分
     heat_score = np.log1p(total_engagement) + 0.5 * np.log1p(post_count)
     
-    # 5. 标准�?    factor_value = heat_score / 10  # 简单标准化
+    # 5. 标准化    factor_value = heat_score / 10  # 简单标准化
     
     return factor_value
 ```
 
 **因子特征**:
-- 因子类型: 关注度因�?- 更新频率: 日频
-- 数据窗口: 7�?- IC预期: 0.02-0.04
+- 数据窗口: 7 天 - IC预期: 0.02-0.04
 
----
 
-## 五、数据存储设�?
-### 5.1 数据库设�?
-#### 新闻数据�?
+
+## 五、数据存储设计
+### 5.1 数据库设计
+#### 新闻数据
 ```sql
 CREATE TABLE news_data (
     news_id TEXT PRIMARY KEY,
@@ -783,7 +845,7 @@ CREATE INDEX idx_news_source ON news_data(source);
 CREATE INDEX idx_news_sentiment ON news_data(sentiment);
 ```
 
-#### 社交媒体数据�?
+#### 社交媒体数据
 ```sql
 CREATE TABLE social_posts (
     post_id TEXT PRIMARY KEY,
@@ -824,7 +886,7 @@ CREATE INDEX idx_analyst_stock ON analyst_expectations(stock_code);
 CREATE INDEX idx_analyst_date ON analyst_expectations(report_date);
 ```
 
-#### 因子数据�?
+#### 因子数据
 ```sql
 CREATE TABLE alternative_factors (
     factor_id TEXT PRIMARY KEY,
@@ -844,10 +906,10 @@ CREATE INDEX idx_factor_date ON alternative_factors(date);
 CREATE INDEX idx_factor_stock ON alternative_factors(stock_code);
 ```
 
----
 
-### 5.2 向量数据库设�?
-**用�?*: 存储新闻和社交媒体内容的向量表示，支持语义搜�?
+
+### 5.2 向量数据库设计
+容的向量表示，支持语义搜索
 ```python
 from chromadb import Client
 from chromadb.config import Settings
@@ -890,115 +952,159 @@ class VectorStore:
         return results
 ```
 
----
 
-## 六、项目实施计�?
+
+## 
 ### 6.1 时间规划
 
-| 阶段 | 时间 | 任务 | 交付�?|
+| 阶段 | 时间 | 任务 | 交付物 |
 |------|------|------|--------|
-| **Phase 1: 数据源接�?* | Week 1-3 | 接入新闻、社交媒体、分析师预期数据�?| 数据采集模块、数据库表结�?|
-| **Phase 2: NLP处理** | Week 4-5 | 开发情感分析、事件提取、实体识别模�?| NLP处理模块、API集成 |
-| **Phase 3: 因子构建** | Week 6-7 | 构建8个另类数据因�?| 因子计算模块、因子数�?|
-| **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测�?| 测试报告、验收文�?|
+情情情情情感分析、事件提取、实体识别模块 | NLP处理模块、API集成 |
+| **Phase 3: 因子构建** | Week 6-7 | 构建 8 个另类数据因子 | 因子计算模块、因子数据 |
+| **Phase 4: 测试验证** | Week 8 | IC验证、回测验证、系统测试 | 测试报告、验收文档 |
 
----
 
-### 6.2 里程�?
-| 里程�?| 时间 | 验收标准 |
+
+### 6.2 里程碑
+| 里程碑 | 时间 | 验收标准 |
 |--------|------|---------|
-| **M1: 数据源接入完�?* | Week 3 | 至少3个数据源接入，数据质�?95% |
-| **M2: NLP处理完成** | Week 5 | 情感分析准确�?80%，事件提取完�?|
-| **M3: 因子构建完成** | Week 7 | 至少8个因子，IC均�?0.03 |
-| **M4: 项目验收** | Week 8 | 所有测试通过，文档完�?|
+情情情情感分析准确率 ≥80%，事件提取完整率 ≥90% |
+| **M4: 项目验收** | Week 8 | 所有测试通过，文档完整性|
 
----
 
-## 七、资源分�?
+
+## 七、资源分配
 ### 7.1 人力资源
 
-| 角色 | 职责 | 工作�?|
+| 角色 | 职责 | 工作量 |
 |------|------|--------|
-| **项目负责�?* | 整体协调、进度管�?| 20% |
-| **数据工程�?* | 数据源接入、数据采�?| 60% |
-| **NLP工程�?* | 情感分析、事件提�?| 40% |
-| **因子研究�?* | 因子构建、IC验证 | 40% |
-| **测试工程�?* | 系统测试、质量保�?| 20% |
+| **项目负责人 | 整体协调、进度管理 | 20% |
+情情情情感分析、事件提取 | 40% |
+| **因子研究员 | 因子构建、IC验证 | 40% |
+| **测试工程师 | 系统测试、质量保障 | 20% |
 
-**总工作量**: �?80人时
+****总工作量**: 180 人时
 
----
 
-### 7.2 技术资�?
+
+### 7.2 技术资源
 | 资源类型 | 规格 | 成本 |
 |---------|------|------|
-| **计算资源** | 本地开发机�?�?6G�?| 0�?|
-| **存储资源** | 本地SSD 500GB | 0�?|
-| **API调用** | GLM-4-Flash | �?00�?�?|
-| **数据�?* | 公开API | 0�?|
+| **计算资源** | 本地开发机（16GB 内存） | 0 ||
+| **存储资源** | 本地SSD 500GB | 0 ||
+| **API调用** | GLM-4-Flash | （待补充） | （待补充） |
 
-**总成�?*: �?00�?�?
----
+**总成本**: （待补充）
 
-## 八、风险管�?
-### 8.1 技术风�?
+
+## 
+### 8.1 技术风险
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **API频率限制** | �?| �?| 实现请求队列、多账号轮换 |
-| **数据质量不稳�?* | �?| �?| 数据清洗、异常检�?|
-| **NLP准确率不�?* | �?| �?| 模型优化、人工标注验�?|
-| **系统性能瓶颈** | �?| �?| 异步处理、缓存优�?|
+| **API频率限制** | 中 | 中 | 实现请求队列、多账号轮换 |
+洗、异常检查|
+| **NLP准确率不达标** | 中 | 中 | 模型优化、人工标注验证 |
+| **系统性能瓶颈** | 中 | 中 | 异步处理、缓存优化 |
 
----
+
 
 ### 8.2 项目风险
 
 | 风险 | 影响 | 概率 | 缓解措施 |
 |------|------|------|---------|
-| **进度延期** | �?| �?| 预留缓冲时间、并行开�?|
-| **资源不足** | �?| �?| 优先级管理、资源复�?|
-| **需求变�?* | �?| �?| 需求冻结、变更控�?|
+| **进度延期** | 中 | 中 | 预留缓冲时间、并行开发 |
+| **需求变更** | 中 | 中 | 需求冻结、变更控制 |
 
----
 
-## 九、验收标�?
+
+## 九、验收标准
 ### 9.1 功能验收
 
 | 功能 | 验收标准 | 测试方法 |
 |------|---------|---------|
-| **数据采集** | 数据完整�?95% | 数据质量检�?|
-| **NLP处理** | 情感分析准确�?80% | 人工标注验证 |
-| **因子计算** | 因子数量�?�?| 功能测试 |
-| **IC验证** | IC均�?0.03 | 统计检�?|
+| **数据采集** | 数据完整率 ≥95% | 数据质量检查|
+情情情情感分析准确率 ≥80% | 人工标注验证 |
+| **因子计算** | 因子数量（待补充）| 功能测试 |
 
----
+
 
 ### 9.2 性能验收
 
-| 指标 | 目标�?| 测试方法 |
+| 指标 | 目标值 | 测试方法 |
 |------|--------|---------|
 | **数据采集延迟** | <5分钟 | 性能测试 |
-| **因子计算延迟** | <10�?| 性能测试 |
-| **系统可用�?* | >99% | 监控统计 |
+| **因子计算延迟** | <10s | 性能测试 |
+| **系统可用性** | >99% | 监控统计 |
 
----
 
-## 十、项目文�?
-### 10.1 已生成文�?
-1. **项目蓝图**: 本文�?2. **技术规格书**: 待制�?3. **实施计划**: 待制�?4. **测试计划**: 待制�?
----
+
+## 十、项目文档
+### 10.1 已生成文档
+
 
 **蓝图版本**: v1.0  
 **创建日期**: 2026-04-02  
-**状�?*: �?已完�?
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 
----
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
+
+
+
+
+
+
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **Scrapy** | 2.11+ | 数据采集 | [官方文档](https://scrapy.org/) |
+| **GLM-4-Flash** | latest | NLP处理 | [官方文档](https://open.bigmodel.cn/) |
+| **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
+
+
+```mermaid
+graph LR
+    U0["DATA SOURCE MAN"] --> B
+    B["ALTERNATIVE DAT"]
+    B --> D0["DATA QUALITY MO"]
+    B --> D1["DATA CATALOG BL"]
+    
+    style B fill:#ff6b6b
+    style U0 fill:#4ecdc4
+    style D0 fill:#45b7d1
+```
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Alternative Data Integration
+- **模块ID**: ALTERNATIVE_DATA_INTEGRATION_001
+- **蓝图文档**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 1.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+```

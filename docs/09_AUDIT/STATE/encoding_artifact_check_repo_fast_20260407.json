@@ -1,0 +1,216 @@
+{
+  "scope": "git-tracked text files (excluded archive/audit_state, size<=2MB)",
+  "scanned_files": 2662,
+  "strict_decode_failures": 0,
+  "files_with_fffd": 0,
+  "files_with_c1_controls": 0,
+  "files_with_cjk_question_mark": 378,
+  "total_cjk_question_mark_hits": 25954,
+  "details": {
+    "bad_decode": [],
+    "with_fffd": [],
+    "with_c1": [],
+    "with_cjkq_top": [
+      {
+        "file": "docs/09_AUDIT/STATE/cjk_question_mark_todo_scoped.json",
+        "hits": 3284
+      },
+      {
+        "file": "docs/01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+        "hits": 413
+      },
+      {
+        "file": "docs/01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md",
+        "hits": 380
+      },
+      {
+        "file": "docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md",
+        "hits": 380
+      },
+      {
+        "file": "docs/04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md",
+        "hits": 364
+      },
+      {
+        "file": "docs/01_FRAMEWORK/NATURAL_LANGUAGE_MODULE_ANALYSIS.md",
+        "hits": 288
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md",
+        "hits": 260
+      },
+      {
+        "file": "docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md",
+        "hits": 238
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_l.md",
+        "hits": 201
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_e.md",
+        "hits": 196
+      },
+      {
+        "file": "docs/09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md",
+        "hits": 196
+      },
+      {
+        "file": "docs/09_AUDIT/TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md",
+        "hits": 184
+      },
+      {
+        "file": "docs/09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md",
+        "hits": 181
+      },
+      {
+        "file": "docs/01_FRAMEWORK/RESEARCH_INNOVATION_LAYER_BLUEPRINT.md",
+        "hits": 177
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_DATA_INTERFACE_TECHNICAL_SPECIFICATION.md",
+        "hits": 175
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/P0_01_Database_Design_Document.md",
+        "hits": 172
+      },
+      {
+        "file": "docs/01_FRAMEWORK/PERSONAL_DEVELOPMENT_BLUEPRINT.md",
+        "hits": 165
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/SMART_EXECUTION_ENGINE_TECHNICAL_SPECIFICATION.md",
+        "hits": 156
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_f.md",
+        "hits": 154
+      },
+      {
+        "file": "docs/09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md",
+        "hits": 153
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_REGIME_SYSTEM_TECHNICAL_SPECIFICATION.md",
+        "hits": 150
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION.md",
+        "hits": 149
+      },
+      {
+        "file": "docs/01_FRAMEWORK/LAYER4_ML/AI_ENHANCEMENT_INTEGRATION_BLUEPRINT.md",
+        "hits": 148
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MONTHLY_REPORTER_TECHNICAL_SPECIFICATION.md",
+        "hits": 147
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/AI_PATTERN_RECOGNITION_ENGINE_TECHNICAL_SPECIFICATION.md",
+        "hits": 140
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/IFIND_CONNECTOR_TECHNICAL_SPECIFICATION.md",
+        "hits": 140
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail_strategies_g.md",
+        "hits": 138
+      },
+      {
+        "file": "docs/01_FRAMEWORK/HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md",
+        "hits": 136
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/LIQUIDITY_MANAGEMENT_SYSTEM_TECHNICAL_SPECIFICATION.md",
+        "hits": 136
+      },
+      {
+        "file": "docs/01_FRAMEWORK/EXTREME_MARKET_RESPONSE_BLUEPRINT.md",
+        "hits": 134
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DAILY_REPORTER_TECHNICAL_SPECIFICATION.md",
+        "hits": 134
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION.md",
+        "hits": 132
+      },
+      {
+        "file": "scripts/fix_factor_backtest_integration_gaps.py",
+        "hits": 132
+      },
+      {
+        "file": "docs/01_FRAMEWORK/AI_GOVERNANCE_BLUEPRINT.md",
+        "hits": 131
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/PERFORMANCE_ANALYZER_TECHNICAL_SPECIFICATION.md",
+        "hits": 130
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DAILY_PORTFOLIO_OPTIMIZER_TECHNICAL_SPECIFICATION.md",
+        "hits": 128
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md",
+        "hits": 128
+      },
+      {
+        "file": "docs/01_FRAMEWORK/ARCHITECTURE_AUDIT_REPORT.md",
+        "hits": 124
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/CONSTRUCTION_SPECIFICATION.md",
+        "hits": 124
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md",
+        "hits": 123
+      },
+      {
+        "file": "docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_BLUEPRINT.md",
+        "hits": 119
+      },
+      {
+        "file": "docs/01_FRAMEWORK/CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md",
+        "hits": 118
+      },
+      {
+        "file": "docs/09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md",
+        "hits": 118
+      },
+      {
+        "file": "docs/01_FRAMEWORK/LAYER4_ML/MODEL_MONITORING_TECHNICAL_SPECIFICATION.md",
+        "hits": 117
+      },
+      {
+        "file": "docs/01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md",
+        "hits": 117
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/CODING_ROADMAP.md",
+        "hits": 117
+      },
+      {
+        "file": "docs/01_FRAMEWORK/LAYER4_ML/ONLINE_LEARNING_TECHNICAL_SPECIFICATION.md",
+        "hits": 116
+      },
+      {
+        "file": "docs/01_FRAMEWORK/LAYER4_ML/REINFORCEMENT_LEARNING_TECHNICAL_SPECIFICATION.md",
+        "hits": 116
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md",
+        "hits": 111
+      },
+      {
+        "file": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DATANORMALIZER_TECHNICAL_SPECIFICATION.md",
+        "hits": 111
+      }
+    ]
+  }
+}

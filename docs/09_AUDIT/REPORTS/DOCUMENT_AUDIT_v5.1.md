@@ -1,1112 +1,1122 @@
 ---
-standard_type: 技术文�?
-applicable_scope: 全系�?
-compliance_level: 初始标准
+standard_type: όΛΑόεψόΨΘόκ?
+applicable_scope: ίΖρύ│╗ύ╗?
+compliance_level: ίΙζίπΜόιΘίΘΗ
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 文档维护�?
-version: 1.0.0
+implementation_status: ϋχ╛ϋχκώα╢όχ╡
+owner: όΨΘόκμύ╗┤όΛνϋΑ?
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+version: 5.0.0
 module_id: DOC_DOCUMENT_AUDIT_V5.1
 created_date: 2026-03-31
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
-# 清风量化系统 v5.1 文档审查报告
-
-> **审查时间**: 2026-03-31
-> **审查范围**: D:\ZephyrAlpha 完整目录结构
-> **审查标准**: 专业量化机构文件治理方式（SOLO Coder优化版）
-> **版本**: v5.1
-> **状�?*: 待处�?
-
 ---
 
-## 一、执行摘�?
+# ό╕ΖώμΟώΘΠίΝΨύ│╗ύ╗θ v5.1 όΨΘόκμίχκόθξόΛξίΣΛ
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 整体评价
 
-| 维度 | 评分 | 说明 |
+> **ίχκόθξόΩ╢ώΩ┤**: 2026-03-31
+> **ίχκόθξϋΝΔίδ┤**: D:\ZephyrAlpha ίχΝόΧ┤ύδχί╜Χύ╗ΥόηΕ
+> **ίχκόθξόιΘίΘΗ**: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΨΘϊ╗╢ό▓╗ύΡΗόΨ╣ί╝ΠΎ╝ΙSOLO Coderϊ╝αίΝΨύΚΙΎ╝Κ
+> **ύΚΙόευ**: v5.1
+> **ύΛ╢όΑ?*: ί╛ΖίνΕύΡ?
+
+---
+
+## ϊ╕ΑήΑΒόΚπϋκΝόΣαϋο?
+
+### 1.1 όΧ┤ϊ╜ΥϋψΕϊ╗╖
+
+| ύ╗┤ί║ο | ϋψΕίΙΗ | ϋψ┤όαΟ |
 |------|------|------|
-| **目录边界** | ⭐⭐⭐⭐�?(5/5) | src/tests/docs/config/scripts/data 职责分明 |
-| **文件漂移防治** | ⭐⭐⭐⭐ (4/5) | 基本清晰，少�?ARCHIVED.md 位置错误 |
-| **重复控制** | ⭐⭐⭐⭐�?(5/5) | FAQ/CHANGELOG/蓝图重复已清�?|
-| **索引完整�?* | ⭐⭐�?(3/5) | 存在大量幽灵引用�?00+处断裂） |
-| **一文件一职责** | ⭐⭐�?(3/5) | 存在 INDEX/SITEMAP 职责重叠、链接路径错�?|
-| **版本一致�?* | ⭐⭐�?(3/5) | v4.0/v5.0/v5.1 版本混用 |
+| **ύδχί╜Χϋ╛╣ύΧΝ** | έφΡέφΡέφΡέφΡέφ?(5/5) | src/tests/docs/config/scripts/data ϋΒΝϋ┤μίΙΗόαΟ |
+| **όΨΘϊ╗╢ό╝Γύπ╗ώα▓ό▓╗** | έφΡέφΡέφΡέφΡ (4/5) | ίθ║όευό╕Ζόβ░Ύ╝Νί░ΣώΘ?ARCHIVED.md ϊ╜Ξύ╜χώΦβϋψψ |
+| **ώΘΞίνΞόΟπίΙ╢** | έφΡέφΡέφΡέφΡέφ?(5/5) | FAQ/CHANGELOG/ϋΥζίδ╛ώΘΞίνΞί╖▓ό╕ΖύΡ?|
+| **ύ┤λί╝ΧίχΝόΧ┤όΑ?* | έφΡέφΡέφ?(3/5) | ίφαίερίνπώΘΠί╣╜ύΒ╡ί╝ΧύΦρΎ╝?00+ίνΕόΨφϋμΓΎ╝Κ |
+| **ϊ╕ΑόΨΘϊ╗╢ϊ╕ΑϋΒΝϋ┤μ** | έφΡέφΡέφ?(3/5) | ίφαίερ INDEX/SITEMAP ϋΒΝϋ┤μώΘΞίΠιήΑΒώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψ?|
+| **ύΚΙόευϊ╕ΑϋΘ┤όΑ?* | έφΡέφΡέφ?(3/5) | v4.0/v5.0/v5.1 ύΚΙόευό╖╖ύΦρ |
 
-### 1.2 文档统计
+### 1.2 όΨΘόκμύ╗θϋχκ
 
-| 类别 | 数量 | 说明 |
+| ύ▒╗ίΙτ | όΧ░ώΘΠ | ϋψ┤όαΟ |
 |------|------|------|
-| 根目录核心文�?| 13�?| INDEX, BLUEPRINT, CHANGELOG, FAQ�?|
-| 一级子目录 | 8�?| 00_OVERVIEW ~ 08_USER_EXPERIENCE |
-| **当前文档总数** | **~80+** | 较v5.0初期的~150减少�?0% |
-| **问题总数** | **56�?* | 15严重 + 24中等 + 17轻微 |
-| **紧急修复（P0�?* | **11�?* | 幽灵引用、版本重复、孤儿文件必须立即修�?|
+| όι╣ύδχί╜Χόι╕ί┐ΔόΨΘόκ?| 13ϊ╕?| INDEX, BLUEPRINT, CHANGELOG, FAQύφ?|
+| ϊ╕Αύ║πίφΡύδχί╜Χ | 8ϊ╕?| 00_OVERVIEW ~ 08_USER_EXPERIENCE |
+| **ί╜ΥίΚΞόΨΘόκμόΑ╗όΧ░** | **~80+** | ϋ╛Δv5.0ίΙζόεθύγΕ~150ίΘΠί░Σύ║?0% |
+| **ώΩχώλαόΑ╗όΧ░** | **56ϊ╕?* | 15ϊ╕ξώΘΞ + 24ϊ╕φύφΚ + 17ϋ╜╗ί╛χ |
+| **ύ┤πόΑξϊ┐χίνΞΎ╝ΙP0Ύ╝?* | **11ϊ╕?* | ί╣╜ύΒ╡ί╝ΧύΦρήΑΒύΚΙόευώΘΞίνΞήΑΒίφνίΕ┐όΨΘϊ╗╢ί┐Ζώκ╗ύτΜίΞ│ϊ┐χίν?|
 
 ---
 
-## 二、问题总览
+## ϊ║ΝήΑΒώΩχώλαόΑ╗ϋπΙ
 
-### 2.1 问题严重程度分类
+### 2.1 ώΩχώλαϊ╕ξώΘΞύρΜί║οίΙΗύ▒╗
 
-| 严重程度 | 数量 | 问题类型 |
+| ϊ╕ξώΘΞύρΜί║ο | όΧ░ώΘΠ | ώΩχώλαύ▒╗ίηΜ |
 |----------|------|----------|
-| 🔴 **严重** | 15�?| 幽灵引用断裂、版本重复、孤儿文�?|
-| 🟡 **中等** | 24�?| 索引断裂、版本不一致、目录命名不规范、职责重�?|
-| 🟢 **轻微** | 17�?| 空目录、废弃文件、中文命�?|
+| ΏθΦ┤ **ϊ╕ξώΘΞ** | 15ϊ╕?| ί╣╜ύΒ╡ί╝ΧύΦρόΨφϋμΓήΑΒύΚΙόευώΘΞίνΞήΑΒίφνίΕ┐όΨΘϊ╗?|
+| Ώθθκ **ϊ╕φύφΚ** | 24ϊ╕?| ύ┤λί╝ΧόΨφϋμΓήΑΒύΚΙόευϊ╕Ξϊ╕ΑϋΘ┤ήΑΒύδχί╜ΧίΣ╜ίΡΞϊ╕ΞϋπΕϋΝΔήΑΒϋΒΝϋ┤μώΘΞίΠ?|
+| Ώθθλ **ϋ╜╗ί╛χ** | 17ϊ╕?| ύσ║ύδχί╜ΧήΑΒί║θί╝ΔόΨΘϊ╗╢ήΑΒϊ╕φόΨΘίΣ╜ίΡ?|
 
-### 2.2 问题一览表�?6个问题）
+### 2.2 ώΩχώλαϊ╕ΑϋπΙϋκρΎ╝?6ϊ╕ςώΩχώλαΎ╝Κ
 
-| # | 严重程度 | 问题 | 位置 | 状�?|
+| # | ϊ╕ξώΘΞύρΜί║ο | ώΩχώλα | ϊ╜Ξύ╜χ | ύΛ╢όΑ?|
 |---|----------|------|------|------|
-| 1 | 🔴 严重 | System_Manifest.md 缺失 | docs/ | �?未解�?|
-| 2 | 🔴 严重 | ARCHIVED.md 在非归档目录 | docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ | �?未解�?|
-| 3 | 🔴 严重 | ARCHIVED.md 在非归档目录 | docs/08_USER_EXPERIENCE/04_NOZYIO/ | �?未解�?|
-| 4 | 🟡 中等 | 索引引用不存在的文件 | 多个文档 | �?未解�?|
-| 5 | 🟡 中等 | 07_SYSTEM_MANIFEST.md 重复 | 06_ARCHIVE/main/BLUEPRINTS/ | ⚠️ 待确�?|
-| 6 | 🟡 中等 | 08_USER_EXPERIENCE 命名不规�?| docs/08_USER_EXPERIENCE/ | ⚠️ 待确�?|
-| 7 | 🟡 中等 | 版本号不一�?| 多个文档 | �?未解�?|
-| 8 | 🟢 轻微 | DEVELOPER_RULES.md 臃肿 | 05_IMPLEMENTATION/02_DEVELOPMENT/ | ⚠️ 可�?|
-| 9 | 🟢 轻微 | 空目录检�?| 多个目录 | ⚠️ 可�?|
-| 10 | 🟢 轻微 | 08_USER_EXPERIENCE 归属不明 | docs/08_USER_EXPERIENCE/ | ⚠️ 可�?|
-| 11 | 🔴 严重 | EXPERIMENT_TRACKING.md 重复 | docs/ vs docs/07_RESEARCH/ | �?未解�?|
-| 12 | 🔴 严重 | CHANGELOG.md 重复 | docs/ vs docs/06_ARCHIVE/main/ | �?未解�?|
-| 13 | 🟡 中等 | HANDOVER.md 位置不当 | docs/HANDOVER.md | �?未解�?|
-| 14 | 🟡 中等 | KNOWLEDGE_MANAGEMENT.md 位置不当 | docs/KNOWLEDGE_MANAGEMENT.md | �?未解�?|
-| 15 | 🟡 中等 | 5个文档未被索�?| 05_IMPLEMENTATION/01_QUICKSTART/ | �?未解�?|
-| 16 | 🟡 中等 | 06_ARCHIVE/main/ 目录结构混乱 | docs/06_ARCHIVE/main/ | �?未解�?|
-| 17 | 🟡 中等 | INDEX.md �?SITEMAP.md 内容高度重复 | docs/ | �?未解�?|
-| 18 | 🟢 轻微 | 部分归档文件未添�?_archived 后缀 | docs/06_ARCHIVE/main/ | ⚠️ 可�?|
-| 19 | 🟢 轻微 | 部分文件名使用中�?| docs/06_ARCHIVE/main/v4_development/ | ⚠️ 可�?|
-| 20 | 🟡 中等 | SITEMAP.md 引用过时文件�?| docs/SITEMAP.md | �?未解�?|
-| 21 | 🔴 严重 | SPEC.md 幽灵引用�?0+处） | 多个文档 | �?未解�?|
-| 22 | 🔴 严重 | CODE_STATUS.md 幽灵引用�?+处） | 多个文档 | �?未解�?|
-| 23 | 🔴 严重 | CODE_REVIEW_REPORT.md 幽灵引用 | 00_OVERVIEW | �?未解�?|
-| 24 | 🔴 严重 | System_Manifest.md 幽灵引用�?00+处） | 多个文档 | �?未解�?|
-| 25 | 🔴 严重 | 蓝图文档引用断裂�?个） | SITEMAP.md | �?未解�?|
-| 26 | 🟡 中等 | 蓝图文档7�?合并但原文档仍存�?| BLUEPRINTS/ | �?未解�?|
-| 27 | 🟡 中等 | INDEX.md vs SITEMAP.md 职责重叠 | docs/ | �?未解�?|
-| 28 | 🟡 中等 | 架构描述4处重�?| 多个文档 | �?未解�?|
-| 29 | 🟡 中等 | 6+个子目录缺少索引 | �?1.4.1 | �?未解�?|
-| 30 | 🟢 轻微 | 4个历史审计报告可删除 | 06_ARCHIVE/main/ | ⚠️ 可�?|
-| 31 | 🟢 轻微 | 2个备份文件可删除 | v4_development/ | ⚠️ 可�?|
-| 32 | 🟢 轻微 | 1个个人笔记可删除 | 06_ARCHIVE/ | ⚠️ 可�?|
-| 33 | 🔴 严重 | 02_FACTOR_LIBRARY README 链接路径错误 | docs/02_FACTOR_LIBRARY/README.md | �?未解�?|
-| 34 | 🟡 中等 | v4_development 冗余文件未清�?| docs/06_ARCHIVE/main/v4_development/ | �?未解�?|
-| 35 | 🟡 中等 | QMT极速策略交易系统说明文�?pdf 未索�?| docs/04_EXECUTION/ | �?未解�?|
-| 36 | 🟢 轻微 | 审计报告重复（COMPLETE vs FINAL�?| 06_ARCHIVE/main/ | �?未确�?|
+| 1 | ΏθΦ┤ ϊ╕ξώΘΞ | System_Manifest.md ύ╝║ίν▒ | docs/ | έζ?όεςϋπμίΗ?|
+| 2 | ΏθΦ┤ ϊ╕ξώΘΞ | ARCHIVED.md ίερώζηί╜Τόκμύδχί╜Χ | docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ | έζ?όεςϋπμίΗ?|
+| 3 | ΏθΦ┤ ϊ╕ξώΘΞ | ARCHIVED.md ίερώζηί╜Τόκμύδχί╜Χ | docs/08_USER_EXPERIENCE/04_NOZYIO/ | έζ?όεςϋπμίΗ?|
+| 4 | Ώθθκ ϊ╕φύφΚ | ύ┤λί╝Χί╝ΧύΦρϊ╕ΞίφαίερύγΕόΨΘϊ╗╢ | ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 5 | Ώθθκ ϊ╕φύφΚ | 07_SYSTEM_MANIFEST.md ώΘΞίνΞ | 06_ARCHIVE/main/BLUEPRINTS/ | έγιΎ╕Π ί╛Ζύκχϋχ?|
+| 6 | Ώθθκ ϊ╕φύφΚ | 08_USER_EXPERIENCE ίΣ╜ίΡΞϊ╕ΞϋπΕϋΝ?| docs/08_USER_EXPERIENCE/ | έγιΎ╕Π ί╛Ζύκχϋχ?|
+| 7 | Ώθθκ ϊ╕φύφΚ | ύΚΙόευίΠ╖ϊ╕Ξϊ╕ΑϋΘ?| ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 8 | Ώθθλ ϋ╜╗ί╛χ | DEVELOPER_RULES.md ϋΘΔϋΓ┐ | 05_IMPLEMENTATION/02_DEVELOPMENT/ | έγιΎ╕Π ίΠψώΑ?|
+| 9 | Ώθθλ ϋ╜╗ί╛χ | ύσ║ύδχί╜ΧόμΑόθ?| ίνγϊ╕ςύδχί╜Χ | έγιΎ╕Π ίΠψώΑ?|
+| 10 | Ώθθλ ϋ╜╗ί╛χ | 08_USER_EXPERIENCE ί╜Τί▒ηϊ╕ΞόαΟ | docs/08_USER_EXPERIENCE/ | έγιΎ╕Π ίΠψώΑ?|
+| 11 | ΏθΦ┤ ϊ╕ξώΘΞ | EXPERIMENT_TRACKING.md ώΘΞίνΞ | docs/ vs docs/07_RESEARCH/ | έζ?όεςϋπμίΗ?|
+| 12 | ΏθΦ┤ ϊ╕ξώΘΞ | CHANGELOG.md ώΘΞίνΞ | docs/ vs docs/06_ARCHIVE/main/ | έζ?όεςϋπμίΗ?|
+| 13 | Ώθθκ ϊ╕φύφΚ | HANDOVER.md ϊ╜Ξύ╜χϊ╕Ξί╜Υ | docs/HANDOVER.md | έζ?όεςϋπμίΗ?|
+| 14 | Ώθθκ ϊ╕φύφΚ | KNOWLEDGE_MANAGEMENT.md ϊ╜Ξύ╜χϊ╕Ξί╜Υ | docs/KNOWLEDGE_MANAGEMENT.md | έζ?όεςϋπμίΗ?|
+| 15 | Ώθθκ ϊ╕φύφΚ | 5ϊ╕ςόΨΘόκμόεςϋλτύ┤λί╝?| 05_IMPLEMENTATION/01_QUICKSTART/ | έζ?όεςϋπμίΗ?|
+| 16 | Ώθθκ ϊ╕φύφΚ | 06_ARCHIVE/main/ ύδχί╜Χύ╗ΥόηΕό╖╖ϊ╣▒ | docs/06_ARCHIVE/main/ | έζ?όεςϋπμίΗ?|
+| 17 | Ώθθκ ϊ╕φύφΚ | INDEX.md ϊ╕?SITEMAP.md ίΗΖίχ╣ώταί║οώΘΞίνΞ | docs/ | έζ?όεςϋπμίΗ?|
+| 18 | Ώθθλ ϋ╜╗ί╛χ | ώΔρίΙΗί╜ΤόκμόΨΘϊ╗╢όεςό╖╗ίΛ?_archived ίΡΟύ╝Α | docs/06_ARCHIVE/main/ | έγιΎ╕Π ίΠψώΑ?|
+| 19 | Ώθθλ ϋ╜╗ί╛χ | ώΔρίΙΗόΨΘϊ╗╢ίΡΞϊ╜┐ύΦρϊ╕φόΨ?| docs/06_ARCHIVE/main/v4_development/ | έγιΎ╕Π ίΠψώΑ?|
+| 20 | Ώθθκ ϊ╕φύφΚ | SITEMAP.md ί╝ΧύΦρϋ┐ΘόΩ╢όΨΘϊ╗╢ίΡ?| docs/SITEMAP.md | έζ?όεςϋπμίΗ?|
+| 21 | ΏθΦ┤ ϊ╕ξώΘΞ | SPEC.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?0+ίνΕΎ╝Κ | ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 22 | ΏθΦ┤ ϊ╕ξώΘΞ | CODE_STATUS.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?+ίνΕΎ╝Κ | ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 23 | ΏθΦ┤ ϊ╕ξώΘΞ | CODE_REVIEW_REPORT.md ί╣╜ύΒ╡ί╝ΧύΦρ | 00_OVERVIEW | έζ?όεςϋπμίΗ?|
+| 24 | ΏθΦ┤ ϊ╕ξώΘΞ | System_Manifest.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?00+ίνΕΎ╝Κ | ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 25 | ΏθΦ┤ ϊ╕ξώΘΞ | ϋΥζίδ╛όΨΘόκμί╝ΧύΦρόΨφϋμΓΎ╝?ϊ╕ςΎ╝Κ | SITEMAP.md | έζ?όεςϋπμίΗ?|
+| 26 | Ώθθκ ϊ╕φύφΚ | ϋΥζίδ╛όΨΘόκμ7έΗ?ίΡΙί╣╢ϊ╜ΗίΟθόΨΘόκμϊ╗Ξίφαίε?| BLUEPRINTS/ | έζ?όεςϋπμίΗ?|
+| 27 | Ώθθκ ϊ╕φύφΚ | INDEX.md vs SITEMAP.md ϋΒΝϋ┤μώΘΞίΠι | docs/ | έζ?όεςϋπμίΗ?|
+| 28 | Ώθθκ ϊ╕φύφΚ | όη╢όηΕόΠΠϋ┐░4ίνΕώΘΞίν?| ίνγϊ╕ςόΨΘόκμ | έζ?όεςϋπμίΗ?|
+| 29 | Ώθθκ ϊ╕φύφΚ | 6+ϊ╕ςίφΡύδχί╜Χύ╝║ί░Σύ┤λί╝Χ | ϋπ?1.4.1 | έζ?όεςϋπμίΗ?|
+| 30 | Ώθθλ ϋ╜╗ί╛χ | 4ϊ╕ςίΟΗίΠ▓ίχκϋχκόΛξίΣΛίΠψίΙιώβν | 06_ARCHIVE/main/ | έγιΎ╕Π ίΠψώΑ?|
+| 31 | Ώθθλ ϋ╜╗ί╛χ | 2ϊ╕ςίνΘϊ╗╜όΨΘϊ╗╢ίΠψίΙιώβν | v4_development/ | έγιΎ╕Π ίΠψώΑ?|
+| 32 | Ώθθλ ϋ╜╗ί╛χ | 1ϊ╕ςϊ╕ςϊ║║ύυΦϋχ░ίΠψίΙιώβν | 06_ARCHIVE/ | έγιΎ╕Π ίΠψώΑ?|
+| 33 | ΏθΦ┤ ϊ╕ξώΘΞ | 02_FACTOR_LIBRARY README ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ | docs/02_FACTOR_LIBRARY/README.md | έζ?όεςϋπμίΗ?|
+| 34 | Ώθθκ ϊ╕φύφΚ | v4_development ίΗΩϊ╜βόΨΘϊ╗╢όεςό╕ΖύΡ?| docs/06_ARCHIVE/main/v4_development/ | έζ?όεςϋπμίΗ?|
+| 35 | Ώθθκ ϊ╕φύφΚ | QMTόηΒώΑθύφΨύΧξϊ║νόαΥύ│╗ύ╗θϋψ┤όαΟόΨΘόκ?pdf όεςύ┤λί╝?| docs/04_EXECUTION/ | έζ?όεςϋπμίΗ?|
+| 36 | Ώθθλ ϋ╜╗ί╛χ | ίχκϋχκόΛξίΣΛώΘΞίνΞΎ╝ΙCOMPLETE vs FINALΎ╝?| 06_ARCHIVE/main/ | έζ?όεςύκχϋχ?|
 
 ---
 
-## 三、严重问题详�?
+## ϊ╕ΚήΑΒϊ╕ξώΘΞώΩχώλαϋψοόΔ?
 
-### 3.1 问题1：System_Manifest.md 缺失
+### 3.1 ώΩχώλα1Ύ╝γSystem_Manifest.md ύ╝║ίν▒
 
-**问题描述**�?
-多个文档引用�?`docs/System_Manifest.md`，但该文件不存在�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+ίνγϊ╕ςόΨΘόκμί╝ΧύΦρϊ║?`docs/System_Manifest.md`Ύ╝Νϊ╜ΗϋψξόΨΘϊ╗╢ϊ╕ΞίφαίερήΑ?
 
-**引用位置汇�?*�?
+**ί╝ΧύΦρϊ╜Ξύ╜χό▒ΘόΑ?*Ύ╝?
 
-| 引用文档 | 引用内容 |
+| ί╝ΧύΦρόΨΘόκμ | ί╝ΧύΦρίΗΖίχ╣ |
 |----------|----------|
-| `05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md` | `System_Manifest.md - 系统清单（架构、模块、权限）` |
-| `docs/BLUEPRINT.md` | `系统概览�?System_Manifest.md` |
-| `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` | `技术细节见 UNIFIED_ARCHITECTURE.md` |
+| `05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md` | `System_Manifest.md - ύ│╗ύ╗θό╕ΖίΞΧΎ╝Ιόη╢όηΕήΑΒόρκίζΩήΑΒόζΔώβΡΎ╝Κ` |
+| `docs/BLUEPRINT.md` | `ύ│╗ύ╗θόοΓϋπΙϋπ?System_Manifest.md` |
+| `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` | `όΛΑόεψύ╗ΗϋΛΓϋπΒ UNIFIED_ARCHITECTURE.md` |
 
-**交叉验证**�?
+**ϊ║νίΠΚώςΝϋψΒ**Ύ╝?
 ```
-�?存在的文件：
-- 06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md (完整内容)
-- 06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md (引用 System_Manifest.md)
+έε?ίφαίερύγΕόΨΘϊ╗╢Ύ╝γ
+- 06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md (ίχΝόΧ┤ίΗΖίχ╣)
+- 06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md (ί╝ΧύΦρ System_Manifest.md)
 
-�?缺失的文件：
+έζ?ύ╝║ίν▒ύγΕόΨΘϊ╗╢Ύ╝γ
 - docs/System_Manifest.md
 - docs/UNIFIED_ARCHITECTURE.md
 ```
 
-**根本原因**�?
-System_Manifest.md 原本存在�?docs/，后被归档到 06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md，但引用未更新�?
+**όι╣όευίΟθίδι**Ύ╝?
+System_Manifest.md ίΟθόευίφαίερϊ║?docs/Ύ╝ΝίΡΟϋλτί╜ΤόκμίΙ░ 06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.mdΎ╝Νϊ╜Ηί╝ΧύΦρόεςόδ┤όΨ░ήΑ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 
-| 方案 | 描述 | 工作�?| 推荐 |
+| όΨ╣όκΙ | όΠΠϋ┐░ | ί╖ξϊ╜εώΘ?| όΟρϋΞΡ |
 |------|------|--------|------|
-| **方案A** | 从归档恢�?System_Manifest.md �?docs/ | 5分钟 | �?**推荐** |
-| **方案B** | 更新所有引用指向归档位�?| 15分钟 | 备�?|
+| **όΨ╣όκΙA** | ϊ╗Οί╜ΤόκμόΒλίν?System_Manifest.md ίΙ?docs/ | 5ίΙΗώΤθ | έε?**όΟρϋΞΡ** |
+| **όΨ╣όκΙB** | όδ┤όΨ░όΚΑόεΚί╝ΧύΦρόΝΘίΡΣί╜Τόκμϊ╜Ξύ╜?| 15ίΙΗώΤθ | ίνΘώΑ?|
 
-**执行方案A**�?
+**όΚπϋκΝόΨ╣όκΙA**Ύ╝?
 ```bash
-# 恢复文件
+# όΒλίνΞόΨΘϊ╗╢
 Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_Manifest.md"
 ```
 
 ---
 
-### 3.2 问题2：ARCHIVED.md 在非归档目录（决策框架）
+### 3.2 ώΩχώλα2Ύ╝γARCHIVED.md ίερώζηί╜Τόκμύδχί╜ΧΎ╝ΙίΗ│ύφΨόκΗόη╢Ύ╝Κ
 
-**问题位置**：`docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md`
 
-**文件内容摘要**�?
+**όΨΘϊ╗╢ίΗΖίχ╣όΣαϋοΒ**Ύ╝?
 ```markdown
-# 决策框架已归�?
+# ίΗ│ύφΨόκΗόη╢ί╖▓ί╜Τόκ?
 
-本文档描述的决策框架因过度工程化，已�?v5.0 归档�?
+όευόΨΘόκμόΠΠϋ┐░ύγΕίΗ│ύφΨόκΗόη╢ίδιϋ┐Θί║οί╖ξύρΜίΝΨΎ╝Νί╖▓ϊ║?v5.0 ί╜ΤόκμήΑ?
 ```
 
-**问题分析**�?
-- 已归档文档应统一放在 `06_ARCHIVE/` 目录
-- 不应在功能目录下保留 ARCHIVED 占位�?
-- 专业量化机构标准：归档文档集中管理，便于清理和维�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ί╖▓ί╜ΤόκμόΨΘόκμί║Φύ╗θϊ╕ΑόΦ╛ίερ `06_ARCHIVE/` ύδχί╜Χ
+- ϊ╕Ξί║ΦίερίΛθϋΔ╜ύδχί╜Χϊ╕Μϊ┐ζύΧβ ARCHIVED ίΞιϊ╜Ξύυ?
+- ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόιΘίΘΗΎ╝γί╜ΤόκμόΨΘόκμώδΗϊ╕φύχκύΡΗΎ╝Νϊ╛┐ϊ║Οό╕ΖύΡΗίΤΝύ╗┤όΛ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 删除非归档目录的 ARCHIVED.md
+# ίΙιώβνώζηί╜Τόκμύδχί╜ΧύγΕ ARCHIVED.md
 Remove-Item "docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md"
 ```
 
 ---
 
-### 3.3 问题3：ARCHIVED.md 在非归档目录（NozyIO�?
+### 3.3 ώΩχώλα3Ύ╝γARCHIVED.md ίερώζηί╜Τόκμύδχί╜ΧΎ╝ΙNozyIOΎ╝?
 
-**问题位置**：`docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md`
 
-**文件内容摘要**�?
+**όΨΘϊ╗╢ίΗΖίχ╣όΣαϋοΒ**Ύ╝?
 ```markdown
-# NozyIO 模块已归�?
+# NozyIO όρκίζΩί╖▓ί╜Τόκ?
 
-NozyIO 交互协议文档已归档，原因是该协议未被系统采用�?
+NozyIO ϊ║νϊ║ΤίΞΠϋχχόΨΘόκμί╖▓ί╜ΤόκμΎ╝ΝίΟθίδιόαψϋψξίΞΠϋχχόεςϋλτύ│╗ύ╗θώΘΘύΦρήΑ?
 ```
 
-**问题分析**�?
-同问�?，已归档文档不应在功能目录中保留占位符�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+ίΡΝώΩχώλ?Ύ╝Νί╖▓ί╜ΤόκμόΨΘόκμϊ╕Ξί║ΦίερίΛθϋΔ╜ύδχί╜Χϊ╕φϊ┐ζύΧβίΞιϊ╜ΞύυοήΑ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 删除非归档目录的 ARCHIVED.md
+# ίΙιώβνώζηί╜Τόκμύδχί╜ΧύγΕ ARCHIVED.md
 Remove-Item "docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md"
 ```
 
 ---
 
-### 3.4 问题11：EXPERIMENT_TRACKING.md 重复
+### 3.4 ώΩχώλα11Ύ╝γEXPERIMENT_TRACKING.md ώΘΞίνΞ
 
-**问题描述**�?
-根目�?`docs/EXPERIMENT_TRACKING.md` �?`docs/07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md` 内容重复�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+όι╣ύδχί╜?`docs/EXPERIMENT_TRACKING.md` ϊ╕?`docs/07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md` ίΗΖίχ╣ώΘΞίνΞήΑ?
 
-**文件对比**�?
+**όΨΘϊ╗╢ίψ╣όψΦ**Ύ╝?
 
-| 项目 | docs/EXPERIMENT_TRACKING.md | docs/07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md |
+| ώκ╣ύδχ | docs/EXPERIMENT_TRACKING.md | docs/07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md |
 |------|----------------------------|---------------------------------------------------------------------|
-| 内容 | wandb.ai 实验追踪蓝图 | 本地 JSONL 实验追踪系统 |
-| 行数 | ~875�?| ~490�?|
-| 定位 | AI增强版（wandb�?| 简化版（单人使用） |
-| 状�?| 蓝图（未实现�?| 已实现版�?|
+| ίΗΖίχ╣ | wandb.ai ίχηώςΝϋ┐╜ϋ╕ςϋΥζίδ╛ | όευίε░ JSONL ίχηώςΝϋ┐╜ϋ╕ςύ│╗ύ╗θ |
+| ϋκΝόΧ░ | ~875ϋκ?| ~490ϋκ?|
+| ίχγϊ╜Ξ | AIίληί╝║ύΚΙΎ╝ΙwandbΎ╝?| ύχΑίΝΨύΚΙΎ╝ΙίΞΧϊ║║ϊ╜┐ύΦρΎ╝Κ |
+| ύΛ╢όΑ?| ϋΥζίδ╛Ύ╝ΙόεςίχηύΟ░Ύ╝?| ί╖▓ίχηύΟ░ύΚΙόε?|
 
-**问题分析**�?
-- 两个文件功能定位不同（wandb�?vs 本地版）
-- 但根目录的文档声称是"根文�?，容易混�?
-- 07_RESEARCH 版本更实用，应保留；根目录版本应删除
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ϊ╕νϊ╕ςόΨΘϊ╗╢ίΛθϋΔ╜ίχγϊ╜Ξϊ╕ΞίΡΝΎ╝ΙwandbύΚ?vs όευίε░ύΚΙΎ╝Κ
+- ϊ╜Ηόι╣ύδχί╜ΧύγΕόΨΘόκμίμ░ύπ░όαψ"όι╣όΨΘόκ?Ύ╝Νίχ╣όαΥό╖╖ό╖?
+- 07_RESEARCH ύΚΙόευόδ┤ίχηύΦρΎ╝Νί║Φϊ┐ζύΧβΎ╝δόι╣ύδχί╜ΧύΚΙόευί║ΦίΙιώβν
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 删除根目录的重复文档
+# ίΙιώβνόι╣ύδχί╜ΧύγΕώΘΞίνΞόΨΘόκμ
 Remove-Item "docs/EXPERIMENT_TRACKING.md"
 ```
 
 ---
 
-### 3.5 问题12：CHANGELOG.md 重复
+### 3.5 ώΩχώλα12Ύ╝γCHANGELOG.md ώΘΞίνΞ
 
-**问题描述**�?
-`docs/CHANGELOG.md` �?`docs/06_ARCHIVE/main/CHANGELOG.md` 内容重复�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+`docs/CHANGELOG.md` ϊ╕?`docs/06_ARCHIVE/main/CHANGELOG.md` ίΗΖίχ╣ώΘΞίνΞήΑ?
 
-**文件对比**�?
+**όΨΘϊ╗╢ίψ╣όψΦ**Ύ╝?
 
-| 项目 | docs/CHANGELOG.md | docs/06_ARCHIVE/main/CHANGELOG.md |
+| ώκ╣ύδχ | docs/CHANGELOG.md | docs/06_ARCHIVE/main/CHANGELOG.md |
 |------|-------------------|-------------------------------------|
-| 内容 | v4.0.2 �?v5.0 变更记录 | v3.x 历史变更记录 |
-| 版本范围 | v4.0.2 - v5.0 | v1.0 - v3.x |
-| 状�?| 当前版本 | 历史版本 |
+| ίΗΖίχ╣ | v4.0.2 έΗ?v5.0 ίΠαόδ┤ϋχ░ί╜Χ | v3.x ίΟΗίΠ▓ίΠαόδ┤ϋχ░ί╜Χ |
+| ύΚΙόευϋΝΔίδ┤ | v4.0.2 - v5.0 | v1.0 - v3.x |
+| ύΛ╢όΑ?| ί╜ΥίΚΞύΚΙόευ | ίΟΗίΠ▓ύΚΙόευ |
 
-**问题分析**�?
-- 归档中的 CHANGELOG.md 只包�?v3.x 历史
-- 主目录的 CHANGELOG.md 是当前版本，包含 v4.0.2 - v5.0
-- 实际上内容不重复，但归档版本应重命名�?`CHANGELOG_v3.x.md`
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ί╜Τόκμϊ╕φύγΕ CHANGELOG.md ίΠςίΝΖίΡ?v3.x ίΟΗίΠ▓
+- ϊ╕╗ύδχί╜ΧύγΕ CHANGELOG.md όαψί╜ΥίΚΞύΚΙόευΎ╝ΝίΝΖίΡτ v4.0.2 - v5.0
+- ίχηώβΖϊ╕ΛίΗΖίχ╣ϊ╕ΞώΘΞίνΞΎ╝Νϊ╜Ηί╜ΤόκμύΚΙόευί║ΦώΘΞίΣ╜ίΡΞϊ╕?`CHANGELOG_v3.x.md`
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 重命名归档中的历史版�?
+# ώΘΞίΣ╜ίΡΞί╜Τόκμϊ╕φύγΕίΟΗίΠ▓ύΚΙόε?
 Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_v3.x_archived.md"
 ```
 
 ---
 
-### 3.6 问题21：SPEC.md 幽灵引用�?0+处）
+### 3.6 ώΩχώλα21Ύ╝γSPEC.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?0+ίνΕΎ╝Κ
 
-**问题描述**: �?0+个文档引用了 `SPEC.md`，但该文件不存在�?
+**ώΩχώλαόΠΠϋ┐░**: ύ║?0+ϊ╕ςόΨΘόκμί╝ΧύΦρϊ║Η `SPEC.md`Ύ╝Νϊ╜ΗϋψξόΨΘϊ╗╢ϊ╕ΞίφαίερήΑ?
 
-**引用位置清单**:
+**ί╝ΧύΦρϊ╜Ξύ╜χό╕ΖίΞΧ**:
 
-| 引用文档 | 引用路径 | 状�?|
+| ί╝ΧύΦρόΨΘόκμ | ί╝ΧύΦρϋ╖ψί╛Ε | ύΛ╢όΑ?|
 |----------|----------|------|
-| `docs/00_OVERVIEW/README.md` | `` | �?不存�?|
-| `docs/03_TRADING_TACTICS/99_ARCHIVE/*.md` | `` | �?不存�?|
-| `docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/*.md` | `` | �?不存�?|
-| `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/*.md` | `` | �?不存�?|
-| `docs/03_TRADING_TACTICS/05_STRATEGY_POOL/index.md` | `` | �?不存�?|
+| `docs/00_OVERVIEW/README.md` | `` | έζ?ϊ╕Ξίφαίε?|
+| `docs/03_TRADING_TACTICS/99_ARCHIVE/*.md` | `` | έζ?ϊ╕Ξίφαίε?|
+| `docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/*.md` | `` | έζ?ϊ╕Ξίφαίε?|
+| `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/*.md` | `` | έζ?ϊ╕Ξίφαίε?|
+| `docs/03_TRADING_TACTICS/05_STRATEGY_POOL/index.md` | `` | έζ?ϊ╕Ξίφαίε?|
 
-**解决方案**:
+**ϋπμίΗ│όΨ╣όκΙ**:
 ```bash
-# 创建 docs/SPEC.md 重定向到 INDEX.md
+# ίΙδί╗║ docs/SPEC.md ώΘΞίχγίΡΣίΙ░ INDEX.md
 ```
 
 ---
 
-### 3.7 问题22：CODE_STATUS.md 幽灵引用�?+处）
+### 3.7 ώΩχώλα22Ύ╝γCODE_STATUS.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?+ίνΕΎ╝Κ
 
-**问题描述**: �?+个文档引用了 `CODE_STATUS.md`，但该文件不存在�?
+**ώΩχώλαόΠΠϋ┐░**: ύ║?+ϊ╕ςόΨΘόκμί╝ΧύΦρϊ║Η `CODE_STATUS.md`Ύ╝Νϊ╜ΗϋψξόΨΘϊ╗╢ϊ╕ΞίφαίερήΑ?
 
-**引用位置清单**:
+**ί╝ΧύΦρϊ╜Ξύ╜χό╕ΖίΞΧ**:
 
-| 引用文档 | 引用路径 | 状�?|
+| ί╝ΧύΦρόΨΘόκμ | ί╝ΧύΦρϋ╖ψί╛Ε | ύΛ╢όΑ?|
 |----------|----------|------|
-| `docs/00_OVERVIEW/README.md` | `` | �?不存�?|
-| `docs/03_TRADING_TACTICS/02_TACTICS_MERGED/README.md` | `` | �?不存�?|
+| `docs/00_OVERVIEW/README.md` | `` | έζ?ϊ╕Ξίφαίε?|
+| `docs/03_TRADING_TACTICS/02_TACTICS_MERGED/README.md` | `` | έζ?ϊ╕Ξίφαίε?|
 
-**解决方案**:
+**ϋπμίΗ│όΨ╣όκΙ**:
 ```bash
-# 创建占位符指向归档版�?
+# ίΙδί╗║ίΞιϊ╜ΞύυοόΝΘίΡΣί╜ΤόκμύΚΙόε?
 ```
 
 ---
 
-### 3.8 问题23：CODE_REVIEW_REPORT.md 幽灵引用
+### 3.8 ώΩχώλα23Ύ╝γCODE_REVIEW_REPORT.md ί╣╜ύΒ╡ί╝ΧύΦρ
 
-**问题描述**: `docs/00_OVERVIEW/README.md` 引用了不存在�?`CODE_REVIEW_REPORT.md`�?
+**ώΩχώλαόΠΠϋ┐░**: `docs/00_OVERVIEW/README.md` ί╝ΧύΦρϊ║Ηϊ╕Ξίφαίερύγ?`CODE_REVIEW_REPORT.md`ήΑ?
 
-**解决方案**: 删除该引用或创建占位�?
+**ϋπμίΗ│όΨ╣όκΙ**: ίΙιώβνϋψξί╝ΧύΦρόΙΨίΙδί╗║ίΞιϊ╜Ξύυ?
 
 ---
 
-### 3.9 问题24：System_Manifest.md 幽灵引用�?00+处）
+### 3.9 ώΩχώλα24Ύ╝γSystem_Manifest.md ί╣╜ύΒ╡ί╝ΧύΦρΎ╝?00+ίνΕΎ╝Κ
 
-**问题描述**: �?00+处引�?`System_Manifest.md`，但该文件不存在（已归档）�?
+**ώΩχώλαόΠΠϋ┐░**: ύ║?00+ίνΕί╝ΧύΦ?`System_Manifest.md`Ύ╝Νϊ╜ΗϋψξόΨΘϊ╗╢ϊ╕ΞίφαίερΎ╝Ιί╖▓ί╜ΤόκμΎ╝ΚήΑ?
 
-**引用统计**:
-- `Grep` 搜索结果显示 100+ 处引�?
-- 主要集中�?`docs/` 内部的交叉引�?
-- 归档版本存在�?`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md`
+**ί╝ΧύΦρύ╗θϋχκ**:
+- `Grep` όΡεύ┤λύ╗Υόηεόα╛ύν║ 100+ ίνΕί╝ΧύΦ?
+- ϊ╕╗ϋοΒώδΗϊ╕φίε?`docs/` ίΗΖώΔρύγΕϊ║νίΠΚί╝ΧύΦ?
+- ί╜ΤόκμύΚΙόευίφαίερϊ║?`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md`
 
-**解决方案**:
+**ϋπμίΗ│όΨ╣όκΙ**:
 ```bash
-# 恢复文件
+# όΒλίνΞόΨΘϊ╗╢
 Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_Manifest.md"
 ```
 
 ---
 
-### 3.10 问题25：蓝图文档引用断裂（7个）
+### 3.10 ώΩχώλα25Ύ╝γϋΥζίδ╛όΨΘόκμί╝ΧύΦρόΨφϋμΓΎ╝Ι7ϊ╕ςΎ╝Κ
 
-| 原文�?| 被引用位�?| 归档位置 | 状�?|
+| ίΟθόΨΘόκ?| ϋλτί╝ΧύΦρϊ╜Ξύ╜?| ί╜Τόκμϊ╜Ξύ╜χ | ύΛ╢όΑ?|
 |--------|------------|----------|------|
-| `ULTIMATE_BLUEPRINT.md` | SITEMAP.md, INDEX.md | `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` | ⚠️ 已归�?|
-| `DEPLOYMENT_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md` | ⚠️ 已归�?|
-| `SECURITY_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md` | ⚠️ 已归�?|
-| `API_INTEGRATION_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md` | ⚠️ 已归�?|
-| `AI_RESEARCH_FRAMEWORK.md` | SITEMAP.md, INDEX.md | `06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md` | ⚠️ 已归�?|
-| `DEVELOPMENT_ROADMAP.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md` | ⚠️ 已归�?|
-| `System_Manifest.md` | 100+�?| `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | ⚠️ 已归�?|
+| `ULTIMATE_BLUEPRINT.md` | SITEMAP.md, INDEX.md | `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `DEPLOYMENT_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `SECURITY_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `API_INTEGRATION_BLUEPRINT.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `AI_RESEARCH_FRAMEWORK.md` | SITEMAP.md, INDEX.md | `06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `DEVELOPMENT_ROADMAP.md` | SITEMAP.md | `06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
+| `System_Manifest.md` | 100+ίν?| `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | έγιΎ╕Π ί╖▓ί╜Τόκ?|
 
 ---
 
-### 3.11 问题33�?2_FACTOR_LIBRARY README 链接路径错误
+### 3.11 ώΩχώλα33Ύ╝?2_FACTOR_LIBRARY README ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ
 
-**问题位置**：`docs/02_FACTOR_LIBRARY/README.md` �?9-22�?
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/02_FACTOR_LIBRARY/README.md` ύυ?9-22ϋκ?
 
-**错误链接**�?
+**ώΦβϋψψώΥ╛όΟξ**Ύ╝?
 ```markdown
-| **数据宇宙** | 数据源、数据质�?|  |
-| **回测结果** | IC 报告、回测报�?|  |
-| **因子注册** | 因子注册表、元数据 |  |
-| **监控中心** | 实时监控、月度报告、AI因子管家 |  |
+| **όΧ░όΞχίχΘίχβ** | όΧ░όΞχό║ΡήΑΒόΧ░όΞχϋ┤ρώΘ?|  |
+| **ίδηό╡Μύ╗Υόηε** | IC όΛξίΣΛήΑΒίδηό╡ΜόΛξίΣ?|  |
+| **ίδιίφΡό│ρίΗΝ** | ίδιίφΡό│ρίΗΝϋκρήΑΒίΖΔόΧ░όΞχ |  |
+| **ύδΣόΟπϊ╕φί┐Δ** | ίχηόΩ╢ύδΣόΟπήΑΒόεΙί║οόΛξίΣΛήΑΒAIίδιίφΡύχκίχ╢ |  |
 ```
 
-**问题分析**�?
-- `../04_DATA_SOURCE/` 指向的是 `docs/04_DATA_SOURCE/`，但该目录不存在
-- 实际目录结构�?`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/`（在02因子库下�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- `../04_DATA_SOURCE/` όΝΘίΡΣύγΕόαψ `docs/04_DATA_SOURCE/`Ύ╝Νϊ╜Ηϋψξύδχί╜Χϊ╕Ξίφαίερ
+- ίχηώβΖύδχί╜Χύ╗ΥόηΕόα?`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/`Ύ╝Ιίερ02ίδιίφΡί║Υϊ╕ΜΎ╝?
 
-**正确路径应为**�?
+**όφμύκχϋ╖ψί╛Εί║Φϊ╕║**Ύ╝?
 ```markdown
-| **数据宇宙** | 数据源、数据质�?| [04_DATA_SOURCE](docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/) |
-| **回测结果** | IC 报告、回测报�?| [05_BACKTEST](docs/02_FACTOR_LIBRARY/05_BACKTEST/) |
-| **因子注册** | 因子注册表、元数据 | [06_FACTOR_REGISTRY](docs/02_FACTOR_LIBRARY/06_FACTOR_REGISTRY/) |
-| **监控中心** | 实时监控、月度报告、AI因子管家 | [07_FACTOR_MONITORING](docs/02_FACTOR_LIBRARY/07_FACTOR_MONITORING/) |
+| **όΧ░όΞχίχΘίχβ** | όΧ░όΞχό║ΡήΑΒόΧ░όΞχϋ┤ρώΘ?| 04_DATA_SOURCE |
+| **ίδηό╡Μύ╗Υόηε** | IC όΛξίΣΛήΑΒίδηό╡ΜόΛξίΣ?| 05_BACKTEST |
+| **ίδιίφΡό│ρίΗΝ** | ίδιίφΡό│ρίΗΝϋκρήΑΒίΖΔόΧ░όΞχ | 06_FACTOR_REGISTRY |
+| **ύδΣόΟπϊ╕φί┐Δ** | ίχηόΩ╢ύδΣόΟπήΑΒόεΙί║οόΛξίΣΛήΑΒAIίδιίφΡύχκίχ╢ | 07_FACTOR_MONITORING |
 ```
 
 ---
 
-## 四、中等问题详�?
+## ίδδήΑΒϊ╕φύφΚώΩχώλαϋψοόΔ?
 
-### 4.1 问题4：索引引用不存在的文�?
+### 4.1 ώΩχώλα4Ύ╝γύ┤λί╝Χί╝ΧύΦρϊ╕ΞίφαίερύγΕόΨΘϊ╗?
 
-**问题描述**：多个文档引用了不存在的文件，导致索引断裂�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γίνγϊ╕ςόΨΘόκμί╝ΧύΦρϊ║Ηϊ╕ΞίφαίερύγΕόΨΘϊ╗╢Ύ╝Νίψ╝ϋΘ┤ύ┤λί╝ΧόΨφϋμΓήΑ?
 
-**引用断裂清单**�?
+**ί╝ΧύΦρόΨφϋμΓό╕ΖίΞΧ**Ύ╝?
 
-| 引用位置 | 引用文件 | 状�?|
+| ί╝ΧύΦρϊ╜Ξύ╜χ | ί╝ΧύΦρόΨΘϊ╗╢ | ύΛ╢όΑ?|
 |----------|----------|------|
-| BLUEPRINT.md | System_Manifest.md | �?缺失 |
-| BLUEPRINT.md | UNIFIED_ARCHITECTURE.md | �?缺失 |
-| 01_ULTIMATE_BLUEPRINT.md | System_Manifest.md | �?缺失 |
-| 01_ULTIMATE_BLUEPRINT.md | UNIFIED_ARCHITECTURE.md | �?缺失 |
-| DEVELOPER_RULES.md | System_Manifest.md | �?缺失 |
+| BLUEPRINT.md | System_Manifest.md | έζ?ύ╝║ίν▒ |
+| BLUEPRINT.md | UNIFIED_ARCHITECTURE.md | έζ?ύ╝║ίν▒ |
+| 01_ULTIMATE_BLUEPRINT.md | System_Manifest.md | έζ?ύ╝║ίν▒ |
+| 01_ULTIMATE_BLUEPRINT.md | UNIFIED_ARCHITECTURE.md | έζ?ύ╝║ίν▒ |
+| DEVELOPER_RULES.md | System_Manifest.md | έζ?ύ╝║ίν▒ |
 
 ---
 
-### 4.2 问题5�?7_SYSTEM_MANIFEST.md 重复
+### 4.2 ώΩχώλα5Ύ╝?7_SYSTEM_MANIFEST.md ώΘΞίνΞ
 
-**问题位置**：`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md`
 
-**问题分析**�?
-- 该文件是 System_Manifest.md 的归档版�?
-- 如果恢复 System_Manifest.md，则归档版本应注�?已恢�?
-
----
-
-### 4.3 问题6�?8_USER_EXPERIENCE 命名不规�?
-
-**问题位置**：`docs/08_USER_EXPERIENCE/`
-
-**问题分析**�?
-- 现有目录编号�?00-08，共9个一级目�?
-- 原规划为 00-07�?个目录）
-
-**推荐**：保持现状（影响最小的务实选择�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ϋψξόΨΘϊ╗╢όαψ System_Manifest.md ύγΕί╜ΤόκμύΚΙόε?
+- ίοΓόηεόΒλίνΞ System_Manifest.mdΎ╝ΝίΙβί╜ΤόκμύΚΙόευί║Φό│ρόα?ί╖▓όΒλίν?
 
 ---
 
-### 4.4 问题7：版本号不一�?
+### 4.3 ώΩχώλα6Ύ╝?8_USER_EXPERIENCE ίΣ╜ίΡΞϊ╕ΞϋπΕϋΝ?
 
-**问题描述**：多个文档使用不同的版本标识�?
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/08_USER_EXPERIENCE/`
 
-**版本混用统计**�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ύΟ░όεΚύδχί╜Χύ╝ΨίΠ╖ϊ╕?00-08Ύ╝ΝίΖ▒9ϊ╕ςϊ╕Αύ║πύδχί╜?
+- ίΟθϋπΕίΙΤϊ╕║ 00-07Ύ╝?ϊ╕ςύδχί╜ΧΎ╝Κ
 
-| 版本 | 出现位置 |
+**όΟρϋΞΡ**Ύ╝γϊ┐ζόΝΒύΟ░ύΛ╢Ύ╝Ιί╜▒ίΥΞόεΑί░ΠύγΕίΛκίχηώΑΚόΜσΎ╝?
+
+---
+
+### 4.4 ώΩχώλα7Ύ╝γύΚΙόευίΠ╖ϊ╕Ξϊ╕ΑϋΘ?
+
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γίνγϊ╕ςόΨΘόκμϊ╜┐ύΦρϊ╕ΞίΡΝύγΕύΚΙόευόιΘϋψΗήΑ?
+
+**ύΚΙόευό╖╖ύΦρύ╗θϋχκ**Ύ╝?
+
+| ύΚΙόευ | ίΘ║ύΟ░ϊ╜Ξύ╜χ |
 |------|----------|
-| v4.0 | 多个文档（过时） |
-| v5.0 | 多个文档 |
+| v4.0 | ίνγϊ╕ςόΨΘόκμΎ╝Ιϋ┐ΘόΩ╢Ύ╝Κ |
+| v5.0 | ίνγϊ╕ςόΨΘόκμ |
 | v5.1 | INDEX.md, SITEMAP.md, CHANGELOG.md |
-| v3.1 | DEVELOPER_RULES.md (module_id版本) |
+| v3.1 | DEVELOPER_RULES.md (module_idύΚΙόευ) |
 
-**解决方案**：统一主版本标识为 v5.1
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝γύ╗θϊ╕Αϊ╕╗ύΚΙόευόιΘϋψΗϊ╕║ v5.1
 
 ---
 
-### 4.5 问题13：HANDOVER.md 位置不当
+### 4.5 ώΩχώλα13Ύ╝γHANDOVER.md ϊ╜Ξύ╜χϊ╕Ξί╜Υ
 
-**问题描述**：`docs/HANDOVER.md` 是项目交接文档，应在项目根目录而非 docs/ 目录�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`docs/HANDOVER.md` όαψώκ╣ύδχϊ║νόΟξόΨΘόκμΎ╝Νί║Φίερώκ╣ύδχόι╣ύδχί╜ΧϋΑΝώζη docs/ ύδχί╜ΧήΑ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 移动到根目录
+# ύπ╗ίΛρίΙ░όι╣ύδχί╜Χ
 Move-Item "docs/HANDOVER.md" "HANDOVER.md"
 ```
 
 ---
 
-### 4.6 问题14：KNOWLEDGE_MANAGEMENT.md 位置不当
+### 4.6 ώΩχώλα14Ύ╝γKNOWLEDGE_MANAGEMENT.md ϊ╜Ξύ╜χϊ╕Ξί╜Υ
 
-**问题描述**：`docs/KNOWLEDGE_MANAGEMENT.md` �?AI 研究基础设施文档，应�?`docs/07_RESEARCH/` 目录�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`docs/KNOWLEDGE_MANAGEMENT.md` όα?AI ύιΦύσ╢ίθ║ύκΑϋχ╛όΨ╜όΨΘόκμΎ╝Νί║Φίε?`docs/07_RESEARCH/` ύδχί╜ΧήΑ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 移动�?07_RESEARCH 目录
+# ύπ╗ίΛρίΙ?07_RESEARCH ύδχί╜Χ
 Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.md"
 ```
 
 ---
 
-### 4.7 问题15�?个文档未被索�?
+### 4.7 ώΩχώλα15Ύ╝?ϊ╕ςόΨΘόκμόεςϋλτύ┤λί╝?
 
-**未索引文档清�?*�?
+**όεςύ┤λί╝ΧόΨΘόκμό╕ΖίΞ?*Ύ╝?
 
-| # | 文档路径 | 文档说明 | 建议操作 |
+| # | όΨΘόκμϋ╖ψί╛Ε | όΨΘόκμϋψ┤όαΟ | ί╗║ϋχχόΥΞϊ╜ε |
 |---|----------|----------|----------|
-| 1 | `docs/05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md` | 开发路线图 | 添加到索�?|
-| 2 | `docs/05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md` | 学习路径 | 添加到索�?|
-| 3 | `docs/05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md` | Phase 1 设计 | 添加到索�?|
-| 4 | `docs/05_IMPLEMENTATION/01_QUICKSTART/factor_design.md` | 因子设计指南 | 添加到索�?|
-| 5 | `docs/05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md` | 首次回测指南 | 添加到索�?|
+| 1 | `docs/05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md` | ί╝ΑίΠΣϋ╖ψύ║┐ίδ╛ | ό╖╗ίΛιίΙ░ύ┤λί╝?|
+| 2 | `docs/05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md` | ίφοϊ╣ιϋ╖ψί╛Ε | ό╖╗ίΛιίΙ░ύ┤λί╝?|
+| 3 | `docs/05_IMPLEMENTATION/01_QUICKSTART/PHASE1_DESIGN.md` | Phase 1 ϋχ╛ϋχκ | ό╖╗ίΛιίΙ░ύ┤λί╝?|
+| 4 | `docs/05_IMPLEMENTATION/01_QUICKSTART/factor_design.md` | ίδιίφΡϋχ╛ϋχκόΝΘίΞΩ | ό╖╗ίΛιίΙ░ύ┤λί╝?|
+| 5 | `docs/05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md` | ώοΨόυκίδηό╡ΜόΝΘίΞΩ | ό╖╗ίΛιίΙ░ύ┤λί╝?|
 
 ---
 
-### 4.8 问题16�?6_ARCHIVE/main/ 目录结构混乱
+### 4.8 ώΩχώλα16Ύ╝?6_ARCHIVE/main/ ύδχί╜Χύ╗ΥόηΕό╖╖ϊ╣▒
 
-**问题描述**：`docs/06_ARCHIVE/main/` 目录包含多种类型的文档，结构混乱�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`docs/06_ARCHIVE/main/` ύδχί╜ΧίΝΖίΡτίνγύπΞύ▒╗ίηΜύγΕόΨΘόκμΎ╝Νύ╗ΥόηΕό╖╖ϊ╣▒ήΑ?
 
-**建议重组结构**�?
+**ί╗║ϋχχώΘΞύ╗Εύ╗ΥόηΕ**Ύ╝?
 ```
 06_ARCHIVE/main/
-├── BLUEPRINTS/                      # 蓝图归档
-├── v4_development/                  # v4.0 开发文�?
-├── AUDIT_REPORTS/                   # 集中管理审计报告
-├── CHANGELOG/                       # 集中管理历史变更
-└── README.md
+έΦεέΦΑέΦΑ BLUEPRINTS/                      # ϋΥζίδ╛ί╜Τόκμ
+έΦεέΦΑέΦΑ v4_development/                  # v4.0 ί╝ΑίΠΣόΨΘόκ?
+έΦεέΦΑέΦΑ AUDIT_REPORTS/                   # ώδΗϊ╕φύχκύΡΗίχκϋχκόΛξίΣΛ
+έΦεέΦΑέΦΑ CHANGELOG/                       # ώδΗϊ╕φύχκύΡΗίΟΗίΠ▓ίΠαόδ┤
+έΦΦέΦΑέΦΑ README.md
 ```
 
 ---
 
-### 4.9 问题17：INDEX.md �?SITEMAP.md 内容高度重复
+### 4.9 ώΩχώλα17Ύ╝γINDEX.md ϊ╕?SITEMAP.md ίΗΖίχ╣ώταί║οώΘΞίνΞ
 
-**问题分析**�?
-- INDEX.md = 快速入口（5分钟导航�?
-- SITEMAP.md = 完整地图（深度参考）
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- INDEX.md = ί┐τώΑθίΖξίΠμΎ╝Ι5ίΙΗώΤθίψ╝ϋΙςΎ╝?
+- SITEMAP.md = ίχΝόΧ┤ίε░ίδ╛Ύ╝Ιό╖▒ί║οίΠΓϋΑΔΎ╝Κ
 
-**推荐**：保持现状，但需明确区分职责
+**όΟρϋΞΡ**Ύ╝γϊ┐ζόΝΒύΟ░ύΛ╢Ύ╝Νϊ╜ΗώεΑόαΟύκχίΝ║ίΙΗϋΒΝϋ┤μ
 
 ---
 
-### 4.10 问题20：SITEMAP.md 引用过时文件�?
+### 4.10 ώΩχώλα20Ύ╝γSITEMAP.md ί╝ΧύΦρϋ┐ΘόΩ╢όΨΘϊ╗╢ίΡ?
 
-**过时引用清单**�?
+**ϋ┐ΘόΩ╢ί╝ΧύΦρό╕ΖίΞΧ**Ύ╝?
 
-| SITEMAP.md 中的引用 | 实际文件�?| 状�?|
+| SITEMAP.md ϊ╕φύγΕί╝ΧύΦρ | ίχηώβΖόΨΘϊ╗╢ίΡ?| ύΛ╢όΑ?|
 |---------------------|------------|------|
-| `System_Manifest.md` | `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | �?需更新 |
-| `UNIFIED_ARCHITECTURE.md` | `01_FRAMEWORK/ARCHITECTURE.md` | �?需更新 |
+| `System_Manifest.md` | `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` | έζ?ώεΑόδ┤όΨ░ |
+| `UNIFIED_ARCHITECTURE.md` | `01_FRAMEWORK/ARCHITECTURE.md` | έζ?ώεΑόδ┤όΨ░ |
 
 ---
 
-### 4.11 问题26：蓝图文�?�?合并但原文档仍存�?
+### 4.11 ώΩχώλα26Ύ╝γϋΥζίδ╛όΨΘόκ?έΗ?ίΡΙί╣╢ϊ╜ΗίΟθόΨΘόκμϊ╗Ξίφαίε?
 
-**问题**: 7个蓝图已合并�?`BLUEPRINT.md`，但原文件仍存在且被引用
+**ώΩχώλα**: 7ϊ╕ςϋΥζίδ╛ί╖▓ίΡΙί╣╢ίΙ?`BLUEPRINT.md`Ύ╝Νϊ╜ΗίΟθόΨΘϊ╗╢ϊ╗Ξίφαίερϊ╕Φϋλτί╝ΧύΦρ
 
-**建议**: �?`BLUEPRINT.md` 开头添加说明：
+**ί╗║ϋχχ**: ίε?`BLUEPRINT.md` ί╝Αίν┤ό╖╗ίΛιϋψ┤όαΟΎ╝γ
 ```markdown
-> **说明**: 本文档为合并版，原始文档�?`06_ARCHIVE/main/BLUEPRINTS/`
+> **ϋψ┤όαΟ**: όευόΨΘόκμϊ╕║ίΡΙί╣╢ύΚΙΎ╝ΝίΟθίπΜόΨΘόκμϋπ?`06_ARCHIVE/main/BLUEPRINTS/`
 ```
 
 ---
 
-### 4.12 问题27：INDEX.md vs SITEMAP.md 职责重叠
+### 4.12 ώΩχώλα27Ύ╝γINDEX.md vs SITEMAP.md ϋΒΝϋ┤μώΘΞίΠι
 
-**建议区分**�?
+**ί╗║ϋχχίΝ║ίΙΗ**Ύ╝?
 
-| 文件 | 职责 | 内容范围 |
+| όΨΘϊ╗╢ | ϋΒΝϋ┤μ | ίΗΖίχ╣ϋΝΔίδ┤ |
 |------|------|----------|
-| `INDEX.md` | 快速入�?| 5分钟导航 + 核心文档索引 |
-| `SITEMAP.md` | 完整参�?| 深度地图 + 按用途查�?+ 完整目录 |
+| `INDEX.md` | ί┐τώΑθίΖξίΠ?| 5ίΙΗώΤθίψ╝ϋΙς + όι╕ί┐ΔόΨΘόκμύ┤λί╝Χ |
+| `SITEMAP.md` | ίχΝόΧ┤ίΠΓϋΑ?| ό╖▒ί║οίε░ίδ╛ + όΝΚύΦρώΑΦόθξόΚ?+ ίχΝόΧ┤ύδχί╜Χ |
 
 ---
 
-### 4.13 问题28：架构描�?处重�?
+### 4.13 ώΩχώλα28Ύ╝γόη╢όηΕόΠΠϋ┐?ίνΕώΘΞίν?
 
-| 位置 | 描述内容 | 重叠�?|
+| ϊ╜Ξύ╜χ | όΠΠϋ┐░ίΗΖίχ╣ | ώΘΞίΠιί║?|
 |------|----------|--------|
-| `BLUEPRINT.md` 第一�?| 终极愿景、人机协作模式、Layer 0-11架构 | �?|
-| `00_OVERVIEW/README.md` | 系统简介、Layer 0-11架构 | �?|
-| `01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11统一架构 | �?|
-| `docs/README.md` | 项目定位、快速开�?| �?|
+| `BLUEPRINT.md` ύυυϊ╕Αύτ?| ύ╗ΙόηΒόΕ┐όβψήΑΒϊ║║όε║ίΞΠϊ╜εόρκί╝ΠήΑΒLayer 0-11όη╢όηΕ | ώτ?|
+| `00_OVERVIEW/README.md` | ύ│╗ύ╗θύχΑϊ╗ΜήΑΒLayer 0-11όη╢όηΕ | ώτ?|
+| `01_FRAMEWORK/ARCHITECTURE.md` | Layer 0-11ύ╗θϊ╕Αόη╢όηΕ | ϊ╕?|
+| `docs/README.md` | ώκ╣ύδχίχγϊ╜ΞήΑΒί┐τώΑθί╝Αίπ?| ϊ╜?|
 
 ---
 
-### 4.14 问题29�?+个子目录缺少索引
+### 4.14 ώΩχώλα29Ύ╝?+ϊ╕ςίφΡύδχί╜Χύ╝║ί░Σύ┤λί╝Χ
 
-**缺少索引的子目录**�?
+**ύ╝║ί░Σύ┤λί╝ΧύγΕίφΡύδχί╜Χ**Ύ╝?
 
-| 一级目�?| 子目�?| 缺少索引 |
+| ϊ╕Αύ║πύδχί╜?| ίφΡύδχί╜?| ύ╝║ί░Σύ┤λί╝Χ |
 |----------|--------|----------|
-| 02_FACTOR_LIBRARY | `01_METHODOLOGY/` | �?|
-| 02_FACTOR_LIBRARY | `04_DATA_SOURCE/` | �?|
-| 02_FACTOR_LIBRARY | `05_BACKTEST/` | �?|
-| 03_TRADING_TACTICS | `01_STRATEGY_FRAMEWORK/` | �?|
-| 03_TRADING_TACTICS | `03_ADVANCED_TACTICS/` | �?|
-| 04_EXECUTION | `03_MONITORING/` | �?|
+| 02_FACTOR_LIBRARY | `01_METHODOLOGY/` | έε?|
+| 02_FACTOR_LIBRARY | `04_DATA_SOURCE/` | έε?|
+| 02_FACTOR_LIBRARY | `05_BACKTEST/` | έε?|
+| 03_TRADING_TACTICS | `01_STRATEGY_FRAMEWORK/` | έε?|
+| 03_TRADING_TACTICS | `03_ADVANCED_TACTICS/` | έε?|
+| 04_EXECUTION | `03_MONITORING/` | έε?|
 
 ---
 
-### 4.15 问题34：v4_development 冗余文件未清�?
+### 4.15 ώΩχώλα34Ύ╝γv4_development ίΗΩϊ╜βόΨΘϊ╗╢όεςό╕ΖύΡ?
 
-**冗余文件清单**�?
+**ίΗΩϊ╜βόΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| 文件�?| 冗余原因 | 建议操作 |
+| όΨΘϊ╗╢ίΡ?| ίΗΩϊ╜βίΟθίδι | ί╗║ϋχχόΥΞϊ╜ε |
 |--------|----------|----------|
-| `清风量化交易系统4.0开发粗�?- 副本.md` | 与开发粗稿内容相�?| �?删除 |
-| `清风量化交易系统4.0开发粗稿_backup.md` | 开发粗稿的备份 | �?删除 |
-| `清风量化交易系统4.0.txt` | 纯文本备�?| �?删除 |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md` | ϊ╕Οί╝ΑίΠΣύ▓Ωύρ┐ίΗΖίχ╣ύδ╕ίΡ?| έζ?ίΙιώβν |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md` | ί╝ΑίΠΣύ▓Ωύρ┐ύγΕίνΘϊ╗╜ | έζ?ίΙιώβν |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt` | ύ║ψόΨΘόευίνΘϊ╗?| έζ?ίΙιώβν |
 
 ---
 
-### 4.16 问题35：QMT极速策略交易系统说明文�?pdf 未索�?
+### 4.16 ώΩχώλα35Ύ╝γQMTόηΒώΑθύφΨύΧξϊ║νόαΥύ│╗ύ╗θϋψ┤όαΟόΨΘόκ?pdf όεςύ┤λί╝?
 
-**问题位置**：`docs/04_EXECUTION/迅投QMT极速策略交易系统说明文�?pdf`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/04_EXECUTION/ϋ┐ΖόΛΧQMTόηΒώΑθύφΨύΧξϊ║νόαΥύ│╗ύ╗θϋψ┤όαΟόΨΘόκ?pdf`
 
-**问题分析**�?
-- QMT是清风量化系统的核心交易平台
-- 其接口文档应该是重要的参考资�?
-- 未索引会导致用户找不到该文档
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- QMTόαψό╕ΖώμΟώΘΠίΝΨύ│╗ύ╗θύγΕόι╕ί┐Δϊ║νόαΥί╣│ίΠ░
+- ίΖ╢όΟξίΠμόΨΘόκμί║ΦϋψξόαψώΘΞϋοΒύγΕίΠΓϋΑΔϋ╡ΕόΨ?
+- όεςύ┤λί╝Χϊ╝γίψ╝ϋΘ┤ύΦρόΙ╖όΚ╛ϊ╕ΞίΙ░ϋψξόΨΘόκμ
 
-**解决方案**：在 INDEX.md �?04_EXECUTION/README.md 中添加索�?
-
----
-
-## 五、轻微问题详�?
-
-### 5.1 问题8：DEVELOPER_RULES.md 臃肿
-
-**问题位置**：`docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md`
-
-**文件统计**�?
-- 总行数：927�?
-- 包含章节�?2�?
-
-**推荐**：保持现状（务实选择，当前结构可接受�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝γίερ INDEX.md ίΤ?04_EXECUTION/README.md ϊ╕φό╖╗ίΛιύ┤λί╝?
 
 ---
 
-### 5.2 问题9：空目录检�?
+## ϊ║ΦήΑΒϋ╜╗ί╛χώΩχώλαϋψοόΔ?
 
-**检查结�?*�?
+### 5.1 ώΩχώλα8Ύ╝γDEVELOPER_RULES.md ϋΘΔϋΓ┐
+
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md`
+
+**όΨΘϊ╗╢ύ╗θϋχκ**Ύ╝?
+- όΑ╗ϋκΝόΧ░Ύ╝γ927ϋκ?
+- ίΝΖίΡτύτιϋΛΓΎ╝?2ϊ╕?
+
+**όΟρϋΞΡ**Ύ╝γϊ┐ζόΝΒύΟ░ύΛ╢Ύ╝ΙίΛκίχηώΑΚόΜσΎ╝Νί╜ΥίΚΞύ╗ΥόηΕίΠψόΟξίΠΩΎ╝?
+
+---
+
+### 5.2 ώΩχώλα9Ύ╝γύσ║ύδχί╜ΧόμΑόθ?
+
+**όμΑόθξύ╗Υόη?*Ύ╝?
 ```
-⚠️ 需要检查的目录�?
-- docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ (删除 ARCHIVED.md 后是否为空？)
-- docs/08_USER_EXPERIENCE/04_NOZYIO/ (删除 ARCHIVED.md 后是否为空？)
+έγιΎ╕Π ώεΑϋοΒόμΑόθξύγΕύδχί╜ΧΎ╝?
+- docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ (ίΙιώβν ARCHIVED.md ίΡΟόαψίΡοϊ╕║ύσ║Ύ╝θ)
+- docs/08_USER_EXPERIENCE/04_NOZYIO/ (ίΙιώβν ARCHIVED.md ίΡΟόαψίΡοϊ╕║ύσ║Ύ╝θ)
 ```
 
 ---
 
-### 5.3 问题10�?8_USER_EXPERIENCE 归属不明
+### 5.3 ώΩχώλα10Ύ╝?8_USER_EXPERIENCE ί╜Τί▒ηϊ╕ΞόαΟ
 
-**目录内容**�?
+**ύδχί╜ΧίΗΖίχ╣**Ύ╝?
 ```
 08_USER_EXPERIENCE/
-├── README.md
-├── 01_UI_DESIGN/
-�?  └── 界面布局.md
-└── 04_NOZYIO/
-    ├── ARCHIVED.md (待删�?
-    └── README.md
+έΦεέΦΑέΦΑ README.md
+έΦεέΦΑέΦΑ 01_UI_DESIGN/
+έΦ?  έΦΦέΦΑέΦΑ ύΧΝώζλί╕Δί▒Α.md
+έΦΦέΦΑέΦΑ 04_NOZYIO/
+    έΦεέΦΑέΦΑ ARCHIVED.md (ί╛ΖίΙιώβ?
+    έΦΦέΦΑέΦΑ README.md
 ```
 
 ---
 
-### 5.4 问题18：部分归档文件未添加 _archived 后缀
+### 5.4 ώΩχώλα18Ύ╝γώΔρίΙΗί╜ΤόκμόΨΘϊ╗╢όεςό╖╗ίΛι _archived ίΡΟύ╝Α
 
-**命名不一致清�?*�?
+**ίΣ╜ίΡΞϊ╕Ξϊ╕ΑϋΘ┤ό╕ΖίΞ?*Ύ╝?
 
-| 文件 | 当前命名 | 建议命名 |
+| όΨΘϊ╗╢ | ί╜ΥίΚΞίΣ╜ίΡΞ | ί╗║ϋχχίΣ╜ίΡΞ |
 |------|----------|----------|
-| `06_ARCHIVE/main/CHANGELOG.md` | 无后缀 | `CHANGELOG_v3.x_archived.md` |
-| `06_ARCHIVE/main/NOZYIO_REFERENCE.md` | 无后缀 | `NOZYIO_REFERENCE_archived.md` |
+| `06_ARCHIVE/main/CHANGELOG.md` | όΩιίΡΟύ╝Α | `CHANGELOG_v3.x_archived.md` |
+| `06_ARCHIVE/main/NOZYIO_REFERENCE.md` | όΩιίΡΟύ╝Α | `NOZYIO_REFERENCE_archived.md` |
 
 ---
 
-### 5.5 问题19：部分文件名使用中文
+### 5.5 ώΩχώλα19Ύ╝γώΔρίΙΗόΨΘϊ╗╢ίΡΞϊ╜┐ύΦρϊ╕φόΨΘ
 
-**中文文件名清�?*�?
+**ϊ╕φόΨΘόΨΘϊ╗╢ίΡΞό╕ΖίΞ?*Ύ╝?
 
-| 当前文件�?| 建议英文�?|
+| ί╜ΥίΚΞόΨΘϊ╗╢ίΡ?| ί╗║ϋχχϋΜ▒όΨΘίΝ?|
 |------------|------------|
-| `清风量化交易系统4.0开发粗�?md` | `v4.0_development_draft.md` |
-| `清风量化交易系统4.0开发细�?md` | `v4.0_development_detail.md` |
-| `清风量化交易系统4.0开发方�?md` | `v4.0_development_plan.md` |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?md` | `v4.0_development_draft.md` |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ╗Ηύρ?md` | `v4.0_development_detail.md` |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣόΨ╣όκ?md` | `v4.0_development_plan.md` |
 
 ---
 
-### 5.6 问题30�?个历史审计报告可删除
+### 5.6 ώΩχώλα30Ύ╝?ϊ╕ςίΟΗίΠ▓ίχκϋχκόΛξίΣΛίΠψίΙιώβν
 
-| 文件 | 说明 | 建议 |
+| όΨΘϊ╗╢ | ϋψ┤όαΟ | ί╗║ϋχχ |
 |------|------|------|
-| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | 旧文档分�?| 可删�?|
-| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | 开发序�?| 可删�?|
-| `06_ARCHIVE/main/TEST_PLAN_archived.md` | 测试计划 | 可删�?|
-| `06_ARCHIVE/main/README_v1.1_archived.md` | v1.1自述 | 可删�?|
+| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | όΩπόΨΘόκμίΙΗόη?| ίΠψίΙιώβ?|
+| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | ί╝ΑίΠΣί║ΠίΙ?| ίΠψίΙιώβ?|
+| `06_ARCHIVE/main/TEST_PLAN_archived.md` | ό╡ΜϋψΧϋχκίΙΤ | ίΠψίΙιώβ?|
+| `06_ARCHIVE/main/README_v1.1_archived.md` | v1.1ϋΘςϋ┐░ | ίΠψίΙιώβ?|
 
 ---
 
-### 5.7 问题31�?个备份文件可删除
+### 5.7 ώΩχώλα31Ύ╝?ϊ╕ςίνΘϊ╗╜όΨΘϊ╗╢ίΠψίΙιώβν
 
-| 文件 | 说明 | 建议 |
+| όΨΘϊ╗╢ | ϋψ┤όαΟ | ί╗║ϋχχ |
 |------|------|------|
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗�?- 副本.md` | 备份 | 可删�?|
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗稿_backup.md` | 备份 | 可删�?|
+| `06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md` | ίνΘϊ╗╜ | ίΠψίΙιώβ?|
+| `06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md` | ίνΘϊ╗╜ | ίΠψίΙιώβ?|
 
 ---
 
-### 5.8 问题32�?个个人笔记可删除
+### 5.8 ώΩχώλα32Ύ╝?ϊ╕ςϊ╕ςϊ║║ύυΦϋχ░ίΠψίΙιώβν
 
-| 文件 | 说明 | 建议 |
+| όΨΘϊ╗╢ | ϋψ┤όαΟ | ί╗║ϋχχ |
 |------|------|------|
-| `06_ARCHIVE/旧文档务实评估_1人AI_一个月.md` | 个人评估笔记 | 可删�?|
+| `06_ARCHIVE/όΩπόΨΘόκμίΛκίχηϋψΕϊ╝░_1ϊ║║AI_ϊ╕Αϊ╕ςόεΙ.md` | ϊ╕ςϊ║║ϋψΕϊ╝░ύυΦϋχ░ | ίΠψίΙιώβ?|
 
 ---
 
-### 5.9 问题36：审计报告重复（COMPLETE vs FINAL�?
+### 5.9 ώΩχώλα36Ύ╝γίχκϋχκόΛξίΣΛώΘΞίνΞΎ╝ΙCOMPLETE vs FINALΎ╝?
 
-**重复文件清单**�?
+**ώΘΞίνΞόΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| 文件�?| 版本 | 状�?|
+| όΨΘϊ╗╢ίΡ?| ύΚΙόευ | ύΛ╢όΑ?|
 |--------|------|------|
-| `COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md` | v2 | ⚠️ 待确�?|
-| `FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | v2 | ⚠️ 待确�?|
-| `FINAL_AUDIT_REPORT_V5.md` | v5 | �?当前活跃 |
+| `COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md` | v2 | έγιΎ╕Π ί╛Ζύκχϋχ?|
+| `FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | v2 | έγιΎ╕Π ί╛Ζύκχϋχ?|
+| `FINAL_AUDIT_REPORT_V5.md` | v5 | έε?ί╜ΥίΚΞό┤╗ϋ╖Δ |
 
 ---
 
-## 六、解决方案执行清�?
+## ίΖφήΑΒϋπμίΗ│όΨ╣όκΙόΚπϋκΝό╕ΖίΞ?
 
-### 6.1 P0 紧急修复（必须立即执行�?
+### 6.1 P0 ύ┤πόΑξϊ┐χίνΞΎ╝Ιί┐Ζώκ╗ύτΜίΞ│όΚπϋκΝΎ╝?
 
-| # | 操作 | 命令/说明 | 对应问题 |
+| # | όΥΞϊ╜ε | ίΣ╜ϊ╗ν/ϋψ┤όαΟ | ίψ╣ί║ΦώΩχώλα |
 |---|------|-----------|----------|
-| 1 | 恢复 System_Manifest.md | `Copy-Item "06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_Manifest.md"` | 问题1,24 |
-| 2 | 删除 ARCHIVED.md（决策框架） | `Remove-Item "docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md"` | 问题2 |
-| 3 | 删除 ARCHIVED.md（NozyIO�?| `Remove-Item "docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md"` | 问题3 |
-| 4 | 删除 EXPERIMENT_TRACKING.md 重复 | `Remove-Item "docs/EXPERIMENT_TRACKING.md"` | 问题11 |
-| 5 | 重命�?CHANGELOG.md | `Rename-Item "06_ARCHIVE/main/CHANGELOG.md" "06_ARCHIVE/main/CHANGELOG_v3.x_archived.md"` | 问题12 |
-| 6 | 创建 SPEC.md 重定�?| 创建 `docs/SPEC.md` 指向 `INDEX.md` | 问题21 |
-| 7 | 修正因子库README链接路径 | 修正4�?`../` 为正确相对路�?| 问题33 |
+| 1 | όΒλίνΞ System_Manifest.md | `Copy-Item "06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_Manifest.md"` | ώΩχώλα1,24 |
+| 2 | ίΙιώβν ARCHIVED.mdΎ╝ΙίΗ│ύφΨόκΗόη╢Ύ╝Κ | `Remove-Item "docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md"` | ώΩχώλα2 |
+| 3 | ίΙιώβν ARCHIVED.mdΎ╝ΙNozyIOΎ╝?| `Remove-Item "docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md"` | ώΩχώλα3 |
+| 4 | ίΙιώβν EXPERIMENT_TRACKING.md ώΘΞίνΞ | `Remove-Item "docs/EXPERIMENT_TRACKING.md"` | ώΩχώλα11 |
+| 5 | ώΘΞίΣ╜ίΡ?CHANGELOG.md | `Rename-Item "06_ARCHIVE/main/CHANGELOG.md" "06_ARCHIVE/main/CHANGELOG_v3.x_archived.md"` | ώΩχώλα12 |
+| 6 | ίΙδί╗║ SPEC.md ώΘΞίχγίΡ?| ίΙδί╗║ `docs/SPEC.md` όΝΘίΡΣ `INDEX.md` | ώΩχώλα21 |
+| 7 | ϊ┐χόφμίδιίφΡί║ΥREADMEώΥ╛όΟξϋ╖ψί╛Ε | ϊ┐χόφμ4ίν?`../` ϊ╕║όφμύκχύδ╕ίψ╣ϋ╖ψί╛?| ώΩχώλα33 |
 
-### 6.2 P1 重要修复（本周内执行�?
+### 6.2 P1 ώΘΞϋοΒϊ┐χίνΞΎ╝ΙόευίΣρίΗΖόΚπϋκΝΎ╝?
 
-| # | 操作 | 说明 | 对应问题 |
+| # | όΥΞϊ╜ε | ϋψ┤όαΟ | ίψ╣ί║ΦώΩχώλα |
 |---|------|------|----------|
-| 8 | 移动 HANDOVER.md | `Move-Item "docs/HANDOVER.md" "HANDOVER.md"` | 问题13 |
-| 9 | 移动 KNOWLEDGE_MANAGEMENT.md | `Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.md"` | 问题14 |
-| 10 | 更新 INDEX.md | 添加5个未索引文档 + QMT PDF | 问题15,35 |
-| 11 | 更新 07_SYSTEM_MANIFEST.md | 添加"已恢�?注释 | 问题5 |
-| 12 | 检查空目录 | 根据情况删除或保�?| 问题9 |
-| 13 | 更新过时版本�?| v4.0 �?v5.1 | 问题7 |
-| 14 | 更新 SITEMAP.md 引用 | 修复过时文件引用 | 问题20 |
-| 15 | 为蓝图文档添加归档注�?| �?BLUEPRINTS/ 各文件添�?已归�?头部 | 问题25,26 |
-| 16 | 明确 INDEX.md vs SITEMAP.md 职责 | INDEX=入口，SITEMAP=完整参�?| 问题17,27 |
-| 17 | 创建子目录索�?| �?01_METHODOLOGY/ 等创�?INDEX.md | 问题29 |
+| 8 | ύπ╗ίΛρ HANDOVER.md | `Move-Item "docs/HANDOVER.md" "HANDOVER.md"` | ώΩχώλα13 |
+| 9 | ύπ╗ίΛρ KNOWLEDGE_MANAGEMENT.md | `Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.md"` | ώΩχώλα14 |
+| 10 | όδ┤όΨ░ INDEX.md | ό╖╗ίΛι5ϊ╕ςόεςύ┤λί╝ΧόΨΘόκμ + QMT PDF | ώΩχώλα15,35 |
+| 11 | όδ┤όΨ░ 07_SYSTEM_MANIFEST.md | ό╖╗ίΛι"ί╖▓όΒλίν?ό│ρώΘΛ | ώΩχώλα5 |
+| 12 | όμΑόθξύσ║ύδχί╜Χ | όι╣όΞχόΔΖίΗ╡ίΙιώβνόΙΨϊ┐ζύΧ?| ώΩχώλα9 |
+| 13 | όδ┤όΨ░ϋ┐ΘόΩ╢ύΚΙόευίΠ?| v4.0 έΗ?v5.1 | ώΩχώλα7 |
+| 14 | όδ┤όΨ░ SITEMAP.md ί╝ΧύΦρ | ϊ┐χίνΞϋ┐ΘόΩ╢όΨΘϊ╗╢ί╝ΧύΦρ | ώΩχώλα20 |
+| 15 | ϊ╕║ϋΥζίδ╛όΨΘόκμό╖╗ίΛιί╜Τόκμό│ρώΘ?| ίε?BLUEPRINTS/ ίΡΕόΨΘϊ╗╢ό╖╗ίΛ?ί╖▓ί╜Τόκ?ίν┤ώΔρ | ώΩχώλα25,26 |
+| 16 | όαΟύκχ INDEX.md vs SITEMAP.md ϋΒΝϋ┤μ | INDEX=ίΖξίΠμΎ╝ΝSITEMAP=ίχΝόΧ┤ίΠΓϋΑ?| ώΩχώλα17,27 |
+| 17 | ίΙδί╗║ίφΡύδχί╜Χύ┤λί╝?| ϊ╕?01_METHODOLOGY/ ύφΚίΙδί╗?INDEX.md | ώΩχώλα29 |
 
-### 6.3 P2 优化修复（可选）
+### 6.3 P2 ϊ╝αίΝΨϊ┐χίνΞΎ╝ΙίΠψώΑΚΎ╝Κ
 
-| # | 操作 | 说明 | 对应问题 |
+| # | όΥΞϊ╜ε | ϋψ┤όαΟ | ίψ╣ί║ΦώΩχώλα |
 |---|------|------|----------|
-| 18 | 删除v4冗余文件 | 删除副本、备份、txt | 问题34 |
-| 19 | 重组 06_ARCHIVE/main/ | 创建 AUDIT_REPORTS/ �?CHANGELOG/ 子目�?| 问题16 |
-| 20 | 统一归档文件命名 | 添加 _archived 后缀 | 问题18 |
-| 21 | 中文文件名英文化 | 重命�?v4_development/ 中的文件 | 问题19 |
-| 22 | 拆分 DEVELOPER_RULES.md | 如需更细粒度文档 | 问题8 |
-| 23 | 统一目录编号 | 08_USER_EXPERIENCE �?07 | 问题6,10 |
-| 24 | 确认审计报告重复 | 对比 COMPLETE vs FINAL | 问题36 |
+| 18 | ίΙιώβνv4ίΗΩϊ╜βόΨΘϊ╗╢ | ίΙιώβνίΚψόευήΑΒίνΘϊ╗╜ήΑΒtxt | ώΩχώλα34 |
+| 19 | ώΘΞύ╗Ε 06_ARCHIVE/main/ | ίΙδί╗║ AUDIT_REPORTS/ ίΤ?CHANGELOG/ ίφΡύδχί╜?| ώΩχώλα16 |
+| 20 | ύ╗θϊ╕Αί╜ΤόκμόΨΘϊ╗╢ίΣ╜ίΡΞ | ό╖╗ίΛι _archived ίΡΟύ╝Α | ώΩχώλα18 |
+| 21 | ϊ╕φόΨΘόΨΘϊ╗╢ίΡΞϋΜ▒όΨΘίΝΨ | ώΘΞίΣ╜ίΡ?v4_development/ ϊ╕φύγΕόΨΘϊ╗╢ | ώΩχώλα19 |
+| 22 | όΜΗίΙΗ DEVELOPER_RULES.md | ίοΓώεΑόδ┤ύ╗Ηύ▓Τί║οόΨΘόκμ | ώΩχώλα8 |
+| 23 | ύ╗θϊ╕Αύδχί╜Χύ╝ΨίΠ╖ | 08_USER_EXPERIENCE έΗ?07 | ώΩχώλα6,10 |
+| 24 | ύκχϋχνίχκϋχκόΛξίΣΛώΘΞίνΞ | ίψ╣όψΦ COMPLETE vs FINAL | ώΩχώλα36 |
 
 ---
 
-## 七、修复工作量估算
+## ϊ╕ΔήΑΒϊ┐χίνΞί╖ξϊ╜εώΘΠϊ╝░ύχΩ
 
-### 7.1 按优先级估算
+### 7.1 όΝΚϊ╝αίΖΙύ║πϊ╝░ύχΩ
 
-| 优先�?| 问题�?| 预计时间 | 说明 |
+| ϊ╝αίΖΙύ║?| ώΩχώλαόΧ?| ώλΕϋχκόΩ╢ώΩ┤ | ϋψ┤όαΟ |
 |--------|--------|----------|------|
-| **P0 紧�?* | 7�?| 15-20分钟 | 幽灵引用修复 + 链接路径错误 |
-| **P1 重要** | 10�?| 45-60分钟 | 冗余清理 + 索引补充 |
-| **P2 优化** | 7�?| 20-30分钟 | 废弃文件清理 + 命名规范 |
-| **总计** | **42�?* | **80-110分钟** | - |
+| **P0 ύ┤πόΑ?* | 7ϊ╕?| 15-20ίΙΗώΤθ | ί╣╜ύΒ╡ί╝ΧύΦρϊ┐χίνΞ + ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ |
+| **P1 ώΘΞϋοΒ** | 10ϊ╕?| 45-60ίΙΗώΤθ | ίΗΩϊ╜βό╕ΖύΡΗ + ύ┤λί╝ΧϋκξίΖΖ |
+| **P2 ϊ╝αίΝΨ** | 7ϊ╕?| 20-30ίΙΗώΤθ | ί║θί╝ΔόΨΘϊ╗╢ό╕ΖύΡΗ + ίΣ╜ίΡΞϋπΕϋΝΔ |
+| **όΑ╗ϋχκ** | **42ϊ╕?* | **80-110ίΙΗώΤθ** | - |
 
-### 7.2 按问题类型估�?
+### 7.2 όΝΚώΩχώλαύ▒╗ίηΜϊ╝░ύχ?
 
-| 问题类型 | 问题�?| 预计时间 | 示例 |
+| ώΩχώλαύ▒╗ίηΜ | ώΩχώλαόΧ?| ώλΕϋχκόΩ╢ώΩ┤ | ύν║ϊ╛Μ |
 |----------|--------|----------|------|
-| 幽灵引用 | 5�?| 10分钟 | 创建重定向文�?|
-| 链接路径错误 | 4�?| 5分钟 | 修正相对路径 |
-| 文件删除 | 8�?| 5分钟 | Remove-Item |
-| 文件移动 | 2�?| 2分钟 | Move-Item |
-| 索引更新 | 3�?| 15分钟 | 更新INDEX/SITEMAP |
-| 目录重组 | 1�?| 30分钟 | 创建子目�?|
+| ί╣╜ύΒ╡ί╝ΧύΦρ | 5ϊ╕?| 10ίΙΗώΤθ | ίΙδί╗║ώΘΞίχγίΡΣόΨΘϊ╗?|
+| ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ | 4ίν?| 5ίΙΗώΤθ | ϊ┐χόφμύδ╕ίψ╣ϋ╖ψί╛Ε |
+| όΨΘϊ╗╢ίΙιώβν | 8ϊ╕?| 5ίΙΗώΤθ | Remove-Item |
+| όΨΘϊ╗╢ύπ╗ίΛρ | 2ϊ╕?| 2ίΙΗώΤθ | Move-Item |
+| ύ┤λί╝Χόδ┤όΨ░ | 3ϊ╕?| 15ίΙΗώΤθ | όδ┤όΨ░INDEX/SITEMAP |
+| ύδχί╜ΧώΘΞύ╗Ε | 1ϊ╕?| 30ίΙΗώΤθ | ίΙδί╗║ίφΡύδχί╜?|
 
 ---
 
-## 八、专业量化机构文件治理标准对�?
+## ίΖτήΑΒϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΨΘϊ╗╢ό▓╗ύΡΗόιΘίΘΗίψ╣ύΖ?
 
-### 8.1 八大标准检查表
+### 8.1 ίΖτίνπόιΘίΘΗόμΑόθξϋκρ
 
-| 检查项 | 标准要求 | 当前状�?| 改进建议 |
+| όμΑόθξώκ╣ | όιΘίΘΗϋοΒό▒Γ | ί╜ΥίΚΞύΛ╢όΑ?| όΦ╣ϋ┐δί╗║ϋχχ |
 |--------|----------|----------|----------|
-| **目录边界** | src/tests/docs/config/scripts/data 清晰划分 | �?5/5 | 保持 |
-| **文件漂移** | 无文档在代码目录，无代码在文档目�?| �?5/5 | 清理完成 |
-| **重复控制** | 无多个文档描述同一内容 | ⚠️ 3/5 | 需清理蓝图重复 |
-| **索引完整** | 所有文档都有索引入�?| ⚠️ 3/5 | 幽灵引用严重 |
-| **一文件一职责** | 无文件承担多种职�?| ⚠️ 3/5 | INDEX/SITEMAP重叠 |
-| **归档管理** | 废弃文档统一归档 | �?4/5 | 基本合规 |
-| **版本一�?* | 版本号清晰一�?| ⚠️ 3/5 | v4.0/v5.0混用 |
-| **命名规范** | 目录/文件命名统一 | ⚠️ 3/5 | 中文文件�?|
+| **ύδχί╜Χϋ╛╣ύΧΝ** | src/tests/docs/config/scripts/data ό╕Ζόβ░ίΙΤίΙΗ | έε?5/5 | ϊ┐ζόΝΒ |
+| **όΨΘϊ╗╢ό╝Γύπ╗** | όΩιόΨΘόκμίερϊ╗μύιΒύδχί╜ΧΎ╝ΝόΩιϊ╗μύιΒίερόΨΘόκμύδχί╜?| έε?5/5 | ό╕ΖύΡΗίχΝόΙΡ |
+| **ώΘΞίνΞόΟπίΙ╢** | όΩιίνγϊ╕ςόΨΘόκμόΠΠϋ┐░ίΡΝϊ╕ΑίΗΖίχ╣ | έγιΎ╕Π 3/5 | ώεΑό╕ΖύΡΗϋΥζίδ╛ώΘΞίνΞ |
+| **ύ┤λί╝ΧίχΝόΧ┤** | όΚΑόεΚόΨΘόκμώΔ╜όεΚύ┤λί╝ΧίΖξίΠ?| έγιΎ╕Π 3/5 | ί╣╜ύΒ╡ί╝ΧύΦρϊ╕ξώΘΞ |
+| **ϊ╕ΑόΨΘϊ╗╢ϊ╕ΑϋΒΝϋ┤μ** | όΩιόΨΘϊ╗╢όΚ┐όΜΖίνγύπΞϋΒΝϋ┤?| έγιΎ╕Π 3/5 | INDEX/SITEMAPώΘΞίΠι |
+| **ί╜ΤόκμύχκύΡΗ** | ί║θί╝ΔόΨΘόκμύ╗θϊ╕Αί╜Τόκμ | έε?4/5 | ίθ║όευίΡΙϋπΕ |
+| **ύΚΙόευϊ╕ΑϋΘ?* | ύΚΙόευίΠ╖ό╕Ζόβ░ϊ╕ΑϋΘ?| έγιΎ╕Π 3/5 | v4.0/v5.0ό╖╖ύΦρ |
+| **ίΣ╜ίΡΞϋπΕϋΝΔ** | ύδχί╜Χ/όΨΘϊ╗╢ίΣ╜ίΡΞύ╗θϊ╕Α | έγιΎ╕Π 3/5 | ϊ╕φόΨΘόΨΘϊ╗╢ίΡ?|
 
-### 8.2 量化指标
+### 8.2 ώΘΠίΝΨόΝΘόιΘ
 
-| 指标 | 目标�?| 当前�?| 状�?|
+| όΝΘόιΘ | ύδχόιΘίΑ?| ί╜ΥίΚΞίΑ?| ύΛ╢όΑ?|
 |------|--------|--------|------|
-| 文档总数 | 60-80 | ~80 | �?达标 |
-| 重复文档�?| 0 | 3+ | ⚠️ 待清�?|
-| 未索引文�?| <5 | 5 | ⚠️ 待处�?|
-| 严重问题�?| 0 | 12 | 🔴 需紧急修�?|
-| 幽灵引用�?| 0 | 100+ | 🔴 严重 |
-| 链接路径错误 | 0 | 4�?| 🔴 新增 |
-| 版本一致�?| 100% | ~70% | ⚠️ 待改�?|
+| όΨΘόκμόΑ╗όΧ░ | 60-80 | ~80 | έε?ϋ╛╛όιΘ |
+| ώΘΞίνΞόΨΘόκμύ╗?| 0 | 3+ | έγιΎ╕Π ί╛Ζό╕ΖύΡ?|
+| όεςύ┤λί╝ΧόΨΘόκ?| <5 | 5 | έγιΎ╕Π ί╛ΖίνΕύΡ?|
+| ϊ╕ξώΘΞώΩχώλαόΧ?| 0 | 12 | ΏθΦ┤ ώεΑύ┤πόΑξϊ┐χίν?|
+| ί╣╜ύΒ╡ί╝ΧύΦρόΧ?| 0 | 100+ | ΏθΦ┤ ϊ╕ξώΘΞ |
+| ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ | 0 | 4ίν?| ΏθΦ┤ όΨ░ίλη |
+| ύΚΙόευϊ╕ΑϋΘ┤όΑ?| 100% | ~70% | έγιΎ╕Π ί╛ΖόΦ╣ϋ┐?|
 
 ---
 
-## 九、做得好的方�?
+## ϊ╣ζήΑΒίΒγί╛Ωίξ╜ύγΕόΨ╣ώζ?
 
-| 方面 | 评价 | 说明 |
+| όΨ╣ώζλ | ϋψΕϊ╗╖ | ϋψ┤όαΟ |
 |------|------|------|
-| **目录结构** | ⭐⭐⭐⭐�?| 顶层8个一级目录按职能清晰划分 |
-| **归档机制** | ⭐⭐⭐⭐�?| 06_ARCHIVE/ 统一管理历史文档 |
-| **代码目录纯净** | ⭐⭐⭐⭐�?| src/, tests/, config/ 无文档漂�?|
-| **版本控制** | ⭐⭐⭐⭐ | �?CHANGELOG.md �?VERSION_HISTORY.md |
-| **索引意识** | ⭐⭐⭐⭐ | �?INDEX.md �?SITEMAP.md 双索�?|
-| **命名规范** | ⭐⭐�?| 中文命名用于内容文档，英文用于技术文�?|
+| **ύδχί╜Χύ╗ΥόηΕ** | έφΡέφΡέφΡέφΡέφ?| ώκ╢ί▒Γ8ϊ╕ςϊ╕Αύ║πύδχί╜ΧόΝΚϋΒΝϋΔ╜ό╕Ζόβ░ίΙΤίΙΗ |
+| **ί╜Τόκμόε║ίΙ╢** | έφΡέφΡέφΡέφΡέφ?| 06_ARCHIVE/ ύ╗θϊ╕ΑύχκύΡΗίΟΗίΠ▓όΨΘόκμ |
+| **ϊ╗μύιΒύδχί╜Χύ║ψίΘΑ** | έφΡέφΡέφΡέφΡέφ?| src/, tests/, config/ όΩιόΨΘόκμό╝Γύπ?|
+| **ύΚΙόευόΟπίΙ╢** | έφΡέφΡέφΡέφΡ | όε?CHANGELOG.md ίΤ?VERSION_HISTORY.md |
+| **ύ┤λί╝ΧόΕΠϋψΗ** | έφΡέφΡέφΡέφΡ | όε?INDEX.md ίΤ?SITEMAP.md ίΠΝύ┤λί╝?|
+| **ίΣ╜ίΡΞϋπΕϋΝΔ** | έφΡέφΡέφ?| ϊ╕φόΨΘίΣ╜ίΡΞύΦρϊ║ΟίΗΖίχ╣όΨΘόκμΎ╝ΝϋΜ▒όΨΘύΦρϊ║ΟόΛΑόεψόΨΘόκ?|
 
 ---
 
-## 十、版本演进记�?
+## ίΞΒήΑΒύΚΙόευό╝Φϋ┐δϋχ░ί╜?
 
-| 日期 | 版本 | 操作 | 执行�?|
+| όΩξόεθ | ύΚΙόευ | όΥΞϊ╜ε | όΚπϋκΝϊ║?|
 |------|------|------|--------|
-| 2026-03-31 | v5.1 初版 | 第一轮文档审查，10个问�?| AI Assistant |
-| 2026-03-31 | v5.1 补充 | 第二轮审查，补充10个问题（20个） | AI Assistant |
-| 2026-03-31 | v5.1 补充 | 第三轮审查，发现EXPERIMENT_TRACKING重复等问�?| AI Assistant |
-| 2026-03-31 | v5.1 第四�?| 深度交叉验证，新�?2个问题（32个） | AI Assistant |
-| 2026-03-31 | v5.1 第五�?| 补充问题33-36，完善执行清单（42个） | AI Assistant |
-| 2026-03-31 | v5.1 第六�?| 深度全文审查，补充问�?7-50 | AI Assistant |
+| 2026-03-31 | v5.1 ίΙζύΚΙ | ύυυϊ╕Αϋ╜χόΨΘόκμίχκόθξΎ╝Ν10ϊ╕ςώΩχώλ?| AI Assistant |
+| 2026-03-31 | v5.1 ϋκξίΖΖ | ύυυϊ║Νϋ╜χίχκόθξΎ╝ΝϋκξίΖΖ10ϊ╕ςώΩχώλαΎ╝Ι20ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ϋκξίΖΖ | ύυυϊ╕Κϋ╜χίχκόθξΎ╝ΝίΠΣύΟ░EXPERIMENT_TRACKINGώΘΞίνΞύφΚώΩχώλ?| AI Assistant |
+| 2026-03-31 | v5.1 ύυυίδδϋ╜?| ό╖▒ί║οϊ║νίΠΚώςΝϋψΒΎ╝ΝόΨ░ίλ?2ϊ╕ςώΩχώλαΎ╝Ι32ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ύυυϊ║Φϋ╜?| ϋκξίΖΖώΩχώλα33-36Ύ╝ΝίχΝίΨΕόΚπϋκΝό╕ΖίΞΧΎ╝Ι42ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ύυυίΖφϋ╜?| ό╖▒ί║οίΖρόΨΘίχκόθξΎ╝ΝϋκξίΖΖώΩχώλ?7-50 | AI Assistant |
 
 ---
 
-## 十一、新增问题详情（第六轮审查）
+## ίΞΒϊ╕ΑήΑΒόΨ░ίληώΩχώλαϋψοόΔΖΎ╝ΙύυυίΖφϋ╜χίχκόθξΎ╝Κ
 
-### 11.1 问题37：BLUEPRINT.md �?BLUEPRINTS/ 内容重复
+### 11.1 ώΩχώλα37Ύ╝γBLUEPRINT.md ϊ╕?BLUEPRINTS/ ίΗΖίχ╣ώΘΞίνΞ
 
-**问题描述**�?
-`docs/BLUEPRINT.md` 已将7个蓝图文档合并，但完整的原始内容仍存在于 `06_ARCHIVE/main/BLUEPRINTS/` 目录下，造成"单一职责"原则违反�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+`docs/BLUEPRINT.md` ί╖▓ί░Η7ϊ╕ςϋΥζίδ╛όΨΘόκμίΡΙί╣╢Ύ╝Νϊ╜ΗίχΝόΧ┤ύγΕίΟθίπΜίΗΖίχ╣ϊ╗Ξίφαίερϊ║Ο `06_ARCHIVE/main/BLUEPRINTS/` ύδχί╜Χϊ╕ΜΎ╝ΝώΑιόΙΡ"ίΞΧϊ╕ΑϋΒΝϋ┤μ"ίΟθίΙβϋ┐ζίΠΞήΑ?
 
-**重复文件清单**�?
+**ώΘΞίνΞόΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| BLUEPRINT.md 章节 | 对应归档文件 | 归档位置 |
+| BLUEPRINT.md ύτιϋΛΓ | ίψ╣ί║Φί╜ΤόκμόΨΘϊ╗╢ | ί╜Τόκμϊ╜Ξύ╜χ |
 |-------------------|--------------|----------|
-| 第一章：终极愿景 | ULTIMATE_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` |
-| 第二章：技术栈 | ULTIMATE_BLUEPRINT.md | 同上 |
-| 第三章：部署蓝图 | DEPLOYMENT_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md` |
-| 第四章：安全蓝图 | SECURITY_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md` |
-| 第五章：API蓝图 | API_INTEGRATION_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md` |
-| 第六章：AI研究框架 | AI_RESEARCH_FRAMEWORK.md | `06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md` |
-| 第七章：开发路线图 | DEVELOPMENT_ROADMAP.md | `06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md` |
-| 第八章：系统架构 | System_Manifest.md | `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` |
+| ύυυϊ╕ΑύτιΎ╝γύ╗ΙόηΒόΕ┐όβψ | ULTIMATE_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md` |
+| ύυυϊ║ΝύτιΎ╝γόΛΑόεψόιΙ | ULTIMATE_BLUEPRINT.md | ίΡΝϊ╕Λ |
+| ύυυϊ╕ΚύτιΎ╝γώΔρύ╜▓ϋΥζίδ╛ | DEPLOYMENT_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md` |
+| ύυυίδδύτιΎ╝γίχΚίΖρϋΥζίδ╛ | SECURITY_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md` |
+| ύυυϊ║ΦύτιΎ╝γAPIϋΥζίδ╛ | API_INTEGRATION_BLUEPRINT.md | `06_ARCHIVE/main/BLUEPRINTS/04_API_INTEGRATION_BLUEPRINT.md` |
+| ύυυίΖφύτιΎ╝γAIύιΦύσ╢όκΗόη╢ | AI_RESEARCH_FRAMEWORK.md | `06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md` |
+| ύυυϊ╕ΔύτιΎ╝γί╝ΑίΠΣϋ╖ψύ║┐ίδ╛ | DEVELOPMENT_ROADMAP.md | `06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md` |
+| ύυυίΖτύτιΎ╝γύ│╗ύ╗θόη╢όηΕ | System_Manifest.md | `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` |
 
-**问题分析**�?
-- BLUEPRINT.md 只包含章节索引和摘要，完整内容在 archive �?
-- 违反�?单一真实来源"原则
-- 用户阅读 BLUEPRINT.md 时需要跳转多次才能看到完整内�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- BLUEPRINT.md ίΠςίΝΖίΡτύτιϋΛΓύ┤λί╝ΧίΤΝόΣαϋοΒΎ╝ΝίχΝόΧ┤ίΗΖίχ╣ίερ archive ϊ╕?
+- ϋ┐ζίΠΞϊ║?ίΞΧϊ╕Αύεθίχηόζξό║Ρ"ίΟθίΙβ
+- ύΦρόΙ╖ώαΖϋψ╗ BLUEPRINT.md όΩ╢ώεΑϋοΒϋ╖│ϋ╜υίνγόυκόΚΞϋΔ╜ύεΜίΙ░ίχΝόΧ┤ίΗΖίχ?
 
-**解决方案**�?
-| 方案 | 描述 | 推荐 |
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
+| όΨ╣όκΙ | όΠΠϋ┐░ | όΟρϋΞΡ |
 |------|------|------|
-| **方案A** | BLUEPRINT.md 包含完整内容，删�?archive 中的重复 | �?推荐 |
-| **方案B** | 保持现状，明确说�?完整内容�?archive" | 备�?|
+| **όΨ╣όκΙA** | BLUEPRINT.md ίΝΖίΡτίχΝόΧ┤ίΗΖίχ╣Ύ╝ΝίΙιώβ?archive ϊ╕φύγΕώΘΞίνΞ | έε?όΟρϋΞΡ |
+| **όΨ╣όκΙB** | ϊ┐ζόΝΒύΟ░ύΛ╢Ύ╝ΝόαΟύκχϋψ┤όα?ίχΝόΧ┤ίΗΖίχ╣ϋπ?archive" | ίνΘώΑ?|
 
 ---
 
-### 11.2 问题38：System_Manifest.md 存在两个版本
+### 11.2 ώΩχώλα38Ύ╝γSystem_Manifest.md ίφαίερϊ╕νϊ╕ςύΚΙόευ
 
-**问题描述**�?
-`System_Manifest.md` 存在于两个位置：
-1. `docs/System_Manifest.md` - 如果已恢�?
-2. `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` - 归档版本
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+`System_Manifest.md` ίφαίερϊ║Οϊ╕νϊ╕ςϊ╜Ξύ╜χΎ╝γ
+1. `docs/System_Manifest.md` - ίοΓόηεί╖▓όΒλίν?
+2. `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` - ί╜ΤόκμύΚΙόευ
 
-**交叉验证**�?
+**ϊ║νίΠΚώςΝϋψΒ**Ύ╝?
 ```
-�?docs/System_Manifest.md（如果已恢复�?
-�?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md（归档版本）
+έε?docs/System_Manifest.mdΎ╝ΙίοΓόηεί╖▓όΒλίνΞΎ╝?
+έε?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.mdΎ╝Ιί╜ΤόκμύΚΙόευΎ╝Κ
 ```
 
-**问题分析**�?
-- 两个版本内容可能不同�?
-- 违反�?唯一真实来源"原则
-- 需要确定哪个是权威版本
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ϊ╕νϊ╕ςύΚΙόευίΗΖίχ╣ίΠψϋΔ╜ϊ╕ΞίΡΝόφ?
+- ϋ┐ζίΠΞϊ║?ίΦψϊ╕Αύεθίχηόζξό║Ρ"ίΟθίΙβ
+- ώεΑϋοΒύκχίχγίΥςϊ╕ςόαψόζΔίρΒύΚΙόευ
 
-**解决方案**�?
-- 确定 `docs/System_Manifest.md` 为权威版�?
-- `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` 添加"已归档，内容已并�?docs/System_Manifest.md"注释
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
+- ύκχίχγ `docs/System_Manifest.md` ϊ╕║όζΔίρΒύΚΙόε?
+- `06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md` ό╖╗ίΛι"ί╖▓ί╜ΤόκμΎ╝ΝίΗΖίχ╣ί╖▓ί╣╢ίΖ?docs/System_Manifest.md"ό│ρώΘΛ
 
 ---
 
-### 11.3 问题39：v4_development/ 目录大量冗余文件
+### 11.3 ώΩχώλα39Ύ╝γv4_development/ ύδχί╜ΧίνπώΘΠίΗΩϊ╜βόΨΘϊ╗╢
 
-**问题位置**：`docs/06_ARCHIVE/main/v4_development/`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/06_ARCHIVE/main/v4_development/`
 
-**冗余文件清单**�?
+**ίΗΩϊ╜βόΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| 文件�?| 冗余原因 | 建议操作 |
+| όΨΘϊ╗╢ίΡ?| ίΗΩϊ╜βίΟθίδι | ί╗║ϋχχόΥΞϊ╜ε |
 |--------|----------|----------|
-| `清风量化交易系统4.0开发粗�?- 副本.md` | 完全是备�?| �?删除 |
-| `清风量化交易系统4.0开发粗稿_backup.md` | 完全是备�?| �?删除 |
-| `清风量化交易系统4.0.txt` | 纯文本备�?| �?删除 |
-| `清风量化交易系统4.0开发粗�?md` | 已被细稿取代 | ⚠️ 评估后决�?|
-| `清风量化交易系统4.0开发细�?md` | 详细设计文档 | �?保留 |
-| `清风量化交易系统4.0开发方�?md` | 开发方�?| �?保留 |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md` | ίχΝίΖρόαψίνΘϊ╗?| έζ?ίΙιώβν |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md` | ίχΝίΖρόαψίνΘϊ╗?| έζ?ίΙιώβν |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt` | ύ║ψόΨΘόευίνΘϊ╗?| έζ?ίΙιώβν |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?md` | ί╖▓ϋλτύ╗Ηύρ┐ίΠΨϊ╗μ | έγιΎ╕Π ϋψΕϊ╝░ίΡΟίΗ│ίχ?|
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ╗Ηύρ?md` | ϋψού╗Ηϋχ╛ϋχκόΨΘόκμ | έε?ϊ┐ζύΧβ |
+| `ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣόΨ╣όκ?md` | ί╝ΑίΠΣόΨ╣όκ?| έε?ϊ┐ζύΧβ |
 
-**问题分析**�?
-- 备份文件不应该进入版本控�?
-- 个人开发笔记性质的文档不应在项目中保�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ίνΘϊ╗╜όΨΘϊ╗╢ϊ╕Ξί║Φϋψξϋ┐δίΖξύΚΙόευόΟπίΙ?
+- ϊ╕ςϊ║║ί╝ΑίΠΣύυΦϋχ░όΑπϋ┤ρύγΕόΨΘόκμϊ╕Ξί║Φίερώκ╣ύδχϊ╕φϊ┐ζύΧ?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 立即删除备份文件
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗�?- 副本.md")
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗稿_backup.md")
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0.txt")
+# ύτΜίΞ│ίΙιώβνίνΘϊ╗╜όΨΘϊ╗╢
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md")
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md")
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt")
 ```
 
 ---
 
-### 11.4 问题40：孤儿文件（未被索引引用的文档）
+### 11.4 ώΩχώλα40Ύ╝γίφνίΕ┐όΨΘϊ╗╢Ύ╝Ιόεςϋλτύ┤λί╝Χί╝ΧύΦρύγΕόΨΘόκμΎ╝Κ
 
-**问题描述**：存在多个文档没有任何索引引用，成为"幽灵文档"�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γίφαίερίνγϊ╕ςόΨΘόκμό▓κόεΚϊ╗╗ϊ╜Χύ┤λί╝Χί╝ΧύΦρΎ╝ΝόΙΡϊ╕║"ί╣╜ύΒ╡όΨΘόκμ"ήΑ?
 
-**孤儿文件清单**�?
+**ίφνίΕ┐όΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| # | 文件路径 | 文档说明 | 建议操作 |
+| # | όΨΘϊ╗╢ϋ╖ψί╛Ε | όΨΘόκμϋψ┤όαΟ | ί╗║ϋχχόΥΞϊ╜ε |
 |---|----------|----------|----------|
-| 1 | `docs/04_EXECUTION/signal_generation.md` | 信号生成文档 | 建立索引引用 |
-| 2 | `docs/03_TRADING_TACTICS/parameter_management.md` | 参数管理文档 | 建立索引引用 |
-| 3 | `docs/03_TRADING_TACTICS/REFACTOR_COMPLETE.md` | 重构完成报告 | �?删除（已过期�?|
-| 4 | `docs/03_TRADING_TACTICS/OPTIMIZATION_REPORT.md` | 优化报告 | �?删除（已过期�?|
-| 5 | `docs/02_FACTOR_LIBRARY/05_BACKTEST_REORGANIZATION.md` | 回测重组方案 | �?删除（已执行完毕�?|
-| 6 | `docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md` | 审计报告 | 移入 archive |
-| 7 | `docs/02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md` | 优化总结 | �?删除（已过期�?|
-| 8 | `docs/02_FACTOR_LIBRARY/05_BREADTH_INDICATORS.md` | 宽度指标文档 | 建立索引引用 |
+| 1 | `docs/04_EXECUTION/signal_generation.md` | ϊ┐κίΠ╖ύΦθόΙΡόΨΘόκμ | ί╗║ύτΜύ┤λί╝Χί╝ΧύΦρ |
+| 2 | `docs/03_TRADING_TACTICS/parameter_management.md` | ίΠΓόΧ░ύχκύΡΗόΨΘόκμ | ί╗║ύτΜύ┤λί╝Χί╝ΧύΦρ |
+| 3 | `docs/03_TRADING_TACTICS/REFACTOR_COMPLETE.md` | ώΘΞόηΕίχΝόΙΡόΛξίΣΛ | έζ?ίΙιώβνΎ╝Ιί╖▓ϋ┐ΘόεθΎ╝?|
+| 4 | `docs/03_TRADING_TACTICS/OPTIMIZATION_REPORT.md` | ϊ╝αίΝΨόΛξίΣΛ | έζ?ίΙιώβνΎ╝Ιί╖▓ϋ┐ΘόεθΎ╝?|
+| 5 | `docs/02_FACTOR_LIBRARY/05_BACKTEST_REORGANIZATION.md` | ίδηό╡ΜώΘΞύ╗ΕόΨ╣όκΙ | έζ?ίΙιώβνΎ╝Ιί╖▓όΚπϋκΝίχΝόψΧΎ╝?|
+| 6 | `docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md` | ίχκϋχκόΛξίΣΛ | ύπ╗ίΖξ archive |
+| 7 | `docs/02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md` | ϊ╝αίΝΨόΑ╗ύ╗Υ | έζ?ίΙιώβνΎ╝Ιί╖▓ϋ┐ΘόεθΎ╝?|
+| 8 | `docs/02_FACTOR_LIBRARY/05_BREADTH_INDICATORS.md` | ίχ╜ί║οόΝΘόιΘόΨΘόκμ | ί╗║ύτΜύ┤λί╝Χί╝ΧύΦρ |
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 ```bash
-# 删除过期临时报告
+# ίΙιώβνϋ┐Θόεθϊ╕┤όΩ╢όΛξίΣΛ
 DeleteFile("docs/03_TRADING_TACTICS/REFACTOR_COMPLETE.md")
 DeleteFile("docs/03_TRADING_TACTICS/OPTIMIZATION_REPORT.md")
 DeleteFile("docs/02_FACTOR_LIBRARY/05_BACKTEST_REORGANIZATION.md")
 DeleteFile("docs/02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md")
 
-# 移动�?archive
+# ύπ╗ίΛρίΙ?archive
 MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-library/AUDIT_REPORT_archived.md")
 ```
 
 ---
 
-### 11.5 问题41：README.md 引用路径错误
+### 11.5 ώΩχώλα41Ύ╝γREADME.md ί╝ΧύΦρϋ╖ψί╛ΕώΦβϋψψ
 
-**问题位置**：`docs/README.md` 或根目录 `README.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/README.md` όΙΨόι╣ύδχί╜Χ `README.md`
 
-**错误引用**�?
+**ώΦβϋψψί╝ΧύΦρ**Ύ╝?
 ```markdown
-| [System_Manifest.md](docs/02_FACTOR_LIBRARY/System_Manifest.md) | 系统清单 |
+| System_Manifest.md | ύ│╗ύ╗θό╕ΖίΞΧ |
 ```
 
-**问题分析**�?
-- 相对路径 `../docs/` 是错误的
-- 根目录的 README.md 引用 `docs/System_Manifest.md` 应该�?`./docs/System_Manifest.md`
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ύδ╕ίψ╣ϋ╖ψί╛Ε `../docs/` όαψώΦβϋψψύγΕ
+- όι╣ύδχί╜ΧύγΕ README.md ί╝ΧύΦρ `docs/System_Manifest.md` ί║ΦϋψξύΦ?`./docs/System_Manifest.md`
 
-**解决方案**�?
-修正为正确的相对路径
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
+ϊ┐χόφμϊ╕║όφμύκχύγΕύδ╕ίψ╣ϋ╖ψί╛Ε
 
 ---
 
-### 11.6 问题42：文档命名不一�?
+### 11.6 ώΩχώλα42Ύ╝γόΨΘόκμίΣ╜ίΡΞϊ╕Ξϊ╕ΑϋΘ?
 
-**中文文件名清�?*�?
+**ϊ╕φόΨΘόΨΘϊ╗╢ίΡΞό╕ΖίΞ?*Ύ╝?
 
-| 当前文件�?| 建议英文�?|
+| ί╜ΥίΚΞόΨΘϊ╗╢ίΡ?| ί╗║ϋχχϋΜ▒όΨΘίΝ?|
 |------------|------------|
-| `因子分类总表.md` | `FACTOR_INDEX.md` |
-| `1_Barra风格因子.md` | `barra_style_factors.md` |
-| `2_行业因子.md` | `industry_factors.md` |
-| `3_尾部风险因子.md` | `tail_risk_factors.md` |
-| `T.03.RM003.Barra优化�?md` | `barra_optimizer.md` |
-| `T.03.RM004.因子透明度报�?md` | `factor_transparency_report.md` |
-| `界面布局.md` | `ui_layout.md` |
-| `因子库手册_v3.2.md` | `factor_library_manual_v3.2.md` |
-| `财务报表指标/THS_BD完整指标清单.md` | `ths_bd_indicator_list.md` |
+| `ίδιίφΡίΙΗύ▒╗όΑ╗ϋκρ.md` | `FACTOR_INDEX.md` |
+| `1_BarraώμΟόι╝ίδιίφΡ.md` | `barra_style_factors.md` |
+| `2_ϋκΝϊ╕γίδιίφΡ.md` | `industry_factors.md` |
+| `3_ί░╛ώΔρώμΟώβσίδιίφΡ.md` | `tail_risk_factors.md` |
+| `T.03.RM003.Barraϊ╝αίΝΨίβ?md` | `barra_optimizer.md` |
+| `T.03.RM004.ίδιίφΡώΑΠόαΟί║οόΛξίΣ?md` | `factor_transparency_report.md` |
+| `ύΧΝώζλί╕Δί▒Α.md` | `ui_layout.md` |
+| `ίδιίφΡί║ΥόΚΜίΗΝ_v3.2.md` | `factor_library_manual_v3.2.md` |
+| `ϋ┤λίΛκόΛξϋκρόΝΘόιΘ/THS_BDίχΝόΧ┤όΝΘόιΘό╕ΖίΞΧ.md` | `ths_bd_indicator_list.md` |
 
-**编号前缀混乱**�?
-- `1_Barra风格因子.md`、`2_行业因子.md` - 使用数字编号
-- `T.03.RM003.Barra优化�?md` - 使用复杂编号系统
+**ύ╝ΨίΠ╖ίΚΞύ╝Αό╖╖ϊ╣▒**Ύ╝?
+- `1_BarraώμΟόι╝ίδιίφΡ.md`ήΑΒ`2_ϋκΝϊ╕γίδιίφΡ.md` - ϊ╜┐ύΦρόΧ░ίφΩύ╝ΨίΠ╖
+- `T.03.RM003.Barraϊ╝αίΝΨίβ?md` - ϊ╜┐ύΦρίνΞόζΓύ╝ΨίΠ╖ύ│╗ύ╗θ
 
-**解决方案**�?
-统一使用英文命名，移除不必要的编号前缀
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
+ύ╗θϊ╕Αϊ╜┐ύΦρϋΜ▒όΨΘίΣ╜ίΡΞΎ╝Νύπ╗ώβνϊ╕Ξί┐ΖϋοΒύγΕύ╝ΨίΠ╖ίΚΞύ╝Α
 
 ---
 
-### 11.7 问题43�?6_ARCHIVE/main/ 目录结构混乱
+### 11.7 ώΩχώλα43Ύ╝?6_ARCHIVE/main/ ύδχί╜Χύ╗ΥόηΕό╖╖ϊ╣▒
 
-**问题位置**：`docs/06_ARCHIVE/main/`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/06_ARCHIVE/main/`
 
-**当前结构**�?
+**ί╜ΥίΚΞύ╗ΥόηΕ**Ύ╝?
 ```
 06_ARCHIVE/main/
-├── BLUEPRINTS/                      # 蓝图归档
-├── v4_development/                  # v4.0 开发文�?
-├── AUDIT_REPORTS/                   # �?已有
-├── CHANGELOG/                       # �?已有（但内容�?main/�?
-├── COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md
-├── DOCUMENT_AUDIT_REPORT_v1.md
-├── FINAL_AUDIT_REPORT_V5.md
-├── FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md
-├── FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md
-├── FINAL_SYSTEM_AUDIT_archived.md
-├── LEGACY_DOC_ANALYSIS_archived.md
-├── DEVELOPMENT_SEQUENCE_archived.md
-├── TEST_PLAN_archived.md
-├── CODE_STATUS_archived.md
-├── RESEARCH_PIPELINE_archived.md
-├── SYSTEM_AUDIT_REPORT.md
-├── NOZYIO_REFERENCE.md
-├── README.md
-├── README_v1.1_archived.md
-├── UPGRADE_REPORT.md
-├── 量化策略框架_v3.1.md
-└── CHANGELOG.md                      # ⚠️ �?docs/CHANGELOG.md 重复
+έΦεέΦΑέΦΑ BLUEPRINTS/                      # ϋΥζίδ╛ί╜Τόκμ
+έΦεέΦΑέΦΑ v4_development/                  # v4.0 ί╝ΑίΠΣόΨΘόκ?
+έΦεέΦΑέΦΑ AUDIT_REPORTS/                   # έε?ί╖▓όεΚ
+έΦεέΦΑέΦΑ CHANGELOG/                       # έε?ί╖▓όεΚΎ╝Ιϊ╜ΗίΗΖίχ╣ίε?main/Ύ╝?
+έΦεέΦΑέΦΑ COMPLETE_DOCUMENT_AUDIT_REPORT_v2.md
+έΦεέΦΑέΦΑ DOCUMENT_AUDIT_REPORT_v1.md
+έΦεέΦΑέΦΑ FINAL_AUDIT_REPORT_V5.md
+έΦεέΦΑέΦΑ FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md
+έΦεέΦΑέΦΑ FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md
+έΦεέΦΑέΦΑ FINAL_SYSTEM_AUDIT_archived.md
+έΦεέΦΑέΦΑ LEGACY_DOC_ANALYSIS_archived.md
+έΦεέΦΑέΦΑ DEVELOPMENT_SEQUENCE_archived.md
+έΦεέΦΑέΦΑ TEST_PLAN_archived.md
+έΦεέΦΑέΦΑ CODE_STATUS_archived.md
+έΦεέΦΑέΦΑ RESEARCH_PIPELINE_archived.md
+έΦεέΦΑέΦΑ SYSTEM_AUDIT_REPORT.md
+έΦεέΦΑέΦΑ NOZYIO_REFERENCE.md
+έΦεέΦΑέΦΑ README.md
+έΦεέΦΑέΦΑ README_v1.1_archived.md
+έΦεέΦΑέΦΑ UPGRADE_REPORT.md
+έΦεέΦΑέΦΑ ώΘΠίΝΨύφΨύΧξόκΗόη╢_v3.1.md
+έΦΦέΦΑέΦΑ CHANGELOG.md                      # έγιΎ╕Π ϊ╕?docs/CHANGELOG.md ώΘΞίνΞ
 ```
 
-**建议重组**�?
+**ί╗║ϋχχώΘΞύ╗Ε**Ύ╝?
 ```
 06_ARCHIVE/main/
-├── BLUEPRINTS/                      # 蓝图归档�?个已合并蓝图�?
-�?  ├── 01_ULTIMATE_BLUEPRINT.md     # ⚠️ 建议删除完整内容，只保留索引
-�?  ├── 02_DEPLOYMENT_BLUEPRINT.md
-�?  ├── 03_SECURITY_BLUEPRINT.md
-�?  ├── 04_API_INTEGRATION_BLUEPRINT.md
-�?  ├── 05_AI_RESEARCH_FRAMEWORK.md
-�?  ├── 06_DEVELOPMENT_ROADMAP.md
-�?  └── 07_SYSTEM_MANIFEST.md        # ⚠️ 建议删除完整内容
-├── v4_development/                  # v4.0 开发文�?
-�?  ├── 清风量化交易系统4.0开发粗�?md  # �?保留
-�?  ├── 清风量化交易系统4.0开发细�?md  # �?保留
-�?  ├── 清风量化交易系统4.0开发方�?md  # �?保留
-�?  └── ...（删除副本和备份�?
-├── AUDIT_REPORTS/                   # 集中管理审计报告
-�?  ├── FINAL_AUDIT_REPORT_V5.md
-�?  ├── SYSTEM_AUDIT_REPORT.md
-�?  └── ...（移入此目录�?
-├── CHANGELOG/                       # 集中管理历史变更
-�?  └── CHANGELOG_v3.x_archived.md   # 重命名归档版�?
-└── README.md                         # 归档说明
+έΦεέΦΑέΦΑ BLUEPRINTS/                      # ϋΥζίδ╛ί╜ΤόκμΎ╝?ϊ╕ςί╖▓ίΡΙί╣╢ϋΥζίδ╛Ύ╝?
+έΦ?  έΦεέΦΑέΦΑ 01_ULTIMATE_BLUEPRINT.md     # έγιΎ╕Π ί╗║ϋχχίΙιώβνίχΝόΧ┤ίΗΖίχ╣Ύ╝ΝίΠςϊ┐ζύΧβύ┤λί╝Χ
+έΦ?  έΦεέΦΑέΦΑ 02_DEPLOYMENT_BLUEPRINT.md
+έΦ?  έΦεέΦΑέΦΑ 03_SECURITY_BLUEPRINT.md
+έΦ?  έΦεέΦΑέΦΑ 04_API_INTEGRATION_BLUEPRINT.md
+έΦ?  έΦεέΦΑέΦΑ 05_AI_RESEARCH_FRAMEWORK.md
+έΦ?  έΦεέΦΑέΦΑ 06_DEVELOPMENT_ROADMAP.md
+έΦ?  έΦΦέΦΑέΦΑ 07_SYSTEM_MANIFEST.md        # έγιΎ╕Π ί╗║ϋχχίΙιώβνίχΝόΧ┤ίΗΖίχ╣
+έΦεέΦΑέΦΑ v4_development/                  # v4.0 ί╝ΑίΠΣόΨΘόκ?
+έΦ?  έΦεέΦΑέΦΑ ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?md  # έε?ϊ┐ζύΧβ
+έΦ?  έΦεέΦΑέΦΑ ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ╗Ηύρ?md  # έε?ϊ┐ζύΧβ
+έΦ?  έΦεέΦΑέΦΑ ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣόΨ╣όκ?md  # έε?ϊ┐ζύΧβ
+έΦ?  έΦΦέΦΑέΦΑ ...Ύ╝ΙίΙιώβνίΚψόευίΤΝίνΘϊ╗╜Ύ╝?
+έΦεέΦΑέΦΑ AUDIT_REPORTS/                   # ώδΗϊ╕φύχκύΡΗίχκϋχκόΛξίΣΛ
+έΦ?  έΦεέΦΑέΦΑ FINAL_AUDIT_REPORT_V5.md
+έΦ?  έΦεέΦΑέΦΑ SYSTEM_AUDIT_REPORT.md
+έΦ?  έΦΦέΦΑέΦΑ ...Ύ╝Ιύπ╗ίΖξόφνύδχί╜ΧΎ╝?
+έΦεέΦΑέΦΑ CHANGELOG/                       # ώδΗϊ╕φύχκύΡΗίΟΗίΠ▓ίΠαόδ┤
+έΦ?  έΦΦέΦΑέΦΑ CHANGELOG_v3.x_archived.md   # ώΘΞίΣ╜ίΡΞί╜ΤόκμύΚΙόε?
+έΦΦέΦΑέΦΑ README.md                         # ί╜Τόκμϋψ┤όαΟ
 ```
 
 ---
 
-### 11.8 问题44�?7_ARCHIVE/ 存在非归档文�?
+### 11.8 ώΩχώλα44Ύ╝?7_ARCHIVE/ ίφαίερώζηί╜ΤόκμόΨΘόκ?
 
-**问题位置**：`docs/06_ARCHIVE/`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/06_ARCHIVE/`
 
-**非归档文档清�?*�?
+**ώζηί╜ΤόκμόΨΘόκμό╕ΖίΞ?*Ύ╝?
 
-| 文件 | 说明 | 建议操作 |
+| όΨΘϊ╗╢ | ϋψ┤όαΟ | ί╗║ϋχχόΥΞϊ╜ε |
 |------|------|----------|
-| `旧文档务实评估_1人AI_一个月.md` | 个人评估笔记 | �?删除 |
-| `旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md` | 个人分析笔记 | �?删除 |
-| `factor-library/` | 因子库历�?| �?保留 |
-| `old_v4_plan_archive.md` | v4 计划归档 | �?保留（在 archive 内） |
-| `战术手册_v1.0.md` | 战术手册历史 | �?保留（在 archive 内） |
-| `技术文档_v1.0.md` | 技术文档历�?| �?保留（在 archive 内） |
-| `策略池_v1.0.md` | 策略池历�?| �?保留（在 archive 内） |
-| `系统增强手册_v1.0.md` | 系统增强历史 | �?保留（在 archive 内） |
+| `όΩπόΨΘόκμίΛκίχηϋψΕϊ╝░_1ϊ║║AI_ϊ╕Αϊ╕ςόεΙ.md` | ϊ╕ςϊ║║ϋψΕϊ╝░ύυΦϋχ░ | έζ?ίΙιώβν |
+| `όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md` | ϊ╕ςϊ║║ίΙΗόηΡύυΦϋχ░ | έζ?ίΙιώβν |
+| `factor-library/` | ίδιίφΡί║ΥίΟΗίΠ?| έε?ϊ┐ζύΧβ |
+| `old_v4_plan_archive.md` | v4 ϋχκίΙΤί╜Τόκμ | έε?ϊ┐ζύΧβΎ╝Ιίερ archive ίΗΖΎ╝Κ |
+| `όΙαόεψόΚΜίΗΝ_v1.0.md` | όΙαόεψόΚΜίΗΝίΟΗίΠ▓ | έε?ϊ┐ζύΧβΎ╝Ιίερ archive ίΗΖΎ╝Κ |
+| `όΛΑόεψόΨΘόκμ_v1.0.md` | όΛΑόεψόΨΘόκμίΟΗίΠ?| έε?ϊ┐ζύΧβΎ╝Ιίερ archive ίΗΖΎ╝Κ |
+| `ύφΨύΧξό▒ι_v1.0.md` | ύφΨύΧξό▒ιίΟΗίΠ?| έε?ϊ┐ζύΧβΎ╝Ιίερ archive ίΗΖΎ╝Κ |
+| `ύ│╗ύ╗θίληί╝║όΚΜίΗΝ_v1.0.md` | ύ│╗ύ╗θίληί╝║ίΟΗίΠ▓ | έε?ϊ┐ζύΧβΎ╝Ιίερ archive ίΗΖΎ╝Κ |
 
-**问题分析**�?
-- 个人笔记不应进入版本控制
-- 应删除或移到外部存储
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- ϊ╕ςϊ║║ύυΦϋχ░ϊ╕Ξί║Φϋ┐δίΖξύΚΙόευόΟπίΙ╢
+- ί║ΦίΙιώβνόΙΨύπ╗ίΙ░ίνΨώΔρίφαίΓρ
 
 ---
 
-### 11.9 问题45：docs/ 根目录存在项目级文档
+### 11.9 ώΩχώλα45Ύ╝γdocs/ όι╣ύδχί╜Χίφαίερώκ╣ύδχύ║πόΨΘόκμ
 
-**问题描述**：`docs/` 根目录存在多个项目级文档，与 `docs/00_OVERVIEW/` 职责重叠�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`docs/` όι╣ύδχί╜Χίφαίερίνγϊ╕ςώκ╣ύδχύ║πόΨΘόκμΎ╝Νϊ╕Ο `docs/00_OVERVIEW/` ϋΒΝϋ┤μώΘΞίΠιήΑ?
 
-**项目级文档清�?*�?
+**ώκ╣ύδχύ║πόΨΘόκμό╕ΖίΞ?*Ύ╝?
 
-| 文件 | 职责 | 建议位置 |
+| όΨΘϊ╗╢ | ϋΒΝϋ┤μ | ί╗║ϋχχϊ╜Ξύ╜χ |
 |------|------|----------|
-| `BLUEPRINT.md` | 系统蓝图 | �?留在 docs/ |
-| `INDEX.md` | 快速入�?| �?留在 docs/ |
-| `SITEMAP.md` | 文档地图 | �?留在 docs/ |
-| `System_Manifest.md` | 系统清单 | ⚠️ 职责与其他文档重�?|
-| `API_Contract.md` | 接口契约 | �?留在 docs/ |
-| `AI_Permissions.md` | AI权限 | �?留在 docs/ |
-| `FAQ.md` | 常见问题 | �?留在 docs/ |
-| `CHANGELOG.md` | 变更日志 | �?留在 docs/ |
-| `HANDOVER.md` | 交接文档 | �?应移�?docs/ |
-| `KNOWLEDGE_MANAGEMENT.md` | 知识管理 | �?应移�?docs/07_RESEARCH/ |
-| `VERSIONING.md` | 版本管理 | �?留在 docs/ |
-| `CODE_EXAMPLES.md` | 代码示例 | �?留在 docs/ |
-| `EXPERIMENT_TRACKING.md` | 实验追踪 | �?已重复，已标记删�?|
-| `QUICK_REFERENCE.md` | 快速参�?| �?留在 docs/ |
+| `BLUEPRINT.md` | ύ│╗ύ╗θϋΥζίδ╛ | έε?ύΧβίερ docs/ |
+| `INDEX.md` | ί┐τώΑθίΖξίΠ?| έε?ύΧβίερ docs/ |
+| `SITEMAP.md` | όΨΘόκμίε░ίδ╛ | έε?ύΧβίερ docs/ |
+| `System_Manifest.md` | ύ│╗ύ╗θό╕ΖίΞΧ | έγιΎ╕Π ϋΒΝϋ┤μϊ╕ΟίΖ╢ϊ╗ΨόΨΘόκμώΘΞίΠ?|
+| `API_Contract.md` | όΟξίΠμίξΣύ║ο | έε?ύΧβίερ docs/ |
+| `AI_Permissions.md` | AIόζΔώβΡ | έε?ύΧβίερ docs/ |
+| `FAQ.md` | ί╕╕ϋπΒώΩχώλα | έε?ύΧβίερ docs/ |
+| `CHANGELOG.md` | ίΠαόδ┤όΩξί┐Ω | έε?ύΧβίερ docs/ |
+| `HANDOVER.md` | ϊ║νόΟξόΨΘόκμ | έζ?ί║Φύπ╗ίΘ?docs/ |
+| `KNOWLEDGE_MANAGEMENT.md` | ύθξϋψΗύχκύΡΗ | έζ?ί║Φύπ╗ίΖ?docs/07_RESEARCH/ |
+| `VERSIONING.md` | ύΚΙόευύχκύΡΗ | έε?ύΧβίερ docs/ |
+| `CODE_EXAMPLES.md` | ϊ╗μύιΒύν║ϊ╛Μ | έε?ύΧβίερ docs/ |
+| `EXPERIMENT_TRACKING.md` | ίχηώςΝϋ┐╜ϋ╕ς | έζ?ί╖▓ώΘΞίνΞΎ╝Νί╖▓όιΘϋχ░ίΙιώβ?|
+| `QUICK_REFERENCE.md` | ί┐τώΑθίΠΓϋΑ?| έε?ύΧβίερ docs/ |
 
-**问题分析**�?
-- `HANDOVER.md` 是项目交接文档，应在项目根目�?
-- `KNOWLEDGE_MANAGEMENT.md` 是研究基础设施，应�?`docs/07_RESEARCH/`
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- `HANDOVER.md` όαψώκ╣ύδχϊ║νόΟξόΨΘόκμΎ╝Νί║Φίερώκ╣ύδχόι╣ύδχί╜?
+- `KNOWLEDGE_MANAGEMENT.md` όαψύιΦύσ╢ίθ║ύκΑϋχ╛όΨ╜Ύ╝Νί║Φίε?`docs/07_RESEARCH/`
 
 ---
 
-### 11.10 问题46：SITEMAP.md �?INDEX.md 职责重叠
+### 11.10 ώΩχώλα46Ύ╝γSITEMAP.md ϊ╕?INDEX.md ϋΒΝϋ┤μώΘΞίΠι
 
-**问题描述**�?
-- `INDEX.md` = 快速入口（5分钟导航�?
-- `SITEMAP.md` = 完整地图（深度参考）
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+- `INDEX.md` = ί┐τώΑθίΖξίΠμΎ╝Ι5ίΙΗώΤθίψ╝ϋΙςΎ╝?
+- `SITEMAP.md` = ίχΝόΧ┤ίε░ίδ╛Ύ╝Ιό╖▒ί║οίΠΓϋΑΔΎ╝Κ
 
-**当前问题**�?
-两个文件内容高度重复，都是目录导�?
+**ί╜ΥίΚΞώΩχώλα**Ύ╝?
+ϊ╕νϊ╕ςόΨΘϊ╗╢ίΗΖίχ╣ώταί║οώΘΞίνΞΎ╝ΝώΔ╜όαψύδχί╜Χίψ╝ϋΙ?
 
-**建议**�?
-明确职责划分�?
-| 文件 | 职责 | 内容范围 |
+**ί╗║ϋχχ**Ύ╝?
+όαΟύκχϋΒΝϋ┤μίΙΤίΙΗΎ╝?
+| όΨΘϊ╗╢ | ϋΒΝϋ┤μ | ίΗΖίχ╣ϋΝΔίδ┤ |
 |------|------|----------|
-| `INDEX.md` | 快速入�?| 5分钟导航 + 核心文档索引 + 按用途查�?|
-| `SITEMAP.md` | 完整参�?| 深度地图 + 按用途查�?+ 推荐阅读顺序 + 文档关系�?|
+| `INDEX.md` | ί┐τώΑθίΖξίΠ?| 5ίΙΗώΤθίψ╝ϋΙς + όι╕ί┐ΔόΨΘόκμύ┤λί╝Χ + όΝΚύΦρώΑΦόθξόΚ?|
+| `SITEMAP.md` | ίχΝόΧ┤ίΠΓϋΑ?| ό╖▒ί║οίε░ίδ╛ + όΝΚύΦρώΑΦόθξόΚ?+ όΟρϋΞΡώαΖϋψ╗ώκ║ί║Π + όΨΘόκμίΖ│ύ│╗ίδ?|
 
 ---
 
-### 11.11 问题47：内容重复文档组
+### 11.11 ώΩχώλα47Ύ╝γίΗΖίχ╣ώΘΞίνΞόΨΘόκμύ╗Ε
 
-**重复文档组清�?*�?
+**ώΘΞίνΞόΨΘόκμύ╗Εό╕ΖίΞ?*Ύ╝?
 
-| # | 重复�?| 内容描述 | 建议解决方案 |
+| # | ώΘΞίνΞύ╗?| ίΗΖίχ╣όΠΠϋ┐░ | ί╗║ϋχχϋπμίΗ│όΨ╣όκΙ |
 |---|--------|----------|--------------|
-| 1 | BLUEPRINT.md vs BLUEPRINTS/*.md | 蓝图合并�?vs 原始完整�?| BLUEPRINT.md 包含完整内容 |
-| 2 | INDEX.md vs SITEMAP.md | 快速入�?vs 完整地图 | 明确职责区分 |
-| 3 | System_Manifest.md vs 07_SYSTEM_MANIFEST.md | 系统清单 vs 归档�?| 恢复后删�?archive 版本 |
-| 4 | CHANGELOG.md vs 06_ARCHIVE/main/CHANGELOG.md | 当前�?vs 历史�?| 重命名归档版�?CHANGELOG_v3.x |
-| 5 | EXPERIMENT_TRACKING.md vs 07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md | wandb�?vs 本地�?| 删除根目录版�?|
+| 1 | BLUEPRINT.md vs BLUEPRINTS/*.md | ϋΥζίδ╛ίΡΙί╣╢ύΚ?vs ίΟθίπΜίχΝόΧ┤ύΚ?| BLUEPRINT.md ίΝΖίΡτίχΝόΧ┤ίΗΖίχ╣ |
+| 2 | INDEX.md vs SITEMAP.md | ί┐τώΑθίΖξίΠ?vs ίχΝόΧ┤ίε░ίδ╛ | όαΟύκχϋΒΝϋ┤μίΝ║ίΙΗ |
+| 3 | System_Manifest.md vs 07_SYSTEM_MANIFEST.md | ύ│╗ύ╗θό╕ΖίΞΧ vs ί╜ΤόκμύΚ?| όΒλίνΞίΡΟίΙιώβ?archive ύΚΙόευ |
+| 4 | CHANGELOG.md vs 06_ARCHIVE/main/CHANGELOG.md | ί╜ΥίΚΞύΚ?vs ίΟΗίΠ▓ύΚ?| ώΘΞίΣ╜ίΡΞί╜ΤόκμύΚΙϊ╕?CHANGELOG_v3.x |
+| 5 | EXPERIMENT_TRACKING.md vs 07_RESEARCH/04_EXPERIMENT_TRACKING/experiment_tracking.md | wandbύΚ?vs όευίε░ύΚ?| ίΙιώβνόι╣ύδχί╜ΧύΚΙόε?|
 
 ---
 
-### 11.12 问题48：一个文件承担多种职�?
+### 11.12 ώΩχώλα48Ύ╝γϊ╕Αϊ╕ςόΨΘϊ╗╢όΚ┐όΜΖίνγύπΞϋΒΝϋ┤?
 
-**问题文件清单**�?
+**ώΩχώλαόΨΘϊ╗╢ό╕ΖίΞΧ**Ύ╝?
 
-| 文件 | 当前职责 | 问题 |
+| όΨΘϊ╗╢ | ί╜ΥίΚΞϋΒΝϋ┤μ | ώΩχώλα |
 |------|----------|------|
-| `System_Manifest.md` | 系统清单 + 模块映射 + 目录结构 + AI权限 + 接口版本 + 依赖矩阵 | 职责过多 |
-| `INDEX.md` | 快速入�?+ 核心文档索引 + 文档地图 + 按用途查�?| 职责过多 |
-| `SITEMAP.md` | 文档地图 + 按用途查�?+ 推荐阅读顺序 + 文档关系�?| 职责过多 |
-| `BLUEPRINT.md` | 蓝图索引 + 完整内容引用 + 7个章节摘�?| 职责过多 |
+| `System_Manifest.md` | ύ│╗ύ╗θό╕ΖίΞΧ + όρκίζΩόαιί░Ε + ύδχί╜Χύ╗ΥόηΕ + AIόζΔώβΡ + όΟξίΠμύΚΙόευ + ϊ╛ζϋ╡Ψύθσώα╡ | ϋΒΝϋ┤μϋ┐Θίνγ |
+| `INDEX.md` | ί┐τώΑθίΖξίΠ?+ όι╕ί┐ΔόΨΘόκμύ┤λί╝Χ + όΨΘόκμίε░ίδ╛ + όΝΚύΦρώΑΦόθξόΚ?| ϋΒΝϋ┤μϋ┐Θίνγ |
+| `SITEMAP.md` | όΨΘόκμίε░ίδ╛ + όΝΚύΦρώΑΦόθξόΚ?+ όΟρϋΞΡώαΖϋψ╗ώκ║ί║Π + όΨΘόκμίΖ│ύ│╗ίδ?| ϋΒΝϋ┤μϋ┐Θίνγ |
+| `BLUEPRINT.md` | ϋΥζίδ╛ύ┤λί╝Χ + ίχΝόΧ┤ίΗΖίχ╣ί╝ΧύΦρ + 7ϊ╕ςύτιϋΛΓόΣαϋο?| ϋΒΝϋ┤μϋ┐Θίνγ |
 
-**建议拆分方案**�?
-- `System_Manifest.md` 只保留：系统清单、目录结构、模块映�?
-- `AI_Permissions.md` 独立（已存在�?
-- `API_Contract.md` 独立（已存在�?
+**ί╗║ϋχχόΜΗίΙΗόΨ╣όκΙ**Ύ╝?
+- `System_Manifest.md` ίΠςϊ┐ζύΧβΎ╝γύ│╗ύ╗θό╕ΖίΞΧήΑΒύδχί╜Χύ╗ΥόηΕήΑΒόρκίζΩόαιί░?
+- `AI_Permissions.md` ύΜυύτΜΎ╝Ιί╖▓ίφαίερΎ╝?
+- `API_Contract.md` ύΜυύτΜΎ╝Ιί╖▓ίφαίερΎ╝?
 
 ---
 
-### 11.13 问题49：docs/06_ARCHIVE/main/BLUEPRINTS/ 完整内容应删�?
+### 11.13 ώΩχώλα49Ύ╝γdocs/06_ARCHIVE/main/BLUEPRINTS/ ίχΝόΧ┤ίΗΖίχ╣ί║ΦίΙιώβ?
 
-**问题描述**�?
-BLUEPRINT.md 已合�?个蓝图文档的摘要，但原始完整内容仍在 BLUEPRINTS/ 目录
+**ώΩχώλαόΠΠϋ┐░**Ύ╝?
+BLUEPRINT.md ί╖▓ίΡΙί╣?ϊ╕ςϋΥζίδ╛όΨΘόκμύγΕόΣαϋοΒΎ╝Νϊ╜ΗίΟθίπΜίχΝόΧ┤ίΗΖίχ╣ϊ╗Ξίερ BLUEPRINTS/ ύδχί╜Χ
 
-**建议操作**�?
-1. 如果 BLUEPRINT.md 包含完整内容 �?删除 BLUEPRINTS/ 下的所�?.md 文件
-2. 如果 BLUEPRINT.md 只包含索�?�?更新为包含完整内�?
+**ί╗║ϋχχόΥΞϊ╜ε**Ύ╝?
+1. ίοΓόηε BLUEPRINT.md ίΝΖίΡτίχΝόΧ┤ίΗΖίχ╣ έΗ?ίΙιώβν BLUEPRINTS/ ϊ╕ΜύγΕόΚΑόε?.md όΨΘϊ╗╢
+2. ίοΓόηε BLUEPRINT.md ίΠςίΝΖίΡτύ┤λί╝?έΗ?όδ┤όΨ░ϊ╕║ίΝΖίΡτίχΝόΧ┤ίΗΖίχ?
 
-**推荐方案A**�?
+**όΟρϋΞΡόΨ╣όκΙA**Ύ╝?
 ```bash
-# 删除已并�?BLUEPRINT.md 的完整内容文�?
+# ίΙιώβνί╖▓ί╣╢ίΖ?BLUEPRINT.md ύγΕίχΝόΧ┤ίΗΖίχ╣όΨΘϊ╗?
 DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md")
 DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md")
 DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/03_SECURITY_BLUEPRINT.md")
@@ -1118,140 +1128,140 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 ---
 
-### 11.14 问题50：scripts/、data/、notebooks/ 目录为空
+### 11.14 ώΩχώλα50Ύ╝γscripts/ήΑΒdata/ήΑΒnotebooks/ ύδχί╜Χϊ╕║ύσ║
 
-**问题位置**�?
-- `scripts/` - 只有 .gitkeep
-- `data/` - 只有 .gitkeep
-- `notebooks/` - 只有 .gitkeep
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝?
+- `scripts/` - ίΠςόεΚ .gitkeep
+- `data/` - ίΠςόεΚ .gitkeep
+- `notebooks/` - ίΠςόεΚ .gitkeep
 
-**问题分析**�?
-- scripts/ 应包含实用脚本（数据下载、回测运行等�?
-- data/ 是数据存储目录（gitignored�?
-- notebooks/ �?Jupyter 分析目录（gitignored�?
+**ώΩχώλαίΙΗόηΡ**Ύ╝?
+- scripts/ ί║ΦίΝΖίΡτίχηύΦρϋΕγόευΎ╝ΙόΧ░όΞχϊ╕Μϋ╜╜ήΑΒίδηό╡Μϋ┐ΡϋκΝύφΚΎ╝?
+- data/ όαψόΧ░όΞχίφαίΓρύδχί╜ΧΎ╝ΙgitignoredΎ╝?
+- notebooks/ όα?Jupyter ίΙΗόηΡύδχί╜ΧΎ╝ΙgitignoredΎ╝?
 
-**建议**�?
-| 目录 | 建议内容 |
+**ί╗║ϋχχ**Ύ╝?
+| ύδχί╜Χ | ί╗║ϋχχίΗΖίχ╣ |
 |------|----------|
-| `scripts/` | 添加 validate_config.py、download_data.py、backtest.py 等实用脚�?|
-| `data/` | 保持空（gitignored），供运行时存储数据 |
-| `notebooks/` | 保持空（gitignored），供分析使�?|
+| `scripts/` | ό╖╗ίΛι validate_config.pyήΑΒdownload_data.pyήΑΒbacktest.py ύφΚίχηύΦρϋΕγόε?|
+| `data/` | ϊ┐ζόΝΒύσ║Ύ╝ΙgitignoredΎ╝ΚΎ╝Νϊ╛δϋ┐ΡϋκΝόΩ╢ίφαίΓρόΧ░όΞχ |
+| `notebooks/` | ϊ┐ζόΝΒύσ║Ύ╝ΙgitignoredΎ╝ΚΎ╝Νϊ╛δίΙΗόηΡϊ╜┐ύΦ?|
 
 ---
 
-## 十二、执行清单补充（问题37-50�?
+## ίΞΒϊ║ΝήΑΒόΚπϋκΝό╕ΖίΞΧϋκξίΖΖΎ╝ΙώΩχώλα37-50Ύ╝?
 
-### 12.1 P0 紧急修复（补充�?
+### 12.1 P0 ύ┤πόΑξϊ┐χίνΞΎ╝ΙϋκξίΖΖΎ╝?
 
-| # | 操作 | 对应问题 |
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα |
 |---|------|----------|
-| 38 | 确定 System_Manifest.md 权威版本 | 问题38 |
-| 39 | 删除 v4_development 备份文件 | 问题39 |
-| 40 | 删除孤儿过期文件 | 问题40 |
-| 41 | 修复 README.md 路径错误 | 问题41 |
+| 38 | ύκχίχγ System_Manifest.md όζΔίρΒύΚΙόευ | ώΩχώλα38 |
+| 39 | ίΙιώβν v4_development ίνΘϊ╗╜όΨΘϊ╗╢ | ώΩχώλα39 |
+| 40 | ίΙιώβνίφνίΕ┐ϋ┐ΘόεθόΨΘϊ╗╢ | ώΩχώλα40 |
+| 41 | ϊ┐χίνΞ README.md ϋ╖ψί╛ΕώΦβϋψψ | ώΩχώλα41 |
 
-### 12.2 P1 重要修复（补充）
+### 12.2 P1 ώΘΞϋοΒϊ┐χίνΞΎ╝ΙϋκξίΖΖΎ╝Κ
 
-| # | 操作 | 对应问题 |
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα |
 |---|------|----------|
-| 42 | 统一文档命名（中文→英文�?| 问题42 |
-| 43 | 重组 06_ARCHIVE/main/ 目录结构 | 问题43 |
-| 44 | 删除 06_ARCHIVE/ 个人笔记 | 问题44 |
-| 45 | 移动 HANDOVER.md �?KNOWLEDGE_MANAGEMENT.md | 问题45 |
-| 46 | 明确 INDEX.md vs SITEMAP.md 职责 | 问题46 |
-| 47 | 解决内容重复文档�?| 问题47 |
-| 48 | 拆分职责过多的文�?| 问题48 |
+| 42 | ύ╗θϊ╕ΑόΨΘόκμίΣ╜ίΡΞΎ╝Ιϊ╕φόΨΘέΗΤϋΜ▒όΨΘΎ╝?| ώΩχώλα42 |
+| 43 | ώΘΞύ╗Ε 06_ARCHIVE/main/ ύδχί╜Χύ╗ΥόηΕ | ώΩχώλα43 |
+| 44 | ίΙιώβν 06_ARCHIVE/ ϊ╕ςϊ║║ύυΦϋχ░ | ώΩχώλα44 |
+| 45 | ύπ╗ίΛρ HANDOVER.md ίΤ?KNOWLEDGE_MANAGEMENT.md | ώΩχώλα45 |
+| 46 | όαΟύκχ INDEX.md vs SITEMAP.md ϋΒΝϋ┤μ | ώΩχώλα46 |
+| 47 | ϋπμίΗ│ίΗΖίχ╣ώΘΞίνΞόΨΘόκμύ╗?| ώΩχώλα47 |
+| 48 | όΜΗίΙΗϋΒΝϋ┤μϋ┐ΘίνγύγΕόΨΘϊ╗?| ώΩχώλα48 |
 
-### 12.3 P2 优化修复（补充）
+### 12.3 P2 ϊ╝αίΝΨϊ┐χίνΞΎ╝ΙϋκξίΖΖΎ╝Κ
 
-| # | 操作 | 对应问题 |
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα |
 |---|------|----------|
-| 49 | 删除 BLUEPRINTS/ 完整内容 | 问题49 |
-| 50 | 填充 scripts/ 目录实用脚本 | 问题50 |
+| 49 | ίΙιώβν BLUEPRINTS/ ίχΝόΧ┤ίΗΖίχ╣ | ώΩχώλα49 |
+| 50 | ίκτίΖΖ scripts/ ύδχί╜ΧίχηύΦρϋΕγόευ | ώΩχώλα50 |
 
 ---
 
-## 十三、问题统计更�?
+## ίΞΒϊ╕ΚήΑΒώΩχώλαύ╗θϋχκόδ┤όΨ?
 
-### 13.1 最新问题总数
+### 13.1 όεΑόΨ░ώΩχώλαόΑ╗όΧ░
 
-| 严重程度 | 原问题数 | 新增问题�?| 合计 |
+| ϊ╕ξώΘΞύρΜί║ο | ίΟθώΩχώλαόΧ░ | όΨ░ίληώΩχώλαόΧ?| ίΡΙϋχκ |
 |----------|----------|------------|------|
-| 🔴 **严重** | 12�?| 3�?| **15�?* |
-| 🟡 **中等** | 16�?| 8�?| **24�?* |
-| 🟢 **轻微** | 14�?| 3�?| **17�?* |
-| **总计** | **42�?* | **14�?* | **56�?* |
+| ΏθΦ┤ **ϊ╕ξώΘΞ** | 12ϊ╕?| 3ϊ╕?| **15ϊ╕?* |
+| Ώθθκ **ϊ╕φύφΚ** | 16ϊ╕?| 8ϊ╕?| **24ϊ╕?* |
+| Ώθθλ **ϋ╜╗ί╛χ** | 14ϊ╕?| 3ϊ╕?| **17ϊ╕?* |
+| **όΑ╗ϋχκ** | **42ϊ╕?* | **14ϊ╕?* | **56ϊ╕?* |
 
-### 13.2 新增问题清单
+### 13.2 όΨ░ίληώΩχώλαό╕ΖίΞΧ
 
-| # | 严重程度 | 问题 | 位置 |
+| # | ϊ╕ξώΘΞύρΜί║ο | ώΩχώλα | ϊ╜Ξύ╜χ |
 |---|----------|------|------|
-| 37 | 🟡 中等 | BLUEPRINT.md �?BLUEPRINTS/ 内容重复 | docs/BLUEPRINT.md vs 06_ARCHIVE/ |
-| 38 | 🔴 严重 | System_Manifest.md 两个版本 | docs/ vs 06_ARCHIVE/ |
-| 39 | 🟡 中等 | v4_development/ 大量冗余文件 | docs/06_ARCHIVE/main/v4_development/ |
-| 40 | 🟡 中等 | 孤儿文件（未被索引引用） | 多个位置 |
-| 41 | 🟢 轻微 | README.md 路径错误 | 根目�?README.md |
-| 42 | 🟢 轻微 | 文档命名不一致（中文、编号混乱） | 多个目录 |
-| 43 | 🟡 中等 | 06_ARCHIVE/main/ 目录结构混乱 | docs/06_ARCHIVE/main/ |
-| 44 | 🟢 轻微 | 06_ARCHIVE/ 存在非归档文�?| docs/06_ARCHIVE/ |
-| 45 | 🟡 中等 | docs/ 根目录项目级文档职责重叠 | docs/ 根目�?|
-| 46 | 🟡 中等 | INDEX.md vs SITEMAP.md 职责重叠 | docs/ |
-| 47 | 🟡 中等 | 5组内容重复文�?| 多个位置 |
-| 48 | 🟡 中等 | 一个文件承担多种职�?| System_Manifest.md �?|
-| 49 | 🟡 中等 | BLUEPRINTS/ 完整内容应删�?| docs/06_ARCHIVE/main/BLUEPRINTS/ |
-| 50 | 🟢 轻微 | scripts/data/notebooks 目录为空 | 根目�?|
+| 37 | Ώθθκ ϊ╕φύφΚ | BLUEPRINT.md ϊ╕?BLUEPRINTS/ ίΗΖίχ╣ώΘΞίνΞ | docs/BLUEPRINT.md vs 06_ARCHIVE/ |
+| 38 | ΏθΦ┤ ϊ╕ξώΘΞ | System_Manifest.md ϊ╕νϊ╕ςύΚΙόευ | docs/ vs 06_ARCHIVE/ |
+| 39 | Ώθθκ ϊ╕φύφΚ | v4_development/ ίνπώΘΠίΗΩϊ╜βόΨΘϊ╗╢ | docs/06_ARCHIVE/main/v4_development/ |
+| 40 | Ώθθκ ϊ╕φύφΚ | ίφνίΕ┐όΨΘϊ╗╢Ύ╝Ιόεςϋλτύ┤λί╝Χί╝ΧύΦρΎ╝Κ | ίνγϊ╕ςϊ╜Ξύ╜χ |
+| 41 | Ώθθλ ϋ╜╗ί╛χ | README.md ϋ╖ψί╛ΕώΦβϋψψ | όι╣ύδχί╜?README.md |
+| 42 | Ώθθλ ϋ╜╗ί╛χ | όΨΘόκμίΣ╜ίΡΞϊ╕Ξϊ╕ΑϋΘ┤Ύ╝Ιϊ╕φόΨΘήΑΒύ╝ΨίΠ╖ό╖╖ϊ╣▒Ύ╝Κ | ίνγϊ╕ςύδχί╜Χ |
+| 43 | Ώθθκ ϊ╕φύφΚ | 06_ARCHIVE/main/ ύδχί╜Χύ╗ΥόηΕό╖╖ϊ╣▒ | docs/06_ARCHIVE/main/ |
+| 44 | Ώθθλ ϋ╜╗ί╛χ | 06_ARCHIVE/ ίφαίερώζηί╜ΤόκμόΨΘόκ?| docs/06_ARCHIVE/ |
+| 45 | Ώθθκ ϊ╕φύφΚ | docs/ όι╣ύδχί╜Χώκ╣ύδχύ║πόΨΘόκμϋΒΝϋ┤μώΘΞίΠι | docs/ όι╣ύδχί╜?|
+| 46 | Ώθθκ ϊ╕φύφΚ | INDEX.md vs SITEMAP.md ϋΒΝϋ┤μώΘΞίΠι | docs/ |
+| 47 | Ώθθκ ϊ╕φύφΚ | 5ύ╗ΕίΗΖίχ╣ώΘΞίνΞόΨΘόκ?| ίνγϊ╕ςϊ╜Ξύ╜χ |
+| 48 | Ώθθκ ϊ╕φύφΚ | ϊ╕Αϊ╕ςόΨΘϊ╗╢όΚ┐όΜΖίνγύπΞϋΒΝϋ┤?| System_Manifest.md ύφ?|
+| 49 | Ώθθκ ϊ╕φύφΚ | BLUEPRINTS/ ίχΝόΧ┤ίΗΖίχ╣ί║ΦίΙιώβ?| docs/06_ARCHIVE/main/BLUEPRINTS/ |
+| 50 | Ώθθλ ϋ╜╗ί╛χ | scripts/data/notebooks ύδχί╜Χϊ╕║ύσ║ | όι╣ύδχί╜?|
 
 ---
 
-## 十四、专业量化机构标准对照（更新�?
+## ίΞΒίδδήΑΒϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόιΘίΘΗίψ╣ύΖπΎ╝Ιόδ┤όΨ░Ύ╝?
 
-### 14.1 八大标准检查表（更新）
+### 14.1 ίΖτίνπόιΘίΘΗόμΑόθξϋκρΎ╝Ιόδ┤όΨ░Ύ╝Κ
 
-| 检查项 | 标准要求 | 原评�?| 新评�?| 变化 |
+| όμΑόθξώκ╣ | όιΘίΘΗϋοΒό▒Γ | ίΟθϋψΕίΙ?| όΨ░ϋψΕίΙ?| ίΠαίΝΨ |
 |--------|----------|--------|--------|------|
-| **目录边界** | src/tests/docs/config/scripts/data 清晰划分 | ⭐⭐⭐⭐�?| ⭐⭐⭐⭐�?| - |
-| **文件漂移** | 无文档在代码目录，无代码在文档目�?| ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | - |
-| **重复控制** | 无多个文档描述同一内容 | ⭐⭐⭐⭐�?| ⭐⭐�?| ⚠️ 下降 |
-| **索引完整** | 所有文档都有索引入�?| ⭐⭐�?| ⭐⭐�?| - |
-| **一文件一职责** | 无文件承担多种职�?| ⭐⭐�?| ⭐⭐ | ⚠️ 下降 |
-| **归档管理** | 废弃文档统一归档 | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | - |
-| **版本一�?* | 版本号清晰一�?| ⭐⭐�?| ⭐⭐�?| - |
-| **命名规范** | 目录/文件命名统一 | ⭐⭐�?| ⭐⭐ | ⚠️ 下降 |
+| **ύδχί╜Χϋ╛╣ύΧΝ** | src/tests/docs/config/scripts/data ό╕Ζόβ░ίΙΤίΙΗ | έφΡέφΡέφΡέφΡέφ?| έφΡέφΡέφΡέφΡέφ?| - |
+| **όΨΘϊ╗╢ό╝Γύπ╗** | όΩιόΨΘόκμίερϊ╗μύιΒύδχί╜ΧΎ╝ΝόΩιϊ╗μύιΒίερόΨΘόκμύδχί╜?| έφΡέφΡέφΡέφΡ | έφΡέφΡέφΡέφΡ | - |
+| **ώΘΞίνΞόΟπίΙ╢** | όΩιίνγϊ╕ςόΨΘόκμόΠΠϋ┐░ίΡΝϊ╕ΑίΗΖίχ╣ | έφΡέφΡέφΡέφΡέφ?| έφΡέφΡέφ?| έγιΎ╕Π ϊ╕ΜώβΞ |
+| **ύ┤λί╝ΧίχΝόΧ┤** | όΚΑόεΚόΨΘόκμώΔ╜όεΚύ┤λί╝ΧίΖξίΠ?| έφΡέφΡέφ?| έφΡέφΡέφ?| - |
+| **ϊ╕ΑόΨΘϊ╗╢ϊ╕ΑϋΒΝϋ┤μ** | όΩιόΨΘϊ╗╢όΚ┐όΜΖίνγύπΞϋΒΝϋ┤?| έφΡέφΡέφ?| έφΡέφΡ | έγιΎ╕Π ϊ╕ΜώβΞ |
+| **ί╜ΤόκμύχκύΡΗ** | ί║θί╝ΔόΨΘόκμύ╗θϊ╕Αί╜Τόκμ | έφΡέφΡέφΡέφΡ | έφΡέφΡέφΡέφΡ | - |
+| **ύΚΙόευϊ╕ΑϋΘ?* | ύΚΙόευίΠ╖ό╕Ζόβ░ϊ╕ΑϋΘ?| έφΡέφΡέφ?| έφΡέφΡέφ?| - |
+| **ίΣ╜ίΡΞϋπΕϋΝΔ** | ύδχί╜Χ/όΨΘϊ╗╢ίΣ╜ίΡΞύ╗θϊ╕Α | έφΡέφΡέφ?| έφΡέφΡ | έγιΎ╕Π ϊ╕ΜώβΞ |
 
-### 14.2 量化指标（更新）
+### 14.2 ώΘΠίΝΨόΝΘόιΘΎ╝Ιόδ┤όΨ░Ύ╝Κ
 
-| 指标 | 目标�?| 原�?| 新�?| 状�?|
+| όΝΘόιΘ | ύδχόιΘίΑ?| ίΟθίΑ?| όΨ░ίΑ?| ύΛ╢όΑ?|
 |------|--------|------|------|------|
-| 文档总数 | 60-80 | ~80 | ~80 | �?达标 |
-| 重复文档�?| 0 | 3+ | 5+ | ⚠️ 恶化 |
-| 未索引文�?| <5 | 5 | 8 | ⚠️ 恶化 |
-| 严重问题�?| 0 | 12 | 15 | 🔴 恶化 |
-| 轻微问题�?| <10 | 14 | 17 | ⚠️ 恶化 |
-| 链接路径错误 | 0 | 4�?| 1�?| �?改善 |
+| όΨΘόκμόΑ╗όΧ░ | 60-80 | ~80 | ~80 | έε?ϋ╛╛όιΘ |
+| ώΘΞίνΞόΨΘόκμύ╗?| 0 | 3+ | 5+ | έγιΎ╕Π όΒ╢ίΝΨ |
+| όεςύ┤λί╝ΧόΨΘόκ?| <5 | 5 | 8 | έγιΎ╕Π όΒ╢ίΝΨ |
+| ϊ╕ξώΘΞώΩχώλαόΧ?| 0 | 12 | 15 | ΏθΦ┤ όΒ╢ίΝΨ |
+| ϋ╜╗ί╛χώΩχώλαόΧ?| <10 | 14 | 17 | έγιΎ╕Π όΒ╢ίΝΨ |
+| ώΥ╛όΟξϋ╖ψί╛ΕώΦβϋψψ | 0 | 4ίν?| 1ίν?| έε?όΦ╣ίΨΕ |
 
 ---
 
-## 十五、附�?
+## ίΞΒϊ║ΦήΑΒώβΕί╜?
 
-### 15.1 待删除文件清�?
+### 15.1 ί╛ΖίΙιώβνόΨΘϊ╗╢ό╕ΖίΞ?
 
 ```
-# 备份文件（立即删除）
-docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗�?- 副本.md
-docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗稿_backup.md
-docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0.txt
+# ίνΘϊ╗╜όΨΘϊ╗╢Ύ╝ΙύτΜίΞ│ίΙιώβνΎ╝Κ
+docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md
+docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md
+docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt
 
-# 过期临时报告（立即删除）
+# ϋ┐Θόεθϊ╕┤όΩ╢όΛξίΣΛΎ╝ΙύτΜίΞ│ίΙιώβνΎ╝Κ
 docs/03_TRADING_TACTICS/REFACTOR_COMPLETE.md
 docs/03_TRADING_TACTICS/OPTIMIZATION_REPORT.md
 docs/02_FACTOR_LIBRARY/05_BACKTEST_REORGANIZATION.md
 docs/02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md
 
-# 个人笔记（立即删除）
-docs/06_ARCHIVE/旧文档务实评估_1人AI_一个月.md
-docs/06_ARCHIVE/旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md
+# ϊ╕ςϊ║║ύυΦϋχ░Ύ╝ΙύτΜίΞ│ίΙιώβνΎ╝Κ
+docs/06_ARCHIVE/όΩπόΨΘόκμίΛκίχηϋψΕϊ╝░_1ϊ║║AI_ϊ╕Αϊ╕ςόεΙ.md
+docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md
 
-# 重复文档（待确认后删除）
+# ώΘΞίνΞόΨΘόκμΎ╝Ιί╛ΖύκχϋχνίΡΟίΙιώβνΎ╝Κ
 docs/EXPERIMENT_TRACKING.md
 docs/06_ARCHIVE/main/BLUEPRINTS/01_ULTIMATE_BLUEPRINT.md
 docs/06_ARCHIVE/main/BLUEPRINTS/02_DEPLOYMENT_BLUEPRINT.md
@@ -1262,599 +1272,599 @@ docs/06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md
 docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md
 docs/06_ARCHIVE/main/CHANGELOG.md
 
-# 非归档位�?ARCHIVED.md（立即删除）
+# ώζηί╜Τόκμϊ╜Ξύ╜?ARCHIVED.mdΎ╝ΙύτΜίΞ│ίΙιώβνΎ╝Κ
 docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md
 docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md
 ```
 
-### 15.2 待移动文件清�?
+### 15.2 ί╛Ζύπ╗ίΛρόΨΘϊ╗╢ό╕ΖίΞ?
 
 ```
-# 移动到正确位�?
-docs/HANDOVER.md �?根目�?HANDOVER.md
-docs/KNOWLEDGE_MANAGEMENT.md �?docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.md
-docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md �?docs/06_ARCHIVE/factor-library/AUDIT_REPORT_archived.md
+# ύπ╗ίΛρίΙ░όφμύκχϊ╜Ξύ╜?
+docs/HANDOVER.md έΗ?όι╣ύδχί╜?HANDOVER.md
+docs/KNOWLEDGE_MANAGEMENT.md έΗ?docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.md
+docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md έΗ?docs/06_ARCHIVE/factor-library/AUDIT_REPORT_archived.md
 ```
 
-### 15.3 待重命名文件清单
+### 15.3 ί╛ΖώΘΞίΣ╜ίΡΞόΨΘϊ╗╢ό╕ΖίΞΧ
 
 ```
-# 统一命名规范
-docs/06_ARCHIVE/main/CHANGELOG.md �?CHANGELOG_v3.x_archived.md
-docs/因子分类总表.md �?FACTOR_INDEX.md
-docs/1_Barra风格因子.md �?barra_style_factors.md
-docs/2_行业因子.md �?industry_factors.md
-docs/3_尾部风险因子.md �?tail_risk_factors.md
+# ύ╗θϊ╕ΑίΣ╜ίΡΞϋπΕϋΝΔ
+docs/06_ARCHIVE/main/CHANGELOG.md έΗ?CHANGELOG_v3.x_archived.md
+docs/ίδιίφΡίΙΗύ▒╗όΑ╗ϋκρ.md έΗ?FACTOR_INDEX.md
+docs/1_BarraώμΟόι╝ίδιίφΡ.md έΗ?barra_style_factors.md
+docs/2_ϋκΝϊ╕γίδιίφΡ.md έΗ?industry_factors.md
+docs/3_ί░╛ώΔρώμΟώβσίδιίφΡ.md έΗ?tail_risk_factors.md
 ```
 
 ---
 
-## 十六、本次深度审查新增问题（第七轮审查）
+## ίΞΒίΖφήΑΒόευόυκό╖▒ί║οίχκόθξόΨ░ίληώΩχώλαΎ╝Ιύυυϊ╕Δϋ╜χίχκόθξΎ╝Κ
 
-> **审查日期**: 2026-03-31
-> **审查范围**: src/、tests/、config/、docs/、scripts/、data/
-> **审查标准**: 专业量化机构文件治理方式
+> **ίχκόθξόΩξόεθ**: 2026-03-31
+> **ίχκόθξϋΝΔίδ┤**: src/ήΑΒtests/ήΑΒconfig/ήΑΒdocs/ήΑΒscripts/ήΑΒdata/
+> **ίχκόθξόιΘίΘΗ**: ϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΨΘϊ╗╢ό▓╗ύΡΗόΨ╣ί╝Π
 
-### 16.1 审查执行摘要
+### 16.1 ίχκόθξόΚπϋκΝόΣαϋοΒ
 
-| 目录 | 实际状�?| 规划状�?| 符合�?|
+| ύδχί╜Χ | ίχηώβΖύΛ╢όΑ?| ϋπΕίΙΤύΛ╢όΑ?| ύυοίΡΙί║?|
 |------|----------|----------|--------|
-| **src/** | �?仅有3个基础模块 | 应有15个模�?| 20% |
-| **tests/** | �?结构完整 | 应有单元/集成测试 | 100% |
-| **config/** | �?结构良好 | 配置完整 | 100% |
-| **docs/** | �?文档冗余/重复 | 结构清晰 | 60% |
-| **scripts/** | ⚠️ 仅有.gitkeep | 需完善 | 0% |
-| **data/** | �?正常 | 正常使用 | 100% |
+| **src/** | έζ?ϊ╗ΖόεΚ3ϊ╕ςίθ║ύκΑόρκίζΩ | ί║ΦόεΚ15ϊ╕ςόρκίζ?| 20% |
+| **tests/** | έε?ύ╗ΥόηΕίχΝόΧ┤ | ί║ΦόεΚίΞΧίΖΔ/ώδΗόΙΡό╡ΜϋψΧ | 100% |
+| **config/** | έε?ύ╗ΥόηΕϋΚψίξ╜ | ώΖΞύ╜χίχΝόΧ┤ | 100% |
+| **docs/** | έζ?όΨΘόκμίΗΩϊ╜β/ώΘΞίνΞ | ύ╗ΥόηΕό╕Ζόβ░ | 60% |
+| **scripts/** | έγιΎ╕Π ϊ╗ΖόεΚ.gitkeep | ώεΑίχΝίΨΕ | 0% |
+| **data/** | έε?όφμί╕╕ | όφμί╕╕ϊ╜┐ύΦρ | 100% |
 
-### 16.2 核心问题分类
+### 16.2 όι╕ί┐ΔώΩχώλαίΙΗύ▒╗
 
-| 问题类别 | 严重程度 | 数量 | 说明 |
+| ώΩχώλαύ▒╗ίΙτ | ϊ╕ξώΘΞύρΜί║ο | όΧ░ώΘΠ | ϋψ┤όαΟ |
 |----------|----------|------|------|
-| 文档与实现脱�?| 🔴 严重 | 1 | src/只有3模块，文档规�?5�?|
-| 文档重复 | 🟡 中等 | 5+ | INDEX/SITEMAP、蓝图文档等 |
-| 职责重叠 | 🟡 中等 | 3+ | README混合多种职责 |
-| 文件漂移 | 🟡 中等 | 2 | 个人笔记混入归档 |
-| 归档不完�?| 🟢 轻微 | 1 | v4_development未索�?|
+| όΨΘόκμϊ╕ΟίχηύΟ░ϋΕ▒ϋΛ?| ΏθΦ┤ ϊ╕ξώΘΞ | 1 | src/ίΠςόεΚ3όρκίζΩΎ╝ΝόΨΘόκμϋπΕίΙ?5ϊ╕?|
+| όΨΘόκμώΘΞίνΞ | Ώθθκ ϊ╕φύφΚ | 5+ | INDEX/SITEMAPήΑΒϋΥζίδ╛όΨΘόκμύφΚ |
+| ϋΒΝϋ┤μώΘΞίΠι | Ώθθκ ϊ╕φύφΚ | 3+ | READMEό╖╖ίΡΙίνγύπΞϋΒΝϋ┤μ |
+| όΨΘϊ╗╢ό╝Γύπ╗ | Ώθθκ ϊ╕φύφΚ | 2 | ϊ╕ςϊ║║ύυΦϋχ░ό╖╖ίΖξί╜Τόκμ |
+| ί╜Τόκμϊ╕ΞίχΝόΧ?| Ώθθλ ϋ╜╗ί╛χ | 1 | v4_developmentόεςύ┤λί╝?|
 
 ---
 
-### 16.3 问题51：文档与实现严重脱节（�?最严重�?
+### 16.3 ώΩχώλα51Ύ╝γόΨΘόκμϊ╕ΟίχηύΟ░ϊ╕ξώΘΞϋΕ▒ϋΛΓΎ╝ΙΏθΦ?όεΑϊ╕ξώΘΞΎ╝?
 
-**问题描述**：`src/` 目录严重不完整，文档中规划的15个模块大部分未实现�?
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`src/` ύδχί╜Χϊ╕ξώΘΞϊ╕ΞίχΝόΧ┤Ύ╝ΝόΨΘόκμϊ╕φϋπΕίΙΤύγΕ15ϊ╕ςόρκίζΩίνπώΔρίΙΗόεςίχηύΟ░ήΑ?
 
-**src/ 目录实际结构**�?
+**src/ ύδχί╜ΧίχηώβΖύ╗ΥόηΕ**Ύ╝?
 ```
 src/
-├── core/
-�?  ├── __init__.py
-�?  ├── base.py                    # �?存在
-�?  └── exceptions.py              # �?存在
-├── modules/
-�?  ├── __init__.py
-�?  ├── alert_manager.py           # �?存在
-�?  ├── factor_calculator.py       # �?存在
-�?  └── risk_manager.py            # �?存在
-└── utils/
-    └── __init__.py
+έΦεέΦΑέΦΑ core/
+έΦ?  έΦεέΦΑέΦΑ __init__.py
+έΦ?  έΦεέΦΑέΦΑ base.py                    # έε?ίφαίερ
+έΦ?  έΦΦέΦΑέΦΑ exceptions.py              # έε?ίφαίερ
+έΦεέΦΑέΦΑ modules/
+έΦ?  έΦεέΦΑέΦΑ __init__.py
+έΦ?  έΦεέΦΑέΦΑ alert_manager.py           # έε?ίφαίερ
+έΦ?  έΦεέΦΑέΦΑ factor_calculator.py       # έε?ίφαίερ
+έΦ?  έΦΦέΦΑέΦΑ risk_manager.py            # έε?ίφαίερ
+έΦΦέΦΑέΦΑ utils/
+    έΦΦέΦΑέΦΑ __init__.py
 ```
 
-**文档中规划的 src/ 目录结构**�?
+**όΨΘόκμϊ╕φϋπΕίΙΤύγΕ src/ ύδχί╜Χύ╗ΥόηΕ**Ύ╝?
 ```
 src/
-├── core/                          # �?存在
-├── data/                          # �?不存�?
-├── factors/                       # �?不存�?
-├── ml/                            # �?不存�?
-├── sentiment/                     # �?不存�?
-├── backtest/                      # �?不存�?
-├── portfolio/                     # �?不存�?
-├── execution/                     # �?不存�?
-├── risk/                          # �?不存�?
-├── ai/                            # �?不存�?
-├── visualization/                  # �?不存�?
-└── utils/                         # �?存在
+έΦεέΦΑέΦΑ core/                          # έε?ίφαίερ
+έΦεέΦΑέΦΑ data/                          # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ factors/                       # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ ml/                            # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ sentiment/                     # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ backtest/                      # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ portfolio/                     # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ execution/                     # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ risk/                          # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ ai/                            # έζ?ϊ╕Ξίφαίε?
+έΦεέΦΑέΦΑ visualization/                  # έζ?ϊ╕Ξίφαίε?
+έΦΦέΦΑέΦΑ utils/                         # έε?ίφαίερ
 ```
 
-**模块实现对比**�?
+**όρκίζΩίχηύΟ░ίψ╣όψΦ**Ύ╝?
 
-| 文档中规划的模块 | src/ 中是否存�?| 状�?|
+| όΨΘόκμϊ╕φϋπΕίΙΤύγΕόρκίζΩ | src/ ϊ╕φόαψίΡοίφαίε?| ύΛ╢όΑ?|
 |-----------------|-----------------|------|
-| M01 DataHub | �?不存�?| 未实�?|
-| M02 FactorCalculator | �?存在 | 已实�?|
-| M03 StrategyEngine | �?不存�?| 未实�?|
-| M04 RiskManager | �?存在 | 已实�?|
-| M05 PortfolioOptimizer | �?不存�?| 未实�?|
-| M06 TradeExecutor | �?不存�?| 未实�?|
-| M07 RiskMonitor | �?不存�?| 未实�?|
-| M08 PerformanceAnalyzer | �?不存�?| 未实�?|
-| M09 ConfigManager | �?不存�?| 未实�?|
-| M10 LogManager | �?不存�?| 未实�?|
-| M11 CacheManager | �?不存�?| 未实�?|
-| M12 EventBus | �?不存�?| 未实�?|
-| M13 MetricsCollector | �?不存�?| 未实�?|
-| M14 AlertManager | �?存在 | 已实�?|
-| M15 BacktestEngine | �?不存�?| 未实�?|
+| M01 DataHub | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M02 FactorCalculator | έε?ίφαίερ | ί╖▓ίχηύΟ?|
+| M03 StrategyEngine | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M04 RiskManager | έε?ίφαίερ | ί╖▓ίχηύΟ?|
+| M05 PortfolioOptimizer | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M06 TradeExecutor | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M07 RiskMonitor | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M08 PerformanceAnalyzer | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M09 ConfigManager | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M10 LogManager | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M11 CacheManager | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M12 EventBus | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M13 MetricsCollector | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
+| M14 AlertManager | έε?ίφαίερ | ί╖▓ίχηύΟ?|
+| M15 BacktestEngine | έζ?ϊ╕Ξίφαίε?| όεςίχηύΟ?|
 
-**实际实现�?*: 3/15 = **20%**
+**ίχηώβΖίχηύΟ░ύΟ?*: 3/15 = **20%**
 
-**影响**�?
-1. 新开发者阅读文档后无法找到实际代码
-2. 文档成为"蓝图"而非"现状"
-3. 文档维护成本增加（需要同步更新）
-4. 可能导致开发方向偏离实际需�?
+**ί╜▒ίΥΞ**Ύ╝?
+1. όΨ░ί╝ΑίΠΣϋΑΖώαΖϋψ╗όΨΘόκμίΡΟόΩιό│ΧόΚ╛ίΙ░ίχηώβΖϊ╗μύιΒ
+2. όΨΘόκμόΙΡϊ╕║"ϋΥζίδ╛"ϋΑΝώζη"ύΟ░ύΛ╢"
+3. όΨΘόκμύ╗┤όΛνόΙΡόευίληίΛιΎ╝ΙώεΑϋοΒίΡΝόφξόδ┤όΨ░Ύ╝Κ
+4. ίΠψϋΔ╜ίψ╝ϋΘ┤ί╝ΑίΠΣόΨ╣ίΡΣίΒΠύο╗ίχηώβΖώεΑό▒?
 
-**解决方案**�?
+**ϋπμίΗ│όΨ╣όκΙ**Ύ╝?
 
-| 方案 | 描述 | 优点 | 缺点 |
+| όΨ╣όκΙ | όΠΠϋ┐░ | ϊ╝αύΓ╣ | ύ╝║ύΓ╣ |
 |------|------|------|------|
-| **方案A: 文档降级** | 文档标注�?愿景/规划"，不作为开发依�?| 减少维护负担 | 失去引导作用 |
-| **方案B: 立即更新** | 更新文档反映实际状态（只实�?个模块） | 文档准确 | 需要立即投入工�?|
-| **方案C: 双轨并行** | 创建IMPLEMENTED.md记录已实现功�?| 保留规划同时保持准确 | 增加维护负担 |
+| **όΨ╣όκΙA: όΨΘόκμώβΞύ║π** | όΨΘόκμόιΘό│ρϊ╕?όΕ┐όβψ/ϋπΕίΙΤ"Ύ╝Νϊ╕Ξϊ╜εϊ╕║ί╝ΑίΠΣϊ╛ζόΞ?| ίΘΠί░Σύ╗┤όΛνϋ┤θόΜΖ | ίν▒ίΟ╗ί╝Χίψ╝ϊ╜εύΦρ |
+| **όΨ╣όκΙB: ύτΜίΞ│όδ┤όΨ░** | όδ┤όΨ░όΨΘόκμίΠΞόαιίχηώβΖύΛ╢όΑΒΎ╝ΙίΠςίχηύΟ?ϊ╕ςόρκίζΩΎ╝Κ | όΨΘόκμίΘΗύκχ | ώεΑϋοΒύτΜίΞ│όΛΧίΖξί╖ξϊ╜?|
+| **όΨ╣όκΙC: ίΠΝϋ╜ρί╣╢ϋκΝ** | ίΙδί╗║IMPLEMENTED.mdϋχ░ί╜Χί╖▓ίχηύΟ░ίΛθϋΔ?| ϊ┐ζύΧβϋπΕίΙΤίΡΝόΩ╢ϊ┐ζόΝΒίΘΗύκχ | ίληίΛιύ╗┤όΛνϋ┤θόΜΖ |
 
-**推荐方案B**：更新文档以反映实际状�?
+**όΟρϋΞΡόΨ╣όκΙB**Ύ╝γόδ┤όΨ░όΨΘόκμϊ╗ξίΠΞόαιίχηώβΖύΛ╢όΑ?
 
-**执行步骤**�?
-1. 更新 `docs/System_Manifest.md`，为每个模块添加状态标�?
-   - �?已实现：FactorCalculator、RiskManager、AlertManager
-   - 🔄 规划中：DataHub、StrategyEngine、PortfolioOptimizer �?
-2. �?`docs/INDEX.md` 添加"当前实现状�?章节
-3. 更新 `docs/BLUEPRINT.md` 第八章系统架构，标注实现状�?
+**όΚπϋκΝόφξώςν**Ύ╝?
+1. όδ┤όΨ░ `docs/System_Manifest.md`Ύ╝Νϊ╕║όψΠϊ╕ςόρκίζΩό╖╗ίΛιύΛ╢όΑΒόιΘϋψ?
+   - έε?ί╖▓ίχηύΟ░Ύ╝γFactorCalculatorήΑΒRiskManagerήΑΒAlertManager
+   - ΏθΦΕ ϋπΕίΙΤϊ╕φΎ╝γDataHubήΑΒStrategyEngineήΑΒPortfolioOptimizer ύφ?
+2. ίε?`docs/INDEX.md` ό╖╗ίΛι"ί╜ΥίΚΞίχηύΟ░ύΛ╢όΑ?ύτιϋΛΓ
+3. όδ┤όΨ░ `docs/BLUEPRINT.md` ύυυίΖτύτιύ│╗ύ╗θόη╢όηΕΎ╝ΝόιΘό│ρίχηύΟ░ύΛ╢όΑ?
 
 ---
 
-### 16.4 问题52：文档重复问题（🟡 中等�?
+### 16.4 ώΩχώλα52Ύ╝γόΨΘόκμώΘΞίνΞώΩχώλαΎ╝ΙΏθθκ ϊ╕φύφΚΎ╝?
 
-**16.4.1 INDEX.md �?SITEMAP.md 重复**
+**16.4.1 INDEX.md ϊ╕?SITEMAP.md ώΘΞίνΞ**
 
-| 文件 | 自称职责 | 实际内容 |
+| όΨΘϊ╗╢ | ϋΘςύπ░ϋΒΝϋ┤μ | ίχηώβΖίΗΖίχ╣ |
 |------|----------|----------|
-| **INDEX.md** | 快速入�?5分钟导航) | 快速入�?核心文档+文档地图+按用途查�?|
-| **SITEMAP.md** | 完整地图(深度参�? | 快速入�?按用途查�?完整地图 |
+| **INDEX.md** | ί┐τώΑθίΖξίΠ?5ίΙΗώΤθίψ╝ϋΙς) | ί┐τώΑθίΖξίΠ?όι╕ί┐ΔόΨΘόκμ+όΨΘόκμίε░ίδ╛+όΝΚύΦρώΑΦόθξόΚ?|
+| **SITEMAP.md** | ίχΝόΧ┤ίε░ίδ╛(ό╖▒ί║οίΠΓϋΑ? | ί┐τώΑθίΖξίΠ?όΝΚύΦρώΑΦόθξόΚ?ίχΝόΧ┤ίε░ίδ╛ |
 
-**问题**：两者内�?*85%相同**，职责定义模�?
+**ώΩχώλα**Ύ╝γϊ╕νϋΑΖίΗΖίχ?*85%ύδ╕ίΡΝ**Ύ╝ΝϋΒΝϋ┤μίχγϊ╣Κόρκύ│?
 
-**推荐方案**：合并为一个真正的索引
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γίΡΙί╣╢ϊ╕║ϊ╕Αϊ╕ςύεθόφμύγΕύ┤λί╝Χ
 ```bash
-# 保留 INDEX.md 作为唯一索引
-# 删除 SITEMAP.md
+# ϊ┐ζύΧβ INDEX.md ϊ╜εϊ╕║ίΦψϊ╕Αύ┤λί╝Χ
+# ίΙιώβν SITEMAP.md
 ```
 
 ---
 
-**16.4.2 03_TRADING_TACTICS/README.md 内容过少**
+**16.4.2 03_TRADING_TACTICS/README.md ίΗΖίχ╣ϋ┐Θί░Σ**
 
-**问题位置**：`docs/03_TRADING_TACTICS/README.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/03_TRADING_TACTICS/README.md`
 
-**当前内容**（仅3行）�?
+**ί╜ΥίΚΞίΗΖίχ╣**Ύ╝Ιϊ╗Ζ3ϋκΝΎ╝ΚΎ╝?
 ```markdown
-# 03_TRADING_TACTICS - 交易战术�?
-> 清风量化交易系统 4.0 核心交易策略与战术文�?
+# 03_TRADING_TACTICS - ϊ║νόαΥόΙαόεψί║?
+> ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ 4.0 όι╕ί┐Δϊ║νόαΥύφΨύΧξϊ╕ΟόΙαόεψόΨΘόκ?
 > ...
 ```
 
-**问题**：这个README完全没有承担"入口"职责，而INDEX.md却有大量内容
+**ώΩχώλα**Ύ╝γϋ┐βϊ╕ςREADMEίχΝίΖρό▓κόεΚόΚ┐όΜΖ"ίΖξίΠμ"ϋΒΝϋ┤μΎ╝ΝϋΑΝINDEX.mdίΞ┤όεΚίνπώΘΠίΗΖίχ╣
 
-**推荐方案**：补充完整入口内�?
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γϋκξίΖΖίχΝόΧ┤ίΖξίΠμίΗΖίχ?
 ```markdown
-# 03_TRADING_TACTICS - 交易策略�?
+# 03_TRADING_TACTICS - ϊ║νόαΥύφΨύΧξί║?
 
-> 清风量化系统 v5.0 �?20个交易策略导�?
+> ό╕ΖώμΟώΘΠίΝΨύ│╗ύ╗θ v5.0 ύγ?20ϊ╕ςϊ║νόαΥύφΨύΧξίψ╝ϋΙ?
 
-## 快速导�?
+## ί┐τώΑθίψ╝ϋΙ?
 
-| 分类 | 策略�?| 说明 |
+| ίΙΗύ▒╗ | ύφΨύΧξόΧ?| ϋψ┤όαΟ |
 |------|--------|------|
-| 趋势跟踪 | 30�?| S001-S030 |
-| 均值回�?| 25�?| S031-S055 |
+| ϋ╢ΜίΛ┐ϋ╖θϋ╕ς | 30ϊ╕?| S001-S030 |
+| ίζΘίΑ╝ίδηί╜?| 25ϊ╕?| S031-S055 |
 | ...
 
-## 核心策略
+## όι╕ί┐ΔύφΨύΧξ
 
-### S001: 均线趋势跟踪策略 �?
+### S001: ίζΘύ║┐ϋ╢ΜίΛ┐ϋ╖θϋ╕ςύφΨύΧξ έε?
 ...
 ```
 
 ---
 
-**16.4.3 05_IMPLEMENTATION/README.md 过于臃肿**
+**16.4.3 05_IMPLEMENTATION/README.md ϋ┐Θϊ║ΟϋΘΔϋΓ┐**
 
-**问题位置**：`docs/05_IMPLEMENTATION/README.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/05_IMPLEMENTATION/README.md`
 
-**文件统计**�?00+�?
+**όΨΘϊ╗╢ύ╗θϋχκ**Ύ╝?00+ϋκ?
 
-**混合的职�?*�?
-- 实施计划（阶段一~五）
-- 快速导�?
-- 文档结构
-- 快速开�?
-- 重要规范速查
-- 常见问题
-- 个人开发者最佳实�?
-- 渐进式采用建�?
+**ό╖╖ίΡΙύγΕϋΒΝϋ┤?*Ύ╝?
+- ίχηόΨ╜ϋχκίΙΤΎ╝Ιώα╢όχ╡ϊ╕Α~ϊ║ΦΎ╝Κ
+- ί┐τώΑθίψ╝ϋΙ?
+- όΨΘόκμύ╗ΥόηΕ
+- ί┐τώΑθί╝Αίπ?
+- ώΘΞϋοΒϋπΕϋΝΔώΑθόθξ
+- ί╕╕ϋπΒώΩχώλα
+- ϊ╕ςϊ║║ί╝ΑίΠΣϋΑΖόεΑϊ╜│ίχηϋ╖?
+- ό╕Ρϋ┐δί╝ΠώΘΘύΦρί╗║ϋχ?
 
-**推荐方案**：拆分为多个文档
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γόΜΗίΙΗϊ╕║ίνγϊ╕ςόΨΘόκμ
 ```
 05_IMPLEMENTATION/
-├── README.md                    # 入口：总览+快速导�?
-├── IMPLEMENTATION_PLAN.md       # 拆分：实施计�?
-├── QUICK_START_GUIDE.md         # 拆分：快速开�?
-└── FAQ.md                       # 拆分：常见问�?
+έΦεέΦΑέΦΑ README.md                    # ίΖξίΠμΎ╝γόΑ╗ϋπΙ+ί┐τώΑθίψ╝ϋΙ?
+έΦεέΦΑέΦΑ IMPLEMENTATION_PLAN.md       # όΜΗίΙΗΎ╝γίχηόΨ╜ϋχκίΙ?
+έΦεέΦΑέΦΑ QUICK_START_GUIDE.md         # όΜΗίΙΗΎ╝γί┐τώΑθί╝Αίπ?
+έΦΦέΦΑέΦΑ FAQ.md                       # όΜΗίΙΗΎ╝γί╕╕ϋπΒώΩχώλ?
 ```
 
 ---
 
-**16.4.4 02_FACTOR_LIBRARY/README.md 过于臃肿**
+**16.4.4 02_FACTOR_LIBRARY/README.md ϋ┐Θϊ║ΟϋΘΔϋΓ┐**
 
-**问题位置**：`docs/02_FACTOR_LIBRARY/README.md`
+**ώΩχώλαϊ╜Ξύ╜χ**Ύ╝γ`docs/02_FACTOR_LIBRARY/README.md`
 
-**文件统计**�?80+�?
+**όΨΘϊ╗╢ύ╗θϋχκ**Ύ╝?80+ϋκ?
 
-**混合的职�?*�?
-- 快速导�?
-- 新增内容
-- 架构说明
-- 因子库概�?
-- 核心文档
-- 使用指南
-- 质量标准
-- 监控与告�?
-- 更新记录
-- 相关文档
+**ό╖╖ίΡΙύγΕϋΒΝϋ┤?*Ύ╝?
+- ί┐τώΑθίψ╝ϋΙ?
+- όΨ░ίληίΗΖίχ╣
+- όη╢όηΕϋψ┤όαΟ
+- ίδιίφΡί║ΥόοΓϋπ?
+- όι╕ί┐ΔόΨΘόκμ
+- ϊ╜┐ύΦρόΝΘίΞΩ
+- ϋ┤ρώΘΠόιΘίΘΗ
+- ύδΣόΟπϊ╕ΟίΣΛϋφ?
+- όδ┤όΨ░ϋχ░ί╜Χ
+- ύδ╕ίΖ│όΨΘόκμ
 
-**推荐方案**：拆分为多个文档
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γόΜΗίΙΗϊ╕║ίνγϊ╕ςόΨΘόκμ
 ```
 02_FACTOR_LIBRARY/
-├── README.md                    # 入口：总览+快速导�?
-├── OVERVIEW.md                  # 拆分：架构说�?因子库概�?
-├── USAGE_GUIDE.md               # 拆分：使用指�?质量标准
-└── MONITORING.md                # 拆分：监控与告警
+έΦεέΦΑέΦΑ README.md                    # ίΖξίΠμΎ╝γόΑ╗ϋπΙ+ί┐τώΑθίψ╝ϋΙ?
+έΦεέΦΑέΦΑ OVERVIEW.md                  # όΜΗίΙΗΎ╝γόη╢όηΕϋψ┤όα?ίδιίφΡί║ΥόοΓϋπ?
+έΦεέΦΑέΦΑ USAGE_GUIDE.md               # όΜΗίΙΗΎ╝γϊ╜┐ύΦρόΝΘίΞ?ϋ┤ρώΘΠόιΘίΘΗ
+έΦΦέΦΑέΦΑ MONITORING.md                # όΜΗίΙΗΎ╝γύδΣόΟπϊ╕ΟίΣΛϋφο
 ```
 
 ---
 
-**16.4.5 蓝图文档重复（已归档但原文件仍存在）**
+**16.4.5 ϋΥζίδ╛όΨΘόκμώΘΞίνΞΎ╝Ιί╖▓ί╜Τόκμϊ╜ΗίΟθόΨΘϊ╗╢ϊ╗ΞίφαίερΎ╝Κ**
 
-**问题描述**：BLUEPRINT.md 已将7个蓝图文档合并，但原始文档仍�?BLUEPRINTS/ 目录
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γBLUEPRINT.md ί╖▓ί░Η7ϊ╕ςϋΥζίδ╛όΨΘόκμίΡΙί╣╢Ύ╝Νϊ╜ΗίΟθίπΜόΨΘόκμϊ╗Ξίε?BLUEPRINTS/ ύδχί╜Χ
 
-**重复文件**�?个完整蓝图文�?
+**ώΘΞίνΞόΨΘϊ╗╢**Ύ╝?ϊ╕ςίχΝόΧ┤ϋΥζίδ╛όΨΘόκ?
 
-**推荐方案**�?
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝?
 ```bash
-# 方案A：删�?BLUEPRINTS/ 下的完整内容，只保留索引
-# 方案B（推荐）：保持现状，明确说明"完整内容�?archive"
+# όΨ╣όκΙAΎ╝γίΙιώβ?BLUEPRINTS/ ϊ╕ΜύγΕίχΝόΧ┤ίΗΖίχ╣Ύ╝ΝίΠςϊ┐ζύΧβύ┤λί╝Χ
+# όΨ╣όκΙBΎ╝ΙόΟρϋΞΡΎ╝ΚΎ╝γϊ┐ζόΝΒύΟ░ύΛ╢Ύ╝ΝόαΟύκχϋψ┤όαΟ"ίχΝόΧ┤ίΗΖίχ╣ϋπ?archive"
 ```
 
 ---
 
-### 16.5 问题53：职责划分问题（🟡 中等�?
+### 16.5 ώΩχώλα53Ύ╝γϋΒΝϋ┤μίΙΤίΙΗώΩχώλαΎ╝ΙΏθθκ ϊ╕φύφΚΎ╝?
 
-**16.5.1 一个文件承担多种职�?*
+**16.5.1 ϊ╕Αϊ╕ςόΨΘϊ╗╢όΚ┐όΜΖίνγύπΞϋΒΝϋ┤?*
 
-| 文件 | 承担职责�?| 问题描述 |
+| όΨΘϊ╗╢ | όΚ┐όΜΖϋΒΝϋ┤μόΧ?| ώΩχώλαόΠΠϋ┐░ |
 |------|------------|----------|
-| **DEVELOPER_RULES.md** | 5�?| 目录规范+代码标准+配置管理+测试规范+工作流程 |
-| **05_IMPLEMENTATION/README.md** | 6�?| 实施计划+快速导�?文档结构+快速开�?规范速查+FAQ |
-| **02_FACTOR_LIBRARY/README.md** | 7�?| 快速导�?架构+使用指南+质量标准+监控告警+更新记录+相关文档 |
+| **DEVELOPER_RULES.md** | 5ύπ?| ύδχί╜ΧϋπΕϋΝΔ+ϊ╗μύιΒόιΘίΘΗ+ώΖΞύ╜χύχκύΡΗ+ό╡ΜϋψΧϋπΕϋΝΔ+ί╖ξϊ╜εό╡ΒύρΜ |
+| **05_IMPLEMENTATION/README.md** | 6ύπ?| ίχηόΨ╜ϋχκίΙΤ+ί┐τώΑθίψ╝ϋΙ?όΨΘόκμύ╗ΥόηΕ+ί┐τώΑθί╝Αίπ?ϋπΕϋΝΔώΑθόθξ+FAQ |
+| **02_FACTOR_LIBRARY/README.md** | 7ύπ?| ί┐τώΑθίψ╝ϋΙ?όη╢όηΕ+ϊ╜┐ύΦρόΝΘίΞΩ+ϋ┤ρώΘΠόιΘίΘΗ+ύδΣόΟπίΣΛϋφο+όδ┤όΨ░ϋχ░ί╜Χ+ύδ╕ίΖ│όΨΘόκμ |
 
-**DEVELOPER_RULES.md 详细拆分建议**�?
+**DEVELOPER_RULES.md ϋψού╗ΗόΜΗίΙΗί╗║ϋχχ**Ύ╝?
 ```
 05_IMPLEMENTATION/02_DEVELOPMENT/
-├── README.md                    # 开发规范总览（合并现有子文档链接�?
-├── CODE_STANDARD.md            # 拆分：代码标�?
-├── CONFIG_MANAGEMENT.md        # 拆分：配置管�?
-├── TESTING_STANDARD.md         # 拆分：测试规�?
-├── WORKFLOW.md                 # 拆分：工作流�?
-└── DIRECTORY_STRUCTURE.md      # 拆分：目录结�?
+έΦεέΦΑέΦΑ README.md                    # ί╝ΑίΠΣϋπΕϋΝΔόΑ╗ϋπΙΎ╝ΙίΡΙί╣╢ύΟ░όεΚίφΡόΨΘόκμώΥ╛όΟξΎ╝?
+έΦεέΦΑέΦΑ CODE_STANDARD.md            # όΜΗίΙΗΎ╝γϊ╗μύιΒόιΘίΘ?
+έΦεέΦΑέΦΑ CONFIG_MANAGEMENT.md        # όΜΗίΙΗΎ╝γώΖΞύ╜χύχκύΡ?
+έΦεέΦΑέΦΑ TESTING_STANDARD.md         # όΜΗίΙΗΎ╝γό╡ΜϋψΧϋπΕϋΝ?
+έΦεέΦΑέΦΑ WORKFLOW.md                 # όΜΗίΙΗΎ╝γί╖ξϊ╜εό╡Βύρ?
+έΦΦέΦΑέΦΑ DIRECTORY_STRUCTURE.md      # όΜΗίΙΗΎ╝γύδχί╜Χύ╗Υόη?
 ```
 
 ---
 
-### 16.6 问题54：文件漂移问题（🟡 中等�?
+### 16.6 ώΩχώλα54Ύ╝γόΨΘϊ╗╢ό╝Γύπ╗ώΩχώλαΎ╝ΙΏθθκ ϊ╕φύφΚΎ╝?
 
-**16.6.1 归档不完�?*
+**16.6.1 ί╜Τόκμϊ╕ΞίχΝίΖ?*
 
-**06_ARCHIVE/main/v4_development/** 中存在以下文件，�?**06_ARCHIVE/README.md** 的归档清单中**未被索引**�?
+**06_ARCHIVE/main/v4_development/** ϊ╕φίφαίερϊ╗ξϊ╕ΜόΨΘϊ╗╢Ύ╝Νίε?**06_ARCHIVE/README.md** ύγΕί╜Τόκμό╕ΖίΞΧϊ╕φ**όεςϋλτύ┤λί╝Χ**Ύ╝?
 
-| 文件 | 状�?|
+| όΨΘϊ╗╢ | ύΛ╢όΑ?|
 |------|------|
-| 清风量化交易系统4.0开发粗�?- 副本.md | �?冗余副本 |
-| 清风量化交易系统4.0开发粗稿_backup.md | �?备份文件 |
-| 清风量化交易系统4.0.txt | �?纯文本版 |
-| 清风量化交易系统4.0开发粗�?md | ⚠️ 已被细稿取代 |
-| 清风量化交易系统4.0开发细�?md | �?保留 |
-| 清风量化交易系统4.0开发方�?md | �?保留 |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md | έζ?ίΗΩϊ╜βίΚψόευ |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md | έζ?ίνΘϊ╗╜όΨΘϊ╗╢ |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt | έζ?ύ║ψόΨΘόευύΚΙ |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?md | έγιΎ╕Π ί╖▓ϋλτύ╗Ηύρ┐ίΠΨϊ╗μ |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ╗Ηύρ?md | έε?ϊ┐ζύΧβ |
+| ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣόΨ╣όκ?md | έε?ϊ┐ζύΧβ |
 
-**推荐方案**�?
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝?
 ```bash
-# 立即删除
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗�?- 副本.md")
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发粗稿_backup.md")
-DeleteFile("docs/06_ARCHIVE/main/v4_development/清风量化交易系统4.0.txt")
+# ύτΜίΞ│ίΙιώβν
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?- ίΚψόευ.md")
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md")
+DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0.txt")
 
-# 评估后决�?
-# 删除或保�?清风量化交易系统4.0开发粗�?md（已被细稿取代）
+# ϋψΕϊ╝░ίΡΟίΗ│ίχ?
+# ίΙιώβνόΙΨϊ┐ζύΧ?ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ?mdΎ╝Ιί╖▓ϋλτύ╗Ηύρ┐ίΠΨϊ╗μΎ╝Κ
 ```
 
 ---
 
-**16.6.2 个人笔记混入归档**
+**16.6.2 ϊ╕ςϊ║║ύυΦϋχ░ό╖╖ίΖξί╜Τόκμ**
 
-**问题文件**�?
-- `docs/06_ARCHIVE/旧文档务实评估_1人AI_一个月.md` - 个人评估笔记
-- `docs/06_ARCHIVE/旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md` - 个人分析笔记
+**ώΩχώλαόΨΘϊ╗╢**Ύ╝?
+- `docs/06_ARCHIVE/όΩπόΨΘόκμίΛκίχηϋψΕϊ╝░_1ϊ║║AI_ϊ╕Αϊ╕ςόεΙ.md` - ϊ╕ςϊ║║ϋψΕϊ╝░ύυΦϋχ░
+- `docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md` - ϊ╕ςϊ║║ίΙΗόηΡύυΦϋχ░
 
-**推荐方案**�?
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝?
 ```bash
-# 删除个人笔记
-DeleteFile("docs/06_ARCHIVE/旧文档务实评估_1人AI_一个月.md")
-DeleteFile("docs/06_ARCHIVE/旧文档分析报告_清风量化交易系统4.0开发粗稿_backup.md")
+# ίΙιώβνϊ╕ςϊ║║ύυΦϋχ░
+DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΛκίχηϋψΕϊ╝░_1ϊ║║AI_ϊ╕Αϊ╕ςόεΙ.md")
+DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕ΖώμΟώΘΠίΝΨϊ║νόαΥύ│╗ύ╗θ4.0ί╝ΑίΠΣύ▓Ωύρ┐_backup.md")
 ```
 
 ---
 
-### 16.7 问题55：未索引文档（�?轻微�?
+### 16.7 ώΩχώλα55Ύ╝γόεςύ┤λί╝ΧόΨΘόκμΎ╝ΙΏθθ?ϋ╜╗ί╛χΎ╝?
 
-**v4_development/ 文件未被索引**
+**v4_development/ όΨΘϊ╗╢όεςϋλτύ┤λί╝Χ**
 
-**问题**�?6_ARCHIVE/README.md 的归档清单未列出 v4_development/ 中的文件
+**ώΩχώλα**Ύ╝?6_ARCHIVE/README.md ύγΕί╜Τόκμό╕ΖίΞΧόεςίΙΩίΘ║ v4_development/ ϊ╕φύγΕόΨΘϊ╗╢
 
-**推荐方案**：更�?06_ARCHIVE/README.md 添加 v4_development/ 归档清单
-
----
-
-### 16.8 问题56：DEVELOPER_RULES.md 与其他文档职责重�?
-
-**问题描述**：`docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md` �?`docs/05_IMPLEMENTATION/02_DEVELOPMENT/README.md` 内容高度重叠
-
-**重叠内容**�?
-- 代码命名规范
-- 配置管理原则
-- 测试规范
-
-**推荐方案**：保�?DEveloper_RULES.md 作为详细规范，README.md 作为快速参�?
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γόδ┤όΨ?06_ARCHIVE/README.md ό╖╗ίΛι v4_development/ ί╜Τόκμό╕ΖίΞΧ
 
 ---
 
-## 十七、专业量化机构文件治理方�?
+### 16.8 ώΩχώλα56Ύ╝γDEVELOPER_RULES.md ϊ╕ΟίΖ╢ϊ╗ΨόΨΘόκμϋΒΝϋ┤μώΘΞίΠ?
 
-### 17.1 五大原则
+**ώΩχώλαόΠΠϋ┐░**Ύ╝γ`docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md` ϊ╕?`docs/05_IMPLEMENTATION/02_DEVELOPMENT/README.md` ίΗΖίχ╣ώταί║οώΘΞίΠι
 
-| 原则 | 描述 | 当前状�?|
+**ώΘΞίΠιίΗΖίχ╣**Ύ╝?
+- ϊ╗μύιΒίΣ╜ίΡΞϋπΕϋΝΔ
+- ώΖΞύ╜χύχκύΡΗίΟθίΙβ
+- ό╡ΜϋψΧϋπΕϋΝΔ
+
+**όΟρϋΞΡόΨ╣όκΙ**Ύ╝γϊ┐ζόΝ?DEveloper_RULES.md ϊ╜εϊ╕║ϋψού╗ΗϋπΕϋΝΔΎ╝ΝREADME.md ϊ╜εϊ╕║ί┐τώΑθίΠΓϋΑ?
+
+---
+
+## ίΞΒϊ╕ΔήΑΒϊ╕Υϊ╕γώΘΠίΝΨόε║όηΕόΨΘϊ╗╢ό▓╗ύΡΗόΨ╣ί╝?
+
+### 17.1 ϊ║ΦίνπίΟθίΙβ
+
+| ίΟθίΙβ | όΠΠϋ┐░ | ί╜ΥίΚΞύΛ╢όΑ?|
 |------|------|----------|
-| **1. 职责驱动原则(SoC)** | 每个文件只承担一种核心职�?| ⚠️ 部分违反 |
-| **2. 索引完备原则** | 活跃文档必须被索引，归档文档必须可追�?| ⚠️ 部分违反 |
-| **3. 版本隔离原则** | 同一内容只保留最新版本，历史版本统一归档 | ⚠️ 部分违反 |
-| **4. 文档代码对应原则** | 文档必须反映实际代码状�?| �?严重违反 |
-| **5. 命名规范原则** | 文件名应清晰表达其内容和职责 | ⚠️ 部分违反 |
+| **1. ϋΒΝϋ┤μώσ▒ίΛρίΟθίΙβ(SoC)** | όψΠϊ╕ςόΨΘϊ╗╢ίΠςόΚ┐όΜΖϊ╕ΑύπΞόι╕ί┐ΔϋΒΝϋ┤?| έγιΎ╕Π ώΔρίΙΗϋ┐ζίΠΞ |
+| **2. ύ┤λί╝ΧίχΝίνΘίΟθίΙβ** | ό┤╗ϋ╖ΔόΨΘόκμί┐Ζώκ╗ϋλτύ┤λί╝ΧΎ╝Νί╜ΤόκμόΨΘόκμί┐Ζώκ╗ίΠψϋ┐╜ό║?| έγιΎ╕Π ώΔρίΙΗϋ┐ζίΠΞ |
+| **3. ύΚΙόευώγΦύο╗ίΟθίΙβ** | ίΡΝϊ╕ΑίΗΖίχ╣ίΠςϊ┐ζύΧβόεΑόΨ░ύΚΙόευΎ╝ΝίΟΗίΠ▓ύΚΙόευύ╗θϊ╕Αί╜Τόκμ | έγιΎ╕Π ώΔρίΙΗϋ┐ζίΠΞ |
+| **4. όΨΘόκμϊ╗μύιΒίψ╣ί║ΦίΟθίΙβ** | όΨΘόκμί┐Ζώκ╗ίΠΞόαιίχηώβΖϊ╗μύιΒύΛ╢όΑ?| έζ?ϊ╕ξώΘΞϋ┐ζίΠΞ |
+| **5. ίΣ╜ίΡΞϋπΕϋΝΔίΟθίΙβ** | όΨΘϊ╗╢ίΡΞί║Φό╕Ζόβ░ϋκρϋ╛╛ίΖ╢ίΗΖίχ╣ίΤΝϋΒΝϋ┤μ | έγιΎ╕Π ώΔρίΙΗϋ┐ζίΠΞ |
 
-### 17.2 职责驱动原则详解
-
-```
-每个文件只承担一种核心职�?
-
-�?正确:
-  src/core/base.py         �?只定义核心数据类
-  docs/ARCHITECTURE.md     �?只描述架�?
-  config/system.yaml       �?只管理系统配�?
-
-�?错误:
-  一个文件混合多种职责（如当前DEVELOPER_RULES.md�?
-```
-
-### 17.3 索引完备原则详解
+### 17.2 ϋΒΝϋ┤μώσ▒ίΛρίΟθίΙβϋψοϋπμ
 
 ```
-活跃文档必须被索引，归档文档必须可追�?
+όψΠϊ╕ςόΨΘϊ╗╢ίΠςόΚ┐όΜΖϊ╕ΑύπΞόι╕ί┐ΔϋΒΝϋ┤?
 
-�?正确:
-  docs/INDEX.md 索引所有活跃文�?
-  docs/06_ARCHIVE/README.md 索引所有归档文�?
+έε?όφμύκχ:
+  src/core/base.py         έΗ?ίΠςίχγϊ╣Κόι╕ί┐ΔόΧ░όΞχύ▒╗
+  docs/ARCHITECTURE.md     έΗ?ίΠςόΠΠϋ┐░όη╢όη?
+  config/system.yaml       έΗ?ίΠςύχκύΡΗύ│╗ύ╗θώΖΞύ╜?
 
-�?当前问题:
-  v4_development/ 中的文件未被索引
+έζ?ώΦβϋψψ:
+  ϊ╕Αϊ╕ςόΨΘϊ╗╢ό╖╖ίΡΙίνγύπΞϋΒΝϋ┤μΎ╝ΙίοΓί╜ΥίΚΞDEVELOPER_RULES.mdΎ╝?
 ```
 
-### 17.4 版本隔离原则详解
+### 17.3 ύ┤λί╝ΧίχΝίνΘίΟθίΙβϋψοϋπμ
 
 ```
-同一内容只保留最新版本，历史版本统一归档
+ό┤╗ϋ╖ΔόΨΘόκμί┐Ζώκ╗ϋλτύ┤λί╝ΧΎ╝Νί╜ΤόκμόΨΘόκμί┐Ζώκ╗ίΠψϋ┐╜ό║?
 
-�?正确:
-  保留: FINAL_AUDIT_REPORT_V5.md
-  删除: v1-v4所有版�?
+έε?όφμύκχ:
+  docs/INDEX.md ύ┤λί╝ΧόΚΑόεΚό┤╗ϋ╖ΔόΨΘόκ?
+  docs/06_ARCHIVE/README.md ύ┤λί╝ΧόΚΑόεΚί╜ΤόκμόΨΘόκ?
 
-�?当前问题:
-  6个审计报告版本堆�?
-  6个v4开发文档版本堆�?
+έζ?ί╜ΥίΚΞώΩχώλα:
+  v4_development/ ϊ╕φύγΕόΨΘϊ╗╢όεςϋλτύ┤λί╝Χ
 ```
 
-### 17.5 文档代码对应原则详解
+### 17.4 ύΚΙόευώγΦύο╗ίΟθίΙβϋψοϋπμ
 
 ```
-文档必须反映实际代码状态，不允�?文档先行"
+ίΡΝϊ╕ΑίΗΖίχ╣ίΠςϊ┐ζύΧβόεΑόΨ░ύΚΙόευΎ╝ΝίΟΗίΠ▓ύΚΙόευύ╗θϊ╕Αί╜Τόκμ
 
-�?正确:
-  文档规划 ←→ 实际实现  同步
+έε?όφμύκχ:
+  ϊ┐ζύΧβ: FINAL_AUDIT_REPORT_V5.md
+  ίΙιώβν: v1-v4όΚΑόεΚύΚΙόε?
 
-�?当前问题:
-  文档规划15个模块，实际只实�?�?
+έζ?ί╜ΥίΚΞώΩχώλα:
+  6ϊ╕ςίχκϋχκόΛξίΣΛύΚΙόευίιΗύπ?
+  6ϊ╕ςv4ί╝ΑίΠΣόΨΘόκμύΚΙόευίιΗύπ?
+```
+
+### 17.5 όΨΘόκμϊ╗μύιΒίψ╣ί║ΦίΟθίΙβϋψοϋπμ
+
+```
+όΨΘόκμί┐Ζώκ╗ίΠΞόαιίχηώβΖϊ╗μύιΒύΛ╢όΑΒΎ╝Νϊ╕ΞίΖΒϋχ?όΨΘόκμίΖΙϋκΝ"
+
+έε?όφμύκχ:
+  όΨΘόκμϋπΕίΙΤ έΗΡέΗΤ ίχηώβΖίχηύΟ░  ίΡΝόφξ
+
+έζ?ί╜ΥίΚΞώΩχώλα:
+  όΨΘόκμϋπΕίΙΤ15ϊ╕ςόρκίζΩΎ╝ΝίχηώβΖίΠςίχηύΟ?ϊ╕?
 ```
 
 ---
 
-## 十八、综合解决方�?
+## ίΞΒίΖτήΑΒύ╗╝ίΡΙϋπμίΗ│όΨ╣όκ?
 
-### 18.1 紧急行动项（P0�?
+### 18.1 ύ┤πόΑξϋκΝίΛρώκ╣Ύ╝ΙP0Ύ╝?
 
-| 优先�?| 行动�?| 影响 | 对应问题 |
+| ϊ╝αίΖΙύ║?| ϋκΝίΛρώκ?| ί╜▒ίΥΞ | ίψ╣ί║ΦώΩχώλα |
 |--------|--------|------|----------|
-| 🔴 P0 | **更新 System_Manifest.md 反映实际状�?* | �?| 问题51 |
-| 🔴 P0 | **合并 INDEX.md �?SITEMAP.md** | �?| 问题52 |
-| 🟡 P1 | **清理 v4_development/ 冗余文件** | �?| 问题54 |
-| 🟡 P1 | **完善 06_ARCHIVE 索引** | �?| 问题55 |
-| 🟡 P1 | **删除或移出个人笔�?* | �?| 问题54 |
+| ΏθΦ┤ P0 | **όδ┤όΨ░ System_Manifest.md ίΠΞόαιίχηώβΖύΛ╢όΑ?* | ώτ?| ώΩχώλα51 |
+| ΏθΦ┤ P0 | **ίΡΙί╣╢ INDEX.md ίΤ?SITEMAP.md** | ϊ╕?| ώΩχώλα52 |
+| Ώθθκ P1 | **ό╕ΖύΡΗ v4_development/ ίΗΩϊ╜βόΨΘϊ╗╢** | ϊ╕?| ώΩχώλα54 |
+| Ώθθκ P1 | **ίχΝίΨΕ 06_ARCHIVE ύ┤λί╝Χ** | ϊ╜?| ώΩχώλα55 |
+| Ώθθκ P1 | **ίΙιώβνόΙΨύπ╗ίΘ║ϊ╕ςϊ║║ύυΦϋχ?* | ϊ╕?| ώΩχώλα54 |
 
-### 18.2 中期优化（P1�?
+### 18.2 ϊ╕φόεθϊ╝αίΝΨΎ╝ΙP1Ύ╝?
 
-| 行动�?| 描述 | 对应问题 |
+| ϋκΝίΛρώκ?| όΠΠϋ┐░ | ίψ╣ί║ΦώΩχώλα |
 |--------|------|----------|
-| 拆分大文�?| DEVEL OPPER_RULES.md(900+�? �?5个独立文�?| 问题53 |
-| 完善子目录README | 03_TRADING_TACTICS/README.md等补充入口内�?| 问题52 |
-| 清理归档 | 审计报告只保留最新版�?| 问题52 |
+| όΜΗίΙΗίνπόΨΘόκ?| DEVEL OPPER_RULES.md(900+ϋκ? έΗ?5ϊ╕ςύΜυύτΜόΨΘόκ?| ώΩχώλα53 |
+| ίχΝίΨΕίφΡύδχί╜ΧREADME | 03_TRADING_TACTICS/README.mdύφΚϋκξίΖΖίΖξίΠμίΗΖίχ?| ώΩχώλα52 |
+| ό╕ΖύΡΗί╜Τόκμ | ίχκϋχκόΛξίΣΛίΠςϊ┐ζύΧβόεΑόΨ░ύΚΙόε?| ώΩχώλα52 |
 
-### 18.3 目录结构优化建议
+### 18.3 ύδχί╜Χύ╗ΥόηΕϊ╝αίΝΨί╗║ϋχχ
 
 ```
 docs/
-├── INDEX.md                      # 唯一索引（合并INDEX+SITEMAP�?
-├── BLUEPRINT.md                  # 蓝图总览
-├── System_Manifest.md           # 系统清单（更新以反映实际状态）
-├── 00_OVERVIEW/                  # �?正常
-├── 01_FRAMEWORK/                 # �?正常
-├── 02_FACTOR_LIBRARY/           # 需拆分README
-├── 03_TRADING_TACTICS/           # 需完善README
-├── 04_EXECUTION/                 # �?正常
-├── 05_IMPLEMENTATION/            # 需拆分大文�?
-├── 06_ARCHIVE/                  # 需清理+完善索引
-├── 07_RESEARCH/                  # �?正常
-└── 08_USER_EXPERIENCE/           # �?正常
+έΦεέΦΑέΦΑ INDEX.md                      # ίΦψϊ╕Αύ┤λί╝ΧΎ╝ΙίΡΙί╣╢INDEX+SITEMAPΎ╝?
+έΦεέΦΑέΦΑ BLUEPRINT.md                  # ϋΥζίδ╛όΑ╗ϋπΙ
+έΦεέΦΑέΦΑ System_Manifest.md           # ύ│╗ύ╗θό╕ΖίΞΧΎ╝Ιόδ┤όΨ░ϊ╗ξίΠΞόαιίχηώβΖύΛ╢όΑΒΎ╝Κ
+έΦεέΦΑέΦΑ 00_OVERVIEW/                  # έε?όφμί╕╕
+έΦεέΦΑέΦΑ 01_FRAMEWORK/                 # έε?όφμί╕╕
+έΦεέΦΑέΦΑ 02_FACTOR_LIBRARY/           # ώεΑόΜΗίΙΗREADME
+έΦεέΦΑέΦΑ 03_TRADING_TACTICS/           # ώεΑίχΝίΨΕREADME
+έΦεέΦΑέΦΑ 04_EXECUTION/                 # έε?όφμί╕╕
+έΦεέΦΑέΦΑ 05_IMPLEMENTATION/            # ώεΑόΜΗίΙΗίνπόΨΘϊ╗?
+έΦεέΦΑέΦΑ 06_ARCHIVE/                  # ώεΑό╕ΖύΡΗ+ίχΝίΨΕύ┤λί╝Χ
+έΦεέΦΑέΦΑ 07_RESEARCH/                  # έε?όφμί╕╕
+έΦΦέΦΑέΦΑ 08_USER_EXPERIENCE/           # έε?όφμί╕╕
 ```
 
 ---
 
-## 十九、src/ �?tests/ 对比分析
+## ίΞΒϊ╣ζήΑΒsrc/ ϊ╕?tests/ ίψ╣όψΦίΙΗόηΡ
 
-### 19.1 模块覆盖对比
+### 19.1 όρκίζΩϋοΗύδΨίψ╣όψΦ
 
-| 方面 | src/ | tests/ | 状�?|
+| όΨ╣ώζλ | src/ | tests/ | ύΛ╢όΑ?|
 |------|------|--------|------|
-| 模块完整�?| 3个模�?| 5个测试文�?| ⚠️ 不匹�?|
-| 目录结构 | �?良好 | �?良好 | �?一�?|
-| 命名规范 | �?良好 | �?良好 | �?一�?|
-| 测试覆盖 | N/A | �?完整 | �?良好 |
+| όρκίζΩίχΝόΧ┤όΑ?| 3ϊ╕ςόρκίζ?| 5ϊ╕ςό╡ΜϋψΧόΨΘϊ╗?| έγιΎ╕Π ϊ╕ΞίΝ╣ώΖ?|
+| ύδχί╜Χύ╗ΥόηΕ | έε?ϋΚψίξ╜ | έε?ϋΚψίξ╜ | έε?ϊ╕ΑϋΘ?|
+| ίΣ╜ίΡΞϋπΕϋΝΔ | έε?ϋΚψίξ╜ | έε?ϋΚψίξ╜ | έε?ϊ╕ΑϋΘ?|
+| ό╡ΜϋψΧϋοΗύδΨ | N/A | έε?ίχΝόΧ┤ | έε?ϋΚψίξ╜ |
 
-### 19.2 tests/ 实际覆盖情况
+### 19.2 tests/ ίχηώβΖϋοΗύδΨόΔΖίΗ╡
 
-| 测试文件 | 对应模块 | 状�?|
+| ό╡ΜϋψΧόΨΘϊ╗╢ | ίψ╣ί║ΦόρκίζΩ | ύΛ╢όΑ?|
 |----------|----------|------|
-| test_alert_manager.py | src/modules/alert_manager.py | �?|
-| test_factor_calculator.py | src/modules/factor_calculator.py | �?|
-| test_risk_manager.py | src/modules/risk_manager.py | �?|
-| test_core.py | src/core/base.py | �?|
-| test_exceptions.py | src/core/exceptions.py | �?|
+| test_alert_manager.py | src/modules/alert_manager.py | έε?|
+| test_factor_calculator.py | src/modules/factor_calculator.py | έε?|
+| test_risk_manager.py | src/modules/risk_manager.py | έε?|
+| test_core.py | src/core/base.py | έε?|
+| test_exceptions.py | src/core/exceptions.py | έε?|
 
-**结论**：tests/ 覆盖了所有已实现�?src/ 模块，测试质量良好�?
+**ύ╗Υϋχ║**Ύ╝γtests/ ϋοΗύδΨϊ║ΗόΚΑόεΚί╖▓ίχηύΟ░ύγ?src/ όρκίζΩΎ╝Νό╡ΜϋψΧϋ┤ρώΘΠϋΚψίξ╜ήΑ?
 
 ---
 
-## 二十、config/ 结构分析
+## ϊ║ΝίΞΒήΑΒconfig/ ύ╗ΥόηΕίΙΗόηΡ
 
-### 20.1 目录结构
+### 20.1 ύδχί╜Χύ╗ΥόηΕ
 
 ```
 config/
-├── factors/
-�?  └── selected_factors.yaml
-├── risk/
-�?  └── rules.yaml
-├── data_sources.yaml
-└── system.yaml
+έΦεέΦΑέΦΑ factors/
+έΦ?  έΦΦέΦΑέΦΑ selected_factors.yaml
+έΦεέΦΑέΦΑ risk/
+έΦ?  έΦΦέΦΑέΦΑ rules.yaml
+έΦεέΦΑέΦΑ data_sources.yaml
+έΦΦέΦΑέΦΑ system.yaml
 ```
 
-**结论**：✅ **config/ 目录结构清晰，符合规�?*
+**ύ╗Υϋχ║**Ύ╝γέεΖ **config/ ύδχί╜Χύ╗ΥόηΕό╕Ζόβ░Ύ╝ΝύυοίΡΙϋπΕϋΝ?*
 
 ---
 
-## 二十一、根目录文档统计
+## ϊ║ΝίΞΒϊ╕ΑήΑΒόι╣ύδχί╜ΧόΨΘόκμύ╗θϋχκ
 
-| 类别 | 数量 | 说明 |
+| ύ▒╗ίΙτ | όΧ░ώΘΠ | ϋψ┤όαΟ |
 |------|------|------|
-| 总文档数 | ~150+ | 含归�?|
-| 活跃文档 | ~50 | 核心文档 |
-| 归档文档 | ~100 | 历史文档 |
-| src/ 模块 | 3 | 实际实现 |
-| src/ 规划 | 15 | 文档规划 |
-| tests/ 文件 | 5 | 单元测试 |
+| όΑ╗όΨΘόκμόΧ░ | ~150+ | ίΡτί╜Τόκ?|
+| ό┤╗ϋ╖ΔόΨΘόκμ | ~50 | όι╕ί┐ΔόΨΘόκμ |
+| ί╜ΤόκμόΨΘόκμ | ~100 | ίΟΗίΠ▓όΨΘόκμ |
+| src/ όρκίζΩ | 3 | ίχηώβΖίχηύΟ░ |
+| src/ ϋπΕίΙΤ | 15 | όΨΘόκμϋπΕίΙΤ |
+| tests/ όΨΘϊ╗╢ | 5 | ίΞΧίΖΔό╡ΜϋψΧ |
 
 ---
 
-## 二十二、问题统计更�?
+## ϊ║ΝίΞΒϊ║ΝήΑΒώΩχώλαύ╗θϋχκόδ┤όΨ?
 
-### 22.1 最新问题总数
+### 22.1 όεΑόΨ░ώΩχώλαόΑ╗όΧ░
 
-| 严重程度 | 原问题数 | 新增问题�?| 合计 |
+| ϊ╕ξώΘΞύρΜί║ο | ίΟθώΩχώλαόΧ░ | όΨ░ίληώΩχώλαόΧ?| ίΡΙϋχκ |
 |----------|----------|------------|------|
-| 🔴 **严重** | 15�?| 1个（文档与实现脱节） | **16�?* |
-| 🟡 **中等** | 24�?| 5个（重复+职责+漂移�?| **29�?* |
-| 🟢 **轻微** | 17�?| 1个（未索引） | **18�?* |
-| **总计** | **56�?* | **7�?* | **63�?* |
+| ΏθΦ┤ **ϊ╕ξώΘΞ** | 15ϊ╕?| 1ϊ╕ςΎ╝ΙόΨΘόκμϊ╕ΟίχηύΟ░ϋΕ▒ϋΛΓΎ╝Κ | **16ϊ╕?* |
+| Ώθθκ **ϊ╕φύφΚ** | 24ϊ╕?| 5ϊ╕ςΎ╝ΙώΘΞίνΞ+ϋΒΝϋ┤μ+ό╝Γύπ╗Ύ╝?| **29ϊ╕?* |
+| Ώθθλ **ϋ╜╗ί╛χ** | 17ϊ╕?| 1ϊ╕ςΎ╝Ιόεςύ┤λί╝ΧΎ╝Κ | **18ϊ╕?* |
+| **όΑ╗ϋχκ** | **56ϊ╕?* | **7ϊ╕?* | **63ϊ╕?* |
 
-### 22.2 新增问题清单（第七轮�?
+### 22.2 όΨ░ίληώΩχώλαό╕ΖίΞΧΎ╝Ιύυυϊ╕Δϋ╜χΎ╝?
 
-| # | 严重程度 | 问题 | 位置 |
+| # | ϊ╕ξώΘΞύρΜί║ο | ώΩχώλα | ϊ╜Ξύ╜χ |
 |---|----------|------|------|
-| 51 | 🔴 严重 | 文档与实现严重脱�?| src/ vs docs/ |
-| 52 | 🟡 中等 | 文档重复（INDEX/SITEMAP等） | docs/ |
-| 53 | 🟡 中等 | 职责重叠（README混合多种职责�?| 多个README.md |
-| 54 | 🟡 中等 | 文件漂移（个人笔记、未索引�?| 06_ARCHIVE/ |
-| 55 | 🟢 轻微 | 未索引文�?| v4_development/ |
-| 56 | 🟡 中等 | DEVELOPER_RULES.md与其他文档重�?| 05_IMPLEMENTATION/ |
+| 51 | ΏθΦ┤ ϊ╕ξώΘΞ | όΨΘόκμϊ╕ΟίχηύΟ░ϊ╕ξώΘΞϋΕ▒ϋΛ?| src/ vs docs/ |
+| 52 | Ώθθκ ϊ╕φύφΚ | όΨΘόκμώΘΞίνΞΎ╝ΙINDEX/SITEMAPύφΚΎ╝Κ | docs/ |
+| 53 | Ώθθκ ϊ╕φύφΚ | ϋΒΝϋ┤μώΘΞίΠιΎ╝ΙREADMEό╖╖ίΡΙίνγύπΞϋΒΝϋ┤μΎ╝?| ίνγϊ╕ςREADME.md |
+| 54 | Ώθθκ ϊ╕φύφΚ | όΨΘϊ╗╢ό╝Γύπ╗Ύ╝Ιϊ╕ςϊ║║ύυΦϋχ░ήΑΒόεςύ┤λί╝ΧΎ╝?| 06_ARCHIVE/ |
+| 55 | Ώθθλ ϋ╜╗ί╛χ | όεςύ┤λί╝ΧόΨΘόκ?| v4_development/ |
+| 56 | Ώθθκ ϊ╕φύφΚ | DEVELOPER_RULES.mdϊ╕ΟίΖ╢ϊ╗ΨόΨΘόκμώΘΞίΠ?| 05_IMPLEMENTATION/ |
 
 ---
 
-## 二十三、执行清单（完整版）
+## ϊ║ΝίΞΒϊ╕ΚήΑΒόΚπϋκΝό╕ΖίΞΧΎ╝ΙίχΝόΧ┤ύΚΙΎ╝Κ
 
-### 23.1 P0 紧急修�?
+### 23.1 P0 ύ┤πόΑξϊ┐χίν?
 
-| # | 操作 | 对应问题 | 状�?|
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα | ύΛ╢όΑ?|
 |---|------|----------|------|
-| 1 | 恢复 System_Manifest.md | 问题1,24 | �?未解�?|
-| 2 | 删除 ARCHIVED.md（决策框架） | 问题2 | �?未解�?|
-| 3 | 删除 ARCHIVED.md（NozyIO�?| 问题3 | �?未解�?|
-| 4 | 删除 EXPERIMENT_TRACKING.md 重复 | 问题11 | �?未解�?|
-| 5 | 重命�?CHANGELOG.md | 问题12 | �?未解�?|
-| 6 | 创建 SPEC.md 重定�?| 问题21 | �?未解�?|
-| 7 | 修正因子库README链接路径 | 问题33 | �?未解�?|
-| **51** | **更新 System_Manifest.md 反映实际状�?* | **问题51** | **�?未解�?* |
+| 1 | όΒλίνΞ System_Manifest.md | ώΩχώλα1,24 | έζ?όεςϋπμίΗ?|
+| 2 | ίΙιώβν ARCHIVED.mdΎ╝ΙίΗ│ύφΨόκΗόη╢Ύ╝Κ | ώΩχώλα2 | έζ?όεςϋπμίΗ?|
+| 3 | ίΙιώβν ARCHIVED.mdΎ╝ΙNozyIOΎ╝?| ώΩχώλα3 | έζ?όεςϋπμίΗ?|
+| 4 | ίΙιώβν EXPERIMENT_TRACKING.md ώΘΞίνΞ | ώΩχώλα11 | έζ?όεςϋπμίΗ?|
+| 5 | ώΘΞίΣ╜ίΡ?CHANGELOG.md | ώΩχώλα12 | έζ?όεςϋπμίΗ?|
+| 6 | ίΙδί╗║ SPEC.md ώΘΞίχγίΡ?| ώΩχώλα21 | έζ?όεςϋπμίΗ?|
+| 7 | ϊ┐χόφμίδιίφΡί║ΥREADMEώΥ╛όΟξϋ╖ψί╛Ε | ώΩχώλα33 | έζ?όεςϋπμίΗ?|
+| **51** | **όδ┤όΨ░ System_Manifest.md ίΠΞόαιίχηώβΖύΛ╢όΑ?* | **ώΩχώλα51** | **έζ?όεςϋπμίΗ?* |
 
-### 23.2 P1 重要修复
+### 23.2 P1 ώΘΞϋοΒϊ┐χίνΞ
 
-| # | 操作 | 对应问题 | 状�?|
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα | ύΛ╢όΑ?|
 |---|------|----------|------|
-| 8 | 移动 HANDOVER.md | 问题13 | �?未解�?|
-| 9 | 移动 KNOWLEDGE_MANAGEMENT.md | 问题14 | �?未解�?|
-| 10 | 更新 INDEX.md | 问题15,35 | �?未解�?|
+| 8 | ύπ╗ίΛρ HANDOVER.md | ώΩχώλα13 | έζ?όεςϋπμίΗ?|
+| 9 | ύπ╗ίΛρ KNOWLEDGE_MANAGEMENT.md | ώΩχώλα14 | έζ?όεςϋπμίΗ?|
+| 10 | όδ┤όΨ░ INDEX.md | ώΩχώλα15,35 | έζ?όεςϋπμίΗ?|
 | ... | ... | ... | ... |
-| **52** | **合并 INDEX.md �?SITEMAP.md** | **问题52** | **�?未解�?* |
-| **53** | **拆分大文档（DEVELOPER_RULES等）** | **问题53** | **�?未解�?* |
-| **54** | **清理 v4_development/ 冗余文件** | **问题54** | **�?未解�?* |
+| **52** | **ίΡΙί╣╢ INDEX.md ίΤ?SITEMAP.md** | **ώΩχώλα52** | **έζ?όεςϋπμίΗ?* |
+| **53** | **όΜΗίΙΗίνπόΨΘόκμΎ╝ΙDEVELOPER_RULESύφΚΎ╝Κ** | **ώΩχώλα53** | **έζ?όεςϋπμίΗ?* |
+| **54** | **ό╕ΖύΡΗ v4_development/ ίΗΩϊ╜βόΨΘϊ╗╢** | **ώΩχώλα54** | **έζ?όεςϋπμίΗ?* |
 
-### 23.3 P2 优化修复
+### 23.3 P2 ϊ╝αίΝΨϊ┐χίνΞ
 
-| # | 操作 | 对应问题 | 状�?|
+| # | όΥΞϊ╜ε | ίψ╣ί║ΦώΩχώλα | ύΛ╢όΑ?|
 |---|------|----------|------|
-| 18 | 删除v4冗余文件 | 问题34 | �?未解�?|
+| 18 | ίΙιώβνv4ίΗΩϊ╜βόΨΘϊ╗╢ | ώΩχώλα34 | έζ?όεςϋπμίΗ?|
 | ... | ... | ... | ... |
-| **55** | **完善 06_ARCHIVE 索引** | **问题55** | **�?未解�?* |
+| **55** | **ίχΝίΨΕ 06_ARCHIVE ύ┤λί╝Χ** | **ώΩχώλα55** | **έζ?όεςϋπμίΗ?* |
 
 ---
 
-## 二十四、版本演进记录（更新�?
+## ϊ║ΝίΞΒίδδήΑΒύΚΙόευό╝Φϋ┐δϋχ░ί╜ΧΎ╝Ιόδ┤όΨ░Ύ╝?
 
-| 日期 | 版本 | 操作 | 执行�?|
+| όΩξόεθ | ύΚΙόευ | όΥΞϊ╜ε | όΚπϋκΝϊ║?|
 |------|------|------|--------|
-| 2026-03-31 | v5.1 初版 | 第一轮文档审查，10个问�?| AI Assistant |
-| 2026-03-31 | v5.1 补充 | 第二轮审查，补充10个问题（20个） | AI Assistant |
-| 2026-03-31 | v5.1 补充 | 第三轮审查，发现EXPERIMENT_TRACKING重复等问�?| AI Assistant |
-| 2026-03-31 | v5.1 第四�?| 深度交叉验证，新�?2个问题（32个） | AI Assistant |
-| 2026-03-31 | v5.1 第五�?| 补充问题33-36，完善执行清单（42个） | AI Assistant |
-| 2026-03-31 | v5.1 第六�?| 深度全文审查，补充问�?7-50 | AI Assistant |
-| **2026-03-31** | **v5.1 第七�?* | **深度审查src/tests/config，补充问�?1-56** | **AI Assistant** |
+| 2026-03-31 | v5.1 ίΙζύΚΙ | ύυυϊ╕Αϋ╜χόΨΘόκμίχκόθξΎ╝Ν10ϊ╕ςώΩχώλ?| AI Assistant |
+| 2026-03-31 | v5.1 ϋκξίΖΖ | ύυυϊ║Νϋ╜χίχκόθξΎ╝ΝϋκξίΖΖ10ϊ╕ςώΩχώλαΎ╝Ι20ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ϋκξίΖΖ | ύυυϊ╕Κϋ╜χίχκόθξΎ╝ΝίΠΣύΟ░EXPERIMENT_TRACKINGώΘΞίνΞύφΚώΩχώλ?| AI Assistant |
+| 2026-03-31 | v5.1 ύυυίδδϋ╜?| ό╖▒ί║οϊ║νίΠΚώςΝϋψΒΎ╝ΝόΨ░ίλ?2ϊ╕ςώΩχώλαΎ╝Ι32ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ύυυϊ║Φϋ╜?| ϋκξίΖΖώΩχώλα33-36Ύ╝ΝίχΝίΨΕόΚπϋκΝό╕ΖίΞΧΎ╝Ι42ϊ╕ςΎ╝Κ | AI Assistant |
+| 2026-03-31 | v5.1 ύυυίΖφϋ╜?| ό╖▒ί║οίΖρόΨΘίχκόθξΎ╝ΝϋκξίΖΖώΩχώλ?7-50 | AI Assistant |
+| **2026-03-31** | **v5.1 ύυυϊ╕Δϋ╜?* | **ό╖▒ί║οίχκόθξsrc/tests/configΎ╝ΝϋκξίΖΖώΩχώλ?1-56** | **AI Assistant** |
 
 ---
 
-**最后更�?*: 2026-03-31
-**维护�?*: 清风量化文档治理委员�?
-**版本**: v5.1
-**状�?*: 待处�?
-**问题总数**: 63个（16严重 + 29中等 + 18轻微�?
+**όεΑίΡΟόδ┤όΨ?*: 2026-03-31
+**ύ╗┤όΛνϋΑ?*: ό╕ΖώμΟώΘΠίΝΨόΨΘόκμό▓╗ύΡΗίπΦίΣαϊ╝?
+**ύΚΙόευ**: v5.1
+**ύΛ╢όΑ?*: ί╛ΖίνΕύΡ?
+**ώΩχώλαόΑ╗όΧ░**: 63ϊ╕ςΎ╝Ι16ϊ╕ξώΘΞ + 29ϊ╕φύφΚ + 18ϋ╜╗ί╛χΎ╝?

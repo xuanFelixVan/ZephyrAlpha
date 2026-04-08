@@ -1,0 +1,199 @@
+{
+  "timestamp": "2026-04-07T03:06:54.397800",
+  "total": 16,
+  "success": 8,
+  "failed": 8,
+  "total_files_moved": 7,
+  "total_dirs_deleted": 3,
+  "results": [
+    {
+      "sparse_dir": "03_TRADING_TACTICS/05_STRATEGY_POOL",
+      "target_dir": "03_TRADING_TACTICS",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['index.md']"
+    },
+    {
+      "sparse_dir": "05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/a_stock_rules",
+      "target_dir": "05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "T.08.AR001.a_stock_rule_engine_design.md"
+      ],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['a_stock_rules_config.yaml', 'INDEX.md']"
+    },
+    {
+      "sparse_dir": "05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/ui_design",
+      "target_dir": "05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "README.md"
+      ],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['01_UI_DESIGN', '04_NOZYIO', 'INDEX.md']"
+    },
+    {
+      "sparse_dir": "05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/lessons_learned",
+      "target_dir": "05_IMPLEMENTATION/07_OPERATIONS/knowledge_base",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "PERSONAL_DEVELOPMENT_LESSONS_LEARNED.md"
+      ],
+      "files_skipped": [
+        "INDEX.md"
+      ],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive",
+      "target_dir": "06_ARCHIVE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['audit_state', 'INDEX.md', 'technical_reviews']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive/audit_state/sample_validation_2026-04-02",
+      "target_dir": "06_ARCHIVE/20260404_audit_reports_archive/audit_state",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "sample_audit_report.md"
+      ],
+      "files_skipped": [],
+      "directories_deleted": [
+        "06_ARCHIVE/20260404_audit_reports_archive/audit_state/sample_validation_2026-04-02"
+      ],
+      "error": null
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/IFIND_CONNECTOR",
+      "target_dir": "06_ARCHIVE/20260404_audit_reports_archive/technical_reviews",
+      "action": "merge",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "comprehensive_assessment_report.md"
+      ],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['comprehensive_assessment_report.md', 'implementation_complexity.json', 'risk_analysis.json', 'technical_feasibility_assessment.json']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/QMT_DATA_INTERFACE",
+      "target_dir": "06_ARCHIVE/20260404_audit_reports_archive/technical_reviews",
+      "action": "merge",
+      "success": true,
+      "files_moved": [],
+      "files_skipped": [
+        "comprehensive_assessment_report.md"
+      ],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['comprehensive_assessment_report.md', 'implementation_complexity.json', 'risk_analysis.json', 'technical_feasibility_assessment.json']"
+    },
+    {
+      "sparse_dir": "06_ARCHIVE/architecture_v4/module_designs/layer_4",
+      "target_dir": "06_ARCHIVE/architecture_v4/module_designs",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "INDEX.md",
+        "L4_FEATURE_ENG.md"
+      ],
+      "files_skipped": [],
+      "directories_deleted": [
+        "06_ARCHIVE/architecture_v4/module_designs/layer_4"
+      ],
+      "error": null
+    },
+    {
+      "sparse_dir": "08_HUMAN_AI_INTERFACE/01_MOBILE_PUSH",
+      "target_dir": "08_HUMAN_AI_INTERFACE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "08_HUMAN_AI_INTERFACE/02_MONITORING",
+      "target_dir": "08_HUMAN_AI_INTERFACE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "08_HUMAN_AI_INTERFACE/03_AUTHENTICATION",
+      "target_dir": "08_HUMAN_AI_INTERFACE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "08_HUMAN_AI_INTERFACE/04_BACKTEST_INTERFACE",
+      "target_dir": "08_HUMAN_AI_INTERFACE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "09_AUDIT/PROCESSES",
+      "target_dir": "09_AUDIT",
+      "action": "merge",
+      "success": true,
+      "files_moved": [
+        "PERIODIC_AUDIT_PROCESS.md"
+      ],
+      "files_skipped": [],
+      "directories_deleted": [
+        "09_AUDIT/PROCESSES"
+      ],
+      "error": null
+    },
+    {
+      "sparse_dir": "09_RESEARCH_INNOVATION/01_ai_research_lab",
+      "target_dir": "09_RESEARCH_INNOVATION",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    },
+    {
+      "sparse_dir": "10_GOVERNANCE_COMPLIANCE/01_internal_controls",
+      "target_dir": "10_GOVERNANCE_COMPLIANCE",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "files_skipped": [],
+      "directories_deleted": [],
+      "error": "目录非空，无法删除: ['INDEX.md']"
+    }
+  ]
+}

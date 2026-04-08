@@ -1,5 +1,18 @@
 ---
-module_id: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
+module_id: LAYER_016
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 8 (人机交互层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: LIQUIDITY_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -18,6 +31,43 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.8: 流动性管理系统蓝图
+> **核心职责**: 流动性管理系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：流动性管理系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Liquidity Management蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Liquidity Management蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**模块蓝图，负责特定功能的实现**。
+
+### 职责边界
+
+**负责**：
+- ✅ 核心功能实现
+- ✅ 接口定义
+- ✅ 数据模型设计
+
+**不负责**：
+- ❌ 其他模块职责
+- ❌ 跨模块协调
+
+### 对接模块
+
+**上游模块**：
+- 上游模块
+
+**下游模块**：
+- 下游模块
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-05  
@@ -132,7 +182,7 @@ Layer 11.8流动性管理系统是清风量化系统的**流动性守护者**，
 
 ```
 流动性评分:
-Liquidity_Score = w1 × Turnover_Score + w2 × Spread_Score + w3 × Depth_Score + w4 × Impact_Score
+Liquidity_Score = w1  Turnover_Score + w2  Spread_Score + w3  Depth_Score + w4  Impact_Score
 
 其中:
 - Turnover_Score: 换手率评分（越高越好）
@@ -381,10 +431,10 @@ class LiquidityAssessmentEngine:
 Max_Position = f(Liquidity_Score, Portfolio_Value, Trading_Days)
 
 交易速度限制:
-Max_Daily_Volume = Avg_Daily_Volume × Participation_Rate
+Max_Daily_Volume = Avg_Daily_Volume  Participation_Rate
 
 流动性成本约束:
-Max_Cost = Target_Return × Cost_Tolerance_Ratio
+Max_Cost = Target_Return  Cost_Tolerance_Ratio
 
 动态约束调整:
 Constraint_Adjustment = f(Market_Volatility, Liquidity_Stress)
@@ -550,10 +600,10 @@ class LiquidityConstraintSystem:
 Liquidity_VaR = f(Holding_Period, Liquidation_Cost, Market_Impact)
 
 极端场景模拟:
-Scenario_Loss = Position × Price_Shock + Liquidation_Cost
+Scenario_Loss = Position  Price_Shock + Liquidation_Cost
 
 流动性危机应对:
-Time_to_Liquidate = Position / (Daily_Volume × Participation_Rate)
+Time_to_Liquidate = Position / (Daily_Volume  Participation_Rate)
 ```
 
 #### 2.3.2 技术实现
@@ -769,10 +819,10 @@ class LiquidityStressTestEngine:
 
 ```
 总流动性预算:
-Total_Liquidity_Budget = Portfolio_Value × Liquidity_Reserve_Ratio
+Total_Liquidity_Budget = Portfolio_Value  Liquidity_Reserve_Ratio
 
 策略流动性预算:
-Strategy_Budget = Total_Budget × Strategy_Weight × Liquidity_Factor
+Strategy_Budget = Total_Budget  Strategy_Weight  Liquidity_Factor
 
 流动性成本优化:
 Optimal_Execution = argmin(Execution_Cost + Market_Impact)
@@ -1192,9 +1242,9 @@ class SuspendedStockLiquidityManager:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./RISK_BUDGET_SYSTEM_BLUEPRINT.md) | 风险预算系统 |
+| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算系统 |
 
 ---
 
@@ -1208,3 +1258,34 @@ class SuspendedStockLiquidityManager:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 更新Layer 11主蓝图文档
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Liquidity Management Blueprint
+- **模块ID**: LIQUIDITY_MANAGEMENT_BLUEPRINT_001
+- **蓝图文档**: LIQUIDITY_MANAGEMENT_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.8 - 流动性管理系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Liquidity Management Blueprint** | Layer 11.8 - 流动性管理系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

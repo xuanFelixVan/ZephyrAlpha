@@ -1,27 +1,44 @@
 ---
+module_id: DEVELOPMENT_STANDARDS_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 技术标准制定与规范管理与优化维护
+---
 module_id: IMPL_DEV_STANDARDS_001
 version: 1.0.15.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
+responsibility:
+  - 技术标准制定与规范管理与优化维护
 standard_type: 专业量化机构实施标准
 applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
-implementation_status: 进行?
----
+implementation_status: 进行?---
+
 
 
 # 开发标准与规范
+> **核心职责**: 标准规范制定
+> **职责边界**: 
+> - ✅ 本文档负责：标准规范制定相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> 清风量化系统 v5.3 的开发标准、目录结构、代码规?
+
+> 清风量化系统 v5.3 的开发标准、目录结构、代码规范
 >
 > **文档来源**: ?DEVELOPER_RULES.md 拆分而来，遵循职责驱动原?
 > **相关文档**: [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md), [DESIGN_PRINCIPLES.md](./DESIGN_PRINCIPLES.md)
 
 
-## 一、目录结构规?
+## 一、目录结构规范
 
 ### 1.1 顶层结构
 
@@ -144,7 +161,7 @@ ZephyrAlpha/
 | 中文目录?| 跨平台问?| 英文命名 |
 
 
-## 二、文件命名规?
+## 二、文件命名规范
 
 ### 2.1 Python 文件
 
@@ -192,7 +209,7 @@ quick-start.md              # 用连字符
 ```
 
 
-## 三、代码标?
+## 三、代码指标
 
 ### 3.1 文件头部
 
@@ -290,7 +307,7 @@ cache:
 ```
 
 
-## 五、测试规?
+## 五、测试规范
 
 ### 5.1 测试文件位置
 
@@ -330,7 +347,7 @@ pytest tests/ --cov=src --cov-report=html
 ```
 
 
-## 六、文件归属检查清?
+## 六、文件归属检查清单
 
 创建文件前，问自己：
 

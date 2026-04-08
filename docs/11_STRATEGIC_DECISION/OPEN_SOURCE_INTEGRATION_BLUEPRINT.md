@@ -1,9 +1,22 @@
 ---
-module_id: OPEN_SOURCE_INTEGRATION_BP_001
+module_id: LAYER_017
 version: 1.0.0
 status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 7 (风控层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: OPEN_SOURCE_INTEGRATION_BP_001
+version: 1.1.0
+status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: 2026-04-07
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 专业量化机构级开源集成蓝图
@@ -19,6 +32,47 @@ related_documents:
 ---
 
 # Layer 11开源项目集成蓝图
+> **核心职责**: 开源项目集成蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：开源项目集成蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Open Source Integration蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Open Source Integration蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**开源项目集成蓝图，负责开源项目的选型和集成方案**。
+
+### 职责边界
+
+**负责**：
+- ✅ 开源项目选型（项目评估和选择）
+- ✅ 集成方案设计（技术集成架构）
+- ✅ 集成实施指导（集成步骤和最佳实践）
+- ✅ 集成效果评估（集成效果分析）
+
+**不负责**：
+- ❌ 具体模块实现（由各模块蓝图负责）
+- ❌ 技术选型决策（由TECHNOLOGY_SELECTION_DECISION.md负责）
+- ❌ 实施路径规划（由BLUEPRINT.md负责）
+
+### 对接模块
+
+**上游模块**：
+- 技术选型决策
+- 架构设计文档
+
+**下游模块**：
+- 各模块蓝图
+- 实施团队
+
+---
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -250,7 +304,7 @@ class RiskfolioLibIntegration:
 ```
 输入数据流:
 ┌─────────────┐
-│ 历史收益率  │ → returns: pd.DataFrame (资产 × 时间)
+│ 历史收益率  │ → returns: pd.DataFrame (资产  时间)
 └─────────────┘
 ┌─────────────┐
 │ 风险参数    │ → risk_free_rate, risk_measure, constraints
@@ -1004,3 +1058,34 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 11: 战略决策层
+##### 0.001. Open Source Integration Bp
+- **模块ID**: OPEN_SOURCE_INTEGRATION_BP_001
+- **蓝图文档**: OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11开源项目集成方案
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Open Source Integration Bp** | Layer 11开源项目集成方案 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

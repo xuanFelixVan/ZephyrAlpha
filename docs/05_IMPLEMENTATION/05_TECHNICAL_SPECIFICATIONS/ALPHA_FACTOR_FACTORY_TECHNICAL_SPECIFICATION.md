@@ -1,4 +1,15 @@
+﻿---
+module_id: ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - ALPHA_FACTOR_FACTORY_TECHNICAL技术规范
 ---
+
+﻿---
 module_id: IMPL_ALPHA_FACTOR_FACTORY_TECH_SPEC_001
 version: 1.0.1
 spec_version: 1.0
@@ -17,11 +28,15 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+
+---
 ---
 
 # Alpha因子工厂技术规格书 v1.0
 
-> 清风量化系统 v5.3 - Alpha因子工厂详细技术设?> **索引**: `ALPHA_FACTORY_001`
+> 清风量化系统 v5.3 - Alpha因子工厂详细技术设计> **索引**: `ALPHA_FACTORY_001`
 > **开发时?*: 200h
 > **核心定位**: 动态管?700+因子，基于市场状态筛选和合成Alpha因子，为文艺复兴模式提供超额收益来源
 
@@ -34,8 +49,8 @@ implementation_status: 设计阶段
 - 因子筛选机制缺失，导致因子在不同市场状态下表现不稳?- 需要建立动态因子管理体系，实现因子的持续优化和迭代
 
 **技术痛?*?- 因子库规模小，覆盖面不足
-- 无动态因子筛选机?- 无因子有效性监?- 无因子衰减预测能?
-**预期�?*?- 建立包含5700+因子的因子库
+- 无动态因子筛选机?- 无因子有效性监?- 无因子衰减预测能力
+**预期?*?- 建立包含5700+因子的因子库
 - 实现因子动态筛选（IC均值≥0.03?- 实现因子衰减预测（提?-2周预警）
 - 提升策略夏普比率至≥2.0
 
@@ -48,7 +63,7 @@ implementation_status: 设计阶段
 - 作为中观层面的收益来源，为策略选择提供因子基础
 - 作为多因子模型的实现载体，实现超额收益生?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-03 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -58,16 +73,16 @@ implementation_status: 设计阶段
 
 ### 2.1 系统架构?
 ```
-┌─────────────────────────────────────────────────────────────────??                   Alpha因子工厂架构                             ?├─────────────────────────────────────────────────────────────────??                                                                ?? 因子库管理层                                                   ??    ├── 价值因子库 (PE/PB/PS/PCF)                               ??    ├── 成长因子?(营收增长/利润增长)                          ??    ├── 质量因子?(ROE/ROA/现金流质?                         ??    ├── 动量因子?(价格动量/盈余动量)                          ??    └── 技术因子库 (MA/MACD/RSI/ATR)                            ??          ?                                                    ?? 因子计算?                                                    ??    ├── 财务因子计算                                            ??    ├── 技术因子计?                                           ??    ├── 另类因子计算                                            ??    └── 因子标准?                                             ??          ?                                                    ?? 因子筛选层                                                     ??    ├── IC检?                                                 ??    ├── IR检?                                                 ??    ├── 因子正交?                                             ??    └── 因子�?                                               ??          ?                                                    ?? 因子合成?                                                    ??    ├── 因子权重优化                                            ??    ├── 多因子合?                                             ??    ├── 因子衰减预测                                            ??    └── Alpha信号生成                                           ??                                                                ?└─────────────────────────────────────────────────────────────────?```
+┌─────────────────────────────────────────────────────────────────??                   Alpha因子工厂架构                             ?├─────────────────────────────────────────────────────────────────??                                                                ?? 因子库管理层                                                   ??    ├── 价值因子库 (PE/PB/PS/PCF)                               ??    ├── 成长因子?(营收增长/利润增长)                          ??    ├── 质量因子?(ROE/ROA/现金流质?                         ??    ├── 动量因子?(价格动量/盈余动量)                          ??    └── 技术因子库 (MA/MACD/RSI/ATR)                            ??          ?                                                    ?? 因子计算?                                                    ??    ├── 财务因子计算                                            ??    ├── 技术因子计?                                           ??    ├── 另类因子计算                                            ??    └── 因子标准?                                             ??          ?                                                    ?? 因子筛选层                                                     ??    ├── IC检?                                                 ??    ├── IR检?                                                 ??    ├── 因子正交?                                             ??    └── 因子?                                               ??          ?                                                    ?? 因子合成?                                                    ??    ├── 因子权重优化                                            ??    ├── 多因子合?                                             ??    ├── 因子衰减预测                                            ??    └── Alpha信号生成                                           ??                                                                ?└─────────────────────────────────────────────────────────────────?```
 
 ### 2.2 Layer定位详细说明
 
 **Layer归属**: Layer 2-4 - 中观策略?
 **职责范围**: 
-- 管理和维护因子库?700+因子?- 计算和更新因�?- 筛选有效因?- 合成Alpha信号
+- 管理和维护因子库?700+因子?- 计算和更新因?- 筛选有效因?- 合成Alpha信号
 
 **上下层接?*: 
-- 上层依赖: 接收市场状态识别系统的市场�?- 下层依赖: 为日线组合优化器提供Alpha信号
+- 上层依赖: 接收市场状态识别系统的市场?- 下层依赖: 为日线组合优化器提供Alpha信号
 
 ### 2.3 模块职责与边界定?
 **核心职责**: Alpha因子管理与信号生?
@@ -80,7 +95,7 @@ implementation_status: 设计阶段
 
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
-| **市场状态识别系?* | 强依?| API调用 | v1.0+ | 获取市场�?|
+| **市场状态识别系?* | 强依?| API调用 | v1.0+ | 获取市场?|
 | **数据源层** | 强依?| 数据库查?| v1.0+ | 获取财务和市场数?|
 | **日线组合优化?* | 下游依赖 | 事件发布 | v1.0+ | 提供Alpha信号 |
 | **绩效归因?* | 弱依?| 日志记录 | v1.0+ | 记录因子表现 |
@@ -104,11 +119,11 @@ class FactorInput:
     stock_data: pd.DataFrame             # 股票数据
     financial_data: pd.DataFrame         # 财务数据
     market_data: pd.DataFrame            # 市场数据
-    market_state: Optional[str]          # 市场�?    timestamp: datetime                  # 时间?
+    market_state: Optional[str]          # 市场?    timestamp: datetime                  # 时间?
 @dataclass
 class FactorOutput:
     """因子输出"""
-    factor_values: pd.DataFrame          # 因子?(股票×因子)
+    factor_values: pd.DataFrame          # 因子?(股票因子)
     factor_ic: Dict[str, float]          # 因子IC
     factor_ir: Dict[str, float]          # 因子IR
     factor_correlation: pd.DataFrame     # 因子相关性矩?    selected_factors: List[str]          # 筛选后的因?    alpha_signal: pd.Series              # 合成Alpha信号
@@ -139,7 +154,7 @@ class IAlphaFactorFactory(ABC):
         """筛选因?        
         Args:
             factor_values: 因子?            factor_ic: 因子IC
-            ic_threshold: IC�?            
+            ic_threshold: IC?            
         Returns:
             List[str]: 筛选后的因子列?        """
         pass
@@ -150,7 +165,7 @@ class IAlphaFactorFactory(ABC):
         """合成因子
         
         Args:
-            factor_values: 因子?            factor_weights: 因子权重(�?
+            factor_values: 因子?            factor_weights: 因子权重(?
             
         Returns:
             pd.Series: 合成Alpha信号
@@ -241,10 +256,10 @@ class IAlphaFactorFactory(ABC):
 | 性能指标 | 目标?| 测量方法 |
 |---------|--------|---------|
 | **因子计算时间** | ?30?| 全市场因子计?|
-| **因子筛选时?* | ?10?| IC检验和�?|
+| **因子筛选时?* | ?10?| IC检验和?|
 | **因子合成时间** | ?5?| 多因子合?|
-| **IC�?* | ?0.03 | 历史回测验证 |
-| **IR�?* | ?0.5 | 历史回测验证 |
+| **IC?* | ?0.03 | 历史回测验证 |
+| **IR?* | ?0.5 | 历史回测验证 |
 
 ---
 
@@ -323,9 +338,9 @@ CREATE TABLE factor_performance (
     ├── iFind行情数据
     └── 另类数据?          ?因子计算 (Layer 2-4)
     ├── 财务因子计算
-    ├── 技术因子计?    └── 另类因子计算
-          ?因子�?(Layer 2-4)
-    ├── IC检?    ├── IR检?    └── 因子正交?          ?因子合成 (Layer 2-4)
+    ├── 技术因子计划    └── 另类因子计算
+          ?因子?(Layer 2-4)
+    ├── IC检查    ├── IR检查    └── 因子正交?          ?因子合成 (Layer 2-4)
     ├── 权重优化
     ├── 多因子合?    └── Alpha信号生成
           ?结果存储 (Layer 1)
@@ -369,7 +384,7 @@ class AlphaFactorFactory:
             factor_input: 因子输入数据
             
         Returns:
-            pd.DataFrame: 筛选合成后的因�?        """
+            pd.DataFrame: 筛选合成后的因?        """
         all_factors = {}
         
         all_factors['basic'] = self.factor_calculator.calculate_factors(factor_input)
@@ -401,7 +416,7 @@ class AlphaFactorFactory:
 | 动量因子 | FactorCalculator | 30+ | Layer 2 基础因子 |
 | 技术指?| FactorCalculator | 50+ | Layer 2 基础因子 |
 | AI因子 | QlibAlpha158 | 158 | Layer 4 AI因子 |
-| 因子�?| AlphaFactorFactory | - | 本模块职?|
+| 因子?| AlphaFactorFactory | - | 本模块职?|
 | 因子合成 | AlphaFactorFactory | - | 本模块职?|
 
 ### 5.2 因子筛选算?
@@ -411,7 +426,7 @@ class FactorScreener:
     """因子筛选器
     
     职责边界说明:
-    - IC计算调用FactorIC模块，本模块不重复实?    - �? [FACTOR_IC](./FACTOR_IC_TECHNICAL_SPECIFICATION.md)
+    - IC计算调用FactorIC模块，本模块不重复实?    - ? [FACTOR_IC](./FACTOR_IC_TECHNICAL_SPECIFICATION.md)
     """
     
     def calculate_ic(self, factor_values: pd.Series,
@@ -430,7 +445,7 @@ class FactorScreener:
         """基于IC筛选因?        
         Args:
             factor_values: 因子值矩?            forward_returns: 未来收益
-            ic_threshold: IC�?            
+            ic_threshold: IC?            
         Returns:
             List[str]: 筛选后的因子列?        """
         selected_factors = []
@@ -451,7 +466,7 @@ def orthogonalize_factors(self, factor_values: pd.DataFrame) -> pd.DataFrame:
     Args:
         factor_values: 因子值矩?        
     Returns:
-        pd.DataFrame: 正交化后的因�?    """
+        pd.DataFrame: 正交化后的因?    """
     from sklearn.preprocessing import StandardScaler
     from scipy.linalg import qr
     
@@ -551,7 +566,7 @@ def synthesize_alpha_signal(self, factor_values: pd.DataFrame,
 
 ```python
 class FactorDecayPredictor:
-    """因子衰减预测?""
+    """因子衰减预测试""
     
     def predict_decay(self, factor_name: str,
                      performance_history: pd.DataFrame,
@@ -590,7 +605,7 @@ class FactorDecayPredictor:
 
 ### 6.1 语言框架
 
-| 技术组?| 技术选型 | 版本要求 | �?|
+| 技术组?| 技术选型 | 版本要求 | ?|
 |---------|---------|---------|------|
 | **编程语言** | Python | 3.9+ | 主要开发语言 |
 | **数据处理** | pandas | 2.0+ | 数据处理与分?|
@@ -628,7 +643,7 @@ sqlalchemy>=2.0.0
 | 测试模块 | 测试内容 | 覆盖率要?|
 |---------|---------|-----------|
 | **因子计算** | 各类因子计算正确?| ?90% |
-| **因子�?* | IC检验、正交化 | ?85% |
+| **因子?* | IC检验、正交化 | ?85% |
 | **因子合成** | 权重优化、信号合?| ?90% |
 | **衰减预测** | 衰减概率预测 | ?80% |
 
@@ -658,9 +673,9 @@ def test_alpha_signal_generation():
 | 测试场景 | 性能指标 | 通过标准 |
 |---------|---------|---------|
 | **全市场因子计?* | 计算时间 | ?30?|
-| **因子�?* | 筛选时?| ?10?|
+| **因子?* | 筛选时?| ?10?|
 | **因子合成** | 合成时间 | ?5?|
-| **IC�?* | IC?| ?0.03 |
+| **IC?* | IC?| ?0.03 |
 
 ---
 
@@ -678,7 +693,7 @@ def test_alpha_signal_generation():
 | 约束类型 | 约束内容 | 应对策略 |
 |---------|---------|---------|
 | **数据约束** | 需要完整的财务和市场数?| 分阶段实施，先积累数?|
-| **计算约束** | 5700+因子计算量大 | 使用并行计算、GPU�?|
+| **计算约束** | 5700+因子计算量大 | 使用并行计算、GPU?|
 | **存储约束** | 因子值存储空间需求大 | 数据压缩、分区存?|
 
 ---
@@ -690,9 +705,9 @@ def test_alpha_signal_generation():
 | 验收?| 验收标准 | 验证方法 |
 |--------|---------|---------|
 | **因子库规?* | ?5700个因?| 因子库统?|
-| **因子覆盖?* | ?95%股票有因�?| 覆盖度检?|
-| **IC�?* | ?0.03 | 历史回测 |
-| **IR�?* | ?0.5 | 历史回测 |
+| **因子覆盖?* | ?95%股票有因?| 覆盖度检?|
+| **IC?* | ?0.03 | 历史回测 |
+| **IR?* | ?0.5 | 历史回测 |
 
 ### 9.2 性能验收
 
@@ -786,14 +801,14 @@ def test_alpha_signal_generation():
 | **IC** | Information Coefficient | 因子预测能力指标 |
 | **IR** | Information Ratio | 因子风险调整后收?|
 | **因子衰减** | 因子IC逐渐下降 | 因子失效预警 |
-| **因子正交?* | 消除因子间相�?| 提高因子独立?|
+| **因子正交?* | 消除因子间相?| 提高因子独立?|
 
 ### C. 变更记录
 
-| 版本 | 日期 | 变更内容 | �?|
+| 版本 | 日期 | 变更内容 | ?|
 |------|------|----------|------|
 | v1.0 | 2026-04-03 | 初始版本 | 首席技术评审官 |
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Draft | **下一?*: 技术评?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Draft | **下一?*: 技术评?

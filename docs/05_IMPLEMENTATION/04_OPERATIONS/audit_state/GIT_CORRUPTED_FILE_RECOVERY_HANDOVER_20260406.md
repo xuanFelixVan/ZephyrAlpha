@@ -1,4 +1,24 @@
+---
+module_id: GIT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 实施团队
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统实施与部署管理与优化维护
+---
+---
+
 # Git历史损坏文件恢复交接文档
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **交接时间**: 2026-04-06
 > **交接人**: Trae AI (蓝图架构师)
@@ -330,11 +350,11 @@ iconv -f GB18030 -t UTF-8 input.md > output.md
 
 | 文档名称 | module_id | 版本 | 状态 | 最后更新 | 文档路径 |
 |----------|-----------|------|------|----------|----------|
-| 动态相关性建模蓝图 | DYNAMIC_CORRELATION_MODELING_001 | v1.0.0 | Active | 2026-04-03 | [链接](./DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md) |
-| 简化风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | [链接](./SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md) 🆕 |
-| 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./COINTEGRATION_ANALYSIS_BLUEPRINT.md) 🆕 |
-| 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | [链接](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) 🆕 |
-| 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | [链接](./HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) 🆕 |
+| 动态相关性建模蓝图 | DYNAMIC_CORRELATION_MODELING_001 | v1.0.0 | Active | 2026-04-03 | 链接 |
+| 简化风险预算系统蓝图 | SIMPLIFIED_RISK_BUDGET_SYSTEM_001 | v1.0.0 | Active | 2026-04-06 | 链接 🆕 |
+| 协整分析蓝图 | COINTEGRATION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | 链接 🆕 |
+| 风险贡献分析蓝图 | RISK_CONTRIBUTION_ANALYSIS_001 | v1.0.0 | Active | 2026-04-06 | 链接 🆕 |
+| 层级风险预算蓝图 | HIERARCHICAL_RISK_BUDGET_001 | v1.0.0 | Active | 2026-04-06 | 链接 🆕 |
 ```
 
 ### 2. 更新统计信息
@@ -357,17 +377,17 @@ git commit -m "docs: 恢复SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md - 简化�
 
 ## 🔗 相关文档
 
-- [HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md) - 高级版参考
-- [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md) - 基础模块
-- [INDEX.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) - 蓝图索引
+- HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md - 高级版参考
+- RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md - 基础模块
+- INDEX.md - 蓝图索引
 
 ---
 
 ## 📞 联系方式
 
 如有问题，请参考：
-- 系统架构文档: [ARCHITECTURE.md](docs/01_FRAMEWORK/ARCHITECTURE.md)
-- 模块职责边界: [MODULE_RESPONSIBILITY_BOUNDARIES.md](docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- 系统架构文档: ARCHITECTURE.md
+- 模块职责边界: MODULE_RESPONSIBILITY_BOUNDARIES.md
 
 ---
 

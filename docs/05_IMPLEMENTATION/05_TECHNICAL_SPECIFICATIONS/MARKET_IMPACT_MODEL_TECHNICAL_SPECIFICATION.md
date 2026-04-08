@@ -1,4 +1,15 @@
+﻿---
+module_id: MARKET_IMPACT_MODEL_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - MARKET_IMPACT_MODEL_TECHNICAL技术规范
 ---
+
+﻿---
 module_id: MARKET_IMPACT_MODEL_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -17,11 +28,15 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+
+---
 ---
 
 # 市场冲击模型技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 市场冲击模型详细技术设?> **索引**: `MARKET_IMPACT_001`
+> 清风量化系统 v5.3 - 市场冲击模型详细技术设计> **索引**: `MARKET_IMPACT_001`
 > **开发时?*: 60h
 > **核心定位**: 预测和控制交易行为对市场价格的影响，优化执行策略
 
@@ -36,7 +51,7 @@ implementation_status: 设计阶段
 **技术痛?*?- 无市场冲击预测模?- 无历史交易冲击数据积?- 无实时冲击监控和预警机制
 - 无基于冲击的执行策略优化
 
-**预期�?*?- 准确预测市场冲击（误差≤20%?- 优化执行策略，降低执行成?0-50%
+**预期?*?- 准确预测市场冲击（误差≤20%?- 优化执行策略，降低执行成?0-50%
 - 提供实时冲击监控和预?- 为智能执行算法提供决策支?
 ### 1.2 技术定位与架构层归?
 **Layer定位**: Layer 5 - 策略执行层（微观执行层）
@@ -47,7 +62,7 @@ implementation_status: 设计阶段
 - 作为微观执行层的基础设施，为智能执行算法提供冲击预测
 - 作为成本控制的核心组件，预测和控制交易成?- 作为风险管理的重要环节，评估交易行为的市场影?
 ### 1.3 版本信息与变更记?
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Draft |
 
@@ -143,7 +158,7 @@ class ImpactModelPerformance:
     """冲击模型性能"""
     model_type: ImpactModelType
     mae: float  # 平均绝对误差
-    rmse: float  # 均方根误?    r2_score: float  # R²分数
+    rmse: float  # 均方根误?    r2_score: float  # R分数
     prediction_accuracy: float  # 预测准确?    sample_size: int  # 样本数量
     last_updated: datetime
 
@@ -234,7 +249,7 @@ class MarketImpactModelAPI(ABC):
         更新模型
         
         Args:
-            new_data: 新数?            retrain: 是否重新训练
+            new_data: 新数据            retrain: 是否重新训练
             
         Returns:
             bool: 更新是否成功
@@ -277,7 +292,7 @@ class MarketImpactModelAPI(ABC):
                         symbol: str,
                         threshold_bps: float) -> bool:
         """
-        设置冲击预警�?        
+        设置冲击预警?        
         Args:
             symbol: 股票代码
             threshold_bps: 冲击阈值（基点?            
@@ -447,7 +462,7 @@ class MarketImpactModelAPI(ABC):
 **算法原理**?- 基于Kyle (1985) ?Almgren (2005) 的市场冲击理?- 冲击与订单规模的平方根成正比
 - 公式: Impact = σ * (Q/V)^0.5 * η
 
-**实现步骤**?1. 计算股票波动�?2. 获取平均日成交量V
+**实现步骤**?1. 计算股票波动?2. 获取平均日成交量V
 3. 根据订单规模Q计算冲击
 4. 使用历史数据校准参数η
 
@@ -462,7 +477,7 @@ class MarketImpactModelAPI(ABC):
 **算法原理**?- 冲击与订单规模成线性关?- 公式: Impact = α * (Q/V) + β
 
 **实现步骤**?1. 计算订单规模占比Q/V
-2. 使用线性模型计算冲?3. 校准参数α�?
+2. 使用线性模型计算冲?3. 校准参数α?
 **复杂度分?*?- 时间复杂? O(1)
 - 空间复杂? O(1)
 - 计算复杂? ?
@@ -504,7 +519,7 @@ class MarketImpactModelAPI(ABC):
 | **缓存** | Redis | 7.0+ | 高性能缓存 |
 
 ### 6.2 第三方依?
-| 依赖?| 版本 | �?| 许可?|
+| 依赖?| 版本 | ?| 许可?|
 |--------|------|------|--------|
 | **scipy** | 1.11+ | 科学计算 | BSD |
 | **statsmodels** | 0.14+ | 统计建模 | BSD |
@@ -527,9 +542,9 @@ class MarketImpactModelAPI(ABC):
 
 | 测试类型 | 覆盖率要?| 测试工具 | 测试重点 |
 |----------|------------|----------|----------|
-| **模型测试** | ?0% | pytest | 各模型预测正�?|
+| **模型测试** | ?0% | pytest | 各模型预测正?|
 | **接口测试** | ?5% | pytest | API接口功能完整?|
-| **数据模型测试** | ?0% | pytest | 数据结构和存储正�?|
+| **数据模型测试** | ?0% | pytest | 数据结构和存储正?|
 
 ### 7.2 集成测试
 

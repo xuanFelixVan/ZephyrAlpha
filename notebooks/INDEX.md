@@ -9,6 +9,9 @@ version: 1.0.0
 module_id: INDEX_NOTEBOOKS
 created_date: 2026-04-03
 last_updated: 2026-04-03
+responsibility:
+  - 文档索引、导航导航、快速查找
+---
 ---
 # 研发笔记目录索引
 
@@ -40,8 +43,8 @@ last_updated: 2026-04-03
 notebooks/
 ├── 00_TEMPLATES/              # 模板库
 │   ├── INDEX.md               # 模板库索引 (本文档)
-│   ├── 01_EDA_TEMPLATE.py     # 探索性数据分析模板
-│   └── 02_FACTOR_TEMPLATE.py  # 因子开发模板
+│   ├── 01_EDA_TEMPLATE_v1.0.0.py     # 探索性数据分析模板
+│   └── 02_FACTOR_TEMPLATE_v1.0.0.py  # 因子开发模板
 ├── 01_EXPLORATORY_ANALYSIS/   # 探索性分析 (预留目录)
 ├── 02_FACTOR_DEVELOPMENT/     # 因子开发 (预留目录)
 ├── 03_STRATEGY_RESEARCH/      # 策略研究 (预留目录)
@@ -128,8 +131,8 @@ notebooks/
 ### 模板文档
 | 模板 | 适用范围 | 关键功能 |
 |------|----------|----------|
-| **[EDA模板](./00_TEMPLATES/01_EDA_TEMPLATE.py)** | 探索性分析 | 数据质量检查、分布分析、相关性 |
-| **[因子开发模板](./00_TEMPLATES/02_FACTOR_TEMPLATE.py)** | 因子研究 | 因子计算、IC分析、回测验证 |
+| **[EDA模板](./00_TEMPLATES/01_EDA_TEMPLATE_v1.0.0.py)** | 探索性分析 | 数据质量检查、分布分析、相关性 |
+| **[因子开发模板](./00_TEMPLATES/02_FACTOR_TEMPLATE_v1.0.0.py)** | 因子研究 | 因子计算、IC分析、回测验证 |
 
 ### 预留文档
 - 策略研究模板 (计划中)

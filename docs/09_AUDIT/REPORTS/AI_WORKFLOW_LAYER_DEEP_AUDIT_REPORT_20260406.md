@@ -1,4 +1,25 @@
+---
+module_id: AUDIT_AI工作流层深度审计报告_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 审计系统
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+standard_type: 审计报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+---
+
+
 # AI工作流层深度审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## 1. 审计概要
 

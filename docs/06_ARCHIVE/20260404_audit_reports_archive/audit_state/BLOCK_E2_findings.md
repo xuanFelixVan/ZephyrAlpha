@@ -1,18 +1,38 @@
 ---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_E2_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - BLOCK_E2_findings.md - E2块审计发?文档
+---
+
+﻿﻿---
 module_id: ARCHIVE_BLOCK_E2_FINDINGS_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
+responsibility:
+  - 归档文档、历史版本、审计状态追踪
+  - 交易执行
+  - 系统架构
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?
----
+implementation_status: 进行?---
+
 
 # BLOCK_E2_findings.md - E2块审计发?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计?*: E2 (src/ 执行代码)
 > **审计日期**: 2026-03-31
@@ -126,7 +146,7 @@ __version__ = "5.1.0"
 
 ### 2026-03-31 E2块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | E2-P1-001 | src/__init__.py版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | E2-P1-002 | src/core/__init__.py版本v5.0 ?v5.3 | ?已修?| 2026-03-31 |

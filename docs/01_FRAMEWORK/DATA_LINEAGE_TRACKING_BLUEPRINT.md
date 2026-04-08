@@ -1,35 +1,56 @@
 ---
-module_id: DATA_LINEAGE_TRACKING_BLUEPRINT_001
+module_id: DATA_LINEAGE_TRACKING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据血缘追踪、数据治理、数据资产管理
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Data Governance", "Apache Atlas", "DataHub"]
+reference_models:
+- Two Sigma Data Governance
+- Apache Atlas
+- DataHub
 related_documents:
-  - ARCHITECTURE.md
-  - LAYER_10_GAP_ANALYSIS_REPORT.md
+- ARCHITECTURE.md
+- LAYER_10_GAP_ANALYSIS_REPORT.md
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - 数据血缘关系追踪（数据来源、转换、使用路径）
+
   - 数据资产管理（数据目录、分类、标签）
+
   - 数据质量监控（数据验证、质量评分）
+
   - 数据合规管理（数据访问控制、隐私保护）
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 数据质量顶层治理
+
   - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md: 数据质量管理执行
+
   - DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md: 数据隐私合规
+
+  '
+responsibility:
+- 数据管理架构设计与实施规范与优化维护
+---
 ---
 
 # 数据血缘追踪系统蓝图
+> **核心职责**: Data Lineage Tracking蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Lineage Tracking蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -795,6 +816,6 @@ data_docs_sites:
 ---
 
 **参考文档**:
-- [Layer 10差距分析报告](d:\ZephyrAlpha\docs\01_FRAMEWORK\LAYER_10_GAP_ANALYSIS_REPORT.md)
+- Layer 10差距分析报告
 - [Apache Atlas官方文档](https://atlas.apache.org/)
 - [Great Expectations官方文档](https://docs.greatexpectations.io/)

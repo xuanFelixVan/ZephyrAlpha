@@ -3,46 +3,55 @@ module_id: IMPL_DEV_CODE_QUALITY_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 系统实施与部署管理与优化维护
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
 ---
+---
+
 
 # CODE_QUALITY.md - 代码质量标准
+> **核心职责**: 标准规范制定
+> **职责边界**: 
+> - ✅ 本文档负责：标准规范制定相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**：v4.0
-> **更新日期**�?026-03-28
-> **状�?*：已制定
+> **更新日期**?026-03-28
+> **状?*：已制定
 
 ---
 
-## 1. 代码状态标记规�?
+## 1. 代码状态标记规范
 
-### 1.1 状态标记定�?
+### 1.1 状态标记定?
 
-| 旧标�?| 新标�?| 含义 | 颜色 |
+| 旧指标| 新指标| 含义 | 颜色 |
 |--------|--------|------|------|
-| `{# TODO: 回测阶段实现}` | `[PLACEHOLDER: TODO: 回测阶段实现]` | 待实现代�?| 红色 |
+| `{# TODO: 回测阶段实现}` | `[PLACEHOLDER: TODO: 回测阶段实现]` | 待实现代?| 红色 |
 | `{# EXAMPLE: 研究阶段示例}` | `[STUDY_ONLY: 示例代码]` | 仅用于研究的示例 | 黄色 |
-| `{# EXECUTABLE: 验证代码}` | `[EXECUTABLE: 已验证可运行]` | 可执行代�?| 绿色 |
+| `{# EXECUTABLE: 验证代码}` | `[EXECUTABLE: 已验证可运行]` | 可执行代?| 绿色 |
 
 ### 1.2 标记使用示例
 
 ```python
-# �?正确示例
+# ?正确示例
 def calculate_factor(stock_data):
     """
-    计算因子�?
+    计算因子?
 
     [PLACEHOLDER: TODO: 回测阶段实现 - 需要添加缓存机制]
     """
     pass
 
-# �?错误示例
+# ?错误示例
 def calculate_factor(stock_data):
     """
     # TODO: 回测阶段实现
@@ -85,17 +94,17 @@ def calculate_factor(stock_data):
 
 | 类型 | 规范 | 示例 |
 |------|------|------|
-| 普通函�?| snake_case | `calculate_rsi()` |
+| 普通函?| snake_case | `calculate_rsi()` |
 | 私有函数 | `_snake_case` | `_validate_data()` |
 | 异步函数 | `async_snake_case` | `async_fetch_data()` |
 
-### 2.3 类命�?
+### 2.3 类命?
 
 | 类型 | 规范 | 示例 |
 |------|------|------|
 | 普通类 | PascalCase | `DataCollector` |
-| 异常�?| PascalCase + Exception | `DataException` |
-| 数据�?| PascalCase | `MarketData` |
+| 异常?| PascalCase + Exception | `DataException` |
+| 数据?| PascalCase | `MarketData` |
 
 ---
 
@@ -104,8 +113,8 @@ def calculate_factor(stock_data):
 ### 3.1 Python PEP 8
 
 ```python
-# 行长度：最�?00字符
-# 缩进�?个空�?
+# 行长度：最?00字符
+# 缩进?个空?
 # 变量命名：snake_case
 # 类命名：PascalCase
 # 常量命名：UPPER_SNAKE_CASE
@@ -114,7 +123,7 @@ def calculate_factor(stock_data):
 ### 3.2 导入顺序
 
 ```python
-# 1. 标准�?
+# 1. 标准?
 import os
 import sys
 from datetime import datetime
@@ -140,18 +149,18 @@ from config import settings
 ```python
 def calculate_factor(factor_id: str, date: str, params: dict = None) -> Result:
     """
-    计算指定因子的�?
+    计算指定因子的?
 
     Parameters:
         factor_id (str): 因子ID
-        date (str): 计算日期，格�?YYYY-MM-DD
+        date (str): 计算日期，格?YYYY-MM-DD
         params (dict, optional): 因子参数字典
 
     Returns:
         Result: 包含计算结果的Result对象
 
     Raises:
-        FactorException: 因子计算失败时抛�?
+        FactorException: 因子计算失败时抛?
 
     [PLACEHOLDER: TODO: 添加缓存机制]
     """
@@ -161,35 +170,35 @@ def calculate_factor(factor_id: str, date: str, params: dict = None) -> Result:
 ### 4.2 注释规范
 
 ```python
-# �?好的注释：解释为什么，不是做什�?
+# ?好的注释：解释为什么，不是做什?
 # 使用缓存避免重复计算（因为因子计算开销大）
 cache_key = f"{factor_id}_{date}"
 
-# �?坏的注释：重复代码内�?
-# 将因子ID和日期组合成缓存�?
+# ?坏的注释：重复代码内?
+# 将因子ID和日期组合成缓存?
 cache_key = f"{factor_id}_{date}"
 ```
 
 ---
 
-## 5. 硬编码禁止规�?
+## 5. 硬编码禁止规范
 
 ### 5.1 禁止的硬编码
 
 | 类型 | 示例 | 正确做法 |
 |------|------|----------|
-| 数据�?| `url = "http://api.example.com"` | `url = config.get("data_source.url")` |
-| 阈�?| `if price > 100:` | `if price > config.get("threshold.price"):` |
+| 数据?| `url = "http://api.example.com"` | `url = config.get("data_source.url")` |
+| 阈?| `if price > 100:` | `if price > config.get("threshold.price"):` |
 | 路径 | `path = "/data/raw"` | `path = config.get("paths.raw_data")` |
-| 字符�?| `status = "active"` | `status = Status.ACTIVE.value` |
+| 字符?| `status = "active"` | `status = Status.ACTIVE.value` |
 
 ### 5.2 配置文件引用模式
 
 ```python
-# �?正确：从配置读取
+# ?正确：从配置读取
 MAX_POSITION = config.get("risk.max_single_position", 0.2)
 
-# �?错误：硬编码
+# ?错误：硬编码
 MAX_POSITION = 0.2
 ```
 
@@ -206,7 +215,7 @@ import pytest
 from src.modules.data_collector import DataCollector
 
 class TestDataCollector:
-    """DataCollector测试�?""
+    """DataCollector测试?""
 
     @pytest.fixture
     def collector(self):
@@ -220,7 +229,7 @@ class TestDataCollector:
         assert result.data is not None
 ```
 
-### 6.2 测试覆盖率要�?
+### 6.2 测试覆盖率要?
 
 | 模块类型 | 最低覆盖率 |
 |----------|-----------|
@@ -232,23 +241,23 @@ class TestDataCollector:
 
 ## 7. 代码审查清单
 
-### 7.1 提交前检�?
+### 7.1 提交前检查
 
 ```
-�?所有硬编码已替换为配置引用
-�?所有TODO已标记为 [PLACEHOLDER]
-�?所有示例代码标记为 [STUDY_ONLY]
-�?所有可执行代码标记�?[EXECUTABLE]
-�?所有函数有docstring
-�?测试覆盖率达到要�?
-�?代码通过flake8检�?
-�?代码通过black格式�?
+?所有硬编码已替换为配置引用
+?所有TODO已标记为 [PLACEHOLDER]
+?所有示例代码标记为 [STUDY_ONLY]
+?所有可执行代码标记?[EXECUTABLE]
+?所有函数有docstring
+?测试覆盖率达到要?
+?代码通过flake8检?
+?代码通过black格式?
 ```
 
 ### 7.2 审查重点
 
-1. **硬编码检�?*：搜索数字、字符串常量
-2. **路径检�?*：确保使用相对路径或配置路径
+1. **硬编码检?*：搜索数字、字符串常量
+2. **路径检?*：确保使用相对路径或配置路径
 3. **异常处理**：检查是否有裸露的except语句
 4. **敏感信息**：检查是否包含API密钥、密码等
 

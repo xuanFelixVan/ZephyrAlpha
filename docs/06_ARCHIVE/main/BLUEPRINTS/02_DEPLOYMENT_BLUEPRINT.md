@@ -1,12 +1,25 @@
 ---
+module_id: 02DEPLOYMENTBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+responsibility:
+- 归档文档、历史版本
+layer: Layer 2 (Alpha因子层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
 module_id: ARCHIVE_BP_DEPLOYMENT_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
 standard_type: 专业量化机构蓝图
-applicable_scope: 全系统架构设�?
+applicable_scope: 全系统架构设?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
@@ -14,13 +27,18 @@ implementation_status: 设计阶段
 
 
 # 部署蓝图
+> **核心职责**: 02 Deployment蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：02 Deployment蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v4.0 的部署架构和流程
 
 
 ## 1. 部署架构
 
-### 1.1 开发环�?
+### 1.1 开发环?
 
 **目标**: 本地开发和测试
 
@@ -29,8 +47,8 @@ implementation_status: 设计阶段
 本地机器 (Windows/Mac/Linux)
 ├── Python 3.9+
 ├── 虚拟环境 (venv)
-├── 依赖�?(requirements.txt)
-├── 本地数据�?(SQLite)
+├── 依赖?(requirements.txt)
+├── 本地数据?(SQLite)
 └── 本地缓存 (内存)
 ```
 
@@ -45,15 +63,15 @@ python src/main.py --mode dev
 
 ### 1.2 测试环境
 
-**目标**: 功能测试和集成测�?
+**目标**: 功能测试和集成测?
 
 **配置**:
 ```
-测试服务�?
+测试服务?
 ├── Docker容器 (单机)
-├── PostgreSQL (测试数据�?
+├── PostgreSQL (测试数据?
 ├── Redis (测试缓存)
-├── 测试数据�?(1年历史数�?
+├── 测试数据?(1年历史数?
 └── 监控工具 (Prometheus)
 ```
 
@@ -70,12 +88,12 @@ pytest tests/ -v
 
 **配置**:
 ```
-模拟服务�?
-├── Docker容器 (多机�?
+模拟服务?
+├── Docker容器 (多机?
 ├── PostgreSQL (生产级数据库)
-├── Redis集群 (高可用缓�?
+├── Redis集群 (高可用缓?
 ├── Kafka (消息队列)
-├── 完整历史数据 (5�?
+├── 完整历史数据 (5?
 └── 监控告警 (Prometheus + Grafana)
 ```
 
@@ -94,10 +112,10 @@ docker-compose -f docker-compose.staging.yml up -d
 ```
 生产集群 (Kubernetes)
 ├── 8个FactorCalculator容器 (并行计算)
-├── 2个StrategyEngine容器 (高可�?
-├── 2个TradeExecutor容器 (高可�?
-├── PostgreSQL主从 (数据持久�?
-├── Redis集群 (高可用缓�?
+├── 2个StrategyEngine容器 (高可?
+├── 2个TradeExecutor容器 (高可?
+├── PostgreSQL主从 (数据持久?
+├── Redis集群 (高可用缓?
 ├── Kafka集群 (消息队列)
 ├── ELK日志系统 (日志聚合)
 ├── Prometheus + Grafana (监控告警)
@@ -116,15 +134,15 @@ kubectl apply -f k8s/
 ### 2.1 代码构建
 
 **步骤**:
-1. 代码检�?(pylint, flake8)
+1. 代码检?(pylint, flake8)
 2. 单元测试 (pytest)
-3. 代码覆盖率检�?(coverage > 80%)
+3. 代码覆盖率检?(coverage > 80%)
 4. 构建Docker镜像
 5. 推送到镜像仓库
 
 **命令**:
 ```bash
-# 代码检�?
+# 代码检?
 pylint src/
 flake8 src/
 
@@ -143,14 +161,14 @@ docker push registry.example.com/qingfeng:v4.0.2
 1. 安装Python依赖
 2. 安装系统依赖
 3. 验证依赖版本
-4. 生成依赖锁文�?
+4. 生成依赖锁文?
 
 **命令**:
 ```bash
 # 安装依赖
 pip install -r requirements.txt
 
-# 生成锁文�?
+# 生成锁文?
 pip freeze > requirements.lock
 
 # 验证依赖
@@ -158,21 +176,21 @@ pip check
 ```
 
 
-### 2.3 配置初始�?
+### 2.3 配置初始?
 
 **步骤**:
 1. 加载系统配置
 2. 初始化数据库
-3. 初始化缓�?
-4. 初始化消息队�?
-5. 验证配置有效�?
+3. 初始化缓?
+4. 初始化消息队?
+5. 验证配置有效?
 
 **命令**:
 ```bash
 # 初始化数据库
 python scripts/init_db.py
 
-# 初始化缓�?
+# 初始化缓?
 python scripts/init_cache.py
 
 # 验证配置
@@ -185,7 +203,7 @@ python scripts/validate_config.py
 **步骤**:
 1. 下载历史数据
 2. 数据清洗
-3. 数据预处�?
+3. 数据预处?
 4. 数据验证
 5. 数据备份
 
@@ -205,18 +223,18 @@ python scripts/validate_data.py
 ### 2.5 系统启动
 
 **步骤**:
-1. 启动基础服务 (数据库、缓存、消息队�?
-2. 启动核心模块 (DataHub、FactorCalculator�?
+1. 启动基础服务 (数据库、缓存、消息队?
+2. 启动核心模块 (DataHub、FactorCalculator?
 3. 启动监控系统 (Prometheus、Grafana)
 4. 启动告警系统 (AlertManager)
-5. 健康检�?
+5. 健康检?
 
 **命令**:
 ```bash
-# 启动所有服�?
+# 启动所有服?
 docker-compose up -d
 
-# 健康检�?
+# 健康检?
 ./scripts/health_check.sh
 
 # 查看日志
@@ -224,7 +242,7 @@ docker-compose logs -f
 ```
 
 
-## 3. 容器化方�?
+## 3. 容器化方?
 
 ### 3.1 Dockerfile
 
@@ -244,7 +262,7 @@ COPY requirements.txt .
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制源代�?
+# 复制源代?
 COPY src/ src/
 COPY config/ config/
 
@@ -262,7 +280,7 @@ CMD ["python", "src/main.py"]
 version: '3.8'
 
 services:
-  # 数据�?
+  # 数据?
   postgres:
     image: postgres:13
     environment:
@@ -304,7 +322,7 @@ services:
     ports:
       - "8001:8000"
 
-  # 因子计算 (8个并�?
+  # 因子计算 (8个并?
   factor_calculator_1:
     build: .
     environment:
@@ -316,7 +334,7 @@ services:
       - postgres
       - redis
 
-  # ... factor_calculator_2 �?factor_calculator_8
+  # ... factor_calculator_2 ?factor_calculator_8
 
   # 策略引擎
   strategy_engine:
@@ -412,11 +430,11 @@ spec:
 ### 4.1 系统监控
 
 **指标**:
-- CPU使用�?
-- 内存使用�?
-- 磁盘使用�?
+- CPU使用?
+- 内存使用?
+- 磁盘使用?
 - 网络流量
-- 进程�?
+- 进程?
 
 **告警规则**:
 ```yaml
@@ -427,22 +445,22 @@ groups:
       expr: cpu_usage > 80
       for: 5m
       annotations:
-        summary: "CPU使用率过�?({{ $value }}%)"
-        description: "主机 {{ $labels.instance }} CPU使用率超�?0%"
+        summary: "CPU使用率过?({{ $value }}%)"
+        description: "主机 {{ $labels.instance }} CPU使用率超?0%"
         severity: warning
       
     - alert: CriticalCPUUsage
       expr: cpu_usage > 95
       for: 2m
       annotations:
-        summary: "CPU使用率严重过�?({{ $value }}%)"
+        summary: "CPU使用率严重过?({{ $value }}%)"
         severity: critical
       
     - alert: HighMemoryUsage
       expr: memory_usage > 85
       for: 5m
       annotations:
-        summary: "内存使用率过�?({{ $value }}%)"
+        summary: "内存使用率过?({{ $value }}%)"
         severity: warning
       
     - alert: DiskSpaceLow
@@ -457,10 +475,10 @@ groups:
 ### 4.2 性能监控
 
 **指标**:
-- 请求延迟（p50、p95、p99�?
-- 吞吐量（QPS�?
-- 错误�?
-- 缓存命中�?
+- 请求延迟（p50、p95、p99?
+- 吞吐量（QPS?
+- 错误?
+- 缓存命中?
 
 **告警规则**:
 ```yaml
@@ -479,7 +497,7 @@ groups:
       expr: qps < 100
       for: 10m
       annotations:
-        summary: "吞吐量过�?({{ $value }} QPS)"
+        summary: "吞吐量过?({{ $value }} QPS)"
         description: "系统吞吐量低于预期，可能存在故障"
         severity: warning
       
@@ -487,16 +505,16 @@ groups:
       expr: error_rate > 1
       for: 5m
       annotations:
-        summary: "错误率过�?({{ $value }}%)"
-        description: "错误率超�?%，需要立即调�?
+        summary: "错误率过?({{ $value }}%)"
+        description: "错误率超?%，需要立即调?
         severity: critical
       
     - alert: LowCacheHitRate
       expr: cache_hit_rate < 80
       for: 10m
       annotations:
-        summary: "缓存命中率过�?({{ $value }}%)"
-        description: "缓存命中率低�?0%，性能可能下降"
+        summary: "缓存命中率过?({{ $value }}%)"
+        description: "缓存命中率低?0%，性能可能下降"
         severity: warning
 ```
 
@@ -504,8 +522,8 @@ groups:
 ### 4.3 业务监控
 
 **指标**:
-- 策略信号�?
-- 交易成交�?
+- 策略信号?
+- 交易成交?
 - 投资组合收益
 - 风险指标（最大回撤、夏普比率）
 
@@ -526,8 +544,8 @@ groups:
       expr: max_drawdown > 20
       for: 1d
       annotations:
-        summary: "最大回撤超�?0%"
-        description: "投资组合最大回�?{{ $value }}%，风险过�?
+        summary: "最大回撤超?0%"
+        description: "投资组合最大回?{{ $value }}%，风险过?
         severity: critical
       
     - alert: LowSharpeRatio
@@ -535,7 +553,7 @@ groups:
       for: 7d
       annotations:
         summary: "夏普比率过低 ({{ $value }})"
-        description: "风险调整后收益不理想，需要优化策�?
+        description: "风险调整后收益不理想，需要优化策?
         severity: warning
       
     - alert: NoTrades
@@ -606,21 +624,21 @@ receivers:
 
 ```
 告警触发
-    �?
-告警分类（严�?警告/信息�?
-    �?
-    ├→ 严重告警 �?立即通知 �?人工介入
-    ├→ 警告告警 �?记录日志 �?定期检�?
-    └→ 信息告警 �?记录日志 �?定期分析
-    �?
+    ?
+告警分类（严?警告/信息?
+    ?
+    ├→ 严重告警 ?立即通知 ?人工介入
+    ├→ 警告告警 ?记录日志 ?定期检?
+    └→ 信息告警 ?记录日志 ?定期分析
+    ?
 告警处理
-    �?
-    ├→ 自动恢复（如可能�?
+    ?
+    ├→ 自动恢复（如可能?
     ├→ 人工处理
     └→ 升级处理
-    �?
+    ?
 告警关闭
-    �?
+    ?
 事后分析
 ```
 
@@ -629,12 +647,12 @@ receivers:
 
 ### 5.1 备份策略
 
-**数据库备�?*:
+**数据库备?*:
 ```bash
-# 每天凌晨2点执行全量备�?
+# 每天凌晨2点执行全量备?
 0 2 * * * pg_dump qingfeng > /backup/qingfeng_$(date +\%Y\%m\%d).sql
 
-# 每小时执行增量备�?
+# 每小时执行增量备?
 0 * * * * pg_basebackup -D /backup/incremental_$(date +\%Y\%m\%d\%H)
 ```
 
@@ -650,12 +668,12 @@ git archive --format tar.gz HEAD > /backup/code_$(date +%Y%m%d).tar.gz
 
 ### 5.2 恢复流程
 
-**数据库恢�?*:
+**数据库恢?*:
 ```bash
 # 1. 停止应用
 docker-compose down
 
-# 2. 恢复数据�?
+# 2. 恢复数据?
 psql qingfeng < /backup/qingfeng_20260328.sql
 
 # 3. 启动应用
@@ -670,10 +688,10 @@ docker-compose up -d
 
 **主从切换**:
 ```bash
-# 1. 检测主库故�?
+# 1. 检测主库故?
 ./scripts/check_primary.sh
 
-# 2. 提升从库为主�?
+# 2. 提升从库为主?
 pg_ctl promote -D /var/lib/postgresql/data
 
 # 3. 更新连接配置
@@ -684,13 +702,13 @@ docker-compose restart
 ```
 
 
-## 6. 扩展性方�?
+## 6. 扩展性方?
 
 ### 6.1 水平扩展
 
 **因子计算扩展**:
 ```bash
-# �?个容器扩展到16�?
+# ?个容器扩展到16?
 docker-compose up -d --scale factor_calculator=16
 ```
 
@@ -729,7 +747,7 @@ cache = MultiLevelCache(
 
 **计算优化**:
 ```python
-# 使用向量化计�?
+# 使用向量化计?
 factors = np.vectorize(calculate_factor)(data)
 
 # 使用JIT编译
@@ -739,16 +757,16 @@ def fast_calculation(data):
 ```
 
 
-## 7. 部署检查清�?
+## 7. 部署检查清?
 
 - [ ] 代码检查通过
 - [ ] 单元测试通过
 - [ ] 集成测试通过
-- [ ] 代码覆盖�?> 80%
+- [ ] 代码覆盖?> 80%
 - [ ] Docker镜像构建成功
 - [ ] 配置文件验证通过
 - [ ] 数据库初始化完成
-- [ ] 缓存初始化完�?
+- [ ] 缓存初始化完?
 - [ ] 监控系统启动
 - [ ] 告警规则配置
 - [ ] 备份策略配置
@@ -757,5 +775,36 @@ def fast_calculation(data):
 - [ ] 文档更新完成
 
 
-**最后更�?*: 2026-03-28  
-**维护�?*: 清风量化系统
+**最后更?*: 2026-03-28  
+**维护?*: 清风量化系统
+---
+
+## 8. 文档治理
+
+### 8.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Archive Bp Deployment
+- **模块ID**: ARCHIVE_BP_DEPLOYMENT_001
+- **蓝图文档**: 02_DEPLOYMENT_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 全系统架构设?
+- **状态**: Active
+```
+
+### 8.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Archive Bp Deployment** | 全系统架构设? | **核心模块** |
+
+### 8.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active

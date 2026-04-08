@@ -1,0 +1,143 @@
+{
+  "L1_file_system": {
+    "directory_structure": [],
+    "file_naming": [],
+    "path_references": []
+  },
+  "L2_document_content": {
+    "responsibility_issues": [
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 'HUMAN_AI_INTERFACE文档' 被 3 个文档共享",
+        "files": [
+          "BLUEPRINT_CHAPTER_NAMING_STANDARD.md",
+          "index.md",
+          "INDEX_TEMPLATE.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      }
+    ],
+    "index_completeness": [
+      {
+        "type": "索引不完整",
+        "severity": "P1",
+        "description": "43个文件未被索引",
+        "files": [
+          "34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md",
+          "25_STRATEGY_IDE\\README.md",
+          "25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
+          "05_BACKTEST_UI\\README.md",
+          "38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
+          "37_ACCESSIBILITY\\README.md",
+          "17_DOCUMENTATION_CENTER\\DOCUMENTATION_CENTER_BLUEPRINT.md",
+          "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+          "24_RISK_DASHBOARD\\README.md",
+          "27_RISK_CONTROL_PANEL\\README.md"
+        ],
+        "recommendation": "更新INDEX.md以包含所有活跃文档"
+      }
+    ],
+    "version_isolation": [
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "INDEX.md",
+        "files": [
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      },
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "README.md",
+        "files": [
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      }
+    ],
+    "doc_code_correspondence": []
+  },
+  "L3_professional_standards": {
+    "five_principles": [],
+    "classification": [
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '17_DOCUMENTATION_CENTER' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      },
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '29_WEBSOCKET_REALTIME' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      }
+    ],
+    "numbering": [],
+    "quality": [
+      {
+        "type": "文档过长",
+        "file": "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（912行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      },
+      {
+        "type": "文档过长",
+        "file": "06_REPORTING\\REPORTING_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（859行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      }
+    ]
+  },
+  "statistics": {
+    "total_files": 63,
+    "total_directories": 21,
+    "total_size": 121733,
+    "issues_found": 8
+  }
+}

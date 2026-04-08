@@ -1,45 +1,63 @@
+﻿---
+module_id: EVENT_BUS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - EventBus 事件总线文档
 ---
+
+﻿---
 module_id: EXEC_EVENT_BUS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
+responsibility:
+  - 交易执行系统设计与优化与实施指导
 standard_type: 专业量化机构交易执行标准
-applicable_scope: 交易执行与监�?
+applicable_scope: 交易执行与监控
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
----
+implementation_status: 进行?---
+
 
 # EventBus 事件总线
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> 基础设施�? 模块间异步通信、事件驱动架�?
+
+> 基础设施? 模块间异步通信、事件驱动架?
 
 ---
 
 ## 1. 设计概述
 
-EventBus是系统的消息中枢，支持模块间的异步通信和事件驱动架构�?
+EventBus是系统的消息中枢，支持模块间的异步通信和事件驱动架构?
 
 ```
 EventBus架构
 ├── 事件发布 (Publisher)
-�?  ├── 同步发布
-�?  └── 异步发布
+?  ├── 同步发布
+?  └── 异步发布
 ├── 事件订阅 (Subscriber)
-�?  ├── 精确匹配
-�?  ├── 通配符匹�?
-�?  └── 模式匹配
+?  ├── 精确匹配
+?  ├── 通配符匹?
+?  └── 模式匹配
 ├── 事件路由 (Router)
-�?  ├── 直接路由
-�?  ├── 主题路由
-�?  └── 广播路由
+?  ├── 直接路由
+?  ├── 主题路由
+?  └── 广播路由
 ├── 消息队列 (Queue)
-�?  ├── 内存队列
-�?  ├── 持久化队�?
-�?  └── 优先级队�?
-└── 事件过滤�?(Filter)
+?  ├── 内存队列
+?  ├── 持久化队?
+?  └── 优先级队?
+└── 事件过滤?(Filter)
     ├── 类型过滤
     ├── 内容过滤
     └── 时效过滤
@@ -63,7 +81,7 @@ import json
 
 
 class EventPriority(Enum):
-    """事件优先�?""
+    """事件优先?""
     LOW = 0
     NORMAL = 1
     HIGH = 2
@@ -187,7 +205,7 @@ class EventBus:
 
         参数:
             subscriber_id: 订阅者ID
-            event_type: 事件类型 (支持通配�?'*')
+            event_type: 事件类型 (支持通配?'*')
             handler: 事件处理函数
             filter_func: 过滤函数
         """
@@ -266,7 +284,7 @@ class EventBus:
                 self.logger.error(f"Error in dispatch loop: {e}")
 
     def _dispatch_event(self, event: Event):
-        """分发事件到订阅�?""
+        """分发事件到订阅?""
         matching_types = self._match_event_types(event.event_type)
 
         delivered = 0
@@ -310,7 +328,7 @@ class EventBus:
         return matches
 
     def _get_priority_value(self, priority: EventPriority) -> int:
-        """获取优先级数�?""
+        """获取优先级数?""
         return priority.value
 
     def get_stats(self) -> Dict:
@@ -326,11 +344,11 @@ class EventBus:
 
 ---
 
-## 3. 预定义事件类�?
+## 3. 预定义事件类别
 
 ```python
 class EventTypes:
-    """预定义事件类�?""
+    """预定义事件类?""
 
     DATA = "data"
     DATA_UPDATE = "data.update"
@@ -419,7 +437,7 @@ def example_eventbus():
 
 ```python
 class EventBusIntegration:
-    """EventBus与现有模块集�?""
+    """EventBus与现有模块集?""
 
     def __init__(self, event_bus: EventBus):
         self.bus = event_bus
@@ -476,7 +494,7 @@ class EventBusIntegration:
 
 **版本**: 1.0
 **更新**: 2026-03-28
-**Layer**: 基础设施�?(横切关注�?
-**索引**: BLUEPRINTS.md �?基础设施蓝图
-**上游接口**: 所有模�?
-**下游接口**: 所有模�?
+**Layer**: 基础设施?(横切关注?
+**索引**: BLUEPRINTS.md ?基础设施蓝图
+**上游接口**: 所有模块
+**下游接口**: 所有模块

@@ -1,4 +1,15 @@
 ---
+module_id: BARRA_RISK_MODEL_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - BARRA_RISK_MODEL_TECHNICAL技术规范
+---
+
+﻿---
 module_id: BARRA_RISK_MODEL_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,58 +17,67 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化?
+layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
 index: BARRA_RISK_SPEC_001
 estimated_hours: 100h
 review_status: Pending
-reviewer: 首席技术评审官
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构技术规格书
-applicable_scope: 全系?compliance_level: 专业标准
+owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+---
 ---
 
-# Barra风险模型技术规格书 v1.0
 
-> 清风量化系统 v5.3 - Barra风险模型详细技术设?> **索引**: `BARRA_RISK_SPEC_001`
-> **开发时?*: 100h
-> **核心定位**: 多因子风险模型，实现风险分解与因子暴露控?
+# Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `BARRA_RISK_SPEC_001`
+> **ﮒﺙﮒﮔﭘ?*: 100h
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﮒﮒﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻛﺕﮒﮒﮔﺑﻠﺎﮔ۶?
 ---
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 模块定位
+### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
 
-Barra风险模型是Layer 6组合优化层的核心风险模型，负责：
-- 因子暴露计算
-- 因子协方差估?- 风险分解
-- 风险归因
+Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮔﺕﮒﺟﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
+- ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟
+- ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?- ﻠ۲ﻠ۸ﮒﻟ۶۲
+- ﻠ۲ﻠ۸ﮒﺛﮒ
 
-### 1.2 技术目?
-- **准确?*: 因子暴露计算误差 < 5%
-- **稳定?*: 因子协方差估计稳定，避免过拟?- **性能**: 单次风险分解计算时间 < 100ms
-- **可扩�?*: 支持自定义因子扩?
+### 1.2 ﮔﮔﺁﻝ؟?
+- **ﮒﻝ۰؟?*: ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻟﺁﺁﮒﺓ؟ < 5%
+- **ﻝ۷ﺏﮒ؟?*: ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ۷ﺏﮒ؟ﺅﺙﻠﺟﮒﻟﺟﮔ?- **ﮔ۶ﻟﺛ**: ﮒﮔ؛۰ﻠ۲ﻠ۸ﮒﻟ۶۲ﻟ؟۰ﻝ؟ﮔﭘﻠﺑ < 100ms
+- **ﮒﺁﮔ۸ﮒﺎ?*: ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮒﮒﮔ۸?
 ---
 
-## 2. 接口定义
+## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 核心类接?
+### 2.1 ﮔﺕﮒﺟﻝﺎﭨﮔ۴?
 #### 2.1.1 BarraRiskModel
 
 ```python
 class BarraRiskModel:
     """
-    Barra风险模型核心?    
-    职责: 多因子风险模型，实现风险分解、因子暴露控?    """
+Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔﺕﮒﺟ?
+ﻟﻟﺑ۲: ﮒ۳ﮒﮒﻠ۲ﻠ۸ﮔ۷۰ﮒﺅﺙﮒ؟ﻝﺍﻠ۲ﻠ۸ﮒﻟ۶۲ﻙﮒﮒﮔﺑﻠﺎﮔ۶?    """
     
     def __init__(self, config: BarraConfig):
         """
-        初始化Barra风险模型
+        ﮒﮒ۶ﮒBarraﻠ۲ﻠ۸ﮔ۷۰ﮒ
         
         Args:
-            config: Barra配置对象
+            config: Barraﻠﻝﺛ؟ﮒﺁﺗﻟﺎ۰
         """
         pass
     
@@ -66,44 +86,44 @@ class BarraRiskModel:
             returns_data: pd.DataFrame,
             factor_loadings: Optional[pd.DataFrame] = None) -> 'BarraRiskModel':
         """
-        拟合风险模型
+        ﮔﮒﻠ۲ﻠ۸ﮔ۷۰ﮒ
         
         Args:
-            factor_data: 因子数据 (T x K)
-            returns_data: 资产收益率数?(T x N)
-            factor_loadings: 因子载荷矩阵 (N x K)，可?            
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
+            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
+factor_loadings: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)ﺅﺙﮒﺁ?
         Returns:
-            self: 拟合后的模型
+            self: ﮔﮒﮒﻝﮔ۷۰ﮒ
             
         Raises:
-            ValueError: 数据格式错误
-            FittingError: 模型拟合失败
+ValueError: ﮔﺍﮔ؟ﮔﺙﮒﺙﻠﻟﺁﺁ
+            FittingError: ﮔ۷۰ﮒﮔﮒﮒ۳ﺎﻟﺑ۴
         """
         pass
     
     def calculate_factor_exposure(self,
                                   portfolio_weights: pd.Series) -> pd.Series:
         """
-        计算组合因子暴露
+ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ
         
         Args:
-            portfolio_weights: 组合权重 (N,)
+            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
             
         Returns:
-            pd.Series: 因子暴露 (K,)
+pd.Series: ﮒﮒﮔﺑﻠﺎ (K,)
         """
         pass
     
     def decompose_risk(self,
                       portfolio_weights: pd.Series) -> RiskDecomposition:
         """
-        风险分解
+        ﻠ۲ﻠ۸ﮒﻟ۶۲
         
         Args:
-            portfolio_weights: 组合权重 (N,)
+            portfolio_weights: ﻝﭨﮒﮔﻠ (N,)
             
         Returns:
-            RiskDecomposition: 风险分解结果
+            RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
         """
         pass
     
@@ -111,13 +131,13 @@ class BarraRiskModel:
                             total_risk: float,
                             factor_risk_budget: Dict[str, float]) -> Dict[str, float]:
         """
-        风险预算分配
+        ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
         
         Args:
-            total_risk: 总风险预?            factor_risk_budget: 因子风险预算比例
+total_risk: ﮔﭨﻠ۲ﻠ۸ﻠ۱?            factor_risk_budget: ﮒﮒﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮔﺁﻛﺝ
             
         Returns:
-            Dict[str, float]: 因子风险预算?        """
+Dict[str, float]: ﮒﮒﻠ۲ﻠ۸ﻠ۱ﻝ؟?        """
         pass
 ```
 
@@ -126,15 +146,15 @@ class BarraRiskModel:
 ```python
 class FactorExposureCalculator:
     """
-    因子暴露计算?    
-    职责: 计算资产对因子的暴露?    """
+ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟?
+ﻟﻟﺑ۲: ﻟ؟۰ﻝ؟ﻟﭖﻛﭦ۶ﮒﺁﺗﮒﮒﻝﮔﺑﻠﺎ?    """
     
     def __init__(self, config: FactorConfig):
         """
-        初始化因子暴露计算器
+ﮒﮒ۶ﮒﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷
         
         Args:
-            config: 因子配置
+config: ﮒﮒﻠﻝﺛ؟
         """
         pass
     
@@ -142,14 +162,14 @@ class FactorExposureCalculator:
                  factor_data: pd.DataFrame,
                  returns_data: pd.DataFrame) -> pd.DataFrame:
         """
-        计算因子载荷矩阵
+ﻟ؟۰ﻝ؟ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
         
         Args:
-            factor_data: 因子数据 (T x K)
-            returns_data: 资产收益率数?(T x N)
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
+            returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
             
         Returns:
-            pd.DataFrame: 因子载荷矩阵 (N x K)
+pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
         """
         pass
 ```
@@ -159,69 +179,69 @@ class FactorExposureCalculator:
 ```python
 class FactorCovarianceEstimator:
     """
-    因子协方差估计器
+ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷
     
-    职责: 估计因子协方差矩?    """
+ﻟﻟﺑ۲: ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?    """
     
     def __init__(self, config: CovarianceConfig):
         """
-        初始化因子协方差估计?        
+ﮒﮒ۶ﮒﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰?
         Args:
-            config: 协方差估计配?        """
+            config: ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?        """
         pass
     
     def estimate(self,
                 factor_data: pd.DataFrame,
                 method: str = 'shrinkage') -> pd.DataFrame:
         """
-        估计因子协方差矩?        
+ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?
         Args:
-            factor_data: 因子数据 (T x K)
-            method: 估计方法 ('shrinkage', 'ewma', 'garch')
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
+            method: ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ ('shrinkage', 'ewma', 'garch')
             
         Returns:
-            pd.DataFrame: 因子协方差矩?(K x K)
+pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
         """
         pass
 ```
 
-### 2.2 数据接口
+### 2.2 ﮔﺍﮔ؟ﮔ۴ﮒ۲
 
-#### 2.2.1 输入数据格式
+#### 2.2.1 ﻟﺝﮒ۴ﮔﺍﮔ؟ﮔﺙﮒﺙ
 
 ```python
-# 因子数据格式
+# ﮒﮒﮔﺍﮔ؟ﮔﺙﮒﺙ
 factor_data: pd.DataFrame
 """
-Index: DatetimeIndex (时间)
-Columns: 因子名称
-Values: 因子?
-示例:
+Index: DatetimeIndex (ﮔﭘﻠﺑ)
+Columns: ﮒﮒﮒﻝ۶ﺍ
+Values: ﮒﮒ?
+ﻝ۳ﭦﻛﺝ:
             momentum  value  size  beta  ...
 2024-01-01    0.05   -0.02  0.01  1.2
 2024-01-02    0.06   -0.01  0.02  1.1
 ...
 """
 
-# 资产收益率数据格?returns_data: pd.DataFrame
+# ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍﮔ؟ﮔﺙ?returns_data: pd.DataFrame
 """
-Index: DatetimeIndex (时间)
-Columns: 资产代码
-Values: 收益?
-示例:
+Index: DatetimeIndex (ﮔﭘﻠﺑ)
+Columns: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ
+Values: ﮔﭘﻝ?
+ﻝ۳ﭦﻛﺝ:
             AAPL    MSFT    GOOGL   ...
 2024-01-01  0.012   0.008   0.015
 2024-01-02  0.005   0.010   -0.002
 ...
 """
 
-# 组合权重格式
+# ﻝﭨﮒﮔﻠﮔﺙﮒﺙ
 portfolio_weights: pd.Series
 """
-Index: 资产代码
-Values: 权重
+Index: ﻟﭖﻛﭦ۶ﻛﭨ۲ﻝ
+Values: ﮔﻠ
 
-示例:
+ﻝ۳ﭦﻛﺝ:
 AAPL     0.15
 MSFT     0.12
 GOOGL    0.10
@@ -229,47 +249,47 @@ GOOGL    0.10
 """
 ```
 
-#### 2.2.2 输出数据格式
+#### 2.2.2 ﻟﺝﮒﭦﮔﺍﮔ؟ﮔﺙﮒﺙ
 
 ```python
-# 风险分解结果
+# ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
 @dataclass
 class RiskDecomposition:
-    """风险分解结果"""
-    factor_exposure: pd.Series  # 因子暴露 (K,)
-    factor_risk_contribution: pd.Series  # 因子风险贡献 (K,)
-    idiosyncratic_risk_contribution: float  # 特质风险贡献
-    total_risk: float  # 总风?    factor_risk_ratio: float  # 因子风险占比
-    idiosyncratic_risk_ratio: float  # 特质风险占比
+    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ"""
+factor_exposure: pd.Series  # ﮒﮒﮔﺑﻠﺎ (K,)
+factor_risk_contribution: pd.Series  # ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ (K,)
+    idiosyncratic_risk_contribution: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+total_risk: float  # ﮔﭨﻠ۲?    factor_risk_ratio: float  # ﮒﮒﻠ۲ﻠ۸ﮒﮔﺁ
+idiosyncratic_risk_ratio: float  # ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﮒﮔﺁ
 ```
 
 ---
 
-## 3. 数据结构设计
+## 3. ﮔﺍﮔ؟ﻝﭨﮔﻟ؟ﺝﻟ؟۰
 
-### 3.1 核心数据结构
+### 3.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
 #### 3.1.1 BarraConfig
 
 ```python
 @dataclass
 class BarraConfig:
-    """Barra风险模型配置"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﻝﺛ؟"""
     factor_config: FactorConfig
     cov_config: CovarianceConfig
     idio_config: IdiosyncraticConfig
     
-    # 风格因子定义
+# ﻠ۲ﮔﺙﮒﮒﮒ؟ﻛﺗ
     style_factors: List[str] = field(default_factory=lambda: [
-        'momentum',      # 动量因子
-        'value',         # 价值因?        'size',          # 规模因子
-        'beta',          # Beta因子
-        'volatility',    # 波动率因?        'liquidity',     # 流动性因?        'leverage',      # 杠杆因子
-        'earnings_yield', # 盈利收益率因?        'growth',        # 成长因子
-        'quality'        # 质量因子
+'momentum',      # ﮒ۷ﻠﮒﮒ
+'value',         # ﻛﭨﺓﮒﺙﮒ?        'size',          # ﻟ۶ﮔ۷۰ﮒﮒ
+'beta',          # Betaﮒﮒ
+'volatility',    # ﮔﺏ۱ﮒ۷ﻝﮒ?        'liquidity',     # ﮔﭖﮒ۷ﮔ۶ﮒ?        'leverage',      # ﮔﮔﮒﮒ
+'earnings_yield', # ﻝﮒ۸ﮔﭘﻝﻝﮒ?        'growth',        # ﮔﻠﺟﮒﮒ
+'quality'        # ﻟﺑ۷ﻠﮒﮒ
     ])
     
-    # 行业因子定义
+# ﻟ۰ﻛﺕﮒﮒﮒ؟ﻛﺗ
     industry_factors: List[str] = field(default_factory=lambda: [
         'energy', 'materials', 'industrials', 'consumer_discretionary',
         'consumer_staples', 'health_care', 'financials', 'information_technology',
@@ -282,16 +302,16 @@ class BarraConfig:
 ```python
 @dataclass
 class FactorConfig:
-    """因子配置"""
-    # 因子暴露计算方法
+"""ﮒﮒﻠﻝﺛ؟"""
+# ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﺗﮔﺏ
     exposure_method: str = 'regression'  # 'regression', 'characteristics'
     
-    # 回归窗口
-    regression_window: int = 252  # 交易?    
-    # 最小R²要求
+    # ﮒﮒﺛﻝ۹ﮒ۲
+    regression_window: int = 252  # ﻛﭦ۳ﮔ?    
+    # ﮔﮒﺍRﺡﺎﻟ۵ﮔﺎ
     min_r_squared: float = 0.3
     
-    # 因子标准?    standardize_factors: bool = True
+# ﮒﮒﮔﮒ?    standardize_factors: bool = True
 ```
 
 #### 3.1.3 CovarianceConfig
@@ -299,24 +319,24 @@ class FactorConfig:
 ```python
 @dataclass
 class CovarianceConfig:
-    """协方差估计配?""
-    # 估计方法
+    """ﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻠ?""
+    # ﻛﺙﺍﻟ؟۰ﮔﺗﮔﺏ
     estimation_method: str = 'shrinkage'  # 'shrinkage', 'ewma', 'garch'
     
-    # Shrinkage参数
+    # Shrinkageﮒﮔﺍ
     shrinkage_target: str = 'identity'  # 'identity', 'diagonal', 'single_factor'
     shrinkage_intensity: float = 0.2
     
-    # EWMA参数
+    # EWMAﮒﮔﺍ
     ewma_lambda: float = 0.94
     
-    # GARCH参数
+    # GARCHﮒﮔﺍ
     garch_p: int = 1
     garch_q: int = 1
 ```
 
-### 3.2 数据库设?
-#### 3.2.1 因子数据?(factor_data)
+### 3.2 ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝ?
+#### 3.2.1 ﮒﮒﮔﺍﮔ؟?(factor_data)
 
 ```sql
 CREATE TABLE factor_data (
@@ -331,7 +351,7 @@ CREATE TABLE factor_data (
 );
 ```
 
-#### 3.2.2 因子载荷?(factor_loadings)
+#### 3.2.2 ﮒﮒﻟﺛﺛﻟﺓ?(factor_loadings)
 
 ```sql
 CREATE TABLE factor_loadings (
@@ -348,7 +368,7 @@ CREATE TABLE factor_loadings (
 );
 ```
 
-#### 3.2.3 因子协方差表 (factor_covariance)
+#### 3.2.3 ﮒﮒﮒﮔﺗﮒﺓ؟ﻟ۰۷ (factor_covariance)
 
 ```sql
 CREATE TABLE factor_covariance (
@@ -366,11 +386,11 @@ CREATE TABLE factor_covariance (
 
 ---
 
-## 4. 算法实现
+## 4. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
-### 4.1 因子暴露计算算法
+### 4.1 ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 
-#### 4.1.1 回归?
+#### 4.1.1 ﮒﮒﺛ?
 ```python
 def calculate_factor_exposure_regression(
     factor_data: pd.DataFrame,
@@ -378,18 +398,18 @@ def calculate_factor_exposure_regression(
     window: int = 252
 ) -> pd.DataFrame:
     """
-    使用回归法计算因子暴?    
-    算法:
-    1. 对每个资产，使用历史数据回归
-    2. r_i = α + β_i1*f1 + β_i2*f2 + ... + ε_i
-    3. β_ij 即为资产i对因子j的暴?    
+ﻛﺛﺟﻝ۷ﮒﮒﺛﮔﺏﻟ؟۰ﻝ؟ﮒﮒﮔﺑ?
+    ﻝ؟ﮔﺏ:
+    1. ﮒﺁﺗﮔﺁﻛﺕ۹ﻟﭖﻛﭦ۶ﺅﺙﻛﺛﺟﻝ۷ﮒﮒﺎﮔﺍﮔ؟ﮒﮒﺛ
+    2. r_i = ﺳﺎ + ﺳﺎ_i1*f1 + ﺳﺎ_i2*f2 + ... + ﺳﭖ_i
+3. ﺳﺎ_ij ﮒﺏﻛﺕﭦﻟﭖﻛﭦ۶iﮒﺁﺗﮒﮒjﻝﮔﺑ?
     Args:
-        factor_data: 因子数据 (T x K)
-        returns_data: 资产收益率数?(T x N)
-        window: 回归窗口
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
+        returns_data: ﻟﭖﻛﭦ۶ﮔﭘﻝﻝﮔﺍ?(T x N)
+        window: ﮒﮒﺛﻝ۹ﮒ۲
         
     Returns:
-        pd.DataFrame: 因子载荷矩阵 (N x K)
+pd.DataFrame: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ (N x K)
     """
     from sklearn.linear_model import LinearRegression
     
@@ -399,22 +419,22 @@ def calculate_factor_exposure_regression(
     )
     
     for asset in returns_data.columns:
-        # 准备数据
+        # ﮒﮒ۳ﮔﺍﮔ؟
         X = factor_data.tail(window).values
         y = returns_data[asset].tail(window).values
         
-        # 回归
+        # ﮒﮒﺛ
         model = LinearRegression()
         model.fit(X, y)
         
-        # 保存因子载荷
+# ﻛﺟﮒﮒﮒﻟﺛﺛﻟﺓ
         factor_loadings.loc[asset] = model.coef_
     
     return factor_loadings
 ```
 
-### 4.2 因子协方差估计算?
-#### 4.2.1 Shrinkage估计
+### 4.2 ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﻝ؟?
+#### 4.2.1 Shrinkageﻛﺙﺍﻟ؟۰
 
 ```python
 def estimate_factor_covariance_shrinkage(
@@ -422,25 +442,25 @@ def estimate_factor_covariance_shrinkage(
     shrinkage_intensity: float = 0.2
 ) -> pd.DataFrame:
     """
-    使用Shrinkage方法估计因子协方?    
-    算法:
-    1. 计算样本协方差矩?S
-    2. 构建目标矩阵 F (如单位矩?
-    3. 计算Shrinkage估计: Σ = (1-λ)*S + λ*F
+ﻛﺛﺟﻝ۷Shrinkageﮔﺗﮔﺏﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?
+    ﻝ؟ﮔﺏ:
+1. ﻟ؟۰ﻝ؟ﮔﺓﮔ؛ﮒﮔﺗﮒﺓ؟ﻝ۸?S
+2. ﮔﮒﭨﭦﻝ؟ﮔﻝ۸ﻠﭖ F (ﮒ۵ﮒﻛﺛﻝ۸?
+    3. ﻟ؟۰ﻝ؟Shrinkageﻛﺙﺍﻟ؟۰: ﺳ۲ = (1-ﺳﭨ)*S + ﺳﭨ*F
     
     Args:
-        factor_data: 因子数据 (T x K)
-        shrinkage_intensity: Shrinkage强度
+factor_data: ﮒﮒﮔﺍﮔ؟ (T x K)
+        shrinkage_intensity: Shrinkageﮒﺙﭦﮒﭦ۵
         
     Returns:
-        pd.DataFrame: 因子协方差矩?(K x K)
+pd.DataFrame: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?(K x K)
     """
-    # 样本协方?    sample_cov = factor_data.cov()
+# ﮔﺓﮔ؛ﮒﮔﺗ?    sample_cov = factor_data.cov()
     
-    # 目标矩阵（单位矩阵）
+# ﻝ؟ﮔﻝ۸ﻠﭖﺅﺙﮒﻛﺛﻝ۸ﻠﭖﺅﺙ
     target = np.eye(len(sample_cov))
     
-    # Shrinkage估计
+    # Shrinkageﻛﺙﺍﻟ؟۰
     shrinkage_cov = (1 - shrinkage_intensity) * sample_cov + \
                     shrinkage_intensity * target
     
@@ -451,7 +471,7 @@ def estimate_factor_covariance_shrinkage(
     )
 ```
 
-### 4.3 风险分解算法
+### 4.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝ؟ﮔﺏ
 
 ```python
 def decompose_portfolio_risk(
@@ -461,36 +481,36 @@ def decompose_portfolio_risk(
     idiosyncratic_risk: pd.Series
 ) -> RiskDecomposition:
     """
-    风险分解
+    ﻠ۲ﻠ۸ﮒﻟ۶۲
     
-    算法:
-    1. 计算组合因子暴露: f_p = X'w
-    2. 计算因子风险贡献: σ_f² = f_p'Σ_f f_p
-    3. 计算特质风险贡献: σ_ε² = w'D_ε w
-    4. 总风? σ_p = sqrt(σ_f² + σ_ε²)
+    ﻝ؟ﮔﺏ:
+1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ: f_p = X'w
+2. ﻟ؟۰ﻝ؟ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_fﺡﺎ = f_p'ﺳ۲_f f_p
+    3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: ﺵ_ﺳﭖﺡﺎ = w'D_ﺳﭖ w
+    4. ﮔﭨﻠ۲? ﺵ_p = sqrt(ﺵ_fﺡﺎ + ﺵ_ﺳﭖﺡﺎ)
     
     Args:
-        portfolio_weights: 组合权重
-        factor_loadings: 因子载荷矩阵
-        factor_covariance: 因子协方差矩?        idiosyncratic_risk: 特质风险
+        portfolio_weights: ﻝﭨﮒﮔﻠ
+factor_loadings: ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ
+factor_covariance: ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?        idiosyncratic_risk: ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸
         
     Returns:
-        RiskDecomposition: 风险分解结果
+        RiskDecomposition: ﻠ۲ﻠ۸ﮒﻟ۶۲ﻝﭨﮔ
     """
-    # 1. 计算组合因子暴露
+# 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﮒﮒﮔﺑﻠﺎ
     factor_exposure = factor_loadings.T @ portfolio_weights
     
-    # 2. 计算因子风险贡献
+# 2. ﻟ؟۰ﻝ؟ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     factor_risk_squared = factor_exposure.T @ factor_covariance @ factor_exposure
     
-    # 边际风险贡献
+    # ﻟﺝﺗﻠﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     marginal_factor_risk = factor_covariance @ factor_exposure
     factor_risk_contribution = factor_exposure * marginal_factor_risk / np.sqrt(factor_risk_squared)
     
-    # 3. 计算特质风险贡献
+    # 3. ﻟ؟۰ﻝ؟ﻝﺗﻟﺑ۷ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     idiosyncratic_risk_squared = (portfolio_weights ** 2 * idiosyncratic_risk ** 2).sum()
     
-    # 4. 总风?    total_risk = np.sqrt(factor_risk_squared + idiosyncratic_risk_squared)
+    # 4. ﮔﭨﻠ۲?    total_risk = np.sqrt(factor_risk_squared + idiosyncratic_risk_squared)
     
     return RiskDecomposition(
         factor_exposure=factor_exposure,
@@ -504,11 +524,11 @@ def decompose_portfolio_risk(
 
 ---
 
-## 5. 测试方案
+## 5. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 5.1 单元测试
+### 5.1 ﮒﮒﮔﭖﻟﺁ
 
-#### 5.1.1 因子暴露计算测试
+#### 5.1.1 ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔﭖﻟﺁ
 
 ```python
 import pytest
@@ -516,11 +536,11 @@ import numpy as np
 import pandas as pd
 
 class TestFactorExposureCalculator:
-    """因子暴露计算器测?""
+"""ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒ۷ﮔﭖ?""
     
     def test_calculate_factor_exposure(self):
-        """测试因子暴露计算"""
-        # 准备测试数据
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟"""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 10),
@@ -531,17 +551,17 @@ class TestFactorExposureCalculator:
             columns=['asset_{}'.format(i) for i in range(50)]
         )
         
-        # 计算因子暴露
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
-        # 验证结果
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert factor_loadings.shape == (50, 10)
         assert not factor_loadings.isnull().any().any()
     
     def test_factor_exposure_accuracy(self):
-        """测试因子暴露计算准确?""
-        # 使用已知因子的数据测?        # �? r = 0.5*f1 + 0.3*f2 + noise
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮒﻝ۰؟?""
+# ﻛﺛﺟﻝ۷ﮒﺓﺎﻝ۴ﮒﮒﻝﮔﺍﮔ؟ﮔﭖ?        # ﮔ? r = 0.5*f1 + 0.3*f2 + noise
         np.random.seed(42)
         f1 = np.random.randn(252)
         f2 = np.random.randn(252)
@@ -555,42 +575,42 @@ class TestFactorExposureCalculator:
         calculator = FactorExposureCalculator(FactorConfig())
         factor_loadings = calculator.calculate(factor_data, returns_data)
         
-        # 验证因子载荷接近真实?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
+# ﻠ۹ﻟﺁﮒﮒﻟﺛﺛﻟﺓﮔ۴ﻟﺟﻝﮒ؟?        assert abs(factor_loadings.loc['asset', 'f1'] - 0.5) < 0.1
         assert abs(factor_loadings.loc['asset', 'f2'] - 0.3) < 0.1
 ```
 
-#### 5.1.2 因子协方差估计测?
+#### 5.1.2 ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮔﭖ?
 ```python
 class TestFactorCovarianceEstimator:
-    """因子协方差估计器测试"""
+"""ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍﻟ؟۰ﮒ۷ﮔﭖﻟﺁ"""
     
     def test_estimate_factor_covariance(self):
-        """测试因子协方差估?""
-        # 准备测试数据
+"""ﮔﭖﻟﺁﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 10),
             columns=['factor_{}'.format(i) for i in range(10)]
         )
         
-        # 估计因子协方?        estimator = FactorCovarianceEstimator(CovarianceConfig())
+# ﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?        estimator = FactorCovarianceEstimator(CovarianceConfig())
         factor_cov = estimator.estimate(factor_data)
         
-        # 验证结果
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert factor_cov.shape == (10, 10)
-        assert np.allclose(factor_cov.values, factor_cov.values.T)  # 对称
-        assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # 正定
+        assert np.allclose(factor_cov.values, factor_cov.values.T)  # ﮒﺁﺗﻝ۶ﺍ
+assert np.all(np.linalg.eigvals(factor_cov.values) > 0)  # ﮔ۲ﮒ؟
 ```
 
-#### 5.1.3 风险分解测试
+#### 5.1.3 ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ
 
 ```python
 class TestRiskDecomposition:
-    """风险分解测试"""
+    """ﻠ۲ﻠ۸ﮒﻟ۶۲ﮔﭖﻟﺁ"""
     
     def test_decompose_risk(self):
-        """测试风险分解"""
-        # 准备测试数据
+        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲"""
+        # ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟
         np.random.seed(42)
         n_assets = 50
         n_factors = 10
@@ -610,64 +630,64 @@ class TestRiskDecomposition:
             np.random.dirichlet(np.ones(n_assets))
         )
         
-        # 创建Barra模型
+        # ﮒﮒﭨﭦBarraﮔ۷۰ﮒ
         barra_model = BarraRiskModel(BarraConfig())
         barra_model.factor_loadings = factor_loadings
         barra_model.factor_covariance = factor_covariance
         barra_model.idiosyncratic_risk = idiosyncratic_risk
         
-        # 风险分解
+        # ﻠ۲ﻠ۸ﮒﻟ۶۲
         decomposition = barra_model.decompose_risk(portfolio_weights)
         
-        # 验证结果
+        # ﻠ۹ﻟﺁﻝﭨﮔ
         assert decomposition.total_risk > 0
         assert abs(decomposition.factor_risk_ratio + 
                   decomposition.idiosyncratic_risk_ratio - 1.0) < 1e-6
 ```
 
-### 5.2 集成测试
+### 5.2 ﻠﮔﮔﭖﻟﺁ
 
 ```python
 class TestBarraRiskModelIntegration:
-    """Barra风险模型集成测试"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﻠﮔﮔﭖﻟﺁ"""
     
     def test_full_workflow(self):
-        """测试完整工作?""
-        # 准备数据
+        """ﮔﭖﻟﺁﮒ؟ﮔﺑﮒﺓ۴ﻛﺛ?""
+        # ﮒﮒ۳ﮔﺍﮔ؟
         factor_data, returns_data = self._prepare_test_data()
         
-        # 创建模型
+        # ﮒﮒﭨﭦﮔ۷۰ﮒ
         config = BarraConfig()
         model = BarraRiskModel(config)
         
-        # 拟合模型
+        # ﮔﮒﮔ۷۰ﮒ
         model.fit(factor_data, returns_data)
         
-        # 计算因子暴露
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
         portfolio_weights = pd.Series(
             np.random.dirichlet(np.ones(len(returns_data.columns))),
             index=returns_data.columns
         )
         factor_exposure = model.calculate_factor_exposure(portfolio_weights)
         
-        # 风险分解
+        # ﻠ۲ﻠ۸ﮒﻟ۶۲
         decomposition = model.decompose_risk(portfolio_weights)
         
-        # 验证
+        # ﻠ۹ﻟﺁ
         assert len(factor_exposure) == len(config.style_factors) + len(config.industry_factors)
         assert decomposition.total_risk > 0
     
     def _prepare_test_data(self):
-        """准备测试数据"""
+        """ﮒﮒ۳ﮔﭖﻟﺁﮔﺍﮔ؟"""
         np.random.seed(42)
         
-        # 生成因子数据
+# ﻝﮔﮒﮒﮔﺍﮔ؟
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
             columns=['factor_{}'.format(i) for i in range(38)]
         )
         
-        # 生成资产收益?        returns_data = pd.DataFrame(
+        # ﻝﮔﻟﭖﻛﭦ۶ﮔﭘﻝ?        returns_data = pd.DataFrame(
             np.random.randn(252, 100),
             columns=['asset_{}'.format(i) for i in range(100)]
         )
@@ -675,15 +695,15 @@ class TestBarraRiskModelIntegration:
         return factor_data, returns_data
 ```
 
-### 5.3 性能测试
+### 5.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 class TestBarraRiskModelPerformance:
-    """Barra风险模型性能测试"""
+    """Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮔ۶ﻟﺛﮔﭖﻟﺁ"""
     
     def test_factor_exposure_performance(self):
-        """测试因子暴露计算性能"""
-        # 大规模数?        np.random.seed(42)
+"""ﮔﭖﻟﺁﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ"""
+        # ﮒ۳۶ﻟ۶ﮔ۷۰ﮔﺍ?        np.random.seed(42)
         factor_data = pd.DataFrame(
             np.random.randn(252, 38),
             columns=['factor_{}'.format(i) for i in range(38)]
@@ -693,7 +713,7 @@ class TestBarraRiskModelPerformance:
             columns=['asset_{}'.format(i) for i in range(1000)]
         )
         
-        # 计时
+        # ﻟ؟۰ﮔﭘ
         import time
         start = time.time()
         
@@ -702,12 +722,12 @@ class TestBarraRiskModelPerformance:
         
         elapsed = time.time() - start
         
-        # 验证性能
-        assert elapsed < 5.0  # 5秒内完成
+        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
+        assert elapsed < 5.0  # 5ﻝ۶ﮒﮒ؟ﮔ
     
     def test_risk_decomposition_performance(self):
-        """测试风险分解性能"""
-        # 准备数据
+        """ﮔﭖﻟﺁﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۶ﻟﺛ"""
+        # ﮒﮒ۳ﮔﺍﮔ؟
         np.random.seed(42)
         n_assets = 1000
         n_factors = 38
@@ -725,7 +745,7 @@ class TestBarraRiskModelPerformance:
             np.random.dirichlet(np.ones(n_assets))
         )
         
-        # 计时
+        # ﻟ؟۰ﮔﭘ
         import time
         start = time.time()
         
@@ -735,40 +755,40 @@ class TestBarraRiskModelPerformance:
         
         elapsed = time.time() - start
         
-        # 验证性能
-        assert elapsed < 0.1  # 100ms内完?```
+        # ﻠ۹ﻟﺁﮔ۶ﻟﺛ
+        assert elapsed < 0.1  # 100msﮒﮒ؟?```
 
 ---
 
-## 6. 性能要求
+## 6. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-### 6.1 计算性能
+### 6.1 ﻟ؟۰ﻝ؟ﮔ۶ﻟﺛ
 
-| 操作 | 数据规模 | 性能要求 | 测试结果 |
+| ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ | ﮔﭖﻟﺁﻝﭨﮔ |
 |------|---------|---------|---------|
-| **因子暴露计算** | 1000资产 × 38因子 | < 5?| ?通过 |
-| **因子协方差估?* | 38因子 × 252?| < 1?| ?通过 |
-| **风险分解** | 1000资产 | < 100ms | ?通过 |
-| **风险归因** | 1000资产 | < 200ms | ?通过 |
+| **ﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒﮒ | < 5?| ?ﻠﻟﺟ |
+| **ﮒﮒﮒﮔﺗﮒﺓ؟ﻛﺙﺍ?* | 38ﮒﮒ ﺣ 252?| < 1?| ?ﻠﻟﺟ |
+| **ﻠ۲ﻠ۸ﮒﻟ۶۲** | 1000ﻟﭖﻛﭦ۶ | < 100ms | ?ﻠﻟﺟ |
+| **ﻠ۲ﻠ۸ﮒﺛﮒ** | 1000ﻟﭖﻛﭦ۶ | < 200ms | ?ﻠﻟﺟ |
 
-### 6.2 内存使用
+### 6.2 ﮒﮒﻛﺛﺟﻝ۷
 
-| 操作 | 内存占用 | 限制 |
+| ﮔﻛﺛ | ﮒﮒﮒﻝ۷ | ﻠﮒﭘ |
 |------|---------|------|
-| **因子数据存储** | 38因子 × 252?| < 10MB |
-| **因子载荷矩阵** | 1000资产 × 38因子 | < 5MB |
-| **因子协方差矩?* | 38 × 38 | < 1MB |
+| **ﮒﮒﮔﺍﮔ؟ﮒﮒ۷** | 38ﮒﮒ ﺣ 252?| < 10MB |
+| **ﮒﮒﻟﺛﺛﻟﺓﻝ۸ﻠﭖ** | 1000ﻟﭖﻛﭦ۶ ﺣ 38ﮒﮒ | < 5MB |
+| **ﮒﮒﮒﮔﺗﮒﺓ؟ﻝ۸?* | 38 ﺣ 38 | < 1MB |
 
 ---
 
-## 7. 部署方案
+## 7. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰
 
-### 7.1 部署架构
+### 7.1 ﻠ۷ﻝﺛﺎﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────??        应用?                         ?? ┌──────────────────────────────────? ?? ?  BarraRiskModel API             ? ?? └──────────────────────────────────? ?└─────────────────────────────────────────?                  ?┌─────────────────────────────────────────??        服务?                         ?? ┌──────────? ┌──────────?          ?? ?因子暴露 ? ?风险分解 ?          ?? ?计算服务 ? ?服务     ?          ?? └──────────? └──────────?          ?└─────────────────────────────────────────?                  ?┌─────────────────────────────────────────??        数据?                         ?? ┌──────────? ┌──────────?          ?? ?因子数据 ? ?协方?  ?          ?? ??      ? ?数据?  ?          ?? └──────────? └──────────?          ?└─────────────────────────────────────────?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮒﭦﻝ۷?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?? ?  BarraRiskModel API             ? ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﮒ۰?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒﮒﮔﺑﻠﺎ ? ?ﻠ۲ﻠ۸ﮒﻟ۶۲ ?          ?? ?ﻟ؟۰ﻝ؟ﮔﮒ۰ ? ?ﮔﮒ۰     ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                  ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ??        ﮔﺍﮔ؟?                         ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?? ?ﮒﮒﮔﺍﮔ؟ ? ?ﮒﮔﺗ?  ?          ?? ??      ? ?ﮔﺍﮔ؟?  ?          ?? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?          ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 7.2 部署配置
+### 7.2 ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
 ```yaml
 # barra_risk_model_config.yaml
@@ -823,17 +843,17 @@ database:
 
 ---
 
-## 8. 监控与维?
-### 8.1 监控指标
+## 8. ﻝﮔ۶ﻛﺕﻝﭨﺑ?
+### 8.1 ﻝﮔ۶ﮔﮔ
 
-| 指标 | 描述 | �?| 告警级别 |
+| ﮔﮔ | ﮔﻟﺟﺍ | ﻠ?| ﮒﻟ۵ﻝﭦ۶ﮒ، |
 |------|------|------|---------|
-| **计算延迟** | 单次计算耗时 | > 200ms | P1 |
-| **内存使用** | 内存占用?| > 80% | P2 |
-| **因子暴露异常** | 因子暴露超过�?| > 3σ | P0 |
-| **协方差矩阵异?* | 协方差矩阵条件数 | > 1000 | P1 |
+| **ﻟ؟۰ﻝ؟ﮒﭨﭘﻟﺟ** | ﮒﮔ؛۰ﻟ؟۰ﻝ؟ﻟﮔﭘ | > 200ms | P1 |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﮒﮒﮒﻝ۷?| > 80% | P2 |
+| **ﮒﮒﮔﺑﻠﺎﮒﺙﮒﺕﺕ** | ﮒﮒﮔﺑﻠﺎﻟﭘﻟﺟﻠ?| > 3ﺵ | P0 |
+| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮒﺙ?* | ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﮔ۰ﻛﭨﭘﮔﺍ | > 1000 | P1 |
 
-### 8.2 日志记录
+### 8.2 ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ
 
 ```python
 import logging
@@ -845,7 +865,7 @@ def log_factor_exposure_calculation(
     factor_count: int,
     elapsed_time: float
 ):
-    """记录因子暴露计算日志"""
+"""ﻟ؟ﺍﮒﺛﮒﮒﮔﺑﻠﺎﻟ؟۰ﻝ؟ﮔ۴ﮒﺟ"""
     logger.info({
         'event': 'factor_exposure_calculation',
         'asset_count': asset_count,
@@ -859,7 +879,7 @@ def log_risk_decomposition(
     total_risk: float,
     factor_risk_ratio: float
 ):
-    """记录风险分解日志"""
+    """ﻟ؟ﺍﮒﺛﻠ۲ﻠ۸ﮒﻟ۶۲ﮔ۴ﮒﺟ"""
     logger.info({
         'event': 'risk_decomposition',
         'portfolio_id': portfolio_id,
@@ -869,39 +889,39 @@ def log_risk_decomposition(
     })
 ```
 
-### 8.3 维护计划
+### 8.3 ﻝﭨﺑﮔ۳ﻟ؟۰ﮒ
 
-| 维护任务 | 频率 | 描述 |
+| ﻝﭨﺑﮔ۳ﻛﭨﭨﮒ۰ | ﻠ۱ﻝ | ﮔﻟﺟﺍ |
 |---------|------|------|
-| **因子数据更新** | 每日 | 更新因子数据 |
-| **协方差矩阵重?* | 每周 | 重新估计因子协方?|
-| **模型回测** | 每月 | 回测模型性能 |
-| **参数调优** | 每季?| 调整模型参数 |
+| **ﮒﮒﮔﺍﮔ؟ﮔﺑﮔﺍ** | ﮔﺁﮔ۴ | ﮔﺑﮔﺍﮒﮒﮔﺍﮔ؟ |
+| **ﮒﮔﺗﮒﺓ؟ﻝ۸ﻠﭖﻠ?* | ﮔﺁﮒ۷ | ﻠﮔﺍﻛﺙﺍﻟ؟۰ﮒﮒﮒﮔﺗ?|
+| **ﮔ۷۰ﮒﮒﮔﭖ** | ﮔﺁﮔ | ﮒﮔﭖﮔ۷۰ﮒﮔ۶ﻟﺛ |
+| **ﮒﮔﺍﻟﺍﻛﺙ** | ﮔﺁﮒ۲?| ﻟﺍﮔﺑﮔ۷۰ﮒﮒﮔﺍ |
 
 ---
 
-## 附录
+## ﻠﮒﺛ
 
-### A. API文档
+### A. APIﮔﮔ۰۲
 
 #### A.1 REST API
 
 ```yaml
-# 计算因子暴露
+# ﻟ؟۰ﻝ؟ﮒﮒﮔﺑﻠﺎ
 POST /api/v1/barra/factor_exposure
 Request:
   portfolio_weights: Dict[str, float]
 Response:
   factor_exposure: Dict[str, float]
 
-# 风险分解
+# ﻠ۲ﻠ۸ﮒﻟ۶۲
 POST /api/v1/barra/risk_decomposition
 Request:
   portfolio_weights: Dict[str, float]
 Response:
   risk_decomposition: RiskDecomposition
 
-# 风险预算分配
+# ﻠ۲ﻠ۸ﻠ۱ﻝ؟ﮒﻠ
 POST /api/v1/barra/risk_budget
 Request:
   total_risk: float
@@ -910,7 +930,7 @@ Response:
   allocated_risk_budget: Dict[str, float]
 ```
 
-### B. 依赖?
+### B. ﻛﺝﻟﭖ?
 ```txt
 pandas>=1.5.0
 numpy>=1.21.0
@@ -922,4 +942,4 @@ riskfolio-lib>=4.0.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?

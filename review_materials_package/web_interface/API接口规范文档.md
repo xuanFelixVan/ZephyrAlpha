@@ -17,7 +17,7 @@ compliance_level: 初始设计
 > **关联文档**: 
 > - [Web管理界面架构设计](T.06.UI001.web_management_interface_architecture_design.md)
 > - [前端组件结构图](前端组件结构图.md)
-> - [系统API设计规范](../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
+> - [系统API设计规范](../../docs/05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md)
 
 ## 1. 概述
 

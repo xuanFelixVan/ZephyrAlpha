@@ -43,11 +43,11 @@ python -m src.main
 
 | 文档 | 说明 |
 |------|------|
-| [系统蓝图](docs/05_IMPLEMENTATION/BLUEPRINT.md) | 系统蓝图 |
-| [文档索引](docs/03_TRADING_TACTICS/INDEX.md) | 文档索引 |
+| [系统蓝图](docs/05_IMPLEMENTATION/SITEMAP.md) | 实施层站点图与导航 |
+| [文档索引](docs/INDEX.md) | 文档索引 |
 | [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | 接口规范 |
 | [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 策略定义 |
-| [常见问题](docs/02_FACTOR_LIBRARY/FAQ.md) | 常见问题 |
+| [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | 常见问题 |
 
 ---
 

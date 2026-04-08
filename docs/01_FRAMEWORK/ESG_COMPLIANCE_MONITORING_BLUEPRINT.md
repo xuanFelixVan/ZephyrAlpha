@@ -1,36 +1,56 @@
 ---
-module_id: ESG_COMPLIANCE_MONITORING_BLUEPRINT_001
+module_id: ESG_COMPLIANCE_MONITORING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
+responsibility:
+- 系统监控架构设计与实施方案与实施指导
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: ESG合规监控系统
 compliance_level: 顶级专业标准
-reference_models: ["ESG Reporting Standards", "SFDR", "EU Taxonomy"]
+reference_models:
+- ESG Reporting Standards
+- SFDR
+- EU Taxonomy
 related_documents:
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - REGULATORY_REPORTING_BLUEPRINT.md
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- REGULATORY_REPORTING_BLUEPRINT.md
+- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - ESG数据采集（环境、社会、治理数据）
+
   - ESG评分计算（ESG综合评分、分项评分）
+
   - ESG合规检查（ESG披露要求、投资限制）
+
   - ESG报告生成（ESG报告、可持续投资报告）
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成
+
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
+
+  - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪'
+---
 ---
 
+
 # ESG合规监控系统蓝图
+> **核心职责**: Esg Compliance Monitoring蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Esg Compliance Monitoring蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -246,7 +266,7 @@ class ESGDataCollector:
         
         for data_type in data_types:
             if data_type in self.data_sources:
-                data = self.data_sources[data_type](company_id)
+                data = self.data_sourcesdata_type
                 environmental_data.extend(data)
         
         return environmental_data
@@ -335,7 +355,7 @@ class ESGDataCollector:
                 category=ESGCategory.ENVIRONMENTAL,
                 metric_name='total_water_withdrawal',
                 metric_value=10000.0,
-                unit='m³',
+unit='m',
                 reporting_period='2025',
                 data_source='company_report',
                 last_updated=datetime.now()
@@ -576,3 +596,34 @@ class ESGComplianceCheck:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 10: 治理与合规层
+##### 0.001. Esg Compliance Monitoring Blueprint
+- **模块ID**: ESG_COMPLIANCE_MONITORING_BLUEPRINT_001
+- **蓝图文档**: ESG_COMPLIANCE_MONITORING_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: ESG合规监控系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Esg Compliance Monitoring Blueprint** | ESG合规监控系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

@@ -1,0 +1,322 @@
+{
+  "L1_file_system": {
+    "directory_structure": [],
+    "file_naming": [],
+    "path_references": []
+  },
+  "L2_document_content": {
+    "responsibility_issues": [
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '系统监控仪表板架构设计、实时监控指标展示、告警规则配置与触发机制实现' 被 2 个文档共享",
+        "files": [
+          "01_MONITORING\\MONITORING_DASHBOARD_BLUEPRINT.md",
+          "01_MONITORING\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '提供文档支持' 被 2 个文档共享",
+        "files": [
+          "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+          "06_REPORTING\\REPORTING_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '文档中心架构设计、文档分类管理、文档搜索与导航、文档版本控制实现' 被 2 个文档共享",
+        "files": [
+          "17_DOCUMENTATION_CENTER\\DOCUMENTATION_CENTER_BLUEPRINT.md",
+          "17_DOCUMENTATION_CENTER\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '风险管理仪表板设计、风险指标实时监控、风险预警机制、风险报告生成实现' 被 2 个文档共享",
+        "files": [
+          "24_RISK_DASHBOARD\\README.md",
+          "24_RISK_DASHBOARD\\RISK_DASHBOARD_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '策略开发IDE设计、代码编辑器集成、策略调试工具、策略回测与优化功能实现' 被 2 个文档共享",
+        "files": [
+          "25_STRATEGY_IDE\\README.md",
+          "25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '因子分析工具设计、因子挖掘算法、因子有效性测试、因子组合优化实现' 被 2 个文档共享",
+        "files": [
+          "26_FACTOR_ANALYSIS\\FACTOR_ANALYSIS_BLUEPRINT.md",
+          "26_FACTOR_ANALYSIS\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '风控面板设计、风控规则配置、风控参数调整、风控日志记录与审计实现' 被 2 个文档共享",
+        "files": [
+          "27_RISK_CONTROL_PANEL\\README.md",
+          "27_RISK_CONTROL_PANEL\\RISK_CONTROL_PANEL_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 'API网关架构设计、API路由管理、API认证与授权、API限流与监控实现' 被 2 个文档共享",
+        "files": [
+          "28_API_GATEWAY\\API_GATEWAY_BLUEPRINT.md",
+          "28_API_GATEWAY\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 'WebSocket实时通信架构设计、消息推送机制、连接管理、数据同步实现' 被 2 个文档共享",
+        "files": [
+          "29_WEBSOCKET_REALTIME\\README.md",
+          "29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '合规监控界面设计、合规规则配置、合规检查引擎、合规报告生成实现' 被 2 个文档共享",
+        "files": [
+          "30_COMPLIANCE_MONITORING\\COMPLIANCE_MONITORING_BLUEPRINT.md",
+          "30_COMPLIANCE_MONITORING\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '资金管理界面设计、资金分配算法、资金使用监控、资金调拨功能实现' 被 2 个文档共享",
+        "files": [
+          "31_CAPITAL_MANAGEMENT\\CAPITAL_MANAGEMENT_BLUEPRINT.md",
+          "31_CAPITAL_MANAGEMENT\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '用户行为分析设计、行为数据采集、行为模式识别、用户画像构建实现' 被 2 个文档共享",
+        "files": [
+          "32_USER_BEHAVIOR_ANALYTICS\\README.md",
+          "32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '多语言支持架构设计、语言包管理、动态语言切换、本地化内容管理实现' 被 2 个文档共享",
+        "files": [
+          "33_I18N_SUPPORT\\I18N_SUPPORT_BLUEPRINT.md",
+          "33_I18N_SUPPORT\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '主题定制系统设计、主题模板管理、主题切换机制、主题配置持久化实现' 被 2 个文档共享",
+        "files": [
+          "34_THEME_CUSTOMIZATION\\README.md",
+          "34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '数据导出工具设计、导出格式支持、导出任务管理、导出进度监控实现' 被 2 个文档共享",
+        "files": [
+          "35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
+          "35_DATA_EXPORT_TOOLS\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '用户培训系统设计、培训内容管理、培训进度跟踪、培训效果评估实现' 被 2 个文档共享",
+        "files": [
+          "36_USER_TRAINING\\README.md",
+          "36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '无障碍支持设计、屏幕阅读器支持、键盘导航、高对比度主题实现' 被 2 个文档共享",
+        "files": [
+          "37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
+          "37_ACCESSIBILITY\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '离线支持架构设计、离线数据缓存、离线操作同步、网络状态检测实现' 被 2 个文档共享",
+        "files": [
+          "38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
+          "38_OFFLINE_SUPPORT\\README.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      },
+      {
+        "type": "职责重叠",
+        "severity": "P1",
+        "description": "职责 '第三方集成架构设计、集成接口管理、数据格式转换、集成测试框架实现' 被 2 个文档共享",
+        "files": [
+          "39_THIRD_PARTY_INTEGRATION\\README.md",
+          "39_THIRD_PARTY_INTEGRATION\\THIRD_PARTY_INTEGRATION_BLUEPRINT.md"
+        ],
+        "recommendation": "明确各文档的职责边界或合并文档"
+      }
+    ],
+    "index_completeness": [
+      {
+        "type": "索引不完整",
+        "severity": "P1",
+        "description": "43个文件未被索引",
+        "files": [
+          "25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
+          "32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md",
+          "32_USER_BEHAVIOR_ANALYTICS\\README.md",
+          "35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
+          "36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md",
+          "38_OFFLINE_SUPPORT\\README.md",
+          "31_CAPITAL_MANAGEMENT\\README.md",
+          "05_BACKTEST_UI\\README.md",
+          "37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
+          "26_FACTOR_ANALYSIS\\README.md"
+        ],
+        "recommendation": "更新INDEX.md以包含所有活跃文档"
+      }
+    ],
+    "version_isolation": [
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "INDEX.md",
+        "files": [
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md",
+          "INDEX.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      },
+      {
+        "type": "潜在重复文档",
+        "severity": "P1",
+        "description": "发现20个相似文件名",
+        "base_name": "README.md",
+        "files": [
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md",
+          "README.md"
+        ],
+        "recommendation": "检查是否为重复版本，归档旧版本"
+      }
+    ],
+    "doc_code_correspondence": []
+  },
+  "L3_professional_standards": {
+    "five_principles": [],
+    "classification": [
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '17_DOCUMENTATION_CENTER' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      },
+      {
+        "type": "分类可能不当",
+        "severity": "P2",
+        "description": "目录分类 '29_WEBSOCKET_REALTIME' 可能不符合标准",
+        "recommendation": "检查分类是否正确"
+      }
+    ],
+    "numbering": [],
+    "quality": [
+      {
+        "type": "文档过长",
+        "file": "05_BACKTEST_UI\\BACKTEST_UI_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（912行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      },
+      {
+        "type": "文档过长",
+        "file": "06_REPORTING\\REPORTING_BLUEPRINT.md",
+        "severity": "P2",
+        "description": "文档过长（859行），建议拆分",
+        "recommendation": "拆分为多个小文档"
+      }
+    ]
+  },
+  "statistics": {
+    "total_files": 63,
+    "total_directories": 21,
+    "total_size": 122687,
+    "issues_found": 26
+  }
+}

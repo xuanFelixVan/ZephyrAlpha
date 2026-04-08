@@ -1,129 +1,149 @@
+﻿---
+module_id: README
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+standard_type: 说明文件
+applicable_scope: 01_FRAMEWORK
+compliance_level: 专业标准
+parent_document: ../INDEX.md
+responsibility:
+  - 01_FRAMEWORK说明文档
 ---
+
+﻿---
 module_id: FRAMEWORK_README_001
 version: 5.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: é¦å¸­ææ¡£æ¶æ?
-standard_type: ä¸ä¸éåæºæææ¡£
-applicable_scope: å¨ç³»?
-compliance_level: ä¸ä¸æ å
+owner: 首席文档架构?
+standard_type: 专业量化机构文档
+applicable_scope:
+?
+compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: è¿è¡?
+implementation_status: 进行?---
+
+
+# 框架定义 (Framework)
+> **核心职责**: 模块说明和快速入门指南
+> **职责边界**: 
+> - ✅ 本文档负责：模块说明和快速入门指南相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> **版本**: v5.3
+> **更新日期**: 2026-03-30
+> **技术架?*: Layer 0-11技术流水线
+> **业务架构**: 三级时间框架融合架构
+> **职责**: 系统架构、市场状态识别、人机协作流程、技术栈选择
+
 ---
 
-# æ¡æ¶å®ä¹ (Framework)
+## 一、文档概述
 
-> **çæ¬**: v5.3
-> **æ´æ°æ¥æ**: 2026-03-30
-> **ææ¯æ¶?*: Layer 0-11ææ¯æµæ°´çº¿
-> **ä¸å¡æ¶æ**: ä¸çº§æ¶é´æ¡æ¶èåæ¶æ
-> **èè´£**: ç³»ç»æ¶æãå¸åºç¶æè¯å«ãäººæºåä½æµç¨ãææ¯æ éæ©
-
----
-
-## ä¸ãææ¡£æ¦?
-
-| ææ¡£ | èè´£ | è¯´æ |
+| 文档 | 职责 | 说明 |
 |------|------|------|
-| **ARCHITECTURE.md** | Layer 0-11ç»ä¸æ¶æ | åå±æ¶æãæ¨¡åæ å°ãææ¯éå |
-| **MARKET_REGIME.md** | å¸åºç¶æè¯?| å¤§çæ©æ¶ãç¶æåç±»ãç­ç¥æ ?|
-| **HUMAN_AI_FLOW.md** | äººæºåä½æµç¨ | æææºå¶ãAIè§è²å®ä¹ãå³ç­æµ?|
-| **TECH_STACK.md** | ææ¯æ éæ© | æ°æ®?åæµ/å¯è§?AI/å­å¨éå |
-| **PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md** | ä¸ä¸å¤æ¶é´æ¡æ¶æ¶?| ä¸çº§æ¶é´æ¡æ¶èåæ¶æï¼æ¡¥?æèºå¤å´æ¨¡å¼?|
-| **PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md** | ä¸ä¸å®æ½èå¾ | 10ä¸ªæå®æ½è·¯çº¿å¾ãAIè¯å®¡å¢æºå?ä¸ªå³é®å®¡æ ¸è?|
-| **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | æ°æ®æºå±ä¸ä¸å®æ½èå¾ | P0/P1/P2ä¸çº§æ¨¡åè®¾è®¡?ä¸ªæå®æ½è®¡åãä¸ä¸æºæå¯¹?|
-| **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | ä¸ªäººå¼ååå¥½å®æ½æ¹?| 6ä¸ªéåä¸ªäººå¼åçæ¨¡å?å¨å®æ½è®¡åãä½ææ¬è½»éçº§æ¹?|
-| **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** | å³é®æ¨¡åå®æ½èå¾ | P0å®æ¶é£æ§+P1å¨çå¸åº+P2æ©å±æ¨¡å?-6å¨å®æ½ãè¦çåº¦æå?5% |
-| **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AIç­ç¥èªå¨åéæè?| 15ä¸ªAIå¼æºé¡¹ç®ãäºé¶æ®µå®æ½ãAIè¯å®¡å¢ãQMTéæ |
-| **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11æå­é©±å¨å±æ¶?| èªç¶è¯­è¨äº¤äºå±ãOpen WebUI + LangChain + VNPYãé¶ä»£ç æä½ |
+| **ARCHITECTURE.md** | Layer 0-11统一架构 | 分层架构、模块映射、技术选型 |
+| **MARKET_REGIME.md** | 市场状态识?| 大盘择时、状态分类、策略映?|
+| **HUMAN_AI_FLOW.md** | 人机协作流程 | 授权机制、AI角色定义、决策流程|
+| **TECH_STACK.md** | 技术栈选择 | 数据?回测/可视?AI/存储选型 |
+| **DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md** | 数据源层专业实施蓝图 | P0/P1/P2三级模块设计?个月实施计划、专业机构对接|
+| **PERSONAL_DEVELOPMENT_BLUEPRINT.md** | 个人开发友好实施方?| 6个适合个人开发的模块?周实施计划、低成本轻量级方?|
+| **CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md** |
+| **AI_STRATEGY_AUTOMATION_BLUEPRINT.md** | AI策略自动化集成蓝图| 15个AI开源项目、五阶段实施、AI评审团、QMT集成 |
+| **NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md** | Layer 11文字驱动层架?| 自然语言交互层、Open WebUI + LangChain + VNPY、零代码操作 |
 
 ---
 
-## äºãæ ¸å¿æ¦?
+## 二、核心概述
 
-### 2.1 Layer 0-11 æ¶æ
+### 2.1 Layer 0-11 架构
 
 ```
-Layer 0: æ°æ®æºå± (QMT/iFind/SuperCommand)
-Layer 1: æ°æ®é¢å¤çå± (æ¸æ´/æ å?éªè¯)
-Layer 2: Alphaå å­?(5700+å å­)
-Layer 3: èæåæ?(æ°é»/ææ/äºä»¶) ð
-Layer 4: æºå¨å­¦ä¹ ?(Qlib Alpha158/LSTM) ð
-Layer 5: ç­ç¥æ§è¡?(ä¿¡å·çæ/QMTäº¤æ)
-Layer 6: ç»åä¼å?(åå¼æ¹?Barra)
-Layer 7: AIæ¥å?(æ¥æ¥/ææ¥/å½å ) ð
-Layer 8: äººæºäº¤äº?(ææ/çæ§/è¾©è®º) ð
-Layer 11: æå­é©±å¨?(èªç¶è¯­è¨äº¤äº/é¶ä»£ç æ? ð
+Layer 0: 数据源层 (QMT/iFind/SuperCommand)
+洗/标准?验证)
+Layer 2: Alpha因子?(5700+因子)
+Layer 3:
+感/事件) 🆕
+Layer 4: 机器学习?(Qlib Alpha158/LSTM) 🆕
+Layer 5: 策略执行?(信号生成/QMT交易)
+Layer 6: 组合优化?(均值方?Barra)
+Layer 7: AI报告?(日报/月报/归因) 🆕
+Layer 8: 人机交互?(授权/监控/辩论) 🆕
+Layer 11: 文字驱动?(自然语言交互/零代码操? 🆕
 ```
 
-**æ³¨æ**: Layer 11æ¯æå­é©±å¨å±ï¼ä½äºLayer 0-11ä¹ä¸ï¼æä¾èªç¶è¯­è¨äº¤äºçé¢ï¼å®ç°é¶ä»£ç æä½æ´ä¸ªç³»ç»ãè¯¦ç»è®¾è®¡å?[NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
+**注意**: Layer 11是文字驱动层，位于Layer 0-11之上，提供自然语言交互界面，实现零代码操作整个系统。详细设计参?[NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md)
 
-### 2.2 æ ¸å¿è®¾è®¡åå
+### 2.2 核心设计原则
 
-| åå | è¯´æ |
+| 原则 | 说明 |
 |------|------|
-| **å¤§çæ©æ¶ä¼å** | ææç­ç¥çç¬¬ä¸æ­¥ï¼å¤æ­å¸åºç?|
-| **äººææAIæ§è¡** | äººåå³ç­ï¼AIæ§è¡ |
-| **å¯åæµä¼?* | ç¨³å®ç­ç¥æå®?|
-| **AIè¾å©ä¸æ¿?* | AIæä¾å»ºè®®ï¼äººæç»å³?|
+| **人授权AI执行** | 人做决策，AI执行 |
+| **可回测优?* | 稳定策略才实现|
+| **AI
+助不替?* | AI提供建议，人最终决?|
 
 ---
 
-## ä¸ãå¿«éå¯¼?
+## 三、快速导?
 
-### 3.1 æä»»å¡å¯¼?
+### 3.1 按任务导?
 
-| ä»»å¡ | ææ¡£ |
+| 任务 | 文档 |
 |------|------|
-| çè§£ç³»ç»æ¶æ | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| äºè§£å¤§çæ©æ¶ | [MARKET_REGIME.md](./MARKET_REGIME.md) |
-| çè§£äººæºåä½ | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
-| æ¥çææ¯éå | [TECH_STACK.md](./TECH_STACK.md) |
-| é¶ä»£ç æä½ç³»?| [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
+| 理解系统架构 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| 了解大盘择时 | [MARKET_REGIME.md](./MARKET_REGIME.md) |
+| 理解人机协作 | HUMAN_AI_FLOW.md |
+| 查看技术选型 | [TECH_STACK.md](./TECH_STACK.md) |
+| 零代码操作系?| [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
-### 3.2 æLayerå¯¼èª
+### 3.2 按Layer导航
 
-| Layer | ææ¡£ |
+| Layer | 文档 |
 |-------|------|
 | Layer 0 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 1 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 2 | [å å­åºææ¡£](../02_FACTOR_LIBRARY/README.md) |
+| Layer 2 | `因子库文档` |
 | Layer 3 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 4 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 5 | [æ§è¡ææ¡£](../04_EXECUTION/README.md) |
+| Layer 5 | [执行文档](../04_EXECUTION/README.md) |
 | Layer 6 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
 | Layer 7 | [ARCHITECTURE.md](./ARCHITECTURE.md) |
-| Layer 8 | [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) |
+| Layer 8 | HUMAN_AI_FLOW.md |
 | Layer 11 | [NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md](./NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md) |
 
 ---
 
-## åãä¸å¶ä»æ¨¡åçå³?
+##
+?
 
 ```
-01_FRAMEWORK (æ¬ç®?
-âââ ARCHITECTURE.md     ââ 02_FACTOR_LIBRARY (å å­?
-âââ MARKET_REGIME.md    ââ 03_TRADING_TACTICS (ç­ç¥)
-âââ HUMAN_AI_FLOW.md   ââ 04_EXECUTION (æ§è¡)
-âââ TECH_STACK.md      ââ 05_IMPLEMENTATION (é¨ç½²)
+01_FRAMEWORK (本目?
+├── ARCHITECTURE.md     ←→ 02_FACTOR_LIBRARY (因子?
+├── MARKET_REGIME.md    ←→ 03_TRADING_TACTICS (策略)
+├── HUMAN_AI_FLOW.md   ←→ 04_EXECUTION (执行)
+└── TECH_STACK.md      ←→ 05_IMPLEMENTATION (部署)
 
-å±çº§å³ç³»:
-âââ Layer 0-2: æ°æ®åå ??02_FACTOR_LIBRARY
-âââ Layer 3-4: AIè½å ?07_RESEARCH
-âââ Layer 5-6: äº¤ææ§è¡ ?04_EXECUTION
-âââ Layer 7-8: äººæºäº¤äº ?08_USER_EXPERIENCE
+:
+├── Layer 0-2: 数据和因??02_FACTOR_LIBRARY
+├── Layer 3-4: AI能力 ?07_RESEARCH
+├── Layer 5-6: 交易执行 ?04_EXECUTION
+└── Layer 7-8: 人机交互 ?08_USER_EXPERIENCE
 ```
 
 ---
 
-## äºãæ´æ°è®°?
+## 五、更新记?
 
-| çæ¬ | æ¥æ | åæ´åå®¹ |
+容 |
 |------|------|----------|
-| v2.0 | 2026-03-30 | æ¹æ¡Céç»ï¼æ°?ä¸ªç¬ç«æ?|
-| v1.0 | 2026-03-29 | åå§çæ¬ |
+| v2.0 | 2026-03-30 | 方案C重组，新?个独立文?|
+| v1.0 | 2026-03-29 | 初始版本 |
 
 ---
 
-**ç?*: ?æ´»è·

@@ -1,127 +1,148 @@
 ---
 module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-version: 1.0.1
-spec_version: 1.0
+version: 1.0.0
 status: Active
-parent_doc: ../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
-last_updated: '2026-04-06'
-created_date: 2026-04-02
-layer: Layer 6 (组合优化层)
-index: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
-estimated_hours: 160h
-estimated_effort: 4周
-review_status: Pending
-reviewer: 首席技术评审官
-review_date: 2026-04-02
-owner: 组合优化层负责人
-standard_type: 专业量化机构蓝图文档
-applicable_scope: 全系统
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-open_source_dependency: numpy, pandas, scipy, cvxpy
-priority: P0
+responsibility:
+  - 多策略分层系统
+  - 策略绩效评估
+  - 策略权重分配
+  - 信号融合
+  - 策略协调优化
+layer: Layer 6 (组合优化层)
 ---
 
+## 核心定位
 
-# 多策略分层系统蓝?v1.0
+负责多策略分层系统的设计与构建和运行和操作，构建策略分层架构，生成和输出策略协调和风险预算分配功能，兼容和适配多策略协调和监控。本模块实现策略间的协调与优化，确保各策略协同工作。
+## 设计目标
 
-> 清风量化系统 v5.3 - 多策略分层系统架构设?> **索引**: `STRATEGY_HIERARCHY_001`
-> **开发时?*: 160h
-> **核心定位**: 实现策略分层权重分配、信号融合机制、策略协同优化，构建多策略协同的专业量化系统
+### 主要目标
 
----
+1. **功能完整性**: 确保MULTI STRATEGY HIERARCHICAL SYSTEM功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
 
-## 1. 模块概述
+### 质量目标
 
-### 1.1 业务背景与价值主?
-**业务需?*?- 当前系统多策略权重分配静态固定，无法根据策略表现动态调?- 缺乏策略间的信号融合机制，导致信号冲突和资源浪费
-- 需要实现专业机构的多策略分层管理能力，提升组合整体表现
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
 
-**价值主?*?- 实现策略分层权重动态分配（调整频率：周度）
-- 提升多策略组合的夏普比率（≥2.0?- 降低策略间相关性风险（平均相关性≤0.3?- 实现策略协同优化，提升资金使用效?
-### 1.2 技术定位与架构层归?
-**Layer定位**: Layer 6 - 组合优化层（策略管理层）
 
-**模块类别**: 核心模块
+## 核心功能
 
-**架构角色**: 
-- 作为多策略管理的核心组件，实现策略权重动态分?- 作为信号融合中心，协调不同策略的信号输出
-- 作为策略协同优化器，提升组合整体表现
+### 功能清单
 
-### 1.3 核心功能清单
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
 
-1. **策略分层权重分配**: 基于策略绩效、风险贡献、相关性动态分配权?2. **信号融合机制**: 多策略信号融合、冲突解决、置信度加权
-3. **策略协同优化**: 策略间协同效应识别、资源优化配?4. **策略绩效监控**: 实时监控策略表现、动态调整权?
----
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用MULTI STRATEGY HIERARCHICAL SYSTEM化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
+
+
+
+
+> **职责边界**: 
+
+> **开发时间: 160h
 
 ## 2. 架构设计
 
-### 2.1 系统架构?
+### 2.1 系统架构
+
+```mermaid
+graph TB
+  subgraph Inputs[输入层]
+    R[策略收益率序列] --> PERF[绩效评估层]
+    S[策略交易信号] --> FUSE[信号融合层]
+    C[风险约束/预算] --> CONS[约束层]
+  end
+
+  subgraph Layers[分层与优化]
+    PERF --> ALLOC[分层权重分配]
+    CONS --> ALLOC
+    FUSE --> COORD[策略协同优化]
+    ALLOC --> COORD
+  end
+
+  subgraph Outputs[输出与监控]
+    COORD --> W[权重输出]
+    COORD --> FS[融合信号输出]
+    COORD --> REP[绩效/风控报告]
+    COORD --> AL[预警/监控]
+  end
 ```
-┌─────────────────────────────────────────────────────────────────??                   多策略分层系统架?                            ?├─────────────────────────────────────────────────────────────────??                                                                ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略绩效评估?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?收益?  ? ?风险指标 ? ?相关?  ? ?容量评估 ?? ?? ? ?计算     ? ?计算     ? ?计算     ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略分层权重分配?                           ? ?? ? ┌──────────────────?     ┌──────────────────?        ? ?? ? ? 核心策略?      ?     ? 卫星策略?     ?        ? ?? ? ? ┌────────────? ?     ? ┌────────────? ?        ? ?? ? ? ?趋势跟踪   ? ?     ? ?套利策略   ? ?        ? ?? ? ? ?(40%)      ? ?     ? ?(20%)      ? ?        ? ?? ? ? └────────────? ?     ? └────────────? ?        ? ?? ? ? ┌────────────? ?     ? ┌────────────? ?        ? ?? ? ? ?均值回?  ? ?     ? ?事件驱动   ? ?        ? ?? ? ? ?(30%)      ? ?     ? ?(10%)      ? ?        ? ?? ? ? └────────────? ?     ? └────────────? ?        ? ?? ? └──────────────────?     └──────────────────?        ? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             信号融合机制?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?信号收集 ? ?冲突检?? ?融合算法 ? ?置信?  ?? ?? ? ?         ? ?         ? ?         ? ?加权     ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             策略协同优化?                               ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?协同效应 ? ?资源优化 ? ?风险预算 ? ?动态调??? ?? ? ?识别     ? ?配置     ? ?分配     ? ?         ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ??                         ?                                     ?? ┌──────────────────────────────────────────────────────────? ?? ?             输出与监控层                                  ? ?? ? ┌──────────? ┌──────────? ┌──────────? ┌──────────?? ?? ? ?权重输出 ? ?信号输出 ? ?绩效报告 ? ?预警机制 ?? ?? ? └──────────? └──────────? └──────────? └──────────?? ?? └──────────────────────────────────────────────────────────? ?└─────────────────────────────────────────────────────────────────?```
 
-### 2.2 模块分层架构
+### 2.3 数据流设计
 
-**Layer 1 - 策略绩效评估?*
-- 收益率计算器（绝对收益、相对收益、风险调整收益）
-- 风险指标计算器（VaR、CVaR、最大回撤、夏普比率）
-- 相关性计算器（策略间相关性矩阵）
-- 容量评估器（策略容量、资金使用效率）
-
-**Layer 2 - 策略分层权重分配?*
-- 核心策略层权重分配器（趋势跟踪、均值回归等核心策略?- 卫星策略层权重分配器（套利策略、事件驱动等卫星策略?- 动态权重调整器（基于绩效动态调整权重）
-- 权重约束处理器（权重上下限、风险约束）
-
-**Layer 3 - 信号融合机制?*
-- 信号收集器（收集各策略的交易信号?- 冲突检测器（检测信号冲突和矛盾?- 融合算法引擎（投票法、加权平均、机器学习融合）
-- 置信度加权器（基于历史准确率加权?
-**Layer 4 - 策略协同优化?*
-- 协同效应识别器（识别策略间协同效应）
-- 资源优化配置器（优化资金和风险资源分配）
-- 风险预算分配器（策略级风险预算分配）
-- 动态调整器（实时调整策略权重和资源?
-**Layer 5 - 输出与监控层**
-- 权重输出器（输出策略权重方案?- 信号输出器（输出融合后的交易信号?- 绩效报告生成器（生成策略绩效报告?- 预警机制（策略表现异常预警）
-
-### 2.3 数据流设?
 ```
-策略信号 ?绩效评估 ?权重分配 ?信号融合 ?协同优化
-    ?          ?          ?          ?          ?信号收集   指标计算   分层分配   冲突检?  资源优化
-    ?          ?          ?          ?          ?信号验证   风险评估   权重约束   融合决策   动态调?```
+信号收集 → 信号验证 → 风险评估 → 权重约束 → 融合决策 → 动态调整
+```
 
----
+
 
 ## 3. 核心组件详细设计
 
-### 3.1 策略绩效评估?
-**设计目标**: 全面评估策略绩效，为权重分配提供依据
+### 3.1 策略绩效评估
 
 ```python
 class StrategyPerformanceEvaluator:
-    """策略绩效评估?    
+    """策略绩效评估器    
     索引: STRATEGY_HIERARCHY_001-M01
-    职责: 评估策略的收益率、风险指标、相关性等绩效指标
-    输入: 策略历史收益率、基准收益率
     输出: 策略绩效评估结果
     """
     
     def __init__(self, config: PerformanceConfig):
         self.config = config
-        self.risk_free_rate = config.risk_free_rate  # 无风险利?        
+        self.risk_free_rate = config.risk_free_rate  # 无风险利率        
     def evaluate_strategy(self, strategy_returns: pd.Series,
                          benchmark_returns: Optional[pd.Series] = None,
                          strategy_name: str = '') -> StrategyPerformance:
         """评估策略绩效
         
         Args:
-            strategy_returns: 策略历史收益?            benchmark_returns: 基准收益率（可选）
+            strategy_returns: 策略历史收益率            benchmark_returns: 基准收益率（可选）
             strategy_name: 策略名称
             
         Returns:
             StrategyPerformance: 策略绩效评估结果
         """
-        # 1. 计算收益率指?        return_metrics = self._calculate_return_metrics(strategy_returns)
+        # 1. 计算收益率指标        return_metrics = self._calculate_return_metrics(strategy_returns)
         
         # 2. 计算风险指标
         risk_metrics = self._calculate_risk_metrics(strategy_returns)
@@ -131,7 +152,8 @@ class StrategyPerformanceEvaluator:
             strategy_returns, risk_metrics
         )
         
-        # 4. 计算相对指标（如果有基准?        relative_metrics = {}
+        # 4. 计算相对指标（如果有基准）
+        relative_metrics = {}
         if benchmark_returns is not None:
             relative_metrics = self._calculate_relative_metrics(
                 strategy_returns, benchmark_returns
@@ -150,7 +172,7 @@ class StrategyPerformanceEvaluator:
         )
     
     def _calculate_return_metrics(self, returns: pd.Series) -> Dict[str, float]:
-        """计算收益率指?""
+        """计算收益率指标""
         return {
             'total_return': (1 + returns).prod() - 1,
             'annual_return': returns.mean() * 252,
@@ -162,13 +184,13 @@ class StrategyPerformanceEvaluator:
     
     def _calculate_risk_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算风险指标"""
-        # VaR (95%置信?
+        # VaR (95%置信度
         var_95 = np.percentile(returns, 5)
         
-        # CVaR (条件风险�?
+        # CVaR (条件风险（CVaR）
         cvar_95 = returns[returns <= var_95].mean()
         
-        # 最大回?        cumulative = (1 + returns).cumprod()
+        # 最大回撤        cumulative = (1 + returns).cumprod()
         running_max = cumulative.cummax()
         drawdown = (cumulative - running_max) / running_max
         max_drawdown = drawdown.min()
@@ -206,7 +228,7 @@ class StrategyPerformanceEvaluator:
             'sharpe_ratio': sharpe_ratio,
             'sortino_ratio': sortino_ratio,
             'calmar_ratio': calmar_ratio,
-            'information_ratio': sharpe_ratio  # 简化处?        }
+            'information_ratio': sharpe_ratio  # 简化处理        }
     
     def _calculate_relative_metrics(self, strategy_returns: pd.Series,
                                    benchmark_returns: pd.Series) -> Dict[str, float]:
@@ -235,11 +257,11 @@ class StrategyPerformanceEvaluator:
     def _calculate_capacity_metrics(self, returns: pd.Series) -> Dict[str, float]:
         """计算容量指标"""
         # 平均持仓时间
-        avg_holding_period = 5  # 简化：假设平均持仓5?        
-        # 资金周转?        turnover_rate = 252 / avg_holding_period
+        avg_holding_period = 5  # 简化：假设平均持仓 5 天        
+        # 资金周转率        turnover_rate = 252 / avg_holding_period
         
         # 策略容量（简化估算）
-        # 基于收益率波动和流动性估?        capacity = 1e8 * (1 / returns.std())  # 简化：波动率越小，容量越大
+        # 基于收益率波动和流动性估算        capacity = 1e8 * (1 / returns.std())  # 简化：波动率越小，容量越大
         
         return {
             'avg_holding_period': avg_holding_period,
@@ -248,51 +270,48 @@ class StrategyPerformanceEvaluator:
         }
     
     def calculate_correlation_matrix(self, strategy_returns: Dict[str, pd.Series]) -> pd.DataFrame:
-        """计算策略间相关性矩?        
         Args:
-            strategy_returns: 各策略的收益率序?            
+            strategy_returns: 各策略的收益率序列            
         Returns:
-            pd.DataFrame: 相关性矩?        """
         returns_df = pd.DataFrame(strategy_returns)
         correlation_matrix = returns_df.corr()
         
         return correlation_matrix
 ```
 
-### 3.2 策略分层权重分配?
-**设计目标**: 基于策略绩效和风险贡献动态分配权?
+
 ```python
 class StrategyLayerWeightAllocator:
-    """策略分层权重分配?    
+    """
     索引: STRATEGY_HIERARCHY_001-M02
-    职责: 基于策略绩效、风险贡献、相关性动态分配权?    输入: 策略绩效评估结果、相关性矩?    输出: 策略权重分配方案
     """
     
     def __init__(self, config: WeightAllocationConfig):
         self.config = config
-        self.core_strategy_weight = config.core_strategy_weight  # 核心策略层权重（?0%?        self.satellite_strategy_weight = config.satellite_strategy_weight  # 卫星策略层权重（?0%?        
+        self.core_strategy_weight = config.core_strategy_weight  # 核心策略层权重（例如 60%）
+        self.satellite_strategy_weight = config.satellite_strategy_weight  # 卫星策略层权重（例如 40%）
     def allocate_weights(self, strategy_performances: Dict[str, StrategyPerformance],
                         correlation_matrix: pd.DataFrame,
                         current_weights: Dict[str, float]) -> WeightAllocationResult:
-        """分配策略权重
         
         Args:
             strategy_performances: 各策略的绩效评估结果
-            correlation_matrix: 策略间相关性矩?            current_weights: 当前权重
             
         Returns:
-            WeightAllocationResult: 权重分配结果
         """
-        # 1. 策略分类（核心策?vs 卫星策略?        core_strategies, satellite_strategies = self._classify_strategies(
+        # 1. 策略分类（核心策略 vs 卫星策略）
+        core_strategies, satellite_strategies = self._classify_strategies(
             strategy_performances
         )
         
-        # 2. 核心策略层权重分?        core_weights = self._allocate_layer_weights(
+        # 2. 核心策略层权重分配
+        core_weights = self._allocate_layer_weights(
             core_strategies, strategy_performances, correlation_matrix,
             self.core_strategy_weight
         )
         
-        # 3. 卫星策略层权重分?        satellite_weights = self._allocate_layer_weights(
+        # 3. 卫星策略层权重分配
+        satellite_weights = self._allocate_layer_weights(
             satellite_strategies, strategy_performances, correlation_matrix,
             self.satellite_strategy_weight
         )
@@ -322,7 +341,6 @@ class StrategyLayerWeightAllocator:
         """策略分类
         
         核心策略：夏普比率≥1.5，最大回撤≤15%
-        卫星策略：其他策?        """
         core_strategies = []
         satellite_strategies = []
         
@@ -341,9 +359,8 @@ class StrategyLayerWeightAllocator:
                                 performances: Dict[str, StrategyPerformance],
                                 correlation_matrix: pd.DataFrame,
                                 layer_weight: float) -> Dict[str, float]:
-        """分配层内权重
+权重
         
-        使用风险平价方法分配权重
         """
         if len(strategies) == 0:
             return {}
@@ -376,10 +393,10 @@ class StrategyLayerWeightAllocator:
         max_weight = self.config.max_weight
         weights = {k: min(v, max_weight) for k, v in weights.items()}
         
-        # 权重归一?        total_weight = sum(weights.values())
+        # 权重归一化        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
         
-        # 单日调整幅度限制
+度限制
         max_adjustment = self.config.max_daily_adjustment
         for name in weights:
             if name in current_weights:
@@ -390,7 +407,7 @@ class StrategyLayerWeightAllocator:
                     else:
                         weights[name] = current_weights[name] - max_adjustment
         
-        # 再次归一?        total_weight = sum(weights.values())
+        # 再次归一化        total_weight = sum(weights.values())
         weights = {k: v / total_weight for k, v in weights.items()}
         
         return weights
@@ -399,13 +416,12 @@ class StrategyLayerWeightAllocator:
                                      correlation_matrix: pd.DataFrame) -> Dict[str, float]:
         """计算风险贡献"""
         # 简化计算：基于权重和波动率
-        # 实际应考虑相关性矩?        
         risk_contributions = {}
         for name, weight in weights.items():
-            # 简化：风险贡献 = 权重 * 平均相关?            avg_correlation = correlation_matrix[name].mean()
+            avg_correlation = correlation_matrix[name].mean()
             risk_contributions[name] = weight * avg_correlation
         
-        # 标准?        total_risk = sum(risk_contributions.values())
+        # 标准化        total_risk = sum(risk_contributions.values())
         if total_risk > 0:
             risk_contributions = {k: v / total_risk for k, v in risk_contributions.items()}
         
@@ -424,38 +440,38 @@ class StrategyLayerWeightAllocator:
                     adjustments.append(f"{direction}{name}权重{abs(adjustment):.2%}")
         
         if adjustments:
-            return "基于绩效评估和风险贡献调? " + ", ".join(adjustments)
+            return "基于绩效评估和风险贡献调整 " + ", ".join(adjustments)
         else:
-            return "维持当前权重分配"
+"
 ```
 
 ### 3.3 信号融合引擎
 
-**设计目标**: 融合多策略信号，解决信号冲突，输出最终交易信?
+**设计目标**: 融合多策略信号，解决信号冲突，输出最终交易信号
 ```python
 class SignalFusionEngine:
     """信号融合引擎
     
     索引: STRATEGY_HIERARCHY_001-M03
     职责: 融合多策略信号，解决信号冲突
-    输入: 各策略的交易信号
-    输出: 融合后的最终信?    """
+    输出: 融合后的最终信号    """
     
     def __init__(self, config: FusionConfig):
         self.config = config
-        self.fusion_method = config.fusion_method  # 融合方法（voting/weighted/ml?        
+        self.fusion_method = config.fusion_method  # 融合方法（voting/weighted/ml）
     def fuse_signals(self, strategy_signals: Dict[str, TradingSignal],
                     strategy_weights: Dict[str, float],
                     historical_accuracy: Dict[str, float]) -> FusedSignal:
-        """融合多策略信?        
+        """融合多策略信号        
         Args:
             strategy_signals: 各策略的交易信号
             strategy_weights: 策略权重
-            historical_accuracy: 各策略的历史准确?            
+            historical_accuracy: 各策略的历史准确率            
         Returns:
             FusedSignal: 融合后的信号
         """
-        # 1. 检测信号冲?        conflicts = self._detect_conflicts(strategy_signals)
+        # 1. 检测信号冲突
+        conflicts = self._detect_conflicts(strategy_signals)
         
         # 2. 根据融合方法融合信号
         if self.fusion_method == 'voting':
@@ -477,10 +493,10 @@ class SignalFusionEngine:
         return fused_signal
     
     def _detect_conflicts(self, signals: Dict[str, TradingSignal]) -> List[SignalConflict]:
-        """检测信号冲?""
+        """检测信号冲突"""
         conflicts = []
         
-        # 检测方向冲?        directions = [sig.direction for sig in signals.values()]
+        # 检测方向冲突        directions = [sig.direction for sig in signals.values()]
         if 'long' in directions and 'short' in directions:
             conflicts.append(SignalConflict(
                 conflict_type='direction',
@@ -488,7 +504,7 @@ class SignalFusionEngine:
                 strategies=[name for name, sig in signals.items() if sig.direction in ['long', 'short']]
             ))
         
-        # 检测强度冲?        strengths = [sig.strength for sig in signals.values()]
+        # 检测强度冲突        strengths = [sig.strength for sig in signals.values()]
         if max(strengths) - min(strengths) > 0.5:
             conflicts.append(SignalConflict(
                 conflict_type='strength',
@@ -500,7 +516,7 @@ class SignalFusionEngine:
     
     def _voting_fusion(self, signals: Dict[str, TradingSignal],
                       weights: Dict[str, float]) -> FusedSignal:
-        """投票法融?""
+        """投票法融合"""
         # 统计各方向的加权票数
         votes = {'long': 0.0, 'short': 0.0, 'neutral': 0.0}
         
@@ -524,14 +540,14 @@ class SignalFusionEngine:
                         weights: Dict[str, float],
                         accuracy: Dict[str, float]) -> FusedSignal:
         """加权平均融合"""
-        # 计算综合权重（策略权?* 历史准确率）
+        # 计算综合权重（策略权重 * 历史准确率）
         composite_weights = {}
         for name in signals:
             strategy_weight = weights.get(name, 1.0 / len(signals))
             strategy_accuracy = accuracy.get(name, 0.5)
             composite_weights[name] = strategy_weight * strategy_accuracy
         
-        # 归一?        total_weight = sum(composite_weights.values())
+        # 归一化        total_weight = sum(composite_weights.values())
         composite_weights = {k: v / total_weight for k, v in composite_weights.items()}
         
         # 加权平均信号强度
@@ -541,12 +557,14 @@ class SignalFusionEngine:
         for name, signal in signals.items():
             weight = composite_weights[name]
             
-            # 方向转换为数值（long=1, neutral=0, short=-1?            direction_value = {'long': 1, 'neutral': 0, 'short': -1}[signal.direction]
+            # 方向转换为数值（long=1, neutral=0, short=-1）
+            direction_value = {'long': 1, 'neutral': 0, 'short': -1}[signal.direction]
             
             weighted_direction += weight * direction_value * signal.strength
             weighted_strength += weight * signal.strength
         
-        # 确定最终方?        if weighted_direction > 0.1:
+        # 确定最终方向
+        if weighted_direction > 0.1:
             final_direction = 'long'
         elif weighted_direction < -0.1:
             final_direction = 'short'
@@ -563,22 +581,21 @@ class SignalFusionEngine:
     
     def _ml_fusion(self, signals: Dict[str, TradingSignal],
                   weights: Dict[str, float]) -> FusedSignal:
-        """机器学习融合（简化版?""
-        # 实际应使用训练好的ML模型
+        """机器学习融合（简化版）"""
+应使用训练好的ML模型
         # 这里简化为加权平均
         
         return self._weighted_fusion(signals, weights, {})
 ```
 
-### 3.4 策略协同优化?
-**设计目标**: 识别策略间协同效应，优化资源分配
+### 3.4 策略协同优化
+
 
 ```python
 class StrategySynergyOptimizer:
-    """策略协同优化?    
+    """策略协同优化器    
     索引: STRATEGY_HIERARCHY_001-M04
-    职责: 识别策略间协同效应，优化资源分配
-    输入: 策略绩效、相关性矩阵、资源约?    输出: 协同优化方案
+
     """
     
     def __init__(self, config: SynergyConfig):
@@ -591,7 +608,6 @@ class StrategySynergyOptimizer:
         
         Args:
             strategy_performances: 策略绩效
-            correlation_matrix: 相关性矩?            resource_constraints: 资源约束
             
         Returns:
             SynergyOptimizationResult: 协同优化结果
@@ -602,7 +618,7 @@ class StrategySynergyOptimizer:
         # 2. 识别冲突策略
         conflicts = self._identify_conflicts(correlation_matrix)
         
-        # 3. 优化资源分配
+
         resource_allocation = self._optimize_resources(
             strategy_performances, synergies, conflicts, resource_constraints
         )
@@ -620,7 +636,6 @@ class StrategySynergyOptimizer:
     def _identify_synergies(self, correlation_matrix: pd.DataFrame) -> List[StrategySynergy]:
         """识别协同效应
         
-        协同效应：相关性在[-0.3, 0.3]之间的策略组?        """
         synergies = []
         
         strategies = correlation_matrix.columns
@@ -629,7 +644,6 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 低相关性或负相�?= 协同效应
                     if -0.3 <= corr <= 0.3:
                         synergy_type = 'diversification' if corr >= 0 else 'hedging'
                         synergies.append(StrategySynergy(
@@ -645,7 +659,8 @@ class StrategySynergyOptimizer:
     def _identify_conflicts(self, correlation_matrix: pd.DataFrame) -> List[StrategyConflict]:
         """识别冲突策略
         
-        冲突策略：相�?0.7的策略组?        """
+        冲突策略：相关系数 > 0.7 的策略组
+        """
         conflicts = []
         
         strategies = correlation_matrix.columns
@@ -654,14 +669,13 @@ class StrategySynergyOptimizer:
                 if i < j:
                     corr = correlation_matrix.loc[strat1, strat2]
                     
-                    # 高相�?= 冲突
+                    # 高相关 = 冲突
                     if corr > 0.7:
                         conflicts.append(StrategyConflict(
                             strategy1=strat1,
                             strategy2=strat2,
                             correlation=corr,
                             conflict_type='high_correlation',
-                            recommendation='考虑降低其中一个策略的权重'
                         ))
         
         return conflicts
@@ -670,12 +684,10 @@ class StrategySynergyOptimizer:
                            synergies: List[StrategySynergy],
                            conflicts: List[StrategyConflict],
                            constraints: ResourceConstraints) -> Dict[str, ResourceAllocation]:
-        """优化资源分配"""
+"""
         allocations = {}
         
-        # 基于绩效和协同效应分配资?        for name, perf in performances.items():
-            # 基础分配：基于Sharpe比率
-            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一?            
+            base_allocation = perf.risk_adjusted_metrics['sharpe_ratio'] / 3.0  # 归一化            
             # 协同加成
             synergy_bonus = 0.0
             for synergy in synergies:
@@ -688,7 +700,7 @@ class StrategySynergyOptimizer:
                 if name in [conflict.strategy1, conflict.strategy2]:
                     conflict_penalty += 0.1
             
-            # 最终分?            final_allocation = base_allocation + synergy_bonus - conflict_penalty
+            # 最终分配            final_allocation = base_allocation + synergy_bonus - conflict_penalty
             final_allocation = max(0.1, min(1.0, final_allocation))  # 限制在[0.1, 1.0]
             
             allocations[name] = ResourceAllocation(
@@ -698,7 +710,7 @@ class StrategySynergyOptimizer:
                 risk_budget=constraints.total_risk_budget * final_allocation
             )
         
-        # 归一?        total_allocation = sum(a.allocation_ratio for a in allocations.values())
+        # 归一化        total_allocation = sum(a.allocation_ratio for a in allocations.values())
         for name in allocations:
             allocations[name].allocation_ratio /= total_allocation
             allocations[name].capital_allocation = constraints.total_capital * allocations[name].allocation_ratio
@@ -712,19 +724,18 @@ class StrategySynergyOptimizer:
         recommendations = []
         
         # 协同建议
-        for synergy in synergies[:3]:  # ?个协同效?            recommendations.append(
-                f"?{synergy.strategy1}和{synergy.strategy2}具有{synergy.benefit}效应，建议增加配?
+        for synergy in synergies[:3]:  # 3 个协同效应            recommendations.append(
+
             )
         
         # 冲突建议
-        for conflict in conflicts[:3]:  # ?个冲?            recommendations.append(
-                f"⚠️ {conflict.strategy1}和{conflict.strategy2}相关性过?{conflict.correlation:.2f})，{conflict.recommendation}"
+        for conflict in conflicts[:3]:  # 3 个冲突            recommendations.append(
             )
         
         return recommendations
 ```
 
----
+
 
 ## 4. 接口定义
 
@@ -775,7 +786,6 @@ class SignalConflict:
 
 @dataclass
 class WeightAllocationResult:
-    """权重分配结果"""
     weights: Dict[str, float]
     core_weights: Dict[str, float]
     satellite_weights: Dict[str, float]
@@ -802,7 +812,7 @@ class StrategyConflict:
 
 @dataclass
 class ResourceAllocation:
-    """资源分配"""
+"""
     strategy_name: str
     allocation_ratio: float
     capital_allocation: float
@@ -825,7 +835,7 @@ class SynergyOptimizationResult:
 
 
 class IPerformanceEvaluator(ABC):
-    """绩效评估器接?""
+    """绩效评估器接口"""
     
     @abstractmethod
     def evaluate(self, returns: pd.Series, benchmark: Optional[pd.Series] = None) -> StrategyPerformance:
@@ -834,12 +844,10 @@ class IPerformanceEvaluator(ABC):
 
 
 class IWeightAllocator(ABC):
-    """权重分配器接?""
     
     @abstractmethod
     def allocate(self, performances: Dict[str, StrategyPerformance],
                 correlation_matrix: pd.DataFrame) -> Dict[str, float]:
-        """分配策略权重"""
         pass
 
 
@@ -853,13 +861,12 @@ class ISignalFusion(ABC):
         pass
 ```
 
-### 4.2 主接?
+### 4.2 主接口
 ```python
 class MultiStrategyHierarchicalSystem:
     """多策略分层系统主接口
     
     索引: STRATEGY_HIERARCHY_001-MAIN
-    职责: 协调策略绩效评估、权重分配、信号融合、协同优?    """
     
     def __init__(self, config: HierarchicalSystemConfig):
         self.config = config
@@ -872,9 +879,10 @@ class MultiStrategyHierarchicalSystem:
                          strategy_signals: Dict[str, TradingSignal],
                          current_weights: Dict[str, float],
                          resource_constraints: ResourceConstraints) -> ManagementResult:
-        """管理多策?        
+        """管理多策略        
         Args:
-            strategy_returns: 各策略的历史收益?            strategy_signals: 各策略的当前信号
+            strategy_returns: 各策略的历史收益率
+            strategy_signals: 各策略的当前信号
             current_weights: 当前权重
             resource_constraints: 资源约束
             
@@ -886,9 +894,8 @@ class MultiStrategyHierarchicalSystem:
         for name, returns in strategy_returns.items():
             performances[name] = self.performance_evaluator.evaluate_strategy(returns)
         
-        # 2. 相关性计?        correlation_matrix = self.performance_evaluator.calculate_correlation_matrix(strategy_returns)
         
-        # 3. 权重分配
+
         weight_result = self.weight_allocator.allocate_weights(
             performances, correlation_matrix, current_weights
         )
@@ -917,120 +924,143 @@ class MultiStrategyHierarchicalSystem:
         )
 ```
 
----
+
 
 ## 5. 实施计划
 
 ### 5.1 开发里程碑
 
-**Phase 1: 绩效评估与权重分配（Week 1-2?*
-- ?实现策略绩效评估?- ?实现策略分层权重分配?- ?完成单元测试
 
-**Phase 2: 信号融合与协同优化（Week 3-4?*
-- ?实现信号融合引擎
-- ?实现策略协同优化?- ?完成集成测试
+**Phase 2: 信号融合与协同优化（Week 3-4）
+- 实现信号融合引擎
+- 实现策略协同优化
+- 完成集成测试
 
-**Phase 3: 系统集成与优化（Week 5-6?*
-- ?集成到组合优化层
-- ?实现实时监控接口
-- ?完成性能优化
-- ?完成回测验证
+**Phase 3: 系统集成与优化（Week 5-6）
+- 集成到组合优化层
+- 实现实时监控接口
+- 完成性能优化
+- 完成回测验证
 
-**Phase 4: 生产部署（Week 7-8?*
-- ?生产环境部署
-- ?监控系统集成
-- ?文档完善
-- ?用户培训
+**Phase 4: 生产部署（Week 7-8）
+- 生产环境部署
+- 监控系统集成
+- 文档完善
+- 用户培训
 
 ### 5.2 技术栈
 
 | 组件 | 技术选型 | 版本要求 |
 |------|----------|----------|
-| **优化引擎** | CVXPY, scipy | ?.2, ?.7 |
-| **数据分析** | numpy, pandas | ?.21, ?.3 |
-| **机器学习** | scikit-learn | ?.0 |
-| **可视?* | matplotlib, plotly | ?.5, ?.0 |
-| **监控** | Prometheus, Grafana | ?.0, ?.0 |
+| **优化引擎** | CVXPY, scipy | 1.2, 1.7 |
+| **数据分析** | numpy, pandas | 1.21, 2.3 |
+| **机器学习** | scikit-learn | 1.0 |
+| **可视化** | matplotlib, plotly | 3.5, 5.0 |
+| **监控** | Prometheus, Grafana | 2.0, 10.0 |
 
 ### 5.3 性能指标
 
-| 指标 | 目标?| 验证方法 |
+| 指标 | 目指标| 验证方法 |
 |------|--------|----------|
-| **权重调整延迟** | ??| 性能测试 |
-| **信号融合延迟** | ??| 性能测试 |
-| **策略夏普比率** | ?.0 | 回测验证 |
-| **策略相关?* | ?.3 | 统计分析 |
+| **权重调整延迟** | （待补充） | 性能测试 |
+| **信号融合延迟** | （待补充） | 性能测试 |
+| **策略夏普比率** | ≥1.0 | 回测验证 |
 
----
 
-## 6. 风险与约?
-### 6.1 技术风?
-| 风险?| 风险等级 | 缓解措施 |
+
+## 6. 风险与约束
+### 6.1 技术风险
+| 风险项 | 风险等级 | 缓解措施 |
 |--------|----------|----------|
-| **策略过拟?* | P1 | 样本外验证、交叉验?|
-| **信号冲突频繁** | P2 | 优化融合算法、增加冲突解决机?|
-| **权重调整滞后** | P2 | 实时监控、快速响?|
-| **系统复杂?* | P2 | 模块化设计、充分测?|
+| **策略过拟合 | P1 | 样本外验证、交叉验证|
+| **信号冲突频繁** | P2 | 优化融合算法、增加冲突解决机制|
+| **权重调整滞后** | P2 | 实时监控、快速响应|
+
+
 
 ### 6.2 实施约束
 
-1. **数据约束**: 需要足够长的历史数据支持绩效评?2. **计算约束**: 需要高性能计算资源支持实时优化
-3. **策略约束**: 需要足够多的策略支持分层管?4. **风控约束**: 需要严格的风控审批流程
+1. **数据约束**: 需要足够长的历史数据支持绩效评估2. **计算约束**: 需要高性能计算资源支持实时优化
+3. **策略约束**: 需要足够多的策略支持分层管理4. **风控约束**: 需要严格的风控审批流程
 
----
+
 
 ## 7. 验收标准
 
 ### 7.1 功能验收
 
-- ?支持策略绩效全面评估（收益率、风险、风险调整收益）
-- ?支持策略分层权重动态分?- ?支持多策略信号融合和冲突解决
-- ?支持策略协同效应识别和优?
+- 支持策略分层权重动态分配
+- 支持多策略信号融合和冲突解决
+- 支持策略协同效应识别和优化
 ### 7.2 性能验收
 
-- ?权重调整延迟??- ?信号融合延迟??- ?策略夏普比率?.0
-- ?策略平均相关性≤0.3
+- 权重调整延迟（待补充）
+- 信号融合延迟（待补充）
+- 策略夏普比率 ≥ 1.0
 
 ### 7.3 质量验收
 
-- ?代码覆盖率≥85%
-- ?文档完整度≥95%
-- ?符合API契约规范
-- ?通过代码审查
+- 代码覆盖率≥85%
+- 文档完整度≥95%
+- 符合API契约规范
+- 通过代码审查
 
----
 
-## 8. 参考资?
+
+## 8. 参考资料
 ### 8.1 学术论文
 
 1. **Risk Parity**: Qian, E. (2005). "Risk Parity Portfolios"
 2. **Multi-Strategy**: Asness, C., et al. (2013). "Value and Momentum Everywhere"
 3. **Signal Fusion**: Qin, Z., et al. (2008). "Multi-Source Information Fusion"
 
-### 8.2 开源项?
+### 8.2 开源项目
 1. **PyPortfolioOpt**: https://github.com/robertmartin8/PyPortfolioOpt
 2. **Riskfolio-Lib**: https://github.com/dcajasn/Riskfolio-Lib
 3. **scikit-learn**: https://scikit-learn.org/
 
-### 8.3 相关文档
 
-- [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-- [PORTFOLIO_OPTIMIZATION_BLUEPRINT.md](./PORTFOLIO_OPTIMIZATION_BLUEPRINT.md)
-- [API_Contract.md](../../../01_FRAMEWORK/API_Contract.md)
+- PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+- PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+- API_Contract.md
 
----
+
 
 **文档版本**: v1.0
-**最后更?*: 2026-04-02
-**审核�?*: 待审?**下一?*: 提交技术评审官审核
+**最后更新**: 2026-04-02
+**审核**: （待提交）
+**下一步**: 提交技术评审官审核
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 组合优化层负责人 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 
----
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
+
+
+
+
+## 9. 文档治理
+
+### 9.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Multi Strategy Hierarchical System
+- **模块ID**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
+- **蓝图文档**: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
+```
+
+### 9.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Multi Strategy Hierarchical System** | 
+
+### 9.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+```

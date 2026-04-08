@@ -1,0 +1,1157 @@
+{
+  "L1": {
+    "目录结构": [
+      {
+        "type": "稀疏目录",
+        "path": "00_GOVERNANCE",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "02_ALPHA_FACTORS_INDEX",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "03_RISK_FACTORS",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE",
+        "file_count": 1,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "06_REGISTRY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "07_FACTOR_MONITORING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "09_AUDIT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\03_CLEANING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\IFIND",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE",
+        "file_count": 2,
+        "severity": "P2"
+      }
+    ],
+    "文件命名": [],
+    "路径引用": []
+  },
+  "L2": {
+    "职责驱动": [
+      {
+        "type": "职责描述模糊",
+        "path": "README.md",
+        "responsibility": "提供02 Factor Library相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "00_GOVERNANCE\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "responsibility": "",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "02_ALPHA_FACTORS_INDEX\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "03_RISK_FACTORS\\README.md",
+        "responsibility": "提供03 Risk Factors相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\INDEX.md",
+        "responsibility": "数据质量监控与治理",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "05_BACKTEST\\README.md",
+        "responsibility": "提供05 Backtest相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "06_REGISTRY\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "07_FACTOR_MONITORING\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "09_AUDIT\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "10_MANUAL\\README.md",
+        "responsibility": "提供10 Manual相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+        "responsibility": "提供文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+        "responsibility": "提供07 Data Pipeline相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+        "responsibility": "提供Config Management相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+        "responsibility": "提供Data Anomaly Detection相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+        "responsibility": "提供Data Api Gateway相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+        "responsibility": "提供Data Backup Recovery相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+        "responsibility": "提供Data Catalog相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+        "responsibility": "提供Data Compression Archive相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+        "responsibility": "提供Data Contract相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+        "responsibility": "提供Data Federation相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+        "responsibility": "提供Data Lifecycle Management相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+        "responsibility": "提供Data Lineage Tracking相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+        "responsibility": "提供Data Monitoring Enhanced相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+        "responsibility": "提供Data Observability相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+        "responsibility": "提供Data Orchestration Enhanced相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+        "responsibility": "提供Data Permission Management相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+        "responsibility": "提供Data Profiling相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+        "responsibility": "提供Data Security Privacy相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+        "responsibility": "提供Data Standardization相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+        "responsibility": "提供Data Sync Replication相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+        "responsibility": "提供Data Testing Framework相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+        "responsibility": "提供Data Version Control相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\IFIND\\README.md",
+        "responsibility": "提供Ifind相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+        "responsibility": "提供Realtime Data Streaming相关文档支持",
+        "severity": "P2"
+      },
+      {
+        "type": "职责描述模糊",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+        "responsibility": "提供Time Series Storage相关文档支持",
+        "severity": "P2"
+      }
+    ],
+    "索引完备": [],
+    "版本隔离": [
+      {
+        "type": "变更记录缺失",
+        "path": "INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "SITEMAP.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "00_GOVERNANCE\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "02_ALPHA_FACTORS_INDEX\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "03_RISK_FACTORS\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "05_BACKTEST\\BACKTEST_REORGANIZATION.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "05_BACKTEST\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "06_REGISTRY\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "07_FACTOR_MONITORING\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "09_AUDIT\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "10_MANUAL\\FAQ.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "10_MANUAL\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\IFIND\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\IFIND\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+        "severity": "P2"
+      },
+      {
+        "type": "变更记录缺失",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+        "severity": "P2"
+      }
+    ],
+    "文档代码对应": []
+  },
+  "L3": {
+    "五大原则": [
+      {
+        "type": "YAML字段缺失",
+        "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "missing_fields": [
+          "version",
+          "status",
+          "created_date",
+          "owner"
+        ],
+        "severity": "P1"
+      }
+    ],
+    "文档分类": [],
+    "编号体系": [],
+    "文档质量": [
+      {
+        "type": "文档内容过少",
+        "path": "01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "size": 157,
+        "severity": "P2"
+      }
+    ]
+  },
+  "重复内容": [
+    {
+      "type": "内容相似",
+      "path1": "SITEMAP.md",
+      "path2": "05_BACKTEST\\BACKTEST_REORGANIZATION.md",
+      "similarity": "80.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "SITEMAP.md",
+      "path2": "10_MANUAL\\FAQ.md",
+      "similarity": "80.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "01_STANDARDS\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "05_BACKTEST\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "06_REGISTRY\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "07_FACTOR_MONITORING\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "00_GOVERNANCE\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "05_BACKTEST\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "06_REGISTRY\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "07_FACTOR_MONITORING\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "01_STANDARDS\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "path2": "05_BACKTEST\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "path2": "06_REGISTRY\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "path2": "07_FACTOR_MONITORING\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "05_BACKTEST\\INDEX.md",
+      "path2": "06_REGISTRY\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "05_BACKTEST\\INDEX.md",
+      "path2": "07_FACTOR_MONITORING\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "05_BACKTEST\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "05_BACKTEST\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "06_REGISTRY\\INDEX.md",
+      "path2": "07_FACTOR_MONITORING\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "06_REGISTRY\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "06_REGISTRY\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "07_FACTOR_MONITORING\\INDEX.md",
+      "path2": "09_AUDIT\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "07_FACTOR_MONITORING\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    },
+    {
+      "type": "内容相似",
+      "path1": "09_AUDIT\\INDEX.md",
+      "path2": "10_MANUAL\\INDEX.md",
+      "similarity": "100.00%",
+      "severity": "P1"
+    }
+  ],
+  "职责问题": [
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "06_REGISTRY\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "07_FACTOR_MONITORING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "09_AUDIT\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "00_GOVERNANCE\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "path2": "06_REGISTRY\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "path2": "07_FACTOR_MONITORING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "path2": "09_AUDIT\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "path2": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "02_ALPHA_FACTORS_INDEX\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "06_REGISTRY\\README.md",
+      "path2": "07_FACTOR_MONITORING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "06_REGISTRY\\README.md",
+      "path2": "09_AUDIT\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "06_REGISTRY\\README.md",
+      "path2": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "06_REGISTRY\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "07_FACTOR_MONITORING\\README.md",
+      "path2": "09_AUDIT\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "07_FACTOR_MONITORING\\README.md",
+      "path2": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "07_FACTOR_MONITORING\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "09_AUDIT\\README.md",
+      "path2": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "09_AUDIT\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    },
+    {
+      "type": "职责完全相同",
+      "path1": "04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "path2": "04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "responsibility": "提供文档支持",
+      "severity": "P1"
+    }
+  ]
+}

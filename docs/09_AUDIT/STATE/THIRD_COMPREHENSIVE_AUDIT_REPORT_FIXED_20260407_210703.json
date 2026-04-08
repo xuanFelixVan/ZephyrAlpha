@@ -1,0 +1,513 @@
+{
+  "L1": {
+    "目录结构": [
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE",
+        "file_count": 1,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\03_CLEANING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\IFIND",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING",
+        "file_count": 2,
+        "severity": "P2"
+      },
+      {
+        "type": "稀疏目录",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE",
+        "file_count": 2,
+        "severity": "P2"
+      }
+    ],
+    "文件命名": [
+      {
+        "type": "旧架构命名残留",
+        "path": "SITEMAP.md",
+        "severity": "P1"
+      },
+      {
+        "type": "旧架构命名残留",
+        "path": "10_MANUAL\\FAQ.md",
+        "severity": "P1"
+      }
+    ],
+    "路径引用": []
+  },
+  "L2": {
+    "职责驱动": [
+      {
+        "type": "职责缺失",
+        "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+        "severity": "P1"
+      }
+    ],
+    "索引完备": [
+      {
+        "type": "索引不完整",
+        "path": "INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "00_GOVERNANCE\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "01_STANDARDS\\INDEX.md",
+        "missing_files": [
+          "FACTOR_TAXONOMY.md",
+          "FACTOR_REGISTRY.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "02_ALPHA_FACTORS_INDEX\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "03_RISK_FACTORS\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "05_BACKTEST\\INDEX.md",
+        "missing_files": [
+          "BACKTEST_REORGANIZATION.md",
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "06_REGISTRY\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "07_FACTOR_MONITORING\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "09_AUDIT\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "OVERVIEW.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "10_MANUAL\\INDEX.md",
+        "missing_files": [
+          "README.md",
+          "FAQ.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\IFIND\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      },
+      {
+        "type": "索引不完整",
+        "path": "04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+        "missing_files": [
+          "README.md"
+        ],
+        "severity": "P2"
+      }
+    ],
+    "版本隔离": [],
+    "文档代码对应": []
+  },
+  "L3": {
+    "五大原则": [],
+    "文档分类": [],
+    "编号体系": [],
+    "文档质量": [
+      {
+        "type": "YAML字段缺失",
+        "path": "01_STANDARDS\\FACTOR_REGISTRY.md",
+        "missing_fields": [
+          "module_id",
+          "version",
+          "status",
+          "created_date",
+          "owner",
+          "responsibility"
+        ],
+        "severity": "P1"
+      }
+    ]
+  },
+  "重复内容": [],
+  "职责问题": []
+}

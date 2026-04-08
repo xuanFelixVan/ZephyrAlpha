@@ -1,4 +1,17 @@
 ---
+module_id: INVESTMENTCONSTRAINTBLUEPRIN_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 9 (治理层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
 module_id: INVESTMENT_CONSTRAINT_001
 version: 1.0.0
 status: Active
@@ -14,6 +27,43 @@ priority: P1
 ---
 
 # 投资限制管理系统蓝图
+> **核心职责**: 投资限制管理系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：投资限制管理系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Investment Constraint蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Investment Constraint蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**模块蓝图，负责特定功能的实现**。
+
+### 职责边界
+
+**负责**：
+- ✅ 核心功能实现
+- ✅ 接口定义
+- ✅ 数据模型设计
+
+**不负责**：
+- ❌ 其他模块职责
+- ❌ 跨模块协调
+
+### 对接模块
+
+**上游模块**：
+- 上游模块
+
+**下游模块**：
+- 下游模块
+
+---
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **优先级**: 🟡 P1 - 专业增强
@@ -1110,10 +1160,41 @@ class SkfolioIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
-| [MARKET_REGIME_BLUEPRINT.md](./MARKET_REGIME_BLUEPRINT.md) | 市场状态识别系统 |
+| BLUEPRINT.md | Layer 11主蓝图 |
+| `MARKET_REGIME_BLUEPRINT.md` | 市场状态识别系统 |
 | [MACRO_FACTOR_BLUEPRINT.md](./MACRO_FACTOR_BLUEPRINT.md) | 宏观因子系统 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Investment Constraint
+- **模块ID**: INVESTMENT_CONSTRAINT_001
+- **蓝图文档**: INVESTMENT_CONSTRAINT_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.14 - 投资限制管理系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Investment Constraint** | Layer 11.14 - 投资限制管理系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

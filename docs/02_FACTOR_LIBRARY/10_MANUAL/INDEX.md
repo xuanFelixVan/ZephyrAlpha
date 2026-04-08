@@ -1,93 +1,48 @@
 ---
-module_id: INDEX_MANUAL_001
+module_id: FACTOR_LIBRARY_10_MANUAL_INDEX
 version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 10_MANUAL目录
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 目录导航
+  - 模块索引
+  - 职责协调
+standard_type: 索引文档
+applicable_scope: 因子库
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已实施
 ---
+# 10_MANUAL 使用手册
 
-# 10_MANUAL - 因子库手册
-
-> 因子研究方法论与分类体系
-
----
-
-## 📂 目录说明
-
-本目录存放因子库手册相关的文档，包括：
-- 因子研究方法论
-- 因子分类体系
-- 操作指南
+> **核心职责**: 因子库使用指南、FAQ和最佳实践
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航、模块索引、职责协调
+> - ❌ 本文档不负责：具体实现细节、其他模块内容
 
 ---
 
-## 📄 文档列表
+## 📋 概述
 
-| 文档 | 说明 | 状态 |
-|------|------|------|
-| [FACTOR_LIBRARY_MANUAL.md](./FACTOR_LIBRARY_MANUAL.md) | 因子库手册v3.2 | ✅ 已实施 |
+因子库使用指南、FAQ和最佳实践
 
----
+## 📂 目录结构
 
-## 📊 手册概览
-
-### 版本历史
-
-| 版本 | 说明 |
-|------|------|
-| **v1.0-v1.9** | 初始版本及Excel/PNG来源因子整合 |
-| **v2.0-v2.4** | 财务报表因子库 + iFind API因子库 |
-| **v3.0** | 专业机构化重构，创建索引体系 |
-| **v3.1** | 补充THS_BD完整指标清单(~900+) |
-| **v3.2** | 当前版本 |
-
-### 核心内容
-
-- 因子研究方法论
-- 因子分类体系
-- THS_BD指标清单
-- 因子库索引
+- [FAQ](./FAQ.md)
+- [README](./README.md)
 
 ---
 
-## 🔍 使用指南
+## 🎯 核心职责
 
-### 查看手册
-
-1. 阅读 [FACTOR_LIBRARY_MANUAL.md](./FACTOR_LIBRARY_MANUAL.md) - 了解因子库手册
-2. 了解因子研究方法论和分类体系
-
-### 配套文档
-
-- 战术手册
-- 因子库索引
-- THS_BD指标
+1. **使用指南编写**
+2. **FAQ维护**
+3. **最佳实践总结**
 
 ---
 
-## 📈 统计信息
+## 变更记录
 
-| 指标 | 数值 |
-|------|------|
-| **文档数量** | 1个 |
-| **版本迭代** | 3.2 |
-| **THS_BD指标** | 900+ |
-
----
-
-## 🔗 相关链接
-
-- [因子库总览](../README.md)
-- [因子分类体系](../01_STANDARDS/FACTOR_TAXONOMY.md)
-- [THS_BD指标清单](../04_DATA_SOURCE/IFIND/financial_statements/THS_BD_COMPLETE_INDICATOR_LIST.md)
-
----
-
-> **最后更新**: 2026-04-04  
-> **维护者**: 首席文档架构师
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |

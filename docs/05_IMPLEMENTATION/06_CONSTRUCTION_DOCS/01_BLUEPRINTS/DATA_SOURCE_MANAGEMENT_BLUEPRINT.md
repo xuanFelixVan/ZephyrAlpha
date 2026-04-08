@@ -1,108 +1,102 @@
 ---
-module_id: IMPL_DATA_SOURCE_MGMT_BP_001
+module_id: DATA_SOURCE_MANAGEMENT_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: 'Layer 0数据源层 | 业务架构: 三级时间框架融合架构'
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-implementation_progress: 0%
-open_source_dependency: airflow, prefect, dagster
-estimated_effort: 2周
-priority: P2
+responsibility:
+- 数据源管理
+- 数据源注册
+- 连接管理
+- 元数据采集
+layer: Layer 5.1 (数据处理)
 ---
 
-# 数据源管理蓝图
 
-> 清风量化系统 v5.3 - 数据源管理系统详细设计
-> **模块ID**: `DATA_SOURCE_MGMT_001`
-> **实施周期**: Week 33-34（2周）
-> **优先级**: P2（优化）
-> **预期收益**: 提升数据源管理效率80%，降低数据源故障影响90%
+## 核心定位
+
+负责数据源管理模块设计，实现数据源注册认证、连接池管理、元数据自动采集、数据源健康检查功能，统一管理各类数据源接入。
+
+# DATA SOURCE MANAGEMENT BLUEPRINT
+
+> **核心职责**: Data Source Management蓝图设计
+> **职责边界**: 
+...
+## 设计目标
+
+### 主要目标
+
+1. **功能完整性**: 确保DATA SOURCE MANAGEMENT功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用DATA SOURCE MANAGEMENT化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
 
 ## 一、设计背景与目标
 
-### 1.1 业务需求
 
 **当前痛点**:
-- 数据源配置分散
 - 数据源状态不透明
-- 数据源故障影响大
-- 数据源权限管理混乱
+障影响大
 
 **业务目标**:
-- 建立统一数据源管理平台
-- 实时监控数据源状态
-- 快速响应数据源故障
-- 规范数据源权限管理
+障
 
-### 1.2 技术目标
 
-| 指标 | 目标值 | 说明 |
 |------|--------|------|
-| **数据源监控覆盖率** | 100% | 所有数据源被监控 |
-| **故障发现时间** | <1分钟 | 故障发现时间<1分钟 |
-| **故障恢复时间** | <10分钟 | 故障恢复时间<10分钟 |
-| **权限管理准确率** | 100% | 权限管理准确率100% |
+| **
+障发现时间<1分钟 |
+| **
+障恢复时间<10分钟 |
 
----
-
-## 二、系统架构设计
-
-### 2.1 整体架构图
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                数据源管理架构                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           数据源注册层 (Source Registration)         │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │数据源注册   │ │连接配置     │ │元数据管理   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           数据源监控层 (Source Monitoring)           │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │连接状态监控 │ │性能监控     │ │可用性监控   │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           故障管理层 (Failure Management)            │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │故障检测     │ │故障告警     │ │故障恢复     │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                          ↓                                  │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │           权限管理层 (Permission Management)         │   │
-│  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐   │   │
-│  │  │访问控制     │ │凭证管理     │ │审计日志     │   │   │
-│  │  └─────────────┘ └─────────────┘ └─────────────┘   │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 2.2 技术选型
-
-| 组件 | 技术方案 | 版本要求 | 选型理由 |
-|------|---------|---------|---------|
-| **数据源管理** | Apache Airflow | 2.7.0+ | 数据源连接管理 |
-| **工作流编排** | Prefect | 2.14+ | 现代化工作流编排 |
-| **数据编排** | Dagster | 1.5+ | 数据资产管理 |
-| **密钥管理** | HashiCorp Vault | 1.15+ | 安全凭证管理 |
-
----
-
-## 三、核心模块设计
 
 ### 3.1 数据源注册器 (SourceRegistry)
 
@@ -113,7 +107,6 @@ from datetime import datetime
 from enum import Enum
 
 class SourceType(Enum):
-    """数据源类型"""
     DATABASE = "database"
     API = "api"
     FILE = "file"
@@ -121,7 +114,6 @@ class SourceType(Enum):
     CLOUD_STORAGE = "cloud_storage"
 
 class SourceStatus(Enum):
-    """数据源状态"""
     ACTIVE = "active"
     INACTIVE = "inactive"
     ERROR = "error"
@@ -129,7 +121,6 @@ class SourceStatus(Enum):
 
 @dataclass
 class DataSource:
-    """数据源"""
     source_id: str
     source_name: str
     source_type: SourceType
@@ -147,7 +138,6 @@ class SourceRegistry:
         self.sources: Dict[str, DataSource] = {}
     
     def register_source(self, source_config: Dict[str, Any]) -> DataSource:
-        """注册数据源"""
         source = DataSource(
             source_id=source_config['source_id'],
             source_name=source_config['source_name'],
@@ -161,12 +151,10 @@ class SourceRegistry:
         return source
     
     def get_source(self, source_id: str) -> Optional[DataSource]:
-        """获取数据源"""
         return self.sources.get(source_id)
     
     def update_source(self, source_id: str,
                       updates: Dict[str, Any]) -> Optional[DataSource]:
-        """更新数据源"""
         source = self.get_source(source_id)
         if not source:
             return None
@@ -179,7 +167,6 @@ class SourceRegistry:
         return source
     
     def list_sources(self, source_type: SourceType = None) -> List[DataSource]:
-        """列出数据源"""
         if source_type:
             return [s for s in self.sources.values() if s.source_type == source_type]
         return list(self.sources.values())
@@ -206,7 +193,6 @@ import time
 
 @dataclass
 class SourceHealth:
-    """数据源健康状态"""
     source_id: str
     is_healthy: bool
     latency_ms: float
@@ -222,7 +208,6 @@ class SourceMonitor:
         self.health_records: Dict[str, SourceHealth] = {}
     
     def check_source_health(self, source_id: str) -> SourceHealth:
-        """检查数据源健康状态"""
         source = self.registry.get_source(source_id)
         if not source:
             return SourceHealth(
@@ -283,7 +268,7 @@ class SourceMonitor:
         return []
 ```
 
-### 3.3 故障管理器 (FailureManager)
+### 3.3 
 
 ```python
 from typing import Dict, List, Any, Optional
@@ -291,7 +276,8 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class FailureSeverity(Enum):
-    """故障严重程度"""
+    """
+障严重程度"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -299,7 +285,8 @@ class FailureSeverity(Enum):
 
 @dataclass
 class FailureEvent:
-    """故障事件"""
+    """
+障事件"""
     event_id: str
     source_id: str
     severity: FailureSeverity
@@ -310,19 +297,18 @@ class FailureEvent:
     details: Dict[str, Any] = field(default_factory=dict)
 
 class FailureManager:
-    """故障管理器"""
+    """
     
     def __init__(self):
         self.failures: List[FailureEvent] = []
         self.alert_handlers: List[callable] = []
     
     def register_alert_handler(self, handler: callable):
-        """注册告警处理器"""
         self.alert_handlers.append(handler)
     
     def detect_failure(self, source_id: str,
                        health: SourceHealth) -> Optional[FailureEvent]:
-        """检测故障"""
+?""
         if health.is_healthy:
             return None
         
@@ -344,7 +330,7 @@ class FailureManager:
         return failure
     
     def _determine_severity(self, health: SourceHealth) -> FailureSeverity:
-        """确定故障严重程度"""
+障严重程度"""
         if health.error_rate >= 0.9:
             return FailureSeverity.CRITICAL
         elif health.error_rate >= 0.5:
@@ -355,7 +341,6 @@ class FailureManager:
             return FailureSeverity.LOW
     
     def _send_alerts(self, failure: FailureEvent):
-        """发送告警"""
         for handler in self.alert_handlers:
             try:
                 handler(failure)
@@ -364,7 +349,7 @@ class FailureManager:
     
     def resolve_failure(self, event_id: str,
                         resolution: str) -> Optional[FailureEvent]:
-        """解决故障"""
+障"""
         failure = next((f for f in self.failures if f.event_id == event_id), None)
         
         if not failure:
@@ -376,17 +361,14 @@ class FailureManager:
         return failure
     
     def get_active_failures(self) -> List[FailureEvent]:
-        """获取活跃故障"""
+障"""
         return [f for f in self.failures if not f.resolved_at]
 ```
 
----
 
-## 四、接口设计
 
 ### 4.1 RESTful API
 
-#### 4.1.1 注册数据源
 
 ```http
 POST /api/v1/sources
@@ -406,7 +388,6 @@ POST /api/v1/sources
 }
 ```
 
-#### 4.1.2 获取数据源健康状态
 
 ```http
 GET /api/v1/sources/{source_id}/health
@@ -423,67 +404,87 @@ GET /api/v1/sources/{source_id}/health
 }
 ```
 
----
 
-## 五、部署架构
-
-```yaml
-version: '3.8'
-services:
-  airflow:
-    image: apache/airflow:2.7.0
-    ports:
-      - "8080:8080"
-    environment:
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql://user:pass@postgres:5432/airflow
-  
-  vault:
-    image: hashicorp/vault:latest
-    ports:
-      - "8200:8200"
-    environment:
-      - VAULT_DEV_ROOT_TOKEN_ID=root
-  
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=airflow
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=pass
-```
-
----
-
-## 六、监控指标
+## 
 
 | 指标名称 | 指标类型 | 说明 |
 |---------|---------|------|
 | `source_total_sources` | Gauge | 数据源总数 |
-| `source_healthy_sources` | Gauge | 健康数据源数量 |
-| `source_latency_milliseconds` | Histogram | 数据源延迟 |
-| `source_failures_total` | Counter | 故障总数 |
+| `source_failures_total` | Counter | 
+障总数 |
 
----
 
-## 七、实施计划
+
 
 | 阶段 | 任务 | 预计时间 |
 |------|------|---------|
-| **阶段1** | 搭建Airflow和Vault | 2天 |
-| **阶段2** | 开发数据源注册器 | 3天 |
-| **阶段3** | 开发数据源监控器 | 3天 |
-| **阶段4** | 开发故障管理器 | 2天 |
-| **阶段5** | 测试和优化 | 2天 |
 
----
 
-## 八、相关文档
 
-- [数据血缘追踪蓝图](./DATA_LINEAGE_TRACKING_BLUEPRINT.md)
+## 
+
 - [数据治理平台蓝图](./DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md)
 - [高性能数据管道蓝图](./HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md)
 
----
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-06 | **维护者**: 首席蓝图架构师
+
+
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Data Source Management
+- **模块ID**: DATA_SOURCE_MANAGEMENT_001
+- **蓝图文档**: DATA_SOURCE_MANAGEMENT_BLUEPRINT.md
+- **职责**: Layer 0数据源层 | 业务架构: 三级时间框架融合架构
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Data Source Management** | Layer 0数据源层 | 业务架构: 三级时间框架融合架构 | **核心模块** |
+
+### 1.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+
+
+
+
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **Apache Airflow** | 2.7+ | 任务调度 | [官方文档](https://airflow.apache.org/) |
+
+
+```mermaid
+graph LR
+    B["DATA SOURCE MAN"]
+    B --> D0["DATA CATALOG BL"]
+    B --> D1["DATA QUALITY MO"]
+    B --> D2["HIGH PERFORMANC"]
+    B --> D3["ALTERNATIVE DAT"]
+    
+    style B fill:#ff6b6b
+    style D0 fill:#45b7d1
+```
+
+## 变更历史
+
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+
+

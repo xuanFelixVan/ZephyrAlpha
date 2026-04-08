@@ -1,5 +1,18 @@
 ---
-module_id: PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
+module_id: LAYER_018
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 2 (Alpha因子层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: PERFORMANCE_ATTRIBUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -18,6 +31,47 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.7: 业绩归因系统蓝图
+> **核心职责**: 业绩归因系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：业绩归因系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Performance Attribution蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Performance Attribution蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**业绩归因系统蓝图，负责绩效分析和归因报告**。
+
+### 职责边界
+
+**负责**：
+- ✅ 收益归因分析（Brinson归因）
+- ✅ 风险归因分析（风险来源分析）
+- ✅ 归因报告生成（归因分析报告）
+- ✅ 绩效评估（夏普/卡玛/索提诺比率）
+
+**不负责**：
+- ❌ 资产配置决策（由战略资产配置模块负责）
+- ❌ 风险预算分配（由风险预算分配模块负责）
+- ❌ 具体交易执行（由Layer 6组合优化层负责）
+
+### 对接模块
+
+**上游模块**：
+- Layer 6 组合优化层
+- Layer 7 风险管理层
+
+**下游模块**：
+- Layer 8 报告层
+- Layer 10 质量保证层
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-05  
@@ -135,13 +189,13 @@ Layer 11.7业绩归因系统是清风量化系统的**业绩诊断引擎**，负
 Total_Excess_Return = 组合收益 - 基准收益
 
 配置效应 (Allocation Effect):
-AE = Σ (w_p - w_b) × (R_b - R_b_total)
+AE = Σ (w_p - w_b)  (R_b - R_b_total)
 
 选择效应 (Selection Effect):
-SE = Σ w_b × (R_p - R_b)
+SE = Σ w_b  (R_p - R_b)
 
 交互效应 (Interaction Effect):
-IE = Σ (w_p - w_b) × (R_p - R_b)
+IE = Σ (w_p - w_b)  (R_p - R_b)
 
 其中:
 - w_p: 组合权重
@@ -319,7 +373,7 @@ class BrinsonAttributionEngine:
 
 ```
 组合收益分解:
-R_p = Σ β_i × F_i + α
+R_p = Σ β_i  F_i + α
 
 其中:
 - β_i: 因子i的暴露
@@ -327,7 +381,7 @@ R_p = Σ β_i × F_i + α
 - α: 特质收益
 
 因子贡献度:
-Contribution_i = β_i × F_i
+Contribution_i = β_i  F_i
 
 因子贡献比例:
 Contribution_Ratio_i = Contribution_i / R_p
@@ -342,7 +396,7 @@ class FactorAttributionResult:
     factor_contributions: Dict[str, float]  # 因子贡献
     idiosyncratic_return: float             # 特质收益
     total_return: float                     # 总收益
-    r_squared: float                        # R²
+r_squared: float                        # R
     details: Dict                           # 详细信息
     timestamp: datetime
 
@@ -395,7 +449,7 @@ class FactorAttributionEngine:
     def _calculate_r_squared(self, 
                             portfolio_return: float,
                             factor_contribution: float) -> float:
-        """计算R²"""
+        """计算R"""
         if abs(portfolio_return) < 1e-10:
             return 0.0
         
@@ -441,13 +495,13 @@ class FactorAttributionEngine:
 
 ```
 组合风险分解:
-σ_p² = Σ Σ w_i × w_j × σ_ij
+σ_p = Σ Σ w_i  w_j  σ_ij
 
 风险贡献度:
-RC_i = w_i × Σ w_j × σ_ij / σ_p
+RC_i = w_i  Σ w_j  σ_ij / σ_p
 
 边际风险:
-MR_i = ∂σ_p / ∂w_i = Σ w_j × σ_ij / σ_p
+MR_i = ∂σ_p / ∂w_i = Σ w_j  σ_ij / σ_p
 
 风险调整收益:
 RAR = R_p / σ_p
@@ -568,7 +622,7 @@ class RiskAttributionEngine:
 Cumulative_Excess = Π (1 + R_p,t) - Π (1 + R_b,t)
 
 时间加权归因:
-TWAE_t = (AE_t × (1 + R_b,t)) / (1 + R_p,t)
+TWAE_t = (AE_t  (1 + R_b,t)) / (1 + R_p,t)
 
 其中:
 - R_p,t: t期组合收益
@@ -939,9 +993,9 @@ class StyleAttributionEngine:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./RISK_BUDGET_SYSTEM_BLUEPRINT.md) | 风险预算系统 |
+| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算系统 |
 
 ---
 
@@ -955,3 +1009,34 @@ class StyleAttributionEngine:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建流动性管理系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Performance Attribution Blueprint
+- **模块ID**: PERFORMANCE_ATTRIBUTION_BLUEPRINT_001
+- **蓝图文档**: PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.7 - 业绩归因系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Performance Attribution Blueprint** | Layer 11.7 - 业绩归因系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

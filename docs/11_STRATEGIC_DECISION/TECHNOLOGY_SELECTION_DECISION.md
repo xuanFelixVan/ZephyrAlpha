@@ -1,9 +1,9 @@
 ---
 module_id: TECH_SELECTION_DECISION_001
-version: 1.0.0
+version: 1.1.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 11 (战略决策层)
 standard_type: 技术选型决策文档
@@ -12,12 +12,56 @@ compliance_level: 专业标准
 parent_document: OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
 implementation_status: 决策阶段
 related_documents:
-  - ARCHITECTURE.md
-  - BLUEPRINT.md
-  - OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+- ARCHITECTURE.md
+- BLUEPRINT.md
+- OPEN_SOURCE_INTEGRATION_BLUEPRINT.md
+responsibility:
+- 11 STRATEGIC DECISION模块文档管理与维护
+---
 ---
 
 # Layer 11技术选型决策文档
+> **核心职责**: 技术选型决策
+> **职责边界**: 
+> - ✅ 本文档负责：技术选型决策相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**技术选型决策文档，负责技术方案的选择和决策记录**。
+
+### 职责边界
+
+**负责**：
+- ✅ 技术方案评估（多方案对比）
+- ✅ 技术选型决策（最终方案选择）
+- ✅ 决策记录（决策依据和过程）
+- ✅ 决策追踪（决策执行跟踪）
+
+**不负责**：
+- ❌ 具体技术实现（由各模块蓝图负责）
+- ❌ 集成方案设计（由OPEN_SOURCE_INTEGRATION_BLUEPRINT.md负责）
+- ❌ 实施路径规划（由BLUEPRINT.md负责）
+
+### 对接模块
+
+**上游模块**：
+- 需求分析
+- 技术调研
+
+**下游模块**：
+- 开源集成蓝图
+- 各模块蓝图
+
+---
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06

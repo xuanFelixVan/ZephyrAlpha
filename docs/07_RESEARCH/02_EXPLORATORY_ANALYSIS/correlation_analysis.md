@@ -3,23 +3,32 @@ module_id: RESEARCH_CORRELATION_ANALYSIS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 07 RESEARCH模块文档管理与维护
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
+---
 ---
 
-# 相关性分�?
 
-> 因子、资产、市场的相关性分析工�?
+# 相关性分?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> 因子、资产、市场的相关性分析工?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P1 - 核心模块
-> **Layer**: Layer 1 (分析�?
+> **优先?*: P1 - 核心模块
+> **Layer**: Layer 1 (分析?
 > **索引**: R.02.EDA.002
 
 ---
@@ -27,24 +36,24 @@ implementation_status: 进行�?
 ## 1. 概述
 
 相关性分析是量化研究的基础工具，用于：
-- 因子间的相关性分析（避免因子冗余�?
-- 资产间的相关性分析（组合构建�?
-- 时间序列的领先滞后关系（择时信号�?
+- 因子间的相关性分析（避免因子冗余?
+- 资产间的相关性分析（组合构建?
+- 时间序列的领先滞后关系（择时信号?
 
 ---
 
-## 2. 相关性类�?
+## 2. 相关性类别
 
 | 类型 | 说明 | 应用场景 |
 |------|------|----------|
-| 截面相关�?| 同一时间点不同资产的相关�?| 因子相关性、资产配�?|
-| 时序相关�?| 同一资产不同时间的相关�?| 趋势识别、自相关检�?|
-| 交叉相关�?| 两个时间序列的领先滞后关�?| 择时信号、因果分�?|
-| 滚动相关�?| 滚动窗口内的动态相关�?| 相关性稳定性分�?|
+| 截面相关?| 同一时间点不同资产的相关?| 因子相关性、资产配?|
+| 时序相关?| 同一资产不同时间的相关?| 趋势识别、自相关检查|
+| 交叉相关?| 两个时间序列的领先滞后关?| 择时信号、因果分?|
+| 滚动相关?| 滚动窗口内的动态相关?| 相关性稳定性分?|
 
 ---
 
-## 3. 截面相关�?
+## 3. 截面相关?
 
 ### 3.1 计算方法
 
@@ -53,7 +62,7 @@ import pandas as pd
 import numpy as np
 
 class CrossSectionalCorrelation:
-    """截面相关性分�?""
+    """截面相关性分?""
 
     def calculate(
         self,
@@ -61,23 +70,23 @@ class CrossSectionalCorrelation:
         method: str = 'spearman'
     ) -> pd.DataFrame:
         """
-        计算截面相关性矩�?
+        计算截面相关性矩?
 
         Parameters:
         -----------
         data : pd.DataFrame
-            �?日期，列=资产/因子代码
+            ?日期，列=资产/因子代码
         method : str
-            'spearman' �?'pearson'
+            'spearman' ?'pearson'
 
         Returns:
         --------
-        pd.DataFrame: 相关性矩�?
+        pd.DataFrame: 相关性矩?
         """
         return data.corr(method=method)
 ```
 
-### 3.2 因子相关性分�?
+### 3.2 因子相关性分?
 
 ```python
 class FactorCorrelationAnalyzer:
@@ -94,9 +103,9 @@ class FactorCorrelationAnalyzer:
         Parameters:
         -----------
         factor_data : dict
-            {因子�? 因子值DataFrame}
+            {因子? 因子值DataFrame}
         threshold : float
-            高相关阈�?
+            高相关阈?
 
         Returns:
         --------
@@ -105,7 +114,7 @@ class FactorCorrelationAnalyzer:
         # 构建因子矩阵
         factor_matrix = pd.DataFrame(factor_data)
 
-        # 计算相关性矩�?
+        # 计算相关性矩?
         corr_matrix = factor_matrix.corr(method='spearman')
 
         # 找出高相关对
@@ -128,13 +137,13 @@ class FactorCorrelationAnalyzer:
 
 ---
 
-## 4. 时间序列相关�?
+## 4. 时间序列相关?
 
 ### 4.1 交叉相关计算
 
 ```python
 class TimeSeriesCorrelation:
-    """时间序列相关性分�?""
+    """时间序列相关性分?""
 
     def cross_correlation(
         self,
@@ -143,16 +152,16 @@ class TimeSeriesCorrelation:
         max_lag: int = 20
     ) -> pd.Series:
         """
-        计算两个时间序列的交叉相关（领先滞后关系�?
+        计算两个时间序列的交叉相关（领先滞后关系?
 
         Parameters:
         -----------
         series1 : pd.Series
-            第一个时间序�?
+            第一个时间序?
         series2 : pd.Series
-            第二个时间序�?
+            第二个时间序?
         max_lag : int
-            最大滞后阶�?
+            最大滞后阶?
 
         Returns:
         --------
@@ -177,11 +186,11 @@ class TimeSeriesCorrelation:
         max_lag: int = 20
     ) -> dict:
         """
-        判断两个序列的领先滞后关�?
+        判断两个序列的领先滞后关?
 
         Returns:
         --------
-        dict: {'lead': series1领先多少�? 'lag': series1滞后多少期}
+        dict: {'lead': series1领先多少? 'lag': series1滞后多少期}
         """
         cross_corr = self.cross_correlation(series1, series2, max_lag)
         best_lag = cross_corr.abs().idxmax()
@@ -198,13 +207,13 @@ class TimeSeriesCorrelation:
 
 ---
 
-## 5. 滚动相关�?
+## 5. 滚动相关?
 
 ### 5.1 滚动相关计算
 
 ```python
 class RollingCorrelation:
-    """滚动相关性分�?""
+    """滚动相关性分?""
 
     def calculate_rolling_correlation(
         self,
@@ -213,7 +222,7 @@ class RollingCorrelation:
         window: int = 60
     ) -> pd.Series:
         """
-        计算滚动相关�?
+        计算滚动相关?
 
         Parameters:
         -----------
@@ -235,11 +244,11 @@ class RollingCorrelation:
         window: int = 60
     ) -> dict:
         """
-        分析相关性的稳定�?
+        分析相关性的稳定?
 
         Returns:
         --------
-        dict: {均�? 标准�? 最小�? 最大�? 稳定性评分}
+        dict: {均? 标准? 最小? 最大? 稳定性评分}
         """
         rolling_corr = self.calculate_rolling_correlation(series1, series2, window)
 
@@ -257,11 +266,11 @@ class RollingCorrelation:
 
 ## 6. 相关性矩阵可视化
 
-### 6.1 热力图数�?
+### 6.1 热力图数据
 
 ```python
 class CorrelationHeatmap:
-    """相关性热力图数据生成�?""
+    """相关性热力图数据生成?""
 
     def prepare_heatmap_data(
         self,
@@ -281,19 +290,19 @@ class CorrelationHeatmap:
             'matrix': corr_matrix.values.tolist(),
             'labels': labels if labels else corr_matrix.columns.tolist(),
             'colorscale': 'RdBu',  # 红蓝配色
-            'zmid': 0  # 中心�?
+            'zmid': 0  # 中心?
         }
 ```
 
 ---
 
-## 7. 因子正交�?
+## 7. 因子正交?
 
-### 7.1 Gram-Schmidt正交�?
+### 7.1 Gram-Schmidt正交?
 
 ```python
 class FactorOrthogonalization:
-    """因子正交化处�?""
+    """因子正交化处?""
 
     def gram_schmidt(
         self,
@@ -312,7 +321,7 @@ class FactorOrthogonalization:
 
         Returns:
         --------
-        pd.DataFrame: 正交化后的因子矩�?
+        pd.DataFrame: 正交化后的因子矩?
         """
         orthogonalized = factors.copy()
 
@@ -343,7 +352,7 @@ class FactorOrthogonalization:
 
         Returns:
         --------
-        pd.DataFrame: 正交化后的因子矩�?
+        pd.DataFrame: 正交化后的因子矩?
         """
         orthogonalized = pd.DataFrame(
             index=factors.index,
@@ -354,7 +363,7 @@ class FactorOrthogonalization:
             if i == 0:
                 orthogonalized[col] = factors[col]
             else:
-                # 对前面已正交化因子回归，取残�?
+                # 对前面已正交化因子回归，取残?
                 reference_cols = factors.columns[:i]
                 reference_data = orthogonalized[reference_cols]
 
@@ -381,7 +390,7 @@ class FactorOrthogonalization:
         # 最小二乘解
         coeffs, _, _, _ = lstsq(X_arr, y_arr, rcond=None)
 
-        # 预测�?
+        # 预测?
         y_pred = X_arr @ coeffs
 
         # 残差
@@ -395,27 +404,27 @@ class FactorOrthogonalization:
 ```yaml
 # config/correlation_analysis.yaml
 correlation_analysis:
-  # 截面相关性配�?
+  # 截面相关性配?
   cross_sectional:
     method: "spearman"          # spearman | pearson
-    high_threshold: 0.8         # 高相关阈�?
-    warning_threshold: 0.6      # 警告阈�?
+    high_threshold: 0.8         # 高相关阈?
+    warning_threshold: 0.6      # 警告阈?
 
-  # 滚动相关性配�?
+  # 滚动相关性配?
   rolling:
     window: 60                  # 滚动窗口
     min_periods: 30             # 最小样本数
-    stability_threshold: 0.3    # 稳定性阈�?
+    stability_threshold: 0.3    # 稳定性阈?
 
-  # 正交化配�?
+  # 正交化配?
   orthogonalization:
     method: "gram_schmidt"      # gram_schmidt | sequential
-    reference_factor: "MARKET_CAP"  # 参考因�?
+    reference_factor: "MARKET_CAP"  # 参考因?
 
   # 交叉相关配置
   cross_correlation:
-    max_lag: 20                 # 最大滞后阶�?
-    significance_level: 0.05    # 显著性水�?
+    max_lag: 20                 # 最大滞后阶?
+    significance_level: 0.05    # 显著性水?
 ```
 
 ---
@@ -426,8 +435,8 @@ correlation_analysis:
 07_RESEARCH/02_EXPLORATORY_ANALYSIS/
 ├── README.md
 ├── statistical_tools.md         # 统计分析工具
-├── correlation_analysis.md     # 本文�?�?
-└── pattern_mining.md          # 模式挖掘(待创�?
+├── correlation_analysis.md     # 本文??
+└── pattern_mining.md          # 模式挖掘(待创?
 ```
 
 ---
@@ -436,10 +445,10 @@ correlation_analysis:
 
 | 接口 | 说明 |
 |------|------|
-| **上游接口** | DataHub、因子计算引�?|
-| **下游接口** | 因子合成、组合优化、风险分�?|
+| **上游接口** | DataHub、因子计算引?|
+| **下游接口** | 因子合成、组合优化、风险分?|
 | **输入格式** | pd.DataFrame (date x asset/factor) |
-| **输出格式** | pd.DataFrame (相关性矩�? |
+| **输出格式** | pd.DataFrame (相关性矩? |
 
 ---
 

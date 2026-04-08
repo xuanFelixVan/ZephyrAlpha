@@ -1,39 +1,29 @@
 ---
-module_id: PERFORMANCE_ANALYSIS_001
+module_id: 10_AI_WORKFLOW_PERFORMANCE_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 系统性能分析与优
-compliance_level: 专业标准
-parent_document: INDEX.md
-implementation_status: 设计阶段
-reference_models:
-  - Performance Profiling Tools
-  - System Optimization Framework
-  - Bottleneck Analysis
-related_documents:
-  - LIVE_TRADING_MONITOR_BLUEPRINT.md
-  - QUALITY_MONITORING_BLUEPRINT.md
-  - PERFORMANCE_MONITORING.md
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 性能分析报告文档
 ---
 
-
-## 文档职责说明
-
+﻿---
+module_id: PERFORMANCE_ANALYSIS_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - PERFORMANCE ANALYSIS module blueprint design
 **本文档职责**: 性能分析模块蓝图
-- 性能指标采集、性能瓶颈识别、性能报告生成、优化建议生成、性能趋势分析
-
-# 性能分析模块蓝图
-
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **实施周期**: 1.5
 > **核心定位**: 系统性能分析与优
 > **技术栈**: Python + cProfile + Py-Spy
-
 ---
 
 ## 一、概
@@ -749,7 +739,7 @@ class PerformanceAnalyzer:
 
 | 文档 | 说明 |
 |------|------|
-| [实盘监控模块蓝图](./LIVE_TRADING_MONITOR_BLUEPRINT.md) | 实时监控机制 |
+| `实盘监控模块蓝图` | 实时监控机制 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 | [性能监控文档](../05_IMPLEMENTATION/07_OPERATIONS/PERFORMANCE_MONITORING.md) | 性能监控规格 |
 

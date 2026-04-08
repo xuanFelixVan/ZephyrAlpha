@@ -1,4 +1,17 @@
 ---
+module_id: MULTISTRATEGYCOORDINATIONBL_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 3 (策略层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 交易策略框架设计与实施指导与实施指导
+---
 module_id: MULTI_STRATEGY_COORDINATION_001
 version: 1.0.0
 status: Active
@@ -14,6 +27,47 @@ priority: P0
 ---
 
 # 多策略协调系统蓝图
+> **核心职责**: 多策略协调系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：多策略协调系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Multi Strategy Coordination蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Multi Strategy Coordination蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**多策略协调系统蓝图，负责策略信号冲突解决和资金协调**。
+
+### 职责边界
+
+**负责**：
+- ✅ 策略信号冲突解决（信号优先级判断）
+- ✅ 策略资金协调（跨策略资金分配）
+- ✅ 策略风险协调（跨策略风险控制）
+- ✅ 协调报告生成（协调决策报告）
+
+**不负责**：
+- ❌ 资产配置决策（由战略资产配置模块负责）
+- ❌ 风险预算分配（由风险预算分配模块负责）
+- ❌ 具体交易执行（由Layer 6组合优化层负责）
+
+### 对接模块
+
+**上游模块**：
+- Layer 5 策略层
+- Layer 10 质量保证层
+
+**下游模块**：
+- Layer 6 组合优化层
+- Layer 7 风险管理层
+
+---
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **优先级**: 🔴 P0 - 必须实施
@@ -1007,10 +1061,41 @@ class MultiStrategyCoordinator:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [CAPITAL_ALLOCATION_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 资本配置系统 |
 | [INVESTMENT_CONSTRAINT_BLUEPRINT.md](./INVESTMENT_CONSTRAINT_BLUEPRINT.md) | 投资限制管理系统 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Multi Strategy Coordination
+- **模块ID**: MULTI_STRATEGY_COORDINATION_001
+- **蓝图文档**: MULTI_STRATEGY_COORDINATION_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.18 - 多策略协调系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Multi Strategy Coordination** | Layer 11.18 - 多策略协调系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

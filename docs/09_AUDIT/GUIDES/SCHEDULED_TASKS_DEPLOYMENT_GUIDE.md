@@ -1,110 +1,120 @@
 ---
-standard_type: 实施指南
-applicable_scope: 全系�?
-compliance_level: 正式标准
+standard_type: ﮒ؟ﮔﺛﮔﮒ
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md
-implementation_status: 已完�?
-owner: 文档管理�?
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?
+owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
+responsibility:
+- 操作指南编写与使用说明与系统维护管理
 version: 1.0.0
 module_id: SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
+status: Active
 ---
-# 定期审计任务部署指南
-
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
-
 ---
 
-## 1. 部署概述
+# ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠ۷ﻝﺛﺎﮔﮒ
+> **核心职责**: 使用指南和教程
+> **职责边界**: 
+> - ✅ 本文档负责：使用指南和教程相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 部署目标
 
-在Windows系统上部署ZephyrAlpha文档治理定期审计任务，实现自动化文档质量监控�?
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 
-### 1.2 部署内容
+---
 
-| 任务名称 | 频率 | 执行时间 | 审计内容 |
+## 1. ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
+
+### 1.1 ﻠ۷ﻝﺛﺎﻝ؟ﮔ
+
+ﮒ۷Windowsﻝﺏﭨﻝﭨﻛﺕﻠ۷ﻝﺛﺎZephyrAlphaﮔﮔ۰۲ﮔﺎﭨﻝﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﺅﺙﮒ؟ﻝﺍﻟ۹ﮒ۷ﮒﮔﮔ۰۲ﻟﺑ۷ﻠﻝﮔ۶ﻙ?
+
+### 1.2 ﻠ۷ﻝﺛﺎﮒﮒ؟ﺗ
+
+| ﻛﭨﭨﮒ۰ﮒﻝ۶ﺍ | ﻠ۱ﻝ | ﮔ۶ﻟ۰ﮔﭘﻠﺑ | ﮒ؟۰ﻟ؟۰ﮒﮒ؟ﺗ |
 |---------|------|----------|----------|
-| **快速审�?* | 每周一 | 凌晨2:00 | 链接有效性、元数据完整�?|
-| **标准审计** | 每月1�?| 凌晨3:00 | 文档分类、命名规范、索引完整�?|
-| **深度审计** | 每季度首�?| 凌晨3:00 | 三层审计（L1-L3）、五大原则符合�?|
+| **ﮒﺟ،ﻠﮒ؟۰ﻟ؟?* | ﮔﺁﮒ۷ﻛﺕ | ﮒﮔ۷2:00 | ﻠﺝﮔ۴ﮔﮔﮔ۶ﻙﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ?|
+| **ﮔﮒﮒ؟۰ﻟ؟۰** | ﮔﺁﮔ1ﮔ?| ﮒﮔ۷3:00 | ﮔﮔ۰۲ﮒﻝﺎﭨﻙﮒﺛﮒﻟ۶ﻟﻙﻝﺑ۱ﮒﺙﮒ؟ﮔﺑﮔ?|
+| **ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰** | ﮔﺁﮒ۲ﮒﭦ۵ﻠ۵ﮔ?| ﮒﮔ۷3:00 | ﻛﺕﮒﺎﮒ؟۰ﻟ؟۰ﺅﺙL1-L3ﺅﺙﻙﻛﭦﮒ۳۶ﮒﮒﻝ؛۵ﮒﮔ?|
 
-### 1.3 部署前置条件
+### 1.3 ﻠ۷ﻝﺛﺎﮒﻝﺛ؟ﮔ۰ﻛﭨﭘ
 
-- [x] Windows 10/Windows Server 2016或更高版�?
-- [x] Python 3.8或更高版�?
-- [x] 管理员权�?
-- [x] 项目已克隆到本地
+- [x] Windows 10/Windows Server 2016ﮔﮔﺑﻠ،ﻝﮔ?
+- [x] Python 3.8ﮔﮔﺑﻠ،ﻝﮔ?
+- [x] ﻝ؟۰ﻝﮒﮔﻠ?
+- [x] ﻠ۰ﺗﻝ؟ﮒﺓﺎﮒﻠﮒﺍﮔ؛ﮒﺍ
 
 ---
 
-## 2. 部署步骤
+## 2. ﻠ۷ﻝﺛﺎﮔ۴ﻠ۹۳
 
-### 2.1 步骤1: 准备环境
+### 2.1 ﮔ۴ﻠ۹۳1: ﮒﮒ۳ﻝﺁﮒ۱
 
-**检查Python环境**:
+**ﮔ۲ﮔ۴Pythonﻝﺁﮒ۱**:
 ```powershell
-# 检查Python版本
+# ﮔ۲ﮔ۴Pythonﻝﮔ؛
 python --version
 
-# 应该显示: Python 3.8.x 或更高版�?
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: Python 3.8.x ﮔﮔﺑﻠ،ﻝﮔ?
 ```
 
-**检查项目目�?*:
+**ﮔ۲ﮔ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ?*:
 ```powershell
-# 进入项目目录
+# ﻟﺟﮒ۴ﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ
 cd D:\ZephyrAlpha
 
-# 检查脚本是否存�?
+# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒﮒ?
 ls scripts\scheduled_*.py
 ```
 
-### 2.2 步骤2: 测试审计脚本
+### 2.2 ﮔ۴ﻠ۹۳2: ﮔﭖﻟﺁﮒ؟۰ﻟ؟۰ﻟﮔ؛
 
-**运行部署脚本测试**:
+**ﻟﺟﻟ۰ﻠ۷ﻝﺛﺎﻟﮔ؛ﮔﭖﻟﺁ**:
 ```powershell
-# 以管理员身份运行PowerShell
-# 测试脚本和任�?
+# ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰PowerShell
+# ﮔﭖﻟﺁﻟﮔ؛ﮒﻛﭨﭨﮒ?
 .\scripts\deploy_scheduled_tasks.ps1 -Action Test -ProjectRoot "D:\ZephyrAlpha"
 ```
 
-**手动测试脚本**:
+**ﮔﮒ۷ﮔﭖﻟﺁﻟﮔ؛**:
 ```powershell
-# 测试快速审计脚�?
+# ﮔﭖﻟﺁﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﻟﮔ?
 python scripts\scheduled_quick_audit.py
 
-# 测试标准审计脚本
+# ﮔﭖﻟﺁﮔﮒﮒ؟۰ﻟ؟۰ﻟﮔ؛
 python scripts\scheduled_standard_audit.py
 
-# 测试深度审计脚本
+# ﮔﭖﻟﺁﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﻟﮔ؛
 python scripts\scheduled_deep_audit.py
 ```
 
-### 2.3 步骤3: 安装定期任务
+### 2.3 ﮔ۴ﻠ۹۳3: ﮒ؟ﻟ۲ﮒ؟ﮔﻛﭨﭨﮒ۰
 
-**安装任务**:
+**ﮒ؟ﻟ۲ﻛﭨﭨﮒ۰**:
 ```powershell
-# 以管理员身份运行PowerShell
+# ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰PowerShell
 .\scripts\deploy_scheduled_tasks.ps1 -Action Install -ProjectRoot "D:\ZephyrAlpha"
 ```
 
-**验证安装**:
+**ﻠ۹ﻟﺁﮒ؟ﻟ۲**:
 ```powershell
-# 查看已安装的任务
+# ﮔ۴ﻝﮒﺓﺎﮒ؟ﻟ۲ﻝﻛﭨﭨﮒ۰
 Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"}
 
-# 查看任务详情
+# ﮔ۴ﻝﻛﭨﭨﮒ۰ﻟﺁ۵ﮔ
 Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | Format-List *
 ```
 
-### 2.4 步骤4: 配置审计通知（可选）
+### 2.4 ﮔ۴ﻠ۹۳4: ﻠﻝﺛ؟ﮒ؟۰ﻟ؟۰ﻠﻝ۴ﺅﺙﮒﺁﻠﺅﺙ
 
-**编辑通知配置**:
+**ﻝﺙﻟﺝﻠﻝ۴ﻠﻝﺛ؟**:
 ```yaml
-# 文件: config/audit_notification.yaml
+# ﮔﻛﭨﭘ: config/audit_notification.yaml
 
 email:
   enabled: true
@@ -116,125 +126,125 @@ email:
     - "doc-admin@example.com"
 ```
 
-**测试邮件通知**:
+**ﮔﭖﻟﺁﻠ؟ﻛﭨﭘﻠﻝ۴**:
 ```powershell
-# 发送测试邮�?
+# ﮒﻠﮔﭖﻟﺁﻠ؟ﻛﭨ?
 python scripts\test_notification.py
 ```
 
 ---
 
-## 3. 任务管理
+## 3. ﻛﭨﭨﮒ۰ﻝ؟۰ﻝ
 
-### 3.1 查看任务状�?
+### 3.1 ﮔ۴ﻝﻛﭨﭨﮒ۰ﻝﭘﮔ?
 
-**使用PowerShell查看**:
+**ﻛﺛﺟﻝ۷PowerShellﮔ۴ﻝ**:
 ```powershell
-# 查看所有ZephyrAlpha任务
+# ﮔ۴ﻝﮔﮔZephyrAlphaﻛﭨﭨﮒ۰
 Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"} | 
     Select-Object TaskName, State, NextRunTime, LastRunTime | 
     Format-Table -AutoSize
 
-# 查看特定任务
+# ﮔ۴ﻝﻝﺗﮒ؟ﻛﭨﭨﮒ۰
 Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | Format-List *
 ```
 
-**使用任务计划程序查看**:
-1. 打开"任务计划程序"（Task Scheduler�?
-2. 在任务计划程序库中找�?ZephyrAlpha"相关任务
-3. 查看"触发�?�?操作"�?历史记录"等选项�?
+**ﻛﺛﺟﻝ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮔ۴ﻝ**:
+1. ﮔﮒﺙ"ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦ"ﺅﺙTask Schedulerﺅﺙ?
+2. ﮒ۷ﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮒﭦﻛﺕﮔﺝﮒ?ZephyrAlpha"ﻝﺕﮒﺏﻛﭨﭨﮒ۰
+3. ﮔ۴ﻝ"ﻟ۶۵ﮒﮒ?ﻙ?ﮔﻛﺛ"ﻙ?ﮒﮒﺎﻟ؟ﺍﮒﺛ"ﻝﻠﻠ۰ﺗﮒ?
 
-### 3.2 手动运行任务
+### 3.2 ﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
 
-**使用PowerShell运行**:
+**ﻛﺛﺟﻝ۷PowerShellﻟﺟﻟ۰**:
 ```powershell
-# 手动运行快速审�?
+# ﮔﮒ۷ﻟﺟﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
 Start-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 
-# 手动运行标准审计
+# ﮔﮒ۷ﻟﺟﻟ۰ﮔﮒﮒ؟۰ﻟ؟۰
 Start-ScheduledTask -TaskName "ZephyrAlpha_Monthly_Audit"
 
-# 手动运行深度审计
+# ﮔﮒ۷ﻟﺟﻟ۰ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
 Start-ScheduledTask -TaskName "ZephyrAlpha_Quarterly_Audit"
 ```
 
-**手动运行脚本**:
+**ﮔﮒ۷ﻟﺟﻟ۰ﻟﮔ؛**:
 ```powershell
-# 运行快速审�?
+# ﻟﺟﻟ۰ﮒﺟ،ﻠﮒ؟۰ﻟ؟?
 python scripts\scheduled_quick_audit.py
 
-# 运行标准审计
+# ﻟﺟﻟ۰ﮔﮒﮒ؟۰ﻟ؟۰
 python scripts\scheduled_standard_audit.py
 
-# 运行深度审计
+# ﻟﺟﻟ۰ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰
 python scripts\scheduled_deep_audit.py
 ```
 
-### 3.3 禁用/启用任务
+### 3.3 ﻝ۵ﻝ۷/ﮒﺁﻝ۷ﻛﭨﭨﮒ۰
 
-**禁用任务**:
+**ﻝ۵ﻝ۷ﻛﭨﭨﮒ۰**:
 ```powershell
 Disable-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 ```
 
-**启用任务**:
+**ﮒﺁﻝ۷ﻛﭨﭨﮒ۰**:
 ```powershell
 Enable-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 ```
 
-### 3.4 卸载任务
+### 3.4 ﮒﺕﻟﺛﺛﻛﭨﭨﮒ۰
 
-**卸载所有任�?*:
+**ﮒﺕﻟﺛﺛﮔﮔﻛﭨﭨﮒ?*:
 ```powershell
-# 以管理员身份运行
+# ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰
 .\scripts\deploy_scheduled_tasks.ps1 -Action Uninstall -ProjectRoot "D:\ZephyrAlpha"
 ```
 
-**手动卸载单个任务**:
+**ﮔﮒ۷ﮒﺕﻟﺛﺛﮒﻛﺕ۹ﻛﭨﭨﮒ۰**:
 ```powershell
 Unregister-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" -Confirm:$false
 ```
 
 ---
 
-## 4. 审计报告查看
+## 4. ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔ۴ﻝ
 
-### 4.1 报告位置
+### 4.1 ﮔ۴ﮒﻛﺛﻝﺛ؟
 
-审计报告自动保存到以下位置：
+ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻟ۹ﮒ۷ﻛﺟﮒﮒﺍﻛﭨ۴ﻛﺕﻛﺛﻝﺛ؟ﺅﺙ
 
 ```
 D:\ZephyrAlpha\
-├── docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
-�?  ├── weekly_20260402.json          # 快速审计报�?
-�?  ├── monthly_20260402.json         # 标准审计报告
-�?  ├── monthly_summary_20260402.md   # 标准审计摘要
-�?  └── quarterly_20260402.json       # 深度审计报告
-�?
-└── docs\09_AUDIT\REPORTS\
-    └── QUARTERLY_AUDIT_REPORT_20260402.md  # 季度审计报告
+ﻗﻗﻗ docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
+ﻗ?  ﻗﻗﻗ weekly_20260402.json          # ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
+ﻗ?  ﻗﻗﻗ monthly_20260402.json         # ﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+ﻗ?  ﻗﻗﻗ monthly_summary_20260402.md   # ﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
+ﻗ?  ﻗﻗﻗ quarterly_20260402.json       # ﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+ﻗ?
+ﻗﻗﻗ docs\09_AUDIT\REPORTS\
+ﻗﻗﻗ QUARTERLY_AUDIT_REPORT_20260402.md  # ﮒ۲ﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
 ```
 
-### 4.2 查看最新报�?
+### 4.2 ﮔ۴ﻝﮔﮔﺍﮔ۴ﮒ?
 
-**使用PowerShell查看**:
+**ﻛﺛﺟﻝ۷PowerShellﮔ۴ﻝ**:
 ```powershell
-# 查看最新的快速审计报�?
+# ﮔ۴ﻝﮔﮔﺍﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
 Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_*.json | 
     Sort-Object LastWriteTime -Descending | 
     Select-Object -First 1 | 
     Get-Content | ConvertFrom-Json | ConvertTo-Json -Depth 10
 
-# 查看最新的标准审计摘要
+# ﮔ۴ﻝﮔﮔﺍﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵
 Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*.md | 
     Sort-Object LastWriteTime -Descending | 
     Select-Object -First 1 | 
     Get-Content
 ```
 
-### 4.3 报告内容说明
+### 4.3 ﮔ۴ﮒﮒﮒ؟ﺗﻟﺁﺑﮔ
 
-**快速审计报�?*:
+**ﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?*:
 ```json
 {
   "summary": {
@@ -253,190 +263,190 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*
 }
 ```
 
-**标准审计摘要**:
+**ﮔﮒﮒ؟۰ﻟ؟۰ﮔﻟ۵**:
 ```markdown
-# 月度文档审计摘要报告
+# ﮔﮒﭦ۵ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮔﻟ۵ﮔ۴ﮒ
 
-**审计时间**: 2026-04-02T03:00:00
+**ﮒ؟۰ﻟ؟۰ﮔﭘﻠﺑ**: 2026-04-02T03:00:00
 
-## 审计概要
+## ﮒ؟۰ﻟ؟۰ﮔ۵ﻟ۵
 
-- 扫描文件�? 456
-- 问题总数: 10
+- ﮔ،ﮔﮔﻛﭨﭘﮔ? 456
+- ﻠ؟ﻠ۱ﮔﭨﮔﺍ: 10
 
-## 问题分布
+## ﻠ؟ﻠ۱ﮒﮒﺕ
 
-- warning: 5�?
-- info: 5�?
+- warning: 5ﻛﺕ?
+- info: 5ﻛﺕ?
 
-## 问题类型
+## ﻠ؟ﻠ۱ﻝﺎﭨﮒ
 
-- broken_link: 3�?
-- missing_metadata: 4�?
-- non_standard_category: 3�?
+- broken_link: 3ﻛﺕ?
+- missing_metadata: 4ﻛﺕ?
+- non_standard_category: 3ﻛﺕ?
 ```
 
 ---
 
-## 5. 故障排查
+## 5. ﮔﻠﮔﮔ۴
 
-### 5.1 任务未执�?
+### 5.1 ﻛﭨﭨﮒ۰ﮔ۹ﮔ۶ﻟ۰?
 
-**检查任务状�?*:
+**ﮔ۲ﮔ۴ﻛﭨﭨﮒ۰ﻝﭘﮔ?*:
 ```powershell
 Get-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" | 
     Select-Object TaskName, State, LastRunTime, LastTaskResult
 ```
 
-**可能原因及解决方�?*:
+**ﮒﺁﻟﺛﮒﮒﮒﻟ۶۲ﮒﺏﮔﺗﮔﺏ?*:
 
-| 问题 | 原因 | 解决方法 |
+| ﻠ؟ﻠ۱ | ﮒﮒ | ﻟ۶۲ﮒﺏﮔﺗﮔﺏ |
 |------|------|---------|
-| 任务状态为"已禁�? | 任务被禁�?| 启用任务 |
-| LastTaskResult不为0 | 脚本执行失败 | 查看日志文件 |
-| LastRunTime为空 | 任务从未运行 | 手动运行测试 |
-| 计算机休�?| 电源设置问题 | 调整电源设置 |
+| ﻛﭨﭨﮒ۰ﻝﭘﮔﻛﺕﭦ"ﮒﺓﺎﻝ۵ﻝ? | ﻛﭨﭨﮒ۰ﻟ۱،ﻝ۵ﻝ?| ﮒﺁﻝ۷ﻛﭨﭨﮒ۰ |
+| LastTaskResultﻛﺕﻛﺕﭦ0 | ﻟﮔ؛ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﮔ۴ﻝﮔ۴ﮒﺟﮔﻛﭨﭘ |
+| LastRunTimeﻛﺕﭦﻝ۸ﭦ | ﻛﭨﭨﮒ۰ﻛﭨﮔ۹ﻟﺟﻟ۰ | ﮔﮒ۷ﻟﺟﻟ۰ﮔﭖﻟﺁ |
+| ﻟ؟۰ﻝ؟ﮔﭦﻛﺙﻝ?| ﻝﭖﮔﭦﻟ؟ﺝﻝﺛ؟ﻠ؟ﻠ۱ | ﻟﺍﮔﺑﻝﭖﮔﭦﻟ؟ﺝﻝﺛ؟ |
 
-**查看日志**:
+**ﮔ۴ﻝﮔ۴ﮒﺟ**:
 ```powershell
-# 查看审计日志
+# ﮔ۴ﻝﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
 Get-Content logs\quick_audit.log -Tail 50
 
-# 查看Windows任务计划程序日志
+# ﮔ۴ﻝWindowsﻛﭨﭨﮒ۰ﻟ؟۰ﮒﻝ۷ﮒﭦﮔ۴ﮒﺟ
 Get-WinEvent -LogName "Microsoft-Windows-TaskScheduler/Operational" | 
     Where-Object {$_.Message -like "*ZephyrAlpha*"} | 
     Select-Object -First 10
 ```
 
-### 5.2 脚本执行失败
+### 5.2 ﻟﮔ؛ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴
 
-**检查Python环境**:
+**ﮔ۲ﮔ۴Pythonﻝﺁﮒ۱**:
 ```powershell
-# 检查Python版本
+# ﮔ۲ﮔ۴Pythonﻝﮔ؛
 python --version
 
-# 检查依赖包
+# ﮔ۲ﮔ۴ﻛﺝﻟﭖﮒ
 pip list | Select-String "pathlib|json|logging"
 ```
 
-**检查脚本路�?*:
+**ﮔ۲ﮔ۴ﻟﮔ؛ﻟﺓﺁﮒﺝ?*:
 ```powershell
-# 检查脚本是否存�?
+# ﮔ۲ﮔ۴ﻟﮔ؛ﮔﺁﮒ۵ﮒﮒ?
 Test-Path scripts\scheduled_quick_audit.py
 
-# 检查工作目�?
+# ﮔ۲ﮔ۴ﮒﺓ۴ﻛﺛﻝ؟ﮒﺛ?
 Get-Location
 ```
 
-**手动运行测试**:
+**ﮔﮒ۷ﻟﺟﻟ۰ﮔﭖﻟﺁ**:
 ```powershell
-# 切换到项目目�?
+# ﮒﮔ۱ﮒﺍﻠ۰ﺗﻝ؟ﻝ؟ﮒﺛ?
 cd D:\ZephyrAlpha
 
-# 手动运行脚本
+# ﮔﮒ۷ﻟﺟﻟ۰ﻟﮔ؛
 python scripts\scheduled_quick_audit.py
 ```
 
-### 5.3 审计报告未生�?
+### 5.3 ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﮔ۹ﻝﮔ?
 
-**检查输出目�?*:
+**ﮔ۲ﮔ۴ﻟﺝﮒﭦﻝ؟ﮒﺛ?*:
 ```powershell
-# 检查目录是否存�?
+# ﮔ۲ﮔ۴ﻝ؟ﮒﺛﮔﺁﮒ۵ﮒﮒ?
 Test-Path docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state
 
-# 检查目录权�?
+# ﮔ۲ﮔ۴ﻝ؟ﮒﺛﮔﻠ?
 Get-Acl docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state | Format-List
 ```
 
-**检查磁盘空�?*:
+**ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?*:
 ```powershell
-# 检查磁盘空�?
+# ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?
 Get-PSDrive D | Select-Object Used, Free
 ```
 
 ---
 
-## 6. 维护建议
+## 6. ﻝﭨﺑﮔ۳ﮒﭨﭦﻟ؟؟
 
-### 6.1 定期检�?
+### 6.1 ﮒ؟ﮔﮔ۲ﮔ?
 
-**每周检�?*:
-- 查看快速审计报�?
-- 检查任务执行状�?
-- 处理发现的问�?
+**ﮔﺁﮒ۷ﮔ۲ﮔ?*:
+- ﮔ۴ﻝﮒﺟ،ﻠﮒ؟۰ﻟ؟۰ﮔ۴ﮒ?
+- ﮔ۲ﮔ۴ﻛﭨﭨﮒ۰ﮔ۶ﻟ۰ﻝﭘﮔ?
+- ﮒ۳ﻝﮒﻝﺍﻝﻠ؟ﻠ۱?
 
-**每月检�?*:
-- 查看标准审计报告
-- 检查磁盘空�?
-- 清理过期报告
+**ﮔﺁﮔﮔ۲ﮔ?*:
+- ﮔ۴ﻝﮔﮒﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- ﮔ۲ﮔ۴ﻝ۲ﻝﻝ۸ﭦﻠ?
+- ﮔﺕﻝﻟﺟﮔﮔ۴ﮒ
 
-**每季度检�?*:
-- 查看深度审计报告
-- 评估审计效果
-- 优化审计规则
+**ﮔﺁﮒ۲ﮒﭦ۵ﮔ۲ﮔ?*:
+- ﮔ۴ﻝﮔﺓﺎﮒﭦ۵ﮒ؟۰ﻟ؟۰ﮔ۴ﮒ
+- ﻟﺁﻛﺙﺍﮒ؟۰ﻟ؟۰ﮔﮔ
+- ﻛﺙﮒﮒ؟۰ﻟ؟۰ﻟ۶ﮒ
 
-### 6.2 报告归档
+### 6.2 ﮔ۴ﮒﮒﺛﮔ۰۲
 
-**手动归档**:
+**ﮔﮒ۷ﮒﺛﮔ۰۲**:
 ```powershell
-# 创建归档目录
+# ﮒﮒﭨﭦﮒﺛﮔ۰۲ﻝ؟ﮒﺛ
 New-Item -ItemType Directory -Path "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\archive\2026\Q1" -Force
 
-# 移动旧报�?
+# ﻝ۶ﭨﮒ۷ﮔ۶ﮔ۴ﮒ?
 Move-Item docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\weekly_202601*.json `
     -Destination "docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\archive\2026\Q1\"
 ```
 
-**自动归档**:
+**ﻟ۹ﮒ۷ﮒﺛﮔ۰۲**:
 ```powershell
-# 运行清理脚本
+# ﻟﺟﻟ۰ﮔﺕﻝﻟﮔ؛
 python scripts\cleanup_audit_reports.py
 ```
 
-### 6.3 性能优化
+### 6.3 ﮔ۶ﻟﺛﻛﺙﮒ
 
-**优化审计速度**:
-- 减少扫描文件数量（排除不必要的目录）
-- 调整审计规则（只检查关键问题）
-- 使用并行处理（如果支持）
+**ﻛﺙﮒﮒ؟۰ﻟ؟۰ﻠﮒﭦ۵**:
+- ﮒﮒﺍﮔ،ﮔﮔﻛﭨﭘﮔﺍﻠﺅﺙﮔﻠ۳ﻛﺕﮒﺟﻟ۵ﻝﻝ؟ﮒﺛﺅﺙ
+- ﻟﺍﮔﺑﮒ؟۰ﻟ؟۰ﻟ۶ﮒﺅﺙﮒ۹ﮔ۲ﮔ۴ﮒﺏﻠ؟ﻠ؟ﻠ۱ﺅﺙ
+- ﻛﺛﺟﻝ۷ﮒﺗﭘﻟ۰ﮒ۳ﻝﺅﺙﮒ۵ﮔﮔﺁﮔﺅﺙ
 
-**优化磁盘使用**:
-- 定期清理过期报告
-- 压缩归档报告
-- 监控磁盘空间
-
----
-
-## 7. 参考文�?
-
-- [定期审计任务配置](../CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
-- [文档治理流程标准](../STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-<!-- 链接目标不存在已注释: - [文档审计工具使用手册](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md) -->
-
+**ﻛﺙﮒﻝ۲ﻝﻛﺛﺟﻝ۷**:
+- ﮒ؟ﮔﮔﺕﻝﻟﺟﮔﮔ۴ﮒ
+- ﮒﻝﺙ۸ﮒﺛﮔ۰۲ﮔ۴ﮒ
+- ﻝﮔ۶ﻝ۲ﻝﻝ۸ﭦﻠﺑ
 
 ---
 
-## 8. 快速参�?
+## 7. ﮒﻟﮔﮔ۰?
 
-### 常用命令
+- ﮒ؟ﮔﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻠﻝﺛ؟
+- ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ
+<!-- ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ۷ﮒﺓﺎﮔﺏ۷ﻠ: - [ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/DOCUMENT_AUDITOR_SPECIFICATION.md) -->
+
+
+---
+
+## 8. ﮒﺟ،ﻠﮒﻟ?
+
+### ﮒﺕﺕﻝ۷ﮒﺛﻛﭨ۳
 
 ```powershell
-# 安装任务
+# ﮒ؟ﻟ۲ﻛﭨﭨﮒ۰
 .\scripts\deploy_scheduled_tasks.ps1 -Action Install
 
-# 测试任务
+# ﮔﭖﻟﺁﻛﭨﭨﮒ۰
 .\scripts\deploy_scheduled_tasks.ps1 -Action Test
 
-# 卸载任务
+# ﮒﺕﻟﺛﺛﻛﭨﭨﮒ۰
 .\scripts\deploy_scheduled_tasks.ps1 -Action Uninstall
 
-# 查看任务状�?
+# ﮔ۴ﻝﻛﭨﭨﮒ۰ﻝﭘﮔ?
 Get-ScheduledTask | Where-Object {$_.TaskName -like "ZephyrAlpha*"}
 
-# 手动运行任务
+# ﮔﮒ۷ﻟﺟﻟ۰ﻛﭨﭨﮒ۰
 Start-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit"
 
-# 查看最新报�?
+# ﮔ۴ﻝﮔﮔﺍﮔ۴ﮒ?
 Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json | 
     Sort-Object LastWriteTime -Descending | 
     Select-Object -First 1
@@ -444,5 +454,7 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02
+
+```

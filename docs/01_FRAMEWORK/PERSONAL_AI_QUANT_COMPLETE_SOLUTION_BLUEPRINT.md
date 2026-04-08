@@ -3,21 +3,33 @@ module_id: PERSONAL_AI_QUANT_SOLUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
+layer: Layer 2 (Alpha因子层)
 standard_type: 专业量化机构级方案
 applicable_scope: 全系统
 compliance_level: 顶级专业标准
-reference_models: ["个人开发+AI维护模式", "开源优先策略", "专业机构治理标准"]
+reference_models:
+- 个人开发+AI维护模式
+- 开源优先策略
+- 专业机构治理标准
 related_documents:
-  - ARCHITECTURE.md
-  - System_Manifest.md
-  - PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md
+- ARCHITECTURE.md
+- System_Manifest.md
+- PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md
 parent_document: INDEX.md
 implementation_status: 规划阶段
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
 ---
 
 # 清风量化系统完整解决方案蓝图
+> **核心职责**: Personal Ai Quant Complete Solution蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Personal Ai Quant Complete Solution蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -370,7 +382,7 @@ implementation_status: 规划阶段
 ```markdown
 | 文档名称 | 模块ID | 版本 | 状态 | 路径 | 职责摘要 |
 |---------|--------|------|------|------|---------|
-| [蓝图名称](./path/to/blueprint.md) | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
+| 蓝图名称 | MODULE_001 | 1.0 | Active | docs/path/ | 核心职责描述 |
 ```
 
 #### 原则3: 版本隔离 (Version Isolation)
@@ -807,11 +819,11 @@ main (主分支)
 
 | 成本项 | 月度成本 | 年度成本 | 说明 |
 |--------|---------|---------|------|
-| **AI服务** | ¥200-500 | ¥2400-6000 | GLM-4 API调用 |
-| **数据服务** | ¥0-500 | ¥0-6000 | AKShare免费，Tushare可选 |
-| **云服务** | ¥0-300 | ¥0-3600 | 可选，本地开发可省 |
-| **硬件** | 一次性 | ¥5000-10000 | 电脑升级（如需要） |
-| **总计** | ¥200-1300 | ¥7400-25600 | 根据选择浮动 |
+| **AI服务** | 200-500 | 2400-6000 | GLM-4 API调用 |
+| **数据服务** | 0-500 | 0-6000 | AKShare免费，Tushare可选 |
+| **云服务** | 0-300 | 0-3600 | 可选，本地开发可省 |
+| **硬件** | 一次性 | 5000-10000 | 电脑升级（如需要） |
+| **总计** | 200-1300 | 7400-25600 | 根据选择浮动 |
 
 ---
 

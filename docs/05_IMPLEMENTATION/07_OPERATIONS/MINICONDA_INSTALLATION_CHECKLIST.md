@@ -1,83 +1,103 @@
-# Miniconda安装关键步骤检查清�?
-## 📋 安装时必须确认的选项
+---
+module_id: MINICONDA_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 实施团队
+responsibility:
+- 系统实施与部署管理与优化维护
+standard_type: 专业量化机构文档
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+---
 
-### 1. 双击运行安装程序
 
-### 2. 安装向导步骤检�?
-**步骤1: 欢迎界面**
+# Minicondaﮒ؟ﻟ۲ﮒﺏﻠ؟ﮔ۴ﻠ۹۳ﮔ۲ﮔ۴ﮔﺕﮒ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+## ﻭ ﮒ؟ﻟ۲ﮔﭘﮒﺟﻠ۰ﭨﻝ۰؟ﻟ؟۳ﻝﻠﻠ۰ﺗ
+
+### 1. ﮒﮒﭨﻟﺟﻟ۰ﮒ؟ﻟ۲ﻝ۷ﮒﭦ
+
+### 2. ﮒ؟ﻟ۲ﮒﮒﺁﺙﮔ۴ﻠ۹۳ﮔ۲ﮔ?
+**ﮔ۴ﻠ۹۳1: ﮔ؛۱ﻟﺟﻝﻠ۱**
 ```
 [Next]
 ```
 
-**步骤2: 许可协议**
+**ﮔ۴ﻠ۹۳2: ﻟ؟ﺕﮒﺁﮒﻟ؟؟**
 ```
 [I Agree]
 ```
 
-**步骤3: 安装类型**
+**ﮔ۴ﻠ۹۳3: ﮒ؟ﻟ۲ﻝﺎﭨﮒ**
 ```
-�?Just Me (recommended)    �?选择这个
-�?All Users (requires admin privileges)
+ﻗ?Just Me (recommended)    ﻗ?ﻠﮔ۸ﻟﺟﻛﺕ۹
+ﻗ?All Users (requires admin privileges)
 [Next]
 ```
 
-**步骤4: 安装路径**
+**ﮔ۴ﻠ۹۳4: ﮒ؟ﻟ۲ﻟﺓﺁﮒﺝ**
 ```
-默认路径: C:\Users\fanzi\miniconda3
+ﻠﭨﻟ؟۳ﻟﺓﺁﮒﺝ: C:\Users\fanzi\miniconda3
 [Next]
 ```
 
-### ⭐⭐�?关键步骤：高级选项 ⭐⭐�?
-**步骤5: 高级选项（必须截图确认）**
+**ﮔ۴ﻠ۹۳5: ﻠ،ﻝﭦ۶ﻠﻠ۰ﺗﺅﺙﮒﺟﻠ۰ﭨﮔ۹ﮒﺝﻝ۰؟ﻟ؟۳ﺅﺙ**
 ```
-┌─────────────────────────────────────�?�?Advanced Options                    �?�?                                    �?�?☑️ [ ] Add Miniconda3 to my PATH   �?�?必须勾选！
-�?   environment variable             �?�?                                    �?�?☑️ [ ] Register Miniconda3 as my   �?�?建议勾�?�?   default Python                   �?�?                                    �?�?[Install]  [Cancel]                 �?└─────────────────────────────────────�?```
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?Advanced Options                    ﻗ?ﻗ?                                    ﻗ?ﻗ?ﻗﺅﺕ [ ] Add Miniconda3 to my PATH   ﻗ?ﻗ?ﮒﺟﻠ۰ﭨﮒﺝﻠﺅﺙ
+ﻗ?   environment variable             ﻗ?ﻗ?                                    ﻗ?ﻗ?ﻗﺅﺕ [ ] Register Miniconda3 as my   ﻗ?ﻗ?ﮒﭨﭦﻟ؟؟ﮒﺝﻠ?ﻗ?   default Python                   ﻗ?ﻗ?                                    ﻗ?ﻗ?[Install]  [Cancel]                 ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-**重要**：必须确�?**两个复选框都被勾�?*�?
-### 3. 完成安装
+**ﻠﻟ۵**ﺅﺙﮒﺟﻠ۰ﭨﻝ۰؟ﻛﺟ?**ﻛﺕ۳ﻛﺕ۹ﮒ۳ﻠﮔ۰ﻠﺛﻟ۱،ﮒﺝﻠ?*ﺅﺙ?
+### 3. ﮒ؟ﮔﮒ؟ﻟ۲
 ```
-等待安装完成 �?[Next] �?[Finish]
+ﻝﮒﺝﮒ؟ﻟ۲ﮒ؟ﮔ ﻗ?[Next] ﻗ?[Finish]
 ```
 
 ---
 
-## 🔧 安装后验�?
-### 验证1: 关闭所有终端窗�?```
-1. 关闭当前所有PowerShell/CMD窗口
-2. 关闭VS Code（如果打开了）
-3. 关闭Trae AI的终端（如果需要）
+## ﻭ۶ ﮒ؟ﻟ۲ﮒﻠ۹ﻟﺁ?
+### ﻠ۹ﻟﺁ1: ﮒﺏﻠﮔﮔﻝﭨﻝ،ﺁﻝ۹ﮒ?```
+1. ﮒﺏﻠﮒﺛﮒﮔﮔPowerShell/CMDﻝ۹ﮒ۲
+2. ﮒﺏﻠVS Codeﺅﺙﮒ۵ﮔﮔﮒﺙﻛﭦﺅﺙ
+3. ﮒﺏﻠTrae AIﻝﻝﭨﻝ،ﺁﺅﺙﮒ۵ﮔﻠﻟ۵ﺅﺙ
 ```
 
-### 验证2: 重新打开终端
+### ﻠ۹ﻟﺁ2: ﻠﮔﺍﮔﮒﺙﻝﭨﻝ،ﺁ
 ```
-1. �?Win + R
-2. 输入: powershell
-3. 按回车打开新的PowerShell
+1. ﮔ?Win + R
+2. ﻟﺝﮒ۴: powershell
+3. ﮔﮒﻟﺛ۵ﮔﮒﺙﮔﺍﻝPowerShell
 ```
 
-### 验证3: 运行验证命令
+### ﻠ۹ﻟﺁ3: ﻟﺟﻟ۰ﻠ۹ﻟﺁﮒﺛﻛﭨ۳
 ```powershell
-# 命令1: 检查conda版本
+# ﮒﺛﻛﭨ۳1: ﮔ۲ﮔ۴condaﻝﮔ؛
 conda --version
-# 应该显示: conda 24.x.x
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: conda 24.x.x
 
-# 命令2: 检查Python版本
+# ﮒﺛﻛﭨ۳2: ﮔ۲ﮔ۴Pythonﻝﮔ؛
 python --version
-# 应该显示: Python 3.13.x（Miniconda自带的Python�?
-# 命令3: 检查conda环境
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: Python 3.13.xﺅﺙMinicondaﻟ۹ﮒﺕ۵ﻝPythonﺅﺙ?
+# ﮒﺛﻛﭨ۳3: ﮔ۲ﮔ۴condaﻝﺁﮒ۱
 conda env list
-# 应该显示: base 环境
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: base ﻝﺁﮒ۱
 ```
 
 ---
 
-## 📝 环境配置文件创建
+## ﻭ ﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﮒﭨﭦ
 
-**不要**直接在终端输入YAML内容！而是创建文件�?
-### 创建 environment.yml 文件
+**ﻛﺕﻟ۵**ﻝﺑﮔ۴ﮒ۷ﻝﭨﻝ،ﺁﻟﺝﮒ۴YAMLﮒﮒ؟ﺗﺅﺙﻟﮔﺁﮒﮒﭨﭦﮔﻛﭨﭘﺅﺙ?
+### ﮒﮒﭨﭦ environment.yml ﮔﻛﭨﭘ
 
 ```powershell
-# 创建环境配置文件
+# ﮒﮒﭨﭦﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﻛﭨﭘ
 @'
 name: qmt
 channels:
@@ -91,28 +111,28 @@ dependencies:
     - xtquant
 '@ | Out-File -FilePath environment.yml -Encoding UTF8
 
-# 使用配置文件创建环境
+# ﻛﺛﺟﻝ۷ﻠﻝﺛ؟ﮔﻛﭨﭘﮒﮒﭨﭦﻝﺁﮒ۱
 conda env create -f environment.yml
 ```
 
 ---
 
-## ⚠️ 常见错误和解决方�?
-### 错误1: "conda command not found"
-**原因**: PATH环境变量没有配置
-**解决**:
-1. 重新安装Miniconda
-2. 确保勾�?Add to PATH"
-3. 重启所有终�?
-### 错误2: 安装程序闪退
-**原因**: 权限问题
-**解决**:
-1. 右键点击安装程序
-2. 选择"以管理员身份运行"
+## ﻗﺅﺕ ﮒﺕﺕﻟ۶ﻠﻟﺁﺁﮒﻟ۶۲ﮒﺏﮔﺗﮔ۰?
+### ﻠﻟﺁﺁ1: "conda command not found"
+**ﮒﮒ**: PATHﻝﺁﮒ۱ﮒﻠﮔﺎ۰ﮔﻠﻝﺛ؟
+**ﻟ۶۲ﮒﺏ**:
+1. ﻠﮔﺍﮒ؟ﻟ۲Miniconda
+2. ﻝ۰؟ﻛﺟﮒﺝﻠ?Add to PATH"
+3. ﻠﮒﺁﮔﮔﻝﭨﻝ،?
+### ﻠﻟﺁﺁ2: ﮒ؟ﻟ۲ﻝ۷ﮒﭦﻠ۹ﻠ
+**ﮒﮒ**: ﮔﻠﻠ؟ﻠ۱
+**ﻟ۶۲ﮒﺏ**:
+1. ﮒﺏﻠ؟ﻝﺗﮒﭨﮒ؟ﻟ۲ﻝ۷ﮒﭦ
+2. ﻠﮔ۸"ﻛﭨ۴ﻝ؟۰ﻝﮒﻟﭦ،ﻛﭨﺛﻟﺟﻟ۰"
 
-### 错误3: 下载速度�?**解决**: 使用国内镜像
+### ﻠﻟﺁﺁ3: ﻛﺕﻟﺛﺛﻠﮒﭦ۵ﮔ?**ﻟ۶۲ﮒﺏ**: ﻛﺛﺟﻝ۷ﮒﺛﮒﻠﮒ
 ```
-# 配置清华镜像
+# ﻠﻝﺛ؟ﮔﺕﮒﻠﮒ
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
 conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
@@ -121,38 +141,38 @@ conda config --set show_channel_urls yes
 
 ---
 
-## 🎯 安装完成后的正确操作
+## ﻭﺁ ﮒ؟ﻟ۲ﮒ؟ﮔﮒﻝﮔ۲ﻝ۰؟ﮔﻛﺛ
 
-### 1. 创建QMT环境
+### 1. ﮒﮒﭨﭦQMTﻝﺁﮒ۱
 ```powershell
-# 方法1: 使用命令�?conda create -n qmt python=3.12 -y
+# ﮔﺗﮔﺏ1: ﻛﺛﺟﻝ۷ﮒﺛﻛﭨ۳ﻟ۰?conda create -n qmt python=3.12 -y
 
-# 方法2: 使用配置文件（推荐）
-# 先创�?environment.yml 文件
-# 然后运行: conda env create -f environment.yml
+# ﮔﺗﮔﺏ2: ﻛﺛﺟﻝ۷ﻠﻝﺛ؟ﮔﻛﭨﭘﺅﺙﮔ۷ﻟﺅﺙ
+# ﮒﮒﮒﭨ?environment.yml ﮔﻛﭨﭘ
+# ﻝﭘﮒﻟﺟﻟ۰: conda env create -f environment.yml
 ```
 
-### 2. 激活环�?```powershell
+### 2. ﮔﺟﮔﺑﭨﻝﺁﮒ۱?```powershell
 conda activate qmt
 ```
 
-### 3. 验证Python版本
+### 3. ﻠ۹ﻟﺁPythonﻝﮔ؛
 ```powershell
 python --version
-# 应该显示: Python 3.12.x
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: Python 3.12.x
 ```
 
-### 4. 安装xtquant
+### 4. ﮒ؟ﻟ۲xtquant
 ```powershell
 pip install xtquant pandas numpy
 ```
 
 ---
 
-## 📞 需要帮助？
+## ﻭ ﻠﻟ۵ﮒﺕ؟ﮒ۸ﺅﺙ
 
-**如果您在安装过程中遇到问题，请提�?*�?
-1. **安装程序的截�?*（特别是高级选项页面�?2. **安装过程中的任何错误信息**
-3. **安装完成后运�?`conda --version` 的输�?*
+**ﮒ۵ﮔﮔ۷ﮒ۷ﮒ؟ﻟ۲ﻟﺟﻝ۷ﻛﺕﻠﮒﺍﻠ؟ﻠ۱ﺅﺙﻟﺁﺓﮔﻛﺝ?*ﺅﺙ?
+1. **ﮒ؟ﻟ۲ﻝ۷ﮒﭦﻝﮔ۹ﮒ?*ﺅﺙﻝﺗﮒ،ﮔﺁﻠ،ﻝﭦ۶ﻠﻠ۰ﺗﻠ۰ﭖﻠ۱ﺅﺙ?2. **ﮒ؟ﻟ۲ﻟﺟﻝ۷ﻛﺕﻝﻛﭨﭨﻛﺛﻠﻟﺁﺁﻛﺟ۰ﮔﺁ**
+3. **ﮒ؟ﻟ۲ﮒ؟ﮔﮒﻟﺟﻟ۰?`conda --version` ﻝﻟﺝﮒ?*
 
-**重要提醒**：不要跳�?Add to PATH"选项！这是conda命令可用的关键�?
+**ﻠﻟ۵ﮔﻠ**ﺅﺙﻛﺕﻟ۵ﻟﺓﺏﻟﺟ?Add to PATH"ﻠﻠ۰ﺗﺅﺙﻟﺟﮔﺁcondaﮒﺛﻛﭨ۳ﮒﺁﻝ۷ﻝﮒﺏﻠ؟ﻙ?

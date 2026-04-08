@@ -2,72 +2,97 @@
 module_id: STRATEGIC_WEIGHTING_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: 宏观配置层战略资产配置
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
-layer: "Layer 5 (宏观配置层) | 业务架构: 三级时间框架融合架构"
-estimated_effort: 2.5周
-open_source_dependency: cvxpy, pandas, numpy, scipy, PyPortfolioOpt
+responsibility:
+- STRATEGIC_WEIGHTING蓝图设计
+- 长期权重优化
+layer: Layer 5 (策略执行层)
 ---
 
-# 战略资产权重分配系统蓝图 v1.0
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **核心定位**: 宏观配置层战略资产权重分配
-> **索引**: `STRATEGIC_WEIGHTING_001`
-> **开发周期**: 2.5周
+## 核心定位
 
----
+负责战略权重模块设计，实现战略权重计算、权重调整、权重约束管理，支持长期资产配置。
 
-## 📋 执行摘要
 
-战略资产权重分配系统是清风量化系统宏观配置层的核心模块，负责根据经济范式判断和市场状态，制定长期战略资产配置方案，为季度调仓决策提供目标配置基准。
+> **职责边界**:
+## 设计目标
 
-### 核心价值
+### 主要目标
 
-- **全天候配置**: 基于桥水全天候模型的资产配置
-- **动态调整**: 根据经济范式动态调整权重
-- **风险平价**: 实现风险平价配置
-- **多目标优化**: 平衡收益、风险、流动性多个目标
+1. **功能完整性**: 确保STRATEGIC WEIGHTING功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
 
----
+### 质量目标
 
-## 🎯 模块定位与职责
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用STRATEGIC WEIGHTING化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
+
 
 ### 核心职责
 
-| 职责类别 | 具体职责 | 输出产物 |
 |---------|---------|---------|
 | **权重计算** | 计算战略资产权重 | 目标权重方案 |
-| **风险平价** | 实现风险平价配置 | 风险平价权重 |
-| **优化求解** | 多目标优化求解 | 最优权重 |
-| **约束处理** | 处理配置约束 | 约束满足权重 |
 
----
 
-## 🏗️ 架构设计
 
-### 资产配置框架
+
 
 ```mermaid
 graph TB
-    A[经济范式判断] --> B[资产权重分配系统]
     C[市场状态识别] --> B
     D[风险预算] --> B
     
-    B --> E{配置模型选择}
+B --> E{
     
     E -->|经济扩张| F[风险平价模型]
-    E -->|经济衰退| G[防御性配置]
-    E -->|经济滞胀| H[通胀对冲配置]
-    E -->|经济复苏| I[进攻性配置]
     
     F --> J[目标权重]
     G --> J
@@ -75,12 +100,10 @@ graph TB
     I --> J
     
     J --> K[约束优化]
-    K --> L[最终配置方案]
 ```
 
----
 
-## 🔧 关键组件设计
+
 
 ### 1. 风险平价模型
 
@@ -102,7 +125,7 @@ class RiskParityModel:
         """优化风险平价权重"""
         n_assets = len(covariance_matrix)
         
-        # 如果没有指定目标风险贡献，则平均分配
+
         if target_risk is None:
             target_risk_contribution = np.ones(n_assets) / n_assets
         else:
@@ -126,8 +149,6 @@ class RiskParityModel:
         # 约束条件
         constraints = [
             cp.sum(weights) == 1,  # 权重和为1
-            weights >= 0,  # 不允许做空
-            weights <= 0.40  # 单资产最大权重40%
         ]
         
         # 求解
@@ -144,7 +165,7 @@ class RiskParityModel:
 
 
 class AllWeatherModel:
-    """全天候配置模型"""
+    """
     
     def __init__(self):
         # 四种经济环境
@@ -155,7 +176,6 @@ class AllWeatherModel:
             'RECESSION': '经济衰退'
         }
         
-        # 各环境下的资产权重
         self.environment_weights = {
             'GROWTH': {
                 '股票': 0.30,
@@ -186,7 +206,6 @@ class AllWeatherModel:
     def allocate(self,
                 economic_regime: str,
                 regime_probability: float) -> Dict[str, float]:
-        """根据经济范式分配权重"""
         # 获取基准权重
         base_weights = self.environment_weights.get(economic_regime, 
                                                    self.environment_weights['GROWTH'])
@@ -196,7 +215,6 @@ class AllWeatherModel:
         for asset, weight in base_weights.items():
             adjusted_weights[asset] = weight * regime_probability
         
-        # 归一化
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -231,13 +249,11 @@ class MultiObjectiveOptimizer:
                 covariance_matrix: pd.DataFrame,
                 objective_weights: Dict[str, float],
                 constraints: Dict[str, Any]) -> Dict[str, float]:
-        """多目标优化"""
         n_assets = len(expected_returns)
         
         # 定义优化变量
         weights = cp.Variable(n_assets)
         
-        # 计算各目标
         portfolio_return = expected_returns.values @ weights
         portfolio_risk = cp.sqrt(cp.quad_form(weights, covariance_matrix.values))
         
@@ -298,21 +314,17 @@ class MultiObjectiveOptimizer:
         return (portfolio_return - risk_free_rate) / portfolio_risk
     
     def _maximize_diversification(self, weights, covariance_matrix):
-        """最大化分散度"""
         n = len(weights)
         return -cp.sum_squares(weights - 1/n)
     
     def _get_sector_mask(self, sector: str) -> np.ndarray:
         """获取行业掩码"""
-        # 简化实现，实际应根据行业分类映射
         return np.ones(100, dtype=bool)
 ```
 
-### 3. 约束处理器
 
 ```python
 class ConstraintHandler:
-    """约束处理器"""
     
     def __init__(self):
         self.constraints = {}
@@ -339,18 +351,14 @@ class ConstraintHandler:
                     max_weight
                 )
         
-        # 应用流动性约束
         if 'liquidity' in self.constraints:
             min_liquidity = self.constraints['liquidity'].get('min', 0)
             
             for asset, weight in adjusted_weights.items():
                 asset_value = weight * portfolio_value
-                # 检查流动性是否足够
-                # 如果不足，降低权重
                 # adjusted_weights[asset] = ...
                 pass
         
-        # 归一化
         total_weight = sum(adjusted_weights.values())
         if total_weight > 0:
             adjusted_weights = {
@@ -361,69 +369,106 @@ class ConstraintHandler:
         return adjusted_weights
 ```
 
----
+
 
 ## 🚀 实施要点
 
-### 阶段1：风险平价模型开发（第1周）
 
 **任务**:
-1. ✅ 实现风险平价优化
-2. ✅ 实现全天候配置
-3. ✅ 实现协方差矩阵估计
-4. ✅ 编写单元测试
 
----
 
-### 阶段2：多目标优化器开发（第1-2周）
+
 
 **任务**:
-1. ✅ 实现收益最大化
-2. ✅ 实现风险最小化
-3. ✅ 实现夏普比率最大化
-4. ✅ 实现分散度最大化
-5. ✅ 编写单元测试
 
----
 
-### 阶段3：约束处理器开发（第2-3周）
+
 
 **任务**:
-1. ✅ 实现权重约束
-2. ✅ 实现流动性约束
-3. ✅ 实现行业约束
-4. ✅ 集成测试
 
----
+
 
 ## 📈 性能指标
 
-### 配置质量指标
+### 核心 KPI
 
-| 指标 | 目标值 |
 |------|--------|
-| **风险贡献均衡度** | < 10% |
 | **夏普比率提升** | > 0.2 |
-| **分散度** | > 0.7 |
-| **约束满足率** | 100% |
 
----
 
-## 🔗 相关文档
+
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+| **SciPy** | 1.10+ | 科学计算 | [官方文档](https://scipy.org/) |
+
+
+```mermaid
+graph LR
+]
+    C[数据质量监控] --> B
+    D[风险平价策略] --> B
+    
+    B --> E[季度调仓]
+    B --> F[组合再平衡]
+    B --> G[组合优化引擎]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
 
 - [季度调仓决策系统蓝图](./QUARTERLY_REBALANCE_BLUEPRINT.md)
 - [经济范式判断引擎蓝图](./ECONOMIC_REGIME_ENGINE_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
----
+
 
 ## 📝 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
 
----
 
-**蓝图状态**: ✅ 设计完成
-**下一步**: 开始实施阶段1 - 风险平价模型开发
+
+
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Strategic Weighting
+- **模块ID**: STRATEGIC_WEIGHTING_001
+- **蓝图文档**: STRATEGIC_WEIGHTING_BLUEPRINT.md
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 1.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

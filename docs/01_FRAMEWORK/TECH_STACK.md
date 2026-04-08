@@ -3,22 +3,30 @@ module_id: TECH_STACK_001
 version: 5.3.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
+last_updated: '2026-04-07'
 owner: 首席文档架构?
 standard_type: 专业量化机构文档
-applicable_scope: 全系?
+applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+responsibility:
+- 系统框架设计与核心架构管理与优化维护
+---
 ---
 
 # 技术栈选择 (TECH STACK)
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v5.3
 > **创建日期**: 2026-03-30
 > **Layer**: 通用
 > **职责**: 技术选型、替代方案对比、关键技术决?
-> **父文?*: [README.md](./README.md)
+> **父文?*: README.md
 
 ---
 
@@ -44,7 +52,7 @@ implementation_status: 进行?
 | 平台 | 选择 | 理由 |
 |------|------|------|
 | **QMT (迅投)** | ?主平?| 国金证券QMT，深度API支持 |
-| **Backtrader** | �?研究 | 轻量回测，快速验?|
+| **Backtrader** | ?研究 | 轻量回测，快速验证|
 | **自研引擎** | 最终目?| 完全可控的完整回?|
 
 ### QMT核心能力
@@ -92,7 +100,7 @@ implementation_status: 进行?
 
 ## 3. 可视化平?
 
-| 平台 | 选择 | �?|
+| 平台 | 选择 | ?|
 |------|------|------|
 | **Streamlit** | 主可视化 | 回测报告/仪表?交互 |
 | **Plotly** | 图表引擎 | K?绩效/归因可视?|
@@ -102,7 +110,7 @@ implementation_status: 进行?
 
 ## 4. AI/ML技术栈
 
-| �?| 技术选择 | 说明 |
+| ?| 技术选择 | 说明 |
 |------|---------|------|
 | **LLM调用** | LangChain | AI研究Agent |
 | **情感分析** | DeepSeek API / Qwen3 | 新闻/舆情分析 |
@@ -114,9 +122,9 @@ implementation_status: 进行?
 
 ### LLM模型分工
 
-| 模型 | �?| 成本 | 上下?|
+| 模型 | ?| 成本 | 上下?|
 |------|------|------|--------|
-| **GLM-4-Flash** | 因子�?报告生成 | 免费 | 200K |
+| **GLM-4-Flash** | 因子?报告生成 | 免费 | 200K |
 | **Qwen3-4B** | 代码生成 | 免费 | 32K |
 | **DeepSeek-R1-Distill** | 推理分析 | 免费 | - |
 
@@ -129,7 +137,7 @@ implementation_status: 进行?
 | **热数?* | Redis | 1分钟K线，60交易?|
 | **温数?* | ClickHouse | 5分钟K线，1?|
 | **冷数?* | ClickHouse | 日K线，10? |
-| **缓存** | Redis | 因子值缓?|
+| **缓存** | Redis | 因子值缓存|
 
 ---
 
@@ -137,7 +145,7 @@ implementation_status: 进行?
 
 | 优化?| 选择 | 说明 |
 |--------|------|------|
-| **基础优化** | scipy.optimize | �?二次规划 |
+| **基础优化** | scipy.optimize | ?二次规划 |
 | **高级优化** | CVXPY | 凸优化，支持多种约束 |
 | ** Barra模型** | 自研 + 外采 | 风险因子模型 |
 
@@ -172,9 +180,9 @@ implementation_status: 进行?
 |------|------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 统一架构 |
 | [MARKET_REGIME.md](./MARKET_REGIME.md) | 市场状态识?|
-| [HUMAN_AI_FLOW.md](./HUMAN_AI_FLOW.md) | 人机协作流程 |
-| [README.md](./README.md) | 框架总览 |
+| HUMAN_AI_FLOW.md | 人机协作流程 |
+| README.md | 框架总览 |
 
 ---
 
-**版本**: v1.0 | **更新**: 2026-03-30 | **�?*: ?活跃
+**版本**: v1.0 | **更新**: 2026-03-30 | **?*: ?活跃

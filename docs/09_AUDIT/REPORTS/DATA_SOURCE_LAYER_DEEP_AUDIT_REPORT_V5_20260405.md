@@ -1,9 +1,9 @@
 ---
 module_id: DATA_SOURCE_LAYER_AUDIT_REPORT_V5_001
-version: 1.0.0
+version: 5.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 深度审计报告
 applicable_scope: 数据源层文档体系
@@ -11,9 +11,17 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 audit_type: 第五次深度审计
 audit_date: 2026-04-05
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+---
 ---
 
 # 数据源层文档深度审计报告V5
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.4 - 数据源层文档第五次深度审计
 > **审计日期**: 2026-04-05
@@ -345,9 +353,9 @@ audit_date: 2026-04-05
 
 - [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 - [文档治理审计检查清单](../../09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](../../09_AUDIT/STANDARDS/AUDIT_STANDARDS_v5.1.md)
-- [第四次深度审计报告](DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_V4_20260405.md)
-- [文档命名规范](DOCUMENT_NAMING_STANDARD.md)
+- 审计质量标准v5.1
+- 第四次深度审计报告
+- 文档命名规范
 
 ---
 

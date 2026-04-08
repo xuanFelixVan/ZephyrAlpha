@@ -1,183 +1,201 @@
 ---
-standard_type: 技术文?
-applicable_scope: 系统实施
-compliance_level: 初始标准
+module_id: AI_AGENT_CALL_PROTOCOL_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 系统实施与部署管理与优化维护
+---
+---
+standard_type: ﮔﮔﺁﮔ?
+applicable_scope: ﻝﺏﭨﻝﭨﮒ؟ﮔﺛ
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
-owner: 实施负责?
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+owner: ﮒ؟ﮔﺛﻟﺑﻟﺑ۲?
+responsibility:
+  - 系统实施与部署管理与优化维护
 version: 1.0.0
 module_id: IMP_AI_AGENT_CALL_PROTOC
 created_date: 2026-04-02
-last_updated: 2026-04-02
----
-# 智能体间调用协议 v1.0
+last_updated: 2026-04-02---
 
-## 1. 概述
+# ﮔﭦﻟﺛﻛﺛﻠﺑﻟﺍﻝ۷ﮒﻟ؟؟ v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-本文档定义了清风量化系统中各AI智能体之间的标准化调用协议，确保智能体协作高效、数据传递规范、错误处理统一。协议遵?*职责驱动、接口明确、数据标准化**的原�?
 
-## 2. 智能体角色定?
+## 1. ﮔ۵ﻟﺟﺍ
 
-| 智能体标识名 | 中文名称 | 核心职责 | 所属架构层 |
+ﮔ؛ﮔﮔ۰۲ﮒ؟ﻛﺗﻛﭦﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﻛﺕﮒAIﮔﭦﻟﺛﻛﺛﻛﺗﻠﺑﻝﮔﮒﮒﻟﺍﻝ۷ﮒﻟ؟؟ﺅﺙﻝ۰؟ﻛﺟﮔﭦﻟﺛﻛﺛﮒﻛﺛﻠ،ﮔﻙﮔﺍﮔ؟ﻛﺙﻠﻟ۶ﻟﻙﻠﻟﺁﺁﮒ۳ﻝﻝﭨﻛﺕﻙﮒﻟ؟؟ﻠﭖ?*ﻟﻟﺑ۲ﻠ۸ﺎﮒ۷ﻙﮔ۴ﮒ۲ﮔﻝ۰؟ﻙﮔﺍﮔ؟ﮔﮒﮒ**ﻝﮒﮒ?
+
+## 2. ﮔﭦﻟﺛﻛﺛﻟ۶ﻟﺎﮒ؟?
+
+| ﮔﭦﻟﺛﻛﺛﮔﻟﺁﮒ | ﻛﺕﮔﮒﻝ۶ﺍ | ﮔﺕﮒﺟﻟﻟﺑ۲ | ﮔﮒﺎﮔﭘﮔﮒﺎ |
 |--------------|----------|----------|------------|
-| `blueprint-architect` | 蓝图架构?| 负责系统蓝图设计、架构规划、模块职责定?| Layer 0-11 架构设计?|
-| `spec-approver` | 审批智能?| 负责技术规格书撰写、方案评审、技术可行性评?| 技术评审层 |
-| `development-agent` | 开发智能体 | 负责代码实现、模块开发、测试编?| 开发实施层 |
-| `audit-sentinel` | 审计哨兵 | 负责系统审计、代码质量检查、安全扫?| 质量监控?|
+| `blueprint-architect` | ﻟﮒﺝﮔﭘﮔ?| ﻟﺑﻟﺑ۲ﻝﺏﭨﻝﭨﻟﮒﺝﻟ؟ﺝﻟ؟۰ﻙﮔﭘﮔﻟ۶ﮒﻙﮔ۷۰ﮒﻟﻟﺑ۲ﮒ؟?| Layer 0-11 ﮔﭘﮔﻟ؟ﺝﻟ؟۰?|
+| `spec-approver` | ﮒ؟۰ﮔﺗﮔﭦﻟﺛ?| ﻟﺑﻟﺑ۲ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔﺍﮒﻙﮔﺗﮔ۰ﻟﺁﮒ؟۰ﻙﮔﮔﺁﮒﺁﻟ۰ﮔ۶ﻟﺁ?| ﮔﮔﺁﻟﺁﮒ؟۰ﮒﺎ |
+| `development-agent` | ﮒﺙﮒﮔﭦﻟﺛﻛﺛ | ﻟﺑﻟﺑ۲ﻛﭨ۲ﻝﮒ؟ﻝﺍﻙﮔ۷۰ﮒﮒﺙﮒﻙﮔﭖﻟﺁﻝﺙ?| ﮒﺙﮒﮒ؟ﮔﺛﮒﺎ |
+| `audit-sentinel` | ﮒ؟۰ﻟ؟۰ﮒ۷ﮒﭖ | ﻟﺑﻟﺑ۲ﻝﺏﭨﻝﭨﮒ؟۰ﻟ؟۰ﻙﻛﭨ۲ﻝﻟﺑ۷ﻠﮔ۲ﮔ۴ﻙﮒ؟ﮒ۷ﮔ،?| ﻟﺑ۷ﻠﻝﮔ۶?|
 
-## 3. 调用触发条件
+## 3. ﻟﺍﻝ۷ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ
 
-### 3.1 蓝图架构??审批智能?
-- **触发条件**：蓝图设计完成，需要进行技术规格书撰写和方案评?
-- **传递数?*：蓝图文档路径、设计概要、关键需求点
-- **预期输出**：技术规格书、技术评审报?
+### 3.1 ﻟﮒﺝﮔﭘﮔ??ﮒ؟۰ﮔﺗﮔﭦﻟﺛ?
+- **ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**ﺅﺙﻟﮒﺝﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﺅﺙﻠﻟ۵ﻟﺟﻟ۰ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔﺍﮒﮒﮔﺗﮔ۰ﻟﺁ?
+- **ﻛﺙﻠﮔﺍ?*ﺅﺙﻟﮒﺝﮔﮔ۰۲ﻟﺓﺁﮒﺝﻙﻟ؟ﺝﻟ؟۰ﮔ۵ﻟ۵ﻙﮒﺏﻠ؟ﻠﮔﺎﻝﺗ
+- **ﻠ۱ﮔﻟﺝﮒﭦ**ﺅﺙﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻙﮔﮔﺁﻟﺁﮒ؟۰ﮔ۴?
 
-### 3.2 审批智能??开发智能体
-- **触发条件**：技术评审通过，需要开始代码实?
-- **传递数?*：技术规格书路径、评审报告、实施约束条?
-- **预期输出**：代码实现、模块文档、测试用?
+### 3.2 ﮒ؟۰ﮔﺗﮔﭦﻟﺛ??ﮒﺙﮒﮔﭦﻟﺛﻛﺛ
+- **ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**ﺅﺙﮔﮔﺁﻟﺁﮒ؟۰ﻠﻟﺟﺅﺙﻠﻟ۵ﮒﺙﮒ۶ﻛﭨ۲ﻝﮒ؟?
+- **ﻛﺙﻠﮔﺍ?*ﺅﺙﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟﺓﺁﮒﺝﻙﻟﺁﮒ؟۰ﮔ۴ﮒﻙﮒ؟ﮔﺛﻝﭦ۵ﮔﮔ۰?
+- **ﻠ۱ﮔﻟﺝﮒﭦ**ﺅﺙﻛﭨ۲ﻝﮒ؟ﻝﺍﻙﮔ۷۰ﮒﮔﮔ۰۲ﻙﮔﭖﻟﺁﻝ۷?
 
-### 3.3 开发智能体 ?审计哨兵
-- **触发条件**：代码开发完成，需要进行质量检?
-- **传递数?*：代码路径、测试报告、构建结?
-- **预期输出**：审计报告、质量评分、改进建?
+### 3.3 ﮒﺙﮒﮔﭦﻟﺛﻛﺛ ?ﮒ؟۰ﻟ؟۰ﮒ۷ﮒﭖ
+- **ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**ﺅﺙﻛﭨ۲ﻝﮒﺙﮒﮒ؟ﮔﺅﺙﻠﻟ۵ﻟﺟﻟ۰ﻟﺑ۷ﻠﮔ۲?
+- **ﻛﺙﻠﮔﺍ?*ﺅﺙﻛﭨ۲ﻝﻟﺓﺁﮒﺝﻙﮔﭖﻟﺁﮔ۴ﮒﻙﮔﮒﭨﭦﻝﭨ?
+- **ﻠ۱ﮔﻟﺝﮒﭦ**ﺅﺙﮒ؟۰ﻟ؟۰ﮔ۴ﮒﻙﻟﺑ۷ﻠﻟﺁﮒﻙﮔﺗﻟﺟﮒﭨﭦ?
 
-## 4. 数据传递格?
+## 4. ﮔﺍﮔ؟ﻛﺙﻠﮔﺙ?
 
-### 4.1 通用请求格式
-所有智能体调用必须使用以下JSON格式?
+### 4.1 ﻠﻝ۷ﻟﺁﺓﮔﺎﮔﺙﮒﺙ
+ﮔﮔﮔﭦﻟﺛﻛﺛﻟﺍﻝ۷ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷ﻛﭨ۴ﻛﺕJSONﮔﺙﮒﺙ?
 
 ```json
 {
-  "request_id": "uuid-v4-生成唯一标识",
-  "timestamp": "ISO 8601时间?,
-  "source_agent": "调用方智能体标识?,
-  "target_agent": "被调用方智能体标识名",
-  "operation": "操作类型",
+"request_id": "uuid-v4-ﻝﮔﮒﺁﻛﺕﮔﻟﺁ",
+  "timestamp": "ISO 8601ﮔﭘﻠﺑ?,
+"source_agent": "ﻟﺍﻝ۷ﮔﺗﮔﭦﻟﺛﻛﺛﮔﻟﺁ?,
+"target_agent": "ﻟ۱،ﻟﺍﻝ۷ﮔﺗﮔﭦﻟﺛﻛﺛﮔﻟﺁﮒ",
+  "operation": "ﮔﻛﺛﻝﺎﭨﮒ",
   "parameters": {
-    // 操作特定参数
+    // ﮔﻛﺛﻝﺗﮒ؟ﮒﮔﺍ
   },
   "context": {
-    "project_root": "项目根目录绝对路?,
-    "current_phase": "当前开发阶?,
-    "priority": "优先级（high/medium/low?
+"project_root": "ﻠ۰ﺗﻝ؟ﮔﺗﻝ؟ﮒﺛﻝﭨﮒﺁﺗﻟﺓﺁ?,
+    "current_phase": "ﮒﺛﮒﮒﺙﮒﻠﭘ?,
+    "priority": "ﻛﺙﮒﻝﭦ۶ﺅﺙhigh/medium/low?
   }
 }
 ```
 
-### 4.2 操作类型定义
+### 4.2 ﮔﻛﺛﻝﺎﭨﮒﮒ؟ﻛﺗ
 
-| 操作类型 | 说明 | 源智能体 | 目标智能?|
+| ﮔﻛﺛﻝﺎﭨﮒ | ﻟﺁﺑﮔ | ﮔﭦﮔﭦﻟﺛﻛﺛ | ﻝ؟ﮔﮔﭦﻟﺛ?|
 |----------|------|----------|------------|
-| `convert_blueprint_to_spec` | 蓝图转技术规格书 | blueprint-architect | spec-approver |
-| `review_technical_spec` | 评审技术规格书 | spec-approver | spec-approver |
-| `generate_implementation` | 生成代码实现 | spec-approver | development-agent |
-| `audit_code_quality` | 审计代码质量 | development-agent | audit-sentinel |
-| `assess_technical_feasibility` | 评估技术可�?| spec-approver | spec-approver |
-| `analyze_risk` | 分析风险 | spec-approver | spec-approver |
-| `calculate_implementation_complexity` | 计算实施复杂?| spec-approver | spec-approver |
+| `convert_blueprint_to_spec` | ﻟﮒﺝﻟﺛ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ | blueprint-architect | spec-approver |
+| `review_technical_spec` | ﻟﺁﮒ؟۰ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ | spec-approver | spec-approver |
+| `generate_implementation` | ﻝﮔﻛﭨ۲ﻝﮒ؟ﻝﺍ | spec-approver | development-agent |
+| `audit_code_quality` | ﮒ؟۰ﻟ؟۰ﻛﭨ۲ﻝﻟﺑ۷ﻠ | development-agent | audit-sentinel |
+| `assess_technical_feasibility` | ﻟﺁﻛﺙﺍﮔﮔﺁﮒﺁﻟ۰?| spec-approver | spec-approver |
+| `analyze_risk` | ﮒﮔﻠ۲ﻠ۸ | spec-approver | spec-approver |
+| `calculate_implementation_complexity` | ﻟ؟۰ﻝ؟ﮒ؟ﮔﺛﮒ۳ﮔ?| spec-approver | spec-approver |
 
-### 4.3 特定操作参数
+### 4.3 ﻝﺗﮒ؟ﮔﻛﺛﮒﮔﺍ
 
-#### 4.3.1 convert_blueprint_to_spec（蓝图转技术规格书?
+#### 4.3.1 convert_blueprint_to_specﺅﺙﻟﮒﺝﻟﺛ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵?
 ```json
 {
   "parameters": {
-    "blueprint_path": "蓝图文档绝对路径",
-    "output_dir": "技术规格书输出目录",
-    "template_path": "技术规格书模板路径（可选）",
+    "blueprint_path": "ﻟﮒﺝﮔﮔ۰۲ﻝﭨﮒﺁﺗﻟﺓﺁﮒﺝ",
+"output_dir": "ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻟﺝﮒﭦﻝ؟ﮒﺛ",
+"template_path": "ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮔ۷۰ﮔﺟﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙ",
     "generate_review_report": true
   }
 }
 ```
 
-#### 4.3.2 review_technical_spec（评审技术规格书?
+#### 4.3.2 review_technical_specﺅﺙﻟﺁﮒ؟۰ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵?
 ```json
 {
   "parameters": {
-    "spec_path": "技术规格书绝对路径",
-    "blueprint_path": "关联的蓝图文档路径（可选）",
+"spec_path": "ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﭨﮒﺁﺗﻟﺓﺁﮒﺝ",
+    "blueprint_path": "ﮒﺏﻟﻝﻟﮒﺝﮔﮔ۰۲ﻟﺓﺁﮒﺝﺅﺙﮒﺁﻠﺅﺙ",
     "assessment_tools": ["technical_feasibility", "risk_analysis", "implementation_complexity"],
-    "output_dir": "评审报告输出目录"
+    "output_dir": "ﻟﺁﮒ؟۰ﮔ۴ﮒﻟﺝﮒﭦﻝ؟ﮒﺛ"
   }
 }
 ```
 
-#### 4.3.3 generate_implementation（生成代码实现）
+#### 4.3.3 generate_implementationﺅﺙﻝﮔﻛﭨ۲ﻝﮒ؟ﻝﺍﺅﺙ
 ```json
 {
   "parameters": {
-    "spec_path": "技术规格书绝对路径",
-    "review_report_path": "评审报告路径",
-    "output_dir": "代码输出目录",
-    "module_name": "模块名称",
+"spec_path": "ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﭨﮒﺁﺗﻟﺓﺁﮒﺝ",
+    "review_report_path": "ﻟﺁﮒ؟۰ﮔ۴ﮒﻟﺓﺁﮒﺝ",
+"output_dir": "ﻛﭨ۲ﻝﻟﺝﮒﭦﻝ؟ﮒﺛ",
+    "module_name": "ﮔ۷۰ﮒﮒﻝ۶ﺍ",
     "programming_language": "python"
   }
 }
 ```
 
-## 5. 响应格式
+## 5. ﮒﮒﭦﮔﺙﮒﺙ
 
-### 5.1 成功响应
+### 5.1 ﮔﮒﮒﮒﭦ
 ```json
 {
-  "response_id": "与request_id对应",
-  "timestamp": "ISO 8601时间?,
+  "response_id": "ﻛﺕrequest_idﮒﺁﺗﮒﭦ",
+  "timestamp": "ISO 8601ﮔﭘﻠﺑ?,
   "status": "success",
-  "execution_time": "执行时间（秒?,
+  "execution_time": "ﮔ۶ﻟ۰ﮔﭘﻠﺑﺅﺙﻝ۶?,
   "results": {
     "output_files": [
       {
-        "path": "输出文件路径",
-        "type": "文件类型",
-        "description": "文件描述"
+        "path": "ﻟﺝﮒﭦﮔﻛﭨﭘﻟﺓﺁﮒﺝ",
+        "type": "ﮔﻛﭨﭘﻝﺎﭨﮒ",
+        "description": "ﮔﻛﭨﭘﮔﻟﺟﺍ"
       }
     ],
     "summary": {
-      "score": "评分?-100?,
-      "level": "等级",
-      "recommendation": "建议"
+      "score": "ﻟﺁﮒ?-100?,
+"level": "ﻝﻝﭦ۶",
+      "recommendation": "ﮒﭨﭦﻟ؟؟"
     }
   },
   "next_steps": [
     {
-      "agent": "下一个智能体标识?,
-      "operation": "建议的操?,
-      "description": "操作描述"
+"agent": "ﻛﺕﻛﺕﻛﺕ۹ﮔﭦﻟﺛﻛﺛﮔﻟﺁ?,
+      "operation": "ﮒﭨﭦﻟ؟؟ﻝﮔ?,
+      "description": "ﮔﻛﺛﮔﻟﺟﺍ"
     }
   ]
 }
 ```
 
-### 5.2 错误响应
+### 5.2 ﻠﻟﺁﺁﮒﮒﭦ
 ```json
 {
-  "response_id": "与request_id对应",
-  "timestamp": "ISO 8601时间?,
+  "response_id": "ﻛﺕrequest_idﮒﺁﺗﮒﭦ",
+  "timestamp": "ISO 8601ﮔﭘﻠﺑ?,
   "status": "error",
-  "error_code": "错误代码",
-  "error_message": "错误描述",
-  "error_details": "详细错误信息",
-  "suggested_recovery": "建议的恢复措?
+"error_code": "ﻠﻟﺁﺁﻛﭨ۲ﻝ",
+  "error_message": "ﻠﻟﺁﺁﮔﻟﺟﺍ",
+  "error_details": "ﻟﺁ۵ﻝﭨﻠﻟﺁﺁﻛﺟ۰ﮔﺁ",
+  "suggested_recovery": "ﮒﭨﭦﻟ؟؟ﻝﮔ۱ﮒ۳ﮔ۹?
 }
 ```
 
-## 6. 错误代码定义
+## 6. ﻠﻟﺁﺁﻛﭨ۲ﻝﮒ؟ﻛﺗ
 
-| 错误代码 | 说明 | 处理建议 |
+| ﻠﻟﺁﺁﻛﭨ۲ﻝ | ﻟﺁﺑﮔ | ﮒ۳ﻝﮒﭨﭦﻟ؟؟ |
 |----------|------|----------|
-| `AGENT_NOT_FOUND` | 目标智能体不存在 | 检查智能体标识名是否正?|
-| `INVALID_PARAMETERS` | 参数格式错误 | 检查参数是否符合要?|
-| `FILE_NOT_FOUND` | 文件不存?| 检查文件路径是否正?|
-| `PERMISSION_DENIED` | 权限不足 | 检查文件读写权?|
-| `EXECUTION_FAILED` | 执行过程失败 | 查看详细错误信息，重新执?|
-| `TIMEOUT` | 执行超时 | 增加超时时间或优化处理逻辑 |
+| `AGENT_NOT_FOUND` | ﻝ؟ﮔﮔﭦﻟﺛﻛﺛﻛﺕﮒﮒ۷ | ﮔ۲ﮔ۴ﮔﭦﻟﺛﻛﺛﮔﻟﺁﮒﮔﺁﮒ۵ﮔ۲?|
+| `INVALID_PARAMETERS` | ﮒﮔﺍﮔﺙﮒﺙﻠﻟﺁﺁ | ﮔ۲ﮔ۴ﮒﮔﺍﮔﺁﮒ۵ﻝ؛۵ﮒﻟ۵?|
+| `FILE_NOT_FOUND` | ﮔﻛﭨﭘﻛﺕﮒ?| ﮔ۲ﮔ۴ﮔﻛﭨﭘﻟﺓﺁﮒﺝﮔﺁﮒ۵ﮔ۲?|
+| `PERMISSION_DENIED` | ﮔﻠﻛﺕﻟﭘﺏ | ﮔ۲ﮔ۴ﮔﻛﭨﭘﻟﺁﭨﮒﮔ?|
+| `EXECUTION_FAILED` | ﮔ۶ﻟ۰ﻟﺟﻝ۷ﮒ۳ﺎﻟﺑ۴ | ﮔ۴ﻝﻟﺁ۵ﻝﭨﻠﻟﺁﺁﻛﺟ۰ﮔﺁﺅﺙﻠﮔﺍﮔ۶?|
+| `TIMEOUT` | ﮔ۶ﻟ۰ﻟﭘﮔﭘ | ﮒ۱ﮒﻟﭘﮔﭘﮔﭘﻠﺑﮔﻛﺙﮒﮒ۳ﻝﻠﭨﻟﺝ |
 
-## 7. 调用示例
+## 7. ﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ
 
-### 7.1 蓝图转技术规格书完整流程
+### 7.1 ﻟﮒﺝﻟﺛ؛ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮒ؟ﮔﺑﮔﭖﻝ۷
 
-**请求示例**?
+**ﻟﺁﺓﮔﺎﻝ۳ﭦﻛﺝ**?
 ```json
 {
   "request_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -199,7 +217,7 @@ last_updated: 2026-04-02
 }
 ```
 
-**响应示例**?
+**ﮒﮒﭦﻝ۳ﭦﻛﺝ**?
 ```json
 {
   "response_id": "550e8400-e29b-41d4-a716-446655440000",
@@ -211,66 +229,66 @@ last_updated: 2026-04-02
       {
         "path": "d:/ZephyrAlpha/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/FACTOR_BACKTEST_INTEGRATION_SPEC_v1.0.md",
         "type": "technical_specification",
-        "description": "因子库与回测集成技术规格书"
+"description": "ﮒﮒﮒﭦﻛﺕﮒﮔﭖﻠﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵"
       },
       {
         "path": "d:/ZephyrAlpha/docs/05_IMPLEMENTATION/07_OPERATIONS/review_reports/FACTOR_BACKTEST_INTEGRATION_REVIEW_20260402.md",
         "type": "review_report",
-        "description": "技术评审报?
+        "description": "ﮔﮔﺁﻟﺁﮒ؟۰ﮔ۴?
       }
     ],
     "summary": {
       "score": 46.6,
-      "level": "中等风险",
-      "recommendation": "[WARNING] 综合评估中等，需要关注风险点和复杂度"
+"level": "ﻛﺕﻝﻠ۲ﻠ۸",
+"recommendation": "[WARNING] ﻝﭨﺙﮒﻟﺁﻛﺙﺍﻛﺕﻝﺅﺙﻠﻟ۵ﮒﺏﮔﺏ۷ﻠ۲ﻠ۸ﻝﺗﮒﮒ۳ﮔﮒﭦ۵"
     }
   },
   "next_steps": [
     {
       "agent": "development-agent",
       "operation": "generate_implementation",
-      "description": "根据技术规格书开始代码实?
+"description": "ﮔﺗﮔ؟ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮒﺙﮒ۶ﻛﭨ۲ﻝﮒ؟?
     }
   ]
 }
 ```
 
-## 8. 实施要求
+## 8. ﮒ؟ﮔﺛﻟ۵ﮔﺎ
 
-### 8.1 智能体实现要?
-1. **输入解析**：每个智能体必须能够解析标准请求格式
-2. **输出生成**：必须生成标准响应格?
-3. **错误处理**：必须捕获异常并生成标准错误响应
-4. **日志记录**：必须记录调用日志，包括请求、响应、执行时?
+### 8.1 ﮔﭦﻟﺛﻛﺛﮒ؟ﻝﺍﻟ۵?
+1. **ﻟﺝﮒ۴ﻟ۶۲ﮔ**ﺅﺙﮔﺁﻛﺕ۹ﮔﭦﻟﺛﻛﺛﮒﺟﻠ۰ﭨﻟﺛﮒ۳ﻟ۶۲ﮔﮔﮒﻟﺁﺓﮔﺎﮔﺙﮒﺙ
+2. **ﻟﺝﮒﭦﻝﮔ**ﺅﺙﮒﺟﻠ۰ﭨﻝﮔﮔﮒﮒﮒﭦﮔﺙ?
+3. **ﻠﻟﺁﺁﮒ۳ﻝ**ﺅﺙﮒﺟﻠ۰ﭨﮔﻟﺓﮒﺙﮒﺕﺕﮒﺗﭘﻝﮔﮔﮒﻠﻟﺁﺁﮒﮒﭦ
+4. **ﮔ۴ﮒﺟﻟ؟ﺍﮒﺛ**ﺅﺙﮒﺟﻠ۰ﭨﻟ؟ﺍﮒﺛﻟﺍﻝ۷ﮔ۴ﮒﺟﺅﺙﮒﮔ؛ﻟﺁﺓﮔﺎﻙﮒﮒﭦﻙﮔ۶ﻟ۰ﮔﭘ?
 
-### 8.2 工具集成要求
-1. **评估工具**：spec-approver必须集成三个评估工具（technical_feasibility_assessor.py, risk_analyzer.py, implementation_complexity_calculator.py?
-2. **模板使用**：必须使用标准模板生成技术规格书和评审报?
-3. **文件管理**：必须遵循系统的文件路径标准
+### 8.2 ﮒﺓ۴ﮒﺓﻠﮔﻟ۵ﮔﺎ
+1. **ﻟﺁﻛﺙﺍﮒﺓ۴ﮒﺓ**ﺅﺙspec-approverﮒﺟﻠ۰ﭨﻠﮔﻛﺕﻛﺕ۹ﻟﺁﻛﺙﺍﮒﺓ۴ﮒﺓﺅﺙtechnical_feasibility_assessor.py, risk_analyzer.py, implementation_complexity_calculator.py?
+2. **ﮔ۷۰ﮔﺟﻛﺛﺟﻝ۷**ﺅﺙﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷ﮔﮒﮔ۷۰ﮔﺟﻝﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﮒﻟﺁﮒ؟۰ﮔ۴?
+3. **ﮔﻛﭨﭘﻝ؟۰ﻝ**ﺅﺙﮒﺟﻠ۰ﭨﻠﭖﮒﺝ۹ﻝﺏﭨﻝﭨﻝﮔﻛﭨﭘﻟﺓﺁﮒﺝﮔﮒ
 
-### 8.3 质量保证
-1. **协议版本管理**：协议版本必须明确标识，支持向后兼容
-2. **测试验证**：必须定期进行协议兼容性测?
-3. **文档更新**：协议变更必须及时更新本文档
+### 8.3 ﻟﺑ۷ﻠﻛﺟﻟﺁ
+1. **ﮒﻟ؟؟ﻝﮔ؛ﻝ؟۰ﻝ**ﺅﺙﮒﻟ؟؟ﻝﮔ؛ﮒﺟﻠ۰ﭨﮔﻝ۰؟ﮔﻟﺁﺅﺙﮔﺁﮔﮒﮒﮒﺙﮒ؟ﺗ
+2. **ﮔﭖﻟﺁﻠ۹ﻟﺁ**ﺅﺙﮒﺟﻠ۰ﭨﮒ؟ﮔﻟﺟﻟ۰ﮒﻟ؟؟ﮒﺙﮒ؟ﺗﮔ۶ﮔﭖ?
+3. **ﮔﮔ۰۲ﮔﺑﮔﺍ**ﺅﺙﮒﻟ؟؟ﮒﮔﺑﮒﺟﻠ۰ﭨﮒﮔﭘﮔﺑﮔﺍﮔ؛ﮔﮔ۰۲
 
-## 9. 版本历史
+## 9. ﻝﮔ؛ﮒﮒﺎ
 
-| 版本 | 日期 | 说明 | �?|
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻟﺁﺑﮔ | ﻛﺛ?|
 |------|------|------|------|
-| v1.0 | 2026-04-02 | 初始版本，定义基础调用协议 | 审批智能?(Spec-Approver) |
+| v1.0 | 2026-04-02 | ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒ؟ﻛﺗﮒﭦﻝ۰ﻟﺍﻝ۷ﮒﻟ؟؟ | ﮒ؟۰ﮔﺗﮔﭦﻟﺛ?(Spec-Approver) |
 
-## 10. 附录
+## 10. ﻠﮒﺛ
 
-### 10.1 智能体标识名规范
-- 必须使用小写字母、数字和连字?
-- 格式：`[角色]-[功能]`，如 `blueprint-architect`, `spec-approver`
-- 长度不超?0个字?
+### 10.1 ﮔﭦﻟﺛﻛﺛﮔﻟﺁﮒﻟ۶ﻟ
+- ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷ﮒﺍﮒﮒﮔﺁﻙﮔﺍﮒﮒﻟﺟﮒ?
+- ﮔﺙﮒﺙﺅﺙ`[ﻟ۶ﻟﺎ]-[ﮒﻟﺛ]`ﺅﺙﮒ۵ `blueprint-architect`, `spec-approver`
+- ﻠﺟﮒﭦ۵ﻛﺕﻟﭘ?0ﻛﺕ۹ﮒ?
 
-### 10.2 文件路径规范
-- 必须使用绝对路径
-- Windows系统使用正斜杠或反斜杠，建议统一使用正斜杠（`d:/ZephyrAlpha/docs/...`?
-- 路径中不得包含中文字?
+### 10.2 ﮔﻛﭨﭘﻟﺓﺁﮒﺝﻟ۶ﻟ
+- ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷ﻝﭨﮒﺁﺗﻟﺓﺁﮒﺝ
+- Windowsﻝﺏﭨﻝﭨﻛﺛﺟﻝ۷ﮔ۲ﮔﮔﮔﮒﮔﮔﺅﺙﮒﭨﭦﻟ؟؟ﻝﭨﻛﺕﻛﺛﺟﻝ۷ﮔ۲ﮔﮔﺅﺙ`d:/ZephyrAlpha/docs/...`?
+- ﻟﺓﺁﮒﺝﻛﺕﻛﺕﮒﺝﮒﮒ،ﻛﺕﮔﮒ?
 
-### 10.3 时间戳格?
-- 必须使用ISO 8601格式：`YYYY-MM-DDTHH:MM:SSZ`
-- 时区统一使用UTC（Z表示UTC时间?
+### 10.3 ﮔﭘﻠﺑﮔﺏﮔﺙ?
+- ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷ISO 8601ﮔﺙﮒﺙﺅﺙ`YYYY-MM-DDTHH:MM:SSZ`
+- ﮔﭘﮒﭦﻝﭨﻛﺕﻛﺛﺟﻝ۷UTCﺅﺙZﻟ۰۷ﻝ۳ﭦUTCﮔﭘﻠﺑ?

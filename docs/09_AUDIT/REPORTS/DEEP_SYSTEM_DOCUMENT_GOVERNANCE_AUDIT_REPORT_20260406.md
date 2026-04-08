@@ -3,8 +3,10 @@ module_id: DEEP_SYSTEM_DOC_GOVERNANCE_AUDIT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: Audit Sentinel
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
 standard_type: 专业文档治理审计报告
 applicable_scope: 全系统文档
 compliance_level: 专业标准
@@ -12,8 +14,15 @@ audit_type: 深度全系统审计
 audit_date: 2026-04-06
 audit_layers: L1, L2, L3
 ---
+---
+
 
 # 全系统深度文档治理审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计日期**: 2026-04-06
 > **审计范围**: 全系统所有文档文件
@@ -410,9 +419,9 @@ git commit -m "fix: 删除12个重复归档文档 - P0问题修复"
 
 ### B. 参考标准文档
 
-- [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-- [审计质量标准v5.1](../STANDARDS/AUDIT_STANDARDS_v5.1.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
+- 审计质量标准v5.1
 
 ### C. 术语表
 

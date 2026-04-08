@@ -1,0 +1,107 @@
+---
+module_id: 09_AUDIT_PROCEDURES_INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-08
+owner: 首席文档架构师
+responsibility:
+  - PROCEDURES目录索引
+---
+
+﻿---
+module_id: 09_AUDIT_PROCEDURES_INDEX_PROCEDURES_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-08
+owner: 文档治理系统
+responsibility:
+  - 目录导航与文档索引管理与优化维护
+standard_type: 索引文档
+applicable_scope: 文档索引导航
+compliance_level: 专业标准---
+
+
+# Procedures索引
+> **核心职责**: 目录导航和文档索引
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航和文档索引相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> **版本**: v1.0.0
+> **创建日期**: 2026-04-07
+> **核心定位**: 文档索引导航
+> **索引**: `INDEX_PROCEDURES_001`
+
+---
+
+## 📋 目录概览
+
+### 统计信息
+
+| 指标 | 数值 |
+|------|------|
+| **文档总数** | 6 |
+| **活跃模块** | 6 |
+| **更新频率** | 按需更新 |
+
+---
+
+## 📚 文档列表
+
+### 核心文档
+
+- Ai Audit Guidelines - `AUDIT_PROC_AI_GUIDELINES_001`
+- Audit Execution Procedures - `AUDIT_EXECUTION_PROCEDURES`
+- Personal Audit Workflow - `AUDIT_PROC_PERSONAL_WF_001`
+- [全系统文档审计方案（分批目录）](./FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) - `AUDIT_PLAN_FULL_SYSTEM_20260408`
+- [全系统文档审计全案（含重复处理办法 + 清单引用）](./FULL_SYSTEM_AUDIT_COMPLETE_CASE_20260408.md) - `AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408`
+- [Sentinel 自动治理运行报告](../REPORTS/SENTINEL_AUTONOMOUS_GOVERNANCE_RUN_20260408.md) - `SENTINEL_AUTONOMOUS_RUN_20260408`
+- [OpenClaw 文档整改方案（草稿）](./OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408.md) - `OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408`
+- [OpenClaw 整改执行手册（顺序与验收）](./OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md) - `OPENCLAW_REMEDIATION_PLAYBOOK_20260408`
+- [文档治理裁决书（已锁定）](../STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md) - `GOVERNANCE_DECISIONS_LOCKED_20260408`
+- [文档整改详细任务指令（可复制给 AI）](./DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) - `DOC_REMEDIATION_TASK_DIRECTIVE_20260408`
+
+---
+
+## 🔍 维护指南
+
+### 更新规则
+
+1. **新增文档**: 在此目录添加新文档后，更新本文档列表
+2. **删除文档**: 删除文档后，从列表中移除对应条目
+3. **重命名文档**: 更新文档名称后，同步更新索引
+
+### 质量标准
+
+- ✅ 所有文档必须有明确的module_id
+- ✅ 文档命名遵循专业量化机构标准
+- ✅ 保持索引与实际文件一致
+
+---
+
+## 📝 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
+| v1.0.1 | 2026-04-08 | 增加审计全案与子目录文件清单引用 | 系统维护者 |
+| v1.0.2 | 2026-04-08 | 增加 OpenClaw 整改方案草稿索引 | 系统维护者 |
+| v1.0.3 | 2026-04-08 | 增加整改执行手册与已锁定裁决书索引 | 系统维护者 |
+| v1.0.4 | 2026-04-08 | 增加文档整改详细任务指令索引 | 系统维护者 |
+
+---
+
+## 🔗 相关文档
+
+- [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
+- [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
+- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+
+---
+
+**索引状态**: ✅ 活跃
+**维护频率**: 按需更新
+**下次更新**: 按需

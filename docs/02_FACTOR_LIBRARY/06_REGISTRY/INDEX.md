@@ -1,50 +1,48 @@
 ---
-module_id: INDEX_REGISTRY_001
-version: 1.0.1
+module_id: FACTOR_LIBRARY_06_REGISTRY_INDEX
+version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构�?standard_type: 目录索引
-applicable_scope: 因子注册�?compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已完�?---
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 目录导航
+  - 模块索引
+  - 职责协调
+standard_type: 索引文档
+applicable_scope: 因子库
+compliance_level: 专业标准
+---
+# 06_REGISTRY 因子注册表
 
-# 因子注册表目录索�?
-> 因子注册表的核心索引文件，提供因子目录和分类信息
+> **核心职责**: 因子注册、版本管理和生命周期管理
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航、模块索引、职责协调
+> - ❌ 本文档不负责：具体实现细节、其他模块内容
 
 ---
+
+## 📋 概述
+
+因子注册、版本管理和生命周期管理
 
 ## 📂 目录结构
 
-### 核心文档
-
-| 文档名称 | 说明 | 重要�?|
-|---------|------|--------|
-| [因子目录](./FACTOR_CATALOG.md) | 完整的因子目录清�?| ⭐⭐⭐⭐�?|
+- [OVERVIEW](./OVERVIEW.md)
+- [README](./README.md)
 
 ---
 
-## 🔍 快速导�?
-### 因子分类
+## 🎯 核心职责
 
-- **价值因�?*: PE、PB、PS、PCF等估值指�?- **成长因子**: 营收增长率、利润增长率�?- **质量因子**: ROE、ROA、毛利率�?- **动量因子**: 价格动量、成交量动量�?- **技术因�?*: 均线、MACD、RSI�?- **情绪因子**: 舆情、搜索指数等
-- **风险因子**: Barra风格因子、行业因子等
-
----
-
-## 📊 统计信息
-
-- **总因子数**: 5900+
-- **活跃因子**: 25-30�?- **核心因子**: 10�?- **卫星因子**: 15�?- **实验因子**: 5�?
----
-
-## 📚 相关文档
-
-- [因子分类体系](../01_STANDARDS/FACTOR_TAXONOMY.md)
-- [因子筛选策略](../01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](../01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
+1. **因子注册管理**
+2. **因子版本控制**
+3. **因子生命周期管理**
 
 ---
 
-> **最后更�?*: 2026-04-04  
-> **维护�?*: 首席文档架构�?
+## 变更记录
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |

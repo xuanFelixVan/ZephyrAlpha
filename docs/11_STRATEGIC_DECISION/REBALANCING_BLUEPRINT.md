@@ -1,5 +1,18 @@
 ---
-module_id: REBALANCING_BLUEPRINT_001
+module_id: LAYER_020
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 5 (执行层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: REBALANCING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
@@ -18,6 +31,47 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.10: 再平衡决策系统蓝图
+> **核心职责**: 再平衡决策系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：再平衡决策系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Rebalancing蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Rebalancing蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**再平衡决策系统蓝图，负责再平衡策略和执行跟踪**。
+
+### 职责边界
+
+**负责**：
+- ✅ 再平衡触发判断（阈值/时间触发）
+- ✅ 再平衡方案生成（优化再平衡方案）
+- ✅ 再平衡成本优化（成本最小化）
+- ✅ 再平衡执行跟踪（执行监控）
+
+**不负责**：
+- ❌ 资产配置决策（由战略资产配置模块负责）
+- ❌ 风险预算分配（由风险预算分配模块负责）
+- ❌ 具体交易执行（由Layer 6组合优化层负责）
+
+### 对接模块
+
+**上游模块**：
+- Layer 6 组合优化层
+- Layer 7 风险管理层
+
+**下游模块**：
+- Layer 6 组合优化层
+- Layer 8 报告层
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  
@@ -402,20 +456,20 @@ class RebalanceTriggerEngine:
 
 ```
 最小成本优化:
-min Σ |Δw_i| × Cost_i
+min Σ |Δw_i|  Cost_i
 s.t. |w_i - w_target_i| ≤ ε, ∀i
 
 税务优化:
-min Tax_Cost = Σ max(0, P_i - Cost_Basis_i) × Tax_Rate × Δw_i
+min Tax_Cost = Σ max(0, P_i - Cost_Basis_i)  Tax_Rate  Δw_i
 s.t. 达到目标权重
 
 部分再平衡:
-min Σ |Δw_i| × Cost_i
+min Σ |Δw_i|  Cost_i
 s.t. Σ |Δw_i| ≤ Max_Turnover
      |w_i - w_target_i| ≤ ε', ∀i
 
 风险预算再平衡:
-min Σ (RC_i - RC_target_i)²
+min Σ (RC_i - RC_target_i)
 s.t. Σ w_i = 1
 ```
 
@@ -812,7 +866,7 @@ Risk_Improvement = (σ_before - σ_after) / σ_before
 TE_Improvement = (TE_before - TE_after) / TE_before
 
 综合评分:
-Overall_Score = w1 × Cost_Score + w2 × Risk_Score + w3 × TE_Score
+Overall_Score = w1  Cost_Score + w2  Risk_Score + w3  TE_Score
 ```
 
 #### 2.4.2 技术实现
@@ -1136,7 +1190,7 @@ class SuspendedStockRebalance:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md) | 组合优化AI蓝图 |
 | [TCA_BLUEPRINT.md](./TCA_BLUEPRINT.md) | 交易成本分析系统 |
@@ -1153,3 +1207,34 @@ class SuspendedStockRebalance:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建基准管理系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Rebalancing Blueprint
+- **模块ID**: REBALANCING_BLUEPRINT_001
+- **蓝图文档**: REBALANCING_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.10 - 再平衡决策系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Rebalancing Blueprint** | Layer 11.10 - 再平衡决策系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

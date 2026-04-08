@@ -3,15 +3,24 @@ module_id: TODO_CLEANUP_INVENTORY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: Audit Sentinel
+responsibility:
+- 审计体系设计与质量监控与实施指导
 standard_type: TODO清理清单
 applicable_scope: 全系统文档
 compliance_level: 专业标准
 audit_type: P1问题修复
 ---
+---
+
 
 # TODO/TBD标记清理清单
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **创建日期**: 2026-04-06
 > **审计报告**: DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md
@@ -262,9 +271,9 @@ audit_type: P1问题修复
 
 ## 🔗 相关文档
 
-- [深度系统审计报告](../REPORTS/DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
-- [专业文档治理审计指南](../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-- [文档治理审计检查清单](../TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
+- [深度系统审计报告](./DEEP_SYSTEM_DOCUMENT_GOVERNANCE_AUDIT_REPORT_20260406.md)
+- 专业文档治理审计指南
+- 文档治理审计检查清单
 
 ---
 

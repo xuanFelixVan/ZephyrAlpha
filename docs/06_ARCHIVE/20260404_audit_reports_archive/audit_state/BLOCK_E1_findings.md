@@ -1,23 +1,43 @@
 ---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_E1_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - BLOCK_E1_findings.md - E1块审计发?文档
+---
+
+﻿﻿---
 module_id: ARCHIVE_BLOCK_E1_FINDINGS_001
 version: 4.0.15.3.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
+responsibility:
+  - 归档文档、历史版本、审计状态追踪
+  - 交易执行
+  - 回测系统
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?
----
+implementation_status: 进行?---
+
 
 # BLOCK_E1_findings.md - E1块审计发?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计?*: E1 (tests/ ?notebooks/)
 > **审计日期**: 2026-03-31
 > **审计模式**: Sentinel v5.3
-> **块定义说?*: 基于现有分块逻辑，E1 块覆?`tests/` ?`notebooks/` 目录，补?8 块审计体�?
+> **块定义说?*: 基于现有分块逻辑，E1 块覆?`tests/` ?`notebooks/` 目录，补?8 块审计体?
 
 ---
 
@@ -179,19 +199,19 @@ notebooks/
 ## ?符合性检?
 
 ### 目录神圣?
-| 目录 | 期望内容 | 实际内容 | �?|
+| 目录 | 期望内容 | 实际内容 | ?|
 |------|----------|----------|------|
 | `tests/` | 测试代码 | Python测试文件 | ?符合 |
 | `notebooks/` | 研发笔记 | (空，待填? | ?符合 |
 
-### 版本一�?
-| 文件 | 当前版本 | 期望版本 | �?|
+### 版本一?
+| 文件 | 当前版本 | 期望版本 | ?|
 |------|----------|----------|------|
 | `tests/__init__.py` | (无版本标? | v5.3 | ⚠️ 建议添加 |
 | `tests/conftest.py` | (无版本标? | v5.3 | ⚠️ 建议添加 |
 
 ### 路径引用检?
-| 检查项 | �?| 说明 |
+| 检查项 | ?| 说明 |
 |--------|------|------|
 | 测试文件导入路径 | ?符合 | 使用相对导入或绝对导入，无路径冗?|
 | Notebooks内部引用 | ?符合 | 暂无内容，无引用问题 |

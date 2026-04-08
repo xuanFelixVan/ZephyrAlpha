@@ -1,117 +1,137 @@
 ---
+module_id: POSITION_MANAGER_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - POSITION_MANAGER_TECHNICAL技术规范
+---
+
+﻿---
 module_id: POSITION_MANAGER_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 5 策略执行?| 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行?
+implementation_status: ﻟﺟﻟ۰?
+---
 ---
 
-# PositionManager持仓管理器模块技术规格书
 
-> 清风量化系统 v5.3 - PositionManager持仓管理器模块详细技术设?
-> **模块ID**: `POSITION_MANAGER_001`
-> **版本**: v1.0.0
-> **�?*: ?正式
+# PositionManagerﮔﻛﭨﻝ؟۰ﻝﮒ۷ﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
 
-## 1. 概述
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - PositionManagerﮔﻛﭨﻝ؟۰ﻝﮒ۷ﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?
+> **ﮔ۷۰ﮒID**: `POSITION_MANAGER_001`
+> **ﻝﮔ؛**: v1.0.0
+> **ﻝ?*: ?ﮔ۲ﮒﺙ
 
-### 1.1 设计背景与业务目?
-- **业务需?*: 系统需要统一的持仓管理器进行持仓计算和管?
-- **技术痛?*: 
-  - 持仓计算复杂：持仓计算涉及成本、市值、盈亏等多个维度
-  - 持仓更新频繁：交易频繁导致持仓更新频?
-  - 持仓查询多样：需要支持多种持仓查询方?
-  - 风险控制严格：持仓需要严格的风险控制
-- **预期�?*: 
-  - 建立统一的持仓计算机?
-  - 提供高效的持仓更新机?
-  - 支持多种持仓查询方式
-  - 实现严格的持仓风险控?
 
-### 1.2 技术定位与架构层归?
-- **Layer定位**: Layer 5 - 策略执行?(符合ARCHITECTURE.md定义)
-- **模块类别**: 核心持仓管理模块
-- **架构角色**: Layer 5策略执行核心，负责持仓计算和管理
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.3 版本信息
-| 版本 | 日期 | �?| 变更说明 | �?|
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?
+- **ﻛﺕﮒ۰ﻠ?*: ﻝﺏﭨﻝﭨﻠﻟ۵ﻝﭨﻛﺕﻝﮔﻛﭨﻝ؟۰ﻝﮒ۷ﻟﺟﻟ۰ﮔﻛﭨﻟ؟۰ﻝ؟ﮒﻝ؟۰?
+- **ﮔﮔﺁﻝ?*: 
+- ﮔﻛﭨﻟ؟۰ﻝ؟ﮒ۳ﮔﺅﺙﮔﻛﭨﻟ؟۰ﻝ؟ﮔﭘﮒﮔﮔ؛ﻙﮒﺕﮒﺙﻙﻝﻛﭦﻝﮒ۳ﻛﺕ۹ﻝﭨﺑﮒﭦ۵
+  - ﮔﻛﭨﮔﺑﮔﺍﻠ۱ﻝﺗﺅﺙﻛﭦ۳ﮔﻠ۱ﻝﺗﮒﺁﺙﻟﺑﮔﻛﭨﮔﺑﮔﺍﻠ۱?
+- ﮔﻛﭨﮔ۴ﻟﺁ۱ﮒ۳ﮔﺓﺅﺙﻠﻟ۵ﮔﺁﮔﮒ۳ﻝ۶ﮔﻛﭨﮔ۴ﻟﺁ۱ﮔﺗ?
+- ﻠ۲ﻠ۸ﮔ۶ﮒﭘﻛﺕ۴ﮔﺙﺅﺙﮔﻛﭨﻠﻟ۵ﻛﺕ۴ﮔﺙﻝﻠ۲ﻠ۸ﮔ۶ﮒﭘ
+- **ﻠ۱ﮔﻛﭨ?*: 
+  - ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﮔﻛﭨﻟ؟۰ﻝ؟ﮔﭦ?
+  - ﮔﻛﺝﻠ،ﮔﻝﮔﻛﭨﮔﺑﮔﺍﮔﭦ?
+  - ﮔﺁﮔﮒ۳ﻝ۶ﮔﻛﭨﮔ۴ﻟﺁ۱ﮔﺗﮒﺙ
+- ﮒ؟ﻝﺍﻛﺕ۴ﮔﺙﻝﮔﻛﭨﻠ۲ﻠ۸ﮔ۶?
+
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?
+- **Layerﮒ؟ﻛﺛ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?(ﻝ؛۵ﮒARCHITECTURE.mdﮒ؟ﻛﺗ)
+- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔﺕﮒﺟﮔﻛﭨﻝ؟۰ﻝﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: Layer 5ﻝﻝ۴ﮔ۶ﻟ۰ﮔﺕﮒﺟﺅﺙﻟﺑﻟﺑ۲ﮔﻛﭨﻟ؟۰ﻝ؟ﮒﻝ؟۰ﻝ
+
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝ?|
 |------|------|------|----------|------|
-| v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+| v1.0.0 | 2026-04-02 | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ | ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
-## 2. 详细架构设计
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 系统架构?
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?
 ```
-┌─────────────────────────────────────────────────────────────?
-?                   Layer 5: 策略执行?                      ?
-├─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+?                   Layer 5: ﻝﻝ۴ﮔ۶ﻟ۰?                      ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ?                                                            ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?       PositionManager (持仓管理器主模块)              ? ?
-? ? - 持仓计算                                            ? ?
-? ? - 持仓更新                                            ? ?
-? ? - 持仓查询                                            ? ?
-? ? - 风险控制                                            ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?       PositionManager (ﮔﻛﭨﻝ؟۰ﻝﮒ۷ﻛﺕﭨﮔ۷۰ﮒ)              ? ?
+? ? - ﮔﻛﭨﻟ؟۰ﻝ؟                                            ? ?
+? ? - ﮔﻛﭨﮔﺑﮔﺍ                                            ? ?
+? ? - ﮔﻛﭨﮔ۴ﻟﺁ۱                                            ? ?
+? ? - ﻠ۲ﻠ۸ﮔ۶ﮒﭘ                                            ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         核心组件                                      ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │PositionCalc ?│PositionUpdt ?│PositionQuery? ? ?
-? ? │持仓计算器    ? │持仓更新器   ? │持仓查询器   ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │RiskControl ?│PositionRepo ?│PositionCache? ? ?
-? ? │风险控制器    ? │持仓仓?    ? │持仓缓?    ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺕﮒﺟﻝﭨﻛﭨﭘ                                      ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗPositionCalc ?ﻗPositionUpdt ?ﻗPositionQuery? ? ?
+? ? ﻗﮔﻛﭨﻟ؟۰ﻝ؟ﮒ۷    ? ﻗﮔﻛﭨﮔﺑﮔﺍﮒ۷   ? ﻗﮔﻛﭨﮔ۴ﻟﺁ۱ﮒ۷   ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗRiskControl ?ﻗPositionRepo ?ﻗPositionCache? ? ?
+? ? ﻗﻠ۲ﻠ۸ﮔ۶ﮒﭘﮒ۷    ? ﻗﮔﻛﭨﻛﭨ?    ? ﻗﮔﻛﭨﻝﺙ?    ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         数据存储?                                  ? ?
-? ? - PostgreSQL (持久化存?                           ? ?
-? ? - Redis (缓存)                                      ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺍﮔ؟ﮒﮒ۷?                                  ? ?
+? ? - PostgreSQL (ﮔﻛﺗﮒﮒ?                           ? ?
+? ? - Redis (ﻝﺙﮒ)                                      ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                                                            ?
-└─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 5 - 策略执行?
-- **职责范围**: 持仓计算、持仓更新、持仓查询、风险控?
-- **上下层接?*: 
-  - 上层依赖: Layer 5 QMTExecutor (提供交易执行结果)
-  - 下层依赖: Layer 6 组合优化?(提供持仓信息)
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
+- **Layerﮒﺛﮒﺎ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?
+- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﮔﻛﭨﻟ؟۰ﻝ؟ﻙﮔﻛﭨﮔﺑﮔﺍﻙﮔﻛﭨﮔ۴ﻟﺁ۱ﻙﻠ۲ﻠ۸ﮔ۶?
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 5 QMTExecutor (ﮔﻛﺝﻛﭦ۳ﮔﮔ۶ﻟ۰ﻝﭨﮔ)
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 6 ﻝﭨﮒﻛﺙﮒ?(ﮔﻛﺝﮔﻛﭨﻛﺟ۰ﮔﺁ)
 
-### 2.3 模块职责与边界定?
-- **核心职责**: 持仓计算、持仓更新、持仓查询、风险控?
-- **职责边界**: 
-  - ?本模块负? 持仓计算、持仓更新、持仓查询、风险控?
-  - ?本模块不负责: 交易执行、策略决策、数据获取、风险模?
-- **接口契约**: 提供统一的Python API接口
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟?
+- **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﮔﻛﭨﻟ؟۰ﻝ؟ﻙﮔﻛﭨﮔﺑﮔﺍﻙﮔﻛﭨﮔ۴ﻟﺁ۱ﻙﻠ۲ﻠ۸ﮔ۶?
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+  - ?ﮔ؛ﮔ۷۰ﮒﻟﺑ? ﮔﻛﭨﻟ؟۰ﻝ؟ﻙﮔﻛﭨﮔﺑﮔﺍﻙﮔﻛﭨﮔ۴ﻟﺁ۱ﻙﻠ۲ﻠ۸ﮔ۶?
+- ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﻛﭦ۳ﮔﮔ۶ﻟ۰ﻙﻝﻝ۴ﮒﺏﻝﻙﮔﺍﮔ؟ﻟﺓﮒﻙﻠ۲ﻠ۸ﮔ۷۰?
+- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﻝﭨﻛﺕﻝPython APIﮔ۴ﮒ۲
 
-### 2.4 依赖关系
-| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| psycopg2 | 强依?| Python?| >=2.9 | PostgreSQL驱动 |
-| redis | 强依?| Python?| >=4.0 | Redis客户?|
-| decimal | 强依?| Python标准?| >=3.8 | 高精度计?|
+| psycopg2 | ﮒﺙﭦﻛﺝ?| Python?| >=2.9 | PostgreSQLﻠ۸ﺎﮒ۷ |
+| redis | ﮒﺙﭦﻛﺝ?| Python?| >=4.0 | Redisﮒ؟۱ﮔﺓ?|
+| decimal | ﮒﺙﭦﻛﺝ?| Pythonﮔﮒ?| >=3.8 | ﻠ،ﻝﺎﺝﮒﭦ۵ﻟ؟۰?|
 
 ---
 
-## 3. 接口定义
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 API接口规范
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
-#### 3.1.1 主接口类
+#### 3.1.1 ﻛﺕﭨﮔ۴ﮒ۲ﻝﺎﭨ
 ```python
 from typing import Dict, List, Optional, Any
 from datetime import datetime, date
@@ -125,14 +145,14 @@ import logging
 
 
 class OrderSide(Enum):
-    """订单方向枚举"""
+    """ﻟ؟۱ﮒﮔﺗﮒﮔﻛﺕﺝ"""
     BUY = "buy"
     SELL = "sell"
 
 
 @dataclass
 class Position:
-    """持仓信息"""
+    """ﮔﻛﭨﻛﺟ۰ﮔﺁ"""
     position_id: int
     account_id: int
     stock_code: str
@@ -154,7 +174,7 @@ class Position:
 
 @dataclass
 class PositionSnapshot:
-    """持仓快照"""
+    """ﮔﻛﭨﮒﺟ،ﻝ۶"""
     snapshot_id: int
     account_id: int
     snapshot_date: date
@@ -164,7 +184,7 @@ class PositionSnapshot:
 
 
 class PositionRepository:
-    """持仓仓储"""
+    """ﮔﻛﭨﻛﭨﮒ۷"""
     
     def __init__(self, db_config: Dict[str, Any]):
         self.db_config = db_config
@@ -172,7 +192,7 @@ class PositionRepository:
         self._init_connection()
     
     def _init_connection(self) -> None:
-        """初始化数据库连接"""
+        """ﮒﮒ۶ﮒﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴"""
         self.conn = psycopg2.connect(
             host=self.db_config['host'],
             port=self.db_config['port'],
@@ -191,18 +211,18 @@ class PositionRepository:
         quantity: int,
         avg_cost: Decimal
     ) -> Position:
-        """创建持仓
+        """ﮒﮒﭨﭦﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
-            stock_name: 股票名称
-            exchange: 交易所
-            quantity: 数量
-            avg_cost: 平均成本
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            stock_name: ﻟ۰ﻝ۴۷ﮒﻝ۶ﺍ
+            exchange: ﻛﭦ۳ﮔﮔ
+            quantity: ﮔﺍﻠ
+            avg_cost: ﮒﺗﺏﮒﮔﮔ؛
             
-        返回:
-            持仓信息
+        ﻟﺟﮒ:
+            ﮔﻛﭨﻛﺟ۰ﮔﺁ
         """
         cursor = self.conn.cursor()
         
@@ -251,14 +271,14 @@ class PositionRepository:
         account_id: int,
         stock_code: Optional[str] = None
     ) -> List[Position]:
-        """查询账户持仓
+        """ﮔ۴ﻟﺁ۱ﻟﺑ۵ﮔﺓﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码（可选）
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝﺅﺙﮒﺁﻠﺅﺙ
             
-        返回:
-            持仓列表
+        ﻟﺟﮒ:
+            ﮔﻛﭨﮒﻟ۰۷
         """
         cursor = self.conn.cursor()
         
@@ -324,23 +344,23 @@ class PositionRepository:
         realized_pnl: Decimal,
         position_pct: Decimal
     ) -> bool:
-        """更新持仓
+        """ﮔﺑﮔﺍﮔﻛﭨ
         
-        参数:
-            position_id: 持仓ID
-            quantity: 数量
-            available_quantity: 可用数量
-            frozen_quantity: 冻结数量
-            avg_cost: 平均成本
-            current_price: 当前价格
-            market_value: �?
-            unrealized_pnl: 浮动盈亏
-            unrealized_pnl_pct: 浮动盈亏比例
-            realized_pnl: 已实现盈?
-            position_pct: 仓位占比
+        ﮒﮔﺍ:
+            position_id: ﮔﻛﭨID
+            quantity: ﮔﺍﻠ
+            available_quantity: ﮒﺁﻝ۷ﮔﺍﻠ
+            frozen_quantity: ﮒﭨﻝﭨﮔﺍﻠ
+            avg_cost: ﮒﺗﺏﮒﮔﮔ؛
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
+            market_value: ﮒﺕ?
+            unrealized_pnl: ﮔﭖ؟ﮒ۷ﻝﻛﭦ
+            unrealized_pnl_pct: ﮔﭖ؟ﮒ۷ﻝﻛﭦﮔﺁﻛﺝ
+            realized_pnl: ﮒﺓﺎﮒ؟ﻝﺍﻝ?
+position_pct: ﻛﭨﻛﺛﮒﮔﺁ
             
-        返回:
-            是否成功
+        ﻟﺟﮒ:
+            ﮔﺁﮒ۵ﮔﮒ
         """
         cursor = self.conn.cursor()
         
@@ -372,7 +392,7 @@ class PositionRepository:
 
 
 class PositionCache:
-    """持仓缓存"""
+"""ﮔﻛﭨﻝﺙﮒ"""
     
     def __init__(self, redis_config: Dict[str, Any]):
         self.redis_client = redis.Redis(
@@ -389,14 +409,14 @@ class PositionCache:
         account_id: int,
         stock_code: str
     ) -> Optional[Position]:
-        """获取持仓缓存
+"""ﻟﺓﮒﮔﻛﭨﻝﺙﮒ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             
-        返回:
-            持仓信息（如果存在）
+        ﻟﺟﮒ:
+ﮔﻛﭨﻛﺟ۰ﮔﺁﺅﺙﮒ۵ﮔﮒﮒ۷ﺅﺙ
         """
         key = f"position:{account_id}:{stock_code}"
         data = self.redis_client.get(key)
@@ -412,11 +432,11 @@ class PositionCache:
         position: Position,
         ttl: int = 3600
     ) -> None:
-        """设置持仓缓存
+"""ﻟ؟ﺝﻝﺛ؟ﮔﻛﭨﻝﺙﮒ
         
-        参数:
-            position: 持仓信息
-            ttl: 过期时间（秒?
+        ﮒﮔﺍ:
+            position: ﮔﻛﭨﻛﺟ۰ﮔﺁ
+            ttl: ﻟﺟﮔﮔﭘﻠﺑﺅﺙﻝ۶?
         """
         key = f"position:{position.account_id}:{position.stock_code}"
         
@@ -447,18 +467,18 @@ class PositionCache:
         account_id: int,
         stock_code: str
     ) -> None:
-        """删除持仓缓存
+"""ﮒﻠ۳ﮔﻛﭨﻝﺙﮒ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
         """
         key = f"position:{account_id}:{stock_code}"
         self.redis_client.delete(key)
 
 
 class PositionCalculator:
-    """持仓计算?""
+    """ﮔﻛﭨﻟ؟۰ﻝ؟?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -468,14 +488,14 @@ class PositionCalculator:
         quantity: int,
         current_price: Decimal
     ) -> Decimal:
-        """计算�?
+        """ﻟ؟۰ﻝ؟ﮒﺕ?
         
-        参数:
-            quantity: 数量
-            current_price: 当前价格
+        ﮒﮔﺍ:
+            quantity: ﮔﺍﻠ
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
             
-        返回:
-            �?
+        ﻟﺟﮒ:
+            ﮒﺕ?
         """
         return Decimal(quantity) * current_price
     
@@ -485,15 +505,15 @@ class PositionCalculator:
         avg_cost: Decimal,
         current_price: Decimal
     ) -> Decimal:
-        """计算浮动盈亏
+        """ﻟ؟۰ﻝ؟ﮔﭖ؟ﮒ۷ﻝﻛﭦ
         
-        参数:
-            quantity: 数量
-            avg_cost: 平均成本
-            current_price: 当前价格
+        ﮒﮔﺍ:
+            quantity: ﮔﺍﻠ
+            avg_cost: ﮒﺗﺏﮒﮔﮔ؛
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
             
-        返回:
-            浮动盈亏
+        ﻟﺟﮒ:
+            ﮔﭖ؟ﮒ۷ﻝﻛﭦ
         """
         return Decimal(quantity) * (current_price - avg_cost)
     
@@ -502,14 +522,14 @@ class PositionCalculator:
         avg_cost: Decimal,
         current_price: Decimal
     ) -> Decimal:
-        """计算浮动盈亏比例
+        """ﻟ؟۰ﻝ؟ﮔﭖ؟ﮒ۷ﻝﻛﭦﮔﺁﻛﺝ
         
-        参数:
-            avg_cost: 平均成本
-            current_price: 当前价格
+        ﮒﮔﺍ:
+            avg_cost: ﮒﺗﺏﮒﮔﮔ؛
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
             
-        返回:
-            浮动盈亏比例
+        ﻟﺟﮒ:
+            ﮔﭖ؟ﮒ۷ﻝﻛﭦﮔﺁﻛﺝ
         """
         if avg_cost == Decimal('0'):
             return Decimal('0')
@@ -521,14 +541,14 @@ class PositionCalculator:
         market_value: Decimal,
         total_value: Decimal
     ) -> Decimal:
-        """计算仓位占比
+"""ﻟ؟۰ﻝ؟ﻛﭨﻛﺛﮒﮔﺁ
         
-        参数:
-            market_value: �?
-            total_value: 总资?
+        ﮒﮔﺍ:
+            market_value: ﮒﺕ?
+            total_value: ﮔﭨﻟﭖ?
             
-        返回:
-            仓位占比
+        ﻟﺟﮒ:
+ﻛﭨﻛﺛﮒﮔﺁ
         """
         if total_value == Decimal('0'):
             return Decimal('0')
@@ -537,7 +557,7 @@ class PositionCalculator:
 
 
 class PositionUpdater:
-    """持仓更新?""
+    """ﮔﻛﭨﮔﺑﮔﺍ?""
     
     def __init__(
         self,
@@ -559,18 +579,18 @@ class PositionUpdater:
         price: Decimal,
         total_value: Decimal
     ) -> Position:
-        """根据成交更新持仓
+"""ﮔﺗﮔ؟ﮔﻛﭦ۳ﮔﺑﮔﺍﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
-            side: 买卖方向
-            quantity: 数量
-            price: 价格
-            total_value: 总资?
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            side: ﻛﺗﺍﮒﮔﺗﮒ
+            quantity: ﮔﺍﻠ
+price: ﻛﭨﺓﮔﺙ
+            total_value: ﮔﭨﻟﭖ?
             
-        返回:
-            更新后的持仓
+        ﻟﺟﮒ:
+            ﮔﺑﮔﺍﮒﻝﮔﻛﭨ
         """
         positions = self.repository.find_by_account(account_id, stock_code)
         
@@ -592,18 +612,18 @@ class PositionUpdater:
         total_value: Decimal,
         positions: List[Position]
     ) -> Position:
-        """增加持仓
+"""ﮒ۱ﮒﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
-            quantity: 数量
-            price: 价格
-            total_value: 总资?
-            positions: 现有持仓
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            quantity: ﮔﺍﻠ
+price: ﻛﭨﺓﮔﺙ
+            total_value: ﮔﭨﻟﭖ?
+            positions: ﻝﺍﮔﮔﻛﭨ
             
-        返回:
-            更新后的持仓
+        ﻟﺟﮒ:
+            ﮔﺑﮔﺍﮒﻝﮔﻛﭨ
         """
         cost = Decimal(quantity) * price
         
@@ -714,18 +734,18 @@ class PositionUpdater:
         total_value: Decimal,
         positions: List[Position]
     ) -> Position:
-        """减少持仓
+        """ﮒﮒﺍﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
-            quantity: 数量
-            price: 价格
-            total_value: 总资?
-            positions: 现有持仓
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            quantity: ﮔﺍﻠ
+price: ﻛﭨﺓﮔﺙ
+            total_value: ﮔﭨﻟﭖ?
+            positions: ﻝﺍﮔﮔﻛﭨ
             
-        返回:
-            更新后的持仓
+        ﻟﺟﮒ:
+            ﮔﺑﮔﺍﮒﻝﮔﻛﭨ
         """
         if not positions:
             raise ValueError(f"No position found for {stock_code}")
@@ -785,7 +805,7 @@ class PositionUpdater:
 
 
 class PositionQuery:
-    """持仓查询?""
+    """ﮔﻛﭨﮔ۴ﻟﺁ۱?""
     
     def __init__(
         self,
@@ -801,14 +821,14 @@ class PositionQuery:
         account_id: int,
         stock_code: str
     ) -> Optional[Position]:
-        """获取持仓
+        """ﻟﺓﮒﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             
-        返回:
-            持仓信息（如果存在）
+        ﻟﺟﮒ:
+ﮔﻛﭨﻛﺟ۰ﮔﺁﺅﺙﮒ۵ﮔﮒﮒ۷ﺅﺙ
         """
         position = self.cache.get_position(account_id, stock_code)
         
@@ -828,19 +848,19 @@ class PositionQuery:
         self,
         account_id: int
     ) -> List[Position]:
-        """获取所有持?
+        """ﻟﺓﮒﮔﮔﮔ?
         
-        参数:
-            account_id: 账户ID
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
             
-        返回:
-            持仓列表
+        ﻟﺟﮒ:
+            ﮔﻛﭨﮒﻟ۰۷
         """
         return self.repository.find_by_account(account_id)
 
 
 class RiskController:
-    """风险控制?""
+    """ﻠ۲ﻠ۸ﮔ۶ﮒﭘ?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -851,14 +871,14 @@ class RiskController:
         position: Position,
         max_position_pct: Decimal
     ) -> bool:
-        """检查持仓上?
+        """ﮔ۲ﮔ۴ﮔﻛﭨﻛﺕ?
         
-        参数:
-            position: 持仓信息
-            max_position_pct: 最大持仓比?
+        ﮒﮔﺍ:
+            position: ﮔﻛﭨﻛﺟ۰ﮔﺁ
+            max_position_pct: ﮔﮒ۳۶ﮔﻛﭨﮔﺁ?
             
-        返回:
-            是否通过
+        ﻟﺟﮒ:
+            ﮔﺁﮒ۵ﻠﻟﺟ
         """
         return position.position_pct <= max_position_pct
     
@@ -869,16 +889,16 @@ class RiskController:
         max_position_pct: Decimal,
         current_quantity: int = 0
     ) -> int:
-        """获取持仓上限
+        """ﻟﺓﮒﮔﻛﭨﻛﺕﻠ
         
-        参数:
-            total_value: 总资?
-            current_price: 当前价格
-            max_position_pct: 最大持仓比?
-            current_quantity: 当前持仓数量
+        ﮒﮔﺍ:
+            total_value: ﮔﭨﻟﭖ?
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
+            max_position_pct: ﮔﮒ۳۶ﮔﻛﭨﮔﺁ?
+            current_quantity: ﮒﺛﮒﮔﻛﭨﮔﺍﻠ
             
-        返回:
-            最大可买入数量
+        ﻟﺟﮒ:
+            ﮔﮒ۳۶ﮒﺁﻛﺗﺍﮒ۴ﮔﺍﻠ
         """
         if current_price == Decimal('0'):
             return 0
@@ -889,7 +909,7 @@ class RiskController:
 
 
 class PositionManager:
-    """持仓管理器主?""
+    """ﮔﻛﭨﻝ؟۰ﻝﮒ۷ﻛﺕﭨ?""
     
     def __init__(self, config: Dict[str, Any]):
         self.config = config
@@ -912,18 +932,18 @@ class PositionManager:
         price: Decimal,
         total_value: Decimal
     ) -> Position:
-        """更新持仓
+        """ﮔﺑﮔﺍﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
-            side: 买卖方向
-            quantity: 数量
-            price: 价格
-            total_value: 总资?
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            side: ﻛﺗﺍﮒﮔﺗﮒ
+            quantity: ﮔﺍﻠ
+price: ﻛﭨﺓﮔﺙ
+            total_value: ﮔﭨﻟﭖ?
             
-        返回:
-            更新后的持仓
+        ﻟﺟﮒ:
+            ﮔﺑﮔﺍﮒﻝﮔﻛﭨ
         """
         return self.updater.update_position_from_trade(
             account_id, stock_code, side, quantity, price, total_value
@@ -934,14 +954,14 @@ class PositionManager:
         account_id: int,
         stock_code: str
     ) -> Optional[Position]:
-        """获取持仓
+        """ﻟﺓﮒﮔﻛﭨ
         
-        参数:
-            account_id: 账户ID
-            stock_code: 股票代码
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
             
-        返回:
-            持仓信息（如果存在）
+        ﻟﺟﮒ:
+ﮔﻛﭨﻛﺟ۰ﮔﺁﺅﺙﮒ۵ﮔﮒﮒ۷ﺅﺙ
         """
         return self.query.get_position(account_id, stock_code)
     
@@ -949,13 +969,13 @@ class PositionManager:
         self,
         account_id: int
     ) -> List[Position]:
-        """获取所有持?
+        """ﻟﺓﮒﮔﮔﮔ?
         
-        参数:
-            account_id: 账户ID
+        ﮒﮔﺍ:
+            account_id: ﻟﺑ۵ﮔﺓID
             
-        返回:
-            持仓列表
+        ﻟﺟﮒ:
+            ﮔﻛﭨﮒﻟ۰۷
         """
         return self.query.get_all_positions(account_id)
     
@@ -963,13 +983,13 @@ class PositionManager:
         self,
         position: Position
     ) -> bool:
-        """检查持仓上?
+        """ﮔ۲ﮔ۴ﮔﻛﭨﻛﺕ?
         
-        参数:
-            position: 持仓信息
+        ﮒﮔﺍ:
+            position: ﮔﻛﭨﻛﺟ۰ﮔﺁ
             
-        返回:
-            是否通过
+        ﻟﺟﮒ:
+            ﮔﺁﮒ۵ﻠﻟﺟ
         """
         max_position_pct = Decimal(str(self.config.get('max_position_pct', 0.1)))
         return self.risk_controller.check_position_limit(position, max_position_pct)
@@ -981,16 +1001,16 @@ class PositionManager:
         stock_code: str,
         account_id: int
     ) -> int:
-        """获取持仓上限
+        """ﻟﺓﮒﮔﻛﭨﻛﺕﻠ
         
-        参数:
-            total_value: 总资?
-            current_price: 当前价格
-            stock_code: 股票代码
-            account_id: 账户ID
+        ﮒﮔﺍ:
+            total_value: ﮔﭨﻟﭖ?
+current_price: ﮒﺛﮒﻛﭨﺓﮔﺙ
+stock_code: ﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
+            account_id: ﻟﺑ۵ﮔﺓID
             
-        返回:
-            最大可买入数量
+        ﻟﺟﮒ:
+            ﮔﮒ۳۶ﮒﺁﻛﺗﺍﮒ۴ﮔﺍﻠ
         """
         max_position_pct = Decimal(str(self.config.get('max_position_pct', 0.1)))
         
@@ -1002,26 +1022,26 @@ class PositionManager:
         )
 ```
 
-### 3.2 性能指标要求
-| 性能指标 | 目标?| 测量方法 |
+### 3.2 ﮔ۶ﻟﺛﮔﮔﻟ۵ﮔﺎ
+| ﮔ۶ﻟﺛﮔﮔ | ﻝ؟ﮔ?| ﮔﭖﻠﮔﺗﮔﺏ |
 |----------|--------|----------|
-| 持仓更新时间 | < 50ms | 单次更新 |
-| 持仓查询时间 | < 20ms | 单次查询 |
-| 缓存命中?| ?90% | 缓存监控 |
-| 数据一�?| 100% | 数据验证 |
+| ﮔﻛﭨﮔﺑﮔﺍﮔﭘﻠﺑ | < 50ms | ﮒﮔ؛۰ﮔﺑﮔﺍ |
+| ﮔﻛﭨﮔ۴ﻟﺁ۱ﮔﭘﻠﺑ | < 20ms | ﮒﮔ؛۰ﮔ۴ﻟﺁ۱ |
+| ﻝﺙﮒﮒﺛﻛﺕ?| ?90% | ﻝﺙﮒﻝﮔ۶ |
+| ﮔﺍﮔ؟ﻛﺕﻟ?| 100% | ﮔﺍﮔ؟ﻠ۹ﻟﺁ |
 
-### 3.3 安全机制
-- **数据一�?*: 使用数据库事务保证数据一�?
-- **并发控制**: 使用乐观锁控制并发更?
-- **数据备份**: 定期备份持仓数据
+### 3.3 ﮒ؟ﮒ۷ﮔﭦﮒﭘ
+- **ﮔﺍﮔ؟ﻛﺕﻟ?*: ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﮒﭦﻛﭦﮒ۰ﻛﺟﻟﺁﮔﺍﮔ؟ﻛﺕﻟ?
+- **ﮒﺗﭘﮒﮔ۶ﮒﭘ**: ﻛﺛﺟﻝ۷ﻛﺗﻟ۶ﻠﮔ۶ﮒﭘﮒﺗﭘﮒﮔﺑ?
+- **ﮔﺍﮔ؟ﮒ۳ﻛﭨﺛ**: ﮒ؟ﮔﮒ۳ﻛﭨﺛﮔﻛﭨﮔﺍﮔ؟
 
 ---
 
-## 4. 数据模型与存?
+## 4. ﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ?
 
-### 4.1 核心数据结构
+### 4.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
-#### 4.1.1 持仓表模?
+#### 4.1.1 ﮔﻛﭨﻟ۰۷ﮔ۷۰?
 ```sql
 CREATE TABLE positions (
     id BIGSERIAL PRIMARY KEY,
@@ -1050,24 +1070,24 @@ CREATE INDEX idx_positions_stock ON positions(stock_code);
 CREATE INDEX idx_positions_account_stock ON positions(account_id, stock_code);
 ```
 
-### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容?|
+### 4.2 ﻝﺙﮒﻝﻝ۴
+| ﻝﺙﮒﻝﺎﭨﮒ | TTL | ﮔﺓﮔﺎﺍﻝﻝ۴ | ﮔﮒ۳۶ﮒ؟ﺗ?|
 |----------|-----|----------|----------|
-| 持仓缓存 | 1小时 | LRU | 10000条记?|
-| 快照缓存 | 1?| LRU | 365份快?|
+| ﮔﻛﭨﻝﺙﮒ | 1ﮒﺍﮔﭘ | LRU | 10000ﮔ۰ﻟ؟ﺍ?|
+| ﮒﺟ،ﻝ۶ﻝﺙﮒ | 1?| LRU | 365ﻛﭨﺛﮒﺟ،?|
 
-### 4.3 数据持久?
-- **持久化需?*: 所有持仓数据需要持久化存储
-- **存储格式**: PostgreSQL数据?
-- **备份策略**: 每日备份
+### 4.3 ﮔﺍﮔ؟ﮔﻛﺗ?
+- **ﮔﻛﺗﮒﻠ?*: ﮔﮔﮔﻛﭨﮔﺍﮔ؟ﻠﻟ۵ﮔﻛﺗﮒﮒﮒ۷
+- **ﮒﮒ۷ﮔﺙﮒﺙ**: PostgreSQLﮔﺍﮔ؟?
+- **ﮒ۳ﻛﭨﺛﻝﻝ۴**: ﮔﺁﮔ۴ﮒ۳ﻛﭨﺛ
 
 ---
 
-## 5. 算法实现说明
+## 5. ﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﮔ
 
-### 5.1 核心算法
+### 5.1 ﮔﺕﮒﺟﻝ؟ﮔﺏ
 
-#### 5.1.1 持仓计算算法
+#### 5.1.1 ﮔﻛﭨﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
 ```python
 def calculate_unrealized_pnl(
     self,
@@ -1076,17 +1096,17 @@ def calculate_unrealized_pnl(
     current_price: Decimal
 ) -> Decimal:
     """
-    浮动盈亏计算算法
+    ﮔﭖ؟ﮒ۷ﻝﻛﭦﻟ؟۰ﻝ؟ﻝ؟ﮔﺏ
     
-    算法原理:
-    浮动盈亏 = 数量 * (当前价格 - 平均成本)
+    ﻝ؟ﮔﺏﮒﻝ:
+ﮔﭖ؟ﮒ۷ﻝﻛﭦ = ﮔﺍﻠ * (ﮒﺛﮒﻛﭨﺓﮔﺙ - ﮒﺗﺏﮒﮔﮔ؛)
     
-    复杂? O(1)
+    ﮒ۳ﮔ? O(1)
     """
     return Decimal(quantity) * (current_price - avg_cost)
 ```
 
-#### 5.1.2 持仓更新算法
+#### 5.1.2 ﮔﻛﭨﮔﺑﮔﺍﻝ؟ﮔﺏ
 ```python
 def update_position_from_trade(
     self,
@@ -1098,15 +1118,15 @@ def update_position_from_trade(
     total_value: Decimal
 ) -> Position:
     """
-    持仓更新算法
+    ﮔﻛﭨﮔﺑﮔﺍﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 查询现有持仓
-    2. 根据买卖方向更新持仓
-    3. 计算新的持仓指标
-    4. 更新数据库和缓存
+    ﻝ؟ﮔﺏﮒﻝ:
+    1. ﮔ۴ﻟﺁ۱ﻝﺍﮔﮔﻛﭨ
+2. ﮔﺗﮔ؟ﻛﺗﺍﮒﮔﺗﮒﮔﺑﮔﺍﮔﻛﭨ
+3. ﻟ؟۰ﻝ؟ﮔﺍﻝﮔﻛﭨﮔﮔ
+4. ﮔﺑﮔﺍﮔﺍﮔ؟ﮒﭦﮒﻝﺙﮒ
     
-    复杂? O(1)
+    ﮒ۳ﮔ? O(1)
     """
     positions = self.repository.find_by_account(account_id, stock_code)
     
@@ -1122,16 +1142,16 @@ def update_position_from_trade(
 
 ---
 
-## 6. 实施技术栈
+## 6. ﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 语言与框?
-| 技术选型 | 版本要求 | �?| 选择理由 |
+### 6.1 ﻟﺁﻟ۷ﻛﺕﮔ۰?
+| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﻝ?| ﻠﮔ۸ﻝﻝﺎ |
 |----------|----------|------|----------|
-| Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
-| psycopg2 | >=2.9 | PostgreSQL驱动 | 成熟稳定 |
-| redis | >=4.0 | Redis客户?| 高性能缓存 |
+| Python | >=3.8 | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ | ﻠﮒﻝﺏﭨﻝﭨﮔﮒﻟﺁﻟ۷ |
+| psycopg2 | >=2.9 | PostgreSQLﻠ۸ﺎﮒ۷ | ﮔﻝﻝ۷ﺏﮒ؟ |
+| redis | >=4.0 | Redisﮒ؟۱ﮔﺓ?| ﻠ،ﮔ۶ﻟﺛﻝﺙﮒ |
 
-### 6.2 第三方依?
+### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝ?
 ```yaml
 requirements:
   - psycopg2-binary>=2.9.0
@@ -1140,20 +1160,20 @@ requirements:
 
 ---
 
-## 7. 测试策略
+## 7. ﮔﭖﻟﺁﻝﻝ۴
 
-### 7.1 单元测试
-| 测试?| 测试内容 | 覆盖率目?|
+### 7.1 ﮒﮒﮔﭖﻟﺁ
+| ﮔﭖﻟﺁ?| ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟?|
 |--------|----------|------------|
-| 持仓计算 | 计算正确?| 100% |
-| 持仓更新 | 更新正确?| 100% |
-| 持仓查询 | 查询正确?| 100% |
-| 风险控制 | 控制正确?| 100% |
+| ﮔﻛﭨﻟ؟۰ﻝ؟ | ﻟ؟۰ﻝ؟ﮔ۲ﻝ۰؟?| 100% |
+| ﮔﻛﭨﮔﺑﮔﺍ | ﮔﺑﮔﺍﮔ۲ﻝ۰؟?| 100% |
+| ﮔﻛﭨﮔ۴ﻟﺁ۱ | ﮔ۴ﻟﺁ۱ﮔ۲ﻝ۰؟?| 100% |
+| ﻠ۲ﻠ۸ﮔ۶ﮒﭘ | ﮔ۶ﮒﭘﮔ۲ﻝ۰؟?| 100% |
 
-### 7.2 集成测试
+### 7.2 ﻠﮔﮔﭖﻟﺁ
 ```python
 def test_position_manager_integration():
-    """集成测试示例"""
+    """ﻠﮔﮔﭖﻟﺁﻝ۳ﭦﻛﺝ"""
     config = {
         'db_config': {
             'host': 'localhost',
@@ -1187,60 +1207,60 @@ def test_position_manager_integration():
 
 ---
 
-## 8. 风险与约?
+## 8. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵?
 
-### 8.1 技术风?
-| 风险ID | 风险描述 | 风险等级 | 缓解措施 |
+### 8.1 ﮔﮔﺁﻠ۲?
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﻠ۲ﻠ۸ﻝﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|----------|
-| R001 | 数据库连接失?| P1 | 实现连接重试机制 |
-| R002 | 缓存失效 | P2 | 实现缓存预热机制 |
-| R003 | 并发更新冲突 | P1 | 实现乐观锁机?|
+| R001 | ﮔﺍﮔ؟ﮒﭦﻟﺟﮔ۴ﮒ۳ﺎ?| P1 | ﮒ؟ﻝﺍﻟﺟﮔ۴ﻠﻟﺁﮔﭦﮒﭘ |
+| R002 | ﻝﺙﮒﮒ۳ﺎﮔ | P2 | ﮒ؟ﻝﺍﻝﺙﮒﻠ۱ﻝﮔﭦﮒﭘ |
+| R003 | ﮒﺗﭘﮒﮔﺑﮔﺍﮒﺎﻝ۹ | P1 | ﮒ؟ﻝﺍﻛﺗﻟ۶ﻠﮔﭦ?|
 
-### 8.2 约束条件
-- **技术约?*: 依赖PostgreSQL和Redis
-- **资源约束**: 内存使用<1GB，磁盘使?10GB
-- **时间约束**: 预计开发时?2小时
-- **质量约束**: 测试覆盖率≥90%
+### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
+- **ﮔﮔﺁﻝﭦ۵?*: ﻛﺝﻟﭖPostgreSQLﮒRedis
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: ﮒﮒﻛﺛﺟﻝ۷<1GBﺅﺙﻝ۲ﻝﻛﺛﺟ?10GB
+- **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: ﻠ۱ﻟ؟۰ﮒﺙﮒﮔﭘ?2ﮒﺍﮔﭘ
+- **ﻟﺑ۷ﻠﻝﭦ۵ﮔ**: ﮔﭖﻟﺁﻟ۵ﻝﻝﻗ۴90%
 
 ---
 
-## 9. 验收标准
+## 9. ﻠ۹ﮔﭘﮔﮒ
 
-### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮒﻟﺛ?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |--------|----------|----------|
-| 持仓计算 | 计算正确 | 单元测试 |
-| 持仓更新 | 更新正确 | 单元测试 |
-| 持仓查询 | 查询正确 | 单元测试 |
-| 风险控制 | 控制正确 | 单元测试 |
+| ﮔﻛﭨﻟ؟۰ﻝ؟ | ﻟ؟۰ﻝ؟ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﮔﻛﭨﮔﺑﮔﺍ | ﮔﺑﮔﺍﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﮔﻛﭨﮔ۴ﻟﺁ۱ | ﮔ۴ﻟﺁ۱ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻠ۲ﻠ۸ﮔ۶ﮒﭘ | ﮔ۶ﮒﭘﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
 
-### 9.2 性能验收标准
-| 性能指标 | 验收标准 | 验证方法 |
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 持仓更新时间 | < 50ms | 性能测试 |
-| 持仓查询时间 | < 20ms | 性能测试 |
-| 缓存命中?| ?90% | 性能测试 |
+| ﮔﻛﭨﮔﺑﮔﺍﮔﭘﻠﺑ | < 50ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﮔﻛﭨﮔ۴ﻟﺁ۱ﮔﭘﻠﺑ | < 20ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻝﺙﮒﮒﺛﻛﺕ?| ?90% | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 9.3 质量验收标准
-| 质量指标 | 验收标准 | 验证方法 |
+### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘﮔﮒ
+| ﻟﺑ۷ﻠﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 测试覆盖?| ?90% | pytest-cov |
-| 代码质量 | 无严重问?| pylint |
+| ﮔﭖﻟﺁﻟ۵ﻝ?| ?90% | pytest-cov |
+| ﻛﭨ۲ﻝﻟﺑ۷ﻠ | ﮔﻛﺕ۴ﻠﻠ؟?| pylint |
 
 ---
 
-## 10. 实施路线?
+## 10. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
 
-### 10.1 Phase 1: 核心功能开?(3?
-- **Day 1**: 持仓仓储、持仓缓?
-- **Day 2**: 持仓计算器、持仓更新器
-- **Day 3**: 持仓查询器、风险控制器
+### 10.1 Phase 1: ﮔﺕﮒﺟﮒﻟﺛﮒﺙ?(3?
+- **Day 1**: ﮔﻛﭨﻛﭨﮒ۷ﻙﮔﻛﭨﻝﺙ?
+- **Day 2**: ﮔﻛﭨﻟ؟۰ﻝ؟ﮒ۷ﻙﮔﻛﭨﮔﺑﮔﺍﮒ۷
+- **Day 3**: ﮔﻛﭨﮔ۴ﻟﺁ۱ﮒ۷ﻙﻠ۲ﻠ۸ﮔ۶ﮒﭘﮒ۷
 
 ---
 
-## 附录
+## ﻠﮒﺛ
 
-### A. 配置示例
+### A. ﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ
 ```yaml
 position_manager:
   db_config:
@@ -1264,17 +1284,17 @@ position_manager:
     max_size: 10000
 ```
 
-### B. 错误码定?
-| 错误?| 错误类型 | 错误描述 | 处理方式 |
+### B. ﻠﻟﺁﺁﻝﮒ؟?
+| ﻠﻟﺁﺁ?| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﻠﻟﺁﺁﮔﻟﺟﺍ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|----------|----------|----------|
-| ERR_POS_001 | DatabaseError | 数据库错?| 记录日志，返回错?|
-| ERR_POS_002 | CacheError | 缓存错误 | 记录日志，降级处?|
-| ERR_POS_003 | PositionError | 持仓错误 | 记录日志，返回错?|
+| ERR_POS_001 | DatabaseError | ﮔﺍﮔ؟ﮒﭦﻠ?| ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_POS_002 | CacheError | ﻝﺙﮒﻠﻟﺁﺁ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻠﻝﭦ۶ﮒ۳?|
+| ERR_POS_003 | PositionError | ﮔﻛﭨﻠﻟﺁﺁ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 
-### C. 参考文?
-- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [数据库设计](../../design/database/P0-01_Database_Design_Document.md)
+### C. ﮒﻟﮔ?
+- [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
+- [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- ﮔﺍﮔ؟ﮒﭦﻟ؟ﺝﻟ؟۰
 
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 策略执行层负责人
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

@@ -1,0 +1,275 @@
+{
+  "timestamp": "2026-04-07T01:02:07.982381",
+  "stats": {
+    "total_files": 1152,
+    "files_with_module_id": 1103,
+    "total_issues": 54
+  },
+  "issues": {
+    "module_id_duplicates": [],
+    "responsibility_overlap": [
+      {
+        "responsibility": "风险预算",
+        "count": 106,
+        "files": [
+          "docs\\INDEX.md",
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "docs\\01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
+          "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\DYNAMIC_RISK_BUDGETING_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md"
+        ]
+      },
+      {
+        "responsibility": "市场状态识别",
+        "count": 111,
+        "files": [
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md"
+        ]
+      },
+      {
+        "responsibility": "数据质量",
+        "count": 243,
+        "files": [
+          "docs\\System_Manifest.md",
+          "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+          "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS.md",
+          "docs\\01_FRAMEWORK\\COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md",
+          "docs\\01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md"
+        ]
+      }
+    ],
+    "missing_index": [
+      {
+        "directory": "docs\\03_TRADING_TACTICS\\03_ADVANCED_TACTICS",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters",
+        "md_count": 10
+      },
+      {
+        "directory": "docs\\03_TRADING_TACTICS\\09_RISK_RULES",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\03_TRADING_TACTICS\\99_ARCHIVE",
+        "md_count": 6
+      },
+      {
+        "directory": "docs\\04_EXECUTION\\01_ORDER_EXECUTION",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\04_EXECUTION\\06_SIMULATION",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\04_EXECUTION\\07_LIVE_STREAM",
+        "md_count": 7
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\02_IMPLEMENTATION_GUIDES",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\03_OPERATION_MANUALS",
+        "md_count": 4
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\06_CHECKLISTS",
+        "md_count": 4
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\design",
+        "md_count": 5
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\design\\database",
+        "md_count": 8
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\design\\data_consistency",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\design\\trading_costs",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\design\\web_interface",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\ui_design\\04_NOZYIO",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\improvements",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\improvement_plans",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base",
+        "md_count": 5
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\best_practices",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\case_studies",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\tools_guides",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\05_IMPLEMENTATION\\99_ARCHIVE",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\20260404_market_participant_consolidation",
+        "md_count": 6
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\20260405_economic_regime_cleanup",
+        "md_count": 4
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_1",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11",
+        "md_count": 5
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_9",
+        "md_count": 6
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\duplicate_documents\\20260404_layer7_audit_reports",
+        "md_count": 4
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\factor-library",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\incomplete_documents\\20260404_blueprint_incomplete",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\integrated_documents\\20260403_market_simulation",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\knowledge_library\\enterprise_plans",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\main",
+        "md_count": 8
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\main\\BLUEPRINTS",
+        "md_count": 8
+      },
+      {
+        "directory": "docs\\06_ARCHIVE\\main\\v4_development",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\07_RESEARCH\\01_ENVIRONMENT",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\07_RESEARCH\\02_EXPLORATORY_ANALYSIS",
+        "md_count": 4
+      },
+      {
+        "directory": "docs\\07_RESEARCH\\03_PATTERN_RECOGNITION",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\07_RESEARCH\\04_EXPERIMENT_TRACKING",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\08_KNOWLEDGE\\BEST_PRACTICES",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\08_KNOWLEDGE\\FACTOR_LIBRARY",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\08_KNOWLEDGE\\STRATEGY_LIBRARY",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\09_ARCHIVE\\TECHNICAL_SPECIFICATIONS",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\09_AUDIT\\GUIDES",
+        "md_count": 2
+      },
+      {
+        "directory": "docs\\09_AUDIT\\PROCEDURES",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\09_AUDIT\\REPORTS",
+        "md_count": 110
+      },
+      {
+        "directory": "docs\\09_AUDIT\\STANDARDS",
+        "md_count": 19
+      },
+      {
+        "directory": "docs\\09_AUDIT\\STATE",
+        "md_count": 3
+      },
+      {
+        "directory": "docs\\09_AUDIT\\TEMPLATES",
+        "md_count": 12
+      },
+      {
+        "directory": "docs\\09_AUDIT\\WORKFLOWS",
+        "md_count": 3
+      }
+    ],
+    "missing_yaml": [],
+    "encoding_issues": []
+  },
+  "summary": {
+    "total_issues": 54,
+    "critical_issues": 0,
+    "important_issues": 3,
+    "minor_issues": 51
+  }
+}

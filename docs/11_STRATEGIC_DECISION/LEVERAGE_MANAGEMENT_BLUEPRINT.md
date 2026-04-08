@@ -1,5 +1,18 @@
 ---
-module_id: LEVERAGE_MANAGEMENT_BLUEPRINT_001
+module_id: LAYER_015
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 3 (策略层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
+module_id: LEVERAGE_MANAGEMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -19,6 +32,43 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.6: 融资融券管理系统蓝图
+> **核心职责**: 融资融券管理系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：融资融券管理系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Leverage Management蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Leverage Management蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**模块蓝图，负责特定功能的实现**。
+
+### 职责边界
+
+**负责**：
+- ✅ 核心功能实现
+- ✅ 接口定义
+- ✅ 数据模型设计
+
+**不负责**：
+- ❌ 其他模块职责
+- ❌ 跨模块协调
+
+### 对接模块
+
+**上游模块**：
+- 上游模块
+
+**下游模块**：
+- 下游模块
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-05  
@@ -139,9 +189,9 @@ Target_Leverage = f(市场波动率, 策略夏普比率, 风险预算, 市场状
 Leverage_Efficiency = (杠杆后收益 - 融资成本) / 杠杆风险
 
 杠杆调整决策:
-如果 当前杠杆率 < 目标杠杆率 × 0.9:
+如果 当前杠杆率 < 目标杠杆率  0.9:
     增加杠杆
-否则如果 当前杠杆率 > 目标杠杆率 × 1.1:
+否则如果 当前杠杆率 > 目标杠杆率  1.1:
     降低杠杆
 否则:
     保持不变
@@ -264,7 +314,7 @@ class DynamicLeverageEngine:
                                      leverage_ratio: float) -> float:
         """计算杠杆效率"""
         net_return = leveraged_return - financing_cost
-        leverage_risk = leverage_ratio * 0.10  # 假设风险为杠杆率×10%
+        leverage_risk = leverage_ratio * 0.10  # 假设风险为杠杆率10%
         
         if leverage_risk > 0:
             efficiency = net_return / leverage_risk
@@ -328,7 +378,7 @@ class DynamicLeverageEngine:
 
 ```
 总融资成本:
-Total_Cost = 融资金额 × 融资利率 × 融资期限 / 360
+Total_Cost = 融资金额  融资利率  融资期限 / 360
 
 多券商比较:
 最优券商 = argmin(融资利率 + 交易成本 + 服务质量评分)
@@ -453,7 +503,7 @@ class FinancingCostOptimizer:
 Available = 券商库存 - 已融出数量
 
 融券成本:
-Short_Cost = 融券金额 × 融券费率 × 融券期限 / 360
+Short_Cost = 融券金额  融券费率  融券期限 / 360
 
 最优融券策略:
 最优券源 = argmin(融券费率 + 券源稳定性评分)
@@ -566,7 +616,7 @@ Warning_Line = 150%  # 维持担保比例低于150%预警
 Liquidation_Line = 130%  # 维持担保比例低于130%强制平仓
 
 保证金补充:
-Required_Margin = (融资余额 + 融券余额) × 1.5 - (现金 + 证券市值)
+Required_Margin = (融资余额 + 融券余额)  1.5 - (现金 + 证券市值)
 ```
 
 #### 2.4.2 技术实现
@@ -950,10 +1000,10 @@ class QMTLeverageAPI:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
 | [PORTFOLIO_INSURANCE_BLUEPRINT.md](./PORTFOLIO_INSURANCE_BLUEPRINT.md) | 投资组合保险系统 |
-| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./RISK_BUDGET_SYSTEM_BLUEPRINT.md) | 风险预算系统 |
+| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算系统 |
 
 ---
 
@@ -967,3 +1017,34 @@ class QMTLeverageAPI:
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建业绩归因系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Leverage Management Blueprint
+- **模块ID**: LEVERAGE_MANAGEMENT_BLUEPRINT_001
+- **蓝图文档**: LEVERAGE_MANAGEMENT_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.6 - 融资融券管理系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Leverage Management Blueprint** | Layer 11.6 - 融资融券管理系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

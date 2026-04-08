@@ -1,164 +1,913 @@
----
-module_id: BACKTEST_UI_BLUEPRINT_001
+﻿---
+module_id: 08_HUMAN_AI_INTERFACE_05_BACKTEST_UI_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 系统架构师
-layer: Layer 8 (人机交互层)
-module_id: 8.5
-module_name: 交互式回测界面
-standard_type: 专业量化机构系统蓝图
-applicable_scope: ZephyrAlpha回测界面
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 回测界面交互设计、回测参数配置、回测结果可视化展示、性能指标分析图表实现
 ---
 
-# 交互式回测界面模块蓝图
 
-> **版本**: v1.0
-> **创建日期**: 2026-04-06
-> **技术方案**: Streamlit
-> **优先级**: P1（重要模块）
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
----
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-## 一、模块概述
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护-
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-交互式回测界面提供策略回测、结果可视化和报告生成功能。
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-### 1.1 核心功能
+responsibility:
+  - 回测界面设计与实施方案与优化维护#
+responsibility:
+  - 回测界面设计与实施方案与优化维护#
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护💻
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护实
+responsibility:
+  - 回测界面设计与实施方案与优化维护现
+responsibility:
+  - 回测界面设计与实施方案与优化维护代
+responsibility:
+  - 回测界面设计与实施方案与优化维护码
+responsibility:
+  - 回测界面设计与实施方案与优化维护示
+responsibility:
+  - 回测界面设计与实施方案与优化维护例
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-| 功能 | 说明 | 优先级 |
-|------|------|--------|
-| 策略选择 | 选择回测策略 | P0 |
-| 参数配置 | 配置回测参数 | P0 |
-| 结果可视化 | 图表展示 | P0 |
-| 报告生成 | 生成回测报告 | P1 |
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
----
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护p
+responsibility:
+  - 回测界面设计与实施方案与优化维护y
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护h
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-## 二、技术选型
+responsibility:
+  - 回测界面设计与实施方案与优化维护#
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护回
+responsibility:
+  - 回测界面设计与实施方案与优化维护测
+responsibility:
+  - 回测界面设计与实施方案与优化维护界
+responsibility:
+  - 回测界面设计与实施方案与优化维护面
+responsibility:
+  - 回测界面设计与实施方案与优化维护实
+responsibility:
+  - 回测界面设计与实施方案与优化维护现
+responsibility:
+  - 回测界面设计与实施方案与优化维护示
+responsibility:
+  - 回测界面设计与实施方案与优化维护例
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-### 2.1 核心技术栈
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护m
+responsibility:
+  - 回测界面设计与实施方案与优化维护p
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护k
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                  回测界面技术栈                           │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌─────────────┐      ┌─────────────┐                 │
-│  │  Streamlit  │ ◄─── │  Backtest   │                 │
-│  │  (界面)     │      │  Engine     │                 │
-│  └──────┬──────┘      └─────────────┘                 │
-│         │                                               │
-│         │                                               │
-│         ▼                                               │
-│  ┌─────────────┐                                       │
-│  │ Quantstats  │                                       │
-│  │ (可视化)    │                                       │
-│  └─────────────┘                                       │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护m
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护m
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护m
+responsibility:
+  - 回测界面设计与实施方案与优化维护p
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护m
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
----
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-## 三、界面设计
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护B
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护k
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护U
+responsibility:
+  - 回测界面设计与实施方案与优化维护I
+responsibility:
+  - 回测界面设计与实施方案与优化维护:
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-### 3.1 主界面布局
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护:
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                    ZephyrAlpha 回测系统                     │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │  策略选择: [双均线策略 ▼]                            │ │
-│  │  开始日期: [2025-01-01]  结束日期: [2025-12-31]     │ │
-│  │  初始资金: [1000000]    手续费率: [0.0003]          │ │
-│  │                                                      │ │
-│  │  [开始回测]                                          │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │              回测结果                                │ │
-│  │  总收益率: 35%    年化收益: 28%    夏普比率: 1.85   │ │
-│  │  最大回撤: 12%    胜率: 62%       盈亏比: 1.8      │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                            │
-│  ┌──────────────────────────────────────────────────────┐ │
-│  │              净值曲线                                │ │
-│  │  [图表区域]                                         │ │
-│  └──────────────────────────────────────────────────────┘ │
-│                                                            │
-└────────────────────────────────────────────────────────────┘
-```
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护=
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护C
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
----
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-## 四、实施步骤
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护u
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护k
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护,
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护g
+responsibility:
+  - 回测界面设计与实施方案与优化维护y
+responsibility:
+  - 回测界面设计与实施方案与优化维护,
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护,
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护h
+responsibility:
+  - 回测界面设计与实施方案与优化维护=
+responsibility:
+  - 回测界面设计与实施方案与优化维护1
+responsibility:
+  - 回测界面设计与实施方案与优化维护0
+responsibility:
+  - 回测界面设计与实施方案与优化维护0
+responsibility:
+  - 回测界面设计与实施方案与优化维护0
+responsibility:
+  - 回测界面设计与实施方案与优化维护0
+responsibility:
+  - 回测界面设计与实施方案与优化维护0
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护:
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-### 4.1 安装依赖
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护g
+responsibility:
+  - 回测界面设计与实施方案与优化维护y
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护g
+responsibility:
+  - 回测界面设计与实施方案与优化维护y
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-```bash
-pip install streamlit quantstats plotly
-```
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护d
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护
 
-### 4.2 主程序代码
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护k
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护h
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护i
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护_
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护a
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护h
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护
+
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护t
+responsibility:
+  - 回测界面设计与实施方案与优化维护u
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护 
+responsibility:
+  - 回测界面设计与实施方案与优化维护s
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护l
+responsibility:
+  - 回测界面设计与实施方案与优化维护f
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护c
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护e
+responsibility:
+  - 回测界面设计与实施方案与优化维护b
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护o
+responsibility:
+  - 回测界面设计与实施方案与优化维护.
+responsibility:
+  - 回测界面设计与实施方案与优化维护r
+responsibility:
+  - 回测界面设计与实施方案与优化维护u
+responsibility:
+  - 回测界面设计与实施方案与优化维护n
+responsibility:
+  - 回测界面设计与实施方案与优化维护(
+responsibility:
+  - 回测界面设计与实施方案与优化维护)
+responsibility:
+  - 回测界面设计与实施方案与优化维护
+
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护`
+responsibility:
+  - 回测界面设计与实施方案与优化维护
+
+responsibility:
+  - 回测界面设计与实施方案与优化维护
+
+
+## 💻 实现代码示例
 
 ```python
-import streamlit as st
-import quantstats as qs
+# 回测界面实现示例
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import pandas as pd
 
-st.set_page_config(page_title="ZephyrAlpha回测系统", layout="wide")
+app = FastAPI()
 
-st.title("ZephyrAlpha 回测系统")
+class BacktestConfig(BaseModel):
+    strategy_id: str
+    start_date: str
+    end_date: str
+    initial_capital: float
+    parameters: dict
 
-# 侧边栏配置
-st.sidebar.header("回测配置")
-strategy = st.sidebar.selectbox("策略选择", ["双均线策略", "动量策略", "均值回归"])
-start_date = st.sidebar.date_input("开始日期")
-end_date = st.sidebar.date_input("结束日期")
-initial_capital = st.sidebar.number_input("初始资金", value=1000000)
+@app.post("/api/backtest/run")
+async def run_backtest(config: BacktestConfig):
+    """执行回测"""
+    # 加载策略
+    strategy = load_strategy(config.strategy_id)
+    
+    # 执行回测
+    results = strategy.backtest(
+        start_date=config.start_date,
+        end_date=config.end_date,
+        initial_capital=config.initial_capital,
+        **config.parameters
+    )
+    
+    return {
+        "status": "success",
+        "results": results.to_dict()
+    }
 
-# 回测按钮
-if st.sidebar.button("开始回测"):
-    with st.spinner("回测运行中..."):
-        # 执行回测
-        result = run_backtest(strategy, start_date, end_date, initial_capital)
-        
-        # 显示结果
-        col1, col2, col3 = st.columns(3)
-        col1.metric("总收益率", f"{result['total_return']:.2%}")
-        col2.metric("年化收益", f"{result['annual_return']:.2%}")
-        col3.metric("夏普比率", f"{result['sharpe']:.2f}")
-        
-        # 显示图表
-        st.plotly_chart(result['equity_curve'])
+@app.get("/api/backtest/results/{backtest_id}")
+async def get_backtest_results(backtest_id: str):
+    """获取回测结果"""
+    results = load_backtest_results(backtest_id)
+    
+    return {
+        "metrics": {
+            "total_return": results['total_return'],
+            "sharpe_ratio": results['sharpe_ratio'],
+            "max_drawdown": results['max_drawdown']
+        },
+        "trades": results['trades']
+    }
 ```
-
-### 4.3 启动命令
-
-```bash
-streamlit run backtest_ui.py
-```
-
----
-
-## 五、验收标准
-
-| 验收项 | 验收标准 | 测试方法 |
-|--------|---------|---------|
-| 界面访问 | 可访问8501端口 | 浏览器访问 |
-| 策略选择 | 可选择策略 | 功能测试 |
-| 参数配置 | 可配置参数 | 功能测试 |
-| 回测执行 | 可执行回测 | 功能测试 |
-| 结果展示 | 图表正常显示 | 视觉检查 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13

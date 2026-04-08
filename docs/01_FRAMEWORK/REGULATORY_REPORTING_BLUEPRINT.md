@@ -1,10 +1,23 @@
 ---
-module_id: REGULATORY_REPORTING_BLUEPRINT_001
+module_id: REGULATORY_REPORTING_BLUEPRINT
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - REGULATORY_REPORTING蓝图设计
+---
+
+﻿---
+module_id: REGULATORY_REPORTING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
 last_updated: 2026-04-06
 owner: 首席架构师
+responsibility:
+  - 系统架构蓝图设计与实施指导与实施方案
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 监管报告自动化系统
@@ -28,10 +41,15 @@ responsibility_boundary: |
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
   - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
----
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库---
+
 
 # 监管报告自动化系统蓝图
+> **核心职责**: Regulatory Reporting蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Regulatory Reporting蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -387,23 +405,23 @@ class TradeReportGenerator:
 | 指标 | 数值 |
 |------|------|
 | 总交易次数 | {{ summary.total_trades }} |
-| 总交易金额 | ¥{{ "%.2f"|format(summary.total_amount) }} |
-| 总手续费 | ¥{{ "%.2f"|format(summary.total_commission) }} |
+| 总交易金额 | {{ "%.2f"|format(summary.total_amount) }} |
+| 总手续费 | {{ "%.2f"|format(summary.total_commission) }} |
 | 买入次数 | {{ summary.buy_trades }} |
 | 卖出次数 | {{ summary.sell_trades }} |
-| 买入金额 | ¥{{ "%.2f"|format(summary.buy_amount) }} |
-| 卖出金额 | ¥{{ "%.2f"|format(summary.sell_amount) }} |
-| 净买入金额 | ¥{{ "%.2f"|format(summary.net_amount) }} |
+| 买入金额 | {{ "%.2f"|format(summary.buy_amount) }} |
+| 卖出金额 | {{ "%.2f"|format(summary.sell_amount) }} |
+| 净买入金额 | {{ "%.2f"|format(summary.net_amount) }} |
 
 ## 二、交易图表
 
 ### 2.1 交易金额分布
 
-![交易金额分布]({{ charts.trade_amounts }})
+!交易金额分布
 
 ### 2.2 持仓分布
 
-![持仓分布]({{ charts.position_distribution }})
+!持仓分布
 
 ## 三、风险提示
 
@@ -546,3 +564,34 @@ class ReportTemplate:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 10: 治理与合规层
+##### 0.001. Regulatory Reporting Blueprint
+- **模块ID**: REGULATORY_REPORTING_BLUEPRINT_001
+- **蓝图文档**: REGULATORY_REPORTING_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 监管报告自动化系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Regulatory Reporting Blueprint** | 监管报告自动化系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

@@ -1,30 +1,31 @@
 ---
-module_id: SENTIMENT_ANALYSIS_RISK_MGMT_001
-version: 1.1.0
+module_id: 10_AI_WORKFLOW_SENTIMENT_ANALYSIS_RISK_MANAGEMENT
+version: 1.0.0
 status: Active
-created_date: 2026-04-02
-last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 风险管理文档
-applicable_scope: 舆情分析层改进模块风险管
-compliance_level: 专业标准
-parent_document: INDEX.md
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - grafana/dashboards/risk_monitoring.json文档
 ---
 
-
-## 文档职责说明
-
+﻿---
+module_id: SENTIMENT_ANALYSIS_RISK_MANAGEMENT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - SENTIMENT ANALYSIS RISK MANAGEMENT document
 **本文档职责**: 风险管理文档
-- 风险识别、风险评估、风险缓解措施
-
-# 舆情分析层改进模块风险管理文
-
+> **核心职责**: 文档内容说明
+> **职责边界**: 
 > **版本**: v1.1
 > **创建日期**: 2026-04-02
 > **最后更*: 2026-04-04
 > **文档类型**: 风险管理
 > **状*: 活跃
-
 ---
 
 ## 📋 文档目录
@@ -160,7 +161,7 @@ parent_document: INDEX.md
 | IR-002 | 时间不足 | 3 | 4 | 12 | P0 |
 | BR-001 | 数据隐私合规 | 3 | 4 | 12 | P1 |
 
-**风险评分 = 发生概率 × 影响程度**优先级划*:
+**风险评分 = 发生概率  影响程度**优先级划*:
 - P0: 风险评分 12
 - P1: 风险评分 9-11
 - P2: 风险评分 6-8

@@ -1,4 +1,25 @@
+---
+module_id: V_011
+version: 7.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 实施团队
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+standard_type: 专业量化机构报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+---
+
+
 # 舆情分析层文档治理深度审计报告 v7
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 **审计日期**: 2026-04-06  
 **审计范围**: docs/10_AI_WORKFLOW/ (舆情分析层)  
@@ -86,7 +107,7 @@
 **问题位置**: 
 - 文件：SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md
 - 行号：全文
-- 具体表现：所有中文字符显示为乱码（如"舆情分析层"显示为"èæ æå±"）
+- 具体表现：所有中文字符显示为乱码（如"舆情分析层"显示为" "）
 
 **根本原因**: 文件在之前的批量替换过程中使用了latin-1编码读取，导致UTF-8编码的中文字符损坏
 

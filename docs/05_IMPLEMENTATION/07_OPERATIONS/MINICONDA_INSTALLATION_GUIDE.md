@@ -1,165 +1,186 @@
-# Miniconda安装指南�?分钟�?
-## 📋 安装步骤
+---
+module_id: MINICONDA_002
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 实施团队
+responsibility:
+- 操作指南编写与使用说明与系统维护管理
+standard_type: 专业量化机构指南
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+---
 
-### 步骤1: 下载Miniconda�?分钟�?
-1. 打开浏览器，访问�?   ```
+
+# Minicondaﮒ؟ﻟ۲ﮔﮒﺅﺙ?ﮒﻠﺅﺙ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+## ﻭ ﮒ؟ﻟ۲ﮔ۴ﻠ۹۳
+
+### ﮔ۴ﻠ۹۳1: ﻛﺕﻟﺛﺛMinicondaﺅﺙ?ﮒﻠﺅﺙ?
+1. ﮔﮒﺙﮔﭖﻟ۶ﮒ۷ﺅﺙﻟ؟ﺟﻠ؟ﺅﺙ?   ```
    https://docs.conda.io/en/latest/miniconda.html
    ```
 
-2. 向下滚动�?Windows installers"部分
+2. ﮒﻛﺕﮔﭨﮒ۷ﮒ?Windows installers"ﻠ۷ﮒ
 
-3. 点击下载�?   ```
+3. ﻝﺗﮒﭨﻛﺕﻟﺛﺛﺅﺙ?   ```
    Miniconda3 Windows 64-bit
    ```
-   文件名类似：`Miniconda3-latest-Windows-x86_64.exe`
+   ﮔﻛﭨﭘﮒﻝﺎﭨﻛﺙﺙﺅﺙ`Miniconda3-latest-Windows-x86_64.exe`
 
 ---
 
-### 步骤2: 安装Miniconda�?分钟�?
-1. 双击运行下载的安装程�?
-2. 欢迎界面：点�?**Next**
+### ﮔ۴ﻠ۹۳2: ﮒ؟ﻟ۲Minicondaﺅﺙ?ﮒﻠﺅﺙ?
+1. ﮒﮒﭨﻟﺟﻟ۰ﻛﺕﻟﺛﺛﻝﮒ؟ﻟ۲ﻝ۷ﮒﭦ?
+2. ﮔ؛۱ﻟﺟﻝﻠ۱ﺅﺙﻝﺗﮒ?**Next**
 
-3. 许可协议：点�?**I Agree**
+3. ﻟ؟ﺕﮒﺁﮒﻟ؟؟ﺅﺙﻝﺗﮒ?**I Agree**
 
-4. 安装类型：选择 **Just Me (recommended)**，点�?**Next**
+4. ﮒ؟ﻟ۲ﻝﺎﭨﮒﺅﺙﻠﮔ۸ **Just Me (recommended)**ﺅﺙﻝﺗﮒ?**Next**
 
-5. 安装路径：使用默认路径，点击 **Next**
+5. ﮒ؟ﻟ۲ﻟﺓﺁﮒﺝﺅﺙﻛﺛﺟﻝ۷ﻠﭨﻟ؟۳ﻟﺓﺁﮒﺝﺅﺙﻝﺗﮒﭨ **Next**
 
-6. 高级选项（重要！）：
-   - �?**勾�?* "Add Miniconda3 to my PATH environment variable"
-   - �?**勾�?* "Register Miniconda3 as my default Python"
-   - 点击 **Install**
+6. ﻠ،ﻝﭦ۶ﻠﻠ۰ﺗﺅﺙﻠﻟ۵ﺅﺙﺅﺙﺅﺙ
+   - ﻗ?**ﮒﺝﻠ?* "Add Miniconda3 to my PATH environment variable"
+   - ﻗ?**ﮒﺝﻠ?* "Register Miniconda3 as my default Python"
+   - ﻝﺗﮒﭨ **Install**
 
-7. 等待安装完成，点�?**Next**，然后点�?**Finish**
-
----
-
-### 步骤3: 重启终端�?0秒）
-
-1. **关闭当前所有终端窗�?*
-
-2. **重新打开一个新的PowerShell终端**
+7. ﻝﮒﺝﮒ؟ﻟ۲ﮒ؟ﮔﺅﺙﻝﺗﮒ?**Next**ﺅﺙﻝﭘﮒﻝﺗﮒ?**Finish**
 
 ---
 
-### 步骤4: 创建Python 3.12环境�?分钟�?
-在新打开的终端中运行�?
+### ﮔ۴ﻠ۹۳3: ﻠﮒﺁﻝﭨﻝ،ﺁﺅﺙ?0ﻝ۶ﺅﺙ
+
+1. **ﮒﺏﻠﮒﺛﮒﮔﮔﻝﭨﻝ،ﺁﻝ۹ﮒ?*
+
+2. **ﻠﮔﺍﮔﮒﺙﻛﺕﻛﺕ۹ﮔﺍﻝPowerShellﻝﭨﻝ،ﺁ**
+
+---
+
+### ﮔ۴ﻠ۹۳4: ﮒﮒﭨﭦPython 3.12ﻝﺁﮒ۱ﺅﺙ?ﮒﻠﺅﺙ?
+ﮒ۷ﮔﺍﮔﮒﺙﻝﻝﭨﻝ،ﺁﻛﺕﻟﺟﻟ۰ﺅﺙ?
 ```powershell
-# 创建环境
+# ﮒﮒﭨﭦﻝﺁﮒ۱
 conda create -n qmt python=3.12 -y
 
-# 激活环�?conda activate qmt
+# ﮔﺟﮔﺑﭨﻝﺁﮒ۱?conda activate qmt
 
-# 安装依赖
+# ﮒ؟ﻟ۲ﻛﺝﻟﭖ
 pip install xtquant pandas numpy
 
-# 验证安装
+# ﻠ۹ﻟﺁﮒ؟ﻟ۲
 python --version
 ```
 
-**预期输出**�?```
+**ﻠ۱ﮔﻟﺝﮒﭦ**ﺅﺙ?```
 Python 3.12.x
 ```
 
 ---
 
-### 步骤5: 测试QMT连接�?分钟�?
+### ﮔ۴ﻠ۹۳5: ﮔﭖﻟﺁQMTﻟﺟﮔ۴ﺅﺙ?ﮒﻠﺅﺙ?
 ```powershell
-# 确保在qmt环境�?conda activate qmt
+# ﻝ۰؟ﻛﺟﮒ۷qmtﻝﺁﮒ۱ﻛﺕ?conda activate qmt
 
-# 运行验证脚本
+# ﻟﺟﻟ۰ﻠ۹ﻟﺁﻟﮔ؛
 python scripts/verify_qmt_environment.py
 ```
 
-**预期结果**�?```
-�?Python版本: 3.12.x
-�?xtquant库可�?�?XtAccount类可�?```
+**ﻠ۱ﮔﻝﭨﮔ**ﺅﺙ?```
+ﻗ?Pythonﻝﮔ؛: 3.12.x
+ﻗ?xtquantﮒﭦﮒﺁﻝ?ﻗ?XtAccountﻝﺎﭨﮒﺁﻝ?```
 
 ---
 
-## ⚠️ 重要提示
+## ﻗﺅﺕ ﻠﻟ۵ﮔﻝ۳ﭦ
 
-### 安装时必须勾选PATH选项�?
+### ﮒ؟ﻟ۲ﮔﭘﮒﺟﻠ۰ﭨﮒﺝﻠPATHﻠﻠ۰ﺗﺅﺙ?
 ```
-安装界面示例�?┌─────────────────────────────────────�?�?Advanced Options                    �?�?                                    �?�?☑️ Add Miniconda3 to my PATH        �?�?必须勾选！
-�?   environment variable             �?�?                                    �?�?☑️ Register Miniconda3 as my        �?�?建议勾�?�?   default Python                   �?�?                                    �?�?[Install]  [Cancel]                 �?└─────────────────────────────────────�?```
+ﮒ؟ﻟ۲ﻝﻠ۱ﻝ۳ﭦﻛﺝﺅﺙ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?ﻗ?Advanced Options                    ﻗ?ﻗ?                                    ﻗ?ﻗ?ﻗﺅﺕ Add Miniconda3 to my PATH        ﻗ?ﻗ?ﮒﺟﻠ۰ﭨﮒﺝﻠﺅﺙ
+ﻗ?   environment variable             ﻗ?ﻗ?                                    ﻗ?ﻗ?ﻗﺅﺕ Register Miniconda3 as my        ﻗ?ﻗ?ﮒﭨﭦﻟ؟؟ﮒﺝﻠ?ﻗ?   default Python                   ﻗ?ﻗ?                                    ﻗ?ﻗ?[Install]  [Cancel]                 ﻗ?ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?```
 
-### 如果忘记勾选PATH选项
+### ﮒ۵ﮔﮒﺟﻟ؟ﺍﮒﺝﻠPATHﻠﻠ۰ﺗ
 
-需要手动添加到PATH�?1. 右键"此电�? �?属�?�?高级系统设置
-2. 环境变量 �?系统变量 �?Path �?编辑
-3. 添加以下路径�?   ```
-   C:\Users\你的用户名\miniconda3
-   C:\Users\你的用户名\miniconda3\Scripts
-   C:\Users\你的用户名\miniconda3\Library\bin
+ﻠﻟ۵ﮔﮒ۷ﮔﺓﭨﮒﮒﺍPATHﺅﺙ?1. ﮒﺏﻠ؟"ﮔ۳ﻝﭖﻟ? ﻗ?ﮒﺎﮔ?ﻗ?ﻠ،ﻝﭦ۶ﻝﺏﭨﻝﭨﻟ؟ﺝﻝﺛ؟
+2. ﻝﺁﮒ۱ﮒﻠ ﻗ?ﻝﺏﭨﻝﭨﮒﻠ ﻗ?Path ﻗ?ﻝﺙﻟﺝ
+3. ﮔﺓﭨﮒﻛﭨ۴ﻛﺕﻟﺓﺁﮒﺝﺅﺙ?   ```
+C: （待补充）
+C: （待补充）
+C: （待补充）
    ```
 
 ---
 
-## 🎯 验证安装成功
+## ﻭﺁ ﻠ۹ﻟﺁﮒ؟ﻟ۲ﮔﮒ
 
-运行以下命令�?
+ﻟﺟﻟ۰ﻛﭨ۴ﻛﺕﮒﺛﻛﭨ۳ﺅﺙ?
 ```powershell
-# 检查conda版本
+# ﮔ۲ﮔ۴condaﻝﮔ؛
 conda --version
-# 应显�? conda 24.x.x
+# ﮒﭦﮔﺝﻝ۳? conda 24.x.x
 
-# 检查Python版本
+# ﮔ۲ﮔ۴Pythonﻝﮔ؛
 python --version
-# 应显�? Python 3.12.x
+# ﮒﭦﮔﺝﻝ۳? Python 3.12.x
 
-# 检查环境列�?conda env list
-# 应显�? qmt 环境
+# ﮔ۲ﮔ۴ﻝﺁﮒ۱ﮒﻟ۰?conda env list
+# ﮒﭦﮔﺝﻝ۳? qmt ﻝﺁﮒ۱
 ```
 
 ---
 
-## 📞 遇到问题�?
-### 问题1: conda命令找不�?
-**原因**：未勾选PATH选项或未重启终端
+## ﻭ ﻠﮒﺍﻠ؟ﻠ۱ﺅﺙ?
+### ﻠ؟ﻠ۱1: condaﮒﺛﻛﭨ۳ﮔﺝﻛﺕﮒ?
+**ﮒﮒ**ﺅﺙﮔ۹ﮒﺝﻠPATHﻠﻠ۰ﺗﮔﮔ۹ﻠﮒﺁﻝﭨﻝ،ﺁ
 
-**解决**�?1. 重启终端
-2. 如果还不行，重新安装并勾选PATH选项
+**ﻟ۶۲ﮒﺏ**ﺅﺙ?1. ﻠﮒﺁﻝﭨﻝ،ﺁ
+2. ﮒ۵ﮔﻟﺟﻛﺕﻟ۰ﺅﺙﻠﮔﺍﮒ؟ﻟ۲ﮒﺗﭘﮒﺝﻠPATHﻠﻠ۰ﺗ
 
-### 问题2: Python版本仍然�?.13
+### ﻠ؟ﻠ۱2: Pythonﻝﮔ؛ﻛﭨﻝﭘﮔ?.13
 
-**原因**：未激活qmt环境
+**ﮒﮒ**ﺅﺙﮔ۹ﮔﺟﮔﺑﭨqmtﻝﺁﮒ۱
 
-**解决**�?```powershell
+**ﻟ۶۲ﮒﺏ**ﺅﺙ?```powershell
 conda activate qmt
 python --version
 ```
 
-### 问题3: pip安装失败
+### ﻠ؟ﻠ۱3: pipﮒ؟ﻟ۲ﮒ۳ﺎﻟﺑ۴
 
-**原因**：网络问�?
-**解决**：使用国内镜�?```powershell
+**ﮒﮒ**ﺅﺙﻝﺛﻝﭨﻠ؟ﻠ۱?
+**ﻟ۶۲ﮒﺏ**ﺅﺙﻛﺛﺟﻝ۷ﮒﺛﮒﻠﮒ?```powershell
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xtquant pandas numpy
 ```
 
 ---
 
-## 🚀 安装完成�?
-1. **启动QMT客户�?*
-   - 打开国金QMT软件
-   - 登录时勾选【极简模式】或【独立交易�?
-2. **激活qmt环境**
+## ﻭ ﮒ؟ﻟ۲ﮒ؟ﮔﮒ?
+1. **ﮒﺁﮒ۷QMTﮒ؟۱ﮔﺓﻝ،?*
+   - ﮔﮒﺙﮒﺛﻠQMTﻟﺛﺁﻛﭨﭘ
+   - ﻝﭨﮒﺛﮔﭘﮒﺝﻠﻙﮔﻝ؟ﮔ۷۰ﮒﺙﻙﮔﻙﻝ؛ﻝ،ﻛﭦ۳ﮔﻙ?
+2. **ﮔﺟﮔﺑﭨqmtﻝﺁﮒ۱**
    ```powershell
    conda activate qmt
    ```
 
-3. **运行测试脚本**
+3. **ﻟﺟﻟ۰ﮔﭖﻟﺁﻟﮔ؛**
    ```powershell
    python scripts/test_qmt_connection_v4.py
    ```
 
-4. **预期结果**
+4. **ﻠ۱ﮔﻝﭨﮔ**
    ```
-   �?数据接口连接成功
-   �?交易接口连接成功
-   �?账户订阅成功
+   ﻗ?ﮔﺍﮔ؟ﮔ۴ﮒ۲ﻟﺟﮔ۴ﮔﮒ
+   ﻗ?ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﮔﮒ
+   ﻗ?ﻟﺑ۵ﮔﺓﻟ؟۱ﻠﮔﮒ
    ```
 
 ---
 
-**预计总时�?*: 5-7分钟
+**ﻠ۱ﻟ؟۰ﮔﭨﮔﭘﻠ?*: 5-7ﮒﻠ

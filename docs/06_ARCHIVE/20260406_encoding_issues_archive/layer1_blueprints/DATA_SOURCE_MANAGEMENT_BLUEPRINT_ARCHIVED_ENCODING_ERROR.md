@@ -3,8 +3,10 @@ module_id: IMPL_DATA_SOURCE_MGMT_BP_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席技术评审官
+responsibility:
+- 归档文档、历史版本、蓝图设计
 standard_type: 专业量化机构蓝图
 applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
 compliance_level: 专业标准
@@ -15,9 +17,16 @@ open_source_dependency: pandas, numpy
 estimated_effort: 1.5周
 priority: P1
 ---
+---
+
 
 
 # 数据源管理系统蓝?
+> **核心职责**: Data Source Management Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Source Management Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化系统 v5.3 - 数据源管理系统详细设?> **模块ID**: `DATA_SOURCE_MANAGEMENT_001`
 > **实施周期**: Week 13-14?周）
 > **优先?*: P0（必需?> **预期收益**: 提高数据源可?9.9%，减少故障影响时?0%
@@ -615,7 +624,7 @@ class SourcePriorityManager:
 | **Qlib** | Python?| 无需认证 | 🆓 免费 | 微软量化数据 | P2（补充） |
 | **自建数据?* | 自定?| 自定?| - | 自定?| P3（自定义?|
 
-> **📋 详细数据接口清单**: 请参?[DATA_SOURCE_INVENTORY.md](./DATA_SOURCE_INVENTORY.md) 获取完整的数据接口清单，包括?> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib?> - 数据源优先级策略和切换规?> - 成本分析和优化建?> - 数据源监控指标和告警规则
+> **📋 详细数据接口清单**: 请参?DATA_SOURCE_INVENTORY.md 获取完整的数据接口清单，包括?> - 8个数据源的详细说明（iFind、QMT、Tushare、AKShare、Baostock、EFinance、yfinance、Qlib?> - 数据源优先级策略和切换规?> - 成本分析和优化建?> - 数据源监控指标和告警规则
 
 ### 4.2 数据源配置规?
 ```yaml
@@ -770,10 +779,10 @@ src/
 ### 8.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文?*: [LAYER1_IMPROVEMENT_PLAN.md](./LAYER1_IMPROVEMENT_PLAN.md)
+- **父文?*: LAYER1_IMPROVEMENT_PLAN.md
 - **关联文档**:
-  - [LAYER1_BLUEPRINT_GAP_ANALYSIS.md](../review_reports/LAYER1_BLUEPRINT_GAP_ANALYSIS.md)
-  - [DATACLEANER_TECHNICAL_SPECIFICATION.md](./DATACLEANER_TECHNICAL_SPECIFICATION.md)
+  - LAYER1_BLUEPRINT_GAP_ANALYSIS.md
+  - DATACLEANER_TECHNICAL_SPECIFICATION.md
 
 ### 8.2 版本管理
 

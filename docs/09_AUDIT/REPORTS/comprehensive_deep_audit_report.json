@@ -1,0 +1,4461 @@
+{
+  "summary": {
+    "audit_date": "2026-04-07T21:32:53.852686",
+    "total_documents": 2595,
+    "total_issues": 514,
+    "severity_distribution": {
+      "low": 33,
+      "medium": 201,
+      "high": 280
+    },
+    "layer_distribution": {
+      "L1": 132,
+      "L2": 335,
+      "L3": 47
+    },
+    "category_distribution": {
+      "目录结构": 36,
+      "文件命名": 11,
+      "路径引用": 85,
+      "职责驱动": 297,
+      "索引完备性": 21,
+      "版本隔离": 17,
+      "五大原则": 31,
+      "编号体系": 16
+    }
+  },
+  "layer1_issues": [
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "00_RESOURCES",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "medium",
+      "file": "06_CONSTRUCTION_DOCS",
+      "issue_type": "空目录",
+      "description": "目录为空，建议删除或填充内容",
+      "suggestion": "删除空目录或添加必要文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "07_AI_REPORTING",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "medium",
+      "file": "09_ARCHIVE",
+      "issue_type": "空目录",
+      "description": "目录为空，建议删除或填充内容",
+      "suggestion": "删除空目录或添加必要文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "00_RESOURCES\\04_PLATFORM_DOCS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "01_FRAMEWORK\\ARCHITECTURE_DECISIONS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "04_EXECUTION\\02_TRADE_EXECUTOR",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\40_TRADING_TERMINAL",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\41_SYSTEM_CONFIG_CENTER",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\42_USER_PERMISSION_MANAGEMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\43_PERFORMANCE_MONITORING",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\44_LOG_MANAGEMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\45_CONFIG_MANAGEMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\46_BACKUP_RECOVERY",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\47_SYSTEM_HEALTH_CHECK",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\48_VERSION_MANAGEMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\49_NOTIFICATION_ALERT_SYSTEM",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\50_MOBILE_SUPPORT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\51_DATA_IMPORT_TOOLS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\52_WORKFLOW_MANAGEMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\53_KNOWLEDGE_BASE_SYSTEM",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\54_AI_ASSISTANT_INTEGRATION",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\55_PERFORMANCE_ANALYSIS_TOOLS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\56_SECURITY_AUDIT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\57_SANDBOX_ENVIRONMENT",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\58_API_DOCUMENTATION_GENERATION",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\59_PERFORMANCE_BENCHMARK_TESTING",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_HUMAN_AI_INTERFACE\\60_COLLABORATION_TOOLS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(1个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "08_KNOWLEDGE_BASE\\01_TECHNICAL_KNOWLEDGE",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\old_versions",
+      "issue_type": "空目录",
+      "description": "目录为空，建议删除或填充内容",
+      "suggestion": "删除空目录或添加必要文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "09_AUDIT\\DECISION_RECORDS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "09_AUDIT\\RESEARCH_MEMOS",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "09_RESEARCH_INNOVATION\\maintenance_records",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "10_GOVERNANCE_COMPLIANCE\\CLASSIFICATION",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "目录结构",
+      "severity": "low",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules",
+      "issue_type": "稀疏目录",
+      "description": "目录文件过少(2个)，建议整合",
+      "suggestion": "考虑整合到父目录或补充文档"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210333.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210333",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_DEEP_GAP_ANALYSIS_REPORT_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER6_DEEP_GAP_ANALYSIS_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_FINAL_COMPLETE_SOLUTION_REPORT_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER6_FINAL_COMPLETE_SOLUTION_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_COMPLETE_OPTIMIZATION_REPORT_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_COMPLETE_OPTIMIZATION_REPORT_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_OPTIMIZED_20260407_205817.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER8_DEEP_AUDIT_REPORT_OPTIMIZED_20260407_205817",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\LAYER5_ARCHITECTURE_COMPLETENESS_ANALYSIS_20260407.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_ARCHITECTURE_COMPLETENESS_ANALYSIS_20260407",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "文件命名",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_210012.md",
+      "issue_type": "旧架构命名残留",
+      "description": "文件名包含旧架构关键词: LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_210012",
+      "suggestion": "重命名文件，移除旧架构关键词"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "System_Manifest.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: 05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "System_Manifest.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: 05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT8_FINAL_FIX_SUMMARY_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_P0_P1_FIX_REPORT_20260407_190935.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT8_FINAL_FIX_SUMMARY_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_P1_FIX_REPORT_V2_20260407_190803.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT8_FINAL_FIX_SUMMARY_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_DEEP_AUDIT_REPORT_20260407_190947.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLUEPRINT_STAGE_DELIVERY_CHECKLIST_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\BLUEPRINT_STAGE_DELIVERY_CHECKLIST_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/40_TRADING_TERMINAL/TRADING_TERMINAL_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/41_SYSTEM_CONFIG_CENTER/SYSTEM_CONFIG_CENTER_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/42_USER_PERMISSION_MANAGEMENT/USER_PERMISSION_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/43_PERFORMANCE_MONITORING/PERFORMANCE_MONITORING_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/44_LOG_MANAGEMENT/LOG_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/45_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/46_BACKUP_RECOVERY/BACKUP_RECOVERY_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/47_SYSTEM_HEALTH_CHECK/SYSTEM_HEALTH_CHECK_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/48_VERSION_MANAGEMENT/VERSION_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/49_NOTIFICATION_ALERT_SYSTEM/NOTIFICATION_ALERT_SYSTEM_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/50_MOBILE_SUPPORT/MOBILE_SUPPORT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/51_DATA_IMPORT_TOOLS/DATA_IMPORT_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/52_WORKFLOW_MANAGEMENT/WORKFLOW_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/53_KNOWLEDGE_BASE_SYSTEM/KNOWLEDGE_BASE_SYSTEM_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/54_AI_ASSISTANT_INTEGRATION/AI_ASSISTANT_INTEGRATION_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/55_PERFORMANCE_ANALYSIS_TOOLS/PERFORMANCE_ANALYSIS_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/56_SECURITY_AUDIT/SECURITY_AUDIT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/57_SANDBOX_ENVIRONMENT/SANDBOX_ENVIRONMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/58_API_DOCUMENTATION_GENERATION/API_DOCUMENTATION_GENERATION_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/59_PERFORMANCE_BENCHMARK_TESTING/PERFORMANCE_BENCHMARK_TESTING_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/60_COLLABORATION_TOOLS/COLLABORATION_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/40_TRADING_TERMINAL/TRADING_TERMINAL_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/41_SYSTEM_CONFIG_CENTER/SYSTEM_CONFIG_CENTER_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/42_USER_PERMISSION_MANAGEMENT/USER_PERMISSION_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/43_PERFORMANCE_MONITORING/PERFORMANCE_MONITORING_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/44_LOG_MANAGEMENT/LOG_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/45_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/46_BACKUP_RECOVERY/BACKUP_RECOVERY_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/47_SYSTEM_HEALTH_CHECK/SYSTEM_HEALTH_CHECK_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/48_VERSION_MANAGEMENT/VERSION_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/49_NOTIFICATION_ALERT_SYSTEM/NOTIFICATION_ALERT_SYSTEM_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/50_MOBILE_SUPPORT/MOBILE_SUPPORT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/51_DATA_IMPORT_TOOLS/DATA_IMPORT_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/52_WORKFLOW_MANAGEMENT/WORKFLOW_MANAGEMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/53_KNOWLEDGE_BASE_SYSTEM/KNOWLEDGE_BASE_SYSTEM_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/54_AI_ASSISTANT_INTEGRATION/AI_ASSISTANT_INTEGRATION_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/55_PERFORMANCE_ANALYSIS_TOOLS/PERFORMANCE_ANALYSIS_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/56_SECURITY_AUDIT/SECURITY_AUDIT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/57_SANDBOX_ENVIRONMENT/SANDBOX_ENVIRONMENT_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/58_API_DOCUMENTATION_GENERATION/API_DOCUMENTATION_GENERATION_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/59_PERFORMANCE_BENCHMARK_TESTING/PERFORMANCE_BENCHMARK_TESTING_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/60_COLLABORATION_TOOLS/COLLABORATION_TOOLS_BLUEPRINT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_BLUEPRINT_SUPPLEMENT_FINAL_REPORT_20260407.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: file:///D:/ZephyrAlpha/docs/08_HUMAN_AI_INTERFACE/index.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./PORTFOLIO_OPT...\n315. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | [SMART_ORDER_ROUTER_BLUEPRINT.md](./SMART_ORDER_...\n316. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITO...\n317. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | [TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md](...\n318. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | [TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md](./TRADIN...\n319. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | [EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md](./E...\n320. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: ### ææ¯ä¾èµ?\n321. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |\n322. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£]...\n323. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: ### å¼ç¨å\n324. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: ³ç³»å?\n325. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: ¶ä»ç¸å\n326. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: ³ææ¡£\n327. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | STRATEGY_EXECUTION_LAYER_BLUEPRINT.md | ç­ç¥æ...\n328. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: **èå¾ç¼å**: é¦å¸­æ¶æå¸?\n329. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: **èå¾ç¶æ?*: å·²å®æ?\n330. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | çæ¬ | æ¥æ | åæ´å\n331. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: å®¹ | åæ´äº?|\n332. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸...\n333. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-...\n334. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: #### Layer 5: ç­ç¥æ§è¡å±?\n335. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: - **ææ¯è§æ ¼ä¹¦**: å¾\n336. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: åå»?\n337. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: - **èè´£**: Layer 5 - ç­ç¥æ§è¡å±?\n338. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: - **ç¶æ?*: Active\n339. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | **Algorithmic Trading Optimizer** | Layer 5 - ç­...\n340. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | çæ¬ | æ¥æ | åæ´å\n341. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: å®¹ | åæ´äº?|\n342. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: | v1.0.0 | 2026-04-06 | åå§çæ¬åå»º | é¦å¸...\n343. **删除乱码行**: ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md\n   - 内容: **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-...\n344. **删除乱码行**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md\n   - 内容: owner: ä¸ªäººå¼åè?\n345. **删除乱码行**: ALPHA_FACTOR_FACTORY_BLUEPRINT.md\n   - 内容:   - å¸åºç¶æè¯å?(Layer 4",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./DATA_SOURCE...\n611. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: ç½® |\n612. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | [DATA QUALITY MONITORING BLUEPRINT](./DATA_QUALI...\n613. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | [DATA CATALOG BLUEPRINT](./DATA_CATALOG_BLUEPRIN...\n614. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: ### ææ¯ä¾èµ?\n615. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |\n616. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | **Selenium** | 4.15+ | å¨æé¡µé¢æå?| [å®æ...\n617. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: ### å¼ç¨å\n618. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: ³ç³»å?\n619. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: #### Layer 6: ç»åä¼åå±?\n620. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: - **ææ¯è§æ ¼ä¹¦**: å¾\n621. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: åå»?\n622. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: - **èè´£**: Layer 2 Alphaå å­å±?- å¦ç±»æ°æ®...\n623. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: - **ç¶æ?*: Active\n624. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | **Alternative Data Integration** | Layer 2 Alpha...\n625. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | çæ¬ | æ¥æ | åæ´å\n626. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: å®¹ | åæ´äº?|\n627. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: | v1.0.0 | 2026-04-02 | åå§çæ¬åå»º | é¦å¸...\n628. **删除乱码行**: ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md\n   - 内容: **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-...\n629. **删除乱码行**: ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md\n   - 内容: æå»ºæ¶æå·®è·åæçè®¾è®¡ä¸å®ç°ï¼åºäº...\n630. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容:   - å¼å¸¸æ£æµ?\n631. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: applicable_scope: Layer 9 çæ§å±?\n632. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: # èªå¨åæ°æ®ä¿®å¤å¼æèå?\n633. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: è´è´£Auto Repair Engineçè®¾è®¡ãå®ç°åç»´æ...\n634. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ### 1.1 ä¸å¡éæ±?\n635. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ### 1.2 ææ¯ç®æ ?\n636. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | ææ  | ç®æ å?| è¯´æ |\n637. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | **èªå¨ä¿®å¤æ¯ä¾** | â?0% | 70%ä»¥ä¸çæ°...\n638. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | **ä¿®å¤åç¡®ç?* | â?5% | ä¿®å¤åæ°æ®åç...\n639. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | **ä¿®å¤æ¶é´** | <5ç§?| åæ¬¡ä¿®å¤æ¶é´<5ç§...\n640. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | **ä¿®å¤è¦çç?* | â?0% | è¦ç80%ä»¥ä¸çæ...\n641. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ## ð ç¸å\n642. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ³ææ¡£\n643. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITO...\n644. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [æ°æ®æºç®¡çèå¾](./DATA_SOURCE_MANAGEMENT...\n645. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: æ°æ® |\n646. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md...\n647. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [è´¨éè¯åç³»ç»èå¾](./QUALITY_SCORING_SYS...\n648. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [è´¨éæ¥åèªå¨åèå¾](./QUALITY_REPORT_A...\n649. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | [æ°æ®å¯è§æµæ§èå¾](./DATA_OBSERVABILITY_...\n650. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ### ææ¯ä¾èµ?\n651. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |\n652. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: | **PyOD** | 1.1.0+ | å¼å¸¸æ£æµ?| [å®æ¹ææ¡£]...\n653. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ### å¼ç¨å\n654. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ³ç³»å?\n655. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ## äºãç³»ç»æ¶æè®¾è®?\n656. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: ### 2.1 æ´ä½æ¶æå?\n657. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: âââââââââââââââââ...\n658. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â?               èªå¨åæ°æ®ä¿®å¤å¼ææ¶æ...\n659. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: âââââââââââââââââ...\n660. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â?                                               ...\n661. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? ââââââââââââââââ...\n662. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? â?          é®é¢æ£æµå± (Problem Detectio...\n663. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? â? ââââââââââââââ...\n664. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? â? âç¼ºå¤±å¼æ£æµ?  â?âå¼å¸¸å¼æ£æµ? ...\n665. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? â? ââââââââââââââ...\n666. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? ââââââââââââââââ...\n667. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â?                         â?                   ...\n668. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? ââââââââââââââââ...\n669. **删除乱码行**: AUTO_REPAIR_ENGINE_BLUEPRINT.md\n   - 内容: â? â?          ä¿®å¤ç­ç¥å±?(Repair Strategy",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: ./DATA_QUALITY_MONITO...\n860. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md...\n861. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: æ°æ?|\n862. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | [å¨æç¸å\n863. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³æ§å»ºæ¨¡èå¾](./DYNAMIC_CORRELATION_MODELING_B...\n864. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³æ§ç©é?|\n865. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | [ç®åé£é©é¢ç®ç³»ç»èå¾](./SIMPLIFIED_RI...\n866. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPT...\n867. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | [VaR/ESçæ§èå¾](./VAR_ES_MONITORING_BLUEPRI...\n868. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ### ææ¯ä¾èµ?\n869. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |\n870. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£]...\n871. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ### å¼ç¨å\n872. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»å?\n873. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容:     D[å¨æç¸å\n874. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³æ§å»ºæ¨¡] --> B\n875. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ## 5. ä¸å\n876. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ¶ä»æ¨¡åçå\n877. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»\n878. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ### 5.1 æ¨¡åä¾èµå\n879. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»\n880. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | æ¨¡å | å\n881. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»ç±»å | è¯´æ |\n882. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | RISK_ATTRIBUTION_SYSTEM | è¢«ä¾èµ?| ä¸ºé£é©å½...\n883. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | RISK_CONTRIBUTION_ANALYSIS | è¢«ä¾èµ?| ä¸ºé£é...\n884. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | PORTFOLIO_OPTIMIZATION | è¢«ä¾èµ?| ä¸ºç»åä¼...\n885. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: æ¬æ¨¡åå¨INDEX.mdä¸­è¢«å½ç±»ä¸ºLayer 7ï¼é£é...\n886. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ¶æ ¸å¿èè´£ï¼å¤å å­é£é©æ¨¡åãé£é©é¢ç...\n887. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | ææ  | ç®æ å?| æµéæ¹æ³ |\n888. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | **é£é©åè§£ç²¾åº¦** | â?0% | åæµéªè¯ |\n889. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | **å å­æ´é²åç¡®åº?* | â?5% | æ ·æ¬å¤æµè...\n890. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | **é£é©é¢ç®ç®¡çç²¾åº¦** | â?0% | åè½æµ...\n891. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | çæ¬ | æ¥æ | åæ´å\n892. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: å®¹ | åæ´äº?|\n893. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | v1.0.3 | 2026-04-06 | éæ°çææ­£ç¡®å\n894. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: **èå¾çæ¬**: v1.0.3 | **åå»ºæ¥æ**: 2026-...\n895. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: #### Layer 6: ç»åä¼åå±?\n896. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: - **ææ¯è§æ ¼ä¹¦**: å¾\n897. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: åå»?\n898. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: - **èè´£**: å\n899. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ¨ç³»ç»?\n900. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: - **ç¶æ?*: Active\n901. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: ¨ç³»ç»?| **æ ¸å¿æ¨¡å** |\n902. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | çæ¬ | æ¥æ | åæ´å\n903. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: å®¹ | åæ´äº?|\n904. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: | v1.0.0 | 2026-04-03 | åå§çæ¬åå»º | é¦å¸...\n905. **删除乱码行**: BARRA_RISK_MODEL_BLUEPRINT.md\n   - 内容: **èå¾çæ¬**: v1.0.0 | **åå»ºæ¥æ**: 2026-...\n906. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容:   - æä¼é\n907. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½?\n908. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: applicable_scope: Layer 6 ç»åä¼åå±?\n909. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: æå»ºBlack-Littermanæ¨¡åçè®¾è®¡ä¸å®ç°ï¼å...\n910. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: è§ç¹ï¼ä¼åèµäº§é\n911. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½®å³ç­ï¼æåæèµç»åè¡¨ç°ã?\n912. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: > **æ ¸å¿èè´£**: ç»åå¸åºåè¡¡è§ç¹ä¸æ...\n913. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: > - â?æ¬ææ¡£è´è´£ï¼Black-Littermanæ¨¡åãè...\n914. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½?\n915. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: > - â?æ¬ææ¡£ä¸è´è´£ï¼å å­è®¡ç®ï¼ç±å å...\n916. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ### 1.1 æ¨¡åå®ä½ä¸ç®æ ?\n917. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: **Layerå®ä½**: Layer 6 - ç»åä¼åå±ï¼ç»å...\n918. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: **æ ¸å¿ä»·å?*:\n919. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: - ç»åå¸åºåè¡¡è§ç¹ï¼å\n920. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: éªï¼ä¸æèµè\n921. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ä¸»è§è§ç¹ï¼åéªï¼?\n922. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: - æä¾æ´ç¨³å¥ãæ´ç¬¦åå®é\n923. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: çæèµç»åæé?\n924. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: - ä¸ä¸æºæå¹¿æ³ä½¿ç¨çæ ¸å¿ç»åä¼åæ¨¡...\n925. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: **ä¸å¡ä»·å?*:\n926. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: - æåç»åä¼åç»æçç¨³å®æ§åå¯è§£é...\n927. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: è®¸æèµè\n928. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: èå\n929. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ¥ä¸ä¸å¤æ­åå¸åºæ´å¯\n930. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: - éåä¸ªäººæèµè\n931. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç»åèªèº«ç ç©¶è§ç?\n932. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | é¡¹ç® | å\n933. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: å®¹ |\n934. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **ç¶æ?* | Active |\n935. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **æåæ´æ?* | 2026-04-06 |\n936. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **å¼æºä¾èµ?* | PyPortfolioOpt, Riskfolio-Lib ...\n937. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **é¢è®¡å·¥æ¶** | 2-3å¤?|\n938. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ### 1.3 ä¸ç°ææ¨¡åå\n939. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ³ç³?\n940. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»ç±»å | æ¨¡ååç§° | module_id | éææ¹å...\n941. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **è¾å\n942. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ¥ä¾èµ** | å å­åºæ¨¡å?| FACTOR_BACKTEST_001 |...\n943. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **è¾å\n944. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ¥ä¾èµ** | ç­ç¥å¼ææ¨¡å | STRAT_ENGINE_001 ...\n945. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **è¾å\n946. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ¥ä¾èµ** | æ°æ®æºå± | Layer 0 | è·åå¸åºæ...\n947. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ## ð ç¸å\n948. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ³ææ¡£\n949. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [ç»åä¼åå¼æéæèå¾](./PORTFOLIO_OPT...\n950. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [æ°æ®è´¨éçæ§èå¾](./DATA_QUALITY_MONITO...\n951. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [æ°æ®ç®å½èå¾](./DATA_CATALOG_BLUEPRINT.md...\n952. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: æ°æ?|\n953. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [æç¥é\n954. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½®å¼æèå¾](./STRATEGIC_ALLOCATION_ENGINE_BL...\n955. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½® |\n956. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [ç®åé£é©é¢ç®ç³»ç»èå¾](./SIMPLIFIED_RI...\n957. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | [STRATEGY_SELECTION_BLUEPRINT.md](./STRATEGY_SEL...\n958. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ### ææ¯ä¾èµ?\n959. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | ææ¯ç»ä»?| çæ¬ | ç¨é?| ææ¡£ |\n960. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: | **NumPy** | 1.24+ | æ°å¼è®¡ç®?| [å®æ¹ææ¡£]...\n961. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ### å¼ç¨å\n962. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ³ç³»å?\n963. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容:     B --> E[æç¥é\n964. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½®å¼æ]\n965. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ### 2.1 Layerå®ä½ä¸èè´£è¾¹ç?\n966. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: **Layer 6 - ç»åä¼åå±æ¶æ?*:\n967. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: Layer 6: ç»åä¼åå±?\n968. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: â?  âââ ç»åä¼åå?(PORTFOLIO_OPTIMIZAT...\n969. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: â?  âââ Black-Littermanæ¨¡å (BLACK_LITTER...\n970. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: â?  âââ é£é©å¹³ä»·ç­ç¥ (RISK_PARITY_STR...\n971. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: â?  âââ å¤èµäº§é\n972. **删除乱码行**: BLACK_LITTERMAN_MODEL_BLUEPRINT.md\n   - 内容: ç½?(MULTI_ASSET_ALLOCATION_001",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: 01_BLU...\n1145. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | 5 | æ°æ®è®¢é\n1146. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: æå¡ | [DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md](...\n1147. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | 6 | æ°æ®è±æä¸å å¯?| [DATA_MASKING_ENCRYPT...\n1148. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | åºå· | èå¾åç§° | æä»¶è·¯å¾ | å¼æºæ¹...\n1149. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: æ°æ®ç®¡çå¢å¼?| [METADATA_MANAGEMENT_ENHANCEM...\n1150. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | 8 | æ°æ®æ ååå¼æ?| [DATA_STANDARDIZATION...\n1151. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | 9 | æ°æ®æºå¥åº·çæ?| [DATA_SOURCE_HEALTH_M...\n1152. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | 10 | CDCåæ´æ°æ®æè· | [CDC_CHANGE_DATA_CA...\n1153. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ## ðï¸?ä¸ãææ¯éåæ»ç»\n1154. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | ææ¯é¢å?| éåæ¹æ¡ | æ¨èçç± | å¼æ...\n1155. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ¶åºæ°æ®åº?* | TimescaleDB | åºäºPostgre...\n1156. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **åå¼å­å¨** | ClickHouse | åæºæ§è½æå...\n1157. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **ç¼å­** | Redis | åè½å\n1158. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ¨é¢ï¼ç¤¾åºæ´»è·?| redis |\n1159. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®è´¨é** | Great Expectations | åè½å\n1160. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ¨é¢ï¼æéæ | great-expectations |\n1161. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: æ°æ®ç®¡ç?* | DataHub | åè½å\n1162. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ¨é¢ï¼çé¢ç°ä»?| datahub |\n1163. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **çæ§** | Prometheus + Grafana | è¡ä¸æ å...\n1164. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®è±æ** | Presidio | å¾®è½¯å¼æºï¼å...\n1165. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ¨é¢ | presidio |\n1166. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ### 3.2 å¼æºæ¹æ¡ä¼å?\n1167. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: 1. **æçç¨³å®**: æææ¹æ¡åä¸ºä¸çéªè¯...\n1168. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: 2. **ç¤¾åºæ´»è·**: ææé¡¹ç®GitHubææ æ?> ...\n1169. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: 3. **ææ¡£å®å**: ææé¡¹ç®åæå®æ´çä¸...\n1170. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: ### 4.1 Layer 1æ¶æå®æ´åº?\n1171. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | æ¶æé¢å | å·²ææ¨¡å | æ°å¢æ¨¡å | æ»...\n1172. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®éé** | 5ä¸?| 2ä¸?| 7ä¸?| 100% |\n1173. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®å­å¨** | 2ä¸?| 4ä¸?| 6ä¸?| 100% |\n1174. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®å¤ç** | 4ä¸?| 2ä¸?| 6ä¸?| 100% |\n1175. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®æ²»ç** | 6ä¸?| 3ä¸?| 9ä¸?| 100% |\n1176. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®æå¡** | 1ä¸?| 4ä¸?| 5ä¸?| 100% |\n1177. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®å®å\n1178. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ°æ®è¿ç»´** | 4ä¸?| 2ä¸?| 6ä¸?| 100% |\n1179. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: | **æ»ä½å®æ´åº?* | **23ä¸?* | **20ä¸?* | **43ä...\n1180. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: v1.0 (èå¾å?                    v2.0 (èå¾å?\n1181. **删除乱码行**: BLUEPRINTS_COMPLETION_REPORT_20260407.md\n   - 内容: âââ æ°æ®éé (5",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_AUDIT_FINAL_REPORT.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_AUDIT_OPTIMIZATION_FINAL_SUMMARY.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_172930.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_FIX_REPORT_20260407_173128.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_IMPROVEMENT_FINAL_SUMMARY_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_COMPREHENSIVE_IMPROVEMENT_REPORT_20260407_181757.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DEEP_AUDIT_FINAL_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DEEP_AUDIT_REPORT_20260407_175903.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DEEP_AUDIT_REPORT_20260407_190508.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DEEP_AUDIT_REPORT_20260407_190758.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DEEP_AUDIT_REPORT_20260407_191039.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_EIGHTH_ROUND_FINAL_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_EIGHTH_ROUND_FIX_REPORT_20260407_185543.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_FIFTH_ROUND_IMPROVEMENT_REPORT_20260407_183116.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_FINAL_SUMMARY_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_FOURTH_ROUND_VERIFICATION_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_MEDIUM_LOW_PRIORITY_OPTIMIZATION_REPORT_20260407_174403.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_P2_FIX_FINAL_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_PROFESSIONAL_FIX_REPORT_20260407_184226.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_SIMILARITY_FIX_REPORT_20260407_190452.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_SIXTH_ROUND_AUDIT_FINAL_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_TENTH_ROUND_FIX_REPORT_20260407_191021.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_THIRD_ROUND_AUDIT_FINAL_REPORT_20260407.md",
+      "suggestion": "修复或删除无效链接"
+    },
+    {
+      "category": "路径引用",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+      "issue_type": "死链接",
+      "description": "链接指向不存在的文件: LAYER5_YAML_RESPONSIBILITY_FIX_REPORT_20260407_185813.md",
+      "suggestion": "修复或删除无效链接"
+    }
+  ],
+  "layer2_issues": [
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "00_OVERVIEW\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "00_RESOURCES\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "01_FRAMEWORK\\DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(91字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "01_FRAMEWORK\\SYSTEM_ARCHITECTURE_DIAGRAM.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(96字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(68字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "07_AI_REPORTING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\BLUEPRINT_CHAPTER_NAMING_STANDARD.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(32字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\INDEX_TEMPLATE.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "01_FRAMEWORK\\ARCHITECTURE_DECISIONS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\00_GOVERNANCE\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(97字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\00_GOVERNANCE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(93字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\02_ALPHA_FACTORS_INDEX\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(93字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\03_RISK_FACTORS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(66字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\05_BACKTEST\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(66字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(93字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\06_REGISTRY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(93字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\07_FACTOR_MONITORING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(93字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\09_AUDIT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\10_MANUAL\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(66字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(62字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(60字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\OVERVIEW.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(99字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(64字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "03_TRADING_TACTICS\\09_RISK_RULES\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "04_EXECUTION\\02_TRADE_EXECUTOR\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204814.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204938.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT8_FINAL_P1_FIX_REPORT_20260407_191820.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(97字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\COMPREHENSIVE_LINK_FIX_REPORT_20260407.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(58字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\ENCODING_CHECK_REPORT_20260407.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(98字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210333.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012859.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(87字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_014237.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(83字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_014935.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(83字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\AUTO_REPAIR_ENGINE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\BARRA_RISK_MODEL_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\CLICKHOUSE_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\CONFIGURATION_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_ACCESS_AUDIT_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_BACKUP_RECOVERY_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_CLEANING_ENGINE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_SOURCE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_VALIDATION_ENGINE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\FINANCING_OPTIMIZATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\INTRADAY_STRATEGY_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\MARKET_IMPACT_MODEL_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\MONITORING_ALERTING_SYSTEM_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\OPENING_STRATEGY_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\PORTFOLIO_ATTRIBUTION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\QUALITY_REPORT_AUTOMATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\QUALITY_SCORING_SYSTEM_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\REDIS_CACHE_LAYER_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\RISK_CONTROL_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\SMART_ORDER_ROUTER_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\STRATEGIC_WEIGHTING_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\STRESS_TESTING_SYSTEM_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TAX_LOSS_HARVESTING_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TIMESCALEDB_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TURNOVER_CONTROL_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\VAR_ES_MONITORING_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(54字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205005.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205249.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(95字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_FINAL_FIX_REPORT_20260407_205141.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_REMAINING_FIX_REPORT_20260407_203535.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(68字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_TENTH_ROUND_FIX_REPORT_20260407_191021.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(94字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\DATABASE_DOC_FIX_REPORT_20260407_203812.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_210012.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\checklists\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\monitoring\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "07_RESEARCH\\04_EXPERIMENT_TRACKING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\01_MONITORING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\05_BACKTEST_UI\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\06_REPORTING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\17_DOCUMENTATION_CENTER\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\24_RISK_DASHBOARD\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\25_STRATEGY_IDE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\25_STRATEGY_IDE\\STRATEGY_IDE_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\26_FACTOR_ANALYSIS\\FACTOR_ANALYSIS_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\26_FACTOR_ANALYSIS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\27_RISK_CONTROL_PANEL\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\27_RISK_CONTROL_PANEL\\RISK_CONTROL_PANEL_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(51字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\28_API_GATEWAY\\API_GATEWAY_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\28_API_GATEWAY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\29_WEBSOCKET_REALTIME\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\29_WEBSOCKET_REALTIME\\WEBSOCKET_REALTIME_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\30_COMPLIANCE_MONITORING\\COMPLIANCE_MONITORING_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(77字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\30_COMPLIANCE_MONITORING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\31_CAPITAL_MANAGEMENT\\CAPITAL_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\31_CAPITAL_MANAGEMENT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\32_USER_BEHAVIOR_ANALYTICS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\32_USER_BEHAVIOR_ANALYTICS\\USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\33_I18N_SUPPORT\\I18N_SUPPORT_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\33_I18N_SUPPORT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\34_THEME_CUSTOMIZATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\34_THEME_CUSTOMIZATION\\THEME_CUSTOMIZATION_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\35_DATA_EXPORT_TOOLS\\DATA_EXPORT_TOOLS_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(52字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\35_DATA_EXPORT_TOOLS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\36_USER_TRAINING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\36_USER_TRAINING\\USER_TRAINING_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\37_ACCESSIBILITY\\ACCESSIBILITY_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\37_ACCESSIBILITY\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\38_OFFLINE_SUPPORT\\OFFLINE_SUPPORT_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\38_OFFLINE_SUPPORT\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\39_THIRD_PARTY_INTEGRATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_HUMAN_AI_INTERFACE\\39_THIRD_PARTY_INTEGRATION\\THIRD_PARTY_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(49字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "08_KNOWLEDGE_BASE\\01_TECHNICAL_KNOWLEDGE\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\backtest_standards.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\backtest_standards.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(59字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\CLEANING_RULES.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\CLEANING_RULES.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\correlation_matrix.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\correlation_matrix.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(47字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(42字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(44字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_DECAY.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_DECAY.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(43字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\factor_master_index.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\factor_master_index.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(47字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\factor_neutralization.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\factor_neutralization.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(33字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\factor_synthesis.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\factor_synthesis.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(54字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(52字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(80字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FAQ.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FINANCIAL_STATEMENTS_API.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FINANCIAL_STATEMENTS_API.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(47字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(50字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\HANDOVER.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\HANDOVER.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(42字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\ic_analysis.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\ic_analysis.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(53字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(59字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\MACRO_DATA.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(75字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(43字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(41字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(59字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\QMT_INTERFACE.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\QMT_INTERFACE.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(44字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\QUALITY_METRICS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\QUALITY_METRICS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\README.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\research_management.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\research_management.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\SCHEDULER_API.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\SCHEDULER_API.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(46字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(44字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(43字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\AUTOMATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\BEST_PRACTICES\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\CASE_STUDIES\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\CONFIGURATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\DECISION_RECORDS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V8_20260407.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\ISSUE_HANDOVER_DOCUMENT_20260407.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\RESEARCH_MEMOS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\SOLUTIONS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FINAL_FIX_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FIX_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\P1_P2_FIX_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_FIX_FINAL_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_STRATEGY_REPORT.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md",
+      "issue_type": "职责不清",
+      "description": "文档缺少明确的职责描述",
+      "suggestion": "在文档头部添加职责说明"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\TOOLS\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_AUDIT\\TRAINING\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "09_RESEARCH_INNOVATION\\maintenance_records\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "10_GOVERNANCE_COMPLIANCE\\CI_CD_INTEGRATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "10_GOVERNANCE_COMPLIANCE\\CLASSIFICATION\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "职责驱动",
+      "severity": "medium",
+      "file": "10_GOVERNANCE_COMPLIANCE\\TRAINING_SYSTEM\\README.md",
+      "issue_type": "内容过短",
+      "description": "文档内容过短(24字)，职责可能不完整",
+      "suggestion": "扩充文档内容或合并到相关文档"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\51_DATA_IMPORT_TOOLS",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\46_BACKUP_RECOVERY",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\49_NOTIFICATION_ALERT_SYSTEM",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\59_PERFORMANCE_BENCHMARK_TESTING",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\53_KNOWLEDGE_BASE_SYSTEM",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\50_MOBILE_SUPPORT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\47_SYSTEM_HEALTH_CHECK",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\48_VERSION_MANAGEMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\43_PERFORMANCE_MONITORING",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\42_USER_PERMISSION_MANAGEMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\58_API_DOCUMENTATION_GENERATION",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\57_SANDBOX_ENVIRONMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\54_AI_ASSISTANT_INTEGRATION",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\60_COLLABORATION_TOOLS",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\45_CONFIG_MANAGEMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\40_TRADING_TERMINAL",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\44_LOG_MANAGEMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\55_PERFORMANCE_ANALYSIS_TOOLS",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\52_WORKFLOW_MANAGEMENT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\41_SYSTEM_CONFIG_CENTER",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "索引完备性",
+      "severity": "high",
+      "file": "08_HUMAN_AI_INTERFACE\\56_SECURITY_AUDIT",
+      "issue_type": "缺少索引",
+      "description": "目录缺少INDEX.md导航文件",
+      "suggestion": "创建INDEX.md索引文件"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\README.md, 09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md, 09_ARCHIVE\\duplicates\\SITEMAP.md, 09_AUDIT\\REPORTS\\ISSUE_HANDOVER_DOCUMENT_20260407.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "06_ARCHIVE\\overlap_FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT_20260407_190203.md, 05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: FACTOR_EXPOSURE_MANAGEMENT_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md, 09_ARCHIVE\\duplicates\\SCHEDULER_API.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md, 09_ARCHIVE\\duplicates\\CLEANING_RULES.md, 09_ARCHIVE\\duplicates\\INDEX.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md, 05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_BACKUP_RECOVERY_BLUEPRINT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: DATA_BACKUP_RECOVERY_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md, 05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_CATALOG_BLUEPRINT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: DATA_CATALOG_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md, 05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_OBSERVABILITY_BLUEPRINT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: DATA_OBSERVABILITY_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md, 05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_VERSION_CONTROL_BLUEPRINT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: DATA_VERSION_CONTROL_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_191536.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_191835.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_192259.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201519.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201858.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202026.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202208.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202511.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202729.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_203239.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_203415.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190138.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190308.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190747.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190854.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_191001.md, 05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_GAP_ANALYSIS_REPORT_20260407.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_202954.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203332.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203635.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203909.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_FIX_REPORT_20260407_203219.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_190508.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_190758.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191039.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191517.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191712.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191841.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_192212.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_192714.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201210.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201332.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201620.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201742.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201834.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201915.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201946.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202019.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202125.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202351.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_REMAINING_FIX_REPORT_20260407_203535.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_SIMILARITY_FIX_REPORT_20260407_190452.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_TENTH_ROUND_FIX_REPORT_20260407_191021.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155.md, 05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\DATABASE_DOC_FIX_REPORT_20260407_203812.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\backtest_standards.md, 09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md, 09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md, 09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md, 09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md, 09_ARCHIVE\\duplicates\\factor_neutralization.md, 09_ARCHIVE\\duplicates\\factor_preprocessing.md, 09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md, 09_ARCHIVE\\duplicates\\factor_return_analysis.md, 09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md, 09_ARCHIVE\\duplicates\\factor_synthesis.md, 09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md, 09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md, 09_ARCHIVE\\duplicates\\ic_analysis.md, 09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md, 09_ARCHIVE\\duplicates\\research_management.md, 09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md, 09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md, 09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md, 09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md, 09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md, 09_ARCHIVE\\duplicates\\factor_master_index.md, 09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md, 09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md, 09_ARCHIVE\\duplicates\\MACRO_DATA.md, 09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md, 09_ARCHIVE\\duplicates\\QMT_INTERFACE.md, 09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md, 09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md, 09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md, 09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md, 09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\correlation_matrix.md, 09_ARCHIVE\\duplicates\\FACTOR_DECAY.md, 09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md, 09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md, 09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_ARCHIVE\\duplicates\\FAQ.md, 09_ARCHIVE\\duplicates\\HANDOVER.md, 09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\DOCS_ENCODING_GOVERNANCE_FIX_REPORT_20260407.md, 09_AUDIT\\REPORTS\\FINAL_AUDIT_REPORT_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V2_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V3_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V4_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V5_20260407.md, 09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V6_20260407.md, 09_AUDIT\\REPORTS\\PRIORITY_ISSUE_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\ROUND2_FIX_SUMMARY_20260407.md, 09_AUDIT\\REPORTS\\SECOND_DEEP_AUDIT_REPORT_20260407.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 09_AUDIT_REPORTS_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    },
+    {
+      "category": "版本隔离",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\ALPHA_FACTOR_COMPREHENSIVE_AUDIT_REPORT_20260407_204111.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191954.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201104.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201831.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_202418.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_202557.md, 09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_203133.md, 09_AUDIT\\STATE\\PROFESSIONAL_BLUEPRINT_GOVERNANCE_FINAL_REPORT.md",
+      "issue_type": "编号重复",
+      "description": "多个文档使用相同module_id: 09_AUDIT_STATE_001",
+      "suggestion": "为每个文档分配唯一的module_id"
+    }
+  ],
+  "layer3_issues": [
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204814.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204938.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210333.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\TRADING_COST_OPTIMIZATION_BLUEPRINT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205005.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205249.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_FINAL_FIX_REPORT_20260407_205141.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_210012.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V8_20260407.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\REPORTS\\ISSUE_HANDOVER_DOCUMENT_20260407.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FINAL_FIX_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FIX_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\P1_P2_FIX_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_FIX_FINAL_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_STRATEGY_REPORT.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "五大原则",
+      "severity": "high",
+      "file": "09_AUDIT\\STATE\\THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md",
+      "issue_type": "缺少元数据",
+      "description": "文档缺少标准YAML前置信息",
+      "suggestion": "添加完整的YAML前置信息"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204814.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_204938.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210333.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER6_COMPREHENSIVE_AUDIT_REPORT_20260407_210456.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205005.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_205249.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_205733.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_COMPREHENSIVE_AUDIT_REPORT_20260407_210012.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V8_20260407.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FINAL_FIX_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\DATA_SOURCE_P2_FIX_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\P1_P2_FIX_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_FIX_FINAL_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\SPARSE_DIRECTORY_STRATEGY_REPORT.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    },
+    {
+      "category": "编号体系",
+      "severity": "medium",
+      "file": "09_AUDIT\\STATE\\THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md",
+      "issue_type": "编号缺失",
+      "description": "文档缺少module_id编号",
+      "suggestion": "添加标准化的module_id"
+    }
+  ],
+  "duplicates": [
+    {
+      "type": "内容重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md"
+      ],
+      "severity": "high",
+      "description": "3个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
+        "09_ARCHIVE\\duplicates\\factor_neutralization.md",
+        "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
+        "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
+        "09_ARCHIVE\\duplicates\\factor_synthesis.md",
+        "09_ARCHIVE\\duplicates\\ic_analysis.md"
+      ],
+      "severity": "high",
+      "description": "6个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
+    {
+      "type": "内容重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
+        "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md"
+      ],
+      "severity": "high",
+      "description": "2个文档内容完全相同"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\README.md",
+        "09_ARCHIVE\\duplicates\\OPTIMIZATION_SUMMARY.md",
+        "09_ARCHIVE\\duplicates\\SITEMAP.md",
+        "09_AUDIT\\REPORTS\\ISSUE_HANDOVER_DOCUMENT_20260407.md"
+      ],
+      "severity": "high",
+      "description": "4个文档使用相同module_id: 02_FACTOR_LIBRARY_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "06_ARCHIVE\\overlap_FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT_20260407_190203.md",
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: FACTOR_EXPOSURE_MANAGEMENT_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\README.md",
+        "09_ARCHIVE\\duplicates\\SCHEDULER_API.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\README.md",
+        "09_ARCHIVE\\duplicates\\CLEANING_RULES.md",
+        "09_ARCHIVE\\duplicates\\INDEX.md"
+      ],
+      "severity": "high",
+      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\README.md",
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_BACKUP_RECOVERY_BLUEPRINT.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: DATA_BACKUP_RECOVERY_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\README.md",
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_CATALOG_BLUEPRINT.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: DATA_CATALOG_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\README.md",
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_OBSERVABILITY_BLUEPRINT.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: DATA_OBSERVABILITY_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\README.md",
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\DATA_VERSION_CONTROL_BLUEPRINT.md"
+      ],
+      "severity": "high",
+      "description": "2个文档使用相同module_id: DATA_VERSION_CONTROL_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_191536.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_191835.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_192259.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201331.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201519.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_201858.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202026.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202208.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202511.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_202729.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_203239.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_COMPREHENSIVE_AUDIT_REPORT_20260407_203415.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190138.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190308.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190747.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_190854.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_FULL_AUDIT_REPORT_20260407_191001.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\AUDIT6_GAP_ANALYSIS_REPORT_20260407.md"
+      ],
+      "severity": "high",
+      "description": "18个文档使用相同module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_202954.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203332.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203635.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_AUDIT_REPORT_20260407_203909.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_COMPREHENSIVE_FIX_REPORT_20260407_203219.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_190508.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_190758.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191039.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191517.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191712.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_191841.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_192212.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_192714.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201210.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201332.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201620.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201742.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201834.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201915.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_201946.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202019.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202125.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_DEEP_AUDIT_REPORT_20260407_202351.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_ELEVENTH_ROUND_FIX_REPORT_20260407_191501.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_REMAINING_FIX_REPORT_20260407_203535.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_SIMILARITY_FIX_REPORT_20260407_190452.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_TENTH_ROUND_FIX_REPORT_20260407_191021.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\AUDIT5_THIRTEENTH_ROUND_FIX_REPORT_20260407_201155.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\DATABASE_DOC_FIX_REPORT_20260407_203812.md"
+      ],
+      "severity": "high",
+      "description": "29个文档使用相同module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\backtest_standards.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_CALCULATION_FRAMEWORK.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_DEFINITION.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_MANAGEMENT_STANDARD.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_MINING_GUIDE.md",
+        "09_ARCHIVE\\duplicates\\factor_neutralization.md",
+        "09_ARCHIVE\\duplicates\\factor_preprocessing.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_REGISTRY.md",
+        "09_ARCHIVE\\duplicates\\factor_return_analysis.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_SCREENING_STRATEGY.md",
+        "09_ARCHIVE\\duplicates\\factor_synthesis.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_TAXONOMY.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_GUIDE.md",
+        "09_ARCHIVE\\duplicates\\FUTURE_FACTOR_TOOLS.md",
+        "09_ARCHIVE\\duplicates\\ic_analysis.md",
+        "09_ARCHIVE\\duplicates\\MODULE_DESIGN_PLAN.md",
+        "09_ARCHIVE\\duplicates\\research_management.md",
+        "09_ARCHIVE\\duplicates\\TECHNICAL_INDICATORS.md"
+      ],
+      "severity": "high",
+      "description": "18个文档使用相同module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\BAOSTOCK_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\CORRELATION_ANALYSIS.md",
+        "09_ARCHIVE\\duplicates\\DATA_ACQUISITION.md",
+        "09_ARCHIVE\\duplicates\\DATA_REQUIREMENTS.md",
+        "09_ARCHIVE\\duplicates\\DATA_SOURCE_ADAPTERS.md",
+        "09_ARCHIVE\\duplicates\\DATA_SOURCE_LAYER_GAP_ANALYSIS.md",
+        "09_ARCHIVE\\duplicates\\factor_master_index.md",
+        "09_ARCHIVE\\duplicates\\FREE_DATA_SOURCES.md",
+        "09_ARCHIVE\\duplicates\\IFIND_CONNECTOR.md",
+        "09_ARCHIVE\\duplicates\\MACRO_DATA.md",
+        "09_ARCHIVE\\duplicates\\NEWS_SENTIMENT_DATA_SOURCE.md",
+        "09_ARCHIVE\\duplicates\\QMT_INTERFACE.md",
+        "09_ARCHIVE\\duplicates\\STATISTICAL_TOOLS.md",
+        "09_ARCHIVE\\duplicates\\SUPERCMD_CONNECTOR.md"
+      ],
+      "severity": "high",
+      "description": "14个文档使用相同module_id: 02_FACTOR_LIBRARY_04_DATA_SOURCE_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\BARRA_STYLE_FACTORS.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_TRANSPARENCY_REPORT.md",
+        "09_ARCHIVE\\duplicates\\INDUSTRY_FACTORS.md",
+        "09_ARCHIVE\\duplicates\\TAIL_RISK_FACTORS.md"
+      ],
+      "severity": "high",
+      "description": "4个文档使用相同module_id: 02_FACTOR_LIBRARY_03_RISK_FACTORS_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\correlation_matrix.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_DECAY.md",
+        "09_ARCHIVE\\duplicates\\FACTOR_VALIDATION_BLUEPRINT.md",
+        "09_ARCHIVE\\duplicates\\LAYERED_BACKTEST.md",
+        "09_ARCHIVE\\duplicates\\OVERFITTING_TEST.md"
+      ],
+      "severity": "high",
+      "description": "5个文档使用相同module_id: 02_FACTOR_LIBRARY_05_BACKTEST_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_ARCHIVE\\duplicates\\FAQ.md",
+        "09_ARCHIVE\\duplicates\\HANDOVER.md",
+        "09_ARCHIVE\\duplicates\\KNOWLEDGE_MANAGEMENT.md"
+      ],
+      "severity": "high",
+      "description": "3个文档使用相同module_id: 02_FACTOR_LIBRARY_10_MANUAL_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_AUDIT\\REPORTS\\DOCS_ENCODING_GOVERNANCE_FIX_REPORT_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_AUDIT_REPORT_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V2_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V3_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V4_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V5_20260407.md",
+        "09_AUDIT\\REPORTS\\FINAL_FIX_SUMMARY_V6_20260407.md",
+        "09_AUDIT\\REPORTS\\PRIORITY_ISSUE_FIX_SUMMARY_20260407.md",
+        "09_AUDIT\\REPORTS\\ROUND2_FIX_SUMMARY_20260407.md",
+        "09_AUDIT\\REPORTS\\SECOND_DEEP_AUDIT_REPORT_20260407.md"
+      ],
+      "severity": "high",
+      "description": "11个文档使用相同module_id: 09_AUDIT_REPORTS_001"
+    },
+    {
+      "type": "编号重复",
+      "files": [
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_COMPREHENSIVE_AUDIT_REPORT_20260407_204111.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191954.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_192237.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201104.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_201831.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_202418.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_202557.md",
+        "09_AUDIT\\STATE\\ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_203133.md",
+        "09_AUDIT\\STATE\\PROFESSIONAL_BLUEPRINT_GOVERNANCE_FINAL_REPORT.md"
+      ],
+      "severity": "high",
+      "description": "10个文档使用相同module_id: 09_AUDIT_STATE_001"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "P0",
+      "action": "立即修复280个高严重性问题",
+      "impact": "影响文档质量和系统稳定性",
+      "timeline": "24小时内"
+    },
+    {
+      "priority": "P1",
+      "action": "处理17个重复问题",
+      "impact": "影响文档职责清晰度",
+      "timeline": "1周内"
+    }
+  ]
+}

@@ -1,11 +1,22 @@
 ---
+module_id: AI_010
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 交易策略团队
+responsibility:
+- 交易策略框架设计与实施指导与实施指导
+layer: Layer 3 (策略层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
 module_id: STRATEGY_LIFECYCLE_AI_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席架构�?
-standard_type: 专业机构级蓝�?
 applicable_scope: 策略生命周期管理
 compliance_level: 专业标准
 parent_document: ../STRATEGY_AI_MODULES_ANALYSIS.md
@@ -21,110 +32,58 @@ related_documents:
 ---
 
 # 策略生命周期管理AI蓝图
+> **核心职责**: Strategy Lifecycle Ai蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Strategy Lifecycle Ai蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
-> **实施周期**: 2�?
-> **核心定位**: 策略全生命周期动态管�?
 > **技术栈**: Python + SQLite + MLflow
 
 ---
 
-## 一、概�?
 
 ### 1.1 蓝图定位
 
-本文档是清风量化系统�?*策略生命周期管理AI蓝图**，旨在实现：
 
-- �?**策略萌芽期管�?*: 验证策略想法，评估可行�?
-- �?**策略成长期管�?*: 跟踪策略表现，分配资�?
-- �?**策略成熟期管�?*: 监控策略性能，优化参�?
-- �?**策略衰退期管�?*: 检测策略失效，执行退�?
-- �?**策略池动态管�?*: 控制策略数量，管理多样�?
+?
 
-### 1.2 核心价�?
 
-**对个人开发者的价�?*�?
-1. **自动化管�?*: AI自动管理策略全生命周�?
-2. **失效检�?*: 自动识别失效策略，避免继续亏�?
-3. **策略池优�?*: 自动调整策略权重，优化策略池
 4. **减少人工**: 减少人工管理策略的工作量
 
-**对系统的价�?*�?
 1. **风险控制**: 及时退役失效策略，控制风险
-2. **资源优化**: 优化策略池，提高资源利用�?
 3. **持续改进**: 建立策略持续改进机制
 4. **知识积累**: 积累策略生命周期管理经验
 
 ### 1.3 Layer定位
 
 ```
-Layer 5: 策略执行�?(Strategy Execution Layer)
     ├── 策略生命周期管理AI
-    �?  ├── 萌芽期管理子系统
-    �?  ├── 成长期管理子系统
-    �?  ├── 成熟期管理子系统
-    �?  ├── 衰退期管理子系统
-    �?  └── 策略池管理子系统
 ```
 
-**架构位置**: 位于Layer 5(策略执行�?，是策略管理的核心模块�?
 
 ---
 
-## 二、架构设�?
 
 ### 2.1 整体架构
 
 ```
-┌─────────────────────────────────────────────────────────────�?
-�?             策略生命周期管理AI架构                          �?
-├─────────────────────────────────────────────────────────────�?
-�?                                                            �?
-�? ┌─────────────────────────────────────────────────────�?  �?
-�? �?       策略池管理子系统 (Strategy Pool Manager)     �?  �?
-�? �? ├─ 策略数量控制                                     �?  �?
-�? �? ├─ 策略多样性管�?                                  �?  �?
-�? �? └─ 策略相关性控�?                                  �?  �?
-�? └─────────────────────────────────────────────────────�?  �?
-�?                         �?                                 �?
-�? ┌─────────────────────────────────────────────────────�?  �?
-�? �?       生命周期阶段识别 (Stage Identifier)          �?  �?
-�? �? ├─ 萌芽期识�?                                      �?  �?
-�? �? ├─ 成长期识�?                                      �?  �?
-�? �? ├─ 成熟期识�?                                      �?  �?
-�? �? └─ 衰退期识�?                                      �?  �?
-�? └─────────────────────────────────────────────────────�?  �?
-�?                         �?                                 �?
-�? ┌─────────────────────────────────────────────────────�?  �?
-�? �?       阶段管理子系�?(Stage Manager)               �?  �?
-�? �? ├─ 萌芽期管�?                                      �?  �?
-�? �? ├─ 成长期管�?                                      �?  �?
-�? �? ├─ 成熟期管�?                                      �?  �?
-�? �? └─ 衰退期管�?                                      �?  �?
-�? └─────────────────────────────────────────────────────�?  �?
-�?                         �?                                 �?
-�? ┌─────────────────────────────────────────────────────�?  �?
-�? �?       退役决策子系统 (Retirement Decision)         �?  �?
-�? �? ├─ 失效检�?                                        �?  �?
-�? �? ├─ 退役评�?                                        �?  �?
-�? �? └─ 退役执�?                                        �?  �?
-�? └─────────────────────────────────────────────────────�?  �?
-�?                                                            �?
-└─────────────────────────────────────────────────────────────�?
+?                                                            ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                         ?                                 ?
+?                                                            ?
 ```
 
-### 2.2 数据流设�?
 
 ```
-策略创建 �?萌芽期管�?�?成长期管�?�?成熟期管�?�?衰退期管�?�?策略退�?
-    �?                                                       �?
-    └────────────────── 策略池优�?←───────────────────────────�?
+?                                                       ?
 ```
 
 ---
 
-## 三、核心功能设�?
 
 ### 3.1 策略生命周期阶段识别
 
@@ -138,52 +97,35 @@ from typing import Dict, List, Optional
 
 class StrategyStage(Enum):
     """策略生命周期阶段"""
-    EMERGING = "emerging"      # 萌芽�?
-    GROWING = "growing"        # 成长�?
-    MATURE = "mature"          # 成熟�?
-    DECLINING = "declining"    # 衰退�?
-    RETIRED = "retired"        # 已退�?
+EMERGING = "emerging"      # ?
+GROWING = "growing"        # ?
+MATURE = "mature"          # ?
+DECLINING = "declining"    # ?
 
 @dataclass
 class StageCriteria:
     """阶段判定标准"""
     
-    # 萌芽期标�?
     emerging_criteria = {
-        'age_days': (0, 30),           # 策略年龄0-30�?
-        'trade_count': (0, 10),        # 交易次数0-10�?
         'sharpe_range': (-1.0, 3.0),   # 夏普比率范围
-        'confidence': 0.3              # 置信�?30%
     }
     
-    # 成长期标�?
     growing_criteria = {
-        'age_days': (30, 180),         # 策略年龄30-180�?
-        'trade_count': (10, 100),      # 交易次数10-100�?
         'sharpe_range': (1.0, 3.0),    # 夏普比率范围
-        'confidence': (0.3, 0.7),      # 置信�?0%-70%
         'performance_trend': 'improving'  # 性能趋势向上
     }
     
-    # 成熟期标�?
     mature_criteria = {
-        'age_days': (180, 720),        # 策略年龄180-720�?
-        'trade_count': (100, 1000),    # 交易次数100-1000�?
         'sharpe_range': (1.5, 2.5),    # 夏普比率范围
-        'confidence': (0.7, 0.9),      # 置信�?0%-90%
         'performance_trend': 'stable'  # 性能趋势稳定
     }
     
-    # 衰退期标�?
     declining_criteria = {
-        'age_days': (720, float('inf')),  # 策略年龄>720�?
         'sharpe_decline': 0.3,            # 夏普比率下降30%
         'performance_trend': 'declining', # 性能趋势向下
-        'confidence': 0.9                 # 置信�?90%
     }
 
 class StageIdentifier:
-    """策略生命周期阶段识别�?""
     
     def __init__(self):
         self.criteria = StageCriteria()
@@ -193,7 +135,6 @@ class StageIdentifier:
         # 1. 获取策略数据
         strategy_data = self._get_strategy_data(strategy_id)
         
-        # 2. 计算关键指标
         metrics = self._calculate_metrics(strategy_data)
         
         # 3. 判定阶段
@@ -209,7 +150,6 @@ class StageIdentifier:
             return StrategyStage.RETIRED
     
     def _calculate_metrics(self, strategy_data: Dict) -> Dict:
-        """计算策略关键指标"""
         return {
             'age_days': self._calculate_age(strategy_data['created_at']),
             'trade_count': strategy_data['trade_count'],
@@ -219,13 +159,11 @@ class StageIdentifier:
         }
     
     def _calculate_confidence(self, strategy_data: Dict) -> float:
-        """计算策略置信�?""
         # 基于样本量、稳定性、一致性计算置信度
         sample_size = strategy_data['trade_count']
         stability = self._calculate_stability(strategy_data)
         consistency = self._calculate_consistency(strategy_data)
         
-        # 综合置信�?
         confidence = (
             min(sample_size / 100, 1.0) * 0.4 +
             stability * 0.3 +
@@ -237,7 +175,6 @@ class StageIdentifier:
 
 ---
 
-### 3.2 萌芽期管�?
 
 ```python
 class EmergingStageManager:
@@ -248,21 +185,18 @@ class EmergingStageManager:
         self.prioritizer = StrategyPrioritizer()
         
     def manage_emerging_stage(self, strategy_id: str):
-        """管理萌芽期策�?""
         # 1. 策略想法验证
         validation_result = self.validator.validate_strategy_idea(strategy_id)
         
-        # 2. 可行性评�?
         feasibility = self._assess_feasibility(strategy_id)
         
-        # 3. 优先级排�?
+# 3.
         priority = self.prioritizer.calculate_priority(
             strategy_id=strategy_id,
             validation_result=validation_result,
             feasibility=feasibility
         )
         
-        # 4. 决策：是否进入成长期
         if validation_result.passed and feasibility.score > 0.6:
             self._promote_to_growing(strategy_id, priority)
         else:
@@ -277,14 +211,10 @@ class EmergingStageManager:
         )
     
     def _assess_feasibility(self, strategy_id: str) -> FeasibilityAssessment:
-        """评估策略可行�?""
-        # 1. 数据可行�?
         data_feasibility = self._check_data_availability(strategy_id)
         
-        # 2. 技术可行�?
         tech_feasibility = self._check_technical_feasibility(strategy_id)
         
-        # 3. 风险可行�?
         risk_feasibility = self._check_risk_feasibility(strategy_id)
         
         # 4. 综合评分
@@ -304,7 +234,6 @@ class EmergingStageManager:
 
 ---
 
-### 3.3 成长期管�?
 
 ```python
 class GrowingStageManager:
@@ -316,11 +245,11 @@ class GrowingStageManager:
         self.risk_controller = RiskController()
         
     def manage_growing_stage(self, strategy_id: str):
-        """管理成长期策�?""
         # 1. 表现跟踪
         performance = self.tracker.track_performance(strategy_id)
         
-        # 2. 资金分配
+# 2.
+
         allocation = self.allocator.allocate_capital(
             strategy_id=strategy_id,
             performance=performance
@@ -332,7 +261,6 @@ class GrowingStageManager:
             allocation=allocation
         )
         
-        # 4. 决策：是否进入成熟期
         if performance.sharpe_ratio > 1.5 and performance.confidence > 0.7:
             self._promote_to_mature(strategy_id)
         elif performance.sharpe_ratio < 0.5:
@@ -370,7 +298,6 @@ class GrowingStageManager:
 
 ---
 
-### 3.4 成熟期管�?
 
 ```python
 class MatureStageManager:
@@ -382,7 +309,6 @@ class MatureStageManager:
         self.weight_adjuster = WeightAdjuster()
         
     def manage_mature_stage(self, strategy_id: str):
-        """管理成熟期策�?""
         # 1. 性能监控
         performance = self.monitor.monitor_performance(strategy_id)
         
@@ -395,7 +321,6 @@ class MatureStageManager:
             performance=performance
         )
         
-        # 4. 决策：是否进入衰退�?
         if performance.sharpe_ratio < 1.0 or performance.decline_rate > 0.3:
             self._demote_to_declining(strategy_id)
         
@@ -410,7 +335,6 @@ class MatureStageManager:
 
 ---
 
-### 3.5 衰退期管�?
 
 ```python
 class DecliningStageManager:
@@ -422,11 +346,8 @@ class DecliningStageManager:
         self.executor = RetirementExecutor()
         
     def manage_declining_stage(self, strategy_id: str):
-        """管理衰退期策�?""
-        # 1. 失效检�?
         failure_analysis = self.detector.detect_failure(strategy_id)
         
-        # 2. 退役评�?
         retirement_assessment = self.evaluator.assess_retirement(
             strategy_id=strategy_id,
             failure_analysis=failure_analysis
@@ -436,7 +357,6 @@ class DecliningStageManager:
         if retirement_assessment.should_reduce_weight:
             self._reduce_strategy_weight(strategy_id, retirement_assessment.reduction_ratio)
         
-        # 4. 退役决�?
         if retirement_assessment.should_retire:
             self.executor.execute_retirement(strategy_id)
         
@@ -451,14 +371,10 @@ class FailureDetector:
     """策略失效检测器"""
     
     def detect_failure(self, strategy_id: str) -> FailureAnalysis:
-        """检测策略失�?""
-        # 1. 性能失效检�?
         performance_failure = self._detect_performance_failure(strategy_id)
         
-        # 2. 市场环境失效检�?
         market_failure = self._detect_market_failure(strategy_id)
         
-        # 3. 风险失效检�?
         risk_failure = self._detect_risk_failure(strategy_id)
         
         # 4. 综合失效判定
@@ -481,7 +397,7 @@ class FailureDetector:
         # 获取策略历史性能
         performance_history = self._get_performance_history(strategy_id)
         
-        # 计算性能下降幅度
+度
         recent_sharpe = performance_history['recent_sharpe']
         historical_sharpe = performance_history['historical_sharpe']
         decline_rate = (historical_sharpe - recent_sharpe) / historical_sharpe
@@ -499,7 +415,6 @@ class FailureDetector:
 
 ---
 
-### 3.6 策略池管�?
 
 ```python
 class StrategyPoolManager:
@@ -511,17 +426,14 @@ class StrategyPoolManager:
         self.correlation_controller = CorrelationController()
         
     def manage_pool(self):
-        """管理策略�?""
         # 1. 数量控制
         capacity_status = self.capacity_controller.check_capacity()
         
-        # 2. 多样性管�?
         diversity_status = self.diversity_manager.manage_diversity()
         
-        # 3. 相关性控�?
+# 3.
         correlation_status = self.correlation_controller.control_correlation()
         
-        # 4. 优化策略�?
         if capacity_status.need_optimization:
             self._optimize_pool(capacity_status, diversity_status, correlation_status)
         
@@ -536,7 +448,6 @@ class DiversityManager:
     """策略多样性管理器"""
     
     def manage_diversity(self) -> DiversityStatus:
-        """管理策略多样�?""
         # 1. 策略类型分布
         type_distribution = self._analyze_type_distribution()
         
@@ -546,14 +457,12 @@ class DiversityManager:
         # 3. 策略时间框架分布
         timeframe_distribution = self._analyze_timeframe_distribution()
         
-        # 4. 多样性评�?
         diversity_score = self._calculate_diversity_score(
             type_distribution,
             style_distribution,
             timeframe_distribution
         )
         
-        # 5. 多样性优化建�?
         recommendations = self._generate_recommendations(diversity_score)
         
         return DiversityStatus(
@@ -567,7 +476,6 @@ class DiversityManager:
 
 ---
 
-## 四、数据模型设�?
 
 ### 4.1 策略生命周期数据模型
 
@@ -595,7 +503,6 @@ class StrategyLifecycleRecord:
     # 管理决策
     management_decisions: List[Dict]
     
-    # 退役信�?
     retirement_info: Optional[Dict]
 
 @dataclass
@@ -607,13 +514,11 @@ class StageTransition:
     transition_time: datetime
     transition_reason: str
     performance_at_transition: Dict
-    decision_maker: str  # AI或人�?
 ```
 
 ### 4.2 数据库表结构
 
 ```sql
--- 策略生命周期�?
 CREATE TABLE strategy_lifecycle (
     strategy_id VARCHAR(50) PRIMARY KEY,
     strategy_name VARCHAR(100),
@@ -626,7 +531,6 @@ CREATE TABLE strategy_lifecycle (
     retirement_info JSON
 );
 
--- 阶段转换记录�?
 CREATE TABLE stage_transitions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     strategy_id VARCHAR(50),
@@ -656,7 +560,6 @@ CREATE TABLE strategy_pool_status (
 
 ---
 
-## 五、接口设�?
 
 ### 5.1 文字交互接口
 
@@ -665,76 +568,46 @@ class StrategyLifecycleTextInterface:
     """策略生命周期文字交互接口"""
     
     def get_lifecycle_status(self, strategy_id: str = None):
-        """获取策略生命周期状�?""
         if strategy_id:
-            # 单个策略状�?
             status = self._get_single_strategy_status(strategy_id)
             return self._format_single_status(status)
         else:
-            # 所有策略状�?
             all_status = self._get_all_strategies_status()
             return self._format_all_status(all_status)
     
     def check_strategies_health(self):
-        """检查所有策略健康状�?""
         health_report = self._generate_health_report()
         return self._format_health_report(health_report)
     
     def recommend_retirement(self):
-        """推荐退役策�?""
         retirement_recommendations = self._generate_retirement_recommendations()
         return self._format_retirement_recommendations(retirement_recommendations)
 ```
 
-**文字交互场景**�?
 
 ```
-用户�?检查一下所有策略的生命周期状�?
-系统�?📊 策略生命周期状态报�?
 
-萌芽期策略：2�?
-├─ 策略A：正在验证，通过�?0%
-�?  └─ 建议：继续观察，增加样本�?
-└─ 策略B：正在验证，通过�?5%
-    └─ 建议：性能不佳，建议淘�?
 
-成长期策略：3�?
-├─ 策略C：表现优秀，夏普比�?.1
-�?  └─ 建议：增加资金分�?0%
+?0%
 ├─ 策略D：表现良好，夏普比率1.5
-�?  └─ 建议：维持当前资�?
 └─ 策略E：表现一般，夏普比率0.8
-    └─ 建议：减少资金分�?0%
+?0%
 
-成熟期策略：5�?
-├─ 策略F：性能稳定，夏普比�?.8
-├─ 策略G：性能稳定，夏普比�?.6
-├─ 策略H：性能稳定，夏普比�?.7
-├─ 策略I：性能稳定，夏普比�?.5
-└─ 策略J：性能稳定，夏普比�?.9
 
-衰退期策略：1�?
-└─ 策略K：⚠�?性能退化，夏普比率�?.0降至1.2
     └─ 建议：退役策略，减少风险
 
-AI建议�?
-1. 策略K建议退役（性能下降40%�?
 2. 策略C建议增加资金20%
 3. 策略E建议减少资金30%
-4. 策略B建议淘汰（通过率低�?
 ```
 
 ---
 
-## 六、实施路�?
+##
 
 ### 6.1 实施计划
 
-**Week 1：核心功能实�?*
 
-| 任务 | 工作�?| 交付�?|
 |------|--------|--------|
-| 阶段识别器实�?| 8h | StageIdentifier |
 | 萌芽期管理器实现 | 8h | EmergingStageManager |
 | 成长期管理器实现 | 8h | GrowingStageManager |
 | 成熟期管理器实现 | 8h | MatureStageManager |
@@ -742,7 +615,6 @@ AI建议�?
 
 **Week 2：集成与测试**
 
-| 任务 | 工作�?| 交付�?|
 |------|--------|--------|
 | 策略池管理器实现 | 8h | StrategyPoolManager |
 | 数据库设计与实现 | 4h | 数据库表结构 |
@@ -752,46 +624,62 @@ AI建议�?
 
 ---
 
-## 七、质量保�?
 
 ### 7.1 测试标准
 
-| 测试�?| 标准 | 验证方法 |
 |--------|------|---------|
-| 阶段识别准确�?| �?5% | 历史数据回测 |
-| 退役决策准确率 | �?0% | 模拟测试 |
-| 性能监控延迟 | �?�?| 性能测试 |
-| 文字交互响应时间 | �?�?| 压力测试 |
 
 ### 7.2 监控指标
 
-| 指标 | 目标�?| 告警阈�?|
 |------|--------|---------|
-| 策略池健康度 | �?0% | <70% |
-| 多样性评�?| �?.7 | <0.5 |
-| 平均策略年龄 | 180-360�?| >720�?|
-| 退役策略比�?| 10-20% | >30% |
 
 ---
 
-## 八、文档治�?
+##
 
 ### 8.1 文档索引
 
-**本文档在系统中的位置**�?
-- **父文�?*: [STRATEGY_AI_MODULES_ANALYSIS.md](STRATEGY_AI_MODULES_ANALYSIS.md)
-- **关联文档**:
+- **?*: STRATEGY_AI_MODULES_ANALYSIS.md
+- **
   - [AI_STRATEGY_AUTOMATION_BLUEPRINT.md](../../01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md)
   - [STRATEGY_ENGINE_CORE_BLUEPRINT.md](./STRATEGY_ENGINE_CORE_BLUEPRINT.md)
-  - [AI_WORKFLOW_LOGGER_BLUEPRINT.md](../../10_AI_WORKFLOW/AI_WORKFLOW_LOGGER_BLUEPRINT.md)
+  - `AI_WORKFLOW_LOGGER_BLUEPRINT.md`
 
 ### 8.2 版本管理
 
-**版本历史**�?
-- v1.0 (2026-04-02): 初始版本，定义核心功�?
 
 ---
 
 **文档结束**
 
-> 本蓝图由首席架构师设计，遵循专业量化机构标准，为策略生命周期管理提供完整解决方案�?
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Strategy Lifecycle Ai
+- **模块ID**: STRATEGY_LIFECYCLE_AI_001
+- **蓝图文档**: STRATEGY_LIFECYCLE_AI_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Strategy Lifecycle Ai** |  | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active

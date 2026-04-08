@@ -1,306 +1,327 @@
-# QMT连接问题完整诊断报告
+---
+module_id: QMT_002
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 实施团队
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
+standard_type: 专业量化机构报告
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+---
 
-**诊断时间**: 2026-04-03 19:35  
-**诊断对象**: 国金证券QMT交易端连接问�? 
-**诊断结果**: 发现根本原因并已部分修复
+
+# QMTﻟﺟﮔ۴ﻠ؟ﻠ۱ﮒ؟ﮔﺑﻟﺁﮔﮔ۴ﮒ
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+**ﻟﺁﮔﮔﭘﻠﺑ**: 2026-04-03 19:35
+**ﻟﺁﮔﮒﺁﺗﻟﺎ۰**: ﮒﺛﻠﻟﺁﮒﺕQMTﻛﭦ۳ﮔﻝ،ﺁﻟﺟﮔ۴ﻠ؟ﻠ۱?
+**ﻟﺁﮔﻝﭨﮔ**: ﮒﻝﺍﮔﺗﮔ؛ﮒﮒﮒﺗﭘﮒﺓﺎﻠ۷ﮒﻛﺟ؟ﮒ۳
 
 ---
 
-## 📊 诊断总结
+## ﻭ ﻟﺁﮔﮔﭨﻝﭨ
 
-### �?已确认正常的部分
+### ﻗ?ﮒﺓﺎﻝ۰؟ﻟ؟۳ﮔ۲ﮒﺕﺕﻝﻠ۷ﮒ
 
-| 检查项 | 状�?| 说明 |
+| ﮔ۲ﮔ۴ﻠ۰ﺗ | ﻝﭘﮔ?| ﻟﺁﺑﮔ |
 |--------|------|------|
-| **userdata_mini文件�?* | �?存在 | 路径正确 |
-| **up_queue_xtquant文件** | �?存在 | 账号有策略交易权�?|
-| **down_queue文件** | �?存在 | 交易队列正常 |
-| **写入权限** | �?正常 | 可以创建文件 |
-| **xtdata数据接口** | �?成功 | 可以获取行情数据 |
-| **xtquant库安�?* | �?已安�?| 版本: xtquant_250516 |
+| **userdata_miniﮔﻛﭨﭘﮒ۳?* | ﻗ?ﮒﮒ۷ | ﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟ |
+| **up_queue_xtquantﮔﻛﭨﭘ** | ﻗ?ﮒﮒ۷ | ﻟﺑ۵ﮒﺓﮔﻝﻝ۴ﻛﭦ۳ﮔﮔﻠ?|
+| **down_queueﮔﻛﭨﭘ** | ﻗ?ﮒﮒ۷ | ﻛﭦ۳ﮔﻠﮒﮔ۲ﮒﺕﺕ |
+| **ﮒﮒ۴ﮔﻠ** | ﻗ?ﮔ۲ﮒﺕﺕ | ﮒﺁﻛﭨ۴ﮒﮒﭨﭦﮔﻛﭨﭘ |
+| **xtdataﮔﺍﮔ؟ﮔ۴ﮒ۲** | ﻗ?ﮔﮒ | ﮒﺁﻛﭨ۴ﻟﺓﮒﻟ۰ﮔﮔﺍﮔ؟ |
+| **xtquantﮒﭦﮒ؟ﻟ۲?* | ﻗ?ﮒﺓﺎﮒ؟ﻟ۲?| ﻝﮔ؛: xtquant_250516 |
 
-### �?发现的问�?
-| 问题 | 严重程度 | 状�?| 影响 |
+### ﻗ?ﮒﻝﺍﻝﻠ؟ﻠ۱?
+| ﻠ؟ﻠ۱ | ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ | ﻝﭘﮔ?| ﮒﺛﺎﮒ |
 |------|---------|------|------|
-| **Python版本不兼�?* | 🔴 �?| �?未修�?| API导入失败，连接返�?1 |
-| **路径格式不正�?* | 🟡 �?| �?已修�?| 可能导致连接失败 |
-| **Session冲突** | 🟢 �?| ⚠️  需注意 | 连接失败 |
+| **Pythonﻝﮔ؛ﻛﺕﮒﺙﮒ؟?* | ﻭﺑ ﻠ،?| ﻗ?ﮔ۹ﻛﺟ؟ﮒ۳?| APIﮒﺁﺙﮒ۴ﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﺟﮔ۴ﻟﺟﮒ?1 |
+| **ﻟﺓﺁﮒﺝﮔﺙﮒﺙﻛﺕﮔ۲ﻝ۰?* | ﻭ۰ ﻛﺕ?| ﻗ?ﮒﺓﺎﻛﺟ؟ﮒ۳?| ﮒﺁﻟﺛﮒﺁﺙﻟﺑﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ |
+| **Sessionﮒﺎﻝ۹** | ﻭ۱ ﻛﺛ?| ﻗﺅﺕ  ﻠﮔﺏ۷ﮔ | ﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ |
 
 ---
 
-## 🔍 详细诊断过程
+## ﻭ ﻟﺁ۵ﻝﭨﻟﺁﮔﻟﺟﻝ۷
 
-### 阶段1: 初始连接测试
+### ﻠﭘﮔ؟ﭖ1: ﮒﮒ۶ﻟﺟﮔ۴ﮔﭖﻟﺁ
 
-**测试脚本**: `test_qmt_connection_v3.py`
+**ﮔﭖﻟﺁﻟﮔ؛**: `test_qmt_connection_v3.py`
 
-**测试结果**:
+**ﮔﭖﻟﺁﻝﭨﮔ**:
 ```
-�?数据接口测试成功 - 获取�?5234 只股�?�?交易接口连接失败，返回码: -1
+ﻗ?ﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﭖﻟﺁﮔﮒ - ﻟﺓﮒﮒ?5234 ﮒ۹ﻟ۰ﻝ۴?ﻗ?ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﺟﮒﻝ: -1
 ```
 
-**初步诊断**: 数据接口可用，交易接口不可用
+**ﮒﮔ۴ﻟﺁﮔ**: ﮔﺍﮔ؟ﮔ۴ﮒ۲ﮒﺁﻝ۷ﺅﺙﻛﭦ۳ﮔﮔ۴ﮒ۲ﻛﺕﮒﺁﻝ۷
 
 ---
 
-### 阶段2: 权限诊断
+### ﻠﭘﮔ؟ﭖ2: ﮔﻠﻟﺁﮔ
 
-**诊断脚本**: `diagnose_qmt_permission.py`
+**ﻟﺁﮔﻟﮔ؛**: `diagnose_qmt_permission.py`
 
-**关键发现**:
+**ﮒﺏﻠ؟ﮒﻝﺍ**:
 ```
-�?找到 up_queue_xtquant 文件 (2 �?
-  �?说明账号有策略交易权�?```
+ﻗ?ﮔﺝﮒﺍ up_queue_xtquant ﮔﻛﭨﭘ (2 ﻛﺕ?
+ﻗ?ﻟﺁﺑﮔﻟﺑ۵ﮒﺓﮔﻝﻝ۴ﻛﭦ۳ﮔﮔﻠ?```
 
-**结论**: 排除了账号权限问�?
+**ﻝﭨﻟ؟ﭦ**: ﮔﻠ۳ﻛﭦﻟﺑ۵ﮒﺓﮔﻠﻠ؟ﻠ۱?
 ---
 
-### 阶段3: 深度诊断
+### ﻠﭘﮔ؟ﭖ3: ﮔﺓﺎﮒﭦ۵ﻟﺁﮔ
 
-**诊断脚本**: `diagnose_qmt_deep.py`
+**ﻟﺁﮔﻟﮔ؛**: `diagnose_qmt_deep.py`
 
-**关键发现**:
+**ﮒﺏﻠ؟ﮒﻝﺍ**:
 
-#### 1. 路径格式问题 �?已修�?
-**问题**:
+#### 1. ﻟﺓﺁﮒﺝﮔﺙﮒﺙﻠ؟ﻠ۱ ﻗ?ﮒﺓﺎﻛﺟ؟ﮒ۳?
+**ﻠ؟ﻠ۱**:
 ```
-�?错误路径: E:/国金QMT交易端模�?bin.x64
-�?正确路径: E:/国金QMT交易端模�?userdata_mini
-```
-
-**官方文档**:
-> miniqmt：路径指定到安装目录�?`\userdata_mini` 文件�?
-**修复操作**:
-- 已更�?`.env.qmt` 文件
-- 将路径从 `bin.x64` 改为 `userdata_mini`
-
-#### 2. Python版本问题 �?未修�?
-**问题**:
-```
-�?当前版本: Python 3.13.12
-�?官方支持: Python 3.6 - 3.12 (64�?
+ﻗ?ﻠﻟﺁﺁﻟﺓﺁﮒﺝ: E:/ﮒﺛﻠQMTﻛﭦ۳ﮔﻝ،ﺁﮔ۷۰ﮔ?bin.x64
+ﻗ?ﮔ۲ﻝ۰؟ﻟﺓﺁﮒﺝ: E:/ﮒﺛﻠQMTﻛﭦ۳ﮔﻝ،ﺁﮔ۷۰ﮔ?userdata_mini
 ```
 
-**官方文档**:
-> XtQuant 目前提供的库包括 64 �?Python 3.6�?.7�?.8�?.9�?.10�?.11�?.12版本
+**ﮒ؟ﮔﺗﮔﮔ۰۲**:
+> miniqmtﺅﺙﻟﺓﺁﮒﺝﮔﮒ؟ﮒﺍﮒ؟ﻟ۲ﻝ؟ﮒﺛﻛﺕ?`\userdata_mini` ﮔﻛﭨﭘﮒ۳?
+**ﻛﺟ؟ﮒ۳ﮔﻛﺛ**:
+- ﮒﺓﺎﮔﺑﮔ?`.env.qmt` ﮔﻛﭨﭘ
+- ﮒﺍﻟﺓﺁﮒﺝﻛﭨ `bin.x64` ﮔﺗﻛﺕﭦ `userdata_mini`
 
-**影响**:
-- `XtAccount` 导入失败
-- 交易接口连接返回 -1
-
-**错误信息**:
+#### 2. Pythonﻝﮔ؛ﻠ؟ﻠ۱ ﻗ?ﮔ۹ﻛﺟ؟ﮒ۳?
+**ﻠ؟ﻠ۱**:
 ```
-�?xtquant导入失败: cannot import name 'XtAccount' from 'xtquant.xttrader'
+ﻗ?ﮒﺛﮒﻝﮔ؛: Python 3.13.12
+ﻗ?ﮒ؟ﮔﺗﮔﺁﮔ: Python 3.6 - 3.12 (64ﻛﺛ?
+```
+
+**ﮒ؟ﮔﺗﮔﮔ۰۲**:
+> XtQuant ﻝ؟ﮒﮔﻛﺝﻝﮒﭦﮒﮔ؛ 64 ﻛﺛ?Python 3.6ﻙ?.7ﻙ?.8ﻙ?.9ﻙ?.10ﻙ?.11ﻙ?.12ﻝﮔ؛
+
+**ﮒﺛﺎﮒ**:
+- `XtAccount` ﮒﺁﺙﮒ۴ﮒ۳ﺎﻟﺑ۴
+- ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﻟﺟﮒ -1
+
+**ﻠﻟﺁﺁﻛﺟ۰ﮔﺁ**:
+```
+ﻗ?xtquantﮒﺁﺙﮒ۴ﮒ۳ﺎﻟﺑ۴: cannot import name 'XtAccount' from 'xtquant.xttrader'
 ```
 
 ---
 
-## 📋 解决方案
+## ﻭ ﻟ۶۲ﮒﺏﮔﺗﮔ۰
 
-### 🔴 立即修复项（必须�?
-#### 创建Python 3.12虚拟环境
+### ﻭﺑ ﻝ،ﮒﺏﻛﺟ؟ﮒ۳ﻠ۰ﺗﺅﺙﮒﺟﻠ۰ﭨﺅﺙ?
+#### ﮒﮒﭨﭦPython 3.12ﻟﮔﻝﺁﮒ۱
 
-**方案1: 使用conda（推荐）**
+**ﮔﺗﮔ۰1: ﻛﺛﺟﻝ۷condaﺅﺙﮔ۷ﻟﺅﺙ**
 
 ```bash
-# 步骤1: 创建环境
+# ﮔ۴ﻠ۹۳1: ﮒﮒﭨﭦﻝﺁﮒ۱
 conda create -n qmt python=3.12 -y
 
-# 步骤2: 激活环�?conda activate qmt
+# ﮔ۴ﻠ۹۳2: ﮔﺟﮔﺑﭨﻝﺁﮒ۱?conda activate qmt
 
-# 步骤3: 安装依赖
+# ﮔ۴ﻠ۹۳3: ﮒ؟ﻟ۲ﻛﺝﻟﭖ
 pip install xtquant pandas numpy
 
-# 步骤4: 验证安装
-python -c "import xtquant; print('�?xtquant安装成功')"
+# ﮔ۴ﻠ۹۳4: ﻠ۹ﻟﺁﮒ؟ﻟ۲
+python -c "import xtquant; print('ﻗ?xtquantﮒ؟ﻟ۲ﮔﮒ')"
 ```
 
-**方案2: 使用venv**
+**ﮔﺗﮔ۰2: ﻛﺛﺟﻝ۷venv**
 
 ```bash
-# 前提：需要先安装Python 3.12
+# ﮒﮔﺅﺙﻠﻟ۵ﮒﮒ؟ﻟ۲Python 3.12
 
-# 步骤1: 下载Python 3.12
-# 访问: https://www.python.org/downloads/
-# 下载: Python 3.12.x (64�?
+# ﮔ۴ﻠ۹۳1: ﻛﺕﻟﺛﺛPython 3.12
+# ﻟ؟ﺟﻠ؟: https://www.python.org/downloads/
+# ﻛﺕﻟﺛﺛ: Python 3.12.x (64ﻛﺛ?
 
-# 步骤2: 创建虚拟环境
+# ﮔ۴ﻠ۹۳2: ﮒﮒﭨﭦﻟﮔﻝﺁﮒ۱
 py -3.12 -m venv qmt_env
 
-# 步骤3: 激活环�?qmt_env\Scripts\activate  # Windows
+# ﮔ۴ﻠ۹۳3: ﮔﺟﮔﺑﭨﻝﺁﮒ۱?qmt_env\Scripts\activate  # Windows
 
-# 步骤4: 安装依赖
+# ﮔ۴ﻠ۹۳4: ﮒ؟ﻟ۲ﻛﺝﻟﭖ
 pip install xtquant pandas numpy
 ```
 
 ---
 
-### 🟡 验证配置（重要）
+### ﻭ۰ ﻠ۹ﻟﺁﻠﻝﺛ؟ﺅﺙﻠﻟ۵ﺅﺙ
 
-#### 1. 验证Python版本
+#### 1. ﻠ۹ﻟﺁPythonﻝﮔ؛
 
 ```bash
 python --version
-# 应该显示: Python 3.12.x
+# ﮒﭦﻟﺁ۴ﮔﺝﻝ۳ﭦ: Python 3.12.x
 
 python -c "import sys; print(f'Python {sys.version}')"
-# 确认�?4位版�?```
+# ﻝ۰؟ﻟ؟۳ﮔ?4ﻛﺛﻝﮔ?```
 
-#### 2. 验证xtquant安装
+#### 2. ﻠ۹ﻟﺁxtquantﮒ؟ﻟ۲
 
 ```bash
-python -c "import xtquant; print('�?xtquant可用')"
-python -c "from xtquant import xtdata; print('�?xtdata可用')"
-python -c "from xtquant.xttrader import XtQuantTrader; print('�?xttrader可用')"
+python -c "import xtquant; print('ﻗ?xtquantﮒﺁﻝ۷')"
+python -c "from xtquant import xtdata; print('ﻗ?xtdataﮒﺁﻝ۷')"
+python -c "from xtquant.xttrader import XtQuantTrader; print('ﻗ?xttraderﮒﺁﻝ۷')"
 ```
 
-#### 3. 验证路径配置
+#### 3. ﻠ۹ﻟﺁﻟﺓﺁﮒﺝﻠﻝﺛ؟
 
 ```bash
-# 检�?.env.qmt 文件
+# ﮔ۲ﮔ?.env.qmt ﮔﻛﭨﭘ
 cat .env.qmt
 
-# 确认路径格式�?# QMT_SIMULATION_CLIENT_PATH=E:/国金QMT交易端模�?userdata_mini
-# QMT_LIVE_CLIENT_PATH=E:/国金QMT交易端实�?userdata_mini
+# ﻝ۰؟ﻟ؟۳ﻟﺓﺁﮒﺝﮔﺙﮒﺙﺅﺙ?# QMT_SIMULATION_CLIENT_PATH=E:/ﮒﺛﻠQMTﻛﭦ۳ﮔﻝ،ﺁﮔ۷۰ﮔ?userdata_mini
+# QMT_LIVE_CLIENT_PATH=E:/ﮒﺛﻠQMTﻛﭦ۳ﮔﻝ،ﺁﮒ؟ﻝ?userdata_mini
 ```
 
 ---
 
-### 🟢 测试连接（最后步骤）
+### ﻭ۱ ﮔﭖﻟﺁﻟﺟﮔ۴ﺅﺙﮔﮒﮔ۴ﻠ۹۳ﺅﺙ
 
-#### 1. 启动QMT客户�?
+#### 1. ﮒﺁﮒ۷QMTﮒ؟۱ﮔﺓﻝ،?
 ```
-1. 打开国金QMT软件
-2. 在登录界面，勾选【极简模式】或【独立交易�?3. 输入账号密码登录
-4. 确认登录成功
+1. ﮔﮒﺙﮒﺛﻠQMTﻟﺛﺁﻛﭨﭘ
+2. ﮒ۷ﻝﭨﮒﺛﻝﻠ۱ﺅﺙﮒﺝﻠﻙﮔﻝ؟ﮔ۷۰ﮒﺙﻙﮔﻙﻝ؛ﻝ،ﻛﭦ۳ﮔﻙ?3. ﻟﺝﮒ۴ﻟﺑ۵ﮒﺓﮒﺁﻝﻝﭨﮒﺛ
+4. ﻝ۰؟ﻟ؟۳ﻝﭨﮒﺛﮔﮒ
 ```
 
-#### 2. 运行测试脚本
+#### 2. ﻟﺟﻟ۰ﮔﭖﻟﺁﻟﮔ؛
 
 ```bash
-# 激活qmt环境
+# ﮔﺟﮔﺑﭨqmtﻝﺁﮒ۱
 conda activate qmt
 
-# 运行测试
+# ﻟﺟﻟ۰ﮔﭖﻟﺁ
 python scripts/test_qmt_connection_v4.py
 ```
 
-#### 3. 预期结果
+#### 3. ﻠ۱ﮔﻝﭨﮔ
 
 ```
-�?数据接口测试成功
-�?交易接口连接成功
-�?账户订阅成功
-�?资产查询成功
+ﻗ?ﮔﺍﮔ؟ﮔ۴ﮒ۲ﮔﭖﻟﺁﮔﮒ
+ﻗ?ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﮔﮒ
+ﻗ?ﻟﺑ۵ﮔﺓﻟ؟۱ﻠﮔﮒ
+ﻗ?ﻟﭖﻛﭦ۶ﮔ۴ﻟﺁ۱ﮔﮒ
 ```
 
 ---
 
-## 🎯 根本原因分析
+## ﻭﺁ ﮔﺗﮔ؛ﮒﮒﮒﮔ
 
-### 问题链条
-
-```
-Python 3.13 (不兼�?
-    �?xtquant API导入失败
-    �?XtAccount类不存在
-    �?交易接口连接返回-1
-    �?无法进行程序化交�?```
-
-### 解决链条
+### ﻠ؟ﻠ۱ﻠﺝﮔ۰
 
 ```
-创建Python 3.12环境
-    �?正确安装xtquant�?    �?API导入成功
-    �?交易接口连接成功
-    �?可以程序化交�?```
+Python 3.13 (ﻛﺕﮒﺙﮒ؟?
+    ﻗ?xtquant APIﮒﺁﺙﮒ۴ﮒ۳ﺎﻟﺑ۴
+ﻗ?XtAccountﻝﺎﭨﻛﺕﮒﮒ۷
+    ﻗ?ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﻟﺟﮒ-1
+ﻗ?ﮔﮔﺏﻟﺟﻟ۰ﻝ۷ﮒﭦﮒﻛﭦ۳ﮔ?```
+
+### ﻟ۶۲ﮒﺏﻠﺝﮔ۰
+
+```
+ﮒﮒﭨﭦPython 3.12ﻝﺁﮒ۱
+ﻗ?ﮔ۲ﻝ۰؟ﮒ؟ﻟ۲xtquantﮒﭦ?    ﻗ?APIﮒﺁﺙﮒ۴ﮔﮒ
+    ﻗ?ﻛﭦ۳ﮔﮔ۴ﮒ۲ﻟﺟﮔ۴ﮔﮒ
+    ﻗ?ﮒﺁﻛﭨ۴ﻝ۷ﮒﭦﮒﻛﭦ۳ﮔ?```
 
 ---
 
-## 📚 参考文�?
-### 官方文档
+## ﻭ ﮒﻟﮔﮔ۰?
+### ﮒ؟ﮔﺗﮔﮔ۰۲
 
-1. **迅投知识�?*: https://dict.thinktrader.net/
-2. **Native API文档**: https://dict.thinktrader.net/nativeApi/start_now.html
-3. **Inner API文档**: https://dict.thinktrader.net/innerApi/start_now.html
+1. **ﻟﺟﮔﻝ۴ﻟﺁﮒﭦ?*: https://dict.thinktrader.net/
+2. **Native APIﮔﮔ۰۲**: https://dict.thinktrader.net/nativeApi/start_now.html
+3. **Inner APIﮔﮔ۰۲**: https://dict.thinktrader.net/innerApi/start_now.html
 
-### 社区资源
+### ﻝ۳ﺝﮒﭦﻟﭖﮔﭦ
 
-1. **迅投官方论坛**: https://www.xuntou.net/
-2. **国金MiniQMT连接问题**: https://www.xuntou.net/forum.php?mod=viewthread&tid=1705
+1. **ﻟﺟﮔﮒ؟ﮔﺗﻟ؟ﭦﮒ**: https://www.xuntou.net/
+2. **ﮒﺛﻠMiniQMTﻟﺟﮔ۴ﻠ؟ﻠ۱**: https://www.xuntou.net/forum.php?mod=viewthread&tid=1705
 
-### 本地文档
+### ﮔ؛ﮒﺍﮔﮔ۰۲
 
-1. **PDF说明文档**: `D:\ZephyrAlpha\迅投QMT极速策略交易系统说明文�?pdf`
-2. **连接故障排查**: `docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md`
-3. **MiniQMT登录指南**: `docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_MINIQMT_LOGIN_GUIDE.md`
-
----
-
-## ⚠️  重要提示
-
-### Python版本要求
-
-- �?**必须使用**: Python 3.6 - 3.12 (64�?
-- �?**不支�?*: Python 3.13+ �?32位版�?
-### QMT客户端要�?
-- �?**必须启动**: QMT客户端必须先启动
-- �?**必须登录**: 以极简模式或独立交易模式登�?- �?**路径正确**: 配置文件指向 `userdata_mini` 文件�?
-### 账号权限要求
-
-- �?**已确�?*: 您的账号有策略交易权�?- �?**已确�?*: up_queue_xtquant文件存在
+1. **PDFﻟﺁﺑﮔﮔﮔ۰۲**: `D:\ZephyrAlpha\ﻟﺟﮔQMTﮔﻠﻝﻝ۴ﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻟﺁﺑﮔﮔﮔ۰?pdf`
+2. **ﻟﺟﮔ۴ﮔﻠﮔﮔ۴**: `docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_CONNECTION_TROUBLESHOOTING.md`
+3. **MiniQMTﻝﭨﮒﺛﮔﮒ**: `docs/05_IMPLEMENTATION/07_OPERATIONS/QMT_MINIQMT_LOGIN_GUIDE.md`
 
 ---
 
-## 📈 下一步行�?
-### 立即执行（今天）
+## ﻗﺅﺕ  ﻠﻟ۵ﮔﻝ۳ﭦ
 
-1. �?**创建Python 3.12环境**
+### Pythonﻝﮔ؛ﻟ۵ﮔﺎ
+
+- ﻗ?**ﮒﺟﻠ۰ﭨﻛﺛﺟﻝ۷**: Python 3.6 - 3.12 (64ﻛﺛ?
+- ﻗ?**ﻛﺕﮔﺁﮔ?*: Python 3.13+ ﮔ?32ﻛﺛﻝﮔ?
+### QMTﮒ؟۱ﮔﺓﻝ،ﺁﻟ۵ﮔﺎ?
+- ﻗ?**ﮒﺟﻠ۰ﭨﮒﺁﮒ۷**: QMTﮒ؟۱ﮔﺓﻝ،ﺁﮒﺟﻠ۰ﭨﮒﮒﺁﮒ۷
+- ﻗ?**ﮒﺟﻠ۰ﭨﻝﭨﮒﺛ**: ﻛﭨ۴ﮔﻝ؟ﮔ۷۰ﮒﺙﮔﻝ؛ﻝ،ﻛﭦ۳ﮔﮔ۷۰ﮒﺙﻝﭨﮒﺛ?- ﻗ?**ﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟**: ﻠﻝﺛ؟ﮔﻛﭨﭘﮔﮒ `userdata_mini` ﮔﻛﭨﭘﮒ۳?
+### ﻟﺑ۵ﮒﺓﮔﻠﻟ۵ﮔﺎ
+
+- ﻗ?**ﮒﺓﺎﻝ۰؟ﻟ؟?*: ﮔ۷ﻝﻟﺑ۵ﮒﺓﮔﻝﻝ۴ﻛﭦ۳ﮔﮔﻠ?- ﻗ?**ﮒﺓﺎﻝ۰؟ﻟ؟?*: up_queue_xtquantﮔﻛﭨﭘﮒﮒ۷
+
+---
+
+## ﻭ ﻛﺕﻛﺕﮔ۴ﻟ۰ﮒ?
+### ﻝ،ﮒﺏﮔ۶ﻟ۰ﺅﺙﻛﭨﮒ۳۸ﺅﺙ
+
+1. ﻗ?**ﮒﮒﭨﭦPython 3.12ﻝﺁﮒ۱**
    ```bash
    conda create -n qmt python=3.12 -y
    conda activate qmt
    pip install xtquant pandas numpy
    ```
 
-2. �?**验证环境配置**
+2. ﻗ?**ﻠ۹ﻟﺁﻝﺁﮒ۱ﻠﻝﺛ؟**
    ```bash
    python --version
-   python -c "import xtquant; print('�?成功')"
+   python -c "import xtquant; print('ﻗ?ﮔﮒ')"
    ```
 
-3. �?**重新测试连接**
+3. ﻗ?**ﻠﮔﺍﮔﭖﻟﺁﻟﺟﮔ۴**
    ```bash
    python scripts/test_qmt_connection_v4.py
    ```
 
-### 后续任务（本周）
+### ﮒﻝﭨﻛﭨﭨﮒ۰ﺅﺙﮔ؛ﮒ۷ﺅﺙ
 
-1. 📝 **更新项目文档**
-   - 记录Python版本要求
-   - 更新环境配置指南
+1. ﻭ **ﮔﺑﮔﺍﻠ۰ﺗﻝ؟ﮔﮔ۰۲**
+   - ﻟ؟ﺍﮒﺛPythonﻝﮔ؛ﻟ۵ﮔﺎ
+   - ﮔﺑﮔﺍﻝﺁﮒ۱ﻠﻝﺛ؟ﮔﮒ
 
-2. 🧪 **完善测试脚本**
-   - 添加更多错误处理
-   - 增加自动化诊�?
-3. 📊 **实现QMT执行�?*
-   - 基于成功的连接测�?   - 集成到Layer 5策略执行�?
+2. ﻭ۶۹ **ﮒ؟ﮒﮔﭖﻟﺁﻟﮔ؛**
+- ﮔﺓﭨﮒﮔﺑﮒ۳ﻠﻟﺁﺁﮒ۳ﻝ
+- ﮒ۱ﮒﻟ۹ﮒ۷ﮒﻟﺁﮔ?
+3. ﻭ **ﮒ؟ﻝﺍQMTﮔ۶ﻟ۰ﮒ?*
+- ﮒﭦﻛﭦﮔﮒﻝﻟﺟﮔ۴ﮔﭖﻟﺁ?   - ﻠﮔﮒﺍLayer 5ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎ?
 ---
 
-## 📞 技术支�?
-### 如遇问题
+## ﻭ ﮔﮔﺁﮔﺁﮔ?
+### ﮒ۵ﻠﻠ؟ﻠ۱
 
-1. **检查Python版本**: `python --version`
-2. **检查xtquant安装**: `pip show xtquant`
-3. **检查QMT客户�?*: 确认已启动并登录
-4. **查看日志**: 运行诊断脚本查看详细信息
+1. **ﮔ۲ﮔ۴Pythonﻝﮔ؛**: `python --version`
+2. **ﮔ۲ﮔ۴xtquantﮒ؟ﻟ۲**: `pip show xtquant`
+3. **ﮔ۲ﮔ۴QMTﮒ؟۱ﮔﺓﻝ،?*: ﻝ۰؟ﻟ؟۳ﮒﺓﺎﮒﺁﮒ۷ﮒﺗﭘﻝﭨﮒﺛ
+4. **ﮔ۴ﻝﮔ۴ﮒﺟ**: ﻟﺟﻟ۰ﻟﺁﮔﻟﮔ؛ﮔ۴ﻝﻟﺁ۵ﻝﭨﻛﺟ۰ﮔﺁ
 
-### 联系方式
+### ﻟﻝﺏﭨﮔﺗﮒﺙ
 
-- **国金证券客服**: 95310
-- **迅投官方论坛**: https://www.xuntou.net/
+- **ﮒﺛﻠﻟﺁﮒﺕﮒ؟۱ﮔ**: 95310
+- **ﻟﺟﮔﮒ؟ﮔﺗﻟ؟ﭦﮒ**: https://www.xuntou.net/
 
 ---
 
-**报告生成时间**: 2026-04-03 19:35  
-**诊断工具版本**: v4.0  
-**下次审计建议**: 环境配置完成后重新测�?
+**ﮔ۴ﮒﻝﮔﮔﭘﻠﺑ**: 2026-04-03 19:35  
+**ﻟﺁﮔﮒﺓ۴ﮒﺓﻝﮔ؛**: v4.0
+**ﻛﺕﮔ؛۰ﮒ؟۰ﻟ؟۰ﮒﭨﭦﻟ؟؟**: ﻝﺁﮒ۱ﻠﻝﺛ؟ﮒ؟ﮔﮒﻠﮔﺍﮔﭖﻟﺁ?

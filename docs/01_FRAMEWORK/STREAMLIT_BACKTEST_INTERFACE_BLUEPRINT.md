@@ -1,23 +1,42 @@
 ---
-module_id: STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT_001
+module_id: STREAMLIT_BACKTEST_INTERFACE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 系统架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - Streamlit交互式回测界面
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma Research Platform", "Citadel Quant Dashboard", "Renaissance Backtest Interface"]
+reference_models:
+- Two Sigma Research Platform
+- Citadel Quant Dashboard
+- Renaissance Backtest Interface
 related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - GRAFANA_MONITORING_BLUEPRINT.md
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
+- GRAFANA_MONITORING_BLUEPRINT.md
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 layer: Layer 8 (人机交互层)
----
+responsibility_boundary: '本文档负责Streamlit交互式回测界面设计，包括：
 
+  - 交互式回测界面
+
+  - 回测参数配置
+
+  - 回测结果可视化
+
+
+  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md'
+responsibility:
+- STREAMLIT_BACKTEST_INTERFACE蓝图设计
+---
 # Streamlit交互式回测界面蓝图
+> **核心职责**: Streamlit Backtest Interface蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Streamlit Backtest Interface蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-05  
@@ -736,3 +755,34 @@ Streamlit交互式回测界面通过**开源优先策略**，实现了：
 2. 开发回测配置界面（第2-3天）
 3. 开发绩效分析界面（第4-5天）
 4. 开发因子分析+报告（第6-7天）
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 8: 人机交互层
+##### 0.001. Streamlit Backtest Interface Blueprint
+- **模块ID**: STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT_001
+- **蓝图文档**: [STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md](#)
+- **技术规格书**: 待创建
+- **职责**: Layer 8 - Streamlit交互式回测界面
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Streamlit Backtest Interface Blueprint** | Layer 8 - Streamlit交互式回测界面 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

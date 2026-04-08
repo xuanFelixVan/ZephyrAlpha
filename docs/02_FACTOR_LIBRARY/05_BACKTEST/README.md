@@ -1,63 +1,39 @@
 ---
-module_id: BACKTEST_README_001
+module_id: 05_BACKTEST_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-04
-owner: 首席文档架构师
-standard_type: 专业量化机构因子标准
-applicable_scope: 因子研究与管理
-compliance_level: 初始标准
-parent_document: ../INDEX.md
-implementation_status: 进行中
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 模块说明
+  - 使用指南
+  - 快速开始
 ---
+# 05 Backtest
 
-# 05_BACKTEST - 回测报告目录
+## 📋 概述
 
-> 因子回测报告集中管理
->
-> **版本**：v1.0
-> **更新日期**�?026-03-28
+本目录包含05 Backtest相关的文档和资源。
 
----
+## 📂 目录结构
 
-## 目录结构
+- [BACKTEST_REORGANIZATION](BACKTEST_REORGANIZATION.md)
+- [INDEX](INDEX.md)
 
-```
-05_BACKTEST/
-├── README.md           # 本文�?
-├── 趋势�?            # 趋势跟踪因子回测
-├── 均值回归类/        # 均值回归因子回�?
-├── value_factors/            # 价值因子回�?
-├── 成长�?            # 成长因子回测
-├── 质量�?            # 质量因子回测
-├── 动量�?            # 动量因子回测
-├── 情绪�?            # 情绪因子回测
-└── 风险�?            # 风险因子回测
-```
+## 📝 使用说明
+
+请参考目录中的具体文档了解详细信息。
 
 ---
 
-## 回测报告命名规范
-
-```
-{因子类型}_{因子名称}_{日期}.md
-```
-
-示例�?
-- `趋势类_MA5_20260328.md`
-- `value_factors_PE_TTM_20260328.md`
+**最后更新**: 2026-04-07 20:23:32
 
 ---
 
-## 回测报告模板
+## 变更记录
 
-详见：[01_STANDARDS/BACKTEST_STANDARDS.md](../01_STANDARDS/BACKTEST_STANDARDS.md)
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
 
----
-
-## 更新记录
-
-| 版本 | 日期 | 变更内容 |
-|------|------|----------|
-| v1.0 | 2026-03-28 | 初始版本 |

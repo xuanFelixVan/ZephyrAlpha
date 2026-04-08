@@ -4,170 +4,168 @@ version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 实施层架构师
-standard_type: 专业量化机构文档地图
-applicable_scope: 05_IMPLEMENTATION目录
-compliance_level: 专业标准
+owner: ﮒ؟ﮔﺛﮒﺎﮔﭘﮔﮒﺕ
+responsibility:
+  - 系统实施与部署管理与优化维护
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲ﮒﺍﮒﺝ
+applicable_scope: 05_IMPLEMENTATIONﻝ؟ﮒﺛ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: INDEX.md
-implementation_status: 活跃维护
----
+implementation_status: ﮔﺑﭨﻟﺓﻝﭨﺑﮔ۳---
 
-# 实施层文档地?(SITEMAP)
 
-> 清风量化系统 v5.3 实施层目录的完整文档导航地图
+# ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 ﮒ؟ﮔﺛﮒﺎﻝ؟ﮒﺛﻝﮒ؟ﮔﺑﮔﮔ۰۲ﮒﺁﺙﻟ۹ﮒﺍﮒﺝ
 >
-> **职责区分**:
-> - [INDEX.md](./INDEX.md) = 快速入口（5分钟导航?> - **本文?* = 完整地图（深度参考）
+> **ﻟﻟﺑ۲ﮒﭦﮒ**:
+> - [INDEX.md](./INDEX.md) = ﮒﺟ،ﻠﮒ۴ﮒ۲ﺅﺙ5ﮒﻠﮒﺁﺙﻟ۹?> - **ﮔ؛ﮔ?* = ﮒ؟ﮔﺑﮒﺍﮒﺝﺅﺙﮔﺓﺎﮒﭦ۵ﮒﻟﺅﺙ
 
 ---
 
-## 📍 文档位置导航
+## ﻭ ﮔﮔ۰۲ﻛﺛﻝﺛ؟ﮒﺁﺙﻟ۹
 
-### 一级导?
+### ﻛﺕﻝﭦ۶ﮒﺁﺙ?
 ```
 05_IMPLEMENTATION/
-├── 01_QUICKSTART/                    # 快速开??  ├── README.md                     # 快速开始指??  ├── LEARNING_PATH.md              # 学习路径
-?  ├── ROADMAP.md                    # 实施路线??  ├── dev-setup.md                  # 开发环境设??  ├── first-backtest.md             # 第一次回??  ├── factor-design.md              # 因子设计
-?  └── PHASE1_DESIGN.md              # 第一阶段设计
-?├── 02_DEVELOPMENT/                   # 开发标??  ├── README.md                     # 开发概??  ├── DEVELOPMENT_STANDARDS.md      # 开发标??  ├── DESIGN_PRINCIPLES.md          # 设计原则
-?  ├── CODE_QUALITY.md               # 代码质量
-?  ├── TESTING_STANDARD.md           # 测试标准
-?  ├── SECURITY.md                   # 安全标准
-?  ├── ERROR_HANDLING.md             # 错误处理
-?  ├── LOGGING_STANDARD.md           # 日志标准
-?  ├── CONFIG_MANAGEMENT.md          # 配置管理
-?  ├── PATH_STANDARD.md              # 路径标准
-?  ├── DOCUMENT_NUMBERING_STANDARD.md # 文档编号标准
-?  ├── VERSION_MANAGEMENT_STANDARD.md # 版本管理标准
-?  ├── DOCUMENT_QUALITY_GATE_STANDARD.md # 文档质量门标??  ├── DEVELOPMENT_WORKFLOW.md       # 开发工作流
-?  ├── RELEASE_CHECKLIST.md          # 发布检查清??  ├── API_DESIGN.md                 # API设计
-?  ├── AUTH.md                       # 认证授权
-?  ├── DEVELOPER_RULES.md            # 开发者规??  ├── AI_AGENT_CALL_PROTOCOL.md     # AI智能体调用协??  └── CONFIG_STANDARD.md            # 配置标准
-?├── 03_DEPLOYMENT/                    # 部署
-?  ├── README.md                     # 部署概述
-?  └── DEPLOYMENT_PLAN.md            # 部署计划
-?├── 04_INFRASTRUCTURE/                # 基础设施
-?  ├── README.md                     # 基础设施概述
-?  ├── DAILY_PIPELINE.md             # 日常流水??  ├── DATA_CLEANING.md              # 数据清洗
-?  ├── DATA_LINEAGE.md               # 数据血??  └── STORAGE_TIER.md               # 存储分层
-?├── 07_OPERATIONS/                    # 运维
-?  ├── README.md                     # 运维概述
-?  ├── AUDIT_CHECKLIST_TEMPLATE.md   # 审计检查清单模??  ├── QUALITY_GATE_MECHANISM.md     # 质量门机??  ├── PERFORMANCE_MONITORING.md     # 性能监控
-?  ├── DOCUMENT_AUDIT_WORKFLOW.md    # 文档审计工作??  ├── VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # 版本管理自动化指??  ├── audit_state/                  # 审计�??  ├── knowledge_base/               # 知识??  ├── review_reports/               # 评审报告
-?  └── improvement_plans/            # 改进计划
-?├── 05_TECHNICAL_SPECIFICATIONS/      # 技术规??  ├── (80+技术规格文?
-?  └── ...
-?├── 06_CONSTRUCTION_DOCS/             # 建设文档
-?  ├── 01_BLUEPRINTS/                # 蓝图文档
-?  └── ...
-?└── 索引文档
-    ├── INDEX.md                      # 快速入?    ├── SITEMAP.md                    # 完整地图
-    └── README.md                     # 实施层概?```
+ﻗﻗﻗ 01_QUICKSTART/                    # ﮒﺟ،ﻠﮒﺙ??  ﻗﻗﻗ README.md                     # ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ??  ﻗﻗﻗ LEARNING_PATH.md              # ﮒ۵ﻛﺗﻟﺓﺁﮒﺝ
+?  ﻗﻗﻗ ROADMAP.md                    # ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ??  ﻗﻗﻗ dev-setup.md                  # ﮒﺙﮒﻝﺁﮒ۱ﻟ؟ﺝ??  ﻗﻗﻗ first-backtest.md             # ﻝ؛؛ﻛﺕﮔ؛۰ﮒ??  ﻗﻗﻗ factor-design.md              # ﮒﮒﻟ؟ﺝﻟ؟۰
+?  ﻗﻗﻗ PHASE1_DESIGN.md              # ﻝ؛؛ﻛﺕﻠﭘﮔ؟ﭖﻟ؟ﺝﻟ؟۰
+?ﻗﻗﻗ 02_DEVELOPMENT/                   # ﮒﺙﮒﮔ??  ﻗﻗﻗ README.md                     # ﮒﺙﮒﮔ۵??  ﻗﻗﻗ DEVELOPMENT_STANDARDS.md      # ﮒﺙﮒﮔ??  ﻗﻗﻗ DESIGN_PRINCIPLES.md          # ﻟ؟ﺝﻟ؟۰ﮒﮒ
+?  ﻗﻗﻗ CODE_QUALITY.md               # ﻛﭨ۲ﻝﻟﺑ۷ﻠ
+?  ﻗﻗﻗ TESTING_STANDARD.md           # ﮔﭖﻟﺁﮔﮒ
+?  ﻗﻗﻗ SECURITY.md                   # ﮒ؟ﮒ۷ﮔﮒ
+?  ﻗﻗﻗ ERROR_HANDLING.md             # ﻠﻟﺁﺁﮒ۳ﻝ
+?  ﻗﻗﻗ LOGGING_STANDARD.md           # ﮔ۴ﮒﺟﮔﮒ
+?  ﻗﻗﻗ CONFIG_MANAGEMENT.md          # ﻠﻝﺛ؟ﻝ؟۰ﻝ
+?  ﻗﻗﻗ PATH_STANDARD.md              # ﻟﺓﺁﮒﺝﮔﮒ
+?  ﻗﻗﻗ DOCUMENT_NUMBERING_STANDARD.md # ﮔﮔ۰۲ﻝﺙﮒﺓﮔﮒ
+?  ﻗﻗﻗ VERSION_MANAGEMENT_STANDARD.md # ﻝﮔ؛ﻝ؟۰ﻝﮔﮒ
+?  ﻗﻗﻗ DOCUMENT_QUALITY_GATE_STANDARD.md # ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔ??  ﻗﻗﻗ DEVELOPMENT_WORKFLOW.md       # ﮒﺙﮒﮒﺓ۴ﻛﺛﮔﭖ
+?  ﻗﻗﻗ RELEASE_CHECKLIST.md          # ﮒﮒﺕﮔ۲ﮔ۴ﮔﺕ??  ﻗﻗﻗ API_DESIGN.md                 # APIﻟ؟ﺝﻟ؟۰
+?  ﻗﻗﻗ AUTH.md                       # ﻟ؟۳ﻟﺁﮔﮔ
+?  ﻗﻗﻗ DEVELOPER_RULES.md            # ﮒﺙﮒﻟﻟ۶??  ﻗﻗﻗ AI_AGENT_CALL_PROTOCOL.md     # AIﮔﭦﻟﺛﻛﺛﻟﺍﻝ۷ﮒ??  ﻗﻗﻗ CONFIG_STANDARD.md            # ﻠﻝﺛ؟ﮔﮒ
+?ﻗﻗﻗ 03_DEPLOYMENT/                    # ﻠ۷ﻝﺛﺎ
+?  ﻗﻗﻗ README.md                     # ﻠ۷ﻝﺛﺎﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ DEPLOYMENT_PLAN.md            # ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ
+?ﻗﻗﻗ 04_INFRASTRUCTURE/                # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
+?  ﻗﻗﻗ README.md                     # ﮒﭦﻝ۰ﻟ؟ﺝﮔﺛﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ DAILY_PIPELINE.md             # ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ??  ﻗﻗﻗ DATA_CLEANING.md              # ﮔﺍﮔ؟ﮔﺕﮔﺑ
+?  ﻗﻗﻗ DATA_LINEAGE.md               # ﮔﺍﮔ؟ﻟ۰??  ﻗﻗﻗ STORAGE_TIER.md               # ﮒﮒ۷ﮒﮒﺎ
+?ﻗﻗﻗ 07_OPERATIONS/                    # ﻟﺟﻝﭨﺑ
+?  ﻗﻗﻗ README.md                     # ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ
+?  ﻗﻗﻗ AUDIT_CHECKLIST_TEMPLATE.md   # ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰??  ﻗﻗﻗ QUALITY_GATE_MECHANISM.md     # ﻟﺑ۷ﻠﻠ۷ﮔﭦ??  ﻗﻗﻗ PERFORMANCE_MONITORING.md     # ﮔ۶ﻟﺛﻝﮔ۶
+?  ﻗﻗﻗ DOCUMENT_AUDIT_WORKFLOW.md    # ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﻛﺛ??  ﻗﻗﻗ VERSION_MANAGEMENT_AUTOMATION_GUIDE.md # ﻝﮔ؛ﻝ؟۰ﻝﻟ۹ﮒ۷ﮒﮔ??  ﻗﻗﻗ audit_state/                  # ﮒ؟۰ﻟ؟۰ﻝ??  ﻗﻗﻗ knowledge_base/               # ﻝ۴ﻟﺁ??  ﻗﻗﻗ review_reports/               # ﻟﺁﮒ؟۰ﮔ۴ﮒ
+?  ﻗﻗﻗ improvement_plans/            # ﮔﺗﻟﺟﻟ؟۰ﮒ
+?ﻗﻗﻗ 05_TECHNICAL_SPECIFICATIONS/      # ﮔﮔﺁﻟ۶??  ﻗﻗﻗ (80+ﮔﮔﺁﻟ۶ﮔﺙﮔ?
+?  ﻗﻗﻗ ...
+?ﻗﻗﻗ 06_CONSTRUCTION_DOCS/             # ﮒﭨﭦﻟ؟ﺝﮔﮔ۰۲
+?  ﻗﻗﻗ 01_BLUEPRINTS/                # ﻟﮒﺝﮔﮔ۰۲
+?  ﻗﻗﻗ ...
+?ﻗﻗﻗ ﻝﺑ۱ﮒﺙﮔﮔ۰۲
+    ﻗﻗﻗ INDEX.md                      # ﮒﺟ،ﻠﮒ۴?    ﻗﻗﻗ SITEMAP.md                    # ﮒ؟ﮔﺑﮒﺍﮒﺝ
+    ﻗﻗﻗ README.md                     # ﮒ؟ﮔﺛﮒﺎﮔ۵?```
 
 ---
 
-## 🗺?按用途查?
-### 我是新手
+## ﻭﭦ?ﮔﻝ۷ﻠﮔ۴?
+### ﮔﮔﺁﮔﺍﮔ
 
-**快速上手路?* (1小时):
-1. 阅读 [01_QUICKSTART/README.md](./01_QUICKSTART/README.md) - 快速开?(10分钟)
-2. 阅读 [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - 学习路径 (10分钟)
-3. 阅读 [01_QUICKSTART/dev-setup.md](./01_QUICKSTART/dev-setup.md) - 开发环境设?(20分钟)
-4. 阅读 [01_QUICKSTART/first-backtest.md](./01_QUICKSTART/first-backtest.md) - 第一次回?(20分钟)
+**ﮒﺟ،ﻠﻛﺕﮔﻟﺓﺁ?* (1ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ 01_QUICKSTART/README.md - ﮒﺟ،ﻠﮒﺙ?(10ﮒﻠ)
+2. ﻠﻟﺁﭨ [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - ﮒ۵ﻛﺗﻟﺓﺁﮒﺝ (10ﮒﻠ)
 
-### 我是开�?
-**开发规范学习路?* (2小时):
-1. 阅读 [02_DEVELOPMENT/README.md](./02_DEVELOPMENT/README.md) - 开发概?(10分钟)
-2. 阅读 [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - 开发标?(30分钟)
-3. 阅读 [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - 设计原则 (20分钟)
-4. 阅读 [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - 代码质量 (20分钟)
-5. 阅读 [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - 测试标准 (20分钟)
-6. 阅读 [02_DEVELOPMENT/SECURITY.md](./02_DEVELOPMENT/SECURITY.md) - 安全标准 (20分钟)
+### ﮔﮔﺁﮒﺙﮒ?
+**ﮒﺙﮒﻟ۶ﻟﮒ۵ﻛﺗﻟﺓﺁ?* (2ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ 02_DEVELOPMENT/README.md - ﮒﺙﮒﮔ۵?(10ﮒﻠ)
+2. ﻠﻟﺁﭨ [02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) - ﮒﺙﮒﮔ?(30ﮒﻠ)
+3. ﻠﻟﺁﭨ [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - ﻟ؟ﺝﻟ؟۰ﮒﮒ (20ﮒﻠ)
+4. ﻠﻟﺁﭨ [02_DEVELOPMENT/CODE_QUALITY.md](./02_DEVELOPMENT/CODE_QUALITY.md) - ﻛﭨ۲ﻝﻟﺑ۷ﻠ (20ﮒﻠ)
+5. ﻠﻟﺁﭨ [02_DEVELOPMENT/TESTING_STANDARD.md](./02_DEVELOPMENT/TESTING_STANDARD.md) - ﮔﭖﻟﺁﮔﮒ (20ﮒﻠ)
+6. ﻠﻟﺁﭨ [02_DEVELOPMENT/SECURITY.md](./02_DEVELOPMENT/SECURITY.md) - ﮒ؟ﮒ۷ﮔﮒ (20ﮒﻠ)
 
-### 我是运维人员
+### ﮔﮔﺁﻟﺟﻝﭨﺑﻛﭦﭦﮒ
 
-**运维工作路线** (2小时):
-1. 阅读 [07_OPERATIONS/README.md](./07_OPERATIONS/README.md) - 运维概述 (20分钟)
-2. 阅读 [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - 审计检查清?(20分钟)
-3. 阅读 [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - 质量门机?(20分钟)
-4. 阅读 [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - 部署计划 (20分钟)
-5. 阅读 [04_INFRASTRUCTURE/DAILY_PIPELINE.md](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) - 日常流水?(20分钟)
+**ﻟﺟﻝﭨﺑﮒﺓ۴ﻛﺛﻟﺓﺁﻝﭦﺟ** (2ﮒﺍﮔﭘ):
+1. ﻠﻟﺁﭨ 07_OPERATIONS/README.md - ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ (20ﮒﻠ)
+2. ﻠﻟﺁﭨ [07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) - ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?(20ﮒﻠ)
+3. ﻠﻟﺁﭨ [07_OPERATIONS/QUALITY_GATE_MECHANISM.md](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) - ﻟﺑ۷ﻠﻠ۷ﮔﭦ?(20ﮒﻠ)
+4. ﻠﻟﺁﭨ [03_DEPLOYMENT/DEPLOYMENT_PLAN.md](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) - ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ (20ﮒﻠ)
+5. ﻠﻟﺁﭨ [04_INFRASTRUCTURE/DAILY_PIPELINE.md](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) - ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?(20ﮒﻠ)
 
-### 我要查看技术规?
-**技术规格查找路?* (根据需?:
-1. 浏览 [05_TECHNICAL_SPECIFICATIONS/](./05_TECHNICAL_SPECIFICATIONS/) 目录
-2. 根据模块名称查找对应的技术规格文?3. 参考文档中的实施状态和优先?
+### ﮔﻟ۵ﮔ۴ﻝﮔﮔﺁﻟ۶?
+**ﮔﮔﺁﻟ۶ﮔﺙﮔ۴ﮔﺝﻟﺓﺁ?* (ﮔﺗﮔ؟ﻠ?:
+1. ﮔﭖﻟ۶ [05_TECHNICAL_SPECIFICATIONS/](./05_TECHNICAL_SPECIFICATIONS/) ﻝ؟ﮒﺛ
+2. ﮔﺗﮔ؟ﮔ۷۰ﮒﮒﻝ۶ﺍﮔ۴ﮔﺝﮒﺁﺗﮒﭦﻝﮔﮔﺁﻟ۶ﮔﺙﮔ?3. ﮒﻟﮔﮔ۰۲ﻛﺕﻝﮒ؟ﮔﺛﻝﭘﮔﮒﻛﺙﮒ?
 ---
 
-## 📊 按主题分?
-### 快速开?
-| 文档名称 | 说明 | 重要?|
+## ﻭ ﮔﻛﺕﭨﻠ۱ﮒ?
+### ﮒﺟ،ﻠﮒﺙ?
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [快速开始](./01_QUICKSTART/README.md) | 快速开始指?| ⭐⭐⭐⭐?|
-| [学习路径](./01_QUICKSTART/LEARNING_PATH.md) | 学习路径 | ⭐⭐⭐⭐ |
-| [实施路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线?| ⭐⭐⭐⭐ |
-| [开发环境设置](./01_QUICKSTART/dev-setup.md) | 开发环境设?| ⭐⭐⭐⭐ |
+| ﮒﺟ،ﻠﮒﺙﮒ۶ | ﮒﺟ،ﻠﮒﺙﮒ۶ﮔ?| ﻗﻗﻗﻗ?|
+| [ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ](./01_QUICKSTART/ROADMAP.md) | ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?| ﻗﻗﻗﻗ |
 
-### 开发标?
-| 文档名称 | 说明 | 重要?|
+### ﮒﺙﮒﮔ?
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [开发标准](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 开发标?| ⭐⭐⭐⭐?|
-| [设计原则](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) | 设计原则 | ⭐⭐⭐⭐?|
-| [代码质量](./02_DEVELOPMENT/CODE_QUALITY.md) | 代码质量标准 | ⭐⭐⭐⭐?|
-| [测试标准](./02_DEVELOPMENT/TESTING_STANDARD.md) | 测试标准 | ⭐⭐⭐⭐?|
-| [安全标准](./02_DEVELOPMENT/SECURITY.md) | 安全标准 | ⭐⭐⭐⭐?|
+| [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) | ﻟ؟ﺝﻟ؟۰ﮒﮒ | ﻗﻗﻗﻗ?|
 
-### 部署与基础设施
+### ﻠ۷ﻝﺛﺎﻛﺕﮒﭦﻝ۰ﻟ؟ﺝﮔﺛ
 
-| 文档名称 | 说明 | 重要?|
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [部署计划](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | 部署计划 | ⭐⭐⭐⭐ |
-| [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | 日常流水?| ⭐⭐⭐⭐ |
-| [数据清洗](./04_INFRASTRUCTURE/DATA_CLEANING.md) | 数据清洗 | ⭐⭐⭐⭐ |
-| [存储分层](./04_INFRASTRUCTURE/STORAGE_TIER.md) | 存储分层 | ⭐⭐⭐⭐ |
+| [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ | ﻗﻗﻗﻗ |
+| [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑ?| ﻗﻗﻗﻗ |
+| ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﮔﺍﮔ؟ﮔﺕﮔﺑ | ﻗﻗﻗﻗ |
 
-### 运维
+### ﻟﺟﻝﭨﺑ
 
-| 文档名称 | 说明 | 重要?|
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺁﺑﮔ | ﻠﻟ۵?|
 |---------|------|--------|
-| [运维概述](./07_OPERATIONS/README.md) | 运维概述 | ⭐⭐⭐⭐?|
-| [审计检查清单模板](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | 审计检查清?| ⭐⭐⭐⭐ |
-| [质量门机制](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | 质量门机?| ⭐⭐⭐⭐ |
-| [性能监控](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | 性能监控 | ⭐⭐⭐⭐ |
+| ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ | ﻗﻗﻗﻗ?|
+| [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md) | ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕ?| ﻗﻗﻗﻗ |
+| [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md) | ﻟﺑ۷ﻠﻠ۷ﮔﭦ?| ﻗﻗﻗﻗ |
+| [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md) | ﮔ۶ﻟﺛﻝﮔ۶ | ﻗﻗﻗﻗ |
 
 ---
 
-## 🔍 按关键词查找
+## ﻭ ﮔﮒﺏﻠ؟ﻟﺁﮔ۴ﮔﺝ
 
-### 开发关键词
+### ﮒﺙﮒﮒﺏﻠ؟ﻟﺁ
 
-- **开发标?*: [开发标准](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
-- **设计原则**: [设计原则](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md)
-- **代码质量**: [代码质量](./02_DEVELOPMENT/CODE_QUALITY.md)
-- **测试**: [测试标准](./02_DEVELOPMENT/TESTING_STANDARD.md)
-- **安全**: [安全标准](./02_DEVELOPMENT/SECURITY.md)
+- **ﮒﺙﮒﮔ?*: [ﮒﺙﮒﮔﮒ](./02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+- **ﻟ؟ﺝﻟ؟۰ﮒﮒ**: [ﻟ؟ﺝﻟ؟۰ﮒﮒ](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md)
+- **ﻛﭨ۲ﻝﻟﺑ۷ﻠ**: [ﻛﭨ۲ﻝﻟﺑ۷ﻠ](./02_DEVELOPMENT/CODE_QUALITY.md)
+- **ﮔﭖﻟﺁ**: [ﮔﭖﻟﺁﮔﮒ](./02_DEVELOPMENT/TESTING_STANDARD.md)
+- **ﮒ؟ﮒ۷**: [ﮒ؟ﮒ۷ﮔﮒ](./02_DEVELOPMENT/SECURITY.md)
 
-### 部署关键?
-- **部署**: [部署计划](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
-- **流水?*: [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
-- **数据清洗**: [数据清洗](./04_INFRASTRUCTURE/DATA_CLEANING.md)
+### ﻠ۷ﻝﺛﺎﮒﺏﻠ؟?
+- **ﻠ۷ﻝﺛﺎ**: [ﻠ۷ﻝﺛﺎﻟ؟۰ﮒ](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
+- **ﮔﭖﮔﺍﺑ?*: [ﮔ۴ﮒﺕﺕﮔﭖﮔﺍﺑﻝﭦﺟ](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
+- **ﮔﺍﮔ؟ﮔﺕﮔﺑ**: ﮔﺍﮔ؟ﮔﺕﮔﺑ
 
-### 运维关键?
-- **运维**: [运维概述](./07_OPERATIONS/README.md)
-- **审计**: [审计检查清单模板](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
-- **质量?*: [质量门机制](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
-- **监控**: [性能监控](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
+### ﻟﺟﻝﭨﺑﮒﺏﻠ؟?
+- **ﻟﺟﻝﭨﺑ**: ﻟﺟﻝﭨﺑﮔ۵ﻟﺟﺍ
+- **ﮒ؟۰ﻟ؟۰**: [ﮒ؟۰ﻟ؟۰ﮔ۲ﮔ۴ﮔﺕﮒﮔ۷۰ﮔﺟ](./07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md)
+- **ﻟﺑ۷ﻠ?*: [ﻟﺑ۷ﻠﻠ۷ﮔﭦﮒﭘ](./07_OPERATIONS/QUALITY_GATE_MECHANISM.md)
+- **ﻝﮔ۶**: [ﮔ۶ﻟﺛﻝﮔ۶](./07_OPERATIONS/PERFORMANCE_MONITORING.md)
 
-### 文档标准关键?
-- **文档编号**: [文档编号标准](./02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
-- **版本管理**: [版本管理标准](./02_DEVELOPMENT/VERSION_MANAGEMENT_STANDARD.md)
-- **质量?*: [文档质量门标准](./02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
+### ﮔﮔ۰۲ﮔﮒﮒﺏﻠ؟?
+- **ﮔﮔ۰۲ﻝﺙﮒﺓ**: [ﮔﮔ۰۲ﻝﺙﮒﺓﮔﮒ](./02_DEVELOPMENT/DOCUMENT_NUMBERING_STANDARD.md)
+- **ﻝﮔ؛ﻝ؟۰ﻝ**: [ﻝﮔ؛ﻝ؟۰ﻝﮔﮒ](./02_DEVELOPMENT/VERSION_MANAGEMENT_STANDARD.md)
+- **ﻟﺑ۷ﻠ?*: [ﮔﮔ۰۲ﻟﺑ۷ﻠﻠ۷ﮔﮒ](./02_DEVELOPMENT/DOCUMENT_QUALITY_GATE_STANDARD.md)
 
 ---
 
-## 🔗 相关链接
+## ﻭ ﻝﺕﮒﺏﻠﺝﮔ۴
 
-- [系统主索引](../INDEX.md)
-- [系统文档地图](../SITEMAP.md)
-- [框架设计索引](../01_FRAMEWORK/INDEX.md)
-- [因子库索引](../02_FACTOR_LIBRARY/INDEX.md)
+- [ﻝﺏﭨﻝﭨﻛﺕﭨﻝﺑ۱ﮒﺙ](../INDEX.md)
+- [ﻝﺏﭨﻝﭨﮔﮔ۰۲ﮒﺍﮒﺝ](../SITEMAP.md)
+- [ﮔ۰ﮔﭘﻟ؟ﺝﻟ؟۰ﻝﺑ۱ﮒﺙ](../01_FRAMEWORK/INDEX.md)
+- `ﮒﮒﮒﭦﻝﺑ۱ﮒﺙ`

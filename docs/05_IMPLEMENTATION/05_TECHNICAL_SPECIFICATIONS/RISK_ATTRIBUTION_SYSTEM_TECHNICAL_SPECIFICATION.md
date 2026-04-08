@@ -1,4 +1,15 @@
 ---
+module_id: RISK_ATTRIBUTION_SYSTEM_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - RISK_ATTRIBUTION_SYSTEM_TECHNICAL技术规范
+---
+
+﻿---
 module_id: RISK_ATTRIBUTION_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,52 +17,61 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化?
+layer: Layer 6 (ﻝﭨﮒﻛﺙﮒ?
 index: RISK_ATTRIBUTION_SPEC_001
 estimated_hours: 50h
 review_status: Pending
-reviewer: 首席技术评审官
+reviewer: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
 review_date: 2026-04-03
-owner: 组合优化层负责人
-standard_type: 专业量化机构技术规格书
-applicable_scope: 全系?compliance_level: 专业标准
+owner: ﻝﭨﮒﻛﺙﮒﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: ﮒ۷ﻝﺏﭨ?compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 设计阶段
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+---
 ---
 
-# 风险归因系统技术规格书 v1.0
 
-> 清风量化系统 v5.3 - 风险归因系统详细技术设?> **索引**: `RISK_ATTRIBUTION_SPEC_001`
-> **开发时?*: 50h
-> **核心定位**: 多维度风险归因分析，识别风险来源
+# ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?> **ﻝﺑ۱ﮒﺙ**: `RISK_ATTRIBUTION_SPEC_001`
+> **ﮒﺙﮒﮔﭘ?*: 50h
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒﮒﮔﺅﺙﻟﺁﮒ،ﻠ۲ﻠ۸ﮔ۴ﮔﭦ
 
 ---
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 模块定位
+### 1.1 ﮔ۷۰ﮒﮒ؟ﻛﺛ
 
-风险归因系统是Layer 6组合优化层的分析模块，负责：
-- 因子风险归因
-- 行业风险归因
-- 资产风险归因
-- 风险贡献度分?
+ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﺁLayer 6ﻝﭨﮒﻛﺙﮒﮒﺎﻝﮒﮔﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﺅﺙ
+- ﮒﮒﻠ۲ﻠ۸ﮒﺛﮒ
+- ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ
+- ﻟﭖﻛﭦ۶ﻠ۲ﻠ۸ﮒﺛﮒ
+- ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟ﮒﭦ۵ﮒ?
 ---
 
-## 2. 接口定义
+## 2. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 2.1 核心类接?
+### 2.1 ﮔﺕﮒﺟﻝﺎﭨﮔ۴?
 ```python
 class RiskAttributionSystem:
     """
-    风险归因系统核心?    
-    职责: 多维度风险归因分?    """
+ﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨﻝﭨﮔﺕﮒﺟ?
+ﻟﻟﺑ۲: ﮒ۳ﻝﭨﺑﮒﭦ۵ﻠ۲ﻠ۸ﮒﺛﮒﮒ?    """
     
     def __init__(self, barra_model: BarraRiskModel):
         """
-        初始化风险归因系?        
+ﮒﮒ۶ﮒﻠ۲ﻠ۸ﮒﺛﮒﻝﺏﭨ?
         Args:
-            barra_model: Barra风险模型实例
+            barra_model: Barraﻠ۲ﻠ۸ﮔ۷۰ﮒﮒ؟ﻛﺝ
         """
         pass
     
@@ -59,49 +79,49 @@ class RiskAttributionSystem:
                       portfolio_weights: pd.Series,
                       returns_data: pd.DataFrame) -> AttributionResult:
         """
-        风险归因分析
+ﻠ۲ﻠ۸ﮒﺛﮒﮒﮔ
         
         Args:
-            portfolio_weights: 组合权重
-            returns_data: 收益率数?            
+            portfolio_weights: ﻝﭨﮒﮔﻠ
+            returns_data: ﮔﭘﻝﻝﮔﺍ?            
         Returns:
-            AttributionResult: 归因结果
+AttributionResult: ﮒﺛﮒﻝﭨﮔ
         """
         pass
     
     def factor_attribution(self,
                           portfolio_weights: pd.Series) -> FactorAttribution:
         """
-        因子风险归因
+ﮒﮒﻠ۲ﻠ۸ﮒﺛﮒ
         
         Args:
-            portfolio_weights: 组合权重
+            portfolio_weights: ﻝﭨﮒﮔﻠ
             
         Returns:
-            FactorAttribution: 因子归因结果
+FactorAttribution: ﮒﮒﮒﺛﮒﻝﭨﮔ
         """
         pass
     
     def industry_attribution(self,
                             portfolio_weights: pd.Series) -> IndustryAttribution:
         """
-        行业风险归因
+ﻟ۰ﻛﺕﻠ۲ﻠ۸ﮒﺛﮒ
         
         Args:
-            portfolio_weights: 组合权重
+            portfolio_weights: ﻝﭨﮒﮔﻠ
             
         Returns:
-            IndustryAttribution: 行业归因结果
+IndustryAttribution: ﻟ۰ﻛﺕﮒﺛﮒﻝﭨﮔ
         """
         pass
 ```
 
-### 2.2 数据结构
+### 2.2 ﮔﺍﮔ؟ﻝﭨﮔ
 
 ```python
 @dataclass
 class AttributionResult:
-    """归因结果"""
+"""ﮒﺛﮒﻝﭨﮔ"""
     factor_attribution: FactorAttribution
     industry_attribution: IndustryAttribution
     asset_attribution: AssetAttribution
@@ -110,24 +130,24 @@ class AttributionResult:
 
 @dataclass
 class FactorAttribution:
-    """因子归因"""
-    factor_contributions: pd.Series  # 因子风险贡献
-    factor_exposures: pd.Series  # 因子暴露
-    factor_marginal_contributions: pd.Series  # 边际贡献
+"""ﮒﮒﮒﺛﮒ"""
+factor_contributions: pd.Series  # ﮒﮒﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+factor_exposures: pd.Series  # ﮒﮒﮔﺑﻠﺎ
+    factor_marginal_contributions: pd.Series  # ﻟﺝﺗﻠﻟﺑ۰ﻝ؟
 
 @dataclass
 class IndustryAttribution:
-    """行业归因"""
-    industry_contributions: pd.Series  # 行业风险贡献
-    industry_weights: pd.Series  # 行业权重
-    industry_marginal_contributions: pd.Series  # 边际贡献
+"""ﻟ۰ﻛﺕﮒﺛﮒ"""
+    industry_contributions: pd.Series  # ﻟ۰ﻛﺕﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
+    industry_weights: pd.Series  # ﻟ۰ﻛﺕﮔﻠ
+    industry_marginal_contributions: pd.Series  # ﻟﺝﺗﻠﻟﺑ۰ﻝ؟
 ```
 
 ---
 
-## 3. 算法实现
+## 3. ﻝ؟ﮔﺏﮒ؟ﻝﺍ
 
-### 3.1 风险归因算法
+### 3.1 ﻠ۲ﻠ۸ﮒﺛﮒﻝ؟ﮔﺏ
 
 ```python
 def attribute_risk(
@@ -137,33 +157,33 @@ def attribute_risk(
     factor_covariance: pd.DataFrame
 ) -> AttributionResult:
     """
-    风险归因算法
+ﻠ۲ﻠ۸ﮒﺛﮒﻝ؟ﮔﺏ
     
-    公式:
-    σ_p^2 = w'Σw
-    风险贡献: RC_i = w_i * (Σw)_i / σ_p
+    ﮒ؛ﮒﺙ:
+    ﺵ_p^2 = w'ﺳ۲w
+    ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟: RC_i = w_i * (ﺳ۲w)_i / ﺵ_p
     
     Args:
-        portfolio_weights: 组合权重
-        covariance_matrix: 协方差矩?        factor_loadings: 因子载荷
-        factor_covariance: 因子协方?        
+        portfolio_weights: ﻝﭨﮒﮔﻠ
+covariance_matrix: ﮒﮔﺗﮒﺓ؟ﻝ۸?        factor_loadings: ﮒﮒﻟﺛﺛﻟﺓ
+factor_covariance: ﮒﮒﮒﮔﺗ?
     Returns:
-        AttributionResult: 归因结果
+AttributionResult: ﮒﺛﮒﻝﭨﮔ
     """
-    # 1. 计算组合风险
+    # 1. ﻟ؟۰ﻝ؟ﻝﭨﮒﻠ۲ﻠ۸
     portfolio_variance = portfolio_weights @ covariance_matrix @ portfolio_weights
     portfolio_risk = np.sqrt(portfolio_variance)
     
-    # 2. 计算风险贡献
+    # 2. ﻟ؟۰ﻝ؟ﻠ۲ﻠ۸ﻟﺑ۰ﻝ؟
     marginal_contrib = covariance_matrix @ portfolio_weights
     risk_contrib = portfolio_weights * marginal_contrib / portfolio_risk
     
-    # 3. 因子归因
+# 3. ﮒﮒﮒﺛﮒ
     factor_contrib = calculate_factor_contribution(
         portfolio_weights, factor_loadings, factor_covariance
     )
     
-    # 4. 行业归因
+# 4. ﻟ۰ﻛﺕﮒﺛﮒ
     industry_contrib = calculate_industry_contribution(
         portfolio_weights, covariance_matrix
     )
@@ -179,43 +199,43 @@ def attribute_risk(
 
 ---
 
-## 4. 测试方案
+## 4. ﮔﭖﻟﺁﮔﺗﮔ۰
 
 ```python
 class TestRiskAttribution:
-    """风险归因测试"""
+"""ﻠ۲ﻠ۸ﮒﺛﮒﮔﭖﻟﺁ"""
     
     def test_factor_attribution(self):
-        """测试因子归因"""
-        # 创建测试数据
+"""ﮔﭖﻟﺁﮒﮒﮒﺛﮒ"""
+        # ﮒﮒﭨﭦﮔﭖﻟﺁﮔﺍﮔ؟
         weights = pd.Series([0.3, 0.3, 0.4], index=['A', 'B', 'C'])
         
-        # 执行归因
+# ﮔ۶ﻟ۰ﮒﺛﮒ
         attribution = risk_attribution_system.factor_attribution(weights)
         
-        # 验证
+        # ﻠ۹ﻟﺁ
         assert attribution.factor_contributions.sum() > 0
-        assert len(attribution.factor_exposures) == 10  # 10个因?    
+assert len(attribution.factor_exposures) == 10  # 10ﻛﺕ۹ﮒ?
     def test_industry_attribution(self):
-        """测试行业归因"""
+"""ﮔﭖﻟﺁﻟ۰ﻛﺕﮒﺛﮒ"""
         weights = pd.Series([0.3, 0.3, 0.4], index=['A', 'B', 'C'])
         
         attribution = risk_attribution_system.industry_attribution(weights)
         
-        # 验证
+        # ﻠ۹ﻟﺁ
         assert attribution.industry_contributions.sum() > 0
 ```
 
 ---
 
-## 5. 性能要求
+## 5. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-| 操作 | 数据规模 | 性能要求 |
+| ﮔﻛﺛ | ﮔﺍﮔ؟ﻟ۶ﮔ۷۰ | ﮔ۶ﻟﺛﻟ۵ﮔﺎ |
 |------|---------|---------|
-| **风险归因** | 1000资产 | < 200ms |
-| **因子归因** | 10因子 | < 100ms |
-| **行业归因** | 28行业 | < 100ms |
+| **ﻠ۲ﻠ۸ﮒﺛﮒ** | 1000ﻟﭖﻛﭦ۶ | < 200ms |
+| **ﮒﮒﮒﺛﮒ** | 10ﮒﮒ | < 100ms |
+| **ﻟ۰ﻛﺕﮒﺛﮒ** | 28ﻟ۰ﻛﺕ | < 100ms |
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
+**ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﻝﮔ؛**: v1.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03 | **ﻝ?*: Final | **ﻛﺕﻛﺕ?*: ﮒ؟ﮔﺛﮒﺙ?

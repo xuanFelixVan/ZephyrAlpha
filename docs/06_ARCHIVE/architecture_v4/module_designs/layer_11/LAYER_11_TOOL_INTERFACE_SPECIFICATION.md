@@ -1,126 +1,145 @@
 ---
+module_id: LAYER_11_TOOL_INTERFACE_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - LAYER_11_TOOL_INTERFACE技术规范
+---
+
+﻿---
 module_id: LAYER_11_TOOL_INTERFACE_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席蓝图架构�?standard_type: 专业量化机构蓝图
-applicable_scope: Layer 11工具接口规范
-compliance_level: 专业机构标准
+owner: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﻟﮒﺝ
+responsibility:
+  - 归档文档、历史版本
+applicable_scope: Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
+compliance_level: ﻛﺕﻛﺕﮔﭦﮔﮔﮒ
 parent_document: ./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md
-implementation_status: 设计阶段
+implementation_status: ﻟ؟ﺝﻟ؟۰ﻠﭘﮔ؟ﭖ
+---
 ---
 
-# Layer 11工具接口规范
 
-> 清风量化交易系统 v5.2 - 所有模块工具接口详细定�?> **索引**: `LAYER_11_TOOL_SPEC_001`
-> **核心定位**: 明确每个模块支持的操作、参数和返回值，避免重复文字交付设计
-> **关键原则**: Layer 11统一意图识别，各模块只提供纯API接口
+# Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
 
-## 一、设计原�?
-### 1.1 核心原则
+> ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v5.2 - ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?> **ﻝﺑ۱ﮒﺙ**: `LAYER_11_TOOL_SPEC_001`
+> **ﮔﺕﮒﺟﮒ؟ﻛﺛ**: ﮔﻝ۰؟ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮔﺁﮔﻝﮔﻛﺛﻙﮒﮔﺍﮒﻟﺟﮒﮒﺙﺅﺙﻠﺟﮒﻠﮒ۳ﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰
+> **ﮒﺏﻠ؟ﮒﮒ**: Layer 11ﻝﭨﻛﺕﮔﮒﺝﻟﺁﮒ،ﺅﺙﮒﮔ۷۰ﮒﮒ۹ﮔﻛﺝﻝﭦﺁAPIﮔ۴ﮒ۲
 
-| 原则 | 说明 |
+
+## ﻛﺕﻙﻟ؟ﺝﻟ؟۰ﮒﮒ?
+### 1.1 ﮔﺕﮒﺟﮒﮒ
+
+| ﮒﮒ | ﻟﺁﺑﮔ |
 |------|------|
-| **单一AI�?* | Layer 11负责所有意图识别和参数提取 |
-| **纯执行层** | 各模块只提供API接口，不包含AI理解 |
-| **工具化封�?* | 每个模块封装为工具，通过统一接口调用 |
-| **接口标准�?* | 所有工具遵循统一的输入输出格�?|
+| **ﮒﻛﺕAIﮒﺎ?* | Layer 11ﻟﺑﻟﺑ۲ﮔﮔﮔﮒﺝﻟﺁﮒ،ﮒﮒﮔﺍﮔﮒ |
+| **ﻝﭦﺁﮔ۶ﻟ۰ﮒﺎ** | ﮒﮔ۷۰ﮒﮒ۹ﮔﻛﺝAPIﮔ۴ﮒ۲ﺅﺙﻛﺕﮒﮒ،AIﻝﻟ۶۲ |
+| **ﮒﺓ۴ﮒﺓﮒﮒﺍﻟ۲?* | ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﺍﻟ۲ﻛﺕﭦﮒﺓ۴ﮒﺓﺅﺙﻠﻟﺟﻝﭨﻛﺕﮔ۴ﮒ۲ﻟﺍﻝ۷ |
+| **ﮔ۴ﮒ۲ﮔﮒﮒ?* | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﻟﺝﮒ۴ﻟﺝﮒﭦﮔﺙﮒﺙ?|
 
-### 1.2 细化层次
+### 1.2 ﻝﭨﮒﮒﺎﮔ؛۰
 
 ```
-┌─────────────────────────────────────────────────────────�?�? Layer 11: 文字交付层（统一细化�?                        �?�? ┌───────────────────────────────────────────────────�?�?�? �? 意图识别 + 参数提取（需要细化设计）                 �?�?�? �? - 用户�?创建动量策略" �?意图: configure_strategy �?�?�? �? - 提取参数: {type: momentum, period: 5}          �?�?�? └───────────────────────────────────────────────────�?�?└─────────────────────────────────────────────────────────�?                          �?        ┌─────────────────┼─────────────────�?        �?                �?                �?┌──────────────�? ┌──────────────�? ┌──────────────�?�? 策略工具     �? �? 因子工具     �? �? 风控工具     �?�? (工具接口)   �? �? (工具接口)   �? �? (工具接口)   �?�? 不需要细�?  �? �? 不需要细�?  �? �? 不需要细�?  �?�? 文字交付     �? �? 文字交付     �? �? 文字交付     �?└──────────────�? └──────────────�? └──────────────�?```
 
-**关键�?*�?- �?Layer 11需要细化意图识别和参数提取
-- �?各模块不需要细化文字交付设�?- �?各模块只需要明确工具接口规�?
+**ﮒﺏﻠ؟ﻝ?*ﺅﺙ?- ﻗ?Layer 11ﻠﻟ۵ﻝﭨﮒﮔﮒﺝﻟﺁﮒ،ﮒﮒﮔﺍﮔﮒ
+- ﻗ?ﮒﮔ۷۰ﮒﻛﺕﻠﻟ۵ﻝﭨﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?- ﻗ?ﮒﮔ۷۰ﮒﮒ۹ﻠﻟ۵ﮔﻝ۰؟ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ?
 
-## 二、工具接口统一规范
+## ﻛﭦﻙﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻝﭨﻛﺕﻟ۶ﻟ
 
-### 2.1 输入参数规范
+### 2.1 ﻟﺝﮒ۴ﮒﮔﺍﻟ۶ﻟ
 
 ```python
 {
-    "action": "操作类型",  # 必需：具体操作名�?    "params": {            # 必需：操作参�?        "param1": "value1",
+    "action": "ﮔﻛﺛﻝﺎﭨﮒ",  # ﮒﺟﻠﺅﺙﮒﺓﻛﺛﮔﻛﺛﮒﻝ۶?    "params": {            # ﮒﺟﻠﺅﺙﮔﻛﺛﮒﮔ?        "param1": "value1",
         "param2": "value2"
     }
 }
 ```
 
-### 2.2 输出结果规范
+### 2.2 ﻟﺝﮒﭦﻝﭨﮔﻟ۶ﻟ
 
 ```python
 {
-    "success": True,       # 必需：是否成�?    "message": "操作结果描述",  # 必需：结果描�?    "data": {              # 可选：返回数据
+    "success": True,       # ﮒﺟﻠﺅﺙﮔﺁﮒ۵ﮔﮒ?    "message": "ﮔﻛﺛﻝﭨﮔﮔﻟﺟﺍ",  # ﮒﺟﻠﺅﺙﻝﭨﮔﮔﻟﺟ?    "data": {              # ﮒﺁﻠﺅﺙﻟﺟﮒﮔﺍﮔ؟
         "key1": "value1",
         "key2": "value2"
     },
-    "error": None          # 可选：错误信息
+    "error": None          # ﮒﺁﻠﺅﺙﻠﻟﺁﺁﻛﺟ۰ﮔﺁ
 }
 ```
 
 
-## 三、P0模块工具接口规范
+## ﻛﺕﻙP0ﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 3.1 策略工具（StrategyTool�?
-**模块ID**: L11_TOOL_STRATEGY_001
-**优先�?*: P0
-**覆盖模块**: Layer 5 策略执行�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 3.1 ﻝﻝ۴ﮒﺓ۴ﮒﺓﺅﺙStrategyToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_STRATEGY_001
+**ﻛﺙﮒﻝﭦ?*: P0
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **configure** | 配置新策�?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
-| **start** | 启动策略 | strategy_id | 启动状�?|
-| **stop** | 停止策略 | strategy_id | 停止状�?|
-| **status** | 查询策略状�?| strategy_id | 策略状态详�?|
-| **list** | 列出所有策�?| �?| 策略列表 |
-| **backtest** | 回测策略 | strategy_id, start_date, end_date | 回测结果 |
-| **optimize** | 优化策略参数 | strategy_id, param_ranges | 优化结果 |
+| **configure** | ﻠﻝﺛ؟ﮔﺍﻝﻝ?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
+| **start** | ﮒﺁﮒ۷ﻝﻝ۴ | strategy_id | ﮒﺁﮒ۷ﻝﭘﮔ?|
+| **stop** | ﮒﮔ۱ﻝﻝ۴ | strategy_id | ﮒﮔ۱ﻝﭘﮔ?|
+| **status** | ﮔ۴ﻟﺁ۱ﻝﻝ۴ﻝﭘﮔ?| strategy_id | ﻝﻝ۴ﻝﭘﮔﻟﺁ۵ﮔ?|
+| **list** | ﮒﮒﭦﮔﮔﻝﻝ?| ﮔ?| ﻝﻝ۴ﮒﻟ۰۷ |
+| **backtest** | ﮒﮔﭖﻝﻝ۴ | strategy_id, start_date, end_date | ﮒﮔﭖﻝﭨﮔ |
+| **optimize** | ﻛﺙﮒﻝﻝ۴ﮒﮔﺍ | strategy_id, param_ranges | ﻛﺙﮒﻝﭨﮔ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.1.1 configure（配置策略）
+##### 3.1.1 configureﺅﺙﻠﻝﺛ؟ﻝﻝ۴ﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "configure",
     "params": {
-        "strategy_type": "momentum",      # 必需：策略类�?        "holding_period": 5,               # 可选：持仓周期（天�?        "stop_loss": 0.1,                  # 可选：止损比例
-        "take_profit": 0.2,                # 可选：止盈比例
-        "position_size": 0.05,             # 可选：仓位大小
-        "universe": ["000001.SZ", "600000.SH"]  # 可选：股票�?    }
+"strategy_type": "momentum",      # ﮒﺟﻠﺅﺙﻝﻝ۴ﻝﺎﭨﮒ?        "holding_period": 5,               # ﮒﺁﻠﺅﺙﮔﻛﭨﮒ۷ﮔﺅﺙﮒ۳۸ﺅﺙ?        "stop_loss": 0.1,                  # ﮒﺁﻠﺅﺙﮔ۱ﮔﮔﺁﻛﺝ
+"take_profit": 0.2,                # ﮒﺁﻠﺅﺙﮔ۱ﻝﮔﺁﻛﺝ
+        "position_size": 0.05,             # ﮒﺁﻠﺅﺙﻛﭨﻛﺛﮒ۳۶ﮒﺍ
+        "universe": ["000001.SZ", "600000.SH"]  # ﮒﺁﻠﺅﺙﻟ۰ﻝ۴۷ﮔﺎ?    }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "策略配置成功",
+"message": "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "STRAT_20260402_001",
-        "strategy_name": "动量策略_5日持�?,
+"strategy_name": "ﮒ۷ﻠﻝﻝ۴_5ﮔ۴ﮔﻛﭨ?,
         "created_at": "2026-04-02T10:30:00Z",
         "status": "configured"
     }
 }
 ```
 
-##### 3.1.2 start（启动策略）
+##### 3.1.2 startﺅﺙﮒﺁﮒ۷ﻝﻝ۴ﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "start",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # 必需：策略ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "策略已启�?,
+"message": "ﻝﻝ۴ﮒﺓﺎﮒﺁﮒ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "running",
@@ -129,21 +148,21 @@ implementation_status: 设计阶段
 }
 ```
 
-##### 3.1.3 stop（停止策略）
+##### 3.1.3 stopﺅﺙﮒﮔ۱ﻝﻝ۴ﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "stop",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # 必需：策略ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "策略已停�?,
+"message": "ﻝﻝ۴ﮒﺓﺎﮒﮔ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "stopped",
@@ -152,21 +171,21 @@ implementation_status: 设计阶段
 }
 ```
 
-##### 3.1.4 status（查询策略状态）
+##### 3.1.4 statusﺅﺙﮔ۴ﻟﺁ۱ﻝﻝ۴ﻝﭘﮔﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "status",
     "params": {
-        "strategy_id": "STRAT_20260402_001"  # 必需：策略ID
+"strategy_id": "STRAT_20260402_001"  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "策略状态查询成�?,
+"message": "ﻝﻝ۴ﻝﭘﮔﮔ۴ﻟﺁ۱ﮔﮒ?,
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "status": "running",
@@ -184,30 +203,30 @@ implementation_status: 设计阶段
 }
 ```
 
-##### 3.1.5 list（列出所有策略）
+##### 3.1.5 listﺅﺙﮒﮒﭦﮔﮔﻝﻝ۴ﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "list",
     "params": {}
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "策略列表查询成功",
+"message": "ﻝﻝ۴ﮒﻟ۰۷ﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "strategies": [
             {
                 "strategy_id": "STRAT_20260402_001",
-                "name": "动量策略_5日持�?,
+"name": "ﮒ۷ﻠﻝﻝ۴_5ﮔ۴ﮔﻛﭨ?,
                 "status": "running",
                 "created_at": "2026-04-02T10:30:00Z"
             },
             {
                 "strategy_id": "STRAT_20260401_002",
-                "name": "均值回归策�?,
+"name": "ﮒﮒﺙﮒﮒﺛﻝﻝ?,
                 "status": "stopped",
                 "created_at": "2026-04-01T09:00:00Z"
             }
@@ -219,36 +238,36 @@ implementation_status: 设计阶段
 
 ---
 
-### 3.2 因子工具（FactorTool�?
-**模块ID**: L11_TOOL_FACTOR_001
-**优先�?*: P0
-**覆盖模块**: Layer 2 因子�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 3.2 ﮒﮒﮒﺓ۴ﮒﺓﺅﺙFactorToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_FACTOR_001
+**ﻛﺙﮒﻝﭦ?*: P0
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 2 ﮒﮒﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **query** | 查询因子数据 | factor_name, start_date, end_date | 因子数据 |
-| **mine** | AI挖掘新因�?| factor_type, constraints | 新因子定�?|
-| **validate** | 验证因子有效�?| factor_id, test_period | 验证结果 |
-| **monitor** | 监控因子漂移 | factor_id, threshold | 漂移报告 |
+| **query** | ﮔ۴ﻟﺁ۱ﮒﮒﮔﺍﮔ؟ | factor_name, start_date, end_date | ﮒﮒﮔﺍﮔ؟ |
+| **mine** | AIﮔﮔﮔﺍﮒﮒ?| factor_type, constraints | ﮔﺍﮒﮒﮒ؟ﻛﺗ?|
+| **validate** | ﻠ۹ﻟﺁﮒﮒﮔﮔﮔ?| factor_id, test_period | ﻠ۹ﻟﺁﻝﭨﮔ |
+| **monitor** | ﻝﮔ۶ﮒﮒﮔﺙﻝ۶ﭨ | factor_id, threshold | ﮔﺙﻝ۶ﭨﮔ۴ﮒ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.2.1 query（查询因子）
+##### 3.2.1 queryﺅﺙﮔ۴ﻟﺁ۱ﮒﮒﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "query",
     "params": {
-        "factor_name": "momentum",         # 必需：因子名�?        "start_date": "2026-01-01",        # 可选：开始日�?        "end_date": "2026-03-31",          # 可选：结束日期
-        "symbols": ["000001.SZ", "600000.SH"]  # 可选：股票代码
+"factor_name": "momentum",         # ﮒﺟﻠﺅﺙﮒﮒﮒﻝ۶?        "start_date": "2026-01-01",        # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",          # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
+"symbols": ["000001.SZ", "600000.SH"]  # ﮒﺁﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "因子数据查询成功",
+"message": "ﮒﮒﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "factor_name": "momentum",
         "factor_values": [
@@ -264,12 +283,12 @@ implementation_status: 设计阶段
 }
 ```
 
-##### 3.2.2 mine（挖掘新因子�?
-**输入参数**�?```python
+##### 3.2.2 mineﺅﺙﮔﮔﮔﺍﮒﮒﺅﺙ?
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "mine",
     "params": {
-        "factor_type": "momentum",         # 必需：因子类�?        "constraints": {                    # 可选：约束条件
+"factor_type": "momentum",         # ﮒﺟﻠﺅﺙﮒﮒﻝﺎﭨﮒ?        "constraints": {                    # ﮒﺁﻠﺅﺙﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
             "max_period": 20,
             "min_ic": 0.05
         }
@@ -277,13 +296,13 @@ implementation_status: 设计阶段
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "新因子挖掘成�?,
+"message": "ﮔﺍﮒﮒﮔﮔﮔﮒ?,
     "data": {
         "factor_id": "FACTOR_20260402_001",
-        "factor_name": "动量因子_10�?,
+"factor_name": "ﮒ۷ﻠﮒﮒ_10ﮔ?,
         "formula": "close.shift(10) / close - 1",
         "ic": 0.08,
         "performance": {
@@ -296,35 +315,35 @@ implementation_status: 设计阶段
 
 ---
 
-### 3.3 风控工具（RiskControlTool�?
-**模块ID**: L11_TOOL_RISK_001
-**优先�?*: P0
-**覆盖模块**: Layer 6 风控�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 3.3 ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓﺅﺙRiskControlToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_RISK_001
+**ﻛﺙﮒﻝﭦ?*: P0
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 6 ﻠ۲ﮔ۶ﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **adjust_params** | 调整风控参数 | max_drawdown, position_limit | 更新后的参数 |
-| **set_stop_loss** | 设置止损 | strategy_id, stop_loss | 止损设置 |
-| **set_take_profit** | 设置止盈 | strategy_id, take_profit | 止盈设置 |
-| **get_risk_report** | 获取风险报告 | �?| 风险报告 |
+| **adjust_params** | ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ | max_drawdown, position_limit | ﮔﺑﮔﺍﮒﻝﮒﮔﺍ |
+| **set_stop_loss** | ﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔ | strategy_id, stop_loss | ﮔ۱ﮔﻟ؟ﺝﻝﺛ؟ |
+| **set_take_profit** | ﻟ؟ﺝﻝﺛ؟ﮔ۱ﻝ | strategy_id, take_profit | ﮔ۱ﻝﻟ؟ﺝﻝﺛ؟ |
+| **get_risk_report** | ﻟﺓﮒﻠ۲ﻠ۸ﮔ۴ﮒ | ﮔ?| ﻠ۲ﻠ۸ﮔ۴ﮒ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.3.1 adjust_params（调整风控参数）
+##### 3.3.1 adjust_paramsﺅﺙﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "adjust_params",
     "params": {
-        "max_drawdown": 0.10,      # 必需：最大回�?        "position_limit": 0.05,    # 必需：单股仓位上�?        "daily_loss_limit": 0.02   # 可选：单日亏损上限
+        "max_drawdown": 0.10,      # ﮒﺟﻠﺅﺙﮔﮒ۳۶ﮒﮔ?        "position_limit": 0.05,    # ﮒﺟﻠﺅﺙﮒﻟ۰ﻛﭨﻛﺛﻛﺕﻠ?        "daily_loss_limit": 0.02   # ﮒﺁﻠﺅﺙﮒﮔ۴ﻛﭦﮔﻛﺕﻠ
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "风控参数调整成功",
+    "message": "ﻠ۲ﮔ۶ﮒﮔﺍﻟﺍﮔﺑﮔﮒ",
     "data": {
         "max_drawdown": 0.10,
         "position_limit": 0.05,
@@ -334,21 +353,21 @@ implementation_status: 设计阶段
 }
 ```
 
-##### 3.3.2 set_stop_loss（设置止损）
+##### 3.3.2 set_stop_lossﺅﺙﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "set_stop_loss",
     "params": {
-        "strategy_id": "STRAT_20260402_001",  # 必需：策略ID
-        "stop_loss": 0.08                     # 必需：止损比�?    }
+"strategy_id": "STRAT_20260402_001",  # ﮒﺟﻠﺅﺙﻝﻝ۴ID
+"stop_loss": 0.08                     # ﮒﺟﻠﺅﺙﮔ۱ﮔﮔﺁﻛﺝ?    }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "止损设置成功",
+"message": "ﮔ۱ﮔﻟ؟ﺝﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "STRAT_20260402_001",
         "stop_loss": 0.08,
@@ -359,35 +378,35 @@ implementation_status: 设计阶段
 
 ---
 
-### 3.4 授权工具（ApprovalTool�?
-**模块ID**: L11_TOOL_APPROVAL_001
-**优先�?*: P0
-**覆盖模块**: Layer 8 授权�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 3.4 ﮔﮔﮒﺓ۴ﮒﺓﺅﺙApprovalToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_APPROVAL_001
+**ﻛﺙﮒﻝﭦ?*: P0
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 8 ﮔﮔﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **confirm** | 授权确认 | decision_id, approved | 授权结果 |
-| **reject** | 拒绝授权 | decision_id, reason | 拒绝结果 |
-| **list_pending** | 列出待授权决�?| �?| 待授权列�?|
+| **confirm** | ﮔﮔﻝ۰؟ﻟ؟۳ | decision_id, approved | ﮔﮔﻝﭨﮔ |
+| **reject** | ﮔﻝﭨﮔﮔ | decision_id, reason | ﮔﻝﭨﻝﭨﮔ |
+| **list_pending** | ﮒﮒﭦﮒﺝﮔﮔﮒﺏﻝ?| ﮔ?| ﮒﺝﮔﮔﮒﻟ۰?|
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 3.4.1 confirm（授权确认）
+##### 3.4.1 confirmﺅﺙﮔﮔﻝ۰؟ﻟ؟۳ﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "confirm",
     "params": {
-        "decision_id": "DEC_20260402_001",  # 必需：决策ID
-        "approved": True,                    # 必需：是否授�?        "comment": "同意上架策略"             # 可选：备注
+"decision_id": "DEC_20260402_001",  # ﮒﺟﻠﺅﺙﮒﺏﻝID
+"approved": True,                    # ﮒﺟﻠﺅﺙﮔﺁﮒ۵ﮔﮔ?        "comment": "ﮒﮔﻛﺕﮔﭘﻝﻝ۴"             # ﮒﺁﻠﺅﺙﮒ۳ﮔﺏ۷
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "授权确认成功",
+    "message": "ﮔﮔﻝ۰؟ﻟ؟۳ﮔﮒ",
     "data": {
         "decision_id": "DEC_20260402_001",
         "status": "approved",
@@ -398,44 +417,44 @@ implementation_status: 设计阶段
 ```
 
 
-## 四、P1模块工具接口规范
+## ﮒﻙP1ﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 4.1 舆情工具（SentimentTool�?
-**模块ID**: L11_TOOL_SENTIMENT_001
-**优先�?*: P1
-**覆盖模块**: Layer 3 舆情�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 4.1 ﻟﮔﮒﺓ۴ﮒﺓﺅﺙSentimentToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_SENTIMENT_001
+**ﻛﺙﮒﻝﭦ?*: P1
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 3 ﻟﮔﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **query** | 查询舆情 | symbol, start_date, end_date | 舆情数据 |
-| **alert** | 舆情预警 | threshold, keywords | 预警列表 |
+| **query** | ﮔ۴ﻟﺁ۱ﻟﮔ | symbol, start_date, end_date | ﻟﮔﮔﺍﮔ؟ |
+| **alert** | ﻟﮔﻠ۱ﻟ۵ | threshold, keywords | ﻠ۱ﻟ۵ﮒﻟ۰۷ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 4.1.1 query（查询舆情）
+##### 4.1.1 queryﺅﺙﮔ۴ﻟﺁ۱ﻟﮔﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "query",
     "params": {
-        "symbol": "000001.SZ",        # 必需：股票代�?        "start_date": "2026-03-01",   # 可选：开始日�?        "end_date": "2026-03-31",     # 可选：结束日期
-        "keywords": ["业绩", "利好"]   # 可选：关键�?    }
+"symbol": "000001.SZ",        # ﮒﺟﻠﺅﺙﻟ۰ﻝ۴۷ﻛﭨ۲ﻝ?        "start_date": "2026-03-01",   # ﮒﺁﻠﺅﺙﮒﺙﮒ۶ﮔ۴ﮔ?        "end_date": "2026-03-31",     # ﮒﺁﻠﺅﺙﻝﭨﮔﮔ۴ﮔ
+        "keywords": ["ﻛﺕﻝﭨ۸", "ﮒ۸ﮒ۴ﺛ"]   # ﮒﺁﻠﺅﺙﮒﺏﻠ؟ﻟﺁ?    }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "舆情查询成功",
+    "message": "ﻟﮔﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "symbol": "000001.SZ",
         "sentiment_score": 0.65,
         "news": [
             {
                 "date": "2026-03-15",
-                "title": "平安银行业绩超预�?,
+                "title": "ﮒﺗﺏﮒ؟ﻠﭘﻟ۰ﻛﺕﻝﭨ۸ﻟﭘﻠ۱ﮔ?,
                 "sentiment": 0.8,
-                "source": "财经新闻"
+                "source": "ﻟﺑ۱ﻝﭨﮔﺍﻠﭨ"
             }
         ]
     }
@@ -444,33 +463,33 @@ implementation_status: 设计阶段
 
 ---
 
-### 4.2 ML工具（MLTool�?
-**模块ID**: L11_TOOL_ML_001
-**优先�?*: P1
-**覆盖模块**: Layer 4 机器学习�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 4.2 MLﮒﺓ۴ﮒﺓﺅﺙMLToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_ML_001
+**ﻛﺙﮒﻝﭦ?*: P1
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **train** | 训练模型 | model_type, features, target | 训练结果 |
-| **query** | 查询模型表现 | model_id | 模型表现 |
+| **train** | ﻟ؟ﻝﭨﮔ۷۰ﮒ | model_type, features, target | ﻟ؟ﻝﭨﻝﭨﮔ |
+| **query** | ﮔ۴ﻟﺁ۱ﮔ۷۰ﮒﻟ۰۷ﻝﺍ | model_id | ﮔ۷۰ﮒﻟ۰۷ﻝﺍ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 4.2.1 train（训练模型）
+##### 4.2.1 trainﺅﺙﻟ؟ﻝﭨﮔ۷۰ﮒﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "train",
     "params": {
-        "model_type": "LSTM",              # 必需：模型类�?        "features": ["momentum", "volume"], # 必需：特征列�?        "target": "return_5d",             # 必需：目标变�?        "train_period": "2020-2025"        # 可选：训练期间
+"model_type": "LSTM",              # ﮒﺟﻠﺅﺙﮔ۷۰ﮒﻝﺎﭨﮒ?        "features": ["momentum", "volume"], # ﮒﺟﻠﺅﺙﻝﺗﮒﺝﮒﻟ۰?        "target": "return_5d",             # ﮒﺟﻠﺅﺙﻝ؟ﮔﮒﻠ?        "train_period": "2020-2025"        # ﮒﺁﻠﺅﺙﻟ؟ﻝﭨﮔﻠﺑ
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "模型训练成功",
+"message": "ﮔ۷۰ﮒﻟ؟ﻝﭨﮔﮒ",
     "data": {
         "model_id": "MODEL_20260402_001",
         "model_type": "LSTM",
@@ -486,26 +505,26 @@ implementation_status: 设计阶段
 
 ---
 
-### 4.3 组合工具（PortfolioTool�?
-**模块ID**: L11_TOOL_PORTFOLIO_001
-**优先�?*: P1
-**覆盖模块**: Layer 6 组合�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 4.3 ﻝﭨﮒﮒﺓ۴ﮒﺓﺅﺙPortfolioToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_PORTFOLIO_001
+**ﻛﺙﮒﻝﭦ?*: P1
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 6 ﻝﭨﮒﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **optimize** | 组合优化 | method, constraints | 优化结果 |
-| **query** | 查询组合配置 | �?| 组合配置 |
-| **adjust** | 调整组合权重 | symbol, weight | 调整结果 |
+| **optimize** | ﻝﭨﮒﻛﺙﮒ | method, constraints | ﻛﺙﮒﻝﭨﮔ |
+| **query** | ﮔ۴ﻟﺁ۱ﻝﭨﮒﻠﻝﺛ؟ | ﮔ?| ﻝﭨﮒﻠﻝﺛ؟ |
+| **adjust** | ﻟﺍﮔﺑﻝﭨﮒﮔﻠ | symbol, weight | ﻟﺍﮔﺑﻝﭨﮔ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 4.3.1 optimize（组合优化）
+##### 4.3.1 optimizeﺅﺙﻝﭨﮒﻛﺙﮒﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "optimize",
     "params": {
-        "method": "mean_variance",    # 必需：优化方�?        "constraints": {              # 可选：约束条件
+        "method": "mean_variance",    # ﮒﺟﻠﺅﺙﻛﺙﮒﮔﺗﮔﺏ?        "constraints": {              # ﮒﺁﻠﺅﺙﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
             "max_weight": 0.1,
             "min_weight": 0.01
         }
@@ -513,10 +532,10 @@ implementation_status: 设计阶段
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "组合优化成功",
+    "message": "ﻝﭨﮒﻛﺙﮒﮔﮒ",
     "data": {
         "optimized_weights": [
             {"symbol": "000001.SZ", "weight": 0.08},
@@ -531,33 +550,33 @@ implementation_status: 设计阶段
 
 ---
 
-### 4.4 报告工具（ReportTool�?
-**模块ID**: L11_TOOL_REPORT_001
-**优先�?*: P1
-**覆盖模块**: Layer 7 报告�?
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+### 4.4 ﮔ۴ﮒﮒﺓ۴ﮒﺓﺅﺙReportToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_REPORT_001
+**ﻛﺙﮒﻝﭦ?*: P1
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 7 ﮔ۴ﮒﮒﺎ?
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **query** | 查询历史报告 | report_type, date | 报告内容 |
-| **analyze** | 市场分析 | market_scope | 分析报告 |
+| **query** | ﮔ۴ﻟﺁ۱ﮒﮒﺎﮔ۴ﮒ | report_type, date | ﮔ۴ﮒﮒﮒ؟ﺗ |
+| **analyze** | ﮒﺕﮒﭦﮒﮔ | market_scope | ﮒﮔﮔ۴ﮒ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 4.4.1 query（查询报告）
+##### 4.4.1 queryﺅﺙﮔ۴ﻟﺁ۱ﮔ۴ﮒﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "query",
     "params": {
-        "report_type": "daily",      # 必需：报告类�?        "date": "2026-04-01"         # 可选：日期
+        "report_type": "daily",      # ﮒﺟﻠﺅﺙﮔ۴ﮒﻝﺎﭨﮒ?        "date": "2026-04-01"         # ﮒﺁﻠﺅﺙﮔ۴ﮔ
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "报告查询成功",
+    "message": "ﮔ۴ﮒﮔ۴ﻟﺁ۱ﮔﮒ",
     "data": {
         "report_type": "daily",
         "date": "2026-04-01",
@@ -575,38 +594,38 @@ implementation_status: 设计阶段
 ```
 
 
-## 五、P2模块工具接口规范
+## ﻛﭦﻙP2ﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 5.1 数据源工具（DataSourceTool�?
-**模块ID**: L11_TOOL_DATASOURCE_001
-**优先�?*: P2
-**覆盖模块**: Layer 0 数据源层
+### 5.1 ﮔﺍﮔ؟ﮔﭦﮒﺓ۴ﮒﺓﺅﺙDataSourceToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_DATASOURCE_001
+**ﻛﺙﮒﻝﭦ?*: P2
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 0 ﮔﺍﮔ؟ﮔﭦﮒﺎ
 
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **configure_qmt** | 配置QMT数据�?| account, password | 配置结果 |
-| **configure_ifind** | 配置iFind数据�?| account, password | 配置结果 |
-| **test_connection** | 测试数据源连�?| source | 连接状�?|
-| **status** | 查询数据源状�?| �?| 状态信�?|
+| **configure_qmt** | ﻠﻝﺛ؟QMTﮔﺍﮔ؟ﮔﭦ?| account, password | ﻠﻝﺛ؟ﻝﭨﮔ |
+| **configure_ifind** | ﻠﻝﺛ؟iFindﮔﺍﮔ؟ﮔﭦ?| account, password | ﻠﻝﺛ؟ﻝﭨﮔ |
+| **test_connection** | ﮔﭖﻟﺁﮔﺍﮔ؟ﮔﭦﻟﺟﮔ?| source | ﻟﺟﮔ۴ﻝﭘﮔ?|
+| **status** | ﮔ۴ﻟﺁ۱ﮔﺍﮔ؟ﮔﭦﻝﭘﮔ?| ﮔ?| ﻝﭘﮔﻛﺟ۰ﮔ?|
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 5.1.1 configure_qmt（配置QMT数据源）
+##### 5.1.1 configure_qmtﺅﺙﻠﻝﺛ؟QMTﮔﺍﮔ؟ﮔﭦﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "configure_qmt",
     "params": {
-        "account": "your_account",    # 必需：账�?        "password": "your_password",  # 必需：密�?        "server": "127.0.0.1"         # 可选：服务器地址
+"account": "your_account",    # ﮒﺟﻠﺅﺙﻟﺑ۵ﮒ?        "password": "your_password",  # ﮒﺟﻠﺅﺙﮒﺁﻝ?        "server": "127.0.0.1"         # ﮒﺁﻠﺅﺙﮔﮒ۰ﮒ۷ﮒﺍﮒ
     }
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "QMT数据源配置成�?,
+    "message": "QMTﮔﺍﮔ؟ﮔﭦﻠﻝﺛ؟ﮔﮒ?,
     "data": {
         "source": "QMT",
         "status": "connected",
@@ -617,27 +636,27 @@ implementation_status: 设计阶段
 
 ---
 
-### 5.2 预处理工具（PreprocessingTool�?
-**模块ID**: L11_TOOL_PREPROCESSING_001
-**优先�?*: P2
-**覆盖模块**: Layer 1 数据预处理层
+### 5.2 ﻠ۱ﮒ۳ﻝﮒﺓ۴ﮒﺓﺅﺙPreprocessingToolﺅﺙ?
+**ﮔ۷۰ﮒID**: L11_TOOL_PREPROCESSING_001
+**ﻛﺙﮒﻝﭦ?*: P2
+**ﻟ۵ﻝﮔ۷۰ﮒ**: Layer 1 ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝﮒﺎ
 
-#### 支持的操�?
-| 操作 | 说明 | 参数 | 返回�?|
+#### ﮔﺁﮔﻝﮔﻛﺛ?
+| ﮔﻛﺛ | ﻟﺁﺑﮔ | ﮒﮔﺍ | ﻟﺟﮒﮒ?|
 |------|------|------|--------|
-| **configure_cleaner** | 配置清洗规则 | rules | 配置结果 |
-| **configure_normalizer** | 配置标准化方�?| method | 配置结果 |
-| **validate** | 验证数据质量 | dataset | 验证结果 |
+| **configure_cleaner** | ﻠﻝﺛ؟ﮔﺕﮔﺑﻟ۶ﮒ | rules | ﻠﻝﺛ؟ﻝﭨﮔ |
+| **configure_normalizer** | ﻠﻝﺛ؟ﮔﮒﮒﮔﺗﮔﺏ?| method | ﻠﻝﺛ؟ﻝﭨﮔ |
+| **validate** | ﻠ۹ﻟﺁﮔﺍﮔ؟ﻟﺑ۷ﻠ | dataset | ﻠ۹ﻟﺁﻝﭨﮔ |
 
-#### 操作详细定义
+#### ﮔﻛﺛﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ
 
-##### 5.2.1 configure_cleaner（配置清洗规则）
+##### 5.2.1 configure_cleanerﺅﺙﻠﻝﺛ؟ﮔﺕﮔﺑﻟ۶ﮒﺅﺙ
 
-**输入参数**�?```python
+**ﻟﺝﮒ۴ﮒﮔﺍ**ﺅﺙ?```python
 {
     "action": "configure_cleaner",
     "params": {
-        "rules": {                    # 必需：清洗规�?            "remove_outliers": True,
+        "rules": {                    # ﮒﺟﻠﺅﺙﮔﺕﮔﺑﻟ۶ﮒ?            "remove_outliers": True,
             "fill_missing": "mean",
             "remove_duplicates": True
         }
@@ -645,10 +664,10 @@ implementation_status: 设计阶段
 }
 ```
 
-**输出结果**�?```python
+**ﻟﺝﮒﭦﻝﭨﮔ**ﺅﺙ?```python
 {
     "success": True,
-    "message": "清洗规则配置成功",
+    "message": "ﮔﺕﮔﺑﻟ۶ﮒﻠﻝﺛ؟ﮔﮒ",
     "data": {
         "rules": {
             "remove_outliers": True,
@@ -661,23 +680,23 @@ implementation_status: 设计阶段
 ```
 
 
-## 六、工具调用示�?
-### 6.1 完整调用流程
+## ﮒﻙﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻝ۳ﭦﻛﺝ?
+### 6.1 ﮒ؟ﮔﺑﻟﺍﻝ۷ﮔﭖﻝ۷
 
 ```python
-# 用户输入
-user_input = "创建一个动量策略，持仓5天，止损10%"
+# ﻝ۷ﮔﺓﻟﺝﮒ۴
+user_input = "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%"
 
-# Layer 11处理流程
+# Layer 11ﮒ۳ﻝﮔﭖﻝ۷
 agent = QuantTradingAgent()
 result = agent.chat(user_input)
 
-# 内部流程
+# ﮒﻠ۷ﮔﭖﻝ۷
 """
-1. AI理解意图: "配置策略"
-2. AI提取参数: {strategy_type: "momentum", holding_period: 5, stop_loss: 0.1}
-3. AI选择工具: "策略管理工具"
-4. 调用工具: StrategyTool.execute({
+1. AIﻝﻟ۶۲ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝﻝ۴"
+2. AIﮔﮒﮒﮔﺍ: {strategy_type: "momentum", holding_period: 5, stop_loss: 0.1}
+3. AIﻠﮔ۸ﮒﺓ۴ﮒﺓ: "ﻝﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ"
+4. ﻟﺍﻝ۷ﮒﺓ۴ﮒﺓ: StrategyTool.execute({
        "action": "configure",
        "params": {
            "strategy_type": "momentum",
@@ -685,151 +704,151 @@ result = agent.chat(user_input)
            "stop_loss": 0.1
        }
    })
-5. 工具执行: 策略引擎.configure_strategy(...) (无AI，直接执�?
-6. AI格式化结�? "策略配置成功！策略ID: STRAT_20260402_001"
+5. ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰: ﻝﻝ۴ﮒﺙﮔ.configure_strategy(...) (ﮔAIﺅﺙﻝﺑﮔ۴ﮔ۶ﻟ۰?
+6. AIﮔﺙﮒﺙﮒﻝﭨﮔ? "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝﻝ۴ID: STRAT_20260402_001"
 """
 
 print(result)
-# 输出: "策略配置成功！策略ID: STRAT_20260402_001"
+# ﻟﺝﮒﭦ: "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙﻝﻝ۴ID: STRAT_20260402_001"
 ```
 
-### 6.2 多步骤操作示�?
+### 6.2 ﮒ۳ﮔ۴ﻠ۹۳ﮔﻛﺛﻝ۳ﭦﻛﺝ?
 ```python
-# 用户输入
-user_input = "查询动量因子的表现，然后创建一个使用该因子的策�?
+# ﻝ۷ﮔﺓﻟﺝﮒ۴
+user_input = "ﮔ۴ﻟﺁ۱ﮒ۷ﻠﮒﮒﻝﻟ۰۷ﻝﺍﺅﺙﻝﭘﮒﮒﮒﭨﭦﻛﺕﻛﺕ۹ﻛﺛﺟﻝ۷ﻟﺁ۴ﮒﮒﻝﻝﻝ?
 
-# Layer 11处理流程
+# Layer 11ﮒ۳ﻝﮔﭖﻝ۷
 """
-步骤1: 查询因子
-- 意图: "查询因子"
-- 参数: {factor_name: "momentum"}
-- 调用: FactorTool.execute({"action": "query", "params": {"factor_name": "momentum"}})
-- 结果: 因子IC=0.12，表现良�?
-步骤2: 创建策略
-- 意图: "配置策略"
-- 参数: {strategy_type: "momentum", factor: "momentum"}
-- 调用: StrategyTool.execute({"action": "configure", "params": {...}})
-- 结果: 策略ID: STRAT_20260402_001
+ﮔ۴ﻠ۹۳1: ﮔ۴ﻟﺁ۱ﮒﮒ
+- ﮔﮒﺝ: "ﮔ۴ﻟﺁ۱ﮒﮒ"
+- ﮒﮔﺍ: {factor_name: "momentum"}
+- ﻟﺍﻝ۷: FactorTool.execute({"action": "query", "params": {"factor_name": "momentum"}})
+- ﻝﭨﮔ: ﮒﮒIC=0.12ﺅﺙﻟ۰۷ﻝﺍﻟﺁﮒ۴?
+ﮔ۴ﻠ۹۳2: ﮒﮒﭨﭦﻝﻝ۴
+- ﮔﮒﺝ: "ﻠﻝﺛ؟ﻝﻝ۴"
+- ﮒﮔﺍ: {strategy_type: "momentum", factor: "momentum"}
+- ﻟﺍﻝ۷: StrategyTool.execute({"action": "configure", "params": {...}})
+- ﻝﭨﮔ: ﻝﻝ۴ID: STRAT_20260402_001
 
-AI格式化结�? "动量因子表现良好（IC=0.12），已创建策略STRAT_20260402_001"
+AIﮔﺙﮒﺙﮒﻝﭨﮔ? "ﮒ۷ﻠﮒﮒﻟ۰۷ﻝﺍﻟﺁﮒ۴ﺛﺅﺙIC=0.12ﺅﺙﺅﺙﮒﺓﺎﮒﮒﭨﭦﻝﻝ۴STRAT_20260402_001"
 """
 ```
 
 
-## 七、工具注册表
+## ﻛﺕﻙﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻟ۰۷
 
-### 7.1 完整工具清单
+### 7.1 ﮒ؟ﮔﺑﮒﺓ۴ﮒﺓﮔﺕﮒ
 
-| 工具名称 | 工具�?| 优先�?| 操作数量 | 状�?|
+| ﮒﺓ۴ﮒﺓﮒﻝ۶ﺍ | ﮒﺓ۴ﮒﺓﻝﺎ?| ﻛﺙﮒﻝﭦ?| ﮔﻛﺛﮔﺍﻠ | ﻝﭘﮔ?|
 |---------|--------|--------|---------|------|
-| 策略管理 | StrategyTool | P0 | 7�?| �?已设�?|
-| 因子管理 | FactorTool | P0 | 4�?| �?已设�?|
-| 风控管理 | RiskControlTool | P0 | 4�?| �?已设�?|
-| 授权确认 | ApprovalTool | P0 | 3�?| �?已设�?|
-| 舆情查询 | SentimentTool | P1 | 2�?| �?已设�?|
-| 模型训练 | MLTool | P1 | 2�?| �?已设�?|
-| 组合优化 | PortfolioTool | P1 | 3�?| �?已设�?|
-| 报告查询 | ReportTool | P1 | 2�?| �?已设�?|
-| 数据源管�?| DataSourceTool | P2 | 4�?| �?已设�?|
-| 数据预处�?| PreprocessingTool | P2 | 3�?| �?已设�?|
-| **总计** | - | - | **34个操�?* | - |
+| ﻝﻝ۴ﻝ؟۰ﻝ | StrategyTool | P0 | 7ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮒﮒﻝ؟۰ﻝ | FactorTool | P0 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﻠ۲ﮔ۶ﻝ؟۰ﻝ | RiskControlTool | P0 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔﮔﻝ۰؟ﻟ؟۳ | ApprovalTool | P0 | 3ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﻟﮔﮔ۴ﻟﺁ۱ | SentimentTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔ۷۰ﮒﻟ؟ﻝﭨ | MLTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﻝﭨﮒﻛﺙﮒ | PortfolioTool | P1 | 3ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔ۴ﮒﮔ۴ﻟﺁ۱ | ReportTool | P1 | 2ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔﺍﮔ؟ﮔﭦﻝ؟۰ﻝ?| DataSourceTool | P2 | 4ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| ﮔﺍﮔ؟ﻠ۱ﮒ۳ﻝ?| PreprocessingTool | P2 | 3ﻛﺕ?| ﻗ?ﮒﺓﺎﻟ؟ﺝﻟ؟?|
+| **ﮔﭨﻟ؟۰** | - | - | **34ﻛﺕ۹ﮔﻛﺛ?* | - |
 
-### 7.2 优先级分�?
-| 优先�?| 工具数量 | 操作数量 | 占比 |
+### 7.2 ﻛﺙﮒﻝﭦ۶ﮒﮒﺕ?
+| ﻛﺙﮒﻝﭦ?| ﮒﺓ۴ﮒﺓﮔﺍﻠ | ﮔﻛﺛﮔﺍﻠ | ﮒﮔﺁ |
 |--------|---------|---------|------|
-| P0 | 4�?| 18个操�?| 53% |
-| P1 | 4�?| 9个操�?| 26% |
-| P2 | 2�?| 7个操�?| 21% |
-| **总计** | **10�?* | **34个操�?* | **100%** |
+| P0 | 4ﻛﺕ?| 18ﻛﺕ۹ﮔﻛﺛ?| 53% |
+| P1 | 4ﻛﺕ?| 9ﻛﺕ۹ﮔﻛﺛ?| 26% |
+| P2 | 2ﻛﺕ?| 7ﻛﺕ۹ﮔﻛﺛ?| 21% |
+| **ﮔﭨﻟ؟۰** | **10ﻛﺕ?* | **34ﻛﺕ۹ﮔﻛﺛ?* | **100%** |
 
 
-## 八、实施路线图
+## ﮒ،ﻙﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟﮒﺝ
 
-### Phase 1：P0工具开发（Week 1-2�?
-**目标**: 完成P0工具开�?
+### Phase 1ﺅﺙP0ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 1-2ﺅﺙ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP0ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
-工作内容:
-  1. 策略工具开发（7个操作）
-  2. 因子工具开发（4个操作）
-  3. 风控工具开发（4个操作）
-  4. 授权工具开发（3个操作）
+ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
+1. ﻝﻝ۴ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ7ﻛﺕ۹ﮔﻛﺛﺅﺙ
+2. ﮒﮒﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  3. ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  4. ﮔﮔﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ3ﻛﺕ۹ﮔﻛﺛﺅﺙ
 
-交付�?
-  - 4个工具文�?  - 18个操作实�?  - 单元测试
+ﻛﭦ۳ﻛﭨﻝ?
+  - 4ﻛﺕ۹ﮒﺓ۴ﮒﺓﮔﻛﭨ?  - 18ﻛﺕ۹ﮔﻛﺛﮒ؟ﻝ?  - ﮒﮒﮔﭖﻟﺁ
 ```
 
-### Phase 2：P1工具开发（Week 3-4�?
-**目标**: 完成P1工具开�?
+### Phase 2ﺅﺙP1ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 3-4ﺅﺙ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP1ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
-工作内容:
-  1. 舆情工具开发（2个操作）
-  2. ML工具开发（2个操作）
-  3. 组合工具开发（3个操作）
-  4. 报告工具开发（2个操作）
+ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
+  1. ﻟﮔﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ2ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  2. MLﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ2ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  3. ﻝﭨﮒﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ3ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  4. ﮔ۴ﮒﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ2ﻛﺕ۹ﮔﻛﺛﺅﺙ
 
-交付�?
-  - 4个工具文�?  - 9个操作实�?  - 集成测试
+ﻛﭦ۳ﻛﭨﻝ?
+  - 4ﻛﺕ۹ﮒﺓ۴ﮒﺓﮔﻛﭨ?  - 9ﻛﺕ۹ﮔﻛﺛﮒ؟ﻝ?  - ﻠﮔﮔﭖﻟﺁ
 ```
 
-### Phase 3：P2工具开发（Week 5-6�?
-**目标**: 完成P2工具开�?
+### Phase 3ﺅﺙP2ﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙWeek 5-6ﺅﺙ?
+**ﻝ؟ﮔ**: ﮒ؟ﮔP2ﮒﺓ۴ﮒﺓﮒﺙﮒ?
 ```yaml
-工作内容:
-  1. 数据源工具开发（4个操作）
-  2. 预处理工具开发（3个操作）
+ﮒﺓ۴ﻛﺛﮒﮒ؟ﺗ:
+  1. ﮔﺍﮔ؟ﮔﭦﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ4ﻛﺕ۹ﮔﻛﺛﺅﺙ
+  2. ﻠ۱ﮒ۳ﻝﮒﺓ۴ﮒﺓﮒﺙﮒﺅﺙ3ﻛﺕ۹ﮔﻛﺛﺅﺙ
 
-交付�?
-  - 2个工具文�?  - 7个操作实�?  - 完整测试套件
+ﻛﭦ۳ﻛﭨﻝ?
+  - 2ﻛﺕ۹ﮒﺓ۴ﮒﺓﮔﻛﭨ?  - 7ﻛﺕ۹ﮔﻛﺛﮒ؟ﻝ?  - ﮒ؟ﮔﺑﮔﭖﻟﺁﮒ۴ﻛﭨﭘ
 ```
 
 
-## 九、关键洞�?
-### 9.1 细化层次总结
+## ﻛﺗﻙﮒﺏﻠ؟ﮔﺑﮒﺁ?
+### 9.1 ﻝﭨﮒﮒﺎﮔ؛۰ﮔﭨﻝﭨ
 
-| 层级 | 需要细�?| 不需要细�?|
+| ﮒﺎﻝﭦ۶ | ﻠﻟ۵ﻝﭨﮒ?| ﻛﺕﻠﻟ۵ﻝﭨﮒ?|
 |------|---------|-----------|
-| **Layer 11** | �?意图识别、参数提取、工具路�?| - |
-| **各模�?* | �?工具接口规范（操作、参数、返回值） | �?文字交付设计 |
+| **Layer 11** | ﻗ?ﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒﻙﮒﺓ۴ﮒﺓﻟﺓﺁﻝ?| - |
+| **ﮒﮔ۷۰ﮒ?* | ﻗ?ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟﺅﺙﮔﻛﺛﻙﮒﮔﺍﻙﻟﺟﮒﮒﺙﺅﺙ | ﻗ?ﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟۰ |
 
-### 9.2 核心优势
+### 9.2 ﮔﺕﮒﺟﻛﺙﮒﺟ
 
-| 优势 | 说明 |
+| ﻛﺙﮒﺟ | ﻟﺁﺑﮔ |
 |------|------|
-| **避免重复** | 不需要为每个模块单独做文字交付设�?|
-| **统一标准** | 所有工具遵循统一的接口规�?|
-| **易于扩展** | 新增模块只需定义工具接口 |
-| **维护简�?* | 只需维护Layer 11的意图识别逻辑 |
+| **ﻠﺟﮒﻠﮒ۳** | ﻛﺕﻠﻟ۵ﻛﺕﭦﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?|
+| **ﻝﭨﻛﺕﮔﮒ** | ﮔﮔﮒﺓ۴ﮒﺓﻠﭖﮒﺝ۹ﻝﭨﻛﺕﻝﮔ۴ﮒ۲ﻟ۶ﻟ?|
+| **ﮔﻛﭦﮔ۸ﮒﺎ** | ﮔﺍﮒ۱ﮔ۷۰ﮒﮒ۹ﻠﮒ؟ﻛﺗﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ |
+| **ﻝﭨﺑﮔ۳ﻝ؟ﮒ?* | ﮒ۹ﻠﻝﭨﺑﮔ۳Layer 11ﻝﮔﮒﺝﻟﺁﮒ،ﻠﭨﻟﺝ |
 
-### 9.3 与另一个AI方案的对�?
-| 对比�?| 另一个AI方案 | 本方�?| 优势 |
+### 9.3 ﻛﺕﮒ۵ﻛﺕﻛﺕ۹AIﮔﺗﮔ۰ﻝﮒﺁﺗﮔﺁ?
+| ﮒﺁﺗﮔﺁﻠ۰?| ﮒ۵ﻛﺕﻛﺕ۹AIﮔﺗﮔ۰ | ﮔ؛ﮔﺗﮔ۰?| ﻛﺙﮒﺟ |
 |--------|-------------|--------|------|
-| **细化方式** | 每个模块单独做文字交付设�?| Layer 11统一意图识别 + 工具接口规范 | �?避免重复 |
-| **AI层数�?* | 29个AI�?| 1个AI�?| �?减少96.6% |
-| **维护成本** | 高（29套逻辑�?| 低（统一标准�?| �?显著降低 |
-| **扩展�?* | 差（新增模块需新增AI层） | 好（新增工具接口即可�?| �?显著提升 |
+| **ﻝﭨﮒﮔﺗﮒﺙ** | ﮔﺁﻛﺕ۹ﮔ۷۰ﮒﮒﻝ؛ﮒﮔﮒﻛﭦ۳ﻛﭨﻟ؟ﺝﻟ؟?| Layer 11ﻝﭨﻛﺕﮔﮒﺝﻟﺁﮒ، + ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ | ﻗ?ﻠﺟﮒﻠﮒ۳ |
+| **AIﮒﺎﮔﺍﻠ?* | 29ﻛﺕ۹AIﮒﺎ?| 1ﻛﺕ۹AIﮒﺎ?| ﻗ?ﮒﮒﺍ96.6% |
+| **ﻝﭨﺑﮔ۳ﮔﮔ؛** | ﻠ،ﺅﺙ29ﮒ۴ﻠﭨﻟﺝﺅﺙ?| ﻛﺛﺅﺙﻝﭨﻛﺕﮔﮒﺅﺙ?| ﻗ?ﮔﺝﻟﻠﻛﺛ |
+| **ﮔ۸ﮒﺎﮔ?* | ﮒﺓ؟ﺅﺙﮔﺍﮒ۱ﮔ۷۰ﮒﻠﮔﺍﮒ۱AIﮒﺎﺅﺙ | ﮒ۴ﺛﺅﺙﮔﺍﮒ۱ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﮒﺏﮒﺁﺅﺙ?| ﻗ?ﮔﺝﻟﮔﮒ |
 
 
-## 十、相关文档索�?
-### 10.1 核心参考文�?
-| 文档名称 | 路径 | 说明 |
+## ﮒﻙﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ?
+### 10.1 ﮔﺕﮒﺟﮒﻟﮔﮔ۰?
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
-| [Layer 11工具封装蓝图](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | 工具封装架构 |
-| [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
-| [文字驱动核心模块](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLU设计 |
-| [量化交易Agent模块](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agent框架 |
+| [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔ |
+| [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
+| [ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ |
+| [ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒ](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agentﮔ۰ﮔﭘ |
 
-### 10.2 代码实现位置
+### 10.2 ﻛﭨ۲ﻝﮒ؟ﻝﺍﻛﺛﻝﺛ؟
 
-| 模块 | 路径 | 说明 |
+| ﮔ۷۰ﮒ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |------|------|------|
-| 工具基类 | `src/layer_11/tools/base_tool.py` | 工具基类定义 |
-| 策略工具 | `src/layer_11/tools/strategy_tool.py` | 策略工具实现 |
-| 因子工具 | `src/layer_11/tools/factor_tool.py` | 因子工具实现 |
-| 风控工具 | `src/layer_11/tools/risk_control_tool.py` | 风控工具实现 |
-| 工具注册中心 | `src/layer_11/tools/__init__.py` | 工具注册管理 |
+| ﮒﺓ۴ﮒﺓﮒﭦﻝﺎﭨ | `src/layer_11/tools/base_tool.py` | ﮒﺓ۴ﮒﺓﮒﭦﻝﺎﭨﮒ؟ﻛﺗ |
+| ﻝﻝ۴ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/strategy_tool.py` | ﻝﻝ۴ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
+| ﮒﮒﮒﺓ۴ﮒﺓ | `src/layer_11/tools/factor_tool.py` | ﮒﮒﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
+| ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓ | `src/layer_11/tools/risk_control_tool.py` | ﻠ۲ﮔ۶ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ |
+| ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕﮒﺟ | `src/layer_11/tools/__init__.py` | ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻝ؟۰ﻝ |
 
 ---
 
-**文档版本**: v1.0.0
-**最后更�?*: 2026-04-02
-**维护�?*: 首席蓝图架构�?
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﻝﭨﺑﮔ۳ﻟ?*: ﻠ۵ﮒﺕﻟﮒﺝﮔﭘﮔﮒﺕ?

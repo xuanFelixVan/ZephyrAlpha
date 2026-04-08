@@ -1,0 +1,343 @@
+[
+  {
+    "timestamp": "2026-04-07 16:33:12",
+    "document_metrics": {
+      "total_files": 2053,
+      "files_with_metadata": 2023,
+      "files_with_responsibility": 1852,
+      "metadata_compliance_rate": 98.53872381880176,
+      "responsibility_compliance_rate": 90.20944958597174
+    },
+    "reference_metrics": {
+      "total_links": 8537,
+      "valid_links": 8515,
+      "invalid_links": 22,
+      "link_validity_rate": 99.74229823122876
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1928884559181685,
+      "depth_distribution": {
+        "0": 4,
+        "1": 474,
+        "2": 789,
+        "3": 694,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 87.5261965322035,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 17:10:19",
+    "document_metrics": {
+      "total_files": 2091,
+      "files_with_metadata": 44,
+      "files_with_responsibility": 25,
+      "metadata_compliance_rate": 2.1042563366810136,
+      "responsibility_compliance_rate": 1.1956001912960306
+    },
+    "reference_metrics": {
+      "total_links": 8078,
+      "valid_links": 8076,
+      "invalid_links": 2,
+      "link_validity_rate": 99.97524139638524
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.194643711142994,
+      "depth_distribution": {
+        "0": 4,
+        "1": 475,
+        "2": 814,
+        "3": 706,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 40.862969358179086,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 17:34:44",
+    "document_metrics": {
+      "total_files": 2114,
+      "files_with_metadata": 154,
+      "files_with_responsibility": 29,
+      "metadata_compliance_rate": 7.28476821192053,
+      "responsibility_compliance_rate": 1.3718070009460739
+    },
+    "reference_metrics": {
+      "total_links": 7198,
+      "valid_links": 7190,
+      "invalid_links": 8,
+      "link_validity_rate": 99.88885801611559
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.196310312204352,
+      "depth_distribution": {
+        "0": 4,
+        "1": 475,
+        "2": 829,
+        "3": 714,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 42.42644926860005,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 17:53:01",
+    "document_metrics": {
+      "total_files": 2135,
+      "files_with_metadata": 446,
+      "files_with_responsibility": 162,
+      "metadata_compliance_rate": 20.88992974238876,
+      "responsibility_compliance_rate": 7.587822014051522
+    },
+    "reference_metrics": {
+      "total_links": 6922,
+      "valid_links": 6903,
+      "invalid_links": 19,
+      "link_validity_rate": 99.72551285755561
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1985948477751758,
+      "depth_distribution": {
+        "0": 4,
+        "1": 476,
+        "2": 839,
+        "3": 724,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 47.70219718279361,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:02:14",
+    "document_metrics": {
+      "total_files": 2240,
+      "files_with_metadata": 1979,
+      "files_with_responsibility": 160,
+      "metadata_compliance_rate": 88.34821428571429,
+      "responsibility_compliance_rate": 7.142857142857142
+    },
+    "reference_metrics": {
+      "total_links": 7455,
+      "valid_links": 7327,
+      "invalid_links": 127,
+      "link_validity_rate": 98.28303152246815
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1915178571428573,
+      "depth_distribution": {
+        "0": 4,
+        "1": 477,
+        "2": 937,
+        "3": 730,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 67.41794517102616,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:02:39",
+    "document_metrics": {
+      "total_files": 2243,
+      "files_with_metadata": 1982,
+      "files_with_responsibility": 160,
+      "metadata_compliance_rate": 88.36379848417299,
+      "responsibility_compliance_rate": 7.133303611234954
+    },
+    "reference_metrics": {
+      "total_links": 7459,
+      "valid_links": 7330,
+      "invalid_links": 128,
+      "link_validity_rate": 98.27054564955088
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.191261703076237,
+      "depth_distribution": {
+        "0": 4,
+        "1": 477,
+        "2": 940,
+        "3": 730,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 67.41696396236415,
+      "compliance_level": "不合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:21:30",
+    "document_metrics": {
+      "total_files": 2296,
+      "files_with_metadata": 2032,
+      "files_with_responsibility": 1960,
+      "metadata_compliance_rate": 88.50174216027874,
+      "responsibility_compliance_rate": 85.36585365853658
+    },
+    "reference_metrics": {
+      "total_links": 7627,
+      "valid_links": 7463,
+      "invalid_links": 163,
+      "link_validity_rate": 97.84974432935624
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1898954703832754,
+      "depth_distribution": {
+        "0": 4,
+        "1": 477,
+        "2": 986,
+        "3": 737,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 82.9786166785978,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:28:06",
+    "document_metrics": {
+      "total_files": 2309,
+      "files_with_metadata": 2038,
+      "files_with_responsibility": 1961,
+      "metadata_compliance_rate": 88.26331745344305,
+      "responsibility_compliance_rate": 84.92854049372023
+    },
+    "reference_metrics": {
+      "total_links": 6497,
+      "valid_links": 6317,
+      "invalid_links": 179,
+      "link_validity_rate": 97.22949053409266
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.191857947163274,
+      "depth_distribution": {
+        "0": 4,
+        "1": 477,
+        "2": 992,
+        "3": 744,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 82.63355049500476,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:32:35",
+    "document_metrics": {
+      "total_files": 2318,
+      "files_with_metadata": 2045,
+      "files_with_responsibility": 1935,
+      "metadata_compliance_rate": 88.22260569456428,
+      "responsibility_compliance_rate": 83.47713546160483
+    },
+    "reference_metrics": {
+      "total_links": 5358,
+      "valid_links": 5286,
+      "invalid_links": 71,
+      "link_validity_rate": 98.65621500559911
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.1919758412424506,
+      "depth_distribution": {
+        "0": 4,
+        "1": 477,
+        "2": 999,
+        "3": 746,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 82.75907330236998,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  },
+  {
+    "timestamp": "2026-04-07 18:49:43",
+    "total_files": 1978,
+    "compliance_score": 86.81,
+    "metadata_compliance_rate": 98.43,
+    "responsibility_compliance_rate": 97.12,
+    "link_validity_rate": 99.72,
+    "deep_file_count": 59,
+    "total_links": 3231,
+    "valid_links": 3222
+  },
+  {
+    "timestamp": "2026-04-07 18:50:04",
+    "document_metrics": {
+      "total_files": 2353,
+      "files_with_metadata": 2068,
+      "files_with_responsibility": 1942,
+      "metadata_compliance_rate": 87.88780280492988,
+      "responsibility_compliance_rate": 82.53293667658309
+    },
+    "reference_metrics": {
+      "total_links": 5449,
+      "valid_links": 5368,
+      "invalid_links": 80,
+      "link_validity_rate": 98.51348871352542
+    },
+    "structure_metrics": {
+      "max_depth": 4,
+      "avg_depth": 2.199320016999575,
+      "depth_distribution": {
+        "0": 4,
+        "1": 478,
+        "2": 1008,
+        "3": 771,
+        "4": 92
+      },
+      "deep_files_count": 92
+    },
+    "compliance_metrics": {
+      "compliance_score": 82.42697479085321,
+      "compliance_level": "合格",
+      "target_score": 90
+    }
+  }
+]

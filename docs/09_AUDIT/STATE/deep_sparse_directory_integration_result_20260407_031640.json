@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-04-07T03:16:40.076900",
+  "total": 13,
+  "success": 12,
+  "failed": 1,
+  "total_files_moved": 0,
+  "total_dirs_deleted": 7,
+  "results": [
+    {
+      "path": "00_RESOURCES\\04_PLATFORM_DOCS",
+      "action": "delete_empty",
+      "success": false,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": "目录非空或文件不匹配: ['INDEX.md', 'QMT_TRADING_SYSTEM_REFERENCE.pdf', 'README.md', 'xuntou_qmt_trading_system_documentation.pdf']"
+    },
+    {
+      "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\asking"
+      ],
+      "error": null
+    },
+    {
+      "path": "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\chao-gu-yang-jia"
+      ],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_PROGRESS_TRACKING",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_PROGRESS_TRACKING"
+      ],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\risk_management",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "05_IMPLEMENTATION\\07_OPERATIONS\\risk_management"
+      ],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\training_plans",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "05_IMPLEMENTATION\\07_OPERATIONS\\training_plans"
+      ],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\05_IMPLEMENTATION\\database",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "06_ARCHIVE\\05_IMPLEMENTATION\\database"
+      ],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\duplicate_documents\\20260403_layer7_audit",
+      "action": "delete_empty",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "06_ARCHIVE\\duplicate_documents\\20260403_layer7_audit"
+      ],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\lessons_learned",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QMT_DATA_INTERFACE",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design\\01_UI_DESIGN",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    }
+  ]
+}

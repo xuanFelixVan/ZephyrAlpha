@@ -1,0 +1,969 @@
+{
+  "audit_info": {
+    "audit_time": "2026-04-07 12:50:35",
+    "audit_standard": "专业量化机构五大原则 + 四层审计标准v4",
+    "audit_scope": "Layer 4机器学习层所有文档"
+  },
+  "L1_file_system": {
+    "directory_structure": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_PERMISSIONS.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_PERMISSIONS.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_PERMISSIONS.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ARCHITECTURE.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AUTOML_AUTOMATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AUTOML_AUTOMATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AUTOML_AUTOMATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\CURRICULUM_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\CURRICULUM_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\CURRICULUM_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DATA_ANNOTATION_PLATFORM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DATA_ANNOTATION_PLATFORM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DATA_ANNOTATION_PLATFORM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DATA_AUGMENTATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DATA_AUGMENTATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DATA_AUGMENTATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DATA_QUALITY_MONITORING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DEEPAR_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DEEPAR_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DEEPAR_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DIFFUSION_MODEL_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DIFFUSION_MODEL_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DIFFUSION_MODEL_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DISTRIBUTED_TRAINING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DISTRIBUTED_TRAINING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DISTRIBUTED_TRAINING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DOCUMENT_RESPONSIBILITY_BOUNDARIES.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DOCUMENT_RESPONSIBILITY_BOUNDARIES.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DOCUMENT_RESPONSIBILITY_BOUNDARIES.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\DRIFT_DETECTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\DRIFT_DETECTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\DRIFT_DETECTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ENSEMBLE_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ENSEMBLE_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ENSEMBLE_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\EVENT_DRIVEN_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\EVENT_DRIVEN_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\EVENT_DRIVEN_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\EXPERIMENT_TRACKING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\EXPERIMENT_TRACKING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\EXPERIMENT_TRACKING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\FAIRNESS_DETECTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\FAIRNESS_DETECTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\FAIRNESS_DETECTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\FEATURE_STORE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\FEATURE_STORE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\FEATURE_STORE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\FEDERATED_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\FEDERATED_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\FEDERATED_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\GRADIENT_ACCUMULATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\GRADIENT_ACCUMULATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\GRADIENT_ACCUMULATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\GRADIENT_CHECKPOINTING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\GRADIENT_CHECKPOINTING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\GRADIENT_CHECKPOINTING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\GRAPH_NEURAL_NETWORK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\GRAPH_NEURAL_NETWORK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\GRAPH_NEURAL_NETWORK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\GRAYSCALE_RELEASE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\GRAYSCALE_RELEASE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\GRAYSCALE_RELEASE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\INFERENCE_ACCELERATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\INFERENCE_ACCELERATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\INFERENCE_ACCELERATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\INVESTMENT_PHILOSOPHY.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\INVESTMENT_PHILOSOPHY.md",
+        "expected_path": "docs\\01_FRAMEWORK\\INVESTMENT_PHILOSOPHY.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\KNOWLEDGE_DISTILLATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\KNOWLEDGE_DISTILLATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\KNOWLEDGE_DISTILLATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LEARNING_RATE_SCHEDULER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\LEARNING_RATE_SCHEDULER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\LEARNING_RATE_SCHEDULER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LIQUID_NEURAL_NETWORK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\LIQUID_NEURAL_NETWORK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\LIQUID_NEURAL_NETWORK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LLM_FINE_TUNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\LLM_FINE_TUNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\LLM_FINE_TUNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_COMPREHENSIVE_ANALYSIS.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_COMPREHENSIVE_ANALYSIS.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_COMPREHENSIVE_ANALYSIS.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MAMBA_SSM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MAMBA_SSM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MAMBA_SSM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MARKET_MAKING_MODEL_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MARKET_MAKING_MODEL_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MARKET_MAKING_MODEL_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MEMORY_AUGMENTED_NN_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MEMORY_AUGMENTED_NN_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MEMORY_AUGMENTED_NN_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\META_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\META_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\META_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MIA_DEFENSE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MIA_DEFENSE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MIA_DEFENSE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MIXED_PRECISION_TRAINING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MIXED_PRECISION_TRAINING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MIXED_PRECISION_TRAINING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MIXTURE_OF_EXPERTS_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MIXTURE_OF_EXPERTS_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MIXTURE_OF_EXPERTS_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MLOPS_PLATFORM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MLOPS_PLATFORM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MLOPS_PLATFORM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_AB_TESTING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_AB_TESTING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_AB_TESTING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_CARD_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_CARD_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_CARD_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_LINEAGE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_LINEAGE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_LINEAGE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_MONITORING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_MONITORING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_MONITORING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_PRUNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_PRUNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_PRUNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_QUANTIZATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_QUANTIZATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_QUANTIZATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_REGISTRY_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_REGISTRY_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_REGISTRY_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_ROLLBACK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_ROLLBACK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_ROLLBACK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_SECURITY_SCANNER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_SECURITY_SCANNER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_SECURITY_SCANNER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_SERVING_FRAMEWORK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_SERVING_FRAMEWORK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_SERVING_FRAMEWORK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_VERSIONING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_VERSIONING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_VERSIONING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_WARMUP_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_WARMUP_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_WARMUP_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODEL_WATERMARK_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODEL_WATERMARK_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODEL_WATERMARK_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MULTIMODAL_FUSION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MULTIMODAL_FUSION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MULTIMODAL_FUSION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MULTIMODAL_LLM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MULTIMODAL_LLM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MULTIMODAL_LLM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MULTI_MODEL_ORCHESTRATOR_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\MULTI_TASK_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\MULTI_TASK_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\MULTI_TASK_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\NBEATS_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\NBEATS_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\NBEATS_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\NEURAL_ODE_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\NEURAL_ODE_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\NEURAL_ODE_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\NEWLY_DISCOVERED_MODULES_BLUEPRINT_COLLECTION.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\NEWLY_DISCOVERED_MODULES_BLUEPRINT_COLLECTION.md",
+        "expected_path": "docs\\01_FRAMEWORK\\NEWLY_DISCOVERED_MODULES_BLUEPRINT_COLLECTION.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ONLINE_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ONLINE_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ONLINE_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\OPTIMIZER_VARIANTS_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\OPTIMIZER_VARIANTS_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\OPTIMIZER_VARIANTS_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ORDER_FLOW_PREDICTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\ORDER_FLOW_PREDICTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\ORDER_FLOW_PREDICTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION.md",
+        "expected_path": "docs\\01_FRAMEWORK\\P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\PROMPT_ENGINEERING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\PROMPT_ENGINEERING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\PROMPT_ENGINEERING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\RAG_SYSTEM_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\RAG_SYSTEM_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\RAG_SYSTEM_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\REINFORCEMENT_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\REINFORCEMENT_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\REINFORCEMENT_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SECURE_MULTI_PARTY_COMPUTATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SELF_SUPERVISED_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SELF_SUPERVISED_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SELF_SUPERVISED_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SERVICE_MESH_INTEGRATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SERVICE_MESH_INTEGRATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SERVICE_MESH_INTEGRATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SPARSE_ATTENTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SPARSE_ATTENTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SPARSE_ATTENTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\SYNTHETIC_DATA_GENERATION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\SYNTHETIC_DATA_GENERATION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\SYNTHETIC_DATA_GENERATION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\TAIL_RISK_PREDICTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\TAIL_RISK_PREDICTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\TAIL_RISK_PREDICTION_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\TEXT_ENCODER_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\TEXT_ENCODER_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\TEXT_ENCODER_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\TRANSFER_LEARNING_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\TRANSFER_LEARNING_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\TRANSFER_LEARNING_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\TRUSTED_EXECUTION_ENVIRONMENT_BLUEPRINT.md"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\VOLATILITY_PREDICTION_BLUEPRINT.md",
+        "issue": "目录漂移",
+        "description": "Layer 4文档不在LAYER4_ML目录中",
+        "current_path": "docs\\01_FRAMEWORK\\VOLATILITY_PREDICTION_BLUEPRINT.md",
+        "expected_path": "docs\\01_FRAMEWORK\\VOLATILITY_PREDICTION_BLUEPRINT.md"
+      }
+    ],
+    "file_naming": [],
+    "path_references": []
+  },
+  "L2_document_content": {
+    "responsibility_driven": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 定义系统架构和模块组织，确保架构清晰"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 定义系统架构和模块组织，确保架构清晰"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\INDEX.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 负责index的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_GOVERNANCE_FIX_REPORT_20260406.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\README.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 负责readme的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_COMPLETENESS_CHECK_REPORT.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_FIX_PROGRESS_REPORT_20260406.md",
+        "issue": "职责不清",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      }
+    ],
+    "index_completeness": [],
+    "version_isolation": []
+  },
+  "L3_professional_standards": {
+    "five_principles": [],
+    "document_classification": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+        "issue": "分类错误",
+        "description": "Layer归属错误: Layer 10 (治理合规层)"
+      }
+    ],
+    "numbering_system": [],
+    "document_quality": []
+  },
+  "deep_check": {
+    "duplicate_documents": [],
+    "unclear_responsibility": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\AI_PERMISSIONS.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 负责ai permissions的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 定义系统架构和模块组织，确保架构清晰"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 定义系统架构和模块组织，确保架构清晰"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V2_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V4_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V5_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V6_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\INDEX.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 负责index的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\MASTER_INDEX.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 负责master index的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_COMPREHENSIVE_AUDIT_V5_20260404.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_DEEP_GOVERNANCE_AUDIT_V2_20260406.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 执行文档治理审计，生成审计报告和改进建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_GOVERNANCE_FIX_REPORT_20260406.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\README.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 负责readme的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\README_1.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 负责readme 1的设计、实现和维护工作"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_COMPLETENESS_CHECK_REPORT.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      },
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\YAML_FIX_PROGRESS_REPORT_20260406.md",
+        "issue": "职责过短",
+        "description": "职责描述过短: 分析系统状态，生成评估报告和优化建议"
+      }
+    ],
+    "responsibility_overlap": [
+      {
+        "issue": "职责重叠",
+        "description": "发现11个文档具有相同职责",
+        "responsibility": "执行文档治理审计，生成审计报告和改进建议",
+        "documents": [
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V2_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V4_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V5_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V6_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_COMPREHENSIVE_AUDIT_V5_20260404.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_DEEP_GOVERNANCE_AUDIT_V2_20260406.md",
+          "docs\\01_FRAMEWORK\\LAYER4_ML\\ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md"
+        ]
+      }
+    ],
+    "content_similarity": []
+  },
+  "summary": {
+    "total_docs": 146,
+    "total_issues": 139,
+    "L1_issues": 109,
+    "L2_issues": 7,
+    "L3_issues": 1,
+    "deep_issues": 22,
+    "compliance_rate": 4.79
+  }
+}

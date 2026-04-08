@@ -1,485 +1,113 @@
 ---
-module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001
-version: 1.2.0
+module_id: 08_HUMAN_AI_INTERFACE_INDEX
+version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 系统架构师
-layer: Layer 8 (人机交互层)
-standard_type: 专业量化机构系统蓝图
-applicable_scope: ZephyrAlpha人机交互层完整设计
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 人机交互层主索引、模块导航与文档目录管理、系统架构概览
+standard_type: 索引文档
+applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准
-parent_document: ../01_FRAMEWORK/ARCHITECTURE.md
-implementation_status: 蓝图设计
 ---
 
-# Layer 8 人机交互层 - 系统蓝图索引
+# Layer 8 人机交互层索引
 
-> **版本**: v1.2
-> **创建日期**: 2026-04-06
-> **更新日期**: 2026-04-06
-> **设计理念**: 轻量级专业方案，个人开发+AI维护+个人使用
-> **新增模块**: 在线研究环境、参数优化界面、实盘交易界面
+## 📊 统计信息
 
----
-
-## 一、模块设计原则
-
-### 1.1 设计目标
-
-| 目标 | 说明 |
+| 指标 | 数值 |
 |------|------|
-| **轻量级** | 最小依赖，易于部署和维护 |
-| **可扩展** | 模块化设计，可逐步扩展 |
-| **AI友好** | 代码清晰，便于AI理解和维护 |
-| **个人使用** | 专注核心功能，不过度设计 |
+| **模块总数** | 84个 |
+| **原有模块** | 20个 |
+| **新增模块** | 64个 |
+| **P0级模块** | 9个 |
+| **P1级模块** | 22个 |
+| **P2级模块** | 13个 |
+| **蓝图文档** | 84个 |
+| **索引文档** | 84个 |
+
+**索引状态**: ✅ 活跃  
+**维护频率**: 按需更新  
+**下次更新**: 根据模块实施进度更新  
+**最后更新**: 2026-04-08（补充24个专业机构必备模块）
+
+## 📁 其他活跃文档
+
+### 原有模块（20个）
+
+- [MONITORING_DASHBOARD_BLUEPRINT](01_MONITORING/MONITORING_DASHBOARD_BLUEPRINT.md)
+- [BACKTEST_UI_BLUEPRINT](05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md)
+- [REPORTING_BLUEPRINT](06_REPORTING/REPORTING_BLUEPRINT.md)
+- [DOCUMENTATION_CENTER_BLUEPRINT](17_DOCUMENTATION_CENTER/DOCUMENTATION_CENTER_BLUEPRINT.md)
+- [RISK_DASHBOARD_BLUEPRINT](24_RISK_DASHBOARD/RISK_DASHBOARD_BLUEPRINT.md)
+- [STRATEGY_IDE_BLUEPRINT](25_STRATEGY_IDE/STRATEGY_IDE_BLUEPRINT.md)
+- [FACTOR_ANALYSIS_BLUEPRINT](26_FACTOR_ANALYSIS/FACTOR_ANALYSIS_BLUEPRINT.md)
+- [RISK_CONTROL_PANEL_BLUEPRINT](27_RISK_CONTROL_PANEL/RISK_CONTROL_PANEL_BLUEPRINT.md)
+- [API_GATEWAY_BLUEPRINT](28_API_GATEWAY/API_GATEWAY_BLUEPRINT.md)
+- [WEBSOCKET_REALTIME_BLUEPRINT](29_WEBSOCKET_REALTIME/WEBSOCKET_REALTIME_BLUEPRINT.md)
+- [COMPLIANCE_MONITORING_BLUEPRINT](30_COMPLIANCE_MONITORING/COMPLIANCE_MONITORING_BLUEPRINT.md)
+- [CAPITAL_MANAGEMENT_BLUEPRINT](31_CAPITAL_MANAGEMENT/CAPITAL_MANAGEMENT_BLUEPRINT.md)
+- [USER_BEHAVIOR_ANALYTICS_BLUEPRINT](32_USER_BEHAVIOR_ANALYTICS/USER_BEHAVIOR_ANALYTICS_BLUEPRINT.md)
+- [I18N_SUPPORT_BLUEPRINT](33_I18N_SUPPORT/I18N_SUPPORT_BLUEPRINT.md)
+- [THEME_CUSTOMIZATION_BLUEPRINT](34_THEME_CUSTOMIZATION/THEME_CUSTOMIZATION_BLUEPRINT.md)
+- [DATA_EXPORT_TOOLS_BLUEPRINT](35_DATA_EXPORT_TOOLS/DATA_EXPORT_TOOLS_BLUEPRINT.md)
+- [USER_TRAINING_BLUEPRINT](36_USER_TRAINING/USER_TRAINING_BLUEPRINT.md)
+- [ACCESSIBILITY_BLUEPRINT](37_ACCESSIBILITY/ACCESSIBILITY_BLUEPRINT.md)
+- [OFFLINE_SUPPORT_BLUEPRINT](38_OFFLINE_SUPPORT/OFFLINE_SUPPORT_BLUEPRINT.md)
+- [THIRD_PARTY_INTEGRATION_BLUEPRINT](39_THIRD_PARTY_INTEGRATION/THIRD_PARTY_INTEGRATION_BLUEPRINT.md)
+
+### 新增模块 - P0级（9个）
+
+- [TRADING_TERMINAL_BLUEPRINT](40_TRADING_TERMINAL/TRADING_TERMINAL_BLUEPRINT.md) - 交易终端（核心缺失）
+- [ORDER_MANAGEMENT_SYSTEM_BLUEPRINT](61_ORDER_MANAGEMENT_SYSTEM/ORDER_MANAGEMENT_SYSTEM_BLUEPRINT.md) - 订单管理系统（OMS）
+- [EXECUTION_MANAGEMENT_SYSTEM_BLUEPRINT](62_EXECUTION_MANAGEMENT_SYSTEM/EXECUTION_MANAGEMENT_SYSTEM_BLUEPRINT.md) - 执行管理系统（EMS）
+- [REALTIME_RISK_MONITORING_BLUEPRINT](64_REALTIME_RISK_MONITORING/REALTIME_RISK_MONITORING_BLUEPRINT.md) - 实时风险监控
+- [DATA_MANAGEMENT_PLATFORM_BLUEPRINT](66_DATA_MANAGEMENT_PLATFORM/DATA_MANAGEMENT_PLATFORM_BLUEPRINT.md) - 数据管理平台
+- [AUDIT_LOG_SYSTEM_BLUEPRINT](71_AUDIT_LOG_SYSTEM/AUDIT_LOG_SYSTEM_BLUEPRINT.md) - 审计日志系统
+- [TRANSACTION_COST_ANALYSIS_BLUEPRINT](79_TRANSACTION_COST_ANALYSIS/TRANSACTION_COST_ANALYSIS_BLUEPRINT.md) - 交易成本分析（TCA）（高级）
+- [PORTFOLIO_MANAGEMENT_BLUEPRINT](80_PORTFOLIO_MANAGEMENT/PORTFOLIO_MANAGEMENT_BLUEPRINT.md) - 组合管理（高级）
+
+### 新增模块 - P1级（22个）
+
+- [SYSTEM_CONFIG_CENTER_BLUEPRINT](41_SYSTEM_CONFIG_CENTER/SYSTEM_CONFIG_CENTER_BLUEPRINT.md) - 系统配置中心
+- [USER_PERMISSION_MANAGEMENT_BLUEPRINT](42_USER_PERMISSION_MANAGEMENT/USER_PERMISSION_MANAGEMENT_BLUEPRINT.md) - 用户权限管理
+- [PERFORMANCE_MONITORING_BLUEPRINT](43_PERFORMANCE_MONITORING/PERFORMANCE_MONITORING_BLUEPRINT.md) - 性能监控
+- [LOG_MANAGEMENT_BLUEPRINT](44_LOG_MANAGEMENT/LOG_MANAGEMENT_BLUEPRINT.md) - 日志管理
+- [CONFIG_MANAGEMENT_BLUEPRINT](45_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md) - 配置管理
+- [BACKUP_RECOVERY_BLUEPRINT](46_BACKUP_RECOVERY/BACKUP_RECOVERY_BLUEPRINT.md) - 备份与恢复
+- [SYSTEM_HEALTH_CHECK_BLUEPRINT](47_SYSTEM_HEALTH_CHECK/SYSTEM_HEALTH_CHECK_BLUEPRINT.md) - 系统健康检查
+- [VERSION_MANAGEMENT_BLUEPRINT](48_VERSION_MANAGEMENT/VERSION_MANAGEMENT_BLUEPRINT.md) - 版本管理
+- [ALGORITHMIC_TRADING_CONSOLE_BLUEPRINT](63_ALGORITHMIC_TRADING_CONSOLE/ALGORITHMIC_TRADING_CONSOLE_BLUEPRINT.md) - 算法交易控制台
+- [RISK_REPORTING_SYSTEM_BLUEPRINT](65_RISK_REPORTING_SYSTEM/RISK_REPORTING_SYSTEM_BLUEPRINT.md) - 风险报告系统
+- [DATA_QUALITY_MONITORING_BLUEPRINT](67_DATA_QUALITY_MONITORING/DATA_QUALITY_MONITORING_BLUEPRINT.md) - 数据质量监控
+- [DEPLOYMENT_MANAGEMENT_PLATFORM_BLUEPRINT](68_DEPLOYMENT_MANAGEMENT_PLATFORM/DEPLOYMENT_MANAGEMENT_PLATFORM_BLUEPRINT.md) - 部署管理平台
+- [COMPLIANCE_REPORTING_SYSTEM_BLUEPRINT](72_COMPLIANCE_REPORTING_SYSTEM/COMPLIANCE_REPORTING_SYSTEM_BLUEPRINT.md) - 合规报告系统
+- [CLEARING_SETTLEMENT_MANAGEMENT_BLUEPRINT](73_CLEARING_SETTLEMENT_MANAGEMENT/CLEARING_SETTLEMENT_MANAGEMENT_BLUEPRINT.md) - 清算结算管理（高级）
+- [MARGIN_MANAGEMENT_BLUEPRINT](74_MARGIN_MANAGEMENT/MARGIN_MANAGEMENT_BLUEPRINT.md) - 保证金管理（高级）
+- [FUND_MANAGEMENT_BLUEPRINT](75_FUND_MANAGEMENT/FUND_MANAGEMENT_BLUEPRINT.md) - 资金管理（高级）
+- [COUNTERPARTY_RISK_MANAGEMENT_BLUEPRINT](76_COUNTERPARTY_RISK_MANAGEMENT/COUNTERPARTY_RISK_MANAGEMENT_BLUEPRINT.md) - 交易对手风险管理（高级）
+- [MODEL_RISK_MANAGEMENT_BLUEPRINT](77_MODEL_RISK_MANAGEMENT/MODEL_RISK_MANAGEMENT_BLUEPRINT.md) - 模型风险管理（高级）
+- [MULTI_ACCOUNT_MANAGEMENT_BLUEPRINT](78_MULTI_ACCOUNT_MANAGEMENT/MULTI_ACCOUNT_MANAGEMENT_BLUEPRINT.md) - 多账户管理（高级）
+- [STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT](81_STRATEGY_LIFECYCLE_MANAGEMENT/STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) - 策略生命周期管理（高级）
+- [MARKET_DATA_MANAGEMENT_BLUEPRINT](82_MARKET_DATA_MANAGEMENT/MARKET_DATA_MANAGEMENT_BLUEPRINT.md) - 市场数据管理（高级）
+- [PERFORMANCE_ATTRIBUTION_BLUEPRINT](83_PERFORMANCE_ATTRIBUTION/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md) - 绩效归因分析（高级）
+
+### 新增模块 - P2级（13个）
+
+- [NOTIFICATION_ALERT_SYSTEM_BLUEPRINT](49_NOTIFICATION_ALERT_SYSTEM/NOTIFICATION_ALERT_SYSTEM_BLUEPRINT.md) - 通知与告警系统
+- [MOBILE_SUPPORT_BLUEPRINT](50_MOBILE_SUPPORT/MOBILE_SUPPORT_BLUEPRINT.md) - 移动端支持
+- [DATA_IMPORT_TOOLS_BLUEPRINT](51_DATA_IMPORT_TOOLS/DATA_IMPORT_TOOLS_BLUEPRINT.md) - 数据导入工具
+- [WORKFLOW_MANAGEMENT_BLUEPRINT](52_WORKFLOW_MANAGEMENT/WORKFLOW_MANAGEMENT_BLUEPRINT.md) - 工作流管理
+- [KNOWLEDGE_BASE_SYSTEM_BLUEPRINT](53_KNOWLEDGE_BASE_SYSTEM/KNOWLEDGE_BASE_SYSTEM_BLUEPRINT.md) - 知识库系统
+- [AI_ASSISTANT_INTEGRATION_BLUEPRINT](54_AI_ASSISTANT_INTEGRATION/AI_ASSISTANT_INTEGRATION_BLUEPRINT.md) - AI助手集成
+- [PERFORMANCE_ANALYSIS_TOOLS_BLUEPRINT](55_PERFORMANCE_ANALYSIS_TOOLS/PERFORMANCE_ANALYSIS_TOOLS_BLUEPRINT.md) - 性能分析工具
+- [SECURITY_AUDIT_BLUEPRINT](56_SECURITY_AUDIT/SECURITY_AUDIT_BLUEPRINT.md) - 安全审计
+- [SANDBOX_ENVIRONMENT_BLUEPRINT](57_SANDBOX_ENVIRONMENT/SANDBOX_ENVIRONMENT_BLUEPRINT.md) - 沙箱环境
+- [API_DOCUMENTATION_GENERATION_BLUEPRINT](58_API_DOCUMENTATION_GENERATION/API_DOCUMENTATION_GENERATION_BLUEPRINT.md) - API文档生成
+- [PERFORMANCE_BENCHMARK_TESTING_BLUEPRINT](59_PERFORMANCE_BENCHMARK_TESTING/PERFORMANCE_BENCHMARK_TESTING_BLUEPRINT.md) - 性能基准测试
+- [COLLABORATION_TOOLS_BLUEPRINT](60_COLLABORATION_TOOLS/COLLABORATION_TOOLS_BLUEPRINT.md) - 协作工具
+- [CAPACITY_PLANNING_TOOL_BLUEPRINT](69_CAPACITY_PLANNING_TOOL/CAPACITY_PLANNING_TOOL_BLUEPRINT.md) - 容量规划工具
+- [COST_MANAGEMENT_TOOL_BLUEPRINT](70_COST_MANAGEMENT_TOOL/COST_MANAGEMENT_TOOL_BLUEPRINT.md) - 成本管理工具
 
-### 1.2 技术选型原则
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   技术选型决策矩阵                            │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  优先级排序：                                                │
-│  1. 开源成熟方案（首选）                                     │
-│  2. 官方推荐方案                                            │
-│  3. 社区活跃方案                                            │
-│  4. 轻量级方案                                              │
-│                                                             │
-│  排除项：                                                    │
-│  ✗ 商业付费方案                                             │
-│  ✗ 过度复杂的方案                                            │
-│  ✗ 难以AI维护的方案                                          │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 二、模块清单
-
-### 2.1 核心模块（必须实现）
-
-| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 |
-|------|--------|---------|---------|--------|
-| 8.1 | MONITORING | 监控仪表板 | Grafana | P0 |
-| 8.2 | ALERTING | 告警通知系统 | Alertmanager + 邮件 | P0 |
-| 8.3 | AUTH | 认证授权系统 | FastAPI-Users | P0 |
-| 8.4 | API_DOCS | API文档系统 | FastAPI Swagger | P0 |
-
-### 2.2 重要模块（短期实现）
-
-| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 |
-|------|--------|---------|---------|--------|
-| 8.5 | BACKTEST_UI | 交互式回测界面 | Streamlit | P1 |
-| 8.6 | REPORTING | 报告生成系统 | Quantstats | P1 |
-| 8.7 | AUDIT_LOG | 审计日志系统 | Loki + 文件日志 | P1 |
-
-### 2.3 增强模块（可选实现）
-
-| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 |
-|------|--------|---------|---------|--------|
-| 8.8 | MOBILE_PUSH | 移动推送通知 | 微信/邮件 | P2 |
-| 8.9 | TRADING_JOURNAL | 交易日志系统 | SQLite + Streamlit | P2 |
-| 8.10 | CONFIG_MANAGEMENT | 配置管理界面 | Streamlit + YAML | P2 |
-| 8.11 | USER_PREFERENCES | 用户偏好设置 | SQLite + Streamlit | P2 |
-| 8.12 | SYSTEM_STATUS | 系统状态面板 | Streamlit + Prometheus | P2 |
-| 8.13 | DATA_MANAGEMENT | 数据管理界面 | Streamlit + Pandas | P2 |
-| 8.14 | STRATEGY_MANAGEMENT | 策略管理界面 | Streamlit + SQLite | P2 |
-| 8.15 | PERMISSION_MANAGEMENT | 权限管理界面 | Streamlit + FastAPI-Users | P2 |
-
-### 2.4 专业补充模块（必须实现）
-
-| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 | 开源项目 |
-|------|--------|---------|---------|--------|---------|
-| 8.16 | API_RATE_LIMITING | API限流保护 | slowapi | P0 | [slowapi](https://github.com/laurentS/slowapi) 1.2k+ |
-| 8.17 | DOCUMENTATION_CENTER | 文档中心 | MkDocs | P0 | [MkDocs](https://github.com/mkdocs/mkdocs) 19k+ |
-| 8.18 | KNOWLEDGE_BASE | 知识库系统 | Obsidian | P0 | [Obsidian](https://obsidian.md) 免费个人使用 |
-| 8.19 | CI_CD_INTEGRATION | CI/CD集成 | GitHub Actions | P1 | [GitHub Actions](https://github.com/features/actions) 公开免费 |
-| 8.20 | DATA_BACKUP | 数据备份系统 | Restic | P1 | [Restic](https://github.com/restic/restic) 25k+ |
-
-### 2.5 专业机构标准补充模块（必须实现）⭐新增
-
-| 序号 | 模块ID | 模块名称 | 技术方案 | 优先级 | 开源项目 |
-|------|--------|---------|---------|--------|---------|
-| 8.21 | ONLINE_RESEARCH_ENVIRONMENT | 在线研究环境 | JupyterLab | P0 | [JupyterLab](https://github.com/jupyterlab/jupyterlab) 14k+ |
-| 8.22 | PARAMETER_OPTIMIZATION | 参数优化界面 | Optuna + Streamlit | P0 | [Optuna](https://github.com/optuna/optuna) 8k+ |
-| 8.23 | LIVE_TRADING_INTERFACE | 实盘交易界面 | Streamlit | P0 | [Streamlit](https://github.com/streamlit/streamlit) 35k+ |
-
-**模块总计**: 23个模块（核心4个 + 重要6个 + 增强8个 + 专业补充5个 + 专业机构标准补充3个）
-
----
-
-## 三、模块依赖关系
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        Layer 8 模块依赖关系图                          │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│                        ┌──────────────┐                              │
-│                        │   用户入口    │                              │
-│                        └──────┬───────┘                              │
-│                               │                                       │
-│              ┌────────────────┼────────────────┐                      │
-│              ▼                ▼                ▼                      │
-│     ┌──────────────┐ ┌──────────────┐ ┌──────────────┐            │
-│     │   API文档    │ │  监控仪表板   │ │  回测界面    │            │
-│     │  (Swagger)   │ │  (Grafana)   │ │  (Streamlit) │            │
-│     └──────┬───────┘ └──────┬───────┘ └──────┬───────┘            │
-│            │                 │                 │                     │
-│            └─────────────────┼─────────────────┘                     │
-│                              ▼                                        │
-│                   ┌─────────────────────┐                            │
-│                   │   认证授权系统       │                            │
-│                   │  (FastAPI-Users)    │                            │
-│                   └──────────┬──────────┘                            │
-│                              │                                        │
-│          ┌───────────────────┼───────────────────┐                   │
-│          ▼                   ▼                   ▼                   │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐           │
-│  │  告警系统     │   │  审计日志     │   │  报告系统     │           │
-│  │(Alertmanager)│   │   (Loki)     │   │(Quantstats)  │           │
-│  └──────────────┘   └──────────────┘   └──────────────┘           │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐ ⭐新增    │
-│  │  在线研究     │   │  参数优化     │   │  实盘交易     │           │
-│  │ (JupyterLab) │   │   (Optuna)    │   │ (Streamlit)  │           │
-│  └──────────────┘   └──────────────┘   └──────────────┘           │
-│                                                                      │
-│  可选模块：                                                         │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
-│  │  移动推送     │   │  交易日志    │   │  配置管理    │          │
-│  │  (微信/邮件)  │   │  (SQLite)    │   │  (Streamlit) │          │
-│  └──────────────┘   └──────────────┘   └──────────────┘          │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
-│  │  用户偏好     │   │  系统状态    │   │  数据管理    │          │
-│  │  (SQLite)    │   │ (Streamlit)  │   │  (Streamlit) │          │
-│  └──────────────┘   └──────────────┘   └──────────────┘          │
-│  ┌──────────────┐   ┌──────────────┐                              │
-│  │  策略管理     │   │  权限管理    │                              │
-│  │  (Streamlit) │   │  (Streamlit) │                              │
-│  └──────────────┘   └──────────────┘                              │
-│                                                                      │
-│  专业补充模块：                                                     │
-│  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
-│  │  API限流     │   │  文档中心    │   │  知识库      │          │
-│  │  (slowapi)   │   │  (MkDocs)    │   │  (Obsidian)  │          │
-│  └──────────────┘   └──────────────┘   └──────────────┘          │
-│  ┌──────────────┐   ┌──────────────┐                              │
-│  │  CI/CD集成   │   │  数据备份    │                              │
-│  │(GitHub Actions)│  │  (Restic)    │                              │
-│  └──────────────┘   └──────────────┘                              │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 四、部署架构
-
-### 4.1 单机部署架构
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        部署架构（个人使用）                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                      用户浏览器                              │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│                              ▼                                      │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                    Nginx 反向代理 (可选)                     │   │
-│  │                       :80 / :443                            │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-│                              │                                      │
-│         ┌────────────────────┼────────────────────┐                │
-│         ▼                    ▼                    ▼                 │
-│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐         │
-│  │  FastAPI    │     │  Grafana    │     │  Streamlit  │         │
-│  │  :8000      │     │  :3000      │     │  :8501      │         │
-│  │             │     │             │     │             │         │
-│  │ - API文档   │     │ - 监控面板   │     │ - 回测界面  │         │
-│  │ - 认证      │     │ - 指标展示   │     │ - 分析工具  │         │
-│  │ - 告警触发  │     │ - 趋势图     │     │ - 报告      │         │
-│  └─────────────┘     └─────────────┘     └─────────────┘         │
-│         │                    │                    │                 │
-│         └────────────────────┼────────────────────┘                │
-│                              ▼                                      │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                      数据存储层                              │   │
-│  │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────┐  │   │
-│  │  │  SQLite   │ │  Loki     │ │  Prometheus│ │  文件存储 │  │   │
-│  │  │ (用户数据) │ │ (日志)    │ │ (指标)    │ │ (报告)   │  │   │
-│  │  └───────────┘ └───────────┘ └───────────┘ └───────────┘  │   │
-│  └─────────────────────────────────────────────────────────────┘   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-### 4.2 端口分配
-
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| FastAPI | 8000 | 主API服务 |
-| Grafana | 3000 | 监控仪表板 |
-| Streamlit | 8501 | 回测界面 |
-| Prometheus | 9090 | 指标收集 |
-| Loki | 3100 | 日志收集 |
-
----
-
-## 五、实施路线图
-
-### 5.1 第一阶段：核心基础（1周）
-
-| 周 | 任务 | 交付物 |
-|----|------|--------|
-| Day 1-2 | 搭建FastAPI基础架构 | 可运行的API服务 |
-| Day 3-4 | 集成FastAPI-Users认证 | 登录/注册功能 |
-| Day 5 | 配置Swagger文档 | 完整的API文档 |
-| Day 6-7 | 基础监控端点 | /health健康检查 |
-
-### 5.2 第二阶段：监控告警（1周）
-
-| 周 | 任务 | 交付物 |
-|----|------|--------|
-| Day 8-9 | 部署Grafana | 监控仪表板 |
-| Day 10 | 配置Prometheus | 指标收集 |
-| Day 11-12 | 集成Alertmanager | 告警通知 |
-| Day 13-14 | 配置告警规则 | 告警通知（邮件） |
-
-### 5.3 第三阶段：分析工具（2周）⭐新增模块
-
-| 周 | 任务 | 交付物 |
-|----|------|--------|
-| Day 15-16 | 部署Streamlit | 回测界面框架 |
-| Day 17-18 | 集成Quantstats | 报告生成功能 |
-| Day 19-20 | 集成Loki | 审计日志 |
-| Day 21 | 整体测试 | 完整系统测试 |
-| **Day 22-23** | **部署JupyterLab** | **在线研究环境** ⭐新增 |
-| **Day 24-25** | **集成Optuna** | **参数优化界面** ⭐新增 |
-| **Day 26-28** | **实盘交易界面** | **交易界面** ⭐新增 |
-
-### 5.4 第四阶段：增强功能（可选）
-
-| 周 | 任务 | 交付物 |
-|----|------|--------|
-| Day 29-30 | 配置管理界面 | 配置管理功能 |
-| Day 31-32 | 用户偏好设置 | 偏好管理功能 |
-| Day 33-34 | 系统状态面板 | 状态监控功能 |
-| Day 35-36 | 数据管理界面 | 数据管理功能 |
-| Day 37-38 | 策略管理界面 | 策略管理功能 |
-| Day 39-40 | 权限管理界面 | 权限管理功能 |
-
-### 5.5 第五阶段：专业补充（必须）
-
-| 周 | 任务 | 交付物 |
-|----|------|--------|
-| Day 41-41 | API限流保护 | slowapi集成 |
-| Day 42-42 | 文档中心 | MkDocs部署 |
-| Day 43-43 | 知识库系统 | Obsidian配置 |
-| Day 44-45 | CI/CD集成 | GitHub Actions配置 |
-| Day 46-46 | 数据备份系统 | Restic备份配置 |
-
-**总工作量**: 约6周（核心1周 + 监控1周 + 分析工具2周 + 增强2周 + 专业补充1周）
-
----
-
-## 六、模块详情索引
-
-### 6.1 核心模块
-
-| 文档 | 位置 | 说明 |
-|------|------|------|
-| 监控仪表板蓝图 | [MONITORING_DASHBOARD_BLUEPRINT.md](01_MONITORING/MONITORING_DASHBOARD_BLUEPRINT.md) | Grafana监控方案 |
-| 告警系统蓝图 | [ALERTING_SYSTEM_BLUEPRINT.md](02_ALERTING/ALERTING_SYSTEM_BLUEPRINT.md) | 告警通知方案 |
-| 认证系统蓝图 | [AUTH_SYSTEM_BLUEPRINT.md](03_AUTH/AUTH_SYSTEM_BLUEPRINT.md) | 认证授权方案 |
-| API文档蓝图 | [API_DOCS_BLUEPRINT.md](04_API_DOCS/API_DOCS_BLUEPRINT.md) | Swagger配置 |
-
-### 6.2 重要模块
-
-| 文档 | 位置 | 说明 |
-|------|------|------|
-| 回测界面蓝图 | [BACKTEST_UI_BLUEPRINT.md](05_BACKTEST_UI/BACKTEST_UI_BLUEPRINT.md) | Streamlit回测方案 |
-| 报告系统蓝图 | [REPORTING_BLUEPRINT.md](06_REPORTING/REPORTING_BLUEPRINT.md) | 报告生成方案 |
-| 审计日志蓝图 | [AUDIT_LOG_BLUEPRINT.md](07_AUDIT_LOG/AUDIT_LOG_BLUEPRINT.md) | 日志收集方案 |
-
-### 6.3 可选模块
-
-| 文档 | 位置 | 说明 |
-|------|------|------|
-| 移动推送蓝图 | [MOBILE_PUSH_BLUEPRINT.md](08_MOBILE_PUSH/MOBILE_PUSH_BLUEPRINT.md) | 推送通知方案 |
-| 交易日志蓝图 | [TRADING_JOURNAL_BLUEPRINT.md](09_TRADING_JOURNAL/TRADING_JOURNAL_BLUEPRINT.md) | 交易记录方案 |
-| 配置管理蓝图 | [CONFIG_MANAGEMENT_BLUEPRINT.md](10_CONFIG_MANAGEMENT/CONFIG_MANAGEMENT_BLUEPRINT.md) | 配置管理方案 |
-| 用户偏好蓝图 | [USER_PREFERENCES_BLUEPRINT.md](11_USER_PREFERENCES/USER_PREFERENCES_BLUEPRINT.md) | 用户偏好方案 |
-| 系统状态蓝图 | [SYSTEM_STATUS_BLUEPRINT.md](12_SYSTEM_STATUS/SYSTEM_STATUS_BLUEPRINT.md) | 系统状态方案 |
-| 数据管理蓝图 | [DATA_MANAGEMENT_BLUEPRINT.md](13_DATA_MANAGEMENT/DATA_MANAGEMENT_BLUEPRINT.md) | 数据管理方案 |
-| 策略管理蓝图 | [STRATEGY_MANAGEMENT_BLUEPRINT.md](14_STRATEGY_MANAGEMENT/STRATEGY_MANAGEMENT_BLUEPRINT.md) | 策略管理方案 |
-| 权限管理蓝图 | [PERMISSION_MANAGEMENT_BLUEPRINT.md](15_PERMISSION_MANAGEMENT/PERMISSION_MANAGEMENT_BLUEPRINT.md) | 权限管理方案 |
-
-### 6.4 专业补充模块
-
-| 文档 | 位置 | 说明 |
-|------|------|------|
-| API限流蓝图 | [API_RATE_LIMITING_BLUEPRINT.md](16_API_RATE_LIMITING/API_RATE_LIMITING_BLUEPRINT.md) | slowapi限流方案 |
-| 文档中心蓝图 | [DOCUMENTATION_CENTER_BLUEPRINT.md](17_DOCUMENTATION_CENTER/DOCUMENTATION_CENTER_BLUEPRINT.md) | MkDocs文档方案 |
-| 知识库蓝图 | [KNOWLEDGE_BASE_BLUEPRINT.md](18_KNOWLEDGE_BASE/KNOWLEDGE_BASE_BLUEPRINT.md) | Obsidian知识库方案 |
-| CI/CD蓝图 | [CI_CD_INTEGRATION_BLUEPRINT.md](19_CI_CD_INTEGRATION/CI_CD_INTEGRATION_BLUEPRINT.md) | GitHub Actions方案 |
-| 数据备份蓝图 | [DATA_BACKUP_BLUEPRINT.md](20_DATA_BACKUP/DATA_BACKUP_BLUEPRINT.md) | Restic备份方案 |
-
----
-
-## 七、验收标准
-
-### 7.1 功能验收
-
-| 模块 | 验收条件 | 测试方法 |
-|------|---------|---------|
-| 监控仪表板 | 可查看系统指标 | 访问Grafana |
-| 告警系统 | 异常时收到邮件 | 触发测试告警 |
-| 认证系统 | 登录/登出正常 | 功能测试 |
-| API文档 | 完整API可测试 | Swagger测试 |
-| 回测界面 | 可运行回测 | Streamlit操作 |
-| 报告生成 | 可生成报告 | 执行报告功能 |
-| 审计日志 | 可查询日志 | 日志查询 |
-| **在线研究环境** | **Notebook正常运行** | **代码测试** ⭐新增 |
-| **参数优化界面** | **优化正常执行** | **优化测试** ⭐新增 |
-| **实盘交易界面** | **交易功能正常** | **交易测试** ⭐新增 |
-| 移动推送 | 可接收推送 | 推送测试 |
-| 交易日志 | 可记录交易 | 日志记录 |
-| 配置管理 | 可管理配置 | 配置编辑 |
-| 用户偏好 | 可设置偏好 | 偏好设置 |
-| 系统状态 | 可查看状态 | 状态面板 |
-| 数据管理 | 可管理数据 | 数据操作 |
-| 策略管理 | 可管理策略 | 策略操作 |
-| 权限管理 | 可管理权限 | 权限操作 |
-| API限流 | 可限制请求频率 | 限流测试 |
-| 文档中心 | 可访问文档 | 在线访问 |
-| 知识库 | 可检索知识 | 搜索测试 |
-| CI/CD | 自动化测试部署 | CI运行 |
-| 数据备份 | 可备份恢复数据 | 备份测试 |
-
-### 7.2 性能验收
-
-| 指标 | 目标值 | 说明 |
-|------|-------|------|
-| API响应时间 | < 200ms | 正常请求 |
-| 页面加载时间 | < 3s | Grafana/Streamlit |
-| 日志查询时间 | < 1s | 日志检索 |
-| 报告生成时间 | < 30s | 单次报告 |
-| **Notebook启动** | **< 5s** | **JupyterLab启动** ⭐新增 |
-| **优化执行** | **< 20分钟** | **100次优化** ⭐新增 |
-| **交易响应** | **< 2s** | **下单响应** ⭐新增 |
-
----
-
-## 八、后续维护
-
-### 8.1 维护计划
-
-| 周期 | 任务 | 负责人 |
-|------|------|--------|
-| 每周 | 日志审查 | AI辅助 |
-| 每月 | 性能优化 | AI辅助 |
-| 每季度 | 安全更新 | AI辅助 |
-| 每年 | 系统升级 | AI辅助 |
-
-### 8.2 备份策略
-
-| 数据类型 | 备份频率 | 保留时间 |
-|---------|---------|---------|
-| 用户数据 | 每日 | 30天 |
-| 审计日志 | 每日 | 90天 |
-| 报告文件 | 每周 | 1年 |
-| 系统配置 | 每周 | 1年 |
-
----
-
-## 九、附录
-
-### 9.1 参考资料
-
-| 资源 | 链接 |
-|------|------|
-| FastAPI官方文档 | https://fastapi.tiangolo.com/ |
-| Grafana文档 | https://grafana.com/docs/ |
-| Streamlit文档 | https://docs.streamlit.io/ |
-| Prometheus文档 | https://prometheus.io/docs/ |
-| Quantstats文档 | https://quantstats.github.io/ |
-
-### 9.2 技术栈总览
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Layer 8 技术栈总览                        │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              前端技术栈                             │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ Streamlit│  │  Grafana  │  │  MkDocs   │         │   │
-│  │  │  (界面)   │  │  (监控)   │  │  (文档)   │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │JupyterLab│  │  Plotly   │  │  Swagger  │ ⭐新增  │   │
-│  │  │ (研究)    │  │ (可视化)  │  │  (API文档)│         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              后端技术栈                             │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ FastAPI  │  │Prometheus│  │Alertmanager│        │   │
-│  │  │  (API)   │  │ (监控)   │  │  (告警)   │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │  Optuna  │  │  Loki    │  │ slowapi  │ ⭐新增  │   │
-│  │  │ (优化)    │  │  (日志)  │  │ (限流)   │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              数据存储                               │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │ SQLite   │  │  Loki    │  │ Prometheus│        │   │
-│  │  │ (业务数据)│  │  (日志)  │  │ (监控数据)│         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │              工具链                                 │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │   │
-│  │  │GitHub    │  │  Restic  │  │ Obsidian │         │   │
-│  │  │Actions   │  │  (备份)  │  │ (知识库) │         │   │
-│  │  └──────────┘  └──────────┘  └──────────┘         │   │
-│  └─────────────────────────────────────────────────────┘   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 9.3 开源项目清单
-
-| 项目 | Stars | License | 用途 |
-|------|-------|---------|------|
-| **FastAPI** | 75k+ | MIT | API框架 |
-| **Streamlit** | 35k+ | Apache-2.0 | 界面开发 |
-| **Grafana** | 62k+ | AGPL-3.0 | 监控仪表板 |
-| **Prometheus** | 54k+ | Apache-2.0 | 监控系统 |
-| **Alertmanager** | 6k+ | Apache-2.0 | 告警系统 |
-| **JupyterLab** | 14k+ | BSD-3-Clause | 研究环境 ⭐新增 |
-| **Optuna** | 8k+ | MIT | 参数优化 ⭐新增 |
-| **Quantstats** | 4k+ | MIT | 绩效报告 |
-| **Loki** | 23k+ | AGPL-3.0 | 日志系统 |
-| **MkDocs** | 19k+ | BSD-2-Clause | 文档中心 |
-| **Restic** | 25k+ | BSD-2-Clause | 数据备份 |
-| **slowapi** | 1.2k+ | MIT | API限流 |
-| **Obsidian** | - | 免费个人使用 | 知识库 |
-
----
-
-**文档状态**: 🟢 活跃
-**下次更新**: 2026-04-13
-**维护周期**: 每周审查

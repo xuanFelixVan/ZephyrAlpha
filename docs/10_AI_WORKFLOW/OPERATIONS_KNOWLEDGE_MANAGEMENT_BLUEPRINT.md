@@ -1,32 +1,30 @@
 ---
-module_id: AIWF_OKM_001
+module_id: 10_AI_WORKFLOW_OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT
 version: 1.0.0
 status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-04
-owner: 首席架构师
-standard_type: 专业机构级蓝图
-applicable_scope: 运维与知识管理模
-compliance_level: 专业标准
-parent_document: INDEX.md
-layer: 舆情分析
-priority: P2
-estimated_effort: 70h
-integrated_modules:
-  - AIWF_CAM_001
-  - AIWF_DSM_001
-  - AIWF_POM_001
-  - AIWF_KMM_001
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - prometheus.yml文档
 ---
 
-
-## 文档职责说明
-
+﻿---
+module_id: OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - OPERATIONS KNOWLEDGE MANAGEMENT module blueprint design
 **本文档职责**: 运维知识管理模块蓝图
-- 知识库构建、运维经验沉淀、故障诊断、知识检索
-
-# 运维与知识管理模块蓝(Operations & Knowledge Management Blueprint)
-
+**📌 职责边界说明**: 
+- **本文档**: 舆情专用运维知识库，负责舆情运维知识管理
+- **KNOWLEDGE_MANAGEMENT**: 系统级知识管理平台，负责全系统知识的积累、检索和传承
+**职责关系**: 
+> **核心职责**: 蓝图设计和架构规划
+> **职责边界**: 
 > **模块ID**: AIWF_OKM_001
 > **版本**: v1.0
 > **创建日期**: 2026-04-03
@@ -34,7 +32,6 @@ integrated_modules:
 > **优先*: P2 (中优先级)
 > **预计工作*: 70小时
 > **整合模块**: AIWF_CAM_001 (合规审计) + AIWF_DSM_001 (数据安全) + AIWF_POM_001 (性能优化) + AIWF_KMM_001 (知识管理)
-
 ---
 
 ## 一、模块概述
@@ -1144,3 +1141,34 @@ CREATE TABLE knowledge_base (
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-03 | **状*: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Aiwf Okm
+- **模块ID**: AIWF_OKM_001
+- **蓝图文档**: [OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md](./OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 运维与知识管理模
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Aiwf Okm** | 运维与知识管理模 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

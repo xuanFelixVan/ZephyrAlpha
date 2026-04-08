@@ -1,175 +1,194 @@
 ---
+module_id: CHANGELOG_001_ARCHIVED_1
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 归档文档、历史版本
+---
 module_id: DOC_CHANGELOG_001
 version: 1.2.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
-standard_type: 专业量化机构文档
-applicable_scope: 全系�?
-compliance_level: 初始标准
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+  - 因子计算
+  - 回测系统
+  - 数据源
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: INDEX.md
-implementation_status: 进行�?
----
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?---
 
 
-# CHANGELOG.md - 变更日志
 
-> 清风量化系统 v5.1 版本变更记录
+# CHANGELOG.md - ﮒﮔﺑﮔ۴ﮒﺟ
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.1 ﻝﮔ؛ﮒﮔﺑﻟ؟ﺍﮒﺛ
 
 
 ## [v5.1.0] - 2026-03-31
 
-### 🧹 文档精简: v5.0 �?v5.1
+### ﻭ۶ﺗ ﮔﮔ۰۲ﻝﺎﺝﻝ؟: v5.0 ﻗ?v5.1
 
-> 按照专业量化机构文件治理方式进行文档治理
+> ﮔﻝ۶ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﻛﭨﭘﮔﺎﭨﻝﮔﺗﮒﺙﻟﺟﻟ۰ﮔﮔ۰۲ﮔﺎﭨﻝ
 
-#### 删除的冗余文�?
+#### ﮒﻠ۳ﻝﮒﻛﺛﮔﻛﭨ?
 
-| 文件路径 | 删除原因 |
+| ﮔﻛﭨﭘﻟﺓﺁﮒﺝ | ﮒﻠ۳ﮒﮒ |
 |----------|----------|
-| `05_IMPLEMENTATION/07_OPERATIONS/faq.md` | �?`docs/FAQ.md` 重复 |
-| `00_OVERVIEW/VERSION_HISTORY.md` | �?`CHANGELOG.md` 重复 |
-| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft - 副本.md` | 冗余副本 |
-| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft_backup.md` | 冗余备份 |
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0.txt` | 可从其他文档重建 |
-| `06_ARCHIVE/main/v4_development/清风量化交易系统4.0开发细�?md` | 与粗稿重�?|
-| `06_ARCHIVE/main/FINAL_SYSTEM_AUDIT_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md` | 旧版本审�?|
-| `06_ARCHIVE/main/DOCUMENT_AUDIT_REPORT_v1.md` | 旧版本审�?|
-| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | 过时文档 |
-| `06_ARCHIVE/main/RESEARCH_PIPELINE_archived.md` | 过时文档 |
-| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | 过时分析 |
-| `06_ARCHIVE/main/README_v1.1_archived.md` | 极旧版本 |
-| `06_ARCHIVE/main/CODE_STATUS_archived.md` | 过时状�?|
-| `06_ARCHIVE/main/TEST_PLAN_archived.md` | 过时测试 |
-| `06_ARCHIVE/main/BLUEPRINTS/00_UNIFIED_ARCHITECTURE_archived.md` | 已合�?|
-| `06_ARCHIVE/old_v4_plan_archive.md` | 已废�?|
-| `06_ARCHIVE/旧文档务实评估_1人AI_一个月.md` | 临时评估 |
-| `06_ARCHIVE/旧文档分析报告_qingfeng_v4_draft_backup.md` | 冗余分析 |
+| `05_IMPLEMENTATION/07_OPERATIONS/faq.md` | ﻛﺕ?`docs/FAQ.md` ﻠﮒ۳ |
+| `00_OVERVIEW/VERSION_HISTORY.md` | ﻛﺕ?`CHANGELOG.md` ﻠﮒ۳ |
+| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft - ﮒﺁﮔ؛.md` | ﮒﻛﺛﮒﺁﮔ؛ |
+| `06_ARCHIVE/main/v4_development/qingfeng_v4_draft_backup.md` | ﮒﻛﺛﮒ۳ﻛﭨﺛ |
+| `06_ARCHIVE/main/v4_development/ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ4.0.txt` | ﮒﺁﻛﭨﮒﭘﻛﭨﮔﮔ۰۲ﻠﮒﭨﭦ |
+| `06_ARCHIVE/main/v4_development/ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ4.0ﮒﺙﮒﻝﭨﻝ۷?md` | ﻛﺕﻝﺎﻝ۷ﺟﻠﮒ۳?|
+| `06_ARCHIVE/main/FINAL_SYSTEM_AUDIT_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v2_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/FINAL_DOCUMENT_AUDIT_REPORT_v3_archived.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/DOCUMENT_AUDIT_REPORT_v1.md` | ﮔ۶ﻝﮔ؛ﮒ؟۰ﻟ؟?|
+| `06_ARCHIVE/main/DEVELOPMENT_SEQUENCE_archived.md` | ﻟﺟﮔﭘﮔﮔ۰۲ |
+| `06_ARCHIVE/main/RESEARCH_PIPELINE_archived.md` | ﻟﺟﮔﭘﮔﮔ۰۲ |
+| `06_ARCHIVE/main/LEGACY_DOC_ANALYSIS_archived.md` | ﻟﺟﮔﭘﮒﮔ |
+| `06_ARCHIVE/main/README_v1.1_archived.md` | ﮔﮔ۶ﻝﮔ؛ |
+| `06_ARCHIVE/main/CODE_STATUS_archived.md` | ﻟﺟﮔﭘﻝﭘﮔ?|
+| `06_ARCHIVE/main/TEST_PLAN_archived.md` | ﻟﺟﮔﭘﮔﭖﻟﺁ |
+| `06_ARCHIVE/main/BLUEPRINTS/00_UNIFIED_ARCHITECTURE_archived.md` | ﮒﺓﺎﮒﮒﺗ?|
+| `06_ARCHIVE/old_v4_plan_archive.md` | ﮒﺓﺎﮒﭦﮒﺙ?|
+| `06_ARCHIVE/ﮔ۶ﮔﮔ۰۲ﮒ۰ﮒ؟ﻟﺁﻛﺙﺍ_1ﻛﭦﭦAI_ﻛﺕﻛﺕ۹ﮔ.md` | ﻛﺕﺑﮔﭘﻟﺁﻛﺙﺍ |
+| `06_ARCHIVE/ﮔ۶ﮔﮔ۰۲ﮒﮔﮔ۴ﮒ_qingfeng_v4_draft_backup.md` | ﮒﻛﺛﮒﮔ |
 
-#### v4_development 目录精简
+#### v4_development ﻝ؟ﮒﺛﻝﺎﺝﻝ؟
 
-| 精简�?| 精简�?|
+| ﻝﺎﺝﻝ؟ﮒ?| ﻝﺎﺝﻝ؟ﮒ?|
 |--------|--------|
-| 9个文�?| 2个文�?|
+| 9ﻛﺕ۹ﮔﻛﭨ?| 2ﻛﺕ۹ﮔﻛﭨ?|
 
-保留文件�?
-- `qingfeng_v4_draft.md` - 初始设计
-- `qingfeng_v4_development_plan.md` - 开发方�?
+ﻛﺟﻝﮔﻛﭨﭘﺅﺙ?
+- `qingfeng_v4_draft.md` - ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
+- `qingfeng_v4_development_plan.md` - ﮒﺙﮒﮔﺗﮔ۰?
 
-#### 更新的索引文�?
+#### ﮔﺑﮔﺍﻝﻝﺑ۱ﮒﺙﮔﮔ۰?
 
-- �?`INDEX.md` - v2.3，新�?DOCUMENT_AUDIT_v5.1.md 索引
-- �?`SITEMAP.md` - v2.2，反映最新结�?
-- �?`06_ARCHIVE/README.md` - v5.1，记录清理变�?
-- �?`DOCUMENT_AUDIT_v5.1.md` - 新建，文档审查报�?
+- ﻗ?`INDEX.md` - v2.3ﺅﺙﮔﺍﮒ۱?DOCUMENT_AUDIT_v5.1.md ﻝﺑ۱ﮒﺙ
+- ﻗ?`SITEMAP.md` - v2.2ﺅﺙﮒﮔﮔﮔﺍﻝﭨﮔ?
+- ﻗ?`06_ARCHIVE/README.md` - v5.1ﺅﺙﻟ؟ﺍﮒﺛﮔﺕﻝﮒﮔ?
+- ﻗ?`DOCUMENT_AUDIT_v5.1.md` - ﮔﺍﮒﭨﭦﺅﺙﮔﮔ۰۲ﮒ؟۰ﮔ۴ﮔ۴ﮒ?
 
-#### 待处理问�?
+#### ﮒﺝﮒ۳ﻝﻠ؟ﻠ۱?
 
-| 问题 | 严重程度 | 说明 |
+| ﻠ؟ﻠ۱ | ﻛﺕ۴ﻠﻝ۷ﮒﭦ۵ | ﻟﺁﺑﮔ |
 |------|----------|------|
-| System_Manifest.md 缺失 | 🔴 严重 | 需�?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md 恢复 |
-| ARCHIVED.md 在非归档目录 | 🔴 严重 | docs/03/08/ �?docs/08/04/ 下各有一�?|
-| 索引引用断裂 | 🟡 中等 | 多个文档引用不存在的文件 |
+| System_Manifest.md ﻝﺙﭦﮒ۳ﺎ | ﻭﺑ ﻛﺕ۴ﻠ | ﻠﻛﭨ?06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md ﮔ۱ﮒ۳ |
+| ARCHIVED.md ﮒ۷ﻠﮒﺛﮔ۰۲ﻝ؟ﮒﺛ | ﻭﺑ ﻛﺕ۴ﻠ | docs/03/08/ ﮒ?docs/08/04/ ﻛﺕﮒﮔﻛﺕﻛﺕ?|
+| ﻝﺑ۱ﮒﺙﮒﺙﻝ۷ﮔﻟ۲ | ﻭ۰ ﻛﺕﻝ | ﮒ۳ﻛﺕ۹ﮔﮔ۰۲ﮒﺙﻝ۷ﻛﺕﮒﮒ۷ﻝﮔﻛﭨﭘ |
 
-#### 统计数据
+#### ﻝﭨﻟ؟۰ﮔﺍﮔ؟
 
-| 指标 | 数�?|
+| ﮔﮔ | ﮔﺍﮒ?|
 |------|------|
-| 删除文件 | 20�?|
-| 精简后文档总数 | ~80+ (从~150减少) |
-| v4_development精简 | 9�?�?2�?|
+| ﮒﻠ۳ﮔﻛﭨﭘ | 20ﻛﺕ?|
+| ﻝﺎﺝﻝ؟ﮒﮔﮔ۰۲ﮔﭨﮔﺍ | ~80+ (ﻛﭨ~150ﮒﮒﺍ) |
+| v4_developmentﻝﺎﺝﻝ؟ | 9ﻛﺕ?ﻗ?2ﻛﺕ?|
 
 
 ## [v5.0.0] - 2026-03-29
 
-### 🚀 重大升级: v4.0 �?v5.0
+### ﻭ ﻠﮒ۳۶ﮒﻝﭦ۶: v4.0 ﻗ?v5.0
 
-#### 版本标识统一
-- �?统一版本标识�?v5.0.0
-- �?更新 quant_system_v4/README.md
-- �?更新 quant_system_v4/config/system.yaml
-- �?更新 CHANGELOG.md
+#### ﻝﮔ؛ﮔﻟﺁﻝﭨﻛﺕ
+- ﻗ?ﻝﭨﻛﺕﻝﮔ؛ﮔﻟﺁﻛﺕ?v5.0.0
+- ﻗ?ﮔﺑﮔﺍ quant_system_v4/README.md
+- ﻗ?ﮔﺑﮔﺍ quant_system_v4/config/system.yaml
+- ﻗ?ﮔﺑﮔﺍ CHANGELOG.md
 
-#### 文档结构更新
-- �?重写 System_Manifest.md 以反�?v5.0 实际结构
-- �?标记模块实现状态（✅已实现 / 🔄规划�?/ ❌待开发）
-- �?归档旧文件到 06_ARCHIVE/
+#### ﮔﮔ۰۲ﻝﭨﮔﮔﺑﮔﺍ
+- ﻗ?ﻠﮒ System_Manifest.md ﻛﭨ۴ﮒﮔ?v5.0 ﮒ؟ﻠﻝﭨﮔ
+- ﻗ?ﮔﻟ؟ﺍﮔ۷۰ﮒﮒ؟ﻝﺍﻝﭘﮔﺅﺙﻗﮒﺓﺎﮒ؟ﻝﺍ / ﻭﻟ۶ﮒﻛﺕ?/ ﻗﮒﺝﮒﺙﮒﺅﺙ
+- ﻗ?ﮒﺛﮔ۰۲ﮔ۶ﮔﻛﭨﭘﮒﺍ 06_ARCHIVE/
 
-#### v5.0 目录结构
+#### v5.0 ﻝ؟ﮒﺛﻝﭨﮔ
 ```
 docs/
-├── 00_OVERVIEW/              # 系统总览
-├── 01_FRAMEWORK/             # 框架定义
-├── 02_FACTOR_LIBRARY/        # 因子�?(含治理框�?
-├── 03_TRADING_TACTICS/       # 交易策略
-├── 04_EXECUTION/             # 执行引擎
-├── 05_IMPLEMENTATION/        # 实施指南
-├── 06_ARCHIVE/               # 归档
-└── 07_RESEARCH/              # AI研究
+ﻗﻗﻗ 00_OVERVIEW/              # ﻝﺏﭨﻝﭨﮔﭨﻟ۶
+ﻗﻗﻗ 01_FRAMEWORK/             # ﮔ۰ﮔﭘﮒ؟ﻛﺗ
+ﻗﻗﻗ 02_FACTOR_LIBRARY/        # ﮒﮒﮒﭦ?(ﮒ،ﮔﺎﭨﻝﮔ۰ﮔ?
+ﻗﻗﻗ 03_TRADING_TACTICS/       # ﻛﭦ۳ﮔﻝﻝ۴
+ﻗﻗﻗ 04_EXECUTION/             # ﮔ۶ﻟ۰ﮒﺙﮔ
+ﻗﻗﻗ 05_IMPLEMENTATION/        # ﮒ؟ﮔﺛﮔﮒ
+ﻗﻗﻗ 06_ARCHIVE/               # ﮒﺛﮔ۰۲
+ﻗﻗﻗ 07_RESEARCH/              # AIﻝﻝ۸ﭘ
 ```
 
 
 ## [v4.0.2] - 2026-03-28
 
-### 🎯 主要改进
+### ﻭﺁ ﻛﺕﭨﻟ۵ﮔﺗﻟﺟ
 
-#### 阶段一交付完成
-- �?创建 `System_Manifest.md` - 系统清单
-- �?创建 `CONTEXT_SNAPSHOT.json` - 上下文快�?
-- �?创建 `API_Contract.md` - 接口契约
-- �?创建 `Strategy_Spec_S001.md` - 策略逻辑白皮�?
-- �?创建 `AI_Permissions.md` - AI权限清单
+#### ﻠﭘﮔ؟ﭖﻛﺕﻛﭦ۳ﻛﭨﮒ؟ﮔ
+- ﻗ?ﮒﮒﭨﭦ `System_Manifest.md` - ﻝﺏﭨﻝﭨﮔﺕﮒ
+- ﻗ?ﮒﮒﭨﭦ `CONTEXT_SNAPSHOT.json` - ﻛﺕﻛﺕﮔﮒﺟ،ﻝ?
+- ﻗ?ﮒﮒﭨﭦ `API_Contract.md` - ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
+- ﻗ?ﮒﮒﭨﭦ `Strategy_Spec_S001.md` - ﻝﻝ۴ﻠﭨﻟﺝﻝﺛﻝ؟ﻛﺗ?
+- ﻗ?ﮒﮒﭨﭦ `AI_Permissions.md` - AIﮔﻠﮔﺕﮒ
 
-#### 因子库重�?
-- �?创建 `02_ALPHA_FACTORS_INDEX.md` - 单一索引表（87个因子）
-- �?删除7个重复的因子分类文件
-- �?备份旧文件到 `archives/02_ALPHA_FACTORS_OLD/`
+#### ﮒﮒﮒﭦﻠﻝﭨ?
+- ﻗ?ﮒﮒﭨﭦ `02_ALPHA_FACTORS_INDEX.md` - ﮒﻛﺕﻝﺑ۱ﮒﺙﻟ۰۷ﺅﺙ87ﻛﺕ۹ﮒﮒﺅﺙ
+- ﻗ?ﮒﻠ۳7ﻛﺕ۹ﻠﮒ۳ﻝﮒﮒﮒﻝﺎﭨﮔﻛﭨﭘ
+- ﻗ?ﮒ۳ﻛﭨﺛﮔ۶ﮔﻛﭨﭘﮒﺍ `archives/02_ALPHA_FACTORS_OLD/`
 
-#### 回测报告分离
-- �?创建 `05_BACKTEST/ic_reports/` - 因子IC验证报告
-- �?创建 `05_BACKTEST/strategy_reports/` - 策略回测报告
-- �?分离因子IC验证 vs 策略回测
+#### ﮒﮔﭖﮔ۴ﮒﮒﻝ۵ﭨ
+- ﻗ?ﮒﮒﭨﭦ `05_BACKTEST/ic_reports/` - ﮒﮒICﻠ۹ﻟﺁﮔ۴ﮒ
+- ﻗ?ﮒﮒﭨﭦ `05_BACKTEST/strategy_reports/` - ﻝﻝ۴ﮒﮔﭖﮔ۴ﮒ
+- ﻗ?ﮒﻝ۵ﭨﮒﮒICﻠ۹ﻟﺁ vs ﻝﻝ۴ﮒﮔﭖ
 
 
 ## [v4.0.1] - 2026-03-28
 
-### 📋 初始版本
+### ﻭ ﮒﮒ۶ﻝﮔ؛
 
-- 完成系统架构设计（Layer 0-7�?
-- 完成因子库建设（87+个因子）
-- 完成策略池设计（120个策略框架）
-- 完成技术规格文�?
+- ﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰ﺅﺙLayer 0-7ﺅﺙ?
+- ﮒ؟ﮔﮒﮒﮒﭦﮒﭨﭦﻟ؟ﺝﺅﺙ87+ﻛﺕ۹ﮒﮒﺅﺙ
+- ﮒ؟ﮔﻝﻝ۴ﮔﺎﻟ؟ﺝﻟ؟۰ﺅﺙ120ﻛﺕ۹ﻝﻝ۴ﮔ۰ﮔﭘﺅﺙ
+- ﮒ؟ﮔﮔﮔﺁﻟ۶ﮔﺙﮔﮔ۰?
 
 
 ## [v4.0] - 2026-03-28
 
-### 🚀 首次发布
+### ﻭ ﻠ۵ﮔ؛۰ﮒﮒﺕ
 
-- 清风量化交易系统 v4.0 正式发布
-- 采用Layer 0-7分层架构
-- 支持30-50种策略动态管�?
-- 支持AI因子挖掘和参数优�?
-
-
-## 版本管理规则
-
-### 主版本升级（v5.0 �?v6.0�?
-- 架构重大改变
-- 核心模块替换
-- 数据格式不兼�?
-
-### 次版本升级（v5.1 �?v5.2�?
-- 新增模块
-- 新增因子�?
-- 新增策略
-
-### 补丁版本升级（v5.1.0 �?v5.1.1�?
-- Bug修复
-- 文档更新
-- 性能优化
+- ﮔﺕﻠ۲ﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨ v4.0 ﮔ۲ﮒﺙﮒﮒﺕ
+- ﻠﻝ۷Layer 0-7ﮒﮒﺎﮔﭘﮔ
+- ﮔﺁﮔ30-50ﻝ۶ﻝﻝ۴ﮒ۷ﮔﻝ؟۰ﻝ?
+- ﮔﺁﮔAIﮒﮒﮔﮔﮒﮒﮔﺍﻛﺙﮒ?
 
 
-**最后更�?*: 2026-03-31 | **维护�?*: 清风量化研究�?
+## ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﮒ
+
+### ﻛﺕﭨﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.0 ﻗ?v6.0ﺅﺙ?
+- ﮔﭘﮔﻠﮒ۳۶ﮔﺗﮒ
+- ﮔﺕﮒﺟﮔ۷۰ﮒﮔﺟﮔ۱
+- ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮒﺙﮒ؟?
+
+### ﮔ؛۰ﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.1 ﻗ?v5.2ﺅﺙ?
+- ﮔﺍﮒ۱ﮔ۷۰ﮒ
+- ﮔﺍﮒ۱ﮒﮒﮒﭦ?
+- ﮔﺍﮒ۱ﻝﻝ۴
+
+### ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv5.1.0 ﻗ?v5.1.1ﺅﺙ?
+- Bugﻛﺟ؟ﮒ۳
+- ﮔﮔ۰۲ﮔﺑﮔﺍ
+- ﮔ۶ﻟﺛﻛﺙﮒ
+
+
+**ﮔﮒﮔﺑﮔ?*: 2026-03-31 | **ﻝﭨﺑﮔ۳ﻟ?*: ﮔﺕﻠ۲ﻠﮒﻝﻝ۸ﭘﻠ?

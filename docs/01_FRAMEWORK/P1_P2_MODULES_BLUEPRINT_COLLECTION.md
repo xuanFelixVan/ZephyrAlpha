@@ -3,21 +3,34 @@ module_id: P1_P2_MODULES_BLUEPRINT_COLLECTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: 全系统 (Layer 0-11)
 standard_type: 专业量化机构级P1/P2模块蓝图汇总
 applicable_scope: P1级专业模块 + P2级扩展模块实施
 compliance_level: 顶级专业标准
-reference_models: ["Two Sigma", "Citadel", "Bridgewater", "WorldQuant", "Renaissance Technologies"]
+reference_models:
+- Two Sigma
+- Citadel
+- Bridgewater
+- WorldQuant
+- Renaissance Technologies
 related_documents:
-  - P0_CORE_MODULES_BLUEPRINT_COLLECTION.md
-  - ALL_LAYERS_GAP_ANALYSIS.md
+- P0_CORE_MODULES_BLUEPRINT_COLLECTION.md
+- ALL_LAYERS_GAP_ANALYSIS.md
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
 ---
 
 # P1级专业模块 + P2级扩展模块蓝图汇总
+> **核心职责**: P1 P2 Modules Blueprint Collection.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：P1 P2 Modules Blueprint Collection.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  
@@ -222,9 +235,9 @@ python src/data_lineage/tracker.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **Atlas服务器** | ¥300 |
-| **总计** | **¥800** |
+| **云服务器** | 500 |
+| **Atlas服务器** | 300 |
+| **总计** | **800** |
 
 ---
 
@@ -442,8 +455,8 @@ python src/model_risk/manager.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 3周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -591,8 +604,8 @@ python src/model_fairness/detector.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -706,17 +719,17 @@ class DataSourceCostOptimizer:
 # 数据源成本报告
 
 ## 成本概览
-- 总成本: ¥{cost_analysis['total_cost']:.2f}
+- 总成本: {cost_analysis['total_cost']:.2f}
 
 ## 各数据源成本
 """
         
         for source, cost in cost_analysis['cost_by_source'].items():
-            report += f"- {source}: ¥{cost:.2f}\n"
+report += f"- {source}: {cost:.2f}\n"
         
         report += "\n## 优化机会\n"
         for opportunity in cost_analysis['optimization_opportunities']:
-            report += f"- {opportunity['description']}: ¥{opportunity['potential_savings']:.2f}\n"
+report += f"- {opportunity['description']}: {opportunity['potential_savings']:.2f}\n"
         
         return report
 ```
@@ -739,8 +752,8 @@ python src/data_cost/optimizer.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -781,9 +794,7 @@ class DataAugmentationSystem:
             raise ValueError(f"不支持的增强方法: {method}")
         
         # 应用增强方法
-        augmented_data = self.augmentation_methods[method](
-            data, augmentation_ratio
-        )
+        augmented_data = self.augmentation_methodsmethod
         
         return augmented_data
     
@@ -901,8 +912,8 @@ python src/data_augmentation/system.py
 | 成本项 | 总价 |
 |--------|------|
 | **开发时间** | 2周 |
-| **云服务器** | ¥500 |
-| **总计** | **¥500** |
+| **云服务器** | 500 |
+| **总计** | **500** |
 
 ---
 
@@ -915,18 +926,18 @@ python src/data_augmentation/system.py
 | 成本项 | 总计 |
 |--------|------|
 | **开发时间** | 3个月 (AI辅助) |
-| **云服务器** | ¥500/月 × 3 = ¥1,500 |
-| **其他成本** | ¥1,500 |
-| **总计** | **¥3,000** |
+| **云服务器** | 500/月  3 = 1,500 |
+| **其他成本** | 1,500 |
+| **总计** | **3,000** |
 
 #### P2级扩展模块 (15个)
 
 | 成本项 | 总计 |
 |--------|------|
 | **开发时间** | 3个月 (AI辅助) |
-| **云服务器** | ¥500/月 × 3 = ¥1,500 |
-| **其他成本** | ¥1,000 |
-| **总计** | **¥2,500** |
+| **云服务器** | 500/月  3 = 1,500 |
+| **其他成本** | 1,000 |
+| **总计** | **2,500** |
 
 ### 3.2 实施优先级
 

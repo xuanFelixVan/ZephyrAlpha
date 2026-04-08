@@ -1,5 +1,18 @@
 ---
-module_id: PORTFOLIO_INSURANCE_BLUEPRINT_001
+module_id: LAYER_019
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 6 (组合优化层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 投资组合优化蓝图设计与实施指导与实施方案
+---
+module_id: PORTFOLIO_INSURANCE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -18,6 +31,43 @@ implementation_status: 设计阶段
 ---
 
 # Layer 11.5: 投资组合保险系统蓝图
+> **核心职责**: 投资组合保险系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：投资组合保险系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Portfolio Insurance蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Portfolio Insurance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**模块蓝图，负责特定功能的实现**。
+
+### 职责边界
+
+**负责**：
+- ✅ 核心功能实现
+- ✅ 接口定义
+- ✅ 数据模型设计
+
+**不负责**：
+- ❌ 其他模块职责
+- ❌ 跨模块协调
+
+### 对接模块
+
+**上游模块**：
+- 上游模块
+
+**下游模块**：
+- 下游模块
+
+---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-05  
@@ -123,13 +173,13 @@ Layer 11.5投资组合保险系统是清风量化系统的**风险保护盾**，
 
 ```
 保护层 (Floor):
-Floor_t = Max(Floor_0, Value_t × (1 - MaxDrawdown))
+Floor_t = Max(Floor_0, Value_t  (1 - MaxDrawdown))
 
 保护距离 (Cushion):
 Cushion_t = Portfolio_Value_t - Floor_t
 
 风险资产配置:
-Risky_Asset_t = Min(Cushion_t × Multiplier, Portfolio_Value_t × Max_Risky_Ratio)
+Risky_Asset_t = Min(Cushion_t  Multiplier, Portfolio_Value_t  Max_Risky_Ratio)
 
 安全资产配置:
 Safe_Asset_t = Portfolio_Value_t - Risky_Asset_t
@@ -264,19 +314,19 @@ class CPPIEngine:
 - 组合价值: 100万
 - 保护层: 80万
 - 保护距离: 20万
-- 风险资产: 60万 (20万 × 3)
+- 风险资产: 60万 (20万  3)
 - 安全资产: 40万
 
 市场下跌20%后:
-- 风险资产: 48万 (60万 × 0.8)
+- 风险资产: 48万 (60万  0.8)
 - 组合价值: 88万 (48万 + 40万)
 - 新保护层: 80万 (保持不变)
 - 新保护距离: 8万
-- 新风险资产: 24万 (8万 × 3)
+- 新风险资产: 24万 (8万  3)
 - 新安全资产: 64万
 
 保护效果:
-- 无CPPI损失: 20万 (100万 × 20%)
+- 无CPPI损失: 20万 (100万  20%)
 - 有CPPI损失: 12万 (100万 - 88万)
 - 保护效果: 减少40%损失
 ```
@@ -291,14 +341,14 @@ class CPPIEngine:
 
 ```
 保护层动态提升:
-Floor_t = Max(Floor_t-1, Portfolio_Value_t × Floor_Ratio)
+Floor_t = Max(Floor_t-1, Portfolio_Value_t  Floor_Ratio)
 
 收益锁定机制:
 如果 Portfolio_Value_t > Peak_Value_t-1:
-    New_Floor = Max(Old_Floor, Portfolio_Value_t × Lock_Ratio)
+New_Floor = Max(Old_Floor, Portfolio_Value_t  Lock_Ratio)
     
 风险资产配置:
-Risky_Asset_t = (Portfolio_Value_t - Floor_t) × Multiplier
+Risky_Asset_t = (Portfolio_Value_t - Floor_t)  Multiplier
 ```
 
 **关键特性**：
@@ -377,13 +427,13 @@ class TIPPEngine:
 Portfolio_t = Stock_t + Put_Option_t
 
 成本计算:
-Hedge_Cost = Put_Premium × Number_of_Contracts
+Hedge_Cost = Put_Premium  Number_of_Contracts
 
 保护效果:
 如果 Stock_t < Strike_Price:
-    Portfolio_Value = Strike_Price × Shares + Put_Payoff
+Portfolio_Value = Strike_Price  Shares + Put_Payoff
 否则:
-    Portfolio_Value = Stock_t × Shares
+Portfolio_Value = Stock_t  Shares
 ```
 
 **关键参数**：
@@ -765,9 +815,9 @@ Layer 7 AI报告
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构 |
-| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./RISK_BUDGET_SYSTEM_BLUEPRINT.md) | 风险预算系统 |
+| [RISK_BUDGET_SYSTEM_BLUEPRINT.md](./CAPITAL_ALLOCATION_BLUEPRINT.md) | 风险预算系统 |
 
 ---
 
@@ -781,3 +831,34 @@ Layer 7 AI报告
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建融资融券管理系统蓝图
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Portfolio Insurance Blueprint
+- **模块ID**: PORTFOLIO_INSURANCE_BLUEPRINT_001
+- **蓝图文档**: PORTFOLIO_INSURANCE_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.5 - 投资组合保险系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Portfolio Insurance Blueprint** | Layer 11.5 - 投资组合保险系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

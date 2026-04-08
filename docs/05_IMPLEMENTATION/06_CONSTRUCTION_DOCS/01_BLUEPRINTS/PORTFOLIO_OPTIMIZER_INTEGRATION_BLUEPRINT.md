@@ -1,60 +1,138 @@
 ---
+responsibility:
+- 优化器集成
+- 接口封装
+- 优化器协调
+- 结果整合
 module_id: PORTFOLIO_OPTIMIZER_INTEGRATION_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib, skfolio, deepfolio, cvxpy
-estimated_effort: 5-7天
-priority: P0
+layer: Layer 6 (组合优化层)
 ---
 
 
+## 核心定位
+
+负责投资组合优化器集成的设计与构建和运行和操作，整合优化算法和约束分析和转换，生成和输出统一的优化接口，兼容和适配组合优化。
+
 # 组合优化引擎集成模块蓝图
 
-> 清风量化交易系统 v5.3 - 组合优化引擎集成详细设计
-> **索引**: `OPTIMIZER_INTEGRATION_001`
-> **开发周期**: 5-7天
-> **核心定位**: 统一优化器接口，多优化器集成，优化器选择策略
-> **参考开源**: PyPortfolioOpt + Riskfolio-Lib + skfolio + deepfolio + cvxpy
-> **专业对标**: 所有专业量化机构必备模块
+> **核心职责**: 统一优化器接口，多优化器集成
+> **职责边界**:
+## 设计目标
+
+### 主要目标
+
+1. **功能完整性**: 确保PORTFOLIO OPTIMIZER INTEGRATION功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用PORTFOLIO OPTIMIZER INTEGRATION化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layer定位**: Layer 6 - 组合优化层（优化引擎模块）
 
-**核心价值**:
-- 多优化器集成（PyPortfolioOpt、Riskfolio-Lib、skfolio、deepfolio）
-- 统一优化器接口
 - 优化器选择策略
 - 优化结果验证
 - 优化性能对比
 
-**业务价值**:
 - 提供多种优化方法选择
-- 提升优化灵活性
 - 支持优化方法对比
 
 ### 1.2 版本信息
 
-| 项目 | 内容 |
 |------|------|
 | **模块ID** | PORTFOLIO_OPTIMIZER_INTEGRATION_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | PyPortfolioOpt, Riskfolio-Lib, skfolio, deepfolio, cvxpy |
-| **预计工时** | 5-7天 |
 
----
 
-## 2. 技术实现
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+|
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
+| **Riskfolio-Lib** | 5.0+ | 风险优化 | [官方文档](https://riskfolio-lib.readthedocs.io/) |
+| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
+
+
+```mermaid
+graph LR
+    A[数据质量监控] --> B[组合优化引擎]
+    C[数据目录] --> B
+    D[策略组合优化] --> B
+    
+    B --> E[多目标优化]
+    B --> G[组合约束管理]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style D fill:#45b7d1
+```
+
+
+
 
 ### 2.1 核心API
 
@@ -65,7 +143,6 @@ import pandas as pd
 import numpy as np
 
 class BaseOptimizer(ABC):
-    """优化器基类"""
     
     @abstractmethod
     def optimize(
@@ -78,17 +155,13 @@ class BaseOptimizer(ABC):
         执行优化
         
         Args:
-            expected_returns: 预期收益率
-            cov_matrix: 协方差矩阵
             constraints: 约束条件
             
         Returns:
-            最优权重
         """
         pass
 
 class PyPortfolioOptOptimizer(BaseOptimizer):
-    """PyPortfolioOpt优化器"""
     
     def optimize(
         self,
@@ -106,7 +179,6 @@ class PyPortfolioOptOptimizer(BaseOptimizer):
         return np.array(list(weights.values()))
 
 class RiskfolioLibOptimizer(BaseOptimizer):
-    """Riskfolio-Lib优化器"""
     
     def optimize(
         self,
@@ -120,7 +192,6 @@ class RiskfolioLibOptimizer(BaseOptimizer):
         pass
 
 class SkfolioOptimizer(BaseOptimizer):
-    """skfolio优化器"""
     
     def optimize(
         self,
@@ -134,7 +205,6 @@ class SkfolioOptimizer(BaseOptimizer):
         pass
 
 class DeepfolioOptimizer(BaseOptimizer):
-    """deepfolio优化器"""
     
     def optimize(
         self,
@@ -170,12 +240,9 @@ class OptimizerIntegration:
         
         Args:
             method: 优化方法名称
-            expected_returns: 预期收益率
-            cov_matrix: 协方差矩阵
             constraints: 约束条件
             
         Returns:
-            最优权重
         """
         optimizer = self.optimizers.get(method)
         if not optimizer:
@@ -190,10 +257,8 @@ class OptimizerIntegration:
         constraints: Optional[Dict] = None
     ) -> pd.DataFrame:
         """
-        对比多个优化器结果
         
         Returns:
-            优化结果对比表
         """
         results = {}
         for name, optimizer in self.optimizers.items():
@@ -214,17 +279,11 @@ class OptimizerIntegration:
         return pd.DataFrame(results).T
 ```
 
-### 2.2 优化器特性对比
 
-| 优化器 | 特点 | 适用场景 | 性能 |
 |--------|------|---------|------|
-| **PyPortfolioOpt** | 经典优化方法、约束丰富 | 传统组合优化 | ⭐⭐⭐ |
-| **Riskfolio-Lib** | 风险模型丰富、高级功能 | 风险管理导向 | ⭐⭐⭐ |
-| **skfolio** | ML风格接口、易于集成 | 机器学习场景 | ⭐⭐ |
 | **deepfolio** | 深度学习、端到端优化 | 复杂优化问题 | ⭐⭐ |
-| **cvxpy** | 灵活、自定义优化 | 特殊约束优化 | ⭐⭐⭐ |
 
----
+
 
 ## 3. 接口定义
 
@@ -249,17 +308,15 @@ class OptimizerAPI:
         cov_matrix: List[List[float]],
         methods: List[str]
     ) -> ComparisonResult:
-        """对比多个优化器"""
         
     @endpoint("/api/v1/optimizer/select")
     async def select_optimizer(
         self,
         optimization_criteria: dict
     ) -> OptimizerRecommendation:
-        """推荐优化器"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -267,19 +324,37 @@ class OptimizerAPI:
 |------|------|------|
 | Phase 1 | 统一接口设计、PyPortfolioOpt集成 | 16h |
 | Phase 2 | Riskfolio-Lib、skfolio、deepfolio集成 | 20h |
-| Phase 3 | API、对比功能、测试 | 16h |
 
----
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 
----
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+
+
+## 5. 文档治理
+
+### 5.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Portfolio Optimizer Integration
+- **模块ID**: PORTFOLIO_OPTIMIZER_INTEGRATION_001
+- **蓝图文档**: PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md
+```
+
+### 5.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 5.3 版本管理
+
+|------|------|----------|--------|
+
+
+

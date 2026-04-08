@@ -1,0 +1,165 @@
+# CONSOLIDATED REPORT FOR AI（过夜审计汇总 — 供下一轮会话阅读）
+
+> 生成时间: 2026-04-08T03:32:43
+> 仓库: `D:\ZephyrAlpha`
+> 运行目录: `docs\09_AUDIT\STATE\overnight_runs\20260408_033240`
+
+## 1. 执行摘要
+
+| 指标 | 值 |
+|------|-----|
+| Markdown 文件数 | 2808 |
+| 内链解析数（相对路径类） | 4636 |
+| 判定有效链接 | 3575 |
+| 判定无效链接 | 69 |
+| 重复 module_id 组数 | 238 |
+| 未检出 module_id 文件数（头 120KB） | 74 |
+
+## 2. 本目录产出文件（请优先阅读）
+
+- `MANIFEST.json` — 步骤与时间
+- `module_id_duplicates_detail.md` — 重复 id 与路径列表
+- `invalid_links_detail.md` — 无效链接表
+- `git_snapshot.txt` — 分支、tag、diff 摘要
+- `sentinel_l1_scan_<run_id>.json` — 机器可读全量
+- `md_by_subdir_<run_id>.md` — 按目录文件清单副本
+
+## 3. docs/ 一级目录文档量（Top 30）
+
+| 目录 | 文件数 | 约字节 |
+|------|--------|--------|
+| `05_IMPLEMENTATION` | 796 | 12594966 |
+| `06_ARCHIVE` | 587 | 8784704 |
+| `09_AUDIT` | 428 | 5894378 |
+| `01_FRAMEWORK` | 338 | 6434560 |
+| `02_FACTOR_LIBRARY` | 141 | 305011 |
+| `08_HUMAN_AI_INTERFACE` | 107 | 350312 |
+| `10_AI_WORKFLOW` | 69 | 1477064 |
+| `09_ARCHIVE` | 57 | 284494 |
+| `03_TRADING_TACTICS` | 56 | 824625 |
+| `11_STRATEGIC_DECISION` | 51 | 1208112 |
+| `04_EXECUTION` | 30 | 359836 |
+| `09_RESEARCH_INNOVATION` | 30 | 748617 |
+| `10_GOVERNANCE_COMPLIANCE` | 21 | 146446 |
+| `07_RESEARCH` | 18 | 147007 |
+| `08_KNOWLEDGE` | 13 | 183441 |
+| `08_KNOWLEDGE_BASE` | 5 | 29785 |
+| `00_RESOURCES` | 4 | 9628 |
+| `00_OVERVIEW` | 3 | 16396 |
+| `06_CONSTRUCTION_DOCS` | 3 | 29591 |
+| `07_AI_REPORTING` | 2 | 3055 |
+| `API_README.md` | 1 | 5807 |
+| `INDEX.md` | 1 | 15851 |
+| `SITEMAP.md` | 1 | 8546 |
+| `System_Manifest.md` | 1 | 75878 |
+| `module_designs` | 1 | 77283 |
+
+## 4. 体积最大的 Markdown（Top 40）
+
+| 字节 | 路径 |
+|------|------|
+| 1622704 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md` |
+| 609866 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/STRATEGY_EXECUTION_DEEP_CONTENT_AUDIT_REPORT_20260407.md` |
+| 455730 | `docs/09_AUDIT/STATE/ARCHIVE_FILES_REFERENCE_CHECK_REPORT_20260407_184342.md` |
+| 342358 | `docs/09_RESEARCH_INNOVATION/BLUEPRINT.md` |
+| 335176 | `docs/06_ARCHIVE/main/v4_development/qingfeng_v4_draft.md` |
+| 246314 | `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/md_by_subdir_20260408_033240.md` |
+| 246314 | `docs/09_AUDIT/STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md` |
+| 245705 | `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/md_by_subdir_20260408_022356.md` |
+| 245173 | `docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md` |
+| 194118 | `docs/09_AUDIT/REPORTS/ISSUE_HANDOVER_DOCUMENT_20260407.md` |
+| 119218 | `docs/06_ARCHIVE/strategy_pool.md` |
+| 115921 | `docs/06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_VALIDATOR.md` |
+| 110797 | `docs/06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_ANOMALY_DETECTOR.md` |
+| 107012 | `docs/09_AUDIT/REPORTS/DOCUMENT_AUDIT_v5.1.md` |
+| 106968 | `docs/06_ARCHIVE/overlap_DOCUMENT_AUDIT_v5.1_20260407_190203.md` |
+| 97792 | `docs/01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md` |
+| 90363 | `docs/01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md` |
+| 86932 | `docs/01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md` |
+| 86233 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/COMPREHENSIVE_DEEP_AUDIT_20260407_173907.md` |
+| 83908 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DEEP_AUDIT_V6_20260407.md` |
+| 82668 | `docs/09_AUDIT/STATE/MISSING_METADATA_SCAN_REPORT_20260407_170852.md` |
+| 82653 | `docs/06_ARCHIVE/overlap_MISSING_METADATA_SCAN_REPORT_20260407_170852_20260407_190203.md` |
+| 79917 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DEEP_AUDIT_V2_20260407.md` |
+| 79891 | `docs/09_AUDIT/STATE/MISSING_METADATA_SCAN_REPORT_20260407_173053.md` |
+| 79876 | `docs/06_ARCHIVE/overlap_MISSING_METADATA_SCAN_REPORT_20260407_173053_20260407_190203.md` |
+| 79448 | `docs/04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md` |
+| 77283 | `docs/module_designs/layer_0/L0_QMT.md` |
+| 75878 | `docs/System_Manifest.md` |
+| 73857 | `05_IMPLEMENTATION/04_OPERATIONS/audit_state/HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md` |
+| 73334 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/TRADING_COST_TEST_CASE_DESIGN.md` |
+| 73103 | `docs/01_FRAMEWORK/MEMPALACE_INTEGRATION_BLUEPRINT.md` |
+| 70615 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md` |
+| 70438 | `docs/06_ARCHIVE/architecture_v4/L4_FEATURE_ENG.md` |
+| 69966 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/COMPENSATING_TRANSACTION_DESIGN.md` |
+| 68709 | `docs/01_FRAMEWORK/AI_CAPABILITY_GAP_BLUEPRINT.md` |
+| 68264 | `docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE_V2_ARCHIVED.md` |
+| 67440 | `docs/06_ARCHIVE/main/v4_development/qingfeng_v4_development_plan.md` |
+| 66733 | `docs/06_ARCHIVE/20260404_market_participant_consolidation/A_STOCK_MAIN_FORCE_BEHAVIOR_RESEARCH.md` |
+| 64742 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md` |
+| 63585 | `review_materials_package/trading_costs/交易成本测试用例设计.md` |
+
+## 5. Git 快照（摘录）
+
+```text
+$ git rev-parse HEAD
+c62f537c2fe94436d9204c9c76e5a6f08d91135b
+
+
+$ git rev-parse --abbrev-ref HEAD
+backup/layer25-deep-audit-20260407
+
+
+$ git status -sb
+## backup/layer25-deep-audit-20260407
+ M .env.example
+ M docs/09_AUDIT/STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md
+ M docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.json
+ M docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md
+?? docs/09_AUDIT/STATE/Untitled-1.json
+?? docs/09_AUDIT/STATE/Untitled-2.json
+?? docs/09_AUDIT/STATE/overnight_runs/20260408_022356/
+?? docs/module_designs/
+
+
+$ git tag -l audit-snapshot-*
+audit-snapshot-20260408
+
+
+$ git tag -l audit-phase0-*
+audit-phase0-complete-20260408
+
+
+$ git diff --name-status audit-snapshot-20260408...HEAD (truncated)
+M	.trae/skills/audit-sentinel/SKILL.md
+M	05_IMPLEMENTATION/04_OPERATIONS/audit_state/HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md
+M	docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/SYSTEM_ARCHITECTURE_GIT_AUDIT_REPORT_20260408.md
+M	docs/09_AUDIT/PROCEDURES/INDEX.md
+A	docs/09_AUDIT/REPORTS/FULL_DOC_GOVERNANCE_AUDIT_PHASE0_20260408.md
+A	docs/09_AUDIT/REPORTS/SENTINEL_AUTONOMOUS_GOVERNANCE_RUN_20260408.md
+M	docs/09_AUDIT/STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md
+A	docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.json
+A	docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md
+A	docs/09_AUDIT/STATE/SENTINEL_PROGRESS_20260408.json
+A	docs/09_AUDIT/STATE/inventory_md_20260408.csv
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MANIFEST.json
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.json
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/git_snapshot.txt
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail.md
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/inventory_md_20260408_021344.csv
+A	docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail.md
+A	scripts/overnight_audit_runner.py
+A	scripts/register_overnight_scheduled_task.ps1
+A	scripts/sentinel_l1_governance_scan.py
+
+
+```
+
+## 6. 下一轮 AI 建议动作
+
+1. 阅读 `invalid_links_detail.md`，按类修复：缺失文件 / 伪链接 / 路径层级错误。
+2. 按 `module_id_duplicates_detail.md` 分批消解重复（先 audit_state 与 INDEX 模板）。
+3. 对照 `FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md` 继续做 L2 分批职责审计。

@@ -1,0 +1,14 @@
+{
+  "fix_date": "2026-04-07T19:02:53.534005",
+  "fixes": {
+    "sparse_dirs_integrated": 0,
+    "empty_dirs_deleted": 21,
+    "files_renamed": 0
+  },
+  "total_fixes": 21,
+  "summary": {
+    "sparse_dirs_integrated": 0,
+    "empty_dirs_deleted": 21,
+    "files_renamed": 0
+  }
+}

@@ -1,36 +1,57 @@
 ---
-module_id: DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001
+module_id: DATA_PRIVACY_COMPLIANCE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据隐私合规系统
 compliance_level: 顶级专业标准
-reference_models: ["GDPR", "PIPL", "OpenDP", "Differential Privacy"]
+reference_models:
+- GDPR
+- PIPL
+- OpenDP
+- Differential Privacy
 related_documents:
-  - DATA_GOVERNANCE_LAYER_BLUEPRINT.md
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- DATA_GOVERNANCE_LAYER_BLUEPRINT.md
+- DATA_LINEAGE_TRACKING_BLUEPRINT.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - 数据分类分级（敏感数据识别、数据分级）
+
   - 隐私保护措施（数据脱敏、差分隐私）
+
   - 合规检查（GDPR/PIPL合规检查）
+
   - 隐私审计（隐私影响评估、审计日志）
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - DATA_LINEAGE_TRACKING_BLUEPRINT.md: 数据血缘追踪
+
   - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查
+
+  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控规则检查'
+responsibility:
+- DATA_PRIVACY_COMPLIANCE蓝图设计
+---
 ---
 
+
 # 数据隐私合规系统蓝图
+> **核心职责**: Data Privacy Compliance蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Privacy Compliance蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -347,7 +368,7 @@ class DataMasker:
         """脱敏数据"""
         
         if field_name in self.masking_rules:
-            return self.masking_rules[field_name](value, masking_type)
+            return self.masking_rulesfield_name
         
         return self._default_mask(value, masking_type)
     
@@ -557,10 +578,41 @@ class DataBreachEvent:
 
 | 文档 | 说明 |
 |------|------|
-| [DATA_GOVERNANCE_LAYER_BLUEPRINT.md](./DATA_GOVERNANCE_LAYER_BLUEPRINT.md) | 数据治理层蓝图 |
+| DATA_GOVERNANCE_LAYER_BLUEPRINT.md | 数据治理层蓝图 |
 | [DATA_LINEAGE_TRACKING_BLUEPRINT.md](./DATA_LINEAGE_TRACKING_BLUEPRINT.md) | 数据血缘追踪蓝图 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | 治理与合规层蓝图 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 10: 治理与合规层
+##### 0.001. Data Privacy Compliance Blueprint
+- **模块ID**: DATA_PRIVACY_COMPLIANCE_BLUEPRINT_001
+- **蓝图文档**: DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 数据隐私合规系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Data Privacy Compliance Blueprint** | 数据隐私合规系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

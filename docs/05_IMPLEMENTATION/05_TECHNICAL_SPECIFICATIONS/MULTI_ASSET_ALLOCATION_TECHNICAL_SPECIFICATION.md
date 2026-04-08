@@ -1,4 +1,15 @@
+﻿---
+module_id: MULTI_ASSET_ALLOCATION_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - MULTI_ASSET_ALLOCATION_TECHNICAL技术规范
 ---
+
+﻿---
 module_id: MULTI_ASSET_ALLOCATION_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -17,13 +28,22 @@ standard_type: 专业量化机构技术规格书
 applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+
+---
 ---
 
 # 多资产类别配置技术规格书 v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> 清风量化系统 v5.3 - 多资产类别配置详细技术设?> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
+
+> 清风量化系统 v5.3 - 多资产类别配置详细技术设计> **索引**: `MULTI_ASSET_ALLOCATION_SPEC_001`
 > **开发时?*: 80h
-> **核心定位**: 跨资产风险平价配置，全天候策略实?
+> **核心定位**: 跨资产风险平价配置，全天候策略实现
 ---
 
 ## 1. 概述
@@ -36,7 +56,7 @@ implementation_status: 设计阶段
 
 ## 2. 接口定义
 
-### 2.1 核心类接?
+### 2.1 核心类接口
 ```python
 class MultiAssetAllocator:
     """
@@ -176,7 +196,7 @@ def risk_parity_allocation(
 
 ```python
 class TestMultiAssetAllocation:
-    """多资产配置测?""
+    """多资产配置测试""
     
     def test_risk_parity(self):
         """测试风险平价"""
@@ -194,7 +214,7 @@ class TestMultiAssetAllocation:
         assert all(abs(rc - 1/3) < 0.01 for rc in risk_contribs)
     
     def test_all_weather(self):
-        """测试全天候策?""
+        """测试全天候策略""
         regime_probs = pd.Series([0.25, 0.25, 0.25, 0.25],
                                 index=['扩张', '滞胀', '衰退', '复苏'])
         
@@ -219,4 +239,4 @@ class TestMultiAssetAllocation:
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **�?*: Final | **下一?*: 实施开?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **?*: Final | **下一?*: 实施开?

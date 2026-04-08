@@ -3,35 +3,44 @@ module_id: RESEARCH_EXP_TRACKING_SUB_001
 version: 1.0.2
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 07 RESEARCH模块文档管理与维护
 standard_type: 专业量化机构研究标准
 applicable_scope: 量化研究实验
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
+---
 ---
 
-# 实验追踪系统
 
-> 量化研究实验记录与版本管�?
+# 实验追踪系统
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> 量化研究实验记录与版本管?
 >
 > **版本**: v1.0
 > **更新**: 2026-03-28
-> **优先�?*: P2
-> **Layer**: Layer 0 (研究支持�?
+> **优先?*: P2
+> **Layer**: Layer 0 (研究支持?
 > **索引**: R.04.EXP.001
 
 ---
 
 ## 1. 概述
 
-实验追踪系统记录每次量化研究的参数、结果、代码版本，确保研究可复现�?
+实验追踪系统记录每次量化研究的参数、结果、代码版本，确保研究可复现?
 
-**设计原则**�?
-- **极简** - 单人开发，不需要复杂系�?
-- **自动�?* - 脚本自动记录，无需人工干预
-- **可复�?* - 记录足够信息重现实验
+**设计原则**?
+- **极简** - 单人开发，不需要复杂系统
+- **自动?* - 脚本自动记录，无需人工干预
+- **可复?* - 记录足够信息重现实验
 
 ---
 
@@ -54,7 +63,7 @@ implementation_status: 进行�?
         "fast_period": 12,
         "slow_period": 26,
         "signal_period": 9,
-        "stock_pool": "全市�?,
+        "stock_pool": "全市?,
         "rebalance_freq": "D"
     },
 
@@ -83,9 +92,9 @@ implementation_status: 进行�?
 
 ---
 
-## 3. 实验记录�?
+## 3. 实验记录?
 
-### 3.1 基础记录�?
+### 3.1 基础记录?
 
 ```python
 import json
@@ -95,7 +104,7 @@ from pathlib import Path
 from typing import Optional
 
 class ExperimentTracker:
-    """实验追踪�?""
+    """实验追踪?""
 
     def __init__(self, storage_path: str = "data/experiments"):
         self.storage_path = Path(storage_path)
@@ -155,7 +164,7 @@ class ExperimentTracker:
             "tags": tags or []
         }
 
-        # 追加到文�?
+        # 追加到文?
         with open(self.experiments_file, 'a', encoding='utf-8') as f:
             f.write(json.dumps(record, ensure_ascii=False) + '\n')
 
@@ -164,12 +173,12 @@ class ExperimentTracker:
     def _generate_id(self) -> str:
         """生成实验ID"""
         date_str = datetime.now().strftime("%Y%m%d")
-        # 计算当天实验�?
+        # 计算当天实验?
         n_today = self._count_today_experiments() + 1
         return f"EXP_{date_str}_{n_today:03d}"
 
     def _count_today_experiments(self) -> int:
-        """统计当天实验�?""
+        """统计当天实验?""
         today = datetime.now().strftime("%Y-%m-%d")
         count = 0
         try:
@@ -211,7 +220,7 @@ class ExperimentQuery:
         self.tracker = tracker
 
     def load_all(self) -> list:
-        """加载所有实�?""
+        """加载所有实?""
         experiments = []
         try:
             with open(self.tracker.experiments_file, 'r', encoding='utf-8') as f:
@@ -222,22 +231,22 @@ class ExperimentQuery:
         return experiments
 
     def query_by_name(self, name: str) -> list:
-        """按名称查�?""
+        """按名称查?""
         all_exps = self.load_all()
         return [e for e in all_exps if name in e.get('experiment_name', '')]
 
     def query_by_type(self, research_type: str) -> list:
-        """按类型查�?""
+        """按类型查?""
         all_exps = self.load_all()
         return [e for e in all_exps if e.get('research_type') == research_type]
 
     def query_by_tag(self, tag: str) -> list:
-        """按标签查�?""
+        """按标签查?""
         all_exps = self.load_all()
         return [e for e in all_exps if tag in e.get('tags', [])]
 
     def query_by_date_range(self, start_date: str, end_date: str) -> list:
-        """按日期范围查�?""
+        """按日期范围查?""
         all_exps = self.load_all()
         return [
             e for e in all_exps
@@ -345,7 +354,7 @@ class ExperimentComparison:
 
 ## 指标对比
 
-| 指标 | 实验1 | 实验2 | 差异 | 变化�?| 胜出 |
+| 指标 | 实验1 | 实验2 | 差异 | 变化?| 胜出 |
 |------|-------|-------|------|--------|------|
 """
 
@@ -357,16 +366,16 @@ class ExperimentComparison:
 
 ---
 
-## 6. 自动记录装饰�?
+## 6. 自动记录装饰?
 
-### 6.1 实验记录装饰�?
+### 6.1 实验记录装饰?
 
 ```python
 from functools import wraps
 
 def track_experiment(tracker: ExperimentTracker, experiment_name: str = None):
     """
-    实验追踪装饰�?
+    实验追踪装饰?
 
     Usage:
     ------
@@ -436,8 +445,8 @@ experiment_tracking:
 
   # 保留策略
   retention:
-    keep_days: 365    # 保留365�?
-    archive_old: true  # 归档旧实�?
+    keep_days: 365    # 保留365?
+    archive_old: true  # 归档旧实?
 ```
 
 ---
@@ -447,9 +456,9 @@ experiment_tracking:
 ```
 07_RESEARCH/
 ├── 04_EXPERIMENT_TRACKING/
-�?  ├── README.md
-�?  ├── experiment_tracking.md      # 本文�?�?
-�?  └── auto_recording.md           # 自动记录(简化版)
+?  ├── README.md
+?  ├── experiment_tracking.md      # 本文??
+?  └── auto_recording.md           # 自动记录(简化版)
 ```
 
 ---
@@ -458,8 +467,8 @@ experiment_tracking:
 
 | 接口 | 说明 |
 |------|------|
-| **上游接口** | 所有研�?回测函数（通过装饰器） |
-| **下游接口** | 研究报告、策略迭�?|
+| **上游接口** | 所有研?回测函数（通过装饰器） |
+| **下游接口** | 研究报告、策略迭代|
 | **存储格式** | JSONL文件（每行一个实验） |
 
 ---

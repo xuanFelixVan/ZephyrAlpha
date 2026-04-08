@@ -3,18 +3,27 @@ module_id: IMPL_DEV_LOGGING_STD_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-01
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: 首席文档架构?
+responsibility:
+- 技术标准制定与规范管理与优化维护
 standard_type: 专业量化机构实施标准
-applicable_scope: 系统实施与部�?
+applicable_scope: 系统实施与部?
 compliance_level: 初始标准
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: 进行?
+---
 ---
 
-# 日志记录规范 (LOGGING_STANDARD.md)
 
-> 本文档定义了清风量化交易系统4.0的日志记录标准，包括日志级别、格式规范、输出目标、命名规范等�?
+# 日志记录规范 (LOGGING_STANDARD.md)
+> **核心职责**: 标准规范制定
+> **职责边界**: 
+> - ✅ 本文档负责：标准规范制定相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> 本文档定义了清风量化交易系统4.0的日志记录标准，包括日志级别、格式规范、输出目标、命名规范等?
 
 ---
 
@@ -22,30 +31,30 @@ implementation_status: 进行�?
 
 ### 1.1 级别规范
 
-| 级别 | 数�?| 使用场景 | 示例 |
+| 级别 | 数据| 使用场景 | 示例 |
 |------|------|----------|------|
-| `CRITICAL` | 50 | 系统级严重问�?| 资金风险、认证失败、数据丢�?|
-| `ERROR` | 40 | 错误需要处�?| API调用失败、数据解析异�?|
-| `WARNING` | 30 | 异常但可处理 | 数据缺失、配置使用默认�?|
-| `INFO` | 20 | 正常业务流程 | 策略启动、信号生成、订单执�?|
-| `DEBUG` | 10 | 开发调试信�?| 函数入参、中间变量、循环次�?|
+| `CRITICAL` | 50 | 系统级严重问?| 资金风险、认证失败、数据丢?|
+| `ERROR` | 40 | 错误需要处?| API调用失败、数据解析异?|
+| `WARNING` | 30 | 异常但可处理 | 数据缺失、配置使用默认?|
+| `INFO` | 20 | 正常业务流程 | 策略启动、信号生成、订单执?|
+| `DEBUG` | 10 | 开发调试信?| 函数入参、中间变量、循环次?|
 
 ### 1.2 级别使用原则
 
 ```python
-# �?正确示例
+# ?正确示例
 
-logger.critical(f"账户 {account_id} 亏损超过阈�?{threshold}")
+logger.critical(f"账户 {account_id} 亏损超过阈?{threshold}")
 logger.error(f"THS API 调用失败: {error_code} - {message}")
-logger.warning(f"数据�?{source} 返回空数据，使用缓存")
-logger.info(f"策略 {strategy_id} �?{stock_code} 生成买入信号")
+logger.warning(f"数据?{source} 返回空数据，使用缓存")
+logger.info(f"策略 {strategy_id} ?{stock_code} 生成买入信号")
 logger.debug(f"因子计算参数: window={window}, threshold={threshold}")
 
-# �?错误示例
+# ?错误示例
 
 logger.info(f"用户 {user_id} 登录成功")  # 过于琐碎
-logger.error(f"出错�?)  # 信息不足
-logger.debug(f"循环�?{i} �?)  # 生产环境不应输出
+logger.error(f"出错?)  # 信息不足
+logger.debug(f"循环?{i} ?)  # 生产环境不应输出
 ```
 
 ---
@@ -60,15 +69,15 @@ LOG_FORMAT = "[{timestamp}] [{level}] [{module}] [{function}:{line}] [{context}]
 LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 # 输出示例
-[2026-03-28 10:15:30] [INFO] [backtest_engine] [run_strategy:156] [strategy=S001] 策略执行开�?
+[2026-03-28 10:15:30] [INFO] [backtest_engine] [run_strategy:156] [strategy=S001] 策略执行开?
 [2026-03-28 10:15:31] [ERROR] [data_fetcher] [fetch_ohlcv:89] [stock=000001] 数据获取失败: 超时
-[2026-03-28 10:15:32] [WARNING] [risk_manager] [check_position:203] [position=0.95] 仓位超过阈�?
+[2026-03-28 10:15:32] [WARNING] [risk_manager] [check_position:203] [position=0.95] 仓位超过阈?
 ```
 
-### 2.2 上下文字�?
+### 2.2 上下文字?
 
 ```python
-# 日志上下文字段规�?
+# 日志上下文字段规?
 CONTEXT_FIELDS = {
     "strategy_id": "策略唯一标识",
     "stock_code": "股票代码",
@@ -79,7 +88,7 @@ CONTEXT_FIELDS = {
     "duration_ms": "执行耗时(毫秒)",
 }
 
-# 上下文使用示�?
+# 上下文使用示?
 logger.info(
     f"生成交易信号",
     extra={"strategy_id": "S001", "stock_code": "600519", "signal_type": "buy"}
@@ -162,12 +171,12 @@ logging:
 
 | 文件 | 内容 | 级别 | 保留策略 |
 |------|------|------|----------|
-| `logs/app.log` | 应用主日�?| INFO+ | 5个备�?|
-| `logs/error.log` | 错误日志 | ERROR+ | 10个备�?|
-| `logs/audit/audit.log` | 审计日志 | INFO+ | 20个备�?|
-| `logs/backtest/backtest_{date}.log` | 回测日志 | DEBUG | 30�?|
-| `logs/trade/trade_{date}.log` | 交易日志 | INFO+ | 90�?|
-| `logs/data/data_{date}.log` | 数据获取日志 | WARNING+ | 14�?|
+| `logs/app.log` | 应用主日?| INFO+ | 5个备?|
+| `logs/error.log` | 错误日志 | ERROR+ | 10个备?|
+| `logs/audit/audit.log` | 审计日志 | INFO+ | 20个备?|
+| `logs/backtest/backtest_{date}.log` | 回测日志 | DEBUG | 30?|
+| `logs/trade/trade_{date}.log` | 交易日志 | INFO+ | 90?|
+| `logs/data/data_{date}.log` | 数据获取日志 | WARNING+ | 14?|
 ```
 
 ---
@@ -187,13 +196,13 @@ logger = logging.getLogger("quant_system.trade.executor")
 # quant_system.{layer}.{module}.{submodule}
 # - layer: backtest / risk / data / trade / system
 # - module: engine / manager / fetcher / executor
-# - submodule: (可�? 具体功能
+# - submodule: (可? 具体功能
 ```
 
-### 4.2 日志文件�?
+### 4.2 日志文件?
 
 ```bash
-# 日志文件名规�?
+# 日志文件名规?
 app_{YYYYMMDD}.log              # 应用日志
 error_{YYYYMMDD}.log            # 错误日志
 audit_{YYYYMMDD}.log            # 审计日志
@@ -215,7 +224,7 @@ import re
 from typing import Any, Dict
 
 class LogSanitizer:
-    """日志脱敏处理�?""
+    """日志脱敏处理?""
 
     SENSITIVE_PATTERNS = {
         "api_key": (r'api[_-]?key["\']?\s*[:=]\s*["\']?([a-zA-Z0-9_/-]+)',
@@ -251,23 +260,23 @@ class LogSanitizer:
         return result
 ```
 
-### 5.2 禁止记录的敏感信�?
+### 5.2 禁止记录的敏感信?
 
 ```markdown
-## 禁止记录的敏感信�?
+## 禁止记录的敏感信?
 
-�?API密钥和Token
-�?交易密码和资金密�?
-�?身份证号、手机号
-�?银行卡号
-�?策略参数中的核心算法
-�?真实资金账户信息
+?API密钥和Token
+?交易密码和资金密?
+?身份证号、手机号
+?银行卡号
+?策略参数中的核心算法
+?真实资金账户信息
 
-�?可以记录
-�?操作类型和结�?
-�?股票代码和交易方�?
-�?时间戳和耗时
-�?脱敏后的统计信息
+?可以记录
+?操作类型和结?
+?股票代码和交易方?
+?时间戳和耗时
+?脱敏后的统计信息
 ```
 
 ---
@@ -281,7 +290,7 @@ class LogSanitizer:
 
 def fetch_stock_data(stock_code: str, start_date: str, end_date: str) -> pd.DataFrame:
     logger.info(
-        f"开始获取股票数�?,
+        f"开始获取股票数?,
         extra={
             "stock_code": stock_code,
             "start_date": start_date,
@@ -304,7 +313,7 @@ def fetch_stock_data(stock_code: str, start_date: str, end_date: str) -> pd.Data
 
     except DataSourceError as e:
         logger.error(
-            f"数据源错�?,
+            f"数据源错?,
             extra={
                 "stock_code": stock_code,
                 "error_code": e.code,
@@ -357,7 +366,7 @@ alert_rules:
     severity: HIGH
     channels: [email]
 
-  - name: "数据源超�?
+  - name: "数据源超?
     condition: "WARNING in data.log and 'timeout'"
     severity: MEDIUM
     channels: [slack]
@@ -375,7 +384,7 @@ alert_rules:
 ### 8.1 日志查询示例
 
 ```bash
-# 查询特定策略的错误日�?
+# 查询特定策略的错误日?
 grep "S001" logs/error.log | grep ERROR
 
 # 查询某时间范围的日志
@@ -401,4 +410,4 @@ grep "TRADE" logs/trade_20260328.log | grep FILLED
 ---
 
 **版本**: v1.0
-**最后更�?*: 2026-03-28
+**最后更?*: 2026-03-28

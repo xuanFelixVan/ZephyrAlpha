@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-04-07T11:50:46.308067",
+  "total": 7,
+  "success": 7,
+  "failed": 0,
+  "total_files_moved": 0,
+  "total_dirs_deleted": 1,
+  "results": [
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\docs\\06_ARCHIVE",
+      "action": "delete_empty",
+      "priority": "high",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [
+        "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\docs\\06_ARCHIVE"
+      ],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules",
+      "action": "delete_empty",
+      "priority": "high",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_json_reports_20260402",
+      "action": "delete_empty",
+      "priority": "high",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\04_CONFIG_TEMPLATES",
+      "action": "delete_empty",
+      "priority": "high",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\encoding_backups\\20260406_ai_workflow",
+      "action": "delete_empty",
+      "priority": "high",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR",
+      "action": "merge_single",
+      "priority": "medium",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QMT_DATA_INTERFACE",
+      "action": "merge_single",
+      "priority": "medium",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    }
+  ]
+}

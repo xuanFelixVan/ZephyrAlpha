@@ -1,97 +1,78 @@
 ---
+module_id: STRATEGYENGINECOREBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 交易策略团队
+responsibility:
+- 交易策略框架设计与实施指导与实施指导
+layer: Layer 3 (策略层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
 module_id: TACTICS_BLUEPRINT_CORE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-03
-owner: 首席文档架构�?standard_type: 专业量化机构蓝图
-applicable_scope: 策略引擎核心模块技术设�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
 
 
-# 策略引擎核心模块技术蓝�?
-> 清风量化交易系统 v5.3 - 策略引擎核心模块详细技术设�?> **索引**: `STRAT.ENG.CORE.001`
-> **开发周�?*: 400小时（胶合代码开发）
-> **核心定位**: 策略引擎核心组件详细设计，支�?20+策略动态加载、事件驱动执行、热部署的专业架�?> **补充文档**: 本蓝图是[STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md)的技术补充，专注于核心模块实现细�?
+> **核心职责**: Strategy Engine Core蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Strategy Engine Core蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+>
+
+
 
 ## 一、设计目标与约束
 
 ### 1.1 核心设计目标
 
-| 目标 | 优先�?| 技术实�?|
 |------|--------|----------|
-| **120+策略动态加�?* | P0 | 插件式架�?+ 配置驱动发现 |
 | **统一策略接口** | P0 | 遵循API_Contract.md的IStrategyEngine接口 |
-| **热部署支�?* | P0 | 策略隔离 + 动态类加载 |
-| **事件驱动执行** | P1 | 异步事件总线 + 策略事件监听�?|
-| **配置驱动管理** | P1 | YAML配置文件 + 参数版本控制 |
-| **状态可观测** | P1 | 策略状态监�?+ 性能指标收集 |
-| **模块化扩�?* | P2 | 插件系统 + 依赖注入容器 |
+| **
 
 ### 1.2 技术约束与原则
 
-1. **最小化自研代码原则**�?0%使用成熟开源，20%自研胶合代码
-2. **接口先行原则**：所有模块必须先定义接口，后实现
-3. **配置驱动原则**：策略发现、加载、参数全部通过配置文件管理
-4. **事件驱动原则**：模块间通过事件通信，降低耦合�?5. **状态可观测原则**：所有策略运行状态实时监控，可追�?
-### 1.3 与现有系统集�?
+2. **
+3. **
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
-| **factor_calculator.py** | 因子计算服务 | API_Contract.md 2.2�?|
-| **risk_manager.py** | 风控检查服�?| API_Contract.md 2.3�?|
 | **alert_manager.py** | 告警通知服务 | 事件总线集成 |
-| **Backtrader引擎** | 回测适配�?| STRATEGY_ENGINE_BLUEPRINT.md 3.2�?|
+?| STRATEGY_ENGINE_BLUEPRINT.md 3.2?|
 
 
-## 二、核心架构设�?
-### 2.1 整体架构�?
 ```
-┌─────────────────────────────────────────────────────────────────�?�?                  策略引擎核心架构                                �?├─────────────────────────────────────────────────────────────────�?�?                                                                �?�? ┌─────────────�?    发现       ┌─────────────�?                �?�? �? 策略目录   �?──────────────�?│策略扫描器   �?                �?�? �?(config/    �?               �?Strategy    �?                �?�? �? strategies/)�?               �?Scanner)    �?                �?�? └─────────────�?               └──────┬──────�?                �?�?                                        �?解析                   �?�?                                        �?                       �?�? ┌─────────────�?    注册       ┌─────────────�?                �?�? │策略注册表   �?◄───────────── │策略加载器   �?                �?�? �?Strategy    �?               �?Strategy    �?                �?�? �?Registry)   �?               �?Loader)     �?                �?�? └──────┬──────�?               └─────────────�?                �?�?        �?获取元数�?                                            �?�?        �?                                                       �?�? ┌─────────────�?    创建实例    ┌─────────────�?                �?�? │策略工�?    �?──────────────�?│策略引�?    �?                �?�? �?Strategy    �?               �?Strategy     �?                �?�? �?Factory)    �?               �?Engine)      �?                �?�? └──────┬──────�?               └──────┬──────�?                �?�?        �?                              �?执行                   �?�?        �?                              �?                       �?�? ┌──────▼──────�?               ┌─────────────�?                �?�? │参数管理器   �?               │事件总线     �?                �?�? �?Parameter   �?               �?Event Bus)  �?                �?�? �?Manager)    �?               └──────┬──────�?                �?�? └─────────────�?                      �?发布事件                �?�?                                        �?                       �?�?                                 ┌─────────────�?                �?�?                                 │下游模�?    �?                �?�?                                 �?风控/执行/  �?                �?�?                                 �?监控)       �?                �?�?                                 └─────────────�?                �?└─────────────────────────────────────────────────────────────────�?```
 
 ### 2.2 组件职责划分
 
-| 组件 | 职责 | 核心功能 | 实现复杂�?|
 |------|------|----------|------------|
-| **StrategyScanner** | 策略发现 | 扫描策略目录，解析配置文�?| �?|
-| **StrategyLoader** | 策略加载 | 动态导入策略模块，验证接口 | �?|
-| **StrategyRegistry** | 策略注册 | 管理策略元数据，提供查询接口 | �?|
-| **StrategyFactory** | 策略创建 | 实例化策略对象，注入依赖 | �?|
-| **StrategyEngine** | 策略执行 | 运行策略逻辑，管理策略生命周�?| �?|
-| **ParameterManager** | 参数管理 | 管理策略参数，支持版本控�?| �?|
-| **EventBus** | 事件分发 | 异步事件发布/订阅，模块解�?| �?|
-| **StateMonitor** | 状态监�?| 收集策略运行指标，健康检�?| �?|
 
-### 2.3 数据流设�?
 ```
-策略开�?�?配置文件 �?扫描发现 �?加载验证 �?注册元数�?    �?参数配置 �?工厂创建 �?引擎执行 �?事件发布 �?下游处理
-    �?状态监�?�?指标收集 �?运行日志 �?异常处理 �?结果反馈
 ```
 
 
-## 三、核心组件详细设�?
-### 3.1 StrategyScanner（策略扫描器�?
-**设计目标**：自动发现策略配置文件，支持增量扫描和缓存机�?
 ```python
 class StrategyScanner:
-    """策略扫描�?    
     索引: STRAT.ENG.CORE.001-M01
-    职责: 扫描策略配置目录，发现策略配置文�?    输入: 策略目录路径(config/strategies/)
-    输出: 策略配置文件列表(策略ID �?配置文件路径)
     """
     
     def __init__(self, config_dir: str = "config/strategies"):
         self.config_dir = Path(config_dir)
-        self.cache = {}  # 策略ID �?(mtime, config_path)
+self.cache = {}  # ID ?(mtime, config_path)
         
     def scan(self, force_refresh: bool = False) -> Dict[str, str]:
-        """扫描策略目录，返回策略配置文件映�?        
         参数:
             force_refresh: 是否强制刷新缓存
             
         返回:
-            Dict[str, str]: 策略ID �?配置文件路径
         """
         if not force_refresh and self._is_cache_valid():
             return self._get_cached_configs()
@@ -118,33 +99,23 @@ class StrategyScanner:
         from watchdog.events import FileSystemEventHandler
 ```
 
-### 3.2 StrategyLoader（策略加载器�?
-**设计目标**：动态加载策略模块，验证接口兼容性，隔离策略执行环境
 
 ```python
 class StrategyLoader:
-    """策略加载�?    
     索引: STRAT.ENG.CORE.001-M02
     职责: 动态加载策略模块，验证策略接口
-    输入: 策略配置文件路径
-    输出: 策略类对�?已验�?
     """
     
     def __init__(self, module_search_paths: List[str] = None):
         self.module_search_paths = module_search_paths or []
-        self._loaded_modules = {}  # 模块路径 �?模块对象
         
     def load_strategy_class(self, config: Dict) -> Type[BaseStrategy]:
-        """根据配置加载策略�?        
         参数:
-            config: 策略配置字典
+config:
             
         返回:
-            Type[BaseStrategy]: 策略�?            
         步骤:
             1. 解析模块路径 (module_path)
-            2. 动态导入模�?            3. 获取策略�?(class_name)
-            4. 验证接口兼容�?            5. 返回策略�?        """
         # 1. 解析模块信息
         module_path = config.get('module_path')
         class_name = config.get('class_name')
@@ -152,16 +123,15 @@ class StrategyLoader:
         if not module_path or not class_name:
             raise StrategyLoadError("Missing module_path or class_name in config")
             
-        # 2. 动态导入模�?        try:
+?        try:
             if module_path not in self._loaded_modules:
                 module = importlib.import_module(module_path)
                 self._loaded_modules[module_path] = module
             else:
                 module = self._loaded_modules[module_path]
                 
-            # 3. 获取策略�?            strategy_class = getattr(module, class_name)
             
-            # 4. 验证接口兼容�?            self._validate_strategy_interface(strategy_class)
+?            self._validate_strategy_interface(strategy_class)
             
             return strategy_class
             
@@ -171,7 +141,7 @@ class StrategyLoader:
             raise StrategyLoadError(f"Class {class_name} not found in module {module_path}: {e}")
             
     def _validate_strategy_interface(self, strategy_class: Type) -> None:
-        """验证策略类接口兼容�?""
+?""
         required_methods = [
             'initialize',
             'handle_data', 
@@ -184,28 +154,20 @@ class StrategyLoader:
             if not hasattr(strategy_class, method):
                 raise StrategyInterfaceError(f"Strategy class missing required method: {method}")
                 
-        # 验证是否是BaseStrategy的子�?        if not issubclass(strategy_class, BaseStrategy):
             raise StrategyInterfaceError(f"Strategy class must inherit from BaseStrategy")
 ```
 
-### 3.3 StrategyRegistry（策略注册表�?
-**设计目标**：集中管理策略元数据，提供快速查询和状态管�?
 ```python
 class StrategyRegistry:
-    """策略注册�?    
     索引: STRAT.ENG.CORE.001-M03
-    职责: 管理策略元数据，提供查询和状态管�?    输入: 策略配置信息
-    输出: 策略元数据对�?    """
     
     def __init__(self):
-        self._strategies = {}  # 策略ID �?StrategyMetadata
-        self._by_category = defaultdict(list)  # 策略类别 �?策略ID列表
-        self._statuses = {}  # 策略ID �?策略状�?        
+self._strategies = {}  # ID ?StrategyMetadata
     def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
-        """注册策略元数�?        
+?
         参数:
             strategy_id: 策略ID
-            metadata: 策略元数据对�?        """
+metadata:
         if strategy_id in self._strategies:
             raise StrategyAlreadyRegisteredError(f"Strategy {strategy_id} already registered")
             
@@ -216,30 +178,28 @@ class StrategyRegistry:
         logger.info(f"Registered strategy: {strategy_id} ({metadata.name})")
         
     def get_metadata(self, strategy_id: str) -> StrategyMetadata:
-        """获取策略元数�?""
+?""
         if strategy_id not in self._strategies:
             raise StrategyNotFoundError(f"Strategy {strategy_id} not found")
         return self._strategies[strategy_id]
         
     def get_by_category(self, category: str) -> List[StrategyMetadata]:
-        """按类别获取策略列�?""
         strategy_ids = self._by_category.get(category, [])
         return [self._strategies[strategy_id] for strategy_id in strategy_ids]
         
     def update_status(self, strategy_id: str, status: StrategyStatus) -> None:
-        """更新策略状�?""
         if strategy_id not in self._strategies:
             raise StrategyNotFoundError(f"Strategy {strategy_id} not found")
         self._statuses[strategy_id] = status
         
     def list_all(self) -> List[StrategyMetadata]:
-        """列出所有策�?""
         return list(self._strategies.values())
 
 
 @dataclass
 class StrategyMetadata:
-    """策略元数�?""
+"""
+?""
     strategy_id: str
     name: str
     description: str
@@ -271,22 +231,18 @@ class ParameterInfo:
 
 ### 3.4 StrategyFactory（策略工厂）
 
-**设计目标**：按需创建策略实例，支持依赖注入和参数注入
 
 ```python
 class StrategyFactory:
     """策略工厂
     
     索引: STRAT.ENG.CORE.001-M04
-    职责: 创建策略实例，注入依赖和参数
-    输入: 策略ID + 参数覆盖
     输出: 策略实例对象
     """
     
     def __init__(self, registry: StrategyRegistry, loader: StrategyLoader):
         self.registry = registry
         self.loader = loader
-        self._instances = {}  # 策略ID �?策略实例缓存
         
     def create_strategy(self, strategy_id: str, 
                        parameter_overrides: Dict[str, Any] = None,
@@ -295,21 +251,18 @@ class StrategyFactory:
         
         参数:
             strategy_id: 策略ID
-            parameter_overrides: 参数覆盖�?            use_cache: 是否使用实例缓存
             
         返回:
             BaseStrategy: 策略实例
         """
-        # 1. 检查缓�?        if use_cache and strategy_id in self._instances:
             instance = self._instances[strategy_id]
             # 应用参数覆盖
             if parameter_overrides:
                 instance.set_parameters(parameter_overrides)
             return instance
             
-        # 2. 获取策略元数�?        metadata = self.registry.get_metadata(strategy_id)
+?        metadata = self.registry.get_metadata(strategy_id)
         
-        # 3. 加载策略�?        config = {
             'module_path': metadata.module_path,
             'class_name': metadata.class_name
         }
@@ -326,7 +279,6 @@ class StrategyFactory:
             if use_cache:
                 self._instances[strategy_id] = instance
                 
-            # 7. 更新注册表状�?            self.registry.update_status(strategy_id, StrategyStatus.INITIALIZED)
             
             return instance
             
@@ -337,33 +289,29 @@ class StrategyFactory:
             
     def _build_parameters(self, metadata: StrategyMetadata, 
                          overrides: Dict[str, Any] = None) -> Dict[str, Any]:
-        """构建策略参数字典"""
+"""
         parameters = {}
         
         for param_name, param_info in metadata.parameters.items():
-            # 优先使用覆盖�?            if overrides and param_name in overrides:
+#
                 value = overrides[param_name]
             else:
                 value = param_info.default
                 
-            # 类型转换和验�?            try:
                 validated_value = self._validate_parameter(value, param_info)
                 parameters[param_name] = validated_value
             except ValueError as e:
                 logger.warning(f"Parameter validation failed for {param_name}: {e}")
-                parameters[param_name] = value  # 使用原始�?                
         return parameters
 ```
 
 ### 3.5 StrategyEngine（策略引擎）
 
-**设计目标**：策略执行核心，管理策略生命周期，集成事件驱动架�?
 ```python
 class StrategyEngine:
     """策略引擎
     
     索引: STRAT.ENG.CORE.001-M05
-    职责: 策略执行核心，管理策略生命周�?    输入: 市场数据 + 策略实例
     输出: 交易信号 + 策略事件
     接口: 遵循API_Contract.md中的IStrategyEngine接口
     """
@@ -372,7 +320,6 @@ class StrategyEngine:
         self.event_bus = event_bus
         self.registry = registry
         self.factory = StrategyFactory(registry, StrategyLoader())
-        self._running_strategies = {}  # 策略ID �?运行上下�?        self._executor = ThreadPoolExecutor(max_workers=10)
         
     def generate_signals(self, strategy_id: str, 
                         symbols: List[str], 
@@ -382,7 +329,7 @@ class StrategyEngine:
         参数:
             strategy_id: 策略ID
             symbols: 股票代码列表
-            date: 交易�?            
+date: ?
         返回:
             List[Signal]: 交易信号列表
             
@@ -409,7 +356,7 @@ class StrategyEngine:
                 strategy, market_data
             )
             
-            # 设置超时
+时
             signals = future.result(timeout=5.0)
             
             # 4. 发布策略执行事件
@@ -444,7 +391,6 @@ class StrategyEngine:
     def start_strategy(self, strategy_id: str, 
                       schedule: Optional[str] = None) -> None:
         """启动策略（定时执行）"""
-        # 创建运行上下�?        ctx = StrategyContext(
             strategy_id=strategy_id,
             status=StrategyStatus.SCHEDULED,
             last_run=None,
@@ -463,35 +409,25 @@ class StrategyEngine:
             self.event_bus.publish(StrategyStoppedEvent(strategy_id=strategy_id))
 ```
 
-### 3.6 Layer 11工具接口集成
+### 3.6 Layer 11
 
-**设计目标**：策略引擎作为纯执行层，通过Layer 11工具接口接受调用，不包含AI理解逻辑
+含AI理解逻辑
 
-**架构原则**�?- �?**纯执行层**：策略引擎只提供API接口，不包含AI理解
-- �?**单一AI�?*：所有意图识别和参数提取由Layer 11统一处理
-- �?**工具化封�?*：策略引擎封装为工具，通过LangChain调用
+含AI理解
+- ?**
 
-**工具接口规范**�?
-详细接口定义参见：[Layer 11工具接口规范](../../module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md)
+**
 
-**支持的操�?*�?
-| 操作 | 说明 | 参数 | 返回�?|
 |------|------|------|--------|
-| **configure** | 配置新策�?| strategy_type, holding_period, stop_loss, take_profit | strategy_id |
-| **start** | 启动策略 | strategy_id | 启动状�?|
-| **stop** | 停止策略 | strategy_id | 停止状�?|
-| **status** | 查询策略状�?| strategy_id | 策略状态详�?|
-| **list** | 列出所有策�?| �?| 策略列表 |
+| **configure** |
 | **backtest** | 回测策略 | strategy_id, start_date, end_date | 回测结果 |
 | **optimize** | 优化策略参数 | strategy_id, param_ranges | 优化结果 |
 
-**调用示例**�?
 ```python
-# Layer 11调用策略引擎（纯执行，无AI�?from src.layer_11.tools.strategy_tool import StrategyTool
 
-# 初始化策略工�?strategy_tool = StrategyTool()
+?strategy_tool = StrategyTool()
 
-# 配置策略（参数已由Layer 11 AI提取�?result = strategy_tool.execute({
+#
     "action": "configure",
     "params": {
         "strategy_type": "momentum",
@@ -504,33 +440,29 @@ class StrategyEngine:
 # 返回结果
 # {
 #     "success": True,
-#     "message": "策略配置成功",
+#     "message": "
+",
 #     "data": {
 #         "strategy_id": "STRAT_20260402_001",
-#         "strategy_name": "动量策略_5日持�?,
 #         "status": "configured"
 #     }
 # }
 ```
 
-**重要说明**�?- �?**已移�?*：自然语言策略接口(NLSI)、策略描述语言(DSL)、AI策略转换工作�?- �?**原因**：这些功能属于AI理解层，应由Layer 11统一处理
-- �?**优势**：避免重复AI调用，提升性能，降低维护成�?
-### 3.7 EventBus（事件总线�?
-**设计目标**：异步事件发�?订阅系统，实现模块解�?
 ```python
 class EventBus:
     """事件总线
     
     索引: STRAT.ENG.CORE.001-M06
-    职责: 异步事件发布/订阅，模块解�?    设计模式: 发布-订阅模式 + 观察者模�?    """
+?    """
     
     def __init__(self):
-        self._subscribers = defaultdict(list)  # 事件类型 �?订阅者列�?        self._queue = Queue()  # 事件队列
         self._worker_thread = None
         self._running = False
         
     def subscribe(self, event_type: Type[Event], callback: Callable) -> None:
-        """订阅事件"""
+"""
+事件"""
         self._subscribers[event_type].append(callback)
         
     def publish(self, event: Event) -> None:
@@ -556,7 +488,7 @@ class EventBus:
                 event = self._queue.get(timeout=1.0)
                 event_type = type(event)
                 
-                # 通知所有订阅�?                for callback in self._subscribers[event_type]:
+?                for callback in self._subscribers[event_type]:
                     try:
                         callback(event)
                     except Exception as e:
@@ -605,49 +537,47 @@ class StrategyErrorEvent(StrategyEvent):
 
 @dataclass
 class StrategyTimeoutEvent(StrategyEvent):
-    """策略超时事件"""
+时事件"""
 ```
 
 
-## 四、动态加载机�?
 ### 4.1 策略发现流程
 
 ```
-1. 配置文件扫描
-   �?2. YAML解析验证
-   �?3. 元数据提�?   �?4. 接口兼容性检�?   �?5. 注册表注�?```
+1.
+?3.
 
-### 4.2 配置文件格式规范
+### 4.2
 
 ```yaml
 # config/strategies/trend/ma_cross.yaml
 strategy_id: "T001_ma_cross"
 name: "移动均线交叉策略"
-description: "基于快速均线和慢速均线交叉的交易策略"
 category: "trend"
 version: "1.0.0"
-author: "系统内置"
+置"
 created_date: "2026-03-01"
 last_modified: "2026-03-30"
 
-# 模块配置
+#
+置
 module_path: "src.strategies.trend.ma_cross"
 class_name: "MovingAverageCrossStrategy"
 
-# 参数配置
+#
+置
 parameters:
   fast_period:
     type: "int"
     default: 20
     min_value: 5
     max_value: 100
-    description: "快速均线周�?
   slow_period:
     type: "int"  
     default: 50
     min_value: 10
     max_value: 200
-    description: "慢速均线周�?
+description: "
   position_size:
     type: "float"
     default: 0.1
@@ -655,7 +585,8 @@ parameters:
     max_value: 0.5
     description: "仓位大小比例"
 
-# 依赖配置
+#
+置
 dependencies:
   - "pandas>=1.5.0"
   - "numpy>=1.24.0"
@@ -663,11 +594,9 @@ dependencies:
 # 标签系统
 tags:
   - "趋势跟踪"
-  - "技术指�?
-  - "A股优�?
+- "A?
 ```
 
-### 4.3 热部署实现方�?
 ```python
 class HotDeploymentManager:
     """热部署管理器"""
@@ -678,7 +607,6 @@ class HotDeploymentManager:
         self.file_watcher = None
         
     def enable_hot_reload(self) -> None:
-        """启用热重�?""
         # 监控策略目录变化
         self.file_watcher = FileSystemWatcher(
             path="config/strategies/",
@@ -687,9 +615,8 @@ class HotDeploymentManager:
         self.file_watcher.start()
         
     def _on_config_changed(self, event: FileSystemEvent) -> None:
-        """配置文件变化回调"""
+"""
         if event.event_type in ('created', 'modified'):
-            # 重新扫描并加载策�?            configs = self.scanner.scan(force_refresh=True)
             
             for strategy_id, config_path in configs.items():
                 try:
@@ -699,39 +626,35 @@ class HotDeploymentManager:
                     
     def _reload_strategy(self, strategy_id: str, config_path: str) -> None:
         """重新加载策略"""
-        # 1. 解析新配�?        with open(config_path, 'r') as f:
+?        with open(config_path, 'r') as f:
             new_config = yaml.safe_load(f)
             
-        # 2. 获取现有策略状�?        old_status = self.registry.get_status(strategy_id)
         
-        # 3. 重新加载策略�?        loader = StrategyLoader()
         strategy_class = loader.load_strategy_class(new_config)
         
-        # 4. 更新注册表元数据
         metadata = self._create_metadata(new_config, config_path)
         self.registry.update_metadata(strategy_id, metadata)
         
-        # 5. 恢复策略状�?        if old_status == StrategyStatus.RUNNING:
             # 重启策略
             self._restart_strategy(strategy_id)
 ```
 
 
-## 五、集成方案设�?
 ### 5.1 与Backtrader集成
 
 ```python
 class BacktraderStrategyAdapter:
-    """Backtrader策略适配�?""
+?""
     
     def __init__(self, strategy_engine: StrategyEngine):
         self.strategy_engine = strategy_engine
         
     def create_backtrader_strategy(self, strategy_id: str) -> bt.Strategy:
-        """创建Backtrader策略包装�?""
+?""
         
         class BacktraderStrategyWrapper(bt.Strategy):
-            """Backtrader策略包装�?""
+"""Backtrader
+?""
             
             params = (
                 ('strategy_id', strategy_id),
@@ -756,13 +679,10 @@ class BacktraderStrategyAdapter:
         return BacktraderStrategyWrapper
 ```
 
-### 5.2 与现有模块集�?
 ```python
 class SystemIntegrator:
-    """系统集成�?""
     
     def __init__(self):
-        # 初始化所有核心组�?        self.scanner = StrategyScanner()
         self.loader = StrategyLoader()
         self.registry = StrategyRegistry()
         self.factory = StrategyFactory(self.registry, self.loader)
@@ -775,15 +695,11 @@ class SystemIntegrator:
         self.alert_manager = AlertManager()
         
     def setup_event_handlers(self) -> None:
-        """设置事件处理�?""
         
-        # 策略事件 �?因子计算
         self.event_bus.subscribe(StrategyExecutedEvent, self._on_strategy_executed)
         
-        # 策略错误 �?告警通知
         self.event_bus.subscribe(StrategyErrorEvent, self._on_strategy_error)
         
-        # 策略信号 �?风控检�?        self.event_bus.subscribe(SignalGeneratedEvent, self._on_signal_generated)
         
     def _on_strategy_executed(self, event: StrategyExecutedEvent) -> None:
         """策略执行完成事件处理"""
@@ -800,42 +716,38 @@ class SystemIntegrator:
         
     def _on_signal_generated(self, event: SignalGeneratedEvent) -> None:
         """信号生成事件处理"""
-        # 风控检�?        risk_result = self.risk_manager.check_signal(event.signal)
         
         if risk_result.approved:
             # 发送到交易执行
             self._send_to_execution(event.signal)
         else:
-            logger.warning(f"信号被风控拒�? {risk_result.reason}")
 ```
 
 
-## 六、配置管理与参数系统
+##
 
-### 6.1 多层配置系统
+### 6.1
 
 ```
-配置层级（从高到低优先级�?
-1. 运行时参数覆�?(最高优先级)
+?
+级)
 2. 策略实例参数
-3. 策略配置文件参数  
-4. 系统默认参数 (最低优先级)
+3.
+级)
 ```
 
 ### 6.2 参数版本控制
 
 ```python
 class ParameterVersionManager:
-    """参数版本管理�?""
     
     def __init__(self, storage_backend: ParameterStorage):
         self.storage = storage_backend
-        self._versions = {}  # 策略ID �?参数版本列表
         
     def save_parameter_snapshot(self, strategy_id: str, 
                                parameters: Dict[str, Any],
                                version_note: str = "") -> str:
-        """保存参数快照"""
+"""
         version_id = f"v{len(self._versions.get(strategy_id, [])) + 1}"
         
         snapshot = ParameterSnapshot(
@@ -848,7 +760,8 @@ class ParameterVersionManager:
         
         self.storage.save_snapshot(snapshot)
         
-        # 更新内存版本列表
+#
+存版本列表
         if strategy_id not in self._versions:
             self._versions[strategy_id] = []
         self._versions[strategy_id].append(snapshot)
@@ -857,7 +770,6 @@ class ParameterVersionManager:
         
     def rollback_parameters(self, strategy_id: str, 
                            version_id: str) -> Dict[str, Any]:
-        """回滚到指定版本参�?""
         snapshot = self.storage.load_snapshot(strategy_id, version_id)
         
         if not snapshot:
@@ -869,7 +781,7 @@ class ParameterVersionManager:
         return snapshot.parameters
 ```
 
-### 6.3 配置验证规则
+### 6.3
 
 ```python
 CONFIG_VALIDATION_RULES = {
@@ -907,12 +819,10 @@ CONFIG_VALIDATION_RULES = {
 ```
 
 
-## 七、性能优化与监�?
 ### 7.1 性能指标收集
 
 ```python
 class PerformanceMonitor:
-    """性能监控�?""
     
     METRICS = [
         'strategy_load_time_ms',
@@ -952,7 +862,6 @@ CACHE_CONFIG = {
     'strategy_instances': {
         'max_size': 50,
         'ttl_seconds': 3600,  # 1小时
-        'eviction_policy': 'LRU'  # 最近最少使�?    },
     'market_data': {
         'max_size': 1000,
         'ttl_seconds': 300,  # 5分钟
@@ -961,7 +870,7 @@ CACHE_CONFIG = {
     'parameter_snapshots': {
         'max_size': 100,
         'ttl_seconds': 86400,  # 24小时
-        'eviction_policy': 'FIFO'  # 先进先出
+'eviction_policy': 'FIFO'  #
     }
 }
 ```
@@ -970,15 +879,12 @@ CACHE_CONFIG = {
 
 ```python
 class ResourceIsolator:
-    """资源隔离�?""
     
     def __init__(self):
-        self.strategy_processes = {}  # 策略ID �?进程句柄
         
     def run_strategy_in_isolation(self, strategy_id: str, 
                                  func: Callable, *args, **kwargs) -> Any:
         """在隔离环境中运行策略"""
-        # 使用进程池隔离策略执�?        with ProcessPoolExecutor(max_workers=1) as executor:
             future = executor.submit(func, *args, **kwargs)
             
             try:
@@ -993,21 +899,20 @@ class ResourceIsolator:
 ```
 
 
-## 八、错误处理与容错机制
+##
 
-### 8.1 错误分类与处理策�?
 | 错误类型 | 严重等级 | 处理策略 | 恢复动作 |
 |----------|----------|----------|----------|
-| **配置错误** | ERROR | 立即失败 | 跳过该策略，记录日志 |
+| **
 | **加载错误** | ERROR | 立即失败 | 标记策略不可用，通知用户 |
-| **执行超时** | WARNING | 超时控制 | 终止执行，返回空信号 |
-| **内存溢出** | CRITICAL | 资源隔离 | 重启策略进程 |
+** | WARNING |
+时控制 | 终止执行，返回空信号 |
+| **
+存溢出** | CRITICAL | 资源隔离 | 重启策略进程 |
 | **数据错误** | WARNING | 数据验证 | 使用默认值或跳过 |
 
-### 8.2 断路器模式实�?
 ```python
 class CircuitBreaker:
-    """断路器模�?""
     
     def __init__(self, failure_threshold: int = 5,
                  recovery_timeout: int = 60):
@@ -1018,7 +923,6 @@ class CircuitBreaker:
         self.state = 'CLOSED'  # CLOSED, OPEN, HALF_OPEN
         
     def execute(self, func: Callable, *args, **kwargs) -> Any:
-        """通过断路器执行函�?""
         if self.state == 'OPEN':
             if self._should_try_recovery():
                 self.state = 'HALF_OPEN'
@@ -1028,7 +932,6 @@ class CircuitBreaker:
         try:
             result = func(*args, **kwargs)
             
-            # 成功执行，重置状�?            if self.state == 'HALF_OPEN':
                 self.state = 'CLOSED'
             self.failure_count = 0
             
@@ -1044,7 +947,6 @@ class CircuitBreaker:
             raise
             
     def _should_try_recovery(self) -> bool:
-        """检查是否应该尝试恢�?""
         if not self.last_failure_time:
             return True
             
@@ -1059,13 +961,10 @@ class CircuitBreaker:
 
 ```
 生产环境部署:
-┌─────────────────�?   ┌─────────────────�?�? 策略配置中心    �?   �? 策略执行集群    �?�? (Config DB)    │◄──►│  (Engine Nodes) �?└─────────────────�?   └─────────────────�?         �?                     �?         �?                     �?┌─────────────────�?   ┌─────────────────�?�? 监控告警系统    �?   �? 日志分析平台    �?�? (Prometheus)   �?   �? (ELK Stack)    �?└─────────────────�?   └─────────────────�?```
 
-### 9.2 健康检查接�?
 ```python
 @app.route('/health')
 def health_check():
-    """健康检查接�?""
     return {
         'status': 'healthy',
         'timestamp': datetime.utcnow().isoformat(),
@@ -1109,48 +1008,78 @@ prometheus_metrics:
 ```
 
 
-## 十、相关文档索�?
-### 10.1 核心参考文�?
-| 文档 | 说明 | 相关�?|
+##
+?|
 |------|------|--------|
-| [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 个人开发蓝�?| ⭐⭐⭐⭐�?|
-| [API_Contract.md](../API_Contract.md) | 系统接口契约 | ⭐⭐⭐⭐�?|
 | [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | 系统架构设计 | ⭐⭐⭐⭐ |
 | [BACKTEST_BLUEPRINT.md](./BACKTEST_BLUEPRINT.md) | 回测系统设计 | ⭐⭐⭐⭐ |
-| [STRATEGY_TEMPLATES.md](./STRATEGY_TEMPLATES.md) | 策略模板�?| ⭐⭐�?|
 
 ### 10.2 代码实现位置
 
-| 组件 | 文件路径 | 状�?|
 |------|----------|------|
-| StrategyScanner | `src/modules/strategy_scanner.py` | 待实�?|
-| StrategyLoader | `src/modules/strategy_loader.py` | 待实�?|
-| StrategyRegistry | `src/modules/strategy_registry.py` | 待实�?|
-| StrategyFactory | `src/modules/strategy_factory.py` | 待实�?|
-| StrategyEngine | `src/modules/strategy_engine.py` | 待实�?|
-| EventBus | `src/core/event_bus.py` | 待实�?|
+| StrategyScanner | `src/modules/strategy_scanner.py` |
+?|
+| StrategyLoader | `src/modules/strategy_loader.py` |
+?|
+| StrategyRegistry | `src/modules/strategy_registry.py` |
+?|
+| StrategyFactory | `src/modules/strategy_factory.py` |
+?|
+| StrategyEngine | `src/modules/strategy_engine.py` |
+?|
+| EventBus | `src/core/event_bus.py` |
+?|
 
-### 10.3 配置示例位置
+### 10.3
 
-| 配置类型 | 文件路径 | 用�?|
+|
 |----------|----------|------|
-| 策略配置 | `config/strategies/trend/ma_cross.yaml` | 移动均线交叉策略 |
-| 系统配置 | `config/system.yaml` | 策略引擎全局配置 |
-| 缓存配置 | `config/cache.yaml` | 缓存策略配置 |
-| 监控配置 | `config/monitoring.yaml` | 性能监控配置 |
+|
+置 |
+|
+置 |
+|
+置 |
 
 
 ## 十一、开发里程碑
 
-### 11.1 第一阶段：核心骨架（Week 1-2�?- [ ] 实现StrategyScanner基础扫描功能
-- [ ] 实现StrategyLoader动态加载机�?- [ ] 实现StrategyRegistry元数据管�?- [ ] 完成配置文件解析验证
 
-### 11.2 第二阶段：引擎核心（Week 3-4�?- [ ] 实现StrategyFactory依赖注入
 - [ ] 实现StrategyEngine生命周期管理
 - [ ] 实现EventBus事件系统
 - [ ] 完成基础集成测试
 
-### 11.3 第三阶段：高级功能（Week 5-6�?- [ ] 实现热部署机�?- [ ] 实现参数版本控制
 - [ ] 实现性能监控系统
-- [ ] 完成断路器容错机�?
 ### 11.4 第四阶段：生产就
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Tactics Blueprint Core
+- **模块ID**: TACTICS_BLUEPRINT_CORE_001
+- **蓝图文档**: STRATEGY_ENGINE_CORE_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: ?compliance_level: 
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Tactics Blueprint Core** | ?compliance_level:  | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
+```

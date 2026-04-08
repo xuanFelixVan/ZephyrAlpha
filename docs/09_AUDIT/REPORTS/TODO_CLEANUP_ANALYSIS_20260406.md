@@ -3,14 +3,22 @@ module_id: TODO_CLEANUP_ANALYSIS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: Audit Sentinel
 standard_type: TODO清理分析报告
 applicable_scope: 活跃文档TODO标记
 compliance_level: 专业标准
+responsibility:
+- 审计体系设计与质量监控与实施指导
+---
 ---
 
 # TODO标记清理分析报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **分析日期**: 2026-04-06
 > **分析方法**: 四阶段审查（核心蓝图→技术规格→数据源→审计文档）

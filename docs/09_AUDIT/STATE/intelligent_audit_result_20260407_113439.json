@@ -1,0 +1,656 @@
+{
+  "timestamp": "2026-04-07T11:34:39.735523",
+  "total_issues": 128,
+  "auto_fixed": 128,
+  "need_manual": 0,
+  "risk_stats": {
+    "P1_中风险": {
+      "total": 128,
+      "auto": 128,
+      "manual": 0
+    }
+  },
+  "auto_fixed_details": [
+    {
+      "path": "INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "01_FRAMEWORK\\INTELLIGENT_COMPLIANCE_CHECK_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_FINAL_COMPLETENESS_ANALYSIS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "01_FRAMEWORK\\NATURAL_LANGUAGE_REPORT_GENERATION_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "01_FRAMEWORK\\RESEARCH_OUTCOME_TRANSFORMATION_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "01_FRAMEWORK\\STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\BAOSTOCK_CONNECTOR.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CORRELATION_ANALYSIS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ACQUISITION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_REQUIREMENTS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_ADAPTERS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DOCUMENT_NAMING_STANDARD.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 标准规范制定"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\factor_master_index.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\FREE_DATA_SOURCES.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND_CONNECTOR.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\MACRO_DATA.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\NEWS_SENTIMENT_DATA_SOURCE.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QMT_INTERFACE.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\STATISTICAL_TOOLS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\SUPERCMD_CONNECTOR.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\02_SCHEDULER\\SCHEDULER_API.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\CLEANING_RULES.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\03_CLEANING\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\07_DATA_PIPELINE\\README.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 模块说明和快速入门指南"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\CONFIG_MANAGEMENT\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ANOMALY_DETECTION\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_API_GATEWAY\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_BACKUP_RECOVERY\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CATALOG\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_CONTRACT\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_FEDERATION\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_LINEAGE_TRACKING\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_MONITORING_ENHANCED\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_OBSERVABILITY\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_PROFILING\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SECURITY_PRIVACY\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_STANDARDIZATION\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_SYNC_REPLICATION\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_TESTING_FRAMEWORK\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\DATA_VERSION_CONTROL\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\REALTIME_DATA_STREAMING\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\04_DATA_SOURCE\\TIME_SERIES_STORAGE\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\WEEKLY_AUDIT_MECHANISM.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DATA_SOURCE_LAYER_DEEP_AUDIT_REPORT_20260407_V2.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\DELETED_FILES_REVIEW_REPORT_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER11_LONG_TERM_OPTIMIZATION_REPORT_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER2_ALPHA_FACTOR_GOVERNANCE_REPORT_V22_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_COMPREHENSIVE_FIX_FINAL_REPORT_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER8_DEEP_AUDIT_REPORT_V3_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\OPTIMIZATION_REPORT_V14_20260406.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\P2_AUTOMATION_GOVERNANCE_IMPLEMENTATION_REPORT_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "09_AUDIT\\REPORTS\\LAYER1_FIX_SUMMARY_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "09_AUDIT\\REPORTS\\LAYER4_DEEP_AUDIT_REPORT_V2_20260407.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 分析报告和评估结果"
+    },
+    {
+      "path": "09_AUDIT\\STATE\\monitoring_report_20260407_031723.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "09_AUDIT\\STATE\\monitoring_report_20260407_032043.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "09_AUDIT\\STATE\\monitoring_report_20260407_032106.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "09_AUDIT\\STATE\\monitoring_report_20260407_113339.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "09_AUDIT\\STATE\\monitoring_report_20260407_113416.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\DATA_SOURCE_EXTENSION_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\OPEN_SOURCE_MODULE_SOLUTION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\OPERATIONS_KNOWLEDGE_MANAGEMENT_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\REAL_TIME_ALERT_SYSTEM_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\REAL_TIME_MONITORING_DASHBOARD_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_IMPLEMENTATION_DETAILS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_IMPROVEMENT_PROGRESS_TRACKER.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_LONG_TERM_IMPROVEMENT_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_LONG_TERM_TECHNICAL_SPECIFICATION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_PROJECT_MANAGEMENT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_RISK_MANAGEMENT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_ANALYSIS_TEST_PLAN.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\SENTIMENT_FACTOR_LIBRARY_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_AI_WORKFLOW\\VALIDATION_TESTING_FRAMEWORK_BLUEPRINT.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 蓝图设计和架构规划"
+    },
+    {
+      "path": "10_GOVERNANCE_COMPLIANCE\\GOVERNANCE_PROCESSES\\DOCUMENT_MAINTENANCE_PROCESS.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "10_GOVERNANCE_COMPLIANCE\\GOVERNANCE_PROCESSES\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "10_GOVERNANCE_COMPLIANCE\\KNOWLEDGE_BASE\\INDEX.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 目录导航和文档索引"
+    },
+    {
+      "path": "11_STRATEGIC_DECISION\\03_strategy_selection\\STRATEGY_PORTFOLIO_OPTIMIZATION.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    },
+    {
+      "path": "11_STRATEGIC_DECISION\\03_strategy_selection\\STRATEGY_SELECTION_FRAMEWORK.md",
+      "problem_type": "responsibility_missing",
+      "message": "已添加职责: 文档内容说明"
+    }
+  ],
+  "need_manual_details": []
+}

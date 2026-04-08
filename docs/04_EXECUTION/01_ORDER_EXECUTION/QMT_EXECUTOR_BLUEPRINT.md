@@ -1,89 +1,87 @@
 ---
-module_id: QMT_EXECUTOR_BLUEPRINT_001
+module_id: QMT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 执行团队
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+layer: Layer 5 (执行层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+module_id: QMT_EXECUTOR_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
 last_updated: 2026-04-03
-owner: 首席架构�?standard_type: 专业量化机构蓝图
-applicable_scope: Layer 5 策略执行�?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-architecture_layer: Layer 5 - 策略执行�?estimated_hours: 120
 priority: P0
 ---
 
-# QMT交易执行器实现蓝�?
-> 清风量化系统 v5.3 - QMT交易执行器完整实现计�?> **模块ID**: `QMT_EXECUTOR_001`
+> **核心职责**: Qmt Executor蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Qmt Executor蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+>
 > **版本**: v1.0.0
-> **状�?*: �?设计完成，待实现
-> **预计开发时�?*: 120小时
+实现
 
 ---
 
 ## 📋 执行摘要
 
 ### 核心目标
-实现一个生产级的QMT交易执行器，支持模拟和实盘交易，与清风量化系统无缝集成�?
-### 关键成果
-- �?完成QMT接口技术规范文�?- �?完成QMT执行器技术规格书
-- �?完成QMT配置文件和环境变量管�?- �?实现QMT交易执行器核心模�?- �?实现QMT数据接口适配�?- �?实现QMT风险控制集成
-- �?完成单元测试和集成测�?
+###
+- ?QMT
 ---
 
 ## 1. 项目概述
 
 ### 1.1 业务背景
 
-**当前状�?*:
-- QMT客户端已安装并运行（模拟环境�?- 数据接口已验证可�?�?- 模拟账户连接失败（返回码 -1）⚠�?- 实盘账户连接失败（返回码 -1）⚠�?
 **问题诊断**:
-返回�?-1 通常表示�?1. QMT客户端未正确登录交易账户
 2. 需要在QMT客户端中手动登录交易账户
-3. 账号权限或配置问�?
 **解决方案**:
 1. 在QMT客户端中手动登录交易账户
 2. 确认账号密码正确
-3. 检查账户权限设�?
-### 1.2 技术定�?
 | 维度 | 定位 |
 |------|------|
-| **架构层级** | Layer 5 - 策略执行�?|
 | **模块类别** | 核心交易执行模块 |
 | **上游模块** | StrategyEngine, SignalGenerator |
 | **下游模块** | RiskMonitor, PerformanceTracker |
-| **依赖�?* | xtquant (v250516) |
-| **配置管理** | config/qmt_config.yaml + .env.qmt |
+| **
 
-### 1.3 实现优先�?
-| 优先�?| 模块 | 预计时间 | 状�?|
+?
+|
 |--------|------|----------|------|
-| **P0** | QMT连接管理�?| 20h | �?待实�?|
-| **P0** | QMT订单执行�?| 30h | �?待实�?|
-| **P0** | QMT数据适配�?| 25h | �?待实�?|
-| **P1** | QMT风险控制集成 | 20h | �?待实�?|
-| **P1** | QMT监控和告�?| 15h | �?待实�?|
-| **P2** | QMT性能优化 | 10h | �?待实�?|
+?|
+?|
+?| 25h | ?
+?|
+?|
+?|
+?|
 
 ---
 
 ## 2. 架构设计
 
-### 2.1 系统架构�?
 ```
-┌─────────────────────────────────────────────────────────────�?�?                   Layer 5: 策略执行�?                      �?├─────────────────────────────────────────────────────────────�?�?                                                            �?�? ┌──────────────────────────────────────────────────────�? �?�? �?       QMTExecutor (交易执行器主模块)                  �? �?�? �? ├─ 连接管理 (ConnectionManager)                      �? �?�? �? ├─ 订单执行 (OrderExecutor)                          �? �?�? �? ├─ 账户管理 (AccountManager)                         �? �?�? �? ├─ 持仓管理 (PositionManager)                        �? �?�? �? └─ 风险控制 (RiskController)                         �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?       QMT数据适配�?(QMTDataAdapter)                 �? �?�? �? ├─ 行情数据 (MarketDataAdapter)                      �? �?�? �? ├─ 财务数据 (FinancialDataAdapter)                   �? �?�? �? └─ 实时订阅 (SubscriptionManager)                    �? �?�? └──────────────────────────────────────────────────────�? �?�?                          �?                                 �?�? ┌──────────────────────────────────────────────────────�? �?�? �?         QMT API�?(xtquant)                          �? �?�? �? ├─ XtQuantTrader (交易API)                           �? �?�? �? ├─ xtdata (数据API)                                  �? �?�? �? └─ xtorder (订单API)                                 �? �?�? └──────────────────────────────────────────────────────�? �?�?                                                            �?└─────────────────────────────────────────────────────────────�?```
 
 ### 2.2 核心组件设计
 
-#### 2.2.1 QMT连接管理�?(ConnectionManager)
 
 **职责**:
 - 管理与QMT客户端的连接生命周期
 - 处理连接、断开、重连逻辑
-- 维护连接状态和心跳检�?
-**关键接口**:
+**
 ```python
 class QMTConnectionManager:
-    """QMT连接管理�?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -104,27 +102,20 @@ class QMTConnectionManager:
         pass
     
     def is_connected(self) -> bool:
-        """检查连接状�?""
         pass
     
     def start_heartbeat(self, interval: int = 30) -> None:
-        """启动心跳检�?""
         pass
 ```
 
 **实现要点**:
-1. 支持模拟和实盘账户切�?2. 自动重连机制（最�?次，间隔5秒）
-3. 心跳检测保持连接活�?4. 连接状态监控和告警
 
-#### 2.2.2 QMT订单执行�?(OrderExecutor)
 
 **职责**:
 - 执行交易订单
-- 监控订单状�?- 处理订单异常和重�?
-**关键接口**:
+**
 ```python
 class QMTOrderExecutor:
-    """QMT订单执行�?""
     
     def __init__(self, connection_manager: QMTConnectionManager):
         self.connection = connection_manager
@@ -140,7 +131,6 @@ class QMTOrderExecutor:
         pass
     
     def query_order(self, order_id: str) -> OrderStatus:
-        """查询订单状�?""
         pass
     
     def _convert_order(self, unified_order: Order) -> QMTOrder:
@@ -149,19 +139,19 @@ class QMTOrderExecutor:
 ```
 
 **实现要点**:
-1. 支持多种订单类型（市价、限价、止损等�?2. 订单状态实时监�?3. 异常订单自动重试机制
 4. 订单执行日志完整记录
 
-#### 2.2.3 QMT数据适配�?(QMTDataAdapter)
+?(QMTDataAdapter)
 
 **职责**:
-- 封装QMT数据接口
-- 提供统一的数据访问接�?- 管理数据订阅
+-
+QMT数据接口
 
-**关键接口**:
+
+**
 ```python
 class QMTDataAdapter:
-    """QMT数据适配�?""
+?""
     
     def __init__(self, config: QMTConfig):
         self.config = config
@@ -173,11 +163,11 @@ class QMTDataAdapter:
         start_date: str,
         end_date: str
     ) -> pd.DataFrame:
-        """获取历史行情数据"""
+数据"""
         pass
     
     def get_realtime_quotes(self, symbols: List[str]) -> Dict:
-        """获取实时行情"""
+"""
         pass
     
     def subscribe_quotes(
@@ -185,7 +175,8 @@ class QMTDataAdapter:
         symbols: List[str],
         callback: Callable
     ) -> None:
-        """订阅实时行情"""
+"""
+"""
         pass
     
     def get_financial_data(
@@ -198,142 +189,115 @@ class QMTDataAdapter:
 ```
 
 **实现要点**:
-1. 数据缓存机制（减少API调用�?2. 批量数据获取优化
-3. 数据格式标准�?4. 错误处理和重�?
 ---
 
 ## 3. 实现计划
 
-### 3.1 阶段一：基础连接和配置（20小时�?
-**任务清单**:
+单**:
 - [ ] 实现QMTConnectionManager
-- [ ] 实现配置加载和验�?- [ ] 实现连接状态监�?- [ ] 编写连接测试用例
+- [ ]
 - [ ] 解决当前连接失败问题
 
 **验收标准**:
-- �?能够成功连接模拟账户
-- �?能够成功连接实盘账户
-- �?连接状态实时监�?- �?自动重连机制工作正常
 
 **当前问题解决方案**:
 1. 在QMT客户端中手动登录交易账户
 2. 确认账号密码正确
-3. 检查账户权限设�?4. 查看QMT客户端日志排查问�?
-### 3.2 阶段二：订单执行功能�?0小时�?
-**任务清单**:
+单**:
 - [ ] 实现QMTOrderExecutor
 - [ ] 实现订单格式转换
-- [ ] 实现订单状态监�?- [ ] 实现订单查询和撤�?- [ ] 编写订单执行测试用例
 
 **验收标准**:
-- �?能够执行市价�?- �?能够执行限价�?- �?能够执行止损�?- �?订单状态实时更�?- �?撤单功能正常
 
-### 3.3 阶段三：数据接口集成�?5小时�?
-**任务清单**:
+单**:
 - [ ] 实现QMTDataAdapter
-- [ ] 实现行情数据获取
-- [ ] 实现实时行情订阅
+数据获取
+
 - [ ] 实现财务数据获取
 - [ ] 编写数据接口测试用例
 
 **验收标准**:
-- �?能够获取历史K线数�?- �?能够获取实时行情
-- �?能够订阅行情推�?- �?能够获取财务数据
-- �?数据格式标准�?
-### 3.4 阶段四：风险控制集成�?0小时�?
-**任务清单**:
+
+单**:
 - [ ] 集成系统风险控制模块
-- [ ] 实现交易前风险检�?- [ ] 实现持仓和资金监�?- [ ] 实现异常交易告警
 - [ ] 编写风险控制测试用例
 
 **验收标准**:
-- �?交易前风险检查工作正�?- �?持仓和资金实时监�?- �?异常交易自动告警
-- �?风险控制日志完整
 
-### 3.5 阶段五：监控和优化（25小时�?
-**任务清单**:
+单**:
 - [ ] 实现性能监控
-- [ ] 实现连接池优�?- [ ] 实现数据缓存优化
 - [ ] 编写完整集成测试
 - [ ] 编写使用文档
 
 **验收标准**:
-- �?性能指标监控正常
-- �?连接池工作正�?- �?数据缓存有效
-- �?所有测试通过
-- �?文档完整清晰
+晰
 
 ---
 
-## 4. 技术规�?
 ### 4.1 代码规范
 
 **文件组织**:
 ```
 src/
 ├── execution/
-�?  ├── qmt/
-�?  �?  ├── __init__.py
-�?  �?  ├── connection_manager.py
-�?  �?  ├── order_executor.py
-�?  �?  ├── data_adapter.py
-�?  �?  ├── account_manager.py
-�?  �?  ├── position_manager.py
-�?  �?  └── risk_controller.py
-�?  └── __init__.py
+?   qmt/
+?  ?   __init__.py
+?  ?   connection_manager.py
+?  ?   order_executor.py
+?  ?   data_adapter.py
+?  ?   account_manager.py
+?  ?   position_manager.py
+?  ?   risk_controller.py
+?   __init__.py
 ```
 
 **命名规范**:
-- 类名：PascalCase (�?`QMTConnectionManager`)
-- 函数名：snake_case (�?`execute_order`)
-- 常量：UPPER_CASE (�?`MAX_RETRY_TIMES`)
-- 私有方法：_leading_underscore (�?`_convert_order`)
 
 **文档规范**:
-- 所有公共方法必须有docstring
+-
+须有docstring
 - 使用Google风格docstring
-- 包含参数类型和返回值说�?- 包含使用示例
+-
+含使用示例
 
 ### 4.2 测试规范
 
-**测试覆盖率要�?*:
-- 单元测试覆盖�?�?80%
+-
 - 集成测试覆盖核心流程
-- 端到端测试覆盖完整交易流�?
 **测试文件组织**:
 ```
 tests/
 ├── unit/
-�?  ├── test_qmt_connection_manager.py
-�?  ├── test_qmt_order_executor.py
-�?  └── test_qmt_data_adapter.py
+?   test_qmt_connection_manager.py
+?   test_qmt_order_executor.py
+?   test_qmt_data_adapter.py
 ├── integration/
-�?  └── test_qmt_integration.py
+?   test_qmt_integration.py
 └── fixtures/
     └── qmt_test_data.py
 ```
 
-### 4.3 配置管理
+### 4.3
 
-**配置文件**:
-- `config/qmt_config.yaml`: 非敏感配�?- `.env.qmt`: 敏感信息（账号密码）
-- `.env.qmt.example`: 配置模板
+**
+- `config/qmt_config.yaml`:
+- `.env.qmt.example`:
 
-**配置加载**:
+**
 ```python
 from pathlib import Path
 import yaml
 from dotenv import load_dotenv
 
 class QMTConfig:
-    """QMT配置管理"""
+"""QMT
     
     def __init__(self):
         self._load_config()
         self._load_env()
     
     def _load_config(self):
-        """加载YAML配置"""
+置"""
         config_path = Path("config/qmt_config.yaml")
         with open(config_path, 'r', encoding='utf-8') as f:
             self.config = yaml.safe_load(f)
@@ -351,21 +315,14 @@ class QMTConfig:
 
 ## 5. 风险评估
 
-### 5.1 技术风�?
 | 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|----------|
-| QMT API变更 | �?| 接口不兼�?| 版本锁定、抽象层封装 |
-| 网络连接不稳�?| �?| 交易中断 | 自动重连、心跳检�?|
-| 订单执行失败 | �?| 交易损失 | 异常处理、重试机�?|
-| 数据延迟 | �?| 策略失效 | 数据缓存、多源备�?|
+ |
 
 ### 5.2 业务风险
 
 | 风险 | 等级 | 影响 | 缓解措施 |
 |------|------|------|----------|
-| 实盘交易错误 | �?| 资金损失 | 模拟测试、风控检�?|
-| 账号权限问题 | �?| 无法交易 | 权限验证、告警通知 |
-| 交易成本超预�?| �?| 收益下降 | 成本监控、算法优�?|
 
 ---
 
@@ -373,10 +330,7 @@ class QMTConfig:
 
 ### 6.1 功能验收
 
-- [ ] 能够成功连接模拟和实盘账�?- [ ] 能够执行各类订单（市价、限价、止损）
 - [ ] 能够查询订单状态和持仓信息
-- [ ] 能够获取实时和历史行情数�?- [ ] 能够订阅行情推�?- [ ] 风险控制功能正常工作
-- [ ] 监控和告警功能正�?
 ### 6.2 性能验收
 
 - [ ] 订单执行延迟 < 100ms
@@ -386,19 +340,17 @@ class QMTConfig:
 
 ### 6.3 质量验收
 
-- [ ] 单元测试覆盖�?�?80%
-- [ ] 集成测试全部通过
+- [ ]
 - [ ] 代码审查通过
-- [ ] 文档完整清晰
+晰
 
 ---
 
 ## 7. 后续优化方向
 
-### 7.1 短期优化�?个月内）
+）
 
 1. **性能优化**
-   - 实现连接�?   - 优化数据缓存
    - 批量操作优化
 
 2. **功能增强**
@@ -406,53 +358,80 @@ class QMTConfig:
    - 实现智能订单路由
    - 增强监控告警
 
-### 7.2 中期优化�?个月内）
+）
 
 1. **算法交易**
    - 实现TWAP/VWAP算法
    - 实现冰山订单
-   - 实现动态止盈止�?
-2. **多账户管�?*
-   - 支持多账户切�?   - 实现账户分组
    - 统一账户视图
 
-### 7.3 长期优化�?个月内）
+）
 
-1. **高可用架�?*
    - 实现主备切换
    - 实现负载均衡
-   - 实现故障自动恢复
+-
+障自动恢复
 
 2. **智能风控**
-   - AI驱动的风险识�?   - 自适应风控策略
    - 实时风险预警
 
 ---
 
-## 8. 参考文�?
-### 8.1 内部文档
+## 8. ?
+### 8.1
+部文档
 
-- [QMT数据接口技术规范](../../02_FACTOR_LIBRARY/04_DATA_SOURCE/QMT_INTERFACE.md)
+- `QMT数据接口技术规范`
 - [QMT执行器技术规格书](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md)
-- [订单执行蓝图](ORDER_EXECUTION_BLUEPRINT.md)
-- [模拟交易蓝图](../06_SIMULATION/BLUEPRINT.md)
+- 订单执行蓝图
+- 模拟交易蓝图
 
 ### 8.2 外部文档
 
 - [QMT官方API文档](https://dict.thinktrader.net/nativeApi/start_now.html)
-- [XtQuant数据字典](https://dict.thinktrader.net/dictionary/)
+](https://dict.thinktrader.net/dictionary/)
 - [QMT快速开始指南](https://dict.thinktrader.net/innerApi/start_now.html)
 
 ---
 
 ## 9. 变更历史
 
-| 版本 | 日期 | 作�?| 变更说明 |
 |------|------|------|----------|
-| v1.0.0 | 2026-04-03 | 首席架构�?| 初始版本，完成设计阶�?|
 
 ---
 
-**维护�?*: 清风量化架构团队
+风量化架构团队
 **更新日期**: 2026-04-03
 **下次审查**: 2026-04-10
+---
+
+## 10. 文档治理
+
+### 10.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Qmt Executor Blueprint
+- **模块ID**: QMT_EXECUTOR_BLUEPRINT_001
+- **蓝图文档**: QMT_EXECUTOR_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 5 ?compliance_level: 
+- **状态**: Active
+```
+
+### 10.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Qmt Executor Blueprint** | Layer 5 ?compliance_level:  | **核心模块** |
+
+### 10.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active
+```

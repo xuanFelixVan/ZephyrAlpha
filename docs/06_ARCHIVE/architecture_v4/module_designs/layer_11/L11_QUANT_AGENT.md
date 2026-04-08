@@ -3,170 +3,179 @@ module_id: L11_QUANT_AGENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+- 归档文档、历史版本
 layer: Layer 11
-module_type: 核心模块
+module_type: ﮔﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
 estimated_hours: 30
-standard_type: 设计文档
-applicable_scope: 全系�?
-compliance_level: 初始标准
+standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+---
 ---
 
-# L11_QUANT_AGENT: 量化交易Agent模块设计文档
 
-> **版本**: v1.0  
-> **创建日期**: 2026-04-02  
-> **所属层�?*: Layer 11 - 文字驱动�? 
-> **设计状�?*: �?设计完成  
-> **优先�?*: P0 (核心模块)
+# L11_QUANT_AGENT: ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
----
 
-## 📋 目录
-
-- [1. 模块概述](#1-模块概述)
-- [2. Agent架构](#2-agent架构)
-- [3. 模型管理](#3-模型管理)
-- [4. 工具集成](#4-工具集成)
-- [5. 记忆管理](#5-记忆管理)
-- [6. 安全机制](#6-安全机制)
-- [7. 性能优化](#7-性能优化)
-- [8. 测试方案](#8-测试方案)
+> **ﻝﮔ؛**: v1.0  
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒﻠ۸ﺎﮒ۷ﮒﺎ?
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
+> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔﺕﮒﺟﮔ۷۰ﮒ)
 
 ---
 
-## 1. 模块概述
+## ﻭ ﻝ؟ﮒﺛ
 
-### 1.1 功能定位
+- [1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ](#1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ)
+- [2. Agentﮔﭘﮔ](#2-agentﮔﭘﮔ)
+- [3. ﮔ۷۰ﮒﻝ؟۰ﻝ](#3-ﮔ۷۰ﮒﻝ؟۰ﻝ)
+- [4. ﮒﺓ۴ﮒﺓﻠﮔ](#4-ﮒﺓ۴ﮒﺓﻠﮔ)
+- [5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ](#5-ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)
+- [6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ](#6-ﮒ؟ﮒ۷ﮔﭦﮒﭘ)
+- [7. ﮔ۶ﻟﺛﻛﺙﮒ](#7-ﮔ۶ﻟﺛﻛﺙﮒ)
+- [8. ﮔﭖﻟﺁﮔﺗﮔ۰](#8-ﮔﭖﻟﺁﮔﺗﮔ۰)
 
-**L11_QUANT_AGENT**是Layer 11的智能Agent模块，基于LangChain 1.0构建，负责智能推理和工具调用�?
+---
 
-**核心职责**�?
-- 🧠 **智能推理**：基于LLM进行复杂推理
-- 🔧 **工具调用**：调用量化交易工具集
-- 💭 **记忆管理**：管理对话历史和长期记忆
-- 🛡�?**安全控制**：PII检测和权限控制
-- 📊 **性能监控**：监控Agent性能指标
+## 1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### 1.2 技术栈
+### 1.1 ﮒﻟﺛﮒ؟ﻛﺛ
+
+**L11_QUANT_AGENT**ﮔﺁLayer 11ﻝﮔﭦﻟﺛAgentﮔ۷۰ﮒﺅﺙﮒﭦﻛﭦLangChain 1.0ﮔﮒﭨﭦﺅﺙﻟﺑﻟﺑ۲ﮔﭦﻟﺛﮔ۷ﻝﮒﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﻙ?
+
+**ﮔﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
+- ﻭ۶ **ﮔﭦﻟﺛﮔ۷ﻝ**ﺅﺙﮒﭦﻛﭦLLMﻟﺟﻟ۰ﮒ۳ﮔﮔ۷ﻝ
+- ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓﻠ
+- ﻭ **ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ**ﺅﺙﻝ؟۰ﻝﮒﺁﺗﻟﺁﮒﮒﺎﮒﻠﺟﮔﻟ؟ﺍﮒﺟ
+- ﻭ۰ﺅﺕ?**ﮒ؟ﮒ۷ﮔ۶ﮒﭘ**ﺅﺙPIIﮔ۲ﮔﭖﮒﮔﻠﮔ۶ﮒﭘ
+- ﻭ **ﮔ۶ﻟﺛﻝﮔ۶**ﺅﺙﻝﮔ۶Agentﮔ۶ﻟﺛﮔﮔ
+
+### 1.2 ﮔﮔﺁﮔ
 
 ```yaml
-核心框架:
-  - LangChain 1.0: Agent框架
-  - LangGraph: 状态图执行引擎
-  - LangSmith: 监控和调试平�?
+ﮔﺕﮒﺟﮔ۰ﮔﭘ:
+  - LangChain 1.0: Agentﮔ۰ﮔﭘ
+  - LangGraph: ﻝﭘﮔﮒﺝﮔ۶ﻟ۰ﮒﺙﮔ
+  - LangSmith: ﻝﮔ۶ﮒﻟﺍﻟﺁﮒﺗﺏﮒ?
 
-模型支持:
-  本地模型:
-    - deepseek-r1:14b (推理�?
-    - qwen2.5-coder:14b (编程�?
-    - qwen3-coder:30b (综合最�?
+ﮔ۷۰ﮒﮔﺁﮔ:
+  ﮔ؛ﮒﺍﮔ۷۰ﮒ:
+    - deepseek-r1:14b (ﮔ۷ﻝﮒﺙ?
+    - qwen2.5-coder:14b (ﻝﺙﻝ۷ﮒﺙ?
+    - qwen3-coder:30b (ﻝﭨﺙﮒﮔﮒﺙ?
   
-  云端API:
+  ﻛﭦﻝ،ﺁAPI:
     - GPT-4 Turbo (OpenAI)
     - Claude 3.5 Sonnet (Anthropic)
-    - Qwen-Max (阿里�?
+    - Qwen-Max (ﻠﺟﻠﻛﭦ?
 
-工具集成:
-  - QuantTradingTools (量化交易工具)
-  - SystemTools (系统管理工具)
-  - DataTools (数据分析工具)
+ﮒﺓ۴ﮒﺓﻠﮔ:
+  - QuantTradingTools (ﻠﮒﻛﭦ۳ﮔﮒﺓ۴ﮒﺓ)
+  - SystemTools (ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ)
+  - DataTools (ﮔﺍﮔ؟ﮒﮔﮒﺓ۴ﮒﺓ)
 ```
 
-### 1.3 模块边界
+### 1.3 ﮔ۷۰ﮒﻟﺝﺗﻝ
 
 ```yaml
-输入:
-  - 用户意图
-  - 提取的参�?
-  - 对话上下�?
+ﻟﺝﮒ۴:
+  - ﻝ۷ﮔﺓﮔﮒﺝ
+  - ﮔﮒﻝﮒﮔ?
+  - ﮒﺁﺗﻟﺁﻛﺕﻛﺕﮔ?
 
-输出:
-  - 工具调用决策
-  - 执行结果
-  - 智能建议
+ﻟﺝﮒﭦ:
+- ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮒﺏﻝ
+  - ﮔ۶ﻟ۰ﻝﭨﮔ
+  - ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟
 
-不包�?
-  - 自然语言理解 (由TEXT_DRIVER负责)
-  - UI渲染 (由WEB_UI负责)
-  - 工具实现 (由TOOLS负责)
+ﻛﺕﮒﮒ?
+- ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲ (ﻝﺎTEXT_DRIVERﻟﺑﻟﺑ۲)
+  - UIﮔﺕﺎﮔ (ﻝﺎWEB_UIﻟﺑﻟﺑ۲)
+  - ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍ (ﻝﺎTOOLSﻟﺑﻟﺑ۲)
 ```
 
 ---
 
-## 2. Agent架构
+## 2. Agentﮔﭘﮔ
 
-### 2.1 整体架构
+### 2.1 ﮔﺑﻛﺛﮔﭘﮔ
 
 ```
-┌─────────────────────────────────────────────────────────�?
-�? QuantTradingAgent                                       �?
-�? ┌─────────────────────────────────────────────────�?  �?
-�? �? ModelManager (模型管理)                         �?  �?
-�? �? ├─ LocalModelManager (本地模型)                �?  �?
-�? �? └─ CloudModelManager (云端模型)                �?  �?
-�? └─────────────────────────────────────────────────�?  �?
-�?                       �?                               �?
-�? ┌─────────────────────────────────────────────────�?  �?
-�? �? AgentCore (Agent核心)                          �?  �?
-�? �? ├─ ReActLoop (推理循环)                        �?  �?
-�? �? ├─ ToolSelector (工具选择)                     �?  �?
-�? �? └─ DecisionMaker (决策�?                      �?  �?
-�? └─────────────────────────────────────────────────�?  �?
-�?                       �?                               �?
-�? ┌─────────────────────────────────────────────────�?  �?
-�? �? ToolIntegration (工具集成)                      �?  �?
-�? �? ├─ QuantTools (量化工具)                       �?  �?
-�? �? ├─ SystemTools (系统工具)                      �?  �?
-�? �? └─ DataTools (数据工具)                        �?  �?
-�? └─────────────────────────────────────────────────�?  �?
-�?                       �?                               �?
-�? ┌─────────────────────────────────────────────────�?  �?
-�? �? MemoryManager (记忆管理)                        �?  �?
-�? �? ├─ ConversationMemory (对话记忆)               �?  �?
-�? �? ├─ LongTermMemory (长期记忆)                   �?  �?
-�? �? └─ WorkingMemory (工作记忆)                    �?  �?
-�? └─────────────────────────────────────────────────�?  �?
-�?                       �?                               �?
-�? ┌─────────────────────────────────────────────────�?  �?
-�? �? SecurityLayer (安全�?                          �?  �?
-�? �? ├─ PIIDetector (PII检�?                       �?  �?
-�? �? ├─ PermissionChecker (权限检�?                �?  �?
-�? �? └─ AuditLogger (审计日志)                      �?  �?
-�? └─────────────────────────────────────────────────�?  �?
-└─────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? QuantTradingAgent                                       ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? ModelManager (ﮔ۷۰ﮒﻝ؟۰ﻝ)                         ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ LocalModelManager (ﮔ؛ﮒﺍﮔ۷۰ﮒ)                ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ CloudModelManager (ﻛﭦﻝ،ﺁﮔ۷۰ﮒ)                ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? AgentCore (Agentﮔﺕﮒﺟ)                          ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ReActLoop (ﮔ۷ﻝﮒﺝ۹ﻝﺁ)                        ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ToolSelector (ﮒﺓ۴ﮒﺓﻠﮔ۸)                     ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ DecisionMaker (ﮒﺏﻝﮒ?                      ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? ToolIntegration (ﮒﺓ۴ﮒﺓﻠﮔ)                      ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ QuantTools (ﻠﮒﮒﺓ۴ﮒﺓ)                       ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ SystemTools (ﻝﺏﭨﻝﭨﮒﺓ۴ﮒﺓ)                      ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ DataTools (ﮔﺍﮔ؟ﮒﺓ۴ﮒﺓ)                        ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? MemoryManager (ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)                        ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ ConversationMemory (ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ)               ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ LongTermMemory (ﻠﺟﮔﻟ؟ﺍﮒﺟ)                   ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ WorkingMemory (ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ)                    ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ?                       ﻗ?                               ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗ? ﻗ? SecurityLayer (ﮒ؟ﮒ۷ﮒﺎ?                          ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ PIIDetector (PIIﮔ۲ﮔﭖ?                       ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ PermissionChecker (ﮔﻠﮔ۲ﮔ?                ﻗ?  ﻗ?
+ﻗ? ﻗ? ﻗﻗ AuditLogger (ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ)                      ﻗ?  ﻗ?
+ﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?  ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 2.2 ReAct循环
+### 2.2 ReActﮒﺝ۹ﻝﺁ
 
-**LangChain 1.0标准化ReAct循环**�?
+**LangChain 1.0ﮔﮒﮒReActﮒﺝ۹ﻝﺁ**ﺅﺙ?
 
 ```python
-# ReAct循环：Reason �?Act �?Observe �?Decide
+# ReActﮒﺝ۹ﻝﺁﺅﺙReason ﻗ?Act ﻗ?Observe ﻗ?Decide
 
 class ReActLoop:
-    """ReAct推理循环"""
+    """ReActﮔ۷ﻝﮒﺝ۹ﻝﺁ"""
     
     def execute(self, user_input: str) -> str:
-        """执行ReAct循环"""
+        """ﮔ۶ﻟ۰ReActﮒﺝ۹ﻝﺁ"""
         
-        # 1. Reason (推理)
+        # 1. Reason (ﮔ۷ﻝ)
         thought = self.reason(user_input)
         
-        # 2. Act (行动)
+        # 2. Act (ﻟ۰ﮒ۷)
         action = self.act(thought)
         
-        # 3. Observe (观察)
+        # 3. Observe (ﻟ۶ﮒﺁ)
         observation = self.observe(action)
         
-        # 4. Decide (决策)
+# 4. Decide (ﮒﺏﻝ)
         decision = self.decide(observation)
         
-        # 循环直到得到最终答�?
+# ﮒﺝ۹ﻝﺁﻝﺑﮒﺍﮒﺝﮒﺍﮔﻝﭨﻝﮔ۰?
         while not decision.is_final:
             thought = self.reason(observation)
             action = self.act(thought)
@@ -176,7 +185,7 @@ class ReActLoop:
         return decision.answer
 ```
 
-### 2.3 核心类设�?
+### 2.3 ﮔﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
 
 ```python
 from langchain.agents import create_agent
@@ -185,34 +194,34 @@ from langchain.memory import ConversationBufferMemory
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 class QuantTradingAgent:
-    """量化交易AI Agent"""
+    """ﻠﮒﻛﭦ۳ﮔAI Agent"""
     
     def __init__(self, config: dict):
         """
-        初始化Agent
+        ﮒﮒ۶ﮒAgent
         
         Args:
-            config: 配置字典
-                - model_name: 模型名称
-                - tools: 工具列表
-                - system_prompt: 系统提示�?
+config: ﻠﻝﺛ؟ﮒﮒﺕ
+                - model_name: ﮔ۷۰ﮒﮒﻝ۶ﺍ
+                - tools: ﮒﺓ۴ﮒﺓﮒﻟ۰۷
+                - system_prompt: ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
         """
-        # 1. 初始化模�?
+        # 1. ﮒﮒ۶ﮒﮔ۷۰ﮒ?
         self.llm = self._init_model(config["model_name"])
         
-        # 2. 初始化工�?
+        # 2. ﮒﮒ۶ﮒﮒﺓ۴ﮒ?
         self.tools = config["tools"]
         
-        # 3. 初始化记�?
+        # 3. ﮒﮒ۶ﮒﻟ؟ﺍﮒﺟ?
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
         
-        # 4. 系统提示�?
+        # 4. ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?
         self.system_prompt = config.get("system_prompt", self._default_prompt())
         
-        # 5. 创建Agent
+        # 5. ﮒﮒﭨﭦAgent
         self.agent = create_agent(
             model=self.llm,
             tools=self.tools,
@@ -221,16 +230,16 @@ class QuantTradingAgent:
         )
     
     def _init_model(self, model_name: str):
-        """初始化模�?""
+        """ﮒﮒ۶ﮒﮔ۷۰ﮒ?""
         
         if model_name in ["gpt-4-turbo", "gpt-4", "claude-3"]:
-            # 云端API
+            # ﻛﭦﻝ،ﺁAPI
             return ChatOpenAI(
                 model=model_name,
                 temperature=0.1
             )
         else:
-            # 本地Ollama
+            # ﮔ؛ﮒﺍOllama
             return ChatOpenAI(
                 base_url="http://localhost:11434/v1",
                 api_key="ollama",
@@ -240,105 +249,105 @@ class QuantTradingAgent:
     
     def chat(self, user_input: str) -> str:
         """
-        与Agent对话
+        ﻛﺕAgentﮒﺁﺗﻟﺁ
         
         Args:
-            user_input: 用户输入
+            user_input: ﻝ۷ﮔﺓﻟﺝﮒ۴
             
         Returns:
-            Agent回复
+            Agentﮒﮒ۳
         """
         try:
             result = self.agent.invoke({"input": user_input})
             return result["output"]
         except Exception as e:
-            return f"抱歉，处理您的请求时出现错误：{str(e)}"
+return f"ﮔﺎﮔﺅﺙﮒ۳ﻝﮔ۷ﻝﻟﺁﺓﮔﺎﮔﭘﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙ{str(e)}"
     
     def _default_prompt(self) -> str:
-        """默认系统提示�?""
-        return """你是ZephyrAlpha量化交易系统的AI助手，专门帮助用户通过自然语言操作量化交易系统�?
+        """ﻠﭨﻟ؟۳ﻝﺏﭨﻝﭨﮔﻝ۳ﭦﻟﺁ?""
+return """ﻛﺛﮔﺁZephyrAlphaﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻝAIﮒ۸ﮔﺅﺙﻛﺕﻠ۷ﮒﺕ؟ﮒ۸ﻝ۷ﮔﺓﻠﻟﺟﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻛﺛﻠﮒﻛﭦ۳ﮔﻝﺏﭨﻝﭨﻙ?
 
-## 你的身份
-- 专业量化交易顾问
-- 系统操作助手
-- 风险管理专家
+## ﻛﺛﻝﻟﭦ،ﻛﭨﺛ
+- ﻛﺕﻛﺕﻠﮒﻛﭦ۳ﮔﻠ۰ﺝﻠ؟
+- ﻝﺏﭨﻝﭨﮔﻛﺛﮒ۸ﮔ
+- ﻠ۲ﻠ۸ﻝ؟۰ﻝﻛﺕﮒ؟ﭘ
 
-## 你的能力
-1. **策略配置**：理解用户的策略描述，提取参数并配置
-2. **风控调整**：理解风险偏好，调整风控参数
-3. **状态查�?*：查询系统状态并用自然语言反馈
-4. **回测分析**：运行策略回测，分析结果
-5. **智能建议**：根据市场情况给出专业建�?
+## ﻛﺛﻝﻟﺛﮒ
+1. **ﻝﻝ۴ﻠﻝﺛ؟**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻝﻝ۴ﮔﻟﺟﺍﺅﺙﮔﮒﮒﮔﺍﮒﺗﭘﻠﻝﺛ؟
+2. **ﻠ۲ﮔ۶ﻟﺍﮔﺑ**ﺅﺙﻝﻟ۶۲ﻠ۲ﻠ۸ﮒﮒ۴ﺛﺅﺙﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ
+3. **ﻝﭘﮔﮔ۴ﻟﺁ?*ﺅﺙﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔﮒﺗﭘﻝ۷ﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﻠ۵
+4. **ﮒﮔﭖﮒﮔ**ﺅﺙﻟﺟﻟ۰ﻝﻝ۴ﮒﮔﭖﺅﺙﮒﮔﻝﭨﮔ
+5. **ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟**ﺅﺙﮔﺗﮔ؟ﮒﺕﮒﭦﮔﮒﭖﻝﭨﮒﭦﻛﺕﻛﺕﮒﭨﭦﻟ؟?
 
-## 工作流程
-1. 分析用户意图（配�?查询/调整/建议�?
-2. 提取关键参数
-3. 调用对应的系统工�?
-4. 将结果转换为友好的自然语言反馈
+## ﮒﺓ۴ﻛﺛﮔﭖﻝ۷
+1. ﮒﮔﻝ۷ﮔﺓﮔﮒﺝﺅﺙﻠﻝﺛ?ﮔ۴ﻟﺁ۱/ﻟﺍﮔﺑ/ﮒﭨﭦﻟ؟؟ﺅﺙ?
+2. ﮔﮒﮒﺏﻠ؟ﮒﮔﺍ
+3. ﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒ?
+4. ﮒﺍﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﮒﮒ۴ﺛﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﻠ۵
 
-## 专业术语映射
-- "动量策略" �?momentum
-- "价值策�? �?value
-- "质量策略" �?quality
-- "成长策略" �?growth
-- "持仓5�? �?holding_period=5
-- "止损10%" �?stop_loss=0.10
-- "最大回�?5%" �?max_drawdown=0.15
-- "单只仓位5%" �?position_limit=0.05
+## ﻛﺕﻛﺕﮔﺁﻟﺁﮔﮒﺍ
+- "ﮒ۷ﻠﻝﻝ۴" ﻗ?momentum
+- "ﻛﭨﺓﮒﺙﻝﻝ? ﻗ?value
+- "ﻟﺑ۷ﻠﻝﻝ۴" ﻗ?quality
+- "ﮔﻠﺟﻝﻝ۴" ﻗ?growth
+- "ﮔﻛﭨ5ﮒ۳? ﻗ?holding_period=5
+- "ﮔ۱ﮔ10%" ﻗ?stop_loss=0.10
+- "ﮔﮒ۳۶ﮒﮔ?5%" ﻗ?max_drawdown=0.15
+- "ﮒﮒ۹ﻛﭨﻛﺛ5%" ﻗ?position_limit=0.05
 
-## 回复风格
-- 专业但不晦涩
-- 简洁但不失细节
-- 友好但保持专�?
-- 提供数据支持建议
+## ﮒﮒ۳ﻠ۲ﮔﺙ
+- ﻛﺕﻛﺕﻛﺛﻛﺕﮔ۵ﮔﭘ۸
+- ﻝ؟ﮔﺑﻛﺛﻛﺕﮒ۳ﺎﻝﭨﻟ
+- ﮒﮒ۴ﺛﻛﺛﻛﺟﮔﻛﺕﻛﺕ?
+- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﮒﭨﭦﻟ؟؟
 
-## 重要提示
-- 所有参数必须通过工具调用，不能直接执�?
-- 涉及资金的操作需要用户确�?
-- 提供数据支持的建议，不给出绝对承�?
+## ﻠﻟ۵ﮔﻝ۳ﭦ
+- ﮔﮔﮒﮔﺍﮒﺟﻠ۰ﭨﻠﻟﺟﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﺅﺙﻛﺕﻟﺛﻝﺑﮔ۴ﮔ۶ﻟ۰?
+- ﮔﭘﮒﻟﭖﻠﻝﮔﻛﺛﻠﻟ۵ﻝ۷ﮔﺓﻝ۰؟ﻟ؟?
+- ﮔﻛﺝﮔﺍﮔ؟ﮔﺁﮔﻝﮒﭨﭦﻟ؟؟ﺅﺙﻛﺕﻝﭨﮒﭦﻝﭨﮒﺁﺗﮔﺟﻟﺁ?
 """
 ```
 
 ---
 
-## 3. 模型管理
+## 3. ﮔ۷۰ﮒﻝ؟۰ﻝ
 
-### 3.1 本地模型管理
+### 3.1 ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝ
 
 ```python
 class LocalModelManager:
-    """本地模型管理�?""
+    """ﮔ؛ﮒﺍﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
     
     def __init__(self):
         self.models = {
             "deepseek-r1:8b": {
                 "size": "5.2GB",
                 "vram": "~6GB",
-                "strength": "推理�?,
-                "use_case": "简单查�?
+                "strength": "ﮔ۷ﻝﮒﺟ?,
+                "use_case": "ﻝ؟ﮒﮔ۴ﻟﺁ?
             },
             "deepseek-r1:14b": {
                 "size": "9.0GB",
                 "vram": "~10GB",
-                "strength": "推理�?,
-                "use_case": "策略配置"
+                "strength": "ﮔ۷ﻝﮒﺙ?,
+"use_case": "ﻝﻝ۴ﻠﻝﺛ؟"
             },
             "qwen2.5-coder:14b": {
                 "size": "9.0GB",
                 "vram": "~10GB",
-                "strength": "编程�?,
-                "use_case": "代码生成"
+                "strength": "ﻝﺙﻝ۷ﮒﺙ?,
+"use_case": "ﻛﭨ۲ﻝﻝﮔ"
             },
             "qwen3-coder:30b": {
                 "size": "18GB",
                 "vram": "~20GB",
-                "strength": "综合最�?,
-                "use_case": "复杂分析"
+                "strength": "ﻝﭨﺙﮒﮔﮒﺙ?,
+                "use_case": "ﮒ۳ﮔﮒﮔ"
             }
         }
     
     def get_model(self, model_name: str) -> ChatOpenAI:
-        """获取模型实例"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         return ChatOpenAI(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
@@ -347,7 +356,7 @@ class LocalModelManager:
         )
     
     def check_availability(self, model_name: str) -> bool:
-        """检查模型是否可�?""
+        """ﮔ۲ﮔ۴ﮔ۷۰ﮒﮔﺁﮒ۵ﮒﺁﻝ?""
         try:
             import requests
             response = requests.get("http://localhost:11434/api/tags")
@@ -357,34 +366,34 @@ class LocalModelManager:
             return False
 ```
 
-### 3.2 云端模型管理
+### 3.2 ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝ
 
 ```python
 class CloudModelManager:
-    """云端模型管理�?""
+    """ﻛﭦﻝ،ﺁﮔ۷۰ﮒﻝ؟۰ﻝﮒ?""
     
     def __init__(self, api_keys: dict):
         self.api_keys = api_keys
         self.models = {
             "gpt-4-turbo": {
                 "provider": "openai",
-                "cost": "¥0.03/1k tokens",
-                "strength": "推理最�?
+                "cost": "ﺡ۴0.03/1k tokens",
+                "strength": "ﮔ۷ﻝﮔﮒﺙ?
             },
             "claude-3.5-sonnet": {
                 "provider": "anthropic",
-                "cost": "¥0.02/1k tokens",
-                "strength": "长文本分�?
+                "cost": "ﺡ۴0.02/1k tokens",
+                "strength": "ﻠﺟﮔﮔ؛ﮒﮔ?
             },
             "qwen-max": {
                 "provider": "alibaba",
-                "cost": "¥0.01/1k tokens",
-                "strength": "中文理解"
+                "cost": "ﺡ۴0.01/1k tokens",
+"strength": "ﻛﺕﮔﻝﻟ۶۲"
             }
         }
     
     def get_model(self, model_name: str) -> ChatOpenAI:
-        """获取模型实例"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         
         if model_name.startswith("gpt"):
             return ChatOpenAI(
@@ -399,75 +408,75 @@ class CloudModelManager:
                 api_key=self.api_keys["anthropic"],
                 temperature=0.1
             )
-        # ... 其他模型
+        # ... ﮒﭘﻛﭨﮔ۷۰ﮒ
 ```
 
-### 3.3 智能路由
+### 3.3 ﮔﭦﻟﺛﻟﺓﺁﻝﺎ
 
 ```python
 class ModelRouter:
-    """模型智能路由"""
+    """ﮔ۷۰ﮒﮔﭦﻟﺛﻟﺓﺁﻝﺎ"""
     
     def __init__(self, local_manager, cloud_manager):
         self.local = local_manager
         self.cloud = cloud_manager
     
     def route(self, user_input: str, intent: str) -> str:
-        """智能路由到合适的模型"""
+        """ﮔﭦﻟﺛﻟﺓﺁﻝﺎﮒﺍﮒﻠﻝﮔ۷۰ﮒ"""
         
-        # 1. 简单查�?�?本地小模�?
+        # 1. ﻝ؟ﮒﮔ۴ﻟﺁ?ﻗ?ﮔ؛ﮒﺍﮒﺍﮔ۷۰ﮒ?
         if intent == "query_status":
             return "deepseek-r1:8b"
         
-        # 2. 策略配置 �?本地中模�?
+# 2. ﻝﻝ۴ﻠﻝﺛ؟ ﻗ?ﮔ؛ﮒﺍﻛﺕﮔ۷۰ﮒ?
         elif intent == "configure_strategy":
             return "deepseek-r1:14b"
         
-        # 3. 代码生成 �?本地编程模型
+# 3. ﻛﭨ۲ﻝﻝﮔ ﻗ?ﮔ؛ﮒﺍﻝﺙﻝ۷ﮔ۷۰ﮒ
         elif intent == "generate_code":
             return "qwen2.5-coder:14b"
         
-        # 4. 复杂分析 �?本地大模�?
+        # 4. ﮒ۳ﮔﮒﮔ ﻗ?ﮔ؛ﮒﺍﮒ۳۶ﮔ۷۰ﮒ?
         elif intent == "complex_analysis":
             return "qwen3-coder:30b"
         
-        # 5. 紧急任�?�?云端API
+        # 5. ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?ﻗ?ﻛﭦﻝ،ﺁAPI
         elif intent == "urgent_task":
             return "gpt-4-turbo"
         
-        # 6. 默认 �?本地中模�?
+# 6. ﻠﭨﻟ؟۳ ﻗ?ﮔ؛ﮒﺍﻛﺕﮔ۷۰ﮒ?
         else:
             return "deepseek-r1:14b"
     
     def get_model_instance(self, model_name: str):
-        """获取模型实例"""
+        """ﻟﺓﮒﮔ۷۰ﮒﮒ؟ﻛﺝ"""
         
-        # 检查是否为本地模型
+        # ﮔ۲ﮔ۴ﮔﺁﮒ۵ﻛﺕﭦﮔ؛ﮒﺍﮔ۷۰ﮒ
         if model_name in self.local.models:
             if self.local.check_availability(model_name):
                 return self.local.get_model(model_name)
         
-        # 回退到云端模�?
+        # ﮒﻠﮒﺍﻛﭦﻝ،ﺁﮔ۷۰ﮒ?
         return self.cloud.get_model(model_name)
 ```
 
 ---
 
-## 4. 工具集成
+## 4. ﮒﺓ۴ﮒﺓﻠﮔ
 
-### 4.1 工具注册
+### 4.1 ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒ
 
 ```python
 from langchain.tools import Tool
 
 class ToolRegistry:
-    """工具注册中心"""
+"""ﮒﺓ۴ﮒﺓﮔﺏ۷ﮒﻛﺕﮒﺟ"""
     
     def __init__(self):
         self.tools = {}
     
     def register(self, name: str, func: callable, description: str):
-        """注册工具"""
+        """ﮔﺏ۷ﮒﮒﺓ۴ﮒﺓ"""
         self.tools[name] = Tool(
             name=name,
             func=func,
@@ -475,84 +484,84 @@ class ToolRegistry:
         )
     
     def get_tool(self, name: str) -> Tool:
-        """获取工具"""
+        """ﻟﺓﮒﮒﺓ۴ﮒﺓ"""
         return self.tools.get(name)
     
     def get_all_tools(self) -> list:
-        """获取所有工�?""
+        """ﻟﺓﮒﮔﮔﮒﺓ۴ﮒ?""
         return list(self.tools.values())
 ```
 
-### 4.2 工具分类
+### 4.2 ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ
 
 ```python
 class ToolCategories:
-    """工具分类"""
+    """ﮒﺓ۴ﮒﺓﮒﻝﺎﭨ"""
     
-    # 策略管理工具
+# ﻝﻝ۴ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     STRATEGY_TOOLS = [
-        "配置策略",
-        "修改策略",
-        "删除策略",
-        "启动策略",
-        "停止策略"
+"ﻠﻝﺛ؟ﻝﻝ۴",
+"ﻛﺟ؟ﮔﺗﻝﻝ۴",
+"ﮒﻠ۳ﻝﻝ۴",
+"ﮒﺁﮒ۷ﻝﻝ۴",
+"ﮒﮔ۱ﻝﻝ۴"
     ]
     
-    # 风控管理工具
+    # ﻠ۲ﮔ۶ﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     RISK_TOOLS = [
-        "调整风控参数",
-        "设置止损止盈",
-        "调整仓位限制"
+        "ﻟﺍﮔﺑﻠ۲ﮔ۶ﮒﮔﺍ",
+"ﻟ؟ﺝﻝﺛ؟ﮔ۱ﮔﮔ۱ﻝ",
+        "ﻟﺍﮔﺑﻛﭨﻛﺛﻠﮒﭘ"
     ]
     
-    # 数据查询工具
+    # ﮔﺍﮔ؟ﮔ۴ﻟﺁ۱ﮒﺓ۴ﮒﺓ
     QUERY_TOOLS = [
-        "查询持仓",
-        "查询委托",
-        "查询成交",
-        "查询资金",
-        "查询系统状�?
+        "ﮔ۴ﻟﺁ۱ﮔﻛﭨ",
+        "ﮔ۴ﻟﺁ۱ﮒ۶ﮔ",
+        "ﮔ۴ﻟﺁ۱ﮔﻛﭦ۳",
+        "ﮔ۴ﻟﺁ۱ﻟﭖﻠ",
+        "ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?
     ]
     
-    # 系统管理工具
+    # ﻝﺏﭨﻝﭨﻝ؟۰ﻝﮒﺓ۴ﮒﺓ
     SYSTEM_TOOLS = [
-        "查看日志",
-        "导出报告",
-        "系统配置"
+        "ﮔ۴ﻝﮔ۴ﮒﺟ",
+        "ﮒﺁﺙﮒﭦﮔ۴ﮒ",
+        "ﻝﺏﭨﻝﭨﻠﻝﺛ؟"
     ]
     
-    # 回测分析工具
+    # ﮒﮔﭖﮒﮔﮒﺓ۴ﮒﺓ
     BACKTEST_TOOLS = [
-        "运行回测",
-        "查看回测结果",
-        "优化参数"
+        "ﻟﺟﻟ۰ﮒﮔﭖ",
+        "ﮔ۴ﻝﮒﮔﭖﻝﭨﮔ",
+        "ﻛﺙﮒﮒﮔﺍ"
     ]
 ```
 
-### 4.3 工具调用流程
+### 4.3 ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮔﭖﻝ۷
 
 ```python
 class ToolExecutor:
-    """工具执行�?""
+    """ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰ﮒ?""
     
     def __init__(self, tool_registry: ToolRegistry):
         self.registry = tool_registry
     
     def execute(self, tool_name: str, params: dict) -> dict:
-        """执行工具"""
+        """ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ"""
         
-        # 1. 获取工具
+        # 1. ﻟﺓﮒﮒﺓ۴ﮒﺓ
         tool = self.registry.get_tool(tool_name)
         if not tool:
             return {
                 "success": False,
-                "error": f"工具 {tool_name} 不存�?
+"error": f"ﮒﺓ۴ﮒﺓ {tool_name} ﻛﺕﮒﮒ?
             }
         
-        # 2. 参数验证
+        # 2. ﮒﮔﺍﻠ۹ﻟﺁ
         validated_params = self._validate_params(tool, params)
         
-        # 3. 执行工具
+        # 3. ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓ
         try:
             result = tool.func(validated_params)
             return {
@@ -566,22 +575,22 @@ class ToolExecutor:
             }
     
     def _validate_params(self, tool: Tool, params: dict) -> dict:
-        """验证参数"""
-        # 参数验证逻辑
+        """ﻠ۹ﻟﺁﮒﮔﺍ"""
+        # ﮒﮔﺍﻠ۹ﻟﺁﻠﭨﻟﺝ
         return params
 ```
 
 ---
 
-## 5. 记忆管理
+## 5. ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ
 
-### 5.1 对话记忆
+### 5.1 ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ
 
 ```python
 from langchain.memory import ConversationBufferMemory
 
 class ConversationMemory:
-    """对话记忆"""
+    """ﮒﺁﺗﻟﺁﻟ؟ﺍﮒﺟ"""
     
     def __init__(self, max_history: int = 100):
         self.memory = ConversationBufferMemory(
@@ -591,32 +600,32 @@ class ConversationMemory:
         self.max_history = max_history
     
     def add(self, role: str, content: str):
-        """添加对话"""
+"""ﮔﺓﭨﮒﮒﺁﺗﻟﺁ"""
         if role == "user":
             self.memory.chat_memory.add_user_message(content)
         else:
             self.memory.chat_memory.add_ai_message(content)
     
     def get_history(self, last_n: int = None) -> list:
-        """获取历史"""
+        """ﻟﺓﮒﮒﮒﺎ"""
         history = self.memory.chat_memory.messages
         if last_n:
             return history[-last_n:]
         return history
     
     def clear(self):
-        """清空记忆"""
+        """ﮔﺕﻝ۸ﭦﻟ؟ﺍﮒﺟ"""
         self.memory.clear()
 ```
 
-### 5.2 长期记忆
+### 5.2 ﻠﺟﮔﻟ؟ﺍﮒﺟ
 
 ```python
 from langchain.vectorstores import Milvus
 from langchain.embeddings import OpenAIEmbeddings
 
 class LongTermMemory:
-    """长期记忆（向量数据库�?""
+    """ﻠﺟﮔﻟ؟ﺍﮒﺟﺅﺙﮒﻠﮔﺍﮔ؟ﮒﭦﺅﺙ?""
     
     def __init__(self, collection_name: str = "quant_memory"):
         self.embeddings = OpenAIEmbeddings()
@@ -626,14 +635,14 @@ class LongTermMemory:
         )
     
     def store(self, text: str, metadata: dict = None):
-        """存储记忆"""
+"""ﮒﮒ۷ﻟ؟ﺍﮒﺟ"""
         self.vectorstore.add_texts(
             texts=[text],
             metadatas=[metadata] if metadata else None
         )
     
     def retrieve(self, query: str, k: int = 5) -> list:
-        """检索记�?""
+        """ﮔ۲ﻝﺑ۱ﻟ؟ﺍﮒﺟ?""
         results = self.vectorstore.similarity_search(
             query=query,
             k=k
@@ -641,11 +650,11 @@ class LongTermMemory:
         return results
 ```
 
-### 5.3 工作记忆
+### 5.3 ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟ
 
 ```python
 class WorkingMemory:
-    """工作记忆（当前会话状态）"""
+    """ﮒﺓ۴ﻛﺛﻟ؟ﺍﮒﺟﺅﺙﮒﺛﮒﻛﺙﻟﺁﻝﭘﮔﺅﺙ"""
     
     def __init__(self):
         self.state = {
@@ -656,15 +665,15 @@ class WorkingMemory:
         }
     
     def update(self, key: str, value: Any):
-        """更新状�?""
+        """ﮔﺑﮔﺍﻝﭘﮔ?""
         self.state[key] = value
     
     def get(self, key: str) -> Any:
-        """获取状�?""
+        """ﻟﺓﮒﻝﭘﮔ?""
         return self.state.get(key)
     
     def clear(self):
-        """清空状�?""
+        """ﮔﺕﻝ۸ﭦﻝﭘﮔ?""
         self.state = {
             "current_strategy": None,
             "current_task": None,
@@ -675,15 +684,15 @@ class WorkingMemory:
 
 ---
 
-## 6. 安全机制
+## 6. ﮒ؟ﮒ۷ﮔﭦﮒﭘ
 
-### 6.1 PII检�?
+### 6.1 PIIﮔ۲ﮔﭖ?
 
 ```python
 import re
 
 class PIIDetector:
-    """PII检测器"""
+    """PIIﮔ۲ﮔﭖﮒ۷"""
     
     def __init__(self):
         self.patterns = {
@@ -694,7 +703,7 @@ class PIIDetector:
         }
     
     def detect(self, text: str) -> list:
-        """检测PII"""
+        """ﮔ۲ﮔﭖPII"""
         detected = []
         for pii_type, pattern in self.patterns.items():
             matches = re.findall(pattern, text)
@@ -706,17 +715,17 @@ class PIIDetector:
         return detected
     
     def mask(self, text: str) -> str:
-        """脱敏"""
+        """ﻟﺎﮔ"""
         for pii_type, pattern in self.patterns.items():
             text = re.sub(pattern, f"[{pii_type.upper()}_MASKED]", text)
         return text
 ```
 
-### 6.2 权限控制
+### 6.2 ﮔﻠﮔ۶ﮒﭘ
 
 ```python
 class PermissionChecker:
-    """权限检查器"""
+    """ﮔﻠﮔ۲ﮔ۴ﮒ۷"""
     
     def __init__(self):
         self.permissions = {
@@ -726,19 +735,19 @@ class PermissionChecker:
         }
     
     def check(self, user_role: str, action: str) -> bool:
-        """检查权�?""
+        """ﮔ۲ﮔ۴ﮔﻠ?""
         allowed_actions = self.permissions.get(user_role, [])
         return action in allowed_actions
 ```
 
-### 6.3 审计日志
+### 6.3 ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ
 
 ```python
 import logging
 from datetime import datetime
 
 class AuditLogger:
-    """审计日志"""
+    """ﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
     
     def __init__(self, log_file: str = "logs/audit.log"):
         self.logger = logging.getLogger("audit")
@@ -751,7 +760,7 @@ class AuditLogger:
         self.logger.addHandler(handler)
     
     def log(self, user: str, action: str, details: dict):
-        """记录审计日志"""
+        """ﻟ؟ﺍﮒﺛﮒ؟۰ﻟ؟۰ﮔ۴ﮒﺟ"""
         self.logger.info({
             "timestamp": datetime.now().isoformat(),
             "user": user,
@@ -762,19 +771,19 @@ class AuditLogger:
 
 ---
 
-## 7. 性能优化
+## 7. ﮔ۶ﻟﺛﻛﺙﮒ
 
-### 7.1 模型缓存
+### 7.1 ﮔ۷۰ﮒﻝﺙﮒ
 
 ```python
 from functools import lru_cache
 
 class ModelCache:
-    """模型缓存"""
+"""ﮔ۷۰ﮒﻝﺙﮒ"""
     
     @lru_cache(maxsize=10)
     def get_model(self, model_name: str):
-        """获取模型（带缓存�?""
+"""ﻟﺓﮒﮔ۷۰ﮒﺅﺙﮒﺕ۵ﻝﺙﮒﺅﺙ?""
         return ChatOpenAI(
             base_url="http://localhost:11434/v1",
             api_key="ollama",
@@ -783,30 +792,30 @@ class ModelCache:
         )
 ```
 
-### 7.2 并发控制
+### 7.2 ﮒﺗﭘﮒﮔ۶ﮒﭘ
 
 ```python
 from concurrent.futures import ThreadPoolExecutor
 
 class ConcurrentExecutor:
-    """并发执行�?""
+    """ﮒﺗﭘﮒﮔ۶ﻟ۰ﮒ?""
     
     def __init__(self, max_workers: int = 4):
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
     
     def execute(self, func: callable, *args, **kwargs):
-        """并发执行"""
+        """ﮒﺗﭘﮒﮔ۶ﻟ۰"""
         future = self.executor.submit(func, *args, **kwargs)
         return future.result()
 ```
 
-### 7.3 性能监控
+### 7.3 ﮔ۶ﻟﺛﻝﮔ۶
 
 ```python
 import time
 
 class PerformanceMonitor:
-    """性能监控"""
+    """ﮔ۶ﻟﺛﻝﮔ۶"""
     
     def __init__(self):
         self.metrics = {
@@ -816,11 +825,11 @@ class PerformanceMonitor:
         }
     
     def record(self, metric: str, value: float):
-        """记录指标"""
+"""ﻟ؟ﺍﮒﺛﮔﮔ"""
         self.metrics[metric].append(value)
     
     def get_stats(self, metric: str) -> dict:
-        """获取统计"""
+        """ﻟﺓﮒﻝﭨﻟ؟۰"""
         values = self.metrics[metric]
         return {
             "avg": sum(values) / len(values) if values else 0,
@@ -832,114 +841,114 @@ class PerformanceMonitor:
 
 ---
 
-## 8. 测试方案
+## 8. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 8.1 单元测试
+### 8.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 def test_agent_creation():
-    """测试Agent创建"""
+    """ﮔﭖﻟﺁAgentﮒﮒﭨﭦ"""
     config = {
         "model_name": "deepseek-r1:14b",
         "tools": [],
-        "system_prompt": "测试"
+        "system_prompt": "ﮔﭖﻟﺁ"
     }
     
     agent = QuantTradingAgent(config)
     assert agent is not None
 
 def test_model_routing():
-    """测试模型路由"""
+    """ﮔﭖﻟﺁﮔ۷۰ﮒﻟﺓﺁﻝﺎ"""
     router = ModelRouter(local_manager, cloud_manager)
     
-    # 测试简单查询路�?
-    model = router.route("查询状�?, "query_status")
+    # ﮔﭖﻟﺁﻝ؟ﮒﮔ۴ﻟﺁ۱ﻟﺓﺁﻝ?
+    model = router.route("ﮔ۴ﻟﺁ۱ﻝﭘﮔ?, "query_status")
     assert model == "deepseek-r1:8b"
     
-    # 测试策略配置路由
-    model = router.route("配置策略", "configure_strategy")
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟ﻟﺓﺁﻝﺎ
+model = router.route("ﻠﻝﺛ؟ﻝﻝ۴", "configure_strategy")
     assert model == "deepseek-r1:14b"
 ```
 
-### 8.2 集成测试
+### 8.2 ﻠﮔﮔﭖﻟﺁ
 
 ```python
 def test_end_to_end_conversation():
-    """端到端对话测�?""
+    """ﻝ،ﺁﮒﺍﻝ،ﺁﮒﺁﺗﻟﺁﮔﭖﻟﺁ?""
     agent = QuantTradingAgent(config)
     
-    # 测试策略配置
-    response = agent.chat("我想创建一个动量因子策略，持仓5天，止损10%")
-    assert "策略" in response
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟
+response = agent.chat("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%")
+assert "ﻝﻝ۴" in response
     
-    # 测试多轮对话
-    response = agent.chat("运行回测")
-    assert "回测" in response
+    # ﮔﭖﻟﺁﮒ۳ﻟﺛ؟ﮒﺁﺗﻟﺁ
+    response = agent.chat("ﻟﺟﻟ۰ﮒﮔﭖ")
+    assert "ﮒﮔﭖ" in response
 ```
 
-### 8.3 性能测试
+### 8.3 ﮔ۶ﻟﺛﮔﭖﻟﺁ
 
 ```python
 def test_response_time():
-    """响应时间测试"""
+    """ﮒﮒﭦﮔﭘﻠﺑﮔﭖﻟﺁ"""
     agent = QuantTradingAgent(config)
     
     times = []
     for i in range(10):
         start = time.time()
-        agent.chat("查询系统状�?)
+        agent.chat("ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?)
         end = time.time()
         times.append(end - start)
     
     avg_time = sum(times) / len(times)
-    assert avg_time < 3.0  # 平均响应时间小于3�?
+    assert avg_time < 3.0  # ﮒﺗﺏﮒﮒﮒﭦﮔﭘﻠﺑﮒﺍﻛﭦ3ﻝ۶?
 ```
 
 ---
 
-## 9. 部署配置
+## 9. ﻠ۷ﻝﺛﺎﻠﻝﺛ؟
 
-### 9.1 配置文件
+### 9.1 ﻠﻝﺛ؟ﮔﻛﭨﭘ
 
-**文件路径**: `config/layer_11/agent_config.yaml`
+**ﮔﻛﭨﭘﻟﺓﺁﮒﺝ**: `config/layer_11/agent_config.yaml`
 
 ```yaml
-# Agent配置
+# Agentﻠﻝﺛ؟
 agent:
-  # 默认模型
+  # ﻠﭨﻟ؟۳ﮔ۷۰ﮒ
   default_model: "deepseek-r1:14b"
   
-  # 模型配置
+  # ﮔ۷۰ﮒﻠﻝﺛ؟
   models:
     local:
       - name: "deepseek-r1:8b"
-        use_case: "简单查�?
+        use_case: "ﻝ؟ﮒﮔ۴ﻟﺁ?
       - name: "deepseek-r1:14b"
-        use_case: "策略配置"
+use_case: "ﻝﻝ۴ﻠﻝﺛ؟"
       - name: "qwen2.5-coder:14b"
-        use_case: "代码生成"
+use_case: "ﻛﭨ۲ﻝﻝﮔ"
       - name: "qwen3-coder:30b"
-        use_case: "复杂分析"
+        use_case: "ﮒ۳ﮔﮒﮔ"
     
     cloud:
       - name: "gpt-4-turbo"
-        use_case: "紧急任�?
+        use_case: "ﻝﺑ۶ﮔ۴ﻛﭨﭨﮒ?
         api_key: "${OPENAI_API_KEY}"
   
-  # 记忆配置
+  # ﻟ؟ﺍﮒﺟﻠﻝﺛ؟
   memory:
     max_history: 100
     long_term:
       enabled: true
       collection: "quant_memory"
   
-  # 安全配置
+  # ﮒ؟ﮒ۷ﻠﻝﺛ؟
   security:
     pii_detection: true
     permission_check: true
     audit_log: true
   
-  # 性能配置
+  # ﮔ۶ﻟﺛﻠﻝﺛ؟
   performance:
     model_cache_size: 10
     max_concurrent: 4
@@ -948,19 +957,19 @@ agent:
 
 ---
 
-## 📚 相关文档索引
+## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 
-### 核心蓝图文档
+### ﮔﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
 
-| 文档名称 | 路径 | 说明 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
-| [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
-| [Layer 11工具封装蓝图](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | 工具封装架构、单一AI层设�?|
-| [Layer 11工具接口规范](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | 所有模块工具接口详细定�?|
-| [文字驱动核心模块](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLU设计、意图识别、参数提�?|
+| [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
+| [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔﻙﮒﻛﺕAIﮒﺎﻟ؟ﺝﻟ؟?|
+| [Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?|
+| [ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒ](./L11_TEXT_DRIVER.md) | `docs/module_designs/layer_11/L11_TEXT_DRIVER.md` | NLUﻟ؟ﺝﻟ؟۰ﻙﮔﮒﺝﻟﺁﮒ،ﻙﮒﮔﺍﮔﮒ?|
 
 ---
 
-> **设计完成时间**: 2026-04-02  
-> **设计状�?*: �?已完�? 
-> **下一阶段**: 编码实施
+> **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝﮒ؟ﮔﺛ

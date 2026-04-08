@@ -3,14 +3,22 @@ module_id: GITHUB_ISSUE_CREATION_LIST_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: Audit Sentinel
 standard_type: GitHub Issue创建清单
 applicable_scope: TODO标记转换
 compliance_level: 专业标准
+responsibility:
+- 审计体系设计与质量监控与实施指导
+---
 ---
 
 # GitHub Issue创建清单
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **创建日期**: 2026-04-06
 > **总Issue数**: 18个
@@ -47,7 +55,7 @@ compliance_level: 专业标准
 当前使用默认的风险平价模型，需要支持用户自定义风险预算配置。
 
 ## 相关文档
-- [STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md#L328)
+- STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT.md
 
 ## 技术方案
 1. 扩展HRPOpt类，支持自定义风险预算参数
@@ -85,7 +93,7 @@ compliance_level: 专业标准
 QMT执行器需要根据上次交易日期判断是否满足交易频率限制。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md#L1431)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 查询交易记录表
@@ -123,7 +131,7 @@ QMT执行器需要根据上次交易日期判断是否满足交易频率限制�
 QMT执行器需要在异常情况下及时通知用户，确保风险可控。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md#L1503)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 集成告警系统（邮件/钉钉/企业微信）
@@ -161,7 +169,7 @@ QMT执行器需要在异常情况下及时通知用户，确保风险可控。
 QMT执行器需要在风险超标时自动采取风控措施，保护投资组合。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md#L1509)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 定义风控触发条件
@@ -199,7 +207,7 @@ QMT执行器需要在风险超标时自动采取风控措施，保护投资组�
 QMT执行器需要一个统一的告警系统，方便扩展和维护。
 
 ## 相关文档
-- [QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md](../docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md#L1699)
+- QMT_EXECUTOR_TECHNICAL_SPECIFICATION.md
 
 ## 技术方案
 1. 设计告警系统架构
@@ -236,7 +244,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现回测阶段的核心功能，包括回测引擎、数据加载、结果分析等。
 
 ## 相关文档
-- [CODE_QUALITY.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md#L29)
+- CODE_QUALITY.md
 
 ## 预计时间
 2天
@@ -256,7 +264,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 为回测阶段添加缓存机制，提升回测性能。
 
 ## 相关文档
-- [CODE_QUALITY.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md#L41)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天
@@ -276,7 +284,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现回测阶段的另一个功能点。
 
 ## 相关文档
-- [CODE_QUALITY.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md#L48)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天
@@ -296,7 +304,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现通用的缓存机制，支持多种缓存后端。
 
 ## 相关文档
-- [CODE_QUALITY.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/CODE_QUALITY.md#L156)
+- CODE_QUALITY.md
 
 ## 预计时间
 1天
@@ -316,7 +324,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现订单Saga模式，确保订单创建的原子性和一致性。
 
 ## 相关文档
-- [P0-07_Order_Management_Detailed_Design.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/P0-07_Order_Management_Detailed_Design.md#L695)
+- P0-07_Order_Management_Detailed_Design.md
 
 ## 预计时间
 1天
@@ -336,7 +344,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现缓存数据的反序列化逻辑。
 
 ## 相关文档
-- [P0-06_Account_Management_Detailed_Design.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/P0-06_Account_Management_Detailed_Design.md#L861)
+- P0-06_Account_Management_Detailed_Design.md
 
 ## 预计时间
 0.5天
@@ -356,7 +364,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的重试逻辑，提高系统容错能力。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/P0-05_Multi_Engine_Coordinator_Design.md#L678)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -376,7 +384,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的继续补偿逻辑。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/P0-05_Multi_Engine_Coordinator_Design.md#L683)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -396,7 +404,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 实现多引擎协调器的手动恢复逻辑。
 
 ## 相关文档
-- [P0-05_Multi_Engine_Coordinator_Design.md](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/design/database/P0-05_Multi_Engine_Coordinator_Design.md#L688)
+- P0-05_Multi_Engine_Coordinator_Design.md
 
 ## 预计时间
 0.5天
@@ -416,7 +424,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 从数据库查询历史验证结果，用于趋势分析。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](../docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_MONITORING_ENHANCED/BLUEPRINT.md#L994)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 0.5天
@@ -436,7 +444,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 从数据库查询历史异常数据，用于异常模式分析。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](../docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_MONITORING_ENHANCED/BLUEPRINT.md#L1002)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 0.5天
@@ -456,7 +464,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 生成HTML格式的数据监控报告，便于查看和分享。
 
 ## 相关文档
-- [DATA_MONITORING_ENHANCED/BLUEPRINT.md](../docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_MONITORING_ENHANCED/BLUEPRINT.md#L1010)
+- DATA_MONITORING_ENHANCED/BLUEPRINT.md
 
 ## 预计时间
 1天
@@ -478,7 +486,7 @@ QMT执行器需要一个统一的告警系统，方便扩展和维护。
 为数据血缘追踪系统集成告警系统，支持邮件、钉钉等告警渠道。
 
 ## 相关文档
-- [DATA_LINEAGE_TRACKING/BLUEPRINT.md](../docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_LINEAGE_TRACKING/BLUEPRINT.md#L700)
+- DATA_LINEAGE_TRACKING/BLUEPRINT.md
 
 ## 预计时间
 1天

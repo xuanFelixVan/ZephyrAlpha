@@ -1,19 +1,38 @@
 ---
+module_id: PATH_LIST_AUDIT_UPDATE_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 归档文档、历史版本、审计状态追踪
+---
 module_id: ARCHIVE_PATH_LIST_AUDIT_001
 version: 2026.04.02
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
+responsibility:
+  - 因子计算
+  - 交易执行
+  - 回测系统
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?
----
+implementation_status: 进行?---
+
 
 
 # 路径列表审计更新报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 基于用户提供的系统路径列表的合规性分?
 
@@ -87,7 +106,7 @@ implementation_status: 进行?
 ### 2. 合规性问题分?
 
 #### 2.1 中文命名违规 (5?
-根据开发标?§4.2.1，中文目录名和文件名禁止使用?
+根据开发标?4.2.1，中文目录名和文件名禁止使用?
 
 | 违规?| 类型 | 当前名称 | 建议英文名称 | 引用文件?|
 |--------|------|----------|--------------|------------|
@@ -100,9 +119,9 @@ implementation_status: 进行?
 **影响范围**: 22个文件引用需要更?
 
 #### 2.2 缓存目录管理问题 (2?
-根据开发标?§4.2.2，缓存目录应被正确忽略：
+根据开发标?4.2.2，缓存目录应被正确忽略：
 
-| 目录 | 问题 | 标准要求 | 当前�?|
+| 目录 | 问题 | 标准要求 | 当前?|
 |------|------|----------|----------|
 | `.mypy_cache\` | 未在.gitignore?| 应忽略构建缓?| ⚠️ 未忽?|
 | `.trae\` | 未在.gitignore?| 应忽略IDE配置 | ⚠️ 未忽?|
@@ -123,10 +142,10 @@ implementation_status: 进行?
 - **格式**: 每行一个绝对路径，Windows格式
 - **范围**: 覆盖系统主要目录，但缺失某些子目?
 - **时效?*: 反映近期系统状态，但包含计划中目录
-- **�?*: 可能用于系统清单、文档索引或审计�?
+- **?*: 可能用于系统清单、文档索引或审计?
 
 #### 3.2 与System_Manifest.md对比
-检?[System_Manifest.md](../../../02_FACTOR_LIBRARY/System_Manifest.md) 发现?
+检?System_Manifest.md 发现?
 - System_Manifest.md 使用相对路径和描述性结?
 - 用户列表更详细，但包含不准确信息
 - 两者需要同步更?
@@ -226,13 +245,13 @@ docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\
 ### 3. 文档同步更新
 
 #### 3.1 更新System_Manifest.md
-确保 [System_Manifest.md](../../../02_FACTOR_LIBRARY/System_Manifest.md) 反映更新后的路径结构?
+确保 System_Manifest.md 反映更新后的路径结构?
 
 #### 3.2 更新INDEX.md和SITEMAP.md
-检查并更新主索引文档中的路径引�?
+检查并更新主索引文档中的路径引?
 
 #### 3.3 更新因子库索?
-更新 [factor_master_index.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/iFind/factor_master_index.md) 中的文件引用?
+更新 factor_master_index.md 中的文件引用?
 
 ### 4. 自动化维护建?
 
@@ -323,7 +342,7 @@ grep "中文模式"  # 检查中文引?
 4. .gitignore当前状态记?
 
 ### 3. 参考标?
-1. [开发标准](../../02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) §4.2.1-4.2.4
+1. 开发标准 4.2.1-4.2.4
 2. [专业文档治理审计指南](../../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
 3. [审计质量标准 v5.3](../../../09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
 

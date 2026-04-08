@@ -1,24 +1,41 @@
 ---
+module_id: CODE_EXAMPLES_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 系统实施与部署管理与优化维护
+---
 module_id: IMPL_CODE_EXAMPLES_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构�?
+owner: 首席文档架构?
+responsibility:
+  - 系统实施与部署管理与优化维护
 standard_type: 专业量化机构文档
-applicable_scope: 全系�?
+applicable_scope: 全系统
 compliance_level: 初始标准
 parent_document: INDEX.md
-implementation_status: 进行�?
----
+implementation_status: 进行?---
+
 
 
 # 代码示例
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> 清风量化系统 v5.0 的策略开发、因子计算、部署脚本示�?
+
+> 清风量化系统 v5.0 的策略开发、因子计算、部署脚本示?
 
 
-## 1. 策略开发示�?
+## 1. 策略开发示?
 
 ### S001: 均线趋势跟踪策略
 
@@ -34,10 +51,10 @@ class TrendFollowStrategy(BaseStrategy):
     """
     均线趋势跟踪策略
     
-    逻辑�?
-    1. 计算20日和50日均�?
-    2. 快线 > 慢线 �?买入信号
-    3. 快线 < 慢线 �?卖出信号
+    逻辑?
+    1. 计算20日和50日均?
+    2. 快线 > 慢线 ?买入信号
+    3. 快线 < 慢线 ?卖出信号
     """
     
     def __init__(self, ma_short=20, ma_long=50, stop_loss=0.05, take_profit=0.15):
@@ -54,7 +71,7 @@ class TrendFollowStrategy(BaseStrategy):
         data['ma_short'] = data['close'].rolling(window=self.ma_short).mean()
         data['ma_long'] = data['close'].rolling(window=self.ma_long).mean()
         
-        # 获取最新数�?
+        # 获取最新数?
         latest = data.iloc[-1]
         prev = data.iloc[-2]
         
@@ -67,7 +84,7 @@ class TrendFollowStrategy(BaseStrategy):
             'take_profit': None
         }
         
-        # 金叉：快线从下穿上慢�?
+        # 金叉：快线从下穿上慢?
         if prev['ma_short'] <= prev['ma_long'] and latest['ma_short'] > latest['ma_long']:
             signal['action'] = 'buy'
             signal['confidence'] = 0.8
@@ -75,7 +92,7 @@ class TrendFollowStrategy(BaseStrategy):
             signal['stop_loss'] = latest['close'] * (1 - self.stop_loss)
             signal['take_profit'] = latest['close'] * (1 + self.take_profit)
         
-        # 死叉：快线从上穿下慢�?
+        # 死叉：快线从上穿下慢?
         elif prev['ma_short'] >= prev['ma_long'] and latest['ma_short'] < latest['ma_long']:
             signal['action'] = 'sell'
             signal['confidence'] = 0.8
@@ -83,13 +100,13 @@ class TrendFollowStrategy(BaseStrategy):
         return signal
     
     def validate_signal(self, signal: Dict, context: Dict) -> bool:
-        """验证信号有效�?""
+        """验证信号有效?""
         
         # 检查成交量
         if context.get('volume', 0) < 100000:
             return False
         
-        # 检查价�?
+        # 检查价?
         if context.get('price', 0) <= 0:
             return False
         
@@ -104,7 +121,7 @@ if __name__ == "__main__":
     
     # 计算信号
     signal = strategy.calculate_signal(data)
-    print(f"信号: {signal['action']}, 信心�? {signal['confidence']}")
+    print(f"信号: {signal['action']}, 信心? {signal['confidence']}")
 ```
 
 
@@ -126,9 +143,9 @@ class MomentumFactor(BaseFactor):
     
     公式: Momentum = (Close_t - Close_t-n) / Close_t-n
     
-    说明�?
-    - 计算过去n天的收益�?
-    - 正值表示上升趋势，负值表示下降趋�?
+    说明?
+    - 计算过去n天的收益?
+    - 正值表示上升趋势，负值表示下降趋?
     """
     
     def __init__(self, period=20):
@@ -138,19 +155,19 @@ class MomentumFactor(BaseFactor):
         self.factor_name = "动量因子"
     
     def calculate(self, data: pd.DataFrame) -> Union[float, pd.Series]:
-        """计算因子�?""
+        """计算因子?""
         
         if len(data) < self.period + 1:
-            raise ValueError(f"数据长度不足，需要至少{self.period + 1}�?)
+            raise ValueError(f"数据长度不足，需要至少{self.period + 1}?)
         
-        # 计算收益�?
+        # 计算收益?
         close_prices = data['close'].values
         momentum = (close_prices[-1] - close_prices[-self.period-1]) / close_prices[-self.period-1]
         
         return momentum
     
     def calculate_batch(self, data: pd.DataFrame) -> pd.Series:
-        """批量计算因子�?""
+        """批量计算因子?""
         
         close_prices = data['close'].values
         momentum_values = np.zeros(len(data))
@@ -161,13 +178,13 @@ class MomentumFactor(BaseFactor):
         return pd.Series(momentum_values, index=data.index, name=self.factor_id)
     
     def validate(self, factor_value: float) -> bool:
-        """验证因子值有效�?""
+        """验证因子值有效?""
         
         # 检查是否为NaN
         if np.isnan(factor_value):
             return False
         
-        # 检查是否为无穷�?
+        # 检查是否为无穷?
         if np.isinf(factor_value):
             return False
         
@@ -182,7 +199,7 @@ if __name__ == "__main__":
     
     # 计算因子
     momentum = factor.calculate(data)
-    print(f"动量因子�? {momentum:.4f}")
+    print(f"动量因子? {momentum:.4f}")
     
     # 批量计算
     momentum_series = factor.calculate_batch(data)
@@ -214,11 +231,11 @@ docker-compose -f docker-compose.prod.yml up -d
 echo "3. 等待服务启动..."
 sleep 10
 
-# 4. 健康检�?
-echo "4. 执行健康检�?.."
+# 4. 健康检?
+echo "4. 执行健康检?.."
 for i in {1..30}; do
     if curl -f http://localhost:8000/health > /dev/null 2>&1; then
-        echo "�?服务已启�?
+        echo "?服务已启?
         break
     fi
     echo "等待服务启动... ($i/30)"
@@ -240,7 +257,7 @@ echo "7. 验证部署..."
 docker-compose ps
 docker-compose logs --tail=20
 
-echo "�?部署完成�?
+echo "?部署完成?
 ```
 
 ### Kubernetes部署脚本
@@ -288,7 +305,7 @@ echo "6. 验证部署..."
 kubectl get pods -n qingfeng
 kubectl get svc -n qingfeng
 
-echo "�?部署完成�?
+echo "?部署完成?
 ```
 
 ### 监控配置脚本
@@ -335,7 +352,7 @@ curl -X POST http://localhost:9093/api/v1/alerts \
     -H "Content-Type: application/json" \
     -d @config/alert-rules.json
 
-echo "�?监控配置完成�?
+echo "?监控配置完成?
 echo "Prometheus: http://localhost:9090"
 echo "Grafana: http://localhost:3000"
 echo "AlertManager: http://localhost:9093"
@@ -360,7 +377,7 @@ def main():
     parser.add_argument('--output', default='results/backtest.html')
     args = parser.parse_args()
     
-    # 初始化回测引�?
+    # 初始化回测引?
     engine = BacktestEngine()
     
     # 加载策略
@@ -385,7 +402,7 @@ def main():
     # 生成报告
     print(f"年化收益: {results['annual_return']:.2%}")
     print(f"夏普比率: {results['sharpe_ratio']:.2f}")
-    print(f"最大回�? {results['max_drawdown']:.2%}")
+    print(f"最大回? {results['max_drawdown']:.2%}")
     print(f"胜率: {results['win_rate']:.2%}")
     
     # 保存报告
@@ -397,5 +414,5 @@ if __name__ == "__main__":
 ```
 
 
-**最后更�?*: 2026-03-28  
-**维护�?*: 清风量化系统
+**最后更?*: 2026-03-28  
+**维护?*: 清风量化系统

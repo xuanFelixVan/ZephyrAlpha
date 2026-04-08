@@ -1,0 +1,20 @@
+{
+  "scan_time": "2026-04-07T02:00:54.300660",
+  "summary": {
+    "total_documents": 92,
+    "total_links": 377,
+    "valid_links": 377,
+    "broken_links": 0,
+    "valid_rate": "100.00%",
+    "status": "✅ 全部有效"
+  },
+  "broken_links": {
+    "count": 0,
+    "by_source_doc": {},
+    "by_missing_target": {}
+  },
+  "valid_links": {
+    "count": 377
+  },
+  "recommendations": []
+}

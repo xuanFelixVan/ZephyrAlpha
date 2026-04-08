@@ -1,8 +1,38 @@
+---
+module_id: QMT_FINAL_SETUP_GUIDE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - QMT_FINAL_SETUP操作指南
+---
+
+﻿---
+module_id: QMT_FINAL_SETUP_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
+responsibility:
+  - 操作指南编写与使用说明与系统维护管理
+standard_type: 专业量化机构指南
+applicable_scope: 全系统
+compliance_level: 专业标准---
+
+
 # QMT Final Setup Guide
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 ## Current Status
 
-�?**Completed Successfully:**
+?**Completed Successfully:**
 
 1. **Miniconda installed** at `E:\Miniconda`
 2. **Python 3.12 environment** created as `qmt`
@@ -11,19 +41,18 @@
 5. **Permissions verified** (strategy trading permission exists)
 6. **Configuration updated** with correct paths
 
-�?**Remaining Issue:**
+?**Remaining Issue:**
 
 **QMT trading interface connection returns -1**
 
 This means:
-- �?Data interface works (xtdata connects)
-- �?Trading interface fails (xttrader returns -1)
+- ?Data interface works (xtdata connects)
+- ?Trading interface fails (xttrader returns -1)
 
 ## Root Cause Analysis
 
 The most common cause for return code -1 is:
 
-**QMT client not logged in with "Minimal Mode" (极简模式)**
 
 When you login to QMT, you must check the "Minimal Mode" or "Independent Trading" checkbox.
 
@@ -36,14 +65,11 @@ When you login to QMT, you must check the "Minimal Mode" or "Independent Trading
 
 ### Step 2: Login with Minimal Mode
 
-1. **Start QMT client** (double-click "国金证券QMT交易�?)
 2. **On login screen:**
    - Account: `8886156677`
    - Password: `134752`
-   - �?**CHECK "极简模式" or "独立交易" checkbox** (MUST BE CHECKED!)
    - Click "Login"
 3. **Wait 30 seconds** for full initialization
-4. **Verify login:** Main window appears, status shows "已连�?
 
 ### Step 3: Test Connection
 
@@ -64,11 +90,9 @@ C:\Users\fanzi\.conda\envs\qmt\python.exe scripts\test_qmt_connection_v6.py
 
 If successful:
 ```
-�?交易接口连接成功�?�?账户订阅成功�?�?资产查询成功�?```
 
 If still failing (returns -1):
 ```
-�?交易接口连接失败，返回码: -1
 ```
 
 ## If Still Failing
@@ -77,8 +101,6 @@ If still failing (returns -1):
 
 1. **QMT Version:** Should be 2.0.8.300 (yours is correct)
 2. **Installation Paths:**
-   - Simulation: `E:\国金QMT交易端模拟\userdata_mini` (exists)
-   - Live: `D:\国金证券QMT交易端\userdata_mini` (updated in config)
 3. **File Permissions:** Diagnosis shows write permission is OK
 4. **Session Conflict:** Try different session by waiting 5 minutes or restarting computer
 
@@ -97,8 +119,6 @@ C:\Users\fanzi\.conda\envs\qmt\python.exe scripts\diagnose_qmt_deep.py
 If still failing after confirming Minimal Mode login:
 
 1. **Contact Guojin Securities:** 95310
-   - Ask: "确认账号 8886156677 是否有QMT策略交易权限"
-   - Ask: "确认MiniQMT极简模式是否已开�?
 2. **Check official documentation:**
    - https://dict.thinktrader.net/
    - https://www.xuntou.net/
@@ -109,11 +129,9 @@ If still failing after confirming Minimal Mode login:
 ```
 QMT_SIMULATION_ACCOUNT=8886156677
 QMT_SIMULATION_PASSWORD=134752
-QMT_SIMULATION_CLIENT_PATH=E:/国金QMT交易端模�?userdata_mini
 
 QMT_LIVE_ACCOUNT=8887871993
 QMT_LIVE_PASSWORD=198910
-QMT_LIVE_CLIENT_PATH=D:/国金证券QMT交易�?userdata_mini
 ```
 
 ### Python Environment
@@ -152,11 +170,11 @@ Once connection succeeds:
 **The only remaining issue is QMT client login mode.**
 
 All technical preparations are complete:
-- �?Python 3.12 environment ready
-- �?xtquant library installed
-- �?Configuration files correct
-- �?Permissions verified
-- �?Data interface working
+- ?Python 3.12 environment ready
+- ?xtquant library installed
+- ?Configuration files correct
+- ?Permissions verified
+- ?Data interface working
 
 **You just need to ensure QMT is logged in with "Minimal Mode" checked.**
 
@@ -165,3 +183,4 @@ All technical preparations are complete:
 **Last Updated:** 2026-04-03  
 **Status:** Awaiting QMT client configuration  
 **Estimated Time to Fix:** 2-5 minutes (login with correct mode)
+```

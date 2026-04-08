@@ -3,17 +3,18 @@ module_id: AIWF_DSE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 首席架构师
+responsibility:
+- 数据源扩展模块蓝图 (Data Source Extension Blueprint)文档
 standard_type: 专业机构级蓝图
 applicable_scope: 数据源扩展模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-layer: 舆情分析层
+layer: Layer 0 (数据源层)
 priority: P0
 estimated_effort: 40h
 ---
-
 
 ## 文档职责说明
 
@@ -21,6 +22,12 @@ estimated_effort: 40h
 - Twitter/Reddit/FRED/SEC EDGAR数据采集、数据源管理
 
 # 数据源扩展模块蓝图 (Data Source Extension Blueprint)
+
+> **核心职责**: 蓝图设计和架构规划
+> **职责边界**: 
+> - ✅ 本文档负责：蓝图设计和架构规划相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **模块ID**: AIWF_DSE_001
 > **版本**: v1.0
@@ -526,3 +533,34 @@ class DataSourceManager:
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Aiwf Dse
+- **模块ID**: AIWF_DSE_001
+- **蓝图文档**: [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./DATA_SOURCE_EXTENSION_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 数据源扩展模块
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Aiwf Dse** | 数据源扩展模块 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

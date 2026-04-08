@@ -3,23 +3,19 @@ module_id: POST_TRADE_REVIEW_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
+last_updated: '2026-04-07'
 owner: 首席架构师
+responsibility:
+- 复盘模块蓝图文档
+layer: Layer 7 (AI报告层)
 standard_type: 专业机构级蓝图
 applicable_scope: 交易复盘分析
 compliance_level: 专业标准
 parent_document: INDEX.md
 implementation_status: 设计阶段
-reference_models:
-  - Professional Trading Review
-  - Performance Attribution
-  - Risk Analysis Framework
-related_documents:
-  - AI_WORKFLOW_LOGGER_BLUEPRINT.md
-  - FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md
-  - QUALITY_MONITORING_BLUEPRINT.md
+reference_models: null
+related_documents: null
 ---
-
 
 ## 文档职责说明
 
@@ -781,7 +777,7 @@ class PostTradeReviewer:
 
 | 文档 | 说明 |
 |------|------|
-| [AI工作记录与优化模块蓝图](./AI_WORKFLOW_LOGGER_BLUEPRINT.md) | AI工作记录数据|
+| `AI工作记录与优化模块蓝图` | AI工作记录数据|
 | [全流程数据保存机制蓝图](./FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md) | 数据持久化基础设施 |
 | [质量监控蓝图](../09_AUDIT/QUALITY_MONITORING_BLUEPRINT.md) | 质量监控体系 |
 

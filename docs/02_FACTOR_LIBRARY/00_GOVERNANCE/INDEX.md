@@ -1,90 +1,48 @@
 ---
-module_id: INDEX_GOVERNANCE_001
+module_id: FACTOR_LIBRARY_00_GOVERNANCE_INDEX
 version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构师
-standard_type: 专业量化机构目录索引
-applicable_scope: 00_GOVERNANCE目录
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 目录导航
+  - 模块索引
+  - 职责协调
+standard_type: 索引文档
+applicable_scope: 因子库
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已实施
 ---
+# 00_GOVERNANCE 治理文档
 
-# 00_GOVERNANCE - 因子库治理
-
-> 因子库的治理与管理体系
-
----
-
-## 📂 目录说明
-
-本目录存放因子库治理相关的文档，包括：
-- 治理框架
-- 管理制度
-- 决策流程
+> **核心职责**: 因子库治理框架、规范和流程文档
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航、模块索引、职责协调
+> - ❌ 本文档不负责：具体实现细节、其他模块内容
 
 ---
 
-## 📄 文档列表
+## 📋 概述
 
-| 文档 | 说明 | 状态 |
-|------|------|------|
-| [README.md](./README.md) | 因子库治理框架 | ✅ 已实施 |
+因子库治理框架、规范和流程文档
 
----
+## 📂 目录结构
 
-## 📊 治理框架概览
-
-### 治理委员会
-
-因子治理委员会（Factor Governance Committee）负责：
-- 因子入库审批
-- 因子淘汰决策
-- 风险控制监督
-- 策略调整建议
-
-### 治理流程
-
-```
-因子发现 → IC验证 → 委员会评审 → 入库决策 → 持续监控
-```
+- [OVERVIEW](./OVERVIEW.md)
+- [README](./README.md)
 
 ---
 
-## 🔍 使用指南
+## 🎯 核心职责
 
-### 查看治理框架
-
-1. 阅读 [README.md](./README.md) - 了解因子库治理框架
-2. 了解治理委员会的职责和决策流程
-
-### 参与治理
-
-1. 提交因子入库申请
-2. 参与因子评审会议
-3. 监控因子表现
+1. **因子库治理框架制定**
+2. **文档管理规范**
+3. **质量监控流程**
 
 ---
 
-## 📈 统计信息
+## 变更记录
 
-| 指标 | 数值 |
-|------|------|
-| **文档数量** | 1个 |
-| **治理流程** | 5个阶段 |
-| **决策机制** | 委员会评审 |
-
----
-
-## 🔗 相关链接
-
-- [因子库总览](../README.md)
-- [因子管理标准](../01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md)
-- [因子监控](../07_FACTOR_MONITORING/FACTOR_MONITORING.md)
-
----
-
-> **最后更新**: 2026-04-04  
-> **维护者**: 首席文档架构师
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |

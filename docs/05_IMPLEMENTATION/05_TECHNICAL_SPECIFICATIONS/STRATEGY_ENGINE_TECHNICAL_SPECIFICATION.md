@@ -1,123 +1,143 @@
 ---
+module_id: STRATEGY_ENGINE_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - STRATEGY_ENGINE_TECHNICAL技术规范
+---
+
+﻿---
 module_id: STRATEGY_ENGINE_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
-owner: 首席技术评审官
-standard_type: 专业量化机构技术规格书
-applicable_scope: Layer 5 策略执行?| 业务架构: 三级时间框架融合架构
-compliance_level: 专业标准
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+applicable_scope: Layer 5 ﻝﻝ۴ﮔ۶ﻟ۰?| ﻛﺕﮒ۰ﮔﭘﮔ: ﻛﺕﻝﭦ۶ﮔﭘﻠﺑﮔ۰ﮔﭘﻟﮒﮔﭘﮔ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行?
+implementation_status: ﻟﺟﻟ۰?
+---
 ---
 
-# StrategyEngine策略引擎模块技术规格书
 
-> 清风量化系统 v5.3 - StrategyEngine策略引擎模块详细技术设?
-> **模块ID**: `STRATEGY_ENGINE_001`
-> **版本**: v1.0.0
-> **�?*: ?正式
+# StrategyEngineﻝﻝ۴ﮒﺙﮔﮔ۷۰ﮒﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
 
-## 1. 概述
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨ v5.3 - StrategyEngineﻝﻝ۴ﮒﺙﮔﮔ۷۰ﮒﻟﺁ۵ﻝﭨﮔﮔﺁﻟ؟ﺝ?
+> **ﮔ۷۰ﮒID**: `STRATEGY_ENGINE_001`
+> **ﻝﮔ؛**: v1.0.0
+> **ﻝ?*: ?ﮔ۲ﮒﺙ
 
-### 1.1 设计背景与业务目?
-- **业务需?*: 系统需要统一的策略引擎进行策略注册、调度、执行和监控
-- **技术痛?*: 
-  - 策略管理混乱：缺乏统一的策略注册和管理机制
-  - 策略执行效率低：策略执行缺乏并行化和优化
-  - 策略监控困难：缺乏实时的策略运行状态监?
-  - 策略扩展性差：难以快速添加和部署新策?
-- **预期�?*: 
-  - 建立统一的策略注册和管理机制
-  - 提升策略执行效率和并行化能力
-  - 提供实时的策略运行状态监?
-  - 支持策略热部署和快速扩?
 
-### 1.2 技术定位与架构层归?
-- **Layer定位**: Layer 5 - 策略执行?(符合ARCHITECTURE.md定义)
-- **模块类别**: 核心策略执行模块
-- **架构角色**: Layer 5策略执行核心，协调策略注册、调度、执行和监控
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.3 版本信息
-| 版本 | 日期 | �?| 变更说明 | �?|
+### 1.1 ﻟ؟ﺝﻟ؟۰ﻟﮔﺁﻛﺕﻛﺕﮒ۰ﻝ؟?
+- **ﻛﺕﮒ۰ﻠ?*: ﻝﺏﭨﻝﭨﻠﻟ۵ﻝﭨﻛﺕﻝﻝﻝ۴ﮒﺙﮔﻟﺟﻟ۰ﻝﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
+- **ﮔﮔﺁﻝ?*: 
+- ﻝﻝ۴ﻝ؟۰ﻝﮔﺓﺓﻛﺗﺎﺅﺙﻝﺙﭦﻛﺗﻝﭨﻛﺕﻝﻝﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
+- ﻝﻝ۴ﮔ۶ﻟ۰ﮔﻝﻛﺛﺅﺙﻝﻝ۴ﮔ۶ﻟ۰ﻝﺙﭦﻛﺗﮒﺗﭘﻟ۰ﮒﮒﻛﺙﮒ
+- ﻝﻝ۴ﻝﮔ۶ﮒﺍﻠﺝﺅﺙﻝﺙﭦﻛﺗﮒ؟ﮔﭘﻝﻝﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
+- ﻝﻝ۴ﮔ۸ﮒﺎﮔ۶ﮒﺓ؟ﺅﺙﻠﺝﻛﭨ۴ﮒﺟ،ﻠﮔﺓﭨﮒﮒﻠ۷ﻝﺛﺎﮔﺍﻝ?
+- **ﻠ۱ﮔﻛﭨ?*: 
+- ﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﻝﻝ۴ﮔﺏ۷ﮒﮒﻝ؟۰ﻝﮔﭦﮒﭘ
+- ﮔﮒﻝﻝ۴ﮔ۶ﻟ۰ﮔﻝﮒﮒﺗﭘﻟ۰ﮒﻟﺛﮒ
+- ﮔﻛﺝﮒ؟ﮔﭘﻝﻝﻝ۴ﻟﺟﻟ۰ﻝﭘﮔﻝ?
+- ﮔﺁﮔﻝﻝ۴ﻝﻠ۷ﻝﺛﺎﮒﮒﺟ،ﻠﮔ۸?
+
+### 1.2 ﮔﮔﺁﮒ؟ﻛﺛﻛﺕﮔﭘﮔﮒﺎﮒﺛ?
+- **Layerﮒ؟ﻛﺛ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?(ﻝ؛۵ﮒARCHITECTURE.mdﮒ؟ﻛﺗ)
+- **ﮔ۷۰ﮒﻝﺎﭨﮒ،**: ﮔﺕﮒﺟﻝﻝ۴ﮔ۶ﻟ۰ﮔ۷۰ﮒ
+- **ﮔﭘﮔﻟ۶ﻟﺎ**: Layer 5ﻝﻝ۴ﮔ۶ﻟ۰ﮔﺕﮒﺟﺅﺙﮒﻟﺍﻝﻝ۴ﮔﺏ۷ﮒﻙﻟﺍﮒﭦ۵ﻙﮔ۶ﻟ۰ﮒﻝﮔ۶
+
+### 1.3 ﻝﮔ؛ﻛﺟ۰ﮔﺁ
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﻛﺛ?| ﮒﮔﺑﻟﺁﺑﮔ | ﻝ?|
 |------|------|------|----------|------|
-| v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
+| v1.0.0 | 2026-04-02 | ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟ | ﮒﮒ۶ﻝﮔ؛ | Active |
 
 ---
 
-## 2. 详细架构设计
+## 2. ﻟﺁ۵ﻝﭨﮔﭘﮔﻟ؟ﺝﻟ؟۰
 
-### 2.1 系统架构?
+### 2.1 ﻝﺏﭨﻝﭨﮔﭘﮔ?
 ```
-┌─────────────────────────────────────────────────────────────?
-?                   Layer 5: 策略执行?                      ?
-├─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+?                   Layer 5: ﻝﻝ۴ﮔ۶ﻟ۰?                      ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ?                                                            ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         StrategyEngine (策略引擎主模?               ? ?
-? ? - 策略注册                                            ? ?
-? ? - 策略调度                                            ? ?
-? ? - 策略执行                                            ? ?
-? ? - 策略监控                                            ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         StrategyEngine (ﻝﻝ۴ﮒﺙﮔﻛﺕﭨﮔ۷۰?               ? ?
+? ? - ﻝﻝ۴ﮔﺏ۷ﮒ                                            ? ?
+? ? - ﻝﻝ۴ﻟﺍﮒﭦ۵                                            ? ?
+? ? - ﻝﻝ۴ﮔ۶ﻟ۰                                            ? ?
+? ? - ﻝﻝ۴ﻝﮔ۶                                            ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         核心组件                                      ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │StrategyScanner?│StrategyLoader?│StrategyRegistry? ?
-? ? │策略扫描器     ? │策略加载器   ? │策略注册表   ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? ? ┌─────────────? ┌─────────────? ┌─────────────? ? ?
-? ? │StrategyFactory?│ParameterMgr ?│EventBus     ? ? ?
-? ? │策略工?      ? │参数管理器   ? │事件总线     ? ? ?
-? ? └─────────────? └─────────────? └─────────────? ? ?
-? ? ┌─────────────?                                    ? ?
-? ? │StateMonitor ?                                    ? ?
-? ? │状态监控器   ?                                    ? ?
-? ? └─────────────?                                    ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺕﮒﺟﻝﭨﻛﭨﭘ                                      ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗStrategyScanner?ﻗStrategyLoader?ﻗStrategyRegistry? ?
+? ? ﻗﻝﻝ۴ﮔ،ﮔﮒ۷     ? ﻗﻝﻝ۴ﮒﻟﺛﺛﮒ۷   ? ﻗﻝﻝ۴ﮔﺏ۷ﮒﻟ۰۷   ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗStrategyFactory?ﻗParameterMgr ?ﻗEventBus     ? ? ?
+? ? ﻗﻝﻝ۴ﮒﺓ۴?      ? ﻗﮒﮔﺍﻝ؟۰ﻝﮒ۷   ? ﻗﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ     ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                    ? ?
+? ? ﻗStateMonitor ?                                    ? ?
+? ? ﻗﻝﭘﮔﻝﮔ۶ﮒ۷   ?                                    ? ?
+? ? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?                                    ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                          ?                                 ?
-? ┌──────────────────────────────────────────────────────? ?
-? ?         支撑服务                                     ? ?
-? ? - 配置服务 (Config Service)                         ? ?
-? ? - 日志服务 (Log Service)                           ? ?
-? ? - 监控服务 (Monitor Service)                       ? ?
-? └──────────────────────────────────────────────────────? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
+? ?         ﮔﺁﮔﮔﮒ۰                                     ? ?
+? ? - ﻠﻝﺛ؟ﮔﮒ۰ (Config Service)                         ? ?
+? ? - ﮔ۴ﮒﺟﮔﮒ۰ (Log Service)                           ? ?
+? ? - ﻝﮔ۶ﮔﮒ۰ (Monitor Service)                       ? ?
+? ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ? ?
 ?                                                            ?
-└─────────────────────────────────────────────────────────────?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 2.2 Layer定位详细说明
-- **Layer归属**: Layer 5 - 策略执行?
-- **职责范围**: 策略注册、策略调度、策略执行、策略监?
-- **上下层接?*: 
-  - 上层依赖: Layer 4 机器学习?(提供预测信号)
-  - 下层依赖: Layer 6 组合优化?(接收交易信号)
+### 2.2 Layerﮒ؟ﻛﺛﻟﺁ۵ﻝﭨﻟﺁﺑﮔ
+- **Layerﮒﺛﮒﺎ**: Layer 5 - ﻝﻝ۴ﮔ۶ﻟ۰?
+- **ﻟﻟﺑ۲ﻟﮒﺑ**: ﻝﻝ۴ﮔﺏ۷ﮒﻙﻝﻝ۴ﻟﺍﮒﭦ۵ﻙﻝﻝ۴ﮔ۶ﻟ۰ﻙﻝﻝ۴ﻝ?
+- **ﻛﺕﻛﺕﮒﺎﮔ۴?*: 
+- ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗ?(ﮔﻛﺝﻠ۱ﮔﭖﻛﺟ۰ﮒﺓ)
+  - ﻛﺕﮒﺎﻛﺝﻟﭖ: Layer 6 ﻝﭨﮒﻛﺙﮒ?(ﮔ۴ﮔﭘﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ)
 
-### 2.3 模块职责与边界定?
-- **核心职责**: 策略注册、策略调度、策略执行、策略监?
-- **职责边界**: 
-  - ?本模块负? 策略全生命周期管?
-  - ?本模块不负责: 数据获取、因子计算、风险控制、交易执?
-- **接口契约**: 提供统一的Python API接口
+### 2.3 ﮔ۷۰ﮒﻟﻟﺑ۲ﻛﺕﻟﺝﺗﻝﮒ؟?
+- **ﮔﺕﮒﺟﻟﻟﺑ۲**: ﻝﻝ۴ﮔﺏ۷ﮒﻙﻝﻝ۴ﻟﺍﮒﭦ۵ﻙﻝﻝ۴ﮔ۶ﻟ۰ﻙﻝﻝ۴ﻝ?
+- **ﻟﻟﺑ۲ﻟﺝﺗﻝ**: 
+- ?ﮔ؛ﮔ۷۰ﮒﻟﺑ? ﻝﻝ۴ﮒ۷ﻝﮒﺛﮒ۷ﮔﻝ؟۰?
+- ?ﮔ؛ﮔ۷۰ﮒﻛﺕﻟﺑﻟﺑ۲: ﮔﺍﮔ؟ﻟﺓﮒﻙﮒﮒﻟ؟۰ﻝ؟ﻙﻠ۲ﻠ۸ﮔ۶ﮒﭘﻙﻛﭦ۳ﮔﮔ۶?
+- **ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵**: ﮔﻛﺝﻝﭨﻛﺕﻝPython APIﮔ۴ﮒ۲
 
-### 2.4 依赖关系
-| 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
+### 2.4 ﻛﺝﻟﭖﮒﺏﻝﺏﭨ
+| ﻛﺝﻟﭖﮔ۷۰ﮒ | ﻛﺝﻟﭖﻝﺎﭨﮒ | ﮔ۴ﮒ۲ﮔﺗﮒﺙ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﮒ۳ﮔﺏ۷ |
 |----------|----------|----------|----------|------|
-| threading | 强依?| Python标准?| >=3.8 | 多线程支?|
-| queue | 强依?| Python标准?| >=3.8 | 队列支持 |
-| yaml | 强依?| Python?| >=5.4.0 | 配置解析 |
-| watchdog | 可选依?| Python?| >=2.1.0 | 文件监控 |
+| threading | ﮒﺙﭦﻛﺝ?| Pythonﮔﮒ?| >=3.8 | ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?|
+| queue | ﮒﺙﭦﻛﺝ?| Pythonﮔﮒ?| >=3.8 | ﻠﮒﮔﺁﮔ |
+| yaml | ﮒﺙﭦﻛﺝ?| Python?| >=5.4.0 | ﻠﻝﺛ؟ﻟ۶۲ﮔ |
+| watchdog | ﮒﺁﻠﻛﺝ?| Python?| >=2.1.0 | ﮔﻛﭨﭘﻝﮔ۶ |
 
 ---
 
-## 3. 接口定义
+## 3. ﮔ۴ﮒ۲ﮒ؟ﻛﺗ
 
-### 3.1 API接口规范
+### 3.1 APIﮔ۴ﮒ۲ﻟ۶ﻟ
 
-#### 3.1.1 主接口类
+#### 3.1.1 ﻛﺕﭨﮔ۴ﮒ۲ﻝﺎﭨ
 ```python
 from typing import Dict, List, Optional, Any, Callable
 from datetime import datetime
@@ -131,7 +151,7 @@ import logging
 
 
 class StrategyStatus(Enum):
-    """策略状态枚?""
+"""ﻝﻝ۴ﻝﭘﮔﮔ?""
     REGISTERED = "registered"
     RUNNING = "running"
     PAUSED = "paused"
@@ -141,7 +161,7 @@ class StrategyStatus(Enum):
 
 @dataclass
 class StrategyMetadata:
-    """策略元数?""
+"""ﻝﻝ۴ﮒﮔﺍ?""
     strategy_id: str
     name: str
     category: str
@@ -155,7 +175,7 @@ class StrategyMetadata:
 
 @dataclass
 class Signal:
-    """交易信号"""
+    """ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
     signal_id: str
     strategy_id: str
     symbol: str
@@ -167,7 +187,7 @@ class Signal:
 
 @dataclass
 class StrategyExecutionContext:
-    """策略执行上下?""
+"""ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
     strategy_id: str
     status: StrategyStatus
     start_time: datetime
@@ -178,11 +198,11 @@ class StrategyExecutionContext:
 
 
 class IStrategy(ABC):
-    """策略接口"""
+"""ﻝﻝ۴ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def initialize(self, parameters: Dict[str, Any]) -> None:
-        """初始化策?""
+"""ﮒﮒ۶ﮒﻝ?""
         pass
     
     @abstractmethod
@@ -191,24 +211,24 @@ class IStrategy(ABC):
         market_data: Dict[str, Any],
         context: StrategyExecutionContext
     ) -> List[Signal]:
-        """生成交易信号"""
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
         pass
     
     @abstractmethod
     def on_event(self, event: Dict[str, Any]) -> None:
-        """处理事件"""
+        """ﮒ۳ﻝﻛﭦﻛﭨﭘ"""
         pass
 
 
 class StrategyScanner:
-    """策略扫描?""
+"""ﻝﻝ۴ﮔ،ﮔ?""
     
     def __init__(self, strategy_dir: str):
         self.strategy_dir = strategy_dir
         self.logger = logging.getLogger(__name__)
     
     def scan_strategies(self) -> List[str]:
-        """扫描策略目录"""
+"""ﮔ،ﮔﻝﻝ۴ﻝ؟ﮒﺛ"""
         import os
         strategy_files = []
         
@@ -220,20 +240,20 @@ class StrategyScanner:
         return strategy_files
     
     def parse_strategy_config(self, config_file: str) -> Dict[str, Any]:
-        """解析策略配置文件"""
+"""ﻟ۶۲ﮔﻝﻝ۴ﻠﻝﺛ؟ﮔﻛﭨﭘ"""
         with open(config_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
         return config
 
 
 class StrategyLoader:
-    """策略加载?""
+"""ﻝﻝ۴ﮒﻟﺛﺛ?""
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
     def load_strategy(self, strategy_id: str, config: Dict[str, Any]) -> IStrategy:
-        """动态加载策?""
+"""ﮒ۷ﮔﮒﻟﺛﺛﻝ?""
         module_path = config.get('module')
         class_name = config.get('class')
         
@@ -244,7 +264,7 @@ class StrategyLoader:
         return strategy_class()
     
     def validate_strategy(self, strategy: IStrategy) -> bool:
-        """验证策略接口"""
+"""ﻠ۹ﻟﺁﻝﻝ۴ﮔ۴ﮒ۲"""
         required_methods = ['initialize', 'generate_signals', 'on_event']
         
         for method in required_methods:
@@ -255,7 +275,7 @@ class StrategyLoader:
 
 
 class StrategyRegistry:
-    """策略注册?""
+"""ﻝﻝ۴ﮔﺏ۷ﮒ?""
     
     def __init__(self):
         self._strategies: Dict[str, StrategyMetadata] = {}
@@ -264,7 +284,7 @@ class StrategyRegistry:
         self.logger = logging.getLogger(__name__)
     
     def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
-        """注册策略"""
+"""ﮔﺏ۷ﮒﻝﻝ۴"""
         if strategy_id in self._strategies:
             raise ValueError(f"Strategy {strategy_id} already registered")
         
@@ -273,7 +293,7 @@ class StrategyRegistry:
         self.logger.info(f"Registered strategy: {strategy_id}")
     
     def unregister(self, strategy_id: str) -> None:
-        """注销策略"""
+"""ﮔﺏ۷ﻠﻝﻝ۴"""
         if strategy_id not in self._strategies:
             raise ValueError(f"Strategy {strategy_id} not found")
         
@@ -285,21 +305,21 @@ class StrategyRegistry:
         self.logger.info(f"Unregistered strategy: {strategy_id}")
     
     def get_metadata(self, strategy_id: str) -> StrategyMetadata:
-        """获取策略元数?""
+"""ﻟﺓﮒﻝﻝ۴ﮒﮔﺍ?""
         if strategy_id not in self._strategies:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         return self._strategies[strategy_id]
     
     def get_status(self, strategy_id: str) -> StrategyStatus:
-        """获取策略�?""
+"""ﻟﺓﮒﻝﻝ۴ﻝ?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
         return self._statuses[strategy_id]
     
     def set_status(self, strategy_id: str, status: StrategyStatus) -> None:
-        """设置策略�?""
+"""ﻟ؟ﺝﻝﺛ؟ﻝﻝ۴ﻝ?""
         if strategy_id not in self._statuses:
             raise ValueError(f"Strategy {strategy_id} not found")
         
@@ -307,12 +327,12 @@ class StrategyRegistry:
         self.logger.info(f"Strategy {strategy_id} status changed to {status}")
     
     def list_strategies(self) -> List[str]:
-        """列出所有策?""
+"""ﮒﮒﭦﮔﮔﻝ?""
         return list(self._strategies.keys())
 
 
 class StrategyFactory:
-    """策略工厂"""
+"""ﻝﻝ۴ﮒﺓ۴ﮒ"""
     
     def __init__(self, registry: StrategyRegistry, loader: StrategyLoader):
         self.registry = registry
@@ -320,7 +340,7 @@ class StrategyFactory:
         self.logger = logging.getLogger(__name__)
     
     def create_strategy(self, strategy_id: str) -> IStrategy:
-        """创建策略实例"""
+"""ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ"""
         metadata = self.registry.get_metadata(strategy_id)
         
         config = {
@@ -339,7 +359,7 @@ class StrategyFactory:
 
 
 class EventBus:
-    """事件总线"""
+    """ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ"""
     
     def __init__(self):
         self._subscribers: Dict[str, List[Callable]] = {}
@@ -349,7 +369,7 @@ class EventBus:
         self.logger = logging.getLogger(__name__)
     
     def subscribe(self, event_type: str, callback: Callable) -> None:
-        """订阅事件"""
+        """ﻟ؟۱ﻠﻛﭦﻛﭨﭘ"""
         if event_type not in self._subscribers:
             self._subscribers[event_type] = []
         
@@ -357,13 +377,13 @@ class EventBus:
         self.logger.info(f"Subscribed to event: {event_type}")
     
     def unsubscribe(self, event_type: str, callback: Callable) -> None:
-        """取消订阅"""
+        """ﮒﮔﭘﻟ؟۱ﻠ"""
         if event_type in self._subscribers:
             self._subscribers[event_type].remove(callback)
             self.logger.info(f"Unsubscribed from event: {event_type}")
     
     def publish(self, event_type: str, event_data: Dict[str, Any]) -> None:
-        """发布事件"""
+        """ﮒﮒﺕﻛﭦﻛﭨﭘ"""
         event = {
             'type': event_type,
             'data': event_data,
@@ -372,7 +392,7 @@ class EventBus:
         self._event_queue.put(event)
     
     def start(self) -> None:
-        """启动事件总线"""
+        """ﮒﺁﮒ۷ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ"""
         self._running = True
         self._thread = threading.Thread(target=self._process_events)
         self._thread.daemon = True
@@ -380,14 +400,14 @@ class EventBus:
         self.logger.info("EventBus started")
     
     def stop(self) -> None:
-        """停止事件总线"""
+"""ﮒﮔ۱ﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ"""
         self._running = False
         if self._thread:
             self._thread.join()
         self.logger.info("EventBus stopped")
     
     def _process_events(self) -> None:
-        """处理事件"""
+        """ﮒ۳ﻝﻛﭦﻛﭨﭘ"""
         while self._running:
             try:
                 event = self._event_queue.get(timeout=1.0)
@@ -396,7 +416,7 @@ class EventBus:
                 continue
     
     def _dispatch_event(self, event: Dict[str, Any]) -> None:
-        """分发事件"""
+        """ﮒﮒﻛﭦﻛﭨﭘ"""
         event_type = event['type']
         
         if event_type in self._subscribers:
@@ -408,7 +428,7 @@ class EventBus:
 
 
 class StrategyEngine:
-    """策略引擎"""
+"""ﻝﻝ۴ﮒﺙﮔ"""
     
     def __init__(self, event_bus: EventBus, registry: StrategyRegistry):
         self.event_bus = event_bus
@@ -419,7 +439,7 @@ class StrategyEngine:
         self.logger = logging.getLogger(__name__)
     
     def start_strategy(self, strategy_id: str) -> None:
-        """启动策略"""
+"""ﮒﺁﮒ۷ﻝﻝ۴"""
         if strategy_id in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} already running")
         
@@ -444,7 +464,7 @@ class StrategyEngine:
         self.logger.info(f"Started strategy: {strategy_id}")
     
     def stop_strategy(self, strategy_id: str) -> None:
-        """停止策略"""
+"""ﮒﮔ۱ﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -461,7 +481,7 @@ class StrategyEngine:
         self.logger.info(f"Stopped strategy: {strategy_id}")
     
     def pause_strategy(self, strategy_id: str) -> None:
-        """暂停策略"""
+"""ﮔﮒﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -478,7 +498,7 @@ class StrategyEngine:
         self.logger.info(f"Paused strategy: {strategy_id}")
     
     def resume_strategy(self, strategy_id: str) -> None:
-        """恢复策略"""
+"""ﮔ۱ﮒ۳ﻝﻝ۴"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -500,7 +520,7 @@ class StrategyEngine:
         symbols: List[str],
         date: str
     ) -> List[Signal]:
-        """生成交易信号"""
+        """ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ"""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
@@ -541,7 +561,7 @@ class StrategyEngine:
             raise
     
     def _fetch_market_data(self, symbols: List[str], date: str) -> Dict[str, Any]:
-        """获取市场数据"""
+        """ﻟﺓﮒﮒﺕﮒﭦﮔﺍﮔ؟"""
         return {
             'symbols': symbols,
             'date': date,
@@ -549,38 +569,38 @@ class StrategyEngine:
         }
     
     def get_context(self, strategy_id: str) -> StrategyExecutionContext:
-        """获取策略执行上下?""
+"""ﻟﺓﮒﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕ?""
         if strategy_id not in self._running_contexts:
             raise ValueError(f"Strategy {strategy_id} not running")
         
         return self._running_contexts[strategy_id]
 ```
 
-### 3.2 性能指标要求
-| 性能指标 | 目标?| 测量方法 |
+### 3.2 ﮔ۶ﻟﺛﮔﮔﻟ۵ﮔﺎ
+| ﮔ۶ﻟﺛﮔﮔ | ﻝ؟ﮔ?| ﮔﭖﻠﮔﺗﮔﺏ |
 |----------|--------|----------|
-| 策略注册时间 | < 100ms | 单次注册 |
-| 策略启动时间 | < 500ms | 单次启动 |
-| 信号生成时间 | < 1?| 单次生成 |
-| 并发策略?| ?10?| 并发测试 |
-| 事件处理延迟 | < 50ms | 单次处理 |
+| ﻝﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮒﮔ؛۰ﮔﺏ۷ﮒ |
+| ﻝﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮒﮔ؛۰ﮒﺁﮒ۷ |
+| ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 1?| ﮒﮔ؛۰ﻝﮔ |
+| ﮒﺗﭘﮒﻝﻝ۴?| ?10?| ﮒﺗﭘﮒﮔﭖﻟﺁ |
+| ﻛﭦﻛﭨﭘﮒ۳ﻝﮒﭨﭘﻟﺟ | < 50ms | ﮒﮔ؛۰ﮒ۳ﻝ |
 
-### 3.3 安全机制
-- **策略隔离**: 每个策略运行在独立的上下文中
-- **异常处理**: 策略异常不影响其他策略运?
-- **资源限制**: 限制策略的资源使?
+### 3.3 ﮒ؟ﮒ۷ﮔﭦﮒﭘ
+- **ﻝﻝ۴ﻠﻝ۵ﭨ**: ﮔﺁﻛﺕ۹ﻝﻝ۴ﻟﺟﻟ۰ﮒ۷ﻝ؛ﻝ،ﻝﻛﺕﻛﺕﮔﻛﺕ
+- **ﮒﺙﮒﺕﺕﮒ۳ﻝ**: ﻝﻝ۴ﮒﺙﮒﺕﺕﻛﺕﮒﺛﺎﮒﮒﭘﻛﭨﻝﻝ۴ﻟﺟ?
+- **ﻟﭖﮔﭦﻠﮒﭘ**: ﻠﮒﭘﻝﻝ۴ﻝﻟﭖﮔﭦﻛﺛﺟ?
 
 ---
 
-## 4. 数据模型与存?
+## 4. ﮔﺍﮔ؟ﮔ۷۰ﮒﻛﺕﮒ?
 
-### 4.1 核心数据结构
+### 4.1 ﮔﺕﮒﺟﮔﺍﮔ؟ﻝﭨﮔ
 
-#### 4.1.1 策略元数据模?
+#### 4.1.1 ﻝﻝ۴ﮒﮔﺍﮔ؟ﮔ۷۰?
 ```python
 @dataclass
 class StrategyMetadataData:
-    """策略元数据数据模?""
+"""ﻝﻝ۴ﮒﮔﺍﮔ؟ﮔﺍﮔ؟ﮔ۷۰?""
     strategy_id: str
     name: str
     category: str
@@ -592,11 +612,11 @@ class StrategyMetadataData:
     created_time: datetime
 ```
 
-#### 4.1.2 策略执行上下文模?
+#### 4.1.2 ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔ۷۰?
 ```python
 @dataclass
 class StrategyExecutionContextData:
-    """策略执行上下文数据模?""
+"""ﻝﻝ۴ﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﮔﺍﮔ؟ﮔ۷۰?""
     strategy_id: str
     status: StrategyStatus
     start_time: datetime
@@ -606,11 +626,11 @@ class StrategyExecutionContextData:
     last_error: Optional[str]
 ```
 
-#### 4.1.3 交易信号模型
+#### 4.1.3 ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓﮔ۷۰ﮒ
 ```python
 @dataclass
 class SignalData:
-    """交易信号数据模型"""
+    """ﻛﭦ۳ﮔﻛﺟ۰ﮒﺓﮔﺍﮔ؟ﮔ۷۰ﮒ"""
     signal_id: str
     strategy_id: str
     symbol: str
@@ -620,36 +640,36 @@ class SignalData:
     timestamp: datetime
 ```
 
-### 4.2 缓存策略
-| 缓存类型 | TTL | 淘汰策略 | 最大容?|
+### 4.2 ﻝﺙﮒﻝﻝ۴
+| ﻝﺙﮒﻝﺎﭨﮒ | TTL | ﮔﺓﮔﺎﺍﻝﻝ۴ | ﮔﮒ۳۶ﮒ؟ﺗ?|
 |----------|-----|----------|----------|
-| 策略实例缓存 | 30分钟 | LRU | 50个实?|
-| 策略配置缓存 | 1小时 | LRU | 100个配?|
-| 信号缓存 | 5分钟 | LRU | 1000?|
+| ﻝﻝ۴ﮒ؟ﻛﺝﻝﺙﮒ | 30ﮒﻠ | LRU | 50ﻛﺕ۹ﮒ؟?|
+| ﻝﻝ۴ﻠﻝﺛ؟ﻝﺙﮒ | 1ﮒﺍﮔﭘ | LRU | 100ﻛﺕ۹ﻠ?|
+| ﻛﺟ۰ﮒﺓﻝﺙﮒ | 5ﮒﻠ | LRU | 1000?|
 
-### 4.3 数据持久?
-- **持久化需?*: 策略元数据、执行上下文需要持久化存储
-- **存储格式**: YAML配置文件 + SQLite数据?
+### 4.3 ﮔﺍﮔ؟ﮔﻛﺗ?
+- **ﮔﻛﺗﮒﻠ?*: ﻝﻝ۴ﮒﮔﺍﮔ؟ﻙﮔ۶ﻟ۰ﻛﺕﻛﺕﮔﻠﻟ۵ﮔﻛﺗﮒﮒﮒ۷
+- **ﮒﮒ۷ﮔﺙﮒﺙ**: YAMLﻠﻝﺛ؟ﮔﻛﭨﭘ + SQLiteﮔﺍﮔ؟?
 
 ---
 
-## 5. 算法实现说明
+## 5. ﻝ؟ﮔﺏﮒ؟ﻝﺍﻟﺁﺑﮔ
 
-### 5.1 核心算法
+### 5.1 ﮔﺕﮒﺟﻝ؟ﮔﺏ
 
-#### 5.1.1 策略注册算法
+#### 5.1.1 ﻝﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
 ```python
 def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
     """
-    策略注册算法
+ﻝﻝ۴ﮔﺏ۷ﮒﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 检查策略是否已注册
-    2. 存储策略元数?
-    3. 初始化策略状?
-    4. 发布注册事件
+    ﻝ؟ﮔﺏﮒﻝ:
+1. ﮔ۲ﮔ۴ﻝﻝ۴ﮔﺁﮒ۵ﮒﺓﺎﮔﺏ۷ﮒ
+2. ﮒﮒ۷ﻝﻝ۴ﮒﮔﺍ?
+3. ﮒﮒ۶ﮒﻝﻝ۴ﻝﭘ?
+    4. ﮒﮒﺕﮔﺏ۷ﮒﻛﭦﻛﭨﭘ
     
-    复杂? O(1)
+    ﮒ۳ﮔ? O(1)
     """
     if strategy_id in self._strategies:
         raise ValueError(f"Strategy {strategy_id} already registered")
@@ -659,7 +679,7 @@ def register(self, strategy_id: str, metadata: StrategyMetadata) -> None:
     self.logger.info(f"Registered strategy: {strategy_id}")
 ```
 
-#### 5.1.2 策略执行算法
+#### 5.1.2 ﻝﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
 ```python
 def generate_signals(
     self,
@@ -668,17 +688,17 @@ def generate_signals(
     date: str
 ) -> List[Signal]:
     """
-    策略执行算法
+ﻝﻝ۴ﮔ۶ﻟ۰ﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 检查策略运行状?
-    2. 创建策略实例
-    3. 获取市场数据
-    4. 执行策略逻辑
-    5. 生成交易信号
-    6. 发布信号事件
+    ﻝ؟ﮔﺏﮒﻝ:
+1. ﮔ۲ﮔ۴ﻝﻝ۴ﻟﺟﻟ۰ﻝﭘ?
+2. ﮒﮒﭨﭦﻝﻝ۴ﮒ؟ﻛﺝ
+    3. ﻟﺓﮒﮒﺕﮒﭦﮔﺍﮔ؟
+4. ﮔ۶ﻟ۰ﻝﻝ۴ﻠﭨﻟﺝ
+    5. ﻝﮔﻛﭦ۳ﮔﻛﺟ۰ﮒﺓ
+    6. ﮒﮒﺕﻛﺟ۰ﮒﺓﻛﭦﻛﭨﭘ
     
-    复杂? O(n*m) n为股票数，m为策略复杂度
+ﮒ۳ﮔ? O(n*m) nﻛﺕﭦﻟ۰ﻝ۴۷ﮔﺍﺅﺙmﻛﺕﭦﻝﻝ۴ﮒ۳ﮔﮒﭦ۵
     """
     if strategy_id not in self._running_contexts:
         raise ValueError(f"Strategy {strategy_id} not running")
@@ -720,19 +740,19 @@ def generate_signals(
         raise
 ```
 
-#### 5.1.3 事件分发算法
+#### 5.1.3 ﻛﭦﻛﭨﭘﮒﮒﻝ؟ﮔﺏ
 ```python
 def _dispatch_event(self, event: Dict[str, Any]) -> None:
     """
-    事件分发算法
+    ﻛﭦﻛﭨﭘﮒﮒﻝ؟ﮔﺏ
     
-    算法原理:
-    1. 获取事件类型
-    2. 查找订阅?
-    3. 依次调用回调函数
-    4. 处理异常
+    ﻝ؟ﮔﺏﮒﻝ:
+    1. ﻟﺓﮒﻛﭦﻛﭨﭘﻝﺎﭨﮒ
+    2. ﮔ۴ﮔﺝﻟ؟۱ﻠ?
+    3. ﻛﺝﮔ؛۰ﻟﺍﻝ۷ﮒﻟﺍﮒﺛﮔﺍ
+    4. ﮒ۳ﻝﮒﺙﮒﺕﺕ
     
-    复杂? O(k) k为订阅者数?
+    ﮒ۳ﮔ? O(k) kﻛﺕﭦﻟ؟۱ﻠﻟﮔﺍ?
     """
     event_type = event['type']
     
@@ -746,17 +766,17 @@ def _dispatch_event(self, event: Dict[str, Any]) -> None:
 
 ---
 
-## 6. 实施技术栈
+## 6. ﮒ؟ﮔﺛﮔﮔﺁﮔ
 
-### 6.1 语言与框?
-| 技术选型 | 版本要求 | �?| 选择理由 |
+### 6.1 ﻟﺁﻟ۷ﻛﺕﮔ۰?
+| ﮔﮔﺁﻠﮒ | ﻝﮔ؛ﻟ۵ﮔﺎ | ﻝ?| ﻠﮔ۸ﻝﻝﺎ |
 |----------|----------|------|----------|
-| Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
-| threading | 标准?| 多线程支?| Python内置，稳定可?|
-| queue | 标准?| 队列支持 | Python内置，线程安?|
-| yaml | >=5.4.0 | 配置解析 | 人类可读，易于维?|
+| Python | >=3.8 | ﻛﺕﭨﻟ۵ﮒﺙﮒﻟﺁﻟ۷ | ﻠﮒﻝﺏﭨﻝﭨﮔﮒﻟﺁﻟ۷ |
+| threading | ﮔﮒ?| ﮒ۳ﻝﭦﺟﻝ۷ﮔﺁ?| Pythonﮒﻝﺛ؟ﺅﺙﻝ۷ﺏﮒ؟ﮒﺁ?|
+| queue | ﮔﮒ?| ﻠﮒﮔﺁﮔ | Pythonﮒﻝﺛ؟ﺅﺙﻝﭦﺟﻝ۷ﮒ؟?|
+| yaml | >=5.4.0 | ﻠﻝﺛ؟ﻟ۶۲ﮔ | ﻛﭦﭦﻝﺎﭨﮒﺁﻟﺁﭨﺅﺙﮔﻛﭦﻝﭨﺑ?|
 
-### 6.2 第三方依?
+### 6.2 ﻝ؛؛ﻛﺕﮔﺗﻛﺝ?
 ```yaml
 requirements:
   - pyyaml>=5.4.0
@@ -765,20 +785,20 @@ requirements:
 
 ---
 
-## 7. 测试策略
+## 7. ﮔﭖﻟﺁﻝﻝ۴
 
-### 7.1 单元测试
-| 测试?| 测试内容 | 覆盖率目?|
+### 7.1 ﮒﮒﮔﭖﻟﺁ
+| ﮔﭖﻟﺁ?| ﮔﭖﻟﺁﮒﮒ؟ﺗ | ﻟ۵ﻝﻝﻝ؟?|
 |--------|----------|------------|
-| 策略注册 | 注册正确?| 100% |
-| 策略执行 | 执行正确?| 100% |
-| 事件分发 | 分发正确?| 100% |
-| 状态管?| 状态转换正�?| 100% |
+| ﻝﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ۲ﻝ۰؟?| 100% |
+| ﻝﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ۲ﻝ۰؟?| 100% |
+| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ۲ﻝ۰؟?| 100% |
+| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ۲ﻝ۰?| 100% |
 
-### 7.2 集成测试
+### 7.2 ﻠﮔﮔﭖﻟﺁ
 ```python
 def test_strategy_engine_integration():
-    """集成测试示例"""
+    """ﻠﮔﮔﭖﻟﺁﻝ۳ﭦﻛﺝ"""
     event_bus = EventBus()
     registry = StrategyRegistry()
     engine = StrategyEngine(event_bus, registry)
@@ -804,63 +824,63 @@ def test_strategy_engine_integration():
 
 ---
 
-## 8. 风险与约?
+## 8. ﻠ۲ﻠ۸ﻛﺕﻝﭦ۵?
 
-### 8.1 技术风?
-| 风险ID | 风险描述 | 风险等级 | 缓解措施 |
+### 8.1 ﮔﮔﺁﻠ۲?
+| ﻠ۲ﻠ۸ID | ﻠ۲ﻠ۸ﮔﻟﺟﺍ | ﻠ۲ﻠ۸ﻝﻝﭦ۶ | ﻝﺙﻟ۶۲ﮔ۹ﮔﺛ |
 |--------|----------|----------|----------|
-| R001 | 策略异常导致引擎崩溃 | P1 | 实现异常隔离和断路器机制 |
-| R002 | 策略资源泄漏 | P1 | 实现资源监控和限制机?|
-| R003 | 事件队列积压 | P2 | 实现队列监控和背压机?|
-| R004 | 策略冲突 | P2 | 实现策略隔离和优先级机制 |
+| R001 | ﻝﻝ۴ﮒﺙﮒﺕﺕﮒﺁﺙﻟﺑﮒﺙﮔﮒﺑ۸ﮔﭦ | P1 | ﮒ؟ﻝﺍﮒﺙﮒﺕﺕﻠﻝ۵ﭨﮒﮔﻟﺓﺁﮒ۷ﮔﭦﮒﭘ |
+| R002 | ﻝﻝ۴ﻟﭖﮔﭦﮔﺏﮔﺙ | P1 | ﮒ؟ﻝﺍﻟﭖﮔﭦﻝﮔ۶ﮒﻠﮒﭘﮔﭦ?|
+| R003 | ﻛﭦﻛﭨﭘﻠﮒﻝ۶ﺁﮒ | P2 | ﮒ؟ﻝﺍﻠﮒﻝﮔ۶ﮒﻟﮒﮔﭦ?|
+| R004 | ﻝﻝ۴ﮒﺎﻝ۹ | P2 | ﮒ؟ﻝﺍﻝﻝ۴ﻠﻝ۵ﭨﮒﻛﺙﮒﻝﭦ۶ﮔﭦﮒﭘ |
 
-### 8.2 约束条件
-- **技术约?*: 依赖Python标准库和少量第三方库
-- **资源约束**: 内存使用<2GB，CPU使用<50%
-- **时间约束**: 预计开发时?0小时
-- **质量约束**: 测试覆盖率≥90%
+### 8.2 ﻝﭦ۵ﮔﮔ۰ﻛﭨﭘ
+- **ﮔﮔﺁﻝﭦ۵?*: ﻛﺝﻟﭖPythonﮔﮒﮒﭦﮒﮒﺍﻠﻝ؛؛ﻛﺕﮔﺗﮒﭦ
+- **ﻟﭖﮔﭦﻝﭦ۵ﮔ**: ﮒﮒﻛﺛﺟﻝ۷<2GBﺅﺙCPUﻛﺛﺟﻝ۷<50%
+- **ﮔﭘﻠﺑﻝﭦ۵ﮔ**: ﻠ۱ﻟ؟۰ﮒﺙﮒﮔﭘ?0ﮒﺍﮔﭘ
+- **ﻟﺑ۷ﻠﻝﭦ۵ﮔ**: ﮔﭖﻟﺁﻟ۵ﻝﻝﻗ۴90%
 
 ---
 
-## 9. 验收标准
+## 9. ﻠ۹ﮔﭘﮔﮒ
 
-### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+### 9.1 ﮒﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮒﻟﺛ?| ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |--------|----------|----------|
-| 策略注册 | 注册正确 | 单元测试 |
-| 策略执行 | 执行正确 | 单元测试 |
-| 事件分发 | 分发正确 | 单元测试 |
-| 状态管?| 状态转换正?| 单元测试 |
+| ﻝﻝ۴ﮔﺏ۷ﮒ | ﮔﺏ۷ﮒﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮔ۶ﻟ۰ | ﮔ۶ﻟ۰ﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻛﭦﻛﭨﭘﮒﮒ | ﮒﮒﮔ۲ﻝ۰؟ | ﮒﮒﮔﭖﻟﺁ |
+| ﻝﭘﮔﻝ؟۰?| ﻝﭘﮔﻟﺛ؛ﮔ۱ﮔ۲?| ﮒﮒﮔﭖﻟﺁ |
 
-### 9.2 性能验收标准
-| 性能指标 | 验收标准 | 验证方法 |
+### 9.2 ﮔ۶ﻟﺛﻠ۹ﮔﭘﮔﮒ
+| ﮔ۶ﻟﺛﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 策略注册时间 | < 100ms | 性能测试 |
-| 策略启动时间 | < 500ms | 性能测试 |
-| 信号生成时间 | < 1?| 性能测试 |
+| ﻝﻝ۴ﮔﺏ۷ﮒﮔﭘﻠﺑ | < 100ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻝﻝ۴ﮒﺁﮒ۷ﮔﭘﻠﺑ | < 500ms | ﮔ۶ﻟﺛﮔﭖﻟﺁ |
+| ﻛﺟ۰ﮒﺓﻝﮔﮔﭘﻠﺑ | < 1?| ﮔ۶ﻟﺛﮔﭖﻟﺁ |
 
-### 9.3 质量验收标准
-| 质量指标 | 验收标准 | 验证方法 |
+### 9.3 ﻟﺑ۷ﻠﻠ۹ﮔﭘﮔﮒ
+| ﻟﺑ۷ﻠﮔﮔ | ﻠ۹ﮔﭘﮔﮒ | ﻠ۹ﻟﺁﮔﺗﮔﺏ |
 |----------|----------|----------|
-| 测试覆盖?| ?90% | pytest-cov |
-| 代码质量 | 无严重问?| pylint |
+| ﮔﭖﻟﺁﻟ۵ﻝ?| ?90% | pytest-cov |
+| ﻛﭨ۲ﻝﻟﺑ۷ﻠ | ﮔﻛﺕ۴ﻠﻠ؟?| pylint |
 
 ---
 
-## 10. 实施路线?
+## 10. ﮒ؟ﮔﺛﻟﺓﺁﻝﭦﺟ?
 
-### 10.1 Phase 1: 核心功能开?(5?
-- **Day 1**: 策略扫描器、策略加载器
-- **Day 2**: 策略注册表、策略工?
-- **Day 3**: 策略引擎、事件总线
-- **Day 4**: 状态监控、参数管?
-- **Day 5**: 集成测试、优?
+### 10.1 Phase 1: ﮔﺕﮒﺟﮒﻟﺛﮒﺙ?(5?
+- **Day 1**: ﻝﻝ۴ﮔ،ﮔﮒ۷ﻙﻝﻝ۴ﮒﻟﺛﺛﮒ۷
+- **Day 2**: ﻝﻝ۴ﮔﺏ۷ﮒﻟ۰۷ﻙﻝﻝ۴ﮒﺓ۴?
+- **Day 3**: ﻝﻝ۴ﮒﺙﮔﻙﻛﭦﻛﭨﭘﮔﭨﻝﭦﺟ
+- **Day 4**: ﻝﭘﮔﻝﮔ۶ﻙﮒﮔﺍﻝ؟۰?
+- **Day 5**: ﻠﮔﮔﭖﻟﺁﻙﻛﺙ?
 
 ---
 
-## 附录
+## ﻠﮒﺛ
 
-### A. 配置示例
+### A. ﻠﻝﺛ؟ﻝ۳ﭦﻛﺝ
 ```yaml
 strategy_engine:
   strategy_dir: "config/strategies"
@@ -876,18 +896,18 @@ strategy_engine:
     max_cpu_percent: 50
 ```
 
-### B. 错误码定?
-| 错误?| 错误类型 | 错误描述 | 处理方式 |
+### B. ﻠﻟﺁﺁﻝﮒ؟?
+| ﻠﻟﺁﺁ?| ﻠﻟﺁﺁﻝﺎﭨﮒ | ﻠﻟﺁﺁﮔﻟﺟﺍ | ﮒ۳ﻝﮔﺗﮒﺙ |
 |--------|----------|----------|----------|
-| ERR_ENGINE_001 | RegisterError | 策略注册失败 | 记录日志，返回错?|
-| ERR_ENGINE_002 | ExecuteError | 策略执行失败 | 记录日志，返回错?|
-| ERR_ENGINE_003 | EventError | 事件处理失败 | 记录日志，返回错?|
-| ERR_ENGINE_004 | ResourceError | 资源不足 | 记录日志，返回错?|
+| ERR_ENGINE_001 | RegisterError | ﻝﻝ۴ﮔﺏ۷ﮒﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_ENGINE_002 | ExecuteError | ﻝﻝ۴ﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_ENGINE_003 | EventError | ﻛﭦﻛﭨﭘﮒ۳ﻝﮒ۳ﺎﻟﺑ۴ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
+| ERR_ENGINE_004 | ResourceError | ﻟﭖﮔﭦﻛﺕﻟﭘﺏ | ﻟ؟ﺍﮒﺛﮔ۴ﮒﺟﺅﺙﻟﺟﮒﻠ?|
 
-### C. 参考文?
-- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
-- [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [策略引擎核心蓝图](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
+### C. ﮒﻟﮔ?
+- [ﮔﭘﮔﮒ؟ﻛﺗ](../../01_FRAMEWORK/ARCHITECTURE.md)
+- [ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝ](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
+- [ﻝﻝ۴ﮒﺙﮔﮔﺕﮒﺟﻟﮒﺝ](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_CORE_BLUEPRINT.md)
 
 
-**文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: 策略执行层负责人
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0.0 | **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02 | **ﻝﭨﺑﮔ۳?*: ﻝﻝ۴ﮔ۶ﻟ۰ﮒﺎﻟﺑﻟﺑ۲ﻛﭦﭦ

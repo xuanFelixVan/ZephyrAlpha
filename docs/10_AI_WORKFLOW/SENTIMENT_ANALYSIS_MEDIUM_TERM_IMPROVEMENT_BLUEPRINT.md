@@ -1,19 +1,19 @@
 ---
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_BLUEPRINT_001
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 首席架构师
+responsibility:
+- 舆情分析层中期改进综合蓝(Medium-Term Improvement Blueprint)文档
+layer: Layer 3 (舆情分析层)
 standard_type: 专业机构级蓝图
-applicable_scope: 舆情分析层中期改进模
+applicable_scope: 舆情分析层中期改进模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-implementation_period: -6个月
-included_modules:
-  - 金融知识图谱
-  - 流式处理架构
-  - 多语言支持
+implementation_period: 3-6个月
+included_modules: null
 ---
 
 
@@ -23,6 +23,12 @@ included_modules:
 - 知识图谱、流式处理、多语言支持
 
 # 舆情分析层中期改进综合蓝(Medium-Term Improvement Blueprint)
+
+> **核心职责**: 蓝图设计和架构规划
+> **职责边界**: 
+> - ✅ 本文档负责：蓝图设计和架构规划相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
@@ -454,10 +460,39 @@ included_modules:
 
 ## 八、相关文档
 
-## 八、相关文档
-
 暂无相关文档。
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Sentiment Analysis Medium Term Blueprint
+- **模块ID**: SENTIMENT_ANALYSIS_MEDIUM_TERM_BLUEPRINT_001
+- **蓝图文档**: [SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md](./SENTIMENT_ANALYSIS_MEDIUM_TERM_IMPROVEMENT_BLUEPRINT.md)
+- **技术规格书**: 待创建
+- **职责**: 舆情分析层中期改进模
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Sentiment Analysis Medium Term Blueprint** | 舆情分析层中期改进模 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active

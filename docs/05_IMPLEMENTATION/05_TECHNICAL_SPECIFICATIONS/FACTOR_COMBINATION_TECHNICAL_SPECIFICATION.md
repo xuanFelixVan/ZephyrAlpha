@@ -1,23 +1,38 @@
+﻿---
+module_id: FACTOR_COMBINATION_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - FACTOR_COMBINATION_TECHNICAL技术规范
 ---
+
+﻿---
 module_id: IMPL_FACTOR_COMBINATION_TECH_SPEC_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
 last_updated: 2026-04-02
 owner: 首席技术评审官
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规格书
 applicable_scope: Layer 2 Alpha因子?| 业务架构: 三级时间框架融合架构
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
 ---
+---
+
 
 # 因子合成优化模块技术规格书
 
-> 清风量化系统 v5.3 - 因子合成优化模块详细技术设?
+> 清风量化系统 v5.3 - 因子合成优化模块详细技术设计
 > **模块ID**: `FACTOR_COMBINATION_001`
 > **版本**: v1.0.0
-> **�?*: ?正式
+> **?*: ?正式
 
 
 ## 1. 概述
@@ -29,7 +44,7 @@ implementation_status: 进行?
   - 过拟合风险：因子太多容易过拟合历史数据，实盘效果?
   - 权重优化困难：缺乏科学的因子权重分配方法
   - 因子共线性：因子间存在共线性，影响模型稳定?
-- **预期�?*: 
+- **预期?*: 
   - 降低因子冗余，提升计算效?
   - 减少过拟合风险，提升实盘表现
   - 科学分配因子权重，提升组合表?
@@ -41,7 +56,7 @@ implementation_status: 进行?
 - **架构角色**: Layer 2优化组件，为策略执行层提供优化后的因子组?
 
 ### 1.3 版本信息
-| 版本 | 日期 | �?| 变更说明 | �?|
+| 版本 | 日期 | ?| 变更说明 | ?|
 |------|------|------|----------|------|
 | v1.0.0 | 2026-04-02 | 首席技术评审官 | 初始版本 | Active |
 
@@ -97,10 +112,10 @@ implementation_status: 进行?
 | 依赖模块 | 依赖类型 | 接口方式 | 版本要求 | 备注 |
 |----------|----------|----------|----------|------|
 | pandas | 强依?| Python?| >=1.3.0 | 数据处理核心 |
-| numpy | 强依?| Python?| >=1.21.0 | 数值计?|
+| numpy | 强依?| Python?| >=1.21.0 | 数值计划|
 | scipy | 强依?| Python?| >=1.7.0 | 优化算法 |
 | scikit-learn | 强依?| Python?| >=1.0.0 | PCA降维 |
-| cvxpy | 弱依?| Python?| >=1.2.0 | 凸优?|
+| cvxpy | 弱依?| Python?| >=1.2.0 | 凸优化|
 
 ---
 
@@ -176,7 +191,7 @@ class FactorCombinationOptimizer:
         max_factors: int = 10,
         method: str = "ic_based"
     ) -> List[str]:
-        """因子�?""
+        """因子?""
         pass
     
     def reduce_dimensionality(
@@ -214,16 +229,16 @@ class FactorCombinationOptimizer:
 ```
 
 ### 3.2 性能指标要求
-| 性能指标 | 目标?| 测量方法 |
+| 性能指标 | 目指标| 测量方法 |
 |----------|--------|----------|
-| 权重优化时间 | < 5?| 10因子×1000?|
-| 因子正交化时?| < 2?| 10因子×1000?|
+| 权重优化时间 | < 5?| 10因子1000?|
+| 因子正交化时?| < 2?| 10因子1000?|
 | PCA降维时间 | < 3?| 100因子?0主成?|
 | 相关性分析时?| < 1?| 100因子相关性矩?|
 | 自动优化时间 | < 10?| 完整优化流程 |
 
 ### 3.3 安全机制
-- **数据安全**: 合成优化不修改原始数?
+- **数据安全**: 合成优化不修改原始数据
 - **结果验证**: 优化结果自动验证
 - **日志审计**: 记录所有优化操?
 
@@ -244,7 +259,7 @@ class FactorWeights:
     performance_metrics: Dict[str, float]
 ```
 
-#### 4.1.2 因子相关性模?
+#### 4.1.2 因子相关性模块
 ```python
 @dataclass
 class FactorCorrelation:
@@ -271,7 +286,7 @@ class CombinationEvaluation:
 | 缓存类型 | TTL | 淘汰策略 | 最大容?|
 |----------|-----|----------|----------|
 | 权重优化结果缓存 | 24小时 | LRU | 1000?|
-| 相关性矩阵缓?| 24小时 | LRU | 1000?|
+| 相关性矩阵缓存| 24小时 | LRU | 1000?|
 | PCA降维结果缓存 | 24小时 | LRU | 500?|
 
 ### 4.3 数据持久?
@@ -299,7 +314,7 @@ def combine_factors(
     2. 根据方法计算权重
     3. 加权合成
     
-    复杂? O(n × m) n为因子数，m为数据点?
+    复杂? O(n  m) n为因子数，m为数据点?
     """
     factor_df = pd.DataFrame(factor_dict)
     
@@ -330,7 +345,7 @@ def optimize_weights(
     2. 设置约束条件（权重和?、单因子权重限制等）
     3. 使用优化算法求解
     
-    复杂? O(n^2 × iter) n为因子数，iter为迭代次?
+    复杂? O(n^2  iter) n为因子数，iter为迭代次?
     """
     from scipy.optimize import minimize
     
@@ -383,7 +398,7 @@ def orthogonalize_factors(
     2. 去除因子间的线性相?
     3. 保留独立信息
     
-    复杂? O(n^2 × m) n为因子数，m为数据点?
+    复杂? O(n^2  m) n为因子数，m为数据点?
     """
     from sklearn.linear_model import LinearRegression
     
@@ -424,7 +439,7 @@ def reduce_dimensionality(
     2. 计算协方差矩?
     3. 提取主成?
     
-    复杂? O(n^2 × m) n为因子数，m为数据点?
+    复杂? O(n^2  m) n为因子数，m为数据点?
     """
     from sklearn.decomposition import PCA
     from sklearn.preprocessing import StandardScaler
@@ -449,11 +464,11 @@ def reduce_dimensionality(
 ## 6. 实施技术栈
 
 ### 6.1 语言与框?
-| 技术选型 | 版本要求 | �?| 选择理由 |
+| 技术选型 | 版本要求 | ?| 选择理由 |
 |----------|----------|------|----------|
 | Python | >=3.8 | 主要开发语言 | 量化系统标准语言 |
 | pandas | >=1.3.0 | 数据处理 | 数据分析标准?|
-| numpy | >=1.21.0 | 数值计?| 高性能数值计?|
+| numpy | >=1.21.0 | 数值计划| 高性能数值计划|
 | scipy | >=1.7.0 | 优化算法 | 专业优化?|
 | scikit-learn | >=1.0.0 | PCA降维 | 机器学习标准?|
 
@@ -476,7 +491,7 @@ requirements:
 |--------|----------|------------|
 | 因子合成 | 合成正确?| 100% |
 | 权重优化 | 优化正确?| 100% |
-| 因子正交?| 正交化正�?| 100% |
+| 因子正交?| 正交化正?| 100% |
 | PCA降维 | 降维正确?| 100% |
 
 ### 7.2 集成测试
@@ -504,15 +519,15 @@ def test_factor_combination_integration():
 
 ---
 
-## 8. 风险与约?
+## 8. 风险与约束
 
 ### 8.1 技术风?
 | 风险ID | 风险描述 | 风险等级 | 缓解措施 |
 |--------|----------|----------|----------|
 | R001 | 优化算法收敛失败 | P1 | 多种优化算法备选、参数调?|
-| R002 | 因子共线性导致不稳定 | P1 | 正交化处理、VIF检?|
-| R003 | 过拟合历史数?| P1 | 样本外验证、交叉验?|
-| R004 | 计算性能瓶颈 | P2 | 并行计算、GPU�?|
+| R002 | 因子共线性导致不稳定 | P1 | 正交化处理、VIF检查|
+| R003 | 过拟合历史数据| P1 | 样本外验证、交叉验证|
+| R004 | 计算性能瓶颈 | P2 | 并行计算、GPU?|
 
 ### 8.2 约束条件
 - **技术约?*: 依赖scipy、scikit-learn等科学计算库
@@ -525,7 +540,7 @@ def test_factor_combination_integration():
 ## 9. 验收标准
 
 ### 9.1 功能验收标准
-| 功能?| 验收标准 | 验证方法 |
+| 功能力| 验收标准 | 验证方法 |
 |--------|----------|----------|
 | 因子合成 | 合成正确 | 单元测试 |
 | 权重优化 | 优化正确 | 单元测试 |
@@ -541,8 +556,8 @@ def test_factor_combination_integration():
 ### 9.3 质量验收标准
 | 质量指标 | 验收标准 | 验证方法 |
 |----------|----------|----------|
-| 权重优化准确?| 100% | 质量检?|
-| 正交化准确率 | 100% | 质量检?|
+| 权重优化准确?| 100% | 质量检查|
+| 正交化准确率 | 100% | 质量检查|
 | 测试覆盖?| ?90% | pytest-cov |
 
 ---
@@ -550,10 +565,10 @@ def test_factor_combination_integration():
 ## 10. 实施路线?
 
 ### 10.1 Phase 1: 核心功能开?(4?
-- **Day 1**: 因子合成、权重优?
+- **Day 1**: 因子合成、权重优化
 - **Day 2**: 因子正交化、PCA降维
 - **Day 3**: 因子筛选、相关性分?
-- **Day 4**: 自动优化、测?
+- **Day 4**: 自动优化、测试
 
 ---
 
@@ -591,7 +606,7 @@ factor_combination:
 ### C. 参考文?
 - [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 - [模块职责边界](../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
-- [因子合成方法](../../02_FACTOR_LIBRARY/01_STANDARDS/factor_synthesis.md)
+- `因子合成方法`
 
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-02 | **维护?*: Alpha因子层负责人

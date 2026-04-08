@@ -3,16 +3,16 @@ module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: '2026-04-07'
 owner: 首席架构师
+responsibility:
+- 舆情分析层中期改进模块详细技术规格书文档
+layer: Layer 3 (舆情分析层)
 standard_type: 技术规格书
-applicable_scope: 舆情分析层中期改进模
+applicable_scope: 舆情分析层中期改进模块
 compliance_level: 专业标准
 parent_document: INDEX.md
-applicable_modules:
-  - 知识图谱
-  - 流式处理架构
-  - 多语言支持
+applicable_modules: null
 ---
 
 
@@ -23,6 +23,12 @@ applicable_modules:
 
 # 舆情分析层中期改进模块详细技术规格书
 
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
 > **版本**: v1.0
 > **创建日期**: 2026-04-02
 > **适用模块**: 知识图谱、流式处理架构、多语言支持
@@ -32,10 +38,10 @@ applicable_modules:
 
 ## 📋 文档目录
 
-1. [知识图谱模块技术规格](#一知识图谱模块技术规
-2. [流式处理架构技术规格](#二流式处理架构技术规
-3. [多语言支持模块技术规格](#三多语言支持模块技术规
-4. [数据字典](#四数据字
+1. [知识图谱模块技术规格](#一知识图谱模块技术规格)
+2. [流式处理架构技术规格](#二流式处理架构技术规格)
+3. [多语言支持模块技术规格](#三多语言支持模块技术规格)
+4. [数据字典](#四数据字典)
 5. [API接口规范](#五api接口规范)
 6. [算法流程图](#六算法流程图)
 7. [性能指标定义](#七性能指标定义)

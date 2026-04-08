@@ -1,150 +1,167 @@
 ---
+module_id: VERSIONING_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 个人开发者
+standard_type: 专业量化机构文档
+responsibility:
+- 系统实施与部署管理与优化维护
+---
 module_id: DOC_VERSIONING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
-owner: 首席文档架构?
-standard_type: 专业量化机构文档
-applicable_scope: 全系?
-compliance_level: 初始标准
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔ?
+responsibility:
+  - 系统实施与部署管理与优化维护
+standard_type: ﻛﺕﻛﺕﻠﮒﮔﭦﮔﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨ?
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: INDEX.md
-implementation_status: 进行?
----
+implementation_status: ﻟﺟﻟ۰?---
 
 
-# VERSIONING.md - 版本管理规范
 
-> 清风量化系统版本号管理和升级规则
+# VERSIONING.md - ﻝﮔ؛ﻝ؟۰ﻝﻟ۶ﻟ
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
 
-## 版本号格?
+> ﮔﺕﻠ۲ﻠﮒﻝﺏﭨﻝﭨﻝﮔ؛ﮒﺓﻝ؟۰ﻝﮒﮒﻝﭦ۶ﻟ۶ﮒ
+
+
+## ﻝﮔ؛ﮒﺓﮔﺙ?
 
 ```
-{主版本}.{次版本}.{补丁版本}
+{ﻛﺕﭨﻝﮔ؛}.{ﮔ؛۰ﻝﮔ؛}.{ﻟ۰۴ﻛﺕﻝﮔ؛}
 ```
 
-示例: `4.0.2`
+ﻝ۳ﭦﻛﺝ: `4.0.2`
 
 
-## 版本升级规则
+## ﻝﮔ؛ﮒﻝﭦ۶ﻟ۶ﮒ
 
-### 主版本升级（v4.0 ?v5.0?
+### ﻛﺕﭨﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv4.0 ?v5.0?
 
-**触发条件**:
-- 架构改变（Layer 0-11重组?
-- 核心模块替换
-- 数据格式不兼?
-- 接口版本升级（interface_version: 1.0 ?2.0?
+**ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**:
+- ﮔﭘﮔﮔﺗﮒﺅﺙLayer 0-11ﻠﻝﭨ?
+- ﮔﺕﮒﺟﮔ۷۰ﮒﮔﺟﮔ۱
+- ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﺕﮒﺙ?
+- ﮔ۴ﮒ۲ﻝﮔ؛ﮒﻝﭦ۶ﺅﺙinterface_version: 1.0 ?2.0?
 
-**操作**:
-1. 更新 `System_Manifest.md` 中的 `version` 字段
-2. 更新 `CONTEXT_SNAPSHOT.json` 中的 `system_version`
-3. ?`CHANGELOG.md` 中记录重大变?
-4. 备份旧版本到 `archives/v4.0/`
+**ﮔﻛﺛ**:
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﻠﮒ۳۶ﮒ?
+4. ﮒ۳ﻛﭨﺛﮔ۶ﻝﮔ؛ﮒﺍ `archives/v4.0/`
 
-**示例**:
+**ﻝ۳ﭦﻛﺝ**:
 ```json
 {
   "system_version": "5.0",
   "interface_version": "2.0",
   "breaking_changes": [
-    "Layer 0-11架构重组",
-    "数据格式从Parquet改为Arrow"
+    "Layer 0-11ﮔﭘﮔﻠﻝﭨ",
+"ﮔﺍﮔ؟ﮔﺙﮒﺙﻛﭨParquetﮔﺗﻛﺕﭦArrow"
   ]
 }
 ```
 
-### 次版本升级（v4.0 ?v4.1?
+### ﮔ؛۰ﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv4.0 ?v4.1?
 
-**触发条件**:
-- 新增模块
-- 新增因子库（>10个因子）
-- 新增策略?5个策略）
-- 新增功能（不影响现有接口?
+**ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**:
+- ﮔﺍﮒ۱ﮔ۷۰ﮒ
+- ﮔﺍﮒ۱ﮒﮒﮒﭦﺅﺙ>10ﻛﺕ۹ﮒﮒﺅﺙ
+- ﮔﺍﮒ۱ﻝﻝ۴?5ﻛﺕ۹ﻝﻝ۴ﺅﺙ
+- ﮔﺍﮒ۱ﮒﻟﺛﺅﺙﻛﺕﮒﺛﺎﮒﻝﺍﮔﮔ۴ﮒ۲?
 
-**操作**:
-1. 更新 `System_Manifest.md` 中的 `version` 字段
-2. 更新 `CONTEXT_SNAPSHOT.json` 中的 `system_version`
-3. ?`CHANGELOG.md` 中记录新增功?
-4. 更新 `02_ALPHA_FACTORS_INDEX.md` 中的因子统计
+**ﮔﻛﺛ**:
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﮔﺍﮒ۱ﮒ?
+4. ﮔﺑﮔﺍ `02_ALPHA_FACTORS_INDEX.md` ﻛﺕﻝﮒﮒﻝﭨﻟ؟۰
 
-**示例**:
+**ﻝ۳ﭦﻛﺝ**:
 ```markdown
 ## [v4.1] - 2026-04-15
 
 ### Added
-- 新增10个动量因子（ALPHA_065-074?
-- 新增5个策略（S010-S014?
-- 新增市场状态识别模?
+- ﮔﺍﮒ۱10ﻛﺕ۹ﮒ۷ﻠﮒﮒﺅﺙALPHA_065-074?
+- ﮔﺍﮒ۱5ﻛﺕ۹ﻝﻝ۴ﺅﺙS010-S014?
+- ﮔﺍﮒ۱ﮒﺕﮒﭦﻝﭘﮔﻟﺁﮒ،ﮔ۷۰?
 ```
 
-### 补丁版本升级（v4.0 ?v4.0.1?
+### ﻟ۰۴ﻛﺕﻝﮔ؛ﮒﻝﭦ۶ﺅﺙv4.0 ?v4.0.1?
 
-**触发条件**:
-- Bug修复
-- 文档更新
-- 性能优化
-- 因子参数调整
+**ﻟ۶۵ﮒﮔ۰ﻛﭨﭘ**:
+- Bugﻛﺟ؟ﮒ۳
+- ﮔﮔ۰۲ﮔﺑﮔﺍ
+- ﮔ۶ﻟﺛﻛﺙﮒ
+- ﮒﮒﮒﮔﺍﻟﺍﮔﺑ
 
-**操作**:
-1. 更新 `System_Manifest.md` 中的 `version` 字段
-2. 更新 `CONTEXT_SNAPSHOT.json` 中的 `system_version`
-3. ?`CHANGELOG.md` 中记录修复内?
+**ﮔﻛﺛ**:
+1. ﮔﺑﮔﺍ `System_Manifest.md` ﻛﺕﻝ `version` ﮒﮔ؟ﭖ
+2. ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json` ﻛﺕﻝ `system_version`
+3. ?`CHANGELOG.md` ﻛﺕﻟ؟ﺍﮒﺛﻛﺟ؟ﮒ۳ﮒ?
 
-**示例**:
+**ﻝ۳ﭦﻛﺝ**:
 ```markdown
 ## [v4.0.1] - 2026-03-29
 
 ### Fixed
-- 修复MA5计算中的NaN处理
-- 修复PE_TTM因子的数据源错误
+- ﻛﺟ؟ﮒ۳MA5ﻟ؟۰ﻝ؟ﻛﺕﻝNaNﮒ۳ﻝ
+- ﻛﺟ؟ﮒ۳PE_TTMﮒﮒﻝﮔﺍﮔ؟ﮔﭦﻠﻟﺁﺁ
 
 ### Changed
-- 优化因子计算性能（提?5%?
+- ﻛﺙﮒﮒﮒﻟ؟۰ﻝ؟ﮔ۶ﻟﺛﺅﺙﮔ?5%?
 ```
 
 
-## 版本兼容性规?
+## ﻝﮔ؛ﮒﺙﮒ؟ﺗﮔ۶ﻟ۶?
 
-| 版本类型 | 兼容?| 说明 |
+| ﻝﮔ؛ﻝﺎﭨﮒ | ﮒﺙﮒ؟ﺗ?| ﻟﺁﺑﮔ |
 |---------|--------|------|
-| 主版?| ?不兼?| v4.0 的数?接口不能用于 v5.0 |
-| 次版?| ?向后兼容 | v4.0 的代码可以用?v4.1 |
-| 补丁版本 | ?完全兼容 | v4.0 ?v4.0.1 完全兼容 |
+| ﻛﺕﭨﻝ?| ?ﻛﺕﮒﺙ?| v4.0 ﻝﮔﺍ?ﮔ۴ﮒ۲ﻛﺕﻟﺛﻝ۷ﻛﭦ v5.0 |
+| ﮔ؛۰ﻝ?| ?ﮒﮒﮒﺙﮒ؟ﺗ | v4.0 ﻝﻛﭨ۲ﻝﮒﺁﻛﭨ۴ﻝ۷?v4.1 |
+| ﻟ۰۴ﻛﺕﻝﮔ؛ | ?ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ | v4.0 ?v4.0.1 ﮒ؟ﮒ۷ﮒﺙﮒ؟ﺗ |
 
 
-## 版本检查机?
+## ﻝﮔ؛ﮔ۲ﮔ۴ﮔﭦ?
 
-### 启动时检?
+### ﮒﺁﮒ۷ﮔﭘﮔ۲?
 
 ```python
 def check_version_compatibility():
-    """检查系统版本兼�?""
+    """ﮔ۲ﮔ۴ﻝﺏﭨﻝﭨﻝﮔ؛ﮒﺙﮒ؟?""
     
-    # 读取当前版本
+    # ﻟﺁﭨﮒﮒﺛﮒﻝﮔ؛
     current_version = read_system_version()
     
-    # 读取快照版本
+    # ﻟﺁﭨﮒﮒﺟ،ﻝ۶ﻝﮔ؛
     snapshot_version = read_snapshot_version()
     
-    # 检查兼�?
+    # ﮔ۲ﮔ۴ﮒﺙﮒ؟?
     if current_version.major != snapshot_version.major:
         raise VersionMismatchError(
-            f"主版本不匹配: {current_version} vs {snapshot_version}"
+            f"ﻛﺕﭨﻝﮔ؛ﻛﺕﮒﺗﻠ: {current_version} vs {snapshot_version}"
         )
     
     if current_version.minor < snapshot_version.minor:
         raise VersionMismatchError(
-            f"次版本过? {current_version} < {snapshot_version}"
+            f"ﮔ؛۰ﻝﮔ؛ﻟﺟ? {current_version} < {snapshot_version}"
         )
 ```
 
-### 接口版本协商
+### ﮔ۴ﮒ۲ﻝﮔ؛ﮒﮒ
 
 ```python
 def negotiate_interface_version():
-    """协商接口版本"""
+    """ﮒﮒﮔ۴ﮒ۲ﻝﮔ؛"""
     
     client_version = "1.0"
     server_version = "1.0"
@@ -152,62 +169,62 @@ def negotiate_interface_version():
     if client_version == server_version:
         return True
     elif client_version < server_version:
-        # 向后兼容
+        # ﮒﮒﮒﺙﮒ؟ﺗ
         return True
     else:
-        # 客户端版本过?
+        # ﮒ؟۱ﮔﺓﻝ،ﺁﻝﮔ؛ﻟﺟ?
         raise InterfaceVersionError()
 ```
 
 
-## 版本发布流程
+## ﻝﮔ؛ﮒﮒﺕﮔﭖﻝ۷
 
-### 第一步：准备
+### ﻝ؛؛ﻛﺕﮔ۴ﺅﺙﮒﮒ۳
 
-- [ ] 更新所有版本号字段
-- [ ] 更新 `CHANGELOG.md`
-- [ ] 更新 `System_Manifest.md`
-- [ ] 更新 `CONTEXT_SNAPSHOT.json`
+- [ ] ﮔﺑﮔﺍﮔﮔﻝﮔ؛ﮒﺓﮒﮔ؟ﭖ
+- [ ] ﮔﺑﮔﺍ `CHANGELOG.md`
+- [ ] ﮔﺑﮔﺍ `System_Manifest.md`
+- [ ] ﮔﺑﮔﺍ `CONTEXT_SNAPSHOT.json`
 
-### 第二步：验证
+### ﻝ؛؛ﻛﭦﮔ۴ﺅﺙﻠ۹ﻟﺁ
 
-- [ ] 运行所有单元测?
-- [ ] 运行集成测试
-- [ ] 验证向后兼容?
-- [ ] 验证接口版本
+- [ ] ﻟﺟﻟ۰ﮔﮔﮒﮒﮔﭖ?
+- [ ] ﻟﺟﻟ۰ﻠﮔﮔﭖﻟﺁ
+- [ ] ﻠ۹ﻟﺁﮒﮒﮒﺙﮒ؟ﺗ?
+- [ ] ﻠ۹ﻟﺁﮔ۴ﮒ۲ﻝﮔ؛
 
-### 第三步：发布
+### ﻝ؛؛ﻛﺕﮔ۴ﺅﺙﮒﮒﺕ
 
-- [ ] 创建Git标签（v4.0.2?
-- [ ] 备份旧版?
-- [ ] 更新文档
-- [ ] 发布变更日志
+- [ ] ﮒﮒﭨﭦGitﮔﻝﺝﺅﺙv4.0.2?
+- [ ] ﮒ۳ﻛﭨﺛﮔ۶ﻝ?
+- [ ] ﮔﺑﮔﺍﮔﮔ۰۲
+- [ ] ﮒﮒﺕﮒﮔﺑﮔ۴ﮒﺟ
 
-### 第四步：验证
+### ﻝ؛؛ﮒﮔ۴ﺅﺙﻠ۹ﻟﺁ
 
-- [ ] 验证新版本可正常启动
-- [ ] 验证数据迁移成功
-- [ ] 验证所有模块正常运?
+- [ ] ﻠ۹ﻟﺁﮔﺍﻝﮔ؛ﮒﺁﮔ۲ﮒﺕﺕﮒﺁﮒ۷
+- [ ] ﻠ۹ﻟﺁﮔﺍﮔ؟ﻟﺟﻝ۶ﭨﮔﮒ
+- [ ] ﻠ۹ﻟﺁﮔﮔﮔ۷۰ﮒﮔ۲ﮒﺕﺕﻟﺟ?
 
 
-## 版本号字段位?
+## ﻝﮔ؛ﮒﺓﮒﮔ؟ﭖﻛﺛ?
 
-| 文件 | 字段 | 格式 |
+| ﮔﻛﭨﭘ | ﮒﮔ؟ﭖ | ﮔﺙﮒﺙ |
 |------|------|------|
 | `System_Manifest.md` | `version` | `4.0.2` |
 | `CONTEXT_SNAPSHOT.json` | `system_version` | `4.0.2` |
 | `CONTEXT_SNAPSHOT.json` | `interface_version` | `1.0` |
-| `CHANGELOG.md` | 标题 | `[v4.0.2]` |
+| `CHANGELOG.md` | ﮔﻠ۱ | `[v4.0.2]` |
 | `pyproject.toml` | `version` | `4.0.2` |
 
 
-## 版本历史
+## ﻝﮔ؛ﮒﮒﺎ
 
-| 版本 | 发布日期 | 主要变更 |
+| ﻝﮔ؛ | ﮒﮒﺕﮔ۴ﮔ | ﻛﺕﭨﻟ۵ﮒﮔﺑ |
 |------|---------|---------|
-| v4.0.2 | 2026-03-28 | 完成阶段一交付，优化因子库结构 |
-| v4.0.1 | 2026-03-28 | 初始版本，完成系统架构设?|
-| v4.0 | 2026-03-28 | 首次发布 |
+| v4.0.2 | 2026-03-28 | ﮒ؟ﮔﻠﭘﮔ؟ﭖﻛﺕﻛﭦ۳ﻛﭨﺅﺙﻛﺙﮒﮒﮒﮒﭦﻝﭨﮔ |
+| v4.0.1 | 2026-03-28 | ﮒﮒ۶ﻝﮔ؛ﺅﺙﮒ؟ﮔﻝﺏﭨﻝﭨﮔﭘﮔﻟ؟ﺝ?|
+| v4.0 | 2026-03-28 | ﻠ۵ﮔ؛۰ﮒﮒﺕ |
 
 
-**版本**: 1.0 | **更新**: 2026-03-28 | **�?*: ?活跃
+**ﻝﮔ؛**: 1.0 | **ﮔﺑﮔﺍ**: 2026-03-28 | **ﻝ?*: ?ﮔﺑﭨﻟﺓ

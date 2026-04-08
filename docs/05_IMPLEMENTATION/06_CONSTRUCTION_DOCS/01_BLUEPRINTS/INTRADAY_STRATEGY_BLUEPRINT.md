@@ -2,72 +2,100 @@
 module_id: INTRADAY_STRATEGY_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: 2026-04-06
-owner: 首席架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: 微观执行层盘中策略
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-priority: P0
-layer: "Layer 1 (微观执行层) | 业务架构: 三级时间框架融合架构"
-estimated_effort: 2.5周
-open_source_dependency: pandas, numpy, scipy, scikit-learn
+responsibility:
+- INTRADAY_STRATEGY蓝图设计
+策略
+- 盘中交易
+波动捕捉
+风险管理
+layer: Layer 5 (策略执行层)
+策略蓝图
 ---
 
-# 盘中策略模块蓝图 v1.0
+
+> **职责边界**: 
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
-> **核心定位**: 微观执行层盘中时段交易策略
 > **索引**: `INTRADAY_STRATEGY_001`
-> **开发周期**: 2.5周
 
----
+## 核心定位
 
-## 📋 执行摘要
 
-盘中策略模块是清风量化系统微观执行层的核心组件，处理盘中时段（10:00-14:30）的常规交易场景，利用分钟级价格行为和成交量模式制定交易决策。
+日内交易策略模块，构建和运行和操作基于日内市场数据的短期交易策略，包括开盘策略、盘中策略和收盘策略，兼容和适配高频交易和算法交易执行。
+### 主要目标
 
-### 核心价值
+1. **功能完整性**: 确保INTRADAY STRATEGY功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
 
-- **分钟级信号**: 基于分钟K线的实时信号生成
-- **成交量分析**: 深度分析成交量模式
-- **趋势跟踪**: 捕捉盘中趋势机会
-- **均值回归**: 利用盘中价格回归机会
+### 质量目标
 
----
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
 
-## 🎯 模块定位与职责
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用INTRADAY STRATEGY化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
 
 ### 核心职责
 
-| 职责类别 | 具体职责 | 输出产物 |
 |---------|---------|---------|
-| **盘中信号生成** | 分析分钟级价格行为 | 盘中交易信号 |
-| **成交量分析** | 分析成交量模式 | 成交量分析报告 |
 | **趋势跟踪** | 跟踪盘中趋势 | 趋势跟踪信号 |
-| **均值回归** | 识别回归机会 | 均值回归信号 |
 
----
 
-## 🏗️ 架构设计
+
 
 ### 盘中策略类型
 
 | 策略类型 | 策略名称 | 策略逻辑 | 适用场景 |
 |---------|---------|---------|---------|
 | **趋势跟踪** | Trend Following | 跟踪盘中趋势 | 趋势市场 |
-| **均值回归** | Mean Reversion | 价格回归均值 | 震荡市场 |
-| **成交量突破** | Volume Breakout | 成交量突破 | 突破市场 |
-| **动量策略** | Momentum | 追踪动量 | 强趋势市场 |
 
----
 
-## 🔧 关键组件设计
 
-### 1. 盘中信号生成器
+
 
 ```python
 from typing import Dict, Any
@@ -75,7 +103,6 @@ import pandas as pd
 import numpy as np
 
 class IntradaySignalGenerator:
-    """盘中信号生成器"""
     
     def __init__(self):
         self.strategies = {
@@ -95,7 +122,6 @@ class IntradaySignalGenerator:
             signal = strategy.generate_signal(intraday_data)
             signals[strategy_name] = signal
         
-        # 根据市场状态选择最佳策略
         best_strategy = self._select_best_strategy(market_state)
         
         return {
@@ -105,7 +131,6 @@ class IntradaySignalGenerator:
         }
     
     def _select_best_strategy(self, market_state: str) -> str:
-        """选择最佳策略"""
         strategy_mapping = {
             'BULL': 'momentum',
             'BEAR': 'mean_reversion',
@@ -121,7 +146,6 @@ class TrendFollowingStrategy:
     
     def generate_signal(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
         """生成趋势跟踪信号"""
-        # 计算移动平均线
         ma_short = intraday_data['close'].rolling(5).mean()
         ma_long = intraday_data['close'].rolling(20).mean()
         
@@ -148,11 +172,8 @@ class TrendFollowingStrategy:
 
 
 class MeanReversionStrategy:
-    """均值回归策略"""
     
     def generate_signal(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
-        """生成均值回归信号"""
-        # 计算价格偏离度
         ma = intraday_data['close'].rolling(20).mean()
         std = intraday_data['close'].rolling(20).std()
         
@@ -190,16 +211,12 @@ class VolumeAnalyzer:
     """成交量分析器"""
     
     def analyze(self, intraday_data: pd.DataFrame) -> Dict[str, Any]:
-        """分析成交量模式"""
-        # 计算成交量移动平均
         volume_ma = intraday_data['volume'].rolling(20).mean()
         
-        # 计算成交量比率
         current_volume = intraday_data['volume'].iloc[-1]
         current_volume_ma = volume_ma.iloc[-1]
         volume_ratio = current_volume / current_volume_ma
         
-        # 计算成交量趋势
         volume_trend = intraday_data['volume'].diff().mean()
         
         return {
@@ -209,7 +226,6 @@ class VolumeAnalyzer:
         }
     
     def _classify_volume(self, volume_ratio: float) -> str:
-        """分类成交量水平"""
         if volume_ratio < 0.5:
             return 'VERY_LOW'
         elif volume_ratio < 1.0:
@@ -222,69 +238,75 @@ class VolumeAnalyzer:
             return 'VERY_HIGH'
 ```
 
----
+
 
 ## 🚀 实施要点
 
-### 阶段1：盘中信号生成器开发（第1周）
 
 **任务**:
-1. ✅ 实现趋势跟踪策略
-2. ✅ 实现均值回归策略
-3. ✅ 实现成交量突破策略
-4. ✅ 实现动量策略
-5. ✅ 编写单元测试
 
----
 
-### 阶段2：成交量分析器开发（第1-2周）
+
 
 **任务**:
-1. ✅ 实现成交量模式识别
-2. ✅ 实现成交量异常检测
-3. ✅ 实现成交量趋势分析
-4. ✅ 编写单元测试
 
----
+
 
 ### 阶段3：集成测试与优化（第2-3周）
 
 **任务**:
-1. ✅ 编写集成测试用例
-2. ✅ 执行回测验证
-3. ✅ 优化策略参数
-4. ✅ 部署到生产环境
 
----
+
 
 ## 📈 性能指标
 
 ### 策略性能要求
 
-| 指标 | 目标值 |
 |------|--------|
-| **信号准确率** | ≥55% |
-| **平均收益率** | > 0.05% |
-| **最大回撤** | < 1.5% |
 | **夏普比率** | > 1.2 |
 
----
 
-## 🔗 相关文档
+
 
 - [开盘策略模块蓝图](./OPENING_STRATEGY_BLUEPRINT.md)
 - [秒级风险控制系统蓝图](./RISK_CONTROL_BLUEPRINT.md)
-- [专业多时间框架策略架构](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
 
----
+
 
 ## 📝 变更历史
 
-| 版本 | 日期 | 变更内容 | 作者 |
 |------|------|---------|------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席架构师 |
 
----
 
-**蓝图状态**: ✅ 设计完成
-**下一步**: 开始实施阶段1 - 盘中信号生成器开发
+
+
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Intraday Strategy
+- **模块ID**: INTRADAY_STRATEGY_001
+- **蓝图文档**: INTRADAY_STRATEGY_BLUEPRINT.md
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 1.3 版本管理
+
+|------|------|----------|--------|
+
+
+
+## 变更历史
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本创建 | 实施团队 |
+
+
+

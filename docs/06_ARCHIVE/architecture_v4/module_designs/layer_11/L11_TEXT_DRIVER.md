@@ -3,87 +3,96 @@ module_id: L11_TEXT_DRIVER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-02
-owner: 首席文档架构�?
+last_updated: '2026-04-07'
+owner: ﻠ۵ﮒﺕﮔﮔ۰۲ﮔﭘﮔﮒﺕ?
+responsibility:
+- 归档文档、历史版本
 layer: Layer 11
-module_type: 核心模块
+module_type: ﮔﺕﮒﺟﮔ۷۰ﮒ
 priority: P0
 estimated_hours: 40
-standard_type: 设计文档
-applicable_scope: 全系�?
-compliance_level: 初始标准
+standard_type: ﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨ?
+compliance_level: ﮒﮒ۶ﮔﮒ
 parent_document: ../INDEX.md
-implementation_status: 进行�?
+implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+---
 ---
 
-# L11_TEXT_DRIVER: 文字驱动核心模块设计文档
 
-> **版本**: v1.0  
-> **创建日期**: 2026-04-02  
-> **所属层�?*: Layer 11 - 文字驱动�? 
-> **设计状�?*: �?设计完成  
-> **优先�?*: P0 (核心模块)
+# L11_TEXT_DRIVER: ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﮔ۷۰ﮒﻟ؟ﺝﻟ؟۰ﮔﮔ۰۲
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
----
 
-## 📋 目录
-
-- [1. 模块概述](#1-模块概述)
-- [2. 功能设计](#2-功能设计)
-- [3. 技术架构](#3-技术架�?
-- [4. 接口设计](#4-接口设计)
-- [5. 数据流设计](#5-数据流设�?
-- [6. 配置管理](#6-配置管理)
-- [7. 错误处理](#7-错误处理)
-- [8. 测试方案](#8-测试方案)
-- [9. 部署方案](#9-部署方案)
+> **ﻝﮔ؛**: v1.0  
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-02  
+> **ﮔﮒﺎﮒﺎﻝﭦ?*: Layer 11 - ﮔﮒﻠ۸ﺎﮒ۷ﮒﺎ?
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔ  
+> **ﻛﺙﮒﻝﭦ?*: P0 (ﮔﺕﮒﺟﮔ۷۰ﮒ)
 
 ---
 
-## 1. 模块概述
+## ﻭ ﻝ؟ﮒﺛ
 
-### 1.1 功能定位
+- [1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ](#1-ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ)
+- [2. ﮒﻟﺛﻟ؟ﺝﻟ؟۰](#2-ﮒﻟﺛﻟ؟ﺝﻟ؟۰)
+- [3. ﮔﮔﺁﮔﭘﮔ](#3-ﮔﮔﺁﮔﭘﮔ?
+- [4. ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰](#4-ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰)
+- [5. ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﻟ؟۰](#5-ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﻟ؟?
+- [6. ﻠﻝﺛ؟ﻝ؟۰ﻝ](#6-ﻠﻝﺛ؟ﻝ؟۰ﻝ)
+- [7. ﻠﻟﺁﺁﮒ۳ﻝ](#7-ﻠﻟﺁﺁﮒ۳ﻝ)
+- [8. ﮔﭖﻟﺁﮔﺗﮔ۰](#8-ﮔﭖﻟﺁﮔﺗﮔ۰)
+- [9. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰](#9-ﻠ۷ﻝﺛﺎﮔﺗﮔ۰)
 
-**L11_TEXT_DRIVER**是Layer 11的核心模块，负责将用户的自然语言描述转换为系统操作指令�?
+---
 
-**核心职责**�?
-- 🎯 **自然语言理解**：理解用户的文字描述
-- 🧠 **意图识别**：识别用户的操作意图
-- 📊 **参数提取**：从描述中提取关键参�?
-- 🔧 **工具调用**：调用对应的系统工具
-- 💬 **结果反馈**：将执行结果转换为自然语言
+## 1. ﮔ۷۰ﮒﮔ۵ﻟﺟﺍ
 
-### 1.2 模块边界
+### 1.1 ﮒﻟﺛﮒ؟ﻛﺛ
+
+**L11_TEXT_DRIVER**ﮔﺁLayer 11ﻝﮔﺕﮒﺟﮔ۷۰ﮒﺅﺙﻟﺑﻟﺑ۲ﮒﺍﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻟﺟﺍﻟﺛ؛ﮔ۱ﻛﺕﭦﻝﺏﭨﻝﭨﮔﻛﺛﮔﻛﭨ۳ﻙ?
+
+**ﮔﺕﮒﺟﻟﻟﺑ۲**ﺅﺙ?
+- ﻭﺁ **ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﮔﮒﮔﻟﺟﺍ
+- ﻭ۶ **ﮔﮒﺝﻟﺁﮒ،**ﺅﺙﻟﺁﮒ،ﻝ۷ﮔﺓﻝﮔﻛﺛﮔﮒﺝ
+- ﻭ **ﮒﮔﺍﮔﮒ**ﺅﺙﻛﭨﮔﻟﺟﺍﻛﺕﮔﮒﮒﺏﻠ؟ﮒﮔ?
+- ﻭ۶ **ﮒﺓ۴ﮒﺓﻟﺍﻝ۷**ﺅﺙﻟﺍﻝ۷ﮒﺁﺗﮒﭦﻝﻝﺏﭨﻝﭨﮒﺓ۴ﮒﺓ
+- ﻭ؛ **ﻝﭨﮔﮒﻠ۵**ﺅﺙﮒﺍﮔ۶ﻟ۰ﻝﭨﮔﻟﺛ؛ﮔ۱ﻛﺕﭦﻟ۹ﻝﭘﻟﺁﻟ۷
+
+### 1.2 ﮔ۷۰ﮒﻟﺝﺗﻝ
 
 ```yaml
-输入:
-  - 用户文字描述
-  - 对话历史
-  - 系统状�?
+ﻟﺝﮒ۴:
+- ﻝ۷ﮔﺓﮔﮒﮔﻟﺟﺍ
+  - ﮒﺁﺗﻟﺁﮒﮒﺎ
+  - ﻝﺏﭨﻝﭨﻝﭘﮔ?
 
-输出:
-  - 工具调用指令
-  - 执行结果反馈
-  - 智能建议
+ﻟﺝﮒﭦ:
+  - ﮒﺓ۴ﮒﺓﻟﺍﻝ۷ﮔﻛﭨ۳
+  - ﮔ۶ﻟ۰ﻝﭨﮔﮒﻠ۵
+  - ﮔﭦﻟﺛﮒﭨﭦﻟ؟؟
 
-不包�?
-  - 模型推理（由Agent模块负责�?
-  - 工具实现（由工具模块负责�?
-  - UI渲染（由Web界面负责�?
+ﻛﺕﮒﮒ?
+  - ﮔ۷۰ﮒﮔ۷ﻝﺅﺙﻝﺎAgentﮔ۷۰ﮒﻟﺑﻟﺑ۲ﺅﺙ?
+  - ﮒﺓ۴ﮒﺓﮒ؟ﻝﺍﺅﺙﻝﺎﮒﺓ۴ﮒﺓﮔ۷۰ﮒﻟﺑﻟﺑ۲ﺅﺙ?
+  - UIﮔﺕﺎﮔﺅﺙﻝﺎWebﻝﻠ۱ﻟﺑﻟﺑ۲ﺅﺙ?
 ```
 
-### 1.3 依赖关系
+### 1.3 ﻛﺝﻟﭖﮒﺏﻝﺏﭨ
 
 ```yaml
-上游依赖:
-  - L11_WEB_UI: 用户输入
-  - L11_AGENT: 模型推理
+ﻛﺕﮔﺕﺕﻛﺝﻟﭖ:
+  - L11_WEB_UI: ﻝ۷ﮔﺓﻟﺝﮒ۴
+  - L11_AGENT: ﮔ۷۰ﮒﮔ۷ﻝ
 
-下游依赖:
-  - L11_TOOLS: 工具调用
-  - Layer 0-9: 系统操作
+ﻛﺕﮔﺕﺕﻛﺝﻟﭖ:
+  - L11_TOOLS: ﮒﺓ۴ﮒﺓﻟﺍﻝ۷
+  - Layer 0-9: ﻝﺏﭨﻝﭨﮔﻛﺛ
 
-外部依赖:
+ﮒ۳ﻠ۷ﻛﺝﻟﭖ:
   - LangChain 1.0
   - Ollama
   - Open WebUI
@@ -91,18 +100,18 @@ implementation_status: 进行�?
 
 ---
 
-## 2. 功能设计
+## 2. ﮒﻟﺛﻟ؟ﺝﻟ؟۰
 
-### 2.1 核心功能
+### 2.1 ﮔﺕﮒﺟﮒﻟﺛ
 
-#### 2.1.1 自然语言理解
+#### 2.1.1 ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲
 
-**功能描述**：理解用户的自然语言描述
+**ﮒﻟﺛﮔﻟﺟﺍ**ﺅﺙﻝﻟ۶۲ﻝ۷ﮔﺓﻝﻟ۹ﻝﭘﻟﺁﻟ۷ﮔﻟﺟﺍ
 
-**实现方式**�?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**ﺅﺙ?
 ```python
 class NaturalLanguageUnderstanding:
-    """自然语言理解"""
+"""ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲"""
     
     def __init__(self, model_name: str = "deepseek-r1:14b"):
         self.llm = ChatOpenAI(
@@ -114,27 +123,27 @@ class NaturalLanguageUnderstanding:
     
     def understand(self, user_input: str) -> dict:
         """
-        理解用户输入
+        ﻝﻟ۶۲ﻝ۷ﮔﺓﻟﺝﮒ۴
         
-        返回:
+        ﻟﺟﮒ:
         {
-            "intent": "configure_strategy",  # 意图
-            "entities": {  # 实体
+            "intent": "configure_strategy",  # ﮔﮒﺝ
+            "entities": {  # ﮒ؟ﻛﺛ
                 "strategy_type": "momentum",
                 "holding_period": 5,
                 "stop_loss": 0.1
             },
-            "confidence": 0.95  # 置信�?
+            "confidence": 0.95  # ﻝﺛ؟ﻛﺟ۰ﮒﭦ?
         }
         """
         prompt = f"""
-        分析以下用户输入，提取意图和关键参数�?
+        ﮒﮔﻛﭨ۴ﻛﺕﻝ۷ﮔﺓﻟﺝﮒ۴ﺅﺙﮔﮒﮔﮒﺝﮒﮒﺏﻠ؟ﮒﮔﺍﺅﺙ?
         
-        用户输入: {user_input}
+        ﻝ۷ﮔﺓﻟﺝﮒ۴: {user_input}
         
-        请返回JSON格式�?
+ﻟﺁﺓﻟﺟﮒJSONﮔﺙﮒﺙﺅﺙ?
         {{
-            "intent": "意图类型",
+            "intent": "ﮔﮒﺝﻝﺎﭨﮒ",
             "entities": {{}},
             "confidence": 0.0-1.0
         }}
@@ -144,35 +153,35 @@ class NaturalLanguageUnderstanding:
         return json.loads(response.content)
 ```
 
-#### 2.1.2 意图识别
+#### 2.1.2 ﮔﮒﺝﻟﺁﮒ،
 
-**支持的意图类�?*�?
+**ﮔﺁﮔﻝﮔﮒﺝﻝﺎﭨﮒ?*ﺅﺙ?
 
-| 意图类型 | 描述 | 示例 |
+| ﮔﮒﺝﻝﺎﭨﮒ | ﮔﻟﺟﺍ | ﻝ۳ﭦﻛﺝ |
 |----------|------|------|
-| **configure_strategy** | 配置策略 | "创建一个动量因子策�? |
-| **adjust_risk_control** | 调整风控 | "把最大回撤限制调整到10%" |
-| **query_status** | 查询状�?| "告诉我系统当前状�? |
-| **run_backtest** | 运行回测 | "对这个策略运�?023年的回测" |
-| **export_report** | 导出报告 | "导出本月的交易报�? |
-| **get_suggestion** | 获取建议 | "给我一些策略建�? |
+| **configure_strategy** | ﻠﻝﺛ؟ﻝﻝ۴ | "ﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ? |
+| **adjust_risk_control** | ﻟﺍﮔﺑﻠ۲ﮔ۶ | "ﮔﮔﮒ۳۶ﮒﮔ۳ﻠﮒﭘﻟﺍﮔﺑﮒﺍ10%" |
+| **query_status** | ﮔ۴ﻟﺁ۱ﻝﭘﮔ?| "ﮒﻟﺁﮔﻝﺏﭨﻝﭨﮒﺛﮒﻝﭘﮔ? |
+| **run_backtest** | ﻟﺟﻟ۰ﮒﮔﭖ | "ﮒﺁﺗﻟﺟﻛﺕ۹ﻝﻝ۴ﻟﺟﻟ۰?023ﮒﺗﺑﻝﮒﮔﭖ" |
+| **export_report** | ﮒﺁﺙﮒﭦﮔ۴ﮒ | "ﮒﺁﺙﮒﭦﮔ؛ﮔﻝﻛﭦ۳ﮔﮔ۴ﮒ? |
+| **get_suggestion** | ﻟﺓﮒﮒﭨﭦﻟ؟؟ | "ﻝﭨﮔﻛﺕﻛﭦﻝﻝ۴ﮒﭨﭦﻟ؟? |
 
-**意图识别逻辑**�?
+**ﮔﮒﺝﻟﺁﮒ،ﻠﭨﻟﺝ**ﺅﺙ?
 ```python
 class IntentRecognizer:
-    """意图识别�?""
+    """ﮔﮒﺝﻟﺁﮒ،ﮒ?""
     
     def recognize(self, user_input: str) -> str:
-        """识别用户意图"""
+        """ﻟﺁﮒ،ﻝ۷ﮔﺓﮔﮒﺝ"""
         
-        # 关键词匹�?
+        # ﮒﺏﻠ؟ﻟﺁﮒﺗﻠ?
         keywords = {
-            "configure_strategy": ["创建", "配置", "设置", "策略"],
-            "adjust_risk_control": ["调整", "风控", "回撤", "止损"],
-            "query_status": ["查询", "状�?, "表现", "持仓"],
-            "run_backtest": ["回测", "测试", "验证"],
-            "export_report": ["导出", "报告", "下载"],
-            "get_suggestion": ["建议", "推荐", "意见"]
+"configure_strategy": ["ﮒﮒﭨﭦ", "ﻠﻝﺛ؟", "ﻟ؟ﺝﻝﺛ؟", "ﻝﻝ۴"],
+"adjust_risk_control": ["ﻟﺍﮔﺑ", "ﻠ۲ﮔ۶", "ﮒﮔ۳", "ﮔ۱ﮔ"],
+            "query_status": ["ﮔ۴ﻟﺁ۱", "ﻝﭘﮔ?, "ﻟ۰۷ﻝﺍ", "ﮔﻛﭨ"],
+            "run_backtest": ["ﮒﮔﭖ", "ﮔﭖﻟﺁ", "ﻠ۹ﻟﺁ"],
+            "export_report": ["ﮒﺁﺙﮒﭦ", "ﮔ۴ﮒ", "ﻛﺕﻟﺛﺛ"],
+            "get_suggestion": ["ﮒﭨﭦﻟ؟؟", "ﮔ۷ﻟ", "ﮔﻟ۶"]
         }
         
         for intent, words in keywords.items():
@@ -182,79 +191,79 @@ class IntentRecognizer:
         return "unknown"
 ```
 
-#### 2.1.3 参数提取
+#### 2.1.3 ﮒﮔﺍﮔﮒ
 
-**参数提取规则**�?
+**ﮒﮔﺍﮔﮒﻟ۶ﮒ**ﺅﺙ?
 
 ```python
 class ParameterExtractor:
-    """参数提取�?""
+    """ﮒﮔﺍﮔﮒﮒ?""
     
     def extract(self, user_input: str, intent: str) -> dict:
-        """提取参数"""
+        """ﮔﮒﮒﮔﺍ"""
         
         if intent == "configure_strategy":
             return self._extract_strategy_params(user_input)
         elif intent == "adjust_risk_control":
             return self._extract_risk_params(user_input)
-        # ... 其他意图
+        # ... ﮒﭘﻛﭨﮔﮒﺝ
     
     def _extract_strategy_params(self, user_input: str) -> dict:
-        """提取策略参数"""
+"""ﮔﮒﻝﻝ۴ﮒﮔﺍ"""
         
         params = {}
         
-        # 策略类型
+# ﻝﻝ۴ﻝﺎﭨﮒ
         strategy_types = {
-            "动量": "momentum",
-            "价�?: "value",
-            "质量": "quality",
-            "成长": "growth"
+            "ﮒ۷ﻠ": "momentum",
+            "ﻛﭨﺓﮒ?: "value",
+            "ﻟﺑ۷ﻠ": "quality",
+            "ﮔﻠﺟ": "growth"
         }
         for key, value in strategy_types.items():
             if key in user_input:
                 params["strategy_type"] = value
         
-        # 持仓周期
+        # ﮔﻛﭨﮒ۷ﮔ
         import re
-        match = re.search(r"持仓(\d+)�?, user_input)
+        match = re.search(r"ﮔﻛﭨ(\d+)ﮒ۳?, user_input)
         if match:
             params["holding_period"] = int(match.group(1))
         
-        # 止损比例
-        match = re.search(r"止损(\d+)%", user_input)
+# ﮔ۱ﮔﮔﺁﻛﺝ
+match = re.search(r"ﮔ۱ﮔ(\d+)%", user_input)
         if match:
             params["stop_loss"] = int(match.group(1)) / 100
         
         return params
 ```
 
-### 2.2 辅助功能
+### 2.2 ﻟﺝﮒ۸ﮒﻟﺛ
 
-#### 2.2.1 对话历史管理
+#### 2.2.1 ﮒﺁﺗﻟﺁﮒﮒﺎﻝ؟۰ﻝ
 
 ```python
 class ConversationManager:
-    """对话历史管理"""
+    """ﮒﺁﺗﻟﺁﮒﮒﺎﻝ؟۰ﻝ"""
     
     def __init__(self):
         self.history = []
         self.max_history = 100
     
     def add_message(self, role: str, content: str):
-        """添加消息"""
+"""ﮔﺓﭨﮒﮔﭘﮔﺁ"""
         self.history.append({
             "role": role,
             "content": content,
             "timestamp": datetime.now()
         })
         
-        # 限制历史长度
+        # ﻠﮒﭘﮒﮒﺎﻠﺟﮒﭦ۵
         if len(self.history) > self.max_history:
             self.history = self.history[-self.max_history:]
     
     def get_context(self, last_n: int = 5) -> str:
-        """获取上下�?""
+        """ﻟﺓﮒﻛﺕﻛﺕﮔ?""
         recent = self.history[-last_n:]
         return "\n".join([
             f"{msg['role']}: {msg['content']}"
@@ -262,68 +271,68 @@ class ConversationManager:
         ])
 ```
 
-#### 2.2.2 智能提示
+#### 2.2.2 ﮔﭦﻟﺛﮔﻝ۳ﭦ
 
 ```python
 class SmartPrompter:
-    """智能提示"""
+    """ﮔﭦﻟﺛﮔﻝ۳ﭦ"""
     
     def suggest_next_action(self, context: dict) -> str:
-        """建议下一步操�?""
+"""ﮒﭨﭦﻟ؟؟ﻛﺕﻛﺕﮔ۴ﮔﻛﺛ?""
         
         if context.get("strategy_configured"):
-            return "策略已配置，是否需要运行回测验证？"
+return "ﻝﻝ۴ﮒﺓﺎﻠﻝﺛ؟ﺅﺙﮔﺁﮒ۵ﻠﻟ۵ﻟﺟﻟ۰ﮒﮔﭖﻠ۹ﻟﺁﺅﺙ"
         elif context.get("backtest_completed"):
-            return "回测完成，是否需要启动模拟交易？"
+            return "ﮒﮔﭖﮒ؟ﮔﺅﺙﮔﺁﮒ۵ﻠﻟ۵ﮒﺁﮒ۷ﮔ۷۰ﮔﻛﭦ۳ﮔﺅﺙ"
         else:
-            return "您还需要什么帮助？"
+            return "ﮔ۷ﻟﺟﻠﻟ۵ﻛﭨﻛﺗﮒﺕ؟ﮒ۸ﺅﺙ"
 ```
 
 ---
 
-## 3. 技术架�?
+## 3. ﮔﮔﺁﮔﭘﮔ?
 
-### 3.1 架构�?
+### 3.1 ﮔﭘﮔﮒ?
 
 ```
-┌─────────────────────────────────────────────────────────�?
-�? 用户输入                                                 �?
-└─────────────────────────────────────────────────────────�?
-                        �?
-┌─────────────────────────────────────────────────────────�?
-�? NaturalLanguageUnderstanding                           �?
-�? ├─ InputPreprocessor (输入预处�?                       �?
-�? ├─ IntentRecognizer (意图识别)                          �?
-�? └─ ParameterExtractor (参数提取)                        �?
-└─────────────────────────────────────────────────────────�?
-                        �?
-┌─────────────────────────────────────────────────────────�?
-�? ConversationManager (对话管理)                          �?
-�? ├─ HistoryManager (历史管理)                            �?
-�? ├─ ContextBuilder (上下文构�?                          �?
-�? └─ MemoryManager (记忆管理)                             �?
-└─────────────────────────────────────────────────────────�?
-                        �?
-┌─────────────────────────────────────────────────────────�?
-�? ToolDispatcher (工具调度)                               �?
-�? ├─ ToolSelector (工具选择)                              �?
-�? ├─ ParameterValidator (参数验证)                        �?
-�? └─ ExecutionMonitor (执行监控)                          �?
-└─────────────────────────────────────────────────────────�?
-                        �?
-┌─────────────────────────────────────────────────────────�?
-�? ResultFormatter (结果格式�?                            �?
-�? ├─ NaturalLanguageGenerator (自然语言生成)              �?
-�? ├─ SmartPrompter (智能提示)                             �?
-�? └─ FeedbackCollector (反馈收集)                         �?
-└─────────────────────────────────────────────────────────�?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? ﻝ۷ﮔﺓﻟﺝﮒ۴                                                 ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                        ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? NaturalLanguageUnderstanding                           ﻗ?
+ﻗ? ﻗﻗ InputPreprocessor (ﻟﺝﮒ۴ﻠ۱ﮒ۳ﻝ?                       ﻗ?
+ﻗ? ﻗﻗ IntentRecognizer (ﮔﮒﺝﻟﺁﮒ،)                          ﻗ?
+ﻗ? ﻗﻗ ParameterExtractor (ﮒﮔﺍﮔﮒ)                        ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                        ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? ConversationManager (ﮒﺁﺗﻟﺁﻝ؟۰ﻝ)                          ﻗ?
+ﻗ? ﻗﻗ HistoryManager (ﮒﮒﺎﻝ؟۰ﻝ)                            ﻗ?
+ﻗ? ﻗﻗ ContextBuilder (ﻛﺕﻛﺕﮔﮔﮒﭨ?                          ﻗ?
+ﻗ? ﻗﻗ MemoryManager (ﻟ؟ﺍﮒﺟﻝ؟۰ﻝ)                             ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                        ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? ToolDispatcher (ﮒﺓ۴ﮒﺓﻟﺍﮒﭦ۵)                               ﻗ?
+ﻗ? ﻗﻗ ToolSelector (ﮒﺓ۴ﮒﺓﻠﮔ۸)                              ﻗ?
+ﻗ? ﻗﻗ ParameterValidator (ﮒﮔﺍﻠ۹ﻟﺁ)                        ﻗ?
+ﻗ? ﻗﻗ ExecutionMonitor (ﮔ۶ﻟ۰ﻝﮔ۶)                          ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+                        ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
+ﻗ? ResultFormatter (ﻝﭨﮔﮔﺙﮒﺙﮒ?                            ﻗ?
+ﻗ? ﻗﻗ NaturalLanguageGenerator (ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﮔ)              ﻗ?
+ﻗ? ﻗﻗ SmartPrompter (ﮔﭦﻟﺛﮔﻝ۳ﭦ)                             ﻗ?
+ﻗ? ﻗﻗ FeedbackCollector (ﮒﻠ۵ﮔﭘﻠ)                         ﻗ?
+ﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗﻗ?
 ```
 
-### 3.2 核心类设�?
+### 3.2 ﮔﺕﮒﺟﻝﺎﭨﻟ؟ﺝﻟ؟?
 
 ```python
 class TextDriver:
-    """文字驱动核心�?""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮔﺕﮒﺟﻝﺎ?""
     
     def __init__(self, config: dict):
         self.nlu = NaturalLanguageUnderstanding(config["model"])
@@ -332,24 +341,24 @@ class TextDriver:
         self.result_formatter = ResultFormatter()
     
     def process(self, user_input: str) -> str:
-        """处理用户输入"""
+        """ﮒ۳ﻝﻝ۷ﮔﺓﻟﺝﮒ۴"""
         
-        # 1. 理解用户输入
+        # 1. ﻝﻟ۶۲ﻝ۷ﮔﺓﻟﺝﮒ۴
         understanding = self.nlu.understand(user_input)
         
-        # 2. 更新对话历史
+        # 2. ﮔﺑﮔﺍﮒﺁﺗﻟﺁﮒﮒﺎ
         self.conversation_manager.add_message("user", user_input)
         
-        # 3. 调度工具
+        # 3. ﻟﺍﮒﭦ۵ﮒﺓ۴ﮒﺓ
         tool_result = self.tool_dispatcher.dispatch(
             understanding["intent"],
             understanding["entities"]
         )
         
-        # 4. 格式化结�?
+# 4. ﮔﺙﮒﺙﮒﻝﭨﮔ?
         response = self.result_formatter.format(tool_result)
         
-        # 5. 更新对话历史
+        # 5. ﮔﺑﮔﺍﮒﺁﺗﻟﺁﮒﮒﺎ
         self.conversation_manager.add_message("assistant", response)
         
         return response
@@ -357,85 +366,85 @@ class TextDriver:
 
 ---
 
-## 4. 接口设计
+## 4. ﮔ۴ﮒ۲ﻟ؟ﺝﻟ؟۰
 
-### 4.1 对外接口
+### 4.1 ﮒﺁﺗﮒ۳ﮔ۴ﮒ۲
 
 ```python
 class ITextDriver(ABC):
-    """文字驱动接口"""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def process(self, user_input: str) -> str:
-        """处理用户输入"""
+        """ﮒ۳ﻝﻝ۷ﮔﺓﻟﺝﮒ۴"""
         pass
     
     @abstractmethod
     def get_conversation_history(self) -> list:
-        """获取对话历史"""
+        """ﻟﺓﮒﮒﺁﺗﻟﺁﮒﮒﺎ"""
         pass
     
     @abstractmethod
     def reset_conversation(self):
-        """重置对话"""
+        """ﻠﻝﺛ؟ﮒﺁﺗﻟﺁ"""
         pass
 ```
 
-### 4.2 内部接口
+### 4.2 ﮒﻠ۷ﮔ۴ﮒ۲
 
 ```python
 class INaturalLanguageUnderstanding(ABC):
-    """自然语言理解接口"""
+"""ﻟ۹ﻝﭘﻟﺁﻟ۷ﻝﻟ۶۲ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def understand(self, user_input: str) -> dict:
-        """理解用户输入"""
+        """ﻝﻟ۶۲ﻝ۷ﮔﺓﻟﺝﮒ۴"""
         pass
 
 class IToolDispatcher(ABC):
-    """工具调度接口"""
+    """ﮒﺓ۴ﮒﺓﻟﺍﮒﭦ۵ﮔ۴ﮒ۲"""
     
     @abstractmethod
     def dispatch(self, intent: str, params: dict) -> dict:
-        """调度工具"""
+        """ﻟﺍﮒﭦ۵ﮒﺓ۴ﮒﺓ"""
         pass
 ```
 
 ---
 
-## 5. 数据流设�?
+## 5. ﮔﺍﮔ؟ﮔﭖﻟ؟ﺝﻟ؟?
 
-### 5.1 主数据流
+### 5.1 ﻛﺕﭨﮔﺍﮔ؟ﮔﭖ
 
 ```
-用户输入
-  �?
-[预处理] �?清洗、分词、标准化
-  �?
-[意图识别] �?识别操作意图
-  �?
-[参数提取] �?提取关键参数
-  �?
-[上下文构建] �?结合对话历史
-  �?
-[工具选择] �?选择合适的工具
-  �?
-[参数验证] �?验证参数合法�?
-  �?
-[工具执行] �?执行工具操作
-  �?
-[结果格式化] �?生成自然语言响应
-  �?
-用户反馈
+ﻝ۷ﮔﺓﻟﺝﮒ۴
+  ﻗ?
+[ﻠ۱ﮒ۳ﻝ] ﻗ?ﮔﺕﮔﺑﻙﮒﻟﺁﻙﮔﮒﮒ
+  ﻗ?
+[ﮔﮒﺝﻟﺁﮒ،] ﻗ?ﻟﺁﮒ،ﮔﻛﺛﮔﮒﺝ
+  ﻗ?
+[ﮒﮔﺍﮔﮒ] ﻗ?ﮔﮒﮒﺏﻠ؟ﮒﮔﺍ
+  ﻗ?
+[ﻛﺕﻛﺕﮔﮔﮒﭨﭦ] ﻗ?ﻝﭨﮒﮒﺁﺗﻟﺁﮒﮒﺎ
+  ﻗ?
+[ﮒﺓ۴ﮒﺓﻠﮔ۸] ﻗ?ﻠﮔ۸ﮒﻠﻝﮒﺓ۴ﮒﺓ
+  ﻗ?
+[ﮒﮔﺍﻠ۹ﻟﺁ] ﻗ?ﻠ۹ﻟﺁﮒﮔﺍﮒﮔﺏﮔ?
+  ﻗ?
+[ﮒﺓ۴ﮒﺓﮔ۶ﻟ۰] ﻗ?ﮔ۶ﻟ۰ﮒﺓ۴ﮒﺓﮔﻛﺛ
+  ﻗ?
+[ﻝﭨﮔﮔﺙﮒﺙﮒ] ﻗ?ﻝﮔﻟ۹ﻝﭘﻟﺁﻟ۷ﮒﮒﭦ
+  ﻗ?
+ﻝ۷ﮔﺓﮒﻠ۵
 ```
 
-### 5.2 数据结构
+### 5.2 ﮔﺍﮔ؟ﻝﭨﮔ
 
 ```python
-# 用户输入
-user_input = "我想创建一个动量因子策略，持仓5天，止损10%"
+# ﻝ۷ﮔﺓﻟﺝﮒ۴
+user_input = "ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%"
 
-# 理解结果
+# ﻝﻟ۶۲ﻝﭨﮔ
 understanding = {
     "intent": "configure_strategy",
     "entities": {
@@ -446,7 +455,7 @@ understanding = {
     "confidence": 0.95
 }
 
-# 工具调用
+# ﮒﺓ۴ﮒﺓﻟﺍﻝ۷
 tool_call = {
     "tool": "configure_strategy",
     "params": {
@@ -457,57 +466,57 @@ tool_call = {
     }
 }
 
-# 执行结果
+# ﮔ۶ﻟ۰ﻝﭨﮔ
 tool_result = {
     "success": True,
-    "message": "策略配置成功",
+"message": "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ",
     "data": {
         "strategy_id": "strategy_1",
         "config": {...}
     }
 }
 
-# 响应
-response = """�?策略配置成功�?
+# ﮒﮒﭦ
+response = """ﻗ?ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺅﺙ?
 
-策略ID: strategy_1
-策略类型: 动量因子策略
-持仓周期: 5�?
-止损比例: 10%
+ﻝﻝ۴ID: strategy_1
+ﻝﻝ۴ﻝﺎﭨﮒ: ﮒ۷ﻠﮒﮒﻝﻝ۴
+ﮔﻛﭨﮒ۷ﮔ: 5ﮒ۳?
+ﮔ۱ﮔﮔﺁﻛﺝ: 10%
 
-预计年化收益: 15-25%
-建议风险等级: 中等
+ﻠ۱ﻟ؟۰ﮒﺗﺑﮒﮔﭘﻝ: 15-25%
+ﮒﭨﭦﻟ؟؟ﻠ۲ﻠ۸ﻝﻝﭦ۶: ﻛﺕﻝ
 
-是否需要立即启动回测验证？"""
+ﮔﺁﮒ۵ﻠﻟ۵ﻝ،ﮒﺏﮒﺁﮒ۷ﮒﮔﭖﻠ۹ﻟﺁﺅﺙ"""
 ```
 
 ---
 
-## 6. 配置管理
+## 6. ﻠﻝﺛ؟ﻝ؟۰ﻝ
 
-### 6.1 配置文件
+### 6.1 ﻠﻝﺛ؟ﮔﻛﭨﭘ
 
-**文件路径**: `config/layer_11/text_driver_config.yaml`
+**ﮔﻛﭨﭘﻟﺓﺁﮒﺝ**: `config/layer_11/text_driver_config.yaml`
 
 ```yaml
-# 文字驱动配置
+# ﮔﮒﻠ۸ﺎﮒ۷ﻠﻝﺛ؟
 text_driver:
-  # 模型配置
+  # ﮔ۷۰ﮒﻠﻝﺛ؟
   model:
     default: "deepseek-r1:14b"
     fallback: "qwen2.5-coder:14b"
     
-  # 对话配置
+  # ﮒﺁﺗﻟﺁﻠﻝﺛ؟
   conversation:
     max_history: 100
     context_window: 5
     
-  # 意图识别
+  # ﮔﮒﺝﻟﺁﮒ،
   intent:
     confidence_threshold: 0.8
     unknown_intent_handler: "ask_clarification"
     
-  # 参数提取
+  # ﮒﮔﺍﮔﮒ
   parameter:
     strict_validation: true
     default_values:
@@ -515,27 +524,27 @@ text_driver:
       stop_loss: 0.1
       max_position: 20
       
-  # 工具调度
+  # ﮒﺓ۴ﮒﺓﻟﺍﮒﭦ۵
   tool:
     timeout: 30
     retry_times: 3
     retry_delay: 1
 ```
 
-### 6.2 配置加载
+### 6.2 ﻠﻝﺛ؟ﮒﻟﺛﺛ
 
 ```python
 import yaml
 
 class ConfigManager:
-    """配置管理�?""
+    """ﻠﻝﺛ؟ﻝ؟۰ﻝﮒ?""
     
     def __init__(self, config_path: str):
         with open(config_path, 'r', encoding='utf-8') as f:
             self.config = yaml.safe_load(f)
     
     def get(self, key: str, default=None):
-        """获取配置"""
+        """ﻟﺓﮒﻠﻝﺛ؟"""
         keys = key.split('.')
         value = self.config
         for k in keys:
@@ -545,76 +554,76 @@ class ConfigManager:
 
 ---
 
-## 7. 错误处理
+## 7. ﻠﻟﺁﺁﮒ۳ﻝ
 
-### 7.1 错误类型
+### 7.1 ﻠﻟﺁﺁﻝﺎﭨﮒ
 
 ```python
 class TextDriverError(Exception):
-    """文字驱动基础错误"""
+"""ﮔﮒﻠ۸ﺎﮒ۷ﮒﭦﻝ۰ﻠﻟﺁﺁ"""
     pass
 
 class IntentRecognitionError(TextDriverError):
-    """意图识别错误"""
+    """ﮔﮒﺝﻟﺁﮒ،ﻠﻟﺁﺁ"""
     pass
 
 class ParameterExtractionError(TextDriverError):
-    """参数提取错误"""
+    """ﮒﮔﺍﮔﮒﻠﻟﺁﺁ"""
     pass
 
 class ToolDispatchError(TextDriverError):
-    """工具调度错误"""
+    """ﮒﺓ۴ﮒﺓﻟﺍﮒﭦ۵ﻠﻟﺁﺁ"""
     pass
 ```
 
-### 7.2 错误处理策略
+### 7.2 ﻠﻟﺁﺁﮒ۳ﻝﻝﻝ۴
 
 ```python
 class ErrorHandler:
-    """错误处理�?""
+    """ﻠﻟﺁﺁﮒ۳ﻝﮒ?""
     
     def handle(self, error: Exception, context: dict) -> str:
-        """处理错误"""
+        """ﮒ۳ﻝﻠﻟﺁﺁ"""
         
         if isinstance(error, IntentRecognitionError):
-            return "抱歉，我不太理解您的意思，能换种说法吗�?
+return "ﮔﺎﮔﺅﺙﮔﻛﺕﮒ۳۹ﻝﻟ۶۲ﮔ۷ﻝﮔﮔﺅﺙﻟﺛﮔ۱ﻝ۶ﻟﺁﺑﮔﺏﮒﺅﺙ?
         
         elif isinstance(error, ParameterExtractionError):
-            return f"参数提取失败，请提供更详细的信息�?
+            return f"ﮒﮔﺍﮔﮒﮒ۳ﺎﻟﺑ۴ﺅﺙﻟﺁﺓﮔﻛﺝﮔﺑﻟﺁ۵ﻝﭨﻝﻛﺟ۰ﮔﺁﻙ?
         
         elif isinstance(error, ToolDispatchError):
-            return f"操作执行失败：{str(error)}"
+            return f"ﮔﻛﺛﮔ۶ﻟ۰ﮒ۳ﺎﻟﺑ۴ﺅﺙ{str(error)}"
         
         else:
-            return "系统出现错误，请稍后重试�?
+            return "ﻝﺏﭨﻝﭨﮒﭦﻝﺍﻠﻟﺁﺁﺅﺙﻟﺁﺓﻝ۷ﮒﻠﻟﺁﻙ?
 ```
 
 ---
 
-## 8. 测试方案
+## 8. ﮔﭖﻟﺁﮔﺗﮔ۰
 
-### 8.1 单元测试
+### 8.1 ﮒﮒﮔﭖﻟﺁ
 
 ```python
 def test_intent_recognition():
-    """测试意图识别"""
+    """ﮔﭖﻟﺁﮔﮒﺝﻟﺁﮒ،"""
     recognizer = IntentRecognizer()
     
-    # 测试策略配置意图
-    intent = recognizer.recognize("我想创建一个动量因子策�?)
+# ﮔﭖﻟﺁﻝﻝ۴ﻠﻝﺛ؟ﮔﮒﺝ
+intent = recognizer.recognize("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ?)
     assert intent == "configure_strategy"
     
-    # 测试风控调整意图
-    intent = recognizer.recognize("把最大回撤限制调整到10%")
+    # ﮔﭖﻟﺁﻠ۲ﮔ۶ﻟﺍﮔﺑﮔﮒﺝ
+    intent = recognizer.recognize("ﮔﮔﮒ۳۶ﮒﮔ۳ﻠﮒﭘﻟﺍﮔﺑﮒﺍ10%")
     assert intent == "adjust_risk_control"
 
 def test_parameter_extraction():
-    """测试参数提取"""
+    """ﮔﭖﻟﺁﮒﮔﺍﮔﮒ"""
     extractor = ParameterExtractor()
     
-    # 测试策略参数提取
+# ﮔﭖﻟﺁﻝﻝ۴ﮒﮔﺍﮔﮒ
     params = extractor.extract(
-        "我想创建一个动量因子策略，持仓5天，止损10%",
+"ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%",
         "configure_strategy"
     )
     
@@ -623,60 +632,60 @@ def test_parameter_extraction():
     assert params["stop_loss"] == 0.1
 ```
 
-### 8.2 集成测试
+### 8.2 ﻠﮔﮔﭖﻟﺁ
 
 ```python
 def test_end_to_end():
-    """端到端测�?""
+    """ﻝ،ﺁﮒﺍﻝ،ﺁﮔﭖﻟﺁ?""
     driver = TextDriver(config)
     
-    # 测试完整流程
-    response = driver.process("我想创建一个动量因子策略，持仓5天，止损10%")
+    # ﮔﭖﻟﺁﮒ؟ﮔﺑﮔﭖﻝ۷
+response = driver.process("ﮔﮔﺏﮒﮒﭨﭦﻛﺕﻛﺕ۹ﮒ۷ﻠﮒﮒﻝﻝ۴ﺅﺙﮔﻛﭨ5ﮒ۳۸ﺅﺙﮔ۱ﮔ10%")
     
-    assert "策略配置成功" in response
-    assert "动量因子策略" in response
-    assert "5�? in response
+assert "ﻝﻝ۴ﻠﻝﺛ؟ﮔﮒ" in response
+assert "ﮒ۷ﻠﮒﮒﻝﻝ۴" in response
+    assert "5ﮒ۳? in response
     assert "10%" in response
 ```
 
 ---
 
-## 9. 部署方案
+## 9. ﻠ۷ﻝﺛﺎﮔﺗﮔ۰
 
-### 9.1 部署架构
+### 9.1 ﻠ۷ﻝﺛﺎﮔﭘﮔ
 
 ```yaml
-部署方式: 本地部署
-运行环境: Python 3.9+
-依赖服务:
-  - Ollama (本地LLM)
-  - Open WebUI (Web界面)
+ﻠ۷ﻝﺛﺎﮔﺗﮒﺙ: ﮔ؛ﮒﺍﻠ۷ﻝﺛﺎ
+ﻟﺟﻟ۰ﻝﺁﮒ۱: Python 3.9+
+ﻛﺝﻟﭖﮔﮒ۰:
+  - Ollama (ﮔ؛ﮒﺍLLM)
+  - Open WebUI (Webﻝﻠ۱)
   
-资源需�?
-  CPU: 4�?
-  内存: 16GB+
-  GPU: 8GB+ (推荐)
-  存储: 50GB+
+ﻟﭖﮔﭦﻠﮔﺎ?
+CPU: 4ﮔ?
+ﮒﮒ: 16GB+
+  GPU: 8GB+ (ﮔ۷ﻟ)
+ﮒﮒ۷: 50GB+
 ```
 
-### 9.2 启动脚本
+### 9.2 ﮒﺁﮒ۷ﻟﮔ؛
 
 ```python
 # start_text_driver.py
 from src.layer_11.text_driver import TextDriver
 
 def main():
-    # 加载配置
+# ﮒﻟﺛﺛﻠﻝﺛ؟
     config = ConfigManager("config/layer_11/text_driver_config.yaml").config
     
-    # 初始化文字驱�?
+# ﮒﮒ۶ﮒﮔﮒﻠ۸ﺎﮒ?
     driver = TextDriver(config)
     
-    # 启动服务
-    print("文字驱动模块已启�?)
+    # ﮒﺁﮒ۷ﮔﮒ۰
+print("ﮔﮒﻠ۸ﺎﮒ۷ﮔ۷۰ﮒﮒﺓﺎﮒﺁﮒ?)
     
-    # 测试
-    response = driver.process("查询系统状�?)
+    # ﮔﭖﻟﺁ
+    response = driver.process("ﮔ۴ﻟﺁ۱ﻝﺏﭨﻝﭨﻝﭘﮔ?)
     print(response)
 
 if __name__ == "__main__":
@@ -685,19 +694,19 @@ if __name__ == "__main__":
 
 ---
 
-## 📚 相关文档索引
+## ﻭ ﻝﺕﮒﺏﮔﮔ۰۲ﻝﺑ۱ﮒﺙ
 
-### 核心蓝图文档
+### ﮔﺕﮒﺟﻟﮒﺝﮔﮔ۰۲
 
-| 文档名称 | 路径 | 说明 |
+| ﮔﮔ۰۲ﮒﻝ۶ﺍ | ﻟﺓﺁﮒﺝ | ﻟﺁﺑﮔ |
 |---------|------|------|
-| [Layer 11架构蓝图](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11整体架构 |
-| [Layer 11工具封装蓝图](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | 工具封装架构、单一AI层设�?|
-| [Layer 11工具接口规范](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | 所有模块工具接口详细定�?|
-| [量化交易Agent模块](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agent框架、模型管理、工具集�?|
+| [Layer 11ﮔﭘﮔﻟﮒﺝ](./LAYER_11_ARCHITECTURE.md) | `docs/module_designs/layer_11/LAYER_11_ARCHITECTURE.md` | Layer 11ﮔﺑﻛﺛﮔﭘﮔ |
+| [Layer 11ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﻟﮒﺝ](./LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_ENCAPSULATION_BLUEPRINT.md` | ﮒﺓ۴ﮒﺓﮒﺍﻟ۲ﮔﭘﮔﻙﮒﻛﺕAIﮒﺎﻟ؟ﺝﻟ؟?|
+| [Layer 11ﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟ۶ﻟ](./LAYER_11_TOOL_INTERFACE_SPECIFICATION.md) | `docs/module_designs/layer_11/LAYER_11_TOOL_INTERFACE_SPECIFICATION.md` | ﮔﮔﮔ۷۰ﮒﮒﺓ۴ﮒﺓﮔ۴ﮒ۲ﻟﺁ۵ﻝﭨﮒ؟ﻛﺗ?|
+| [ﻠﮒﻛﭦ۳ﮔAgentﮔ۷۰ﮒ](./L11_QUANT_AGENT.md) | `docs/module_designs/layer_11/L11_QUANT_AGENT.md` | Agentﮔ۰ﮔﭘﻙﮔ۷۰ﮒﻝ؟۰ﻝﻙﮒﺓ۴ﮒﺓﻠﮔ?|
 
 ---
 
-> **设计完成时间**: 2026-04-02  
-> **设计状�?*: �?已完�? 
-> **下一阶段**: 编码实施
+> **ﻟ؟ﺝﻟ؟۰ﮒ؟ﮔﮔﭘﻠﺑ**: 2026-04-02  
+> **ﻟ؟ﺝﻟ؟۰ﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﮒ؟ﮔ? 
+> **ﻛﺕﻛﺕﻠﭘﮔ؟ﭖ**: ﻝﺙﻝﮒ؟ﮔﺛ

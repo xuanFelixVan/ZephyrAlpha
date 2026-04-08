@@ -1,16 +1,36 @@
 ---
+module_id: 06_ARCHIVE_20260404_MARKET_PARTICIPANT_CONSOLIDATION_ARCHIVE_README
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 市场参与者文档整合归档说明文档
+---
+
+﻿---
 module_id: ARCHIVE_MARKET_PARTICIPANT_CONSOLIDATION_001
 version: 1.0.0
 status: Archived
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 归档文档、历史版本
+  - 系统架构
+  - 文档治理
 standard_type: 归档说明
 applicable_scope: 市场参与者文档整合
-compliance_level: 专业标准
----
+compliance_level: 专业标准---
+
 
 # 市场参与者文档整合归档说明
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **归档日期**: 2026-04-04
 > **归档原因**: 职责分散整改，整合为2个核心文档

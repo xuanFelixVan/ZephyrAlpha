@@ -1,60 +1,135 @@
 ---
+responsibility:
+- 组合约束管理
+- 约束条件设置
+- 约束条件验证
+- 约束优化
 module_id: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
-applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, skfolio
-estimated_effort: 3-5天
-priority: P0
+layer: Layer 6 (组合优化层)
 ---
 
 
+## 核心定位
+
+负责投资组合约束协调和监控的设计与构建和运行和操作，定义和管理组合约束条件，生成和输出约束检查和优化功能，兼容和适配组合构建。
+
 # 组合约束管理模块蓝图
 
-> 清风量化交易系统 v5.3 - 组合约束管理详细设计
-> **索引**: `PORTFOLIO_CONSTRAINT_001`
-> **开发周期**: 3-5天
-> **核心定位**: 专业级组合约束管理，支持约束库、冲突检测、优先级管理
-> **参考开源**: PyPortfolioOpt + skfolio
-> **专业对标**: 所有专业量化机构必备模块
+> **职责边界**: 
+> - ...
+## 设计目标
+
+### 主要目标
+
+1. **功能完整性**: 确保PORTFOLIO CONSTRAINT MANAGEMENT功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用PORTFOLIO CONSTRAINT MANAGEMENT化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
+
+
+
 
 ## 1. 概述
 
 ### 1.1 模块定位
 
-**Layer定位**: Layer 6 - 组合优化层（约束管理模块）
 
-**核心价值**:
 - 约束库管理（行业约束、因子约束、风险约束）
-- 约束冲突检测
-- 约束优先级管理
-- 约束可视化
-- 约束模板库
 
-**业务价值**:
 - 确保组合符合投资限制
-- 自动化约束检查
 - 提升合规效率
 
 ### 1.2 版本信息
 
-| 项目 | 内容 |
 |------|------|
 | **模块ID** | PORTFOLIO_CONSTRAINT_MANAGEMENT_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | PyPortfolioOpt, skfolio |
-| **预计工时** | 3-5天 |
 
----
 
-## 2. 技术实现
+
+### 上游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+### 下游依赖
+
+| 文档名称 | module_id | 依赖类型 | 说明 |
+|---------|-----------|---------|------|
+
+
+|---------|------|------|------|
+| **PyPortfolioOpt** | 1.5+ | 组合优化 | [官方文档](https://pyportfolioopt.readthedocs.io/) |
+| **skfolio** | 1.0+ | 组合学习 | [官方文档](https://skfolio.org/) |
+| **Pandas** | 2.0+ | 数据处理 | [官方文档](https://pandas.pydata.org/) |
+
+
+```mermaid
+graph LR
+    A[组合优化引擎] --> B[组合约束管理]
+    C[数据质量监控] --> B
+    D[数据目录] --> B
+    
+    B --> E[多目标优化]
+    B --> G[场景分析]
+    
+    style B fill:#ff6b6b
+    style A fill:#4ecdc4
+    style C fill:#45b7d1
+```
+
+
+
 
 ### 2.1 核心API
 
@@ -65,7 +140,6 @@ import pandas as pd
 import numpy as np
 
 class ConstraintManager:
-    """组合约束管理器"""
     
     def __init__(self):
         self.constraints = []
@@ -79,7 +153,6 @@ class ConstraintManager:
         添加行业约束
         
         Args:
-            sector_weights: 行业权重限制，格式 {'科技': (0.0, 0.3), '金融': (0.1, 0.4)}
             sector_mapping: 股票到行业的映射
         """
         pass
@@ -109,14 +182,12 @@ class ConstraintManager:
         
         Args:
             max_volatility: 最大波动率
-            max_drawdown: 最大回撤
             max_var: 最大VaR
         """
         pass
     
     def detect_conflicts(self) -> List[dict]:
         """
-        检测约束冲突
         
         Returns:
             冲突列表
@@ -134,7 +205,6 @@ class ConstraintManager:
             ef: EfficientFrontier对象
             
         Returns:
-            添加约束后的优化器
         """
         pass
 ```
@@ -143,13 +213,8 @@ class ConstraintManager:
 
 | 约束类型 | 说明 | 示例 |
 |---------|------|------|
-| **权重约束** | 单个资产权重限制 | w_i ∈ [0, 0.1] |
-| **行业约束** | 行业权重限制 | Σ w_i (科技) ≤ 0.3 |
-| **因子约束** | 因子暴露限制 | -0.5 ≤ β_size ≤ 0.5 |
-| **风险约束** | 风险指标限制 | σ_p ≤ 0.15 |
-| **交易约束** | 交易限制 | |w_t - w_{t-1}| ≤ 0.05 |
 
----
+
 
 ## 3. 接口定义
 
@@ -170,7 +235,6 @@ class ConstraintAPI:
         self,
         constraints: List[dict]
     ) -> ConflictCheckResult:
-        """检查约束冲突"""
         
     @endpoint("/api/v1/constraints/apply")
     async def apply_constraints(
@@ -181,27 +245,44 @@ class ConstraintAPI:
         """应用约束优化"""
 ```
 
----
+
 
 ## 4. 实施路径
 
 | 阶段 | 任务 | 工时 |
 |------|------|------|
-| Phase 1 | 约束库管理实现 | 12h |
 | Phase 2 | 冲突检测、skfolio集成 | 16h |
-| Phase 3 | API、测试、文档 | 12h |
 
----
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 
----
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+
+
+## 5. 文档治理
+
+### 5.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Portfolio Constraint Management
+- **模块ID**: PORTFOLIO_CONSTRAINT_MANAGEMENT_001
+- **蓝图文档**: PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
+```
+
+### 5.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 5.3 版本管理
+
+|------|------|----------|--------|
+
+
+

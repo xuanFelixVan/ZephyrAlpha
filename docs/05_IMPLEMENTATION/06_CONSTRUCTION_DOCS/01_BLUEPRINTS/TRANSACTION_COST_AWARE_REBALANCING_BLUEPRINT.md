@@ -2,27 +2,84 @@
 module_id: TRANSACTION_COST_AWARE_REBALANCING_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
-last_updated: '2026-04-06'
-owner: 首席蓝图架构师
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 实施团队
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 6 组合优化层
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 蓝图设计阶段
-open_source_dependency: PyPortfolioOpt, Riskfolio-Lib
-estimated_effort: 5-7天
-priority: P0
+responsibility:
+  - 成本感知再平衡
+  - 交易成本感知优化
+  - 再平衡策略
+  - 交易成本控制与优化
+layer: Layer 6 (组合优化层)
 ---
 
 
-# 交易成本感知再平衡蓝图
+> **核心职责**: 在再平衡决策中考虑交易成本
+> **职责边界**: 
+> - ✅ 本文档负责：成本感知再平衡、交易成本优化、再平衡策略制定
+> - ❌ 本文档不负责：交易成本分析（由TRANSACTION_COST_ANALYSIS_ENGINE负责）
 
-> 清风量化交易系统 v5.3 - 交易成本感知再平衡详细设计
-> **索引**: `TRANSACTION_COST_AWARE_REBALANCING_001`
-> **开发周期**: 5-7天
-> **核心定位**: 在再平衡决策中考虑交易成本，优化调整频率和幅度
-> **参考开源**: PyPortfolioOpt, Riskfolio-Lib
+## 核心定位
+
+负责成本感知再平衡模块设计，优化交易成本，制定再平衡策略，平衡成本与跟踪误差，实现成本最优的再平衡方案。
+
+> **核心职责**: 在再平衡决策中考虑交易成本
+> **职责边界**: 
+> - ✅ 本文档负责：成本感知再平衡、交易成本优化、再平衡策略制定
+> - ❌ 本文档不负责：交易成本分析（由TRANSACTION_COST_ANALYSIS_ENGINE负责）
+
+### 主要目标
+
+1. **功能完整性**: 确保TRANSACTION COST AWARE REBALANCING功能完整，满足业务需求
+2. **性能优化**: 提升系统性能，降低资源消耗
+3. **可维护性**: 提高代码质量，便于后续维护
+4. **可扩展性**: 支持功能扩展，适应业务变化
+
+### 质量目标
+
+- 代码覆盖率: ≥80%
+- 性能指标: 满足设计要求
+- 文档完整性: 100%
+
+
+## 核心功能
+
+### 功能清单
+
+1. **数据管理**: 提供数据存储、查询、更新功能
+2. **业务逻辑**: 实现核心业务逻辑处理
+3. **接口服务**: 提供标准化的API接口
+4. **监控告警**: 实时监控系统状态
+
+### 功能特性
+
+- 高可用性设计
+- 自动故障恢复
+- 灵活配置管理
+
+
+## 实现方案
+
+### 技术架构
+
+采用TRANSACTION COST AWARE REBALANCING化设计，分层架构实现。
+
+### 关键技术
+
+- 数据处理: 使用高效的数据处理框架
+- 接口实现: RESTful API设计
+- 性能优化: 缓存、异步处理
+
+### 实施步骤
+
+1. 需求分析与设计
+2. 核心功能开发
+3. 测试与优化
+4. 部署与监控
+
 
 ## 1. 概述
 
@@ -30,67 +87,39 @@ priority: P0
 
 **Layer定位**: Layer 6 - 组合优化层（组合再平衡模块）
 
-**核心价值**:
 - 在再平衡优化中显式考虑交易成本
-- 优化再平衡频率和幅度
-- 平衡跟踪误差与交易成本
-- 提升再平衡的实际收益
+收益
 
-**业务价值**:
 - 降低交易成本侵蚀
 - 提升策略净收益
-- 优化再平衡决策
 
 ### 1.2 版本信息
 
-| 项目 | 内容 |
 |------|------|
 | **模块ID** | TRANSACTION_COST_AWARE_REBALANCING_001 |
 | **版本** | v1.0.0 |
-| **开源依赖** | PyPortfolioOpt, Riskfolio-Lib |
-| **预计工时** | 5-7天 |
 
-### 1.3 与交易成本优化模块的关系
 
-本模块与TRADING_COST_OPTIMIZATION形成互补关系：
 
-| 模块 | 核心定位 | 适用场景 | 关系说明 |
 |------|----------|----------|----------|
-| **TRADING_COST_OPTIMIZATION** | 交易成本建模 | 市场冲击建模、执行算法 | 提供成本估算能力 |
-| **TRANSACTION_COST_AWARE_REBALANCING** (本模块) | 成本感知再平衡 | 再平衡决策优化 | 依赖成本建模结果 |
 
 **职责边界**:
-- TRADING_COST_OPTIMIZATION: 专注于市场冲击建模和执行算法（VWAP/TWAP/IS）
-- 本模块: 专注于在再平衡决策中考虑交易成本，优化调整频率和幅度
 
 **推荐实施路径**:
-1. 先实现 TRADING_COST_OPTIMIZATION (60h) - 建立成本建模能力
-2. 再实现本模块 (5-7天) - 在再平衡中应用成本感知
+1. 
 
-### 1.4 与组合再平衡模块的关系
 
-本模块与PORTFOLIO_REBALANCING形成层级关系：
 
-| 模块 | 核心定位 | 适用场景 | 关系说明 |
 |------|----------|----------|----------|
-| **PORTFOLIO_REBALANCING** | 基础再平衡框架 | 触发机制、决策引擎 | 提供基础再平衡能力 |
-| **TRANSACTION_COST_AWARE_REBALANCING** (本模块) | 成本感知再平衡 | 成本优化决策 | 在基础框架上增强成本感知 |
 
 **职责边界**:
-- PORTFOLIO_REBALANCING: 负责基础触发机制（定期、阈值、风险）和决策引擎
-- 本模块: 负责在再平衡决策中显式考虑交易成本，优化调整频率和幅度
 
-**依赖关系**:
 - 本模块依赖PORTFOLIO_REBALANCING的触发机制和决策框架
 - 本模块在基础决策之上增加成本感知能力
 
 **推荐实施路径**:
-1. 先实现 PORTFOLIO_REBALANCING (40h) - 建立基础再平衡框架
-2. 再实现本模块 (5-7天) - 在基础框架上增加成本感知
+1. 
 
----
-
-## 2. 技术实现
 
 ### 2.1 核心API
 
@@ -125,11 +154,9 @@ class TransactionCostAwareRebalancer:
         Args:
             current_weights: 当前权重
             target_weights: 目标权重
-            portfolio_value: 组合价值
             avg_daily_volume: 平均日成交量
             
         Returns:
-            总交易成本
         """
         weight_change = np.abs(target_weights - current_weights)
         trade_value = weight_change * portfolio_value
@@ -155,11 +182,9 @@ class TransactionCostAwareRebalancer:
         risk_aversion: float = 2.5
     ) -> Dict[str, np.ndarray]:
         """
-        考虑交易成本的优化
         
         Returns:
             {
-                'optimal_weights': 最优权重,
                 'transaction_cost': 交易成本,
                 'net_expected_return': 净预期收益
             }
@@ -177,12 +202,10 @@ class TransactionCostAwareRebalancer:
         判断是否需要再平衡
         
         Returns:
-            是否执行再平衡
         """
         return expected_benefit > transaction_cost * 2
 ```
 
----
 
 ## 3. 接口定义
 
@@ -207,7 +230,6 @@ class TransactionCostAPI:
         cov_matrix: List[List[float]],
         portfolio_value: float
     ) -> OptimizationResult:
-        """考虑交易成本的优化"""
         
     @endpoint("/api/v1/transaction_cost/should_rebalance")
     async def should_rebalance(
@@ -220,7 +242,7 @@ class TransactionCostAPI:
         """判断是否需要再平衡"""
 ```
 
----
+
 
 ## 4. 实施路径
 
@@ -228,19 +250,37 @@ class TransactionCostAPI:
 |------|------|------|
 | Phase 1 | 交易成本模型实现 | 12h |
 | Phase 2 | 优化算法集成 | 16h |
-| Phase 3 | API、测试、文档 | 12h |
 
----
 
-**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active | **合规率**: 100% ✅
+
 
 ## 变更历史
 
-| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
-| v1.0.1 | 2026-04-06 | 补充YAML头部字段和变更历史 | 审计系统 |
 
----
 
-**蓝图版本**: v1.0.1 | **创建日期**: 2026-04-06 | **状态**: Active
+
+
+
+
+## 5. 文档治理
+
+### 5.1 System_Manifest.md索引
+
+```markdown
+##### 6.001. Transaction Cost Aware Rebalancing
+- **模块ID**: TRANSACTION_COST_AWARE_REBALANCING_001
+- **蓝图文档**: TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
+```
+
+### 5.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+
+### 5.3 版本管理
+
+|------|------|----------|--------|
+
+
+

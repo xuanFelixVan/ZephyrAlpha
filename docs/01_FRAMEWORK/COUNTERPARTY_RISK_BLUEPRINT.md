@@ -1,36 +1,56 @@
 ---
-module_id: COUNTERPARTY_RISK_BLUEPRINT_001
+module_id: COUNTERPARTY_RISK_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-07'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易对手风险管理系统
 compliance_level: 顶级专业标准
-reference_models: ["Open Source Risk Engine", "CVA/DVA Models", "Basel III"]
+reference_models:
+- Open Source Risk Engine
+- CVA/DVA Models
+- Basel III
 related_documents:
-  - RISK_MANAGEMENT_LAYER_BLUEPRINT.md
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
+- RISK_MANAGEMENT_LAYER_BLUEPRINT.md
+- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+- MODEL_RISK_MANAGEMENT_BLUEPRINT.md
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: |
-  **本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+
   - 交易对手信用评估（信用评级、违约概率）
+
   - CVA/DVA计算（信用价值调整、债务价值调整）
+
   - 敞口监控（潜在敞口、当前敞口）
+
   - 风险缓释（抵押品管理、净额结算）
-  
+
+
   **与本文档职责边界**：
+
   - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
+
   - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
+
   - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
+
+  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库'
+responsibility:
+- COUNTERPARTY_RISK蓝图设计
+---
 ---
 
+
 # 交易对手风险管理系统蓝图
+> **核心职责**: Counterparty Risk蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Counterparty Risk蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
@@ -539,10 +559,41 @@ class CollateralInfo:
 
 | 文档 | 说明 |
 |------|------|
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| RISK_MANAGEMENT_LAYER_BLUEPRINT.md | 风险管理层蓝图 |
 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | 治理与合规层蓝图 |
 | [MODEL_RISK_MANAGEMENT_BLUEPRINT.md](./MODEL_RISK_MANAGEMENT_BLUEPRINT.md) | 模型风险管理蓝图 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 10: 治理与合规层
+##### 0.001. Counterparty Risk Blueprint
+- **模块ID**: COUNTERPARTY_RISK_BLUEPRINT_001
+- **蓝图文档**: COUNTERPARTY_RISK_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: 交易对手风险管理系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Counterparty Risk Blueprint** | 交易对手风险管理系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

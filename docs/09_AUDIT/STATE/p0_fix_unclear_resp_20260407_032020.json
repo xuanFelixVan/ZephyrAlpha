@@ -1,0 +1,1404 @@
+{
+  "fix_time": "2026-04-07 03:20:20",
+  "fixed_count": 199,
+  "skipped_count": 1,
+  "error_count": 0,
+  "details": [
+    {
+      "doc": "CHANGELOG.md",
+      "issues": [
+        "缺少YAML头部"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": ".pytest_cache\\README.md",
+      "issues": [
+        "缺少YAML头部"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": ".trae\\MCP_WRAPPER_SOLUTION.md",
+      "issues": [
+        "缺少YAML头部"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\API_README.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\INDEX.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\LAYER4_MASTER_INDEX.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\SITEMAP.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\System_Manifest.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "notebooks\\INDEX.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "notebooks\\README.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "review_materials_package\\技术方案设计汇总报告.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "review_materials_package\\技术方案评审会议议程.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "scripts\\README.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": ".trae\\skills\\audit-sentinel\\SKILL.md",
+      "issues": [
+        "缺少YAML头部"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "data\\assessments\\INDEX.md",
+      "issues": [
+        "缺少responsibility字段"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "data\\assessments\\market_impact\\market_impact_assessment_report.md",
+      "issues": [
+        "缺少YAML头部"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\00_OVERVIEW\\DATA_FLOW.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\00_OVERVIEW\\README.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\00_RESOURCES\\README.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ACCEPTANCE_CRITERIA_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ACTIVE_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ADVERSARIAL_ROBUSTNESS_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_AGENT_FRAMEWORK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_CAPABILITY_GAP_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_DECISION_AUDIT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 数据质量"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_EVOLUTION_LOOP_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 市场状态识别"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 市场状态识别"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_GOVERNANCE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 市场状态识别"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_PERMISSIONS.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_STRATEGY_AUTOMATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 市场状态识别"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AI_TRUST_CALIBRATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALGORITHM_INVENTORY_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALL_LAYERS_GAP_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ALTERNATIVE_DATA_FUSION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AML_MONITORING_SYSTEM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\API_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ARBITRAGE_DETECTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE_AUDIT_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ARCHITECTURE_MIGRATION_PLAN.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AUDIT_LOG_VIEWER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AUDIT_TRAIL_SYSTEM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AUTOML_AUTOMATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\AUTOML_PIPELINE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BACKDOOR_DETECTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BACKTEST_RESULT_VIEWER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BEST_EXECUTION_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_ARCHITECTURE_MAPPING.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_COMPLETE_GAP_ANALYSIS_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN.md",
+      "issues": [
+        "职责描述过短: ",
+        "包含模糊关键词: 待补充"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_FINAL_COMPLETION_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: 数据质量"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\CODE_GENERATION_MODEL_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COMPLIANCE_DOCUMENT_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COMPLIANCE_REPORT_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\CORRELATION_PREDICTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COUNTERPARTY_RISK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\COUNTERPARTY_RISK_ORE_IMPLEMENTATION.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\CURRICULUM_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATAFLOW_ARCHITECTURE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_ANNOTATION_PLATFORM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_AUGMENTATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_EXPLORATION_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_LINEAGE_TRACKING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_PREPROCESSING_LAYER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_ASSESSMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_GOVERNANCE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_SOURCE_FAILOVER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_SOURCE_LAYER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DECISION_DASHBOARD_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DEEPAR_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DIFFUSION_MODEL_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DISTRIBUTED_TRAINING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DOCUMENT_NAMING_STANDARD.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DOCUMENT_RESPONSIBILITY_BOUNDARIES.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DRIFT_DETECTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\DYNAMIC_RISK_BUDGETING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\ENSEMBLE_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\EVENT_DRIVEN_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\EVENT_SOURCING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\EXPERIMENT_TRACKING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\EXTREME_MARKET_RESPONSE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FACTOR_MINING_AUTOMATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FACTOR_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FAIRNESS_DETECTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FASTAPI_USERS_AUTH_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FEATURE_SELECTION_AUTOMATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FEATURE_STORE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FEDERATED_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: ",
+        "包含模糊关键词: todo"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\FUND_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GOVERNANCE_DASHBOARD_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GOVERNANCE_DECISION_SUPPORT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GRADIENT_ACCUMULATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GRADIENT_CHECKPOINTING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GRAFANA_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GRAPH_NEURAL_NETWORK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\GRAYSCALE_RELEASE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HELP_SYSTEM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HIGH_FREQUENCY_SIGNAL_PROCESSING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HOMOMORPHIC_ENCRYPTION_ML_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: 风险预算"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTEGRATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTERACTION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_ADVANCED_FEATURES_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_GAP_ANALYSIS_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\IMPLEMENTATION_ACCELERATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INDEX.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INFERENCE_ACCELERATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INTELLIGENT_COMPLIANCE_CHECK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INTELLIGENT_RECOMMENDATION_SYSTEM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INTERFACE_CONTRACT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INVESTMENT_DECISION_AUDIT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INVESTMENT_PHILOSOPHY.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\INVESTOR_RELATIONS_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\KNOWLEDGE_DISTILLATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER4_MACHINE_LEARNING_COMPREHENSIVE_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER4_P2_FRONTIER_MODULES_BLUEPRINT_COLLECTION.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_BLUEPRINT_STAGE_FINAL_CONFIRMATION_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_BLUEPRINT_STAGE_FINAL_SUPPLEMENT_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_COMPLETE_IMPLEMENTATION_ROADMAP.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_COMPLETE_SUPPLEMENT_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_DEEP_AUDIT_REPORT_FINAL.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_DOCUMENT_GOVERNANCE_AUDIT_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_AND_SUPPLEMENT_PLAN.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GAP_ANALYSIS_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_FINAL.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_FINAL_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_COMPLETENESS_ANALYSIS_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_FINAL_GAP_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_SECOND_ROUND_COMPLETE_SUPPLEMENT_REPORT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_SECOND_ROUND_GAP_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LAYER_10_THIRD_ROUND_PROFESSIONAL_INSTITUTION_STANDARD_GAP_ANALYSIS.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LEARNING_RATE_SCHEDULER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LIQUIDITY_RISK_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LIQUID_NEURAL_NETWORK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\LLM_FINE_TUNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MACHINE_LEARNING_LAYER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MAMBA_SSM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MARKET_ABUSE_SURVEILLANCE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MARKET_MAKING_MODEL_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MARKET_MICROSTRUCTURE_MODEL_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MEMORY_AUGMENTED_NN_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\META_LEARNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MIA_DEFENSE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MISSING_MODULES_BLUEPRINT_COLLECTION.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md",
+      "issues": [
+        "职责描述过短: ",
+        "包含模糊关键词: todo"
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MIXED_PRECISION_TRAINING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MIXTURE_OF_EXPERTS_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MLOPS_PLATFORM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MOBILE_INTERFACE_COVERAGE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MOBILE_PUSH_NOTIFICATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_AB_TESTING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_CARD_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_DEBUGGING_TOOLKIT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_LINEAGE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_MANAGEMENT_INTERFACE_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_MONITORING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_PRUNING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_QUANTIZATION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_REGISTRY_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_RISK_MANAGEMENT_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_RISK_MLFLOW_IMPLEMENTATION.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_ROLLBACK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_SECURITY_SCANNER_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_SERVING_FRAMEWORK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_VERSIONING_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_WARMUP_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODEL_WATERMARK_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MODULE_RESPONSIBILITY_BOUNDARIES.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MULTIMODAL_FUSION_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    },
+    {
+      "doc": "docs\\01_FRAMEWORK\\MULTIMODAL_LLM_BLUEPRINT.md",
+      "issues": [
+        "职责描述过短: "
+      ],
+      "fixed": true
+    }
+  ]
+}

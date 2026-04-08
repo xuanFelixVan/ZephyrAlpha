@@ -1,5 +1,18 @@
 ---
-module_id: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT_001
+module_id: LAYER_008
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 首席架构师
+responsibility:
+- 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
+layer: Layer 4 (机器学习层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+---
+module_id: SENTIMENT_ANALYSIS_LAYER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -17,8 +30,12 @@ related_documents:
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
-
 # Layer 3: 舆情分析层蓝图
+> **核心职责**: 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
+> **职责边界**: 
+> - ✅ 本文档负责：Sentiment Analysis Layer蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-05
@@ -526,10 +543,41 @@ class AnalystForecast:
 
 | 文档 | 说明 |
 |------|------|
-| [NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md](./NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md) | 新闻情感分析蓝图 |
+| [NEWS_SENTIMENT_ANALYSIS_BLUEPRINT.md](#) | 新闻情感分析蓝图 |
 | [DATA_PREPROCESSING_LAYER_BLUEPRINT.md](./DATA_PREPROCESSING_LAYER_BLUEPRINT.md) | 数据预处理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 3: 舆情分析层
+##### 0.001. Sentiment Analysis Layer Blueprint
+- **模块ID**: SENTIMENT_ANALYSIS_LAYER_BLUEPRINT_001
+- **蓝图文档**: [SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md](#)
+- **技术规格书**: 待创建
+- **职责**: Layer 3 - 舆情分析层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Sentiment Analysis Layer Blueprint** | Layer 3 - 舆情分析层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

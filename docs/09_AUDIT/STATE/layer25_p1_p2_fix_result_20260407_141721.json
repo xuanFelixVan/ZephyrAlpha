@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-04-07T14:17:21.220956",
+  "p1_results": {
+    "index_fixed": 1,
+    "blueprint_fixed": 0,
+    "responsibility_fixed": 20,
+    "duplicate_checked": 2
+  },
+  "naming_results": [
+    {
+      "old_name": "factor_catalog.md",
+      "new_name": "FACTOR_CATALOG.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_library_manual.md",
+      "new_name": "FACTOR_LIBRARY_MANUAL.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "backtest_standards.md",
+      "new_name": "BACKTEST_STANDARDS.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_neutralization.md",
+      "new_name": "FACTOR_NEUTRALIZATION.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_preprocessing.md",
+      "new_name": "FACTOR_PREPROCESSING.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_return_analysis.md",
+      "new_name": "FACTOR_RETURN_ANALYSIS.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_synthesis.md",
+      "new_name": "FACTOR_SYNTHESIS.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "ic_analysis.md",
+      "new_name": "IC_ANALYSIS.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "research_management.md",
+      "new_name": "RESEARCH_MANAGEMENT.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_master_index.md",
+      "new_name": "FACTOR_MASTER_INDEX.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "correlation_matrix.md",
+      "new_name": "CORRELATION_MATRIX.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    },
+    {
+      "old_name": "factor_monitoring.md",
+      "new_name": "FACTOR_MONITORING.md",
+      "status": "already_exists",
+      "message": "目标文件已存在"
+    }
+  ],
+  "summary": {
+    "total_p1_fixed": 21,
+    "total_naming_fixed": 0,
+    "total_issues": 154,
+    "fixed_issues": 21
+  }
+}

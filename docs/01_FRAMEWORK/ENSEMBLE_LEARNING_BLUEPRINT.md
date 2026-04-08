@@ -1,393 +1,541 @@
 ---
-module_id: ENSEMBLE_LEARNING_BLUEPRINT_001
+module_id: ENSEMBLE_LEARNING_001
 version: 1.0.0
 status: Active
-created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: é¦å¸­èå¾æ¶æå¸?layer: Layer 4 (æºå¨å­¦ä¹ å±?
-standard_type: é«å±æ¶æèå¾
-priority: P1
-layer: Layer 3 (策略层)
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 首席架构师
+layer: Layer 4 (机器学习层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 模型集成学习
+compliance_level: 顶级专业标准
+reference_models:
+- Netflix Prize
+- Kaggle Winners
+- Two Sigma
+related_documents:
+- MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
+- AUTOML_AUTOMATION_BLUEPRINT.md
+- MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md
+responsibility:
+- 提供ensemble learning blueprint的完整架构设计、技术选型和实施路径规划
+responsibility_boundary: '本文档负责模型集成学习，包括：
+
+
+  AutoML自动化请参考：AUTOML_AUTOMATION_BLUEPRINT.md
+
+  模型服务框架请参考：MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
+
+  '
+parent_document: ./ARCHITECTURE.md
+implementation_status: 蓝图设计完成
+priority: P0 (最高优先级)
+estimated_effort: 1.5周
+open_source_solution: XGBoost + LightGBM + CatBoost + Scikit-learn
+---
 ---
 
-# éæå­¦ä¹ æ¡æ¶èå¾
+# 模型集成学习蓝图
+> **核心职责**: 提供ensemble learning blueprint的完整架构设计、技术选型和实施路径规划
+> **职责边界**: 
+> - ✅ 本文档负责：Ensemble Learning蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> **èå¾ç¼å·**: `ENS-001`
-> **åå»ºæ¥æ**: 2026-04-03
-> **Layer**: Layer 4 - æºå¨å­¦ä¹ å±?> **ä¼åçº?*: P1 (å¼ºçå»ºè®®è¡¥å)
-> **é¢è®¡å·¥æ¶**: 40h
 
----
-
-## 1. æ¦è¿°
-
-### 1.1 è®¾è®¡èæ¯
-
-éæå­¦ä¹ æ¯é¡¶çº§éåæºæçæ ¸å¿ææ¯ä¹ä¸ï¼éè¿ç»åå¤ä¸ªæ¨¡åæåé¢æµç¨³å®æ§åç²¾åº¦ï¼?
-- **éä½æ¹å·®**: Baggingæ¹æ³åå°æ¨¡åæ¹å·®
-- **éä½åå·®**: Boostingæ¹æ³åå°æ¨¡ååå·®
-- **æåé²æ£æ?*: å¤æ¨¡åæç¥¨éä½åæ¨¡åé£é©
-- **æè·å¤æ ·æ?*: ä¸åæ¨¡åæè·ä¸åæ¨¡å¼
-
-### 1.2 ä¸å¡ä»·å?
-| ä»·å¼ç»´åº?| å·ä½æ¶ç |
-|----------|----------|
-| **é¢æµç¨³å®æ?* | é¢æµæ¹å·®éä½30-50% |
-| **ç²¾åº¦æå** | ICæå10-20% |
-| **é£é©åæ£** | åæ¨¡åå¤±æé£é©éä½?|
-| **å¯è§£éæ?* | æ¨¡åéè¦æ§åæ?|
-
-### 1.3 å¯¹æ æºæ
-
-- **æèºå¤å´**: éæå­¦ä¹ æ¯æ ¸å¿ç­ç?- **Two Sigma**: å¤æ¨¡åèå?- **Citadel**: æ¨¡åç»åä¼å
+> **版本**: v1.0
+> **创建日期**: 2026-04-07
+> **优先级**: P0 (最高优先级)
+> **目的**: 集成多个模型，提升预测准确性和稳定性
 
 ---
 
-## 2. æ¶æè®¾è®¡
+## 📋 一、概述
 
-### 2.1 Layerå®ä½
+### 1.1 定位与目标
+
+**核心定位**: 清风量化系统的模型集成学习引擎
+
+**战略目标**:
+- 集成多个机器学习模型
+- 提升预测准确性
+- 增强模型稳定性
+- 降低过拟合风险
+
+**业务价值**:
+- 提升预测准确率 15-25%
+- 降低模型方差 30-40%
+- 提高模型鲁棒性
+- 增强泛化能力
+
+### 1.2 版本信息
+
+| 版本 | 日期 | 变更说明 | 作者 |
+|------|------|---------|------|
+| v1.0 | 2026-04-07 | 初始版本 | 首席架构师 |
+
+---
+
+## 🏗️ 二、架构设计
+
+### 2.1 Layer定位
 
 ```
-Layer 4: æºå¨å­¦ä¹ å±?âââ æ¨¡åæ¶æ
-â?  âââ LSTMæ¨¡å
-â?  âââ Transformeræ¨¡å
-â?  âââ ...
-âââ éæå­¦ä¹ æ¡æ¶ â?æ¬æ¨¡å?â?  âââ Bagging
-â?  âââ Boosting
-â?  âââ Stacking
-â?  âââ Voting
-âââ æ¨¡åè®­ç»
-âââ æ¨¡åæå¡
+Layer 4: 机器学习层
+    ├── 模型集成学习蓝图 ⭐ 本蓝图
+    ├── AutoML自动化机器学习蓝图
+    ├── 模型服务框架蓝图
+    └── 模型性能基准蓝图
 ```
 
-### 2.2 æ ¸å¿æ¶æ
+### 2.2 系统架构
 
 ```
-âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                       éæå­¦ä¹ æ¡æ¶æ¶æ                                     â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?â?                                                                            â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â? â?                       åºæ¨¡åå±                                     â?  â?â? â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?             â?  â?â? â? â?LSTMæ¨¡å     â? â?Transformer  â? â?XGBoost      â?             â?  â?â? â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?             â?  â?â? â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?             â?  â?â? â? â?LightGBM     â? â?CatBoost     â? â?çº¿æ§æ¨¡å?    â?             â?  â?â? â? ââââââââââââââââ? ââââââââââââââââ? ââââââââââââââââ?             â?  â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â?                                   â?                                       â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â? â?                   éæç­ç¥å±?                                      â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? â?Bagging (Bootstrap Aggregating)                               â? â?  â?â? â? â? â?éæºæ£®æ                                                   â? â?  â?â? â? â? â?BaggingRegressor                                           â? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? â?Boosting                                                      â? â?  â?â? â? â? â?AdaBoost                                                   â? â?  â?â? â? â? â?Gradient Boosting                                          â? â?  â?â? â? â? â?XGBoost / LightGBM / CatBoost                              â? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? â?Stacking                                                      â? â?  â?â? â? â? â?å¤å±åå­¦ä¹?                                                â? â?  â?â? â? â? â?äº¤åéªè¯é¢æµ                                               â? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? â? â?Voting                                                        â? â?  â?â? â? â? â?ç¡¬æç¥?(å¤æ°è¡¨å³)                                          â? â?  â?â? â? â? â?è½¯æç¥?(å æå¹³å)                                          â? â?  â?â? â? ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ? â?  â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â?                                   â?                                       â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â? â?                   åå­¦ä¹ å±                                         â?  â?â? â? â?æéå­¦ä¹ : å­¦ä¹ ååºæ¨¡åçæä¼æé?                                â?  â?â? â? â?å¨æéæ©: æ ¹æ®å¸åºç¶æéæ©æ¨¡å                                   â?  â?â? â? â?ç½®ä¿¡åº¦å æ? æ ¹æ®æ¨¡åç½®ä¿¡åº¦å æ?                                  â?  â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â?                                   â?                                       â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â? â?                   è¾åºå±?                                          â?  â?â? â? â?éæé¢æµ: å æç»åé¢æµ                                           â?  â?â? â? â?ä¸ç¡®å®æ? é¢æµæ¹å·®ä¼°è®¡                                           â?  â?â? â? â?æ¨¡åè´¡ç®: åæ¨¡åéè¦æ?                                          â?  â?â? âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?  â?â?                                                                            â?âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ?```
+┌─────────────────────────────────────────────────────────────────┐
+│              模型集成学习系统架构                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              基础模型层 (Base Models Layer)               │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ XGBoost      │  │ LightGBM     │  │ CatBoost     │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ Random Forest│  │ Neural Net   │  │ Linear Model │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                      ↓                                         │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              集成策略层 (Ensemble Strategy Layer)         │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ Bagging      │  │ Boosting     │  │ Stacking     │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ Voting       │  │ Blending     │  │ Weighted Avg │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                      ↓                                         │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              权重优化层 (Weight Optimization Layer)       │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ 网格搜索     │  │ 贝叶斯优化   │  │ 遗传算法     │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                      ↓                                         │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              评估层 (Evaluation Layer)                    │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │  │
+│  │  │ 交叉验证     │  │ 性能评估     │  │ 模型解释     │   │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘   │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-### 2.3 æ¨¡åèè´£
+### 2.3 核心模块
 
-| æ¨¡å | èè´£ | è¾å¥ | è¾åº |
-|------|------|------|------|
-| **åºæ¨¡åç®¡ç?* | ç®¡çå¤ä¸ªåºæ¨¡å?| è®­ç»æ°æ® | åºæ¨¡åé¢æµ?|
-| **Bagging** | å¹¶è¡è®­ç»å¤ä¸ªæ¨¡å | æ°æ®å­é | å¹³åé¢æµ |
-| **Boosting** | åºåè®­ç»å¼±å­¦ä¹ å¨ | æ®å·® | å æé¢æµ |
-| **Stacking** | åå­¦ä¹ ç»å?| åºæ¨¡åé¢æµ?| åæ¨¡åé¢æµ?|
-| **Voting** | æç¥¨/å æå¹³å | åºæ¨¡åé¢æµ?| éæé¢æµ |
+| 模块名称 | 功能说明 | 技术栈 |
+|---------|---------|--------|
+| 基础模型训练器 | 训练多个基础模型 | XGBoost/LightGBM/CatBoost |
+| Bagging集成器 | Bagging集成策略 | Scikit-learn |
+| Boosting集成器 | Boosting集成策略 | XGBoost/LightGBM |
+| Stacking集成器 | Stacking集成策略 | Scikit-learn |
+| 权重优化器 | 优化集成权重 | Optuna |
+| 集成评估器 | 评估集成模型性能 | Scikit-learn |
 
 ---
 
-## 3. æ¥å£è®¾è®¡
+## 💻 三、技术实现
 
-### 3.1 æ ¸å¿æ¥å£
+### 3.1 开源项目集成
 
+#### **XGBoost (梯度提升)**
+
+**项目地址**: https://github.com/dmlc/xgboost
+
+**Stars**: 26k+
+
+**核心功能**:
+- 梯度提升算法
+- 高性能计算
+- 正则化
+- 并行计算
+
+**集成方案**:
 ```python
-class EnsembleFramework:
-    """éæå­¦ä¹ æ¡æ¶"""
-    
-    def __init__(
-        self,
-        base_models: Dict[str, Any],
-        ensemble_strategy: str = 'stacking',
-        meta_model: Optional[Any] = None,
-        cv_folds: int = 5
-    ):
-        """åå§åéææ¡æ?        
-        Args:
-            base_models: åºæ¨¡åå­å?{åç§°: æ¨¡å}
-            ensemble_strategy: éæç­ç¥ ('bagging', 'boosting', 'stacking', 'voting')
-            meta_model: åæ¨¡å?(Stackingç?
-            cv_folds: äº¤åéªè¯ææ°
-        """
-        pass
-    
-    def fit(
-        self,
-        X: pd.DataFrame,
-        y: pd.Series,
-        sample_weight: Optional[pd.Series] = None
-    ) -> 'EnsembleFramework':
-        """è®­ç»éææ¨¡å
-        
-        Args:
-            X: ç¹å¾æ°æ®
-            y: ç®æ åé
-            sample_weight: æ ·æ¬æé
-            
-        Returns:
-            self
-        """
-        pass
-    
-    def predict(
-        self,
-        X: pd.DataFrame,
-        return_uncertainty: bool = False
-    ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
-        """éæé¢æµ
-        
-        Args:
-            X: ç¹å¾æ°æ®
-            return_uncertainty: æ¯å¦è¿åä¸ç¡®å®æ?            
-        Returns:
-            é¢æµå?(åä¸ç¡®å®æ?
-        """
-        pass
-    
-    def get_model_importance(self) -> Dict[str, float]:
-        """è·åæ¨¡åéè¦æ?        
-        Returns:
-            Dict[str, float]: {æ¨¡åå? éè¦æ§}
-        """
-        pass
+import xgboost as xgb
+from sklearn.model_selection import cross_val_score
 
-
-class DynamicEnsembleSelector:
-    """å¨æéæéæ©å?""
+class XGBoostModel:
+    def __init__(self, params=None):
+        self.params = params or {
+            'objective': 'reg:squarederror',
+            'max_depth': 6,
+            'learning_rate': 0.1,
+            'n_estimators': 100,
+            'random_state': 42
+        }
+        self.model = None
     
-    def __init__(
-        self,
-        models: Dict[str, Any],
-        regime_detector: Any
-    ):
-        """åå§åå¨æéæ©å?        
-        Args:
-            models: æ¨¡åå­å¸
-            regime_detector: å¸åºç¶ææ£æµå¨
-        """
-        pass
+    def train(self, X_train, y_train):
+        self.model = xgb.XGBRegressor(**self.params)
+        self.model.fit(X_train, y_train)
     
-    def select_models(
-        self,
-        market_state: str
-    ) -> List[str]:
-        """æ ¹æ®å¸åºç¶æéæ©æ¨¡å
-        
-        Args:
-            market_state: å¸åºç¶æ?            
-        Returns:
-            List[str]: éä¸­çæ¨¡ååè¡?        """
-        pass
+    def predict(self, X):
+        return self.model.predict(X)
     
-    def predict(
-        self,
-        X: pd.DataFrame,
-        market_state: str
-    ) -> np.ndarray:
-        """å¨æéæé¢æµ?        
-        Args:
-            X: ç¹å¾æ°æ®
-            market_state: å¸åºç¶æ?            
-        Returns:
-            np.ndarray: é¢æµå?        """
-        pass
+    def get_feature_importance(self):
+        return self.model.feature_importances_
 ```
 
-### 3.2 éç½®æ¥å£
+#### **LightGBM (轻量级梯度提升)**
 
+**项目地址**: https://github.com/microsoft/LightGBM
+
+**Stars**: 16k+
+
+**核心功能**:
+- 快速训练
+- 低内存使用
+- 支持大规模数据
+- 类别特征支持
+
+**集成方案**:
 ```python
-@dataclass
-class EnsembleConfig:
-    """éæéç½®"""
-    
-    strategy: str = 'stacking'
-    base_models: List[str] = None
-    meta_model: str = 'ridge'
-    cv_folds: int = 5
-    use_weights: bool = True
-    n_jobs: int = -1
+import lightgbm as lgb
 
-
-class EnsembleModelRegistry:
-    """éææ¨¡åæ³¨åè¡?""
+class LightGBMModel:
+    def __init__(self, params=None):
+        self.params = params or {
+            'objective': 'regression',
+            'metric': 'rmse',
+            'boosting_type': 'gbdt',
+            'num_leaves': 31,
+            'learning_rate': 0.05,
+            'feature_fraction': 0.9,
+            'random_state': 42
+        }
+        self.model = None
     
-    def register_model(
-        self,
-        name: str,
-        model_class: type,
-        default_params: Dict
-    ):
-        """æ³¨ååºæ¨¡å?        
-        Args:
-            name: æ¨¡ååç§°
-            model_class: æ¨¡åç±?            default_params: é»è®¤åæ°
-        """
-        pass
-    
-    def get_model(
-        self,
-        name: str,
-        **kwargs
-    ) -> Any:
-        """è·åæ¨¡åå®ä¾
+    def train(self, X_train, y_train, X_val=None, y_val=None):
+        train_data = lgb.Dataset(X_train, label=y_train)
         
-        Args:
-            name: æ¨¡ååç§°
-            **kwargs: è¦çåæ°
-            
-        Returns:
-            æ¨¡åå®ä¾
-        """
-        pass
-```
-
----
-
-## 4. æ°æ®æµè®¾è®?
-### 4.1 è®­ç»æ°æ®æµ?
-```
-è®­ç»æ°æ®
-    â?ç¹å¾å·¥ç¨
-    â?åºæ¨¡åå¹¶è¡è®­ç»?(Bagging)
-æ?åºåè®­ç» (Boosting)
-æ?äº¤åéªè¯é¢æµ (Stacking)
-    â?åæ¨¡åè®­ç»?(Stacking)
-    â?æéä¼å (Voting)
-    â?éææ¨¡åä¿å­
-```
-
-### 4.2 é¢æµæ°æ®æµ?
-```
-å®æ¶ç¹å¾
-    â?ååºæ¨¡åå¹¶è¡é¢æµ
-    â?é¢æµç»æèå
-    â?åæ¨¡åé¢æµ?(Stacking)
-æ?å æå¹³å (Voting)
-    â?æç»é¢æµè¾å?```
-
----
-
-## 5. ææ¯æ 
-
-### 5.1 æ ¸å¿ä¾èµ
-
-```yaml
-# requirements_ensemble.txt
-
-# ä¼ ç»ML
-scikit-learn>=1.3.0
-
-# æ¢¯åº¦æå
-xgboost>=2.0.0
-lightgbm>=4.0.0
-catboost>=1.2.0
-
-# æ·±åº¦å­¦ä¹ 
-torch>=2.0.0
-
-# éæå·¥å·
-mlxtend>=0.22.0
-
-# æ°æ®å¤ç
-pandas>=2.0.0
-numpy>=1.24.0
-```
-
-### 5.2 ç¡¬ä»¶éæ±?
-| éç½®é¡?| æä½è¦æ±?| æ¨èéç½® |
-|--------|----------|----------|
-| CPU | 8æ ?| 16æ ?|
-| åå­ | 32GB | 64GB |
-| GPU | å¯é?| RTX 3080 |
-
----
-
-## 6. ä¸ç°æç³»ç»éæ?
-### 6.1 ä¸æ¨¡åè®­ç»æµæ°´çº¿åä½
-
-```python
-class ModelTrainingPipeline:
-    def train_ensemble(
-        self,
-        data: pd.DataFrame,
-        config: EnsembleConfig
-    ) -> EnsembleFramework:
-        base_models = {}
-        for model_name in config.base_models:
-            model = self.registry.get_model(model_name)
-            base_models[model_name] = model
+        valid_sets = [train_data]
+        if X_val is not None and y_val is not None:
+            valid_data = lgb.Dataset(X_val, label=y_val)
+            valid_sets.append(valid_data)
         
-        ensemble = EnsembleFramework(
-            base_models=base_models,
-            ensemble_strategy=config.strategy
+        self.model = lgb.train(
+            self.params,
+            train_data,
+            num_boost_round=1000,
+            valid_sets=valid_sets,
+            early_stopping_rounds=50,
+            verbose_eval=100
         )
-        ensemble.fit(data.X, data.y)
-        return ensemble
+    
+    def predict(self, X):
+        return self.model.predict(X)
 ```
 
-### 6.2 ä¸å¸åºç¶ææ£æµåä½?
+#### **CatBoost (类别特征支持)**
+
+**项目地址**: https://github.com/catboost/catboost
+
+**Stars**: 8k+
+
+**核心功能**:
+- 类别特征处理
+- 对称树结构
+- GPU加速
+- 自动特征工程
+
+**集成方案**:
 ```python
-class MarketRegimeDetector:
-    def get_regime_ensemble(
-        self,
-        regime: str
-    ) -> EnsembleFramework:
-        return self.regime_ensembles[regime]
+from catboost import CatBoostRegressor, Pool
+
+class CatBoostModel:
+    def __init__(self, params=None):
+        self.params = params or {
+            'iterations': 1000,
+            'learning_rate': 0.05,
+            'depth': 6,
+            'loss_function': 'RMSE',
+            'random_seed': 42,
+            'verbose': 100
+        }
+        self.model = None
+    
+    def train(self, X_train, y_train, cat_features=None):
+        self.model = CatBoostRegressor(**self.params)
+        
+        train_pool = Pool(X_train, y_train, cat_features=cat_features)
+        
+        self.model.fit(train_pool)
+    
+    def predict(self, X):
+        return self.model.predict(X)
+```
+
+### 3.2 核心算法
+
+#### **Stacking集成**
+
+```python
+from sklearn.model_selection import KFold
+import numpy as np
+
+class StackingEnsemble:
+    def __init__(self, base_models, meta_model, n_folds=5):
+        self.base_models = base_models
+        self.meta_model = meta_model
+        self.n_folds = n_folds
+    
+    def fit(self, X, y):
+        self.base_models_ = [list() for _ in self.base_models]
+        self.meta_model_ = clone(self.meta_model)
+        
+        kfold = KFold(n_splits=self.n_folds, shuffle=True, random_state=42)
+        
+        meta_features = np.zeros((X.shape[0], len(self.base_models)))
+        
+        for i, model in enumerate(self.base_models):
+            for train_idx, val_idx in kfold.split(X, y):
+                instance = clone(model)
+                self.base_models_[i].append(instance)
+                
+                instance.fit(X[train_idx], y[train_idx])
+                
+                meta_features[val_idx, i] = instance.predict(X[val_idx])
+        
+        self.meta_model_.fit(meta_features, y)
+        
+        return self
+    
+    def predict(self, X):
+        meta_features = np.zeros((X.shape[0], len(self.base_models)))
+        
+        for i, models in enumerate(self.base_models_):
+            predictions = np.zeros((X.shape[0], len(models)))
+            for j, model in enumerate(models):
+                predictions[:, j] = model.predict(X)
+            meta_features[:, i] = predictions.mean(axis=1)
+        
+        return self.meta_model_.predict(meta_features)
+```
+
+#### **加权平均集成**
+
+```python
+from scipy.optimize import minimize
+
+class WeightedAverageEnsemble:
+    def __init__(self, models):
+        self.models = models
+        self.weights = None
+    
+    def optimize_weights(self, X_val, y_val):
+        predictions = []
+        for model in self.models:
+            pred = model.predict(X_val)
+            predictions.append(pred)
+        
+        predictions = np.array(predictions).T
+        
+        def objective(weights):
+            weighted_pred = np.dot(predictions, weights)
+            mse = mean_squared_error(y_val, weighted_pred)
+            return mse
+        
+        n_models = len(self.models)
+        initial_weights = np.ones(n_models) / n_models
+        
+        constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
+        bounds = [(0, 1) for _ in range(n_models)]
+        
+        result = minimize(
+            objective,
+            initial_weights,
+            method='SLSQP',
+            bounds=bounds,
+            constraints=constraints
+        )
+        
+        self.weights = result.x
+        
+        return self.weights
+    
+    def predict(self, X):
+        predictions = []
+        for model in self.models:
+            pred = model.predict(X)
+            predictions.append(pred)
+        
+        predictions = np.array(predictions).T
+        weighted_pred = np.dot(predictions, self.weights)
+        
+        return weighted_pred
 ```
 
 ---
 
-## 7. éªæ¶æ å
+## 📊 四、数据模型
 
-### 7.1 åè½éªæ¶
+### 4.1 集成模型配置表
 
-| éªæ¶é¡?| éªæ¶æ å | éªè¯æ¹æ³ |
-|--------|----------|----------|
-| å¤æ¨¡åæ¯æ?| æ¯æâ?ç§åºæ¨¡å | éææµè¯ |
-| éæç­ç¥ | æ¯æ4ç§ç­ç?| åè½æµè¯ |
-| å¨æéæ© | æ ¹æ®å¸åºç¶æéæ© | éææµè¯ |
+```sql
+CREATE TABLE ensemble_model_configs (
+    ensemble_id VARCHAR(50) PRIMARY KEY,
+    ensemble_name VARCHAR(100) NOT NULL,
+    ensemble_strategy VARCHAR(50) NOT NULL,
+    base_models JSON NOT NULL,
+    meta_model JSON,
+    weights JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
 
-### 7.2 æ§è½éªæ¶
+### 4.2 集成模型性能表
 
-| ææ  | ç®æ å?| æµéæ¹æ³ |
-|------|--------|----------|
-| ICæå | â?0% vs åæ¨¡å?| åæµéªè¯ |
-| é¢æµæ¹å·® | éä½â?0% | ç»è®¡åæ |
-| é¢æµå»¶è¿ | â?00ms | æ§è½æµè¯ |
-
----
-
-## 8. å®æ½è·¯çº¿å?
-### Phase 1: åºç¡å®ç° (1å?
-
-- [ ] Votingéæå®ç°
-- [ ] Baggingéæå®ç°
-- [ ] ååæµè¯
-
-### Phase 2: é«çº§éæ (1å?
-
-- [ ] Stackingå®ç°
-- [ ] Boostingéæ
-- [ ] éææµè¯
-
-### Phase 3: å¨æéæ© (1å?
-
-- [ ] å¨æéæ©å¨å®ç?- [ ] ä¸å¸åºç¶æéæ?- [ ] çäº§é¨ç½²
+```sql
+CREATE TABLE ensemble_model_performance (
+    performance_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ensemble_id VARCHAR(50) NOT NULL,
+    metric_name VARCHAR(50) NOT NULL,
+    metric_value DECIMAL(10, 6) NOT NULL,
+    evaluation_date TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ensemble_id) REFERENCES ensemble_model_configs(ensemble_id)
+);
+```
 
 ---
 
-## 9. é£é©ä¸çº¦æ?
-### 9.1 ææ¯é£é?
-| é£é©é¡?| é£é©ç­çº§ | ç¼è§£æªæ½ |
-|--------|----------|----------|
-| è¿æå?| P2 | äº¤åéªè¯ãæ­£åå |
-| è®¡ç®ææ¬ | P2 | å¹¶è¡è®¡ç®ãGPUå é?|
-| æ¨¡åç¸å³æ?| P1 | å¤æ ·æ§çº¦æ?|
+## 🚀 五、实施路径
+
+### Phase 1: 基础功能 (1-5天)
+
+**目标**: 实现基础集成策略
+
+**任务清单**:
+- [ ] 安装配置XGBoost
+- [ ] 安装配置LightGBM
+- [ ] 安装配置CatBoost
+- [ ] 实现基础模型训练
+- [ ] 实现简单集成
+
+**验收标准**:
+- ✅ 所有模型库正常运行
+- ✅ 能够训练基础模型
+- ✅ 能够进行简单集成
+
+### Phase 2: 高级集成 (6-8天)
+
+**目标**: 实现高级集成策略
+
+**任务清单**:
+- [ ] 实现Stacking集成
+- [ ] 实现权重优化
+- [ ] 实现交叉验证
+- [ ] 性能优化
+
+**验收标准**:
+- ✅ Stacking集成功能正常
+- ✅ 权重优化功能正常
+- ✅ 性能达到预期
+
+### Phase 3: 生产部署 (9-10天)
+
+**目标**: 生产环境部署
+
+**任务清单**:
+- [ ] 生产环境部署
+- [ ] API接口开发
+- [ ] 监控告警
+- [ ] 文档完善
+
+**验收标准**:
+- ✅ 生产环境稳定运行
+- ✅ API接口可用
+- ✅ 文档齐全
 
 ---
 
-## 10. åèèµæº?
-### 10.1 å­¦æ¯è®ºæ
+## 📈 六、性能指标
 
-1. Zhou, Z.H. (2012). "Ensemble Methods: Foundations and Algorithms"
-2. Wolpert, D.H. (1992). "Stacked Generalization"
+### 6.1 关键指标
 
-### 10.2 å¼æºå®ç?
-- [scikit-learn ensemble](https://scikit-learn.org/stable/modules/ensemble.html)
-- [mlxtend](https://github.com/rasbt/mlxtend)
+| 指标名称 | 目标值 | 监控方式 |
+|---------|--------|---------|
+| 预测准确率提升 | > 15% | 性能评估 |
+| 模型稳定性提升 | > 30% | 方差分析 |
+| 集成训练时间 | < 30min | 性能监控 |
+| 模型泛化能力 | > 90% | 交叉验证 |
+
+### 6.2 监控指标
+
+```python
+from prometheus_client import Counter, Histogram, Gauge
+
+ensemble_training_counter = Counter(
+    'ensemble_training_total',
+    'Total ensemble trainings',
+    ['strategy', 'status']
+)
+
+ensemble_performance = Gauge(
+    'ensemble_model_performance',
+    'Ensemble model performance',
+    ['ensemble_id', 'metric_name']
+)
+```
 
 ---
 
-**èå¾çæ¬**: v1.0
-**åå»ºæ¥æ**: 2026-04-03
-**ç»´æ¤è?*: æºå¨å­¦ä¹ å±è´è´£äºº
+## 🔒 七、安全考虑
+
+### 7.1 数据安全
+
+- 训练数据访问控制
+- 模型文件加密
+- 敏感特征保护
+
+### 7.2 系统安全
+
+- API访问认证
+- 权限管理
+- 审计日志
+
+---
+
+## 📚 八、相关文档
+
+| 文档名称 | 说明 | 位置 |
+|---------|------|------|
+| 系统架构 | Layer 0-11架构定义 | ARCHITECTURE.md |
+| AutoML自动化 | AutoML自动化方案 | AUTOML_AUTOMATION_BLUEPRINT.md |
+| 模型服务框架 | 模型服务框架方案 | MODEL_SERVING_FRAMEWORK_BLUEPRINT.md |
+| 模型性能基准 | 模型性能基准方案 | MODEL_PERFORMANCE_BENCHMARK_BLUEPRINT.md |
+
+---
+
+## 🎉 九、总结
+
+### 9.1 核心优势
+
+- ✅ **多样性**: 多种集成策略
+- ✅ **高性能**: 显著提升预测准确性
+- ✅ **稳定性**: 降低模型方差
+- ✅ **鲁棒性**: 增强泛化能力
+- ✅ **开源性**: 100%使用成熟开源项目
+
+### 9.2 适用场景
+
+- 模型性能优化
+- 降低过拟合
+- 提升稳定性
+- 竞赛建模
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

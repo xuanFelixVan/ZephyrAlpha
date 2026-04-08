@@ -1,3 +1,14 @@
+---
+module_id: MARKET_IMPACT_ASSESSMENT_REPORT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 个人开发者
+responsibility:
+  - 报告生成、数据分析、结果展示
+---
+
 # 综合评估报告
 
 生成时间: 2026-04-02 21:48:52

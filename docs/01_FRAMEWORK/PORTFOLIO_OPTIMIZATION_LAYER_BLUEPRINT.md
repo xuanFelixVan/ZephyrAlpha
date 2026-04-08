@@ -1,5 +1,18 @@
 ---
-module_id: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT_001
+module_id: LAYER_006
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 首席架构师
+layer: Layer 7 (风控层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 投资组合优化蓝图设计与实施指导与实施方案
+---
+module_id: PORTFOLIO_OPTIMIZATION_LAYER_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
@@ -19,6 +32,11 @@ implementation_status: 设计阶段
 ---
 
 # Layer 6: 组合优化层蓝图
+> **核心职责**: Portfolio Optimization Layer蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Portfolio Optimization Layer蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-05
@@ -516,9 +534,40 @@ class RebalanceSignal:
 | 文档 | 说明 |
 |------|------|
 | [ALPHA_FACTOR_LAYER_BLUEPRINT.md](./ALPHA_FACTOR_LAYER_BLUEPRINT.md) | Alpha因子层蓝图 |
-| [RISK_MANAGEMENT_LAYER_BLUEPRINT.md](./RISK_MANAGEMENT_LAYER_BLUEPRINT.md) | 风险管理层蓝图 |
+| RISK_MANAGEMENT_LAYER_BLUEPRINT.md | 风险管理层蓝图 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 系统架构文档 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 6: 组合优化层
+##### 0.001. Portfolio Optimization Layer Blueprint
+- **模块ID**: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT_001
+- **蓝图文档**: PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 6 - 组合优化层
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Portfolio Optimization Layer Blueprint** | Layer 6 - 组合优化层 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-05 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-05 | **状态**: Active

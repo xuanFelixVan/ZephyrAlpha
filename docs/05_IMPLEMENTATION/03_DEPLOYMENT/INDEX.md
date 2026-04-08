@@ -1,17 +1,35 @@
 ---
+module_id: 05_IMPLEMENTATION_03_DEPLOYMENT_INDEX
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - 03_DEPLOYMENT目录索引
+---
+
+﻿---
 module_id: IMPL_INDEX_DEPLOYMENT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-04
 last_updated: 2026-04-04
 owner: 首席文档架构师
+responsibility:
+  - 目录导航与文档索引管理与优化维护
 standard_type: 专业量化机构索引文档
 applicable_scope: 03_DEPLOYMENT目录
 compliance_level: 专业标准
-parent_document: ../INDEX.md
----
+parent_document: ../INDEX.md---
+
 
 # 03_DEPLOYMENT 部署指南索引
+> **核心职责**: 目录导航和文档索引
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航和文档索引相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **目录职责**: 系统部署与发布管理
 > **文档数量**: 2个
@@ -23,7 +41,7 @@ parent_document: ../INDEX.md
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](./README.md) | 部署指南概述 | Active |
+| README.md | 部署指南概述 | Active |
 | [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md) | 部署计划 | Active |
 
 ---
@@ -32,7 +50,7 @@ parent_document: ../INDEX.md
 
 ### 部署流程
 
-1. **阅读概述**: [README.md](./README.md)
+1. **阅读概述**: README.md
 2. **制定计划**: [DEPLOYMENT_PLAN.md](./DEPLOYMENT_PLAN.md)
 
 ### 部署命令

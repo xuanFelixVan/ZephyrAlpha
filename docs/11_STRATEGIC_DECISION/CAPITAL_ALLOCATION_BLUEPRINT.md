@@ -1,4 +1,17 @@
 ---
+module_id: CAPITALALLOCATIONBLUEPRINT_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: '2026-04-07'
+owner: 文档管理员
+layer: Layer 3 (策略层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 全系统
+compliance_level: 专业标准
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+---
 module_id: CAPITAL_ALLOCATION_001
 version: 1.0.0
 status: Active
@@ -14,6 +27,48 @@ priority: P1
 ---
 
 # 资本配置系统蓝图
+> **核心职责**: 资本配置系统蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：资本配置系统蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+> **核心职责**: Capital Allocation蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Capital Allocation蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+## 📋 文档职责说明
+
+### 核心职责
+
+本文档是**资本配置系统蓝图，负责战略资产配置和资本分配决策**。
+
+### 职责边界
+
+**负责**：
+- ✅ 战略资产配置（季度/年度资产配置）
+- ✅ 战术资产配置（月度/周度配置调整）
+- ✅ 动态资产配置（市场环境变化调整）
+- ✅ 资本分配决策（跨策略资本分配）
+- ✅ 配置优化（均值方差、风险平价、Black-Litterman）
+
+**不负责**：
+- ❌ 风险预算分配（由风险预算分配模块负责）
+- ❌ 策略选择决策（由投资策略选择模块负责）
+- ❌ 具体交易执行（由Layer 6组合优化层负责）
+
+### 对接模块
+
+**上游模块**：
+- Layer 10 质量保证层
+- Layer 7 风险管理层
+
+**下游模块**：
+- Layer 6 组合优化层
+- Layer 7 风险管理层
+
+---
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **优先级**: 🟡 P1 - 强烈建议
@@ -884,17 +939,17 @@ class OpportunityCostAnalyzer:
         
         if idle_cost.amount > 0:
             recommendations.append(
-                f"建议将闲置资金投资于货币基金，可减少成本¥{idle_cost.amount:,.2f}"
+                f"建议将闲置资金投资于货币基金，可减少成本{idle_cost.amount:,.2f}"
             )
         
         if efficiency_cost.amount > 0:
             recommendations.append(
-                f"优化配置方案可提升收益¥{efficiency_cost.amount:,.2f}"
+                f"优化配置方案可提升收益{efficiency_cost.amount:,.2f}"
             )
         
         if timing_cost.amount > 0:
             recommendations.append(
-                f"减少执行延迟可节省成本¥{timing_cost.amount:,.2f}"
+                f"减少执行延迟可节省成本{timing_cost.amount:,.2f}"
             )
         
         return recommendations
@@ -1017,10 +1072,41 @@ class SkfolioIntegration:
 
 | 文档 | 说明 |
 |------|------|
-| [BLUEPRINT.md](./BLUEPRINT.md) | Layer 11主蓝图 |
+| BLUEPRINT.md | Layer 11主蓝图 |
 | [MULTI_STRATEGY_COORDINATION_BLUEPRINT.md](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md) | 多策略协调系统 |
 | [IPS_MANAGEMENT_BLUEPRINT.md](./IPS_MANAGEMENT_BLUEPRINT.md) | 投资政策声明管理 |
 
 ---
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
+---
+
+## 1. 文档治理
+
+### 1.1 System_Manifest.md索引
+
+```markdown
+#### Layer 0: 系统架构
+##### 0.001. Capital Allocation
+- **模块ID**: CAPITAL_ALLOCATION_001
+- **蓝图文档**: CAPITAL_ALLOCATION_BLUEPRINT.md
+- **技术规格书**: 待创建
+- **职责**: Layer 11.20 - 资本配置系统
+- **状态**: Active
+```
+
+### 1.2 模块职责边界
+
+| 模块 | 职责 | 边界 |
+|------|------|------|
+| **Capital Allocation** | Layer 11.20 - 资本配置系统 | **核心模块** |
+
+### 1.3 版本管理
+
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
+
+---
+
+**蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

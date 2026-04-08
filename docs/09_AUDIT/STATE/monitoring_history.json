@@ -1,0 +1,353 @@
+[
+  {
+    "timestamp": "2026-04-07T02:11:37.970443",
+    "stats": {
+      "total_files": 1650,
+      "total_dirs": 222,
+      "files_with_yaml": 1649,
+      "files_with_responsibility": 1648,
+      "files_with_module_id": 1590,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.05
+  },
+  {
+    "timestamp": "2026-04-07T02:16:11.010701",
+    "stats": {
+      "total_files": 1659,
+      "total_dirs": 222,
+      "files_with_yaml": 1593,
+      "files_with_responsibility": 1584,
+      "files_with_module_id": 1593,
+      "encoding_issues": 0,
+      "sparse_dirs": 96
+    },
+    "compliance_rate": 96.88
+  },
+  {
+    "timestamp": "2026-04-07T02:21:26.237201",
+    "stats": {
+      "total_files": 1672,
+      "total_dirs": 222,
+      "files_with_yaml": 1672,
+      "files_with_responsibility": 1671,
+      "files_with_module_id": 1672,
+      "encoding_issues": 0,
+      "sparse_dirs": 96
+    },
+    "compliance_rate": 99.99
+  },
+  {
+    "timestamp": "2026-04-07T02:24:52.924940",
+    "stats": {
+      "total_files": 1681,
+      "total_dirs": 223,
+      "files_with_yaml": 1678,
+      "files_with_responsibility": 1673,
+      "files_with_module_id": 1678,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.79
+  },
+  {
+    "timestamp": "2026-04-07T02:25:16.062936",
+    "stats": {
+      "total_files": 1682,
+      "total_dirs": 224,
+      "files_with_yaml": 1678,
+      "files_with_responsibility": 1678,
+      "files_with_module_id": 1678,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.82
+  },
+  {
+    "timestamp": "2026-04-07T02:25:49.344487",
+    "stats": {
+      "total_files": 1686,
+      "total_dirs": 224,
+      "files_with_yaml": 1685,
+      "files_with_responsibility": 1685,
+      "files_with_module_id": 1685,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.96
+  },
+  {
+    "timestamp": "2026-04-07T02:58:17.553303",
+    "stats": {
+      "total_files": 1715,
+      "total_dirs": 224,
+      "files_with_yaml": 1712,
+      "files_with_responsibility": 1712,
+      "files_with_module_id": 1712,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 99.87
+  },
+  {
+    "timestamp": "2026-04-07T02:59:02.881238",
+    "stats": {
+      "total_files": 1717,
+      "total_dirs": 224,
+      "files_with_yaml": 1717,
+      "files_with_responsibility": 1717,
+      "files_with_module_id": 1717,
+      "encoding_issues": 0,
+      "sparse_dirs": 97
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T03:03:23.937668",
+    "stats": {
+      "total_files": 1742,
+      "total_dirs": 223,
+      "files_with_yaml": 1738,
+      "files_with_responsibility": 1730,
+      "files_with_module_id": 1738,
+      "encoding_issues": 0,
+      "sparse_dirs": 100
+    },
+    "compliance_rate": 99.71
+  },
+  {
+    "timestamp": "2026-04-07T03:04:06.495238",
+    "stats": {
+      "total_files": 1746,
+      "total_dirs": 223,
+      "files_with_yaml": 1746,
+      "files_with_responsibility": 1746,
+      "files_with_module_id": 1746,
+      "encoding_issues": 0,
+      "sparse_dirs": 100
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T03:07:20.948043",
+    "stats": {
+      "total_files": 1755,
+      "total_dirs": 220,
+      "files_with_yaml": 1753,
+      "files_with_responsibility": 1750,
+      "files_with_module_id": 1752,
+      "encoding_issues": 0,
+      "sparse_dirs": 98
+    },
+    "compliance_rate": 99.86
+  },
+  {
+    "timestamp": "2026-04-07T03:07:52.242445",
+    "stats": {
+      "total_files": 1757,
+      "total_dirs": 221,
+      "files_with_yaml": 1757,
+      "files_with_responsibility": 1757,
+      "files_with_module_id": 1756,
+      "encoding_issues": 0,
+      "sparse_dirs": 99
+    },
+    "compliance_rate": 99.99
+  },
+  {
+    "timestamp": "2026-04-07T03:08:18.259973",
+    "stats": {
+      "total_files": 1759,
+      "total_dirs": 221,
+      "files_with_yaml": 1759,
+      "files_with_responsibility": 1758,
+      "files_with_module_id": 1759,
+      "encoding_issues": 0,
+      "sparse_dirs": 99
+    },
+    "compliance_rate": 99.99
+  },
+  {
+    "timestamp": "2026-04-07T03:08:50.476576",
+    "stats": {
+      "total_files": 1762,
+      "total_dirs": 221,
+      "files_with_yaml": 1760,
+      "files_with_responsibility": 1759,
+      "files_with_module_id": 1760,
+      "encoding_issues": 0,
+      "sparse_dirs": 99
+    },
+    "compliance_rate": 99.9
+  },
+  {
+    "timestamp": "2026-04-07T03:09:20.946106",
+    "stats": {
+      "total_files": 1766,
+      "total_dirs": 221,
+      "files_with_yaml": 1766,
+      "files_with_responsibility": 1766,
+      "files_with_module_id": 1766,
+      "encoding_issues": 0,
+      "sparse_dirs": 98
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T03:13:50.209639",
+    "stats": {
+      "total_files": 1749,
+      "total_dirs": 202,
+      "files_with_yaml": 1725,
+      "files_with_responsibility": 1717,
+      "files_with_module_id": 1725,
+      "encoding_issues": 0,
+      "sparse_dirs": 80
+    },
+    "compliance_rate": 98.86
+  },
+  {
+    "timestamp": "2026-04-07T03:14:09.191989",
+    "stats": {
+      "total_files": 1751,
+      "total_dirs": 202,
+      "files_with_yaml": 1751,
+      "files_with_responsibility": 1751,
+      "files_with_module_id": 1751,
+      "encoding_issues": 0,
+      "sparse_dirs": 80
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T03:16:56.263354",
+    "stats": {
+      "total_files": 1754,
+      "total_dirs": 196,
+      "files_with_yaml": 1753,
+      "files_with_responsibility": 1749,
+      "files_with_module_id": 1753,
+      "encoding_issues": 0,
+      "sparse_dirs": 73
+    },
+    "compliance_rate": 99.9
+  },
+  {
+    "timestamp": "2026-04-07T03:17:23.446805",
+    "stats": {
+      "total_files": 1756,
+      "total_dirs": 196,
+      "files_with_yaml": 1756,
+      "files_with_responsibility": 1756,
+      "files_with_module_id": 1756,
+      "encoding_issues": 0,
+      "sparse_dirs": 73
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T03:20:43.703551",
+    "stats": {
+      "total_files": 1748,
+      "total_dirs": 196,
+      "files_with_yaml": 1723,
+      "files_with_responsibility": 1720,
+      "files_with_module_id": 1723,
+      "encoding_issues": 0,
+      "sparse_dirs": 72
+    },
+    "compliance_rate": 98.88
+  },
+  {
+    "timestamp": "2026-04-07T03:21:06.606022",
+    "stats": {
+      "total_files": 1751,
+      "total_dirs": 196,
+      "files_with_yaml": 1751,
+      "files_with_responsibility": 1751,
+      "files_with_module_id": 1751,
+      "encoding_issues": 0,
+      "sparse_dirs": 72
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T11:33:39.086398",
+    "stats": {
+      "total_files": 1780,
+      "total_dirs": 198,
+      "files_with_yaml": 1779,
+      "files_with_responsibility": 1777,
+      "files_with_module_id": 1779,
+      "encoding_issues": 0,
+      "sparse_dirs": 51
+    },
+    "compliance_rate": 99.93
+  },
+  {
+    "timestamp": "2026-04-07T11:34:16.417425",
+    "stats": {
+      "total_files": 1781,
+      "total_dirs": 198,
+      "files_with_yaml": 1781,
+      "files_with_responsibility": 1781,
+      "files_with_module_id": 1781,
+      "encoding_issues": 0,
+      "sparse_dirs": 51
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T11:43:41.398752",
+    "stats": {
+      "total_files": 1796,
+      "total_dirs": 193,
+      "files_with_yaml": 1793,
+      "files_with_responsibility": 1773,
+      "files_with_module_id": 1792,
+      "encoding_issues": 0,
+      "sparse_dirs": 51
+    },
+    "compliance_rate": 99.58
+  },
+  {
+    "timestamp": "2026-04-07T11:44:11.659220",
+    "stats": {
+      "total_files": 1797,
+      "total_dirs": 193,
+      "files_with_yaml": 1797,
+      "files_with_responsibility": 1797,
+      "files_with_module_id": 1797,
+      "encoding_issues": 0,
+      "sparse_dirs": 51
+    },
+    "compliance_rate": 100.0
+  },
+  {
+    "timestamp": "2026-04-07T11:51:05.636421",
+    "stats": {
+      "total_files": 1806,
+      "total_dirs": 192,
+      "files_with_yaml": 1804,
+      "files_with_responsibility": 1783,
+      "files_with_module_id": 1804,
+      "encoding_issues": 0,
+      "sparse_dirs": 52
+    },
+    "compliance_rate": 99.63
+  },
+  {
+    "timestamp": "2026-04-07T11:51:34.859927",
+    "stats": {
+      "total_files": 1808,
+      "total_dirs": 192,
+      "files_with_yaml": 1808,
+      "files_with_responsibility": 1808,
+      "files_with_module_id": 1808,
+      "encoding_issues": 0,
+      "sparse_dirs": 52
+    },
+    "compliance_rate": 100.0
+  }
+]

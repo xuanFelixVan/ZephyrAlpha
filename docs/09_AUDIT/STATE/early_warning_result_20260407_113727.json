@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-04-07T11:37:27.897807",
+  "warnings_count": 0,
+  "alerts_count": 1,
+  "warnings": [],
+  "alerts": [
+    {
+      "type": "Module ID唯一性警报",
+      "level": "🔴 高风险",
+      "message": "发现 19 个Module ID重复",
+      "action": "立即修复重复的Module ID"
+    }
+  ]
+}

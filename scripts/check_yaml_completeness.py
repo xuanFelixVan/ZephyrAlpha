@@ -92,8 +92,8 @@ class YAMLCompletenessChecker:
                 result.error_message = "无法识别文件编码"
                 return result
             
-            # 检查乱码字符
-            if '�' in content or '?' in content[:500]:
+            # 检查替换字符（U+FFFD）与可疑片段（仅做提示，不作为强校验）
+            if '\ufffd' in content or '?' in content[:500]:
                 result.encoding_issues = True
             
             # 提取YAML块

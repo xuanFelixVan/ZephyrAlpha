@@ -3,8 +3,10 @@ module_id: IMPL_DATA_LINEAGE_BP_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席技术评审官
+responsibility:
+- 归档文档、历史版本、蓝图设计
 standard_type: 专业量化机构蓝图
 applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
 compliance_level: 专业标准
@@ -15,9 +17,16 @@ open_source_dependency: pandas, numpy, openlineage
 estimated_effort: 2周
 priority: P1
 ---
+---
+
 
 
 # 数据血缘追踪系统蓝?
+> **核心职责**: Data Lineage Tracking Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Lineage Tracking Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 > 清风量化系统 v5.3 - 数据血缘追踪系统详细设?> **模块ID**: `DATA_LINEAGE_001`
 > **实施周期**: Week 1-2?周）
 > **优先?*: P0（核心）
@@ -1437,10 +1446,10 @@ src/
 ### 9.1 文档索引
 
 **本文档在系统中的位置**:
-- **父文?*: [LAYER1_GAP_ANALYSIS_REPORT.md](../LAYER1_GAP_ANALYSIS_REPORT.md)
+- **父文?*: LAYER1_GAP_ANALYSIS_REPORT.md
 - **关联文档**:
-  - [DATACLEANER_TECHNICAL_SPECIFICATION.md](../../05_TECHNICAL_SPECIFICATIONS/DATACLEANER_TECHNICAL_SPECIFICATION.md)
-  - [DATA_QUALITY.md](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_QUALITY.md)
+  - DATACLEANER_TECHNICAL_SPECIFICATION.md
+  - DATA_QUALITY.md
 
 ### 9.2 版本管理
 

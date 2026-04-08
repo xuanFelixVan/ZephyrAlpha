@@ -1,0 +1,98 @@
+{
+  "fix_time": "2026-04-07 12:58:43",
+  "classification_fix": {
+    "fixed": 1,
+    "details": [
+      {
+        "doc": "docs\\01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+        "old": "layer: Layer 10 (治理合规层)",
+        "new": "layer: Layer 4 (机器学习层)"
+      }
+    ]
+  },
+  "responsibility_differentiation": {
+    "fixed": 16,
+    "details": [
+      {
+        "doc": "docs/01_FRAMEWORK/ARCHITECTURE.md",
+        "old": "定义清风量化系统的整体架构设计、模块组织和层级关系，确保系统架构清晰可维护",
+        "new": "定义清风量化系统的整体架构设计、模块组织和层级关系，作为系统架构的权威参考文档"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md",
+        "old": "定义清风量化系统的整体架构设计、模块组织和层级关系，确保系统架构清晰可维护",
+        "new": "规划系统架构迁移的具体路径、时间节点和实施步骤，确保从旧架构到新架构的平滑过渡"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/DEEP_AUDIT_REPORT_20260407.md",
+        "old": "执行Layer 4机器学习层深度审计（20260407），生成审计报告和问题清单",
+        "new": "执行Layer 4机器学习层首轮深度审计（20260407），生成审计报告和问题清单"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/MACHINE_LEARNING_GOVERNANCE_DEEP_AUDIT_REPORT_20260407.md",
+        "old": "执行Layer 4机器学习层深度审计（20260407），生成审计报告和问题清单",
+        "new": "执行Layer 4机器学习层治理合规深度审计（20260407），重点检查治理标准和最佳实践符合性"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/DEEP_AUDIT_REPORT_V2_20260407.md",
+        "old": "执行Layer 4机器学习层第2轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层第2轮深度审计，聚焦职责驱动和索引完备性问题"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/ML_LAYER_DEEP_GOVERNANCE_AUDIT_V2_20260406.md",
+        "old": "执行Layer 4机器学习层第2轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层治理合规第2轮审计，重点检查文档治理合规性"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/DEEP_AUDIT_REPORT_V5_20260407.md",
+        "old": "执行Layer 4机器学习层第5轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层第5轮深度审计，聚焦职责描述增强和核心职责修复"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/ML_COMPREHENSIVE_AUDIT_V5_20260404.md",
+        "old": "执行Layer 4机器学习层第5轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层全面综合审计（第5轮），覆盖所有文档和模块的完整性检查"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/INDEX.md",
+        "old": "提供Layer 4机器学习层的文档导航和索引服务，帮助用户快速定位相关文档",
+        "new": "提供Layer 4机器学习层的快速导航索引，列出核心模块和关键文档入口"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/MASTER_INDEX.md",
+        "old": "提供Layer 4机器学习层的文档导航和索引服务，帮助用户快速定位相关文档",
+        "new": "提供Layer 4机器学习层的完整主索引，包含所有文档的详细清单和分类"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/ML_LAYER_COMPREHENSIVE_AUDIT_V1_20260405.md",
+        "old": "执行Layer 4机器学习层第1轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层全面综合审计（第1轮），建立审计基线和问题清单"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/ML_LAYER_GOVERNANCE_AUDIT_V1_20260405.md",
+        "old": "执行Layer 4机器学习层第1轮深度审计，生成详细审计报告和改进建议",
+        "new": "执行Layer 4机器学习层治理合规首轮审计，建立治理合规检查标准"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/README.md",
+        "old": "提供Layer 4机器学习层的概述说明、快速开始指南和模块介绍",
+        "new": "提供Layer 4机器学习层的主要概述说明、快速开始指南和核心模块介绍"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/README_1.md",
+        "old": "提供Layer 4机器学习层的概述说明、快速开始指南和模块介绍",
+        "new": "提供Layer 4机器学习层的补充说明、扩展信息和最佳实践指南"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/YAML_COMPLETENESS_CHECK_REPORT.md",
+        "old": "检查Layer 4机器学习层文档YAML元数据完整性，生成检查报告和修复建议",
+        "new": "检查Layer 4机器学习层文档YAML元数据完整性，生成完整性检查报告"
+      },
+      {
+        "doc": "docs/01_FRAMEWORK/LAYER4_ML/YAML_FIX_PROGRESS_REPORT_20260406.md",
+        "old": "检查Layer 4机器学习层文档YAML元数据完整性，生成检查报告和修复建议",
+        "new": "跟踪Layer 4机器学习层文档YAML修复进度，生成修复进度报告"
+      }
+    ]
+  }
+}

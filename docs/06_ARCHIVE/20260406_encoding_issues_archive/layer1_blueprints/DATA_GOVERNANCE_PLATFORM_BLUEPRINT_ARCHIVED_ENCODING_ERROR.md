@@ -3,7 +3,7 @@ module_id: IMPL_DATA_GOVERNANCE_BP_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-05
-last_updated: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 'Layer 1数据预处理层 | 业务架构: 三级时间框架融合架构'
@@ -14,10 +14,18 @@ implementation_progress: 0%
 open_source_dependency: pandas, numpy, great_expectations
 estimated_effort: 4周
 priority: P1
+responsibility:
+- 归档文档、历史版本、蓝图设计
+---
 ---
 
 
 # 数据治理平台蓝图
+> **核心职责**: Data Governance Platform Blueprint Archived Encoding Error.Md蓝图设计
+> **职责边界**: 
+> - ✅ 本文档负责：Data Governance Platform Blueprint Archived Encoding Error.Md蓝图设计相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > 清风量化系统 v5.3 - 数据治理平台详细设计
 > **模块ID**: `DATA_GOVERNANCE_PLATFORM_001`
@@ -518,11 +526,11 @@ CREATE TABLE governance_issues (
 
 ### 8.1 参考文档
 
-- [DATA_CATALOG_BLUEPRINT.md](./DATA_CATALOG_BLUEPRINT.md) - 数据目录蓝图
-- [DATA_OBSERVABILITY_BLUEPRINT.md](./DATA_OBSERVABILITY_BLUEPRINT.md) - 数据可观测性蓝图
-- [DATA_QUALITY_BLUEPRINT.md](./DATA_QUALITY_BLUEPRINT.md) - 数据质量蓝图
-- [DATA_SECURITY_COMPLIANCE_BLUEPRINT.md](./DATA_SECURITY_COMPLIANCE_BLUEPRINT.md) - 数据安全合规蓝图
-- [DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md](./DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md) - 数据生命周期管理蓝图
+- DATA_CATALOG_BLUEPRINT.md - 数据目录蓝图
+- DATA_OBSERVABILITY_BLUEPRINT.md - 数据可观测性蓝图
+- DATA_QUALITY_BLUEPRINT.md - 数据质量蓝图
+- DATA_SECURITY_COMPLIANCE_BLUEPRINT.md - 数据安全合规蓝图
+- DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md - 数据生命周期管理蓝图
 
 ### 8.2 术语表
 

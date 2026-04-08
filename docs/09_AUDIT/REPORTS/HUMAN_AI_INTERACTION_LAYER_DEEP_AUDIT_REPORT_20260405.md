@@ -3,15 +3,24 @@ module_id: AUDIT_REPORT_HUMAN_AI_INTERACTION_20260405_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: '2026-04-07'
 owner: 审计系统
+responsibility:
+- 系统审计分析与质量评估报告与改进建议
 standard_type: 专业文档治理审计报告
 applicable_scope: 人机交互层文档深度审计
 compliance_level: 专业标准
 parent_document: ../TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md
 ---
+---
+
 
 # 人机交互层文档深度审计报告
+> **核心职责**: 分析报告和评估结果
+> **职责边界**: 
+> - ✅ 本文档负责：分析报告和评估结果相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计日期**: 2026-04-05  
 > **审计范围**: docs/01_FRAMEWORK/ 人机交互层相关文档  

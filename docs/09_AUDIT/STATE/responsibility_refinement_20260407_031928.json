@@ -1,0 +1,319 @@
+{
+  "fix_time": "2026-04-07 03:19:28",
+  "fixes": [
+    {
+      "file": "A_SHARE_HISTORICAL_DATA_PROCESSING_BLUEPRINT.md",
+      "responsibility": "A股历史数据处理流程设计与实施"
+    },
+    {
+      "file": "BAOSTOCK_CONNECTOR.md",
+      "responsibility": "Baostock数据源接入与数据获取"
+    },
+    {
+      "file": "CORRELATION_ANALYSIS.md",
+      "responsibility": "相关性分析方法与因子相关性计算"
+    },
+    {
+      "file": "DATA_ACQUISITION.md",
+      "responsibility": "数据采集策略制定与数据源管理"
+    },
+    {
+      "file": "DATA_REQUIREMENTS.md",
+      "responsibility": "数据需求分析与数据规格定义"
+    },
+    {
+      "file": "DATA_SOURCE_ADAPTERS.md",
+      "responsibility": "数据源适配器设计与统一接口实现"
+    },
+    {
+      "file": "DATA_SOURCE_LAYER_GAP_ANALYSIS_V2.md",
+      "responsibility": "数据源层架构差距分析与改进建议"
+    },
+    {
+      "file": "DOCUMENT_NAMING_STANDARD.md",
+      "responsibility": "文档命名规范与标准化指南"
+    },
+    {
+      "file": "factor_master_index.md",
+      "responsibility": "root - factor master index"
+    },
+    {
+      "file": "FREE_DATA_SOURCES.md",
+      "responsibility": "免费数据源汇总与使用指南"
+    },
+    {
+      "file": "IFIND_CONNECTOR.md",
+      "responsibility": "iFind数据源接入与金融数据获取"
+    },
+    {
+      "file": "INDEX.md",
+      "responsibility": "Layer 1数据预处理层总索引与模块导航"
+    },
+    {
+      "file": "MACRO_DATA.md",
+      "responsibility": "宏观经济数据获取与处理"
+    },
+    {
+      "file": "NEWS_SENTIMENT_DATA_SOURCE.md",
+      "responsibility": "新闻情感数据源与文本分析"
+    },
+    {
+      "file": "QMT_INTERFACE.md",
+      "responsibility": "QMT交易接口对接与行情数据获取"
+    },
+    {
+      "file": "STATISTICAL_TOOLS.md",
+      "responsibility": "统计分析工具与数据计算方法"
+    },
+    {
+      "file": "SUPERCMD_CONNECTOR.md",
+      "responsibility": "SuperCMD命令行接口对接"
+    },
+    {
+      "file": "02_SCHEDULER\\BLUEPRINT.md",
+      "responsibility": "任务调度器设计与调度策略"
+    },
+    {
+      "file": "02_SCHEDULER\\INDEX.md",
+      "responsibility": "调度器模块导航"
+    },
+    {
+      "file": "02_SCHEDULER\\SCHEDULER_API.md",
+      "responsibility": "调度器API接口定义与使用说明"
+    },
+    {
+      "file": "03_CLEANING\\BLUEPRINT.md",
+      "responsibility": "数据清洗流程设计与清洗规则制定"
+    },
+    {
+      "file": "03_CLEANING\\CLEANING_RULES.md",
+      "responsibility": "数据清洗规则库与异常数据处理"
+    },
+    {
+      "file": "03_CLEANING\\INDEX.md",
+      "responsibility": "数据清洗模块导航与文档索引"
+    },
+    {
+      "file": "07_DATA_PIPELINE\\BLUEPRINT.md",
+      "responsibility": "数据管道架构设计与编排流程"
+    },
+    {
+      "file": "07_DATA_PIPELINE\\INDEX.md",
+      "responsibility": "数据管道模块导航"
+    },
+    {
+      "file": "07_DATA_PIPELINE\\README.md",
+      "responsibility": "数据管道模块说明与使用指南"
+    },
+    {
+      "file": "CONFIG_MANAGEMENT\\BLUEPRINT.md",
+      "responsibility": "配置管理系统设计与环境管理"
+    },
+    {
+      "file": "CONFIG_MANAGEMENT\\INDEX.md",
+      "responsibility": "配置管理模块导航"
+    },
+    {
+      "file": "DATA_ANOMALY_DETECTION\\BLUEPRINT.md",
+      "responsibility": "数据异常检测算法与告警机制"
+    },
+    {
+      "file": "DATA_ANOMALY_DETECTION\\INDEX.md",
+      "responsibility": "数据异常检测模块导航"
+    },
+    {
+      "file": "DATA_API_GATEWAY\\BLUEPRINT.md",
+      "responsibility": "统一数据API网关设计与接口管理"
+    },
+    {
+      "file": "DATA_API_GATEWAY\\INDEX.md",
+      "responsibility": "数据API网关模块导航"
+    },
+    {
+      "file": "DATA_BACKUP_RECOVERY\\BLUEPRINT.md",
+      "responsibility": "数据备份恢复策略与灾难恢复"
+    },
+    {
+      "file": "DATA_BACKUP_RECOVERY\\INDEX.md",
+      "responsibility": "数据备份恢复模块导航"
+    },
+    {
+      "file": "DATA_CATALOG\\BLUEPRINT.md",
+      "responsibility": "数据目录管理与元数据组织"
+    },
+    {
+      "file": "DATA_CATALOG\\INDEX.md",
+      "responsibility": "数据目录模块导航"
+    },
+    {
+      "file": "DATA_COMPRESSION_ARCHIVE\\BLUEPRINT.md",
+      "responsibility": "数据压缩归档策略与存储优化"
+    },
+    {
+      "file": "DATA_COMPRESSION_ARCHIVE\\INDEX.md",
+      "responsibility": "数据压缩归档模块导航"
+    },
+    {
+      "file": "DATA_CONTRACT\\BLUEPRINT.md",
+      "responsibility": "数据契约定义与服务级别协议"
+    },
+    {
+      "file": "DATA_CONTRACT\\INDEX.md",
+      "responsibility": "数据契约模块导航"
+    },
+    {
+      "file": "DATA_FEDERATION\\BLUEPRINT.md",
+      "responsibility": "数据联邦架构与跨源数据访问"
+    },
+    {
+      "file": "DATA_FEDERATION\\INDEX.md",
+      "responsibility": "数据联邦模块导航"
+    },
+    {
+      "file": "DATA_LIFECYCLE_MANAGEMENT\\BLUEPRINT.md",
+      "responsibility": "数据生命周期管理与归档策略"
+    },
+    {
+      "file": "DATA_LIFECYCLE_MANAGEMENT\\INDEX.md",
+      "responsibility": "数据生命周期管理模块导航"
+    },
+    {
+      "file": "DATA_LINEAGE_TRACKING\\BLUEPRINT.md",
+      "responsibility": "数据血缘追踪与数据流向分析"
+    },
+    {
+      "file": "DATA_LINEAGE_TRACKING\\INDEX.md",
+      "responsibility": "数据血缘追踪模块导航"
+    },
+    {
+      "file": "DATA_MONITORING_ENHANCED\\BLUEPRINT.md",
+      "responsibility": "数据监控增强功能与可视化"
+    },
+    {
+      "file": "DATA_MONITORING_ENHANCED\\INDEX.md",
+      "responsibility": "数据监控增强模块导航"
+    },
+    {
+      "file": "DATA_OBSERVABILITY\\BLUEPRINT.md",
+      "responsibility": "数据可观测性架构与监控指标"
+    },
+    {
+      "file": "DATA_OBSERVABILITY\\INDEX.md",
+      "responsibility": "数据可观测性模块导航"
+    },
+    {
+      "file": "DATA_ORCHESTRATION_ENHANCED\\BLUEPRINT.md",
+      "responsibility": "数据编排增强功能与工作流管理"
+    },
+    {
+      "file": "DATA_ORCHESTRATION_ENHANCED\\INDEX.md",
+      "responsibility": "数据编排增强模块导航"
+    },
+    {
+      "file": "DATA_PERMISSION_MANAGEMENT\\BLUEPRINT.md",
+      "responsibility": "数据权限管理策略与访问控制"
+    },
+    {
+      "file": "DATA_PERMISSION_MANAGEMENT\\INDEX.md",
+      "responsibility": "数据权限管理模块导航"
+    },
+    {
+      "file": "DATA_PROFILING\\BLUEPRINT.md",
+      "responsibility": "数据分析与统计特征提取"
+    },
+    {
+      "file": "DATA_PROFILING\\INDEX.md",
+      "responsibility": "数据分析模块导航"
+    },
+    {
+      "file": "DATA_SECURITY_PRIVACY\\BLUEPRINT.md",
+      "responsibility": "数据安全策略与隐私保护机制"
+    },
+    {
+      "file": "DATA_SECURITY_PRIVACY\\INDEX.md",
+      "responsibility": "数据安全隐私模块导航"
+    },
+    {
+      "file": "DATA_STANDARDIZATION\\BLUEPRINT.md",
+      "responsibility": "数据标准化规则与格式统一"
+    },
+    {
+      "file": "DATA_STANDARDIZATION\\INDEX.md",
+      "responsibility": "数据标准化模块导航"
+    },
+    {
+      "file": "DATA_SYNC_REPLICATION\\BLUEPRINT.md",
+      "responsibility": "数据同步复制策略与一致性保证"
+    },
+    {
+      "file": "DATA_SYNC_REPLICATION\\INDEX.md",
+      "responsibility": "数据同步复制模块导航"
+    },
+    {
+      "file": "DATA_TESTING_FRAMEWORK\\BLUEPRINT.md",
+      "responsibility": "数据测试框架设计与测试用例管理"
+    },
+    {
+      "file": "DATA_TESTING_FRAMEWORK\\INDEX.md",
+      "responsibility": "数据测试框架模块导航"
+    },
+    {
+      "file": "DATA_VERSION_CONTROL\\BLUEPRINT.md",
+      "responsibility": "数据版本控制策略与变更追踪"
+    },
+    {
+      "file": "DATA_VERSION_CONTROL\\INDEX.md",
+      "responsibility": "数据版本控制模块导航"
+    },
+    {
+      "file": "IFIND\\INDEX.md",
+      "responsibility": "iFind数据源模块导航"
+    },
+    {
+      "file": "QUALITY_MANAGEMENT\\DATA_QUALITY_CONTROL_SYSTEM.md",
+      "responsibility": "数据质量控制体系设计与实施"
+    },
+    {
+      "file": "QUALITY_MANAGEMENT\\INDEX.md",
+      "responsibility": "数据质量管理模块导航"
+    },
+    {
+      "file": "QUALITY_MANAGEMENT\\QUALITY_METRICS.md",
+      "responsibility": "数据质量指标定义与监控"
+    },
+    {
+      "file": "REALTIME_DATA_STREAMING\\BLUEPRINT.md",
+      "responsibility": "实时数据流处理架构与Kafka集成"
+    },
+    {
+      "file": "REALTIME_DATA_STREAMING\\INDEX.md",
+      "responsibility": "实时数据流模块导航"
+    },
+    {
+      "file": "TIME_SERIES_STORAGE\\BLUEPRINT.md",
+      "responsibility": "时序数据存储架构设计与TimescaleDB集成"
+    },
+    {
+      "file": "TIME_SERIES_STORAGE\\INDEX.md",
+      "responsibility": "时序存储模块导航"
+    },
+    {
+      "file": "IFIND\\financial_statements\\FINANCIAL_STATEMENTS_API.md",
+      "responsibility": "财务报表API接口与数据获取"
+    },
+    {
+      "file": "IFIND\\financial_statements\\INDEX.md",
+      "responsibility": "财务报表数据模块导航"
+    },
+    {
+      "file": "IFIND\\financial_statements\\THS_BD_COMPLETE_INDICATOR_LIST.md",
+      "responsibility": "同花顺完整指标列表与数据字典"
+    }
+  ],
+  "statistics": {
+    "total_docs": 77,
+    "fixed_docs": 77,
+    "skipped_docs": 0,
+    "errors": 0
+  }
+}

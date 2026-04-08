@@ -1,69 +1,90 @@
 ---
-standard_type: 工具指南
-applicable_scope: 元数据管�?compliance_level: 正式标准
+module_id: METADATA_ENHANCER_GUIDE
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - METADATA_ENHANCER操作指南
+---
+
+﻿---
+version: 1.0.0
+standard_type: тиЦтЁиТїЄтЇЌ
+responsibility:
+  - 操作指南编写与使用说明与系统维护管理
+applicable_scope: тЁЃТЋ░ТЇуАуљ?compliance_level: ТГБт╝ЈТаЄтЄє
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ти▓тїТѕ?owner: ТќЄТАБуАуљєтЉ?version: 1.0.0
 module_id: METADATA_ENHANCER_GUIDE
 created_date: 2026-04-02
 last_updated: 2026-04-02
-tags: ["工具指南", "元数�?, "自动�?, "使用手册"]
+tags: ["тиЦтЁиТїЄтЇЌ", "тЁЃТЋ░ТЇ?, "УЄфтіетї?, "Сй┐ућеТЅІтєї"]
 ---
-# 元数据增强工具使用指�?
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
 ---
 
-## 1. 工具概述
+# тЁЃТЋ░ТЇтбът╝║тиЦтЁиСй┐ућеТїЄтЇ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 工具简�?
-元数据增强工具用于自动推断和补充文档元数据，确保文档元数据完整性和规范性�?
-### 1.2 主要功能
+**ТќЄТАБуЅѕТюг**: 1.0.0
+**ТюђтљјТЏ┤Тќ?*: 2026-04-02
+**ТќЄТАБТЅђТюЅУђ?*: ТќЄТАБуАуљєтЉ?
+---
 
-- �?自动推断元数�?- �?批量添加元数�?- �?验证元数据完整�?- �?生成增强报告
+## 1. тиЦтЁиТдѓУ┐░
+
+### 1.1 тиЦтЁиуђС╗?
+тЁЃТЋ░ТЇтбът╝║тиЦтЁиућеС║јУЄфтіеТјеТќГтњїУАЦтЁЁТќЄТАБтЁЃТЋ░ТЇ№╝їуАС┐ЮТќЄТАБтЁЃТЋ░ТЇтїТЋ┤ТђДтњїУДёУїЃТђДсђ?
+### 1.2 СИ╗УдЂтіЪУЃй
+
+- Рю?УЄфтіеТјеТќГтЁЃТЋ░ТЇ?- Рю?ТЅ╣жЄЈТи╗тіатЁЃТЋ░ТЇ?- Рю?жфїУЂтЁЃТЋ░ТЇтїТЋ┤Тђ?- Рю?ућЪТѕљтбът╝║ТіЦтЉі
 
 ---
 
-## 2. 快速开�?
-### 2.1 基本使用
+## 2. т┐ФжђЪт╝ђтД?
+### 2.1 тЪ║ТюгСй┐уће
 
-**增强元数�?*:
+**тбът╝║тЁЃТЋ░ТЇ?*:
 ```bash
 python scripts/metadata_enhancer.py
 ```
 
-**验证元数�?*:
+**жфїУЂтЁЃТЋ░ТЇ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 3. 功能详解
+## 3. тіЪУЃйУдУДБ
 
-### 3.1 元数据推�?
-**推断规则**:
-- 从文件路径推断module_id
-- 从文件名推断标题
-- 从目录结构推断分�?
-**示例**:
+### 3.1 тЁЃТЋ░ТЇТјеТќ?
+**ТјеТќГУДётѕЎ**:
+- С╗јТќЄС╗ХУитЙёТјеТќГmodule_id
+- С╗јТќЄС╗ХтљЇТјеТќГТаЄжбў
+- С╗јуЏтйЋу╗ЊТъёТјеТќГтѕєу▒?
+**уц║СЙІ**:
 ```
-文件路径: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
-推断结果:
+ТќЄС╗ХУитЙё: docs/02_FACTOR_LIBRARY/01_FACTORS/MOMENTUM_FACTOR.md
+ТјеТќГу╗ЊТъю:
   - module_id: MOMENTUM_FACTOR
   - category: 02_FACTOR_LIBRARY
-  - title: 动量因子
+  - title: тіежЄЈтЏатГљ
 ```
 
-### 3.2 元数据验�?
-**必需字段**:
+### 3.2 тЁЃТЋ░ТЇжфїУ?
+**т┐ЁжюђтГЌТх**:
 - owner
 - version
 - module_id
 - created_date
 - last_updated
 
-**推荐字段**:
+**ТјеУЇљтГЌТх**:
 - standard_type
 - applicable_scope
 - compliance_level
@@ -71,9 +92,9 @@ python scripts/metadata_enhancer.py --validate
 
 ---
 
-## 4. 配置选项
+## 4. жЁЇуйжђЅжА╣
 
-### 4.1 推断规则配置
+### 4.1 ТјеТќГУДётѕЎжЁЇуй
 
 ```yaml
 inference_rules:
@@ -84,35 +105,35 @@ inference_rules:
   category:
     source: "directory"
     mapping:
-      "01_FRAMEWORK": "框架文档"
-      "02_FACTOR_LIBRARY": "因子�?
+      "01_FRAMEWORK": "ТАєТъХТќЄТАБ"
+      "02_FACTOR_LIBRARY": "тЏатГљт║?
 ```
 
 ---
 
-## 5. 最佳实�?
-### 5.1 使用模板
+## 5. ТюђСй│тъУи?
+### 5.1 Сй┐ућеТеАТЮ┐
 
-**创建文档时使用模�?*:
+**тѕЏт╗║ТќЄТАБТЌХСй┐ућеТеАТЮ?*:
 ```bash
-# 使用文档模板
+# Сй┐ућеТќЄТАБТеАТЮ┐
 cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md new_document.md
 ```
 
-### 5.2 定期验证
+### 5.2 тџТюЪжфїУЂ
 
-**每月验证元数据完整�?*:
+**ТЈТюѕжфїУЂтЁЃТЋ░ТЇтїТЋ┤Тђ?*:
 ```bash
 python scripts/metadata_enhancer.py --validate
 ```
 
 ---
 
-## 6. 参考文�?
-- [元数据增强工具技术规范](../../05_TECHNICAL_SPECIFICATIONS/METADATA_ENHANCER_SPECIFICATION.md)
-- [文档模板](../../09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
+## 6. тЈѓУђЃТќЄТА?
+- тЁЃТЋ░ТЇтбът╝║тиЦтЁиТіђТюУДёУїЃ
+- ТќЄТАБТеАТЮ┐
 
 ---
 
-**文档状�?*: 正式标准
-**下次更新**: 2026-07-02
+**ТќЄТАБуіХТђ?*: ТГБт╝ЈТаЄтЄє
+**СИІТгАТЏ┤Тќ░**: 2026-07-02

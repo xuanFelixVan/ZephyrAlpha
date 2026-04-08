@@ -1,0 +1,168 @@
+{
+  "timestamp": "2026-04-07T16:15:04.265673",
+  "summary": {
+    "total_files": 2046,
+    "total_dirs": 204,
+    "total_issues": 5,
+    "compliance_rate": 99.76
+  },
+  "issues": {
+    "L1_目录结构": [],
+    "L1_文件命名": [
+      {
+        "type": "旧架构命名残留",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md",
+        "severity": "high",
+        "detail": "文件名包含旧架构关键词: LAYER5_DEEP_CONTENT_AUDIT_REPORT_20260407.md"
+      }
+    ],
+    "L1_路径引用": [
+      {
+        "type": "死链接",
+        "count": 4027,
+        "severity": "medium",
+        "detail": "发现4027个死链接"
+      }
+    ],
+    "L2_职责驱动": [
+      {
+        "type": "职责不清",
+        "count": 908,
+        "severity": "high",
+        "detail": "发现908个职责描述不清的文档"
+      },
+      {
+        "type": "职责重叠",
+        "count": 25,
+        "severity": "high",
+        "detail": "发现25组职责重叠"
+      }
+    ],
+    "L2_索引完备性": [
+      {
+        "type": "缺少INDEX.md",
+        "path": "05_IMPLEMENTATION\\07_OPERATIONS\\standards",
+        "severity": "medium",
+        "detail": "目录有1个文档但缺少INDEX.md"
+      }
+    ],
+    "L2_版本隔离": [],
+    "L3_五大原则": [],
+    "L3_文档分类": [],
+    "L3_编号体系": [],
+    "L3_文档质量": []
+  },
+  "duplicate_files": [],
+  "overlapping_responsibility": [
+    {
+      "responsibility": "扩展功能、辅助模块、支撑文档",
+      "file_count": 34,
+      "files": [
+        "SITEMAP.md",
+        "07_RESEARCH\\EXPERIMENT_TRACKING.md",
+        "07_RESEARCH\\TECHNICAL_VALIDATION_PLAN.md",
+        "07_RESEARCH\\01_ENVIRONMENT\\docker_setup.md",
+        "07_RESEARCH\\02_EXPLORATORY_ANALYSIS\\correlation_analysis.md"
+      ]
+    },
+    {
+      "responsibility": "系统框架、架构设计",
+      "file_count": 69,
+      "files": [
+        "01_FRAMEWORK\\AI_CONVERSATIONAL_INTERFACE_ENHANCEMENT_BLUEPRINT.md",
+        "01_FRAMEWORK\\AI_REPORT_GENERATION_BLUEPRINT.md",
+        "01_FRAMEWORK\\ALPHA_FACTOR_LAYER_BLUEPRINT.md",
+        "01_FRAMEWORK\\ARCHITECTURE_AUDIT_REPORT.md",
+        "01_FRAMEWORK\\AUDIT_LOG_VIEWER_BLUEPRINT.md"
+      ]
+    },
+    {
+      "responsibility": "风险预算 (Layer 11)",
+      "file_count": 16,
+      "files": [
+        "01_FRAMEWORK\\LIQUIDITY_RISK_MANAGEMENT_BLUEPRINT.md",
+        "01_FRAMEWORK\\PORTFOLIO_REBALANCING_BLUEPRINT.md",
+        "01_FRAMEWORK\\TRADE_ERROR_CORRECTION_BLUEPRINT.md",
+        "05_IMPLEMENTATION\\02_DEVELOPMENT\\ERROR_HANDLING.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\LAYER_7_11_DIRECTORY_RESTRUCTURE_REPORT_20260404.md"
+      ]
+    },
+    {
+      "responsibility": "市场状态识别 (Layer 4)",
+      "file_count": 9,
+      "files": [
+        "01_FRAMEWORK\\MARKET_REGIME.md",
+        "03_TRADING_TACTICS\\Strategy_Spec_S001.md",
+        "03_TRADING_TACTICS\\01_STRATEGY_FRAMEWORK\\overview.md",
+        "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\README.md",
+        "03_TRADING_TACTICS\\04_YOUZI_STRATEGIES\\other-masters\\retail_strategies_c.md"
+      ]
+    },
+    {
+      "responsibility": "执行文档治理审计，生成审计报告和改进建议",
+      "file_count": 11,
+      "files": [
+        "01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_20260407.md",
+        "01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V2_20260407.md",
+        "01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V3_20260407.md",
+        "01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V4_20260407.md",
+        "01_FRAMEWORK\\LAYER4_ML\\DEEP_AUDIT_REPORT_V5_20260407.md"
+      ]
+    },
+    {
+      "responsibility": "目录导航、文档索引",
+      "file_count": 16,
+      "files": [
+        "01_FRAMEWORK\\LAYER4_ML\\INDEX.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\INDEX.md",
+        "05_IMPLEMENTATION\\07_OPERATIONS\\audit_state\\INDEX.md",
+        "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\INDEX.md",
+        "06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_reports_20260402\\INDEX.md"
+      ]
+    },
+    {
+      "responsibility": "归档索引、文件追溯",
+      "file_count": 7,
+      "files": [
+        "01_FRAMEWORK\\_archive\\INDEX.md",
+        "06_ARCHIVE\\20260407_old_layer_audit_reports\\layer10_reports\\INDEX.md",
+        "06_ARCHIVE\\20260407_old_layer_audit_reports\\layer11_reports\\INDEX.md",
+        "06_ARCHIVE\\20260407_old_layer_audit_reports\\layer25_reports\\INDEX.md",
+        "06_ARCHIVE\\20260407_old_layer_audit_reports\\layer5_reports\\INDEX.md"
+      ]
+    },
+    {
+      "responsibility": "数据质量 (Layer 1)",
+      "file_count": 32,
+      "files": [
+        "02_FACTOR_LIBRARY\\INDEX.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_TAXONOMY.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\P1_P2_OPTIMIZATION_REPORT_20260406.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_012859.md",
+        "05_IMPLEMENTATION\\04_OPERATIONS\\audit_state\\quality_monitoring_report_20260407_014237.md"
+      ]
+    },
+    {
+      "responsibility": "因子计算、因子库管理",
+      "file_count": 50,
+      "files": [
+        "02_FACTOR_LIBRARY\\OPTIMIZATION_SUMMARY.md",
+        "02_FACTOR_LIBRARY\\README.md",
+        "02_FACTOR_LIBRARY\\SITEMAP.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\ALPHA_FACTORS_INDEX_STANDARD.md",
+        "02_FACTOR_LIBRARY\\01_STANDARDS\\FACTOR_CALCULATION_FRAMEWORK.md"
+      ]
+    },
+    {
+      "responsibility": "交易策略、战术执行",
+      "file_count": 50,
+      "files": [
+        "03_TRADING_TACTICS\\AI_SUPERVISION_INTEGRATION_PLAN.md",
+        "03_TRADING_TACTICS\\API_Contract.md",
+        "03_TRADING_TACTICS\\ARCHIVED.md",
+        "03_TRADING_TACTICS\\INDEX.md",
+        "03_TRADING_TACTICS\\NEURAL_NETWORK_INTEGRATION_PLAN.md"
+      ]
+    }
+  ]
+}

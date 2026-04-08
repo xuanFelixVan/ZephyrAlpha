@@ -1,18 +1,38 @@
 ---
+module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_BLOCK_D1_FINDINGS
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - D1块审计发?- 00_OVERVIEW ~ 01_FRAMEWORK文档文档
+---
+
+﻿﻿---
 module_id: ARCHIVE_BLOCK_D1_FINDINGS_001
 version: 4.0.1
 status: Active
 created_date: 2026-04-01
 last_updated: 2026-04-01
 owner: 首席文档架构?
+responsibility:
+  - 归档文档、历史版本、审计状态追踪
+  - 因子计算
+  - 组合优化
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监?
 compliance_level: 审计标准
 parent_document: ../INDEX.md
-implementation_status: 进行?
----
+implementation_status: 进行?---
+
 
 # D1块审计发?- 00_OVERVIEW ~ 01_FRAMEWORK文档
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
 
 > **审计时间**: 2026-03-31
 > **审计范围**: docs/00_OVERVIEW ?docs/01_FRAMEWORK 目录
@@ -23,12 +43,12 @@ implementation_status: 进行?
 
 ## 📊 审计摘要
 
-| 指标 | �?| 说明 |
+| 指标 | ?| 说明 |
 |------|------|------|
 | **审查目录?* | 2?| 00_OVERVIEW, 01_FRAMEWORK |
 | **审查文件?* | 7?| README(x2), DATA_FLOW, TECH_STACK, HUMAN_AI_FLOW, MARKET_REGIME, ARCHITECTURE |
 | **发现问题?* | 待分?| P0/P1/P2分类统计 |
-| **版本一�?* | 待验?| 部分文档版本v4.0与系统v5.3不一?|
+| **版本一?* | 待验?| 部分文档版本v4.0与系统v5.3不一?|
 
 ---
 
@@ -36,14 +56,14 @@ implementation_status: 进行?
 
 ### docs/00_OVERVIEW/
 
-| 文件 | 版本 | �?|
+| 文件 | 版本 | ?|
 |------|------|------|
 | README.md | v4.0 | ⚠️ 版本不一?|
 | DATA_FLOW.md | v4.0 | ⚠️ 版本不一?|
 
 ### docs/01_FRAMEWORK/
 
-| 文件 | 版本 | �?|
+| 文件 | 版本 | ?|
 |------|------|------|
 | README.md | v2.0 | ?正常 |
 | TECH_STACK.md | v1.0 | ?正常 |
@@ -62,7 +82,7 @@ implementation_status: 进行?
 **发现位置**: `docs/00_OVERVIEW/README.md`, `docs/00_OVERVIEW/DATA_FLOW.md`
 **问题描述**: 两个文档版本标识为v4.0，与系统v5.3不一?
 
-| 文件 | 当前版本 | 系统版本 | �?|
+| 文件 | 当前版本 | 系统版本 | ?|
 |------|----------|----------|------|
 | docs/00_OVERVIEW/README.md | v4.0 | v5.3 | ⚠️ 不一?|
 | docs/00_OVERVIEW/DATA_FLOW.md | v4.0 | v5.3 | ⚠️ 不一?|
@@ -134,7 +154,7 @@ implementation_status: 进行?
 ```
 |  | 主规格文档（完整索引?|
 |  | 代码状态规?|
-| [CHANGELOG.md](../../../06_ARCHIVE/CHANGELOG.md) | 变更日志 |
+| [CHANGELOG.md](../../CHANGELOG.md) | 变更日志 |
 |  | 审查报告 |
 ```
 
@@ -156,10 +176,10 @@ implementation_status: 进行?
 **问题描述**: 引用不存在的目录
 
 ```
-| Layer 2 | [因子库文档](../../../../README.md) |
-| Layer 5 | [执行文档](../../../../README.md) |
-| Layer 6 | [组合优化文档](../../../../README.md) |
-| Layer 7 | [绩效文档](../../../../README.md) |
+| Layer 2 | 因子库文档 |
+| Layer 5 | 执行文档 |
+| Layer 6 | 组合优化文档 |
+| Layer 7 | 绩效文档 |
 ```
 
 **问题分析**:
@@ -209,7 +229,7 @@ implementation_status: 进行?
 
 ### 2026-03-31 D1块审?- 修复完成
 
-| # | 问题编号 | 修复操作 | �?| 修复日期 |
+| # | 问题编号 | 修复操作 | ?| 修复日期 |
 |---|----------|----------|------|----------|
 | 1 | D1-P1-001 | 00_OVERVIEW/README.md版本v4.0 ?v5.3 | ?已修?| 2026-03-31 |
 | 2 | D1-P1-001 | 00_OVERVIEW/DATA_FLOW.md版本v4.0 ?v5.3 | ?已修?| 2026-03-31 |

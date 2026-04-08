@@ -1,4 +1,15 @@
+﻿---
+module_id: DYNAMIC_CORRELATION_MODELING_TECHNICAL_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - DYNAMIC_CORRELATION_MODELING_TECHNICAL技术规范
 ---
+
+﻿---
 module_id: DYNAMIC_CORRELATION_MODELING_SPEC_001
 version: 1.0.0
 spec_version: 1.0
@@ -6,23 +17,32 @@ status: Active
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
 last_updated: 2026-04-03
 created_date: 2026-04-03
-layer: Layer 6 (组合优化�?
+layer: Layer 6 (组合优化?
 index: DYNAMIC_CORRELATION_MODELING_SPEC_001
 estimated_hours: 80h
 review_status: Pending
 reviewer: 首席技术评审官
 review_date: 2026-04-03
 owner: 组合优化层负责人
+responsibility:
+  - 技术规格定义与实施标准制定与实施标准
 standard_type: 专业量化机构技术规格书
-applicable_scope: 全系�?compliance_level: 专业标准
+applicable_scope: 全系?compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
+---
+
 
 # 动态相关性建模技术规格书 v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-> 清风量化系统 v5.3 - 动态相关性建模详细技术设�?> **索引**: `DYNAMIC_CORRELATION_MODELING_SPEC_001`
-> **开发时�?*: 80h
+
+> 清风量化系统 v5.3 - 动态相关性建模详细技术设计> **索引**: `DYNAMIC_CORRELATION_MODELING_SPEC_001`
+> **开发时?*: 80h
 > **核心定位**: DCC-GARCH动态相关性建模，桥水核心能力
 
 ---
@@ -33,26 +53,26 @@ implementation_status: 设计阶段
 
 动态相关性建模是Layer 6组合优化层的核心模块，负责：
 - DCC-GARCH模型实现
-- 动态相关性矩阵估�?- 相关性突变检�?- 风险平价优化支持
+- 动态相关性矩阵估?- 相关性突变检?- 风险平价优化支持
 
-### 1.2 技术目�?
-- **准确�?*: 相关性预测误�?< 0.1
-- **效率**: 单次计算时间 < 2秒（100资产�?- **鲁棒�?*: 处理极端市场相关性突�?- **可扩展�?*: 支持多资产类�?
+### 1.2 技术目?
+- **准确?*: 相关性预测误?< 0.1
+- **效率**: 单次计算时间 < 2秒（100资产?- **鲁棒?*: 处理极端市场相关性突?- **可扩展?*: 支持多资产类别
 ---
 
 ## 2. 接口定义
 
-### 2.1 核心类接�?
+### 2.1 核心类接口
 ```python
 class DynamicCorrelationModel:
     """
     动态相关性模型核心类
     
-    职责: DCC-GARCH动态相关性建�?    """
+    职责: DCC-GARCH动态相关性建?    """
     
     def __init__(self, config: DCCConfig):
         """
-        初始化动态相关性模�?        
+        初始化动态相关性模?        
         Args:
             config: DCC-GARCH配置参数
         """
@@ -63,7 +83,7 @@ class DynamicCorrelationModel:
         拟合DCC-GARCH模型
         
         Args:
-            returns_data: 收益率数�?(T, N)
+            returns_data: 收益率数?(T, N)
             
         Returns:
             self: 模型实例
@@ -73,12 +93,12 @@ class DynamicCorrelationModel:
     def predict_correlation(self, 
                            horizon: int = 1) -> pd.DataFrame:
         """
-        预测未来相关性矩�?        
+        预测未来相关性矩?        
         Args:
             horizon: 预测期数
             
         Returns:
-            pd.DataFrame: 预测的相关性矩�?(N, N)
+            pd.DataFrame: 预测的相关性矩?(N, N)
         """
         pass
     
@@ -86,21 +106,21 @@ class DynamicCorrelationModel:
                                 returns_data: pd.DataFrame,
                                 threshold: float = 0.3) -> List[CorrelationBreak]:
         """
-        检测相关性突�?        
+        检测相关性突?        
         Args:
-            returns_data: 收益率数�?            threshold: 突变阈�?            
+            returns_data: 收益率数?            threshold: 突变阈?            
         Returns:
-            List[CorrelationBreak]: 相关性突变列�?        """
+            List[CorrelationBreak]: 相关性突变列?        """
         pass
     
     def get_conditional_correlation(self, 
                                    timestamp: datetime) -> pd.DataFrame:
         """
-        获取条件相关性矩�?        
+        获取条件相关性矩?        
         Args:
-            timestamp: 时间�?            
+            timestamp: 时间?            
         Returns:
-            pd.DataFrame: 条件相关性矩�?        """
+            pd.DataFrame: 条件相关性矩?        """
         pass
 ```
 
@@ -129,7 +149,7 @@ class GARCHModel:
         拟合GARCH模型
         
         Args:
-            returns: 收益率序�?            
+            returns: 收益率序?            
         Returns:
             self: 模型实例
         """
@@ -137,19 +157,19 @@ class GARCHModel:
     
     def conditional_volatility(self) -> pd.Series:
         """
-        获取条件波动�?        
+        获取条件波动?        
         Returns:
-            pd.Series: 条件波动率序�?        """
+            pd.Series: 条件波动率序?        """
         pass
     
     def forecast(self, horizon: int = 1) -> np.ndarray:
         """
-        预测未来波动�?        
+        预测未来波动?        
         Args:
             horizon: 预测期数
             
         Returns:
-            np.ndarray: 预测波动�?        """
+            np.ndarray: 预测波动?        """
         pass
 ```
 
@@ -163,11 +183,11 @@ class DCCConfig:
     garch_q: int = 1  # ARCH阶数
     dcc_a: float = 0.01  # DCC参数a
     dcc_b: float = 0.95  # DCC参数b
-    max_iter: int = 100  # 最大迭代次�?    tolerance: float = 1e-6  # 收敛容差
+    max_iter: int = 100  # 最大迭代次?    tolerance: float = 1e-6  # 收敛容差
 
 @dataclass
 class CorrelationBreak:
-    """相关性突�?""
+    """相关性突?""
     timestamp: datetime
     asset1: str
     asset2: str
@@ -191,16 +211,16 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
     算法步骤:
     1. 对每个资产拟合GARCH模型，获取标准化残差
     2. 估计DCC参数 (a, b)
-    3. 计算动态条件相关�?    
+    3. 计算动态条件相关?    
     公式:
     Q_t = (1-a-b) * Q_bar + a * eps_{t-1} * eps_{t-1}' + b * Q_{t-1}
     R_t = diag(Q_t)^{-1/2} * Q_t * diag(Q_t)^{-1/2}
     
     Args:
-        returns_data: 收益率数�?        config: 配置参数
+        returns_data: 收益率数?        config: 配置参数
         
     Returns:
-        Dict: 模型参数和结�?    """
+        Dict: 模型参数和结?    """
     T, N = returns_data.shape
     
     # 1. 拟合单变量GARCH模型
@@ -227,7 +247,7 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
         eps = standardized_residuals[t-1:t].T
         Q[t] = (1 - a - b) * Q_bar + a * (eps @ eps.T) + b * Q[t-1]
         
-        # 标准化得到相关性矩�?        D_inv = np.diag(1.0 / np.sqrt(np.diag(Q[t])))
+        # 标准化得到相关性矩?        D_inv = np.diag(1.0 / np.sqrt(np.diag(Q[t])))
         R[t] = D_inv @ Q[t] @ D_inv
     
     return {
@@ -241,18 +261,18 @@ def dcc_garch_fit(returns_data: pd.DataFrame, config: DCCConfig) -> Dict:
     }
 ```
 
-### 3.2 相关性突变检测算�?
+### 3.2 相关性突变检测算?
 ```python
 def detect_correlation_break(
     correlation_series: np.ndarray,
     threshold: float = 0.3
 ) -> List[CorrelationBreak]:
     """
-    检测相关性突�?    
-    方法: 滚动窗口相关性变化检�?    
+    检测相关性突?    
+    方法: 滚动窗口相关性变化检?    
     Args:
-        correlation_series: 相关性时间序�?(T, N, N)
-        threshold: 突变阈�?        
+        correlation_series: 相关性时间序?(T, N, N)
+        threshold: 突变阈?        
     Returns:
         List[CorrelationBreak]: 突变列表
     """
@@ -286,7 +306,7 @@ def detect_correlation_break(
 
 ```python
 class TestDynamicCorrelation:
-    """动态相关性模型测�?""
+    """动态相关性模型测?""
     
     def test_dcc_garch_fit(self):
         """测试DCC-GARCH拟合"""
@@ -303,7 +323,7 @@ class TestDynamicCorrelation:
         assert model.correlation_matrices_.shape == (500, 10, 10)
     
     def test_correlation_prediction(self):
-        """测试相关性预�?""
+        """测试相关性预?""
         returns = pd.DataFrame(np.random.randn(500, 10) * 0.02)
         
         model = DynamicCorrelationModel(DCCConfig())
@@ -318,9 +338,9 @@ class TestDynamicCorrelation:
         assert np.all(np.abs(pred_corr) <= 1.0)
     
     def test_correlation_break_detection(self):
-        """测试相关性突变检�?""
-        # 创建包含突变的数�?        returns = pd.DataFrame(np.random.randn(500, 10) * 0.02)
-        # 在第250天引入相关性突�?        returns.iloc[250:, 0] = returns.iloc[250:, 1] + np.random.randn(250) * 0.01
+        """测试相关性突变检?""
+        # 创建包含突变的数?        returns = pd.DataFrame(np.random.randn(500, 10) * 0.02)
+        # 在第250天引入相关性突?        returns.iloc[250:, 0] = returns.iloc[250:, 1] + np.random.randn(250) * 0.01
         
         model = DynamicCorrelationModel(DCCConfig())
         model.fit(returns)
@@ -337,14 +357,14 @@ class TestDynamicCorrelation:
 
 | 操作 | 数据规模 | 性能要求 |
 |------|---------|---------|
-| **模型拟合** | 100资产, 500�?| < 30�?|
-| **相关性预�?* | 100资产 | < 500ms |
-| **突变检�?* | 100资产, 500�?| < 5�?|
-| **条件相关�?* | 单次查询 | < 100ms |
+| **模型拟合** | 100资产, 500?| < 30?|
+| **相关性预?* | 100资产 | < 500ms |
+| **突变检?* | 100资产, 500?| < 5?|
+| **条件相关?* | 单次查询 | < 100ms |
 
 ---
 
-## 6. 依赖�?
+## 6. 依赖?
 ```txt
 arch>=5.0.0
 scipy>=1.7.0
@@ -354,4 +374,4 @@ pandas>=1.3.0
 
 ---
 
-**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状�?*: Final | **下一�?*: 实施开�?
+**技术规格书版本**: v1.0 | **创建日期**: 2026-04-03 | **状?*: Final | **下一?*: 实施开发

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-修复“整体 UTF-8 正常，但部分行出现 mojibake（如 æåæ´æ?* ）”的 Markdown 文档。
+修复“整体 UTF-8 正常，但部分行出现 mojibake（并可能混入控制字符）”的 Markdown 文档。
 
 策略：
 - 逐行检测：若一行不含中文（CJK=0）但包含明显 mojibake 迹象（â/Ã/ä/å/æ/é 等组合），
@@ -53,7 +53,7 @@ def fix_text(text: str) -> tuple[str, int]:
         before_cjk = cjk_count(line)
         before_ctl = len(CONTROL_RE.findall(line))
         # 触发条件：
-        # - mojibake token 明显，或含控制字符（常见于 `æ` 这类序列）
+        # - mojibake token 明显，或含控制字符
         if before_moji >= 2 or before_ctl >= 1:
             cand = reverse_latin1_utf8(line)
             if cand is not None:

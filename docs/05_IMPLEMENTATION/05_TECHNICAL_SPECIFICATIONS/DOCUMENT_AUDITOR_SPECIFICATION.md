@@ -1,62 +1,83 @@
 ---
-standard_type: 技术规�?applicable_scope: 文档审计系统
-compliance_level: 正式标准
+module_id: DOCUMENT_AUDITOR_SPECIFICATION
+version: 1.0.0
+status: Active
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 首席文档架构师
+responsibility:
+  - DOCUMENT_AUDITOR技术规范
+---
+
+﻿---
+version: 1.0.0
+standard_type: ﮔﮔﺁﻟ۶ﻟ?applicable_scope: ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﻝﺏﭨﻝﭨ
+responsibility:
+  - 系统审计分析与质量评估报告与改进建议
+compliance_level: ﮔ۲ﮒﺙﮔﮒ
 parent_document: ../README.md
-implementation_status: 已完�?owner: 文档管理�?version: 1.0.0
+implementation_status: ﮒﺓﺎﮒ؟ﮔ?owner: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?version: 1.0.0
 module_id: DOCUMENT_AUDITOR_SPECIFICATION
 created_date: 2026-04-02
 last_updated: 2026-04-02
 ---
-# 文档审计工具技术规�?
-**文档版本**: 1.0.0
-**最后更�?*: 2026-04-02
-**文档所有�?*: 文档管理�?
 ---
 
-## 1. 概述
+# ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﮔﮔﺁﻟ۶ﻟ?
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
 
-### 1.1 目标
-
-定义文档审计工具的技术规范，确保工具能够有效执行文档质量检查和审计任务�?
-### 1.2 适用范围
-
-- 链接有效性检�?- 版本格式检�?- 文档分类检�?- 元数据完整性检�?
+**ﮔﮔ۰۲ﻝﮔ؛**: 1.0.0
+**ﮔﮒﮔﺑﮔ?*: 2026-04-02
+**ﮔﮔ۰۲ﮔﮔﻟ?*: ﮔﮔ۰۲ﻝ؟۰ﻝﮒ?
 ---
 
-## 2. 架构设计
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 2.1 核心组件
+### 1.1 ﻝ؟ﮔ
+
+ﮒ؟ﻛﺗﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒﺓ۴ﮒﺓﻝﮔﮔﺁﻟ۶ﻟﺅﺙﻝ۰؟ﻛﺟﮒﺓ۴ﮒﺓﻟﺛﮒ۳ﮔﮔﮔ۶ﻟ۰ﮔﮔ۰۲ﻟﺑ۷ﻠﮔ۲ﮔ۴ﮒﮒ؟۰ﻟ؟۰ﻛﭨﭨﮒ۰ﻙ?
+### 1.2 ﻠﻝ۷ﻟﮒﺑ
+
+- ﻠﺝﮔ۴ﮔﮔﮔ۶ﮔ۲ﮔ?- ﻝﮔ؛ﮔﺙﮒﺙﮔ۲ﮔ?- ﮔﮔ۰۲ﮒﻝﺎﭨﮔ۲ﮔ?- ﮒﮔﺍﮔ؟ﮒ؟ﮔﺑﮔ۶ﮔ۲ﮔ?
+---
+
+## 2. ﮔﭘﮔﻟ؟ﺝﻟ؟۰
+
+### 2.1 ﮔﺕﮒﺟﻝﭨﻛﭨﭘ
 
 ```python
 class DocumentAuditor:
-    """文档审计�?""
+    """ﮔﮔ۰۲ﮒ؟۰ﻟ؟۰ﮒ?""
     
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
         self.issues: List[AuditIssue] = []
         
     def scan_markdown_files(self) -> List[Path]:
-        """扫描所有Markdown文件"""
+        """ﮔ،ﮔﮔﮔMarkdownﮔﻛﭨﭘ"""
         
     def check_links(self, files: List[Path]) -> List[AuditIssue]:
-        """检查链接有效�?""
+        """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
         
     def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-        """检查版本格�?""
+"""ﮔ۲ﮔ۴ﻝﮔ؛ﮔﺙﮒﺙ?""
         
     def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-        """检查文档分�?""
+        """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
         
     def run_full_audit(self) -> Dict:
-        """执行完整审计"""
+        """ﮔ۶ﻟ۰ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰"""
 ```
 
-### 2.2 数据结构
+### 2.2 ﮔﺍﮔ؟ﻝﭨﮔ
 
 ```python
 @dataclass
 class AuditIssue:
-    """审计问题"""
+    """ﮒ؟۰ﻟ؟۰ﻠ؟ﻠ۱"""
     file_path: str
     issue_type: str
     severity: str  # 'error', 'warning', 'info'
@@ -67,15 +88,15 @@ class AuditIssue:
 
 ---
 
-## 3. 功能规范
+## 3. ﮒﻟﺛﻟ۶ﻟ
 
-### 3.1 链接检�?
-**检查内�?*:
-- 内部链接有效�?- 相对路径正确�?- 文件存在�?
-**实现方式**:
+### 3.1 ﻠﺝﮔ۴ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮒﻠ۷ﻠﺝﮔ۴ﮔﮔﮔ?- ﻝﺕﮒﺁﺗﻟﺓﺁﮒﺝﮔ۲ﻝ۰؟ﮔ?- ﮔﻛﭨﭘﮒﮒ۷ﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_links(self, files: List[Path]) -> List[AuditIssue]:
-    """检查链接有效�?""
+    """ﮔ۲ﮔ۴ﻠﺝﮔ۴ﮔﮔﮔ?""
     for file in files:
         content = file.read_text(encoding='utf-8')
         links = self._extract_links(content)
@@ -86,17 +107,17 @@ def check_links(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='broken_link',
                     severity='warning',
-                    message=f'链接目标不存�? {link}'
+message=f'ﻠﺝﮔ۴ﻝ؟ﮔﻛﺕﮒﮒ? {link}'
                 ))
 ```
 
-### 3.2 版本检�?
-**检查内�?*:
-- 版本号格式（MAJOR.MINOR.PATCH�?- 版本一致�?
-**实现方式**:
+### 3.2 ﻝﮔ؛ﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﺅﺙMAJOR.MINOR.PATCHﺅﺙ?- ﻝﮔ؛ﻛﺕﻟﺑﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_versions(self, files: List[Path]) -> List[AuditIssue]:
-    """检查版本格�?""
+"""ﮔ۲ﮔ۴ﻝﮔ؛ﮔﺙﮒﺙ?""
     VERSION_PATTERN = re.compile(r'version:\s*["\']?(\d+\.\d+\.\d+)["\']?')
     
     for file in files:
@@ -110,17 +131,17 @@ def check_versions(self, files: List[Path]) -> List[AuditIssue]:
                     file_path=str(file),
                     issue_type='invalid_version',
                     severity='warning',
-                    message=f'版本号格式不正确: {version}'
+message=f'ﻝﮔ؛ﮒﺓﮔﺙﮒﺙﻛﺕﮔ۲ﻝ۰؟: {version}'
                 ))
 ```
 
-### 3.3 分类检�?
-**检查内�?*:
-- 文档分类规范�?- 目录结构一致�?
-**实现方式**:
+### 3.3 ﮒﻝﺎﭨﮔ۲ﮔ?
+**ﮔ۲ﮔ۴ﮒﮒ؟?*:
+- ﮔﮔ۰۲ﮒﻝﺎﭨﻟ۶ﻟﮔ?- ﻝ؟ﮒﺛﻝﭨﮔﻛﺕﻟﺑﮔ?
+**ﮒ؟ﻝﺍﮔﺗﮒﺙ**:
 ```python
 def check_classification(self, files: List[Path]) -> List[AuditIssue]:
-    """检查文档分�?""
+    """ﮔ۲ﮔ۴ﮔﮔ۰۲ﮒﻝﺎ?""
     STANDARD_CATEGORIES = {
         '01_FRAMEWORK',
         '02_FACTOR_LIBRARY',
@@ -135,47 +156,47 @@ def check_classification(self, files: List[Path]) -> List[AuditIssue]:
                 file_path=str(file),
                 issue_type='non_standard_category',
                 severity='info',
-                message=f'非标准分�? {category}'
+message=f'ﻠﮔﮒﮒﻝﺎ? {category}'
             ))
 ```
 
 ---
 
-## 4. 性能要求
+## 4. ﮔ۶ﻟﺛﻟ۵ﮔﺎ
 
-### 4.1 性能指标
+### 4.1 ﮔ۶ﻟﺛﮔﮔ
 
-| 指标 | 要求 |
+| ﮔﮔ | ﻟ۵ﮔﺎ |
 |------|------|
-| **扫描速度** | �?00文件/分钟 |
-| **内存使用** | �?00MB |
-| **报告生成** | �?�?|
+| **ﮔ،ﮔﻠﮒﭦ۵** | ﻗ?00ﮔﻛﭨﭘ/ﮒﻠ |
+| **ﮒﮒﻛﺛﺟﻝ۷** | ﻗ?00MB |
+| **ﮔ۴ﮒﻝﮔ** | ﻗ?ﻝ۶?|
 
-### 4.2 优化策略
+### 4.2 ﻛﺙﮒﻝﻝ۴
 
-- 使用生成器处理大文件
-- 并行处理多个文件
-- 缓存文件索引
+- ﻛﺛﺟﻝ۷ﻝﮔﮒ۷ﮒ۳ﻝﮒ۳۶ﮔﻛﭨﭘ
+- ﮒﺗﭘﻟ۰ﮒ۳ﻝﮒ۳ﻛﺕ۹ﮔﻛﭨﭘ
+- ﻝﺙﮒﮔﻛﭨﭘﻝﺑ۱ﮒﺙ
 
 ---
 
-## 5. 接口规范
+## 5. ﮔ۴ﮒ۲ﻟ۶ﻟ
 
-### 5.1 命令行接�?
+### 5.1 ﮒﺛﻛﭨ۳ﻟ۰ﮔ۴ﮒ?
 ```bash
-# 检查链�?python scripts/document_auditor.py --check-links
+# ﮔ۲ﮔ۴ﻠﺝﮔ?python scripts/document_auditor.py --check-links
 
-# 检查版�?python scripts/document_auditor.py --check-versions
+# ﮔ۲ﮔ۴ﻝﮔ?python scripts/document_auditor.py --check-versions
 
-# 检查分�?python scripts/document_auditor.py --check-classification
+# ﮔ۲ﮔ۴ﮒﻝﺎ?python scripts/document_auditor.py --check-classification
 
-# 完整审计
+# ﮒ؟ﮔﺑﮒ؟۰ﻟ؟۰
 python scripts/document_auditor.py --all
 ```
 
-### 5.2 输出格式
+### 5.2 ﻟﺝﮒﭦﮔﺙﮒﺙ
 
-**JSON格式**:
+**JSONﮔﺙﮒﺙ**:
 ```json
 {
   "summary": {
@@ -196,25 +217,25 @@ python scripts/document_auditor.py --all
 
 ---
 
-## 6. 扩展�?
-### 6.1 插件机制
+## 6. ﮔ۸ﮒﺎﮔ?
+### 6.1 ﮔﻛﭨﭘﮔﭦﮒﭘ
 
-支持自定义检查规�?
+ﮔﺁﮔﻟ۹ﮒ؟ﻛﺗﮔ۲ﮔ۴ﻟ۶ﮒ?
 ```python
 class CustomAuditRule:
-    """自定义审计规�?""
+    """ﻟ۹ﮒ؟ﻛﺗﮒ؟۰ﻟ؟۰ﻟ۶ﮒ?""
     
     def check(self, file: Path) -> List[AuditIssue]:
-        """执行检�?""
+        """ﮔ۶ﻟ۰ﮔ۲ﮔ?""
         pass
 
-# 注册规则
+# ﮔﺏ۷ﮒﻟ۶ﮒ
 auditor.register_rule(CustomAuditRule())
 ```
 
-### 6.2 配置文件
+### 6.2 ﻠﻝﺛ؟ﮔﻛﭨﭘ
 
-支持配置文件定制:
+ﮔﺁﮔﻠﻝﺛ؟ﮔﻛﭨﭘﮒ؟ﮒﭘ:
 ```yaml
 # audit_config.yaml
 rules:
@@ -229,11 +250,11 @@ rules:
 
 ---
 
-## 7. 参考文�?
-- [文档治理流程标准](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
-- [文档分类标准](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
+## 7. ﮒﻟﮔﮔ۰?
+- [ﮔﮔ۰۲ﮔﺎﭨﻝﮔﭖﻝ۷ﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md)
+- [ﮔﮔ۰۲ﮒﻝﺎﭨﮔﮒ](../../09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md)
 
 ---
 
-**文档状�?*: 正式标准
-**下次审查**: 2026-07-02
+**ﮔﮔ۰۲ﻝﭘﮔ?*: ﮔ۲ﮒﺙﮔﮒ
+**ﻛﺕﮔ؛۰ﮒ؟۰ﮔ۴**: 2026-07-02

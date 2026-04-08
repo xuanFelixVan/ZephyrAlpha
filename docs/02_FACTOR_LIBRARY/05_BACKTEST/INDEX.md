@@ -1,77 +1,48 @@
 ---
-module_id: INDEX_BACKTEST_001
-version: 1.0.1
+module_id: FACTOR_LIBRARY_05_BACKTEST_INDEX
+version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: 2026-04-04
-owner: 首席文档架构�?standard_type: 目录索引
-applicable_scope: 因子回测
+created_date: 2026-04-07
+last_updated: 2026-04-07
+owner: 文档管理团队
+responsibility:
+  - 目录导航
+  - 模块索引
+  - 职责协调
+standard_type: 索引文档
+applicable_scope: 因子库
 compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 已完�?---
-
-# 因子回测目录索引
-
-> 因子回测的核心索引文件，提供回测方法论、验证流程和过拟合测�?
 ---
+# 05_BACKTEST 回测系统
+
+> **核心职责**: 因子回测框架、流程和结果分析
+> **职责边界**: 
+> - ✅ 本文档负责：目录导航、模块索引、职责协调
+> - ❌ 本文档不负责：具体实现细节、其他模块内容
+
+---
+
+## 📋 概述
+
+因子回测框架、流程和结果分析
 
 ## 📂 目录结构
 
-### 子目录
-
-| 目录 | 说明 | 文件数 |
-|------|------|--------|
-| [value_factors/](./value_factors/INDEX.md) | 价值因子回测报告 | 2个 |
-| [ic_reports/](./ic_reports/README.md) | 因子IC验证报告 | 1个 |
-| [strategy_reports/](./strategy_reports/README.md) | 策略回测报告 | 1个 |
-
-### 核心文档
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| [因子验证蓝图](./FACTOR_VALIDATION_BLUEPRINT.md) | 因子验证的完整蓝图 | ⭐⭐⭐⭐⭐ |
-| [因子衰减测试](./06_FACTOR_DECAY.md) | 因子IC衰减分析 | ⭐⭐⭐⭐⭐ |
-| [分层回测](./07_LAYERED_BACKTEST.md) | 因子分层回测方法 | ⭐⭐⭐⭐⭐ |
-| [过拟合测试](./09_OVERFITTING_TEST.md) | 过拟合检测和防范 | ⭐⭐⭐⭐ |
-| [相关性矩阵](./CORRELATION_MATRIX.md) | 因子相关性分析 | ⭐⭐⭐⭐ |
-| [回测概览](./README.md) | 回测系统概述 | ⭐⭐⭐ | ⭐⭐�?|
+- [BACKTEST_REORGANIZATION](./BACKTEST_REORGANIZATION.md)
+- [README](./README.md)
 
 ---
 
-## 🔍 快速导�?
-### 回测流程
+## 🎯 核心职责
 
-```
-因子计算 �?IC测试 �?分层回测 �?相关性分�?�?过拟合测�?�?入库决策
-```
-
-### 关键指标
-
-- **IC (Information Coefficient)**: 因子预测能力
-- **ICIR (IC Information Ratio)**: IC稳定�?- **分层收益**: Top-Bottom收益�?- **换手�?*: 因子信号换手成本
-- **最大回�?*: 策略风险控制
+1. **回测框架设计**
+2. **回测流程管理**
+3. **回测结果分析**
 
 ---
 
-## 📊 回测标准
+## 变更记录
 
-| 指标 | 标准 | 说明 |
-|------|------|------|
-| IC均�?| > 0.03 | 因子有效�?|
-| ICIR | > 0.5 | IC稳定�?|
-| IC t�?| > 2.0 | 统计显著�?|
-| Top-Bottom收益 | > 10% | 分层效果 |
-| 换手�?| < 50% | 交易成本控制 |
-
----
-
-## 📚 相关文档
-
-- [因子筛选策略](../01_STANDARDS/FACTOR_SCREENING_STRATEGY.md)
-- [因子验证指南](../01_STANDARDS/FACTOR_VALIDATION_GUIDE.md)
-- [因子监控](../07_FACTOR_MONITORING/FACTOR_MONITORING.md)
-
----
-
-> **最后更�?*: 2026-04-04  
-> **维护�?*: 首席文档架构�?
+| 版本 | 日期 | 变更内容 | 变更人 |
+|------|------|----------|--------|
+| v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |

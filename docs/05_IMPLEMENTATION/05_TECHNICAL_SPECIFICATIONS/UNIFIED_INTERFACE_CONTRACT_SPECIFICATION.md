@@ -3,53 +3,62 @@ module_id: UNIFIED_INTERFACE_CONTRACT_SPEC_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席技术评审官
-standard_type: 接口契约规范
-applicable_scope: Layer 4 机器学习层及相关模块
-compliance_level: 专业标准
+last_updated: '2026-04-07'
+owner: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
+responsibility:
+- 系统实施与部署管理与优化维护
+standard_type: ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ
+applicable_scope: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
+compliance_level: ﻛﺕﻛﺕﮔﮒ
+---
 ---
 
-# 统一接口契约规范 v1.0
 
-> **文档版本**: v1.0
-> **创建日期**: 2026-04-03
-> **适用范围**: Layer 4 机器学习层及相关模块
-> **目的**: 消除接口重复定义，建立统一的接口契�?
+# ﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﻟ۶ﻟ v1.0
+> **核心职责**: 文档内容说明
+> **职责边界**: 
+> - ✅ 本文档负责：文档内容说明相关内容
+> - ❌ 本文档不负责：其他模块内容
+
+
+> **ﮔﮔ۰۲ﻝﮔ؛**: v1.0
+> **ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
+> **ﻠﻝ۷ﻟﮒﺑ**: Layer 4 ﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒ
+> **ﻝ؟ﻝ**: ﮔﭘﻠ۳ﮔ۴ﮒ۲ﻠﮒ۳ﮒ؟ﻛﺗﺅﺙﮒﭨﭦﻝ،ﻝﭨﻛﺕﻝﮔ۴ﮒ۲ﮒ۴ﺅﺟ?
 ---
 
-## 1. 概述
+## 1. ﮔ۵ﻟﺟﺍ
 
-### 1.1 文档目的
+### 1.1 ﮔﮔ۰۲ﻝ؟ﻝ
 
-本文档定义了机器学习层及相关模块的统一接口契约，解决以下问题：
-- 接口定义重复（因子计算、模型训练、特征服务）
-- 职责边界不清
-- 调用关系混乱
+ﮔ؛ﮔﮔ۰۲ﮒ؟ﻛﺗﻛﭦﮔﭦﮒ۷ﮒ۵ﻛﺗﮒﺎﮒﻝﺕﮒﺏﮔ۷۰ﮒﻝﻝﭨﻛﺕﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ﺅﺙﻟ۶۲ﮒﺏﻛﭨ۴ﻛﺕﻠ؟ﻠ۱ﺅﺙ
+- ﮔ۴ﮒ۲ﮒ؟ﻛﺗﻠﮒ۳ﺅﺙﮒﮒﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟ﻝﭨﻙﻝﺗﮒﺝﮔﮒ۰ﺅﺙ
+- ﻟﻟﺑ۲ﻟﺝﺗﻝﻛﺕﮔﺕ
+- ﻟﺍﻝ۷ﮒﺏﻝﺏﭨﮔﺓﺓﻛﺗﺎ
 
-### 1.2 适用模块
+### 1.2 ﻠﻝ۷ﮔ۷۰ﮒ
 
-| 模块 | 接口类型 | 契约版本 |
+| ﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﻝﺎﭨﮒ | ﮒ۴ﻝﭦ۵ﻝﮔ؛ |
 |------|----------|----------|
-| FactorCalculator | 因子计算 | IFactorCalculator v1.0 |
-| AlphaFactorFactory | 因子计算 | IFactorCalculator v1.0 |
-| QlibAlpha158 | 因子计算 | IFactorCalculator v1.0 |
-| ModelTrainingPipeline | 模型训练 | IModelTrainer v1.0 |
-| LSTMModel | 模型训练 | IModelTrainer v1.0 |
-| TransformerModel | 模型训练 | IModelTrainer v1.0 |
-| FeatureEngineering | 特征服务 | IFeatureService v1.0 |
-| FeatureStore | 特征服务 | IFeatureService v1.0 |
+| FactorCalculator | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| AlphaFactorFactory | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| QlibAlpha158 | ﮒﮒﻟ؟۰ﻝ؟ | IFactorCalculator v1.0 |
+| ModelTrainingPipeline | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
+| LSTMModel | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
+| TransformerModel | ﮔ۷۰ﮒﻟ؟ﻝﭨ | IModelTrainer v1.0 |
+| FeatureEngineering | ﻝﺗﮒﺝﮔﮒ۰ | IFeatureService v1.0 |
+| FeatureStore | ﻝﺗﮒﺝﮔﮒ۰ | IFeatureService v1.0 |
 
 ---
 
-## 2. 因子计算接口契约
+## 2. ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
 ### 2.1 IFactorCalculator v1.0
 
-**职责**: 定义因子计算的标准接�?
-**实现模块**: FactorCalculator (Layer 2), QlibAlpha158 (Layer 4)
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮒﮒﻟ؟۰ﻝ؟ﻝﮔﮒﮔ۴ﺅﺟ?
+**ﮒ؟ﻝﺍﮔ۷۰ﮒ**: FactorCalculator (Layer 2), QlibAlpha158 (Layer 4)
 
-**调用�?*: AlphaFactorFactory, 策略引擎
+**ﻟﺍﻝ۷ﺅﺟ?*: AlphaFactorFactory, ﻝﻝ۴ﮒﺙﮔ
 
 ```python
 from abc import ABC, abstractmethod
@@ -61,7 +70,7 @@ import pandas as pd
 
 @dataclass
 class FactorInput:
-    """因子计算输入"""
+"""ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴"""
     instruments: List[str]
     start_date: datetime
     end_date: datetime
@@ -71,7 +80,7 @@ class FactorInput:
 
 @dataclass
 class FactorOutput:
-    """因子计算输出"""
+"""ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒﭦ"""
     factor_values: pd.DataFrame
     factor_names: List[str]
     calculation_time: float
@@ -79,15 +88,15 @@ class FactorOutput:
 
 
 class IFactorCalculator(ABC):
-    """因子计算接口契约 v1.0
+"""ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
-    实现模块:
-    - FactorCalculator: 基础因子计算 (Layer 2)
-    - QlibAlpha158: AI因子计算 (Layer 4)
+    ﮒ؟ﻝﺍﮔ۷۰ﮒ:
+- FactorCalculator: ﮒﭦﻝ۰ﮒﮒﻟ؟۰ﻝ؟ (Layer 2)
+- QlibAlpha158: AIﮒﮒﻟ؟۰ﻝ؟ (Layer 4)
     
-    调用�?
-    - AlphaFactorFactory: 因子筛选和合成
-    - 策略引擎: 直接使用因子
+    ﻟﺍﻝ۷ﺅﺟ?
+- AlphaFactorFactory: ﮒﮒﻝﻠﮒﮒﮔ
+- ﻝﻝ۴ﮒﺙﮔ: ﻝﺑﮔ۴ﻛﺛﺟﻝ۷ﮒﮒ
     """
     
     @abstractmethod
@@ -95,69 +104,69 @@ class IFactorCalculator(ABC):
         self,
         factor_input: FactorInput
     ) -> FactorOutput:
-        """计算因子
+"""ﻟ؟۰ﻝ؟ﮒﮒ
         
         Args:
-            factor_input: 因子计算输入
+factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
             
         Returns:
-            FactorOutput: 因子计算结果
+FactorOutput: ﮒﮒﻟ؟۰ﻝ؟ﻝﭨﮔ
             
         Raises:
-            FactorCalculationError: 因子计算失败
-            InvalidInputError: 输入参数无效
+FactorCalculationError: ﮒﮒﻟ؟۰ﻝ؟ﮒ۳ﺎﻟﺑ۴
+InvalidInputError: ﻟﺝﮒ۴ﮒﮔﺍﮔﮔ
         """
         pass
     
     @abstractmethod
     def get_factor_definitions(self) -> Dict[str, Dict[str, Any]]:
-        """获取因子定义
+"""ﻟﺓﮒﮒﮒﮒ؟ﻛﺗ
         
         Returns:
-            Dict[str, Dict]: 因子名称 -> 因子定义
+Dict[str, Dict]: ﮒﮒﮒﻝ۶ﺍ -> ﮒﮒﮒ؟ﻛﺗ
         """
         pass
     
     @abstractmethod
     def validate_input(self, factor_input: FactorInput) -> bool:
-        """验证输入参数
+        """ﻠ۹ﻟﺁﻟﺝﮒ۴ﮒﮔﺍ
         
         Args:
-            factor_input: 因子计算输入
+factor_input: ﮒﮒﻟ؟۰ﻝ؟ﻟﺝﮒ۴
             
         Returns:
-            bool: 验证是否通过
+            bool: ﻠ۹ﻟﺁﮔﺁﮒ۵ﻠﻟﺟ
         """
         pass
 ```
 
-### 2.2 接口实现映射
+### 2.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
-| 实现模块 | 接口方法 | 因子类型 | Layer |
+| ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮒﮒﻝﺎﭨﮒ | Layer |
 |----------|----------|----------|-------|
-| FactorCalculator | calculate_factors | 价值、成长、动量、技术指�?| Layer 2 |
-| QlibAlpha158 | calculate_factors | Alpha158 AI因子 | Layer 4 |
-| BarraStyleFactorCalculator | calculate_factors | 风格因子 | Layer 6 |
+| FactorCalculator | calculate_factors | ﻛﭨﺓﮒﺙﻙﮔﻠﺟﻙﮒ۷ﻠﻙﮔﮔﺁﮔﺅﺟ?| Layer 2 |
+| QlibAlpha158 | calculate_factors | Alpha158 AIﮒﮒ | Layer 4 |
+| BarraStyleFactorCalculator | calculate_factors | ﻠ۲ﮔﺙﮒﮒ | Layer 6 |
 
-### 2.3 调用关系
+### 2.3 ﻟﺍﻝ۷ﮒﺏﻝﺏﭨ
 
 ```
 AlphaFactorFactory
-    ├── FactorCalculator.calculate_factors() -> 基础因子
-    ├── QlibAlpha158.calculate_factors() -> AI因子
-    └── 内部筛选和合成逻辑
+ﻗﻗﻗ FactorCalculator.calculate_factors() -> ﮒﭦﻝ۰ﮒﮒ
+ﻗﻗﻗ QlibAlpha158.calculate_factors() -> AIﮒﮒ
+ﻗﻗﻗ ﮒﻠ۷ﻝﻠﮒﮒﮔﻠﭨﻟﺝ
 ```
 
 ---
 
-## 3. 模型训练接口契约
+## 3. ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
 ### 3.1 IModelTrainer v1.0
 
-**职责**: 定义模型训练的标准接�?
-**实现模块**: LSTMTrainer, TransformerTrainer
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﮔ۷۰ﮒﻟ؟ﻝﭨﻝﮔﮒﮔ۴ﺅﺟ?
+**ﮒ؟ﻝﺍﮔ۷۰ﮒ**: LSTMTrainer, TransformerTrainer
 
-**调用�?*: ModelTrainingPipeline
+**ﻟﺍﻝ۷ﺅﺟ?*: ModelTrainingPipeline
 
 ```python
 from abc import ABC, abstractmethod
@@ -169,7 +178,7 @@ import numpy as np
 
 @dataclass
 class TrainingConfig:
-    """训练配置"""
+"""ﻟ؟ﻝﭨﻠﻝﺛ؟"""
     num_epochs: int = 100
     batch_size: int = 32
     learning_rate: float = 0.001
@@ -181,7 +190,7 @@ class TrainingConfig:
 
 @dataclass
 class TrainingResult:
-    """训练结果"""
+"""ﻟ؟ﻝﭨﻝﭨﮔ"""
     model_id: str
     training_history: Dict[str, List[float]]
     best_epoch: int
@@ -192,12 +201,12 @@ class TrainingResult:
 
 
 class IModelTrainer(ABC):
-    """模型训练接口契约 v1.0
+"""ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
-    实现模块:
-    - LSTMTrainer: LSTM模型训练�?    - TransformerTrainer: Transformer模型训练�?    
-    调用�?
-    - ModelTrainingPipeline: 通用训练流水�?    """
+    ﮒ؟ﻝﺍﮔ۷۰ﮒ:
+- LSTMTrainer: LSTMﮔ۷۰ﮒﻟ؟ﻝﭨﺅﺟ?    - TransformerTrainer: Transformerﮔ۷۰ﮒﻟ؟ﻝﭨﺅﺟ?
+    ﻟﺍﻝ۷ﺅﺟ?
+- ModelTrainingPipeline: ﻠﻝ۷ﻟ؟ﻝﭨﮔﭖﮔﺍﺑﺅﺟ?    """
     
     @abstractmethod
     def train(
@@ -207,76 +216,76 @@ class IModelTrainer(ABC):
         X_val: np.ndarray,
         y_val: np.ndarray
     ) -> TrainingResult:
-        """训练模型
+"""ﻟ؟ﻝﭨﮔ۷۰ﮒ
         
         Args:
-            X_train: 训练特征
-            y_train: 训练标签
-            X_val: 验证特征
-            y_val: 验证标签
+X_train: ﻟ؟ﻝﭨﻝﺗﮒﺝ
+y_train: ﻟ؟ﻝﭨﮔﻝﺝ
+            X_val: ﻠ۹ﻟﺁﻝﺗﮒﺝ
+y_val: ﻠ۹ﻟﺁﮔﻝﺝ
             
         Returns:
-            TrainingResult: 训练结果
+TrainingResult: ﻟ؟ﻝﭨﻝﭨﮔ
         """
         pass
     
     @abstractmethod
     def save_model(self, path: str) -> None:
-        """保存模型
+"""ﻛﺟﮒﮔ۷۰ﮒ
         
         Args:
-            path: 保存路径
+path: ﻛﺟﮒﻟﺓﺁﮒﺝ
         """
         pass
     
     @abstractmethod
     def load_model(self, path: str) -> None:
-        """加载模型
+"""ﮒﻟﺛﺛﮔ۷۰ﮒ
         
         Args:
-            path: 模型路径
+            path: ﮔ۷۰ﮒﻟﺓﺁﮒﺝ
         """
         pass
     
     @abstractmethod
     def get_model_config(self) -> Dict[str, Any]:
-        """获取模型配置
+        """ﻟﺓﮒﮔ۷۰ﮒﻠﻝﺛ؟
         
         Returns:
-            Dict: 模型配置
+            Dict: ﮔ۷۰ﮒﻠﻝﺛ؟
         """
         pass
 ```
 
-### 3.2 接口实现映射
+### 3.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
-| 实现模块 | 接口方法 | 模型类型 | 职责 |
+| ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮔ۷۰ﮒﻝﺎﭨﮒ | ﻟﻟﺑ۲ |
 |----------|----------|----------|------|
-| LSTMTrainer | train() | LSTM | 模型特定训练逻辑 |
-| TransformerTrainer | train() | Transformer | 模型特定训练逻辑 |
+| LSTMTrainer | train() | LSTM | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﻠﭨﻟﺝ |
+| TransformerTrainer | train() | Transformer | ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨﻠﭨﻟﺝ |
 
-### 3.3 调用关系
+### 3.3 ﻟﺍﻝ۷ﮒﺏﻝﺏﭨ
 
 ```
-ModelTrainingPipeline (通用流水�?
-    �?    ├── 数据版本管理 (DVC)
-    ├── 超参数优�?(Optuna)
-    ├── 实验跟踪 (MLflow)
-    �?    └── IModelTrainer.train() (模型特定训练)
-            ├── LSTMTrainer.train()
-            └── TransformerTrainer.train()
+ModelTrainingPipeline (ﻠﻝ۷ﮔﭖﮔﺍﺑﺅﺟ?
+    ﺅﺟ?    ﻗﻗﻗ ﮔﺍﮔ؟ﻝﮔ؛ﻝ؟۰ﻝ (DVC)
+    ﻗﻗﻗ ﻟﭘﮒﮔﺍﻛﺙﺅﺟ?(Optuna)
+    ﻗﻗﻗ ﮒ؟ﻠ۹ﻟﺓﻟﺕ۹ (MLflow)
+ﺅﺟ?    ﻗﻗﻗ IModelTrainer.train() (ﮔ۷۰ﮒﻝﺗﮒ؟ﻟ؟ﻝﭨ)
+            ﻗﻗﻗ LSTMTrainer.train()
+            ﻗﻗﻗ TransformerTrainer.train()
 ```
 
 ---
 
-## 4. 特征服务接口契约
+## 4. ﻝﺗﮒﺝﮔﮒ۰ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵
 
 ### 4.1 IFeatureService v1.0
 
-**职责**: 定义特征服务的标准接�?
-**实现模块**: FeatureStore
+**ﻟﻟﺑ۲**: ﮒ؟ﻛﺗﻝﺗﮒﺝﮔﮒ۰ﻝﮔﮒﮔ۴ﺅﺟ?
+**ﮒ؟ﻝﺍﮔ۷۰ﮒ**: FeatureStore
 
-**调用�?*: 模型训练、在线推�?
+**ﻟﺍﻝ۷ﺅﺟ?*: ﮔ۷۰ﮒﻟ؟ﻝﭨﻙﮒ۷ﻝﭦﺟﮔ۷ﺅﺟ?
 ```python
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Any
@@ -287,7 +296,7 @@ import pandas as pd
 
 @dataclass
 class FeatureVectorRequest:
-    """特征向量请求"""
+    """ﻝﺗﮒﺝﮒﻠﻟﺁﺓﮔﺎ"""
     entity_keys: List[str]
     feature_names: List[str]
     entity_type: str = 'stock'
@@ -296,7 +305,7 @@ class FeatureVectorRequest:
 
 @dataclass
 class FeatureVectorResponse:
-    """特征向量响应"""
+    """ﻝﺗﮒﺝﮒﻠﮒﮒﭦ"""
     entity_key: str
     feature_values: Dict[str, Any]
     feature_timestamps: Dict[str, datetime]
@@ -305,7 +314,7 @@ class FeatureVectorResponse:
 
 @dataclass
 class HistoricalFeaturesRequest:
-    """历史特征请求"""
+    """ﮒﮒﺎﻝﺗﮒﺝﻟﺁﺓﮔﺎ"""
     entity_keys: List[str]
     feature_names: List[str]
     start_time: datetime
@@ -314,14 +323,14 @@ class HistoricalFeaturesRequest:
 
 
 class IFeatureService(ABC):
-    """特征服务接口契约 v1.0
+    """ﻝﺗﮒﺝﮔﮒ۰ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ v1.0
     
-    实现模块:
-    - FeatureStore: 特征存储服务
+    ﮒ؟ﻝﺍﮔ۷۰ﮒ:
+- FeatureStore: ﻝﺗﮒﺝﮒﮒ۷ﮔﮒ۰
     
-    调用�?
-    - ModelTrainingPipeline: 训练数据获取
-    - ModelServingService: 在线推理特征
+    ﻟﺍﻝ۷ﺅﺟ?
+- ModelTrainingPipeline: ﻟ؟ﻝﭨﮔﺍﮔ؟ﻟﺓﮒ
+    - ModelServingService: ﮒ۷ﻝﭦﺟﮔ۷ﻝﻝﺗﮒﺝ
     """
     
     @abstractmethod
@@ -329,13 +338,13 @@ class IFeatureService(ABC):
         self,
         request: FeatureVectorRequest
     ) -> List[FeatureVectorResponse]:
-        """获取在线特征
+        """ﻟﺓﮒﮒ۷ﻝﭦﺟﻝﺗﮒﺝ
         
         Args:
-            request: 特征请求
+            request: ﻝﺗﮒﺝﻟﺁﺓﮔﺎ
             
         Returns:
-            List[FeatureVectorResponse]: 特征向量列表
+            List[FeatureVectorResponse]: ﻝﺗﮒﺝﮒﻠﮒﻟ۰۷
         """
         pass
     
@@ -344,13 +353,13 @@ class IFeatureService(ABC):
         self,
         request: HistoricalFeaturesRequest
     ) -> pd.DataFrame:
-        """获取历史特征
+        """ﻟﺓﮒﮒﮒﺎﻝﺗﮒﺝ
         
         Args:
-            request: 历史特征请求
+            request: ﮒﮒﺎﻝﺗﮒﺝﻟﺁﺓﮔﺎ
             
         Returns:
-            pd.DataFrame: 历史特征数据
+            pd.DataFrame: ﮒﮒﺎﻝﺗﮒﺝﮔﺍﮔ؟
         """
         pass
     
@@ -360,58 +369,58 @@ class IFeatureService(ABC):
         feature_name: str,
         feature_definition: Dict[str, Any]
     ) -> str:
-        """注册特征
+        """ﮔﺏ۷ﮒﻝﺗﮒﺝ
         
         Args:
-            feature_name: 特征名称
-            feature_definition: 特征定义
+            feature_name: ﻝﺗﮒﺝﮒﻝ۶ﺍ
+            feature_definition: ﻝﺗﮒﺝﮒ؟ﻛﺗ
             
         Returns:
-            str: 特征ID
+            str: ﻝﺗﮒﺝID
         """
         pass
 ```
 
-### 4.2 接口实现映射
+### 4.2 ﮔ۴ﮒ۲ﮒ؟ﻝﺍﮔﮒﺍ
 
-| 实现模块 | 接口方法 | 服务类型 | 职责 |
+| ﮒ؟ﻝﺍﮔ۷۰ﮒ | ﮔ۴ﮒ۲ﮔﺗﮔﺏ | ﮔﮒ۰ﻝﺎﭨﮒ | ﻟﻟﺑ۲ |
 |----------|----------|----------|------|
-| FeatureStore | get_online_features() | 在线服务 | 实时特征检�?|
-| FeatureStore | get_historical_features() | 离线服务 | 批量特征检�?|
+| FeatureStore | get_online_features() | ﮒ۷ﻝﭦﺟﮔﮒ۰ | ﮒ؟ﮔﭘﻝﺗﮒﺝﮔ۲ﺅﺟ?|
+| FeatureStore | get_historical_features() | ﻝ۵ﭨﻝﭦﺟﮔﮒ۰ | ﮔﺗﻠﻝﺗﮒﺝﮔ۲ﺅﺟ?|
 
-### 4.3 与FeatureEngineering的协�?
+### 4.3 ﻛﺕFeatureEngineeringﻝﮒﺅﺟ?
 ```
-FeatureEngineering (特征工程)
-    �?    ├── 特征生成
-    ├── 特征选择
-    ├── 特征变换
-    └── 输出计算后的特征
-            �?            �?FeatureStore (特征存储)
-    �?    ├── register_feature() -> 注册特征
-    ├── 存储特征数据
-    └── get_online_features() -> 服务特征
+FeatureEngineering (ﻝﺗﮒﺝﮒﺓ۴ﻝ۷)
+    ﺅﺟ?    ﻗﻗﻗ ﻝﺗﮒﺝﻝﮔ
+    ﻗﻗﻗ ﻝﺗﮒﺝﻠﮔ۸
+    ﻗﻗﻗ ﻝﺗﮒﺝﮒﮔ۱
+    ﻗﻗﻗ ﻟﺝﮒﭦﻟ؟۰ﻝ؟ﮒﻝﻝﺗﮒﺝ
+ﺅﺟ?            ﺅﺟ?FeatureStore (ﻝﺗﮒﺝﮒﮒ۷)
+    ﺅﺟ?    ﻗﻗﻗ register_feature() -> ﮔﺏ۷ﮒﻝﺗﮒﺝ
+ﻗﻗﻗ ﮒﮒ۷ﻝﺗﮒﺝﮔﺍﮔ؟
+    ﻗﻗﻗ get_online_features() -> ﮔﮒ۰ﻝﺗﮒﺝ
 ```
 
 ---
 
-## 5. 接口版本管理
+## 5. ﮔ۴ﮒ۲ﻝﮔ؛ﻝ؟۰ﻝ
 
-### 5.1 版本控制规则
+### 5.1 ﻝﮔ؛ﮔ۶ﮒﭘﻟ۶ﮒ
 
-1. **向后兼容**: 新版本必须向后兼容旧版本
-2. **废弃通知**: 废弃接口需提前3个月通知
-3. **版本标识**: 所有接口需标注版本�?
-### 5.2 变更记录
+1. **ﮒﮒﮒﺙﮒ؟ﺗ**: ﮔﺍﻝﮔ؛ﮒﺟﻠ۰ﭨﮒﮒﮒﺙﮒ؟ﺗﮔ۶ﻝﮔ؛
+2. **ﮒﭦﮒﺙﻠﻝ۴**: ﮒﭦﮒﺙﮔ۴ﮒ۲ﻠﮔﮒ3ﻛﺕ۹ﮔﻠﻝ۴
+3. **ﻝﮔ؛ﮔﻟﺁ**: ﮔﮔﮔ۴ﮒ۲ﻠﮔﮔﺏ۷ﻝﮔ؛ﺅﺟ?
+### 5.2 ﮒﮔﺑﻟ؟ﺍﮒﺛ
 
-| 版本 | 日期 | 变更内容 | 影响模块 |
+| ﻝﮔ؛ | ﮔ۴ﮔ | ﮒﮔﺑﮒﮒ؟ﺗ | ﮒﺛﺎﮒﮔ۷۰ﮒ |
 |------|------|----------|----------|
-| v1.0 | 2026-04-03 | 初始版本 | 因子计算、模型训练、特征服�?|
+| v1.0 | 2026-04-03 | ﮒﮒ۶ﻝﮔ؛ | ﮒﮒﻟ؟۰ﻝ؟ﻙﮔ۷۰ﮒﻟ؟ﻝﭨﻙﻝﺗﮒﺝﮔﺅﺟ?|
 
 ---
 
-## 6. 接口使用指南
+## 6. ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷ﮔﮒ
 
-### 6.1 因子计算接口使用
+### 6.1 ﮒﮒﻟ؟۰ﻝ؟ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
 
 ```python
 from factor_calculator import FactorCalculator
@@ -430,7 +439,7 @@ basic_factors = factor_calculator.calculate_factors(factor_input)
 ai_factors = alpha158_manager.calculate_factors(factor_input)
 ```
 
-### 6.2 模型训练接口使用
+### 6.2 ﮔ۷۰ﮒﻟ؟ﻝﭨﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
 
 ```python
 from model_training_pipeline import ModelTrainingPipeline
@@ -442,7 +451,7 @@ pipeline = ModelTrainingPipeline(trainer, pipeline_config)
 result = pipeline.train(training_config)
 ```
 
-### 6.3 特征服务接口使用
+### 6.3 ﻝﺗﮒﺝﮔﮒ۰ﮔ۴ﮒ۲ﻛﺛﺟﻝ۷
 
 ```python
 from feature_store import FeatureStoreAPI
@@ -459,9 +468,9 @@ features = feature_store.get_online_features(request)
 
 ---
 
-## 7. 附录
+## 7. ﻠﮒﺛ
 
-### 7.1 相关文档
+### 7.1 ﻝﺕﮒﺏﮔﮔ۰۲
 
 - [FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION](./FACTOR_CALCULATOR_TECHNICAL_SPECIFICATION.md)
 - [ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION](./ALPHA_FACTOR_FACTORY_TECHNICAL_SPECIFICATION.md)
@@ -470,18 +479,18 @@ features = feature_store.get_online_features(request)
 - [LSTM_MODEL_TECHNICAL_SPECIFICATION](./LSTM_MODEL_TECHNICAL_SPECIFICATION.md)
 - [TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION](./TRANSFORMER_MODEL_TECHNICAL_SPECIFICATION.md)
 - [FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION](./FEATURE_ENGINEERING_TECHNICAL_SPECIFICATION.md)
-- [FEATURE_STORE_TECHNICAL_SPECIFICATION](./FEATURE_STORE_TECHNICAL_SPECIFICATION.md)
+- FEATURE_STORE_TECHNICAL_SPECIFICATION
 
-### 7.2 术语�?
-| 术语 | 定义 |
+### 7.2 ﮔﺁﻟﺁﺅﺟ?
+| ﮔﺁﻟﺁ | ﮒ؟ﻛﺗ |
 |------|------|
-| 接口契约 | 模块间交互的标准化接口定�?|
-| 因子计算 | 从原始数据计算因子值的过程 |
-| 模型训练 | 使用数据训练机器学习模型的过�?|
-| 特征服务 | 提供特征数据的存储和检索服�?|
+| ﮔ۴ﮒ۲ﮒ۴ﻝﭦ۵ | ﮔ۷۰ﮒﻠﺑﻛﭦ۳ﻛﭦﻝﮔﮒﮒﮔ۴ﮒ۲ﮒ؟ﺅﺟ?|
+| ﮒﮒﻟ؟۰ﻝ؟ | ﻛﭨﮒﮒ۶ﮔﺍﮔ؟ﻟ؟۰ﻝ؟ﮒﮒﮒﺙﻝﻟﺟﻝ۷ |
+| ﮔ۷۰ﮒﻟ؟ﻝﭨ | ﻛﺛﺟﻝ۷ﮔﺍﮔ؟ﻟ؟ﻝﭨﮔﭦﮒ۷ﮒ۵ﻛﺗﮔ۷۰ﮒﻝﻟﺟﺅﺟ?|
+| ﻝﺗﮒﺝﮔﮒ۰ | ﮔﻛﺝﻝﺗﮒﺝﮔﺍﮔ؟ﻝﮒﮒ۷ﮒﮔ۲ﻝﺑ۱ﮔﺅﺟ?|
 
 ---
 
-**文档版本**: v1.0
-**创建日期**: 2026-04-03
-**维护�?*: 首席技术评审官
+**ﮔﮔ۰۲ﻝﮔ؛**: v1.0
+**ﮒﮒﭨﭦﮔ۴ﮔ**: 2026-04-03
+**ﻝﭨﺑﮔ۳ﺅﺟ?*: ﻠ۵ﮒﺕﮔﮔﺁﻟﺁﮒ؟۰ﮒ؟
