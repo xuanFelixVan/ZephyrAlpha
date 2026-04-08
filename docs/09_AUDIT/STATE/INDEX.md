@@ -54,7 +54,7 @@ compliance_level: 专业标准---
 
 - [稀疏目录分析报告](./sparse_directory_analysis_20260407_030548.md) - 系统文档
 
-- `稀疏目录分析报告` - 系统文档
+- [严格孤儿文件报告 REGEN](./STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md) - 治理扫描报告
 
 ---
 
