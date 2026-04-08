@@ -58,6 +58,8 @@ compliance_level: 专业标准---
 
 - [文档仓库目录与阶段放置标准](./DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) - docs 一级/实施子目录/第 2 阶段施工文档默认路径
 
+- [重复文档处理标准（canonical 裁决）](./DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) - 重复/重叠/多版本并存的裁决与追溯
+
 
 ### 核心文档
 
