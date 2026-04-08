@@ -1,202 +1,16 @@
 {
-  "scan_time_utc": "20260408T031102Z",
+  "scan_time_utc": "20260408T032206Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3124,
+  "md_file_count": 3131,
   "links": {
     "stats": {
-      "total_files_scanned": 3124,
-      "total_md_links": 4572,
+      "total_files_scanned": 3131,
+      "total_md_links": 4567,
       "skipped_external": 992,
-      "valid": 3543,
-      "invalid": 37
+      "valid": 3575,
+      "invalid": 0
     },
-    "invalid_details_sample": [
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
-        "url": "./DATA_FABRIC_BLUEPRINT.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DATA_FABRIC_BLUEPRINT.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
-        "url": "./DATA_MESH_BLUEPRINT.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DATA_MESH_BLUEPRINT.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT5_DUPLICATE_SECTION_CLEANUP_REPORT_20260407_175455.md",
-        "url": "./DATA_FABRIC_BLUEPRINT.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/DATA_FABRIC_BLUEPRINT.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/AUDIT8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
-        "url": "./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GAP_ANALYSIS_REPORT_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md",
-        "url": "./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GAP_ANALYSIS_REPORT_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md",
-        "url": "./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLUEPRINT_STAGE_DELIVERY_CHECKLIST_20260407.md",
-        "url": "./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GAP_ANALYSIS_REPORT_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/BLUEPRINT_STAGE_DELIVERY_CHECKLIST_20260407.md",
-        "url": "./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
-        "url": "./LAYER8_GAP_ANALYSIS_REPORT_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GAP_ANALYSIS_REPORT_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_ARCHITECTURE_SUPPLEMENT_PLAN_20260407.md",
-        "url": "./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md",
-        "resolved": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONFIG_CENTER_BLUEPRINT.md",
-        "url": "**value",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/**value"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_ENHANCED_BLUEPRINT.md",
-        "url": "df, fix_suggestion",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/df, fix_suggestion"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FAULT_DIAGNOSIS_BLUEPRINT.md",
-        "url": "service_name, dry_run",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/service_name, dry_run"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SERVICE_DISCOVERY_BLUEPRINT.md",
-        "url": "instances, service_name",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/instances, service_name"
-      },
-      {
-        "source": "docs/08_HUMAN_AI_INTERFACE/82_MARKET_DATA_MANAGEMENT/MARKET_DATA_MANAGEMENT_BLUEPRINT.md",
-        "url": "data",
-        "resolved": "docs/08_HUMAN_AI_INTERFACE/82_MARKET_DATA_MANAGEMENT/data"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md",
-        "url": "09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md",
-        "resolved": "docs/09_AUDIT/STATE/09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md",
-        "url": "09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md",
-        "resolved": "docs/09_AUDIT/STATE/09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md",
-        "url": "System_Manifest.md",
-        "resolved": "docs/09_AUDIT/STATE/System_Manifest.md"
-      },
-      {
-        "source": "docs/module_designs/layer_0/L0_QMT.md",
-        "url": "../../API_Contract.md",
-        "resolved": "docs/API_Contract.md"
-      },
-      {
-        "source": "notebooks/00_TEMPLATES/INDEX.md",
-        "url": "./01_EDA_TEMPLATE.py",
-        "resolved": "notebooks/00_TEMPLATES/01_EDA_TEMPLATE.py"
-      },
-      {
-        "source": "notebooks/00_TEMPLATES/INDEX.md",
-        "url": "./02_FACTOR_TEMPLATE.py",
-        "resolved": "notebooks/00_TEMPLATES/02_FACTOR_TEMPLATE.py"
-      },
-      {
-        "source": "notebooks/02_FACTOR_DEVELOPMENT/INDEX.md",
-        "url": "../../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md",
-        "resolved": "docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md"
-      },
-      {
-        "source": "notebooks/INDEX.md",
-        "url": "./00_TEMPLATES/01_EDA_TEMPLATE.py",
-        "resolved": "notebooks/00_TEMPLATES/01_EDA_TEMPLATE.py"
-      },
-      {
-        "source": "notebooks/INDEX.md",
-        "url": "./00_TEMPLATES/02_FACTOR_TEMPLATE.py",
-        "resolved": "notebooks/00_TEMPLATES/02_FACTOR_TEMPLATE.py"
-      },
-      {
-        "source": "notebooks/README.md",
-        "url": "../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md",
-        "resolved": "docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md"
-      },
-      {
-        "source": "README.md",
-        "url": "docs/05_IMPLEMENTATION/BLUEPRINT.md",
-        "resolved": "docs/05_IMPLEMENTATION/BLUEPRINT.md"
-      },
-      {
-        "source": "README.md",
-        "url": "docs/02_FACTOR_LIBRARY/FAQ.md",
-        "resolved": "docs/02_FACTOR_LIBRARY/FAQ.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "design/data_consistency/多引擎数据一致性设计方案.md",
-        "resolved": "review_materials_package/data_consistency/design/data_consistency/多引擎数据一致性设计方案.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "design/data_consistency/Saga模式实现流程图.md",
-        "resolved": "review_materials_package/data_consistency/design/data_consistency/Saga模式实现流程图.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "design/data_consistency/补偿事务设计文档.md",
-        "resolved": "review_materials_package/data_consistency/design/data_consistency/补偿事务设计文档.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "../04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md",
-        "resolved": "review_materials_package/04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md",
-        "resolved": "review_materials_package/05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md",
-        "resolved": "review_materials_package/04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/多引擎数据一致性设计方案.md",
-        "url": "../design/trading_costs/交易成本模型算法文档.md",
-        "resolved": "review_materials_package/design/trading_costs/交易成本模型算法文档.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/补偿事务设计文档.md",
-        "url": "../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md",
-        "resolved": "review_materials_package/04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md"
-      },
-      {
-        "source": "review_materials_package/data_consistency/补偿事务设计文档.md",
-        "url": "../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md",
-        "resolved": "review_materials_package/05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md"
-      },
-      {
-        "source": "review_materials_package/web_interface/API接口规范文档.md",
-        "url": "../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md",
-        "resolved": "05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md"
-      }
-    ],
+    "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
@@ -1094,6 +908,7 @@
       "docs/09_AUDIT/REPORTS/OPENCLAW_PHASE0.md",
       "docs/09_AUDIT/REPORTS/OPENCLAW_REMEDIATION_BACKLOG.md",
       "docs/09_AUDIT/REPORTS/P0_FIX_SUMMARY_20260407.md",
+      "docs/09_AUDIT/REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md",
       "docs/09_AUDIT/STATE/DATA_SOURCE_P2_FINAL_FIX_REPORT.md",
       "docs/09_AUDIT/STATE/DATA_SOURCE_P2_FIX_REPORT.md",
       "docs/09_AUDIT/STATE/FIFTH_COMPREHENSIVE_AUDIT_REPORT.md",
@@ -1124,8 +939,14 @@
       "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md",
       "docs/09_AUDIT/STATE/P1_P2_FIX_FINAL_REPORT.md",
       "docs/09_AUDIT/STATE/P1_P2_FIX_REPORT.md",
+      "docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md",
       "docs/09_AUDIT/STATE/P2_ISSUES_FIX_REPORT.md",
+      "docs/09_AUDIT/STATE/PRECOMMIT_FAILURE_LOG_20260408.md",
       "docs/09_AUDIT/STATE/RESPONSIBILITY_OVERLAP_ANALYSIS.md",
+      "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0A_20260408.md",
+      "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0B_20260408.md",
+      "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md",
+      "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408.md",
@@ -1135,7 +956,7 @@
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md"
     ],
-    "no_id_total": 391
+    "no_id_total": 398
   },
   "path_depth": {
     "deepest_30": [

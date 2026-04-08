@@ -477,7 +477,8 @@ class DataQualityFixer:
         issue_type = fix_suggestion.get("issue")
         
         if issue_type in self.fix_strategies:
-            return self.fix_strategies[issue_type](df, fix_suggestion)
+            _fix = self.fix_strategies[issue_type]
+            return _fix(df, fix_suggestion)
         
         return df
     

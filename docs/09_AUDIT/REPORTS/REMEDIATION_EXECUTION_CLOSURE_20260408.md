@@ -1,8 +1,8 @@
 # 文档整改执行收口报告
 
 > **分支**: `docs/remediation-openclaw-20260408`  
-> **执行依据**: `DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` + `GOVERNANCE_DECISIONS_LOCKED_20260408.md`  
-> **收口时间**: 2026-04-08（UTC 扫描见 L1 报告）
+> **执行依据**: `DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` + `GOVERNANCE_DECISIONS_LOCKED_20260408.md` + `OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`  
+> **L1 收口扫描 UTC**: 见 `docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` 文首时间戳
 
 ---
 
@@ -10,23 +10,35 @@
 
 | EC | 标准摘要 | 状态 | 说明 |
 |----|----------|------|------|
-| EC-1 | 根目录损坏 `temp_*.md` 处理 | **已满足** | 16 个根目录 `temp_*.md` 已迁入 `docs/06_ARCHIVE/temp_pending/` 并写 README |
-| EC-2 | 蓝图双重路径等 P0 死链 | **部分满足** | 已修正 5 篇蓝图中 `](05_IMPLEMENTATION/.../01_BLUEPRINTS/` → `./` 自链；其余无效链多为伪链接/缺目标文件（见 L1） |
-| EC-3 | 双 YAML 清零 | **已满足** | `merge_double_yaml_frontmatter.py` 多轮合并后，`--list` 为 **0**；dry-run 目录 `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408/` 已生成 |
-| EC-4 | 重复 `module_id` 为 0 | **未完全满足** | `dedupe_module_id_frontmatter.py` 已处理首道 front matter 内重复 **166** 篇；L1 仍报 **约 130** 组重复（正文/多 `module_id` 行/占位符等，需下一轮专项或增强扫描规则） |
-| EC-5 | `audit_state` 唯一权威目录 | **已满足** | `07_OPERATIONS/audit_state` 下 **109** 个文件已迁入 `04_OPERATIONS/audit_state`；07 侧仅留 `README.md` 跳转说明；`docs/**` 内 **55** 个文件路径已替换 |
-| EC-6 | L1 回归报告存档 | **已满足** | `docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` / `.json` |
-| EC-7 | Git 分支与 tag | **已满足** | 分支 `docs/remediation-openclaw-20260408`；主整改 commit `6aa5e7ee`，后续小提交见 `git log --oneline`；tags：`remediation-p0a-complete` … `remediation-p1b-complete`、`remediation-cycle-20260408-closed`（指向当前 HEAD） |
+| EC-1 | 根目录损坏 `temp_*.md` 处理 | **已满足** | 根目录 **无** `temp_*.md`；正文副本在 `docs/06_ARCHIVE/temp_pending/`（见该目录 `README.md`） |
+| EC-2 | 蓝图双重路径等 P0 死链 | **已满足** | Backlog P0-5 所指双重路径已修；全库 L1 **Markdown 内链判定无效 = 0** |
+| EC-3 | 双 YAML 清零 | **已满足** | `python scripts/merge_double_yaml_frontmatter.py --list` → **0**；dry-run 目录 `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408/` 保留备查 |
+| EC-4 | 重复 `module_id` 为 0 | **未完全满足** | L1 仍报 **130** 组重复 id（审计/归档与 canonical 蓝图等并存）；需下一轮按 ADR-OC-003 继续 `_ARCHIVED` / 注册表收敛 |
+| EC-5 | `audit_state` 唯一权威目录 | **已满足** | 权威目录为 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state`；`07_OPERATIONS/audit_state` 仅余跳转 `README.md` |
+| EC-6 | L1 回归报告存档 | **已满足** | `docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` 与 `.json`（由当次 `sentinel_l1_governance_scan.py` 复制生成） |
+| EC-7 | Git 分支与 tag | **已满足** | 分支 `docs/remediation-openclaw-20260408`；节点 tag：`remediation-p0a-complete`、`remediation-p0b-complete`、`remediation-p1a-complete`、`remediation-p1b-complete`、`remediation-cycle-20260408-closed`；后续小提交见 `git log --oneline` |
+
+**闭环声明**：按执行手册 §0，**EC-1～EC-3、EC-5～EC-7** 已满足；**EC-4** 仍为已知技术债，**不阻塞**宣布「本轮回」中 P0 内链与结构整改完成，但 **EC-4 清零** 应列入下一轮 P1-A 续作。
 
 ---
 
 ## 基线对比（摘录）
 
-| 指标 | 基线（`SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408`） | 收口（`SENTINEL_L1_POST_REMEDIATION_20260408`） |
-|------|--------------------------------------------------------------|------------------------------------------------|
-| 无效内链 | 69（OpenClaw 口径）/ 基线 JSON 以当时扫描为准 | **37** |
-| 双 YAML | ~1964（OpenClaw） | **0**（脚本检测） |
-| 重复 module_id 组 | ~238（OpenClaw） | **~130**（L1 首 120KB 内 `module_id:` 匹配） |
+| 指标 | 基线（`SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408`，若已保存） | 收口（`SENTINEL_L1_POST_REMEDIATION_20260408`） |
+|------|------------------------------------------------------------------------|------------------------------------------------|
+| 无效内链（L1） | 以当时 JSON 为准（历史约 69 / 37 等口径） | **0** |
+| 双 YAML（`merge_double_yaml_frontmatter.py --list`） | ~1964（OpenClaw 初扫） | **0** |
+| 重复 module_id 组（L1） | ~238（OpenClaw） | **130** |
+
+---
+
+## 关键提交（摘录，以 `git log` 为准）
+
+| 说明 | commit（示例） |
+|------|----------------|
+| 根目录 temp 删除/归档、蓝图示例行防伪链、README / Layer2 链、L1 POST 与收口文更新 | （见当前分支最新 `docs(remediation)` 类提交） |
+| notebooks / review 包 / L0_QMT 内链清零 | `4e35ea93` |
+| audit_state 死链与路径修复等 | `5d28b0fd` 等 |
 
 ---
 
@@ -37,13 +49,19 @@
 | `scripts/merge_double_yaml_frontmatter.py` | ADR-OC-001 双 YAML 合并 |
 | `scripts/dedupe_module_id_frontmatter.py` | ADR-OC-003 首道 front matter `module_id` 去重 |
 | `scripts/consolidate_audit_state_07_to_04.py` | ADR-OC-002 目录迁入 |
+| `scripts/sentinel_l1_governance_scan.py` | L1 内链与 module_id 抽样扫描 |
 
 ---
 
 ## 后续建议（非阻塞）
 
-- 对 `audit_state` 内指向已删除 `LAYER8_GAP_ANALYSIS_REPORT_*.md` 的 `./` 链接批量改指向现存 LAYER8 报告。  
-- 增强 L1：忽略 fenced code 内 `module_id:`，或继续批量 `_ARCHIVED` 直至重复组为 0。  
-- `README.md` 中 `BLUEPRINT.md` / `FAQ.md` 若不存在，创建占位或改链。  
+- **EC-4**：对 L1 重复表逐组定 canonical，归档副本改 `module_id` 后缀并更新 `MODULE_ID_REGISTRY`（若存在）。  
+- 增强 L1：可选忽略 fenced code 内误匹配，减少伪链接维护成本。  
 
-详见 `docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md`。
+已延期项见 `docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md`（若存在）。
+
+---
+
+## pre-commit（ADR-OC-004）
+
+若使用 `git commit --no-verify`，须在 `docs/09_AUDIT/STATE/PRECOMMIT_FAILURE_LOG_20260408.md` 留痕；整改后应单独排查 `.git/hooks` 与 pre-commit 配置。

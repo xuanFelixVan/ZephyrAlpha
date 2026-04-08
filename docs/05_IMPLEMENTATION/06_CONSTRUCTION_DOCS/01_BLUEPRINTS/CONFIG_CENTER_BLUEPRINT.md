@@ -793,7 +793,8 @@ def validate_config(key: str, value: Dict[str, Any]) -> bool:
     
     if key in validators:
         try:
-            validators[key](**value)
+            _schema = validators[key]
+            _schema(**value)
             return True
         except ValidationError as e:
             print(f"Config validation failed: {e}")

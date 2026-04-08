@@ -613,9 +613,9 @@ report = dataset.get_expectation_suite()
 
 ### 8.2 参考文档
 
-- [Layer 2架构完整性分析报告](09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md)
-- [Layer 2完整补充方案](09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md)
-- [System_Manifest.md](System_Manifest.md)
+- [Layer 2架构完整性分析报告](./LAYER2_DEEP_MISSING_ANALYSIS.md)
+- [Layer 2完整补充方案](./LAYER2_BLUEPRINT_GENERATION_REPORT.md)
+- [System_Manifest.md](../../System_Manifest.md)
 
 ---
 

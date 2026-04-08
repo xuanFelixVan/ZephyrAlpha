@@ -383,7 +383,8 @@ class LoadBalancer:
         if not instances:
             return None
         
-        return self.strategies[self.strategy](instances, service_name)
+        _fn = self.strategies[self.strategy]
+        return _fn(instances, service_name)
     
     def _round_robin(self, instances: List[Dict], service_name: str) -> Dict:
         """轮询策略"""

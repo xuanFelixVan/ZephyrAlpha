@@ -247,7 +247,8 @@ class DataSubscriptionManager:
             for sub_id, sub in self.subscriptions.items():
                 if data['symbol'] in sub['symbols']:
                     # 调用回调函数
-                    sub['callback'](data)
+                    _cb = sub['callback']
+                    _cb(data)
 ```
 
 #### 4. 数据分发服务

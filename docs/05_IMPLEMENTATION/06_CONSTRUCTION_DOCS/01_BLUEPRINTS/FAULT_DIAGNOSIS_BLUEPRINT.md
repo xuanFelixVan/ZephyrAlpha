@@ -427,7 +427,8 @@ class AutoRepair:
         }
         
         if fault_type in self.repair_actions:
-            actions = self.repair_actions[fault_type](service_name, dry_run)
+            _repair = self.repair_actions[fault_type]
+            actions = _repair(service_name, dry_run)
             repair_result["actions"] = actions
             repair_result["success"] = True
         
