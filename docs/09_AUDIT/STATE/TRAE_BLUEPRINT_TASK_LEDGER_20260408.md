@@ -162,6 +162,14 @@ related_documents:
 | C8 | `docs/01_FRAMEWORK/DATA_LINEAGE_VISUALIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C8 | `docs/01_FRAMEWORK/DATA_PREPROCESSING_LAYER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C8 | `docs/01_FRAMEWORK/DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_ASSESSMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_GOVERNANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_SOURCE_COST_OPTIMIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_SOURCE_FAILOVER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
