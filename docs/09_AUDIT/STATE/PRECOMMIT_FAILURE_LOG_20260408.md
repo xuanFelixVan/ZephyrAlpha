@@ -19,3 +19,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: 新增 `ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`、`ARCH_MODULE_GAP_REGISTER_20260408.md`，更新 PROCEDURES INDEX 与 L1 扫描
+
+## 2026-04-08 — 架构/模块审核执行（阶段 1～3 最小补缺）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: 填写缺口登记表 15 条；方案附录 A/B；修正 `MODULE_RESPONSIBILITY_BOUNDARIES` 策略引擎 Layer 与 `ARCHITECTURE.md` 对齐；刷新 L1
