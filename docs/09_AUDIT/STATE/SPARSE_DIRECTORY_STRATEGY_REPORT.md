@@ -1,3 +1,7 @@
+---
+module_id: SPARSE_DIRECTORY_STRATEGY_REPORT
+---
+
 # 稀疏目录分析与修复策略报告
 
 ## 执行概要

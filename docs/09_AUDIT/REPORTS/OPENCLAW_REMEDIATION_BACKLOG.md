@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_REMEDIATION_BACKLOG
+---
+
 # OpenClaw 整改 Backlog（仅建议，不执行改库）
 
 > **run_id**: OPENCLAW_20260408_033500

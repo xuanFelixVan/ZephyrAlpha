@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_04_MODEL_EXPERIMENTS_289
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks/04_MODEL_EXPERIMENTS
 
 > **批次ID**: 289

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260406_ENCODING_ISSUES_DE7CED46_142
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints
 
 > **批次ID**: 142

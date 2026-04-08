@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_AUDIT_DECISION_RECORDS_253
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_AUDIT/DECISION_RECORDS
 
 > **批次ID**: 253

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_KNOWLEDGE_LIBRARY_ENTERPRISE_PLANS_163
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/knowledge_library/enterprise_plans
 
 > **批次ID**: 163

@@ -1,3 +1,7 @@
+---
+module_id: PRECOMMIT_FAILURE_LOG_20260408
+---
+
 # pre-commit 失败记录（ADR-OC-004）
 
 ## 2026-04-08 — 整改大提交

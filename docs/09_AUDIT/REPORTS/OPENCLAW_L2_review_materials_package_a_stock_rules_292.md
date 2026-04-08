@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_REVIEW_MATERIALS_PACKAGE_A_STOCK_RULES_292
+---
+
 # OpenClaw L2 深度审计 — 批次: review_materials_package/a_stock_rules
 
 > **批次ID**: 292

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_07_RESEARCH_04_EXPERIMENT_TRACKING_173
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/07_RESEARCH/04_EXPERIMENT_TRACKING
 
 > **批次ID**: 173

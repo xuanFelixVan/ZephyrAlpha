@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_DUPLICATE_DOCUMENTS_158
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/duplicate_documents
 
 > **批次ID**: 158

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_KNOWLEDGE_239
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_KNOWLEDGE
 
 > **批次ID**: 239

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_01_EXPLORATORY_ANALYSIS_286
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks/01_EXPLORATORY_ANALYSIS
 
 > **批次ID**: 286

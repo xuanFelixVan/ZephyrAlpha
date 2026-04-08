@@ -1,3 +1,7 @@
+---
+module_id: SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408
+---
+
 # Sentinel L1 扫描结果（机器生成）
 
 > **UTC 时间**: 20260408T030341Z

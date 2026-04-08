@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_MODULE_DESIGNS_LAYER_0_283
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/module_designs/layer_0
 
 > **批次ID**: 283

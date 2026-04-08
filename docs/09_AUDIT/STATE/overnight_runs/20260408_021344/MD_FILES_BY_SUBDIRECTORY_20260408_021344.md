@@ -1,3 +1,7 @@
+---
+module_id: MD_FILES_BY_SUBDIRECTORY_20260408_021344
+---
+
 # Markdown 文件按子目录清单（文档审计适用）
 
 > **生成时间**: 2026-04-08

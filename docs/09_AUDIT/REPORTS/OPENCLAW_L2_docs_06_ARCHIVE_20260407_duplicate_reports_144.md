@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260407_DUPLICATE_REPORTS_144
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260407_duplicate_reports
 
 > **批次ID**: 144

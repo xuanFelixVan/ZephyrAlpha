@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_05_IMPLEMENTATION_07_OPERATIONS_KNO_64157635_129
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides
 
 > **批次ID**: 129

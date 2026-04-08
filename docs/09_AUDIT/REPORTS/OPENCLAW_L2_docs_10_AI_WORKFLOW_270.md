@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_10_AI_WORKFLOW_270
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/10_AI_WORKFLOW
 
 > **批次ID**: 270

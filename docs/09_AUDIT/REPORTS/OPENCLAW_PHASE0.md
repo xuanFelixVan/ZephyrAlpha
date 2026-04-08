@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_PHASE0
+---
+
 # OpenClaw 阶段 0 基线报告
 
 > **生成时间**: 2026-04-08T03:35

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_11_STRATEGIC_DECISION_ARCHIVE_282
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/11_STRATEGIC_DECISION/archive
 
 > **批次ID**: 282

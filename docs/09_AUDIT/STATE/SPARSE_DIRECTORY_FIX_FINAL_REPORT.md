@@ -1,3 +1,7 @@
+---
+module_id: SPARSE_DIRECTORY_FIX_FINAL_REPORT
+---
+
 # 稀疏目录修复最终报告
 
 ## 执行概要

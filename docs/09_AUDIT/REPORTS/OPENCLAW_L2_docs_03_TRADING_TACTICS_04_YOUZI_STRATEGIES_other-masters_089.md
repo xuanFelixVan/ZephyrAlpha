@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_03_TRADING_TACTICS_04_YOUZI_STRATEGIES_OTHER-MASTERS_089
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters
 
 > **批次ID**: 089

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_RESEARCH_INNOVATION_MAINTENANCE_RECORDS_269
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_RESEARCH_INNOVATION/maintenance_records
 
 > **批次ID**: 269

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_HUMAN_AI_INTERFACE_33_I18N_SUPPORT_188
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_HUMAN_AI_INTERFACE/33_I18N_SUPPORT
 
 > **批次ID**: 188

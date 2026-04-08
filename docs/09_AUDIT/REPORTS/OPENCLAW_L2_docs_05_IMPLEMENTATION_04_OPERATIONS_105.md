@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_05_IMPLEMENTATION_04_OPERATIONS_105
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/05_IMPLEMENTATION/04_OPERATIONS
 
 > **批次ID**: 105

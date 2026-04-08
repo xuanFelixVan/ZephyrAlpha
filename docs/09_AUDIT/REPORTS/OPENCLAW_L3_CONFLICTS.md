@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L3_CONFLICTS
+---
+
 # OpenClaw L3 专业标准层冲突报告
 
 > **run_id**: OPENCLAW_20260408_033500

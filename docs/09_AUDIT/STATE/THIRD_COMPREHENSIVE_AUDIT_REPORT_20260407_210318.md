@@ -1,3 +1,7 @@
+---
+module_id: THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318
+---
+
 # Alpha因子层第三次全面深度审计报告
 
 ## 审计概要

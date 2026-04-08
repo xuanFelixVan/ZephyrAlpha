@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_04_EXECUTION_03_MONITORING_097
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/04_EXECUTION/03_MONITORING
 
 > **批次ID**: 097

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_SCRIPTS_296
+---
+
 # OpenClaw L2 深度审计 — 批次: scripts
 
 > **批次ID**: 296

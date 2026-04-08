@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_KNOWLEDGE_FACTOR_LIBRARY_241
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_KNOWLEDGE/FACTOR_LIBRARY
 
 > **批次ID**: 241

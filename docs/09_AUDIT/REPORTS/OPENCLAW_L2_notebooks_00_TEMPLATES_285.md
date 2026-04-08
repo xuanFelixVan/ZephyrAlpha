@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_00_TEMPLATES_285
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks/00_TEMPLATES
 
 > **批次ID**: 285

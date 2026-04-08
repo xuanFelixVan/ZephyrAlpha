@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_284
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks
 
 > **批次ID**: 284

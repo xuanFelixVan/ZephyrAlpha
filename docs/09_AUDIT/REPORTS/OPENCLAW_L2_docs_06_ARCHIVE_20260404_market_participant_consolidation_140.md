@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260404_MARKET_PARTICIPANT_CONSOLIDATION_140
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260404_market_participant_consolidation
 
 > **批次ID**: 140

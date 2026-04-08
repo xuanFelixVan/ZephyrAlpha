@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_04_EXECUTION_06_SIMULATION_098
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/04_EXECUTION/06_SIMULATION
 
 > **批次ID**: 098

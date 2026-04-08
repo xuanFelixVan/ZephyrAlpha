@@ -1,3 +1,7 @@
+---
+module_id: MODULE_ID_DUPLICATES_DETAIL_20260408_033240
+---
+
 # module_id 重复明细（供 AI 分批消解）
 
 > 重复组数: 238

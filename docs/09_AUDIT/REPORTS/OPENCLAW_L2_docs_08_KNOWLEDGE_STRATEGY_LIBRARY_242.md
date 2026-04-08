@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_KNOWLEDGE_STRATEGY_LIBRARY_242
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_KNOWLEDGE/STRATEGY_LIBRARY
 
 > **批次ID**: 242

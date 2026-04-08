@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_AUDIT_WORKFLOWS_266
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_AUDIT/WORKFLOWS
 
 > **批次ID**: 266

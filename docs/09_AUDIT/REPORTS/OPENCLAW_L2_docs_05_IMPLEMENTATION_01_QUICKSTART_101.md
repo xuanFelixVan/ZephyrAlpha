@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_05_IMPLEMENTATION_01_QUICKSTART_101
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/05_IMPLEMENTATION/01_QUICKSTART
 
 > **批次ID**: 101

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_11_STRATEGIC_DECISION_03_STRATEGY_SELECTION_280
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/11_STRATEGIC_DECISION/03_strategy_selection
 
 > **批次ID**: 280

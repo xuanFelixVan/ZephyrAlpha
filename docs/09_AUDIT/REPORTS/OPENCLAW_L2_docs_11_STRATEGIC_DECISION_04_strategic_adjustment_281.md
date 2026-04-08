@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_11_STRATEGIC_DECISION_04_STRATEGIC_ADJUSTMENT_281
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/11_STRATEGIC_DECISION/04_strategic_adjustment
 
 > **批次ID**: 281

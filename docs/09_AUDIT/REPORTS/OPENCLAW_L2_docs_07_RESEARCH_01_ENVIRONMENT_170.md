@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_07_RESEARCH_01_ENVIRONMENT_170
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/07_RESEARCH/01_ENVIRONMENT
 
 > **批次ID**: 170

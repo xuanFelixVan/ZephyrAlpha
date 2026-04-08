@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_02_FACTOR_DEVELOPMENT_287
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks/02_FACTOR_DEVELOPMENT
 
 > **批次ID**: 287

@@ -1,3 +1,7 @@
+---
+module_id: REMEDIATION_EXECUTION_CLOSURE_20260408
+---
+
 # 文档整改执行收口报告
 
 > **分支**: `docs/remediation-openclaw-20260408`  

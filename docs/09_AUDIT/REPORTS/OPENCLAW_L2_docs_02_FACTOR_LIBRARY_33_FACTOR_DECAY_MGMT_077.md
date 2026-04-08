@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_02_FACTOR_LIBRARY_33_FACTOR_DECAY_MGMT_077
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/02_FACTOR_LIBRARY/33_FACTOR_DECAY_MGMT
 
 > **批次ID**: 077

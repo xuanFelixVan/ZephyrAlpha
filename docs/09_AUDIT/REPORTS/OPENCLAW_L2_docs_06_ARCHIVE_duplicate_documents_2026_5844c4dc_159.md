@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_DUPLICATE_DOCUMENTS_2026_5844C4DC_159
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports
 
 > **批次ID**: 159

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_04_EXECUTION_02_TRADE_EXECUTOR_096
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/04_EXECUTION/02_TRADE_EXECUTOR
 
 > **批次ID**: 096

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_133
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE
 
 > **批次ID**: 133

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_03_TRADING_TACTICS_09_RISK_RULES_091
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/03_TRADING_TACTICS/09_RISK_RULES
 
 > **批次ID**: 091

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_INTEGRATED_DOCUMENTS_202_74132F62_162
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/integrated_documents/20260403_market_simulation
 
 > **批次ID**: 162

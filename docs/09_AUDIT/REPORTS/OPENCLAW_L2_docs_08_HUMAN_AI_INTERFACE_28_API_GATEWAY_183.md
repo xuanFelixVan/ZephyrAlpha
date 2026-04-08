@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_HUMAN_AI_INTERFACE_28_API_GATEWAY_183
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_HUMAN_AI_INTERFACE/28_API_GATEWAY
 
 > **批次ID**: 183

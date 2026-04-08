@@ -1,3 +1,7 @@
+---
+module_id: LAYER2_ARCHITECTURE_COMPLETENESS_ANALYSIS
+---
+
 # Layer 2 Alpha因子层架构完整性分析报告
 
 ## 分析概要

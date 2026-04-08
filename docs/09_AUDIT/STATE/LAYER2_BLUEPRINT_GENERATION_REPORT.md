@@ -1,3 +1,7 @@
+---
+module_id: LAYER2_BLUEPRINT_GENERATION_REPORT
+---
+
 # Layer 2 Alpha因子层缺失模块蓝图生成完成报告
 
 ## 执行概要

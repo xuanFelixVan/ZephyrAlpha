@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_FACTOR-LIBRARY_160
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/factor-library
 
 > **批次ID**: 160

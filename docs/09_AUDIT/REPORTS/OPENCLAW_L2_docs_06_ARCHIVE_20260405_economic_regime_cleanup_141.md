@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260405_ECONOMIC_REGIME_CLEANUP_141
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260405_economic_regime_cleanup
 
 > **批次ID**: 141

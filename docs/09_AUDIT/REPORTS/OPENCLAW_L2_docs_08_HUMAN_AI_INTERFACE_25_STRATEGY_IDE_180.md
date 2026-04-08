@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_HUMAN_AI_INTERFACE_25_STRATEGY_IDE_180
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_HUMAN_AI_INTERFACE/25_STRATEGY_IDE
 
 > **批次ID**: 180

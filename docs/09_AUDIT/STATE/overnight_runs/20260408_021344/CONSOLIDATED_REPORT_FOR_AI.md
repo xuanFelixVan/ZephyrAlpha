@@ -1,3 +1,7 @@
+---
+module_id: CONSOLIDATED_REPORT_FOR_AI_20260408_021344
+---
+
 # CONSOLIDATED REPORT FOR AI（过夜审计汇总 — 供下一轮会话阅读）
 
 > 生成时间: 2026-04-08T02:13:46

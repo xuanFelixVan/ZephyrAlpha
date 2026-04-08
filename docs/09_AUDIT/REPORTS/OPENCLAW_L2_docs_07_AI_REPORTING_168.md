@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_07_AI_REPORTING_168
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/07_AI_REPORTING
 
 > **批次ID**: 168

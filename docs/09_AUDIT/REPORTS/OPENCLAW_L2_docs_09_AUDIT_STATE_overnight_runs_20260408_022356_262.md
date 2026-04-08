@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_AUDIT_STATE_OVERNIGHT_RUNS_20260408_022356_262
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_AUDIT/STATE/overnight_runs/20260408_022356
 
 > **批次ID**: 262

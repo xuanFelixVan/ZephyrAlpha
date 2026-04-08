@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_AUDIT_SOLUTIONS_258
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_AUDIT/SOLUTIONS
 
 > **批次ID**: 258

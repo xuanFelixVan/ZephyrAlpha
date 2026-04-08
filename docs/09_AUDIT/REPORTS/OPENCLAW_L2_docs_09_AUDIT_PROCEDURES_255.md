@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_09_AUDIT_PROCEDURES_255
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/09_AUDIT/PROCEDURES
 
 > **批次ID**: 255

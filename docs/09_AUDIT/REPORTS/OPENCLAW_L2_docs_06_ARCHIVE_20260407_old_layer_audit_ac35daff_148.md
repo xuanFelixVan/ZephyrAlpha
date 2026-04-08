@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260407_OLD_LAYER_AUDIT_AC35DAFF_148
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260407_old_layer_audit_reports/layer25_reports
 
 > **批次ID**: 148

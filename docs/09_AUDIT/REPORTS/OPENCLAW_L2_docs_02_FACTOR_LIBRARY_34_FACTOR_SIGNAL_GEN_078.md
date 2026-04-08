@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_02_FACTOR_LIBRARY_34_FACTOR_SIGNAL_GEN_078
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/02_FACTOR_LIBRARY/34_FACTOR_SIGNAL_GEN
 
 > **批次ID**: 078

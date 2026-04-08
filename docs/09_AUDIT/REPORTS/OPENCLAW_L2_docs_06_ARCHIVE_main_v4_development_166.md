@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_MAIN_V4_DEVELOPMENT_166
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/main/v4_development
 
 > **批次ID**: 166

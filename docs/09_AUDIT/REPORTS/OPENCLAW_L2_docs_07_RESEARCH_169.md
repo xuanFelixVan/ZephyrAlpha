@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_07_RESEARCH_169
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/07_RESEARCH
 
 > **批次ID**: 169

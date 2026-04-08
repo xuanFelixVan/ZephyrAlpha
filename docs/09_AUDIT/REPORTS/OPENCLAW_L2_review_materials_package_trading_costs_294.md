@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_REVIEW_MATERIALS_PACKAGE_TRADING_COSTS_294
+---
+
 # OpenClaw L2 深度审计 — 批次: review_materials_package/trading_costs
 
 > **批次ID**: 294

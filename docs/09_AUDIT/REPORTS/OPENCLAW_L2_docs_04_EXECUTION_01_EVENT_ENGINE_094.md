@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_04_EXECUTION_01_EVENT_ENGINE_094
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/04_EXECUTION/01_EVENT_ENGINE
 
 > **批次ID**: 094

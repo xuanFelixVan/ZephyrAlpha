@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_20260404_AUDIT_REPORTS_A_E27F49C3_136
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402
 
 > **批次ID**: 136

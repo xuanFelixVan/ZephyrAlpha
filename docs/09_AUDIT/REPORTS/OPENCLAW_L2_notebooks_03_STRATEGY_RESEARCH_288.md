@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_NOTEBOOKS_03_STRATEGY_RESEARCH_288
+---
+
 # OpenClaw L2 深度审计 — 批次: notebooks/03_STRATEGY_RESEARCH
 
 > **批次ID**: 288

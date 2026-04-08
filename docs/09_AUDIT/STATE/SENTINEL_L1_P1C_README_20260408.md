@@ -1,3 +1,7 @@
+---
+module_id: SENTINEL_L1_P1C_README_20260408
+---
+
 # Sentinel L1 扫描结果（机器生成）
 
 > **UTC 时间**: 20260408T041615Z

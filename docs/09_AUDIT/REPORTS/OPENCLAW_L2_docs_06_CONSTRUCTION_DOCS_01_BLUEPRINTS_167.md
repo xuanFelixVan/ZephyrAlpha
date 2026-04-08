@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_167
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_CONSTRUCTION_DOCS/01_BLUEPRINTS
 
 > **批次ID**: 167

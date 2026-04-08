@@ -715,332 +715,332 @@ related_documents:
 - [x] **T0647** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_021.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0648** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_03_RISK_FACTORS_022.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0649** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_023.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0650** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_024.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0651** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_025.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0652** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_026.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0653** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_CONFIG_MANAGEMENT_027.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0654** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_ANOMALY_DETECTION_028.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0655** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_API_GATEWAY_029.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0656** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_BACKUP_RECOVERY_030.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0657** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_CATALOG_031.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0658** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_CONTRACT_033.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0659** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_FEDERATION_034.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0660** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LINEAGE_TRACKING_036.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0661** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_OBSERVABILITY_038.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0662** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_PROFILING_041.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0663** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_SECURITY_PRIVACY_042.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0664** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_STANDARDIZATION_043.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0665** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_SYNC_REPLICATION_044.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0666** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_TESTING_FRAMEWORK_045.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0667** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_VERSION_CONTROL_046.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0668** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_36027022_039.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0669** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_50e27860_040.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0670** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_6c3429bd_037.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0671** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_9061bb1d_032.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0672** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_9b57ccd1_035.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0673** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_IFIND_047.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0674** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_RE_867a8301_048.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0675** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_TIME_SERIES_STORAGE_049.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0676** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_05_BACKTEST_050.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0677** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_06_REGISTRY_051.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0678** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_07_FACTOR_MONITORING_052.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0679** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_09_AUDIT_053.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0680** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_10_MANUAL_054.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0681** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_11_FACTOR_MINING_ENGINE_055.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0682** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_12_FACTOR_ORTHOGONALIZATION_056.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0683** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_13_MULTI_FACTOR_SYNTHESIS_057.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0684** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_14_FACTOR_RISK_MODEL_058.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0685** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_15_FACTOR_VERSION_CONTROL_059.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0686** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_16_FACTOR_ATTRIBUTION_060.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0687** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_17_FACTOR_BACKTEST_ENHANCED_061.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0688** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_18_FACTOR_VISUALIZATION_062.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0689** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_19_FACTOR_DATA_QUALITY_063.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0690** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_20_FACTOR_BENCHMARK_064.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0691** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_21_FACTOR_WORKFLOW_065.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0692** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_22_FACTOR_PERFORMANCE_OPT_066.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0693** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_23_FACTOR_ML_INTEGRATION_067.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0694** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_24_FACTOR_DOC_AUTO_068.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0695** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_25_FACTOR_API_SERVICE_069.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0696** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_26_FACTOR_DATA_LINEAGE_070.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0697** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_27_FACTOR_COMPLIANCE_071.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0698** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_28_FACTOR_REALTIME_072.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0699** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_29_FACTOR_PORTFOLIO_OPT_073.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0700** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_30_STYLE_FACTOR_SYSTEM_074.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0701** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_31_FACTOR_NEUTRALIZATION_075.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0702** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_32_FACTOR_DYNAMIC_WEIGHT_076.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0703** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_33_FACTOR_DECAY_MGMT_077.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0704** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_34_FACTOR_SIGNAL_GEN_078.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0705** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_35_INDUSTRY_ROTATION_079.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0706** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_36_FACTOR_EXPOSURE_MGMT_080.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0707** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_37_FACTOR_CORRELATION_081.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0708** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_38_FACTOR_TURNOVER_OPT_082.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0709** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_39_EVENT_DRIVEN_FACTOR_083.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0710** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_40_FACTOR_CAPACITY_MGMT_084.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0711** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_086.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0712** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_03_ADVANCED_TACTICS_087.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0713** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_04_YOUZI_STRATEGIES_088.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0714** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_04_YOUZI_STRATEGIES_other-masters_089.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0715** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_085.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0716** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_08_DECISION_FRAMEWORK_090.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0717** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_09_RISK_RULES_091.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0718** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_99_ARCHIVE_092.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0719** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_01_EVENT_ENGINE_094.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0720** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_01_ORDER_EXECUTION_095.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0721** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_02_TRADE_EXECUTOR_096.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0722** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_03_MONITORING_097.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0723** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_06_SIMULATION_098.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0724** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_07_LIVE_STREAM_099.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0725** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_093.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0726** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_01_QUICKSTART_101.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0727** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_02_DEVELOPMENT_102.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0728** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_03_DEPLOYMENT_103.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0729** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_INFRASTRUCTURE_104.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0730** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_OPERATIONS_105.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0731** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_OPERATIONS_audit_state_106.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0732** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_107.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0733** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_109.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0734** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_113.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0735** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_06_CHECKLISTS_120.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0736** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_108.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0737** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_2e4ab0ac_117.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0738** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_336b6500_114.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0739** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_45d886e1_111.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0740** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_7f471eb5_119.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0741** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_99fb3e58_112.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0742** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_c1631a89_110.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0743** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_c30f81d4_118.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0744** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_d8d917f1_116.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0745** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_fc4b2c16_115.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0746** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_121.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0747** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_audit_state_122.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0748** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_checklists_123.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0749** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_improvement_plans_124.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0750** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_improvements_125.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0751** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_483c6a56_128.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0752** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_64157635_129.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0753** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_cd5b2933_127.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0754** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_knowledge_base_126.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0755** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_monitoring_130.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0756** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_standards_131.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0757** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_100.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0758** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_99_ARCHIVE_132.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0759** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_133.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0760** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_04366d92_138.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0761** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_3561c3fb_139.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0762** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_6933338f_137.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0763** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_e27f49c3_136.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0764** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_archive_134.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0765** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_archive_audit_state_135.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0766** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_market_participant_consolidation_140.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0767** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260405_economic_regime_cleanup_141.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0768** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260406_encoding_issues_de7ced46_142.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0769** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_duplicate_audit_reports_143.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0770** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_duplicate_reports_144.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0771** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_50cf8232_149.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0772** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_6d1af119_151.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0773** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_80746742_150.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0774** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_9ffb0b75_147.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0775** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_ac35daff_148.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0776** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_dbf65b5e_146.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0777** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_reports_145.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0778** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_p1_cleanup_archive_152.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0779** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_153.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0780** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_154.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0781** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_11_156.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0782** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_1_155.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0783** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_9_157.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0784** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_duplicate_documents_158.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0785** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_duplicate_documents_2026_5844c4dc_159.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0786** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_factor-library_160.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0787** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_incomplete_documents_202_5484454f_161.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0788** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_integrated_documents_202_74132f62_162.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0789** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_knowledge_library_enterprise_plans_163.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0790** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_164.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0791** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_BLUEPRINTS_165.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0792** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_v4_development_166.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0793** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_167.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0794** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_AI_REPORTING_168.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0795** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_01_ENVIRONMENT_170.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0796** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_02_EXPLORATORY_ANALYSIS_171.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0797** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_03_PATTERN_RECOGNITION_172.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0798** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_04_EXPERIMENT_TRACKING_173.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0799** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_169.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0800** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_01_MONITORING_175.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0801** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_05_BACKTEST_UI_176.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0802** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_06_REPORTING_177.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0803** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_174.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0804** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_17_DOCUMENTATION_CENTER_178.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0805** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_24_RISK_DASHBOARD_179.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0806** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_25_STRATEGY_IDE_180.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0807** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_26_FACTOR_ANALYSIS_181.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0808** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_182.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0809** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_28_API_GATEWAY_183.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0810** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_29_WEBSOCKET_REALTIME_184.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0811** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_185.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0812** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_31_CAPITAL_MANAGEMENT_186.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0813** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_32_USER_BEHAVIOR_ANALYTICS_187.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0814** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_33_I18N_SUPPORT_188.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0815** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_34_THEME_CUSTOMIZATION_189.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0816** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_190.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0817** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_36_USER_TRAINING_191.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0818** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_37_ACCESSIBILITY_192.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0819** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_38_OFFLINE_SUPPORT_193.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0820** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_39_THIRD_PARTY_INTEGRATION_194.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0821** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_40_TRADING_TERMINAL_195.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0822** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_41_SYSTEM_CONFIG_CENTER_196.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0823** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_42_USER_PERMISSION_MANAGEMENT_197.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0824** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_43_PERFORMANCE_MONITORING_198.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0825** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_44_LOG_MANAGEMENT_199.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0826** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_45_CONFIG_MANAGEMENT_200.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0827** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_46_BACKUP_RECOVERY_201.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0828** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_47_SYSTEM_HEALTH_CHECK_202.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0829** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_48_VERSION_MANAGEMENT_203.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0830** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_49_NOTIFICATION_ALERT_SYSTEM_204.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0831** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_50_MOBILE_SUPPORT_205.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0832** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_51_DATA_IMPORT_TOOLS_206.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0833** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_52_WORKFLOW_MANAGEMENT_207.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0834** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_53_KNOWLEDGE_BASE_SYSTEM_208.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0835** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_54_AI_ASSISTANT_INTEGRATION_209.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0836** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_55_PERFORMANCE_ANALYSIS_TOOLS_210.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0837** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_56_SECURITY_AUDIT_211.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0838** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_57_SANDBOX_ENVIRONMENT_212.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0839** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_58_API_DOCUMENTATION_GENERATION_213.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0840** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_59_PERFORMANCE_BENCHMARK_TESTING_214.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0841** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_60_COLLABORATION_TOOLS_215.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0842** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_61_ORDER_MANAGEMENT_SYSTEM_216.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0843** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_62_EXECUTION_MANAGEMENT_SYSTEM_217.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0844** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_63_ALGORITHMIC_TRADING_CONSOLE_218.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0845** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_64_REALTIME_RISK_MONITORING_219.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0846** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_65_RISK_REPORTING_SYSTEM_220.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0847** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_66_DATA_MANAGEMENT_PLATFORM_221.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0848** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_67_DATA_QUALITY_MONITORING_222.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0849** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_68_DEPLOYMENT_MANAGEMENT_PLATFORM_223.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0850** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_69_CAPACITY_PLANNING_TOOL_224.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0851** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_70_COST_MANAGEMENT_TOOL_225.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0852** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_71_AUDIT_LOG_SYSTEM_226.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0853** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_72_COMPLIANCE_REPORTING_SYSTEM_227.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0854** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_73_CLEARING_SETTLEMENT_MANAGEMENT_228.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0855** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_74_MARGIN_MANAGEMENT_229.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0856** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_75_FUND_MANAGEMENT_230.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0857** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_76_COUNTERPARTY_RISK_MANAGEMENT_231.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0858** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_77_MODEL_RISK_MANAGEMENT_232.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0859** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_78_MULTI_ACCOUNT_MANAGEMENT_233.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0860** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_79_TRANSACTION_COST_ANALYSIS_234.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0861** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_80_PORTFOLIO_MANAGEMENT_235.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0862** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_81_STRATEGY_LIFECYCLE_MANAGEMENT_236.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0863** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_82_MARKET_DATA_MANAGEMENT_237.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0864** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_83_PERFORMANCE_ATTRIBUTION_238.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0865** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_239.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0866** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BASE_01_TECHNICAL_KNOWLEDGE_244.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0867** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BASE_243.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0868** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BEST_PRACTICES_240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0869** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_FACTOR_LIBRARY_241.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0870** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_STRATEGY_LIBRARY_242.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0871** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_ARCHIVE_TECHNICAL_SPECIFICATIONS_246.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0872** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_ARCHIVE_duplicates_245.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0873** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_247.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0874** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_AUTOMATION_248.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0875** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_BEST_PRACTICES_249.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0876** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CASE_STUDIES_250.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0877** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CONFIGURATION_252.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0878** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CONFIG_251.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0879** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_DECISION_RECORDS_253.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0880** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_GUIDES_254.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0881** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_PROCEDURES_255.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0882** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_REPORTS_256.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0883** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_RESEARCH_MEMOS_257.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0884** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_SOLUTIONS_258.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0885** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STANDARDS_259.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0886** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_260.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0887** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_overnight_runs_20260408_021344_261.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0888** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_overnight_runs_20260408_022356_262.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0889** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TEMPLATES_263.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0890** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TOOLS_264.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0891** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TRAINING_265.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0892** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_WORKFLOWS_266.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0893** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION_267.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0894** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION__archive_268.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0895** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION_maintenance_records_269.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0896** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_AI_WORKFLOW_270.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0897** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_271.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0898** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_CI_CD_INTEGRATION_272.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0899** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_CLASSIFICATION_273.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0900** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_GOVERNANCE_PROCESSES_274.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0901** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_KNOWLEDGE_BASE_275.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0902** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_TRAINING_SYSTEM_276.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0903** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_01_asset_allocation_278.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0904** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_02_risk_budgeting_279.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0905** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_03_strategy_selection_280.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0906** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_04_strategic_adjustment_281.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0907** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_277.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0908** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_archive_282.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0909** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_module_designs_layer_0_283.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0910** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_00_TEMPLATES_285.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0911** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_01_EXPLORATORY_ANALYSIS_286.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0912** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_02_FACTOR_DEVELOPMENT_287.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0913** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_03_STRATEGY_RESEARCH_288.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0914** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_04_MODEL_EXPERIMENTS_289.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0915** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_05_REPORTS_290.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0916** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_284.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0917** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_291.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0918** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_a_stock_rules_292.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0919** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_data_consistency_293.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0920** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_trading_costs_294.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0921** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_web_interface_295.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0922** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_scripts_296.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0923** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L3_CONFLICTS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0924** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_PHASE0.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0925** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_REMEDIATION_BACKLOG.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0926** （NO-MID）`docs/09_AUDIT/REPORTS/P0_FIX_SUMMARY_20260407.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0927** （NO-MID）`docs/09_AUDIT/REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0928** （NO-MID）`docs/09_AUDIT/STATE/DATA_SOURCE_P2_FINAL_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0929** （NO-MID）`docs/09_AUDIT/STATE/DATA_SOURCE_P2_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0930** （NO-MID）`docs/09_AUDIT/STATE/FIFTH_COMPREHENSIVE_AUDIT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0931** （NO-MID）`docs/09_AUDIT/STATE/FOURTH_COMPREHENSIVE_AUDIT_REPORT_20260407_213318.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0932** （NO-MID）`docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0933** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_ARCHITECTURE_COMPLETENESS_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0934** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0935** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0936** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0937** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_SUPPLEMENT_PLAN.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0938** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0939** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_ULTRA_DEEP_MISSING_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0940** （NO-MID）`docs/09_AUDIT/STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0941** （NO-MID）`docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0942** （NO-MID）`docs/09_AUDIT/STATE/P1_P2_FIX_FINAL_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0943** （NO-MID）`docs/09_AUDIT/STATE/P1_P2_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0944** （NO-MID）`docs/09_AUDIT/STATE/P2_ISSUES_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0945** （NO-MID）`docs/09_AUDIT/STATE/PRECOMMIT_FAILURE_LOG_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0946** （NO-MID）`docs/09_AUDIT/STATE/RESPONSIBILITY_OVERLAP_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0947** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0A_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0948** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0B_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0949** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0950** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0951** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_P1C_AUDIT_STATE_INDEX_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0952** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_P1C_README_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0953** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0954** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0955** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0956** （NO-MID）`docs/09_AUDIT/STATE/SIXTH_COMPREHENSIVE_AUDIT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0957** （NO-MID）`docs/09_AUDIT/STATE/SPARSE_DIRECTORY_FIX_FINAL_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0958** （NO-MID）`docs/09_AUDIT/STATE/SPARSE_DIRECTORY_STRATEGY_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0959** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0960** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0961** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0962** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0963** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0964** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0965** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0966** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0967** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0968** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/md_by_subdir_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0969** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0970** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/sentinel_l1_scan_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0971** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0972** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0973** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/md_by_subdir_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0974** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [ ] **T0975** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0650** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_02_SCHEDULER_024.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0651** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_03_CLEANING_025.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0652** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_07_DATA_PIPELINE_026.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0653** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_CONFIG_MANAGEMENT_027.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0654** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_ANOMALY_DETECTION_028.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0655** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_API_GATEWAY_029.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0656** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_BACKUP_RECOVERY_030.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0657** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_CATALOG_031.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0658** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_CONTRACT_033.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0659** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_FEDERATION_034.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0660** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_LINEAGE_TRACKING_036.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0661** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_OBSERVABILITY_038.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0662** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_PROFILING_041.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0663** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_SECURITY_PRIVACY_042.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0664** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_STANDARDIZATION_043.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0665** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_SYNC_REPLICATION_044.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0666** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_TESTING_FRAMEWORK_045.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0667** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DATA_VERSION_CONTROL_046.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0668** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_36027022_039.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0669** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_50e27860_040.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0670** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_6c3429bd_037.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0671** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_9061bb1d_032.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0672** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_DA_9b57ccd1_035.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0673** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_IFIND_047.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0674** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_RE_867a8301_048.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0675** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_04_DATA_SOURCE_TIME_SERIES_STORAGE_049.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0676** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_05_BACKTEST_050.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0677** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_06_REGISTRY_051.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0678** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_07_FACTOR_MONITORING_052.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0679** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_09_AUDIT_053.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0680** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_10_MANUAL_054.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0681** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_11_FACTOR_MINING_ENGINE_055.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0682** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_12_FACTOR_ORTHOGONALIZATION_056.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0683** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_13_MULTI_FACTOR_SYNTHESIS_057.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0684** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_14_FACTOR_RISK_MODEL_058.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0685** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_15_FACTOR_VERSION_CONTROL_059.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0686** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_16_FACTOR_ATTRIBUTION_060.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0687** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_17_FACTOR_BACKTEST_ENHANCED_061.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0688** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_18_FACTOR_VISUALIZATION_062.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0689** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_19_FACTOR_DATA_QUALITY_063.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0690** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_20_FACTOR_BENCHMARK_064.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0691** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_21_FACTOR_WORKFLOW_065.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0692** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_22_FACTOR_PERFORMANCE_OPT_066.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0693** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_23_FACTOR_ML_INTEGRATION_067.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0694** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_24_FACTOR_DOC_AUTO_068.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0695** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_25_FACTOR_API_SERVICE_069.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0696** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_26_FACTOR_DATA_LINEAGE_070.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0697** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_27_FACTOR_COMPLIANCE_071.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0698** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_28_FACTOR_REALTIME_072.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0699** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_29_FACTOR_PORTFOLIO_OPT_073.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0700** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_30_STYLE_FACTOR_SYSTEM_074.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0701** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_31_FACTOR_NEUTRALIZATION_075.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0702** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_32_FACTOR_DYNAMIC_WEIGHT_076.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0703** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_33_FACTOR_DECAY_MGMT_077.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0704** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_34_FACTOR_SIGNAL_GEN_078.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0705** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_35_INDUSTRY_ROTATION_079.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0706** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_36_FACTOR_EXPOSURE_MGMT_080.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0707** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_37_FACTOR_CORRELATION_081.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0708** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_38_FACTOR_TURNOVER_OPT_082.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0709** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_39_EVENT_DRIVEN_FACTOR_083.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0710** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_40_FACTOR_CAPACITY_MGMT_084.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0711** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_01_STRATEGY_FRAMEWORK_086.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0712** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_03_ADVANCED_TACTICS_087.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0713** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_04_YOUZI_STRATEGIES_088.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0714** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_04_YOUZI_STRATEGIES_other-masters_089.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0715** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_085.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0716** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_08_DECISION_FRAMEWORK_090.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0717** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_09_RISK_RULES_091.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0718** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_03_TRADING_TACTICS_99_ARCHIVE_092.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0719** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_01_EVENT_ENGINE_094.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0720** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_01_ORDER_EXECUTION_095.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0721** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_02_TRADE_EXECUTOR_096.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0722** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_03_MONITORING_097.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0723** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_06_SIMULATION_098.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0724** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_07_LIVE_STREAM_099.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0725** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_04_EXECUTION_093.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0726** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_01_QUICKSTART_101.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0727** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_02_DEVELOPMENT_102.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0728** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_03_DEPLOYMENT_103.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0729** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_INFRASTRUCTURE_104.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0730** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_OPERATIONS_105.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0731** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_04_OPERATIONS_audit_state_106.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0732** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_107.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0733** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_109.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0734** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_113.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0735** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_06_CHECKLISTS_120.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0736** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_108.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0737** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_2e4ab0ac_117.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0738** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_336b6500_114.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0739** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_45d886e1_111.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0740** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_7f471eb5_119.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0741** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_99fb3e58_112.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0742** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_c1631a89_110.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0743** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_c30f81d4_118.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0744** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_d8d917f1_116.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0745** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_06_CONSTRUCTION_D_fc4b2c16_115.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0746** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_121.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0747** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_audit_state_122.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0748** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_checklists_123.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0749** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_improvement_plans_124.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0750** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_improvements_125.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0751** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_483c6a56_128.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0752** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_64157635_129.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0753** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_kno_cd5b2933_127.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0754** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_knowledge_base_126.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0755** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_monitoring_130.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0756** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_07_OPERATIONS_standards_131.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0757** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_100.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0758** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_05_IMPLEMENTATION_99_ARCHIVE_132.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0759** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_133.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0760** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_04366d92_138.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0761** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_3561c3fb_139.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0762** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_6933338f_137.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0763** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_a_e27f49c3_136.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0764** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_archive_134.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0765** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_archive_audit_state_135.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0766** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260404_market_participant_consolidation_140.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0767** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260405_economic_regime_cleanup_141.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0768** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260406_encoding_issues_de7ced46_142.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0769** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_duplicate_audit_reports_143.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0770** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_duplicate_reports_144.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0771** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_50cf8232_149.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0772** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_6d1af119_151.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0773** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_80746742_150.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0774** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_9ffb0b75_147.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0775** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_ac35daff_148.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0776** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_dbf65b5e_146.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0777** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_old_layer_audit_reports_145.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0778** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_20260407_p1_cleanup_archive_152.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0779** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_153.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0780** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_154.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0781** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_11_156.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0782** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_1_155.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0783** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_architecture_v4_module_designs_layer_9_157.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0784** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_duplicate_documents_158.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0785** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_duplicate_documents_2026_5844c4dc_159.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0786** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_factor-library_160.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0787** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_incomplete_documents_202_5484454f_161.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0788** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_integrated_documents_202_74132f62_162.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0789** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_knowledge_library_enterprise_plans_163.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0790** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_164.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0791** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_BLUEPRINTS_165.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0792** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_ARCHIVE_main_v4_development_166.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0793** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_06_CONSTRUCTION_DOCS_01_BLUEPRINTS_167.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0794** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_AI_REPORTING_168.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0795** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_01_ENVIRONMENT_170.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0796** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_02_EXPLORATORY_ANALYSIS_171.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0797** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_03_PATTERN_RECOGNITION_172.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0798** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_04_EXPERIMENT_TRACKING_173.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0799** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_07_RESEARCH_169.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0800** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_01_MONITORING_175.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0801** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_05_BACKTEST_UI_176.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0802** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_06_REPORTING_177.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0803** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_174.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0804** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_17_DOCUMENTATION_CENTER_178.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0805** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_24_RISK_DASHBOARD_179.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0806** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_25_STRATEGY_IDE_180.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0807** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_26_FACTOR_ANALYSIS_181.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0808** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_27_RISK_CONTROL_PANEL_182.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0809** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_28_API_GATEWAY_183.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0810** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_29_WEBSOCKET_REALTIME_184.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0811** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_185.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0812** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_31_CAPITAL_MANAGEMENT_186.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0813** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_32_USER_BEHAVIOR_ANALYTICS_187.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0814** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_33_I18N_SUPPORT_188.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0815** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_34_THEME_CUSTOMIZATION_189.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0816** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_35_DATA_EXPORT_TOOLS_190.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0817** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_36_USER_TRAINING_191.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0818** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_37_ACCESSIBILITY_192.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0819** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_38_OFFLINE_SUPPORT_193.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0820** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_39_THIRD_PARTY_INTEGRATION_194.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0821** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_40_TRADING_TERMINAL_195.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0822** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_41_SYSTEM_CONFIG_CENTER_196.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0823** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_42_USER_PERMISSION_MANAGEMENT_197.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0824** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_43_PERFORMANCE_MONITORING_198.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0825** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_44_LOG_MANAGEMENT_199.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0826** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_45_CONFIG_MANAGEMENT_200.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0827** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_46_BACKUP_RECOVERY_201.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0828** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_47_SYSTEM_HEALTH_CHECK_202.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0829** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_48_VERSION_MANAGEMENT_203.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0830** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_49_NOTIFICATION_ALERT_SYSTEM_204.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0831** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_50_MOBILE_SUPPORT_205.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0832** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_51_DATA_IMPORT_TOOLS_206.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0833** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_52_WORKFLOW_MANAGEMENT_207.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0834** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_53_KNOWLEDGE_BASE_SYSTEM_208.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0835** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_54_AI_ASSISTANT_INTEGRATION_209.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0836** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_55_PERFORMANCE_ANALYSIS_TOOLS_210.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0837** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_56_SECURITY_AUDIT_211.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0838** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_57_SANDBOX_ENVIRONMENT_212.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0839** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_58_API_DOCUMENTATION_GENERATION_213.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0840** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_59_PERFORMANCE_BENCHMARK_TESTING_214.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0841** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_60_COLLABORATION_TOOLS_215.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0842** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_61_ORDER_MANAGEMENT_SYSTEM_216.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0843** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_62_EXECUTION_MANAGEMENT_SYSTEM_217.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0844** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_63_ALGORITHMIC_TRADING_CONSOLE_218.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0845** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_64_REALTIME_RISK_MONITORING_219.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0846** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_65_RISK_REPORTING_SYSTEM_220.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0847** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_66_DATA_MANAGEMENT_PLATFORM_221.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0848** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_67_DATA_QUALITY_MONITORING_222.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0849** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_68_DEPLOYMENT_MANAGEMENT_PLATFORM_223.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0850** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_69_CAPACITY_PLANNING_TOOL_224.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0851** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_70_COST_MANAGEMENT_TOOL_225.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0852** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_71_AUDIT_LOG_SYSTEM_226.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0853** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_72_COMPLIANCE_REPORTING_SYSTEM_227.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0854** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_73_CLEARING_SETTLEMENT_MANAGEMENT_228.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0855** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_74_MARGIN_MANAGEMENT_229.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0856** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_75_FUND_MANAGEMENT_230.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0857** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_76_COUNTERPARTY_RISK_MANAGEMENT_231.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0858** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_77_MODEL_RISK_MANAGEMENT_232.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0859** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_78_MULTI_ACCOUNT_MANAGEMENT_233.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0860** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_79_TRANSACTION_COST_ANALYSIS_234.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0861** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_80_PORTFOLIO_MANAGEMENT_235.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0862** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_81_STRATEGY_LIFECYCLE_MANAGEMENT_236.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0863** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_82_MARKET_DATA_MANAGEMENT_237.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0864** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_HUMAN_AI_INTERFACE_83_PERFORMANCE_ATTRIBUTION_238.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0865** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_239.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0866** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BASE_01_TECHNICAL_KNOWLEDGE_244.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0867** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BASE_243.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0868** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_BEST_PRACTICES_240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0869** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_FACTOR_LIBRARY_241.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0870** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_08_KNOWLEDGE_STRATEGY_LIBRARY_242.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0871** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_ARCHIVE_TECHNICAL_SPECIFICATIONS_246.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0872** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_ARCHIVE_duplicates_245.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0873** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_247.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0874** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_AUTOMATION_248.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0875** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_BEST_PRACTICES_249.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0876** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CASE_STUDIES_250.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0877** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CONFIGURATION_252.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0878** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_CONFIG_251.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0879** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_DECISION_RECORDS_253.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0880** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_GUIDES_254.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0881** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_PROCEDURES_255.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0882** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_REPORTS_256.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0883** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_RESEARCH_MEMOS_257.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0884** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_SOLUTIONS_258.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0885** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STANDARDS_259.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0886** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_260.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0887** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_overnight_runs_20260408_021344_261.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0888** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_STATE_overnight_runs_20260408_022356_262.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0889** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TEMPLATES_263.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0890** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TOOLS_264.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0891** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_TRAINING_265.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0892** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_AUDIT_WORKFLOWS_266.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0893** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION_267.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0894** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION__archive_268.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0895** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_09_RESEARCH_INNOVATION_maintenance_records_269.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0896** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_AI_WORKFLOW_270.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0897** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_271.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0898** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_CI_CD_INTEGRATION_272.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0899** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_CLASSIFICATION_273.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0900** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_GOVERNANCE_PROCESSES_274.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0901** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_KNOWLEDGE_BASE_275.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0902** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_10_GOVERNANCE_COMPLIANCE_TRAINING_SYSTEM_276.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0903** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_01_asset_allocation_278.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0904** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_02_risk_budgeting_279.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0905** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_03_strategy_selection_280.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0906** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_04_strategic_adjustment_281.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0907** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_277.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0908** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_11_STRATEGIC_DECISION_archive_282.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0909** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_module_designs_layer_0_283.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0910** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_00_TEMPLATES_285.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0911** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_01_EXPLORATORY_ANALYSIS_286.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0912** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_02_FACTOR_DEVELOPMENT_287.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0913** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_03_STRATEGY_RESEARCH_288.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0914** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_04_MODEL_EXPERIMENTS_289.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0915** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_05_REPORTS_290.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0916** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_notebooks_284.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0917** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_291.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0918** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_a_stock_rules_292.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0919** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_data_consistency_293.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0920** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_trading_costs_294.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0921** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_review_materials_package_web_interface_295.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0922** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L2_scripts_296.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0923** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_L3_CONFLICTS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0924** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_PHASE0.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0925** （NO-MID）`docs/09_AUDIT/REPORTS/OPENCLAW_REMEDIATION_BACKLOG.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0926** （NO-MID）`docs/09_AUDIT/REPORTS/P0_FIX_SUMMARY_20260407.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0927** （NO-MID）`docs/09_AUDIT/REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0928** （NO-MID）`docs/09_AUDIT/STATE/DATA_SOURCE_P2_FINAL_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0929** （NO-MID）`docs/09_AUDIT/STATE/DATA_SOURCE_P2_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0930** （NO-MID）`docs/09_AUDIT/STATE/FIFTH_COMPREHENSIVE_AUDIT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0931** （NO-MID）`docs/09_AUDIT/STATE/FOURTH_COMPREHENSIVE_AUDIT_REPORT_20260407_213318.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0932** （NO-MID）`docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0933** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_ARCHITECTURE_COMPLETENESS_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0934** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0935** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0936** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0937** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_COMPLETE_SUPPLEMENT_PLAN.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0938** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0939** （NO-MID）`docs/09_AUDIT/STATE/LAYER2_ULTRA_DEEP_MISSING_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0940** （NO-MID）`docs/09_AUDIT/STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0941** （NO-MID）`docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0942** （NO-MID）`docs/09_AUDIT/STATE/P1_P2_FIX_FINAL_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0943** （NO-MID）`docs/09_AUDIT/STATE/P1_P2_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0944** （NO-MID）`docs/09_AUDIT/STATE/P2_ISSUES_FIX_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0945** （NO-MID）`docs/09_AUDIT/STATE/PRECOMMIT_FAILURE_LOG_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0946** （NO-MID）`docs/09_AUDIT/STATE/RESPONSIBILITY_OVERLAP_ANALYSIS.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0947** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0A_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0948** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P0B_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0949** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0950** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0951** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_P1C_AUDIT_STATE_INDEX_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0952** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_P1C_README_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0953** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0954** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0955** （NO-MID）`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_BASELINE_PRE_REMEDIATION_20260408.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0956** （NO-MID）`docs/09_AUDIT/STATE/SIXTH_COMPREHENSIVE_AUDIT_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0957** （NO-MID）`docs/09_AUDIT/STATE/SPARSE_DIRECTORY_FIX_FINAL_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0958** （NO-MID）`docs/09_AUDIT/STATE/SPARSE_DIRECTORY_STRATEGY_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0959** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0960** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0961** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0962** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0963** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0964** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0965** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0966** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0967** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0968** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/md_by_subdir_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0969** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0970** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/sentinel_l1_scan_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0971** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0972** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0973** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/md_by_subdir_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0974** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0975** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 
 ---
 

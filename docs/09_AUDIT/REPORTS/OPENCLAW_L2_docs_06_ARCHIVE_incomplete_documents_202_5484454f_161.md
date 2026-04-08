@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_INCOMPLETE_DOCUMENTS_202_5484454F_161
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete
 
 > **批次ID**: 161

@@ -1,3 +1,7 @@
+---
+module_id: RESPONSIBILITY_OVERLAP_ANALYSIS
+---
+
 # 职责重叠问题详细分析报告
 
 ## 分析概要

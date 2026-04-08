@@ -1,3 +1,7 @@
+---
+module_id: LAYER2_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT
+---
+
 # Layer 2 Alpha因子层完整蓝图补充报告
 
 ## 执行摘要

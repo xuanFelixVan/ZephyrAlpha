@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_KNOWLEDGE_BEST_PRACTICES_240
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_KNOWLEDGE/BEST_PRACTICES
 
 > **批次ID**: 240

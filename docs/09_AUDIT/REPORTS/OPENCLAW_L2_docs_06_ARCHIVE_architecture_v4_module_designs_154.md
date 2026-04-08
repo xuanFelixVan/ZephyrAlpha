@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_06_ARCHIVE_ARCHITECTURE_V4_MODULE_DESIGNS_154
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/architecture_v4/module_designs
 
 > **批次ID**: 154

@@ -1,3 +1,7 @@
+---
+module_id: OPENCLAW_L2_DOCS_08_HUMAN_AI_INTERFACE_06_REPORTING_177
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/08_HUMAN_AI_INTERFACE/06_REPORTING
 
 > **批次ID**: 177
