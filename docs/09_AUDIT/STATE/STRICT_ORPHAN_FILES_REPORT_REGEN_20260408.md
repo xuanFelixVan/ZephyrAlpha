@@ -7,7 +7,7 @@ generated_by: scripts/strict_orphan_inbound_scan.py
 
 # 严格孤儿扫描（机器生成）— 20260408
 
-> **UTC**: 2026-04-08T16:24:04Z
+> **UTC**: 2026-04-08T17:31:01Z
 > **范围**: 链入来源为**全仓库** `.md`；入度目标为 `docs/**/*.md`；孤儿候选为 docs 内文件
 > **孤儿定义**: 入链次数 = 0，且非排除入口（INDEX/README/SITEMAP + 3 个框架枢纽）
 
@@ -15,7 +15,7 @@ generated_by: scripts/strict_orphan_inbound_scan.py
 
 | 指标 | 数值 |
 |------|------|
-| docs 内 .md 总数 | 3129 |
+| docs 内 .md 总数 | 3131 |
 | 严格孤儿（去排除后） | 532 |
 
 ## 纯路径清单

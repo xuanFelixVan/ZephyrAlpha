@@ -3,7 +3,7 @@ module_id: MULTI_STRATEGY_HIERARCHICAL_SYSTEM_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-09
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -77,7 +77,9 @@ layer: Layer 6 (组合优化层)
 
 
 
-> **职责边界**: 
+> **职责边界**:
+> - ✅ 本文档负责：多策略分层架构、策略绩效评估、策略权重分配、信号融合、策略协调优化
+> - ❌ 本文档不负责：单策略信号生成（由各策略蓝图负责）、订单执行（由SMART_EXECUTION_ENGINE负责）
 
 > **开发时间: 160h
 

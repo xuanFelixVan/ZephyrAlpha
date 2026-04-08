@@ -3,7 +3,7 @@ module_id: OBJECT_STORAGE_INTEGRATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-09
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -19,7 +19,9 @@ layer: Layer 5.1 (数据处理)
 
 # 对象存储集成蓝图
 
-> **职责边界**: 
+> **职责边界**:
+> - ✅ 本文档负责：对象存储集成（S3兼容）、大文件存储与检索、数据生命周期管理、存储分层策略
+> - ❌ 本文档不负责：数据库存储（由ClickHouse/TimescaleDB蓝图负责）、数据清洗（由DATA_CLEANING_ENGINE负责）
 
 ## 核心定位
 

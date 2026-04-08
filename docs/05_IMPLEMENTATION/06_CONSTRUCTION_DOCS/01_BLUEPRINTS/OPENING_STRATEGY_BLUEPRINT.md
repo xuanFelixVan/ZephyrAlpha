@@ -3,7 +3,7 @@ module_id: OPENING_STRATEGY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-09
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -15,17 +15,17 @@ responsibility:
 layer: Layer 5 (策略执行层)
 ---
 
+# 开盘策略模块蓝图
 
-> **职责边界**: 
+> **职责边界**:
+> - ✅ 本文档负责：开盘策略设计、开盘竞价信号生成、开盘波动策略、开盘时段执行优化
+> - ❌ 本文档不负责：盘中/收盘策略（由INTRADAY_STRATEGY等模块负责）、订单执行（由SMART_EXECUTION_ENGINE负责）
 
 > **版本**: v1.0
 > **创建日期**: 2026-04-06
 > **索引**: `OPENING_STRATEGY_001`
 
 ## 核心定位
-
-
-开盘策略模块，构建和运行和操作基于开盘阶段市场特征的交易策略，包括开盘集合竞价策略、开盘波动策略等，优化开盘时段的交易执行。
 
 ## 接口与契约（蓝图终稿）
 

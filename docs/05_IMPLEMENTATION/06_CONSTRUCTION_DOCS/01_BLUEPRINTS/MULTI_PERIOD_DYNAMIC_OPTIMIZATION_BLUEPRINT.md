@@ -3,7 +3,7 @@ module_id: MULTI_PERIOD_DYNAMIC_OPTIMIZATION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-09
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -22,6 +22,8 @@ layer: Layer 5 (策略执行层)
 
 
 > **职责边界**:
+> - ✅ 本文档负责：多期投资组合优化、动态权重调整、长期策略规划、多期约束与交易成本优化
+> - ❌ 本文档不负责：单期优化（由MEAN_VARIANCE_OPTIMIZATION等负责）、订单执行（由SMART_EXECUTION_ENGINE负责）
 ## 设计目标
 
 ### 主要目标
@@ -77,7 +79,7 @@ layer: Layer 5 (策略执行层)
 
 
 > 核心职责: Multi Period Dynamic Optimization蓝图设计
-> 职责边界: 
+> 职责边界: 同上文「职责边界」段
 
 ## 接口与契约（蓝图终稿）
 
