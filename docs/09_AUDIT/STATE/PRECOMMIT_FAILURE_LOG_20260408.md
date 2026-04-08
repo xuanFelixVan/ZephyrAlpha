@@ -49,3 +49,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: `MACRO_FACTOR_SYSTEM_BLUEPRINT.md`；Layer11 对照 v1.2；ARCHITECTURE §4.1/§5/Layer10 与 G-015 收口；01_BLUEPRINTS INDEX 175；登记表 v1.6；L1 无效链 0
+
+## 2026-04-08 — P1-C：audit_state 索引可点击链（Backlog P1-2）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: 新增 `scripts/generate_audit_state_index.py`；`audit_state/INDEX.md` 343 条 `./xxx.md` 链接；`REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN.md` 去除重复 `---`；`P1C_DEFERRED` 勾选 P1-2；L1 留存 `SENTINEL_L1_P1C_AUDIT_STATE_INDEX_20260408.*`

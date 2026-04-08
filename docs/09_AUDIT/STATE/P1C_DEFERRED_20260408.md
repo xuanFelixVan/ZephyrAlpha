@@ -4,7 +4,7 @@
 
 | Backlog | 说明 |
 |---------|------|
-| P1-2 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/INDEX.md` 裸链统一加 `./`（若 INDEX 仍存在且在用） |
+| P1-2 | ~~`audit_state/INDEX.md` 裸链~~ **已处理（2026-04-08）**：`scripts/generate_audit_state_index.py` 全量生成可点击 `./xxx.md` 列表。 |
 | P1-3 | **部分已做（2026-04-08）**：`LAYER8_GAP_*` → `./AUDIT8_GAP_ANALYSIS_REPORT_20260407.md`，`LAYER8_COMPLETE_SUPPLEMENT_*` → `./LAYER8_BLUEPRINT_STAGE_FINAL_COMPLETE_SOLUTION_20260408.md`；`AUDIT5_DUPLICATE_*` 内 `./DATA_FABRIC/MESH` → `../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/`。若仍有旧文件名出现在历史报告正文，可检索后按需替换。 |
 | P1-5 | `docs/06_ARCHIVE/` 根散落文档分主题子目录 |
 | P1-6 | `docs/09_ARCHIVE/duplicates` 与 `06_ARCHIVE` 交叉策略 |
