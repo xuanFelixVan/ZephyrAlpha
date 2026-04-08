@@ -1,7 +1,7 @@
 ---
 module_id: MACRO_FACTOR_SYSTEM_001
-version: 0.1.0
-status: Draft
+version: 1.0.0
+status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-08'
 owner: 战略与因子团队
@@ -33,11 +33,26 @@ responsibility:
 | 暴露计算 | 组合/资产对宏观因子的 beta 或因子载荷 |
 | 应用 | 战略配置、压力情景、与 [PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md](./PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md) 联动 |
 
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)。宏观因子定义、数据源版本、发布事件、暴露计算口径等需以该真源或其子契约为准。
+- 与数据层接口：原始宏观数据（频率、时区、修订）到标准化因子输出的字段字典需闭合到契约。
+- 与组合优化接口：因子暴露约束/目标（如目标 beta 区间、风险预算联动）需以契约形式供优化模块消费。
+- 与风险管理/情景分析接口：压力情景输入与宏观因子冲击映射需闭合到契约。
+
+## 验收标准（可检查）
+
+- 能对任一宏观因子给出“定义公式/数据源/发布频率/版本历史”，并可复现任一历史版本的因子序列。
+- 能对任一组合输出宏观因子暴露（至少一个计算口径）并能说明窗口、频率与缺失值处理。
+- 能将至少一项宏观因子约束或目标传递给组合优化/风险预算模块，并验证结果满足约束。
+- 能在宏观数据修订或异常跳变时产生告警，并输出降级/回滚策略与记录。
+
+## 已知限制
+
+- 数据字典与 API 细化将在施工阶段补全并固化到 `API_Contract.md`；本蓝图先完成边界、接口闭合点与验收闭环。
+
 ## 相关文档
 
 - [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](../../../01_FRAMEWORK/STRATEGIC_DECISION_LAYER_BLUEPRINT.md)  
 - [RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md](./RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md)  
 
----
-
-**状态**：Draft v0.1 — 批次 F 新增；数据字典与 API 在实施阶段补全。

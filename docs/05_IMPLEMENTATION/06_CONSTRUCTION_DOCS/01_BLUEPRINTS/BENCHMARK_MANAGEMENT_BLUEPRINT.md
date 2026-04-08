@@ -1,7 +1,7 @@
 ---
 module_id: BENCHMARK_MANAGEMENT_001
-version: 0.1.0
-status: Draft
+version: 1.0.0
+status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-08'
 owner: 战略与组合团队
@@ -33,11 +33,24 @@ responsibility:
 | 对齐与复权 | 与行情、组合收益口径对齐 |
 | 监控 | TE、主动权重、行业偏离告警 |
 
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)。基准成分、估值口径、对齐频率、TE/IR 指标口径等对外约定需以该真源或其子契约为准。
+- 邻层协同边界：与 **L0（数据源）**、**L6（组合优化）**、**L9（研究/创新）** 的交互以契约为准（避免跨层口径漂移）。
+
+## 验收标准（可检查）
+
+- 能在一次基准变更后，复现该次变更的 **审批记录、基准版本号、成分清单、复权口径**。
+- 能输出基准相对绩效与 TE（Tracking Error）报告，并能说明计算窗口与频率。
+- 能对任一组合给出“基准成分暴露差异”的可检查结果（行业/风格/主题至少一类）。
+- 能在异常（基准缺数据/成分跳变）时给出降级策略与告警记录。
+
+## 已知限制
+
+- 本文仅定义蓝图阶段的能力与边界；具体字段字典与指标口径将在施工文档阶段固化到 `API_Contract.md` 的子契约中。
+
 ## 相关文档
 
 - [PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md](./PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md) — 绩效评估口径  
 - [PORTFOLIO_ATTRIBUTION_BLUEPRINT.md](./PORTFOLIO_ATTRIBUTION_BLUEPRINT.md) — 归因与基准暴露  
 
----
-
-**状态**：Draft — 可按实施进度扩展数据契约与接口节。

@@ -90,10 +90,10 @@ related_documents:
 
 | 批次 | 文件（仓库相对路径） | 执行方 | 状态 | 交付日期 | L1 无效链 | 备注 |
 |------|----------------------|--------|------|----------|-----------|------|
-| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md` | Trae | 待开始 | | | Draft→终稿 |
-| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ESG_INVESTMENT_SYSTEM_BLUEPRINT.md` | Trae | 待开始 | | | Draft→终稿 |
-| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md` | Trae | 待开始 | | | Draft→终稿 |
-| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md` | Trae | 待开始 | | | Draft→终稿 |
+| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
+| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ESG_INVESTMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
+| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
+| T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
 | T2+ | （派发前按 INDEX 填入下一组 ≤8 篇） | Trae | 未派发 | | | |
 
 ### 3.2 Cursor（`docs/01_FRAMEWORK/` 根目录 `*BLUEPRINT*.md`，字母序）
@@ -230,7 +230,25 @@ L1 结果（无效链）：
 
 ### 历史记录
 
-（每次粘贴后 Cursor 将要点同步到 §3「状态/备注」行）
+#### 2026-04-08 — 批次 T1（Trae 交付摘要，已落盘验收）
+
+Trae 修改文件列表：
+
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ESG_INVESTMENT_SYSTEM_BLUEPRINT.md`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md`
+
+L1 结果（无效链）：0
+
+逐文件要点（Trae 描述）：
+
+- `BENCHMARK_MANAGEMENT_BLUEPRINT.md`：YAML `status→Active`、`version→1.0.0`；新增“接口与契约/验收标准/已知限制”；移除末尾 Draft 状态说明。
+- `ESG_INVESTMENT_SYSTEM_BLUEPRINT.md`：同上；已知限制说明 ESG 数据源待实施阶段确定。
+- `IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md`：同上；已知限制说明工作流与审计日志字段待实施阶段补充。
+- `MACRO_FACTOR_SYSTEM_BLUEPRINT.md`：同上；已知限制说明数据字典与 API 细节待实施阶段补全。
+
+待 Cursor 跟进：已将要点同步到 §3.1 T1 行，并在本分支落盘上述 4 篇蓝图终稿化内容。
 
 ---
 
