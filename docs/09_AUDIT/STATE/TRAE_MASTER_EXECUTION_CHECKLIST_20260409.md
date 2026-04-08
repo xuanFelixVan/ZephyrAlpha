@@ -588,52 +588,52 @@ related_documents:
 - [x] **T0525** （ORPHAN）`docs/06_ARCHIVE/temp_pending/temp_risk_budget_v2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0526** （ORPHAN）`docs/06_ARCHIVE/temp_pending/temp_risk_budget_v3.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0527** （ORPHAN）`docs/06_ARCHIVE/temp_pending/temp_stress_test_spec.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0528** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/CONSTRAINTS_SOLVER_TECHNICAL_SPECIFICATION_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0529** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0530** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE_V2_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0531** （ORPHAN）`docs/09_ARCHIVE/duplicates/ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0532** （ORPHAN）`docs/09_ARCHIVE/duplicates/BAOSTOCK_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0533** （ORPHAN）`docs/09_ARCHIVE/duplicates/BARRA_STYLE_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0534** （ORPHAN）`docs/09_ARCHIVE/duplicates/CLEANING_RULES.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0535** （ORPHAN）`docs/09_ARCHIVE/duplicates/CORRELATION_ANALYSIS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0536** （ORPHAN）`docs/09_ARCHIVE/duplicates/DATA_SOURCE_ADAPTERS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0537** （ORPHAN）`docs/09_ARCHIVE/duplicates/DATA_SOURCE_LAYER_GAP_ANALYSIS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0538** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_DECAY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0539** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_DEFINITION.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0540** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_MANAGEMENT_STANDARD.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0541** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_MINING_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0542** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_REGISTRY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0543** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_SCREENING_STRATEGY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0544** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_TRANSPARENCY_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0545** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_VALIDATION_BLUEPRINT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0546** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_VALIDATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0547** （ORPHAN）`docs/09_ARCHIVE/duplicates/FAQ.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0548** （ORPHAN）`docs/09_ARCHIVE/duplicates/FINANCIAL_STATEMENTS_API.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0549** （ORPHAN）`docs/09_ARCHIVE/duplicates/FREE_DATA_SOURCES.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0550** （ORPHAN）`docs/09_ARCHIVE/duplicates/FUTURE_FACTOR_TOOLS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0551** （ORPHAN）`docs/09_ARCHIVE/duplicates/HANDOVER.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0552** （ORPHAN）`docs/09_ARCHIVE/duplicates/IFIND_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0553** （ORPHAN）`docs/09_ARCHIVE/duplicates/INDUSTRY_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0554** （ORPHAN）`docs/09_ARCHIVE/duplicates/KNOWLEDGE_MANAGEMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0555** （ORPHAN）`docs/09_ARCHIVE/duplicates/LAYERED_BACKTEST.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0556** （ORPHAN）`docs/09_ARCHIVE/duplicates/MACRO_DATA.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0557** （ORPHAN）`docs/09_ARCHIVE/duplicates/MODULE_DESIGN_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0558** （ORPHAN）`docs/09_ARCHIVE/duplicates/NEWS_SENTIMENT_DATA_SOURCE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0559** （ORPHAN）`docs/09_ARCHIVE/duplicates/OPTIMIZATION_SUMMARY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0560** （ORPHAN）`docs/09_ARCHIVE/duplicates/OVERFITTING_TEST.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0561** （ORPHAN）`docs/09_ARCHIVE/duplicates/QMT_INTERFACE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0562** （ORPHAN）`docs/09_ARCHIVE/duplicates/QUALITY_METRICS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0563** （ORPHAN）`docs/09_ARCHIVE/duplicates/SCHEDULER_API.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0564** （ORPHAN）`docs/09_ARCHIVE/duplicates/STATISTICAL_TOOLS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0565** （ORPHAN）`docs/09_ARCHIVE/duplicates/SUPERCMD_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0566** （ORPHAN）`docs/09_ARCHIVE/duplicates/TAIL_RISK_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0567** （ORPHAN）`docs/09_ARCHIVE/duplicates/backtest_standards.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0568** （ORPHAN）`docs/09_ARCHIVE/duplicates/correlation_matrix.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0569** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_master_index.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0570** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_neutralization.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0571** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_preprocessing.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0572** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_return_analysis.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0573** （ORPHAN）`docs/09_ARCHIVE/duplicates/research_management.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0528** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/CONSTRAINTS_SOLVER_TECHNICAL_SPECIFICATION_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0529** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V1_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0530** （ORPHAN）`docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC_UPDATE_V2_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0531** （ORPHAN）`docs/09_ARCHIVE/duplicates/ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0532** （ORPHAN）`docs/09_ARCHIVE/duplicates/BAOSTOCK_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0533** （ORPHAN）`docs/09_ARCHIVE/duplicates/BARRA_STYLE_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0534** （ORPHAN）`docs/09_ARCHIVE/duplicates/CLEANING_RULES.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0535** （ORPHAN）`docs/09_ARCHIVE/duplicates/CORRELATION_ANALYSIS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0536** （ORPHAN）`docs/09_ARCHIVE/duplicates/DATA_SOURCE_ADAPTERS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0537** （ORPHAN）`docs/09_ARCHIVE/duplicates/DATA_SOURCE_LAYER_GAP_ANALYSIS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0538** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_DECAY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0539** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_DEFINITION.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0540** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_MANAGEMENT_STANDARD.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0541** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_MINING_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0542** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_REGISTRY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0543** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_SCREENING_STRATEGY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0544** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_TRANSPARENCY_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0545** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_VALIDATION_BLUEPRINT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0546** （ORPHAN）`docs/09_ARCHIVE/duplicates/FACTOR_VALIDATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0547** （ORPHAN）`docs/09_ARCHIVE/duplicates/FAQ.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0548** （ORPHAN）`docs/09_ARCHIVE/duplicates/FINANCIAL_STATEMENTS_API.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0549** （ORPHAN）`docs/09_ARCHIVE/duplicates/FREE_DATA_SOURCES.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0550** （ORPHAN）`docs/09_ARCHIVE/duplicates/FUTURE_FACTOR_TOOLS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0551** （ORPHAN）`docs/09_ARCHIVE/duplicates/HANDOVER.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0552** （ORPHAN）`docs/09_ARCHIVE/duplicates/IFIND_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0553** （ORPHAN）`docs/09_ARCHIVE/duplicates/INDUSTRY_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0554** （ORPHAN）`docs/09_ARCHIVE/duplicates/KNOWLEDGE_MANAGEMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0555** （ORPHAN）`docs/09_ARCHIVE/duplicates/LAYERED_BACKTEST.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0556** （ORPHAN）`docs/09_ARCHIVE/duplicates/MACRO_DATA.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0557** （ORPHAN）`docs/09_ARCHIVE/duplicates/MODULE_DESIGN_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0558** （ORPHAN）`docs/09_ARCHIVE/duplicates/NEWS_SENTIMENT_DATA_SOURCE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0559** （ORPHAN）`docs/09_ARCHIVE/duplicates/OPTIMIZATION_SUMMARY.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0560** （ORPHAN）`docs/09_ARCHIVE/duplicates/OVERFITTING_TEST.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0561** （ORPHAN）`docs/09_ARCHIVE/duplicates/QMT_INTERFACE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0562** （ORPHAN）`docs/09_ARCHIVE/duplicates/QUALITY_METRICS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0563** （ORPHAN）`docs/09_ARCHIVE/duplicates/SCHEDULER_API.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0564** （ORPHAN）`docs/09_ARCHIVE/duplicates/STATISTICAL_TOOLS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0565** （ORPHAN）`docs/09_ARCHIVE/duplicates/SUPERCMD_CONNECTOR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0566** （ORPHAN）`docs/09_ARCHIVE/duplicates/TAIL_RISK_FACTORS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0567** （ORPHAN）`docs/09_ARCHIVE/duplicates/backtest_standards.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0568** （ORPHAN）`docs/09_ARCHIVE/duplicates/correlation_matrix.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0569** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_master_index.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0570** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_neutralization.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0571** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_preprocessing.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0572** （ORPHAN）`docs/09_ARCHIVE/duplicates/factor_return_analysis.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0573** （ORPHAN）`docs/09_ARCHIVE/duplicates/research_management.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0574** （ORPHAN）`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 
 ---
@@ -1060,7 +1060,7 @@ related_documents:
 - [ ] **T0987** （DIR）`docs/08_HUMAN_AI_INTERFACE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [ ] **T0988** （DIR）`docs/08_KNOWLEDGE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [ ] **T0989** （DIR）`docs/08_KNOWLEDGE_BASE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0990** （DIR）`docs/09_ARCHIVE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0990** （DIR）`docs/09_ARCHIVE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [ ] **T0991** （DIR）`docs/09_AUDIT/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [ ] **T0992** （DIR）`docs/09_RESEARCH_INNOVATION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [ ] **T0993** （DIR）`docs/10_AI_WORKFLOW/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
