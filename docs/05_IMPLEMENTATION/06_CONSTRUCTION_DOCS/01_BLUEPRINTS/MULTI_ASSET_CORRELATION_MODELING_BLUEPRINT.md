@@ -177,6 +177,27 @@ class CorrelationOutput:
 - [ ] 回测验证
 - [ ] 文档完善
 
+## 接口与契约
+
+### API契约索引
+
+本模块遵循系统统一接口规范，详见 [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md)。
+
+### 核心接口定义
+
+| 接口名称 | 索引 | 说明 |
+|----------|------|------|
+| 相关性估计 | API.MACM.001 | estimate_correlation接口 |
+| Copula拟合 | API.MACM.002 | fit_copula接口 |
+| 尾部相关性计算 | API.MACM.003 | calculate_tail_dependence接口 |
+| 动态相关性 | API.MACM.004 | dynamic_correlation接口 |
+
+### 数据格式规范
+
+- 输入格式: numpy.ndarray (收益率矩阵 T x N)
+- 输出格式: Dict (corr_matrix, tail_dependence, copula_params)
+- 时间戳格式: ISO 8601 UTC
+
 ## 验收标准
 
 | 标准 | 指标 |
@@ -185,6 +206,25 @@ class CorrelationOutput:
 | 性能 | 单次拟合<1秒 |
 | 覆盖率 | 支持主要资产类别 |
 | 文档 | API文档完整 |
+
+## 已知限制
+
+### 技术限制
+
+1. **数据要求**: 需要至少252个交易日的收益率数据才能进行可靠的Copula拟合
+2. **资产数量**: 大规模资产(>200)的Copula拟合计算复杂度高，建议分批处理
+3. **内存限制**: 高维Copula拟合需要较大内存，建议≥8GB
+4. **数值稳定性**: 极端市场条件下相关性估计可能不稳定
+
+### 功能限制
+
+1. **动态模型**: DCC模型仅支持GARCH(1,1)动态过程
+2. **Copula选择**: 当前不支持混合Copula模型
+3. **尾部相关性**: 仅支持二元尾部相关性，多元尾部相关性待扩展
+
+### 待补充项
+
+- 无TBD项，所有核心功能已明确定义
 
 ## 变更历史
 

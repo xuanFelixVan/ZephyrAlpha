@@ -5,10 +5,10 @@ responsibility:
 - 系统整体性能优化
 - 架构改进
 module_id: SYSTEM_ENHANCEMENT_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -115,18 +115,27 @@ layer: Layer 6 (组合优化层)
 ```mermaid
 graph TB
   subgraph P0[P0 核心模块]
-    SA[ScenarioAnalyzer\n情景分析] --> FUS[MultiTimeframeReportFusion\n多时间框架融合]
-    ST[StressTestReporter\n压力测试] --> FUS
-    RR[RealTimeRiskReporter\n实时风险] --> FUS
+    SA[ScenarioAnalyzer
+情景分析] --> FUS[MultiTimeframeReportFusion
+多时间框架融合]
+    ST[StressTestReporter
+压力测试] --> FUS
+    RR[RealTimeRiskReporter
+实时风险] --> FUS
   end
 
-  FUS --> HUB[ReportDistributionHub\n统一报告分发中心]
+  FUS --> HUB[ReportDistributionHub
+统一报告分发中心]
 
   subgraph P1[P1 扩展模块]
-    LIF[StrategyLifecycleReporter\n策略生命周期]
-    REG[RegulatoryReporter\n监管合规]
-    EXP[AIExplainabilityReporter\n可解释性]
-    EXE[ExecutionCostReporter\n执行成本]
+    LIF[StrategyLifecycleReporter
+策略生命周期]
+    REG[RegulatoryReporter
+监管合规]
+    EXP[AIExplainabilityReporter
+可解释性]
+    EXE[ExecutionCostReporter
+执行成本]
   end
 
   HUB --> LIF
@@ -653,17 +662,25 @@ graph LR
     style C fill:#45b7d1
 ```
 
+## 接口与契约（蓝图终稿）
 
+- **契约真源**：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)
+- **对外接口边界**：本模块提供系统增强功能的配置与监控接口；不直接执行交易，不替代核心交易模块的决策权限。
+
+## 验收标准（可检查）
+
+- 至少 1 项系统增强功能能够在给定配置下完成部署验证，并提供可检查的运行状态与性能指标（可复现）。
+
+## 已知限制
+
+- 系统增强功能的适用范围需在实施阶段通过契约真源子契约逐一固化；蓝图阶段仅定义边界与验收口径。
 
 ## 变更历史
 
+| 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席技术评审官 |
-
-
-
-
-
+| v1.0.1 | 2026-04-08 | 补齐三段门禁 | Trae-07 |
 
 ## 1. 文档治理
 

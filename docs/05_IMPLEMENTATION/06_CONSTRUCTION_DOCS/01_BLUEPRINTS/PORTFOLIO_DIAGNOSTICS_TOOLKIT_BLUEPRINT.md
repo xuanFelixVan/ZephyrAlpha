@@ -200,6 +200,27 @@ class DiagnosticsOutput:
 - [ ] 可视化
 - [ ] 文档完善
 
+## 接口与契约
+
+### API契约索引
+
+本模块遵循系统统一接口规范，详见 [API_Contract.md](../../../03_TRADING_TACTICS/API_Contract.md)。
+
+### 核心接口定义
+
+| 接口名称 | 索引 | 说明 |
+|----------|------|------|
+| 完整诊断 | API.PDT.001 | run_diagnostics接口 |
+| 约束验证 | API.PDT.002 | check_constraints接口 |
+| 数值稳定性检查 | API.PDT.003 | check_numerical_stability接口 |
+| 风险诊断 | API.PDT.004 | check_risk_concentration接口 |
+
+### 数据格式规范
+
+- 输入格式: numpy.ndarray (weights, cov_matrix, expected_returns)
+- 输出格式: Dict (total_issues, issues, recommendations, report)
+- 时间戳格式: ISO 8601 UTC
+
 ## 验收标准
 
 | 标准 | 指标 |
@@ -208,6 +229,25 @@ class DiagnosticsOutput:
 | 诊断速度 | <1秒 |
 | 误报率 | <5% |
 | 报告完整性 | 100% |
+
+## 已知限制
+
+### 技术限制
+
+1. **数据要求**: 需要完整的权重、协方差矩阵、预期收益数据
+2. **数值精度**: 浮点数精度可能导致微小误差
+3. **阈值设置**: 问题检测阈值需要根据业务场景调整
+4. **历史数据**: 部分诊断需要历史收益数据
+
+### 功能限制
+
+1. **诊断维度**: 当前仅支持4类诊断，更多维度待扩展
+2. **修复建议**: 当前仅提供问题描述，自动修复待扩展
+3. **实时诊断**: 不支持实时组合诊断
+
+### 待补充项
+
+- 无TBD项，所有核心功能已明确定义
 
 ## 变更历史
 
