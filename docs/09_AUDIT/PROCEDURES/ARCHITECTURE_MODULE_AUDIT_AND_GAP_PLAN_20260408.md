@@ -153,6 +153,11 @@
   - 新增 `scripts/generate_01_blueprints_index.py`，重写 `01_BLUEPRINTS/INDEX.md`（**171** 条，与目录一致）。  
   - `BLUEPRINT_ARCHITECTURE_MAPPING.md`、`ARCHITECTURE.md` §5 相关文档表增加 **01_BLUEPRINTS 索引** 入口；登记表 G-008 / G-016 关闭。  
 
+- **批次 D（Layer 11 对照 + ARCHITECTURE 可读性）**  
+  - 新建 [`LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`](../STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md)（22 行能力 ↔ 蓝图；**基准 / ESG / IPS** 标 TBD）。  
+  - `ARCHITECTURE.md`：Layer 11 节互链对照表；修复重要更新块、§4.2～§4.3、相关文档表等乱码。  
+  - 登记表 G-013 关闭（TBD 随新蓝图迭代）；G-015 部分推进。  
+
 - **详细行项目**：见 [`../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。
 
 ---

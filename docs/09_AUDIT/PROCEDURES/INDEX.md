@@ -43,8 +43,8 @@ compliance_level: 专业标准---
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 8 |
-| **活跃模块** | 8 |
+| **文档总数** | 9 |
+| **活跃模块** | 9 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -65,6 +65,7 @@ compliance_level: 专业标准---
 - [文档整改详细任务指令（可复制给 AI）](./DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) - `DOC_REMEDIATION_TASK_DIRECTIVE_20260408`
 - [架构/模块审核与补缺方案](./ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md) - `ARCH_MODULE_AUDIT_GAP_PLAN_20260408`
 - [模块缺口与矛盾登记表（工作副本）](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) - `ARCH_MODULE_GAP_REGISTER_20260408`
+- [Layer 11 能力 ↔ 实施蓝图对照](../STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) - `LAYER11_CAPABILITY_MAP_20260408`
 
 ---
 
@@ -94,6 +95,7 @@ compliance_level: 专业标准---
 | v1.0.3 | 2026-04-08 | 增加整改执行手册与已锁定裁决书索引 | 系统维护者 |
 | v1.0.4 | 2026-04-08 | 增加文档整改详细任务指令索引 | 系统维护者 |
 | v1.0.5 | 2026-04-08 | 增加架构/模块审核与补缺方案及缺口登记表索引 | 系统维护者 |
+| v1.0.6 | 2026-04-08 | 增加 Layer 11 能力↔蓝图对照表索引 | 系统维护者 |
 
 ---
 

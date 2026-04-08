@@ -34,3 +34,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: `generate_01_blueprints_index.py`；重写 INDEX.md；MAPPING + ARCHITECTURE 互链；登记表 G-008/G-016
+
+## 2026-04-08 — Layer 11 对照表 + ARCHITECTURE 乱码修复（批次 D）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`；ARCHITECTURE §4.2/4.3 与文首/Layer11 导语；登记表 v1.3；PROCEDURES INDEX
