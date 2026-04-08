@@ -474,8 +474,8 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [Layer 8架构完整性分析报告](./LAYER8_GAP_ANALYSIS_REPORT_20260407.md)
-- [Layer 8完整补充方案](./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md)
+- [Layer 8架构完整性分析报告](./AUDIT8_GAP_ANALYSIS_REPORT_20260407.md)
+- [Layer 8完整补充方案](./LAYER8_BLUEPRINT_STAGE_FINAL_COMPLETE_SOLUTION_20260408.md)
 - 人机交互层主索引
 
 ### 蓝图文档（16个新增）

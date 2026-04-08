@@ -134,8 +134,8 @@ compliance_level: 专业标准
 
 | 文档类型 | 文档名称 | 状态 | 说明 |
 |---------|---------|------|------|
-| **架构分析报告** | LAYER8_GAP_ANALYSIS_REPORT_20260407.md | ✅ 完成 | Layer 8架构完整性分析 |
-| **补充方案** | LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md | ✅ 完成 | Layer 8完整补充方案 |
+| **架构分析报告** | AUDIT8_GAP_ANALYSIS_REPORT_20260407.md | ✅ 完成 | Layer 8架构完整性分析 |
+| **补充方案** | LAYER8_BLUEPRINT_STAGE_FINAL_COMPLETE_SOLUTION_20260408.md | ✅ 完成 | Layer 8完整补充方案 |
 | **交付方案** | BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md | ✅ 完成 | 蓝图阶段完整交付方案 |
 | **交付清单** | BLUEPRINT_STAGE_DELIVERY_CHECKLIST_20260407.md | ✅ 完成 | 蓝图阶段交付清单 |
 | **系统清单** | System_Manifest.md (v5.9.0) | ✅ 完成 | 系统清单账本 |
@@ -462,8 +462,8 @@ compliance_level: 专业标准
 
 ### 核心文档
 
-- [Layer 8架构完整性分析报告](./LAYER8_GAP_ANALYSIS_REPORT_20260407.md)
-- [Layer 8完整补充方案](./LAYER8_COMPLETE_SUPPLEMENT_PLAN_20260407.md)
+- [Layer 8架构完整性分析报告](./AUDIT8_GAP_ANALYSIS_REPORT_20260407.md)
+- [Layer 8完整补充方案](./LAYER8_BLUEPRINT_STAGE_FINAL_COMPLETE_SOLUTION_20260408.md)
 - [蓝图阶段完整交付方案](./BLUEPRINT_STAGE_COMPLETE_DELIVERY_PLAN_20260407.md)
 - System_Manifest.md - 系统清单账本（v5.9.0）
 

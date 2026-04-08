@@ -425,7 +425,7 @@ compliance_level: 专业标准
 
 ### 架构文档
 
-- [Layer 8架构完整性分析报告](./LAYER8_GAP_ANALYSIS_REPORT_20260407.md)
+- [Layer 8架构完整性分析报告](./AUDIT8_GAP_ANALYSIS_REPORT_20260407.md)
 - 人机交互层主索引
 
 ### 蓝图文档
