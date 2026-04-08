@@ -1072,10 +1072,10 @@ related_documents:
 
 ## F. 仓库非 `docs/` 文档带
 
-- [ ] **T0997** （EXT）`review_materials_package/` — 与内部真源区分、豁免登记（CONSTRUCTION_GATE / P1C_DEFERRED 口径）
-- [ ] **T0998** （EXT）`notebooks/**/*.md` — 与 docs 交叉引用；抽样断链检查
-- [ ] **T0999** （EXT）`data/**/*.md` — 与实施文档去重；登记 canonical
-- [ ] **T1000** （EXT）仓库根 `README.md` — 与 `docs/INDEX.md`、`System_Manifest.md` 一致
+- [x] **T0997** （EXT）`review_materials_package/` — 与内部真源区分、豁免登记（CONSTRUCTION_GATE / P1C_DEFERRED 口径）
+- [x] **T0998** （EXT）`notebooks/**/*.md` — 与 docs 交叉引用；抽样断链检查
+- [x] **T0999** （EXT）`data/**/*.md` — 与实施文档去重；登记 canonical
+- [x] **T1000** （EXT）仓库根 `README.md` — 与 `docs/INDEX.md`、`System_Manifest.md` 一致
 
 ---
 
