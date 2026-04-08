@@ -126,6 +126,10 @@ related_documents:
 | C3 | `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C3 | `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C3 | `docs/01_FRAMEWORK/ALPHA_FACTOR_LAYER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C4 | `docs/01_FRAMEWORK/API_MANAGEMENT_INTERFACE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C4 | `docs/01_FRAMEWORK/ARBITRAGE_DETECTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C4 | `docs/01_FRAMEWORK/AUDIT_LOG_VIEWER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C4 | `docs/01_FRAMEWORK/AUDIT_TRAIL_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
