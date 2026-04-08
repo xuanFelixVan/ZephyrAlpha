@@ -1,6 +1,6 @@
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260408T031557Z
+> **UTC 时间**: 20260408T032004Z
 > **Markdown 文件数**: 3131
 
 ## 链接统计
@@ -8,40 +8,13 @@
 | 指标 | 数值 |
 |------|------|
 | 扫描文件 | 3131 |
-| Markdown 内链（非 http/锚点等已排除） | 4572 |
+| Markdown 内链（非 http/锚点等已排除） | 4567 |
 | 跳过（外链/锚点等） | 992 |
-| 判定有效 | 3553 |
-| 判定无效 | 27 |
+| 判定有效 | 3575 |
+| 判定无效 | 0 |
 
 ### 无效链接样本（最多 800 条）
 
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONFIG_CENTER_BLUEPRINT.md` → `**value`
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_ENHANCED_BLUEPRINT.md` → `df, fix_suggestion`
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FAULT_DIAGNOSIS_BLUEPRINT.md` → `service_name, dry_run`
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SERVICE_DISCOVERY_BLUEPRINT.md` → `instances, service_name`
-- `docs/08_HUMAN_AI_INTERFACE/82_MARKET_DATA_MANAGEMENT/MARKET_DATA_MANAGEMENT_BLUEPRINT.md` → `data`
-- `docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md` → `09_AUDIT/STATE/LAYER2_DEEP_MISSING_ANALYSIS.md`
-- `docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md` → `09_AUDIT/STATE/LAYER2_BLUEPRINT_GENERATION_REPORT.md`
-- `docs/09_AUDIT/STATE/LAYER2_COMPLETE_IMPLEMENTATION_PLAN.md` → `System_Manifest.md`
-- `docs/module_designs/layer_0/L0_QMT.md` → `../../API_Contract.md`
-- `notebooks/00_TEMPLATES/INDEX.md` → `./01_EDA_TEMPLATE.py`
-- `notebooks/00_TEMPLATES/INDEX.md` → `./02_FACTOR_TEMPLATE.py`
-- `notebooks/02_FACTOR_DEVELOPMENT/INDEX.md` → `../../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`
-- `notebooks/INDEX.md` → `./00_TEMPLATES/01_EDA_TEMPLATE.py`
-- `notebooks/INDEX.md` → `./00_TEMPLATES/02_FACTOR_TEMPLATE.py`
-- `notebooks/README.md` → `../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`
-- `README.md` → `docs/05_IMPLEMENTATION/BLUEPRINT.md`
-- `README.md` → `docs/02_FACTOR_LIBRARY/FAQ.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `design/data_consistency/多引擎数据一致性设计方案.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `design/data_consistency/Saga模式实现流程图.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `design/data_consistency/补偿事务设计文档.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `../04_EXECUTION/06_SIMULATION/MULTI_ENGINE_BLUEPRINT.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md`
-- `review_materials_package/data_consistency/多引擎数据一致性设计方案.md` → `../design/trading_costs/交易成本模型算法文档.md`
-- `review_materials_package/data_consistency/补偿事务设计文档.md` → `../04_EXECUTION/06_SIMULATION/ENGINE_ADAPTER_DESIGN.md`
-- `review_materials_package/data_consistency/补偿事务设计文档.md` → `../05_IMPLEMENTATION/04_INFRASTRUCTURE/STORAGE_TIER.md`
-- `review_materials_package/web_interface/API接口规范文档.md` → `../../05_IMPLEMENTATION/02_DEVELOPMENT/API_DESIGN.md`
 
 ## module_id
 

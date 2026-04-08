@@ -6,7 +6,7 @@ parent_document: ./INDEX.md
 implementation_status: 可用
 owner: 研究团队
 version: 1.0.0
-module_id: DOC_README
+module_id: DOC_README_ARCHIVED_1
 created_date: 2026-03-31
 last_updated: 2026-04-03
 responsibility:
@@ -278,7 +278,7 @@ def save_results(results_dict, filename):
 |------|------|
 | [../docs/07_RESEARCH/README.md](../docs/07_RESEARCH/README.md) | 研究模块总览 |
 | [../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规范 |
-| [../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md](../docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md) | 因子管理标准 |
+| [因子库标准索引](../docs/02_FACTOR_LIBRARY/01_STANDARDS/INDEX.md) | 因子标准与索引 |
 
 ---
 

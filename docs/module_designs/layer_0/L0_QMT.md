@@ -2514,7 +2514,7 @@ alerts:
 
 ### 10.1 参考文档
 - [架构设计文档](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0定义
-- [API接口契约](../../API_Contract.md) - 系统接口规范
+- [API接口契约](../../03_TRADING_TACTICS/API_Contract.md) - 系统接口规范
 - [QMT平台文档](../../../README.md) - QMT使用说明
 
 ### 10.2 依赖文档
