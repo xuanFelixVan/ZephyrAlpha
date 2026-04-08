@@ -69,3 +69,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: 新增 `CONSTRUCTION_GATE_CRITERIA_20260408.md`（先治理后施工总清单）、`DOUBLE_YAML_EXCEPTIONS.md`；架构方案表增施工门禁行；PROCEDURES INDEX v1.2 链到门禁
+
+## 2026-04-08 — CONSTRUCTION_GATE v1.1：三阶段（蓝图→施工文档→代码）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `CONSTRUCTION_GATE_CRITERIA_20260408.md` §0 蓝图终稿/全库范围、§0.3 施工文档交付、两档放行声明；§3 标题标明第 3 阶段
