@@ -1,6 +1,6 @@
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260408T032206Z
+> **UTC 时间**: 20260408T033030Z
 > **Markdown 文件数**: 3131
 
 ## 链接统计
@@ -18,32 +18,12 @@
 
 ## module_id
 
-- 唯一 module_id 数: **3451**
-- 重复 id 数: **130**
-- 未检出 module_id 的文件数（抽样扫描前 120KB）: **398**
+- 唯一 module_id 数: **2722**
+- 重复 id 数: **0**
+- 首道 front matter 无 `module_id` 的文件数: **398**
 
 ### 重复模块（前 20 个）
 
-- `SIMPLIFIED_RISK_BUDGET_SYSTEM_001`: 5 个文件
-- `QUARTERLY_REBALANCE_001`: 4 个文件
-- `DYNAMIC_ASSET_ALLOCATION_001`: 4 个文件
-- `IMPL_BARRA_RISK_MODEL_BP_001`: 4 个文件
-- `DATA_VERSION_CONTROL_001`: 3 个文件
-- `MONITORING_DASHBOARD_001`: 3 个文件
-- `QUARTERLY_REBALANCE_BLUEPRINT_001`: 3 个文件
-- `STRATEGIC_WEIGHTING_001`: 3 个文件
-- `SENTIMENT_ANALYSIS_MEDIUM_TERM_TS_001`: 3 个文件
-- `PORTFOLIO_SCENARIO_ANALYSIS_001`: 3 个文件
-- `MODULE_NAME_001`: 3 个文件
-- `[MODULE_NAME]_001`: 3 个文件
-- `{MODULE_ID}`: 3 个文件
-- `AI_PERMISSIONS_001`: 2 个文件
-- `ARCHITECTURE_001`: 2 个文件
-- `ARCHITECTURE_EVOLUTION_HISTORY`: 2 个文件
-- `DATA_FLOW_AND_MODULE_INTERACTION_DIAGRAMS`: 2 个文件
-- `FRAMEWORK__001`: 2 个文件
-- `FACTOR_ENGINE_DETAILED_DESIGN`: 2 个文件
-- `AI_PATTERN_RECOGNITION_ENGINE_001`: 2 个文件
 
 ## 路径深度 Top 10
 

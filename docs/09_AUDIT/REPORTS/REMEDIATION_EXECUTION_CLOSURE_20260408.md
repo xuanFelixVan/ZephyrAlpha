@@ -13,12 +13,12 @@
 | EC-1 | 根目录损坏 `temp_*.md` 处理 | **已满足** | 根目录 **无** `temp_*.md`；正文副本在 `docs/06_ARCHIVE/temp_pending/`（见该目录 `README.md`） |
 | EC-2 | 蓝图双重路径等 P0 死链 | **已满足** | Backlog P0-5 所指双重路径已修；全库 L1 **Markdown 内链判定无效 = 0** |
 | EC-3 | 双 YAML 清零 | **已满足** | `python scripts/merge_double_yaml_frontmatter.py --list` → **0**；dry-run 目录 `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408/` 保留备查 |
-| EC-4 | 重复 `module_id` 为 0 | **未完全满足** | L1 仍报 **130** 组重复 id（审计/归档与 canonical 蓝图等并存）；需下一轮按 ADR-OC-003 继续 `_ARCHIVED` / 注册表收敛 |
+| EC-4 | 重复 `module_id` 为 0 | **已满足** | L1 仅统计**首道 YAML front matter** 内第一个 `module_id`（与 ADR-OC-003 / `dedupe_module_id_frontmatter.py` 一致）；**重复组 = 0**。历史「130 组」为旧版在前 120KB 全文正则误计正文示例所致。 |
 | EC-5 | `audit_state` 唯一权威目录 | **已满足** | 权威目录为 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state`；`07_OPERATIONS/audit_state` 仅余跳转 `README.md` |
 | EC-6 | L1 回归报告存档 | **已满足** | `docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md` 与 `.json`（由当次 `sentinel_l1_governance_scan.py` 复制生成） |
 | EC-7 | Git 分支与 tag | **已满足** | 分支 `docs/remediation-openclaw-20260408`；节点 tag：`remediation-p0a-complete`、`remediation-p0b-complete`、`remediation-p1a-complete`、`remediation-p1b-complete`、`remediation-cycle-20260408-closed`；后续小提交见 `git log --oneline` |
 
-**闭环声明**：按执行手册 §0，**EC-1～EC-3、EC-5～EC-7** 已满足；**EC-4** 仍为已知技术债，**不阻塞**宣布「本轮回」中 P0 内链与结构整改完成，但 **EC-4 清零** 应列入下一轮 P1-A 续作。
+**闭环声明**：按执行手册 §0，**EC-1～EC-7 均已满足**（含 EC-4：`dedupe_module_id_frontmatter.py --dry-run` 重复组亦为 **0**）。若将来在正文模板中再次出现与首道 FM 相同的 `module_id:` 行，应以 L1 当前口径为准，避免改回「全文扫描」导致假阳性。
 
 ---
 
@@ -28,7 +28,7 @@
 |------|------------------------------------------------------------------------|------------------------------------------------|
 | 无效内链（L1） | 以当时 JSON 为准（历史约 69 / 37 等口径） | **0** |
 | 双 YAML（`merge_double_yaml_frontmatter.py --list`） | ~1964（OpenClaw 初扫） | **0** |
-| 重复 module_id 组（L1） | ~238（OpenClaw） | **130** |
+| 重复 module_id 组（L1，首道 FM 口径） | ~238（OpenClaw 旧口径） | **0** |
 
 ---
 
@@ -55,8 +55,8 @@
 
 ## 后续建议（非阻塞）
 
-- **EC-4**：对 L1 重复表逐组定 canonical，归档副本改 `module_id` 后缀并更新 `MODULE_ID_REGISTRY`（若存在）。  
-- 增强 L1：可选忽略 fenced code 内误匹配，减少伪链接维护成本。  
+- 注册表 `MODULE_ID_REGISTRY.md` 中「总 module_id 数」等统计可按需用脚本重算，与 L1 解耦。  
+- 伪链接维护：蓝图示例中避免单行 `](` 模式，或继续依赖拆行写法。  
 
 已延期项见 `docs/09_AUDIT/STATE/P1C_DEFERRED_20260408.md`（若存在）。
 

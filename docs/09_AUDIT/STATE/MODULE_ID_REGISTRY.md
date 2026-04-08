@@ -36,7 +36,7 @@ responsibility:
 | **总module_id数** | 903 |
 | **活跃文档** | 903 |
 | **归档文档** | 排除 |
-| **重复ID** | 0 ✅ |
+| **重复ID** | 0 ✅（与 Sentinel L1 **首道 front matter** `module_id` 口径一致；`dedupe_module_id_frontmatter.py --dry-run` 重复组 0） |
 
 ### 命名规范
 

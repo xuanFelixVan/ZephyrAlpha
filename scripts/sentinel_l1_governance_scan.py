@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Sentinel L1：全库 md 链接可达性 + module_id 重复扫描（只读），输出到 docs/09_AUDIT/STATE/
+
+module_id 重复：**仅**各文件首道 `---` YAML 内第一个 `module_id`，与 ADR-OC-003 及
+`dedupe_module_id_frontmatter.py` 一致；不扫描正文或第二段 YAML 中的示例行，避免假阳性。
+
 用法：在仓库根目录执行  python scripts/sentinel_l1_governance_scan.py
 """
 from __future__ import annotations
@@ -16,6 +20,42 @@ SKIP_PARTS = {".git", ".venv", ".pytest_cache", "__pycache__"}
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)
 MAX_DETAIL = 800  # 明细条数上限，防止报告过大
+
+
+def split_first_front_matter(raw: str) -> tuple[str, str, str] | None:
+    """返回 (bom_prefix, fm_inner, body_after_fm)。与 dedupe_module_id_frontmatter 语义一致。"""
+    bom = ""
+    s = raw
+    if s.startswith("\ufeff"):
+        bom = "\ufeff"
+        s = s[1:]
+    lines = s.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return None
+    inner: list[str] = []
+    i = 1
+    while i < len(lines):
+        if lines[i].strip() == "---":
+            break
+        inner.append(lines[i])
+        i += 1
+    if i >= len(lines):
+        return None
+    body = "\n".join(lines[i + 1 :])
+    fm_inner = "\n".join(inner)
+    return (bom, fm_inner, body)
+
+
+def first_front_matter_module_id(raw: str) -> str | None:
+    """仅首道 YAML front matter 内第一个 module_id（ADR-OC-003 / 台账口径）。"""
+    sp = split_first_front_matter(raw)
+    if not sp:
+        return None
+    m = MODULE_ID_RE.search(sp[1])
+    if not m:
+        return None
+    k = m.group(1).strip().strip('"').strip("'")
+    return k or None
 
 
 def iter_md_files() -> list[Path]:
@@ -134,17 +174,14 @@ def scan_module_ids(all_files: list[Path]) -> dict:
         if rel.startswith("review_materials_package"):
             continue
         try:
-            head = md.read_text(encoding="utf-8", errors="replace")[:120000]
+            raw = md.read_text(encoding="utf-8", errors="replace")
         except Exception:
             continue
-        found = MODULE_ID_RE.findall(head)
-        if not found:
+        k = first_front_matter_module_id(raw)
+        if not k:
             no_id.append(rel)
             continue
-        for raw in found:
-            k = raw.strip().strip('"').strip("'")
-            if k:
-                mid_to_files[k].append(rel)
+        mid_to_files[k].append(rel)
     dup = {k: v for k, v in mid_to_files.items() if len(v) > 1}
     return {
         "unique_module_ids": len(mid_to_files),
@@ -213,7 +250,7 @@ def main() -> None:
             "",
             f"- 唯一 module_id 数: **{mi['unique_module_ids']}**",
             f"- 重复 id 数: **{mi['duplicate_ids_count']}**",
-            f"- 未检出 module_id 的文件数（抽样扫描前 120KB）: **{mi['no_id_total']}**",
+            f"- 首道 front matter 无 `module_id` 的文件数: **{mi['no_id_total']}**",
             "",
             "### 重复模块（前 20 个）",
             "",
