@@ -13,6 +13,12 @@ created_date: 2026-03-31
 last_updated: '2026-04-07'
 status: Active
 ---
+> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/REPORTS/DOCUMENT_AUDIT_v5.1.md`  
+> **处置建议**：待真源确认后，保留为追溯或合并后删除；不得作为入口索引直接推荐。
+
+---
+
 ---
 
 # ό╕ΖώμΟώΘΠίΝΨύ│╗ύ╗θ v5.1 όΨΘόκμίχκόθξόΛξίΣΛ

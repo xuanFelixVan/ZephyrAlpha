@@ -19,6 +19,10 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/SITEMAP.md`  
+> **处置建议**：merge_then_delete（因子库站点地图以业务目录 SITEMAP 为准）。
+
 # ĵͼ (SITEMAP)
 > **核心职责**: ĵͼ (SITEMAP)的定义、实现和应用
 > **职责边界**: 

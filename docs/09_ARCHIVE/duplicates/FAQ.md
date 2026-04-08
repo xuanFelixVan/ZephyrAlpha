@@ -9,6 +9,10 @@ last_updated: 2026-04-07
 owner: 文档管理团队
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md`  
+> **处置建议**：merge_then_delete（因子库 FAQ 真源在 10_MANUAL）。
+
 # FAQ.md - 常见问题
 > **核心职责**: 常见问题解答和用户指引，涉及常见问题
 > **职责边界**: 

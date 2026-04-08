@@ -11,6 +11,10 @@ last_updated: 2026-04-07
 owner: 文档管理团队
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/REPORTS/INDEX.md`  
+> **处置建议**：retain_trace（优化类摘要应归入审计报告索引或具体报告真源）。
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 变更人 |

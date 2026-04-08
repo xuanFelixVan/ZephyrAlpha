@@ -10,6 +10,12 @@ responsibility:
 layer: Layer 10 (治理合规层)
 standard_type: 专业量化机构文档
 ---
+> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md`  
+> **处置建议**：待真源确认后，保留为追溯或合并后删除；不得作为入口索引直接推荐。
+
+---
+
 # 文档分类标准
 
 > **核心职责**: 文档分类体系管理

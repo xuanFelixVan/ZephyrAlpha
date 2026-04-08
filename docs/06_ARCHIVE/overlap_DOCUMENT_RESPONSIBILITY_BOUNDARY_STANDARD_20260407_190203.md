@@ -8,6 +8,12 @@ owner: 首席文档架构师
 responsibility:
   - DOCUMENT_RESPONSIBILITY_BOUNDARY标准规范
 ---
+> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/STANDARDS/DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md`  
+> **处置建议**：待真源确认后，保留为追溯或合并后删除；不得作为入口索引直接推荐。
+
+---
+
 
 ﻿---
 module_id: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD_001

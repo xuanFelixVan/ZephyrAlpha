@@ -101,6 +101,7 @@ implementation_status: 活跃维护
 | [严格孤儿报告（当期）](./STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md) | 严格孤儿与 A/B/C 分桶 |
 | [严格孤儿纯路径清单（基线）](./STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt) | 每行一个路径，供批处理与对账 |
 | [蓝图阶段文档彻底清洁总案](./PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) | P0–P3 分阶段 + 三条工作流 + 退出标准 |
+| [Trae 自主执行指令（勿问 Owner）](./STATE/TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md) | 中文全文 + **§10 英文 normative block**（推荐 GLM 先贴英文块） |
 | [工作交接：蓝图阶段清洁接力（STATE）](./STATE/HANDOFF_ORPHAN_GOVERNANCE_20260408.md) | **v2.0 整册**：§0 目录；**§15** Git 备份；**§16** 防幻觉；**§17** Trae×GLM-5.1 八小时方案；**§18** 重复与 Layer→蓝图导航；§11～§14 清洁/门禁/IA；终点 **第 2 阶段放行证据链** |
 | [审计门户 INDEX_AUDIT](./INDEX_AUDIT.md) | 审计快速入口与既有「严格孤儿」分流 |
 

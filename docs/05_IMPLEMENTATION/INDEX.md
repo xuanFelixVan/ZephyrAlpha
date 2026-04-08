@@ -3,7 +3,7 @@ module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-04
+last_updated: 2026-04-08
 owner: 实施层架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -11,14 +11,15 @@ standard_type: 专业量化机构目录索引
 applicable_scope: 05_IMPLEMENTATION目录
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 活跃维护---
+implementation_status: 活跃维护
+---
 
 
 # 实施层目录索引
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-07  
+> **最后更新**: 2026-04-08  
 > **维护者**: 实施层架构师
 
 ---
@@ -125,19 +126,56 @@ implementation_status: 活跃维护---
 
 ---
 
-## 🧭 严格孤儿挂载（波次 1：入口补齐）
+## 🧭 严格孤儿挂载（实施层 A 类已扫光）
 
-> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
-> **动作**：只做“索引入口挂载”，不改正文内容。
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt` 中 **`docs/05_IMPLEMENTATION/` 全部 30 条**（与 `STRICT_ORPHAN_FILES_REPORT_20260408` A 类子集一致）。  
+> **状态**：已由本索引 **全量挂载**（每条至少一处自 `05_IMPLEMENTATION/INDEX.md` 出发的相对链接）。  
+> **动作**：仅索引入口，不改正文。
 
+### 01_QUICKSTART
+
+- [开发环境 setup](./01_QUICKSTART/dev_setup.md)
+- [首次回测](./01_QUICKSTART/first_backtest.md)
+
+### 02_DEVELOPMENT
+
+- [AI Agent 调用协议](./02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md)
+- [API 设计](./02_DEVELOPMENT/API_DESIGN.md)
+- [认证](./02_DEVELOPMENT/AUTH.md)
+- [配置管理](./02_DEVELOPMENT/CONFIG_MANAGEMENT.md)
+- [日志标准](./02_DEVELOPMENT/LOGGING_STANDARD.md)
+- [测试框架](./02_DEVELOPMENT/TEST_FRAMEWORK.md)
+
+### 04_OPERATIONS
+
+- [文档治理持续改进](./04_OPERATIONS/DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT.md)
 - [周度审计机制](./04_OPERATIONS/WEEKLY_AUDIT_MECHANISM.md)
+
+### 05_TECHNICAL_SPECIFICATIONS
+
+- [AI 虚拟研究团队技术规格](./05_TECHNICAL_SPECIFICATIONS/AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION.md)
+- [配置管理器技术规格](./05_TECHNICAL_SPECIFICATIONS/CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md)
 - [经济周期报告器技术规格](./05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md)
 - [信号质量报告器技术规格](./05_TECHNICAL_SPECIFICATIONS/SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md)
+
+### 07_OPERATIONS
+
 - [审计交接](./07_OPERATIONS/AUDIT_HANDOVER.md)
-- [文档创建检查清单](./07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
 - [持续改进执行报告](./07_OPERATIONS/CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md)
+- [文档创建检查清单](./07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
 - [改进计划执行报告](./07_OPERATIONS/improvement_plans/IMPROVEMENT_PLAN_EXECUTION_REPORT.md)
+- [智能执行市场影响改进计划](./07_OPERATIONS/improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md)
+- [个人工作流指南](./07_OPERATIONS/knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+- [最佳实践模板](./07_OPERATIONS/knowledge_base/BEST_PRACTICES_TEMPLATE.md)
+- [案例研究模板](./07_OPERATIONS/knowledge_base/CASE_STUDY_TEMPLATE.md)
+- [事件总线集成案例](./07_OPERATIONS/knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- [链接修复案例](./07_OPERATIONS/knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md)
+- [策略工厂实施案例](./07_OPERATIONS/knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
 - [文档审计员指南](./07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md)
+- [元数据增强器指南](./07_OPERATIONS/knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md)
+- [持续监控机制](./07_OPERATIONS/monitoring/CONTINUOUS_MONITORING_MECHANISM.md)
+- [文档质量标准](./07_OPERATIONS/standards/DOCUMENT_QUALITY_STANDARDS.md)
+- [Layer 识别标准](./07_OPERATIONS/standards/LAYER_IDENTIFICATION_STANDARD.md)
 
 ---
 

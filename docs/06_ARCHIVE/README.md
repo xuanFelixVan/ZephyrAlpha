@@ -101,6 +101,17 @@ implementation_status: 进行?---
 
 ---
 
+## 🧭 B 类归档治理入口（canonical / 重叠 / 重复）
+
+> **目的**：让“历史/重叠/重复”文档具备可追溯入口，并明确 **canonical 真源**，避免被误读为权威正文。
+
+- **归档审计报告总入口（2026-04-04 批次）**：[`20260404_audit_reports_archive/INDEX.md`](./20260404_audit_reports_archive/INDEX.md)
+- **P1 清理归档入口（2026-04-07 批次）**：[`20260407_p1_cleanup_archive/INDEX.md`](./20260407_p1_cleanup_archive/INDEX.md)
+- **duplicates（重复裁决汇总）**：[`../09_ARCHIVE/duplicates/INDEX.md`](../09_ARCHIVE/duplicates/INDEX.md)
+- **overlap_* 规则与聚合入口**：[`overlap_INDEX_20260407_190203.md`](./overlap_INDEX_20260407_190203.md)
+- **overlap + 严格孤儿 A 类并行排期（按主题批次，避免单次改几百文件）**：[`OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`](./OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md)
+- **重复文档处理标准（canonical 裁决）**：[`../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md`](../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)
+
 ## v5.1 变更记录 (2026-03-31)
 
 ### 清理冗余文件

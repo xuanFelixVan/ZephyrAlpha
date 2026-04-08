@@ -9,6 +9,10 @@ responsibility:
   - 提供文档支持
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/STATE/ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md`  
+> **处置建议**：retain_trace（审计报告真源在 09_AUDIT/STATE）。
+
 # Alpha因子层深度审计报告 - 第二轮
 
 ## 审计概要

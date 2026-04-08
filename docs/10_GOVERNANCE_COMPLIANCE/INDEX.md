@@ -3,7 +3,7 @@ module_id: 10_GOVERNANCE_COMPLIANCE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - 10_GOVERNANCE_COMPLIANCE目录索引
@@ -14,7 +14,7 @@ module_id: 10_GOVERNANCE_COMPLIANCE_INDEX_GOVERNANCE_COMPLIANCE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: 2026-04-08
 owner: 系统架构?standard_type: 专业量化机构目录索引
 applicable_scope: Layer 10 - 治理与合规层
 compliance_level: 专业标准
@@ -95,6 +95,13 @@ responsibility:
 - [LINK_MAINTENANCE_MECHANISM](./LINK_MAINTENANCE_MECHANISM.md)
 - [RESPONSIBILITY_REVIEW_MECHANISM](./RESPONSIBILITY_REVIEW_MECHANISM.md)
 - [SIMILARITY_THRESHOLD_OPTIMIZATION](./SIMILARITY_THRESHOLD_OPTIMIZATION.md)
+
+### 子目录直链（持续合入 · 从 Layer 10 主索引）
+
+- [CI/CD 集成指南](./CI_CD_INTEGRATION/CI_CD_INTEGRATION_GUIDE.md)
+- [文档创建流程](./GOVERNANCE_PROCESSES/DOCUMENT_CREATION_PROCESS.md)
+- [文档审查流程](./GOVERNANCE_PROCESSES/DOCUMENT_REVIEW_PROCESS.md)
+- [培训体系指南](./TRAINING_SYSTEM/TRAINING_SYSTEM_GUIDE.md)
 
 ---
 

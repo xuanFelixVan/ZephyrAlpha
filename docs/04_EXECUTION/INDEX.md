@@ -3,7 +3,7 @@ module_id: 04_EXECUTION_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - 04_EXECUTION目录索引
@@ -14,7 +14,7 @@ module_id: 04_EXECUTION_INDEX_EXECUTION_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-04
+last_updated: 2026-04-08
 owner: 执行层架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -29,7 +29,7 @@ implementation_status: 活跃维护---
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-07  
+> **最后更新**: 2026-04-08  
 > **维护者**: 执行层架构师
 
 ---
@@ -118,6 +118,11 @@ implementation_status: 活跃维护---
 | [健康监控](./03_MONITORING/HEALTH_MONITORING.md) | 健康监控 | ⭐⭐⭐⭐ |
 | [实时监控](./03_MONITORING/REAL_TIME_MONITORING.md) | 实时监控 | ⭐⭐⭐⭐ |
 | [绩效归因](./03_MONITORING/PERFORMANCE_ATTRIBUTION.md) | 绩效归因 | ⭐⭐⭐⭐ |
+
+## 🧭 严格孤儿挂载（持续合入）
+
+- [模块监控说明](./03_MONITORING/MODULE_MONITOR.md)
+- [Python 版本说明（实盘流）](./07_LIVE_STREAM/IMPORTANT_PYTHON_VERSION.md)
 
 ### AI委员?
 | 文档名称 | 说明 | 重要?|

@@ -30,7 +30,11 @@ owner: 文档管理团队
 
 **适用场景**：组合风险控制、因子中性化、风险归因分?
 
-***
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md`  
+> **处置建议**：merge_then_delete（以 Barra 风险模型蓝图为准）。
+
+---
 
 ## 2. 十大风格因子定义
 

@@ -43,6 +43,13 @@ responsibility:
 **文档数量**: 4个子目录
 **创建日期**: 2026-04-07
 
+### 遗留路径（`docs/06_CONSTRUCTION_DOCS`）
+
+历史上存在与上述 canonical 目录**平行**的 `docs/06_CONSTRUCTION_DOCS/` 树（当前仅余少量蓝图）。权威蓝图清单仍以 [01_BLUEPRINTS 机器生成索引](./01_BLUEPRINTS/INDEX.md) 为准；以下入口用于消除严格孤儿入度并避免误删遗留副本：
+
+- [遗留 01_BLUEPRINTS 索引](../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)
+- [A_STOCK_DATA_PROCESSING_BLUEPRINT（遗留副本）](../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/A_STOCK_DATA_PROCESSING_BLUEPRINT.md)
+
 ---
 
 ## 📁 子目录清单

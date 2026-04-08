@@ -33,8 +33,8 @@ responsibility:
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 9 |
-| **活跃模块** | 9 |
+| **文档总数** | 10 |
+| **活跃模块** | 10 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -57,6 +57,7 @@ responsibility:
 - [模块缺口与矛盾登记表（工作副本）](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) - `ARCH_MODULE_GAP_REGISTER_20260408`
 - [Layer 11 能力 ↔ 实施蓝图对照](../STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) - `LAYER11_CAPABILITY_MAP_20260408`
 - [施工门禁（先治理、后施工）](../STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md) - `CONSTRUCTION_GATE_CRITERIA_20260408`
+- [蓝图阶段文档彻底清洁总案（孤儿/重复/overlap）](./BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) - `BLUEPRINT_DOC_HYGIENE_MASTER_20260408`
 
 ---
 

@@ -22,6 +22,12 @@ owner: 文档管理团队
 | 数据清洗引擎 | `03_CLEANING/` | 下游处理 | 数据清洗和质量检查 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
 
+---
+
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/01_FRAMEWORK/DATA_SOURCE_LAYER_BLUEPRINT.md`  
+> **处置建议**：merge_then_delete（以 Layer 0 数据源层蓝图为准；本副本在真源覆盖后可合并清退）。
+
 **职责边界**:
 - ✅ 本文档负责: 定义"如何获取数据"
 - ❌ 本文档不负责: 定义需要什么数据（由 DATA_REQUIREMENTS.md 负责）

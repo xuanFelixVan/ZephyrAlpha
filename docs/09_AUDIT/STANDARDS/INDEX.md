@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STANDARDS_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - STANDARDS目录索引
@@ -14,7 +14,7 @@ module_id: 09_AUDIT_STANDARDS_INDEX_STANDARDS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -43,8 +43,8 @@ compliance_level: 专业标准---
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 19 |
-| **活跃模块** | 18 |
+| **文档总数** | 20 |
+| **活跃模块** | 19 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -59,6 +59,8 @@ compliance_level: 专业标准---
 - [文档仓库目录与阶段放置标准](./DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) - docs 一级/实施子目录/第 2 阶段施工文档默认路径
 
 - [重复文档处理标准（canonical 裁决）](./DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) - 重复/重叠/多版本并存的裁决与追溯
+
+- [全库孤儿与重复/重叠治理方案（Playbook）](./DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) - 孤儿分桶、重复裁决、工具门禁与批次节奏（总册）
 
 ### ✅ 入口补齐（用于严格孤儿入度统计）
 

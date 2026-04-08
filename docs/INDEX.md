@@ -3,7 +3,7 @@ module_id: INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
   - docs目录索引
@@ -18,7 +18,7 @@ implementation_status: 活跃维护
 owner: 系统架构?version: 1.1.1
 module_id: INDEX_ROOT_001
 created_date: 2026-04-02
-last_updated: 2026-04-07
+last_updated: 2026-04-08
 responsibility:
   - 目录导航与文档索引管理与优化维护
   responsibility_layer: Layer 11
@@ -36,7 +36,7 @@ responsibility:
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构 + Layer 0-11完整架构  
-> **最后更新**: 2026-04-07  
+> **最后更新**: 2026-04-08  
 > **维护者**: 系统架构师
 
 ---
@@ -141,6 +141,10 @@ docs/
 | **Layer 2** | Alpha因子?| 因子计算、因子库 | |
 | **Layer 1** | 数据预处理层 | 数据清洗、标准化 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 0** | 数据源层 | 数据采集、数据接?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+
+## 🧭 持续合入 · 直达入口（严格孤儿对账）
+
+- [L0 QMT 模块设计](./module_designs/layer_0/L0_QMT.md)
 
 ### 顶层架构蓝图 (Layer 7-11) 🆕
 

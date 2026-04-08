@@ -3,7 +3,7 @@ module_id: 03_TRADING_TACTICS_INDEX_20260407124139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-07'
+last_updated: '2026-04-08'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
@@ -63,6 +63,32 @@ implementation_status: ш┐ЫшбМф╕?---
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
 - [REFACTOR_COMPLETE](./REFACTOR_COMPLETE.md)
+
+## 🧭 严格孤儿挂载（波次 3：战术层主干可发现性）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt` 中 `docs/03_TRADING_TACTICS/` 路径仍缺自顶向下入口的条目。  
+> **动作**：仅在主索引增加链接；子目录已有索引的，此处再挂一层以便从 `03_TRADING_TACTICS/INDEX.md` 直达。
+
+### 策略框架
+
+- [策略模板库](./01_STRATEGY_FRAMEWORK/STRATEGY_TEMPLATES.md)
+
+### 高级战术
+
+- [市场周期](./03_ADVANCED_TACTICS/market_cycles.md)
+- [波浪交易](./03_ADVANCED_TACTICS/wave_trading.md)
+
+### 游资策略（other-masters 补充篇）
+
+- [retail_strategies_c](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_c.md) · [d](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_d.md) · [e](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_e.md) · [f](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_f.md) · [g](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_g.md) · [h](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_h.md) · [i](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_i.md) · [j](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_j.md) · [k](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_k.md) · [l](./04_YOUZI_STRATEGIES/other-masters/retail_strategies_l.md)
+
+### 99_ARCHIVE（历史战术归档）
+
+- [AI 集成（归档）](./99_ARCHIVE/ai_integration.md)
+- [接口标准（归档）](./99_ARCHIVE/interface_standard.md)
+- [管理器（归档）](./99_ARCHIVE/manager.md)
+- [模式识别（归档）](./99_ARCHIVE/pattern_recognition.md)
+- [技术指标（归档）](./99_ARCHIVE/technical_indicators.md)
 
 ## тн?ца╕х┐ГцЦЗцбгя╝Их┐Ешп╗я╝Й
 

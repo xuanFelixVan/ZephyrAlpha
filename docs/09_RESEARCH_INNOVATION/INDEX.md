@@ -3,7 +3,7 @@ module_id: 09_RESEARCH_INNOVATION_INDEX_RESEARCH_INNOVATION_001
 version: 2.1.0
 status: Active
 created_date: 2026-04-04
-last_updated: '2026-04-07'
+last_updated: '2026-04-08'
 owner: 系统架构师
 responsibility:
 - 负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
@@ -28,7 +28,7 @@ implementation_status: 设计阶段
 
 > **版本**: v2.1
 > **架构**: Layer 9 - 研究与创新层
-> **最后更新**: 2026-04-07
+> **最后更新**: 2026-04-08
 > **维护者**: 系统架构师
 
 ---
@@ -100,6 +100,15 @@ implementation_status: 设计阶段
 - [MISSING_MODULES_ANALYSIS](./MISSING_MODULES_ANALYSIS.md)
 - [OPENSOURCE_INTEGRATION_GUIDE](./OPENSOURCE_INTEGRATION_GUIDE.md)
 - [WEEKLY_MAINTENANCE_REPORT_20260407](./WEEKLY_MAINTENANCE_REPORT_20260407.md)
+
+### `_archive/`（持续合入 · 可点击入口）
+
+- [COMPLETE_BLUEPRINT](./_archive/COMPLETE_BLUEPRINT.md)
+- [COMPLETE_SUPPLEMENT_v2](./_archive/COMPLETE_SUPPLEMENT_v2.md)
+- [CRITICAL_MISSING](./_archive/CRITICAL_MISSING.md)
+- [DOCUMENT_GOVERNANCE_FINAL_AUDIT_REPORT](./_archive/DOCUMENT_GOVERNANCE_FINAL_AUDIT_REPORT.md)
+- [MISSING_MODULES_SUPPLEMENT](./_archive/MISSING_MODULES_SUPPLEMENT.md)
+- [SYSTEM_MANIFEST_UPDATE_GUIDE](./_archive/SYSTEM_MANIFEST_UPDATE_GUIDE.md)
 
 ### 实施指南
 

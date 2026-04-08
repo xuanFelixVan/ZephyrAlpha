@@ -12,6 +12,12 @@ parent_document: ../INDEX.md
 responsibility:
   - MISSING_METADATA_SCAN_20260407_173053报告文档
 ---
+> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/09_AUDIT/STATE/MISSING_METADATA_SCAN_REPORT_20260407_173053.md`  
+> **处置建议**：待真源确认后，保留为追溯或合并后删除；不得作为入口索引直接推荐。
+
+---
+
 
 # 缺少元数据文档扫描报告
 

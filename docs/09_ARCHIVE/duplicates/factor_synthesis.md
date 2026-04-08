@@ -13,6 +13,10 @@ owner: 文档管理团队
 
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/11_FACTOR_MINING_ENGINE/FACTOR_MINING_ENGINE_BLUEPRINT.md`  
+> **处置建议**：merge_then_delete（因子合成与挖掘引擎职责一致）。
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 变更人 |

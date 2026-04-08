@@ -23,6 +23,10 @@ owner: 文档管理团队
 | **自动入库** | 实验完成后自动提取关键信息入?|
 | **可追?* | 完整记录知识来源和血?|
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/10_AI_WORKFLOW/KNOWLEDGE_MANAGEMENT_BLUEPRINT.md`  
+> **处置建议**：merge_then_delete（知识管理体系以知识管理蓝图为准）。
+
 ## 2. 知识管理架构
 
 ### 2.1 知识来源

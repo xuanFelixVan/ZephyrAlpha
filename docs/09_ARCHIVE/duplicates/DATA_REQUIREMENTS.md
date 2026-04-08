@@ -21,6 +21,12 @@ owner: 文档管理团队
 | 数据采集蓝图 | [DATA_ACQUISITION.md](./DATA_ACQUISITION.md) | 下游实现 | 根据本需求规格实现数据采集 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
 
+---
+
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CONTRACT/OVERVIEW.md`  
+> **处置建议**：merge_then_delete（数据需求口径建议下沉到数据契约模块；本副本为历史规格草案）。
+
 **职责边界**:
 - ✅ 本文档负责: 定义"需要什么数据"
 - ❌ 本文档不负责: 如何获取数据（由 DATA_ACQUISITION.md 负责）

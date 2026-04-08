@@ -3,7 +3,7 @@ module_id: 11_STRATEGIC_DECISION_INDEX_STRATEGIC_DECISION_001
 version: 2.0.0
 status: Active
 created_date: 2026-04-04
-last_updated: '2026-04-07'
+last_updated: '2026-04-08'
 owner: 系统架构师
 standard_type: 专业量化机构目录索引
 applicable_scope: Layer 11 - 战略决策层
@@ -19,7 +19,7 @@ responsibility:
 
 > **版本**: v2.0
 > **架构**: Layer 11 - 战略决策层
-> **最后更新**: 2026-04-07
+> **最后更新**: 2026-04-08
 > **维护者**: 系统架构师
 
 ---
@@ -95,6 +95,13 @@ responsibility:
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
 - [REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN](./REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN.md)
+
+### `archive/`（持续合入 · 可点击入口）
+
+- [BLUEPRINT 创建进展报告（20260407）](./archive/BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md)
+- [BLUEPRINT 实施状态报告（20260407）](./archive/BLUEPRINT_IMPLEMENTATION_STATUS_REPORT_20260407.md)
+- [BLUEPRINT v2.0.1 备份](./archive/BLUEPRINT_v2.0.1_backup.md)
+- [P1 BLUEPRINT 创建进展（20260407）](./archive/P1_BLUEPRINT_CREATION_PROGRESS_REPORT_20260407.md)
 
 ---
 

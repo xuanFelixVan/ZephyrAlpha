@@ -27,3 +27,9 @@ owner: 文档管理团队
 ---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
+
+---
+
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md`  
+> **处置建议**：merge_then_delete（因子验证框架以因子-回测集成施工蓝图为准）。

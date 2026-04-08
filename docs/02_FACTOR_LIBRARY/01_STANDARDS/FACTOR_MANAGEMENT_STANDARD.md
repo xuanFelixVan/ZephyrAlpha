@@ -3,22 +3,16 @@ module_id: FACTOR_GUIDE_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-01
-last_updated: '2026-04-07'
+last_updated: 2026-04-08
 owner: 首席文档架构师
 responsibility:
-- 因子计算、因子库管理
+  - 因子计算、因子库管理
 standard_type: 专业量化机构因子标准
 applicable_scope: 因子研究与管理
 compliance_level: 初始标准
-parent_document: ../INDEX.md
+parent_document: ./INDEX.md
 implementation_status: 进行中
 ---
----
-
-> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
-> **canonical_path**：`docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`  
-> **处置建议**：保留追溯（retain_trace）；如后续归档清理，可转移到 duplicates 池或合并后删除。
-
 
 # 因子管理标准 (Factor Management Standard)
 
@@ -482,3 +476,4 @@ factor_management:
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |
+

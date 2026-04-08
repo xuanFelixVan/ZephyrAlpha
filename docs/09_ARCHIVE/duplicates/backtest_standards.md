@@ -14,6 +14,10 @@ owner: 文档管理团队
 
 ---
 
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/08_KNOWLEDGE/BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md`  
+> **处置建议**：merge_then_delete（以最佳实践真源为准；本副本仅保留追溯到完成并入为止）。
+
 ## 变更记录
 
 | 版本 | 日期 | 变更内容 | 变更人 |

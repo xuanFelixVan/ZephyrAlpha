@@ -30,7 +30,11 @@ owner: 文档管理团队
 
 **适用场景**：行业轮动策略、行业风险控制、行业暴露分?
 
-***
+> **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/OVERVIEW.md`  
+> **处置建议**：merge_then_delete（行业/风险因子归属风险因子模块概览）。
+
+---
 
 ## 2. 申万一级行业分?
 

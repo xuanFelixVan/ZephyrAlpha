@@ -12,6 +12,12 @@ standard_type: 专业量化机构文档治理标准
 applicable_scope: 全系统文档结构规范
 compliance_level: 专业标准
 ---
+> **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
+> **canonical_path**：`docs/06_ARCHIVE/20260407_p1_cleanup_archive/DOCUMENT_STRUCTURE_STANDARD.md`  
+> **处置建议**：待真源确认后，保留为追溯或合并后删除；不得作为入口索引直接推荐。
+
+---
+
 ---
 
 # 文档结构标准
