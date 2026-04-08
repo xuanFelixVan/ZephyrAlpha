@@ -144,6 +144,16 @@ related_documents:
 | C6 | `docs/01_FRAMEWORK/BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C6 | `docs/01_FRAMEWORK/CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C6 | `docs/01_FRAMEWORK/CODE_GENERATION_MODEL_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPLIANCE_DOCUMENT_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPLIANCE_KNOWLEDGE_BASE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPLIANCE_REPORT_INTERFACE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/CORRELATION_PREDICTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/COUNTERPARTY_RISK_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/CURRICULUM_LEARNING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C7 | `docs/01_FRAMEWORK/CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
