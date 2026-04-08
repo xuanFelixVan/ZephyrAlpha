@@ -1,9 +1,9 @@
 ---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-08'
+last_updated: '2026-04-09'
 owner: 仓库 Owner
 standard_type: 审计台账
 applicable_scope: Trae（GLM）与 Cursor 分工、蓝图阶段批次与交接
@@ -287,6 +287,16 @@ related_documents:
 | T2-20 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/UNIT_TESTING_BLUEPRINT.md` | Trae-06 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-20 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/VAR_ES_MONITORING_BLUEPRINT.md` | Trae-06 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-20 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/VULNERABILITY_DETECTION_BLUEPRINT.md` | Trae-06 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
+
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：多期组合优化/动态权重/长期规划/交易成本优化；不负责：单期优化/订单执行） |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：分层架构/绩效评估/权重分配/信号融合/协调优化；不负责：单策略信号/订单执行） |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：S3兼容存储/大文件/生命周期/分层策略；不负责：数据库存储/数据清洗） |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPENING_STRATEGY_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：开盘策略/竞价信号/波动策略/执行优化；不负责：盘中策略/订单执行） |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ORDER_FLOW_ANALYSIS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
 
 ### 3.2 Cursor（`docs/01_FRAMEWORK/` 根目录 `*BLUEPRINT*.md`，字母序）
 
