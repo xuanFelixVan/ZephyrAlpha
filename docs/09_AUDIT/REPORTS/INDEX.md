@@ -45,6 +45,7 @@ compliance_level: 专业标准
 ### 快速入口（建议先看）
 
 - **夜间审计产物（快照）**：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)
+- **Reports 分组索引（推荐入口）**：[`INDEX_GROUPED_20260408.md`](./INDEX_GROUPED_20260408.md)
 - **进度类报告（常用入口）**：
   - [`PHASE3_CURRENT_PROGRESS_20260407.md`](./PHASE3_CURRENT_PROGRESS_20260407.md)
   - [`PHASE3_P2_PROGRESS_20260407.md`](./PHASE3_P2_PROGRESS_20260407.md)
