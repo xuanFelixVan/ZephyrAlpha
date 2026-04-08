@@ -222,6 +222,8 @@ related_documents:
 | T2-12 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-08 | 0 | 同批次验收落盘修复 |
 | T2-12 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-08 | 0 | 同批次验收落盘修复 |
 
+| T2-13 | （无） | Trae-?? | 已完成 | 2026-04-08 | 0 | 统筹-A 验收：工作区 clean，无新增可提交 diff；说明该批次目标文件在仓库现态已满足 §0.1 门禁三段；L1 扫描时间戳 20260408T094254Z，Invalid links=0；无 commit（避免空提交） |
+
 ### 3.2 Cursor（`docs/01_FRAMEWORK/` 根目录 `*BLUEPRINT*.md`，字母序）
 
 **策略**：每批最多 **8** 个文件；子目录（如 `LAYER4_ML/`）单独开批次号 **C-L4-***，避免与根目录混批。
