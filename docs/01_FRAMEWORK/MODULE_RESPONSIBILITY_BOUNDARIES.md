@@ -75,7 +75,32 @@ Layer 0: 数据源层
 |------|--------|-----------|----------|----------|
 | **因子库模?* | FACTOR_BACKTEST_001 | Layer 2 + Layer 5 | 因子计算、存储、IC分析、因子回测验证| **因子层面**的回测验证|
 | **策略引擎模块** | STRAT_ENGINE_001 | Layer 5 | 策略逻辑开发、策略回测执行、绩效分析 | **策略层面**的回测执行（与 `ARCHITECTURE.md` 中 Layer 3=舆情层 对齐；原「Layer 3 + Layer 5」为笔误，已更正） |
-| **回测执行模块** | (Backtrader集成) | Layer 5 | 回测引擎执行、交易模拟、成本计划| **引擎层面**的回测执?|
+| **回测执行模块** | (Backtrader集成) | Layer 5 | 回测引擎执行、交易模拟、成本建模 | **引擎层面**的回测执行 |
+
+**权威蓝图入口（因子 / 回测 / Backtrader）**：[FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md)
+
+**因子计算与工厂（与因子库职责对应）**：[ALPHA_FACTOR_FACTORY_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALPHA_FACTOR_FACTORY_BLUEPRINT.md)
+
+### Layer 3 → Layer 5：舆情与策略
+
+Layer **3** 产出舆情与事件类信号；Layer **5** 策略引擎消费行情、因子及（可选）舆情信号。数据流摘要见 [ARCHITECTURE.md](./ARCHITECTURE.md) 第 4 节；跨模块约定见 [API 接口契约](../03_TRADING_TACTICS/API_Contract.md)。
+
+### Layer 9～11 主蓝图索引（与 ARCHITECTURE.md 对齐）
+
+| Layer | 主蓝图 |
+|-------|--------|
+| 9 研究与创新 | [RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md) |
+| 10 治理与合规 | [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) |
+| 11 战略决策 | [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md) |
+
+### 风控横切职责（索引）
+
+风控「贯穿各层」的监控与压力测试等，见 [ARCHITECTURE.md](./ARCHITECTURE.md)；实现侧示例：[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)、[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)。
+
+### 设计文档双轨说明（`module_designs` vs `01_FRAMEWORK`）
+
+- **`docs/01_FRAMEWORK/`**：总架构、Layer、模块边界与框架级蓝图 — **冲突时以此为准**。  
+- **`docs/module_designs/`**：按层/实现的细化设计 — **对齐实现与评审**；与框架矛盾时以框架为准，并应在 [缺口登记表](../09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) 或本文件变更记录中留痕。
 
 ---
 
@@ -140,6 +165,8 @@ Layer 0: 数据源层
 | **报告输出** | 策略绩效报告 | AI报告?| Markdown/PDF报告 |
 
 ### 3. 回测执行模块 (Backtrader集成)
+
+**集成与引擎约定（权威）**：[FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md)
 
 #### ?核心职责 (必须负责)
 
@@ -271,6 +298,7 @@ Layer 0: 数据源层
 |------|------|----------|--------|
 | v1.0 | 2026-04-01 | 创建文档，明确因子库与策略引擎职责边界 | Audit Sentinel |
 | v1.1 | 2026-04-08 | 策略引擎 Layer 与 `ARCHITECTURE.md` 对齐（Layer 5；修正原 Layer 3 混用） | 架构/模块审核 |
+| v1.2 | 2026-04-08 | 增补 Layer9-11 索引、回测/因子权威蓝图链、风控索引、双轨说明、舆情→策略与 API_Contract 互链 | 架构/模块审核执行 |
 
 ---
 

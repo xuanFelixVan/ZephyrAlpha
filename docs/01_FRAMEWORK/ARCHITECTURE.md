@@ -1,40 +1,19 @@
 ﻿---
-module_id: ARCHITECTURE
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - 统一架构 UNIFIED_ARCHITECTURE文档
----
-
-﻿---
-module_id: ARCHITECTURE_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-  - 系统架构设计与技术选型与实施指导
-  responsibility_layer: Layer 4 - 机器学习层
-  responsibility_layer: Layer 4 - 机器学习层
-responsibility_layer: Layer 4 - 机器学习层
----
----
----
--------
 module_id: ARCHITECTURE_001
 version: 5.5.0
 status: Active
 created_date: 2026-04-01
-last_updated: 2026-04-06
-owner: 首席文档架构?standard_type: 专业量化机构文档
-applicable_scope: 全系?compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 进行?---
+last_updated: '2026-04-08'
+owner: 首席文档架构师
+standard_type: 专业量化机构文档
+applicable_scope: 全系统技术架构 Layer 0-11
+compliance_level: 专业标准
+parent_document: ./INDEX.md
+implementation_status: 进行中
+responsibility:
+  - 系统整体分层架构与跨层数据流权威说明
+  - 与模块职责边界文档对齐（见 MODULE_RESPONSIBILITY_BOUNDARIES.md）
+---
 
 # 统一架构 (UNIFIED_ARCHITECTURE)
 > **核心职责**: 定义清风量化系统的整体架构设计、模块组织和层级关系，作为系统架构的权威参考文档
@@ -192,7 +171,9 @@ Layer 0: 数据源层 (Data Sources)
 
 ### 4.2 关键数据接口
 
-| 数据流方?| 数据类型 | 格式 | 频率 | 质量要求 |
+> **接口契约（单一入口）**：[API 接口契约](../03_TRADING_TACTICS/API_Contract.md) — 跨模块调用与数据边界约定；下表为 Layer 间数据流摘要，细节以契约为准。
+
+| 数据流方向 | 数据类型 | 格式 | 频率 | 质量要求 |
 |------------|----------|------|------|----------|
 | **Layer 0 ?Layer 1** | 原始市场数据 | OHLCV + 财务 + 新闻 | 实时/日频 | 完整? 95% |
 | **Layer 1 ?Layer 2** | 清洗后数据| 标准化DataFrame | 日频 | 无缺失?|

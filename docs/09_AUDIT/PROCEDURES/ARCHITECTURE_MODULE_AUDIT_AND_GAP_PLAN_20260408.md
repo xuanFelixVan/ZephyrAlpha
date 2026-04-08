@@ -139,9 +139,16 @@
 
 ## 附录 B：本次执行记录（2026-04-08）
 
-- **阶段 1**：已对照 `ARCHITECTURE.md`、`MODULE_RESPONSIBILITY_BOUNDARIES.md`、`BLUEPRINT_ARCHITECTURE_MAPPING.md` 开头与映射节。  
-- **阶段 2**：已在登记表标注 P0/P1/P2。  
-- **阶段 3（已做最小补缺）**：修正 `MODULE_RESPONSIBILITY_BOUNDARIES.md` 中策略引擎 **Layer 编号** 与 `ARCHITECTURE.md`（Layer 3=舆情、策略属 Layer 5）的矛盾。  
+- **批次 A（首轮）**  
+  - 阶段 1：对照 `ARCHITECTURE.md`、`MODULE_RESPONSIBILITY_BOUNDARIES.md`、`BLUEPRINT_ARCHITECTURE_MAPPING.md`。  
+  - 阶段 3（最小）：策略引擎 **Layer 5** 与总架构对齐（G-001）。  
+
+- **批次 B（全系统 P1 执行）**  
+  - `ARCHITECTURE.md`：合并 **单一 front matter**（`module_id: ARCHITECTURE_001`）；§4.2 增加 **API_Contract** 入口（路径 `../03_TRADING_TACTICS/API_Contract.md`）。  
+  - `BLUEPRINT_ARCHITECTURE_MAPPING.md`：**整篇重写为 v1.1**（可机读表格 + 与 ARCHITECTURE 权威顺序声明）。  
+  - `MODULE_RESPONSIBILITY_BOUNDARIES.md`：Layer 9～11 主蓝图表、回测/因子 **权威蓝图链**、舆情→策略与 **API_Contract**、**风控索引**、**module_designs 双轨说明**（v1.2）。  
+  - 登记表更新至 v1.1；L1 **无效内链 0**。  
+
 - **详细行项目**：见 [`../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。
 
 ---

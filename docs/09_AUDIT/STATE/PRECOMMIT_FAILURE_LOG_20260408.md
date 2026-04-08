@@ -24,3 +24,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: 填写缺口登记表 15 条；方案附录 A/B；修正 `MODULE_RESPONSIBILITY_BOUNDARIES` 策略引擎 Layer 与 `ARCHITECTURE.md` 对齐；刷新 L1
+
+## 2026-04-08 — 架构/模块审核全系统 P1 补缺（批次 B）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: ARCHITECTURE 单一 YAML + API_Contract；BLUEPRINT_ARCHITECTURE_MAPPING 重写 v1.1；MODULE_RESPONSIBILITY 增补索引与蓝图链；登记表 v1.1；L1 无效链 0
