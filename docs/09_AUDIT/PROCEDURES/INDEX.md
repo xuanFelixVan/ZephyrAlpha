@@ -1,6 +1,6 @@
 ---
 module_id: 09_AUDIT_PROCEDURES_INDEX
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-08'
@@ -20,7 +20,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.1.0
+> **版本**: v1.2.0
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `09_AUDIT_PROCEDURES_INDEX`
@@ -56,6 +56,7 @@ responsibility:
 - [架构/模块审核与补缺方案](./ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md) - `ARCH_MODULE_AUDIT_GAP_PLAN_20260408`
 - [模块缺口与矛盾登记表（工作副本）](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) - `ARCH_MODULE_GAP_REGISTER_20260408`
 - [Layer 11 能力 ↔ 实施蓝图对照](../STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) - `LAYER11_CAPABILITY_MAP_20260408`
+- [施工门禁（先治理、后施工）](../STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md) - `CONSTRUCTION_GATE_CRITERIA_20260408`
 
 ---
 
@@ -87,6 +88,7 @@ responsibility:
 | v1.0.5 | 2026-04-08 | 增加架构/模块审核与补缺方案及缺口登记表索引 | 系统维护者 |
 | v1.0.6 | 2026-04-08 | 增加 Layer 11 能力↔蓝图对照表索引 | 系统维护者 |
 | v1.1.0 | 2026-04-08 | 合并双 YAML 头为单一 front matter；修正相关文档相对路径 | 系统维护者 |
+| v1.2.0 | 2026-04-08 | 索引增加施工门禁 `CONSTRUCTION_GATE_CRITERIA_20260408` | 系统维护者 |
 
 ---
 

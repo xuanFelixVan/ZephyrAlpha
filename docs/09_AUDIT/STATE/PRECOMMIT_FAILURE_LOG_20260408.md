@@ -64,3 +64,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: `docs/09_AUDIT/PROCEDURES/INDEX.md` 合并双头、v1.1.0；`ISSUE_HANDOVER_DOCUMENT_20260407.md` 中 audit_state 文件名对齐 AUDIT8_*；L1 复扫
+
+## 2026-04-08 — 施工门禁与双 YAML 豁免登记骨架
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: 新增 `CONSTRUCTION_GATE_CRITERIA_20260408.md`（先治理后施工总清单）、`DOUBLE_YAML_EXCEPTIONS.md`；架构方案表增施工门禁行；PROCEDURES INDEX v1.2 链到门禁
