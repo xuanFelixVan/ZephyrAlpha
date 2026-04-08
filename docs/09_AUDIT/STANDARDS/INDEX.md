@@ -56,6 +56,8 @@ compliance_level: 专业标准---
 
 - [文件命名规范标准](./FILE_NAMING_STANDARD.md) - 系统文档
 
+- [文档仓库目录与阶段放置标准](./DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) - docs 一级/实施子目录/第 2 阶段施工文档默认路径
+
 
 ### 核心文档
 

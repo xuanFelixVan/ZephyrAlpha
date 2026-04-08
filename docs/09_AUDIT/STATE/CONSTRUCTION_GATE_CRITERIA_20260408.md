@@ -1,6 +1,6 @@
 ---
 module_id: CONSTRUCTION_GATE_CRITERIA_20260408
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-08'
@@ -30,7 +30,7 @@ responsibility:
 | 阶段 | 名称 | 做什么 | 结束时应达到的感觉 |
 |------|------|--------|-------------------|
 | **第 1 阶段** | **蓝图** | 系统分层、模块职责、能力 ↔ 文档挂载、接口边界可查（`ARCHITECTURE`、`MODULE_RESPONSIBILITY_BOUNDARIES`、各域 `*_BLUEPRINT.md` 等） | 「盖哪栋楼、每层干什么、找哪份文档」已说清，**无大块空白** |
-| **第 2 阶段** | **施工文档**（施工图纸 / 施工流程 / 施工计划 / 施工方案） | 按模块或里程碑拆解：**先后顺序、每步交付物、验收、风险、与 API/数据级的细化说明**；可放在 `docs/05_IMPLEMENTATION/` 下实施类目录（路径由 Owner 与 AI 约定一篇索引） | 「工人进场前，工序单和细化说明有了」 |
+| **第 2 阶段** | **施工文档**（施工图纸 / 施工流程 / 施工计划 / 施工方案） | 按模块或里程碑拆解：**先后顺序、每步交付物、验收、风险、与 API/数据级的细化说明**；**默认目录**见 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§4**，索引入口 [`03_CONSTRUCTION_PLANS/INDEX.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS/INDEX.md) | 「工人进场前，工序单和细化说明有了」 |
 | **第 3 阶段** | **施工（实现）** | 按第 2 阶段文档 **编写与修改业务代码**、测试、部署或自用跑通 | 「真的在盖」 |
 
 ### 0.1 「蓝图终稿」标准（进入第 2 阶段的条件）
@@ -44,6 +44,21 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 5. **闭合**：篇首或显著位置 **不得** 再保留未解释的「Draft / 待补 / TBD 占位」；若确有已知限制，须归入 **「已知限制」** 并附 **补全计划或 §4 豁免**。
 
 **进入第 2 阶段的放行**：上述条件在 §0.2 范围内 **全部满足** 后，可开始编写 **第 2 阶段** 成套施工文档（流程、计划、方案）。
+
+### 0.1a 蓝图阶段：文档放置与目录标准（Owner 关切）
+
+**方向是对的**：专业机构也会先定 **「文档地图 + 放置规则」**，再大规模写作；个人项目同样受益，否则文件会散到 AI 也难找。
+
+**建议把握两点**（避免「把未来每一种文件名都预写死」这种做不到的事）：
+
+1. **定「哪类进哪棵树」**：一级目录职责、实施子目录、`src` 与 `docs` 分工 —— 以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为 **现行真源**；命名与路径格式另见 [`PATH_STANDARD.md`](../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md)、[`FILE_NAMING_STANDARD.md`](../STANDARDS/FILE_NAMING_STANDARD.md)。  
+2. **新类型走变更**：以后出现新文档类型，**先**在 `LAYOUT` 标准 §6 或 `TECH_DECISION_RECORDS` **加一条**，再建新文件夹 —— 这样算「提前定规矩」，而不是开工后乱长。
+
+**蓝图阶段完成项（与放置相关）**：
+
+- [ ] **`DOCUMENT_REPOSITORY_LAYOUT_STANDARD`** 已阅读并确认无与 Owner 意图冲突（冲突则改标准或登记豁免）。  
+- [ ] **`03_CONSTRUCTION_PLANS/`** 已存在且含 **`INDEX.md`**（可与蓝图终稿并行创建，见该目录当前文件）。  
+- [ ] 蓝图终稿范围内各篇 **路径与链接** 符合 LAYOUT 表（或已在篇内说明例外理由）。
 
 ### 0.2 「全库蓝图」范围（须书面划定，可扩展）
 
@@ -187,3 +202,4 @@ L1 报告：docs/09_AUDIT/STATE/SENTINEL_L1_PRE_CONSTRUCTION_YYYYMMDD.md
 |------|------|------|
 | 1.0.0 | 2026-04-08 | 初始：Owner「先治理后施工」决策与总清单 |
 | 1.1.0 | 2026-04-08 | 新增 §0：蓝图 → 施工文档 → 代码施工三阶段；蓝图终稿与全库范围；两档放行声明 |
+| 1.2.0 | 2026-04-08 | §0.1a 蓝图阶段目录标准；链到 `DOCUMENT_REPOSITORY_LAYOUT_STANDARD`；第 2 阶段默认 `03_CONSTRUCTION_PLANS/` |

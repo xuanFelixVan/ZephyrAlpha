@@ -74,3 +74,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: `CONSTRUCTION_GATE_CRITERIA_20260408.md` §0 蓝图终稿/全库范围、§0.3 施工文档交付、两档放行声明；§3 标题标明第 3 阶段
+
+## 2026-04-08 — 文档仓库目录标准 + 03_CONSTRUCTION_PLANS 占位
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`；`05_IMPLEMENTATION/.../03_CONSTRUCTION_PLANS/INDEX.md`；`CONSTRUCTION_GATE` v1.2 §0.1a；STANDARDS INDEX 增链
