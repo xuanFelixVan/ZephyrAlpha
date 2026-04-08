@@ -1139,10 +1139,10 @@ related_documents:
 
 - [x] **T1047** （REM）P0-A：`temp_*.md` + 蓝图双重路径 + `[模块ID]` 占位 — 指令 §4
 - [x] **T1048** （REM）P0-B：双 YAML 50 文件 dry-run 审阅后再分批写回 — 指令 §5 / ADR-OC-001
-- [ ] **T1049** （REM）P1-A：module_id 去重 + 缺省 + registry — 指令 §6
-- [ ] **T1050** （REM）P1-B：audit_state 权威目录合并 — 指令 §7 / ADR-OC-002
-- [ ] **T1051** （REM）P1-C：P1 余项 — 指令 §8 与 P1C_DEFERRED
-- [ ] **T1052** （REM）闭环：EC-1～EC-7 复跑勾选 + POST_REMEDIATION L1 存档路径
+- [x] **T1049** （REM）P1-A：module_id 去重 + 缺省 + registry — 指令 §6
+- [x] **T1050** （REM）P1-B：audit_state 权威目录合并 — 指令 §7 / ADR-OC-002
+- [x] **T1051** （REM）P1-C：P1 余项 — 指令 §8 与 P1C_DEFERRED
+- [x] **T1052** （REM）闭环：EC-1～EC-7 复跑勾选 + POST_REMEDIATION L1 存档路径
 
 ---
 
