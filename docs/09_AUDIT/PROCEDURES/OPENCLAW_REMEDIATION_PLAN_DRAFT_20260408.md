@@ -1,6 +1,7 @@
 # OpenClaw 文档整改方案（草稿）
 
 > **状态**: 执行就绪 — **具体顺序、验收打勾、质量门**以执行手册为准（见下「必读三件套」）  
+> **本轮回收口**: `docs/09_AUDIT/REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md`（EC-1～EC-7 勾选；EC-4 待续）  
 > **适用场景**: 个人仓库、单人开发、AI 辅助维护  
 > **关联 run_id**: OPENCLAW_20260408_033500  
 > **依据**: `docs/09_AUDIT/REPORTS/OPENCLAW_AUDIT_SUMMARY_20260408.md`、`OPENCLAW_REMEDIATION_BACKLOG.md`、`OPENCLAW_L3_CONFLICTS.md`、`OPENCLAW_INVENTORY_AUDIT_LEDGER.csv`  
