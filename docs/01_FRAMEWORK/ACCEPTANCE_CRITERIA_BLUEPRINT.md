@@ -3,35 +3,25 @@ module_id: ACCEPTANCE_CRITERIA_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-07'
+last_updated: '2026-04-08'
 responsibility:
-- 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
+  - 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
 layer: Layer 4
 owner: 首席文档架构师
----
 applicable_scope: 系统验收标准
-
 compliance_level: 顶级专业标准
-
-reference_models: ["Software Testing Best Practices", "Quality Assurance Standards", "Performance Benchmarking"]
-
+reference_models:
+  - Software Testing Best Practices
+  - Quality Assurance Standards
+  - Performance Benchmarking
 related_documents:
-
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
-
   - AI_GOVERNANCE_BLUEPRINT.md
-
 parent_document: ../ARCHITECTURE.md
-
 implementation_status: 蓝图设计完成
-
-layer: Layer 4 (机器学习层)
-
 responsibility_boundary: |
-  本文档负责Layer 4机器学习层的验收标准设计，包括功能验收、性能验收、安全验收等核心功能。---
-
-
-
+  本文档负责 Layer 4 机器学习层的验收标准设计，包括功能验收、性能验收、安全验收等核心功能。
+---
 
 > **核心职责**: 提供acceptance criteria blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -46,8 +36,17 @@ responsibility_boundary: |
 
 > **规划周期**: 持续应用（每个模块验收）
 
+## 接口与契约（蓝图终稿）
 
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。若验收涉及在线服务或数据契约，须以该文档及既有子契约为准。
 
+## 验收标准（可检查）
+
+- Owner 能在任一次模块发布前，依据本文档给出的等级与检查维度完成书面验收结论，且验收清单中的条目可在实现仓库中找到对应测试或签字记录。
+
+## 已知限制
+
+- 历史正文中的表格与代码块可能存在换行断裂；若与上述门禁冲突，以实现阶段前一轮排版修复为准。
 
 ---
 
