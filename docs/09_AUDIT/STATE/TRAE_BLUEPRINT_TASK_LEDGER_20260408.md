@@ -154,6 +154,14 @@ related_documents:
 | C7 | `docs/01_FRAMEWORK/COUNTERPARTY_RISK_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C7 | `docs/01_FRAMEWORK/CURRICULUM_LEARNING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C7 | `docs/01_FRAMEWORK/CYBERSECURITY_INCIDENT_RESPONSE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_ANNOTATION_PLATFORM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_AUGMENTATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_EXPLORATION_INTERFACE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_LINEAGE_TRACKING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_LINEAGE_VISUALIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_PREPROCESSING_LAYER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C8 | `docs/01_FRAMEWORK/DATA_PRIVACY_COMPLIANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 

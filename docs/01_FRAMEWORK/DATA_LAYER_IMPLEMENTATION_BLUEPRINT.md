@@ -59,6 +59,18 @@ responsibility:
 > - 如果你是个人开发：参考PERSONAL_DEVELOPMENT_BLUEPRINT.md
 > - 如果你需要补充关键模块：参考CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md
 
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。数据接入、抽取、缓存、落库与数据质量上报若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能从本文中明确至少一条“数据源接入 → 处理/对齐 → 落库/缓存 → 下游可用性 → 审计/监控”的可检查闭环，并能在 `API_Contract.md` 中定位到相应的数据契约入口（或在本文写明豁免与补全计划）。
+
+## 已知限制
+
+- 本文篇幅大且含大量历史占位；以本节门禁为准，结构精修与索引抽取留待专项批次。
+
 ---
 
 ## 📊 一、现状诊断与差距分析
