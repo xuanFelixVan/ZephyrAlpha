@@ -50,5 +50,10 @@ implementation_status: ти▓тї№┐?---
 - factor_design.md - тЏатГљУЙУАтЁЦжЌе
 - first-backtest.md - уггСИђТгАтЏъ№┐?---
 
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [dev_setup](./dev_setup.md)
+- [first_backtest](./first_backtest.md)
+
 
 **у┤бт╝ЋуЅѕТюг**: v1.0.0 | **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03 | **у╗┤Тіц№┐?*: ждќтИГТќЄТАБТъХТъё№┐?

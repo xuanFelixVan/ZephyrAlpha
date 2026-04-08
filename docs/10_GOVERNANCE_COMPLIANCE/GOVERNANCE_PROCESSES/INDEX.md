@@ -70,6 +70,11 @@ compliance_level: 专业标准
 | 文档审查流程 | DOCUMENT_REVIEW_PROCESS_001 | 文档审查的标准流程和方法 |
 | 文档维护流程 | DOCUMENT_MAINTENANCE_PROCESS_001 | 文档维护的标准流程和要求 |
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [DOCUMENT_CREATION_PROCESS](./DOCUMENT_CREATION_PROCESS.md)
+- [DOCUMENT_REVIEW_PROCESS](./DOCUMENT_REVIEW_PROCESS.md)
+
 ---
 
 ## 🎯 三、流程使用指南

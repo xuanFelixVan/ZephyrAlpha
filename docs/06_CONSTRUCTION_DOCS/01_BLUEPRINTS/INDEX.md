@@ -55,6 +55,10 @@ compliance_level: 专业标准---
 
 - A Stock Data Processing Blueprint - `A_001`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [A_STOCK_DATA_PROCESSING_BLUEPRINT](./A_STOCK_DATA_PROCESSING_BLUEPRINT.md)
+
 ---
 
 ## 🔍 维护指南

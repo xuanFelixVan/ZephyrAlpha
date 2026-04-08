@@ -52,6 +52,10 @@ compliance_level: 专业标准
 - Rtx3090 Best Models - `EXE_RTX3090_BEST_MODELS`
 - Rtx3090 Configuration Summary - `EXE_RTX3090_CONFIGURATIO`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [IMPORTANT_PYTHON_VERSION](./IMPORTANT_PYTHON_VERSION.md)
+
 ---
 
 ## 🔍 维护指南

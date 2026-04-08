@@ -60,6 +60,10 @@ implementation_status: ш┐ЫшбМф╕?---
 - [涨停板分析（高级战术）](./03_ADVANCED_TACTICS/limit_up_analysis.md)
 - [优化报告](./OPTIMIZATION_REPORT.md)
 
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [REFACTOR_COMPLETE](./REFACTOR_COMPLETE.md)
+
 ## тн?ца╕х┐ГцЦЗцбгя╝Их┐Ешп╗я╝Й
 
 | цЦЗцбг | чФищА?| щШЕшп╗цЧ╢щЧ┤ |

@@ -116,6 +116,12 @@ implementation_status: 进行?---
 > 由于 `docs/09_AUDIT/` 在 A 类中数量很大（>500），不建议把全量条目直接塞进本页。  
 > 专业机构做法：本页保留“入口与分流”，全量清单以子索引承接（后续波次逐步补齐各子目录的 `INDEX.md`）。
 
+### ✅ 本波次补齐的入口（非归档类）
+
+- [ARCHITECTURE_ANALYSIS_REPORT](./ARCHITECTURE_ANALYSIS_REPORT.md)
+- [MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK](./MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
+- [PERIODIC_AUDIT_PROCESS](./PERIODIC_AUDIT_PROCESS.md)
+
 ## 🔄 审计触发机制
 
 ### 个人开发者触发条?| 触发条件 | 审查类型 | 时限 |

@@ -40,6 +40,13 @@ responsibility:
 
 本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-11架构组织，包括文档名称、module_id、版本、状态和最后更新日期?---
 
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+> 说明：以下两份技术规格书当前仍为入度=0，此处补齐可达入口（不改正文）。
+
+- [AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION](./AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION.md)
+- [CONFIG_MANAGER_TECHNICAL_SPECIFICATION](./CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md)
+
 ## 2. 核心模块技术规格书
 
 ### 2.1 智能执行算法引擎

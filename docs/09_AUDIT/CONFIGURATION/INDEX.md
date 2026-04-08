@@ -55,6 +55,10 @@ compliance_level: 专业标准---
 
 - Scheduled Audit Configuration - `SCHEDULED_AUDIT_CONFIG`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [SCHEDULED_AUDIT_CONFIGURATION](./SCHEDULED_AUDIT_CONFIGURATION.md)
+
 ---
 
 ## 🔍 维护指南

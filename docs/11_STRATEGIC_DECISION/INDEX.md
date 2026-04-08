@@ -92,6 +92,10 @@ responsibility:
 | 战略决策层蓝图 | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 | [职责边界矩阵](./RESPONSIBILITY_BOUNDARY_MATRIX.md) | 模块职责边界定义 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN](./REMAINING_BLUEPRINTS_IMPLEMENTATION_PLAN.md)
+
 ---
 
 ## 📖 模块蓝图索引

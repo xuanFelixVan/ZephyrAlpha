@@ -61,6 +61,10 @@ compliance_level: 专业标准---
 
 - Document Governance Continuous Improvement - `DOCUMENTGOVERNANCECONTINUOUS_001`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT](./DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT.md)
+
 ---
 
 ## 🔍 维护指南

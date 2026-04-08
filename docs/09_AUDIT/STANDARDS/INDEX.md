@@ -60,6 +60,25 @@ compliance_level: 专业标准---
 
 - [重复文档处理标准（canonical 裁决）](./DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) - 重复/重叠/多版本并存的裁决与追溯
 
+### ✅ 入口补齐（用于严格孤儿入度统计）
+
+- [合规审计系统标准](./COMPLIANCE_AUDIT_SYSTEM.md)
+- [持续改进流程标准](./CONTINUOUS_IMPROVEMENT_PROCESS.md)
+- [持续质量改进流程](./CONTINUOUS_QUALITY_IMPROVEMENT_PROCESS.md)
+- [文档治理优化提案](./DOC_GOVERNANCE_OPTIMIZATION_PROPOSAL.md)
+- [文档治理系统计划](./DOC_GOVERNANCE_SYSTEM_PLAN.md)
+- [文档命名标准（旧版/兼容）](./DOC_NAMING_STANDARD.md)
+- [文档质量文化计划](./DOC_QUALITY_CULTURE_PLAN.md)
+- [文档引用标准（旧版/兼容）](./DOC_REFERENCE_STANDARD.md)
+- [文档分类例外清单](./DOCUMENT_CLASSIFICATION_EXCEPTION_LIST.md)
+- [文档元数据模板](./DOCUMENT_METADATA_TEMPLATE.md)
+- [文档职责边界标准](./DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD.md)
+- [路径引用标准（旧版/兼容）](./PATH_REFERENCE_STANDARD.md)
+- [周期性审计机制](./PERIODIC_AUDIT_MECHANISM.md)
+- [周期性检查计划](./PERIODIC_CHECK_PLAN.md)
+- [质量标准](./QUALITY_STANDARD.md)
+- [职责模板库](./RESPONSIBILITY_TEMPLATE_LIBRARY.md)
+
 
 ### 核心文档
 

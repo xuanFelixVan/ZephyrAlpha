@@ -23,6 +23,20 @@ applicable_scope: 04_YOUZI_STRATEGIES
 - [README](README.md)
 - [retail_strategies_a](retail_strategies_a.md)
 - [retail_strategies_b](retail_strategies_b.md)
+- [other-masters/INDEX](./other-masters/INDEX.md)
+
+### ✅ 入口补齐（other-masters 系列）
+
+- [retail_strategies_c](./other-masters/retail_strategies_c.md)
+- [retail_strategies_d](./other-masters/retail_strategies_d.md)
+- [retail_strategies_e](./other-masters/retail_strategies_e.md)
+- [retail_strategies_f](./other-masters/retail_strategies_f.md)
+- [retail_strategies_g](./other-masters/retail_strategies_g.md)
+- [retail_strategies_h](./other-masters/retail_strategies_h.md)
+- [retail_strategies_i](./other-masters/retail_strategies_i.md)
+- [retail_strategies_j](./other-masters/retail_strategies_j.md)
+- [retail_strategies_k](./other-masters/retail_strategies_k.md)
+- [retail_strategies_l](./other-masters/retail_strategies_l.md)
 
 ---
 

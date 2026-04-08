@@ -58,6 +58,10 @@ implementation_status: х╖▓хоМцИ?---
 ### чнЦчХех╝ХцУОца╕х┐Г
 - STRATEGY_ENGINE_BLUEPRINT.md - чнЦчХех╝ХцУОцА╗ф╜Ушо╛шоб
 - STRATEGY_ENGINE_CORE_BLUEPRINT.md - ца╕х┐ГцибхЭЧцКАцЬпшо╛шо?
+
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [STRATEGY_TEMPLATES](./STRATEGY_TEMPLATES.md)
 ### чнЦчХечФЯхС╜хСицЬЯ
 - lifecycle.md - чнЦчХечФЯхС╜хСицЬЯчобчРЖ
 - STRATEGY_LIFECYCLE_AI_BLUEPRINT.md - AIш╛ЕхКйчнЦчХечФЯхС╜хСицЬЯ

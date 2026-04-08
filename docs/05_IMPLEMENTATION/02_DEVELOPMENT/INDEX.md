@@ -70,5 +70,16 @@ implementation_status: х╖▓хоМя┐?---
 - VERSION_MANAGEMENT_STANDARD.md - чЙИцЬмчобчРЖ
 ---
 
+## 🧭 严格孤儿挂载（波次：A 类剩余大头）
+
+> 说明：以下文件当前入度为 0（未被任何 Markdown 链接）。此处补齐入口，便于检索与后续治理自动化。
+
+- [AI_AGENT_CALL_PROTOCOL](./AI_AGENT_CALL_PROTOCOL.md)
+- [API_DESIGN](./API_DESIGN.md)
+- [AUTH](./AUTH.md)
+- [CONFIG_MANAGEMENT](./CONFIG_MANAGEMENT.md)
+- [LOGGING_STANDARD](./LOGGING_STANDARD.md)
+- [TEST_FRAMEWORK](./TEST_FRAMEWORK.md)
+
 
 **ч┤вх╝ХчЙИцЬм**: v1.0.0 | **хИЫх╗║цЧецЬЯ**: 2026-04-03 | **ч╗┤цКдя┐?*: щжЦх╕нцЦЗцбгцЮ╢цЮДя┐?

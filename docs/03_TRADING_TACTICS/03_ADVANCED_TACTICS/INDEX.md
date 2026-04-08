@@ -57,6 +57,11 @@ compliance_level: 专业标准---
 - Market-Cycles - `TACTICS_MARKET_CYCLES_001`
 - Wave-Trading - `TACTICS_WAVE_TRADING_001`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [Market Cycles](./market_cycles.md)
+- [Wave Trading](./wave_trading.md)
+
 ---
 
 ## 🔍 维护指南

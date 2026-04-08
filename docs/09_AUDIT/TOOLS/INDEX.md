@@ -53,7 +53,7 @@ compliance_level: 专业标准---
 
 ### 核心文档
 
-- Markdown Link Validator
+- [MARKDOWN_LINK_VALIDATOR](./MARKDOWN_LINK_VALIDATOR.md)
 
 ---
 

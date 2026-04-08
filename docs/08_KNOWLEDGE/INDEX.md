@@ -108,6 +108,14 @@ implementation_status: 已完?tags: ["知识?, "索引", "导航"]
 
 ---
 
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [BACKTEST_BEST_PRACTICES](./BEST_PRACTICES/BACKTEST_BEST_PRACTICES.md)
+- [FACTOR_CASE_LIBRARY](./FACTOR_LIBRARY/FACTOR_CASE_LIBRARY.md)
+- [STRATEGY_CASE_LIBRARY](./STRATEGY_LIBRARY/STRATEGY_CASE_LIBRARY.md)
+
+---
+
 ### 2. 策略案例库（STRATEGY_LIBRARY?
 #### 2.1 策略案例?
 **文档**: **核心内容**:

@@ -137,3 +137,21 @@ df -h
 - [ﮒ؟۰ﮔﺗﮔﭦﻟﺛﻛﺛﮒﺓ۴ﮒﺓﻛﺛﺟﻝ۷ﮔﮒ?v1.0](./SPEC_APPROVER_TOOL_GUIDE.md) - 技术规格说明
 
 - [HMMцибхЮЛцКАцЬпхЯ╣шоншобхИ?](./HMM_TRAINING_PLAN_001.md) - 培训材料
+
+---
+
+## 🧭 严格孤儿挂载（波次：A 类剩余大头）
+
+> 说明：以下文件当前入度为 0（未被任何 Markdown 链接）。此处补齐入口，方便检索与后续治理自动化。
+
+- [SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN](./improvement_plans/SMART_EXECUTION_MARKET_IMPACT_IMPROVEMENT_PLAN.md)
+- [DOCUMENT_QUALITY_STANDARDS](./standards/DOCUMENT_QUALITY_STANDARDS.md)
+- [LAYER_IDENTIFICATION_STANDARD](./standards/LAYER_IDENTIFICATION_STANDARD.md)
+- [CONTINUOUS_MONITORING_MECHANISM](./monitoring/CONTINUOUS_MONITORING_MECHANISM.md)
+- [BEST_PRACTICES_TEMPLATE](./knowledge_base/BEST_PRACTICES_TEMPLATE.md)
+- [CASE_STUDY_TEMPLATE](./knowledge_base/CASE_STUDY_TEMPLATE.md)
+- [PERSONAL_WORKFLOW_GUIDE](./knowledge_base/best_practices/PERSONAL_WORKFLOW_GUIDE.md)
+- [EVENT_BUS_INTEGRATION_CASE_STUDY](./knowledge_base/case_studies/EVENT_BUS_INTEGRATION_CASE_STUDY.md)
+- [LINK_FIX_CASE_STUDY](./knowledge_base/case_studies/LINK_FIX_CASE_STUDY.md)
+- [STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY](./knowledge_base/case_studies/STRATEGY_FACTORY_IMPLEMENTATION_CASE_STUDY.md)
+- [METADATA_ENHANCER_GUIDE](./knowledge_base/tools_guides/METADATA_ENHANCER_GUIDE.md)

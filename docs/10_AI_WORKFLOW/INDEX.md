@@ -21,7 +21,7 @@ compliance_level: 专业标准
 > - ❌ 本文档不负责：其他模块内容
 
 > **版本**: v1.0.0
-> **架构**: Layer 7 (AI报告层) + Layer 3 (舆情分析层)
+> **架构**: Layer 7（AI报告层）+ Layer 3（舆情分析层）
 > **最后更新**: 2026-04-07
 > **维护者**: 实施团队
 
@@ -31,7 +31,7 @@ compliance_level: 专业标准
 
 本目录存放AI工作流与舆情分析综合层的所有文档，包括：
 
-**Layer 7 (AI报告层)**:
+**Layer 7（AI报告层）**:
 - AI工作记录与优化
 - AI工作汇报与交付
 - 复盘模块
@@ -48,7 +48,7 @@ compliance_level: 专业标准
 - 验证与测试框架
 - 运维知识管理
 
-**Layer 3 (舆情分析层)**:
+**Layer 3（舆情分析层）**:
 - 舆情因子库
 - 深度学习情感分析
 - 实时监控仪表盘
@@ -87,6 +87,10 @@ compliance_level: 专业标准
 
 - [舆情层补充蓝图合集报告](./SENTIMENT_LAYER_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT.md)
 - [舆情层最终完备性评估报告](./SENTIMENT_LAYER_FINAL_COMPLETENESS_ASSESSMENT_REPORT.md)
+
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [SENTIMENT_LAYER_FOURTH_ROUND_ULTIMATE_ASSESSMENT](./SENTIMENT_LAYER_FOURTH_ROUND_ULTIMATE_ASSESSMENT.md)
 
 ### Layer 3 舆情分析层蓝图文档
 

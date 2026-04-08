@@ -47,6 +47,10 @@ implementation_status: ти▓тїТѕ?---
 - BLUEPRINT.md - уЏЉТјДу│╗у╗ЪУЊЮтЏЙ
 - REAL_TIME_MONITORING.md - тъТЌХуЏЉТјД
 - HEALTH_MONITORING.md - тЂЦт║иуЏЉТјД
+
+## 🧭 严格孤儿挂载（波次：A 类继续清理）
+
+- [MODULE_MONITOR](./MODULE_MONITOR.md)
 ---
 
 

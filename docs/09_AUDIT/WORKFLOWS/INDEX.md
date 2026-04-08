@@ -57,6 +57,11 @@ compliance_level: 专业标准---
 - Doc Creation Workflow - `DOCCREATIONWORKFLOW_001`
 - Periodic Audit Workflow - `PERIODICAUDITWORKFLOW_001`
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [DOC_CREATION_WORKFLOW](./DOC_CREATION_WORKFLOW.md)
+- [PERIODIC_AUDIT_WORKFLOW](./PERIODIC_AUDIT_WORKFLOW.md)
+
 ---
 
 ## 🔍 维护指南

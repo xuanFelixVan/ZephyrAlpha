@@ -68,6 +68,12 @@ implementation_status: 已完整
 - [相关性分析](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md)
 - [研究报告生成器](./02_EXPLORATORY_ANALYSIS/research_report_generator.md)
 
+### ✅ 入口链接补齐（用于严格孤儿入度统计）
+
+- [docker_setup](./01_ENVIRONMENT/docker_setup.md)
+- [statistical_tools](./02_EXPLORATORY_ANALYSIS/statistical_tools.md)
+- [candle_patterns](./03_PATTERN_RECOGNITION/candle_patterns.md)
+
 ### 03_PATTERN_RECOGNITION - 模式识别
 
 | 文件 | 说明 |

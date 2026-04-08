@@ -28,7 +28,7 @@ standard_type: 专业量化机构文档
 
 ## 📚 文档列表
 
-- CI_CD_INTEGRATION_GUIDE
+- [CI_CD_INTEGRATION_GUIDE](./CI_CD_INTEGRATION_GUIDE.md)
 
 
 ---
