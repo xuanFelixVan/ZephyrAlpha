@@ -49,6 +49,17 @@ implementation_status: ш┐ЫшбМф╕?---
 ### цИСшжБхобшобч│╗ч╗Я
 тЖ?[09_AUDIT/INDEX_AUDIT.md](../09_AUDIT/INDEX_AUDIT.md) - хобшобщЧицИ╖я╝?хИЖщТЯя╝?
 
+---
+
+## 🧭 严格孤儿挂载（波次 1：入口补齐）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
+> **动作**：只做“索引入口挂载”，不改正文内容。
+
+- [策略 AI 模块分析](./01_STRATEGY_FRAMEWORK/STRATEGY_AI_MODULES_ANALYSIS.md)
+- [涨停板分析（高级战术）](./03_ADVANCED_TACTICS/limit_up_analysis.md)
+- [优化报告](./OPTIMIZATION_REPORT.md)
+
 ## тн?ца╕х┐ГцЦЗцбгя╝Их┐Ешп╗я╝Й
 
 | цЦЗцбг | чФищА?| щШЕшп╗цЧ╢щЧ┤ |

@@ -125,6 +125,22 @@ implementation_status: 活跃维护---
 
 ---
 
+## 🧭 严格孤儿挂载（波次 1：入口补齐）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
+> **动作**：只做“索引入口挂载”，不改正文内容。
+
+- [周度审计机制](./04_OPERATIONS/WEEKLY_AUDIT_MECHANISM.md)
+- [经济周期报告器技术规格](./05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md)
+- [信号质量报告器技术规格](./05_TECHNICAL_SPECIFICATIONS/SIGNAL_QUALITY_REPORTER_TECHNICAL_SPECIFICATION.md)
+- [审计交接](./07_OPERATIONS/AUDIT_HANDOVER.md)
+- [文档创建检查清单](./07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
+- [持续改进执行报告](./07_OPERATIONS/CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md)
+- [改进计划执行报告](./07_OPERATIONS/improvement_plans/IMPROVEMENT_PLAN_EXECUTION_REPORT.md)
+- [文档审计员指南](./07_OPERATIONS/knowledge_base/tools_guides/DOCUMENT_AUDITOR_GUIDE.md)
+
+---
+
 ## 🗂?子目?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
