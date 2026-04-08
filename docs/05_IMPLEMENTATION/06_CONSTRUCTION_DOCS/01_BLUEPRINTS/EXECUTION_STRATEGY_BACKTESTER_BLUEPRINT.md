@@ -405,6 +405,7 @@ graph LR
 
 - **契约真源**：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)
 - **对外接口边界**：本模块提供执行策略回测与评估接口（回放、指标计算、对比）；不直接执行实盘交易，不替代真实成交回报的权威来源。
+- **策略配置入口**：支持接收由 [`STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md`](./STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md) 生成并通过 Schema 校验的 `StrategyConfig` + `backtest_plan`（含 `dataset_id`/`seed`），确保回测可复现与可审计。
 
 ## 验收标准（可检查）
 

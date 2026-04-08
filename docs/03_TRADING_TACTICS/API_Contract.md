@@ -502,3 +502,95 @@ class IRiskManager(ABC):
 
 
 **ﻝﮔ؛**: 1.1 | **ﮔﺑﮔﺍ**: 2026-03-29 | **ﻝﭘﮔ?*: ﻗ?ﮔﺑﭨﻟﺓ
+
+---
+
+## 11. StrategyAuthoringAssistant（文字/对话 → 策略配置）子契约（增补）
+
+> **目的**：把“文字/对话”输入转为 **可执行且可校验** 的 `StrategyConfig`，并能触发回测与报告；同时落盘审计字段，保证可复现与可追溯。
+
+### 11.1 对象：StrategyDraft（草案）
+
+```json
+{
+  "draft_id": "draft_20260408_0001",
+  "user_text": "我想做一个均线趋势策略：5日上穿20日买入，下穿卖出；最大回撤不超过10%；回测2019-2024。",
+  "clarifications": [
+    {"question": "标的范围是什么？", "answer": "沪深300成分股"},
+    {"question": "调仓频率？", "answer": "日频"},
+    {"question": "交易成本假设？", "answer": "单边万三，滑点万二"}
+  ],
+  "missing_fields": ["benchmark_id"],
+  "proposed_config": {
+    "strategy_id": "SMA_CROSS_001",
+    "version": "1.0.0",
+    "universe": {"type": "index_components", "index_id": "CSI300"},
+    "timeframe": "1D",
+    "signals": {"type": "sma_cross", "fast": 5, "slow": 20},
+    "risk_controls": {"max_drawdown_pct": 0.10},
+    "execution_assumptions": {"commission_bps": 3, "slippage_bps": 2}
+  }
+}
+```
+
+### 11.2 对象：StrategyConfig（可执行配置，必须通过校验）
+
+```json
+{
+  "strategy_id": "SMA_CROSS_001",
+  "version": "1.0.0",
+  "strategy_config_version": "cfg_20260408_0001",
+  "dataset_id": "dataset_cn_equity_eod_v1",
+  "seed": 42,
+  "universe": {"type": "index_components", "index_id": "CSI300"},
+  "timeframe": "1D",
+  "signals": {"type": "sma_cross", "fast": 5, "slow": 20},
+  "risk_controls": {"max_drawdown_pct": 0.10, "position_limit_pct": 0.05},
+  "execution_assumptions": {"commission_bps": 3, "slippage_bps": 2},
+  "backtest_plan": {
+    "start_date": "2019-01-01",
+    "end_date": "2024-12-31",
+    "benchmark_id": "CSI300",
+    "parameter_sweep": null
+  }
+}
+```
+
+### 11.3 API：生成草案 / 校验配置 / 触发回测 / 获取报告
+
+#### POST /strategy_drafts
+
+- **输入**：`user_text` + （可选）`context`（如标的范围、偏好、禁忌）
+- **输出**：`StrategyDraft`
+
+#### POST /strategy_specs/validate
+
+- **输入**：`StrategyConfig`
+- **输出**：校验结果（通过/失败 + 字段级错误）
+
+```json
+{
+  "valid": false,
+  "errors": [
+    {"path": "backtest_plan.benchmark_id", "message": "required"},
+    {"path": "signals.fast", "message": "must be < signals.slow"}
+  ]
+}
+```
+
+#### POST /backtests
+
+- **输入**：`StrategyConfig`
+- **输出**：`backtest_id` + 回测元信息（含审计字段回显）
+
+#### GET /reports/{report_id}
+
+- **输出**：报告元信息 + 可下载的产物引用（HTML/PDF/JSON）
+
+### 11.4 审计字段（必须落盘）
+
+- `strategy_id` / `version` / `strategy_config_version`
+- `dataset_id`（数据集/口径版本）
+- `seed`（随机性控制：抽样/蒙特卡洛/重采样等）
+- `engine_version`（策略引擎/回测引擎版本）
+- `created_at` / `created_by`（用户或 Agent）

@@ -1321,6 +1321,7 @@ python scripts/migrate.py
 
 - **契约真源**：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)
 - **对外接口边界**：本模块负责将因子研究产出接入回测/评估链路并输出可追溯结果；不直接生成实盘交易指令，不替代数据层的权威数据口径。
+- **策略配置入口**：支持接收由 [`STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md`](./STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md) 生成并通过 Schema 校验的 `StrategyConfig`，以便将“文字/对话”表达的策略意图落到可复现的因子回测任务。
 
 ## 验收标准（可检查）
 

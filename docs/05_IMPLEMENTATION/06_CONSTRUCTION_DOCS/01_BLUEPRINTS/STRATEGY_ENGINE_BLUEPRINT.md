@@ -723,6 +723,7 @@ if __name__ == "__main__":
 
 - **契约真源**：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)
 - **对外接口边界**：本模块对外提供策略调度、执行与信号产出的能力（含运行状态/事件可查询）；不负责订单撮合与下单执行，不替代风控对交易约束的最终裁决。
+- **上游入口（策略配置生成）**：[`STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md`](./STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md)（`STRATEGY_AUTHORING_ASSISTANT_001`）负责将用户“文字/对话”转为可校验的 `StrategyConfig`，并将通过校验的配置交由本模块执行/调度。
 
 ## 验收标准（可检查）
 

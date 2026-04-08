@@ -624,6 +624,7 @@ class PerformanceAPI:
 
 - **契约真源**：[`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md)
 - **对外接口边界**：本模块输出绩效指标与评估报告（例如收益、回撤、风险调整收益等）；不负责收益归因分解（由归因模块负责），不负责风险模型的权威口径。
+- **输入来源（可追溯回测链）**：当策略来自 [`STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md`](./STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md)（文字/对话→配置）时，绩效输出必须包含 `strategy_config_version`、`dataset_id`、`seed` 等审计字段，确保“同配置同数据”可复现与可对账。
 
 ## 验收标准（可检查）
 
