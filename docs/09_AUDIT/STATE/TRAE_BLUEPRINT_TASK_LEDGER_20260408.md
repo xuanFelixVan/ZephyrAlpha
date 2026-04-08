@@ -34,6 +34,28 @@ related_documents:
 
 ---
 
+## 1.1 施工队编组（6 队，并行执行规范）
+
+> **目标**：在不撞文件的前提下最大化吞吐；Owner 只负责“转发/回传”，调度与验收由 Cursor 统一指挥与收口。
+
+| 施工队 | 执行方 | 目录包（白名单范围） | 分支建议 | 产出/交付 |
+|--------|--------|----------------------|----------|-----------|
+| Trae-01 | Trae | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/`（只允许改分配到的批次文件） | `docs/blueprint-trae-01` | 每批 ≤8 篇：补齐 §0.1 门禁段 + L1=0 + 交付摘要 |
+| Trae-02 | Trae | 同上 | `docs/blueprint-trae-02` | 同上 |
+| Trae-03 | Trae | 同上 | `docs/blueprint-trae-03` | 同上 |
+| Trae-04 | Trae | 同上 | `docs/blueprint-trae-04` | 同上 |
+| Trae-05 | Trae | 同上 | `docs/blueprint-trae-05` | 同上 |
+| Cursor-01 | Cursor | `docs/01_FRAMEWORK/`（继续 Cursor 批次流水线） | `docs/blueprint-cursor` | 批次 C*：补齐 §0.1 门禁段 + L1=0 + 台账更新 + commit 收口 |
+
+**并行硬规则（必须执行）**
+
+- **只改白名单**：每队只允许改派发给自己的文件清单；除此之外任何文件不得打开/保存（避免“自动格式化”造成冲突）。
+- **禁止跨目录包**：Trae 队不得修改 `docs/01_FRAMEWORK/`；Cursor 队不得修改 `01_BLUEPRINTS/`（除非 Owner 明确指派某批验收修复）。
+- **每批 ≤8 篇**：保证验收与合并可控。
+- **交付必须含 L1**：批次结束必须跑 `python scripts/sentinel_l1_governance_scan.py`，保证 `Invalid links = 0`。
+
+---
+
 ## 2. 可复制给 Trae 的完整任务说明（已填好占位）
 
 **以下整块可复制到 Trae 对话开头（每新开一批时，把 §3 中「本批文件列表」同步贴到文首或文末）。**
@@ -86,7 +108,7 @@ related_documents:
 
 ### 3.1 Trae（`01_BLUEPRINTS`）
 
-**策略**：先清空 YAML 为 `status: Draft` 的四篇（批次 T1）；其后按 `01_BLUEPRINTS/INDEX.md` 顺序每批 ≤8 篇。
+**策略**：T1 已完成（四篇）；其后以“缺失 §0.1 门禁三段（接口与契约/验收标准/已知限制）”为筛选条件，按文件名排序切批（每批 ≤8 篇），并行派发给 5 个 Trae 施工队。
 
 | 批次 | 文件（仓库相对路径） | 执行方 | 状态 | 交付日期 | L1 无效链 | 备注 |
 |------|----------------------|--------|------|----------|-----------|------|
@@ -94,7 +116,46 @@ related_documents:
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ESG_INVESTMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
-| T2+ | （派发前按 INDEX 填入下一组 ≤8 篇） | Trae | 未派发 | | | |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALPHA_FACTOR_FACTORY_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/API_DOCUMENTATION_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/API_GATEWAY_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AUDIT_LOGGING_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/AUTO_REPAIR_ENGINE_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BARRA_RISK_MODEL_BLUEPRINT.md` | Trae-01 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BLACK_LITTERMAN_MODEL_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CI_CD_PIPELINE_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CLICKHOUSE_INTEGRATION_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CODE_QUALITY_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/COINTEGRATION_ANALYSIS_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONFIGURATION_MANAGEMENT_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-2 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONFIG_CENTER_BLUEPRINT.md` | Trae-02 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_CONFLICT_RESOLVER_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONTAINER_ORCHESTRATION_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CVAR_OPTIMIZATION_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_ACCESS_AUDIT_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_BACKUP_RECOVERY_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CATALOG_BLUEPRINT.md` | Trae-03 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_CLEANING_ENGINE_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_COST_MANAGEMENT_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_FABRIC_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_LINEAGE_ENHANCED_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_MASKING_ENCRYPTION_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-4 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_MESH_BLUEPRINT.md` | Trae-04 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_OBSERVABILITY_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_ENHANCED_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SECURITY_COMPLIANCE_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
+| T2-5 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md` | Trae-05 | 已派发 | | | 门禁三段缺失（待补齐） |
 
 ### 3.2 Cursor（`docs/01_FRAMEWORK/` 根目录 `*BLUEPRINT*.md`，字母序）
 
