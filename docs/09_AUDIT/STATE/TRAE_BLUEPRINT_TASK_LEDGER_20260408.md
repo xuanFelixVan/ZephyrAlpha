@@ -136,6 +136,14 @@ related_documents:
 | C5 | `docs/01_FRAMEWORK/BACKTEST_RESULT_VIEWER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C5 | `docs/01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C5 | `docs/01_FRAMEWORK/BEST_EXECUTION_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_GAP_ANALYSIS_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BLUEPRINT_STAGE_FINAL_COMPLETION_REPORT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/BUSINESS_CONTINUITY_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/CIRCUIT_BREAKER_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C6 | `docs/01_FRAMEWORK/CODE_GENERATION_MODEL_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
