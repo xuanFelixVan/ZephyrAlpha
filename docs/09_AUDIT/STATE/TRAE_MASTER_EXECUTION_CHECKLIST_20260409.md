@@ -250,31 +250,31 @@ related_documents:
 - [x] **T0187** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRADE_AUDITOR_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0188** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0189** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0190** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0191** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0192** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0193** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0194** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0195** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_ALTERNATIVE_ASSESSMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0196** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0197** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0198** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0199** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_COST_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0200** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_FABRIC_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0201** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_GOVERNANCE_PLATFORM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0202** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0203** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LINEAGE_TRACKING_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0204** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_MESH_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0205** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_OBSERVABILITY_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0206** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SECURITY_COMPLIANCE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0207** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SOURCE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0208** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0209** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VIRTUALIZATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0210** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0211** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_REPORT_AUTOMATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0212** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_SCORING_SYSTEM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0213** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_DATA_LAKE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [ ] **T0214** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_QUALITY_MONITOR_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0190** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0191** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0192** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0193** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0194** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0195** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_ALTERNATIVE_ASSESSMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0196** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0197** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0198** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/AUTO_REPAIR_ENGINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0199** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_COST_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0200** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_FABRIC_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0201** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_GOVERNANCE_PLATFORM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0202** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0203** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_LINEAGE_TRACKING_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0204** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_MESH_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0205** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_OBSERVABILITY_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0206** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SECURITY_COMPLIANCE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0207** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_SOURCE_MANAGEMENT_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0208** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VERSION_CONTROL_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0209** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/DATA_VIRTUALIZATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0210** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0211** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_REPORT_AUTOMATION_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0212** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/QUALITY_SCORING_SYSTEM_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0213** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_DATA_LAKE_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0214** （ORPHAN）`docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints/REALTIME_QUALITY_MONITOR_BLUEPRINT_ARCHIVED_ENCODING_ERROR.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0215** （ORPHAN）`docs/06_ARCHIVE/20260407_duplicate_audit_reports/STRATEGY_EXECUTION_DEEP_AUDIT_SUMMARY_20260407.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0216** （ORPHAN）`docs/06_ARCHIVE/20260407_duplicate_audit_reports/STRATEGY_EXECUTION_RESPONSIBILITY_FIX_REPORT_20260407.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [ ] **T0217** （ORPHAN）`docs/06_ARCHIVE/20260407_duplicate_reports/STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
