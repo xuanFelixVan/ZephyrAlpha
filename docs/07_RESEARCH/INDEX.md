@@ -58,6 +58,16 @@ implementation_status: 已完整
 | statistical_tools.md | 统计工具 |
 | research_report_generator.md | 研究报告生成?|
 
+---
+
+## 🧭 严格孤儿挂载（波次 1：入口补齐）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
+> **动作**：只做“索引入口挂载”，不改正文内容。
+
+- [相关性分析](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md)
+- [研究报告生成器](./02_EXPLORATORY_ANALYSIS/research_report_generator.md)
+
 ### 03_PATTERN_RECOGNITION - 模式识别
 
 | 文件 | 说明 |

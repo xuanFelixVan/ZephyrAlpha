@@ -99,6 +99,23 @@ implementation_status: 进行?---
 ### 📊 报告与输?- **** - 标准审计报告格式
 - **[当前审计报告](./REPORTS/DOCUMENT_AUDIT_v5.1.md)** - 最新系统审计结?
 
+---
+
+## 🧭 严格孤儿挂载（波次 1：入口补齐）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
+> **动作**：仅在索引层新增入口，不改正文内容。
+
+### 入口建议（先从 Reports 与 overnight 产物开始）
+
+- 报告总入口：[`REPORTS/INDEX.md`](./REPORTS/INDEX.md)
+- 夜间产物入口：[`STATE/overnight_runs/INDEX.md`](./STATE/overnight_runs/INDEX.md)
+
+### A 类严格孤儿（09_AUDIT）分流建议
+
+> 由于 `docs/09_AUDIT/` 在 A 类中数量很大（>500），不建议把全量条目直接塞进本页。  
+> 专业机构做法：本页保留“入口与分流”，全量清单以子索引承接（后续波次逐步补齐各子目录的 `INDEX.md`）。
+
 ## 🔄 审计触发机制
 
 ### 个人开发者触发条?| 触发条件 | 审查类型 | 时限 |

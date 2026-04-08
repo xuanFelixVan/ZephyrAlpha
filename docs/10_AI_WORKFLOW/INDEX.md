@@ -78,6 +78,16 @@ compliance_level: 专业标准
 | [DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md](./DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md) | 数据质量与血缘管理蓝图 | ⭐⭐⭐⭐ |
 | [DATA_SOURCE_EXTENSION_BLUEPRINT.md](./DATA_SOURCE_EXTENSION_BLUEPRINT.md) | 数据源扩展模块蓝图 | ⭐⭐⭐⭐ |
 
+---
+
+## 🧭 严格孤儿挂载（波次 1：入口补齐）
+
+> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
+> **动作**：只做“索引入口挂载”，不改正文内容。
+
+- [舆情层补充蓝图合集报告](./SENTIMENT_LAYER_COMPLETE_BLUEPRINT_SUPPLEMENT_REPORT.md)
+- [舆情层最终完备性评估报告](./SENTIMENT_LAYER_FINAL_COMPLETENESS_ASSESSMENT_REPORT.md)
+
 ### Layer 3 舆情分析层蓝图文档
 
 | 文档名称 | 说明 | 重要度 |
