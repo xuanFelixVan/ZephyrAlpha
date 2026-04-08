@@ -43,8 +43,8 @@ compliance_level: 专业标准---
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 6 |
-| **活跃模块** | 6 |
+| **文档总数** | 8 |
+| **活跃模块** | 8 |
 | **更新频率** | 按需更新 |
 
 ---
@@ -63,6 +63,8 @@ compliance_level: 专业标准---
 - [OpenClaw 整改执行手册（顺序与验收）](./OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md) - `OPENCLAW_REMEDIATION_PLAYBOOK_20260408`
 - [文档治理裁决书（已锁定）](../STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md) - `GOVERNANCE_DECISIONS_LOCKED_20260408`
 - [文档整改详细任务指令（可复制给 AI）](./DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) - `DOC_REMEDIATION_TASK_DIRECTIVE_20260408`
+- [架构/模块审核与补缺方案](./ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md) - `ARCH_MODULE_AUDIT_GAP_PLAN_20260408`
+- [模块缺口与矛盾登记表（工作副本）](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) - `ARCH_MODULE_GAP_REGISTER_20260408`
 
 ---
 
@@ -91,6 +93,7 @@ compliance_level: 专业标准---
 | v1.0.2 | 2026-04-08 | 增加 OpenClaw 整改方案草稿索引 | 系统维护者 |
 | v1.0.3 | 2026-04-08 | 增加整改执行手册与已锁定裁决书索引 | 系统维护者 |
 | v1.0.4 | 2026-04-08 | 增加文档整改详细任务指令索引 | 系统维护者 |
+| v1.0.5 | 2026-04-08 | 增加架构/模块审核与补缺方案及缺口登记表索引 | 系统维护者 |
 
 ---
 

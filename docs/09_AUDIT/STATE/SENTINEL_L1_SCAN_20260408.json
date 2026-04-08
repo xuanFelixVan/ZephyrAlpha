@@ -1,20 +1,20 @@
 {
-  "scan_time_utc": "20260408T033030Z",
+  "scan_time_utc": "20260408T034230Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3131,
+  "md_file_count": 3133,
   "links": {
     "stats": {
-      "total_files_scanned": 3131,
-      "total_md_links": 4567,
+      "total_files_scanned": 3133,
+      "total_md_links": 4573,
       "skipped_external": 992,
-      "valid": 3575,
+      "valid": 3581,
       "invalid": 0
     },
     "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 2722,
+    "unique_module_ids": 2723,
     "duplicate_ids_count": 0,
     "duplicates": {},
     "files_without_module_id_sample": [
@@ -57,6 +57,7 @@
       "docs/06_ARCHIVE/temp_pending/temp_risk_budget_v2.md",
       "docs/06_ARCHIVE/temp_pending/temp_risk_budget_v3.md",
       "docs/06_ARCHIVE/temp_pending/temp_stress_test_spec.md",
+      "docs/09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md",
       "docs/09_AUDIT/PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md",
       "docs/09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md",
       "docs/09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408.md",
@@ -417,7 +418,7 @@
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md",
       "docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md"
     ],
-    "no_id_total": 398
+    "no_id_total": 399
   },
   "path_depth": {
     "deepest_30": [

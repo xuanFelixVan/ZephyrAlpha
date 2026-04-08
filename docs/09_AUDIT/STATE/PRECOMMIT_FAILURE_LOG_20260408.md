@@ -14,3 +14,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: `sentinel_l1_governance_scan.py` 仅解析首道 front matter 的 `module_id`；刷新 L1/POST/收口报告；`MODULE_ID_REGISTRY` 脚注对齐
+
+## 2026-04-08 — 架构/模块审核方案提交
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: 新增 `ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`、`ARCH_MODULE_GAP_REGISTER_20260408.md`，更新 PROCEDURES INDEX 与 L1 扫描
