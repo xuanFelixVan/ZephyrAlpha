@@ -1046,27 +1046,27 @@ related_documents:
 
 ## E. `docs/` 一级目录 — 归档 / 职责 / 导航 普查
 
-- [ ] **T0976** （DIR）`docs/00_OVERVIEW/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0977** （DIR）`docs/00_RESOURCES/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0978** （DIR）`docs/01_FRAMEWORK/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0979** （DIR）`docs/02_FACTOR_LIBRARY/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0980** （DIR）`docs/03_TRADING_TACTICS/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0981** （DIR）`docs/04_EXECUTION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0982** （DIR）`docs/05_IMPLEMENTATION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0976** （DIR）`docs/00_OVERVIEW/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0977** （DIR）`docs/00_RESOURCES/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0978** （DIR）`docs/01_FRAMEWORK/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0979** （DIR）`docs/02_FACTOR_LIBRARY/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0980** （DIR）`docs/03_TRADING_TACTICS/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0981** （DIR）`docs/04_EXECUTION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0982** （DIR）`docs/05_IMPLEMENTATION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [x] **T0983** （DIR）`docs/06_ARCHIVE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0984** （DIR）`docs/06_CONSTRUCTION_DOCS/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0985** （DIR）`docs/07_AI_REPORTING/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0986** （DIR）`docs/07_RESEARCH/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0987** （DIR）`docs/08_HUMAN_AI_INTERFACE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0988** （DIR）`docs/08_KNOWLEDGE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0989** （DIR）`docs/08_KNOWLEDGE_BASE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0984** （DIR）`docs/06_CONSTRUCTION_DOCS/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0985** （DIR）`docs/07_AI_REPORTING/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0986** （DIR）`docs/07_RESEARCH/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0987** （DIR）`docs/08_HUMAN_AI_INTERFACE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0988** （DIR）`docs/08_KNOWLEDGE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0989** （DIR）`docs/08_KNOWLEDGE_BASE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [x] **T0990** （DIR）`docs/09_ARCHIVE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0991** （DIR）`docs/09_AUDIT/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0992** （DIR）`docs/09_RESEARCH_INNOVATION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0993** （DIR）`docs/10_AI_WORKFLOW/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0994** （DIR）`docs/10_GOVERNANCE_COMPLIANCE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0995** （DIR）`docs/11_STRATEGIC_DECISION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
-- [ ] **T0996** （DIR）`docs/module_designs/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0991** （DIR）`docs/09_AUDIT/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0992** （DIR）`docs/09_RESEARCH_INNOVATION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0993** （DIR）`docs/10_AI_WORKFLOW/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0994** （DIR）`docs/10_GOVERNANCE_COMPLIANCE/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0995** （DIR）`docs/11_STRATEGIC_DECISION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
+- [x] **T0996** （DIR）`docs/module_designs/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 
 ---
 
