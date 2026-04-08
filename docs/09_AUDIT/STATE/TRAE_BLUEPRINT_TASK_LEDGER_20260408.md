@@ -34,9 +34,9 @@ related_documents:
 
 ---
 
-## 1.1 施工队编组（6 队，并行执行规范）
+## 1.1 施工队编组（7 队：5×Trae + 2×Cursor，并行执行规范）
 
-> **目标**：在不撞文件的前提下最大化吞吐；Owner 只负责“转发/回传”，调度与验收由 Cursor 统一指挥与收口。
+> **目标**：在不撞文件的前提下最大化吞吐；Owner 只负责“转发/回传”。Cursor 分为 **指挥** 与 **执行** 两个对话，避免上下文混乱。
 
 | 施工队 | 执行方 | 目录包（白名单范围） | 分支建议 | 产出/交付 |
 |--------|--------|----------------------|----------|-----------|
@@ -45,7 +45,8 @@ related_documents:
 | Trae-03 | Trae | 同上 | `docs/blueprint-trae-03` | 同上 |
 | Trae-04 | Trae | 同上 | `docs/blueprint-trae-04` | 同上 |
 | Trae-05 | Trae | 同上 | `docs/blueprint-trae-05` | 同上 |
-| Cursor-01 | Cursor | `docs/01_FRAMEWORK/`（继续 Cursor 批次流水线） | `docs/blueprint-cursor` | 批次 C*：补齐 §0.1 门禁段 + L1=0 + 台账更新 + commit 收口 |
+| Cursor-01（指挥） | Cursor | **只维护**：`docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`（台账真源）与派发清单；不直接改蓝图正文 | `docs/blueprint-cursor` | 调度派发、验收口径、台账更新指令 |
+| Cursor-02（执行） | Cursor | **执行施工**：`docs/01_FRAMEWORK/`（继续 Cursor 批次流水线）；必要时仅做“验收落盘修复” | `docs/blueprint-cursor` | 批次 C*：补齐 §0.1 门禁段 + L1=0 + commit 收口（执行侧完成后回传摘要给指挥侧） |
 
 **并行硬规则（必须执行）**
 
@@ -53,6 +54,7 @@ related_documents:
 - **禁止跨目录包**：Trae 队不得修改 `docs/01_FRAMEWORK/`；Cursor 队不得修改 `01_BLUEPRINTS/`（除非 Owner 明确指派某批验收修复）。
 - **每批 ≤8 篇**：保证验收与合并可控。
 - **交付必须含 L1**：批次结束必须跑 `python scripts/sentinel_l1_governance_scan.py`，保证 `Invalid links = 0`。
+- **指挥/执行分离**：Owner 与 Trae 只与 Cursor-01（指挥）对接；Cursor-02（执行）只接收“已定稿的白名单批次”，完成后把结果回传给 Cursor-01 记录台账。
 
 ---
 
