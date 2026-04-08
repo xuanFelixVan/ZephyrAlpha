@@ -149,6 +149,10 @@
   - `MODULE_RESPONSIBILITY_BOUNDARIES.md`：Layer 9～11 主蓝图表、回测/因子 **权威蓝图链**、舆情→策略与 **API_Contract**、**风控索引**、**module_designs 双轨说明**（v1.2）。  
   - 登记表更新至 v1.1；L1 **无效内链 0**。  
 
+- **批次 C（蓝图目录索引）**  
+  - 新增 `scripts/generate_01_blueprints_index.py`，重写 `01_BLUEPRINTS/INDEX.md`（**171** 条，与目录一致）。  
+  - `BLUEPRINT_ARCHITECTURE_MAPPING.md`、`ARCHITECTURE.md` §5 相关文档表增加 **01_BLUEPRINTS 索引** 入口；登记表 G-008 / G-016 关闭。  
+
 - **详细行项目**：见 [`../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`](../STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。
 
 ---

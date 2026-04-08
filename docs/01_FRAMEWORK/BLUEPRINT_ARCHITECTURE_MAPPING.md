@@ -65,6 +65,7 @@ responsibility:
 
 ## 4. 治理与同步
 
+- **实施侧蓝图全目录索引**（机器维护）：[`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)（运行 `python scripts/generate_01_blueprints_index.py` 更新）。  
 - 新增或重命名蓝图 / 规格书后，应在本文件或 [ARCHITECTURE.md](./ARCHITECTURE.md) 「相关文档」中 **至少一处** 可点击到达。  
 - 架构级缺口与矛盾登记：[ARCH_MODULE_GAP_REGISTER_20260408.md](../09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)。  
 - 执行方案：[ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md](../09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md)。

@@ -221,6 +221,7 @@ Layer 0: 数据源层 (Data Sources)
 | [HUMAN_AI_INTEGRATION_BLUEPRINT.md](./HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 人机协作流程 |
 | [TECH_STACK.md](./TECH_STACK.md) | 技术栈选择 |
 | README.md | 框架总览 |
+| [01_BLUEPRINTS 全目录索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) | 实施侧全部蓝图/报告类 Markdown 列表（`generate_01_blueprints_index.py` 维护） |
 
 ### P0级核心蓝图
 #### AI增强系统

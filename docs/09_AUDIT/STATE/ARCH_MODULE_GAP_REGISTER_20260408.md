@@ -1,6 +1,6 @@
 ---
 module_id: 09_AUDIT_STATE_ARCH_MODULE_GAP_REGISTER_20260408
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-08'
@@ -25,7 +25,7 @@ applicable_scope: 架构与模块缺口登记
 | G-005 | G5 | 回测引擎入口 | `MODULE_RESPONSIBILITY_BOUNDARIES.md` | 需 canonical 蓝图 | 仅有模块名无路径 | P1 | 链到 FACTOR_BACKTEST_INTEGRATION | **已修正**（2026-04-08） |
 | G-006 | G5 | L0→L1 契约入口 | `ARCHITECTURE.md` §4.2 | 数据流权威 | 缺单一契约链 | P1 | 指向 `docs/03_TRADING_TACTICS/API_Contract.md` | **已修正**（2026-04-08） |
 | G-007 | G3 | 业务↔Layer 对照 | `BLUEPRINT_ARCHITECTURE_MAPPING.md` | 可逐条对照 | 旧版损坏 | P2 | 随 G-003 关闭 | **已修正**（2026-04-08） |
-| G-008 | G4 | 蓝图全量挂载 | `01_BLUEPRINTS/*.md` | 总纲可指回 | 未全量核对 | P2 | 以 MAPPING §4 + ARCHITECTURE §5 为抽样入口；全量留待下轮 | **部分完成** |
+| G-008 | G4 | 蓝图全量挂载 | `01_BLUEPRINTS/*.md` | 总纲可指回 | 未全量核对 | P2 | `INDEX.md` 全量列表 + MAPPING/ARCHITECTURE 互链 | **已修正**（2026-04-08 批次 C） |
 | G-009 | G1 | 风控横切索引 | `MODULE_RESPONSIBILITY_BOUNDARIES.md` | ARCHITECTURE 叙述 | 缺集中索引 | P2 | 增加风控索引段 + 蓝图链 | **已修正**（2026-04-08） |
 | G-010 | G2 | `module_id` 唯一 | `ARCHITECTURE.md` | Sentinel 首道 FM | 混用 ARCHITECTURE / ARCHITECTURE_001 | P1 | 统一为 `ARCHITECTURE_001` | **已修正**（随 G-002） |
 | G-011 | G5 | 因子库 ↔ 蓝图文件 | `MODULE_RESPONSIBILITY_BOUNDARIES.md` | FACTOR_BACKTEST_001 | ID 与文件未互链 | P2 | 链 ALPHA_FACTOR_FACTORY + 集成蓝图 | **已修正**（2026-04-08） |
@@ -38,7 +38,7 @@ applicable_scope: 架构与模块缺口登记
 
 | ID | 缺陷类 | 模块/能力名 | 发现位置 | 简述 | P | 状态 |
 |----|--------|-------------|----------|------|---|------|
-| G-016 | P2 | `01_BLUEPRINTS` 总索引 | 目录根缺单一 INDEX | 蓝图数量大，建议维护 `01_BLUEPRINTS/INDEX.md` 或链到 SITEMAP | P2 | 待处理 |
+| G-016 | P2 | `01_BLUEPRINTS` 总索引 | `01_BLUEPRINTS/INDEX.md` | 需可复现更新 | 增加 `generate_01_blueprints_index.py` 与全量列表 | P2 | **已修正**（2026-04-08 批次 C） |
 
 ## Deferred / 说明
 

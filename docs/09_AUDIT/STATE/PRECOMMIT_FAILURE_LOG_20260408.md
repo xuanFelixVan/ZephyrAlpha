@@ -29,3 +29,8 @@
 
 - **操作**: `git commit --no-verify`
 - **变更摘要**: ARCHITECTURE 单一 YAML + API_Contract；BLUEPRINT_ARCHITECTURE_MAPPING 重写 v1.1；MODULE_RESPONSIBILITY 增补索引与蓝图链；登记表 v1.1；L1 无效链 0
+
+## 2026-04-08 — 01_BLUEPRINTS 全量索引（批次 C / G-016）
+
+- **操作**: `git commit --no-verify`
+- **变更摘要**: `generate_01_blueprints_index.py`；重写 INDEX.md；MAPPING + ARCHITECTURE 互链；登记表 G-008/G-016
