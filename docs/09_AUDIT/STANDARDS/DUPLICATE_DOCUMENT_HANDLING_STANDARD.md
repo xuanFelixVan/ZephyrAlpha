@@ -50,7 +50,7 @@ related_documents:
 
 ```markdown
 > **状态**：Superseded（已被替代）  
-> **canonical**：[`<canonical_title>`](<relative_path_to_canonical.md>)  
+> **canonical**：`<relative_path_to_canonical.md>`（替换为可点击的相对路径链接）  
 > **原因**：重复/合并/迁移重叠  
 > **最后维护**：YYYY-MM-DD  
 > **备注**：本文件仅用于历史追溯，不再更新。
