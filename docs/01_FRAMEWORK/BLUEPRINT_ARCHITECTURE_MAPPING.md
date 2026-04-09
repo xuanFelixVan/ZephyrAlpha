@@ -3,7 +3,7 @@ module_id: BLUEPRINT_ARCHITECTURE_MAPPING_001
 version: 1.1.0
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-08'
+last_updated: '2026-04-09'
 owner: 首席文档架构师
 standard_type: 架构映射文档
 applicable_scope: 业务时间框架与 Layer 0-11 技术流水线对照

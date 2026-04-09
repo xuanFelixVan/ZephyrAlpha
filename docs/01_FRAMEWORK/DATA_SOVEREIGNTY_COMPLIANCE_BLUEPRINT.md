@@ -61,6 +61,7 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
   - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md: 数据质量治理'
 responsibility:
 - DATA_SOVEREIGNTY_COMPLIANCE蓝图设计
+---
 # 数据主权合规系统蓝图
 > **核心职责**: Data Sovereignty Compliance蓝图设计
 > **职责边界**: 
@@ -72,6 +73,19 @@ responsibility:
 > **创建日期**: 2026-04-07  
 > **状态**: 活跃  
 > **对标机构**: Citadel, Two Sigma, Bridgewater, D.E. Shaw
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。数据驻留策略查询、跨境传输审批、合规报告导出若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“策略/规则配置 → 数据分类与驻留检查 → 违规/例外处置 → 审计与报告”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 各国法规细则与名单源以施工文档阶段选定的合规栈为准；以本节门禁为准。
+
 ---
 
 ## 1. 概述

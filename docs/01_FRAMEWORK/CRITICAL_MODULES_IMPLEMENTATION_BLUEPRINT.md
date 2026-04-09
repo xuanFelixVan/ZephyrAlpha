@@ -21,6 +21,21 @@ responsibility:
 standard_type: 专业量化机构蓝图
 applicable_scope: 全系统
 ---
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。关键模块实施所依赖的数据接口、风控/执行回调、配置下发与审计查询若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能从本文的实施优先级表中任选一条 P0/P1 项，写出“交付物清单 → 联调入口 → 可观测/审计验证点”，并能在 `API_Contract.md` 中定位到对应契约或登记豁免与补全计划。
+
+## 已知限制
+
+- 正文含历史导入导致的排版与符号断裂；以本节门禁为准，全文排版修复留待专项批次。
+
+---
+
 > **核心职责**: Critical Modules Implementation蓝图设计
 > **职责边界**: 
 > - ✅ 本文档负责：Critical Modules Implementation蓝图设计相关内容

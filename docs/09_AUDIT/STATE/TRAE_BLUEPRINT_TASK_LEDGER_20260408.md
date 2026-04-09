@@ -1,6 +1,6 @@
 ---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.2.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-09'
@@ -310,6 +310,7 @@ related_documents:
 |------|--------|--------|------|----------|-----------|--------|------|
 | F-Exec-01 | 6 | Cursor-02 | 已完成 | 2026-04-08 | 0 | `d3f0682e` | 补齐门禁三段；执行侧为避免越权未提交 `SENTINEL_L1_SCAN_20260408.*` |
 | F-Exec-02 | 8 | Cursor-02 | 已完成 | 2026-04-08 | 0 | `35de6bcd` | 补齐门禁三段；执行侧为避免越权未提交 `SENTINEL_L1_SCAN_20260408.*` |
+| F-Exec-03 | 8 | Cursor-02 | 已完成 | 2026-04-09 | 0 | `4f2b9e28` | 根目录字母序下一批：YAML 收敛 / 门禁补齐；附 L1 扫描落盘 |
 
 | 批次 | 文件（仓库相对路径） | 执行方 | 状态 | 交付日期 | L1 无效链 | 备注 |
 |------|----------------------|--------|------|----------|-----------|------|
@@ -381,6 +382,14 @@ related_documents:
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_SOURCE_COST_OPTIMIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_SOURCE_FAILOVER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C10 | `docs/01_FRAMEWORK/ALTERNATIVE_DATA_FUSION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + §0.1（既有段保留） |
+| C10 | `docs/01_FRAMEWORK/AML_MONITORING_SYSTEM_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合修复（§0.1 段已存在） |
+| C10 | `docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md` | Cursor | 已完成 | 2026-04-09 | 0 | 台账补登；§0.1 已完备；`last_updated` 刷新 |
+| C10 | `docs/01_FRAMEWORK/CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 补齐 §0.1 门禁三段 |
+| C10 | `docs/01_FRAMEWORK/DATAFLOW_ARCHITECTURE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C10 | `docs/01_FRAMEWORK/DATA_SOURCE_LAYER_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 补齐 §0.1 门禁三段 |
+| C10 | `docs/01_FRAMEWORK/DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
+| C10 | `docs/01_FRAMEWORK/DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
@@ -424,6 +433,14 @@ related_documents:
 - `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md`
 - `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md`
 - `docs/01_FRAMEWORK/ALPHA_FACTOR_LAYER_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/ALTERNATIVE_DATA_FUSION_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/AML_MONITORING_SYSTEM_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md`
+- `docs/01_FRAMEWORK/CRITICAL_MODULES_IMPLEMENTATION_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DATAFLOW_ARCHITECTURE_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DATA_SOURCE_LAYER_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md`
 
 ---
 
@@ -493,3 +510,4 @@ L1 结果（无效链）：0
 |------|------|------|
 | 1.0.0 | 2026-04-08 | 初版：分工、已填充 Trae 说明、批次 1 四文件、批次规则、交接区 |
 | 1.1.0 | 2026-04-08 | 并行分工；Trae/Cursor 分表；Cursor C1 八文件；占用清单 |
+| 1.3.0 | 2026-04-09 | Cursor C10 / F-Exec-03：根目录 8 篇框架蓝图（字母序缺口）YAML 与 §0.1 收口；占用清单追加 |

@@ -1,44 +1,17 @@
 ﻿---
-module_id: DATAFLOW_ARCHITECTURE_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DATAFLOW_ARCHITECTURE蓝图设计
----
-
-﻿---
 module_id: DATAFLOW_ARCHITECTURE_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
-last_updated: 2026-04-02
-
+last_updated: '2026-04-09'
 owner: 首席架构师
-
 layer: Layer 4 (机器学习层)
-
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的数据流架构设计，包括流式处理、批处理、混合处理等核心功能。
 standard_type: 专业量化机构蓝图
-
-applicable_scope: 三级时间框架架构
-
+applicable_scope: 三级时间框架数据流架构
 compliance_level: 专业标准
-
-parent_document: PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
+parent_document: ./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 responsibility:
-  - 提供dataflow architecture blueprint的完整架构设计、技术选型和实施路径规划
-  responsibility_layer: Layer 11
----
----
----
+  - 跨层数据流架构设计与与邻层契约对齐
 ---
 # 三级时间框架数据流架构蓝图
 > **核心职责**: 提供dataflow architecture blueprint的完整架构设计、技术选型和实施路径规划
@@ -53,9 +26,19 @@ responsibility:
 
 > **目的**: 明确三级时间框架架构的跨层数据流转机?> **核心价?*: 确保数据在各层级间高效、准确、实时流程
 
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。跨层数据订阅、特征/信号下发、回压与背压、审计与血缘查询若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能从本文数据流示意中任选一条跨 Layer 路径，写出“数据入口 → 处理阶段 → 消费方 → 可观测/审计验证点”，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 正文含历史导入导致的编码与排版噪声；以本节门禁为准，全文清理留待专项批次。
+
 ---
-
-
 
 ## 📊 一、数据流总览
 
