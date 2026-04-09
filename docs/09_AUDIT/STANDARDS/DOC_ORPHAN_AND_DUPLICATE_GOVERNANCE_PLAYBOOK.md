@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STANDARDS_DOC_ORPHAN_DUP_PLAYBOOK_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
-last_updated: 2026-04-08
+last_updated: 2026-04-09
 owner: 文档治理系统
 standard_type: 治理方案（全流程）
 applicable_scope: 全库 `docs/**/*.md`（孤儿与重复/重叠）
@@ -179,3 +179,4 @@ related_documents:
 | （既有） | `docs/01_FRAMEWORK/INDEX.md`、`docs/03_TRADING_TACTICS/INDEX.md`、`docs/05_IMPLEMENTATION/INDEX.md`、`docs/07_RESEARCH/INDEX.md` | 主干域分批挂接（见各索引内「严格孤儿」小节） |
 | 2026-04-09 | `01_BLUEPRINTS/` 4 篇未入台账蓝图 | Trae GLM-5.1 自主窗口：全量对账发现 9 篇未在台账批次的蓝图，其中 4 篇补齐 §0.1 职责边界（OPENING_STRATEGY / OBJECT_STORAGE_INTEGRATION / MULTI_STRATEGY_HIERARCHICAL_SYSTEM / MULTI_PERIOD_DYNAMIC_OPTIMIZATION），5 篇已合规无需修改；**L1：Invalid links = 0**；REGEN 孤儿 532 篇 |
 | 2026-04-09 | 全库治理大扫除 | Trae GLM-5.1 自主窗口续跑：DEDUP 2簇修复（FACTOR_GUIDE_001 + STRICT_ORPHAN_REPORT）→ module_id 重复=0；532 ORPHAN 全部入站链（06_ARCHIVE + 09_ARCHIVE INDEX.md 转链接格式 + STATE INDEX 补链）；401→326 NO-MID 补 module_id + 3 overnight_runs 重复修复 → dup=0；21 DIR 任务 + 4 EXT 任务完成（补 06_CONSTRUCTION_DOCS + 09_ARCHIVE INDEX.md）；**全程 L1：Invalid links = 0，dup = 0** |
+| 2026-04-09 | [`TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md`](../STATE/TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md) Part B / 主清单收口 | **1062/1062** 任务全勾选；**L1：Invalid links = 0**；首道 `module_id` **重复 = 0、缺省 = 0**；双 YAML **= 0**（约 830 篇合并为单头，多轮修复）；`module_id` 登记 **3054**；REM **P1-A/B/C** + **EC-1～EC-7** 闭环；**CG3** 施工门禁块与 **SUB** 子树边界通过；**AUDIT** 全方案 **35** 批次完成（另 9 篇补 FM）；**Git tag**：`doc-milestone-20260409-partb-complete` |

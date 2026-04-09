@@ -1,6 +1,6 @@
 ---
 module_id: TRAE_MASTER_EXECUTION_CHECKLIST_20260409
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-09
 last_updated: '2026-04-09'
@@ -29,7 +29,8 @@ related_documents:
 # Trae / 文档治理 — 主执行清单（单一文档 · 全量编号）
 
 > **用途**：本文件为**唯一勾选真源**；`TRAE_LINE_TASK_BACKLOG_20260409.md`（Part A）与 `TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md`（Part B）为分卷，**任务内容与编号以本文件为准**。再生成：`python scripts/generate_trae_master_execution_checklist.py`。
-> **执行规则**：从 **最小未勾选编号** 继续；每批 ≤20～50 文件（视类型）；每批结束 `python scripts/sentinel_l1_governance_scan.py` 且 **Invalid links = 0** 后 `git commit`；禁止向 Owner 提问（见下方框架任务）。
+> **闭环状态（2026-04-09）**：**1062/1062** 已全部勾选；收工见 `DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` §10 末行；Git tag：`doc-milestone-20260409-partb-complete`。
+> **执行规则**（历史）：从 **最小未勾选编号** 继续；每批 ≤20～50 文件（视类型）；每批结束 `python scripts/sentinel_l1_governance_scan.py` 且 **Invalid links = 0** 后 `git commit`；禁止向 Owner 提问（见下方框架任务）。
 
 ## 编号索引（按段）
 
