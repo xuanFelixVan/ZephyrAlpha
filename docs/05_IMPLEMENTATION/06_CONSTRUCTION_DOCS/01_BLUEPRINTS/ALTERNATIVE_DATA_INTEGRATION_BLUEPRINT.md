@@ -121,45 +121,6 @@ graph TB
   NLP --> FEAT[特征工程/因子构建]
   FEAT --> STORE[(存储：SQLite/向量库)]
   STORE --> USE[下游：因子挖掘/策略增强]
-```mermaid
-graph TB
-  subgraph Sources[数据源]
-    N[新闻] --> COL
-    S[社交媒体] --> COL
-    A[分析师预期] --> COL
-  end
-
-  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
-  CLEAN --> NLP[NLP 处理：情感/事件/实体]
-  NLP --> FEAT[特征工程/因子构建]
-  FEAT --> STORE[(存储：SQLite/向量库)]
-  STORE --> USE[下游：因子挖掘/策略增强]
-```mermaid
-graph TB
-  subgraph Sources[数据源]
-    N[新闻] --> COL
-    S[社交媒体] --> COL
-    A[分析师预期] --> COL
-  end
-
-  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
-  CLEAN --> NLP[NLP 处理：情感/事件/实体]
-  NLP --> FEAT[特征工程/因子构建]
-  FEAT --> STORE[(存储：SQLite/向量库)]
-  STORE --> USE[下游：因子挖掘/策略增强]
-```mermaid
-graph TB
-  subgraph Sources[数据源]
-    N[新闻] --> COL
-    S[社交媒体] --> COL
-    A[分析师预期] --> COL
-  end
-
-  COL[采集与解析] --> CLEAN[清洗/去噪/去重]
-  CLEAN --> NLP[NLP 处理：情感/事件/实体]
-  NLP --> FEAT[特征工程/因子构建]
-  FEAT --> STORE[(存储：SQLite/向量库)]
-  STORE --> USE[下游：因子挖掘/策略增强]
 ```
 
 ### 1.2 技术栈选择
