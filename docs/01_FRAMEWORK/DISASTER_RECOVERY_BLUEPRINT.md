@@ -35,6 +35,7 @@ responsibility_boundary: '本文档负责全系统灾备体系设计，包括：
   机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md'
 responsibility:
 - DISASTER_RECOVERY蓝图设计
+---
 # 灾备体系蓝图
 > **核心职责**: Disaster Recovery蓝图设计
 > **职责边界**: 
@@ -46,6 +47,18 @@ responsibility:
 >
 > **定位**: 个人量化系统的简化灾备方案，未来开发预留
 ---
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。灾备状态查询、备份作业编排、恢复演练与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“备份计划 → 故障/演练触发 → 恢复步骤 → 校验与审计留痕”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- RTO/RPO 与备份介质/存储选型需在施工文档阶段锁定；以本节门禁为准。
 
 ## 📌 文档定位
 

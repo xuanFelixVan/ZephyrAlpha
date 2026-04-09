@@ -1,58 +1,30 @@
 ﻿---
-module_id: DRIFT_DETECTION_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DRIFT_DETECTION蓝图设计
----
-
-﻿---
 module_id: DRIFT_DETECTION_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
-last_updated: 2026-04-03
-
-owner: 首席蓝图架构师
-
+last_updated: '2026-04-09'
+owner: 首席文档架构师
 layer: Layer 4 (机器学习层)
-
 standard_type: 专业量化机构蓝图
-
-applicable_scope: 数据漂移检测系?compliance_level: 顶级专业标准
-
-reference_models: ["Bridgewater Drift Detection", "Renaissance Concept Drift", "Two Sigma Data Quality"]
-
-related_documents:
-
-  - AI_CAPABILITY_GAP_BLUEPRINT.md
-
-  - MODEL_MONITORING_BLUEPRINT.md
-
-  - ONLINE_LEARNING_BLUEPRINT.md
-
-parent_document: ../ARCHITECTURE.md
-
-implementation_status: 蓝图设计完成
-
-estimated_hours: 30
-
+applicable_scope: 数据漂移检测系统
+compliance_level: 顶级专业标准
 priority: P0
-
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的漂移检测系统设计，包括数据漂移、概念漂移、模型漂移等核心功能。
+estimated_hours: 30
+reference_models:
+  - Bridgewater Drift Detection
+  - Renaissance Concept Drift
+  - Two Sigma Data Quality
+related_documents:
+  - AI_CAPABILITY_GAP_BLUEPRINT.md
+  - MODEL_MONITORING_BLUEPRINT.md
+  - ONLINE_LEARNING_BLUEPRINT.md
+parent_document: ../ARCHITECTURE.md
+implementation_status: 蓝图设计完成
 responsibility:
-  - 提供drift detection blueprint的完整架构设计、技术选型和实施路径规划
----
----
----
+  - 漂移检测蓝图设计与邻层契约对齐
+responsibility_boundary: |
+  本文档负责 Layer 4 机器学习层的漂移检测系统设计，包括数据漂移、概念漂移与模型漂移等核心能力。
 ---
 
 
@@ -73,6 +45,20 @@ responsibility:
 ---
 
 
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。漂移检测任务配置、告警/处置触发、模型/特征回滚与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“采样/监控 → 漂移判定 → 告警或处置 → 审计记录”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体统计检验、阈值与处置策略需在施工文档阶段锁定；以本节门禁为准。
+
+---
 
 ## 📊 一、概述
 

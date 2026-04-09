@@ -8,11 +8,12 @@ responsibility:
 - 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的DeepAR时序模型设计，包括概率预测、自回归结构、不确定性建模等核心功能。
-
-  '
+responsibility_boundary: |
+  本文档负责 Layer 4 机器学习层的 DeepAR 时序模型设计，包括概率预测、自回归结构与不确定性建模等核心能力。
 layer: Layer 4 (机器学习层)
 owner: 首席文档架构师
+---
+
 # DeepAR 蓝图
 > **核心职责**: 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
 > **职责边界**: 
@@ -31,6 +32,18 @@ owner: 首席文档架构师
 
 > **预计工时**: 40h
 ---
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。预测任务创建、训练/推理作业编排、预测结果输出与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“数据输入 → 训练/推理 → 预测产物输出 → 误差回测/监控”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 本文存在历史导入造成的排版断裂与占位空段；以本节门禁为准，全文清理留待专项批次。
 
 
 

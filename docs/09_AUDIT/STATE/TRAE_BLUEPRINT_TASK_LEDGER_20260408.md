@@ -311,6 +311,7 @@ related_documents:
 | F-Exec-01 | 6 | Cursor-02 | 已完成 | 2026-04-08 | 0 | `d3f0682e` | 补齐门禁三段；执行侧为避免越权未提交 `SENTINEL_L1_SCAN_20260408.*` |
 | F-Exec-02 | 8 | Cursor-02 | 已完成 | 2026-04-08 | 0 | `35de6bcd` | 补齐门禁三段；执行侧为避免越权未提交 `SENTINEL_L1_SCAN_20260408.*` |
 | F-Exec-03 | 8 | Cursor-02 | 已完成 | 2026-04-09 | 0 | `8afa8c73` | 根目录字母序下一批：YAML 收敛 / 门禁补齐；附 L1 扫描落盘 |
+| F-Exec-04 | 8 | Cursor-02 | 已完成 | 2026-04-09 | 0 | （见本批 commit） | 根目录字母序下一批：YAML 收敛 / 门禁补齐；复跑 L1 扫描落盘 |
 
 | 批次 | 文件（仓库相对路径） | 执行方 | 状态 | 交付日期 | L1 无效链 | 备注 |
 |------|----------------------|--------|------|----------|-----------|------|
@@ -391,6 +392,15 @@ related_documents:
 | C10 | `docs/01_FRAMEWORK/DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
 | C10 | `docs/01_FRAMEWORK/DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
 
+| C11 | `docs/01_FRAMEWORK/DECISION_DASHBOARD_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DEEPAR_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DIFFUSION_MODEL_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DISASTER_RECOVERY_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | front matter 闭合 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| C11 | `docs/01_FRAMEWORK/DYNAMIC_RISK_BUDGETING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
 ---
@@ -441,6 +451,14 @@ related_documents:
 - `docs/01_FRAMEWORK/DATA_SOURCE_LAYER_BLUEPRINT.md`
 - `docs/01_FRAMEWORK/DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md`
 - `docs/01_FRAMEWORK/DATA_SOVEREIGNTY_COMPLIANCE_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DECISION_DASHBOARD_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DEEPAR_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DIFFERENTIAL_PRIVACY_ML_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DIFFUSION_MODEL_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DISASTER_RECOVERY_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md`
+- `docs/01_FRAMEWORK/DYNAMIC_RISK_BUDGETING_BLUEPRINT.md`
 
 ---
 

@@ -1,39 +1,19 @@
 ﻿---
-module_id: DIFFUSION_MODEL_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DIFFUSION_MODEL蓝图设计
----
-
-﻿---
 module_id: DIFFUSION_MODEL_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
-owner: 首席蓝图架构?layer: Layer 4 (机器学习?
-responsibility:
-  - 提供diffusion model blueprint的完整架构设计、技术选型和实施路径规划
-
-standard_type: 高层架构蓝图
-
-priority: P2
-
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的扩散模型设计，包括扩散过程、去噪网络、生成采样等核心功能。
+last_updated: '2026-04-09'
+owner: 首席文档架构师
 layer: Layer 4 (机器学习层)
----
----
----
+standard_type: 专业量化机构蓝图
+applicable_scope: 扩散模型
+compliance_level: 专业标准
+priority: P2
+responsibility:
+  - 扩散模型蓝图设计与邻层契约对齐
+responsibility_boundary: |
+  本文档负责 Layer 4 机器学习层的扩散模型设计，包括扩散过程、去噪网络与生成采样等核心能力。
 ---
 # 扩散模型蓝图
 > **核心职责**: 提供diffusion model blueprint的完整架构设计、技术选型和实施路径规划
@@ -57,6 +37,20 @@ layer: Layer 4 (机器学习层)
 ---
 
 
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。生成任务请求、采样/生成产物输出、模型版本发布与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“训练或加载模型 → 生成/采样 → 产物输出 → 质量评估与审计记录”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体采样器、训练数据与评估基准需在施工文档阶段锁定；以本节门禁为准。
+
+---
 
 ## 1. 概述
 

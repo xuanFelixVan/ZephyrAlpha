@@ -1,39 +1,19 @@
 ﻿---
-module_id: DIFFERENTIAL_PRIVACY_ML_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DIFFERENTIAL_PRIVACY_ML蓝图设计
----
-
-﻿---
 module_id: DIFFERENTIAL_PRIVACY_ML_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
-owner: 首席蓝图架构?layer: Layer 4 (机器学习?
-responsibility:
-  - 提供differential privacy ml blueprint的完整架构设计、技术选型和实施路径规划
-
-standard_type: 高层架构蓝图
-
-priority: P1
-
-responsibility_boundary: |
-  本文档负责Layer 4机器学习层的差分隐私机器学习设计，包括噪声添加、隐私预算、隐私保护等核心功能。
+last_updated: '2026-04-09'
+owner: 首席文档架构师
 layer: Layer 4 (机器学习层)
----
----
----
+standard_type: 专业量化机构蓝图
+applicable_scope: 差分隐私机器学习
+compliance_level: 专业标准
+priority: P1
+responsibility:
+  - 差分隐私机器学习蓝图设计与邻层契约对齐
+responsibility_boundary: |
+  本文档负责 Layer 4 机器学习层的差分隐私机器学习设计，包括噪声添加、隐私预算与隐私保护等核心能力。
 ---
 # 隐私保护ML(差分隐私)蓝图
 > **核心职责**: 提供differential privacy ml blueprint的完整架构设计、技术选型和实施路径规划
@@ -59,6 +39,20 @@ layer: Layer 4 (机器学习层)
 ---
 
 
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。隐私预算配置、训练作业编排、模型/指标发布与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“隐私预算设定 → 训练/评估 → 产物发布 → 审计记录”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体 \(\epsilon,\delta\) 与噪声机制选型需在施工文档阶段锁定；以本节门禁为准。
+
+---
 
 ## 1. 概述
 

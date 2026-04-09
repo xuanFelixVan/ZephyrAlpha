@@ -1,28 +1,18 @@
 ---
-module_id: DECISIONDASHBOARDBLUEPRINT_001
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: '2026-04-07'
-owner: 首席架构师
-layer: Layer 11 (战略决策层)
-standard_type: 专业量化机构蓝图
-applicable_scope: 全系统
-compliance_level: 专业标准
-responsibility:
-- 系统架构蓝图设计与实施指导与实施方案
----
 module_id: DECISION_DASHBOARD_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: 2026-04-06
+last_updated: '2026-04-09'
 owner: 首席蓝图架构师
 layer: Layer 8 (人机交互层)
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 决策仪表板
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater AYA Decision Dashboard", "Renaissance Decision Interface", "Two Sigma Decision Hub"]
+reference_models:
+  - Bridgewater AYA Decision Dashboard
+  - Renaissance Decision Interface
+  - Two Sigma Decision Hub
 related_documents:
   - HUMAN_AI_INTERACTION_BLUEPRINT.md
   - HUMAN_AI_INTEGRATION_BLUEPRINT.md
@@ -33,7 +23,7 @@ responsibility_boundary: |
   - AI建议展示
   - 决策审批流程
   - 决策历史追踪
-  
+
   战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
   界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
@@ -54,6 +44,18 @@ implementation_status: 蓝图设计完成
 > **目标**: 构建专业级决策仪表板，整合所有决策入口
 
 ---
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。决策建议下发、审批流状态、执行触发与审计查询若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“决策建议生成 → 展示/审批 → 执行触发 → 审计留痕”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体 UI/交互细节与权限模型在施工文档阶段锁定；以本节门禁为准。
 
 ## 📋 执行摘要
 

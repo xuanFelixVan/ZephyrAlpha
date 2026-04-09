@@ -1,39 +1,19 @@
 ﻿---
-module_id: DISTRIBUTED_TRAINING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DISTRIBUTED_TRAINING蓝图设计
----
-
-﻿---
 module_id: DISTRIBUTED_TRAINING_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-04
-
-last_updated: 2026-04-04
-
-owner: 首席蓝图架构?layer: Layer 4 (机器学习?
-responsibility:
-  - 提供distributed training blueprint的完整架构设计、技术选型和实施路径规划
-
-standard_type: 高层架构蓝图
-
+last_updated: '2026-04-09'
+owner: 首席文档架构师
+layer: Layer 4 (机器学习层)
+standard_type: 专业量化机构蓝图
+applicable_scope: 分布式训练框架
+compliance_level: 专业标准
 priority: P0
-
+responsibility:
+  - 分布式训练蓝图设计与邻层契约对齐
 responsibility_boundary: |
-  本文档负责Layer 4机器学习层的分布式训练系统设计，包括数据并行、模型并行、混合并行等核心功能。
-layer: Layer 3 (策略层)
----
----
----
+  本文档负责 Layer 4 机器学习层的分布式训练系统设计，包括数据并行、模型并行与混合并行等核心能力。
 ---
 
 
@@ -59,6 +39,20 @@ layer: Layer 3 (策略层)
 ---
 
 
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。训练作业创建/调度、资源配额、训练指标上报与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“作业提交 → 分布式调度 → 指标/日志采集 → 失败恢复 → 审计留痕”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体框架（如 PyTorch/Accelerate/DeepSpeed）与集群拓扑需在施工文档阶段锁定；以本节门禁为准。
+
+---
 
 ## 1. 概述
 

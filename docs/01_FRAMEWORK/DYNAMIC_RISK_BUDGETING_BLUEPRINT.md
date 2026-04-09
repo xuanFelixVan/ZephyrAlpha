@@ -1,32 +1,23 @@
 ---
-module_id: DYNAMIC_RISK_BUDGETING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席文档架构师
-responsibility:
-  - DYNAMIC_RISK_BUDGETING蓝图设计
----
-
-﻿---
 module_id: DYNAMIC_RISK_BUDGETING_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 首席架构师
+last_updated: '2026-04-09'
+owner: 首席文档架构师
 layer: Layer 6 (组合优化层)
 standard_type: 专业量化机构级蓝图
 applicable_scope: 动态风险预算模块
 compliance_level: 顶级专业标准
-reference_models: ["Bridgewater", "AQR", "Two Sigma"]
+reference_models:
+  - Bridgewater
+  - AQR
+  - Two Sigma
 responsibility:
   - 风险管理框架设计与实施方案与优化维护
   responsibility_layer: Layer 11
 ---
----
----
+
 
 # 动态风险预算蓝图
 > **核心职责**: Dynamic Risk Budgeting蓝图设计
@@ -41,6 +32,18 @@ responsibility:
 > **实施周期**: 2周
 
 ---
+
+## 接口与契约（蓝图终稿）
+
+- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。风险预算配置、组合优化请求、约束/风险暴露查询与审计事件若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+
+## 验收标准（可检查）
+
+- 能在本文中明确至少一条“市场状态输入 → 风险预算计算 → 组合优化 → 风险暴露校验 → 审计留痕”的可检查闭环，并能映射到 `API_Contract.md` 的对应契约入口（或写明豁免与补全计划）。
+
+## 已知限制
+
+- 具体风险模型、约束集与求解器配置需在施工文档阶段锁定；以本节门禁为准。
 
 ## 一、模块概述
 
