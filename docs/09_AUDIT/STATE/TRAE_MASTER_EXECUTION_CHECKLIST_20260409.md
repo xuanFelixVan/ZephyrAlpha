@@ -1159,9 +1159,9 @@ related_documents:
 
 ## K. 二级热点子树（可选加深）
 
-- [ ] **T1059** （SUB）`docs/05_IMPLEMENTATION/04_OPERATIONS/` — 与 09_AUDIT / audit_state 边界
-- [ ] **T1060** （SUB）`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` — 蓝图与施工文档边界
-- [ ] **T1061** （SUB）`docs/05_IMPLEMENTATION/07_OPERATIONS/` — 运维与监控入口
+- [x] **T1059** （SUB）`docs/05_IMPLEMENTATION/04_OPERATIONS/` — 与 09_AUDIT / audit_state 边界
+- [x] **T1060** （SUB）`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` — 蓝图与施工文档边界
+- [x] **T1061** （SUB）`docs/05_IMPLEMENTATION/07_OPERATIONS/` — 运维与监控入口
 - [x] **T1062** （SUB）`docs/06_ARCHIVE/` 根散落 — G1 归类索引
 
 ---
