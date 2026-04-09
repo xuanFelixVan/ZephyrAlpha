@@ -1,3 +1,7 @@
+---
+module_id: STORAGE_TIER
+---
+
 ﻿---
 module_id: STORAGE_TIER
 version: 1.0.0

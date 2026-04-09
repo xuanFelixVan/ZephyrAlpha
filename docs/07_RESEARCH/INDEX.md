@@ -1,3 +1,7 @@
+---
+module_id: INDEX
+---
+
 ﻿---
 module_id: 07_RESEARCH_INDEX
 version: 1.0.0

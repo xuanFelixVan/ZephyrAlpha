@@ -1,3 +1,7 @@
+---
+module_id: BLUEPRINT_CHECKLIST
+---
+
 ﻿---
 module_id: BLUEPRINT_CHECKLIST
 version: 1.0.0

@@ -1,3 +1,7 @@
+---
+module_id: README
+---
+
 ﻿---
 module_id: 03_TRADING_TACTICS_README
 version: 1.0.0
