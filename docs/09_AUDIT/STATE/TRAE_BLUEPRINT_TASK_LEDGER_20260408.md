@@ -123,7 +123,7 @@ related_documents:
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ESG_INVESTMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
 | T1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-08 | 0 | Draft→Active + 补齐 §0.1 门禁段 |
-| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md` | Trae-01 | 已完成 | 2026-04-08 | 0 | Trae 提交 `be80f67b` 含扫描输出 `SENTINEL_L1_SCAN_20260408.*`（不合规）；统筹-A 已追加清理 `2a860b70`（不重写历史） |
+| T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md` | Trae-01 | 已完成 | 2026-04-08 | 0 | Trae 提交 `be80f67b` 含扫描输出 `SENTINEL_L1_SCAN_20260408.*`（不合规）；统筹-A 已追加清理 `2a860b70`（不重写历史）；recovery_owner=Cursor-REC-03; recovery_status=Fixed; recovery_started_date=2026-04-09; recovery_commit=92d37672328a747b2cb40132ca646399ae1a0b0b; recovery_notes=清理重复/空代码块与异常字符，复跑 L1=0 |
 | T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALPHA_FACTOR_FACTORY_BLUEPRINT.md` | Trae-01 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md` | Trae-01 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-1 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/API_DOCUMENTATION_BLUEPRINT.md` | Trae-01 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
@@ -204,7 +204,7 @@ related_documents:
 | T2-10 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MISSING_MODULES_SUMMARY_BLUEPRINT.md` | Trae-10 | 已完成 | 2026-04-08 | 0 | 同批次验收落盘修复 |
 | T2-10 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md` | Trae-10 | 已完成 | 2026-04-08 | 0 | 同批次验收落盘修复 |
 
-| T2-11 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md` | Trae-02 | 已完成 | 2026-04-08 | 0 | Trae 提交 `c1ecd661` 含扫描输出 `SENTINEL_L1_SCAN_20260408.*`（不合规）；统筹-A 将以追加提交清理扫描输出（不重写历史） |
+| T2-11 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md` | Trae-02 | 已完成 | 2026-04-08 | 0 | Trae 提交 `c1ecd661` 含扫描输出 `SENTINEL_L1_SCAN_20260408.*`（不合规）；统筹-A 将以追加提交清理扫描输出（不重写历史）；recovery_owner=Cursor-REC-01; recovery_status=Claimed; recovery_started_date=2026-04-09 |
 | T2-11 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md` | Trae-02 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-11 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md` | Trae-02 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-11 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VALIDATION_ENGINE_BLUEPRINT.md` | Trae-02 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
@@ -226,14 +226,14 @@ related_documents:
 
 | T2-GLOBAL | （全库蓝图阶段最终放行） | Cursor-01 | 已完成 | 2026-04-08 | 0 | 全局收敛验收：复跑 `python scripts/sentinel_l1_governance_scan.py`；UTC=20260408T101606Z；Invalid links=0；module_id duplicates=0；扫描产物 `SENTINEL_L1_SCAN_20260408.*` 已 `git restore` 不入库 |
 
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 仓库落盘提交 `a1541752` 为混批（夹带非本批文件）；统筹-A 以拆账方式验收，并统一门禁标题为（接口与契约（蓝图终稿）/验收标准（可检查）/已知限制）；L1=0 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PERFORMANCE_TESTING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_ATTRIBUTION_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CAPACITY_ESTIMATOR_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_COMPARISON_TOOL_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
-| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 仓库落盘提交 `a1541752` 为混批（夹带非本批文件）；统筹-A 以拆账方式验收，并统一门禁标题为（接口与契约（蓝图终稿）/验收标准（可检查）/已知限制）；L1=0；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PERFORMANCE_TESTING_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_ATTRIBUTION_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CAPACITY_ESTIMATOR_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_COMPARISON_TOOL_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T2-14 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md` | Trae-09 | 已完成 | 2026-04-08 | 0 | 同批次验收完成；recovery_owner=Cursor-REC-05; recovery_status=Claimed; recovery_started_date=2026-04-09 |
 
 | T2-15 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md` | Trae-05 | 已完成 | 2026-04-08 | 0 | Trae 提交 `77b387c3` 误带扫描输出 `SENTINEL_L1_SCAN_20260408.*`（不合规）；统筹-A 已追加清理 `0c85903d`（不重写历史）；L1=0 |
 | T2-15 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PRODUCTION_PORTFOLIO_PIPELINE_BLUEPRINT.md` | Trae-05 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
@@ -288,15 +288,15 @@ related_documents:
 | T2-20 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/VAR_ES_MONITORING_BLUEPRINT.md` | Trae-06 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 | T2-20 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/VULNERABILITY_DETECTION_BLUEPRINT.md` | Trae-06 | 已完成 | 2026-04-08 | 0 | 同批次验收完成 |
 
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：多期组合优化/动态权重/长期规划/交易成本优化；不负责：单期优化/订单执行） |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：分层架构/绩效评估/权重分配/信号融合/协调优化；不负责：单策略信号/订单执行） |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：S3兼容存储/大文件/生命周期/分层策略；不负责：数据库存储/数据清洗） |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPENING_STRATEGY_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：开盘策略/竞价信号/波动策略/执行优化；不负责：盘中策略/订单执行） |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ORDER_FLOW_ANALYSIS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
-| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：多期组合优化/动态权重/长期规划/交易成本优化；不负责：单期优化/订单执行）；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：分层架构/绩效评估/权重分配/信号融合/协调优化；不负责：单策略信号/订单执行）；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：S3兼容存储/大文件/生命周期/分层策略；不负责：数据库存储/数据清洗）；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPENING_STRATEGY_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 补齐职责边界（负责：开盘策略/竞价信号/波动策略/执行优化；不负责：盘中策略/订单执行）；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ORDER_FLOW_ANALYSIS_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
+| T3 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md` | Trae | 已完成 | 2026-04-09 | 0 | 仓库现态已满足 §0.1 五条，无需修改；recovery_owner=Cursor-REC-02; recovery_status=Claimed; recovery_started_date=2026-04-09 |
 
 ### 3.2 Cursor（`docs/01_FRAMEWORK/` 根目录 `*BLUEPRINT*.md`，字母序）
 
