@@ -1,6 +1,6 @@
 ﻿---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.8.1
+version: 1.8.2
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-10'
@@ -614,6 +614,7 @@ L1 结果（无效链）：0
 | T3-37 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTROL_BLUEPRINT.md` | Trae-06 | [已完成] | 2026-04-10 | 0 | 施工 commit=5667426e；补充职责边界（✅/❌）；§0.1 与 `API_Contract.md` 相对链齐备（统筹抽查 grep）；与 **T3-21** 补正为**同一提交**三篇 |
 | T3-37 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_PARITY_STRATEGY_BLUEPRINT.md` | Trae-06 | [已完成] | 2026-04-10 | 0 | 同上 |
 | T3-37 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ROBUST_OPTIMIZATION_BLUEPRINT.md` | Trae-06 | [已完成] | 2026-04-10 | 0 | 同上 |
+| T3-41 | （8篇 `PORTFOLIO_*`：`DIVERSIFICATION_METRIC` / `DRIFT_MONITOR` / `HEALTH_SCORING` / `INSURANCE_STRATEGY` / `OPTIMIZATION` / `OPTIMIZATION_DIAGNOSTICS` / `OPTIMIZER_INTEGRATION` / `PERFORMANCE_EVALUATION`，路径均 `01_BLUEPRINTS/`） | Trae-04 | [已完成] | 2026-04-10 | 0 | 8/8 抽查：§0.1 三段 + 蓝图内 `API_Contract.md` 相对链（惯例 `../../../03_TRADING_TACTICS/API_Contract.md`）齐全；YAML Active/1.0.0；无正文 diff；分支 `docs/blueprint-trae-04`，空提交 **commit=b0b9da78**，message「T3-41 收口（Trae-04，L1=0）」；L1 Invalid links=0（施工方报告）。**注**：施工流水显示 L1 曾在 **`docs/blueprint-trae-06`** 上写入扫描产物，已 `git restore` 两条 `SENTINEL_*` 后切回 `trae-04` 再打空提交；合并前建议在 **`docs/blueprint-trae-04` 干净工作区复跑 L1** 作交叉验证。 |
 | T3-26 | （8篇白名单蓝图，docs/blueprint-trae-05） | Trae-05 | [待回收] | 2026-04-10 | 0 | 施工侧自检：8篇 §0.1 三段齐全，API_Contract 相对链正确，YAML Active/1.0.0，L1=0；无改动按规范不提交（N/A）；**等待回收队在 docs/blueprint-rec-T3-26 打空提交闭环** |
 | T3-24 | （8篇 M-* 白名单，与 T3-11b 同清单；Trae-01） | Trae-01 + Cursor-REC（FIFO） | ❌ 退回待补正 | 2026-04-10 | - | **统筹核实（驳回「已完成」结论）**：(1) `4e64e0bc` 为 **空提交**（`git show --name-only` 无文件列表），台账 **T3-11** 对应 **`docs/01_FRAMEWORK/`** 框架蓝图收口，**不能**解释为「本批 8 篇 `01_BLUEPRINTS` 由该 commit 引入」。(2) 本机 `git merge-base --is-ancestor 4e64e0bc docs/blueprint-trae-01` 为**否**；`git branch --contains 4e64e0bc` 显示该 commit 在 **`docs/blueprint-rec-T3-11`**，**不**在 `docs/blueprint-trae-01` 祖先链上（若你方已合并两分支请本地重跑并更新回报）。(3) `MONITORING_ALERTING_SYSTEM_BLUEPRINT.md` **仍缺** §0.1 三段及可点击 `API_Contract` 链（篇内无「接口与契约（蓝图终稿）」），与 T3-11b 末行一致。**补正**：最小补本篇 → L1 → `git restore` 两条 `SENTINEL_L1_SCAN_20260408.*` → 带 **真实 hash** 提交；其余 7 篇若已无 diff，可由回收队 `docs/blueprint-rec-T3-24` 与上述修补 commit 一并闭环。Trae 报告中的 tip `27c25fdd` 仅作指针记录，不构成门禁豁免。 |
 | 1.6.1 | 2026-04-10 | 修正 T3-05：从"仅扫描产物/预填"升级为正式验收——8 篇白名单已满足 §0.1，非白名单文件已正确排除 |
@@ -627,3 +628,4 @@ L1 结果（无效链）：0
 | 1.7.9 | 2026-04-10 | 登记 T3-26（Trae-05）待回收：8篇白名单已合规，施工 N/A，等待回收队空提交闭环 |
 | 1.8.0 | 2026-04-10 | T3-24（Trae-01）退回：4e64e0bc 非 01_BLUEPRINTS 八篇正文提交且非 trae-01 祖先；MONITORING_ALERTING 仍缺 §0.1 |
 | 1.8.1 | 2026-04-10 | T3-37 施工完成 + T3-21 补正闭合：Trae-06 commit=5667426e，三篇 RISK_*，分支 docs/blueprint-trae-06，L1=0 |
+| 1.8.2 | 2026-04-10 | T3-41（Trae-04）：8 篇 PORTFOLIO_* 已合规，空提交 commit=b0b9da78；注 L1 曾在 trae-06 误跑后已 restore |
