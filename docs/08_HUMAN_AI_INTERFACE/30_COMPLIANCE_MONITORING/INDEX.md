@@ -1,19 +1,19 @@
 ---
 module_id: 08_HUMAN_AI_INTERFACE_30_COMPLIANCE_MONITORING_INDEX
-| 文档名称 | 类型 | 状态 | 说明 |
-|version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-10'
 owner: 文档管理团队
 responsibility:
-  - COMPLIANCE_MONITORING模块目录导航与文档索引管理
-
----|------|------|------|
-| COMPLIANCE_MONITORING_BLUEPRINT.md | 蓝图 | 活跃 | 合规监控和管理界面，支持合规规则配置、检查报告和异常交易监控 |
-
-responsibility:
-  - 系统模块设计与实施方案与优化维护
+  - COMPLIANCE_MONITORING 模块目录导航与文档索引管理
+standard_type: 导航索引
 ---
 
-**索引状态**: ✅ 活跃 | **维护**: 按需更新
+# 30_COMPLIANCE_MONITORING — 文档索引
+
+| 文档 | 类型 | 说明 |
+|------|------|------|
+| [COMPLIANCE_MONITORING_LAYER8_MODULE.md](./COMPLIANCE_MONITORING_LAYER8_MODULE.md) | Layer 8 入口 | 指向正式稿 [COMPLIANCE_MONITORING_BLUEPRINT.md](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) |
+
+**索引状态**：活跃 | **维护**：按需更新

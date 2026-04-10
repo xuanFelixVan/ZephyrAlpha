@@ -345,7 +345,7 @@ parent_document: INDEX.md
 | 数据质量监控 | DATA_QUALITY_MONITORING_BLUEPRINT.md | 数据质量检查 | Great Expectations |
 | 回测结果管理 | BACKTEST_RESULTS_MANAGEMENT_BLUEPRINT.md | 回测结果存储 | MLflow |
 | 策略版本控制 | STRATEGY_VERSION_CONTROL_BLUEPRINT.md | 版本控制 | DVC + Git |
-| 市场状态识别 | MARKET_REGIME_DETECTION_BLUEPRINT.md | 市场状态识别 | hmmlearn |
+| 市场状态识别 | MARKET_REGIME_DETECTION_AI_WORKFLOW_ENTRY.md（→ 图纸柜） | 市场状态识别 | hmmlearn |
 | 智能异常检测 | INTELLIGENT_ANOMALY_DETECTION_BLUEPRINT.md | 异常检测 | PyOD |
 | 交易执行分析 | TRADE_EXECUTION_ANALYSIS_BLUEPRINT.md | 执行分析 | QuantLib |
 | 投资组合诊断 | PORTFOLIO_DIAGNOSTICS_BLUEPRINT.md | 组合诊断 | PyPortfolioOpt |

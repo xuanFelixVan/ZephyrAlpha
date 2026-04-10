@@ -5,7 +5,7 @@ module_id: RESPONSIBILITY_FIX_REPORT_20260407_030139
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-07'
+last_updated: '2026-04-10'
 owner: 首席文档架构师
 standard_type: 职责描述修复报告
 applicable_scope: 全系统文档

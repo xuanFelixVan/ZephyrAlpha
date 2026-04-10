@@ -14,7 +14,7 @@ reference_models:
 - Citadel Smart Rebalancing
 related_documents:
 - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 open_source_projects:
@@ -39,7 +39,7 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
   - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
 
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析（包含再平衡成本分析）
+  - TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md: 交易成本分析（包含再平衡成本分析，stub → canonical）
 
   '
 responsibility:

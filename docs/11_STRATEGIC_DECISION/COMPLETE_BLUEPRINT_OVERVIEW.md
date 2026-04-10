@@ -140,7 +140,7 @@ responsibility:
 | 文档名称 | 优先级 | 状态 | 实施状态 | 说明 |
 |---------|--------|------|---------|------|
 | SCENARIO_ANALYSIS_BLUEPRINT.md | P1 | ✅ 已创建 | ✅ 已实现 | 情景分析系统蓝图 |
-| BENCHMARK_MANAGEMENT_BLUEPRINT.md | P1 | ✅ 已创建 | ⚠️ 部分实现 | 基准管理系统蓝图 |
+| BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md（正式稿：`01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md`） | P1 | ✅ 已创建 | ⚠️ 部分实现 | 基准管理系统蓝图 |
 
 #### 缺失蓝图（3个）
 

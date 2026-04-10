@@ -1,0 +1,5 @@
+# C2 归档：DATA_VERSION_CONTROL_BLUEPRINT（basename 碰撞消解）
+
+- **Canonical（权威稿）**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VERSION_CONTROL_BLUEPRINT.md`
+- **Layer4 入口（stub）**：`docs/01_FRAMEWORK/LAYER4_ML/DATA_VERSION_CONTROL_LAYER4_ENTRY.md`
+- **本目录**：原 `LAYER4_ML` 与 `20260407_p1_cleanup_archive` 下同名稿快照，保留审计轨迹。

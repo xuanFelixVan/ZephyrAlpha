@@ -36,9 +36,9 @@ implementation_status: х╖▓хоМцИ?---
 
 | цЦЗф╗╢ | шБМш┤г | чК╢цА?|
 |------|------|------|
-| STRATEGY_ENGINE_BLUEPRINT.md | чнЦчХех╝ХцУОцА╗ф╜УшУЭхЫ╛ | Active |
+| [STRATEGY_ENGINE_TACTICS_ENTRY.md](./STRATEGY_ENGINE_TACTICS_ENTRY.md) | 策略引擎（→ 图纸柜正式稿） | Active |
 | STRATEGY_ENGINE_CORE_BLUEPRINT.md | чнЦчХех╝ХцУОца╕х┐ГцибхЭЧцКАцЬпшо╛шо?| Active |
-| STRATEGY_SELECTION_BLUEPRINT.md | чнЦчХещАЙцЛйцбЖцЮ╢ | Active |
+| [STRATEGY_SELECTION_TACTICS_ENTRY.md](./STRATEGY_SELECTION_TACTICS_ENTRY.md) | 策略选择（→ 图纸柜正式稿） | Active |
 | STRATEGY_TEMPLATES.md | чнЦчХецибцЭ┐х║?| Active |
 | BACKTEST_BLUEPRINT.md | хЫЮц╡Лч│╗ч╗ЯшУЭхЫ╛ | Active |
 | BATCH_EVALUATION_BLUEPRINT.md | цЙ╣щЗПшпДф╝░шУЭхЫ╛ | Active |
@@ -56,7 +56,7 @@ implementation_status: х╖▓хоМцИ?---
 ## ЁЯУЦ ца╕х┐ГцЦЗцбг
 
 ### чнЦчХех╝ХцУОца╕х┐Г
-- STRATEGY_ENGINE_BLUEPRINT.md - чнЦчХех╝ХцУОцА╗ф╜Ушо╛шоб
+- [STRATEGY_ENGINE_TACTICS_ENTRY.md](./STRATEGY_ENGINE_TACTICS_ENTRY.md) - 策略引擎（stub → 图纸柜）
 - STRATEGY_ENGINE_CORE_BLUEPRINT.md - ца╕х┐ГцибхЭЧцКАцЬпшо╛шо?
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）

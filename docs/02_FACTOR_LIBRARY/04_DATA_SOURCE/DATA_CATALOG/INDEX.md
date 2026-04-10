@@ -32,7 +32,7 @@ parent_document: ../INDEX.md
 ## 📂 目录结构
 
 - [README](./README.md) - 模块说明
-- [OVERVIEW](./OVERVIEW.md) - 模块概览
+- [OVERVIEW](./FACTOR_LIB_DATA_SOURCE_DATA_CATALOG_OVERVIEW.md) - 模块概览
 
 ---
 

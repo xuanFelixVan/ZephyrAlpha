@@ -130,7 +130,7 @@ responsibility:
 | 文档名称 | 说明 | 优先级 | 状态 |
 |---------|------|--------|------|
 | [情景分析系统蓝图](./SCENARIO_ANALYSIS_BLUEPRINT.md) | 情景模拟、压力测试 | P1 | ✅ 已创建 |
-| [基准管理系统蓝图](./BENCHMARK_MANAGEMENT_BLUEPRINT.md) | 基准选择、跟踪误差控制 | P1 | ✅ 已创建 |
+| [基准管理 · 目录入口](./BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md)（正式稿见图纸柜） | 基准选择、跟踪误差控制 | P1 | ✅ 已创建 |
 
 ### 5. 支持模块
 
@@ -301,7 +301,7 @@ responsibility:
 - [投资限制管理蓝图](./INVESTMENT_CONSTRAINT_BLUEPRINT.md)
 - [IPS管理蓝图](./IPS_MANAGEMENT_BLUEPRINT.md)
 - [情景分析系统蓝图](./SCENARIO_ANALYSIS_BLUEPRINT.md)
-- [基准管理系统蓝图](./BENCHMARK_MANAGEMENT_BLUEPRINT.md)
+- [基准管理 · 目录入口](./BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md)（→ [`01_BLUEPRINTS` 正式稿](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md)）
 - [流动性管理蓝图](./LIQUIDITY_MANAGEMENT_BLUEPRINT.md)
 
 #### P2级模块（可选实施）
@@ -329,7 +329,7 @@ responsibility:
 #### 绩效分析相关
 - 业绩归因系统蓝图
 - [交易成本分析蓝图](./TCA_BLUEPRINT.md)
-- [基准管理系统蓝图](./BENCHMARK_MANAGEMENT_BLUEPRINT.md)
+- [基准管理 · 目录入口](./BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md)（→ [`01_BLUEPRINTS` 正式稿](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/BENCHMARK_MANAGEMENT_BLUEPRINT.md)）
 
 #### 策略管理相关
 - [多策略协调系统蓝图](./MULTI_STRATEGY_COORDINATION_BLUEPRINT.md)

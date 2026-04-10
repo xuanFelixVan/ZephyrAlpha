@@ -1,0 +1,4 @@
+# C2 归档：PERFORMANCE_ATTRIBUTION_BLUEPRINT（basename 碰撞消解）
+
+- **Canonical（权威稿）**：`docs/11_STRATEGIC_DECISION/PERFORMANCE_ATTRIBUTION_BLUEPRINT.md`（Layer 11.7 业绩归因系统蓝图）
+- **本目录**：Layer 8 `83_PERFORMANCE_ATTRIBUTION` 下同名稿的快照（`PERFORMANCE_ATTRIBUTION_BLUEPRINT_legacy_layer8_83.md`），消解 basename 碰撞后保留审计轨迹。

@@ -56,7 +56,7 @@ priority: P0核心
 
 #### 2.1.1 数据版本控制 (DVC)
 
-**蓝图文档**: DATA_VERSION_CONTROL_BLUEPRINT.md
+**蓝图文档**: [Layer4 入口](./DATA_VERSION_CONTROL_LAYER4_ENTRY.md) · [正式蓝图](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VERSION_CONTROL_BLUEPRINT.md)
 
 | 项目 | 说明 |
 |------|------|

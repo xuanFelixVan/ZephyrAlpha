@@ -322,8 +322,8 @@ Layer 0: 数据源层 (Data Sources)
 
 | 文档 | 说明 |
 |------|------|
-| **[DISASTER_RECOVERY_BLUEPRINT.md](./DISASTER_RECOVERY_BLUEPRINT.md)** | **📋 规划** 灾备体系蓝图：数据备份、故障恢复与异地容灾 |
+| **[DISASTER_RECOVERY_FRAMEWORK_ENTRY.md](./DISASTER_RECOVERY_FRAMEWORK_ENTRY.md)** | 灾备：**框架入口** → 正式稿见图纸柜 `DISASTER_RECOVERY_BLUEPRINT.md` |
 
 ---
 
-**版本**: v5.6 | **更新**: 2026-04-08 | **状态**: 活跃
+**版本**: v5.7 | **更新**: 2026-04-10 | **状态**: 活跃

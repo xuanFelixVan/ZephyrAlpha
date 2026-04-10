@@ -15,7 +15,7 @@ reference_models:
 - Two Sigma Attribution
 related_documents:
 - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
 - AI_DECISION_AUDIT_BLUEPRINT.md
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
@@ -46,7 +46,7 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
   - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md: 算法性能基准
 
-  - TRANSACTION_COST_ANALYSIS_BLUEPRINT.md: 交易成本分析
+  - TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md: 交易成本分析（stub → canonical）
 
   - AI_DECISION_AUDIT_BLUEPRINT.md: AI决策审计
 

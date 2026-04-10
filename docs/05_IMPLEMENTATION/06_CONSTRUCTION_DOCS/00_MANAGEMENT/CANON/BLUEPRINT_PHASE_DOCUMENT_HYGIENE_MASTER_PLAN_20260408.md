@@ -66,7 +66,7 @@ related_documents:
 
 ### P1 — 审计与研究支撑
 
-- `docs/09_AUDIT/REPORTS/`：以 [`INDEX_GROUPED_20260408.md`](../../../../09_AUDIT/REPORTS/INDEX_GROUPED_20260408.md) 为枢纽，**禁止**把数百报告逐篇堆进单一 `INDEX.md`。
+- `docs/09_AUDIT/REPORTS/`：以 [`INDEX_GROUPED_REPORTS_20260408.md`](../../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 为枢纽，**禁止**把数百报告逐篇堆进单一 `INDEX.md`。
 - `docs/07_RESEARCH/`、`docs/08_KNOWLEDGE/`：按子目录 `INDEX.md` 分批补链。
 
 ### P2 — duplicates 池「结案」

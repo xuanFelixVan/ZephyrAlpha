@@ -1,22 +1,12 @@
 ---
-module_id: 10_AI_WORKFLOW_COMPLIANCE_MONITORING_BLUEPRINT
-version: 1.0.0
-status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 合规监控模块蓝图文档
----
-
-﻿---
 module_id: COMPLIANCE_MONITORING_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-04
+last_updated: '2026-04-10'
 owner: 首席架构师
-responsibility: 
+responsibility:
+  - 合规监控模块蓝图文档
 layer: Layer 10 (治理与合规层)
 standard_type: 专业机构级蓝图
 applicable_scope: 合规监控模块实现
@@ -800,7 +790,7 @@ class ComplianceMonitor:
 ```markdown
 | 蓝图文档 | 路径 | 模块ID | 版本 | 状| 职责概要 |
 |----------|------|--------|------|------|----------|
-| [合规监控模块蓝图](../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` | COMPLIANCE_MONITORING_001 | 1.0 | Active | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预|
+| [合规监控模块蓝图](./COMPLIANCE_MONITORING_BLUEPRINT.md) | `docs/10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` | COMPLIANCE_MONITORING_001 | 1.0 | Active | 交易合规检查、风控合规检查、监管报告生成、审计追踪、违规预|
 ```
 
 ### 6.2 模块职责边界

@@ -62,7 +62,7 @@ compliance_level: 专业标准---
 
 > 说明：本目录下报告/状态文件数量较多，避免把上百条链接塞进本页；采用“分组索引”承接入口。
 
-- **分组入口**：[`INDEX_GROUPED_20260408.md`](./INDEX_GROUPED_20260408.md)（覆盖当前仍为严格孤儿的 95 篇 STATE 文档）
+- **分组入口**：[`INDEX_GROUPED_STATE_20260408.md`](./INDEX_GROUPED_STATE_20260408.md)（覆盖当前仍为严格孤儿的 95 篇 STATE 文档）
 - **夜间批跑**：[`overnight_runs/INDEX.md`](./overnight_runs/INDEX.md)
 
 

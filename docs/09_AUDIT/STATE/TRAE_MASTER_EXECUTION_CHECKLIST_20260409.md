@@ -125,7 +125,7 @@ related_documents:
 - [x] **T0061** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0062** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DEEP_SYSTEM_AUDIT_REPORT_20260404_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0063** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_AUDIT_FIX_COMPLETION_REPORT_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [x] **T0064** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0064** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_legacy_20260404_audit_reports_archive.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0065** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V3_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0066** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V4_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0067** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V5_20260403.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
@@ -251,11 +251,11 @@ related_documents:
 - [x] **T0187** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRADE_AUDITOR_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0188** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0189** （ORPHAN）`docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [x] **T0190** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0190** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README_20260404_market_participant_consolidation.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0191** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0192** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0193** （ORPHAN）`docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [x] **T0194** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0194** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README_20260405_economic_regime_cleanup.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0195** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_ALTERNATIVE_ASSESSMENT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0196** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0197** （ORPHAN）`docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
@@ -309,7 +309,7 @@ related_documents:
 - [x] **T0245** （ORPHAN）`docs/06_ARCHIVE/20260407_p1_cleanup_archive/VERSION_MANAGEMENT_AUTOMATION_GUIDE.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0246** （ORPHAN）`docs/06_ARCHIVE/20260407_p1_cleanup_archive/VERSION_MANAGEMENT_DECISIONS.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0247** （ORPHAN）`docs/06_ARCHIVE/20260407_p1_cleanup_archive/VERSION_MANAGEMENT_OPTIMIZATION_PLAN.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [x] **T0248** （ORPHAN）`docs/06_ARCHIVE/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0248** （ORPHAN）`docs/06_ARCHIVE/ARCHIVE_README_06_ARCHIVE_ROOT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0249** （ORPHAN）`docs/06_ARCHIVE/P0_01_Database_Design_Document_v1_backup.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0250** （ORPHAN）`docs/06_ARCHIVE/architecture_v4/L4_FEATURE_ENG.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0251** （ORPHAN）`docs/06_ARCHIVE/architecture_v4/module_designs/layer_1/L1_CLEANER.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
@@ -324,7 +324,7 @@ related_documents:
 - [x] **T0260** （ORPHAN）`docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/DOCUMENT_RESTORE_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0261** （ORPHAN）`docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0262** （ORPHAN）`docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
-- [x] **T0263** （ORPHAN）`docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
+- [x] **T0263** （ORPHAN）`docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README_duplicate_documents.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0264** （ORPHAN）`docs/06_ARCHIVE/factor-library/ifind_factors_list.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0265** （ORPHAN）`docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0266** （ORPHAN）`docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
@@ -1027,20 +1027,20 @@ related_documents:
 - [x] **T0958** （NO-MID）`docs/09_AUDIT/STATE/SPARSE_DIRECTORY_STRATEGY_REPORT.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0959** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_20260407_210318.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0960** （NO-MID）`docs/09_AUDIT/STATE/THIRD_COMPREHENSIVE_AUDIT_REPORT_FIXED_20260407_210703.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0961** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0961** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0962** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0963** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0964** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0965** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0966** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0967** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0964** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0965** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail_20260408_021344.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0966** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0967** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0968** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/md_by_subdir_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0969** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0969** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0970** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_022356/sentinel_l1_scan_20260408_022356.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0971** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0972** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0971** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0972** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0973** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/md_by_subdir_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
-- [x] **T0974** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
+- [x] **T0974** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0975** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 
 ---
@@ -1127,7 +1127,7 @@ related_documents:
 - [x] **T1038** （HO）对照 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md`；与当前 backlog 冲突则登记 ARCH gap
 - [x] **T1039** （HO）运行 `strict_orphan_inbound_scan.py`；保留 REGEN 与基线 diff 说明
 - [x] **T1040** （HO）`CANONICAL_POINTERS.md`：无悬空 TBD；新簇已 disposition
-- [x] **T1041** （HO）`INDEX_GROUPED_20260408.md`（STATE 与 REPORTS）：长列表入站是否足够
+- [x] **T1041** （HO）`INDEX_GROUPED_STATE_20260408.md` / `INDEX_GROUPED_REPORTS_20260408.md`（STATE 与 REPORTS）：长列表入站是否足够
 - [x] **T1042** （HO）`docs/09_AUDIT/INDEX_AUDIT.md`：门户链可达真源
 - [x] **T1043** （HO）`OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`：节奏或 defer
 - [x] **T1044** （HO）Git：长时作业前基线 tag；窗口结束 milestone tag 或书面说明跳过

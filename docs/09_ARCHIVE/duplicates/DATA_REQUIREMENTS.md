@@ -26,7 +26,7 @@ owner: 文档管理团队
 ---
 
 > **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
-> **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CONTRACT/OVERVIEW.md`  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CONTRACT/FACTOR_LIB_DATA_SOURCE_DATA_CONTRACT_OVERVIEW.md`  
 > **处置建议**：merge_then_delete（数据需求口径建议下沉到数据契约模块；本副本为历史规格草案）。
 
 **职责边界**:

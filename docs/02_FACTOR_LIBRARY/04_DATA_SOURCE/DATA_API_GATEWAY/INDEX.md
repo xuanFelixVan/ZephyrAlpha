@@ -32,7 +32,7 @@ API接口管理、API访问控制、API性能监控
 ## 📂 目录结构
 
 - [README](./README.md) - 模块说明
-- [OVERVIEW](./OVERVIEW.md) - 模块概览
+- [OVERVIEW](./FACTOR_LIB_DATA_SOURCE_DATA_API_GATEWAY_OVERVIEW.md) - 模块概览
 
 ---
 

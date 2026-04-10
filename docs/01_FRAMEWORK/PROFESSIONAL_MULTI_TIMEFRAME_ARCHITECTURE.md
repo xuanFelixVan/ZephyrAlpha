@@ -407,7 +407,7 @@ class StrategySelectionSystem:
     集成位置: 中观策略层核心组?
 ?
 
-    参考设? [STRATEGY_SELECTION_BLUEPRINT.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_BLUEPRINT.md)
+    参考设? [STRATEGY_SELECTION_TACTICS_ENTRY.md](../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/STRATEGY_SELECTION_TACTICS_ENTRY.md)
     """
     
     def __init__(self, strategy_pool: StrategyPool):

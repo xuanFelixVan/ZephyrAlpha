@@ -32,7 +32,7 @@ iFind接口集成、因子数据获取、数据质量验证
 ## 📂 目录结构
 
 - [README](./README.md) - 模块说明
-- [OVERVIEW](./OVERVIEW.md) - 模块概览
+- [OVERVIEW](./FACTOR_LIB_DATA_SOURCE_IFIND_OVERVIEW.md) - 模块概览
 
 ---
 

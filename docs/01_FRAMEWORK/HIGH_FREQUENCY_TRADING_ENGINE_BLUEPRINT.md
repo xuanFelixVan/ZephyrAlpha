@@ -16,7 +16,7 @@ reference_models:
 related_documents:
 - ORDER_EXECUTION_BLUEPRINT.md
 - SMART_ORDER_ROUTING_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
 responsibility_boundary: '本文档负责高频交易执行引擎，包括：
 
   - 低延迟订单执行
@@ -515,7 +515,7 @@ execution_quality = Gauge(
 | 系统架构 | Layer 0-11架构定义 | ARCHITECTURE.md |
 | 订单执行 | 订单执行方案 | ORDER_EXECUTION_BLUEPRINT.md |
 | 智能订单路由 | 智能订单路由方案 | SMART_ORDER_ROUTING_BLUEPRINT.md |
-| 交易成本分析 | 交易成本分析方案 | TRANSACTION_COST_ANALYSIS_BLUEPRINT.md |
+| 交易成本分析 | 交易成本分析方案 | TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md |
 
 ---
 

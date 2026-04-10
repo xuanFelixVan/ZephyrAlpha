@@ -8,9 +8,9 @@
 产出目录: docs/09_AUDIT/STATE/overnight_runs/<UTC或本地时间戳>/
   - run.log              完整日志
   - MANIFEST.json        步骤、耗时、退出码
-  - CONSOLIDATED_REPORT_FOR_AI.md  给下一轮 AI 阅读的主报告（含统计、路径、摘要）
-  - module_id_duplicates_detail.md
-  - invalid_links_detail.md
+  - CONSOLIDATED_REPORT_FOR_AI_<run_id>.md  给下一轮 AI 阅读的主报告（basename 带 run_id，避免跨 run 的 C2 碰撞）
+  - module_id_duplicates_detail_<run_id>.md
+  - invalid_links_detail_<run_id>.md
   - git_snapshot.txt
   - 并复制 inventory / sentinel 扫描结果副本（便于单目录打包）
 
@@ -194,6 +194,7 @@ def write_consolidated(
     large_files: list[tuple[int, str]],
     manifest: dict,
 ) -> None:
+    run_id = run_dir.name
     s = sentinel_json.get("links", {}).get("stats", {})
     mi = sentinel_json.get("module_ids", {})
     md_count = sentinel_json.get("md_file_count", 0)
@@ -219,8 +220,9 @@ def write_consolidated(
         "## 2. 本目录产出文件（请优先阅读）",
         "",
         "- `MANIFEST.json` — 步骤与时间",
-        "- `module_id_duplicates_detail.md` — 重复 id 与路径列表",
-        "- `invalid_links_detail.md` — 无效链接表",
+        f"- `module_id_duplicates_detail_{run_id}.md` — 重复 id 与路径列表",
+        f"- `invalid_links_detail_{run_id}.md` — 无效链接表",
+        f"- `CONSOLIDATED_REPORT_FOR_AI_{run_id}.md` — 本汇总（basename 已带 run_id）",
         "- `git_snapshot.txt` — 分支、tag、diff 摘要",
         "- `sentinel_l1_scan_<run_id>.json` — 机器可读全量",
         "- `md_by_subdir_<run_id>.md` — 按目录文件清单副本",
@@ -254,13 +256,13 @@ def write_consolidated(
             "",
             "## 6. 下一轮 AI 建议动作",
             "",
-            "1. 阅读 `invalid_links_detail.md`，按类修复：缺失文件 / 伪链接 / 路径层级错误。",
-            "2. 按 `module_id_duplicates_detail.md` 分批消解重复（先 audit_state 与 INDEX 模板）。",
+            f"1. 阅读 `invalid_links_detail_{run_id}.md`，按类修复：缺失文件 / 伪链接 / 路径层级错误。",
+            f"2. 按 `module_id_duplicates_detail_{run_id}.md` 分批消解重复（先 audit_state 与 INDEX 模板）。",
             "3. 对照 `FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md` 继续做 L2 分批职责审计。",
             "",
         ]
     )
-    (run_dir / "CONSOLIDATED_REPORT_FOR_AI.md").write_text("\n".join(lines), encoding="utf-8")
+    (run_dir / f"CONSOLIDATED_REPORT_FOR_AI_{run_id}.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def main() -> int:
@@ -319,8 +321,8 @@ def main() -> int:
                     suf = ".json" if name.endswith(".json") else ".md"
                     (run_dir / f"sentinel_l1_scan_{run_id}{suf}").write_bytes(p.read_bytes())
 
-        build_module_id_report(sentinel_data, run_dir / "module_id_duplicates_detail.md")
-        build_invalid_links_report(sentinel_data, run_dir / "invalid_links_detail.md")
+        build_module_id_report(sentinel_data, run_dir / f"module_id_duplicates_detail_{run_id}.md")
+        build_invalid_links_report(sentinel_data, run_dir / f"invalid_links_detail_{run_id}.md")
 
         top_level = aggregate_docs_top_level()
         large_files = largest_md_files(80)

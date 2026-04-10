@@ -1,6 +1,6 @@
 ---
 module_id: DOCUMENT_REPOSITORY_LAYOUT_STANDARD_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-10'
@@ -14,6 +14,8 @@ responsibility:
   - 规定第 2 阶段（施工流程/计划/方案）默认落盘位置与命名建议
 related_documents:
   - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
+  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md
+  - ../../01_FRAMEWORK/ARCHITECTURE.md
   - ../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md
   - ./FILE_NAMING_STANDARD.md
 ---
@@ -22,7 +24,7 @@ related_documents:
 
 > **核心职责**：回答「这类文档应该放在仓库哪个文件夹」，使个人开发 + AI 维护时**少漂移、少重复、可追溯**。  
 > **职责边界**：本文规定 **docs/** 下及与文档强相关的实施目录习惯；**不**替代 `src/` 内代码结构规范（代码结构以实施蓝图与 `PATH_STANDARD` 中代码部分为准）。  
-> **办公室衔接（扫描 / 尽治批次）**：把 rollup、前缀队列与「查表归位」连成固定步骤时，见项目办公室 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（真源仍以本文 §2～§4 为准）。
+> **办公室衔接（扫描 / 尽治批次）**：把 rollup、前缀队列与「查表归位」连成固定步骤时，见项目办公室 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（真源仍以本文 §2～§4 为准）。**系统 Layer 0～11 与 `docs/` 路径分立**的摘要见下方 **§1 第 5 条**，详述与同口径复阅见该规程 **§1.5**（勿另起平行标准文件）。
 
 ---
 
@@ -31,7 +33,8 @@ related_documents:
 1. **一类内容一个家**：架构、因子、战术契约、实施、审计、归档**分树**；不确定时先查下表再新建目录。  
 2. **真源唯一**：同一主题**一篇 canonical** 入口，复制件只进 `archive` 并写「参见 xxx」。  
 3. **阶段可读**：第 1 阶段（蓝图）产出主要在 **`01_FRAMEWORK`** 与 **`01_BLUEPRINTS`**；第 2 阶段（施工文档）产出在 **`03_CONSTRUCTION_PLANS`**（见 §4）；第 3 阶段代码在 **`src/`**、测试在 **`tests/`**。  
-4. **扩展规则**：未来新类型文档若下表无格，须在本文件 **§6 变更记录** 增一行再创建目录（或在 `TECH_DECISION_RECORDS` 登记后次日同步本文）。
+4. **扩展规则**：未来新类型文档若下表无格，须在本文件 **§6 变更记录** 增一行再创建目录（或在 `TECH_DECISION_RECORDS` 登记后次日同步本文）。  
+5. **架构 Layer 与 `docs/` 路径分立**：**Layer 0～11**（模块在运行栈中的主责层）以 [`ARCHITECTURE.md`](../../01_FRAMEWORK/ARCHITECTURE.md) 为准；**本篇 §2～§4** 只回答「这篇 Markdown 应落在哪棵 `docs/` 子树」。**勿**用路径名中的数字前缀（如 `10_AI_WORKFLOW`）代替 Layer 编号；先后关系、防混与蓝图 `layer` 冲突处置见 [放置规程 §1.5](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（同口径：[REPO_WIDE §2.3.1](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)、[AI 交接 §3.2](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md)）。**勿**另建平行「Layer 放置标准」文件——有缺口时改 **本文 §6** 或上述规程/任务清单**互指**，不复制第二套真源。
 
 ---
 
@@ -103,5 +106,6 @@ related_documents:
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.2 | 2026-04-10 | **§1** 增第 5 条（Layer 0～11 与 `docs/` 路径分立 + 禁平行真源）；文首、`related_documents` 互指 `ARCHITECTURE.md`、放置规程 **§1.5**、REPO_WIDE **§2.3.1**、AI **§3.2** |
 | 1.0.1 | 2026-04-10 | 文首增与办公室 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 互指 |
 | 1.0.0 | 2026-04-08 | 初版：一级目录职责、05 实施子目录、第 2 阶段默认路径 |

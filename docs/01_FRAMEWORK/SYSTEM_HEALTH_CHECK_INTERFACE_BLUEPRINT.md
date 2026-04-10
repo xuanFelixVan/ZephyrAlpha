@@ -16,7 +16,7 @@ reference_models:
 related_documents:
 - HUMAN_AI_INTERACTION_BLUEPRINT.md
 - GRAFANA_MONITORING_BLUEPRINT.md
-- DISASTER_RECOVERY_BLUEPRINT.md
+- DISASTER_RECOVERY_FRAMEWORK_ENTRY.md
 responsibility_boundary: '本文档负责系统健康检查界面设计，包括：
 
   - 系统组件状态检查
@@ -34,7 +34,7 @@ responsibility_boundary: '本文档负责系统健康检查界面设计，包括
 
   监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
 
-  灾备体系请参考：DISASTER_RECOVERY_BLUEPRINT.md
+  灾备体系请参考：DISASTER_RECOVERY_FRAMEWORK_ENTRY.md（→ 图纸柜正式稿）
 
   '
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
@@ -567,7 +567,7 @@ class SystemHealthCheckInterface:
 |---------|------|------|
 | [人机交互层战略规划](./HUMAN_AI_INTERACTION_BLUEPRINT.md) | 战略规划 | 人机交互层战略定义 |
 | [Grafana监控可视化蓝图](./GRAFANA_MONITORING_BLUEPRINT.md) | 监控系统 | 监控可视化系统 |
-| [灾备体系蓝图](./DISASTER_RECOVERY_BLUEPRINT.md) | 灾备系统 | 灾备体系设计 |
+| [灾备 · 框架入口](./DISASTER_RECOVERY_FRAMEWORK_ENTRY.md) | 灾备系统 | 指向图纸柜正式蓝图 |
 
 ---
 

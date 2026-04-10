@@ -277,7 +277,7 @@ graph LR
 | **了解策略体系** | [overview.md](./overview.md) |
 | **查看策略分类** | [classification.md](./classification.md) |
 | **开发新策略** | [lifecycle.md](./lifecycle.md) |
-| **策略引擎开?* | [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) |
+| **策略引擎开?* | [STRATEGY_ENGINE_TACTICS_ENTRY.md](./STRATEGY_ENGINE_TACTICS_ENTRY.md) |
 | **选择策略** | ../05_STRATEGY_POOL/index.md |
 | **查看具体策略** | [../INDEX.md](../INDEX.md) |
 
@@ -301,7 +301,7 @@ graph LR
 -  《量化交易? Ernest Chan
 -  [策略分类文档](./classification.md)
 -  [策略生命周期](./lifecycle.md)
--  [策略引擎开发蓝图](./STRATEGY_ENGINE_BLUEPRINT.md)
+-  [策略引擎开发蓝图（stub）](./STRATEGY_ENGINE_TACTICS_ENTRY.md)
 
 ---
 

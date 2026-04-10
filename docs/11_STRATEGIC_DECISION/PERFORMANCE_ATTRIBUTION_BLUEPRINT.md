@@ -16,7 +16,7 @@ module_id: PERFORMANCE_ATTRIBUTION_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-05
-last_updated: 2026-04-05
+last_updated: 2026-04-10
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: Layer 11.7 - 业绩归因系统

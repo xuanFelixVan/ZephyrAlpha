@@ -561,7 +561,7 @@ class BacktestAPI:
 |------|------|
 | [overview.md](./overview.md) | 策略体系概述 |
 | [lifecycle.md](./lifecycle.md) | 策略生命周期管理 |
-| [STRATEGY_ENGINE_BLUEPRINT.md](./STRATEGY_ENGINE_BLUEPRINT.md) | 策略引擎开发蓝?|
+| [STRATEGY_ENGINE_TACTICS_ENTRY.md](./STRATEGY_ENGINE_TACTICS_ENTRY.md) | 策略引擎（→ 图纸柜正式稿） |
 | API_Contract.md | 系统API契约 |
 
 

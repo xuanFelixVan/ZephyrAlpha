@@ -89,12 +89,12 @@ module_id: SENTINEL_L1_AFTER_P0B_20260408
 ## 路径深度 Top 10
 
 - depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md`
 - depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/md_by_subdir_20260408_033240.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail_20260408_033240.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md`
 - depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/sentinel_l1_scan_20260408_022356.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail_20260408_022356.md`
 - depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/md_by_subdir_20260408_022356.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail.md`
-- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail_20260408_022356.md`
+- depth=5 `docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md`

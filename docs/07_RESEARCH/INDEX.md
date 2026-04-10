@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: DOCS_07_RESEARCH_INDEX_001
 ---
 
 ﻿---

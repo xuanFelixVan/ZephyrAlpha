@@ -88,10 +88,10 @@ responsibility:
 | duplicates 台账 | `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md` |
 | overlap canonical 模板 | `docs/06_ARCHIVE/OVERLAP_CANONICAL_POINTER_TEMPLATE.md` |
 | 01_BLUEPRINTS 机器索引 | `scripts/generate_01_blueprints_index.py` → `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md` |
-| STATE 分组承接（避免单页堆上百链） | `docs/09_AUDIT/STATE/INDEX_GROUPED_20260408.md` |
+| STATE 分组承接（避免单页堆上百链） | `docs/09_AUDIT/STATE/INDEX_GROUPED_STATE_20260408.md` |
 | 严格孤儿报告（人工分桶说明，与基线配套） | `docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` |
 | 审计门户（快速分流） | `docs/09_AUDIT/INDEX_AUDIT.md` |
-| REPORTS 长列表分组 | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_20260408.md` |
+| REPORTS 长列表分组 | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md` |
 | 重复文档处理标准（与 Playbook 配套） | `docs/09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md` |
 | 文档补救任务指令 | `docs/09_AUDIT/PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` |
 | 架构模块审计与 gap 计划 | `docs/09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md` |
@@ -193,8 +193,8 @@ python scripts/sentinel_l1_governance_scan.py
 
 | 类型 | 典型位置 | 建议动作 |
 |------|----------|----------|
-| **一次性扫描报告 / 中间态** | `docs/09_AUDIT/STATE/` 下大量带时间戳的报告、`SENTINEL_L1_*`、历史 FIX 报告 | **保留文件本体**优先；用 **`INDEX_GROUPED_20260408.md`**（或按日更新的分组页）承接入口；**勿**把上百篇逐链贴进单一 `INDEX.md`。若确需弱化干扰：在文首 front matter 增加 **`status: Superseded`**（或项目约定等价词）并**文字说明**替代真源路径（不强制改文件名，避免外链雪崩）。 |
-| **REPORTS 长列表** | `docs/09_AUDIT/REPORTS/` | 以 **`REPORTS/INDEX_GROUPED_20260408.md`** 为枢纽；过时报告可标记「仅历史对账」并指向当前程序真源（如 Playbook、总案）。 |
+| **一次性扫描报告 / 中间态** | `docs/09_AUDIT/STATE/` 下大量带时间戳的报告、`SENTINEL_L1_*`、历史 FIX 报告 | **保留文件本体**优先；用 **`INDEX_GROUPED_STATE_20260408.md` / `INDEX_GROUPED_REPORTS_20260408.md`**（或按日更新的分组页）承接入口；**勿**把上百篇逐链贴进单一 `INDEX.md`。若确需弱化干扰：在文首 front matter 增加 **`status: Superseded`**（或项目约定等价词）并**文字说明**替代真源路径（不强制改文件名，避免外链雪崩）。 |
+| **REPORTS 长列表** | `docs/09_AUDIT/REPORTS/` | 以 **`REPORTS/INDEX_GROUPED_REPORTS_20260408.md`** 为枢纽；过时报告可标记「仅历史对账」并指向当前程序真源（如 Playbook、总案）。 |
 | **仍约束当前行为的程序** | `PROCEDURES/*`、`STANDARDS/*`、施工门禁 | **不**因「日期旧」自动降级；若内容被取代，走 **TDR/ADR 或 Playbook 变更记录**，并在旧文顶部用**一段**说明「由哪篇接替」。 |
 | **重复池 / overlap** | `09_ARCHIVE/duplicates`、`06_ARCHIVE/overlap_*` | **只**按 `DUPLICATE_DOCUMENT_HANDLING_STANDARD` 与 overlap 模板处理；删除或合并前**必须**更新 `CANONICAL_POINTERS.md` 或 overlap 台账。 |
 | **生成物是否进 git** | `SENTINEL_L1_*`、`*REGEN*` | 若仓库策略为不提交：改完后 **`git restore`** 即可；若策略为提交基线：由 Owner 定夺，**交接人不擅自批量提交噪声**。 |
@@ -402,7 +402,7 @@ python scripts/sentinel_l1_governance_scan.py
 |----------|------|------------|
 | **导航与索引卫生** | 主干、P0 域有权威 `INDEX.md` 或等价入口 | 清洁总案 P0 目录；总案 §5「主干 INDEX」 |
 | **严格孤儿收敛** | 高价值文档避免入度为 0 漂流 | `scripts/strict_orphan_inbound_scan.py`；基线与 `STRICT_ORPHAN_FILES_LIST_REGEN_*.txt` |
-| **长列表分流** | 报告海不堆进单页 `INDEX.md` | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_20260408.md`；`docs/09_AUDIT/STATE/INDEX_GROUPED_20260408.md` |
+| **长列表分流** | 报告海不堆进单页 `INDEX.md` | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md`；`docs/09_AUDIT/STATE/INDEX_GROUPED_STATE_20260408.md` |
 
 ### 14.3 链接与引用完整性（Link integrity）
 

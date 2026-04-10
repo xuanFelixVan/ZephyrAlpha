@@ -1,7 +1,7 @@
 ---
 module_id: 02_FACTOR_LIBRARY_01_STANDARDS_001
 - 父目? 01_STANDARDS/README.md
-- 相关: [FACTOR_TAXONOMY.md](./FACTOR_TAXONOMY.md)
+- 相关（归档副本）: [FACTOR_TAXONOMY_legacy_09_archive_duplicates.md](./FACTOR_TAXONOMY_legacy_09_archive_duplicates.md) · 真源 `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_TAXONOMY.md`
 - 相关: [TECHNICAL_INDICATORS.md](./TECHNICAL_INDICATORS.md)
 - 相关: [IC_ANALYSIS.md](./ic_analysis.md)
 responsibility:

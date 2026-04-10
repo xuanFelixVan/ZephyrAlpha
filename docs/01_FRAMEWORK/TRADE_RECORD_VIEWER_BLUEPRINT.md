@@ -16,7 +16,7 @@ reference_models:
 - Citadel Trade Analysis
 related_documents:
 - HUMAN_AI_INTERACTION_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
 - AUDIT_LOG_VIEWER_BLUEPRINT.md
 responsibility_boundary: '本文档负责交易记录查看器设计，包括：
 
@@ -31,7 +31,7 @@ responsibility_boundary: '本文档负责交易记录查看器设计，包括：
   - 交易导出功能界面
 
 
-  交易成本分析请参考：TRANSACTION_COST_ANALYSIS_BLUEPRINT.md
+  交易成本分析请参考：TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md（→ `10_AI_WORKFLOW` canonical）
 
   审计日志请参考：AUDIT_LOG_VIEWER_BLUEPRINT.md
 

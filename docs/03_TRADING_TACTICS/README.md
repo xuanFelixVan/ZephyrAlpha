@@ -1,5 +1,5 @@
 ---
-module_id: README
+module_id: DOCS_03_TRADING_TACTICS_README_001
 ---
 
 ﻿---
@@ -45,7 +45,7 @@ implementation_status: 进行?---
 
 | 目录 | 说明 | 关键文档 |
 |------|------|----------|
-| 01_STRATEGY_FRAMEWORK/ | 策略框架 | overview.md, lifecycle.md, classification.md, STRATEGY_ENGINE_BLUEPRINT.md |
+| 01_STRATEGY_FRAMEWORK/ | 策略框架 | overview.md, lifecycle.md, classification.md, STRATEGY_ENGINE_TACTICS_ENTRY.md |
 | 02_TACTICS_MERGED/ | 战术融合 | README.md |
 | 03_ADVANCED_TACTICS/ | 高级战术 | 波段交易, 涨停分析, 市场周期 |
 | 04_YOUZI_STRATEGIES/ | 游资策略 | 龙头战法, 短线技?|
@@ -68,7 +68,7 @@ implementation_status: 进行?---
 | 文档 | 说明 |
 |------|------|
 | [INDEX.md](INDEX.md) | 策略索引 |
-| STRATEGY_ENGINE_BLUEPRINT.md | 策略引擎开发蓝图|
+| [STRATEGY_ENGINE_TACTICS_ENTRY.md](01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_TACTICS_ENTRY.md) | 策略引擎（stub → 图纸柜） |
 | Strategy_Spec_S001.md | S001策略规格 |
 | parameter_management.md | 参数管理 |
 | OPTIMIZATION_REPORT.md | 优化报告 |

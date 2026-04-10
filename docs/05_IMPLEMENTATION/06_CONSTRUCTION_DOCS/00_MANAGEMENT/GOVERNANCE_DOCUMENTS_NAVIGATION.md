@@ -1,6 +1,6 @@
 ﻿---
 module_id: GOVERNANCE_DOCUMENTS_NAVIGATION_001
-version: 1.0.3
+version: 1.0.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -37,8 +37,8 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 | 施工门禁（蓝图终稿 / 阶段模型） | [`CONSTRUCTION_GATE_CRITERIA_20260408.md`](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md)（项目办公室 **CANON** 真源） |
 | 蓝图交付标准（机构精华版，目标态） | [`BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md`](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) |
 | 文档治理架构（L0～L5 分层与边界） | [`DOCUMENT_GOVERNANCE_ARCHITECTURE.md`](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) |
-| 文档仓库目录与放置标准 | [`docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
-| 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| 文档仓库目录与放置标准（§2～§4 目录表；**§1 第 5 条** Layer/路径分立摘要） | [`docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
+| 文档地图与放置（办公室规程 · **§1.5** 与 LAYOUT **§1 第 5 条**同口径 · 与扫描/§7 衔接） | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
 | 全局文件治理会话交接（新对话粘贴） | [`GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md`](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 已锁定治理裁决 | [`docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md`](../../../09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md) |
 | OpenClaw 整改执行手册 | [`docs/09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`](../../../09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md) |
@@ -142,7 +142,7 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 | [蓝图终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md) | 终稿门禁（与施工门禁文档互补） |
 | [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 阶段勾选 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | L0～L5 分层与审计边界（机构参照模型） |
-| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | LAYOUT 真源 + 扫描/§7 批次衔接（办公室规程） |
+| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | LAYOUT 真源 + **§1.5**（与 LAYOUT §1 第 5 条同口径）+ 扫描/§7 批次衔接 |
 | [执行协议](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md) | 防幻觉与图纸柜操作纪律 |
 | **本文** | 全库治理类**导航**；详版仍以各目录真源为准 |
 
@@ -152,6 +152,7 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.4 | 2026-04-10 | 施工与蓝图表、办公室关系表互指 LAYOUT **§1 第 5 条**与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 同口径 |
 | 1.0.3 | 2026-04-10 | 施工与蓝图表增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 1.0.2 | 2026-04-10 | 施工与蓝图表增 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；脚本表 L1 路径改 `scripts/governance/`；办公室关系表增一行 |
 | 1.0.1 | 2026-04-10 | 施工与蓝图表增文档治理架构；办公室关系表增一行 |

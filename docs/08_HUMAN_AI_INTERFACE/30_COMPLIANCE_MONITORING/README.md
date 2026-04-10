@@ -18,4 +18,4 @@ compliance_level: 专业标准
 
 ## 📋 说明
 
-此目录包含2个文档，建议整合到父目录或补充更多文档。
+含 Layer 8 入口 [`COMPLIANCE_MONITORING_LAYER8_MODULE.md`](./COMPLIANCE_MONITORING_LAYER8_MODULE.md) 与正式稿 [`10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md`](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) 互指（C2 basename 已消解）。

@@ -3,7 +3,7 @@ module_id: MODEL_RISK_MANAGEMENT_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-06
-last_updated: '2026-04-07'
+last_updated: '2026-04-10'
 owner: 首席架构师
 layer: Layer 10 (治理与合规层)
 standard_type: 专业量化机构级蓝图

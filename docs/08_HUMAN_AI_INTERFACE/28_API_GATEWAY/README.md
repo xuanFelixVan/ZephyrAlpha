@@ -18,4 +18,4 @@ compliance_level: 专业标准
 
 ## 📋 说明
 
-此目录包含2个文档，建议整合到父目录或补充更多文档。
+此目录含 Layer 8 入口（`API_GATEWAY_LAYER8_MODULE.md`）与正式图纸柜蓝图互指；详细设计见 `01_BLUEPRINTS/API_GATEWAY_BLUEPRINT.md`。

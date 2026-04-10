@@ -1,9 +1,9 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.2
+version: 1.0.8
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-11'
+last_updated: '2026-04-12'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
@@ -14,7 +14,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 # 全局文件治理 — 会话交接（新对话粘贴用）
 
 > **用途**：你在**新对话**里要做「从全局扫描开始、深度清洁每一处」时，把下文 **「二、工作交接指令（请全文执行）」** 整段复制给 AI；并说明工作区根目录为 **ZephyrAlpha** 仓库。  
-> **真源优先级**：执行细节以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准；命令表以 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 为准；放置以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 为准。
+> **真源优先级**：执行细节以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准（**§2.3.1** Layer 与路径防混）；命令表以 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 为准；放置以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5 条**摘要）+ [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**）为准；系统 **Layer 0～11** 以 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 为准，**勿**从 `10_*` 目录名推断；**勿**新建平行「Layer 放置标准」。
 
 ---
 
@@ -26,9 +26,11 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 |--------------|------------|
 | 文档地图 + 放置规则 | [DOCUMENT_REPOSITORY_LAYOUT_STANDARD](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)、[DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、图纸柜 [01_BLUEPRINTS_REPOSITORY_RULES](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
 | 基线清单与目录热力 | `git ls-files`、平面清单、`export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_*` |
-| 链接健康门禁 | `sentinel_l1_governance_scan.py`（Invalid links → 0 为团队习惯） |
+| 链接健康门禁 | `sentinel_l1_governance_scan.py`（Invalid links → 0 为团队习惯；**2026-04-11 快照**：见 [`SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md) **判定无效 0**） |
 | 蓝图/总清单机器校验 | `verify_01_*`、`verify_scattered_*`、`verify_manifest_paths_strict.py` |
-| 同内容重复（文本类） | `scan_duplicate_file_content.py` + REPO_WIDE **§3**（C1/C2/D） |
+| 同内容重复（文本类） | `scan_duplicate_file_content.py` + REPO_WIDE **§3**（C1/C2/D）；蓝图 D **低置信**合稿台账 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
+| 同名不同路径（basename · **非导航**） | `scan_basename_collisions.py` → [`BASENAME_COLLISIONS_*`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md)；**非导航类当前为 0**（2026-04-11，见 REPO_WIDE **§3.6 C2**）；`INDEX`/`README` 等导航名多份并存见报表「导航名」分表，默认不强制改名 |
+| 蓝图 D 类重叠（启发式候选） | `scan_blueprint_d_overlap_candidates.py` → 最新 [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md)（**非最终裁决**）；低置信合稿登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 索引健全性信号（v1） | `scan_index_health.py` → 零入链候选（非「必须在某 INDEX」裁决） |
 | 删稿裁决（人） | [FILE_DELETION_OR_RETENTION_PLAYBOOK](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) |
 | 深度队列与退出标准 | REPO_WIDE **§7.2～§7.3** |
@@ -49,7 +51,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 
 - [ ] [办公室 README](./README.md) 流程 1～7 与 [蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)、REPO_WIDE **无冲突表述**（并列、W 轨 ≠ 尽治）。  
 - [ ] [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/governance/` 实际脚本一致。  
-- [ ] REPO_WIDE **§8** 自查项仍可达（含 AI 交接 **①‴**、放置规程、索引健全性）。  
+- [ ] REPO_WIDE **§8** 自查项仍可达（含 AI 交接 **①‴**、**§3.2**、放置规程 **§1.5**、索引健全性）。  
 
 ---
 
@@ -71,7 +73,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 1. 阅读 REPO_WIDE **§0、§1、§1.1**（扫描能做什么、不能做什么）。  
 2. 阅读 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 全文。  
 3. 阅读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§3～§5**（扫描→归位→索引→零入链）。  
-4. 若本轮含 **蓝图 D 类（主题可能重叠）**：阅读 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（机器建议 ≠ 最终裁决）。
+4. 若本轮含 **蓝图 D 类（主题可能重叠）**：阅读 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（机器建议 ≠ 最终裁决；**§5 双轨**）。若执行 **低置信**合稿（新路径 + 旧稿 stub）：每例在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) **追加一行**（路径列用 Markdown 相对链，便于一点就跳）。
 
 **阶段 B — 全局基线刷新（仓库根执行；`YYYYMMDD` 换成当天）**
 
@@ -123,6 +125,12 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.8 | 2026-04-12 | §1.1 增 D 类候选报表入口（`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`）与待审登记表互指 |
+| 1.0.7 | 2026-04-11 | §1.1 链接健康行互指 L1 快照（判定无效 0） |
+| 1.0.6 | 2026-04-11 | §1.1 表增 C2 basename（非导航已收口）；互指 `BASENAME_COLLISIONS_20260411` 与 REPO_WIDE §3.6 |
+| 1.0.5 | 2026-04-10 | 真源段互指 LAYOUT **§1 第 5 条**；禁平行 Layer 放置真源 |
+| 1.0.4 | 2026-04-10 | 真源段与 §1.3 自检互指 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、`ARCHITECTURE.md`、REPO_WIDE **§2.3.1**、AI 交接 **§3.2**（Layer 与路径防混） |
+| 1.0.3 | 2026-04-10 | 机构对照表与阶段 A 互指 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)（低置信 + 可点击链） |
 | 1.0.2 | 2026-04-11 | 阶段 B 增 `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选） |
 | 1.0.1 | 2026-04-11 | 阶段 B 增 `scan_basename_collisions.py`（C2 basename 报表） |
 | 1.0.0 | 2026-04-10 | 首版：机构对照缺口、办公室自检、可复制会话指令 |

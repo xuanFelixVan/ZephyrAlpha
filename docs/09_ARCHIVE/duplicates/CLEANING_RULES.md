@@ -11,7 +11,7 @@ owner: 文档管理团队
 ---
 
 > **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
-> **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/03_CLEANING/OVERVIEW.md`  
+> **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/03_CLEANING/FACTOR_LIB_DATA_SOURCE_CLEANING_OVERVIEW.md`  
 > **处置建议**：merge_then_delete（清洗规则权威归属数据清洗模块；后续可细分到专门规则文档）。
 
 ## 变更记录

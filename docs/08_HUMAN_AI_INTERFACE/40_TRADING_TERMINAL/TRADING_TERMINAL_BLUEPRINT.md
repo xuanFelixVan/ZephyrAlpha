@@ -548,7 +548,7 @@ const TradingTerminal: React.FC = () => {
 
 ### 相关模块
 
-- [API网关蓝图](../28_API_GATEWAY/API_GATEWAY_BLUEPRINT.md)
+- [API 网关 · Layer 8 入口](../28_API_GATEWAY/API_GATEWAY_LAYER8_MODULE.md)（正式蓝图见图纸柜 `API_GATEWAY_BLUEPRINT.md`）
 - [WebSocket实时通信蓝图](../29_WEBSOCKET_REALTIME/WEBSOCKET_REALTIME_BLUEPRINT.md)
 - [风险控制面板蓝图](../27_RISK_CONTROL_PANEL/RISK_CONTROL_PANEL_BLUEPRINT.md)
 

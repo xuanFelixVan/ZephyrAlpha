@@ -28,7 +28,7 @@ compliance_level: 专业标准
 
 ## 📂 目录结构
 
-- [OVERVIEW](./OVERVIEW.md)
+- [OVERVIEW](./FACTOR_LIB_FACTOR_DOMAIN_AUDIT_OVERVIEW.md)
 - [README](./README.md)
 
 ---

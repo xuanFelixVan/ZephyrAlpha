@@ -46,7 +46,7 @@ implementation_status: 设计阶段
 | 已有模块 | 集成方式 | 接口定义 |
 |----------|----------|----------|
 | **alert_manager.py** | 告警通知服务 | 事件总线集成 |
-?| STRATEGY_ENGINE_BLUEPRINT.md 3.2?|
+?| STRATEGY_ENGINE_TACTICS_ENTRY.md 3.2?|
 
 
 ```

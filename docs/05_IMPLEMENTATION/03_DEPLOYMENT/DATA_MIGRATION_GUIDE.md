@@ -410,7 +410,7 @@ curl http://localhost:8000/health
 - [系统部署指南](DEPLOYMENT_GUIDE.md)
 - [环境配置指南](ENVIRONMENT_CONFIG_GUIDE.md)
 - 故障诊断指南
-- [常见问题FAQ](../07_OPERATIONS/FAQ.md)
+- [常见问题FAQ](../07_OPERATIONS/IMPLEMENTATION_OPERATIONS_FAQ.md)
 
 ---
 

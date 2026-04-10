@@ -1,0 +1,4 @@
+# C2 归档：DOCUMENT_METADATA_TEMPLATE（basename 碰撞消解）
+
+- **Canonical（权威稿）**：`docs/09_AUDIT/STANDARDS/DOCUMENT_METADATA_TEMPLATE.md`
+- **本目录**：原 `docs/06_ARCHIVE/20260407_p1_cleanup_archive/DOCUMENT_METADATA_TEMPLATE.md` 快照（`DOCUMENT_METADATA_TEMPLATE_legacy_p1_cleanup_archive.md`）。

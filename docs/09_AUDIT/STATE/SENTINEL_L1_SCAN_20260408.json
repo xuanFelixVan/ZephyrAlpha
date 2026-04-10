@@ -1,31 +1,22 @@
 {
-  "scan_time_utc": "20260410T162946Z",
+  "scan_time_utc": "20260410T194923Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3193,
+  "md_file_count": 3230,
   "links": {
     "stats": {
-      "total_files_scanned": 3193,
-      "total_md_links": 7278,
-      "skipped_external": 988,
-      "valid": 6290,
+      "total_files_scanned": 3230,
+      "total_md_links": 7523,
+      "skipped_external": 986,
+      "valid": 6537,
       "invalid": 0
     },
     "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3080,
-    "duplicate_ids_count": 2,
-    "duplicates": {
-      "README": [
-        "docs/01_FRAMEWORK/README.md",
-        "docs/03_TRADING_TACTICS/README.md"
-      ],
-      "INDEX": [
-        "docs/07_RESEARCH/INDEX.md",
-        "docs/INDEX.md"
-      ]
-    },
+    "unique_module_ids": 3088,
+    "duplicate_ids_count": 0,
+    "duplicates": {},
     "files_without_module_id_sample": [
       "CONTRIBUTING.md",
       "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GIT_DELETED_CONTENT_DEEP_CHECK_20260408.md",
@@ -37,6 +28,34 @@
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/P1_BLUEPRINTS_FINAL_COMPLETION_REPORT_20260407.md",
       "docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
       "docs/06_ARCHIVE/20260407_p1_cleanup_archive/DOCUMENT_AUDIT_WORKFLOW.md",
+      "docs/06_ARCHIVE/20260410_c2_benchmark_management/BENCHMARK_MANAGEMENT_BLUEPRINT_legacy_11_STRATEGIC_DECISION.md",
+      "docs/06_ARCHIVE/20260410_c2_benchmark_management/README.md",
+      "docs/06_ARCHIVE/20260410_c2_data_version_control/README.md",
+      "docs/06_ARCHIVE/20260410_c2_disaster_recovery/DISASTER_RECOVERY_BLUEPRINT_legacy_01_FRAMEWORK.md",
+      "docs/06_ARCHIVE/20260410_c2_disaster_recovery/README.md",
+      "docs/06_ARCHIVE/20260410_c2_document_creation_checklist/README.md",
+      "docs/06_ARCHIVE/20260410_c2_document_metadata_template/README.md",
+      "docs/06_ARCHIVE/20260410_c2_full_process_data_persistence/FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT_legacy_LAYER4_ML.md",
+      "docs/06_ARCHIVE/20260410_c2_full_process_data_persistence/README.md",
+      "docs/06_ARCHIVE/20260410_c2_market_regime_detection/MARKET_REGIME_DETECTION_BLUEPRINT_legacy_10_ai_workflow.md",
+      "docs/06_ARCHIVE/20260410_c2_market_regime_detection/README.md",
+      "docs/06_ARCHIVE/20260410_c2_model_performance_version_management/README.md",
+      "docs/06_ARCHIVE/20260410_c2_model_risk_management/MODEL_RISK_MANAGEMENT_BLUEPRINT_legacy_layer8_77.md",
+      "docs/06_ARCHIVE/20260410_c2_model_risk_management/README.md",
+      "docs/06_ARCHIVE/20260410_c2_p1_audit_report_basenames/README.md",
+      "docs/06_ARCHIVE/20260410_c2_p1_audit_reports_batch2/README.md",
+      "docs/06_ARCHIVE/20260410_c2_performance_attribution/README.md",
+      "docs/06_ARCHIVE/20260410_c2_realtime_risk_monitoring/README.md",
+      "docs/06_ARCHIVE/20260410_c2_research_workflow_management/README.md",
+      "docs/06_ARCHIVE/20260410_c2_short_term_improvement_completion/README.md",
+      "docs/06_ARCHIVE/20260410_c2_strategy_engine/README.md",
+      "docs/06_ARCHIVE/20260410_c2_strategy_lifecycle_management/README.md",
+      "docs/06_ARCHIVE/20260410_c2_strategy_lifecycle_management/STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT_legacy_layer8_81.md",
+      "docs/06_ARCHIVE/20260410_c2_strategy_lifecycle_management/STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT_legacy_p1_cleanup_archive.md",
+      "docs/06_ARCHIVE/20260410_c2_strategy_selection/README.md",
+      "docs/06_ARCHIVE/20260410_c2_transaction_cost_analysis/README.md",
+      "docs/06_ARCHIVE/20260410_c2_transaction_cost_analysis/TRANSACTION_COST_ANALYSIS_BLUEPRINT_legacy_01_FRAMEWORK.md",
+      "docs/06_ARCHIVE/20260410_c2_transaction_cost_analysis/TRANSACTION_COST_ANALYSIS_BLUEPRINT_legacy_layer8_79.md",
       "docs/06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md",
       "docs/06_ARCHIVE/main/v4_development/qingfeng_v4_development_plan.md",
       "docs/06_ARCHIVE/overlap_sparse_directory_analysis_20260407_021046_20260407_190203.md",
@@ -114,7 +133,10 @@
       "docs/09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md",
       "docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md",
       "docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260411.md",
+      "docs/09_AUDIT/STATE/BASENAME_COLLISIONS_20260410.md",
       "docs/09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md",
+      "docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260411.md",
+      "docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md",
       "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md",
       "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md",
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md",
@@ -128,7 +150,7 @@
       "docs/09_AUDIT/STATE/sparse_directory_analysis_20260407_030548.md",
       "SECURITY.md"
     ],
-    "no_id_total": 100
+    "no_id_total": 131
   },
   "path_depth": {
     "deepest_30": [
@@ -138,7 +160,7 @@
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md"
       },
       {
         "depth": 5,
@@ -146,11 +168,11 @@
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/invalid_links_detail_20260408_033240.md"
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md"
       },
       {
         "depth": 5,
@@ -158,7 +180,7 @@
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/module_id_duplicates_detail_20260408_022356.md"
       },
       {
         "depth": 5,
@@ -166,19 +188,19 @@
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/invalid_links_detail_20260408_022356.md"
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356/CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md"
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module_id_duplicates_detail_20260408_021344.md"
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid_links_detail_20260408_021344.md"
       },
       {
         "depth": 5,
@@ -190,7 +212,7 @@
       },
       {
         "depth": 5,
-        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md"
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md"
       },
       {
         "depth": 5,

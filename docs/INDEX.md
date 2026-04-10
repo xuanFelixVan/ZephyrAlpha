@@ -1,5 +1,5 @@
 ---
-module_id: INDEX
+module_id: DOCS_ROOT_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

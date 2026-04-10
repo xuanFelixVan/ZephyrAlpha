@@ -463,7 +463,7 @@ tail -f logs/app.log
 
 ## 🔗 相关文档
 
-- [常见问题FAQ](FAQ.md)
+- [常见问题FAQ](IMPLEMENTATION_OPERATIONS_FAQ.md)
 - [错误代码参考](ERROR_CODES.md)
 - [性能调优指南](PERFORMANCE_TUNING_GUIDE.md)
 - [系统部署指南](../03_DEPLOYMENT/DEPLOYMENT_GUIDE.md)

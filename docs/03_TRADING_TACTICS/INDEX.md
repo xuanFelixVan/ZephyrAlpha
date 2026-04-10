@@ -161,7 +161,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | README.md | чнЦчХец▒ацА╗шзИ |
 | [INDEX.md](INDEX.md) | чнЦчХеч┤вх╝Х |
 |  | чнЦчХецбЖцЮ╢ |
-| STRATEGY_ENGINE_BLUEPRINT.md | чнЦчХех╝ХцУОх╝АхПСшУЭхЫ?|
+| [STRATEGY_ENGINE_TACTICS_ENTRY.md](01_STRATEGY_FRAMEWORK/STRATEGY_ENGINE_TACTICS_ENTRY.md) | 策略引擎（stub → 图纸柜） |
 |  | щлШч║зцИШцЬп |
 |  | ц╕╕ш╡ДчнЦчХе |
 

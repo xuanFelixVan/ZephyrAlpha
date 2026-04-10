@@ -101,7 +101,7 @@ related_documents:
 - [ ] **HO-02** 对照 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md`：当前蓝图卫生阶段与本文 Part A/B 是否一致，冲突则登记 `ARCH_MODULE_GAP_REGISTER`
 - [ ] **HO-03** 运行 `scripts/strict_orphan_inbound_scan.py`，保留 REGEN 列表与基线 diff 说明
 - [ ] **HO-04** 检查 `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`：无悬空 TBD；新增重复簇已 disposition
-- [ ] **HO-05** `docs/09_AUDIT/STATE/INDEX_GROUPED_20260408.md` 与 `docs/09_AUDIT/REPORTS/INDEX_GROUPED_20260408.md`：STATE/REPORTS 长列表入站是否仍足够（不足则补链或登记）
+- [ ] **HO-05** `docs/09_AUDIT/STATE/INDEX_GROUPED_STATE_20260408.md` 与 `docs/09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md`：STATE/REPORTS 长列表入站是否仍足够（不足则补链或登记）
 - [ ] **HO-06** `docs/09_AUDIT/INDEX_AUDIT.md`：门户链是否可达当前真源
 - [ ] **HO-07** `docs/06_ARCHIVE/OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`：本窗口 overlap/orphan 是否按节奏推进或登记 defer
 - [ ] **HO-08** Git：长时作业前分支 + 基线 tag（见 HANDOFF §15）；本窗口结束 milestone tag 或说明为何跳过

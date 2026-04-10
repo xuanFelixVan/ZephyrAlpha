@@ -754,11 +754,11 @@ applicable_scope: docs/**/*.md 严格孤儿（入度=0）清单与分桶
 - docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRADE_AUDITOR_TECHNICAL_REVIEW_REPORT.md
 - docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/TRANSFORMER_MODEL_TECHNICAL_REVIEW_REPORT.md
 - docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/USER_PREFERENCES_TECHNICAL_REVIEW_REPORT.md
-- docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README.md
+- docs/06_ARCHIVE/20260404_market_participant_consolidation/ARCHIVE_README_20260404_market_participant_consolidation.md
 - docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_BEHAVIOR_RESEARCH_SUPPLEMENT.md
 - docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_GUIDE.md
 - docs/06_ARCHIVE/20260404_market_participant_consolidation/MARKET_PARTICIPANT_SIMULATION_IMPLEMENTATION_PLAN.md
-- docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md
+- docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README_20260405_economic_regime_cleanup.md
 - docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_ALTERNATIVE_ASSESSMENT.md
 - docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_SECURITY_PATCH_001.md
 - docs/06_ARCHIVE/20260405_economic_regime_cleanup/ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_V2.md
@@ -822,11 +822,11 @@ applicable_scope: docs/**/*.md 严格孤儿（入度=0）清单与分桶
 - docs/06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_HYPERPARAM_OPT.md
 - docs/06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_MARKET_DETECTOR.md
 - docs/06_ARCHIVE/architecture_v4/module_designs/layer_9/L9_MODEL_ENSEMBLER.md
-- docs/06_ARCHIVE/ARCHIVE_README.md
+- docs/06_ARCHIVE/ARCHIVE_README_06_ARCHIVE_ROOT.md
 - docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/DOCUMENT_RESTORE_REPORT.md
 - docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT.md
 - docs/06_ARCHIVE/duplicate_documents/20260404_layer7_audit_reports/SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT.md
-- docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README.md
+- docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README_duplicate_documents.md
 - docs/06_ARCHIVE/factor-library/ifind_factors_list.md
 - docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT_ARCHIVED.md
 - docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md

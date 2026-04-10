@@ -571,7 +571,7 @@ responsibility:
 | 帮助系统蓝图 | 用户帮助 | HELP_SYSTEM_BLUEPRINT.md |
 | API管理界面蓝图 | API管理 | API_MANAGEMENT_INTERFACE_BLUEPRINT.md |
 | 系统健康检查界面蓝图 | 健康检查 | SYSTEM_HEALTH_CHECK_INTERFACE_BLUEPRINT.md |
-| 灾备体系蓝图 | 灾难恢复 | DISASTER_RECOVERY_BLUEPRINT.md |
+| 灾备体系蓝图 | 灾难恢复 | DISASTER_RECOVERY_FRAMEWORK_ENTRY.md |
 
 ---
 

@@ -28,7 +28,7 @@ Alpha因子的索引和分类文档
 
 ## 📂 目录结构
 
-- [OVERVIEW](./OVERVIEW.md)
+- [OVERVIEW](./FACTOR_LIB_ALPHA_FACTORS_INDEX_OVERVIEW.md)
 - [README](./README.md)
 
 ---

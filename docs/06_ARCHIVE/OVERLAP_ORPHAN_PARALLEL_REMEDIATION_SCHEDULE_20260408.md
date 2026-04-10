@@ -55,7 +55,7 @@ compliance_level: 专业标准
 | B2 | `docs/03_TRADING_TACTICS/` | `docs/03_TRADING_TACTICS/INDEX.md` | 同上 |
 | B3 | `docs/05_IMPLEMENTATION/` 各子域 | 对应子目录 `INDEX.md` | 同上 |
 | B4 | `docs/07_RESEARCH/`、`docs/08_KNOWLEDGE/` | 各 `INDEX.md` / `index.md` | 同上 |
-| B5 | `docs/09_AUDIT/`（报告类） | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_20260408.md` 或分桶索引 | 大批量用分组索引，避免单页过长 |
+| B5 | `docs/09_AUDIT/`（报告类） | `docs/09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md` 或分桶索引 | 大批量用分组索引，避免单页过长 |
 
 **原则**：入口页只增加 **可点击链接**，不重写归档正文；与 overlap 轨道 **同一周可并行不同目录**，但单次提交仍宜「一个波次」。
 

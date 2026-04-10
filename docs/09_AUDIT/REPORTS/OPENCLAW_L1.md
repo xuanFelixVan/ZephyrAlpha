@@ -6,7 +6,7 @@ module_id: OPENCLAW_L1
 
 > **run_id**: OPENCLAW_20260408_033500
 > **生成时间**: 2026-04-08
-> **数据来源**: `SENTINEL_L1_SCAN_20260408.json`、`overnight_runs/20260408_033240/invalid_links_detail.md`、`module_id_duplicates_detail.md`
+> **数据来源**: `SENTINEL_L1_SCAN_20260408.json`、`overnight_runs/20260408_033240/invalid_links_detail_20260408_033240.md`、`overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md`
 
 ---
 

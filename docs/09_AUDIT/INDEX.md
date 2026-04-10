@@ -110,7 +110,7 @@ implementation_status: 活跃维护
 
 | 入口 | 说明 |
 |------|------|
-| [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_20260408.md) | 大量报告按分组可点 |
+| [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 大量报告按分组可点 |
 | [REPORTS/INDEX](./REPORTS/INDEX.md) | 报告目录索引 |
 
 ### Playbook 执行批次：根目录补充入口

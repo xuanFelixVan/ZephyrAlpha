@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.6
+version: 1.1.7
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -16,8 +16,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 > **用途**：把「蓝图终稿」要办的事写成可勾选、可复查的条目；后续对话或排期可直接打开本文件对照进度。  
 > **机构目标态**：与 [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) 对照时，本清单为**任务分解真源**，该标准为**合并视角与门禁映射**。  
-> **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为准；**正式图纸柜**里什么能放、什么不能放，以 [01_BLUEPRINTS 图纸柜文件治理规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。  
-> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（rollup → 查 LAYOUT → 搬迁 → 验证）；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7** 并列使用。  
+> **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为准（**§1 第 5 条**：Layer 0～11 与路径分立摘要；勿另建平行标准）；**正式图纸柜**里什么能放、什么不能放，以 [01_BLUEPRINTS 图纸柜文件治理规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。  
+> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述，与 LAYOUT **§1 第 5 条**同口径）；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)。  
 > **与卫生计划的关系**：执行本清单时，应同步遵守 [蓝图阶段文档卫生总计划](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；不必重复发明流程。  
 > **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](./README.md)、[推荐阅读入口](#推荐阅读入口) 与 [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)（若与全库导航相关）。  
 > **任务 3 状态**：2026-04-10 已完成 — 过程报告已迁入 `01_BLUEPRINTS/REPORTS/`，`INDEX.md` 已重生成；防幻觉执行协议见 [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md)。  
@@ -46,8 +46,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 |------|------|
 | **仓库根卫生与误提交（Playbook）** | [`REPO_ROOT_GOVERNANCE_PLAYBOOK.md`](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | **01_BLUEPRINTS 摆放与导航规则（真源）** | [`01_BLUEPRINTS_REPOSITORY_RULES.md`](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
-| **文档地图与放置（办公室规程）** | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
-| **`docs/` 目录职责与阶段落盘（标准真源）** | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
+| **文档地图与放置（办公室规程 · §1.5 与 LAYOUT §1 第 5 条同口径）** | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| **`docs/` 目录职责与阶段落盘（标准真源 · §1 第 5 条 Layer/路径摘要）** | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
 | **蓝图终稿定义与认可** | [`BLUEPRINT_FINAL_SIGNOFF.md`](./BLUEPRINT_FINAL_SIGNOFF.md) |
 | **蓝图交付标准（机构精华版，目标态）** | [`BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md`](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) |
 | **文档治理架构（L0～L5）** | [`DOCUMENT_GOVERNANCE_ARCHITECTURE.md`](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) |
@@ -220,6 +220,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.7 | 2026-04-10 | 文首摆放/地图段互指 LAYOUT **§1 第 5 条**、放置规程 **§1.5**、REPO_WIDE **§2.3.1**、`ARCHITECTURE.md`；禁平行「Layer 放置标准」 |
 | 1.1.6 | 2026-04-10 | 文首与 **LAYOUT 标准**、**文档地图与放置规程** 互指；机构顺序表 3～5 与推荐阅读增放置联动；并列 REPO_WIDE §7 |
 | 1.1.5 | 2026-04-10 | 扩展轨增与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 互补说明（W 轨 ≠ 深度尽治） |
 | 1.1.4 | 2026-04-10 | 按机构顺序执行：W0 Owner 备注、W1～W4 与任务 5 勾选；根 README / scripts README；L1 0 无效 |

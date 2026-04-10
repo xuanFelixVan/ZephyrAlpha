@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STATE_OVERNIGHT_RUNS_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
-last_updated: 2026-04-08
+last_updated: 2026-04-11
 owner: 文档治理系统
 standard_type: 索引文档
 applicable_scope: overnight_runs
@@ -19,23 +19,23 @@ applicable_scope: overnight_runs
 > 命名约定：`YYYYMMDD_HHMMSS/`
 
 - [`20260408_033240/`](./20260408_033240/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI.md`](./20260408_033240/CONSOLIDATED_REPORT_FOR_AI.md)
+  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md`](./20260408_033240/CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md)
   - L1：[`sentinel_l1_scan_20260408_033240.md`](./20260408_033240/sentinel_l1_scan_20260408_033240.md)
-  - 细节：[`invalid_links_detail.md`](./20260408_033240/invalid_links_detail.md) / [`module_id_duplicates_detail.md`](./20260408_033240/module_id_duplicates_detail.md) / [`md_by_subdir_20260408_033240.md`](./20260408_033240/md_by_subdir_20260408_033240.md)
+  - 细节：[`invalid_links_detail_20260408_033240.md`](./20260408_033240/invalid_links_detail_20260408_033240.md) / [`module_id_duplicates_detail_20260408_033240.md`](./20260408_033240/module_id_duplicates_detail_20260408_033240.md) / [`md_by_subdir_20260408_033240.md`](./20260408_033240/md_by_subdir_20260408_033240.md)
 
 - [`20260408_022356/`](./20260408_022356/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI.md`](./20260408_022356/CONSOLIDATED_REPORT_FOR_AI.md)
+  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md`](./20260408_022356/CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md)
   - L1：[`sentinel_l1_scan_20260408_022356.md`](./20260408_022356/sentinel_l1_scan_20260408_022356.md)
-  - 细节：[`invalid_links_detail.md`](./20260408_022356/invalid_links_detail.md) / [`module_id_duplicates_detail.md`](./20260408_022356/module_id_duplicates_detail.md) / [`md_by_subdir_20260408_022356.md`](./20260408_022356/md_by_subdir_20260408_022356.md)
+  - 细节：[`invalid_links_detail_20260408_022356.md`](./20260408_022356/invalid_links_detail_20260408_022356.md) / [`module_id_duplicates_detail_20260408_022356.md`](./20260408_022356/module_id_duplicates_detail_20260408_022356.md) / [`md_by_subdir_20260408_022356.md`](./20260408_022356/md_by_subdir_20260408_022356.md)
 
 - [`20260408_021344/`](./20260408_021344/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI.md`](./20260408_021344/CONSOLIDATED_REPORT_FOR_AI.md)
+  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md`](./20260408_021344/CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md)
   - L1：[`SENTINEL_L1_SCAN_20260408_20260408_021344.md`](./20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md)
-  - 细节：[`invalid_links_detail.md`](./20260408_021344/invalid_links_detail.md) / [`module_id_duplicates_detail.md`](./20260408_021344/module_id_duplicates_detail.md) / [`MD_FILES_BY_SUBDIRECTORY_20260408_021344.md`](./20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md)
+  - 细节：[`invalid_links_detail_20260408_021344.md`](./20260408_021344/invalid_links_detail_20260408_021344.md) / [`module_id_duplicates_detail_20260408_021344.md`](./20260408_021344/module_id_duplicates_detail_20260408_021344.md) / [`MD_FILES_BY_SUBDIRECTORY_20260408_021344.md`](./20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md)
 
 ## 使用建议
 
-- **日常阅读**：优先读每批次的 `CONSOLIDATED_REPORT_FOR_AI.md`。  
-- **问题定位**：需要深入再看 `invalid_links_detail.md` / `module_id_duplicates_detail.md`。  
+- **日常阅读**：优先读每批次的 `CONSOLIDATED_REPORT_FOR_AI_<run_id>.md`（basename 带 run_id，避免跨批次 C2 碰撞）。  
+- **问题定位**：需要深入再看同目录下 `invalid_links_detail_<run_id>.md` / `module_id_duplicates_detail_<run_id>.md`。  
 - **历史对账**：需要对比不同批次的 `sentinel_l1_scan_*.md` 指标变化。  
 
