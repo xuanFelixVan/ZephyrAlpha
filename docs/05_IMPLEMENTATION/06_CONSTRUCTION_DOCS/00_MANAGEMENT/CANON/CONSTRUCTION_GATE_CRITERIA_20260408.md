@@ -51,7 +51,7 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 
 **建议把握两点**（避免「把未来每一种文件名都预写死」这种做不到的事）：
 
-1. **定「哪类进哪棵树」**：一级目录职责、实施子目录、`src` 与 `docs` 分工 —— 以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为 **现行真源**；命名与路径格式另见 [`PATH_STANDARD.md`](../../../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md)、[`FILE_NAMING_STANDARD.md`](../../../../09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)。  
+1. **定「哪类进哪棵树」**：一级目录职责、实施子目录、`src` 与 `docs` 分工 —— 以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为 **现行真源**；与 rollup/尽治批次的**固定衔接步骤**见办公室 [文档地图与放置规则](../DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。命名与路径格式另见 [`PATH_STANDARD.md`](../../../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md)、[`FILE_NAMING_STANDARD.md`](../../../../09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)。  
 2. **新类型走变更**：以后出现新文档类型，**先**在 `LAYOUT` 标准 §6 或 `TECH_DECISION_RECORDS` **加一条**，再建新文件夹 —— 这样算「提前定规矩」，而不是开工后乱长。
 
 **蓝图阶段完成项（与放置相关）**：

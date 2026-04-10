@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.5
+version: 1.2.6
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -20,7 +20,8 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。  
 > **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `scripts/governance/generate_architecture_service_catalog.py`）。  
 > **扫描是否覆盖「每一种文件格式、每一文件的语义分析与自动处理」？** **否**——见 **§1.1**（分工具、分口径；Git 已跟踪 vs 工作区 Markdown 亦有差异）。  
-> **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。
+> **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。  
+> **文档地图 + 放置规则（机构习惯）**：目录职责与阶段落盘的 **真源** 为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；与扫描/§7 批次的 **衔接步骤** 见办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。
 
 ---
 
@@ -40,7 +41,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 | 指标 | 数值 | 备注 |
 |------|------|------|
-| **已跟踪文件总数** | **4371**（2026-04-10 快照） | `git ls-files` 行数；以后以最新 rollup / 平面清单为准 |
+| **已跟踪文件总数** | **4384**（2026-04-10 复跑 rollup） | `git ls-files` 行数；以后以最新 rollup / 平面清单为准 |
 | **Markdown** | 3176 | 体量最大，索引策略必须分层，避免「逐文件手打链接」 |
 | **Python** | 736 | 含 `scripts/` 为主 |
 | **JSON** | 314 | 含审计状态、配置片段等 |
@@ -154,6 +155,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **模块全景（逻辑树）** | §2.4；将来 `MODULE_PANORAMA_*` 与 rollup **同频**重跑 | 包名/域改名后重跑，避免索引漂移 |
 | **架构服务目录 + C4 多视图** | `python scripts/governance/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
 | **内容重复（后缀白名单）** | `python scripts/governance/scan_duplicate_file_content.py --ext md`（可加 `yaml` 等） | 产出 `DUPLICATE_CONTENT_BY_HASH_*`；**须**人工按 §3 合并 | 默认不扫无扩展名/二进制；大文件见 `--max-mb` |
+| **文档地图与放置** | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) + [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 搬迁/新建目录前**先查格**；大批归位与 **§7** 同窗 | 新类型目录须先改 LAYOUT §6 或决策记录（见规程 §1） |
 | **治理工具归口** | 办公室 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 一键查命令与产出 | 实现在 `scripts/governance/`；根目录同名 `.py` 为兼容转发 |
 
 **办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
@@ -293,6 +295,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.6 | 2026-04-10 | 纳入 **文档地图 + 放置规则**：文首与 §6 互指；§2.3 增「文档地图与放置」行；§7.2 增 **摆放** 退出项；§8 办公室自查增 [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与 AI 交接 **①‴** |
 | 1.2.5 | 2026-04-10 | 治理脚本归口 `scripts/governance/`；`rollup`/`scan_duplicate` 支持 `--include-untracked`；互指 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；§1.1 与 §2.3 命令路径更新 |
 | 1.2.4 | 2026-04-10 | **P1** 落地 `scan_duplicate_file_content.py`；§2.3 增内容重复与工具索引；互指 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；§1.1 表更新 |
 | 1.2.3 | 2026-04-10 | 新增 **§1.1** 扫描覆盖/格式边界（Git vs L1、全格式语义不承诺）；**§8** 增自查项；**P4** 矩阵与 §1.1 对齐 |
@@ -313,6 +316,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 架构服务目录 + C4 摘要（生成） | [`ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 | 内容重复（SHA256 · 后缀白名单） | [`DUPLICATE_CONTENT_BY_HASH_20260410.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) / [`.json`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.json) |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
+| 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| `docs/` 目录职责与阶段落盘（标准真源） | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
 | 叙事层模块/总账入口（与 §2.4 生成物互补） | [`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) |
 | 蓝图阶段任务（并列） | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) |
 | 孤儿与重复治理 | [DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) |
@@ -335,6 +340,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 - [ ] **重复**：该前缀下 **C1** 已按 §3.2 处理或确认无组；**C2** 已报表且无未决高优先级碰撞；**D 类**已登记或已裁决。  
+- [ ] **摆放**：本批新增或错放文件已按 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（及 [办公室放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）归到约定目录，或已在 PR 中登记**例外理由**与复审方式；动 `01_BLUEPRINTS` 时尚须符合 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md)。  
 - [ ] **导航**：父级或本级具备 **INDEX / README / 上级入口** 之一（归档区至少 **archive 内 INDEX** 或父级说明）。  
 - [ ] **内链**：本批次改动涉及路径已跑 **L1**；全库 **0 无效** 或已登记例外。  
 - [ ] **衍生物**：按 P2 策略无应迁走的 `.diff`/`.bak`（或已归档）。  
@@ -353,8 +359,8 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 大改办公室或本清单后，维护者快速过一遍：
 
-- [ ] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**；**办公室文件一览**表与磁盘一致；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步。  
-- [ ] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」。  
+- [ ] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与 LAYOUT 标准互指无断链。  
+- [ ] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴）与 LAYOUT 真源优先级。  
 - [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。  
 - [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。  
 - [ ] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。  

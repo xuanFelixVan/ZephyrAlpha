@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.3
+version: 1.1.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -20,6 +20,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 **全库治理文档**（`09_AUDIT`、`10_GOVERNANCE_COMPLIANCE` 等）**真源仍在原目录**；办公室只提供一张总地图： [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)（说明为何不整体搬进办公室、为何不放进图纸柜）。
 
 **例外（已定）**：**施工门禁**与**蓝图卫生总案**正文已迁入 [CANON/](./CANON/README.md)，作为蓝图终稿 / 放行的**唯一受控路径**；全库链接已指向该目录。
+
+**文档地图 + 放置规则（机构习惯）**：**「这类文档应放哪」** 的标准真源为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；**正式图纸柜**摆放以 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。扫描/rollup 途中要把文件归到合理位置时，按办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 执行（与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7** 退出标准中的 **「摆放」** 项对齐）。
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**（可与扫描/合并并行的事）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/governance/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
 
@@ -43,6 +45,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
 5. **仓库根卫生与误提交**：[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)（垃圾文件名、密钥进库、运行时数据、误放根下的正式稿归位）。
 6. **整仓文件体量、合并与深度尽治（与蓝图并列）**：[全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（**§1.1** 扫描边界、平面清单、**深度 3～6 rollup**、§2.3 并行项、§3 合并、**§7**、**§8**、**P5**）。**说明**：蓝图扩展轨 **W0～W4 勾完 ≠ 文件已尽治**；**全格式逐文件语义处理**不在当前门禁范围内。
+7. **文档地图与放置（扫描途中归位）**：[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) + [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；搬迁/新建目录后按 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 复跑相关 `verify_*` 与 `sentinel_l1`。
 
 ---
 
@@ -52,9 +55,10 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 文档 | 职责摘要 | 可并入同一治理窗口的典型动作 |
 |------|----------|--------------------------------|
-| [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表 |
+| [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表；**文档地图与放置**与 LAYOUT 互指无断链 |
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 治理脚本**总表**（命令、产出、顺序）；**不**决定废脚本删否 | 新增脚本时同步更新本表 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留决策树与 PR 检查项 | 出重复报表或清脚本时随 PR 引用 |
+| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、蓝图任务 **3～5** / **W** 轨同窗 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | L0～L5、与 `09_AUDIT` 边界 | 与「尽治」表述冲突时优先回写架构或本 README |
 | [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手顺序、真源、常见任务 | 增补「rollup / §7」后自检阅读顺序表 |
 | [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) | 审计/合规入口地图 | 大挪移目录后补外链 |
@@ -76,6 +80,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 |------|------|
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | **链检查 / rollup / verify / 架构目录 / 内容重复**等脚本：命令、产出、复跑顺序 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留：决策树 + PR 检查项（与重复报表、§3 配套） |
+| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **文档地图 + 放置规则** 与任务/扫描的衔接；真源链指 LAYOUT + 图纸柜规则 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | 专业机构式 **L0～L5 分层**、控制流、与 `09_AUDIT` 边界 |
 | [CANON 目录说明](./CANON/README.md) | 施工门禁 + 蓝图卫生总案（**真源**） |
 | [施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 三阶段、蓝图终稿五条、§3 总清单 |
@@ -141,6 +146,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.4 | 2026-04-10 | 新增 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；文首与治理流程第 7 条；办公室两表互指；联动 REPO_WIDE §7、蓝图任务清单 |
 | 1.1.3 | 2026-04-10 | 新增 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；常用脚本增内容重复扫描；文首一键入口 |
 | 1.1.2 | 2026-04-10 | 增 **扫描覆盖诚实口径**小节（互指任务清单 §1.1）；流程第 6 条写明非「全格式语义处理」 |
 | 1.1.1 | 2026-04-10 | 增 **ARCHITECTURE_SERVICE_CATALOG** 说明与常用脚本；根目录 **LICENSE/CONTRIBUTING/SECURITY** 与任务清单 **1.2.2** 对齐 |

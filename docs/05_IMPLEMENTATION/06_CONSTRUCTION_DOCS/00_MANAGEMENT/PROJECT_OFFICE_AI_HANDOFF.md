@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.8
+version: 1.2.9
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -51,6 +51,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 |------|------|----------------|
 | ① | [本文件夹 README](./README.md) | 办公室内有哪些文档、外链到哪 |
 | ①″（工具查询） | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 链检查、rollup、verify、架构目录、**内容重复扫描**等**一条表** |
+| ①‴（地图与放置） | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **全库 `docs/` 该放哪**：真源链（LAYOUT + 图纸柜规则）+ 与 rollup/§7 批次的**扫描→归位**步骤；搬迁前优先于「凭感觉 mkdir」 |
 | ①′ | [DOCUMENT_GOVERNANCE_ARCHITECTURE.md](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | **机构式分层架构**（L0～L5）、控制流、与 `09_AUDIT` 边界；首读 README 后建议接着读 |
 | ② | [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 图纸柜根目录**允许/禁止**什么文件；过程稿应放哪 |
 | ③ | [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md) | 整理图纸柜时的执行纪律、自检命令；**用户可复制指令**在文首 |
@@ -61,23 +62,24 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | ⑥（按需） | [CONTROLLED_DOCUMENTS_REGISTER.md](./CONTROLLED_DOCUMENTS_REGISTER.md) | 易混淆主题的唯一正式稿登记 |
 | ⑦（按需） | [办公室 README](./README.md) →「全库文档治理流程」+ [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) | 处理**同题多稿、孤儿、重复簇**时必读；与任务清单任务 1～2 联动 |
 
-若用户要你**改代码**而非文档，仍建议至少读完 ②；若动 `01_BLUEPRINTS`，再读 ③。若任务涉及**重复/归档/ canonical 裁决**，再读 ⑦。若任务为**整仓文件一次尽治、按目录拆队列、合并重复**，读 **⑤′** 并对照 [办公室 README](./README.md)「办公室文件一览」。
+若用户要你**改代码**而非文档，仍建议至少读完 ②；若动 `01_BLUEPRINTS`，再读 ③。若任务涉及**新建/搬迁 `docs/` 下路径、不确定应放哪棵树**，读 **①‴** 并对照 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)。若任务涉及**重复/归档/ canonical 裁决**，再读 ⑦。若任务为**整仓文件一次尽治、按目录拆队列、合并重复**，读 **⑤′** 并对照 [办公室 README](./README.md)「办公室文件一览」。
 
 ---
 
 ## 3. 真源优先级（发生冲突时听谁的）
 
-1. **图纸柜摆放**：以 [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。  
-2. **终稿含义与变更原则**：以 [BLUEPRINT_FINAL_SIGNOFF.md](./BLUEPRINT_FINAL_SIGNOFF.md) 为准；**机构级目标态一页纸**以 [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) 为准。  
-3. **全库有哪些蓝图、总清单口径**：以 [蓝图阶段完整总结](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 为**当前入口之一**（若用户指定了更新的总清单，以用户指定为准）。  
-4. **施工门禁与蓝图卫生真源**：均在 [CANON](./CANON/README.md)——[施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md)、[卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；勿再使用已废弃的 `09_AUDIT/STATE` 或 `PROCEDURES` 旧路径。  
-5. **`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` 与 `docs/06_CONSTRUCTION_DOCS/`**：建设文档以 **前者为 canonical**；遗留树见 [建设文档 INDEX](../INDEX.md) 中的「遗留路径」说明；**不要**在未核对总清单的情况下删除遗留副本。  
-6. **孤儿与重复 / 重叠**：以 [孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 与 [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) 为程序真源；台账见 [`docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。与蓝图总清单冲突时，**先裁决 canonical** 再改链接。  
-7. **全库治理入口索引**：其余审计、标准、合规路径以 [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) 为准（本交接说明**不**复制其正文）。
+1. **全库 `docs/` 目录职责与阶段落盘**：以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为准；与扫描/尽治的衔接步骤见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。  
+2. **图纸柜摆放**：以 [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准（仅约束 `01_BLUEPRINTS/`，不替代上条全库 LAYOUT）。  
+3. **终稿含义与变更原则**：以 [BLUEPRINT_FINAL_SIGNOFF.md](./BLUEPRINT_FINAL_SIGNOFF.md) 为准；**机构级目标态一页纸**以 [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) 为准。  
+4. **全库有哪些蓝图、总清单口径**：以 [蓝图阶段完整总结](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 为**当前入口之一**（若用户指定了更新的总清单，以用户指定为准）。  
+5. **施工门禁与蓝图卫生真源**：均在 [CANON](./CANON/README.md)——[施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md)、[卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；勿再使用已废弃的 `09_AUDIT/STATE` 或 `PROCEDURES` 旧路径。  
+6. **`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` 与 `docs/06_CONSTRUCTION_DOCS/`**：建设文档以 **前者为 canonical**；遗留树见 [建设文档 INDEX](../INDEX.md) 中的「遗留路径」说明；**不要**在未核对总清单的情况下删除遗留副本。  
+7. **孤儿与重复 / 重叠**：以 [孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 与 [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) 为程序真源；台账见 [`docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。与蓝图总清单冲突时，**先裁决 canonical** 再改链接。  
+8. **全库治理入口索引**：其余审计、标准、合规路径以 [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) 为准（本交接说明**不**复制其正文）。
 
 ### 3.1 架构真源（分层模型）
 
-**L0～L5 分层**、控制流及与 `09_AUDIT` 边界以 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) 为准。上列 **1.～7.** 为**冲突时裁决顺序**；若与该架构 §4 表述不一致，**以上列为准**并回写架构文档。
+**L0～L5 分层**、控制流及与 `09_AUDIT` 边界以 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) 为准。上列 **1.～8.** 为**冲突时裁决顺序**；若与该架构 §4 表述不一致，**以上列为准**并回写架构文档。
 
 ---
 
@@ -85,6 +87,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 用户要你做的事 | 建议动作 |
 |----------------|----------|
+| 不知道某份文档应放在 `docs/` 哪棵子树 | 先查 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) §2～§4；再按 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与 rollup/§7 批次衔接；若仍无格，先走 LAYOUT **§6** 变更再建目录。 |
 | 整理 `01_BLUEPRINTS` 根目录 | 对照 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md)：仅保留 `*BLUEPRINT.md` 与 `INDEX.md`；带日期的报告、分析进 `01_BLUEPRINTS/REPORTS/`（若尚无则创建）。 |
 | 更新蓝图文件列表 | 在仓库根执行：`python scripts/governance/generate_01_blueprints_index.py`（更新 `01_BLUEPRINTS/INDEX.md`）。 |
 | 核对「蓝图阶段是否终稿」 | 对照 [交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) + [终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md) + [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 逐项勾选；总清单链接须 **100% 全量**核对（见任务 1，抽检须 Owner 书面豁免）。 |
@@ -116,10 +119,11 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 项目办公室: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/
 图纸柜:     docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 建设文档根: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
-索引脚本:   scripts/generate_01_blueprints_index.py
-目录聚合:   scripts/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
-架构目录:   scripts/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
-内容重复:   scripts/scan_duplicate_file_content.py --ext md → docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.md|.json
+索引脚本:   scripts/governance/generate_01_blueprints_index.py（根目录同名入口可转发）
+目录聚合:   scripts/governance/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
+架构目录:   scripts/governance/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
+内容重复:   scripts/governance/scan_duplicate_file_content.py --ext md → docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.md|.json
+地图与放置: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md
 工具总表:   docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
 ```
 
@@ -129,6 +133,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.9 | 2026-04-10 | 阅读顺序增 ①‴ [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；真源优先级首位为 LAYOUT + 放置规程；常见任务增「不知放哪」；路径速查统一 `scripts/governance/` 与地图文件 |
 | 1.2.8 | 2026-04-10 | 阅读顺序增 ①″ [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；路径速查增内容重复与工具总表 |
 | 1.2.7 | 2026-04-10 | 常见任务「L1」互指任务清单 **§1.1**（扫描边界、非全格式语义） |
 | 1.2.6 | 2026-04-10 | 路径速查增 `generate_architecture_service_catalog`；常见任务互指 **ARCHITECTURE_SERVICE_CATALOG** |

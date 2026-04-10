@@ -1,9 +1,9 @@
 ---
 module_id: DOCUMENT_REPOSITORY_LAYOUT_STANDARD_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-08'
+last_updated: '2026-04-10'
 owner: 仓库 Owner
 standard_type: 专业量化机构文档体系标准
 applicable_scope: 全仓库 Markdown 与实施类文档的目录放置（含蓝图阶段与施工文档阶段）
@@ -21,7 +21,8 @@ related_documents:
 # 文档仓库目录与阶段放置标准
 
 > **核心职责**：回答「这类文档应该放在仓库哪个文件夹」，使个人开发 + AI 维护时**少漂移、少重复、可追溯**。  
-> **职责边界**：本文规定 **docs/** 下及与文档强相关的实施目录习惯；**不**替代 `src/` 内代码结构规范（代码结构以实施蓝图与 `PATH_STANDARD` 中代码部分为准）。
+> **职责边界**：本文规定 **docs/** 下及与文档强相关的实施目录习惯；**不**替代 `src/` 内代码结构规范（代码结构以实施蓝图与 `PATH_STANDARD` 中代码部分为准）。  
+> **办公室衔接（扫描 / 尽治批次）**：把 rollup、前缀队列与「查表归位」连成固定步骤时，见项目办公室 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（真源仍以本文 §2～§4 为准）。
 
 ---
 
@@ -102,4 +103,5 @@ related_documents:
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.1 | 2026-04-10 | 文首增与办公室 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 互指 |
 | 1.0.0 | 2026-04-08 | 初版：一级目录职责、05 实施子目录、第 2 阶段默认路径 |
