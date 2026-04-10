@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-12T20:30:00Z` |
-| **上轮 commit** | `6ff35410` |
+| **上轮 commit** | `30992cf9` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | 继续 `docs/09_AUDIT/REPORTS`（断链抽样修 `sentinel_l1`、或子目录分批） |
 | **notes** | **B-02 批次 3（REPORTS · 索引健全性）**：已跑 `scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260412` → [`INDEX_HEALTH_ORPHAN_20260412.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md)（**zero_inbound=0**）；[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 增「导航与索引健全性证据」并链到上述报告。前缀仍 **未** §7.2 全量退出；批次 1～2 见历史 notes。 |
