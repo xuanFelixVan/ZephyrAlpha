@@ -1,0 +1,27 @@
+---
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_README_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-14
+last_updated: '2026-04-14'
+owner: 文档治理系统
+responsibility:
+  - 本目录门面说明与导航入口（非全量清单真源）
+standard_type: 索引文档
+applicable_scope: docs/05_IMPLEMENTATION/04_OPERATIONS
+---
+
+# 04_OPERATIONS — 运营管理文档区（门面）
+
+本目录存放**实施侧运营、审计状态与治理流程**相关文档，体量较大。**条目导航**以 [`INDEX.md`](./INDEX.md) 为准；**审计报告集中区**见 [`audit_state/INDEX.md`](./audit_state/INDEX.md)。
+
+## 推荐阅读顺序
+
+1. [`INDEX.md`](./INDEX.md) — 本目录索引与维护说明  
+2. [`audit_state/INDEX.md`](./audit_state/INDEX.md) — `audit_state` 长列表入口  
+3. 目录体量（深度 3 前缀条数）：[`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，当前快照 **406** 条）
+
+## 上级入口
+
+- [实施域索引 `../INDEX.md`](../INDEX.md)  
+- [文档总入口 `../../../INDEX.md`](../../../INDEX.md)

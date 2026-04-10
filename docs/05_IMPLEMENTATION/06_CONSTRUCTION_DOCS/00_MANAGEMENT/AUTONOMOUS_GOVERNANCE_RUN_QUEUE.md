@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.4
+version: 1.0.5
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-14'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-14T12:00:00Z` |
-| **上轮 commit** | `0a24e0f3` |
+| **UTC 时间** | `2026-04-14T20:00:00Z` |
+| **上轮 commit** | `1e42e36c` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2）；或 Owner 切至 `docs/05_IMPLEMENTATION/04_OPERATIONS` |
-| **notes** | **B-02 批次 6**：[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 补「484 vs 499」口径说明，并链 [`REPO_DIRECTORY_ROLLUP_20260413`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)；`related_documents` 增 rollup。运行队列 **v1.0.4**。批次 5 见上条。 |
+| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/04_OPERATIONS`（§7.2 续批）；或回到 `docs/09_AUDIT/REPORTS` |
+| **notes** | **B-02 · `04_OPERATIONS` 批次 1**：新增 [`04_OPERATIONS/README.md`](../../../05_IMPLEMENTATION/04_OPERATIONS/README.md)；[`04_OPERATIONS/INDEX.md`](../../../05_IMPLEMENTATION/04_OPERATIONS/INDEX.md) 增「导航与上级入口」并去第二段 front matter 前 BOM；[`05_IMPLEMENTATION/INDEX.md`](../../../05_IMPLEMENTATION/INDEX.md) §04_OPERATIONS 增门面链。体量 **406** 条见 [`REPO_DIRECTORY_ROLLUP_20260413`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)。运行队列 **v1.0.5**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
@@ -143,6 +143,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.5 | 2026-04-14 | **B-02 · `04_OPERATIONS` 批次 1**：新增 `README`、补 `INDEX` 导航与实施层 `INDEX` 链 |
 | 1.0.4 | 2026-04-14 | **B-02 批次 6**：`INDEX_GROUPED_REPORTS_20260408` 对齐 rollup 口径并补导航链 |
 | 1.0.3 | 2026-04-14 | **B-02 批次 5**：REPORTS `README`/`INDEX` 与 `REPO_DIRECTORY_ROLLUP_20260413` 互链并声明手工统计非 Git 真源 |
 | 1.0.2 | 2026-04-13 | 指针 notes 记录 **B-03**：`REPO_DIRECTORY_ROLLUP_20260413`；§4 前缀表条数与快照对齐（REPORTS 499、STATE 382、`06_CONSTRUCTION_DOCS` 273） |

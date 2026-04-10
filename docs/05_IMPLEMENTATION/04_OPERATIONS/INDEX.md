@@ -3,18 +3,18 @@ module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-14
 owner: 首席文档架构师
 responsibility:
   - 04_OPERATIONS目录索引
 ---
 
-﻿---
+---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX_2_04_OPERATIONS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-14
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -38,6 +38,12 @@ compliance_level: 专业标准---
 ---
 
 ## 📋 目录概览
+
+### 导航与上级入口
+
+- **本目录门面（短说明）**：[./README.md](./README.md)  
+- **审计状态子树**：[./audit_state/INDEX.md](./audit_state/INDEX.md)  
+- **实施域索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
 ### 统计信息
 
