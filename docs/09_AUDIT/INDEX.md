@@ -114,6 +114,17 @@ implementation_status: 活跃维护
 | [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 大量报告按分组可点 |
 | [REPORTS/INDEX](./REPORTS/INDEX.md) | 报告目录索引 |
 
+### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
+
+> 与 `09_AUDIT` 并列：**本域**偏标准/模板/Playbook；**04_OPERATIONS** 存放实施侧运营说明与 `audit_state` 大批量审计/整改稿。治理接力见 [自主接力运行队列](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)。
+
+| 入口 | 说明 |
+|------|------|
+| [04_OPERATIONS 门面](../05_IMPLEMENTATION/04_OPERATIONS/README.md) | 目录短说明与推荐阅读顺序 |
+| [04_OPERATIONS/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/INDEX.md) | 本级索引与维护说明 |
+| [audit_state/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/audit_state/INDEX.md) | 审计/整改类 Markdown 长列表 |
+| [INDEX_HEALTH（零入链 · 04_OPERATIONS）](./STATE/INDEX_HEALTH_ORPHAN_20260411.md) | 前缀索引健全性机器报告（快照） |
+
 ### Playbook 执行批次：根目录补充入口
 
 > 从本页主索引直达（与 `INDEX_AUDIT` 并列）；仅增加链接，不改正文。
