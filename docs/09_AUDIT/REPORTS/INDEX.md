@@ -28,6 +28,8 @@ compliance_level: 专业标准
 ### 导航与上级入口
 
 - **本目录门面（短说明）**：[./README.md](./README.md)  
+- **索引健全性（零入链 · 机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260412.md](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)  
+- **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)  
 - **审计域总索引**：[../INDEX.md](../INDEX.md)  
 - **文档总入口**：[../../INDEX.md](../../INDEX.md)
 

@@ -19,7 +19,8 @@ applicable_scope: docs/09_AUDIT/REPORTS
 
 1. [`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md) — 按主题分组浏览  
 2. [`INDEX.md`](./INDEX.md) — 全量索引与快速入口  
-3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)
+3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)  
+4. 多会话治理接力（当前指针 / Phase B）：[`../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
 
 ## 目录体量（与仓库快照对齐）
 
