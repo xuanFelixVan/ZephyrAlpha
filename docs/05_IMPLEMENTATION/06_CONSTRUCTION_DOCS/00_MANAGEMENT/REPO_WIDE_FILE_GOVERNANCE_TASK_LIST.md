@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.3.2
+version: 1.3.3
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -20,7 +20,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。  
 > **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `scripts/governance/generate_architecture_service_catalog.py`）。  
 > **扫描是否覆盖「每一种文件格式、每一文件的语义分析与自动处理」？** **否**——见 **§1.1**（分工具、分口径；Git 已跟踪 vs 工作区 Markdown 亦有差异）。  
-> **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；**同名不同路径（C2）**：`scripts/governance/scan_basename_collisions.py` → `BASENAME_COLLISIONS_*`（默认 `docs/`）；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。  
+> **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；**同名不同路径（C2）**：`scripts/governance/scan_basename_collisions.py` → `BASENAME_COLLISIONS_*`（默认 `docs/`）；**主题可能重叠（D · 启发式）**：`scripts/governance/scan_blueprint_d_overlap_candidates.py` → `BLUEPRINT_D_OVERLAP_CANDIDATES_*` + [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。  
 > **文档地图 + 放置规则（机构习惯）**：目录职责与阶段落盘的 **真源** 为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；与扫描/§7 批次的 **衔接步骤** 见办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。
 
 ---
@@ -104,13 +104,14 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **`verify_01_blueprints_*` / `verify_manifest_paths_strict.py`** | 指定 INDEX/清单中的路径 | 链接与路径存在性 | 不遍历全库所有文件 |
 | **`scripts/governance/scan_duplicate_file_content.py`** | 默认 **Git 已跟踪** + `--ext` 白名单；可选 `--include-untracked` | 内容 **SHA256**，`members[].git_source` 区分 tracked/untracked | **不**自动删；合并走 **§3** C1 + [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；大文件可用 `--max-mb` 跳过 |
 | **`scripts/governance/scan_basename_collisions.py`** | 默认 **`docs/`** 已跟踪 + `--ext`（默认 `md`）；可选 `--all-repo` | 按 **basename** 分组列出**同名不同路径**（C2 输入）；导航名（INDEX/README 等）在 MD 中单独统计 | **不**读正文；**不**自动合并或重命名；消解走 **§3.3** + Owner 裁决 |
+| **`scripts/governance/scan_blueprint_d_overlap_candidates.py`** | **`docs/`** 下已跟踪且 basename 含 `BLUEPRINT` 的 `.md`；默认排除 `overnight_runs` | **D 类候选对**：token/H2 相似度、**建议 canonical**、**建议合并大纲**；默认 **score 截断**（`--max-output-pairs`） | **不是** embedding/LLM 语义；**不**自动合稿；最终裁决见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) |
 | **`scripts/governance/scan_index_health.py`** | 默认 **`docs/`** 下已跟踪 `.md`（可 `--prefix`）；入链来源默认**全库已跟踪** `.md` | 统计 **Markdown 相对链**入链，报告 **零入链** 候选 | **不**解析 HTML/代码块链接；**不**判定「必须出现在某 INDEX」（见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.3**）；**不**自动删稿 |
 | **被忽略路径** | `.gitignore` 等 | 本清单**默认不**纳入「删并」 | 本地密钥、缓存、`.env.qmt` 等由安全与 ignore 策略管 |
 
 **结论（回答「是否涵盖所有格式、是否每一文件都识别分析处理」）**：
 
 - **「涵盖」**：在 **路径级**，`git ls-files` 已覆盖**所有已跟踪**路径（任意后缀）；§1 的扩展名统计可列出当前仓库**已出现**的后缀类型。  
-- **「每一文件识别/分析/处理」**：**没有**。当前自动化主要是 **Markdown 链接 + module_id**、**目录计数**、**API 路由抽取**、**特定清单校验**、**内容 hash 重复（C1）**、**basename 碰撞（C2 报表）**、**零入链报表（`scan_index_health.py`）**；**语义理解、业务裁决、二进制内容治理**需 **人工 + 分格式专项**（或未来单独立项脚本）。  
+- **「每一文件识别/分析/处理」**：**没有**。当前自动化主要是 **Markdown 链接 + module_id**、**目录计数**、**API 路由抽取**、**特定清单校验**、**内容 hash 重复（C1）**、**basename 碰撞（C2 报表）**、**蓝图 D 类重叠候选（启发式，`scan_blueprint_d_overlap_candidates.py`）**、**零入链报表（`scan_index_health.py`）**；**真·语义等价、业务裁决、二进制内容治理**需 **人工 + 分格式专项**（或外接 LLM 工作流，且须门禁）。  
 - **验收建议**：大治理收口时声明以 **「已跟踪 + L1 + verify + rollup」** 为门禁组合；若要求「仅扫描入库文件」，应 **先 `git status` 清干净**或接受 L1 与 `git ls-files` 的已知差异。  
 - **索引「是否够健全」**：**L1** 校验相对链**能否解析**；**`scan_index_health.py`** 产出 **`docs/` 下零入链候选**（见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**），**不**等价于「必须在某 INDEX 出现」；域级 INDEX **覆盖规则**仍属 **§5.3** / 待规则冻结。搬迁后入链/机器清单见同文 **§4**。
 
@@ -232,7 +233,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 ### 3.4 D（功能重复）的最小流程
 
 1. 扫描阶段仅输出**候选簇**（主题关键词、互链、标题相近等），登记台账。  
-2. **评审会或异步 Owner 裁决**：确定真源、读者迁移路径、是否保留 stub。  
+   - **已落地（启发式）**：`python scripts/governance/scan_blueprint_d_overlap_candidates.py` → `BLUEPRINT_D_OVERLAP_CANDIDATES_*`（**建议 canonical + 建议合并大纲**）；操作规程见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)。  
+2. **评审会或异步 Owner 裁决**：确定真源、读者迁移路径、是否保留 stub（**机器建议不等于最终裁决**）。  
 3. 再执行正文合并/删稿与链接替换（同 §3.2 第 3～6 步精神，但第 4 步以「叙事归并」为主）。
 
 ### 3.5 与扫描并行时的分工（四条线程）
@@ -243,6 +245,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **B** | 仅处理 **C1** 已确认分组：canonical + 替换链接 + 删或 stub | 可与 A **并行**，以报表为闸门。 |
 | **C** | 断链修复、`.diff`/`.bak` 策略、脚本目录生成型 INDEX、各域导航补链、§2.3 表内校验与登记 | 与合并正交，可并行。 |
 | **D** | **D 类**只维护台账与排期，**评审通过前**不删不并 | 与 A 并行；合并滞后一拍。 |
+| **D′（蓝图）** | 跑 `scan_blueprint_d_overlap_candidates.py`，从 **TOP-N 候选对**起做 Owner 评审与合稿排期 | 与 **§3.4**、Playbook 对齐；可与 **§7** 同窗口 |
 | **E（可选）** | **§7 目录队列**：按 rollup 子前缀做「退出标准」勾选，与 B 交替推进 | 合并清空某前缀后，该前缀的 C1/C2 报表应**收敛** |
 
 ### 3.6 §3 勾选（合并专项）
@@ -301,6 +304,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.3 | 2026-04-11 | D 类流水线：`scan_blueprint_d_overlap_candidates.py` + [D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)；§1.1 / §3.4 / §3.5 / §6 互指 |
 | 1.3.2 | 2026-04-11 | C2 推进：`DATA_QUALITY_MONITORING_BLUEPRINT` 同名簇消解 + 归档 README；分散蓝图清单重生成；§3.6 C2 附进展 |
 | 1.3.1 | 2026-04-11 | 新增 `scan_basename_collisions.py`；P1 basename 报表 ✅；§1.1 / 文首互指；§3.6 C2 附报表链接 |
 | 1.3.0 | 2026-04-11 | §3.1 **宽松**归档裁定；§3.6 归档策略 + C1（temp_pending 五簇）；P0 基线复跑约定闭环 |
@@ -328,6 +332,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 架构服务目录 + C4 摘要（生成） | [`ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 | 内容重复（SHA256 · 后缀白名单） | [`DUPLICATE_CONTENT_BY_HASH_20260411.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md) / [`.json`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json) |
 | 同名不同路径（basename · C2 · `scan_basename_collisions.py`） | [`BASENAME_COLLISIONS_20260411.md`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md) / [`.json`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json) |
+| 蓝图 D 类重叠候选（启发式 · `scan_blueprint_d_overlap_candidates.py`） | [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260411.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260411.md) / [`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260411.json) · [Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) |
 | 索引健全性（零入链候选 · `scan_index_health.py`） | [`INDEX_HEALTH_ORPHAN_20260410.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
 | 全局文件治理会话交接（新对话粘贴） | [GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |

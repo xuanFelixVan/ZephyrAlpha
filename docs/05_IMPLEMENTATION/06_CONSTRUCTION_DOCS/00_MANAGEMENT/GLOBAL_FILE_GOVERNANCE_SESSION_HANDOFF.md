@@ -1,6 +1,6 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -70,7 +70,8 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 
 1. 阅读 REPO_WIDE **§0、§1、§1.1**（扫描能做什么、不能做什么）。  
 2. 阅读 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 全文。  
-3. 阅读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§3～§5**（扫描→归位→索引→零入链）。
+3. 阅读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§3～§5**（扫描→归位→索引→零入链）。  
+4. 若本轮含 **蓝图 D 类（主题可能重叠）**：阅读 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（机器建议 ≠ 最终裁决）。
 
 **阶段 B — 全局基线刷新（仓库根执行；`YYYYMMDD` 换成当天）**
 
@@ -82,6 +83,7 @@ python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD --incl
 python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD
 python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD --include-untracked
 python scripts/governance/scan_basename_collisions.py --date YYYYMMDD
+python scripts/governance/scan_blueprint_d_overlap_candidates.py --date YYYYMMDD
 python scripts/governance/scan_index_health.py --date YYYYMMDD
 python scripts/governance/generate_architecture_service_catalog.py
 python scripts/governance/sentinel_l1_governance_scan.py
@@ -121,5 +123,6 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.2 | 2026-04-11 | 阶段 B 增 `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选） |
 | 1.0.1 | 2026-04-11 | 阶段 B 增 `scan_basename_collisions.py`（C2 basename 报表） |
 | 1.0.0 | 2026-04-10 | 首版：机构对照缺口、办公室自检、可复制会话指令 |

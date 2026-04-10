@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.8
+version: 1.1.9
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -58,6 +58,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表；**文档地图与放置**与 LAYOUT 互指无断链 |
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 治理脚本**总表**（命令、产出、顺序）；**不**决定废脚本删否 | 新增脚本时同步更新本表 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留决策树与 PR 检查项 | 出重复报表或清脚本时随 PR 引用 |
+| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口 | 跑 `scan_blueprint_d_overlap_candidates.py` 后按 §3.4 评审 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、蓝图任务 **3～5** / **W** 轨同窗 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | **新开对话可复制**的尽治指令：从全库扫描到深度清洁 | 大扫除窗口启动时发给 AI；与 REPO_WIDE **§7**、工具总表对齐 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | L0～L5、与 `09_AUDIT` 边界 | 与「尽治」表述冲突时优先回写架构或本 README |
@@ -81,6 +82,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 |------|------|
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | **链检查 / rollup / verify / 架构目录 / 内容重复**等脚本：命令、产出、复跑顺序 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留：决策树 + PR 检查项（与重复报表、§3 配套） |
+| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | 蓝图主题可能重叠：机器建议 + 人工裁决与合稿 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **文档地图 + 放置规则** 与任务/扫描的衔接；真源链指 LAYOUT + 图纸柜规则 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | **新会话工作指令**：全局扫描 → 深度清洁队列与硬约束 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | 专业机构式 **L0～L5 分层**、控制流、与 `09_AUDIT` 边界 |
@@ -143,6 +145,9 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 - **同名不同路径 / basename 碰撞（C2 报表）**：  
   `python scripts/governance/scan_basename_collisions.py`（默认 `docs/` + `.md`；可加 `--all-repo`）  
   （输出 `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*`）  
+- **蓝图 D 类重叠候选（启发式 + 建议 canonical/合并大纲）**：  
+  `python scripts/governance/scan_blueprint_d_overlap_candidates.py`（见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)）  
+  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`）  
 - **索引健全性（零入链候选，默认扫 `docs/`）**：  
   `python scripts/governance/scan_index_health.py`  
   （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**）  
@@ -160,6 +165,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.9 | 2026-04-11 | 办公室表增 D 类 Playbook；常用脚本增 `scan_blueprint_d_overlap_candidates.py` |
 | 1.1.8 | 2026-04-11 | 常用脚本增 `scan_basename_collisions.py`（C2 basename 报表） |
 | 1.1.7 | 2026-04-11 | 新增「基线复跑约定」；互指 REPO_WIDE P0 / §3.1 **宽松**归档裁定 |
 | 1.1.6 | 2026-04-10 | 增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md)；工具总表口径补索引健全性；扫描优化项补 §5.3/合规外规 |

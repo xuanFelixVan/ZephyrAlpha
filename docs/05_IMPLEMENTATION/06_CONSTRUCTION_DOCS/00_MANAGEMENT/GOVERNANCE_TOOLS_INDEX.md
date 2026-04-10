@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.1.3
+version: 1.1.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -30,6 +30,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | `generate_architecture_service_catalog.py` | **架构/服务目录 + C4 摘要**（`src/`、routes、`pyproject`） | `python scripts/governance/generate_architecture_service_catalog.py` | `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.{md,json}` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须**传 `--ext`，默认 `md`）；可选 `--include-untracked` | `python scripts/governance/scan_duplicate_file_content.py --ext md` | `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.{md,json}` |
 | `scan_basename_collisions.py` | **同名不同路径（C2）**：按 basename 分组（默认 `docs/` + `--ext md`）；可选 `--all-repo` | `python scripts/governance/scan_basename_collisions.py` | `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*.{md,json}` |
+| `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**：启发式相似度 + **建议 canonical / 合并大纲**（非最终裁决） | `python scripts/governance/scan_blueprint_d_overlap_candidates.py` | `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*.{md,json}` |
 | `scan_index_health.py` | **索引健全性**：`docs/` 下 md **零入链**候选（全库 md 相对链统计） | `python scripts/governance/scan_index_health.py` | `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.{md,json}` |
 | `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 内链 | `python scripts/governance/verify_01_blueprints_index_links.py` | 终端输出 |
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 | `python scripts/governance/verify_scattered_blueprints_manifest_links.py` | 终端输出 |
@@ -50,9 +51,10 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 4. `generate_architecture_service_catalog.py`  
 5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）  
 6. `scan_basename_collisions.py`（C2 同名不同路径报表；与 C1 独立）  
-7. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 [放置规程 §5.2](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）  
+7. `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选 + 机器建议；见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)）  
+8. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 [放置规程 §5.2](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）  
 
-合并重复内容前请再读 [任务清单 §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（C1 / C2 流程）与 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
+合并重复内容前请再读 [任务清单 §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（C1 / C2 / **D**）与 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
 
 ---
 
@@ -74,6 +76,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.4 | 2026-04-11 | 增 `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠）；§2 第 8 步 `scan_index_health` |
 | 1.1.3 | 2026-04-11 | 增 `scan_basename_collisions.py`（C2 basename 报表）；§2 复跑顺序第 6～7 步 |
 | 1.1.2 | 2026-04-10 | 增 `scan_index_health.py`（索引健全性 / 零入链）；§2 复跑顺序增第 6 步 |
 | 1.1.1 | 2026-04-10 | 文首与 §2 互指 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) + LAYOUT 标准 |
