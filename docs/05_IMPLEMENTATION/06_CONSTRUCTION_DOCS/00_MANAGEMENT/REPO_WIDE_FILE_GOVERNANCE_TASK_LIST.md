@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.0
+version: 1.2.1
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -16,7 +16,8 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **用途**：回答「是否要先扫全树再建任务清单」——**要先有基线清单与统计，再分波次治理**；本文件给出**口径、基线数字、可勾选波次**，避免无控制面的大扫除。  
 > **与蓝图清单的关系**：与 [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **并列**；蓝图清单偏**终稿与施工门禁**，本清单偏**整仓文件体量、重复与导航**。扩展轨 **W0～W4 勾选完毕 ≠ 本清单「目录尽治」完毕**（二者互补，见蓝图清单扩展轨节互指）。  
 > **一次性尽治目标**：以**单批次最大穷尽**为排期目标——按 **§7** 对 `docs/` 等前缀拆队列、逐前缀打到退出标准；客观上规范与仓库仍会演进，**长期靠门禁脚本 + 定期重跑 §1 清单/rollup** 维持，避免「无标准的第二轮大扫除」。  
-> **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。
+> **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。  
+> **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。
 
 ---
 
@@ -100,7 +101,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### 2.2 「每个文件都能迅速定位」
 
-**目标不是**为 4369 个路径各维护一条人工索引行（不可持续）。**目标是**分层可达：
+**目标不是**为每个已跟踪路径各写一条人工索引行（不可持续）。**目标是**分层可达：
 
 - **L1**：仓库根 `README.md`、`docs/INDEX.md`、建设文档 [`INDEX.md`](../INDEX.md)。  
 - **L2**：各业务域 `INDEX.md`（仓库内已有大量分布，需治理**孤岛**与**上级链接**）。  
@@ -126,8 +127,32 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **TODO/TBD 台账** | [`TODO_CLEANUP_INVENTORY`](../../../09_AUDIT/REPORTS/TODO_CLEANUP_INVENTORY_20260406.md) 等 | 占位清理与合并可同窗 |
 | **全系统文档审计 A～H** | [审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) | 与尽治同窗但**签字口径独立** |
 | **代码重复 / 重构** | 单立 PR + 测试 | **不**与文档合并混批（见 §3.1） |
+| **模块全景（逻辑树）** | §2.4；将来 `MODULE_PANORAMA_*` 与 rollup **同频**重跑 | 包名/域改名后重跑，避免索引漂移 |
 
 **办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
+
+### 2.4 系统架构「模块全景树」与多级索引（三/四级子模块）
+
+**专业机构会不会做这类东西？**  
+**会做**，但很少靠「单文件手绘大树」维护到底；更常见的是**组合**：
+
+- **架构/服务目录**（谁拥有、边界、对外接口、依赖关系）；  
+- **多视图**（如 C4 的上下文/容器/组件，或本仓库已有的 Layer/域划分叙事）；  
+- **可检索清单**（门户、Wiki、JSON —— 与 CMDB 或代码仓生成物衔接）；  
+- **生成物 + 少量人工映射**（以包路径、`module_id`、合约为输入，定期重生成；人只维护例外与别名）。
+
+**你是不是「需要」？**  
+- **需要一种全景可达性**：否则三、四级子模块只能靠人肉记路径或盲搜。  
+- **推荐形态**：**物理全景**（按路径前缀的深度聚合，已有 `REPO_DIRECTORY_ROLLUP_*`）与 **逻辑全景**（按架构层级/业务域/代码包语义命名的树或表）**并列**，并互链；不要混成一种深度口径。  
+- **先冻结「什么叫三级、四级」**：在本仓库里是指 `src/` 下第几层包、`docs/0x_*` 域，还是 `LAYERn_*` 文档簇——**定义不同，树就不同**；脚本只能实现**已写明的规则**。
+
+**扫描过程中能不能建、并不断更新？**  
+**能。** 建议与整仓扫描**同批次或紧接**执行：
+
+1. **输入**：`git ls-files`（与 rollup 相同）+ 可选从 Markdown 头抽取 `module_id` / 自定义 YAML 映射（若日后引入）。  
+2. **输出**：例如 `docs/09_AUDIT/STATE/MODULE_PANORAMA_<date>.json`（机器真源）+ 精简 `.md`（人类浏览）；按约定深度展开 `src/**` 与选定的 `docs/**` 前缀。  
+3. **更新节奏**：大治理 PR 后、或季度，与 **rollup 一并重跑**并 commit，用 diff 观察子树漂移。  
+4. **与叙事真源的关系**：[`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) 等继续承担**解释与裁决**；生成物标注 **generated**，避免「两份真源」静默分叉。
 
 ---
 
@@ -223,7 +248,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 ### P4 — 与现有门禁脚本对齐
 
 - [ ] 将本清单 P1～P3 的产出与现有 `scripts/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）。  
-- [ ] 可选：新增「重复内容报表」脚本，输出到 `docs/09_AUDIT/STATE/`，CI 仅告警不阻断（先软后硬）。
+- [ ] 可选：新增「重复内容报表」脚本，输出到 `docs/09_AUDIT/STATE/`，CI 仅告警不阻断（先软后硬）。  
+- [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](../../../../scripts/README.md) 登记用途。
 
 ### P5 — 深度尽治（与 §7 对齐）
 
@@ -237,6 +263,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.1 | 2026-04-10 | 新增 **§2.4** 架构模块全景与机构做法；§2.3 增「模块全景」行；**P4** 可选全景脚本；文首互指 §2.4 |
 | 1.2.0 | 2026-04-10 | **§2.3** 可并行工作总表；**§7** 深度目录队列与退出标准；**§8** 办公室二次自查；**P5**；rollup 脚本与 `REPO_DIRECTORY_ROLLUP_20260410.*`；§1 明确深度 2 不足尽治 |
 | 1.1.0 | 2026-04-10 | 新增 **§3 合并重复文件方案**（分型、C1/C2/D 流程、并行线程、§3.6 勾选）；P1 互指 §3 |
 | 1.0.0 | 2026-04-10 | 首版：基线统计、口径、P0～P4 波次；附全量路径导出文件 |
@@ -249,6 +276,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 |------|------|
 | 全量已跟踪路径清单 | [`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
 | 目录深度聚合（3～6） | [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
+| 叙事层模块/总账入口（与 §2.4 生成物互补） | [`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) |
 | 蓝图阶段任务（并列） | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) |
 | 孤儿与重复治理 | [DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) |
 
@@ -290,6 +318,6 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 - [ ] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**；**办公室文件一览**表与磁盘一致。  
 - [ ] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」。  
-- [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup** 与既有 `verify_*` / `sentinel_l1`。  
+- [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup** 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** 模块全景脚本，表中已登记。  
 - [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。  
 - [ ] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。
