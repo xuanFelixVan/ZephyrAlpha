@@ -3,7 +3,7 @@ module_id: 05_IMPLEMENTATION_04_OPERATIONS_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-14
-last_updated: '2026-04-14'
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非全量清单真源）
@@ -19,7 +19,9 @@ applicable_scope: docs/05_IMPLEMENTATION/04_OPERATIONS
 
 1. [`INDEX.md`](./INDEX.md) — 本目录索引与维护说明  
 2. [`audit_state/INDEX.md`](./audit_state/INDEX.md) — `audit_state` 长列表入口  
-3. 目录体量（深度 3 前缀条数）：[`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，当前快照 **406** 条）
+3. [`WEEKLY_AUDIT_MECHANISM.md`](./WEEKLY_AUDIT_MECHANISM.md) — 定期（周）审计机制说明  
+4. 索引健全性（零入链 · 前缀扫描）：[`../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md`](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md)  
+5. 目录体量（深度 3 前缀条数）：[`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，当前快照 **406** 条）
 
 ## 上级入口
 

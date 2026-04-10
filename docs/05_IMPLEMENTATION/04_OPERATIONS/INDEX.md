@@ -1,9 +1,9 @@
 ---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX_2
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-14
+last_updated: 2026-04-11
 owner: 首席文档架构师
 responsibility:
   - 04_OPERATIONS目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ---
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_INDEX_2_04_OPERATIONS_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-14
+last_updated: 2026-04-11
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-07
 > **核心定位**: 运营管理
 > **索引**: `INDEX_04_OPERATIONS_001`
@@ -43,14 +43,15 @@ compliance_level: 专业标准---
 
 - **本目录门面（短说明）**：[./README.md](./README.md)  
 - **审计状态子树**：[./audit_state/INDEX.md](./audit_state/INDEX.md)  
+- **索引健全性（零入链 · 机器报告）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md)  
 - **实施域索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
 ### 统计信息
 
 | 指标 | 数值 |
 |------|------|
-| **文档总数** | 1 |
-| **活跃模块** | 1 |
+| **本级 Markdown 正文**（不含 `README.md` / 本 `INDEX.md`、`audit_state/`） | **6** |
+| **audit_state 子树** | 见 [`./audit_state/INDEX.md`](./audit_state/INDEX.md) |
 | **更新频率** | 按需更新 |
 
 ---
@@ -61,6 +62,8 @@ compliance_level: 专业标准---
 - [文档索引体系优化方案](./DOCUMENT_INDEX_SYSTEM_OPTIMIZATION_PLAN.md) - 系统文档
 
 - [文档治理最佳实践库](./DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY.md) - 系统文档
+
+- [定期审计机制（周审计）](./WEEKLY_AUDIT_MECHANISM.md) - 运营 / 审计机制
 
 
 ### 核心文档
@@ -94,6 +97,7 @@ compliance_level: 专业标准---
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
+| v1.0.1 | 2026-04-11 | B-02 批次3：补 `WEEKLY_AUDIT_MECHANISM` 入本级列表；统计表与 INDEX_HEALTH 导航 | 文档治理接力 |
 
 ---
 
