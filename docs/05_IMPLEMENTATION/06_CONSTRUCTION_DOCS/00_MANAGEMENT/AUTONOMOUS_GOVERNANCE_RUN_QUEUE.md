@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-13T12:00:00Z` |
-| **上轮 commit** | `893189ae` |
+| **上轮 commit** | `d890e5c6` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | 继续 `docs/09_AUDIT/REPORTS`（子目录门面、或达标后 **B-03** rollup） |
 | **notes** | **B-02 批次 4（REPORTS · L1=0 时的导航收口）**：全库 `sentinel_l1` **判定无效=0**，未改断链；[`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 增「索引健全性」链至 [`INDEX_HEALTH_ORPHAN_20260412.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md)；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 机器产出表增同一报告行并去第二段 front matter 前 BOM。前缀仍 **未** §7.2 全量退出。 |
