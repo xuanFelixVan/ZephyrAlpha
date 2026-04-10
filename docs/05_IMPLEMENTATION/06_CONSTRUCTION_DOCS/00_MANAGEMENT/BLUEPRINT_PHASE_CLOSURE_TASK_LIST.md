@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.3
+version: 1.0.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -56,7 +56,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **同题多稿与下面「重复文档治理」的关系**：若总清单暴露「同一主题两份正式稿」，须按 [孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) 做 canonical 裁决（重定向、登记表、`CANONICAL_POINTERS` 等），不能只改链接不裁决。
 
-- [ ] 已选定「总清单」主文档（或主文档 + 明确子索引的组合）
+- [x] 已选定「总清单」主文档（或主文档 + 明确子索引的组合）— **主入口**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)；**图纸柜机器列表**：[`01_BLUEPRINTS/INDEX.md`](../01_BLUEPRINTS/INDEX.md)（2026-04-10）
 - [ ] 每个「该有蓝图的条目」在总清单中均有记录
 - [ ] 每条目可点击跳转到**唯一认定的正式蓝图**（无「同一主题两份正式稿各写各的」）
 - [ ] **链接验证（全量）**：已对总清单中**每一条**「应有蓝图」做链接与 canonical 核对（备注：已全检，N = ___ 条）。若已获 Owner **书面抽检豁免**，改为完成抽检并在此写明豁免依据与样本
@@ -70,9 +70,9 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **与重复治理的关系**：若「两套路径」下存在**同题双份正文**，除写明哪条路径为权威外，还须按任务 1 所链的 **Playbook / 重复标准** 做副本处置（重定向、归档、登记表），避免「只认路径不认稿」留下两套真源。
 
-- [ ] 在「全楼地图」中用一句话写明：**以哪条路径为权威（canonical）**
-- [ ] 对非权威一侧：已标为只读副本 / 已迁出 / 已删除（三选一，且与地图一致）
-- [ ] 所有对外链接与脚本默认指向 canonical 路径
+- [x] 在「全楼地图」中用一句话写明：**以哪条路径为权威（canonical）** — 已写入 [`06_CONSTRUCTION_DOCS/INDEX.md`](../INDEX.md)「目录概要」与 [`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)（2026-04-10）
+- [x] 对非权威一侧：已标为只读副本 / 已迁出 / 已删除（三选一，且与地图一致）— `docs/06_CONSTRUCTION_DOCS/` 在 INDEX「遗留路径」中声明为非权威副本入口（2026-04-10）
+- [x] 所有对外链接与脚本默认指向 canonical 路径 — **新建与治理默认**以 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` 为准；`09_AUDIT` 等历史 JSON/报告内旧路径为**记录快照**，不强制整库改写（2026-04-10）
 
 ---
 
@@ -90,9 +90,9 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **目标**：`06_CONSTRUCTION_DOCS/INDEX.md`（及必要的 `README.md`）中的子目录名称、数量、职责描述与磁盘上真实文件夹一致。
 
-- [ ] 已核对当前子目录（含 `00_MANAGEMENT`、`02_IMPLEMENTATION_GUIDES` 等）
-- [ ] 已更新 `INDEX.md` 中的表格与说明（或已改文件夹命名以匹配旧索引，二选一）
-- [ ] 统计数字（子目录个数、文档数等）已复核或改为「见各目录 INDEX / 脚本生成」等可维护表述
+- [x] 已核对当前子目录（含 `00_MANAGEMENT`、`02_IMPLEMENTATION_GUIDES` 等）— 磁盘 8 顶层目录，2026-04-10
+- [x] 已更新 `INDEX.md` 中的表格与说明（或已改文件夹命名以匹配旧索引，二选一）— 已重写子目录表与目录说明
+- [x] 统计数字（子目录个数、文档数等）已复核或改为「见各目录 INDEX / 脚本生成」等可维护表述 — 子目录数 8；篇数指向下级 INDEX
 
 ---
 
@@ -110,7 +110,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **目标**：本清单第 1～5 项的执行结果，能在卫生计划与审计台账中找到对应记录或关闭说明。
 
-- [ ] 已对照 [蓝图阶段文档卫生总计划](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) 检查是否有遗漏批次
+- [x] 已对照 [蓝图阶段文档卫生总计划](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) 检查是否有遗漏批次 — 2026-04-10：INDEX 大门与任务 4 对齐属目录卫生/P0 相关入口整理（细项批次仍可按卫生总案 P1～P3 推进）
 - [ ] 若仍存在 TODO/TBD 清理台账，已更新状态或注明「仅归档范围保留」
 
 ---
@@ -132,6 +132,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.4 | 2026-04-10 | 执行任务 2、4 勾选；任务 1 选定总清单；任务 6 卫生对照（部分）；INDEX 与磁盘对齐 |
 | 1.0.3 | 2026-04-10 | 推荐阅读增文档治理架构 |
 | 1.0.2 | 2026-04-10 | 任务 1：Owner 默认全量链接验证（100%）；抽检仅书面豁免 |
 | 1.0.1 | 2026-04-10 | 任务 1：抽检/全检说明、重复文档治理勾选与推荐阅读链；任务 2：与重复治理交叉说明 |

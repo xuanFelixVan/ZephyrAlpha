@@ -3,7 +3,7 @@ module_id: BLUEPRINT_STAGE_COMPLETE_SUMMARY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-07'
+last_updated: '2026-04-10'
 owner: 首席蓝图架构师
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
@@ -38,6 +38,13 @@ reference_models:
 ## 验收标准（可检查）
 
 - Owner 能根据本文的“蓝图阶段内容清单”逐项核对，并能从每个关键模块条目跳转到对应的蓝图或契约入口。
+
+## 全库蓝图总清单地位（项目办公室 · 任务 1）
+
+本文档由 **Owner 指定**为全库蓝图阶段总结与**总清单主入口**之一，用于与 [施工门禁](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §0.2「全库蓝图范围」及 [全库蓝图终稿任务清单](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **任务 1** 对照。
+
+- **与 `01_BLUEPRINTS` 的关系**：模块级文件名与机器生成列表以 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 为准；本文负责**阶段口径、分层统计与跨目录索引**，二者**互补**，不互相替代。
+- **链接全量核对**：任务 1 要求的 **100%** 逐条链接验证须在勾选任务清单前完成；进度与 **N** 记在任务清单任务 1 备注行。
 
 ## 已知限制
 
