@@ -1,6 +1,6 @@
 ﻿---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.8.5
+version: 1.8.6
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-10'
@@ -619,7 +619,7 @@ L1 结果（无效链）：0
 | T3-27 | （8篇：`OPTIMIZATION_RESULT_VALIDATOR` / `OPTIMIZER_DIAGNOSTICS` / `PERFORMANCE_TESTING` / `PORTFOLIO_ATTRIBUTION` / `PORTFOLIO_CAPACITY_ESTIMATOR` / `PORTFOLIO_COMPARISON_TOOL` / `PORTFOLIO_CONSTRAINT_MANAGEMENT` / `PORTFOLIO_DIAGNOSTICS_TOOLKIT`，均 `01_BLUEPRINTS/`） | Trae + Cursor-REC（FIFO） | [待回收] | 2026-04-10 | 0 | 施工报告未署队号；8 篇无 diff，**Commit N/A**（符合 §0 施工口径）。统筹抽查 8/8：§0.1 三段 + `API_Contract.md` 相对链齐全。L1=0，SENTINEL 已 restore（施工方报告）。**等待回收队** `docs/blueprint-rec-T3-27` `--allow-empty` 并回报 hash。**注**：其中 3 篇与台账 **T3-13b**（Trae-03）行重复；回收可在回报中声明 **同一 hash 同时闭合 T3-13b 三行**，统筹后续一并改 **[已完成]**，或按 FIFO 分开展开。 |
 | T3-28 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MONITORING_DASHBOARD_ENHANCEMENT_BLUEPRINT.md` | Trae-02 | ❌ 退回待补正 | 2026-04-10 | - | **一票否决（内容）**：统筹在当前树 `grep` 本篇 **无**「接口与契约（蓝图终稿）」「验收标准（可检查）」「已知限制」**无** 可点击 `API_Contract.md` 链 → 与 Trae 报告「均已合规」**矛盾**；**不得**以 Commit N/A 闭环。**一票否决（时序）**：施工流水显示 `git branch`/`status` 曾在 trae-01/05/06/07 与声称的 trae-02 之间多次切换，L1 扫描与「当前在 docs/blueprint-trae-02」**无法建立可靠因果**，比照 T3-29 类否决。**补正**：仅最小补本篇 §0.1 → 在 **`docs/blueprint-trae-02` 干净工作区** 单独跑 L1 → `git restore` 两条 `SENTINEL_*` → 提交带 **hash**（message 可用 `docs(blueprint): T3-28 修补 MONITORING_DASHBOARD_ENHANCEMENT §0.1（Trae-02，L1=0）`）或由回收队 `docs/blueprint-rec-T3-28` 执行。 |
 | T3-28 | （同批其余 7 篇：`MULTI_ASSET_CORRELATION_MODELING` / `MULTI_OBJECTIVE_OPTIMIZATION` / `MULTI_PERIOD_DYNAMIC_OPTIMIZATION` / `MULTI_STRATEGY_HIERARCHICAL_SYSTEM` / `OBJECT_STORAGE_INTEGRATION` / `OPENING_STRATEGY` / `OPTIMIZATION_HISTORY_TRACKER`） | Trae-02 | ⚠️ 随主篇重验 | 2026-04-10 | - | 统筹抽查：7/7 具 §0.1 + `API_Contract` 链；**整批状态以 MONITORING_DASHBOARD 补正 + 在 trae-02 上重跑 L1 留痕为准**，本行不单独记「已完成」。 |
-| T3-26 | （8篇白名单蓝图，docs/blueprint-trae-05） | Trae-05 | [待回收] | 2026-04-10 | 0 | 施工侧自检：8篇 §0.1 三段齐全，API_Contract 相对链正确，YAML Active/1.0.0，L1=0；无改动按规范不提交（N/A）；**等待回收队在 docs/blueprint-rec-T3-26 打空提交闭环** |
+| T3-26 / T3-36 | （8篇白名单蓝图，`docs/blueprint-trae-05`；派发批次号 T3-36 与台账先行 **T3-26** 为同一批） | Trae-05 + Cursor-REC（FIFO） | [已完成] | 2026-04-10 | 0 | **施工**（Trae-05，2026-04-10 再报 T3-36）：工作区干净，8 篇已合规，**Commit N/A**、**不做空提交**——符合 §0「施工队不提交」表。**回收**：分支 `docs/blueprint-rec-T3-36`，空提交 **commit=ff5c9367**（message「回收验收 T3-36 收口（L1=0）」）。**统筹追溯以 ff5c9367 为准**；无需 Trae 再打空提交。 |
 | T3-24 | （8篇 M-* 白名单，与 T3-11b 同清单；Trae-01） | Trae-01 + Cursor-REC（FIFO） | ❌ 退回待补正 | 2026-04-10 | - | **统筹核实（驳回「已完成」结论）**：(1) `4e64e0bc` 为 **空提交**（`git show --name-only` 无文件列表），台账 **T3-11** 对应 **`docs/01_FRAMEWORK/`** 框架蓝图收口，**不能**解释为「本批 8 篇 `01_BLUEPRINTS` 由该 commit 引入」。(2) 本机 `git merge-base --is-ancestor 4e64e0bc docs/blueprint-trae-01` 为**否**；`git branch --contains 4e64e0bc` 显示该 commit 在 **`docs/blueprint-rec-T3-11`**，**不**在 `docs/blueprint-trae-01` 祖先链上（若你方已合并两分支请本地重跑并更新回报）。(3) `MONITORING_ALERTING_SYSTEM_BLUEPRINT.md` **仍缺** §0.1 三段及可点击 `API_Contract` 链（篇内无「接口与契约（蓝图终稿）」），与 T3-11b 末行一致。**补正**：最小补本篇 → L1 → `git restore` 两条 `SENTINEL_L1_SCAN_20260408.*` → 带 **真实 hash** 提交；其余 7 篇若已无 diff，可由回收队 `docs/blueprint-rec-T3-24` 与上述修补 commit 一并闭环。Trae 报告中的 tip `27c25fdd` 仅作指针记录，不构成门禁豁免。 |
 | 1.6.1 | 2026-04-10 | 修正 T3-05：从"仅扫描产物/预填"升级为正式验收——8 篇白名单已满足 §0.1，非白名单文件已正确排除 |
 | 1.6.2 | 2026-04-10 | 补录 T3-02 施工白名单4篇口径；T3-12 追加回收待派行（施工 commit=d4aea016 已确认，FIFO 派单中） |
@@ -636,3 +636,4 @@ L1 结果（无效链）：0
 | 1.8.3 | 2026-04-10 | T3-22（Trae-09）内容侧已抽查 8/8 合规，施工 N/A；待回收队 docs/blueprint-rec-T3-22 空提交闭环 |
 | 1.8.4 | 2026-04-10 | T3-27：8 篇合规施工 N/A；待回收 rec-T3-27；与 T3-13b 三篇文件重叠可一次 hash 闭合 |
 | 1.8.5 | 2026-04-10 | T3-28（Trae-02）退回：MONITORING_DASHBOARD 仍缺 §0.1；L1/分支流水不可靠 |
+| 1.8.6 | 2026-04-10 | T3-36 与 T3-26 合并记 **[已完成]**：Trae N/A 合规；回收空提交 ff5c9367（rec-T3-36） |
