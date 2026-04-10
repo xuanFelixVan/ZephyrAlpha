@@ -1,14 +1,14 @@
 {
   "generated_date": "20260410",
   "generator": "scripts/governance/scan_duplicate_file_content.py",
-  "include_untracked": false,
+  "include_untracked": true,
   "extensions": [
     "md"
   ],
   "max_mb": null,
-  "candidate_count_tracked": 3183,
+  "candidate_count_tracked": 3187,
   "candidate_count_untracked": 0,
-  "total_candidates_scanned": 3183,
+  "total_candidates_scanned": 3187,
   "duplicate_cluster_count": 5,
   "duplicate_file_path_count": 11,
   "skipped_over_max_mb": [],

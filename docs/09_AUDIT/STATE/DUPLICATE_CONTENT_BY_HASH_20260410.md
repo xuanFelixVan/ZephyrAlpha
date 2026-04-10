@@ -8,11 +8,11 @@ generated_by: scripts/governance/scan_duplicate_file_content.py
 # 内容重复扫描报告（SHA256）
 
 > **机器真源**：[`DUPLICATE_CONTENT_BY_HASH_20260410.json`](./DUPLICATE_CONTENT_BY_HASH_20260410.json)
-> **后缀白名单**：`md` ｜ **候选**：已跟踪 3183 ｜ **重复簇数**：5
+> **后缀白名单**：`md` ｜ **候选**：已跟踪 3187 + 未跟踪 0 ｜ **重复簇数**：5
 
 ## 说明
 
-- 仅 **Git 已跟踪**且后缀匹配的文件。
+- Git **已跟踪** + `--others --exclude-standard` 未跟踪候选（与 `--ext` 匹配）。
 - 每条路径在 JSON `members[].git_source` 中标注 **tracked** / **untracked**（便于优先处理「该入库却未 add」的重复）。
 - **合并/删稿**须按 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3**（C1）与 [文件删除与保留裁决 Playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/FILE_DELETION_OR_RETENTION_PLAYBOOK.md) 执行，勿仅凭本报告自动删除。
 

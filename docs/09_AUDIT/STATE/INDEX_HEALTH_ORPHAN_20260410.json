@@ -16,8 +16,8 @@
     "SECURITY.md",
     "docs/INDEX.md"
   ],
-  "candidate_md_count": 2481,
-  "link_source_md_count": 2512,
+  "candidate_md_count": 2483,
+  "link_source_md_count": 2514,
   "zero_inbound_count": 164,
   "zero_inbound_paths": [
     "docs/00_OVERVIEW/README.md",

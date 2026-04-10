@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.9
+version: 1.3.0
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -208,6 +208,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **严格**：`docs/06_ARCHIVE/**`（及同类只读归档前缀）**不参与**「删副本」合并，仅在报表中标注「与活动区是否同内容」。  
 - **宽松**：允许在台账明确的前提下，将误拷入 archive 的**完全重复**副件删除；**仍需**全仓链接检查。
 
+**Owner 书面裁定（2026-04-11）**：本仓库采用 **宽松** 策略——允许在 [文件删除与保留裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) 与 **§3.2** 流程下，删除 `docs/06_ARCHIVE/**` 内 **C1（字节级相同）** 的冗余副本并保留唯一 canonical；**活动区 ↔ 归档区**若需长期双份并存，须在 PR 或台账写明理由。下一复审：大版本或每季度与 rollup 同频。
+
 ### 3.2 C1 合并的标准操作顺序（推荐固定照做）
 
 1. **出报表**：脚本或手工维护列表，按 hash 分组列出路径（建议输出到 `docs/09_AUDIT/STATE/`，便于 diff）。  
@@ -244,8 +246,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### 3.6 §3 勾选（合并专项）
 
-- [ ] 书面选定 **归档区策略**（§3.1 严格 / 宽松）。  
-- [ ] C1：至少完成一轮 hash 报表 + 对**已裁决**簇执行 §3.2（可分多 PR）。  
+- [x] 书面选定 **归档区策略**（§3.1 严格 / 宽松）。（2026-04-11：**宽松**，见 §3.1 末段 Owner 裁定。）  
+- [x] C1：至少完成一轮 hash 报表 + 对**已裁决**簇执行 §3.2（可分多 PR）。（2026-04-11：`docs/06_ARCHIVE/temp_pending/` 内 `DUPLICATE_CONTENT_BY_HASH_20260410` 所报 **5 簇**已合并为 **5 个 canonical**，副本已删；台账见该目录 [`README.md`](../../../06_ARCHIVE/temp_pending/README.md)。复跑 [`DUPLICATE_CONTENT_BY_HASH_20260411.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md)：`duplicate_clusters=0`。）  
 - [ ] C2：basename 报表完成；对**高优先级**碰撞簇完成 canonical 或重命名消解。  
 - [ ] D：候选簇已登记；**已裁决**簇完成叙事归并 + 链接 + 台账。  
 - [ ] 合并相关 PR 均附：替换范围摘要、已跑验证脚本列表。
@@ -259,7 +261,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - [x] 导出全量 `git ls-files` 平面清单至 `docs/09_AUDIT/STATE/`（见上文文件名）。  
 - [x] 记录扩展名与目录聚合统计（见 §1）。  
 - [x] 生成 **深度 3～6** 目录聚合（JSON + MD）：`python scripts/governance/export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_20260410.*`（2026-04-10）。  
-- [ ] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](./README.md) 或本文件版本记录。
+- [x] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](./README.md) 或本文件版本记录。（2026-04-11：已写入办公室 README「基线复跑约定」；与本文件 §3.1 末段复审口径一致。）
 
 ### P1 — 重复与冗余（机器可做部分）
 
@@ -298,6 +300,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.0 | 2026-04-11 | §3.1 **宽松**归档裁定；§3.6 归档策略 + C1（temp_pending 五簇）；P0 基线复跑约定闭环 |
 | 1.2.9 | 2026-04-10 | §6 推荐阅读增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 1.2.8 | 2026-04-10 | 落地 **`scan_index_health.py`**；§1.1 表与结论、§6 推荐阅读增 `INDEX_HEALTH_ORPHAN_*` |
 | 1.2.7 | 2026-04-10 | §1.1 **结论** 增「索引健全性」边界：L1/verify 能做什么；搬迁后索引同步与可选孤儿报表互指 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4～§5** |

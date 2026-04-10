@@ -1,9 +1,9 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.6
+version: 1.1.7
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 项目办公室（00_MANAGEMENT）总入口与外链索引
@@ -145,12 +145,19 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
   （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**）  
 - **全部治理命令一张表**：[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)
 
+### 基线复跑约定（与 REPO_WIDE P0、§3.1 复审口径一致）
+
+- **最低频率**：每个**大版本**或至少**每季度**复跑：`export_repo_directory_rollup.py`（建议带 `--date YYYYMMDD`）、`REPO_GIT_TRACKED_FILES_*.txt`（§1 内 PowerShell/Python 片段）。  
+- **大治理批次收口**：同一窗口内建议复跑 `scan_duplicate_file_content.py --ext md`、`scan_index_health.py`、`sentinel_l1_governance_scan.py`；产出更新至 `docs/09_AUDIT/STATE/` 后 **commit**，便于 JSON/报表 diff。  
+- **归档区 C1 合并**：须符合 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3**；当前 Owner 裁定为 **宽松**（见该文 §3.1 末段）。
+
 ---
 
 ## 版本记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.7 | 2026-04-11 | 新增「基线复跑约定」；互指 REPO_WIDE P0 / §3.1 **宽松**归档裁定 |
 | 1.1.6 | 2026-04-10 | 增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md)；工具总表口径补索引健全性；扫描优化项补 §5.3/合规外规 |
 | 1.1.5 | 2026-04-10 | 常用脚本增 `scan_index_health.py`（索引健全性 / 零入链） |
 | 1.1.4 | 2026-04-10 | 新增 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；文首与治理流程第 7 条；办公室两表互指；联动 REPO_WIDE §7、蓝图任务清单 |

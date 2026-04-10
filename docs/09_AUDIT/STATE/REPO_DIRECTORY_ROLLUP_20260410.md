@@ -6,7 +6,7 @@ generated_date: '20260410'
 
 # 仓库目录深度聚合（路径条数）
 
-> 由 `scripts/governance/export_repo_directory_rollup.py` 生成；**仅已跟踪**，共 **4384** 条路径。
+> 由 `scripts/governance/export_repo_directory_rollup.py` 生成；**已跟踪 4400** + **未跟踪（未 ignore）0** 条路径。
 > JSON 真源：[`REPO_DIRECTORY_ROLLUP_20260410.json`](./REPO_DIRECTORY_ROLLUP_20260410.json)
 
 ## 使用说明
@@ -21,9 +21,9 @@ generated_date: '20260410'
 | 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/09_AUDIT/REPORTS` | 498 |
-| `docs/09_AUDIT/STATE` | 408 |
+| `docs/09_AUDIT/STATE` | 410 |
 | `docs/05_IMPLEMENTATION/04_OPERATIONS` | 406 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 266 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 269 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive` | 218 |
 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | 97 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` | 83 |
@@ -83,10 +83,10 @@ generated_date: '20260410'
 | `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408` | 50 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS` | 35 |
 | `docs/09_AUDIT/STATE/overnight_runs` | 28 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 19 |
 | `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base` | 18 |
 | `docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints` | 18 |
 | `docs/06_ARCHIVE/architecture_v4/module_designs` | 18 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 16 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES` | 13 |
 | `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters` | 11 |
 | `docs/06_ARCHIVE/20260407_old_layer_audit_reports/layer10_reports` | 10 |
