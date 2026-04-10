@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | （例：`2026-04-11T22:00:00Z`） |
-| **上轮 commit** | （例：`dd729268` 或「无」） |
-| **next_queue_id** | **B-01** |
-| **本轮建议前缀**（§7） | 完成 B-01 后，自表顶 `docs/09_AUDIT/REPORTS` 起选批（或改为你方优先级） |
-| **notes** | 落地接力文件后首轮：勾选 B-01，再进入 B-02 单前缀批次 |
+| **UTC 时间** | `2026-04-11T16:30:00Z` |
+| **上轮 commit** | `待填` |
+| **next_queue_id** | **B-02** |
+| **本轮建议前缀**（§7） | 自顶前缀 `docs/09_AUDIT/REPORTS`（498 条）按 REPO_WIDE **§7.2** 小批执行；或按 Owner 优先级改选下一前缀 |
+| **notes** | **B-01 已完成**：已读本仓 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 与 [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json)（`total_tracked=4459`，深度 3 Top 与 §4 前缀表一致）。下一执行项：**B-02** 单前缀批次。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
@@ -74,7 +74,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 机器/AI **可**做：单前缀一批内的摆放核对、导航补链、断链修、rollup 复跑、小步 commit。  
 **勿**在无人裁决时批量删 `06_ARCHIVE` 或合并 D 类蓝图正文。
 
-- [ ] **B-01** 已读 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 与 [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json)  
+- [x] **B-01** 已读 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 与 [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json)（2026-04-11）  
 - [ ] **B-02** 对下表 **自顶向下**每次选 **1 个前缀**（或拆子目录），按 REPO_WIDE **§7.2** 模板执行一批后打勾并 commit  
 - [ ] **B-03** 批次间 `python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD` 并提交（作证据）  
 - [ ] **B-04** REPO_WIDE **§7.3** 总勾或登记**书面例外**（须 Owner）
