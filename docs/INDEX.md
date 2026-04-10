@@ -211,6 +211,8 @@ docs/
 | [审计报告区门面（REPORTS）](./09_AUDIT/REPORTS/README.md) | 大量审计/进度报告的导航入口 | ⭐⭐⭐⭐ |
 | [REPORTS 分组索引](./09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 报告按主题分组可点（推荐浏览路径） | ⭐⭐⭐⭐ |
 | [REPORTS 索引健全性（零入链 · 机器报告）](./09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md) | `docs/09_AUDIT/REPORTS` 前缀；`scan_index_health.py` 产出 | ⭐⭐⭐ |
+| [STATE 目录索引](./09_AUDIT/STATE/INDEX.md) | `docs/09_AUDIT/STATE` 导航、机器产出表、严格孤儿分组入口 | ⭐⭐⭐⭐ |
+| [STATE 索引健全性（零入链 · 机器报告）](./09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md) | `docs/09_AUDIT/STATE` 前缀（日期 **20260413**，与 REPORTS 的 `20260412` 分文件） | ⭐⭐⭐ |
 
 ---
 
