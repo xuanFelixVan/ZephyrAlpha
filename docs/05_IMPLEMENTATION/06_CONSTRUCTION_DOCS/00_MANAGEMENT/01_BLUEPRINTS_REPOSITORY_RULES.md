@@ -1,0 +1,94 @@
+---
+module_id: 01_BLUEPRINTS_REPOSITORY_RULES_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-10
+last_updated: '2026-04-10'
+owner: 文档负责人（可指定）
+responsibility:
+  - 建设文档中「正式图纸柜」01_BLUEPRINTS 的放置与导航规则（真源）
+standard_type: 文件治理规则
+applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ 下的蓝图柜与相邻管理区
+---
+
+# 01_BLUEPRINTS 图纸柜 — 文件治理规则
+
+> **一句话**：正式图纸柜的根目录里，只放「正式蓝图正文」和「本柜文件目录」；进度、检查单、分析报告进子文件夹或项目办公室；档案室大门的说明放在 `06_CONSTRUCTION_DOCS` 一层，且须与真实文件夹一致。  
+> **冲突处理**：若与本规则不一致的旧习惯或旧链接，以本文件为真源，并安排一次性整改。
+
+---
+
+## 1. 适用范围与路径真源
+
+| 概念 | 权威路径（canonical） |
+|------|------------------------|
+| 建设文档根（档案室） | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/` |
+| 正式图纸柜 | `…/01_BLUEPRINTS/` |
+| 项目办公室（规章、任务清单、模板等） | `…/00_MANAGEMENT/` |
+| 历史平行路径 | `docs/06_CONSTRUCTION_DOCS/` 仅允许保留**已声明的副本或迁出残留**；新建与默认修改一律在 canonical 路径进行。全库「谁为准」须在 [全库蓝图总清单](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)（或后续指定的唯一总清单）中写明。 |
+
+---
+
+## 2. 文档分四类（先分类，再决定放哪）
+
+| 类型 | 含义 | 典型例子 |
+|------|------|----------|
+| **A. 正式蓝图** | 模块/系统的设计说明，可作为终稿依据 | `*_BLUEPRINT.md` |
+| **B. 本柜目录登记** | 列出本柜内有哪些文件，机器生成、便于对账 | `01_BLUEPRINTS/INDEX.md` |
+| **C. 过程记录** | 进度、完成报告、覆盖率/完备性分析、批次计划 | `*_202604*.md`、`*_COMPLETION_REPORT*.md`、`*_ANALYSIS_*.md`（不以正式蓝图命名的） |
+| **D. 全室导航** | 描述档案室有哪些子文件夹、各自职责 | `06_CONSTRUCTION_DOCS/INDEX.md`、`README.md` |
+
+---
+
+## 3. `01_BLUEPRINTS/` 根目录 — 允许与禁止
+
+### 3.1 允许放在根目录的文件
+
+1. **正式蓝图**：文件名须以 **`BLUEPRINT.md`** 结尾（即 `*BLUEPRINT.md`）。  
+2. **本柜目录**：唯一允许的例外文件名 **`INDEX.md`**，由 `scripts/generate_01_blueprints_index.py` 生成；**性质是目录登记，不算蓝图正文**，但**当前约定仍放在本柜根目录**（与脚本输出一致，路径简单）。
+
+### 3.2 禁止放在根目录的内容
+
+1. **过程记录类**（类型 C）：凡带固定批次/日期的报告、进度表、完备性分析、检查用清单稿等，**不得**长期留在 `01_BLUEPRINTS` 根目录。  
+2. **任何**不满足「`INDEX.md` 或 `*BLUEPRINT.md`」命名的 Markdown，默认不得放在根目录（除非经书面修订本规则特批）。
+
+### 3.3 过程记录应放哪里
+
+- **首选**：`01_BLUEPRINTS/REPORTS/`（专收本柜相关过程稿、报告、分析）。  
+- **亦可**：与全项目相关的任务勾选、跨柜清单放在 `00_MANAGEMENT/`（例如 [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)）。  
+- **执行时防漏、防幻觉**：整理本柜时遵守 [图纸柜执行协议](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md)。
+
+---
+
+## 4. 「门口指示牌」分层规则
+
+| 层级 | 文件 | 规则 |
+|------|------|------|
+| **档案室大门** | `06_CONSTRUCTION_DOCS/INDEX.md`、`README.md` | 必须反映**真实子目录**名称与职责；与子文件夹不一致时，**优先改正文字**（除非全团队决定改名文件夹并批量改链接）。 |
+| **图纸柜内目录** | `01_BLUEPRINTS/INDEX.md` | 仅列出本柜应用规则后的文件；生成脚本应**排除** `REPORTS/` 内文件若未来索引策略变化，须同步改脚本并更新本规则。当前脚本只扫描根目录 `*.md`。 |
+
+**说明**：不要求把 `01_BLUEPRINTS/INDEX.md` 挪到 `00_MANAGEMENT`；若日后为追求「根目录仅有蓝图正文」而外移，须：**更新本规则 + 修改生成脚本 + 全库替换链接** 一次完成。
+
+---
+
+## 5. 与「全库蓝图」的关系
+
+- `01_BLUEPRINTS` **只服务**「建设文档这条线」下的集中蓝图柜；**全库**其他目录（如 `01_FRAMEWORK`、`11_STRATEGIC_DECISION` 等）仍可有蓝图文件。  
+- **唯一总清单**、每条能力对应的 **唯一正式链接**，由全库级文档约定（见任务清单 [任务 1](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md#任务-1全楼地图唯一总清单)）；**本规则不替代全库总清单**，只约束**本图纸柜**内的摆放。
+
+---
+
+## 6. 维护与修订
+
+- 新增/重命名正式蓝图后：运行 `python scripts/generate_01_blueprints_index.py`，更新 `01_BLUEPRINTS/INDEX.md`。  
+- 修订本规则：递增 `version`，更新 `last_updated`，并在任务清单或卫生计划中留一句变更说明。  
+- AI 或协作者整理本柜时：**先打开本文件**，再动文件位置。  
+- **终稿门禁**（什么叫终稿、谁认可）：见 [蓝图终稿定义与认可](./BLUEPRINT_FINAL_SIGNOFF.md)。
+
+---
+
+## 7. 版本记录
+
+| 版本 | 日期 | 说明 |
+|------|------|------|
+| 1.0.0 | 2026-04-10 | 首版：根目录仅 `*BLUEPRINT.md` + `INDEX.md`；过程记录进 `REPORTS/` 或 `00_MANAGEMENT`；大门索引在 `06_CONSTRUCTION_DOCS` 一层；维护节链至 [蓝图终稿定义与认可](./BLUEPRINT_FINAL_SIGNOFF.md)。 |

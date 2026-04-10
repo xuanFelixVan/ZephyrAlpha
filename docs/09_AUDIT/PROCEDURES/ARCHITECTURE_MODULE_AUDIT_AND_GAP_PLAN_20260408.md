@@ -18,7 +18,7 @@ module_id: ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408
 | **权威栈（冲突时优先级从高到低）** | ① `docs/01_FRAMEWORK/ARCHITECTURE.md` ② `docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md` ③ `docs/01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md`（若存在且与①②一致使用）④ 单域蓝图（`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/`） |
 | **本轮不做什么** | 全库目录扁平化；大规模删文；与「第一条垂直切片」无关的蓝图扩写 |
 | **建议时间盒** | 草案 30min；对照审 2～4h（可分多次）；补缺按 P0 批次、每批 ≤3h |
-| **施工门禁** | Owner 决策：**先完成** [`CONSTRUCTION_GATE_CRITERIA_20260408.md`](../STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md) §3 总清单，**再**启动业务实现与按图施工（OpenClaw EC 仅为其中一块）。 |
+| **施工门禁** | Owner 决策：**先完成** [`CONSTRUCTION_GATE_CRITERIA_20260408.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §3 总清单，**再**启动业务实现与按图施工（OpenClaw EC 仅为其中一块）。 |
 
 ---
 

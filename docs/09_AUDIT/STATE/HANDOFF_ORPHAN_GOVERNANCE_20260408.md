@@ -1,4 +1,4 @@
----
+﻿---
 module_id: HANDOFF_ORPHAN_GOVERNANCE_20260408
 version: 2.0.0
 status: Active
@@ -12,7 +12,7 @@ related_documents:
   - ../STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md
   - ../STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md
   - ../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md
-  - ../PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md
+  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md
   - ../PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md
   - ../PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md
   - ../PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md
@@ -23,7 +23,7 @@ related_documents:
   - ../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md
   - ./STRICT_ORPHAN_FILES_REPORT_20260408.md
   - ./STRICT_ORPHAN_FILES_LIST_20260408.txt
-  - ./CONSTRUCTION_GATE_CRITERIA_20260408.md
+  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
   - ./ARCH_MODULE_GAP_REGISTER_20260408.md
   - ./TRAE_BLUEPRINT_TASK_LEDGER_20260408.md
   - ./TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md
@@ -80,7 +80,7 @@ responsibility:
 | 用途 | 路径 |
 |------|------|
 | Playbook（含 §10 执行记录） | `docs/09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md` |
-| 蓝图阶段「彻底清洁」总案 | `docs/09_AUDIT/PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md` |
+| 蓝图阶段「彻底清洁」总案 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md` |
 | overlap / orphan 并行节奏 | `docs/06_ARCHIVE/OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md` |
 | 严格孤儿**基线**清单 | `docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt` |
 | 严格孤儿**重算**清单 | `docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_REGEN_<date>.txt` |
@@ -95,7 +95,7 @@ responsibility:
 | 重复文档处理标准（与 Playbook 配套） | `docs/09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md` |
 | 文档补救任务指令 | `docs/09_AUDIT/PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` |
 | 架构模块审计与 gap 计划 | `docs/09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md` |
-| 施工门禁（先治理、后大规模编码） | `docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md` |
+| 施工门禁（先治理、后大规模编码） | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md` |
 | Trae 蓝图任务台账 | `docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` |
 | 夜间批跑（可选） | `scripts/overnight_audit_runner.py` |
 
@@ -327,7 +327,7 @@ python scripts/sentinel_l1_governance_scan.py
 
 ### 13.6 写施工文档（第 2 阶段）之前还要做什么？蓝图阶段最终交付长什么样？
 
-> **真源**：`docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md` **§0**；本节为其摘要 + 与本交接其他节的交叉引用。
+> **真源**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md` **§0**；本节为其摘要 + 与本交接其他节的交叉引用。
 
 #### 13.6.1 门禁口径：谁挡在第 2 阶段前面？
 
@@ -494,7 +494,7 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 | **数量与趋势** | 「严格孤儿还剩多少篇」等数字，**只引用** `python scripts/strict_orphan_inbound_scan.py` 生成的 `STRICT_ORPHAN_FILES_LIST_REGEN_*.txt` 行数或报告，**禁止**手估。 |
 | **链接有效性** | 「全库无断链」须以 **`python scripts/sentinel_l1_governance_scan.py` 输出**为准（Invalid links = 0）。 |
 | **重复与真源** | 多篇疑似重复时，**先打开** `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md` 与 `DUPLICATE_DOCUMENT_HANDLING_STANDARD.md`；**禁止**未更新台账就删除「看起来像重复」的文件。 |
-| **门禁状态** | 「已达蓝图终稿」须逐条对照 `docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md` **§0.1 / §0.2**；**禁止**用笼统「差不多了」代替勾选。 |
+| **门禁状态** | 「已达蓝图终稿」须逐条对照 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md` **§0.1 / §0.2**；**禁止**用笼统「差不多了」代替勾选。 |
 | **进度真源** | Trae 侧任务批次与完成摘要，须回写 **`docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`**（与台账 §6 约定一致），避免口头进度漂移。 |
 | **不向 Owner 中途追问时的默认策略** | 遇歧义：**选保守**（少删、多挂链、多登记 gap）；**不猜** Owner 意图；**把假设写进** `ARCH_MODULE_GAP_REGISTER_20260408.md` 或台账「待 Owner 裁决」列。 |
 

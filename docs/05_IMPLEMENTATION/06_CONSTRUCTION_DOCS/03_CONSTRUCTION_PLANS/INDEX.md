@@ -12,7 +12,7 @@ responsibility:
   - 施工类文档（流程、计划、方案）目录索引
 related_documents:
   - ../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md
-  - ../../../09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md
+  - ../00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
 ---
 
 # 施工文档目录（第 2 阶段）

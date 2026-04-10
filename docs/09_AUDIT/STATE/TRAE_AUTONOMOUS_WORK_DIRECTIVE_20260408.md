@@ -1,4 +1,4 @@
----
+﻿---
 module_id: TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408
 version: 1.2.2
 status: Active
@@ -16,7 +16,7 @@ related_documents:
   - ./TRAE_LINE_TASK_BACKLOG_20260409.md
   - ./TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md
   - ./MODULE_ID_MISSING_FILES_LIST_20260409.txt
-  - ./CONSTRUCTION_GATE_CRITERIA_20260408.md
+  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
 responsibility:
   - 约束 Trae：不中断询问 Owner；自解问题；证据驱动
 ---
@@ -43,7 +43,7 @@ responsibility:
 
 1. `docs/09_AUDIT/STATE/HANDOFF_ORPHAN_GOVERNANCE_20260408.md` — **整册剧本**（尤其 **§0、§15～§18**）。  
 2. `docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` — **本批任务与目录边界**。  
-3. `docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md` — **§0.1 / §0.2**（蓝图终稿五条与范围）。  
+3. `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md` — **§0.1 / §0.2**（蓝图终稿五条与范围）。  
 4. `docs/03_TRADING_TACTICS/API_Contract.md` — 蓝图接口条款须能指到此处（或文内声明的等价契约）。
 
 **禁止**在未读完 **HANDOFF §16（防幻觉）** 前开始改文件。
@@ -179,7 +179,7 @@ Use **repository-relative paths** below. Repo root example: `d:\ZephyrAlpha`.
 4) docs/09_AUDIT/STATE/TRAE_LINE_TASK_INDEX_20260409.md — optional: explains split Part A/B backlogs vs master.
 5) docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_20260409.md — split Part A (regenerate from script; no global IDs).
 6) docs/09_AUDIT/STATE/TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md — split Part B.
-7) docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md — §0.1 and §0.2.
+7) docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md — §0.1 and §0.2.
 8) docs/03_TRADING_TACTICS/API_Contract.md — contract anchor for blueprint interface clauses.
 
 [HARD RULES]

@@ -8,7 +8,7 @@ owner: 文档维护者
 version: 1.0.1
 module_id: DOC_README
 created_date: 2026-03-28
-last_updated: 2026-04-08
+last_updated: 2026-04-10
 ---
 # 清风量化交易系统 v5.1
 
@@ -51,6 +51,7 @@ python -m src.main
 | [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | API 契约 |
 | [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 示例策略规格 |
 | [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | FAQ |
+| [项目办公室 AI 交接说明](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md) | 蓝图/建设文档治理：给 AI 或新协作者快速上手 |
 
 ---
 

@@ -13,7 +13,7 @@ responsibility:
   - 规定 docs 一级/关键二级目录的职责边界
   - 规定第 2 阶段（施工流程/计划/方案）默认落盘位置与命名建议
 related_documents:
-  - ../STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md
+  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
   - ../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md
   - ./FILE_NAMING_STANDARD.md
 ---

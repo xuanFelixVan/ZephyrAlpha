@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """生成单一主执行清单：TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md（全局编号 T0001+）。"""
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ def main() -> None:
             "related_documents:",
             "  - ./HANDOFF_ORPHAN_GOVERNANCE_20260408.md",
             "  - ./TRAE_BLUEPRINT_TASK_LEDGER_20260408.md",
-            "  - ./CONSTRUCTION_GATE_CRITERIA_20260408.md",
+            "  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md",
             "  - ../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md",
             "  - ../STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md",
             "  - ../STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md",
@@ -46,7 +46,7 @@ def main() -> None:
             "  - ../PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md",
             "  - ../PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md",
             "  - ../PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md",
-            "  - ../PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md",
+            "  - ../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md",
             "  - ../../03_TRADING_TACTICS/API_Contract.md",
             "  - ./STRICT_ORPHAN_FILES_LIST_REGEN_20260408.txt",
             "  - ./MODULE_ID_MISSING_FILES_LIST_20260409.txt",
@@ -85,14 +85,14 @@ def main() -> None:
         "（框架）通读并之后遵守 `docs/09_AUDIT/STATE/TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md` 全文：§3 禁止、§4 工作循环、§5 DoD、§6 遇阻、§7 时长、§8 收工",
         "（框架）通读 `docs/09_AUDIT/STATE/HANDOFF_ORPHAN_GOVERNANCE_20260408.md` 全文；至少精读 §0 目录、§15 Git、§16 防幻觉、§17 长时作业、§18 重复互查",
         "（框架）打开 `docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`；**仅**能修改台账指派给自己的 `01_BLUEPRINTS` 文件；未指派的不打开不保存",
-        "（框架）打开 `docs/09_AUDIT/STATE/CONSTRUCTION_GATE_CRITERIA_20260408.md`：确认 §0 三阶段、§0.1 蓝图终稿五条、§0.3 与 §3 与当前窗口目标一致",
+        "（框架）打开 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md`：确认 §0 三阶段、§0.1 蓝图终稿五条、§0.3 与 §3 与当前窗口目标一致",
         "（框架）打开 `docs/03_TRADING_TACTICS/API_Contract.md`；蓝图「接口与契约」段须可指到此真源",
         "（框架）打开 `docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md`（全部 ADR；双 YAML、module_id、audit_state、重复正文等）",
         "（框架）打开 `docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`",
         "（框架）打开 `docs/09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md`",
         "（框架）打开 `docs/09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md`（含 §10 执行记录义务）",
         "（框架）打开 `docs/09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md` 与 `docs/09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md`（矛盾时加 G3 草案，不擅自改总纲）",
-        "（框架）打开 `docs/09_AUDIT/PROCEDURES/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md` 并对照当前阶段",
+        "（框架）打开 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md` 并对照当前阶段",
         "（框架）打开 `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md`；动重复前必须先更新 disposition，禁止无记录删除",
         "（硬规则）执行全程禁止向 Owner/用户提问、禁止等待确认（工具完全不可用且 §6 用尽除外）",
         "（硬规则）禁止编造 `docs/` 下路径；任何「文件存在」须 Glob/Read 验证",

@@ -1,14 +1,14 @@
 ---
 module_id: CONSTRUCTION_GATE_CRITERIA_20260408
-version: 1.2.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-08'
+last_updated: '2026-04-10'
 owner: 仓库 Owner
-standard_type: 审计台账
+standard_type: 施工治理真源（项目办公室 CANON）
 applicable_scope: 文档治理完成前禁止「按图施工」的验收门禁
 compliance_level: 与裁决书、执行手册一致
-parent_document: ../PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md
+parent_document: ../../../../09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md
 responsibility:
   - 汇总「先治理、后施工」的可验收条件
   - 与 OpenClaw EC、全系统审计批次、架构/模块方案对齐
@@ -30,7 +30,7 @@ responsibility:
 | 阶段 | 名称 | 做什么 | 结束时应达到的感觉 |
 |------|------|--------|-------------------|
 | **第 1 阶段** | **蓝图** | 系统分层、模块职责、能力 ↔ 文档挂载、接口边界可查（`ARCHITECTURE`、`MODULE_RESPONSIBILITY_BOUNDARIES`、各域 `*_BLUEPRINT.md` 等） | 「盖哪栋楼、每层干什么、找哪份文档」已说清，**无大块空白** |
-| **第 2 阶段** | **施工文档**（施工图纸 / 施工流程 / 施工计划 / 施工方案） | 按模块或里程碑拆解：**先后顺序、每步交付物、验收、风险、与 API/数据级的细化说明**；**默认目录**见 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§4**，索引入口 [`03_CONSTRUCTION_PLANS/INDEX.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS/INDEX.md) | 「工人进场前，工序单和细化说明有了」 |
+| **第 2 阶段** | **施工文档**（施工图纸 / 施工流程 / 施工计划 / 施工方案） | 按模块或里程碑拆解：**先后顺序、每步交付物、验收、风险、与 API/数据级的细化说明**；**默认目录**见 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§4**，索引入口 [`03_CONSTRUCTION_PLANS/INDEX.md`](../../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS/INDEX.md) | 「工人进场前，工序单和细化说明有了」 |
 | **第 3 阶段** | **施工（实现）** | 按第 2 阶段文档 **编写与修改业务代码**、测试、部署或自用跑通 | 「真的在盖」 |
 
 ### 0.1 「蓝图终稿」标准（进入第 2 阶段的条件）
@@ -51,7 +51,7 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 
 **建议把握两点**（避免「把未来每一种文件名都预写死」这种做不到的事）：
 
-1. **定「哪类进哪棵树」**：一级目录职责、实施子目录、`src` 与 `docs` 分工 —— 以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为 **现行真源**；命名与路径格式另见 [`PATH_STANDARD.md`](../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md)、[`FILE_NAMING_STANDARD.md`](../STANDARDS/FILE_NAMING_STANDARD.md)。  
+1. **定「哪类进哪棵树」**：一级目录职责、实施子目录、`src` 与 `docs` 分工 —— 以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为 **现行真源**；命名与路径格式另见 [`PATH_STANDARD.md`](../../../../05_IMPLEMENTATION/02_DEVELOPMENT/PATH_STANDARD.md)、[`FILE_NAMING_STANDARD.md`](../../../../09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md)。  
 2. **新类型走变更**：以后出现新文档类型，**先**在 `LAYOUT` 标准 §6 或 `TECH_DECISION_RECORDS` **加一条**，再建新文件夹 —— 这样算「提前定规矩」，而不是开工后乱长。
 
 **蓝图阶段完成项（与放置相关）**：
@@ -95,17 +95,17 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 | 你的说法 | 仓库内对应真源 / 动作 |
 |----------|------------------------|
 | **元数据风险** | OpenClaw 执行手册 **EC-1～EC-6**；`sentinel_l1_governance_scan.py`；双 YAML（`merge_double_yaml_frontmatter.py`）；首道 FM `module_id`（`dedupe_module_id_frontmatter.py`） |
-| **架构 / 模块审核** | [`ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`](../PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md) + [`ARCH_MODULE_GAP_REGISTER_20260408.md`](./ARCH_MODULE_GAP_REGISTER_20260408.md)；**扩展**：方案第二节未勾选的 **`01_BLUEPRINTS` 全量对账**、`docs/module_designs/` 与切片绑定后的一轮对照 |
-| **审计（全库）** | [`FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md`](../PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) 阶段 **A～H**（及方案所载阶段 I 若适用）+ 建议进度文件 [`§四` 进度 JSON 约定](../PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) |
-| **技术审批** | [`TECH_DECISION_RECORDS.md`](../../01_FRAMEWORK/TECH_DECISION_RECORDS.md)；施工前对 **`API_Contract`** 及跨模块接口的变更做 **TDR/ADR 登记**（最小：一条记录链到契约路径） |
+| **架构 / 模块审核** | [`ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md`](../../../../09_AUDIT/PROCEDURES/ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md) + [`ARCH_MODULE_GAP_REGISTER_20260408.md`](../../../../09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md)；**扩展**：方案第二节未勾选的 **`01_BLUEPRINTS` 全量对账**、`docs/module_designs/` 与切片绑定后的一轮对照 |
+| **审计（全库）** | [`FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md`](../../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) 阶段 **A～H**（及方案所载阶段 I 若适用）+ 建议进度文件 [`§四` 进度 JSON 约定](../../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) |
+| **技术审批** | [`TECH_DECISION_RECORDS.md`](../../../../01_FRAMEWORK/TECH_DECISION_RECORDS.md)；施工前对 **`API_Contract`** 及跨模块接口的变更做 **TDR/ADR 登记**（最小：一条记录链到契约路径） |
 | **架构瘦身** | 裁决书 **ADR-OC-005**（重复/多版本正文：canonical + 归档 + 内链）；`06_ARCHIVE` 根散落归类、**`09_AUDIT/REPORTS/` 版本链收敛**（与 Backlog P1-9 一致） |
-| **文件治理** | OpenClaw **P1-C 余项**（见 [`P1C_DEFERRED_20260408.md`](./P1C_DEFERRED_20260408.md)）、`review_materials_package` 路径与豁免（P1-8）、双目录 INDEX 类问题 |
+| **文件治理** | OpenClaw **P1-C 余项**（见 [`P1C_DEFERRED_20260408.md`](../../../../09_AUDIT/STATE/P1C_DEFERRED_20260408.md)）、`review_materials_package` 路径与豁免（P1-8）、双目录 INDEX 类问题 |
 
 ---
 
 ## 2. 基线：OpenClaw 正式闭环（若已满足则只存档、不重复劳动）
 
-执行收口报告：[`REMEDIATION_EXECUTION_CLOSURE_20260408.md`](../REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md) 声称 **EC-1～EC-7** 已满足。  
+执行收口报告：[`REMEDIATION_EXECUTION_CLOSURE_20260408.md`](../../../../09_AUDIT/REPORTS/REMEDIATION_EXECUTION_CLOSURE_20260408.md) 声称 **EC-1～EC-7** 已满足。  
 **放行施工前**请在当前分支 **复跑** 并保存一次：
 
 ```text
@@ -122,20 +122,20 @@ python scripts/merge_double_yaml_frontmatter.py --list
 ### A. 机械与链接门禁（P0）
 
 - [ ] **A1** 当前仓库 L1：**Markdown 内链判定无效 = 0**（报告已存档）。  
-- [ ] **A2** 双 YAML：**`merge_double_yaml_frontmatter.py --list` → 0**，或仅剩 [`DOUBLE_YAML_EXCEPTIONS.md`](./DOUBLE_YAML_EXCEPTIONS.md) 登记豁免。  
+- [ ] **A2** 双 YAML：**`merge_double_yaml_frontmatter.py --list` → 0**，或仅剩 [`DOUBLE_YAML_EXCEPTIONS.md`](../../../../09_AUDIT/STATE/DOUBLE_YAML_EXCEPTIONS.md) 登记豁免。  
 - [ ] **A3** 首道 FM **重复 `module_id` 组 = 0**（与 L1 / `dedupe_module_id_frontmatter.py` 口径一致）。  
 - [ ] **A4** `audit_state` 仅 **`04_OPERATIONS/audit_state`** 为权威工作区；`07_.../audit_state` 仅为跳转说明（ADR-OC-002）。
 
 ### B. 架构 / 模块（语义 + 挂载）
 
-- [ ] **B1** [`ARCH_MODULE_GAP_REGISTER_20260408.md`](./ARCH_MODULE_GAP_REGISTER_20260408.md) 内登记项均为 **已修正** 或已 **defer** 并注明理由。  
-- [ ] **B2** **Layer 11**：[`LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`](./LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) 与 `ARCHITECTURE.md` Layer 11 表一致且无 TBD（当前 v1.2 为基线，若改架构需同步改表）。  
+- [ ] **B1** [`ARCH_MODULE_GAP_REGISTER_20260408.md`](../../../../09_AUDIT/STATE/ARCH_MODULE_GAP_REGISTER_20260408.md) 内登记项均为 **已修正** 或已 **defer** 并注明理由。
+- [ ] **B2** **Layer 11**：[`LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md`](../../../../09_AUDIT/STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md) 与 `ARCHITECTURE.md` Layer 11 表一致且无 TBD（当前 v1.2 为基线，若改架构需同步改表）。
 - [ ] **B3** **`01_BLUEPRINTS` 全量对账**：`generate_01_blueprints_index.py` 产物与目录一致，且与 `BLUEPRINT_ARCHITECTURE_MAPPING.md` **无未解释的孤儿挂载**（脚本或抽检报告路径写入 `audit_state` 或 `STATE`）。  
 - [ ] **B4** **`docs/module_designs/`**：已与选定垂直切片绑定并完成 **阶段 1 对照审**（仅目录勾选后执行；未绑定则本项记「N/A」须 Owner 签字于 §4）。
 
 ### C. 全系统文档审计（分批深度）
 
-按 [`FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md`](../PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) **阶段 A～H** 执行；每批至少保留：**进度记录 + 本批结论摘要**（可放在 `audit_state` 或 `09_AUDIT/STATE`）。
+按 [`FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md`](../../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) **阶段 A～H** 执行；每批至少保留：**进度记录 + 本批结论摘要**（可放在 `audit_state` 或 `09_AUDIT/STATE`）。
 
 - [ ] **C1** 阶段 **A**（入口与架构真源 A1–A4）  
 - [ ] **C2** 阶段 **B**（实施与施工 B1–B6）  
@@ -158,7 +158,7 @@ python scripts/merge_double_yaml_frontmatter.py --list
 
 ### E. 技术审批（施工前最小集）
 
-- [ ] **E1** 拟施工涉及的 **公共接口 / 数据契约** 已在 [`API_Contract.md`](../../03_TRADING_TACTICS/API_Contract.md) 或子契约中有条目，且 [`TECH_DECISION_RECORDS.md`](../../01_FRAMEWORK/TECH_DECISION_RECORDS.md) 中有对应 **TDR/ADR** 或明确「沿用既有决策」的引用。  
+- [ ] **E1** 拟施工涉及的 **公共接口 / 数据契约** 已在 [`API_Contract.md`](../../../../03_TRADING_TACTICS/API_Contract.md) 或子契约中有条目，且 [`TECH_DECISION_RECORDS.md`](../../../../01_FRAMEWORK/TECH_DECISION_RECORDS.md) 中有对应 **TDR/ADR** 或明确「沿用既有决策」的引用。  
 - [ ] **E2** **pre-commit**：按 ADR-OC-004，已安排 **修钩子或收窄规则** 的跟踪项（不要求整改期内一次解决，但施工前须有结论或豁免）。
 
 ### F. P2 与「全部完成」的边界
@@ -203,3 +203,4 @@ L1 报告：docs/09_AUDIT/STATE/SENTINEL_L1_PRE_CONSTRUCTION_YYYYMMDD.md
 | 1.0.0 | 2026-04-08 | 初始：Owner「先治理后施工」决策与总清单 |
 | 1.1.0 | 2026-04-08 | 新增 §0：蓝图 → 施工文档 → 代码施工三阶段；蓝图终稿与全库范围；两档放行声明 |
 | 1.2.0 | 2026-04-08 | §0.1a 蓝图阶段目录标准；链到 `DOCUMENT_REPOSITORY_LAYOUT_STANDARD`；第 2 阶段默认 `03_CONSTRUCTION_PLANS/` |
+| 1.3.0 | 2026-04-10 | **真源迁至** `00_MANAGEMENT/CANON/`；文内相对链接已重算；`standard_type` 标为施工治理真源 |
