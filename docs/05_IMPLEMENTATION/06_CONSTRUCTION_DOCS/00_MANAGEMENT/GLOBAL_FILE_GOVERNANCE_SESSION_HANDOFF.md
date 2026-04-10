@@ -1,9 +1,9 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.8
+version: 1.0.9
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-12'
+last_updated: '2026-04-10'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
@@ -26,7 +26,8 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 |--------------|------------|
 | 文档地图 + 放置规则 | [DOCUMENT_REPOSITORY_LAYOUT_STANDARD](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)、[DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、图纸柜 [01_BLUEPRINTS_REPOSITORY_RULES](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
 | 基线清单与目录热力 | `git ls-files`、平面清单、`export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_*` |
-| 链接健康门禁 | `sentinel_l1_governance_scan.py`（Invalid links → 0 为团队习惯；**2026-04-11 快照**：见 [`SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md) **判定无效 0**） |
+| 链接健康门禁 | `sentinel_l1_governance_scan.py`（Invalid links → 0 为团队习惯；见 [`SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md) **判定无效 0**） |
+| 首道 `module_id`（台账口径） | 同一份 L1 报告：**首道无 `module_id` → 0**、**跨文件重复 → 0**；散稿批量补全见 `backfill_missing_module_id.py`（[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)） |
 | 蓝图/总清单机器校验 | `verify_01_*`、`verify_scattered_*`、`verify_manifest_paths_strict.py` |
 | 同内容重复（文本类） | `scan_duplicate_file_content.py` + REPO_WIDE **§3**（C1/C2/D）；蓝图 D **低置信**合稿台账 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 同名不同路径（basename · **非导航**） | `scan_basename_collisions.py` → [`BASENAME_COLLISIONS_*`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md)；**非导航类当前为 0**（2026-04-11，见 REPO_WIDE **§3.6 C2**）；`INDEX`/`README` 等导航名多份并存见报表「导航名」分表，默认不强制改名 |
@@ -91,6 +92,8 @@ python scripts/governance/generate_architecture_service_catalog.py
 python scripts/governance/sentinel_l1_governance_scan.py
 ```
 
+若 L1 报告 **首道无 `module_id` > 0**：先 `python scripts/governance/backfill_missing_module_id.py` 预览，再 `python scripts/governance/backfill_missing_module_id.py --apply`，**然后**再跑一次 `sentinel_l1_governance_scan.py`（见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)）。
+
 另用仓库内已载明的 PowerShell/Python 片段**可选**刷新 `REPO_GIT_TRACKED_FILES_*.txt`（REPO_WIDE **§1**）。
 
 **阶段 C — 建立深度清洁队列**
@@ -125,6 +128,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.9 | 2026-04-10 | §1.1 增首道 `module_id` 行（L1 报告无 id/重复双 0 + `backfill_missing_module_id.py`）；阶段 B 增 backfill→复跑 L1 说明 |
 | 1.0.8 | 2026-04-12 | §1.1 增 D 类候选报表入口（`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`）与待审登记表互指 |
 | 1.0.7 | 2026-04-11 | §1.1 链接健康行互指 L1 快照（判定无效 0） |
 | 1.0.6 | 2026-04-11 | §1.1 表增 C2 basename（非导航已收口）；互指 `BASENAME_COLLISIONS_20260411` 与 REPO_WIDE §3.6 |

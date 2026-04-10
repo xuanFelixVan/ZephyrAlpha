@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.3.3
+version: 1.3.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -100,7 +100,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 登记「哪份才是正式稿」 | 在 [登记表](./CONTROLLED_DOCUMENTS_REGISTER.md) 增行，并确保总清单链接一致。 |
 | 修正建设文档「大门口」描述 | 改 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md`，使子目录表与**磁盘真实文件夹**一致。 |
 | 处理同题多稿 / 重复 / 重叠 | 按 §1.5 与 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1～2；程序与模板见 Playbook、[重复标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)、[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。蓝图 **D 类**另见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)；**低置信**合稿登记 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)。 |
-| 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/governance/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。**注意**：L1 扫描工作区 `*.md`，与 **`git ls-files` 仅已跟踪** 可能不一致，见 [任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1**。 |
+| 全库 Markdown 内链 + 首道 `module_id` | 在仓库根执行：`python scripts/governance/sentinel_l1_governance_scan.py`；习惯上 **无效内链 0**，且 L1 报告内 **首道无 `module_id` → 0**、**重复 `module_id` → 0**。若新增散稿导致无 id：先 `python scripts/governance/backfill_missing_module_id.py`，再 `--apply`，再复跑 L1（见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)）。**注意**：L1 扫工作区 `*.md`，与 **`git ls-files` 仅已跟踪** 可能不一致，见 [任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1**。 |
 | 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
 | 整仓「深度尽治」+ 合并重复 + 不想只做表面统计 | 打开 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)：跑 `python scripts/governance/export_repo_directory_rollup.py` 得深度 3～6 队列；按 **§7** 前缀退出标准推进，**§2.3** 与扫描/合并并行；**W 轨勾完 ≠ 尽治完毕**。 |
 | 要三级/四级「模块全景」+ 索引、对标机构做法 | 先读同一清单 **§2.4**；已落地 **架构服务目录 + C4**：`python scripts/governance/generate_architecture_service_catalog.py` → [`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；可选再实现 `MODULE_PANORAMA_*`，与 rollup **同频**更新。 |
@@ -130,6 +130,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 架构目录:   scripts/governance/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
 内容重复:   scripts/governance/scan_duplicate_file_content.py --ext md → docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.md|.json
 索引健全性: scripts/governance/scan_index_health.py → docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.md|.json
+L1 / module_id: scripts/governance/sentinel_l1_governance_scan.py；补首道 module_id: scripts/governance/backfill_missing_module_id.py（--apply 后复跑 L1）
 蓝图 D 类:   scripts/governance/scan_blueprint_d_overlap_candidates.py → docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*；规程 D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md；低置信台账 D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md
 地图与放置: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md
 工具总表:   docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
@@ -141,6 +142,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.4 | 2026-04-10 | 常见任务「L1」扩展为内链 + 首道 `module_id` + `backfill_missing_module_id.py`；路径速查增两行 |
 | 1.3.3 | 2026-04-10 | **§3.2** 互指 LAYOUT **§1 第 5 条**；禁平行 Layer 放置真源 |
 | 1.3.2 | 2026-04-10 | 新增 **§3.2**（系统 Layer 0～11 vs `docs/` 路径 vs 文档治理 L0～L5）；①‴ / 常见任务 / 阅读顺序末段互指 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
 | 1.3.1 | 2026-04-10 | 阅读顺序增 ①″-D（D 类 Playbook + 合稿待审登记）；常见任务与路径速查互指 D 类 |

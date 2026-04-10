@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.1.8
+version: 1.1.9
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -48,6 +48,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 0. （若涉及**归位/新建目录**）对照 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**）与 LAYOUT 标准，确认目标路径合法或已登记例外；**勿**用路径前缀代替 Layer 编号。  
 1. `verify_*`（蓝图与总清单）  
 2. `sentinel_l1_governance_scan.py`  
+2′. （仅当 L1 报告 **首道无 `module_id` > 0**）`backfill_missing_module_id.py` → `--apply` → 再跑步骤 2  
 3. `export_repo_directory_rollup.py`  
 4. `generate_architecture_service_catalog.py`  
 5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）  
@@ -77,6 +78,8 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.9 | 2026-04-10 | §2 复跑顺序增 2′（L1 无 `module_id` 时 `backfill_missing_module_id.py` → 再跑 L1） |
+| 1.1.8 | 2026-04-10 | 工具表增 `backfill_missing_module_id.py` |
 | 1.1.7 | 2026-04-10 | 文首互指 LAYOUT **§1 第 5 条**；禁平行 Layer 放置真源 |
 | 1.1.6 | 2026-04-10 | 文首与 §2 第 0 步互指 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、`ARCHITECTURE.md`、REPO_WIDE **§2.3.1**（Layer 与路径防混） |
 | 1.1.5 | 2026-04-10 | D 类步骤互指 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)（低置信合稿 + Markdown 相对链） |

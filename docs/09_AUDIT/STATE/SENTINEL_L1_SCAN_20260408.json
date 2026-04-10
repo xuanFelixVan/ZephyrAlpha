@@ -1,20 +1,20 @@
 {
-  "scan_time_utc": "20260410T200345Z",
+  "scan_time_utc": "20260410T200822Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 3230,
   "links": {
     "stats": {
       "total_files_scanned": 3230,
-      "total_md_links": 7523,
+      "total_md_links": 7526,
       "skipped_external": 986,
-      "valid": 6537,
+      "valid": 6540,
       "invalid": 0
     },
     "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3218,
+    "unique_module_ids": 3219,
     "duplicate_ids_count": 0,
     "duplicates": {},
     "files_without_module_id_sample": [],
