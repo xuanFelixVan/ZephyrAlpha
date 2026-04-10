@@ -28,3 +28,7 @@ alwaysApply: true
 
 - 每轮结束前：更新运行队列中 **「当前指针」**表（last_commit、next_queue_id、notes）。  
 - **勿假设**下一轮读过本轮上下文。
+
+## 防死循环（同一任务连续失败 3 次）
+
+- 针对**同一目标**（如 L1 判无效归零、或一次 merge/rebase 冲突）若已连续失败 **3** 次，**停止**继续自动修；在 `AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md` 按文内规则标 **`[STUCK]`**，**跳到下一队列项**，并在回复中说明原因与留给 Owner 的摘要。
