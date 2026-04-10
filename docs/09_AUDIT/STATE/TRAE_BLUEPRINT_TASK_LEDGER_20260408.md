@@ -1,9 +1,9 @@
----
+﻿---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.3.0
+version: 1.7.6
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-09'
+last_updated: '2026-04-10'
 owner: 仓库 Owner
 standard_type: 审计台账
 applicable_scope: Trae（GLM）与 Cursor 分工、蓝图阶段批次与交接
@@ -19,7 +19,48 @@ related_documents:
 # Trae × Cursor 蓝图阶段任务台账
 
 > **用途**：Owner 在 **Trae** 与 **Cursor** 两边并行推进蓝图终稿时，**以本文件为唯一进度真源**；新开的 Cursor 对话只要读本文件 + `CONSTRUCTION_GATE`，即可接续安排 Trae、核对交付。  
-> **谁维护**：**Cursor** 在每批派发/验收后更新「批次进度表」与「Cursor 占用清单」；**Owner** 可把 Trae 返回的摘要粘贴进 §6。
+> **谁维护**：**Cursor-01（统筹）** 在每批验收后更新；台账提交只落在 `docs/blueprint-commander` 分支。
+
+---
+
+## 0. 全队操作规范速查（v2.0，2026-04-10 生效）
+
+### L1 扫描三步（每批必做，顺序不变）
+```
+1. python scripts/sentinel_l1_governance_scan.py
+2. 确认：判定无效 = 0
+3. git restore docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.json
+   git restore docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md
+```
+⚠️ 第 3 步是 `restore`，**不是 delete**！
+
+### 接口链唯一合法写法
+```markdown
+[API_Contract.md](../../../docs/03_TRADING_TACTICS/API_Contract.md)
+```
+❌ 禁止 `file:///D:/ZephyrAlpha/...` 绝对路径
+
+### 所有文件已合规时
+| 角色 | 操作 |
+|------|------|
+| 施工队（Trae） | **不提交**，不做空提交 |
+| 回收队（Cursor-REC） | **做空提交**闭环：`git commit --allow-empty -m "docs(blueprint): 回收验收 T3-XX 收口（L1=0）"` |
+
+### 统筹受理门槛
+- ✅ 有 `git show <hash>` 可查的 commit → 受理
+- ❌ 无 commit hash 的文字报告 → 退回，要求补发：
+  1. `git branch --show-current`
+  2. `git log -1 --oneline`
+  3. `git show --stat`（仅含白名单路径）
+
+### 批次状态定义
+| 状态 | 含义 |
+|------|------|
+| 施工完成 | 施工队已提交，待回收 |
+| 待回收 | 施工 commit 已核查，等回收接单 |
+| 已完成 | 回收验收通过，L1=0 |
+| 退回待重做 | 施工不合格，需重新交付 |
+| 施工存疑 | 无可验证 commit，挂起 |
 
 ---
 
@@ -400,6 +441,37 @@ related_documents:
 | C11 | `docs/01_FRAMEWORK/DISTRIBUTED_TRAINING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
 | C11 | `docs/01_FRAMEWORK/DRIFT_DETECTION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
 | C11 | `docs/01_FRAMEWORK/DYNAMIC_RISK_BUDGETING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-09 | 0 | 双 YAML 收敛 + 补齐 §0.1 |
+| T3-11 | `docs/01_FRAMEWORK/ESG_COMPLIANCE_MONITORING_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 验收确认 §0.1 已满足，无需修改；--allow-empty 收口；L1=0；commit=4e64e0bc |
+| T3-11 | `docs/01_FRAMEWORK/FACTOR_BACKTEST_FRAMEWORK_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-11 | `docs/01_FRAMEWORK/FUND_MANAGEMENT_INTERFACE_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-11 | `docs/01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-11 | `docs/01_FRAMEWORK/GRAFANA_MONITORING_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-11 | `docs/01_FRAMEWORK/HELP_SYSTEM_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-11 | `docs/01_FRAMEWORK/HIGH_FREQUENCY_TRADING_ENGINE_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 同上；分支 docs/blueprint-rec-T3-11；8 篇均已满足门禁，未改文件 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARGIN_CALL_MONITOR_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 批次号冲突（已有 T3-11 框架层批次）；施工引用 commit=4e64e0bc 为回收队空提交，非施工 diff；7/8 文件当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_IMPACT_MODEL_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_MICROSTRUCTURE_SIMULATION_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规（报告描述有误，三段实为齐全） |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_REGIME_DETECTION_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md` | Trae-01 | ⚠️ 施工存疑 | 2026-04-10 | - | 同上；当前树已合规 |
+| T3-11b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MONITORING_ALERTING_SYSTEM_BLUEPRINT.md` | Trae-01 | ❌ 退回待重做 | 2026-04-10 | - | §0.1 三段门禁缺失（无接口与契约/无 API_Contract.md 链/无验收句/无已知限制）；T3-03 登记已完成但当前树不一致，疑被后续改动覆盖；授权回收队接单修补 |
+| T3-01 | （台账更新提交，无蓝图改动） | Trae-01 | 已记录 | 2026-04-09 | 0 | commit=64269e52；仅台账文件修改，无蓝图正文变化 |
+| T3-02 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_SOURCE_MANAGEMENT_BLUEPRINT.md` | Cursor-REC（FIFO） | 已完成 | 2026-04-10 | 0 | 施工白名单4篇*_BLUEPRINT.md（追加口径确认）；本篇为唯一需修补项，其余3篇已合规；回收 commit=d75981b7；L1=0；⚠️施工方上报 施工commit=64269e52（该hash在本仓库记录中仅含台账修改，实际施工文件清单待施工队补充说明） |
+| T3-03 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VALIDATION_ENGINE_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | commit=682c237d；补齐 §0.1 门禁段 |
+| T3-03 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_VERSION_CONTROL_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-03 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DEPENDENCY_MANAGEMENT_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-03 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MONITORING_ALERTING_SYSTEM_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-04 | （空提交，无蓝图改动） | Trae-04 | 已记录 | 2026-04-09 | 0 | commit=30efaa7b；empty commit，无蓝图文件变化 |
+| T3-05 | （8 篇白名单蓝图，均已满足 §0.1，无需修改） | Cursor-REC（FIFO） | 已完成 | 2026-04-10 | 0 | commit=358e8af4；回收验收：8 篇均具备 API_Contract.md 契约链、可检查验收句、具体已知限制；未做润色；扫描产物随 commit 入库（刷新 L1，非误操作）；非白名单文件（DEV_ENVIRONMENT、DISASTER_RECOVERY 等）已正确排除 |
+| T3-06 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md` | Trae-06 + Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 施工 commit=3711244f（含 §0.1 补丁）；回收验收 L1=0；扫描产物误随 commit 入库（记录）；分支 docs/blueprint-trae-06 |
+| T3-12 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | commit=d4aea016；与 T3-06 文件有重叠（先后修改同一文件），验收无冲突 |
+| T3-12 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-12 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/CVAR_OPTIMIZATION_BLUEPRINT.md` | Trae-03 | 已完成 | 2026-04-09 | 0 | 同上 |
+| T3-12 | （3篇白名单施工已确认：CONSTRAINT_SOLVER_INTEGRATION、COVARIANCE_ESTIMATION_ENHANCEMENT、CVAR_OPTIMIZATION） | Cursor-REC（FIFO） | 待回收 | - | - | 施工 commit=d4aea016 已核实；FIFO 回收派单已发（2026-04-10） |
+| T3-07 | （8篇白名单蓝图，均已满足 §0.1，无需修改，无提交） | Trae-07 + Cursor-REC（FIFO） | 已完成 | 2026-04-10 | 0 | 施工方报告均合规（status=Active，version>=1.0.0，API_Contract链接完整）；无空提交；回收验收 L1=0 |
+| T3-08 | （8篇 DATA_* 白名单蓝图，均已满足 §0.1，无需修改） | Cursor-REC（FIFO） | 已完成 | 2026-04-10 | 0 | 施工分支 docs/blueprint-trae-08（基线 500ecba0）；8 篇 DATA_* 文件当前树已合规，无新 diff；回收空提交闭环 commit=10e2e1e5；L1=0；⚠️ 多余提交：3cd3fef6（落在 docs/blueprint-trae-03，串台遗留）、19b7c457（落在 docs/blueprint-commander，重复）——均以 10e2e1e5 为准 |
+| T3-13 | （INDEX.md + 空蓝图提交） | Trae-04 + Cursor-REC（FIFO） | 已完成 | 2026-04-09 | 0 | 施工 commit=4d362533（empty）；回收 commit=8265df78（仅 INDEX.md）；L1=0 |
 
 **Git 建议**：Cursor 使用分支 `docs/blueprint-cursor`；Trae 使用 `docs/blueprint-trae-batch-N`。
 
@@ -529,3 +601,15 @@ L1 结果（无效链）：0
 | 1.0.0 | 2026-04-08 | 初版：分工、已填充 Trae 说明、批次 1 四文件、批次规则、交接区 |
 | 1.1.0 | 2026-04-08 | 并行分工；Trae/Cursor 分表；Cursor C1 八文件；占用清单 |
 | 1.3.0 | 2026-04-09 | Cursor C10 / F-Exec-03：根目录 8 篇框架蓝图（字母序缺口）YAML 与 §0.1 收口；占用清单追加 |
+| 1.4.0 | 2026-04-09 | 登记 T3-10（Cursor 代 Trae-10）：8 篇蓝图验收确认 §0.1 已满足，L1=0 |
+| 1.5.0 | 2026-04-09 | 登记 T3-11（Cursor-REC FIFO）：7 篇框架层蓝图验收确认 §0.1 已满足，L1=0，commit=4e64e0bc；启动 FIFO 动态回收队机制 |
+| 1.6.0 | 2026-04-10 | 批量补录 T3-01~T3-06/T3-12/T3-13：共 8 批次，10 篇蓝图（含部分重触文件与空提交）；注记扫描产物误入 commit 问题 |
+| T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 批次号冲突（T3-13 已被 Trae-04 占用）；施工方（Trae-03）确认无需改动（文件已合规）；§0.1 三段齐全，API_Contract 链接正确；**等待回收队空提交闭环** |
+| T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 同上；§0.1 三段齐全，API_Contract 链接正确 |
+| T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 同上；§0.1 三段齐全，API_Contract 链接正确 |
+| 1.6.1 | 2026-04-10 | 修正 T3-05：从"仅扫描产物/预填"升级为正式验收——8 篇白名单已满足 §0.1，非白名单文件已正确排除 |
+| 1.6.2 | 2026-04-10 | 补录 T3-02 施工白名单4篇口径；T3-12 追加回收待派行（施工 commit=d4aea016 已确认，FIFO 派单中） |
+| 1.7.3 | 2026-04-10 | 登记 T3-11b（Trae-01 M-files 批次，批次号冲突）：8 篇 M-files，施工 commit=4e64e0bc 为回收空提交 -> 施工存疑；MONITORING_ALERTING §0.1 缺失 -> 退回授权回收接管 |
+| 1.7.4 | 2026-04-10 | 登记 T3-08（Cursor-REC FIFO）：8 篇 DATA_* 白名单均已合规，回收空提交 commit=10e2e1e5，L1=0；注记多余提交 3cd3fef6/19b7c457 |
+| 1.7.5 | 2026-04-10 | 补录 T3-13b（Trae-03，批次号冲突）：3 篇文件 §0.1 已合规，L1=0，施工无需改动；等待回收队空提交闭环 |
+| 1.7.6 | 2026-04-10 | 登记 T3-25（Cursor-REC FIFO）：VAR_ES_MONITORING + VULNERABILITY_DETECTION，基于 docs/blueprint-trae-10，均已合规，空提交 commit=587343ff，L1=0 |
