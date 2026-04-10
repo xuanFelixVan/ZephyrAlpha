@@ -32,7 +32,13 @@ def repo_root() -> Path:
 
 
 def git_ls_docs_md(root: Path) -> list[str]:
-    out = subprocess.check_output(["git", "ls-files"], text=True, cwd=root)
+    out = subprocess.check_output(
+        ["git", "-c", "core.quotePath=false", "ls-files"],
+        text=True,
+        cwd=root,
+        encoding="utf-8",
+        errors="replace",
+    )
     return sorted(
         line.strip()
         for line in out.splitlines()

@@ -32,15 +32,23 @@ GEN = "scripts/governance/scan_duplicate_file_content.py"
 
 
 def git_ls_files(repo_root: Path) -> list[str]:
-    out = subprocess.check_output(["git", "ls-files"], cwd=repo_root, text=True)
+    out = subprocess.check_output(
+        ["git", "-c", "core.quotePath=false", "ls-files"],
+        cwd=repo_root,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     return [ln.strip().replace("\\", "/") for ln in out.splitlines() if ln.strip()]
 
 
 def git_ls_untracked_not_ignored(repo_root: Path) -> list[str]:
     out = subprocess.check_output(
-        ["git", "ls-files", "--others", "--exclude-standard"],
+        ["git", "-c", "core.quotePath=false", "ls-files", "--others", "--exclude-standard"],
         cwd=repo_root,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     return [ln.strip().replace("\\", "/") for ln in out.splitlines() if ln.strip()]
 

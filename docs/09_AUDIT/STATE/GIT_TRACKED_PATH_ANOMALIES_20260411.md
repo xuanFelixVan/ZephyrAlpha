@@ -1,24 +1,39 @@
 ---
 module_id: GIT_TRACKED_PATH_ANOMALIES_20260411
 standard_type: audit_state
-applicable_scope: Git 索引异常路径清点（P2 前置证据）
+applicable_scope: Git 路径「显示转义」与索引真源澄清；治理脚本 ls-files 口径
 generated_date: '20260411'
+last_updated: '2026-04-11'
 ---
 
-# Git 已跟踪路径异常清单（引号 / 八进制转义）
+# Git 路径：引号 / 八进制输出 vs 索引真源（澄清说明）
 
-> **用途**：为 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1**、**P2** 提供**可复跑、可 diff** 的逐路径真源；**不**在本文件中执行 `git mv`（须单独 PR + 备份 + L1）。  
-> **口径说明**：下列 **8** 条在 `git ls-files` 输出中以 **前导双引号 `"`** 包裹，且路径中含 **`\nnn` 八进制转义**（Git 对非 ASCII 的引用形式）。统计上常被误计为「`"` 前缀桶」与「扩展名看似 `md"`」**两类异常**，实为**同一批 8 条**，非 16 条。
+> **用途**：为 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1**、**P2** 提供可复跑说明；**纠正**「看见 `git ls-files` 带引号 = 索引里路径坏了」的误判。
 
-## 复跑（仓库根 · PowerShell）
+## 结论（先看这段）
+
+1. **`review_materials_package` 下含中文文件名的路径**：在 Git **索引与工作区**中一般为 **正常 UTF-8**；**并非**必须 `git mv` 才能「修复索引」。  
+2. PowerShell / 终端在**默认** `core.quotePath` 下，`git ls-files` 对非 ASCII 可能输出 **双引号 + `\nnn` 八进制转义**——这是 **CLI 显示层**行为，不是第二套路径。  
+3. **整仓统计、rollup、重复扫描**等自动化应使用 **`git -c core.quotePath=false ls-files`**（Python 侧加 `encoding="utf-8"`），或使用 **`git ls-files -z` + UTF-8 解码**（本仓库 `scan_index_health.py` 已用 `-z`）。**2026-04-11** 起 `export_repo_directory_rollup.py`、`scan_*`、`sample_docs_nav_coverage.py`、`generate_architecture_service_catalog.py` 等已统一 `quotePath=false`。  
+4. 若历史平面清单（如 `REPO_GIT_TRACKED_FILES_20260410.txt`）前几行出现引号形式，属**导出命令未关 quotePath**；请改用 [`REPO_GIT_TRACKED_FILES_20260411.txt`](./REPO_GIT_TRACKED_FILES_20260411.txt) 或按 [REPO_WIDE §1](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 推荐 one-liner 重导。
+
+## 复现「带引号」输出（仓库根 · PowerShell）
 
 ```powershell
 git ls-files | Select-String -Pattern '^"'
 ```
 
-（与 `Select-String -Pattern 'md"$'` 对上述 8 条输出一致。）
+对 `review_materials_package` 中含非 ASCII 的路径，默认配置下常可得到 **8** 行（与「扩展名看似 `md"`」的误读为**同一批**，非 16 条）。
 
-## 异常路径（逐字拷贝自 `git ls-files`，共 8 条）
+## 人类可读 UTF-8 输出（对照）
+
+```powershell
+git -c core.quotePath=false ls-files review_materials_package/
+```
+
+## 附录：默认 `git ls-files` 下的转义显示示例（8 条）
+
+下列为 **显示层**逐字拷贝，**不要**当作 Markdown 内链或脚本路径字面量使用：
 
 ```text
 "review_materials_package/data_consistency/Saga\346\250\241\345\274\217\345\256\236\347\216\260\346\265\201\347\250\213\345\233\276.md"
@@ -31,25 +46,6 @@ git ls-files | Select-String -Pattern '^"'
 "review_materials_package/\346\212\200\346\234\257\346\226\271\346\241\210\350\257\204\345\256\241\344\274\232\350\256\256\350\256\256\347\250\213.md"
 ```
 
-## 同目录「正常 UTF-8 路径」对照（无引号 · 示例）
-
-便于确认 **并非** 整树异常，而是上述 8 条与下列 **5** 条等并存：
-
-```text
-review_materials_package/a_stock_rules/T.08.AR001.a_stock_rule_engine_design.md
-review_materials_package/a_stock_rules/a_stock_rules_config.yaml
-review_materials_package/trading_costs/T.05.TE001.trading_cost_model_algorithm_document.md
-review_materials_package/trading_costs/trading_cost_config_template.yaml
-review_materials_package/web_interface/T.06.UI001.web_management_interface_architecture_design.md
-```
-
-## P2 规范化建议（摘要）
-
-1. 新开分支；必要时先 `git archive` 或整仓备份。  
-2. 使用 `git mv`（或两步 mv）将每条**异常字面**迁到目标 UTF-8 相对路径；避免在 shell 中手工拼接引号导致二次转义。  
-3. 全仓检索 Markdown / 脚本中是否硬编码了带引号或八进制的旧路径。  
-4. 复跑 `python scripts/governance/sentinel_l1_governance_scan.py`（判定无效 **0**）、`export_repo_directory_rollup.py`，并更新 [`REPO_GIT_TRACKED_FILES_*.txt`](./REPO_GIT_TRACKED_FILES_20260410.txt) 若仍作为基线。  
-
 ---
 
-**生成**：2026-04-11；与当时 `git ls-files` 一致。
+**维护**：若 Git 默认配置变更或新增非 ASCII 路径，可复跑上文命令核对；**无需**为此单独开「路径规范化」PR，除非确有**错误字面路径**被提交（与本附录所示**显示转义**不同）。

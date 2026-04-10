@@ -24,7 +24,13 @@ from pathlib import Path
 
 
 def git_ls_files(repo_root: Path, prefix: str) -> list[str]:
-    out = subprocess.check_output(["git", "ls-files", prefix], cwd=repo_root, text=True)
+    out = subprocess.check_output(
+        ["git", "-c", "core.quotePath=false", "ls-files", prefix],
+        cwd=repo_root,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     return [ln.strip().replace("\\", "/") for ln in out.splitlines() if ln.strip()]
 
 

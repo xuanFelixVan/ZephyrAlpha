@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.25
+version: 1.4.26
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -39,17 +39,17 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 ## 1. 基线快照（2026-04-10，可复跑更新）
 
-> **2026-04-10 数字刷新**：与 `git ls-files` 当前快照对齐（见 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)）。Git 索引中 **`review_materials_package`** 下仍有 **8** 条路径以 **`"`** 包裹且含 **八进制转义**（工具输出上易被误读为「`"` 前缀桶」与「扩展名 `md"`」**两类**，实为**同一批 8 条**）；**逐路径清单与复跑命令**见 [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)；规范化见 **P2**。
+> **基线数字**：与 `git ls-files` 对齐；**人类可读 UTF-8 平面清单**见 [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)（导出命令见下，**须** `core.quotePath=false`）。在 PowerShell **默认**配置下，`git ls-files` 对非 ASCII 可能打印 **引号 + 八进制转义**——属 **CLI 显示**，**不是**索引里另存了一套「坏路径」；与 rollup 误分桶、平面清单前几行「像异常」常同源。**澄清与复跑对照**见 [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。历史快照仍可查 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)（该次导出未关 quotePath，**勿**与机器统计直接混用）。
 
 | 指标 | 数值 | 备注 |
 |------|------|------|
-| **已跟踪文件总数** | **4454**（2026-04-10 `git ls-files`） | 与 [`REPO_DIRECTORY_ROLLUP_20260410`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) 头部路径条数同量级；以后以最新 rollup / 平面清单为准 |
+| **已跟踪文件总数** | **4459**（2026-04-11 `git -c core.quotePath=false ls-files`） | 与 [`REPO_DIRECTORY_ROLLUP_20260411`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 头部路径条数一致；以后以最新 rollup / 平面清单为准 |
 | **Markdown（`.md`）** | 3227 | 体量最大，索引策略必须分层，避免「逐文件手打链接」 |
 | **Python（`.py`）** | 756 | 含 `scripts/` 为主 |
 | **JSON** | 325 | 含审计状态、配置片段等 |
 | **`.diff` 跟踪文件** | 50 | 均已位于 [`06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)（历史 dry-run） |
 | **`.bak2` / `.bak3` 等备份扩展名（已跟踪）** | **1** + **1** | `.bak2` 在 `encoding_backups`；`.bak3` 在 `06_ARCHIVE/20260410_system_manifest_backup/` |
-| **一级目录体量（已跟踪）** | `docs/` **3584**，`scripts/` **690**，`src/` **66** | 治理重心在 `docs/` 与 `scripts/`；另含异常前缀 `"review_materials_package` **8** 条（与正常 `review_materials_package/` **5** 条并存） |
+| **一级目录体量（已跟踪）** | `docs/` **3584**，`scripts/` **690**，`src/` **66** | 治理重心在 `docs/` 与 `scripts/`；`review_materials_package/` 共 **13** 条（含中文文件名 **8** + 英文/配置等 **5**）；rollup 已用 `quotePath=false`，**无**误计的 `"review_materials` 假前缀桶 |
 
 **深度 2 目录聚合（节选，`docs/` 下深度固定为 3 段式前缀 Top 6 — 与 rollup 人类读摘要同口径）**
 
@@ -57,7 +57,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 |------|-----------|
 | `docs/09_AUDIT/REPORTS` | 498 |
 | `docs/05_IMPLEMENTATION/04_OPERATIONS` | 406 |
-| `docs/09_AUDIT/STATE` | 374 |
+| `docs/09_AUDIT/STATE` | 377 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 272 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive` | 218 |
 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | 97 |
@@ -68,21 +68,21 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 | 产出 | 路径 |
 |------|------|
-| 人类可读摘要（`docs/` 下各深度 Top 表 + 说明） | [`docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) |
-| 全量前缀计数（JSON，可按任意前缀筛选） | [`docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
+| 人类可读摘要（`docs/` 下各深度 Top 表 + 说明） | [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md)（**2026-04-11** · `quotePath=false`）；历史 [`20260410`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) |
+| 全量前缀计数（JSON，可按任意前缀筛选） | [`REPO_DIRECTORY_ROLLUP_20260411.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 [`20260410.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
 
 **复跑（仓库根）**：`python scripts/governance/export_repo_directory_rollup.py`（可选 `--date YYYYMMDD`、`--top N`、`--include-untracked` 把工作区未跟踪且未被 ignore 的路径并入聚合）。大治理批次完成后应 **commit 更新后的 rollup**，便于 diff「哪些前缀已清空」。
 
 **全量路径平面清单（可检索、可 diff）**  
-路径：`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`  
+主路径：`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt`（UTF-8、**无** `quotePath` 转义）；历史：`REPO_GIT_TRACKED_FILES_20260410.txt`（导出时未关 `quotePath`，前几行可能含引号+八进制，**仅作存档**）。
 
-> **注意**：若清单中出现带引号或 `\346` 这类八进制转义片段，通常表示 **Git 索引里记录了异常/转义形式的路径**（与正常 UTF-8 中文路径并存时尤需警惕）；处置见 **P2** 路径规范化。
+> **注意**：平面清单里若出现带引号或 `\346` 这类片段，**优先**怀疑导出命令未使用 `core.quotePath=false`，**不要**直接推断「索引损坏」；见 [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。
 
 **复跑导出命令（仓库根，PowerShell）**
 
 ```powershell
-# 推荐用 Python 导出 UTF-8，避免 PowerShell 对部分路径的转义差异：
-python -c "import subprocess; p=subprocess.check_output(['git','ls-files'],text=True); lines=sorted(p.splitlines()); open(r'docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_YYYYMMDD.txt','w',encoding='utf-8',newline='\n').write('\n'.join(lines)+'\n')"
+# 必须带 core.quotePath=false，且 Python 用 UTF-8 解码 stdout：
+python -c "import subprocess; p=subprocess.check_output(['git','-c','core.quotePath=false','ls-files'],text=True,encoding='utf-8',errors='replace'); lines=sorted(p.splitlines()); open(r'docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_YYYYMMDD.txt','w',encoding='utf-8',newline='\n').write('\n'.join(lines)+'\n')"
 ```
 
 **复跑统计命令（仓库根，PowerShell）**
@@ -280,7 +280,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - [x] 导出全量 `git ls-files` 平面清单至 `docs/09_AUDIT/STATE/`（见上文文件名）。  
 - [x] 记录扩展名与目录聚合统计（见 §1）。  
-- [x] 生成 **深度 3～6** 目录聚合（JSON + MD）：`python scripts/governance/export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_20260410.*`（2026-04-10）。  
+- [x] 生成 **深度 3～6** 目录聚合（JSON + MD）：`python scripts/governance/export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_*`（2026-04-11 起脚本内 `git ls-files` 使用 **`core.quotePath=false`**；当前快照 [`20260411`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md)；历史 `20260410` 仍可对照）。  
 - [x] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](./README.md) 或本文件版本记录。（2026-04-11：已写入办公室 README「基线复跑约定」；与本文件 §3.1 末段复审口径一致。）
 
 ### P1 — 重复与冗余（机器可做部分）
@@ -293,7 +293,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - [x] 评审 **50** 个已跟踪 `.diff`：保留标准、迁 archive、或从跟踪中移除。（2026-04-10：50 个均为双 YAML **dry-run** 样本，已从 `docs/09_AUDIT/STATE/` **整体迁出**至 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)；[`OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`](../../../09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md)、[`DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md`](../../../09_AUDIT/PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) 已改为「每批自建 `double_yaml_dryrun_<YYYYMMDD>/`」并互指归档样本。）  
 - [x] 评审 `.bak2` / `.bak3` 等：是否应仅存于 archive 或本地（不进 Git）。（2026-04-10：`docs/System_Manifest.md.bak3` → [`06_ARCHIVE/20260410_system_manifest_backup/`](../../../06_ARCHIVE/20260410_system_manifest_backup/README.md)；`docs/06_ARCHIVE/encoding_backups/...*.bak2` 已位于 archive，保留为编码修复历史备份。）  
-- [x] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。（2026-04-10：已跟踪 **13** 条路径均为常规 UTF-8 文件名，**无**异常引号/转义段；若统计脚本再报异常则重开本条。）
+- [x] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。（2026-04-10：**工作区/索引**已为 UTF-8 中文名，**无**须 `git mv` 的「坏路径」。2026-04-11：**根因**为默认 `git ls-files` **显示转义** + 部分脚本未关 `quotePath`，导致 rollup/清单误判；已统一治理脚本 `git -c core.quotePath=false ls-files` 并刷新 [`REPO_DIRECTORY_ROLLUP_20260411`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md)、[`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)；说明见 [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。）
 
 ### P3 — 索引可达性（导航）
 
@@ -335,6 +335,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.26 | 2026-04-11 | 治理脚本统一 `quotePath=false` + UTF-8；刷新 `REPO_DIRECTORY_ROLLUP_20260411`、`REPO_GIT_TRACKED_FILES_20260411`；§1/§6/§7/§8 与 `GIT_TRACKED_PATH_ANOMALIES` 改写为「显示转义 ≠ 索引损坏」 |
 | 1.4.25 | 2026-04-11 | §1 澄清「8+8」为同一批 8 条 Git 异常路径；§6 链 `GIT_TRACKED_PATH_ANOMALIES_20260411`；与 STATE 索引整仓产出表互指 |
 | 1.4.24 | 2026-04-11 | P3：勾选「抽样反向检查」并链 `DOCS_NAV_COVERAGE_SAMPLE_20260410`；§6 推荐阅读增主导航抽样与 `W2_SECRET_PATTERN_SPOTCHECK`；P4.1 矩阵增 `sample_docs_nav_coverage.py`；§8「§1 数字」与当前 `git ls-files` 4454 对齐勾选 |
 | 1.4.22 | 2026-04-10 | P2：50×`.diff` 迁 `06_ARCHIVE/20260408_double_yaml_dryrun_sample`；`System_Manifest.md.bak3` 迁 archive；程序文档改 dry-run 路径；P1 Playbook 流程对齐勾选；P3：`scripts/README` 分类导航 + `src/README`；P4.1 门禁矩阵；§8 部分勾选；复跑 `rollup` + `REPO_GIT_TRACKED_FILES_20260410.txt` |
@@ -389,8 +390,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 说明 | 路径 |
 |------|------|
-| 全量已跟踪路径清单 | [`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
-| 目录深度聚合（3～6） | [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
+| 全量已跟踪路径清单（UTF-8 · `quotePath=false`） | [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt) · 历史 [`20260410`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
+| 目录深度聚合（3～6） | [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 [`20260410`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) |
 | 架构服务目录 + C4 摘要（生成） | [`ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 | 内容重复（SHA256 · 后缀白名单） | [`DUPLICATE_CONTENT_BY_HASH_20260411.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md) / [`.json`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json) |
 | 同名不同路径（basename · C2 · `scan_basename_collisions.py`） | [`BASENAME_COLLISIONS_20260411.md`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md) / [`.json`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json) |
@@ -399,7 +400,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 索引健全性（零入链候选 · `scan_index_health.py`） | [`INDEX_HEALTH_ORPHAN_20260410.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
 | P3 主导航覆盖率抽样（`sample_docs_nav_coverage.py` · 样例） | [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](../../../09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_20260410.md) |
 | W2 可选密钥型字面量抽查（Python 模式 · 等价抽检记录） | [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](../../../09_AUDIT/STATE/W2_SECRET_PATTERN_SPOTCHECK_20260410.md)（与 [蓝图任务清单 W2](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 互指） |
-| Git 索引异常路径（P2 前置 · `git ls-files` 引号/八进制） | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md) · [STATE 索引汇总表](../../../09_AUDIT/STATE/INDEX.md) |
+| Git 路径 quotePath / 显示转义澄清（**非**索引损坏） | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md) · [STATE 索引汇总表](../../../09_AUDIT/STATE/INDEX.md) |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
 | 全局文件治理会话交接（新对话粘贴） | [GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5** Layer 与路径防混） |
@@ -418,7 +419,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### 7.1 怎么从「最深」起排
 
-1. 打开 [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。  
+1. 打开 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。  
 2. 对 **`docs/09_AUDIT/REPORTS`、`docs/09_AUDIT/STATE`** 等超高计数前缀：在批次内再按**子文件夹**细分为子队列（rollup 深度加一或手工列目录）。  
 3. **`docs/06_ARCHIVE/**`**：默认 **只读治理**（摆放、索引、与活动区重复标注），删并须符合 **§3.1 归档区策略**。  
 4. **`scripts/`、`src/`、`notebooks/`**：以「入口可读 + 重复脚本/模块报表」为主，不单套用文档 C1 流程；**`src/` 或 API 变更**后复跑 `generate_architecture_service_catalog.py` 刷新服务目录。
@@ -432,7 +433,7 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 - [ ] **导航**：父级或本级具备 **INDEX / README / 上级入口** 之一（归档区至少 **archive 内 INDEX** 或父级说明）。  
 - [ ] **内链**：本批次改动涉及路径已跑 **L1**；全库 **0 无效** 或已登记例外。  
 - [ ] **衍生物**：按 P2 策略无应迁走的 `.diff`/`.bak`（或已归档）。  
-- [ ] **路径健全**：无引号/转义异常路径（见 §1 注意项）。  
+- [ ] **路径健全**：平面清单/rollup 使用 `quotePath=false` 或 `-z` 导出；无**真实**错误路径（默认可读 `git ls-files` 的引号显示**不算**索引损坏，见 §1 与 `GIT_TRACKED_PATH_ANOMALIES`）。  
 - [ ] **证据**：rollup 重跑已提交或报告路径可指认。
 
 ### 7.3 §7 总勾选（尽治里程碑）
@@ -450,6 +451,6 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 - [x] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类合稿待审登记**、**D 类二审模板**、`triage_blueprint_d_overlap_pairs.py`）；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.5** 与 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对。）  
 - [x] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。（2026-04-10 批次核对。）  
 - [x] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
-- [x] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（2026-04-11：**已跟踪文件总数** `git ls-files` = **4454**，与 §1 表 **4454** 一致；扩展名分桶与深度 3 Top6 仍以 **2026-04-10** 快照字面保留；全量刷新 §1 字面时复跑 §1 中 PowerShell/Python 片段并更新 `REPO_GIT_TRACKED_FILES_*` / `REPO_DIRECTORY_ROLLUP_*`。Git 索引 **8+8** 引号 / `md"` 异常路径注记仍见 §1 段首与 **P2** backlog，与「review_materials_package 子集已人工核对 UTF-8」可并存。）  
+- [x] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（2026-04-11：**已跟踪文件总数** `git -c core.quotePath=false ls-files` = **4459**，与 §1 表及 [`REPO_DIRECTORY_ROLLUP_20260411`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 头部 **4459** 一致；深度 3 Top6 已与 **20260411** rollup 对齐；`review_materials_package` 引号显示问题已澄清为 **CLI quotePath**，见 [`GIT_TRACKED_PATH_ANOMALIES_20260411`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。）  
 - [x] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。（2026-04-10 批次核对。）  
 - [x] **§1.1** 已与 `scripts/` 内实际行为一致；对外未再暗示「全格式、全文件语义扫描」。（2026-04-10：与 **P4.1** 矩阵一致。）

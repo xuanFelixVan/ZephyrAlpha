@@ -28,19 +28,24 @@ GEN = "scripts/governance/export_repo_directory_rollup.py"
 
 
 def git_ls_files(repo_root: Path) -> list[str]:
+    # core.quotePath=false：避免非 ASCII 路径在输出中被引号+八进制转义，导致 rollup 误分桶
     out = subprocess.check_output(
-        ["git", "ls-files"],
+        ["git", "-c", "core.quotePath=false", "ls-files"],
         cwd=repo_root,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     return [ln.strip().replace("\\", "/") for ln in out.splitlines() if ln.strip()]
 
 
 def git_ls_untracked_not_ignored(repo_root: Path) -> list[str]:
     out = subprocess.check_output(
-        ["git", "ls-files", "--others", "--exclude-standard"],
+        ["git", "-c", "core.quotePath=false", "ls-files", "--others", "--exclude-standard"],
         cwd=repo_root,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     return [ln.strip().replace("\\", "/") for ln in out.splitlines() if ln.strip()]
 

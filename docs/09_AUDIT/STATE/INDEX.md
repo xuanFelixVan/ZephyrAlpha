@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.2
+version: 1.0.3
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-11
@@ -74,7 +74,9 @@ compliance_level: 专业标准---
 |------|------------|------|
 | P3 主导航可见性抽样（宽松） | `sample_docs_nav_coverage.py` | [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](./DOCS_NAV_COVERAGE_SAMPLE_20260410.md) |
 | W2 可选密钥型字面量抽查 | 等价检查记录（非 gitleaks） | [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](./W2_SECRET_PATTERN_SPOTCHECK_20260410.md) |
-| Git 索引异常路径（P2 前置清单） | `git ls-files` 引号/八进制逐条 | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](./GIT_TRACKED_PATH_ANOMALIES_20260411.md) |
+| Git quotePath / 显示转义澄清 | 与索引真源对照 | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](./GIT_TRACKED_PATH_ANOMALIES_20260411.md) |
+| 目录 rollup（`quotePath=false`） | `export_repo_directory_rollup.py` | [`REPO_DIRECTORY_ROLLUP_20260411.md`](./REPO_DIRECTORY_ROLLUP_20260411.md) · [`.json`](./REPO_DIRECTORY_ROLLUP_20260411.json) |
+| 平面路径清单 UTF-8 | 导出见 REPO_WIDE §1 | [`REPO_GIT_TRACKED_FILES_20260411.txt`](./REPO_GIT_TRACKED_FILES_20260411.txt) |
 
 ---
 
@@ -114,6 +116,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.3 | 2026-04-11 | 整仓产出表增 rollup 20260411、平面清单 20260411；Git 行改为 quotePath 澄清口径 | 文档治理系统 |
 | v1.0.2 | 2026-04-11 | 增整仓治理产出表（导航抽样、W2 抽查、Git 异常路径）；内层 `module_id` 版本对齐 | 文档治理系统 |
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
 
