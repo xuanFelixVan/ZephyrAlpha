@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-13'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-13T12:00:00Z` |
-| **上轮 commit** | `d890e5c6` |
+| **UTC 时间** | `2026-04-13T18:30:00Z` |
+| **上轮 commit** | `132745e7` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | 继续 `docs/09_AUDIT/REPORTS`（子目录门面、或达标后 **B-03** rollup） |
-| **notes** | **B-02 批次 4（REPORTS · L1=0 时的导航收口）**：全库 `sentinel_l1` **判定无效=0**，未改断链；[`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 增「索引健全性」链至 [`INDEX_HEALTH_ORPHAN_20260412.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md)；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 机器产出表增同一报告行并去第二段 front matter 前 BOM。前缀仍 **未** §7.2 全量退出。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2）；rollup 真源 **`REPO_DIRECTORY_ROLLUP_20260413`** |
+| **notes** | **B-03 已入库（本提交）**：[`REPO_DIRECTORY_ROLLUP_20260413.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.json)（**4468** 已跟踪；REPORTS **499**）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) rollup 行指向 20260413 最新 + 20260411 历史。运行队列 §4 前缀条数已与该快照对齐；`front matter` 版本 **1.0.2**。**下一项**：**B-02** 继续 REPORTS。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
@@ -76,17 +76,17 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 - [x] **B-01** 已读 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 与 [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json)（2026-04-11）  
 - [ ] **B-02** 对下表 **自顶向下**每次选 **1 个前缀**（或拆子目录），按 REPO_WIDE **§7.2** 模板执行一批后打勾并 commit  
-- [ ] **B-03** 批次间 `python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD` 并提交（作证据）  
+- [x] **B-03** 批次间 `python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD` 并提交（作证据）（2026-04-13：`20260413` 快照已提交）  
 - [ ] **B-04** REPO_WIDE **§7.3** 总勾或登记**书面例外**（须 Owner）
 
-#### `docs/` 深度 3 前缀队列表（来源 `REPO_DIRECTORY_ROLLUP_20260411.json` · 前 40）
+#### `docs/` 深度 3 前缀队列表（条数以最新 rollup 为准；当前快照见 `REPO_DIRECTORY_ROLLUP_20260413.json` · 前 40 占位）
 
 | 状态 | 条数 | 前缀 |
 |------|-----:|------|
-| [ ] | 498 | `docs/09_AUDIT/REPORTS` |
+| [ ] | 499 | `docs/09_AUDIT/REPORTS` |
 | [ ] | 406 | `docs/05_IMPLEMENTATION/04_OPERATIONS` |
-| [ ] | 377 | `docs/09_AUDIT/STATE` |
-| [ ] | 272 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` |
+| [ ] | 382 | `docs/09_AUDIT/STATE` |
+| [ ] | 273 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` |
 | [ ] | 218 | `docs/06_ARCHIVE/20260404_audit_reports_archive` |
 | [ ] | 97 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` |
 | [ ] | 83 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` |
@@ -143,6 +143,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.2 | 2026-04-13 | 指针 notes 记录 **B-03**：`REPO_DIRECTORY_ROLLUP_20260413`；§4 前缀表条数与快照对齐（REPORTS 499、STATE 382、`06_CONSTRUCTION_DOCS` 273） |
 | 1.0.1 | 2026-04-11 | 增 **[STUCK]** 防死循环：连续失败 3 次停止、标注指针与前缀表、跳下一项；与 AGENTS / Cursor rule 互指 |
 | 1.0.0 | 2026-04-11 | 首版：指针表、锚点 A/B/C、§7 深度 3 前 40 前缀、Phase B～D |
 
