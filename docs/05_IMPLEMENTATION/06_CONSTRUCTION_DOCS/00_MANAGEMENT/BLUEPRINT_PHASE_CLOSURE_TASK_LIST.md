@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.1
+version: 1.1.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -129,6 +129,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 ### W0：控制面落地（办公室先行）
 
 - [x] **分层与验收口径**已写入受控交付标准（§1.5）与本清单扩展轨（2026-04-10）
+- [x] **仓库根事故处置**已形成 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 并与 W2/W4 互指（2026-04-10，commit `b24eebce`）
 - [ ] Owner 已确认 **R0～R4** 与本仓实际目录命名一致（若工程无独立 `src/` 等，在备注中写明「本仓源码根 = ___」）
 - [x] [项目办公室 README](./README.md) 与 [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) 已能指到 §1.5 与本节（2026-04-10）
 
@@ -160,6 +161,12 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 **完成判据（扩展轨）**：W0～W4 相关行 Owner 认为可勾选，且每条 **能指到证据**（commit、报告路径、登记表、本文件备注日期）。
 
+**扩展轨执行备忘（2026-04-10）**
+
+- **仓库根实操一批**（与 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 一致）：commit **`9c2a9108`** — 移除根目录误跟踪垃圾文件与 QMT 队列文件、停止跟踪 `.env.qmt`、更新 `.gitignore`（含 `.audit_cache/` 与根下 QMT 账号目录占位）、两份审计报告归位至 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`。  
+- **Playbook 成文与互指**：commit **`b24eebce`**。  
+- **说明**：上列为**证据链**，**不自动等同** W2/W4 已全部勾选；**密钥轮换、历史是否清库、根 README 是否已指到办公室**等仍须 Owner 对照 **W2** 各条自检后再勾。
+
 ---
 
 ## 执行备忘 · 任务 5 扫描（2026-04-10）
@@ -188,6 +195,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.2 | 2026-04-10 | W0 增 Playbook 勾选；扩展轨增执行备忘（`9c2a9108` / `b24eebce` 证据） |
 | 1.1.1 | 2026-04-10 | 推荐阅读与 W2 互指 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | 1.1.0 | 2026-04-10 | 新增全仓库分层治理扩展轨 W0～W4；与交付标准 §1.5 对齐 |
 | 1.0.9 | 2026-04-10 | 任务 1 四项勾选闭合：INDEX+分散清单 N=582、三校验脚本、总清单增「任务 1 闭合口径」 |
