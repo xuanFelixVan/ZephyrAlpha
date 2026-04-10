@@ -3,7 +3,7 @@ module_id: 09_AUDIT_REPORTS_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-12
-last_updated: '2026-04-13'
+last_updated: '2026-04-14'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非长列表真源）
@@ -20,6 +20,10 @@ applicable_scope: docs/09_AUDIT/REPORTS
 1. [`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md) — 按主题分组浏览  
 2. [`INDEX.md`](./INDEX.md) — 全量索引与快速入口  
 3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)
+
+## 目录体量（与仓库快照对齐）
+
+- **深度 3 前缀路径数**：以 `git ls-files` rollup 为准 → [`../STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（**`docs/09_AUDIT/REPORTS` = 499** 条，快照日期 `20260413`）
 
 ## 索引健全性（本前缀）
 

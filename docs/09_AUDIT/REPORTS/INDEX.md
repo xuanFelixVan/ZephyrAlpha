@@ -3,7 +3,7 @@ module_id: 09_AUDIT_REPORTS_INDEX_REPORTS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-12'
+last_updated: '2026-04-14'
 owner: 文档治理系统
 responsibility:
 - 目录导航与文档索引管理与优化维护
@@ -38,6 +38,8 @@ compliance_level: 专业标准
 | **文档总数** | 112 |
 | **活跃模块** | 66 |
 | **更新频率** | 按需更新 |
+
+> **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → [`../STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（当前快照 **`docs/09_AUDIT/REPORTS` = 499**）。上表为历史手工统计，对账前请勿单独当作 Git 真源。
 
 ---
 
