@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-13T18:30:00Z` |
-| **上轮 commit** | `132745e7` |
+| **上轮 commit** | `21379ff4` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2）；rollup 真源 **`REPO_DIRECTORY_ROLLUP_20260413`** |
 | **notes** | **B-03 已入库（本提交）**：[`REPO_DIRECTORY_ROLLUP_20260413.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.json)（**4468** 已跟踪；REPORTS **499**）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) rollup 行指向 20260413 最新 + 20260411 历史。运行队列 §4 前缀条数已与该快照对齐；`front matter` 版本 **1.0.2**。**下一项**：**B-02** 继续 REPORTS。 |
