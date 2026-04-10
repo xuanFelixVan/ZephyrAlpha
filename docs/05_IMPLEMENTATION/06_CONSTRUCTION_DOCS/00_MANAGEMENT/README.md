@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.0.4
+version: 1.0.5
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -28,7 +28,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 1. **蓝图与建设文档收口**：[全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)（分解真源）+ [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md)（合并视角）。
 2. **孤儿与重复 / 重叠**：[孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)；重复簇台账：[CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。
 3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。
-4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。
+4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
+5. **仓库根卫生与误提交**：[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)（垃圾文件名、密钥进库、运行时数据、误放根下的正式稿归位）。
 
 ---
 
@@ -48,6 +49,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 蓝图任务 1～6 + **扩展轨 W0～W4**（整仓分层）勾选进度 |
 | [受控文档登记表](./CONTROLLED_DOCUMENTS_REGISTER.md) | 易混淆/跨目录正式稿台账（按需填行） |
 | [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) | 审计/标准/合规入口汇总（链接到真源，不搬迁正文） |
+| [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) | 根目录正常清单、垃圾文件/密钥/队列误入库的处置；衔接 §1.5 与 W2/W4 |
 
 ---
 
@@ -89,6 +91,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.5 | 2026-04-10 | 新增 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 入口；治理流程增第 5 条 |
 | 1.0.4 | 2026-04-10 | 治理流程增第 4 条（全仓库分层）；表内交付标准/任务清单说明同步 §1.5 与 W 轨 |
 | 1.0.3 | 2026-04-10 | 增加 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) 入口 |
 | 1.0.2 | 2026-04-10 | 治理流程摘要：总清单链接默认全量核对（100%） |

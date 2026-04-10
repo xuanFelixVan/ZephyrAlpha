@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.0
+version: 1.1.1
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -26,6 +26,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 说明 | 路径 |
 |------|------|
+| **仓库根卫生与误提交（Playbook）** | [`REPO_ROOT_GOVERNANCE_PLAYBOOK.md`](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | **01_BLUEPRINTS 摆放与导航规则（真源）** | [`01_BLUEPRINTS_REPOSITORY_RULES.md`](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
 | **蓝图终稿定义与认可** | [`BLUEPRINT_FINAL_SIGNOFF.md`](./BLUEPRINT_FINAL_SIGNOFF.md) |
 | **蓝图交付标准（机构精华版，目标态）** | [`BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md`](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) |
@@ -139,6 +140,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 ### W2：R1 仓库配置与门面
 
+> 操作细则与事故分类：**[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)**。
+
 - [ ] `.gitignore`（及若有的 `.gitattributes`）已覆盖应排除目录与密钥模式；无已知的误提交大目录
 - [ ] 根 `README`（或等价入口）能指到建设文档 canonical 与办公室入口
 - [ ] （可选）已运行密钥/秘密扫描或等价检查，发现问题已修或已登记风险
@@ -149,6 +152,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 - [ ] 源码根目录约定（文件夹结构、生成物位置）已写在根 README 或工程文档中，且与门禁 **§0.3** 可追溯要求不冲突
 
 ### W4：R4 排除层验证
+
+> 与根目录误提交、缓存目录的边界一致时，对照 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) **§1～2**。
 
 - [ ] 已确认 **依赖/缓存/构建产物** 不应出现在版本库中的规则生效（CI 或人工复查记录二选一即可）
 - [ ] 若使用 pre-commit / CI 拦截，配置已入库或文档中指明真源路径
@@ -183,6 +188,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.1 | 2026-04-10 | 推荐阅读与 W2 互指 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | 1.1.0 | 2026-04-10 | 新增全仓库分层治理扩展轨 W0～W4；与交付标准 §1.5 对齐 |
 | 1.0.9 | 2026-04-10 | 任务 1 四项勾选闭合：INDEX+分散清单 N=582、三校验脚本、总清单增「任务 1 闭合口径」 |
 | 1.0.8 | 2026-04-10 | 任务 1：`verify_manifest_paths_strict.py` + 总清单 §3.1.2 磁盘路径对齐；任务 5 备忘改为与递归扫描一致 |

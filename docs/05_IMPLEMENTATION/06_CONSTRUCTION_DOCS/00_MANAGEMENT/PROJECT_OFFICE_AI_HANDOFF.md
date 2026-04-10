@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.2
+version: 1.2.3
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -91,6 +91,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 处理同题多稿 / 重复 / 重叠 | 按 §1.5 与 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1～2；程序与模板见 Playbook、[重复标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)、[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。 |
 | 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。 |
 | 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
+| 仓库根出现怪文件 / 密钥误入库 / 运行时数据进库 | 按 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 分类处理（A 垃圾 / B 密钥 / C 运行时）；衔接 **W2、W4**。 |
 
 ---
 
@@ -120,6 +121,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.3 | 2026-04-10 | 常见任务增仓库根治理；链至 [REPO_ROOT_GOVERNANCE_PLAYBOOK](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | 1.2.2 | 2026-04-10 | 交付标准增 §1.5 / 任务清单增 W 轨；阅读顺序 ④′⑤ 与常见任务表同步 |
 | 1.2.1 | 2026-04-10 | 阅读顺序增 ①′ [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md)；真源优先级下增 §3.1 与架构互指 |
 | 1.2.0 | 2026-04-10 | §1.5 治理原则（机构对齐）；真源优先级增孤儿/重复与全库导航；常见任务增重复处置与 L1 扫描；明确总清单 100% 全量核对；阅读顺序增 ⑦ |
