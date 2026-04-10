@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.6
+version: 1.0.7
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -50,6 +50,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 **注意**：蓝图不仅存在于 `01_BLUEPRINTS`，还分散在 `01_FRAMEWORK`、`11_STRATEGIC_DECISION`、`10_AI_WORKFLOW`、`02_FACTOR_LIBRARY` 等目录；总清单必须能覆盖这些位置或明确它们如何汇入 canonical。
 
 **链接验证：本仓库默认「全量核对」（100%）**
+
+> **辅助核对（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 中 **Markdown 显式 `[](.md)` 链接** 经脚本解析 **4** 条，目标均存在。清单内**表格/反引号路径**的逐条全检仍须人工或专项脚本，完成后填下方 **N**。
 
 - **Owner 要求**：对总清单中每一个「应有蓝图」条目，须**逐条**确认链接可解析、指向**唯一 canonical**；完成后在本任务下备注「已全检，共 N 条」。
 - **机构常见例外**（仅当 Owner **书面豁免**时适用）：体量极大时可采用**统计抽检**（如随机 10 条）+ 说明样本量与豁免理由；**本仓库不设默认抽检**，豁免须写入登记表、commit 说明或本文件备注，避免无记录的「口头打折」。
@@ -144,6 +146,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 - `SMART_EXECUTION_ENGINE_BLUEPRINT.md`
 - `STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md`
 
+**批次 2026-04-10（三）**：8 份蓝图将「### 待补充项」改为「### 可选增强（第二期）」，避免与「未闭合占位」混淆；原意均为「核心已闭合」。
+
 **批次 2026-04-10（续）已处理**：`BLACK_LITTERMAN`（版本表 TBD→未发布第二期；表头修复）、`SMART_EXECUTION_ENGINE`、`MARKET_IMPACT_MODEL`、`LIQUIDITY_MANAGEMENT_SYSTEM`、`REALTIME_RISK_HEDGE_ENGINE`（性能目标/缺行风险）、`MARKET_PARTICIPANT_SIMULATION_INTEGRATION`、`STATISTICAL_ARBITRAGE_MODULE`、`ALTERNATIVE_DATA_INTEGRATION`（验收表与成本、风险节）、`MULTI_STRATEGY_HIERARCHICAL_SYSTEM`、`FACTOR_BACKTEST_INTEGRATION`（成本表重写）；6 份蓝图中间「集成验收项（待补充）」已改为联调口径说明。
 
 ---
@@ -165,6 +169,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.7 | 2026-04-10 | 任务 5：8 份蓝图小节标题「待补充项」→「可选增强（第二期）」 |
 | 1.0.6 | 2026-04-10 | 任务 5 续：多份蓝图去「待补充/TBD」与集成验收占位；任务清单备忘更新 |
 | 1.0.5 | 2026-04-10 | 任务 6 台账衔接备注；任务 5 扫描备忘（命中列表）；git commit 已提交 INDEX/总清单/本清单三文件 |
 | 1.0.4 | 2026-04-10 | 执行任务 2、4 勾选；任务 1 选定总清单；任务 6 卫生对照（部分）；INDEX 与磁盘对齐 |
