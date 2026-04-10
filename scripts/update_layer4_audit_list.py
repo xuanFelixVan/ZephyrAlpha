@@ -105,7 +105,7 @@ removed_docs = {
         'ACTIVE_LEARNING_BLUEPRINT.md',
     ],
     'Layer 8 (人机交互层)': [
-        'DISASTER_RECOVERY_BLUEPRINT.md',
+        'DISASTER_RECOVERY_FRAMEWORK_ENTRY.md',
     ],
 }
 

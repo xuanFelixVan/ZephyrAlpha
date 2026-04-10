@@ -42,7 +42,7 @@ layer_updates = {
     'CURRICULUM_LEARNING_BLUEPRINT.md': 'Layer 3 (策略层)',
     'CORRELATION_PREDICTION_BLUEPRINT.md': 'Layer 3 (策略层)',
     'ACTIVE_LEARNING_BLUEPRINT.md': 'Layer 3 (策略层)',
-    'DISASTER_RECOVERY_BLUEPRINT.md': 'Layer 8 (人机交互层)',
+    'DISASTER_RECOVERY_FRAMEWORK_ENTRY.md': 'Layer 8 (框架入口 → 图纸柜灾备蓝图)',
 }
 
 print('=' * 80)
