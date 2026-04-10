@@ -87,8 +87,9 @@ module_id: DOC_REMEDIATION_TASK_DIRECTIVE_20260408
 
 1. 从全库中选出 **50** 个已确认含「双 YAML 头」的 `.md` 文件（可与 OpenClaw 台账或自写检测脚本一致）。  
 2. 对这批文件**仅生成** unified diff，输出到目录：  
-   `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408/`  
+   `docs/09_AUDIT/STATE/double_yaml_dryrun_<YYYYMMDD>/`（每批自建；**勿**与归档样本混放）  
    （每文件一个 `.diff` 或单一汇总 diff，由执行者选定，但必须可人工审阅。）  
+   **历史样本（50 个 .diff）**见 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)。  
 3. **你（人类）**审阅 diff：确认无「正文被吃进 YAML」、无「丢失 module_id」。  
 4. 通过后，再按目录分批，每批 **100～200** 个文件应用相同算法写回仓库。
 

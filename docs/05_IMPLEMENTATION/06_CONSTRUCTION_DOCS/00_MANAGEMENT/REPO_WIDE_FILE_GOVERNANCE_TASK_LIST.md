@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.21
+version: 1.4.22
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -284,23 +284,37 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - [x] **同名不同路径**：对 basename 碰撞做报表（脚本或 `git ls-files` 后处理），人工判 canonical；**合并/重命名步骤见 §3.3**。（2026-04-11：已落地 `scripts/governance/scan_basename_collisions.py` → [`BASENAME_COLLISIONS_20260411.md`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md)；**§3.6 C2（非导航）已勾选完成**，余导航名碰撞见报表分表。）  
 - [x] **同内容（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（例：`--ext md`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；**合并/删稿仍须**遵守 **§3.2** 与归档策略 **§3.1**。  
-- [ ] 将结果与 [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 对齐，**先归并再删**；与 **§3.6** 勾选一并推进。
+- [x] 将结果与 [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 对齐，**先归并再删**；与 **§3.6** 勾选一并推进。（2026-04-10：**流程对齐**已落实 — C1/C2 已按 §3.2/§3.3 与归档策略执行；后续每一批合并/删稿仍须逐 PR 对照 Playbook **先归并再删**；D 类按 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) 单列。）
 
 ### P2 — 明显「多余」扩展名与审计衍生物
 
-- [ ] 评审 **50** 个已跟踪 `.diff`：保留标准、迁 archive、或从跟踪中移除。  
-- [ ] 评审 `.bak2` / `.bak3` 等：是否应仅存于 archive 或本地（不进 Git）。  
-- [ ] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。
+- [x] 评审 **50** 个已跟踪 `.diff`：保留标准、迁 archive、或从跟踪中移除。（2026-04-10：50 个均为双 YAML **dry-run** 样本，已从 `docs/09_AUDIT/STATE/` **整体迁出**至 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)；[`OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`](../../../09_AUDIT/PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md)、[`DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md`](../../../09_AUDIT/PROCEDURES/DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md) 已改为「每批自建 `double_yaml_dryrun_<YYYYMMDD>/`」并互指归档样本。）  
+- [x] 评审 `.bak2` / `.bak3` 等：是否应仅存于 archive 或本地（不进 Git）。（2026-04-10：`docs/System_Manifest.md.bak3` → [`06_ARCHIVE/20260410_system_manifest_backup/`](../../../06_ARCHIVE/20260410_system_manifest_backup/README.md)；`docs/06_ARCHIVE/encoding_backups/...*.bak2` 已位于 archive，保留为编码修复历史备份。）  
+- [x] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。（2026-04-10：已跟踪 **13** 条路径均为常规 UTF-8 文件名，**无**异常引号/转义段；若统计脚本再报异常则重开本条。）
 
 ### P3 — 索引可达性（导航）
 
 - [ ] 从 `docs/INDEX.md` 与 [`../INDEX.md`](../INDEX.md) 出发做**抽样反向检查**：随机/分层抽样未出现在任何 INDEX/SITEMAP 的 `docs/` 文件比例（目标：持续下降）。  
-- [ ] `scripts/`：在 [scripts/README.md](../../../../scripts/README.md) 或生成清单中补齐**分类导航**（与脚本数量匹配）。  
-- [ ] `src/`：在根 README 或 `src/` 下 INDEX 中保证模块入口**可跳转**。
+- [x] `scripts/`：在 [scripts/README.md](../../../../scripts/README.md) 或生成清单中补齐**分类导航**（与脚本数量匹配）。（2026-04-10：增 **分类导航（P3）** 小节 + 治理表补 `scan_basename_collisions.py`。）  
+- [x] `src/`：在根 README 或 `src/` 下 INDEX 中保证模块入口**可跳转**。（2026-04-10：新增 [`src/README.md`](../../../../src/README.md)；根 [README.md](../../../../README.md)「项目结构」互指。）
 
 ### P4 — 与现有门禁脚本对齐
 
-- [ ] 将本清单 P1～P3 的产出与现有 `scripts/governance/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）；**矩阵须与 §1.1 一致**（脚本名 ↔ 覆盖集合 ↔ 不做的事）。  
+#### P4.1 P1～P3 产出与门禁脚本衔接矩阵（与 §1.1 一致）
+
+| 关切 / 产出 | 脚本或门禁（`scripts/governance/` 为主） | **不做的事**（与 §1.1 同口径） |
+|-------------|--------------------------------------------|--------------------------------|
+| 目录体量与拆队列（P0 / §7） | `export_repo_directory_rollup.py` | 不读文件内容语义 |
+| Markdown 内链 + 首道 `module_id` | `sentinel_l1_governance_scan.py` | 不扫正文语义；工作区 md 可能与 `git ls-files` 不一致 |
+| 总清单 / INDEX 路径存在性 | `verify_manifest_paths_strict.py`、`verify_01_blueprints_index_links.py`、`verify_scattered_blueprints_manifest_links.py` | 不遍历全库所有文件 |
+| 同内容重复（C1） | `scan_duplicate_file_content.py`（须 `--ext`） | 不自动删；删并走 §3.2 + [删稿 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) |
+| 同名不同路径（C2） | `scan_basename_collisions.py` | 不读正文；不自动合并 |
+| 蓝图主题可能重叠（D） | `scan_blueprint_d_overlap_candidates.py`、`triage_blueprint_d_overlap_pairs.py` | 非 embedding 语义；不自动合稿；二审须模板 + Owner |
+| `docs/` 零入链候选 | `scan_index_health.py` | 不裁决「必须出现在某 INDEX」 |
+| 架构 / API / `src/` 目录表 | `generate_architecture_service_catalog.py` | 不做全仓 AST 调用图 |
+| 首道 `module_id` 缺失 | `backfill_missing_module_id.py`（`--apply` 后须复跑 L1） | 不修复业务正文质量 |
+
+- [x] 将本清单 P1～P3 的产出与现有 `scripts/governance/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）；**矩阵须与 §1.1 一致**（脚本名 ↔ 覆盖集合 ↔ 不做的事）。（2026-04-10：见上表 **P4.1**。）  
 - [x] **架构/服务目录 + C4 摘要 + 可检索 JSON**：`generate_architecture_service_catalog.py` → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.{md,json}`（2026-04-10）；含根目录机构缺口表。  
 - [x] 「重复内容报表」：`scan_duplicate_file_content.py`（已落地）；可选后续接 CI **仅告警**。  
 - [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](../../../../scripts/README.md) 登记用途。
@@ -317,6 +331,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.22 | 2026-04-10 | P2：50×`.diff` 迁 `06_ARCHIVE/20260408_double_yaml_dryrun_sample`；`System_Manifest.md.bak3` 迁 archive；程序文档改 dry-run 路径；P1 Playbook 流程对齐勾选；P3：`scripts/README` 分类导航 + `src/README`；P4.1 门禁矩阵；§8 部分勾选；复跑 `rollup` + `REPO_GIT_TRACKED_FILES_20260410.txt` |
 | 1.4.21 | 2026-04-10 | D 类：`triage_blueprint_d_overlap_pairs.py` + TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 写入文首、§1.1、§3.4～§3.6、§6 推荐阅读 |
 | 1.4.20 | 2026-04-10 | L1：落地 `backfill_missing_module_id.py`，全库首道 FM **无 `module_id` → 0**（131 篇：结构修复 15 + 补 id 116）；`sentinel_l1_governance_scan.py` 产出 MD 增 FM + 统计排除自指；`scan_blueprint_d_overlap_candidates.py` 产出 MD 增稳定 `module_id`；复跑 L1 **判定无效 0、重复 id 0** |
 | 1.4.19 | 2026-04-12 | D 类：复跑 `scan_blueprint_d_overlap_candidates.py` → `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`；§3.6 D 附机器基线数字；§6 推荐阅读主链改 20260412 并保留 20260411 快照 |
@@ -384,6 +399,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 叙事层模块/总账入口（与 §2.4 生成物互补） | [`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) |
 | 蓝图阶段任务（并列） | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) |
 | 孤儿与重复治理 | [DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) |
+| 双 YAML dry-run 历史样本（50×`.diff`，已迁出 STATE） | [`06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md) |
 
 ---
 
@@ -422,9 +438,9 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 大改办公室或本清单后，维护者快速过一遍：
 
-- [ ] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类合稿待审登记**、**D 类二审模板**、`triage_blueprint_d_overlap_pairs.py`）；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.5** 与 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。  
-- [ ] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。  
-- [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。  
-- [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。  
-- [ ] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。  
-- [ ] **§1.1** 已与 `scripts/` 内实际行为一致；对外未再暗示「全格式、全文件语义扫描」。
+- [x] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类合稿待审登记**、**D 类二审模板**、`triage_blueprint_d_overlap_pairs.py`）；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.5** 与 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对。）  
+- [x] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。（2026-04-10 批次核对。）  
+- [x] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
+- [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（§1 仍为 **2026-04-10** 快照；本轮已复跑 rollup / 平面清单，**文件总数**未改 §1 表内字面数 — 下次大治理可一并更新 §1 表。）  
+- [x] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。（2026-04-10 批次核对。）  
+- [x] **§1.1** 已与 `scripts/` 内实际行为一致；对外未再暗示「全格式、全文件语义扫描」。（2026-04-10：与 **P4.1** 矩阵一致。）

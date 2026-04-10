@@ -1,5 +1,4 @@
 ---
-module_id: DOCS_09_AUDIT_STATE_REPO_DIRECTORY_ROLLUP_20260410
 standard_type: audit_state
 applicable_scope: 全仓库路径目录聚合（git ls-files，可选未跟踪）
 generated_date: '20260410'
@@ -7,7 +6,7 @@ generated_date: '20260410'
 
 # 仓库目录深度聚合（路径条数）
 
-> 由 `scripts/governance/export_repo_directory_rollup.py` 生成；**已跟踪 4400** + **未跟踪（未 ignore）0** 条路径。
+> 由 `scripts/governance/export_repo_directory_rollup.py` 生成；**仅已跟踪**，共 **4451** 条路径。
 > JSON 真源：[`REPO_DIRECTORY_ROLLUP_20260410.json`](./REPO_DIRECTORY_ROLLUP_20260410.json)
 
 ## 使用说明
@@ -22,28 +21,29 @@ generated_date: '20260410'
 | 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/09_AUDIT/REPORTS` | 498 |
-| `docs/09_AUDIT/STATE` | 410 |
 | `docs/05_IMPLEMENTATION/04_OPERATIONS` | 406 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 269 |
+| `docs/09_AUDIT/STATE` | 374 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 272 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive` | 218 |
 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | 97 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` | 83 |
 | `docs/05_IMPLEMENTATION/07_OPERATIONS` | 62 |
 | `docs/09_ARCHIVE/duplicates` | 54 |
+| `docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample` | 50 |
 | `docs/01_FRAMEWORK/LAYER4_ML` | 40 |
 | `docs/06_ARCHIVE/20260407_old_layer_audit_reports` | 40 |
-| `docs/06_ARCHIVE/20260407_p1_cleanup_archive` | 33 |
 | `docs/09_AUDIT/STANDARDS` | 33 |
+| `docs/06_ARCHIVE/20260407_p1_cleanup_archive` | 23 |
 | `docs/05_IMPLEMENTATION/02_DEVELOPMENT` | 21 |
 | `docs/06_ARCHIVE/architecture_v4` | 20 |
 | `docs/06_ARCHIVE/main` | 20 |
 | `docs/09_RESEARCH_INNOVATION/maintenance_records` | 19 |
 | `docs/06_ARCHIVE/20260406_encoding_issues_archive` | 18 |
-| `docs/06_ARCHIVE/temp_pending` | 17 |
 | `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK` | 16 |
 | `docs/09_AUDIT/TEMPLATES` | 16 |
 | `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES` | 15 |
 | `docs/04_EXECUTION/07_LIVE_STREAM` | 13 |
+| `docs/06_ARCHIVE/temp_pending` | 11 |
 | `docs/09_AUDIT/PROCEDURES` | 10 |
 | `docs/03_TRADING_TACTICS/99_ARCHIVE` | 7 |
 | `docs/05_IMPLEMENTATION/01_QUICKSTART` | 7 |
@@ -66,11 +66,10 @@ generated_date: '20260410'
 | `docs/04_EXECUTION/01_ORDER_EXECUTION` | 4 |
 | `docs/05_IMPLEMENTATION/04_INFRASTRUCTURE` | 4 |
 | `docs/05_IMPLEMENTATION/99_ARCHIVE` | 4 |
+| `docs/06_ARCHIVE/20260410_c2_p1_audit_report_basenames` | 4 |
 | `docs/06_ARCHIVE/incomplete_documents` | 4 |
 | `docs/06_ARCHIVE/knowledge_library` | 4 |
 | `docs/08_KNOWLEDGE/BEST_PRACTICES` | 4 |
-| `docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS` | 4 |
-| `docs/09_AUDIT/GUIDES` | 4 |
 
 
 ## `docs/` 下深度 4 前缀 Top 50（按路径条数降序）
@@ -81,10 +80,9 @@ generated_date: '20260410'
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS` | 178 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state` | 121 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive/technical_reviews` | 96 |
-| `docs/09_AUDIT/STATE/double_yaml_dryrun_sample_20260408` | 50 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS` | 35 |
 | `docs/09_AUDIT/STATE/overnight_runs` | 28 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 19 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 22 |
 | `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base` | 18 |
 | `docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints` | 18 |
 | `docs/06_ARCHIVE/architecture_v4/module_designs` | 18 |
@@ -127,6 +125,7 @@ generated_date: '20260410'
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_TESTING_FRAMEWORK` | 3 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_VERSION_CONTROL` | 3 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/REALTIME_DATA_STREAMING` | 3 |
+| `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/TIME_SERIES_STORAGE` | 3 |
 
 
 ## `docs/` 下深度 5 前缀 Top 50（按路径条数降序）

@@ -95,7 +95,7 @@ Layer 4: 组合层 → Layer 5: 执行层 → Layer 6: 监控层 → Layer 7: �
 ```
 ZephyrAlpha/
 ├── config/          # 配置文件
-├── src/            # 源代码
+├── src/            # 源代码（模块索引见 src/README.md）
 ├── data/           # 数据存储
 ├── logs/           # 日志文件
 ├── tests/          # 测试代码
