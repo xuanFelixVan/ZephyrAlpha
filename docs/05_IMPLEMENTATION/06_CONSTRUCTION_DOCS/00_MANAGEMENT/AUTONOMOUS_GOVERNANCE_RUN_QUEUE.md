@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-14T12:00:00Z` |
-| **上轮 commit** | `b3708445` |
+| **上轮 commit** | `0a24e0f3` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2）；或 Owner 切至 `docs/05_IMPLEMENTATION/04_OPERATIONS` |
 | **notes** | **B-02 批次 6**：[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 补「484 vs 499」口径说明，并链 [`REPO_DIRECTORY_ROLLUP_20260413`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)；`related_documents` 增 rollup。运行队列 **v1.0.4**。批次 5 见上条。 |
