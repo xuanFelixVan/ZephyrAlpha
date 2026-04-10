@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.0
+version: 1.1.1
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -22,6 +22,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 **例外（已定）**：**施工门禁**与**蓝图卫生总案**正文已迁入 [CANON/](./CANON/README.md)，作为蓝图终稿 / 放行的**唯一受控路径**；全库链接已指向该目录。
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**（可与扫描/合并并行的事）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
+
+**机构式架构/服务目录（已生成，可检索）**：[`docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（及同主文件名 `.json`）——含 **C4 类 Context/Containers/Components**、从 **FastAPI routes** 抽取的 **HTTP 端点**、`src/` 组件平面表、**根目录相对机构常见缺口**；复跑 `python scripts/generate_architecture_service_catalog.py`。叙事真源仍以 `docs/01_FRAMEWORK/ARCHITECTURE.md`、`System_Manifest` 等为准。
 
 ### 全库文档治理流程（摘要）
 
@@ -47,7 +49,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手顺序、真源、常见任务 | 增补「rollup / §7」后自检阅读顺序表 |
 | [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) | 审计/合规入口地图 | 大挪移目录后补外链 |
 | [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) | 根目录误提交、密钥、运行时 | 与 §2.3「根门面」并行 |
-| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) | **整仓尽治主真源**（合并 + 深度队列 + §2.4 模块全景口径） | 滚动勾选 P0～P5、§3.6、§7.3；**P4** 可选 `MODULE_PANORAMA_*` |
+| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) | **整仓尽治主真源**（合并 + 深度队列 + §2.4 + **ARCHITECTURE_SERVICE_CATALOG**） | 滚动勾选 P0～P5、§3.6、§7.3；**P4** 已含架构目录生成物，可选 `MODULE_PANORAMA_*` |
 | [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 蓝图 1～6 + **W0～W4** | 与尽治**并列**；总清单与重复口径闭合 |
 | [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | 目标态、§1.5 分层 | 对照 §7 退出标准是否需增删 |
 | [蓝图终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md) | 终稿含义与变更 | canonical 变更时可追溯 |
@@ -72,7 +74,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | 目标态：四支柱 + 三阶段 + **§1.5 全仓库分层治理（R0～R4）** + 合并自检 |
 | [蓝图终稿定义与认可](./BLUEPRINT_FINAL_SIGNOFF.md) | 什么叫终稿、谁认可、终稿后怎么改 |
 | [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 蓝图任务 1～6 + **扩展轨 W0～W4**（整仓分层）；含机构治理顺序与执行勾选 |
-| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) | **整仓**尽治：平面清单 + **rollup** + **§2.4 模块全景**、§2.3 并行项、§3 合并、**§7**、§8、**P4/P5** |
+| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) | **整仓**尽治 + **ARCHITECTURE_SERVICE_CATALOG**（C4/服务目录）；平面清单、rollup、§2.3～§2.4、§3、§7、§8、P4/P5 |
 | [受控文档登记表](./CONTROLLED_DOCUMENTS_REGISTER.md) | 易混淆/跨目录正式稿台账（按需填行） |
 | [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) | 审计/标准/合规入口汇总（链接到真源，不搬迁正文） |
 | [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) | 根目录正常清单、垃圾文件/密钥/队列误入库的处置；衔接 §1.5 与 W2/W4 |
@@ -113,6 +115,9 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 - **目录深度聚合**（整仓治理排期、`docs/` 下深度 3～6 Top 表 + JSON）：  
   `python scripts/export_repo_directory_rollup.py`  
   （可选 `--date YYYYMMDD`、`--top N`；输出在 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`）
+- **架构服务目录 + C4 摘要**（`src/`、`pyproject`、API routes、根目录机构缺口表）：  
+  `python scripts/generate_architecture_service_catalog.py`  
+  （输出 `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*`）
 
 ---
 
@@ -120,6 +125,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.1 | 2026-04-10 | 增 **ARCHITECTURE_SERVICE_CATALOG** 说明与常用脚本；根目录 **LICENSE/CONTRIBUTING/SECURITY** 与任务清单 **1.2.2** 对齐 |
 | 1.1.0 | 2026-04-10 | 尽治主清单互指 **§2.4** 模块全景与 **P4** 可选脚本；物理 rollup 与逻辑 `MODULE_PANORAMA_*` 并列说明 |
 | 1.0.9 | 2026-04-10 | 尽治主清单互指 **§7/§8/P5/rollup**；新增「办公室文件一览」表；流程第 6 条扩写；常用脚本增 `export_repo_directory_rollup.py` |
 | 1.0.8 | 2026-04-10 | 新增 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 与治理流程第 6 条 |

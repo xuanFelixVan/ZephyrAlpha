@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.5
+version: 1.2.6
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -93,7 +93,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。 |
 | 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
 | 整仓「深度尽治」+ 合并重复 + 不想只做表面统计 | 打开 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)：跑 `python scripts/export_repo_directory_rollup.py` 得深度 3～6 队列；按 **§7** 前缀退出标准推进，**§2.3** 与扫描/合并并行；**W 轨勾完 ≠ 尽治完毕**。 |
-| 要三级/四级「模块全景」+ 索引、对标机构做法 | 先读同一清单 **§2.4**（物理 rollup vs 逻辑树、叙事真源 `System_Manifest`/`SITEMAP`/`module_designs`）；可选实现 **P4** 中 `MODULE_PANORAMA_*` 生成脚本，与 rollup **同频**更新。 |
+| 要三级/四级「模块全景」+ 索引、对标机构做法 | 先读同一清单 **§2.4**；已落地 **架构服务目录 + C4**：`python scripts/generate_architecture_service_catalog.py` → [`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；可选再实现 `MODULE_PANORAMA_*`，与 rollup **同频**更新。 |
 | 仓库根出现怪文件 / 密钥误入库 / 运行时数据进库 | 按 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 分类处理（A 垃圾 / B 密钥 / C 运行时）；衔接 **W2、W4**。 |
 
 ---
@@ -117,6 +117,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 建设文档根: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 索引脚本:   scripts/generate_01_blueprints_index.py
 目录聚合:   scripts/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
+架构目录:   scripts/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
 ```
 
 ---
@@ -125,6 +126,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.6 | 2026-04-10 | 路径速查增 `generate_architecture_service_catalog`；常见任务互指 **ARCHITECTURE_SERVICE_CATALOG** |
 | 1.2.5 | 2026-04-10 | 常见任务增「模块全景 / §2.4 / MODULE_PANORAMA」与机构对标说明 |
 | 1.2.4 | 2026-04-10 | 阅读顺序增 ⑤′ [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；常见任务增「深度尽治」；路径速查增 `export_repo_directory_rollup.py` |
 | 1.2.3 | 2026-04-10 | 常见任务增仓库根治理；链至 [REPO_ROOT_GOVERNANCE_PLAYBOOK](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |

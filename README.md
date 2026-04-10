@@ -63,6 +63,15 @@ python -m src.main
 | [全库蓝图终稿任务清单](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
 | [施工门禁](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
 
+### 开源协作与架构索引（生成物）
+
+| 入口 | 说明 |
+|------|------|
+| [LICENSE](LICENSE) | MIT（与 `pyproject.toml` 声明一致） |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与办公室入口 |
+| [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
+| [架构服务目录 + C4 摘要](docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/generate_architecture_service_catalog.py` |
+
 ---
 
 ## 系统架构
@@ -114,4 +123,4 @@ ZephyrAlpha/
 
 ---
 
-**版本**: v5.1 | **更新**: 2026-04-10
+**版本**: v5.1 | **更新**: 2026-04-10（含根目录 LICENSE / CONTRIBUTING / SECURITY 与架构服务目录生成物）

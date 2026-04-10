@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.1
+version: 1.2.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -17,7 +17,8 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **与蓝图清单的关系**：与 [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **并列**；蓝图清单偏**终稿与施工门禁**，本清单偏**整仓文件体量、重复与导航**。扩展轨 **W0～W4 勾选完毕 ≠ 本清单「目录尽治」完毕**（二者互补，见蓝图清单扩展轨节互指）。  
 > **一次性尽治目标**：以**单批次最大穷尽**为排期目标——按 **§7** 对 `docs/` 等前缀拆队列、逐前缀打到退出标准；客观上规范与仓库仍会演进，**长期靠门禁脚本 + 定期重跑 §1 清单/rollup** 维持，避免「无标准的第二轮大扫除」。  
 > **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。  
-> **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。
+> **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。  
+> **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `generate_architecture_service_catalog.py`）。
 
 ---
 
@@ -128,6 +129,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **全系统文档审计 A～H** | [审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) | 与尽治同窗但**签字口径独立** |
 | **代码重复 / 重构** | 单立 PR + 测试 | **不**与文档合并混批（见 §3.1） |
 | **模块全景（逻辑树）** | §2.4；将来 `MODULE_PANORAMA_*` 与 rollup **同频**重跑 | 包名/域改名后重跑，避免索引漂移 |
+| **架构服务目录 + C4 多视图** | `python scripts/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
 
 **办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
 
@@ -152,7 +154,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 1. **输入**：`git ls-files`（与 rollup 相同）+ 可选从 Markdown 头抽取 `module_id` / 自定义 YAML 映射（若日后引入）。  
 2. **输出**：例如 `docs/09_AUDIT/STATE/MODULE_PANORAMA_<date>.json`（机器真源）+ 精简 `.md`（人类浏览）；按约定深度展开 `src/**` 与选定的 `docs/**` 前缀。  
 3. **更新节奏**：大治理 PR 后、或季度，与 **rollup 一并重跑**并 commit，用 diff 观察子树漂移。  
-4. **与叙事真源的关系**：[`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) 等继续承担**解释与裁决**；生成物标注 **generated**，避免「两份真源」静默分叉。
+4. **与叙事真源的关系**：[`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) 等继续承担**解释与裁决**；生成物标注 **generated**，避免「两份真源」静默分叉。  
+
+5. **已落地的机构式组合（本仓库）**：`scripts/generate_architecture_service_catalog.py` 从 **`pyproject.toml`、`git ls-files src/`、`src/api/main.py`、各 `routes/*.py`** 推导 **Context / Containers / Components（HTTP 端点）**、**service_catalog** 与 **根目录机构缺口自检表**，输出 [`ARCHITECTURE_SERVICE_CATALOG_*.md/json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；与 **rollup**、以及将来可选的 **`MODULE_PANORAMA_*`** 产物**同频**复跑即可持续刷新。
 
 ---
 
@@ -248,6 +252,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 ### P4 — 与现有门禁脚本对齐
 
 - [ ] 将本清单 P1～P3 的产出与现有 `scripts/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）。  
+- [x] **架构/服务目录 + C4 摘要 + 可检索 JSON**：`generate_architecture_service_catalog.py` → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.{md,json}`（2026-04-10）；含根目录机构缺口表。  
 - [ ] 可选：新增「重复内容报表」脚本，输出到 `docs/09_AUDIT/STATE/`，CI 仅告警不阻断（先软后硬）。  
 - [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](../../../../scripts/README.md) 登记用途。
 
@@ -263,6 +268,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.2 | 2026-04-10 | **§2.4** 增架构服务目录生成物说明；§2.3 增 C4/服务目录行；**P4** 勾选 `ARCHITECTURE_SERVICE_CATALOG_*`；§6 增入口；根目录补 **LICENSE / CONTRIBUTING / SECURITY** |
 | 1.2.1 | 2026-04-10 | 新增 **§2.4** 架构模块全景与机构做法；§2.3 增「模块全景」行；**P4** 可选全景脚本；文首互指 §2.4 |
 | 1.2.0 | 2026-04-10 | **§2.3** 可并行工作总表；**§7** 深度目录队列与退出标准；**§8** 办公室二次自查；**P5**；rollup 脚本与 `REPO_DIRECTORY_ROLLUP_20260410.*`；§1 明确深度 2 不足尽治 |
 | 1.1.0 | 2026-04-10 | 新增 **§3 合并重复文件方案**（分型、C1/C2/D 流程、并行线程、§3.6 勾选）；P1 互指 §3 |
@@ -276,6 +282,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 |------|------|
 | 全量已跟踪路径清单 | [`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
 | 目录深度聚合（3～6） | [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
+| 架构服务目录 + C4 摘要（生成） | [`ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 | 叙事层模块/总账入口（与 §2.4 生成物互补） | [`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) |
 | 蓝图阶段任务（并列） | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) |
 | 孤儿与重复治理 | [DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) |
@@ -291,7 +298,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 1. 打开 [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。  
 2. 对 **`docs/09_AUDIT/REPORTS`、`docs/09_AUDIT/STATE`** 等超高计数前缀：在批次内再按**子文件夹**细分为子队列（rollup 深度加一或手工列目录）。  
 3. **`docs/06_ARCHIVE/**`**：默认 **只读治理**（摆放、索引、与活动区重复标注），删并须符合 **§3.1 归档区策略**。  
-4. **`scripts/`、`src/`、`notebooks/`**：以「入口可读 + 重复脚本/模块报表」为主，不单套用文档 C1 流程。
+4. **`scripts/`、`src/`、`notebooks/`**：以「入口可读 + 重复脚本/模块报表」为主，不单套用文档 C1 流程；**`src/` 或 API 变更**后复跑 `generate_architecture_service_catalog.py` 刷新服务目录。
 
 ### 7.2 单个目录前缀（或子队列）「退出标准」勾选模板
 
@@ -318,6 +325,6 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 - [ ] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**；**办公室文件一览**表与磁盘一致。  
 - [ ] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」。  
-- [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup** 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** 模块全景脚本，表中已登记。  
+- [ ] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。  
 - [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。  
 - [ ] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。
