@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.1
+version: 1.2.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -54,8 +54,8 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | ② | [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 图纸柜根目录**允许/禁止**什么文件；过程稿应放哪 |
 | ③ | [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md) | 整理图纸柜时的执行纪律、自检命令；**用户可复制指令**在文首 |
 | ④ | [BLUEPRINT_FINAL_SIGNOFF.md](./BLUEPRINT_FINAL_SIGNOFF.md) | **什么叫蓝图终稿**、谁算认可、终稿后怎么改 |
-| ④′ | [BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | **机构精华版交付目标态**（四支柱 + 三阶段 + 合并自检）；与门禁 §0～§3 对照 |
-| ⑤ | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 全库蓝图收尾**还有哪些勾选项未完成**（含 **100% 总清单链接核对** 默认口径） |
+| ④′ | [BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | **机构精华版交付目标态**（四支柱 + 三阶段 + **§1.5 全仓库分层 R0～R4** + 合并自检）；与门禁 §0～§3 对照 |
+| ⑤ | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 蓝图任务 1～6 进度 + **扩展轨 W0～W4**（整仓分层）；总清单链接默认 **100% 全量** |
 | ⑥（按需） | [CONTROLLED_DOCUMENTS_REGISTER.md](./CONTROLLED_DOCUMENTS_REGISTER.md) | 易混淆主题的唯一正式稿登记 |
 | ⑦（按需） | [办公室 README](./README.md) →「全库文档治理流程」+ [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) | 处理**同题多稿、孤儿、重复簇**时必读；与任务清单任务 1～2 联动 |
 
@@ -90,6 +90,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 修正建设文档「大门口」描述 | 改 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md`，使子目录表与**磁盘真实文件夹**一致。 |
 | 处理同题多稿 / 重复 / 重叠 | 按 §1.5 与 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1～2；程序与模板见 Playbook、[重复标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)、[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。 |
 | 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。 |
+| 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
 
 ---
 
@@ -119,6 +120,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.2 | 2026-04-10 | 交付标准增 §1.5 / 任务清单增 W 轨；阅读顺序 ④′⑤ 与常见任务表同步 |
 | 1.2.1 | 2026-04-10 | 阅读顺序增 ①′ [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md)；真源优先级下增 §3.1 与架构互指 |
 | 1.2.0 | 2026-04-10 | §1.5 治理原则（机构对齐）；真源优先级增孤儿/重复与全库导航；常见任务增重复处置与 L1 扫描；明确总清单 100% 全量核对；阅读顺序增 ⑦ |
 | 1.0.1 | 2026-04-10 | 增加机构精华版交付标准阅读项与真源优先级、常见任务对照 |
