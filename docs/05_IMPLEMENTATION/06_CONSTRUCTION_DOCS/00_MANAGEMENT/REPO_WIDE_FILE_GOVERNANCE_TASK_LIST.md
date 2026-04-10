@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.6
+version: 1.2.7
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -109,7 +109,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - **「涵盖」**：在 **路径级**，`git ls-files` 已覆盖**所有已跟踪**路径（任意后缀）；§1 的扩展名统计可列出当前仓库**已出现**的后缀类型。  
 - **「每一文件识别/分析/处理」**：**没有**。当前自动化主要是 **Markdown 链接 + module_id**、**目录计数**、**API 路由抽取**、**特定清单校验**；**语义理解、业务裁决、二进制内容治理**需 **人工 + 分格式专项**（或未来单独立项脚本）。  
-- **验收建议**：大治理收口时声明以 **「已跟踪 + L1 + verify + rollup」** 为门禁组合；若要求「仅扫描入库文件」，应 **先 `git status` 清干净**或接受 L1 与 `git ls-files` 的已知差异。
+- **验收建议**：大治理收口时声明以 **「已跟踪 + L1 + verify + rollup」** 为门禁组合；若要求「仅扫描入库文件」，应 **先 `git status` 清干净**或接受 L1 与 `git ls-files` 的已知差异。  
+- **索引「是否够健全」**：**L1** 只校验**已写出**的相对链能否解析，**不**自动判定「该文件应出现在哪几份 `INDEX.md`」；搬迁后须同步的入链/机器清单/登记表见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4**；若要做「孤儿/域 INDEX 覆盖」类报表，属 **可选增强**，见同文 **§5**（须先写规则再写脚本）。
 
 ---
 
@@ -295,6 +296,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.7 | 2026-04-10 | §1.1 **结论** 增「索引健全性」边界：L1/verify 能做什么；搬迁后索引同步与可选孤儿报表互指 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4～§5** |
 | 1.2.6 | 2026-04-10 | 纳入 **文档地图 + 放置规则**：文首与 §6 互指；§2.3 增「文档地图与放置」行；§7.2 增 **摆放** 退出项；§8 办公室自查增 [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与 AI 交接 **①‴** |
 | 1.2.5 | 2026-04-10 | 治理脚本归口 `scripts/governance/`；`rollup`/`scan_duplicate` 支持 `--include-untracked`；互指 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；§1.1 与 §2.3 命令路径更新 |
 | 1.2.4 | 2026-04-10 | **P1** 落地 `scan_duplicate_file_content.py`；§2.3 增内容重复与工具索引；互指 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；§1.1 表更新 |
