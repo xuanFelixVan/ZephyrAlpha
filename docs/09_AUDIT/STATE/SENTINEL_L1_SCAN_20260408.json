@@ -1,20 +1,20 @@
 {
-  "scan_time_utc": "20260410T114841Z",
+  "scan_time_utc": "20260410T130740Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3181,
+  "md_file_count": 3182,
   "links": {
     "stats": {
-      "total_files_scanned": 3181,
-      "total_md_links": 6663,
+      "total_files_scanned": 3182,
+      "total_md_links": 6525,
       "skipped_external": 987,
-      "valid": 5676,
+      "valid": 5538,
       "invalid": 0
     },
     "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3073,
+    "unique_module_ids": 3074,
     "duplicate_ids_count": 2,
     "duplicates": {
       "README": [
@@ -28,7 +28,6 @@
     },
     "files_without_module_id_sample": [
       "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/LAYER8_GIT_DELETED_CONTENT_DEEP_CHECK_20260408.md",
-      "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md",
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/LAYER5_BLUEPRINT_COMPLETENESS_FINAL_ANALYSIS_20260408.md",
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/LAYER5_BLUEPRINT_COVERAGE_REANALYSIS_20260407.md",
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/LAYER5_COMPLETENESS_DEEP_ANALYSIS_20260407.md",
@@ -116,6 +115,7 @@
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_27_FACTOR_COMPLIANCE_071.md",
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_28_FACTOR_REALTIME_072.md",
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_29_FACTOR_PORTFOLIO_OPT_073.md",
+      "docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_POST_REMEDIATION_20260408.md",

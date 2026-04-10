@@ -45,6 +45,7 @@ reference_models:
 
 - **与 `01_BLUEPRINTS` 的关系**：模块级文件名与机器生成列表以 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 为准；本文负责**阶段口径、分层统计与跨目录索引**，二者**互补**，不互相替代。
 - **链接全量核对**：任务 1 要求的 **100%** 逐条链接验证须在勾选任务清单前完成；进度与 **N** 记在任务清单任务 1 备注行。
+- **表格路径机器核对**：本文表格列出的以 `docs/` 开头的具体路径与标准 Markdown 内链，以仓库根执行 `python scripts/verify_manifest_paths_strict.py` 为**严格真源**；报告写入 `docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`（与同名 `.json` 同批生成，**勿**在未生成前对该报告文件写 Markdown 内链，以免首轮校验鸡生蛋）。
 
 ## 已知限制
 
@@ -195,20 +196,24 @@ reference_models:
 | **职责边界** | docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md | ✅ 已完成 | 模块职责边界定义 |
 | **系统索引** | docs/System_Manifest.md | ✅ 已完成 | 系统总索引 |
 
-#### 3.1.2 模块蓝图文档
+#### 3.1.2 模块蓝图文档（本仓库磁盘路径 · 与 ARCHITECTURE 对齐）
 
-| 模块层级 | 文档路径 | 状态 | 说明 |
-|---------|---------|------|------|
-| **Layer 0** | docs/00_DATA_SOURCES/ | ✅ 已完成 | 数据源层 |
-| **Layer 1** | docs/01_DATA_ENGINEERING/ | ✅ 已完成 | 数据工程层 |
-| **Layer 2** | docs/02_ALPHA_FACTORS/ | ✅ 已完成 | Alpha因子层 |
-| **Layer 3** | docs/03_STRATEGY/ | ✅ 已完成 | 策略层 |
-| **Layer 4** | docs/04_MACHINE_LEARNING/ | ✅ 已完成 | 机器学习层 |
-| **Layer 5** | docs/05_EXECUTION/ | ✅ 已完成 | 执行层 |
-| **Layer 6** | docs/06_PORTFOLIO_OPTIMIZATION/ | ✅ 已完成 | 组合优化层 |
-| **Layer 7** | docs/07_RISK_MANAGEMENT/ | ✅ 已完成 | 风控层 |
-| **Layer 8** | docs/08_MONITORING/ | ✅ 已完成 | 监控层 |
-| **Layer 9** | docs/09_RESEARCH_INNOVATION/BLUEPRINT.md | ✅ 已完成 | 研究创新层（78个模块） |
+> **口径**：下列 **Layer 名称** 与 [`ARCHITECTURE.md`](./ARCHITECTURE.md) §1 栈位一致；**文档路径** 为本仓库 `docs/` 下**真实存在**的目录或文件，用于总清单严格路径核对（非历史规划目录名）。单一目录可承载多层叙事职责，边界以架构真源为准。
+
+| 叙事 Layer | 本仓库 docs 路径 | 状态 | 说明 |
+|---------|------|------|------|
+| **Layer 0** 数据源层 | docs/00_OVERVIEW/ | ✅ 已完成 | 总览与数据源口径入口之一 |
+| **Layer 1** 数据预处理层 | docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ | ✅ 已完成 | 含数据预处理等规格文档 |
+| **Layer 2** Alpha 因子层 | docs/02_FACTOR_LIBRARY/ | ✅ 已完成 | 因子库与 Alpha 文档主区 |
+| **Layer 3** 舆情分析层 | docs/03_TRADING_TACTICS/ | ✅ 已完成 | 舆情/事件与战术文档主区 |
+| **Layer 4** 机器学习层 | docs/07_RESEARCH/ | ✅ 已完成 | 研究/ML 管线相关文档 |
+| **Layer 5** 策略执行层 | docs/04_EXECUTION/ | ✅ 已完成 | 订单、事件、执行与仿真等 |
+| **Layer 6** 组合优化层 | docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ | ✅ 已完成 | 含组合/优化类正式蓝图（图纸柜） |
+| **Layer 7** AI 报告层 | docs/07_AI_REPORTING/ | ✅ 已完成 | 绩效与自动报告 |
+| **Layer 8** 人机交互层 | docs/08_HUMAN_AI_INTERFACE/ | ✅ 已完成 | 人机协同与界面层 |
+| **Layer 9** 研究与创新层 | docs/09_RESEARCH_INNOVATION/BLUEPRINT.md | ✅ 已完成 | 研究创新层总蓝图入口 |
+| **Layer 10** 治理与合规层 | docs/10_GOVERNANCE_COMPLIANCE/ | ✅ 已完成 | 内控与合规 |
+| **Layer 11** 战略决策层 | docs/11_STRATEGIC_DECISION/ | ✅ 已完成 | 战略与决策 |
 
 ---
 

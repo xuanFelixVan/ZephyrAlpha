@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.7
+version: 1.0.8
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -51,7 +51,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **链接验证：本仓库默认「全量核对」（100%）**
 
-> **辅助核对（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 中 **标准 Markdown 内链**（目标为仓库内其它 `.md` 文件）经脚本解析 **4** 条，目标均存在。清单内**表格/反引号路径**的逐条全检仍须人工或专项脚本，完成后填下方 **N**。
+> **严格路径脚本（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 已由 `scripts/verify_manifest_paths_strict.py` 核对 **唯一路径项 N_path = 24**（标准 Markdown 内链 + 表格/正文中 `docs/` 字面路径去重，缺失则脚本 exit 1）；人读报告：`docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`。**注意**：`N_path` 仅为「总清单内可机读路径」真子集；**全库「应有蓝图条目」** 仍须 Owner 按本任务正文逐条闭环，完成后在下方 **N** 填写全量条目数（≥ `N_path`）。
 
 - **Owner 要求**：对总清单中每一个「应有蓝图」条目，须**逐条**确认链接可解析、指向**唯一 canonical**；完成后在本任务下备注「已全检，共 N 条」。
 - **机构常见例外**（仅当 Owner **书面豁免**时适用）：体量极大时可采用**统计抽检**（如随机 10 条）+ 说明样本量与豁免理由；**本仓库不设默认抽检**，豁免须写入登记表、commit 说明或本文件备注，避免无记录的「口头打折」。
@@ -119,36 +119,9 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 ## 执行备忘 · 任务 5 扫描（2026-04-10）
 
-已对 `01_BLUEPRINTS/` 根目录 `*BLUEPRINT.md`（不含 `REPORTS/`）检索 `待补充`、`| TBD |`、集成验收「待补充」等：**多份文件仍有占位**，需按 P0→P1 分批改为**明确数值/引用真源**或**标明第二期**，不可单次会话清完。本次命中文件（按路径，供专项排队，**非穷举 grep 可再扩**）包括但不限于：
+**递归全树（2026-04-10 续 · 严）**：已对 `01_BLUEPRINTS/**/*.md`（含 `REPORTS/`）检索 `| TBD |`、`（待补充）`、`### 待补充`、`集成验收.*待`：**0 命中**。另对根目录 `*BLUEPRINT.md` 检索 `待补充`：**0 命中**。扩词表或新增正文后须重跑并更新本段。
 
-- `ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
-- `BLACK_LITTERMAN_MODEL_BLUEPRINT.md`
-- `CONFIGURATION_MANAGEMENT_BLUEPRINT.md`
-- `DATA_ACCESS_AUDIT_BLUEPRINT.md`
-- `DATA_BACKUP_RECOVERY_BLUEPRINT.md`
-- `DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md`
-- `FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md`
-- `LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md`
-- `MARKET_IMPACT_MODEL_BLUEPRINT.md`
-- `MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md`
-- `MONITORING_ALERTING_SYSTEM_BLUEPRINT.md`
-- `MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md`
-- `MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md`
-- `MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md`
-- `OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md`
-- `PERFORMANCE_TESTING_BLUEPRINT.md`
-- `PORTFOLIO_ATTRIBUTION_BLUEPRINT.md`
-- `PORTFOLIO_CAPACITY_ESTIMATOR_BLUEPRINT.md`
-- `PORTFOLIO_COMPARISON_TOOL_BLUEPRINT.md`
-- `PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md`
-- `PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md`
-- `REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md`
-- `SMART_EXECUTION_ENGINE_BLUEPRINT.md`
-- `STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md`
-
-**批次 2026-04-10（三）**：8 份蓝图将「### 待补充项」改为「### 可选增强（第二期）」，避免与「未闭合占位」混淆；原意均为「核心已闭合」。
-
-**批次 2026-04-10（续）已处理**：`BLACK_LITTERMAN`（版本表 TBD→未发布第二期；表头修复）、`SMART_EXECUTION_ENGINE`、`MARKET_IMPACT_MODEL`、`LIQUIDITY_MANAGEMENT_SYSTEM`、`REALTIME_RISK_HEDGE_ENGINE`（性能目标/缺行风险）、`MARKET_PARTICIPANT_SIMULATION_INTEGRATION`、`STATISTICAL_ARBITRAGE_MODULE`、`ALTERNATIVE_DATA_INTEGRATION`（验收表与成本、风险节）、`MULTI_STRATEGY_HIERARCHICAL_SYSTEM`、`FACTOR_BACKTEST_INTEGRATION`（成本表重写）；6 份蓝图中间「集成验收项（待补充）」已改为联调口径说明。
+**历史批次（归档备忘）**：2026-04-10 多批已将「### 待补充项」改为「### 可选增强（第二期）」、去掉 `| TBD |` 与集成验收「待补充」等；细目见本文件版本记录与 git 历史，不再逐文件列举以免与当前扫描结果冲突。
 
 ---
 
@@ -169,6 +142,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.8 | 2026-04-10 | 任务 1：`verify_manifest_paths_strict.py` + 总清单 §3.1.2 磁盘路径对齐；任务 5 备忘改为与递归扫描一致 |
 | 1.0.7 | 2026-04-10 | 任务 5：8 份蓝图小节标题「待补充项」→「可选增强（第二期）」 |
 | 1.0.6 | 2026-04-10 | 任务 5 续：多份蓝图去「待补充/TBD」与集成验收占位；任务清单备忘更新 |
 | 1.0.5 | 2026-04-10 | 任务 6 台账衔接备注；任务 5 扫描备忘（命中列表）；git commit 已提交 INDEX/总清单/本清单三文件 |
