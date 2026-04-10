@@ -68,7 +68,8 @@ A股数据/
 .env
 .env.local
 .env.*.local
-.env.qmt  # QMT账号密码配置
+# QMT 账号密码配置（行尾注释会破坏上一行匹配，故单独一行）
+.env.qmt
 .secrets/
 *.key
 *.pem
