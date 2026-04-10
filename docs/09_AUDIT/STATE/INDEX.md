@@ -78,6 +78,7 @@ compliance_level: 专业标准---
 | 目录 rollup（`quotePath=false`） | `export_repo_directory_rollup.py` | **最新（20260413）** [`REPO_DIRECTORY_ROLLUP_20260413.md`](./REPO_DIRECTORY_ROLLUP_20260413.md) · [`.json`](./REPO_DIRECTORY_ROLLUP_20260413.json)；历史 [`20260411.md`](./REPO_DIRECTORY_ROLLUP_20260411.md) · [`.json`](./REPO_DIRECTORY_ROLLUP_20260411.json) |
 | 平面路径清单 UTF-8 | 导出见 REPO_WIDE §1 | [`REPO_GIT_TRACKED_FILES_20260411.txt`](./REPO_GIT_TRACKED_FILES_20260411.txt) |
 | 索引健全性（零入链 · REPORTS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` | [`INDEX_HEALTH_ORPHAN_20260412.md`](./INDEX_HEALTH_ORPHAN_20260412.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260412.json) |
+| 索引健全性（零入链 · 04_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS` | [`INDEX_HEALTH_ORPHAN_20260414.md`](./INDEX_HEALTH_ORPHAN_20260414.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260414.json) |
 | 多会话接力（Cursor 排队） | 当前指针 + §7 深度 3 前缀表 | [AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) |
 
 ---
