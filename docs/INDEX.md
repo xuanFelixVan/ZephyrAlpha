@@ -209,6 +209,7 @@ docs/
 | [审计标准](./09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) | 审计标准 | ⭐⭐⭐⭐ |
 | [审计域索引](./09_AUDIT/INDEX.md) | `09_AUDIT` 总入口与 Playbook 分流 | ⭐⭐⭐⭐ |
 | [审计报告区门面（REPORTS）](./09_AUDIT/REPORTS/README.md) | 大量审计/进度报告的导航入口 | ⭐⭐⭐⭐ |
+| [REPORTS 分组索引](./09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 报告按主题分组可点（推荐浏览路径） | ⭐⭐⭐⭐ |
 | [REPORTS 索引健全性（零入链 · 机器报告）](./09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md) | `docs/09_AUDIT/REPORTS` 前缀；`scan_index_health.py` 产出 | ⭐⭐⭐ |
 
 ---
