@@ -1,0 +1,123 @@
+---
+module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-10
+last_updated: '2026-04-10'
+owner: 仓库 Owner / 文档负责人
+responsibility:
+  - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
+standard_type: 操作规程
+applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；非外规法律 hold 体系
+---
+
+# 全局文件治理 — 会话交接（新对话粘贴用）
+
+> **用途**：你在**新对话**里要做「从全局扫描开始、深度清洁每一处」时，把下文 **「二、工作交接指令（请全文执行）」** 整段复制给 AI；并说明工作区根目录为 **ZephyrAlpha** 仓库。  
+> **真源优先级**：执行细节以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准；命令表以 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 为准；放置以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 为准。
+
+---
+
+## 一、与专业机构文件治理对照：本仓库已有什么、还缺什么
+
+### 1.1 已对齐的常见机构做法
+
+| 机构常见能力 | 本仓库对应 |
+|--------------|------------|
+| 文档地图 + 放置规则 | [DOCUMENT_REPOSITORY_LAYOUT_STANDARD](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)、[DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、图纸柜 [01_BLUEPRINTS_REPOSITORY_RULES](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
+| 基线清单与目录热力 | `git ls-files`、平面清单、`export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_*` |
+| 链接健康门禁 | `sentinel_l1_governance_scan.py`（Invalid links → 0 为团队习惯） |
+| 蓝图/总清单机器校验 | `verify_01_*`、`verify_scattered_*`、`verify_manifest_paths_strict.py` |
+| 同内容重复（文本类） | `scan_duplicate_file_content.py` + REPO_WIDE **§3**（C1/C2/D） |
+| 索引健全性信号（v1） | `scan_index_health.py` → 零入链候选（非「必须在某 INDEX」裁决） |
+| 删稿裁决（人） | [FILE_DELETION_OR_RETENTION_PLAYBOOK](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) |
+| 深度队列与退出标准 | REPO_WIDE **§7.2～§7.3** |
+| 架构/服务目录生成 | `generate_architecture_service_catalog.py` |
+
+### 1.2 相对「大型机构受控文档体系」仍可能缺失（诚实清单）
+
+以下**未**在本仓库单独立全套流程；若外规要求，需 Owner **另档**或接 CI/外系统：
+
+- **记录保留期 / 法律 hold / 密级标签**（与 Git 历史、删除权交叉）。  
+- **CI 强制**：每次 PR 自动跑齐 L1 + verify + rollup（当前多为**约定**与本地/批次跑）。  
+- **二进制与 LFS**：体积阈值、误提交大块文件的**自动拒收**（仅有架构目录里的缺口提示类信息）。  
+- **域内 INDEX 必列规则**的**自动化**（规则未冻结前不做硬门禁，见 [放置规程 §5.3](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）。  
+- **全格式语义审阅**（PDF/Office/图片 OCR 等）——本清单**明确不做**（REPO_WIDE **§1.1**）。  
+- **逻辑模块全景 `MODULE_PANORAMA_*`**：仍为 **P4 可选**（REPO_WIDE **§2.4**）。
+
+### 1.3 办公室与任务清单联动自检（维护者用）
+
+- [ ] [办公室 README](./README.md) 流程 1～7 与 [蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)、REPO_WIDE **无冲突表述**（并列、W 轨 ≠ 尽治）。  
+- [ ] [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/governance/` 实际脚本一致。  
+- [ ] REPO_WIDE **§8** 自查项仍可达（含 AI 交接 **①‴**、放置规程、索引健全性）。  
+
+---
+
+## 二、工作交接指令（请全文执行）
+
+**上下文**
+
+- 工作区根目录：**ZephyrAlpha**（本仓库）。  
+- 目标：从**全局扫描与基线刷新**开始，按**可打勾的目录前缀队列**做**深度清洁**（摆放、重复、导航、内链），直到 REPO_WIDE **§7** 退出标准或已登记**书面例外**。  
+- **硬约束**：  
+  1. **不**在未读 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) 的情况下批量删除。  
+  2. 合并重复须遵守 REPO_WIDE **§3**（尤其 C1 流程与归档区策略 **§3.1**）。  
+  3. 每批实质性改路径后：`sentinel_l1_governance_scan.py` → **Invalid links = 0**（除非 Owner 书面例外）。  
+  4. 搬迁/新建路径须符合 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；拿不准时先读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。  
+  5. **「每一个文件」**：以**路径与链接可治理**为目标；**不承诺**对每份文件做业务语义审阅（见 REPO_WIDE **§1.1**）。
+
+**阶段 A — 先读后扫（约 15～30 分钟）**
+
+1. 阅读 REPO_WIDE **§0、§1、§1.1**（扫描能做什么、不能做什么）。  
+2. 阅读 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 全文。  
+3. 阅读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§3～§5**（扫描→归位→索引→零入链）。
+
+**阶段 B — 全局基线刷新（仓库根执行；`YYYYMMDD` 换成当天）**
+
+按顺序运行并 **commit** 更新后的 STATE（或按 Owner 要求仅保留本地）：
+
+```text
+python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD
+python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD --include-untracked
+python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD
+python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD --include-untracked
+python scripts/governance/scan_index_health.py --date YYYYMMDD
+python scripts/governance/generate_architecture_service_catalog.py
+python scripts/governance/sentinel_l1_governance_scan.py
+```
+
+另用仓库内已载明的 PowerShell/Python 片段**可选**刷新 `REPO_GIT_TRACKED_FILES_*.txt`（REPO_WIDE **§1**）。
+
+**阶段 C — 建立深度清洁队列**
+
+1. 打开 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_YYYYMMDD.md` 的 **深度 5、6**（及 3、4）表，结合 `.json` 全量前缀。  
+2. 按 REPO_WIDE **§7.1** 拆分超大前缀（如 `docs/09_AUDIT/STATE`）为子队列。  
+3. 为每一前缀建立「本批 PR 描述」模板：目标、是否动 archive、是否只做导航不写语义。
+
+**阶段 D — 逐前缀执行（每批建议可控规模，如 20～80 个文件或单个子树）**
+
+对当前前缀队列中的每一批：
+
+1. **摆放**：对照 LAYOUT + [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4** 决定是否搬迁；动 `01_BLUEPRINTS` 时叠加图纸柜规则。  
+2. **重复**：若存在 C1，按 REPO_WIDE **§3.2**（canonical → 替换链接 → 删或 stub）。  
+3. **导航**：父级或本级 **INDEX / README / 上级入口**（§7.2）。  
+4. **内链**：`sentinel_l1_governance_scan.py`；触及蓝图则跑相关 `verify_*` 与 `generate_01_blueprints_index.py`（若适用）。  
+5. **索引信号**：视需要复跑 `scan_index_health.py`（零入链**不**等于必须删）。  
+6. **收口**：`git commit`；下一批前可再跑 `export_repo_directory_rollup.py --date YYYYMMDD` 看前缀是否「变薄」。
+
+**阶段 E — 里程碑**
+
+- 对照 REPO_WIDE **§7.3** 总勾选与 **§8** 办公室自查。  
+- 与 [蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **扩展轨 W0～W4** **并列核对**（W 轨勾完 ≠ 尽治完毕）。
+
+**停止并询问 Owner 的条件**
+
+- 需 **canonical / 归档策略 / 外规** 裁决；或 sentinel 长期无法归零且涉及历史快照/审计正文是否可改。
+
+---
+
+## 三、版本记录
+
+| 版本 | 日期 | 说明 |
+|------|------|------|
+| 1.0.0 | 2026-04-10 | 首版：机构对照缺口、办公室自检、可复制会话指令 |
