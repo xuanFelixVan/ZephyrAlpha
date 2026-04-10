@@ -1,6 +1,6 @@
 ﻿---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.7.6
+version: 1.7.9
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-10'
@@ -607,9 +607,17 @@ L1 结果（无效链）：0
 | T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 批次号冲突（T3-13 已被 Trae-04 占用）；施工方（Trae-03）确认无需改动（文件已合规）；§0.1 三段齐全，API_Contract 链接正确；**等待回收队空提交闭环** |
 | T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 同上；§0.1 三段齐全，API_Contract 链接正确 |
 | T3-13b | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md` | Trae-03 | 待回收 | 2026-04-10 | 0 | 同上；§0.1 三段齐全，API_Contract 链接正确 |
+| T3-29 | （8篇白名单蓝图，分支 docs/blueprint-trae-08） | Trae-08 | ❌ 退回待补正 | 2026-04-10 | - | **三条一票否决**：①L1 扫描发生在切换到 docs/blueprint-trae-08 之前，因果时序不可靠；②Commit hash=N/A，与回收队"无改动也 --allow-empty"规范冲突；③报告含"第XXX行"占位符，不可核对。**补正要求（三选一）**：A) 在 docs/blueprint-trae-08 干净工作区重跑 L1 + git restore + 空提交，回报真实 hash；B) 由回收队按 FIFO 接管在 docs/blueprint-rec-T3-29 闭环；C) 统筹书面豁免（此路径需本批单独注记） |
+| T3-21 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_PARITY_STRATEGY_BLUEPRINT.md` | Trae-06 | [退回] 施工存疑 | 2026-04-10 | - | commit=5b726590 存在且说明正确；git show --name-only 仅含本篇（1篇），报告另列 RISK_CONTROL + ROBUST_OPTIMIZATION 均不在该 commit 内 -> 文件清单不符 |
+| T3-21 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTROL_BLUEPRINT.md` | Trae-06 | [退回] 施工存疑 | 2026-04-10 | - | 报告声称同批但不在 5b726590 变更列表；另：5b726590 在 docs/blueprint-trae-01 历史里，不在 docs/blueprint-trae-06 -> 分支表述与 git 事实不符 |
+| T3-21 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ROBUST_OPTIMIZATION_BLUEPRINT.md` | Trae-06 | [退回] 施工存疑 | 2026-04-10 | - | 同上；需补提交或 cherry-pick 到正确分支后重报四行 |
+| T3-26 | （8篇白名单蓝图，docs/blueprint-trae-05） | Trae-05 | [待回收] | 2026-04-10 | 0 | 施工侧自检：8篇 §0.1 三段齐全，API_Contract 相对链正确，YAML Active/1.0.0，L1=0；无改动按规范不提交（N/A）；**等待回收队在 docs/blueprint-rec-T3-26 打空提交闭环** |
 | 1.6.1 | 2026-04-10 | 修正 T3-05：从"仅扫描产物/预填"升级为正式验收——8 篇白名单已满足 §0.1，非白名单文件已正确排除 |
 | 1.6.2 | 2026-04-10 | 补录 T3-02 施工白名单4篇口径；T3-12 追加回收待派行（施工 commit=d4aea016 已确认，FIFO 派单中） |
 | 1.7.3 | 2026-04-10 | 登记 T3-11b（Trae-01 M-files 批次，批次号冲突）：8 篇 M-files，施工 commit=4e64e0bc 为回收空提交 -> 施工存疑；MONITORING_ALERTING §0.1 缺失 -> 退回授权回收接管 |
 | 1.7.4 | 2026-04-10 | 登记 T3-08（Cursor-REC FIFO）：8 篇 DATA_* 白名单均已合规，回收空提交 commit=10e2e1e5，L1=0；注记多余提交 3cd3fef6/19b7c457 |
 | 1.7.5 | 2026-04-10 | 补录 T3-13b（Trae-03，批次号冲突）：3 篇文件 §0.1 已合规，L1=0，施工无需改动；等待回收队空提交闭环 |
 | 1.7.6 | 2026-04-10 | 登记 T3-25（Cursor-REC FIFO）：VAR_ES_MONITORING + VULNERABILITY_DETECTION，基于 docs/blueprint-trae-10，均已合规，空提交 commit=587343ff，L1=0 |
+| 1.7.7 | 2026-04-10 | 登记 T3-29（Trae-08）退回：L1 时序不可靠 + 无 commit hash + 报告含占位符，三条否决；等待补正或回收队接管 |
+| 1.7.8 | 2026-04-10 | 登记 T3-21（Trae-06）退回施工存疑：commit=5b726590 仅含1篇(RISK_PARITY)但报告声称3篇；commit 落在 trae-01 而非 trae-06；等待补正 |
+| 1.7.9 | 2026-04-10 | 登记 T3-26（Trae-05）待回收：8篇白名单已合规，施工 N/A，等待回收队空提交闭环 |
