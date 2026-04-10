@@ -11,7 +11,7 @@ responsibility:
 
 ---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.4
+version: 1.0.5
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-13
@@ -38,6 +38,20 @@ compliance_level: 专业标准---
 ---
 
 ## 📋 目录概览
+
+### 导航与上级入口
+
+- **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
+- **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)
+
+### 机器产出快捷入链（本页补桩 · 与 INDEX_HEALTH 对账）
+
+> 下列条目仅供**入链**与人工跳转；正文真源仍以各文件自身及办公室台账为准。
+
+- [架构服务目录快照](./ARCHITECTURE_SERVICE_CATALOG_20260411.md)
+- [basename 碰撞扫描](./BASENAME_COLLISIONS_20260410.md)
+- [Manifest 路径审计（蓝图阶段摘要）](./MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)
+- [L1 施工前扫描记录](./SENTINEL_L1_PRE_CONSTRUCTION_20260409.md)
 
 ### 统计信息
 
@@ -79,6 +93,7 @@ compliance_level: 专业标准---
 | 平面路径清单 UTF-8 | 导出见 REPO_WIDE §1 | [`REPO_GIT_TRACKED_FILES_20260411.txt`](./REPO_GIT_TRACKED_FILES_20260411.txt) |
 | 索引健全性（零入链 · REPORTS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` | [`INDEX_HEALTH_ORPHAN_20260412.md`](./INDEX_HEALTH_ORPHAN_20260412.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260412.json) |
 | 索引健全性（零入链 · 04_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS` | **最新（20260411）** [`INDEX_HEALTH_ORPHAN_20260411.md`](./INDEX_HEALTH_ORPHAN_20260411.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260411.json)；历史 [`20260414.md`](./INDEX_HEALTH_ORPHAN_20260414.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260414.json) |
+| 索引健全性（零入链 · STATE 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STATE` | [`INDEX_HEALTH_ORPHAN_20260413.md`](./INDEX_HEALTH_ORPHAN_20260413.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260413.json) |
 | 多会话接力（Cursor 排队） | 当前指针 + §7 深度 3 前缀表 | [AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) |
 
 ---
