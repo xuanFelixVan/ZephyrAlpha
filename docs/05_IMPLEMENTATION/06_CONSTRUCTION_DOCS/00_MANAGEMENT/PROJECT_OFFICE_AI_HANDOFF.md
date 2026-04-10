@@ -50,7 +50,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 顺序 | 文件 | 你要搞懂的事 |
 |------|------|----------------|
 | ① | [本文件夹 README](./README.md) | 办公室内有哪些文档、外链到哪 |
-| ①″（工具查询） | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 链检查、rollup、verify、架构目录、**内容重复扫描**等**一条表** |
+| ①″（工具查询） | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 链检查、rollup、verify、架构目录、**内容重复**、**索引健全性（零入链）**等**一条表** |
 | ①‴（地图与放置） | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **全库 `docs/` 该放哪**：真源链（LAYOUT + 图纸柜规则）+ 与 rollup/§7 批次的**扫描→归位**步骤；搬迁前优先于「凭感觉 mkdir」 |
 | ①′ | [DOCUMENT_GOVERNANCE_ARCHITECTURE.md](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | **机构式分层架构**（L0～L5）、控制流、与 `09_AUDIT` 边界；首读 README 后建议接着读 |
 | ② | [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 图纸柜根目录**允许/禁止**什么文件；过程稿应放哪 |
