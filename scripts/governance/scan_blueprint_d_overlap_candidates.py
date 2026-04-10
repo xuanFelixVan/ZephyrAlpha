@@ -419,6 +419,7 @@ def main() -> int:
 
     md: list[str] = [
         "---",
+        f"module_id: AUDIT_BLUEPRINT_D_OVERLAP_CANDIDATES_{args.date}",
         "standard_type: audit_state",
         "applicable_scope: D 类蓝图主题重叠候选（启发式）",
         f"generated_date: '{args.date}'",

@@ -1,3 +1,7 @@
+---
+module_id: SECURITY
+---
+
 # 安全策略（Security）
 
 ## 报告漏洞

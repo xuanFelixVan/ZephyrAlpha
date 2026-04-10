@@ -1,4 +1,5 @@
 ---
+module_id: DOCS_09_AUDIT_STATE_ARCHITECTURE_SERVICE_CATALOG_20260411
 standard_type: audit_state
 applicable_scope: 架构服务目录（生成物）
 generated_date: '20260411'

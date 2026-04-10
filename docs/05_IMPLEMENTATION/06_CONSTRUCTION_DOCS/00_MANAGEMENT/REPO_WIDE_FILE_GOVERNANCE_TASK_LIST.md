@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.19
+version: 1.4.20
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-12'
+last_updated: '2026-04-10'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -315,6 +315,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.20 | 2026-04-10 | L1：落地 `backfill_missing_module_id.py`，全库首道 FM **无 `module_id` → 0**（131 篇：结构修复 15 + 补 id 116）；`sentinel_l1_governance_scan.py` 产出 MD 增 FM + 统计排除自指；`scan_blueprint_d_overlap_candidates.py` 产出 MD 增稳定 `module_id`；复跑 L1 **判定无效 0、重复 id 0** |
 | 1.4.19 | 2026-04-12 | D 类：复跑 `scan_blueprint_d_overlap_candidates.py` → `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`；§3.6 D 附机器基线数字；§6 推荐阅读主链改 20260412 并保留 20260411 快照 |
 | 1.4.18 | 2026-04-11 | L1：消解首道 `module_id` 跨文件重复 2 组（`README`×2、`INDEX`×2）→ `DOCS_01_FRAMEWORK_README_001` 等；复跑 **重复 id 数 0** |
 | 1.4.17 | 2026-04-11 | L1：`sentinel_l1_governance_scan.py` 复跑 **判定无效 0**（修 D 类登记表示例链、归档稿相对链、`BLUEPRINT_VALIDATION_REPORT` 中 `STRATEGY_ENGINE` 指向图纸柜） |

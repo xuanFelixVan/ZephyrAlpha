@@ -20,6 +20,8 @@ SKIP_PARTS = {".git", ".venv", ".pytest_cache", "__pycache__"}
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)
 MAX_DETAIL = 800  # 明细条数上限，防止报告过大
+# 本脚本覆写的 Markdown 报告：本轮扫描读到的仍是旧稿，勿计入「无 module_id」以免自指为 1
+L1_REPORT_MD_REL = "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md"
 
 
 def split_first_front_matter(raw: str) -> tuple[str, str, str] | None:
@@ -179,7 +181,8 @@ def scan_module_ids(all_files: list[Path]) -> dict:
             continue
         k = first_front_matter_module_id(raw)
         if not k:
-            no_id.append(rel)
+            if rel != L1_REPORT_MD_REL:
+                no_id.append(rel)
             continue
         mid_to_files[k].append(rel)
     dup = {k: v for k, v in mid_to_files.items() if len(v) > 1}
@@ -219,6 +222,12 @@ def main() -> None:
 
     s = payload["links"]["stats"]
     md_lines = [
+        "---",
+        "module_id: AUDIT_SENTINEL_L1_SCAN_20260408",
+        "standard_type: audit_state",
+        "generated_by: scripts/governance/sentinel_l1_governance_scan.py",
+        "---",
+        "",
         "# Sentinel L1 扫描结果（机器生成）",
         "",
         f"> **UTC 时间**: {ts}",

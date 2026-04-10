@@ -1,3 +1,7 @@
+---
+module_id: DOCS_09_AUDIT_REPORTS_OPENCLAW_L2_DOCS_02_FACTOR_LIBRARY_09_AUDIT_053
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/02_FACTOR_LIBRARY/09_AUDIT
 
 > **批次ID**: 053

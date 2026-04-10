@@ -1,4 +1,5 @@
 ---
+module_id: DOCS_09_AUDIT_STATE_DUPLICATE_CONTENT_BY_HASH_20260411
 standard_type: audit_state
 applicable_scope: 内容级重复（按后缀白名单）
 generated_date: '20260411'

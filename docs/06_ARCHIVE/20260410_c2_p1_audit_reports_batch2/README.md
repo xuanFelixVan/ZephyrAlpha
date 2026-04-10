@@ -1,3 +1,7 @@
+---
+module_id: DOCS_06_ARCHIVE_20260410_C2_P1_AUDIT_REPORTS_BATCH2_README
+---
+
 # C2 归档：`p1_cleanup_archive` 与 `audit_state` 同名审计报告（第二组）
 
 以下两份的 **canonical** 保留在 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`；本目录为原 `20260407_p1_cleanup_archive` 快照。

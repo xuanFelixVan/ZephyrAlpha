@@ -1,3 +1,7 @@
+---
+module_id: DOCS_09_AUDIT_REPORTS_OPENCLAW_L2_DOCS_01_FRAMEWORK_LAYER4_ML_017
+---
+
 # OpenClaw L2 深度审计 — 批次: docs/01_FRAMEWORK/LAYER4_ML
 
 > **批次ID**: 017

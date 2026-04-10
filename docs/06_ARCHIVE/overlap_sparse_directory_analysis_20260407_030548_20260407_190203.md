@@ -8,6 +8,7 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 responsibility:
 - 审计报告、合规检查
+---
 # 稀疏目录分析报告
 
 > **核心职责**: 文档内容说明

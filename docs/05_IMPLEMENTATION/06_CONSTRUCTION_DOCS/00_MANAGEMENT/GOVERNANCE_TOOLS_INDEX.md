@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.1.7
+version: 1.1.8
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -26,6 +26,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | 工具（脚本） | 一句话 | 命令（仓库根，推荐） | 主要产出 |
 |--------------|--------|----------------------|----------|
 | `sentinel_l1_governance_scan.py` | Markdown **内链** + 首道 front matter **`module_id` 重复** | `python scripts/governance/sentinel_l1_governance_scan.py` | `docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_*.md`（及 json，以脚本为准） |
+| `backfill_missing_module_id.py` | 为首道 FM **补 `module_id`**（粘连 `---`、未闭合 FM、纯报表无头等） | `python scripts/governance/backfill_missing_module_id.py --apply` | 就地改写目标 `.md`；跑后须复跑 **L1** |
 | `export_repo_directory_rollup.py` | **Git 已跟踪**路径按目录深度 **2～6** 聚合计数；可选未跟踪 | `python scripts/governance/export_repo_directory_rollup.py`（可加 `--include-untracked`） | `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.{md,json}` |
 | `generate_architecture_service_catalog.py` | **架构/服务目录 + C4 摘要**（`src/`、routes、`pyproject`） | `python scripts/governance/generate_architecture_service_catalog.py` | `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.{md,json}` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须**传 `--ext`，默认 `md`）；可选 `--include-untracked` | `python scripts/governance/scan_duplicate_file_content.py --ext md` | `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.{md,json}` |

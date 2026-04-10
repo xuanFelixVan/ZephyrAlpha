@@ -1,4 +1,5 @@
 ---
+module_id: DOCS_09_AUDIT_STATE_INDEX_HEALTH_ORPHAN_20260410
 standard_type: audit_state
 applicable_scope: 索引健全性（零入链候选 · 路径级）
 generated_date: '20260410'

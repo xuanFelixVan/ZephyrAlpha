@@ -12,6 +12,7 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本
+---
 # A股量化交易系?.0开发方?
 > **核心职责**: 文档内容说明
 > **职责边界**: 

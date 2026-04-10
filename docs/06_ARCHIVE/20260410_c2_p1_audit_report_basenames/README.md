@@ -1,3 +1,7 @@
+---
+module_id: DOCS_06_ARCHIVE_20260410_C2_P1_AUDIT_REPORT_BASENAMES_README
+---
+
 # C2 归档：`p1_cleanup_archive` 与 `audit_state` 同名审计报告（basename 碰撞消解）
 
 以下三份文件的 **canonical** 均保留在 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`（实施运维侧活跃稿）；本目录仅存原 `docs/06_ARCHIVE/20260407_p1_cleanup_archive/` 下同名快照。

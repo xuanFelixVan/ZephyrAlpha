@@ -1,4 +1,5 @@
 ---
+module_id: DOCS_09_AUDIT_STATE_BASENAME_COLLISIONS_20260411
 standard_type: audit_state
 applicable_scope: 同名不同路径（basename · C2 输入）
 generated_date: '20260411'

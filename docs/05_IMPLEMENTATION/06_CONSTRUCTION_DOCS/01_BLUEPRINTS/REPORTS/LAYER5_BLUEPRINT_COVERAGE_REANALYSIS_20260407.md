@@ -1,4 +1,5 @@
----module_id: LAYER5_BLUEPRINT_COVERAGE_REANALYSIS_20260407
+---
+module_id: LAYER5_BLUEPRINT_COVERAGE_REANALYSIS_20260407
 
 analysis_type: Layer 5策略执行层蓝图覆盖情况重新分析
 created_date: 2026-04-07

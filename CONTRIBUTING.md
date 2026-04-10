@@ -1,3 +1,7 @@
+---
+module_id: CONTRIBUTING
+---
+
 # 贡献指南（Contributing）
 
 本仓库以 **个人 Owner + 协作者 / AI 辅助** 为主；若你提交 PR 或参与文档治理，请先阅读下列入口。

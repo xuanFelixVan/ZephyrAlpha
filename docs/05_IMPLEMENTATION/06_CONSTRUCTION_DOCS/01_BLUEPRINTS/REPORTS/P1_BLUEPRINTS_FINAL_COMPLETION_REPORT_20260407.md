@@ -1,4 +1,5 @@
----module_id: P1_BLUEPRINTS_FINAL_COMPLETION_REPORT_20260407
+---
+module_id: P1_BLUEPRINTS_FINAL_COMPLETION_REPORT_20260407
 
 report_type: P1级别蓝图最终完成报告
 created_date: 2026-04-07

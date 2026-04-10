@@ -1,4 +1,5 @@
 ---
+module_id: DOCS_09_AUDIT_STATE_ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1
 title: 任务1 · 分散正式蓝图路径清单（机器生成）
 generated_at_utc: 2026-04-10T19:32:30.473824+00:00
 entry_count: 400

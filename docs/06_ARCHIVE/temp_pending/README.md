@@ -1,3 +1,7 @@
+---
+module_id: DOCS_06_ARCHIVE_TEMP_PENDING_README
+---
+
 # 根目录临时 Markdown 归档（整改 P0-A）
 
 根目录 `temp_*.md` 已于 2026-04-08 迁入本目录，避免污染仓库根与编码损坏文件长期暴露。

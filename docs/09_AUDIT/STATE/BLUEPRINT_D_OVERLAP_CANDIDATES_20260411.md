@@ -1,4 +1,5 @@
 ---
+module_id: AUDIT_BLUEPRINT_D_OVERLAP_CANDIDATES_20260411
 standard_type: audit_state
 applicable_scope: D 类蓝图主题重叠候选（启发式）
 generated_date: '20260411'

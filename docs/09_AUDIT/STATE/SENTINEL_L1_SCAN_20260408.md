@@ -1,6 +1,12 @@
+---
+module_id: AUDIT_SENTINEL_L1_SCAN_20260408
+standard_type: audit_state
+generated_by: scripts/governance/sentinel_l1_governance_scan.py
+---
+
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260410T194923Z
+> **UTC 时间**: 20260410T200345Z
 > **Markdown 文件数**: 3230
 
 ## 链接统计
@@ -18,9 +24,9 @@
 
 ## module_id
 
-- 唯一 module_id 数: **3088**
+- 唯一 module_id 数: **3218**
 - 重复 id 数: **0**
-- 首道 front matter 无 `module_id` 的文件数: **131**
+- 首道 front matter 无 `module_id` 的文件数: **0**
 
 ### 重复模块（前 20 个）
 

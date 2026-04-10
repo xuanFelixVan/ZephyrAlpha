@@ -38,6 +38,7 @@ responsibility:
 | `generate_scattered_blueprints_manifest_task1.py` | 生成分散蓝图路径清单（STATE） |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 |
 | `sentinel_l1_governance_scan.py` | 工作区递归 `*.md` 内链 + 首道 front matter `module_id`（报告在 `docs/09_AUDIT/STATE/`）；**非** `git ls-files` 全集，见 [任务清单 §1.1](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
+| `backfill_missing_module_id.py` | 批量补首道 `module_id`（粘连 `---`、未闭合 FM、无头等）；`--apply` 后须复跑 `sentinel_l1_governance_scan.py` |
 | `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合路径计数（默认可视为 `git ls-files`；可加 `--include-untracked`）→ `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
 | `generate_architecture_service_catalog.py` | 架构/服务目录 + C4 摘要 + 可检索 JSON：`pyproject`、`src/`、`src/api/routes`、根目录机构缺口表 → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`；可选 `--include-untracked`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
