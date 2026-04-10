@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.14
+version: 1.0.15
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-12'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-12T20:00:00Z` |
-| **上轮 commit** | `41531525` |
+| **UTC 时间** | `2026-04-13T00:00:00Z` |
+| **上轮 commit** | `eee023ab` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2 续批）；或 `docs/09_AUDIT/STATE` · `docs/05_IMPLEMENTATION/04_OPERATIONS` |
-| **notes** | **B-02 · `09_AUDIT/REPORTS` 批次 5**：[`docs/INDEX.md`](../../../INDEX.md) §审计 增 [REPORTS 分组索引](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 入链。L1 **判定无效=0**。运行队列 **v1.0.14**。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE`（§7.2 续批）；或 `docs/09_AUDIT/REPORTS` · `docs/05_IMPLEMENTATION/04_OPERATIONS` |
+| **notes** | **B-02 · `09_AUDIT/STATE` 批次 1**：[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 增导航区、机器表登记 [INDEX_HEALTH_20260413](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md)，并对 4 条零入链候选做本页补桩后复扫 **zero_inbound=0**（**STATE** 专用日期 **20260413**，避免与 **REPORTS** 的 `INDEX_HEALTH_20260412` 混用同一真源文件）。L1 **判定无效=0**。运行队列 **v1.0.15**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
