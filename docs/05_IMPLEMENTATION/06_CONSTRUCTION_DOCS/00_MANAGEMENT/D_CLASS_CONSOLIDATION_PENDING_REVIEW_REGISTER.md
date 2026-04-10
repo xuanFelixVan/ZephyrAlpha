@@ -1,6 +1,6 @@
 ---
 module_id: D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER_001
-version: 1.0.3
+version: 1.0.4
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-12'
@@ -15,7 +15,7 @@ applicable_scope: D 类合稿 — **仅低置信**分支（见 [D 类蓝图重�
 
 > **用途**：机器生成 `*_CONSOLIDATED_YYYYMMDD.md`（或等价新路径）后，**旧稿不删**（stub 或正文迁 archive + 原路径 stub）。本表集中记录 **待你后审** 的条目，避免散落在 commit message 里找不到。  
 > **高置信**合并 **不登记本表**（见 Playbook §5.1）；若仍希望留审计痕，可写在 commit body 或 `docs/09_AUDIT/STATE/` 简短日志。  
-> **机器候选池（启发式）**：最新 [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md)（[`JSON`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json)）；评审顺序与双轨见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)。
+> **机器候选池（启发式）**：最新 [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md)（[`JSON`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json)）。可选 **A 档分流 + 二审队列**：[`BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md)（[`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json)）、[`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl)（脚本 `triage_blueprint_d_overlap_pairs.py`，Playbook **§3.5**）；更强模型二审配合 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)。评审顺序与双轨见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)。
 
 ## 列说明
 
@@ -44,6 +44,7 @@ applicable_scope: D 类合稿 — **仅低置信**分支（见 [D 类蓝图重�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.4 | 2026-04-10 | 文首互指 `TRIAGE_*`、`SECOND_PASS_QUEUE_*.jsonl`、[二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 与 Playbook **§3.5** |
 | 1.0.3 | 2026-04-12 | 文首互指最新 `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412` 与 Playbook |
 | 1.0.2 | 2026-04-11 | 去除会被 L1 判无效的示例死链与字面 `](相对路径)`；列说明改叙述；示例合稿列改用反引号占位路径 |
 | 1.0.1 | 2026-04-10 | 列说明与示例行改为 Markdown 相对链接，支持「一点就跳」 |

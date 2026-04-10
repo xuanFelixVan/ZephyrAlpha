@@ -1,6 +1,6 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.9
+version: 1.0.10
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -31,7 +31,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 | 蓝图/总清单机器校验 | `verify_01_*`、`verify_scattered_*`、`verify_manifest_paths_strict.py` |
 | 同内容重复（文本类） | `scan_duplicate_file_content.py` + REPO_WIDE **§3**（C1/C2/D）；蓝图 D **低置信**合稿台账 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 同名不同路径（basename · **非导航**） | `scan_basename_collisions.py` → [`BASENAME_COLLISIONS_*`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md)；**非导航类当前为 0**（2026-04-11，见 REPO_WIDE **§3.6 C2**）；`INDEX`/`README` 等导航名多份并存见报表「导航名」分表，默认不强制改名 |
-| 蓝图 D 类重叠（启发式候选） | `scan_blueprint_d_overlap_candidates.py` → 最新 [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md)（**非最终裁决**）；低置信合稿登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
+| 蓝图 D 类重叠（启发式候选） | `scan_blueprint_d_overlap_candidates.py` → 最新 [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md)（**非最终裁决**）；可选 `triage_blueprint_d_overlap_pairs.py` → [`TRIAGE_20260412`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md) + [`SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) + [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；低置信合稿登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 索引健全性信号（v1） | `scan_index_health.py` → 零入链候选（非「必须在某 INDEX」裁决） |
 | 删稿裁决（人） | [FILE_DELETION_OR_RETENTION_PLAYBOOK](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) |
 | 深度队列与退出标准 | REPO_WIDE **§7.2～§7.3** |
@@ -74,7 +74,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 1. 阅读 REPO_WIDE **§0、§1、§1.1**（扫描能做什么、不能做什么）。  
 2. 阅读 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 全文。  
 3. 阅读 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§3～§5**（扫描→归位→索引→零入链）。  
-4. 若本轮含 **蓝图 D 类（主题可能重叠）**：阅读 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（机器建议 ≠ 最终裁决；**§5 双轨**）。若执行 **低置信**合稿（新路径 + 旧稿 stub）：每例在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) **追加一行**（路径列用 Markdown 相对链，便于一点就跳）。
+4. 若本轮含 **蓝图 D 类（主题可能重叠）**：阅读 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（机器建议 ≠ 最终裁决；**§5 双轨**；**§3.5** 分流/二审）。若执行 **低置信**合稿（新路径 + 旧稿 stub）：每例在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) **追加一行**（路径列用 Markdown 相对链，便于一点就跳）。
 
 **阶段 B — 全局基线刷新（仓库根执行；`YYYYMMDD` 换成当天）**
 
@@ -87,6 +87,7 @@ python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMD
 python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD --include-untracked
 python scripts/governance/scan_basename_collisions.py --date YYYYMMDD
 python scripts/governance/scan_blueprint_d_overlap_candidates.py --date YYYYMMDD
+python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD
 python scripts/governance/scan_index_health.py --date YYYYMMDD
 python scripts/governance/generate_architecture_service_catalog.py
 python scripts/governance/sentinel_l1_governance_scan.py
@@ -128,6 +129,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.10 | 2026-04-10 | 阶段 B 增 `triage_blueprint_d_overlap_pairs.py`；§1.1 D 类行与阶段 A 互指 TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 | 1.0.9 | 2026-04-10 | §1.1 增首道 `module_id` 行（L1 报告无 id/重复双 0 + `backfill_missing_module_id.py`）；阶段 B 增 backfill→复跑 L1 说明 |
 | 1.0.8 | 2026-04-12 | §1.1 增 D 类候选报表入口（`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`）与待审登记表互指 |
 | 1.0.7 | 2026-04-11 | §1.1 链接健康行互指 L1 快照（判定无效 0） |

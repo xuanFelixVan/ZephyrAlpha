@@ -1,6 +1,6 @@
 ﻿---
 module_id: GOVERNANCE_DOCUMENTS_NAVIGATION_001
-version: 1.0.4
+version: 1.0.5
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -55,6 +55,8 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 |------|------|
 | L1 治理扫描脚本 | [`scripts/governance/sentinel_l1_governance_scan.py`](../../../../scripts/governance/sentinel_l1_governance_scan.py)（根目录 [`sentinel_l1_governance_scan.py`](../../../../scripts/sentinel_l1_governance_scan.py) 可转发） |
 | L1 扫描产物（运行生成；路径以仓库内实际为准） | `docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.json`、`SENTINEL_L1_SCAN_20260408.md` 等 |
+| 蓝图 D 类重叠候选（启发式） | [`scripts/governance/scan_blueprint_d_overlap_candidates.py`](../../../../scripts/governance/scan_blueprint_d_overlap_candidates.py) → `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*` |
+| 蓝图 D 类 A 档分流 + 二审队列 JSONL | [`scripts/governance/triage_blueprint_d_overlap_pairs.py`](../../../../scripts/governance/triage_blueprint_d_overlap_pairs.py) → `BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`；二审配合 [D 类二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 
 ---
 
@@ -152,6 +154,7 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.5 | 2026-04-10 | 「脚本与扫描产物」表增 D 类 `scan_blueprint_d_overlap_candidates` / `triage_blueprint_d_overlap_pairs` 与二审模板互指 |
 | 1.0.4 | 2026-04-10 | 施工与蓝图表、办公室关系表互指 LAYOUT **§1 第 5 条**与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 同口径 |
 | 1.0.3 | 2026-04-10 | 施工与蓝图表增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 1.0.2 | 2026-04-10 | 施工与蓝图表增 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；脚本表 L1 路径改 `scripts/governance/`；办公室关系表增一行 |

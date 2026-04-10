@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.12
+version: 1.1.13
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -25,7 +25,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**、**§2.3.1**（Layer 与路径防混）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/governance/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
 
-**治理工具一键查**：[`GOVERNANCE_TOOLS_INDEX.md`](./GOVERNANCE_TOOLS_INDEX.md)（链检查、rollup、verify、架构目录、**内容重复**、**索引健全性（零入链）**等命令与产出表；实现在 [`scripts/governance/`](../../../../scripts/governance/)，根目录同名入口为兼容转发）。
+**治理工具一键查**：[`GOVERNANCE_TOOLS_INDEX.md`](./GOVERNANCE_TOOLS_INDEX.md)（链检查、rollup、verify、架构目录、**内容重复**、**索引健全性（零入链）**、**蓝图 D 类重叠扫描 + A 档分流 + 二审 JSONL**等命令与产出表；实现在 [`scripts/governance/`](../../../../scripts/governance/)，根目录同名入口为兼容转发）。
 
 **机构式架构/服务目录（已生成，可检索）**：[`docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（及同主文件名 `.json`）——含 **C4 类 Context/Containers/Components**、从 **FastAPI routes** 抽取的 **HTTP 端点**、`src/` 组件平面表、**根目录相对机构常见缺口**；复跑 `python scripts/governance/generate_architecture_service_catalog.py`。叙事真源仍以 `docs/01_FRAMEWORK/ARCHITECTURE.md`、`System_Manifest` 等为准。
 
@@ -41,7 +41,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 1. **蓝图与建设文档收口**：[全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)（分解真源；**机构治理顺序**见该文首节对照表）+ [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md)（合并视角）。
 2. **孤儿与重复 / 重叠**：[孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)；重复簇台账：[CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。蓝图 **D 类 · 低置信**合稿（新路径 + 旧稿 stub、不立刻删）须在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) 追加行（可点击相对链）；规程见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§5**。
-3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。
+3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。蓝图 **D 类**在跑完 `scan_blueprint_d_overlap_candidates.py` 后，可再跑 `triage_blueprint_d_overlap_pairs.py`，用 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 交给更强模型辅助裁决（详见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§3.5**）。
 4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
 5. **仓库根卫生与误提交**：[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)（垃圾文件名、密钥进库、运行时数据、误放根下的正式稿归位）。
 6. **整仓文件体量、合并与深度尽治（与蓝图并列）**：[全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（**§1.1** 扫描边界、平面清单、**深度 3～6 rollup**、§2.3 并行项、§3 合并、**§7**、**§8**、**P5**）。**说明**：蓝图扩展轨 **W0～W4 勾完 ≠ 文件已尽治**；**全格式逐文件语义处理**不在当前门禁范围内。
@@ -58,7 +58,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表；**文档地图与放置**与 LAYOUT 互指无断链 |
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 治理脚本**总表**（命令、产出、顺序）；**不**决定废脚本删否 | 新增脚本时同步更新本表 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留决策树与 PR 检查项 | 出重复报表或清脚本时随 PR 引用 |
-| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口；**§5 双轨**（高/低置信） | 跑 `scan_blueprint_d_overlap_candidates.py` 后按 REPO_WIDE **§3.4** 评审 |
+| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口；**§3.5** A 档分流 + 二审；**§5 双轨**（高/低置信） | 跑 `scan_blueprint_d_overlap_candidates.py` → 可选 `triage_blueprint_d_overlap_pairs.py`；二审配合 [D 类二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；按 REPO_WIDE **§3.4** 评审 |
+| [D 类重叠二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | 供 GLM/Claude 等输出**固定 JSON Schema**；含模板自优化 `prompt_template_patch_proposal` | 与 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl` 同批使用；不替代 Owner 签核 |
 | [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | **低置信** D 类合稿台账（新稿 / stub / archive 的 **Markdown 可点击链**） | 每做一例低置信合稿追加一行；高置信 **不**登记 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；**§1.5** Layer 0～11 与 `docs/` 路径分立；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、**§2.3.1**、蓝图任务 **3～5** / **W** 轨同窗 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | **新开对话可复制**的尽治指令：从全库扫描到深度清洁 | 大扫除窗口启动时发给 AI；与 REPO_WIDE **§7**、工具总表对齐 |
@@ -83,7 +84,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 |------|------|
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | **链检查 / rollup / verify / 架构目录 / 内容重复**等脚本：命令、产出、复跑顺序 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留：决策树 + PR 检查项（与重复报表、§3 配套） |
-| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | 蓝图主题可能重叠：机器建议 + 人工裁决与合稿（**§5 双轨**） |
+| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | 蓝图主题可能重叠：机器建议 + **§3.5** 分流/二审 + 人工裁决与合稿（**§5 双轨**） |
+| [D 类重叠二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | 更强模型二审：任务说明、枚举、**JSON Schema**、模板升级 proposal |
 | [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | 低置信 D 类合稿：**一点就跳**的相对链 + 批次 / 状态 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **文档地图 + 放置规则** 与任务/扫描的衔接；**§1.5** 与 LAYOUT **§1 第 5 条**同口径；真源链指 LAYOUT + 图纸柜规则 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | **新会话工作指令**：全局扫描 → 深度清洁队列与硬约束 |
@@ -150,6 +152,9 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 - **蓝图 D 类重叠候选（启发式 + 建议 canonical/合并大纲）**：  
   `python scripts/governance/scan_blueprint_d_overlap_candidates.py`（见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)；**低置信合稿**须登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)）  
   （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`）  
+- **蓝图 D 类 A 档分流 + 二审队列（JSONL）**：  
+  `python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（可选 `--queue-mode high_medium`；见 Playbook **§3.5** 与 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)）  
+  （输出 `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`）  
 - **索引健全性（零入链候选，默认扫 `docs/`）**：  
   `python scripts/governance/scan_index_health.py`  
   （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**）  
@@ -158,7 +163,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 ### 基线复跑约定（与 REPO_WIDE P0、§3.1 复审口径一致）
 
 - **最低频率**：每个**大版本**或至少**每季度**复跑：`export_repo_directory_rollup.py`（建议带 `--date YYYYMMDD`）、`REPO_GIT_TRACKED_FILES_*.txt`（§1 内 PowerShell/Python 片段）。  
-- **大治理批次收口**：同一窗口内建议复跑 `scan_duplicate_file_content.py --ext md`、`scan_index_health.py`、`sentinel_l1_governance_scan.py`；产出更新至 `docs/09_AUDIT/STATE/` 后 **commit**，便于 JSON/报表 diff。  
+- **大治理批次收口**：同一窗口内建议复跑 `scan_duplicate_file_content.py --ext md`、`scan_index_health.py`、`sentinel_l1_governance_scan.py`；若本轮含 **D 类**，在 `scan_blueprint_d_overlap_candidates.py` 之后可再跑 `triage_blueprint_d_overlap_pairs.py` 生成二审 JSONL。产出更新至 `docs/09_AUDIT/STATE/` 后 **commit**，便于 JSON/报表 diff。  
 - **归档区 C1 合并**：须符合 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3**；当前 Owner 裁定为 **宽松**（见该文 §3.1 末段）。
 
 ---
@@ -167,6 +172,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.13 | 2026-04-10 | 互指 `triage_blueprint_d_overlap_pairs.py`、[二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)、Playbook **§3.5**；办公室表增二审模板行；常用脚本与基线复跑约定补 D 档分流 |
 | 1.1.12 | 2026-04-10 | 办公室内文件表「文档地图」行与 LAYOUT **§1 第 5 条** / 放置规程 **§1.5** 对齐 |
 | 1.1.11 | 2026-04-10 | 文首/流程/办公室表互指 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、REPO_WIDE **§2.3.1**、AI **§3.2**、`ARCHITECTURE.md`（Layer 0～11 与 `docs/` 路径分立） |
 | 1.1.10 | 2026-04-10 | 增 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) 双表入口；流程第 2 条与常用脚本互指低置信登记 |

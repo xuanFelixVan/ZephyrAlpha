@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-10
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -55,6 +55,16 @@ compliance_level: 专业标准---
 - [稀疏目录分析报告](./sparse_directory_analysis_20260407_030548.md) - 系统文档
 
 - [严格孤儿文件报告 REGEN](./STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md) - 治理扫描报告
+
+### 蓝图 D 类机器产出（候选 / 分流 / 二审队列）
+
+> 完整流程与 Owner 裁决见办公室 [D 类蓝图重叠 Playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（**§3.5**、**§5**）；更强模型二审提示词见 [二审模板](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)。
+
+| 阶段 | 说明 | 示例路径（按日期轮换 `YYYYMMDD`） |
+|------|------|--------------------------------------|
+| 启发式候选对 | `scan_blueprint_d_overlap_candidates.py` | [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](./BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md) · [`.json`](./BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json) |
+| A 档分流摘要 | `triage_blueprint_d_overlap_pairs.py` | [`BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md`](./BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md) · [`.json`](./BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json) |
+| 二审输入队列 | 同上 | [`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](./BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) |
 
 ---
 
