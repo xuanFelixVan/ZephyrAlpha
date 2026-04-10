@@ -5,11 +5,11 @@
   "extensions": [
     "md"
   ],
-  "path_count": 3160,
-  "basename_collision_count": 45,
-  "collision_path_total": 447,
+  "path_count": 3162,
+  "basename_collision_count": 44,
+  "collision_path_total": 444,
   "nav_name_collision_basenames": 4,
-  "non_nav_collision_basenames": 41,
+  "non_nav_collision_basenames": 40,
   "clusters": [
     {
       "basename": "INDEX.md",
@@ -218,7 +218,7 @@
     },
     {
       "basename": "README.md",
-      "count": 117,
+      "count": 118,
       "paths": [
         "docs/00_OVERVIEW/README.md",
         "docs/00_RESOURCES/04_PLATFORM_DOCS/README.md",
@@ -288,6 +288,7 @@
         "docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring/README.md",
         "docs/05_IMPLEMENTATION/README.md",
         "docs/06_ARCHIVE/20260407_p1_cleanup_archive/README.md",
+        "docs/06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md",
         "docs/06_ARCHIVE/README.md",
         "docs/06_ARCHIVE/factor-library/README.md",
         "docs/06_ARCHIVE/incomplete_documents/20260404_blueprint_incomplete/README.md",
@@ -397,16 +398,6 @@
         "docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md",
         "docs/06_ARCHIVE/ARCHIVE_README.md",
         "docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README.md"
-      ]
-    },
-    {
-      "basename": "DATA_QUALITY_MONITORING_BLUEPRINT.md",
-      "count": 4,
-      "paths": [
-        "docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md",
-        "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md",
-        "docs/08_HUMAN_AI_INTERFACE/67_DATA_QUALITY_MONITORING/DATA_QUALITY_MONITORING_BLUEPRINT.md",
-        "docs/10_AI_WORKFLOW/DATA_QUALITY_MONITORING_BLUEPRINT.md"
       ]
     },
     {

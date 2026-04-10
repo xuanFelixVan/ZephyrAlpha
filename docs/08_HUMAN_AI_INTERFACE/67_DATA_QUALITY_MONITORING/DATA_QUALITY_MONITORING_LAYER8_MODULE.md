@@ -1,9 +1,9 @@
 ---
 module_id: 08_HUMAN_AI_INTERFACE_67_DATA_QUALITY_MONITORING
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-08
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 首席架构师
 responsibility:
   - 数据质量规则、数据质量监控、数据质量报告、数据质量告警
@@ -30,6 +30,8 @@ open_source_alternatives:
 ---
 
 # 模块67: 数据质量监控 (DATA_QUALITY_MONITORING)
+
+> **C2 同名消解（2026-04-11）**：本路径**不再**使用文件名 `DATA_QUALITY_MONITORING_BLUEPRINT.md`，避免与图纸柜正式蓝图同名。**施工级 canonical** 见 [DATA_QUALITY_MONITORING_BLUEPRINT.md（01_BLUEPRINTS）](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md)。
 
 ## 📋 模块概览
 
@@ -86,4 +88,4 @@ open_source_alternatives:
 
 **蓝图创建时间**: 2026-04-08  
 **蓝图版本**: 1.0.0  
-**最后更新**: 2026-04-08
+**最后更新**: 2026-04-11

@@ -419,7 +419,7 @@ related_documents:
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_ASSESSMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_GOVERNANCE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MANAGEMENT_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
-| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
+| C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md`（已 C2 收口：正文在 `docs/06_ARCHIVE/20260411_c2_data_quality_monitoring/`；canonical 见 `01_BLUEPRINTS`） | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_INTERFACE_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |
 | C9 | `docs/01_FRAMEWORK/DATA_SOURCE_COST_OPTIMIZATION_BLUEPRINT.md` | Cursor | 已完成 | 2026-04-08 | 0 | §0.1 合规段 |

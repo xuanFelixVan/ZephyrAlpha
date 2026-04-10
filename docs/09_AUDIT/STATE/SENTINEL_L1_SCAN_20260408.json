@@ -1,13 +1,13 @@
 {
-  "scan_time_utc": "20260410T161924Z",
+  "scan_time_utc": "20260410T162946Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3192,
+  "md_file_count": 3193,
   "links": {
     "stats": {
-      "total_files_scanned": 3192,
-      "total_md_links": 7277,
+      "total_files_scanned": 3193,
+      "total_md_links": 7278,
       "skipped_external": 988,
-      "valid": 6289,
+      "valid": 6290,
       "invalid": 0
     },
     "invalid_details_sample": [],
@@ -37,6 +37,7 @@
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/P1_BLUEPRINTS_FINAL_COMPLETION_REPORT_20260407.md",
       "docs/05_IMPLEMENTATION/07_OPERATIONS/improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md",
       "docs/06_ARCHIVE/20260407_p1_cleanup_archive/DOCUMENT_AUDIT_WORKFLOW.md",
+      "docs/06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md",
       "docs/06_ARCHIVE/main/v4_development/qingfeng_v4_development_plan.md",
       "docs/06_ARCHIVE/overlap_sparse_directory_analysis_20260407_021046_20260407_190203.md",
       "docs/06_ARCHIVE/overlap_sparse_directory_analysis_20260407_030548_20260407_190203.md",
@@ -127,7 +128,7 @@
       "docs/09_AUDIT/STATE/sparse_directory_analysis_20260407_030548.md",
       "SECURITY.md"
     ],
-    "no_id_total": 99
+    "no_id_total": 100
   },
   "path_depth": {
     "deepest_30": [

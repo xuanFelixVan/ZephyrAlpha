@@ -78,7 +78,7 @@ responsibility:
 
 ## 接口与契约（蓝图终稿）
 
-- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。质量实时检查、告警事件、数据源切换与质量报告输出若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
+- 全库 API 与事件约定真源：[`API_Contract.md`](../../03_TRADING_TACTICS/API_Contract.md)。质量实时检查、告警事件、数据源切换与质量报告输出若通过接口/事件实现，须在该真源或本文后续接口说明中闭合。
 
 ## 验收标准（可检查）
 
@@ -999,13 +999,13 @@ class AutoSwitcher:
 
 |------|------|--------|
 
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11主架?| ⭐⭐⭐⭐?|
+| [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11主架?| ⭐⭐⭐⭐?|
 
-| [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架?| ⭐⭐⭐⭐?|
+| [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](../../01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 专业多时间框架架?| ⭐⭐⭐⭐?|
 
-| [REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控 | ⭐⭐⭐⭐ |
+| [REALTIME_RISK_MONITORING_BLUEPRINT.md](../../01_FRAMEWORK/REALTIME_RISK_MONITORING_BLUEPRINT.md) | 实时风险监控 | ⭐⭐⭐⭐ |
 
-| [AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md) | AI可解释性工?| ⭐⭐?|
+| [AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](../../01_FRAMEWORK/AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md) | AI可解释性工?| ⭐⭐?|
 
 | [RAG_KNOWLEDGE_SYSTEM_BLUEPRINT.md](#) | RAG知识系统 | ⭐⭐?|
 

@@ -9,7 +9,7 @@ generated_by: scripts/governance/scan_basename_collisions.py
 
 > **机器真源**：[`BASENAME_COLLISIONS_20260411.json`](./BASENAME_COLLISIONS_20260411.json)
 > **范围**：docs/ ｜ **后缀**：`md`
-> **候选路径数**：3160 ｜ **发生碰撞的 basename 数**：45
+> **候选路径数**：3162 ｜ **发生碰撞的 basename 数**：44
 
 ## 说明
 
@@ -20,7 +20,7 @@ generated_by: scripts/governance/scan_basename_collisions.py
 
 | 类别 | basename 数 |
 |------|------------:|
-| 非导航名（优先人工审） | 41 |
+| 非导航名（优先人工审） | 40 |
 | 导航名（`changelog.md, contributing.md, index.md, license.md, readme.md, sitemap.md`） | 4 |
 
 ## 非导航名碰撞（逐条展开）
@@ -67,13 +67,6 @@ generated_by: scripts/governance/scan_basename_collisions.py
 - `docs/06_ARCHIVE/20260405_economic_regime_cleanup/ARCHIVE_README.md`
 - `docs/06_ARCHIVE/ARCHIVE_README.md`
 - `docs/06_ARCHIVE/duplicate_documents/ARCHIVE_README.md`
-
-### `DATA_QUALITY_MONITORING_BLUEPRINT.md` · 4 条路径
-
-- `docs/01_FRAMEWORK/DATA_QUALITY_MONITORING_BLUEPRINT.md`
-- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md`
-- `docs/08_HUMAN_AI_INTERFACE/67_DATA_QUALITY_MONITORING/DATA_QUALITY_MONITORING_BLUEPRINT.md`
-- `docs/10_AI_WORKFLOW/DATA_QUALITY_MONITORING_BLUEPRINT.md`
 
 ### `CONSOLIDATED_REPORT_FOR_AI.md` · 3 条路径
 
@@ -277,6 +270,6 @@ generated_by: scripts/governance/scan_basename_collisions.py
 | basename | 路径条数 |
 |----------|----------:|
 | `INDEX.md` | 199 |
-| `README.md` | 117 |
+| `README.md` | 118 |
 | `SITEMAP.md` | 5 |
 | `CHANGELOG.md` | 2 |

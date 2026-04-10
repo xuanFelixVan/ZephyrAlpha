@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.3.1
+version: 1.3.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -249,7 +249,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - [x] 书面选定 **归档区策略**（§3.1 严格 / 宽松）。（2026-04-11：**宽松**，见 §3.1 末段 Owner 裁定。）  
 - [x] C1：至少完成一轮 hash 报表 + 对**已裁决**簇执行 §3.2（可分多 PR）。（2026-04-11：`docs/06_ARCHIVE/temp_pending/` 内 `DUPLICATE_CONTENT_BY_HASH_20260410` 所报 **5 簇**已合并为 **5 个 canonical**，副本已删；台账见该目录 [`README.md`](../../../06_ARCHIVE/temp_pending/README.md)。复跑 [`DUPLICATE_CONTENT_BY_HASH_20260411.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md)：`duplicate_clusters=0`。）  
-- [ ] C2：basename 报表完成；对**高优先级**碰撞簇完成 canonical 或重命名消解。（**报表**：2026-04-11 [`BASENAME_COLLISIONS_20260411.md`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md) — `docs/` 下 `.md` 共 **45** 个碰撞 basename，非导航名 **41**；脚本 `scan_basename_collisions.py`。**高优先级消解**仍待分批 Owner 裁决。）  
+- [ ] C2：basename 报表完成；对**高优先级**碰撞簇完成 canonical 或重命名消解。（**报表**：[`BASENAME_COLLISIONS_20260411.md`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md) — 复跑后 `docs/` 下 `.md` 碰撞 basename **44**、非导航名 **40**。**已消解 1 簇**：`DATA_QUALITY_MONITORING_BLUEPRINT.md` — canonical 仅保留 [`01_BLUEPRINTS/...`](../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md)；`01_FRAMEWORK` / `10_AI_WORKFLOW` 正文迁入 [`06_ARCHIVE/20260411_c2_data_quality_monitoring/`](../../../06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md)；Layer8 改为 [`DATA_QUALITY_MONITORING_LAYER8_MODULE.md`](../../../08_HUMAN_AI_INTERFACE/67_DATA_QUALITY_MONITORING/DATA_QUALITY_MONITORING_LAYER8_MODULE.md)。**其余簇**仍待分批裁决。）  
 - [ ] D：候选簇已登记；**已裁决**簇完成叙事归并 + 链接 + 台账。  
 - [ ] 合并相关 PR 均附：替换范围摘要、已跑验证脚本列表。
 
@@ -301,6 +301,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.2 | 2026-04-11 | C2 推进：`DATA_QUALITY_MONITORING_BLUEPRINT` 同名簇消解 + 归档 README；分散蓝图清单重生成；§3.6 C2 附进展 |
 | 1.3.1 | 2026-04-11 | 新增 `scan_basename_collisions.py`；P1 basename 报表 ✅；§1.1 / 文首互指；§3.6 C2 附报表链接 |
 | 1.3.0 | 2026-04-11 | §3.1 **宽松**归档裁定；§3.6 归档策略 + C1（temp_pending 五簇）；P0 基线复跑约定闭环 |
 | 1.2.9 | 2026-04-10 | §6 推荐阅读增 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
