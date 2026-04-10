@@ -3,7 +3,7 @@ module_id: 09_AUDIT_REPORTS_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-12
-last_updated: '2026-04-12'
+last_updated: '2026-04-13'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非长列表真源）
@@ -20,6 +20,10 @@ applicable_scope: docs/09_AUDIT/REPORTS
 1. [`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md) — 按主题分组浏览  
 2. [`INDEX.md`](./INDEX.md) — 全量索引与快速入口  
 3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)
+
+## 索引健全性（本前缀）
+
+- **零入链扫描（2026-04-12）**：[`../STATE/INDEX_HEALTH_ORPHAN_20260412.md`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS`；与 [`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md) 顶部说明一致）
 
 ## 上级入口
 
