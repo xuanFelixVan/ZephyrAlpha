@@ -43,6 +43,8 @@ responsibility:
 | `generate_architecture_service_catalog.py` | 架构/服务目录 + C4 摘要 + 可检索 JSON：`pyproject`、`src/`、`src/api/routes`、根目录机构缺口表 → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`；可选 `--include-untracked`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
 | `scan_index_health.py` | **`docs/` 零入链候选**（全库 md 相对链统计）→ `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；见 [放置规程 §5.2](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**（启发式）→ `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`；规程见办公室 `D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md` |
+| `triage_blueprint_d_overlap_pairs.py` | D 类 **A 档分流** + 二审用 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`；提示词模板见办公室 `D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md` |
 
 ---
 

@@ -1,9 +1,9 @@
 ---
 module_id: D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK_001
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-11
-last_updated: '2026-04-11'
+last_updated: '2026-04-10'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 定义蓝图 D 类（主题/职责重叠、表述不同）的发现、机器建议与人工收口流程
@@ -48,6 +48,19 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
    - **不同层/不同职责**（如数据源 vs ML 侧质量）→ **不合并正文**，改为 **互链 + 职责表**。  
 3. **定稿动作**（合并路径）：对齐目录 → 吸收独有段落 → 更新 canonical → 另一路径 **stub** 或 **迁 archive** → [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3.2** 改链 → `sentinel_l1` / 相关 `verify_*`。  
 4. **台账**：重大裁决可记入 [CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md) 或本目录登记表。
+
+### 3.5 A 档分流与二审（更强模型）
+
+为减少「逐对打开」成本，可在人工初筛前增加 **路径规则分流** 与可选 **二审（GLM / Claude Opus 等）**：
+
+1. **A 档分流**（仓库根）：`python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD`（或 `--input docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_YYYYMMDD.json`）  
+   - `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_YYYYMMDD.{md,json}`：全量 `triage_tier`、优先级统计与逐对摘录。  
+   - `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_YYYYMMDD.jsonl`：**每行一个 JSON**，含机器指标 + `excerpt_a` / `excerpt_b`（非全文），供二审模型消费。  
+   - 可选：`--queue-mode high_medium` — 不将 `second_pass_priority=LOW` 写入 JSONL（多为「图纸柜 vs 归档」组合，可按默认策略优先 stub/链收口）。  
+2. **二审**：将 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 全文与 **JSONL 片段**（可按 `second_pass_priority` 或 `pair_id` 截取）发给更强模型；**输出必须符合模板内 JSON Schema**；**仍须 Owner 抽样或签核**后再改仓库。  
+3. **模板与规则迭代**：二审可在输出根对象中附带 `prompt_template_patch_proposal`（见模板 §六）；Owner 择优合并回模板或调整 `triage_blueprint_d_overlap_pairs.py`。
+
+与 **§5 双轨**：二审结论若属 **低置信** 合稿路径，仍走 **5.2** 与 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)。
 
 ---
 
@@ -101,5 +114,6 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.0 | 2026-04-10 | 增 **§3.5**：`triage_blueprint_d_overlap_pairs.py` + [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)（JSON Schema + 模板自优化 proposal） |
 | 1.1.0 | 2026-04-11 | §5 双轨：高置信可不保留旧稿 vs 低置信合稿新路径 + [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 1.0.0 | 2026-04-11 | 首版：D 类流水线与机器建议口径 |
