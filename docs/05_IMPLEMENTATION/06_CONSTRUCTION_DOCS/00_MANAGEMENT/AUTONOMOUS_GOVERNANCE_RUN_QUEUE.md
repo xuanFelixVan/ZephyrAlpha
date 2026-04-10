@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-12T18:00:00Z` |
-| **上轮 commit** | `4e66ad63` |
+| **上轮 commit** | `82df7b5f` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | 继续 `docs/09_AUDIT/REPORTS`（断链抽样、`INDEX_GROUPED` 维护、或 `scan_index_health --prefix docs/09_AUDIT/REPORTS`） |
 | **notes** | **B-02 批次 2（REPORTS 导航）**：[`docs/INDEX.md`](../../../INDEX.md) §5 增 `09_AUDIT` 总入口与 [`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md)；[`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md)「REPORTS 长列表入口」增门面链并去除第二段 front matter 前 BOM。前缀仍 **未** §7.2 全量退出。批次 1 见上条。 |
