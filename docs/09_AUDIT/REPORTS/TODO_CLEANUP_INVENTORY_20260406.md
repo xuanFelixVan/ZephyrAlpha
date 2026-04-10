@@ -3,7 +3,7 @@ module_id: TODO_CLEANUP_INVENTORY_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: '2026-04-07'
+last_updated: '2026-04-10'
 owner: Audit Sentinel
 responsibility:
 - 审计体系设计与质量监控与实施指导
@@ -23,6 +23,11 @@ audit_type: P1问题修复
 > **处理方案**: 方案A - 批量审查
 > **总文件数**: 30个文件
 ---
+
+## 治理衔接备注（2026-04-10）
+
+- 本文件所列 **30 个文件** 为 **2026-04-06 审计基线**，本次**未**重跑全库统计、**未**改上表数字。
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/` 根目录正式蓝图仍存在「（待补充）」、版本表 `TBD`、集成验收占位等，**不在**上述 30 文件口径内；清理队列与优先级见 [全库蓝图终稿任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **任务 5** 及其中 **「执行备忘 · 任务 5 扫描」**。
 
 ## 📊 清理概览
 

@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.4
+version: 1.0.5
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -111,7 +111,38 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 **目标**：本清单第 1～5 项的执行结果，能在卫生计划与审计台账中找到对应记录或关闭说明。
 
 - [x] 已对照 [蓝图阶段文档卫生总计划](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) 检查是否有遗漏批次 — 2026-04-10：INDEX 大门与任务 4 对齐属目录卫生/P0 相关入口整理（细项批次仍可按卫生总案 P1～P3 推进）
-- [ ] 若仍存在 TODO/TBD 清理台账，已更新状态或注明「仅归档范围保留」
+- [x] 若仍存在 TODO/TBD 清理台账，已更新状态或注明「仅归档范围保留」— 已在 [`TODO_CLEANUP_INVENTORY_20260406.md`](../../../09_AUDIT/REPORTS/TODO_CLEANUP_INVENTORY_20260406.md) 文首增加 **2026-04-10 治理衔接备注**（与任务 5 联动；原 30 文件统计未重算）
+
+---
+
+## 执行备忘 · 任务 5 扫描（2026-04-10）
+
+已对 `01_BLUEPRINTS/` 根目录 `*BLUEPRINT.md`（不含 `REPORTS/`）检索 `待补充`、`| TBD |`、集成验收「待补充」等：**多份文件仍有占位**，需按 P0→P1 分批改为**明确数值/引用真源**或**标明第二期**，不可单次会话清完。本次命中文件（按路径，供专项排队，**非穷举 grep 可再扩**）包括但不限于：
+
+- `ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md`
+- `BLACK_LITTERMAN_MODEL_BLUEPRINT.md`
+- `CONFIGURATION_MANAGEMENT_BLUEPRINT.md`
+- `DATA_ACCESS_AUDIT_BLUEPRINT.md`
+- `DATA_BACKUP_RECOVERY_BLUEPRINT.md`
+- `DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md`
+- `FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md`
+- `LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md`
+- `MARKET_IMPACT_MODEL_BLUEPRINT.md`
+- `MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md`
+- `MONITORING_ALERTING_SYSTEM_BLUEPRINT.md`
+- `MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md`
+- `MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md`
+- `MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md`
+- `OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md`
+- `PERFORMANCE_TESTING_BLUEPRINT.md`
+- `PORTFOLIO_ATTRIBUTION_BLUEPRINT.md`
+- `PORTFOLIO_CAPACITY_ESTIMATOR_BLUEPRINT.md`
+- `PORTFOLIO_COMPARISON_TOOL_BLUEPRINT.md`
+- `PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md`
+- `PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md`
+- `REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md`
+- `SMART_EXECUTION_ENGINE_BLUEPRINT.md`
+- `STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md`
 
 ---
 
@@ -132,6 +163,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.5 | 2026-04-10 | 任务 6 台账衔接备注；任务 5 扫描备忘（命中列表）；git commit 已提交 INDEX/总清单/本清单三文件 |
 | 1.0.4 | 2026-04-10 | 执行任务 2、4 勾选；任务 1 选定总清单；任务 6 卫生对照（部分）；INDEX 与磁盘对齐 |
 | 1.0.3 | 2026-04-10 | 推荐阅读增文档治理架构 |
 | 1.0.2 | 2026-04-10 | 任务 1：Owner 默认全量链接验证（100%）；抽检仅书面豁免 |
