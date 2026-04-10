@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.22
+version: 1.4.24
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -39,26 +39,28 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 ## 1. 基线快照（2026-04-10，可复跑更新）
 
+> **2026-04-10 数字刷新**：与 `git ls-files` 当前快照对齐（见 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)）。Git 索引中仍有 **8** 条以 **`"`** 误入的路径前缀（`"review_materials_package/...`）及 **8** 条扩展名被记为 **`md"`** 的异常路径，统计时单独体现为一级目录异常桶；规范化见 **P2**。
+
 | 指标 | 数值 | 备注 |
 |------|------|------|
-| **已跟踪文件总数** | **4384**（2026-04-10 复跑 rollup） | `git ls-files` 行数；以后以最新 rollup / 平面清单为准 |
-| **Markdown** | 3176 | 体量最大，索引策略必须分层，避免「逐文件手打链接」 |
-| **Python** | 736 | 含 `scripts/` 为主 |
-| **JSON** | 314 | 含审计状态、配置片段等 |
-| **`.diff` 跟踪文件** | 50 | 适合统一归档/剔除策略评审 |
-| **`.bak2` / `.bak3` 等备份扩展名（已跟踪）** | 至少 2 | 见下文 P2，宜迁出主树或进 archive |
-| **一级目录体量（已跟踪）** | `docs/` 3523，`scripts/` 670，`src/` 65 | 治理重心在 `docs/` 与 `scripts/` |
+| **已跟踪文件总数** | **4454**（2026-04-10 `git ls-files`） | 与 [`REPO_DIRECTORY_ROLLUP_20260410`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) 头部路径条数同量级；以后以最新 rollup / 平面清单为准 |
+| **Markdown（`.md`）** | 3227 | 体量最大，索引策略必须分层，避免「逐文件手打链接」 |
+| **Python（`.py`）** | 756 | 含 `scripts/` 为主 |
+| **JSON** | 325 | 含审计状态、配置片段等 |
+| **`.diff` 跟踪文件** | 50 | 均已位于 [`06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)（历史 dry-run） |
+| **`.bak2` / `.bak3` 等备份扩展名（已跟踪）** | **1** + **1** | `.bak2` 在 `encoding_backups`；`.bak3` 在 `06_ARCHIVE/20260410_system_manifest_backup/` |
+| **一级目录体量（已跟踪）** | `docs/` **3584**，`scripts/` **690**，`src/` **66** | 治理重心在 `docs/` 与 `scripts/`；另含异常前缀 `"review_materials_package` **8** 条（与正常 `review_materials_package/` **5** 条并存） |
 
-**深度 2 目录聚合（节选，文件数 Top — 仅作一级排期摘要）**
+**深度 2 目录聚合（节选，`docs/` 下深度固定为 3 段式前缀 Top 6 — 与 rollup 人类读摘要同口径）**
 
 | 前缀 | 约文件数 |
 |------|-----------|
-| `docs/09_AUDIT` | 1012 |
-| `docs/05_IMPLEMENTATION` | 880 |
-| `docs/06_ARCHIVE` | 644 |
-| `docs/01_FRAMEWORK` | 338 |
-| `docs/02_FACTOR_LIBRARY` | 144 |
-| `docs/08_HUMAN_AI_INTERFACE` | 107 |
+| `docs/09_AUDIT/REPORTS` | 498 |
+| `docs/05_IMPLEMENTATION/04_OPERATIONS` | 406 |
+| `docs/09_AUDIT/STATE` | 374 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 272 |
+| `docs/06_ARCHIVE/20260404_audit_reports_archive` | 218 |
+| `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | 97 |
 
 > **不足以支撑「一次尽治到最深」**：深度 2 会把 `docs/09_AUDIT` 等上千文件**糊成一桶**；**必须**配合下方 **深度 3～6 聚合**按子前缀拆队列（见 `REPO_DIRECTORY_ROLLUP_*`）。
 
@@ -107,6 +109,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **`scripts/governance/scan_blueprint_d_overlap_candidates.py`** | **`docs/`** 下已跟踪且 basename 含 `BLUEPRINT` 的 `.md`；默认排除 `overnight_runs` | **D 类候选对**：token/H2 相似度、**建议 canonical**、**建议合并大纲**；默认 **score 截断**（`--max-output-pairs`） | **不是** embedding/LLM 语义；**不**自动合稿；裁决与 **低置信合稿登记** 见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) + [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | **`scripts/governance/triage_blueprint_d_overlap_pairs.py`** | 读入某日的 `BLUEPRINT_D_OVERLAP_CANDIDATES_*.json` | **A 档分流**摘要（`TRIAGE_*.{md,json}`）+ **二审队列** `SECOND_PASS_QUEUE_*.jsonl`；可选 `--queue-mode high_medium` | **不**替代 Owner 签核；二审须配合 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)（Playbook **§3.5**） |
 | **`scripts/governance/scan_index_health.py`** | 默认 **`docs/`** 下已跟踪 `.md`（可 `--prefix`）；入链来源默认**全库已跟踪** `.md` | 统计 **Markdown 相对链**入链，报告 **零入链** 候选 | **不**解析 HTML/代码块链接；**不**判定「必须出现在某 INDEX」（见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.3**）；**不**自动删稿 |
+| **`scripts/governance/sample_docs_nav_coverage.py`** | **`docs/`** 下已跟踪 `.md`；合并若干 **INDEX/SITEMAP** 全文为 blob | **P3 抽样**：路径子串是否出现在主导航正文（宽松命中） | **不**等价于「必须在 INDEX 列出」；**不**替代 `scan_index_health` |
 | **被忽略路径** | `.gitignore` 等 | 本清单**默认不**纳入「删并」 | 本地密钥、缓存、`.env.qmt` 等由安全与 ignore 策略管 |
 
 **结论（回答「是否涵盖所有格式、是否每一文件都识别分析处理」）**：
@@ -294,7 +297,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### P3 — 索引可达性（导航）
 
-- [ ] 从 `docs/INDEX.md` 与 [`../INDEX.md`](../INDEX.md) 出发做**抽样反向检查**：随机/分层抽样未出现在任何 INDEX/SITEMAP 的 `docs/` 文件比例（目标：持续下降）。  
+- [x] 从 `docs/INDEX.md` 与 [`../INDEX.md`](../INDEX.md) 出发做**抽样反向检查**：随机/分层抽样路径子串是否出现在合并后的主导航正文（宽松命中；**不**等价「必须在 INDEX 列出」）。（2026-04-11：`python scripts/governance/sample_docs_nav_coverage.py` → 样例报告 [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](../../../09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_20260410.md)，参数示例 n=200、seed=42；完整口径见 **§1.1** `sample_docs_nav_coverage.py` 行。）  
 - [x] `scripts/`：在 [scripts/README.md](../../../../scripts/README.md) 或生成清单中补齐**分类导航**（与脚本数量匹配）。（2026-04-10：增 **分类导航（P3）** 小节 + 治理表补 `scan_basename_collisions.py`。）  
 - [x] `src/`：在根 README 或 `src/` 下 INDEX 中保证模块入口**可跳转**。（2026-04-10：新增 [`src/README.md`](../../../../src/README.md)；根 [README.md](../../../../README.md)「项目结构」互指。）
 
@@ -311,6 +314,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 同名不同路径（C2） | `scan_basename_collisions.py` | 不读正文；不自动合并 |
 | 蓝图主题可能重叠（D） | `scan_blueprint_d_overlap_candidates.py`、`triage_blueprint_d_overlap_pairs.py` | 非 embedding 语义；不自动合稿；二审须模板 + Owner |
 | `docs/` 零入链候选 | `scan_index_health.py` | 不裁决「必须出现在某 INDEX」 |
+| 主导航正文覆盖率（P3 抽样） | `sample_docs_nav_coverage.py` | 不替代 `scan_index_health`；宽松子串命中 |
 | 架构 / API / `src/` 目录表 | `generate_architecture_service_catalog.py` | 不做全仓 AST 调用图 |
 | 首道 `module_id` 缺失 | `backfill_missing_module_id.py`（`--apply` 后须复跑 L1） | 不修复业务正文质量 |
 
@@ -331,6 +335,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.24 | 2026-04-11 | P3：勾选「抽样反向检查」并链 `DOCS_NAV_COVERAGE_SAMPLE_20260410`；§6 推荐阅读增主导航抽样与 `W2_SECRET_PATTERN_SPOTCHECK`；P4.1 矩阵增 `sample_docs_nav_coverage.py`；§8「§1 数字」与当前 `git ls-files` 4454 对齐勾选 |
 | 1.4.22 | 2026-04-10 | P2：50×`.diff` 迁 `06_ARCHIVE/20260408_double_yaml_dryrun_sample`；`System_Manifest.md.bak3` 迁 archive；程序文档改 dry-run 路径；P1 Playbook 流程对齐勾选；P3：`scripts/README` 分类导航 + `src/README`；P4.1 门禁矩阵；§8 部分勾选；复跑 `rollup` + `REPO_GIT_TRACKED_FILES_20260410.txt` |
 | 1.4.21 | 2026-04-10 | D 类：`triage_blueprint_d_overlap_pairs.py` + TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 写入文首、§1.1、§3.4～§3.6、§6 推荐阅读 |
 | 1.4.20 | 2026-04-10 | L1：落地 `backfill_missing_module_id.py`，全库首道 FM **无 `module_id` → 0**（131 篇：结构修复 15 + 补 id 116）；`sentinel_l1_governance_scan.py` 产出 MD 增 FM + 统计排除自指；`scan_blueprint_d_overlap_candidates.py` 产出 MD 增稳定 `module_id`；复跑 L1 **判定无效 0、重复 id 0** |
@@ -391,6 +396,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 蓝图 D 类重叠候选（启发式 · `scan_blueprint_d_overlap_candidates.py`） | [`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md) / [`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json) · 历史快照 [`20260411`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260411.md) · [Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) · **低置信合稿台账** [D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | 蓝图 D 类 A 档分流 + 二审队列（`triage_blueprint_d_overlap_pairs.py`） | [`BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md) / [`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json) · [`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) · [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 | 索引健全性（零入链候选 · `scan_index_health.py`） | [`INDEX_HEALTH_ORPHAN_20260410.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
+| P3 主导航覆盖率抽样（`sample_docs_nav_coverage.py` · 样例） | [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](../../../09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_20260410.md) |
+| W2 可选密钥型字面量抽查（Python 模式 · 等价抽检记录） | [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](../../../09_AUDIT/STATE/W2_SECRET_PATTERN_SPOTCHECK_20260410.md)（与 [蓝图任务清单 W2](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 互指） |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
 | 全局文件治理会话交接（新对话粘贴） | [GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5** Layer 与路径防混） |
@@ -441,6 +448,6 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 - [x] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类合稿待审登记**、**D 类二审模板**、`triage_blueprint_d_overlap_pairs.py`）；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.5** 与 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对。）  
 - [x] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。（2026-04-10 批次核对。）  
 - [x] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
-- [ ] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（§1 仍为 **2026-04-10** 快照；本轮已复跑 rollup / 平面清单，**文件总数**未改 §1 表内字面数 — 下次大治理可一并更新 §1 表。）  
+- [x] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（2026-04-11：**已跟踪文件总数** `git ls-files` = **4454**，与 §1 表 **4454** 一致；扩展名分桶与深度 3 Top6 仍以 **2026-04-10** 快照字面保留；全量刷新 §1 字面时复跑 §1 中 PowerShell/Python 片段并更新 `REPO_GIT_TRACKED_FILES_*` / `REPO_DIRECTORY_ROLLUP_*`。Git 索引 **8+8** 引号 / `md"` 异常路径注记仍见 §1 段首与 **P2** backlog，与「review_materials_package 子集已人工核对 UTF-8」可并存。）  
 - [x] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。（2026-04-10 批次核对。）  
 - [x] **§1.1** 已与 `scripts/` 内实际行为一致；对外未再暗示「全格式、全文件语义扫描」。（2026-04-10：与 **P4.1** 矩阵一致。）

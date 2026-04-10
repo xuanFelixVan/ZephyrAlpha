@@ -1,9 +1,9 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.2.0
+version: 1.2.1
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 治理类脚本与门禁工具的统一索引（办公室入口）
@@ -34,6 +34,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**：启发式相似度 + **建议 canonical / 合并大纲**（非最终裁决） | `python scripts/governance/scan_blueprint_d_overlap_candidates.py` | `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*.{md,json}` |
 | `triage_blueprint_d_overlap_pairs.py` | **D 类 A 档分流** + 生成二审 **JSONL**（含摘录）；见 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | `python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD` | `BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl` |
 | `scan_index_health.py` | **索引健全性**：`docs/` 下 md **零入链**候选（全库 md 相对链统计） | `python scripts/governance/scan_index_health.py` | `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.{md,json}` |
+| `sample_docs_nav_coverage.py` | **P3 抽样**：合并若干 INDEX/SITEMAP 为导航 blob，检路径子串宽松命中（**不**替代 `scan_index_health`） | `python scripts/governance/sample_docs_nav_coverage.py`（可选 `--sample`、`--seed`、`--date`） | 默认终端摘要；样例见 `docs/09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_*.md` |
 | `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 内链 | `python scripts/governance/verify_01_blueprints_index_links.py` | 终端输出 |
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 | `python scripts/governance/verify_scattered_blueprints_manifest_links.py` | 终端输出 |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 | `python scripts/governance/verify_manifest_paths_strict.py` | 终端输出 |
@@ -57,6 +58,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 7. `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选 + 机器建议；见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§5**；**低置信**合稿须登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)）  
 7′. `triage_blueprint_d_overlap_pairs.py`（可选：A 档分流 + `SECOND_PASS_QUEUE_*.jsonl`；二审见 [D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)）  
 8. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 [放置规程 §5.2](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）  
+8′. （可选）`sample_docs_nav_coverage.py` — 主导航正文覆盖率抽样；产出样例见 [REPO_WIDE §6](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 推荐阅读表  
 
 合并重复内容前请再读 [任务清单 §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（C1 / C2 / **D**）与 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
 
@@ -80,6 +82,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.1 | 2026-04-11 | 工具表与 §2 增 `sample_docs_nav_coverage.py`（P3 主导航抽样；互指 REPO_WIDE §6 样例） |
 | 1.2.0 | 2026-04-10 | 增 `triage_blueprint_d_overlap_pairs.py`；§2 增 7′；二审模板 [D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 | 1.1.9 | 2026-04-10 | §2 复跑顺序增 2′（L1 无 `module_id` 时 `backfill_missing_module_id.py` → 再跑 L1） |
 | 1.1.8 | 2026-04-10 | 工具表增 `backfill_missing_module_id.py` |

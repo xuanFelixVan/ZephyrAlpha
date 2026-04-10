@@ -1,9 +1,9 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.7
+version: 1.1.8
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 全库蓝图终稿阶段任务清单（人类与 AI 共用）
@@ -167,7 +167,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 - [x] `.gitignore`（及若有的 `.gitattributes`）已覆盖应排除目录与密钥模式；无已知的误提交大目录 — 2026-04-10：复核根 `.gitignore`；根目录误提交清理证据见 commit `9c2a9108` 与 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)
 - [x] 根 `README`（或等价入口）能指到建设文档 canonical 与办公室入口 — 2026-04-10：根 [`README.md`](../../../../README.md) 已增「治理与建设文档」表（含 `06_CONSTRUCTION_DOCS/INDEX.md`、`00_MANAGEMENT/README.md`、交付标准、任务清单、施工门禁）
-- [ ] （可选）已运行密钥/秘密扫描或等价检查，发现问题已修或已登记风险 — **未执行**（Owner 可选）
+- [x] （可选）已运行密钥/秘密扫描或等价检查，发现问题已修或已登记风险 — 2026-04-11：**等价检查** = 仓库内 Python 对常见密钥型字面量模式扫描，命中文件数 **0**，记录见 [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](../../../09_AUDIT/STATE/W2_SECRET_PATTERN_SPOTCHECK_20260410.md)；**不**替代专业 scanner（如 gitleaks）；若外规要求须另跑并登记。与 [全仓库文件治理任务清单 §6](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 推荐阅读互指。
 
 ### W3：R2 脚本与 R3 工程
 
@@ -220,6 +220,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.8 | 2026-04-11 | W2 可选密钥扫描：勾选并以 `W2_SECRET_PATTERN_SPOTCHECK_20260410` 为等价抽检证据；互指 REPO_WIDE §6 |
 | 1.1.7 | 2026-04-10 | 文首摆放/地图段互指 LAYOUT **§1 第 5 条**、放置规程 **§1.5**、REPO_WIDE **§2.3.1**、`ARCHITECTURE.md`；禁平行「Layer 放置标准」 |
 | 1.1.6 | 2026-04-10 | 文首与 **LAYOUT 标准**、**文档地图与放置规程** 互指；机构顺序表 3～5 与推荐阅读增放置联动；并列 REPO_WIDE §7 |
 | 1.1.5 | 2026-04-10 | 扩展轨增与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 互补说明（W 轨 ≠ 深度尽治） |
