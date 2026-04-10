@@ -113,6 +113,8 @@ implementation_status: 活跃维护
 | [REPORTS 门面（短说明）](./REPORTS/README.md) | 首次进入报告区建议先读；链到分组索引与 `INDEX` |
 | [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 大量报告按分组可点 |
 | [REPORTS/INDEX](./REPORTS/INDEX.md) | 报告目录索引 |
+| [REPORTS 索引健全性（零入链）](./STATE/INDEX_HEALTH_ORPHAN_20260412.md) | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` 机器报告 |
+| [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) | 办公室脚本与产出真源（含 `scan_index_health`） |
 
 ### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
 
