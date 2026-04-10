@@ -20,6 +20,7 @@ alwaysApply: true
 ## 每轮必做（Git + 门禁）
 
 - 先 **`git status`**；**仅** `git add` 与本任务相关文件；**禁止**把无关未提交改动打包进同一 commit。  
+- **禁止**默认使用 `git add -A`、`git add --all`、`git add .`；**必须** `git add <明确路径>…`。**仅当用户对话中明文授权**「全量暂存」时例外，且 commit 说明须注明。  
 - 实质性改文档/路径后：`python scripts/governance/sentinel_l1_governance_scan.py` — **判定无效 = 0**（无 Owner 书面例外则修链）。  
 - 导出/统计 `git ls-files`：使用 **`git -c core.quotePath=false`** 或 **`-z` + UTF-8**（见 `docs/09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md`）。  
 - **commit message**：完整 **中文** 句，说明做了什么与为何。
