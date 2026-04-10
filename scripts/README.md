@@ -8,7 +8,7 @@ owner: 文档维护者
 version: 1.0.0
 module_id: DOC_README_ARCHIVED_2
 created_date: 2026-04-01
-last_updated: 2026-04-02
+last_updated: 2026-04-10
 responsibility:
   - 模块说明、快速入门、使用指南
 ---
@@ -21,6 +21,20 @@ responsibility:
 > **创建日期**: 2026-04-01
 > **维护者**: Audit Sentinel
 > **定位**: 系统维护和开发辅助脚本
+
+---
+
+## 文档治理与门禁（与任务清单 / 办公室互指）
+
+仓库根执行；详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。
+
+| 脚本 | 作用 |
+|------|------|
+| `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 列表内链 |
+| `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 |
+| `generate_scattered_blueprints_manifest_task1.py` | 生成分散蓝图路径清单（STATE） |
+| `verify_manifest_paths_strict.py` | 校验总清单正文路径 |
+| `sentinel_l1_governance_scan.py` | 全库 Markdown 内链 + `module_id` 扫描（报告在 `docs/09_AUDIT/STATE/`） |
 
 ---
 

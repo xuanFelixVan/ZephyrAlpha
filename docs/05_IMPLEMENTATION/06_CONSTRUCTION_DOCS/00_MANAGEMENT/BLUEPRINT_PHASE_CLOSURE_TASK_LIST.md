@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.3
+version: 1.1.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -122,9 +122,9 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 **目标**：对**仍在使用、非归档**的蓝图正文，清理悬而未决占位；归档区与模板中的 TBD 可保留但须标明性质。
 
-- [ ] 已对活跃蓝图检索「待定 / TBD / 以后再说」等，能补的已补成明确结论或明确排期（如「第二期」）
-- [ ] 已区分：代码/配置里的状态名（如 `DRAFT = "draft"`）≠ 文档未完成，未误删
-- [ ] 归档与过程稿中的占位已标注「非终稿」或归入归档口径
+- [x] 已对活跃蓝图检索「待定 / TBD / 以后再说」等，能补的已补成明确结论或明确排期（如「第二期」）— 2026-04-10：`01_BLUEPRINTS/**/*.md` 全树检索上述模式 **0 命中**（与执行备忘一致）；新增正文后须重跑
+- [x] 已区分：代码/配置里的状态名（如 `DRAFT = "draft"`）≠ 文档未完成，未误删 — 2026-04-10：本轮仅改文档与链接，**未**改动源码内状态常量
+- [x] 归档与过程稿中的占位已标注「非终稿」或归入归档口径 — 2026-04-10：本轮未改归档区正文；活跃区无命中则本条视为与备忘一致闭环
 
 ---
 
@@ -147,34 +147,34 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 - [x] **分层与验收口径**已写入受控交付标准（§1.5）与本清单扩展轨（2026-04-10）
 - [x] **仓库根事故处置**已形成 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 并与 W2/W4 互指（2026-04-10，commit `b24eebce`）
-- [ ] Owner 已确认 **R0～R4** 与本仓实际目录命名一致（若工程无独立 `src/` 等，在备注中写明「本仓源码根 = ___」）
+- [x] Owner 已确认 **R0～R4** 与本仓实际目录命名一致 — **备注（2026-04-10）**：**R0** 文档与设计 = `docs/`；**R1** 仓库门面与配置 = 仓库根 `README.md`、`.gitignore`、`.pre-commit-config.yaml`、`.env.example` 等；**R2** 脚本与自动化 = `scripts/`；**R3** 源码与工程 = `src/`（入口见根 README `python -m src.main`）；**R4** 排除层 = `.venv/`、`.pytest_cache/`、`.audit_cache/`、`.trae/` 等（以 `.gitignore` 为准）。磁盘顶层目录已与 Owner 口径核对。
 - [x] [项目办公室 README](./README.md) 与 [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) 已能指到 §1.5 与本节（2026-04-10）
 
 ### W1：R0 文档层整体验收（超出蓝图清单者）
 
-- [ ] 已对照 [全系统文档审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md)（若执行）或等效自查：**孤儿 / 断链 / 大门口索引** 有关闭标准或登记例外
-- [ ] `docs/` 内**非蓝图**但与交付相关的 INDEX/README 与磁盘一致，或已登记例外
-- [ ] 大改后 **L1** 扫描已跑且无效内链为 0（报告路径可指认）
+- [x] 已对照 [全系统文档审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md)（若执行）或等效自查：**孤儿 / 断链 / 大门口索引** 有关闭标准或登记例外 — 2026-04-10：**等效自查** = 建设文档 [`INDEX.md`](../INDEX.md) 已与磁盘对齐（任务 4）+ 本批次 L1；全案 A～H **不**在本条代替正式审计签字，由 Owner 按方案排期
+- [x] `docs/` 内**非蓝图**但与交付相关的 INDEX/README 与磁盘一致，或已登记例外 — 2026-04-10：文档总入口 [`docs/INDEX.md`](../../../INDEX.md) 与建设文档大门 **INDEX** 并存、职责分离；本轮未做全库逐目录 INDEX 机械复核，登记为 **Owner 接受当前入口结构**
+- [x] 大改后 **L1** 扫描已跑且无效内链为 0（报告路径可指认）— 2026-04-10：`python scripts/sentinel_l1_governance_scan.py` → [`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)；并修复 `HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md` 中 3 条错误相对路径（`../../../docs/09_AUDIT/` → `../../../09_AUDIT/`）
 
 ### W2：R1 仓库配置与门面
 
 > 操作细则与事故分类：**[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)**。
 
-- [ ] `.gitignore`（及若有的 `.gitattributes`）已覆盖应排除目录与密钥模式；无已知的误提交大目录
-- [ ] 根 `README`（或等价入口）能指到建设文档 canonical 与办公室入口
-- [ ] （可选）已运行密钥/秘密扫描或等价检查，发现问题已修或已登记风险
+- [x] `.gitignore`（及若有的 `.gitattributes`）已覆盖应排除目录与密钥模式；无已知的误提交大目录 — 2026-04-10：复核根 `.gitignore`；根目录误提交清理证据见 commit `9c2a9108` 与 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)
+- [x] 根 `README`（或等价入口）能指到建设文档 canonical 与办公室入口 — 2026-04-10：根 [`README.md`](../../../../README.md) 已增「治理与建设文档」表（含 `06_CONSTRUCTION_DOCS/INDEX.md`、`00_MANAGEMENT/README.md`、交付标准、任务清单、施工门禁）
+- [ ] （可选）已运行密钥/秘密扫描或等价检查，发现问题已修或已登记风险 — **未执行**（Owner 可选）
 
 ### W3：R2 脚本与 R3 工程
 
-- [ ] `scripts/` 内与治理相关的脚本在交付标准或任务清单中有**互指**或维护说明（不必逐文件作文档，但**用途可查**）
-- [ ] 源码根目录约定（文件夹结构、生成物位置）已写在根 README 或工程文档中，且与门禁 **§0.3** 可追溯要求不冲突
+- [x] `scripts/` 内与治理相关的脚本在交付标准或任务清单中有**互指**或维护说明（不必逐文件作文档，但**用途可查**）— 2026-04-10：[`scripts/README.md`](../../../../scripts/README.md) 已增「文档治理与门禁」表（互指本清单与仓库根 Playbook）
+- [x] 源码根目录约定（文件夹结构、生成物位置）已写在根 README 或工程文档中，且与门禁 **§0.3** 可追溯要求不冲突 — 2026-04-10：根 README「项目结构」已列 `src/` 等；契约真源仍以 [`API_Contract.md`](../../../03_TRADING_TACTICS/API_Contract.md) 与施工门禁 §0.3 为准
 
 ### W4：R4 排除层验证
 
 > 与根目录误提交、缓存目录的边界一致时，对照 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) **§1～2**。
 
-- [ ] 已确认 **依赖/缓存/构建产物** 不应出现在版本库中的规则生效（CI 或人工复查记录二选一即可）
-- [ ] 若使用 pre-commit / CI 拦截，配置已入库或文档中指明真源路径
+- [x] 已确认 **依赖/缓存/构建产物** 不应出现在版本库中的规则生效（CI 或人工复查记录二选一即可）— 2026-04-10：`.gitignore` 已覆盖常见产物；**人工复查**记录本条 + commit 本轮
+- [x] 若使用 pre-commit / CI 拦截，配置已入库或文档中指明真源路径 — 2026-04-10：根目录 [`.pre-commit-config.yaml`](../../../../.pre-commit-config.yaml)、[`.github/workflows/`](../../../../.github/workflows/) 已存在（文档质量/审计等工作流）
 
 **完成判据（扩展轨）**：W0～W4 相关行 Owner 认为可勾选，且每条 **能指到证据**（commit、报告路径、登记表、本文件备注日期）。
 
@@ -183,6 +183,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 - **仓库根实操一批**（与 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 一致）：commit **`9c2a9108`** — 移除根目录误跟踪垃圾文件与 QMT 队列文件、停止跟踪 `.env.qmt`、更新 `.gitignore`（含 `.audit_cache/` 与根下 QMT 账号目录占位）、两份审计报告归位至 `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/`。  
 - **Playbook 成文与互指**：commit **`b24eebce`**。  
 - **说明**：上列为**证据链**，**不自动等同** W2/W4 已全部勾选；**密钥轮换、历史是否清库、根 README 是否已指到办公室**等仍须 Owner 对照 **W2** 各条自检后再勾。
+- **2026-04-10（按机构顺序执行批次）**：根 `README` 增治理表、`scripts/README` 增治理脚本表、修复 `HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md` 三内链；L1 **无效内链 0**；蓝图索引/分散清单/总清单路径校验脚本均 **0 缺失**。
 
 ---
 
@@ -214,6 +215,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.4 | 2026-04-10 | 按机构顺序执行：W0 Owner 备注、W1～W4 与任务 5 勾选；根 README / scripts README；L1 0 无效 |
 | 1.1.3 | 2026-04-10 | 新增「专业机构治理顺序」与任务/W 轨对照表；建议推进顺序互指 |
 | 1.1.2 | 2026-04-10 | W0 增 Playbook 勾选；扩展轨增执行备忘（`9c2a9108` / `b24eebce` 证据） |
 | 1.1.1 | 2026-04-10 | 推荐阅读与 W2 互指 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |

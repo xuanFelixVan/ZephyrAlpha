@@ -53,6 +53,16 @@ python -m src.main
 | [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | FAQ |
 | [项目办公室 AI 交接说明](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md) | 蓝图/建设文档治理：给 AI 或新协作者快速上手 |
 
+### 治理与建设文档（canonical）
+
+| 入口 | 说明 |
+|------|------|
+| [建设文档总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md) | `06_CONSTRUCTION_DOCS` 档案室大门（须与真实子目录一致） |
+| [项目办公室 README](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/README.md) | 规章、任务清单、交付标准、CANON 门禁导航 |
+| [蓝图交付标准（机构精华版）](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | 机构式目标态与 §1.5 全仓库分层 |
+| [全库蓝图终稿任务清单](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
+| [施工门禁](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
+
 ---
 
 ## 系统架构
@@ -104,4 +114,4 @@ ZephyrAlpha/
 
 ---
 
-**版本**: v5.1 | **更新**: 2026-04-08
+**版本**: v5.1 | **更新**: 2026-04-10
