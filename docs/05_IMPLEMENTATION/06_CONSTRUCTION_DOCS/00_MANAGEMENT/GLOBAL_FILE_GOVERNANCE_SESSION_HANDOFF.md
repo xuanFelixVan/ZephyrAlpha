@@ -1,9 +1,9 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
@@ -81,6 +81,7 @@ python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD
 python scripts/governance/export_repo_directory_rollup.py --date YYYYMMDD --include-untracked
 python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD
 python scripts/governance/scan_duplicate_file_content.py --ext md --date YYYYMMDD --include-untracked
+python scripts/governance/scan_basename_collisions.py --date YYYYMMDD
 python scripts/governance/scan_index_health.py --date YYYYMMDD
 python scripts/governance/generate_architecture_service_catalog.py
 python scripts/governance/sentinel_l1_governance_scan.py
@@ -120,4 +121,5 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.1 | 2026-04-11 | 阶段 B 增 `scan_basename_collisions.py`（C2 basename 报表） |
 | 1.0.0 | 2026-04-10 | 首版：机构对照缺口、办公室自检、可复制会话指令 |
