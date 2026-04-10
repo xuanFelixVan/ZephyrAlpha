@@ -197,6 +197,8 @@ docs/
 | `实施蓝图` | 系统实施蓝图 | ⭐⭐⭐⭐?|
 | [开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 开发标?| ⭐⭐⭐⭐ |
 | [测试标准](./05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 测试标准 | ⭐⭐⭐⭐ |
+| [实施域索引](./05_IMPLEMENTATION/INDEX.md) | `05_IMPLEMENTATION` 总入口与各子目录导航 | ⭐⭐⭐⭐ |
+| [运营管理 04_OPERATIONS](./05_IMPLEMENTATION/04_OPERATIONS/README.md) | 运营文档与 `audit_state` 审计稿区门面 | ⭐⭐⭐⭐ |
 
 ### 5. 审计系统 (09_AUDIT)
 

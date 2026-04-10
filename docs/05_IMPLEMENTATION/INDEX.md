@@ -151,6 +151,7 @@ implementation_status: 活跃维护
 - [本目录门面](./04_OPERATIONS/README.md) · [索引](./04_OPERATIONS/INDEX.md) · [audit_state](./04_OPERATIONS/audit_state/INDEX.md)
 - [文档治理持续改进](./04_OPERATIONS/DOCUMENT_GOVERNANCE_CONTINUOUS_IMPROVEMENT.md)
 - [周度审计机制](./04_OPERATIONS/WEEKLY_AUDIT_MECHANISM.md)
+- [索引健全性（零入链 · 机器报告）](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md)
 
 ### 05_TECHNICAL_SPECIFICATIONS
 
