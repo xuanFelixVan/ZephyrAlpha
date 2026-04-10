@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.24
+version: 1.4.25
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -39,7 +39,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 ## 1. 基线快照（2026-04-10，可复跑更新）
 
-> **2026-04-10 数字刷新**：与 `git ls-files` 当前快照对齐（见 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)）。Git 索引中仍有 **8** 条以 **`"`** 误入的路径前缀（`"review_materials_package/...`）及 **8** 条扩展名被记为 **`md"`** 的异常路径，统计时单独体现为一级目录异常桶；规范化见 **P2**。
+> **2026-04-10 数字刷新**：与 `git ls-files` 当前快照对齐（见 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)）。Git 索引中 **`review_materials_package`** 下仍有 **8** 条路径以 **`"`** 包裹且含 **八进制转义**（工具输出上易被误读为「`"` 前缀桶」与「扩展名 `md"`」**两类**，实为**同一批 8 条**）；**逐路径清单与复跑命令**见 [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)；规范化见 **P2**。
 
 | 指标 | 数值 | 备注 |
 |------|------|------|
@@ -335,6 +335,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.25 | 2026-04-11 | §1 澄清「8+8」为同一批 8 条 Git 异常路径；§6 链 `GIT_TRACKED_PATH_ANOMALIES_20260411`；与 STATE 索引整仓产出表互指 |
 | 1.4.24 | 2026-04-11 | P3：勾选「抽样反向检查」并链 `DOCS_NAV_COVERAGE_SAMPLE_20260410`；§6 推荐阅读增主导航抽样与 `W2_SECRET_PATTERN_SPOTCHECK`；P4.1 矩阵增 `sample_docs_nav_coverage.py`；§8「§1 数字」与当前 `git ls-files` 4454 对齐勾选 |
 | 1.4.22 | 2026-04-10 | P2：50×`.diff` 迁 `06_ARCHIVE/20260408_double_yaml_dryrun_sample`；`System_Manifest.md.bak3` 迁 archive；程序文档改 dry-run 路径；P1 Playbook 流程对齐勾选；P3：`scripts/README` 分类导航 + `src/README`；P4.1 门禁矩阵；§8 部分勾选；复跑 `rollup` + `REPO_GIT_TRACKED_FILES_20260410.txt` |
 | 1.4.21 | 2026-04-10 | D 类：`triage_blueprint_d_overlap_pairs.py` + TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 写入文首、§1.1、§3.4～§3.6、§6 推荐阅读 |
@@ -398,6 +399,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 索引健全性（零入链候选 · `scan_index_health.py`） | [`INDEX_HEALTH_ORPHAN_20260410.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
 | P3 主导航覆盖率抽样（`sample_docs_nav_coverage.py` · 样例） | [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](../../../09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_20260410.md) |
 | W2 可选密钥型字面量抽查（Python 模式 · 等价抽检记录） | [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](../../../09_AUDIT/STATE/W2_SECRET_PATTERN_SPOTCHECK_20260410.md)（与 [蓝图任务清单 W2](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 互指） |
+| Git 索引异常路径（P2 前置 · `git ls-files` 引号/八进制） | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md) · [STATE 索引汇总表](../../../09_AUDIT/STATE/INDEX.md) |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
 | 全局文件治理会话交接（新对话粘贴） | [GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) |
 | 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5** Layer 与路径防混） |

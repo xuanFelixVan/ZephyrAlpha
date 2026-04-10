@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-10
+last_updated: 2026-04-11
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -66,6 +66,16 @@ compliance_level: 专业标准---
 | A 档分流摘要 | `triage_blueprint_d_overlap_pairs.py` | [`BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md`](./BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md) · [`.json`](./BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json) |
 | 二审输入队列 | 同上 | [`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](./BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) |
 
+### 整仓文件治理机器产出（抽样 / 密钥抽查 / Git 路径异常）
+
+> 任务口径与波次见办公室 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（**§1**、**§6**、**P2～P3**）。
+
+| 类型 | 脚本或说明 | 路径 |
+|------|------------|------|
+| P3 主导航可见性抽样（宽松） | `sample_docs_nav_coverage.py` | [`DOCS_NAV_COVERAGE_SAMPLE_20260410.md`](./DOCS_NAV_COVERAGE_SAMPLE_20260410.md) |
+| W2 可选密钥型字面量抽查 | 等价检查记录（非 gitleaks） | [`W2_SECRET_PATTERN_SPOTCHECK_20260410.md`](./W2_SECRET_PATTERN_SPOTCHECK_20260410.md) |
+| Git 索引异常路径（P2 前置清单） | `git ls-files` 引号/八进制逐条 | [`GIT_TRACKED_PATH_ANOMALIES_20260411.md`](./GIT_TRACKED_PATH_ANOMALIES_20260411.md) |
+
 ---
 
 ## 🧭 严格孤儿挂载（波次：A 类剩余大头）
@@ -104,6 +114,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.2 | 2026-04-11 | 增整仓治理产出表（导航抽样、W2 抽查、Git 异常路径）；内层 `module_id` 版本对齐 | 文档治理系统 |
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
 
 ---
