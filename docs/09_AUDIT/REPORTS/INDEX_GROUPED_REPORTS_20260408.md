@@ -3,12 +3,14 @@ module_id: 09_AUDIT_REPORTS_INDEX_GROUPED_20260408
 version: 1.1.3
 status: Active
 created_date: 2026-04-08
-last_updated: 2026-04-10
+last_updated: 2026-04-12
 owner: 文档治理系统
 standard_type: 索引文档
 applicable_scope: 09_AUDIT/REPORTS 分组索引
 related_documents:
   - ./INDEX.md
+  - ./README.md
+  - ../STATE/INDEX_HEALTH_ORPHAN_20260412.md
 ---
 
 # Reports 分组索引（2026-04-08，v1.1）
@@ -16,6 +18,11 @@ related_documents:
 > 目的：把 REPORTS 的长列表分组为可导航入口。
 
 - **报告文件数**：484（含子目录 .md；不含本 INDEX）
+
+## 导航与索引健全性证据
+
+- **门面**：[./README.md](./README.md) ｜ **长列表全量索引**：[./INDEX.md](./INDEX.md)
+- **本前缀零入链扫描（2026-04-12）**：[`../STATE/INDEX_HEALTH_ORPHAN_20260412.md`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS`，**zero_inbound=0**）
 
 ## OpenClaw_L2 (296)
 
