@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.2
+version: 1.1.3
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -21,6 +21,23 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 > **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](./README.md) 与本节表格。  
 > **任务 3 状态**：2026-04-10 已完成 — 过程报告已迁入 `01_BLUEPRINTS/REPORTS/`，`INDEX.md` 已重生成；防幻觉执行协议见 [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md)。  
 > **全仓库分层治理**：与任务 1～6 **并列**、**不互相替代**；控制面口径见 [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，勾选见本文 **「全仓库分层治理（扩展轨）」**。
+
+## 专业机构治理顺序（与本文任务的对照）
+
+> **用途**：约定「按机构习惯应先做什么、后做什么」的**推荐逻辑**，避免无控制面的大扫除；与 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) 四支柱兼容。  
+> **执行**：相邻阶段可**重叠**，但不宜在 **1～2** 未立稳时单独以「删文件」代替治理。
+
+| 顺序 | 机构阶段（摘要） | 本清单中的对应位置 |
+|------|------------------|---------------------|
+| **1** | 控制面：标准、分层、事故处置口径 | [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) §1.5、办公室规章、[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、**W0** |
+| **2** | 范围与基线：终稿含义、施工阶段门禁 | [终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md)、[施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §0、**W0**（Owner 确认 R0～R4） |
+| **3** | 清点与映射：总清单、索引、链接可追溯 | **任务 1**、建设文档 [`INDEX.md`](../INDEX.md)、蓝图分散清单 |
+| **4** | 归位与裁决：canonical、副本、根目录误提交 | **任务 2**、[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、**W2** / **W4** |
+| **5** | 质量收口：摆放、占位、卫生 | **任务 3～5**、[卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) |
+| **6** | 与实施衔接：施工包、契约 | [施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §0.3、§3 |
+| **7** | 持续保证：审计对齐、可复跑检查 | **任务 6**、**W1**、L1 扫描、[全系统文档审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md)（若采用） |
+
+**与下文「建议推进顺序」表的关系**：上表为**机构阶段逻辑**；后文 **①～⑦** 为**实操打卡顺序**（① 偏重任务 1 等蓝图收口，⑦ 为扩展轨），二者兼容、可对照使用。
 
 ## 推荐阅读入口
 
@@ -179,6 +196,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 ## 建议推进顺序（可当本周节奏）
 
+> **机构逻辑对照**：与上文 **「专业机构治理顺序」** 表一致；优先保证 **1～2 控制面与基线**，再推进清点与归位。
+
 | 顺序 | 任务 | 完成判据（摘要） |
 |------|------|------------------|
 | ① | 任务 1 | 总清单 + 唯一正式链接 + **全量**链接验证（默认 100%，见上文豁免条款）+ 重复口径闭环 |
@@ -195,6 +214,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.3 | 2026-04-10 | 新增「专业机构治理顺序」与任务/W 轨对照表；建议推进顺序互指 |
 | 1.1.2 | 2026-04-10 | W0 增 Playbook 勾选；扩展轨增执行备忘（`9c2a9108` / `b24eebce` 证据） |
 | 1.1.1 | 2026-04-10 | 推荐阅读与 W2 互指 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | 1.1.0 | 2026-04-10 | 新增全仓库分层治理扩展轨 W0～W4；与交付标准 §1.5 对齐 |

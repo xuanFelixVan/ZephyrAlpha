@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.0.5
+version: 1.0.6
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -25,7 +25,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 与「蓝图终稿任务」**交叉**：重复 / 同题多稿须在任务清单 **任务 1** 内闭环，方法不在此重复发明。**总清单链接核对**：Owner 默认 **100% 全量**逐条验证（见任务清单任务 1；抽检仅书面豁免）。
 
-1. **蓝图与建设文档收口**：[全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)（分解真源）+ [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md)（合并视角）。
+1. **蓝图与建设文档收口**：[全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)（分解真源；**机构治理顺序**见该文首节对照表）+ [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md)（合并视角）。
 2. **孤儿与重复 / 重叠**：[孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)；重复簇台账：[CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。
 3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。
 4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
@@ -91,6 +91,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.6 | 2026-04-10 | 治理流程第 1 条互指任务清单「专业机构治理顺序」 |
 | 1.0.5 | 2026-04-10 | 新增 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 入口；治理流程增第 5 条 |
 | 1.0.4 | 2026-04-10 | 治理流程增第 4 条（全仓库分层）；表内交付标准/任务清单说明同步 §1.5 与 W 轨 |
 | 1.0.3 | 2026-04-10 | 增加 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) 入口 |
