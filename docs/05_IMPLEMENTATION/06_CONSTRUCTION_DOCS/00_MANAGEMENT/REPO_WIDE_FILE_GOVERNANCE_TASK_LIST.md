@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.7
+version: 1.2.8
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -103,14 +103,15 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **`sentinel_l1_governance_scan.py`** | 工作区内递归所有 `*.md`（排除 `.git`、`.venv`、`.pytest_cache`、`__pycache__`） | Markdown **内链**可达性、首道 front matter **`module_id` 重复** | **不**扫描正文语义、**不**校验代码块内逻辑；**可能包含未 `git add` 的 .md**（与仅已跟踪清单不同） |
 | **`verify_01_blueprints_*` / `verify_manifest_paths_strict.py`** | 指定 INDEX/清单中的路径 | 链接与路径存在性 | 不遍历全库所有文件 |
 | **`scripts/governance/scan_duplicate_file_content.py`** | 默认 **Git 已跟踪** + `--ext` 白名单；可选 `--include-untracked` | 内容 **SHA256**，`members[].git_source` 区分 tracked/untracked | **不**自动删；合并走 **§3** C1 + [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；大文件可用 `--max-mb` 跳过 |
+| **`scripts/governance/scan_index_health.py`** | 默认 **`docs/`** 下已跟踪 `.md`（可 `--prefix`）；入链来源默认**全库已跟踪** `.md` | 统计 **Markdown 相对链**入链，报告 **零入链** 候选 | **不**解析 HTML/代码块链接；**不**判定「必须出现在某 INDEX」（见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.3**）；**不**自动删稿 |
 | **被忽略路径** | `.gitignore` 等 | 本清单**默认不**纳入「删并」 | 本地密钥、缓存、`.env.qmt` 等由安全与 ignore 策略管 |
 
 **结论（回答「是否涵盖所有格式、是否每一文件都识别分析处理」）**：
 
 - **「涵盖」**：在 **路径级**，`git ls-files` 已覆盖**所有已跟踪**路径（任意后缀）；§1 的扩展名统计可列出当前仓库**已出现**的后缀类型。  
-- **「每一文件识别/分析/处理」**：**没有**。当前自动化主要是 **Markdown 链接 + module_id**、**目录计数**、**API 路由抽取**、**特定清单校验**；**语义理解、业务裁决、二进制内容治理**需 **人工 + 分格式专项**（或未来单独立项脚本）。  
+- **「每一文件识别/分析/处理」**：**没有**。当前自动化主要是 **Markdown 链接 + module_id**、**目录计数**、**API 路由抽取**、**特定清单校验**、**零入链报表（`scan_index_health.py`）**；**语义理解、业务裁决、二进制内容治理**需 **人工 + 分格式专项**（或未来单独立项脚本）。  
 - **验收建议**：大治理收口时声明以 **「已跟踪 + L1 + verify + rollup」** 为门禁组合；若要求「仅扫描入库文件」，应 **先 `git status` 清干净**或接受 L1 与 `git ls-files` 的已知差异。  
-- **索引「是否够健全」**：**L1** 只校验**已写出**的相对链能否解析，**不**自动判定「该文件应出现在哪几份 `INDEX.md`」；搬迁后须同步的入链/机器清单/登记表见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4**；若要做「孤儿/域 INDEX 覆盖」类报表，属 **可选增强**，见同文 **§5**（须先写规则再写脚本）。
+- **索引「是否够健全」**：**L1** 校验相对链**能否解析**；**`scan_index_health.py`** 产出 **`docs/` 下零入链候选**（见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**），**不**等价于「必须在某 INDEX 出现」；域级 INDEX **覆盖规则**仍属 **§5.3** / 待规则冻结。搬迁后入链/机器清单见同文 **§4**。
 
 ---
 
@@ -157,6 +158,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **架构服务目录 + C4 多视图** | `python scripts/governance/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
 | **内容重复（后缀白名单）** | `python scripts/governance/scan_duplicate_file_content.py --ext md`（可加 `yaml` 等） | 产出 `DUPLICATE_CONTENT_BY_HASH_*`；**须**人工按 §3 合并 | 默认不扫无扩展名/二进制；大文件见 `--max-mb` |
 | **文档地图与放置** | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) + [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 搬迁/新建目录前**先查格**；大批归位与 **§7** 同窗 | 新类型目录须先改 LAYOUT §6 或决策记录（见规程 §1） |
+| **索引健全性（零入链）** | `python scripts/governance/scan_index_health.py`（可加 `--prefix` 等） | 产出 `INDEX_HEALTH_ORPHAN_*`；与 **L1** 互补 | 不判定域 INDEX 必列；见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2～§5.3** |
 | **治理工具归口** | 办公室 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 一键查命令与产出 | 实现在 `scripts/governance/`；根目录同名 `.py` 为兼容转发 |
 
 **办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
@@ -296,6 +298,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.8 | 2026-04-10 | 落地 **`scan_index_health.py`**；§1.1 表与结论、§6 推荐阅读增 `INDEX_HEALTH_ORPHAN_*` |
 | 1.2.7 | 2026-04-10 | §1.1 **结论** 增「索引健全性」边界：L1/verify 能做什么；搬迁后索引同步与可选孤儿报表互指 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§4～§5** |
 | 1.2.6 | 2026-04-10 | 纳入 **文档地图 + 放置规则**：文首与 §6 互指；§2.3 增「文档地图与放置」行；§7.2 增 **摆放** 退出项；§8 办公室自查增 [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与 AI 交接 **①‴** |
 | 1.2.5 | 2026-04-10 | 治理脚本归口 `scripts/governance/`；`rollup`/`scan_duplicate` 支持 `--include-untracked`；互指 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；§1.1 与 §2.3 命令路径更新 |
@@ -317,6 +320,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 目录深度聚合（3～6） | [`REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
 | 架构服务目录 + C4 摘要（生成） | [`ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 | 内容重复（SHA256 · 后缀白名单） | [`DUPLICATE_CONTENT_BY_HASH_20260410.md`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) / [`.json`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.json) |
+| 索引健全性（零入链候选 · `scan_index_health.py`） | [`INDEX_HEALTH_ORPHAN_20260410.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
 | 治理工具总索引（办公室） | [GOVERNANCE_TOOLS_INDEX.md](./GOVERNANCE_TOOLS_INDEX.md) |
 | 文档地图与放置（办公室规程 · 与扫描/§7 衔接） | [DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
 | `docs/` 目录职责与阶段落盘（标准真源） | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |

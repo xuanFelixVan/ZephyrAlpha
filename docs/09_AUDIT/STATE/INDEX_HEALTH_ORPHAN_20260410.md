@@ -1,0 +1,53 @@
+---
+standard_type: audit_state
+applicable_scope: 索引健全性（零入链候选 · 路径级）
+generated_date: '20260410'
+generated_by: scripts/governance/scan_index_health.py
+---
+
+# 索引健全性扫描报告（零入链候选）
+
+> **机器真源**：[`INDEX_HEALTH_ORPHAN_20260410.json`](./INDEX_HEALTH_ORPHAN_20260410.json)
+> **候选范围**：`docs/` ｜ **候选 md 数**：2481 ｜ **入链来源**：all-tracked（2512 个 md）
+> **零入链（已应用 ignore 后）**：**164**
+
+## 说明
+
+- **零入链** = 无**其他**已跟踪 `.md` 通过正文 Markdown 相对链接指向该文件（不含自身、不含 http(s)）。
+- **不等于**应删除；常见于待挂链的新稿、仅被代码或非 md 引用、或应从父级 `INDEX.md` 补链。
+- 与 [文档地图与放置规则](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5** 一致：本报告为**健全性信号**，裁决仍须人工 + 域规则。
+
+## 零入链路径（节选）
+
+- `docs/00_OVERVIEW/README.md`
+- `docs/00_RESOURCES/04_PLATFORM_DOCS/INDEX.md`
+- `docs/00_RESOURCES/04_PLATFORM_DOCS/README.md`
+- `docs/00_RESOURCES/INDEX.md`
+- `docs/00_RESOURCES/README.md`
+- `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/INDEX.md`
+- `docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/INDEX.md`
+- `docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md`
+- `docs/01_FRAMEWORK/LAYER4_ML/INDEX.md`
+- `docs/01_FRAMEWORK/LAYER4_ML/README.md`
+- `docs/02_FACTOR_LIBRARY/README.md`
+- `docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/INDEX.md`
+- `docs/03_TRADING_TACTICS/03_ADVANCED_TACTICS/INDEX.md`
+- `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/INDEX.md`
+- `docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/INDEX.md`
+- `docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/README.md`
+- `docs/03_TRADING_TACTICS/09_RISK_RULES/INDEX.md`
+- `docs/03_TRADING_TACTICS/09_RISK_RULES/README.md`
+- `docs/03_TRADING_TACTICS/99_ARCHIVE/INDEX.md`
+- `docs/04_EXECUTION/01_EVENT_ENGINE/INDEX.md`
+- `docs/04_EXECUTION/01_EVENT_ENGINE/README.md`
+- `docs/04_EXECUTION/01_ORDER_EXECUTION/INDEX.md`
+- `docs/04_EXECUTION/02_TRADE_EXECUTOR/INDEX.md`
+- `docs/04_EXECUTION/02_TRADE_EXECUTOR/README.md`
+- `docs/04_EXECUTION/03_MONITORING/INDEX.md`
+- `docs/04_EXECUTION/03_MONITORING/README.md`
+- `docs/04_EXECUTION/06_SIMULATION/INDEX.md`
+- `docs/04_EXECUTION/06_SIMULATION/README.md`
+- `docs/04_EXECUTION/07_LIVE_STREAM/INDEX.md`
+- `docs/05_IMPLEMENTATION/01_QUICKSTART/INDEX.md`
+
+> 仅列出前 30 条，共 164 条，详见 JSON。

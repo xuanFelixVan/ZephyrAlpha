@@ -1,6 +1,6 @@
 ---
 module_id: DOCUMENT_MAP_PLACEMENT_GOVERNANCE_001
-version: 1.1.0
+version: 1.2.0
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -95,15 +95,20 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 
 以上**不自动**回答：「这篇文件**应当**出现在哪几个 INDEX 里」——这需要 **Owner 策略**（哪些目录必须维护域内 INDEX、哪些靠搜索与上级入口）。
 
-### 5.2 可选增强（未默认可跑）
+### 5.2 已落地：零入链报表（索引健全性 · v1）
 
-若要把「索引健全性」做成**可复跑报表**，可在未来单独立项（例如列入 REPO_WIDE **P3/P4** 类），典型形态包括：
+- **脚本**：`scripts/governance/scan_index_health.py`（仓库根 `scripts/scan_index_health.py` 转发）。  
+- **默认**：候选 = `docs/` 下已跟踪 `.md`（排除 `docs/06_ARCHIVE/`、`docs/09_ARCHIVE/`、`docs/09_AUDIT/STATE/overnight_runs/`）；入链来源 = **全库已跟踪** `.md` 正文中的 Markdown 相对链接。  
+- **产出**：`docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.{md,json}`。  
+- **参数**：`--prefix`（可多次缩小候选树）、`--link-source same-as-candidates`、`--ignore-path` / `--ignore-glob`、`--exclude-prefix` 等（见 `python scripts/governance/scan_index_health.py --help`）。  
+- **不做**：HTML 链接、代码块内路径、「必须在某 INDEX 出现」的规则校验（后者仍属 **§5.3**）。
 
-- **孤儿候选**：在约定范围内（如某 `docs/**` 子树），统计「零入链」或「仅被自身目录外零引用」的 `.md`，产出清单供人工裁决（**不**建议未审自动删）。  
-- **域 INDEX 覆盖规则**：例如「`docs/02_FACTOR_LIBRARY/` 下正式稿须在子域 `INDEX.md` 或上级入口出现」——规则须先写成标准条款，脚本只实现**已写明**的 glob/深度。  
-- **与 rollup 同窗**：同一治理批次先 rollup 再跑孤儿报表，优先处理**大前缀**下的导航缺口。
+### 5.3 仍属可选 / 待规则冻结
 
-**结论**：**搬迁批次内**至少应做 **§4.1 + L1 + 相关 verify**；**「索引是否足够健全」的自动化评分**属于**增强项**，需先冻结规则再写脚本，避免与 §2.2「分层可达、非逐文件登记」冲突。
+- **域 INDEX 覆盖规则**：例如「某前缀下正式稿必须出现在域内 `INDEX.md`」——须先写成标准条款，再单独立项脚本。  
+- **与 rollup 同窗**：大治理批次可先 rollup 再跑 `scan_index_health`，优先啃**大前缀**下的零入链。
+
+**结论**：**搬迁批次内**至少应做 **§4.1 + L1 + 相关 verify**；**零入链报表**作**健全性信号**，与 §2.2「分层可达」兼容（门脸路径默认 `--ignore-path` 排除）。
 
 ---
 
@@ -121,5 +126,6 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.0 | 2026-04-10 | **§5.2** 落地 `scan_index_health.py`（零入链报表）；原「可选增强」拆为 §5.2 / §5.3 |
 | 1.1.0 | 2026-04-10 | 增 **§4 搬迁与索引**、**§5 索引健全性**（现有工具边界与可选增强）；§3 增第 7 步互指 |
 | 1.0.0 | 2026-04-10 | 首版：真源层级、地图含义、扫描→归位步骤、与蓝图/整仓任务联动 |

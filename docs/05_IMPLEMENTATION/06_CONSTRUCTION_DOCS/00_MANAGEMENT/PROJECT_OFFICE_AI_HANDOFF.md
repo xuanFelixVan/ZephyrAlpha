@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.9
+version: 1.3.0
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -123,6 +123,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 目录聚合:   scripts/governance/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
 架构目录:   scripts/governance/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
 内容重复:   scripts/governance/scan_duplicate_file_content.py --ext md → docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.md|.json
+索引健全性: scripts/governance/scan_index_health.py → docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.md|.json
 地图与放置: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md
 工具总表:   docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
 ```
@@ -133,6 +134,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.0 | 2026-04-10 | 路径速查增 `scan_index_health.py` / `INDEX_HEALTH_ORPHAN_*` |
 | 1.2.9 | 2026-04-10 | 阅读顺序增 ①‴ [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；真源优先级首位为 LAYOUT + 放置规程；常见任务增「不知放哪」；路径速查统一 `scripts/governance/` 与地图文件 |
 | 1.2.8 | 2026-04-10 | 阅读顺序增 ①″ [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；路径速查增内容重复与工具总表 |
 | 1.2.7 | 2026-04-10 | 常见任务「L1」互指任务清单 **§1.1**（扫描边界、非全格式语义） |

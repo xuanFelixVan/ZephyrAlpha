@@ -41,6 +41,7 @@ responsibility:
 | `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合路径计数（默认可视为 `git ls-files`；可加 `--include-untracked`）→ `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
 | `generate_architecture_service_catalog.py` | 架构/服务目录 + C4 摘要 + 可检索 JSON：`pyproject`、`src/`、`src/api/routes`、根目录机构缺口表 → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`；可选 `--include-untracked`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
+| `scan_index_health.py` | **`docs/` 零入链候选**（全库 md 相对链统计）→ `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；见 [放置规程 §5.2](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.1.1
+version: 1.1.2
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -29,6 +29,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | `export_repo_directory_rollup.py` | **Git 已跟踪**路径按目录深度 **2～6** 聚合计数；可选未跟踪 | `python scripts/governance/export_repo_directory_rollup.py`（可加 `--include-untracked`） | `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.{md,json}` |
 | `generate_architecture_service_catalog.py` | **架构/服务目录 + C4 摘要**（`src/`、routes、`pyproject`） | `python scripts/governance/generate_architecture_service_catalog.py` | `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.{md,json}` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须**传 `--ext`，默认 `md`）；可选 `--include-untracked` | `python scripts/governance/scan_duplicate_file_content.py --ext md` | `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.{md,json}` |
+| `scan_index_health.py` | **索引健全性**：`docs/` 下 md **零入链**候选（全库 md 相对链统计） | `python scripts/governance/scan_index_health.py` | `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.{md,json}` |
 | `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 内链 | `python scripts/governance/verify_01_blueprints_index_links.py` | 终端输出 |
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 | `python scripts/governance/verify_scattered_blueprints_manifest_links.py` | 终端输出 |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 | `python scripts/governance/verify_manifest_paths_strict.py` | 终端输出 |
@@ -47,6 +48,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 3. `export_repo_directory_rollup.py`  
 4. `generate_architecture_service_catalog.py`  
 5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）  
+6. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 [放置规程 §5.2](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）  
 
 合并重复内容前请再读 [任务清单 §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（C1 流程）与 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
 
@@ -70,6 +72,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.2 | 2026-04-10 | 增 `scan_index_health.py`（索引健全性 / 零入链）；§2 复跑顺序增第 6 步 |
 | 1.1.1 | 2026-04-10 | 文首与 §2 互指 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) + LAYOUT 标准 |
 | 1.1.0 | 2026-04-10 | 物理迁入 `scripts/governance/`；兼容桩；`scan`/`rollup` 支持 `--include-untracked`；互指删稿 Playbook |
 | 1.0.0 | 2026-04-10 | 首版：治理工具总表 + FAQ + 复跑顺序 |

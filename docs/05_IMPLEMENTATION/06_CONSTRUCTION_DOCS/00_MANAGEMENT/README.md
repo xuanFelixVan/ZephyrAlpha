@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.4
+version: 1.1.5
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -138,6 +138,9 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 - **内容重复（须指定后缀，默认 `.md`）**：  
   `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`）  
   （输出 `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`）  
+- **索引健全性（零入链候选，默认扫 `docs/`）**：  
+  `python scripts/governance/scan_index_health.py`  
+  （输出 `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；说明见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2**）  
 - **全部治理命令一张表**：[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)
 
 ---
@@ -146,6 +149,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.5 | 2026-04-10 | 常用脚本增 `scan_index_health.py`（索引健全性 / 零入链） |
 | 1.1.4 | 2026-04-10 | 新增 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)；文首与治理流程第 7 条；办公室两表互指；联动 REPO_WIDE §7、蓝图任务清单 |
 | 1.1.3 | 2026-04-10 | 新增 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；常用脚本增内容重复扫描；文首一键入口 |
 | 1.1.2 | 2026-04-10 | 增 **扫描覆盖诚实口径**小节（互指任务清单 §1.1）；流程第 6 条写明非「全格式语义处理」 |
