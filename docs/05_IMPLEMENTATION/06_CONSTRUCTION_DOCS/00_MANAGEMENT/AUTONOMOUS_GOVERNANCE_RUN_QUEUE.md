@@ -3,7 +3,7 @@ module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-11
-last_updated: '2026-04-11'
+last_updated: '2026-04-12'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 跨 Cursor 会话的治理任务顺序、当前指针与锚点指令真源
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-11T16:30:00Z` |
-| **上轮 commit** | `3939aca8` |
+| **UTC 时间** | `2026-04-12T14:00:00Z` |
+| **上轮 commit** | `6c63c87d` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | 自顶前缀 `docs/09_AUDIT/REPORTS`（498 条）按 REPO_WIDE **§7.2** 小批执行；或按 Owner 优先级改选下一前缀 |
-| **notes** | **B-01 已完成**：已读本仓 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 与 [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json)（`total_tracked=4459`，深度 3 Top 与 §4 前缀表一致）。下一执行项：**B-02** 单前缀批次。 |
+| **本轮建议前缀**（§7） | 继续 `docs/09_AUDIT/REPORTS`（§7.2 子批：抽样断链 / 子目录 INDEX / 或改选下一前缀） |
+| **notes** | **B-02 批次 1（REPORTS）**：新增 [`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 门面；[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md) 补「导航与上级入口」。前缀 **498 条**仍未达 §7.2 全量退出，**下批**建议继续本前缀（子文件夹或 `scan_index_health --prefix` 报告）或 Owner 另选。B-01 已勾选见上轮回合。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
