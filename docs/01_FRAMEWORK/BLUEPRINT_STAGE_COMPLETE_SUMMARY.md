@@ -47,6 +47,19 @@ reference_models:
 - **链接全量核对**：任务 1 要求的 **100%** 逐条链接验证须在勾选任务清单前完成；进度与 **N** 记在任务清单任务 1 备注行。
 - **表格路径机器核对**：本文表格列出的以 `docs/` 开头的具体路径与标准 Markdown 内链，以仓库根执行 `python scripts/verify_manifest_paths_strict.py` 为**严格真源**；报告写入 `docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`（与同名 `.json` 同批生成，**勿**在未生成前对该报告文件写 Markdown 内链，以免首轮校验鸡生蛋）。
 
+### 任务 1 闭合口径：全库「应有蓝图」条目如何记录与可点击跳转
+
+> **枚举定义**：「蓝图条目」= 文件名以 `BLUEPRINT.md` 结尾的 Markdown 正式稿（排除 `*BLUEPRINTS.md` 等集合/汇编命名）。**不**将 `06_ARCHIVE`、`09_ARCHIVE`、`09_AUDIT` 正文区、审计运行目录等纳入活跃枚举（与 [任务清单](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1 一致）。
+
+| 分桶 | 条数（可复现） | 记录与跳转方式 | 机器校验 |
+|------|-----------------|----------------|----------|
+| **A. 正式图纸柜根目录** | **164**（与 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 同步） | INDEX「完整文件列表」中每条均为指向同目录下 `.md` 的相对链接 | `python scripts/verify_01_blueprints_index_links.py`（缺失则 exit 1） |
+| **B. 分散在业务目录** | **418**（见 [`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`](../09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md)） | 清单内每条相对链接指向仓库内唯一文件 | `python scripts/generate_scattered_blueprints_manifest_task1.py` 生成；`python scripts/verify_scattered_blueprints_manifest_links.py` 校验 |
+| **合计 N** | **582** | A+B 覆盖「活跃 *BLUEPRINT.md」全集（本闭合批次） | 三脚本绿即视为链接层全量核对通过 |
+
+- **图纸柜子目录过程稿**：`01_BLUEPRINTS/REPORTS/` 等不以 `*BLUEPRINT.md` 结尾的报告类文件**不**计入上表；其治理见 [图纸柜规则](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md)。
+- **重复文档口径**：`docs/09_ARCHIVE/duplicates/` 内重复池的 canonical 裁决以 [`CANONICAL_POINTERS.md`](../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md) 为准；表内条目均已填写 `canonical_path`（2026-04-10 核对）。业务目录若出现新的同题双稿，须先按 [Playbook](../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 更新台账再改链接。
+
 ## 已知限制
 
 - 本文为总结性文档，清单项与索引可能随目录治理而变化；以本节门禁为准，清单同步在索引专项批次统一维护。

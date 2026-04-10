@@ -1,7 +1,7 @@
 {
   "manifest": "docs/01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
-  "generated_at_utc": "2026-04-10T13:07:39.970326+00:00",
-  "total_checked_unique": 24,
+  "generated_at_utc": "2026-04-10T13:14:42.037951+00:00",
+  "total_checked_unique": 29,
   "missing_count": 0,
   "checked": [
     {
@@ -34,7 +34,35 @@
     },
     {
       "kind": "markdown_link",
-      "line": 201,
+      "line": 57,
+      "url": "../09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md",
+      "resolved_posix": "docs/09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md",
+      "exists": true
+    },
+    {
+      "kind": "markdown_link",
+      "line": 60,
+      "url": "../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md",
+      "resolved_posix": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md",
+      "exists": true
+    },
+    {
+      "kind": "markdown_link",
+      "line": 61,
+      "url": "../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md",
+      "resolved_posix": "docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md",
+      "exists": true
+    },
+    {
+      "kind": "markdown_link",
+      "line": 61,
+      "url": "../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md",
+      "resolved_posix": "docs/09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md",
+      "exists": true
+    },
+    {
+      "kind": "markdown_link",
+      "line": 214,
       "url": "./ARCHITECTURE.md",
       "resolved_posix": "docs/01_FRAMEWORK/ARCHITECTURE.md",
       "exists": true
@@ -49,7 +77,15 @@
     },
     {
       "kind": "docs_literal",
-      "line": 195,
+      "line": 61,
+      "raw": "docs/09_ARCHIVE/duplicates/",
+      "normalized_posix": "docs/09_ARCHIVE/duplicates/",
+      "resolved_posix": "docs/09_ARCHIVE/duplicates/",
+      "exists": true
+    },
+    {
+      "kind": "docs_literal",
+      "line": 208,
       "raw": "docs/01_FRAMEWORK/ARCHITECTURE.md",
       "normalized_posix": "docs/01_FRAMEWORK/ARCHITECTURE.md",
       "resolved_posix": "docs/01_FRAMEWORK/ARCHITECTURE.md",
@@ -57,7 +93,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 196,
+      "line": 209,
       "raw": "docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
       "normalized_posix": "docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
       "resolved_posix": "docs/01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md",
@@ -65,7 +101,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 197,
+      "line": 210,
       "raw": "docs/System_Manifest.md",
       "normalized_posix": "docs/System_Manifest.md",
       "resolved_posix": "docs/System_Manifest.md",
@@ -73,7 +109,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 205,
+      "line": 218,
       "raw": "docs/00_OVERVIEW/",
       "normalized_posix": "docs/00_OVERVIEW/",
       "resolved_posix": "docs/00_OVERVIEW/",
@@ -81,7 +117,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 206,
+      "line": 219,
       "raw": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/",
       "normalized_posix": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/",
       "resolved_posix": "docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/",
@@ -89,7 +125,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 207,
+      "line": 220,
       "raw": "docs/02_FACTOR_LIBRARY/",
       "normalized_posix": "docs/02_FACTOR_LIBRARY/",
       "resolved_posix": "docs/02_FACTOR_LIBRARY/",
@@ -97,7 +133,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 208,
+      "line": 221,
       "raw": "docs/03_TRADING_TACTICS/",
       "normalized_posix": "docs/03_TRADING_TACTICS/",
       "resolved_posix": "docs/03_TRADING_TACTICS/",
@@ -105,7 +141,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 209,
+      "line": 222,
       "raw": "docs/07_RESEARCH/",
       "normalized_posix": "docs/07_RESEARCH/",
       "resolved_posix": "docs/07_RESEARCH/",
@@ -113,7 +149,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 210,
+      "line": 223,
       "raw": "docs/04_EXECUTION/",
       "normalized_posix": "docs/04_EXECUTION/",
       "resolved_posix": "docs/04_EXECUTION/",
@@ -121,7 +157,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 211,
+      "line": 224,
       "raw": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/",
       "normalized_posix": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/",
       "resolved_posix": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/",
@@ -129,7 +165,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 212,
+      "line": 225,
       "raw": "docs/07_AI_REPORTING/",
       "normalized_posix": "docs/07_AI_REPORTING/",
       "resolved_posix": "docs/07_AI_REPORTING/",
@@ -137,7 +173,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 213,
+      "line": 226,
       "raw": "docs/08_HUMAN_AI_INTERFACE/",
       "normalized_posix": "docs/08_HUMAN_AI_INTERFACE/",
       "resolved_posix": "docs/08_HUMAN_AI_INTERFACE/",
@@ -145,7 +181,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 214,
+      "line": 227,
       "raw": "docs/09_RESEARCH_INNOVATION/BLUEPRINT.md",
       "normalized_posix": "docs/09_RESEARCH_INNOVATION/BLUEPRINT.md",
       "resolved_posix": "docs/09_RESEARCH_INNOVATION/BLUEPRINT.md",
@@ -153,7 +189,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 215,
+      "line": 228,
       "raw": "docs/10_GOVERNANCE_COMPLIANCE/",
       "normalized_posix": "docs/10_GOVERNANCE_COMPLIANCE/",
       "resolved_posix": "docs/10_GOVERNANCE_COMPLIANCE/",
@@ -161,7 +197,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 216,
+      "line": 229,
       "raw": "docs/11_STRATEGIC_DECISION/",
       "normalized_posix": "docs/11_STRATEGIC_DECISION/",
       "resolved_posix": "docs/11_STRATEGIC_DECISION/",
@@ -169,7 +205,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 226,
+      "line": 239,
       "raw": "docs/09_RESEARCH_INNOVATION/IMPLEMENTATION_GUIDE.md",
       "normalized_posix": "docs/09_RESEARCH_INNOVATION/IMPLEMENTATION_GUIDE.md",
       "resolved_posix": "docs/09_RESEARCH_INNOVATION/IMPLEMENTATION_GUIDE.md",
@@ -177,7 +213,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 227,
+      "line": 240,
       "raw": "docs/01_FRAMEWORK/COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
       "normalized_posix": "docs/01_FRAMEWORK/COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
       "resolved_posix": "docs/01_FRAMEWORK/COMPREHENSIVE_BLUEPRINT_SUPPLEMENT_PLAN.md",
@@ -185,7 +221,7 @@
     },
     {
       "kind": "docs_literal",
-      "line": 228,
+      "line": 241,
       "raw": "docs/01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md",
       "normalized_posix": "docs/01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md",
       "resolved_posix": "docs/01_FRAMEWORK/MISSING_MODULES_BLUEPRINT_SUPPLEMENT.md",

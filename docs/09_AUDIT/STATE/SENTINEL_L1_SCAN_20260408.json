@@ -1,13 +1,13 @@
 {
-  "scan_time_utc": "20260410T130740Z",
+  "scan_time_utc": "20260410T131526Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3182,
+  "md_file_count": 3183,
   "links": {
     "stats": {
-      "total_files_scanned": 3182,
-      "total_md_links": 6525,
+      "total_files_scanned": 3183,
+      "total_md_links": 6951,
       "skipped_external": 987,
-      "valid": 5538,
+      "valid": 5964,
       "invalid": 0
     },
     "invalid_details_sample": [],
@@ -115,6 +115,7 @@
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_27_FACTOR_COMPLIANCE_071.md",
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_28_FACTOR_REALTIME_072.md",
       "docs/09_AUDIT/REPORTS/OPENCLAW_L2_docs_02_FACTOR_LIBRARY_29_FACTOR_PORTFOLIO_OPT_073.md",
+      "docs/09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md",
       "docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1A_20260408.md",
       "docs/09_AUDIT/STATE/SENTINEL_L1_AFTER_P1B_20260408.md",
@@ -123,7 +124,7 @@
       "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md",
       "docs/09_AUDIT/STATE/sparse_directory_analysis_20260407_030548.md"
     ],
-    "no_id_total": 95
+    "no_id_total": 96
   },
   "path_depth": {
     "deepest_30": [

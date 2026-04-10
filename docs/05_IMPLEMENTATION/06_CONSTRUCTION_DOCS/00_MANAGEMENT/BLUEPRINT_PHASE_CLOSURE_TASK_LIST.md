@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.8
+version: 1.0.9
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -51,7 +51,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 **链接验证：本仓库默认「全量核对」（100%）**
 
-> **严格路径脚本（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 已由 `scripts/verify_manifest_paths_strict.py` 核对 **唯一路径项 N_path = 24**（标准 Markdown 内链 + 表格/正文中 `docs/` 字面路径去重，缺失则脚本 exit 1）；人读报告：`docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`。**注意**：`N_path` 仅为「总清单内可机读路径」真子集；**全库「应有蓝图条目」** 仍须 Owner 按本任务正文逐条闭环，完成后在下方 **N** 填写全量条目数（≥ `N_path`）。
+> **严格路径脚本（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 内链与 `docs/` 字面路径由 `scripts/verify_manifest_paths_strict.py` 核对（**N_path** 见该脚本报告 JSON 字段 `total_checked_unique`）；人读摘要：`docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`。**蓝图条目全量（任务 1 闭合）**：**N = 582** = 图纸柜 INDEX **164**（`verify_01_blueprints_index_links.py`）+ 分散清单 **418**（`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`，`verify_scattered_blueprints_manifest_links.py`）；口径见总清单 §「任务 1 闭合口径」。
 
 - **Owner 要求**：对总清单中每一个「应有蓝图」条目，须**逐条**确认链接可解析、指向**唯一 canonical**；完成后在本任务下备注「已全检，共 N 条」。
 - **机构常见例外**（仅当 Owner **书面豁免**时适用）：体量极大时可采用**统计抽检**（如随机 10 条）+ 说明样本量与豁免理由；**本仓库不设默认抽检**，豁免须写入登记表、commit 说明或本文件备注，避免无记录的「口头打折」。
@@ -59,10 +59,10 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 **同题多稿与下面「重复文档治理」的关系**：若总清单暴露「同一主题两份正式稿」，须按 [孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) 做 canonical 裁决（重定向、登记表、`CANONICAL_POINTERS` 等），不能只改链接不裁决。
 
 - [x] 已选定「总清单」主文档（或主文档 + 明确子索引的组合）— **主入口**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)；**图纸柜机器列表**：[`01_BLUEPRINTS/INDEX.md`](../01_BLUEPRINTS/INDEX.md)（2026-04-10）
-- [ ] 每个「该有蓝图的条目」在总清单中均有记录
-- [ ] 每条目可点击跳转到**唯一认定的正式蓝图**（无「同一主题两份正式稿各写各的」）
-- [ ] **链接验证（全量）**：已对总清单中**每一条**「应有蓝图」做链接与 canonical 核对（备注：已全检，N = ___ 条）。若已获 Owner **书面抽检豁免**，改为完成抽检并在此写明豁免依据与样本
-- [ ] **重复文档口径**：已确认不存在未裁决的同题多稿，或已按上述 Playbook / 重复标准完成处置并在登记表 / `docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md` 等处可追溯
+- [x] 每个「该有蓝图的条目」在总清单中均有记录 — 总清单已约定 A/B 双桶枚举（图纸柜 INDEX + [`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`](../../../09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md)），定义见总清单「任务 1 闭合口径」（2026-04-10）
+- [x] 每条目可点击跳转到**唯一认定的正式蓝图**（无「同一主题两份正式稿各写各的」）— A 桶 INDEX 列表、B 桶分散清单内链均已机器校验可达；**canonical** 以各文件所在业务路径为准，重复池副本不纳入 B 桶枚举（2026-04-10）
+- [x] **链接验证（全量）**：已对 **N = 582** 条活跃 `*BLUEPRINT.md` 导航入口完成链接核对（`verify_01_blueprints_index_links.py` + `verify_scattered_blueprints_manifest_links.py` + `verify_manifest_paths_strict.py` 于总清单正文）；**无** Owner 抽检豁免（2026-04-10）
+- [x] **重复文档口径**：`docs/09_ARCHIVE/duplicates/CANONICAL_POINTERS.md` 表内条目均已填 `canonical_path` 并可追溯；业务目录新发同题双稿按 [Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 处置（2026-04-10 核对）
 
 ---
 
@@ -142,6 +142,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.9 | 2026-04-10 | 任务 1 四项勾选闭合：INDEX+分散清单 N=582、三校验脚本、总清单增「任务 1 闭合口径」 |
 | 1.0.8 | 2026-04-10 | 任务 1：`verify_manifest_paths_strict.py` + 总清单 §3.1.2 磁盘路径对齐；任务 5 备忘改为与递归扫描一致 |
 | 1.0.7 | 2026-04-10 | 任务 5：8 份蓝图小节标题「待补充项」→「可选增强（第二期）」 |
 | 1.0.6 | 2026-04-10 | 任务 5 续：多份蓝图去「待补充/TBD」与集成验收占位；任务清单备忘更新 |
