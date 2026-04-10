@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.3
+version: 1.0.4
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-14'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-14T00:00:00Z` |
-| **上轮 commit** | `fab47697` |
+| **UTC 时间** | `2026-04-14T12:00:00Z` |
+| **上轮 commit** | `b3708445` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2：子目录 / 抽样修链 / 或 Owner 改下一前缀） |
-| **notes** | **B-02 批次 5**：[`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 增「目录体量」链至 [`REPO_DIRECTORY_ROLLUP_20260413.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)；[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md) 统计表下增「体量真源」说明（499 条与 §4 一致）。**B-03** 已入库见提交 `21379ff4`；队列 `front matter` **1.0.3**。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2）；或 Owner 切至 `docs/05_IMPLEMENTATION/04_OPERATIONS` |
+| **notes** | **B-02 批次 6**：[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 补「484 vs 499」口径说明，并链 [`REPO_DIRECTORY_ROLLUP_20260413`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)；`related_documents` 增 rollup。运行队列 **v1.0.4**。批次 5 见上条。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
@@ -143,6 +143,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.4 | 2026-04-14 | **B-02 批次 6**：`INDEX_GROUPED_REPORTS_20260408` 对齐 rollup 口径并补导航链 |
 | 1.0.3 | 2026-04-14 | **B-02 批次 5**：REPORTS `README`/`INDEX` 与 `REPO_DIRECTORY_ROLLUP_20260413` 互链并声明手工统计非 Git 真源 |
 | 1.0.2 | 2026-04-13 | 指针 notes 记录 **B-03**：`REPO_DIRECTORY_ROLLUP_20260413`；§4 前缀表条数与快照对齐（REPORTS 499、STATE 382、`06_CONSTRUCTION_DOCS` 273） |
 | 1.0.1 | 2026-04-11 | 增 **[STUCK]** 防死循环：连续失败 3 次停止、标注指针与前缀表、跳下一项；与 AGENTS / Cursor rule 互指 |
