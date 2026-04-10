@@ -1,13 +1,13 @@
 {
-  "scan_time_utc": "20260410T161227Z",
+  "scan_time_utc": "20260410T161924Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3191,
+  "md_file_count": 3192,
   "links": {
     "stats": {
-      "total_files_scanned": 3191,
-      "total_md_links": 7269,
+      "total_files_scanned": 3192,
+      "total_md_links": 7277,
       "skipped_external": 988,
-      "valid": 6281,
+      "valid": 6289,
       "invalid": 0
     },
     "invalid_details_sample": [],
@@ -113,6 +113,7 @@
       "docs/09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md",
       "docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md",
       "docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260411.md",
+      "docs/09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.md",
       "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md",
       "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.md",
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md",
@@ -126,7 +127,7 @@
       "docs/09_AUDIT/STATE/sparse_directory_analysis_20260407_030548.md",
       "SECURITY.md"
     ],
-    "no_id_total": 98
+    "no_id_total": 99
   },
   "path_depth": {
     "deepest_30": [
