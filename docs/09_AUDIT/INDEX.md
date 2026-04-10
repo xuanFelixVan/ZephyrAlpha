@@ -9,7 +9,7 @@ responsibility:
   - 09_AUDIT目录索引
 ---
 
-﻿---
+---
 module_id: 09_AUDIT_INDEX_AUDIT_001
 version: 1.0.1
 status: Active
@@ -110,6 +110,7 @@ implementation_status: 活跃维护
 
 | 入口 | 说明 |
 |------|------|
+| [REPORTS 门面（短说明）](./REPORTS/README.md) | 首次进入报告区建议先读；链到分组索引与 `INDEX` |
 | [REPORTS 分组索引（20260408）](./REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 大量报告按分组可点 |
 | [REPORTS/INDEX](./REPORTS/INDEX.md) | 报告目录索引 |
 

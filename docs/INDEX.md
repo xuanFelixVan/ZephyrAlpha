@@ -3,7 +3,7 @@ module_id: DOCS_ROOT_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-08
+last_updated: 2026-04-12
 owner: 首席文档架构师
 responsibility:
   - docs目录索引
@@ -18,7 +18,7 @@ implementation_status: 活跃维护
 owner: 系统架构?version: 1.1.1
 module_id: INDEX_ROOT_001
 created_date: 2026-04-02
-last_updated: 2026-04-08
+last_updated: 2026-04-12
 responsibility:
   - 目录导航与文档索引管理与优化维护
   responsibility_layer: Layer 11
@@ -205,6 +205,8 @@ docs/
 | [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计指南 | ⭐⭐⭐⭐?|
 | [文档治理审计检查清单](./09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) | 审计检查清?| ⭐⭐⭐⭐ |
 | [审计标准](./09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) | 审计标准 | ⭐⭐⭐⭐ |
+| [审计域索引](./09_AUDIT/INDEX.md) | `09_AUDIT` 总入口与 Playbook 分流 | ⭐⭐⭐⭐ |
+| [审计报告区门面（REPORTS）](./09_AUDIT/REPORTS/README.md) | 大量审计/进度报告的导航入口 | ⭐⭐⭐⭐ |
 
 ---
 
