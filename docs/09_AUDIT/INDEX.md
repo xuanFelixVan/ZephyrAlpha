@@ -116,6 +116,17 @@ implementation_status: 活跃维护
 | [REPORTS 索引健全性（零入链）](./STATE/INDEX_HEALTH_ORPHAN_20260412.md) | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` 机器报告 |
 | [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) | 办公室脚本与产出真源（含 `scan_index_health`） |
 
+### STATE 子域（机器产出 / 状态台账）
+
+> **`STATE/`** 与 **`REPORTS/`** 并列：本表专指 `docs/09_AUDIT/STATE`。**索引健全性**文件名按前缀分日期：`INDEX_HEALTH_20260412` = **REPORTS**；`INDEX_HEALTH_20260413` = **STATE**（勿混读）。
+
+| 入口 | 说明 |
+|------|------|
+| [STATE/INDEX](./STATE/INDEX.md) | 本级导航、机器产出表、rollup/接力入口 |
+| [STATE 分组索引（严格孤儿挂载）](./STATE/INDEX_GROUPED_STATE_20260408.md) | 分组承接大量 STATE 文档入口 |
+| [STATE 索引健全性（零入链 · 20260413）](./STATE/INDEX_HEALTH_ORPHAN_20260413.md) | `scan_index_health.py --prefix docs/09_AUDIT/STATE` |
+| [夜间批跑索引](./STATE/overnight_runs/INDEX.md) | `overnight_runs` 快照导航 |
+
 ### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
 
 > 与 `09_AUDIT` 并列：**本域**偏标准/模板/Playbook；**04_OPERATIONS** 存放实施侧运营说明与 `audit_state` 大批量审计/整改稿。治理接力见 [自主接力运行队列](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)。
