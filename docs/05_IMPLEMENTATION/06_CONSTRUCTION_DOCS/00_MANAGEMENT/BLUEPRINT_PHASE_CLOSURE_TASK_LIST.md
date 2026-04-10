@@ -1,6 +1,6 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.0.5
+version: 1.0.6
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -144,6 +144,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 - `SMART_EXECUTION_ENGINE_BLUEPRINT.md`
 - `STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md`
 
+**批次 2026-04-10（续）已处理**：`BLACK_LITTERMAN`（版本表 TBD→未发布第二期；表头修复）、`SMART_EXECUTION_ENGINE`、`MARKET_IMPACT_MODEL`、`LIQUIDITY_MANAGEMENT_SYSTEM`、`REALTIME_RISK_HEDGE_ENGINE`（性能目标/缺行风险）、`MARKET_PARTICIPANT_SIMULATION_INTEGRATION`、`STATISTICAL_ARBITRAGE_MODULE`、`ALTERNATIVE_DATA_INTEGRATION`（验收表与成本、风险节）、`MULTI_STRATEGY_HIERARCHICAL_SYSTEM`、`FACTOR_BACKTEST_INTEGRATION`（成本表重写）；6 份蓝图中间「集成验收项（待补充）」已改为联调口径说明。
+
 ---
 
 ## 建议推进顺序（可当本周节奏）
@@ -163,6 +165,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.6 | 2026-04-10 | 任务 5 续：多份蓝图去「待补充/TBD」与集成验收占位；任务清单备忘更新 |
 | 1.0.5 | 2026-04-10 | 任务 6 台账衔接备注；任务 5 扫描备忘（命中列表）；git commit 已提交 INDEX/总清单/本清单三文件 |
 | 1.0.4 | 2026-04-10 | 执行任务 2、4 勾选；任务 1 选定总清单；任务 6 卫生对照（部分）；INDEX 与磁盘对齐 |
 | 1.0.3 | 2026-04-10 | 推荐阅读增文档治理架构 |

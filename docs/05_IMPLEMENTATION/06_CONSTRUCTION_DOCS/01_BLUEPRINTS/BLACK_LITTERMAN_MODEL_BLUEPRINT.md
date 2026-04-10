@@ -8,7 +8,7 @@ module_id: BLACK_LITTERMAN_MODEL_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-10'
 owner: 实施团队
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
@@ -677,11 +677,11 @@ class BlackLittermanAPI:
 
 ### 7.3 版本管理策略
 
-容 | 发布日期 |
-|------|---------|---------|
-| v1.0.0 | 初始版本，基础Black-Litterman功能 | 2026-04-06 |
-| v1.1.0 | 增加因子观点自动生成 | TBD |
-| v1.2.0 | 增加动态观点置信度调整 | TBD |
+| 版本 | 变更摘要 | 发布状态 |
+|------|----------|----------|
+| v1.0.0 | 初始版本，基础 Black-Litterman 功能 | 已锚定（2026-04-06） |
+| v1.1.0 | 增加因子观点自动生成 | **未发布**（第二期；实施前另发 minor） |
+| v1.2.0 | 增加动态观点置信度调整 | **未发布**（第二期；实施前另发 minor） |
 
 
 
