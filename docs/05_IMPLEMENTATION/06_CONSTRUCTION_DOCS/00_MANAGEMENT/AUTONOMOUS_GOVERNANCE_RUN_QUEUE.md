@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.7
+version: 1.0.8
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-11'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-11T16:15:00Z` |
-| **上轮 commit** | `30e8df94` |
+| **UTC 时间** | `2026-04-11T18:00:00Z` |
+| **上轮 commit** | `dbd81465` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/04_OPERATIONS`（§7.2 续批）；或 `docs/09_AUDIT/REPORTS` |
-| **notes** | **B-02 · `04_OPERATIONS` 批次 3**：[`INDEX.md`](../../../05_IMPLEMENTATION/04_OPERATIONS/INDEX.md) 补 [`WEEKLY_AUDIT_MECHANISM`](../../../05_IMPLEMENTATION/04_OPERATIONS/WEEKLY_AUDIT_MECHANISM.md) 入本级列表、修正统计表、链向最新 [`INDEX_HEALTH_ORPHAN_20260411`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md)；[`README.md`](../../../05_IMPLEMENTATION/04_OPERATIONS/README.md) 增周审计与 INDEX_HEALTH 阅读顺序；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 登记 04_OPERATIONS 健全性 **20260411** 快照并保留 **20260414** 历史链。**zero_inbound=0**。L1 **判定无效=0**。运行队列 **v1.0.7**。 |
+| **notes** | **B-02 · `04_OPERATIONS` 批次 4**：[`docs/INDEX.md`](../../../../INDEX.md) §实施 增「实施域索引」「04_OPERATIONS 门面」入链；[`05_IMPLEMENTATION/INDEX.md`](../../../INDEX.md) §04_OPERATIONS 增 [INDEX_HEALTH_ORPHAN_20260411](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md) 链。L1 **判定无效=0**。运行队列 **v1.0.8**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
