@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.3
+version: 1.2.4
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -56,10 +56,11 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | ④ | [BLUEPRINT_FINAL_SIGNOFF.md](./BLUEPRINT_FINAL_SIGNOFF.md) | **什么叫蓝图终稿**、谁算认可、终稿后怎么改 |
 | ④′ | [BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | **机构精华版交付目标态**（四支柱 + 三阶段 + **§1.5 全仓库分层 R0～R4** + 合并自检）；与门禁 §0～§3 对照 |
 | ⑤ | [BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 蓝图任务 1～6 进度 + **扩展轨 W0～W4**（整仓分层）；总清单链接默认 **100% 全量** |
+| ⑤′ | [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) | **整仓一次尽治**：§2.3 与扫描/合并并行项、§3 合并重复、**§7 深度前缀队列与退出标准**、§8 办公室自查、**P5**；rollup 见下路径速查 |
 | ⑥（按需） | [CONTROLLED_DOCUMENTS_REGISTER.md](./CONTROLLED_DOCUMENTS_REGISTER.md) | 易混淆主题的唯一正式稿登记 |
 | ⑦（按需） | [办公室 README](./README.md) →「全库文档治理流程」+ [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md) | 处理**同题多稿、孤儿、重复簇**时必读；与任务清单任务 1～2 联动 |
 
-若用户要你**改代码**而非文档，仍建议至少读完 ②；若动 `01_BLUEPRINTS`，再读 ③。若任务涉及**重复/归档/ canonical 裁决**，再读 ⑦。
+若用户要你**改代码**而非文档，仍建议至少读完 ②；若动 `01_BLUEPRINTS`，再读 ③。若任务涉及**重复/归档/ canonical 裁决**，再读 ⑦。若任务为**整仓文件一次尽治、按目录拆队列、合并重复**，读 **⑤′** 并对照 [办公室 README](./README.md)「办公室文件一览」。
 
 ---
 
@@ -91,6 +92,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 处理同题多稿 / 重复 / 重叠 | 按 §1.5 与 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1～2；程序与模板见 Playbook、[重复标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)、[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。 |
 | 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。 |
 | 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
+| 整仓「深度尽治」+ 合并重复 + 不想只做表面统计 | 打开 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)：跑 `python scripts/export_repo_directory_rollup.py` 得深度 3～6 队列；按 **§7** 前缀退出标准推进，**§2.3** 与扫描/合并并行；**W 轨勾完 ≠ 尽治完毕**。 |
 | 仓库根出现怪文件 / 密钥误入库 / 运行时数据进库 | 按 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 分类处理（A 垃圾 / B 密钥 / C 运行时）；衔接 **W2、W4**。 |
 
 ---
@@ -113,6 +115,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 图纸柜:     docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/
 建设文档根: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 索引脚本:   scripts/generate_01_blueprints_index.py
+目录聚合:   scripts/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
 ```
 
 ---
@@ -121,6 +124,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.4 | 2026-04-10 | 阅读顺序增 ⑤′ [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；常见任务增「深度尽治」；路径速查增 `export_repo_directory_rollup.py` |
 | 1.2.3 | 2026-04-10 | 常见任务增仓库根治理；链至 [REPO_ROOT_GOVERNANCE_PLAYBOOK](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | 1.2.2 | 2026-04-10 | 交付标准增 §1.5 / 任务清单增 W 轨；阅读顺序 ④′⑤ 与常见任务表同步 |
 | 1.2.1 | 2026-04-10 | 阅读顺序增 ①′ [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md)；真源优先级下增 §3.1 与架构互指 |

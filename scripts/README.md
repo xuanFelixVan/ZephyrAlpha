@@ -35,6 +35,7 @@ responsibility:
 | `generate_scattered_blueprints_manifest_task1.py` | 生成分散蓝图路径清单（STATE） |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 |
 | `sentinel_l1_governance_scan.py` | 全库 Markdown 内链 + `module_id` 扫描（报告在 `docs/09_AUDIT/STATE/`） |
+| `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合 `git ls-files` 计数 → `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`（整仓尽治排期）；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
 
 ---
 
