@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.26
+version: 1.4.27
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -335,6 +335,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.27 | 2026-04-11 | §7.1 互指 `AUTONOMOUS_GOVERNANCE_RUN_QUEUE`（跨 Cursor 会话指针 + 深度 3 前缀表）；与根 `AGENTS.md`、`.cursor/rules` 接力配套 |
 | 1.4.26 | 2026-04-11 | 治理脚本统一 `quotePath=false` + UTF-8；刷新 `REPO_DIRECTORY_ROLLUP_20260411`、`REPO_GIT_TRACKED_FILES_20260411`；§1/§6/§7/§8 与 `GIT_TRACKED_PATH_ANOMALIES` 改写为「显示转义 ≠ 索引损坏」 |
 | 1.4.25 | 2026-04-11 | §1 澄清「8+8」为同一批 8 条 Git 异常路径；§6 链 `GIT_TRACKED_PATH_ANOMALIES_20260411`；与 STATE 索引整仓产出表互指 |
 | 1.4.24 | 2026-04-11 | P3：勾选「抽样反向检查」并链 `DOCS_NAV_COVERAGE_SAMPLE_20260410`；§6 推荐阅读增主导航抽样与 `W2_SECRET_PATTERN_SPOTCHECK`；P4.1 矩阵增 `sample_docs_nav_coverage.py`；§8「§1 数字」与当前 `git ls-files` 4454 对齐勾选 |
@@ -419,6 +420,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### 7.1 怎么从「最深」起排
 
+0. **多会话接力**：打开 [自主接力运行队列](./AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)，先更新 **「当前指针」**，再按其中 **Phase B** 深度 3 表自顶向下选批（与 rollup 真源一致）。  
 1. 打开 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。  
 2. 对 **`docs/09_AUDIT/REPORTS`、`docs/09_AUDIT/STATE`** 等超高计数前缀：在批次内再按**子文件夹**细分为子队列（rollup 深度加一或手工列目录）。  
 3. **`docs/06_ARCHIVE/**`**：默认 **只读治理**（摆放、索引、与活动区重复标注），删并须符合 **§3.1 归档区策略**。  

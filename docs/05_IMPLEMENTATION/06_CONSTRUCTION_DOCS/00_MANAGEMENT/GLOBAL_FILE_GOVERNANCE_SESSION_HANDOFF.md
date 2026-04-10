@@ -1,9 +1,9 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.10
+version: 1.0.11
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-11'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
@@ -101,7 +101,8 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 1. 打开 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_YYYYMMDD.md` 的 **深度 5、6**（及 3、4）表，结合 `.json` 全量前缀。  
 2. 按 REPO_WIDE **§7.1** 拆分超大前缀（如 `docs/09_AUDIT/STATE`）为子队列。  
-3. 为每一前缀建立「本批 PR 描述」模板：目标、是否动 archive、是否只做导航不写语义。
+3. 为每一前缀建立「本批 PR 描述」模板：目标、是否动 archive、是否只做导航不写语义。  
+4. **多会话 / 排队执行**：用 [自主接力运行队列](./AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) 维护 **当前指针** 与 **深度 3 前缀勾选**，避免每轮对话从零推断队列。
 
 **阶段 D — 逐前缀执行（每批建议可控规模，如 20～80 个文件或单个子树）**
 
@@ -129,6 +130,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.11 | 2026-04-11 | 阶段 C 增第 4 步：互指 [自主接力运行队列](./AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)（指针 + 前缀表） |
 | 1.0.10 | 2026-04-10 | 阶段 B 增 `triage_blueprint_d_overlap_pairs.py`；§1.1 D 类行与阶段 A 互指 TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 | 1.0.9 | 2026-04-10 | §1.1 增首道 `module_id` 行（L1 报告无 id/重复双 0 + `backfill_missing_module_id.py`）；阶段 B 增 backfill→复跑 L1 说明 |
 | 1.0.8 | 2026-04-12 | §1.1 增 D 类候选报表入口（`BLUEPRINT_D_OVERLAP_CANDIDATES_20260412`）与待审登记表互指 |

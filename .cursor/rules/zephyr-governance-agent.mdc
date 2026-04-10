@@ -1,0 +1,30 @@
+---
+description: ZephyrAlpha 全仓文档治理与接力底线（REPO_WIDE / L1 / Git）
+alwaysApply: true
+---
+
+# ZephyrAlpha — 治理 Agent 底线
+
+## 语言与范围
+
+- 用户对话默认 **中文**；**文件名、脚本名、命令、Git 路径**保留 **英文**。
+- **不扩大范围**：只处理当前用户任务或 [运行队列](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) 中「下一步」；禁止顺带大重构。
+
+## 权威顺序（必读真源）
+
+1. [AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) — **当前指针** + 队列顺序  
+2. [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) — 未勾选项 = backlog  
+3. [GOVERNANCE_TOOLS_INDEX.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) — 脚本与产出  
+4. 蓝图 **D 类**合稿/删并：**须 Owner 裁决**；AI 只做报表、台账、断链修复，**不擅自合并正文**（见 [D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)）。
+
+## 每轮必做（Git + 门禁）
+
+- 先 **`git status`**；**仅** `git add` 与本任务相关文件；**禁止**把无关未提交改动打包进同一 commit。  
+- 实质性改文档/路径后：`python scripts/governance/sentinel_l1_governance_scan.py` — **判定无效 = 0**（无 Owner 书面例外则修链）。  
+- 导出/统计 `git ls-files`：使用 **`git -c core.quotePath=false`** 或 **`-z` + UTF-8**（见 `docs/09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md`）。  
+- **commit message**：完整 **中文** 句，说明做了什么与为何。
+
+## 接力
+
+- 每轮结束前：更新运行队列中 **「当前指针」**表（last_commit、next_queue_id、notes）。  
+- **勿假设**下一轮读过本轮上下文。
