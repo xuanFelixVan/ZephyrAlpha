@@ -24,7 +24,7 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 | 字段 | 填写 |
 |------|------|
 | **UTC 时间** | `2026-04-14T00:00:00Z` |
-| **上轮 commit** | `fc757281` |
+| **上轮 commit** | `fab47697` |
 | **next_queue_id** | **B-02** |
 | **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`（§7.2：子目录 / 抽样修链 / 或 Owner 改下一前缀） |
 | **notes** | **B-02 批次 5**：[`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 增「目录体量」链至 [`REPO_DIRECTORY_ROLLUP_20260413.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)；[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md) 统计表下增「体量真源」说明（499 条与 §4 一致）。**B-03** 已入库见提交 `21379ff4`；队列 `front matter` **1.0.3**。 |
