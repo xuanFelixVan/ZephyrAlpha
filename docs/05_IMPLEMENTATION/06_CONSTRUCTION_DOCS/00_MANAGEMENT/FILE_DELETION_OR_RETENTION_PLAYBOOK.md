@@ -1,0 +1,66 @@
+---
+module_id: FILE_DELETION_OR_RETENTION_PLAYBOOK_001
+version: 1.0.0
+status: Active
+created_date: 2026-04-10
+last_updated: '2026-04-10'
+owner: 文档负责人（可指定）
+responsibility:
+  - 裁决「是否删除、删哪一份、是否改为 stub」的人工流程（与机器扫描解耦）
+standard_type: 操作规程
+applicable_scope: 本仓库内路径的删除、归档与保留；不替代安全/合规对密钥与隐私的独立要求
+---
+
+# 文件删除与保留裁决 Playbook
+
+> **定位**：机器报表（如 `DUPLICATE_CONTENT_BY_HASH_*`、`git ls-files`）只回答「有什么、是否同内容」；**是否删除**必须由本 Playbook + PR 说明落地。  
+> **与任务清单的关系**：内容合并真源步骤见 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3**（尤其 C1/C2/D）；孤儿与叙事归并见 [孤儿与重复文档治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)。
+
+---
+
+## 1. 决策树（先走一遍再动 Git）
+
+对候选路径 `P`（重复报表中的一条、或你认为「多余」的路径）依次判断：
+
+1. **是否含密钥、令牌、本机绝对路径、客户隐私？**  
+   - **是** → **禁止**在 PR 中「普通删稿」了事；按安全流程轮换密钥、改 `.gitignore`、必要时 `git filter-repo` 等（本 Playbook 不展开）。  
+   - **否** → 继续。
+
+2. **`P` 是否被 CI、发布流水线、外部书签或合同交付物明确引用？**  
+   - **是且必须保持 URL 稳定** → 优先 **保留路径 + stub**（短说明 + 指向 canonical 的链接），而不是直接删除。  
+   - **否或可通过批量替换链接解决** → 继续。
+
+3. **`P` 是否在 `docs/06_ARCHIVE/**`（或团队声明的只读归档前缀）内？**  
+   - **是** → 默认 **不删**；若与活动区为 **C1 完全重复**，在 PR 中**书面选择** [任务清单 §3.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 的「严格 / 宽松」策略后再动。  
+   - **否** → 继续。
+
+4. **与同簇其他路径相比，`P` 是否为约定的 canonical（现行规范目录、INDEX/SITEMAP 引用最多、或非 archive）？**  
+   - **P 是 canonical** → **不删** `P`；改删或 stub **副本**。  
+   - **P 是副本** → 进入 **§2** 选择删除或 stub。
+
+5. **若内容仅为「功能重复、表述不同」（D 类）？**  
+   - **不得**按 C1 自动删；须 **Owner/架构叙事归并** 后再删或 stub（见任务清单 **§3.4**）。
+
+---
+
+## 2. 删除前最小检查清单（PR 中可粘贴）
+
+- [ ] 已用仓库搜索确认 **无 Markdown/配置内链** 仍指向即将删除的路径（或已一并替换）。  
+- [ ] 已跑相关门禁：`verify_*`、`sentinel_l1_governance_scan.py` 等与本次改动范围匹配。  
+- [ ] 已在 PR 说明中写明：**删的是副本还是整路径废弃**；若保留 stub，写明 **canonical 路径**。  
+- [ ] 若涉及未跟踪文件：先决定 **应入库 / 应忽略 / 应删除**；未跟踪副本勿与已跟踪 canonical 混淆（见 `scan_duplicate_file_content.py` 的 `git_source` 字段）。
+
+---
+
+## 3. 与「未跟踪」文件的关系
+
+- `git ls-files --others --exclude-standard` 列出的是 **未被 ignore** 的未跟踪文件。  
+- 若报表中某路径标记为 **untracked** 且与已跟踪文件 **C1 同内容**：通常应先裁决「是否应 `git add` 入库」或「是否本地误拷贝应删」；**不要**在未理解来源时批量删除。
+
+---
+
+## 4. 版本记录
+
+| 版本 | 日期 | 说明 |
+|------|------|------|
+| 1.0.0 | 2026-04-10 | 首版：删除/保留决策树 + PR 检查项 + 与 §3 / 孤儿 Playbook 互指 |

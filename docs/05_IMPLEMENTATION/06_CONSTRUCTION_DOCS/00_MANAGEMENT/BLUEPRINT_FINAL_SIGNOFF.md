@@ -55,7 +55,7 @@ applicable_scope: 蓝图阶段收尾及终稿后修订
 
 ## 4. 终稿之后若要修改（变更原则）
 
-1. **小改**（措辞、笔误、链接）：更新文件内版本或 `last_updated`，必要时 rerun `python scripts/generate_01_blueprints_index.py`。  
+1. **小改**（措辞、笔误、链接）：更新文件内版本或 `last_updated`，必要时 rerun `python scripts/governance/generate_01_blueprints_index.py`。  
 2. **实质改设计**（范围、接口、职责变更）：升级版本号（如 minor/major），并在总清单或登记表备注「变更摘要 + 日期」。  
 3. **废弃 / 合并**：旧文件标为归档或删除前，**先**更新总清单与登记表，避免断链。
 

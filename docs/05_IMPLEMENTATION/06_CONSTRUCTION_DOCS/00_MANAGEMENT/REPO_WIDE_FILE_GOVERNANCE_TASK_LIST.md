@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.2.4
+version: 1.2.5
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -16,11 +16,11 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **用途**：回答「是否要先扫全树再建任务清单」——**要先有基线清单与统计，再分波次治理**；本文件给出**口径、基线数字、可勾选波次**，避免无控制面的大扫除。  
 > **与蓝图清单的关系**：与 [全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **并列**；蓝图清单偏**终稿与施工门禁**，本清单偏**整仓文件体量、重复与导航**。扩展轨 **W0～W4 勾选完毕 ≠ 本清单「目录尽治」完毕**（二者互补，见蓝图清单扩展轨节互指）。  
 > **一次性尽治目标**：以**单批次最大穷尽**为排期目标——按 **§7** 对 `docs/` 等前缀拆队列、逐前缀打到退出标准；客观上规范与仓库仍会演进，**长期靠门禁脚本 + 定期重跑 §1 清单/rollup** 维持，避免「无标准的第二轮大扫除」。  
-> **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。  
+> **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、[文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。  
 > **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。  
-> **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `generate_architecture_service_catalog.py`）。  
+> **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `scripts/governance/generate_architecture_service_catalog.py`）。  
 > **扫描是否覆盖「每一种文件格式、每一文件的语义分析与自动处理」？** **否**——见 **§1.1**（分工具、分口径；Git 已跟踪 vs 工作区 Markdown 亦有差异）。  
-> **内容重复（按后缀白名单）**：`scripts/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。
+> **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。
 
 ---
 
@@ -68,7 +68,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 | 人类可读摘要（`docs/` 下各深度 Top 表 + 说明） | [`docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md) |
 | 全量前缀计数（JSON，可按任意前缀筛选） | [`docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
 
-**复跑（仓库根）**：`python scripts/export_repo_directory_rollup.py`（可选 `--date YYYYMMDD`、`--top N`）。大治理批次完成后应 **commit 更新后的 rollup**，便于 diff「哪些前缀已清空」。
+**复跑（仓库根）**：`python scripts/governance/export_repo_directory_rollup.py`（可选 `--date YYYYMMDD`、`--top N`、`--include-untracked` 把工作区未跟踪且未被 ignore 的路径并入聚合）。大治理批次完成后应 **commit 更新后的 rollup**，便于 diff「哪些前缀已清空」。
 
 **全量路径平面清单（可检索、可 diff）**  
 路径：`docs/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`  
@@ -97,11 +97,11 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | 对象/工具 | 覆盖集合 | 实际做的事 | **不做的事** |
 |-----------|-----------|------------|----------------|
 | **`git ls-files`** | **已跟踪**的任意扩展名（与协作真源一致） | 平面清单、rollup、扩展名统计（§1） | 不包含 `.gitignore` 路径；**不**解析文件内容语义 |
-| **`export_repo_directory_rollup.py`** | 同上 | 按目录深度聚合计数 | 不读文件内容 |
+| **`scripts/governance/export_repo_directory_rollup.py`** | 默认同上；可选 `--include-untracked`（`--others --exclude-standard`） | 按目录深度聚合计数 | 不读文件内容 |
 | **`generate_architecture_service_catalog.py`** | 同上中的 `src/`、`pyproject`、API routes | C4 摘要、HTTP 端点、`src/` 目录表 | **不**做全仓 Python AST/调用图；**不**分析二进制 |
 | **`sentinel_l1_governance_scan.py`** | 工作区内递归所有 `*.md`（排除 `.git`、`.venv`、`.pytest_cache`、`__pycache__`） | Markdown **内链**可达性、首道 front matter **`module_id` 重复** | **不**扫描正文语义、**不**校验代码块内逻辑；**可能包含未 `git add` 的 .md**（与仅已跟踪清单不同） |
 | **`verify_01_blueprints_*` / `verify_manifest_paths_strict.py`** | 指定 INDEX/清单中的路径 | 链接与路径存在性 | 不遍历全库所有文件 |
-| **`scan_duplicate_file_content.py`** | **Git 已跟踪** + 调用者传入的 `--ext` 白名单 | 内容 **SHA256**，输出重复簇（json/md） | **不**自动删；合并走 **§3** C1；大文件可用 `--max-mb` 跳过 |
+| **`scripts/governance/scan_duplicate_file_content.py`** | 默认 **Git 已跟踪** + `--ext` 白名单；可选 `--include-untracked` | 内容 **SHA256**，`members[].git_source` 区分 tracked/untracked | **不**自动删；合并走 **§3** C1 + [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；大文件可用 `--max-mb` 跳过 |
 | **被忽略路径** | `.gitignore` 等 | 本清单**默认不**纳入「删并」 | 本地密钥、缓存、`.env.qmt` 等由安全与 ignore 策略管 |
 
 **结论（回答「是否涵盖所有格式、是否每一文件都识别分析处理」）**：
@@ -138,9 +138,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 工作项 | 典型产出 / 命令 | 与合并的关系 |
 |--------|-------------------|----------------|
-| **内链健康** | `python scripts/sentinel_l1_governance_scan.py`；修无效相对路径 | 合并后必跑；也可边合并边修触达文件 |
-| **蓝图 / 分散清单 / 总清单校验** | `verify_01_blueprints_index_links.py`、`verify_scattered_blueprints_manifest_links.py`、`verify_manifest_paths_strict.py` | 合并改路径后必跑 |
-| **图纸柜 INDEX** | `python scripts/generate_01_blueprints_index.py` | 动 `01_BLUEPRINTS` 后跑 |
+| **内链健康** | `python scripts/governance/sentinel_l1_governance_scan.py`；修无效相对路径 | 合并后必跑；也可边合并边修触达文件 |
+| **蓝图 / 分散清单 / 总清单校验** | `scripts/governance/verify_01_blueprints_index_links.py`、`scripts/governance/verify_scattered_blueprints_manifest_links.py`、`scripts/governance/verify_manifest_paths_strict.py` | 合并改路径后必跑 |
+| **图纸柜 INDEX** | `python scripts/governance/generate_01_blueprints_index.py` | 动 `01_BLUEPRINTS` 后跑 |
 | **`.diff` / `.bak*` 策略** | 归档、剔除跟踪或迁 `archive`（见 P2） | 减少合并噪声与误报重复 |
 | **异常路径 / 索引污染** | `review_materials_package` 等引号路径规范化（P2） | 合并前优先，否则链接与 hash 对不齐 |
 | **孤儿与重复程序** | [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[CANONICAL_POINTERS](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md) | D 类与 C2 必用；C1 合并后更新台账 |
@@ -152,9 +152,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **全系统文档审计 A～H** | [审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md) | 与尽治同窗但**签字口径独立** |
 | **代码重复 / 重构** | 单立 PR + 测试 | **不**与文档合并混批（见 §3.1） |
 | **模块全景（逻辑树）** | §2.4；将来 `MODULE_PANORAMA_*` 与 rollup **同频**重跑 | 包名/域改名后重跑，避免索引漂移 |
-| **架构服务目录 + C4 多视图** | `python scripts/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
-| **内容重复（后缀白名单）** | `python scripts/scan_duplicate_file_content.py --ext md`（可加 `yaml` 等） | 产出 `DUPLICATE_CONTENT_BY_HASH_*`；**须**人工按 §3 合并 | 默认不扫无扩展名/二进制；大文件见 `--max-mb` |
-| **治理工具归口** | 办公室 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 一键查命令与产出 | 物理脚本仍在 `scripts/` 根目录 |
+| **架构服务目录 + C4 多视图** | `python scripts/governance/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
+| **内容重复（后缀白名单）** | `python scripts/governance/scan_duplicate_file_content.py --ext md`（可加 `yaml` 等） | 产出 `DUPLICATE_CONTENT_BY_HASH_*`；**须**人工按 §3 合并 | 默认不扫无扩展名/二进制；大文件见 `--max-mb` |
+| **治理工具归口** | 办公室 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 一键查命令与产出 | 实现在 `scripts/governance/`；根目录同名 `.py` 为兼容转发 |
 
 **办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
 
@@ -181,13 +181,13 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 3. **更新节奏**：大治理 PR 后、或季度，与 **rollup 一并重跑**并 commit，用 diff 观察子树漂移。  
 4. **与叙事真源的关系**：[`docs/System_Manifest.md`](../../../System_Manifest.md)、[`docs/SITEMAP.md`](../../../SITEMAP.md)、[`docs/module_designs/INDEX.md`](../../../module_designs/INDEX.md) 等继续承担**解释与裁决**；生成物标注 **generated**，避免「两份真源」静默分叉。  
 
-5. **已落地的机构式组合（本仓库）**：`scripts/generate_architecture_service_catalog.py` 从 **`pyproject.toml`、`git ls-files src/`、`src/api/main.py`、各 `routes/*.py`** 推导 **Context / Containers / Components（HTTP 端点）**、**service_catalog** 与 **根目录机构缺口自检表**，输出 [`ARCHITECTURE_SERVICE_CATALOG_*.md/json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；与 **rollup**、以及将来可选的 **`MODULE_PANORAMA_*`** 产物**同频**复跑即可持续刷新。
+5. **已落地的机构式组合（本仓库）**：`scripts/governance/generate_architecture_service_catalog.py` 从 **`pyproject.toml`、`git ls-files src/`、`src/api/main.py`、各 `routes/*.py`** 推导 **Context / Containers / Components（HTTP 端点）**、**service_catalog** 与 **根目录机构缺口自检表**，输出 [`ARCHITECTURE_SERVICE_CATALOG_*.md/json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；与 **rollup**、以及将来可选的 **`MODULE_PANORAMA_*`** 产物**同频**复跑即可持续刷新。
 
 ---
 
 ## 3. 合并重复文件方案（执行规程）
 
-> **与 §2.1 的对应关系**：本节把 **C（内容重复）**、**basename 碰撞**、**D（功能重复）** 的处置写成**可执行步骤**；**权威流程与叙事归并**仍以 [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 为准，**canonical 台账**可同步 [CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)（若项目仍在使用）。
+> **与 §2.1 的对应关系**：本节把 **C（内容重复）**、**basename 碰撞**、**D（功能重复）** 的处置写成**可执行步骤**；**权威流程与叙事归并**仍以 [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 为准，**canonical 台账**可同步 [CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)（若项目仍在使用）。**是否删除路径**另见 [文件删除与保留裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
 
 ### 3.1 分型：哪些可以合并、哪些禁止自动合并
 
@@ -253,13 +253,13 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 - [x] 导出全量 `git ls-files` 平面清单至 `docs/09_AUDIT/STATE/`（见上文文件名）。  
 - [x] 记录扩展名与目录聚合统计（见 §1）。  
-- [x] 生成 **深度 3～6** 目录聚合（JSON + MD）：`python scripts/export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_20260410.*`（2026-04-10）。  
+- [x] 生成 **深度 3～6** 目录聚合（JSON + MD）：`python scripts/governance/export_repo_directory_rollup.py` → `REPO_DIRECTORY_ROLLUP_20260410.*`（2026-04-10）。  
 - [ ] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](./README.md) 或本文件版本记录。
 
 ### P1 — 重复与冗余（机器可做部分）
 
 - [ ] **同名不同路径**：对 basename 碰撞做报表（脚本或 `git ls-files` 后处理），人工判 canonical；**合并/重命名步骤见 §3.3**。  
-- [x] **同内容（按后缀白名单）**：`scripts/scan_duplicate_file_content.py`（例：`--ext md`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；**合并/删稿仍须**遵守 **§3.2** 与归档策略 **§3.1**。  
+- [x] **同内容（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（例：`--ext md`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；**合并/删稿仍须**遵守 **§3.2** 与归档策略 **§3.1**。  
 - [ ] 将结果与 [孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) 对齐，**先归并再删**；与 **§3.6** 勾选一并推进。
 
 ### P2 — 明显「多余」扩展名与审计衍生物
@@ -276,7 +276,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### P4 — 与现有门禁脚本对齐
 
-- [ ] 将本清单 P1～P3 的产出与现有 `scripts/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）；**矩阵须与 §1.1 一致**（脚本名 ↔ 覆盖集合 ↔ 不做的事）。  
+- [ ] 将本清单 P1～P3 的产出与现有 `scripts/governance/verify_*`、`sentinel_l1_*` 等**能衔接的检查项**列成表（避免重复造轮子）；**矩阵须与 §1.1 一致**（脚本名 ↔ 覆盖集合 ↔ 不做的事）。  
 - [x] **架构/服务目录 + C4 摘要 + 可检索 JSON**：`generate_architecture_service_catalog.py` → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.{md,json}`（2026-04-10）；含根目录机构缺口表。  
 - [x] 「重复内容报表」：`scan_duplicate_file_content.py`（已落地）；可选后续接 CI **仅告警**。  
 - [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](../../../../scripts/README.md) 登记用途。
@@ -293,6 +293,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.5 | 2026-04-10 | 治理脚本归口 `scripts/governance/`；`rollup`/`scan_duplicate` 支持 `--include-untracked`；互指 [删稿裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)；§1.1 与 §2.3 命令路径更新 |
 | 1.2.4 | 2026-04-10 | **P1** 落地 `scan_duplicate_file_content.py`；§2.3 增内容重复与工具索引；互指 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；§1.1 表更新 |
 | 1.2.3 | 2026-04-10 | 新增 **§1.1** 扫描覆盖/格式边界（Git vs L1、全格式语义不承诺）；**§8** 增自查项；**P4** 矩阵与 §1.1 对齐 |
 | 1.2.2 | 2026-04-10 | **§2.4** 增架构服务目录生成物说明；§2.3 增 C4/服务目录行；**P4** 勾选 `ARCHITECTURE_SERVICE_CATALOG_*`；§6 增入口；根目录补 **LICENSE / CONTRIBUTING / SECURITY** |

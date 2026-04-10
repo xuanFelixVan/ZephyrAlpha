@@ -27,18 +27,20 @@ responsibility:
 ## 文档治理与门禁（与任务清单 / 办公室互指）
 
 仓库根执行；**命令与产出总表（办公室）**：[治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)。  
-详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。
+详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。**删稿裁决**：[文件删除与保留裁决 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
 
-| 脚本 | 作用 |
+**实现目录**：[`scripts/governance/`](governance/)（推荐 `python scripts/governance/<脚本名>`）。本目录根下的同名 `.py` 为 **兼容转发**（`runpy`），旧文档中的 `python scripts/<脚本名>.py` 仍可用。
+
+| 脚本（在 `governance/` 内） | 作用 |
 |------|------|
 | `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 列表内链 |
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 |
 | `generate_scattered_blueprints_manifest_task1.py` | 生成分散蓝图路径清单（STATE） |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 |
 | `sentinel_l1_governance_scan.py` | 工作区递归 `*.md` 内链 + 首道 front matter `module_id`（报告在 `docs/09_AUDIT/STATE/`）；**非** `git ls-files` 全集，见 [任务清单 §1.1](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
-| `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合 `git ls-files` 计数 → `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`（整仓尽治排期）；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
+| `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合路径计数（默认可视为 `git ls-files`；可加 `--include-untracked`）→ `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
 | `generate_architecture_service_catalog.py` | 架构/服务目录 + C4 摘要 + 可检索 JSON：`pyproject`、`src/`、`src/api/routes`、根目录机构缺口表 → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*` |
-| `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
+| `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`；可选 `--include-untracked`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
 
 ---
 

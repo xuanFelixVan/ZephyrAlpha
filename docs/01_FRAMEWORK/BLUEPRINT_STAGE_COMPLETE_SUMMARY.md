@@ -45,7 +45,7 @@ reference_models:
 
 - **与 `01_BLUEPRINTS` 的关系**：模块级文件名与机器生成列表以 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 为准；本文负责**阶段口径、分层统计与跨目录索引**，二者**互补**，不互相替代。
 - **链接全量核对**：任务 1 要求的 **100%** 逐条链接验证须在勾选任务清单前完成；进度与 **N** 记在任务清单任务 1 备注行。
-- **表格路径机器核对**：本文表格列出的以 `docs/` 开头的具体路径与标准 Markdown 内链，以仓库根执行 `python scripts/verify_manifest_paths_strict.py` 为**严格真源**；报告写入 `docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`（与同名 `.json` 同批生成，**勿**在未生成前对该报告文件写 Markdown 内链，以免首轮校验鸡生蛋）。
+- **表格路径机器核对**：本文表格列出的以 `docs/` 开头的具体路径与标准 Markdown 内链，以仓库根执行 `python scripts/governance/verify_manifest_paths_strict.py` 为**严格真源**；报告写入 `docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`（与同名 `.json` 同批生成，**勿**在未生成前对该报告文件写 Markdown 内链，以免首轮校验鸡生蛋）。
 
 ### 任务 1 闭合口径：全库「应有蓝图」条目如何记录与可点击跳转
 
@@ -53,8 +53,8 @@ reference_models:
 
 | 分桶 | 条数（可复现） | 记录与跳转方式 | 机器校验 |
 |------|-----------------|----------------|----------|
-| **A. 正式图纸柜根目录** | **164**（与 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 同步） | INDEX「完整文件列表」中每条均为指向同目录下 `.md` 的相对链接 | `python scripts/verify_01_blueprints_index_links.py`（缺失则 exit 1） |
-| **B. 分散在业务目录** | **418**（见 [`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`](../09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md)） | 清单内每条相对链接指向仓库内唯一文件 | `python scripts/generate_scattered_blueprints_manifest_task1.py` 生成；`python scripts/verify_scattered_blueprints_manifest_links.py` 校验 |
+| **A. 正式图纸柜根目录** | **164**（与 [`01_BLUEPRINTS/INDEX.md`](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) 同步） | INDEX「完整文件列表」中每条均为指向同目录下 `.md` 的相对链接 | `python scripts/governance/verify_01_blueprints_index_links.py`（缺失则 exit 1） |
+| **B. 分散在业务目录** | **418**（见 [`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`](../09_AUDIT/STATE/ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md)） | 清单内每条相对链接指向仓库内唯一文件 | `python scripts/governance/generate_scattered_blueprints_manifest_task1.py` 生成；`python scripts/governance/verify_scattered_blueprints_manifest_links.py` 校验 |
 | **合计 N** | **582** | A+B 覆盖「活跃 *BLUEPRINT.md」全集（本闭合批次） | 三脚本绿即视为链接层全量核对通过 |
 
 - **图纸柜子目录过程稿**：`01_BLUEPRINTS/REPORTS/` 等不以 `*BLUEPRINT.md` 结尾的报告类文件**不**计入上表；其治理见 [图纸柜规则](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md)。

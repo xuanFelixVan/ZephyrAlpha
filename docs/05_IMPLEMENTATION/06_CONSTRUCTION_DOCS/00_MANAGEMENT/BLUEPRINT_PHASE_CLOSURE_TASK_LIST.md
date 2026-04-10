@@ -71,7 +71,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 **链接验证：本仓库默认「全量核对」（100%）**
 
-> **严格路径脚本（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 内链与 `docs/` 字面路径由 `scripts/verify_manifest_paths_strict.py` 核对（**N_path** 见该脚本报告 JSON 字段 `total_checked_unique`）；人读摘要：`docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`。**蓝图条目全量（任务 1 闭合）**：**N = 582** = 图纸柜 INDEX **164**（`verify_01_blueprints_index_links.py`）+ 分散清单 **418**（`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`，`verify_scattered_blueprints_manifest_links.py`）；口径见总清单 §「任务 1 闭合口径」。
+> **严格路径脚本（2026-04-10）**：[`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md) 内链与 `docs/` 字面路径由 `scripts/governance/verify_manifest_paths_strict.py` 核对（**N_path** 见该脚本报告 JSON 字段 `total_checked_unique`）；人读摘要：`docs/09_AUDIT/STATE/MANIFEST_PATH_AUDIT_BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`。**蓝图条目全量（任务 1 闭合）**：**N = 582** = 图纸柜 INDEX **164**（`verify_01_blueprints_index_links.py`）+ 分散清单 **418**（`ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`，`verify_scattered_blueprints_manifest_links.py`）；口径见总清单 §「任务 1 闭合口径」。
 
 - **Owner 要求**：对总清单中每一个「应有蓝图」条目，须**逐条**确认链接可解析、指向**唯一 canonical**；完成后在本任务下备注「已全检，共 N 条」。
 - **机构常见例外**（仅当 Owner **书面豁免**时适用）：体量极大时可采用**统计抽检**（如随机 10 条）+ 说明样本量与豁免理由；**本仓库不设默认抽检**，豁免须写入登记表、commit 说明或本文件备注，避免无记录的「口头打折」。
@@ -156,7 +156,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 - [x] 已对照 [全系统文档审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md)（若执行）或等效自查：**孤儿 / 断链 / 大门口索引** 有关闭标准或登记例外 — 2026-04-10：**等效自查** = 建设文档 [`INDEX.md`](../INDEX.md) 已与磁盘对齐（任务 4）+ 本批次 L1；全案 A～H **不**在本条代替正式审计签字，由 Owner 按方案排期
 - [x] `docs/` 内**非蓝图**但与交付相关的 INDEX/README 与磁盘一致，或已登记例外 — 2026-04-10：文档总入口 [`docs/INDEX.md`](../../../INDEX.md) 与建设文档大门 **INDEX** 并存、职责分离；本轮未做全库逐目录 INDEX 机械复核，登记为 **Owner 接受当前入口结构**
-- [x] 大改后 **L1** 扫描已跑且无效内链为 0（报告路径可指认）— 2026-04-10：`python scripts/sentinel_l1_governance_scan.py` → [`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)；并修复 `HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md` 中 3 条错误相对路径（`../../../docs/09_AUDIT/` → `../../../09_AUDIT/`）
+- [x] 大改后 **L1** 扫描已跑且无效内链为 0（报告路径可指认）— 2026-04-10：`python scripts/governance/sentinel_l1_governance_scan.py` → [`docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md`](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)；并修复 `HUMAN_AI_LAYER_DEEP_AUDIT_20260407_163712.md` 中 3 条错误相对路径（`../../../docs/09_AUDIT/` → `../../../09_AUDIT/`）
 
 ### W2：R1 仓库配置与门面
 

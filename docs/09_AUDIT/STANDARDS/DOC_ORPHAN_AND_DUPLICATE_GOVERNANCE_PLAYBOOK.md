@@ -125,7 +125,7 @@ related_documents:
 
 | 工具 | 用途 |
 |------|------|
-| `scripts/sentinel_l1_governance_scan.py` | Markdown **内链有效性**扫描；合并前 **Invalid links = 0**（团队约定） |
+| `scripts/governance/sentinel_l1_governance_scan.py`（根目录同名入口可转发） | Markdown **内链有效性**扫描；合并前 **Invalid links = 0**（团队约定） |
 | 严格孤儿报告 / 清单 | 孤儿 **分桶与批量挂接** 的输入 |
 | `CANONICAL_POINTERS.md` | 重复裁决 **台账** |
 | overlap 模板与排期文档 | **重叠副本** 指针与批次节奏 |

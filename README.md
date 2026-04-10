@@ -71,8 +71,8 @@ python -m src.main
 | [LICENSE](LICENSE) | MIT（与 `pyproject.toml` 声明一致） |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与办公室入口 |
 | [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
-| [架构服务目录 + C4 摘要](docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/generate_architecture_service_catalog.py` |
-| [内容重复扫描报告](docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/scan_duplicate_file_content.py --ext md` |
+| [架构服务目录 + C4 摘要](docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/governance/generate_architecture_service_catalog.py` |
+| [内容重复扫描报告](docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
 
 ---
 

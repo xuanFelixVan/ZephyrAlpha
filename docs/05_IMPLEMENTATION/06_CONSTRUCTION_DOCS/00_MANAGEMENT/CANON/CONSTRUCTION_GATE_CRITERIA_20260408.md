@@ -109,7 +109,7 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 **放行施工前**请在当前分支 **复跑** 并保存一次：
 
 ```text
-python scripts/sentinel_l1_governance_scan.py
+python scripts/governance/sentinel_l1_governance_scan.py
 python scripts/merge_double_yaml_frontmatter.py --list
 ```
 

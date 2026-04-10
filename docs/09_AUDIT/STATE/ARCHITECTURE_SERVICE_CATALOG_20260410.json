@@ -1,6 +1,6 @@
 {
   "generated_date": "20260410",
-  "generator": "scripts/generate_architecture_service_catalog.py",
+  "generator": "scripts/governance/generate_architecture_service_catalog.py",
   "sources": [
     "git ls-files src/",
     "pyproject.toml",

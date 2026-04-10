@@ -105,7 +105,7 @@ applicable_scope: 蓝图阶段收尾、施工前放行、全库文档治理对�
 - [ ] **卫生/审计**：与 [卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) 及台账对齐（任务 6）
 - [ ] **单篇终稿**：§0.2 范围内每篇满足 [终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md) 第 1 节四条
 - [ ] **施工包**：§0.3 与契约/TDR 可追溯（门禁）
-- [ ] **链接健康**：大改 docs 后 rerun `python scripts/sentinel_l1_governance_scan.py`（门禁 §2 相关习惯）
+- [ ] **链接健康**：大改 docs 后 rerun `python scripts/governance/sentinel_l1_governance_scan.py`（门禁 §2 相关习惯）
 - [ ] **全仓库分层（扩展轨）**：[任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 中 **W0～W4** 按 Owner 节奏勾选；与 §1.5 对照
 
 ---

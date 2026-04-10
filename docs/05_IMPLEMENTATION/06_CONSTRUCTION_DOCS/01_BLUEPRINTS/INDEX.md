@@ -13,7 +13,7 @@ applicable_scope: 01_BLUEPRINTS
 
 # 01_BLUEPRINTS 索引
 
-> **说明**：下列「完整文件列表」由 `scripts/generate_01_blueprints_index.py` 生成，避免手工维护漏项。
+> **说明**：下列「完整文件列表」由 `scripts/governance/generate_01_blueprints_index.py` 生成，避免手工维护漏项。
 
 ## 权威导航
 
@@ -194,4 +194,4 @@ applicable_scope: 01_BLUEPRINTS
 
 ---
 
-**维护**: 新增/重命名蓝图后运行 `python scripts/generate_01_blueprints_index.py` 更新本页。
+**维护**: 新增/重命名蓝图后运行 `python scripts/governance/generate_01_blueprints_index.py` 更新本页。

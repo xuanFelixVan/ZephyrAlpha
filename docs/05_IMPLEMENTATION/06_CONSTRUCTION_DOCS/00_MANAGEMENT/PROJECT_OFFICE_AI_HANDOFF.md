@@ -86,15 +86,15 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 用户要你做的事 | 建议动作 |
 |----------------|----------|
 | 整理 `01_BLUEPRINTS` 根目录 | 对照 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md)：仅保留 `*BLUEPRINT.md` 与 `INDEX.md`；带日期的报告、分析进 `01_BLUEPRINTS/REPORTS/`（若尚无则创建）。 |
-| 更新蓝图文件列表 | 在仓库根执行：`python scripts/generate_01_blueprints_index.py`（更新 `01_BLUEPRINTS/INDEX.md`）。 |
+| 更新蓝图文件列表 | 在仓库根执行：`python scripts/governance/generate_01_blueprints_index.py`（更新 `01_BLUEPRINTS/INDEX.md`）。 |
 | 核对「蓝图阶段是否终稿」 | 对照 [交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) + [终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md) + [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 逐项勾选；总清单链接须 **100% 全量**核对（见任务 1，抽检须 Owner 书面豁免）。 |
 | 登记「哪份才是正式稿」 | 在 [登记表](./CONTROLLED_DOCUMENTS_REGISTER.md) 增行，并确保总清单链接一致。 |
 | 修正建设文档「大门口」描述 | 改 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md`，使子目录表与**磁盘真实文件夹**一致。 |
 | 处理同题多稿 / 重复 / 重叠 | 按 §1.5 与 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 任务 1～2；程序与模板见 Playbook、[重复标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)、[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。 |
-| 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。**注意**：L1 扫描工作区 `*.md`，与 **`git ls-files` 仅已跟踪** 可能不一致，见 [任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1**。 |
+| 全库 Markdown 内链健康检查 | 在仓库根执行：`python scripts/governance/sentinel_l1_governance_scan.py`；治理习惯上要求**无效内链为 0**（报告路径见脚本输出，通常于 `docs/09_AUDIT/STATE/`）。**注意**：L1 扫描工作区 `*.md`，与 **`git ls-files` 仅已跟踪** 可能不一致，见 [任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1**。 |
 | 整仓分层治理（非仅蓝图） | 先读 [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) **§1.5**，再按 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **W0→W4** 勾选并留证据；与任务 1～6 **并列、不替代**。 |
-| 整仓「深度尽治」+ 合并重复 + 不想只做表面统计 | 打开 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)：跑 `python scripts/export_repo_directory_rollup.py` 得深度 3～6 队列；按 **§7** 前缀退出标准推进，**§2.3** 与扫描/合并并行；**W 轨勾完 ≠ 尽治完毕**。 |
-| 要三级/四级「模块全景」+ 索引、对标机构做法 | 先读同一清单 **§2.4**；已落地 **架构服务目录 + C4**：`python scripts/generate_architecture_service_catalog.py` → [`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；可选再实现 `MODULE_PANORAMA_*`，与 rollup **同频**更新。 |
+| 整仓「深度尽治」+ 合并重复 + 不想只做表面统计 | 打开 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)：跑 `python scripts/governance/export_repo_directory_rollup.py` 得深度 3～6 队列；按 **§7** 前缀退出标准推进，**§2.3** 与扫描/合并并行；**W 轨勾完 ≠ 尽治完毕**。 |
+| 要三级/四级「模块全景」+ 索引、对标机构做法 | 先读同一清单 **§2.4**；已落地 **架构服务目录 + C4**：`python scripts/governance/generate_architecture_service_catalog.py` → [`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)；可选再实现 `MODULE_PANORAMA_*`，与 rollup **同频**更新。 |
 | 仓库根出现怪文件 / 密钥误入库 / 运行时数据进库 | 按 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) 分类处理（A 垃圾 / B 密钥 / C 运行时）；衔接 **W2、W4**。 |
 
 ---

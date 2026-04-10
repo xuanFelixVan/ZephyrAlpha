@@ -45,7 +45,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ 下的蓝图柜�
 ### 3.1 允许放在根目录的文件
 
 1. **正式蓝图**：文件名须以 **`BLUEPRINT.md`** 结尾（即 `*BLUEPRINT.md`）。  
-2. **本柜目录**：唯一允许的例外文件名 **`INDEX.md`**，由 `scripts/generate_01_blueprints_index.py` 生成；**性质是目录登记，不算蓝图正文**，但**当前约定仍放在本柜根目录**（与脚本输出一致，路径简单）。
+2. **本柜目录**：唯一允许的例外文件名 **`INDEX.md`**，由 `scripts/governance/generate_01_blueprints_index.py` 生成；**性质是目录登记，不算蓝图正文**，但**当前约定仍放在本柜根目录**（与脚本输出一致，路径简单）。
 
 ### 3.2 禁止放在根目录的内容
 
@@ -80,7 +80,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ 下的蓝图柜�
 
 ## 6. 维护与修订
 
-- 新增/重命名正式蓝图后：运行 `python scripts/generate_01_blueprints_index.py`，更新 `01_BLUEPRINTS/INDEX.md`。  
+- 新增/重命名正式蓝图后：运行 `python scripts/governance/generate_01_blueprints_index.py`，更新 `01_BLUEPRINTS/INDEX.md`。  
 - 修订本规则：递增 `version`，更新 `last_updated`，并在任务清单或卫生计划中留一句变更说明。  
 - AI 或协作者整理本柜时：**先打开本文件**，再动文件位置。  
 - **终稿门禁**（什么叫终稿、谁认可）：见 [蓝图终稿定义与认可](./BLUEPRINT_FINAL_SIGNOFF.md)。

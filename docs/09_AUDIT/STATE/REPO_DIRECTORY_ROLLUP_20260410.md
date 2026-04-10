@@ -1,12 +1,12 @@
 ---
 standard_type: audit_state
-applicable_scope: 全仓库已跟踪路径目录聚合
+applicable_scope: 全仓库路径目录聚合（git ls-files，可选未跟踪）
 generated_date: '20260410'
 ---
 
-# 仓库目录深度聚合（已跟踪文件数）
+# 仓库目录深度聚合（路径条数）
 
-> 由 `scripts/export_repo_directory_rollup.py` 生成；**总计 4371** 个已跟踪路径。
+> 由 `scripts/governance/export_repo_directory_rollup.py` 生成；**仅已跟踪**，共 **4384** 条路径。
 > JSON 真源：[`REPO_DIRECTORY_ROLLUP_20260410.json`](./REPO_DIRECTORY_ROLLUP_20260410.json)
 
 ## 使用说明
@@ -14,15 +14,16 @@ generated_date: '20260410'
 - **深度 2**：适合一级排期（与任务清单 §1 节选表同量级）。
 - **深度 3～6**：把大目录（如 `docs/09_AUDIT`、`docs/05_IMPLEMENTATION`）拆成**可分批啃完的子队列**，支撑「按最深前缀尽治」而不是只扫表面。
 - 治理时按前缀从大到小或按业务优先级排序；每一前缀「清空」的标准见 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7**。
+- 未跟踪路径仅在使用 `--include-untracked` 时出现；适合治理「工作区里已存在、尚未 add」的文档。
 
-## `docs/` 下深度 3 前缀 Top 60（按文件数降序）
+## `docs/` 下深度 3 前缀 Top 50（按路径条数降序）
 
-| 目录前缀（深度固定） | 已跟踪文件数 |
+| 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/09_AUDIT/REPORTS` | 498 |
+| `docs/09_AUDIT/STATE` | 408 |
 | `docs/05_IMPLEMENTATION/04_OPERATIONS` | 406 |
-| `docs/09_AUDIT/STATE` | 402 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 265 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | 266 |
 | `docs/06_ARCHIVE/20260404_audit_reports_archive` | 218 |
 | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | 97 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` | 83 |
@@ -69,21 +70,11 @@ generated_date: '20260410'
 | `docs/08_KNOWLEDGE/BEST_PRACTICES` | 4 |
 | `docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS` | 4 |
 | `docs/09_AUDIT/GUIDES` | 4 |
-| `docs/09_AUDIT/WORKFLOWS` | 4 |
-| `docs/11_STRATEGIC_DECISION/01_asset_allocation` | 4 |
-| `docs/11_STRATEGIC_DECISION/02_risk_budgeting` | 4 |
-| `docs/11_STRATEGIC_DECISION/03_strategy_selection` | 4 |
-| `docs/11_STRATEGIC_DECISION/04_strategic_adjustment` | 4 |
-| `docs/02_FACTOR_LIBRARY/00_GOVERNANCE` | 3 |
-| `docs/02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX` | 3 |
-| `docs/02_FACTOR_LIBRARY/03_RISK_FACTORS` | 3 |
-| `docs/02_FACTOR_LIBRARY/05_BACKTEST` | 3 |
-| `docs/02_FACTOR_LIBRARY/06_REGISTRY` | 3 |
 
 
-## `docs/` 下深度 4 前缀 Top 60（按文件数降序）
+## `docs/` 下深度 4 前缀 Top 50（按路径条数降序）
 
-| 目录前缀（深度固定） | 已跟踪文件数 |
+| 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state` | 400 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS` | 178 |
@@ -95,7 +86,7 @@ generated_date: '20260410'
 | `docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base` | 18 |
 | `docs/06_ARCHIVE/20260406_encoding_issues_archive/layer1_blueprints` | 18 |
 | `docs/06_ARCHIVE/architecture_v4/module_designs` | 18 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 15 |
+| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` | 16 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES` | 13 |
 | `docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters` | 11 |
 | `docs/06_ARCHIVE/20260407_old_layer_audit_reports/layer10_reports` | 10 |
@@ -135,21 +126,11 @@ generated_date: '20260410'
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_TESTING_FRAMEWORK` | 3 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_VERSION_CONTROL` | 3 |
 | `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/REALTIME_DATA_STREAMING` | 3 |
-| `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/TIME_SERIES_STORAGE` | 3 |
-| `docs/05_IMPLEMENTATION/07_OPERATIONS/checklists` | 3 |
-| `docs/05_IMPLEMENTATION/07_OPERATIONS/improvement_plans` | 3 |
-| `docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring` | 3 |
-| `docs/05_IMPLEMENTATION/07_OPERATIONS/standards` | 3 |
-| `docs/06_ARCHIVE/integrated_documents/20260403_market_simulation` | 3 |
-| `docs/06_ARCHIVE/main/v4_development` | 3 |
-| `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS` | 2 |
-| `docs/06_ARCHIVE/20260407_old_layer_audit_reports/layer25_reports` | 2 |
-| `docs/06_ARCHIVE/20260407_old_layer_audit_reports/layer6_reports` | 2 |
 
 
-## `docs/` 下深度 5 前缀 Top 60（按文件数降序）
+## `docs/` 下深度 5 前缀 Top 50（按路径条数降序）
 
-| 目录前缀（深度固定） | 已跟踪文件数 |
+| 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402` | 31 |
 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS` | 13 |
@@ -201,21 +182,11 @@ generated_date: '20260410'
 | `docs/01_FRAMEWORK/AI_PERMISSIONS.md` | 1 |
 | `docs/01_FRAMEWORK/AI_REPORT_GENERATION_BLUEPRINT.md` | 1 |
 | `docs/01_FRAMEWORK/AI_STRATEGY_AUTOMATION_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AI_TRUST_CALIBRATION_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_IMPLEMENTATION_PLAN.md` | 1 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/AI_VIRTUAL_RESEARCH_TEAM_PROJECT_KICKOFF.md` | 1 |
-| `docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/INDEX.md` | 1 |
-| `docs/01_FRAMEWORK/ALERT_MANAGEMENT_INTERFACE_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/ALGORITHMIC_TRADING_TEST_FRAMEWORK_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/ALGORITHM_DEPLOYMENT_CONTROL_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/ALGORITHM_INVENTORY_MANAGEMENT_BLUEPRINT.md` | 1 |
 
 
-## `docs/` 下深度 6 前缀 Top 60（按文件数降序）
+## `docs/` 下深度 6 前缀 Top 50（按路径条数降序）
 
-| 目录前缀（深度固定） | 已跟踪文件数 |
+| 目录前缀（深度固定） | 路径条数 |
 |---|---:|
 | `docs/00_OVERVIEW/DATA_FLOW.md` | 1 |
 | `docs/00_OVERVIEW/INDEX.md` | 1 |
@@ -267,14 +238,4 @@ generated_date: '20260410'
 | `docs/01_FRAMEWORK/ARCHITECTURE_AUDIT_REPORT.md` | 1 |
 | `docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/INDEX.md` | 1 |
 | `docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS/README.md` | 1 |
-| `docs/01_FRAMEWORK/ARCHITECTURE_EVOLUTION_HISTORY.md` | 1 |
-| `docs/01_FRAMEWORK/AUDIT_LOG_VIEWER_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AUDIT_TRAIL_SYSTEM_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AUDIT_TRAIL_TIGERBEETLE_IMPLEMENTATION.md` | 1 |
-| `docs/01_FRAMEWORK/AUTOML_AUTOMATION_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/AUTOML_PIPELINE_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/BACKDOOR_DETECTION_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/BACKTEST_RESULT_VIEWER_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/BATCH_INFERENCE_OPTIMIZATION_BLUEPRINT.md` | 1 |
-| `docs/01_FRAMEWORK/BEST_EXECUTION_MONITORING_BLUEPRINT.md` | 1 |
 

@@ -26,7 +26,7 @@ applicable_scope: 01_BLUEPRINTS 整理、索引更新及同类文档治理任务
    施工门禁 / 蓝图卫生总案真源：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/
 3. 任务与勾选：docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md
 4. 禁止凭记忆列举「有哪些文件」或宣称「已完成」：必须用工具列出目录 / 搜索后再写结论。
-5. 改完 01_BLUEPRINTS 根目录后必须在仓库根执行：python scripts/generate_01_blueprints_index.py
+5. 改完 01_BLUEPRINTS 根目录后必须在仓库根执行：python scripts/governance/generate_01_blueprints_index.py
 ```
 
 **一句话版（极简）：**
@@ -43,7 +43,7 @@ applicable_scope: 01_BLUEPRINTS 整理、索引更新及同类文档治理任务
 2. **先查证、后陈述**：描述「某目录下有哪些文件」「是否已干净」前，必须先 `list_dir` / `glob` / `grep` 或终端列目录，再把结果写入回复。  
 3. **禁止幻觉**：不得编造不存在的文件名、路径或脚本名；若未执行命令，不得声称已执行。  
 4. **索引同步**：增删或移动 `01_BLUEPRINTS` 根目录下的 `*.md` 后，在仓库根执行：  
-   `python scripts/generate_01_blueprints_index.py`  
+   `python scripts/governance/generate_01_blueprints_index.py`  
 5. **进度外置**：多步任务以 [任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 勾选为准；会话结束不等于任务完成，以下次打开清单为准。  
 6. **过程稿位置**：带批次日期的报告、分析、清单稿放在 `01_BLUEPRINTS/REPORTS/`，不放根目录。
 

@@ -1,11 +1,14 @@
 {
   "generated_date": "20260410",
-  "generator": "scripts/scan_duplicate_file_content.py",
+  "generator": "scripts/governance/scan_duplicate_file_content.py",
+  "include_untracked": false,
   "extensions": [
     "md"
   ],
-  "max_mb": 15.0,
-  "total_tracked_scanned_candidates": 3181,
+  "max_mb": null,
+  "candidate_count_tracked": 3183,
+  "candidate_count_untracked": 0,
+  "total_candidates_scanned": 3183,
   "duplicate_cluster_count": 5,
   "duplicate_file_path_count": 11,
   "skipped_over_max_mb": [],
@@ -18,6 +21,20 @@
         "docs/06_ARCHIVE/temp_pending/temp_risk_budget.md",
         "docs/06_ARCHIVE/temp_pending/temp_risk_budget_v2.md"
       ],
+      "members": [
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_alerting_blueprint.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_risk_budget.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_risk_budget_v2.md",
+          "git_source": "tracked"
+        }
+      ],
       "count": 3
     },
     {
@@ -25,6 +42,16 @@
       "paths": [
         "docs/06_ARCHIVE/temp_pending/temp_alternative.md",
         "docs/06_ARCHIVE/temp_pending/temp_alternative_data.md"
+      ],
+      "members": [
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_alternative.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_alternative_data.md",
+          "git_source": "tracked"
+        }
       ],
       "count": 2
     },
@@ -34,6 +61,16 @@
         "docs/06_ARCHIVE/temp_pending/temp_blueprint.md",
         "docs/06_ARCHIVE/temp_pending/temp_head_blueprint.md"
       ],
+      "members": [
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_blueprint.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_head_blueprint.md",
+          "git_source": "tracked"
+        }
+      ],
       "count": 2
     },
     {
@@ -42,6 +79,16 @@
         "docs/06_ARCHIVE/temp_pending/temp_gap.md",
         "docs/06_ARCHIVE/temp_pending/temp_gap_analysis.md"
       ],
+      "members": [
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_gap.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_gap_analysis.md",
+          "git_source": "tracked"
+        }
+      ],
       "count": 2
     },
     {
@@ -49,6 +96,16 @@
       "paths": [
         "docs/06_ARCHIVE/temp_pending/temp_open_source.md",
         "docs/06_ARCHIVE/temp_pending/temp_opensource.md"
+      ],
+      "members": [
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_open_source.md",
+          "git_source": "tracked"
+        },
+        {
+          "path": "docs/06_ARCHIVE/temp_pending/temp_opensource.md",
+          "git_source": "tracked"
+        }
       ],
       "count": 2
     }

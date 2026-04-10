@@ -2,13 +2,13 @@
 standard_type: audit_state
 applicable_scope: 架构服务目录（生成物）
 generated_date: '20260410'
-generated_by: scripts/generate_architecture_service_catalog.py
+generated_by: scripts/governance/generate_architecture_service_catalog.py
 ---
 
 # 架构服务目录与 C4 摘要（自动生成）
 
 > **机器真源**：[`ARCHITECTURE_SERVICE_CATALOG_20260410.json`](./ARCHITECTURE_SERVICE_CATALOG_20260410.json)
-> **复跑**：仓库根 `python scripts/generate_architecture_service_catalog.py`
+> **复跑**：仓库根 `python scripts/governance/generate_architecture_service_catalog.py`
 > **叙事与裁决**仍以 [`docs/01_FRAMEWORK/ARCHITECTURE.md`](../../01_FRAMEWORK/ARCHITECTURE.md)、[`docs/System_Manifest.md`](../../System_Manifest.md) 等为真源；本文仅**从代码/元数据推导**的索引视图。
 
 ## 1. 项目元数据（pyproject）
