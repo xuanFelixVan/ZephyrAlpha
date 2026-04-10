@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.2
+version: 1.1.3
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -22,6 +22,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 **例外（已定）**：**施工门禁**与**蓝图卫生总案**正文已迁入 [CANON/](./CANON/README.md)，作为蓝图终稿 / 放行的**唯一受控路径**；全库链接已指向该目录。
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**（可与扫描/合并并行的事）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
+
+**治理工具一键查**：[`GOVERNANCE_TOOLS_INDEX.md`](./GOVERNANCE_TOOLS_INDEX.md)（链检查、rollup、verify、架构目录、**内容重复扫描**等命令与产出表；说明为何不强行把脚本搬到单目录）。
 
 **机构式架构/服务目录（已生成，可检索）**：[`docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（及同主文件名 `.json`）——含 **C4 类 Context/Containers/Components**、从 **FastAPI routes** 抽取的 **HTTP 端点**、`src/` 组件平面表、**根目录相对机构常见缺口**；复跑 `python scripts/generate_architecture_service_catalog.py`。叙事真源仍以 `docs/01_FRAMEWORK/ARCHITECTURE.md`、`System_Manifest` 等为准。
 
@@ -51,6 +53,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | 文档 | 职责摘要 | 可并入同一治理窗口的典型动作 |
 |------|----------|--------------------------------|
 | [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表 |
+| [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 治理脚本**总表**（命令、产出、顺序）；**不**决定废脚本删否 | 新增脚本时同步更新本表 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | L0～L5、与 `09_AUDIT` 边界 | 与「尽治」表述冲突时优先回写架构或本 README |
 | [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手顺序、真源、常见任务 | 增补「rollup / §7」后自检阅读顺序表 |
 | [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md) | 审计/合规入口地图 | 大挪移目录后补外链 |
@@ -70,6 +73,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 文档 | 说明 |
 |------|------|
+| [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | **链检查 / rollup / verify / 架构目录 / 内容重复**等脚本：命令、产出、复跑顺序 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | 专业机构式 **L0～L5 分层**、控制流、与 `09_AUDIT` 边界 |
 | [CANON 目录说明](./CANON/README.md) | 施工门禁 + 蓝图卫生总案（**真源**） |
 | [施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 三阶段、蓝图终稿五条、§3 总清单 |
@@ -124,6 +128,10 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 - **架构服务目录 + C4 摘要**（`src/`、`pyproject`、API routes、根目录机构缺口表）：  
   `python scripts/generate_architecture_service_catalog.py`  
   （输出 `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*`）
+- **内容重复（须指定后缀，默认 `.md`）**：  
+  `python scripts/scan_duplicate_file_content.py --ext md`  
+  （输出 `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`）  
+- **全部治理命令一张表**：[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)
 
 ---
 
@@ -131,6 +139,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.3 | 2026-04-10 | 新增 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；常用脚本增内容重复扫描；文首一键入口 |
 | 1.1.2 | 2026-04-10 | 增 **扫描覆盖诚实口径**小节（互指任务清单 §1.1）；流程第 6 条写明非「全格式语义处理」 |
 | 1.1.1 | 2026-04-10 | 增 **ARCHITECTURE_SERVICE_CATALOG** 说明与常用脚本；根目录 **LICENSE/CONTRIBUTING/SECURITY** 与任务清单 **1.2.2** 对齐 |
 | 1.1.0 | 2026-04-10 | 尽治主清单互指 **§2.4** 模块全景与 **P4** 可选脚本；物理 rollup 与逻辑 `MODULE_PANORAMA_*` 并列说明 |

@@ -1,6 +1,6 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.2.7
+version: 1.2.8
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-10'
@@ -50,6 +50,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | 顺序 | 文件 | 你要搞懂的事 |
 |------|------|----------------|
 | ① | [本文件夹 README](./README.md) | 办公室内有哪些文档、外链到哪 |
+| ①″（工具查询） | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 链检查、rollup、verify、架构目录、**内容重复扫描**等**一条表** |
 | ①′ | [DOCUMENT_GOVERNANCE_ARCHITECTURE.md](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | **机构式分层架构**（L0～L5）、控制流、与 `09_AUDIT` 边界；首读 README 后建议接着读 |
 | ② | [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 图纸柜根目录**允许/禁止**什么文件；过程稿应放哪 |
 | ③ | [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md) | 整理图纸柜时的执行纪律、自检命令；**用户可复制指令**在文首 |
@@ -118,6 +119,8 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 索引脚本:   scripts/generate_01_blueprints_index.py
 目录聚合:   scripts/export_repo_directory_rollup.py  → docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md|.json
 架构目录:   scripts/generate_architecture_service_catalog.py → docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*.md|.json
+内容重复:   scripts/scan_duplicate_file_content.py --ext md → docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*.md|.json
+工具总表:   docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md
 ```
 
 ---
@@ -126,6 +129,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.8 | 2026-04-10 | 阅读顺序增 ①″ [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)；路径速查增内容重复与工具总表 |
 | 1.2.7 | 2026-04-10 | 常见任务「L1」互指任务清单 **§1.1**（扫描边界、非全格式语义） |
 | 1.2.6 | 2026-04-10 | 路径速查增 `generate_architecture_service_catalog`；常见任务互指 **ARCHITECTURE_SERVICE_CATALOG** |
 | 1.2.5 | 2026-04-10 | 常见任务增「模块全景 / §2.4 / MODULE_PANORAMA」与机构对标说明 |

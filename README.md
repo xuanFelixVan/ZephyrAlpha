@@ -59,6 +59,7 @@ python -m src.main
 |------|------|
 | [建设文档总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md) | `06_CONSTRUCTION_DOCS` 档案室大门（须与真实子目录一致） |
 | [项目办公室 README](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/README.md) | 规章、任务清单、交付标准、CANON 门禁导航 |
+| [治理工具总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) | **一条表**查：链检查、rollup、verify、架构目录、内容重复扫描等命令与产出 |
 | [蓝图交付标准（机构精华版）](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | 机构式目标态与 §1.5 全仓库分层 |
 | [全库蓝图终稿任务清单](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
 | [施工门禁](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
@@ -71,6 +72,7 @@ python -m src.main
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与办公室入口 |
 | [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
 | [架构服务目录 + C4 摘要](docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/generate_architecture_service_catalog.py` |
+| [内容重复扫描报告](docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/scan_duplicate_file_content.py --ext md` |
 
 ---
 
