@@ -1,6 +1,6 @@
 ﻿---
 module_id: TRAE_BLUEPRINT_TASK_LEDGER_20260408
-version: 1.7.9
+version: 1.8.0
 status: Active
 created_date: 2026-04-08
 last_updated: '2026-04-10'
@@ -612,6 +612,7 @@ L1 结果（无效链）：0
 | T3-21 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTROL_BLUEPRINT.md` | Trae-06 | [退回] 施工存疑 | 2026-04-10 | - | 报告声称同批但不在 5b726590 变更列表；另：5b726590 在 docs/blueprint-trae-01 历史里，不在 docs/blueprint-trae-06 -> 分支表述与 git 事实不符 |
 | T3-21 | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ROBUST_OPTIMIZATION_BLUEPRINT.md` | Trae-06 | [退回] 施工存疑 | 2026-04-10 | - | 同上；需补提交或 cherry-pick 到正确分支后重报四行 |
 | T3-26 | （8篇白名单蓝图，docs/blueprint-trae-05） | Trae-05 | [待回收] | 2026-04-10 | 0 | 施工侧自检：8篇 §0.1 三段齐全，API_Contract 相对链正确，YAML Active/1.0.0，L1=0；无改动按规范不提交（N/A）；**等待回收队在 docs/blueprint-rec-T3-26 打空提交闭环** |
+| T3-24 | （8篇 M-* 白名单，与 T3-11b 同清单；Trae-01） | Trae-01 + Cursor-REC（FIFO） | ❌ 退回待补正 | 2026-04-10 | - | **统筹核实（驳回「已完成」结论）**：(1) `4e64e0bc` 为 **空提交**（`git show --name-only` 无文件列表），台账 **T3-11** 对应 **`docs/01_FRAMEWORK/`** 框架蓝图收口，**不能**解释为「本批 8 篇 `01_BLUEPRINTS` 由该 commit 引入」。(2) 本机 `git merge-base --is-ancestor 4e64e0bc docs/blueprint-trae-01` 为**否**；`git branch --contains 4e64e0bc` 显示该 commit 在 **`docs/blueprint-rec-T3-11`**，**不**在 `docs/blueprint-trae-01` 祖先链上（若你方已合并两分支请本地重跑并更新回报）。(3) `MONITORING_ALERTING_SYSTEM_BLUEPRINT.md` **仍缺** §0.1 三段及可点击 `API_Contract` 链（篇内无「接口与契约（蓝图终稿）」），与 T3-11b 末行一致。**补正**：最小补本篇 → L1 → `git restore` 两条 `SENTINEL_L1_SCAN_20260408.*` → 带 **真实 hash** 提交；其余 7 篇若已无 diff，可由回收队 `docs/blueprint-rec-T3-24` 与上述修补 commit 一并闭环。Trae 报告中的 tip `27c25fdd` 仅作指针记录，不构成门禁豁免。 |
 | 1.6.1 | 2026-04-10 | 修正 T3-05：从"仅扫描产物/预填"升级为正式验收——8 篇白名单已满足 §0.1，非白名单文件已正确排除 |
 | 1.6.2 | 2026-04-10 | 补录 T3-02 施工白名单4篇口径；T3-12 追加回收待派行（施工 commit=d4aea016 已确认，FIFO 派单中） |
 | 1.7.3 | 2026-04-10 | 登记 T3-11b（Trae-01 M-files 批次，批次号冲突）：8 篇 M-files，施工 commit=4e64e0bc 为回收空提交 -> 施工存疑；MONITORING_ALERTING §0.1 缺失 -> 退回授权回收接管 |
@@ -621,3 +622,4 @@ L1 结果（无效链）：0
 | 1.7.7 | 2026-04-10 | 登记 T3-29（Trae-08）退回：L1 时序不可靠 + 无 commit hash + 报告含占位符，三条否决；等待补正或回收队接管 |
 | 1.7.8 | 2026-04-10 | 登记 T3-21（Trae-06）退回施工存疑：commit=5b726590 仅含1篇(RISK_PARITY)但报告声称3篇；commit 落在 trae-01 而非 trae-06；等待补正 |
 | 1.7.9 | 2026-04-10 | 登记 T3-26（Trae-05）待回收：8篇白名单已合规，施工 N/A，等待回收队空提交闭环 |
+| 1.8.0 | 2026-04-10 | T3-24（Trae-01）退回：4e64e0bc 非 01_BLUEPRINTS 八篇正文提交且非 trae-01 祖先；MONITORING_ALERTING 仍缺 §0.1 |
