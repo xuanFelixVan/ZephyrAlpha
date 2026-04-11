@@ -1,9 +1,9 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.18
+version: 1.1.19
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-16'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 项目办公室（00_MANAGEMENT）总入口与外链索引
@@ -44,8 +44,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 与「蓝图终稿任务」**交叉**：重复 / 同题多稿须在任务清单 **任务 1** 内闭环，方法不在此重复发明。**总清单链接核对**：Owner 默认 **100% 全量**逐条验证（见任务清单任务 1；抽检仅书面豁免）。
 
 1. **蓝图与建设文档收口**：[全库蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md)（分解真源；**机构治理顺序**见该文首节对照表）+ [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md)（合并视角）。
-2. **孤儿与重复 / 重叠**：[孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)；重复簇台账：[CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。蓝图 **D 类 · 低置信**合稿（新路径 + 旧稿 stub、不立刻删）须在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) 追加行（可点击相对链）；规程见 [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§5**。
-3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。蓝图 **D 类**在跑完 `scan_blueprint_d_overlap_candidates.py` 后，可再跑 `triage_blueprint_d_overlap_pairs.py`，用 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 交给更强模型辅助裁决（详见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§3.5**）。
+2. **孤儿与重复 / 重叠**：[孤儿与重复治理 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) + [重复文档处理标准](../../../09_AUDIT/STANDARDS/DUPLICATE_DOCUMENT_HANDLING_STANDARD.md)；重复簇台账：[CANONICAL_POINTERS.md](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md)。蓝图 **D 类**：**置信度 / 高置信可合并** 见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§2.5、§5.1**；**低置信**合稿（新路径 + 旧稿 stub、不立刻删）须在 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) 追加行（可点击相对链）。**方案文件互指索引**：[全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3.4.1**。
+3. **审计区其余入口**：[全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)。蓝图 **D 类**在跑完 `scan_blueprint_d_overlap_candidates.py` 后，可再跑 `triage_blueprint_d_overlap_pairs.py`，用 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) 交给更强模型辅助裁决（详见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§3.5**；与 **§2.5** 同读）。
 4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
 5. **仓库根卫生与误提交**：[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)（垃圾文件名、密钥进库、运行时数据、误放根下的正式稿归位）。
 6. **整仓文件体量、合并与深度尽治（与蓝图并列）**：[全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（**§1.1** 扫描边界、平面清单、**深度 3～6 rollup**、§2.3 并行项、§3 合并、**§7**、**§8**、**P5**）。**说明**：蓝图扩展轨 **W0～W4 勾完 ≠ 文件已尽治**；**全格式逐文件语义处理**不在当前门禁范围内。
@@ -62,7 +62,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [README.md](./README.md)（本文） | 办公室总入口、流程摘要 | §8：改完规章后核对流程编号与下表；**文档地图与放置**与 LAYOUT 互指无断链 |
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 治理脚本**总表**（命令、产出、顺序）；**不**决定废脚本删否 | 新增脚本时同步更新本表 |
 | [文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md) | 删稿/保留决策树与 PR 检查项 | 出重复报表或清脚本时随 PR 引用 |
-| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口；**§3.5** A 档分流 + 二审；**§5 双轨**（高/低置信） | 跑 `scan_blueprint_d_overlap_candidates.py` → 可选 `triage_blueprint_d_overlap_pairs.py`；二审配合 [D 类二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；按 REPO_WIDE **§3.4** 评审 |
+| [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口；**§2.5** 置信度与 **高置信可合并**；**§3.5** A 档分流 + 二审；**§5 双轨**（高/低置信） | 跑 `scan_blueprint_d_overlap_candidates.py` → 可选 `triage_blueprint_d_overlap_pairs.py`；二审配合 [D 类二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；与 [REPO_WIDE **§3.4.1**](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 对表 |
 | [D 类重叠二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | 供 GLM/Claude 等输出**固定 JSON Schema**；含模板自优化 `prompt_template_patch_proposal` | 与 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl` 同批使用；不替代 Owner 签核 |
 | [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | **低置信** D 类合稿台账（新稿 / stub / archive 的 **Markdown 可点击链**） | 每做一例低置信合稿追加一行；高置信 **不**登记 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；**§1.5** Layer 0～11 与 `docs/` 路径分立；**§1.6**「位置是否正确」分桶；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、**§2.3.1**、**§2.3.2**、蓝图任务 **3～5** / **W** 轨同窗 |
@@ -176,6 +176,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.19 | 2026-04-11 | D 类：互指 Playbook **§2.5、§5.1** 与 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 方案索引；办公室表与孤儿/重复流程第 2 条对齐 |
 | 1.1.18 | 2026-04-16 | 文首/流程第 7 条/办公室表互指放置规程 **§1.6**、REPO_WIDE **§2.3.2**、LAYOUT **§1 第 6 条**（「位置是否正确」分桶与入链分立） |
 | 1.1.13 | 2026-04-10 | 互指 `triage_blueprint_d_overlap_pairs.py`、[二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)、Playbook **§3.5**；办公室表增二审模板行；常用脚本与基线复跑约定补 D 档分流 |
 | 1.1.12 | 2026-04-10 | 办公室内文件表「文档地图」行与 LAYOUT **§1 第 5 条** / 放置规程 **§1.5** 对齐 |

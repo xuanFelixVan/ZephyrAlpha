@@ -1,9 +1,9 @@
 ---
 module_id: DOCUMENT_MAP_PLACEMENT_GOVERNANCE_001
-version: 1.3.2
+version: 1.3.3
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-16'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 将「文档地图 + 放置规则」与扫描、任务清单、办公室流程显式对齐（衔接真源，不复制目录学全文）
@@ -62,7 +62,7 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 | **A. 物理树职责** | 这篇稿应落在 **哪棵 `docs/` 前缀** 下？ | [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§2～§4**；`05_IMPLEMENTATION` 细节见 **§3**；图纸柜叠加 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) | **人**对照为主；[`REPO_DIRECTORY_ROLLUP_*`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md) 看**实际**堆在哪 | 错位 → `git mv` 级搬迁 + 本文 **§4** 修链 |
 | **B. 架构 Layer 与路径分立** | 叙事上的 **Layer 0～11** 与 **磁盘路径** 是否被混为一谈？ | 本文 **§1.5**；[`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) | **人** | 改 `front matter` / 正文表述；**禁止**从 `docs/10_*` 路径猜 Layer |
 | **C. 文件名** | 命名是否符合仓库约定？ | [`FILE_NAMING_STANDARD.md`](../../../09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md) | **人** | 重命名 PR；导航名 `INDEX`/`README` 多份并存见 basename 报表说明 |
-| **D. 重复 / 副本** | 是否与其它路径 **同内容** 或 **主题重叠须裁决**？ | [REPO_WIDE §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) | **脚本** + **Owner（D 类）** | C1 合并 / stub；D 类走 Playbook **§5**，低置信合稿登记 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
+| **D. 重复 / 副本** | 是否与其它路径 **同内容** 或 **主题重叠须裁决**？ | [REPO_WIDE §3 / §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；[D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)；[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) | **脚本** + **Owner（D 类）** | C1 合并 / stub；D 类：**§2.5** 置信度与 **§5** 双轨（**高置信可合并**）；低置信合稿登记 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
 | **E. 链接与可达** | 相对链是否断、零入链是否可接受？ | `sentinel_l1_governance_scan.py`；`scan_index_health.py`（本文 **§5.2**） | **脚本**为主 | 修链、补门面；**零入链 ≠ 已证明放对树** |
 | **F. 台账与受控入口** | 登记表、canonical 指针是否仍指向旧路径？ | [受控文档登记表](./CONTROLLED_DOCUMENTS_REGISTER.md)；[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md) 等 | **人** | 与搬迁同一 PR 内更新 |
 
@@ -167,6 +167,7 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.3 | 2026-04-11 | **§1.6** 地图表 **D 行**：互指 [REPO_WIDE §3 / §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)、[D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§2.5 / §5**（高置信可合并 + 低置信待审登记） |
 | 1.3.2 | 2026-04-16 | 新增 **§1.6**（「位置是否正确」分层判准 + 分桶表；与 §2 放置决策、§6 任务联动、接力术语互指）；§2 放置决策显式引用 §1.6 |
 | 1.3.1 | 2026-04-10 | 文首与 **§1.5** 互指 LAYOUT **§1 第 5 条**（禁重复造平行真源） |
 | 1.3.0 | 2026-04-10 | 新增 **§1.5**（Layer 0～11 与 `docs/` 路径分立 + 与 `DOCUMENT_GOVERNANCE_ARCHITECTURE` L0～L5 区分）；§2 地图表增 **技术栈分层**行；§6 联动 REPO_WIDE **§2.3.1** |

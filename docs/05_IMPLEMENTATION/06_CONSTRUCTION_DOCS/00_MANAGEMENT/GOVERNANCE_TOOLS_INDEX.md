@@ -1,9 +1,9 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.2.4
+version: 1.2.5
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-18'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 治理类脚本与门禁工具的统一索引（办公室入口）
@@ -55,8 +55,8 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 4. `generate_architecture_service_catalog.py`  
 5. `scan_duplicate_file_content.py --ext md`（按需加 `yaml` 等；需要看工作区未跟踪重复时加 `--include-untracked`）  
 6. `scan_basename_collisions.py`（C2 同名不同路径报表；与 C1 独立）  
-7. `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选 + 机器建议；见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§5**；**低置信**合稿须登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)）  
-7′. `triage_blueprint_d_overlap_pairs.py`（可选：A 档分流 + `SECOND_PASS_QUEUE_*.jsonl`；二审见 [D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)）  
+7. `scan_blueprint_d_overlap_candidates.py`（D 类蓝图重叠候选 + 机器建议；见 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) **§2.5** 置信度、**§5** 双轨与 **高置信可合并**；**低置信**合稿须登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)；方案索引见 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)）
+7′. `triage_blueprint_d_overlap_pairs.py`（可选：A 档分流 + `SECOND_PASS_QUEUE_*.jsonl`；二审见 [D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；与上条同批）
 8. `scan_index_health.py`（大改导航或想查 **零入链** 候选时；见 [放置规程 §5.2](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）  
 8′. （可选）`sample_docs_nav_coverage.py` — 主导航正文覆盖率抽样；产出样例见 [REPO_WIDE §6](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 推荐阅读表  
 
@@ -82,6 +82,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.5 | 2026-04-11 | §2 第 7/7′ 步：D 类互指 Playbook **§2.5**、**§5** 与 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
 | 1.2.4 | 2026-04-18 | `scan_index_health`：archive 子 `--prefix` 时取消对该 archive 根默认排除；工具表行补说明 |
 | 1.2.3 | 2026-04-16 | 文首与 §2 第 0 步互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2**（位置正确性分桶） |
 | 1.2.2 | 2026-04-11 | `export_repo_directory_rollup` 表注记 `quotePath=false`；与 REPO_WIDE §1 / `GIT_TRACKED_PATH_ANOMALIES` 互指 |
