@@ -3,7 +3,7 @@ module_id: 09_ARCHIVE_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-09
-last_updated: 2026-04-09
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
   - 归档文档目录索引
@@ -18,8 +18,8 @@ responsibility:
 
 ## 📚 子目录
 
-- [duplicates](duplicates/) - 重复文档归档
-  - [INDEX](duplicates/INDEX.md) - 重复文档索引
+- [duplicates 重复文档池索引](./duplicates/INDEX.md)（门面；canonical 见池内 `CANONICAL_POINTERS`）
+  - [duplicates 目录](duplicates/) - 重复文档归档目录
   - [CANONICAL_POINTERS](duplicates/CANONICAL_POINTERS.md) - 规范指针
 - [TECHNICAL_SPECIFICATIONS](TECHNICAL_SPECIFICATIONS/) - 技术规格归档
   - [INDEX](TECHNICAL_SPECIFICATIONS/INDEX.md) - 技术规格索引
