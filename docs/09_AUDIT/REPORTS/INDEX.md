@@ -28,7 +28,9 @@ compliance_level: 专业标准
 ### 导航与上级入口
 
 - **本目录门面（短说明）**：[./README.md](./README.md)  
-- **索引健全性（零入链 · 机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260412.md](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)  
+- **索引健全性（零入链 · 本前缀 REPORTS）**：[../STATE/INDEX_HEALTH_ORPHAN_20260412.md](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS`）  
+- **STATE 前缀健全性（另一份机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260413.md](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（`docs/09_AUDIT/STATE`；日期 **20260413**，勿与上条 `20260412` 混读）  
+- **STATE 子域索引**：[../STATE/INDEX.md](../STATE/INDEX.md)  
 - **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)  
 - **审计域总索引**：[../INDEX.md](../INDEX.md)  
 - **文档总入口**：[../../INDEX.md](../../INDEX.md)
