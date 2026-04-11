@@ -44,7 +44,7 @@ compliance_level: 专业标准---
 - **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
 - **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 20260412）**：[./INDEX_HEALTH_ORPHAN_20260412.md](./INDEX_HEALTH_ORPHAN_20260412.md)（`docs/09_AUDIT/REPORTS`；勿与下条 **STATE · 20260413** 混读）  
 - **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)  
-- **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)  
+- **整仓按目录尽治（REPO_WIDE §7）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)  
 - **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
 - **L1 治理快照（20260408 · 主快照）**：[./SENTINEL_L1_SCAN_20260408.md](./SENTINEL_L1_SCAN_20260408.md)
 
@@ -98,7 +98,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · REPORTS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` | [`INDEX_HEALTH_ORPHAN_20260412.md`](./INDEX_HEALTH_ORPHAN_20260412.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260412.json) |
 | 索引健全性（零入链 · 04_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS` | **最新（20260411）** [`INDEX_HEALTH_ORPHAN_20260411.md`](./INDEX_HEALTH_ORPHAN_20260411.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260411.json)；历史 [`20260414.md`](./INDEX_HEALTH_ORPHAN_20260414.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260414.json) |
 | 索引健全性（零入链 · STATE 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STATE` | [`INDEX_HEALTH_ORPHAN_20260413.md`](./INDEX_HEALTH_ORPHAN_20260413.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260413.json) |
-| 多会话接力（Cursor 排队） | 当前指针 + §7 深度 3 前缀表 | [AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) |
+| 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
 
@@ -138,7 +138,8 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
-| v1.0.4 | 2026-04-11 | 整仓产出表增办公室 `AUTONOMOUS_GOVERNANCE_RUN_QUEUE` 互指 | 文档治理系统 |
+| v1.0.5 | 2026-04-12 | 移除对已废止运行队列的互指；尽治入口改 **REPO_WIDE §7** | 文档治理系统 |
+| v1.0.4 | 2026-04-11 | 整仓产出表曾互指运行队列（已废止，见 v1.0.5） | 文档治理系统 |
 | v1.0.3 | 2026-04-11 | 整仓产出表增 rollup 20260411、平面清单 20260411；Git 行改为 quotePath 澄清口径 | 文档治理系统 |
 | v1.0.2 | 2026-04-11 | 增整仓治理产出表（导航抽样、W2 抽查、Git 异常路径）；内层 `module_id` 版本对齐 | 文档治理系统 |
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |

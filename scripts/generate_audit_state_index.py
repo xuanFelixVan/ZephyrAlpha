@@ -58,7 +58,7 @@ def main() -> None:
         "",
         "- [04_OPERATIONS 索引](../INDEX.md)",
         "- [04_OPERATIONS 门面（README）](../README.md)",
-        "- [自主治理运行队列](../../06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)",
+        "- [全仓库文件治理任务清单 §7](../../06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)",
         "- [治理工具总索引](../../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)",
         "- [09_AUDIT 域索引](../../../09_AUDIT/INDEX.md)",
         "- [STATE 子域索引](../../../09_AUDIT/STATE/INDEX.md)",

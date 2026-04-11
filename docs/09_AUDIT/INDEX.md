@@ -9,7 +9,7 @@ responsibility:
   - 09_AUDIT目录索引
 ---
 
----
+﻿---
 module_id: 09_AUDIT_INDEX_AUDIT_001
 version: 1.0.1
 status: Active
@@ -129,7 +129,7 @@ implementation_status: 活跃维护
 
 ### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
 
-> 与 `09_AUDIT` 并列：**本域**偏标准/模板/Playbook；**04_OPERATIONS** 存放实施侧运营说明与 `audit_state` 大批量审计/整改稿。治理接力见 [自主接力运行队列](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)。
+> 与 `09_AUDIT` 并列：**本域**偏标准/模板/Playbook；**04_OPERATIONS** 存放实施侧运营说明与 `audit_state` 大批量审计/整改稿。整仓按目录尽治见 [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)。
 
 | 入口 | 说明 |
 |------|------|

@@ -8,14 +8,13 @@ alwaysApply: true
 ## 语言与范围
 
 - 用户对话默认 **中文**；**文件名、脚本名、命令、Git 路径**保留 **英文**。
-- **不扩大范围**：只处理当前用户任务或 [运行队列](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) 中「下一步」；禁止顺带大重构。
+- **不扩大范围**：只处理当前用户任务或 [REPO_WIDE](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 中用户点名的 **P5 / §7** 批次；禁止顺带大重构。
 
 ## 权威顺序（必读真源）
 
-1. [AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) — **当前指针** + 队列顺序  
-2. [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) — 未勾选项 = backlog  
-3. [GOVERNANCE_TOOLS_INDEX.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) — 脚本与产出  
-4. 蓝图 **D 类**合稿/删并：**须 Owner 裁决**；AI 只做报表、台账、断链修复，**不擅自合并正文**（见 [D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)）。
+1. [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) — 未勾选项 = backlog（重点 **§3.6**、**P5 / §7**）  
+2. [GOVERNANCE_TOOLS_INDEX.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) — 脚本与产出  
+3. 蓝图 **D 类**合稿/删并：**须 Owner 裁决**；AI 只做报表、台账、断链修复，**不擅自合并正文**（见 [D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)）。
 
 ## 每轮必做（Git + 门禁）
 
@@ -27,9 +26,8 @@ alwaysApply: true
 
 ## 接力
 
-- 每轮结束前：更新运行队列中 **「当前指针」**表（last_commit、next_queue_id、notes）。  
-- **勿假设**下一轮读过本轮上下文。
+- 跨会话进度靠 **REPO_WIDE 勾选**与 **commit/PR 说明**（本批处理了哪个前缀、是否已跑 L1）；勿假设下一轮读过本轮上下文。
 
 ## 防死循环（同一任务连续失败 3 次）
 
-- 针对**同一目标**（如 L1 判无效归零、或一次 merge/rebase 冲突）若已连续失败 **3** 次，**停止**继续自动修；在 `AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md` 按文内规则标 **`[STUCK]`**，**跳到下一队列项**，并在回复中说明原因与留给 Owner 的摘要。
+- 针对**同一目标**（如 L1 判无效归零、或一次 merge/rebase 冲突）若已连续失败 **3** 次，**停止**继续自动修；在回复中标 **`[STUCK]`** 并说明原因与留给 Owner 的摘要；可改做 **§7** 下一前缀或登记例外。
