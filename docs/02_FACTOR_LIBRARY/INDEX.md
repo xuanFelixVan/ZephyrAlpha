@@ -1,6 +1,6 @@
 ---
 module_id: 02_FACTOR_LIBRARY_INDEX_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -10,6 +10,25 @@ responsibility:
   - 模块索引
   - 职责协调
 ---
+
+## 上级与接力
+
+- [docs 根索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+
+### 门面入链（P5 §7）
+
+- [因子库 README](./README.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（本批）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260513.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260513.md)（`scan_index_health.py --prefix docs/02_FACTOR_LIBRARY --date 20260513`；首轮 **`README.md`** 零入链，已由上链补入后复跑 **zero_inbound=0**）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/02_FACTOR_LIBRARY` **144** 条路径；候选 md **142**，差值含非 `.md` 等口径差属正常）
+
+---
+
 # 02 Factor Library 索引
 
 ## 📋 概述
@@ -18,6 +37,7 @@ responsibility:
 
 ## 📂 文档列表
 
+- [README](./README.md)
 - [SITEMAP](SITEMAP.md)
 - [04_DATA_SOURCE 数据源索引](./04_DATA_SOURCE/INDEX.md)
 
@@ -48,6 +68,7 @@ responsibility:
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.2 | 2026-04-11 | P5 §7：`INDEX_HEALTH_20260513` 首轮 `README` 零入链；增上级接力 + README 门面链；产出与 rollup 互指 | 文档管理团队 |
 | v1.0.1 | 2026-04-11 | 文档列表增 `04_DATA_SOURCE/INDEX.md` 显式入口（P5 §7 门面互指对齐） | 文档管理团队 |
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
 

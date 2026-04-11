@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.59
+version: 1.4.60
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -368,6 +368,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-05-10 · 前缀 `docs/10_AI_WORKFLOW`（门面批次）**：复跑 `scan_index_health.py --prefix docs/10_AI_WORKFLOW --date 20260510` → [`INDEX_HEALTH_ORPHAN_20260510.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260510.md)（**zero_inbound=0**；候选 md **68**；首轮即零入链）；[`10_AI_WORKFLOW/INDEX.md`](../../../10_AI_WORKFLOW/INDEX.md) 增上级接力 + P5 门面；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/10_AI_WORKFLOW` **68** 条）。
 - **2026-05-11 · 前缀 `docs/03_TRADING_TACTICS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/03_TRADING_TACTICS --date 20260511` → [`INDEX_HEALTH_ORPHAN_20260511.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260511.md)（**zero_inbound=0**；候选 md **56**；首轮 **8** 处子域 `INDEX`/`README` 零入链，已由 [`03_TRADING_TACTICS/INDEX.md`](../../../03_TRADING_TACTICS/INDEX.md) 子域总索引表补链后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/03_TRADING_TACTICS` **56** 条）。
 - **2026-05-12 · 前缀 `docs/01_FRAMEWORK`（门面批次）**：复跑 `scan_index_health.py --prefix docs/01_FRAMEWORK --date 20260512` → [`INDEX_HEALTH_ORPHAN_20260512.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260512.md)（**zero_inbound=0**；候选 md **336**；首轮 **3** 处子域门面零入链，已由 [`01_FRAMEWORK/INDEX.md`](../../../01_FRAMEWORK/INDEX.md) 子域门面链补后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/01_FRAMEWORK` **336** 条）。
+- **2026-05-13 · 前缀 `docs/02_FACTOR_LIBRARY`（门面批次）**：复跑 `scan_index_health.py --prefix docs/02_FACTOR_LIBRARY --date 20260513` → [`INDEX_HEALTH_ORPHAN_20260513.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260513.md)（**zero_inbound=0**；候选 md **142**；首轮 **`README.md`** 零入链，已由 [`02_FACTOR_LIBRARY/INDEX.md`](../../../02_FACTOR_LIBRARY/INDEX.md) 门面链与文档列表补链后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/02_FACTOR_LIBRARY` **144** 条）。
 
 ---
 
@@ -375,6 +376,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.60 | 2026-04-11 | **P5 §7 子批**：`docs/02_FACTOR_LIBRARY` — `INDEX_HEALTH_20260513`（README 零入链 → 0）；`02_FACTOR_LIBRARY/INDEX` P5 + 文档列表 |
 | 1.4.59 | 2026-04-11 | **P5 §7 子批**：`docs/01_FRAMEWORK` — `INDEX_HEALTH_20260512`（首轮 3 → 零入链 0）；`01_FRAMEWORK/INDEX` 子域门面 + P5 |
 | 1.4.58 | 2026-04-11 | **P5 §7 子批**：`docs/03_TRADING_TACTICS` — `INDEX_HEALTH_20260511`（首轮 8 → 零入链 0）；`03_TRADING_TACTICS/INDEX` 子域表 + P5 |
 | 1.4.57 | 2026-04-11 | **P5 §7 子批**：`docs/10_AI_WORKFLOW` — `INDEX_HEALTH_20260510`（零入链 0）；`10_AI_WORKFLOW/INDEX` P5 门面 + `STATE/INDEX` 产出表 |
