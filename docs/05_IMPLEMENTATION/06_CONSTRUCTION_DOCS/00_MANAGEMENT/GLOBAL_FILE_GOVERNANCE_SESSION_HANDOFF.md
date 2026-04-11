@@ -1,9 +1,9 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.12
+version: 1.0.13
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-12'
+last_updated: '2026-04-11'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 供「新开 AI 对话」启动整仓文件治理时一次性粘贴的指令真源；与 REPO_WIDE、工具总表、放置规程对齐
@@ -101,8 +101,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 1. 打开 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_YYYYMMDD.md` 的 **深度 5、6**（及 3、4）表，结合 `.json` 全量前缀。  
 2. 按 REPO_WIDE **§7.1** 拆分超大前缀（如 `docs/09_AUDIT/STATE`）为子队列。  
-3. 为每一前缀建立「本批 PR 描述」模板：目标、是否动 archive、是否只做导航不写语义。  
-4. **多会话 / 排队执行**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **P5 / §7** 与 `REPO_DIRECTORY_ROLLUP_*` 为序；每批在 PR/commit 说明写清「前缀 + §7.2 退出项」，避免每轮对话从零推断队列。
+3. 为每一前缀建立「本批 PR 描述」模板：目标、是否动 archive、是否只做导航不写语义。
 
 **阶段 D — 逐前缀执行（每批建议可控规模，如 20～80 个文件或单个子树）**
 
@@ -130,7 +129,8 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| 1.0.12 | 2026-04-12 | 阶段 C 第 4 步：废止运行队列单文件，改互指 REPO_WIDE **P5 / §7** + rollup + PR 批次说明 |
+| 1.0.13 | 2026-04-11 | 阶段 C 恢复三步（撤除第 4 步「多会话 / 排队执行」表述）；与撤回根 `AGENTS.md`、`.cursor/rules` 接力附件对齐 |
+| 1.0.12 | 2026-04-12 | 阶段 C 曾增第 4 步（接力/运行队列废止后的 PR 批次说明；见 1.0.13 收敛） |
 | 1.0.11 | 2026-04-11 | 阶段 C 曾互指运行队列（已废止，见 1.0.12） |
 | 1.0.10 | 2026-04-10 | 阶段 B 增 `triage_blueprint_d_overlap_pairs.py`；§1.1 D 类行与阶段 A 互指 TRIAGE / SECOND_PASS_QUEUE / [二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
 | 1.0.9 | 2026-04-10 | §1.1 增首道 `module_id` 行（L1 报告无 id/重复双 0 + `backfill_missing_module_id.py`）；阶段 B 增 backfill→复跑 L1 说明 |

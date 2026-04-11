@@ -1,9 +1,9 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.16
+version: 1.1.17
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-12'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 项目办公室（00_MANAGEMENT）总入口与外链索引
@@ -25,7 +25,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**、**§2.3.1**（Layer 与路径防混）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/governance/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
 
-**整仓按目录尽治（§7）**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7** 与最新 `REPO_DIRECTORY_ROLLUP_*` 拆前缀批次；跨会话靠 **REPO_WIDE 勾选 + commit/PR 批次说明** 接力（根目录 [`AGENTS.md`](../../../../AGENTS.md) 与 `.cursor/rules` 已对齐此口径）。
+**整仓按目录尽治（§7）**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7** 与最新 `REPO_DIRECTORY_ROLLUP_*` 拆前缀批次；跨会话靠 **REPO_WIDE 勾选 + commit/PR 批次说明** 记录进度即可。
 
 **STATE / L1 / 审计域 / 建设文档区（显式入口）**：[STATE 子域索引](../../../09_AUDIT/STATE/INDEX.md) ｜ [L1 治理快照（20260408）](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md) ｜ [09_AUDIT 域总索引](../../../09_AUDIT/INDEX.md) ｜ [建设文档区门面（06/README）](../README.md)
 

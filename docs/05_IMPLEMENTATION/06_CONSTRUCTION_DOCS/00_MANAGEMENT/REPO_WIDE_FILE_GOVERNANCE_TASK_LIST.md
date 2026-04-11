@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.28
+version: 1.4.29
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-12'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -335,7 +335,8 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| 1.4.28 | 2026-04-12 | 废止独立「运行队列」文件；§7.1 第 0 步改为 rollup + **P5** 接力口径；与根 `AGENTS.md`、`.cursor/rules`、办公室 README 对齐 |
+| 1.4.29 | 2026-04-11 | 移除根目录 `AGENTS.md`、`.cursor/rules/zephyr-governance-agent.mdc` 等「长程接力」附件；§7.1 去掉第 0 步；办公室 README / GLOBAL 阶段 C 恢复三步口径 |
+| 1.4.28 | 2026-04-12 | 废止独立「运行队列」文件；§7.1 曾增第 0 步（接力口径，见 1.4.29 撤回附件后收敛） |
 | 1.4.27 | 2026-04-11 | §7.1 曾互指运行队列（已废止，见 1.4.28） |
 | 1.4.26 | 2026-04-11 | 治理脚本统一 `quotePath=false` + UTF-8；刷新 `REPO_DIRECTORY_ROLLUP_20260411`、`REPO_GIT_TRACKED_FILES_20260411`；§1/§6/§7/§8 与 `GIT_TRACKED_PATH_ANOMALIES` 改写为「显示转义 ≠ 索引损坏」 |
 | 1.4.25 | 2026-04-11 | §1 澄清「8+8」为同一批 8 条 Git 异常路径；§6 链 `GIT_TRACKED_PATH_ANOMALIES_20260411`；与 STATE 索引整仓产出表互指 |
@@ -421,8 +422,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 ### 7.1 怎么从「最深」起排
 
-0. **多会话接力**：以最新 [`REPO_DIRECTORY_ROLLUP_*.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) / **JSON** 为桶清单，按 **深度 3 Top 前缀**自顶向下选批（与 **P5** 同一真源）；每批在 PR/commit 说明写清「前缀 + §7.2 退出项」便于下一会话接续。  
-1. 打开 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。  
+1. 打开 [`REPO_DIRECTORY_ROLLUP_20260411.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 中 **深度 5、6** 表，找出仍很大的子树；再回退到深度 3～4 看其父链是否整枝可一起收口。
 2. 对 **`docs/09_AUDIT/REPORTS`、`docs/09_AUDIT/STATE`** 等超高计数前缀：在批次内再按**子文件夹**细分为子队列（rollup 深度加一或手工列目录）。  
 3. **`docs/06_ARCHIVE/**`**：默认 **只读治理**（摆放、索引、与活动区重复标注），删并须符合 **§3.1 归档区策略**。  
 4. **`scripts/`、`src/`、`notebooks/`**：以「入口可读 + 重复脚本/模块报表」为主，不单套用文档 C1 流程；**`src/` 或 API 变更**后复跑 `generate_architecture_service_catalog.py` 刷新服务目录。
