@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.29
+version: 1.0.30
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.29
+> **版本**: v1.0.30
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -119,6 +119,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 04_EXECUTION 前缀） | `scan_index_health.py --prefix docs/04_EXECUTION` | **最新（20260505）** [`INDEX_HEALTH_ORPHAN_20260505.md`](./INDEX_HEALTH_ORPHAN_20260505.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260505.json) |
 | 索引健全性（零入链 · 10_GOVERNANCE_COMPLIANCE 前缀） | `scan_index_health.py --prefix docs/10_GOVERNANCE_COMPLIANCE` | **最新（20260506）** [`INDEX_HEALTH_ORPHAN_20260506.md`](./INDEX_HEALTH_ORPHAN_20260506.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260506.json) |
 | 索引健全性（零入链 · 08_HUMAN_AI_INTERFACE 前缀） | `scan_index_health.py --prefix docs/08_HUMAN_AI_INTERFACE` | **最新（20260507）** [`INDEX_HEALTH_ORPHAN_20260507.md`](./INDEX_HEALTH_ORPHAN_20260507.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260507.json) |
+| 索引健全性（零入链 · 11_STRATEGIC_DECISION 前缀） | `scan_index_health.py --prefix docs/11_STRATEGIC_DECISION` | **最新（20260508）** [`INDEX_HEALTH_ORPHAN_20260508.md`](./INDEX_HEALTH_ORPHAN_20260508.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260508.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -159,6 +160,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.30 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260508`（`docs/11_STRATEGIC_DECISION`；**zero_inbound=0**；候选 md **51**）；`11_STRATEGIC_DECISION/INDEX` 修 YAML 闭合、增子域索引表 + P5；产出表增本行 | 文档治理系统 |
 | v1.0.29 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260507`（`docs/08_HUMAN_AI_INTERFACE`；**zero_inbound=0**；候选 md **107**）；`08_HUMAN_AI_INTERFACE/index` 增子域门面表 + P5；`docs/INDEX` Layer 8 链改为 `index.md`；产出表增本行 | 文档治理系统 |
 | v1.0.28 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260506`（`docs/10_GOVERNANCE_COMPLIANCE`；**zero_inbound=0**；候选 md **21**）；`10_GOVERNANCE_COMPLIANCE/INDEX` 子域门面表 + P5 门面；产出表增本行 | 文档治理系统 |
 | v1.0.27 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260505`（`docs/04_EXECUTION`；**zero_inbound=0**；候选 md **30**）；`docs/INDEX` Layer 5 行补链 `README`；`04_EXECUTION/INDEX` 增子域门面表 + P5 小节；产出表增本行 | 文档治理系统 |

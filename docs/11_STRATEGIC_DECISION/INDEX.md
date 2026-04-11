@@ -11,7 +11,10 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 responsibility:
-- 目录导航与文档索引管理与优化维护
+  - 目录导航与文档索引管理与优化维护
+---
+
+
 # Layer 11: 战略决策层目录索引
 
 > **版本**: v2.0
@@ -87,6 +90,32 @@ responsibility:
 |---------|------|--------|------|
 | 战略决策层蓝图 | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 | [职责边界矩阵](./RESPONSIBILITY_BOUNDARY_MATRIX.md) | 模块职责边界定义 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
+
+---
+
+## 上级与接力
+
+- [docs 根索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260508.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260508.md)（`scan_index_health.py --prefix docs/11_STRATEGIC_DECISION --date 20260508`；**zero_inbound=0**；候选 md **51**；首轮 **5** 处子域 `INDEX.md` 零入链，已由本页下表补链后复跑归零）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/11_STRATEGIC_DECISION` **51** 条路径）
+
+### 子域索引（INDEX 入链）
+
+| 子域 | 索引 |
+|------|------|
+| 01_asset_allocation | [INDEX.md](./01_asset_allocation/INDEX.md) |
+| 02_risk_budgeting | [INDEX.md](./02_risk_budgeting/INDEX.md) |
+| 03_strategy_selection | [INDEX.md](./03_strategy_selection/INDEX.md) |
+| 04_strategic_adjustment | [INDEX.md](./04_strategic_adjustment/INDEX.md) |
+| archive | [INDEX.md](./archive/INDEX.md) |
+
+---
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
