@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_REPORTS_INDEX_REPORTS_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-14'
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
 - 目录导航与文档索引管理与优化维护
@@ -17,7 +17,7 @@ compliance_level: 专业标准
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-07
 > **核心定位**: 报告文档管理
 > **索引**: `INDEX_REPORTS_001`
@@ -32,6 +32,8 @@ compliance_level: 专业标准
 - **STATE 前缀健全性（另一份机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260413.md](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（`docs/09_AUDIT/STATE`；日期 **20260413**，勿与上条 `20260412` 混读）  
 - **STATE 子域索引**：[../STATE/INDEX.md](../STATE/INDEX.md)  
 - **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)  
+- **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- **L1 治理快照（20260408）**：[../STATE/SENTINEL_L1_SCAN_20260408.md](../STATE/SENTINEL_L1_SCAN_20260408.md)  
 - **审计域总索引**：[../INDEX.md](../INDEX.md)  
 - **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
