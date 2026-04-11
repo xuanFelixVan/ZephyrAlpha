@@ -1,9 +1,9 @@
-﻿---
+---
 module_id: HANDOFF_ORPHAN_GOVERNANCE_20260408
-version: 2.0.0
+version: 2.0.1
 status: Active
 created_date: 2026-04-08
-last_updated: '2026-04-08'
+last_updated: '2026-04-11'
 owner: 文档治理系统
 standard_type: 工作交接（整册方案）
 applicable_scope: Trae（GLM-5.1）等连续长时执行 + Cursor 接力；蓝图阶段清洁至「可进入第 2 阶段（施工文档）」
@@ -98,6 +98,16 @@ responsibility:
 | 施工门禁（先治理、后大规模编码） | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md` |
 | Trae 蓝图任务台账 | `docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` |
 | 夜间批跑（可选） | `scripts/overnight_audit_runner.py` |
+
+### 2.0 治理接力快链（可点击）
+
+- [STATE 子域索引](./INDEX.md)
+- [09_AUDIT 域总索引](../INDEX.md)
+- [自主治理运行队列](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
+- [治理工具总索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [L1 治理快照（20260408）](./SENTINEL_L1_SCAN_20260408.md)
+- [REPORTS 区门面](../REPORTS/README.md)
+- [文档总入口](../../INDEX.md)
 
 ### 2.1 关于「是否已收录全部相关文档」
 
