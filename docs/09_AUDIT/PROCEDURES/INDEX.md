@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_PROCEDURES_INDEX
-version: 1.2.0
+version: 1.2.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-08'
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 standard_type: 索引文档
 applicable_scope: docs/09_AUDIT/PROCEDURES
@@ -13,6 +13,21 @@ responsibility:
   - PROCEDURES 目录导航与程序性文档索引
 ---
 
+## 上级与接力
+
+- [09_AUDIT 总索引](../INDEX.md)
+- [docs 根索引](../../INDEX.md)
+- [全仓库文件治理任务清单 §7](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260517.md](../STATE/INDEX_HEALTH_ORPHAN_20260517.md)（`scan_index_health.py --prefix docs/09_AUDIT/PROCEDURES --date 20260517`；**zero_inbound=0**；候选 md **10**；首轮即零入链，本页增 P5 互指与台账登记）
+- **rollup（深度 3）**：[../STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/09_AUDIT/PROCEDURES` **10** 条路径）
+
+---
+
 # Procedures索引
 > **核心职责**: 目录导航和文档索引
 > **职责边界**: 
@@ -20,7 +35,7 @@ responsibility:
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.2.0
+> **版本**: v1.2.1
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `09_AUDIT_PROCEDURES_INDEX`
