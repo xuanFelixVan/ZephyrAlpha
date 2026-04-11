@@ -40,6 +40,7 @@ implementation_status: 已完?
 | 20260404_audit_reports_archive/ | 审计报告归档（audit_state + review_reports?| 2026-04-04 |
 | [20260408_double_yaml_dryrun_sample](20260408_double_yaml_dryrun_sample/README.md) | 双 YAML dry-run 历史样本（50×`.diff` + 本说明） | 2026-04-08 |
 | [20260407_old_layer_audit_reports](./20260407_old_layer_audit_reports/INDEX.md) | 旧架构 Layer 审计报告归档（子目录 INDEX + 报告正文） | 2026-04-07 |
+| [20260407_p1_cleanup_archive](./20260407_p1_cleanup_archive/INDEX.md) | P1 清理批次归档（历史快照 + 全量挂载） | 2026-04-07 |
 | duplicate_documents/ | 重复文档归档 | 2026-04-03 |
 | integrated_documents/ | 整合文档归档 | 2026-04-03 |
 | architecture_v4/ | v4架构归档（Layer 0-11技术流水线?| 2026-04-03 |
