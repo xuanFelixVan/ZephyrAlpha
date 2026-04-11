@@ -38,6 +38,7 @@ implementation_status: 已完?
 | 目录 | 说明 | 归档日期 |
 |------|------|---------|
 | 20260404_audit_reports_archive/ | 审计报告归档（audit_state + review_reports?| 2026-04-04 |
+| [20260408_double_yaml_dryrun_sample](20260408_double_yaml_dryrun_sample/README.md) | 双 YAML dry-run 历史样本（50×`.diff` + 本说明） | 2026-04-08 |
 | duplicate_documents/ | 重复文档归档 | 2026-04-03 |
 | integrated_documents/ | 整合文档归档 | 2026-04-03 |
 | architecture_v4/ | v4架构归档（Layer 0-11技术流水线?| 2026-04-03 |
@@ -99,4 +100,4 @@ implementation_status: 已完?
 - **架构迁移计划**: `../01_FRAMEWORK/ARCHITECTURE_MIGRATION_PLAN.md`
 ---
 
-*最后更? 2026-04-03*
+*最后更新: 2026-04-11*

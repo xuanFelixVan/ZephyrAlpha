@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.39
+version: 1.4.40
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -348,6 +348,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-04-20 · 前缀 `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/02_FACTOR_LIBRARY/04_DATA_SOURCE --date 20260420` → [`INDEX_HEALTH_ORPHAN_20260420.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260420.md)（**zero_inbound=0**；候选 md **81**）；[`04_DATA_SOURCE/INDEX.md`](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md) 增机器产出小节；[`02_FACTOR_LIBRARY/INDEX.md`](../../../02_FACTOR_LIBRARY/INDEX.md) 显式链至 `./04_DATA_SOURCE/INDEX.md`；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **83** 条；与候选 md 数差含非 `.md` 等属正常口径差）。
 - **2026-04-21 · 前缀 `docs/05_IMPLEMENTATION/07_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/07_OPERATIONS --date 20260421` → [`INDEX_HEALTH_ORPHAN_20260421.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260421.md)（**zero_inbound=0**；候选 md **62**；首轮 **10** 处子域 `README`/`INDEX` 零入链，已由 [`07_OPERATIONS/INDEX.md`](../../07_OPERATIONS/INDEX.md) 子目录表补链后归零）；[`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 增「运维手册总索引」并子目录表链至 `./07_OPERATIONS/INDEX.md`；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **62** 条）。
 - **2026-04-22 · 前缀 `docs/09_ARCHIVE/duplicates`（归档重复池 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/09_ARCHIVE/duplicates --date 20260422` → [`INDEX_HEALTH_ORPHAN_20260422.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260422.md)（**zero_inbound=0**；候选 md **54**；首轮 **45** 处零入链，已由 [`duplicates/INDEX.md`](../../../09_ARCHIVE/duplicates/INDEX.md) 增「全量挂载」清单后归零；**不**做删并）；[`09_ARCHIVE/INDEX.md`](../../../09_ARCHIVE/INDEX.md) 门面首链对齐 `./duplicates/INDEX.md`；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **54** 条）。
+- **2026-04-23 · 前缀 `docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample`（归档 · dry-run 样本）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample --date 20260423` → [`INDEX_HEALTH_ORPHAN_20260423.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260423.md)（**zero_inbound=0**；候选 md **1**；其余 **50** 个为 `.diff` 不在 md 入链口径）；[`README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md) 增 P5 门面；[`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 目录表增本样本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **51** 条）。
 
 ---
 
@@ -355,6 +356,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.40 | 2026-04-11 | **P5 §7 子批**：`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample` — `INDEX_HEALTH_20260423`（零入链 0）；dry-run `README` P5 门面 + `06_ARCHIVE/INDEX` 表增行 |
 | 1.4.39 | 2026-04-11 | **P5 §7 子批**：`docs/09_ARCHIVE/duplicates` — `INDEX_HEALTH_20260422`（零入链 0）；`duplicates/INDEX` 全量挂载 + `09_ARCHIVE/INDEX` 门面 |
 | 1.4.38 | 2026-04-11 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/07_OPERATIONS` — `INDEX_HEALTH_20260421`（零入链 0）；`07_OPERATIONS/INDEX` 补子域入口 + `05_IMPLEMENTATION/INDEX` 链至运维总索引 |
 | 1.4.37 | 2026-04-11 | **P5 §7 子批**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` — `INDEX_HEALTH_20260420`（零入链 0）；数据源 `INDEX` 门面 + `02_FACTOR_LIBRARY/INDEX` 显式入口 |
