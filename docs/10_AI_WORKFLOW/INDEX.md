@@ -1,9 +1,9 @@
 ---
 module_id: 10_AI_WORKFLOW_INDEX_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 实施团队
 responsibility:
   - AI工作流与舆情分析综合层索引文件创建、更新与一致性维护
@@ -13,6 +13,20 @@ applicable_scope: Layer 7 AI报告层 + Layer 3 舆情分析层
 compliance_level: 专业标准
 ---
 
+## 上级与接力
+
+- [docs 根索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260510.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260510.md)（`scan_index_health.py --prefix docs/10_AI_WORKFLOW --date 20260510`；**zero_inbound=0**；候选 md **68**；首轮即零入链，本页增 P5 互指与台账登记）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/10_AI_WORKFLOW` **68** 条路径）
+
+---
+
 # AI工作流与舆情分析综合层索引
 
 > **核心职责**: 目录导航和文档索引
@@ -20,9 +34,9 @@ compliance_level: 专业标准
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-> **版本**: v1.0.0
+> **版本**: v1.0.1
 > **架构**: Layer 7（AI报告层）+ Layer 3（舆情分析层）
-> **最后更新**: 2026-04-07
+> **最后更新**: 2026-04-11
 > **维护者**: 实施团队
 
 ---
