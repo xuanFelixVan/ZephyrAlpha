@@ -3,7 +3,7 @@ module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-17'
 owner: 文档管理团队
 responsibility:
   - 提供05 Design Docs相关文档支持
@@ -35,6 +35,15 @@ responsibility:
 - 格式规范性: 100%
 - 内容准确性: 100%
 
+
+## 子域索引（入链入口）
+
+- [a_stock_rules/INDEX.md](./a_stock_rules/INDEX.md)
+- [data_consistency/INDEX.md](./data_consistency/INDEX.md)
+- [database/INDEX.md](./database/INDEX.md)
+- [trading_costs/INDEX.md](./trading_costs/INDEX.md)
+- [ui_design/INDEX.md](./ui_design/INDEX.md)
+- [web_interface/INDEX.md](./web_interface/INDEX.md)
 
 ## 📋 文档列表
 

@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STATE_INDEX
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-16'
+last_updated: '2026-04-17'
 owner: 首席文档架构师
 responsibility:
   - STATE目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.8
+version: 1.0.9
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-16'
+last_updated: '2026-04-17'
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.8
+> **版本**: v1.0.9
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -98,6 +98,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · REPORTS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` | **最新（20260414）** [`INDEX_HEALTH_ORPHAN_20260414.md`](./INDEX_HEALTH_ORPHAN_20260414.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260414.json)；历史 [`20260412`](./INDEX_HEALTH_ORPHAN_20260412.md) |
 | 索引健全性（零入链 · 04_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS` | **最新（20260415）** [`INDEX_HEALTH_ORPHAN_20260415.md`](./INDEX_HEALTH_ORPHAN_20260415.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260415.json)；历史 [`20260411`](./INDEX_HEALTH_ORPHAN_20260411.md) |
 | 索引健全性（零入链 · STATE 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STATE` | **最新（20260416）** [`INDEX_HEALTH_ORPHAN_20260416.md`](./INDEX_HEALTH_ORPHAN_20260416.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260416.json)；历史 [`20260413`](./INDEX_HEALTH_ORPHAN_20260413.md) |
+| 索引健全性（零入链 · 06_CONSTRUCTION_DOCS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` | **最新（20260417）** [`INDEX_HEALTH_ORPHAN_20260417.md`](./INDEX_HEALTH_ORPHAN_20260417.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260417.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -138,6 +139,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.9 | 2026-04-17 | P5 §7 子批：`INDEX_HEALTH_20260417`（`06_CONSTRUCTION_DOCS`；**zero_inbound=0**；候选 **266**）；补 `01_BLUEPRINTS/REPORTS/README` 与 `05_DESIGN_DOCS/INDEX` 入链；`rollup_20260414` 本前缀 **272** 条 | 文档治理系统 |
 | v1.0.8 | 2026-04-16 | P5 §7 子批：`INDEX_HEALTH_20260416`（STATE 前缀；**zero_inbound=0**；候选 md **182**）；产出表与导航链对齐 `rollup_20260414`（本前缀 **390** 条） | 文档治理系统 |
 | v1.0.5 | 2026-04-12 | 移除对已废止运行队列的互指；尽治入口改 **REPO_WIDE §7** | 文档治理系统 |
 | v1.0.4 | 2026-04-11 | 整仓产出表曾互指运行队列（已废止，见 v1.0.5） | 文档治理系统 |

@@ -3,7 +3,7 @@ module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_README
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-11'
+last_updated: '2026-04-17'
 owner: 首席文档架构师
 responsibility:
   - 06_CONSTRUCTION_DOCS说明文档
@@ -41,6 +41,12 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 - [STATE 子域索引](../../09_AUDIT/STATE/INDEX.md)
 - [L1 治理快照（20260408）](../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)
 - [文档总入口](../../INDEX.md)
+
+## 治理与索引健全性（P5 §7 · 门面）
+
+- **索引健全性（零入链 · 本前缀 · 最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md)（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417`；**zero_inbound=0**；候选 md **266**）  
+- **目录体量（rollup · 深度 3）**：[../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`，**272** 条）  
+- **整仓尽治口径**：[./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) ｜ [治理工具总索引](./00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
 
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 

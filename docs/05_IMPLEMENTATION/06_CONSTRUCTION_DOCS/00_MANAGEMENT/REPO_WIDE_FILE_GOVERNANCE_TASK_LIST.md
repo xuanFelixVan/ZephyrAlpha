@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.33
+version: 1.4.34
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-16'
+last_updated: '2026-04-17'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -342,6 +342,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-04-14 · 前缀 `docs/09_AUDIT/REPORTS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414` → [`INDEX_HEALTH_ORPHAN_20260414.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260414.md)（**zero_inbound=0**）；`export_repo_directory_rollup.py --date 20260414` → [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)；门面 [`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md)、[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md)、[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表互指上述快照；**本批未改** REPORTS 下数百报告正文（§7.1：超大前缀先门面与机器证据，再分子队列）。
 - **2026-04-15 · 前缀 `docs/05_IMPLEMENTATION/04_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS --date 20260415` → [`INDEX_HEALTH_ORPHAN_20260415.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260415.md)（**zero_inbound=0**；候选 md **353**）；体量互指既有 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **407** 条）；更新 [`04_OPERATIONS/README.md`](../../04_OPERATIONS/README.md)、[`04_OPERATIONS/INDEX.md`](../../04_OPERATIONS/INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表；**本批未改** `audit_state/` 内长列表正文。
 - **2026-04-16 · 前缀 `docs/09_AUDIT/STATE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416` → [`INDEX_HEALTH_ORPHAN_20260416.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260416.md)（**zero_inbound=0**；候选 md **182**）；体量互指既有 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **390** 条）；更新 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md)、[`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md)、[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md)；**本批未改** STATE 下大量历史报告正文。
+- **2026-04-17 · 前缀 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417` → [`INDEX_HEALTH_ORPHAN_20260417.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md)（**zero_inbound=0**；候选 md **266**；首轮曾 **18**，已通过 [`01_BLUEPRINTS/REPORTS/README.md`](../01_BLUEPRINTS/REPORTS/README.md) 挂 12 份报告链 + [`05_DESIGN_DOCS/INDEX.md`](../05_DESIGN_DOCS/INDEX.md) 挂 6 份子域 `INDEX` 入链后复跑归零）；体量互指 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **272** 条）；更新 [`06_CONSTRUCTION_DOCS/README.md`](../README.md)、[`06_CONSTRUCTION_DOCS/INDEX.md`](../INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表。
 
 ---
 
@@ -349,6 +350,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.34 | 2026-04-17 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` — `INDEX_HEALTH_20260417`（零入链 0）；补 `REPORTS/README`、`05_DESIGN_DOCS/INDEX` 入链；门面 README/INDEX + `STATE/INDEX` 产出表 |
 | 1.4.33 | 2026-04-16 | **§2.3.2** 新增「位置是否正确」判准互文（↔ 放置规程 **§1.6**）；§2.3 总表「文档地图与放置」行补 **§1.6** |
 | 1.4.32 | 2026-04-16 | **P5 §7 子批**：`docs/09_AUDIT/STATE` — `INDEX_HEALTH_20260416`（零入链 0）；`09_AUDIT/INDEX`、`REPORTS/INDEX` 与 `STATE/INDEX` 互指最新快照 |
 | 1.4.31 | 2026-04-15 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/04_OPERATIONS` — `INDEX_HEALTH_20260415`（零入链 0）；门面 README/INDEX 与 `STATE/INDEX` 表对齐 `rollup_20260414` 体量 |

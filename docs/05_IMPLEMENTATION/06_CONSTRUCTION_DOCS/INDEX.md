@@ -3,7 +3,7 @@ module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_INDEX_2
 version: 1.1.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-10'
+last_updated: '2026-04-17'
 owner: 首席文档架构师
 responsibility:
   - 06_CONSTRUCTION_DOCS目录索引
@@ -133,12 +133,19 @@ responsibility:
 - [实施层索引](../INDEX.md)
 - [全库蓝图阶段总结（总清单主入口之一）](../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)
 
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md)（`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`；**zero_inbound=0**）  
+- **rollup（深度 3 条数）**：[../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索本前缀 **272** 条）  
+- **尽治任务清单 §7**：[./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](./00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+
 ---
 
 ## 📝 维护记录
 
 | 日期 | 操作 | 操作人 | 备注 |
 |------|------|--------|------|
+| 2026-04-17 | P5 §7 门面：`INDEX_HEALTH_20260417`；补 `REPORTS/README` 与 `05_DESIGN_DOCS/INDEX` 入链使零入链归零 | 文档治理 | 见 `09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.*` |
 | 2026-04-10 | 子目录表与磁盘对齐 | 文档治理 | 8 顶层目录；删除冗长逐文件枚举（旧版见 `git log -p --` 本路径） |
 | 2026-04-07 | 创建索引 | Audit Sentinel | 初始创建索引 |
 
