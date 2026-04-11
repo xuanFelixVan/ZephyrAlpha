@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.2.6
+version: 1.2.7
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -18,7 +18,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 > **与任务清单的关系**：执行口径与波次见 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；扫描**能做什么、不能做什么**见该文 **§1.1**。  
 > **删稿裁决**（机器不代劳）：见 [文件删除与保留裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。  
 > **文档地图 + 放置**：搬迁或新建 `docs/` 路径前，先 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5～6 条**）+ [办公室放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**「位置是否正确」分桶；互指 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)、REPO_WIDE **§2.3.1**、**§2.3.2**）；**勿**另立平行标准；再跑本表脚本验收。  
-> **Git 暂存、L1 何时跑、UTF-8 编辑**：见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0.1** 与 [REPO_WIDE §1.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；编码全文 [DOCUMENT_ENCODING_STANDARD](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)。
+> **Git 暂存、L1 何时跑、UTF-8 编辑**：见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0.1** 与 [REPO_WIDE §1.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；编码全文 [DOCUMENT_ENCODING_STANDARD](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)。**Solo+全委托 AI、STATE/正文分提交**：同文 **§0.2**、[REPO_WIDE §7.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 末段。
 
 ---
 
@@ -83,6 +83,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.7 | 2026-04-11 | 文首块增 **§0.2**、REPO_WIDE **§7.2** 末（Solo+AI、STATE 分提交） |
 | 1.2.6 | 2026-04-11 | 文首块互指 AI 交接 **§0.1**、REPO_WIDE **§1.2**、文档编码标准 |
 | 1.2.5 | 2026-04-11 | §2 第 7/7′ 步：D 类互指 Playbook **§2.5**、**§5** 与 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
 | 1.2.4 | 2026-04-18 | `scan_index_health`：archive 子 `--prefix` 时取消对该 archive 根默认排除；工具表行补说明 |
