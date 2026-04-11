@@ -76,9 +76,11 @@ implementation_status: 活跃维护
 ### 快速开发
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| 快速开始 | 快速开始指?| ⭐⭐⭐⭐?|
+| [快速开始总索引](./01_QUICKSTART/INDEX.md) | 快速开始文档导航 | ⭐⭐⭐⭐ |
 | [学习路径](./01_QUICKSTART/LEARNING_PATH.md) | 学习路径 | ⭐⭐⭐⭐ |
-| [路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线?| ⭐⭐⭐⭐ |
+| [路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线图 | ⭐⭐⭐⭐ |
+| [开发环境 setup](./01_QUICKSTART/dev_setup.md) | 开发环境 | ⭐⭐⭐⭐ |
+| [首次回测](./01_QUICKSTART/first_backtest.md) | 首次回测 | ⭐⭐⭐⭐ |
 
 ### 开发指标
 | 文档名称 | 说明 | 重要?|
@@ -136,8 +138,13 @@ implementation_status: 活跃维护
 
 ### 01_QUICKSTART
 
+- [快速开始总索引](./01_QUICKSTART/INDEX.md)
 - [开发环境 setup](./01_QUICKSTART/dev_setup.md)
 - [首次回测](./01_QUICKSTART/first_backtest.md)
+- [学习路径](./01_QUICKSTART/LEARNING_PATH.md)
+- [路线图](./01_QUICKSTART/ROADMAP.md)
+- [第一阶段设计](./01_QUICKSTART/PHASE1_DESIGN.md)
+- [因子设计入门](./01_QUICKSTART/factor_design.md)
 
 ### 02_DEVELOPMENT
 
@@ -203,7 +210,7 @@ implementation_status: 活跃维护
 ## 🗂?子目?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
-| [01_QUICKSTART/](./01_QUICKSTART/) | 快速开?| 7 |
+| [01_QUICKSTART/INDEX.md](./01_QUICKSTART/INDEX.md) | 快速开始 | 7 |
 | [02_DEVELOPMENT/INDEX.md](./02_DEVELOPMENT/INDEX.md) | 开发标准 | 21 |
 | [03_DEPLOYMENT/INDEX.md](./03_DEPLOYMENT/INDEX.md) | 部署 | 6 |
 | [04_INFRASTRUCTURE/INDEX.md](./04_INFRASTRUCTURE/INDEX.md) | 基础设施 | 4 |
@@ -216,7 +223,8 @@ implementation_status: 活跃维护
 ## 📖 快速导?
 ### 新手入门
 
-1. 阅读 01_QUICKSTART/README.md - 快速开?2. 阅读 [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - 学习路径
+1. 阅读 [01_QUICKSTART/INDEX.md](./01_QUICKSTART/INDEX.md) - 快速开始总索引  
+2. 阅读 [01_QUICKSTART/LEARNING_PATH.md](./01_QUICKSTART/LEARNING_PATH.md) - 学习路径
 3. 阅读 [02_DEVELOPMENT/DESIGN_PRINCIPLES.md](./02_DEVELOPMENT/DESIGN_PRINCIPLES.md) - 设计原则
 
 ### 开发
