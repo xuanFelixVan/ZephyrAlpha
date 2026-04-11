@@ -1,6 +1,6 @@
 ---
 module_id: GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF_001
-version: 1.0.17
+version: 1.0.18
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -14,7 +14,7 @@ applicable_scope: 本 Git 仓库；路径级尽治与 Markdown 主导门禁；�
 # 全局文件治理 — 会话交接（新对话粘贴用）
 
 > **用途**：你在**新对话**里要做「从全局扫描开始、深度清洁每一处」时，把下文 **「二、工作交接指令（请全文执行）」** 整段复制给 AI；并说明工作区根目录为 **ZephyrAlpha** 仓库。本文即一种 **「接力说明」**（给下一任的短交代）；术语亦见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0**。  
-> **真源优先级**：执行细节以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准（**§1.2** 编码与乱码预防；**§2.3.1** Layer 与路径防混；**§2.3.2**「位置是否正确」↔ 放置规程 **§1.6**；**§7.2** 末 Solo+AI 与 STATE 分提交）；命令表以 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 为准；放置以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5～6 条**）+ [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**）为准；系统 **Layer 0～11** 以 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 为准，**勿**从 `10_*` 目录名推断；**勿**新建平行「Layer 放置标准」。**Git / L1 / UTF-8** 摘要见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0.1**；**人类只看结果、AI 默认执行顺序与双提交** 见同文 **§0.2**。
+> **真源优先级**：执行细节以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准（**§1.2** 编码与乱码预防及 **§1.2 末**「`.gitignore` 与 `STATE/` 两条线」；**§2.3.1** Layer 与路径防混；**§2.3.2**「位置是否正确」↔ 放置规程 **§1.6**；**§7.2 末** Solo+AI / STATE 分提交）；命令表以 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 为准；放置以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5～6 条**）+ [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**）为准；系统 **Layer 0～11** 以 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 为准，**勿**从 `10_*` 目录名推断；**勿**新建平行「Layer 放置标准」。**Git / L1 / UTF-8** 见 [AI 交接 §0.1](./PROJECT_OFFICE_AI_HANDOFF.md)；**ignore 与 `STATE/` 两条线**见 **§0.1.4**；**全委托 AI 机械清单**见 **§0.2**。
 
 ---
 
@@ -114,7 +114,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 3. **导航**：父级或本级 **INDEX / README / 上级入口**（§7.2）。  
 4. **内链**：`sentinel_l1_governance_scan.py`；触及蓝图则跑相关 `verify_*` 与 `generate_01_blueprints_index.py`（若适用）。  
 5. **索引信号**：视需要复跑 `scan_index_health.py`（零入链**不**等于必须删）。  
-6. **收口**：`git commit`；**默认**按 [AI 交接 §0.2](./PROJECT_OFFICE_AI_HANDOFF.md)：**先**正文与逻辑路径、`git add` 逐路径，**再**视情况单独提交 `docs/09_AUDIT/STATE/`（与一锅端规则见 §0.1.1 / §0.2）；下一批前可再跑 `export_repo_directory_rollup.py --date YYYYMMDD` 看前缀是否「变薄」。
+6. **收口**：`git commit`；**默认**按 [AI 交接 §0.2](./PROJECT_OFFICE_AI_HANDOFF.md)（正文与 `docs/09_AUDIT/STATE/` **分提交**、**分路径** `git add`）；**§0.1.4** 勿用 ignore 代替 STATE 策略；下一批前可再跑 `export_repo_directory_rollup.py --date YYYYMMDD` 看前缀是否「变薄」。
 
 **阶段 E — 里程碑**
 
@@ -131,7 +131,7 @@ python scripts/governance/sentinel_l1_governance_scan.py
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| 1.0.17 | 2026-04-11 | 真源段与阶段 D 收口互指 AI 交接 **§0.2**、REPO_WIDE **§7.2** 末段（STATE/正文分提交） |
+| 1.0.18 | 2026-04-11 | 真源段互指 REPO_WIDE **§1.2 末**、**§7.2 末**；AI 交接 **§0.1.4 / §0.2**；阶段 D 收口对齐 STATE 分提交 |
 | 1.0.16 | 2026-04-11 | 硬约束增第 6 条（UTF-8 / 防乱码）；真源段与阶段 A 互指 REPO_WIDE **§1.2**、编码标准、[AI 交接 §0.1](./PROJECT_OFFICE_AI_HANDOFF.md) |
 | 1.0.15 | 2026-04-11 | 硬约束 3：L1 改为「推荐复跑 + 默认门禁目标」；§1.1 D 类行互指 Playbook **§2.5**、REPO_WIDE **§3.4.1**；阶段 A / D 对齐 Git 暂存口径与 D 类索引 |
 | 1.0.14 | 2026-04-16 | 文首标明「接力说明」并互指 AI 交接 **§0**；真源段增 **§1.6 / §2.3.2**、LAYOUT **§1 第 6 条**；§1.1 增「位置是否正确」分桶行；阶段 A 增读 **§1.6**；§1.3 自检增 **§1.6** |

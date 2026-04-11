@@ -1,6 +1,6 @@
 ---
 module_id: GOVERNANCE_DOCUMENTS_NAVIGATION_001
-version: 1.0.8
+version: 1.0.9
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -99,7 +99,7 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 
 | 说明 | 路径 |
 |------|------|
-| 文档编码标准（UTF-8 / 防乱码全文） | [`docs/10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md`](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md) — 办公室实操摘要 [AI 交接 §0.1.3](./PROJECT_OFFICE_AI_HANDOFF.md)；任务清单 [REPO_WIDE §1.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
+| 文档编码标准（UTF-8 / 防乱码全文） | [`docs/10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md`](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md) — 办公室 [AI 交接 §0.1.3](./PROJECT_OFFICE_AI_HANDOFF.md)、**§0.1.4**（`.gitignore` 与 `STATE/` 两条线）、**§0.2**（全委托 AI）；任务清单 [REPO_WIDE §1.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（含末段两条线）、[§7.2 末](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
 | 知识库入口 | [`docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/INDEX.md`](../../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/INDEX.md) |
 | 文档治理知识库 | [`docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE.md`](../../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE.md) |
 | 职责审查机制 | [`docs/10_GOVERNANCE_COMPLIANCE/RESPONSIBILITY_REVIEW_MECHANISM.md`](../../../10_GOVERNANCE_COMPLIANCE/RESPONSIBILITY_REVIEW_MECHANISM.md) |
@@ -155,6 +155,7 @@ applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.0.9 | 2026-04-11 | 「合规与编码」表文档编码行增 **§0.1.4 / §0.2**、REPO_WIDE **§7.2 末** |
 | 1.0.8 | 2026-04-11 | 「合规与编码」表文档编码行互指 AI 交接 **§0.1.3**、REPO_WIDE **§1.2** |
 | 1.0.7 | 2026-04-11 | 「脚本与扫描产物」表 D 类两行补 **§2.5 / §5** 与 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；办公室关系表增 D 类 + §3.4.1 一行 |
 | 1.0.6 | 2026-04-16 | 原则表与办公室关系表互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2** |

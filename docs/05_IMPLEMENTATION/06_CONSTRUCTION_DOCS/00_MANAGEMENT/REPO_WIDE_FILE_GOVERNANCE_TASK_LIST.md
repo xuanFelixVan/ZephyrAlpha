@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.71
+version: 1.4.70
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -19,7 +19,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 > **权威 Playbook**：[孤儿与重复文档治理](./../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、[文件删除与保留裁决](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。  
 > **架构模块全景（多级子模块）**：是否需要、与机构习惯对照、能否随扫描更新——见 **§2.4**。  
 > **架构/服务目录 + C4 摘要（生成物）**：[`ARCHITECTURE_SERVICE_CATALOG_*`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（脚本 `scripts/governance/generate_architecture_service_catalog.py`）。  
-> **扫描是否覆盖「每一种文件格式、每一文件的语义分析与自动处理」？** **否**——见 **§1.1**（分工具、分口径；Git 已跟踪 vs 工作区 Markdown 亦有差异）。**Markdown 编码与防乱码**见 **§1.2**（与 L1 正交；真源 [文档编码标准](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)；办公室摘要 [AI 交接 §0.1.3](./PROJECT_OFFICE_AI_HANDOFF.md)）。  
+> **扫描是否覆盖「每一种文件格式、每一文件的语义分析与自动处理」？** **否**——见 **§1.1**（分工具、分口径；Git 已跟踪 vs 工作区 Markdown 亦有差异）。**Markdown 编码与防乱码**见 **§1.2**（与 L1 正交；真源 [文档编码标准](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)；办公室摘要 [AI 交接 §0.1.3](./PROJECT_OFFICE_AI_HANDOFF.md)）；**§1.2** 末 **`.gitignore` 与 `STATE/` 两条线** 与 [AI 交接 §0.1.4](./PROJECT_OFFICE_AI_HANDOFF.md)、**§0.2** 对齐。  
 > **内容重复（按后缀白名单）**：`scripts/governance/scan_duplicate_file_content.py`（**必须** `--ext`，默认 `md`）→ `DUPLICATE_CONTENT_BY_HASH_*`；**同名不同路径（C2）**：`scripts/governance/scan_basename_collisions.py` → `BASENAME_COLLISIONS_*`（默认 `docs/`）；**主题可能重叠（D · 启发式）**：`scripts/governance/scan_blueprint_d_overlap_candidates.py` → `BLUEPRINT_D_OVERLAP_CANDIDATES_*`；可选 `triage_blueprint_d_overlap_pairs.py` → `BLUEPRINT_D_OVERLAP_TRIAGE_*` + `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`（Playbook **§3.5** + [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)）；[D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md)（**§2.5** 置信度与 **高置信可合并**、**§5 双轨**；**低置信**合稿须登记 [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md)）；**方案文件互指索引**见本文 **§3.4.1**；治理工具总表见 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md)。  
 > **文档地图 + 放置规则（机构习惯）**：目录职责与阶段落盘的 **真源** 为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5 条**为 Layer/路径分立摘要）；与扫描/§7 批次的 **衔接步骤** 见办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)。**架构 Layer（0～11）与 `docs/` 物理路径是两件不同的事**（勿从 `10_*` 等目录名猜 Layer）：见 [放置规程 **§1.5**](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 与本文 **§2.3.1**（同口径）；技术栈分层真源为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)。**勿**另建平行「Layer 放置标准」——缺口改 LAYOUT §6 或上述文件互指。
 
@@ -281,7 +281,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | 更强模型输出 JSON：`confidence`、`low_confidence_register`、`recommended_action` 等（与 Playbook **§2.5** 对齐） |
 | [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | **仅低置信**合稿台账（可点击相对链） |
 | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | **§2** 推荐复跑顺序中的步 **7 / 7′**（`scan_blueprint_d_overlap_candidates.py`、`triage_blueprint_d_overlap_pairs.py`） |
-| [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手阅读顺序 **①″-D**、路径速查；**§0.1** Git 暂存 / L1 时机 / UTF-8 与防乱码；**§0.2** Solo+全委托 AI 机械清单与 STATE/正文分提交 |
+| [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手阅读顺序 **①″-D**、路径速查；**§0.1** Git / L1 / UTF-8；**§0.1.4** ignore 与 `STATE/` 两条线；**§0.2** Solo+全委托 AI 机械清单 |
 | [文档编码标准](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md) | Markdown/文本 **UTF-8** 等全文真源；与本文 **§1.2**、[AI 交接 §0.1.3](./PROJECT_OFFICE_AI_HANDOFF.md) 互指 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | 新会话可复制指令；阶段 A 含 D 类必读 |
 | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **§1.6 分桶 D** 与 D 类低置信登记互指 |
@@ -409,7 +409,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| 1.4.71 | 2026-04-11 | **§7.2** 末增 Solo+AI 与 **STATE/正文分 commit** 默认、互指 AI 交接 **§0.2** |
+| 1.4.72 | 2026-04-11 | **§1.2** 末增「ignore 与 `STATE/` 两条线」块quote；**§7.2** 末增 Solo+AI 与 §0.1.4 互指；§3.4.1 / §8 AI 交接行同步 **§0.1.4 / §0.2** |
 | 1.4.70 | 2026-04-11 | 新增 **§1.2**（Markdown 编码/乱码预防，与 L1 正交）；文首块互指 §1.2；**§2.3** 表「内链/verify」改为**推荐**复跑口径并互指 AI 交接 **§0.1.2**；§8 AI 交接自查条含 **§0.1** / **§1.2** |
 | 1.4.69 | 2026-04-11 | 增 **§3.4.1** D 类方案文件索引（办公室互指）；文首与 **§3.4** 对齐 **§2.5** 置信度；**§7** 跨会话说明去「当前指针」依赖；**§7.2** L1 为推荐+默认目标；§8 办公室自查条同步 D 类 |
 | 1.4.68 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/CONFIG` — `INDEX_HEALTH_20260521`（CONFIG/INDEX → 0）；`09_AUDIT/INDEX` + `CONFIG/INDEX` |
@@ -556,8 +556,6 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 - [ ] **路径健全**：平面清单/rollup 使用 `quotePath=false` 或 `-z` 导出；无**真实**错误路径（默认可读 `git ls-files` 的引号显示**不算**索引损坏，见 §1 与 `GIT_TRACKED_PATH_ANOMALIES`）。  
 - [ ] **证据**：rollup 重跑已提交或报告路径可指认。
 
-**Solo Owner · 全委托 AI（与 §7.2 并行）**：由 AI 执行提交时，**默认**将 **`docs/09_AUDIT/STATE/`** 下机器产出与**正文/脚本**拆成**两次 commit**（先 A 后 B），减少 diff 噪音；**禁止**未授权一锅端 `git add`；**明文**「不要提交 STATE」时仅报告 L1 数值与路径。机械顺序见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0.2**。
-
 ### 7.3 §7 总勾选（尽治里程碑）
 
 - [ ] 已对 **`docs/`** 下深度 3 Top 前缀（或 JSON 中全部超过阈值的前缀）**逐一**达到 §7.2 或登记**书面例外**（含例外原因与复审日）。  
@@ -571,7 +569,7 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 大改办公室或本清单后，维护者快速过一遍：
 
 - [x] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类** Playbook / 二审模板 / **待审登记** / `triage_blueprint_d_overlap_pairs.py` 及 **§3.4.1** 互指）；[治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 与 `scripts/` 实际脚本同步；[文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.5** 与 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对；2026-04-11 增补 D 类 §3.4.1 与 §2.5 口径。）  
-- [x] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§0.1**（Git 暂存、L1 时机、UTF-8/防乱码）与本文 **§1.2**、编码标准互指；**§0.2**（Solo+全委托 AI、STATE/正文分提交）与本文 **§7.2** 末段互指；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。（2026-04-10 批次核对；2026-04-11 增补 §0.1 / §1.2 / §0.2。）  
+- [x] [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)：阅读顺序与**常见任务**含「深度尽治 / rollup / 本清单 §7」、[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（①‴，**§1.5**）与 LAYOUT 真源优先级；**§0.1**（Git 暂存、L1 时机、UTF-8/防乱码）、**§0.1.4**（ignore 与 `STATE/` 两条线）、**§0.2**（Solo+全委托 AI）与本文 **§1.2** 末段、**§7.2** 末、编码标准互指；**§3.2**（Layer 0～11 vs 路径）与 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、本文 **§2.3.1** 三处表述一致。（2026-04-10 批次核对；2026-04-11 起 §0.1.4 / §0.2 / §7.2 末对齐。）  
 - [x] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
 - [x] 本文件 **§1 数字**（文件总数等）与 `git ls-files` / 最新 rollup **无矛盾**（或已注明「快照日期」）。（2026-04-11：**已跟踪文件总数** `git -c core.quotePath=false ls-files` = **4459**，与 §1 表及 [`REPO_DIRECTORY_ROLLUP_20260411`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md) 头部 **4459** 一致；深度 3 Top6 已与 **20260411** rollup 对齐；`review_materials_package` 引号显示问题已澄清为 **CLI quotePath**，见 [`GIT_TRACKED_PATH_ANOMALIES_20260411`](../../../09_AUDIT/STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。）  
 - [x] 与 [蓝图任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **无冲突表述**（并列、互补、W 轨 ≠ 尽治）。（2026-04-10 批次核对。）  

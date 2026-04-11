@@ -1,6 +1,6 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.21
+version: 1.1.22
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -15,7 +15,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 本文件夹放**规章、清单、终稿门禁、登记表**，不放具体模块的蓝图正文（蓝图在 `../01_BLUEPRINTS/`）。
 
-**给任意 AI / 新协作者交接时**：请先读 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)（阅读顺序、真源优先级、常见任务；**§0.1** Git 暂存 / L1 时机 / UTF-8 与防乱码；**§0.2** Solo+全委托 AI 的**机械执行与双提交**默认；**§3.2** 区分 **文档治理 L0～L5** 与 **系统技术栈 Layer 0～11**）。**机构式分层总览**见 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md)（L0～L5、与审计边界）。**运行架构分层（Layer 0～11）真源**为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)；**勿**用 `docs/10_AI_WORKFLOW` 等路径前缀代替 Layer 编号（见 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）。编码与乱码预防全文见 [文档编码标准](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)；任务清单 **§1.2** 与 **§0.1** 同口径。
+**给任意 AI / 新协作者交接时**：请先读 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md)（阅读顺序、真源优先级、常见任务；**§0.1** Git / L1 / UTF-8；**§0.1.4** `.gitignore` 与 `docs/09_AUDIT/STATE/` **两条线**；**§0.2** Solo+全委托 AI 机械清单；**§3.2** 区分 **文档治理 L0～L5** 与 **系统技术栈 Layer 0～11**）。**机构式分层总览**见 [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md)（L0～L5、与审计边界）。**运行架构分层（Layer 0～11）真源**为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)；**勿**用 `docs/10_AI_WORKFLOW` 等路径前缀代替 Layer 编号（见 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）。编码与乱码预防全文见 [文档编码标准](../../../10_GOVERNANCE_COMPLIANCE/DOCUMENT_ENCODING_STANDARD.md)；任务清单 **[§1.2 末](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)**、**[§7.2 末](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)** 与 **§0.1.4 / §0.2** 同口径。
 
 **全库治理文档**（`09_AUDIT`、`10_GOVERNANCE_COMPLIANCE` 等）**真源仍在原目录**；办公室只提供一张总地图： [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)（说明为何不整体搬进办公室、为何不放进图纸柜）。
 
@@ -37,6 +37,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 - **已写清**：任务清单 [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1** —— **Git 已跟踪路径**可被清单/rollup **全覆盖（路径级）**；**不等于**对每一种格式做语义分析或自动处理。  
 - **L1 注意**：`sentinel_l1` 扫的是工作区 **`*.md`**（排除常见缓存目录），与 **`git ls-files` 仅已跟踪** 可能不一致；收口验收前宜保持工作区干净或书面接受差异。  
+- **`.gitignore` vs `STATE/`**：真·临时文件与缓存靠 **ignore（线 A）**；扫描报表进历史的节奏靠 **STATE 分提交（线 B）** —— 见 [AI 交接 §0.1.4](./PROJECT_OFFICE_AI_HANDOFF.md)、[任务清单 §1.2 末](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)。  
 - **仍可选的优化**（未默认可跑）：**域 INDEX 必列规则**（须先写标准再写脚本，见 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.3**）、二进制 **体积/LFS 门禁**、CI 中 **全量治理脚本门禁 + 秘密扫描**、根目录 **Docker/CODEOWNERS**（见 `ARCHITECTURE_SERVICE_CATALOG` 缺口表）、**记录管理类保留策略/法律 hold**（本仓库未单独立标，需 Owner 外规接入时另档）。
 
 ### 全库文档治理流程（摘要）
@@ -176,7 +177,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
-| 1.1.21 | 2026-04-11 | 文首互指 AI 交接 **§0.2**（Solo+全委托 AI 机械清单与 STATE 分提交） |
+| 1.1.22 | 2026-04-11 | 文首与「扫描覆盖」增 **§0.1.4** 两条线、**§0.2**；互指 REPO_WIDE **§1.2 末**、**§7.2 末** |
 | 1.1.20 | 2026-04-11 | 文首互指 AI 交接 **§0.1**、编码标准、[REPO_WIDE §1.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（Git/L1/UTF-8 与尽治任务对齐） |
 | 1.1.19 | 2026-04-11 | D 类：互指 Playbook **§2.5、§5.1** 与 [REPO_WIDE §3.4.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 方案索引；办公室表与孤儿/重复流程第 2 条对齐 |
 | 1.1.18 | 2026-04-16 | 文首/流程第 7 条/办公室表互指放置规程 **§1.6**、REPO_WIDE **§2.3.2**、LAYOUT **§1 第 6 条**（「位置是否正确」分桶与入链分立） |

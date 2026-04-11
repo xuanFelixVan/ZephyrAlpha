@@ -1,6 +1,6 @@
 ---
 module_id: DOCUMENT_ENCODING_STANDARD_001
-version: 1.0.2
+version: 1.0.3
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -24,7 +24,7 @@ compliance_level: 专业标准
 > **合规级别**: 专业标准
 ---
 
-> **与项目办公室 / 尽治任务衔接**：Markdown **实操摘要**（Git 暂存、何时复跑 L1、UTF-8 与防乱码）见 [项目办公室 AI 交接说明](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md) **§0.1**；**全委托 AI 机械执行与 STATE/正文分提交**见同文 **§0.2**；任务清单 **§1.2**（与 L1 正交）与 **§7.2** 末见 [全仓库文件治理任务清单](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；新开对话尽治硬约束见 [全局文件治理会话交接](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md)。
+> **与项目办公室 / 尽治任务衔接**：Markdown **实操摘要**（Git 暂存、何时复跑 L1、UTF-8 与防乱码）见 [项目办公室 AI 交接说明](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md) **§0.1**；**`.gitignore` 与 `STATE/` 两条线**见 **§0.1.4**；**全委托 AI 与 STATE/正文分提交**见 **§0.2**；任务清单 **§1.2**（含末段两条线）与 **§7.2** 末见 [全仓库文件治理任务清单](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；新开对话尽治硬约束见 [全局文件治理会话交接](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md)。
 
 ## 📋 一、规范概述
 
