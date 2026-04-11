@@ -21,9 +21,12 @@ applicable_scope: docs/05_IMPLEMENTATION/04_OPERATIONS
 2. [`audit_state/INDEX.md`](./audit_state/INDEX.md) — `audit_state` 长列表入口  
 3. [`WEEKLY_AUDIT_MECHANISM.md`](./WEEKLY_AUDIT_MECHANISM.md) — 定期（周）审计机制说明  
 4. 索引健全性（零入链 · 前缀扫描）：[`../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md`](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260411.md)  
-5. 目录体量（深度 3 前缀条数）：[`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，当前快照 **406** 条）
+5. 目录体量（深度 3 前缀条数）：[`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，当前快照 **406** 条）  
+6. 多会话治理接力（当前指针 / Phase B）：[`../06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md`](../06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
 
 ## 上级入口
 
 - [实施域索引 `../INDEX.md`](../INDEX.md)  
+- [审计域总索引 `../../09_AUDIT/INDEX.md`](../../09_AUDIT/INDEX.md)  
+- [审计报告区门面（REPORTS）`../../09_AUDIT/REPORTS/README.md`](../../09_AUDIT/REPORTS/README.md)  
 - [文档总入口 `../../../INDEX.md`](../../../INDEX.md)
