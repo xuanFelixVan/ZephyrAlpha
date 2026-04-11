@@ -1,9 +1,9 @@
 ---
 module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_README
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - 06_CONSTRUCTION_DOCS说明文档
@@ -31,6 +31,16 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 提供建设文档的整体说明，包含目录结构、文档分类、使用方法，帮助了解文档体系。
 
 **蓝图与终稿治理（项目办公室）**：规章、终稿定义、任务清单、登记表入口见 [00_MANAGEMENT/README.md](./00_MANAGEMENT/README.md)。
+
+## 上级与接力
+
+- [实施域索引](../INDEX.md)
+- [自主治理运行队列](./00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
+- [治理工具总索引](./00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT 域索引](../../09_AUDIT/INDEX.md)
+- [STATE 子域索引](../../09_AUDIT/STATE/INDEX.md)
+- [L1 治理快照（20260408）](../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)
+- [文档总入口](../../INDEX.md)
 
 > **核心职责**: 模块说明和快速入门指南
 > **职责边界**: 
