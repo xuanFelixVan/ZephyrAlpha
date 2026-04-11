@@ -94,7 +94,8 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| 部署概述 | 部署概述 | ⭐⭐⭐⭐?|
+| [部署总索引](./03_DEPLOYMENT/INDEX.md) | 部署文档导航 | ⭐⭐⭐⭐ |
+| [部署概述（README）](./03_DEPLOYMENT/README.md) | 部署指南概述 | ⭐⭐⭐⭐ |
 | [部署计划](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md) | 部署计划 | ⭐⭐⭐⭐ |
 
 ### 基础设施
@@ -148,6 +149,12 @@ implementation_status: 活跃维护
 - [日志标准](./02_DEVELOPMENT/LOGGING_STANDARD.md)
 - [测试框架](./02_DEVELOPMENT/TEST_FRAMEWORK.md)
 
+### 03_DEPLOYMENT
+
+- [部署总索引](./03_DEPLOYMENT/INDEX.md)
+- [部署概述（README）](./03_DEPLOYMENT/README.md)
+- [部署计划](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
+
 ### 04_OPERATIONS
 
 - [本目录门面](./04_OPERATIONS/README.md) · [索引](./04_OPERATIONS/INDEX.md) · [audit_state](./04_OPERATIONS/audit_state/INDEX.md)
@@ -190,7 +197,7 @@ implementation_status: 活跃维护
 |---------|------|---------|
 | [01_QUICKSTART/](./01_QUICKSTART/) | 快速开?| 7 |
 | [02_DEVELOPMENT/INDEX.md](./02_DEVELOPMENT/INDEX.md) | 开发标准 | 21 |
-| [03_DEPLOYMENT/](./03_DEPLOYMENT/) | 部署 | 2 |
+| [03_DEPLOYMENT/INDEX.md](./03_DEPLOYMENT/INDEX.md) | 部署 | 6 |
 | [04_INFRASTRUCTURE/](./04_INFRASTRUCTURE/) | 基础设施 | 5 |
 | [07_OPERATIONS/INDEX.md](./07_OPERATIONS/INDEX.md) | 运维 | 62 |
 | [05_TECHNICAL_SPECIFICATIONS/INDEX.md](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格 | 80+ |
