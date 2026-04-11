@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.53
+version: 1.4.54
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -362,6 +362,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-05-04 · 前缀 `docs/07_AI_REPORTING`（门面批次）**：复跑 `scan_index_health.py --prefix docs/07_AI_REPORTING --date 20260504` → [`INDEX_HEALTH_ORPHAN_20260504.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260504.md)（**zero_inbound=0**；候选 md **2**；首轮 **`README.md`** 零入链，已由 [`docs/INDEX.md`](../../../INDEX.md) Layer 7 行与本前缀 [`INDEX.md`](../../../07_AI_REPORTING/INDEX.md) 链 `README` 后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/07_AI_REPORTING` **2** 条）。
 - **2026-05-05 · 前缀 `docs/04_EXECUTION`（门面批次）**：复跑 `scan_index_health.py --prefix docs/04_EXECUTION --date 20260505` → [`INDEX_HEALTH_ORPHAN_20260505.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260505.md)（**zero_inbound=0**；候选 md **30**；首轮 **10** 处子域 `INDEX`/`README` 零入链，已由 [`04_EXECUTION/INDEX.md`](../../../04_EXECUTION/INDEX.md) 子域门面表 + [`docs/INDEX.md`](../../../INDEX.md) Layer 5 补 `README` 后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/04_EXECUTION` **35** 条）。
 - **2026-05-06 · 前缀 `docs/10_GOVERNANCE_COMPLIANCE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/10_GOVERNANCE_COMPLIANCE --date 20260506` → [`INDEX_HEALTH_ORPHAN_20260506.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260506.md)（**zero_inbound=0**；候选 md **21**；首轮 **6** 处子域门面零入链，已由 [`10_GOVERNANCE_COMPLIANCE/INDEX.md`](../../../10_GOVERNANCE_COMPLIANCE/INDEX.md) 子域门面表后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/10_GOVERNANCE_COMPLIANCE` **21** 条）。
+- **2026-05-07 · 前缀 `docs/08_HUMAN_AI_INTERFACE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/08_HUMAN_AI_INTERFACE --date 20260507` → [`INDEX_HEALTH_ORPHAN_20260507.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260507.md)（**zero_inbound=0**；候选 md **107**；首轮 **39** 处原有模块子域门面零入链，已由 [`08_HUMAN_AI_INTERFACE/index.md`](../../../08_HUMAN_AI_INTERFACE/index.md) 门面表 + [`docs/INDEX.md`](../../../INDEX.md) Layer 8 链对齐 `index.md` 后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/08_HUMAN_AI_INTERFACE` **107** 条）。
 
 ---
 
@@ -369,6 +370,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.54 | 2026-04-11 | **P5 §7 子批**：`docs/08_HUMAN_AI_INTERFACE` — `INDEX_HEALTH_20260507`（零入链 0）；`index` 门面表 01–39；`docs/INDEX` Layer 8 链 `index.md` |
 | 1.4.53 | 2026-04-11 | **P5 §7 子批**：`docs/10_GOVERNANCE_COMPLIANCE` — `INDEX_HEALTH_20260506`（零入链 0）；`10_GOVERNANCE_COMPLIANCE/INDEX` 子域门面 + P5 |
 | 1.4.52 | 2026-04-11 | **P5 §7 子批**：`docs/04_EXECUTION` — `INDEX_HEALTH_20260505`（零入链 0）；`docs/INDEX` Layer 5 补 README；`04_EXECUTION/INDEX` 子域门面表 |
 | 1.4.51 | 2026-04-11 | **P5 §7 子批**：`docs/07_AI_REPORTING` — `INDEX_HEALTH_20260504`（零入链 0）；`docs/INDEX` Layer 7 补 README；`07_AI_REPORTING/INDEX` P5 门面 |
