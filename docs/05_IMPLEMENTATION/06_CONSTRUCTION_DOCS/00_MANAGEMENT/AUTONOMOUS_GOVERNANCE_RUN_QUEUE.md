@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.29
+version: 1.0.30
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-13'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-13T09:30:00Z` |
-| **上轮 commit** | `a9b48d91` |
+| **UTC 时间** | `2026-04-13T10:00:00Z` |
+| **上轮 commit** | `99f12186` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE` 续批 · `docs/06_ARCHIVE/20260404_market_participant_consolidation`；或 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` |
-| **notes** | **B-02 · `06_CONSTRUCTION_DOCS/03_CONSTRUCTION_PLANS` 批次 1**：[`03_CONSTRUCTION_PLANS/INDEX.md`](../03_CONSTRUCTION_PLANS/INDEX.md) 增 **治理与接力**（办公室、`AUTONOMOUS`、`REPO_WIDE`、图纸柜 `01_BLUEPRINTS/INDEX`、`docs/INDEX`、rollup）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.29**。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE` 续批；或 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` · `docs/09_AUDIT/REPORTS` |
+| **notes** | **B-02 · `06_ARCHIVE/20260404_market_participant_consolidation` 批次 1**：[`INDEX.md`](../../../06_ARCHIVE/20260404_market_participant_consolidation/INDEX.md) 增 **导航与治理接力（出站）**（`docs/INDEX`、`09_AUDIT`、`REPORTS`、`MARKET_PARTICIPANT_SIMULATION_SPEC`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、rollup）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.30**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
