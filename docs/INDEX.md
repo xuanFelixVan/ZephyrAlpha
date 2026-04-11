@@ -98,6 +98,7 @@ responsibility:
 - [系统概览索引](./00_OVERVIEW/INDEX.md)
 - [资源目录索引](./00_RESOURCES/INDEX.md)
 - [资源目录 README](./00_RESOURCES/README.md)
+- [模块设计草图索引](./module_designs/INDEX.md)
 
 ---
 
