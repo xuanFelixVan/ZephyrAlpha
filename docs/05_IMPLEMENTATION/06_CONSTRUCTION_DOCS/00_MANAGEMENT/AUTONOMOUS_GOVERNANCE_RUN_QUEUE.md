@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.17
+version: 1.0.18
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-13'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-13T02:30:00Z` |
-| **上轮 commit** | `84bfd625` |
+| **UTC 时间** | `2026-04-13T03:15:00Z` |
+| **上轮 commit** | `c80437f6` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS` · `docs/05_IMPLEMENTATION/04_OPERATIONS`；或 `docs/09_AUDIT/STATE` 续批 |
-| **notes** | **B-02 · `09_AUDIT/STATE` 批次 3**：[`docs/09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) 在 REPORTS 与 04_OPERATIONS 之间增 **STATE 子域**表（`STATE/INDEX`、分组索引、`INDEX_HEALTH_20260413`、`overnight_runs/INDEX`），并注明与 REPORTS 的 `20260412` 健康度文件分日期勿混读。L1 **判定无效=0**。运行队列 **v1.0.17**。 |
+| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/04_OPERATIONS`；或 `docs/09_AUDIT/REPORTS` 续批 · `docs/09_AUDIT/STATE` |
+| **notes** | **B-02 · `09_AUDIT/REPORTS` 批次 1**：[`docs/09_AUDIT/REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md) 在「索引健全性」增 **STATE** 前缀 `INDEX_HEALTH_20260413` 与 REPORTS `20260412` 分文件说明；「上级入口」增 [`STATE/INDEX`](../../../09_AUDIT/STATE/INDEX.md)。L1 **判定无效=0**。运行队列 **v1.0.18**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
