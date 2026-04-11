@@ -1,13 +1,13 @@
 {
-  "scan_time_utc": "20260411T024412Z",
+  "scan_time_utc": "20260411T024518Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 3248,
   "links": {
     "stats": {
       "total_files_scanned": 3248,
-      "total_md_links": 7773,
+      "total_md_links": 7775,
       "skipped_external": 986,
-      "valid": 6787,
+      "valid": 6789,
       "invalid": 0
     },
     "invalid_details_sample": [],
