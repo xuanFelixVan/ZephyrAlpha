@@ -6,7 +6,7 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260411T025855Z
+> **UTC 时间**: 20260411T025925Z
 > **Markdown 文件数**: 3248
 
 ## 链接统计

@@ -1,9 +1,9 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.31
+version: 1.0.32
 status: Active
 created_date: 2026-04-11
-last_updated: '2026-04-13'
+last_updated: '2026-04-11'
 owner: 仓库 Owner / 文档负责人
 responsibility:
   - 跨 Cursor 会话的治理任务顺序、当前指针与锚点指令真源
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-13T10:30:00Z` |
-| **上轮 commit** | `32226d4a` |
+| **UTC 时间** | `2026-04-11T12:00:00Z` |
+| **上轮 commit** | `21ee6bf2` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` · `docs/09_AUDIT/REPORTS`；或 `docs/09_AUDIT/STATE` 其它子树续批 |
-| **notes** | **B-02 · `09_AUDIT/STATE/overnight_runs` 批次 1**：[`overnight_runs/INDEX.md`](../../../09_AUDIT/STATE/overnight_runs/INDEX.md) 增 **上级与接力**（`STATE/INDEX`、`09_AUDIT/INDEX`、`REPORTS`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、最新 `SENTINEL_L1_SCAN_20260408`）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.31**。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS`；或 `docs/09_AUDIT/STATE` 其它子树续批；已完成一批的 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` 可继续子文件 |
+| **notes** | **B-02 · `05_TECHNICAL_SPECIFICATIONS` 批次 1**：[`05_TECHNICAL_SPECIFICATIONS/INDEX.md`](../../05_TECHNICAL_SPECIFICATIONS/INDEX.md) 增 **上级与接力**（`05_IMPLEMENTATION/INDEX`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、`09_AUDIT/INDEX`、`STATE/INDEX`、`SENTINEL_L1_SCAN_20260408`）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.32**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
