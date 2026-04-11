@@ -93,6 +93,14 @@ responsibility:
 
 ---
 
+## 系统概览与资源（00_OVERVIEW / 00_RESOURCES）
+
+- [系统概览索引](./00_OVERVIEW/INDEX.md)
+- [资源目录索引](./00_RESOURCES/INDEX.md)
+- [资源目录 README](./00_RESOURCES/README.md)
+
+---
+
 ## 📚 文档体系架构
 
 ### 一级目录结束

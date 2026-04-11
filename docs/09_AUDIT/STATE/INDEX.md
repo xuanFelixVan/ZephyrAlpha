@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.36
+version: 1.0.37
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.36
+> **版本**: v1.0.37
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -126,6 +126,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 01_FRAMEWORK 前缀） | `scan_index_health.py --prefix docs/01_FRAMEWORK` | **最新（20260512）** [`INDEX_HEALTH_ORPHAN_20260512.md`](./INDEX_HEALTH_ORPHAN_20260512.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260512.json) |
 | 索引健全性（零入链 · 02_FACTOR_LIBRARY 前缀） | `scan_index_health.py --prefix docs/02_FACTOR_LIBRARY` | **最新（20260513）** [`INDEX_HEALTH_ORPHAN_20260513.md`](./INDEX_HEALTH_ORPHAN_20260513.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260513.json) |
 | 索引健全性（零入链 · 00_OVERVIEW 前缀） | `scan_index_health.py --prefix docs/00_OVERVIEW` | **最新（20260514）** [`INDEX_HEALTH_ORPHAN_20260514.md`](./INDEX_HEALTH_ORPHAN_20260514.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260514.json) |
+| 索引健全性（零入链 · 00_RESOURCES 前缀） | `scan_index_health.py --prefix docs/00_RESOURCES` | **最新（20260515）** [`INDEX_HEALTH_ORPHAN_20260515.md`](./INDEX_HEALTH_ORPHAN_20260515.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260515.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -166,6 +167,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.37 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260515`（`docs/00_RESOURCES`；**zero_inbound=0**；候选 md **4**；首轮 **4** 处门面零入链，已由 `00_RESOURCES/INDEX` 子域链 + `docs/INDEX` 总入口补链后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.36 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260514`（`docs/00_OVERVIEW`；**zero_inbound=0**；候选 md **3**；首轮 **`README.md`** 零入链，已由 `00_OVERVIEW/INDEX` 门面链补入后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.35 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260513`（`docs/02_FACTOR_LIBRARY`；**zero_inbound=0**；候选 md **142**；首轮 **`README.md`** 零入链，已由 `02_FACTOR_LIBRARY/INDEX` 门面链 + 文档列表补链后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.34 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260512`（`docs/01_FRAMEWORK`；**zero_inbound=0**；候选 md **336**；首轮 **3** 处子域门面经 `01_FRAMEWORK/INDEX` 补链后归零）；`01_FRAMEWORK/INDEX` 增上级接力 + P5；产出表增本行 | 文档治理系统 |
