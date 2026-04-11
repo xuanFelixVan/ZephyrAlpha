@@ -139,6 +139,8 @@ implementation_status: 活跃维护
 
 ### 02_DEVELOPMENT
 
+- [开发标准总索引](./02_DEVELOPMENT/INDEX.md)
+- [开发标准概述（README）](./02_DEVELOPMENT/README.md)
 - [AI Agent 调用协议](./02_DEVELOPMENT/AI_AGENT_CALL_PROTOCOL.md)
 - [API 设计](./02_DEVELOPMENT/API_DESIGN.md)
 - [认证](./02_DEVELOPMENT/AUTH.md)
@@ -187,7 +189,7 @@ implementation_status: 活跃维护
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
 | [01_QUICKSTART/](./01_QUICKSTART/) | 快速开?| 7 |
-| [02_DEVELOPMENT/](./02_DEVELOPMENT/) | 开发标?| 20+ |
+| [02_DEVELOPMENT/INDEX.md](./02_DEVELOPMENT/INDEX.md) | 开发标准 | 21 |
 | [03_DEPLOYMENT/](./03_DEPLOYMENT/) | 部署 | 2 |
 | [04_INFRASTRUCTURE/](./04_INFRASTRUCTURE/) | 基础设施 | 5 |
 | [07_OPERATIONS/INDEX.md](./07_OPERATIONS/INDEX.md) | 运维 | 62 |

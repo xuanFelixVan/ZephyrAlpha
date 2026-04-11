@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.19
+version: 1.0.20
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -109,6 +109,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 06_ARCHIVE/20260407_old_layer_audit_reports 前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports` | **最新（20260425）** [`INDEX_HEALTH_ORPHAN_20260425.md`](./INDEX_HEALTH_ORPHAN_20260425.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260425.json) |
 | 索引健全性（零入链 · 09_AUDIT/STANDARDS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STANDARDS` | **最新（20260426）** [`INDEX_HEALTH_ORPHAN_20260426.md`](./INDEX_HEALTH_ORPHAN_20260426.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260426.json) |
 | 索引健全性（零入链 · 06_ARCHIVE/20260407_p1_cleanup_archive 前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_p1_cleanup_archive` | **最新（20260427）** [`INDEX_HEALTH_ORPHAN_20260427.md`](./INDEX_HEALTH_ORPHAN_20260427.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260427.json) |
+| 索引健全性（零入链 · 05_IMPLEMENTATION/02_DEVELOPMENT 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/02_DEVELOPMENT` | **最新（20260428）** [`INDEX_HEALTH_ORPHAN_20260428.md`](./INDEX_HEALTH_ORPHAN_20260428.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260428.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -149,6 +150,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.20 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260428`（`05_IMPLEMENTATION/02_DEVELOPMENT`；**zero_inbound=0**；候选 md **21**）；`05_IMPLEMENTATION/INDEX` 显式链 `02_DEVELOPMENT/INDEX` 与 `README`；`02_DEVELOPMENT/INDEX` 增 P5 门面；产出表增本行 | 文档治理系统 |
 | v1.0.19 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260427`（`06_ARCHIVE/20260407_p1_cleanup_archive`；**zero_inbound=0**；候选 md **23**）；归档 `INDEX` 增全量挂载 + P5 门面；`06_ARCHIVE/INDEX` 表增门面行；产出表增本行 | 文档治理系统 |
 | v1.0.18 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260426`（`09_AUDIT/STANDARDS`；**zero_inbound=0**；候选 md **33**）；`STANDARDS/INDEX` 增 P5 门面；`09_AUDIT/INDEX` 审计标准表显式链 `STANDARDS/INDEX.md`；产出表增本行 | 文档治理系统 |
 | v1.0.17 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260425`（`06_ARCHIVE/20260407_old_layer_audit_reports`；**zero_inbound=0**；候选 md **40**）；归档根 `INDEX` 增子目录 `INDEX` + `layer25` 报告链；`06_ARCHIVE/INDEX` 表增门面行；产出表增本行 | 文档治理系统 |
