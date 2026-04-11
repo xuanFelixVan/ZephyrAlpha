@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.21
+version: 1.0.22
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.21
+> **版本**: v1.0.22
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -111,6 +111,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 06_ARCHIVE/20260407_p1_cleanup_archive 前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_p1_cleanup_archive` | **最新（20260427）** [`INDEX_HEALTH_ORPHAN_20260427.md`](./INDEX_HEALTH_ORPHAN_20260427.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260427.json) |
 | 索引健全性（零入链 · 05_IMPLEMENTATION/02_DEVELOPMENT 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/02_DEVELOPMENT` | **最新（20260428）** [`INDEX_HEALTH_ORPHAN_20260428.md`](./INDEX_HEALTH_ORPHAN_20260428.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260428.json) |
 | 索引健全性（零入链 · 05_IMPLEMENTATION/03_DEPLOYMENT 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/03_DEPLOYMENT` | **最新（20260429）** [`INDEX_HEALTH_ORPHAN_20260429.md`](./INDEX_HEALTH_ORPHAN_20260429.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260429.json) |
+| 索引健全性（零入链 · 05_IMPLEMENTATION/04_INFRASTRUCTURE 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_INFRASTRUCTURE` | **最新（20260430）** [`INDEX_HEALTH_ORPHAN_20260430.md`](./INDEX_HEALTH_ORPHAN_20260430.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260430.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -151,6 +152,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.22 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260430`（`05_IMPLEMENTATION/04_INFRASTRUCTURE`；**zero_inbound=0**；候选 md **4**）；`05_IMPLEMENTATION/INDEX` 显式链 `04_INFRASTRUCTURE/INDEX` 与 `README` 等；`04_INFRASTRUCTURE/INDEX` 增 P5 门面；产出表增本行 | 文档治理系统 |
 | v1.0.21 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260429`（`05_IMPLEMENTATION/03_DEPLOYMENT`；**zero_inbound=0**；候选 md **6**）；`05_IMPLEMENTATION/INDEX` 显式链 `03_DEPLOYMENT/INDEX` 与 `README`；`03_DEPLOYMENT/INDEX` 增 P5 门面与全量清单；产出表增本行 | 文档治理系统 |
 | v1.0.20 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260428`（`05_IMPLEMENTATION/02_DEVELOPMENT`；**zero_inbound=0**；候选 md **21**）；`05_IMPLEMENTATION/INDEX` 显式链 `02_DEVELOPMENT/INDEX` 与 `README`；`02_DEVELOPMENT/INDEX` 增 P5 门面；产出表增本行 | 文档治理系统 |
 | v1.0.19 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260427`（`06_ARCHIVE/20260407_p1_cleanup_archive`；**zero_inbound=0**；候选 md **23**）；归档 `INDEX` 增全量挂载 + P5 门面；`06_ARCHIVE/INDEX` 表增门面行；产出表增本行 | 文档治理系统 |

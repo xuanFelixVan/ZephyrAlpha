@@ -102,9 +102,10 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| 基础设施概述 | 基础设施概述 | ⭐⭐⭐⭐?|
-| [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | 日常流水?| ⭐⭐⭐⭐ |
-
+| [基础设施总索引](./04_INFRASTRUCTURE/INDEX.md) | 基础设施文档导航 | ⭐⭐⭐⭐ |
+| [基础设施概述（README）](./04_INFRASTRUCTURE/README.md) | 基础设施概述 | ⭐⭐⭐⭐ |
+| [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md) | 日常流水线 | ⭐⭐⭐⭐ |
+| [多级存储](./04_INFRASTRUCTURE/STORAGE_TIER.md) | 多级存储架构 | ⭐⭐⭐⭐ |
 
 ### 运维
 
@@ -155,6 +156,13 @@ implementation_status: 活跃维护
 - [部署概述（README）](./03_DEPLOYMENT/README.md)
 - [部署计划](./03_DEPLOYMENT/DEPLOYMENT_PLAN.md)
 
+### 04_INFRASTRUCTURE
+
+- [基础设施总索引](./04_INFRASTRUCTURE/INDEX.md)
+- [基础设施概述（README）](./04_INFRASTRUCTURE/README.md)
+- [日常流水线](./04_INFRASTRUCTURE/DAILY_PIPELINE.md)
+- [多级存储架构](./04_INFRASTRUCTURE/STORAGE_TIER.md)
+
 ### 04_OPERATIONS
 
 - [本目录门面](./04_OPERATIONS/README.md) · [索引](./04_OPERATIONS/INDEX.md) · [audit_state](./04_OPERATIONS/audit_state/INDEX.md)
@@ -198,7 +206,7 @@ implementation_status: 活跃维护
 | [01_QUICKSTART/](./01_QUICKSTART/) | 快速开?| 7 |
 | [02_DEVELOPMENT/INDEX.md](./02_DEVELOPMENT/INDEX.md) | 开发标准 | 21 |
 | [03_DEPLOYMENT/INDEX.md](./03_DEPLOYMENT/INDEX.md) | 部署 | 6 |
-| [04_INFRASTRUCTURE/](./04_INFRASTRUCTURE/) | 基础设施 | 5 |
+| [04_INFRASTRUCTURE/INDEX.md](./04_INFRASTRUCTURE/INDEX.md) | 基础设施 | 4 |
 | [07_OPERATIONS/INDEX.md](./07_OPERATIONS/INDEX.md) | 运维 | 62 |
 | [05_TECHNICAL_SPECIFICATIONS/INDEX.md](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格 | 80+ |
 | [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) | 建设文档 | 20+ |
