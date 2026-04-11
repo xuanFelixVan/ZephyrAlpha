@@ -1,9 +1,9 @@
 ---
 module_id: 01_BLUEPRINTS_INDEX_001
-version: 1.1.0
+version: 1.1.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-10'
+last_updated: '2026-04-13'
 owner: 文档管理团队
 responsibility:
   - 提供 01_BLUEPRINTS 目录完整索引（机器生成列表）
@@ -20,6 +20,12 @@ applicable_scope: 01_BLUEPRINTS
 - 总架构：[ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
 - 模块职责边界：[MODULE_RESPONSIBILITY_BOUNDARIES.md](../../../01_FRAMEWORK/MODULE_RESPONSIBILITY_BOUNDARIES.md)
 - 架构映射：[BLUEPRINT_ARCHITECTURE_MAPPING.md](../../../01_FRAMEWORK/BLUEPRINT_ARCHITECTURE_MAPPING.md)
+
+## 治理与接力（项目办公室）
+
+- [项目办公室总入口](../00_MANAGEMENT/README.md) ｜ [自主接力运行队列（Phase B）](../00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) ｜ [图纸柜规则](../00_MANAGEMENT/01_BLUEPRINTS_REPOSITORY_RULES.md) ｜ [图纸柜执行协议](../00_MANAGEMENT/BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md)  
+- [过程稿与报告子目录说明](./REPORTS/README.md)（非 `*BLUEPRINT.md` 终稿）  
+- **深度 3 前缀体量（rollup）**：[REPO_DIRECTORY_ROLLUP_20260413.md](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`；与本目录蓝图文件数口径不同属正常）
 
 ## 目录概要
 
