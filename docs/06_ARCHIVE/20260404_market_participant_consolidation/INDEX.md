@@ -1,9 +1,9 @@
 ---
 module_id: 06_ARCHIVE_20260404_MARKET_PARTICIPANT_CONSOLIDATION_INDEX
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-13
 owner: 首席文档架构师
 responsibility:
   - 20260404_market_participant_consolidation目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 06_ARCHIVE_20260404_MARKET_PARTICIPANT_CONSOLIDATION_INDEX_20260404_MARKET_PARTICIPANT_CONSOLIDATION_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: 2026-04-13
 owner: 文档治理系统
 responsibility:
   - 归档文档、历史版本
@@ -32,12 +32,21 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.0
+> **版本**: v1.0.1
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_20260404_MARKET_PARTICIPANT_CONSOLIDATION_001`
 
 ---
+
+## 导航与治理接力（出站）
+
+> 本目录为**归档整合快照**；与主题相关的**现行**技术说明以 **`05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS`** 与 **`09_AUDIT`** 为准。
+
+- [文档总入口 `../../INDEX.md`](../../INDEX.md) ｜ [审计域总索引 `../../09_AUDIT/INDEX.md`](../../09_AUDIT/INDEX.md) ｜ [REPORTS 门面 `../../09_AUDIT/REPORTS/README.md`](../../09_AUDIT/REPORTS/README.md)  
+- [实施侧技术规格（市场参与者仿真）`../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md`](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIMULATION_SPEC.md)  
+- [多会话接力（Phase B）`../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) ｜ [治理工具总索引 `../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- **前缀体量（深度 3 · rollup）**：[rollup `20260413`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md) · [`.json`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.json)（在正文内检索 `docs/06_ARCHIVE/20260404_market_participant_consolidation`）
 
 ## 📋 目录概览
 
