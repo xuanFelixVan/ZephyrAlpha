@@ -1,9 +1,9 @@
 ---
 module_id: 02_FACTOR_LIBRARY_INDEX_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 文档管理团队
 responsibility:
   - 目录导航
@@ -19,6 +19,7 @@ responsibility:
 ## 📂 文档列表
 
 - [SITEMAP](SITEMAP.md)
+- [04_DATA_SOURCE 数据源索引](./04_DATA_SOURCE/INDEX.md)
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
@@ -39,7 +40,7 @@ responsibility:
 
 ---
 
-**最后更新**: 2026-04-07 20:23:32
+**最后更新**: 2026-04-11
 
 ---
 
@@ -47,5 +48,6 @@ responsibility:
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.1 | 2026-04-11 | 文档列表增 `04_DATA_SOURCE/INDEX.md` 显式入口（P5 §7 门面互指对齐） | 文档管理团队 |
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
 

@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.36
+version: 1.4.37
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-19'
+last_updated: '2026-04-11'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -345,6 +345,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-04-17 · 前缀 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417` → [`INDEX_HEALTH_ORPHAN_20260417.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260417.md)（**zero_inbound=0**；候选 md **266**；首轮曾 **18**，已通过 [`01_BLUEPRINTS/REPORTS/README.md`](../01_BLUEPRINTS/REPORTS/README.md) 挂 12 份报告链 + [`05_DESIGN_DOCS/INDEX.md`](../05_DESIGN_DOCS/INDEX.md) 挂 6 份子域 `INDEX` 入链后复跑归零）；体量互指 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **272** 条）；更新 [`06_CONSTRUCTION_DOCS/README.md`](../README.md)、[`06_CONSTRUCTION_DOCS/INDEX.md`](../INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表。
 - **2026-04-18 · 前缀 `docs/06_ARCHIVE/20260404_audit_reports_archive`（归档区 · 门面批次）**：`scan_index_health.py` 增 **archive 子 `--prefix` 时取消对该 archive 根默认排除**（否则候选恒 0）；复跑 `--prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418` → [`INDEX_HEALTH_ORPHAN_20260418.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260418.md)（**zero_inbound=0**；候选 **183**；首轮 **5** 处经 [`20260404_audit_reports_archive/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/INDEX.md)、[`technical_reviews/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/INDEX.md)、[`archived_reports_20260402/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/audit_state/archived_reports_20260402/INDEX.md) 补链后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（**218** 条）；**本批未做删并**（§7.1：归档区只读治理为主）。
 - **2026-04-19 · 前缀 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419` → [`INDEX_HEALTH_ORPHAN_20260419.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260419.md)（**zero_inbound=0**；候选 **97**；首轮 **`INDEX.md` 自身** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式指向 `./05_TECHNICAL_SPECIFICATIONS/INDEX.md` 后归零）；[`05_TECHNICAL_SPECIFICATIONS/INDEX.md`](../../05_TECHNICAL_SPECIFICATIONS/INDEX.md) 增机器产出小节；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（**97** 条）。
+- **2026-04-20 · 前缀 `docs/02_FACTOR_LIBRARY/04_DATA_SOURCE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/02_FACTOR_LIBRARY/04_DATA_SOURCE --date 20260420` → [`INDEX_HEALTH_ORPHAN_20260420.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260420.md)（**zero_inbound=0**；候选 md **81**）；[`04_DATA_SOURCE/INDEX.md`](../../../02_FACTOR_LIBRARY/04_DATA_SOURCE/INDEX.md) 增机器产出小节；[`02_FACTOR_LIBRARY/INDEX.md`](../../../02_FACTOR_LIBRARY/INDEX.md) 显式链至 `./04_DATA_SOURCE/INDEX.md`；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **83** 条；与候选 md 数差含非 `.md` 等属正常口径差）。
 
 ---
 
@@ -352,6 +353,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.37 | 2026-04-11 | **P5 §7 子批**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` — `INDEX_HEALTH_20260420`（零入链 0）；数据源 `INDEX` 门面 + `02_FACTOR_LIBRARY/INDEX` 显式入口 |
 | 1.4.36 | 2026-04-19 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` — `INDEX_HEALTH_20260419`（零入链 0）；`05_IMPLEMENTATION/INDEX` 链至技术规格 `INDEX.md` |
 | 1.4.35 | 2026-04-18 | **P5 §7 子批**：`docs/06_ARCHIVE/20260404_audit_reports_archive` + `scan_index_health` archive 子前缀行为；`INDEX_HEALTH_20260418`（零入链 0）；归档根/子 `INDEX` 补链 |
 | 1.4.34 | 2026-04-17 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` — `INDEX_HEALTH_20260417`（零入链 0）；补 `REPORTS/README`、`05_DESIGN_DOCS/INDEX` 入链；门面 README/INDEX + `STATE/INDEX` 产出表 |
