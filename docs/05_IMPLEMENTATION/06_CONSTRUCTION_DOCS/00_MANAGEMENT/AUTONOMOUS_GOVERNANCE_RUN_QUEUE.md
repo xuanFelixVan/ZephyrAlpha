@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.35
+version: 1.0.36
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-11'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-11T18:00:00Z` |
-| **上轮 commit** | `8542d470` |
+| **UTC 时间** | `2026-04-11T20:00:00Z` |
+| **上轮 commit** | `92cfff50` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/REPORTS` 零散报告单篇导航（按需）；`docs/09_AUDIT/STATE` 其它子树；`docs/05_IMPLEMENTATION/04_OPERATIONS` |
-| **notes** | **B-02 · `09_AUDIT/REPORTS` 批次 3**：[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) **导航与索引健全性证据** 增补 **`GOVERNANCE_TOOLS_INDEX`**、**`SENTINEL_L1_SCAN_20260408`**；`related_documents` 同步；frontmatter **v1.1.6**。L1 **判定无效=0**。运行队列 **v1.0.35**。 |
+| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/04_OPERATIONS` 续批（`audit_state/`、`README`）；`docs/09_AUDIT/STATE` 其它子树；`docs/09_AUDIT/REPORTS` 按需单篇 |
+| **notes** | **B-02 · `05_IMPLEMENTATION/04_OPERATIONS` 批次 1**：[`04_OPERATIONS/INDEX.md`](../../04_OPERATIONS/INDEX.md) **导航与上级入口** 增补 **`09_AUDIT/STATE/INDEX`**、**`SENTINEL_L1_SCAN_20260408`**；frontmatter **v1.0.3**。L1 **判定无效=0**。运行队列 **v1.0.36**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
