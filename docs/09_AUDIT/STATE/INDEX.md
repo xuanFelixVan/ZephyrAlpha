@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.12
+version: 1.0.13
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -102,6 +102,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 20260404 审计报告归档前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260404_audit_reports_archive` | **最新（20260418）** [`INDEX_HEALTH_ORPHAN_20260418.md`](./INDEX_HEALTH_ORPHAN_20260418.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260418.json)（脚本：archive 子树 `--prefix` 时自动取消对 `docs/06_ARCHIVE/` 的默认排除） |
 | 索引健全性（零入链 · 05_TECHNICAL_SPECIFICATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` | **最新（20260419）** [`INDEX_HEALTH_ORPHAN_20260419.md`](./INDEX_HEALTH_ORPHAN_20260419.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260419.json) |
 | 索引健全性（零入链 · 02_FACTOR_LIBRARY/04_DATA_SOURCE 前缀） | `scan_index_health.py --prefix docs/02_FACTOR_LIBRARY/04_DATA_SOURCE` | **最新（20260420）** [`INDEX_HEALTH_ORPHAN_20260420.md`](./INDEX_HEALTH_ORPHAN_20260420.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260420.json) |
+| 索引健全性（零入链 · 07_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/07_OPERATIONS` | **最新（20260421）** [`INDEX_HEALTH_ORPHAN_20260421.md`](./INDEX_HEALTH_ORPHAN_20260421.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260421.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -142,6 +143,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.13 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260421`（`05_IMPLEMENTATION/07_OPERATIONS`；**zero_inbound=0**；候选 md **62**）；`07_OPERATIONS/INDEX` 补子域 `README`/`INDEX` 入链 + P5 门面；`05_IMPLEMENTATION/INDEX` 显式链运维总索引；产出表增本行 | 文档治理系统 |
 | v1.0.12 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260420`（`02_FACTOR_LIBRARY/04_DATA_SOURCE`；**zero_inbound=0**；候选 md **81**）；`04_DATA_SOURCE/INDEX` 增机器产出小节；`02_FACTOR_LIBRARY/INDEX` 显式链至数据源 `INDEX.md`；产出表增本行 | 文档治理系统 |
 | v1.0.11 | 2026-04-19 | P5 §7 子批：`INDEX_HEALTH_20260419`（`05_TECHNICAL_SPECIFICATIONS`；**zero_inbound=0**；候选 **97**）；`05_IMPLEMENTATION/INDEX` 显式链至 `INDEX.md`；本前缀 `INDEX` 增机器产出小节 | 文档治理系统 |
 | v1.0.10 | 2026-04-18 | P5 §7 子批：`INDEX_HEALTH_20260418`（`06_ARCHIVE/20260404_audit_reports_archive`；**zero_inbound=0**；候选 **183**）；`scan_index_health` 支持 archive 子 `--prefix`；归档根 `INDEX` 与子索引补链 | 文档治理系统 |

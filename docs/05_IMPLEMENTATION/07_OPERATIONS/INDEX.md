@@ -1,9 +1,9 @@
 ---
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_2
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - 07_OPERATIONS目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: IMPL_INDEX_OPERATIONS_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-04
-last_updated: 2026-04-04
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -33,9 +33,21 @@ parent_document: ../INDEX.md---
 
 > **目录职责**: 系统运维、监控、审计、知识管理
 > **文档数量**: 20+个
-> **最后更新**: 2026-04-04
+> **最后更新**: 2026-04-11
 
 ---
+
+## 上级与接力
+
+- [05_IMPLEMENTATION 索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260421.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260421.md)（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/07_OPERATIONS --date 20260421`；**zero_inbound=0**；候选 md **62**；首轮 **10** 处子域 `README`/`INDEX` 已由本页补链后复跑归零）
+- **rollup（深度 3 前缀条数）**：[../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索 `docs/05_IMPLEMENTATION/07_OPERATIONS` **62** 条）
 
 ## 📋 核心文档清单
 
@@ -55,21 +67,43 @@ parent_document: ../INDEX.md---
 ### audit_state/ - 审计状态
 | 文档 | 职责 |
 |------|------|
+| [README.md](./audit_state/README.md) | 审计状态目录说明 |
 
+### checklists/ - 检查清单
+| 文档 | 职责 |
+|------|------|
+| [README.md](./checklists/README.md) | 检查清单目录说明 |
+| [INDEX.md](./checklists/INDEX.md) | 检查清单子索引 |
 
+### improvement_plans/ - 改进计划（目录级）
+| 文档 | 职责 |
+|------|------|
+| [INDEX.md](./improvement_plans/INDEX.md) | 改进计划子索引 |
 
 ### knowledge_base/ - 知识库
 | 文档 | 职责 |
 |------|------|
+| [INDEX.md](./knowledge_base/INDEX.md) | 知识库子域总索引 |
+| [README.md](./knowledge_base/README.md) | 知识库说明 |
 | [KNOWLEDGE_INDEX.md](./knowledge_base/KNOWLEDGE_INDEX.md) | 知识库索引 |
 | [BEST_PRACTICES_INDEX.md](./knowledge_base/BEST_PRACTICES_INDEX.md) | 最佳实践索引 |
+| [best_practices/INDEX.md](./knowledge_base/best_practices/INDEX.md) | 最佳实践子索引 |
+| [case_studies/INDEX.md](./knowledge_base/case_studies/INDEX.md) | 案例研究子索引 |
+| [tools_guides/INDEX.md](./knowledge_base/tools_guides/INDEX.md) | 工具指南子索引 |
 
 ### improvements/ - 改进计划
 | 文档 | 职责 |
 |------|------|
+| [INDEX.md](./improvements/INDEX.md) | 改进项子索引 |
 | [IMP_001_QMT_API_LEARNING_PLAN.md](./improvements/IMP_001_QMT_API_LEARNING_PLAN.md) | QMT API学习计划 |
 | [IMP_002_QMT_API_COMMUNITY_RESEARCH.md](./improvements/IMP_002_QMT_API_COMMUNITY_RESEARCH.md) | QMT社区研究 |
 | [IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md](./improvements/IMP_003_QMT_CLIENT_STABILITY_SOLUTION.md) | QMT稳定性方案 |
+
+### monitoring/ - 监控
+| 文档 | 职责 |
+|------|------|
+| [README.md](./monitoring/README.md) | 监控目录说明 |
+| [INDEX.md](./monitoring/INDEX.md) | 监控子索引 |
 
 ---
 

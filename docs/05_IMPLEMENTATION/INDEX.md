@@ -3,7 +3,7 @@ module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: '2026-04-19'
+last_updated: '2026-04-11'
 owner: 实施层架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -19,7 +19,7 @@ implementation_status: 活跃维护
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-19  
+> **最后更新**: 2026-04-11  
 > **维护者**: 实施层架构师
 
 ---
@@ -163,6 +163,7 @@ implementation_status: 活跃维护
 
 ### 07_OPERATIONS
 
+- [运维手册总索引](./07_OPERATIONS/INDEX.md)
 - [审计交接](./07_OPERATIONS/AUDIT_HANDOVER.md)
 - [持续改进执行报告](./07_OPERATIONS/CONTINUOUS_IMPROVEMENT_EXECUTION_REPORT.md)
 - [文档创建检查清单](./07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md)
@@ -189,7 +190,7 @@ implementation_status: 活跃维护
 | [02_DEVELOPMENT/](./02_DEVELOPMENT/) | 开发标?| 20+ |
 | [03_DEPLOYMENT/](./03_DEPLOYMENT/) | 部署 | 2 |
 | [04_INFRASTRUCTURE/](./04_INFRASTRUCTURE/) | 基础设施 | 5 |
-| [07_OPERATIONS/](./07_OPERATIONS/) | 运维 | 50+ |
+| [07_OPERATIONS/INDEX.md](./07_OPERATIONS/INDEX.md) | 运维 | 62 |
 | [05_TECHNICAL_SPECIFICATIONS/INDEX.md](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格 | 80+ |
 | [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) | 建设文档 | 20+ |
 
