@@ -152,6 +152,7 @@ implementation_status: 活跃维护
 - [AUTOMATION README](./AUTOMATION/README.md)
 - [定时审计配置](./CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
 - [指南目录索引（GUIDES/INDEX）](./GUIDES/INDEX.md)
+- [CONFIG 目录索引](./CONFIG/INDEX.md)
 - [代码变更文档化指南](./GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
 - [定时任务部署指南](./GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
 
@@ -161,6 +162,7 @@ implementation_status: 活跃维护
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
 | [AUTOMATION/](./AUTOMATION/INDEX.md) | 自动化与持续监控配置入口 | 3 |
+| [CONFIG/](./CONFIG/INDEX.md) | 审计工具与文档系统配置计划入口 | 6 |
 | BEST_PRACTICES/ | 最佳实现| 1 |
 | CASE_STUDIES/ | 案例研究 | 1 |
 | CONFIGURATION/ | 配置 | 1 |

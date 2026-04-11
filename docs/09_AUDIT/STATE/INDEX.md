@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.42
+version: 1.0.43
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.42
+> **版本**: v1.0.43
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -132,6 +132,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 09_AUDIT/TEMPLATES 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/TEMPLATES` | **最新（20260518）** [`INDEX_HEALTH_ORPHAN_20260518.md`](./INDEX_HEALTH_ORPHAN_20260518.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260518.json) |
 | 索引健全性（零入链 · 09_AUDIT/AUTOMATION 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/AUTOMATION` | **最新（20260519）** [`INDEX_HEALTH_ORPHAN_20260519.md`](./INDEX_HEALTH_ORPHAN_20260519.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260519.json) |
 | 索引健全性（零入链 · 09_AUDIT/GUIDES 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/GUIDES` | **最新（20260520）** [`INDEX_HEALTH_ORPHAN_20260520.md`](./INDEX_HEALTH_ORPHAN_20260520.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260520.json) |
+| 索引健全性（零入链 · 09_AUDIT/CONFIG 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/CONFIG` | **最新（20260521）** [`INDEX_HEALTH_ORPHAN_20260521.md`](./INDEX_HEALTH_ORPHAN_20260521.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260521.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -172,6 +173,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.43 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260521`（`docs/09_AUDIT/CONFIG`；**zero_inbound=0**；候选 md **6**；首轮 **`CONFIG/INDEX`** 零入链，已由 `09_AUDIT/INDEX` 显式链 + `CONFIG/INDEX` P5 门面与文档数修正后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.42 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260520`（`docs/09_AUDIT/GUIDES`；**zero_inbound=0**；候选 md **4**；首轮 **`GUIDES/INDEX`** 零入链，已由 `09_AUDIT/INDEX` 显式链 + `GUIDES/INDEX` P5 与 YAML 修正后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.41 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260519`（`docs/09_AUDIT/AUTOMATION`；**zero_inbound=0**；候选 md **3**；首轮 **`INDEX`/`README`** 零入链，已由 `09_AUDIT/INDEX` 补链 + `AUTOMATION/INDEX` 门面后归零）；产出表增本行 | 文档治理系统 |
 | v1.0.40 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260518`（`docs/09_AUDIT/TEMPLATES`；**zero_inbound=0**；候选 md **16**；首轮 **`TEMPLATES/INDEX`** 零入链，已由 `09_AUDIT/INDEX` 审计模板表链 `./TEMPLATES/INDEX.md` + `TEMPLATES/INDEX` P5 后归零）；产出表增本行 | 文档治理系统 |

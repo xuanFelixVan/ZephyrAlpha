@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.67
+version: 1.4.68
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -376,6 +376,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-05-18 · 前缀 `docs/09_AUDIT/TEMPLATES`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/TEMPLATES --date 20260518` → [`INDEX_HEALTH_ORPHAN_20260518.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260518.md)（**zero_inbound=0**；候选 md **16**；首轮 **`TEMPLATES/INDEX.md`** 零入链，已由 [`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) 审计模板表补 `./TEMPLATES/INDEX.md` + [`TEMPLATES/INDEX.md`](../../../09_AUDIT/TEMPLATES/INDEX.md) P5 后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/09_AUDIT/TEMPLATES` **16** 条）。
 - **2026-05-19 · 前缀 `docs/09_AUDIT/AUTOMATION`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/AUTOMATION --date 20260519` → [`INDEX_HEALTH_ORPHAN_20260519.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260519.md)（**zero_inbound=0**；候选 md **3**；首轮 **`INDEX`/`README`** 零入链，已由 [`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) Playbook 补链 + [`AUTOMATION/INDEX.md`](../../../09_AUDIT/AUTOMATION/INDEX.md) 门面后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/09_AUDIT/AUTOMATION` **6** 条）。
 - **2026-05-20 · 前缀 `docs/09_AUDIT/GUIDES`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/GUIDES --date 20260520` → [`INDEX_HEALTH_ORPHAN_20260520.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260520.md)（**zero_inbound=0**；候选 md **4**；首轮 **`GUIDES/INDEX.md`** 零入链，已由 [`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) 显式链 `./GUIDES/INDEX.md` + [`GUIDES/INDEX.md`](../../../09_AUDIT/GUIDES/INDEX.md) P5 与 YAML 修正后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/09_AUDIT/GUIDES` **4** 条）。
+- **2026-05-21 · 前缀 `docs/09_AUDIT/CONFIG`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/CONFIG --date 20260521` → [`INDEX_HEALTH_ORPHAN_20260521.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260521.md)（**zero_inbound=0**；候选 md **6**；首轮 **`CONFIG/INDEX.md`** 零入链，已由 [`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) Playbook 与子目录表链 `./CONFIG/INDEX.md` + [`CONFIG/INDEX.md`](../../../09_AUDIT/CONFIG/INDEX.md) P5 门面后归零）；[`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表增本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/09_AUDIT/CONFIG` **6** 条）。
 
 ---
 
@@ -383,6 +384,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.68 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/CONFIG` — `INDEX_HEALTH_20260521`（CONFIG/INDEX → 0）；`09_AUDIT/INDEX` + `CONFIG/INDEX` |
 | 1.4.67 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/GUIDES` — `INDEX_HEALTH_20260520`（GUIDES/INDEX → 0）；`09_AUDIT/INDEX` + `GUIDES/INDEX` |
 | 1.4.66 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/AUTOMATION` — `INDEX_HEALTH_20260519`（首轮 2 → 0）；`09_AUDIT/INDEX` + `AUTOMATION/INDEX` |
 | 1.4.65 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/TEMPLATES` — `INDEX_HEALTH_20260518`（INDEX 零入链 → 0）；`09_AUDIT/INDEX` + `TEMPLATES/INDEX` |
