@@ -3,7 +3,7 @@ module_id: 09_AUDIT_REPORTS_README_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-12
-last_updated: '2026-04-11'
+last_updated: '2026-04-13'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非长列表真源）
@@ -25,6 +25,10 @@ applicable_scope: docs/09_AUDIT/REPORTS
 ## 目录体量（与仓库快照对齐）
 
 - **深度 3 前缀路径数**：以 `git ls-files` rollup 为准 → [`../STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（**`docs/09_AUDIT/REPORTS` = 499** 条，快照日期 `20260413`）
+
+## Git 列表与路径字面值（锚点 B）
+
+统计或脚本消费 **`git ls-files`** 时，建议 `git -c core.quotePath=false …` 或使用 **`-z` + UTF-8**，避免非 ASCII 路径被 C-quoting 后与磁盘路径对账失败。登记与回放见 [`../STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md`](../STATE/GIT_TRACKED_PATH_ANOMALIES_20260411.md)。
 
 ## 索引健全性（本前缀）
 
