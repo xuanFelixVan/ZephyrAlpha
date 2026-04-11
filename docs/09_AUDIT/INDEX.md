@@ -69,6 +69,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
+| [模板目录索引（TEMPLATES/INDEX）](./TEMPLATES/INDEX.md) | 模板区总索引与全量入口 | ⭐⭐⭐⭐ |
 | [专业文档治理审计指南](./TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计指南 | ⭐⭐⭐⭐?|
 | [文档治理审计检查清单](./TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) | 文档治理审计检查清?| ⭐⭐⭐⭐?|
 | [AI文档治理审计提示词](./TEMPLATES/AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT.md) | AI文档治理审计提示?| ⭐⭐⭐⭐ |
