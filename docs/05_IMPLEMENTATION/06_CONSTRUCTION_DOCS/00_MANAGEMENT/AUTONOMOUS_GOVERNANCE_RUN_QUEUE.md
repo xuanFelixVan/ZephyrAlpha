@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.30
+version: 1.0.31
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-13'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-13T10:00:00Z` |
-| **上轮 commit** | `99f12186` |
+| **UTC 时间** | `2026-04-13T10:30:00Z` |
+| **上轮 commit** | `32226d4a` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE` 续批；或 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` · `docs/09_AUDIT/REPORTS` |
-| **notes** | **B-02 · `06_ARCHIVE/20260404_market_participant_consolidation` 批次 1**：[`INDEX.md`](../../../06_ARCHIVE/20260404_market_participant_consolidation/INDEX.md) 增 **导航与治理接力（出站）**（`docs/INDEX`、`09_AUDIT`、`REPORTS`、`MARKET_PARTICIPANT_SIMULATION_SPEC`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、rollup）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.30**。 |
+| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS` · `docs/09_AUDIT/REPORTS`；或 `docs/09_AUDIT/STATE` 其它子树续批 |
+| **notes** | **B-02 · `09_AUDIT/STATE/overnight_runs` 批次 1**：[`overnight_runs/INDEX.md`](../../../09_AUDIT/STATE/overnight_runs/INDEX.md) 增 **上级与接力**（`STATE/INDEX`、`09_AUDIT/INDEX`、`REPORTS`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、最新 `SENTINEL_L1_SCAN_20260408`）；frontmatter **v1.0.1**。L1 **判定无效=0**。运行队列 **v1.0.31**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
