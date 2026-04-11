@@ -1,6 +1,6 @@
 ---
 module_id: INDEX_AUDIT_STATE_20260408120000
-version: 1.1.0
+version: 1.1.1
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -23,6 +23,18 @@ applicable_scope: 05_IMPLEMENTATION/04_OPERATIONS/audit_state
 **目录路径**: `docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state`  
 **Markdown 文件数**（不含本 INDEX）: **345**  
 **索引生成日期**: 2026-04-11
+
+---
+
+## 上级与接力
+
+- [04_OPERATIONS 索引](../INDEX.md)
+- [04_OPERATIONS 门面（README）](../README.md)
+- [自主治理运行队列](../../06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
+- [治理工具总索引](../../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT 域索引](../../../09_AUDIT/INDEX.md)
+- [STATE 子域索引](../../../09_AUDIT/STATE/INDEX.md)
+- [L1 治理快照（20260408）](../../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)
 
 ---
 
