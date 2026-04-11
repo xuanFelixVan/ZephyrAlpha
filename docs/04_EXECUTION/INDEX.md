@@ -87,7 +87,7 @@ implementation_status: 活跃维护---
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| README | 执行层概述| ⭐⭐⭐⭐?|
+| [README.md](./README.md) | 执行层概述 | ⭐⭐⭐⭐ |
 | [信号生成](./signal_generation.md) | 信号生成机制 | ⭐⭐⭐⭐ |
 
 ### 事件引擎
@@ -118,6 +118,28 @@ implementation_status: 活跃维护---
 | [健康监控](./03_MONITORING/HEALTH_MONITORING.md) | 健康监控 | ⭐⭐⭐⭐ |
 | [实时监控](./03_MONITORING/REAL_TIME_MONITORING.md) | 实时监控 | ⭐⭐⭐⭐ |
 | [绩效归因](./03_MONITORING/PERFORMANCE_ATTRIBUTION.md) | 绩效归因 | ⭐⭐⭐⭐ |
+
+---
+
+## 子域门面（INDEX / README · P5 §7 入链）
+
+> 下列链用于满足「零入链」扫描：子域 **`INDEX.md` / `README.md`** 须被本前缀内其他 `.md` 显式引用。
+
+| 子域 | 索引 | 概述 |
+|------|------|------|
+| 01_EVENT_ENGINE | [INDEX.md](./01_EVENT_ENGINE/INDEX.md) | [README.md](./01_EVENT_ENGINE/README.md) |
+| 01_ORDER_EXECUTION | [INDEX.md](./01_ORDER_EXECUTION/INDEX.md) | （本目录无 `README.md`） |
+| 02_TRADE_EXECUTOR | [INDEX.md](./02_TRADE_EXECUTOR/INDEX.md) | [README.md](./02_TRADE_EXECUTOR/README.md) |
+| 03_MONITORING | [INDEX.md](./03_MONITORING/INDEX.md) | [README.md](./03_MONITORING/README.md) |
+| 06_SIMULATION | [INDEX.md](./06_SIMULATION/INDEX.md) | [README.md](./06_SIMULATION/README.md) |
+| 07_LIVE_STREAM | [INDEX.md](./07_LIVE_STREAM/INDEX.md) | [README_RTX3090.md](./07_LIVE_STREAM/README_RTX3090.md) |
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260505.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260505.md)（`scan_index_health.py --prefix docs/04_EXECUTION --date 20260505`；**zero_inbound=0**；候选 md **30**；首轮 **10** 处子域门面零入链，已由本表 + [`docs/INDEX.md`](../INDEX.md) Layer 5 补 `README` 后复跑归零）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/04_EXECUTION` **35** 条路径；与 md 候选数差含非 `.md` 等属正常口径差）
+
+---
 
 ## 🧭 严格孤儿挂载（持续合入）
 
