@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_STATE_OVERNIGHT_RUNS_INDEX_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-08
-last_updated: 2026-04-11
+last_updated: 2026-04-13
 owner: 文档治理系统
 standard_type: 索引文档
 applicable_scope: overnight_runs
@@ -13,6 +13,12 @@ applicable_scope: overnight_runs
 
 > **说明**：本目录存放“夜间批量审计/扫描”的**产物快照**，用于追溯与对账。  
 > 这些文件通常不应该被当作“正文文档”阅读入口，因此必须通过本索引集中导航，避免成为事实孤儿。
+
+## 上级与接力
+
+- [返回 STATE 目录索引 `../INDEX.md`](../INDEX.md) ｜ [审计域总索引 `../../INDEX.md`](../../INDEX.md) ｜ [REPORTS 门面 `../../REPORTS/README.md`](../../REPORTS/README.md)  
+- [自主接力运行队列（Phase B）`../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md`](../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md) ｜ [治理工具总索引 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`](../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- **仓库内最新 L1 汇总快照（非某一 overnight 批次）**：[../SENTINEL_L1_SCAN_20260408.md](../SENTINEL_L1_SCAN_20260408.md)
 
 ## 运行批次
 
