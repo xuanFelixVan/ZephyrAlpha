@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.42
+version: 1.0.43
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-11'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-12T08:00:00Z` |
+| **UTC 时间** | `2026-04-12T10:00:00Z` |
 | **上轮 commit** | `e442cd3e` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE` 子文件续批；`docs/09_AUDIT/REPORTS` 按需单篇；`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` 其它门面 |
-| **notes** | **B-02 · `00_MANAGEMENT` 批次 3**：[`00_MANAGEMENT/README.md`](./README.md) 在「多会话接力」后增 **STATE / L1 / 09_AUDIT / 06/README** 显式入口行；frontmatter **v1.1.15**。L1 **判定无效=0**。运行队列 **v1.0.42**。 |
+| **本轮建议前缀**（§7） | `docs/09_AUDIT/STATE` 子文件续批（如 `HANDOFF_*`、`TRAE_*` 门面链）；`docs/09_AUDIT/REPORTS` 按需单篇；`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` 其它门面 |
+| **notes** | **B-02 · `00_MANAGEMENT` 批次 3**：[`00_MANAGEMENT/README.md`](./README.md) 在「多会话接力」后增 **STATE / L1 / 09_AUDIT / 06/README** 显式入口行；frontmatter **v1.1.15**。L1 **判定无效=0**。运行队列 **v1.0.43**。**分支 tip（含指针+L1）**：`ee54206a`。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
