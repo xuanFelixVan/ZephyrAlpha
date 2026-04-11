@@ -1,6 +1,6 @@
 ---
 module_id: AUTONOMOUS_GOVERNANCE_RUN_QUEUE_001
-version: 1.0.40
+version: 1.0.41
 status: Active
 created_date: 2026-04-11
 last_updated: '2026-04-11'
@@ -23,11 +23,11 @@ applicable_scope: 全仓文件治理接力；与 REPO_WIDE 并列，执行时以
 
 | 字段 | 填写 |
 |------|------|
-| **UTC 时间** | `2026-04-12T04:00:00Z` |
-| **上轮 commit** | `310100cf` |
+| **UTC 时间** | `2026-04-12T06:00:00Z` |
+| **上轮 commit** | `e522d210` |
 | **next_queue_id** | **B-02** |
-| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS` 续批（`01_BLUEPRINTS/INDEX`、`00_MANAGEMENT` 门面）；`docs/09_AUDIT/STATE` 子文件；`docs/09_AUDIT/REPORTS` 按需单篇 |
-| **notes** | **B-02 · `06_CONSTRUCTION_DOCS` 批次 1**：[`06_CONSTRUCTION_DOCS/README.md`](../README.md) 在「办公室」说明后增 **上级与接力**（`05_IMPLEMENTATION/INDEX`、`AUTONOMOUS`、`GOVERNANCE_TOOLS`、`09_AUDIT/INDEX`、`STATE/INDEX`、`SENTINEL_L1`、文档总入口）；首段 frontmatter **v1.0.1**（未整页重编码历史损坏块）。L1 **判定无效=0**。运行队列 **v1.0.40**。 |
+| **本轮建议前缀**（§7） | `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT` 门面续批；`docs/09_AUDIT/STATE` 子文件；`docs/09_AUDIT/REPORTS` 按需单篇 |
+| **notes** | **B-02 · `06_CONSTRUCTION_DOCS/01_BLUEPRINTS` 批次 2**：对齐 [`generate_01_blueprints_index.py`](../../../../scripts/governance/generate_01_blueprints_index.py) 与现网 **治理与接力** 块，并增补 **`GOVERNANCE_TOOLS`**、**`09_AUDIT/INDEX`**、**`STATE/INDEX`**、**`SENTINEL_L1`**、**`06/README`**、**实施域**、**文档总入口**；重生成 [`01_BLUEPRINTS/INDEX.md`](../01_BLUEPRINTS/INDEX.md)；frontmatter **v1.1.2**。L1 **判定无效=0**。运行队列 **v1.0.41**。 |
 | **stuck** | **无**（若有 **[STUCK]**，见下节并在 `notes` 写明细） |
 
 > 更新规则：完成一个队列子项或推进一批 §7.2 后，**至少**更新 `last_commit` 与 `next_queue_id`。
