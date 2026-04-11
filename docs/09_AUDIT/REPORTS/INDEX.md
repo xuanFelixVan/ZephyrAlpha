@@ -3,7 +3,7 @@ module_id: 09_AUDIT_REPORTS_INDEX_REPORTS_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-11'
+last_updated: '2026-04-14'
 owner: 文档治理系统
 responsibility:
 - 目录导航与文档索引管理与优化维护
@@ -28,7 +28,7 @@ compliance_level: 专业标准
 ### 导航与上级入口
 
 - **本目录门面（短说明）**：[./README.md](./README.md)  
-- **索引健全性（零入链 · 本前缀 REPORTS）**：[../STATE/INDEX_HEALTH_ORPHAN_20260412.md](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS`）  
+- **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260414.md](../STATE/INDEX_HEALTH_ORPHAN_20260414.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 [`20260412`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)  
 - **STATE 前缀健全性（另一份机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260413.md](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（`docs/09_AUDIT/STATE`；日期 **20260413**，勿与上条 `20260412` 混读）  
 - **STATE 子域索引**：[../STATE/INDEX.md](../STATE/INDEX.md)  
 - **整仓按目录尽治（REPO_WIDE §7）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)  
@@ -45,7 +45,7 @@ compliance_level: 专业标准
 | **活跃模块** | 66 |
 | **更新频率** | 按需更新 |
 
-> **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → [`../STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（当前快照 **`docs/09_AUDIT/REPORTS` = 499**）。上表为历史手工统计，对账前请勿单独当作 Git 真源。
+> **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → **最新** [`../STATE/REPO_DIRECTORY_ROLLUP_20260414.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（**`docs/09_AUDIT/REPORTS` = 499**）；历史 [`20260413`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)。上表为历史手工统计，对账前请勿单独当作 Git 真源。
 
 ---
 

@@ -8,7 +8,7 @@ generated_by: scripts/governance/scan_index_health.py
 # 索引健全性扫描报告（零入链候选）
 
 > **机器真源**：[`INDEX_HEALTH_ORPHAN_20260414.json`](./INDEX_HEALTH_ORPHAN_20260414.json)
-> **候选范围**：`docs/05_IMPLEMENTATION/04_OPERATIONS` ｜ **候选 md 数**：353 ｜ **入链来源**：all-tracked（2531 个 md）
+> **候选范围**：`docs/09_AUDIT/REPORTS` ｜ **候选 md 数**：485 ｜ **入链来源**：all-tracked（2532 个 md）
 > **零入链（已应用 ignore 后）**：**0**
 
 ## 说明

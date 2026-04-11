@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_REPORTS_README_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-12
-last_updated: '2026-04-11'
+last_updated: '2026-04-14'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非长列表真源）
@@ -24,7 +24,7 @@ applicable_scope: docs/09_AUDIT/REPORTS
 
 ## 目录体量（与仓库快照对齐）
 
-- **深度 3 前缀路径数**：以 `git ls-files` rollup 为准 → [`../STATE/REPO_DIRECTORY_ROLLUP_20260413.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)（**`docs/09_AUDIT/REPORTS` = 499** 条，快照日期 `20260413`）
+- **深度 3 前缀路径数**：以 `git ls-files` rollup 为准 → **最新** [`../STATE/REPO_DIRECTORY_ROLLUP_20260414.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（**`docs/09_AUDIT/REPORTS` = 499** 条，快照 `20260414`）；历史 [`20260413`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)
 
 ## Git 列表与路径字面值（锚点 B）
 
@@ -32,13 +32,14 @@ applicable_scope: docs/09_AUDIT/REPORTS
 
 ## 索引健全性（本前缀）
 
-- **零入链扫描（2026-04-12）**：[`../STATE/INDEX_HEALTH_ORPHAN_20260412.md`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS`；与 [`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md) 顶部说明一致）
-- **同目录旁系**：`docs/09_AUDIT/STATE` 前缀的健全性为**另一份**机器报告 → [`../STATE/INDEX_HEALTH_ORPHAN_20260413.md`](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（日期 **20260413**，勿与上条 `20260412` 混读）
+- **零入链扫描（最新 · 20260414）**：[`../STATE/INDEX_HEALTH_ORPHAN_20260414.md`](../STATE/INDEX_HEALTH_ORPHAN_20260414.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）
+- **历史快照**：[`../STATE/INDEX_HEALTH_ORPHAN_20260412.md`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)（`20260412`）
+- **同目录旁系**：`docs/09_AUDIT/STATE` 前缀的健全性为**另一份**机器报告 → [`../STATE/INDEX_HEALTH_ORPHAN_20260413.md`](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（日期 **20260413**，勿与上条 REPORTS 报告混读）
 
 ## 上级入口
 
 - [审计域总索引 `../INDEX.md`](../INDEX.md)  
 - [STATE 子域索引 `../STATE/INDEX.md`](../STATE/INDEX.md)（机器产出 / 台账 / rollup）  
-- [治理工具总索引 `GOVERNANCE_TOOLS_INDEX`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- [治理工具总索引 `GOVERNANCE_TOOLS_INDEX.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
 - [L1 治理快照（20260408）`SENTINEL_L1_SCAN_20260408`](../STATE/SENTINEL_L1_SCAN_20260408.md)  
 - [文档总入口 `../../INDEX.md`](../../INDEX.md)

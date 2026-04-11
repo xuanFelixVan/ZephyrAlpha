@@ -1,9 +1,9 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.29
+version: 1.4.30
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-11'
+last_updated: '2026-04-14'
 owner: 文档负责人（可指定）
 responsibility:
   - 全仓库已跟踪文件的清点、去重与索引可达性（与蓝图任务清单并列，不限于蓝图目录）
@@ -329,12 +329,17 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - [ ] 对每批执行 **§7.2** 退出标准，直至 **§7.3** 总勾选可勾或例外已登记。  
 - [ ] 批次间 **重跑 rollup** 与平面清单，保留 JSON diff 作证据。
 
+**§7.2 子批执行备忘（证据链，非总里程碑替代）**
+
+- **2026-04-14 · 前缀 `docs/09_AUDIT/REPORTS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414` → [`INDEX_HEALTH_ORPHAN_20260414.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260414.md)（**zero_inbound=0**）；`export_repo_directory_rollup.py --date 20260414` → [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)；门面 [`REPORTS/README.md`](../../../09_AUDIT/REPORTS/README.md)、[`REPORTS/INDEX.md`](../../../09_AUDIT/REPORTS/INDEX.md)、[`INDEX_GROUPED_REPORTS_20260408.md`](../../../09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表互指上述快照；**本批未改** REPORTS 下数百报告正文（§7.1：超大前缀先门面与机器证据，再分子队列）。
+
 ---
 
 ## 5. 版本记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.30 | 2026-04-14 | **P5 §7 子批**：`docs/09_AUDIT/REPORTS` 门面 — `INDEX_HEALTH_20260414`（零入链 0）+ `rollup_20260414`；修正 `STATE/INDEX` 表内 REPORTS/04_OPERATIONS 健全性行混排；P5 总勾未替代 |
 | 1.4.29 | 2026-04-11 | 移除根目录 `AGENTS.md`、`.cursor/rules/zephyr-governance-agent.mdc` 等「长程接力」附件；§7.1 去掉第 0 步；办公室 README / GLOBAL 阶段 C 恢复三步口径 |
 | 1.4.28 | 2026-04-12 | 废止独立「运行队列」文件；§7.1 曾增第 0 步（接力口径，见 1.4.29 撤回附件后收敛） |
 | 1.4.27 | 2026-04-11 | §7.1 曾互指运行队列（已废止，见 1.4.28） |
