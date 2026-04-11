@@ -1,96 +1,108 @@
 ---
 module_id: DOCS_07_RESEARCH_INDEX_001
----
-
-﻿---
-module_id: 07_RESEARCH_INDEX
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
-  - 07_RESEARCH目录索引
+  - 07_RESEARCH 目录索引
 ---
 
-﻿---
-module_id: 07_RESEARCH_INDEX_07_RESEARCH
-version: 1.0.0
+---
+module_id: 07_RESEARCH_INDEX
+version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-03
-owner: 首席文档架构?standard_type: 专业量化机构索引
+last_updated: '2026-04-11'
+owner: 首席文档架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
+standard_type: 专业量化机构索引文档
 applicable_scope: 研究支持
 compliance_level: 专业标准
 parent_document: ../INDEX.md
-implementation_status: 已完整
+implementation_status: 活跃维护
 ---
----
+
 
 # 研究支持目录索引
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
 
+> **核心职责**: 目录导航和文档索引  
+> **职责边界**:
+> - ✅ 本文档负责：`docs/07_RESEARCH/` 下导航与子域门面入链
+> - ❌ 本文档不负责：其他业务域规格正文的实质性改写
 
-> **目录职责**: 提供研究环境配置、探索性分析、实验追踪支?
-## 📁 目录结构
-
-| 目录 | 职责 | 状态|
-|------|------|------|
-| 01_ENVIRONMENT/ | 研究环境配置 | Active |
-| 02_EXPLORATORY_ANALYSIS/ | 探索性分析工?| Active |
-| 03_PATTERN_RECOGNITION/ | 模式识别研究 | Active |
-| 04_EXPERIMENT_TRACKING/ | 实验追踪 | Active |
-
-## 📂 子目录详?
-### 01_ENVIRONMENT - 研究环境
-
-| 文件 | 说明 |
-|------|------|
-| README.md | 环境说明 |
-| docker_setup.md | Docker配置 |
-
-### 02_EXPLORATORY_ANALYSIS - 探索性分?
-| 文件 | 说明 |
-|------|------|
-| README.md | 分析工具说明 |
-| correlation_analysis.md | 相关性分?|
-| statistical_tools.md | 统计工具 |
-| research_report_generator.md | 研究报告生成?|
+> **目录职责**: 研究环境配置、探索性分析、模式识别与实验追踪支持  
+> **最后更新**: 2026-04-11
 
 ---
 
-## 🧭 严格孤儿挂载（波次 1：入口补齐）
+## 上级与接力
 
-> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
-> **动作**：只做“索引入口挂载”，不改正文内容。
+- [docs 根索引](../INDEX.md)
+- [本目录 README（概述）](./README.md)
+- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md)（`scan_index_health.py --prefix docs/07_RESEARCH --date 20260503`；**zero_inbound=0**；候选 md **18**；首轮子域 **`INDEX`/`README`** 与根 **`INDEX`** 零入链，已由 [`docs/INDEX.md`](../INDEX.md) 与本页**子域门面表**补链后复跑归零）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/07_RESEARCH` **18** 条路径）
+
+---
+
+## 📁 子域门面（INDEX / README）
+
+| 子域 | 索引 | 概述 |
+|------|------|------|
+| 01_ENVIRONMENT | [INDEX.md](./01_ENVIRONMENT/INDEX.md) | [README.md](./01_ENVIRONMENT/README.md) |
+| 02_EXPLORATORY_ANALYSIS | [INDEX.md](./02_EXPLORATORY_ANALYSIS/INDEX.md) | [README.md](./02_EXPLORATORY_ANALYSIS/README.md) |
+| 03_PATTERN_RECOGNITION | [INDEX.md](./03_PATTERN_RECOGNITION/INDEX.md) | [README.md](./03_PATTERN_RECOGNITION/README.md) |
+| 04_EXPERIMENT_TRACKING | [INDEX.md](./04_EXPERIMENT_TRACKING/INDEX.md) | [README.md](./04_EXPERIMENT_TRACKING/README.md) |
+
+---
+
+## 📁 目录结构（职责）
+
+| 目录 | 职责 | 状态 |
+|------|------|------|
+| [01_ENVIRONMENT/](./01_ENVIRONMENT/INDEX.md) | 研究环境配置 | Active |
+| [02_EXPLORATORY_ANALYSIS/](./02_EXPLORATORY_ANALYSIS/INDEX.md) | 探索性分析工具 | Active |
+| [03_PATTERN_RECOGNITION/](./03_PATTERN_RECOGNITION/INDEX.md) | 模式识别研究 | Active |
+| [04_EXPERIMENT_TRACKING/](./04_EXPERIMENT_TRACKING/INDEX.md) | 实验追踪 | Active |
+
+---
+
+## 📄 根目录文档
+
+| 文档 | 说明 |
+|------|------|
+| [TECHNICAL_VALIDATION_PLAN.md](./TECHNICAL_VALIDATION_PLAN.md) | 技术验证计划 |
+| [EXPERIMENT_TRACKING.md](./EXPERIMENT_TRACKING.md) | 实验追踪（根文档） |
+
+---
+
+## 🧭 严格孤儿挂载（入口补齐）
+
+> 只做索引挂载，不改正文。
 
 - [相关性分析](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md)
 - [研究报告生成器](./02_EXPLORATORY_ANALYSIS/research_report_generator.md)
-
-### ✅ 入口链接补齐（用于严格孤儿入度统计）
-
 - [docker_setup](./01_ENVIRONMENT/docker_setup.md)
 - [statistical_tools](./02_EXPLORATORY_ANALYSIS/statistical_tools.md)
 - [candle_patterns](./03_PATTERN_RECOGNITION/candle_patterns.md)
 
-### 03_PATTERN_RECOGNITION - 模式识别
+### 子域正文（补充入链）
 
-| 文件 | 说明 |
+| 子域 | 文档 |
 |------|------|
-| README.md | 模式识别说明 |
-| candle_patterns.md | K线形态识?|
+| 02_EXPLORATORY_ANALYSIS | [correlation_analysis.md](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md) · [statistical_tools.md](./02_EXPLORATORY_ANALYSIS/statistical_tools.md) · [research_report_generator.md](./02_EXPLORATORY_ANALYSIS/research_report_generator.md) |
+| 03_PATTERN_RECOGNITION | [candle_patterns.md](./03_PATTERN_RECOGNITION/candle_patterns.md) |
+| 04_EXPERIMENT_TRACKING | [experiment_tracking.md](./04_EXPERIMENT_TRACKING/experiment_tracking.md) |
 
-### 04_EXPERIMENT_TRACKING - 实验追踪
-
-| 文件 | 说明 |
-|------|------|
-| BLUEPRINT.md | 实验追踪蓝图 |
-| experiment_tracking.md | 实验追踪实现 |
+---
 
 ## 🔍 与其他目录的边界
 
@@ -105,6 +117,7 @@ implementation_status: 已完整
 | **状态** | ✅ 已实现 | 🔄 规划中 |
 
 **边界说明**:
+
 - `07_RESEARCH/` 提供**研究工具和方法**（如何做研究）
 - `09_RESEARCH_INNOVATION/` 定义**研究战略和架构**（研究体系设计）
 
@@ -114,8 +127,7 @@ implementation_status: 已完整
 - **回测框架**: [../02_FACTOR_LIBRARY/05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/)
 - **AI工作流**: [../10_AI_WORKFLOW/INDEX.md](../10_AI_WORKFLOW/INDEX.md)
 - **研究战略层**: [../09_RESEARCH_INNOVATION/INDEX.md](../09_RESEARCH_INNOVATION/INDEX.md)
+
 ---
 
-*最后更新 2026-04-03*
-
-- [技术验证计?](./TECHNICAL_VALIDATION_PLAN.md) - 系统文档
+*最后更新 2026-04-11*

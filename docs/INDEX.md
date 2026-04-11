@@ -81,7 +81,15 @@ responsibility:
 | **完整架构** | [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11完整架构体系 | 架构设计 |
 | **因子?* | | 因子库系统清单| 因子管理 |
 | **交易战术** | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易策略和战术索?| 策略设计 |
+| **研究支持** | [研究支持索引（07_RESEARCH）](./07_RESEARCH/INDEX.md) | 研究环境、探索性分析与实验追踪入口 | `./07_RESEARCH/` |
 | **审计标准** | [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计标准 | 审计规范 |
+
+---
+
+## 研究支持（07_RESEARCH · 导航入口）
+
+- [研究支持总索引](./07_RESEARCH/INDEX.md)
+- [研究支持 README](./07_RESEARCH/README.md)
 
 ---
 
