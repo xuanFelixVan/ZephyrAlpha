@@ -148,6 +148,8 @@ implementation_status: 活跃维护
 - [大规模文件体系深度审计框架](./MASSIVE_FILE_SYSTEM_DEEP_AUDIT_FRAMEWORK.md)
 - [周期性审计流程](./PERIODIC_AUDIT_PROCESS.md)
 - [持续监控配置](./AUTOMATION/CONTINUOUS_MONITORING_CONFIG.md)
+- [AUTOMATION 目录索引](./AUTOMATION/INDEX.md)
+- [AUTOMATION README](./AUTOMATION/README.md)
 - [定时审计配置](./CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
 - [代码变更文档化指南](./GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
 - [定时任务部署指南](./GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
@@ -157,6 +159,7 @@ implementation_status: 活跃维护
 ## 🗂?子目?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
+| [AUTOMATION/](./AUTOMATION/INDEX.md) | 自动化与持续监控配置入口 | 3 |
 | BEST_PRACTICES/ | 最佳实现| 1 |
 | CASE_STUDIES/ | 案例研究 | 1 |
 | CONFIGURATION/ | 配置 | 1 |
