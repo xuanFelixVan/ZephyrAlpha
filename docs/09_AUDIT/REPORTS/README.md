@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_REPORTS_README_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-12
-last_updated: '2026-04-13'
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
   - 本目录门面说明与导航入口（非长列表真源）
@@ -39,4 +39,6 @@ applicable_scope: docs/09_AUDIT/REPORTS
 
 - [审计域总索引 `../INDEX.md`](../INDEX.md)  
 - [STATE 子域索引 `../STATE/INDEX.md`](../STATE/INDEX.md)（机器产出 / 台账 / rollup）  
+- [治理工具总索引 `GOVERNANCE_TOOLS_INDEX`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- [L1 治理快照（20260408）`SENTINEL_L1_SCAN_20260408`](../STATE/SENTINEL_L1_SCAN_20260408.md)  
 - [文档总入口 `../../INDEX.md`](../../INDEX.md)
