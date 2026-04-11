@@ -11,7 +11,7 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.16
+version: 1.0.17
 status: Active
 created_date: 2026-04-07
 last_updated: '2026-04-11'
@@ -106,6 +106,7 @@ compliance_level: 专业标准---
 | 索引健全性（零入链 · 09_ARCHIVE/duplicates 前缀） | `scan_index_health.py --prefix docs/09_ARCHIVE/duplicates` | **最新（20260422）** [`INDEX_HEALTH_ORPHAN_20260422.md`](./INDEX_HEALTH_ORPHAN_20260422.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260422.json)（`--prefix` 落在 `docs/09_ARCHIVE/` 子树时取消对该 archive 根的默认排除） |
 | 索引健全性（零入链 · 06_ARCHIVE/20260408_double_yaml_dryrun_sample 前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample` | **最新（20260423）** [`INDEX_HEALTH_ORPHAN_20260423.md`](./INDEX_HEALTH_ORPHAN_20260423.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260423.json)（候选仅 `README.md`；`.diff` 非 md 口径） |
 | 索引健全性（零入链 · 01_FRAMEWORK/LAYER4_ML 前缀） | `scan_index_health.py --prefix docs/01_FRAMEWORK/LAYER4_ML` | **最新（20260424）** [`INDEX_HEALTH_ORPHAN_20260424.md`](./INDEX_HEALTH_ORPHAN_20260424.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260424.json) |
+| 索引健全性（零入链 · 06_ARCHIVE/20260407_old_layer_audit_reports 前缀） | `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports` | **最新（20260425）** [`INDEX_HEALTH_ORPHAN_20260425.md`](./INDEX_HEALTH_ORPHAN_20260425.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260425.json) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -146,6 +147,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.17 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260425`（`06_ARCHIVE/20260407_old_layer_audit_reports`；**zero_inbound=0**；候选 md **40**）；归档根 `INDEX` 增子目录 `INDEX` + `layer25` 报告链；`06_ARCHIVE/INDEX` 表增门面行；产出表增本行 | 文档治理系统 |
 | v1.0.16 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260424`（`01_FRAMEWORK/LAYER4_ML`；**zero_inbound=0**；候选 md **40**）；`01_FRAMEWORK/INDEX` 显式链 `LAYER4_ML/INDEX` 与 `README`；`LAYER4_ML/INDEX` 增 P5 门面；产出表增本行 | 文档治理系统 |
 | v1.0.15 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260423`（`06_ARCHIVE/20260408_double_yaml_dryrun_sample`；**zero_inbound=0**；候选 md **1**）；`README` 增 P5 门面；`06_ARCHIVE/INDEX` 表增 dry-run 样本行；产出表增本行 | 文档治理系统 |
 | v1.0.14 | 2026-04-11 | P5 §7 子批：`INDEX_HEALTH_20260422`（`09_ARCHIVE/duplicates`；**zero_inbound=0**；候选 md **54**）；`duplicates/INDEX` 全量挂载 + P5 门面；`09_ARCHIVE/INDEX` 门面链对齐；产出表增本行 | 文档治理系统 |

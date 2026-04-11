@@ -1,9 +1,9 @@
 ---
 module_id: ARCHIVE_OLD_LAYER_REPORTS_001
-version: 1.0.0
+version: 1.0.1
 status: Archived
 created_date: 2026-04-07
-last_updated: '2026-04-07'
+last_updated: '2026-04-11'
 owner: 文档治理团队
 standard_type: 专业量化机构归档文档
 applicable_scope: 旧架构命名审计报告归档
@@ -12,6 +12,28 @@ responsibility:
 - 文档归档、历史追溯
 ---
 # 旧架构命名审计报告归档索引
+
+## 上级与接力
+
+- [06_ARCHIVE 索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260425.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260425.md)（`scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports --date 20260425`；**zero_inbound=0**；候选 md **40**；首轮 **8** 处子域 `INDEX` 与 `layer25` 单报告零入链，已由本页「子目录索引」补链 + `06_ARCHIVE/INDEX` 门面后复跑归零）
+- **rollup（深度 3 前缀条数）**：[../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索 `docs/06_ARCHIVE/20260407_old_layer_audit_reports` **40** 条）
+
+### 子目录索引（门面入链）
+
+- [layer5_reports/INDEX](./layer5_reports/INDEX.md)
+- [layer6_reports/INDEX](./layer6_reports/INDEX.md)
+- [layer9_reports/INDEX](./layer9_reports/INDEX.md)
+- [layer10_reports/INDEX](./layer10_reports/INDEX.md)
+- [layer11_reports/INDEX](./layer11_reports/INDEX.md)
+- [layer25_reports/INDEX](./layer25_reports/INDEX.md)
+- [LAYER25 P1/P2 修复报告](./layer25_reports/LAYER25_P1_P2_FIX_REPORT_20260407_141721.md)
 
 ## 📋 归档概要
 
