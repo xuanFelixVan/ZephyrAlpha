@@ -9,9 +9,9 @@ responsibility:
   - STATE目录索引
 ---
 
----
+﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.5
+version: 1.0.6
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-13
@@ -42,7 +42,9 @@ compliance_level: 专业标准---
 ### 导航与上级入口
 
 - **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
-- **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)
+- **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 20260412）**：[./INDEX_HEALTH_ORPHAN_20260412.md](./INDEX_HEALTH_ORPHAN_20260412.md)（`docs/09_AUDIT/REPORTS`；勿与下条 **STATE · 20260413** 混读）  
+- **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)  
+- **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
 
 ### 机器产出快捷入链（本页补桩 · 与 INDEX_HEALTH 对账）
 
