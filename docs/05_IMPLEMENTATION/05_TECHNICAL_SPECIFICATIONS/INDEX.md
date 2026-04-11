@@ -3,7 +3,7 @@ module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-11'
+last_updated: '2026-04-19'
 owner: 首席文档架构师
 responsibility:
   - 05_TECHNICAL_SPECIFICATIONS目录索引
@@ -16,7 +16,7 @@ index_id: TECHNICAL_SPECIFICATIONS_INDEX_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: '2026-04-11'
+last_updated: '2026-04-19'
 owner: 首席技术评审官
 standard_type: 文档索引
 applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
@@ -48,6 +48,11 @@ responsibility:
 - [09_AUDIT 域索引](../../09_AUDIT/INDEX.md)
 - [09_AUDIT STATE 索引](../../09_AUDIT/STATE/INDEX.md)
 - [L1 治理快照（20260408）](../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260419.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260419.md)（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419`；**zero_inbound=0**；候选 **97**）  
+- **rollup（深度 3 条数）**：[../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索本前缀 **97** 条）
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 

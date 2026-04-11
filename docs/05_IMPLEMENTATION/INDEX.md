@@ -1,9 +1,9 @@
-﻿---
+---
 module_id: INDEX_IMPLEMENTATION_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-14
+last_updated: '2026-04-19'
 owner: 实施层架构师
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -19,7 +19,7 @@ implementation_status: 活跃维护
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-14  
+> **最后更新**: 2026-04-19  
 > **维护者**: 实施层架构师
 
 ---
@@ -116,7 +116,7 @@ implementation_status: 活跃维护
 ### 技术规范
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [技术规格索引](./05_TECHNICAL_SPECIFICATIONS/) | 技术规格文?| ⭐⭐⭐⭐?|
+| [技术规格总索引（INDEX.md）](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格文档导航 | ⭐⭐⭐⭐ |
 
 ### 建设文档
 
@@ -155,6 +155,7 @@ implementation_status: 活跃维护
 
 ### 05_TECHNICAL_SPECIFICATIONS
 
+- [技术规格总索引](./05_TECHNICAL_SPECIFICATIONS/INDEX.md)
 - [AI 虚拟研究团队技术规格](./05_TECHNICAL_SPECIFICATIONS/AI_VIRTUAL_RESEARCH_TEAM_TECHNICAL_SPECIFICATION.md)
 - [配置管理器技术规格](./05_TECHNICAL_SPECIFICATIONS/CONFIG_MANAGER_TECHNICAL_SPECIFICATION.md)
 - [经济周期报告器技术规格](./05_TECHNICAL_SPECIFICATIONS/ECONOMIC_REGIME_REPORTER_TECHNICAL_SPECIFICATION.md)
@@ -189,7 +190,7 @@ implementation_status: 活跃维护
 | [03_DEPLOYMENT/](./03_DEPLOYMENT/) | 部署 | 2 |
 | [04_INFRASTRUCTURE/](./04_INFRASTRUCTURE/) | 基础设施 | 5 |
 | [07_OPERATIONS/](./07_OPERATIONS/) | 运维 | 50+ |
-| [05_TECHNICAL_SPECIFICATIONS/](./05_TECHNICAL_SPECIFICATIONS/) | 技术规?| 80+ |
+| [05_TECHNICAL_SPECIFICATIONS/INDEX.md](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格 | 80+ |
 | [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) | 建设文档 | 20+ |
 
 ---
