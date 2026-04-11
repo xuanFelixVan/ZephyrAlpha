@@ -151,6 +151,7 @@ implementation_status: 活跃维护
 - [AUTOMATION 目录索引](./AUTOMATION/INDEX.md)
 - [AUTOMATION README](./AUTOMATION/README.md)
 - [定时审计配置](./CONFIGURATION/SCHEDULED_AUDIT_CONFIGURATION.md)
+- [指南目录索引（GUIDES/INDEX）](./GUIDES/INDEX.md)
 - [代码变更文档化指南](./GUIDES/CODE_CHANGE_DOCUMENTATION_GUIDE.md)
 - [定时任务部署指南](./GUIDES/SCHEDULED_TASKS_DEPLOYMENT_GUIDE.md)
 
@@ -164,7 +165,7 @@ implementation_status: 活跃维护
 | CASE_STUDIES/ | 案例研究 | 1 |
 | CONFIGURATION/ | 配置 | 1 |
 | DECISION_RECORDS/ | 决策记录 | 1 |
-| [GUIDES/](./GUIDES/) | 指南 | 2 |
+| [GUIDES/](./GUIDES/INDEX.md) | 指南与工具使用说明入口 | 4 |
 | [PROCEDURES/](./PROCEDURES/AUDIT_EXECUTION_PROCEDURES.md) | 流程 | 2 |
 | [REPORTS/](./REPORTS/) | 报告 | 12 |
 | [RESEARCH_MEMOS/](./RESEARCH_MEMOS/) | 研究备忘?| 1 |
