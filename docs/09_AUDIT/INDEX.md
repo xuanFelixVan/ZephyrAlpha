@@ -3,7 +3,7 @@ module_id: 09_AUDIT_INDEX
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - 09_AUDIT目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_INDEX_AUDIT_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 审计系统架构?standard_type: 专业量化机构目录索引
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -58,6 +58,7 @@ implementation_status: 活跃维护
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
+| [标准总索引（STANDARDS/INDEX）](./STANDARDS/INDEX.md) | 标准目录导航与全量入口 | ⭐⭐⭐⭐ |
 | [审计标准](./STANDARDS/AUDIT_STANDARDS.md) | 审计标准 | ⭐⭐⭐⭐?|
 | [文档分类标准](./STANDARDS/DOCUMENT_CLASSIFICATION_STANDARD.md) | 文档分类标准 | ⭐⭐⭐⭐?|
 | [文档治理流程标准](./STANDARDS/DOCUMENT_GOVERNANCE_PROCESS_STANDARD.md) | 文档治理流程标准 | ⭐⭐⭐⭐ |

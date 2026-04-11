@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.42
+version: 1.4.43
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-11'
@@ -351,6 +351,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 - **2026-04-23 · 前缀 `docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample`（归档 · dry-run 样本）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample --date 20260423` → [`INDEX_HEALTH_ORPHAN_20260423.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260423.md)（**zero_inbound=0**；候选 md **1**；其余 **50** 个为 `.diff` 不在 md 入链口径）；[`README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md) 增 P5 门面；[`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 目录表增本样本行；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **51** 条）。
 - **2026-04-24 · 前缀 `docs/01_FRAMEWORK/LAYER4_ML`（门面批次）**：复跑 `scan_index_health.py --prefix docs/01_FRAMEWORK/LAYER4_ML --date 20260424` → [`INDEX_HEALTH_ORPHAN_20260424.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260424.md)（**zero_inbound=0**；候选 md **40**；首轮 **`INDEX`/`README`** 零入链，已由 [`01_FRAMEWORK/INDEX.md`](../../../01_FRAMEWORK/INDEX.md) 显式链 `./LAYER4_ML/INDEX.md` 与 `./LAYER4_ML/README.md` 后归零）；[`LAYER4_ML/INDEX.md`](../../../01_FRAMEWORK/LAYER4_ML/INDEX.md) 增 P5 门面；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **40** 条）。
 - **2026-04-25 · 前缀 `docs/06_ARCHIVE/20260407_old_layer_audit_reports`（归档 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports --date 20260425` → [`INDEX_HEALTH_ORPHAN_20260425.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260425.md)（**zero_inbound=0**；候选 md **40**；首轮 **8** 处子域 `INDEX` + `layer25` 单报告零入链，已由 [`20260407_old_layer_audit_reports/INDEX.md`](../../../06_ARCHIVE/20260407_old_layer_audit_reports/INDEX.md) 增「子目录索引」+ [`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 表增门面行后归零）；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **40** 条）。
+- **2026-04-26 · 前缀 `docs/09_AUDIT/STANDARDS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/09_AUDIT/STANDARDS --date 20260426` → [`INDEX_HEALTH_ORPHAN_20260426.md`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260426.md)（**zero_inbound=0**；候选 md **33**）；[`STANDARDS/INDEX.md`](../../../09_AUDIT/STANDARDS/INDEX.md) 增 P5 门面；[`09_AUDIT/INDEX.md`](../../../09_AUDIT/INDEX.md) 审计标准表显式链 `./STANDARDS/INDEX.md`；体量 [`REPO_DIRECTORY_ROLLUP_20260414.md`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（本前缀 **33** 条）。
 
 ---
 
@@ -358,6 +359,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.43 | 2026-04-11 | **P5 §7 子批**：`docs/09_AUDIT/STANDARDS` — `INDEX_HEALTH_20260426`（零入链 0）；`STANDARDS/INDEX` P5 门面 + `09_AUDIT/INDEX` 链标准总索引 |
 | 1.4.42 | 2026-04-11 | **P5 §7 子批**：`docs/06_ARCHIVE/20260407_old_layer_audit_reports` — `INDEX_HEALTH_20260425`（零入链 0）；归档根 `INDEX` 子目录链 + `06_ARCHIVE/INDEX` 门面 |
 | 1.4.41 | 2026-04-11 | **P5 §7 子批**：`docs/01_FRAMEWORK/LAYER4_ML` — `INDEX_HEALTH_20260424`（零入链 0）；`01_FRAMEWORK/INDEX` 链 L4 总索引 + README；`LAYER4_ML/INDEX` P5 门面 |
 | 1.4.40 | 2026-04-11 | **P5 §7 子批**：`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample` — `INDEX_HEALTH_20260423`（零入链 0）；dry-run `README` P5 门面 + `06_ARCHIVE/INDEX` 表增行 |

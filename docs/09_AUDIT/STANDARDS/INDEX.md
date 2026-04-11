@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_STANDARDS_INDEX
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - STANDARDS目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STANDARDS_INDEX_STANDARDS_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -36,6 +36,18 @@ compliance_level: 专业标准---
 > **索引**: `INDEX_STANDARDS_001`
 
 ---
+
+## 上级与接力
+
+- [09_AUDIT 索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260426.md](../STATE/INDEX_HEALTH_ORPHAN_20260426.md)（`scan_index_health.py --prefix docs/09_AUDIT/STANDARDS --date 20260426`；**zero_inbound=0**；候选 md **33**）
+- **rollup（深度 3 前缀条数）**：[../STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（检索 `docs/09_AUDIT/STANDARDS` **33** 条）
 
 ## 📋 目录概览
 
