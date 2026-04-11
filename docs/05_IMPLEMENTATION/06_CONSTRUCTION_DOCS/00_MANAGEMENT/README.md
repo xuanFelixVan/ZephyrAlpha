@@ -1,9 +1,9 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.13
+version: 1.1.14
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-13'
 owner: 文档负责人（可指定）
 responsibility:
   - 项目办公室（00_MANAGEMENT）总入口与外链索引
@@ -24,6 +24,8 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 **文档地图 + 放置规则（机构习惯）**：**「这类文档应放哪」** 的标准真源为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；**正式图纸柜**摆放以 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。扫描/rollup 途中要把文件归到合理位置时，按办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 执行——含 **§1.5**（**架构 Layer 与 `docs/` 路径分立**；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§2.3.1**、**§7.2「摆放」** 对齐）。
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**、**§2.3.1**（Layer 与路径防混）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/governance/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
+
+**多会话接力（Phase B · 当前指针）**：[自主接力运行队列](./AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)（`next_queue_id`、建议前缀、`notes`；与上条 REPO_WIDE **§7** 对齐；根目录 [`AGENTS.md`](../../../../AGENTS.md) 亦指向本队列）。
 
 **治理工具一键查**：[`GOVERNANCE_TOOLS_INDEX.md`](./GOVERNANCE_TOOLS_INDEX.md)（链检查、rollup、verify、架构目录、**内容重复**、**索引健全性（零入链）**、**蓝图 D 类重叠扫描 + A 档分流 + 二审 JSONL**等命令与产出表；实现在 [`scripts/governance/`](../../../../scripts/governance/)，根目录同名入口为兼容转发）。
 
