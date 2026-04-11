@@ -1,9 +1,9 @@
 ---
 module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-07
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - 05_TECHNICAL_SPECIFICATIONS目录索引
@@ -13,10 +13,10 @@ responsibility:
 module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_INDEX_002
 
 index_id: TECHNICAL_SPECIFICATIONS_INDEX_001
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-02
-last_updated: 2026-04-05
+last_updated: '2026-04-11'
 owner: 首席技术评审官
 standard_type: 文档索引
 applicable_scope: 全系统技术规格书（Layer 0-11）compliance_level: 专业标准
@@ -39,6 +39,15 @@ responsibility:
 ## 1. 索引说明
 
 本索引列出了清风量化系统的所有技术规格书文档，按Layer 0-11架构组织，包括文档名称、module_id、版本、状态和最后更新日期?---
+
+## 上级与接力
+
+- [05_IMPLEMENTATION 索引](../INDEX.md)
+- [自主治理运行队列](../06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
+- [治理工具总索引](../06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT 域索引](../../09_AUDIT/INDEX.md)
+- [09_AUDIT STATE 索引](../../09_AUDIT/STATE/INDEX.md)
+- [L1 治理快照（20260408）](../../09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md)
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
