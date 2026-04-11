@@ -13,6 +13,28 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
 ---
+
+## 上级与接力
+
+- [docs 根索引](../INDEX.md)
+- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
+- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+
+### 索引健全性与目录体量（P5 §7）
+
+- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260509.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260509.md)（`scan_index_health.py --prefix docs/09_RESEARCH_INNOVATION --date 20260509`；**zero_inbound=0**；候选 md **30**；首轮 **`_archive/INDEX`**、`maintenance_records/INDEX` 与 **`maintenance_records/README`** 零入链，已由本页下表补链后复跑归零）
+- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/09_RESEARCH_INNOVATION` **48** 条路径；与 md 候选数差含非 `.md` 等属正常口径差）
+
+### 子域门面（INDEX / README）
+
+| 子域 | 索引 | 概述 |
+|------|------|------|
+| `_archive/` | [INDEX.md](./_archive/INDEX.md) | （子目录内历史稿入口） |
+| `maintenance_records/` | [INDEX.md](./maintenance_records/INDEX.md) | [README.md](./maintenance_records/README.md) |
+
+---
+
 ## 核心定位
 
 负责提供Layer 9研究与创新层的文档导航和索引服务，整合研究文档、创新提案、实验报告等各类文档的入口，为研究团队和创新团队提供快速文档定位和检索支持，确保研究与创新文档体系的完整性和可访问性。
