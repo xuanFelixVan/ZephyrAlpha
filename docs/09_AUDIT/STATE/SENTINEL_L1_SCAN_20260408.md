@@ -6,7 +6,7 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260411T031055Z
+> **UTC 时间**: 20260411T031146Z
 > **Markdown 文件数**: 3248
 
 ## 链接统计
@@ -14,9 +14,9 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 | 指标 | 数值 |
 |------|------|
 | 扫描文件 | 3248 |
-| Markdown 内链（非 http/锚点等已排除） | 7863 |
+| Markdown 内链（非 http/锚点等已排除） | 7867 |
 | 跳过（外链/锚点等） | 986 |
-| 判定有效 | 6877 |
+| 判定有效 | 6881 |
 | 判定无效 | 0 |
 
 ### 无效链接样本（最多 800 条）
