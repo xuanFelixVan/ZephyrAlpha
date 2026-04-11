@@ -1,9 +1,9 @@
 ---
 module_id: PROJECT_OFFICE_AI_HANDOFF_001
-version: 1.3.5
+version: 1.3.6
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-16'
 owner: 文档负责人（可指定）
 responsibility:
   - 向 AI 或新协作者交接「项目办公室」与蓝图治理上下文时的必读说明
@@ -14,6 +14,14 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 # 项目办公室 — AI / 协作者交接说明
 
 > **你把这份文件发给任意 AI 时，请同时说明**：工作区根目录是 ZephyrAlpha 仓库；若任务与「蓝图、建设文档、文档整理」有关，先读本节再动文件。
+
+---
+
+## 0. 术语：「接力说明」指什么
+
+- **接力说明**：给**下一轮对话里的 AI** 或**下一位人类协作者**看的**短交代**——上一轮做到哪、哪些路径**不要一锅端 `git add`**、下一步先读哪份真源、跑哪几条门禁命令。本仓库常见载体：[全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md)（含可复制指令）、根目录 `AGENTS.md`、`.cursor/rules/` 中的治理底线等。  
+- **接力说明不是**：把「未裁决的合并 / 删稿」交给下一任默认执行；**D 类蓝图合稿、低置信合并**仍以 [D 类 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) 与 Owner 书面裁决为准。  
+- **与「位置是否正确」**：搬迁或尽治批次判断文件是否放对文件夹时，除 **§3.2**（Layer vs 路径）外，请打开 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.6**（分桶表）。
 
 ---
 
@@ -52,7 +60,7 @@ applicable_scope: 任意 AI 模型 / 人类接手本仓库文档与蓝图相关�
 | ① | [本文件夹 README](./README.md) | 办公室内有哪些文档、外链到哪 |
 | ①″（工具查询） | [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 链检查、rollup、verify、架构目录、**内容重复**、**索引健全性（零入链）**等**一条表** |
 | ①″-D（蓝图 D 类） | [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) + [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) + [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | 主题可能重叠（非 C1/C2）：`scan_blueprint_d_overlap_candidates.py` → 可选 `triage_blueprint_d_overlap_pairs.py`（`TRIAGE_*` + `SECOND_PASS_QUEUE_*.jsonl`）+ **§3.5** / **§5 双轨**；**低置信**合稿须在登记表用 **Markdown 相对链**（一点就跳） |
-| ①‴（地图与放置） | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **全库 `docs/` 该放哪**：真源链（LAYOUT + 图纸柜规则）+ 与 rollup/§7 批次的**扫描→归位**步骤；**含 §1.5**（系统 **Layer 0～11** 与目录名分立，勿从 `10_*` 路径猜 Layer）；搬迁前优先于「凭感觉 mkdir」 |
+| ①‴（地图与放置） | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **全库 `docs/` 该放哪**：真源链（LAYOUT + 图纸柜规则）+ 与 rollup/§7 批次的**扫描→归位**步骤；**含 §1.5**（系统 **Layer 0～11** 与目录名分立，勿从 `10_*` 路径猜 Layer）；**含 §1.6**（「位置是否正确」**A～F 分桶**，避免把断链修好当放对树）；搬迁前优先于「凭感觉 mkdir」 |
 | ①′ | [DOCUMENT_GOVERNANCE_ARCHITECTURE.md](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | **机构式分层架构**（L0～L5）、控制流、与 `09_AUDIT` 边界；首读 README 后建议接着读 |
 | ② | [01_BLUEPRINTS_REPOSITORY_RULES.md](./01_BLUEPRINTS_REPOSITORY_RULES.md) | 图纸柜根目录**允许/禁止**什么文件；过程稿应放哪 |
 | ③ | [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md) | 整理图纸柜时的执行纪律、自检命令；**用户可复制指令**在文首 |
@@ -142,6 +150,7 @@ L1 / module_id: scripts/governance/sentinel_l1_governance_scan.py；补首道 mo
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.6 | 2026-04-16 | 新增 **§0 术语**（「接力说明」）；①‴ 行补 **放置规程 §1.6**（位置正确性分桶）；与 GLOBAL 会话交接、REPO_WIDE **§2.3.2** 互指 |
 | 1.3.5 | 2026-04-10 | ①″-D / 常见任务 / 路径速查互指 `triage_blueprint_d_overlap_pairs.py`、[二审模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)、TRIAGE / SECOND_PASS_QUEUE |
 | 1.3.4 | 2026-04-10 | 常见任务「L1」扩展为内链 + 首道 `module_id` + `backfill_missing_module_id.py`；路径速查增两行 |
 | 1.3.3 | 2026-04-10 | **§3.2** 互指 LAYOUT **§1 第 5 条**；禁平行 Layer 放置真源 |

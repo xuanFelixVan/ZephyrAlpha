@@ -1,9 +1,9 @@
 ---
 module_id: DOCUMENT_MAP_PLACEMENT_GOVERNANCE_001
-version: 1.3.1
+version: 1.3.2
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-10'
+last_updated: '2026-04-16'
 owner: 文档负责人（可指定）
 responsibility:
   - 将「文档地图 + 放置规则」与扫描、任务清单、办公室流程显式对齐（衔接真源，不复制目录学全文）
@@ -44,6 +44,32 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 
 > **与办公室其他「分层」表述的区别**：[`DOCUMENT_GOVERNANCE_ARCHITECTURE.md`](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) 中的 **L0～L5** 描述的是**文档治理控制面**（机构式办公室分层），**不是**本节所述 **Layer 0～11 技术栈**；二者可并存，禁止混名混用。
 
+### 1.6「位置是否正确」— 分层判准、分桶与分类表（搬迁 / 尽治批次用）
+
+**问题**：若只做「先分类、再动手」，仍可能**放错目录或文件名不当**——当分类维度里**没有显式包含「对照标准树」**时，错误位置会与断链、重复等问题纠缠。
+
+**专业机构常见做法（压缩版）**：先有**受控分类法 / 文档类型 → 存放位置**映射（本仓库即 **LAYOUT 标准 §2～§4** + 图纸柜规则 + 命名标准），再对实物做 **inventory（rollup / 清单）**，把每份稿**分桶**后搬迁，最后用 **门禁（L1、verify、可选 INDEX_HEALTH）**验收。**「位置对不对」**与 **「链断不断」「内容是否重复」** 是不同信号，**不可互相替代**。
+
+**是否需要「完整判断方案」？**  
+- **需要一套分层判准**（下表），否则搬迁批次容易漏维度。  
+- **不承诺**对「每一个文件」做业务语义审计或全库「必须在某 INDEX 出现」的硬规则（见 [REPO_WIDE §1.1](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1.1**、本文 **§5.3**）。  
+- **实践口径**：每个搬迁 PR 在描述里写清本批启用了表中**哪几行**判准即可（不必每篇长文）。
+
+#### 1.6.1 分桶表（第一列 =「位置 / 元数据 / 关系」）
+
+| 分桶（维度） | 回答的问题 | 判准真源（本仓库） | 机器 / 人 | 典型动作 |
+|--------------|------------|-------------------|-----------|----------|
+| **A. 物理树职责** | 这篇稿应落在 **哪棵 `docs/` 前缀** 下？ | [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§2～§4**；`05_IMPLEMENTATION` 细节见 **§3**；图纸柜叠加 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) | **人**对照为主；[`REPO_DIRECTORY_ROLLUP_*`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md) 看**实际**堆在哪 | 错位 → `git mv` 级搬迁 + 本文 **§4** 修链 |
+| **B. 架构 Layer 与路径分立** | 叙事上的 **Layer 0～11** 与 **磁盘路径** 是否被混为一谈？ | 本文 **§1.5**；[`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) | **人** | 改 `front matter` / 正文表述；**禁止**从 `docs/10_*` 路径猜 Layer |
+| **C. 文件名** | 命名是否符合仓库约定？ | [`FILE_NAMING_STANDARD.md`](../../../09_AUDIT/STANDARDS/FILE_NAMING_STANDARD.md) | **人** | 重命名 PR；导航名 `INDEX`/`README` 多份并存见 basename 报表说明 |
+| **D. 重复 / 副本** | 是否与其它路径 **同内容** 或 **主题重叠须裁决**？ | [REPO_WIDE §3](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md) | **脚本** + **Owner（D 类）** | C1 合并 / stub；D 类走 Playbook **§5**，低置信合稿登记 [待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) |
+| **E. 链接与可达** | 相对链是否断、零入链是否可接受？ | `sentinel_l1_governance_scan.py`；`scan_index_health.py`（本文 **§5.2**） | **脚本**为主 | 修链、补门面；**零入链 ≠ 已证明放对树** |
+| **F. 台账与受控入口** | 登记表、canonical 指针是否仍指向旧路径？ | [受控文档登记表](./CONTROLLED_DOCUMENTS_REGISTER.md)；[`CANONICAL_POINTERS`](../../../09_ARCHIVE/duplicates/CANONICAL_POINTERS.md) 等 | **人** | 与搬迁同一 PR 内更新 |
+
+**与 §3「扫描→归位」步骤的衔接**：出 rollup（§3 第 1 步）后，用 **A 行**筛出「堆在错误前缀」的候选；归位前用 **B～D** 各扫一遍再动手；收口用 **E～F**。
+
+**与「接力说明」的关系**：下一任 AI/人类应能在交接短文里看到「本批已判定 A/B 至哪一格、未判定项留谁」——见 [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) 全文；**术语解释**见 [项目办公室 AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) **§0**。
+
 ---
 
 ## 2. 「文档地图」在本仓库指什么
@@ -56,7 +82,7 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 | **蓝图与能力总览** | 正式稿导航、任务 1 闭合 | [`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`](../../../01_FRAMEWORK/BLUEPRINT_STAGE_COMPLETE_SUMMARY.md)、[`01_BLUEPRINTS/INDEX.md`](../01_BLUEPRINTS/INDEX.md) |
 | **架构服务视图（代码侧）** | API/组件与根目录机构缺口 | [`ARCHITECTURE_SERVICE_CATALOG_*.md`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) |
 
-**放置决策**时：先用 **LAYOUT 标准**定「这类内容应落在哪棵树」（**§1.5**：与 Layer 编号分开想），再用 **rollup** 看当前文件实际堆在哪棵前缀下，二者不一致即形成**搬迁候选**（须 PR + 链接替换 + 门禁）。
+**放置决策**时：先用 **LAYOUT 标准**定「这类内容应落在哪棵树」（**§1.5**：与 Layer 编号分开想），再用 **rollup** 看当前文件实际堆在哪棵前缀下，二者不一致即形成**搬迁候选**（须 PR + 链接替换 + 门禁）。**是否算「放对」** 请显式对照 **§1.6 分桶表**（至少 **A + E**；涉蓝图重复则 **+ D**）。
 
 ---
 
@@ -132,7 +158,7 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 | 任务/章节 | 与本文关系 |
 |-----------|------------|
 | [蓝图终稿任务清单](./BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) **机构顺序 3～5**、**任务 3～5**、**W0～W4** | 清点与归位、摆放与卫生阶段须**显式对照 LAYOUT + 图纸柜规则**；W2/W4 与根目录误放见 [仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。 |
-| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§2.3、§2.3.1、§7** | **§7.2** 含 **「摆放」「导航」「内链」**（摆放与 **§1.5** 一致）；搬迁后索引同步见本文 **§4** 与 §7.2 **内链** 项；§2.3 总表含 **文档地图与放置** 行；**§2.3.1** 与本文 **§1.5** 互文。 |
+| [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§2.3、§2.3.1、§2.3.2、§7** | **§7.2** 含 **「摆放」「导航」「内链」**（摆放与 **§1.5** / **§1.6** 一致）；搬迁后索引同步见本文 **§4** 与 §7.2 **内链** 项；§2.3 总表含 **文档地图与放置** 行；**§2.3.1** 与本文 **§1.5** 互文；**§2.3.2** 与本文 **§1.6** 互文。 |
 | [蓝图卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md) | 清洁批次与「先定摆放再合并」互补；不与此文冲突时**优先满足 LAYOUT**。 |
 
 ---
@@ -141,6 +167,7 @@ applicable_scope: 全仓库 Markdown/实施文档的路径决策；与整仓尽�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.3.2 | 2026-04-16 | 新增 **§1.6**（「位置是否正确」分层判准 + 分桶表；与 §2 放置决策、§6 任务联动、接力术语互指）；§2 放置决策显式引用 §1.6 |
 | 1.3.1 | 2026-04-10 | 文首与 **§1.5** 互指 LAYOUT **§1 第 5 条**（禁重复造平行真源） |
 | 1.3.0 | 2026-04-10 | 新增 **§1.5**（Layer 0～11 与 `docs/` 路径分立 + 与 `DOCUMENT_GOVERNANCE_ARCHITECTURE` L0～L5 区分）；§2 地图表增 **技术栈分层**行；§6 联动 REPO_WIDE **§2.3.1** |
 | 1.2.0 | 2026-04-10 | **§5.2** 落地 `scan_index_health.py`（零入链报表）；原「可选增强」拆为 §5.2 / §5.3 |

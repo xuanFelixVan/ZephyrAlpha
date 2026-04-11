@@ -1,6 +1,6 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST_001
-version: 1.4.32
+version: 1.4.33
 status: Active
 created_date: 2026-04-10
 last_updated: '2026-04-16'
@@ -163,7 +163,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 | **模块全景（逻辑树）** | §2.4；将来 `MODULE_PANORAMA_*` 与 rollup **同频**重跑 | 包名/域改名后重跑，避免索引漂移 |
 | **架构服务目录 + C4 多视图** | `python scripts/governance/generate_architecture_service_catalog.py` → `ARCHITECTURE_SERVICE_CATALOG_*` | 改 `src/api`、契约路径或根目录机构文件后重跑；JSON 可检索 |
 | **内容重复（后缀白名单）** | `python scripts/governance/scan_duplicate_file_content.py --ext md`（可加 `yaml` 等） | 产出 `DUPLICATE_CONTENT_BY_HASH_*`；**须**人工按 §3 合并 | 默认不扫无扩展名/二进制；大文件见 `--max-mb` |
-| **文档地图与放置** | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**）+ [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) + [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) | 搬迁/新建目录前**先查格**；**Layer 与路径**见 **§2.3.1**；大批归位与 **§7** 同窗 | 新类型目录须先改 LAYOUT §6 或决策记录（见规程 §1） |
+| **文档地图与放置** | [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**）+ [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) + [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) | 搬迁/新建目录前**先查格**；**Layer 与路径**见 **§2.3.1**；**「位置是否正确」分桶**见 **§2.3.2** ↔ 规程 **§1.6**；大批归位与 **§7** 同窗 | 新类型目录须先改 LAYOUT §6 或决策记录（见规程 §1） |
 | **索引健全性（零入链）** | `python scripts/governance/scan_index_health.py`（可加 `--prefix` 等） | 产出 `INDEX_HEALTH_ORPHAN_*`；与 **L1** 互补 | 不判定域 INDEX 必列；见 [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2～§5.3** |
 | **治理工具归口** | 办公室 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) | 一键查命令与产出 | 实现在 `scripts/governance/`；根目录同名 `.py` 为兼容转发 |
 
@@ -178,6 +178,14 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 3. **禁止**：仅凭 `docs/10_AI_WORKFLOW` 等路径前缀推断「等于 Layer 10」；以正文、`front matter` 的 `layer`（若有）与 `ARCHITECTURE.md` **一致**为准。
 
 与 [AI 交接说明 §3.2](./PROJECT_OFFICE_AI_HANDOFF.md) 互指；蓝图 YAML 与正文 Layer 冲突时须 **Owner 裁决**后单点收敛。
+
+### 2.3.2「位置是否正确」— 判准与分桶（与放置规程 §1.6 互文）
+
+**目的**：避免把 **「断链已修」「零入链已改善」** 误当成 **「文件已放在 canonical 目录」**。二者相关但**不等价**。
+
+- **真源**：办公室 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.6**（分层判准 + **A～F 分桶表**）；物理树职责仍以 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) **§2～§4** 为准。  
+- **与 §7.2「摆放」的关系**：§7.2 的摆放验收应能指回 **§1.6** 至少 **A（物理树）+ E（L1/可选 INDEX_HEALTH）**；涉重复合并时叠加 **D**。  
+- **与 §1.1 边界的关系**：§1.6 **不**承诺全库每篇业务语义审计或「域 INDEX 必列」硬门禁（仍见 [放置规程 §5.3](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)）。
 
 ### 2.4 系统架构「模块全景树」与多级索引（三/四级子模块）
 
@@ -341,6 +349,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.4.33 | 2026-04-16 | **§2.3.2** 新增「位置是否正确」判准互文（↔ 放置规程 **§1.6**）；§2.3 总表「文档地图与放置」行补 **§1.6** |
 | 1.4.32 | 2026-04-16 | **P5 §7 子批**：`docs/09_AUDIT/STATE` — `INDEX_HEALTH_20260416`（零入链 0）；`09_AUDIT/INDEX`、`REPORTS/INDEX` 与 `STATE/INDEX` 互指最新快照 |
 | 1.4.31 | 2026-04-15 | **P5 §7 子批**：`docs/05_IMPLEMENTATION/04_OPERATIONS` — `INDEX_HEALTH_20260415`（零入链 0）；门面 README/INDEX 与 `STATE/INDEX` 表对齐 `rollup_20260414` 体量 |
 | 1.4.30 | 2026-04-14 | **P5 §7 子批**：`docs/09_AUDIT/REPORTS` 门面 — `INDEX_HEALTH_20260414`（零入链 0）+ `rollup_20260414`；修正 `STATE/INDEX` 表内 REPORTS/04_OPERATIONS 健全性行混排；P5 总勾未替代 |

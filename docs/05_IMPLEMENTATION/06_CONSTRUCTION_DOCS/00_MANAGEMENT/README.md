@@ -1,9 +1,9 @@
 ---
 module_id: 00_MANAGEMENT_README_001
-version: 1.1.17
+version: 1.1.18
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-11'
+last_updated: '2026-04-16'
 owner: 文档负责人（可指定）
 responsibility:
   - 项目办公室（00_MANAGEMENT）总入口与外链索引
@@ -21,7 +21,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 **例外（已定）**：**施工门禁**与**蓝图卫生总案**正文已迁入 [CANON/](./CANON/README.md)，作为蓝图终稿 / 放行的**唯一受控路径**；全库链接已指向该目录。
 
-**文档地图 + 放置规则（机构习惯）**：**「这类文档应放哪」** 的标准真源为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；**正式图纸柜**摆放以 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。扫描/rollup 途中要把文件归到合理位置时，按办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 执行——含 **§1.5**（**架构 Layer 与 `docs/` 路径分立**；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§2.3.1**、**§7.2「摆放」** 对齐）。
+**文档地图 + 放置规则（机构习惯）**：**「这类文档应放哪」** 的标准真源为 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)；**正式图纸柜**摆放以 [图纸柜规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。扫描/rollup 途中要把文件归到合理位置时，按办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 执行——含 **§1.5**（**架构 Layer 与 `docs/` 路径分立**；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§2.3.1**、**§7.2「摆放」** 对齐）与 **§1.6**（**「位置是否正确」A～F 分桶**，与入链/L1 分立；互指 REPO_WIDE **§2.3.2**）。
 
 **整仓「一次尽治」主清单**：以 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 为准——**§2.3**、**§2.3.1**（Layer 与路径防混）、**§2.4**（**架构模块全景 / 三～四级子模块**索引要不要做、机构常见做法、能否随扫描增量更新）、**§3**（合并重复）、**§7**（按深度 3～6 前缀队列打到退出标准）、**§8**（办公室二次自查）。深度 2 目录统计**不够**拆队列时，用 `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*.md` 与 **JSON 全量前缀**（脚本 `scripts/governance/export_repo_directory_rollup.py`）。**物理树**（rollup）与 **逻辑模块树**（待选实现的 `MODULE_PANORAMA_*`，见任务清单 **P4**）建议并列、互链。
 
@@ -49,7 +49,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 4. **全仓库分层治理（整仓）**：交付标准 **§1.5**（R0～R4）+ 任务清单 **扩展轨 W0～W4**；与「蓝图终稿」并列，**不替代**任务 1～6。  
 5. **仓库根卫生与误提交**：[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)（垃圾文件名、密钥进库、运行时数据、误放根下的正式稿归位）。
 6. **整仓文件体量、合并与深度尽治（与蓝图并列）**：[全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)（**§1.1** 扫描边界、平面清单、**深度 3～6 rollup**、§2.3 并行项、§3 合并、**§7**、**§8**、**P5**）。**说明**：蓝图扩展轨 **W0～W4 勾完 ≠ 文件已尽治**；**全格式逐文件语义处理**不在当前门禁范围内。
-7. **文档地图与放置（扫描途中归位）**：[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**）+ [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) + [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)（Layer 0～11）；搬迁/新建目录后按 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 复跑相关 `verify_*` 与 `sentinel_l1`。
+7. **文档地图与放置（扫描途中归位）**：[文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**）+ [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 6 条**）+ [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)（Layer 0～11）；搬迁/新建目录后按 [治理工具总索引](./GOVERNANCE_TOOLS_INDEX.md) 复跑相关 `verify_*` 与 `sentinel_l1`。
 
 ---
 
@@ -65,7 +65,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 | [D 类蓝图重叠 Playbook](./D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) | **主题可能重叠**（非 C1/C2）的机器建议 + 人工收口；**§3.5** A 档分流 + 二审；**§5 双轨**（高/低置信） | 跑 `scan_blueprint_d_overlap_candidates.py` → 可选 `triage_blueprint_d_overlap_pairs.py`；二审配合 [D 类二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)；按 REPO_WIDE **§3.4** 评审 |
 | [D 类重叠二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | 供 GLM/Claude 等输出**固定 JSON Schema**；含模板自优化 `prompt_template_patch_proposal` | 与 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl` 同批使用；不替代 Owner 签核 |
 | [D 类合稿待审登记](./D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER.md) | **低置信** D 类合稿台账（新稿 / stub / archive 的 **Markdown 可点击链**） | 每做一例低置信合稿追加一行；高置信 **不**登记 |
-| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；**§1.5** Layer 0～11 与 `docs/` 路径分立；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、**§2.3.1**、蓝图任务 **3～5** / **W** 轨同窗 |
+| [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **地图 + LAYOUT 真源衔接**；**§1.5** Layer 0～11 与 `docs/` 路径分立；**§1.6**「位置是否正确」分桶；扫描→查格→搬迁→验证 | 与 REPO_WIDE **§7**、**§2.3.1**、**§2.3.2**、蓝图任务 **3～5** / **W** 轨同窗 |
 | [全局文件治理会话交接](./GLOBAL_FILE_GOVERNANCE_SESSION_HANDOFF.md) | **新开对话可复制**的尽治指令：从全库扫描到深度清洁 | 大扫除窗口启动时发给 AI；与 REPO_WIDE **§7**、工具总表对齐 |
 | [文档治理架构](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) | L0～L5、与 `09_AUDIT` 边界 | 与「尽治」表述冲突时优先回写架构或本 README |
 | [AI 交接说明](./PROJECT_OFFICE_AI_HANDOFF.md) | 接手顺序、真源、常见任务 | 增补「rollup / §7」后自检阅读顺序表 |
@@ -176,6 +176,7 @@ applicable_scope: docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.18 | 2026-04-16 | 文首/流程第 7 条/办公室表互指放置规程 **§1.6**、REPO_WIDE **§2.3.2**、LAYOUT **§1 第 6 条**（「位置是否正确」分桶与入链分立） |
 | 1.1.13 | 2026-04-10 | 互指 `triage_blueprint_d_overlap_pairs.py`、[二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md)、Playbook **§3.5**；办公室表增二审模板行；常用脚本与基线复跑约定补 D 档分流 |
 | 1.1.12 | 2026-04-10 | 办公室内文件表「文档地图」行与 LAYOUT **§1 第 5 条** / 放置规程 **§1.5** 对齐 |
 | 1.1.11 | 2026-04-10 | 文首/流程/办公室表互指 [放置规程 §1.5](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)、REPO_WIDE **§2.3.1**、AI **§3.2**、`ARCHITECTURE.md`（Layer 0～11 与 `docs/` 路径分立） |

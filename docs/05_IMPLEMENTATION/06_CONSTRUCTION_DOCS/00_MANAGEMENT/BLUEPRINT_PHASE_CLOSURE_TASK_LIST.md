@@ -1,9 +1,9 @@
 ---
 module_id: BLUEPRINT_PHASE_CLOSURE_TASK_LIST_001
-version: 1.1.8
+version: 1.1.9
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-11'
+last_updated: '2026-04-16'
 owner: 文档负责人（可指定）
 responsibility:
   - 全库蓝图终稿阶段任务清单（人类与 AI 共用）
@@ -16,8 +16,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 > **用途**：把「蓝图终稿」要办的事写成可勾选、可复查的条目；后续对话或排期可直接打开本文件对照进度。  
 > **机构目标态**：与 [蓝图交付标准（机构精华版）](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) 对照时，本清单为**任务分解真源**，该标准为**合并视角与门禁映射**。  
-> **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为准（**§1 第 5 条**：Layer 0～11 与路径分立摘要；勿另建平行标准）；**正式图纸柜**里什么能放、什么不能放，以 [01_BLUEPRINTS 图纸柜文件治理规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。  
-> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述，与 LAYOUT **§1 第 5 条**同口径）；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)。  
+> **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 为准（**§1 第 5～6 条**：Layer 0～11 与路径分立摘要；**「位置是否正确」与入链分立**；勿另建平行标准）；**正式图纸柜**里什么能放、什么不能放，以 [01_BLUEPRINTS 图纸柜文件治理规则](./01_BLUEPRINTS_REPOSITORY_RULES.md) 为准。  
+> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述；**§1.6** 为「位置是否正确」**A～F 分桶表**，与 [REPO_WIDE §2.3.2](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) 互文）；与 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)。  
 > **与卫生计划的关系**：执行本清单时，应同步遵守 [蓝图阶段文档卫生总计划](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；不必重复发明流程。  
 > **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](./README.md)、[推荐阅读入口](#推荐阅读入口) 与 [全库治理文档导航](./GOVERNANCE_DOCUMENTS_NAVIGATION.md)（若与全库导航相关）。  
 > **任务 3 状态**：2026-04-10 已完成 — 过程报告已迁入 `01_BLUEPRINTS/REPORTS/`，`INDEX.md` 已重生成；防幻觉执行协议见 [BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md](./BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md)。  
@@ -32,9 +32,9 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 |------|------------------|---------------------|
 | **1** | 控制面：标准、分层、事故处置口径 | [交付标准](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) §1.5、办公室规章、[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、**W0** |
 | **2** | 范围与基线：终稿含义、施工阶段门禁 | [终稿定义](./BLUEPRINT_FINAL_SIGNOFF.md)、[施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §0、**W0**（Owner 确认 R0～R4） |
-| **3** | 清点与映射：总清单、索引、链接可追溯 | **任务 1**、建设文档 [`INDEX.md`](../INDEX.md)、蓝图分散清单；对照 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 与 [文档地图与放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 理解「应落在哪棵树」 |
-| **4** | 归位与裁决：canonical、副本、根目录误提交 | **任务 2**、[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、**W2** / **W4**；错放路径按 LAYOUT + [放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 纠正 |
-| **5** | 质量收口：摆放、占位、卫生 | **任务 3～5**、[卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；摆放以 LAYOUT + 图纸柜规则为验收参照 |
+| **3** | 清点与映射：总清单、索引、链接可追溯 | **任务 1**、建设文档 [`INDEX.md`](../INDEX.md)、蓝图分散清单；对照 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) 与 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) 理解「应落在哪棵树」；**「位置是否正确」**用 [放置规程 §1.6](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **分桶表**（至少 **A**），勿仅用入链/L1 代替 |
+| **4** | 归位与裁决：canonical、副本、根目录误提交 | **任务 2**、[孤儿与重复 Playbook](../../../09_AUDIT/STANDARDS/DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK.md)、[仓库根治理 Playbook](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md)、**W2** / **W4**；错放路径按 LAYOUT + [放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§1.6** 纠正 |
+| **5** | 质量收口：摆放、占位、卫生 | **任务 3～5**、[卫生总案](./CANON/BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md)；摆放以 LAYOUT + 图纸柜规则 + [放置规程 §1.6](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**A+E** 最低线）为验收参照 |
 | **6** | 与实施衔接：施工包、契约 | [施工门禁](./CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) §0.3、§3 |
 | **7** | 持续保证：审计对齐、可复跑检查 | **任务 6**、**W1**、L1 扫描、[全系统文档审计方案](../../../09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md)（若采用） |
 
@@ -46,8 +46,8 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 |------|------|
 | **仓库根卫生与误提交（Playbook）** | [`REPO_ROOT_GOVERNANCE_PLAYBOOK.md`](./REPO_ROOT_GOVERNANCE_PLAYBOOK.md) |
 | **01_BLUEPRINTS 摆放与导航规则（真源）** | [`01_BLUEPRINTS_REPOSITORY_RULES.md`](./01_BLUEPRINTS_REPOSITORY_RULES.md) |
-| **文档地图与放置（办公室规程 · §1.5 与 LAYOUT §1 第 5 条同口径）** | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
-| **`docs/` 目录职责与阶段落盘（标准真源 · §1 第 5 条 Layer/路径摘要）** | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
+| **文档地图与放置（办公室规程 · §1.5 / §1.6；与 REPO_WIDE §2.3.2 互文）** | [`DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md`](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| **`docs/` 目录职责与阶段落盘（标准真源 · §1 第 5～6 条）** | [`DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md`](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
 | **蓝图终稿定义与认可** | [`BLUEPRINT_FINAL_SIGNOFF.md`](./BLUEPRINT_FINAL_SIGNOFF.md) |
 | **蓝图交付标准（机构精华版，目标态）** | [`BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md`](./BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) |
 | **文档治理架构（L0～L5）** | [`DOCUMENT_GOVERNANCE_ARCHITECTURE.md`](./DOCUMENT_GOVERNANCE_ARCHITECTURE.md) |
@@ -220,6 +220,7 @@ applicable_scope: 蓝图阶段收尾与终稿验收前；全仓库分层资产�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.1.9 | 2026-04-16 | 文首/机构顺序/推荐阅读互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2**（「位置是否正确」分桶与入链分立） |
 | 1.1.8 | 2026-04-11 | W2 可选密钥扫描：勾选并以 `W2_SECRET_PATTERN_SPOTCHECK_20260410` 为等价抽检证据；互指 REPO_WIDE §6 |
 | 1.1.7 | 2026-04-10 | 文首摆放/地图段互指 LAYOUT **§1 第 5 条**、放置规程 **§1.5**、REPO_WIDE **§2.3.1**、`ARCHITECTURE.md`；禁平行「Layer 放置标准」 |
 | 1.1.6 | 2026-04-10 | 文首与 **LAYOUT 标准**、**文档地图与放置规程** 互指；机构顺序表 3～5 与推荐阅读增放置联动；并列 REPO_WIDE §7 |

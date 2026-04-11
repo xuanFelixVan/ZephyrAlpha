@@ -1,9 +1,9 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.2.2
+version: 1.2.3
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-11'
+last_updated: '2026-04-16'
 owner: 文档负责人（可指定）
 responsibility:
   - 治理类脚本与门禁工具的统一索引（办公室入口）
@@ -17,7 +17,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 > **本文件**：逻辑归口——从这里查「干什么、怎么跑、产出在哪」。  
 > **与任务清单的关系**：执行口径与波次见 [全仓库文件治理任务清单](./REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md)；扫描**能做什么、不能做什么**见该文 **§1.1**。  
 > **删稿裁决**（机器不代劳）：见 [文件删除与保留裁决 Playbook](./FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。  
-> **文档地图 + 放置**：搬迁或新建 `docs/` 路径前，先 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5 条**摘要）+ [办公室放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5** 详述；互指 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)、REPO_WIDE **§2.3.1**）；**勿**另立平行标准；再跑本表脚本验收。
+> **文档地图 + 放置**：搬迁或新建 `docs/` 路径前，先 [LAYOUT 标准](../../../09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md)（**§1 第 5～6 条**）+ [办公室放置规程](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**「位置是否正确」分桶；互指 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)、REPO_WIDE **§2.3.1**、**§2.3.2**）；**勿**另立平行标准；再跑本表脚本验收。
 
 ---
 
@@ -47,7 +47,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 ## 2. 推荐复跑顺序（大改文档/路径之后）
 
-0. （若涉及**归位/新建目录**）对照 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**）与 LAYOUT 标准，确认目标路径合法或已登记例外；**勿**用路径前缀代替 Layer 编号。  
+0. （若涉及**归位/新建目录**）对照 [文档地图与放置规则](./DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md)（**§1.5**、**§1.6**）与 LAYOUT 标准，确认目标路径合法或已登记例外；**勿**用路径前缀代替 Layer 编号。  
 1. `verify_*`（蓝图与总清单）  
 2. `sentinel_l1_governance_scan.py`  
 2′. （仅当 L1 报告 **首道无 `module_id` > 0**）`backfill_missing_module_id.py` → `--apply` → 再跑步骤 2  
@@ -82,6 +82,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.3 | 2026-04-16 | 文首与 §2 第 0 步互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2**（位置正确性分桶） |
 | 1.2.2 | 2026-04-11 | `export_repo_directory_rollup` 表注记 `quotePath=false`；与 REPO_WIDE §1 / `GIT_TRACKED_PATH_ANOMALIES` 互指 |
 | 1.2.1 | 2026-04-11 | 工具表与 §2 增 `sample_docs_nav_coverage.py`（P3 主导航抽样；互指 REPO_WIDE §6 样例） |
 | 1.2.0 | 2026-04-10 | 增 `triage_blueprint_d_overlap_pairs.py`；§2 增 7′；二审模板 [D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) |
