@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_STATE_INDEX
-version: 1.0.0
+version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-13
+last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
   - STATE目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.6
+version: 1.0.7
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-13
+last_updated: '2026-04-11'
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.0
+> **版本**: v1.0.7
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -44,7 +44,9 @@ compliance_level: 专业标准---
 - **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
 - **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 20260412）**：[./INDEX_HEALTH_ORPHAN_20260412.md](./INDEX_HEALTH_ORPHAN_20260412.md)（`docs/09_AUDIT/REPORTS`；勿与下条 **STATE · 20260413** 混读）  
 - **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)  
-- **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)
+- **多会话治理接力（运行队列）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/AUTONOMOUS_GOVERNANCE_RUN_QUEUE.md)  
+- **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
+- **L1 治理快照（20260408 · 主快照）**：[./SENTINEL_L1_SCAN_20260408.md](./SENTINEL_L1_SCAN_20260408.md)
 
 ### 机器产出快捷入链（本页补桩 · 与 INDEX_HEALTH 对账）
 
