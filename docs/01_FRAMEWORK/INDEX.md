@@ -3,7 +3,7 @@ module_id: INDEX_FRAMEWORK_001
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
-last_updated: 2026-04-08
+last_updated: '2026-04-11'
 owner: 系统架构?standard_type: 专业量化机构目录索引
 applicable_scope: 01_FRAMEWORK目录
 compliance_level: 专业标准
@@ -17,7 +17,7 @@ responsibility:
 
 > **版本**: v5.3  
 > **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-08  
+> **最后更新**: 2026-04-11  
 > **维护者**: 系统架构师
 
 ---
@@ -141,6 +141,8 @@ responsibility:
 
 ### Layer 4（机器学习层）补充入口链接
 
+- [LAYER4_ML 目录索引](./LAYER4_ML/INDEX.md)
+- [LAYER4_ML 概述（README）](./LAYER4_ML/README.md)
 - [L4 深度审计报告 V2（20260407）](./LAYER4_ML/DEEP_AUDIT_REPORT_V2_20260407.md)
 - [L4 深度审计报告 V3（20260407）](./LAYER4_ML/DEEP_AUDIT_REPORT_V3_20260407.md)
 - [L4 深度审计报告 V5（20260407）](./LAYER4_ML/DEEP_AUDIT_REPORT_V5_20260407.md)
