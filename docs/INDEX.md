@@ -141,7 +141,7 @@ docs/
 | **Layer 10** | 治理与合规层 | 内部控制、合规监?| [治理与合规层索引](./10_GOVERNANCE_COMPLIANCE/INDEX.md) |
 | **Layer 9** | 研究与创新层 | AI虚拟研究实验室、创新孵化器 | [研究与创新层索引](./09_RESEARCH_INNOVATION/INDEX.md) |
 | **Layer 8** | 人机交互?| 授权、监控、报?| [人机交互层索引](./08_HUMAN_AI_INTERFACE/INDEX.md) |
-| **Layer 7** | AI报告?| 绩效归因、自动报?| [AI报告层索引](./07_AI_REPORTING/INDEX.md) |
+| **Layer 7** | AI报告?| 绩效归因、自动报?| [AI报告层索引](./07_AI_REPORTING/INDEX.md) · [README](./07_AI_REPORTING/README.md) |
 | **Layer 6** | 组合优化?| 组合优化、风险模?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 | **Layer 5** | 策略执行?| 策略运行、信号生?| [执行层索引](./04_EXECUTION/INDEX.md) |
 | **Layer 4** | 机器学习?| AI预测、特征工?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
