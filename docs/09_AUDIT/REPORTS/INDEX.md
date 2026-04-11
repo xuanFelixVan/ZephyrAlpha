@@ -1,9 +1,9 @@
 ---
 module_id: 09_AUDIT_REPORTS_INDEX_REPORTS_001
-version: 1.0.1
+version: 1.0.2
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-14'
+last_updated: '2026-04-16'
 owner: 文档治理系统
 responsibility:
 - 目录导航与文档索引管理与优化维护
@@ -17,7 +17,7 @@ compliance_level: 专业标准
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.1
+> **版本**: v1.0.2
 > **创建日期**: 2026-04-07
 > **核心定位**: 报告文档管理
 > **索引**: `INDEX_REPORTS_001`
@@ -29,7 +29,7 @@ compliance_level: 专业标准
 
 - **本目录门面（短说明）**：[./README.md](./README.md)  
 - **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260414.md](../STATE/INDEX_HEALTH_ORPHAN_20260414.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 [`20260412`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)  
-- **STATE 前缀健全性（另一份机器报告）**：[../STATE/INDEX_HEALTH_ORPHAN_20260413.md](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（`docs/09_AUDIT/STATE`；日期 **20260413**，勿与上条 `20260412` 混读）  
+- **STATE 前缀健全性（另一份机器报告 · 最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260416.md](../STATE/INDEX_HEALTH_ORPHAN_20260416.md)（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 [`20260413`](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（勿与上条 REPORTS `20260412/14` 混读）  
 - **STATE 子域索引**：[../STATE/INDEX.md](../STATE/INDEX.md)  
 - **整仓按目录尽治（REPO_WIDE §7）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)  
 - **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  

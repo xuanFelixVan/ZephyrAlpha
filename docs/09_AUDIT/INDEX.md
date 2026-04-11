@@ -118,13 +118,13 @@ implementation_status: 活跃维护
 
 ### STATE 子域（机器产出 / 状态台账）
 
-> **`STATE/`** 与 **`REPORTS/`** 并列：本表专指 `docs/09_AUDIT/STATE`。**索引健全性**文件名按前缀分日期：`INDEX_HEALTH_20260412` = **REPORTS**；`INDEX_HEALTH_20260413` = **STATE**（勿混读）。
+> **`STATE/`** 与 **`REPORTS/`** 并列：本表专指 `docs/09_AUDIT/STATE`。**索引健全性**文件名按前缀分日期：`INDEX_HEALTH_20260412` = **REPORTS**；**STATE** 前缀以 **最新 `INDEX_HEALTH_*` 日期**为准（当前 **20260416**；历史 **`20260413`** 仍可对照；勿与 REPORTS 行混读）。
 
 | 入口 | 说明 |
 |------|------|
 | [STATE/INDEX](./STATE/INDEX.md) | 本级导航、机器产出表、rollup/接力入口 |
 | [STATE 分组索引（严格孤儿挂载）](./STATE/INDEX_GROUPED_STATE_20260408.md) | 分组承接大量 STATE 文档入口 |
-| [STATE 索引健全性（零入链 · 20260413）](./STATE/INDEX_HEALTH_ORPHAN_20260413.md) | `scan_index_health.py --prefix docs/09_AUDIT/STATE` |
+| [STATE 索引健全性（零入链 · 最新 20260416）](./STATE/INDEX_HEALTH_ORPHAN_20260416.md) | `scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`（**zero_inbound=0**）；历史 [`20260413`](./STATE/INDEX_HEALTH_ORPHAN_20260413.md) |
 | [夜间批跑索引](./STATE/overnight_runs/INDEX.md) | `overnight_runs` 快照导航 |
 
 ### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
@@ -136,7 +136,7 @@ implementation_status: 活跃维护
 | [04_OPERATIONS 门面](../05_IMPLEMENTATION/04_OPERATIONS/README.md) | 目录短说明与推荐阅读顺序 |
 | [04_OPERATIONS/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/INDEX.md) | 本级索引与维护说明 |
 | [audit_state/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/audit_state/INDEX.md) | 审计/整改类 Markdown 长列表 |
-| [INDEX_HEALTH（零入链 · 04_OPERATIONS）](./STATE/INDEX_HEALTH_ORPHAN_20260411.md) | 前缀索引健全性机器报告（快照） |
+| [INDEX_HEALTH（零入链 · 04_OPERATIONS · 最新 20260415）](./STATE/INDEX_HEALTH_ORPHAN_20260415.md) | 前缀索引健全性机器报告；历史 [`20260411`](./STATE/INDEX_HEALTH_ORPHAN_20260411.md) |
 
 ### Playbook 执行批次：根目录补充入口
 

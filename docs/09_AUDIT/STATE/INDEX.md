@@ -3,7 +3,7 @@ module_id: 09_AUDIT_STATE_INDEX
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-11'
+last_updated: '2026-04-16'
 owner: 首席文档架构师
 responsibility:
   - STATE目录索引
@@ -11,10 +11,10 @@ responsibility:
 
 ﻿---
 module_id: 09_AUDIT_STATE_INDEX_STATE_001
-version: 1.0.7
+version: 1.0.8
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-11'
+last_updated: '2026-04-16'
 owner: 文档治理系统
 responsibility:
   - 目录导航与文档索引管理与优化维护
@@ -30,7 +30,7 @@ compliance_level: 专业标准---
 > - ❌ 本文档不负责：其他模块内容
 
 
-> **版本**: v1.0.7
+> **版本**: v1.0.8
 > **创建日期**: 2026-04-07
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_STATE_001`
@@ -42,8 +42,8 @@ compliance_level: 专业标准---
 ### 导航与上级入口
 
 - **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
-- **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：[./INDEX_HEALTH_ORPHAN_20260414.md](./INDEX_HEALTH_ORPHAN_20260414.md)（`docs/09_AUDIT/REPORTS`；历史 [`20260412`](./INDEX_HEALTH_ORPHAN_20260412.md)；勿与下条 **STATE · 20260413** 混读）  
-- **本前缀零入链（STATE · 20260413）**：[./INDEX_HEALTH_ORPHAN_20260413.md](./INDEX_HEALTH_ORPHAN_20260413.md)  
+- **REPORTS 报告区门面**：[../REPORTS/README.md](../REPORTS/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：[./INDEX_HEALTH_ORPHAN_20260414.md](./INDEX_HEALTH_ORPHAN_20260414.md)（`docs/09_AUDIT/REPORTS`；历史 [`20260412`](./INDEX_HEALTH_ORPHAN_20260412.md)；勿与下条 **STATE · 最新** 混读）  
+- **本前缀零入链（STATE · 最新 20260416）**：[./INDEX_HEALTH_ORPHAN_20260416.md](./INDEX_HEALTH_ORPHAN_20260416.md)（**zero_inbound=0**）｜历史 [`20260413`](./INDEX_HEALTH_ORPHAN_20260413.md)  
 - **整仓按目录尽治（REPO_WIDE §7）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)  
 - **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
 - **L1 治理快照（20260408 · 主快照）**：[./SENTINEL_L1_SCAN_20260408.md](./SENTINEL_L1_SCAN_20260408.md)
@@ -97,7 +97,7 @@ compliance_level: 专业标准---
 | 平面路径清单 UTF-8 | 导出见 REPO_WIDE §1 | [`REPO_GIT_TRACKED_FILES_20260411.txt`](./REPO_GIT_TRACKED_FILES_20260411.txt) |
 | 索引健全性（零入链 · REPORTS 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` | **最新（20260414）** [`INDEX_HEALTH_ORPHAN_20260414.md`](./INDEX_HEALTH_ORPHAN_20260414.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260414.json)；历史 [`20260412`](./INDEX_HEALTH_ORPHAN_20260412.md) |
 | 索引健全性（零入链 · 04_OPERATIONS 前缀） | `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS` | **最新（20260415）** [`INDEX_HEALTH_ORPHAN_20260415.md`](./INDEX_HEALTH_ORPHAN_20260415.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260415.json)；历史 [`20260411`](./INDEX_HEALTH_ORPHAN_20260411.md) |
-| 索引健全性（零入链 · STATE 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STATE` | [`INDEX_HEALTH_ORPHAN_20260413.md`](./INDEX_HEALTH_ORPHAN_20260413.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260413.json) |
+| 索引健全性（零入链 · STATE 前缀） | `scan_index_health.py --prefix docs/09_AUDIT/STATE` | **最新（20260416）** [`INDEX_HEALTH_ORPHAN_20260416.md`](./INDEX_HEALTH_ORPHAN_20260416.md) · [`.json`](./INDEX_HEALTH_ORPHAN_20260416.json)；历史 [`20260413`](./INDEX_HEALTH_ORPHAN_20260413.md) |
 | 整仓按目录尽治（§7） | `REPO_DIRECTORY_ROLLUP_*` + §7.2 退出标准 | [REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) |
 
 ---
@@ -138,6 +138,7 @@ compliance_level: 专业标准---
 
 | 版本 | 日期 | 变更内容 | 变更人 |
 |------|------|----------|--------|
+| v1.0.8 | 2026-04-16 | P5 §7 子批：`INDEX_HEALTH_20260416`（STATE 前缀；**zero_inbound=0**；候选 md **182**）；产出表与导航链对齐 `rollup_20260414`（本前缀 **390** 条） | 文档治理系统 |
 | v1.0.5 | 2026-04-12 | 移除对已废止运行队列的互指；尽治入口改 **REPO_WIDE §7** | 文档治理系统 |
 | v1.0.4 | 2026-04-11 | 整仓产出表曾互指运行队列（已废止，见 v1.0.5） | 文档治理系统 |
 | v1.0.3 | 2026-04-11 | 整仓产出表增 rollup 20260411、平面清单 20260411；Git 行改为 quotePath 澄清口径 | 文档治理系统 |
