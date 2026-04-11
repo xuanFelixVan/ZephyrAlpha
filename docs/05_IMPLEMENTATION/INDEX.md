@@ -205,6 +205,13 @@ implementation_status: 活跃维护
 - [文档质量标准](./07_OPERATIONS/standards/DOCUMENT_QUALITY_STANDARDS.md)
 - [Layer 识别标准](./07_OPERATIONS/standards/LAYER_IDENTIFICATION_STANDARD.md)
 
+### 99_ARCHIVE（实施层历史归档）
+
+- [归档索引](./99_ARCHIVE/INDEX.md)
+- [迁移指南 v1](./99_ARCHIVE/migration_guide_v1.md)
+- [模块归档说明](./99_ARCHIVE/MODULE_ARCHIVE.md)
+- [安全蓝图（归档稿）](./99_ARCHIVE/SECURITY_BLUEPRINT.md)
+
 ---
 
 ## 🗂?子目?
@@ -217,6 +224,7 @@ implementation_status: 活跃维护
 | [07_OPERATIONS/INDEX.md](./07_OPERATIONS/INDEX.md) | 运维 | 62 |
 | [05_TECHNICAL_SPECIFICATIONS/INDEX.md](./05_TECHNICAL_SPECIFICATIONS/INDEX.md) | 技术规格 | 80+ |
 | [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) | 建设文档 | 20+ |
+| [99_ARCHIVE/INDEX.md](./99_ARCHIVE/INDEX.md) | 实施层历史归档 | 4 |
 
 ---
 

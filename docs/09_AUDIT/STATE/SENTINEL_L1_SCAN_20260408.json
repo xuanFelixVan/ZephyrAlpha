@@ -1,13 +1,13 @@
 {
-  "scan_time_utc": "20260411T051100Z",
+  "scan_time_utc": "20260411T051224Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3264,
+  "md_file_count": 3265,
   "links": {
     "stats": {
-      "total_files_scanned": 3264,
-      "total_md_links": 8296,
+      "total_files_scanned": 3265,
+      "total_md_links": 8316,
       "skipped_external": 986,
-      "valid": 7310,
+      "valid": 7330,
       "invalid": 0
     },
     "invalid_details_sample": [],
@@ -39,12 +39,13 @@
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260429.md",
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260430.md",
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260501.md",
+      "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260502.md",
       "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.md",
       "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.md",
       "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md",
       "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md"
     ],
-    "no_id_total": 25
+    "no_id_total": 26
   },
   "path_depth": {
     "deepest_30": [
