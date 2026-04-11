@@ -1,9 +1,9 @@
 ---
 module_id: GOVERNANCE_TOOLS_INDEX_001
-version: 1.2.3
+version: 1.2.4
 status: Active
 created_date: 2026-04-10
-last_updated: '2026-04-16'
+last_updated: '2026-04-18'
 owner: 文档负责人（可指定）
 responsibility:
   - 治理类脚本与门禁工具的统一索引（办公室入口）
@@ -33,7 +33,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 | `scan_basename_collisions.py` | **同名不同路径（C2）**：按 basename 分组（默认 `docs/` + `--ext md`）；可选 `--all-repo` | `python scripts/governance/scan_basename_collisions.py` | `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*.{md,json}` |
 | `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**：启发式相似度 + **建议 canonical / 合并大纲**（非最终裁决） | `python scripts/governance/scan_blueprint_d_overlap_candidates.py` | `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*.{md,json}` |
 | `triage_blueprint_d_overlap_pairs.py` | **D 类 A 档分流** + 生成二审 **JSONL**（含摘录）；见 [二审提示词模板](./D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md) | `python scripts/governance/triage_blueprint_d_overlap_pairs.py --date YYYYMMDD` | `BLUEPRINT_D_OVERLAP_TRIAGE_*`、`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl` |
-| `scan_index_health.py` | **索引健全性**：`docs/` 下 md **零入链**候选（全库 md 相对链统计） | `python scripts/governance/scan_index_health.py` | `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.{md,json}` |
+| `scan_index_health.py` | **索引健全性**：`docs/` 下 md **零入链**候选（全库 md 相对链统计）；**若所有 `--prefix` 均落在 `docs/06_ARCHIVE/` 或 `docs/09_ARCHIVE/` 某一子树下**，自动取消对该 archive **根**的默认排除（否则候选恒为 0） | `python scripts/governance/scan_index_health.py` | `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*.{md,json}` |
 | `sample_docs_nav_coverage.py` | **P3 抽样**：合并若干 INDEX/SITEMAP 为导航 blob，检路径子串宽松命中（**不**替代 `scan_index_health`） | `python scripts/governance/sample_docs_nav_coverage.py`（可选 `--sample`、`--seed`、`--date`） | 默认终端摘要；样例见 `docs/09_AUDIT/STATE/DOCS_NAV_COVERAGE_SAMPLE_*.md` |
 | `verify_01_blueprints_index_links.py` | 校验 `01_BLUEPRINTS/INDEX.md` 内链 | `python scripts/governance/verify_01_blueprints_index_links.py` | 终端输出 |
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 | `python scripts/governance/verify_scattered_blueprints_manifest_links.py` | 终端输出 |
@@ -82,6 +82,7 @@ applicable_scope: 仓库根执行的文档治理、链接校验、目录聚合�
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| 1.2.4 | 2026-04-18 | `scan_index_health`：archive 子 `--prefix` 时取消对该 archive 根默认排除；工具表行补说明 |
 | 1.2.3 | 2026-04-16 | 文首与 §2 第 0 步互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2**（位置正确性分桶） |
 | 1.2.2 | 2026-04-11 | `export_repo_directory_rollup` 表注记 `quotePath=false`；与 REPO_WIDE §1 / `GIT_TRACKED_PATH_ANOMALIES` 互指 |
 | 1.2.1 | 2026-04-11 | 工具表与 §2 增 `sample_docs_nav_coverage.py`（P3 主导航抽样；互指 REPO_WIDE §6 样例） |

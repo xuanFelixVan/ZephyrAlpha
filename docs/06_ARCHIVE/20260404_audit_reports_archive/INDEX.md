@@ -3,7 +3,7 @@ module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_3
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
-last_updated: 2026-04-13
+last_updated: '2026-04-18'
 owner: 首席文档架构师
 responsibility:
   - 20260404_audit_reports_archive目录索引
@@ -42,7 +42,9 @@ source_locations:
 
 - [文档总入口 `../../INDEX.md`](../../INDEX.md) ｜ [审计域总索引 `../../09_AUDIT/INDEX.md`](../../09_AUDIT/INDEX.md) ｜ [REPORTS 门面 `../../09_AUDIT/REPORTS/README.md`](../../09_AUDIT/REPORTS/README.md)  
 - [全仓库文件治理任务清单 §7 `../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) ｜ [治理工具总索引 `../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
-- **本前缀体量（深度 3 · rollup）**：[`REPO_DIRECTORY_ROLLUP_20260413.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md) · [`.json`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.json)（在正文内检索 `docs/06_ARCHIVE/20260404_audit_reports_archive`）
+- **本前缀体量（深度 3 · rollup）**：[`REPO_DIRECTORY_ROLLUP_20260414.md`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md) · [`.json`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.json)（检索 `docs/06_ARCHIVE/20260404_audit_reports_archive`，**218** 条）｜历史 [`20260413`](../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md)  
+- **索引健全性（零入链 · 本前缀 · 最新）**：[../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260418.md](../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260418.md)（`scan_index_health.py --prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418`；见报告头 **zero_inbound**）  
+- **子目录索引入口**：[technical_reviews/INDEX.md](technical_reviews/INDEX.md) ｜ [audit_state/archived_reports_20260402/INDEX.md](audit_state/archived_reports_20260402/INDEX.md)
 
 ## 归档统计
 

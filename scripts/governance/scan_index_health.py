@@ -10,7 +10,10 @@
 仓库根执行示例:
   python scripts/governance/scan_index_health.py
   python scripts/governance/scan_index_health.py --prefix docs/05_IMPLEMENTATION/
+  python scripts/governance/scan_index_health.py --prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418
   python scripts/governance/scan_index_health.py --link-source same-as-candidates --date 20260410
+
+说明：默认排除 `docs/06_ARCHIVE/`、`docs/09_ARCHIVE/`（候选恒为空）。若 **所有** `--prefix` 均落在某一 archive 子树下，则自动取消对该 archive **根**的排除，仅扫描该子树。
 
 输出:
   docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_<date>.json
@@ -139,6 +142,26 @@ def default_exclude_prefixes() -> list[str]:
     ]
 
 
+def effective_exclude_prefixes(
+    candidate_prefixes: list[str], user_extra: list[str]
+) -> list[str]:
+    """当所有 --prefix 均落在某 archive 子树内时，取消对该 archive 根的全盘排除，否则该子树下候选 md 恒为 0。"""
+    base = list(default_exclude_prefixes())
+    if not candidate_prefixes:
+        return base + user_extra
+    pres = [normalize_posix(p).rstrip("/") for p in candidate_prefixes]
+
+    def all_under(root: str) -> bool:
+        rn = normalize_posix(root).rstrip("/")
+        return all(p == rn or p.startswith(rn + "/") for p in pres)
+
+    if all_under("docs/06_ARCHIVE"):
+        base = [e for e in base if normalize_posix(e).rstrip("/") != "docs/06_ARCHIVE"]
+    if all_under("docs/09_ARCHIVE"):
+        base = [e for e in base if normalize_posix(e).rstrip("/") != "docs/09_ARCHIVE"]
+    return base + user_extra
+
+
 def default_ignore_paths() -> list[str]:
     """常见门脸：无「其他 md 入链」属正常。"""
     return [
@@ -200,7 +223,9 @@ def main() -> int:
     args = parser.parse_args()
 
     candidate_prefixes = args.prefix if args.prefix else ["docs/"]
-    exclude_prefixes = default_exclude_prefixes() + list(args.exclude_prefix)
+    exclude_prefixes = effective_exclude_prefixes(
+        candidate_prefixes, list(args.exclude_prefix)
+    )
     ignore_paths = set(normalize_posix(p) for p in (default_ignore_paths() + args.ignore_path))
     ignore_globs = list(args.ignore_glob)
 

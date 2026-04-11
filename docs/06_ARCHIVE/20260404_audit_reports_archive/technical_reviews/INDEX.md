@@ -5,7 +5,7 @@ module_id: 06_ARCHIVE_20260404_AUDIT_REPORTS_ARCHIVE_INDEX_4_TECHNICAL_REVIEWS_2
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-07'
+last_updated: '2026-04-18'
 owner: 个人开发者
 standard_type: 专业量化机构文档
 ---
@@ -25,6 +25,11 @@ standard_type: 专业量化机构文档
 **最后更新**: 2026-04-07 12:40:48
 
 ---
+
+## 子目录索引（入链入口）
+
+- [IFIND_CONNECTOR/INDEX.md](IFIND_CONNECTOR/INDEX.md)
+- [QMT_DATA_INTERFACE/INDEX.md](QMT_DATA_INTERFACE/INDEX.md)
 
 ## 📚 文档列表
 
