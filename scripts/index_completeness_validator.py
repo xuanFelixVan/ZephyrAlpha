@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 """
 索引完整性验证脚本
 检查所有活跃文档是否被索引，所有归档文档是否不在活跃索引中

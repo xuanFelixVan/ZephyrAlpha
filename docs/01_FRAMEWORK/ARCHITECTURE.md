@@ -1,9 +1,9 @@
-﻿---
+---
 module_id: ARCHITECTURE_001
 version: 5.6.0
 status: Active
 created_date: 2026-04-01
-last_updated: '2026-04-08'
+last_updated: '2026-04-12'
 owner: 首席文档架构师
 standard_type: 专业量化机构文档
 applicable_scope: 全系统技术架构 Layer 0-11
@@ -13,7 +13,9 @@ implementation_status: 进行中
 responsibility:
   - 系统整体分层架构与跨层数据流权威说明
   - 与模块职责边界文档对齐（见 MODULE_RESPONSIBILITY_BOUNDARIES.md）
+layer: layer_01
 ---
+
 
 # 统一架构 (UNIFIED_ARCHITECTURE)
 > **核心职责**: 定义清风量化系统的整体架构设计、模块组织和层级关系，作为系统架构的权威参考文档
@@ -32,7 +34,7 @@ responsibility:
 
 ## 接口与契约（蓝图终稿）
 
-- 全库 API 与事件约定真源：[`API_Contract.md`](../03_TRADING_TACTICS/API_Contract.md)。本文是架构权威说明，跨层数据流、模块调用与事件边界的最终口径以契约真源为准；如本文与契约冲突，以契约真源为准并在后续架构治理批次同步修订。
+- 全库 API 与事件约定真源：`API_Contract.md`。本文是架构权威说明，跨层数据流、模块调用与事件边界的最终口径以契约真源为准；如本文与契约冲突，以契约真源为准并在后续架构治理批次同步修订。
 
 ## 验收标准（可检查）
 
@@ -54,8 +56,8 @@ responsibility:
 > - **Layer 11**：战略决策层 — 战略资产配置 + 风险预算分配  
 > 
 > **建议优先阅读**：  
-> - **架构设计**：[PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) — 三级时间框架融合架构  
-> - **实施指导**：[PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](./PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) — 实施路线图与开源集成策略  
+> - **架构设计**：PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md — 三级时间框架融合架构  
+> - **实施指导**：PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md — 实施路线图与开源集成策略  
 > 
 > **架构选择建议**：  
 > - **技术实现**：继续使用本文档（Layer 0-11）  
@@ -147,7 +149,7 @@ Layer 0: 数据源层 (Data Sources)
 | 学术前沿追踪 | 论文自动检索解析 | arXiv API + GLM-4 |
 | 研究知识管理 | RAG 知识库 | ChromaDB + Embedding |
 
-**详细蓝图**: [RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)
+**详细蓝图**: RESEARCH_INNOVATION_LAYER_BLUEPRINT.md
 
 ---
 
@@ -167,7 +169,7 @@ Layer 0: 数据源层 (Data Sources)
 | 决策审计追踪 | AI 决策记录、解释 | 日志系统 + 可解释 AI |
 | 风险治理框架 | 风险评估、预算管理 | 风险模型 + AI 评估 |
 
-**详细蓝图**: [GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)
+**详细蓝图**: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 
 ---
 
@@ -204,9 +206,9 @@ Layer 0: 数据源层 (Data Sources)
 | 资本配置系统 | 资本分配、效率优化 | Riskfolio-Lib |
 | 投资决策审计 | 决策追溯、复盘分析 | 审计日志系统 |
 
-**详细蓝图**: [STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md) · 宏观因子专篇：[MACRO_FACTOR_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/MACRO_FACTOR_SYSTEM_BLUEPRINT.md)
+**详细蓝图**: STRATEGIC_DECISION_LAYER_BLUEPRINT.md · 宏观因子专篇：MACRO_FACTOR_SYSTEM_BLUEPRINT.md
 
-**能力与实施蓝图对照（审计维护）**：[LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md](../09_AUDIT/STATE/LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md)（上表各模块 ↔ `01_BLUEPRINTS` / 战略决策卷；22 项均已链到具体蓝图）。
+**能力与实施蓝图对照（审计维护）**：LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md（上表各模块 ↔ `01_BLUEPRINTS` / 战略决策卷；22 项均已链到具体蓝图）。
 
 ---
 
@@ -214,7 +216,7 @@ Layer 0: 数据源层 (Data Sources)
 
 ### 4.1 核心数据流（Layer 0–11 纵览）
 
-> 下图以**表格**替代旧版损坏的 ASCII 示意图；跨层接口细节见 **§4.2** 与 [API 接口契约](../03_TRADING_TACTICS/API_Contract.md)。
+> 下图以**表格**替代旧版损坏的 ASCII 示意图；跨层接口细节见 **§4.2** 与 API 接口契约。
 
 | Layer | 名称 | 主要产出 / 向下游传递 |
 |-------|------|------------------------|
@@ -235,7 +237,7 @@ Layer 0: 数据源层 (Data Sources)
 
 ### 4.2 关键数据接口
 
-> **接口契约（单一入口）**：[API 接口契约](../03_TRADING_TACTICS/API_Contract.md) — 跨模块调用与数据边界约定；下表为 Layer 间数据流摘要，细节以契约为准。
+> **接口契约（单一入口）**：API 接口契约 — 跨模块调用与数据边界约定；下表为 Layer 间数据流摘要，细节以契约为准。
 
 | 数据流方向 | 数据类型 | 格式 | 频率 | 质量要求 |
 |------------|----------|------|------|----------|
@@ -285,9 +287,9 @@ Layer 0: 数据源层 (Data Sources)
 
 | 文档 | 说明 |
 |------|------|
-| [MARKET_REGIME.md](./MARKET_REGIME.md) | 市场状态识别 |
-| [HUMAN_AI_INTEGRATION_BLUEPRINT.md](./HUMAN_AI_INTEGRATION_BLUEPRINT.md) | 人机协作流程 |
-| [TECH_STACK.md](./TECH_STACK.md) | 技术栈选择 |
+| MARKET_REGIME.md | 市场状态识别 |
+| HUMAN_AI_INTEGRATION_BLUEPRINT.md | 人机协作流程 |
+| TECH_STACK.md | 技术栈选择 |
 | README.md | 框架总览 |
 | [01_BLUEPRINTS 全目录索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md) | 实施侧全部蓝图/报告类 Markdown 列表（`generate_01_blueprints_index.py` 维护） |
 
@@ -296,33 +298,33 @@ Layer 0: 数据源层 (Data Sources)
 
 | 文档 | 说明 |
 |------|------|
-| **[AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md](./AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md)** | **🆕 P0** AI 可解释性工具蓝图 |
-| **[RAG_SYSTEM_BLUEPRINT.md](./RAG_SYSTEM_BLUEPRINT.md)** | **🆕 P0** RAG 知识系统（原 RAG_KNOWLEDGE 条目合并指向本蓝图） |
-| **[ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md](./ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 统一自适应模型蓝图 |
-| **[IMPLEMENTATION_ACCELERATION_BLUEPRINT.md](./IMPLEMENTATION_ACCELERATION_BLUEPRINT.md)** | **🆕 P0** 实施加速方案蓝图 |
+| **AI_EXPLAINABILITY_TOOLKIT_BLUEPRINT.md** | **🆕 P0** AI 可解释性工具蓝图 |
+| **RAG_SYSTEM_BLUEPRINT.md** | **🆕 P0** RAG 知识系统（原 RAG_KNOWLEDGE 条目合并指向本蓝图） |
+| **ADAPTIVE_MODEL_SYSTEM_BLUEPRINT.md** | **🆕 P0** 统一自适应模型蓝图 |
+| **IMPLEMENTATION_ACCELERATION_BLUEPRINT.md** | **🆕 P0** 实施加速方案蓝图 |
 
 #### 核心监控体系
 
 | 文档 | 说明 |
 |------|------|
-| **[DATA_QUALITY_MONITORING_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/DATA_QUALITY_MONITORING_BLUEPRINT.md)** | **🆕 P0** 数据质量监控蓝图（canonical 在图纸柜；C2 同名消解 2026-04-11） |
-| **[REALTIME_RISK_MONITORING_BLUEPRINT.md](./REALTIME_RISK_MONITORING_BLUEPRINT.md)** | **🆕 P0** 实时风险监控蓝图 |
-| **[STRESS_TESTING_SYSTEM_BLUEPRINT.md](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/STRESS_TESTING_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 压力测试系统蓝图 |
-| **[COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md](./COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md)** | **🆕 P0** 合规监控系统蓝图 |
+| **DATA_QUALITY_MONITORING_BLUEPRINT.md** | **🆕 P0** 数据质量监控蓝图（canonical 在图纸柜；C2 同名消解 2026-04-11） |
+| **REALTIME_RISK_MONITORING_BLUEPRINT.md** | **🆕 P0** 实时风险监控蓝图 |
+| **STRESS_TESTING_SYSTEM_BLUEPRINT.md** | **🆕 P0** 压力测试系统蓝图 |
+| **COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md** | **🆕 P0** 合规监控系统蓝图 |
 
 #### 顶层架构体系 (Layer 9-11)
 
 | 文档 | 说明 |
 |------|------|
-| **[RESEARCH_INNOVATION_LAYER_BLUEPRINT.md](./RESEARCH_INNOVATION_LAYER_BLUEPRINT.md)** | **🆕 Layer 9** 研究与创新层蓝图：AI 虚拟研究实验与创新孵化 |
-| **[GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md](./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md)** | **🆕 Layer 10** 治理与合规层蓝图：内部控制体系与合规监控 |
-| **[STRATEGIC_DECISION_LAYER_BLUEPRINT.md](./STRATEGIC_DECISION_LAYER_BLUEPRINT.md)** | **🆕 Layer 11** 战略决策层蓝图：战略资产配置与风险预算分配 |
+| **RESEARCH_INNOVATION_LAYER_BLUEPRINT.md** | **🆕 Layer 9** 研究与创新层蓝图：AI 虚拟研究实验与创新孵化 |
+| **GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md** | **🆕 Layer 10** 治理与合规层蓝图：内部控制体系与合规监控 |
+| **STRATEGIC_DECISION_LAYER_BLUEPRINT.md** | **🆕 Layer 11** 战略决策层蓝图：战略资产配置与风险预算分配 |
 
 #### 横向支撑体系
 
 | 文档 | 说明 |
 |------|------|
-| **[DISASTER_RECOVERY_FRAMEWORK_ENTRY.md](./DISASTER_RECOVERY_FRAMEWORK_ENTRY.md)** | 灾备：**框架入口** → 正式稿见图纸柜 `DISASTER_RECOVERY_BLUEPRINT.md` |
+| **DISASTER_RECOVERY_FRAMEWORK_ENTRY.md** | 灾备：**框架入口** → 正式稿见图纸柜 `DISASTER_RECOVERY_BLUEPRINT.md` |
 
 ---
 

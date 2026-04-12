@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # -*- coding: utf-8 -*-
 """
 优化文档分类体系 - 确保每个文档都有明确的Layer归属

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 """
 QMT连接问题深度诊断 - 检查所有可能的原因
 

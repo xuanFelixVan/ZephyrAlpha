@@ -1,0 +1,560 @@
+---
+module_id: SPARSE_DIRECTORY_ANALYSIS_20260412_203547
+version: 1.0.0
+status: Active
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: 首席文档架构师
+layer: layer_09
+responsibility: STATE
+---
+
+
+
+
+
+
+# 稀疏目录分析报告
+
+
+
+> **分析时间**: 2026-04-12 20:35:47
+
+> **分析范围**: D:\ZephyrAlpha\docs
+
+> **稀疏目录定义**: 文件数<3的目录
+
+
+
+## 📊 分析统计
+
+
+
+- **稀疏目录总数**: 119
+
+- **建议合并到父目录**: 88
+
+- **建议合并到兄弟目录**: 0
+
+- **建议保持现状**: 31
+
+
+
+## 🔍 稀疏目录列表
+
+
+
+| 目录路径 | 文件数 | 文件列表 |
+
+|----------|--------|----------|
+
+| 00_RESOURCES | 2 | INDEX.md, README.md |
+
+| 00_RESOURCES\04_PLATFORM_DOCS | 2 | INDEX.md, README.md |
+
+| 01_FRAMEWORK\ARCHITECTURE_DECISIONS | 2 | INDEX.md, README.md |
+
+| 02_FACTOR_LIBRARY\11_FACTOR_MINING_ENGINE | 1 | FACTOR_MINING_ENGINE_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\12_FACTOR_ORTHOGONALIZATION | 1 | FACTOR_ORTHOGONALIZATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\13_MULTI_FACTOR_SYNTHESIS | 1 | MULTI_FACTOR_SYNTHESIS_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\14_FACTOR_RISK_MODEL | 1 | FACTOR_RISK_MODEL_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\15_FACTOR_VERSION_CONTROL | 1 | FACTOR_VERSION_CONTROL_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\16_FACTOR_ATTRIBUTION | 1 | FACTOR_ATTRIBUTION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\17_FACTOR_BACKTEST_ENHANCED | 1 | FACTOR_BACKTEST_ENHANCED_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\18_FACTOR_VISUALIZATION | 1 | FACTOR_VISUALIZATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\19_FACTOR_DATA_QUALITY | 1 | FACTOR_DATA_QUALITY_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\20_FACTOR_BENCHMARK | 1 | FACTOR_BENCHMARK_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\21_FACTOR_WORKFLOW | 1 | FACTOR_WORKFLOW_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\22_FACTOR_PERFORMANCE_OPT | 1 | FACTOR_PERFORMANCE_OPT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\23_FACTOR_ML_INTEGRATION | 1 | FACTOR_ML_INTEGRATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\24_FACTOR_DOC_AUTO | 1 | FACTOR_DOC_AUTO_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\25_FACTOR_API_SERVICE | 1 | FACTOR_API_SERVICE_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\26_FACTOR_DATA_LINEAGE | 1 | FACTOR_DATA_LINEAGE_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\27_FACTOR_COMPLIANCE | 1 | FACTOR_COMPLIANCE_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\28_FACTOR_REALTIME | 1 | FACTOR_REALTIME_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\29_FACTOR_PORTFOLIO_OPT | 1 | FACTOR_PORTFOLIO_OPT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\30_STYLE_FACTOR_SYSTEM | 1 | STYLE_FACTOR_SYSTEM_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\31_FACTOR_NEUTRALIZATION | 1 | FACTOR_NEUTRALIZATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\32_FACTOR_DYNAMIC_WEIGHT | 1 | FACTOR_DYNAMIC_WEIGHT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\33_FACTOR_DECAY_MGMT | 1 | FACTOR_DECAY_MGMT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\34_FACTOR_SIGNAL_GEN | 1 | FACTOR_SIGNAL_GEN_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\35_INDUSTRY_ROTATION | 1 | INDUSTRY_ROTATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\36_FACTOR_EXPOSURE_MGMT | 1 | FACTOR_EXPOSURE_MGMT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\37_FACTOR_CORRELATION | 1 | FACTOR_CORRELATION_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\38_FACTOR_TURNOVER_OPT | 1 | FACTOR_TURNOVER_OPT_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\39_EVENT_DRIVEN_FACTOR | 1 | EVENT_DRIVEN_FACTOR_BLUEPRINT.md |
+
+| 02_FACTOR_LIBRARY\40_FACTOR_CAPACITY_MGMT | 1 | FACTOR_CAPACITY_MGMT_BLUEPRINT.md |
+
+| 03_TRADING_TACTICS\08_DECISION_FRAMEWORK | 2 | INDEX.md, README.md |
+
+| 04_EXECUTION\02_TRADE_EXECUTOR | 2 | INDEX.md, README.md |
+
+| 05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\03_CONSTRUCTION_PLANS | 2 | CONSTRUCTION_PLAN_TEXT_TO_STRATEGY_CONFIG_MVP_20260408.md, INDEX.md |
+
+| 05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\05_DESIGN_DOCS\a_stock_rules | 2 | INDEX.md, README.md |
+
+| 05_IMPLEMENTATION\07_OPERATIONS\audit_state | 1 | README.md |
+
+| 06_ARCHIVE\20260404_audit_reports_archive | 1 | INDEX.md |
+
+| 06_ARCHIVE\20260404_audit_reports_archive\technical_reviews\IFIND_CONNECTOR | 1 | INDEX.md |
+
+| 06_ARCHIVE\20260404_audit_reports_archive\technical_reviews\QMT_DATA_INTERFACE | 2 | comprehensive_assessment_report.md, INDEX.md |
+
+| 06_ARCHIVE\20260407_duplicate_reports | 2 | INDEX.md, STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md |
+
+| 06_ARCHIVE\20260407_old_layer_audit_reports | 1 | INDEX.md |
+
+| 06_ARCHIVE\20260407_old_layer_audit_reports\layer25_reports | 2 | INDEX.md, LAYER25_P1_P2_FIX_REPORT_20260407_141721.md |
+
+| 06_ARCHIVE\20260407_old_layer_audit_reports\layer6_reports | 2 | INDEX.md, LAYER6_DEEP_AUDIT_REPORT_20260407_legacy_layer6_reports_archive.md |
+
+| 06_ARCHIVE\20260408_double_yaml_dryrun_sample | 1 | README.md |
+
+| 06_ARCHIVE\20260410_c2_benchmark_management | 2 | BENCHMARK_MANAGEMENT_BLUEPRINT_legacy_11_STRATEGIC_DECISION.md, README.md |
+
+| 06_ARCHIVE\20260410_c2_disaster_recovery | 2 | DISASTER_RECOVERY_BLUEPRINT_legacy_01_FRAMEWORK.md, README.md |
+
+| 06_ARCHIVE\20260410_c2_document_creation_checklist | 2 | DOCUMENT_CREATION_CHECKLIST_legacy_01_framework.md, README.md |
+
+| 06_ARCHIVE\20260410_c2_document_metadata_template | 2 | DOCUMENT_METADATA_TEMPLATE_legacy_p1_cleanup_archive.md, README.md |
+
+
+
+## 💡 整合建议
+
+
+
+### 建议合并到父目录
+
+
+
+**数量**: 88
+
+
+
+- **02_FACTOR_LIBRARY\11_FACTOR_MINING_ENGINE**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_MINING_ENGINE_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\12_FACTOR_ORTHOGONALIZATION**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_ORTHOGONALIZATION_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\13_MULTI_FACTOR_SYNTHESIS**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: MULTI_FACTOR_SYNTHESIS_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\14_FACTOR_RISK_MODEL**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_RISK_MODEL_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\15_FACTOR_VERSION_CONTROL**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_VERSION_CONTROL_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\16_FACTOR_ATTRIBUTION**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_ATTRIBUTION_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\17_FACTOR_BACKTEST_ENHANCED**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_BACKTEST_ENHANCED_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\18_FACTOR_VISUALIZATION**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_VISUALIZATION_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\19_FACTOR_DATA_QUALITY**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_DATA_QUALITY_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\20_FACTOR_BENCHMARK**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_BENCHMARK_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\21_FACTOR_WORKFLOW**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_WORKFLOW_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\22_FACTOR_PERFORMANCE_OPT**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_PERFORMANCE_OPT_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\23_FACTOR_ML_INTEGRATION**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_ML_INTEGRATION_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\24_FACTOR_DOC_AUTO**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_DOC_AUTO_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\25_FACTOR_API_SERVICE**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_API_SERVICE_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\26_FACTOR_DATA_LINEAGE**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_DATA_LINEAGE_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\27_FACTOR_COMPLIANCE**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_COMPLIANCE_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\28_FACTOR_REALTIME**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_REALTIME_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\29_FACTOR_PORTFOLIO_OPT**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: FACTOR_PORTFOLIO_OPT_BLUEPRINT.md
+
+
+
+- **02_FACTOR_LIBRARY\30_STYLE_FACTOR_SYSTEM**
+
+  - 目标目录: 02_FACTOR_LIBRARY
+
+  - 原因: 仅1个文件，建议合并到父目录
+
+  - 文件: STYLE_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 建议保持现状
+
+
+
+**数量**: 31
+
+
+
+- **00_RESOURCES**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, README.md
+
+
+
+- **00_RESOURCES\04_PLATFORM_DOCS**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, README.md
+
+
+
+- **01_FRAMEWORK\ARCHITECTURE_DECISIONS**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, README.md
+
+
+
+- **03_TRADING_TACTICS\08_DECISION_FRAMEWORK**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, README.md
+
+
+
+- **04_EXECUTION\02_TRADE_EXECUTOR**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, README.md
+
+
+
+- **05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\03_CONSTRUCTION_PLANS**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: CONSTRUCTION_PLAN_TEXT_TO_STRATEGY_CONFIG_MVP_20260408.md, INDEX.md
+
+
+
+- **06_ARCHIVE\20260407_duplicate_reports**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, STRATEGY_EXECUTION_DEEP_AUDIT_REPORT_v4_20260407.md
+
+
+
+- **06_ARCHIVE\20260407_old_layer_audit_reports\layer25_reports**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, LAYER25_P1_P2_FIX_REPORT_20260407_141721.md
+
+
+
+- **06_ARCHIVE\20260407_old_layer_audit_reports\layer6_reports**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: INDEX.md, LAYER6_DEEP_AUDIT_REPORT_20260407_legacy_layer6_reports_archive.md
+
+
+
+- **06_ARCHIVE\20260410_c2_benchmark_management**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: BENCHMARK_MANAGEMENT_BLUEPRINT_legacy_11_STRATEGIC_DECISION.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_disaster_recovery**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: DISASTER_RECOVERY_BLUEPRINT_legacy_01_FRAMEWORK.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_document_creation_checklist**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: DOCUMENT_CREATION_CHECKLIST_legacy_01_framework.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_document_metadata_template**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: DOCUMENT_METADATA_TEMPLATE_legacy_p1_cleanup_archive.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_full_process_data_persistence**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT_legacy_LAYER4_ML.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_market_regime_detection**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: MARKET_REGIME_DETECTION_BLUEPRINT_legacy_10_ai_workflow.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_model_performance_version_management**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT_legacy_p1_cleanup_archive.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_model_risk_management**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: MODEL_RISK_MANAGEMENT_BLUEPRINT_legacy_layer8_77.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_performance_attribution**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: PERFORMANCE_ATTRIBUTION_BLUEPRINT_legacy_layer8_83.md, README.md
+
+
+
+- **06_ARCHIVE\20260410_c2_realtime_risk_monitoring**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: README.md, REALTIME_RISK_MONITORING_BLUEPRINT_legacy_layer8_64.md
+
+
+
+- **06_ARCHIVE\20260410_c2_research_workflow_management**
+
+  - 原因: 有2个文件，暂不整合
+
+  - 文件: README.md, RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT_legacy_p1_cleanup_archive.md
+
+
+
+## 📝 整合步骤
+
+
+
+1. **备份当前状态**: `git checkout -b backup/sparse-directory-integration`
+
+2. **手动整合目录**: 根据建议手动移动文件
+
+3. **更新引用**: 更新相关文档中的链接引用
+
+4. **验证整合效果**: 运行深度审计验证
+
+5. **提交整合成果**: `git add -A; git commit -m 'feat: 整合稀疏目录'`
+
+
+
+## ⚠️ 注意事项
+
+
+
+1. **谨慎操作**: 目录整合会影响大量文件引用
+
+2. **测试验证**: 整合后需要全面测试
+
+3. **文档更新**: 需要更新所有相关文档的链接
+
+4. **团队沟通**: 如有团队协作，需要提前沟通
+

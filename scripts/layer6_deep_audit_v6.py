@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 """
 组合优化层深度审计脚本 V6
 基于专业量化机构五大原则和三层审计标准

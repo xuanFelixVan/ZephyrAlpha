@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 """
 P1-3问题修复脚本 - 修复Module ID重复
 用途：修复18个Module ID重复的文件

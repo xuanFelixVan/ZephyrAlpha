@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 """
 优化版组合优化层深度审计脚本 V3
 用途：优化职责检查逻辑，同时检查YAML头部和文档内容

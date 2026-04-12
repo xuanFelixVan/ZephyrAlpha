@@ -7,7 +7,11 @@ last_updated: 2026-04-13
 owner: 文档治理系统
 standard_type: 索引文档
 applicable_scope: overnight_runs
+layer: layer_09
+responsibility: "处理INDEX相关业务"
 ---
+
+
 
 # overnight_runs 索引（夜间审计产物入口）
 
@@ -16,28 +20,28 @@ applicable_scope: overnight_runs
 
 ## 上级与接力
 
-- [返回 STATE 目录索引 `../INDEX.md`](../INDEX.md) ｜ [审计域总索引 `../../INDEX.md`](../../INDEX.md) ｜ [REPORTS 门面 `../../REPORTS/README.md`](../../REPORTS/README.md)  
-- [全仓库文件治理任务清单 §7 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md`](../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准) ｜ [治理工具总索引 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`](../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
-- **仓库内最新 L1 汇总快照（非某一 overnight 批次）**：[../SENTINEL_L1_SCAN_20260408.md](../SENTINEL_L1_SCAN_20260408.md)
+- [返回 STATE 目录索引 `../INDEX.md`](../INDEX.md) ｜ [审计域总索引 `../../INDEX.md`](../../INDEX.md) ｜ [REPORTS 门面 `../../REPORTS/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)  
+- 全仓库文件治理任务清单 §7 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md` ｜ 治理工具总索引 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`  
+- **仓库内最新 L1 汇总快照（非某一 overnight 批次）**：../SENTINEL_L1_SCAN_20260408.md
 
 ## 运行批次
 
 > 命名约定：`YYYYMMDD_HHMMSS/`
 
-- [`20260408_033240/`](./20260408_033240/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md`](./20260408_033240/CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md)
-  - L1：[`sentinel_l1_scan_20260408_033240.md`](./20260408_033240/sentinel_l1_scan_20260408_033240.md)
-  - 细节：[`invalid_links_detail_20260408_033240.md`](./20260408_033240/invalid_links_detail_20260408_033240.md) / [`module_id_duplicates_detail_20260408_033240.md`](./20260408_033240/module_id_duplicates_detail_20260408_033240.md) / [`md_by_subdir_20260408_033240.md`](./20260408_033240/md_by_subdir_20260408_033240.md)
+- `20260408_033240/`
+  - 汇总：`CONSOLIDATED_REPORT_FOR_AI_20260408_033240.md`
+  - L1：`sentinel_l1_scan_20260408_033240.md`
+  - 细节：`invalid_links_detail_20260408_033240.md` / `module_id_duplicates_detail_20260408_033240.md` / `md_by_subdir_20260408_033240.md`
 
-- [`20260408_022356/`](./20260408_022356/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md`](./20260408_022356/CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md)
-  - L1：[`sentinel_l1_scan_20260408_022356.md`](./20260408_022356/sentinel_l1_scan_20260408_022356.md)
-  - 细节：[`invalid_links_detail_20260408_022356.md`](./20260408_022356/invalid_links_detail_20260408_022356.md) / [`module_id_duplicates_detail_20260408_022356.md`](./20260408_022356/module_id_duplicates_detail_20260408_022356.md) / [`md_by_subdir_20260408_022356.md`](./20260408_022356/md_by_subdir_20260408_022356.md)
+- `20260408_022356/`
+  - 汇总：`CONSOLIDATED_REPORT_FOR_AI_20260408_022356.md`
+  - L1：`sentinel_l1_scan_20260408_022356.md`
+  - 细节：`invalid_links_detail_20260408_022356.md` / `module_id_duplicates_detail_20260408_022356.md` / `md_by_subdir_20260408_022356.md`
 
-- [`20260408_021344/`](./20260408_021344/)
-  - 汇总：[`CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md`](./20260408_021344/CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md)
-  - L1：[`SENTINEL_L1_SCAN_20260408_20260408_021344.md`](./20260408_021344/SENTINEL_L1_SCAN_20260408_20260408_021344.md)
-  - 细节：[`invalid_links_detail_20260408_021344.md`](./20260408_021344/invalid_links_detail_20260408_021344.md) / [`module_id_duplicates_detail_20260408_021344.md`](./20260408_021344/module_id_duplicates_detail_20260408_021344.md) / [`MD_FILES_BY_SUBDIRECTORY_20260408_021344.md`](./20260408_021344/MD_FILES_BY_SUBDIRECTORY_20260408_021344.md)
+- `20260408_021344/`
+  - 汇总：`CONSOLIDATED_REPORT_FOR_AI_20260408_021344.md`
+  - L1：`SENTINEL_L1_SCAN_20260408_20260408_021344.md`
+  - 细节：`invalid_links_detail_20260408_021344.md` / `module_id_duplicates_detail_20260408_021344.md` / `MD_FILES_BY_SUBDIRECTORY_20260408_021344.md`
 
 ## 使用建议
 

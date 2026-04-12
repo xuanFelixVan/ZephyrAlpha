@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 重新生成 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md
 （除 INDEX.md 外本目录全部 *.md，按文件名排序）。仓库根执行:

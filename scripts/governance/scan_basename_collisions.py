@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 """
 按「文件名 basename」查找 Git 已跟踪路径中的同名不同路径（C2 输入）。
 

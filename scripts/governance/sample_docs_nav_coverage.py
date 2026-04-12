@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 """
 P3 辅助：从主要导航 Markdown 中抽样检查 docs/ 下 .md 是否「被提到」。
 

@@ -1,0 +1,196 @@
+{
+  "threshold": 3,
+  "deep_directories_count": 21,
+  "suggestions": [
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\00_MANAGEMENT\\CANON",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\01_BLUEPRINTS\\REPORTS",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 14 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 14,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\a_stock_rules",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 3 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 3,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\database",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 9 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 9,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\data_consistency",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\trading_costs",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\ui_design",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 3 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 3,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\06_CONSTRUCTION_DOCS\\05_DESIGN_DOCS\\web_interface",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\best_practices",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\case_studies",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\05_IMPLEMENTATION\\07_OPERATIONS\\knowledge_base\\tools_guides",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 3 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 3,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_json_reports_20260402",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 13 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 13,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\20260404_audit_reports_archive\\audit_state\\archived_reports_20260402",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 31 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 31,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\IFIND_CONNECTOR",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\20260404_audit_reports_archive\\technical_reviews\\QMT_DATA_INTERFACE",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 5 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 5,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_1",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 4 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 4,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_11",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 6 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 6,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\06_ARCHIVE\\architecture_v4\\module_designs\\layer_9",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 7 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 7,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\09_AUDIT\\STATE\\overnight_runs\\20260408_021344",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 11 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 11,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\09_AUDIT\\STATE\\overnight_runs\\20260408_022356",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 11 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 11,
+      "subdir_count": 0
+    },
+    {
+      "original_path": "docs\\09_AUDIT\\STATE\\overnight_runs\\20260408_033240",
+      "suggested_action": "review_manually",
+      "target_path": null,
+      "reason": "目录有 11 个文件和 0 个子目录，需人工决定是否扁平化",
+      "depth": 4,
+      "file_count": 11,
+      "subdir_count": 0
+    }
+  ],
+  "executed": false
+}

@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # -*- coding: utf-8 -*-
 """
 批量补充元数据
@@ -14,7 +21,7 @@ FACTOR_LIBRARY = Path(r'D:\ZephyrAlpha\docs')
 OUTPUT_DIR = Path(r'D:\ZephyrAlpha\docs\09_AUDIT\STATE')
 
 # 必需字段
-REQUIRED_FIELDS = ['module_id', 'version', 'status', 'created_date', 'owner']
+REQUIRED_FIELDS = ['module_id', 'version', 'status', 'created_date', 'owner', 'layer', 'responsibility']
 
 def check_metadata_completeness(file_path):
     """检查元数据完整性"""
@@ -62,6 +69,37 @@ def generate_module_id(file_path):
     
     return module_id
 
+def infer_layer(file_path):
+    """根据文件路径推断层级"""
+    path_str = str(file_path)
+    layer_mapping = {
+        '01_FRAMEWORK': 'layer_01',
+        '02_FACTOR_LIBRARY': 'layer_02',
+        '03_TRADING_TACTICS': 'layer_03',
+        '04_EXECUTION': 'layer_04',
+        '05_IMPLEMENTATION': 'layer_05',
+        '06_CONSTRUCTION_DOCS': 'layer_06',
+        '07_OPERATIONS': 'layer_07',
+        '08_KNOWLEDGE': 'layer_08',
+        '09_AUDIT': 'layer_09',
+        '10_AI_WORKFLOW': 'layer_10',
+        '11_STRATEGIC_DECISION': 'layer_11',
+        '12_ARCHIVE': 'layer_12',
+    }
+    for key, layer in layer_mapping.items():
+        if key in path_str:
+            return layer
+    # 默认
+    return 'layer_00'
+
+def infer_responsibility(file_path):
+    """根据文件路径推断责任域"""
+    # 简单实现：使用目录名作为责任域
+    parent_dir = file_path.parent.name
+    if parent_dir and parent_dir != '.':
+        return parent_dir
+    return '待分配'
+
 def supplement_metadata_batch(batch_size=100):
     """批量补充元数据"""
     print("=" * 80)
@@ -106,6 +144,8 @@ def supplement_metadata_batch(batch_size=100):
         try:
             # 生成module_id
             module_id = generate_module_id(file_path)
+            layer = infer_layer(file_path)
+            responsibility = infer_responsibility(file_path)
             
             # 生成标准化的元数据
             metadata = f"""---
@@ -115,6 +155,8 @@ status: Active
 created_date: {datetime.now().strftime('%Y-%m-%d')}
 last_updated: {datetime.now().strftime('%Y-%m-%d')}
 owner: 首席文档架构师
+layer: {layer}
+responsibility: {responsibility}
 ---
 
 """
@@ -223,8 +265,8 @@ parent_document: ../INDEX.md
     return report_path
 
 if __name__ == '__main__':
-    # 批量补充元数据
-    supplemented_count, failed_count, remaining_count = supplement_metadata_batch(batch_size=200)
+    # 批量补充元数据（处理所有文件，最多2000个）
+    supplemented_count, failed_count, remaining_count = supplement_metadata_batch(batch_size=2000)
     
     # 生成报告
     report_path = generate_report(supplemented_count, failed_count, remaining_count)

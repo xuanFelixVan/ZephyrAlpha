@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 Sentinel L1：全库 md 链接可达性 + module_id 重复扫描（只读），输出到 docs/09_AUDIT/STATE/
 

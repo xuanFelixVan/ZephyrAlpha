@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 对首个 YAML front matter 内的 module_id 去重：非 canonical 改为 {id}_ARCHIVED_{n}。
 符合 ADR-OC-003。仅改首道 front matter，不碰正文。

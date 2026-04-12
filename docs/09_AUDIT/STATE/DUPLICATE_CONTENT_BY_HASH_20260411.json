@@ -6,19 +6,12 @@
     "md"
   ],
   "max_mb": null,
-  "candidate_count_tracked": 3187,
+  "candidate_count_tracked": 3284,
   "candidate_count_untracked": 0,
-  "total_candidates_scanned": 3187,
+  "total_candidates_scanned": 3284,
   "duplicate_cluster_count": 0,
   "duplicate_file_path_count": 0,
   "skipped_over_max_mb": [],
-  "read_errors": [
-    "docs/06_ARCHIVE/temp_pending/temp_alerting_blueprint.md",
-    "docs/06_ARCHIVE/temp_pending/temp_alternative_data.md",
-    "docs/06_ARCHIVE/temp_pending/temp_gap_analysis.md",
-    "docs/06_ARCHIVE/temp_pending/temp_head_blueprint.md",
-    "docs/06_ARCHIVE/temp_pending/temp_opensource.md",
-    "docs/06_ARCHIVE/temp_pending/temp_risk_budget_v2.md"
-  ],
+  "read_errors": [],
   "clusters": []
 }

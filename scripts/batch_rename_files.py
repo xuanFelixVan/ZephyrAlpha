@@ -1,221 +1,261 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 # -*- coding: utf-8 -*-
+from __future__ import annotations
+
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 """
-批量重命名文件脚本
-功能：将不符合命名规范的文件重命名为标准格式
+批量文件名规范化脚本。
+
+将文件名统一为小写连字符格式（kebab-case），去除空格和特殊字符，
+确保扩展名正确（.md），并保留 Git 历史。
+
+用法：
+    python scripts/batch_rename_files.py --dry-run
+    python scripts/batch_rename_files.py --execute --pattern "*.md"
+    python scripts/batch_rename_files.py --docs-root docs --exclude "**/node_modules/**"
+
+参数：
+    --dry-run           只显示分析结果，不执行重命名（默认）
+    --execute           实际执行重命名（危险！请先 dry-run）
+    --pattern GLOB      文件匹配模式（默认 "**/*.md"）
+    --docs-root PATH    docs 根目录（默认 'docs'）
+    --exclude GLOB      排除模式（可多次使用）
+    --skip-git          不使用 git mv，直接使用 os.rename（不推荐）
+    --verbose           输出详细信息
 """
 
+import argparse
+import fnmatch
+import logging
 import os
 import re
-import json
-from datetime import datetime
+import shlex
+import subprocess
+import sys
 from pathlib import Path
+from typing import List, Tuple, Optional
 
-PROJECT_ROOT = Path("D:/ZephyrAlpha")
-DOCS_DIR = PROJECT_ROOT / "docs"
-OUTPUT_DIR = PROJECT_ROOT / "docs/09_AUDIT/STATE"
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
 
-# 标准文件名列表（允许小写）
-STANDARD_FILENAMES = {
-    'INDEX.md', 'README.md', 'ARCHITECTURE.md', 'CHANGELOG.md',
-    'CONTRIBUTING.md', 'LICENSE.md', 'TODO.md', 'NOTES.md'
-}
 
-def check_filename_naming(file_path):
-    """检查文件命名规范"""
-    file_name = os.path.basename(file_path)
+def normalize_filename(name: str, is_dir: bool = False) -> str:
+    """将文件名规范化为小写连字符格式。
     
-    # 检查是否包含中文
-    has_chinese = any('\u4e00' <= char <= '\u9fff' for char in file_name)
+    规则：
+    1. 转换为全小写。
+    2. 将下划线、空格替换为连字符。
+    3. 删除除连字符、数字、字母、点以外的字符。
+    4. 合并连续的连字符。
+    5. 确保扩展名 .md 小写（如果是文件）。
+    6. 目录名不应包含点（除非是特殊前缀如 .git）。
     
-    # 检查是否包含空格
-    has_space = ' ' in file_name
+    注意：保留前导数字前缀（如 00_）中的下划线？我们选择保留数字前缀，
+    但将下划线替换为连字符（例如 00_governance -> 00-governance）。
+    """
+    # 分离扩展名
+    stem = name
+    ext = ''
+    if not is_dir and '.' in name:
+        stem, ext = os.path.splitext(name)
+        ext = ext.lower()
+        # 确保 markdown 文件扩展名为 .md
+        if ext == '.markdown':
+            ext = '.md'
     
-    # 检查是否为标准文件名
-    if file_name in STANDARD_FILENAMES:
-        return {
-            'has_chinese': has_chinese,
-            'has_space': has_space,
-            'is_standard': True,
-            'is_valid': not has_chinese and not has_space
-        }
+    # 转换小写
+    stem = stem.lower()
     
-    # 检查是否符合命名规范（大写字母、数字、下划线）
-    is_standard = bool(re.match(r'^[A-Z_0-9]+\.md$', file_name))
+    # 替换下划线和空格为连字符
+    stem = re.sub(r'[_\s]+', '-', stem)
     
-    # 检查是否为日期格式文件名
-    is_date_format = bool(re.match(r'^[a-z_0-9]+_\d{8}_\d{6}\.md$', file_name))
+    # 删除非字母数字、非连字符、非点的字符（目录不允许有点）
+    if is_dir:
+        stem = re.sub(r'[^a-z0-9\-]', '', stem)
+    else:
+        # 文件允许有点（用于其他扩展名）
+        stem = re.sub(r'[^a-z0-9\-.]', '', stem)
     
-    # 检查是否为版本格式文件名
-    is_version_format = bool(re.match(r'^[A-Z_0-9]+_v[\d.]+.*\.md$', file_name, re.IGNORECASE))
+    # 合并连续的连字符
+    stem = re.sub(r'-+', '-', stem)
     
-    # 判断是否有效
-    is_valid = (not has_chinese and not has_space and 
-                (is_standard or is_date_format or is_version_format))
+    # 去除首尾连字符
+    stem = stem.strip('-')
     
-    return {
-        'has_chinese': has_chinese,
-        'has_space': has_space,
-        'is_standard': is_standard or is_date_format or is_version_format,
-        'is_valid': is_valid
-    }
-
-def convert_to_standard_name(file_name):
-    """将文件名转换为标准格式"""
-    # 如果是标准文件名，直接返回
-    if file_name in STANDARD_FILENAMES:
-        return file_name
+    # 重新组合
+    if ext:
+        # 如果扩展名是 .md，确保 stem 不以连字符结尾
+        if stem.endswith('-') and ext == '.md':
+            stem = stem[:-1]
+        new_name = stem + ext
+    else:
+        new_name = stem
     
-    # 移除空格
-    new_name = file_name.replace(' ', '_')
-    
-    # 转换为大写
-    name_without_ext = os.path.splitext(new_name)[0]
-    ext = os.path.splitext(new_name)[1]
-    new_name = name_without_ext.upper() + ext
+    # 特殊处理：如果名称为空（极不可能），恢复为 original
+    if not new_name:
+        return name
     
     return new_name
 
-def rename_file(file_path):
-    """重命名文件"""
-    file_name = os.path.basename(file_path)
-    dir_path = os.path.dirname(file_path)
-    
-    # 转换为标准名称
-    new_name = convert_to_standard_name(file_name)
-    
-    # 如果文件名没有变化，返回False
-    if new_name == file_name:
-        return False, "文件名已符合规范", file_name
-    
-    # 构建新路径
-    new_path = os.path.join(dir_path, new_name)
-    
-    # 检查新文件名是否已存在
-    if os.path.exists(new_path):
-        return False, f"目标文件已存在: {new_name}", new_name
-    
-    try:
-        # 重命名文件
-        os.rename(file_path, new_path)
-        return True, f"重命名成功: {file_name} -> {new_name}", new_name
-    except Exception as e:
-        return False, f"重命名失败: {str(e)}", new_name
 
-def scan_and_rename():
-    """扫描并重命名不符合规范的文件"""
-    renamed_files = []
-    failed_files = []
-    total_files = 0
-    valid_files = 0
-    
-    for root, dirs, files in os.walk(DOCS_DIR):
-        # 排除特定目录
-        dirs[:] = [d for d in dirs if d not in ['.git', '__pycache__', 'node_modules', '.venv']]
-        
-        for file in files:
-            if not file.endswith('.md'):
+def should_skip(path: Path, exclude_patterns: List[str]) -> bool:
+    """检查路径是否匹配排除模式。"""
+    posix_path = path.as_posix()
+    for pattern in exclude_patterns:
+        if fnmatch.fnmatch(posix_path, pattern):
+            return True
+    return False
+
+
+def find_files(root: Path, pattern: str, exclude_patterns: List[str]) -> List[Path]:
+    """递归查找匹配模式的文件。"""
+    files = []
+    for filepath in root.rglob(pattern):
+        if filepath.is_file():
+            if should_skip(filepath, exclude_patterns):
                 continue
-            
-            total_files += 1
-            file_path = os.path.join(root, file)
-            rel_path = os.path.relpath(file_path, DOCS_DIR)
-            
-            naming_check = check_filename_naming(file_path)
-            
-            if naming_check['is_valid']:
-                valid_files += 1
-            else:
-                # 重命名文件
-                success, message, new_name = rename_file(file_path)
-                
-                if success:
-                    renamed_files.append({
-                        'old_path': rel_path,
-                        'new_name': new_name,
-                        'message': message
-                    })
-                    valid_files += 1
-                else:
-                    failed_files.append({
-                        'path': rel_path,
-                        'reason': message
-                    })
+            files.append(filepath)
+    return files
+
+
+def git_mv(src: Path, dst: Path, dry_run: bool = True, skip_git: bool = False) -> bool:
+    """使用 git mv 移动文件（保留历史）。"""
+    if dry_run:
+        logger.info(f"[dry-run] git mv {src} -> {dst}")
+        return True
     
-    compliance_rate = valid_files / total_files * 100 if total_files > 0 else 0
+    if skip_git:
+        try:
+            src.rename(dst)
+            logger.info(f"重命名 {src} -> {dst}")
+            return True
+        except OSError as e:
+            logger.error(f"重命名失败：{e}")
+            return False
     
-    return {
-        'total_files': total_files,
-        'valid_files': valid_files,
-        'compliance_rate': compliance_rate,
-        'renamed_files': renamed_files,
-        'failed_files': failed_files
-    }
+    # 使用 git mv
+    cmd = ['git', 'mv', str(src), str(dst)]
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, text=True)
+        logger.info(f"git mv {src} -> {dst}")
+        return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"git mv 失败：{e.stderr}")
+        return False
+
+
+def analyze_rename(filepath: Path, docs_root: Path) -> Tuple[Path, Path, str]:
+    """分析文件的重命名目标路径。"""
+    relative = filepath.relative_to(docs_root)
+    parent = relative.parent
+    old_name = filepath.name
+    is_dir = filepath.is_dir()
+    new_name = normalize_filename(old_name, is_dir)
+    new_relative = parent / new_name
+    new_path = docs_root / new_relative
+    return filepath, new_path, new_name
+
 
 def main():
-    """主函数"""
-    print("=" * 80)
-    print("批量重命名文件")
-    print("=" * 80)
-    print(f"重命名时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print()
-    
-    # 扫描并重命名
-    print("扫描并重命名不符合规范的文件...")
-    result = scan_and_rename()
-    
-    print()
-    print(f"总文件数: {result['total_files']}")
-    print(f"符合规范文件数: {result['valid_files']}")
-    print(f"命名规范符合率: {result['compliance_rate']:.1f}%")
-    print()
-    
-    # 显示重命名结果
-    if result['renamed_files']:
-        print(f"成功重命名 {len(result['renamed_files'])} 个文件:")
-        for i, file_info in enumerate(result['renamed_files'][:20], 1):
-            print(f"  {i}. {file_info['old_path']}")
-            print(f"     -> {file_info['new_name']}")
-        
-        if len(result['renamed_files']) > 20:
-            print(f"... 还有 {len(result['renamed_files']) - 20} 个文件")
-        print()
-    
-    if result['failed_files']:
-        print(f"重命名失败 {len(result['failed_files'])} 个文件:")
-        for i, file_info in enumerate(result['failed_files'][:10], 1):
-            print(f"  {i}. {file_info['path']}")
-            print(f"     原因: {file_info['reason']}")
-        
-        if len(result['failed_files']) > 10:
-            print(f"... 还有 {len(result['failed_files']) - 10} 个文件")
-        print()
-    
-    # 判断是否达到目标
-    if result['compliance_rate'] >= 95:
-        print("✅ 已达到目标符合率（95%）")
+    parser = argparse.ArgumentParser(description='批量文件名规范化')
+    parser.add_argument('--dry-run', action='store_true', default=True,
+                        help='只显示分析结果，不执行重命名（默认）')
+    parser.add_argument('--execute', action='store_true',
+                        help='实际执行重命名（危险！请先 dry-run）')
+    parser.add_argument('--pattern', type=str, default='**/*.md',
+                        help='文件匹配模式（默认 "**/*.md"）')
+    parser.add_argument('--docs-root', type=str, default='docs',
+                        help='docs 根目录（默认 docs）')
+    parser.add_argument('--exclude', action='append', default=[],
+                        help='排除模式（可多次使用），例如 "**/node_modules/**"')
+    parser.add_argument('--skip-git', action='store_true',
+                        help='不使用 git mv，直接使用 os.rename（不推荐）')
+    parser.add_argument('--verbose', action='store_true',
+                        help='输出详细信息')
+    args = parser.parse_args()
+
+    if args.execute:
+        args.dry_run = False
+        logger.warning("执行模式已启用，将实际重命名文件！")
     else:
-        print(f"⚠️ 距离目标还差 {95 - result['compliance_rate']:.1f}%")
-    
-    # 保存结果
-    json_path = OUTPUT_DIR / f'batch_rename_result_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump({
-            'timestamp': datetime.now().isoformat(),
-            'total_files': result['total_files'],
-            'valid_files': result['valid_files'],
-            'compliance_rate': result['compliance_rate'],
-            'renamed_count': len(result['renamed_files']),
-            'failed_count': len(result['failed_files']),
-            'renamed_files': result['renamed_files'],
-            'failed_files': result['failed_files']
-        }, f, ensure_ascii=False, indent=2)
-    
-    print(f"结果已保存至: {json_path}")
-    print()
-    print("=" * 80)
-    print("重命名完成")
-    print("=" * 80)
+        logger.info("干燥运行模式（不实际重命名文件）。")
+
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    docs_root = Path(args.docs_root)
+    if not docs_root.is_dir():
+        logger.error(f"docs 根目录不存在：{docs_root}")
+        sys.exit(1)
+
+    # 默认排除 .git 目录和任何隐藏目录
+    default_exclude = ['**/.git/**', '**/.*/**']
+    exclude_patterns = default_exclude + args.exclude
+
+    logger.info(f"扫描文件，模式：{args.pattern} ...")
+    files = find_files(docs_root, args.pattern, exclude_patterns)
+    logger.info(f"找到 {len(files)} 个文件。")
+
+    rename_plan = []
+    skipped = []
+    for f in files:
+        src, dst, new_name = analyze_rename(f, docs_root)
+        if src.name == new_name:
+            skipped.append((src, "文件名已规范"))
+            continue
+        if dst.exists():
+            skipped.append((src, f"目标文件已存在：{dst}"))
+            continue
+        rename_plan.append((src, dst))
+
+    # 打印分析结果
+    print("\n" + "="*80)
+    print("文件名规范化分析报告")
+    print("="*80)
+    print(f"待重命名文件数：{len(rename_plan)}")
+    print(f"跳过文件数：{len(skipped)}")
+    if rename_plan:
+        print("\n以下文件将被重命名：")
+        for src, dst in rename_plan:
+            print(f"  {src.relative_to(docs_root)}  ->  {dst.relative_to(docs_root)}")
+    if skipped and args.verbose:
+        print("\n跳过的文件：")
+        for src, reason in skipped:
+            print(f"  {src.relative_to(docs_root)}  ({reason})")
+
+    # 执行重命名
+    if not args.dry_run:
+        logger.info("开始执行重命名...")
+        success_count = 0
+        for src, dst in rename_plan:
+            success = git_mv(src, dst, dry_run=False, skip_git=args.skip_git)
+            if success:
+                success_count += 1
+            else:
+                logger.error(f"重命名失败：{src}")
+        logger.info(f"重命名完成，成功 {success_count}/{len(rename_plan)} 个文件。")
+    else:
+        print("\n本次为干燥运行，未实际重命名文件。")
+        print("若要执行重命名，请使用 --execute 参数（务必先备份）。")
+
+    # 生成摘要
+    print("\n" + "="*80)
+    print("总结")
+    print("="*80)
+    print(f"扫描文件总数：{len(files)}")
+    print(f"待重命名文件数：{len(rename_plan)}")
+    print(f"跳过文件数：{len(skipped)}")
+    if args.dry_run:
+        print("\n干燥运行完成。")
+    else:
+        print("\n重命名执行完成。")
+    print("="*80)
+
 
 if __name__ == '__main__':
     main()

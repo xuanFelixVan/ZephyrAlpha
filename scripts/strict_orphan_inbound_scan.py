@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 严格孤儿（入度）扫描：与 Sentinel L1 相同的相对链接解析方式，统计 docs/**/*.md 被链入次数。
 

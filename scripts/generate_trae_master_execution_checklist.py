@@ -1,4 +1,11 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """生成单一主执行清单：TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md（全局编号 T0001+）。"""
 from __future__ import annotations
 

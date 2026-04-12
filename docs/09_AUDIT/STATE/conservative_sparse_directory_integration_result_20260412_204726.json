@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-04-12T20:47:26.322798",
+  "total": 5,
+  "success": 4,
+  "failed": 1,
+  "total_files_moved": 2,
+  "total_dirs_deleted": 0,
+  "results": [
+    {
+      "path": "06_ARCHIVE\\05_IMPLEMENTATION",
+      "action": "merge_to_parent",
+      "success": false,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": "目录不存在"
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\06_REGISTRY",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [
+        "FACTOR_LIB_REGISTRY_OVERVIEW.md"
+      ],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "02_FACTOR_LIBRARY\\10_MANUAL",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [
+        "FAQ.md"
+      ],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "03_TRADING_TACTICS\\08_DECISION_FRAMEWORK",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    },
+    {
+      "path": "04_EXECUTION\\02_TRADE_EXECUTOR",
+      "action": "merge_to_parent",
+      "success": true,
+      "files_moved": [],
+      "directories_deleted": [],
+      "error": null
+    }
+  ]
+}

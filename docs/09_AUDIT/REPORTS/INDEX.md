@@ -1,39 +1,29 @@
 ---
-module_id: 09_AUDIT_REPORTS_INDEX_REPORTS_001
-version: 1.0.2
+module_id: 09_AUDIT_REPORTS_INDEX
+layer: layer_09
+version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: '2026-04-16'
-owner: 文档治理系统
 responsibility:
-- 目录导航与文档索引管理与优化维护
+  - 处理INDEX相关业务
+created_date: 2026-04-07
+last_updated: 2026-04-16
+owner: 文档治理系统
 standard_type: 索引文档
 applicable_scope: 报告文档管理
 compliance_level: 专业标准
-# Reports索引
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> **版本**: v1.0.2
-> **创建日期**: 2026-04-07
-> **核心定位**: 报告文档管理
-> **索引**: `INDEX_REPORTS_001`
 ---
 
 ## 📋 目录概览
 
 ### 导航与上级入口
 
-- **本目录门面（短说明）**：[./README.md](./README.md)  
-- **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260414.md](../STATE/INDEX_HEALTH_ORPHAN_20260414.md)（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 [`20260412`](../STATE/INDEX_HEALTH_ORPHAN_20260412.md)  
-- **STATE 前缀健全性（另一份机器报告 · 最新）**：[../STATE/INDEX_HEALTH_ORPHAN_20260416.md](../STATE/INDEX_HEALTH_ORPHAN_20260416.md)（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 [`20260413`](../STATE/INDEX_HEALTH_ORPHAN_20260413.md)（勿与上条 REPORTS `20260412/14` 混读）  
-- **STATE 子域索引**：[../STATE/INDEX.md](../STATE/INDEX.md)  
-- **整仓按目录尽治（REPO_WIDE §7）**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)  
-- **治理工具总索引**：[../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)  
-- **L1 治理快照（20260408）**：[../STATE/SENTINEL_L1_SCAN_20260408.md](../STATE/SENTINEL_L1_SCAN_20260408.md)  
+- **本目录门面（短说明）**：[./README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)  
+- **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260414.md（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 `20260412`  
+- **STATE 前缀健全性（另一份机器报告 · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260416.md（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 `20260413`（勿与上条 REPORTS `20260412/14` 混读）  
+- **STATE 子域索引**：[../STATE/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)  
+- **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md  
+- **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md  
+- **L1 治理快照（20260408）**：../STATE/SENTINEL_L1_SCAN_20260408.md  
 - **审计域总索引**：[../INDEX.md](../INDEX.md)  
 - **文档总入口**：[../../INDEX.md](../../INDEX.md)
 
@@ -45,7 +35,7 @@ compliance_level: 专业标准
 | **活跃模块** | 66 |
 | **更新频率** | 按需更新 |
 
-> **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → **最新** [`../STATE/REPO_DIRECTORY_ROLLUP_20260414.md`](../STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（**`docs/09_AUDIT/REPORTS` = 499**）；历史 [`20260413`](../STATE/REPO_DIRECTORY_ROLLUP_20260413.md)。上表为历史手工统计，对账前请勿单独当作 Git 真源。
+> **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → **最新** `../STATE/REPO_DIRECTORY_ROLLUP_20260414.md`（**`docs/09_AUDIT/REPORTS` = 499**）；历史 `20260413`。上表为历史手工统计，对账前请勿单独当作 Git 真源。
 
 ---
 
@@ -53,31 +43,31 @@ compliance_level: 专业标准
 
 ### 快速入口（建议先看）
 
-- **夜间审计产物（快照）**：[`../STATE/overnight_runs/INDEX.md`](../STATE/overnight_runs/INDEX.md)
-- **Reports 分组索引（推荐入口）**：[`INDEX_GROUPED_REPORTS_20260408.md`](./INDEX_GROUPED_REPORTS_20260408.md)
+- **夜间审计产物（快照）**：[`../STATE/overnight_runs/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- **Reports 分组索引（推荐入口）**：`INDEX_GROUPED_REPORTS_20260408.md`
 - **进度类报告（常用入口）**：
-  - [`PHASE3_CURRENT_PROGRESS_20260407.md`](./PHASE3_CURRENT_PROGRESS_20260407.md)
-  - [`PHASE3_P2_PROGRESS_20260407.md`](./PHASE3_P2_PROGRESS_20260407.md)
-  - [`P2_CROSS_REFERENCE_PROGRESS_20260406.md`](./P2_CROSS_REFERENCE_PROGRESS_20260406.md)
-  - [`ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_20260406.md`](./ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_20260406.md)
+  - `PHASE3_CURRENT_PROGRESS_20260407.md`
+  - `PHASE3_P2_PROGRESS_20260407.md`
+  - `P2_CROSS_REFERENCE_PROGRESS_20260406.md`
+  - `ENCODING_ISSUES_REBUILD_PROGRESS_REPORT_20260406.md`
 
-- [Layer 1 开源项目集成指南](./OPENSOURCE_INTEGRATION_GUIDE_20260407.md) - 实施指南文档
+- Layer 1 开源项目集成指南 - 实施指南文档
 
 - `Layer 1 数据预处理层专业机构标准差距分析报告` - 系统文档
 
-- [第三阶段P2文档第二批完成报告](./PHASE3_P2_BATCH2_COMPLETION_20260407.md) - 系统文档
+- 第三阶段P2文档第二批完成报告 - 系统文档
 
-- [数据预处理层P2文档交叉引用更新进度报告](./P2_CROSS_REFERENCE_PROGRESS_20260406.md) - 系统文档
+- 数据预处理层P2文档交叉引用更新进度报告 - 系统文档
 
-- [数据预处理层P2文档交叉引用更新完成报告](./P2_CROSS_REFERENCE_COMPLETION_20260407.md) - 系统文档
+- 数据预处理层P2文档交叉引用更新完成报告 - 系统文档
 
-- [Layer 1 深度审计修复总结报告](./FIX_SUMMARY_20260407.md) - 系统文档
+- Layer 1 深度审计修复总结报告 - 系统文档
 
 - `Layer 1 数据预处理层全面架构完整性分析报告` - 系统文档
 
-- [数据预处理层架构完整性评估与开源方案推荐报告](./ARCHITECTURE_GAP_ANALYSIS_AND_OPENSOURCE_RECOMMENDATION_20260405.md) - 系统文档
+- 数据预处理层架构完整性评估与开源方案推荐报告 - 系统文档
 
-- [Layer 1 数据预处理层架构完整性分析报告](./ARCHITECTURE_COMPLETENESS_ANALYSIS_20260407.md) - 系统文档
+- Layer 1 数据预处理层架构完整性分析报告 - 系统文档
 
 
 ### 核心文档
@@ -219,9 +209,9 @@ compliance_level: 专业标准
 
 ## 🔗 相关文档
 
-- [Module ID注册表](../../09_AUDIT/STATE/MODULE_ID_REGISTRY.md)
-- [职责边界地图](../../09_AUDIT/STATE/RESPONSIBILITY_BOUNDARY_MAP.md)
-- [专业文档治理审计指南](../../09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+- Module ID注册表
+- 职责边界地图
+- 专业文档治理审计指南
 
 ---
 

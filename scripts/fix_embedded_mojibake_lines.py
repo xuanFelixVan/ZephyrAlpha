@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # -*- coding: utf-8 -*-
 """
 修复“整体 UTF-8 正常，但部分行出现 mojibake（并可能混入控制字符）”的 Markdown 文档。

@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 INDEX.md职责描述优化脚本
 按照专业量化机构五大原则，为每个INDEX.md添加独特的职责描述

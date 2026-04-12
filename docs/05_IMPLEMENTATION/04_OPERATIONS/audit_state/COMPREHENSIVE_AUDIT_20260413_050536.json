@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-04-13T05:05:36.733885",
+  "summary": {
+    "total_checks": 1,
+    "passed_checks": 0,
+    "failed_checks": 1,
+    "p0_issues": 564,
+    "p1_issues": 0,
+    "p2_issues": 0,
+    "pass_rate": 0.0
+  },
+  "results": [
+    {
+      "check_id": "C-01",
+      "name": "双YAML Frontmatter检测",
+      "severity": "P0",
+      "passed": false,
+      "issues_found": 564,
+      "threshold": 0,
+      "message": "发现 564 个双YAML文件",
+      "duration": 0.39,
+      "fix_suggestion": "阻止提交，使用 fix_double_yaml_merge.py 修复"
+    }
+  ]
+}

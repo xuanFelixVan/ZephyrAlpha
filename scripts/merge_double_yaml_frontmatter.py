@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 按 docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md ADR-OC-001
 合并文件开头「双 YAML」为单一 front matter。

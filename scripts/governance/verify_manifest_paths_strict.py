@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """
 总清单严格路径核对：解析指定 Markdown 中的 (1) 相对 Markdown 内链 (2) 正文/表格中的 docs/... 路径，
 要求在仓库根下存在（文件或目录）。默认目标为蓝图阶段总清单。

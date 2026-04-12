@@ -10,7 +10,9 @@ responsibility:
 standard_type: 蓝图文档
 applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准
+layer: layer_08
 ---
+
 
 # 30_COMPLIANCE_MONITORING
 
@@ -18,4 +20,4 @@ compliance_level: 专业标准
 
 ## 📋 说明
 
-含 Layer 8 入口 [`COMPLIANCE_MONITORING_LAYER8_MODULE.md`](./COMPLIANCE_MONITORING_LAYER8_MODULE.md) 与正式稿 [`10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md`](../../10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md) 互指（C2 basename 已消解）。
+含 Layer 8 入口 `COMPLIANCE_MONITORING_LAYER8_MODULE.md` 与正式稿 `10_AI_WORKFLOW/COMPLIANCE_MONITORING_BLUEPRINT.md` 互指（C2 basename 已消解）。

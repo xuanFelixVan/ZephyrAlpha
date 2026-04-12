@@ -1,33 +1,31 @@
 ---
-module_id: 02_FACTOR_LIBRARY_09_AUDIT_001
+module_id: README
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 模块说明
-  - 使用指南
-  - 快速开始
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: 首席文档架构师
+layer: layer_02
+responsibility: 09_AUDIT
 ---
-# 09_AUDIT
-
-## 📋 概述
-
-审计模块的说明文档，包含文档治理审计相关信息。
 
 
-此目录正在整合中，文档数量较少。
 
-## 📋 说明
 
-此目录包含2个文档，建议整合到父目录或补充更多文档。
 
----
+
+
+
 
 ## 变更记录
 
+
+
 | 版本 | 日期 | 变更内容 | 变更人 |
+
 |------|------|----------|--------|
+
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
+
+
 

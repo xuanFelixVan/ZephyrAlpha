@@ -1,0 +1,4295 @@
+---
+module_id: BLUEPRINT_AUDIT_V8_20260407
+layer: layer_05
+version: 1.0.0
+responsibility: 处理BLUEPRINT_AUDIT_V8_20260407相关业务
+status: Active
+owner: 待指定
+last_updated: '2026-04-13'
+---
+## 🔴 L1 文件系统层问题
+
+
+
+### 🟢 目录漂移 (P2)
+
+
+
+- **描述**: 目录 00_MANAGEMENT 不符合架构设计
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\00_MANAGEMENT
+
+
+
+### 🟢 目录漂移 (P2)
+
+
+
+- **描述**: 目录 03_CONSTRUCTION_PLANS 不符合架构设计
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\03_CONSTRUCTION_PLANS
+
+
+
+### 🟢 命名不规范 (P2)
+
+
+
+- **描述**: 蓝图文档命名不符合规范: LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 命名不规范 (P2)
+
+
+
+- **描述**: 蓝图文档命名不符合规范: LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 命名不规范 (P2)
+
+
+
+- **描述**: 蓝图文档命名不符合规范: LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+
+
+### 🟢 命名不规范 (P2)
+
+
+
+- **描述**: 蓝图文档命名不符合规范: LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 命名不规范 (P2)
+
+
+
+- **描述**: 蓝图文档命名不符合规范: LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ALPHA_FACTOR_FACTORY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ALTERNATIVE_DATA_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\API_DOCUMENTATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\AUDIT_LOGGING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\AUTO_REPAIR_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BARRA_RISK_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BLACK_LITTERMAN_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BLACK_LITTERMAN_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CI_CD_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CI_CD_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CLICKHOUSE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CLICKHOUSE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CODE_QUALITY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CODE_QUALITY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\COINTEGRATION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\COINTEGRATION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIGURATION_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: [
+
+
+
+
+
+
+
+**文档版本**: v1.0.0
+
+
+
+## 接口与契约（蓝图终稿）
+
+
+
+- 全库 API 与事件约定真源：`API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIGURATION_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIG_CENTER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIG_CENTER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONSTRAINT_CONFLICT_RESOLVER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONTAINER_ORCHESTRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CVAR_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_ACCESS_AUDIT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_BACKUP_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CLEANING_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_COST_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_FABRIC_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_GOVERNANCE_PLATFORM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_LIFECYCLE_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_LINEAGE_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_MESH_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_OBSERVABILITY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: DATA_LINEAGE_TRACKING_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_QUALITY_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_QUALITY_MONITORING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SECURITY_COMPLIANCE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DEV_ENVIRONMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISASTER_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISTRIBUTED_TRACING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DOCUMENTATION_GENERATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\EXTENDED_OPTIMIZATION_MODULES_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FACTOR_BACKTEST_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FAULT_DIAGNOSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FINANCING_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIERARCHICAL_OPTIMIZATION_FRAMEWORK_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\INTEGRATION_TESTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\INTRADAY_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIVE_TRADING_INTERFACE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LOAD_BALANCING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LOG_AGGREGATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACHINE_LEARNING_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARGIN_CALL_MONITOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_IMPACT_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_MICROSTRUCTURE_SIMULATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_REGIME_DETECTION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPENING_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPTIMIZATION_RESULT_VALIDATOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ORDER_FLOW_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PERFORMANCE_TESTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_ATTRIBUTION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_CAPACITY_ESTIMATOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_COMPARISON_TOOL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_CONSTRAINT_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_DRIFT_MONITOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_HEALTH_SCORING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_INSURANCE_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_DIAGNOSTICS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_OPTIMIZER_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PRODUCTION_PORTFOLIO_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\QUALITY_SCORING_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\QUARTERLY_REBALANCE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REALTIME_DATA_LAKE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REALTIME_RISK_HEDGE_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REDIS_CACHE_LAYER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_ATTRIBUTION_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_CONTROL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_PARITY_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ROBUST_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SECRETS_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API 契约
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SECURITY_SCANNING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SENSITIVITY_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SERVICE_DISCOVERY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SIGNAL_DECAY_ANALYZER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SIMPLIFIED_TIMEFRAME_COORDINATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SLIPPAGE_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SLIPPAGE_MODEL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SMART_EXECUTION_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SMART_ORDER_ROUTER_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STATISTICAL_ARBITRAGE_MODULE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STOCHASTIC_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STOCHASTIC_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGIC_WEIGHTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_SELECTION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRESS_TESTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRESS_TESTING_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SYSTEM_ENHANCEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TAIL_RISK_HEDGING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TAX_LOSS_HARVESTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TIMESCALEDB_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_COST_MODEL_ENHANCEMENT_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_COST_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: `API_Contract.md`
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRANSACTION_COST_ANALYSIS_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TURNOVER_CONTROL_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIT_TESTING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\VAR_ES_MONITORING_BLUEPRINT.md
+
+
+
+### 🟡 死链接 (P1)
+
+
+
+- **描述**: 死链接: API_Contract.md
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\VULNERABILITY_DETECTION_BLUEPRINT.md
+
+
+
+## 🟡 L2 文档内容层问题
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 API_GATEWAY_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 AUDIT_LOGGING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\AUDIT_LOGGING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 BENCHMARK_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CI_CD_PIPELINE_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CI_CD_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CODE_QUALITY_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CODE_QUALITY_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CONFIG_CENTER_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIG_CENTER_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_LINEAGE_ENHANCED_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_LINEAGE_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_QUALITY_ENHANCED_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_QUALITY_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DEPENDENCY_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DEPENDENCY_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DEV_ENVIRONMENT_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DEV_ENVIRONMENT_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISASTER_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DISTRIBUTED_TRACING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISTRIBUTED_TRACING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DOCUMENTATION_GENERATION_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DOCUMENTATION_GENERATION_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ESG_INVESTMENT_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 FAULT_DIAGNOSIS_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FAULT_DIAGNOSIS_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LIVE_TRADING_INTERFACE_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIVE_TRADING_INTERFACE_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LOAD_BALANCING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LOAD_BALANCING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LOG_AGGREGATION_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LOG_AGGREGATION_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MACRO_FACTOR_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PERFORMANCE_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PERFORMANCE_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SECRETS_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SECRETS_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SECURITY_SCANNING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SECURITY_SCANNING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SERVICE_DISCOVERY_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SERVICE_DISCOVERY_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_ENGINE_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRESS_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRESS_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 UNIT_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIT_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 变更记录缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 VULNERABILITY_DETECTION_BLUEPRINT.md 缺少变更历史记录
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\VULNERABILITY_DETECTION_BLUEPRINT.md
+
+
+
+## 🟢 L3 专业标准层问题
+
+
+
+### 🟢 YAML字段缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟡 Layer定位缺失 (P1)
+
+
+
+- **描述**: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少Layer定位
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟢 YAML字段缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ECONOMIC_REGIME_ENGINE_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
+
+
+
+### 🟡 Layer定位缺失 (P1)
+
+
+
+- **描述**: 蓝图文档 ECONOMIC_REGIME_ENGINE_BLUEPRINT.md 缺少Layer定位
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ECONOMIC_REGIME_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 YAML字段缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ENHANCED_ALERT_SYSTEM_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟡 Layer定位缺失 (P1)
+
+
+
+- **描述**: 蓝图文档 ENHANCED_ALERT_SYSTEM_BLUEPRINT.md 缺少Layer定位
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ENHANCED_ALERT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 YAML字段缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟡 Layer定位缺失 (P1)
+
+
+
+- **描述**: 蓝图文档 RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md 缺少Layer定位
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 YAML字段缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TRADING_COST_OPTIMIZATION_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_COST_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟡 Layer定位缺失 (P1)
+
+
+
+- **描述**: 蓝图文档 TRADING_COST_OPTIMIZATION_BLUEPRINT.md 缺少Layer定位
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_COST_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 ALPHA_FACTOR_FACTORY_BLUEPRINT.md 的module_id ALPHA_FACTOR_FACTORY_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ALPHA_FACTOR_FACTORY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md 的module_id CDC_CHANGE_DATA_CAPTURE_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_BACKUP_RECOVERY_BLUEPRINT.md 的module_id DATA_BACKUP_RECOVERY_001_ARCHIVED_1 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_BACKUP_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 的module_id DATA_CATALOG_001_ARCHIVED_1 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 的module_id DATA_MASKING_ENCRYPTION_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_OBSERVABILITY_BLUEPRINT.md 的module_id DATA_OBSERVABILITY_001_ARCHIVED_1 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_OBSERVABILITY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 的module_id DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 的module_id DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 的module_id DISASTER_RECOVERY_001_ARCHIVED_1 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISASTER_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md 的module_id LAYER6_ARCHITECTURE_DESIGN_001 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md 的module_id LAYER6_DATA_FLOW_DESIGN_001 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md 的module_id LAYER6_INTERFACE_SPECIFICATION_001 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md 的module_id LAYER6_OPENSOURCE_INTEGRATION_001 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_TEST_STRATEGY_BLUEPRINT.md 的module_id LAYER6_TEST_STRATEGY_001 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 的module_id MISSING_MODULES_SUMMARY_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
+
+
+
+### 🟢 module_id不规范 (P2)
+
+
+
+- **描述**: 蓝图文档 UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md 的module_id UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT 不符合规范
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 API_DOCUMENTATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\API_DOCUMENTATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 API_GATEWAY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 AUDIT_LOGGING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\AUDIT_LOGGING_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 AUTO_REPAIR_ENGINE_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\AUTO_REPAIR_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 BENCHMARK_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\BENCHMARK_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CI_CD_PIPELINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CI_CD_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CLICKHOUSE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CLICKHOUSE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CODE_QUALITY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CODE_QUALITY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 COINTEGRATION_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\COINTEGRATION_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CONFIGURATION_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONFIGURATION_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 CVAR_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\CVAR_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_ACCESS_AUDIT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_ACCESS_AUDIT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_BACKUP_RECOVERY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_BACKUP_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CATALOG_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_CLEANING_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_CLEANING_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_LINEAGE_ENHANCED_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_LINEAGE_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_MASKING_ENCRYPTION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_QUALITY_ENHANCED_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_QUALITY_ENHANCED_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DATA_VALIDATION_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DATA_VALIDATION_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DEPENDENCY_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DEPENDENCY_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DEV_ENVIRONMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DEV_ENVIRONMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISASTER_RECOVERY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DISTRIBUTED_TRACING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DISTRIBUTED_TRACING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DOCUMENTATION_GENERATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DOCUMENTATION_GENERATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ESG_INVESTMENT_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ESG_INVESTMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 FAULT_DIAGNOSIS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\FAULT_DIAGNOSIS_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 INTEGRATION_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\INTEGRATION_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 INTRADAY_STRATEGY_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\INTRADAY_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 INTRADAY_STRATEGY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\INTRADAY_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LAYER6_TEST_STRATEGY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LIVE_TRADING_INTERFACE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LIVE_TRADING_INTERFACE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 LOG_AGGREGATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\LOG_AGGREGATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MACRO_FACTOR_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MACRO_FACTOR_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MARGIN_CALL_MONITOR_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARGIN_CALL_MONITOR_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MARKET_MICROSTRUCTURE_SIMULATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_MICROSTRUCTURE_SIMULATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MISSING_MODULES_SUMMARY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MONITORING_ALERTING_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MONITORING_ALERTING_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 ORDER_FLOW_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\ORDER_FLOW_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PERFORMANCE_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PERFORMANCE_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PORTFOLIO_HEALTH_SCORING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_HEALTH_SCORING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PORTFOLIO_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 QUALITY_REPORT_AUTOMATION_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\QUALITY_REPORT_AUTOMATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 REALTIME_DATA_LAKE_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REALTIME_DATA_LAKE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 REDIS_CACHE_LAYER_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\REDIS_CACHE_LAYER_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SECRETS_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SECRETS_MANAGEMENT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SENSITIVITY_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SENSITIVITY_ANALYSIS_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SLIPPAGE_MODEL_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SLIPPAGE_MODEL_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 SMART_ORDER_ROUTER_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\SMART_ORDER_ROUTER_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STOCHASTIC_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STOCHASTIC_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGIC_WEIGHTING_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGIC_WEIGHTING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_ENGINE_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 STRESS_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\STRESS_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TIMESCALEDB_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TIMESCALEDB_INTEGRATION_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TRADING_COST_MODEL_ENHANCEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_COST_MODEL_ENHANCEMENT_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 TURNOVER_CONTROL_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\TURNOVER_CONTROL_BLUEPRINT.md
+
+
+
+### 🟢 主标题缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md 缺少主标题
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 UNIT_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\UNIT_TESTING_BLUEPRINT.md
+
+
+
+### 🟢 文档治理章节缺失 (P2)
+
+
+
+- **描述**: 蓝图文档 VULNERABILITY_DETECTION_BLUEPRINT.md 缺少文档治理章节
+
+- **路径**: docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\01_BLUEPRINTS\VULNERABILITY_DETECTION_BLUEPRINT.md
+
+
+
+---
+
+
+
+## 🎯 改进建议
+
+
+
+### 短期修复（P1级）
+
+
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- 死链接: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- 死链接: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: [
+
+
+
+
+
+
+
+**文档版本**: v1.0.0
+
+
+
+## 接口与契约（蓝图终稿）
+
+
+
+- 全库 API 与事件约定真源：`API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: DATA_LINEAGE_TRACKING_BLUEPRINT.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- 死链接: 死链接: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+
+- 死链接: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- 死链接: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
+
+- 死链接: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md)
+
+- 死链接: 死链接: LAYER11_CAPABILITY_TO_BLUEPRINT_MAP_20260408.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: STRATEGIC_DECISION_LAYER_BLUEPRINT.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API 契约
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: `API_Contract.md`
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- 死链接: 死链接: API_Contract.md
+
+- Layer定位缺失: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少Layer定位
+
+- Layer定位缺失: 蓝图文档 ECONOMIC_REGIME_ENGINE_BLUEPRINT.md 缺少Layer定位
+
+- Layer定位缺失: 蓝图文档 ENHANCED_ALERT_SYSTEM_BLUEPRINT.md 缺少Layer定位
+
+- Layer定位缺失: 蓝图文档 RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md 缺少Layer定位
+
+- Layer定位缺失: 蓝图文档 TRADING_COST_OPTIMIZATION_BLUEPRINT.md 缺少Layer定位
+
+
+
+### 长期优化（P2级）
+
+
+
+- 目录漂移: 目录 00_MANAGEMENT 不符合架构设计
+
+- 目录漂移: 目录 03_CONSTRUCTION_PLANS 不符合架构设计
+
+- 命名不规范: 蓝图文档命名不符合规范: LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md
+
+- 命名不规范: 蓝图文档命名不符合规范: LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md
+
+- 命名不规范: 蓝图文档命名不符合规范: LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md
+
+- 命名不规范: 蓝图文档命名不符合规范: LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md
+
+- 命名不规范: 蓝图文档命名不符合规范: LAYER6_TEST_STRATEGY_BLUEPRINT.md
+
+- 变更记录缺失: 蓝图文档 API_GATEWAY_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 AUDIT_LOGGING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 BENCHMARK_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 CI_CD_PIPELINE_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 CODE_QUALITY_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 CONFIG_CENTER_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DATA_LINEAGE_ENHANCED_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DATA_QUALITY_ENHANCED_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DEPENDENCY_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DEV_ENVIRONMENT_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DISTRIBUTED_TRACING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 DOCUMENTATION_GENERATION_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 ESG_INVESTMENT_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 FAULT_DIAGNOSIS_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 LIVE_TRADING_INTERFACE_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 LOAD_BALANCING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 LOG_AGGREGATION_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 MACRO_FACTOR_SYSTEM_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 PERFORMANCE_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 SECRETS_MANAGEMENT_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 SECURITY_SCANNING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 SERVICE_DISCOVERY_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 STRATEGY_ENGINE_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 STRESS_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 UNIT_TESTING_BLUEPRINT.md 缺少变更历史记录
+
+- 变更记录缺失: 蓝图文档 VULNERABILITY_DETECTION_BLUEPRINT.md 缺少变更历史记录
+
+- YAML字段缺失: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- YAML字段缺失: 蓝图文档 ECONOMIC_REGIME_ENGINE_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- YAML字段缺失: 蓝图文档 ENHANCED_ALERT_SYSTEM_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- YAML字段缺失: 蓝图文档 RISK_CONTRIBUTION_ANALYSIS_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- YAML字段缺失: 蓝图文档 TRADING_COST_OPTIMIZATION_BLUEPRINT.md 缺少字段: module_id, version, status, created_date, owner
+
+- module_id不规范: 蓝图文档 ALPHA_FACTOR_FACTORY_BLUEPRINT.md 的module_id ALPHA_FACTOR_FACTORY_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md 的module_id CDC_CHANGE_DATA_CAPTURE_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_BACKUP_RECOVERY_BLUEPRINT.md 的module_id DATA_BACKUP_RECOVERY_001_ARCHIVED_1 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 的module_id DATA_CATALOG_001_ARCHIVED_1 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 的module_id DATA_MASKING_ENCRYPTION_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_OBSERVABILITY_BLUEPRINT.md 的module_id DATA_OBSERVABILITY_001_ARCHIVED_1 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 的module_id DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 的module_id DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 的module_id DISASTER_RECOVERY_001_ARCHIVED_1 不符合规范
+
+- module_id不规范: 蓝图文档 LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md 的module_id LAYER6_ARCHITECTURE_DESIGN_001 不符合规范
+
+- module_id不规范: 蓝图文档 LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md 的module_id LAYER6_DATA_FLOW_DESIGN_001 不符合规范
+
+- module_id不规范: 蓝图文档 LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md 的module_id LAYER6_INTERFACE_SPECIFICATION_001 不符合规范
+
+- module_id不规范: 蓝图文档 LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md 的module_id LAYER6_OPENSOURCE_INTEGRATION_001 不符合规范
+
+- module_id不规范: 蓝图文档 LAYER6_TEST_STRATEGY_BLUEPRINT.md 的module_id LAYER6_TEST_STRATEGY_001 不符合规范
+
+- module_id不规范: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 的module_id MISSING_MODULES_SUMMARY_BLUEPRINT 不符合规范
+
+- module_id不规范: 蓝图文档 UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT.md 的module_id UNIFIED_DATA_INFRASTRUCTURE_BLUEPRINT 不符合规范
+
+- 主标题缺失: 蓝图文档 ALGORITHMIC_TRADING_OPTIMIZER_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 API_DOCUMENTATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 API_GATEWAY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 AUDIT_LOGGING_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 AUTO_REPAIR_ENGINE_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 BENCHMARK_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CDC_CHANGE_DATA_CAPTURE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CI_CD_PIPELINE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CLICKHOUSE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CODE_QUALITY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 COINTEGRATION_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CONFIGURATION_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CONSTRAINT_SOLVER_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 COVARIANCE_ESTIMATION_ENHANCEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 CVAR_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_ACCESS_AUDIT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_BACKUP_RECOVERY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_CATALOG_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_CLEANING_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_LINEAGE_ENHANCED_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DATA_MASKING_ENCRYPTION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_ORCHESTRATION_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DATA_PREPROCESSING_ARCHITECTURE_GAP_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_PREPROCESSING_COMPLETE_ARCHITECTURE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_QUALITY_ENHANCED_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DATA_SOURCE_HEALTH_MONITOR_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DATA_STANDARDIZATION_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DATA_SUBSCRIPTION_SERVICE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DATA_VALIDATION_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DEPENDENCY_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DEV_ENVIRONMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DISASTER_RECOVERY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DISTRIBUTED_TRACING_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 DOCUMENTATION_GENERATION_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 DYNAMIC_ASSET_ALLOCATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 DYNAMIC_CORRELATION_MODELING_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 DYNAMIC_LEVERAGE_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 ESG_INVESTMENT_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 FACTOR_EXPOSURE_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 FACTOR_NEUTRAL_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 FAULT_DIAGNOSIS_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 HIERARCHICAL_RISK_BUDGET_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 HIGH_PERFORMANCE_DATA_PIPELINE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 INTEGRATION_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 INTRADAY_STRATEGY_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 INTRADAY_STRATEGY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 IPS_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LAYER6_ARCHITECTURE_DESIGN_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LAYER6_DATA_FLOW_DESIGN_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LAYER6_INTERFACE_SPECIFICATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LAYER6_OPENSOURCE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LAYER6_TEST_STRATEGY_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 LIQUIDITY_CONSTRAINED_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 LIQUIDITY_MANAGEMENT_SYSTEM_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 LIVE_TRADING_INTERFACE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 LOG_AGGREGATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 MACRO_FACTOR_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 MARGIN_CALL_MONITOR_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 MARKET_MICROSTRUCTURE_SIMULATION_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 MARKET_PARTICIPANT_SIMULATION_INTEGRATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 MEAN_VARIANCE_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 MISSING_MODULES_SUMMARY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 MONITORING_ALERTING_SYSTEM_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 MULTI_ASSET_CORRELATION_MODELING_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 MULTI_OBJECTIVE_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 MULTI_PERIOD_DYNAMIC_OPTIMIZATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 MULTI_STRATEGY_HIERARCHICAL_SYSTEM_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 OBJECT_STORAGE_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 OPTIMIZATION_HISTORY_TRACKER_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 OPTIMIZER_DIAGNOSTICS_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 ORDER_FLOW_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 PERFORMANCE_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 PORTFOLIO_DIAGNOSTICS_TOOLKIT_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 PORTFOLIO_DIVERSIFICATION_METRIC_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 PORTFOLIO_HEALTH_SCORING_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 PORTFOLIO_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 PORTFOLIO_SCENARIO_ANALYSIS_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 QUALITY_REPORT_AUTOMATION_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 REALTIME_DATA_LAKE_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 REDIS_CACHE_LAYER_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 SECRETS_MANAGEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 SENSITIVITY_ANALYSIS_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 SLIPPAGE_MODEL_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 SMART_ORDER_ROUTER_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 STOCHASTIC_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 STRATEGIC_WEIGHTING_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 STRATEGY_AUTHORING_ASSISTANT_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 STRATEGY_ENGINE_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 STRATEGY_PARAMETER_OPTIMIZATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 STRESS_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 TIMESCALEDB_INTEGRATION_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 TRADING_COST_MODEL_ENHANCEMENT_BLUEPRINT.md 缺少文档治理章节
+
+- 主标题缺失: 蓝图文档 TRADING_SIGNAL_VALIDATOR_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 TRANSACTION_COST_AWARE_REBALANCING_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 TURNOVER_CONTROL_BLUEPRINT.md 缺少主标题
+
+- 主标题缺失: 蓝图文档 UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md 缺少主标题
+
+- 文档治理章节缺失: 蓝图文档 UNIFIED_DATA_API_GATEWAY_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 UNIT_TESTING_BLUEPRINT.md 缺少文档治理章节
+
+- 文档治理章节缺失: 蓝图文档 VULNERABILITY_DETECTION_BLUEPRINT.md 缺少文档治理章节
+

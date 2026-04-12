@@ -1,4 +1,11 @@
+from __future__ import annotations
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 """
 为首道 YAML front matter 补全 `module_id`，与 sentinel_l1_governance_scan 口径一致。
 
@@ -12,7 +19,6 @@
   python scripts/governance/backfill_missing_module_id.py --dry-run
   python scripts/governance/backfill_missing_module_id.py --apply
 """
-from __future__ import annotations
 
 import argparse
 import hashlib

@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# -*- coding: utf-8 -*-
 """校验 ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md 中列表内链是否均可解析。仓库根执行。"""
 from __future__ import annotations
 

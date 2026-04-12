@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "timestamp": "2026-04-13T05:09:01.684209",
+  "summary": {
+    "total_checks": 5,
+    "passed_checks": 3,
+    "failed_checks": 2,
+    "p0_issues": 6,
+    "p1_issues": 0,
+    "p2_issues": 0,
+    "pass_rate": 60.0
+  },
+  "results": [
+    {
+      "check_id": "C-01",
+      "name": "双YAML Frontmatter检测",
+      "severity": "P0",
+      "passed": false,
+      "issues_found": 1,
+      "threshold": 0,
+      "message": "发现 1 个双YAML文件",
+      "duration": 1.01,
+      "fix_suggestion": "阻止提交，使用 fix_double_yaml_merge.py 修复"
+    },
+    {
+      "check_id": "C-02",
+      "name": "无效内链检测",
+      "severity": "P0",
+      "passed": false,
+      "issues_found": 5,
+      "threshold": 0,
+      "message": "发现 5 个无效链接",
+      "duration": 0.79,
+      "fix_suggestion": "阻止合并，使用 batch_fix_invalid_links_v2.py 修复"
+    },
+    {
+      "check_id": "C-03",
+      "name": "重复Module ID检测",
+      "severity": "P0",
+      "passed": true,
+      "issues_found": 0,
+      "threshold": 0,
+      "message": "所有module_id唯一",
+      "duration": 0.43,
+      "fix_suggestion": ""
+    },
+    {
+      "check_id": "C-04",
+      "name": "编码损坏检测",
+      "severity": "P0",
+      "passed": true,
+      "issues_found": 0,
+      "threshold": 0,
+      "message": "未检测到编码问题",
+      "duration": 0.28,
+      "fix_suggestion": ""
+    },
+    {
+      "check_id": "C-05",
+      "name": "必需元数据字段检测",
+      "severity": "P0",
+      "passed": true,
+      "issues_found": 0,
+      "threshold": 0,
+      "message": "所有文件包含必需字段",
+      "duration": 0.27,
+      "fix_suggestion": ""
+    }
+  ]
+}

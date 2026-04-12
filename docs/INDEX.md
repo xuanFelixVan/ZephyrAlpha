@@ -1,42 +1,30 @@
 ---
 module_id: DOCS_ROOT_INDEX_001
-version: 1.0.0
+version: 1.1.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-12
+created_date: 2026-04-02
+last_updated: '2026-04-12'
 owner: 首席文档架构师
-responsibility:
-  - docs目录索引
----
-
-﻿---
-version: 1.0.0
 standard_type: 系统索引
-applicable_scope: 全系?compliance_level: 顶级标准
+applicable_scope: 全系统文档导航
+compliance_level: 顶级标准
 parent_document: README.md
 implementation_status: 活跃维护
-owner: 系统架构?version: 1.1.1
-module_id: INDEX_ROOT_001
-created_date: 2026-04-02
-last_updated: 2026-04-12
 responsibility:
-  - 目录导航与文档索引管理与优化维护
-  responsibility_layer: Layer 11
----
----
+  - 目录导航与文档索引管理
+layer: layer_00
 ---
 
 # 清风量化系统文档索引
 
 > **核心职责**: 目录导航和文档索引
-> **职责边界**: 
+> **职责边界**:
 > - ✅ 本文档负责：目录导航和文档索引相关内容
 > - ❌ 本文档不负责：其他模块内容
 
-
-> **版本**: v5.3  
-> **架构**: 三级时间框架融合架构 + Layer 0-11完整架构  
-> **最后更新**: 2026-04-08  
+> **版本**: v5.3
+> **架构**: 三级时间框架融合架构 + Layer 0-11完整架构
+> **最后更新**: 2026-04-12
 > **维护者**: 系统架构师
 
 ---
@@ -67,22 +55,23 @@ responsibility:
 ### 对接文档
 
 **相关文档**：
-- [System_Manifest.md](./System_Manifest.md) - 系统清单账本（完整模块清单和实施状态）
-- [SITEMAP.md](./SITEMAP.md) - 系统地图（详细文档路径）**维护?*: 系统架构?
+- [System_Manifest.md](./system-manifest.md) - 系统清单账本（完整模块清单和实施状态）
+- [SITEMAP.md](./SITEMAP.md) - 系统地图（详细文档路径）
+
 ---
 
-## 🎯 快速导?
+## 🎯 快速导航
+
 ### 核心文档入口
 
 | 文档类型 | 文档名称 | 说明 | 路径 |
 |---------|---------|------|------|
 | **系统蓝图** | `实施蓝图` | 系统总体实施蓝图 | 核心架构 |
-| **架构文档** | [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | 架构设计 |
+| **架构文档** | 专业多时间框架架构 | 三级时间框架融合架构 | 架构设计 |
 | **完整架构** | [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11完整架构体系 | 架构设计 |
-| **因子?* | | 因子库系统清单| 因子管理 |
-| **交易战术** | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易策略和战术索?| 策略设计 |
-| **研究支持** | [研究支持索引（07_RESEARCH）](./07_RESEARCH/INDEX.md) | 研究环境、探索性分析与实验追踪入口 | `./07_RESEARCH/` |
-| **审计标准** | [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计标准 | 审计规范 |
+| **因子库** | [因子库索引](./02_FACTOR_LIBRARY/INDEX.md) | 因子库系统清单 | 因子管理 |
+| **交易战术** | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易策略和战术索引 | 策略设计 |
+| **审计标准** | 文档治理审计指南 | 专业文档治理审计标准 | 审计规范 |
 
 ---
 
@@ -90,6 +79,22 @@ responsibility:
 
 - [研究支持总索引](./07_RESEARCH/INDEX.md)
 - [研究支持 README](./07_RESEARCH/README.md)
+
+---
+
+## 施工文档（06_CONSTRUCTION_DOCS · 导航入口）
+
+- [施工文档索引](./06_CONSTRUCTION_DOCS/INDEX.md)
+- [蓝图图纸柜 README](./06_CONSTRUCTION_DOCS/01_BLUEPRINTS/README.md)
+
+---
+
+## 知识库（08_KNOWLEDGE · 导航入口）
+
+- [知识库索引](./08_KNOWLEDGE/INDEX.md)
+- [知识库子目录索引](./08_KNOWLEDGE/BEST_PRACTICES/INDEX.md)
+- [因子案例库索引](./08_KNOWLEDGE/FACTOR_LIBRARY/INDEX.md)
+- [策略案例库索引](./08_KNOWLEDGE/STRATEGY_LIBRARY/INDEX.md)
 
 ---
 
@@ -104,74 +109,76 @@ responsibility:
 
 ## 📚 文档体系架构
 
-### 一级目录结束
+### 一级目录结构
+
 ```
 docs/
 ├── 00_OVERVIEW/              # 系统概览
 ├── 00_RESOURCES/             # 资源文档
 ├── 01_FRAMEWORK/             # 框架设计
-├── 02_FACTOR_LIBRARY/        # 因子?(Layer 2)
+├── 02_FACTOR_LIBRARY/        # 因子库 (Layer 2)
 ├── 03_TRADING_TACTICS/       # 交易战术 (Layer 3, 5)
-├── 04_EXECUTION/             # 执行?(Layer 5, 6)
-├── 05_IMPLEMENTATION/        # 实施?├── 06_ARCHIVE/               # 归档文档
-├── 07_AI_REPORTING/          # 🆕 Layer 7: AI报告?├── 08_HUMAN_AI_INTERFACE/    # 🆕 Layer 8: 人机交互?├── 09_RESEARCH_INNOVATION/   # 🆕 Layer 9: 研究与创新层
-├── 10_GOVERNANCE_COMPLIANCE/ # 🆕 Layer 10: 治理与合规层
-└── 11_STRATEGIC_DECISION/    # 🆕 Layer 11: 战略决策?```
+├── 04_EXECUTION/             # 执行引擎 (Layer 5, 6)
+├── 05_IMPLEMENTATION/        # 实施指南
+├── 06_ARCHIVE/               # 归档文档
+├── 06_CONSTRUCTION_DOCS/     # 施工文档 (蓝图图纸柜)
+├── 07_AI_REPORTING/          # Layer 7: AI报告与分析
+├── 08_KNOWLEDGE/             # 知识库
+├── 09_AUDIT/                 # 系统治理审计
+├── 11_STRATEGIC_DECISION/    # Layer 11: 战略决策层
+└── module_designs/           # 模块设计草图
+```
 
 ---
 
-## 🏗?三级时间框架融合架构
+## 🏗️ 三级时间框架融合架构
 
 ### 架构概览
 
 | 时间框架 | 层级 | 核心职责 | 关键文档 |
 |---------|------|---------|---------|
-| **宏观配置?* | Macro | 投资原则、风险预算、策略配?| [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) |
-| **中观策略?* | Meso | 因子计算、信号生成、组合优?| |
-| **微观执行?* | Micro | 订单执行、风险控制、实时监?| [交易战术索引](./03_TRADING_TACTICS/INDEX.md) |
+| **宏观配置层** | Macro | 投资原则、风险预算、策略配置 | 专业多时间框架架构 |
+| **中观策略层** | Meso | 因子计算、信号生成、组合优化 | |
+| **微观执行层** | Micro | 订单执行、风险控制、实时监控 | [交易战术索引](./03_TRADING_TACTICS/INDEX.md) |
 
 ### 架构文档
 
 | 文档名称 | 说明 | 路径 |
 |---------|------|------|
-| **专业多时间框架架?* | 三级时间框架融合架构设计 | [PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) |
-| **专业实施蓝图** | 专业量化机构实施蓝图 | [PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md](./01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) |
-| **架构迁移计划** | 从Layer 0-11迁移到三级时间框?| `ARCHITECTURE_MIGRATION_PLAN.md` |
+| **专业多时间框架架构** | 三级时间框架融合架构设计 | PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md |
+| **专业实施蓝图** | 专业量化机构实施蓝图 | PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md |
+| **架构迁移计划** | 从Layer 0-11迁移到三级时间框架 | `ARCHITECTURE_MIGRATION_PLAN.md` |
 
 ---
 
-## 🏛?Layer 0-11完整架构体系
+## 🏛️ Layer 0-11完整架构体系
 
 ### 架构层级
 
 | Layer | 层级名称 | 核心职责 | 关键文档 |
 |-------|---------|---------|---------|
-| **Layer 11** | 战略决策?| 战略资产配置、风险预算分?| [战略决策层索引](./11_STRATEGIC_DECISION/INDEX.md) |
-| **Layer 10** | 治理与合规层 | 内部控制、合规监?| [治理与合规层索引](./10_GOVERNANCE_COMPLIANCE/INDEX.md) |
-| **Layer 9** | 研究与创新层 | AI虚拟研究实验室、创新孵化器 | [研究与创新层索引](./09_RESEARCH_INNOVATION/INDEX.md) |
-| **Layer 8** | 人机交互?| 授权、监控、报?| [人机交互层索引](./08_HUMAN_AI_INTERFACE/index.md) |
-| **Layer 7** | AI报告?| 绩效归因、自动报?| [AI报告层索引](./07_AI_REPORTING/INDEX.md) · [README](./07_AI_REPORTING/README.md) |
-| **Layer 6** | 组合优化?| 组合优化、风险模?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 5** | 策略执行?| 策略运行、信号生?| [执行层索引](./04_EXECUTION/INDEX.md) · [README](./04_EXECUTION/README.md) |
-| **Layer 4** | 机器学习?| AI预测、特征工?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 3** | 舆情分析?| 新闻分析、情感分?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 2** | Alpha因子?| 因子计算、因子库 | |
+| **Layer 11** | 战略决策层 | 战略资产配置、风险预算分配 | [战略决策层蓝图总览](./11_STRATEGIC_DECISION/complete-blueprint-overview.md) |
+| **Layer 10** | 治理与合规层 | 内部控制、合规监控 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 9** | 研究与创新层 | AI虚拟研究实验室、创新孵化器 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 8** | 人机交互层 | 授权、监控、报告 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 7** | AI报告层 | 绩效归因、自动报告 | [AI报告层索引](./07_AI_REPORTING/INDEX.md) |
+| **Layer 6** | 组合优化层 | 组合优化、风险模型 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 5** | 策略执行层 | 策略运行、信号生成 | [执行层索引](./04_EXECUTION/INDEX.md) |
+| **Layer 4** | 机器学习层 | AI预测、特征工程 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 3** | 舆情分析层 | 新闻分析、情感分析 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 2** | Alpha因子层 | 因子计算、因子库 | [因子库索引](./02_FACTOR_LIBRARY/INDEX.md) |
 | **Layer 1** | 数据预处理层 | 数据清洗、标准化 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
-| **Layer 0** | 数据源层 | 数据采集、数据接?| [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
+| **Layer 0** | 数据源层 | 数据采集、数据接口 | [统一架构](./01_FRAMEWORK/ARCHITECTURE.md) |
 
-## 🧭 持续合入 · 直达入口（严格孤儿对账）
+### 顶层架构蓝图 (Layer 7-11)
 
-- [L0 QMT 模块设计](./module_designs/layer_0/L0_QMT.md)
-
-### 顶层架构蓝图 (Layer 7-11) 🆕
-
-| Layer | 层级名称 | 核心文档 | 重要?|
+| Layer | 层级名称 | 核心文档 | 重要性 |
 |-------|---------|---------|--------|
-| **Layer 11** | 战略决策?| `战略决策层蓝图` | ⭐⭐⭐⭐?|
-| **Layer 10** | 治理与合规层 | `治理与合规层蓝图` | ⭐⭐⭐⭐?|
-| **Layer 9** | 研究与创新层 | [研究与创新层蓝图](./09_RESEARCH_INNOVATION/BLUEPRINT.md) | ⭐⭐⭐⭐?|
-| **Layer 8** | 人机交互?| [人机交互层蓝图](./01_FRAMEWORK/HUMAN_AI_INTERACTION_BLUEPRINT.md) | ⭐⭐⭐⭐?|
-| **Layer 7** | AI报告?| `AI报告层蓝图` | ⭐⭐⭐⭐?|
+| **Layer 11** | 战略决策层 | [蓝图总览](./11_STRATEGIC_DECISION/complete-blueprint-overview.md) | ⭐⭐⭐⭐⭐ |
+| **Layer 10** | 治理与合规层 | `治理与合规层蓝图` | ⭐⭐⭐⭐⭐ |
+| **Layer 9** | 研究与创新层 | `研究与创新层蓝图` | ⭐⭐⭐⭐⭐ |
+| **Layer 8** | 人机交互层 | `人机交互层蓝图` | ⭐⭐⭐⭐⭐ |
+| **Layer 7** | AI报告层 | [AI报告层索引](./07_AI_REPORTING/INDEX.md) | ⭐⭐⭐⭐⭐ |
 
 ---
 
@@ -179,102 +186,105 @@ docs/
 
 ### 1. 框架设计 (01_FRAMEWORK)
 
-| 文档名称 | 说明 | 重要?|
+| 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | **🆕** Layer 0-11完整架构体系 | ⭐⭐⭐⭐?|
-| [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md) | 三级时间框架融合架构 | ⭐⭐⭐⭐?|
-| [专业实施蓝图](./01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md) | 专业量化机构实施蓝图 | ⭐⭐⭐⭐?|
-| [研究与创新层蓝图](./01_FRAMEWORK/RESEARCH_INNOVATION_LAYER_BLUEPRINT.md) | **🆕 Layer 9** AI虚拟研究实验?| ⭐⭐⭐⭐?|
-| [治理与合规层蓝图](./01_FRAMEWORK/GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md) | **🆕 Layer 10** 内部控制体系 | ⭐⭐⭐⭐?|
-| [战略决策层蓝图](./01_FRAMEWORK/STRATEGIC_DECISION_LAYER_BLUEPRINT.md) | **🆕 Layer 11** 战略资产配置 | ⭐⭐⭐⭐?|
+| [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11完整架构体系 | ⭐⭐⭐⭐⭐ |
+| 专业多时间框架架构 | 三级时间框架融合架构 | ⭐⭐⭐⭐⭐ |
+| 专业实施蓝图 | 专业量化机构实施蓝图 | ⭐⭐⭐⭐⭐ |
+| 研究与创新层蓝图 | Layer 9 AI虚拟研究实验室 | ⭐⭐⭐⭐⭐ |
+| 治理与合规层蓝图 | Layer 10 内部控制体系 | ⭐⭐⭐⭐⭐ |
+| 战略决策层蓝图 | Layer 11 战略资产配置 | ⭐⭐⭐⭐⭐ |
 | `架构迁移计划` | 架构迁移计划 | ⭐⭐⭐⭐ |
-| [技术栈](./01_FRAMEWORK/TECH_STACK.md) | 技术栈选择 | ⭐⭐⭐⭐ |
+| 技术栈 | 技术栈选择 | ⭐⭐⭐⭐ |
 
-### 2. 因子?(02_FACTOR_LIBRARY)
+### 2. 因子库 (02_FACTOR_LIBRARY)
 
-| 文档名称 | 说明 | 重要?|
+| 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| | 因子库系统清?| ⭐⭐⭐⭐?|
-| | 因子注册?| ⭐⭐⭐⭐?|
+| [因子库索引](./02_FACTOR_LIBRARY/INDEX.md) | 因子库系统清单 | ⭐⭐⭐⭐⭐ |
+| [因子注册表](./02_FACTOR_LIBRARY/INDEX.md) | 因子注册表 | ⭐⭐⭐⭐⭐ |
 | `因子计算框架` | 因子计算框架 | ⭐⭐⭐⭐ |
-| | 数据源接口文?| ⭐⭐⭐⭐ |
+| | 数据源接口文档 | ⭐⭐⭐⭐ |
 
 ### 3. 交易战术 (03_TRADING_TACTICS)
 
-| 文档名称 | 说明 | 重要?|
+| 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易战术总索?| ⭐⭐⭐⭐?|
+| [交易战术索引](./03_TRADING_TACTICS/INDEX.md) | 交易战术总索引 | ⭐⭐⭐⭐⭐ |
 | [策略框架](./03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md) | 策略框架概览 | ⭐⭐⭐⭐ |
 | | 风险规则引擎 | ⭐⭐⭐⭐ |
 
-### 4. 实施?(05_IMPLEMENTATION)
+### 4. 实施指南 (05_IMPLEMENTATION)
 
-| 文档名称 | 说明 | 重要?|
+| 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| `实施蓝图` | 系统实施蓝图 | ⭐⭐⭐⭐?|
-| [开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md) | 开发标?| ⭐⭐⭐⭐ |
-| [测试标准](./05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md) | 测试标准 | ⭐⭐⭐⭐ |
+| `实施蓝图` | 系统实施蓝图 | ⭐⭐⭐⭐⭐ |
+| 开发标准 | 开发标准 | ⭐⭐⭐⭐ |
+| 测试标准 | 测试标准 | ⭐⭐⭐⭐ |
 | [实施域索引](./05_IMPLEMENTATION/INDEX.md) | `05_IMPLEMENTATION` 总入口与各子目录导航 | ⭐⭐⭐⭐ |
-| [运营管理 04_OPERATIONS](./05_IMPLEMENTATION/04_OPERATIONS/README.md) | 运营文档与 `audit_state` 审计稿区门面 | ⭐⭐⭐⭐ |
 
 ### 5. 审计系统 (09_AUDIT)
 
-| 文档名称 | 说明 | 重要?|
+| 文档名称 | 说明 | 重要性 |
 |---------|------|--------|
-| [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md) | 专业文档治理审计指南 | ⭐⭐⭐⭐?|
-| [文档治理审计检查清单](./09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md) | 审计检查清?| ⭐⭐⭐⭐ |
-| [审计标准](./09_AUDIT/STANDARDS/AUDIT_STANDARDS.md) | 审计标准 | ⭐⭐⭐⭐ |
-| [审计域索引](./09_AUDIT/INDEX.md) | `09_AUDIT` 总入口与 Playbook 分流 | ⭐⭐⭐⭐ |
-| [审计报告区门面（REPORTS）](./09_AUDIT/REPORTS/README.md) | 大量审计/进度报告的导航入口 | ⭐⭐⭐⭐ |
-| [REPORTS 分组索引](./09_AUDIT/REPORTS/INDEX_GROUPED_REPORTS_20260408.md) | 报告按主题分组可点（推荐浏览路径） | ⭐⭐⭐⭐ |
-| [REPORTS 索引健全性（零入链 · 机器报告）](./09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260412.md) | `docs/09_AUDIT/REPORTS` 前缀；`scan_index_health.py` 产出 | ⭐⭐⭐ |
-| [STATE 目录索引](./09_AUDIT/STATE/INDEX.md) | `docs/09_AUDIT/STATE` 导航、机器产出表、严格孤儿分组入口 | ⭐⭐⭐⭐ |
-| [STATE 索引健全性（零入链 · 机器报告）](./09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md) | `docs/09_AUDIT/STATE` 前缀（日期 **20260413**，与 REPORTS 的 `20260412` 分文件） | ⭐⭐⭐ |
+| 文档治理审计指南 | 专业文档治理审计指南 | ⭐⭐⭐⭐⭐ |
+| 文档治理审计检查清单 | 审计检查清单 | ⭐⭐⭐⭐ |
+| 审计标准 | 审计标准 | ⭐⭐⭐⭐ |
+| [审计域索引](./09_AUDIT/INDEX.md) | `09_AUDIT` 总入口 | ⭐⭐⭐⭐ |
 
 ---
 
-## 🔍 按角色导?
-### 系统架构?
-**核心文档**?1. [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md)
-2. [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-3. [专业实施蓝图](./01_FRAMEWORK/PROFESSIONAL_IMPLEMENTATION_BLUEPRINT.md)
+## 🔍 按角色导航
+
+### 系统架构师
+**核心文档**：
+1. [统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md)
+2. 专业多时间框架架构
+3. 专业实施蓝图
 4. `架构迁移计划`
 
-### 研究与创新负责人 🆕
-
+### 研究与创新负责人
 **核心文档**：
-1. [研究与创新层蓝图](./09_RESEARCH_INNOVATION/BLUEPRINT.md)
-2. 3. `因子计算框架`
+1. `研究与创新层蓝图`
+2. [因子库索引](./02_FACTOR_LIBRARY/INDEX.md)
+3. `因子计算框架`
 
-### 治理与合规负责人 🆕
-
+### 治理与合规负责人
 **核心文档**：
 1. `治理与合规层蓝图`
-2. 3. [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
+2. `风险规则引擎`
+3. 文档治理审计指南
 
-### 战略决策负责人 🆕
-
+### 战略决策负责人
 **核心文档**：
-1. `战略决策层蓝图`
-2. [专业多时间框架架构](./01_FRAMEWORK/PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md)
-3. ### 因子研究?
-**核心文档**?1. 2. `因子计算框架`
-3. ### 策略开发人?
-**核心文档**?1. [交易战术索引](./03_TRADING_TACTICS/INDEX.md)
+1. [战略决策层蓝图总览](./11_STRATEGIC_DECISION/complete-blueprint-overview.md)
+2. 专业多时间框架架构
+3. `风险规则引擎`
+
+### 因子研究员
+**核心文档**：
+1. [因子库索引](./02_FACTOR_LIBRARY/INDEX.md)
+2. `因子计算框架`
+3. `数据源接口`
+
+### 策略开发人员
+**核心文档**：
+1. [交易战术索引](./03_TRADING_TACTICS/INDEX.md)
 2. [策略框架](./03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)
-3. [开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+3. 开发标准
 
 ### 风险管理人员
-
-**核心文档**?1. 2. `风险规则蓝图`
-3. [风险报告](./03_TRADING_TACTICS/09_RISK_RULES/RISK_REPORT.md)
+**核心文档**：
+1. `风险规则蓝图`
+2. `风险规则引擎`
+3. 风险报告
 
 ### 审计人员
-
-**核心文档**?1. [文档治理审计指南](./09_AUDIT/TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md)
-2. [文档治理审计检查清单](./09_AUDIT/TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md)
-3. [审计标准](./09_AUDIT/STANDARDS/AUDIT_STANDARDS.md)
-4. [文档治理长效机制](./09_AUDIT/STANDARDS/DOC_GOVERNANCE_MECHANISM.md)
+**核心文档**：
+1. 文档治理审计指南
+2. 文档治理审计检查清单
+3. 审计标准
+4. 文档治理长效机制
 
 ---
 
@@ -285,49 +295,54 @@ docs/
 | 目录 | 文档数量 | 说明 |
 |------|---------|------|
 | **01_FRAMEWORK** | 20+ | 框架设计文档 |
-| **02_FACTOR_LIBRARY** | 50+ | 因子库文?|
+| **02_FACTOR_LIBRARY** | 50+ | 因子库文档 |
 | **03_TRADING_TACTICS** | 30+ | 交易战术文档 |
-| **04_EXECUTION** | 20+ | 执行层文?|
-| **05_IMPLEMENTATION** | 100+ | 实施层文?|
+| **04_EXECUTION** | 20+ | 执行层文档 |
+| **05_IMPLEMENTATION** | 100+ | 实施层文档 |
 | **09_AUDIT** | 30+ | 审计系统文档 |
-| **总计** | **250+** | 全系统文?|
+| **总计** | **250+** | 全系统文档 |
 
-### 架构一致性统?
+### 架构一致性统计
+
 | 指标 | 数量 | 说明 |
 |------|------|------|
-| **三级时间框架文档** | 32?| 包含新架构关键词的文?|
-| **Layer 9-11蓝图** | 3?| 新增顶层架构蓝图 |
-| **归档旧架构文?* | 4?| Layer 0文档已归?|
-| **架构迁移完成?* | 76% | 仍有114个文件包含旧架构残留 |
+| **三级时间框架文档** | 32+ | 包含新架构关键词的文档 |
+| **Layer 9-11蓝图** | 3+ | 新增顶层架构蓝图 |
+| **归档旧架构文档** | 4+ | Layer 0文档已归档 |
+| **架构迁移完成度** | 76% | 仍有114个文件包含旧架构残留 |
 
 ---
 
-## 🚀 快速开?
+## 🚀 快速开始
+
 ### 📖 文档阅读路径
 
 | 角色 | 推荐阅读路径 |
 |------|-------------|
-| **新用?* | 系统概览 ?架构设计 ?实施蓝图 ?开发标?|
-| **系统架构?* | 统一架构 ?专业架构 ?实施蓝图 ?架构迁移计划 |
-| **研究负责?* | 研究与创新层蓝图 ?因子注册??因子计算框架 |
-| **治理负责?* | 治理与合规层蓝图 ?风险规则引擎 ?审计指南 |
-| **战略负责?* | 战略决策层蓝??专业架构 ?风险规则引擎 |
-| **因子研究?* | 因子注册??因子计算框架 ?数据源接??回测标准 |
-| **策略开发人?* | 策略框架 ?开发标??测试标准 ?部署计划 |
-| **风险管理人员** | 风险规则引擎 ?风险规则蓝图 ?风险报告 |
-| **审计人员** | 审计指南 ?审计检查清??审计标准 |
+| **新用户** | 系统概览 → 架构设计 → 实施蓝图 → 开发标准 |
+| **系统架构师** | 统一架构 → 专业架构 → 实施蓝图 → 架构迁移计划 |
+| **研究负责人** | 研究与创新层蓝图 → 因子注册表 → 因子计算框架 |
+| **治理负责人** | 治理与合规层蓝图 → 风险规则引擎 → 审计指南 |
+| **战略负责人** | 战略决策层蓝图 → 专业架构 → 风险规则引擎 |
+| **因子研究员** | 因子注册表 → 因子计算框架 → 数据源接口 → 回测标准 |
+| **策略开发人员** | 策略框架 → 开发标准 → 测试标准 → 部署计划 |
+| **风险管理人员** | 风险规则引擎 → 风险规则蓝图 → 风险报告 |
+| **审计人员** | 审计指南 → 审计检查清单 → 审计标准 |
 
 ### 新用户入门（5步快速上手）
 
-1. **阅读系统概览**：[系统概览](00_OVERVIEW/INDEX.md)
+1. **阅读系统概览**：[系统概览](./00_OVERVIEW/INDEX.md)
 2. **了解架构设计**：[统一架构 (Layer 0-11)](./01_FRAMEWORK/ARCHITECTURE.md)
 3. **查看实施蓝图**：`实施蓝图`
-4. **配置开发环?*：5. **开始开?*：[开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
+4. **配置开发环境**
+5. **开始开发**：开发标准
 
-### 开发人员快速开?
-1. **环境配置**：2. **学习路径**：[学习路径](./05_IMPLEMENTATION/01_QUICKSTART/LEARNING_PATH.md)
-3. **开发规?*：[开发标准](./05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPMENT_STANDARDS.md)
-4. **测试规范**：[测试标准](./05_IMPLEMENTATION/02_DEVELOPMENT/TESTING_STANDARD.md)
+### 开发人员快速开始
+
+1. **环境配置**
+2. **学习路径**：学习路径
+3. **开发规范**：开发标准
+4. **测试规范**：测试标准
 
 ---
 
@@ -337,7 +352,7 @@ docs/
 
 | 资源名称 | 说明 | 链接 |
 |---------|------|------|
-| **GitHub仓库** | 系统源代码仓?| [GitHub](https://github.com/your-repo) |
+| **GitHub仓库** | 系统源代码仓库 | [GitHub](https://github.com/your-repo) |
 | **问题跟踪** | 问题跟踪系统 | [Issues](https://github.com/your-repo/issues) |
 | **文档网站** | 在线文档网站 | [Docs](https://your-docs-site) |
 
@@ -345,13 +360,23 @@ docs/
 
 | 工具名称 | 说明 | 路径 |
 |---------|------|------|
-| **审计工具** | 文档审计工具 | [scripts/document_auditor.py](../scripts/document_auditor.py) |
-| **链接修复** | 链接修复工具 | [scripts/link_fixer.py](../scripts/link_fixer.py) |
-| **架构分析** | 架构分析工具 | [scripts/architecture_analyzer.py](../scripts/architecture_analyzer.py) |
+| **审计工具** | 文档审计工具 | `scripts/document_auditor.py` |
+| **链接修复** | 链接修复工具 | `scripts/link_fixer.py` |
+| **架构分析** | 架构分析工具 | `scripts/architecture_analyzer.py` |
+| **权威源同步** | 权威源同步脚本 | `scripts/sync_authority_source.py` |
+| **版本一致性检查** | 版本一致性检查脚本 | `scripts/check_version_consistency.py` |
 
 ---
 
 ## 📰 更新日志
+
+### 2026-04-12: 文档治理修复
+
+**修复概要**:
+- 修复 `docs/INDEX.md` 重复 frontmatter 和编码乱码
+- 修复 `docs/SITEMAP.md` 重复 frontmatter 和编码乱码
+- 修复 Layer 11 核心文档 frontmatter 重复和职责声明重复
+- 补齐 SITEMAP 中 Layer 7-11 目录映射
 
 ### 2026-04-07: Layer 4文档治理修复
 
@@ -367,40 +392,30 @@ docs/
 - ✅ 文件命名规范化: 11个文件重命名
 - ✅ Layer归属修正: 6个文档归属已更新
 
-**相关文档**:
-
-
-
 ---
 
 ## 📝 文档维护
 
 ### 文档更新流程
 
-1. **创建文档**：使用[文档模板](./09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md)
-2. **质量检?*：使用[文档质量门](./05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/DOCUMENT_QUALITY_GATE.md)
+1. **创建文档**：使用文档模板
+2. **质量检查**：使用文档质量门
 3. **提交审核**：提交到审核流程
-4. **更新索引**：更新相关索引文?
+4. **更新索引**：更新相关索引文档
+
 ### 文档治理原则
 
-遵循专业量化机构五大原则?1. **职责驱动原则**：每个文档只承担一种核心职?2. **索引完备性原?*：所有活跃文档必须被索引
-3. **版本隔离原则**：同一内容只保留最新版?4. **文档代码对应原则**：文档必须反映实际代码状?5. **命名规范原则**：使用标准化的命名体?
----
-
-## 📞 联系方式
-
-| 角色 | 联系方式 | 职责 |
-|------|---------|------|
-| **系统架构?* | architect@example.com | 架构设计和维?|
-| **文档维护?* | docs@example.com | 文档维护和更?|
-| **审计人员** | audit@example.com | 文档审计和质量控?|
+遵循专业量化机构五大原则：
+1. **职责驱动原则**：每个文档只承担一种核心职责
+2. **索引完备性原则**：所有活跃文档必须被索引
+3. **版本隔离原则**：同一内容只保留最新版本
+4. **文档代码对应原则**：文档必须反映实际代码状态
+5. **命名规范原则**：使用标准化的命名体系
 
 ---
 
-**文档版本**: v1.1.0  
-**创建日期**: 2026-04-02  
-**最后更?*: 2026-04-03  
-**维护?*: 系统架构? 
-**状?*: ?活跃维护
-
-- [ZephyrAlpha API文档](./API_README.md) - 系统文档
+**文档版本**: v1.1.0
+**创建日期**: 2026-04-02
+**最后更新**: 2026-04-12
+**维护者**: 系统架构师
+**状态**: ✅ 活跃维护

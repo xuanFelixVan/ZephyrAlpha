@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # -*- coding: utf-8 -*-
 """定向治理：09_AUDIT/TEMPLATES 下两份治理模板文档的 YAML 粘连与「汉字?」断裂回填。"""
 

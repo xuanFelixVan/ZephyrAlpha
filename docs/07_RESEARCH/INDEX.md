@@ -1,15 +1,4 @@
 ---
-module_id: DOCS_07_RESEARCH_INDEX_001
-version: 1.0.1
-status: Active
-created_date: 2026-04-07
-last_updated: '2026-04-11'
-owner: 首席文档架构师
-responsibility:
-  - 07_RESEARCH 目录索引
----
-
----
 module_id: 07_RESEARCH_INDEX
 version: 1.0.1
 status: Active
@@ -17,12 +6,13 @@ created_date: 2026-04-03
 last_updated: '2026-04-11'
 owner: 首席文档架构师
 responsibility:
-  - 目录导航与文档索引管理与优化维护
+- 目录导航与文档索引管理与优化维护
 standard_type: 专业量化机构索引文档
 applicable_scope: 研究支持
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 活跃维护
+layer: layer_07
 ---
 
 
@@ -41,15 +31,15 @@ implementation_status: 活跃维护
 ## 上级与接力
 
 - [docs 根索引](../INDEX.md)
-- [本目录 README（概述）](./README.md)
-- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
-- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
+- [本目录 README（概述）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- 全仓库文件治理任务清单 §7
+- 治理工具总索引
 - [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
 
 ### 索引健全性与目录体量（P5 §7）
 
-- **零入链扫描（最新）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md)（`scan_index_health.py --prefix docs/07_RESEARCH --date 20260503`；**zero_inbound=0**；候选 md **18**；首轮子域 **`INDEX`/`README`** 与根 **`INDEX`** 零入链，已由 [`docs/INDEX.md`](../INDEX.md) 与本页**子域门面表**补链后复跑归零）
-- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 真源同 stem；键 `docs/07_RESEARCH` **18** 条路径）
+- **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md（`scan_index_health.py --prefix docs/07_RESEARCH --date 20260503`；**zero_inbound=0**；候选 md **18**；首轮子域 **`INDEX`/`README`** 与根 **`INDEX`** 零入链，已由 [`docs/INDEX.md`](../INDEX.md) 与本页**子域门面表**补链后复跑归零）
+- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/07_RESEARCH` **18** 条路径）
 
 ---
 
@@ -57,10 +47,10 @@ implementation_status: 活跃维护
 
 | 子域 | 索引 | 概述 |
 |------|------|------|
-| 01_ENVIRONMENT | [INDEX.md](./01_ENVIRONMENT/INDEX.md) | [README.md](./01_ENVIRONMENT/README.md) |
-| 02_EXPLORATORY_ANALYSIS | [INDEX.md](./02_EXPLORATORY_ANALYSIS/INDEX.md) | [README.md](./02_EXPLORATORY_ANALYSIS/README.md) |
-| 03_PATTERN_RECOGNITION | [INDEX.md](./03_PATTERN_RECOGNITION/INDEX.md) | [README.md](./03_PATTERN_RECOGNITION/README.md) |
-| 04_EXPERIMENT_TRACKING | [INDEX.md](./04_EXPERIMENT_TRACKING/INDEX.md) | [README.md](./04_EXPERIMENT_TRACKING/README.md) |
+| 01_ENVIRONMENT | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 02_EXPLORATORY_ANALYSIS | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 03_PATTERN_RECOGNITION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 04_EXPERIMENT_TRACKING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
 
 ---
 
@@ -68,10 +58,10 @@ implementation_status: 活跃维护
 
 | 目录 | 职责 | 状态 |
 |------|------|------|
-| [01_ENVIRONMENT/](./01_ENVIRONMENT/INDEX.md) | 研究环境配置 | Active |
-| [02_EXPLORATORY_ANALYSIS/](./02_EXPLORATORY_ANALYSIS/INDEX.md) | 探索性分析工具 | Active |
-| [03_PATTERN_RECOGNITION/](./03_PATTERN_RECOGNITION/INDEX.md) | 模式识别研究 | Active |
-| [04_EXPERIMENT_TRACKING/](./04_EXPERIMENT_TRACKING/INDEX.md) | 实验追踪 | Active |
+| [01_ENVIRONMENT/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 研究环境配置 | Active |
+| [02_EXPLORATORY_ANALYSIS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 探索性分析工具 | Active |
+| [03_PATTERN_RECOGNITION/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 模式识别研究 | Active |
+| [04_EXPERIMENT_TRACKING/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 实验追踪 | Active |
 
 ---
 
@@ -79,8 +69,8 @@ implementation_status: 活跃维护
 
 | 文档 | 说明 |
 |------|------|
-| [TECHNICAL_VALIDATION_PLAN.md](./TECHNICAL_VALIDATION_PLAN.md) | 技术验证计划 |
-| [EXPERIMENT_TRACKING.md](./EXPERIMENT_TRACKING.md) | 实验追踪（根文档） |
+| TECHNICAL_VALIDATION_PLAN.md | 技术验证计划 |
+| EXPERIMENT_TRACKING.md | 实验追踪（根文档） |
 
 ---
 
@@ -88,19 +78,19 @@ implementation_status: 活跃维护
 
 > 只做索引挂载，不改正文。
 
-- [相关性分析](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md)
-- [研究报告生成器](./02_EXPLORATORY_ANALYSIS/research_report_generator.md)
-- [docker_setup](./01_ENVIRONMENT/docker_setup.md)
-- [statistical_tools](./02_EXPLORATORY_ANALYSIS/statistical_tools.md)
-- [candle_patterns](./03_PATTERN_RECOGNITION/candle_patterns.md)
+- 相关性分析
+- 研究报告生成器
+- docker_setup
+- statistical_tools
+- candle_patterns
 
 ### 子域正文（补充入链）
 
 | 子域 | 文档 |
 |------|------|
-| 02_EXPLORATORY_ANALYSIS | [correlation_analysis.md](./02_EXPLORATORY_ANALYSIS/correlation_analysis.md) · [statistical_tools.md](./02_EXPLORATORY_ANALYSIS/statistical_tools.md) · [research_report_generator.md](./02_EXPLORATORY_ANALYSIS/research_report_generator.md) |
-| 03_PATTERN_RECOGNITION | [candle_patterns.md](./03_PATTERN_RECOGNITION/candle_patterns.md) |
-| 04_EXPERIMENT_TRACKING | [experiment_tracking.md](./04_EXPERIMENT_TRACKING/experiment_tracking.md) |
+| 02_EXPLORATORY_ANALYSIS | correlation_analysis.md · statistical_tools.md · research_report_generator.md |
+| 03_PATTERN_RECOGNITION | candle_patterns.md |
+| 04_EXPERIMENT_TRACKING | experiment_tracking.md |
 
 ---
 

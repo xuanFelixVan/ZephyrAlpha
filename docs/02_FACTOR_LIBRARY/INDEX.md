@@ -1,74 +1,43 @@
 ---
-module_id: 02_FACTOR_LIBRARY_INDEX_001
-version: 1.0.2
+module_id: INDEX
+version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: '2026-04-11'
-owner: 文档管理团队
-responsibility:
-  - 目录导航
-  - 模块索引
-  - 职责协调
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: 首席文档架构师
+layer: layer_02
+responsibility: 02_FACTOR_LIBRARY
 ---
 
-## 上级与接力
 
-- [docs 根索引](../INDEX.md)
-- [全仓库文件治理任务清单 §7](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md#7-一次性深度治理目录队列与退出标准)
-- [治理工具总索引](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
 
-### 门面入链（P5 §7）
 
-- [因子库 README](./README.md)
 
-### 索引健全性与目录体量（P5 §7）
 
-- **零入链扫描（本批）**：[../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260513.md](../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260513.md)（`scan_index_health.py --prefix docs/02_FACTOR_LIBRARY --date 20260513`；首轮 **`README.md`** 零入链，已由上链补入后复跑 **zero_inbound=0**）
-- **rollup（深度 3）**：[../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md](../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md)（JSON 键 `docs/02_FACTOR_LIBRARY` **144** 条路径；候选 md **142**，差值含非 `.md` 等口径差属正常）
 
----
 
-# 02 Factor Library 索引
-
-## 📋 概述
-
-本索引提供02 Factor Library相关文档的导航。
-
-## 📂 文档列表
-
-- [README](./README.md)
-- [SITEMAP](SITEMAP.md)
-- [04_DATA_SOURCE 数据源索引](./04_DATA_SOURCE/INDEX.md)
-
-## 🧭 严格孤儿挂载（波次：A 类继续清理）
-
-> 说明：以下为因子库蓝图补齐入口（不改正文），用于把入度=0 的文档变为可达。
-
-- [FACTOR_MINING_ENGINE_BLUEPRINT](./11_FACTOR_MINING_ENGINE/FACTOR_MINING_ENGINE_BLUEPRINT.md)
-- [FACTOR_ORTHOGONALIZATION_BLUEPRINT](./12_FACTOR_ORTHOGONALIZATION/FACTOR_ORTHOGONALIZATION_BLUEPRINT.md)
-- [MULTI_FACTOR_SYNTHESIS_BLUEPRINT](./13_MULTI_FACTOR_SYNTHESIS/MULTI_FACTOR_SYNTHESIS_BLUEPRINT.md)
-- [FACTOR_RISK_MODEL_BLUEPRINT](./14_FACTOR_RISK_MODEL/FACTOR_RISK_MODEL_BLUEPRINT.md)
-- [FACTOR_VERSION_CONTROL_BLUEPRINT](./15_FACTOR_VERSION_CONTROL/FACTOR_VERSION_CONTROL_BLUEPRINT.md)
-- [FACTOR_ATTRIBUTION_BLUEPRINT](./16_FACTOR_ATTRIBUTION/FACTOR_ATTRIBUTION_BLUEPRINT.md)
-- [FACTOR_BACKTEST_ENHANCED_BLUEPRINT](./17_FACTOR_BACKTEST_ENHANCED/FACTOR_BACKTEST_ENHANCED_BLUEPRINT.md)
-- [FACTOR_VISUALIZATION_BLUEPRINT](./18_FACTOR_VISUALIZATION/FACTOR_VISUALIZATION_BLUEPRINT.md)
-
-## 📝 使用说明
-
-请参考目录中的具体文档了解详细信息。
-
----
 
 **最后更新**: 2026-04-11
 
+
+
 ---
+
+
 
 ## 变更记录
 
+
+
 | 版本 | 日期 | 变更内容 | 变更人 |
+
 |------|------|----------|--------|
+
 | v1.0.2 | 2026-04-11 | P5 §7：`INDEX_HEALTH_20260513` 首轮 `README` 零入链；增上级接力 + README 门面链；产出与 rollup 互指 | 文档管理团队 |
+
 | v1.0.1 | 2026-04-11 | 文档列表增 `04_DATA_SOURCE/INDEX.md` 显式入口（P5 §7 门面互指对齐） | 文档管理团队 |
+
 | v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
+
+
 

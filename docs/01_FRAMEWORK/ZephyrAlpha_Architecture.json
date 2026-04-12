@@ -1,0 +1,264 @@
+{
+  "rootTopic": {
+    "title": "清风量化交易系统 v5.1",
+    "children": {
+      "attached": [
+        {
+          "title": "Layer 0: 数据层",
+          "children": {
+            "attached": [
+              {
+                "title": "数据源接入"
+              },
+              {
+                "title": "数据清洗"
+              },
+              {
+                "title": "数据存储 (SQLite/DuckDB)"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 1: 前置层",
+          "children": {
+            "attached": [
+              {
+                "title": "数据预处理"
+              },
+              {
+                "title": "特征工程"
+              },
+              {
+                "title": "数据验证"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 2: Alpha 层",
+          "children": {
+            "attached": [
+              {
+                "title": "Alpha 因子挖掘"
+              },
+              {
+                "title": "因子库管理"
+              },
+              {
+                "title": "因子评估"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 3: 风险层",
+          "children": {
+            "attached": [
+              {
+                "title": "风险管理"
+              },
+              {
+                "title": "合规检查"
+              },
+              {
+                "title": "风险控制"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 4: 组合层",
+          "children": {
+            "attached": [
+              {
+                "title": "组合优化"
+              },
+              {
+                "title": "资产配置"
+              },
+              {
+                "title": "权重计算"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 5: 执行层",
+          "children": {
+            "attached": [
+              {
+                "title": "订单生成"
+              },
+              {
+                "title": "执行策略"
+              },
+              {
+                "title": "成本分析"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 6: 监控层",
+          "children": {
+            "attached": [
+              {
+                "title": "实时监控"
+              },
+              {
+                "title": "性能监控"
+              },
+              {
+                "title": "异常检测"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Layer 7: 归因层",
+          "children": {
+            "attached": [
+              {
+                "title": "收益归因"
+              },
+              {
+                "title": "风险归因"
+              },
+              {
+                "title": "绩效分析"
+              }
+            ]
+          }
+        },
+        {
+          "title": "核心模块",
+          "children": {
+            "attached": [
+              {
+                "title": "src/core",
+                "children": {
+                  "attached": [
+                    {
+                      "title": "trading_entities.py"
+                    },
+                    {
+                      "title": "exceptions.py"
+                    },
+                    {
+                      "title": "validators.py"
+                    }
+                  ]
+                }
+              },
+              {
+                "title": "src/engines",
+                "children": {
+                  "attached": [
+                    {
+                      "title": "base.py"
+                    },
+                    {
+                      "title": "factory.py"
+                    },
+                    {
+                      "title": "backtesting_adapter.py"
+                    }
+                  ]
+                }
+              },
+              {
+                "title": "src/modules",
+                "children": {
+                  "attached": [
+                    {
+                      "title": "ai_factor_miner"
+                    },
+                    {
+                      "title": "risk_manager"
+                    },
+                    {
+                      "title": "compliance_checker"
+                    },
+                    {
+                      "title": "factor_calculator"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "title": "文档体系",
+          "children": {
+            "attached": [
+              {
+                "title": "docs/01_FRAMEWORK - 架构文档"
+              },
+              {
+                "title": "docs/02_FACTOR_LIBRARY - 因子库"
+              },
+              {
+                "title": "docs/03_TRADING_TACTICS - 策略与执行"
+              },
+              {
+                "title": "docs/04_EXECUTION - 执行文档"
+              },
+              {
+                "title": "docs/05_IMPLEMENTATION - 实施文档"
+              },
+              {
+                "title": "docs/09_AUDIT - 审计与治理"
+              }
+            ]
+          }
+        },
+        {
+          "title": "治理工具",
+          "children": {
+            "attached": [
+              {
+                "title": "审计工具 (audit-*.py)"
+              },
+              {
+                "title": "链接检查器"
+              },
+              {
+                "title": "文档质量检查"
+              },
+              {
+                "title": "架构分析器"
+              },
+              {
+                "title": "重复检测"
+              }
+            ]
+          }
+        },
+        {
+          "title": "技术栈",
+          "children": {
+            "attached": [
+              {
+                "title": "Python 3.10+"
+              },
+              {
+                "title": "pandas, numpy, scipy"
+              },
+              {
+                "title": "SQLite, DuckDB"
+              },
+              {
+                "title": "APScheduler"
+              },
+              {
+                "title": "loguru"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

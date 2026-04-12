@@ -1,48 +1,98 @@
----
+﻿---
+
 module_id: FACTOR_LIBRARY_00_GOVERNANCE_INDEX
+
 version: 1.0.0
+
 status: Active
+
 created_date: 2026-04-07
+
 last_updated: 2026-04-07
+
 owner: 文档管理团队
+
 responsibility:
-  - 目录导航
-  - 模块索引
-  - 职责协调
+
+  - 因子库治理框架制定
+
+  - 文档管理规范
+
+  - 质量监控流程
+
 standard_type: 索引文档
+
 applicable_scope: 因子库
+
 compliance_level: 专业标准
+
+layer: layer_02
 ---
+
+
+
+
 # 00_GOVERNANCE 治理文档
 
+
+
 > **核心职责**: 因子库治理框架、规范和流程文档
+
 > **职责边界**: 
+
 > - ✅ 本文档负责：目录导航、模块索引、职责协调
+
 > - ❌ 本文档不负责：具体实现细节、其他模块内容
 
+
+
 ---
+
+
 
 ## 📋 概述
 
+
+
 因子库治理框架、规范和流程文档
+
+
 
 ## 📂 目录结构
 
-- [OVERVIEW](./FACTOR_LIB_GOVERNANCE_OVERVIEW.md)
-- [README](./README.md)
+
+
+- README.md - 治理框架概述
+
+
 
 ---
+
+
 
 ## 🎯 核心职责
 
+
+
 1. **因子库治理框架制定**
+
 2. **文档管理规范**
+
 3. **质量监控流程**
+
+
 
 ---
 
+
+
 ## 变更记录
 
+
+
 | 版本 | 日期 | 变更内容 | 变更人 |
+
 |------|------|----------|--------|
+
 | v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |
+

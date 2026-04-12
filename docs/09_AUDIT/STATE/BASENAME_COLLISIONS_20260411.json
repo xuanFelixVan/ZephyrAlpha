@@ -5,9 +5,9 @@
   "extensions": [
     "md"
   ],
-  "path_count": 3197,
+  "path_count": 3252,
   "basename_collision_count": 4,
-  "collision_path_total": 343,
+  "collision_path_total": 347,
   "nav_name_collision_basenames": 4,
   "non_nav_collision_basenames": 0,
   "clusters": [
@@ -218,7 +218,7 @@
     },
     {
       "basename": "README.md",
-      "count": 137,
+      "count": 141,
       "paths": [
         "docs/00_OVERVIEW/README.md",
         "docs/00_RESOURCES/04_PLATFORM_DOCS/README.md",
@@ -274,6 +274,7 @@
         "docs/05_IMPLEMENTATION/02_DEVELOPMENT/README.md",
         "docs/05_IMPLEMENTATION/03_DEPLOYMENT/README.md",
         "docs/05_IMPLEMENTATION/04_INFRASTRUCTURE/README.md",
+        "docs/05_IMPLEMENTATION/04_OPERATIONS/README.md",
         "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/README.md",
         "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/README.md",
         "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/README.md",
@@ -288,6 +289,7 @@
         "docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring/README.md",
         "docs/05_IMPLEMENTATION/README.md",
         "docs/06_ARCHIVE/20260407_p1_cleanup_archive/README.md",
+        "docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md",
         "docs/06_ARCHIVE/20260410_c2_benchmark_management/README.md",
         "docs/06_ARCHIVE/20260410_c2_data_version_control/README.md",
         "docs/06_ARCHIVE/20260410_c2_disaster_recovery/README.md",
@@ -307,6 +309,7 @@
         "docs/06_ARCHIVE/20260410_c2_strategy_lifecycle_management/README.md",
         "docs/06_ARCHIVE/20260410_c2_strategy_selection/README.md",
         "docs/06_ARCHIVE/20260410_c2_transaction_cost_analysis/README.md",
+        "docs/06_ARCHIVE/20260410_system_manifest_backup/README.md",
         "docs/06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md",
         "docs/06_ARCHIVE/README.md",
         "docs/06_ARCHIVE/factor-library/README.md",
@@ -349,6 +352,7 @@
         "docs/09_AUDIT/CONFIGURATION/README.md",
         "docs/09_AUDIT/DECISION_RECORDS/README.md",
         "docs/09_AUDIT/README.md",
+        "docs/09_AUDIT/REPORTS/README.md",
         "docs/09_AUDIT/RESEARCH_MEMOS/README.md",
         "docs/09_AUDIT/SOLUTIONS/README.md",
         "docs/09_AUDIT/TOOLS/README.md",

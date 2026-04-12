@@ -2,7 +2,7 @@
   "generated_date": "20260411",
   "generator": "scripts/governance/scan_index_health.py",
   "candidate_prefixes": [
-    "docs/05_IMPLEMENTATION/04_OPERATIONS"
+    "docs/"
   ],
   "link_source": "all-tracked",
   "exclude_prefixes": [
@@ -16,8 +16,8 @@
     "SECURITY.md",
     "docs/INDEX.md"
   ],
-  "candidate_md_count": 353,
-  "link_source_md_count": 2532,
+  "candidate_md_count": 2538,
+  "link_source_md_count": 2570,
   "zero_inbound_count": 0,
   "zero_inbound_paths": [],
   "notes": [

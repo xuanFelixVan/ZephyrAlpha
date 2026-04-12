@@ -24,3 +24,51 @@ repos:
         files: \.md$
         args: ["--validate-only", "--check-metadata-only"]
         pass_filenames: true
+      
+      - id: check-document-placement
+        name: 检查文档放置位置
+        entry: python scripts/check_document_placement.py
+        language: system
+        files: \.(md|txt|json)$
+        pass_filenames: true
+      
+      - id: check-index-integrity
+        name: 检查索引完整性
+        entry: python scripts/check_index_integrity.py
+        language: system
+        files: \.md$
+        pass_filenames: false
+      
+      - id: check-frontmatter-completeness
+        name: 检查 Frontmatter 完整性
+        entry: python scripts/check_metadata_completeness.py
+        language: system
+        files: \.md$
+        args: ["--pre-commit"]
+        pass_filenames: true
+
+      # ── 文档缺陷防护钩子（DOCUMENT_DEFECT_PREVENTION_STANDARD）──
+      # 统一入口：检查暂存 .md 文件的 D-01(双YAML) + D-02(BOM) + D-05(编码损坏)
+      # D-03(内链) + D-04(module_id) 由 CI/CD 全量扫描覆盖
+      # D-06(目录映射) 为警告级，不阻止提交
+
+      - id: doc-guard-pre-commit
+        name: 文档缺陷防护 (D-01/D-02/D-05)
+        entry: python scripts/doc_guard_pre_commit.py --check staged
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: false
+      
+      - id: check-file-naming
+        name: 检查文件命名规范 (C-10)
+        entry: python scripts/doc_guard_pre_commit.py --check-naming
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: true
+      
+      - id: check-directory-naming
+        name: 检查目录命名规范 (D-07)
+        entry: python scripts/check_directory_naming.py --staged
+        language: system
+        files: ^docs/.*$        # 检测 docs 下所有文件和目录
+        pass_filenames: false

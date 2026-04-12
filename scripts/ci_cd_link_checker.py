@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
+import sys
+import io
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 # -*- coding: utf-8 -*-
 """
 CI/CD 文档链接检查器
@@ -82,11 +89,33 @@ class CICDLinkChecker:
                 
                 # 解析链接路径
                 if link_url.startswith('./') or link_url.startswith('../'):
-                    target_path = (Path(source_dir) / link_url).resolve()
                     try:
-                        target_rel = str(target_path.relative_to(self.docs_root)).replace('\\', '/')
-                    except ValueError:
-                        target_rel = link_url
+                        raw_path = Path(source_dir) / link_url
+                        # 跳过路径过长的情况（Windows 260字符限制）
+                        if len(str(raw_path)) > 240:
+                            self.results['skipped_links'] += 1
+                            self.results['total_links'] -= 1
+                            continue
+                        # 使用 resolve() 但确保与 docs_root 同为绝对路径
+                        docs_root_resolved = self.docs_root.resolve()
+                        target_path = raw_path.resolve()
+                        target_rel = str(target_path.relative_to(docs_root_resolved)).replace('\\', '/')
+                    except (ValueError, OSError):
+                        # resolve 失败时，尝试纯字符串路径规范化
+                        try:
+                            normalized = str(Path(source_dir) / link_url).replace('\\', '/')
+                            # 去除 ./ 和 ../ 的纯字符串规范化
+                            parts = normalized.split('/')
+                            resolved_parts = []
+                            for part in parts:
+                                if part == '..':
+                                    if resolved_parts:
+                                        resolved_parts.pop()
+                                elif part and part != '.':
+                                    resolved_parts.append(part)
+                            target_rel = '/'.join(resolved_parts)
+                        except Exception:
+                            target_rel = link_url
                 else:
                     target_rel = link_url
                 

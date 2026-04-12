@@ -1,8 +1,0 @@
----
-module_id: DOCS_06_ARCHIVE_20260410_C2_RESEARCH_WORKFLOW_MANAGEMENT_README
----
-
-# C2 归档：RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT（basename 碰撞消解）
-
-- **Canonical（权威稿）**：`docs/10_AI_WORKFLOW/RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT.md`
-- **本目录**：原 `docs/06_ARCHIVE/20260407_p1_cleanup_archive/` 下同名稿快照（`RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT_legacy_p1_cleanup_archive.md`），保留审计轨迹。
