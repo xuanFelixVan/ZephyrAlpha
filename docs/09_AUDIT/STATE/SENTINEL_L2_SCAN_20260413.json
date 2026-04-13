@@ -14426,5 +14426,7 @@
         "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/INDEX.md"
       }
     ]
-  }
+  },
+  "scan_label": "L2_POST_FIX",
+  "compared_to": "SENTINEL_L1_SCAN_20260408_PRE_FIX broken=5310"
 }
