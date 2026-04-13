@@ -6,20 +6,20 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260413T075658Z
-> **Markdown 文件数**: 4940
+> **UTC 时间**: 20260413T080544Z
+> **Markdown 文件数**: 4946
 
 ## 链接统计
 
 | 指标 | 数值 |
 |------|------|
-| 扫描文件 | 4940 |
-| Markdown 内链（非 http/锚点等已排除） | 8370 |
+| 扫描文件 | 4946 |
+| Markdown 内链（非 http/锚点等已排除） | 8381 |
 | 跳过（外链/锚点等） | 1396 |
-| 判定有效 | 1670 |
-| 判定无效 | 5304 |
+| 判定有效 | 1675 |
+| 判定无效 | 5310 |
 
-### 无效链接样本（最多 800 条）
+### 无效链接样本（最多 20000 条）
 
 - `.audit_fix_backup/docs/01_FRAMEWORK/alpha-factor-layer-blueprint.md` → `./ARCHITECTURE.md`
 - `.audit_fix_backup/docs/01_FRAMEWORK/audit-trail-tigerbeetle-implementation.md` → `../01_FRAMEWORK/ARCHITECTURE.md`
@@ -72,13 +72,11 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 - `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/market-participant-simulation-spec.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
 - `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/mean-variance-optimization-technical-specification.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
 
-（更多无效链接见 JSON `invalid_details_sample` 与统计字段）
-
 ## module_id
 
-- 唯一 module_id 数: **4768**
+- 唯一 module_id 数: **4770**
 - 重复 id 数: **45**
-- 首道 front matter 无 `module_id` 的文件数: **105**
+- 首道 front matter 无 `module_id` 的文件数: **109**
 
 ### 重复模块（前 20 个）
 
