@@ -48,7 +48,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -1114,7 +1114,7 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 
 **索引**: `API.001`
 
----
+```---
 
 
 
@@ -1170,7 +1170,7 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 
 
 
----
+```---
 
 
 

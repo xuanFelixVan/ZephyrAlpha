@@ -24,7 +24,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 ## 上级与接力
 
-- [docs 根索引](../INDEX.md)
+- ~~[docs 根索引]~~
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
 - [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
@@ -33,19 +33,19 @@ implementation_status: ш┐ЫшбМф╕?---
 
 | 子目录 | 入口 |
 |--------|------|
-| 01_STRATEGY_FRAMEWORK | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 03_ADVANCED_TACTICS | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 04_YOUZI_STRATEGIES | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 08_DECISION_FRAMEWORK | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) · [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 09_RISK_RULES | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) · [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 99_ARCHIVE | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
+| 01_STRATEGY_FRAMEWORK | ~~[INDEX]~~ |
+| 03_ADVANCED_TACTICS | ~~[INDEX]~~ |
+| 04_YOUZI_STRATEGIES | ~~[INDEX]~~ |
+| 08_DECISION_FRAMEWORK | ~~[INDEX]~~ · ~~[README]~~ |
+| 09_RISK_RULES | ~~[INDEX]~~ · ~~[README]~~ |
+| 99_ARCHIVE | ~~[INDEX]~~ |
 
 ### 索引健全性与目录体量（P5 §7）
 
 - **零入链扫描（本批）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260511.md（`scan_index_health.py --prefix docs/03_TRADING_TACTICS --date 20260511`；首轮 **8** 处子域 `INDEX`/`README` 零入链，已由上表补链后复跑 **zero_inbound=0**）
 - **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/03_TRADING_TACTICS` **56** 条路径）
 
----
+```---
 
 
 # ф║дцШУцИШцЬпчЫох╜Хч┤вх╝Х
@@ -58,7 +58,7 @@ implementation_status: ш┐ЫшбМф╕?---
 > ц╕ЕщгОщЗПхМЦч│╗ч╗Я v5.3 цИШцЬпх▒ВцЦЗцбгхп╝шИ?>
 > **цЦЗцбгшБМш┤гшп┤цШО**:
 > - **INDEX.md**: х┐лщАЯхЕехПгя╝И5хИЖщТЯхп╝шИкя╝Йя╝МшБЪчДжца╕х┐ГцЦЗцбгхТМх╕╕чФиш╖пх╛?> - **SITEMAP.md**: хоМцХ┤хЬ░хЫ╛я╝Иц╖▒х║жхПВшАГя╝Йя╝МцПРф╛ЫхЕищЭвчЫох╜Хч╗УцЮДхТМцМЙчФищАФш╖пч║?>
-> тн?хоМцХ┤цЦЗцбгхЬ░хЫ╛шп╖цЯечЬ?[SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
+> тн?хоМцХ┤цЦЗцбгхЬ░хЫ╛шп╖цЯечЬ?~~[SITEMAP.md]~~
 >
 > **х┐лщАЯхЕехП?*: тн?цОишНРщШЕшп╗ `BLUEPRINT.md` ф║ЖшзгхоМцХ┤ч│╗ч╗ЯшУЭхЫ╛
 
@@ -68,7 +68,7 @@ implementation_status: ш┐ЫшбМф╕?---
 тЖ?00_OVERVIEW/README.md - ч│╗ч╗ЯцА╗шзИя╝?хИЖщТЯя╝?
 ### цИСшжБчРЖшзгцЮ╢цЮД
 тЖ?`BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИцОишНРя╝Й
-тЖ?[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ч╗Яф╕АцЮ╢цЮД
+тЖ?~~[01_FRAMEWORK/ARCHITECTURE.md]~~ - Layer 0-11ч╗Яф╕АцЮ╢цЮД
 
 ### цИСшжБх╝АхПСчнЦчХ?тЖ?Strategy_Spec_S001.md - чнЦчХецибцЭ┐я╝?0хИЖщТЯя╝?
 ### цИСшжБцЯехЫахн?тЖ?02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
@@ -78,7 +78,7 @@ implementation_status: ш┐ЫшбМф╕?---
 ### цИСшжБхобшобч│╗ч╗Я
 тЖ?09_AUDIT/INDEX_AUDIT.md - хобшобщЧицИ╖я╝?хИЖщТЯя╝?
 
----
+```---
 
 ## 🧭 严格孤儿挂载（波次 1：入口补齐）
 
@@ -115,7 +115,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 - AI 集成（归档）
 - 接口标准（归档）
-- [管理器（归档）](./99_ARCHIVE/manager.md)
+- ~~[管理器（归档）]~~
 - 模式识别（归档）
 - 技术指标（归档）
 
@@ -124,7 +124,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | цЦЗцбг | чФищА?| щШЕшп╗цЧ╢щЧ┤ |
 |------|------|----------|
 | `BLUEPRINT.md` | тн?ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| 30хИЖщТЯ |
-| [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД | 30хИЖщТЯ |
+| ~~[01_FRAMEWORK/ARCHITECTURE.md]~~ | Layer 0-11ч╗Яф╕АцЮ╢цЮД | 30хИЖщТЯ |
 | | AIцЭГщЩРц╕ЕхНХ | 10хИЖщТЯ |
 | API_Contract.md | цибхЭЧцОехПгхеСч║ж | 15хИЖщТЯ |
 | Strategy_Spec_S001.md | чнЦчХещА╗ш╛СчЩ╜чЪоф╣?| 30хИЖщТЯ |
@@ -155,14 +155,14 @@ implementation_status: ш┐ЫшбМф╕?---
 |------|------|
 | README.md | ч│╗ч╗ЯцА╗шзИ |
 | DATA_FLOW.md | цХ░цНоц╡БхЫ╛ |
-| [CHANGELOG.md](06_ARCHIVE/unclassified/CHANGELOG.md) | чЙИцЬмхОЖхП▓я╝Их╖▓хРИх╣╢я╝?|
+| ~~[CHANGELOG.md]~~ | чЙИцЬмхОЖхП▓я╝Их╖▓хРИх╣╢я╝?|
 
 ### 01_FRAMEWORK - цбЖцЮ╢хоЪф╣Й
 
 | цЦЗцбг | шп┤цШО |
 |------|------|
 | README.md | цбЖцЮ╢цЦЗцбгч┤вх╝Х |
-| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД |
+| ~~[ARCHITECTURE.md]~~ | Layer 0-11ч╗Яф╕АцЮ╢цЮД |
 | MODULE_DESIGN_TEMPLATE.md | цибхЭЧшо╛шобцибцЭ┐ |
 | MODULE_DESIGN_PLAN.md | цибхЭЧшо╛шобшобхИТ |
 | MARKET_REGIME.md | х╕ВхЬ║чК╢цАБшпЖхИ?|
@@ -246,7 +246,7 @@ implementation_status: ш┐ЫшбМф╕?---
 2. 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
 ### ч│╗ч╗ЯцЮДх╗║
 1. `BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
-2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - ч╗Яф╕АцЮ╢цЮД
+2. ~~[01_FRAMEWORK/ARCHITECTURE.md]~~ - ч╗Яф╕АцЮ╢цЮД
 3.  - х┐лщАЯх╝Ахз?
 ### ш┐Рч╗┤
 1.  - щГич╜▓цМЗхНЧ
@@ -273,7 +273,7 @@ implementation_status: ш┐ЫшбМф╕?---
 | цЦЗцбг | шп┤цШО | чФищА?|
 |------|------|------|
 | `BLUEPRINT.md` | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| хоМцХ┤шУЭхЫ╛хПВшА?|
-| [CHANGELOG.md](06_ARCHIVE/unclassified/CHANGELOG.md) | чЙИцЬмхПШцЫ┤цЧех┐Ч | чЙИцЬмцОзхИ╢хПВшА?|
+| ~~[CHANGELOG.md]~~ | чЙИцЬмхПШцЫ┤цЧех┐Ч | чЙИцЬмцОзхИ╢хПВшА?|
 | [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md) | чЙИцЬмчобчРЖшзДшМГ | чЙИцЬмцОзхИ╢хПВшА?|
 | CODE_EXAMPLES.md | ф╗гчаБчд║ф╛Л | х╝АхПСхПВшА?|
 | HANDOVER.md | ф║дцОецЦЗцбг | щб╣чЫоф║дцОехПВшА?|
@@ -296,7 +296,7 @@ implementation_status: ш┐ЫшбМф╕?---
 
 ## ЁЯУЦ хоМцХ┤хЬ░хЫ╛
 
-хжВщЬАхоМцХ┤цЦЗцбгч╗УцЮДя╝Мшп╖цЯечЬЛ [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
+хжВщЬАхоМцХ┤цЦЗцбгч╗УцЮДя╝Мшп╖цЯечЬЛ ~~[SITEMAP.md]~~
 
 
 **цЬАхРОцЫ┤цЦ?*: 2026-03-31

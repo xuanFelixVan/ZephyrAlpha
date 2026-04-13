@@ -1,5 +1,5 @@
 ---
-module_id: BLUEPRINT_AUDIT_V8_20260407
+module_id: BLUEPRINT_AUDIT_V8_20260407_6006
 layer: layer_05
 version: 1.0.0
 responsibility: 处理BLUEPRINT_AUDIT_V8_20260407相关业务
@@ -3555,7 +3555,9 @@ last_updated: '2026-04-13'
 
 
 
----
+```
+```---
+```
 
 
 

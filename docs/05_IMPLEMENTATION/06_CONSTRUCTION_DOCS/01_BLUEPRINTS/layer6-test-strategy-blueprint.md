@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_TEST_STRATEGY_001
-
+module_id: LAYER6_TEST_STRATEGY_001_7234
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构测试策略
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 测试策略设计
-
-  - 测试框架选择
-
-  - 测试覆盖率目标
-
-  - 测试流程规范
-
+- 测试策略设计
 layer: layer_06
-
 ---
 
 

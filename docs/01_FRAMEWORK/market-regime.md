@@ -1,31 +1,17 @@
 ---
-
-module_id: MARKET_REGIME_001
-
+module_id: MARKET_REGIME_001_2020
 version: 5.3.1
-
 status: Active
-
 created_date: 2026-04-01
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构?
-
 standard_type: 专业量化机构文档
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 进行?
-
 responsibility:
-
 - 系统框架设计与核心架构管理与优化维护
-
 layer: layer_01
 ---
 
@@ -56,7 +42,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +128,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -212,7 +202,9 @@ class MarketRegimeDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -240,7 +232,9 @@ class MarketRegimeDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -328,7 +322,9 @@ MARKET_TIMING_INDICATORS = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -356,7 +352,9 @@ MARKET_TIMING_INDICATORS = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +374,9 @@ MARKET_TIMING_INDICATORS = {
 
 
 
----
+```
+```---
+```
 
 
 

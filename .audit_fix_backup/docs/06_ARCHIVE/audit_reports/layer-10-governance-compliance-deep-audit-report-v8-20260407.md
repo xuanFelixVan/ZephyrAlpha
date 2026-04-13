@@ -3,6 +3,8 @@ module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
+owner: 待指定
+last_updated: '2026-04-13'
 ---
 **报告版本**: v1.0.0
 

@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_SUPERCMD_20260402
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_SUPERCMD_20260402_5912
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -35,7 +35,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +90,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +136,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -200,7 +206,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -244,7 +252,9 @@ implementation_status: "进行?
 
 4. **技术完整?*: 完整的接口设计、实现方?5. **可复用?*: 辅助数据源，中等复用价?
 
----
+```
+```---
+```
 
 
 
@@ -290,7 +300,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -304,7 +316,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +334,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 

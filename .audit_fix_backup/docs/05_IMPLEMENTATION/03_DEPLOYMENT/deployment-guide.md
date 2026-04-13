@@ -42,7 +42,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -86,7 +86,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -134,7 +134,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -164,7 +164,7 @@ python -c "import zephyr; print(zephyr.__version__)"
 
 
 
----
+```---
 
 
 
@@ -224,7 +224,7 @@ logging:
 
 
 
----
+```---
 
 
 
@@ -302,7 +302,7 @@ export SECRET_KEY=your-secret-key
 
 
 
----
+```---
 
 
 
@@ -356,7 +356,7 @@ python scripts/init_db.py
 
 
 
----
+```---
 
 
 
@@ -432,7 +432,7 @@ server {
 
 
 
----
+```---
 
 
 
@@ -500,7 +500,7 @@ receivers:
 
 
 
----
+```---
 
 
 
@@ -534,7 +534,7 @@ python scripts/check_redis.py
 
 
 
----
+```---
 
 
 
@@ -558,7 +558,7 @@ pytest tests/integration/ -v
 
 
 
----
+```---
 
 
 
@@ -582,7 +582,7 @@ python scripts/check_response_time.py
 
 
 
----
+```---
 
 
 
@@ -622,7 +622,7 @@ systemctl start zephyr
 
 
 
----
+```---
 
 
 
@@ -666,7 +666,7 @@ sudo ufw allow 5432/tcp
 
 
 
----
+```---
 
 
 
@@ -702,7 +702,7 @@ redis-cli config get bind
 
 
 
----
+```---
 
 
 
@@ -738,7 +738,7 @@ ls -la /var/www/zephyr
 
 
 
----
+```---
 
 
 
@@ -794,7 +794,7 @@ ls -la /var/www/zephyr
 
 
 
----
+```---
 
 
 
@@ -812,7 +812,7 @@ ls -la /var/www/zephyr
 
 
 
----
+```---
 
 
 

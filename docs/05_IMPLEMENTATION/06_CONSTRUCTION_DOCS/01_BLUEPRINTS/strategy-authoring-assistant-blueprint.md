@@ -1,33 +1,15 @@
 ---
-
-module_id: STRATEGY_AUTHORING_ASSISTANT_001
-
+module_id: STRATEGY_AUTHORING_ASSISTANT_001_7728
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 产品/研究协作组
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_08
-
 responsibility:
-
-  - 将用户“文字/对话”意图转译为可执行的策略配置（Schema 约束）
-
-  - 通过澄清问答补齐缺失信息，并生成可审计的策略说明与配置版本
-
-  - 在执行前进行静态校验（可运行性/参数范围/数据依赖/风险约束提示）
-
-  - 将已验证的策略配置提交给策略引擎与回测引擎
-
+- 将用户“文字/对话”意图转译为可执行的策略配置（Schema 约束）
 ---
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_06281
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: RESPONSIBILITY_DESCRIPTION_STANDARD_V2_001
+```
 
 version: 2.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 职责描述规范标准 v2.0
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -154,7 +169,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -262,7 +279,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +369,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -394,7 +415,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -450,7 +473,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -530,7 +555,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

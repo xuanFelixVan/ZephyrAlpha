@@ -1,27 +1,15 @@
 ---
-
-module_id: RESPONSIBILITY_TEMPLATE_LIBRARY_001
-
+module_id: RESPONSIBILITY_TEMPLATE_LIBRARY_001_2988
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档治理系统
-
 responsibility:
-
 - 文档模板设计与标准化管理与优化维护
-
 standard_type: 标准文档
-
 applicable_scope: 全系统文档治理
-
 compliance_level: 专业标准
-
 layer: layer_09
 ---
 
@@ -36,7 +24,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +122,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -480,7 +472,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -524,7 +518,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +564,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -610,7 +608,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -626,7 +626,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

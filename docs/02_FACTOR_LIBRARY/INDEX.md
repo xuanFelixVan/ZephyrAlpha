@@ -1,43 +1,227 @@
 ---
-module_id: INDEX
+module_id: LAYER_02_INDEX_AUTO
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
 last_updated: 2026-04-13
-owner: 首席文档架构师
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_02
+compliance_level: 强制标准
+priority: P0-CRITICAL
 layer: layer_02
-responsibility: 02_FACTOR_LIBRARY
+responsibility:
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
+# LAYER_02 自动索引
 
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 193
 
+## 文档列表
 
-
-
-
-
-
-**最后更新**: 2026-04-11
-
+- [01-ultimate-blueprint](./01-ultimate-blueprint.md)
+- [02-deployment-blueprint](./02-deployment-blueprint.md)
+- [FAQ](./FAQ.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [SITEMAP](./SITEMAP.md)
+- [a-stock-data-processing-blueprint](./a-stock-data-processing-blueprint.md)
+- [ai-virtual-research-team-blueprint](./ai-virtual-research-team-blueprint.md)
+- [alpha-factor-layer-blueprint](./alpha-factor-layer-blueprint.md)
+- [backtest-reorganization](./05_BT_ENGINE/backtest-reorganization.md)
+- [critical-modules-implementation-blueprint](./critical-modules-implementation-blueprint.md)
+- [event-driven-factor-blueprint](./39_EVENT_DRIVEN_FACTOR/event-driven-factor-blueprint.md)
+- [factor-api-service-blueprint](./25_FACTOR_API_SERVICE/factor-api-service-blueprint.md)
+- [factor-attribution-blueprint](./16_FACTOR_ATTRIBUTION/factor-attribution-blueprint.md)
+- [factor-backtest-enhanced-blueprint](./17_FACTOR_BT_ENHANCED/factor-backtest-enhanced-blueprint.md)
+- [factor-benchmark-blueprint](./20_FACTOR_BENCHMARK/factor-benchmark-blueprint.md)
+- [factor-capacity-mgmt-blueprint](./40_FACTOR_CAPACITY_MGMT/factor-capacity-mgmt-blueprint.md)
+- [factor-compliance-blueprint](./27_FACTOR_COMPLIANCE/factor-compliance-blueprint.md)
+- [factor-correlation-blueprint](./37_FACTOR_CORRELATION/factor-correlation-blueprint.md)
+- [factor-data-lineage-blueprint](./26_FACTOR_DATA_LINEAGE/factor-data-lineage-blueprint.md)
+- [factor-data-quality-blueprint](./factor-data-quality-blueprint.md)
+- [factor-decay-mgmt-blueprint](./33_FACTOR_DECAY_MGMT/factor-decay-mgmt-blueprint.md)
+- [factor-doc-auto-blueprint](./24_FACTOR_DOC_AUTO/factor-doc-auto-blueprint.md)
+- [factor-dynamic-weight-blueprint](./32_FACTOR_DYNAMIC_WEIGHT/factor-dynamic-weight-blueprint.md)
+- [factor-exposure-mgmt-blueprint](./36_FACTOR_EXPOSURE_MGMT/factor-exposure-mgmt-blueprint.md)
+- [factor-lib-alpha-factors-index-overview](./02_ALPHA_FACTORS_INDEX/factor-lib-alpha-factors-index-overview.md)
+- [factor-lib-data-source-cleaning-overview](./04_DATA_SOURCE/03_CLEANING/factor-lib-data-source-cleaning-overview.md)
+- [factor-lib-data-source-config-management-overview](./04_DATA_SOURCE/CONFIG_MANAGEMENT/factor-lib-data-source-config-management-overview.md)
+- [factor-lib-data-source-data-anomaly-detection-overview](./04_DATA_SOURCE/DATA_ANOMALY_DETECTION/factor-lib-data-source-data-anomaly-detection-overview.md)
+- [factor-lib-data-source-data-api-gateway-overview](./04_DATA_SOURCE/DATA_API_GATEWAY/factor-lib-data-source-data-api-gateway-overview.md)
+- [factor-lib-data-source-data-backup-recovery-overview](./04_DATA_SOURCE/DATA_RECOVERY/factor-lib-data-source-data-backup-recovery-overview.md)
+- [factor-lib-data-source-data-catalog-overview](./04_DATA_SOURCE/DATA_CATALOG/factor-lib-data-source-data-catalog-overview.md)
+- [factor-lib-data-source-data-compression-archive-overview](./04_DATA_SOURCE/DATA_COMPRESSION_ARCHIVE/factor-lib-data-source-data-compression-archive-overview.md)
+- [factor-lib-data-source-data-contract-overview](./04_DATA_SOURCE/DATA_CONTRACT/factor-lib-data-source-data-contract-overview.md)
+- [factor-lib-data-source-data-federation-overview](./04_DATA_SOURCE/DATA_FEDERATION/factor-lib-data-source-data-federation-overview.md)
+- [factor-lib-data-source-data-lifecycle-management-overview](./04_DATA_SOURCE/DATA_LIFECYCLE_MANAGEMENT/factor-lib-data-source-data-lifecycle-management-overview.md)
+- [factor-lib-data-source-data-lineage-tracking-overview](./04_DATA_SOURCE/DATA_LINEAGE_TRACKING/factor-lib-data-source-data-lineage-tracking-overview.md)
+- [factor-lib-data-source-data-monitoring-enhanced-overview](./04_DATA_SOURCE/DATA_MONITORING_ENHANCED/factor-lib-data-source-data-monitoring-enhanced-overview.md)
+- [factor-lib-data-source-data-observability-overview](./04_DATA_SOURCE/DATA_OBSERVABILITY/factor-lib-data-source-data-observability-overview.md)
+- [factor-lib-data-source-data-orchestration-enhanced-overview](./04_DATA_SOURCE/DATA_ORCHESTRATION_ENHANCED/factor-lib-data-source-data-orchestration-enhanced-overview.md)
+- [factor-lib-data-source-data-permission-management-overview](./04_DATA_SOURCE/DATA_PERMISSION_MANAGEMENT/factor-lib-data-source-data-permission-management-overview.md)
+- [factor-lib-data-source-data-pipeline-overview](./04_DATA_SOURCE/07_DATA_PIPELINE/factor-lib-data-source-data-pipeline-overview.md)
+- [factor-lib-data-source-data-profiling-overview](./04_DATA_SOURCE/DATA_PROFILING/factor-lib-data-source-data-profiling-overview.md)
+- [factor-lib-data-source-data-security-privacy-overview](./04_DATA_SOURCE/DATA_SECURITY_PRIVACY/factor-lib-data-source-data-security-privacy-overview.md)
+- [factor-lib-data-source-data-standardization-overview](./04_DATA_SOURCE/DATA_STANDARDIZATION/factor-lib-data-source-data-standardization-overview.md)
+- [factor-lib-data-source-data-sync-replication-overview](./04_DATA_SOURCE/DATA_SYNC_REPLICATION/factor-lib-data-source-data-sync-replication-overview.md)
+- [factor-lib-data-source-data-testing-framework-overview](./04_DATA_SOURCE/DATA_VALIDATION_FRAMEWORK/factor-lib-data-source-data-testing-framework-overview.md)
+- [factor-lib-data-source-data-version-control-overview](./04_DATA_SOURCE/DATA_VERSION_CONTROL/factor-lib-data-source-data-version-control-overview.md)
+- [factor-lib-data-source-ifind-overview](./04_DATA_SOURCE/IFIND/factor-lib-data-source-ifind-overview.md)
+- [factor-lib-data-source-overview](./04_DATA_SOURCE/factor-lib-data-source-overview.md)
+- [factor-lib-data-source-realtime-data-streaming-overview](./04_DATA_SOURCE/REALTIME_DATA_STREAMING/factor-lib-data-source-realtime-data-streaming-overview.md)
+- [factor-lib-data-source-scheduler-overview](./04_DATA_SOURCE/02_SCHEDULER/factor-lib-data-source-scheduler-overview.md)
+- [factor-lib-data-source-time-series-storage-overview](./04_DATA_SOURCE/TIME_SERIES_STORAGE/factor-lib-data-source-time-series-storage-overview.md)
+- [factor-lib-factor-domain-audit-overview](./09_AUDIT/factor-lib-factor-domain-audit-overview.md)
+- [factor-lib-factor-monitoring-overview](./07_FACTOR_MONITORING/factor-lib-factor-monitoring-overview.md)
+- [factor-lib-governance-overview](./00_GOVERNANCE/factor-lib-governance-overview.md)
+- [factor-lib-registry-overview](./factor-lib-registry-overview.md)
+- [factor-lib-risk-factors-overview](./03_RISK_FACTORS/factor-lib-risk-factors-overview.md)
+- [factor-management-standard](./factor-management-standard.md)
+- [factor-mining-automation-blueprint](./factor-mining-automation-blueprint.md)
+- [factor-mining-engine-blueprint](./11_FACTOR_MINING_ENGINE/factor-mining-engine-blueprint.md)
+- [factor-ml-integration-blueprint](./23_FACTOR_ML_INTEGRATION/factor-ml-integration-blueprint.md)
+- [factor-neutralization-blueprint](./31_FACTOR_NEUTRALIZATION/factor-neutralization-blueprint.md)
+- [factor-orthogonalization-blueprint](./12_FACTOR_ORTHOGONALIZATION/factor-orthogonalization-blueprint.md)
+- [factor-performance-opt-blueprint](./22_FACTOR_PERFORMANCE_OPT/factor-performance-opt-blueprint.md)
+- [factor-portfolio-opt-blueprint](./29_FACTOR_PORTFOLIO_OPT/factor-portfolio-opt-blueprint.md)
+- [factor-portfolio-optimization-blueprint](./factor-portfolio-optimization-blueprint.md)
+- [factor-realtime-blueprint](./28_FACTOR_REALTIME/factor-realtime-blueprint.md)
+- [factor-realtime-computation-blueprint](./factor-realtime-computation-blueprint.md)
+- [factor-registry](./01_STANDARDS/factor-registry.md)
+- [factor-risk-model-blueprint](./14_FACTOR_RISK_MODEL/factor-risk-model-blueprint.md)
+- [factor-signal-gen-blueprint](./34_FACTOR_SIGNAL_GEN/factor-signal-gen-blueprint.md)
+- [factor-taxonomy](./01_STANDARDS/factor-taxonomy.md)
+- [factor-turnover-opt-blueprint](./38_FACTOR_TURNOVER_OPT/factor-turnover-opt-blueprint.md)
+- [factor-version-control-blueprint](./15_FACTOR_VERSION_CONTROL/factor-version-control-blueprint.md)
+- [factor-visualization-blueprint](./18_FACTOR_VISUALIZATION/factor-visualization-blueprint.md)
+- [factor-workflow-blueprint](./21_FACTOR_WORKFLOW/factor-workflow-blueprint.md)
+- [implementation-acceleration-blueprint](./implementation-acceleration-blueprint.md)
+- [industry-rotation-blueprint](./35_INDUSTRY_ROTATION/industry-rotation-blueprint.md)
+- [interface-contract-blueprint](./interface-contract-blueprint.md)
+- [knowledge-distillation-blueprint](./knowledge-distillation-blueprint.md)
+- [live-stream-financial-analysis-blueprint](./live-stream-financial-analysis-blueprint.md)
+- [llm-fine-tuning-blueprint](./llm-fine-tuning-blueprint.md)
+- [macro-factor-blueprint](./macro-factor-blueprint.md)
+- [market-making-model-blueprint](./market-making-model-blueprint.md)
+- [model-security-scanner-blueprint](./model-security-scanner-blueprint.md)
+- [multi-factor-synthesis-blueprint](./13_MULTI_FACTOR_SYNTHESIS/multi-factor-synthesis-blueprint.md)
+- [multimodal-llm-blueprint](./multimodal-llm-blueprint.md)
+- [openclaw-l2-docs-02-factor-library-00-governance-019](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-00-governance-019.md)
+- [openclaw-l2-docs-02-factor-library-01-standards-020](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-01-standards-020.md)
+- [openclaw-l2-docs-02-factor-library-018](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-018.md)
+- [openclaw-l2-docs-02-factor-library-02-alpha-factors-index-021](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-02-alpha-factors-index-021.md)
+- [openclaw-l2-docs-02-factor-library-03-risk-factors-022](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-03-risk-factors-022.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-02-scheduler-024](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-02-scheduler-024.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-023](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-023.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-03-cleaning-025](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-03-cleaning-025.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-07-data-pipeline-026](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-07-data-pipeline-026.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-config-management-027](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-config-management-027.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-da-36027022-039](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-da-36027022-039.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-da-50e27860-040](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-da-50e27860-040.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-da-6c3429bd-037](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-da-6c3429bd-037.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-da-9061bb1d-032](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-da-9061bb1d-032.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-da-9b57ccd1-035](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-da-9b57ccd1-035.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-anomaly-detection-028](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-anomaly-detection-028.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-api-gateway-029](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-api-gateway-029.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-backup-recovery-030](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-backup-recovery-030.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-catalog-031](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-catalog-031.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-contract-033](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-contract-033.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-federation-034](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-federation-034.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-lineage-tracking-036](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-lineage-tracking-036.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-observability-038](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-observability-038.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-profiling-041](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-profiling-041.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-security-privacy-042](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-security-privacy-042.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-standardization-043](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-standardization-043.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-sync-replication-044](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-sync-replication-044.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-testing-framework-045](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-testing-framework-045.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-data-version-control-046](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-data-version-control-046.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-ifind-047](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-ifind-047.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-re-867a8301-048](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-re-867a8301-048.md)
+- [openclaw-l2-docs-02-factor-library-04-data-source-time-series-storage-049](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-04-data-source-time-series-storage-049.md)
+- [openclaw-l2-docs-02-factor-library-05-backtest-050](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-05-backtest-050.md)
+- [openclaw-l2-docs-02-factor-library-06-registry-051](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-06-registry-051.md)
+- [openclaw-l2-docs-02-factor-library-07-factor-monitoring-052](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-07-factor-monitoring-052.md)
+- [openclaw-l2-docs-02-factor-library-09-audit-053](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-09-audit-053.md)
+- [openclaw-l2-docs-02-factor-library-10-manual-054](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-10-manual-054.md)
+- [openclaw-l2-docs-02-factor-library-11-factor-mining-engine-055](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-11-factor-mining-engine-055.md)
+- [openclaw-l2-docs-02-factor-library-12-factor-orthogonalization-056](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-12-factor-orthogonalization-056.md)
+- [openclaw-l2-docs-02-factor-library-13-multi-factor-synthesis-057](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-13-multi-factor-synthesis-057.md)
+- [openclaw-l2-docs-02-factor-library-14-factor-risk-model-058](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-14-factor-risk-model-058.md)
+- [openclaw-l2-docs-02-factor-library-15-factor-version-control-059](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-15-factor-version-control-059.md)
+- [openclaw-l2-docs-02-factor-library-16-factor-attribution-060](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-16-factor-attribution-060.md)
+- [openclaw-l2-docs-02-factor-library-17-factor-backtest-enhanced-061](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-17-factor-backtest-enhanced-061.md)
+- [openclaw-l2-docs-02-factor-library-18-factor-visualization-062](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-18-factor-visualization-062.md)
+- [openclaw-l2-docs-02-factor-library-19-factor-data-quality-063](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-19-factor-data-quality-063.md)
+- [openclaw-l2-docs-02-factor-library-20-factor-benchmark-064](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-20-factor-benchmark-064.md)
+- [openclaw-l2-docs-02-factor-library-21-factor-workflow-065](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-21-factor-workflow-065.md)
+- [openclaw-l2-docs-02-factor-library-22-factor-performance-opt-066](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-22-factor-performance-opt-066.md)
+- [openclaw-l2-docs-02-factor-library-23-factor-ml-integration-067](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-23-factor-ml-integration-067.md)
+- [openclaw-l2-docs-02-factor-library-24-factor-doc-auto-068](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-24-factor-doc-auto-068.md)
+- [openclaw-l2-docs-02-factor-library-25-factor-api-service-069](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-25-factor-api-service-069.md)
+- [openclaw-l2-docs-02-factor-library-26-factor-data-lineage-070](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-26-factor-data-lineage-070.md)
+- [openclaw-l2-docs-02-factor-library-27-factor-compliance-071](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-27-factor-compliance-071.md)
+- [openclaw-l2-docs-02-factor-library-28-factor-realtime-072](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-28-factor-realtime-072.md)
+- [openclaw-l2-docs-02-factor-library-29-factor-portfolio-opt-073](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-29-factor-portfolio-opt-073.md)
+- [openclaw-l2-docs-02-factor-library-30-style-factor-system-074](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-30-style-factor-system-074.md)
+- [openclaw-l2-docs-02-factor-library-31-factor-neutralization-075](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-31-factor-neutralization-075.md)
+- [openclaw-l2-docs-02-factor-library-32-factor-dynamic-weight-076](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-32-factor-dynamic-weight-076.md)
+- [openclaw-l2-docs-02-factor-library-33-factor-decay-mgmt-077](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-33-factor-decay-mgmt-077.md)
+- [openclaw-l2-docs-02-factor-library-34-factor-signal-gen-078](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-34-factor-signal-gen-078.md)
+- [openclaw-l2-docs-02-factor-library-35-industry-rotation-079](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-35-industry-rotation-079.md)
+- [openclaw-l2-docs-02-factor-library-36-factor-exposure-mgmt-080](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-36-factor-exposure-mgmt-080.md)
+- [openclaw-l2-docs-02-factor-library-37-factor-correlation-081](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-37-factor-correlation-081.md)
+- [openclaw-l2-docs-02-factor-library-38-factor-turnover-opt-082](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-38-factor-turnover-opt-082.md)
+- [openclaw-l2-docs-02-factor-library-39-event-driven-factor-083](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-39-event-driven-factor-083.md)
+- [openclaw-l2-docs-02-factor-library-40-factor-capacity-mgmt-084](../09_AUDIT/REPORTS/openclaw-l2-docs-02-factor-library-40-factor-capacity-mgmt-084.md)
+- [performance-attribution-blueprint](./performance-attribution-blueprint.md)
+- [research-innovation-layer-blueprint](./research-innovation-layer-blueprint.md)
+- [risk-adjustment-mechanism](../11_STRATEGIC_DECISION/02_risk_budgeting/risk-adjustment-mechanism.md)
+- [style-factor-system-blueprint](./30_STYLE_FACTOR_SYSTEM/style-factor-system-blueprint.md)
 
 
 ---
 
-
-
-## 变更记录
-
-
-
-| 版本 | 日期 | 变更内容 | 变更人 |
-
-|------|------|----------|--------|
-
-| v1.0.2 | 2026-04-11 | P5 §7：`INDEX_HEALTH_20260513` 首轮 `README` 零入链；增上级接力 + README 门面链；产出与 rollup 互指 | 文档管理团队 |
-
-| v1.0.1 | 2026-04-11 | 文档列表增 `04_DATA_SOURCE/INDEX.md` 显式入口（P5 §7 门面互指对齐） | 文档管理团队 |
-
-| v1.0.0 | 2026-04-07 | 初始版本 | 文档管理团队 |
-
-
-
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.083159
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

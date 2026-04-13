@@ -1,33 +1,18 @@
 ---
-
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TS_001
-
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TS_001_5547
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 舆情分析层中期改进模块详细技术规格书文档
-
 layer: layer_03
-
 standard_type: 技术规格书
-
 applicable_scope: 舆情分析层中期改进模块
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 applicable_modules: null
-
 ---
 
 
@@ -70,7 +55,9 @@ applicable_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -94,7 +81,9 @@ applicable_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -718,7 +707,9 @@ print(f"事件关联: {correlation}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1000,7 +991,9 @@ for entity in entities:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1212,7 +1205,9 @@ for relation in relations:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1674,7 +1669,9 @@ print(f"作业状 {status}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2046,7 +2043,9 @@ for i, result in enumerate(results):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2208,7 +2207,9 @@ for i, result in enumerate(results):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2330,7 +2331,9 @@ GET    /languages                   # 获取支持的语言
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2562,7 +2565,9 @@ GET    /languages                   # 获取支持的语言
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2636,7 +2641,9 @@ GET    /languages                   # 获取支持的语言
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2910,7 +2917,9 @@ performance:
 
 
 
----
+```
+```---
+```
 
 
 

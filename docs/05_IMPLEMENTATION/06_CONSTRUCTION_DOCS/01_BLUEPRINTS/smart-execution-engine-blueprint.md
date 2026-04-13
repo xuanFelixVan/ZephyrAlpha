@@ -1,5 +1,5 @@
 ---
-module_id: SMART_EXECUTION_ENGINE_001
+module_id: SMART_EXECUTION_ENGINE_001_7355
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,10 +9,8 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 智能执行引擎
-- 执行算法
-- 智能执行成本优化
-- 市场适应
 layer: layer_06
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 # 智能执行引擎蓝图

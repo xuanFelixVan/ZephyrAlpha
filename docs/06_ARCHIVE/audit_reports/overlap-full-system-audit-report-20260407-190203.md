@@ -1,6 +1,15 @@
+---
+module_id: AUTO_94866
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: FULL_SYSTEM_AUDIT_REPORT_001
+```
+module_id: FULL_SYSTEM_AUDIT_REPORT_001_6425
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 归档文档、历史版本、审计状态追踪
 
 layer: layer_06
----
+```
+```---
+```
 
 
 

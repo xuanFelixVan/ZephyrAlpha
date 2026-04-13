@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
@@ -19,7 +26,7 @@ responsibility:
 - 操作指南编写与使用说明与系统维护管理
 
 layer: layer_06
----
+```---
 
 
 module_id: IMPL_OPS_VERSION_AUTO_GUIDE_001

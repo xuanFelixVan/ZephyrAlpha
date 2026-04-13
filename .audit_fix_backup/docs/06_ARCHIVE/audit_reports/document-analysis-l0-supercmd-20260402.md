@@ -35,7 +35,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -45,7 +45,6 @@ compliance_level: 专业标准
 
 ```yaml
 
-module_id: "ARCHIVE_ANALYSIS_SUPERCMD_001"
 
 version: "1.0.0"
 
@@ -89,7 +88,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -133,7 +132,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -201,7 +200,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -245,7 +244,7 @@ implementation_status: "进行?
 
 4. **技术完整?*: 完整的接口设计、实现方?5. **可复用?*: 辅助数据源，中等复用价?
 
----
+```---
 
 
 
@@ -291,7 +290,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -305,7 +304,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -321,7 +320,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 

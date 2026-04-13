@@ -1,91 +1,20 @@
 ---
-
-module_id: AI_GOVERNANCE_001
-
+module_id: AI_GOVERNANCE_001_5833
 version: 1.0.1
-
 status: Active
-
-created_date: 2026-04-02
-
+created_date: '2026-04-02'
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: AI系统治理
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Safe Garden
-
-- Renaissance Technologies AI Governance
-
-- Two Sigma Model Governance
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- AI_CONSTRAINT_ENGINE_TECHNICAL_SPECIFICATION.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ../ARCHITECTURE.md
-
 implementation_status: 蓝图设计完成
-
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-
-
-  - AI行为准则体系（核心行为准则、操作行为准则）
-
-
-
-  - AI决策透明度（决策解释、决策记录、决策审计）
-
-
-
-  - AI错误责任归属（错误分类、责任认定、改进机制）
-
-
-
-  - AI持续改进机制（性能监控、反馈学习、模型更新）
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理
-
-
-
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md: 人机交互设计
-
-
-
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪记录
-
-
-
-  '
-
-responsibility:
-
-- 系统架构蓝图设计与实施指导与实施方案
-
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 
 # AI治理框架蓝图：AI行为准则与治理机?
@@ -140,7 +69,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -252,7 +183,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -464,7 +395,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -616,7 +549,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -800,7 +733,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -890,7 +825,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -924,7 +861,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -934,7 +873,9 @@ responsibility:
 
 **维护?*: 首席蓝图架构?
 
----
+```
+```---
+```
 
 
 
@@ -990,7 +931,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

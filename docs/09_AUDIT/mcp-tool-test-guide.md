@@ -18,7 +18,9 @@ responsibility: 09_AUDIT
 
 本文档包含所有已安装的 MCP 工具的测试指令，用于验证每个工具是否正常工作。
 
----
+```
+```---
+```
 
 ## 📋 工具清单（共 17 个）
 
@@ -42,7 +44,9 @@ responsibility: 09_AUDIT
 | 16 | semgrep | 代码安全分析 | ⏳ 待测试 |
 | 17 | Qdrant | 向量数据库 | ✅ 已测试 |
 
----
+```
+```---
+```
 
 ## 🔧 测试指令
 
@@ -60,7 +64,9 @@ responsibility: 09_AUDIT
 - ✅ 提取关键信息
 - ✅ 生成简洁的摘要
 
----
+```
+```---
+```
 
 ### 2. **xmind** - 思维导图生成工具
 
@@ -76,7 +82,9 @@ responsibility: 09_AUDIT
 - ✅ 包含项目主要模块
 - ✅ 显示模块间关系
 
----
+```
+```---
+```
 
 ### 3. **pdf-reader-mcp** - PDF 文档阅读器
 
@@ -94,7 +102,9 @@ responsibility: 09_AUDIT
 
 **备注**：如果项目中没有 PDF，可以创建一个测试 PDF 或跳过此工具。
 
----
+```
+```---
+```
 
 ### 4. **Pandoc** - 文档格式转换工具
 
@@ -110,7 +120,9 @@ responsibility: 09_AUDIT
 - ✅ 保持格式完整性
 - ✅ 输出 HTML 文件
 
----
+```
+```---
+```
 
 ### 5. **TH_MCP** - 瞳虎 OCR 服务
 
@@ -127,7 +139,9 @@ responsibility: 09_AUDIT
 
 **备注**：此工具需要 API 密钥，如未配置可能无法使用。
 
----
+```
+```---
+```
 
 ### 6. **Fetch** - 网页内容获取工具
 
@@ -143,7 +157,9 @@ responsibility: 09_AUDIT
 - ✅ 提取正文文本
 - ✅ 总结页面要点
 
----
+```
+```---
+```
 
 ### 7. **File System** - 高级文件系统操作工具
 
@@ -159,7 +175,9 @@ responsibility: 09_AUDIT
 - ✅ 显示文件路径
 - ✅ 统计总数
 
----
+```
+```---
+```
 
 ### 8. **SequentialThinking** - 结构化问题解决工具
 
@@ -175,7 +193,9 @@ responsibility: 09_AUDIT
 - ✅ 逻辑清晰
 - ✅ 提供可执行的建议
 
----
+```
+```---
+```
 
 ### 9. **PostgreSQL** - PostgreSQL 数据库客户端
 
@@ -193,7 +213,9 @@ responsibility: 09_AUDIT
 
 **备注**：此工具需要 PostgreSQL 服务，如未安装可以跳过。
 
----
+```
+```---
+```
 
 ### 10. **Playwright** - 浏览器自动化测试工具
 
@@ -209,7 +231,9 @@ responsibility: 09_AUDIT
 - ✅ 访问指定网页
 - ✅ 保存截图
 
----
+```
+```---
+```
 
 ### 11. **ChromeDevTools** - Chrome 浏览器调试工具
 
@@ -227,7 +251,9 @@ responsibility: 09_AUDIT
 
 **备注**：需要 Chrome 浏览器已安装并运行。
 
----
+```
+```---
+```
 
 ### 12. **Excel** - Excel 表格数据处理工具
 
@@ -245,7 +271,9 @@ responsibility: 09_AUDIT
 
 **备注**：如果项目中没有 Excel 文件，可以创建一个测试文件或跳过。
 
----
+```
+```---
+```
 
 ### 13. **Knowledge Graph Memory** - 知识图谱记忆工具
 
@@ -261,7 +289,9 @@ responsibility: 09_AUDIT
 - ✅ 存储节点和关系
 - ✅ 可以查询图谱
 
----
+```
+```---
+```
 
 ### 14. **GitHub** - GitHub 仓库管理工具
 
@@ -279,7 +309,9 @@ responsibility: 09_AUDIT
 
 **备注**：需要配置 GITHUB_PERSONAL_ACCESS_TOKEN（已配置）。
 
----
+```
+```---
+```
 
 ### 15. **Snyk** - 安全扫描工具
 
@@ -295,7 +327,9 @@ responsibility: 09_AUDIT
 - ✅ 检测漏洞
 - ✅ 生成报告
 
----
+```
+```---
+```
 
 ### 16. **semgrep** - 代码安全扫描工具
 
@@ -311,7 +345,9 @@ responsibility: 09_AUDIT
 - ✅ 检测安全问题
 - ✅ 提供修复建议
 
----
+```
+```---
+```
 
 ### 17. **Qdrant** - 向量数据库 ✅
 
@@ -327,7 +363,9 @@ responsibility: 09_AUDIT
 - ✅ 语义搜索正常
 - ✅ 返回相关结果
 
----
+```
+```---
+```
 
 ## 📝 测试流程
 
@@ -355,7 +393,9 @@ responsibility: 09_AUDIT
 请帮我测试所有安全和代码类的 MCP 工具：Knowledge Graph, GitHub, Snyk, semgrep, Qdrant
 ```
 
----
+```
+```---
+```
 
 ## ✅ 测试结果记录
 
@@ -387,7 +427,9 @@ responsibility: 09_AUDIT
 | Snyk | ⏳ 待测试 | |
 | semgrep | ⏳ 待测试 | |
 
----
+```
+```---
+```
 
 ## 💡 测试建议
 
@@ -413,7 +455,9 @@ responsibility: 09_AUDIT
 - 确认依赖服务是否运行
 - 检查 API 密钥是否正确
 
----
+```
+```---
+```
 
 ## 🚀 开始测试
 
@@ -429,7 +473,9 @@ responsibility: 09_AUDIT
 ...
 ```
 
----
+```
+```---
+```
 
 **文档版本**：1.0  
 **创建时间**：2026-04-11  

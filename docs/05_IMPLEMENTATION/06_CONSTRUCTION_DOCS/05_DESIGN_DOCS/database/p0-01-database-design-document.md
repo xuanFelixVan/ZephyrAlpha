@@ -45,7 +45,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -187,7 +189,9 @@ clickhouse:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -309,7 +313,9 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('active', 'frozen', 'closed'))
 
 
 
----
+```
+```---
+```
 
 
 
@@ -437,7 +443,9 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 
 
 
----
+```
+```---
+```
 
 
 
@@ -575,7 +583,9 @@ ADD CONSTRAINT chk_position_pct_range CHECK (position_pct >= 0 AND position_pct 
 
 
 
----
+```
+```---
+```
 
 
 
@@ -679,7 +689,9 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
 
 
 
----
+```
+```---
+```
 
 
 
@@ -843,7 +855,9 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'submitted', 'parti
 
 
 
----
+```
+```---
+```
 
 
 
@@ -995,7 +1009,9 @@ FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1101,7 +1117,9 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'executed', 'expire
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1155,7 +1173,9 @@ CREATE INDEX idx_engines_status ON engines(status);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1219,7 +1239,9 @@ FOREIGN KEY (engine_id) REFERENCES engines(engine_id) ON DELETE CASCADE;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1287,7 +1309,9 @@ CREATE INDEX idx_saga_transactions_started_at ON saga_transactions(started_at DE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1365,7 +1389,9 @@ FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1439,7 +1465,9 @@ FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1523,7 +1551,9 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-01-08');
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1585,7 +1615,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1649,7 +1681,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1693,7 +1727,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1735,7 +1771,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1769,7 +1807,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1815,7 +1855,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1853,7 +1895,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1899,7 +1943,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1961,7 +2007,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1995,7 +2043,9 @@ CREATE INDEX idx_alerts_active ON alerts(severity, created_at DESC) WHERE status
 
 
 
----
+```
+```---
+```
 
 
 

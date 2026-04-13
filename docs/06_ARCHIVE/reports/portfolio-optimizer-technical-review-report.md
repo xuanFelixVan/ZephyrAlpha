@@ -1,35 +1,19 @@
 ---
-
-module_id: ARCHIVE_PORTFOLIO_OPT_TECH_REVIEW_001
-
+module_id: ARCHIVE_PORTFOLIO_OPT_TECH_REVIEW_001_6361
 review_id: TR-2026-04-02-PORT-OPT
-
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-02
-
 reviewer: 首席技术评审官
-
 standard_type: 专业量化机构技术评审报?
-
 compliance_level: 专业标准
-
 applicable_scope: 系统实施
-
 parent_document: ../INDEX.md
-
 implementation_status: 进行?
-
 owner: 实施负责?
-
 last_updated: '2026-04-07'
-
 responsibility:
-
 - 风险预算 (Layer 11)
-
 layer: layer_06
 ---
 
@@ -112,7 +96,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -182,7 +168,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -254,7 +242,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +340,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -404,7 +396,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +446,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -500,7 +496,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

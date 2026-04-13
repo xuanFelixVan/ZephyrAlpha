@@ -20,7 +20,7 @@ responsibility: 20260410_c2_benchmark_management
 > - 正式稿（canonical）：`BENCHMARK_MANAGEMENT_BLUEPRINT.md`  
 > - 战略决策入口（新）：`BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md`
 
----
+```---
 module_id: LAYER_013
 version: 1.0.0
 status: Active
@@ -33,8 +33,8 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
----
-module_id: BENCHMARK_MANAGEMENT_001
+```---
+module_id: BENCHMARK_MANAGEMENT_001_6819
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
@@ -50,7 +50,7 @@ related_documents:
   - PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
 parent_document: BLUEPRINT.md
 implementation_status: 设计阶段
----
+```---
 
 # Layer 11.11: 基准管理系统蓝图
 > **核心职责**: 基准管理系统蓝图设计
@@ -89,14 +89,14 @@ implementation_status: 设计阶段
 **下游模块**：
 - 下游模块
 
----
+```---
 
 > **版本**: v1.0  
 > **创建日期**: 2026-04-06  
 > **实施周期**: 1周  
 > **目标**: 构建专业化基准管理体系，实现跟踪误差控制与相对收益评估
 
----
+```---
 
 ## 📋 执行摘要
 
@@ -128,7 +128,7 @@ Layer 11.11基准管理系统是清风量化系统的**业绩标尺**，负责�
 
 **综合价值评级**: ⭐⭐⭐⭐ (4/5) - **建议实施**
 
----
+```---
 
 ## 一、架构设计
 
@@ -191,7 +191,7 @@ Layer 11.11基准管理系统是清风量化系统的**业绩标尺**，负责�
 | **比较分析** | 相对收益分析 | 组合收益、基准收益 | 归因报告 | Layer 11.7 |
 | **报告系统** | 生成报告 | 所有数据 | 可视化报告 | Layer 8 |
 
----
+```---
 
 ## 二、核心组件详细设计
 
@@ -375,7 +375,7 @@ class BenchmarkConstructionEngine:
         )
 ```
 
----
+```---
 
 ### 2.2 跟踪误差管理系统
 
@@ -593,7 +593,7 @@ class TrackingErrorManager:
         return optimal_weights
 ```
 
----
+```---
 
 ### 2.3 基准比较分析系统
 
@@ -771,7 +771,7 @@ class BenchmarkComparisonEngine:
         }
 ```
 
----
+```---
 
 ### 2.4 基准报告系统
 
@@ -856,7 +856,7 @@ class BenchmarkReportGenerator:
         return html_template
 ```
 
----
+```---
 
 ## 三、与其他模块的集成
 
@@ -899,7 +899,7 @@ Layer 11.10 再平衡决策
 Layer 5 策略执行
 ```
 
----
+```---
 
 ## 四、实施路径
 
@@ -918,7 +918,7 @@ Layer 5 策略执行
 | 报告生成 | 1天 | 报告功能 |
 | 模块集成 | 1天 | 集成完成 |
 
----
+```---
 
 ## 五、A股市场特色功能
 
@@ -967,7 +967,7 @@ class SectorNeutralBenchmark:
         )
 ```
 
----
+```---
 
 ## 六、风险评估
 
@@ -987,7 +987,7 @@ class SectorNeutralBenchmark:
 | **跟踪失效** | 中 | 实时监控 |
 | **基准变更** | 低 | 变更通知 |
 
----
+```---
 
 ## 七、质量保证
 
@@ -1007,7 +1007,7 @@ class SectorNeutralBenchmark:
 | **报告生成时间** | <30秒 | 实时 |
 | **基准数据更新** | T+0 | 日频 |
 
----
+```---
 
 ## 八、相关文档
 
@@ -1018,7 +1018,7 @@ class SectorNeutralBenchmark:
 | PERFORMANCE_ATTRIBUTION_BLUEPRINT.md | 业绩归因系统 |
 | REBALANCING_BLUEPRINT.md | 再平衡决策系统 |
 
----
+```---
 
 ## 九、版本历史
 
@@ -1026,11 +1026,11 @@ class SectorNeutralBenchmark:
 |------|------|---------|
 | v1.0 | 2026-04-06 | 初始版本，完成基准管理系统设计 |
 
----
+```---
 
 **文档状态**: ✅ 设计完成  
 **下一步**: 创建情景分析系统蓝图
----
+```---
 
 ## 1. 文档治理
 
@@ -1058,6 +1058,6 @@ class SectorNeutralBenchmark:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

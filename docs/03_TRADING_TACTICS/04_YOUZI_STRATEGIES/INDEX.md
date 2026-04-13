@@ -1,25 +1,14 @@
 ---
-
-module_id: 04_YOUZI_STRATEGIES_INDEX_001
-
+module_id: 04_YOUZI_STRATEGIES_INDEX_001_7064
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供04_YOUZI_STRATEGIES目录索引
-
+- 提供04_YOUZI_STRATEGIES目录索引
 standard_type: 专业量化机构索引
-
 applicable_scope: 04_YOUZI_STRATEGIES
-
 layer: layer_03
 ---
 
@@ -44,13 +33,13 @@ layer: layer_03
 
 
 
-- [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[README]~~
 
 - retail_strategies_a
 
 - retail_strategies_b
 
-- [other-masters/INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[other-masters/INDEX]~~
 
 
 
@@ -80,7 +69,9 @@ layer: layer_03
 
 
 
----
+```
+```---
+```
 
 
 

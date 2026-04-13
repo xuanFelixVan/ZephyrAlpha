@@ -1,6 +1,15 @@
+---
+module_id: AUTO_36307
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: FACTOR_LIBRARY_02_ALPHA_FACTORS_INDEX_INDEX
+```
 
 version: 1.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 因子库
 compliance_level: 专业标准
 
 layer: layer_02
----
+```
+```---
+```
 
 
 
@@ -46,7 +57,9 @@ layer: layer_02
 
 
 
----
+```
+```---
+```
 
 
 
@@ -66,7 +79,9 @@ Alpha因子的索引和分类文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -82,7 +97,9 @@ Alpha因子的索引和分类文档
 
 
 
----
+```
+```---
+```
 
 
 

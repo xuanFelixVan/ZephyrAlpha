@@ -51,7 +51,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -79,7 +81,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -113,7 +117,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -123,7 +129,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -141,7 +149,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -199,5 +209,7 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 

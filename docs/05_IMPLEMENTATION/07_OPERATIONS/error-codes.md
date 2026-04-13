@@ -21,7 +21,9 @@ layer: layer_05
 **适用范围**: 系统错误、应用错误、数据库错误
 **更新频率**: 随版本更新
 
----
+```
+```---
+```
 
 ## 🎯 错误代码分类
 
@@ -38,7 +40,9 @@ ZEPHYR-[模块]-[错误类型]-[序号]
 - **CONN**: 错误类型（Connection）
 - **001**: 序号
 
----
+```
+```---
+```
 
 ### 模块标识
 
@@ -51,7 +55,9 @@ ZEPHYR-[模块]-[错误类型]-[序号]
 | **API** | API模块 | API接口错误 |
 | **SYS** | 系统模块 | 系统级错误 |
 
----
+```
+```---
+```
 
 ### 错误类型
 
@@ -65,7 +71,9 @@ ZEPHYR-[模块]-[错误类型]-[序号]
 | **TIMEOUT** | 超时错误 | 操作超时错误 |
 | **LIMIT** | 限制错误 | 资源限制错误 |
 
----
+```
+```---
+```
 
 ## 📚 错误代码详解
 
@@ -92,7 +100,9 @@ export PYTHONPATH="${PYTHONPATH}:/path/to/zephyr"
 python -c "import zephyr; print(zephyr.__version__)"
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-APP-CONFIG-001: 配置文件错误
 
@@ -114,7 +124,9 @@ database:
   password: ${DB_PASSWORD}
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-APP-PORT-001: 端口占用错误
 
@@ -139,7 +151,9 @@ server:
   port: 8001
 ```
 
----
+```
+```---
+```
 
 ### 2. 数据库模块错误 (DB)
 
@@ -167,7 +181,9 @@ telnet localhost 5432
 sudo ufw allow 5432/tcp
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-DB-AUTH-001: 数据库认证失败
 
@@ -191,7 +207,9 @@ password: new_password
 systemctl restart zephyr-app
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-DB-POOL-001: 数据库连接池耗尽
 
@@ -218,7 +236,9 @@ psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'i
 systemctl restart zephyr-app
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-DB-TIMEOUT-001: 数据库查询超时
 
@@ -245,7 +265,9 @@ ANALYZE factors;
 -- 使用适当的WHERE条件
 ```
 
----
+```
+```---
+```
 
 ### 3. 缓存模块错误 (CACHE)
 
@@ -273,7 +295,9 @@ redis-cli ping
 sudo ufw allow 6379/tcp
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-CACHE-AUTH-001: Redis认证失败
 
@@ -302,7 +326,9 @@ redis:
 systemctl restart redis
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-CACHE-MEMORY-001: Redis内存不足
 
@@ -332,7 +358,9 @@ maxmemory-policy allkeys-lru
 systemctl restart redis
 ```
 
----
+```
+```---
+```
 
 ### 4. 认证模块错误 (AUTH)
 
@@ -358,7 +386,9 @@ security:
   token_expiry: 7200  # 2小时
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-AUTH-PERM-001: 权限不足
 
@@ -380,7 +410,9 @@ INSERT INTO user_permissions (user_id, permission) VALUES (1, 'admin');
 -- 或使用管理员账户
 ```
 
----
+```
+```---
+```
 
 ### 5. API模块错误 (API)
 
@@ -405,7 +437,9 @@ curl http://localhost:8000/docs
 curl http://localhost:8000/api/v1/factors
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-API-VALID-001: 请求参数验证失败
 
@@ -427,7 +461,9 @@ curl -X POST http://localhost:8000/api/v1/factors \
   -d '{"name":"momentum","type":"alpha"}'
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-API-LIMIT-001: 请求频率限制
 
@@ -448,7 +484,9 @@ sleep 60
 calls = 200  # 增加到200次/分钟
 ```
 
----
+```
+```---
+```
 
 ### 6. 系统模块错误 (SYS)
 
@@ -480,7 +518,9 @@ mkswap /swapfile
 swapon /swapfile
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-SYS-DISK-001: 磁盘空间不足
 
@@ -509,7 +549,9 @@ rm -rf /tmp/*
 # 或迁移数据到其他磁盘
 ```
 
----
+```
+```---
+```
 
 #### ZEPHYR-SYS-TIMEOUT-001: 系统操作超时
 
@@ -533,7 +575,9 @@ server:
 # 添加缓存
 ```
 
----
+```
+```---
+```
 
 ## 📊 错误代码统计
 
@@ -549,7 +593,9 @@ server:
 | **系统模块** | 3 | 15% |
 | **其他** | 2 | 10% |
 
----
+```
+```---
+```
 
 ### 错误严重程度分布
 
@@ -559,7 +605,9 @@ server:
 | **重要** | 8 | 40% |
 | **一般** | 7 | 35% |
 
----
+```
+```---
+```
 
 ## 🔗 相关文档
 
@@ -568,6 +616,8 @@ server:
 - 性能调优指南
 - 系统部署指南
 
----
+```
+```---
+```
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

@@ -1,5 +1,5 @@
 ---
-module_id: DEPLOYMENT_GUIDE_001
+module_id: DEPLOYMENT_GUIDE_001_3378
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,10 +10,6 @@ applicable_scope: ZephyrAlpha系统部署
 responsibility:
 - DEPLOYMENT操作指南
 layer: layer_05
-1. **标准化**: 使用标准化的部署流程和配置
-2. **自动化**: 尽可能实现自动化部署
-3. **可回滚**: 支持快速回滚到上一个版本
-4. **可监控**: 部署过程可监控、可追溯
 ---
 ## 🔗 相关文档
 
@@ -29,7 +25,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

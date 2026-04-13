@@ -1,25 +1,14 @@
 ---
-
-module_id: API_DOCUMENTATION_TEMPLATE_001
-
+module_id: API_DOCUMENTATION_TEMPLATE_001_0509
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 开发团队
-
 responsibility:
-
-  - API文档模板文档
-
+- API文档模板文档
 standard_type: 专业量化机构模板
-
 applicable_scope: API文档编写
-
 layer: layer_05
 ---
 
@@ -88,7 +77,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +123,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -212,7 +205,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +315,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -426,7 +423,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +465,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -514,7 +515,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +565,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -580,7 +585,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -596,7 +603,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -612,7 +621,9 @@ console.log(data);
 
 
 
----
+```
+```---
+```
 
 
 

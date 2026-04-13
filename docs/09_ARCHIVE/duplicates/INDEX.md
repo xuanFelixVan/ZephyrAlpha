@@ -5,6 +5,8 @@ status: Active
 layer: layer_09
 responsibility:
   - 归档重复文档索引
+owner: System_Guardian
+last_updated: 2026-04-13
 ---
 
 # 归档重复文档索引

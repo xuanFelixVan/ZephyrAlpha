@@ -29,7 +29,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -159,7 +161,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1055,7 +1059,9 @@ class MLDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1323,7 +1329,9 @@ class ElementaryClient:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1469,7 +1477,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1515,7 +1525,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1559,7 +1571,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1579,7 +1593,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1599,7 +1615,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1621,7 +1639,9 @@ class ObservabilityCatalogIntegration:
 
 
 
----
+```
+```---
+```
 
 
 

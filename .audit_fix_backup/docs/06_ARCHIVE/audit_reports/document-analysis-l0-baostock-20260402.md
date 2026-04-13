@@ -35,7 +35,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -45,7 +45,6 @@ compliance_level: 专业标准
 
 ```yaml
 
-module_id: "ARCHIVE_ANALYSIS_BAOSTOCK_001"
 
 version: "1.0.0"
 
@@ -89,7 +88,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -131,7 +130,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -199,7 +198,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -241,7 +240,7 @@ implementation_status: "进行?
 
 3. **业务重要?*: 辅助数据源和验证工具，中等重要?4. **技术完整?*: 完整的接口设计、实现方?5. **可复用?*: 数据验证工具，中等复用价?
 
----
+```---
 
 
 
@@ -287,7 +286,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -301,7 +300,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 
@@ -319,7 +318,7 @@ implementation_status: "进行?
 
 
 
----
+```---
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: SERVICE_DISCOVERY_001
-
+module_id: SERVICE_DISCOVERY_001_3968
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 服务注册
-
-  - 服务发现
-
-  - 健康检查
-
-  - 负载均衡
-
+- 服务注册
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1752,7 +1734,9 @@ SERVICE_METADATA = {
 
 
 
----
+```
+```---
+```
 
 
 

@@ -42,7 +42,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -94,7 +94,7 @@ python -c "import zephyr; print(zephyr.__version__)"
 
 
 
----
+```---
 
 
 
@@ -152,7 +152,7 @@ host all all 0.0.0.0/0 md5
 
 
 
----
+```---
 
 
 
@@ -208,7 +208,7 @@ systemctl restart redis
 
 
 
----
+```---
 
 
 
@@ -260,7 +260,7 @@ alembic upgrade head
 
 
 
----
+```---
 
 
 
@@ -310,7 +310,7 @@ SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 10;
 
 
 
----
+```---
 
 
 
@@ -370,7 +370,7 @@ REINDEX DATABASE zephyr_alpha;
 
 
 
----
+```---
 
 
 
@@ -430,7 +430,7 @@ redis-cli info stats | grep hits
 
 
 
----
+```---
 
 
 
@@ -480,7 +480,7 @@ systemctl restart zephyr-app
 
 
 
----
+```---
 
 
 
@@ -530,7 +530,7 @@ py-spy top --pid $(pgrep -f zephyr)
 
 
 
----
+```---
 
 
 
@@ -574,7 +574,7 @@ systemctl restart zephyr-app
 
 
 
----
+```---
 
 
 
@@ -630,7 +630,7 @@ systemctl restart nginx
 
 
 
----
+```---
 
 
 
@@ -684,7 +684,7 @@ async def rate_limit(request: Request, calls: int = 100, period: int = 60):
 
 
 
----
+```---
 
 
 
@@ -740,7 +740,7 @@ systemctl restart prometheus
 
 
 
----
+```---
 
 
 
@@ -812,7 +812,7 @@ systemctl restart alertmanager
 
 
 
----
+```---
 
 
 
@@ -868,7 +868,7 @@ find ${BACKUP_DIR} -name "backup_*.dump" -mtime +7 -delete
 
 
 
----
+```---
 
 
 
@@ -912,7 +912,7 @@ tail -f /var/log/postgresql/postgresql-13-main.log
 
 
 
----
+```---
 
 
 
@@ -966,7 +966,7 @@ curl http://localhost:8000/health
 
 
 
----
+```---
 
 
 
@@ -1014,7 +1014,7 @@ nethogs
 
 
 
----
+```---
 
 
 
@@ -1032,7 +1032,7 @@ nethogs
 
 
 
----
+```---
 
 
 

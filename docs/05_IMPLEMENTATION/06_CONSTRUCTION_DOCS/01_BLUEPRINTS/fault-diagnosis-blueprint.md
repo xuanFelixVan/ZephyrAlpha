@@ -1,33 +1,15 @@
 ---
-
-module_id: FAULT_DIAGNOSIS_001
-
+module_id: FAULT_DIAGNOSIS_001_7074
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 故障诊断
-
-  - 根因分析
-
-  - 故障预测
-
-  - 自动修复
-
+- 故障诊断
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1248,7 +1230,9 @@ scrape_configs:
 
 
 
----
+```
+```---
+```
 
 
 

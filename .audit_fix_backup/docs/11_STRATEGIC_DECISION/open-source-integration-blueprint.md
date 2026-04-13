@@ -60,7 +60,7 @@ related_documents:
 
   - PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md
 
----
+```---
 
 
 
@@ -146,7 +146,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -160,7 +160,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -210,7 +210,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -702,7 +702,7 @@ class RiskfolioLibIntegration:
 
 
 
----
+```---
 
 
 
@@ -1146,7 +1146,7 @@ class PyPortfolioOptIntegration:
 
 
 
----
+```---
 
 
 
@@ -1618,7 +1618,7 @@ class XQRiskCoreIntegration:
 
 
 
----
+```---
 
 
 
@@ -1776,7 +1776,7 @@ class XQRiskCoreIntegration:
 
 
 
----
+```---
 
 
 
@@ -1848,7 +1848,7 @@ class XQRiskCoreIntegration:
 
 
 
----
+```---
 
 
 
@@ -1924,7 +1924,7 @@ class XQRiskCoreIntegration:
 
 
 
----
+```---
 
 
 
@@ -1982,7 +1982,7 @@ class XQRiskCoreIntegration:
 
 
 
----
+```---
 
 
 
@@ -2022,7 +2022,7 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```---
 
 
 
@@ -2068,7 +2068,7 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```---
 
 
 
@@ -2112,13 +2112,13 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -2174,7 +2174,7 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```---
 
 
 

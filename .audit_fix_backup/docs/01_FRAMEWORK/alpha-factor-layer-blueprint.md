@@ -60,7 +60,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -112,7 +112,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -158,7 +158,7 @@ Layer 2 Alpha因子层是清风量化系统的**Alpha引擎**，负责：
 
 
 
----
+```---
 
 
 
@@ -374,7 +374,7 @@ Layer 2 Alpha因子层是清风量化系统的**Alpha引擎**，负责：
 
 
 
----
+```---
 
 
 
@@ -572,7 +572,7 @@ class TechnicalFactorEngine:
 
 
 
----
+```---
 
 
 
@@ -752,7 +752,7 @@ class ICAnalyzer:
 
 
 
----
+```---
 
 
 
@@ -814,7 +814,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -838,7 +838,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -858,7 +858,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -878,7 +878,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -902,7 +902,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -924,7 +924,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
@@ -944,13 +944,13 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```---
 
 
 
@@ -1006,7 +1006,7 @@ class FactorEvaluation:
 
 
 
----
+```---
 
 
 

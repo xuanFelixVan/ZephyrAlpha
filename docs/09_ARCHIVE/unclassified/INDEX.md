@@ -40,7 +40,7 @@ layer: layer_09
 
 
 
-- [duplicates 重复文档池索引](12_MODULE_DESIGNS/layer_0/INDEX.md)（门面；canonical 见池内 `CANONICAL_POINTERS`）
+- ~~[duplicates 重复文档池索引]~~（门面；canonical 见池内 `CANONICAL_POINTERS`）
 
   - duplicates 目录 - 重复文档归档目录
 
@@ -48,5 +48,5 @@ layer: layer_09
 
 - TECHNICAL_SPECIFICATIONS - 技术规格归档
 
-  - [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) - 技术规格索引
+  - ~~[INDEX]~~ - 技术规格索引
 

@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: T_05_TE001_TRADING_COST_MODEL_ALGORITHM_DOCUMENT_001
@@ -19,7 +26,7 @@ responsibility:
 - 交易策略设计与实施管理与优化维护
 
 layer: layer_05
----
+```---
 
 
 module_id: DESIGN_DOC_002

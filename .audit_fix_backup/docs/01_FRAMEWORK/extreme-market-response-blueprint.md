@@ -108,7 +108,7 @@ responsibility:
 
 > **核心理念**: 极端市场自动识别、AI权限动态降级、人机平滑切换、快速恢复复?> **目标**: 建立专业机构级极端市场应对体系，达到桥水、Citadel的应急响应水?> **对标机构**: 桥水基金极端市场协议、Citadel断路器系统、文艺复兴科技应急响?
 
----
+```---
 
 
 
@@ -158,7 +158,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -608,7 +608,7 @@ class AIBehaviorMonitor:
 
 
 
----
+```---
 
 
 
@@ -906,7 +906,7 @@ class PermissionDowngrader:
 
 
 
----
+```---
 
 
 
@@ -1220,7 +1220,7 @@ class HumanAISwitcher:
 
 
 
----
+```---
 
 
 
@@ -1494,7 +1494,7 @@ class EmergencyPlanExecutor:
 
 
 
----
+```---
 
 
 
@@ -1774,7 +1774,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 
@@ -1986,7 +1986,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 
@@ -2032,7 +2032,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 
@@ -2086,7 +2086,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 
@@ -2136,7 +2136,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 
@@ -2158,7 +2158,7 @@ class RecoveryAssessor:
 
 3. 集成到现有AI治理框架?
 
----
+```---
 
 
 
@@ -2214,7 +2214,7 @@ class RecoveryAssessor:
 
 
 
----
+```---
 
 
 

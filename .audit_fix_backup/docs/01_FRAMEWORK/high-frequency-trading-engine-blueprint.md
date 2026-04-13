@@ -53,7 +53,7 @@ responsibility:
 > **优先级**: P0 (最高优先级)
 > **目的**: 支持高频交易执行，优化执行效率
 
----
+```---
 
 ## 📋 一、概述
 
@@ -79,7 +79,7 @@ responsibility:
 |------|------|---------|------|
 | v1.0 | 2026-04-07 | 初始版本 | 首席架构师 |
 
----
+```---
 
 ## 🏗️ 二、架构设计
 
@@ -158,7 +158,7 @@ Layer 5: 策略执行层
 | 风险检查器 | 实时风险检查 | 规则引擎 |
 | 性能监控器 | 监控系统性能 | Prometheus |
 
----
+```---
 
 ## 💻 三、技术实现
 
@@ -365,7 +365,7 @@ class RealTimeRiskChecker:
         return True
 ```
 
----
+```---
 
 ## 📊 四、数据模型
 
@@ -403,7 +403,7 @@ CREATE TABLE execution_performance (
 );
 ```
 
----
+```---
 
 ## 🚀 五、实施路径
 
@@ -454,7 +454,7 @@ CREATE TABLE execution_performance (
 - ✅ 监控告警正常
 - ✅ 文档齐全
 
----
+```---
 
 ## 📈 六、性能指标
 
@@ -490,7 +490,7 @@ execution_quality = Gauge(
 )
 ```
 
----
+```---
 
 ## 🔒 七、安全考虑
 
@@ -506,7 +506,7 @@ execution_quality = Gauge(
 - 权限管理
 - 审计日志
 
----
+```---
 
 ## 📚 八、相关文档
 
@@ -517,7 +517,7 @@ execution_quality = Gauge(
 | 智能订单路由 | 智能订单路由方案 | SMART_ORDER_ROUTING_BLUEPRINT.md |
 | 交易成本分析 | 交易成本分析方案 | TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md |
 
----
+```---
 
 ## 🎉 九、总结
 
@@ -536,6 +536,6 @@ execution_quality = Gauge(
 - 套利策略
 - 算法交易
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

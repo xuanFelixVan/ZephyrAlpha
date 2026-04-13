@@ -1,5 +1,5 @@
 ---
-module_id: FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT_LEGACY_LAYER4_ML
+module_id: FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT_LEGACY_LAYER4_ML_6297
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -17,7 +17,9 @@ responsibility: 20260410_c2_full_process_data_persistence
 
 > **归档说明（2026-04-10）**：删除前 `LAYER4_ML` 稿快照。**正式蓝图**：FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT；**Layer4 入口 stub**：FULL_PROCESS_DATA_LAYER4_ENTRY。
 
----
+```
+```---
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-02
@@ -51,7 +53,9 @@ responsibility:
 > **实施周期**: 1
 > **核心定位**: 系统数据持久化的基础设施
 > **技术栈**: MLflow + SQLite + Parquet
----
+```
+```---
+```
 
 ## 一、概
 
@@ -91,7 +95,9 @@ Layer 0: 数据(Data Layer)
 
 **架构位置**: 位于Layer 0(数据,是整个系统的数据基础设施
 
----
+```
+```---
+```
 
 ## 二、架构设
 
@@ -228,7 +234,9 @@ def check_governance(data_id: str) -> dict:
     pass
 ```
 
----
+```
+```---
+```
 
 ## 三、数据模
 
@@ -287,7 +295,9 @@ def check_governance(data_id: str) -> dict:
 - INDEX: version_tag
 - INDEX: artifact_type
 
----
+```
+```---
+```
 
 ## 四、技术实
 
@@ -579,7 +589,9 @@ class ExperimentTracker:
             return hashlib.md5(f.read()).hexdigest()
 ```
 
----
+```
+```---
+```
 
 ## 五、实施路径
 
@@ -615,7 +627,9 @@ class ExperimentTracker:
 - 能够管理数据版本
 - 能够检查数据治
 
----
+```
+```---
+```
 
 ## 六、文档治理
 
@@ -647,7 +661,9 @@ class ExperimentTracker:
 - **v1.2**: 增加数据质量监控
 - **v2.0**: 集成分布式存
 
----
+```
+```---
+```
 
 ## 七、风险评
 
@@ -666,7 +682,9 @@ class ExperimentTracker:
 | **学习曲线陡峭** | | | 编写详细文档,提供示例代码 |
 | **集成复杂度高** | | | 分阶段实逐步集成 |
 
----
+```
+```---
+```
 
 ## 八、相关文档
 
@@ -677,6 +695,8 @@ class ExperimentTracker:
 | `开源项目集成方案蓝图` | 开源项目集成方|
 | [MLflow官方文档](https://mlflow.org/docs/latest/index.html) | MLflow使用指南 |
 
----
+```
+```---
+```
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃

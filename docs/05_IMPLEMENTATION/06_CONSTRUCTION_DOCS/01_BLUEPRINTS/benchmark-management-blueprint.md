@@ -1,33 +1,16 @@
 ---
-
-module_id: BENCHMARK_MANAGEMENT_001
-
+module_id: BENCHMARK_MANAGEMENT_001_9071
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 战略与组合团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 11 战略决策 — 基准管理
-
 compliance_level: 专业标准
-
 layer: layer_11
-
 responsibility:
-
-  - 投资基准定义与维护
-
-  - 跟踪误差（TE）与相对收益监控
-
-  - 基准切换与版本治理
-
+- 投资基准定义与维护
 ---
 
 

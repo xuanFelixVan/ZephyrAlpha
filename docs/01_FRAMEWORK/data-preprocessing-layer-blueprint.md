@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_001
-
+module_id: LAYER_001_7632
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_01
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 提供data preprocessing layer blueprint的完整架构设计、技术选型和实施路径规划
-
 ---
 
-module_id: DATA_PREPROCESSING_LAYER_001
+```
+module_id: DATA_PREPROCESSING_LAYER_001_7632
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -112,7 +103,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +151,9 @@ Layer 1数据预处理层是清风量化系统的**数据加工厂**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -394,7 +389,9 @@ Layer 1数据预处理层是清风量化系统的**数据加工厂**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -964,7 +961,9 @@ class OutlierDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1278,7 +1277,9 @@ class TimeAligner:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1680,7 +1681,9 @@ class FinancialIndicatorEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1812,7 +1815,9 @@ class CompletenessChecker:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1902,7 +1907,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1926,7 +1933,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1946,7 +1955,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1966,7 +1977,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1990,7 +2003,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2012,7 +2027,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2032,13 +2049,17 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2094,7 +2115,9 @@ class DataQualityReport:
 
 
 
----
+```
+```---
+```
 
 
 

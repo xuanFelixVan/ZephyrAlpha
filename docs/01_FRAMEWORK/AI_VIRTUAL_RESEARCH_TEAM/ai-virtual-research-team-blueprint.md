@@ -1,5 +1,5 @@
 ---
-module_id: AI_006
+module_id: AI_006_0406
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

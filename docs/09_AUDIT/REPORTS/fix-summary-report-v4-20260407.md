@@ -1,23 +1,13 @@
 ---
-
-module_id: LAYER4_FIX_SUMMARY_REPORT_V4_20260407_001
-
+module_id: LAYER4_FIX_SUMMARY_REPORT_V4_20260407_001_3113
 version: 4.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 个人开发者
-
 standard_type: 专业量化机构文档
-
 responsibility:
-
 - 系统审计分析与质量评估报告与改进建议
-
 layer: layer_09
 ---
 
@@ -46,7 +36,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +84,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -182,7 +176,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -316,7 +312,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -380,7 +378,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -408,7 +408,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +454,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -484,7 +488,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

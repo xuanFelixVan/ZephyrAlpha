@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_BLUEPRINT_TEMPLATE
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_BLUEPRINT_TEMPLATE_5722
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -21,7 +21,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -35,7 +37,7 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
 
 version: [版本号]
@@ -56,7 +58,7 @@ compliance_level: 专业标准
 
 layer: "[Layer定位]"
 
----
+```---
 
 ```
 
@@ -86,7 +88,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +110,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +122,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -154,7 +160,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +172,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -210,7 +218,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -220,7 +230,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -254,7 +264,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -264,7 +276,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -302,7 +314,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -312,7 +326,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -346,7 +360,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -356,7 +372,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -396,13 +412,15 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 ```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -494,7 +512,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -510,7 +530,9 @@ layer: "[Layer定位]"
 
 
 
----
+```
+```---
+```
 
 
 

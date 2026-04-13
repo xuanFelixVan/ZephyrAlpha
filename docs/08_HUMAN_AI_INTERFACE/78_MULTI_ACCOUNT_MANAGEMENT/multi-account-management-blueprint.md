@@ -1,6 +1,15 @@
+---
+module_id: AUTO_46035
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 08_HUMAN_AI_INTERFACE_78_MULTI_ACCOUNT_MANAGEMENT
+```
 
 version: 1.0.0
 
@@ -49,7 +58,9 @@ open_source_alternatives:
     recommendation: 强烈推荐
 
 layer: layer_08
----
+```
+```---
+```
 
 
 
@@ -88,7 +99,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +165,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -226,7 +241,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -358,7 +375,9 @@ class AccountPermissionService:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -380,7 +399,9 @@ class AccountPermissionService:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -404,7 +425,9 @@ class AccountPermissionService:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -426,7 +449,9 @@ class AccountPermissionService:
 
 
 
----
+```
+```---
+```
 
 
 

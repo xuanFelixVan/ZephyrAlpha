@@ -1,6 +1,15 @@
+---
+module_id: AUTO_59236
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: ARCHIVE_OVERLAP_CANONICAL_POINTER_TEMPLATE_001
+```
 
 version: 1.0.0
 
@@ -20,7 +29,9 @@ compliance_level: 专业标准
 
 layer: layer_06
 responsibility: "处理OVERLAP_CANONICAL_POINTER_TEMPLATE相关业务"
----
+```
+```---
+```
 
 
 
@@ -34,7 +45,9 @@ responsibility: "处理OVERLAP_CANONICAL_POINTER_TEMPLATE相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -46,5 +59,7 @@ responsibility: "处理OVERLAP_CANONICAL_POINTER_TEMPLATE相关业务"
 
 
 
----
+```
+```---
+```
 

@@ -1,39 +1,21 @@
 ---
-
-module_id: MODEL_MONITORING_DRIFT_DETECTION_001
-
+module_id: MODEL_MONITORING_DRIFT_DETECTION_001_6106
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 模型监控与漂移检测蓝图 (MODEL_MONITORING_DRIFT_DETECTION)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 模型性能监控与漂移检测
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Evidently AI + NannyML
-
 priority: P0
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +90,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -244,7 +230,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -370,7 +358,9 @@ def ddm_monitor(errors, warning_level=2, drift_level=3):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -450,7 +440,9 @@ def ddm_monitor(errors, warning_level=2, drift_level=3):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -508,7 +500,9 @@ class DriftResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -558,7 +552,9 @@ class DriftResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -580,7 +576,9 @@ class DriftResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -602,7 +600,9 @@ class DriftResult:
 
 
 
----
+```
+```---
+```
 
 
 

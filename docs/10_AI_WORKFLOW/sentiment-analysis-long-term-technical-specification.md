@@ -1,33 +1,18 @@
 ---
-
-module_id: SENTIMENT_ANALYSIS_LONG_TERM_TS_001
-
+module_id: SENTIMENT_ANALYSIS_LONG_TERM_TS_001_1437
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 舆情分析层长期改进模块详细技术规格书文档
-
 layer: layer_03
-
 standard_type: 技术规格书
-
 applicable_scope: 舆情分析层长期改进模块
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 applicable_modules: null
-
 ---
 
 
@@ -70,7 +55,9 @@ applicable_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +79,9 @@ applicable_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -680,7 +669,9 @@ print(f"各模态贡 {multimodal_result['contributions']}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1008,7 +999,9 @@ for color in colors:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1320,7 +1313,9 @@ print(f"说话人情 {emotion}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1972,7 +1967,9 @@ for item in knowledge:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2480,7 +2477,9 @@ print(f"统计: {stats}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2612,7 +2611,9 @@ print(f"统计: {stats}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2696,7 +2697,9 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2812,7 +2815,9 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2878,7 +2883,9 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3062,7 +3069,9 @@ report:
 
 
 
----
+```
+```---
+```
 
 
 

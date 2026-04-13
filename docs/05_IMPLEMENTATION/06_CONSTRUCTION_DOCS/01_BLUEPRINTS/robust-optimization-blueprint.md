@@ -1,33 +1,15 @@
 ---
-
-module_id: ROBUST_OPTIMIZATION_001
-
+module_id: ROBUST_OPTIMIZATION_001_2903
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 鲁棒优化
-
-  - 不确定性建模
-
-  - 鲁棒解求解
-
-  - 参数敏感性
-
+- 鲁棒优化
 layer: layer_06
-
 ---
 
 

@@ -26,7 +26,6 @@ compliance_level: 专业标准
 
 ---
 
-module_id: QMT_EXECUTOR_001
 
 version: 1.0.0
 
@@ -42,7 +41,7 @@ implementation_status: 设计阶段
 
 priority: P0
 
----
+```---
 
 
 
@@ -64,7 +63,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -78,7 +77,7 @@ priority: P0
 
 - ?QMT
 
----
+```---
 
 
 
@@ -136,7 +135,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -380,7 +379,7 @@ class QMTDataAdapter:
 
 **实现要点**:
 
----
+```---
 
 
 
@@ -466,7 +465,7 @@ class QMTDataAdapter:
 
 
 
----
+```---
 
 
 
@@ -624,7 +623,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -650,7 +649,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -690,7 +689,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -752,7 +751,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -786,7 +785,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -798,7 +797,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 
@@ -808,7 +807,7 @@ class QMTConfig:
 
 **下次审查**: 2026-04-10
 
----
+```---
 
 
 
@@ -864,7 +863,7 @@ class QMTConfig:
 
 
 
----
+```---
 
 
 

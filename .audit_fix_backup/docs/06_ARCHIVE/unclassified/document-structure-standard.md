@@ -51,7 +51,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -67,9 +67,9 @@ compliance_level: 专业标准
 
 ```markdown
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_F32B622366
+module_id: EXAMPLE_PLACEHOLDER_F32B622366_6383
 
 version: [版本号]
 
@@ -89,7 +89,7 @@ applicable_scope: [适用范围]
 
 compliance_level: [合规级别]
 
----
+```---
 
 
 
@@ -133,7 +133,7 @@ compliance_level: [合规级别]
 
 
 
----
+```---
 
 
 
@@ -157,9 +157,9 @@ compliance_level: [合规级别]
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_F32B622366              # 必需：唯一标识符
+module_id: EXAMPLE_PLACEHOLDER_F32B622366_6383              # 必需：唯一标识符
 
 version: [版本号]                # 必需：文档版本
 
@@ -179,7 +179,7 @@ applicable_scope: [适用范围]     # 必需：适用范围
 
 compliance_level: [合规级别]     # 必需：合规级别
 
----
+```---
 
 ```
 
@@ -203,7 +203,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 ```markdown
 
----
+```---
 
 
 
@@ -281,7 +281,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 
@@ -371,7 +371,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 
@@ -427,7 +427,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 
@@ -507,7 +507,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 
@@ -551,7 +551,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 
@@ -585,7 +585,7 @@ compliance_level: [合规级别]     # 必需：合规级别
 
 
 
----
+```---
 
 
 

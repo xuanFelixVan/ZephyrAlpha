@@ -1,53 +1,28 @@
 ---
-
-module_id: SCENARIO_ANALYSIS_STRESS_TEST_001
-
+module_id: SCENARIO_ANALYSIS_STRESS_TEST_001_0013
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 情景分析与压力测试系统蓝图文档
-
 layer: layer_07
-
 standard_type: 专业机构级蓝图
-
 applicable_scope: 情景分析与压力测试系统
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图设计阶段
-
 reference_models: null
-
 related_documents: null
-
 open_source_solution: null
-
 primary: QuantConnect LEAN
-
 primary_github: https://github.com/QuantConnect/Lean
-
 primary_stars: 9000+
-
 secondary: Zipline
-
 secondary_github: https://github.com/quantopian/zipline
-
 license: Apache 2.0
-
 cost: 完全免费
-
 ---
 
 
@@ -80,7 +55,9 @@ cost: 完全免费
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +139,9 @@ Layer 7: AI报告层 (AI Reporting Layer)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +547,9 @@ def export_report(report: str, format: str = "pdf") -> str:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -704,7 +685,9 @@ def export_report(report: str, format: str = "pdf") -> str:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -930,7 +913,9 @@ class ScenarioAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1034,7 +1019,9 @@ class ScenarioAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1086,7 +1073,9 @@ class ScenarioAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1110,7 +1099,9 @@ class ScenarioAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1128,7 +1119,9 @@ class ScenarioAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 

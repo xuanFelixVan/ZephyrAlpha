@@ -42,7 +42,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -98,7 +98,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -202,7 +202,7 @@ graph TB
 
 
 
----
+```---
 
 
 
@@ -1774,7 +1774,7 @@ class PerformanceEvaluationEngine:
 
     async def _calculate_performance_metrics(self, performance_data: PerformanceData) -> Dict[str, float]:
 
----
+```---
 
 
 
@@ -1832,7 +1832,7 @@ class PerformanceEvaluationEngine:
 
 
 
----
+```---
 
 
 

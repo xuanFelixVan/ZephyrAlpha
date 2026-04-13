@@ -35,7 +35,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -43,7 +43,6 @@ compliance_level: 专业标准
 
 ### 文档头部元数?```yaml
 
-module_id: ARCHIVE_DOC_ANALYSIS_QMT_001
 
 version: 1.0.0
 
@@ -91,7 +90,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -167,7 +166,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -279,7 +278,7 @@ implementation_status: 进行?```
 
    - 旧架构设计原?
 
----
+```---
 
 
 
@@ -357,7 +356,7 @@ implementation_status: 进行?```
 
 > **设计状?*: ?已完?
 
----
+```---
 
 
 
@@ -365,7 +364,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -375,7 +374,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -385,7 +384,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -395,7 +394,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -407,7 +406,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -437,7 +436,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -479,7 +478,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -513,7 +512,7 @@ implementation_status: 进行?```
 
 - ?符合新架构规?- ?提升文档可维护?
 
----
+```---
 
 
 
@@ -539,7 +538,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -553,7 +552,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 

@@ -125,7 +125,9 @@ class CompensationTransaction:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -529,7 +531,9 @@ class CompensationRetryManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -947,7 +951,9 @@ class OrderSyncCompensation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1417,7 +1423,9 @@ class CompensationStateMachine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1943,7 +1951,9 @@ description: "95%ﻝﻟ۰۴ﮒﺟﻠﻟﺁﮔﻝﭨﮔﭘﻠﺑﻟﭘﻟﺟ?0ﻝ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2155,7 +2165,9 @@ class ManualInterventionTool:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2389,7 +2401,9 @@ class CompensationAuditLogger:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2743,7 +2757,9 @@ class TestCompensationPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2981,7 +2997,9 @@ redis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3207,7 +3225,9 @@ class CompensationDisasterRecovery:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3225,7 +3245,9 @@ class CompensationDisasterRecovery:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -79,7 +79,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -269,7 +271,9 @@ class StrategyBase(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -547,7 +551,9 @@ class DonchianChannelStrategy(StrategyBase):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -845,7 +851,9 @@ class PairTradingStrategy(StrategyBase):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1045,7 +1053,9 @@ class MultiFactorSelectionStrategy(StrategyBase):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1105,7 +1115,9 @@ execution:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1169,7 +1181,9 @@ class StrategyLifecycle:
 
 
 
----
+```
+```---
+```
 
 
 

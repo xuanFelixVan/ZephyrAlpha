@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_FINAL_AUDIT_REPORT_V5
+module_id: 06_ARCHIVE_AUDIT_REPORTS_FINAL_AUDIT_REPORT_V5_8806
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -59,7 +59,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -117,7 +119,9 @@ def get_implemented_factors(self) -> List[str]:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -261,7 +265,9 @@ def _calculate_supertrend(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -317,7 +323,9 @@ if position.unrealized_pnl_pct < -0.20:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -375,7 +383,9 @@ return max(0, max_total_quantity - current_quantity)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -423,7 +433,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -451,7 +463,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -475,7 +489,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -503,7 +519,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -527,7 +545,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -539,7 +559,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -557,7 +579,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -579,7 +603,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -603,7 +629,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -625,7 +653,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -641,7 +671,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -661,7 +693,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -679,7 +713,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -699,7 +735,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -719,7 +757,9 @@ quant_system_v4/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -751,7 +791,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -773,7 +815,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -785,7 +829,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -819,7 +865,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -869,7 +917,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -909,7 +959,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -951,7 +1003,9 @@ system:
 
 
 
----
+```
+```---
+```
 
 
 

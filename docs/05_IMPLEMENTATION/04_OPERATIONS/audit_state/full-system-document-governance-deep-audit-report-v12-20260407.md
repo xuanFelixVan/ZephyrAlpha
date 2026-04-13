@@ -1,6 +1,15 @@
+---
+module_id: AUTO_37330
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: FULL_SYSTEM_AUDIT_V12_001
+```
 
 version: 12.0.0
 
@@ -23,7 +32,9 @@ applicable_scope: 全系统文档
 compliance_level: 专业标准
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 全系统文档治理深度审计报告 V12
@@ -52,7 +63,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +103,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -230,7 +245,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +393,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -524,7 +543,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -586,7 +607,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -630,7 +653,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -780,7 +805,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -830,7 +857,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -884,7 +913,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -49,7 +49,9 @@ responsibility_boundary:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -85,7 +87,9 @@ responsibility_boundary:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -273,7 +277,9 @@ class TrustedExecutionEnvironment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -501,7 +507,9 @@ occlum run /bin/python model_inference.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -513,7 +521,9 @@ occlum run /bin/python model_inference.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -625,7 +635,9 @@ occlum run /bin/python model_inference.py
 
 
 
----
+```
+```---
+```
 
 
 

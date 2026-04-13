@@ -55,7 +55,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1405,7 +1407,9 @@ class AnomalyDetectionPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1913,7 +1917,9 @@ umap-learn>=0.5.0  # 降维
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2313,7 +2319,9 @@ class AnomalyDetectionData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3397,7 +3405,9 @@ class TestPyodPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4359,7 +4369,9 @@ class AnomalyDetectionAlertRules:
 
 
 
----
+```
+```---
+```
 
 ## 🚀 部署设计
 
@@ -6065,7 +6077,9 @@ environments:
 
 
 
----
+```
+```---
+```
 
 ## 📈 总结
 
@@ -6271,7 +6285,9 @@ environments:
 
 
 
----
+```
+```---
+```
 
 
 

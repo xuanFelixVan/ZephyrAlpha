@@ -1,31 +1,23 @@
 ---
-module_id: 01_FRAMEWORK_NATURAL_LANGUAGE_REPORT_GENERATION_BLUEPRINT
+module_id: 01_FRAMEWORK_NATURAL_LANGUAGE_REPORT_GENERATION_BLUEPRINT_0190
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Natural Language Report Generation Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 自然语言报告生成
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Daily Observations
-  - Two Sigma Research Reports
-  - Citadel Performance Reports
-related_documents:
-  - AI_REPORT_GENERATION_BLUEPRINT.md
-  - RAG_SYSTEM_BLUEPRINT.md
-  - PERFORMANCE_ANALYSIS_INTERFACE_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./AI_REPORT_GENERATION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: LangChain
-url: 'https://github.com/Distrotech/reportlab'
+open_source_projects: ''
+url: https://github.com/Distrotech/reportlab
 features: PDF报告生成、图表嵌入、格式化输出
-responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
+responsibility_boundary: '''本文档职责（Layer 7 AI报告层）：'
 ---
 
 ## 📋 一、概述
@@ -66,7 +58,9 @@ responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +166,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -624,7 +620,9 @@ class PDFReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -776,7 +774,9 @@ class ReportData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -880,7 +880,9 @@ class ReportData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -984,7 +986,9 @@ class ReportData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1042,7 +1046,9 @@ class ReportData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1084,7 +1090,9 @@ class ReportData:
 
 
 
----
+```
+```---
+```
 
 
 

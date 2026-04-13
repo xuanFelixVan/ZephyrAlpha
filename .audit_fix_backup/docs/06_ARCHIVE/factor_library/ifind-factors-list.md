@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: IFIND_FACTORS_LIST_001
@@ -53,7 +60,7 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 
 layer: layer_06
----
+```---
 
 
 

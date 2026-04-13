@@ -83,7 +83,7 @@ estimated_dev_hours: 12
 
 
 
----
+```---
 
 
 
@@ -313,7 +313,7 @@ def adjust_prices(
 
 
 
----
+```---
 
 
 
@@ -825,7 +825,7 @@ data_cleaner:
 
 
 
----
+```---
 
 
 
@@ -1407,7 +1407,7 @@ def _execute_cleaning_pipeline(self, data: pd.DataFrame,
 
 
 
----
+```---
 
 
 
@@ -1485,7 +1485,7 @@ pytest>=7.0.0
 
 
 
----
+```---
 
 
 
@@ -1925,7 +1925,7 @@ def create_test_cleaning_plan() -> Dict[str, Any]:
 
 
 
----
+```---
 
 
 
@@ -2151,7 +2151,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2211,7 +2211,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2257,7 +2257,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2285,7 +2285,7 @@ alerts:
 
 
 
----
+```---
 
 
 

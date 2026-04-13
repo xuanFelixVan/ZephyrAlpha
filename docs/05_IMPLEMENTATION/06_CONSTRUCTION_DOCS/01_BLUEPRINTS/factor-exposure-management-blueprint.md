@@ -1,35 +1,16 @@
 ---
-
-module_id: FACTOR_EXPOSURE_MANAGEMENT_001
-
+module_id: FACTOR_EXPOSURE_MANAGEMENT_001_1904
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 因子暴露管理
-
-  - 因子敞口控制
-
-  - 因子中性化
-
-  - 因子风险预算
-
+- 因子暴露管理
 layer: layer_06
-
 ---
 
 

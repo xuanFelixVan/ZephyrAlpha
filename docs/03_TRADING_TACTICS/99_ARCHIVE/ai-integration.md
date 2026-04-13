@@ -22,7 +22,9 @@ layer: layer_03
 ---
 
 
+```
 module_id: TACTICS_ARCH_AI_INTEGRATION_001
+```
 
 version: 1.0.1
 

@@ -37,7 +37,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -165,7 +165,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -305,7 +305,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -429,7 +429,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -447,9 +447,8 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_MODULE_001
 
 version: 1.0.0
 
@@ -467,7 +466,7 @@ responsibility_boundary:
 
   excludes: ["宏观经济分析", "日内交易信号"]
 
----
+```---
 
 ```
 
@@ -539,7 +538,7 @@ foreach ($keyword in $keywords) {
 
 
 
----
+```---
 
 
 
@@ -589,7 +588,7 @@ grep -r "time_frame:.*实时" docs/ --include="*.md"
 
 
 
----
+```---
 
 
 
@@ -605,7 +604,7 @@ grep -r "time_frame:.*实时" docs/ --include="*.md"
 
 
 
----
+```---
 
 
 
@@ -621,7 +620,7 @@ grep -r "time_frame:.*实时" docs/ --include="*.md"
 
 
 
----
+```---
 
 
 

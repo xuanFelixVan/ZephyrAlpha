@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -76,13 +76,13 @@ responsibility: "处理INDEX相关业务"
 
 
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `DOCS_06_ARCHIVE_20260410_C2_RESEARCH_WORKFLOW_MANAGEMENT_README`
+- ~~[Readme]~~ - `DOCS_06_ARCHIVE_20260410_C2_RESEARCH_WORKFLOW_MANAGEMENT_README`
 
 - Research Workflow Management Blueprint Legacy P1 Cleanup Archive - `RESEARCH_WORKFLOW_MANAGEMENT_001_ARCHIVED_1`
 
 
 
----
+```---
 
 
 
@@ -114,7 +114,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -130,7 +130,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -146,7 +146,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

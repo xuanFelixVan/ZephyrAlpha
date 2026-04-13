@@ -61,7 +61,9 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -87,7 +89,9 @@ py -3.12 -m pip install openai-whisper transformers accelerate requests ffmpeg-p
 
 
 
----
+```
+```---
+```
 
 
 
@@ -113,7 +117,9 @@ pip install transformers accelerate requests ffmpeg-python
 
 
 
----
+```
+```---
+```
 
 
 
@@ -123,7 +129,9 @@ pip install transformers accelerate requests ffmpeg-python
 
 
 
----
+```
+```---
+```
 
 
 
@@ -157,7 +165,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -185,7 +195,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -243,5 +255,7 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 
----
+```
+```---
+```
 

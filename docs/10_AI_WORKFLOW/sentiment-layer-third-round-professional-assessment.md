@@ -1,6 +1,15 @@
+---
+module_id: AUTO_84845
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SENTIMENT_LAYER_THIRD_ROUND_PROFESSIONAL_ASSESSMENT_001
+```
 
 version: 1.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 舆情分析层（Layer 3）
 compliance_level: 专业标准
 
 layer: layer_00
----
+```
+```---
+```
 
 
 
@@ -58,7 +69,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -104,7 +117,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +217,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +341,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +485,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -584,7 +605,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -702,7 +725,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -820,7 +845,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -960,7 +987,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1078,7 +1107,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1194,7 +1225,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1254,7 +1287,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 

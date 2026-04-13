@@ -1,25 +1,18 @@
 ---
-module_id: 01_FRAMEWORK_AUTOML_AUTOMATION_BLUEPRINT
+module_id: 01_FRAMEWORK_AUTOML_AUTOMATION_BLUEPRINT_1242
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Automl Automation Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: AutoML自动化机器学习
 compliance_level: 顶级专业标准
-reference_models:
-  - Google AutoML
-  - H2O.ai
-  - DataRobot
-related_documents:
-  - MODEL_SERVING_FRAMEWORK_BLUEPRINT.md
-  - HYPERPARAMETER_OPTIMIZATION_BLUEPRINT.md
-  - NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT.md
-responsibility_boundary: '本文档负责AutoML自动化机器学习，包括：
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责AutoML自动化机器学习，包括：'
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
@@ -75,7 +68,9 @@ open_source_solution: AutoGluon + MLflow + Optuna
 
 
 
----
+```
+```---
+```
 
 
 
@@ -229,7 +224,9 @@ Layer 4: 机器学习层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -733,7 +730,9 @@ class AutoModelSelector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -809,7 +808,9 @@ CREATE TABLE automl_results (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -911,7 +912,9 @@ CREATE TABLE automl_results (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -983,7 +986,9 @@ model_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1015,7 +1020,9 @@ model_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1037,7 +1044,9 @@ model_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1075,7 +1084,9 @@ model_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 

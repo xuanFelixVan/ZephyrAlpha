@@ -64,7 +64,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ Layer 7: AI报告层
 
 
 
----
+```---
 
 
 
@@ -284,7 +284,7 @@ Layer 7: AI报告层
 
 
 
----
+```---
 
 
 
@@ -680,7 +680,7 @@ class MarketImpactModel:
 
 
 
----
+```---
 
 
 
@@ -802,7 +802,7 @@ CREATE TABLE liquidity_analyses (
 
 
 
----
+```---
 
 
 
@@ -906,7 +906,7 @@ CREATE TABLE liquidity_analyses (
 
 
 
----
+```---
 
 
 
@@ -958,7 +958,7 @@ class IMicrostructureAnalyzer(ABC):
 
 
 
----
+```---
 
 
 
@@ -998,7 +998,7 @@ class IMicrostructureAnalyzer(ABC):
 
 
 
----
+```---
 
 
 
@@ -1036,7 +1036,7 @@ class IMicrostructureAnalyzer(ABC):
 
 
 
----
+```---
 
 
 
@@ -1072,7 +1072,7 @@ class IMicrostructureAnalyzer(ABC):
 
 
 
----
+```---
 
 
 

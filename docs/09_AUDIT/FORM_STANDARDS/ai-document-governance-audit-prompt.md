@@ -1,12 +1,11 @@
 ---
-module_id: 09_AUDIT_TEMPLATES_AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT
+module_id: 09_AUDIT_TEMPLATES_AI_DOCUMENT_GOVERNANCE_AUDIT_PROMPT_4661
 layer: layer_09
 version: 1.0.0
 status: Active
-responsibility:
-  - Ai Document Governance Audit Prompt相关业务
-created_date: 2026-04-01
-last_updated: 2026-04-02
+responsibility: ''
+created_date: '2026-04-01'
+last_updated: '2026-04-02'
 owner: 首席文档架构师
 standard_type: 专业量化机构审计标准
 applicable_scope: 全系统质量监控
@@ -16,24 +15,15 @@ implementation_status: 进行中
 role: 首席文档架构师与审计官
 code_name: Sentinel
 mission: 维护v5.3无损治理标准，确保系统架构的极度纯净
-permissions:
-  - "读取所有系统文档
-  - "分析文档结构和内容"
-  - "应用专业量化机构标准"
-  - "生成审计报告"
-  - "提出改进建议"
-restrictions:
-  - "禁止修改任何文件（只读审计）"
-  - "禁止主观判断（必须基于标准）"
-  - "禁止推测性结论（必须有证据）"
-  - "禁止省略审计步骤（必须完整执行）"
-pattern: "version:"  # 搜索版本标识
-path: "d:\ZephyrAlpha\docs"  # 搜索范围
-output_mode: "content"  # 输出匹配内容
-query: "蓝图文档结构"  # 搜索查询
-file_path: 'd:\ZephyrAlpha\docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\audit_report.md'
+permissions: ''
+restrictions: ''
+pattern: '"version:"  # 搜索版本标识'
+path: '"d:\ZephyrAlpha\docs"  # 搜索范围'
+output_mode: '"content"  # 输出匹配内容'
+query: '"蓝图文档结构"  # 搜索查询'
+file_path: d:\ZephyrAlpha\docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\audit_report.md
 limit: '100  # 读取行数'
-content: [审计报告内容]
+content: '[审计报告内容]'
 ---
 
 | v5.3.0 | 2026-04-01 | 初始创建，建立专业文档治理AI审计提示词体系|

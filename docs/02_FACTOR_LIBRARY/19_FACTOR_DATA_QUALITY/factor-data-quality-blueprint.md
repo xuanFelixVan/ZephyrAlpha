@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_DATA_QUALITY_BLUEPRINT
+module_id: FACTOR_DATA_QUALITY_BLUEPRINT_0505_0505
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -11,7 +11,9 @@ responsibility: 19_FACTOR_DATA_QUALITY
 
 
 
+```
 ---|---------------|-----------|---------|
+```
 
 | 数据完整性检查 | 严格检查流程 | ✅ 完整实现 | 🟢 100% |
 
@@ -39,11 +41,15 @@ responsibility: 19_FACTOR_DATA_QUALITY
 
 
 
-module_id: FACTOR_DATA_QUALITY_BLUEPRINT
+```
+module_id: FACTOR_DATA_QUALITY_BLUEPRINT_0505_0505
+```
 layer: layer_02
 version: 1.0.0
 responsibility: "处理FACTOR_DATA_QUALITY_BLUEPRINT相关业务"
----
+```
+```---
+```
 
 
 
@@ -211,7 +217,9 @@ warnings = profile.get_description().warnings
 
 
 
----
+```
+```---
+```
 
 
 
@@ -261,7 +269,9 @@ warnings = profile.get_description().warnings
 
 
 
----
+```
+```---
+```
 
 
 

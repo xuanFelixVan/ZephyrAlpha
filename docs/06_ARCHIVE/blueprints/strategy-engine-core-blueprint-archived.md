@@ -1,6 +1,15 @@
+---
+module_id: AUTO_43997
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED_001
+```
+module_id: STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED_001_0157
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 归档文档、历史版本
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # STRATEGY ENGINE CORE BLUEPRINT ARCHIVED
@@ -36,7 +47,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 version: 1.0.0

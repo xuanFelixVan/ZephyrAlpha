@@ -1,33 +1,16 @@
 ---
-
-module_id: IPS_MANAGEMENT_SYSTEM_001
-
+module_id: IPS_MANAGEMENT_SYSTEM_001_9635
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 战略与治理团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 11 战略决策 — IPS（投资政策声明）
-
 compliance_level: 专业标准
-
 layer: layer_11
-
 responsibility:
-
-  - IPS 文档结构化与版本管理
-
-  - 风险收益目标与约束的可执行映射
-
-  - 合规检查与再平衡/调仓触发联动
-
+- IPS 文档结构化与版本管理
 ---
 
 

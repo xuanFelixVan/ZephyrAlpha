@@ -1,8 +1,17 @@
+---
+module_id: AUTO_83008
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 version: 1.0.0
 
+```
 module_id: 05_IMPLEMENTATION_07_OPERATIONS_AUDIT_STATE_RESPONSIBILITY_PERSONALIZATION_SUMMARY_20260407_20260407
+```
 
 status: Active
 
@@ -17,7 +26,9 @@ responsibility:
 - 职责描述个性化优化总结报告文档
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 职责描述个性化优化总结报告
@@ -34,7 +45,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -74,7 +87,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -182,7 +197,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -304,7 +321,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -366,7 +385,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -408,7 +429,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -484,7 +507,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_GOVERNANCE_MAINTENANCE_GUIDE
+module_id: 09_AUDIT_GOVERNANCE_MAINTENANCE_GUIDE_7432
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -25,7 +25,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -73,7 +75,9 @@ python scripts/add_governance_section.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -131,7 +135,9 @@ python scripts/add_governance_section.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -145,7 +151,7 @@ python scripts/add_governance_section.py
 
 ```markdown
 
----
+```---
 
 
 version: 1.0.0
@@ -162,7 +168,7 @@ layer: Layer N (层级名称)
 
 applicable_scope: 模块职责描述
 
----
+```---
 
 
 
@@ -174,7 +180,7 @@ applicable_scope: 模块职责描述
 
 
 
----
+```---
 
 
 
@@ -230,7 +236,7 @@ applicable_scope: 模块职责描述
 
 
 
----
+```---
 
 
 
@@ -240,7 +246,9 @@ applicable_scope: 模块职责描述
 
 
 
----
+```
+```---
+```
 
 
 
@@ -274,7 +282,9 @@ applicable_scope: 模块职责描述
 
 
 
----
+```
+```---
+```
 
 
 
@@ -338,7 +348,9 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +372,9 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +390,9 @@ DOCS_DIR = Path("docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS")
 
 
 
----
+```
+```---
+```
 
 
 

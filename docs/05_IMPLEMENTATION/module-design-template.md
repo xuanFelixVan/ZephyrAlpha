@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_MODULE_DESIGN_TEMPLATE
+module_id: 05_IMPLEMENTATION_MODULE_DESIGN_TEMPLATE_0628
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 进行?
 
 ```yaml
 
-module_id: "LAYER_MODULE_NAME"  # ? L0_QMT_ADAPTER
+module_id: "LAYER_MODULE_NAME"_0628  # ? L0_QMT_ADAPTER
 
 layer: "Layer 0"                # 所属层?
 
@@ -75,7 +75,9 @@ estimated_dev_hours: 24         # 预计开发时?小时)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -159,7 +161,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -319,7 +323,9 @@ module_name:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -447,7 +453,9 @@ def core_algorithm(data: InputData) -> OutputData:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -509,7 +517,9 @@ sqlalchemy>=1.4.0  # 数据库功?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -643,7 +653,9 @@ def create_invalid_input() -> InputType:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -753,7 +765,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -807,7 +821,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -863,7 +879,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -895,7 +913,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 

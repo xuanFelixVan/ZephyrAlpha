@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -80,11 +80,11 @@ responsibility: "处理INDEX相关业务"
 
 - Construction Gate Criteria 20260408 - `CONSTRUCTION_GATE_CRITERIA_20260408`
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `00_MANAGEMENT_CANON_README_001`
+- ~~[Readme]~~ - `00_MANAGEMENT_CANON_README_001`
 
 
 
----
+```---
 
 
 
@@ -116,7 +116,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -132,7 +132,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -148,7 +148,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

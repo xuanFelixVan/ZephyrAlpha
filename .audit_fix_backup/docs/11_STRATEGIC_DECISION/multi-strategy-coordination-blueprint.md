@@ -50,7 +50,7 @@ open_source_solution: "自研核心 + skfolio辅助"
 
 priority: P0
 
----
+```---
 
 
 
@@ -136,7 +136,7 @@ priority: P0
 
 
 
----
+```---
 
 > **版本**: v1.0
 
@@ -150,7 +150,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -196,7 +196,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -428,7 +428,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -1906,7 +1906,7 @@ class PortfolioRiskMonitor:
 
 
 
----
+```---
 
 
 
@@ -2072,7 +2072,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -2112,7 +2112,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -2132,13 +2132,13 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -2194,7 +2194,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 

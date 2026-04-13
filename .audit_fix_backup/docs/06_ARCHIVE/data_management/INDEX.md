@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -80,11 +80,11 @@ responsibility: "处理INDEX相关业务"
 
 - Data Quality Monitoring Legacy 10 Ai Workflow - `DATA_QUALITY_MONITORING_AI_001`
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `DOCS_06_ARCHIVE_20260411_C2_DATA_QUALITY_MONITORING_README`
+- ~~[Readme]~~ - `DOCS_06_ARCHIVE_20260411_C2_DATA_QUALITY_MONITORING_README`
 
 
 
----
+```---
 
 
 
@@ -116,7 +116,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -132,7 +132,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -148,7 +148,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

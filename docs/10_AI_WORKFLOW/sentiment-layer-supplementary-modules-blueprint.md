@@ -1,12 +1,5 @@
 ---
-1. **开源免费**: 所有模块都使用成熟开源项目
-2. **功能全面**: 覆盖归因、监控、优化等各个方面
-3. **易于部署**: Docker一键部署
-4. **社区支持**: 所有开源项目社区活跃
-1. **优先级**: 先实施P1级模块，再实施P2级模块
-2. **迭代开发**: 每个模块独立开发，逐步集成
-3. **持续优化**: 根据使用情况持续优化
-module_id: 10_AI_WORKFLOW_SENTIMENT-LAYER-SUPPLEMENTARY-MODUL_001
+module_id: 10_AI_WORKFLOW_SENTIMENT-LAYER-SUPPLEMENTARY-MODUL_001_7901
 version: 1.0.0
 status: Active
 owner: 待指定

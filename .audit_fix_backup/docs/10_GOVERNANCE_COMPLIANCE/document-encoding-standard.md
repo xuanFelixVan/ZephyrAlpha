@@ -35,7 +35,7 @@ compliance_level: 专业标准
 - **建议要求**: 现有文档应逐步转换为符合本规范的格式
 - **检查机制**: 通过Git Hook和定期检查确保合规性
 
----
+```---
 
 ## 📝 二、编码标准
 
@@ -88,7 +88,7 @@ git config --global core.safecrlf true
 所有Markdown文档必须包含YAML前置签名，格式如下：
 
 ```yaml
----
+```---
 module_id: MODULE_NAME_001
 version: 1.0.0
 status: Active
@@ -99,7 +99,7 @@ layer: Layer X (层级名称)
 standard_type: 专业量化机构级文档类型
 applicable_scope: 适用范围
 compliance_level: 专业标准
----
+```---
 ```
 
 #### 2.3.2 Python脚本签名
@@ -119,7 +119,7 @@ Date: 2026-04-07
 """
 ```
 
----
+```---
 
 ## 🔍 三、检查机制
 
@@ -164,7 +164,7 @@ python scripts/validate_index_links.py
 python scripts/generate_compliance_report.py
 ```
 
----
+```---
 
 ## 🛠️ 四、修复工具
 
@@ -209,7 +209,7 @@ python scripts/remove_bom.py
 3. 选择"Save with Encoding"
 4. 选择"UTF-8"（不带BOM）
 
----
+```---
 
 ## 📊 五、合规指标
 
@@ -231,7 +231,7 @@ python scripts/remove_bom.py
 - 不合规文件列表
 - 修复建议
 
----
+```---
 
 ## 📚 六、最佳实践
 
@@ -282,7 +282,7 @@ python scripts/check_encoding_issues.py
 python scripts/fix_encoding_issues.py
 ```
 
----
+```---
 
 ## 🔗 七、相关文档
 
@@ -291,7 +291,7 @@ python scripts/fix_encoding_issues.py
 - 编码修复脚本
 - 链接验证脚本
 
----
+```---
 
 ## 📈 八、版本历史
 
@@ -299,6 +299,6 @@ python scripts/fix_encoding_issues.py
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 首席架构师 |
 
----
+```---
 
 **规范版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

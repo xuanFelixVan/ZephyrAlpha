@@ -13,6 +13,7 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 ## 设计目标
@@ -133,7 +134,9 @@ NozyIO通过四层可视化编辑系统，让用户通过拖拽、连线、配�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -331,7 +334,9 @@ class FactorConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -475,7 +480,9 @@ class FeatureSetConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -627,7 +634,9 @@ class StrategyConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -801,7 +810,9 @@ class BacktestResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -913,7 +924,9 @@ BacktestResult = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1011,7 +1024,9 @@ BacktestResult = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1059,7 +1074,9 @@ BacktestResult = {
 
 
 
----
+```
+```---
+```
 
 
 

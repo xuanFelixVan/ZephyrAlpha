@@ -1,33 +1,23 @@
 ---
-module_id: 01_FRAMEWORK_CIRCUIT_BREAKER_SYSTEM_BLUEPRINT
+module_id: 01_FRAMEWORK_CIRCUIT_BREAKER_SYSTEM_BLUEPRINT_0010
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Circuit Breaker System Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 熔断机制系统架构设计
 compliance_level: 顶级专业标准
-reference_models:
-  - NYSE Circuit Breaker
-  - Citadel Circuit Breaker
-  - Two Sigma Risk Control
-  - Bridgewater Circuit Breaker
-related_documents:
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - KILL_SWITCH_SYSTEM_BLUEPRINT.md
-  - RISK_LIMIT_MANAGEMENT_BLUEPRINT.md
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: PyBreaker
-url: 'https://github.com/jd/tenacity'
+open_source_projects: ''
+url: https://github.com/jd/tenacity
 features: 重试机制、熔断机制、装饰器模式
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
 ---
 
 ## 📋 执行摘要
@@ -72,7 +62,9 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -422,7 +414,9 @@ Layer 10: 治理与合规层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -896,7 +890,9 @@ class CircuitBreakerSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1040,7 +1036,9 @@ class CircuitBreakerRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1120,7 +1118,9 @@ class CircuitBreakerRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1204,7 +1204,9 @@ class CircuitBreakerRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1294,7 +1296,9 @@ class CircuitBreakerRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1348,7 +1352,9 @@ class CircuitBreakerRecord:
 
 
 
----
+```
+```---
+```
 
 
 

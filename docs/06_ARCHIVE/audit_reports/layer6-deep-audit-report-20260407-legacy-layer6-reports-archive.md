@@ -1,10 +1,4 @@
 ---
-1. ⏳ **待执行**: 批量修复53个module_id命名不规范文档
-2. ⏳ **待执行**: 统一去除BLUEPRINT后缀
-3. ⏳ **待执行**: 确保module_id格式统一
-1. **建立YAML头部模板**: 统一YAML头部格式，避免职责描述问题
-2. **自动化检查**: 建立自动化检查机制，防止职责描述不清晰
-3. **定期审计**: 定期执行文档治理审计，确保持续符合标准
 module_id: 06_ARCHIVE_AUDIT_REPORTS_LAYER6-DEEP-AUDIT-REPORT-_001
 version: 1.0.0
 status: Active
@@ -52,7 +46,9 @@ layer: layer_6
 
 
 
----
+```
+```---
+```
 
 
 

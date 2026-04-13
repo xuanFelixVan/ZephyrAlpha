@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: DOCUMENT_METADATA_TEMPLATE_ARCHIVED_1
@@ -27,7 +34,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_06
----
+```---
 
 
 
@@ -46,7 +53,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -104,7 +111,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -118,9 +125,9 @@ layer: layer_06
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E
+module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E_4452
 
 version: 1.0.0
 
@@ -132,7 +139,7 @@ last_updated: YYYY-MM-DD
 
 owner: [负责人]
 
----
+```---
 
 ```
 
@@ -144,9 +151,9 @@ owner: [负责人]
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E
+module_id: EXAMPLE_PLACEHOLDER_34E6FBDB1E_4452
 
 version: 1.0.0
 
@@ -172,13 +179,13 @@ compliance_level: 专业标准
 
 parent_document: [父文档路径]
 
----
+```---
 
 ```
 
 
 
----
+```---
 
 
 
@@ -358,7 +365,7 @@ standard_type: 指南
 
 
 
----
+```---
 
 
 
@@ -404,7 +411,7 @@ standard_type: 指南
 
 
 
----
+```---
 
 
 
@@ -444,7 +451,7 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```---
 
 
 
@@ -488,7 +495,7 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```---
 
 
 

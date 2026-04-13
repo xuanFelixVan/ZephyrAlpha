@@ -40,7 +40,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -80,7 +80,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -206,7 +206,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -222,7 +222,7 @@ responsibility:
 
 ```yaml
 
-module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001
+module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001_3236
 
 ```
 
@@ -246,7 +246,7 @@ module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001
 
 # 修复前
 
-module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001
+module_id: LAYER8_HUMAN_AI_INTERFACE_INDEX_001_3236
 
 version: 1.2.0
 
@@ -282,7 +282,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -316,7 +316,7 @@ if file1.name == 'INDEX.md' or file2.name == 'INDEX.md':
 
 
 
----
+```---
 
 
 
@@ -456,7 +456,7 @@ L3: 专业标准层审计
 
 
 
----
+```---
 
 
 
@@ -516,7 +516,7 @@ L3: 专业标准层审计
 
 
 
----
+```---
 
 
 
@@ -558,7 +558,7 @@ L3: 专业标准层审计
 
 
 
----
+```---
 
 
 
@@ -614,7 +614,7 @@ L3: 专业标准层审计
 
 
 
----
+```---
 
 
 

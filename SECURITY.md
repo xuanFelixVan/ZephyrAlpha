@@ -1,5 +1,9 @@
 ---
 module_id: SECURITY
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
 ---
 
 # 安全策略（Security）

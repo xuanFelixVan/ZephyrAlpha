@@ -15,12 +15,12 @@ layer: layer_05
 
 # 04_OPERATIONS — 运营管理文档区（门面）
 
-本目录存放**实施侧运营、审计状态与治理流程**相关文档，体量较大。**条目导航**以 [`INDEX.md`](./INDEX.md) 为准；**审计报告集中区**见 [`audit_state/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)。
+本目录存放**实施侧运营、审计状态与治理流程**相关文档，体量较大。**条目导航**以 [`INDEX.md`](./INDEX.md) 为准；**审计报告集中区**见 [`audit_state/INDEX.md`](../../12_MODULE_DESIGNS/layer_0/INDEX.md)。
 
 ## 推荐阅读顺序
 
 1. [`INDEX.md`](./INDEX.md) — 本目录索引与维护说明  
-2. [`audit_state/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) — `audit_state` 长列表入口  
+2. [`audit_state/INDEX.md`](../../12_MODULE_DESIGNS/layer_0/INDEX.md) — `audit_state` 长列表入口  
 3. `WEEKLY_AUDIT_MECHANISM.md` — 定期（周）审计机制说明  
 4. 索引健全性（零入链 · 前缀扫描 · **最新**）：`../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260415.md`（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS --date 20260415`；**zero_inbound=0**）｜历史 `20260411`  
 5. 目录体量（深度 3 前缀条数）：`../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md`（检索 `docs/05_IMPLEMENTATION/04_OPERATIONS`，快照 **20260414** 为 **407** 条）｜历史 `20260413`  

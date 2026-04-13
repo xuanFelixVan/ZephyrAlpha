@@ -47,7 +47,9 @@ integrated_modules:
 **模块类别**: 支撑性模
 **架构角色**: 模型性能保障组件，确保情感分析模型的持续有效
 
----
+```
+```---
+```
 
 ## 二、详细架构设
 
@@ -254,7 +256,9 @@ class ModelPerformanceManager:
    - 预测分布监控
    - 置信度分布监
 
----
+```
+```---
+```
 
 #### 2.2.2 模型版本管理(ModelVersionManager)
 
@@ -413,7 +417,9 @@ class ModelVersionManager:
         pass
 ```
 
----
+```
+```---
+```
 
 ### 2.3 开源工具集
 
@@ -474,7 +480,9 @@ def log_model_training(
         )
 ```
 
----
+```
+```---
+```
 
 #### Evidently集成
 
@@ -523,7 +531,9 @@ def generate_drift_report(
     return output_path
 ```
 
----
+```
+```---
+```
 
 ## 三、接口定
 
@@ -615,7 +625,9 @@ async def transition_model_stage(
     pass
 ```
 
----
+```
+```---
+```
 
 ## 四、数据模
 
@@ -656,7 +668,9 @@ CREATE TABLE drift_detection_records (
 );
 ```
 
----
+```
+```---
+```
 
 ## 五、实施计
 
@@ -675,7 +689,9 @@ CREATE TABLE drift_detection_records (
 - MLflow配置文件
 - 测试报告
 
----
+```
+```---
+```
 
 ### 5.2  性能监控和漂移检
 
@@ -692,7 +708,9 @@ CREATE TABLE drift_detection_records (
 - Evidently配置文件
 - 测试报告
 
----
+```
+```---
+```
 
 ### 5.3  集成和测
 
@@ -709,7 +727,9 @@ CREATE TABLE drift_detection_records (
 - Grafana仪表
 - 测试报告
 
----
+```
+```---
+```
 
 ## 六、测试策
 
@@ -725,7 +745,9 @@ CREATE TABLE drift_detection_records (
 - pytest
 - unittest.mock
 
----
+```
+```---
+```
 
 ### 6.2 集成测试
 
@@ -738,7 +760,9 @@ CREATE TABLE drift_detection_records (
 - 使用历史情感分析数据
 - 使用模拟漂移数据
 
----
+```
+```---
+```
 
 ## 七、风险管
 
@@ -750,7 +774,9 @@ CREATE TABLE drift_detection_records (
 | 漂移检测误| | | 调整阈值，结合多种检测方|
 | 性能监控开销 | | | 使用采样策略，异步监|
 
----
+```
+```---
+```
 
 ## 八、验收标
 
@@ -774,16 +800,22 @@ CREATE TABLE drift_detection_records (
 - [ ] 所有单元测试通过
 - [ ] 所有集成测试通过
 
----
+```
+```---
+```
 
 ## 九、相关文档
 
 暂无相关文档。
 
----
+```
+```---
+```
 
 **版本**: v1.0 | **更新**: 2026-04-03 | **状*: 活跃
----
+```
+```---
+```
 
 ## 1. 文档治理
 
@@ -811,6 +843,8 @@ CREATE TABLE drift_detection_records (
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```
+```---
+```
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Active

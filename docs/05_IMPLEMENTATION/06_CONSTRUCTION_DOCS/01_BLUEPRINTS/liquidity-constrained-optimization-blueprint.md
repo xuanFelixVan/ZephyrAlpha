@@ -1,33 +1,15 @@
 ---
-
-module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001
-
+module_id: LIQUIDITY_CONSTRAINED_OPTIMIZATION_001_9110
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 流动性约束优化
-
-  - 流动性建模
-
-  - 流动性约束成本控制
-
-  - 流动性风险
-
+- 流动性约束优化
 layer: layer_06
-
 ---
 
 

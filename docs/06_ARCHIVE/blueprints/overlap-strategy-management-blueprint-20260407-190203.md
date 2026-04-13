@@ -1,6 +1,15 @@
+---
+module_id: AUTO_92653
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: STRATEGY_MANAGEMENT_001
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 交易策略框架设计与实施指导与实施指导
 
 layer: layer_06
----
+```
+```---
+```
 
 
 ## 💻 实现代码示例

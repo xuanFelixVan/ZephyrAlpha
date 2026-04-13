@@ -13,7 +13,7 @@ generated_date: '20260413'
 
 - **深度 2**：适合一级排期（与任务清单 §1 节选表同量级）。
 - **深度 3～6**：把大目录（如 `docs/09_AUDIT`、`docs/05_IMPLEMENTATION`）拆成**可分批啃完的子队列**，支撑「按最深前缀尽治」而不是只扫表面。
-- 治理时按前缀从大到小或按业务优先级排序；每一前缀「清空」的标准见 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§7**。
+- 治理时按前缀从大到小或按业务优先级排序；每一前缀「清空」的标准见 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§7**。
 - 未跟踪路径仅在使用 `--include-untracked` 时出现；适合治理「工作区里已存在、尚未 add」的文档。
 
 ## `docs/` 下深度 3 前缀 Top 50（按路径条数降序）

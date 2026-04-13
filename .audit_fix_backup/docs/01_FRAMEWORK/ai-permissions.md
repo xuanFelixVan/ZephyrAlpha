@@ -1,6 +1,6 @@
 ---
 
-module_id: AI_PERMISSIONS_001
+module_id: AI_PERMISSIONS_001_0809
 
 version: 1.0.0
 
@@ -20,7 +20,7 @@ responsibility:
 
 layer: layer_04
 
-module_id: AI_PERMISSIONS_001
+module_id: AI_PERMISSIONS_001_0809
 
 version: 5.3.1
 

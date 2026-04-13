@@ -3,7 +3,7 @@ module_id: LAYER11_RESPONSIBILITY_BOUNDARY_MATRIX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-06
-last_updated: '2026-04-12'
+last_updated: '2026-04-13'
 owner: 首席架构师
 standard_type: 专业量化机构职责边界定义
 applicable_scope: Layer 11 - 战略决策层
@@ -16,8 +16,11 @@ missing_count: 11
 last_synced_date: '2026-04-13 03:09:34'
 synced_from: complete-blueprint-overview.md
 responsibility:
-  - Layer 11 战略决策层模块文档管理与维护
+- Layer 11 战略决策层模块文档管理与维护
 layer: layer_11
+authority_source_synced: true
+authority_source: docs\11_STRATEGIC_DECISION\complete-blueprint-overview.md
+synced_at: '2026-04-13T13:47:31.702840'
 ---
 
 # Layer 11 职责边界矩阵
@@ -31,7 +34,9 @@ layer: layer_11
 > **创建日期**: 2026-04-06
 > **目标**: 明确各模块职责边界，消除职责重叠
 
----
+```
+```---
+```
 
 ## 📋 文档职责说明
 
@@ -59,7 +64,9 @@ layer: layer_11
 - ❌ 技术选型决策
 - ❌ 实施路径规划
 
----
+```
+```---
+```
 
 ## 一、职责边界矩阵
 
@@ -108,7 +115,9 @@ layer: layer_11
 | **投资限制管理** | 限制管理 | ✅ 投资限制定义<br>✅ 限制监控<br>✅ 限制违规预警<br>✅ 限制报告生成 | ❌ 资产配置决策<br>❌ 风险预算分配<br>❌ 具体交易执行 | Layer 10<br>IPS管理 | Layer 6<br>Layer 7 |
 | **决策审计** | 审计追踪 | ✅ 决策记录<br>✅ 决策审计<br>✅ 决策回溯<br>✅ 审计报告生成 | ❌ 资产配置决策<br>❌ 风险预算分配<br>❌ 策略选择 | Layer 6<br>Layer 7 | Layer 10<br>Layer 8 |
 
----
+```
+```---
+```
 
 ## 二、职责重叠处理规则
 
@@ -189,7 +198,9 @@ layer: layer_11
 └── 接口：RiskBudgetInterface
 ```
 
----
+```
+```---
+```
 
 ## 三、模块间接口规范
 
@@ -211,7 +222,9 @@ layer: layer_11
 | **TCAInterface** | 交易成本分析 | 组合优化层<br>报告层 | 成本分析数据 | 日度/周度 |
 | **LiquidityInterface** | 流动性管理 | 组合优化层<br>风险管理层 | 流动性风险数据 | 日度/实时 |
 
----
+```
+```---
+```
 
 ## 四、职责边界检查清单
 
@@ -236,7 +249,9 @@ layer: layer_11
 - [ ] 数据源头明确
 - [ ] 数据终点明确
 
----
+```
+```---
+```
 
 ## 五、职责边界维护
 
@@ -261,11 +276,15 @@ layer: layer_11
 4. 更新相关文档
 5. 通知相关模块负责人
 
----
+```
+```---
+```
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 **核心价值**:
 

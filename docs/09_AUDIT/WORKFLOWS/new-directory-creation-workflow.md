@@ -1,5 +1,5 @@
 ---
-module_id: NEW_DIRECTORY_CREATION_WORKFLOW
+module_id: NEW_DIRECTORY_CREATION_WORKFLOW_0908
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -17,13 +17,17 @@ layer: layer_09
 **责任层级**: Layer 09 - 审计与质量  
 **适用对象**: 所有需要创建新文档目录的人员/AI Agent
 
----
+```
+```---
+```
 
 ## 一、概述
 
 本文档定义在 `docs/` 目录下创建新文件夹的标准操作程序(SOP)，确保目录结构符合文档治理标准，避免目录映射缺失、Layer归属错误等问题。
 
----
+```
+```---
+```
 
 ## 二、创建前检查清单
 
@@ -49,7 +53,9 @@ layer: layer_09
 - 中文命名
 - 空格或特殊字符
 
----
+```
+```---
+```
 
 ## 三、标准创建流程
 
@@ -76,13 +82,13 @@ mkdir -p docs/02_FACTOR_LIBRARY/NEW_MODULE_NAME
 每个新目录**必须**包含 `INDEX.md` 文件：
 
 ```markdown
----
+```---
 layer: layer_02
 version: 1.0.0
 status: Active
 responsibility:
   - NEW_MODULE_NAME目录索引管理
----
+```---
 
 # NEW_MODULE_NAME 目录索引
 
@@ -131,7 +137,9 @@ python scripts/validate_new_directory.py docs/02_FACTOR_LIBRARY/NEW_MODULE_NAME
 python scripts/run_comprehensive_audit.py --check C-06,C-13,C-14
 ```
 
----
+```
+```---
+```
 
 ## 四、审批流程
 
@@ -152,7 +160,9 @@ python scripts/run_comprehensive_audit.py --check C-06,C-13,C-14
 3. 更新 `document-repository-layout-standard.md`
 4. 获得Layer 11书面批准
 
----
+```
+```---
+```
 
 ## 五、自动化脚本
 
@@ -184,7 +194,9 @@ python scripts/validate_directory.py docs/XX_DIRECTORY_NAME
 # ⚠️  SITEMAP同步：缺失（请更新SITEMAP.md）
 ```
 
----
+```
+```---
+```
 
 ## 六、常见问题
 
@@ -223,7 +235,9 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/01_TIME_SERIES/01_DAILY/01_ADJUSTED/INDEX.
 2. 在其他Layer创建 **符号链接文档** 或 **引用文档**
 3. 禁止在不同Layer创建同名目录
 
----
+```
+```---
+```
 
 ## 七、检查清单摘要
 
@@ -236,7 +250,9 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/01_TIME_SERIES/01_DAILY/01_ADJUSTED/INDEX.
 - [ ] 通过了合规性验证
 - [ ] （如需要）获得了适当层级的审批
 
----
+```
+```---
+```
 
 ## 八、相关文档
 
@@ -246,7 +262,9 @@ docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/01_TIME_SERIES/01_DAILY/01_ADJUSTED/INDEX.
 | [`ARCHITECTURE.md`](../../01_FRAMEWORK/ARCHITECTURE.md) | Layer架构定义 |
 | [`document-defect-prevention-standard.md`](../STANDARDS/document-defect-prevention-standard.md) | 缺陷预防标准 (D-06) |
 
----
+```
+```---
+```
 
 **最后更新**: 2026-04-13  
 **维护责任人**: 文档治理委员会

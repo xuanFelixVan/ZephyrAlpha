@@ -67,7 +67,7 @@ responsibility:
 > **开源项目**: pyfolio + empyrical + alphalens
 > **目标**: 构建专业级策略绩效归因系统，理解收益来源，优化策略表现
 
----
+```---
 
 ## 📋 执行摘要
 
@@ -90,7 +90,7 @@ responsibility:
 
 **综合价值评分**: ⭐⭐⭐⭐⭐ (5/5) - **强烈推荐实施**
 
----
+```---
 
 ## 一、架构设计
 
@@ -256,7 +256,7 @@ responsibility:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 二、核心组件详细设计
 
@@ -359,7 +359,7 @@ class BrinsonAttribution:
         return interaction_effect
 ```
 
----
+```---
 
 ### 2.2 因子绩效分析层
 
@@ -433,7 +433,7 @@ class FactorICAnalyzer:
         }
 ```
 
----
+```---
 
 ## 三、开源项目集成方案
 
@@ -554,7 +554,7 @@ class AlphalensAttribution:
         }
 ```
 
----
+```---
 
 ## 四、个人使用适配方案
 
@@ -614,7 +614,7 @@ class AIAttributionAssistant:
         return self.llm(prompt.format(attribution_data=attribution_data))
 ```
 
----
+```---
 
 ## 五、实施计划
 
@@ -637,7 +637,7 @@ class AIAttributionAssistant:
 | **性能测试** | 系统响应时间 | locust |
 | **AI测试** | AI分析准确性 | 人工评估 |
 
----
+```---
 
 ## 六、监控与告警
 
@@ -693,7 +693,7 @@ class AttributionAlertSystem:
         return alerts
 ```
 
----
+```---
 
 ## 七、总结
 
@@ -706,14 +706,14 @@ class AttributionAlertSystem:
 
 **推荐立即实施**，使用pyfolio + empyrical + alphalens开源项目，预计3天完成。
 
----
+```---
 
 **蓝图版本**: v1.0.0
 **蓝图创建时间**: 2026-04-06
 **蓝图作者**: 首席架构师
 **蓝图状态**: 最终版
 **下一步行动**: 实施策略绩效归因系统
----
+```---
 
 ## 1. 文档治理
 
@@ -741,6 +741,6 @@ class AttributionAlertSystem:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

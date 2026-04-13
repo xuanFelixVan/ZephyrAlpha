@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_REPORTS_AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_20260406
+module_id: 09_AUDIT_REPORTS_AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_20260406_2953
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -25,7 +25,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -191,7 +193,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -235,7 +239,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -299,7 +305,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -337,7 +345,9 @@ compliance_level: 专业标准
 
 1. 添加标准YAML头部
 
+```
 2. 设置module_id: INDEX_AI_WORKFLOW_001
+```
 
 
 
@@ -375,7 +385,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -413,7 +425,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -453,7 +467,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

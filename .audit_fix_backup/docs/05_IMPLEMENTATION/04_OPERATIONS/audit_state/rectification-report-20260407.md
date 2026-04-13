@@ -45,7 +45,7 @@ compliance_level: 顶级专业标准
 
 
 
----
+```---
 
 
 
@@ -79,25 +79,23 @@ compliance_level: 顶级专业标准
 
 ```yaml
 
----
+```---
 
-module_id: LAYER_014
 
 version: 1.0.0
 
 ...
 
----
+```---
 
 ﻿---
 
-module_id: STRATEGIC_DECISION_BP_001
 
 version: 3.0.0
 
 ...
 
----
+```---
 
 ```
 
@@ -107,15 +105,14 @@ version: 3.0.0
 
 ```yaml
 
----
+```---
 
-module_id: STRATEGIC_DECISION_BP_001
 
 version: 3.0.0
 
 ...
 
----
+```---
 
 ```
 
@@ -237,7 +234,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 
@@ -299,7 +296,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 
@@ -353,7 +350,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 
@@ -401,7 +398,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 
@@ -453,7 +450,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 
@@ -475,7 +472,7 @@ version: 3.0.0
 
 
 
----
+```---
 
 
 

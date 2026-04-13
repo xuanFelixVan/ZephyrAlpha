@@ -44,7 +44,7 @@ responsibility: "处理L0_QMT相关业务"
 
 
 
----
+```---
 
 
 
@@ -630,7 +630,7 @@ def get_data_with_retry(stock_code, max_retries=3):
 
 
 
----
+```---
 
 
 
@@ -698,7 +698,7 @@ estimated_dev_hours: 16
 
 
 
----
+```---
 
 
 
@@ -828,7 +828,7 @@ def get_historical_bars(
 
 
 
----
+```---
 
 
 
@@ -1150,7 +1150,7 @@ qmt:
 
 
 
----
+```---
 
 
 
@@ -3200,7 +3200,7 @@ spec:
 
 
 
----
+```---
 
 apiVersion: v1
 
@@ -3230,7 +3230,7 @@ spec:
 
 
 
----
+```---
 
 apiVersion: v1
 
@@ -3252,7 +3252,7 @@ stringData:
 
 
 
----
+```---
 
 apiVersion: v1
 
@@ -3760,7 +3760,7 @@ log_info "回滚完成！"
 
 
 
----
+```---
 
 
 
@@ -3830,7 +3830,7 @@ redis>=4.0.0  # 可选，用于分布式缓存
 
 
 
----
+```---
 
 
 
@@ -4770,7 +4770,7 @@ python scripts/generate_stress_report.py
 
 
 
----
+```---
 
 
 
@@ -4924,7 +4924,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -4976,7 +4976,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -5022,7 +5022,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -5052,7 +5052,7 @@ alerts:
 
 
 
----
+```---
 
 
 

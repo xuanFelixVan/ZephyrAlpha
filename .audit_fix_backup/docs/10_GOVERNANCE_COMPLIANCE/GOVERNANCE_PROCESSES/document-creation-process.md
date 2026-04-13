@@ -78,9 +78,8 @@ standard_type: 专业量化机构文档
 
 ```yaml
 
----
+```---
 
-module_id: [MODULE_NAME]_001
 
 version: 1.0.0
 
@@ -100,7 +99,7 @@ layer: Layer X ([Layer名称])
 
 standard_type: 专业量化机构文档
 
----
+```---
 
 ```
 
@@ -224,7 +223,7 @@ python scripts/weekly_layer_check.py
 
 
 
----
+```---
 
 
 

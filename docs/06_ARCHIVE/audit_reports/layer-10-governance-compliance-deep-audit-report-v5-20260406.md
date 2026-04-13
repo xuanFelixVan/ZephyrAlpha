@@ -1,35 +1,19 @@
 ---
-
-module_id: LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V5_20260406_001
-
+module_id: LAYER_10_GOVERNANCE_COMPLIANCE_DEEP_AUDIT_REPORT_V5_20260406_001_5990
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-06
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级审计报告
-
 applicable_scope: Layer 10治理与合规层文档治理审计
-
 compliance_level: 顶级专业标准
-
 audit_type: 第五次深度审计
-
 audit_date: 2026-04-06
-
 audit_scope: Layer 10治理与合规层所有文档
-
 responsibility:
-
 - 数据质量 (Layer 10)
-
 ---
 
 # Layer 10治理与合规层第五次深度审计报告
@@ -56,7 +40,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +72,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +152,9 @@ REGULATORY_REPORTING_BLUEPRINT_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +290,9 @@ REGULATORY_REPORTING_BLUEPRINT_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -356,7 +348,9 @@ REGULATORY_REPORTING_BLUEPRINT_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -396,7 +390,9 @@ REGULATORY_REPORTING_BLUEPRINT_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -432,7 +428,9 @@ REGULATORY_REPORTING_BLUEPRINT_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -524,7 +522,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +568,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 
 
@@ -628,7 +630,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 
 

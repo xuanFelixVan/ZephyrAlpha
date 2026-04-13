@@ -1,312 +1,90 @@
 ---
-module_id: 03_TRADING_TACTICS_INDEX_20260407124139
-version: 1.0.1
+module_id: LAYER_03_INDEX_AUTO
+version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: '2026-04-11'
-owner: 个人开发者
-standard_type: 专业量化机构文档
-responsibility:
-- 目录导航与文档索引管理与优化维护
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_03
+compliance_level: 强制标准
+priority: P0-CRITICAL
 layer: layer_03
+responsibility:
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
-module_id: 03_TRADING_TACTICS_INDEX_TACTICS_001
-version: 5.3.0
-status: Active
-created_date: 2026-04-01
-last_updated: 2026-04-04
-owner: щжЦх╕нцЦЗцбгцЮ╢цЮДх╕?standard_type: ф╕Уф╕ЪщЗПхМЦцЬ║цЮДцЦЗцбг
-applicable_scope: хЕич│╗ч╗?compliance_level: ф╕Уф╕ЪцаЗхЗЖ
-parent_document: ../INDEX.md
-implementation_status: ш┐ЫшбМф╕?---
+# LAYER_03 自动索引
 
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 56
 
-## 上级与接力
+## 文档列表
 
-- [docs 根索引](../INDEX.md)
-- 全仓库文件治理任务清单 §7
-- 治理工具总索引
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+- [03-security-blueprint](./03-security-blueprint.md)
+- [36-decision-framework-archived](./99_ARCHIVE/36-decision-framework-archived.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [ai-integration](./99_ARCHIVE/ai-integration.md)
+- [ai-supervision-integration-plan](./ai-supervision-integration-plan.md)
+- [api-contract](./api-contract.md)
+- [backtest-blueprint](./backtest-blueprint.md)
+- [batch-evaluation-blueprint](./batch-evaluation-blueprint.md)
+- [capital-allocation-blueprint](./capital-allocation-blueprint.md)
+- [interface-standard](./99_ARCHIVE/interface-standard.md)
+- [layer-11-tool-encapsulation-blueprint](./layer-11-tool-encapsulation-blueprint.md)
+- [leverage-management-blueprint](./leverage-management-blueprint.md)
+- [lifecycle](./lifecycle.md)
+- [manager](./99_ARCHIVE/manager.md)
+- [market-cycles](./market-cycles.md)
+- [meta-learning-blueprint](./meta-learning-blueprint.md)
+- [model-rollback-blueprint](./model-rollback-blueprint.md)
+- [multi-strategy-coordination-blueprint](./multi-strategy-coordination-blueprint.md)
+- [multimodal-fusion-blueprint](./multimodal-fusion-blueprint.md)
+- [neural-network-integration-plan](./neural-network-integration-plan.md)
+- [openclaw-l2-docs-03-trading-tactics-01-strategy-framework-086](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-01-strategy-framework-086.md)
+- [openclaw-l2-docs-03-trading-tactics-03-advanced-tactics-087](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-03-advanced-tactics-087.md)
+- [openclaw-l2-docs-03-trading-tactics-04-youzi-strategies-088](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-04-youzi-strategies-088.md)
+- [openclaw-l2-docs-03-trading-tactics-04-youzi-strategies-other-masters-089](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-04-youzi-strategies-other-masters-089.md)
+- [openclaw-l2-docs-03-trading-tactics-08-decision-framework-090](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-08-decision-framework-090.md)
+- [openclaw-l2-docs-03-trading-tactics-085](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-085.md)
+- [openclaw-l2-docs-03-trading-tactics-09-risk-rules-091](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-09-risk-rules-091.md)
+- [openclaw-l2-docs-03-trading-tactics-99-archive-092](../09_AUDIT/REPORTS/openclaw-l2-docs-03-trading-tactics-99-archive-092.md)
+- [optimization-report](./optimization-report.md)
+- [overview](./overview.md)
+- [parameter-management](./parameter-management.md)
+- [refactor-complete](./refactor-complete.md)
+- [retail-strategies-c](./04_YOUZI_STRATEGIES/other-masters/retail-strategies-c.md)
+- [retail-strategies-h](./retail-strategies-h.md)
+- [retail-strategies-i](./retail-strategies-i.md)
+- [retail-strategies-j](./retail-strategies-j.md)
+- [retail-strategies-k](./04_YOUZI_STRATEGIES/other-masters/retail-strategies-k.md)
+- [retail-strategies-l](./04_YOUZI_STRATEGIES/other-masters/retail-strategies-l.md)
+- [risk-report](./risk-report.md)
+- [sentiment-analysis-long-term-technical-specification](./sentiment-analysis-long-term-technical-specification.md)
+- [sentiment-analysis-medium-term-improvement-blueprint](./sentiment-analysis-medium-term-improvement-blueprint.md)
+- [sentiment-analysis-medium-term-technical-specification](./sentiment-analysis-medium-term-technical-specification.md)
+- [strategy-ai-modules-analysis](./01_STRATEGY_FRAMEWORK/strategy-ai-modules-analysis.md)
+- [strategy-engine-blueprint-legacy-03-trading-tactics](./strategy-engine-blueprint-legacy-03-trading-tactics.md)
+- [strategy-engine-core-blueprint](./strategy-engine-core-blueprint.md)
+- [strategy-engine-tactics-entry](./01_STRATEGY_FRAMEWORK/strategy-engine-tactics-entry.md)
+- [strategy-evaluation-criteria](./strategy-evaluation-criteria.md)
+- [strategy-lifecycle-ai-blueprint](./strategy-lifecycle-ai-blueprint.md)
+- [strategy-selection-blueprint-legacy-03-trading-tactics](./strategy-selection-blueprint-legacy-03-trading-tactics.md)
+- [strategy-selection-framework](./strategy-selection-framework.md)
+- [strategy-selection-tactics-entry](./01_STRATEGY_FRAMEWORK/strategy-selection-tactics-entry.md)
+- [strategy-spec-s001](./strategy-spec-s001.md)
+- [strategy-templates](./01_STRATEGY_FRAMEWORK/strategy-templates.md)
 
-### 子域总索引（P5 §7 入链补齐）
-
-| 子目录 | 入口 |
-|--------|------|
-| 01_STRATEGY_FRAMEWORK | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 03_ADVANCED_TACTICS | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 04_YOUZI_STRATEGIES | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 08_DECISION_FRAMEWORK | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) · [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 09_RISK_RULES | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) · [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 99_ARCHIVE | [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-
-### 索引健全性与目录体量（P5 §7）
-
-- **零入链扫描（本批）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260511.md（`scan_index_health.py --prefix docs/03_TRADING_TACTICS --date 20260511`；首轮 **8** 处子域 `INDEX`/`README` 零入链，已由上表补链后复跑 **zero_inbound=0**）
-- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/03_TRADING_TACTICS` **56** 条路径）
 
 ---
 
-
-# ф║дцШУцИШцЬпчЫох╜Хч┤вх╝Х
-> **核心职责**: 目录导航和文档索引
-> **职责边界**: 
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-> - ❌ 本文档不负责：其他模块内容
-
-
-> ц╕ЕщгОщЗПхМЦч│╗ч╗Я v5.3 цИШцЬпх▒ВцЦЗцбгхп╝шИ?>
-> **цЦЗцбгшБМш┤гшп┤цШО**:
-> - **INDEX.md**: х┐лщАЯхЕехПгя╝И5хИЖщТЯхп╝шИкя╝Йя╝МшБЪчДжца╕х┐ГцЦЗцбгхТМх╕╕чФиш╖пх╛?> - **SITEMAP.md**: хоМцХ┤хЬ░хЫ╛я╝Иц╖▒х║жхПВшАГя╝Йя╝МцПРф╛ЫхЕищЭвчЫох╜Хч╗УцЮДхТМцМЙчФищАФш╖пч║?>
-> тн?хоМцХ┤цЦЗцбгхЬ░хЫ╛шп╖цЯечЬ?[SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
->
-> **х┐лщАЯхЕехП?*: тн?цОишНРщШЕшп╗ `BLUEPRINT.md` ф║ЖшзгхоМцХ┤ч│╗ч╗ЯшУЭхЫ╛
-
-
-## ЁЯОп х┐лщАЯхЕехП?
-### цИСцШпцЦ░цЙЛ
-тЖ?00_OVERVIEW/README.md - ч│╗ч╗ЯцА╗шзИя╝?хИЖщТЯя╝?
-### цИСшжБчРЖшзгцЮ╢цЮД
-тЖ?`BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИцОишНРя╝Й
-тЖ?[01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11ч╗Яф╕АцЮ╢цЮД
-
-### цИСшжБх╝АхПСчнЦчХ?тЖ?Strategy_Spec_S001.md - чнЦчХецибцЭ┐я╝?0хИЖщТЯя╝?
-### цИСшжБцЯехЫахн?тЖ?02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРч┤вх╝Хя╝?0хИЖщТЯя╝?
-### цИСшжБщГич╜▓ч│╗ч╗Я
-тЖ? - щГич╜▓цМЗхНЧя╝?0хИЖщТЯя╝?
-### цИСщБЗхИ░щЧощв?тЖ?FAQ.md - х╕╕шзБщЧощвШя╝?хИЖщТЯя╝?
-### цИСшжБхобшобч│╗ч╗Я
-тЖ?09_AUDIT/INDEX_AUDIT.md - хобшобщЧицИ╖я╝?хИЖщТЯя╝?
-
----
-
-## 🧭 严格孤儿挂载（波次 1：入口补齐）
-
-> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
-> **动作**：只做“索引入口挂载”，不改正文内容。
-
-- 策略 AI 模块分析
-- 涨停板分析（高级战术）
-- 优化报告
-
-## 🧭 严格孤儿挂载（波次：A 类继续清理）
-
-- REFACTOR_COMPLETE
-
-## 🧭 严格孤儿挂载（波次 3：战术层主干可发现性）
-
-> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_LIST_20260408.txt` 中 `docs/03_TRADING_TACTICS/` 路径仍缺自顶向下入口的条目。  
-> **动作**：仅在主索引增加链接；子目录已有索引的，此处再挂一层以便从 `03_TRADING_TACTICS/INDEX.md` 直达。
-
-### 策略框架
-
-- 策略模板库
-
-### 高级战术
-
-- 市场周期
-- 波浪交易
-
-### 游资策略（other-masters 补充篇）
-
-- retail_strategies_c · d · e · f · g · h · i · j · k · l
-
-### 99_ARCHIVE（历史战术归档）
-
-- AI 集成（归档）
-- 接口标准（归档）
-- [管理器（归档）](./99_ARCHIVE/manager.md)
-- 模式识别（归档）
-- 技术指标（归档）
-
-## тн?ца╕х┐ГцЦЗцбгя╝Их┐Ешп╗я╝Й
-
-| цЦЗцбг | чФищА?| щШЕшп╗цЧ╢щЧ┤ |
-|------|------|----------|
-| `BLUEPRINT.md` | тн?ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| 30хИЖщТЯ |
-| [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД | 30хИЖщТЯ |
-| | AIцЭГщЩРц╕ЕхНХ | 10хИЖщТЯ |
-| API_Contract.md | цибхЭЧцОехПгхеСч║ж | 15хИЖщТЯ |
-| Strategy_Spec_S001.md | чнЦчХещА╗ш╛СчЩ╜чЪоф╣?| 30хИЖщТЯ |
-| BLUEPRINT_CHECKLIST.md | шУЭхЫ╛хоМцХ┤цАзцгАцЯец╕ЕхН?| 20хИЖщТЯ |
-
-> **шп┤цШО**: 7ф╕кшУЭхЫ╛цЦЗцбгх╖▓хРИх╣╢ф╕?я╝МхОЯхзЛцЦЗцбгх╜Тцбгф║О 
-
-
-## ЁЯдЦ AIшЗкф╕╗щЗПхМЦч│╗ч╗Яя╝Ич╗ИцЮБчЫоцаЗя╝Й
-
-> ца╕х┐Г: AIхИдцЦнх╕ВхЬ║ тЖ?AIщАЙцЛйчнЦчХе тЖ?AIш░ГцХ┤щгОцОз тЖ?ф║║ф╗ЕцОИцЭГ
-
-### х╝АхПСшзДхИ?
-| цЦЗцбг | чФищА?| ч┤вх╝Х |
-|------|------|------|
-| `BLUEPRINT.md` | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛ | - |
-| 06_ARCHIVE/main/BLUEPRINTS/06_DEVELOPMENT_ROADMAP.md | щШ╢цо╡цАзх╝АхПСш╖пч║┐хЫ╛ (Phase 0-6) | DEV.001 |
-| 06_ARCHIVE/main/BLUEPRINTS/05_AI_RESEARCH_FRAMEWORK.md | AIчаФчй╢Agentца╕х┐ГцЮ╢цЮД | AI.AGENT.001 |
-
-
-
-
-## ЁЯУБ цЦЗцбгхЬ░хЫ╛
-
-### 00_OVERVIEW - ч│╗ч╗ЯцА╗шзИ
-
-| цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | ч│╗ч╗ЯцА╗шзИ |
-| DATA_FLOW.md | цХ░цНоц╡БхЫ╛ |
-| [CHANGELOG.md](06_ARCHIVE/unclassified/CHANGELOG.md) | чЙИцЬмхОЖхП▓я╝Их╖▓хРИх╣╢я╝?|
-
-### 01_FRAMEWORK - цбЖцЮ╢хоЪф╣Й
-
-| цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | цбЖцЮ╢цЦЗцбгч┤вх╝Х |
-| [ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) | Layer 0-11ч╗Яф╕АцЮ╢цЮД |
-| MODULE_DESIGN_TEMPLATE.md | цибхЭЧшо╛шобцибцЭ┐ |
-| MODULE_DESIGN_PLAN.md | цибхЭЧшо╛шобшобхИТ |
-| MARKET_REGIME.md | х╕ВхЬ║чК╢цАБшпЖхИ?|
-| | ф║║цЬ║хНПф╜Ьц╡БчиЛ |
-| TECH_STACK.md | цКАцЬпцаИщАЙцЛй |
-
-### 02_FACTOR_LIBRARY - хЫахнРх║?(v5.0цЮ╢цЮД)
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | хЫахнРх║УцА╗шзИ |
-|  | хЫахнРхИЖч▒╗хп╝шИк |
-|  | хЫахнРчаФчй╢цЦ╣ц│Хшо?|
-| 02_ALPHA_FACTORS_INDEX.md | 87ф╕кAlphaхЫахнРч┤вх╝Х |
-|  | 46ф╕кщгОщЩйхЫахн?|
-|  | цХ░цНоц║Ршп┤цШ?|
-|  | хЫЮц╡ЛцКехСК |
-|  | хЫахнРц│ихЖМ |
-|  | чЫСцОзф╕нх┐Г |
-
-### 03_TRADING_TACTICS - ф║дцШУчнЦчХе
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | чнЦчХец▒ацА╗шзИ |
-| [INDEX.md](INDEX.md) | чнЦчХеч┤вх╝Х |
-|  | чнЦчХецбЖцЮ╢ |
-| STRATEGY_ENGINE_TACTICS_ENTRY.md | 策略引擎（stub → 图纸柜） |
-|  | щлШч║зцИШцЬп |
-|  | ц╕╕ш╡ДчнЦчХе |
-
-### 04_EXECUTION - цЙзшбМх╝ХцУО
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | цЙзшбМцА╗шзИ |
-|  | ф║Лф╗╢щй▒хКих╝ХцУО |
-|  | ф║дцШУцЙзшбМ |
-|  | чЫСцОзцибхЭЧ |
-
-### 05_IMPLEMENTATION - хоЮцЦ╜цМЗхНЧ
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | хоЮцЦ╜цМЗхНЧцА╗шзИ |
-|  | х┐лщАЯх╝АхзЛя╝И5хИЖщТЯя╝?|
-|  | х╝АхПСшзДшМ?|
-|  | щГич╜▓цМЗхНЧ |
-|  | ш┐Рч╗┤цЙЛхЖМ |
-
-### 06_ARCHIVE - х╜Тцбг
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | х╜Тцбгшп┤цШО |
-|  | v4.0х╝АхПСцЦЗцбгя╝Ич▓╛чоАхР?ф╕кя╝Й |
-|  | ш┐Зх║жх╖ечиЛхМЦцЦЗцб?|
-
-### 07_RESEARCH - AIчаФчй╢
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | чаФчй╢цА╗шзИ |
-|  | чаФчй╢чОпхвГ |
-|  | цОвч┤вцАзхИЖцЮ?|
-|  | цибх╝ПшпЖхИл |
-|  | хоЮщкМш┐╜ш╕к |
-
-### 09_AUDIT - ч│╗ч╗Яц▓╗чРЖхобшоб
-
-| чЫох╜Х/цЦЗцбг | шп┤цШО |
-|------|------|
-| README.md | хобшобф╜Уч│╗цА╗шзИ |
-| INDEX_AUDIT.md | хобшобщЧицИ╖щжЦщб╡ |
-|  | хобшобцаЗхЗЖ |
-|  | хобшобчиЛх║П |
-
-
-## ЁЯФН цМЙчФищАФцЯецЙ?
-### чнЦчХех╝АхПСшА?1. Strategy_Spec_S001.md - чнЦчХецибцЭ┐
-2. 02_FACTOR_LIBRARY/02_ALPHA_FACTORS_INDEX.md - хЫахнРх║?3. [03_TRADING_TACTICS/](./) - чнЦчХехПВшА?4.  - х╝АхПСшзДшМ?
-### ч│╗ч╗ЯцЮДх╗║
-1. `BLUEPRINT.md` - ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛
-2. [01_FRAMEWORK/ARCHITECTURE.md](../01_FRAMEWORK/ARCHITECTURE.md) - ч╗Яф╕АцЮ╢цЮД
-3.  - х┐лщАЯх╝Ахз?
-### ш┐Рч╗┤
-1.  - щГич╜▓цМЗхНЧ
-2.  - ш┐Рч╗┤цЙЛхЖМ
-3. FAQ.md - х╕╕шзБщЧощвШ
-
-### AIчаФчй╢
-1. `BLUEPRINT.md` - AIчаФчй╢цбЖцЮ╢я╝ИшзБчммхЕнчлая╝Й
-2.  - хоЮщкМш┐╜ш╕к
-3. KNOWLEDGE_MANAGEMENT.md - чЯешпЖчобчРЖ
-
-### ч│╗ч╗ЯхобшобхС?1. 09_AUDIT/INDEX_AUDIT.md - хобшобщЧицИ╖щжЦщб╡
-2. 09_AUDIT/STANDARDS/AUDIT_STANDARDS.md - хобшобцаЗхЗЖ
-3. 09_AUDIT/PROCEDURES/AI_AUDIT_GUIDELINES.md - AIхобшобцМЗхНЧ
-
-
-## ЁЯУК цЦЗцбгч╗Яшоб
-
-- **цА╗цЦЗцбгцХ░**: ~80+я╝Ич▓╛чоАхРОя╝Й
-- **ца╕х┐ГцЦЗцбг**: 5ф╕кя╝Их┐Ешп╗я╝?- **ф╕Ач║зчЫох╜?*: 8ф╕?- **хЫахнРцХ?*: 133ф╕кя╝И87 Alpha + 46 Riskя╝?- **чнЦчХецХ?*: 120ф╕кя╝ИS001-S120я╝?
-
-## ЁЯУЛ хЕ╢ф╗ЦщЗНшжБцЦЗцбг
-
-| цЦЗцбг | шп┤цШО | чФищА?|
-|------|------|------|
-| `BLUEPRINT.md` | ц╕ЕщгОщЗПхМЦч│╗ч╗ЯшУЭхЫ╛я╝ИхРИх╣╢чЙИя╝?| хоМцХ┤шУЭхЫ╛хПВшА?|
-| [CHANGELOG.md](06_ARCHIVE/unclassified/CHANGELOG.md) | чЙИцЬмхПШцЫ┤цЧех┐Ч | чЙИцЬмцОзхИ╢хПВшА?|
-| [VERSIONING.md](../05_IMPLEMENTATION/VERSIONING.md) | чЙИцЬмчобчРЖшзДшМГ | чЙИцЬмцОзхИ╢хПВшА?|
-| CODE_EXAMPLES.md | ф╗гчаБчд║ф╛Л | х╝АхПСхПВшА?|
-| HANDOVER.md | ф║дцОецЦЗцбг | щб╣чЫоф║дцОехПВшА?|
-| EXPERIMENT_TRACKING.md | хоЮщкМш┐╜ш╕к | AIчаФчй╢хПВшА?|
-| | цЦЗцбгхобцЯецКехСК | цЦЗцбгц▓╗чРЖхПВшА?|
-
-### хЫахнРх║УшбехЕЕцЦЗцб?
-| цЦЗцбг | шп┤цШО |
-|------|------|
-| 02_FACTOR_LIBRARY/99_AUDIT_REPORT.md | хЫахнРх║УхобшобцКехС?|
-| `02_FACTOR_LIBRARY/OPTIMIZATION_SUMMARY.md` | хЫахнРф╝ШхМЦцА╗ч╗У |
-
-### ф║дцШУчнЦчХешбехЕЕцЦЗцбг
-
-| цЦЗцбг | шп┤цШО |
-|------|------|
-| 03_TRADING_TACTICS/OPTIMIZATION_REPORT.md | чнЦчХеф╝ШхМЦцКехСК |
-| 03_TRADING_TACTICS/REFACTOR_COMPLETE.md | щЗНцЮДхоМцИРцКехСК |
-
-
-## ЁЯУЦ хоМцХ┤хЬ░хЫ╛
-
-хжВщЬАхоМцХ┤цЦЗцбгч╗УцЮДя╝Мшп╖цЯечЬЛ [SITEMAP.md](../02_FACTOR_LIBRARY/SITEMAP.md)
-
-
-**цЬАхРОцЫ┤цЦ?*: 2026-03-31
-**ч╗┤цКдшА?*: ц╕ЕщгОщЗПхМЦч│╗ч╗Я
-**чЙИцЬм**: v5.3 ф╕кф║║х╝АхПСч▓╛чоАчЙ?
-
-- AI监督集成方案 - 专业机构级设? - 系统文档
-
-- 36ﻝﺁﻟﮒﺏﻝﮔ۰ﮔﭘﺅﺙﮒﺛﮔ۰۲ﺅﺙ - 系统文档
-
-- ﻝ۴ﻝﭨﻝﺛﻝﭨﻠﮔﮔﺗﮔ۰ (NEURAL_NETWORK_INTEGRATION_PLAN) - 系统文档
-
-- 参数管理 - 系统文档
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.084669
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

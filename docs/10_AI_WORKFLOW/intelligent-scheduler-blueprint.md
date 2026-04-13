@@ -1,29 +1,16 @@
 ---
-
-module_id: INTELLIGENT_SCHEDULER_001
-
+module_id: INTELLIGENT_SCHEDULER_001_4987
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: AI工作流团队
-
 responsibility:
-
 - 智能调度器蓝图 (Intelligent Scheduler Blueprint)文档
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 10 - AI工作流层
-
 compliance_level: 专业标准
-
 layer: layer_10
-
 ---
 
 ## 核心定位
@@ -48,7 +35,9 @@ layer: layer_10
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +81,9 @@ layer: layer_10
 
 
 
----
+```
+```---
+```
 
 
 
@@ -218,7 +209,9 @@ graph TB
 
 
 
----
+```
+```---
+```
 
 
 
@@ -310,7 +303,9 @@ class IntelligentScheduler:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -386,7 +381,9 @@ class ResourceAllocator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -428,7 +425,9 @@ class ResourceAllocator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -460,7 +459,9 @@ class ResourceAllocator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +503,9 @@ class ResourceAllocator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -512,7 +515,9 @@ class ResourceAllocator:
 
 
 
----
+```
+```---
+```
 
 
 

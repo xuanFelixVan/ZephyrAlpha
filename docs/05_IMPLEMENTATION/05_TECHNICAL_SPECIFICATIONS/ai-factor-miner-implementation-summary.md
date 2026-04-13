@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY
+module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_AI_FACTOR_MINER_IMPLEMENTATION_SUMMARY_0457
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -155,7 +155,9 @@ compliance_level: СИЊСИџТаЄтЄє
 
   - тцџТќ╣Т│Ћу╗ётљѕуц║№┐?
 
----
+```
+```---
+```
 
 
 
@@ -197,7 +199,9 @@ compliance_level: СИЊСИџТаЄтЄє
 
 - №┐?уе│тџТђДтњїтЇЋУ░ЃТђДУё№┐?- №┐?SQLiteТїЂС╣ЁтїќтГў№┐?- №┐?уіХТђЂТхЂУйгуА№┐?
 
----
+```
+```---
+```
 
 
 
@@ -225,7 +229,9 @@ compliance_level: СИЊСИџТаЄтЄє
 
 - №┐?**тјЪтѕЏ№┐?*: AIУЄфтіеТїќТјўтјЪтѕЏтЏатГљ,жЂ┐тЁЇтљїУ┤е№┐?- №┐?**тцџТаи№┐?*: СИЅтцДAIТќ╣Т│ЋТЈљСЙЏСИЇтљїУДєУДњуџётЏа№┐?- №┐?**ТЋѕујЄ**: УЄфтіетїќТхЂуеІтцДт╣ЁТЈљтЇЄуаћуЕХТЋѕ№┐?- №┐?**У┤ежЄЈ**: СИЦТа╝ICуГЏжђЅС┐ЮУЂтЏатГљУ┤е№┐?
 
----
+```
+```---
+```
 
 
 
@@ -281,7 +287,9 @@ compliance_level: СИЊСИџТаЄтЄє
 
 
 
----
+```
+```---
+```
 
 
 
@@ -339,7 +347,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -373,7 +381,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -411,7 +419,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -439,7 +447,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 

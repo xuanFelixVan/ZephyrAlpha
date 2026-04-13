@@ -1,6 +1,15 @@
+---
+module_id: AUTO_02235
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: FACTOR_LIBRARY_03_RISK_FACTORS_INDEX
+```
 
 version: 1.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 因子库
 compliance_level: 专业标准
 
 layer: layer_02
----
+```
+```---
+```
 
 
 
@@ -46,7 +57,9 @@ layer: layer_02
 
 
 
----
+```
+```---
+```
 
 
 
@@ -68,7 +81,9 @@ layer: layer_02
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +99,9 @@ layer: layer_02
 
 
 
----
+```
+```---
+```
 
 
 

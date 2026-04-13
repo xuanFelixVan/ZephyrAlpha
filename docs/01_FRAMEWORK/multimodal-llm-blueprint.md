@@ -1,33 +1,15 @@
 ---
-
-module_id: MULTIMODAL_LLM_001
-
+module_id: MULTIMODAL_LLM_001_5052
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供multimodal llm blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的多模态大语言模型设计，包括视觉语言模型、音频处理、跨模态融合等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的多模态大语言模型设计，包括视觉语言模型、音频处理、跨模态融合等核心功能。'
 layer: layer_02
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -70,7 +52,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -138,7 +122,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +150,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -516,7 +502,7 @@ torch.Tensor:
 
 
 
----
+```---
 
 
 
@@ -550,7 +536,7 @@ torch.Tensor:
 
 
 
----
+```---
 
 
 
@@ -566,7 +552,7 @@ torch.Tensor:
 
 
 
----
+```---
 
 
 
@@ -678,7 +664,7 @@ torch.Tensor:
 
 
 
----
+```---
 
 
 

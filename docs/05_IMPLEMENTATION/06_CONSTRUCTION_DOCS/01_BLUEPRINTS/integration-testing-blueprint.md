@@ -1,33 +1,15 @@
 ---
-
-module_id: INTEGRATION_TESTING_001
-
+module_id: INTEGRATION_TESTING_001_2521
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 集成测试
-
-  - 端到端测试
-
-  - 测试环境管理
-
-  - 测试数据管理
-
+- 集成测试
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

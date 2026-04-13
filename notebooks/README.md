@@ -12,14 +12,14 @@ last_updated: 2026-04-03
 responsibility:
   - 模块说明、快速入门、使用指南
 ---
----
+```---
 # 研发笔记规范 (Notebooks Standards)
 
 > ZephyrAlpha v5.1 研发笔记模板与规范
 > **版本**: v5.1
 > **更新日期**: 2026-03-31
 
----
+```---
 
 ## 📋 研发笔记定位
 
@@ -31,7 +31,7 @@ responsibility:
 4. **模型实验跟踪** - 机器学习模型训练、评估、对比
 5. **报告生成** - 自动化报告、图表生成、文档输出
 
----
+```---
 
 ## 🏗️ 目录结构规范
 
@@ -50,7 +50,7 @@ notebooks/
 └── README.md                  # 本文档
 ```
 
----
+```---
 
 ## 📝 Notebook命名规范
 
@@ -68,7 +68,7 @@ YYYYMMDD_描述性名称_版本.py   # 使用.py扩展名 (Python脚本格式)
 3. **版本后缀**: `_v1`, `_v2` 等（可选）
 4. **避免中文**: 确保跨平台兼容性
 
----
+```---
 
 ## 🎯 Notebook内容结构
 
@@ -166,7 +166,7 @@ print(f"时间范围: {df['date'].min()} 到 {df['date'].max()}")
 # 额外分析
 ```
 
----
+```---
 
 ## 🔧 代码质量规范
 
@@ -190,7 +190,7 @@ print(f"时间范围: {df['date'].min()} 到 {df['date'].max()}")
 - 避免在循环中重复计算
 - 及时释放内存
 
----
+```---
 
 ## 📊 输出规范
 
@@ -220,7 +220,7 @@ import joblib
 joblib.dump(model, 'output/model_v1.pkl')
 ```
 
----
+```---
 
 ## 🔄 版本控制
 
@@ -238,7 +238,7 @@ git commit -m "feat: 新增市场数据EDA分析 - 20260331"
 - 使用 `nbstripout` 或 `jupyter nbconvert --clear-output`
 - 保持notebook轻量
 
----
+```---
 
 ## 🚀 快速开始
 
@@ -270,7 +270,7 @@ def save_results(results_dict, filename):
         json.dump(results_dict, f, indent=2, default=str)
 ```
 
----
+```---
 
 ## 📚 相关文档
 
@@ -280,7 +280,7 @@ def save_results(results_dict, filename):
 | [../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规范 |
 | [因子库标准索引](../docs/02_FACTOR_LIBRARY/01_STANDARDS/INDEX.md) | 因子标准与索引 |
 
----
+```---
 
 **最后更新**: 2026-03-31  
 **维护者**: 研究团队

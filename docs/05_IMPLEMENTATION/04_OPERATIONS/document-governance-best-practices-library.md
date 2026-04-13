@@ -1,6 +1,15 @@
+---
+module_id: AUTO_66460
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DOCUMENT_GOVERNANCE_BEST_PRACTICES_LIBRARY_001
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 系统实施与部署管理与优化维护
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 文档治理最佳实践库
@@ -54,7 +65,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +103,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -378,7 +393,9 @@ docs/06_ARCHIVE/ (归档目录)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -592,7 +609,9 @@ docs/06_ARCHIVE/ (归档目录)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -712,7 +731,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -884,7 +905,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -946,7 +969,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1036,7 +1061,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1134,7 +1161,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1158,7 +1187,9 @@ python src/utils/document_governance_checker.py docs/11_STRATEGIC_DECISION/
 
 
 
----
+```
+```---
+```
 
 
 

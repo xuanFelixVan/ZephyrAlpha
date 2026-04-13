@@ -1,81 +1,20 @@
 ---
-
-module_id: DATA_SOURCE_QUALITY_MONITORING_001
-
+module_id: DATA_SOURCE_QUALITY_MONITORING_001_7111
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-06
-
+created_date: '2026-04-06'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_00
-
 standard_type: 专业量化机构级数据源质量监控蓝图
-
 applicable_scope: Layer 0数据源质量监控
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Two Sigma Data Quality
-
-- Citadel Data Validation
-
-- Bridgewater Data Governance
-
-related_documents:
-
-- DATA_LAYER_IMPLEMENTATION_BLUEPRINT.md
-
-- DATA_QUALITY_MONITORING_BLUEPRINT.md
-
-- DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
-
-- DATA_QUALITY_MANAGEMENT_BLUEPRINT.md
-
-- DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ../ARCHITECTURE.md
-
 implementation_status: 设计阶段
-
-responsibility_boundary: '**本文档职责（Layer 0 数据源层）**：
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - Layer 1（数据层）: DATA_QUALITY_ASSESSMENT_BLUEPRINT.md - 负责多维度质量评估
-
-
-
-  - Layer 4（机器学习层）: DATA_QUALITY_MONITORING_BLUEPRINT.md - 负责实时质量监控
-
-
-
-  - Layer 10（治理层）: DATA_QUALITY_MANAGEMENT_BLUEPRINT.md - 负责规则定义和改进跟踪
-
-
-
-  - Layer 10（治理层）: DATA_QUALITY_GOVERNANCE_BLUEPRINT.md - 负责顶层治理协调
-
-
-
-  '
-
-responsibility:
-
-- 数据管理架构设计与实施规范与优化维护
-
+responsibility_boundary: '''**本文档职责（Layer 0 数据源层）**：'
+responsibility: ''
 ---
 
 # 数据源质量监控蓝图
@@ -126,7 +65,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +113,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +303,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -418,7 +363,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1858,7 +1805,9 @@ class AlertManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2178,7 +2127,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2284,7 +2235,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2326,7 +2279,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2368,7 +2323,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2408,7 +2365,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2460,13 +2419,17 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2522,7 +2485,9 @@ python src/data_quality/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 

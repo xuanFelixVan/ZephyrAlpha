@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_BLUEPRINTS_L1_CLEANER
+module_id: 06_ARCHIVE_BLUEPRINTS_L1_CLEANER_4449
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 进行?
 
 ```yaml
 
-module_id: "L1_CLEANER"
+module_id: "L1_CLEANER"_4449
 
 layer: "Layer 1"
 
@@ -83,7 +83,9 @@ estimated_dev_hours: 12
 
 
 
----
+```
+```---
+```
 
 
 
@@ -313,7 +315,9 @@ def adjust_prices(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -825,7 +829,9 @@ data_cleaner:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1407,7 +1413,9 @@ def _execute_cleaning_pipeline(self, data: pd.DataFrame,
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1485,7 +1493,9 @@ pytest>=7.0.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1925,7 +1935,9 @@ def create_test_cleaning_plan() -> Dict[str, Any]:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2151,7 +2163,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2211,7 +2225,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2257,7 +2273,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2285,7 +2303,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 

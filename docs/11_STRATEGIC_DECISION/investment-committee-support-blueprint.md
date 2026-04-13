@@ -1,39 +1,19 @@
 ---
-
-module_id: INVESTMENT_COMMITTEE_SUPPORT_001
-
+module_id: INVESTMENT_COMMITTEE_SUPPORT_001_4430
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: Layer 11 - 战略决策层
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
 - Bridgewater Investment Committee
-
-- Two Sigma Decision Process
-
-- Citadel Investment Committee
-
 parent_document: ./BLUEPRINT.md
-
 implementation_status: 蓝图阶段
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 layer: layer_00
 ---
 
@@ -62,7 +42,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -108,7 +90,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +404,9 @@ class DecisionRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1308,7 +1294,9 @@ class DecisionKnowledgeBase:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1510,7 +1498,9 @@ async def get_decision(decision_id: str):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1630,7 +1620,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1716,7 +1708,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1740,7 +1734,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1780,7 +1776,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1798,7 +1796,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,29 +1,20 @@
 ---
-module_id: 01_FRAMEWORK_DATA_QUALITY_MANAGEMENT_BLUEPRINT
+module_id: 01_FRAMEWORK_DATA_QUALITY_MANAGEMENT_BLUEPRINT_0636
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Data Quality Management Blueprint相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 数据质量管理、数据验证、数据监控
 compliance_level: 顶级专业标准
-reference_models:
-  - Two Sigma Data Governance
-  - Great Expectations
-related_documents:
-  - ARCHITECTURE.md
-  - LAYER_10_GAP_ANALYSIS_REPORT.md
-  - DATA_QUALITY_ASSESSMENT_BLUEPRINT.md
-  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ../System_Manifest.md
 implementation_status: 设计阶段
-responsibility_boundary: '**本文档职责（Layer 10 执行层）**：
+responsibility_boundary: '''**本文档职责（Layer 10 执行层）**：'
 ---
 
 ## 📋 执行摘要
@@ -68,7 +59,9 @@ responsibility_boundary: '**本文档职责（Layer 10 执行层）**：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -310,7 +303,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -340,7 +335,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -370,7 +367,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -392,7 +391,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +421,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -430,7 +433,9 @@ class DataQualityManager:
 
 - [Great Expectations官方文档](https://docs.greatexpectations.io/)
 
----
+```
+```---
+```
 
 
 
@@ -486,7 +491,9 @@ class DataQualityManager:
 
 
 
----
+```
+```---
+```
 
 
 

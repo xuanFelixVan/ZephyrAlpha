@@ -1,6 +1,15 @@
+---
+module_id: AUTO_11505
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: LAYER1_OPENSOURCE_INTEGRATION_GUIDE_20260407_001
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 操作指南编写与使用说明与系统维护管理
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # Layer 1 开源项目集成指南
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -142,7 +155,9 @@ conn = psycopg2.connect(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -224,7 +239,9 @@ client.execute('SELECT 1')
 
 
 
----
+```
+```---
+```
 
 
 
@@ -308,7 +325,9 @@ print(r.get('key'))
 
 
 
----
+```
+```---
+```
 
 
 
@@ -388,7 +407,9 @@ client = DataHubRestClient("http://localhost:8080")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +487,9 @@ context = gx.get_context()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -556,7 +579,9 @@ uvicorn main:app --reload
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +661,9 @@ consumer = KafkaConsumer('topic', bootstrap_servers=['localhost:9092'])
 
 
 
----
+```
+```---
+```
 
 
 
@@ -716,7 +743,9 @@ from airflow.operators.python import PythonOperator
 
 
 
----
+```
+```---
+```
 
 
 
@@ -788,7 +817,9 @@ spark = SparkSession.builder.appName("test").getOrCreate()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -834,7 +865,9 @@ spark = SparkSession.builder.appName("test").getOrCreate()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -874,7 +907,9 @@ spark = SparkSession.builder.appName("test").getOrCreate()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -914,7 +949,9 @@ spark = SparkSession.builder.appName("test").getOrCreate()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -982,7 +1019,9 @@ spark = SparkSession.builder.appName("test").getOrCreate()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1092,7 +1131,9 @@ echo "Airflow: http://localhost:8080"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1146,7 +1187,9 @@ echo "Airflow: http://localhost:8080"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1182,7 +1225,9 @@ echo "Airflow: http://localhost:8080"
 
 
 
----
+```
+```---
+```
 
 
 

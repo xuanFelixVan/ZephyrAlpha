@@ -1,31 +1,15 @@
 ---
-
-module_id: FULL_SYSTEM_AUDIT_V12_001_ARCHIVED_1
-
+module_id: FULL_SYSTEM_AUDIT_V12_001_ARCHIVED_1_6964
 version: 12.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 responsibility:
-
-  - 全系统文档治理深度审计
-
-  - 三层审计标准执行
-
-  - 专业量化机构标准验证
-
+- 全系统文档治理深度审计
 standard_type: 专业量化机构审计报告
-
 applicable_scope: 全系统文档
-
 compliance_level: 专业标准
-
 layer: layer_06
 ---
 
@@ -58,7 +42,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +82,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -236,7 +224,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -382,7 +372,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -530,7 +522,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -592,7 +586,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +632,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -786,7 +784,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -836,7 +836,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -890,7 +892,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

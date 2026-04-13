@@ -1,8 +1,17 @@
+---
+module_id: AUTO_06507
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 version: 1.0.0
 
+```
 module_id: STRATEGIC_DECISION_DEEP_REVIEW_20260407
+```
 
 status: Active
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_00
----
+```
+```---
+```
 
 
 # 战略决策层深度架构审查报告
@@ -42,7 +53,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -54,7 +67,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -174,7 +189,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -264,7 +281,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -532,7 +551,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -578,7 +599,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -780,7 +803,9 @@ class DecisionQualityAssessor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -854,7 +879,9 @@ class DecisionQualityAssessor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -932,7 +959,9 @@ class DecisionQualityAssessor:
 
 
 
----
+```
+```---
+```
 
 
 

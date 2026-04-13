@@ -1,29 +1,16 @@
 ---
-
-module_id: ANOMALY_DETECTION_001
-
+module_id: ANOMALY_DETECTION_001_9274
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 responsibility:
-
 - 提供异常检测模型的完整架构设计和实施方案
-
 layer: layer_04
-
 standard_type: 专业量化机构蓝图文档
-
 priority: P0核心
-
 estimated_hours: 20
-
 ---
 
 # 异常检测模型蓝图
@@ -40,7 +27,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +75,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +131,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -330,7 +323,9 @@ class QuantAnomalyDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -386,7 +381,9 @@ class AnomalyDetectionService:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -406,7 +403,9 @@ class AnomalyDetectionService:
 
 
 
----
+```
+```---
+```
 
 
 

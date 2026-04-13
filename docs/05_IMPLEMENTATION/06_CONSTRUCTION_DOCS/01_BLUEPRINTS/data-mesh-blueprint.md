@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_MESH_001
-
+module_id: DATA_MESH_001_7903
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 数据网格架构
-
-  - 数据产品化
-
-  - 领域数据自治
-
-  - 联邦数据治理
-
+- 数据网格架构
 layer: layer_05
-
 ---
 
 

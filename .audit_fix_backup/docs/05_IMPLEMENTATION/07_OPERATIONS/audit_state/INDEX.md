@@ -5,6 +5,8 @@ status: Active
 layer: layer_05
 responsibility:
   - 审计状态工作区索引
+owner: System_Architect
+last_updated: 2026-04-13
 ---
 
 # 审计状态工作区索引

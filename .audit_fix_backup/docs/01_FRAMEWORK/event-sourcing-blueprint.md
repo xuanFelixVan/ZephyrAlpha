@@ -60,7 +60,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -88,7 +88,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -134,7 +134,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -304,7 +304,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -784,7 +784,7 @@ class EventStore:
 
 
 
----
+```---
 
 
 
@@ -984,7 +984,7 @@ class EventReplayer:
 
 
 
----
+```---
 
 
 
@@ -1040,7 +1040,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1064,7 +1064,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1084,7 +1084,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1104,7 +1104,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1128,7 +1128,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1150,7 +1150,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 
@@ -1170,13 +1170,13 @@ class Subscription:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```---
 
 
 
@@ -1232,7 +1232,7 @@ class Subscription:
 
 
 
----
+```---
 
 
 

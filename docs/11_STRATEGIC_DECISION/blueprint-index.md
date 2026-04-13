@@ -3,7 +3,7 @@ module_id: BLUEPRINT_INDEX_001
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
-last_updated: '2026-04-12'
+last_updated: '2026-04-13'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图索引
 applicable_scope: Layer 11 - 战略决策层
@@ -16,8 +16,11 @@ missing_count: 11
 last_synced_date: '2026-04-13 03:09:34'
 synced_from: complete-blueprint-overview.md
 responsibility:
-  - 系统架构蓝图设计与实施指导
+- 系统架构蓝图设计与实施指导
 layer: layer_11
+authority_source_synced: true
+authority_source: docs\11_STRATEGIC_DECISION\complete-blueprint-overview.md
+synced_at: '2026-04-13T13:47:31.699810'
 ---
 
 # Layer 11 战略决策层蓝图索引
@@ -93,7 +96,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -117,7 +122,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -177,7 +184,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -359,7 +368,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -429,7 +440,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -445,7 +458,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 
@@ -485,7 +500,9 @@ layer: layer_11
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_DATA_FLOW_DESIGN_001
-
+module_id: LAYER6_DATA_FLOW_DESIGN_001_7786
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构数据流设计
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6数据流设计
-
-  - 数据流转路径
-
-  - 数据转换规则
-
-  - 数据质量保证
-
+- Layer 6数据流设计
 layer: layer_06
-
 ---
 
 

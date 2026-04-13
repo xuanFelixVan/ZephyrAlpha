@@ -42,7 +42,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -78,7 +78,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -118,7 +118,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -248,7 +248,7 @@ NOTIFICATION_ALERT_SYSTEM_BLUEPRINT.md
 
 
 
----
+```---
 
 
 
@@ -382,7 +382,7 @@ USER_PERMISSION_MANAGEMENT_BLUEPRINT.md
 
 
 
----
+```---
 
 
 
@@ -408,9 +408,9 @@ USER_PERMISSION_MANAGEMENT_BLUEPRINT.md
 
 ```markdown
 
----
+```---
 
-module_id: XXX_001
+module_id: XXX_001_9370
 
 version: 1.0.0
 
@@ -418,7 +418,7 @@ responsibility:
 
   - 系统架构蓝图设计与实施指导与实施方案
 
----
+```---
 
 
 
@@ -466,7 +466,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 
@@ -520,7 +520,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 
@@ -570,7 +570,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 
@@ -610,7 +610,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 
@@ -644,7 +644,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 
@@ -694,7 +694,7 @@ class ModuleImplementation:
 
 
 
----
+```---
 
 
 

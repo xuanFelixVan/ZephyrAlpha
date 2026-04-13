@@ -57,7 +57,9 @@ compliance_level: ﻛﺕﻛﺕﮔﮒ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -273,7 +275,9 @@ AlphaFactorFactory
 
 
 
----
+```
+```---
+```
 
 
 
@@ -511,7 +515,9 @@ ModelTrainingPipeline (ﻠﻝ۷ﮔﭖﮔﺍﺑﺅﺟ?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -761,7 +767,9 @@ FeatureEngineering (ﻝﺗﮒﺝﮒﺓ۴ﻝ۷)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -791,7 +799,9 @@ FeatureEngineering (ﻝﺗﮒﺝﮒﺓ۴ﻝ۷)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -891,7 +901,9 @@ features = feature_store.get_online_features(request)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -937,7 +949,9 @@ features = feature_store.get_online_features(request)
 
 
 
----
+```
+```---
+```
 
 
 

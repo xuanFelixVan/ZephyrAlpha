@@ -1,5 +1,5 @@
 ---
-module_id: ENVIRONMENT_CONFIG_GUIDE_001
+module_id: ENVIRONMENT_CONFIG_GUIDE_001_7166
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -10,10 +10,6 @@ applicable_scope: ZephyrAlpha环境配置
 responsibility:
 - ENVIRONMENT_CONFIG操作指南
 layer: layer_05
-1. **环境隔离**: 不同环境配置相互隔离
-2. **安全可控**: 敏感信息加密存储
-3. **版本可控**: 配置文件纳入版本管理
-4. **易于维护**: 配置结构清晰、易于理解
 ---
 ## 🔗 相关文档
 
@@ -29,7 +25,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

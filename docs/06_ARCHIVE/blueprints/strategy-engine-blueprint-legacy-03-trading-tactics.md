@@ -1,32 +1,21 @@
 ---
-
-module_id: AI_009
-
+module_id: AI_009_3618
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 交易策略团队
-
 layer: layer_03
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 交易策略框架设计与实施指导与实施指导
-
 ---
 
-module_id: TACTICS_STRATEGY_ENGINE_BP_001
+```
+module_id: TACTICS_STRATEGY_ENGINE_BP_001_3618
+```
 
 version: 1.0.1
 
@@ -44,7 +33,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -670,7 +661,7 @@ A: 先专注回测验证，至少完成阶段二（36周）后再考虑实盘。
 
 > **重要提示**：本蓝图针对零编程基础的个人开发者设计，采用"AI生成代码，人工测试验?的开发模式。成功关键不在于编程能力，而在于持续学习和测试验证的能力?/content>
 
----
+```---
 
 
 
@@ -726,7 +717,7 @@ A: 先专注回测验证，至少完成阶段二（36周）后再考虑实盘。
 
 
 
----
+```---
 
 
 

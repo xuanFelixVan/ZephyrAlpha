@@ -13,7 +13,9 @@ owner: 文档管理团队
 | 数据采集蓝图 | DATA_ACQUISITION.md | 下游实现 | 根据本需求规格实现数据采集 |
 | 数据源索引 | [INDEX.md](./INDEX.md) | 上级索引 | 数据源模块总索引 |
 
----
+```
+```---
+```
 
 > **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
 > **canonical_path**：`docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CONTRACT/FACTOR_LIB_DATA_SOURCE_DATA_CONTRACT_OVERVIEW.md`  
@@ -429,7 +431,9 @@ assert len(trading_dates) > len(dates) * 0.95, "交易日期不连续"
 | v1.0 | 2026-04-01 | 初始版本 |
 | v1.1 | 2026-04-05 | 添加文档职责说明章节，明确与DATA_ACQUISITION.md的职责边界 |
 
----
+```
+```---
+```
 
 **最后更新**: 2026-04-05
 **维护者**: 清风量化系统

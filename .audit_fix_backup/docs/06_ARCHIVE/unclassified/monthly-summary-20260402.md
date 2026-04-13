@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: MONTHLY_SUMMARY_20260402_001
@@ -45,7 +52,7 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 
 layer: layer_06
----
+```---
 
 
 

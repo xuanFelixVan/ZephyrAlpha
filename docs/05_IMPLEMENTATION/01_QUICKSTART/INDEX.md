@@ -27,7 +27,9 @@ layer: layer_05
 > **文档数量**: 7 个 Markdown（本目录**无**单独 `README.md`，入口即本索引）  
 > **最后更新**: 2026-04-11
 
----
+```
+```---
+```
 
 ## 上级与接力
 
@@ -41,7 +43,9 @@ layer: layer_05
 - **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260501.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/01_QUICKSTART --date 20260501`；**zero_inbound=0**；候选 md **7**；首轮 **`INDEX.md`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../INDEX.md) 显式补链后复跑归零）
 - **rollup（深度 3 前缀条数）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/01_QUICKSTART` **7** 条）
 
----
+```
+```---
+```
 
 ## 📋 文档清单
 
@@ -54,7 +58,9 @@ layer: layer_05
 | PHASE1_DESIGN.md | 第一阶段设计 | Active |
 | factor_design.md | 因子设计入门 | Active |
 
----
+```
+```---
+```
 
 ## 🎯 快速导航
 
@@ -70,7 +76,9 @@ layer: layer_05
 - PHASE1_DESIGN.md — Phase 1 设计摘要  
 - factor_design.md — 因子设计入门  
 
----
+```
+```---
+```
 
 ## 📊 目录统计
 
@@ -80,7 +88,9 @@ layer: layer_05
 | Active | 7 |
 | 索引覆盖率 | 100% |
 
----
+```
+```---
+```
 
 **维护者**: 实施层架构师  
 **创建日期**: 2026-04-03

@@ -1,33 +1,15 @@
 ---
-
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_GOVERNANCE_PLATFORM_BLUEPRINT
-
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_GOVERNANCE_PLATFORM_BLUEPRINT_3187
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 数据治理平台
-
-  - 数据标准管理
-
-  - 数据质量管理
-
-  - 数据资产管理
-
+- 数据治理平台
 layer: layer_05
-
 ---
 
 
@@ -188,7 +170,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -256,7 +240,9 @@ graph LR
 
 
 
----
+```
+```---
+```
 
 
 
@@ -280,7 +266,9 @@ graph LR
 
 
 
----
+```
+```---
+```
 
 
 
@@ -814,7 +802,9 @@ class AuditTrailEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -898,7 +888,9 @@ POST /api/v1/governance/compliance/check
 
 
 
----
+```
+```---
+```
 
 
 
@@ -960,7 +952,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -982,7 +976,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -994,7 +990,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1006,11 +1004,15 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1056,7 +1058,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1074,7 +1078,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -35,7 +35,7 @@ responsibility:
 
 layer: "Layer 4 (机器学习层)"
 
----
+```---
 
 ﻿# 模块概述
 
@@ -117,7 +117,7 @@ AI模式识别引擎，负责利用机器学习技术识别市场交易模式，
 
 
 
----
+```---
 
 
 
@@ -1313,7 +1313,7 @@ class ModelEnsembler:
 
 
 
----
+```---
 
 
 
@@ -1699,7 +1699,7 @@ class AIPatternRecognitionEngine:
 
 
 
----
+```---
 
 
 
@@ -1795,7 +1795,7 @@ class AIPatternRecognitionEngine:
 
 
 
----
+```---
 
 
 
@@ -1829,7 +1829,7 @@ class AIPatternRecognitionEngine:
 
 4. **存储约束**: 模型文件较大?00MB-1GB?
 
----
+```---
 
 
 
@@ -1875,7 +1875,7 @@ class AIPatternRecognitionEngine:
 
 
 
----
+```---
 
 
 
@@ -2001,7 +2001,7 @@ graph LR
 
 
 
----
+```---
 
 
 
@@ -2027,13 +2027,13 @@ graph LR
 
 
 
----
+```---
 
 
 
 **蓝图版本**: v1.0.1 | **创建日期**: 2026-04-02 | **状态**: Active
 
----
+```---
 
 
 
@@ -2089,7 +2089,7 @@ graph LR
 
 
 
----
+```---
 
 
 

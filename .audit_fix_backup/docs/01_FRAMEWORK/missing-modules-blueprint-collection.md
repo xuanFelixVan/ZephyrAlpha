@@ -62,7 +62,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -78,7 +78,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -252,7 +252,7 @@ results = monitor.validate_data_source(df, "tushare_daily")
 
 
 
----
+```---
 
 
 
@@ -386,7 +386,7 @@ class DataQualityAssessor:
 
 
 
----
+```---
 
 
 
@@ -512,7 +512,7 @@ class AutomatedFactorMining:
 
 
 
----
+```---
 
 
 
@@ -608,7 +608,7 @@ class FactorBacktestEngine:
 
 
 
----
+```---
 
 
 
@@ -752,7 +752,7 @@ class SentimentDataIntegrator:
 
 
 
----
+```---
 
 
 
@@ -784,7 +784,7 @@ class SentimentDataIntegrator:
 
 
 
----
+```---
 
 
 
@@ -904,7 +904,7 @@ class DataSourceFailover:
 
 
 
----
+```---
 
 
 
@@ -954,7 +954,7 @@ class DataSourceFailover:
 
 
 
----
+```---
 
 
 
@@ -1062,7 +1062,7 @@ class DataSourceCostOptimizer:
 
 
 
----
+```---
 
 
 
@@ -1102,7 +1102,7 @@ class DataSourceCostOptimizer:
 
 
 
----
+```---
 
 
 
@@ -1152,7 +1152,7 @@ class DataSourceCostOptimizer:
 
 
 
----
+```---
 
 
 
@@ -1174,7 +1174,7 @@ class DataSourceCostOptimizer:
 
 
 
----
+```---
 
 
 

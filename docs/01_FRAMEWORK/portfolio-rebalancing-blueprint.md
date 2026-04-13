@@ -1,49 +1,23 @@
 ---
-module_id: PORTFOLIO_REBALANCING_FRAMEWORK_001
+module_id: PORTFOLIO_REBALANCING_FRAMEWORK_001_4274
 version: 1.0.0
 status: Active
-created_date: 2026-04-06
+created_date: '2026-04-06'
 last_updated: '2026-04-07'
 owner: 首席架构师
 layer: layer_10
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 组合再平衡系统架构设计
 compliance_level: 顶级专业标准
-reference_models:
-- Bridgewater Portfolio Rebalancing
-- Citadel Smart Rebalancing
-related_documents:
-- PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-- name: PyPortfolioOpt
-  url: https://github.com/robertmartin8/PyPortfolioOpt
-  features: 组合优化、再平衡、交易成本优化
-- name: Riskfolio-Lib
-  url: https://github.com/dcajasn/Riskfolio-Lib
-  features: 组合再平衡优化、风险预算优化
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-  - 再平衡触发（阈值触发、时间触发、事件触发）
-
-  - 再平衡优化（成本优化、风险优化、税务优化）
-
-  - 再平衡执行（交易执行、持仓调整、记录追踪）
-
-  - 再平衡报告（执行报告、效果评估、改进建议）
-
-
-  **与本文档职责边界**：
-
-  - PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT.md: 组合风险归因（包含再平衡风险分析）
-
-  - TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md: 交易成本分析（包含再平衡成本分析，stub → canonical）
-
-  '
-responsibility:
-- 投资组合优化蓝图设计与实施指导与实施方案
+open_source_projects: ''
+url: https://github.com/robertmartin8/PyPortfolioOpt
+features: 组合优化、再平衡、交易成本优化
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 # 组合再平衡系统蓝图（蓝图阶段）
 > **核心职责**: Portfolio Rebalancing蓝图设计
@@ -58,7 +32,9 @@ responsibility:
 > **实施周期**: 3天
 > **开源项目**: PyPortfolioOpt + Riskfolio-Lib
 
----
+```
+```---
+```
 
 ## 📋 执行摘要
 
@@ -80,7 +56,9 @@ responsibility:
 
 **综合价值评分**: ⭐⭐⭐⭐⭐ (5/5) - **强烈推荐实施**
 
----
+```
+```---
+```
 
 ## 一、架构设计
 
@@ -136,7 +114,9 @@ responsibility:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
+```
+```---
+```
 
 ## 二、接口定义
 
@@ -220,7 +200,9 @@ class RebalancingExecutor:
         pass
 ```
 
----
+```
+```---
+```
 
 ## 三、数据流设计
 
@@ -234,7 +216,9 @@ class RebalancingExecutor:
 风险约束   事件检查    税务优化    订单优化    执行日志    审计追踪    改进建议
 ```
 
----
+```
+```---
+```
 
 ## 四、技术选型
 
@@ -298,7 +282,9 @@ weights = port.optimization(model='Classic', rm='MV', obj='Sharpe')
 | **数据存储** | SQLite | 轻量级，个人使用足够 |
 | **可视化** | Plotly + Grafana | 已有蓝图，易于集成 |
 
----
+```
+```---
+```
 
 ## 五、实施路线图
 
@@ -312,7 +298,9 @@ weights = port.optimization(model='Classic', rm='MV', obj='Sharpe')
 | **4** | 执行模块 | 0.5天 | 再平衡执行器 |
 | **5** | 报告模块 | 1天 | 再平衡报告生成器 |
 
----
+```
+```---
+```
 
 ## 六、个人使用适配方案
 
@@ -325,7 +313,9 @@ weights = port.optimization(model='Classic', rm='MV', obj='Sharpe')
 | **执行监控** | AI监控执行+预警 | LLM + 执行系统 |
 | **效果评估** | AI评估效果+建议 | LLM + 统计分析 |
 
----
+```
+```---
+```
 
 ## 七、总结
 
@@ -338,7 +328,9 @@ weights = port.optimization(model='Classic', rm='MV', obj='Sharpe')
 
 **推荐立即实施**，使用PyPortfolioOpt + Riskfolio-Lib开源项目，预计3天完成。
 
----
+```
+```---
+```
 
 **蓝图版本**: v1.0.0
 **蓝图创建时间**: 2026-04-06

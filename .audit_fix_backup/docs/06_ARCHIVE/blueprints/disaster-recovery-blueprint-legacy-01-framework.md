@@ -20,7 +20,7 @@ responsibility: 20260410_c2_disaster_recovery
 > - 正式稿（canonical）：`DISASTER_RECOVERY_BLUEPRINT.md`  
 > - 框架入口（新）：`DISASTER_RECOVERY_FRAMEWORK_ENTRY.md`
 
----
+```---
 module_id: DISASTER_RECOVERY_001
 version: 1.0.0
 status: Planned
@@ -57,7 +57,7 @@ responsibility_boundary: '本文档负责全系统灾备体系设计，包括：
   机器学习层灾备请参考：MLOPS_PLATFORM_BLUEPRINT.md'
 responsibility:
 - DISASTER_RECOVERY蓝图设计
----
+```---
 # 灾备体系蓝图
 > **核心职责**: Disaster Recovery蓝图设计
 > **职责边界**: 
@@ -68,7 +68,7 @@ responsibility:
 > 清风量化系统灾备体系设计文档
 >
 > **定位**: 个人量化系统的简化灾备方案，未来开发预留
----
+```---
 
 ## 接口与契约（蓝图终稿）
 
@@ -91,7 +91,7 @@ responsibility:
 | **适用场景** | 个人开发+AI维护+个人使用 |
 | **实施优先级** | P2（建议实现，非紧急） |
 
----
+```---
 
 ## 🎯 一、灾备体系概述
 
@@ -129,7 +129,7 @@ responsibility:
 | **故障切换** | 自动 Failover | 手动恢复 |
 | **预算投入** | 数百万美元 | 千元级别 |
 
----
+```---
 
 ## 🎯 二、灾备策略设计
 
@@ -162,7 +162,7 @@ responsibility:
 | **硬件故障** | <4小时 | 1.更换硬件 2.恢复系统 3.恢复数据 4.启动服务 |
 | **误删除恢复** | <30分钟 | 1.从回收站恢复 2.验证数据 3.恢复业务 |
 
----
+```---
 
 ## 🎯 三、灾备架构设计
 
@@ -203,7 +203,7 @@ responsibility:
 | **恢复执行器** | 执行数据恢复 | Python脚本 |
 | **监控告警** | 监控备份状态 | Grafana+AlertManager |
 
----
+```---
 
 ## 🎯 四、实施方案
 
@@ -233,7 +233,7 @@ responsibility:
 | 异地容灾 | 异地部署 | 40h |
 | 演练自动化 | 自动化演练 | 16h |
 
----
+```---
 
 ## 🎯 五、开源项目推荐
 
@@ -244,7 +244,7 @@ responsibility:
 | **Duplicati** | 图形化备份 | 无（开源替代） |
 | **BorgBackup** | 重复数据删除 | Restic |
 
----
+```---
 
 ## 📋 版本管理
 
@@ -252,6 +252,6 @@ responsibility:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-03 | 初始版本创建 | 首席架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-03 | **状态**: Planned

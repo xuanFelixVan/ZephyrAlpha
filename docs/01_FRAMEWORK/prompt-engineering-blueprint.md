@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_PROMPT_ENGINEERING_BLUEPRINT
+module_id: 01_FRAMEWORK_PROMPT_ENGINEERING_BLUEPRINT_9529
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Prompt Engineering Blueprint相关业务
-created_date: 2026-04-04
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-04'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的提示工程系统设计，包括提示模板、Few-shot学习、Chain-of-Thought等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的提示工程系统设计，包括提示模板、Few-shot学习、Chain-of-Thought等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -73,7 +72,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -135,7 +136,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -351,7 +352,7 @@ class PromptEngineer:
 
 
 
----
+```---
 
 
 
@@ -395,7 +396,7 @@ langchain>=0.1.0
 
 
 
----
+```---
 
 
 
@@ -427,7 +428,7 @@ langchain>=0.1.0
 
 
 
----
+```---
 
 
 
@@ -445,7 +446,7 @@ langchain>=0.1.0
 
 
 
----
+```---
 
 
 
@@ -557,7 +558,7 @@ langchain>=0.1.0
 
 
 
----
+```---
 
 
 

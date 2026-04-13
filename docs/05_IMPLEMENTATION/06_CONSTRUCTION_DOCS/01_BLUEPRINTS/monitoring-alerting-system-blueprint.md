@@ -1,5 +1,5 @@
 ---
-module_id: MONITORING_ALERTING_SYSTEM_001
+module_id: MONITORING_ALERTING_SYSTEM_001_1789
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 监控告警系统
-- 指标采集
-- 告警规则
-- 通知管理
 layer: layer_05
 ---
 

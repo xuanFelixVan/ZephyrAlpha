@@ -1,29 +1,22 @@
 ---
-module_id: 01_FRAMEWORK_REPORT_INTELLIGENT_QA_BLUEPRINT
+module_id: 01_FRAMEWORK_REPORT_INTELLIGENT_QA_BLUEPRINT_5128
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Report Intelligent Qa Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 报告智能问答
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Research
-  - Two Sigma Reports
-  - Citadel Analytics
-related_documents:
-  - AI_REPORT_GENERATION_BLUEPRINT.md
-  - RAG_SYSTEM_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./AI_REPORT_GENERATION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: LangChain + RAG
+open_source_projects: ''
 features: RAG检索、智能问答、上下文理解
-responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
+responsibility_boundary: '''本文档职责（Layer 7 AI报告层）：'
 ---
 
 ## 📋 一、概述
@@ -48,7 +41,9 @@ responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -78,7 +73,9 @@ responsibility_boundary: '本文档职责（Layer 7 AI报告层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -144,7 +141,9 @@ class ReportIntelligentQA:
 
 
 
----
+```
+```---
+```
 
 
 

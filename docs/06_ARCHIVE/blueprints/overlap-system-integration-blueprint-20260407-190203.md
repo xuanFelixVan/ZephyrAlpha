@@ -1,33 +1,15 @@
 ---
-
 responsibility:
-
 - 系统集成
-
-- 模块集成
-
-- 接口对接
-
-- 数据流
-
-module_id: SYSTEM_INTEGRATION_001
-
+module_id: SYSTEM_INTEGRATION_001_2977
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

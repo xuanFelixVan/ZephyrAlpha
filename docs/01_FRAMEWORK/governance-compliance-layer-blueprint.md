@@ -1,79 +1,20 @@
 ---
-
-module_id: GOVERNANCE_COMPLIANCE_LAYER_001
-
+module_id: GOVERNANCE_COMPLIANCE_LAYER_001_9525
 version: 1.0.2
-
 status: Active
-
-created_date: 2026-04-03
-
+created_date: '2026-04-03'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: Layer 10 - 治理与合规层
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Governance
-
-- Citadel Compliance
-
-- Two Sigma Risk Governance
-
-- SEC/CFA Institute Standards
-
-related_documents:
-
-- ARCHITECTURE.md
-
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- AI_DECISION_AUDIT_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ../INDEX.md
-
 implementation_status: 设计阶段
-
 layer: layer_10
-
-responsibility_boundary: '**本文档职责（Layer 10 总体架构）**：
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 负责合规监控系统的具体实现
-
-
-
-  - AI_GOVERNANCE_BLUEPRINT.md: 负责AI治理框架的具体实现
-
-
-
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 负责审计追踪系统的具体实现
-
-
-
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 负责模型风险管理系统的具体实现
-
-
-
-  '
-
-responsibility:
-
-- 系统架构蓝图设计与实施指导与实施方案
-
+responsibility_boundary: '''**本文档职责（Layer 10 总体架构）**：'
+responsibility: ''
 ---
 
 # Layer 10: 治理与合规层蓝图
@@ -102,7 +43,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -148,7 +91,9 @@ Layer 10治理与合规层是清风量化系统的**治理中枢**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -394,7 +339,9 @@ Layer 10治理与合规层是清风量化系统的**治理中枢**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -686,7 +633,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -698,7 +647,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -710,7 +661,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -722,7 +675,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -734,7 +689,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -760,7 +717,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -782,7 +741,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -804,7 +765,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -832,7 +795,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -850,7 +815,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -860,7 +827,9 @@ class TradingAuthorizationSystem:
 
 - v1.0.1 (2026-04-03): 初始版本
 
----
+```
+```---
+```
 
 
 
@@ -916,7 +885,9 @@ class TradingAuthorizationSystem:
 
 
 
----
+```
+```---
+```
 
 
 

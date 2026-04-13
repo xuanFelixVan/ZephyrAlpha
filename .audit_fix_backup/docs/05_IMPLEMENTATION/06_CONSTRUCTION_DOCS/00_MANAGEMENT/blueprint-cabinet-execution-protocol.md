@@ -15,7 +15,7 @@ layer: layer_05
 
 # 图纸柜执行协议（防忘、防幻觉）
 
----
+```---
 
 ## 给用户复制用：「一条指令」
 
@@ -37,7 +37,7 @@ layer: layer_05
 按仓库里 docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md 执行；先读规则再动手；用工具查磁盘再下结论，禁止瞎编。
 ```
 
----
+```---
 
 ## 给 AI 的操作纪律（必须遵守）
 
@@ -49,7 +49,7 @@ layer: layer_05
 5. **进度外置**：多步任务以 任务清单 勾选为准；会话结束不等于任务完成，以下次打开清单为准。  
 6. **过程稿位置**：带批次日期的报告、分析、清单稿放在 `01_BLUEPRINTS/REPORTS/`，不放根目录。
 
----
+```---
 
 ## 任务 3 完成后的自检（可复制到终端）
 
@@ -62,7 +62,7 @@ Get-ChildItem $bp -File -Filter *.md | Where-Object { $_.Name -ne 'INDEX.md' -an
 
 **期望**：无输出（表示根目录除 `INDEX.md` 外均为 `*BLUEPRINT.md`）。
 
----
+```---
 
 ## 相关文档
 
@@ -72,7 +72,7 @@ Get-ChildItem $bp -File -Filter *.md | Where-Object { $_.Name -ne 'INDEX.md' -an
 | 蓝图终稿定义 | 终稿含义 |
 | [REPORTS 说明](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 过程稿目录说明 |
 
----
+```---
 
 ## 版本记录
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_57142
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 05_IMPLEMENTATION_DOCUMENT_GOVERNANCE_WEEKLY_REPORT_20260407124139
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 文档治理周报
@@ -46,7 +57,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -70,7 +83,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +107,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -170,7 +187,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

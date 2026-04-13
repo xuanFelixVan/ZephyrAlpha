@@ -1,33 +1,15 @@
 ---
-
-module_id: CONFIG_CENTER_001
-
+module_id: CONFIG_CENTER_001_5764
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 配置管理
-
-  - 配置版本控制
-
-  - 配置热更新
-
-  - 环境隔离
-
+- 配置管理
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1638,7 +1620,9 @@ def validate_config(key: str, value: Dict[str, Any]) -> bool:
 
 
 
----
+```
+```---
+```
 
 
 

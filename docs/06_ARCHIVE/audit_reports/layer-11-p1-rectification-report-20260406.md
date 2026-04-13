@@ -1,6 +1,15 @@
+---
+module_id: AUTO_11259
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: LAYER11_P1_RECTIFICATION_REPORT_001
+```
 
 version: 1.0.0
 
@@ -27,7 +36,9 @@ responsibility:
 - 市场状态识别 (Layer 4)
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # Layer 11 P1级问题整改报告
@@ -54,7 +65,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -110,7 +123,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -256,7 +271,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +367,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +435,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -486,7 +507,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -538,7 +561,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -680,7 +705,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -726,7 +753,9 @@ python scripts/adjust_versions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -802,7 +831,9 @@ python scripts/adjust_versions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -870,7 +901,9 @@ python scripts/adjust_versions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -920,7 +953,9 @@ python scripts/adjust_versions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +963,9 @@ python scripts/adjust_versions.py
 
 
 
----
+```
+```---
+```
 
 
 

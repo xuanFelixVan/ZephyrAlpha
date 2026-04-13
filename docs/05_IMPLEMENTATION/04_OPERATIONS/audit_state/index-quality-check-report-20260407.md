@@ -1,6 +1,15 @@
+---
+module_id: AUTO_41247
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: INDEX_QUALITY_CHECK_REPORT_20260407
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 索引质量检查报告文档
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 索引质量检查报告
@@ -42,7 +53,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -74,7 +87,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +131,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +153,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -178,7 +197,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -212,7 +233,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -268,7 +291,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -290,7 +315,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,87 +1,20 @@
 ---
-
-module_id: COMPLIANCE_REPORT_INTERFACE_001
-
+module_id: COMPLIANCE_REPORT_INTERFACE_001_4015
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 合规报告界面
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Compliance Reporting
-
-- Renaissance Technologies Compliance
-
-- Two Sigma Compliance Dashboard
-
-- Citadel Compliance System
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- REGULATORY_REPORTING_BLUEPRINT.md
-
-responsibility_boundary: '本文档负责合规报告界面设计，包括：
-
-
-
-  - 合规报告查看界面
-
-
-
-  - 审计追踪查询界面
-
-
-
-  - 合规状态监控界面
-
-
-
-  - 合规报告生成界面
-
-
-
-  - 合规事件记录界面
-
-
-
-
-
-  合规监控请参考：COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-
-
-  监管报告请参考：REGULATORY_REPORTING_BLUEPRINT.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责合规报告界面设计，包括：'
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility:
-
-- COMPLIANCE_REPORT_INTERFACE蓝图设计
-
+responsibility: ''
 ---
 
 
@@ -134,7 +67,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +149,9 @@ class ComplianceReportInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -238,7 +175,9 @@ class ComplianceReportInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -256,7 +195,9 @@ class ComplianceReportInterface:
 
 
 
----
+```
+```---
+```
 
 
 

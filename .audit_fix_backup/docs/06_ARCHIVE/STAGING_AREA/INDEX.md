@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -76,7 +76,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `DOCS_06_ARCHIVE_TEMP_PENDING_README`
+- ~~[Readme]~~ - `DOCS_06_ARCHIVE_TEMP_PENDING_README`
 
 - Temp Alternative - `DOCS_06_ARCHIVE_TEMP_PENDING_TEMP_ALTERNATIVE`
 
@@ -100,7 +100,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -132,7 +132,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -148,7 +148,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -164,7 +164,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_NBEATS_BLUEPRINT
+module_id: 01_FRAMEWORK_NBEATS_BLUEPRINT_2320
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Nbeats Blueprint相关业务
-created_date: 2026-04-03
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-03'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的N-BEATS时序模型设计，包括时序分解、趋势预测、季节性建模等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的N-BEATS时序模型设计，包括时序分解、趋势预测、季节性建模等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -69,7 +68,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -195,7 +196,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -633,7 +636,9 @@ input_size:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -697,7 +702,9 @@ input_size:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -815,7 +822,9 @@ numpy>=1.24.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -897,7 +906,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -961,7 +972,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1031,7 +1044,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1061,7 +1076,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1101,7 +1118,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1119,7 +1138,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1231,7 +1252,9 @@ class ModelTrainingPipeline:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,50 +1,18 @@
 ---
-
-module_id: ORDEREXECUTIONBLUEPRINT_001
-
-version: 1.0.0
-
-status: Active
-
-created_date: 2026-04-07
-
-last_updated: '2026-04-07'
-
-owner: 执行团队
-
-responsibility:
-
-- 系统架构蓝图设计与实施指导与实施方案
-
-layer: layer_05
-
-standard_type: 专业量化机构蓝图
-
-applicable_scope: 全系统
-
-compliance_level: 专业标准
-
-
+module_id: ORDEREXECUTIONBLUEPRINT_001_7781
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-01
-
 last_updated: 2026-04-01
-
 owner: 首席文档架构?
-
+responsibility:
+- 系统架构蓝图设计与实施指导与实施方案
+layer: layer_05
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统架构设计
-
 compliance_level: 初始标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 设计阶段
-
 ---
 
 
@@ -1273,7 +1241,9 @@ class TradingAPI:
 
 **索引**: `EXEC.001`
 
----
+```
+```---
+```
 
 
 
@@ -1329,7 +1299,9 @@ class TradingAPI:
 
 
 
----
+```
+```---
+```
 
 
 

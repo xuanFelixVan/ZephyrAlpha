@@ -1,16 +1,5 @@
 ---
-1. **开源免费**: Label Studio完全开源，无商业授权费用
-2. **功能全面**: 支持多模态标注，满足各种标注需求
-3. **易于部署**: Docker一键部署，无需复杂配置
-4. **社区活跃**: GitHub 16k+ stars，社区支持完善
-1. **第一阶段（1-2周）**: 部署Label Studio，设计标注模板
-2. **第二阶段（2-3周）**: 建立质量控制流程，完成第一批标注
-3. **第三阶段（3-4周）**: 集成主动学习，优化标注效率
-1. **标注规范**: 建立清晰的标注规范文档
-2. **质量控制**: 定期检查标注一致性和准确率
-3. **数据安全**: 标注数据定期备份
-4. **性能优化**: 大规模标注时注意系统性能
-module_id: 10_AI_WORKFLOW_SENTIMENT-DATA-ANNOTATION-PLATFORM-_001
+module_id: 10_AI_WORKFLOW_SENTIMENT-DATA-ANNOTATION-PLATFORM-_001_6532
 version: 1.0.0
 status: Active
 owner: 待指定

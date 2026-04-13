@@ -63,7 +63,7 @@ reference_models:
 
 
 
----
+```---
 
 
 
@@ -125,7 +125,7 @@ reference_models:
 
 
 
----
+```---
 
 
 
@@ -239,7 +239,7 @@ responsibility_boundary: |
 
 ```yaml
 
----
+```---
 
 module_id: EXAMPLE_001
 
@@ -251,7 +251,7 @@ created_date: 2026-04-06
 
 last_updated: 2026-04-06
 
----
+```---
 
 ```
 
@@ -419,7 +419,7 @@ last_code_update: 2026-04-06
 
 
 
----
+```---
 
 
 
@@ -831,7 +831,7 @@ def calculate_sharpe_ratio(returns: pd.Series, risk_free_rate: float = 0.02) -> 
 
 
 
----
+```---
 
 
 
@@ -1177,7 +1177,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 
@@ -1537,7 +1537,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 
@@ -1605,7 +1605,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 
@@ -1671,7 +1671,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 
@@ -1731,7 +1731,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 
@@ -1795,7 +1795,7 @@ class DataQualityValidator:
 
 
 
----
+```---
 
 
 

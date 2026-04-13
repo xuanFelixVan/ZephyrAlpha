@@ -173,7 +173,9 @@ class DragonPullbackStrategy:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -279,7 +281,9 @@ class HotSectorPrioritySystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -361,7 +365,9 @@ class AuctionAnalysisSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -459,7 +465,9 @@ class PositionTakingSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -555,7 +563,9 @@ class PioneerDragonIdentifier:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -651,7 +661,9 @@ class TargetPriceCalculationSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -761,7 +773,9 @@ class DailyReviewQuantifier:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -841,7 +855,9 @@ class FanbeiStrategy:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -967,7 +983,9 @@ class TopTraderMindSummary:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001
-
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_001_1501
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 模块职责边界
-
-- 边界定义
-
-- 职责划分
-
-- 接口规范
-
 layer: layer_05
-
 ---
 
 
@@ -214,7 +196,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -240,7 +224,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -262,7 +248,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -284,7 +272,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -358,7 +348,9 @@ report = reporter.get_report_result(task_id)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +412,9 @@ report = reporter.get_report_result(task_id)
 
 
 
----
+```
+```---
+```
 
 
 

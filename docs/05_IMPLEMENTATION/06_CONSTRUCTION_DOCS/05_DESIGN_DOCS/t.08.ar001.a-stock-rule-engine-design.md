@@ -13,6 +13,7 @@ applicable_scope: ﮔ۷۰ﮔﻛﭦ۳ﮔﻝﺏﭨﻝﭨ
 compliance_level: ﮔﭘﮔﮔﮒ
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰ﻛﺕ?
+audit_status: HARDCODED_PARAMS_TO_L0
 ---
 
 | **ﻟ۶ﮒﮒﺏﻠﻝﺛ?* | ﮔﮔﻟ۶ﮒﻛﭨ۴YAMLﻠﻝﺛ؟ﮒ؟ﻛﺗﺅﺙﻛﺕﮒﮔﭨﻛﭨ۲ﻝ | ﻟ۶ﮒﻠﻝﺛ؟ﮔﻛﭨﭘ + ﮒ۷ﮔﮒﻟﺛ?|
@@ -1587,7 +1588,9 @@ class TestAStockRuleEngine:
 
 
 
----
+```
+```---
+```
 
 
 

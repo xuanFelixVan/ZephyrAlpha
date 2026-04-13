@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_02_DEVELOPMENT_DOCUMENT_QUALITY_GATE_STANDARD
+module_id: 05_IMPLEMENTATION_02_DEVELOPMENT_DOCUMENT_QUALITY_GATE_STANDARD_9400
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -57,7 +57,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -81,9 +83,9 @@ last_updated: 2026-04-07
 
 ```yaml
 
----
+```---
 
-module_id: [ﮔ۷۰ﮒID]
+module_id: [ﮔ۷۰ﮒID]_9400
 
 version: [ﻝﮔ؛ﮒﺓ]
 
@@ -95,7 +97,7 @@ last_updated: [ﮔﺑﮔﺍﮔ۴ﮔ]
 
 owner: [ﻟﺑﻟﺑ۲ﻛﭦﭦ]
 
----
+```---
 
 ```
 
@@ -301,7 +303,9 @@ implementation_status: [ﮒ؟ﻝﺍﻝﭘﮔ]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -389,7 +393,9 @@ implementation_status: [ﮒ؟ﻝﺍﻝﭘﮔ]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -499,7 +505,9 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```
+```---
+```
 
 
 
@@ -563,7 +571,9 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```
+```---
+```
 
 
 
@@ -609,7 +619,9 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```
+```---
+```
 
 
 
@@ -641,7 +653,9 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```
+```---
+```
 
 
 
@@ -683,7 +697,9 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```
+```---
+```
 
 
 

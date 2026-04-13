@@ -75,7 +75,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +171,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -345,7 +349,9 @@ llm_with_tools = llm.bind_tools(tools)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -459,7 +465,9 @@ STRATEGY_ANALYSIS_PROMPT = """你是一位量化策略分析师。请分析以�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -601,7 +609,9 @@ def rag_augmented_query(user_question: str) -> str:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -725,7 +735,9 @@ def research_agent(user_question: str):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -827,7 +839,9 @@ print(report)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -893,7 +907,9 @@ documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1087,7 +1103,9 @@ class TradingDebateAgent:
 
 
 
----
+```
+```---
+```
 
 
 

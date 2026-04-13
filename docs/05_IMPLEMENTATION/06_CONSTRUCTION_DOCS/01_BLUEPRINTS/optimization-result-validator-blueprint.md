@@ -1,35 +1,16 @@
 ---
-
-module_id: OPTIMIZATION_RESULT_VALIDATOR_001
-
+module_id: OPTIMIZATION_RESULT_VALIDATOR_001_1343
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 优化结果验证
-
-  - 约束满足检查
-
-  - 数值稳定性验证
-
-  - 结果合理性评估
-
+- 优化结果验证
 layer: layer_06
-
 ---
 
 
@@ -818,7 +799,9 @@ class ValidationResult:
 
 ```yaml
 
-- module_id: OPTIMIZATION_RESULT_VALIDATOR_001
+```
+- module_id: OPTIMIZATION_RESULT_VALIDATOR_001_1343
+```
 
   module_name: 优化结果验证器
 

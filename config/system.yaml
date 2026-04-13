@@ -48,3 +48,7 @@ system:
 #    - Linux/Mac: export ZEPHYR_DATA_DIR=/data/zephyr
 #    - Windows: set ZEPHYR_DATA_DIR=D:\data\zephyr
 #    - Python: from pathlib import Path; data_dir = Path(config['paths']['data_dir'])
+
+commission: 0.001
+max_leverage: 2.0
+slippage: 0.0001

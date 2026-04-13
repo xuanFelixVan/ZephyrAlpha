@@ -29,7 +29,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -281,7 +283,9 @@ class FactorICMonitor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -435,7 +439,9 @@ class FactorDecayDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -603,7 +609,9 @@ class FactorLifecycleManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -733,7 +741,9 @@ class MonitoringDashboard:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -841,7 +851,9 @@ class AlertManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -917,7 +929,9 @@ factor_monitoring:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -955,7 +969,9 @@ factor_monitoring:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -977,7 +993,9 @@ factor_monitoring:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -993,7 +1011,9 @@ factor_monitoring:
 
 
 
----
+```
+```---
+```
 
 
 

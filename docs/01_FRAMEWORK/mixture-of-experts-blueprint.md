@@ -1,33 +1,15 @@
 ---
-
-module_id: MIXTURE_OF_EXPERTS_001
-
+module_id: MIXTURE_OF_EXPERTS_001_0483
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供mixture of experts blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P2
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的混合专家模型设计，包括专家路由、负载均衡、模型并行等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的混合专家模型设计，包括专家路由、负载均衡、模型并行等核心功能。'
 layer: layer_04
-
 owner: 首席文档架构师
-
 ---
 
 # 混合专家模型(MoE)蓝图
@@ -70,7 +52,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +116,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -192,7 +178,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -368,7 +354,7 @@ x:
 
 
 
----
+```---
 
 
 
@@ -412,7 +398,7 @@ fairscale>=0.4.0
 
 
 
----
+```---
 
 
 
@@ -446,7 +432,7 @@ fairscale>=0.4.0
 
 
 
----
+```---
 
 
 
@@ -464,7 +450,7 @@ fairscale>=0.4.0
 
 
 
----
+```---
 
 
 
@@ -576,7 +562,7 @@ fairscale>=0.4.0
 
 
 
----
+```---
 
 
 

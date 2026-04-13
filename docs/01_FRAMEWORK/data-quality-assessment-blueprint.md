@@ -1,28 +1,20 @@
 ---
-module_id: 01_FRAMEWORK_DATA_QUALITY_ASSESSMENT_BLUEPRINT
+module_id: 01_FRAMEWORK_DATA_QUALITY_ASSESSMENT_BLUEPRINT_9596
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Data Quality Assessment Blueprint相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级数据质量评估蓝图
 applicable_scope: Layer 1数据质量评估
 compliance_level: 顶级专业标准
-reference_models:
-  - Two Sigma Data Quality
-  - Citadel Data Validation
-  - Bridgewater Data Governance
-related_documents:
-  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_QUALITY_MANAGEMENT_BLUEPRINT.md
-  - DATA_QUALITY_GOVERNANCE_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ../ARCHITECTURE.md
 implementation_status: 设计阶段
-responsibility_boundary: '**本文档职责（Layer 1 数据层）**：
+responsibility_boundary: '''**本文档职责（Layer 1 数据层）**：'
 ---
 
 ## 📋 执行摘要
@@ -67,7 +59,9 @@ responsibility_boundary: '**本文档职责（Layer 1 数据层）**：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -283,7 +277,9 @@ responsibility_boundary: '**本文档职责（Layer 1 数据层）**：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -339,7 +335,9 @@ responsibility_boundary: '**本文档职责（Layer 1 数据层）**：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1265,7 +1263,9 @@ class QualityScoringSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1493,7 +1493,9 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1521,7 +1523,9 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1563,7 +1567,9 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1605,7 +1611,9 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1657,13 +1665,17 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1719,7 +1731,9 @@ python src/data_quality/assessor.py
 
 
 
----
+```
+```---
+```
 
 
 

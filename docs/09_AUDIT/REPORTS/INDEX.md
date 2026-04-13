@@ -17,10 +17,10 @@ compliance_level: 专业标准
 
 ### 导航与上级入口
 
-- **本目录门面（短说明）**：[./README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)  
+- **本目录门面（短说明）**：~~[./README.md]~~  
 - **索引健全性（零入链 · 本前缀 REPORTS · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260414.md（`scan_index_health.py --prefix docs/09_AUDIT/REPORTS --date 20260414`；**zero_inbound=0**）｜历史 `20260412`  
 - **STATE 前缀健全性（另一份机器报告 · 最新）**：../STATE/INDEX_HEALTH_ORPHAN_20260416.md（`scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`；**zero_inbound=0**）｜历史 `20260413`（勿与上条 REPORTS `20260412/14` 混读）  
-- **STATE 子域索引**：[../STATE/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)  
+- **STATE 子域索引**：~~[../STATE/INDEX.md]~~  
 - **整仓按目录尽治（REPO_WIDE §7）**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md  
 - **治理工具总索引**：../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md  
 - **L1 治理快照（20260408）**：../STATE/SENTINEL_L1_SCAN_20260408.md  
@@ -37,13 +37,15 @@ compliance_level: 专业标准
 
 > **体量真源**：本前缀在仓库内的**路径条数**（深度 3 聚合）以 rollup 为准 → **最新** `../STATE/REPO_DIRECTORY_ROLLUP_20260414.md`（**`docs/09_AUDIT/REPORTS` = 499**）；历史 `20260413`。上表为历史手工统计，对账前请勿单独当作 Git 真源。
 
----
+```
+```---
+```
 
 ## 📚 文档列表
 
 ### 快速入口（建议先看）
 
-- **夜间审计产物（快照）**：[`../STATE/overnight_runs/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- **夜间审计产物（快照）**：~~[`../STATE/overnight_runs/INDEX.md`]~~
 - **Reports 分组索引（推荐入口）**：`INDEX_GROUPED_REPORTS_20260408.md`
 - **进度类报告（常用入口）**：
   - `PHASE3_CURRENT_PROGRESS_20260407.md`
@@ -181,7 +183,9 @@ compliance_level: 专业标准
 - Todo Cleanup Inventory 20260406 - `TODO_CLEANUP_INVENTORY_001`
 - Weekly Scan Report 001 20260403 - `WEEKLYSCANREPORT0012026040_001`
 
----
+```
+```---
+```
 
 ## 🔍 维护指南
 
@@ -197,7 +201,9 @@ compliance_level: 专业标准
 - ✅ 文档命名遵循专业量化机构标准
 - ✅ 保持索引与实际文件一致
 
----
+```
+```---
+```
 
 ## 📝 变更历史
 
@@ -205,7 +211,9 @@ compliance_level: 专业标准
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
 
----
+```
+```---
+```
 
 ## 🔗 相关文档
 
@@ -213,7 +221,9 @@ compliance_level: 专业标准
 - 职责边界地图
 - 专业文档治理审计指南
 
----
+```
+```---
+```
 
 **索引状态**: ✅ 活跃
 **维护频率**: 按需更新

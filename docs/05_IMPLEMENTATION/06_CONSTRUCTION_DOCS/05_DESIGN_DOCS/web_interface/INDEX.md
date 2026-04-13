@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_WEB_INTERFACE_001
-
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_WEB_INTERFACE_001_1364
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供Web Interface相关文档支持
-
+- 提供Web Interface相关文档支持
 layer: layer_05
 ---
 
@@ -88,7 +79,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

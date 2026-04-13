@@ -49,7 +49,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -121,7 +121,7 @@ LAYER7_REPORT_API_REFERENCE.md
 
 - ϋ┐Θϊ║ΟώΑγύΦρύγΕίΣ╜ίΡΞΎ╝Ιίο?`README.md`ήΑΒ`DOCUMENT.md`Ύ╝?
 
----
+```---
 
 
 
@@ -193,7 +193,7 @@ docs/06_ARCHIVE/
 
 
 
----
+```---
 
 
 
@@ -247,7 +247,7 @@ docs/06_ARCHIVE/
 
 
 
----
+```---
 
 
 
@@ -339,7 +339,7 @@ docs/06_ARCHIVE/
 
 - ίΝΖίΡτϊ╜┐ύΦρύν║ϊ╛Μϊ╗μύιΒΎ╝Ιί║ΦόΦ╛ίερϊ╜┐ύΦρόΝΘίΞΩΎ╝?- ώΘΞίνΞϋΥζίδ╛όΨΘόκμύγΕόοΓϋ┐░ίΗΖίχ?- ίΝΖίΡτϊ╕ΟόευόρκίζΩόΩιίΖ│ύγΕίΗΖίχ?
 
----
+```---
 
 
 
@@ -361,9 +361,9 @@ docs/06_ARCHIVE/
 
 ```yaml
 
----
+```---
 
-module_id: {MODULE_ID}
+module_id: {MODULE_ID}_7914
 
 version: 1.0.0
 
@@ -391,7 +391,7 @@ owner: ϋ┤θϋ┤μϊ║?---
 
 
 
----
+```---
 
 
 
@@ -447,7 +447,7 @@ owner: ϋ┤θϋ┤μϊ║?---
 
 
 
----
+```---
 
 
 
@@ -625,7 +625,7 @@ python scripts/blueprint_validator.py --verbose --report --output reports/monthl
 
 
 
----
+```---
 
 
 
@@ -639,7 +639,7 @@ python scripts/blueprint_validator.py --verbose --report --output reports/monthl
 
 
 
----
+```---
 
 
 

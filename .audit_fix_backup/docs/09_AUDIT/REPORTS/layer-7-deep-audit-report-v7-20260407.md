@@ -71,7 +71,7 @@ implementation_status: 审计完成
 
 
 
----
+```---
 
 
 
@@ -141,7 +141,7 @@ implementation_status: 审计完成
 
 
 
----
+```---
 
 
 
@@ -339,7 +339,7 @@ implementation_status: 审计完成
 
 
 
----
+```---
 
 
 
@@ -463,7 +463,7 @@ implementation_status: 审计完成
 
 ```yaml
 
----
+```---
 
 module_id: VALIDATION_TESTING_FRAMEWORK_001
 
@@ -485,7 +485,7 @@ applicable_scope: 全系统
 
 compliance_level: 专业标准
 
----
+```---
 
 
 
@@ -517,7 +517,7 @@ priority: P1
 
 estimated_effort: 60h
 
----
+```---
 
 ```
 
@@ -549,7 +549,7 @@ estimated_effort: 60h
 
 
 
----
+```---
 
 
 
@@ -595,7 +595,7 @@ estimated_effort: 60h
 
 
 
----
+```---
 
 
 
@@ -657,7 +657,7 @@ estimated_effort: 60h
 
 
 
----
+```---
 
 
 
@@ -735,7 +735,7 @@ estimated_effort: 60h
 
 
 
----
+```---
 
 
 
@@ -937,7 +937,7 @@ for filename in files_to_fix:
 
 
 
----
+```---
 
 
 
@@ -983,7 +983,7 @@ for filename in files_to_fix:
 
 
 
----
+```---
 
 
 
@@ -1071,7 +1071,7 @@ for filename in files_to_fix:
 
 
 
----
+```---
 
 
 

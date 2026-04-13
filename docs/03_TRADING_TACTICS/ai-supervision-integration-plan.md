@@ -1,5 +1,5 @@
 ---
-module_id: 03_TRADING_TACTICS_AI_SUPERVISION_INTEGRATION_PLAN
+module_id: 03_TRADING_TACTICS_AI_SUPERVISION_INTEGRATION_PLAN_9733
 layer: layer_03
 version: 1.0.0
 status: Active
@@ -49,7 +49,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -203,7 +205,9 @@ Layer 7-8: AI监督?(专业机构级集?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -323,7 +327,9 @@ class RiskControlWorkflow:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -617,7 +623,9 @@ risk_control:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -751,7 +759,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -873,7 +883,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -927,7 +939,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -971,7 +985,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1007,7 +1023,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1049,7 +1067,9 @@ class AIEvaluationFramework:
 
 
 
----
+```
+```---
+```
 
 
 

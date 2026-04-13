@@ -27,14 +27,14 @@ layer: layer_00
 > **架构**: Layer 10 - 治理与合规层  
 > **最后更新**: 2026-04-11
 
----
+```---
 
 ## 上级与接力
 
-- [docs 根索引](../INDEX.md)
+- ~~[docs 根索引]~~
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
-- [09_AUDIT 索引](../09_AUDIT/INDEX.md)
+- ~~[09_AUDIT 索引]~~
 - [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
 
 ### 索引健全性与目录体量（P5 §7）
@@ -42,7 +42,7 @@ layer: layer_00
 - **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260506.md（`scan_index_health.py --prefix docs/10_GOVERNANCE_COMPLIANCE --date 20260506`；**zero_inbound=0**；候选 md **21**；首轮 **6** 处子域门面零入链，已由本页**子域门面表**补链后复跑归零）
 - **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/10_GOVERNANCE_COMPLIANCE` **21** 条路径）
 
----
+```---
 
 ## 🎯 目录职责
 
@@ -54,19 +54,19 @@ layer: layer_00
 - 风险治理框架  
 - 监管合规文档  
 
----
+```---
 
 ## 子域门面（INDEX / README）
 
 | 子域 | 索引 | 概述 |
 |------|------|------|
-| CI_CD_INTEGRATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| CLASSIFICATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| GOVERNANCE_PROCESSES | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | （本目录无 `README.md`） |
-| TRAINING_SYSTEM | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| KNOWLEDGE_BASE | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | （门面见子索引） |
+| CI_CD_INTEGRATION | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| CLASSIFICATION | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| GOVERNANCE_PROCESSES | ~~[INDEX.md]~~ | （本目录无 `README.md`） |
+| TRAINING_SYSTEM | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| KNOWLEDGE_BASE | ~~[INDEX.md]~~ | （门面见子索引） |
 
----
+```---
 
 ## 📚 核心文档
 
@@ -86,7 +86,7 @@ layer: layer_00
 | `risk_governance/` | 风险治理框架 | 🔄 规划中 |
 | `regulatory_compliance/` | 监管合规文档 | 🔄 规划中 |
 
----
+```---
 
 ## 📖 快速导航
 
@@ -104,17 +104,17 @@ layer: layer_00
 - **合规检查**: 自动化合规引擎  
 - **风险评估**: AI 风险评估模型  
 
----
+```---
 
 ## 🔗 相关文档
 
-- [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
+- ~~[统一架构 (Layer 0-11)]~~
 - AI 决策审计蓝图
 - 合规监控系统蓝图
-- [审计系统](../09_AUDIT/INDEX.md)
+- ~~[审计系统]~~
 - [战略决策层 (Layer 11)](../11_STRATEGIC_DECISION/INDEX.md)
 
----
+```---
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
@@ -130,7 +130,7 @@ layer: layer_00
 - 文档审查流程
 - 培训体系指南
 
----
+```---
 
 ## 📊 文档统计
 
@@ -141,7 +141,7 @@ layer: layer_00
 | 实施文档 | 0 |
 | **总计** | **1** |
 
----
+```---
 
 ## 📝 维护说明
 

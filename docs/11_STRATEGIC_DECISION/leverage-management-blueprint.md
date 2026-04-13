@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_015
-
+module_id: LAYER_015_9652
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_03
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: LEVERAGE_MANAGEMENT_001
+```
+module_id: LEVERAGE_MANAGEMENT_001_9652
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -138,7 +129,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +145,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -216,7 +211,9 @@ Layer 11.6融资融券管理系统是清风量化系统的**杠杆引擎**，负
 
 
 
----
+```
+```---
+```
 
 
 
@@ -344,7 +341,9 @@ Layer 11.6融资融券管理系统是清风量化系统的**杠杆引擎**，负
 
 
 
----
+```
+```---
+```
 
 
 
@@ -738,7 +737,9 @@ class DynamicLeverageEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -982,7 +983,9 @@ class FinancingCostOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1196,7 +1199,9 @@ class ShortManagementSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1480,7 +1485,9 @@ class MarginManagementSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1610,7 +1617,9 @@ class LeverageManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1696,7 +1705,9 @@ Layer 6 组合优化
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1766,7 +1777,9 @@ Layer 6 组合优化
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1906,7 +1919,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1946,7 +1961,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1990,7 +2007,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2012,7 +2031,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2028,7 +2049,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2036,7 +2059,9 @@ class QMTLeverageAPI:
 
 **下一步**: 创建业绩归因系统蓝图
 
----
+```
+```---
+```
 
 
 
@@ -2092,7 +2117,9 @@ class QMTLeverageAPI:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,28 +1,20 @@
 ---
-
-module_id: FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT_001
-
+module_id: FACTOR_BACKTEST_BLUEPRINT_COMPLETENESS_AUDIT_REPORT_001_5688
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 个人开发者
-
 standard_type: 专业量化机构文档
-
 responsibility:
-
 - 归档文档、历史版本、审计状态追踪
-
 layer: layer_06
 ---
 
 
-module_id: ARCHIVE_FACTOR_BACKTEST_BP_AUDIT_001
+```
+module_id: ARCHIVE_FACTOR_BACKTEST_BP_AUDIT_001_5688
+```
 
 version: 2026.04.02
 

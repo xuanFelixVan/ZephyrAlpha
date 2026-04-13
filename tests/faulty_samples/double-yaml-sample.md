@@ -10,7 +10,7 @@ responsibility:
 layer: layer_test
 ---
 
----
+```---
 module_id: FAULTY_SAMPLE_DOUBLE_YAML_001_SECONDARY
 version: 1.0.0
 status: Active
@@ -20,7 +20,7 @@ owner: 测试系统
 responsibility:
   - 这是第二个YAML块，会触发D-01检测
 layer: layer_test
----
+```---
 
 # 已知缺陷：双YAML Frontmatter
 

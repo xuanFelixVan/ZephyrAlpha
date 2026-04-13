@@ -1,39 +1,21 @@
 ---
-
-module_id: RISK_BUDGET_MANAGEMENT_001
-
+module_id: RISK_BUDGET_MANAGEMENT_001_4607
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 风险预算管理蓝图 (RISK_BUDGET_MANAGEMENT)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 风险预算管理
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: PyPortfolioOpt + Riskfolio-Lib
-
 priority: P2
-
 ---
 
 ## 文档职责说明
@@ -64,7 +46,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +112,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +268,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -618,7 +606,9 @@ class PyPortfolioOptIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -744,7 +734,9 @@ CREATE TABLE risk_budget_reports (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -848,7 +840,9 @@ CREATE TABLE risk_budget_reports (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -910,7 +904,9 @@ class IRiskBudgetManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -950,7 +946,9 @@ class IRiskBudgetManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -988,7 +986,9 @@ class IRiskBudgetManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1060,7 +1060,9 @@ weights = port.rp_optimization(model='Classic', rm='MV')
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1096,7 +1098,9 @@ weights = port.rp_optimization(model='Classic', rm='MV')
 
 
 
----
+```
+```---
+```
 
 
 

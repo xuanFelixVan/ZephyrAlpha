@@ -23,7 +23,7 @@ responsibility:
 > **违规总数**: 16 个  
 > **风险等级**: 🔴 **高** — 需要立即修复
 
----
+```---
 
 ## 执行摘要
 
@@ -38,7 +38,7 @@ responsibility:
 | 禁止关键词（old） | 1 | 6% | 🟢 低 |
 | **总计** | **16** | **100%** | — |
 
----
+```---
 
 ## 详细违规清单
 
@@ -73,7 +73,7 @@ python scripts/check_directory_naming.py --verbose | grep module_designs
 # 应无输出
 ```
 
----
+```---
 
 ### 🟡 P1: 本周修复（禁止关键词）
 
@@ -110,7 +110,7 @@ mv 05_BACKTEST 05_BACKTESTING
 | 14 | `02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_BACKUP_RECOVERY` | backup | `DATA_RECOVERY` | P1 |
 | 16 | `05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_TEMPLATES` | temp | `04_CONFIG_TMPL` 或 `04_CONFIGURATION_TEMPLATES` | P1 |
 
----
+```---
 
 ## 批量修复脚本
 
@@ -171,7 +171,7 @@ python scripts/check_directory_naming.py --verbose
 # 预期结果: 应显示 "✅ 所有目录命名符合规范"
 ```
 
----
+```---
 
 ## 影响评估
 
@@ -205,7 +205,7 @@ python scripts/batch_fix_invalid_links_v2.py
 - [12_MODULE_DESIGNS/](./12_MODULE_DESIGNS/) - 模块设计草图
 ```
 
----
+```---
 
 ## 修复时间表
 
@@ -217,7 +217,7 @@ python scripts/batch_fix_invalid_links_v2.py
 | **P2** | 修复归档区违规目录 | 维护团队 | 2026-04-20 | 检查通过 |
 | **验证** | 全量检查 + 链接修复 | QA 团队 | 2026-04-22 | 0 违规 |
 
----
+```---
 
 ## 预防措施
 
@@ -239,7 +239,7 @@ python scripts/batch_fix_invalid_links_v2.py
 
 3. **培训**: 为新成员提供目录命名规范培训
 
----
+```---
 
 ## 附录：检查规则摘要
 
@@ -257,7 +257,7 @@ temp, tmp, backup, old, test, new, draft, copy
 # 最大深度: 6 层
 ```
 
----
+```---
 
 **报告生成**: 2026-04-12  
 **下次审计**: 2026-04-19  

@@ -24,8 +24,8 @@ layer: layer_05
 
 ## 治理与接力
 
-- [项目办公室 `../00_MANAGEMENT/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) ｜ 全仓库文件治理任务清单 §7 `../00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md`  
-- [图纸柜索引（蓝图列表）`../01_BLUEPRINTS/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) ｜ [文档总入口 `../../../INDEX.md`](../../../INDEX.md)  
+- ~~[项目办公室 `../00_MANAGEMENT/README.md`]~~ ｜ 全仓库文件治理任务清单 §7 `../00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md`  
+- ~~[图纸柜索引（蓝图列表）`../01_BLUEPRINTS/INDEX.md`]~~ ｜ [文档总入口 `../../../INDEX.md`](../../../INDEX.md)  
 - **深度 3 前缀体量（rollup）**：../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md · [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.json)（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`）
 
 ## 文档列表

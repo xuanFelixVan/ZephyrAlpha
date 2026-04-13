@@ -1,33 +1,15 @@
 ---
-
-module_id: TIMESCALEDB_INTEGRATION_001
-
+module_id: TIMESCALEDB_INTEGRATION_001_4695
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - TimescaleDB集成
-
-- 时序数据库
-
-- 时间序列
-
-- 高效存储
-
 layer: layer_05
-
 ---
 
 

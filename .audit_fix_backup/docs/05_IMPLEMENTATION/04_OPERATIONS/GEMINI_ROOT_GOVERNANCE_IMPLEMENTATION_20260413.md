@@ -17,7 +17,7 @@ layer: layer_05
 > **建议方**: Gemini  
 > **执行方**: Haiku 4.5 Agent
 
----
+```---
 
 ## 📋 三项根源治理任务
 
@@ -89,7 +89,7 @@ $ python scripts/run_comprehensive_audit.py --check C-01 --verbose
 2. **可验证性**: 人工可以快速查看样本文件，验证脚本的判断是否正确
 3. **可调试性**: 如果发现脚本误判，可以立即看到证据
 
----
+```---
 
 ### ✅ 任务2: 建立已知错误样本库与测试验证 (COMPLETED)
 
@@ -184,7 +184,7 @@ jobs:
 2. **失败即阻止**: 如果测试失败（脚本无法检测到问题），则阻止审计进行
 3. **渐进扩展**: 可以逐步添加编码问题、BOM问题等其他样本
 
----
+```---
 
 ### ✅ 任务3: INDEX.md自动同步脚本 (COMPLETED)
 
@@ -259,7 +259,7 @@ python scripts/sync_index.py --dir docs/09_AUDIT/WORKFLOWS
 2. **一致性**: 所有文档的链接格式统一，易于维护
 3. **可扩展**: 框架易于扩展到其他目录（只需修改配置）
 
----
+```---
 
 ## 🔗 三项治理任务的协同
 
@@ -279,7 +279,7 @@ INDEX.md 自动更新 ✅
 生成审计报告 + 样本快照 ✅
 ```
 
----
+```---
 
 ## 📊 使用场景速查表
 
@@ -310,7 +310,7 @@ python scripts/sync_index.py --check || exit 1  # 索引必须最新
 python scripts/run_comprehensive_audit.py --check C-01  # 审计
 ```
 
----
+```---
 
 ## 🎯 治理效果评估
 
@@ -324,7 +324,7 @@ python scripts/run_comprehensive_audit.py --check C-01  # 审计
 | **人工干预** | ⚠️ 频繁 | ✅ 最小化 |
 | **问题追踪** | ❌ 难 | ✅ 有证据链 |
 
----
+```---
 
 ## 📚 文件清单
 
@@ -340,7 +340,7 @@ python scripts/run_comprehensive_audit.py --check C-01  # 审计
 - `docs/09_AUDIT/WORKFLOWS/new-directory-creation-workflow.md` - 添加YAML frontmatter
 - `docs/09_AUDIT/WORKFLOWS/INDEX.md` - 自动更新（by sync_index.py）
 
----
+```---
 
 ## 🚀 后续建议
 
@@ -359,7 +359,7 @@ python scripts/run_comprehensive_audit.py --check C-01  # 审计
 2. 建立违反治理标准的自动检测与通知机制
 3. 定期评估脚本可靠性，持续改进
 
----
+```---
 
 ## 📝 总结
 
@@ -371,7 +371,7 @@ Gemini的建议通过三项根源治理任务，从根本上改变了文档治�
 
 这三项协同工作，建立了一个**可持续、可验证、可自动化的文档治理体系**，彻底打破了"修复-检查-再修复"的恶性循环。
 
----
+```---
 
 **实施完成时间**: 2026-04-13  
 **执行效果**: ✅ 三项任务全部通过验证  

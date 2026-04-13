@@ -1,33 +1,16 @@
 ---
-
-module_id: MACRO_FACTOR_SYSTEM_001
-
+module_id: MACRO_FACTOR_SYSTEM_001_9072
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 战略与因子团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 11 战略决策 — 宏观因子系统
-
 compliance_level: 专业标准
-
 layer: layer_11
-
 responsibility:
-
-  - 宏观因子定义、计算与版本治理
-
-  - 资产/组合对宏观因子的暴露分析与约束
-
-  - 与组合优化及风险预算的接口约定
-
+- 宏观因子定义、计算与版本治理
 ---
 
 

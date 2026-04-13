@@ -24,7 +24,7 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 parent_document: ../PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md
 implementation_status: 设计阶段
----
+```---
 
 # 市场参与者行为模拟系统技术规格书
 > **核心职责**: 文档内容说明
@@ -38,7 +38,7 @@ implementation_status: 设计阶段
 > **技术评审官**: Spec-Approver（审批智能体）
 > **核心理念**: 桥水经济范式 + 文艺复兴统计套利 + 个人AI维护模式
 > **目标**: 实现国家队、主力、散户三类市场参与者行为模型，提升策略预测准确率
----
+```---
 
 ## 📋 一、概述
 ### 1.1 设计背景
@@ -75,7 +75,7 @@ implementation_status: 设计阶段
 | **维护人** | 首席技术评审官 |
 | **评审状态** | 待评审 |
 
----
+```---
 
 ## 🏛 二、详细架构设计
 ### 2.1 整体架构
@@ -767,7 +767,7 @@ game_equilibrium:
 1. **收敛?*: 算法必须?00次迭代内收敛
 2. **稳定?*: 均衡策略在扰动下保持稳定
 3. **有效?*: 均衡策略的收益不低于非均衡策?4. **效率**: 计算时间 < 10?
----
+```---
 
 ## 🔌 三、接口定?
 ### 3.1 智能体统一接口
@@ -1151,7 +1151,7 @@ class RiskControlInterface:
         pass
 ```
 
----
+```---
 
 ## 📊 四、数据模型与存储
 
@@ -1172,7 +1172,7 @@ class RiskControlInterface:
   ?        ?         ?          ?          ?         ?采集?   Layer 1    Layer 2     Layer 2.5   Layer 2.5   Layer 7
 ```
 
----
+```---
 
 ## 🧪 五、测试策略
 ### 5.1 单元测试
@@ -1436,7 +1436,7 @@ class MarketSimulationValidator:
 | **策略绩效** | 夏普比率 > 1.5 | 策略回测 |
 | **系统稳定?* | 724小时无故?| 稳定性测试|
 
----
+```---
 
 ## ⚠️ 六、风险与约束
 
@@ -1458,7 +1458,7 @@ class MarketSimulationValidator:
 | **时间约束** | 个人开发时间有?| AI辅助开?优先核心功能 |
 | **技能约?* | 强化学习专业知识不足 | 使用成熟开源框?学习社区最佳实现|
 
----
+```---
 
 ## ?七、验收指标
 ### 7.1 功能验收标准
@@ -1488,7 +1488,7 @@ class MarketSimulationValidator:
 | **接口一致?* | 100% | 接口测试 |
 | **安全合规?* | 无高危漏?| 安全扫描 |
 
----
+```---
 
 ## 🗓?八、实施路线图
 
@@ -1559,7 +1559,7 @@ class MarketSimulationValidator:
 - 监控仪表?
 **工作?*: 40小时
 
----
+```---
 
 ## 📚 九、参考文?
 ### 9.1 架构文档
@@ -1598,7 +1598,7 @@ class MarketSimulationValidator:
 - **TradingAgents-AShare**: https://github.com/KylinMountain/TradingAgents-AShare
 - **FinGenius**: https://github.com/HuaYaoAI/FinGenius
 
----
+```---
 
 ## 📝 十、变更记?
 | 版本 | 日期 | 变更内容 | 作?|
@@ -1606,6 +1606,6 @@ class MarketSimulationValidator:
 | v1.0 | 2026-04-02 | 初始版本,完整技术规格书 | Spec-Approver（审批智能体） |
 | v1.1 | 2026-04-02 | 补充三个必须改进项设计文?| Spec-Approver（审批智能体） |
 
----
+```---
 
 **版本**: v1.1 | **更新**: 2026-04-02 | **状?*: ?已完整

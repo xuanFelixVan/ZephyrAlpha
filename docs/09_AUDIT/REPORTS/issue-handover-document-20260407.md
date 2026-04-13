@@ -1,5 +1,5 @@
 ---
-module_id: ISSUE_HANDOVER_DOCUMENT_20260407
+module_id: ISSUE_HANDOVER_DOCUMENT_20260407_1614
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -7,12 +7,6 @@ last_updated: 2026-04-13
 owner: 首席文档架构师
 layer: layer_09
 responsibility: REPORTS
-1. **内容语义分析**: 本次审计基于文本模式匹配，未进行深度语义分析
-2. **链接可达性**: 仅检查文件存在性，未检查链接内容相关性
-3. **职责边界**: 职责分析基于关键词提取，可能存在误判
-1. **三层审计**: 执行了完整的L1-L3三层审计
-2. **全面覆盖**: 审计覆盖所有2500个文档
-3. **问题分类**: 所有问题按层级、类别、严重程度分类
 ---
 ## 🔗 相关文档
 
@@ -26,7 +20,9 @@ responsibility: REPORTS
 
 
 
----
+```
+```---
+```
 
 
 

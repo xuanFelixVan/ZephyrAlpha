@@ -16,7 +16,7 @@ generated_by: scripts/governance/scan_blueprint_d_overlap_candidates.py
 - **截断**：满足阈值的候选共 **11375** 对，仅保留 score 最高的 **400** 对（`--max-output-pairs`）；调参见 Playbook §4。
 
 - **不是**语义 embedding / LLM；基于 **标题、responsibility、正文抽样、H2 标题** 的 token 与标题集合相似度。
-- **建议 canonical** 与 **合并大纲** 为 **规则化启发式**，须经 [D 类蓝图重叠 Playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md) 评审后再改稿。
+- **建议 canonical** 与 **合并大纲** 为 **规则化启发式**，须经 [D 类蓝图重叠 Playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/d-class-blueprint-overlap-playbook.md) 评审后再改稿。
 - 与 **C1（字节相同）** 互补：本脚本跳过 **partial_hash** 全同对（应交给 `scan_duplicate_file_content.py`）。
 
 ## 候选对（按 score 降序，截断展示）

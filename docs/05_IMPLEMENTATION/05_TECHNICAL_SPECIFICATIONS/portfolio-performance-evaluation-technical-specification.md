@@ -1,47 +1,25 @@
 ---
-
-module_id: PORTFOLIO_PERFORMANCE_EVALUATION_TECH_SPEC_001
-
+module_id: PORTFOLIO_PERFORMANCE_EVALUATION_TECH_SPEC_001_8501
 version: 1.0.0
-
 spec_version: 1.0
-
 status: Active
-
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/PORTFOLIO_PERFORMANCE_EVALUATION_BLUEPRINT.md
-
 last_updated: '2026-04-07'
-
 created_date: 2026-04-07
-
 layer: layer_07
-
 index: PORTFOLIO_PERFORMANCE_EVALUATION_TECH_SPEC_001
-
 estimated_hours: 16
-
 review_status: Pending
-
 reviewer: 首席技术评审官
-
 review_date: 2026-04-07
-
 owner: 实施团队
-
 responsibility:
-
 - 技术规格定义与实施标准制定与实施标准
-
 standard_type: 专业量化机构技术规格书
-
 applicable_scope: Layer 7 风险管理/绩效评估层
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 待实施
-
 ---
 
 # Portfolio Performance Evaluation技术规格书 v1.0
@@ -68,7 +46,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -108,7 +88,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +144,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -684,7 +668,9 @@ class PerformanceEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -702,7 +688,9 @@ class PerformanceEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -736,7 +724,9 @@ class PerformanceEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -768,7 +758,9 @@ class PerformanceEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 

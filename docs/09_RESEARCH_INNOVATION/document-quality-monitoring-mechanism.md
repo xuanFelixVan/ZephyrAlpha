@@ -1,21 +1,12 @@
 ---
-
-module_id: DOCUMENT_QUALITY_MONITORING_MECHANISM_001
-
+module_id: DOCUMENT_QUALITY_MONITORING_MECHANISM_001_1102
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 responsibility:
-
 - 负责建立和维护Layer 9研究与创新层的文档质量监控机制，定义质量指标、监控流程和告警机制，确保文档持续符合专业量化机构标准，为文档治理提供自动化监控支持。
-
 layer: layer_09
 ---
 
@@ -34,7 +25,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -46,7 +39,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -94,7 +89,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -218,7 +215,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -304,7 +303,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +349,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +419,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -468,7 +473,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -516,7 +523,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -548,7 +557,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -592,7 +603,9 @@ python scripts/layer9_weekly_monitor.py
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,25 +1,14 @@
 ---
-
-module_id: INCIDENT_REPORT_TEMPLATE_001
-
+module_id: INCIDENT_REPORT_TEMPLATE_001_1523
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 运维团队
-
 responsibility:
-
-  - 事故报告模板文档
-
+- 事故报告模板文档
 standard_type: 专业量化机构模板
-
 applicable_scope: 事故报告
-
 layer: layer_05
 ---
 
@@ -88,7 +77,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +131,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -228,7 +221,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -288,7 +283,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +345,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -392,7 +391,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -468,7 +469,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -512,7 +515,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -564,7 +569,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -580,7 +587,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -596,7 +605,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

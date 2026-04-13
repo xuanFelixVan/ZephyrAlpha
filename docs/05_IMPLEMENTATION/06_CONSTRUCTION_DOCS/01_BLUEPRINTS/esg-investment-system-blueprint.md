@@ -1,33 +1,16 @@
 ---
-
-module_id: ESG_INVESTMENT_SYSTEM_001
-
+module_id: ESG_INVESTMENT_SYSTEM_001_6366
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 战略与合规团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 11 战略决策 — ESG 投资
-
 compliance_level: 专业标准
-
 layer: layer_11
-
 responsibility:
-
-  - ESG 评级与数据接入治理
-
-  - ESG 约束与组合优化衔接
-
-  - 报告与披露口径
-
+- ESG 评级与数据接入治理
 ---
 
 

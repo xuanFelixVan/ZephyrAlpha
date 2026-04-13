@@ -28,12 +28,12 @@ layer: layer_05
 > **Layer**: Layer 1 (数据层)
 > **最后更新**: 2026-04-11
 
----
+```---
 
 ## 上级与接力
 
 - [05_IMPLEMENTATION 索引](../INDEX.md)
-- [本目录 README（概述）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[本目录 README（概述）]~~
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
 - [09_AUDIT STATE 索引](../../09_AUDIT/STATE/INDEX.md)
@@ -43,17 +43,17 @@ layer: layer_05
 - **零入链扫描（最新）**：../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260430.md（`scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_INFRASTRUCTURE --date 20260430`；**zero_inbound=0**；候选 md **4**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../INDEX.md) 显式补链 + 本页链 `README` 后复跑归零）
 - **rollup（深度 3 前缀条数）**：../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（检索 `docs/05_IMPLEMENTATION/04_INFRASTRUCTURE` **4** 条）
 
----
+```---
 
 ## 📋 文档清单
 
 | 文档 | 职责 | 状态 |
 |------|------|------|
-| [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 基础设施概述 | Active |
+| ~~[README.md]~~ | 基础设施概述 | Active |
 | DAILY_PIPELINE.md | 每日数据流水线 | Active |
 | STORAGE_TIER.md | 多级存储架构 | Active |
 
----
+```---
 
 ## 🎯 快速导航
 
@@ -70,7 +70,7 @@ layer: layer_05
    - 温数据存储
    - 冷数据存储
 
----
+```---
 
 ## 📊 目录统计
 
@@ -80,13 +80,13 @@ layer: layer_05
 | Active状态 | 4 |
 | 索引覆盖率 | 100% |
 
----
+```---
 
 ## 🔗 相关文档
 
 - DATACLEANER_TECHNICAL_SPECIFICATION.md - 数据清洗
 
----
+```---
 
 **维护者**: 基础设施负责人
 **创建日期**: 2026-04-04

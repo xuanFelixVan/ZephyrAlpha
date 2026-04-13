@@ -49,7 +49,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET
 
 
 
----
+```---
 
 
 
@@ -87,7 +87,6 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/SIMPLIFIED_RISK_BUDGET
 
 ???---
 
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 
 version: 1.0.0
 
@@ -111,7 +110,7 @@ layer: Layer 6 (锟斤拷锟斤拷呕锟?? | 业锟斤拷芄锟? 锟斤拷锟斤
 
 
 
----
+```---
 
 
 
@@ -137,9 +136,8 @@ layer: Layer 6 (锟斤拷锟斤拷呕锟?? | 业锟斤拷芄锟? 锟斤拷锟斤
 
 ```markdown
 
----
+```---
 
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
 
 version: 1.0.0
 
@@ -167,7 +165,7 @@ ai_maintenance: true
 
 simplified_version: true
 
----
+```---
 
 
 
@@ -189,7 +187,7 @@ simplified_version: true
 
 
 
----
+```---
 
 
 
@@ -267,7 +265,7 @@ simplified_version: true
 
 
 
----
+```---
 
 
 
@@ -307,7 +305,7 @@ simplified_version: true
 
 
 
----
+```---
 
 
 
@@ -525,7 +523,7 @@ class SimplifiedRiskBudgetSystem:
 
 
 
----
+```---
 
 
 
@@ -553,7 +551,7 @@ class SimplifiedRiskBudgetSystem:
 
 
 
----
+```---
 
 
 
@@ -573,7 +571,7 @@ class SimplifiedRiskBudgetSystem:
 
 
 
----
+```---
 
 
 
@@ -599,7 +597,7 @@ class SimplifiedRiskBudgetSystem:
 
 
 
----
+```---
 
 
 
@@ -635,7 +633,7 @@ iconv -f GB18030 -t UTF-8 input.md > output.md
 
 
 
----
+```---
 
 
 
@@ -707,7 +705,7 @@ git commit -m "docs: 恢复SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md - 简化�
 
 
 
----
+```---
 
 
 
@@ -723,7 +721,7 @@ git commit -m "docs: 恢复SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md - 简化�
 
 
 
----
+```---
 
 
 
@@ -739,7 +737,7 @@ git commit -m "docs: 恢复SIMPLIFIED_RISK_BUDGET_SYSTEM_BLUEPRINT.md - 简化�
 
 
 
----
+```---
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_41396
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: WINDOWS_TASK_SCHEDULER_CONFIG
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
   - Windows任务计划配置指南文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -38,7 +49,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +105,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +131,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +157,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -192,7 +211,9 @@ Register-ScheduledTask -TaskName "ZephyrAlpha_Deep_Audit" -Action $Action -Trigg
 
 
 
----
+```
+```---
+```
 
 
 
@@ -240,7 +261,9 @@ Register-ScheduledTask -TaskName "ZephyrAlpha_Deep_Audit" -Action $Action -Trigg
 
 
 
----
+```
+```---
+```
 
 
 
@@ -276,7 +299,9 @@ Register-ScheduledTask -TaskName "ZephyrAlpha_Deep_Audit" -Action $Action -Trigg
 
 
 
----
+```
+```---
+```
 
 
 
@@ -336,7 +361,9 @@ Get-ScheduledTaskInfo -TaskName "ZephyrAlpha_Quick_Audit"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +403,9 @@ Get-ScheduledTaskInfo -TaskName "ZephyrAlpha_Quick_Audit"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -392,7 +421,9 @@ Get-ScheduledTaskInfo -TaskName "ZephyrAlpha_Quick_Audit"
 
 
 
----
+```
+```---
+```
 
 
 

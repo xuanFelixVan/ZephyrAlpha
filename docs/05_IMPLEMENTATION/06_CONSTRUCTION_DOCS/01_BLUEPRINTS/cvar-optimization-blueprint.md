@@ -1,35 +1,16 @@
 ---
-
-module_id: CVAR_OPTIMIZATION_001
-
+module_id: CVAR_OPTIMIZATION_001_9869
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - CVaR优化
-
-  - 条件风险价值计算
-
-  - 尾部风险优化
-
-  - 风险度量增强
-
+- CVaR优化
 layer: layer_06
-
 ---
 
 

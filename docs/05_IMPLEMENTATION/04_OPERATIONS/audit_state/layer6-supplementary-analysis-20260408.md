@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_SUPPLEMENTARY_ANALYSIS_001
-
+module_id: LAYER6_SUPPLEMENTARY_ANALYSIS_001_0066
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构补充分析
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6补充分析
-
-  - 新功能识别
-
-  - 开源项目推荐
-
-  - 完整性评估
-
+- Layer 6补充分析
 layer: layer_06
-
 ---
 
 

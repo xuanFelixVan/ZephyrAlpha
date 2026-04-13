@@ -19,7 +19,7 @@ layer: layer_05
 > **用途**：把「蓝图终稿」要办的事写成可勾选、可复查的条目；后续对话或排期可直接打开本文件对照进度。  
 > **机构目标态**：与 蓝图交付标准（机构精华版） 对照时，本清单为**任务分解真源**，该标准为**合并视角与门禁映射**。  
 > **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 `DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md` 为准（**§1 第 5～6 条**：Layer 0～11 与路径分立摘要；**「位置是否正确」与入链分立**；勿另建平行标准）；**正式图纸柜**里什么能放、什么不能放，以 01_BLUEPRINTS 图纸柜文件治理规则 为准。  
-> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 文档地图与放置规则（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述；**§1.6** 为「位置是否正确」**A～F 分桶表**，与 REPO_WIDE §2.3.2 互文）；与 全仓库文件治理任务清单 **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md)。  
+> **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 文档地图与放置规则（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述；**§1.6** 为「位置是否正确」**A～F 分桶表**，与 REPO_WIDE §2.3.2 互文）；与 全仓库文件治理任务清单 **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../../../01_FRAMEWORK/ARCHITECTURE.md)。  
 > **与卫生计划的关系**：执行本清单时，应同步遵守 蓝图阶段文档卫生总计划；不必重复发明流程。  
 > **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](./README.md)、[推荐阅读入口](#推荐阅读入口) 与 全库治理文档导航（若与全库导航相关）。  
 > **任务 3 状态**：2026-04-10 已完成 — 过程报告已迁入 `01_BLUEPRINTS/REPORTS/`，`INDEX.md` 已重生成；防幻觉执行协议见 BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md。  
@@ -68,7 +68,7 @@ layer: layer_05
 | **重复簇指针台账（归档区）**                                       | `CANONICAL_POINTERS.md`                                        |
 | 蓝图阶段总结与内容口径                                            | `BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`                          |
 | 建设文档总索引（需与真实文件夹一致）                                     | `[../INDEX.md](../INDEX.md)`                                   |
-| `01_BLUEPRINTS` 机器生成列表                                 | `[../01_BLUEPRINTS/INDEX.md](../01_BLUEPRINTS/INDEX.md)`       |
+| `01_BLUEPRINTS` 机器生成列表                                 | `[../01_BLUEPRINTS/INDEX.md](../../../../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)`       |
 | TODO/TBD 类清理台账（若仍存在）                                   | `../../../09_AUDIT/REPORTS/TODO_CLEANUP_INVENTORY_20260406.md` |
 
 
@@ -91,7 +91,7 @@ layer: layer_05
 
 **同题多稿与下面「重复文档治理」的关系**：若总清单暴露「同一主题两份正式稿」，须按 孤儿与重复治理 Playbook + 重复文档处理标准 做 canonical 裁决（重定向、登记表、`CANONICAL_POINTERS` 等），不能只改链接不裁决。
 
-- 已选定「总清单」主文档（或主文档 + 明确子索引的组合）— **主入口**：`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`；**图纸柜机器列表**：`[../01_BLUEPRINTS/INDEX.md](../01_BLUEPRINTS/INDEX.md)`（2026-04-10）
+- 已选定「总清单」主文档（或主文档 + 明确子索引的组合）— **主入口**：`BLUEPRINT_STAGE_COMPLETE_SUMMARY.md`；**图纸柜机器列表**：`[../01_BLUEPRINTS/INDEX.md](../../../../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md)`（2026-04-10）
 - 每个「该有蓝图的条目」在总清单中均有记录 — 总清单已约定 A/B 双桶枚举（图纸柜 INDEX + `ACTIVE_SCATTERED_BLUEPRINTS_MANIFEST_TASK1.md`），定义见总清单「任务 1 闭合口径」（2026-04-10）
 - 每条目可点击跳转到**唯一认定的正式蓝图**（无「同一主题两份正式稿各写各的」）— A 桶 INDEX 列表、B 桶分散清单内链均已机器校验可达；**canonical** 以各文件所在业务路径为准，重复池副本不纳入 B 桶枚举（2026-04-10）
 - **链接验证（全量）**：已对 **N = 582** 条活跃 `*BLUEPRINT.md` 导航入口完成链接核对（`verify_01_blueprints_index_links.py` + `verify_scattered_blueprints_manifest_links.py` + `verify_manifest_paths_strict.py` 于总清单正文）；**无** Owner 抽检豁免（2026-04-10）
@@ -220,7 +220,7 @@ layer: layer_05
 
 ### W3：R2 脚本与 R3 工程
 
-- `scripts/` 内与治理相关的脚本在交付标准或任务清单中有**互指**或维护说明（不必逐文件作文档，但**用途可查**）— 2026-04-10：`[scripts/README.md](../../../../scripts/README.md)` 已增「文档治理与门禁」表（互指本清单与仓库根 Playbook）
+- `scripts/` 内与治理相关的脚本在交付标准或任务清单中有**互指**或维护说明（不必逐文件作文档，但**用途可查**）— 2026-04-10：`[scripts/README.md](../../../../../../scripts/README.md)` 已增「文档治理与门禁」表（互指本清单与仓库根 Playbook）
 - 源码根目录约定（文件夹结构、生成物位置）已写在根 README 或工程文档中，且与门禁 **§0.3** 可追溯要求不冲突 — 2026-04-10：根 README「项目结构」已列 `src/` 等；契约真源仍以 `API_Contract.md` 与施工门禁 §0.3 为准
 
 ### W4：R4 排除层验证

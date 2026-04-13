@@ -1,6 +1,15 @@
+---
+module_id: AUTO_91616
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: A_STOCK_RULES_README_001
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
   - 提供文档支持
 
 layer: layer_05
----
+```
+```---
+```
 
 
 

@@ -92,7 +92,7 @@ open_source_solution: PyPortfolioOpt + CVXPY + Riskfolio-Lib
 
 
 
----
+```---
 
 
 
@@ -144,7 +144,7 @@ open_source_solution: PyPortfolioOpt + CVXPY + Riskfolio-Lib
 
 
 
----
+```---
 
 
 
@@ -312,7 +312,7 @@ Layer 2: Alpha因子层
 
 
 
----
+```---
 
 
 
@@ -892,7 +892,7 @@ class FactorICAnalyzer:
 
 
 
----
+```---
 
 
 
@@ -962,7 +962,7 @@ CREATE TABLE factor_weights (
 
 
 
----
+```---
 
 
 
@@ -1062,7 +1062,7 @@ CREATE TABLE factor_weights (
 
 
 
----
+```---
 
 
 
@@ -1136,7 +1136,7 @@ portfolio_sharpe = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1168,7 +1168,7 @@ portfolio_sharpe = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1190,7 +1190,7 @@ portfolio_sharpe = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1228,7 +1228,7 @@ portfolio_sharpe = Gauge(
 
 
 
----
+```---
 
 
 

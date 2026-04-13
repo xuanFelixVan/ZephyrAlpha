@@ -50,7 +50,7 @@ open_source_solution: "Beancount + 自研简化版"
 
 priority: P2
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ priority: P2
 
 
 
----
+```---
 
 > **版本**: v1.0
 
@@ -142,7 +142,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -192,7 +192,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -344,7 +344,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -1094,7 +1094,7 @@ class TaxReportGenerator:
 
 
 
----
+```---
 
 
 
@@ -1132,7 +1132,7 @@ class TaxReportGenerator:
 
 
 
----
+```---
 
 
 
@@ -1170,7 +1170,7 @@ class TaxReportGenerator:
 
 
 
----
+```---
 
 
 
@@ -1188,13 +1188,13 @@ class TaxReportGenerator:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -1250,7 +1250,7 @@ class TaxReportGenerator:
 
 
 
----
+```---
 
 
 

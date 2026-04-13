@@ -17,7 +17,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -63,7 +65,9 @@ GPU: NVIDIA GeForce RTX 3090
 
 
 
----
+```
+```---
+```
 
 
 
@@ -79,7 +83,9 @@ pip install openai-whisper
 
 
 
----
+```
+```---
+```
 
 
 
@@ -95,7 +101,9 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -115,7 +123,9 @@ ollama pull deepseek-r1:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -191,7 +201,9 @@ Write-Host ""
 
 
 
----
+```
+```---
+```
 
 
 
@@ -247,7 +259,9 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -273,7 +287,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -307,7 +323,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -345,5 +363,7 @@ python -c "import whisper; whisper.load_model('large-v3', device='cuda')"
 
 
 
----
+```
+```---
+```
 

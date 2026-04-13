@@ -1,14 +1,5 @@
 ---
-✅ **已完成**: 在审计前进行了Git备份，确保数据安全
-✅ **合规**:
-- 符合专业量化机构五大原则
-- 所有文档都有正确的layer标识
-- 所有文档都有唯一的module_id
-⚠️ **发现问题**:
-- 初次检查发现102个职责重叠（职责描述过于通用）
-- 已修复92个文档的职责描述
-- 修复后仍有部分职责描述相似度较高（70-80%）
-module_id: 06_ARCHIVE_AUDIT_REPORTS_OVERLAP-FINAL-AUDIT-REPOR_001
+module_id: 06_ARCHIVE_AUDIT_REPORTS_OVERLAP-FINAL-AUDIT-REPOR_001_7090
 version: 1.0.0
 status: Active
 owner: 待指定
@@ -146,7 +137,9 @@ last_updated: '2026-04-13'
 
 
 
----
+```
+```---
+```
 
 
 

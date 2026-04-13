@@ -21,7 +21,7 @@ layer: layer_05
 **适用范围**: 版本升级、环境迁移、数据备份恢复
 **前置条件**: 已完成系统部署和数据库配置
 
----
+```---
 
 ## 🎯 迁移目标
 
@@ -32,7 +32,7 @@ layer: layer_05
 3. **可回滚性**: 支持迁移失败后的快速回滚
 4. **可验证性**: 迁移结果可验证、可追溯
 
----
+```---
 
 ### 迁移类型
 
@@ -43,7 +43,7 @@ layer: layer_05
 | **数据备份恢复** | 从备份中恢复数据 | 低 |
 | **数据整合迁移** | 多个数据源整合迁移 | 高 |
 
----
+```---
 
 ## 📦 迁移准备
 
@@ -88,7 +88,7 @@ WHERE table_schema = 'public'
 GROUP BY table_name, column_name;
 ```
 
----
+```---
 
 ### 2. 迁移计划
 
@@ -109,7 +109,7 @@ GROUP BY table_name, column_name;
 - [ ] 网络带宽保障
 - [ ] 人员安排（至少2人）
 
----
+```---
 
 ## 🚀 迁移流程
 
@@ -140,7 +140,7 @@ archive_mode = on
 archive_command = 'cp %p /backup/wal_archive/%f'
 ```
 
----
+```---
 
 ### 阶段2: 数据导出
 
@@ -176,7 +176,7 @@ gzip full_export.dump
 gunzip -t full_export.dump.gz
 ```
 
----
+```---
 
 ### 阶段3: 数据传输
 
@@ -208,7 +208,7 @@ md5sum full_export.dump.gz > full_export.dump.gz.md5
 md5sum -c full_export.dump.gz.md5
 ```
 
----
+```---
 
 ### 阶段4: 数据导入
 
@@ -247,7 +247,7 @@ REINDEX DATABASE zephyr_alpha_new;
 ANALYZE;
 ```
 
----
+```---
 
 ### 阶段5: 数据验证
 
@@ -303,7 +303,7 @@ python scripts/validate_migration.py --source source_host --target target_host
 pytest tests/integration/test_migration.py -v
 ```
 
----
+```---
 
 ## 🔄 切换流程
 
@@ -341,7 +341,7 @@ sed -i 's/zephyr_alpha/zephyr_alpha_new/g' config/settings.yaml
 systemctl start zephyr-app
 ```
 
----
+```---
 
 ### 2. 验证切换
 
@@ -356,7 +356,7 @@ pytest tests/smoke/ -v
 python scripts/check_performance.py
 ```
 
----
+```---
 
 ## 🚨 回滚流程
 
@@ -377,7 +377,7 @@ systemctl start zephyr-app
 curl http://localhost:8000/health
 ```
 
----
+```---
 
 ## 📊 迁移检查清单
 
@@ -405,7 +405,7 @@ curl http://localhost:8000/health
 - [ ] 监控告警正常
 - [ ] 文档更新完成
 
----
+```---
 
 ## 🔗 相关文档
 
@@ -414,6 +414,6 @@ curl http://localhost:8000/health
 - 故障诊断指南
 - 常见问题FAQ
 
----
+```---
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

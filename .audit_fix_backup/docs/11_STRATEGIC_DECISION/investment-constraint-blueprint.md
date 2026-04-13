@@ -50,7 +50,7 @@ open_source_solution: "PyPortfolioOpt + skfolio"
 
 priority: P1
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ priority: P1
 
 
 
----
+```---
 
 > **版本**: v1.0
 
@@ -142,7 +142,7 @@ priority: P1
 
 
 
----
+```---
 
 
 
@@ -188,7 +188,7 @@ priority: P1
 
 
 
----
+```---
 
 
 
@@ -382,7 +382,7 @@ priority: P1
 
 
 
----
+```---
 
 
 
@@ -838,7 +838,7 @@ class RuleConfigurationManager:
 
 
 
----
+```---
 
 
 
@@ -1488,7 +1488,7 @@ class ViolationDetector:
 
 
 
----
+```---
 
 
 
@@ -2060,7 +2060,7 @@ class AdjustmentSuggestionEngine:
 
 
 
----
+```---
 
 
 
@@ -2254,7 +2254,7 @@ class SkfolioIntegration:
 
 
 
----
+```---
 
 
 
@@ -2310,7 +2310,7 @@ class SkfolioIntegration:
 
 
 
----
+```---
 
 
 
@@ -2330,13 +2330,13 @@ class SkfolioIntegration:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -2392,7 +2392,7 @@ class SkfolioIntegration:
 
 
 
----
+```---
 
 
 

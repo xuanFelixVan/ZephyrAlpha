@@ -1,5 +1,5 @@
 ---
-module_id: STATISTICAL_ARBITRAGE_001
+module_id: STATISTICAL_ARBITRAGE_001_3134
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,10 +9,8 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 统计套利模块
-- 统计套利配对交易
-- 协整分析
-- 均值回归
 layer: layer_05
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 

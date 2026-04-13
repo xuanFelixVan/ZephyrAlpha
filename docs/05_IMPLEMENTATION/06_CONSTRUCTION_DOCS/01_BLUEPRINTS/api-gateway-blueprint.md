@@ -1,33 +1,15 @@
 ---
-
-module_id: API_GATEWAY_001
-
+module_id: API_GATEWAY_001_1840
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - API路由管理
-
-  - 限流熔断
-
-  - 认证授权
-
-  - 负载均衡
-
+- API路由管理
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1254,7 +1236,9 @@ scrape_configs:
 
 
 
----
+```
+```---
+```
 
 
 

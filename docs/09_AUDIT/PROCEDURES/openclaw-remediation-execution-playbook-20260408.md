@@ -1,5 +1,5 @@
 ---
-module_id: OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408
+module_id: OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408_7864
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -31,7 +31,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -63,7 +65,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -93,7 +97,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -117,7 +123,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -135,7 +143,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -145,7 +155,7 @@ responsibility: PROCEDURES
 
 1. 向 AI 下达任务时**必须附带**完整路径：`GOVERNANCE_DECISIONS_LOCKED_20260408.md` 中 **ADR-OC-001** 全文。  
 
-2. **先 dry-run**：任选 **50 个** 双 YAML 文件，输出 unified diff 到**本批专用目录**（建议 `docs/09_AUDIT/STATE/double_yaml_dryrun_<YYYYMMDD>/`）；**历史 2026-04-08 样本**已归档至 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)，你肉眼确认无误后再全量写回。  
+2. **先 dry-run**：任选 **50 个** 双 YAML 文件，输出 unified diff 到**本批专用目录**（建议 `docs/09_AUDIT/STATE/double_yaml_dryrun_<YYYYMMDD>/`）；**历史 2026-04-08 样本**已归档至 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)，你肉眼确认无误后再全量写回。  
 
 3. **再分批**：每批建议 **100～200** 个文件，避免单 PR 无法 review。  
 
@@ -153,7 +163,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +181,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -185,7 +199,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -199,7 +215,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -213,7 +231,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -235,7 +255,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 

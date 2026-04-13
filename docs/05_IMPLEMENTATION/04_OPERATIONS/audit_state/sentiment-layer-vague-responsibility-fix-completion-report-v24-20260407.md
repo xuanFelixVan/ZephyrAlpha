@@ -1,6 +1,15 @@
+---
+module_id: AUTO_75841
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SENTIMENT_LAYER_VAGUE_RESPONSIBILITY_FIX_COMPLETION_REPORT_V24_001
+```
 
 version: 24.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 舆情分析层（10_ai_workflow）
 compliance_level: 专业标准
 
 layer: layer_05
----
+```
+```---
+```
 
 
 
@@ -48,7 +59,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +99,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +209,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -258,7 +275,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -284,7 +303,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +371,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -388,7 +411,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -454,7 +479,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -510,7 +537,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -556,7 +585,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

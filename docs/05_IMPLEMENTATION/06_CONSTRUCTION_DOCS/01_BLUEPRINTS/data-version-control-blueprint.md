@@ -1,5 +1,5 @@
 ---
-module_id: DATA_VERSION_CONTROL_IMPL_001
+module_id: DATA_VERSION_CONTROL_IMPL_001_3457
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 数据版本控制
-- 版本管理
-- 变更追踪
-- 回滚机制
 layer: layer_05
 ---
 

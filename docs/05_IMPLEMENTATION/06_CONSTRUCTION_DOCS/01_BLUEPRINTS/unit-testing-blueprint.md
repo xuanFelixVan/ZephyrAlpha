@@ -1,33 +1,15 @@
 ---
-
-module_id: UNIT_TESTING_001
-
+module_id: UNIT_TESTING_001_8685
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 单元测试
-
-  - 测试框架
-
-  - 测试覆盖率
-
-  - 测试自动化
-
+- 单元测试
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1280,7 +1262,9 @@ def test_double(input, expected):
 
 
 
----
+```
+```---
+```
 
 
 

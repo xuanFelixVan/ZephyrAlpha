@@ -14,6 +14,10 @@ responsibility_boundary: '
 - ✅ 职责清晰度: 100%
 - ✅ 文档质量评分: ≥90分
 - ✅ 达到专业量化机构标准
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
 ---
 **审计完成时间**: 2026-04-07
 

@@ -49,7 +49,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -113,7 +115,9 @@ docs/06_ARCHIVE/integrated_documents/20260403_market_simulation/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -153,7 +157,9 @@ docs/06_ARCHIVE/integrated_documents/20260403_market_simulation/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -211,7 +217,9 @@ docs/06_ARCHIVE/integrated_documents/20260403_market_simulation/
 
 - **影响范围**: 需要同步更新所有引用这些module_id的文?
 
----
+```
+```---
+```
 
 
 
@@ -229,7 +237,9 @@ files: 22 files changed, 3126 insertions(+), 1224 deletions(-)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -265,7 +275,9 @@ files: 22 files changed, 3126 insertions(+), 1224 deletions(-)
 
 
 
----
+```
+```---
+```
 
 
 

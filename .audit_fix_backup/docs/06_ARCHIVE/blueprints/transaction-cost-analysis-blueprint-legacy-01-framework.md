@@ -17,7 +17,7 @@ responsibility: 20260410_c2_transaction_cost_analysis
 
 > **归档说明（2026-04-10）**：删除前 `01_FRAMEWORK` 稿快照。**正式蓝图**：TRANSACTION_COST_ANALYSIS_BLUEPRINT；**框架入口 stub**：TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY。
 
----
+```---
 module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT
 version: 1.0.0
 status: Active
@@ -26,7 +26,7 @@ last_updated: 2026-04-07
 owner: 首席文档架构师
 responsibility:
   - TRANSACTION_COST_ANALYSIS蓝图设计
----
+```---
 
 ﻿---
 module_id: TRANSACTION_COST_ANALYSIS_001
@@ -85,7 +85,7 @@ responsibility_boundary: |
 > **开源项目**: QuantLib + Backtrader
 > **目标**: 构建专业级交易成本分析系统，优化执行效率，提高策略净收益
 
----
+```---
 
 ## 📋 执行摘要
 
@@ -108,7 +108,7 @@ responsibility_boundary: |
 
 **综合价值评分**: ⭐⭐⭐⭐⭐ (5/5) - **强烈推荐实施**
 
----
+```---
 
 ## 一、架构设计
 
@@ -240,7 +240,7 @@ responsibility_boundary: |
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 二、核心组件详细设计
 
@@ -328,7 +328,7 @@ class TradeDataCollector:
         )
 ```
 
----
+```---
 
 ### 2.2 成本计算引擎层
 
@@ -439,7 +439,7 @@ class ImplicitCostCalculator:
         return market_impact
 ```
 
----
+```---
 
 ### 2.3 执行效率评估层
 
@@ -526,7 +526,7 @@ class ExecutionQualityEvaluator:
             return max([md.ask_price for md in market_data_list])
 ```
 
----
+```---
 
 ## 三、开源项目集成方案
 
@@ -594,7 +594,7 @@ class BacktraderTCA:
         }
 ```
 
----
+```---
 
 ## 四、个人使用适配方案
 
@@ -653,7 +653,7 @@ class AITCAAssistant:
         return self.llm(prompt.format(cost_data=cost_data))
 ```
 
----
+```---
 
 ## 五、实施计划
 
@@ -676,7 +676,7 @@ class AITCAAssistant:
 | **性能测试** | 系统响应时间 | locust |
 | **AI测试** | AI分析准确性 | 人工评估 |
 
----
+```---
 
 ## 六、监控与告警
 
@@ -732,7 +732,7 @@ class TCAAlertSystem:
         return alerts
 ```
 
----
+```---
 
 ## 七、总结
 
@@ -745,14 +745,14 @@ class TCAAlertSystem:
 
 **推荐立即实施**，使用QuantLib + Backtrader开源项目，预计3天完成。
 
----
+```---
 
 **蓝图版本**: v1.0.0
 **蓝图创建时间**: 2026-04-06
 **蓝图作者**: 首席架构师
 **蓝图状态**: 最终版
 **下一步行动**: 实施交易成本分析系统
----
+```---
 
 ## 1. 文档治理
 
@@ -780,6 +780,6 @@ class TCAAlertSystem:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

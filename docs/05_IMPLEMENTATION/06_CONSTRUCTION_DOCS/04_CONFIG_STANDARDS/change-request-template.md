@@ -1,25 +1,14 @@
 ---
-
-module_id: CHANGE_REQUEST_TEMPLATE_001
-
+module_id: CHANGE_REQUEST_TEMPLATE_001_9391
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 项目管理团队
-
 responsibility:
-
-  - 变更请求模板文档
-
+- 变更请求模板文档
 standard_type: 专业量化机构模板
-
 applicable_scope: 变更请求
-
 layer: layer_05
 ---
 
@@ -88,7 +77,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +127,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -208,7 +201,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -270,7 +265,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -314,7 +311,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -368,7 +367,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -412,7 +413,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -454,7 +457,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -488,7 +493,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -504,7 +511,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

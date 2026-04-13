@@ -1,27 +1,15 @@
 ---
-
-module_id: LAYER4_P1_P2_MODULES_BLUEPRINT_COLLECTION_001
-
+module_id: LAYER4_P1_P2_MODULES_BLUEPRINT_COLLECTION_001_4870
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 responsibility:
-
 - 提供Layer 4机器学习层P1和P2优先级模块的完整蓝图集合
-
 layer: layer_04
-
 standard_type: 专业量化机构蓝图集合文档
-
 priority: P1/P2
-
 ---
 
 # Layer 4机器学习层P1/P2模块蓝图集合
@@ -38,7 +26,9 @@ priority: P1/P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +118,9 @@ class AutoFeatureEngineer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -206,7 +198,9 @@ class MixedPrecisionTrainer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -250,7 +244,9 @@ class MixedPrecisionTrainer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -290,7 +286,9 @@ class MixedPrecisionTrainer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -386,7 +384,9 @@ class ABTestingFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -424,7 +424,9 @@ class ABTestingFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -464,7 +466,9 @@ class ABTestingFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +566,9 @@ class SimCLRModel(nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -602,7 +608,9 @@ class SimCLRModel(nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -700,7 +708,9 @@ usage:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -738,7 +748,9 @@ usage:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -778,7 +790,9 @@ usage:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -822,7 +836,9 @@ usage:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -868,7 +884,9 @@ usage:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -946,7 +964,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -988,7 +1008,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1026,7 +1048,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1070,7 +1094,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1110,7 +1136,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1154,7 +1182,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1194,7 +1224,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1270,7 +1302,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1310,7 +1344,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1352,7 +1388,9 @@ class MarketGNN(torch.nn.Module):
 
 
 
----
+```
+```---
+```
 
 
 

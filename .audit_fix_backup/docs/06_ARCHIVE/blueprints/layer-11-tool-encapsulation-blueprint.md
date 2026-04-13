@@ -40,7 +40,7 @@ parent_document: ../LAYER_11_ARCHITECTURE.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -1322,7 +1322,7 @@ class ToolCache:
 
 
 
----
+```---
 
 
 
@@ -1330,7 +1330,7 @@ class ToolCache:
 
 **?*: 2026-04-02
 
----
+```---
 
 
 
@@ -1386,7 +1386,7 @@ class ToolCache:
 
 
 
----
+```---
 
 
 

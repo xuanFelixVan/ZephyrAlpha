@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 version: 1.0.0
@@ -17,7 +24,7 @@ responsibility:
 - P2级问题修复完成报告文档
 
 layer: layer_05
----
+```---
 
 
 # P2级问题修复完成报告
@@ -32,7 +39,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -48,7 +55,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -74,15 +81,15 @@ layer: layer_05
 
 ```yaml
 
----
+```---
 
-module_id: DYNAMIC_ASSET_ALLOCATION_001
+module_id: DYNAMIC_ASSET_ALLOCATION_001_4600
 
 ...
 
 layer: "Layer 6 (组合优化层)"
 
----
+```---
 
 
 
@@ -108,7 +115,7 @@ module_id: DYNAMIC_ASSET_ALLOCATION_BLUEPRINT_001
 
 layer: "Layer 3 (策略层)"
 
----
+```---
 
 ```
 
@@ -118,15 +125,15 @@ layer: "Layer 3 (策略层)"
 
 ```yaml
 
----
+```---
 
-module_id: DYNAMIC_ASSET_ALLOCATION_001
+module_id: DYNAMIC_ASSET_ALLOCATION_001_4600
 
 ...
 
 layer: "Layer 6 (组合优化层)"
 
----
+```---
 
 
 
@@ -156,7 +163,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -212,7 +219,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -286,7 +293,7 @@ Set-Content $_.FullName -NoNewline }
 
 
 
----
+```---
 
 
 
@@ -308,7 +315,7 @@ Set-Content $_.FullName -NoNewline }
 
 
 
----
+```---
 
 
 
@@ -328,7 +335,7 @@ Set-Content $_.FullName -NoNewline }
 
 
 
----
+```---
 
 
 
@@ -360,7 +367,7 @@ Set-Content $_.FullName -NoNewline }
 
 
 
----
+```---
 
 
 
@@ -422,7 +429,7 @@ Set-Content $_.FullName -NoNewline }
 
 
 
----
+```---
 
 
 

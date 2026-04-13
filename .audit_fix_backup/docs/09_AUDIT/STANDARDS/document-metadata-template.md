@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: DOCUMENT_METADATA_TEMPLATE
@@ -25,7 +32,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```---
 
 
 # 文档元数据模板标准
@@ -42,7 +49,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -100,7 +107,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -114,9 +121,9 @@ layer: layer_09
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F
+module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F_3051
 
 version: 1.0.0
 
@@ -128,7 +135,7 @@ last_updated: YYYY-MM-DD
 
 owner: [负责人]
 
----
+```---
 
 ```
 
@@ -140,9 +147,9 @@ owner: [负责人]
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F
+module_id: EXAMPLE_PLACEHOLDER_6D26FFF08F_3051
 
 version: 1.0.0
 
@@ -166,13 +173,13 @@ compliance_level: 专业标准
 
 parent_document: [父文档路径]
 
----
+```---
 
 ```
 
 
 
----
+```---
 
 
 
@@ -198,11 +205,11 @@ parent_document: [父文档路径]
 
 ```yaml
 
-module_id: FACTOR_LIBRARY_INDEX
+module_id: FACTOR_LIBRARY_INDEX_3051
 
-module_id: DATA_SOURCE_BLUEPRINT
+module_id: DATA_SOURCE_BLUEPRINT_3051
 
-module_id: AUDIT_STANDARDS
+module_id: AUDIT_STANDARDS_3051
 
 ```
 
@@ -348,7 +355,7 @@ standard_type: 指南
 
 
 
----
+```---
 
 
 
@@ -394,7 +401,7 @@ standard_type: 指南
 
 
 
----
+```---
 
 
 
@@ -434,7 +441,7 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```---
 
 
 
@@ -478,7 +485,7 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```---
 
 
 

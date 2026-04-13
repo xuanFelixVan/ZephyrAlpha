@@ -1,5 +1,5 @@
 ---
-module_id: MARKET_REGIME_DETECTION_AI_001
+module_id: MARKET_REGIME_DETECTION_AI_001_3930
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -26,6 +26,8 @@ priority: P1
 | 过拟合 | 中 | 交叉验证 + 正则化 |
 | 市场变化 | 中 | 定期更新模型 |
 
----
+```
+```---
+```
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成

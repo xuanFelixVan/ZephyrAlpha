@@ -19,7 +19,7 @@ layer: layer_05
 > **你在做什么**：人类 Owner 已用脚本 `triage_blueprint_d_overlap_pairs.py` 对机器候选对做了 **A 档路径分流**；你收到的是 **JSONL 中的若干行**（每行一个 JSON 对象），内含路径、机器指标与**摘录**（非全文）。你要对**每一行**给出**语义层判断**，输出**严格 JSON**（见下文 Schema），供人类合并进台账或执行 stub/合并——**你的输出不是 Git 自动提交，也不替代 Owner 最终签核**。  
 > **真源规程**：D 类蓝图重叠 Playbook（**§2.5** 置信度与 **高置信可合并** 准入、**§5** 高/低置信双轨、待审登记）。
 
----
+```---
 
 ## 一、输入你应拿到什么
 
@@ -35,7 +35,7 @@ layer: layer_05
 
 3. **可选**：人类告诉你本轮只处理 `second_pass_priority === "HIGH"` 的子集，或指定 `pair_id` 列表。
 
----
+```---
 
 ## 二、任务（你必须完成）
 
@@ -47,7 +47,7 @@ layer: layer_05
 4. **不要**编造仓库中不存在的路径；**不要**声称已读取全文若仅有摘录。  
 5. 输出 **单一 JSON 数组** 或 **NDJSON**（每行一个 verdict 对象）二选一，须在回复**首段**用一句话声明选用哪种，且**全文仅包含 JSON**，无 Markdown 围栏外的解释（除首句声明外）。**推荐**：`verdicts` 为根的 **一个 JSON 对象**，见 Schema。
 
----
+```---
 
 ## 三、`recommended_action` 枚举（写死）
 
@@ -59,14 +59,14 @@ layer: layer_05
 | `DEFER_HUMAN` | 摘录不足或业务边界不清，**必须由人类打开全文**后再决。 |
 | `ALREADY_RESOLVED_POLICY` | 与 `triage_tier` 一致（如图纸柜 vs 归档），按 Playbook **默认 stub/链**即可，无二审异议。 |
 
----
+```---
 
 ## 四、置信度与语言
 
 - `confidence`：`0.0`～`1.0` 浮点数；与 `same_topic_likelihood`、`recommended_action`、`low_confidence_register` 一并供人类按 Playbook **§2.5** 判定是否落入 **高置信可合并**（可走 **§5.1**）或必须 **低置信 / 待审登记**（**§5.2**）。  
 - `rationale_zh`：**中文**，简洁、可审计（3～8 句为宜）。
 
----
+```---
 
 ## 五、输出 JSON Schema（必须遵守）
 
@@ -111,7 +111,7 @@ layer: layer_05
 | `owner_followups_zh` | array of string | 否 | 给 Owner 的待办提示。 |
 | `low_confidence_register` | boolean | 是 | 若建议走 Playbook **低置信**合稿链，`true` 表示应写入 D 类合稿待审登记。 |
 
----
+```---
 
 ## 六、模板自我优化（给更强模型的元任务）
 
@@ -138,7 +138,7 @@ layer: layer_05
 
 **注意**：即使 `should_update_this_markdown: true`，**默认仍由人类改仓库**；你**不要**假设自己会写回 Git。
 
----
+```---
 
 ## 七、人类 Owner 使用步骤（复制检查清单）
 
@@ -148,7 +148,7 @@ layer: layer_05
 4. 将模型输出保存为 `.../STATE/D_OVERLAP_SECOND_PASS_VERDICTS_YYYYMMDD_run01.json`，**抽样核对**后执行 Playbook（stub / 合并 / 登记）。  
 5. 若 JSON 内含 `prompt_template_patch_proposal`，评审后更新本 `.md` 与脚本。
 
----
+```---
 
 ## 八、版本记录
 

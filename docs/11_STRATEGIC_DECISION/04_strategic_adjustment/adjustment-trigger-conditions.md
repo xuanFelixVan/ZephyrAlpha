@@ -1,6 +1,15 @@
+---
+module_id: AUTO_85181
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: ADJUSTMENT_TRIGGER_CONDITIONS_001
+```
 
 version: 1.0.0
 
@@ -21,7 +30,9 @@ responsibility:
 last_updated: 2026-04-07
 
 layer: layer_04
----
+```
+```---
+```
 
 
 # 调整触发条件蓝图
@@ -232,7 +243,9 @@ P1 - 重要支持模块，建议在战略调整机制实施前完成
 
 
 
----
+```
+```---
+```
 
 
 

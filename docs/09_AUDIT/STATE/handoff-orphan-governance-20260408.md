@@ -114,7 +114,7 @@ layer: layer_09
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
 - L1 治理快照（20260408）
-- [REPORTS 区门面](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- [REPORTS 区门面](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
 - [文档总入口](../../INDEX.md)
 
 ### 2.1 关于「是否已收录全部相关文档」

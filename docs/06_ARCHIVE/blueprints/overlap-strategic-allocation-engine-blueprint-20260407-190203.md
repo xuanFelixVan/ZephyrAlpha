@@ -1,33 +1,15 @@
 ---
-
-module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT
-
+module_id: STRATEGIC_ALLOCATION_ENGINE_BLUEPRINT_5646
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 responsibility:
-
 - 战略配置引擎
-
-- 资产配置
-
-- 长期配置
-
-- 配置决策
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

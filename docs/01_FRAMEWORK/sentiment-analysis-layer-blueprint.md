@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_008
-
+module_id: LAYER_008_5572
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 提供sentiment analysis layer blueprint的完整架构设计、技术选型和实施路径规划
-
 layer: layer_04
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: SENTIMENT_ANALYSIS_LAYER_001
+```
+module_id: SENTIMENT_ANALYSIS_LAYER_001_5572
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 # Layer 3: 舆情分析层蓝图
 
@@ -86,7 +77,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +125,9 @@ Layer 3舆情分析层是清风量化系统的**信息情报中心**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -334,7 +329,9 @@ Layer 3舆情分析层是清风量化系统的**信息情报中心**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -724,7 +721,9 @@ class SentimentAnalyzer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -872,7 +871,9 @@ class SocialDataCollector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -966,7 +967,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -990,7 +993,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1010,7 +1015,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1030,7 +1037,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1054,7 +1063,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1076,7 +1087,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1096,13 +1109,17 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1158,7 +1175,9 @@ class AnalystForecast:
 
 
 
----
+```
+```---
+```
 
 
 

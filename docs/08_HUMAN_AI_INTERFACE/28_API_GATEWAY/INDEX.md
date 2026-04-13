@@ -17,6 +17,6 @@ layer: layer_08
 | 文档 | 类型 | 说明 |
 |------|------|------|
 | API_GATEWAY_LAYER8_MODULE.md | Layer 8 入口 | 指向正式图纸柜 API_GATEWAY_BLUEPRINT |
-| [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 概述 | 模块说明 |
+| ~~[README.md]~~ | 概述 | 模块说明 |
 
 **索引状态**：活跃 | **维护**：按需更新

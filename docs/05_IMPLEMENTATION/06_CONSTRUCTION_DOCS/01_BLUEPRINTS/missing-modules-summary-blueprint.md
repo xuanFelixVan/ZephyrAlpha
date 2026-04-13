@@ -1,33 +1,15 @@
 ---
-
-module_id: MISSING_MODULES_SUMMARY_BLUEPRINT
-
+module_id: MISSING_MODULES_SUMMARY_BLUEPRINT_0307
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 缺失模块摘要
-
-  - 模块识别
-
-  - 差距分析
-
-  - 补充建议
-
+- 缺失模块摘要
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_06
-
 ---
 
 

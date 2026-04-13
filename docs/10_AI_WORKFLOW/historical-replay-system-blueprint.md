@@ -1,39 +1,21 @@
 ---
-
-module_id: HISTORICAL_REPLAY_SYSTEM_001
-
+module_id: HISTORICAL_REPLAY_SYSTEM_001_9043
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 历史回放系统蓝图 (HISTORICAL_REPLAY_SYSTEM)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 历史回放系统
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Backtrader + 自研
-
 priority: P2
-
 ---
 
 ## 文档职责说明
@@ -64,7 +46,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +112,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +268,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -698,7 +686,9 @@ class ScenarioReplayer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -848,7 +838,9 @@ CREATE TABLE scenarios (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -952,7 +944,9 @@ CREATE TABLE scenarios (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1014,7 +1008,9 @@ class IHistoricalReplayer(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1054,7 +1050,9 @@ class IHistoricalReplayer(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1092,7 +1090,9 @@ class IHistoricalReplayer(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1186,7 +1186,9 @@ pf.total_return()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1222,7 +1224,9 @@ pf.total_return()
 
 
 
----
+```
+```---
+```
 
 
 

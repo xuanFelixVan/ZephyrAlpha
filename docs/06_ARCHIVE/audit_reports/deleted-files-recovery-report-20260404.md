@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DELETED_FILES_RECOVERY_REPORT_20260404
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DELETED_FILES_RECOVERY_REPORT_20260404_5217
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -43,7 +43,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -91,11 +93,15 @@ compliance_level: 专业标准
 
 **恢复操作**:
 
+```
 1. 从git历史提取文件内容（提? 72d1c02?2. 添加标准YAML头部（module_id: STANDARDS_SCREENING_001?3. 保存到新位置?1_STANDARDS目录?4. 更新INDEX.md添加索引
+```
 
 5. 提交到git（提? 1e9d544?
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +135,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +177,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -203,7 +213,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -235,7 +247,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -261,7 +275,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -319,7 +335,9 @@ git cat-file -p "72d1c02:docs/02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_
 
 3. **添加YAML头部**
 
+```
    - module_id: STANDARDS_SCREENING_001
+```
 
    - version: 1.0.0
 
@@ -345,7 +363,9 @@ git cat-file -p "72d1c02:docs/02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_
 
    - 文件变更: 4个文?   - 增加行数: 46?   - 删除行数: 42?
 
----
+```
+```---
+```
 
 
 
@@ -395,7 +415,9 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -435,7 +457,9 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -479,7 +503,9 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -491,7 +517,9 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 其他被删除的文件要么内容已合并到其他文档，要么价值较低，不建议恢复。但DATA_QUALITY.md（P1级）?个蓝图文档（P2级）可根据需要选择性恢复?
 
----
+```
+```---
+```
 
 
 
@@ -507,7 +535,9 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 

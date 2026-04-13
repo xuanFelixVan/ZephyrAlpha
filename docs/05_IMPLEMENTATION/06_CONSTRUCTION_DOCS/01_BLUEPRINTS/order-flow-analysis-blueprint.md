@@ -1,35 +1,16 @@
 ---
-
-module_id: ORDER_FLOW_ANALYSIS_001
-
+module_id: ORDER_FLOW_ANALYSIS_001_7183
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 订单流分析
-
-  - 市场微观结构分析
-
-  - 订单簿分析
-
-  - 交易信号提取
-
+- 订单流分析
 layer: layer_06
-
 ---
 
 

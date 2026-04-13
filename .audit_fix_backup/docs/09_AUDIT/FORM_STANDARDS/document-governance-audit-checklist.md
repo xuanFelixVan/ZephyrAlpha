@@ -1,61 +1,18 @@
-﻿---
-
-module_id: DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST_001
-
-version: 1.0.0
-
-status: Active
-
-created_date: 2026-04-07
-
-last_updated: '2026-04-07'
-
-owner: 个人开发者
-
-standard_type: 专业量化机构文档
-
-responsibility:
-
-- 系统审计分析与质量评估报告与改进建议
-
-layer: layer_09
 ---
-
-
 module_id: AUDIT_TPL_CHECKLIST_001
-
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-01
-
 last_updated: 2026-04-01
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 系统审计分析与质量评估报告与改进建议
-
+- 系统审计分析与质量评估报告与改进建议
 standard_type: 专业量化机构审计标准
-
 applicable_scope: 全系统质量监控
-
 compliance_level: 初始标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 进行中
-
 ---
-
-
-
-
-
-
-
 # 专业文档治理审计检查清单
 
 > **核心职责**: 文档内容说明

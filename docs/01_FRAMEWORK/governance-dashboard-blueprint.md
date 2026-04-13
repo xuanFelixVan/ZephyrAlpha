@@ -1,49 +1,22 @@
 ---
-
-module_id: GOVERNANCE_DASHBOARD_001
-
+module_id: GOVERNANCE_DASHBOARD_001_1426
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 治理可视化、合规监控仪表盘、关键指标展示
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
 - Grafana
-
-- Apache Superset
-
-- Metabase
-
 related_documents:
-
 - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- REALTIME_RISK_MONITORING_BLUEPRINT.md
-
-- GRAFANA_MONITORING_BLUEPRINT.md
-
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
-
 implementation_status: 蓝图设计完成
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
 # 治理仪表盘系统蓝图
@@ -98,7 +71,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -168,7 +143,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -274,7 +251,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +431,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -570,7 +551,9 @@ class RealtimeMonitoringDashboard:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -748,7 +731,9 @@ receivers:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -970,7 +955,9 @@ class ReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1274,7 +1261,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1314,7 +1303,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1346,7 +1337,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1378,7 +1371,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1422,7 +1417,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1444,7 +1441,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1460,7 +1459,9 @@ class SupersetIntegration:
 
 
 
----
+```
+```---
+```
 
 
 

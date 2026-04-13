@@ -57,7 +57,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -397,7 +397,7 @@ class DCFValuationModel:
 
 
 
----
+```---
 
 
 
@@ -749,7 +749,7 @@ class RiskBudgetAllocator:
 
 
 
----
+```---
 
 
 
@@ -765,7 +765,7 @@ class RiskBudgetAllocator:
 
 
 
----
+```---
 
 
 
@@ -925,7 +925,7 @@ pd.Series: ﮒ۳ﻟﭖﮒ۷ﮒﮒﮒﮒ?(ﻟﮒﺑ[-1, 1])
 
 
 
----
+```---
 
 
 
@@ -1121,7 +1121,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 
@@ -1155,7 +1155,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 
@@ -1195,7 +1195,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 
@@ -1221,7 +1221,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 
@@ -1241,7 +1241,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 
@@ -1265,7 +1265,7 @@ ifind_connector: iFindﻟﺟﮔ۴ﮒ?(ﮔﺕﮒﺟﮔﺍﮔ؟ﮔﭦ?
 
 
 
----
+```---
 
 
 

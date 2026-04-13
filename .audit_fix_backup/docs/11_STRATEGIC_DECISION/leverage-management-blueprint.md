@@ -60,7 +60,7 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -138,7 +138,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -152,7 +152,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -216,7 +216,7 @@ Layer 11.6融资融券管理系统是清风量化系统的**杠杆引擎**，负
 
 
 
----
+```---
 
 
 
@@ -344,7 +344,7 @@ Layer 11.6融资融券管理系统是清风量化系统的**杠杆引擎**，负
 
 
 
----
+```---
 
 
 
@@ -738,7 +738,7 @@ class DynamicLeverageEngine:
 
 
 
----
+```---
 
 
 
@@ -982,7 +982,7 @@ class FinancingCostOptimizer:
 
 
 
----
+```---
 
 
 
@@ -1196,7 +1196,7 @@ class ShortManagementSystem:
 
 
 
----
+```---
 
 
 
@@ -1480,7 +1480,7 @@ class MarginManagementSystem:
 
 
 
----
+```---
 
 
 
@@ -1610,7 +1610,7 @@ class LeverageManagementInterface:
 
 
 
----
+```---
 
 
 
@@ -1696,7 +1696,7 @@ Layer 6 组合优化
 
 
 
----
+```---
 
 
 
@@ -1766,7 +1766,7 @@ Layer 6 组合优化
 
 
 
----
+```---
 
 
 
@@ -1906,7 +1906,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 
@@ -1946,7 +1946,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 
@@ -1990,7 +1990,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 
@@ -2012,7 +2012,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 
@@ -2028,7 +2028,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 
@@ -2036,7 +2036,7 @@ class QMTLeverageAPI:
 
 **下一步**: 创建业绩归因系统蓝图
 
----
+```---
 
 
 
@@ -2092,7 +2092,7 @@ class QMTLeverageAPI:
 
 
 
----
+```---
 
 
 

@@ -1,27 +1,20 @@
 ---
-module_id: 01_FRAMEWORK_COUNTERPARTY_RISK_BLUEPRINT
+module_id: 01_FRAMEWORK_COUNTERPARTY_RISK_BLUEPRINT_3984
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Counterparty Risk Blueprint相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 交易对手风险管理系统
 compliance_level: 顶级专业标准
-reference_models:
-  - Open Source Risk Engine
-  - CVA/DVA Models
-  - Basel III
-related_documents:
-  - RISK_MANAGEMENT_LAYER_BLUEPRINT.md
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
 ---
 
 ## 📋 执行摘要
@@ -66,7 +59,9 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -292,7 +287,9 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -638,7 +635,9 @@ class CreditRatingModel:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -802,7 +801,9 @@ class CVACalculator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -864,7 +865,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -888,7 +891,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -908,7 +913,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +935,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -952,7 +961,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -974,7 +985,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1012,7 +1025,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1032,13 +1047,17 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1094,7 +1113,9 @@ class CollateralInfo:
 
 
 
----
+```
+```---
+```
 
 
 

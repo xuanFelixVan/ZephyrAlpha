@@ -1,129 +1,25 @@
 ---
-
-module_id: AML_MONITORING_SYSTEM_001
-
+module_id: AML_MONITORING_SYSTEM_001_9082
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 反洗钱监控系统架构设计
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Citadel AML System
-
-- Two Sigma Compliance
-
-- Bridgewater Risk Control
-
-- D.E. Shaw AML Framework
-
-related_documents:
-
-- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-
-- RISK_EVENT_TRACKING_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-open_source_projects:
-
-- name: AML Controller
-
-  url: https://github.com/paihari/aml-controller
-
-  features: AI驱动AML检测、实时交易监控、制裁筛查、模式检测、57K+制裁实体
-
-  license: MIT
-
-  personal_fit: ⭐⭐⭐⭐⭐
-
-- name: Enterprise Fraud Detection
-
-  url: https://github.com/topics/anti-money-laundering
-
-  features: XGBoost/LightGBM/LSTM、实时API、SHAP可解释性、Streamlit仪表板
-
-  license: MIT
-
-  personal_fit: ⭐⭐⭐⭐⭐
-
-- name: AML Fraud Transaction Monitoring
-
-  url: https://github.com/jube-home/aml-fraud-transaction-monitoring
-
-  features: 机器学习实时交易监控、规则引擎、案例管理
-
-  license: MIT
-
-  personal_fit: ⭐⭐⭐⭐
-
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-
-
-  - 反洗钱监控系统架构设计
-
-
-
-  - 交易监控规则定义
-
-
-
-  - 可疑交易识别与告警
-
-
-
-  - 制裁名单筛查
-
-
-
-  - AML报告生成
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 交易合规监控
-
-
-
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
-
-
-
-  - RISK_EVENT_TRACKING_BLUEPRINT.md: 风险事件追踪（事件记录）'
-
-responsibility:
-
-- AML_MONITORING_SYSTEM蓝图设计
-
+open_source_projects: ''
+url: https://github.com/paihari/aml-controller
+features: AI驱动AML检测、实时交易监控、制裁筛查、模式检测、57K+制裁实体
+license: MIT
+personal_fit: ⭐⭐⭐⭐⭐
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 
 # 反洗钱监控系统蓝图
@@ -172,7 +68,9 @@ responsibility:
 
 - 具体规则库与制裁名单来源需在施工文档阶段落定；以本节门禁为准。
 
----
+```
+```---
+```
 
 
 
@@ -230,7 +128,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -384,7 +284,9 @@ class AMLMonitoringInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -614,7 +516,9 @@ class CustomerRiskAssessment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -764,7 +668,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -806,7 +712,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -838,7 +746,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -870,7 +780,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -946,7 +858,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1002,7 +916,9 @@ class STRReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1120,7 +1036,9 @@ explanation = detector.explain(transaction_features)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1142,7 +1060,9 @@ explanation = detector.explain(transaction_features)
 
 
 
----
+```
+```---
+```
 
 
 

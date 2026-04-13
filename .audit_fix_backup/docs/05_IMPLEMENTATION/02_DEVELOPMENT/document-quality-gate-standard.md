@@ -57,7 +57,7 @@ last_updated: 2026-04-07
 
 
 
----
+```---
 
 
 
@@ -81,7 +81,7 @@ last_updated: 2026-04-07
 
 ```yaml
 
----
+```---
 
 module_id: [ﮔ۷۰ﮒID]
 
@@ -95,7 +95,7 @@ last_updated: [ﮔﺑﮔﺍﮔ۴ﮔ]
 
 owner: [ﻟﺑﻟﺑ۲ﻛﭦﭦ]
 
----
+```---
 
 ```
 
@@ -301,7 +301,7 @@ implementation_status: [ﮒ؟ﻝﺍﻝﭘﮔ]
 
 
 
----
+```---
 
 
 
@@ -389,7 +389,7 @@ implementation_status: [ﮒ؟ﻝﺍﻝﭘﮔ]
 
 
 
----
+```---
 
 
 
@@ -499,7 +499,7 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```---
 
 
 
@@ -563,7 +563,7 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```---
 
 
 
@@ -609,7 +609,7 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```---
 
 
 
@@ -641,7 +641,7 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```---
 
 
 
@@ -683,7 +683,7 @@ python scripts/document_quality_gate.py --changed
 
 
 
----
+```---
 
 
 

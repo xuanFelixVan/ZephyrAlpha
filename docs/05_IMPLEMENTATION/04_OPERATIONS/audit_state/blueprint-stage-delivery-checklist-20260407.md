@@ -1,31 +1,15 @@
 ---
-
-module_id: BLUEPRINT_STAGE_DELIVERY_CHECKLIST_001
-
+module_id: BLUEPRINT_STAGE_DELIVERY_CHECKLIST_001_8535
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席架构师
-
 responsibility:
-
-  - 蓝图阶段交付清单
-
-  - 验收标准
-
-  - 施工准备
-
+- 蓝图阶段交付清单
 standard_type: 交付清单
-
 applicable_scope: 清风量化系统蓝图阶段
-
 compliance_level: 专业标准
-
 layer: layer_05
 ---
 
@@ -46,7 +30,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -108,7 +94,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -296,7 +284,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +366,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -432,7 +424,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -624,7 +618,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -730,7 +726,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -916,7 +914,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1004,7 +1004,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1038,7 +1040,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1090,7 +1094,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

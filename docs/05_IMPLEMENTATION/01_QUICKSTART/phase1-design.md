@@ -13,6 +13,7 @@ applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+audit_status: HARDCODED_PARAMS_TO_L0
 ---
 
 ## 1. 系统架构
@@ -79,7 +80,9 @@ DataLoader ?Strategy ?Cerebro ?Broker ?Analyzer ?Report
 
 
 
----
+```
+```---
+```
 
 
 
@@ -141,7 +144,9 @@ ZephyrAlpha/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -341,7 +346,9 @@ if __name__ == '__main__':
 
 
 
----
+```
+```---
+```
 
 
 
@@ -613,7 +620,9 @@ class StockDataLoader:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -857,7 +866,9 @@ class MaCrossStrategy(bt.Strategy):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1165,7 +1176,9 @@ def get_sqn_rating(sqn):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1371,7 +1384,9 @@ class RiskManager(bt.RiskRules):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1455,7 +1470,9 @@ backtest:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1573,7 +1590,9 @@ python src/main.py --code 000001.SZ --commission 0.001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1665,7 +1684,9 @@ python src/main.py --code 000001.SZ --commission 0.001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1685,7 +1706,9 @@ python src/main.py --code 000001.SZ --commission 0.001
 
 
 
----
+```
+```---
+```
 
 
 

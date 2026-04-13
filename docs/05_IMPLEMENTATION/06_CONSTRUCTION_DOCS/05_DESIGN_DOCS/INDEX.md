@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_001
-
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_001_0921
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-17'
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供05 Design Docs相关文档支持
-
+- 提供05 Design Docs相关文档支持
 layer: layer_05
 ---
 
@@ -80,17 +71,17 @@ layer: layer_05
 
 
 
-- [a_stock_rules/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[a_stock_rules/INDEX.md]~~
 
-- [data_consistency/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[data_consistency/INDEX.md]~~
 
-- [database/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[database/INDEX.md]~~
 
-- [trading_costs/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[trading_costs/INDEX.md]~~
 
-- [ui_design/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[ui_design/INDEX.md]~~
 
-- [web_interface/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[web_interface/INDEX.md]~~
 
 
 
@@ -102,7 +93,7 @@ layer: layer_05
 
 - PROFESSIONAL_QUANT_DEVELOPMENT_PROCESS
 
-- [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[README]~~
 
 - REVIEW_MATERIAL_DISTRIBUTION_CHECKLIST
 
@@ -114,7 +105,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

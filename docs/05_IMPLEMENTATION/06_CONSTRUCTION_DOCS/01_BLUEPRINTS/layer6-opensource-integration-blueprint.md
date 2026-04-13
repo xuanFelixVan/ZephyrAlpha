@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_OPENSOURCE_INTEGRATION_001
-
+module_id: LAYER6_OPENSOURCE_INTEGRATION_001_0111
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构集成方案
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 开源库集成方案设计
-
-  - 集成策略制定
-
-  - 版本管理
-
-  - 兼容性保证
-
+- 开源库集成方案设计
 layer: layer_06
-
 ---
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_BARRA_RISK_MODEL_BP_001
+module_id: IMPL_BARRA_RISK_MODEL_BP_001_2748
 version: 1.0.2
 status: Active
 created_date: 2026-04-07
@@ -54,7 +54,9 @@ foreach ($file in $files) {
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: 05_IMPLEMENTATION_ARCHIVED_20260407124139_ARCHIVED_1
@@ -18,7 +25,7 @@ responsibility:
 
 - 系统实施与部署管理与优化维护
 
-module_id: ARCHIVE_NOZYIO_UX_DOC_001
+module_id: ARCHIVE_NOZYIO_UX_DOC_001_9772
 
 version: 0.1.1
 
@@ -45,7 +52,7 @@ parent_document: ../INDEX.md
 implementation_status: 进行?
 
 layer: layer_06
----
+```---
 
 
 

@@ -1,47 +1,25 @@
 ---
-
-module_id: RISK_CONTROL_TECH_SPEC_001
-
+module_id: RISK_CONTROL_TECH_SPEC_001_7887
 version: 1.0.0
-
 spec_version: 1.0
-
 status: Active
-
 parent_doc: ../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/RISK_CONTROL_BLUEPRINT.md
-
 last_updated: '2026-04-07'
-
 created_date: 2026-04-07
-
 layer: layer_05
-
 index: RISK_CONTROL_TECH_SPEC_001
-
 estimated_hours: 20
-
 review_status: Pending
-
 reviewer: 首席技术评审官
-
 review_date: 2026-04-07
-
 owner: 实施团队
-
 responsibility:
-
 - 技术规格定义与实施标准制定与实施标准
-
 standard_type: 专业量化机构技术规格书
-
 applicable_scope: Layer 5.3 风险管理
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 待实施
-
 ---
 
 # Risk Control技术规格书 v1.0
@@ -68,7 +46,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +86,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -160,7 +142,9 @@ implementation_status: 待实施
 
 
 
----
+```
+```---
+```
 
 
 
@@ -630,7 +614,9 @@ class RiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -648,7 +634,9 @@ class RiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -682,7 +670,9 @@ class RiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -714,7 +704,9 @@ class RiskController:
 
 
 
----
+```
+```---
+```
 
 
 

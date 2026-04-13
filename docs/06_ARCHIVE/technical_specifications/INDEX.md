@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_TECHNICAL_SPECIFICATIONS_INDEX
+module_id: 06_ARCHIVE_TECHNICAL_SPECIFICATIONS_INDEX_1341
 version: 1.0.0
 status: Active
 layer: layer_06

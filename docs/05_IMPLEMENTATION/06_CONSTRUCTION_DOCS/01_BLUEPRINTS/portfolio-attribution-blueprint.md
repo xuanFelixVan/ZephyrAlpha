@@ -1,10 +1,7 @@
 ---
 responsibility:
 - 组合归因
-- 收益分解
-- 组合绩效风险归因
-- 归因报告
-module_id: PORTFOLIO_ATTRIBUTION_001
+module_id: PORTFOLIO_ATTRIBUTION_001_9204
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -1,458 +1,228 @@
 ---
-module_id: 01_FRAMEWORK_INDEX
-layer: layer_01
+module_id: LAYER_01_INDEX_AUTO
 version: 1.0.0
 status: Active
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_01
+compliance_level: 强制标准
+priority: P0-CRITICAL
+layer: layer_01
 responsibility:
-  - 处理INDEX相关业务
-created_date: 2026-04-03
-last_updated: 2026-04-11
-owner: '系统架构?standard_type: 专业量化机构目录索引'
-applicable_scope: 01_FRAMEWORK目录
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 活跃维护
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
-## 上级与接力
+# LAYER_01 自动索引
 
-- [docs 根索引](../INDEX.md)
-- 全仓库文件治理任务清单 §7
-- 治理工具总索引
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 194
 
-### 子域门面（P5 §7 入链补齐）
+## 文档列表
 
-- [AI_VIRTUAL_RESEARCH_TEAM 目录索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [ARCHITECTURE_DECISIONS 目录索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [ARCHITECTURE_DECISIONS 概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
-
-### 索引健全性与目录体量（P5 §7）
-
-- **零入链扫描（本批）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260512.md（`scan_index_health.py --prefix docs/01_FRAMEWORK --date 20260512`；首轮 **3** 处子域门面零入链，已由上表补链后复跑 **zero_inbound=0**）
-- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/01_FRAMEWORK` **336** 条路径）
-
----
-
-# 框架设计目录索引
-
-> **版本**: v5.3  
-> **架构**: 三级时间框架融合架构  
-> **最后更新**: 2026-04-11  
-> **维护者**: 系统架构师
-
----
-
-## 📋 文档职责说明
-
-### 核心职责
-
-本文档是**框架设计层的导航索引文档**，负责：
-- 提供框架设计层的快速导航
-- 说明框架设计层的目录结构
-- 推荐框架设计文档的阅读路径
-- 为框架设计文档查找提供导航服务
-
-### 职责边界
-
-**负责**：
-- ✅ 提供框架设计层的快速导航入口
-- ✅ 提供框架设计文档的分类和层级说明
-- ✅ 推荐框架设计文档的阅读路径
-- ✅ 说明框架设计层的文档体系架构
-
-**不负责**：
-- ❌ 完整的模块清单（由System_Manifest.md负责）
-- ❌ 详细的实施状态跟踪（由System_Manifest.md负责）
-- ❌ 版本管理和变更历史（由System_Manifest.md负责）
-
-### 对接文档
-
-**相关文档**：
-- [../INDEX.md](../INDEX.md) - 系统导航入口（快速导航和文档分类）
-- ../System_Manifest.md - 系统清单账本（完整模块清单和实施状态）
-
----
-
-## 🎯 目录职责
-
-本目录存放系统框架设计文档，包括架构定义、技术决策、模块边界等核心设计文档。
-
-
-> **版本**: v5.3  
-> **架构**: 三级时间框架融合架构  
-> **最后更?*: 2026-04-03  
-> **维护?*: 系统架构?
----
-
-## 📚 核心文档
-
-### 架构设计
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| 专业多时间框架架构 | 三级时间框架融合架构设计 | ⭐⭐⭐⭐?|
-| [架构文档](./ARCHITECTURE.md) | 系统架构详细说明 | ⭐⭐⭐⭐?|
-| `架构迁移计划` | Layer 0-11迁移到三级时间框?| ⭐⭐⭐⭐ |
-| 技术栈 | 技术栈选择 | ⭐⭐⭐⭐ |
-
----
-
-## 🧭 严格孤儿挂载（波次 1：入口补齐）
-
-> **来源**：`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_20260408.md` 的 **A 应挂入口（高价值）** 分桶。  
-> **动作**：只做“索引入口挂载”，不改正文内容。
-
-### 01_FRAMEWORK（新增入口链接）
-
-- AI 能力补充完成报告
-- 架构审计报告
-- 蓝图阶段收口差距分析蓝图
-- 蓝图阶段 vs 实施阶段分析
-- 投资决策审计蓝图
-- Mempalace 架构评审报告
-- 情绪分析层蓝图
-- 情绪实时分析蓝图
-- 系统蓝图完备性报告
-- Layer 10 删除文件分析
-
-### 01_FRAMEWORK（继续补齐入口链接）
-
-- ACCEPTANCE_CRITERIA_BLUEPRINT
-- ALGORITHMIC_TRADING_COMPLIANCE_BLUEPRINT
-- AUTOML_AUTOMATION_BLUEPRINT
-- AUTOML_PIPELINE_BLUEPRINT
-- BLUEPRINT_STAGE_COMPLETE_SUPPLEMENT_PLAN
-- COMPLIANCE_DOCUMENT_MANAGEMENT_BLUEPRINT
-- COMPLIANCE_TRAINING_MANAGEMENT_BLUEPRINT
-- DATA_LINEAGE_VISUALIZATION_BLUEPRINT
-- DATA_QUALITY_REALTIME_MONITORING_BLUEPRINT
-- DEEPAR_BLUEPRINT
-- ENSEMBLE_LEARNING_BLUEPRINT
-- EXTREME_MARKET_RESPONSE_BLUEPRINT
-- FACTOR_PORTFOLIO_OPTIMIZATION_BLUEPRINT
-- FACTOR_REALTIME_COMPUTATION_BLUEPRINT
-- FEATURE_STORE_BLUEPRINT
-- HIGH_FREQUENCY_TRADING_ENGINE_BLUEPRINT
-- INVESTOR_RELATIONS_MANAGEMENT_BLUEPRINT
-- LIQUIDITY_RISK_MANAGEMENT_BLUEPRINT
-- META_LEARNING_BLUEPRINT
-- MISSING_MODULES_BLUEPRINT
-- MODEL_PRUNING_BLUEPRINT
-- MODEL_QUANTIZATION_BLUEPRINT
-- MODEL_SECURITY_SCANNER_BLUEPRINT
-- MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT
-- MULTI_MODEL_ORCHESTRATOR_BLUEPRINT
-- MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT
-- MULTI_TASK_LEARNING_BLUEPRINT
-- MULTIMODAL_FUSION_BLUEPRINT
-- NBEATS_BLUEPRINT
-- NEURAL_ODE_BLUEPRINT
-- OPERATIONAL_RISK_MANAGEMENT_BLUEPRINT
-- PERSONAL_AI_MAINTENANCE_BLUEPRINT_STAGE_COMPLETE_SOLUTION
-- PERSONAL_AI_QUANT_COMPLETE_SOLUTION_BLUEPRINT
-- PERSONAL_AI_QUANT_SYSTEM_IMPLEMENTATION_BLUEPRINT
-- PORTFOLIO_REBALANCING_BLUEPRINT
-- PORTFOLIO_RISK_ATTRIBUTION_BLUEPRINT
-- POST_QUANTUM_CRYPTOGRAPHY_BLUEPRINT
-- STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT
-- TEMPORAL_FUSION_TRANSFORMER_BLUEPRINT
-- TEXT_ENCODER_BLUEPRINT
-- TRANSFER_LEARNING_BLUEPRINT
-
-### Layer 4（机器学习层）补充入口链接
-
-- [LAYER4_ML 目录索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [LAYER4_ML 概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
-- L4 深度审计报告 V2（20260407）
-- L4 深度审计报告 V3（20260407）
-- L4 深度审计报告 V5（20260407）
-- L4 深度审计报告 V6（20260407）
-- 机器学习治理深度审计报告（20260407）
-- 机器学习综合审计（20260404）
-- ML Layer 综合审计（20260405）
-- ML Layer 深度治理审计（20260406）
-- ML Layer 治理审计（20260405）
-- ML Layer 治理修复报告（20260406）
-- YAML 完备性检查报告
-- YAML 修复进度报告（20260406）
-
-### 01_FRAMEWORK 波次 2（严格孤儿补挂：Layer 4 技术规格与 AI 虚拟研究团队）
-
-- AI 虚拟研究团队实施计划
-- AI 虚拟研究团队项目启动
-- 因果推断技术规格
-- 漂移检测技术规格
-- 全流程数据持久化蓝图（Layer4 入口）
-- 市场状态（Regime）蓝图
-- ML Layer 开源映射（20260405）
-- 模型治理技术规格
-- 模型可解释性技术规格
-- 模型监控技术规格
-- 在线学习技术规格
-- 概率预测技术规格
-- LAYER4_ML README（副本索引说明）
-- 强化学习技术规格
-- RL 再平衡系统蓝图
-- Streamlit 仪表板技术规格
-
-### 实施蓝图
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| 专业实施蓝图 | 专业量化机构实施蓝图 | ⭐⭐⭐⭐?|
-| 数据层实施蓝图 | 数据层实施蓝?| ⭐⭐⭐⭐ |
-| 关键模块实施蓝图 | 关键模块实施蓝图 | ⭐⭐⭐⭐ |
-
-### 模块边界
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| 模块职责边界 | 模块职责边界定义 | ⭐⭐⭐⭐?|
-| 接口契约蓝图 | 接口契约定义 | ⭐⭐⭐⭐ |
-
-### AI系统
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| AI虚拟研究团队 | AI虚拟研究团队设计（子目录?| ⭐⭐⭐⭐?|
-| 人机交互蓝图 | Layer 8人机交互层总体蓝图 | ⭐⭐⭐⭐?|
-| 人机协同界面蓝图 | 三级时间框架人机协同界面设计 | ⭐⭐⭐⭐ |
-| 人机协作场景蓝图 | 多维度动态协作模?| ⭐⭐⭐⭐ |
-| AI治理蓝图 | AI行为准则与治理机?| ⭐⭐⭐⭐?|
-| AI权限清单 | AI权限规范 | ⭐⭐⭐⭐ |
-| AI信任校准蓝图 | AI信任动态调整机?| ⭐⭐⭐⭐ |
-| AI学习演进蓝图 | AI错误学习与持续改?| ⭐⭐⭐⭐ |
-| AI决策审计蓝图 | AI决策全链路审?| ⭐⭐⭐⭐ |
-| AI能力补充蓝图 | AI能力差距与补充计划 | ⭐⭐⭐⭐ |
-
-### Layer 8 人机交互界面组件 🆕
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| 人机交互层缺失模块分析 | 人机交互层缺失模块分析与补充 | ⭐⭐⭐⭐⭐ |
-| 人机交互层完整补充蓝图 | 人机交互层完整补充方案 | ⭐⭐⭐⭐⭐ |
-| 人机交互层高级特性蓝图 | 人机交互层高级特性补充 | ⭐⭐⭐⭐⭐ |
-| AI对话式交互增强蓝图 | AI对话式交互增强系统 | ⭐⭐⭐⭐⭐ |
-| 移动端界面覆盖蓝图 | 移动端界面覆盖系统 | ⭐⭐⭐⭐ |
-| 智能推荐系统蓝图 | 智能推荐系统 | ⭐⭐⭐⭐ |
-| 决策仪表板蓝图 | 决策入口整合、AI建议展示、审批流程 | ⭐⭐⭐⭐⭐ |
-| 策略配置界面蓝图 | 策略参数配置、版本管理、回测验证 | ⭐⭐⭐⭐⭐ |
-| 审计日志查看器蓝图 | 决策审计追踪、日志查询分析 | ⭐⭐⭐⭐⭐ |
-| 性能分析界面蓝图 | 策略性能分析、归因分析、风险分析 | ⭐⭐⭐⭐⭐ |
-| 数据探索界面蓝图 | 数据浏览查询、可视化分析、质量检查 | ⭐⭐⭐⭐⭐ |
-| 设置管理界面蓝图 | 系统配置、用户偏好、通知配置、安全设置 | ⭐⭐⭐⭐ |
-| 帮助系统蓝图 | 文档浏览、FAQ、视频教程、学习路径 | ⭐⭐⭐⭐ |
-| API管理界面蓝图 | API文档、测试工具、密钥管理、调用统计 | ⭐⭐⭐⭐ |
-| `人机交互层技术蓝图` | 人机交互层技术实现（已归档） | ⭐⭐⭐⭐ |
-| 移动端推送通知蓝图 | 多渠道推送通知系统 | ⭐⭐⭐⭐ |
-| Grafana监控可视化蓝图 | Prometheus+Grafana监控可视化系统 | ⭐⭐⭐⭐ |
-| FastAPI认证权限蓝图 | FastAPI-Users认证权限系统 | ⭐⭐⭐⭐ |
-| Streamlit回测界面蓝图 | 交互式回测界面 | ⭐⭐⭐⭐ |
-| 交易授权界面蓝图 | AI交易建议审批、多级授权、紧急止损 | ⭐⭐⭐⭐⭐ |
-| 持仓管理界面蓝图 | 实时持仓展示、持仓调整、持仓分析 | ⭐⭐⭐⭐⭐ |
-| 风险监控界面蓝图 | 实时风险指标、风险预警、风险归因 | ⭐⭐⭐⭐⭐ |
-| 模型管理界面蓝图 | 模型注册、版本管理、性能监控、部署控制 | ⭐⭐⭐⭐⭐ |
-| 资金管理界面蓝图 | 资金流水、账户余额、资金效率分析 | ⭐⭐⭐⭐⭐ |
-| 数据质量监控界面蓝图 | 数据质量报告、指标监控、异常告警 | ⭐⭐⭐⭐⭐ |
-| 系统健康检查界面蓝图 | 系统组件状态、服务健康、资源监控 | ⭐⭐⭐⭐ |
-| 合规报告界面蓝图 | 合规报告查看、审计追踪、合规状态监控 | ⭐⭐⭐⭐ |
-| 告警管理界面蓝图 | 告警规则配置、通知管理、历史查询 | ⭐⭐⭐⭐ |
-| 回测结果查看器蓝图 | 回测结果查看、分析、报告生成 | ⭐⭐⭐⭐ |
-| 交易记录查看器蓝图 | 历史交易查询、执行质量分析、成本统计 | ⭐⭐⭐⭐ |
-
-### Layer 11 文字驱动层 🆕
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| 自然语言界面蓝图 | Layer 11文字驱动层架构设计 | ⭐⭐⭐⭐?|
-| 全模块文字交互需求分析 | Layer 11全模块文字交互需求分析 | ⭐⭐⭐⭐ |
-
-### Layer 7-11顶层架构蓝图 🆕
-
-| 文档名称 | 说明 | 重要?|
-|---------|------|--------|
-| [研究与创新层蓝图](../09_RESEARCH_INNOVATION/BLUEPRINT.md) | **Layer 9** AI虚拟研究实验?创新孵化?| ⭐⭐⭐⭐?|
-| `治理与合规层蓝图` | **Layer 10** 内部控制体系+合规监控 | ⭐⭐⭐⭐?|
-| `战略决策层蓝图` | **Layer 11** 战略资产配置+风险预算分配 | ⭐⭐⭐⭐?|
-
-### 核心监控体系 (P0?
-
-| 文档名称 | 说明 | 重要?| 实施周期 |
-|---------|------|--------|---------|
-| 数据质量监控蓝图 | 实时数据质量监控、自动告警、质量报告| ⭐⭐⭐⭐?| 2?|
-| 实时风险监控蓝图 | 实时风险监控仪表板、风险预警系?| ⭐⭐⭐⭐?| 2?|
-| | 历史情景压力测试、敏感性分?| ⭐⭐⭐⭐?| 2?|
-| 合规监控系统蓝图 | 监管合规监控、内部合规流?| ⭐⭐⭐⭐?| 2?|
-
-### AI增强系统 (P0?
-
-| 文档名称 | 说明 | 重要?| 实施周期 |
-|---------|------|--------|---------|
-| AI可解释性工具蓝图 | 基于桥水"安全花园"的AI决策可解释性工?| ⭐⭐⭐⭐?| 2?|
-| | 检索增强生成知识系统| ⭐⭐⭐⭐?| 2?|
-| 自适应模型系统蓝图 | HMM市场状态识?动态模型选择 | ⭐⭐⭐⭐?| 2?|
-| 实施加速方案蓝图 | 8个月加速实施计?| ⭐⭐⭐⭐?| 8个月 |
-
----
-
-## 🗂?子目?
-| 目录名称 | 说明 | 文档数量 |
-|---------|------|---------|
-| AI_VIRTUAL_RESEARCH_TEAM/ | AI虚拟研究团队蓝图 | 3 |
+- [ARCHITECTURE](./ARCHITECTURE.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [SITEMAP](./SITEMAP.md)
+- [active-learning-blueprint](./active-learning-blueprint.md)
+- [adaptive-model-system-blueprint](./adaptive-model-system-blueprint.md)
+- [ai-agent-framework-blueprint](./ai-agent-framework-blueprint.md)
+- [ai-capability-gap-blueprint](./ai-capability-gap-blueprint.md)
+- [ai-conversational-interface-enhancement-blueprint](./ai-conversational-interface-enhancement-blueprint.md)
+- [ai-decision-audit-blueprint](./ai-decision-audit-blueprint.md)
+- [ai-evolution-loop-blueprint](./ai-evolution-loop-blueprint.md)
+- [ai-explainability-toolkit-blueprint](./ai-explainability-toolkit-blueprint.md)
+- [ai-memory-additional-blueprints](./ai-memory-additional-blueprints.md)
+- [ai-pattern-recognition-engine-blueprint](./ai-pattern-recognition-engine-blueprint.md)
+- [ai-report-generation-blueprint](./ai-report-generation-blueprint.md)
+- [ai-trust-calibration-blueprint](./ai-trust-calibration-blueprint.md)
+- [ai-virtual-research-team-implementation-plan](./ai-virtual-research-team-implementation-plan.md)
+- [algorithm-performance-benchmark-blueprint](./algorithm-performance-benchmark-blueprint.md)
+- [algorithmic-trading-compliance-blueprint](./algorithmic-trading-compliance-blueprint.md)
+- [all-layers-gap-analysis](./all-layers-gap-analysis.md)
+- [alternative-data-fusion-blueprint](./alternative-data-fusion-blueprint.md)
+- [arbitrage-detection-blueprint](./arbitrage-detection-blueprint.md)
+- [architecture-audit-report](./architecture-audit-report.md)
+- [architecture-evolution-history](./architecture-evolution-history.md)
+- [audit-log-viewer-blueprint](./audit-log-viewer-blueprint.md)
+- [audit-summary-20260407](./audit-summary-20260407.md)
+- [audit-trail-system-blueprint](./audit-trail-system-blueprint.md)
+- [automl-automation-blueprint](./automl-automation-blueprint.md)
+- [automl-pipeline-blueprint](./automl-pipeline-blueprint.md)
+- [backdoor-detection-blueprint](./backdoor-detection-blueprint.md)
+- [batch-inference-optimization-blueprint](./batch-inference-optimization-blueprint.md)
+- [blueprint-architecture-mapping](./blueprint-architecture-mapping.md)
+- [blueprint-stage-complete-gap-analysis-blueprint](./blueprint-stage-complete-gap-analysis-blueprint.md)
+- [blueprint-stage-final-completion-report](./blueprint-stage-final-completion-report.md)
+- [business-continuity-management-blueprint](./business-continuity-management-blueprint.md)
+- [causal-inference-technical-specification](./LAYER4_ML/causal-inference-technical-specification.md)
+- [circuit-breaker-system-blueprint](./circuit-breaker-system-blueprint.md)
+- [code-generation-model-blueprint](./code-generation-model-blueprint.md)
+- [compliance-document-management-blueprint](./compliance-document-management-blueprint.md)
+- [compliance-monitoring-system-blueprint](./compliance-monitoring-system-blueprint.md)
+- [compliance-training-management-blueprint](./compliance-training-management-blueprint.md)
+- [comprehensive-blueprint-supplement-plan](./comprehensive-blueprint-supplement-plan.md)
+- [correlation-prediction-blueprint](./correlation-prediction-blueprint.md)
+- [counterparty-risk-blueprint](./counterparty-risk-blueprint.md)
+- [counterparty-risk-ore-implementation](./counterparty-risk-ore-implementation.md)
+- [curriculum-learning-blueprint](./curriculum-learning-blueprint.md)
+- [cybersecurity-incident-response-blueprint](./cybersecurity-incident-response-blueprint.md)
+- [data-annotation-platform-blueprint](./data-annotation-platform-blueprint.md)
+- [data-augmentation-blueprint](./data-augmentation-blueprint.md)
+- [data-flow-and-module-interaction-diagrams](./data-flow-and-module-interaction-diagrams.md)
+- [data-layer-implementation-blueprint](./data-layer-implementation-blueprint.md)
+- [data-layer-index](./data-layer-index.md)
+- [data-lineage-visualization-blueprint](./data-lineage-visualization-blueprint.md)
+- [data-preprocessing-comprehensive-gap-analysis-20260407](./data-preprocessing-comprehensive-gap-analysis-20260407.md)
+- [data-preprocessing-layer-blueprint](./data-preprocessing-layer-blueprint.md)
+- [data-preprocessing-professional-gap-analysis-20260407](./data-preprocessing-professional-gap-analysis-20260407.md)
+- [data-privacy-compliance-blueprint](./data-privacy-compliance-blueprint.md)
+- [data-quality-assessment-blueprint](./data-quality-assessment-blueprint.md)
+- [data-quality-governance-blueprint](./data-quality-governance-blueprint.md)
+- [data-quality-management-blueprint](./data-quality-management-blueprint.md)
+- [data-quality-realtime-monitoring-blueprint](./data-quality-realtime-monitoring-blueprint.md)
+- [data-source-cost-optimization-blueprint](./data-source-cost-optimization-blueprint.md)
+- [data-version-control-layer4-entry](./LAYER4_ML/data-version-control-layer4-entry.md)
+- [dataflow-architecture-blueprint](./dataflow-architecture-blueprint.md)
+- [deep-audit-report-20260407](./deep-audit-report-20260407.md)
+- [deep-audit-report-v5-20260407](./deep-audit-report-v5-20260407.md)
+- [deep-audit-report-v6-20260407](./LAYER4_ML/deep-audit-report-v6-20260407.md)
+- [differential-privacy-ml-blueprint](./differential-privacy-ml-blueprint.md)
+- [diffusion-model-blueprint](./diffusion-model-blueprint.md)
+- [disaster-recovery-framework-entry](./disaster-recovery-framework-entry.md)
+- [distributed-training-blueprint](./distributed-training-blueprint.md)
+- [document-creation-review-process](./document-creation-review-process.md)
+- [drift-detection-blueprint](./drift-detection-blueprint.md)
+- [drift-detection-technical-specification](./LAYER4_ML/drift-detection-technical-specification.md)
+- [dynamic-risk-budgeting-blueprint](./dynamic-risk-budgeting-blueprint.md)
+- [ensemble-learning-blueprint](./ensemble-learning-blueprint.md)
+- [esg-compliance-monitoring-blueprint](./esg-compliance-monitoring-blueprint.md)
+- [event-driven-learning-blueprint](./event-driven-learning-blueprint.md)
+- [experiment-tracking-blueprint](./experiment-tracking-blueprint.md)
+- [factor-backtest-framework-blueprint](./factor-backtest-framework-blueprint.md)
+- [factor-engine-detailed-design](./factor-engine-detailed-design.md)
+- [feature-selection-automation-blueprint](./feature-selection-automation-blueprint.md)
+- [feature-store-blueprint](./feature-store-blueprint.md)
+- [federated-learning-blueprint](./federated-learning-blueprint.md)
+- [fix-summary-20260407](./fix-summary-20260407.md)
+- [full-process-data-layer4-entry](./LAYER4_ML/full-process-data-layer4-entry.md)
+- [governance-decision-support-blueprint](./governance-decision-support-blueprint.md)
+- [gradient-accumulation-blueprint](./gradient-accumulation-blueprint.md)
+- [gradient-checkpointing-blueprint](./gradient-checkpointing-blueprint.md)
+- [graph-neural-network-blueprint](./graph-neural-network-blueprint.md)
+- [grayscale-release-blueprint](./grayscale-release-blueprint.md)
+- [high-frequency-signal-processing-blueprint](./high-frequency-signal-processing-blueprint.md)
+- [homomorphic-encryption-ml-blueprint](./homomorphic-encryption-ml-blueprint.md)
+- [human-ai-collaboration-scenarios-blueprint](./human-ai-collaboration-scenarios-blueprint.md)
+- [inference-acceleration-blueprint](./inference-acceleration-blueprint.md)
+- [investment-philosophy](./investment-philosophy.md)
+- [learning-rate-scheduler-blueprint](./learning-rate-scheduler-blueprint.md)
+- [liquid-neural-network-blueprint](./liquid-neural-network-blueprint.md)
+- [machine-learning-governance-deep-audit-report-20260407](./LAYER4_ML/machine-learning-governance-deep-audit-report-20260407.md)
+- [market-regime](./market-regime.md)
+- [master-index](./LAYER4_ML/master-index.md)
+- [memory-augmented-nn-blueprint](./memory-augmented-nn-blueprint.md)
+- [missing-modules-blueprint](./missing-modules-blueprint.md)
+- [mixed-precision-training-blueprint](./mixed-precision-training-blueprint.md)
+- [ml-comprehensive-audit-20260404](./LAYER4_ML/ml-comprehensive-audit-20260404.md)
+- [ml-layer-comprehensive-audit-20260405](./LAYER4_ML/ml-layer-comprehensive-audit-20260405.md)
+- [ml-layer-deep-governance-audit-20260406](./LAYER4_ML/ml-layer-deep-governance-audit-20260406.md)
+- [ml-layer-governance-audit-20260405](./LAYER4_ML/ml-layer-governance-audit-20260405.md)
+- [ml-layer-governance-fix-report-20260406](./ml-layer-governance-fix-report-20260406.md)
+- [ml-layer-opensource-mapping-20260405](./LAYER4_ML/ml-layer-opensource-mapping-20260405.md)
+- [mlops-platform-blueprint](./mlops-platform-blueprint.md)
+- [model-drift-detection-blueprint](./LAYER4_ML/model-drift-detection-blueprint.md)
+- [model-governance-technical-specification](./LAYER4_ML/model-governance-technical-specification.md)
+- [model-interpretability-technical-specification](./LAYER4_ML/model-interpretability-technical-specification.md)
+- [model-monitoring-blueprint](./model-monitoring-blueprint.md)
+- [model-monitoring-technical-specification](./LAYER4_ML/model-monitoring-technical-specification.md)
+- [model-warmup-blueprint](./model-warmup-blueprint.md)
+- [module-dependency-graph](./module-dependency-graph.md)
+- [module-responsibility-boundaries](./module-responsibility-boundaries.md)
+- [multi-data-source-coordination-blueprint](./multi-data-source-coordination-blueprint.md)
+- [multi-model-orchestrator-blueprint](./multi-model-orchestrator-blueprint.md)
+- [multi-period-portfolio-optimization-blueprint](./multi-period-portfolio-optimization-blueprint.md)
+- [multi-strategy-dynamic-allocation-blueprint](./multi-strategy-dynamic-allocation-blueprint.md)
+- [natural-language-interface-blueprint](./natural-language-interface-blueprint.md)
+- [natural-language-module-analysis](./natural-language-module-analysis.md)
+- [natural-language-report-generation-blueprint](./natural-language-report-generation-blueprint.md)
+- [nbeats-blueprint](./nbeats-blueprint.md)
+- [neural-architecture-search-blueprint](./neural-architecture-search-blueprint.md)
+- [newly-discovered-modules-blueprint-collection](./newly-discovered-modules-blueprint-collection.md)
+- [online-learning-blueprint](./online-learning-blueprint.md)
+- [online-learning-technical-specification](./LAYER4_ML/online-learning-technical-specification.md)
+- [openclaw-l2-docs-01-framework-014](../09_AUDIT/REPORTS/openclaw-l2-docs-01-framework-014.md)
+- [openclaw-l2-docs-01-framework-ai-virtual-research-team-015](../09_AUDIT/REPORTS/openclaw-l2-docs-01-framework-ai-virtual-research-team-015.md)
+- [openclaw-l2-docs-01-framework-architecture-decisions-016](../09_AUDIT/REPORTS/openclaw-l2-docs-01-framework-architecture-decisions-016.md)
+- [openclaw-l2-docs-01-framework-layer4-ml-017](../09_AUDIT/REPORTS/openclaw-l2-docs-01-framework-layer4-ml-017.md)
+- [operational-risk-management-blueprint](./operational-risk-management-blueprint.md)
+- [optimizer-variants-blueprint](./optimizer-variants-blueprint.md)
+- [order-flow-prediction-blueprint](./order-flow-prediction-blueprint.md)
+- [overlap-comprehensive-gap-analysis-20260407-20260407-190203](./overlap-comprehensive-gap-analysis-20260407-20260407-190203.md)
+- [overlap-professional-gap-analysis-20260407-20260407-190203](./overlap-professional-gap-analysis-20260407-20260407-190203.md)
+- [p0-core-modules-blueprint-collection](./p0-core-modules-blueprint-collection.md)
+- [p0-modules-dev-process-qa](./p0-modules-dev-process-qa.md)
+- [p0-modules-implementation-plan](./p0-modules-implementation-plan.md)
+- [p0-modules-integration-config](./p0-modules-integration-config.md)
+- [p1-p2-modules-blueprint-collection](./p1-p2-modules-blueprint-collection.md)
+- [performance-benchmark-framework](./performance-benchmark-framework.md)
+- [personal-ai-maintenance-complete-solution](./personal-ai-maintenance-complete-solution.md)
+- [personal-ai-quant-complete-solution-blueprint](./personal-ai-quant-complete-solution-blueprint.md)
+- [personal-ai-quant-system-implementation-blueprint](./personal-ai-quant-system-implementation-blueprint.md)
+- [post-mortem-analysis-blueprint](./post-mortem-analysis-blueprint.md)
+- [principle-codifier-blueprint](./principle-codifier-blueprint.md)
+- [probabilistic-forecasting-technical-specification](./LAYER4_ML/probabilistic-forecasting-technical-specification.md)
+- [professional-implementation-blueprint](./professional-implementation-blueprint.md)
+- [professional-multi-timeframe-architecture](./professional-multi-timeframe-architecture.md)
+- [prompt-engineering-blueprint](./prompt-engineering-blueprint.md)
+- [rag-system-blueprint](./rag-system-blueprint.md)
+- [re-audit-summary-20260407](./re-audit-summary-20260407.md)
+- [readme-1](./LAYER4_ML/readme-1.md)
+- [regulatory-reporting-blueprint](./regulatory-reporting-blueprint.md)
+- [regulatory-reporting-cdm-implementation](./regulatory-reporting-cdm-implementation.md)
+- [reinforcement-learning-blueprint](./reinforcement-learning-blueprint.md)
+- [reinforcement-learning-technical-specification](./LAYER4_ML/reinforcement-learning-technical-specification.md)
+- [report-intelligent-qa-blueprint](./report-intelligent-qa-blueprint.md)
+- [research-methodology](./research-methodology.md)
+- [research-outcome-transformation-blueprint](./research-outcome-transformation-blueprint.md)
+- [research-project-management-blueprint](./research-project-management-blueprint.md)
+- [risk-event-tracking-blueprint](./risk-event-tracking-blueprint.md)
+- [risk-limit-management-blueprint](./risk-limit-management-blueprint.md)
+- [secure-multi-party-computation-blueprint](./secure-multi-party-computation-blueprint.md)
+- [self-supervised-learning-blueprint](./self-supervised-learning-blueprint.md)
+- [sentiment-data-integration-blueprint](./sentiment-data-integration-blueprint.md)
+- [sentiment-event-impact-assessment-blueprint](./sentiment-event-impact-assessment-blueprint.md)
+- [sentiment-realtime-analysis-blueprint](./sentiment-realtime-analysis-blueprint.md)
+- [service-mesh-integration-blueprint](./service-mesh-integration-blueprint.md)
+- [smart-order-routing-blueprint](./smart-order-routing-blueprint.md)
+- [sparse-attention-blueprint](./sparse-attention-blueprint.md)
+- [stop-loss-management-blueprint](./stop-loss-management-blueprint.md)
+- [strategic-decision-ai-assistance-blueprint](./strategic-decision-ai-assistance-blueprint.md)
+- [streamlit-dashboard-technical-specification](./LAYER4_ML/streamlit-dashboard-technical-specification.md)
+- [synthetic-data-generation-blueprint](./synthetic-data-generation-blueprint.md)
+- [system-architecture-diagram](./system-architecture-diagram.md)
+- [system-blueprint-completeness-report](./system-blueprint-completeness-report.md)
+- [tail-risk-prediction-blueprint](./tail-risk-prediction-blueprint.md)
+- [tech-decision-records](./tech-decision-records.md)
+- [tech-stack](./tech-stack.md)
+- [text-encoder-blueprint](./text-encoder-blueprint.md)
+- [trading-execution-intelligent-optimization-blueprint](./trading-execution-intelligent-optimization-blueprint.md)
+- [transaction-cost-analysis-blueprint-legacy-01-framework](./transaction-cost-analysis-blueprint-legacy-01-framework.md)
+- [transaction-cost-analysis-framework-entry](./transaction-cost-analysis-framework-entry.md)
+- [trusted-execution-environment-blueprint](./trusted-execution-environment-blueprint.md)
+- [volatility-prediction-blueprint](./volatility-prediction-blueprint.md)
+- [yaml-completeness-check-report](./LAYER4_ML/yaml-completeness-check-report.md)
+- [yaml-fix-progress-report-20260406](./LAYER4_ML/yaml-fix-progress-report-20260406.md)
 
 
 ---
 
-## 📖 快速导?
-### 新手入门
-
-1. 阅读 README.md - 框架概述
-2. 阅读 PROFESSIONAL_MULTI_TIMEFRAME_ARCHITECTURE.md - 架构设计
-3. 阅读 `ARCHITECTURE_MIGRATION_PLAN.md` - 架构迁移
-
-### 开发?
-1. 阅读 MODULE_RESPONSIBILITY_BOUNDARIES.md - 模块边界
-2. 阅读 INTERFACE_CONTRACT_BLUEPRINT.md - 接口契约
-3. 阅读 TECH_STACK.md - 技术栈
-
----
-
-## 🤖 机器学习层蓝?(Layer 4)
-
-### P0级核心蓝?(必须补充)
-
-| 蓝图名称 | module_id | 说明 | 优先?|
-|---------|-----------|------|--------|
-| 实验追踪系统蓝图 | EXP-001 | 实验记录、版本对比、可复现性、团队协?| P0 |
-| `超参数优化系统蓝图` | HPO-001 | 自动调参、贝叶斯优化、多保真优化 | P0 |
-| 分布式训练框架蓝图 | DIST-001 | 数据并行、模型并行、ZeRO优化 | P0 |
-| 模型调试工具蓝图 | DEBUG-001 | 梯度分析、激活分析、性能分析 | P0 |
-| 推理加速引擎蓝图 | INF-001 | 模型量化、算子融合、TensorRT编译 | P0 |
-
-### P1级核心蓝?(专业机构标配)
-
-| 蓝图名称 | module_id | 说明 | 优先?|
-|---------|-----------|------|--------|
-| 市场微观结构模型蓝图 | MMM-001 | 订单簿动态、流动性预测、市场冲击估?| P1 |
-| 高频信号处理蓝图 | HFSP-001 | 微秒级特征提取、噪声过滤、信号聚?| P1 |
-| 另类数据融合蓝图 | ADF-001 | 多源数据处理、跨模态融合、Alpha生成 | P1 |
-| 事件驱动学习蓝图 | EDL-001 | 事件检测、分类、影响预?| P1 |
-| LLM微调蓝图 | LLMFT-001 | LoRA/QLoRA微调、金融领域适配 | P1 |
-| 提示工程蓝图 | PE-001 | 提示模板、Few-shot学习、CoT | P1 |
-| RAG系统蓝图 | RAG-001 | 向量数据库、相似度搜索、增强生?| P1 |
-| 模型版本控制蓝图 | MV-001 | 版本追踪、对比、回滚能?| P1 |
-| 模型血缘追踪蓝图 | MLIN-001 | 数据追溯、特征追溯、训练追?| P1 |
-| 模型A/B测试蓝图 | ABTEST-001 | 在线对比、流量分配、统计显著?| P1 |
-| 模型回滚机制蓝图 | ROLLBACK-001 | 快速回退、自动触发、无损切?| P1 |
-| 联邦学习蓝图 | FL-001 | 隐私保护分布式训练、安全聚?| P1 |
-| 自监督学习蓝图 | SSL-001 | 对比学习、掩码预测、预训练 | P1 |
-| 图神经网络蓝图 | GNN-001 | 股权关系图、供应链网络、知识图?| P1 |
-| 隐私保护ML蓝图 | DPML-001 | 差分隐私、梯度裁剪、噪声注?| P1 |
-| 合成数据生成蓝图 | SYNTH-001 | GAN/VAE/Diffusion生成、质量评?| P1 |
-| 安全多方计算蓝图 | MPC-001 | 跨机构隐私保护计算、秘密分?| P1 |
-| 同态加密ML蓝图 | HEML-001 | 加密数据训练、隐私保护推?| P1 |
-| 混合精度训练蓝图 | MPT-001 | FP16/FP32混合、显存优?| P1 |
-| 梯度检查点蓝图 | GC-001 | 显存优化、大模型训练 | P1 |
-| 做市策略模型蓝图 | MM-001 | 报价优化、库存管理、强化学?| P1 |
-| 套利检测模型蓝图 | ARB-001 | 空间套利、统计套利、三角套?| P1 |
-| 订单流预测蓝图 | OFP-001 | 方向预测、量级预测、时机预?| P1 |
-| 多模态大模型蓝图 | MMLLM-001 | 文本/图像/音频融合、跨模态推?| P1 |
-| 代码生成模型蓝图 | CODEGEN-001 | 自动编码、代码补全、代码审?| P1 |
-| 模型预热系统蓝图 | WARMUP-001 | 冷启动优化、内存预热、缓存预?| P1 |
-
-### P2级扩展蓝?(建议补充)
-
-| 蓝图名称 | module_id | 说明 | 优先?|
-|---------|-----------|------|--------|
-| 扩散模型蓝图 | DIFF-001 | 高质量生成、可控生成、情景模?| P2 |
-| Mamba/SSM蓝图 | MAMBA-001 | 线性复杂度、高效推理、长序列 | P2 |
-| 混合专家模型蓝图 | MOE-001 | 稀疏激活、模型容量、专业化 | P2 |
-| 课程学习蓝图 | CURR-001 | 渐进学习、难度评估、训练调?| P2 |
-| 主动学习蓝图 | AL-001 | 智能采样、标注效率、不确定性采?| P2 |
-| 模型卡片蓝图 | MC-001 | 模型透明、合规文档、责任追?| P2 |
-| | AUDIT-001 | 操作记录、不可篡改、审计追?| P2 |
-| 灰度发布系统蓝图 | GRAY-001 | 渐进发布、风险控制、自动回?| P2 |
-| 模型性能基准蓝图 | BENCH-001 | 标准化评估、横向对比、纵向追?| P2 |
-| 模型水印蓝图 | WM-001 | 所有权证明、版权保护、盗用检?| P2 |
-| 后门检测蓝图 | BD-001 | 后门识别、触发器检测、安全审?| P2 |
-| MIA防御蓝图 | MIA-001 | 成员推理攻击防御、隐私保?| P2 |
-| 特征选择自动化蓝图 | FSA-001 | 自动筛选、冗余消除、效率提?| P2 |
-| 数据质量评估蓝图 | DQA-001 | 质量监控、异常检测、质量报?| P2 |
-| AI Agent框架蓝图 | AGENT-001 | 自主决策、工具调用、多Agent协作 | P2 |
-| | COMP-001 | 量化、剪枝、知识蒸馏 | P2 |
-| 学习率调度器蓝图 | LRS-001 | 自适应学习率、余弦退火、预热 | P2 |
-| 优化器变体蓝图 | OPT-001 | AdamW/LAMB/Lion/AdaBelief | P2 |
-| 记忆增强神经网络蓝图 | MANN-001 | 外部记忆、长期依赖、NTM/DNC | P2 |
-| 稀疏注意力蓝图 | SPARSE-001 | 线性复杂度、长序列处理 | P2 |
-| 波动率预测蓝图 | VOL-001 | GARCH/LSTM-Vol、VaR计算 | P2 |
-| 相关性预测蓝图 | CORR-001 | DCC-GARCH、动态相关矩阵 | P2 |
-| 极端风险预测蓝图 | TAIL-001 | EVT、VaR/ES、尾部风险建模 | P2 |
-| 梯度累积蓝图 | GRADACC-001 | 小显存大batch、等效批次 | P2 |
-| 可信执行环境蓝图 | TEE-001 | SGX/SEV、硬件级安全 | P2 |
-| 服务网格集成蓝图 | MESH-001 | Istio/Envoy、流量管理 | P2 |
-| 批处理推理优化蓝图 | BATCH-001 | 离线推理、吞吐优化 | P2 |
-| 数据增强系统蓝图 | AUG-001 | 时序增强、噪声注入、Mixup | P2 |
-| 数据标注平台蓝图 | ANNO-001 | 标注工具、质量控制、协作管理 | P2 |
-| | DVC-001 | 数据集版本管理、回滚能力 | P2 |
-| 液体神经网络蓝图 | LNN-001 | 连续时间动态、自适应推理 | P2 |
-
----
-
-## 🔗 相关链接
-
-- [系统主索引](../INDEX.md)
-- `因子库索引`
-- [实施层索引](../05_IMPLEMENTATION/README.md)
-
-- 全系统Layer 0-11完整性深度分析报告 - 系统文档
-
-- ZephyrAlpha 架构演进历史 - 系统文档
-
-- ZephyrAlpha 数据流与模块交互图 - 系统文档
-
-- 数据层索引 - 系统文档
-
-- 文档创建审核检查清单 - 系统文档（真源在 checklists；01_FRAMEWORK 旧稿已归档至 `docs/06_ARCHIVE/20260410_c2_document_creation_checklist/`）
-
-- 文档创建审核流程 - 系统文档
-
-- `文档维护流程` - 系统文档
-
-- `清风量化系统文档命名规范标准` - 系统文档
-
-- [](./DOCUMENT_RESPONSIBILITY_BOUNDARIES.md) - 系统文档
-
-- ZephyrAlpha - 系统文档
-
-- Layer 10: 治理与合规层蓝图索引 - 系统文档
-
-- Layer 4机器学习层完整性综合分析报告 - 系统文档
-
-- ZephyrAlpha? - 系统文档
-
-- P0模块开发流程和质量保证文档 - 系统文档
-
-- ZephyrAlpha - 系统文档
-
-- 个人开发+AI维护量化系统完整实施方案 - 系统文档
-
-- ZephyrAlpha? - 系统文档
-
-- [ (SITEMAP)](./SITEMAP.md) - 系统文档
-
-- ZephyrAlpha? - 系统文档
-
-- [](./TECH_DECISION_RECORDS.md) - 系统文档
-
-- 交易对手风险系统ORE集成实施方案 - 实施指南文档
-
-- Layer 10: 治理与合规层完整实施路线图 - 实施指南文档
-
-- Layer 10优先实施模块实施方案 - 实施指南文档
-
-- `模型风险管理系统MLflow集成实施方案` - 实施指南文档
-
-- P0模块完整实施方案 - 实施指南文档
-
-- [](./FACTOR_ENGINE_DETAILED_DESIGN.md) - 设计文档
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.079134
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

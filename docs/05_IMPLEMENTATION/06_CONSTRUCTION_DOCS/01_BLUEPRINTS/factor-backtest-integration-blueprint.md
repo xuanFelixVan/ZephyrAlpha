@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_BACKTEST_INTEGRATION_001
+module_id: FACTOR_BACKTEST_INTEGRATION_001_0086
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 因子回测集成
-- 因子测试
-- 回测框架
-- 因子回测结果分析
 layer: layer_05
 ---
 

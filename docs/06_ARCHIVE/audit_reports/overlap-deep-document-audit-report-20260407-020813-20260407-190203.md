@@ -1,6 +1,15 @@
+---
+module_id: AUTO_21831
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 09_AUDIT_DEEP_DOCUMENT_AUDIT_REPORT_20260407_020813_20260407124139_ARCHIVED_1
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 审计报告、合规检查
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # 深度文档治理审计报告

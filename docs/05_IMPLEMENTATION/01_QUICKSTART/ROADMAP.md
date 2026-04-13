@@ -33,7 +33,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -69,7 +71,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -115,7 +119,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -187,7 +193,9 @@ python src/main.py --code 000001.SZ --start 2024-01-01 --end 2024-12-31
 
 
 
----
+```
+```---
+```
 
 
 
@@ -269,7 +277,9 @@ selected = portfolio.select_stocks(n=50)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -343,7 +353,9 @@ for date in trading_dates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -393,7 +405,9 @@ for date in trading_dates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -433,7 +447,9 @@ for date in trading_dates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -469,7 +485,9 @@ for date in trading_dates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -535,7 +553,9 @@ for date in trading_dates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -567,7 +587,9 @@ A: 1. 查看文档 2. 搜索引擎 3. AI助手 4. 社区提问
 
 
 
----
+```
+```---
+```
 
 
 

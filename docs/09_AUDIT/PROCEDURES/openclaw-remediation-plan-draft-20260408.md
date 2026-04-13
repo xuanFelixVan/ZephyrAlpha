@@ -1,5 +1,5 @@
 ---
-module_id: OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408
+module_id: OPENCLAW_REMEDIATION_PLAN_DRAFT_20260408_3418
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -35,7 +35,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -59,7 +61,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -79,7 +83,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -99,7 +105,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -117,7 +125,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +139,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -141,7 +153,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -153,7 +167,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 
@@ -167,7 +183,9 @@ responsibility: PROCEDURES
 
 
 
----
+```
+```---
+```
 
 
 

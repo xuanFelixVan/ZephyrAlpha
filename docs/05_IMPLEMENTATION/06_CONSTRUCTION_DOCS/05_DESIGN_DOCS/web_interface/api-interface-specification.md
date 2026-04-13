@@ -13,6 +13,7 @@ applicable_scope: Webﻝ؟۰ﻝﻝﻠ۱APIﮔ۴ﮒ۲ﻟ۶ﻟ
 compliance_level: ﮒﮒ۶ﻟ؟ﺝﻟ؟۰
 parent_document: ../INDEX.md
 implementation_status: ﻟﺟﻟ۰?
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 | **RESTfulﻟ؟ﺝﻟ؟۰** | ﻠﭖﮒﺝ۹RESTfulﮔﭘﮔﻠ۲ﮔﺙ | ﻟﭖﮔﭦﮒﺁﺙﮒﻙHTTPﮔﺗﮔﺏﻟﺁﻛﺗ?|
@@ -2013,7 +2014,9 @@ async def rate_limit_middleware(request: Request, call_next):
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,23 +1,13 @@
 ---
-
 responsibility:
-
 - 目录导航与文档索引管理与优化维护
-
-module_id: 09_AUDIT_AUTOMATION_INDEX_AUTOMATION_20260407124048
-
+module_id: 09_AUDIT_AUTOMATION_INDEX_AUTOMATION_20260407124048_5719
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-11'
-
 owner: 个人开发者
-
 standard_type: 专业量化机构文档
-
 layer: layer_09
 ---
 
@@ -36,7 +26,7 @@ layer: layer_09
 
 - 治理工具总索引
 
-- [09_AUDIT STATE 索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[09_AUDIT STATE 索引]~~
 
 
 
@@ -44,7 +34,7 @@ layer: layer_09
 
 
 
-- [本目录 README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[本目录 README]~~
 
 
 
@@ -58,7 +48,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -76,7 +68,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +86,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,7 +96,7 @@ layer: layer_09
 
 
 
-- [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[README]~~
 
 - CONTINUOUS_MONITORING_CONFIG
 
@@ -108,7 +104,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -126,7 +124,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

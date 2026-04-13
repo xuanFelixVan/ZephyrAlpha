@@ -1,6 +1,15 @@
+---
+module_id: AUTO_95496
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: CONTINUOUS_MONITORING_CONFIG_001
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 审计体系设计与质量监控与实施指导
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 持续监控机制配置指南
@@ -46,7 +57,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +99,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +167,9 @@ python scripts/continuous_monitor.py --once
 
 
 
----
+```
+```---
+```
 
 
 
@@ -216,7 +233,9 @@ python scripts/continuous_monitor.py --once
 
 
 
----
+```
+```---
+```
 
 
 
@@ -286,7 +305,9 @@ python scripts/continuous_monitor.py --once
 
 
 
----
+```
+```---
+```
 
 
 
@@ -340,7 +361,9 @@ python scripts/p0_p1_comprehensive_fixer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -428,7 +451,9 @@ layer4_audit_timeout = 1800  # 30分钟
 
 
 
----
+```
+```---
+```
 
 
 
@@ -472,7 +497,9 @@ layer4_audit_timeout = 1800  # 30分钟
 
 
 
----
+```
+```---
+```
 
 
 
@@ -512,7 +539,9 @@ layer4_audit_timeout = 1800  # 30分钟
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +591,9 @@ layer4_audit_timeout = 1800  # 30分钟
 
 
 
----
+```
+```---
+```
 
 
 
@@ -600,7 +631,9 @@ layer4_audit_timeout = 1800  # 30分钟
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_24611
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 version: 1.0.0
+```
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_AUDIT_REPORT_VERSION_UNIFICATION_20260407_20260407180137
+```
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-07
@@ -8,7 +17,9 @@ owner: 文档管理团队
 responsibility:
 - 审计报告版本号统一报告文档
 layer: layer_05
----
+```
+```---
+```
 
 # 审计报告版本号统一报告
 
@@ -93,6 +104,8 @@ YAML格式: version: 2.0.0
 2. YAML中的版本号必须与文件名版本号一致
 3. 版本号格式遵循语义化版本规范（X.Y.Z）
 
----
+```
+```---
+```
 
 *报告生成时间: 2026-04-07 14:28:04*

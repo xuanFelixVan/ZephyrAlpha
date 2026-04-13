@@ -1,5 +1,5 @@
 ---
-module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001_7466
 version: 1.1.0
 status: Active
 created_date: 2026-04-02
@@ -12,13 +12,8 @@ compliance_level: 专业标准
 parent_document: INDEX.md
 applicable_modules:
 - 数据源扩展
-- 深度学习情感分析
-- 实时预警系统
 responsibility:
 - 短期改进技术规格定义与实施标准制定
-1. **复审时间**: 修复完成后1周内进行复审
-2. **审计重点**: 验证YAML头部修复效果和职责描述质量
-3. **持续监控**: 建立定期审计机制，每月进行一次全面审计
 ---
 ## 📊 附录
 
@@ -100,7 +95,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

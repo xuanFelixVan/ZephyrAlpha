@@ -1,6 +1,15 @@
+---
+module_id: AUTO_93076
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SENTIMENT_LAYER_INDEX_FIX_COMPLETION_REPORT_V21_001
+```
 
 version: 21.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 舆情分析层（10_ai_workflow）
 compliance_level: 专业标准
 
 layer: layer_05
----
+```
+```---
+```
 
 
 
@@ -48,7 +59,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +101,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -218,7 +233,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +299,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -308,7 +327,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +371,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -388,7 +411,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +445,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -480,7 +507,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -530,7 +559,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT
+module_id: 01_FRAMEWORK_NEURAL_ARCHITECTURE_SEARCH_BLUEPRINT_7754
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Neural Architecture Search Blueprint相关业务
-created_date: 2026-04-03
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-03'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P2
-responsibility_boundary: '本文档负责Layer 4机器学习层的神经架构搜索设计，包括搜索空间、搜索策略、性能评估等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的神经架构搜索设计，包括搜索空间、搜索策略、性能评估等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -67,7 +66,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +130,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -349,7 +350,7 @@ class NeuralArchitectureSearch:
 
 
 
----
+```---
 
 
 
@@ -397,7 +398,7 @@ autogluon>=0.8.0
 
 
 
----
+```---
 
 
 
@@ -429,7 +430,7 @@ autogluon>=0.8.0
 
 
 
----
+```---
 
 
 
@@ -447,7 +448,7 @@ autogluon>=0.8.0
 
 
 
----
+```---
 
 
 
@@ -559,7 +560,7 @@ autogluon>=0.8.0
 
 
 
----
+```---
 
 
 

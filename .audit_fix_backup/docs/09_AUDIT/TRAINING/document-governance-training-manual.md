@@ -61,7 +61,7 @@ last_updated: 2026-04-07
 
 
 
----
+```---
 
 
 
@@ -123,11 +123,11 @@ last_updated: 2026-04-07
 
 ```yaml
 
----
+```---
 
 owner: щжЦх╕нцЮ╢цЮДх╕?
 
----
+```---
 
 ```
 
@@ -193,13 +193,13 @@ owner: щжЦх╕нцЮ╢цЮДх╕?
 
 ```yaml
 
----
+```---
 
 version: 1.0.0
 
 last_updated: 2026-04-02
 
----
+```---
 
 ```
 
@@ -279,7 +279,7 @@ def get_user(user_id):
 
 
 
----
+```---
 
 
 
@@ -341,7 +341,7 @@ cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md docs/XX_CATEGORY/NEW_DOCUMENT.md
 
 ```yaml
 
----
+```---
 
 standard_type: цКАцЬпцЦЗцб?
 
@@ -363,7 +363,7 @@ created_date: 2026-04-02
 
 last_updated: 2026-04-02
 
----
+```---
 
 ```
 
@@ -453,7 +453,7 @@ python scripts/metadata_enhancer.py --scan
 
 
 
----
+```---
 
 
 
@@ -557,13 +557,13 @@ git diff --name-only HEAD~1 | grep -E '\.(py|js|ts)$'
 
 ```yaml
 
----
+```---
 
 last_updated: 2026-04-02
 
 version: 1.1.0  # чЙИцЬмхП╖хНЗч║?
 
----
+```---
 
 ```
 
@@ -613,7 +613,7 @@ python scripts/document_auditor.py --quick
 
 
 
----
+```---
 
 
 
@@ -703,7 +703,7 @@ python scripts/document_auditor.py --quick
 
 
 
----
+```---
 
 
 
@@ -861,7 +861,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 
@@ -947,7 +947,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 
@@ -1095,7 +1095,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 
@@ -1169,7 +1169,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 
@@ -1215,7 +1215,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 
@@ -1251,7 +1251,7 @@ python scripts/document_classifier.py --report
 
 
 
----
+```---
 
 
 

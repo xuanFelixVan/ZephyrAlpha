@@ -23,11 +23,13 @@ responsibility: 04_DATA_SOURCE
 
 - [INDEX.md](./INDEX.md) - 数据源目录索引
 
-- [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - 数据源层整体说明
+- [README.md](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - 数据源层整体说明
 
 
 
----
+```
+```---
+```
 
 
 

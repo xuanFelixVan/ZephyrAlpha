@@ -1,25 +1,18 @@
 ---
-module_id: 01_FRAMEWORK_SENTIMENT_REALTIME_ANALYSIS_BLUEPRINT
+module_id: 01_FRAMEWORK_SENTIMENT_REALTIME_ANALYSIS_BLUEPRINT_1253
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Sentiment Realtime Analysis Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 舆情实时分析
 compliance_level: 顶级专业标准
-reference_models:
-  - Bloomberg Terminal
-  - Refinitiv
-  - RavenPack
-related_documents:
-  - SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md
-  - SENTIMENT_DATA_INTEGRATION_BLUEPRINT.md
-  - DEEP_LEARNING_SENTIMENT_ANALYZER_BLUEPRINT.md
-responsibility_boundary: '本文档负责舆情实时分析，包括：
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责舆情实时分析，包括：'
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
@@ -75,7 +68,9 @@ open_source_solution: Apache Kafka + Spark Streaming + Hugging Face Transformers
 
 
 
----
+```
+```---
+```
 
 
 
@@ -229,7 +224,9 @@ Layer 3: 舆情分析层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -719,7 +716,9 @@ class ImpactAssessor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -803,7 +802,9 @@ CREATE TABLE trading_signals (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -905,7 +906,9 @@ CREATE TABLE trading_signals (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -977,7 +980,9 @@ signal_accuracy = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1009,7 +1014,9 @@ signal_accuracy = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1031,7 +1038,9 @@ signal_accuracy = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1069,7 +1078,9 @@ signal_accuracy = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 

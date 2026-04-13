@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_MANAGEMENT_STANDARD
+module_id: FACTOR_MANAGEMENT_STANDARD_5744
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -17,11 +17,11 @@ responsibility: 01_STANDARDS
 
 
 
-module_id: FACTOR_MANAGEMENT_STANDARD
+module_id: FACTOR_MANAGEMENT_STANDARD_5744
 layer: layer_02
 version: 1.0.0
 responsibility: "处理FACTOR_MANAGEMENT_STANDARD相关业务"
----
+```---
 
 
 

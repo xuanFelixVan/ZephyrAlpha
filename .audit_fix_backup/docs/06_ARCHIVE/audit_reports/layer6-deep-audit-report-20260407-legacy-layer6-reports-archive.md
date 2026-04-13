@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 version: 1.0.0
@@ -17,7 +24,7 @@ responsibility:
 - LAYER6_DEEP_AUDIT_20260407报告文档
 
 layer: layer_06
----
+```---
 
 
 # Layer 6 组合优化层深度审计报告
@@ -34,7 +41,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -76,7 +83,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -160,7 +167,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -276,7 +283,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -360,7 +367,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -444,19 +451,19 @@ responsibility:
 
 # 修复前
 
-module_id: QUARTERLY_REBALANCE_BLUEPRINT_001
+module_id: QUARTERLY_REBALANCE_BLUEPRINT_001_3105
 
 
 
 # 修复后
 
-module_id: QUARTERLY_REBALANCE_001
+module_id: QUARTERLY_REBALANCE_001_3105
 
 ```
 
 
 
----
+```---
 
 
 
@@ -502,7 +509,7 @@ module_id: QUARTERLY_REBALANCE_001
 
 
 
----
+```---
 
 
 
@@ -520,7 +527,7 @@ module_id: QUARTERLY_REBALANCE_001
 
 
 
----
+```---
 
 
 
@@ -564,7 +571,7 @@ module_id: QUARTERLY_REBALANCE_001
 
 
 
----
+```---
 
 
 
@@ -608,7 +615,7 @@ module_id: QUARTERLY_REBALANCE_001
 
 
 
----
+```---
 
 
 

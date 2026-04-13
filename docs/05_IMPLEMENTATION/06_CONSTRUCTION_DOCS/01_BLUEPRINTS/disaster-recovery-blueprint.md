@@ -748,7 +748,7 @@ spec:
     s3ForcePathStyle: true
     s3Url: http://minio:9000
 
----
+```---
 apiVersion: velero.io/v1
 kind: Schedule
 metadata:
@@ -802,7 +802,9 @@ spec:
 - 恢复手册
 - 集成测试覆盖率≥70%
 
----
+```
+```---
+```
 
 **文档版本**: v1.0.0
 **创建日期**: 2026-04-07

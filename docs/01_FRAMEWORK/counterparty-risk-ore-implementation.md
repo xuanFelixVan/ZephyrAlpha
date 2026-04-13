@@ -66,7 +66,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -134,7 +136,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -318,7 +322,9 @@ ORE引擎计算
 
 
 
----
+```
+```---
+```
 
 
 
@@ -526,7 +532,9 @@ print("\n🎉 所有依赖安装成功！")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1344,7 +1352,9 @@ class CVACalculator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1544,7 +1554,9 @@ class CounterpartyRiskReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1846,7 +1858,9 @@ pytest tests/test_counterparty_risk.py --cov=src/counterparty_risk --cov-report=
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2106,7 +2120,9 @@ python examples/counterparty_risk_example.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2210,7 +2226,9 @@ docker-compose -f docker-compose.counterparty_risk.yml down
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2254,7 +2272,9 @@ docker-compose -f docker-compose.counterparty_risk.yml down
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2310,7 +2330,9 @@ docker-compose -f docker-compose.counterparty_risk.yml down
 
 
 
----
+```
+```---
+```
 
 
 

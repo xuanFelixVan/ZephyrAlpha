@@ -62,7 +62,7 @@ related_documents:
 
   - LIVE_TRADING_MONITOR_BLUEPRINT.md
 
----
+```---
 
 
 
@@ -88,7 +88,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -124,7 +124,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -164,7 +164,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -372,7 +372,7 @@ class PreTradeRiskController:
 
 
 
----
+```---
 
 
 
@@ -592,7 +592,7 @@ class DynamicStopLoss:
 
 
 
----
+```---
 
 
 
@@ -722,7 +722,7 @@ class PostTradeRiskController:
 
 
 
----
+```---
 
 
 
@@ -854,7 +854,7 @@ class ExtremeRiskHandler:
 
 
 
----
+```---
 
 
 
@@ -998,7 +998,7 @@ class IntelligentRiskWarning:
 
 
 
----
+```---
 
 
 
@@ -1190,7 +1190,7 @@ CREATE TABLE risk_metrics_history (
 
 
 
----
+```---
 
 
 
@@ -1288,7 +1288,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1332,7 +1332,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1354,7 +1354,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1384,7 +1384,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1392,7 +1392,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1448,7 +1448,7 @@ class RiskControlTextInterface:
 
 
 
----
+```---
 
 
 

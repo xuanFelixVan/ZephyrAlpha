@@ -87,7 +87,7 @@ last_updated: 2026-04-07
 
 
 
----
+```---
 
 
 
@@ -207,7 +207,7 @@ ollama pull qwen2.5:32b
 
 
 
----
+```---
 
 
 
@@ -227,7 +227,7 @@ ollama pull qwen2.5:32b
 
 
 
----
+```---
 
 
 
@@ -251,7 +251,7 @@ ollama pull qwen2.5:32b
 
 
 
----
+```---
 
 
 
@@ -345,7 +345,7 @@ python test_rtx3090_models.py
 
 
 
----
+```---
 
 
 
@@ -429,7 +429,7 @@ python test_rtx3090_models.py
 
 
 
----
+```---
 
 
 
@@ -471,7 +471,7 @@ python main.py
 
 
 
----
+```---
 
 
 
@@ -519,7 +519,7 @@ python main.py
 
 
 
----
+```---
 
 
 
@@ -541,7 +541,7 @@ python main.py
 
 
 
----
+```---
 
 
 

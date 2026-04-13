@@ -1,18 +1,17 @@
 ---
-module_id: 05_IMPLEMENTATION_07_OPERATIONS_KNOWLEDGE_BASE_BEST_PRACTICES_TEMPLATE
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_KNOWLEDGE_BASE_BEST_PRACTICES_TEMPLATE_8599
 layer: layer_05
 version: 1.0.0
 status: Active
-responsibility:
-  - Best Practices Template相关业务
+responsibility: ''
 created_date: YYYY-MM-DD
 last_updated: YYYY-MM-DD
 owner: тъТќйУ┤ЪУ┤БС║?
 standard_type: ТеАТЮ┐ТќЄТАБ
-title: "ТюђСй│тъУихТеАТЮ?
+title: '"ТюђСй│тъУихТеАТЮ?'
 type: best_practice
-author: "ТЎ║УЃйСйЊтљЇуД?
-tags: ["ТеАТЮ┐", "ТюђСй│тъУи?]
+author: '"ТЎ║УЃйСйЊтљЇуД?'
+tags: '["ТеАТЮ┐", "ТюђСй│тъУи?]'
 applicable_scope: у│╗у╗ЪтъТќй
 compliance_level: тѕЮтДІТаЄтЄє
 parent_document: ../INDEX.md

@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: MARKET_CYCLES_001
@@ -19,7 +26,7 @@ responsibility:
 - 交易策略设计与实施管理与优化维护
 
 layer: layer_03
----
+```---
 
 
 module_id: TACTICS_MARKET_CYCLES_001

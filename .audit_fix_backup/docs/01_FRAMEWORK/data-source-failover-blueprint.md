@@ -84,7 +84,7 @@ reference_models:
 
 
 
----
+```---
 
 
 
@@ -136,7 +136,7 @@ reference_models:
 
 
 
----
+```---
 
 
 
@@ -916,7 +916,7 @@ class DataSourceFailoverManager:
 
 
 
----
+```---
 
 
 
@@ -988,7 +988,7 @@ class FailoverConfig:
 
 
 
----
+```---
 
 
 
@@ -1088,7 +1088,7 @@ data_sources:
 
 
 
----
+```---
 
 
 
@@ -1120,7 +1120,7 @@ data_sources:
 
 
 
----
+```---
 
 
 
@@ -1142,7 +1142,7 @@ data_sources:
 
 
 
----
+```---
 
 
 

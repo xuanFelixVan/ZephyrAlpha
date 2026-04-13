@@ -49,7 +49,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -127,7 +129,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -665,7 +669,9 @@ Alpha因子工厂，负责系统化生成、验证和管理Alpha因子，包括�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -847,7 +853,9 @@ XX模块，负责XX相关功能
 
 
 
----
+```
+```---
+```
 
 
 
@@ -907,7 +915,9 @@ XX模块，负责XX相关功能
 
 
 
----
+```
+```---
+```
 
 
 
@@ -973,7 +983,9 @@ python scripts/responsibility_format_validator.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1027,7 +1039,9 @@ python scripts/responsibility_format_validator.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1083,7 +1097,9 @@ python scripts/responsibility_format_validator.py
 
 
 
----
+```
+```---
+```
 
 
 

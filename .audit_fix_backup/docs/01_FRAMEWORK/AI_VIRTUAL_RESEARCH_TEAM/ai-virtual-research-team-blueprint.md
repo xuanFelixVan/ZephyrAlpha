@@ -46,7 +46,7 @@ implementation_status: 规划阶段
 
 layer: Layer 2 (Alpha因子层)
 
----
+```---
 
 
 
@@ -72,7 +72,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
----
+```---
 
 
 
@@ -108,7 +108,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
----
+```---
 
 
 
@@ -146,7 +146,7 @@ layer: Layer 2 (Alpha因子层)
 
 
 
----
+```---
 
 
 
@@ -486,7 +486,7 @@ class ResearchDirector:
 
 
 
----
+```---
 
 
 
@@ -780,7 +780,7 @@ class FactorResearcher:
 
 
 
----
+```---
 
 
 
@@ -1054,7 +1054,7 @@ class StrategyResearcher:
 
 
 
----
+```---
 
 
 
@@ -1340,7 +1340,7 @@ sentiment_analysis:
 
 
 
----
+```---
 
 
 
@@ -1602,7 +1602,7 @@ updates:
 
 
 
----
+```---
 
 
 
@@ -1628,7 +1628,7 @@ updates:
 
 
 
----
+```---
 
 
 
@@ -1756,7 +1756,7 @@ class KnowledgeBaseIntegration:
 
 
 
----
+```---
 
 
 
@@ -1780,7 +1780,7 @@ class KnowledgeBaseIntegration:
 
 
 
----
+```---
 
 
 
@@ -1812,7 +1812,7 @@ class KnowledgeBaseIntegration:
 
 ??
 
----
+```---
 
 
 
@@ -1832,7 +1832,7 @@ class KnowledgeBaseIntegration:
 
 
 
----
+```---
 
 
 
@@ -1864,13 +1864,13 @@ class KnowledgeBaseIntegration:
 
 
 
----
+```---
 
 
 
 ?
 
----
+```---
 
 
 
@@ -1878,7 +1878,7 @@ class KnowledgeBaseIntegration:
 
 **创建日期**: 2026-04-03  
 
----
+```---
 
 
 
@@ -1934,7 +1934,7 @@ class KnowledgeBaseIntegration:
 
 
 
----
+```---
 
 
 

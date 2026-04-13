@@ -1,29 +1,23 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_OVERLAP_BENCHMARK_MANAGEMENT_BLUEPRINT_20260407_190202
+module_id: 06_ARCHIVE_AUDIT_REPORTS_OVERLAP_BENCHMARK_MANAGEMENT_BLUEPRINT_20260407_190202_9645
 layer: layer_06
 version: 1.0.0
 status: Active
-responsibility:
-  - Overlap Benchmark Management Blueprint 20260407 190202相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图（蓝图阶段）
 applicable_scope: 基准管理系统架构设计
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Benchmark Management
-  - Citadel Performance Analytics
-related_documents:
-  - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-  - ALGORITHM_PERFORMANCE_BENCHMARK_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: pyfolio
-url: 'https://github.com/quantopian/empyrical'
+open_source_projects: ''
+url: https://github.com/quantopian/empyrical
 features: 基准指标计算、风险指标、收益指标
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
 ---
 
 ## 📋 执行摘要
@@ -66,7 +60,9 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -176,7 +172,9 @@ responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -330,7 +328,9 @@ class BenchmarkAttribution:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -358,7 +358,9 @@ class BenchmarkAttribution:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -482,7 +484,9 @@ alpha, beta = ep.alpha_beta(strategy_returns, benchmark_returns)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -510,7 +514,9 @@ alpha, beta = ep.alpha_beta(strategy_returns, benchmark_returns)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -536,7 +542,9 @@ alpha, beta = ep.alpha_beta(strategy_returns, benchmark_returns)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +570,9 @@ alpha, beta = ep.alpha_beta(strategy_returns, benchmark_returns)
 
 
 
----
+```
+```---
+```
 
 
 

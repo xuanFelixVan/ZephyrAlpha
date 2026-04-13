@@ -17,7 +17,7 @@ responsibility: 20260410_c2_market_regime_detection
 
 > **归档说明（2026-04-10）**：删除前 `10_AI_WORKFLOW` 稿快照。**正式蓝图**：MARKET_REGIME_DETECTION_BLUEPRINT；**工作流入口 stub**：MARKET_REGIME_DETECTION_AI_WORKFLOW_ENTRY。
 
----
+```---
 module_id: MARKET_REGIME_DETECTION_AI_001
 version: 1.0.0
 status: Active
@@ -35,7 +35,7 @@ implementation_status: 蓝图阶段
 reference_models: null
 open_source_solution: hmmlearn + 自研
 priority: P1
----
+```---
 ## 文档职责说明
 
 **本文档职责**: 市场状态识别蓝图
@@ -49,7 +49,7 @@ priority: P1
 > **开源替代**: hmmlearn + 自研
 > **成熟度**: ⭐⭐⭐⭐⭐ (顶级专业标准)
 
----
+```---
 
 ## 一、模块概述
 
@@ -71,7 +71,7 @@ priority: P1
 | Two Sigma | Regime分类系统 | hmmlearn |
 | Citadel | 市场环境识别 | 自研 |
 
----
+```---
 
 ## 二、架构设计
 
@@ -143,7 +143,7 @@ priority: P1
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 三、技术实现
 
@@ -220,7 +220,7 @@ def detect_volatility_regime(returns, window=20):
         return 'MEDIUM_VOL'
 ```
 
----
+```---
 
 ## 四、功能模块
 
@@ -260,7 +260,7 @@ def detect_volatility_regime(returns, window=20):
 | 历史分析 | 历史转折点分析 | 自研 |
 | 概率估计 | 转折概率估计 | HMM |
 
----
+```---
 
 ## 五、接口定义
 
@@ -304,7 +304,7 @@ class ChangePoint(BaseModel):
     detection_method: str
 ```
 
----
+```---
 
 ## 六、实施路径
 
@@ -329,7 +329,7 @@ class ChangePoint(BaseModel):
 - [ ] 可视化展示
 - [ ] 文档完善
 
----
+```---
 
 ## 七、质量指标
 
@@ -340,7 +340,7 @@ class ChangePoint(BaseModel):
 | 模型稳定性 | 高 | 滚动验证 |
 | 预警及时性 | <1天 | 日志监控 |
 
----
+```---
 
 ## 八、风险评估
 
@@ -351,6 +351,6 @@ class ChangePoint(BaseModel):
 | 过拟合 | 中 | 交叉验证 + 正则化 |
 | 市场变化 | 中 | 定期更新模型 |
 
----
+```---
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成

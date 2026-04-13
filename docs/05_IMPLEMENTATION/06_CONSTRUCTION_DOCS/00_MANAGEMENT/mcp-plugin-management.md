@@ -842,7 +842,7 @@ applicable_scope: 全系统 MCP 插件使用与管理
 
 | **MCP 插件管理文档** | 文档治理架构 | 遵循专业机构的文档治理标准 |
 
-| **MCP 插件管理文档** | [系统架构](../../../../01_FRAMEWORK/ARCHITECTURE.md) | 与系统整体架构的集成 |
+| **MCP 插件管理文档** | [系统架构](../../../01_FRAMEWORK/ARCHITECTURE.md) | 与系统整体架构的集成 |
 
 
 

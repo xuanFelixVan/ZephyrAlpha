@@ -31,7 +31,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -55,7 +55,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -73,7 +73,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -99,7 +99,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -163,7 +163,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -215,7 +215,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -235,7 +235,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -257,7 +257,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -273,7 +273,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -309,7 +309,7 @@ responsibility: PROCEDURES
 
 
 
----
+```---
 
 
 
@@ -335,7 +335,7 @@ docs/09_AUDIT/STATE/GOVERNANCE_DECISIONS_LOCKED_20260408.md 全部 ADR；
 
 
 
----
+```---
 
 
 

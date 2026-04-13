@@ -55,7 +55,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -73,9 +75,13 @@ compliance_level: 专业标准
 
 **问题文件**:
 
+```
 1. `DATA_QUALITY.md` (module_id: DATA_QUALITY_CONTROL_001)
+```
 
+```
 2. `QUALITY_MANAGEMENT/DATA_QUALITY_CONTROL_SYSTEM.md` (module_id: FACTOR_DOC_001)
+```
 
 
 
@@ -105,7 +111,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -247,7 +255,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -327,7 +337,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -439,7 +451,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -501,7 +515,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -565,7 +581,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -585,7 +603,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -645,7 +665,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -709,7 +731,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

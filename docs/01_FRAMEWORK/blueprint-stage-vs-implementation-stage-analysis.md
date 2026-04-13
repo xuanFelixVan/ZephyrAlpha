@@ -1,29 +1,16 @@
 ---
-
-module_id: BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS_001
-
+module_id: BLUEPRINT_STAGE_VS_IMPLEMENTATION_STAGE_ANALYSIS_001_7167
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-06
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级阶段分析
-
 applicable_scope: 蓝图阶段vs施工阶段模块需求分析
-
 compliance_level: 顶级专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
 # 蓝图阶段vs施工阶段模块需求分析
@@ -74,7 +61,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +109,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +155,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -196,7 +189,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -238,7 +233,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -270,7 +267,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -308,7 +307,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +343,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +379,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -410,7 +415,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -444,7 +451,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +475,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -486,7 +497,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -504,7 +517,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -564,7 +579,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

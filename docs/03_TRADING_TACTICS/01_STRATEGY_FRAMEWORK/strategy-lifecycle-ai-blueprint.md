@@ -1,32 +1,21 @@
 ---
-
-module_id: AI_010
-
+module_id: AI_010_3833
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 交易策略团队
-
 responsibility:
-
 - 交易策略框架设计与实施指导与实施指导
-
 layer: layer_03
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: STRATEGY_LIFECYCLE_AI_001
+```
+module_id: STRATEGY_LIFECYCLE_AI_001_3833
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ related_documents:
 
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +77,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +123,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -166,7 +161,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +345,9 @@ class StageIdentifier:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +465,9 @@ class EmergingStageManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -594,7 +595,9 @@ class GrowingStageManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -668,7 +671,9 @@ class MatureStageManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -828,7 +833,9 @@ class FailureDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -950,7 +957,9 @@ class DiversityManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1118,7 +1127,9 @@ CREATE TABLE strategy_pool_status (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1202,7 +1213,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1246,7 +1259,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1268,7 +1283,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1298,7 +1315,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1306,7 +1325,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1362,7 +1383,9 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 

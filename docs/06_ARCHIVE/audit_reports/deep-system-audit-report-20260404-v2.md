@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DEEP_SYSTEM_AUDIT_REPORT_20260404_V2
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DEEP_SYSTEM_AUDIT_REPORT_20260404_V2_2615
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -43,7 +43,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -123,7 +125,9 @@ compliance_level: 专业标准
 
 - 归档文档（已归档，可接受?- 部分蓝图文档（需更新?
 
----
+```
+```---
+```
 
 
 
@@ -191,7 +195,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -253,7 +259,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -299,7 +307,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -343,7 +353,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -381,7 +393,9 @@ compliance_level: 专业标准
 
 5. 整合稀疏目?
 
----
+```
+```---
+```
 
 
 
@@ -413,7 +427,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -461,7 +477,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

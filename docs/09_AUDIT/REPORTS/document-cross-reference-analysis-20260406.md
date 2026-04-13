@@ -1,6 +1,15 @@
+---
+module_id: AUTO_77153
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406_001
+```
 
 analysis_id: DOCUMENT_CROSS_REFERENCE_ANALYSIS_20260406
 
@@ -25,7 +34,9 @@ responsibility:
 - 审计体系设计与质量监控与实施指导
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 文档交叉引用关系分析报告
@@ -52,7 +63,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +109,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -146,7 +161,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -458,7 +475,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -542,7 +561,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -748,7 +769,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -790,7 +813,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -938,7 +963,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1026,7 +1053,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1048,7 +1077,9 @@ graph TD
 
 
 
----
+```
+```---
+```
 
 
 

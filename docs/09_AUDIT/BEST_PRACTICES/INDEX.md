@@ -1,25 +1,14 @@
 ---
-
-module_id: BEST_PRACTICES_INDEX_001
-
+module_id: BEST_PRACTICES_INDEX_001_8844
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供BEST_PRACTICES目录索引
-
+- 提供BEST_PRACTICES目录索引
 standard_type: 专业量化机构索引
-
 applicable_scope: BEST_PRACTICES
-
 layer: layer_09
 ---
 
@@ -48,7 +37,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

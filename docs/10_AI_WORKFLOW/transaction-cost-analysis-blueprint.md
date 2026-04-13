@@ -1,5 +1,5 @@
 ---
-module_id: TRANSACTION_COST_ANALYSIS_001
+module_id: TRANSACTION_COST_ANALYSIS_001_7928
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -30,7 +30,9 @@ priority: P0
 > **开源替代**: QuantLib + 自研分析模块
 > **成熟度**: ⭐⭐⭐⭐⭐ (顶级专业标准)
 
----
+```
+```---
+```
 
 ## 一、模块概述
 
@@ -52,7 +54,9 @@ priority: P0
 | Two Sigma | 高频执行分析 | 自研分析模块 |
 | Citadel | 实时TCA监控 | QuantLib |
 
----
+```
+```---
+```
 
 ## 二、架构设计
 
@@ -130,7 +134,9 @@ priority: P0
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
----
+```
+```---
+```
 
 ## 三、技术实现
 
@@ -206,7 +212,9 @@ def execution_efficiency_score(actual_cost, benchmark_cost):
     return score
 ```
 
----
+```
+```---
+```
 
 ## 四、功能模块
 
@@ -246,7 +254,9 @@ def execution_efficiency_score(actual_cost, benchmark_cost):
 | Arrival分析 | 与下单价格对比 | 自研 |
 | 效率评分 | 综合效率评分 | 自研 |
 
----
+```
+```---
+```
 
 ## 五、接口定义
 
@@ -289,7 +299,9 @@ class TCAResult:
     overall_score: float       # 综合评分
 ```
 
----
+```
+```---
+```
 
 ## 六、实施路径
 
@@ -314,7 +326,9 @@ class TCAResult:
 - [ ] 可视化仪表盘
 - [ ] 文档完善
 
----
+```
+```---
+```
 
 ## 七、质量指标
 
@@ -325,7 +339,9 @@ class TCAResult:
 | 报告生成时间 | <10秒 | 性能监控 |
 | 优化建议采纳率 | >50% | 统计分析 |
 
----
+```
+```---
+```
 
 ## 八、风险评估
 
@@ -336,6 +352,8 @@ class TCAResult:
 | 计算延迟 | 低 | 异步处理 + 缓存 |
 | 存储膨胀 | 低 | 数据压缩 + 定期清理 |
 
----
+```
+```---
+```
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成

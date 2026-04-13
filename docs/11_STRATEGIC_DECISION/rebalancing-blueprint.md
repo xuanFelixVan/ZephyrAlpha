@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_020
-
+module_id: LAYER_020_0709
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_05
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: REBALANCING_001
+```
+module_id: REBALANCING_001_0709
+```
 
 version: 1.0.0
 
@@ -58,7 +47,9 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -144,7 +135,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +151,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -222,7 +217,9 @@ Layer 11.10再平衡决策系统是清风量化系统的**组合维护中枢**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -358,7 +355,9 @@ Layer 11.10再平衡决策系统是清风量化系统的**组合维护中枢**�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -894,7 +893,9 @@ class RebalanceTriggerEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1468,7 +1469,9 @@ class RebalanceOptimizationEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1696,7 +1699,9 @@ class RebalanceExecutionEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1940,7 +1945,9 @@ class RebalanceEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2032,7 +2039,9 @@ class RebalanceInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2118,7 +2127,9 @@ Layer 11.10 再平衡决策
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2170,7 +2181,9 @@ Layer 11.10 再平衡决策
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2290,7 +2303,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2330,7 +2345,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2370,7 +2387,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2392,7 +2411,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2408,7 +2429,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2416,7 +2439,9 @@ class SuspendedStockRebalance:
 
 **下一步**: 创建基准管理系统蓝图
 
----
+```
+```---
+```
 
 
 
@@ -2472,7 +2497,9 @@ class SuspendedStockRebalance:
 
 
 
----
+```
+```---
+```
 
 
 

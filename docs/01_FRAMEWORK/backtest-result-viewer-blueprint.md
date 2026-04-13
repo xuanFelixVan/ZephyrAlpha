@@ -1,87 +1,20 @@
 ---
-
-module_id: BACKTEST_RESULT_VIEWER_001
-
+module_id: BACKTEST_RESULT_VIEWER_001_4526
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 回测结果查看器
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Backtest Analytics
-
-- Renaissance Technologies Backtest Analysis
-
-- Two Sigma Backtest Visualization
-
-- Citadel Backtest Reporting
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
-
-- STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-
-responsibility_boundary: '本文档负责回测结果查看器设计，包括：
-
-
-
-  - 回测结果查看界面
-
-
-
-  - 回测结果分析界面
-
-
-
-  - 回测报告生成界面
-
-
-
-  - 回测对比分析界面
-
-
-
-  - 回测指标统计界面
-
-
-
-
-
-  回测配置请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
-
-
-
-  绩效归因请参考：STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责回测结果查看器设计，包括：'
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility:
-
-- BACKTEST_RESULT_VIEWER蓝图设计
-
+responsibility: ''
 ---
 
 
@@ -134,7 +67,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -236,7 +171,9 @@ class BacktestResultViewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -260,7 +197,9 @@ class BacktestResultViewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -280,7 +219,9 @@ class BacktestResultViewer:
 
 
 
----
+```
+```---
+```
 
 
 

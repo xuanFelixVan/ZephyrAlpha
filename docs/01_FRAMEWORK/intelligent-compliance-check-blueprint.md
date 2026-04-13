@@ -1,93 +1,23 @@
 ---
-
-module_id: INTELLIGENT_COMPLIANCE_CHECK_001
-
+module_id: INTELLIGENT_COMPLIANCE_CHECK_001_2380
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 智能合规检查
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Citadel Compliance System
-
-- Bridgewater Compliance Framework
-
-- Two Sigma Compliance Engine
-
-related_documents:
-
-- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- REGULATORY_REPORTING_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-open_source_projects:
-
-- name: Open Policy Agent (OPA)
-
-  url: https://github.com/open-policy-agent/opa
-
-  features: 策略引擎、规则评估、合规检查
-
-- name: spaCy
-
-  url: https://github.com/explosion/spaCy
-
-  features: NLP处理、文本分析、实体识别
-
-- name: Great Expectations
-
-  url: https://github.com/great-expectations/great_expectations
-
-  features: 数据验证、质量检查、合规验证
-
-responsibility_boundary: '本文档职责（Layer 10 治理与合规层）：
-
-
-
-
-
-  与其他文档职责边界：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md: 合规监控系统
-
-
-
-  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告系统
-
-
-
-  '
-
-responsibility:
-
-- 系统架构蓝图设计与实施指导与实施方案
-
+open_source_projects: ''
+url: https://github.com/open-policy-agent/opa
+features: 策略引擎、规则评估、合规检查
+responsibility_boundary: '''本文档职责（Layer 10 治理与合规层）：'
+responsibility: ''
 ---
 
 # 智能合规检查系统蓝图
@@ -116,7 +46,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +90,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -268,7 +202,9 @@ Layer 10: 治理与合规层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -988,7 +924,9 @@ class ComplianceReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1126,7 +1064,9 @@ class ComplianceCheckResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1230,7 +1170,9 @@ class ComplianceCheckResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1246,7 +1188,7 @@ class ComplianceCheckResult:
 
 ```yaml
 
-- module_id: INTELLIGENT_COMPLIANCE_CHECK_001
+- module_id: INTELLIGENT_COMPLIANCE_CHECK_001_2380
 
   module_name: 智能合规检查系统
 
@@ -1334,7 +1276,9 @@ class ComplianceCheckResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1392,7 +1336,9 @@ class ComplianceCheckResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1434,7 +1380,9 @@ class ComplianceCheckResult:
 
 
 
----
+```
+```---
+```
 
 
 

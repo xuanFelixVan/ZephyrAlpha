@@ -57,7 +57,9 @@ compliance_level: 专业标准
 
 - ?执行成本分析（滑?市场冲击/执行效率?
 
----
+```
+```---
+```
 
 
 
@@ -123,7 +125,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -185,7 +189,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -287,7 +293,9 @@ def generate_dynamic_scenario(current_market_state):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -481,7 +489,9 @@ class SignalQualityReporter:
 
 **实施难度**: ?**预计工期**: 1?
 
----
+```
+```---
+```
 
 
 
@@ -527,7 +537,9 @@ class SignalQualityReporter:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -597,7 +609,9 @@ class SignalQualityReporter:
 
 3. ?完善文档和测?
 
----
+```
+```---
+```
 
 
 

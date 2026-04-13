@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: SYSTEM_ENHANCEMENT_MANUAL_001
@@ -19,7 +26,7 @@ responsibility:
 - 归档文档、历史版本
 
 layer: layer_06
----
+```---
 
 
 module_id: ARCHIVE_SYS_ENHANCE_001

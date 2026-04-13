@@ -155,7 +155,7 @@ compliance_level: СИЊСИџТаЄтЄє
 
   - тцџТќ╣Т│Ћу╗ётљѕуц║№┐?
 
----
+```---
 
 
 
@@ -197,7 +197,7 @@ compliance_level: СИЊСИџТаЄтЄє
 
 - №┐?уе│тџТђДтњїтЇЋУ░ЃТђДУё№┐?- №┐?SQLiteТїЂС╣ЁтїќтГў№┐?- №┐?уіХТђЂТхЂУйгуА№┐?
 
----
+```---
 
 
 
@@ -225,7 +225,7 @@ compliance_level: СИЊСИџТаЄтЄє
 
 - №┐?**тјЪтѕЏ№┐?*: AIУЄфтіеТїќТјўтјЪтѕЏтЏатГљ,жЂ┐тЁЇтљїУ┤е№┐?- №┐?**тцџТаи№┐?*: СИЅтцДAIТќ╣Т│ЋТЈљСЙЏСИЇтљїУДєУДњуџётЏа№┐?- №┐?**ТЋѕујЄ**: УЄфтіетїќТхЂуеІтцДт╣ЁТЈљтЇЄуаћуЕХТЋѕ№┐?- №┐?**У┤ежЄЈ**: СИЦТа╝ICуГЏжђЅС┐ЮУЂтЏатГљУ┤е№┐?
 
----
+```---
 
 
 
@@ -281,7 +281,7 @@ compliance_level: СИЊСИџТаЄтЄє
 
 
 
----
+```---
 
 
 
@@ -339,7 +339,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -373,7 +373,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -411,7 +411,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 
@@ -439,7 +439,7 @@ factors = miner.mine_factors(data, target, methods=['deep_learning'])
 
 
 
----
+```---
 
 
 

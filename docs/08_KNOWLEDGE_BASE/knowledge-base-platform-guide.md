@@ -1,6 +1,15 @@
+---
+module_id: AUTO_70174
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: KNOWLEDGE_BASE_PLATFORM_GUIDE_001
+```
 
 version: 1.0.0
 
@@ -21,7 +30,9 @@ standard_type: 专业量化机构指南
 applicable_scope: 知识库平台使用
 
 layer: layer_08
----
+```
+```---
+```
 
 
 
@@ -42,7 +53,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -108,7 +121,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +203,9 @@ python scripts/knowledge_base_platform.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -276,7 +293,9 @@ platform.import_knowledge_entries(entries)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -308,7 +327,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -338,7 +359,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +383,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -382,7 +407,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -404,7 +431,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -430,7 +459,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +483,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -474,7 +507,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -496,7 +531,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -522,7 +559,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -544,7 +583,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -566,7 +607,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +631,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -614,7 +659,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +683,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -658,7 +707,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -680,7 +731,9 @@ python scripts/knowledge_base_platform.py --generate-index
 
 
 
----
+```
+```---
+```
 
 
 
@@ -748,7 +801,9 @@ for result in results:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -776,7 +831,9 @@ ls docs/08_KNOWLEDGE_BASE/01_TECHNICAL_KNOWLEDGE/ARCHITECTURE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -828,7 +885,9 @@ for result in results:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -854,7 +913,9 @@ for result in results:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -896,7 +957,9 @@ def archive_knowledge(entry_id: str):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +991,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -956,7 +1021,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -978,7 +1045,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -994,7 +1063,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1010,7 +1081,9 @@ print(f"按状态统计: {stats['entries_by_status']}")
 
 
 
----
+```
+```---
+```
 
 
 

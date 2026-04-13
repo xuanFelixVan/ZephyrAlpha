@@ -1,29 +1,16 @@
 ---
-
 responsibility:
-
 - 目录导航与文档索引管理与优化维护
-
-module_id: KNOWLEDGE_BASE_INDEX_001_ARCHIVED_1
-
+module_id: KNOWLEDGE_BASE_INDEX_001_ARCHIVED_1_9039
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构知识库索引
-
 applicable_scope: 全系统知识库索引
-
 compliance_level: 专业标准
-
 ---
 
 # 文档治理知识库索引
@@ -52,7 +39,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +85,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +111,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +165,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -210,7 +205,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -264,7 +261,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -314,7 +313,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -366,7 +367,9 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 
 
----
+```
+```---
+```
 
 
 

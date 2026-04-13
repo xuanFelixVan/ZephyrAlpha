@@ -1,8 +1,17 @@
+---
+module_id: AUTO_45370
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 version: 1.0.0
 
+```
 module_id: LAYER5_RESPONSIBILITY_FIX_REPORT_20260407
+```
 
 status: Active
 
@@ -17,7 +26,9 @@ responsibility:
 - LAYER5_RESPONSIBILITY_FIX_20260407报告文档
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # Layer 5 策略执行层职责描述修复报告
@@ -32,7 +43,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +431,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +473,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -482,7 +501,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_59678
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: NATURAL_LANGUAGE_INTERFACE_001
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 系统架构蓝图设计与实施指导与实施方案
 
 layer: layer_01
----
+```
+```---
+```
 
 
 # 自然语言交互界面蓝图
@@ -54,7 +65,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,7 +113,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -242,7 +257,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -380,7 +397,9 @@ entities = [
 
 
 
----
+```
+```---
+```
 
 
 
@@ -546,7 +565,9 @@ class DialogPolicy:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -784,7 +805,9 @@ class TradingAgent:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -906,7 +929,9 @@ class ResponseGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1148,7 +1173,9 @@ result = agent.run("查询我的持仓")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1198,7 +1225,9 @@ result = agent.run("查询我的持仓")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1228,7 +1257,9 @@ result = agent.run("查询我的持仓")
 
 
 
----
+```
+```---
+```
 
 
 

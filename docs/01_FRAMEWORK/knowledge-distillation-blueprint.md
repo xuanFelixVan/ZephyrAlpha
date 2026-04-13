@@ -1,33 +1,15 @@
 ---
-
-module_id: KNOWLEDGE_DISTILLATION_001
-
+module_id: KNOWLEDGE_DISTILLATION_001_1516
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-03
-
+created_date: '2026-04-03'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供knowledge distillation blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P2
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的知识蒸馏系统设计，包括教师学生模型、蒸馏损失、模型压缩等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的知识蒸馏系统设计，包括教师学生模型、蒸馏损失、模型压缩等核心功能。'
 layer: layer_02
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -76,7 +58,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +120,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -200,7 +186,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -446,7 +432,7 @@ class KnowledgeDistiller:
 
 
 
----
+```---
 
 
 
@@ -490,7 +476,7 @@ pytorch-lightning>=2.0.0
 
 
 
----
+```---
 
 
 
@@ -522,7 +508,7 @@ pytorch-lightning>=2.0.0
 
 
 
----
+```---
 
 
 
@@ -540,7 +526,7 @@ pytorch-lightning>=2.0.0
 
 
 
----
+```---
 
 
 
@@ -652,7 +638,7 @@ pytorch-lightning>=2.0.0
 
 
 
----
+```---
 
 
 

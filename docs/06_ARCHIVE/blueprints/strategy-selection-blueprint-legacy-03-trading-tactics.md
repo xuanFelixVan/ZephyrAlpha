@@ -1,5 +1,5 @@
 ---
-module_id: STRATEGYSELECTIONBLUEPRINT_001
+module_id: STRATEGYSELECTIONBLUEPRINT_001_7558
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -12,7 +12,9 @@ compliance_level: 专业标准
 responsibility:
 - 交易策略框架设计与实施指导与实施指导
 ---
-module_id: TACTICS_STRATEGY_SELECTION_BP_001
+```
+module_id: TACTICS_STRATEGY_SELECTION_BP_001_7558
+```
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
@@ -21,7 +23,9 @@ owner: 首席文档架构?standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
----
+```
+```---
+```
 
 
 # 策略排名与选择系统技术蓝图
@@ -879,7 +883,7 @@ python strategy_selector.py query \
 **最后更?*: 2026-04-01  
 **维护?*: 策略研发中心  
 **预计开发时?*: 80小时?周全职开发）
----
+```---
 
 ## 1. 文档治理
 
@@ -907,6 +911,6 @@ python strategy_selector.py query \
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active

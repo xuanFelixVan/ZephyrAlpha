@@ -1,39 +1,21 @@
 ---
-
-module_id: PORTFOLIO_DIAGNOSTICS_001
-
+module_id: PORTFOLIO_DIAGNOSTICS_001_9413
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 投资组合诊断蓝图 (PORTFOLIO_DIAGNOSTICS)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 投资组合诊断与优化
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: PyPortfolioOpt
-
 priority: P1
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +90,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -256,7 +242,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -400,7 +388,9 @@ class PortfolioOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -480,7 +470,9 @@ class PortfolioOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +580,9 @@ class HealthScore(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -638,7 +632,9 @@ class HealthScore(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -660,7 +656,9 @@ class HealthScore(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -682,7 +680,9 @@ class HealthScore(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 

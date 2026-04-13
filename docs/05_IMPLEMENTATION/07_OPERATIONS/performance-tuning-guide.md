@@ -1,25 +1,14 @@
 ---
-
-module_id: PERFORMANCE_TUNING_GUIDE_001
-
+module_id: PERFORMANCE_TUNING_GUIDE_001_6877
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 运维团队
-
 standard_type: 专业量化机构指南
-
 applicable_scope: ZephyrAlpha性能调优
-
 responsibility:
-
-  - PERFORMANCE_TUNING操作指南
-
+- PERFORMANCE_TUNING操作指南
 layer: layer_05
 ---
 
@@ -42,7 +31,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -70,7 +61,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +81,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +159,9 @@ stats.print_stats(20)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -226,7 +223,9 @@ valgrind --leak-check=full python app/main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -266,7 +265,9 @@ EXPLAIN ANALYZE SELECT * FROM factors WHERE name = 'momentum';
 
 
 
----
+```
+```---
+```
 
 
 
@@ -328,7 +329,9 @@ CREATE INDEX CONCURRENTLY idx_factors_name ON factors(name);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -382,7 +385,9 @@ WHERE state = 'idle'
 
 
 
----
+```
+```---
+```
 
 
 
@@ -450,7 +455,9 @@ def find_duplicates(factors):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -486,7 +493,9 @@ factor = factors_dict.get(target_id)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -538,7 +547,9 @@ async def process_factors(factor_ids):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -620,7 +631,9 @@ def get_factor_with_cache(factor_id):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -662,7 +675,9 @@ class CachedQuery(Query):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -698,7 +713,9 @@ def process_factors_parallel(factor_ids):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -728,7 +745,9 @@ def process_factors_parallel(factor_ids):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -778,7 +797,9 @@ CREATE INDEX CONCURRENTLY idx_factors_lower_name ON factors(LOWER(name));
 
 
 
----
+```
+```---
+```
 
 
 
@@ -816,7 +837,9 @@ WHERE p.user_id = 1;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -852,7 +875,9 @@ ORDER BY id LIMIT 10;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -898,7 +923,9 @@ CREATE TABLE factors_2026_02 PARTITION OF factors
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +955,9 @@ VACUUM FULL ANALYZE factors;
 
 
 
----
+```
+```---
+```
 
 
 
@@ -956,7 +985,9 @@ database:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1012,7 +1043,9 @@ sysctl -p
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1036,7 +1069,9 @@ sysctl -p
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1104,7 +1139,9 @@ http {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1132,7 +1169,9 @@ server:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1194,7 +1233,9 @@ async def metrics_middleware(request, call_next):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1226,7 +1267,9 @@ SELECT
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1268,7 +1311,9 @@ scrape_configs:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1322,7 +1367,9 @@ class PerformanceTest(HttpUser):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1352,7 +1399,9 @@ ab -n 10000 -c 100 http://localhost:8000/api/v1/factors
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1370,7 +1419,9 @@ ab -n 10000 -c 100 http://localhost:8000/api/v1/factors
 
 
 
----
+```
+```---
+```
 
 
 

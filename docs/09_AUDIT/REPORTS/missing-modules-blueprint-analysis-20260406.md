@@ -45,7 +45,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -199,7 +201,9 @@ class QuarterlyRebalancingDecision:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -325,7 +329,9 @@ class StrategicAssetWeighting:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -449,7 +455,9 @@ class MacroIndicatorCollection:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -593,7 +601,9 @@ class MarketRegimeIdentification:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -717,7 +727,9 @@ class AlphaFactorFactory:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -839,7 +851,9 @@ class DailySignalGeneration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -965,7 +979,9 @@ class MultiFactorSynthesis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1119,7 +1135,9 @@ class OpeningStrategyModule:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1249,7 +1267,9 @@ class IntradayStrategyModule:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1379,7 +1399,9 @@ class ClosingStrategyModule:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1495,7 +1517,9 @@ class EventDrivenModule:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1621,7 +1645,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1669,7 +1695,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1699,7 +1727,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1729,7 +1759,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1759,7 +1791,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1797,7 +1831,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1827,7 +1863,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1857,7 +1895,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1887,7 +1927,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1935,7 +1977,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1965,7 +2009,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2039,7 +2085,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2069,7 +2117,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2093,7 +2143,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2121,7 +2173,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2151,7 +2205,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2183,7 +2239,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2229,7 +2287,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2245,7 +2305,9 @@ class SecondLevelRiskControl:
 
 
 
----
+```
+```---
+```
 
 
 

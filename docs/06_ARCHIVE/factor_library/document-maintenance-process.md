@@ -1,33 +1,16 @@
 ---
-
 responsibility:
-
 - 扩展功能、辅助模块、支撑文档
-
-- 风险预算
-
-- 数据质量
-
-module_id: 10_GOVERNANCE_COMPLIANCE_DOCUMENT_MAINTENANCE_PROCESS_20260407124139
-
+module_id: 10_GOVERNANCE_COMPLIANCE_DOCUMENT_MAINTENANCE_PROCESS_20260407124139_7221
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构治理流程文档
-
 applicable_scope: 全系统文档维护流程
-
 compliance_level: 专业标准
-
 ---
 
 # 文档维护流程
@@ -56,7 +39,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +115,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -408,7 +395,9 @@ System_Manifest.md格式:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -708,7 +697,9 @@ python scripts/responsibility_conflict_detector.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -884,7 +875,9 @@ python scripts/responsibility_conflict_detector.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1048,7 +1041,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1210,7 +1205,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1302,7 +1299,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1398,7 +1397,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 

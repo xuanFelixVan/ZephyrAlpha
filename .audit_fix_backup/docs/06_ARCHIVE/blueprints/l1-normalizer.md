@@ -83,7 +83,7 @@ estimated_dev_hours: 10
 
 
 
----
+```---
 
 
 
@@ -317,7 +317,7 @@ def robust_normalize(
 
 
 
----
+```---
 
 
 
@@ -885,7 +885,7 @@ data_normalizer:
 
 
 
----
+```---
 
 
 
@@ -1349,7 +1349,7 @@ def _normalize_with_method(self, data: pd.DataFrame, method: str, **kwargs) -> N
 
 
 
----
+```---
 
 
 
@@ -1425,7 +1425,7 @@ pytest>=7.0.0
 
 
 
----
+```---
 
 
 
@@ -1909,7 +1909,7 @@ def create_test_fitted_normalizer() -> Dict[str, Any]:
 
 
 
----
+```---
 
 
 
@@ -2139,7 +2139,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2199,7 +2199,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2245,7 +2245,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -2273,7 +2273,7 @@ alerts:
 
 
 
----
+```---
 
 
 

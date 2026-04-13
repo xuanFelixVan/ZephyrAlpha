@@ -1,5 +1,5 @@
 ---
-module_id: DATAVERSIONCONTROLBLUEPRINT_001
+module_id: DATAVERSIONCONTROLBLUEPRINT_001_9997
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

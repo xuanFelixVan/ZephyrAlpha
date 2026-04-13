@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ### 1.1 风险预算框架.md
 
 
@@ -145,7 +152,7 @@
 
 
 
----
+```---
 
 
 
@@ -375,7 +382,7 @@
 
 
 
----
+```---
 
 
 
@@ -390,7 +397,7 @@
 
 ```markdown
 
----
+```---
 
 module_id: EXAMPLE_PLACEHOLDER_67D67A462B
 
@@ -420,7 +427,7 @@ parent_document: ./INDEX.md
 
 implementation_status: 蓝图阶段
 
----
+```---
 
 
 
@@ -440,7 +447,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -469,7 +476,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -491,7 +498,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -513,7 +520,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -544,7 +551,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -573,7 +580,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -595,7 +602,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -610,7 +617,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -632,7 +639,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -668,7 +675,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -690,7 +697,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -712,7 +719,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -722,7 +729,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -794,7 +801,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -889,7 +896,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -931,7 +938,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -973,7 +980,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -1011,7 +1018,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -1049,7 +1056,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 
@@ -1057,7 +1064,7 @@ implementation_status: 蓝图阶段
 
 
 
----
+```---
 
 
 

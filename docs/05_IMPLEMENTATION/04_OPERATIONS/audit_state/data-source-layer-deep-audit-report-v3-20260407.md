@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_配置管理蓝图_001
+module_id: FACTOR_配置管理蓝图_001_8572
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -72,7 +72,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

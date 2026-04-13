@@ -1,6 +1,5 @@
 ---
-1. ?**API**: Week 6
-module_id: 01_FRAMEWORK_AI_VIRTUAL_RESEARCH_TEAM_AI-VIRTUAL-R_001
+module_id: 01_FRAMEWORK_AI_VIRTUAL_RESEARCH_TEAM_AI-VIRTUAL-R_001_7962
 version: 1.0.0
 status: Active
 owner: 待指定

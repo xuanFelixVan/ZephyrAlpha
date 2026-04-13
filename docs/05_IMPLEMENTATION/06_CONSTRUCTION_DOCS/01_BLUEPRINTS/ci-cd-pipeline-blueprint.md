@@ -1,33 +1,15 @@
 ---
-
-module_id: CI_CD_PIPELINE_001
-
+module_id: CI_CD_PIPELINE_001_1125
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 自动化构建
-
-  - 自动化测试
-
-  - 自动化部署
-
-  - 持续集成
-
+- 自动化构建
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1036,7 +1018,9 @@ volumes:
 
 
 
----
+```
+```---
+```
 
 
 

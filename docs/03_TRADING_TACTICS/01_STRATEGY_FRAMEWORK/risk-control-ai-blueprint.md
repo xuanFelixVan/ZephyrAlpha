@@ -1,32 +1,21 @@
 ---
-
-module_id: AI_008
-
+module_id: AI_008_7180
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 交易策略团队
-
 responsibility:
-
 - 风险管理框架设计与实施方案与优化维护
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: RISK_CONTROL_AI_001
+```
+module_id: RISK_CONTROL_AI_001_7180
+```
 
 version: 1.0.0
 
@@ -62,7 +51,9 @@ related_documents:
 
   - LIVE_TRADING_MONITOR_BLUEPRINT.md
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +79,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -124,7 +117,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +159,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -372,7 +369,9 @@ class PreTradeRiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -592,7 +591,9 @@ class DynamicStopLoss:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -722,7 +723,9 @@ class PostTradeRiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -854,7 +857,9 @@ class ExtremeRiskHandler:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -998,7 +1003,9 @@ class IntelligentRiskWarning:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1190,7 +1197,9 @@ CREATE TABLE risk_metrics_history (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1288,7 +1297,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1332,7 +1343,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1354,7 +1367,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1384,7 +1399,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1392,7 +1409,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1448,7 +1467,9 @@ class RiskControlTextInterface:
 
 
 
----
+```
+```---
+```
 
 
 

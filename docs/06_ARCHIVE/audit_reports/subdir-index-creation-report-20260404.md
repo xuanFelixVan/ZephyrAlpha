@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_SUBDIR_INDEX_CREATION_REPORT_20260404
+module_id: 06_ARCHIVE_AUDIT_REPORTS_SUBDIR_INDEX_CREATION_REPORT_20260404_4727
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -41,7 +41,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -77,7 +79,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -107,7 +111,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -139,7 +145,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +177,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -185,7 +195,7 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
 
 version: 1.0.0
@@ -218,7 +228,9 @@ implementation_status: 已完?---
 
 4. **相关文档**: 提供跨目录链?
 
----
+```
+```---
+```
 
 
 
@@ -260,7 +272,9 @@ implementation_status: 已完?---
 
 **建议**: 对于只有1个文件的目录，可以考虑合并到父目录或创建简化版INDEX.md?
 
----
+```
+```---
+```
 
 
 
@@ -298,7 +312,9 @@ implementation_status: 已完?---
 
 - ?所有module_id唯一且符合命名规?
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +358,9 @@ implementation_status: 已完?---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -352,7 +370,9 @@ implementation_status: 已完?---
 
 成功?个重要目录创建了符合专业量化机构标准的INDEX.md文件，显著提升了文档的导航性和可维护性。剩?2个目录优先级较低，可以在后续优化中逐步完善?
 
----
+```
+```---
+```
 
 
 
@@ -368,7 +388,9 @@ implementation_status: 已完?---
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: MODEL_QUANTIZATION_001
-
+module_id: MODEL_QUANTIZATION_001_3861
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-03
-
+created_date: '2026-04-03'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供model quantization blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P2
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的模型量化系统设计，包括量化算法、精度优化、推理加速等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的模型量化系统设计，包括量化算法、精度优化、推理加速等核心功能。'
 layer: layer_04
-
 owner: 首席文档架构师
-
 ---
 
 # 模型量化蓝图
@@ -70,7 +52,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +112,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -190,7 +176,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -412,7 +398,7 @@ class ModelQuantizer:
 
 
 
----
+```---
 
 
 
@@ -460,7 +446,7 @@ tensorrt>=8.6.0
 
 
 
----
+```---
 
 
 
@@ -492,7 +478,7 @@ tensorrt>=8.6.0
 
 
 
----
+```---
 
 
 
@@ -510,7 +496,7 @@ tensorrt>=8.6.0
 
 
 
----
+```---
 
 
 
@@ -622,7 +608,7 @@ tensorrt>=8.6.0
 
 
 
----
+```---
 
 
 

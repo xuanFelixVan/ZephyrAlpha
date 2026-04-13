@@ -1,5 +1,5 @@
 ---
-module_id: IMPL_BARRA_RISK_MODEL_BP_001
+module_id: IMPL_BARRA_RISK_MODEL_BP_001_4280
 owner: ϯ
 standard_type: רҵͼĵ
 version: 1.0.0

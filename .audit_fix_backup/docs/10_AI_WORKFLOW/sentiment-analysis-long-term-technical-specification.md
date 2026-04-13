@@ -70,7 +70,7 @@ applicable_modules: null
 
 
 
----
+```---
 
 
 
@@ -92,7 +92,7 @@ applicable_modules: null
 
 
 
----
+```---
 
 
 
@@ -680,7 +680,7 @@ print(f"各模态贡 {multimodal_result['contributions']}")
 
 
 
----
+```---
 
 
 
@@ -1008,7 +1008,7 @@ for color in colors:
 
 
 
----
+```---
 
 
 
@@ -1320,7 +1320,7 @@ print(f"说话人情 {emotion}")
 
 
 
----
+```---
 
 
 
@@ -1972,7 +1972,7 @@ for item in knowledge:
 
 
 
----
+```---
 
 
 
@@ -2480,7 +2480,7 @@ print(f"统计: {stats}")
 
 
 
----
+```---
 
 
 
@@ -2612,7 +2612,7 @@ print(f"统计: {stats}")
 
 
 
----
+```---
 
 
 
@@ -2696,7 +2696,7 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```---
 
 
 
@@ -2812,7 +2812,7 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```---
 
 
 
@@ -2878,7 +2878,7 @@ GET    /knowledge/stats             # 获取统计
 
 
 
----
+```---
 
 
 
@@ -3062,7 +3062,7 @@ report:
 
 
 
----
+```---
 
 
 

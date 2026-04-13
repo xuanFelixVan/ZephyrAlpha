@@ -1,129 +1,25 @@
 ---
-
-module_id: INVESTMENT_DECISION_AUDIT_001
-
+module_id: INVESTMENT_DECISION_AUDIT_001_8423
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 投资决策审计系统架构设计
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Citadel Investment Audit
-
-- Two Sigma Decision Tracking
-
-- Bridgewater Investment Governance
-
-- D.E. Shaw Decision Audit
-
-related_documents:
-
-- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
-- AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-
-- STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-
-- MODEL_RISK_MANAGEMENT_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-open_source_projects:
-
-- name: Apache Atlas
-
-  url: https://github.com/apache/atlas
-
-  features: 数据治理、血缘追踪、元数据管理、审计追踪
-
-  license: Apache-2.0
-
-  personal_fit: ⭐⭐⭐⭐⭐
-
-- name: OpenLineage
-
-  url: https://github.com/OpenLineage/OpenLineage
-
-  features: 数据血缘标准、作业追踪、影响分析
-
-  license: Apache-2.0
-
-  personal_fit: ⭐⭐⭐⭐⭐
-
-- name: DataHub
-
-  url: https://github.com/datahub-project/datahub
-
-  features: 元数据管理、数据发现、血缘追踪
-
-  license: Apache-2.0
-
-  personal_fit: ⭐⭐⭐⭐
-
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-
-
-  - 投资决策审计系统架构设计
-
-
-
-  - 决策流程追踪
-
-
-
-  - 决策依据记录
-
-
-
-  - 决策影响分析
-
-
-
-  - 审计报告生成
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
-
-
-
-  - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
-
-
-
-  - MODEL_RISK_MANAGEMENT_BLUEPRINT.md: 模型风险管理'
-
-responsibility:
-
-- INVESTMENT_DECISION_AUDIT蓝图设计
-
+open_source_projects: ''
+url: https://github.com/apache/atlas
+features: 数据治理、血缘追踪、元数据管理、审计追踪
+license: Apache-2.0
+personal_fit: ⭐⭐⭐⭐⭐
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 
 # 投资决策审计系统蓝图
@@ -150,7 +46,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -208,7 +106,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +260,9 @@ class InvestmentDecisionAuditInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -560,7 +462,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -656,7 +560,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -698,7 +604,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -730,7 +638,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -762,7 +672,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -804,7 +716,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -860,7 +774,9 @@ class ImpactAnalysis:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -984,7 +900,9 @@ entity = client.entity_post.create_entity({
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1006,7 +924,9 @@ entity = client.entity_post.create_entity({
 
 
 
----
+```
+```---
+```
 
 
 

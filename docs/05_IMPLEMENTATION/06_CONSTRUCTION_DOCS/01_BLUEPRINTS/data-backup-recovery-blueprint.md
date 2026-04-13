@@ -1,5 +1,5 @@
 ---
-module_id: DATA_BACKUP_RECOVERY_001_ARCHIVED_1
+module_id: DATA_BACKUP_RECOVERY_001_ARCHIVED_1_1264
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 数据备份恢复
-- 备份策略
-- 恢复机制
-- 灾难恢复
 layer: layer_05
 ---
 

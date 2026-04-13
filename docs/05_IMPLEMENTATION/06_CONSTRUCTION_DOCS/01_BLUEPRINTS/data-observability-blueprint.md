@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_OBSERVABILITY_001_ARCHIVED_1
-
+module_id: DATA_OBSERVABILITY_001_ARCHIVED_1_2377
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 数据可观测性
-
-- 数据监控
-
-- 数据血缘
-
-- 数据质量告警
-
 layer: layer_05
-
 ---
 
 

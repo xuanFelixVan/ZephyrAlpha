@@ -58,7 +58,7 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -144,7 +144,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -158,7 +158,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -222,7 +222,7 @@ Layer 11.10再平衡决策系统是清风量化系统的**组合维护中枢**�
 
 
 
----
+```---
 
 
 
@@ -358,7 +358,7 @@ Layer 11.10再平衡决策系统是清风量化系统的**组合维护中枢**�
 
 
 
----
+```---
 
 
 
@@ -894,7 +894,7 @@ class RebalanceTriggerEngine:
 
 
 
----
+```---
 
 
 
@@ -1468,7 +1468,7 @@ class RebalanceOptimizationEngine:
 
 
 
----
+```---
 
 
 
@@ -1696,7 +1696,7 @@ class RebalanceExecutionEngine:
 
 
 
----
+```---
 
 
 
@@ -1940,7 +1940,7 @@ class RebalanceEvaluator:
 
 
 
----
+```---
 
 
 
@@ -2032,7 +2032,7 @@ class RebalanceInterface:
 
 
 
----
+```---
 
 
 
@@ -2118,7 +2118,7 @@ Layer 11.10 再平衡决策
 
 
 
----
+```---
 
 
 
@@ -2170,7 +2170,7 @@ Layer 11.10 再平衡决策
 
 
 
----
+```---
 
 
 
@@ -2290,7 +2290,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 
@@ -2330,7 +2330,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 
@@ -2370,7 +2370,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 
@@ -2392,7 +2392,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 
@@ -2408,7 +2408,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 
@@ -2416,7 +2416,7 @@ class SuspendedStockRebalance:
 
 **下一步**: 创建基准管理系统蓝图
 
----
+```---
 
 
 
@@ -2472,7 +2472,7 @@ class SuspendedStockRebalance:
 
 
 
----
+```---
 
 
 

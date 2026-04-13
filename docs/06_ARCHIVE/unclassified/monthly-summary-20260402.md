@@ -1,6 +1,15 @@
+---
+module_id: AUTO_07710
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: MONTHLY_SUMMARY_20260402_001
+```
+module_id: MONTHLY_SUMMARY_20260402_001_9440
+```
 
 version: 1.0.0
 
@@ -44,7 +53,9 @@ applicable_scope: 全系统
 compliance_level: 专业标准
 
 layer: layer_06
----
+```
+```---
+```
 
 
 

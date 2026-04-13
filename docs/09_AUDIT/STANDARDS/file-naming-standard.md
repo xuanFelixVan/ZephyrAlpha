@@ -28,7 +28,9 @@ parent_document: ../INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -72,7 +74,9 @@ parent_document: ../INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -190,7 +194,9 @@ parent_document: ../INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -326,7 +332,9 @@ test_[模块名称].py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -474,7 +482,9 @@ def check_filename_naming(file_path):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -518,7 +528,9 @@ def check_filename_naming(file_path):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -594,7 +606,9 @@ def check_filename_naming(file_path):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -684,7 +698,9 @@ scripts/
 
 
 
----
+```
+```---
+```
 
 
 

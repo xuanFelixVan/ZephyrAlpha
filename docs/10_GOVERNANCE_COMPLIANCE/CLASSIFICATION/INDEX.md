@@ -1,10 +1,19 @@
+---
+module_id: AUTO_40879
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 responsibility:
 
 - 目录导航与文档索引管理与优化维护
 
+```
 module_id: 10_GOVERNANCE_COMPLIANCE_CLASSIFICATION_INDEX_CLASSIFICATION_20260407124048
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 
 layer: layer_00
----
+```
+```---
+```
 
 
 # CLASSIFICATION 目录索引
@@ -36,7 +47,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -52,7 +65,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -66,7 +81,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +101,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 

@@ -108,7 +108,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -160,7 +160,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -318,7 +318,7 @@ Layer 2: Alpha因子层
 
 
 
----
+```---
 
 
 
@@ -932,7 +932,7 @@ class FactorComputationEngine:
 
 
 
----
+```---
 
 
 
@@ -1000,7 +1000,7 @@ CREATE TABLE factor_computation_results (
 
 
 
----
+```---
 
 
 
@@ -1102,7 +1102,7 @@ CREATE TABLE factor_computation_results (
 
 
 
----
+```---
 
 
 
@@ -1174,7 +1174,7 @@ cache_hit_rate = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1206,7 +1206,7 @@ cache_hit_rate = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1228,7 +1228,7 @@ cache_hit_rate = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1266,7 +1266,7 @@ cache_hit_rate = Gauge(
 
 
 
----
+```---
 
 
 

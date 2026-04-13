@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_OPTIMIZATION_PLAN_001
@@ -19,10 +26,10 @@ responsibility:
 - 实施指南、部署文档
 
 layer: layer_06
----
+```---
 
 
-module_id: IMPL_OPS_VERSION_MGMT_001
+module_id: IMPL_OPS_VERSION_MGMT_001_8311
 
 version: 1.0.1
 
@@ -232,7 +239,7 @@ implementation_status: 进行?---
 
 ```yaml
 
-module_id: STRING            # 模块标识符，?"FACTOR_LIB_MAN_001"
+module_id: STRING_8311            # 模块标识符，?"FACTOR_LIB_MAN_001"
 
 version: SEMVER              # 语义化版本号，如 "3.2.0"
 

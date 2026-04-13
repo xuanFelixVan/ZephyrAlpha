@@ -1,6 +1,15 @@
+---
+module_id: AUTO_06312
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 version: 1.0.0
+```
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_VERSION_CONSISTENCY_REPORT_20260407_20260407180137
+```
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-10
@@ -8,7 +17,9 @@ owner: 文档管理团队
 responsibility:
 - 文档版本一致性检查报告文档
 layer: layer_05
----
+```
+```---
+```
 
 # 文档版本一致性检查报告
 
@@ -218,6 +229,8 @@ YAML格式: version: 1.0.0
 2. 使用pre-commit hook检查版本一致性
 3. 在CI/CD流程中加入版本检查
 
----
+```
+```---
+```
 
 *报告生成时间: 2026-04-07 14:00:16*

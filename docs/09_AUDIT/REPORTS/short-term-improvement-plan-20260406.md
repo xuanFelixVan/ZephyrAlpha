@@ -1,6 +1,15 @@
+---
+module_id: AUTO_77751
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SHORT_TERM_IMPROVEMENT_PLAN_20260406_001
+```
 
 plan_id: SHORT_TERM_IMPROVEMENT_PLAN_20260406
 
@@ -25,7 +34,9 @@ responsibility:
 - 审计体系设计与质量监控与实施指导
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 短期改进计划（1周内）
@@ -52,7 +63,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -168,7 +181,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -340,7 +355,9 @@ response = requests.post(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -572,7 +589,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -594,7 +613,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +657,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -684,7 +707,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -748,7 +773,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -794,7 +821,9 @@ class TestDataQualityMonitorPerformance:
 
 
 
----
+```
+```---
+```
 
 
 

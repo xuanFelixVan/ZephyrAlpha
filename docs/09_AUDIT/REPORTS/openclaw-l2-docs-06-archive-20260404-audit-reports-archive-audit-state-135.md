@@ -4,6 +4,8 @@ layer: layer_09
 version: 1.0.0
 responsibility: 处理OPENCLAW_L2_docs_06_ARCHIVE_20260404_audit_reports_archive_audit_state_135相关业务
 status: Active
+owner: System_Guardian
+last_updated: 2026-04-13
 ---
 # OpenClaw L2 深度审计 — 批次: docs/06_ARCHIVE/20260404_audit_reports_archive/audit_state
 
@@ -19,7 +21,9 @@ status: Active
 
 
 
----
+```
+```---
+```
 
 
 

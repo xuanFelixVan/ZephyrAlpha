@@ -1,6 +1,15 @@
+---
+module_id: AUTO_92379
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: LAYER8_DELETED_CONTENT_ANALYSIS_20260407
+```
+module_id: LAYER8_DELETED_CONTENT_ANALYSIS_20260407_5673
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ applicable_scope: Layer 8 - 人机交互层
 compliance_level: 专业标准
 
 layer: layer_05
----
+```
+```---
+```
 
 
 
@@ -42,7 +53,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +163,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -434,7 +449,9 @@ async def wechat_webhook(request: Request):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -814,7 +831,9 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -832,9 +851,8 @@ def protected_route(user: User = Depends(current_active_user)):
 
 ```markdown
 
----
+```---
 
-module_id: XXX_001
 
 version: 1.0.0
 
@@ -852,11 +870,11 @@ responsibility:
 
   - 系统架构蓝图设计与实施指导与实施方案
 
----
+```---
 
 
 
----
+```---
 
 
 
@@ -912,7 +930,9 @@ class ModuleImplementation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -956,7 +976,9 @@ class ModuleImplementation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1076,7 +1098,9 @@ git show afbf3836180782cd496044b6c384412fb7011974^:docs/08_HUMAN_AI_INTERFACE/03
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1120,7 +1144,9 @@ git show afbf3836180782cd496044b6c384412fb7011974^:docs/08_HUMAN_AI_INTERFACE/03
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1170,7 +1196,9 @@ git show afbf3836180782cd496044b6c384412fb7011974^:docs/08_HUMAN_AI_INTERFACE/03
 
 
 
----
+```
+```---
+```
 
 
 

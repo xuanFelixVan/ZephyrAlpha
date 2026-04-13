@@ -1,35 +1,16 @@
 ---
-
-module_id: PORTFOLIO_DRIFT_MONITOR_001
-
+module_id: PORTFOLIO_DRIFT_MONITOR_001_5142
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 组合漂移实时监控
-
-  - 偏离度计算与预警
-
-  - 再平衡触发决策
-
-  - 漂移趋势分析
-
+- 组合漂移实时监控
 layer: layer_06
-
 ---
 
 
@@ -610,7 +591,7 @@ class RebalanceTrigger:
 
 ```yaml
 
-- module_id: PORTFOLIO_DRIFT_MONITOR_001
+- module_id: PORTFOLIO_DRIFT_MONITOR_001_5142
 
   module_name: 组合漂移监控模块
 

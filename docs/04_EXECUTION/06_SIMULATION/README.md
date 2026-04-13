@@ -75,7 +75,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -305,7 +307,9 @@ class SimulationConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -611,7 +615,9 @@ class MarketSimulator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -851,7 +857,9 @@ class OrderSimulator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1121,7 +1129,9 @@ class PositionManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1331,7 +1341,9 @@ class CostCalculator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1627,7 +1639,9 @@ class SimulationEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1713,7 +1727,9 @@ def example_simulation():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1731,7 +1747,9 @@ def example_simulation():
 
 
 
----
+```
+```---
+```
 
 
 

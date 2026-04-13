@@ -1,35 +1,16 @@
 ---
-
-module_id: SIGNAL_DECAY_ANALYZER_001
-
+module_id: SIGNAL_DECAY_ANALYZER_001_6526
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 优化信号衰减分析
-
-  - 信号有效期评估
-
-  - 信号强度预测
-
-  - 信号质量监控
-
+- 优化信号衰减分析
 layer: layer_06
-
 ---
 
 
@@ -690,7 +671,7 @@ class SignalRecord:
 
 ```yaml
 
-- module_id: SIGNAL_DECAY_ANALYZER_001
+- module_id: SIGNAL_DECAY_ANALYZER_001_6526
 
   module_name: 优化信号衰减分析模块
 

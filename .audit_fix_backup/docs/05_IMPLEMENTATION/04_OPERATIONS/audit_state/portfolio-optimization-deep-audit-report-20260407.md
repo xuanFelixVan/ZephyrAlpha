@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 version: 1.0.0
@@ -17,7 +24,7 @@ responsibility:
 - Layer 6 组合优化层深度审计报告文档
 
 layer: layer_05
----
+```---
 
 
 # Layer 6 组合优化层深度审计报告
@@ -34,7 +41,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -70,7 +77,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -122,7 +129,7 @@ layer: layer_05
 
 ```yaml
 
-module_id: QUARTERLY_REBALANCE_BLUEPRINT_001
+module_id: QUARTERLY_REBALANCE_BLUEPRINT_001_6183
 
 owner: 个人开发者
 
@@ -140,7 +147,7 @@ responsibility:
 
 ```yaml
 
-module_id: QUARTERLY_REBALANCE_001
+module_id: QUARTERLY_REBALANCE_001_6183
 
 owner: 实施团队
 
@@ -154,7 +161,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -182,7 +189,7 @@ responsibility:
 
 ```yaml
 
-module_id: MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT_001
+module_id: MODULE_RESPONSIBILITY_BOUNDARIES_BLUEPRINT_001_6183
 
 owner: 个人开发者
 
@@ -196,7 +203,7 @@ responsibility:
 
 layer: "Layer 6 (组合优化层)"
 
----
+```---
 
 ﻿# Layer 7 AI报告?- 模块职责边界定义
 
@@ -212,7 +219,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -236,7 +243,7 @@ layer: "Layer 6 (组合优化层)"
 
 ```yaml
 
-module_id: STRATEGIC_WEIGHTING_BLUEPRINT_001
+module_id: STRATEGIC_WEIGHTING_BLUEPRINT_001_6183
 
 owner: 个人开发者
 
@@ -254,7 +261,7 @@ responsibility:
 
 ```yaml
 
-module_id: STRATEGIC_WEIGHTING_001
+module_id: STRATEGIC_WEIGHTING_001_6183
 
 owner: 实施团队
 
@@ -268,7 +275,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -306,7 +313,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -344,7 +351,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -382,7 +389,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -404,15 +411,15 @@ responsibility:
 
 ```yaml
 
----
+```---
 
-module_id: DYNAMIC_ASSET_ALLOCATION_001
+module_id: DYNAMIC_ASSET_ALLOCATION_001_6183
 
 ...
 
----
+```---
 
-module_id: DYNAMIC_ASSET_ALLOCATION_BLUEPRINT_001
+module_id: DYNAMIC_ASSET_ALLOCATION_BLUEPRINT_001_6183
 
 ...
 
@@ -426,7 +433,7 @@ module_id: DYNAMIC_ASSET_ALLOCATION_BLUEPRINT_001
 
 
 
----
+```---
 
 
 
@@ -462,7 +469,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -524,7 +531,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -578,7 +585,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -678,7 +685,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -716,7 +723,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 
@@ -830,7 +837,7 @@ layer: "Layer 6 (组合优化层)"
 
 
 
----
+```---
 
 
 

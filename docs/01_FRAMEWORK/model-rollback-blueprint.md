@@ -1,33 +1,15 @@
 ---
-
-module_id: MODEL_ROLLBACK_001
-
+module_id: MODEL_ROLLBACK_001_6428
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供model rollback blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的模型回滚系统设计，包括回滚策略、版本切换、故障恢复等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的模型回滚系统设计，包括回滚策略、版本切换、故障恢复等核心功能。'
 layer: layer_03
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -72,7 +54,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +116,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -196,7 +182,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -478,7 +464,7 @@ class ModelRollbackSystem:
 
 
 
----
+```---
 
 
 
@@ -522,7 +508,7 @@ kubernetes>=28.0.0
 
 
 
----
+```---
 
 
 
@@ -554,7 +540,7 @@ kubernetes>=28.0.0
 
 
 
----
+```---
 
 
 
@@ -572,7 +558,7 @@ kubernetes>=28.0.0
 
 
 
----
+```---
 
 
 
@@ -684,7 +670,7 @@ kubernetes>=28.0.0
 
 
 
----
+```---
 
 
 

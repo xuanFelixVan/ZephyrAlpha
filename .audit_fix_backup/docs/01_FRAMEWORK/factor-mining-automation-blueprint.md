@@ -58,7 +58,7 @@ parent_document: ../ARCHITECTURE.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -86,7 +86,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -132,7 +132,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -320,7 +320,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -376,7 +376,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -1106,7 +1106,7 @@ class FactorEvaluator:
 
 
 
----
+```---
 
 
 
@@ -1378,7 +1378,7 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 
@@ -1406,7 +1406,7 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 
@@ -1448,7 +1448,7 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 
@@ -1490,7 +1490,7 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 
@@ -1542,13 +1542,13 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -1604,7 +1604,7 @@ python src/factor_mining/miner.py
 
 
 
----
+```---
 
 
 

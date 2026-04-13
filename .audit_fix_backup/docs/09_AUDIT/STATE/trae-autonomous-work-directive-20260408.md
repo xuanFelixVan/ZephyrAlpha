@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 module_id: TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408
 version: 1.2.2
@@ -20,7 +27,7 @@ related_documents:
 responsibility:
   - 约束 Trae：不中断询问 Owner；自解问题；证据驱动
 layer: layer_09
----
+```---
 
 
 # Trae 自主执行指令（中途禁止询问 Owner）
@@ -33,13 +40,13 @@ layer: layer_09
 > **用途**：将本文 **全文**粘贴到 Trae 对话首条（或系统指令区），并附上仓库路径。  
 > **硬规则**：**禁止**在执行过程中向 Owner 提问或等待确认；**必须**自行读文件、跑脚本、修断链、写台账；遇歧义按 **§6 决策树** 选保守路径。
 
----
+```---
 
 ## 1. 你的角色
 
 你是 **文档治理执行代理**，在 **无人值守**模式下工作，直到 **§5 完成定义**中**当前长跑窗口**的目标达成，或 **§7 资源耗尽**时按 §8 收工。
 
----
+```---
 
 ## 2. 开始前必须只读打开的「真源」（按顺序）
 
@@ -50,7 +57,7 @@ layer: layer_09
 
 **禁止**在未读完 **HANDOFF §16（防幻觉）** 前开始改文件。
 
----
+```---
 
 ## 3. 绝对禁止
 
@@ -61,7 +68,7 @@ layer: layer_09
 - 在 **`sentinel_l1_governance_scan.py` 报告 Invalid links ≠ 0** 时继续堆新改动（须先修到 0 或 **revert** 本批）。  
 - 把 **第 3 阶段（写代码）** 门禁当成本轮终点；本轮终点是 **蓝图交付 + 可进入第 2 阶段证据链**（见 HANDOFF §13.6）。
 
----
+```---
 
 ## 4. 工作循环（每一轮 60～90 分钟）
 
@@ -76,7 +83,7 @@ layer: layer_09
 
 每 **2 轮**可选运行 `python scripts/strict_orphan_inbound_scan.py` 观察趋势。
 
----
+```---
 
 ## 4.1 逐条任务真源（Trae 中断后可续跑）
 
@@ -111,7 +118,7 @@ layer: layer_09
 
 7. **执行顺序建议**（仍禁止问 Owner）：使用主清单时按 **T0001→…** 最小未勾选编号推进（A 段框架须先勾选/遵守）；实务上 **B 元任务与 DEDUP** → **C 孤儿每批 ≤20** → **D NO-MID 每批 ≤50** → **E～K** 穿插。蓝图台账与孤儿/NO-MID 同路径冲突时，**以台账白名单为准**。
 
----
+```---
 
 ## 5. 完成定义（Definition of Done）——「彻底完成」在本指令中的含义
 
@@ -127,7 +134,7 @@ layer: layer_09
 
 若时间/步数用尽仍未清空全部 §0.2 蓝图：**不属失败**；须在收工文中写明 **剩余任务编号范围**（如 `TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md` 自 T0xxx 起未勾选）、或 REGEN 列表、或台账下一批。
 
----
+```---
 
 ## 6. 遇阻时自行处理（禁止问 Owner）
 
@@ -139,14 +146,14 @@ layer: layer_09
 4. **与另一文档矛盾**：在 `ARCH_MODULE_GAP_REGISTER_20260408.md` 加一行 **G3** 草案，**不擅自改**总纲。  
 5. **工具/脚本失败**：读报错；改输入；重试 3 次；仍失败则 **git restore** 本批可疑文件，台账记 **blocked: 脚本名 + 首行错误**，**停止扩 scope**。
 
----
+```---
 
 ## 7. 资源与时长
 
 - 若用户指定 **8 小时**：以 HANDOFF **§17** 为时间盒；超时即进入 **§8 收工**。  
 - 若用户指定 **直至彻底完成**：仍以 **§5 硬完成 + 台账批次穷尽** 为停点；若 §0.2 全量极大，**按台账多窗口**执行，每窗口结束必须 §8。
 
----
+```---
 
 ## 8. 收工时必须留下的产物
 
@@ -155,7 +162,7 @@ layer: layer_09
 - Playbook **§10** 一行。  
 - Git：**§15.3** milestone tag（若适用）。
 
----
+```---
 
 ## 9. 可复制的一句话（贴在 Trae 首条末尾）
 
@@ -163,7 +170,7 @@ layer: layer_09
 严格执行 docs/09_AUDIT/STATE/TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md：中途禁止向我提问；以 HANDOFF v2.0 与 Trae 台账为真源；每批 L1=0 后 commit；无法裁决则台账 TBD/gap 登记，不删不猜。
 ```
 
----
+```---
 
 ## 10. Appendix A — English normative block (recommended paste-first for Trae / GLM)
 

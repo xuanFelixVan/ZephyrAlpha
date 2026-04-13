@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_LAYER_11_STRATEGIC_DECISION_DEEP_AUDIT_REPORT_20260406
+module_id: 06_ARCHIVE_AUDIT_REPORTS_LAYER_11_STRATEGIC_DECISION_DEEP_AUDIT_REPORT_20260406_3851
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -59,7 +59,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -187,7 +189,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -439,7 +443,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -509,7 +515,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -571,7 +579,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -741,7 +751,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -767,7 +779,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -783,7 +797,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -803,7 +819,9 @@ implementation_status: 审计完成
 
 
 
----
+```
+```---
+```
 
 
 

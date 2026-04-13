@@ -1,29 +1,16 @@
 ---
-
-module_id: DATA_VERSION_CONTROL_001
-
+module_id: DATA_VERSION_CONTROL_001_8189
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 responsibility:
-
 - 提供数据版本控制的完整架构设计和技术选型
-
 layer: layer_04
-
 standard_type: 专业量化机构蓝图文档
-
 priority: P0核心
-
 estimated_hours: 20
-
 ---
 
 # 数据版本控制蓝图
@@ -40,7 +27,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -122,7 +111,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -218,7 +209,9 @@ estimated_hours: 20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -688,7 +681,9 @@ class IntegratedExperimentTracker:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -808,7 +803,9 @@ dvc dag
 
 
 
----
+```
+```---
+```
 
 
 
@@ -878,7 +875,9 @@ dvc dag
 
 
 
----
+```
+```---
+```
 
 
 
@@ -966,7 +965,9 @@ state:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1060,7 +1061,9 @@ stages:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1112,7 +1115,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1156,7 +1161,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1198,7 +1205,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 

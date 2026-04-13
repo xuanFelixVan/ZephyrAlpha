@@ -1,10 +1,19 @@
+---
+module_id: AUTO_89862
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 responsibility:
 
 - 目录导航、文档索引
 
+```
 module_id: 11_STRATEGIC_DECISION_ARCHIVE_INDEX_ARCHIVE_20260407124048
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ owner: 个人开发者
 standard_type: 专业量化机构文档
 
 layer: layer_00
----
+```
+```---
+```
 
 
 # archive 目录索引
@@ -36,7 +47,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -52,7 +65,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -72,7 +87,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +107,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 

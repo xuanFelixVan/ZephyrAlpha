@@ -31,7 +31,9 @@ responsibility: REPORTS
 
 
 
----
+```
+```---
+```
 
 
 
@@ -137,7 +139,9 @@ responsibility: REPORTS
 
 | `DEEP_AUDIT_REPORT_V7_20260404.md` | AI报告层（Layer 7）深度审计报告 V7 | AUDIT_AI报告层_LAYER_7_深度审计报告_V7_001 | 双YAML头(3块) | P2 |
 
+```
 | `DEEP_SYSTEM_AUDIT_REPORT_20260404_V7.md` | 全系统深度审计报?V7 | TACTICS_DOC_001 改为 module_id: TACTICS_ARCHIVED_MARKER_001 | 双YAML头(6块) | P2 |
+```
 
 | `DEEP_SYSTEM_AUDIT_REPORT_20260404_V8.md` | 深度系统审计报告 V8 | DEEP_SYSTEM_AUDIT_REPORT_20260404_V8 | 双YAML头(5块) | P2 |
 

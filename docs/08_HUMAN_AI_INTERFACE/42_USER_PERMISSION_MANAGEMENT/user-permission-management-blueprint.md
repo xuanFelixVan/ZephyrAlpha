@@ -1,6 +1,15 @@
+---
+module_id: AUTO_65297
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 08_HUMAN_AI_INTERFACE_42_USER_PERMISSION_MANAGEMENT
+```
 
 version: 1.1.0
 
@@ -65,7 +74,9 @@ open_source_alternatives:
     recommendation: 强烈推荐
 
 layer: layer_08
----
+```
+```---
+```
 
 
 
@@ -104,7 +115,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +177,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -306,7 +321,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -478,7 +495,9 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -524,7 +543,9 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -546,7 +567,9 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +585,9 @@ def protected_route(user: User = Depends(current_active_user)):
 
 
 
----
+```
+```---
+```
 
 
 

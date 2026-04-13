@@ -1,33 +1,16 @@
 ---
-
-module_id: EXECUTION_STRATEGY_BACKTESTER_001
-
+module_id: EXECUTION_STRATEGY_BACKTESTER_001_3854
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 执行策略回测
-
-- 策略模拟
-
-- 成本分析
-
-- 性能评估
-
 layer: layer_05
-
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 

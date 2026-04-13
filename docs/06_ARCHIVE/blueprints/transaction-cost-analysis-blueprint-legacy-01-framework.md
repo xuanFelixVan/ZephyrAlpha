@@ -1,5 +1,5 @@
 ---
-module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT
+module_id: TRANSACTION_COST_ANALYSIS_BLUEPRINT_7015
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -35,6 +35,8 @@ responsibility:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-06 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```
+```---
+```
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-06 | **状态**: Active

@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_DOCUMENT_GOVERNANCE_FIX_SUMMARY_20260407_3460
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -35,7 +35,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -83,7 +85,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -133,7 +137,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -191,7 +197,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -229,7 +237,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -273,7 +283,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -289,7 +301,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -315,7 +329,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -347,7 +363,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -369,7 +387,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -421,7 +441,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -489,7 +511,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -505,7 +529,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -535,7 +561,9 @@ layer_keywords = {
 
 
 
----
+```
+```---
+```
 
 
 

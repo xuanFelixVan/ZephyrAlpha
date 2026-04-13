@@ -4,38 +4,38 @@ standard_type: audit_state
 generated_by: scripts/audit/fix_dead_links.py
 ---
 
-# 断链修复报告（dry-run）
+# 断链修复报告（apply）
 
 > **生成时间**: 20260413
-> **断链总数**: 4588
+> **断链总数**: 4422
 
 ## 操作统计
 
 | 操作 | 数量 |
 |------|------|
-| REPLACE | 4558 |
-| REMOVE_LINK | 30 |
+| REPLACE | 4398 |
+| REMOVE_LINK | 24 |
 
 ## 策略命中分布
 
 | 策略 | 数量 |
 |------|------|
-| global_unique_basename | 2481 |
-| global_closest_basename | 1819 |
-| directory_guided_nav | 206 |
-| kebab_case_fallback | 52 |
+| global_unique_basename | 2465 |
+| global_closest_basename | 1722 |
+| directory_guided_nav | 203 |
+| kebab_case_fallback | 8 |
 
 ## 置信度分布（仅 REPLACE）
 
 | 置信度 | 数量 |
 |--------|------|
-| medium | 2739 |
-| low | 1819 |
+| medium | 2676 |
+| low | 1722 |
 
 ## 高置信修复样本（共 0 条，展示前 30）
 
 
-## 无法自动修复（REMOVE_LINK，共 30 条，展示前 30）
+## 无法自动修复（REMOVE_LINK，共 24 条，展示前 30）
 
 - `docs/03_TRADING_TACTICS/strategy-spec-s001.md`: `../02_FACTOR_LIBRARY/05_BACKTEST/`
 - `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md`: `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt`
@@ -61,9 +61,3 @@ generated_by: scripts/audit/fix_dead_links.py
 - `docs/09_AUDIT/STATE/orphan_eradication_master_plan_20260413.md`: `./{f.name}`
 - `docs/09_AUDIT/STATE/orphan_governance_program_20260413.md`: `path`
 - `docs/09_AUDIT/STATE/orphan_governance_program_20260413.md`: `./{orphan_rel}.md`
-- `docs/SITEMAP.md`: `./02_FACTOR_LIBRARY/05_BACKTEST/`
-- `docs/SITEMAP.md`: `./09_AUDIT/TEMPLATES/`
-- `scripts/README.md`: `pre_commit_hook.py`
-- `scripts/README.md`: `pre_commit_check_module_id.py`
-- `scripts/README.md`: `clean_cache.py`
-- `scripts/README.md`: `clean_cache.py`

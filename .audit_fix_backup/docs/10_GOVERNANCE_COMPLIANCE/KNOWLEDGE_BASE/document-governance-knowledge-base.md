@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE_001
@@ -25,7 +32,7 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_00
----
+```---
 
 
 # 文档治理知识库
@@ -42,7 +49,7 @@ layer: layer_00
 
 
 
----
+```---
 
 
 
@@ -60,7 +67,7 @@ layer: layer_00
 
 
 
----
+```---
 
 
 
@@ -144,7 +151,7 @@ python scripts/fix_missing_responsibility.py
 
 
 
----
+```---
 
 
 
@@ -200,7 +207,7 @@ python scripts/fix_missing_responsibility.py
 
 
 
----
+```---
 
 
 
@@ -272,7 +279,7 @@ python scripts/batch_rename_files.py
 
 
 
----
+```---
 
 
 
@@ -330,7 +337,7 @@ python scripts/batch_rename_files.py
 
 
 
----
+```---
 
 
 
@@ -376,7 +383,7 @@ python scripts/fix_yaml_missing.py
 
 ```yaml
 
----
+```---
 
 module_id: EXAMPLE_PLACEHOLDER_9BC686DF65
 
@@ -402,7 +409,7 @@ compliance_level: [合规级别]
 
 parent_document: [父文档]
 
----
+```---
 
 ```
 
@@ -428,7 +435,7 @@ parent_document: [父文档]
 
 
 
----
+```---
 
 
 
@@ -486,7 +493,7 @@ python scripts/fix_yaml_fields.py
 
 
 
----
+```---
 
 
 
@@ -558,7 +565,7 @@ module_id: [文件名大写]_001
 
 
 
----
+```---
 
 
 
@@ -626,7 +633,7 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```---
 
 
 
@@ -672,7 +679,7 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```---
 
 
 
@@ -710,7 +717,7 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```---
 
 
 
@@ -760,7 +767,7 @@ docs/
 
 
 
----
+```---
 
 
 
@@ -800,7 +807,7 @@ docs/
 
 
 
----
+```---
 
 
 
@@ -814,7 +821,7 @@ docs/
 
 ```yaml
 
----
+```---
 
 module_id: FACTOR_CALCULATION_FRAMEWORK_001
 
@@ -840,7 +847,7 @@ compliance_level: 专业标准
 
 parent_document: ../INDEX.md
 
----
+```---
 
 ```
 
@@ -856,7 +863,7 @@ parent_document: ../INDEX.md
 
 
 
----
+```---
 
 
 
@@ -896,7 +903,7 @@ parent_document: ../INDEX.md
 
 
 
----
+```---
 
 
 

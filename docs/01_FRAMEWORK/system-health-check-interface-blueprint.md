@@ -1,46 +1,20 @@
 ---
-module_id: SYSTEM_HEALTH_CHECK_INTERFACE_001
+module_id: SYSTEM_HEALTH_CHECK_INTERFACE_001_5546
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 layer: layer_08
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 系统健康检查界面
 compliance_level: 顶级专业标准
-reference_models:
-- Bridgewater System Health
-- Renaissance Health Monitor
-- Two Sigma Health Dashboard
-related_documents:
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-- GRAFANA_MONITORING_BLUEPRINT.md
-- DISASTER_RECOVERY_FRAMEWORK_ENTRY.md
-responsibility_boundary: '本文档负责系统健康检查界面设计，包括：
-
-  - 系统组件状态检查
-
-  - 服务健康监控
-
-  - 资源使用监控
-
-  - 告警状态展示
-
-  - 快速诊断功能
-
-
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-  监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
-
-  灾备体系请参考：DISASTER_RECOVERY_FRAMEWORK_ENTRY.md（→ 图纸柜正式稿）
-
-  '
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责系统健康检查界面设计，包括：'
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-responsibility:
-- SYSTEM_HEALTH_CHECK_INTERFACE蓝图设计
+responsibility: ''
 ---
 # 系统健康检查界面蓝图
 > **核心职责**: System Health Check Interface蓝图设计
@@ -54,7 +28,9 @@ responsibility:
 > **实施周期**: 3-5天
 > **目标**: 构建专业级系统健康检查界面，支持快速诊断系统状态
 
----
+```
+```---
+```
 
 ## 📋 执行摘要
 
@@ -77,7 +53,9 @@ responsibility:
 
 **综合价值评级**: ⭐⭐⭐⭐⭐ (5/5) - **强烈推荐实施**
 
----
+```
+```---
+```
 
 ## 一、架构设计
 
@@ -150,7 +128,9 @@ responsibility:
 | **告警状态区** | 展示告警信息 | 告警数据 | 告警列表 | Layer 10 |
 | **快速操作区** | 提供快速操作 | 操作指令 | 操作结果 | Layer 10 |
 
----
+```
+```---
+```
 
 ## 二、核心组件详细设计
 
@@ -289,7 +269,9 @@ responsibility:
 | **查看日志** | 打开日志查看器 | 无需确认 |
 | **导出报告** | 导出健康报告 | 无需确认 |
 
----
+```
+```---
+```
 
 ## 三、开源项目集成方案
 
@@ -537,7 +519,9 @@ class SystemHealthCheckInterface:
             st.metric("接收流量", f"{net_io.bytes_recv / 1024 / 1024:.1f} MB")
 ```
 
----
+```
+```---
+```
 
 ## 四、实施路线图
 
@@ -559,7 +543,9 @@ class SystemHealthCheckInterface:
 | 快速操作功能 | 操作按钮 | 4h | P1 |
 | 导出报告功能 | 导出功能 | 2h | P1 |
 
----
+```
+```---
+```
 
 ## 五、相关文档索引
 
@@ -569,12 +555,16 @@ class SystemHealthCheckInterface:
 | Grafana监控可视化蓝图 | 监控系统 | 监控可视化系统 |
 | 灾备 · 框架入口 | 灾备系统 | 指向图纸柜正式蓝图 |
 
----
+```
+```---
+```
 
 | 版本号 | 修改日期 | 修改内容 | 修改人 |
 |--------|---------|---------|--------|
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```
+```---
+```
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

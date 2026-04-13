@@ -1,35 +1,16 @@
 ---
-
 responsibility:
-
 - 简化风险预算系统
-
-- 简化风险预算分配
-
-- 预算分配
-
-- 风险约束
-
-module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001
-
+module_id: SIMPLIFIED_RISK_BUDGET_SYSTEM_001_9748
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 5.3 (风险管理)
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

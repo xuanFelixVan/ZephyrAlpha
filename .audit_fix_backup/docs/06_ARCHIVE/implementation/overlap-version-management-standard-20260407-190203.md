@@ -1,5 +1,5 @@
 ---
-module_id: T.02.FE001
+module_id: T.02.FE001_6509
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -47,7 +47,7 @@ system_version: v5.3.0
 
 # ﮒﺟ،ﻠﮔﺙﻟﺟﮔ۷۰?(ﮒ۵AIﻝﻝ۸ﭘﮔ۷۰ﮒ)
 
-module_id: AI_RESEARCH_001
+module_id: AI_RESEARCH_001_6509
 
 version: 2.3.0      # ﻠ۱ﻝﺗﮔﺑﮔﺍ
 
@@ -59,7 +59,7 @@ last_updated: 2026-04-02
 
 # ﻝ۷ﺏﮒ؟ﮔ۷۰ﮒ (ﮒ۵ﮔﺍﮔ؟ﮔﭦﮔ۴ﮒ۲)
 
-module_id: DATA_SOURCE_001  
+module_id: DATA_SOURCE_001_6509  
 
 version: 1.0.2      # ﻛﺟﮒ؟ﮔﺑﮔﺍ
 
@@ -71,7 +71,7 @@ last_updated: 2026-03-15
 
 # ﮒ؟ﻠ۹ﮔ۷۰ﮒ (ﮒ۵ﮔﺍﻝ؟ﮔﺏ)
 
-module_id: NEW_ALGO_001
+module_id: NEW_ALGO_001_6509
 
 version: 0.5.0      # ﮒ؟ﻠ۹ﻝﮔ؛
 
@@ -201,7 +201,7 @@ last_updated: 2026-04-01
 
 dependencies:
 
-  - module_id: DATA_SOURCE_001
+  - module_id: DATA_SOURCE_001_6509
 
     min_version: 1.0.0
 
@@ -337,7 +337,7 @@ def check_module_compatibility(module_version: str, system_version: str) -> str:
 
 
 
----
+```---
 
 
 

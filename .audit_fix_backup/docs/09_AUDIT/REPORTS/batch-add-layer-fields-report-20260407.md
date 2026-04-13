@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: BATCH_ADD_LAYER_FIELDS_REPORT_20260407_001
@@ -19,7 +26,7 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_09
----
+```---
 
 
 module_id: LAYER_003

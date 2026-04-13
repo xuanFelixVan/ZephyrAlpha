@@ -1,49 +1,22 @@
 ---
-
-module_id: MODEL_REGISTRY_001_ARCHIVED_1
-
+module_id: MODEL_REGISTRY_001_ARCHIVED_1_0855
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-05
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_00
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 模型注册中心
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
 - MLflow Model Registry
-
-- AWS SageMaker Model Registry
-
-- Azure ML Model Registry
-
 related_documents:
-
 - ARCHITECTURE.md
-
-- MACHINE_LEARNING_LAYER_BLUEPRINT.md
-
-- MODEL_VERSIONING_BLUEPRINT.md
-
 parent_document: ../INDEX.md
-
 implementation_status: 设计阶段
-
 responsibility:
-
 - 提供model registry blueprint的完整架构设计、技术选型和实施路径规划
-
 ---
 
 # 模型注册中心蓝图
@@ -70,7 +43,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +91,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +277,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -770,7 +749,9 @@ class ModelRegistry:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -836,7 +817,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -860,7 +843,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -880,7 +865,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -900,7 +887,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -924,7 +913,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -946,7 +937,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -966,13 +959,17 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1028,7 +1025,9 @@ class ModelDeployment:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -72,3 +72,26 @@ repos:
         language: system
         files: ^docs/.*$        # 检测 docs 下所有文件和目录
         pass_filenames: false
+      
+      # ── 真源卫兵 (Source Guard) ─────────────────────────────────────
+      # 防止双YAML、重复module_id、frontmatter字段缺失
+      # 这是七维审计后的加固措施，确保问题不再复发
+      
+      - id: source-guard
+        name: 真源卫兵 - YAML/module_id/frontmatter检查
+        entry: python scripts/source_guard_pre_commit.py
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: false
+      
+      # ── 强制入链守卫 (Mandatory Inbound Guard) ─────────────────────
+      # Phase 3 of Orphan Eradication Master Plan
+      # 阻止任何没有入链的新文件提交，或自动挂载到索引
+      
+      - id: mandatory-inbound-guard
+        name: 强制入链守卫 - 防止孤儿文件
+        entry: python scripts/mandatory_inbound_guard.py
+        language: system
+        files: ^docs/.*\.md$
+        pass_filenames: true
+        stages: [commit]

@@ -1,5 +1,5 @@
 ---
-module_id: CONSTRUCTION_SPECIFICATION
+module_id: CONSTRUCTION_SPECIFICATION_4896
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -11,8 +11,11 @@ applicable_scope: 全系统开发和文档构建
 compliance_level: 强制执行
 parent_document: ../README.md
 implementation_status: 强制执行
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
----
+```
+```---
+```
 
 
 
@@ -120,7 +123,9 @@ implementation_status: 强制执行
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +329,9 @@ implementation_status: 强制执行
 
 
 
----
+```
+```---
+```
 
 
 
@@ -912,7 +919,9 @@ ZephyrAlpha/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1302,7 +1311,9 @@ class strategy_factory:                 # 小写+下划?class strategyFactory:  
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1350,7 +1361,7 @@ class strategy_factory:                 # 小写+下划?class strategyFactory:  
 
 
 
----
+```---
 
 
 
@@ -1421,7 +1432,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1475,7 +1486,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1511,7 +1522,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1559,7 +1570,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1715,7 +1726,9 @@ implementation_status: [实施状态]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2507,7 +2520,9 @@ import numpy as np
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2903,7 +2918,9 @@ LS d:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3107,7 +3124,9 @@ LS d:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3389,7 +3408,7 @@ LS d:\ZephyrAlpha\docs\05_IMPLEMENTATION\06_CONSTRUCTION_DOCS\
 
 
 
----
+```---
 
 
 
@@ -3826,7 +3845,7 @@ implementation_status: 进行?---
 
 
 
----
+```---
 
 
 
@@ -3922,7 +3941,7 @@ implementation_status: 进行?---
 
 
 
----
+```---
 
 
 
@@ -3970,7 +3989,7 @@ implementation_status: 进行?---
 
 
 
----
+```---
 
 
 
@@ -4024,7 +4043,7 @@ implementation_status: 进行?---
 
 
 
----
+```---
 
 
 

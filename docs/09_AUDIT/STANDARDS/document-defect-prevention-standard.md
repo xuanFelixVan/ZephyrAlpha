@@ -1,5 +1,5 @@
 ---
-module_id: DOCUMENT_DEFECT_PREVENTION_STANDARD_001
+module_id: DOCUMENT_DEFECT_PREVENTION_STANDARD_001_5400
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -23,7 +23,9 @@ supersedes: null
 > - ✅ 本文档负责：6 类文档缺陷的预防规范、pre-commit 钩子标准、CI/CD 门禁定义
 > - ❌ 本文档不负责：具体脚本实现（见 `scripts/`）、审计执行流程（见审计方案）
 
----
+```
+```---
+```
 
 ## 1. 缺陷分类与根因分析
 
@@ -38,7 +40,9 @@ supersedes: null
 | D-05 | 编码损坏（乱码） | 编码转换工具错误；BOM 与非 BOM 混合处理 | 17 篇 P0 | P0 |
 | D-06 | 目录映射缺失 | 新建 Layer 目录未同步 SITEMAP/INDEX；归档区缺少 INDEX.md | 5 个 Layer | P1 |
 
----
+```
+```---
+```
 
 ## 2. 三层防护体系
 
@@ -83,7 +87,9 @@ supersedes: null
 | 架构缺口审计 | 每月 | `ARCH_MODULE_GAP_REGISTER` | D-06 |
 | 归档区健康检查 | 每月 | 归档区 INDEX 完整性 + 链接有效性 | D-03, D-06 |
 
----
+```
+```---
+```
 
 ## 3. 缺陷修复标准流程
 
@@ -166,7 +172,9 @@ supersedes: null
 预防: pre-commit check-sitemap-sync（警告级）
 ```
 
----
+```
+```---
+```
 
 ## 4. Pre-commit 钩子技术规范
 
@@ -203,7 +211,9 @@ python scripts/doc_guard_pre_commit.py --scan-encoding
 | 1 | 阻止提交的缺陷（D-01, D-02, D-04, D-05） | 必须修复后重新提交 |
 | 2 | 警告（D-03 增量, D-06） | 允许提交，但需在 24 小时内处理 |
 
----
+```
+```---
+```
 
 ## 5. 脚本编写规范
 
@@ -254,7 +264,9 @@ def parse_first_frontmatter(content: str) -> tuple[dict, str]:
 # ❌ 错误：使用 yaml.safe_load_all 会解析所有 --- 块
 ```
 
----
+```
+```---
+```
 
 ## 6. 培训与文化建设
 
@@ -274,7 +286,9 @@ def parse_first_frontmatter(content: str) -> tuple[dict, str]:
 | 缺陷趋势分析 | 每月 | 文档 Owner |
 | Pre-commit 钩子维护 | 每半年 | DevOps |
 
----
+```
+```---
+```
 
 ## 7. 度量与持续改进
 
@@ -296,7 +310,9 @@ def parse_first_frontmatter(content: str) -> tuple[dict, str]:
 2. **季度评估**: 评估防护体系有效性，更新检测规则
 3. **年度审计**: 全系统文档审计，验证防护体系覆盖率
 
----
+```
+```---
+```
 
 ## 8. 变更历史
 

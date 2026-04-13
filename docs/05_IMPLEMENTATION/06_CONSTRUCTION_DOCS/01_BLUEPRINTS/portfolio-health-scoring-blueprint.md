@@ -1,35 +1,16 @@
 ---
-
-module_id: PORTFOLIO_HEALTH_SCORING_001
-
+module_id: PORTFOLIO_HEALTH_SCORING_001_9319
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 组合健康度评分
-
-  - 多维度健康评估
-
-  - 健康度趋势追踪
-
-  - 预警机制
-
+- 组合健康度评分
 layer: layer_06
-
 ---
 
 

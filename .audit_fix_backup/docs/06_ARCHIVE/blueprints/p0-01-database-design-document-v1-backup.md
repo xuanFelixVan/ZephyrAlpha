@@ -141,7 +141,7 @@ clickhouse:
 
 
 
----
+```---
 
 
 
@@ -237,7 +237,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('active', 'frozen', 'closed'))
 
 
 
----
+```---
 
 
 
@@ -337,7 +337,7 @@ FOR VALUES FROM ('2026-04-01') TO ('2026-07-01');
 
 
 
----
+```---
 
 
 
@@ -445,7 +445,7 @@ ADD CONSTRAINT chk_position_pct_range CHECK (position_pct >= 0 AND position_pct 
 
 
 
----
+```---
 
 
 
@@ -523,7 +523,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-04-01');
 
 
 
----
+```---
 
 
 
@@ -655,7 +655,7 @@ ADD CONSTRAINT chk_status_valid CHECK (status IN ('pending', 'submitted', 'parti
 
 
 
----
+```---
 
 
 
@@ -773,7 +773,7 @@ FOR VALUES FROM ('2026-04-01') TO ('2026-07-01');
 
 
 
----
+```---
 
 
 
@@ -861,7 +861,7 @@ ADD CONSTRAINT chk_price_positive CHECK (entry_price > 0);
 
 
 
----
+```---
 
 
 
@@ -919,7 +919,7 @@ CREATE INDEX idx_engines_status ON engines(status);
 
 
 
----
+```---
 
 
 
@@ -989,7 +989,7 @@ FOREIGN KEY (engine_id) REFERENCES engines(id) ON DELETE CASCADE;
 
 
 
----
+```---
 
 
 
@@ -1085,7 +1085,7 @@ ADD CONSTRAINT chk_retry_positive CHECK (retry_count >= 0);
 
 
 
----
+```---
 
 
 
@@ -1161,7 +1161,7 @@ FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL;
 
 
 
----
+```---
 
 
 
@@ -1217,7 +1217,7 @@ CREATE INDEX idx_risk_violations_is_resolved ON risk_violations(is_resolved);
 
 
 
----
+```---
 
 
 
@@ -1289,7 +1289,7 @@ FOR VALUES FROM ('2026-01-01') TO ('2026-04-01');
 
 
 
----
+```---
 
 
 
@@ -1351,7 +1351,7 @@ CREATE INDEX idx_alerts_is_resolved ON alerts(is_resolved);
 
 
 
----
+```---
 
 
 
@@ -1419,7 +1419,7 @@ VACUUM ANALYZE trades;
 
 
 
----
+```---
 
 
 
@@ -1467,7 +1467,7 @@ DROP TABLE IF EXISTS trades_2021_q1;
 
 
 
----
+```---
 
 
 
@@ -1535,7 +1535,7 @@ engines (1) ──────< (N) engine_states
 
 
 
----
+```---
 
 
 
@@ -1635,7 +1635,7 @@ connection_pool = psycopg2.pool.ThreadedConnectionPool(
 
 
 
----
+```---
 
 
 
@@ -1731,7 +1731,7 @@ gunzip -c ${BACKUP_FILE} | psql -h localhost -U postgres zephyr_alpha
 
 
 
----
+```---
 
 
 
@@ -1815,7 +1815,7 @@ def migrate_historical_data(csv_file, table_name):
 
 
 
----
+```---
 
 
 
@@ -1911,7 +1911,7 @@ def migrate_historical_data(csv_file, table_name):
 
 
 
----
+```---
 
 
 
@@ -1973,7 +1973,7 @@ def migrate_historical_data(csv_file, table_name):
 
 
 
----
+```---
 
 
 
@@ -2007,7 +2007,7 @@ def migrate_historical_data(csv_file, table_name):
 
 
 
----
+```---
 
 
 

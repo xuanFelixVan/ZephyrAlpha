@@ -1,33 +1,15 @@
 ---
-
-module_id: AUDIT_LOGGING_001
-
+module_id: AUDIT_LOGGING_001_8632
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 安全审计日志
-
-  - 操作审计日志
-
-  - 合规审计日志
-
-  - 审计日志分析
-
+- 安全审计日志
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1182,7 +1164,9 @@ compactor:
 
 
 
----
+```
+```---
+```
 
 
 

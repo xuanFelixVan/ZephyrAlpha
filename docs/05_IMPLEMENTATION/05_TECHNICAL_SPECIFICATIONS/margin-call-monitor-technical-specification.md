@@ -98,7 +98,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -276,7 +278,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -724,7 +728,9 @@ class MarginCallConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1076,7 +1082,9 @@ CREATE TABLE IF NOT EXISTS alert_configurations (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1702,7 +1710,9 @@ class TestMarketLeverageRiskAssessor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1824,7 +1834,9 @@ pytz>=2023.3
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1996,7 +2008,9 @@ performance_benchmarks:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2206,7 +2220,9 @@ performance_benchmarks:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2278,7 +2294,9 @@ performance_benchmarks:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2388,7 +2406,9 @@ performance_benchmarks:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2452,7 +2472,9 @@ performance_benchmarks:
 
 
 
----
+```
+```---
+```
 
 
 

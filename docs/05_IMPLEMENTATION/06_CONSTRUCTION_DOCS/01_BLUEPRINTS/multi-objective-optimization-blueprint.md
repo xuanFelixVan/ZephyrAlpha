@@ -1,10 +1,7 @@
 ---
 responsibility:
 - 多目标优化
-- 目标权衡
-- Pareto前沿
-- 优化目标管理
-module_id: MULTI_OBJECTIVE_OPTIMIZATION_001
+module_id: MULTI_OBJECTIVE_OPTIMIZATION_001_0626
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

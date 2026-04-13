@@ -1,32 +1,21 @@
 ---
-
-module_id: AI_007
-
+module_id: AI_007_7865
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 交易策略团队
-
 responsibility:
-
 - 投资组合优化蓝图设计与实施指导与实施方案
-
 layer: layer_06
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: PORTFOLIO_OPTIMIZATION_AI_001
+```
+module_id: PORTFOLIO_OPTIMIZATION_AI_001_7865
+```
 
 version: 1.0.0
 
@@ -62,7 +51,9 @@ related_documents:
 
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +79,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +121,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -166,7 +161,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -454,7 +451,9 @@ if correlation_matrix[i, j] > 0.7:  #
 
 
 
----
+```
+```---
+```
 
 
 
@@ -656,7 +655,9 @@ class MultiFactorOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -808,7 +809,9 @@ class MultiAssetOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -932,7 +935,9 @@ class MarketAdapter:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1118,7 +1123,9 @@ class PortfolioRiskController:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1284,7 +1291,9 @@ CREATE TABLE strategy_correlations (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1358,7 +1367,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1410,7 +1421,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1438,7 +1451,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1468,7 +1483,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1476,7 +1493,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1532,7 +1551,9 @@ Beta?.85
 
 
 
----
+```
+```---
+```
 
 
 

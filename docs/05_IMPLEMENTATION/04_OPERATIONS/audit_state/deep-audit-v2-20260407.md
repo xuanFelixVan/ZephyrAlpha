@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_DEEP_AUDIT_V2_20260407
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_DEEP_AUDIT_V2_20260407_5926
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -31,7 +31,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -43,7 +45,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -971,7 +975,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3459,7 +3465,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3471,7 +3479,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4209,7 +4219,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4273,7 +4285,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,35 +1,19 @@
 ---
-
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001
-
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_001_9734
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 舆情分析层中期改进综合蓝(Medium-Term Improvement Blueprint)文档
-
 layer: layer_03
-
 standard_type: 专业机构级蓝图
-
 applicable_scope: 舆情分析层中期改进模块
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_period: 3-6个月
-
 included_modules: null
-
 ---
 
 
@@ -72,7 +56,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -94,7 +80,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -262,7 +250,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -412,7 +402,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +560,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -604,7 +598,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +632,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -668,7 +666,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -700,7 +700,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -732,7 +734,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -766,7 +770,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -796,7 +802,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -824,7 +832,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -864,7 +874,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -914,7 +926,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -926,13 +940,17 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-02 | **状*: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -988,7 +1006,9 @@ included_modules: null
 
 
 
----
+```
+```---
+```
 
 
 

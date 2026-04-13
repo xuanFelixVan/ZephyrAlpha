@@ -1,32 +1,21 @@
 ---
-
-module_id: INVESTMENTCONSTRAINTBLUEPRIN_001
-
+module_id: INVESTMENTCONSTRAINTBLUEPRIN_001_0427
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_09
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: INVESTMENT_CONSTRAINT_001
+```
+module_id: INVESTMENT_CONSTRAINT_001_0427
+```
 
 version: 1.0.0
 
@@ -50,7 +39,9 @@ open_source_solution: "PyPortfolioOpt + skfolio"
 
 priority: P1
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +119,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 > **版本**: v1.0
 
@@ -142,7 +135,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +183,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -382,7 +379,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -838,7 +837,9 @@ class RuleConfigurationManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1488,7 +1489,9 @@ class ViolationDetector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2060,7 +2063,9 @@ class AdjustmentSuggestionEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2254,7 +2259,9 @@ class SkfolioIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2310,7 +2317,9 @@ class SkfolioIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2330,13 +2339,17 @@ class SkfolioIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2392,7 +2405,9 @@ class SkfolioIntegration:
 
 
 
----
+```
+```---
+```
 
 
 

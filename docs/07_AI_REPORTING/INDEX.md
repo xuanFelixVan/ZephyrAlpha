@@ -1,121 +1,85 @@
 ---
-module_id: 07_AI_REPORTING_INDEX_AI_REPORTING_001
-version: 1.0.1
+module_id: LAYER_07_INDEX_AUTO
+version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: '2026-04-11'
-owner: 首席文档架构师
-responsibility:
-- 目录导航与文档索引管理与优化维护
-standard_type: 专业量化机构目录索引
-applicable_scope: Layer 7 - AI 报告层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_07
+compliance_level: 强制标准
+priority: P0-CRITICAL
 layer: layer_07
+responsibility:
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
+# LAYER_07 自动索引
 
-# Layer 7：AI 报告层目录索引
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 51
 
-> **核心职责**: 目录导航和文档索引  
-> **职责边界**:
-> - ✅ 本文档负责：`docs/07_AI_REPORTING/` 导航与门面互指
-> - ❌ 本文档不负责：其他 Layer 正文的实质性改写
+## 文档列表
 
-> **版本**: v5.3（叙事口径）  
-> **架构**: Layer 7 - AI 报告层  
-> **最后更新**: 2026-04-11
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [ai-memory-architecture-completeness-analysis](./ai-memory-architecture-completeness-analysis.md)
+- [ai-memory-architecture-supplement-plan](./ai-memory-architecture-supplement-plan.md)
+- [ai-memory-modules-blueprint-collection](./ai-memory-modules-blueprint-collection.md)
+- [ai-memory-supplement-completion-report](./ai-memory-supplement-completion-report.md)
+- [backtest-results-management-blueprint](./backtest-results-management-blueprint.md)
+- [complete-blueprint-supplement-report](./complete-blueprint-supplement-report.md)
+- [configuration-management-center-blueprint](./configuration-management-center-blueprint.md)
+- [data-quality-monitoring-legacy-10-ai-workflow](./data-quality-monitoring-legacy-10-ai-workflow.md)
+- [deleted-content-review-report](./deleted-content-review-report.md)
+- [deleted-files-recovery-assessment-report](./deleted-files-recovery-assessment-report.md)
+- [experiment-memory-blueprint](./experiment-memory-blueprint.md)
+- [factor-effectiveness-monitoring-blueprint](./factor-effectiveness-monitoring-blueprint.md)
+- [historical-replay-system-blueprint](./historical-replay-system-blueprint.md)
+- [intelligent-anomaly-detection-blueprint](./intelligent-anomaly-detection-blueprint.md)
+- [intelligent-parameter-optimization-blueprint](./intelligent-parameter-optimization-blueprint.md)
+- [intelligent-report-distribution-blueprint](./intelligent-report-distribution-blueprint.md)
+- [intelligent-scheduling-system-blueprint](./intelligent-scheduling-system-blueprint.md)
+- [ips-management-blueprint](./ips-management-blueprint.md)
+- [knowledge-management-blueprint](./knowledge-management-blueprint.md)
+- [layer-7-deep-audit-report-v10-20260407](./layer-7-deep-audit-report-v10-20260407.md)
+- [layer-7-deep-audit-report-v11-20260407](./layer-7-deep-audit-report-v11-20260407.md)
+- [layer-7-deep-audit-report-v12-20260407](./layer-7-deep-audit-report-v12-20260407.md)
+- [layer-7-final-completeness-assessment-report](./layer-7-final-completeness-assessment-report.md)
+- [layer-7-gap-analysis-and-supplement-blueprint](../10_AI_WORKFLOW/layer-7-gap-analysis-and-supplement-blueprint.md)
+- [market-microstructure-analysis-blueprint](./market-microstructure-analysis-blueprint.md)
+- [mempalace-architecture-review-report](./mempalace-architecture-review-report.md)
+- [mempalace-integration-blueprint](./mempalace-integration-blueprint.md)
+- [model-memory-blueprint](./model-memory-blueprint.md)
+- [model-monitoring-drift-detection-blueprint](./model-monitoring-drift-detection-blueprint.md)
+- [open-source-integration-blueprint](./open-source-integration-blueprint.md)
+- [portfolio-attribution-technical-specification](./portfolio-attribution-technical-specification.md)
+- [portfolio-diagnostics-blueprint](./portfolio-diagnostics-blueprint.md)
+- [portfolio-optimization-layer-blueprint](./portfolio-optimization-layer-blueprint.md)
+- [portfolio-performance-evaluation-technical-specification](./portfolio-performance-evaluation-technical-specification.md)
+- [post-trade-review-blueprint](./post-trade-review-blueprint.md)
+- [production-monitoring-blueprint](./production-monitoring-blueprint.md)
+- [research-workflow-management-blueprint](../10_AI_WORKFLOW/research-workflow-management-blueprint.md)
+- [research-workflow-management-blueprint-legacy-p1-cleanup-archive](./research-workflow-management-blueprint-legacy-p1-cleanup-archive.md)
+- [risk-budget-management-blueprint](./risk-budget-management-blueprint.md)
+- [risk-control-ai-blueprint](./risk-control-ai-blueprint.md)
+- [scenario-analysis-stress-test-blueprint](./scenario-analysis-stress-test-blueprint.md)
+- [signal-decay-analysis-blueprint](./signal-decay-analysis-blueprint.md)
+- [strategy-lifecycle-management-blueprint](../10_AI_WORKFLOW/strategy-lifecycle-management-blueprint.md)
+- [strategy-version-control-blueprint](./strategy-version-control-blueprint.md)
+- [stress-testing-system-technical-specification](./stress-testing-system-technical-specification.md)
+- [trade-execution-analysis-blueprint](./trade-execution-analysis-blueprint.md)
+- [transaction-cost-analysis-blueprint](../10_AI_WORKFLOW/transaction-cost-analysis-blueprint.md)
+- [var-es-monitoring-technical-specification](./var-es-monitoring-technical-specification.md)
 
----
-
-## 上级与接力
-
-- [docs 根索引](../INDEX.md)
-- [本目录 README（概述）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
-- 全仓库文件治理任务清单 §7
-- 治理工具总索引
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
-
-### 索引健全性与目录体量（P5 §7）
-
-- **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260504.md（`scan_index_health.py --prefix docs/07_AI_REPORTING --date 20260504`；**zero_inbound=0**；候选 md **2**；首轮 **`README.md`** 零入链，已由 [`docs/INDEX.md`](../INDEX.md) Layer 7 行与本页链 `README` 后复跑归零）
-- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/07_AI_REPORTING` **2** 条路径）
-
----
-
-## 🎯 目录职责
-
-本目录存放 Layer 7 AI 报告层文档，包括：
-
-- 绩效归因分析
-- 自动报告生成系统
-- 风险报告
-- 合规报告
-- 投资决策报告
-
----
-
-## 📚 核心文档
-
-### 蓝图文档
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| AI 报告层蓝图 | Layer 7 总体架构设计 | ⭐⭐⭐⭐⭐ |
-
-### 子模块（规划中）
-
-| 目录名称 | 说明 | 状态 |
-|---------|------|------|
-| `performance/` | 绩效归因分析 | 🔄 规划中 |
-| `attribution/` | 归因分析报告 | 🔄 规划中 |
-| `auto_reporting/` | 自动报告生成 | 🔄 规划中 |
-| `risk_reporting/` | 风险报告 | 🔄 规划中 |
-| `compliance_reporting/` | 合规报告 | 🔄 规划中 |
-
----
-
-## 📖 快速导航
-
-### 核心功能
-
-1. **绩效归因**: 多维度绩效分解与归因分析  
-2. **自动报告**: AI 驱动的自动化报告生成  
-3. **风险报告**: 实时风险监控与报告  
-4. **合规报告**: 监管合规报告自动生成  
-
-### 技术栈
-
-- **报告引擎**: Jinja2 模板引擎  
-- **数据可视化**: Plotly, Matplotlib  
-- **AI 增强**: GLM-4 自动报告生成  
-- **数据源**: Layer 5–6 执行数据  
 
 ---
 
-## 🔗 相关文档
-
-- [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
-- [人机交互层 (Layer 8)](../08_HUMAN_AI_INTERFACE/INDEX.md)
-- [执行层 (Layer 5)](../04_EXECUTION/INDEX.md)
-
----
-
-## 📊 文档统计
-
-| 统计项 | 数量 |
-|--------|------|
-| 蓝图文档 | 1 |
-| 技术文档 | 0 |
-| 实施文档 | 0 |
-| **总计** | **1** |
-
----
-
-## 📝 维护说明
-
-- **创建日期**: 2026-04-04  
-- **最后更新**: 2026-04-11  
-- **维护者**: 系统架构师  
-- **更新频率**: 按需更新  
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.113431
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

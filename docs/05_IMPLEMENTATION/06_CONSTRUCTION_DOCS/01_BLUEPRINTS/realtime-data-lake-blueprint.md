@@ -1,33 +1,15 @@
 ---
-
-module_id: REALTIME_DATA_LAKE_001
-
+module_id: REALTIME_DATA_LAKE_001_4839
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 实时数据湖
-
-- 流式入湖
-
-- 实时查询
-
-- 数据湖架构
-
 layer: layer_05
-
 ---
 
 

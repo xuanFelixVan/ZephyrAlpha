@@ -1,6 +1,15 @@
+---
+module_id: AUTO_78856
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: INDEX_UPDATE_MECHANISM_001
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 系统实施与部署管理与优化维护
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 文档索引更新机制
@@ -40,7 +51,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +93,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -142,7 +157,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +231,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +319,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +395,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -424,7 +447,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -510,7 +535,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -574,7 +601,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -634,7 +663,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -682,7 +713,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -772,7 +805,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 
@@ -794,7 +829,9 @@ ls docs/01_FRAMEWORK/*.md | 对比 INDEX.md中的文件列表
 
 
 
----
+```
+```---
+```
 
 
 

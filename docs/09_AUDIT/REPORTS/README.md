@@ -21,7 +21,7 @@ layer: layer_09
 
 1. `INDEX_GROUPED_REPORTS_20260408.md` — 按主题分组浏览  
 2. [`INDEX.md`](./INDEX.md) — 全量索引与快速入口  
-3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)  
+3. 夜间审计快照：[`../STATE/overnight_runs/INDEX.md`](../../12_MODULE_DESIGNS/layer_0/INDEX.md)  
 4. 整仓按目录尽治（REPO_WIDE **§7**）：`../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md`
 
 ## 目录体量（与仓库快照对齐）
@@ -41,7 +41,7 @@ layer: layer_09
 ## 上级入口
 
 - [审计域总索引 `../INDEX.md`](../INDEX.md)  
-- [STATE 子域索引 `../STATE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)（机器产出 / 台账 / rollup）  
+- [STATE 子域索引 `../STATE/INDEX.md`](../../12_MODULE_DESIGNS/layer_0/INDEX.md)（机器产出 / 台账 / rollup）  
 - 治理工具总索引 `GOVERNANCE_TOOLS_INDEX.md`  
 - L1 治理快照（20260408）`SENTINEL_L1_SCAN_20260408`  
 - [文档总入口 `../../INDEX.md`](../../INDEX.md)

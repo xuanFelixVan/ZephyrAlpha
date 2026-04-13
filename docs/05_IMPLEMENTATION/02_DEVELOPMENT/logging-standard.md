@@ -75,7 +75,9 @@ logger.debug(f"循环?{i} ?)  # 生产环境不应输出
 
 
 
----
+```
+```---
+```
 
 
 
@@ -151,7 +153,9 @@ logger.info(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -319,7 +323,9 @@ logging:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -383,7 +389,9 @@ data_{source}_{YYYYMMDD}.log    # 数据获取日志
 
 
 
----
+```
+```---
+```
 
 
 
@@ -519,7 +527,9 @@ class LogSanitizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -653,7 +663,9 @@ TRADE_LOG_FORMAT = "[{timestamp}] [{level}] [{order_id}] [{account_id}] [{stock_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -715,7 +727,9 @@ alert_rules:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -755,7 +769,9 @@ grep "TRADE" logs/trade_20260328.log | grep FILLED
 
 
 
----
+```
+```---
+```
 
 
 
@@ -775,7 +791,9 @@ grep "TRADE" logs/trade_20260328.log | grep FILLED
 
 
 
----
+```
+```---
+```
 
 
 

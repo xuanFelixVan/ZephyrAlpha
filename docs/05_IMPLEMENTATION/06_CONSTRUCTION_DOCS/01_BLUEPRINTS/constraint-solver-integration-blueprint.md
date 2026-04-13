@@ -1,35 +1,16 @@
 ---
-
-module_id: CONSTRAINT_SOLVER_INTEGRATION_001
-
+module_id: CONSTRAINT_SOLVER_INTEGRATION_001_6691
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 约束求解器集成
-
-  - 凸优化求解
-
-  - 约束冲突检测
-
-  - 约束优先级管理
-
+- 约束求解器集成
 layer: layer_06
-
 ---
 
 

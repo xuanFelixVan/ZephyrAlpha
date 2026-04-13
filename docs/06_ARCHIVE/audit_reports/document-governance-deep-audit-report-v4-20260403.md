@@ -67,7 +67,9 @@ owner: 文档管理团队
 
 
 
----
+```
+```---
+```
 
 
 
@@ -155,7 +157,9 @@ owner: 文档管理团队
 
 
 
----
+```
+```---
+```
 
 
 
@@ -271,7 +275,9 @@ owner: 文档管理团队
 
 
 
----
+```
+```---
+```
 
 
 
@@ -335,7 +341,9 @@ owner: 文档管理团队
 
 
 
----
+```
+```---
+```
 
 
 
@@ -385,7 +393,7 @@ owner: 文档管理团队
 
 
 
----
+```---
 
 
 
@@ -423,7 +431,7 @@ git mv docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIM
 
 
 
----
+```---
 
 
 
@@ -451,7 +459,7 @@ git mv docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIM
 
 3. **хоЪцЬЯхобшоб**: х╗║шооцпПцЬИцЙзшбМф╕АцмбцЦЗцбгц▓╗чРЖхобшо?
 
----
+```---
 
 
 
@@ -475,7 +483,7 @@ git mv docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIM
 
 - тЬ?хобшобч╗Ушо║хЯ║ф║ОхПпщкМшпБшпБцН?- тЬ?хобшобх╗║шоохЕ╖цЬЙхПпцУНф╜ЬцА?
 
----
+```---
 
 
 
@@ -511,7 +519,7 @@ git mv docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIM
 
 
 
----
+```---
 
 
 
@@ -521,7 +529,7 @@ git mv docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/MARKET_PARTICIPANT_SIM
 
 **ф╕Лцмбхобшоб**: х╗║шооцпПцЬИцЙзшбМф╕Ацм?
 
----
+```---
 
 
 

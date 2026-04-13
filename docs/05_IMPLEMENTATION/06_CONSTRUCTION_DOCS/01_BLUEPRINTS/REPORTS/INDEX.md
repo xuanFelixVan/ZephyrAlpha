@@ -1,25 +1,15 @@
 ---
-
-module_id: INDEX_REPORTS_001
-
+module_id: INDEX_REPORTS_001_05_IMPLEMENTATION_1449
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-12
-
 last_updated: 2026-04-12
-
 owner: 文档治理系统
-
 standard_type: 索引文档
-
 applicable_scope: 报告文档管理
-
 compliance_level: 专业标准
-
 layer: layer_05
-responsibility: "处理INDEX相关业务"
+responsibility: 处理INDEX相关业务
 ---
 
 
@@ -40,7 +30,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +56,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,11 +94,13 @@ responsibility: "处理INDEX相关业务"
 
 - P1 Infrastructure Blueprints Completion Report 20260407 - `P1_INFRASTRUCTURE_BLUEPRINTS_COMPLETION_REPORT_20260407`
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `01_BLUEPRINTS_REPORTS_README_001`
+- ~~[Readme]~~ - `01_BLUEPRINTS_REPORTS_README_001`
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +132,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +150,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -168,7 +168,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

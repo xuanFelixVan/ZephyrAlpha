@@ -1,67 +1,20 @@
 ---
-
-module_id: STREAMLIT_BACKTEST_INTERFACE_001
-
+module_id: STREAMLIT_BACKTEST_INTERFACE_001_7738
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-05
-
+created_date: '2026-04-05'
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 8 - Streamlit交互式回测界面
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Two Sigma Research Platform
-
-- Citadel Quant Dashboard
-
-- Renaissance Backtest Interface
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- GRAFANA_MONITORING_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
 layer: layer_08
-
-responsibility_boundary: '本文档负责Streamlit交互式回测界面设计，包括：
-
-
-
-  - 交互式回测界面
-
-
-
-  - 回测参数配置
-
-
-
-  - 回测结果可视化
-
-
-
-
-
-  人机交互层战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md'
-
-responsibility:
-
-- STREAMLIT_BACKTEST_INTERFACE蓝图设计
-
+responsibility_boundary: '''本文档负责Streamlit交互式回测界面设计，包括：'
+responsibility: ''
 ---
 
 # Streamlit交互式回测界面蓝图
@@ -88,7 +41,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -134,7 +89,9 @@ Streamlit交互式回测界面是Layer 8人机交互层的**快速原型工具**
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +171,9 @@ Streamlit交互式回测界面是Layer 8人机交互层的**快速原型工具**
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1100,7 +1059,9 @@ class StrategyParameterManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1366,7 +1327,9 @@ def create_interactive_chart(result: Dict):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1424,7 +1387,9 @@ streamlit run backtest_dashboard.py --server.address 0.0.0.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1468,7 +1433,9 @@ streamlit run backtest_dashboard.py --server.address 0.0.0.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1512,7 +1479,9 @@ Streamlit交互式回测界面通过**开源优先策略**，实现了：
 
 4. 开发因子分析+报告（第6-7天）
 
----
+```
+```---
+```
 
 
 
@@ -1568,7 +1537,9 @@ Streamlit交互式回测界面通过**开源优先策略**，实现了：
 
 
 
----
+```
+```---
+```
 
 
 

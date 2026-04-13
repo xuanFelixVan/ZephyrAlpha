@@ -1,5 +1,5 @@
 ---
-module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION
+module_id: SENTIMENT_ANALYSIS_MEDIUM_TERM_TECHNICAL_SPECIFICATION_4892
 version: 1.0.0
 status: Active
 owner: 待指定
@@ -59,7 +59,9 @@ last_updated: '2026-04-13'
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_TEMPLATES_PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE
+module_id: 09_AUDIT_TEMPLATES_PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE_4961
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -315,7 +315,9 @@ v{主版本}.{次版本}.{修订版本}
 
 ```yaml
 
-module_id: DOC_[分类]_[编号]
+```
+module_id: DOC_[分类]_[编号]_4961
+```
 
 version: v1.0
 

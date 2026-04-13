@@ -60,7 +60,7 @@ related_documents:
 
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 
----
+```---
 
 
 
@@ -86,7 +86,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -130,7 +130,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -166,7 +166,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -348,7 +348,7 @@ class StageIdentifier:
 
 
 
----
+```---
 
 
 
@@ -466,7 +466,7 @@ class EmergingStageManager:
 
 
 
----
+```---
 
 
 
@@ -594,7 +594,7 @@ class GrowingStageManager:
 
 
 
----
+```---
 
 
 
@@ -668,7 +668,7 @@ class MatureStageManager:
 
 
 
----
+```---
 
 
 
@@ -828,7 +828,7 @@ class FailureDetector:
 
 
 
----
+```---
 
 
 
@@ -950,7 +950,7 @@ class DiversityManager:
 
 
 
----
+```---
 
 
 
@@ -1118,7 +1118,7 @@ CREATE TABLE strategy_pool_status (
 
 
 
----
+```---
 
 
 
@@ -1202,7 +1202,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1246,7 +1246,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1268,7 +1268,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1298,7 +1298,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1306,7 +1306,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 
@@ -1362,7 +1362,7 @@ class StrategyLifecycleTextInterface:
 
 
 
----
+```---
 
 
 

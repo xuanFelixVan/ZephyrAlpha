@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -112,7 +112,7 @@ responsibility: "处理INDEX相关业务"
 
 - Project Office Ai Handoff - `PROJECT_OFFICE_AI_HANDOFF_001`
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `00_MANAGEMENT_README_001`
+- ~~[Readme]~~ - `00_MANAGEMENT_README_001`
 
 - Repo Root Governance Playbook - `REPO_ROOT_GOVERNANCE_PLAYBOOK_001`
 
@@ -120,7 +120,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -152,7 +152,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -168,7 +168,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -184,7 +184,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

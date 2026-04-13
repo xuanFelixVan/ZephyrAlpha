@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_AUTOML_PIPELINE_BLUEPRINT
+module_id: 01_FRAMEWORK_AUTOML_PIPELINE_BLUEPRINT_7295
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Automl Pipeline Blueprint相关业务
-created_date: 2026-04-03
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-03'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P2
-responsibility_boundary: '本文档负责Layer 4机器学习层的AutoML流水线设计，包括自动特征工程、自动模型选择、自动调参等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的AutoML流水线设计，包括自动特征工程、自动模型选择、自动调参等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -69,7 +68,9 @@ AutoML是自动化机器学习流程的技术：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -135,7 +136,7 @@ AutoML是自动化机器学习流程的技术：
 
 
 
----
+```---
 
 
 
@@ -393,7 +394,7 @@ class AutoMLPipeline:
 
 
 
----
+```---
 
 
 
@@ -445,7 +446,7 @@ h2o>=3.40.0
 
 
 
----
+```---
 
 
 
@@ -479,7 +480,7 @@ h2o>=3.40.0
 
 
 
----
+```---
 
 
 
@@ -497,7 +498,7 @@ h2o>=3.40.0
 
 
 
----
+```---
 
 
 
@@ -609,7 +610,7 @@ h2o>=3.40.0
 
 
 
----
+```---
 
 
 

@@ -1,35 +1,17 @@
 ---
-
-module_id: TRANSACTION_COST_AWARE_REBALANCING_001
-
+module_id: TRANSACTION_COST_AWARE_REBALANCING_001_2248
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 成本感知再平衡
-
-  - 交易成本感知优化
-
-  - 再平衡策略
-
-  - 交易成本控制与优化
-
+- 成本感知再平衡
 layer: layer_06
-
+audit_status: HARDCODED_PARAMS_TO_L0
 ---
 
 

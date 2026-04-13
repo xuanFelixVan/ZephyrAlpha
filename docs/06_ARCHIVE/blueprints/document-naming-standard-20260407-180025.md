@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_BLUEPRINTS_DOCUMENT_NAMING_STANDARD_20260407_180025
+module_id: 06_ARCHIVE_BLUEPRINTS_DOCUMENT_NAMING_STANDARD_20260407_180025_3480
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -61,7 +61,9 @@ implementation_status: 已完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -125,7 +127,9 @@ implementation_status: 已完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -175,7 +179,9 @@ implementation_status: 已完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -189,9 +195,9 @@ implementation_status: 已完成
 
 ```yaml
 
----
+```---
 
-module_id: [唯一标识符]
+module_id: [唯一标识符]_3480
 
 version: [版本号]
 
@@ -213,7 +219,7 @@ parent_document: [父文档路径]
 
 implementation_status: [实施状态]
 
----
+```---
 
 ```
 
@@ -237,7 +243,7 @@ related_documents: [相关文档]
 
 keywords: [关键词]
 
----
+```---
 
 ```
 
@@ -275,7 +281,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -325,7 +333,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -381,7 +391,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -421,7 +433,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -461,7 +475,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -481,7 +497,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -497,7 +515,9 @@ keywords: [关键词]
 
 
 
----
+```
+```---
+```
 
 
 

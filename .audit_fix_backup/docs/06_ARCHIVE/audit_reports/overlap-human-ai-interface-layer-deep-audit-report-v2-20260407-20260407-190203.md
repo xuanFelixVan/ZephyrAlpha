@@ -42,7 +42,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -90,7 +90,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -118,9 +118,8 @@ responsibility:
 
 # 第一个YAML头（错误）
 
----
+```---
 
-module_id: LAYER_004  # 错误的module_id
 
 version: 1.0.0
 
@@ -128,15 +127,14 @@ status: Active
 
 ...
 
----
+```---
 
 
 
 # 第二个YAML头（正确）
 
----
+```---
 
-module_id: HUMAN_AI_INTERFACE_LAYER_TECHNICAL_BLUEPRINT_001
 
 version: 1.0.0
 
@@ -144,7 +142,7 @@ status: Archived  # 已归档状态
 
 ...
 
----
+```---
 
 ```
 
@@ -158,7 +156,7 @@ status: Archived  # 已归档状态
 
 
 
----
+```---
 
 
 
@@ -210,7 +208,7 @@ status: Archived  # 已归档状态
 
 
 
----
+```---
 
 
 
@@ -236,9 +234,8 @@ status: Archived  # 已归档状态
 
 ```yaml
 
----
+```---
 
-module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
 # 缺少以下字段：
 
@@ -256,7 +253,7 @@ module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
 # ...
 
----
+```---
 
 ```
 
@@ -270,7 +267,7 @@ module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
 
 
----
+```---
 
 
 
@@ -310,7 +307,7 @@ module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
 
 
----
+```---
 
 
 
@@ -336,7 +333,7 @@ module_id: HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT_001
 
 
 
----
+```---
 
 
 
@@ -376,7 +373,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -420,7 +417,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -450,7 +447,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -466,7 +463,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -482,7 +479,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -498,7 +495,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -514,7 +511,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -568,7 +565,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -612,7 +609,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -656,7 +653,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 

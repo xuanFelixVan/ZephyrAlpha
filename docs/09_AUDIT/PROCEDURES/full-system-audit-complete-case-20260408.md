@@ -1,41 +1,18 @@
 ---
-
-module_id: AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408
-
+module_id: AUDIT_COMPLETE_CASE_FULL_SYSTEM_20260408_7701
 version: 1.1.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 系统维护者
-
 standard_type: 审计全案
-
 applicable_scope: 全仓库 Markdown 文档治理审计
-
 compliance_level: 个人/AI 维护可执行
-
 parent_document: ./INDEX.md
-
 related_documents:
-
-  - ../STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md
-
-  - ./FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md
-
+- ../STATE/MD_FILES_BY_SUBDIRECTORY_20260408.md
 responsibility:
-
-  - 与子目录级文件清单配套的完整审计全案
-
-  - 重复内容分类、判定与处理办法（可执行）
-
-  - Git 历史价值挖掘、编码与目录治理等扩展风险说明
-
-  - 与专业机构审计方式的差距及可落地的补齐项
-
+- 与子目录级文件清单配套的完整审计全案
 layer: layer_09
 ---
 
@@ -56,7 +33,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -134,7 +113,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +139,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -290,7 +273,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -318,7 +303,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -338,7 +325,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -362,7 +351,9 @@ python scripts/generate_md_inventory_by_dir.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +447,9 @@ git reflog --date=local -20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +561,9 @@ git reflog --date=local -20
 
 
 
----
+```
+```---
+```
 
 
 
@@ -656,7 +651,9 @@ git reflog --date=local -20
 
 
 
----
+```
+```---
+```
 
 
 

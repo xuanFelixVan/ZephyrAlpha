@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_at": "2026-04-13T12:30:39.471050",
+    "purpose": "全局系统常量真源中心",
+    "status": "PLACEHOLDER_FOR_FUTURE_IMPLEMENTATION"
+  },
+  "risk_parameters": {
+    "max_position_size": "TBD",
+    "min_order_amount": "TBD",
+    "risk_limit": "TBD",
+    "stop_loss": "TBD",
+    "take_profit": "TBD",
+    "leverage": "TBD",
+    "slippage": "TBD"
+  },
+  "notes": [
+    "此文件为L0层真源中心占位符",
+    "所有L5层硬编码参数应在此处定义",
+    "当前所有参数值为 TBD（待定），需后续补充"
+  ]
+}

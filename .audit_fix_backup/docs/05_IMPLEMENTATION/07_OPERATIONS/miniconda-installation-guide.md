@@ -48,7 +48,7 @@ https: //docs.conda.io/en/latest/miniconda.html
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ https: //docs.conda.io/en/latest/miniconda.html
 
 
 
----
+```---
 
 
 
@@ -106,7 +106,7 @@ Python 3.12.x
 
 
 
----
+```---
 
 
 
@@ -134,7 +134,7 @@ python scripts/verify_qmt_environment.py
 
 
 
----
+```---
 
 
 
@@ -172,7 +172,7 @@ C: （待补充）
 
 
 
----
+```---
 
 
 
@@ -208,7 +208,7 @@ python --version
 
 
 
----
+```---
 
 
 
@@ -258,7 +258,7 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xtquant pandas numpy
 
 
 
----
+```---
 
 
 
@@ -304,7 +304,7 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xtquant pandas numpy
 
 
 
----
+```---
 
 
 

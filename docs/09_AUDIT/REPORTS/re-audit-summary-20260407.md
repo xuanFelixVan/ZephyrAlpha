@@ -1,23 +1,13 @@
 ---
-
-module_id: LAYER1_RE_AUDIT_SUMMARY_20260407_001
-
+module_id: LAYER1_RE_AUDIT_SUMMARY_20260407_001_2484
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 standard_type: 专业量化机构文档
-
 responsibility: Layer 1再次审计总结与修复报告
-
 layer: layer_01
-
 ---
 
 # Layer 1 再次深度审计总结报告
@@ -32,7 +22,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -94,7 +86,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -216,7 +210,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -262,7 +258,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -292,7 +290,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -330,7 +330,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +350,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -364,7 +368,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 

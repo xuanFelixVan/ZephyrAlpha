@@ -116,7 +116,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +376,9 @@ python src/factor_backtest/engine.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -628,7 +632,9 @@ scrapy crawl sentiment_spider
 
 
 
----
+```
+```---
+```
 
 
 
@@ -860,7 +866,9 @@ uvicorn api:app --host 0.0.0.0 --port 8000
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1070,7 +1078,9 @@ python src/feature_engineering/automated.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1390,7 +1400,9 @@ pytest tests/test_model.py --cov=src --cov-report=html
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1686,7 +1698,9 @@ python src/model_observability/monitor.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1992,7 +2006,9 @@ python src/model_lifecycle/manager.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2450,7 +2466,9 @@ python src/order_routing/smart_router.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2746,7 +2764,9 @@ python src/risk_budget/dynamic_budget.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3102,7 +3122,9 @@ python src/ai_report/generator.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3494,7 +3516,9 @@ python src/ai_explainer/explainer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3846,7 +3870,9 @@ python src/research_project/manager.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3924,7 +3950,9 @@ python src/research_project/manager.py
 
 
 
----
+```
+```---
+```
 
 
 

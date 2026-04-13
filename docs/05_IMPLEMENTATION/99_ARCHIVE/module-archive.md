@@ -1,6 +1,15 @@
+---
+module_id: AUTO_05626
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: IMPL_ARCHIVE_MODULE_001
+```
 
 version: 1.0.1
 
@@ -27,7 +36,9 @@ responsibility:
 - 数据质量 (Layer 1)
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 已归档模?(ARCHIVED)
@@ -54,7 +65,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +93,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +177,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +211,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -212,7 +231,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -38,7 +38,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -116,7 +116,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -172,7 +172,7 @@ cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md docs/XX_CATEGORY/NEW_DOCUMENT.md
 
 ```yaml
 
----
+```---
 
 standard_type: وٹ€وœو–‡و،?
 
@@ -186,13 +186,12 @@ owner: و–‡و،و‰€وœ‰€?
 
 version: 1.0.0
 
-module_id: MODULE_ID
 
 created_date: 2026-04-02
 
 last_updated: 2026-04-02
 
----
+```---
 
 ```
 
@@ -270,7 +269,7 @@ git push origin feature-branch
 
 
 
----
+```---
 
 
 
@@ -450,7 +449,7 @@ db.Index('idx_user_email', User.email)
 
 
 
----
+```---
 
 
 
@@ -478,7 +477,7 @@ db.Index('idx_user_email', User.email)
 
 
 
----
+```---
 
 
 
@@ -566,7 +565,7 @@ exit 0
 
 
 
----
+```---
 
 
 
@@ -594,7 +593,7 @@ exit 0
 
 
 
----
+```---
 
 
 
@@ -606,7 +605,7 @@ exit 0
 
 
 
----
+```---
 
 
 

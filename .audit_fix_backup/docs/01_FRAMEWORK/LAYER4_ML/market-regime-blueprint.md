@@ -50,7 +50,7 @@ open_source_solution: "hmmlearn + MarketRegimeTrader"
 
 priority: P0
 
----
+```---
 
 
 
@@ -126,7 +126,7 @@ priority: P0
 
 
 
----
+```---
 
 > **版本**: v1.0
 
@@ -140,7 +140,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -186,7 +186,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -374,7 +374,7 @@ priority: P0
 
 
 
----
+```---
 
 
 
@@ -804,7 +804,7 @@ class DataNormalizer:
 
 
 
----
+```---
 
 
 
@@ -1212,7 +1212,7 @@ class StateDecoder:
 
 
 
----
+```---
 
 
 
@@ -1418,7 +1418,7 @@ class StateInterpreter:
 
 
 
----
+```---
 
 
 
@@ -1776,7 +1776,7 @@ class DecisionSupportSystem:
 
 
 
----
+```---
 
 
 
@@ -1880,7 +1880,7 @@ class MarketRegimeStorage:
 
 
 
----
+```---
 
 
 
@@ -2006,7 +2006,7 @@ class MarketRegimeTraderIntegration:
 
 
 
----
+```---
 
 
 
@@ -2068,7 +2068,7 @@ class MarketRegimeTraderIntegration:
 
 
 
----
+```---
 
 
 
@@ -2140,7 +2140,7 @@ class MarketRegimeTester:
 
 
 
----
+```---
 
 
 
@@ -2162,7 +2162,7 @@ class MarketRegimeTester:
 
 
 
----
+```---
 
 
 
@@ -2182,13 +2182,13 @@ class MarketRegimeTester:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -2244,7 +2244,7 @@ class MarketRegimeTester:
 
 
 
----
+```---
 
 
 

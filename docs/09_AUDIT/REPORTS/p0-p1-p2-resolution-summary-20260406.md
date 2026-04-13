@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_REPORTS_P0_P1_P2_RESOLUTION_SUMMARY_20260406
+module_id: 09_AUDIT_REPORTS_P0_P1_P2_RESOLUTION_SUMMARY_20260406_8007
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -47,7 +47,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -149,7 +151,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -259,7 +263,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -327,7 +333,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -375,7 +383,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -471,7 +481,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -505,7 +517,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -535,7 +549,9 @@ Message: fix: 删除9个重复归档文档 - P0问题修复
 
 
 
----
+```
+```---
+```
 
 
 
@@ -647,7 +663,9 @@ docs/06_ARCHIVE/duplicate_documents/
 
 
 
----
+```
+```---
+```
 
 
 

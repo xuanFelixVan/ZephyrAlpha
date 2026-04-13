@@ -1,33 +1,15 @@
 ---
-
-module_id: MARKET_MICROSTRUCTURE_MODEL_001
-
+module_id: MARKET_MICROSTRUCTURE_MODEL_001_9483
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供market microstructure model blueprint的架构设计和实施蓝图
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的市场微观结构模型设计，包括订单簿建模、价格发现、流动性分析等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的市场微观结构模型设计，包括订单簿建模、价格发现、流动性分析等核心功能。'
 layer: layer_04
-
 owner: 首席文档架构师
-
 ---
 
 # 市场微观结构模型蓝图
@@ -72,7 +54,9 @@ Citadel
 
 
 
----
+```
+```---
+```
 
 
 
@@ -124,7 +108,9 @@ Citadel
 
 
 
----
+```
+```---
+```
 
 
 
@@ -186,7 +172,7 @@ Citadel
 
 
 
----
+```---
 
 
 
@@ -454,7 +440,7 @@ class MarketMicrostructureModel:
 
 
 
----
+```---
 
 
 
@@ -506,7 +492,7 @@ numba>=0.58.0
 
 
 
----
+```---
 
 
 
@@ -538,7 +524,7 @@ numba>=0.58.0
 
 
 
----
+```---
 
 
 
@@ -556,7 +542,7 @@ numba>=0.58.0
 
 
 
----
+```---
 
 
 
@@ -668,7 +654,7 @@ numba>=0.58.0
 
 
 
----
+```---
 
 
 

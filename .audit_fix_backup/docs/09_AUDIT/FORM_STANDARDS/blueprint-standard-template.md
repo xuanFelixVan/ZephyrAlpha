@@ -23,9 +23,8 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
-module_id: [MODULE_NAME]_001
 
 version: 1.0.0
 
@@ -53,7 +52,7 @@ estimated_effort: [开发周期]
 
 priority: P0/P1/P2
 
----
+```---
 
 ```
 
@@ -97,7 +96,7 @@ priority: P0/P1/P2
 
 
 
----
+```---
 
 
 
@@ -249,7 +248,7 @@ priority: P0/P1/P2
 
 
 
----
+```---
 
 
 
@@ -291,7 +290,7 @@ priority: P0/P1/P2
 
 
 
----
+```---
 
 
 
@@ -335,7 +334,7 @@ priority: P0/P1/P2
 
 
 
----
+```---
 
 
 
@@ -393,7 +392,7 @@ business_architecture: 三级时间框架融合架构
 
 
 
----
+```---
 
 
 
@@ -443,7 +442,7 @@ business_architecture: 三级时间框架融合架构
 
 
 
----
+```---
 
 
 
@@ -479,7 +478,7 @@ python scripts/check_yaml_completeness.py --report --dir docs/05_IMPLEMENTATION/
 
 
 
----
+```---
 
 
 
@@ -501,7 +500,7 @@ python scripts/check_yaml_completeness.py --report --dir docs/05_IMPLEMENTATION/
 
 
 
----
+```---
 
 
 
@@ -517,7 +516,7 @@ python scripts/check_yaml_completeness.py --report --dir docs/05_IMPLEMENTATION/
 
 
 
----
+```---
 
 
 

@@ -1,27 +1,13 @@
 ---
-
-module_id: P0_07_ORDER_MANAGEMENT_001
-
+module_id: P0_07_ORDER_MANAGEMENT_001_0279
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 订单生命周期管理
-
-  - 订单执行
-
-  - 订单查询
-
+- 订单生命周期管理
 layer: layer_05
-
 ---
 
 
@@ -284,7 +270,9 @@ class OrderApplicationService:
 
 
 
----
+```
+```---
+```
 
 
 

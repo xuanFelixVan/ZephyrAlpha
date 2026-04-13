@@ -4,6 +4,8 @@ layer: layer_05
 version: 1.0.0
 responsibility: 处理README相关业务
 status: Active
+owner: System_Architect
+last_updated: 2026-04-13
 ---
 内容已统一至 `../04_OPERATIONS/audit_state`。
 

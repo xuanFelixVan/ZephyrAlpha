@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: DATA_NAMING_STANDARD_001_ARCHIVED_1
@@ -25,7 +32,7 @@ parent_document: ../INDEX.md
 implementation_status: 已完成
 
 layer: layer_06
----
+```---
 
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -36,11 +43,11 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
----
+```---
 
 
 
@@ -96,7 +103,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -146,7 +153,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -210,7 +217,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -260,7 +267,7 @@ layer: layer_06
 
 
 
----
+```---
 
 
 
@@ -274,9 +281,9 @@ layer: layer_06
 
 ```yaml
 
----
+```---
 
-module_id: [唯一标识符]
+module_id: [唯一标识符]_4716
 
 version: [版本号]
 
@@ -298,7 +305,7 @@ parent_document: [父文档路径]
 
 implementation_status: [实施状态]
 
----
+```---
 
 ```
 
@@ -322,7 +329,7 @@ related_documents: [相关文档]
 
 keywords: [关键词]
 
----
+```---
 
 ```
 
@@ -360,7 +367,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -410,7 +417,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -466,7 +473,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -506,7 +513,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -546,7 +553,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -566,7 +573,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 
@@ -582,7 +589,7 @@ keywords: [关键词]
 
 
 
----
+```---
 
 
 

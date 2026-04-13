@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_3
-
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_INDEX_3_9038
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - checklists目录索引
-
+- checklists目录索引
 layer: layer_05
 ---
 
@@ -44,7 +35,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -56,7 +49,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -98,7 +93,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +117,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,15 +127,17 @@ layer: layer_05
 
 
 
-- [运营标准](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[运营标准]~~
 
 - 运营流程
 
-- [运营监控](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[运营监控]~~
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +153,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

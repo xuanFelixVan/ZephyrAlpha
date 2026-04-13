@@ -1,27 +1,13 @@
 ---
-
-module_id: P0_06_ACCOUNT_MANAGEMENT_001
-
+module_id: P0_06_ACCOUNT_MANAGEMENT_001_0977
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 账户生命周期管理
-
-  - 资金管理
-
-  - 账户快照
-
+- 账户生命周期管理
 layer: layer_05
-
 ---
 
 
@@ -248,7 +234,9 @@ class AccountApplicationService:
 
 
 
----
+```
+```---
+```
 
 
 

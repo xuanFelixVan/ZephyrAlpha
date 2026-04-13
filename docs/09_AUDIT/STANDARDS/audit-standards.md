@@ -1,6 +1,15 @@
+---
+module_id: AUTO_13736
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: 09_AUDIT_AUDIT_STANDARDS_20260407124139
+```
+module_id: 09_AUDIT_AUDIT_STANDARDS_20260407124139_5567
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_09
----
+```
+```---
+```
 
 
 

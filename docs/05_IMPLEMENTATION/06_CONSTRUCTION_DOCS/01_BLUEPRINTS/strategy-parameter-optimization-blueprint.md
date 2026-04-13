@@ -1,33 +1,15 @@
 ---
-
-module_id: STRATEGY_PARAMETER_OPTIMIZATION_001
-
+module_id: STRATEGY_PARAMETER_OPTIMIZATION_001_6804
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 策略参数优化
-
-  - 超参数调优
-
-  - 参数搜索
-
-  - 参数验证
-
+- 策略参数优化
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1448,7 +1430,9 @@ CREATE TABLE parameter_trials (
 
 
 
----
+```
+```---
+```
 
 
 

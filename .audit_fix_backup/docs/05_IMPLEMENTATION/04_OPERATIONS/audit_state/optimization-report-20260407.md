@@ -33,7 +33,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -69,7 +69,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -103,7 +103,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -131,9 +131,8 @@ compliance_level: 专业标准
 
 ```yaml
 
---- 
+```--- 
 
-module_id: MONITORING_DASHBOARD_001
 
 ...
 
@@ -141,15 +140,14 @@ compliance_level: 专业标准---
 
 
 
----
+```---
 
-module_id: MONITORING_DASHBOARD_001
 
 ...
 
 layer: Layer 8 (人机交互层)
 
----
+```---
 
 ```
 
@@ -159,9 +157,8 @@ layer: Layer 8 (人机交互层)
 
 ```yaml
 
----
+```---
 
-module_id: MONITORING_DASHBOARD_001
 
 layer: Layer 8 (人机交互层)
 
@@ -169,13 +166,13 @@ responsibility:
 
   - 系统审计分析与质量评估报告与改进建议
 
----
+```---
 
 ```
 
 
 
----
+```---
 
 
 
@@ -209,7 +206,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -225,7 +222,7 @@ responsibility:
 
 
 
----
+```---
 
 
 

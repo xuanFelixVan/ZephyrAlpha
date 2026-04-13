@@ -1,33 +1,15 @@
 ---
-
-module_id: META_LEARNING_001
-
+module_id: META_LEARNING_001_8526
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-03
-
+created_date: '2026-04-03'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供meta learning blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的元学习系统设计，包括学习如何学习、快速适应、少样本学习等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的元学习系统设计，包括学习如何学习、快速适应、少样本学习等核心功能。'
 layer: layer_03
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -72,7 +54,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -148,7 +132,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -284,7 +270,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -892,7 +878,7 @@ class MetaLearningConfig:
 
 
 
----
+```---
 
 
 
@@ -954,7 +940,9 @@ class MetaLearningConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1068,7 +1056,9 @@ numpy>=1.24.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1158,7 +1148,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1226,7 +1218,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1292,7 +1286,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1322,7 +1318,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1366,7 +1364,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1384,7 +1384,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1496,7 +1498,9 @@ class AssetDeployer:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -69,7 +69,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -201,7 +201,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -343,7 +343,7 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
 module_id: FACTOR_配置管理蓝图_001
 
@@ -363,7 +363,7 @@ applicable_scope: 全系统
 
 compliance_level: 专业标准
 
----
+```---
 
 
 
@@ -391,7 +391,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 ```
 
@@ -407,7 +407,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -501,7 +501,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -559,7 +559,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -627,7 +627,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -665,7 +665,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -781,7 +781,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -833,7 +833,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -897,7 +897,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 

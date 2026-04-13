@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_REPORTS_AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V2_20260406
+module_id: 09_AUDIT_REPORTS_AI_WORKFLOW_LAYER_DEEP_AUDIT_REPORT_V2_20260406_6265
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -25,7 +25,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -91,7 +93,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -201,7 +205,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -245,7 +251,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -287,7 +295,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -343,7 +353,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -405,7 +417,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -439,7 +453,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -477,7 +493,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

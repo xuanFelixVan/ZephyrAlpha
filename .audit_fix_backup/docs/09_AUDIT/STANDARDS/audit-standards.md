@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: 09_AUDIT_AUDIT_STANDARDS_20260407124139
@@ -19,7 +26,7 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_09
----
+```---
 
 
 module_id: AUDIT_STD_STANDARDS_001

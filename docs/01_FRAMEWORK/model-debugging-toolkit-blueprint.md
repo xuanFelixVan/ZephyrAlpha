@@ -1,33 +1,15 @@
 ---
-
-module_id: MODEL_DEBUGGING_TOOLKIT_001
-
+module_id: MODEL_DEBUGGING_TOOLKIT_001_1821
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P0
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的模型调试工具包设计，包括梯度分析、激活值分析、权重分析等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的模型调试工具包设计，包括梯度分析、激活值分析、权重分析等核心功能。'
 layer: layer_04
-
 owner: 首席文档架构师
-
 ---
 
 > **核心职责**: 提供model debugging toolkit blueprint的完整架构设计、技术选型和实施路径规划
@@ -72,7 +54,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +114,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +180,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -710,7 +696,7 @@ report_path = debugger.generate_report()
 
 
 
----
+```---
 
 
 
@@ -836,7 +822,7 @@ class TrainingMonitor:
 
 
 
----
+```---
 
 
 
@@ -892,7 +878,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 
@@ -932,7 +918,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 
@@ -966,7 +952,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 
@@ -1036,7 +1022,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 
@@ -1054,7 +1040,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 
@@ -1166,7 +1152,7 @@ captum>=0.7.0
 
 
 
----
+```---
 
 
 

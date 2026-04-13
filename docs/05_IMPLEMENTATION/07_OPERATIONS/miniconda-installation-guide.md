@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_07_OPERATIONS_MINICONDA_INSTALLATION_GUIDE
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_MINICONDA_INSTALLATION_GUIDE_7691
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -48,7 +48,9 @@ https: //docs.conda.io/en/latest/miniconda.html
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +66,9 @@ https: //docs.conda.io/en/latest/miniconda.html
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +110,7 @@ Python 3.12.x
 
 
 
----
+```---
 
 
 
@@ -134,7 +138,7 @@ python scripts/verify_qmt_environment.py
 
 
 
----
+```---
 
 
 
@@ -172,7 +176,9 @@ C: （待补充）
 
 
 
----
+```
+```---
+```
 
 
 
@@ -208,7 +214,9 @@ python --version
 
 
 
----
+```
+```---
+```
 
 
 
@@ -258,7 +266,9 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xtquant pandas numpy
 
 
 
----
+```
+```---
+```
 
 
 
@@ -304,7 +314,9 @@ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple xtquant pandas numpy
 
 
 
----
+```
+```---
+```
 
 
 

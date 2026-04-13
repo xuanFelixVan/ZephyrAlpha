@@ -1,33 +1,15 @@
 ---
-
-module_id: LIVE_TRADING_INTERFACE_001
-
+module_id: LIVE_TRADING_INTERFACE_001_5970
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 券商API接口集成
-
-  - 实盘交易执行
-
-  - 订单管理
-
-  - 账户管理
-
+- 券商API接口集成
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1462,7 +1444,9 @@ CREATE TABLE account_snapshots (
 
 
 
----
+```
+```---
+```
 
 
 

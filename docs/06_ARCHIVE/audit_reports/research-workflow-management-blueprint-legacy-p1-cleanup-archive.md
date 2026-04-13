@@ -1,51 +1,22 @@
 ---
-
-module_id: RESEARCH_WORKFLOW_MANAGEMENT_001_ARCHIVED_1
-
+module_id: RESEARCH_WORKFLOW_MANAGEMENT_001_ARCHIVED_1_8645
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 量化研究工作流管理
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models:
-
 - MLflow Projects
-
-- DVC Pipelines
-
-- Jupyter Lab
-
 open_source_solution: MLflow + DVC + Jupyter
-
 priority: P2
-
 responsibility:
-
 - 研究项目管理
-
-- 实验版本控制
-
-- 研究成果归档
-
-- 协作流程管理
-
 ---
 
 ## 文档职责说明
@@ -76,7 +47,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +113,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -298,7 +273,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -492,7 +469,9 @@ stages:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +615,9 @@ CREATE TABLE research_results (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -740,7 +721,9 @@ CREATE TABLE research_results (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -862,7 +845,9 @@ class IExperimentManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -902,7 +887,9 @@ class IExperimentManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -940,7 +927,9 @@ class IExperimentManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1018,7 +1007,9 @@ dvc push
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1054,7 +1045,9 @@ dvc push
 
 
 
----
+```
+```---
+```
 
 
 

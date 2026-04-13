@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT
-
+module_id: DATA_MASKING_ENCRYPTION_BLUEPRINT_7491
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 数据脱敏加密
-
-  - 敏感数据识别
-
-  - 脱敏规则
-
-  - 加密存储
-
+- 数据脱敏加密
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

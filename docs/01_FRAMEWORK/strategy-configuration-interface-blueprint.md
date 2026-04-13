@@ -1,89 +1,20 @@
 ---
-
-module_id: STRATEGY_CONFIGURATION_INTERFACE_001
-
+module_id: STRATEGY_CONFIGURATION_INTERFACE_001_2885
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 8 - 策略配置界面
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Strategy Configuration
-
-- Renaissance Strategy Management
-
-- Two Sigma Strategy Studio
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
-
-- DECISION_DASHBOARD_BLUEPRINT.md
-
-responsibility_boundary: '本文档负责策略配置界面设计，包括：
-
-
-
-  - 策略参数配置界面
-
-
-
-  - 策略版本管理
-
-
-
-  - 参数回测验证
-
-
-
-  - 策略启用/禁用控制
-
-
-
-  - 参数导入导出
-
-
-
-
-
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-
-
-  回测界面请参考：STREAMLIT_BACKTEST_INTERFACE_BLUEPRINT.md
-
-
-
-  决策仪表板请参考：DECISION_DASHBOARD_BLUEPRINT.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责策略配置界面设计，包括：'
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility:
-
-- STRATEGY_CONFIGURATION_INTERFACE蓝图设计
-
+responsibility: ''
 ---
 
 
@@ -112,7 +43,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +91,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -274,7 +209,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +393,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -498,7 +437,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -542,7 +483,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +505,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -574,7 +519,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

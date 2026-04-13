@@ -1,27 +1,15 @@
 ---
-
-module_id: AUDIT_编码问题文档重建最终完成报告_001
-
+module_id: AUDIT_编码问题文档重建最终完成报告_001_8115
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 审计系统
-
 standard_type: 审计报告
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统审计分析与质量评估报告与改进建议
-
 layer: layer_09
 ---
 
@@ -50,7 +38,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +80,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +154,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -220,7 +214,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +278,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -358,7 +356,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -394,7 +394,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +454,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -520,7 +524,9 @@ foreach ($f in $files) {
 
 
 
----
+```
+```---
+```
 
 
 

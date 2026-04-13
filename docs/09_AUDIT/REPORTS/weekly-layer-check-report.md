@@ -1,6 +1,15 @@
+---
+module_id: AUTO_74606
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 09_AUDIT_WEEKLY_LAYER_CHECK_REPORT_20260407124139
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 定期Layer归属检查报告

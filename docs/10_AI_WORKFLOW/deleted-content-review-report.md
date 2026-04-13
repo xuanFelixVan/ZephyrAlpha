@@ -1,31 +1,17 @@
 ---
-
-module_id: DELETED_CONTENT_REVIEW_001
-
+module_id: DELETED_CONTENT_REVIEW_001_9756
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - Layer 7 AI报告层删除内容审查报告文档
-
 layer: layer_07
-
 standard_type: 专业量化机构审计报告
-
 applicable_scope: Git历史删除内容审查
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 ---
 
 ## 文档职责说明
@@ -42,7 +28,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +48,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +86,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +128,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +156,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +190,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -232,7 +230,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -276,7 +276,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -316,7 +318,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -364,7 +368,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -414,7 +420,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +464,9 @@ parent_document: INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -560,7 +570,9 @@ D       docs/10_AI_WORKFLOW/SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATIO
 
 
 
----
+```
+```---
+```
 
 
 

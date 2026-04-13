@@ -36,7 +36,7 @@ layer: layer_09
 
 
 
-- [docs 根索引](../INDEX.md)
+- ~~[docs 根索引]~~
 
 - 全仓库文件治理任务清单 §7
 
@@ -64,13 +64,13 @@ layer: layer_09
 
 |------|------|------|
 
-| `_archive/` | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | （子目录内历史稿入口） |
+| `_archive/` | ~~[INDEX.md]~~ | （子目录内历史稿入口） |
 
-| `maintenance_records/` | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| `maintenance_records/` | ~~[INDEX.md]~~ | ~~[README.md]~~ |
 
 
 
----
+```---
 
 
 
@@ -82,7 +82,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -110,7 +110,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -132,7 +132,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -200,7 +200,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -304,7 +304,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 

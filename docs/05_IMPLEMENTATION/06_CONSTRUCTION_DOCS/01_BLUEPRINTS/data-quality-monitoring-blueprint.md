@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_QUALITY_MONITORING_001
-
+module_id: DATA_QUALITY_MONITORING_001_1487
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 数据质量监控
-
-- 质量规则
-
-- 质量评分
-
-- 质量报告
-
 layer: layer_05
-
 ---
 
 

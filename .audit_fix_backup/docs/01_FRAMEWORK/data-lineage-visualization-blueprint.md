@@ -132,7 +132,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -184,7 +184,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -344,7 +344,7 @@ Layer 1: 数据预处理层
 
 
 
----
+```---
 
 
 
@@ -812,7 +812,7 @@ class LineageTracker:
 
 
 
----
+```---
 
 
 
@@ -924,7 +924,7 @@ CREATE (source_table)-[:DERIVED_FROM {process: 'process_001'}]->(target_table)
 
 
 
----
+```---
 
 
 
@@ -1034,7 +1034,7 @@ CREATE (source_table)-[:DERIVED_FROM {process: 'process_001'}]->(target_table)
 
 
 
----
+```---
 
 
 
@@ -1106,7 +1106,7 @@ lineage_coverage_gauge = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1138,7 +1138,7 @@ lineage_coverage_gauge = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1160,7 +1160,7 @@ lineage_coverage_gauge = Gauge(
 
 
 
----
+```---
 
 
 
@@ -1198,7 +1198,7 @@ lineage_coverage_gauge = Gauge(
 
 
 
----
+```---
 
 
 

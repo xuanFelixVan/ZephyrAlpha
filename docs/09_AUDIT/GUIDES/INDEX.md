@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_GUIDES_INDEX_GUIDES_001
+module_id: 09_AUDIT_GUIDES_INDEX_GUIDES_001_7613
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
@@ -19,14 +19,16 @@ layer: layer_09
 - [docs 根索引](../../INDEX.md)
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
-- [09_AUDIT STATE 索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[09_AUDIT STATE 索引]~~
 
 ### 索引健全性与目录体量（P5 §7）
 
 - **零入链扫描（本批）**：../STATE/INDEX_HEALTH_ORPHAN_20260520.md（`scan_index_health.py --prefix docs/09_AUDIT/GUIDES --date 20260520`；首轮 **`GUIDES/INDEX.md`** 零入链，已由 `09_AUDIT/INDEX` 显式链 `./GUIDES/INDEX.md` 与子目录表对齐后复跑 **zero_inbound=0**）
 - **rollup（深度 3）**：../STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 键 `docs/09_AUDIT/GUIDES` **4** 条路径）
 
----
+```
+```---
+```
 
 # Guides索引
 > **核心职责**: 目录导航和文档索引
@@ -40,7 +42,9 @@ layer: layer_09
 > **核心定位**: 文档索引导航
 > **索引**: `INDEX_GUIDES_001`
 
----
+```
+```---
+```
 
 ## 📋 目录概览
 
@@ -52,7 +56,9 @@ layer: layer_09
 | **活跃模块** | 4 |
 | **更新频率** | 按需更新 |
 
----
+```
+```---
+```
 
 ## 📚 文档列表
 
@@ -67,7 +73,9 @@ layer: layer_09
 - CODE_CHANGE_DOCUMENTATION_GUIDE
 - SCHEDULED_TASKS_DEPLOYMENT_GUIDE
 
----
+```
+```---
+```
 
 ## 🔍 维护指南
 
@@ -83,7 +91,9 @@ layer: layer_09
 - ✅ 文档命名遵循专业量化机构标准
 - ✅ 保持索引与实际文件一致
 
----
+```
+```---
+```
 
 ## 📝 变更历史
 
@@ -92,7 +102,9 @@ layer: layer_09
 | v1.0.1 | 2026-04-11 | P5 §7：`INDEX_HEALTH_20260520` 门面；修正 YAML 闭合；统计与入口链对齐 4 篇 md | 文档治理系统 |
 | v1.0.0 | 2026-04-07 | 初始版本创建 | 文档治理系统 |
 
----
+```
+```---
+```
 
 ## 🔗 相关文档
 
@@ -100,7 +112,9 @@ layer: layer_09
 - 职责边界地图
 - 专业文档治理审计指南
 
----
+```
+```---
+```
 
 **索引状态**: ✅ 活跃
 **维护频率**: 按需更新

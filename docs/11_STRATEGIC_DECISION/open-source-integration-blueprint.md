@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_017
-
+module_id: LAYER_017_8176
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: OPEN_SOURCE_INTEGRATION_BP_001
+```
+module_id: OPEN_SOURCE_INTEGRATION_BP_001_8176
+```
 
 version: 1.1.0
 
@@ -60,7 +49,9 @@ related_documents:
 
   - PORTFOLIO_OPTIMIZATION_AI_BLUEPRINT.md
 
----
+```
+```---
+```
 
 
 
@@ -146,7 +137,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -160,7 +153,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -210,7 +205,9 @@ related_documents:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -702,7 +699,9 @@ class RiskfolioLibIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1146,7 +1145,9 @@ class PyPortfolioOptIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1618,7 +1619,9 @@ class XQRiskCoreIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1776,7 +1779,9 @@ class XQRiskCoreIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1848,7 +1853,9 @@ class XQRiskCoreIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1924,7 +1931,9 @@ class XQRiskCoreIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1982,7 +1991,9 @@ class XQRiskCoreIntegration:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2022,7 +2033,9 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2068,7 +2081,9 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2112,13 +2127,17 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2174,7 +2193,9 @@ Week 7-8: P2级项目集成（AI-Hedge-Fund）
 
 
 
----
+```
+```---
+```
 
 
 

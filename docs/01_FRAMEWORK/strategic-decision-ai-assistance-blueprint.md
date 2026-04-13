@@ -1,31 +1,23 @@
 ---
-module_id: 01_FRAMEWORK_STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT
+module_id: 01_FRAMEWORK_STRATEGIC_DECISION_AI_ASSISTANCE_BLUEPRINT_5888
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Strategic Decision Ai Assistance Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 战略决策AI辅助
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Investment Committee
-  - Renaissance Technologies Decision Framework
-  - Two Sigma Strategic Planning
-related_documents:
-  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md
-  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: Ray RLLib
-url: 'https://github.com/slundberg/shap'
+open_source_projects: ''
+url: https://github.com/slundberg/shap
 features: 决策解释、特征重要性分析
-responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
+responsibility_boundary: '''本文档职责（Layer 11 战略决策层）：'
 ---
 
 ## 📋 一、概述
@@ -66,7 +58,9 @@ responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -174,7 +168,9 @@ Layer 11: 战略决策层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1044,7 +1040,9 @@ class DecisionEffectEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1182,7 +1180,9 @@ class DecisionExplanation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1286,7 +1286,9 @@ class DecisionExplanation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1390,7 +1392,9 @@ class DecisionExplanation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1448,7 +1452,9 @@ class DecisionExplanation:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1490,7 +1496,9 @@ class DecisionExplanation:
 
 
 
----
+```
+```---
+```
 
 
 

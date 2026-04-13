@@ -1,37 +1,18 @@
 ---
-
-module_id: DATA_SOURCE_FAILOVER_001
-
+module_id: DATA_SOURCE_FAILOVER_001_2330
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 数据管理架构设计与实施规范与优化维护
-
 layer: layer_00
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 数据源故障转移模块
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
 - Bloomberg
-
-- Reuters
-
-- Wind
-
 ---
 
 
@@ -84,7 +65,9 @@ reference_models:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +119,9 @@ reference_models:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -916,7 +901,9 @@ class DataSourceFailoverManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -988,7 +975,9 @@ class FailoverConfig:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1088,7 +1077,9 @@ data_sources:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1120,7 +1111,9 @@ data_sources:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1142,7 +1135,9 @@ data_sources:
 
 
 
----
+```
+```---
+```
 
 
 

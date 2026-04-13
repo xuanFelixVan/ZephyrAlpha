@@ -1,6 +1,15 @@
+---
+module_id: AUTO_23030
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE_001
+```
+module_id: DOCUMENT_GOVERNANCE_KNOWLEDGE_BASE_001_9833
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_00
----
+```
+```---
+```
 
 
 # 文档治理知识库
@@ -42,7 +53,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -144,7 +159,9 @@ python scripts/fix_missing_responsibility.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -200,7 +217,9 @@ python scripts/fix_missing_responsibility.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -272,7 +291,9 @@ python scripts/batch_rename_files.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -330,7 +351,9 @@ python scripts/batch_rename_files.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +399,7 @@ python scripts/fix_yaml_missing.py
 
 ```yaml
 
----
+```---
 
 
 version: 1.0.0
@@ -401,7 +424,7 @@ compliance_level: [合规级别]
 
 parent_document: [父文档]
 
----
+```---
 
 ```
 
@@ -427,7 +450,9 @@ parent_document: [父文档]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -485,7 +510,9 @@ python scripts/fix_yaml_fields.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -556,7 +583,9 @@ python scripts/fix_module_id_missing.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -624,7 +653,9 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -670,7 +701,9 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -708,7 +741,9 @@ python scripts/fix_duplicate_module_id.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -758,7 +793,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -798,7 +835,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -812,7 +851,7 @@ docs/
 
 ```yaml
 
----
+```---
 
 
 version: 1.0.0
@@ -837,7 +876,7 @@ compliance_level: 专业标准
 
 parent_document: ../INDEX.md
 
----
+```---
 
 ```
 
@@ -853,7 +892,9 @@ parent_document: ../INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -893,7 +934,9 @@ parent_document: ../INDEX.md
 
 
 
----
+```
+```---
+```
 
 
 

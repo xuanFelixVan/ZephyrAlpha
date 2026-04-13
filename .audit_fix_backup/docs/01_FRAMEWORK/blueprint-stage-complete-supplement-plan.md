@@ -126,7 +126,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -194,7 +194,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -262,7 +262,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -472,7 +472,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -592,7 +592,7 @@ class StrategicAdjustmentSystem:
 
 
 
----
+```---
 
 
 
@@ -728,7 +728,7 @@ class PortfolioInsuranceSystem:
 
 
 
----
+```---
 
 
 
@@ -878,7 +878,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1008,7 +1008,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1050,7 +1050,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1084,7 +1084,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1118,7 +1118,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1150,7 +1150,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1198,7 +1198,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1242,7 +1242,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1286,7 +1286,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1326,7 +1326,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1358,7 +1358,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1390,7 +1390,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1466,7 +1466,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1492,7 +1492,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1524,7 +1524,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1630,7 +1630,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1670,7 +1670,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1710,7 +1710,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1734,7 +1734,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 
@@ -1794,7 +1794,7 @@ class MultiStrategyCoordinator:
 
 
 
----
+```---
 
 
 

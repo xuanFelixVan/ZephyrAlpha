@@ -1,69 +1,20 @@
 ---
-
-module_id: HELP_SYSTEM_001
-
+module_id: HELP_SYSTEM_001_6823
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
-responsibility:
-
-- 系统架构蓝图设计与实施指导与实施方案
-
+responsibility: ''
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 8 - 帮助系统
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Knowledge Base
-
-- Renaissance Documentation
-
-- Two Sigma Help Center
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
-
-- AI_VIRTUAL_RESEARCH_TEAM/INDEX.md
-
-responsibility_boundary: '本文档负责帮助系统设计，包括：
-
-
-
-
-
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-
-
-  自然语言界面请参考：NATURAL_LANGUAGE_INTERFACE_BLUEPRINT.md
-
-
-
-  AI研究团队请参考：AI_VIRTUAL_RESEARCH_TEAM/INDEX.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责帮助系统设计，包括：'
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
 ---
 
 
@@ -92,7 +43,9 @@ implementation_status: 蓝图设计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -138,7 +91,9 @@ implementation_status: 蓝图设计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -260,7 +215,9 @@ implementation_status: 蓝图设计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -494,7 +451,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -838,7 +797,9 @@ class HelpSystemInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -880,7 +841,9 @@ class HelpSystemInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -900,7 +863,9 @@ class HelpSystemInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -912,7 +877,9 @@ class HelpSystemInterface:
 
 
 
----
+```
+```---
+```
 
 
 

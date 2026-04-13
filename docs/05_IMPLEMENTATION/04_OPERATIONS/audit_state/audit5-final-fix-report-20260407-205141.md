@@ -1,5 +1,5 @@
 ---
-module_id: AUDIT5_FINAL_FIX_REPORT_20260407_205141
+module_id: AUDIT5_FINAL_FIX_REPORT_20260407_205141_1006
 layer: layer_05
 version: 1.0.0
 responsibility: 处理AUDIT5_FINAL_FIX_REPORT_20260407_205141相关业务
@@ -73,7 +73,9 @@ last_updated: '2026-04-13'
 
 | 03_OPERATION_MANUALS/RISK_MONITORING_MANUAL.md | 缩短职责描述到33字 |
 
+```
 | 05_DESIGN_DOCS/a_stock_rules/README.md | 修复module_id: A_STOCK_RULES_README_001 |
+```
 
 | 02_IMPLEMENTATION_GUIDES/INDEX.md | 更新职责描述以区分相似INDEX |
 
@@ -85,7 +87,9 @@ last_updated: '2026-04-13'
 
 
 
----
+```
+```---
+```
 
 
 

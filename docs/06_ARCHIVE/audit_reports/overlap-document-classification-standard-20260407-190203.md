@@ -1,25 +1,14 @@
 ---
-
-module_id: DOCUMENT_CLASSIFICATION_STANDARD_001
-
+module_id: DOCUMENT_CLASSIFICATION_STANDARD_001_0399
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 个人开发者
-
 responsibility:
-
 - 文档分类标准、分类体系、分类检查
-
 layer: layer_10
-
 standard_type: 专业量化机构文档
-
 ---
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -30,7 +19,9 @@ standard_type: 专业量化机构文档
 
 
 
----
+```
+```---
+```
 
 
 
@@ -328,7 +319,9 @@ python scripts/check_document_status.py
 
 
 
----
+```
+```---
+```
 
 
 

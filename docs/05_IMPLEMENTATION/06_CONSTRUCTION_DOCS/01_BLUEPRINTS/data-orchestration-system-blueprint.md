@@ -1,5 +1,5 @@
 ---
-module_id: DATA_ORCHESTRATION_SYSTEM_001
+module_id: DATA_ORCHESTRATION_SYSTEM_001_6398
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 数据调度系统
-- 工作流编排
-- 任务调度
-- 依赖管理
 layer: layer_05
 ---
 

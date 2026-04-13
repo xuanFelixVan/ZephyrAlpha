@@ -13,6 +13,7 @@ applicable_scope: 系统实施与部?
 compliance_level: 实施标准
 parent_document: ../INDEX.md
 implementation_status: 进行?
+audit_status: HARDCODED_PARAMS_TO_L0
 ---
 
 ## 学习前提
@@ -27,7 +28,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -65,7 +68,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -233,7 +238,9 @@ d:\ZephyrAlpha\               # ?主要工作目录
 
 
 
----
+```
+```---
+```
 
 
 
@@ -427,7 +434,9 @@ def run_backtest():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -585,7 +594,9 @@ def factor_backtest(factor_func, data, top_n=50):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -809,7 +820,9 @@ class SimulationTrading:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -865,7 +878,9 @@ class SimulationTrading:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -907,7 +922,9 @@ jupyter notebook
 
 
 
----
+```
+```---
+```
 
 
 
@@ -939,7 +956,9 @@ A: 正常现象，需考虑滑点、流动性等实盘因素
 
 
 
----
+```
+```---
+```
 
 
 
@@ -947,7 +966,9 @@ A: 正常现象，需考虑滑点、流动性等实盘因素
 
 
 
----
+```
+```---
+```
 
 
 

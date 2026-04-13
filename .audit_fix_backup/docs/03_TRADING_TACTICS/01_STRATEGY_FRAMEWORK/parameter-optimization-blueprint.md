@@ -21,7 +21,7 @@ owner: 首席文档架构?standard_type: 专业量化机构蓝图
 applicable_scope: 全系统架构设?compliance_level: 初始标准
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
----
+```---
 
 
 # 参数优化系统技术蓝图
@@ -793,7 +793,7 @@ result = optimizer.optimize(config)
 **最后更?*: 2026-04-01  
 **维护?*: 策略研发中心  
 **预计开发时?*: 100小时?.5周全职开发）
----
+```---
 
 ## 1. 文档治理
 
@@ -821,6 +821,6 @@ result = optimizer.optimize(config)
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active

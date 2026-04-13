@@ -1,6 +1,15 @@
+---
+module_id: AUTO_15444
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: AUDIT_编码问题文档重建完成报告_001_ARCHIVED_1
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 数据质量 (Layer 1)
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # 编码问题文档重建完成报告
@@ -50,7 +61,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +105,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -302,7 +317,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +391,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -432,7 +451,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -472,7 +493,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -516,7 +539,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -568,7 +593,9 @@ docs/06_ARCHIVE/20260406_encoding_issues_archive/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -628,7 +655,9 @@ foreach ($f in $files) {
 
 
 
----
+```
+```---
+```
 
 
 

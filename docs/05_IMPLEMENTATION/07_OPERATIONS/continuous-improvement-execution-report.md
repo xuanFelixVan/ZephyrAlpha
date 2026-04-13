@@ -39,13 +39,17 @@ implementation_status: 进行?
 
    ```yaml
 
-   ---
+```
+```   ---
+```
 
    created_date: '2026-04-01'
 
    last_updated: '2026-04-01'
 
+```
    module_id: XXX_001
+```
 
    owner: 首席文档架构?
 
@@ -53,7 +57,9 @@ implementation_status: 进行?
 
    version: X.X.X
 
-   ---
+```
+```   ---
+```
 
    ```
 
@@ -435,7 +441,9 @@ on:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -471,7 +479,9 @@ on:
 
 
 
----
+```
+```---
+```
 
 
 

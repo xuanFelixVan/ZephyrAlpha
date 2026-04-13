@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_ORDER_FLOW_PREDICTION_BLUEPRINT
+module_id: 01_FRAMEWORK_ORDER_FLOW_PREDICTION_BLUEPRINT_3824
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Order Flow Prediction Blueprint相关业务
-created_date: 2026-04-04
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-04'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的订单流预测模型设计，包括订单流分析、市场微观结构、价格预测等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的订单流预测模型设计，包括订单流分析、市场微观结构、价格预测等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -83,7 +82,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -109,7 +110,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -403,7 +404,7 @@ class OrderFlowPredictor:
 
 
 
----
+```---
 
 
 
@@ -439,7 +440,7 @@ class OrderFlowPredictor:
 
 
 
----
+```---
 
 
 
@@ -455,7 +456,7 @@ class OrderFlowPredictor:
 
 
 
----
+```---
 
 
 
@@ -567,7 +568,7 @@ class OrderFlowPredictor:
 
 
 
----
+```---
 
 
 

@@ -17,7 +17,7 @@ responsibility: 20260410_c2_model_risk_management
 
 > **归档说明（2026-04-10）**：删除前 Layer8 `77_` 目录内同 basename 长文快照。**正式蓝图**：MODEL_RISK_MANAGEMENT_BLUEPRINT；**Layer8 入口 stub**：MODEL_RISK_MANAGEMENT_LAYER8_MODULE。
 
----
+```---
 module_id: 08_HUMAN_AI_INTERFACE_77_MODEL_RISK_MANAGEMENT
 version: 1.0.0
 status: Active
@@ -46,7 +46,7 @@ open_source_alternatives:
     url: https://wandb.ai/
     description: 机器学习实验跟踪
     recommendation: 推荐
----
+```---
 
 # 模块77: 模型风险管理 (MODEL_RISK_MANAGEMENT)
 
@@ -65,7 +65,7 @@ open_source_alternatives:
 
 模型风险管理负责量化模型的验证、监控、风险评估和治理，是量化交易系统的核心风控模块。
 
----
+```---
 
 ## 🎯 核心功能
 
@@ -97,7 +97,7 @@ open_source_alternatives:
 - **模型退役**: 模型退役流程
 - **模型文档**: 模型文档管理
 
----
+```---
 
 ## 🏗️ 技术架构
 
@@ -135,7 +135,7 @@ open_source_alternatives:
 └──────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 🔧 技术实现
 
@@ -200,7 +200,7 @@ class ModelGovernance:
         return self.approval_workflow.approve(model_id, approver)
 ```
 
----
+```---
 
 ## 📦 开源项目推荐
 
@@ -212,7 +212,7 @@ class ModelGovernance:
 | **DVC** | https://dvc.org/ | 数据版本控制 | ⭐⭐⭐⭐ |
 | **Weights & Biases** | https://wandb.ai/ | 机器学习实验跟踪 | ⭐⭐⭐⭐ |
 
----
+```---
 
 ## 🚀 实施计划
 
@@ -224,7 +224,7 @@ class ModelGovernance:
 | 开发模型治理服务 | 3天 | 模型治理服务 |
 | 测试与优化 | 2天 | 测试报告 |
 
----
+```---
 
 ## ✅ 验收标准
 
@@ -235,7 +235,7 @@ class ModelGovernance:
 | 模型注册时效 | <1天 | 模型注册完成时间 |
 | 系统可用性 | >99.9% | 系统可用性 |
 
----
+```---
 
 **蓝图创建时间**: 2026-04-08  
 **蓝图版本**: 1.0.0  

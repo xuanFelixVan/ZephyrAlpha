@@ -11,6 +11,7 @@ owner: 首席技术评审官
 standard_type: 使用指南
 applicable_scope: Layer 7 AI报告层
 compliance_level: 专业标准
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 ## 一、快速开发
@@ -131,7 +132,9 @@ print(f"当前VaR: {risk_metrics.var_95:.2%}")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -323,7 +326,9 @@ for scenario in scenarios:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -505,7 +510,9 @@ for scenario in all_scenarios:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -723,7 +730,9 @@ while True:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -903,7 +912,9 @@ if fused_report.consistency_score < 70:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1039,7 +1050,9 @@ reporter.schedule_lifecycle_review(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1145,7 +1158,9 @@ reporter.enable_auto_correction(True)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1263,7 +1278,9 @@ reporter.enable_continuous_monitoring(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1409,7 +1426,9 @@ reporter.enable_real_time_monitoring(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1593,7 +1612,9 @@ scheduler.start()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1689,7 +1710,9 @@ risk_report = reporter.generate_realtime_report(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1781,7 +1804,9 @@ reporter = RealTimeRiskReporter(log_level='DEBUG')
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1867,7 +1892,9 @@ reporter = RegulatoryReporter(audit=audit)
 
 
 
----
+```
+```---
+```
 
 
 

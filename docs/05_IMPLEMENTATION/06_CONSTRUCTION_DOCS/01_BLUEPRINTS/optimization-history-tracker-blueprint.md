@@ -1,35 +1,16 @@
 ---
-
-module_id: OPTIMIZATION_HISTORY_TRACKER_001
-
+module_id: OPTIMIZATION_HISTORY_TRACKER_001_8495
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 优化历史追踪
-
-  - 决策记录
-
-  - 决策审计
-
-  - 历史分析
-
+- 优化历史追踪
 layer: layer_06
-
 ---
 
 

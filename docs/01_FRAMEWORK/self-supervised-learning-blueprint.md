@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_SELF_SUPERVISED_LEARNING_BLUEPRINT
+module_id: 01_FRAMEWORK_SELF_SUPERVISED_LEARNING_BLUEPRINT_8469
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Self Supervised Learning Blueprint相关业务
-created_date: 2026-04-04
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-04'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的自监督学习设计，包括对比学习、掩码预测、自监督预训练等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的自监督学习设计，包括对比学习、掩码预测、自监督预训练等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -69,7 +68,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -131,7 +132,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -401,7 +402,7 @@ class SelfSupervisedLearner:
 
 
 
----
+```---
 
 
 
@@ -445,7 +446,7 @@ lightly>=1.4.0
 
 
 
----
+```---
 
 
 
@@ -477,7 +478,7 @@ lightly>=1.4.0
 
 
 
----
+```---
 
 
 
@@ -495,7 +496,7 @@ lightly>=1.4.0
 
 
 
----
+```---
 
 
 
@@ -607,7 +608,7 @@ lightly>=1.4.0
 
 
 
----
+```---
 
 
 

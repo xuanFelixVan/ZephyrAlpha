@@ -1,5 +1,5 @@
 ---
-module_id: CHANGELOG
+module_id: CHANGELOG_5193
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -18,7 +18,9 @@ responsibility: 00_OVERVIEW
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本命名遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
----
+```
+```---
+```
 
 ## [Unreleased]
 
@@ -31,7 +33,9 @@ responsibility: 00_OVERVIEW
 ### 修复
 - 待发布的修复
 
----
+```
+```---
+```
 
 ## [1.0.0] - 2026-04-02
 
@@ -94,7 +98,9 @@ responsibility: 00_OVERVIEW
 - 修复AI施工流程不规范问题
 - 修复知识传承机制缺失问题
 
----
+```
+```---
+```
 
 ## [0.2.0] - 2026-04-01
 
@@ -122,7 +128,9 @@ responsibility: 00_OVERVIEW
 - 完善文档索引
 - 建立文档规范
 
----
+```
+```---
+```
 
 ## [0.1.0] - 2026-03-30
 
@@ -143,7 +151,9 @@ responsibility: 00_OVERVIEW
 - 依赖包管理（requirements.txt）
 - 开发工具配置
 
----
+```
+```---
+```
 
 ## 版本类型说明
 
@@ -151,7 +161,9 @@ responsibility: 00_OVERVIEW
 - **MINOR（次版本）**: 向后兼容的功能新增
 - **PATCH（补丁版本）**: 向后兼容的Bug修复
 
----
+```
+```---
+```
 
 ## 变更类型说明
 
@@ -162,7 +174,9 @@ responsibility: 00_OVERVIEW
 - **弃用**: 即将移除的功能
 - **安全**: 安全相关的修复
 
----
+```
+```---
+```
 
 ## 版本规划
 
@@ -186,7 +200,9 @@ responsibility: 00_OVERVIEW
 
 **预计时间**: 2026-06-01
 
----
+```
+```---
+```
 
 ## 参考链接
 

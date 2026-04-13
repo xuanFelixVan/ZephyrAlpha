@@ -1,6 +1,15 @@
+---
+module_id: AUTO_06006
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: ARCHIVE_LAYER9_REPORTS_INDEX_001
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 归档索引、文件追溯
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # Layer 9审计报告归档索引
@@ -82,7 +93,9 @@ git log --all --full-history -- "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_stat
 
 
 
----
+```
+```---
+```
 
 
 

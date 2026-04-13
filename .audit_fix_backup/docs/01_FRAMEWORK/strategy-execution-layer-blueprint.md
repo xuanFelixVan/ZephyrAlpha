@@ -60,7 +60,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -88,7 +88,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -134,7 +134,7 @@ Layer 5策略执行层是清风量化系统的**交易执行中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -378,7 +378,7 @@ Layer 5策略执行层是清风量化系统的**交易执行中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -586,7 +586,7 @@ class OrderGenerator:
 
 
 
----
+```---
 
 
 
@@ -700,7 +700,7 @@ class TWAPAlgorithm:
 
 
 
----
+```---
 
 
 
@@ -764,7 +764,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -788,7 +788,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -808,7 +808,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -828,7 +828,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -852,7 +852,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -874,7 +874,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
@@ -894,13 +894,13 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```---
 
 
 
@@ -956,7 +956,7 @@ class RiskMetrics:
 
 
 
----
+```---
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: CONTAINER_ORCHESTRATION_001
-
+module_id: CONTAINER_ORCHESTRATION_001_7243
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 容器编排
-
-  - 服务部署
-
-  - 资源管理
-
-  - 网络管理
-
+- 容器编排
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1862,7 +1844,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 

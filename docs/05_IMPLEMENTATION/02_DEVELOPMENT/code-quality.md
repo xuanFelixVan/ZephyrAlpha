@@ -111,7 +111,9 @@ def calculate_factor(stock_data):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +171,9 @@ def calculate_factor(stock_data):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -237,7 +241,9 @@ from config import settings
 
 
 
----
+```
+```---
+```
 
 
 
@@ -315,7 +321,9 @@ cache_key = f"{factor_id}_{date}"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -361,7 +369,9 @@ MAX_POSITION = 0.2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -431,7 +441,9 @@ class TestDataCollector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -479,7 +491,9 @@ class TestDataCollector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -499,7 +513,9 @@ class TestDataCollector:
 
 
 
----
+```
+```---
+```
 
 
 

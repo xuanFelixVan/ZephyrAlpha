@@ -1,33 +1,15 @@
 ---
-
-module_id: CDC_CHANGE_DATA_CAPTURE_BLUEPRINT
-
+module_id: CDC_CHANGE_DATA_CAPTURE_BLUEPRINT_2434
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - CDC变更数据捕获
-
-  - 数据变更检测
-
-  - 变更流处理
-
-  - 数据同步
-
+- CDC变更数据捕获
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

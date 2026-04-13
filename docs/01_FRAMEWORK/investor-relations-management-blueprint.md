@@ -1,123 +1,25 @@
 ---
-
-module_id: INVESTOR_RELATIONS_MANAGEMENT_001
-
+module_id: INVESTOR_RELATIONS_MANAGEMENT_001_5760
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 投资者关系管理系统架构设计
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Citadel Investor Relations
-
-- Two Sigma Investor Communications
-
-- Bridgewater IR Platform
-
-- D.E. Shaw Investor Services
-
-related_documents:
-
-- GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
-- AUDIT_TRAIL_SYSTEM_BLUEPRINT.md
-
-- REGULATORY_REPORTING_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-open_source_projects:
-
-- name: Odoo CRM
-
-  url: https://github.com/odoo/odoo
-
-  features: CRM系统、客户管理、营销自动化、报告生成
-
-  license: LGPL-3.0
-
-  personal_fit: ⭐⭐⭐⭐⭐
-
-- name: SuiteCRM
-
-  url: https://github.com/salesagility/SuiteCRM
-
-  features: 开源CRM、客户关系管理、营销自动化
-
-  license: AGPL-3.0
-
-  personal_fit: ⭐⭐⭐⭐
-
-- name: Dolibarr
-
-  url: https://github.com/Dolibarr/dolibarr
-
-  features: ERP+CRM、客户管理、文档管理
-
-  license: GPL-3.0
-
-  personal_fit: ⭐⭐⭐⭐
-
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-
-
-  - 投资者关系管理系统架构设计
-
-
-
-  - 投资者信息管理
-
-
-
-  - 沟通记录追踪
-
-
-
-  - 报告发送管理
-
-
-
-  - 合规披露管理
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - AUDIT_TRAIL_SYSTEM_BLUEPRINT.md: 审计追踪系统（操作记录）
-
-
-
-  - REGULATORY_REPORTING_BLUEPRINT.md: 监管报告生成'
-
-responsibility:
-
-- INVESTOR_RELATIONS_MANAGEMENT蓝图设计
-
+open_source_projects: ''
+url: https://github.com/odoo/odoo
+features: CRM系统、客户管理、营销自动化、报告生成
+license: LGPL-3.0
+personal_fit: ⭐⭐⭐⭐⭐
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 
 # 投资者关系管理系统蓝图
@@ -144,7 +46,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +106,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -354,7 +260,9 @@ class InvestorRelationsInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +470,9 @@ class ReportSending:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -662,7 +572,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -704,7 +616,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -736,7 +650,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -768,7 +684,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -808,7 +726,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -864,7 +784,9 @@ class Disclosure:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -960,7 +882,9 @@ partner = models.execute_kw(db, uid, password, 'res.partner', 'create', [{
 
 
 
----
+```
+```---
+```
 
 
 
@@ -982,7 +906,9 @@ partner = models.execute_kw(db, uid, password, 'res.partner', 'create', [{
 
 
 
----
+```
+```---
+```
 
 
 

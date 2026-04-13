@@ -12,7 +12,9 @@ owner: 文档管理团队
 
 | v1.0 | 2026-03-28 | 整合附录AJ因子暴露透明度报告|
 
----
+```
+```---
+```
 
 > **非真源声明（duplicates）**：本文档位于 `docs/09_ARCHIVE/duplicates/`，仅用于追溯，不作为权威真源（canonical）。  
 > **canonical_path**：`docs/02_FACTOR_LIBRARY/03_RISK_FACTORS/FACTOR_LIB_RISK_FACTORS_OVERVIEW.md`  

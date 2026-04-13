@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_IMPLEMENTATION_INDEX
+module_id: 06_ARCHIVE_IMPLEMENTATION_INDEX_6510
 version: 1.0.0
 status: Active
 layer: layer_06

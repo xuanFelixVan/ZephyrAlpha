@@ -1,39 +1,21 @@
 ---
-
-module_id: INTELLIGENT_SCHEDULING_SYSTEM_001
-
+module_id: INTELLIGENT_SCHEDULING_SYSTEM_001_5091
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 智能调度系统蓝图 (INTELLIGENT_SCHEDULING_SYSTEM)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 智能任务调度与资源管理
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Prefect (推荐) / Airflow
-
 priority: P0
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +100,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -270,7 +256,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -422,7 +410,9 @@ def fetch_data_with_retry():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +492,9 @@ def fetch_data_with_retry():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -572,7 +564,9 @@ class ScheduledTask:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -622,7 +616,9 @@ class ScheduledTask:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -644,7 +640,9 @@ class ScheduledTask:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -666,7 +664,9 @@ class ScheduledTask:
 
 
 
----
+```
+```---
+```
 
 
 

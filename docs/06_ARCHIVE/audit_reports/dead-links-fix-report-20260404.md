@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DEAD_LINKS_FIX_REPORT_20260404
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DEAD_LINKS_FIX_REPORT_20260404_3456
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -41,7 +41,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -77,7 +79,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +133,9 @@ AI_Permissions.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -157,7 +163,9 @@ AI_Permissions.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +177,9 @@ AI_Permissions.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -237,7 +247,9 @@ AI_Permissions.md
 
 **说明**: FACTOR_LIBRARY_MANUAL.md文件本身不存在，可能是扫描错误?
 
----
+```
+```---
+```
 
 
 
@@ -281,7 +293,9 @@ AI_Permissions.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -321,7 +335,7 @@ AI_Permissions.md
 
 
 
----
+```---
 
 
 
@@ -365,7 +379,7 @@ AI_Permissions.md
 
 
 
----
+```---
 
 
 
@@ -377,7 +391,7 @@ AI_Permissions.md
 
 建议后续对编码问题的文件进行UTF-8格式统一，以提高扫描工具的准确性?
 
----
+```---
 
 
 
@@ -391,7 +405,7 @@ AI_Permissions.md
 
 
 
----
+```---
 
 
 

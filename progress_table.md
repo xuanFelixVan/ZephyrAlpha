@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ## 📊 蓝图进度跟踪表
 
 | 蓝图文档 | 优先级 | 状态 | 实施状态 | 说明 |

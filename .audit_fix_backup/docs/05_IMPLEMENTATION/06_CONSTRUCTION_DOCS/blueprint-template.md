@@ -21,7 +21,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -35,9 +35,8 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_650A05A67A
 
 version: [版本号]
 
@@ -57,7 +56,7 @@ compliance_level: 专业标准
 
 layer: "[Layer定位]"
 
----
+```---
 
 ```
 
@@ -87,7 +86,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -107,7 +106,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -117,7 +116,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -155,7 +154,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -165,7 +164,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -211,7 +210,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -221,7 +220,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -255,7 +254,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -265,7 +264,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -303,7 +302,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -313,7 +312,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -347,7 +346,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -357,7 +356,7 @@ layer: "[Layer定位]"
 
 ```markdown
 
----
+```---
 
 
 
@@ -397,13 +396,13 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 ```
 
 
 
----
+```---
 
 
 
@@ -495,7 +494,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -511,7 +510,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 

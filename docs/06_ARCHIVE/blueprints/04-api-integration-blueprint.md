@@ -1,32 +1,21 @@
 ---
-
-module_id: API_001
-
+module_id: API_001_4610
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 responsibility:
-
 - 归档文档、历史版本
-
 layer: layer_05
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: ARCHIVE_BP_API_INTEGRATION_001
+```
+module_id: ARCHIVE_BP_API_INTEGRATION_001_4610
+```
 
 version: 1.0.1
 
@@ -48,7 +37,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -1114,7 +1105,9 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 
 **索引**: `API.001`
 
----
+```
+```---
+```
 
 
 
@@ -1170,7 +1163,9 @@ EVENT_BUS.subscribe('backtest.complete', lambda e: notify_user(e))
 
 
 
----
+```
+```---
+```
 
 
 

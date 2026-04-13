@@ -1,29 +1,15 @@
 ---
-
-module_id: METADATA_MANAGEMENT_ENHANCEMENT_001
-
+module_id: METADATA_MANAGEMENT_ENHANCEMENT_001_3849
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 数据管理架构设计与实施规范与优化维护
-
-  - 影响分析
-
+- 数据管理架构设计与实施规范与优化维护
 layer: layer_05
-
 ---
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -34,7 +20,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_59527
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SENTIMENT_BACKTEST_SYSTEM_BLUEPRINT_001
+```
 
 version: 1.0.0
 
@@ -31,7 +40,9 @@ priority: P0
 estimated_effort: 80h
 
 layer: layer_00
----
+```
+```---
+```
 
 
 
@@ -64,7 +75,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -112,7 +125,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +187,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -626,7 +643,9 @@ def optimize_parameters(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -820,7 +839,9 @@ class BacktestReport:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -902,7 +923,9 @@ async def optimize_parameters(task_id: str, n_trials: int = 100):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -958,7 +981,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -984,7 +1009,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1030,7 +1057,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1064,7 +1093,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 

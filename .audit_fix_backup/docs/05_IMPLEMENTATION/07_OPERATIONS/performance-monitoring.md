@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: PERFORMANCE_MONITORING_001
@@ -19,7 +26,7 @@ responsibility:
 - 系统实施与部署管理与优化维护
 
 layer: layer_05
----
+```---
 
 
 standard_type: ﮔﮔﺁﮔﮔ۰?

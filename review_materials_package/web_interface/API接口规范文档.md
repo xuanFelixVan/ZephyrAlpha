@@ -1030,7 +1030,7 @@ async def rate_limit_middleware(request: Request, call_next):
 | **移动端App** | v1.0 | 应用商店强制更新 |
 | **第三方集成** | v1.0 | 文档通知，提供迁移指南 |
 
----
+```---
 
 **文档版本**: 1.0.0  
 **最后更新**: 2026-04-02  

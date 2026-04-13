@@ -27,7 +27,9 @@ layer: layer_00
 - **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260510.md（`scan_index_health.py --prefix docs/10_AI_WORKFLOW --date 20260510`；**zero_inbound=0**；候选 md **68**；首轮即零入链，本页增 P5 互指与台账登记）
 - **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/10_AI_WORKFLOW` **68** 条路径）
 
----
+```
+```---
+```
 
 # AI工作流与舆情分析综合层索引
 
@@ -41,7 +43,9 @@ layer: layer_00
 > **最后更新**: 2026-04-11
 > **维护者**: 实施团队
 
----
+```
+```---
+```
 
 ## 🎯 目录职责
 
@@ -74,7 +78,9 @@ layer: layer_00
 - 数据质量与血缘
 - 模型性能与版本管理
 
----
+```
+```---
+```
 
 ## 📚 核心文档
 
@@ -94,7 +100,9 @@ layer: layer_00
 | DATA_QUALITY_LINEAGE_MANAGEMENT_BLUEPRINT.md | 数据质量与血缘管理蓝图 | ⭐⭐⭐⭐ |
 | DATA_SOURCE_EXTENSION_BLUEPRINT.md | 数据源扩展模块蓝图 | ⭐⭐⭐⭐ |
 
----
+```
+```---
+```
 
 ## 🧭 严格孤儿挂载（波次 1：入口补齐）
 
@@ -327,7 +335,9 @@ layer: layer_00
 | INTELLIGENT_SCHEDULER_BLUEPRINT.md | 智能调度器蓝图 | ⭐⭐⭐ |
 | LAYER_7_FINAL_COMPLETENESS_ASSESSMENT_REPORT.md | Layer 7最终完整性评估报告 | ⭐⭐⭐ |
 
----
+```
+```---
+```
 
 ## 📖 快速导览
 
@@ -354,7 +364,9 @@ layer: layer_00
 - **可视化**: Streamlit, Plotly
 - **工作流**: Python, 多智能体协作
 
----
+```
+```---
+```
 
 ## 🔗 相关文档
 
@@ -363,7 +375,9 @@ layer: layer_00
 - [执行层 (Layer 5)](../04_EXECUTION/INDEX.md)
 - `因子库层 (Layer 2)`
 
----
+```
+```---
+```
 
 ## 📊 文档统计
 
@@ -376,7 +390,9 @@ layer: layer_00
 | 其他文档 | 16 |
 | **总计** | **62** |
 
----
+```
+```---
+```
 
 ## 📝 维护说明
 

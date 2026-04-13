@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_DATA_QUALITY_BLUEPRINT
+module_id: FACTOR_DATA_QUALITY_BLUEPRINT_1444
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -39,11 +39,11 @@ responsibility: 19_FACTOR_DATA_QUALITY
 
 
 
-module_id: FACTOR_DATA_QUALITY_BLUEPRINT
+module_id: FACTOR_DATA_QUALITY_BLUEPRINT_1444
 layer: layer_02
 version: 1.0.0
 responsibility: "处理FACTOR_DATA_QUALITY_BLUEPRINT相关业务"
----
+```---
 
 
 
@@ -211,7 +211,7 @@ warnings = profile.get_description().warnings
 
 
 
----
+```---
 
 
 
@@ -261,7 +261,7 @@ warnings = profile.get_description().warnings
 
 
 
----
+```---
 
 
 

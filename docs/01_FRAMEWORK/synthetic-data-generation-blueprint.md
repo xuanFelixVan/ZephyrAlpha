@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_SYNTHETIC_DATA_GENERATION_BLUEPRINT
+module_id: 01_FRAMEWORK_SYNTHETIC_DATA_GENERATION_BLUEPRINT_9737
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Synthetic Data Generation Blueprint相关业务
-created_date: 2026-04-04
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-04'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的合成数据生成系统设计，包括GAN生成、VAE生成、Diffusion模型等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的合成数据生成系统设计，包括GAN生成、VAE生成、Diffusion模型等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -85,7 +84,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -147,7 +148,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -411,7 +412,7 @@ class SyntheticDataGenerator:
 
 
 
----
+```---
 
 
 
@@ -459,7 +460,7 @@ ydata-synthetic>=1.3.0
 
 
 
----
+```---
 
 
 
@@ -493,7 +494,7 @@ ydata-synthetic>=1.3.0
 
 
 
----
+```---
 
 
 
@@ -511,7 +512,7 @@ ydata-synthetic>=1.3.0
 
 
 
----
+```---
 
 
 
@@ -623,7 +624,7 @@ ydata-synthetic>=1.3.0
 
 
 
----
+```---
 
 
 

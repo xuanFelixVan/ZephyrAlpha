@@ -1,5 +1,5 @@
 ---
-module_id: FACTOR_MANAGEMENT_STANDARD
+module_id: FACTOR_MANAGEMENT_STANDARD_9432_9432
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -11,17 +11,23 @@ responsibility: 01_STANDARDS
 
 
 
+```
 ---|------|----------|
+```
 
 | v1.0 | 2026-03-30 | 初始版本 |
 
 
 
-module_id: FACTOR_MANAGEMENT_STANDARD
+```
+module_id: FACTOR_MANAGEMENT_STANDARD_9432_9432
+```
 layer: layer_02
 version: 1.0.0
 responsibility: "处理FACTOR_MANAGEMENT_STANDARD相关业务"
----
+```
+```---
+```
 
 
 

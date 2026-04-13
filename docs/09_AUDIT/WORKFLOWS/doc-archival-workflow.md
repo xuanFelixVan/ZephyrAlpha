@@ -51,7 +51,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -91,7 +93,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -293,9 +297,13 @@ python scripts/create_archive_dir.py --reason duplicate --batch 20260403_layer7_
 
    ```yaml
 
-   ---
+```
+```   ---
+```
 
+```
    module_id: MODULE_001
+```
 
    version: 1.0.0
 
@@ -307,7 +315,9 @@ python scripts/create_archive_dir.py --reason duplicate --batch 20260403_layer7_
 
    archived_by: ﻟﮒﺝﮔﭘﮔﮒﺕ?   replacement_doc: docs/PATH/TO/NEW_DOC.md  # ﮒ۵ﮔﮔﺟﻛﭨ۲ﮔﮔ۰۲
 
-   ---
+```
+```   ---
+```
 
    ```
 
@@ -573,7 +583,9 @@ python scripts/verify_archive.py --doc docs/PATH/TO/DOC.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -683,7 +695,9 @@ python scripts/update_references.py --batch-file references_to_update.json
 
 
 
----
+```
+```---
+```
 
 
 
@@ -777,7 +791,9 @@ ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_ARCHIVED.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -825,7 +841,9 @@ ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_ARCHIVED.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -867,7 +885,9 @@ ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_ARCHIVED.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -893,7 +913,9 @@ ECONOMIC_REGIME_ENGINE_TECHNICAL_SPECIFICATION_ARCHIVED.md
 
 
 
----
+```
+```---
+```
 
 
 

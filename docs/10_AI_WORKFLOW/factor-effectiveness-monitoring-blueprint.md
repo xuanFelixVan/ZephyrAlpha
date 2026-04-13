@@ -1,39 +1,21 @@
 ---
-
-module_id: FACTOR_EFFECTIVENESS_MONITORING_001
-
+module_id: FACTOR_EFFECTIVENESS_MONITORING_001_2226
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 因子有效性监控蓝图 (FACTOR_EFFECTIVENESS_MONITORING)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 因子有效性监控
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Alphalens + Empyrical
-
 priority: P2
-
 ---
 
 ## 文档职责说明
@@ -64,7 +46,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +112,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +268,9 @@ Layer 7: AI报告层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -648,7 +636,9 @@ class FactorDecayAnalyzer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -796,7 +786,9 @@ CREATE TABLE factor_effectiveness_reports (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -900,7 +892,9 @@ CREATE TABLE factor_effectiveness_reports (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -986,7 +980,9 @@ class IAlertSystem(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1026,7 +1022,9 @@ class IAlertSystem(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1064,7 +1062,9 @@ class IAlertSystem(ABC):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1154,7 +1154,9 @@ stats = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1190,7 +1192,9 @@ stats = {
 
 
 
----
+```
+```---
+```
 
 
 

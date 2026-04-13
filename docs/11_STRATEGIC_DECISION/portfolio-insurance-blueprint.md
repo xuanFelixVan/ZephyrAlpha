@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_019
-
+module_id: LAYER_019_9915
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_06
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 投资组合优化蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: PORTFOLIO_INSURANCE_001
+```
+module_id: PORTFOLIO_INSURANCE_001_9915
+```
 
 version: 1.0.0
 
@@ -58,7 +47,9 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +127,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +143,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +209,9 @@ Layer 11.5投资组合保险系统是清风量化系统的**风险保护盾**，
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +321,9 @@ Layer 11.5投资组合保险系统是清风量化系统的**风险保护盾**，
 
 
 
----
+```
+```---
+```
 
 
 
@@ -664,7 +663,9 @@ class CPPIEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -830,7 +831,9 @@ class TIPPEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1090,7 +1093,9 @@ class OBPIEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1226,7 +1231,9 @@ class InsuranceMonitor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1342,7 +1349,9 @@ class PortfolioInsuranceInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1424,7 +1433,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1496,7 +1507,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1536,7 +1549,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1576,7 +1591,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1620,7 +1637,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1640,7 +1659,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1656,7 +1677,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1664,7 +1687,9 @@ Layer 7 AI报告
 
 **下一步**: 创建融资融券管理系统蓝图
 
----
+```
+```---
+```
 
 
 
@@ -1720,7 +1745,9 @@ Layer 7 AI报告
 
 
 
----
+```
+```---
+```
 
 
 

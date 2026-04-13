@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_A_STOCK_RULES_001
-
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_A_STOCK_RULES_001_5322
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供A Stock Rules相关文档支持
-
+- 提供A Stock Rules相关文档支持
 layer: layer_05
 ---
 
@@ -70,7 +61,7 @@ layer: layer_05
 
 | T.08.AR001.a_stock_rule_engine_design | A股规则引擎详细设计 | ✅ 已完成 |
 
-| [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 目录说明文档 | ✅ 已完成 |
+| ~~[README]~~ | 目录说明文档 | ✅ 已完成 |
 
 | a_stock_rules_config.yaml | A股规则配置文件 | ✅ 已完成 |
 
@@ -122,7 +113,9 @@ A股规则引擎
 
 
 
----
+```
+```---
+```
 
 
 

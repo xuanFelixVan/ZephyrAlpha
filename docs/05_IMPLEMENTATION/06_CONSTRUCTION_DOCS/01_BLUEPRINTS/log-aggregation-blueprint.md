@@ -1,33 +1,15 @@
 ---
-
-module_id: LOG_AGGREGATION_001
-
+module_id: LOG_AGGREGATION_001_2509
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 日志收集
-
-  - 日志聚合
-
-  - 日志搜索
-
-  - 日志分析
-
+- 日志收集
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1518,7 +1500,9 @@ alerter.start_monitoring()
 
 
 
----
+```
+```---
+```
 
 
 

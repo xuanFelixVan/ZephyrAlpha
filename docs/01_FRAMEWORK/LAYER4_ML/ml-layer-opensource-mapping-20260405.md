@@ -63,7 +63,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -209,7 +211,9 @@ model_engine, _, _, _ = deepspeed.initialize(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -333,7 +337,9 @@ image = pipeline().images[0]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -435,7 +441,9 @@ report.run(reference_data=ref, current_data=cur)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -519,7 +527,9 @@ dvc push
 
 
 
----
+```
+```---
+```
 
 
 
@@ -611,7 +621,9 @@ z_enc = x_enc + y_enc
 
 
 
----
+```
+```---
+```
 
 
 
@@ -697,7 +709,9 @@ forecast = res.forecast(horizon=1)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -777,7 +791,9 @@ response = query_engine.query("question")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -839,7 +855,9 @@ response = query_engine.query("question")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -903,7 +921,9 @@ response = query_engine.query("question")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -947,7 +967,9 @@ response = query_engine.query("question")
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,31 +1,17 @@
 ---
-
-module_id: IMPL_DEV_ERROR_HANDLING_001
-
+module_id: IMPL_DEV_ERROR_HANDLING_001_0308
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-01
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构?
-
 standard_type: 专业量化机构实施标准
-
 applicable_scope: 系统实施与部?
-
 compliance_level: 实施标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 进行?
-
 responsibility:
-
 - 系统实施与部署管理与优化维护
-
 layer: layer_05
 ---
 
@@ -52,7 +38,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -156,7 +144,9 @@ class ExecutionException(QuantSystemException):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -362,7 +352,9 @@ class CircuitBreaker:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -464,7 +456,9 @@ class DataCollector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -578,7 +572,9 @@ ERROR_CODES = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -648,7 +644,9 @@ ALERT_RULES = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -666,7 +664,9 @@ ALERT_RULES = {
 
 
 
----
+```
+```---
+```
 
 
 

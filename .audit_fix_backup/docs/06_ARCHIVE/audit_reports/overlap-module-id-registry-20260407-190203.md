@@ -87,7 +87,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -261,7 +261,7 @@ grep -r "DATA_QUALITY" docs/ --include="*.md" | grep "module_id:"
 
 
 
----
+```---
 
 
 
@@ -313,7 +313,7 @@ grep -r "DATA_QUALITY" docs/ --include="*.md" | grep "module_id:"
 
 
 
----
+```---
 
 
 
@@ -397,7 +397,7 @@ if ($duplicates) {
 
 
 
----
+```---
 
 
 
@@ -413,7 +413,7 @@ if ($duplicates) {
 
 
 
----
+```---
 
 
 
@@ -431,7 +431,7 @@ if ($duplicates) {
 
 
 
----
+```---
 
 
 

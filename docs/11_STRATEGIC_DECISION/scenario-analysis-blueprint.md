@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_021
-
+module_id: LAYER_021_6468
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_06
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: SCENARIO_ANALYSIS_001
+```
+module_id: SCENARIO_ANALYSIS_001_6468
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -138,7 +129,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +145,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -216,7 +211,9 @@ Layer 11.12情景分析系统是清风量化系统的**风险预警雷达**，�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +357,9 @@ Layer 11.12情景分析系统是清风量化系统的**风险预警雷达**，�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -840,7 +839,9 @@ class ScenarioBuilder:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1392,7 +1393,9 @@ class ScenarioSimulationEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1862,7 +1865,9 @@ class ImpactAssessmentEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2142,7 +2147,9 @@ class MitigationStrategyGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2228,7 +2235,9 @@ Layer 11.4 战略调整决策
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2266,7 +2275,9 @@ Layer 11.4 战略调整决策
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2428,7 +2439,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2468,7 +2481,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2508,7 +2523,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2530,7 +2547,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2546,7 +2565,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2554,7 +2575,9 @@ class PolicyShockScenario:
 
 **下一步**: 更新Layer 11主蓝图文档
 
----
+```
+```---
+```
 
 
 
@@ -2610,7 +2633,9 @@ class PolicyShockScenario:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,25 +1,18 @@
 ---
-module_id: 01_FRAMEWORK_MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT
+module_id: 01_FRAMEWORK_MULTI_DATA_SOURCE_COORDINATION_BLUEPRINT_4658
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Multi Data Source Coordination Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 多数据源协同管理
 compliance_level: 顶级专业标准
-reference_models:
-  - Bloomberg Terminal
-  - Reuters Eikon
-  - Wind Terminal
-related_documents:
-  - DATA_SOURCE_QUALITY_MONITORING_BLUEPRINT.md
-  - DATA_SOURCE_FAILOVER_BLUEPRINT.md
-  - DATA_LINEAGE_TRACKING_BLUEPRINT.md
-responsibility_boundary: '本文档负责多数据源协同管理，包括：
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责多数据源协同管理，包括：'
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
@@ -75,7 +68,9 @@ open_source_solution: Apache Kafka + Debezium + Apache Airflow
 
 
 
----
+```
+```---
+```
 
 
 
@@ -235,7 +230,9 @@ Layer 0: 数据源层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -621,7 +618,9 @@ class DataSourceSelector:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -689,7 +688,9 @@ CREATE TABLE data_source_performance (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -795,7 +796,9 @@ CREATE TABLE data_source_performance (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -871,7 +874,9 @@ source_availability_gauge = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -903,7 +908,9 @@ source_availability_gauge = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -925,7 +932,9 @@ source_availability_gauge = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -963,7 +972,9 @@ source_availability_gauge = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 

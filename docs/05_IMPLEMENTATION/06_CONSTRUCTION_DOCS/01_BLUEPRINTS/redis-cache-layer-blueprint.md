@@ -1,33 +1,15 @@
 ---
-
-module_id: REDIS_CACHE_LAYER_001
-
+module_id: REDIS_CACHE_LAYER_001_2511
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - Redis缓存层
-
-- 缓存策略
-
-- 分布式缓存
-
-- 缓存一致性
-
 layer: layer_05
-
 ---
 
 

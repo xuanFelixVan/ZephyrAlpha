@@ -1,6 +1,15 @@
+---
+module_id: AUTO_04337
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: TECHNICAL_KNOWLEDGE_INDEX_001
+```
 
 version: 1.0.0
 
@@ -21,7 +30,9 @@ standard_type: 专业量化机构索引
 applicable_scope: 技术知识库
 
 layer: layer_08
----
+```
+```---
+```
 
 
 
@@ -42,7 +53,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -66,7 +79,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +101,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +123,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -122,7 +141,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +171,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +195,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +213,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -206,7 +233,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 
@@ -222,7 +251,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 

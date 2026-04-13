@@ -1,31 +1,16 @@
 ---
-
-module_id: DEEPAR_001
-
+module_id: DEEPAR_001_2243
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
 last_updated: '2026-04-07'
-
 responsibility:
-
 - 提供deepar blueprint的完整架构设计、技术选型和实施路径规划
-
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: |
-
-  本文档负责 Layer 4 机器学习层的 DeepAR 时序模型设计，包括概率预测、自回归结构与不确定性建模等核心能力。
-
+responsibility_boundary: ''
 layer: layer_04
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -64,7 +49,9 @@ owner: 首席文档架构师
 
 > **预计工时**: 40h
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +137,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -258,7 +247,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -730,7 +719,7 @@ class DeepARDataProcessor:
 
 
 
----
+```---
 
 
 
@@ -794,7 +783,7 @@ class DeepARDataProcessor:
 
 
 
----
+```---
 
 
 
@@ -932,7 +921,7 @@ scipy>=1.11.0
 
 
 
----
+```---
 
 
 
@@ -1076,7 +1065,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1146,7 +1135,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1204,7 +1193,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1234,7 +1223,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1274,7 +1263,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1292,7 +1281,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 
@@ -1404,7 +1393,7 @@ class RiskManager:
 
 
 
----
+```---
 
 
 

@@ -1,32 +1,21 @@
 ---
-
-module_id: 03SECURITYBLUEPRINT_001
-
+module_id: 03SECURITYBLUEPRINT_001_3873
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 responsibility:
-
 - 归档文档、历史版本
-
 layer: layer_03
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: ARCHIVE_BP_SECURITY_001
+```
+module_id: ARCHIVE_BP_SECURITY_001_3873
+```
 
 version: 1.0.1
 
@@ -48,7 +37,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -1084,7 +1075,9 @@ def detect_suspicious_trading(user_id, trade):
 
 **维护?*: 清风量化系统
 
----
+```
+```---
+```
 
 
 
@@ -1140,7 +1133,9 @@ def detect_suspicious_trading(user_id, trade):
 
 
 
----
+```
+```---
+```
 
 
 

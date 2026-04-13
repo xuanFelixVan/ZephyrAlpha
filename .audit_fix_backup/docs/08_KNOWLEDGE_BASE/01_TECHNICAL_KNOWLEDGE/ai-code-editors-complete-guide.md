@@ -20,7 +20,7 @@ responsibility: 01_TECHNICAL_KNOWLEDGE
 
 > 这是一份**超级详细的综合指南**，包含价格、模型、成本分析、场景选择、成本陷阱等全方位信息。
 
----
+```---
 
 # 📑 目录
 
@@ -38,7 +38,7 @@ responsibility: 01_TECHNICAL_KNOWLEDGE
 6. [成本陷阱与优化](#成本陷阱与优化)
 7. [企业级对比](#企业级对比)
 
----
+```---
 
 # 🚀 快速选择指南
 
@@ -108,7 +108,7 @@ $100-200  → Claude Code Max (5-20x用量)
 - 代码补全无限
 - 支持本地LLM (Ollama)
 
----
+```---
 
 # 6大编辑器详细对比
 
@@ -144,7 +144,7 @@ https://github.com/features/copilot/plans
 
 **适合人群:** 学生、开源贡献者、轻度使用者
 
----
+```---
 
 #### **Pro 版本** ($10/月) ⭐ 最值得买
 
@@ -183,7 +183,7 @@ https://github.com/features/copilot/plans
 
 **适合人群:** 个人开发者、成本敏感用户、学习者
 
----
+```---
 
 #### **Pro+ 版本** ($39/月)
 
@@ -222,7 +222,7 @@ https://github.com/features/copilot/plans
 - Pro+ 版本支持更大的知识库
 - 增强了 Code Search 能力
 
----
+```---
 
 #### **Enterprise 版本** (自定义价格)
 
@@ -242,7 +242,7 @@ https://github.com/features/copilot/plans
 
 **适合:** 大型企业、特殊合规需求
 
----
+```---
 
 ### 📊 模型使用限制详解
 
@@ -259,7 +259,7 @@ https://github.com/features/copilot/plans
 - Pro+ 额度 5 倍，但所有高端模型共享
 - 无模型差异化定价（都用 Premium Requests）
 
----
+```---
 
 ### 支持平台
 
@@ -272,7 +272,7 @@ https://github.com/features/copilot/plans
 - ✅ Azure DevOps (支持)
 - ✅ 命令行 (CLI)
 
----
+```---
 
 ### 💡 GitHub Copilot 特色功能分析
 
@@ -292,7 +292,7 @@ https://github.com/features/copilot/plans
 - Pro: $10 + 超额 = $10-30/月（取决于用量）
 - Pro+: $39 + 超额 = $39-60+/月
 
----
+```---
 
 ## 2. Cursor详细版
 
@@ -324,7 +324,7 @@ https://cursor.com/pricing
 - ❌ 自定义指令：不支持
 - 💡 试用场景：体验 IDE 和基础功能
 
----
+```---
 
 #### **Pro 版本** ($20/月) ⭐ 强烈推荐
 
@@ -369,7 +369,7 @@ https://cursor.com/pricing
   → $3 × 1 = $3
 - 消耗 15% 月度预算
 
----
+```---
 
 #### **Pro+ 版本** ($60/月) ⭐⭐ **推荐**
 
@@ -394,7 +394,7 @@ https://cursor.com/pricing
 - 需要模型灵活切换
 - 成本控制在 $60-100 范围内
 
----
+```---
 
 #### **Ultra 版本** ($200/月)
 
@@ -418,7 +418,7 @@ https://cursor.com/pricing
 - 多个AI Agent 并发执行
 - 不关心成本，追求性能
 
----
+```---
 
 #### **Teams 方案** ($40/user/月)
 
@@ -445,7 +445,7 @@ https://cursor.com/pricing
 - 需要协作和成本透明
 - 重视隐私保护
 
----
+```---
 
 #### **Enterprise 方案** (定制价格)
 
@@ -462,7 +462,7 @@ https://cursor.com/pricing
 - 最低购买数量通常 5-10 用户
 - 需要销售咨询
 
----
+```---
 
 ### 📊 Cursor 模型成本对比
 
@@ -485,7 +485,7 @@ https://cursor.com/pricing
 - **质量优化**: Opus > Sonnet (最强代码能力)
 - **平衡选择**: Claude Sonnet (大多数场景最佳)
 
----
+```---
 
 ### 支持平台
 - ✅ Cursor 原生 IDE (完整功能)
@@ -511,7 +511,7 @@ https://cursor.com/pricing
 - Pro+: $60-100/月
 - Ultra: $200+ 固定
 
----
+```---
 
 ## 3. Claude Code详细版
 
@@ -549,7 +549,7 @@ https://claude.com/product/claude-code
 - 学生、评估、轻度使用
 - 仅需 Chat 功能，不需代码编辑
 
----
+```---
 
 #### **Pro 版本** ($20/月) ⭐ 推荐入门
 
@@ -598,7 +598,7 @@ Claude Code 功能包括:
 - 单个或多个相关文件修改
 - 需要 Git 集成的工作流
 
----
+```---
 
 #### **Max 5x 版本** ($100/月)
 
@@ -620,7 +620,7 @@ Claude Code 功能包括:
 - 重度 Claude Code 使用者
 - 需要团队协作和权限管理
 
----
+```---
 
 #### **Max 20x 版本** ($200/月) ⭐ 企业级
 
@@ -653,7 +653,7 @@ Claude Code 功能包括:
 - 对合规性有严格要求
 - 全天候 AI 驱动开发
 
----
+```---
 
 ### 📊 Claude Code 模型配置
 
@@ -671,7 +671,7 @@ Claude Code 功能包括:
   - 官方: 未明确说明
   - 建议: 保守假设 Opus 成本 10 倍 Haiku
 
----
+```---
 
 ### 支持平台
 - ✅ Claude.ai (Web)
@@ -706,7 +706,7 @@ Claude Code 功能包括:
   - 成本指数 = 0.2×10 + 0.8×1 = 2.8
   - 实际月成本估计: $20 × 2.8 = $56/月
 
----
+```---
 
 ## 4. Windsurf详细版
 
@@ -741,7 +741,7 @@ https://windsurf.com/pricing
 **适合:**
 - 体验阶段、学习 IDE
 
----
+```---
 
 #### **Pro 版本** ($20/月) ⭐ **最值得买**
 
@@ -806,7 +806,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
   → $3 × 1 = $3
 - 消耗 15% 月度预算
 
----
+```---
 
 #### **Max 版本** ($200/月) ⭐⭐ **推荐**
 
@@ -837,7 +837,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
 - ✅ 支持背对背 Agent（连续执行）
 - ✅ 企业级稳定性
 
----
+```---
 
 #### **Teams 方案** ($40/user/月)
 
@@ -860,7 +860,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
 - 需要成本透明和协作
 - 隐私优先的团队
 
----
+```---
 
 #### **Enterprise 方案** (定制价格)
 
@@ -877,7 +877,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
 - 最低购买数量: 5-10 users
 - 需要销售咨询
 
----
+```---
 
 ### 📊 Windsurf 总成本分析
 
@@ -907,7 +907,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
   - 固定成本心理舒适
 ```
 
----
+```---
 
 ### 支持平台
 - ✅ Windsurf 原生 IDE (完整功能)
@@ -932,7 +932,7 @@ Agent 自动化任务            → SWE-1.5 (已内含)
 - Pro: $20 + API 费用 = $25-50/月（取决于用量）
 - Max: $200 固定成本，无需担心超额
 
----
+```---
 
 ## 5. JetBrains AI详细版
 
@@ -978,7 +978,7 @@ https://www.jetbrains.com/ai-ides/buy
 - 模型能力受限 (较小的本地模型)
 - 学习曲线高
 
----
+```---
 
 #### **AI Pro 版本** ($9.66/月) ⭐ **最便宜付费**
 
@@ -1013,7 +1013,7 @@ https://www.jetbrains.com/ai-ides/buy
 快速检查/修复   → 使用 Credits
 ```
 
----
+```---
 
 #### **AI Ultimate 版本** ($28.98/月) ⭐⭐ **推荐**
 
@@ -1044,7 +1044,7 @@ https://www.jetbrains.com/ai-ides/buy
 - **验证**: 自动测试修改
 - **迭代**: 失败自动重试
 
----
+```---
 
 #### **AI Enterprise 版本** (定制 $55.44+/月)
 
@@ -1064,7 +1064,7 @@ https://www.jetbrains.com/ai-ides/buy
 - 可部署本地 AI 模型
 - 完全的数据隐私控制
 
----
+```---
 
 ### 📊 JetBrains AI 成本分析
 
@@ -1084,7 +1084,7 @@ AI Ultimate ($28.98) + IDE License
 = ~$46-50/月
 ```
 
----
+```---
 
 ### 支持IDE产品
 - ✅ IntelliJ IDEA Ultimate ⭐ (主要)
@@ -1119,7 +1119,7 @@ AI Ultimate ($28.98) + IDE License
 - Pro: $10 (AI) + $17 (IDE) = ~$27/月
 - Ultimate: $29 (AI) + $17 (IDE) = ~$46/月
 
----
+```---
 
 ## 6. Amazon Q Developer详细版
 
@@ -1176,7 +1176,7 @@ https://aws.amazon.com/q/developer/pricing/
 - 代码补全为主
 - 不需要权限感知
 
----
+```---
 
 #### **Q for Developers Pro** (按量计费)
 
@@ -1191,7 +1191,7 @@ https://aws.amazon.com/q/developer/pricing/
 - ✅ 代码转换：无限制 (按 LOC 计费)
 - ❌ Enterprise 功能：不支持
 
----
+```---
 
 #### **Q for Business Lite** ($3/user/月)
 
@@ -1217,7 +1217,7 @@ https://aws.amazon.com/q/developer/pricing/
 - 成本优先
 - 基础权限感知即可
 
----
+```---
 
 #### **Q for Business Pro** ($20/user/月) ⭐ **推荐企业**
 
@@ -1252,7 +1252,7 @@ https://aws.amazon.com/q/developer/pricing/
 - 对合规性有要求
 - 需要代码知识库
 
----
+```---
 
 ### 📊 Amazon Q 成本分析
 
@@ -1289,7 +1289,7 @@ https://aws.amazon.com/q/developer/pricing/
     = $18 额外成本
 ```
 
----
+```---
 
 ### 支持平台
 - ✅ VS Code (扩展) - 最好体验
@@ -1322,7 +1322,7 @@ https://aws.amazon.com/q/developer/pricing/
 - 小企业: $30-150/月 (Lite)
 - 大企业: $2000+/月 (Pro)
 
----
+```---
 
 # 📊 完整功能矩阵
 
@@ -1343,7 +1343,7 @@ https://aws.amazon.com/q/developer/pricing/
 
 *受速率限制或配额限制
 
----
+```---
 
 ### 模型支持对比
 
@@ -1356,7 +1356,7 @@ https://aws.amazon.com/q/developer/pricing/
 | **JetBrains** | ✅ Sonnet/Haiku | ✅ GPT-4 | ❌ | Mellum | 3+ | 🟡 低 |
 | **Amazon Q** | ✅ Sonnet | ❌ | ❌ | ❌ | 1 | 🟡 中 |
 
----
+```---
 
 ### 企业功能对比
 
@@ -1371,7 +1371,7 @@ https://aws.amazon.com/q/developer/pricing/
 | **HIPAA 合规** | ❌ | ❌ | ❌ | ✅ | ⚠️ |
 | **GDPR 合规** | ✅ | ✅ | ✅ | ✅ | ✅ |
 
----
+```---
 
 # 模型支持与成本分析
 
@@ -1394,7 +1394,7 @@ Opus ↔ Sonnet: 🟢 相同成本 (同属 Premium)
 - 倾向强制使用轻量模型以保守 requests
 - 实际限制了模型选择自由
 
----
+```---
 
 ### Cursor - ✅ 完全透明
 
@@ -1414,7 +1414,7 @@ Sonnet (15 out) →  Haiku (4 out):     节省 73% ✅
 - 可根据任务难度动态选择
 - 可精确预测成本
 
----
+```---
 
 ### Windsurf - ✅ API 价格直通
 
@@ -1431,7 +1431,7 @@ Pro ($20) → Max ($200):
   - 适合重度用户
 ```
 
----
+```---
 
 ### Claude Code - ⚠️ 不透明
 
@@ -1447,7 +1447,7 @@ Pro ($20) → Max ($200):
      → 实际月成本 ≈ $20 × 2.8 = $56/月
 ```
 
----
+```---
 
 ### JetBrains - ⚠️ 完全不透明
 
@@ -1459,7 +1459,7 @@ Pro ($20) → Max ($200):
 - 企业: 协商 Enterprise 合同获得透明定价
 - 个人: 改用 Cursor
 
----
+```---
 
 ### Amazon Q - 🟢 标准 token 计费
 
@@ -1468,7 +1468,7 @@ Pro ($20) → Max ($200):
 - Free: 50 agent/月免费
 - Pro: 所有 agent 无限，超过后按量计费
 
----
+```---
 
 ## 月度成本预测模型
 
@@ -1549,7 +1549,7 @@ Cursor Ultra ($400):
 推荐: Windsurf Max ($200) - 最平衡
 ```
 
----
+```---
 
 # 场景化选择指南
 
@@ -1564,7 +1564,7 @@ Cursor Ultra ($400):
 
 **月成本:** $0 永久
 
----
+```---
 
 ## 场景 2: "我是个人开发者，追求最便宜"
 
@@ -1579,7 +1579,7 @@ Cursor Ultra ($400):
 
 **月成本:** $10-20/月
 
----
+```---
 
 ## 场景 3: "我想要最透明的模型成本"
 
@@ -1592,7 +1592,7 @@ Cursor Ultra ($400):
 
 **月成本:** $20-50/月（完全可控）
 
----
+```---
 
 ## 场景 4: "我要无忧的无限使用"
 
@@ -1615,7 +1615,7 @@ Cursor Ultra ($400):
 
 **月成本:** $200 固定
 
----
+```---
 
 ## 场景 5: "我是初创团队 (3-10人)"
 
@@ -1639,7 +1639,7 @@ Cursor Ultra ($400):
 
 **月成本:** $120-200/月（3-5人）
 
----
+```---
 
 ## 场景 6: "我是企业 (50+ 人)，需要权限感知"
 
@@ -1663,7 +1663,7 @@ Cursor Ultra ($400):
 
 **月成本:** $1000-2000+/月（50-100人）
 
----
+```---
 
 ## 场景 7: "我的代码库很大，需要快速理解"
 
@@ -1685,7 +1685,7 @@ Cursor Ultra ($400):
 
 **推荐:** **Windsurf Pro ($20) 或 Cursor Pro+ ($60)**
 
----
+```---
 
 ## 场景 8: "我想要最强的代码生成质量"
 
@@ -1707,7 +1707,7 @@ Cursor Ultra ($400):
 
 **推荐:** **Claude Code Pro ($20)** (体验最好)
 
----
+```---
 
 # 成本陷阱与优化
 
@@ -1730,7 +1730,7 @@ GitHub Copilot Pro 每月 300 premium requests
 3. 改用 **Windsurf Pro** (API 直通)
 4. 监控 Premium Requests 消耗速度
 
----
+```---
 
 ## 🟡 陷阱 2: Windsurf 的 "Light/Standard/Heavy" 定义过于模糊
 
@@ -1748,7 +1748,7 @@ Windsurf Pro 说 "Standard quota"
 2. 在 Windsurf 的 Discord/社区寻求用量建议
 3. 改用 **Cursor Pro** (清晰的 MPM 数字)
 
----
+```---
 
 ## 🟡 陷阱 3: Claude Code 的模型切换成本不可见
 
@@ -1766,7 +1766,7 @@ Claude Code Pro/Max 说 "More usage" 和 "5×/20× usage"
 2. 需要强大代码能力，用 Pro 而非试图省 Free
 3. 改用 **Cursor Pro** (清晰的 API 费率)
 
----
+```---
 
 ## 🟡 陷阱 4: JetBrains AI 与 IDE 订阅的成本混淆
 
@@ -1785,7 +1785,7 @@ IDE License: $17-20/月 (required)
 2. 企业用户: 协商 Enterprise 合同获得透明定价
 3. 个人用户: 如果关心 AI 成本，改用 Cursor
 
----
+```---
 
 ## 🟠 陷阱 5: Amazon Q Free 的"50 agent/月"容易超额
 
@@ -1802,7 +1802,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 2. 中度 Agent 用户: 升级 **Q Business Lite ($3/user)**（企业）
 3. 个人: 改用 **Cursor Pro** (Agent 无限)
 
----
+```---
 
 # 快速成本对比
 
@@ -1832,7 +1832,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 | **Windsurf** | Max | $200 | 无日限制，Heavy 配额 |
 | **Claude Code** | Max 20x | $200 | 20× 用量，企业功能 |
 
----
+```---
 
 ## 最终选择建议矩阵
 
@@ -1876,7 +1876,7 @@ Amazon Q Free: 代码补全无限，但 Agent 仅 50/月
 └─────────────────────────────────────┘
 ```
 
----
+```---
 
 # 企业级对比
 
@@ -1928,7 +1928,7 @@ FedRAMP  → GitHub (✅)
 PCI-DSS  → 需要咨询各方案
 ```
 
----
+```---
 
 # 数据质量评估
 
@@ -1951,7 +1951,7 @@ PCI-DSS  → 需要咨询各方案
 - Windsurf: 具体的 daily limits
 - Amazon Q: Free 到 Pro 的超额费用细节
 
----
+```---
 
 # 更新日志
 
@@ -1962,7 +1962,7 @@ PCI-DSS  → 需要咨询各方案
 | 2026-04-12 | 6 编辑器对比 | 完整全面对比 |
 | - | 建议关注 | GitHub Copilot 即将推出新定价; Claude 3.5 Opus 发布; Cursor 3.1 新功能 |
 
----
+```---
 
 # 附录: 官方资源链接
 
@@ -1975,7 +1975,7 @@ PCI-DSS  → 需要咨询各方案
 | **JetBrains AI** | [store](https://www.jetbrains.com/store) | [docs](https://www.jetbrains.com/help) | [blog](https://blog.jetbrains.com) |
 | **Amazon Q** | [pricing](https://aws.amazon.com/q/pricing/) | [docs](https://docs.aws.amazon.com/q) | AWS Blog |
 
----
+```---
 
 **本指南基于 2026 年 4 月的官方公开文档生成。定价和功能会频繁变化。**
 

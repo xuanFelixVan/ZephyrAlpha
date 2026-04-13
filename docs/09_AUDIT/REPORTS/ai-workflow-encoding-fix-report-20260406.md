@@ -23,7 +23,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -97,7 +99,9 @@ compliance_level: 专业标准
 
 
 
+```
 - ✅ 已添加module_id: INDEX_AI_WORKFLOW_001
+```
 
 - ✅ 已更新YAML头部
 
@@ -105,7 +109,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -181,7 +187,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -227,7 +235,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -251,7 +261,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -289,7 +301,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -385,7 +399,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

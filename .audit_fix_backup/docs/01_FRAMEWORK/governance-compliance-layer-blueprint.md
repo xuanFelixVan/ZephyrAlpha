@@ -102,7 +102,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -148,7 +148,7 @@ Layer 10治理与合规层是清风量化系统的**治理中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -394,7 +394,7 @@ Layer 10治理与合规层是清风量化系统的**治理中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -686,7 +686,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -698,7 +698,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -710,7 +710,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -722,7 +722,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -734,7 +734,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -760,7 +760,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -782,7 +782,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -804,7 +804,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -832,7 +832,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -850,7 +850,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 
@@ -860,7 +860,7 @@ class TradingAuthorizationSystem:
 
 - v1.0.1 (2026-04-03): 初始版本
 
----
+```---
 
 
 
@@ -916,7 +916,7 @@ class TradingAuthorizationSystem:
 
 
 
----
+```---
 
 
 

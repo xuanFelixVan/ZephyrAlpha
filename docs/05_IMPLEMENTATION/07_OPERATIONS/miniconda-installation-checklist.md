@@ -69,7 +69,7 @@ conda env list
 
 
 
----
+```---
 
 
 
@@ -121,7 +121,7 @@ conda env create -f environment.yml
 
 
 
----
+```---
 
 
 
@@ -169,7 +169,7 @@ conda config --set show_channel_urls yes
 
 
 
----
+```---
 
 
 
@@ -225,7 +225,9 @@ pip install xtquant pandas numpy
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,32 +1,21 @@
 ---
-
-module_id: MULTISTRATEGYCOORDINATIONBL_001
-
+module_id: MULTISTRATEGYCOORDINATIONBL_001_1183
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_03
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 交易策略框架设计与实施指导与实施指导
-
 ---
 
-module_id: MULTI_STRATEGY_COORDINATION_001
+```
+module_id: MULTI_STRATEGY_COORDINATION_001_1183
+```
 
 version: 1.0.0
 
@@ -50,7 +39,9 @@ open_source_solution: "自研核心 + skfolio辅助"
 
 priority: P0
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +127,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 > **版本**: v1.0
 
@@ -150,7 +143,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -196,7 +191,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -428,7 +425,9 @@ priority: P0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1906,7 +1905,9 @@ class PortfolioRiskMonitor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2072,7 +2073,9 @@ class MultiStrategyCoordinator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2112,7 +2115,9 @@ class MultiStrategyCoordinator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2132,13 +2137,17 @@ class MultiStrategyCoordinator:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2194,7 +2203,9 @@ class MultiStrategyCoordinator:
 
 
 
----
+```
+```---
+```
 
 
 

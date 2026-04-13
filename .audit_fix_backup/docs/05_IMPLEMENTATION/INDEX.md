@@ -24,7 +24,7 @@ layer: layer_05
 > **最后更新**: 2026-04-11  
 > **维护者**: 实施层架构师
 
----
+```---
 
 ## 📋 文档职责说明
 
@@ -52,10 +52,10 @@ layer: layer_05
 ### 对接文档
 
 **相关文档**：
-- [../INDEX.md](../INDEX.md) - 系统导航入口（快速导航和文档分类）
+- ~~[../INDEX.md]~~ - 系统导航入口（快速导航和文档分类）
 - ../System_Manifest.md - 系统清单账本（完整模块清单和实施状态）
 
----
+```---
 
 ## 🎯 目录职责
 
@@ -66,21 +66,21 @@ layer: layer_05
 > **最后更?*: 2026-04-03  
 > **维护?*: 实施层架构师
 
----
+```---
 
 ## 🎯 目录职责
 
 本目录存放实施层相关文档，包括快速开始、开发标准、部署、运维、技术规格、建设文档等?
----
+```---
 
 ## 📚 核心文档
 
 ### 快速开发
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [快速开始总索引](12_MODULE_DESIGNS/layer_0/INDEX.md) | 快速开始文档导航 | ⭐⭐⭐⭐ |
+| ~~[快速开始总索引]~~ | 快速开始文档导航 | ⭐⭐⭐⭐ |
 | 学习路径 | 学习路径 | ⭐⭐⭐⭐ |
-| [路线图](./01_QUICKSTART/ROADMAP.md) | 实施路线图 | ⭐⭐⭐⭐ |
+| ~~[路线图]~~ | 实施路线图 | ⭐⭐⭐⭐ |
 | 开发环境 setup | 开发环境 | ⭐⭐⭐⭐ |
 | 首次回测 | 首次回测 | ⭐⭐⭐⭐ |
 
@@ -92,22 +92,22 @@ layer: layer_05
 | 设计原则 | 设计原则 | ⭐⭐⭐⭐ |
 | 代码质量 | 代码质量标准 | ⭐⭐⭐⭐ |
 | 测试标准 | 测试标准 | ⭐⭐⭐⭐ |
-| [安全标准](./02_DEVELOPMENT/SECURITY.md) | 安全标准 | ⭐⭐⭐⭐ |
+| ~~[安全标准]~~ | 安全标准 | ⭐⭐⭐⭐ |
 
 ### 部署
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [部署总索引](12_MODULE_DESIGNS/layer_0/INDEX.md) | 部署文档导航 | ⭐⭐⭐⭐ |
-| [部署概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 部署指南概述 | ⭐⭐⭐⭐ |
+| ~~[部署总索引]~~ | 部署文档导航 | ⭐⭐⭐⭐ |
+| ~~[部署概述（README）]~~ | 部署指南概述 | ⭐⭐⭐⭐ |
 | 部署计划 | 部署计划 | ⭐⭐⭐⭐ |
 
 ### 基础设施
 
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [基础设施总索引](12_MODULE_DESIGNS/layer_0/INDEX.md) | 基础设施文档导航 | ⭐⭐⭐⭐ |
-| [基础设施概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 基础设施概述 | ⭐⭐⭐⭐ |
+| ~~[基础设施总索引]~~ | 基础设施文档导航 | ⭐⭐⭐⭐ |
+| ~~[基础设施概述（README）]~~ | 基础设施概述 | ⭐⭐⭐⭐ |
 | 日常流水线 | 日常流水线 | ⭐⭐⭐⭐ |
 | 多级存储 | 多级存储架构 | ⭐⭐⭐⭐ |
 
@@ -122,7 +122,7 @@ layer: layer_05
 ### 技术规范
 | 文档名称 | 说明 | 重要?|
 |---------|------|--------|
-| [技术规格总索引（INDEX.md）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 技术规格文档导航 | ⭐⭐⭐⭐ |
+| ~~[技术规格总索引（INDEX.md）]~~ | 技术规格文档导航 | ⭐⭐⭐⭐ |
 
 ### 建设文档
 
@@ -130,7 +130,7 @@ layer: layer_05
 |---------|------|--------|
 | [建设文档索引](./06_CONSTRUCTION_DOCS/) | 建设文档 | ⭐⭐⭐⭐?|
 
----
+```---
 
 ## 🧭 严格孤儿挂载（实施层 A 类已扫光）
 
@@ -140,18 +140,18 @@ layer: layer_05
 
 ### 01_QUICKSTART
 
-- [快速开始总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[快速开始总索引]~~
 - 开发环境 setup
 - 首次回测
 - 学习路径
-- [路线图](./01_QUICKSTART/ROADMAP.md)
+- ~~[路线图]~~
 - 第一阶段设计
 - 因子设计入门
 
 ### 02_DEVELOPMENT
 
-- [开发标准总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [开发标准概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[开发标准总索引]~~
+- ~~[开发标准概述（README）]~~
 - AI Agent 调用协议
 - API 设计
 - [认证](./02_DEVELOPMENT/AUTH.md)
@@ -161,27 +161,27 @@ layer: layer_05
 
 ### 03_DEPLOYMENT
 
-- [部署总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [部署概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[部署总索引]~~
+- ~~[部署概述（README）]~~
 - 部署计划
 
 ### 04_INFRASTRUCTURE
 
-- [基础设施总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-- [基础设施概述（README）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[基础设施总索引]~~
+- ~~[基础设施概述（README）]~~
 - 日常流水线
 - 多级存储架构
 
 ### 04_OPERATIONS
 
-- [本目录门面](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) · [索引](12_MODULE_DESIGNS/layer_0/INDEX.md) · [audit_state](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[本目录门面]~~ · ~~[索引]~~ · ~~[audit_state]~~
 - 文档治理持续改进
 - 周度审计机制
 - 索引健全性（零入链 · 机器报告）
 
 ### 05_TECHNICAL_SPECIFICATIONS
 
-- [技术规格总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[技术规格总索引]~~
 - AI 虚拟研究团队技术规格
 - 配置管理器技术规格
 - 经济周期报告器技术规格
@@ -189,7 +189,7 @@ layer: layer_05
 
 ### 07_OPERATIONS
 
-- [运维手册总索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[运维手册总索引]~~
 - 审计交接
 - 持续改进执行报告
 - 文档创建检查清单
@@ -209,31 +209,31 @@ layer: layer_05
 
 ### 99_ARCHIVE（实施层历史归档）
 
-- [归档索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[归档索引]~~
 - 迁移指南 v1
 - 模块归档说明
 - 安全蓝图（归档稿）
 
----
+```---
 
 ## 🗂?子目?
 | 目录名称 | 说明 | 文档数量 |
 |---------|------|---------|
-| [01_QUICKSTART/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 快速开始 | 7 |
-| [02_DEVELOPMENT/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 开发标准 | 21 |
-| [03_DEPLOYMENT/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 部署 | 6 |
-| [04_INFRASTRUCTURE/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 基础设施 | 4 |
-| [07_OPERATIONS/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 运维 | 62 |
-| [05_TECHNICAL_SPECIFICATIONS/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 技术规格 | 80+ |
+| ~~[01_QUICKSTART/INDEX.md]~~ | 快速开始 | 7 |
+| ~~[02_DEVELOPMENT/INDEX.md]~~ | 开发标准 | 21 |
+| ~~[03_DEPLOYMENT/INDEX.md]~~ | 部署 | 6 |
+| ~~[04_INFRASTRUCTURE/INDEX.md]~~ | 基础设施 | 4 |
+| ~~[07_OPERATIONS/INDEX.md]~~ | 运维 | 62 |
+| ~~[05_TECHNICAL_SPECIFICATIONS/INDEX.md]~~ | 技术规格 | 80+ |
 | [06_CONSTRUCTION_DOCS/](./06_CONSTRUCTION_DOCS/) | 建设文档 | 20+ |
-| [99_ARCHIVE/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | 实施层历史归档 | 4 |
+| ~~[99_ARCHIVE/INDEX.md]~~ | 实施层历史归档 | 4 |
 
----
+```---
 
 ## 📖 快速导?
 ### 新手入门
 
-1. 阅读 [01_QUICKSTART/INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) - 快速开始总索引  
+1. 阅读 ~~[01_QUICKSTART/INDEX.md]~~ - 快速开始总索引  
 2. 阅读 01_QUICKSTART/LEARNING_PATH.md - 学习路径
 3. 阅读 02_DEVELOPMENT/DESIGN_PRINCIPLES.md - 设计原则
 
@@ -246,12 +246,12 @@ layer: layer_05
 1. 阅读 07_OPERATIONS/README.md - 运维概述
 2. 阅读 07_OPERATIONS/AUDIT_CHECKLIST_TEMPLATE.md - 审计检查清?3. 阅读 03_DEPLOYMENT/DEPLOYMENT_PLAN.md - 部署计划
 
----
+```---
 
 ## 🔗 相关链接
 
-- [系统主索引](../INDEX.md)
-- [框架设计索引](../01_FRAMEWORK/INDEX.md)
+- ~~[系统主索引]~~
+- ~~[框架设计索引]~~
 - `因子库索引`
 
 - 编码实施路线? - 系统文档
@@ -260,4 +260,4 @@ layer: layer_05
 
 - 快速参? - 系统文档
 
-- [ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)](./SITEMAP.md) - 系统文档
+- ~~[ﮒ؟ﮔﺛﮒﺎﮔﮔ۰۲ﮒﺍ?(SITEMAP)]~~ - 系统文档

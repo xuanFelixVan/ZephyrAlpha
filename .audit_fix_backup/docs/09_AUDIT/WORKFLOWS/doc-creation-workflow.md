@@ -51,7 +51,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -131,9 +131,9 @@ compliance_level: 专业标准
 
 ```markdown
 
----
+```---
 
-module_id: {MODULE_ID}
+module_id: {MODULE_ID}_4918
 
 version: 1.0.0
 
@@ -143,7 +143,7 @@ created_date: {DATE}
 
 owner: {OWNER}
 
----
+```---
 
 
 
@@ -161,7 +161,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -187,7 +187,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -219,7 +219,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -259,7 +259,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -297,7 +297,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -335,7 +335,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -367,7 +367,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -407,7 +407,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -445,7 +445,7 @@ owner: {OWNER}
 
 
 
----
+```---
 
 
 
@@ -595,7 +595,7 @@ python scripts/update_index.py --doc NEW_DOC.md
 
 
 
----
+```---
 
 
 
@@ -695,7 +695,7 @@ python scripts/yaml_validator.py --dir docs/05_IMPLEMENTATION
 
 
 
----
+```---
 
 
 
@@ -741,7 +741,7 @@ python scripts/yaml_validator.py --dir docs/05_IMPLEMENTATION
 
 
 
----
+```---
 
 
 
@@ -797,7 +797,7 @@ python scripts/yaml_validator.py --dir docs/05_IMPLEMENTATION
 
 
 
----
+```---
 
 
 
@@ -825,7 +825,7 @@ python scripts/yaml_validator.py --dir docs/05_IMPLEMENTATION
 
 
 
----
+```---
 
 
 

@@ -1,29 +1,16 @@
 ---
-
-module_id: HYPERPARAMETER_OPTIMIZATION_ML_001
-
+module_id: HYPERPARAMETER_OPTIMIZATION_ML_001_4073
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 系统架构师
-
 responsibility:
-
 - 系统优化方案设计与实施指导与实施指导
-
 layer: layer_04
-
 standard_type: 专业量化机构蓝图文档
-
 priority: P0核心
-
 estimated_hours: 25
-
 ---
 
 # 超参数优化蓝图
@@ -40,7 +27,9 @@ estimated_hours: 25
 
 
 
----
+```
+```---
+```
 
 
 
@@ -124,7 +113,9 @@ estimated_hours: 25
 
 
 
----
+```
+```---
+```
 
 
 
@@ -236,7 +227,9 @@ estimated_hours: 25
 
 
 
----
+```
+```---
+```
 
 
 
@@ -814,7 +807,9 @@ class MultiObjectiveOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -984,7 +979,9 @@ study.optimize(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1156,7 +1153,9 @@ def define_quant_search_space(trial: optuna.Trial):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1268,7 +1267,9 @@ def constrained_objective(trial: optuna.Trial):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1320,7 +1321,9 @@ http://localhost:8080
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1366,7 +1369,9 @@ http://localhost:8080
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1408,7 +1413,9 @@ http://localhost:8080
 
 
 
----
+```
+```---
+```
 
 
 

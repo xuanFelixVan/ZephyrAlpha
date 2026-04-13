@@ -42,7 +42,7 @@ parent_document: ../INDEX.md
 
 
 
----
+```---
 
 
 
@@ -54,7 +54,7 @@ parent_document: ../INDEX.md
 
 
 
----
+```---
 
 
 
@@ -82,7 +82,7 @@ version: X.Y.Z
 
 
 
----
+```---
 
 
 
@@ -200,7 +200,7 @@ version: 1.0.3  # 格式调整
 
 
 
----
+```---
 
 
 
@@ -264,7 +264,7 @@ TRADING_SYSTEM_DESIGN_V1.2.md    # version: 1.2.0
 
 
 
----
+```---
 
 
 
@@ -330,7 +330,7 @@ version: 1.0.0-draft  # 草稿版本，未正式发布
 
 
 
----
+```---
 
 
 
@@ -354,17 +354,16 @@ version: 1.0.0-draft  # 草稿版本，未正式发布
 
 ```yaml
 
----
+```---
 
 version: 1.0.0
 
-module_id: NEW_MODULE_BLUEPRINT
 
 responsibility_boundary: 新模块蓝图设计
 
 layer: Layer 8 (人机交互层)
 
----
+```---
 
 ```
 
@@ -434,7 +433,7 @@ layer: Layer 8 (人机交互层)
 
 
 
----
+```---
 
 
 
@@ -482,7 +481,7 @@ layer: Layer 8 (人机交互层)
 
 
 
----
+```---
 
 
 
@@ -530,7 +529,7 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/VERSION_VALIDATION_REPORT_YYYYM
 
 
 
----
+```---
 
 
 
@@ -558,7 +557,7 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/VERSION_VALIDATION_REPORT_YYYYM
 
 
 
----
+```---
 
 
 
@@ -596,7 +595,7 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/VERSION_VALIDATION_REPORT_YYYYM
 
 
 
----
+```---
 
 
 
@@ -644,7 +643,7 @@ docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/VERSION_VALIDATION_REPORT_YYYYM
 
 
 
----
+```---
 
 
 

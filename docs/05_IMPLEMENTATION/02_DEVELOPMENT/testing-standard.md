@@ -67,7 +67,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -293,7 +295,9 @@ class TestTrendFactor:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -433,7 +437,9 @@ class TestBacktestPipeline:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -567,7 +573,9 @@ class BacktestValidator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -677,7 +685,9 @@ class StrategyValidator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -741,7 +751,9 @@ def mock_api_response(test_data_dir):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -821,7 +833,9 @@ pytest.mark.weekly = "每周执行"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -921,7 +935,9 @@ jobs:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -967,7 +983,9 @@ pytest tests/ --cov=src --cov-fail-under=70
 
 
 
----
+```
+```---
+```
 
 
 
@@ -987,7 +1005,9 @@ pytest tests/ --cov=src --cov-fail-under=70
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1207,7 +1227,9 @@ print('目录结构验证通过')
 
 
 
----
+```
+```---
+```
 
 
 

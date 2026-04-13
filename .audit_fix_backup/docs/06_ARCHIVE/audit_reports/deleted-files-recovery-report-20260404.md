@@ -43,7 +43,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -95,7 +95,7 @@ compliance_level: 专业标准
 
 5. 提交到git（提? 1e9d544?
 
----
+```---
 
 
 
@@ -129,7 +129,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -169,7 +169,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -203,7 +203,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -235,7 +235,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -261,7 +261,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -345,7 +345,7 @@ git cat-file -p "72d1c02:docs/02_FACTOR_LIBRARY/01_METHODOLOGY/FACTOR_SCREENING_
 
    - 文件变更: 4个文?   - 增加行数: 46?   - 删除行数: 42?
 
----
+```---
 
 
 
@@ -395,7 +395,7 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```---
 
 
 
@@ -435,7 +435,7 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```---
 
 
 
@@ -479,7 +479,7 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```---
 
 
 
@@ -491,7 +491,7 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 其他被删除的文件要么内容已合并到其他文档，要么价值较低，不建议恢复。但DATA_QUALITY.md（P1级）?个蓝图文档（P2级）可根据需要选择性恢复?
 
----
+```---
 
 
 
@@ -507,7 +507,7 @@ grep "FACTOR_SCREENING_STRATEGY" docs/02_FACTOR_LIBRARY/INDEX.md
 
 
 
----
+```---
 
 
 

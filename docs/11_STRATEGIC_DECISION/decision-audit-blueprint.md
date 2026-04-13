@@ -1,32 +1,21 @@
 ---
-
-module_id: DECISIONAUDITBLUEPRINT_001
-
+module_id: DECISIONAUDITBLUEPRINT_001_3800
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_11
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: DECISION_AUDIT_001
+```
+module_id: DECISION_AUDIT_001_3800
+```
 
 version: 1.0.0
 
@@ -50,7 +39,9 @@ open_source_solution: "自研审计日志系统"
 
 priority: P2
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +119,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 > **版本**: v1.0
 
@@ -142,7 +135,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +183,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +413,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2564,7 +2563,9 @@ class ComplianceReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2622,7 +2623,9 @@ class ComplianceReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2642,13 +2645,17 @@ class ComplianceReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -2704,7 +2711,9 @@ class ComplianceReportGenerator:
 
 
 
----
+```
+```---
+```
 
 
 

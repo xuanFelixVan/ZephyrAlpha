@@ -1,29 +1,16 @@
 ---
-
-module_id: 01_FRAMEWORK_ARCHITECTURE_DECISIONS_INDEX
-
+module_id: 01_FRAMEWORK_ARCHITECTURE_DECISIONS_INDEX_7504
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 standard_type: 索引文件
-
 applicable_scope: 01_FRAMEWORK\ARCHITECTURE_DECISIONS
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 responsibility:
-
-  - ARCHITECTURE_DECISIONS目录索引
-
+- ARCHITECTURE_DECISIONS目录索引
 layer: layer_01
 ---
 
@@ -52,7 +39,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +53,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +127,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +151,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +167,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +185,9 @@ layer: layer_01
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_INTERFACE_SPECIFICATION_001
-
+module_id: LAYER6_INTERFACE_SPECIFICATION_001_2917
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构接口规范
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6接口规范定义
-
-  - 模块间接口设计
-
-  - API接口标准
-
-  - 数据格式规范
-
+- Layer 6接口规范定义
 layer: layer_06
-
 ---
 
 

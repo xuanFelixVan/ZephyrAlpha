@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_BEST_PRACTICES_DOCUMENT_GOVERNANCE_BEST_PRACTICES
+module_id: 09_AUDIT_BEST_PRACTICES_DOCUMENT_GOVERNANCE_BEST_PRACTICES_9204
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -23,7 +23,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -89,7 +91,7 @@ cp docs/09_AUDIT/TEMPLATES/DOCUMENT_TEMPLATE.md docs/XX_CATEGORY/NEW_DOCUMENT.md
 
 ```yaml
 
----
+```---
 
 standard_type: όΨΘόκμύ▒╗ίηΜ
 
@@ -105,13 +107,13 @@ owner: όΨΘόκμόΚΑόεΚϋΑ?
 
 version: ύΚΙόευίΠ?
 
-module_id: όρκίζΩID
+module_id: όρκίζΩID_9204
 
 created_date: ίΙδί╗║όΩξόεθ
 
 last_updated: όεΑίΡΟόδ┤όΨ░όΩξόε?
 
----
+```---
 
 ```
 
@@ -173,7 +175,9 @@ last_updated: όεΑίΡΟόδ┤όΨ░όΩξόε?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -277,7 +281,9 @@ version: 2.0.0  # ώΘΞίνπίΠαόδ┤
 
 
 
----
+```
+```---
+```
 
 
 
@@ -393,7 +399,9 @@ python scripts/document_auditor.py --all
 
 
 
----
+```
+```---
+```
 
 
 
@@ -525,7 +533,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -601,7 +611,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -669,7 +681,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -745,7 +759,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -817,7 +833,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -915,7 +933,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -933,7 +953,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 

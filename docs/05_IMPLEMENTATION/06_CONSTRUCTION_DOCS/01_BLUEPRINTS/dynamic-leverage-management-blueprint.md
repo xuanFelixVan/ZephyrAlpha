@@ -1,33 +1,15 @@
 ---
-
-module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001
-
+module_id: DYNAMIC_LEVERAGE_MANAGEMENT_001_2709
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 responsibility:
-
-  - 动态杠杆管理
-
-  - 杠杆风险评估
-
-  - 杠杆调整策略
-
-  - 杠杆监控告警
-
+- 动态杠杆管理
 ---
 
 
@@ -202,7 +184,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 **文档版本**: v1.0.0
 

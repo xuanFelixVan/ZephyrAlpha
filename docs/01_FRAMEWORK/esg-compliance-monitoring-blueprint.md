@@ -1,27 +1,20 @@
 ---
-module_id: 01_FRAMEWORK_ESG_COMPLIANCE_MONITORING_BLUEPRINT
+module_id: 01_FRAMEWORK_ESG_COMPLIANCE_MONITORING_BLUEPRINT_8707
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Esg Compliance Monitoring Blueprint相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: ESG合规监控系统
 compliance_level: 顶级专业标准
-reference_models:
-  - ESG Reporting Standards
-  - SFDR
-  - EU Taxonomy
-related_documents:
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-  - REGULATORY_REPORTING_BLUEPRINT.md
-  - COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
 ---
 
 ## 📋 执行摘要
@@ -66,7 +59,9 @@ ESG合规监控系统是清风量化系统的**可持续发展中枢**，负责�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -306,7 +301,9 @@ ESG合规监控系统是清风量化系统的**可持续发展中枢**，负责�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -632,7 +629,9 @@ unit='m',
 
 
 
----
+```
+```---
+```
 
 
 
@@ -864,7 +863,9 @@ class ESGScorer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +929,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -952,7 +955,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -972,7 +977,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -992,7 +999,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1016,7 +1025,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1038,7 +1049,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1072,7 +1085,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1092,13 +1107,17 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1154,7 +1173,9 @@ class ESGComplianceCheck:
 
 
 
----
+```
+```---
+```
 
 
 

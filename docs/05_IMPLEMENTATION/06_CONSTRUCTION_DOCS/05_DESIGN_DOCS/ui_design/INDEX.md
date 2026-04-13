@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_UI_DESIGN_001
-
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_05_DESIGN_DOCS_UI_DESIGN_001_7097
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供Ui Design相关文档支持
-
+- 提供Ui Design相关文档支持
 layer: layer_05
 ---
 
@@ -70,7 +61,7 @@ layer: layer_05
 
 | ui_layout_standard | UI布局标准规范 | ✅ 已完成 |
 
-| [README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 目录说明文档 | ✅ 已完成 |
+| ~~[README]~~ | 目录说明文档 | ✅ 已完成 |
 
 
 
@@ -158,7 +149,9 @@ UI组件体系
 
 
 
----
+```
+```---
+```
 
 
 

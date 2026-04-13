@@ -40,7 +40,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -100,11 +100,11 @@ responsibility: "处理INDEX相关业务"
 
 - P1 Infrastructure Blueprints Completion Report 20260407 - `P1_INFRASTRUCTURE_BLUEPRINTS_COMPLETION_REPORT_20260407`
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `01_BLUEPRINTS_REPORTS_README_001`
+- ~~[Readme]~~ - `01_BLUEPRINTS_REPORTS_README_001`
 
 
 
----
+```---
 
 
 
@@ -136,7 +136,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -152,7 +152,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 
@@ -168,7 +168,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```---
 
 
 

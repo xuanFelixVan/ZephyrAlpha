@@ -110,7 +110,9 @@ E3[
     E4 --> C3
 ```
 
----
+```
+```---
+```
 
 置?(季度/年度)
 
@@ -219,7 +221,9 @@ class AllWeatherOptimizer:
 |--------|------|------|------|
 置 |
 
----
+```
+```---
+```
 
 ## 🧠 第二级：中观策略?(周度/日度)
 
@@ -540,7 +544,9 @@ reasoning.append(f"? {market_state.regime.value}")
 | **日线目标组合** | 权重向量 | 日度 | 交易执行依据 |
 | **风险暴露报告** | 风险矩阵 | 日度 | 风险监控 |
 
----
+```
+```---
+```
 
 /分钟/秒级)
 
@@ -864,7 +870,9 @@ class IntradayStrategy:
 | **专业策略信号** | 策略信号?| 按策略频?| 专业交易机会 |
 | **执行质量报告** | 执行分析 | 日度 | 执行算法优化 |
 
----
+```
+```---
+```
 
 ## 🔗 贯穿支撑系统
 
@@ -988,7 +996,7 @@ class FullCyclePerformanceAttribution:
         # 生成可视化报?
         visualizations = self.attribution_visualizer.create_visualizations(
 
----
+```---
 
 ##
 ?
@@ -1019,7 +1027,7 @@ class FullCyclePerformanceAttribution:
 | AI_STRATEGY_AUTOMATION_BLUEPRINT.md | AI策略自动?- 90%自动化率 |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Layer 0-11技术流水线架构 |
 
----
+```---
 
             attribution_results=attribution_results,
             integrated_view=integrated_view
@@ -1034,7 +1042,9 @@ class FullCyclePerformanceAttribution:
         )
 ```
 
----
+```
+```---
+```
 
 ## 🚀 架构迁移与实施路径
 
@@ -1069,7 +1079,9 @@ class FullCyclePerformanceAttribution:
 | **回测速度** | 小时?| 分钟?| 提升10-60?|
 | **系统可用?* | 95% | 99.9% | 提升至机构级 |
 
----
+```
+```---
+```
 
 ## 📋 总结：专业机构级架构的核心价值
 
@@ -1095,4 +1107,6 @@ class FullCyclePerformanceAttribution:
 
 ?
 
----
+```
+```---
+```

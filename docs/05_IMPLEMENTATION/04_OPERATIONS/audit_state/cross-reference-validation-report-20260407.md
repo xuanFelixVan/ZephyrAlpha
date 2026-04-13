@@ -1,21 +1,12 @@
 ---
-
 version: 1.0.0
-
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_CROSS_REFERENCE_VALIDATION_REPORT_20260407_2026040718013
-
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_CROSS_REFERENCE_VALIDATION_REPORT_20260407_2026040718013_8154
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
 - 跨文档引用验证报告文档
-
 layer: layer_05
 ---
 
@@ -658,7 +649,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

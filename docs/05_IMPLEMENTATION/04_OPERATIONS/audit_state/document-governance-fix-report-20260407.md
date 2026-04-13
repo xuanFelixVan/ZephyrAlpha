@@ -1,27 +1,15 @@
 ---
-
-module_id: DOCUMENT_GOVERNANCE_FIX_REPORT_001
-
+module_id: DOCUMENT_GOVERNANCE_FIX_REPORT_001_4777
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: Audit Sentinel
-
 responsibility:
-
 - 系统审计分析与质量评估报告与改进建议
-
 standard_type: 修复报告
-
 applicable_scope: 人机交互层文档治理
-
 compliance_level: 专业标准
-
 layer: layer_05
 ---
 
@@ -40,7 +28,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +70,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -206,7 +198,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -279,7 +273,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -313,7 +309,9 @@ if file1.name == 'INDEX.md' or file2.name == 'INDEX.md':
 
 
 
----
+```
+```---
+```
 
 
 
@@ -453,7 +451,9 @@ L3: 专业标准层审计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -513,7 +513,9 @@ L3: 专业标准层审计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -555,7 +557,9 @@ L3: 专业标准层审计
 
 
 
----
+```
+```---
+```
 
 
 
@@ -611,7 +615,9 @@ L3: 专业标准层审计
 
 
 
----
+```
+```---
+```
 
 
 

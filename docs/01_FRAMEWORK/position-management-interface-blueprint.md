@@ -1,87 +1,20 @@
 ---
-
-module_id: POSITION_MANAGEMENT_INTERFACE_001
-
+module_id: POSITION_MANAGEMENT_INTERFACE_001_1119
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 持仓管理界面
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Position Monitor
-
-- Renaissance Technologies Portfolio View
-
-- Two Sigma Position Analytics
-
-- Citadel Position Management
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
-
-- RISK_MONITORING_INTERFACE_BLUEPRINT.md
-
-responsibility_boundary: '本文档负责持仓管理界面设计，包括：
-
-
-
-  - 实时持仓展示
-
-
-
-  - 持仓调整界面
-
-
-
-  - 持仓分析报告
-
-
-
-  - 持仓历史查询
-
-
-
-  - 持仓风险分析
-
-
-
-
-
-  组合优化请参考：PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
-
-
-
-  风险监控请参考：RISK_MONITORING_INTERFACE_BLUEPRINT.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责持仓管理界面设计，包括：'
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility:
-
-- POSITION_MANAGEMENT_INTERFACE蓝图设计
-
+responsibility: ''
 ---
 
 
@@ -110,7 +43,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -200,7 +135,9 @@ class PositionManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -224,7 +161,9 @@ class PositionManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -244,7 +183,9 @@ class PositionManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 

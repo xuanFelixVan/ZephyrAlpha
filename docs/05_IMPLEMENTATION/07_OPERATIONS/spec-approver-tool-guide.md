@@ -1,6 +1,15 @@
+---
+module_id: AUTO_43135
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: SPEC_APPROVER_TOOL_GUIDE_001
+```
+module_id: SPEC_APPROVER_TOOL_GUIDE_001_5256
+```
 
 version: 1.0.0
 
@@ -42,7 +51,9 @@ created_date: 2026-04-02
 last_updated: 2026-04-02
 
 layer: layer_05
----
+```
+```---
+```
 
 
 

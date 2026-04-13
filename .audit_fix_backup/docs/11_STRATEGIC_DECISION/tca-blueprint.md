@@ -60,7 +60,7 @@ implementation_status: 设计阶段
 
 open_source_solution: tcapy
 
----
+```---
 
 
 
@@ -146,7 +146,7 @@ open_source_solution: tcapy
 
 
 
----
+```---
 
 
 
@@ -160,7 +160,7 @@ open_source_solution: tcapy
 
 
 
----
+```---
 
 
 
@@ -242,7 +242,7 @@ Layer 11.9交易成本分析系统(TCA)是清风量化系统的**交易成本守
 
 
 
----
+```---
 
 
 
@@ -370,7 +370,7 @@ Layer 11.9交易成本分析系统(TCA)是清风量化系统的**交易成本守
 
 
 
----
+```---
 
 
 
@@ -716,7 +716,7 @@ class SlippageAnalysisEngine:
 
 
 
----
+```---
 
 
 
@@ -1064,7 +1064,7 @@ class MarketImpactEngine:
 
 
 
----
+```---
 
 
 
@@ -1378,7 +1378,7 @@ class ExecutionBenchmarkSystem:
 
 
 
----
+```---
 
 
 
@@ -1706,7 +1706,7 @@ class ExecutionQualityEvaluator:
 
 
 
----
+```---
 
 
 
@@ -1914,7 +1914,7 @@ results = tca.calculate_tca(
 
 
 
----
+```---
 
 
 
@@ -2006,7 +2006,7 @@ class TCAInterface:
 
 
 
----
+```---
 
 
 
@@ -2092,7 +2092,7 @@ Layer 8 监控报告
 
 
 
----
+```---
 
 
 
@@ -2144,7 +2144,7 @@ Layer 8 监控报告
 
 
 
----
+```---
 
 
 
@@ -2252,7 +2252,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 
@@ -2292,7 +2292,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 
@@ -2336,7 +2336,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 
@@ -2358,7 +2358,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 
@@ -2374,7 +2374,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 
@@ -2384,7 +2384,7 @@ class CallAuctionTCA:
 
 **下一步**: 创建再平衡决策系统蓝图
 
----
+```---
 
 
 
@@ -2440,7 +2440,7 @@ class CallAuctionTCA:
 
 
 
----
+```---
 
 
 

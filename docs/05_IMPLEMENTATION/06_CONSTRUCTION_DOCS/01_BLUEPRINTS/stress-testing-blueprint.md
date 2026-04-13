@@ -1,33 +1,15 @@
 ---
-
-module_id: STRESS_TESTING_001
-
+module_id: STRESS_TESTING_001_5679
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 压力测试
-
-  - 极限测试
-
-  - 稳定性测试
-
-  - 容量规划
-
+- 压力测试
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1152,7 +1134,9 @@ locust -f stress_test.py --worker --master-host=<master-ip>
 
 
 
----
+```
+```---
+```
 
 
 

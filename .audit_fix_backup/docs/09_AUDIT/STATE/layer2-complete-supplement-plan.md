@@ -35,7 +35,7 @@ responsibility: STATE
 
 
 
----
+```---
 
 
 
@@ -79,7 +79,7 @@ responsibility: STATE
 
 
 
----
+```---
 
 
 
@@ -181,7 +181,7 @@ responsibility: STATE
 
 
 
----
+```---
 
 
 
@@ -299,7 +299,7 @@ factors = st.transform(X_test)
 
 
 
----
+```---
 
 
 
@@ -395,7 +395,7 @@ orthogonal_factors = pca.fit_transform(scaled_data)
 
 
 
----
+```---
 
 
 
@@ -491,7 +491,7 @@ weights = ef.max_sharpe()
 
 
 
----
+```---
 
 
 
@@ -577,7 +577,7 @@ factor_covariance = np.cov(risk_factors.T)
 
 
 
----
+```---
 
 
 
@@ -677,7 +677,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -703,7 +703,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -723,7 +723,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -745,7 +745,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -769,7 +769,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -817,7 +817,7 @@ with mlflow.start_run():
 
 
 
----
+```---
 
 
 
@@ -983,7 +983,7 @@ Layer 2: Alpha因子层完整架构
 
 
 
----
+```---
 
 
 
@@ -1027,7 +1027,7 @@ Layer 2: Alpha因子层完整架构
 
 
 
----
+```---
 
 
 
@@ -1075,7 +1075,7 @@ Layer 2: Alpha因子层完整架构
 
 
 
----
+```---
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_61098
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: DOCUMENT_METADATA_TEMPLATE
+```
+module_id: DOCUMENT_METADATA_TEMPLATE_4318
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 文档元数据模板标准
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,7 +113,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -114,7 +129,7 @@ layer: layer_09
 
 ```yaml
 
----
+```---
 
 
 version: 1.0.0
@@ -127,7 +142,7 @@ last_updated: YYYY-MM-DD
 
 owner: [负责人]
 
----
+```---
 
 ```
 
@@ -139,7 +154,7 @@ owner: [负责人]
 
 ```yaml
 
----
+```---
 
 
 version: 1.0.0
@@ -164,13 +179,15 @@ compliance_level: 专业标准
 
 parent_document: [父文档路径]
 
----
+```---
 
 ```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -343,7 +360,9 @@ standard_type: 指南
 
 
 
----
+```
+```---
+```
 
 
 
@@ -389,7 +408,9 @@ standard_type: 指南
 
 
 
----
+```
+```---
+```
 
 
 
@@ -429,7 +450,9 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -473,7 +496,9 @@ python scripts/check_metadata_completeness.py
 
 
 
----
+```
+```---
+```
 
 
 

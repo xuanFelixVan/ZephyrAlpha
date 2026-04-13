@@ -72,7 +72,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -116,7 +116,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -258,7 +258,7 @@ class IEconomicRegimeEngine(ABC):
 
 
 
----
+```---
 
 
 
@@ -290,7 +290,7 @@ class IEconomicRegimeEngine(ABC):
 
 
 
----
+```---
 
 
 
@@ -346,7 +346,7 @@ class IEconomicRegimeEngine(ABC):
 
 
 
----
+```---
 
 
 
@@ -368,13 +368,13 @@ class IEconomicRegimeEngine(ABC):
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: 🔄 编码修复
 
----
+```---
 
 
 
@@ -430,7 +430,7 @@ class IEconomicRegimeEngine(ABC):
 
 
 
----
+```---
 
 
 

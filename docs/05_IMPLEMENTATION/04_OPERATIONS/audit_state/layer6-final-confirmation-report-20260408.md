@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_FINAL_CONFIRMATION_REPORT_001
-
+module_id: LAYER6_FINAL_CONFIRMATION_REPORT_001_9170
 version: 8.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 蓝图架构师
-
 standard_type: 专业量化机构最终确认报告
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6最终确认
-
-  - 无遗漏验证
-
-  - 专业机构标准对照
-
-  - 完整性最终确认
-
+- Layer 6最终确认
 layer: layer_06
-
 ---
 
 
@@ -74,7 +55,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -484,7 +467,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -576,7 +561,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -622,7 +609,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -718,7 +707,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -754,7 +745,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

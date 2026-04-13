@@ -1,25 +1,14 @@
 ---
-
-module_id: 01_MONITORING_INDEX_001
-
+module_id: 01_MONITORING_INDEX_001_7065
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - MONITORING模块目录导航与文档索引管理
-
+- MONITORING模块目录导航与文档索引管理
 standard_type: 专业量化机构索引
-
 applicable_scope: 01_MONITORING
-
 layer: layer_08
 ---
 
@@ -48,7 +37,9 @@ layer: layer_08
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_STANDARDS_DOC_ORPHAN_DUP_PLAYBOOK_001
+module_id: 09_AUDIT_STANDARDS_DOC_ORPHAN_DUP_PLAYBOOK_001_0890
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
@@ -26,7 +26,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 
 > **目的**：用可审计、可分批、可门禁的方式，统一处理 **严格孤儿（入度=0）** 与 **重复/重叠（duplicate / overlap）**，避免「一次性改几百个文件」或「无台账的硬删」。
 
----
+```
+```---
+```
 
 ## 1. 范围与不在范围
 
@@ -37,7 +39,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 | **排除入口（孤儿统计）** | 见 `STRICT_ORPHAN_FILES_REPORT_*` 中「排除入口」条款（如部分 `INDEX.md` / `README.md` / 指定枢纽文） |
 | **不在范围** | 源码树、生成物、二进制；若需治理代码内文档，另立规范 |
 
----
+```
+```---
+```
 
 ## 2. 概念对齐
 
@@ -56,7 +60,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 - 每个主题 **对外只认一条权威正文**；索引与对外引用 **优先指向 canonical**。  
 - 细则见：重复文档处理标准（canonical 裁决）。
 
----
+```
+```---
+```
 
 ## 3. 总原则（机构常用）
 
@@ -66,7 +72,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 4. **台账优先**：裁决与处置写入 **台账或索引**，避免口头约定。  
 5. **自动化门禁**：合并前 **链接扫描**（如 L1）**无效链接为 0**（团队约定为准）。
 
----
+```
+```---
+```
 
 ## 4. 孤儿治理流程（端到端）
 
@@ -93,7 +101,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 
 - 被统计规则 **排除** 的文件不参与「孤儿」计数，但仍可能需要在 **父级导航** 中暴露——以报告定义为准，避免重复劳动。
 
----
+```
+```---
+```
 
 ## 5. 重复 / 重叠治理流程（端到端）
 
@@ -123,7 +133,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 
 - 详见：`OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md`（overlap 与孤儿 **双轨、分批**）。
 
----
+```
+```---
+```
 
 ## 6. 工具与门禁
 
@@ -134,7 +146,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 | `CANONICAL_POINTERS.md` | 重复裁决 **台账** |
 | overlap 模板与排期文档 | **重叠副本** 指针与批次节奏 |
 
----
+```
+```---
+```
 
 ## 7. 角色与职责（RACI 简版）
 
@@ -148,7 +162,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 
 （R=执行，A=负责，C=征询）
 
----
+```
+```---
+```
 
 ## 8. 度量与退出标准（建议）
 
@@ -161,7 +177,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 
 **阶段退出（示例）**：主干域 INDEX 已完成 A 类挂接；overlap 按主题批次完成指针；L1 稳定；台账无未决 `TBD` 或已全部登记 Owner。
 
----
+```
+```---
+```
 
 ## 9. 变更记录
 
@@ -169,7 +187,9 @@ responsibility: "处理DOC_ORPHAN_AND_DUPLICATE_GOVERNANCE_PLAYBOOK相关业务"
 |------|------|----------|
 | v1.0.0 | 2026-04-08 | 初版：孤儿 + 重复/重叠 全流程 Playbook |
 
----
+```
+```---
+```
 
 ## 10. 执行记录（运行时追加）
 

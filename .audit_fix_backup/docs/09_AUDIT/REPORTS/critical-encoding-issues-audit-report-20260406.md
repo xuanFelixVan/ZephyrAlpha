@@ -50,7 +50,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -110,7 +110,7 @@ layer: layer_09
 
 
 
----
+```---
 
 
 
@@ -206,7 +206,7 @@ layer: layer_09
 
 ```yaml
 
----
+```---
 
 module_id: REALTIME_QUALITY_MONITOR_001
 
@@ -232,7 +232,7 @@ implementation_status: ƽ׶  # 应为：设计阶段
 
 implementation_progress: 0%
 
----
+```---
 
 ```
 
@@ -256,11 +256,11 @@ implementation_progress: 0%
 
 ```yaml
 
----
+```---
 
 # 第一个YAML头部（正常）
 
-module_id: IMPL_BARRA_RISK_MODEL_BP_001
+module_id: IMPL_BARRA_RISK_MODEL_BP_001_3489_3489
 
 version: 1.0.2
 
@@ -270,17 +270,17 @@ owner: 组合优化层负责人
 
 standard_type: 专业量化机构蓝图文档
 
----
+```---
 
 # 第二个YAML头部（损坏）
 
-module_id: IMPL_BARRA_RISK_MODEL_BP_001
+module_id: IMPL_BARRA_RISK_MODEL_BP_001_3489_3489
 
 owner: ϯ  # 编码损坏
 
 standard_type: רҵͼĵ  # 编码损坏
 
----
+```---
 
 ```
 
@@ -332,7 +332,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -392,7 +392,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -624,7 +624,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -670,7 +670,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -716,7 +716,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -756,7 +756,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -806,7 +806,7 @@ standard_type: רҵͼĵ  # 编码损坏
 
 
 
----
+```---
 
 
 
@@ -852,7 +852,7 @@ foreach ($file in $files) {
 
 
 
----
+```---
 
 
 

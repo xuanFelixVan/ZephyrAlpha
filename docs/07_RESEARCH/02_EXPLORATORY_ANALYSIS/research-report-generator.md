@@ -1,5 +1,5 @@
 ---
-module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_RESEARCH_REPORT_GENERATOR
+module_id: 07_RESEARCH_02_EXPLORATORY_ANALYSIS_RESEARCH_REPORT_GENERATOR_3986
 layer: layer_00
 version: 1.0.0
 status: Active
@@ -33,7 +33,9 @@ ai_conclusion: null
 
 
 
----
+```
+```---
+```
 
 
 

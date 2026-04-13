@@ -1,6 +1,15 @@
+---
+module_id: AUTO_89984
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
+```
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_AUTOMATION_GUIDE_001_3254
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 实施指南、部署文档
 
 layer: layer_06
----
+```
+```---
+```
 
 
 

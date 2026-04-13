@@ -1,35 +1,16 @@
 ---
-
-module_id: MACHINE_LEARNING_OPTIMIZATION_001
-
+module_id: MACHINE_LEARNING_OPTIMIZATION_001_7805
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 机器学习风格组合优化
-
-  - 模型选择和验证
-
-  - 超参数调优
-
-  - 交叉验证
-
+- 机器学习风格组合优化
 layer: layer_06
-
 ---
 
 

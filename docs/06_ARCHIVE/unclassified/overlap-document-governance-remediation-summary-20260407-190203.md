@@ -1,6 +1,15 @@
+---
+module_id: AUTO_93769
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DOCUMENT_GOVERNANCE_REMEDIATION_SUMMARY_001
+```
 
 summary_id: DOCUMENT_GOVERNANCE_REMEDIATION_SUMMARY_001
 
@@ -19,7 +28,9 @@ responsibility:
 owner: 文档管理团队
 
 layer: layer_06
----
+```
+```---
+```
 
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -30,11 +41,15 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -56,7 +71,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -78,7 +95,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -102,7 +121,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -134,7 +155,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -170,7 +193,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +227,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -246,7 +273,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -284,7 +313,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +355,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +381,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -366,4 +401,6 @@ layer: layer_06
 
 
 
----
+```
+```---
+```

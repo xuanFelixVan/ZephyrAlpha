@@ -1,22 +1,14 @@
 ---
-module_id: 05_IMPLEMENTATION_07_OPERATIONS_KNOWLEDGE_BASE_CASE_STUDY_TEMPLATE
+module_id: 05_IMPLEMENTATION_07_OPERATIONS_KNOWLEDGE_BASE_CASE_STUDY_TEMPLATE_5069
 layer: layer_05
 version: 1.0.0
 status: Active
-responsibility:
-  - Case Study Template相关业务
+responsibility: ''
 created_date: YYYY-MM-DD
 last_updated: YYYY-MM-DD
-owner: ίχηόΨ╜ϋ┤θϋ┤μ?
-standard_type: όρκόζ┐όΨΘόκμ
-title: όκΙϊ╛ΜύιΦύσ╢όρκόζ┐
 type: case_study
-author: "όβ║ϋΔ╜ϊ╜ΥίΡΞ?
-tags: ["όρκόζ┐", "όκΙϊ╛ΜύιΦύσ╢"]
-applicable_scope: ύ│╗ύ╗θίχηόΨ╜
-compliance_level: ίΙζίπΜόιΘίΘΗ
 parent_document: ../INDEX.md
-implementation_status: ϋχ╛ϋχκώα╢όχ╡
+owner: 待指定
 ---
 
 # [όρκίζΩίΡΞύπ░]όΛΑόεψϋψΕίχκόκΙϊ╛ΜύιΦ?

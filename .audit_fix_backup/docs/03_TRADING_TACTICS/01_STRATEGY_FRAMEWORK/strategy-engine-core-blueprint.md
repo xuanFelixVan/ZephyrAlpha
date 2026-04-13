@@ -19,7 +19,7 @@ created_date: 2026-04-01
 last_updated: 2026-04-03
 parent_document: ../INDEX.md
 implementation_status: 设计阶段
----
+```---
 
 
 > **核心职责**: Strategy Engine Core蓝图设计
@@ -1051,7 +1051,7 @@ prometheus_metrics:
 
 - [ ] 实现性能监控系统
 ### 11.4 第四阶段：生产就
----
+```---
 
 ## 1. 文档治理
 
@@ -1079,7 +1079,7 @@ prometheus_metrics:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-01 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-01 | **状态**: Active
 ```

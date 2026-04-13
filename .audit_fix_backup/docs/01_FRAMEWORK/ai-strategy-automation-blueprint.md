@@ -68,7 +68,7 @@ responsibility:
 
 - 正文存在历史导入导致的符号断裂与局部格式异常；以本节门禁为准，全文排版修复留待统一清理批次。
 
----
+```---
 
 ## 一、概述
 ### 1.1 蓝图定位
@@ -107,7 +107,7 @@ Phase 4 (Month 7-8): 策略部署与资金分配
 
 Phase 5 (Month 9-10): 持续监控与迭代```
 
----
+```---
 
 ## 二、AI开源项目精选（15 个核心项目）
 
@@ -170,7 +170,7 @@ class AgentQuantQMTAdapter:
         return all_data
 ```
 
----
+```---
 
 #### 项目2: RD-Agent (微软Qlib) ⭐⭐⭐⭐?
 **GitHub**: https://github.com/microsoft/RD-Agent
@@ -212,7 +212,7 @@ class RDAgentFactorMiner:
         return factors
 ```
 
----
+```---
 
 ### 2.2 第二类：多智能体 AI 交易框架（适合 AI 监督）
 #### 项目3: TradingAgents ⭐⭐⭐⭐?
@@ -259,7 +259,7 @@ class TradingAgentsSupervisor:
         )
 ```
 
----
+```---
 
 #### 项目4: LLM-TradeBot ⭐⭐⭐⭐
 
@@ -281,7 +281,7 @@ class TradingAgentsSupervisor:
 - **多LLM支持**：灵活切换模块
 **集成难度**：⭐⭐⭐（中等）
 
----
+```---
 
 ### 2.3 第三类：强化学习策略优化（适合自动调参）
 #### 项目5: FinRL-X ⭐⭐⭐⭐?
@@ -322,7 +322,7 @@ class FinRLBacktestAdapter:
         return self._convert_result(result)
 ```
 
----
+```---
 
 #### 项目6: QuantRL-Lab ⭐⭐⭐⭐
 
@@ -337,7 +337,7 @@ class FinRLBacktestAdapter:
 - - **研究友好**：适合策略研发阶段
 - **评估完善**：多维度性能分析
 
----
+```---
 
 ### 2.4 第四类：LLM 驱动的策略工具
 #### 项目7: FinRobot ⭐⭐⭐⭐?
@@ -392,7 +392,7 @@ class FinRobotStrategyGenerator:
         return code
 ```
 
----
+```---
 
 #### 项目8: AxiomEdge-PRO ⭐⭐⭐⭐
 
@@ -402,7 +402,7 @@ class FinRobotStrategyGenerator:
 - **AI 策略师：LLM作为动态策略管理- ?**Walk-Forward引擎**：滚动优化验证- ?**国际象棋预测**：多步前瞻决策- ?**自适应循环**：策略持续进化
 **集成难度**：⭐⭐⭐
 - - **创新理念**：AI策略师概念先进- **自适应能力：策略持续优化能力
----
+```---
 
 #### 项目9: GenAI-MultiAgent-TradingSystem ⭐⭐⭐⭐
 
@@ -415,7 +415,7 @@ class FinRobotStrategyGenerator:
 - **自动执行**：可选自动交易
 **集成难度**：⭐⭐⭐
 - - **本地部署：支持本地LLM，数据安全- **策略工作时长：完整的策略开发环境
----
+```---
 
 ### 2.5 第五类：专业回测与优化框架
 #### 项目10: AI-Trader ⭐⭐⭐⭐
@@ -426,7 +426,7 @@ class FinRobotStrategyGenerator:
 - **配置驱动**：YAML配置回测流程
 - **20+内置策略**：丰富的策略库- ?**强大CLI**：命令行工具完善
 - **开发者友好：易于扩展
----
+```---
 
 #### 项目11: QTradeX-Algo-Trading-SDK ⭐⭐⭐⭐
 
@@ -436,7 +436,7 @@ class FinRobotStrategyGenerator:
 - **AI优化引擎**：QPSO/LSGA等优化算法- ?**100+交易所**：广泛的交易所支持
 - **向量化执行：高性能回测
 - **多指标支持：Tulip 指标体系
----
+```---
 
 #### 项目12: Investing Algorithm Framework ⭐⭐⭐⭐
 
@@ -446,7 +446,7 @@ class FinRobotStrategyGenerator:
 - **快速部署：从想法到生产一步到位- ?**事件驱动 + 向量化：双引擎回测
 - **扩展规模：支持大规模策略部署
 
----
+```---
 
 ### 2.6 第六类：学术研究级项目
 #### 项目13: PrimoGPT ⭐⭐?
@@ -455,14 +455,14 @@ class FinRobotStrategyGenerator:
 **核心能力**：
 - **NLP+RL融合**：文本特征强化学习
 - **RAG系统**：检索增强生成- ?**博士研究**：学术级严谨性
----
+```---
 
 #### 项目14: hyperopter ⭐⭐?
 **GitHub**: https://github.com/marwinsteiner/hyperopter
 
 **核心能力**：
 - **超参数优化：专业调参工具- ?**CI/CD集成**：策略管道集成- ?**防止过拟合：科学验证方法
----
+```---
 
 #### 项目15: AutoQuantAI ⭐⭐?
 **GitHub**: https://github.com/topics/trading-agent
@@ -470,7 +470,7 @@ class FinRobotStrategyGenerator:
 **核心能力**：
 - **AI盯盘**：自动市场监控- ?**RAG集成**：知识库增强
 - **实时数据**：A股市场支持
----
+```---
 
 ### 2.7 项目集成优先级
 | 优先级 | 项目 | 集成阶段 | 核心功能 |
@@ -484,7 +484,7 @@ class FinRobotStrategyGenerator:
 | **P1** | QuantRL-Lab | Phase 2 | RL训练环境 |
 | **P2** | 其他项目 | Phase 4-5 | 扩展功能 |
 
----
+```---
 
 ## 三、个人开发者专属五阶段实施路线图
 ### 3.1 Phase 1: AI策略研究与生成（Month 1-2
@@ -569,7 +569,7 @@ class AIStrategyResearchPipeline:
 - 策略代码质量达标率≥80%
 - 理论验证通过率≥70%
 
----
+```---
 
 ### 3.2 Phase 2: AI策略测试与优化（Month 3-4
 #### 核心目标
@@ -688,7 +688,7 @@ class ProfessionalBacktestPipeline:
 - 通过率≥30%
 - AI评审准确率≥85%
 
----
+```---
 
 ### 3.3 Phase 3: 模拟盘与小仓位测试（Month 5-6）⭐ 关键阶段
 
@@ -814,7 +814,7 @@ class PaperTradingAndSmallPositionTest:
 - 每月1-2个策略通过小仓位测试。
 - 真实市场验证完成
 
----
+```---
 
 ### 3.4 Phase 4: 策略部署与资金分配（Month 7-8
 #### 核心目标
@@ -873,7 +873,7 @@ class StrategyDeploymentSystem:
 - 每月部署1-2个新策略
 - 策略池规模达到 8-10 ?组合夏普比率>1.5
 
----
+```---
 
 ### 3.5 Phase 5: 持续监控与迭代（Month 9-10
 #### 核心目标
@@ -950,7 +950,7 @@ class ContinuousMonitoringSystem:
 - 风险可控
 - 绩效稳定
 
----
+```---
 
 ## 四、AI评审?+ 个人决策机制
 
@@ -1086,14 +1086,14 @@ class AIDecisionReport:
 
 ## AI建议: {self._generate_recommendation(ai_reviews)}
 
----
+```---
 *本报告由AI评审团自动生成，仅供参考，最终决策权在您手中。
 """
         
         return report
 ```
 
----
+```---
 
 ## 五、优化审核流程与批量生产
 
@@ -1112,7 +1112,7 @@ class AIDecisionReport:
 ****优化效果**：
 - 人工审核节点：3 个 ?人工工作量：6-10小时/天3-5小时/天- ?AI自动化率：90% → 95%
 
----
+```---
 
 ### 5.2 审核项：策略入池决策（Phase 2结束，完全自动）
 #### 自动化理由：
@@ -1180,7 +1180,7 @@ class StrategyPoolAutoApproval:
 ```
 
 **人工参与**: ?
----
+```---
 
 ### 5.3 审核项：模拟盘转实盘决策（Phase 3结束，⚠️ AI自动预警 + 人工最终确认）
 #### 为什么保留人工审核？
@@ -1290,7 +1290,7 @@ class SimulationToLiveAutoReview:
 
 **人工参与**: 仅在有风险预警时（预0%的策略需要人工审核）
 
----
+```---
 
 ### 5.4 审核项：小仓位转正式仓位决策（Phase 3结束，⚠️ AI自动预警 + 人工最终确认）
 #### 自动审核标准
@@ -1351,7 +1351,7 @@ class SmallPositionToFullAutoReview:
 
 **人工参与**: 仅在有风险预警时（预0%的策略需要人工审核）
 
----
+```---
 
 ### 5.5 审核项：策略异常处理决策（Phase 5运行中）- ?AI自动处理（轻度异常）
 
@@ -1408,7 +1408,7 @@ class StrategyAnomalyAutoHandler:
 
 **人工参与**: 仅重度异常和严重异常（预0%的异常需要人工审核）
 
----
+```---
 
 ### 5.6 审核项：重大风险事件决策（Phase 5运行中）- ⚠️ 保留人工决策
 
@@ -1445,7 +1445,7 @@ class MajorRiskEventAIAssistant:
 
 **人工参与**: 必须人工决策（预计每?-1次）
 
----
+```---
 
 ### 5.7 多策略并行模拟盘架构
 
@@ -1552,7 +1552,7 @@ simulation:
     enabled: true
     check_frequency: "daily"         # 每日检?    auto_pass_threshold: 0.75        # 自动通过?```
 
----
+```---
 
 ### 5.8 批量生产流程设计
 
@@ -1683,7 +1683,7 @@ production_pipeline:
     monthly_optimization: true       # 每月优化流程
 ```
 
----
+```---
 
 ### 5.9 优化后的工作量分?
 | 审核节点 | 触发频率 | 人工参与?| 单次时间 | 月度时间 |
@@ -1699,7 +1699,7 @@ production_pipeline:
 - 人工工作量：6-10小时/天?**2-3小时/?*（减0-70%?- ?AI自动化率 0% ?**95%**
 - 人工审核节点???**3*
 
----
+```---
 
 ## 六、自然语言策略交互系统（NL Strategy Interface?
 > **核心?*: 让不会编程的用户通过自然语言对话完成所有策略操?> 
@@ -1769,7 +1769,7 @@ production_pipeline:
     ├── 调整系统参数
     └── 紧急操?```
 
----
+```---
 
 ### 6.2 自然语言策略创建
 
@@ -1886,7 +1886,7 @@ class NLStrategyCreator:
 是否需要：
 1. 立即回测这个策略2. 修改策略参数3. 添加风控规则4. 查看策略代码：```
 
----
+```---
 
 #### 6.2.2 基于模板创建策略
 
@@ -1936,7 +1936,7 @@ class TemplateBasedCreator:
 是否需要：
 1. 查看完整策略代码2. 调整策略参数3. 立即回测?```
 
----
+```---
 
 ### 6.3 自然语言策略修改
 
@@ -2002,7 +2002,7 @@ class NLStrategyModifier:
 是否需要：
 1. 立即回测对比新旧策略2. 保存修改3. 继续调整其他参数据```
 
----
+```---
 
 #### 6.3.2 修改策略逻辑
 
@@ -2082,7 +2082,7 @@ class MAStrategyWithStopLoss(BaseStrategy):
 是否需要：
 1. 查看完整代码2. 调整止损比例3. 立即回测验证?```
 
----
+```---
 
 ### 6.4 自然语言策略管理
 
@@ -2146,7 +2146,7 @@ class NLStrategyManager:
 是否需要：
 1. 查看实时监控面板2. 设置告警规则3. 查看策略详情?```
 
----
+```---
 
 **用户输入**?```
 "把均线交叉策略下?
@@ -2167,7 +2167,7 @@ class NLStrategyManager:
 ?取消操作
 🔄 先查看持仓详?```
 
----
+```---
 
 #### 6.4.2 策略权重调整
 
@@ -2220,7 +2220,7 @@ def adjust_strategy_weight(self, user_input: str):
 是否需要：
 1. 查看资金分配详情2. 调整其他策略权重3. 查看历史权重变化?```
 
----
+```---
 
 ### 6.5 自然语言策略查询
 
@@ -2257,7 +2257,7 @@ def adjust_strategy_weight(self, user_input: str):
 是否需要：
 1. 查看详细交易记录2. 查看持仓详情3. 导出报告?```
 
----
+```---
 
 #### 6.5.2 策略风险查询
 
@@ -2287,7 +2287,7 @@ def adjust_strategy_weight(self, user_input: str):
 是否需要：
 1. 自动优化策略2. 调整风险参数3. 查看风险历史?```
 
----
+```---
 
 ### 6.6 对话式交互界?
 #### 6.6.1 多轮对话管理
@@ -2325,7 +2325,7 @@ def adjust_strategy_weight(self, user_input: str):
       还有什么需要帮助的吗？
 ```
 
----
+```---
 
 #### 6.6.2 智能提示与引?
 ```python
@@ -2368,7 +2368,7 @@ C. 降低权重
 D. 先看看再?
 （系统会根据您的选择自动执行相应操作?```
 
----
+```---
 
 ### 6.7 技术实现架?
 #### 6.7.1 系统架构
@@ -2376,7 +2376,7 @@ D. 先看看再?
 ```
 用户（自然语言输入?    ?┌─────────────────────────────────────?? 自然语言理解?(NLU)                ?? ├── 意图识别 (Intent Recognition)  ?? ├── 实体提取 (Entity Extraction)   ?? └── 上下文管?(Context Manager)   ?└─────────────────────────────────────?    ?┌─────────────────────────────────────?? 对话管理?(DM)                     ?? ├── 对话状态跟?                   ?? ├── 多轮对话管理                    ?? └── 澄清与确?                     ?└─────────────────────────────────────?    ?┌─────────────────────────────────────?? 策略操作?(Strategy Operations)   ?? ├── 策略创建?                     ?? ├── 策略修改?                     ?? ├── 策略管理?                     ?? └── 策略查询?                     ?└─────────────────────────────────────?    ?┌─────────────────────────────────────?? 执行?(Execution)                 ?? ├── 代码生成 (FinRobot)            ?? ├── 策略回测 (Backtesting.py)      ?? ├── 策略部署 (QMT)                 ?? └── 策略监控 (Monitoring)          ?└─────────────────────────────────────?    ?用户（自然语言输出?```
 
----
+```---
 
 #### 6.7.2 核心组件
 
@@ -2435,7 +2435,7 @@ class NLStrategyInterface:
         return response
 ```
 
----
+```---
 
 ### 6.8 实施计划
 
@@ -2450,7 +2450,7 @@ class NLStrategyInterface:
 - NLU: 自研 + LangChain
 - 对话管理: 自研
 
----
+```---
 
 #### Phase 2: 策略创建与修改（Month 3-4
 **目标**: 实现自然语言创建和修改策略
@@ -2463,7 +2463,7 @@ class NLStrategyInterface:
 -  代码生成: FinRobot + AgentQuant
 - 代码验证: AST + 单元测试
 
----
+```---
 
 #### Phase 3: 策略管理与查询（Month 5-6
 **目标**: 实现自然语言管理和查询策略
@@ -2476,7 +2476,7 @@ class NLStrategyInterface:
 -  策略管理: 自研
 - 数据查询: ClickHouse + Redis
 
----
+```---
 
 #### Phase 4: 智能助手（Month 7-8
 **目标**: 实现智能提示和主动建?
@@ -2489,7 +2489,7 @@ class NLStrategyInterface:
 -  对话管理: Rasa + 自研
 - 推荐引擎: 自研
 
----
+```---
 
 ### 6.9 成功指标
 
@@ -2501,7 +2501,7 @@ class NLStrategyInterface:
 | **用户满意?* | ?.5/5.0 | 用户评分 |
 | **平均对话轮数** | ??| 完成一个操作的平均对话轮数 |
 
----
+```---
 
 ## 七、QMT集成方案
 
@@ -2614,7 +2614,7 @@ class AgentQuantQMTAdapter:
         return all_data
 ```
 
----
+```---
 
 ## 八、风险评估与缓解措施
 
@@ -2642,7 +2642,7 @@ class AgentQuantQMTAdapter:
 | **学习曲线陡峭** | P1 | 分阶段实?+ 详细文档 |
 | **时间投入过大** | P2 | 优先核心功能 + 渐进式优化|
 
----
+```---
 
 ## 九、成功指?
 ### 8.1 Phase 1 成功标准
@@ -2668,7 +2668,7 @@ class AgentQuantQMTAdapter:
 - 异常检测准确率 90%
 - 策略池平均Sharpe 1.5
 - 人工参与时间 10小时/?
----
+```---
 
 ## 十、工作量分析
 
@@ -2692,7 +2692,7 @@ class AgentQuantQMTAdapter:
 ├── 小仓位转正式仓位审核: 2-3小时
 ├── 异常处理审核: 1-2小时（按需?└── 重大风险事件审核: 0.5-1小时（按需?```
 
----
+```---
 
 ## 十一、立即行动建?
 ### 10.1 本周任务清单
@@ -2727,7 +2727,7 @@ class AgentQuantQMTAdapter:
 - [ ] 总结Phase 1经验
 - [ ] 规划Phase 2细节
 
----
+```---
 
 ## 十二、相关文档索?
 ### 12.1 P0级核心蓝?
@@ -2747,10 +2747,10 @@ class AgentQuantQMTAdapter:
 | STRATEGY_ENGINE_CORE_BLUEPRINT.md | 策略引擎核心蓝图 | ⭐⭐⭐⭐?|
 | STRATEGY_SELECTION_TACTICS_ENTRY.md | 策略选择（stub → 图纸柜） | ⭐⭐⭐⭐ |
 
----
+```---
 
 **版本**: v1.1 | **更新**: 2026-04-03 | **?*: ?活跃
----
+```---
 
 ## 1. 文档治理
 
@@ -2778,6 +2778,6 @@ class AgentQuantQMTAdapter:
 |------|------|----------|--------|
 | v1.0.0 | 2026-04-02 | 初始版本创建 | 首席蓝图架构师 |
 
----
+```---
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-02 | **状态**: Active

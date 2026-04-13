@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_LINEAGE_ENHANCED_001
-
+module_id: DATA_LINEAGE_ENHANCED_001_1675
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 数据血缘追踪
-
-  - 数据流向分析
-
-  - 数据影响分析
-
-  - 数据溯源
-
+- 数据血缘追踪
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1092,7 +1074,9 @@ migrations:
 
 
 
----
+```
+```---
+```
 
 
 

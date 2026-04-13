@@ -1,6 +1,15 @@
+---
+module_id: AUTO_51992
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: TRAINING_SYSTEM_GUIDE_001
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_00
----
+```
+```---
+```
 
 
 # 文档治理培训体系
@@ -42,7 +53,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -118,7 +133,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -210,7 +227,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -298,7 +317,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -380,7 +401,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -462,7 +485,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -544,7 +569,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +615,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -648,7 +677,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 
@@ -706,7 +737,9 @@ layer: layer_00
 
 
 
----
+```
+```---
+```
 
 
 

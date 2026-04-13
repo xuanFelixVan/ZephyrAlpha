@@ -21,7 +21,9 @@ responsibility: 12_FACTOR_ORTHOGONALIZATION
 
 
 
----
+```
+```---
+```
 
 
 

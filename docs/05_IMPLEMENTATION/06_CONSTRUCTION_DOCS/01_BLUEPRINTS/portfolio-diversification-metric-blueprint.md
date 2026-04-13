@@ -1,33 +1,15 @@
 ---
-
-module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001
-
+module_id: PORTFOLIO_DIVERSIFICATION_METRIC_001_3852
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 分散度度量
-
-  - 风险分散评估
-
-  - 集中度分析
-
-  - 分散化优化
-
+- 分散度度量
 layer: layer_06
-
 ---
 
 

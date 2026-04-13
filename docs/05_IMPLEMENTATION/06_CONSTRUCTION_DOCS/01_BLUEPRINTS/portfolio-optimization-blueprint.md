@@ -1,45 +1,21 @@
 ---
-
-module_id: IMPL_PORTFOLIO_OPT_BP_001
-
+module_id: IMPL_PORTFOLIO_OPT_BP_001_7800
 version: 1.0.2
-
 status: Active
-
 created_date: 2026-04-01
-
 last_updated: 2026-04-07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 5.2 (组合优化)
-
 compliance_level: 初始标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 设计阶段
-
 open_source_dependency: PyPortfolioOpt, CVXPY, Riskfolio-Lib
-
 estimated_effort: 140小时
-
 priority: P0
-
 owner: 实施团队
-
 responsibility:
-
-  - 投资组合优化框架
-
-  - 优化流程协调
-
-  - 优化结果整合
-
-  - 多目标优化支持
-
+- 投资组合优化框架
 layer: layer_06
-
 ---
 
 

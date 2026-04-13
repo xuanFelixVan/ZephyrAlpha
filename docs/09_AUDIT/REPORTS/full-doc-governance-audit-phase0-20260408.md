@@ -1,6 +1,15 @@
+---
+module_id: AUTO_63080
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: AUDIT_PHASE0_BASELINE_20260408
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
   - 记录 Git 基线、清单统计与 audit_scope
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -68,7 +79,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 
@@ -176,7 +189,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 
@@ -198,7 +213,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +231,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 
@@ -238,7 +257,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 
@@ -254,7 +275,9 @@ git checkout audit/backup-20260408
 
 
 
----
+```
+```---
+```
 
 
 

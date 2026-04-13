@@ -51,7 +51,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -203,7 +205,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -523,7 +527,7 @@ python scripts/archive_audit.py --report reports/WEEKLY_SCAN_REPORT_YYYYMMDD.md
 
 
 
----
+```---
 
 
 
@@ -637,7 +641,7 @@ python scripts/verify_fix.py --all
 
 
 
----
+```---
 
 
 
@@ -687,7 +691,7 @@ python scripts/verify_fix.py --all
 
 
 
----
+```---
 
 
 
@@ -733,7 +737,7 @@ python scripts/verify_fix.py --all
 
 2. ﻟﺍﮔﺑﻠ؟ﻠ۱ﻛﺙﮒﻝﭦ?3. ﻠﮔﺍﮒﻠﻟﺑ۲ﻛﭨﭨﻛﭦ?4. ﻛﺕﮔ۴ﻝ؟۰ﻝﮒﺎ?
 
----
+```---
 
 
 
@@ -761,7 +765,7 @@ python scripts/verify_fix.py --all
 
 - **ﻠ۲ﻠ۸ﻠﻛﺛ**: ﮒﮔﭘﮒﻝﺍﮒﻛﺟ؟ﮒ۳ﻠ؟ﻠ۱?
 
----
+```---
 
 
 

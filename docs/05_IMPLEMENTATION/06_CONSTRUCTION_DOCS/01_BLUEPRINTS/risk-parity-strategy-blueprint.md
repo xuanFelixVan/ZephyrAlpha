@@ -1,33 +1,15 @@
 ---
-
 responsibility:
-
 - 风险平价策略
-
-- 风险贡献均衡
-
-- 风险平价权重优化
-
-- 风险平价预算分配
-
-module_id: RISK_PARITY_STRATEGY_001
-
+module_id: RISK_PARITY_STRATEGY_001_2231
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_06
-
 ---
 
 

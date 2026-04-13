@@ -1,21 +1,12 @@
 ---
-
-module_id: MODEL_MONITORING_001
-
+module_id: MODEL_MONITORING_001_4120
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-03
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 提供model monitoring blueprint的完整架构设计、技术选型和实施路径规划
-
 layer: layer_01
 ---
 
@@ -114,7 +105,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 ## 📊 一、概述
 
@@ -200,7 +193,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +315,9 @@ responsibility_boundary: |
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +417,7 @@ responsibility_boundary: |
 
 
 
----
+```---
 
 
 
@@ -1392,7 +1389,7 @@ class AnomalyDetector:
 
 
 
----
+```---
 
 
 
@@ -1568,7 +1565,7 @@ class AnomalyDetector:
 
 
 
----
+```---
 
 
 
@@ -1668,7 +1665,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 
@@ -1752,7 +1749,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 
@@ -1868,7 +1865,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 
@@ -1908,7 +1905,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 
@@ -1928,7 +1925,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 
@@ -2040,7 +2037,7 @@ requests>=2.31.0
 
 
 
----
+```---
 
 
 

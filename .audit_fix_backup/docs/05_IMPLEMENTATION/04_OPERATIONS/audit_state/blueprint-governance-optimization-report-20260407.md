@@ -35,7 +35,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -99,7 +99,7 @@ self.expected_dirs = {
 
 
 
----
+```---
 
 
 
@@ -167,7 +167,7 @@ def get_document_type(self, filename: str) -> str:
 
 
 
----
+```---
 
 
 
@@ -191,7 +191,7 @@ def get_document_type(self, filename: str) -> str:
 
 
 
----
+```---
 
 
 
@@ -215,7 +215,7 @@ def get_document_type(self, filename: str) -> str:
 
 ```yaml
 
----
+```---
 
 module_id: EXAMPLE_PLACEHOLDER_0D10ACEC80
 
@@ -237,7 +237,7 @@ compliance_level: 专业标准
 
 layer: "[Layer定位]"
 
----
+```---
 
 ```
 
@@ -261,7 +261,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -341,7 +341,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -369,7 +369,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -405,7 +405,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -425,7 +425,7 @@ layer: "[Layer定位]"
 
 
 
----
+```---
 
 
 
@@ -467,7 +467,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 
@@ -523,7 +523,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 
@@ -561,7 +561,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 
@@ -577,7 +577,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 
@@ -633,7 +633,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 
@@ -675,7 +675,7 @@ docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/
 
 
 
----
+```---
 
 
 

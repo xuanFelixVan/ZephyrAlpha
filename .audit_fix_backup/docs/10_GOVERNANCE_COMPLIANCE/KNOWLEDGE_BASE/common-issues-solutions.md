@@ -53,7 +53,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -141,7 +141,7 @@ python scripts/responsibility_description_generator.py --file [文件路径]
 
 
 
----
+```---
 
 
 
@@ -215,7 +215,7 @@ python scripts/complete_responsibility_description.py
 
 
 
----
+```---
 
 
 
@@ -297,7 +297,7 @@ python scripts/responsibility_format_validator.py
 
 
 
----
+```---
 
 
 
@@ -337,7 +337,7 @@ python scripts/responsibility_format_validator.py
 
 ```yaml
 
----
+```---
 
 module_id: EXAMPLE_PLACEHOLDER_8D96BADA4C
 
@@ -359,7 +359,7 @@ applicable_scope: [适用范围]
 
 compliance_level: [合规级别]
 
----
+```---
 
 ```
 
@@ -399,7 +399,7 @@ python scripts/document_template_generator.py --type [文档类型]
 
 
 
----
+```---
 
 
 
@@ -487,7 +487,7 @@ python scripts/document_structure_fixer.py --file [文件路径]
 
 
 
----
+```---
 
 
 
@@ -577,7 +577,7 @@ python scripts/fix_encoding_issues.py --batch
 
 
 
----
+```---
 
 
 
@@ -651,7 +651,7 @@ python scripts/fix_encoding_issues.py --remove-bom --file [文件路径]
 
 
 
----
+```---
 
 
 
@@ -747,7 +747,7 @@ python scripts/fix_invalid_links.py
 
 
 
----
+```---
 
 
 
@@ -825,7 +825,7 @@ python scripts/simplify_link_paths.py
 
 
 
----
+```---
 
 
 
@@ -865,11 +865,11 @@ python scripts/simplify_link_paths.py
 
 ```yaml
 
----
+```---
 
 version: 1.0.0  # 使用语义化版本
 
----
+```---
 
 ```
 
@@ -909,7 +909,7 @@ python scripts/optimize_version_management.py
 
 
 
----
+```---
 
 
 
@@ -991,7 +991,7 @@ mv docs/OLD_DOCUMENT.md docs/archive/2026-Q1/
 
 
 
----
+```---
 
 
 
@@ -1079,7 +1079,7 @@ python scripts/check_index_completeness.py
 
 
 
----
+```---
 
 
 
@@ -1115,11 +1115,11 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 ```markdown
 
----
+```---
 
 [YAML头部]
 
----
+```---
 
 
 
@@ -1175,7 +1175,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 
 
----
+```---
 
 
 
@@ -1243,7 +1243,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 
 
----
+```---
 
 
 
@@ -1301,7 +1301,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 
 
----
+```---
 
 
 
@@ -1355,7 +1355,7 @@ INDEX.md结构混乱、分类不清晰、缺少必要信息
 
 
 
----
+```---
 
 
 

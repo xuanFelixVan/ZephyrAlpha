@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V15_20260406
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_PORTFOLIO_OPTIMIZATION_DEEP_AUDIT_V15_20260406_9315
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -63,7 +63,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -131,7 +133,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -257,7 +261,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -325,7 +331,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -367,7 +375,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -411,7 +421,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -489,7 +501,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -523,7 +537,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 

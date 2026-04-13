@@ -1,35 +1,17 @@
 ---
-
-module_id: SLIPPAGE_MODEL_001
-
+module_id: SLIPPAGE_MODEL_001_4144
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 滑点建模
-
-  - 滑点预测
-
-  - 滑点优化
-
-  - 执行质量分析
-
+- 滑点建模
 layer: layer_06
-
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 

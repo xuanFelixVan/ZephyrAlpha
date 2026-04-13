@@ -1,33 +1,15 @@
 ---
-
-module_id: SECURITY_SCANNING_001
-
+module_id: SECURITY_SCANNING_001_5308
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 安全扫描
-
-  - 漏洞检测
-
-  - 配置审计
-
-  - 合规检查
-
+- 安全扫描
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1712,7 +1694,9 @@ class VulnerabilityManager:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,29 +1,16 @@
 ---
-
-module_id: A_001
-
+module_id: A_001_8527
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 responsibility:
-
 - 数据管理架构设计与实施规范与优化维护
-
 layer: layer_02
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
 standard_type: 蓝图标准
@@ -38,13 +25,17 @@ implementation_status: 设计阶段
 
 version: 1.0.0
 
-module_id: DOC_TEMP_A_STOCK_BLUEPRI
+```
+module_id: DOC_TEMP_A_STOCK_BLUEPRI_8527
+```
 
 created_date: 2026-04-01
 
 last_updated: 2026-04-02
 
----
+```
+```---
+```
 
 > **核心职责**: A Stock Data Processing蓝图设计
 
@@ -1710,7 +1701,9 @@ class CheckpointManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1728,7 +1721,9 @@ class CheckpointManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1786,7 +1781,9 @@ class CheckpointManager:
 
 
 
----
+```
+```---
+```
 
 
 

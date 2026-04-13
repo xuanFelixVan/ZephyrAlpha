@@ -1,5 +1,5 @@
 ---
-module_id: INDEX_AUDIT_STATE_20260408120000
+module_id: INDEX_AUDIT_STATE_20260408120000_05_IMPLEMENTATION_9555
 version: 1.1.1
 status: Active
 created_date: 2026-04-07
@@ -18,7 +18,9 @@ layer: layer_05
 > **核心职责**：提供 `audit_state` 目录下审计/整改类 Markdown 的可点击导航。
 > **生成方式**：下列列表由 `scripts/generate_audit_state_index.py` 自动生成，请勿手工逐条维护文件名。
 
----
+```
+```---
+```
 
 ## 目录概览
 
@@ -26,7 +28,9 @@ layer: layer_05
 **Markdown 文件数**（不含本 INDEX）: **345**  
 **索引生成日期**: 2026-04-11
 
----
+```
+```---
+```
 
 ## 上级与接力
 
@@ -38,7 +42,9 @@ layer: layer_05
 - [STATE 子域索引](../../../09_AUDIT/STATE/INDEX.md)
 - L1 治理快照（20260408）
 
----
+```
+```---
+```
 
 ## 文档列表（按文件名排序）
 
@@ -388,7 +394,9 @@ layer: layer_05
 - quality_monitoring_report_20260407_014237
 - quality_monitoring_report_20260407_014935
 
----
+```
+```---
+```
 
 ## 统计信息
 
@@ -397,6 +405,8 @@ layer: layer_05
 | **总文档数** | 345 |
 | **最后更新** | 2026-04-11 |
 
----
+```
+```---
+```
 
 **维护**：新增/重命名报告后执行 `python scripts/generate_audit_state_index.py` 刷新本页。

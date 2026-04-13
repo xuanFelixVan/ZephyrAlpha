@@ -1,6 +1,15 @@
+---
+module_id: AUTO_92415
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DOC_API_CONTRACT_001
+```
 
 version: 5.3.0
 
@@ -24,7 +33,9 @@ implementation_status: 进行中
 
 layer: layer_03
 responsibility: "处理API_Contract相关业务"
----
+```
+```---
+```
 
 
 
@@ -1070,7 +1081,9 @@ class IRiskManager(ABC):
 
 
 
----
+```
+```---
+```
 
 
 

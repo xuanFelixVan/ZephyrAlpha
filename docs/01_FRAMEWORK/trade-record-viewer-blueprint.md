@@ -1,45 +1,20 @@
 ---
-module_id: TRADE_RECORD_VIEWER_001
+module_id: TRADE_RECORD_VIEWER_001_6085
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
 owner: 首席架构师
 layer: layer_08
 standard_type: 专业量化机构蓝图
 applicable_scope: 交易记录查看器
 compliance_level: 顶级专业标准
-reference_models:
-- Bridgewater Trade Analytics
-- Renaissance Technologies Trade History
-- Two Sigma Execution Quality
-- Citadel Trade Analysis
-related_documents:
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-- TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md
-- AUDIT_LOG_VIEWER_BLUEPRINT.md
-responsibility_boundary: '本文档负责交易记录查看器设计，包括：
-
-  - 历史交易记录查询界面
-
-  - 交易执行质量分析界面
-
-  - 交易成本统计界面
-
-  - 交易明细查看界面
-
-  - 交易导出功能界面
-
-
-  交易成本分析请参考：TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md（→ `10_AI_WORKFLOW` canonical）
-
-  审计日志请参考：AUDIT_LOG_VIEWER_BLUEPRINT.md
-
-  '
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责交易记录查看器设计，包括：'
 parent_document: ./HUMAN_AI_INTERFACE_LAYER_COMPLETE_SUPPLEMENT_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-responsibility:
-- TRADE_RECORD_VIEWER蓝图设计
+responsibility: ''
 ---
 
 # 交易记录查看器蓝图
@@ -54,7 +29,9 @@ responsibility:
 > **优先级**: P0 (最高优先级)
 > **目的**: 提供专业级交易记录查看器，支持历史交易查询和分析
 
----
+```
+```---
+```
 
 ## 📋 一、概述
 
@@ -97,7 +74,9 @@ class TradeRecordViewer:
             submitted = st.form_submit_button("查询")
 ```
 
----
+```
+```---
+```
 
 ## 🚀 二、实施路径
 
@@ -109,7 +88,9 @@ class TradeRecordViewer:
 3. 实现交易记录列表
 4. 实现交易成本统计
 
----
+```
+```---
+```
 
 ## 🔧 三、开源项目集成
 
@@ -119,6 +100,8 @@ class TradeRecordViewer:
 | Plotly | 数据可视化 | ⭐ |
 | Pandas | 数据处理 | ⭐ |
 
----
+```
+```---
+```
 
 **蓝图版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

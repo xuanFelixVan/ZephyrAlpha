@@ -5,6 +5,8 @@ status: Active
 layer: layer_06
 responsibility:
   - 归档技术规格文档索引
+owner: System_Architect
+last_updated: 2026-04-13
 ---
 
 # 归档技术规格文档索引

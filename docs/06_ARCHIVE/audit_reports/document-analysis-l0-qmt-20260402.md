@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_QMT_20260402
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_QMT_20260402_7858
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -35,7 +35,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +92,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -166,7 +170,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -278,7 +284,9 @@ implementation_status: 进行?```
 
    - 旧架构设计原?
 
----
+```
+```---
+```
 
 
 
@@ -356,7 +364,7 @@ implementation_status: 进行?```
 
 > **设计状?*: ?已完?
 
----
+```---
 
 
 
@@ -364,7 +372,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -374,7 +382,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -384,7 +392,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -394,7 +402,7 @@ implementation_status: 进行?```
 
 
 
----
+```---
 
 
 
@@ -406,7 +414,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -436,7 +446,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -478,7 +490,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -512,7 +526,9 @@ implementation_status: 进行?```
 
 - ?符合新架构规?- ?提升文档可维护?
 
----
+```
+```---
+```
 
 
 
@@ -538,7 +554,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -552,7 +570,9 @@ implementation_status: 进行?```
 
 
 
----
+```
+```---
+```
 
 
 

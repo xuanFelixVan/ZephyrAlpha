@@ -1,3 +1,10 @@
+---
+module_id: AUTO_65228
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 standard_type: όΛΑόεψόΨΘόκ?
@@ -18,7 +25,9 @@ responsibility:
 
 version: 5.0.0
 
+```
 module_id: DOC_DOCUMENT_AUDIT_V5.1_ARCHIVED_1
+```
 
 created_date: 2026-03-31
 
@@ -27,7 +36,9 @@ last_updated: '2026-04-07'
 status: Active
 
 layer: layer_06
----
+```
+```---
+```
 
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -38,11 +49,15 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -72,7 +87,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -122,7 +139,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -228,7 +247,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -316,7 +337,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -364,7 +387,9 @@ Remove-Item "docs/03_TRADING_TACTICS/08_DECISION_FRAMEWORK/ARCHIVED.md"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -408,7 +433,9 @@ Remove-Item "docs/08_USER_EXPERIENCE/04_NOZYIO/ARCHIVED.md"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -462,7 +489,9 @@ Remove-Item "docs/EXPERIMENT_TRACKING.md"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -514,7 +543,9 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -556,7 +587,9 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -592,7 +625,9 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -608,7 +643,9 @@ Rename-Item "docs/06_ARCHIVE/main/CHANGELOG.md" "docs/06_ARCHIVE/main/CHANGELOG_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -642,7 +679,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -670,7 +709,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -722,7 +763,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -758,7 +801,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -778,7 +823,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -802,7 +849,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -836,7 +885,9 @@ Copy-Item "docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md" "docs/System_M
 
 
 
----
+```
+```---
+```
 
 
 
@@ -860,7 +911,9 @@ Move-Item "docs/HANDOVER.md" "HANDOVER.md"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -884,7 +937,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -912,7 +967,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -944,7 +1001,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -964,7 +1023,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -986,7 +1047,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1008,7 +1071,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1030,7 +1095,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1052,7 +1119,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1082,7 +1151,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1106,7 +1177,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1132,7 +1205,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1160,7 +1235,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1182,7 +1259,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1212,7 +1291,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1234,7 +1315,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1258,7 +1341,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1280,7 +1365,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1298,7 +1385,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1314,7 +1403,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1338,7 +1429,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1424,7 +1517,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1472,7 +1567,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1530,7 +1627,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1556,7 +1655,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1582,7 +1683,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1648,7 +1751,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1696,7 +1801,9 @@ Move-Item "docs/KNOWLEDGE_MANAGEMENT.md" "docs/07_RESEARCH/KNOWLEDGE_MANAGEMENT.
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1754,7 +1861,9 @@ DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║ν
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1816,7 +1925,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1852,7 +1963,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1902,7 +2015,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2018,7 +2133,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2064,7 +2181,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2122,7 +2241,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2158,7 +2279,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2186,7 +2309,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2222,7 +2347,9 @@ MoveFile("docs/02_FACTOR_LIBRARY/99_AUDIT_REPORT.md", "docs/06_ARCHIVE/factor-li
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2268,7 +2395,9 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2310,7 +2439,9 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2374,7 +2505,9 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2438,7 +2571,9 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2494,7 +2629,9 @@ DeleteFile("docs/06_ARCHIVE/main/BLUEPRINTS/07_SYSTEM_MANIFEST.md")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2610,7 +2747,9 @@ docs/3_ί░╛ώΔρώμΟώβσίδιίφΡ.md έΗ?tail_risk_factors.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2668,7 +2807,9 @@ docs/3_ί░╛ώΔρώμΟώβσίδιίφΡ.md έΗ?tail_risk_factors.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2836,7 +2977,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2874,7 +3017,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2944,7 +3089,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2998,7 +3145,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3056,7 +3205,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3084,7 +3235,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3130,7 +3283,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3186,7 +3341,9 @@ DeleteFile("docs/06_ARCHIVE/main/v4_development/ό╕ΖώμΟώΘΠίΝΨϊ║ν
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3216,7 +3373,9 @@ DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕Ζώ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3236,7 +3395,9 @@ DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕Ζώ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3262,7 +3423,9 @@ DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕Ζώ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3396,7 +3559,9 @@ DeleteFile("docs/06_ARCHIVE/όΩπόΨΘόκμίΙΗόηΡόΛξίΣΛ_ό╕Ζώ
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3476,7 +3641,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3526,7 +3693,9 @@ docs/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3562,7 +3731,9 @@ config/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3588,7 +3759,9 @@ config/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3636,7 +3809,9 @@ config/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3710,7 +3885,9 @@ config/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3738,7 +3915,9 @@ config/
 
 
 
----
+```
+```---
+```
 
 
 

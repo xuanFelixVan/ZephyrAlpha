@@ -1,25 +1,15 @@
 ---
-
-module_id: INDEX_TEMP_PENDING_001
-
+module_id: INDEX_TEMP_PENDING_001_06_ARCHIVE_7098
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-12
-
 last_updated: 2026-04-12
-
 owner: 文档治理系统
-
 standard_type: 索引文档
-
 applicable_scope: 文档索引导航
-
 compliance_level: 专业标准
-
 layer: layer_06
-responsibility: "处理INDEX相关业务"
+responsibility: 处理INDEX相关业务
 ---
 
 
@@ -40,7 +30,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +56,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -76,7 +70,7 @@ responsibility: "处理INDEX相关业务"
 
 
 
-- [Readme](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - `DOCS_06_ARCHIVE_TEMP_PENDING_README`
+- ~~[Readme]~~ - `DOCS_06_ARCHIVE_TEMP_PENDING_README`
 
 - Temp Alternative - `DOCS_06_ARCHIVE_TEMP_PENDING_TEMP_ALTERNATIVE`
 
@@ -100,7 +94,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +128,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -148,7 +146,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +164,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

@@ -39,7 +39,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -103,7 +105,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 - 市场状态优先策略（MarketStatePriorityStrategy?- 置信度加权策略（ConfidenceWeightedStrategy?- 历史表现策略（HistoricalPerformanceStrategy?- 动态权重策略（DynamicWeightStrategy?- 平均融合策略（AverageFusionStrategy?- 质量加权策略（QualityWeightedStrategy?- 风险调整策略（RiskAdjustedStrategy?- 分阶段执行策略（PhasedExecutionStrategy?
 
----
+```---
 
 
 
@@ -189,7 +191,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 **测试结果**: 13/13 通过 ?
 
----
+```---
 
 
 
@@ -273,7 +275,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 - **内存占用**: 所有测试内存占?20MB，符合要?
 
----
+```---
 
 
 
@@ -321,7 +323,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 
 
----
+```---
 
 
 
@@ -363,7 +365,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 **增强效果**: 从简化版升级为智能型多维度冲突解决系?
 
----
+```---
 
 
 
@@ -403,7 +405,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 
 
----
+```---
 
 
 
@@ -439,7 +441,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 
 
----
+```---
 
 
 
@@ -485,7 +487,7 @@ Layer 1: 组合层风险预?    ?风险传?Layer 2: 策略层风险预?    ?风�
 
 4. 部署到测试环?
 
----
+```---
 
 
 

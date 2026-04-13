@@ -319,7 +319,7 @@ Get-Content "C:\Users\fanzi\AppData\Roaming\Trae CN\Logs\*.log" -Tail 50
 ### **原始配置文件位置**
 - `C:\Users\fanzi\AppData\Roaming\Trae CN\User\mcp.json` - Trae全局MCP配置
 
----
+```---
 
 ## ✅ **总结**
 

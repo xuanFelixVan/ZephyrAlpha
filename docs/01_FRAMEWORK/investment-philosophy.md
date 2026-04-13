@@ -1,5 +1,5 @@
 ---
-module_id: 01_FRAMEWORK_INVESTMENT_PHILOSOPHY
+module_id: 01_FRAMEWORK_INVESTMENT_PHILOSOPHY_6833
 layer: layer_01
 version: 1.0.0
 status: Active
@@ -43,7 +43,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -79,7 +81,9 @@ RISK_RULES = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -113,7 +117,9 @@ FACTOR_FRAMEWORK = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -139,7 +145,9 @@ DIVERSIFICATION_RULES = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -179,7 +187,9 @@ EXECUTION_RULES = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -219,7 +229,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -243,7 +255,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -259,7 +273,9 @@ OPTIMIZATION_PLAN = {
 
 -
 
----
+```
+```---
+```
 
 
 
@@ -291,7 +307,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -315,7 +333,9 @@ OPTIMIZATION_PLAN = {
 
 1. 因子挖掘：发现新的alpha因子
 
----
+```
+```---
+```
 
 
 
@@ -333,7 +353,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -345,7 +367,9 @@ OPTIMIZATION_PLAN = {
 
 **实施步骤**:
 
----
+```
+```---
+```
 
 
 
@@ -367,7 +391,9 @@ OPTIMIZATION_PLAN = {
 
 ?
 
----
+```
+```---
+```
 
 
 
@@ -391,7 +417,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -417,7 +445,9 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -437,7 +467,9 @@ RISK_LIMITS = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -465,7 +497,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -499,7 +531,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -543,7 +575,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -557,7 +589,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 

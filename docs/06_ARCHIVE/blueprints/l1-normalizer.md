@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_BLUEPRINTS_L1_NORMALIZER
+module_id: 06_ARCHIVE_BLUEPRINTS_L1_NORMALIZER_6942
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -23,7 +23,7 @@ implementation_status: 进行?
 
 ```yaml
 
-module_id: "L1_NORMALIZER"
+module_id: "L1_NORMALIZER"_6942
 
 layer: "Layer 1"
 
@@ -83,7 +83,9 @@ estimated_dev_hours: 10
 
 
 
----
+```
+```---
+```
 
 
 
@@ -317,7 +319,9 @@ def robust_normalize(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -885,7 +889,9 @@ data_normalizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1349,7 +1355,9 @@ def _normalize_with_method(self, data: pd.DataFrame, method: str, **kwargs) -> N
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1425,7 +1433,9 @@ pytest>=7.0.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1909,7 +1919,9 @@ def create_test_fitted_normalizer() -> Dict[str, Any]:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2139,7 +2151,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2199,7 +2213,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2245,7 +2261,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2273,7 +2291,9 @@ alerts:
 
 
 
----
+```
+```---
+```
 
 
 

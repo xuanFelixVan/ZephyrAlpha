@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_BLUEPRINTS_OVERLAP_BLUEPRINT_20260407_190203
+module_id: 06_ARCHIVE_BLUEPRINTS_OVERLAP_BLUEPRINT_20260407_190203_9828
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -50,7 +50,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +94,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +134,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -168,7 +174,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -192,7 +200,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -200,7 +210,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +226,9 @@ dependencies:
 
 | v1.0.0 | 2026-04-06 | 初始版本，补充职责描述和变更记录 | 首席文档架构师 |
 
----
+```
+```---
+```
 
 
 
@@ -270,7 +284,9 @@ dependencies:
 
 
 
----
+```
+```---
+```
 
 
 

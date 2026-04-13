@@ -17,7 +17,7 @@ responsibility: 20260410_c2_strategy_lifecycle_management
 
 > **归档说明（2026-04-10）**：自 `docs/06_ARCHIVE/20260407_p1_cleanup_archive/` 迁出快照（消解 basename 碰撞）。**正式蓝图**：STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT。
 
----
+```---
 module_id: STRATEGY_LIFECYCLE_MANAGEMENT_001_ARCHIVED_1
 version: 1.0.0
 status: Active
@@ -41,7 +41,7 @@ responsibility:
 - 策略上线部署
 - 策略监控告警
 - 策略下线归档
----
+```---
 ## 文档职责说明
 
 **本文档职责**: 策略生命周期管理蓝图
@@ -56,7 +56,7 @@ responsibility:
 > **开源替代**: MLflow + Prefect + transitions
 > **成熟度**: ⭐⭐⭐⭐⭐ (顶级专业标准)
 
----
+```---
 
 ## 一、模块概述
 
@@ -88,7 +88,7 @@ Layer 7: AI报告层
 | Two Sigma | 内部策略生命周期系统 | transitions状态机 |
 | Renaissance | 策略研发流水线 | MLflow实验跟踪 |
 
----
+```---
 
 ## 二、架构设计
 
@@ -176,7 +176,7 @@ Layer 7: AI报告层
 性能不达标 → 状态机:已下线 → 归档分析
 ```
 
----
+```---
 
 ## 三、技术实现
 
@@ -247,7 +247,7 @@ class StrategyLifecycle:
     ]
 ```
 
----
+```---
 
 ## 四、功能模块
 
@@ -296,7 +296,7 @@ class StrategyLifecycle:
 | 经验总结 | 复盘分析 | 复盘模块 |
 | 知识沉淀 | 经验知识库 | 知识管理 |
 
----
+```---
 
 ## 五、接口定义
 
@@ -328,7 +328,7 @@ StrategyDeprecated       # 策略下线事件
 StrategyArchived         # 策略归档事件
 ```
 
----
+```---
 
 ## 六、实施路径
 
@@ -353,7 +353,7 @@ StrategyArchived         # 策略归档事件
 - [ ] 可视化仪表盘
 - [ ] 文档完善
 
----
+```---
 
 ## 七、质量指标
 
@@ -364,7 +364,7 @@ StrategyArchived         # 策略归档事件
 | 策略上线成功率 | >95% | 统计分析 |
 | 数据一致性 | 100% | 数据校验 |
 
----
+```---
 
 ## 八、风险评估
 
@@ -375,6 +375,6 @@ StrategyArchived         # 策略归档事件
 | 数据丢失 | 高 | 定期备份 + 事务保护 |
 | 性能瓶颈 | 中 | 异步处理 + 缓存 |
 
----
+```---
 
 **版本**: v1.0 | **更新**: 2026-04-07 | **状态**: ✅ 蓝图完成

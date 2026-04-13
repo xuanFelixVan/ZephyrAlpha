@@ -42,7 +42,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -64,7 +64,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -86,7 +86,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -150,7 +150,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -176,7 +176,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -246,7 +246,7 @@ ACTIVE_REQUESTS = Gauge(
 
 
 
----
+```---
 
 
 
@@ -308,7 +308,7 @@ PORTFOLIO_VALUE = Gauge(
 
 
 
----
+```---
 
 
 
@@ -400,7 +400,7 @@ class MonitoringMiddleware(BaseHTTPMiddleware):
 
 
 
----
+```---
 
 
 
@@ -504,7 +504,7 @@ async def health_check():
 
 
 
----
+```---
 
 
 
@@ -588,7 +588,7 @@ async def readiness_check():
 
 
 
----
+```---
 
 
 
@@ -646,7 +646,7 @@ ORDER BY count DESC;
 
 
 
----
+```---
 
 
 
@@ -716,7 +716,7 @@ ORDER BY idx_scan ASC;
 
 
 
----
+```---
 
 
 
@@ -764,7 +764,7 @@ WHERE (now() - pg_stat_activity.query_start) > interval '5 minutes';
 
 
 
----
+```---
 
 
 
@@ -812,7 +812,7 @@ queries:
 
 
 
----
+```---
 
 
 
@@ -842,7 +842,7 @@ scrape_configs:
 
 
 
----
+```---
 
 
 
@@ -886,7 +886,7 @@ lscpu
 
 
 
----
+```---
 
 
 
@@ -922,7 +922,7 @@ pmap -x $(pgrep -f zephyr)
 
 
 
----
+```---
 
 
 
@@ -958,7 +958,7 @@ tune2fs -l /dev/sda1
 
 
 
----
+```---
 
 
 
@@ -994,7 +994,7 @@ iperf3 -c target_host
 
 
 
----
+```---
 
 
 
@@ -1066,7 +1066,7 @@ systemctl enable node_exporter
 
 
 
----
+```---
 
 
 
@@ -1096,7 +1096,7 @@ scrape_configs:
 
 
 
----
+```---
 
 
 
@@ -1136,7 +1136,7 @@ datasources:
 
 
 
----
+```---
 
 
 
@@ -1232,7 +1232,7 @@ datasources:
 
 
 
----
+```---
 
 
 
@@ -1288,7 +1288,7 @@ datasources:
 
 
 
----
+```---
 
 
 
@@ -1370,7 +1370,7 @@ groups:
 
 
 
----
+```---
 
 
 
@@ -1422,7 +1422,7 @@ groups:
 
 
 
----
+```---
 
 
 
@@ -1492,7 +1492,7 @@ groups:
 
 
 
----
+```---
 
 
 
@@ -1584,7 +1584,7 @@ receivers:
 
 
 
----
+```---
 
 
 
@@ -1616,7 +1616,7 @@ receivers:
 
 
 
----
+```---
 
 
 
@@ -1636,7 +1636,7 @@ receivers:
 
 
 
----
+```---
 
 
 
@@ -1654,7 +1654,7 @@ receivers:
 
 
 
----
+```---
 
 
 

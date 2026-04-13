@@ -17,4 +17,4 @@ layer: layer_03
 
 **正式蓝图（canonical）**：STRATEGY_SELECTION_BLUEPRINT.md
 
-原同目录 `STRATEGY_SELECTION_BLUEPRINT.md` 与 `01_BLUEPRINTS` **basename 碰撞**。删除前战术域长文见 [`06_ARCHIVE/20260410_c2_strategy_selection/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。
+原同目录 `STRATEGY_SELECTION_BLUEPRINT.md` 与 `01_BLUEPRINTS` **basename 碰撞**。删除前战术域长文见 [`06_ARCHIVE/20260410_c2_strategy_selection/`](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。

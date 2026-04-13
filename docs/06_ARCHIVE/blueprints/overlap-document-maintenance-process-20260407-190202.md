@@ -1,21 +1,12 @@
 ---
-
-module_id: DOCUMENT_MAINTENANCE_PROCESS
-
+module_id: DOCUMENT_MAINTENANCE_PROCESS_9514
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 文档维护流程文档
-
+- 文档维护流程文档
 layer: layer_06
 ---
 
@@ -28,7 +19,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -83,7 +76,9 @@ implementation_status: 活跃维护---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -133,7 +128,9 @@ implementation_status: 活跃维护---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -177,7 +174,9 @@ implementation_status: 活跃维护---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -353,7 +352,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -457,7 +458,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -533,7 +536,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -595,7 +600,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -685,7 +692,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -725,7 +734,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -757,7 +768,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -765,7 +778,9 @@ python scripts/architecture_analyzer.py
 
 
 
----
+```
+```---
+```
 
 
 

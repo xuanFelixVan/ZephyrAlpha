@@ -1,37 +1,20 @@
 ---
-
-module_id: POST_TRADE_REVIEW_001
-
+module_id: POST_TRADE_REVIEW_001_0806
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 复盘模块蓝图文档
-
 layer: layer_07
-
 standard_type: 专业机构级蓝图
-
 applicable_scope: 交易复盘分析
-
 compliance_level: 专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 设计阶段
-
 reference_models: null
-
 related_documents: null
-
 ---
 
 
@@ -62,7 +45,9 @@ related_documents: null
 
 
 
----
+```
+```---
+```
 
 
 
@@ -144,7 +129,9 @@ Layer 7: AI报告(AI Reporting Layer)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -460,7 +447,9 @@ def review_risk(risk_data: dict) -> RiskReview:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -598,7 +587,9 @@ def review_risk(risk_data: dict) -> RiskReview:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -962,7 +953,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -980,7 +971,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -992,7 +983,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -1004,7 +995,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -1016,7 +1007,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -1028,7 +1019,7 @@ class PostTradeReviewer:
 
 
 
----
+```---
 
 
 
@@ -1368,7 +1359,9 @@ class PostTradeReviewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1440,7 +1433,9 @@ class PostTradeReviewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1506,7 +1501,9 @@ class PostTradeReviewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1544,7 +1541,9 @@ class PostTradeReviewer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1564,7 +1563,9 @@ class PostTradeReviewer:
 
 
 
----
+```
+```---
+```
 
 
 

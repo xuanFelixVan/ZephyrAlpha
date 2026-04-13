@@ -75,7 +75,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -107,7 +109,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -227,7 +231,9 @@ ollama pull deepseek-r1:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -271,7 +277,9 @@ ollama pull deepseek-r1:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -349,7 +357,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -419,7 +429,9 @@ ollama pull deepseek-r1:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -499,7 +511,9 @@ ollama pull deepseek-r1:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -567,7 +581,9 @@ quantization_config = BitsAndBytesConfig(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -623,7 +639,9 @@ quantization_config = BitsAndBytesConfig(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -673,7 +691,9 @@ models:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -711,7 +731,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 

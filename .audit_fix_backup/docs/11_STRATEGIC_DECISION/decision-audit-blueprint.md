@@ -50,7 +50,7 @@ open_source_solution: "自研审计日志系统"
 
 priority: P2
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ priority: P2
 
 
 
----
+```---
 
 > **版本**: v1.0
 
@@ -142,7 +142,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -188,7 +188,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -416,7 +416,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -2564,7 +2564,7 @@ class ComplianceReportGenerator:
 
 
 
----
+```---
 
 
 
@@ -2622,7 +2622,7 @@ class ComplianceReportGenerator:
 
 
 
----
+```---
 
 
 
@@ -2642,13 +2642,13 @@ class ComplianceReportGenerator:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```---
 
 
 
@@ -2704,7 +2704,7 @@ class ComplianceReportGenerator:
 
 
 
----
+```---
 
 
 

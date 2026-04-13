@@ -1,6 +1,15 @@
+---
+module_id: AUTO_07898
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: TACTICS_ARCH_INTERFACE_STD_001
+```
 
 version: 1.0.1
 
@@ -27,7 +36,9 @@ responsibility:
 - 市场状态识别 (Layer 4)
 
 layer: layer_03
----
+```
+```---
+```
 
 
 # 策略接口标准

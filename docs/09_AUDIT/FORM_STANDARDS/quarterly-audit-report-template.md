@@ -1,6 +1,15 @@
+---
+module_id: AUTO_50996
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: QUARTERLY_AUDIT_REPORT_TEMPLATE_001
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 每季度文档治理审计报告
@@ -48,7 +59,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +105,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +151,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -184,7 +201,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -232,7 +251,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -266,7 +287,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -298,7 +321,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +367,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

@@ -43,7 +43,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -105,7 +107,9 @@ class SimpleHealthCheck:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -407,7 +411,9 @@ def check_pipeline_status(self) -> CheckResult:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -487,7 +493,9 @@ class SimpleAlertManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -573,7 +581,9 @@ class MonitorScheduler:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -633,7 +643,9 @@ class AutoRecovery:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -681,7 +693,9 @@ monitoring:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -705,7 +719,9 @@ monitoring:
 
 
 
----
+```
+```---
+```
 
 
 

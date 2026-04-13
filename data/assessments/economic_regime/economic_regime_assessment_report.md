@@ -1,5 +1,9 @@
 ---
 module_id: ECONOMIC_REGIME_ASSESSMENT_REPORT
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
 ---
 
 # 综合评估报告
@@ -47,5 +51,5 @@ module_id: ECONOMIC_REGIME_ASSESSMENT_REPORT
 3. **分拆项目**：将大项目拆分为多个小项目，降低复杂度
 4. **引入外部专家**：寻求专业建议和技术支持
 
----
+```---
 *报告生成完成*

@@ -1,106 +1,15 @@
 ---
-
-module_id: DOCUMENT_CREATION_PROCESS_001
-
+module_id: DOCUMENT_CREATION_PROCESS_001_3908
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
-last_updated: '2026-04-07'
-
-owner: 个人开发者
-
-responsibility:
-
-- 治理合规框架设计与实施与实施指导
-
-layer: layer_10
-
-standard_type: 专业量化机构文档
-
----
-
-# 文档创建流程
-
-
-
-> **核心职责**: 文档创建流程管理
-
-> **职责边界**: 
-
-> - ✅ 本文档负责：文档创建流程相关内容
-
-> - ❌ 本文档不负责：其他模块内容
-
-
-
-## 1. 文档创建前准备
-
-
-
-### 1.1 确定文档职责
-
-- 明确文档的核心职责
-
-- 确认职责边界
-
-- 避免与现有文档职责重叠
-
-
-
-### 1.2 确定文档Layer归属
-
-- 根据职责确定Layer归属
-
-- 参考Layer定义标准
-
-- 确保归属正确
-
-
-
-### 1.3 确定文档命名
-
-- 遵循专业命名规范
-
-- 命名反映职责
-
-- 避免特殊字符
-
-
-
-## 2. 文档创建步骤
-
-
-
-### 2.1 创建YAML头部
-
-```yaml
-
----
-
-
-version: 1.0.0
-
-status: Active
-
 created_date: YYYY-MM-DD
-
 last_updated: YYYY-MM-DD
-
 owner: 个人开发者
-
 responsibility:
-
-  - 治理合规框架设计与实施与实施指导
-
+- 治理合规框架设计与实施与实施指导
 layer: Layer X ([Layer名称])
-
 standard_type: 专业量化机构文档
-
 ---
-
 ```
 
 
@@ -223,7 +132,7 @@ python scripts/weekly_layer_check.py
 
 
 
----
+```---
 
 
 

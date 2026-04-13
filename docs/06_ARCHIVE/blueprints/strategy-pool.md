@@ -1,5 +1,14 @@
+---
+module_id: AUTO_64711
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: ARCHIVE_STRATEGY_POOL_001
+```
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
@@ -13,7 +22,9 @@ implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本
 layer: layer_06
----
+```
+```---
+```
 
 # 策略?v1.0
 > **核心职责**: 文档内容说明
@@ -67,7 +78,9 @@ layer: layer_06
 
 | 策略类型 | 策略数量 | 占比 |
 |
+```
 ----|----------|------|
+```
 | 趋势跟踪?| 8-10?| 25% |
 | 均值回归类 | 6-8?| 20% |
 | 动量?| 6-8?| 20% |

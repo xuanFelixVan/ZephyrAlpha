@@ -12,7 +12,7 @@ last_updated: 2026-04-10
 responsibility:
   - 模块说明、快速入门、使用指南
 ---
----
+```---
 # 脚本目录 (Scripts)
 
 > 清风量化系统 v5.1 - 自动化脚本工具集
@@ -22,7 +22,7 @@ responsibility:
 > **维护者**: Audit Sentinel
 > **定位**: 系统维护和开发辅助脚本
 
----
+```---
 
 ## 文档治理与门禁（与任务清单 / 办公室互指）
 
@@ -56,7 +56,7 @@ responsibility:
 | `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**（启发式）→ `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`；规程见办公室 `D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md` |
 | `triage_blueprint_d_overlap_pairs.py` | D 类 **A 档分流** + 二审用 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`；提示词模板见办公室 `D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md` |
 
----
+```---
 
 ## 📋 脚本清单
 
@@ -65,7 +65,7 @@ responsibility:
 | [clean_cache.py](clean_cache.py) | Python 3.6+ | 自动化缓存清理 | 每周/每月 |
 | [clean_cache.bat](clean_cache.bat) | Windows批处理 | 缓存清理（Windows包装器） | 每周/每月 |
 
----
+```---
 
 ## 🧹 缓存清理脚本
 
@@ -143,7 +143,7 @@ clean_cache.bat --all
 3. 定期运行此脚本可保持项目整洁
 ```
 
----
+```---
 
 ## 🔄 集成到开发工作流
 
@@ -185,7 +185,7 @@ cache_clean:
     - schedules  # 定期执行
 ```
 
----
+```---
 
 ## ⚙️ 配置说明
 
@@ -214,7 +214,7 @@ preserve_dirs = [
 3. **错误处理**: 单个文件删除失败不影响其他文件
 4. **详细日志**: 使用 `--verbose` 查看详细过程
 
----
+```---
 
 ## 🚨 注意事项
 
@@ -235,7 +235,7 @@ preserve_dirs = [
 - 后续运行会更快，因为缓存文件已清理
 - 建议在开发间隙或非高峰时间运行
 
----
+```---
 
 ## 📝 版本历史
 
@@ -243,7 +243,7 @@ preserve_dirs = [
 |------|------|----------|
 | v1.0 | 2026-04-01 | 创建缓存清理脚本，支持干运行、详细输出、保留目录 |
 
----
+```---
 
 ## 🔗 相关文档
 
@@ -251,6 +251,6 @@ preserve_dirs = [
 - [开发规范](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) - 开发工作流
 -  - 系统监控体系
 
----
+```---
 
 **状态**: ✅ 活跃 | **维护**: Audit Sentinel

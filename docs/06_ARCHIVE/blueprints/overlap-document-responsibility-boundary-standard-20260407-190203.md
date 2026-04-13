@@ -1,6 +1,15 @@
+---
+module_id: AUTO_19735
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD
+```
+module_id: DOCUMENT_RESPONSIBILITY_BOUNDARY_STANDARD_0317
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
   - DOCUMENT_RESPONSIBILITY_BOUNDARY标准规范
 
 layer: layer_06
----
+```
+```---
+```
 
 
 > **非真源声明（overlap）**：本文档为重叠副本/中间产物，仅用于追溯，不作为权威真源（canonical）。  
@@ -28,7 +39,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -85,7 +98,9 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 > **ﮔﺕﮒﺟﻝ؟ﮔ**: ﮔﻝ۰؟ﮒﻝﺎﭨﮔﮔ۰۲ﻝﻟﻟﺑ۲ﻟﺝﺗﻝﺅﺙﻠﺟﮒﮒﮒ؟ﺗﻠﮒ۳ﺅﺙﮔﻠ،ﮔﮔ۰۲ﻟﺑ۷ﻠ?
 
----
+```
+```---
+```
 
 
 
@@ -117,7 +132,9 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 1. ﻟﮒﺝﮔﮔ۰۲ﺅﺙBlueprint Documentsﺅﺙ?2. ﮔﮔﺁﻟ۶ﮔﺙﻛﺗ۵ﺅﺙTechnical Specificationsﺅﺙ?3. ﮔﮔﺁﻟﺁﮒ؟۰ﮔ۴ﮒﺅﺙTechnical Review Reportsﺅﺙ?4. ﮔﺗﻟﺟﻟ؟۰ﮒﺅﺙImprovement Plansﺅﺙ?
 
----
+```
+```---
+```
 
 
 
@@ -217,7 +234,9 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 - ﮒﮒﭨﭦﮔﭘﻠﺑ: ﻠ؟ﻠ۱ﻟﺁﮒ،ﮒ?- ﮔﺑﮔﺍﻠ۱ﻝ: ﮒ؟ﮔﺛﻟﺟﻝ۷ﻛﺕ?- ﮒﺛﮔ۰۲ﮔﭘﻠﺑ: ﮔﺗﻟﺟﮒ؟ﮔﮒ?
 
----
+```
+```---
+```
 
 
 
@@ -277,7 +296,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -391,7 +410,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 - ﻗ?ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﺅﺙﮒﭦﮔﺝﮒ۷ﻟﮒﺝﮔﮔ۰۲ﺅﺙ?- ﻗ?ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﺅﺙﮒﭦﮔﺝﮒ۷ﻟﮒﺝﮔﮔ۰۲ﺅﺙ?- ﻗ?ﻛﺝﻟﭖﮒﺏﻝﺏﭨﮔ۱ﺏﻝﺅﺙﮒﭦﮔﺝﮒ۷ﻟﮒﺝﮔﮔ۰۲ﺅﺙ?- ﻗ?ﮔﮔﺁﻠﮒﻟﺁﺑﮔﺅﺙﮒﭦﮔﺝﮒ۷ﻟﮒﺝﮔﮔ۰۲ﺅﺙ?
 
----
+```---
 
 
 
@@ -499,7 +518,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -553,7 +572,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -601,7 +620,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -615,7 +634,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 - [ ] ﮔﺁﮒ۵ﮒﮒ،ﮔ۵ﻟﺟﺍﺅﺙ?- [ ] ﮔﺁﮒ۵ﮒﮒ،ﮔ۴ﮒ۲ﮒ؟ﻛﺗﺅﺙ?- [ ] ﮔﺁﮒ۵ﮒﮒ،ﮔﺍﮔ؟ﮔ۷۰ﮒﺅﺙ?- [ ] ﮔﺁﮒ۵ﮒﮒ،ﻝ؟ﮔﺏﮒ؟ﻝﺍﺅﺙ?- [ ] ﮔﺁﮒ۵ﮒﮒ،ﮔﭖﻟﺁﻝﻝ۴ﺅﺙ?- [ ] ﮔﺁﮒ۵ﻠﺟﮒﮒﮒ،ﮔﭘﮔﻟ؟ﺝﻟ؟۰ﺅﺙ?- [ ] ﮔﺁﮒ۵ﻠﺟﮒﮒﮒ،ﮔ۷۰ﮒﻟﻟﺑ۲ﻟﺝﺗﻝﺅﺙ?- [ ] ﮔﺁﮒ۵ﻠﺟﮒﮒﮒ،ﻛﺝﻟﭖﮒﺏﻝﺏﭨﮔ۱ﺏﻝﺅﺙ?- [ ] module_idﮔﺁﮒ۵ﮒﺁﻛﺕﺅﺙ?- [ ] ﮔﺁﮒ۵ﮒﺓﺎﮔﺓﭨﮒﮒﺍﻝﺑ۱ﮒﺙﺅﺙ?
 
----
+```---
 
 
 
@@ -681,7 +700,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -723,7 +742,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 
 
----
+```---
 
 
 
@@ -733,7 +752,7 @@ applicable_scope: ﮒ۷ﻝﺏﭨﻝﭨﮔﮔﮔﮔ۰?compliance_level: ﻛﺕﻛ
 
 **ﻟ۶ﻟﻝﭘﮔ?*: ﻗ?ﮒﺓﺎﻝﮔ?
 
----
+```---
 
 
 

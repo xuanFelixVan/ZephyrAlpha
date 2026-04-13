@@ -71,7 +71,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -527,7 +529,9 @@ class ConfigManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -661,7 +665,9 @@ class ConfigTemplates:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -715,7 +721,9 @@ def example_config_manager():
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,5 +1,14 @@
+---
+module_id: AUTO_58486
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: IMPL_OPS_AUDIT_WORKFLOW_001
+```
 version: 1.0.12.0.0
 status: Active
 created_date: 2026-04-01
@@ -13,7 +22,9 @@ implementation_status: 进行?
 responsibility:
 - 实施指南、部署文档
 layer: layer_06
----
+```
+```---
+```
 
 # 📋 文档与代码审查工作流?
 > **核心职责**: 文档内容说明
@@ -51,7 +62,9 @@ layer: layer_06
 ### 2.1 按需审查触发条件
 | 触发条件 | 审查范围 | 完成时限 |
 |
+```
 ----|----------|----------|
+```
 | **新蓝图完成后** | 全量审查 | 创建蓝图?周内 |
 | **AI讨论新内容后** | 相关模块+交叉影响 | 讨论完成?周内 |
 | **重大架构变更?* | 相关模块+交叉影响 | 变更?周内 |

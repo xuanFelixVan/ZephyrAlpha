@@ -1,3 +1,10 @@
+---
+module_id: AUTO_03002
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 # 目录命名违规迁移计划
 
 **文档编号**: DIR_MIGRATION_PLAN_001  
@@ -6,7 +13,9 @@
 **责任层级**: Layer 09 - 审计与质量  
 **关联检查**: D-07 目录命名规范检测
 
----
+```
+```---
+```
 
 ## 一、迁移概述
 
@@ -44,7 +53,9 @@
 | 15 | `temporary` | 禁止词temp | 06_ARCHIVE/ | `TEMP_PROCESSING_202604` | 🟢 低 |
 | 16 | `temp_pending` | 禁止词temp | 06_ARCHIVE/ | `PENDING_REVIEW_202604` | 🟢 低 |
 
----
+```
+```---
+```
 
 ## 二、分阶段迁移计划
 
@@ -105,7 +116,9 @@
 
 **目标目录**: 06_ARCHIVE/ 下的所有违规目录
 
----
+```
+```---
+```
 
 ## 三、迁移脚本
 
@@ -173,7 +186,9 @@ python scripts/run_comprehensive_audit.py
 echo "✅ 验证完成"
 ```
 
----
+```
+```---
+```
 
 ## 四、风险控制
 
@@ -201,7 +216,9 @@ git checkout HEAD -- docs/
 2. 在系统日志中记录迁移信息
 3. 通知所有相关人员
 
----
+```
+```---
+```
 
 ## 五、进度追踪
 
@@ -212,7 +229,9 @@ git checkout HEAD -- docs/
 | 阶段3: 配置与模板 | 2026-05-12 ~ 05-18 | ⏳ 待开始 | 待分配 |
 | 阶段4: 归档区清理 | 2026-05-19 ~ 06-08 | ⏳ 待开始 | 待分配 |
 
----
+```
+```---
+```
 
 ## 六、关联文档
 
@@ -220,6 +239,8 @@ git checkout HEAD -- docs/
 - 目录命名检查脚本
 - [外部审计安全评估](../../11_STRATEGIC_DECISION/EXTERNAL_AUDIT_SECURITY_ASSESSMENT_20260413.md)
 
----
+```
+```---
+```
 
 **下次审查**: 每阶段完成后审查并更新本计划

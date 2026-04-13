@@ -149,7 +149,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 
 
----
+```
+```---
+```
 
 
 
@@ -341,7 +343,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 
 
----
+```
+```---
+```
 
 
 
@@ -549,7 +553,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 
 
----
+```
+```---
+```
 
 
 
@@ -775,7 +781,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -953,7 +961,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1103,7 +1113,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1253,7 +1265,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1397,7 +1411,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1551,7 +1567,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1613,7 +1631,9 @@ ws.onmessage = (event) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1715,7 +1735,9 @@ const ws = client.realtimeRiske.subscribe((data) => {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1773,7 +1795,9 @@ except APIError as e:
 
 
 
----
+```
+```---
+```
 
 
 

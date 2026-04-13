@@ -1,32 +1,21 @@
 ---
-
-module_id: LAYER_TCA_001
-
+module_id: LAYER_TCA_001_3560
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_05
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: TCA_001
+```
+module_id: TCA_001_3560
+```
 
 version: 1.0.0
 
@@ -60,7 +49,9 @@ implementation_status: 设计阶段
 
 open_source_solution: tcapy
 
----
+```
+```---
+```
 
 
 
@@ -146,7 +137,9 @@ open_source_solution: tcapy
 
 
 
----
+```
+```---
+```
 
 
 
@@ -160,7 +153,9 @@ open_source_solution: tcapy
 
 
 
----
+```
+```---
+```
 
 
 
@@ -242,7 +237,9 @@ Layer 11.9交易成本分析系统(TCA)是清风量化系统的**交易成本守
 
 
 
----
+```
+```---
+```
 
 
 
@@ -370,7 +367,9 @@ Layer 11.9交易成本分析系统(TCA)是清风量化系统的**交易成本守
 
 
 
----
+```
+```---
+```
 
 
 
@@ -716,7 +715,9 @@ class SlippageAnalysisEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1064,7 +1065,9 @@ class MarketImpactEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1378,7 +1381,9 @@ class ExecutionBenchmarkSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1706,7 +1711,9 @@ class ExecutionQualityEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1914,7 +1921,9 @@ results = tca.calculate_tca(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2006,7 +2015,9 @@ class TCAInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2092,7 +2103,9 @@ Layer 8 监控报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2144,7 +2157,9 @@ Layer 8 监控报告
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2252,7 +2267,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2292,7 +2309,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2336,7 +2355,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2358,7 +2379,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2374,7 +2397,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2384,7 +2409,9 @@ class CallAuctionTCA:
 
 **下一步**: 创建再平衡决策系统蓝图
 
----
+```
+```---
+```
 
 
 
@@ -2440,7 +2467,9 @@ class CallAuctionTCA:
 
 
 
----
+```
+```---
+```
 
 
 

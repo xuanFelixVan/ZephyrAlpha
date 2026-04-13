@@ -1,6 +1,15 @@
+---
+module_id: AUTO_43866
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: RESPONSIBILITY_DEDUPLICATION_REPORT_V18_001
+```
 
 version: 18.0.0
 
@@ -27,7 +36,9 @@ applicable_scope: 舆情分析层（10_AI_WORKFLOW）
 compliance_level: 专业标准
 
 layer: layer_05
----
+```
+```---
+```
 
 
 
@@ -48,7 +59,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +105,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -174,7 +189,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -286,7 +303,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +343,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +397,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -410,7 +433,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -452,7 +477,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +529,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -548,7 +577,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -608,7 +639,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

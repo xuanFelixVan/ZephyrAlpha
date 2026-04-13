@@ -17,4 +17,6 @@ layer: layer_08
 
 **正式蓝图（canonical）**：COMPLIANCE_MONITORING_BLUEPRINT.md
 
+```
 原同目录 `COMPLIANCE_MONITORING_BLUEPRINT.md` 与 `10_AI_WORKFLOW` **basename 碰撞**且为占位稿；详设以 `10_AI_WORKFLOW` 文稿为准（`module_id: COMPLIANCE_MONITORING_001`）。
+```

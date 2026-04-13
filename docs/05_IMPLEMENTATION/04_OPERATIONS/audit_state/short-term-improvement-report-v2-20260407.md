@@ -1,6 +1,15 @@
+---
+module_id: AUTO_66228
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SHORT_TERM_IMPROVEMENT_REPORT_V2_20260407
+```
 
 version: 2.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 短期改进实施报告
@@ -42,7 +53,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +99,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -172,7 +189,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -266,7 +285,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -372,7 +393,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +439,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +481,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -490,7 +517,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -534,7 +563,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,5 +1,5 @@
 ---
-module_id: OBJECT_STORAGE_INTEGRATION_001
+module_id: OBJECT_STORAGE_INTEGRATION_001_6547
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 对象存储集成
-- S3兼容
-- 大文件存储
-- 生命周期管理
 layer: layer_05
 ---
 

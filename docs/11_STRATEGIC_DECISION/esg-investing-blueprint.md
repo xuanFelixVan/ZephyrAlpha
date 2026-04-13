@@ -1,32 +1,21 @@
 ---
-
-module_id: ESG_002
-
+module_id: ESG_002_8544
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_09
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: ESG_INVESTING_001
+```
+module_id: ESG_INVESTING_001_8544
+```
 
 version: 1.0.0
 
@@ -50,7 +39,9 @@ open_source_solution: "PyPortfolioOpt ESG约束"
 
 priority: P2
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +119,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 > **版本**: v1.0
 
@@ -142,7 +135,9 @@ priority: P2
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +183,9 @@ ESG投资系统是Layer 11战略决策层的**可持续投资模块**，负责�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -360,7 +357,9 @@ ESG投资系统是Layer 11战略决策层的**可持续投资模块**，负责�
 
 
 
----
+```
+```---
+```
 
 
 
@@ -580,7 +579,9 @@ class ESGOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -632,7 +633,9 @@ class ESGOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -650,13 +653,17 @@ class ESGOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -712,7 +719,9 @@ class ESGOptimizer:
 
 
 
----
+```
+```---
+```
 
 
 

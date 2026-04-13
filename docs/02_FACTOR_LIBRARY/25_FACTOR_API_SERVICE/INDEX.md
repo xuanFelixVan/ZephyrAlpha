@@ -1,25 +1,15 @@
 ---
-
-module_id: INDEX_25_FACTOR_API_SERVICE_001
-
+module_id: INDEX_25_FACTOR_API_SERVICE_001_02_FACTOR_LIBRARY_3339
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-12
-
 last_updated: 2026-04-12
-
 owner: 文档治理系统
-
 standard_type: 索引文档
-
 applicable_scope: 文档索引导航
-
 compliance_level: 专业标准
-
 layer: layer_02
-responsibility: "处理INDEX相关业务"
+responsibility: 处理INDEX相关业务
 ---
 
 
@@ -40,7 +30,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +56,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +74,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -112,7 +108,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +126,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -144,7 +144,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

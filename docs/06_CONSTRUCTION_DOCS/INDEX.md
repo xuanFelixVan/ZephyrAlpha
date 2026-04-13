@@ -1,21 +1,12 @@
 ---
-
-module_id: 06_CONSTRUCTION_DOCS_INDEX
-
+module_id: 06_CONSTRUCTION_DOCS_INDEX_7321
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-09
-
 last_updated: 2026-04-09
-
 owner: 文档治理系统
-
 responsibility:
-
-  - 建设文档目录索引
-
+- 建设文档目录索引
 layer: layer_06
 ---
 
@@ -42,7 +33,7 @@ layer: layer_06
 
 - 01_BLUEPRINTS - 蓝图文档目录
 
-  - [INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) - 蓝图索引
+  - ~~[INDEX]~~ - 蓝图索引
 
   - A_STOCK_DATA_PROCESSING_BLUEPRINT - A股数据处理蓝图
 

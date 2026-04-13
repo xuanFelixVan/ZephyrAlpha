@@ -1,5 +1,14 @@
+---
+module_id: AUTO_97333
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: ARCHIVE_TECH_DOC_001
+```
 version: 1.0.1
 status: Active
 created_date: 2026-04-01
@@ -13,7 +22,9 @@ implementation_status: 进行?
 responsibility:
 - 归档文档、历史版本
 layer: layer_06
----
+```
+```---
+```
 
 # 技术文?v1.0
 > **核心职责**: 文档内容说明
@@ -216,7 +227,9 @@ layer: layer_06
 
 | 成本类型 | 细分 | 计算方式 | 估算难度 |
 |
+```
 ----|------|----------|----------|
+```
 | **显性成?* | 佣金 | 固定费率 | ?|
 | | 印花?| 卖出时收?| ?|
 | **隐性成?* | 滑点 | 期望成交价vs实际成交?| ?|

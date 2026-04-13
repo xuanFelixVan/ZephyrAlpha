@@ -1,5 +1,5 @@
 ---
-module_id: REALTIME_RISK_HEDGE_ENGINE_001
+module_id: REALTIME_RISK_HEDGE_ENGINE_001_6416
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 实时风险对冲引擎
-- 动态对冲
-- 风险监控
-- 对冲执行
 layer: layer_05
 ---
 

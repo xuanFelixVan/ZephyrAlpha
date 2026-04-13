@@ -60,7 +60,7 @@ parent_document: BLUEPRINT.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -138,7 +138,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -152,7 +152,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -216,7 +216,7 @@ Layer 11.12情景分析系统是清风量化系统的**风险预警雷达**，�
 
 
 
----
+```---
 
 
 
@@ -360,7 +360,7 @@ Layer 11.12情景分析系统是清风量化系统的**风险预警雷达**，�
 
 
 
----
+```---
 
 
 
@@ -840,7 +840,7 @@ class ScenarioBuilder:
 
 
 
----
+```---
 
 
 
@@ -1392,7 +1392,7 @@ class ScenarioSimulationEngine:
 
 
 
----
+```---
 
 
 
@@ -1862,7 +1862,7 @@ class ImpactAssessmentEngine:
 
 
 
----
+```---
 
 
 
@@ -2142,7 +2142,7 @@ class MitigationStrategyGenerator:
 
 
 
----
+```---
 
 
 
@@ -2228,7 +2228,7 @@ Layer 11.4 战略调整决策
 
 
 
----
+```---
 
 
 
@@ -2266,7 +2266,7 @@ Layer 11.4 战略调整决策
 
 
 
----
+```---
 
 
 
@@ -2428,7 +2428,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 
@@ -2468,7 +2468,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 
@@ -2508,7 +2508,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 
@@ -2530,7 +2530,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 
@@ -2546,7 +2546,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 
@@ -2554,7 +2554,7 @@ class PolicyShockScenario:
 
 **下一步**: 更新Layer 11主蓝图文档
 
----
+```---
 
 
 
@@ -2610,7 +2610,7 @@ class PolicyShockScenario:
 
 
 
----
+```---
 
 
 

@@ -45,7 +45,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -103,7 +103,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -151,7 +151,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -199,7 +199,7 @@ compliance_level: 专业标准
 
 
 
----
+```---
 
 
 
@@ -231,7 +231,7 @@ compliance_level: 专业标准
 
 ```yaml
 
----
+```---
 
 module_id: FACTOR_README_001
 
@@ -241,7 +241,7 @@ applicable_scope: 因子研究与管?
 
 implementation_status: 进行?
 
----
+```---
 
 ```
 
@@ -251,7 +251,7 @@ implementation_status: 进行?
 
 ```yaml
 
----
+```---
 
 module_id: AUDIT_P0_REPORT_REF_001
 
@@ -261,13 +261,13 @@ applicable_scope: 因子研究与管理
 
 implementation_status: 进行中
 
----
+```---
 
 ```
 
 
 
----
+```---
 
 
 
@@ -293,7 +293,7 @@ implementation_status: 进行中
 
 
 
----
+```---
 
 
 
@@ -309,7 +309,7 @@ implementation_status: 进行中
 
 
 
----
+```---
 
 
 

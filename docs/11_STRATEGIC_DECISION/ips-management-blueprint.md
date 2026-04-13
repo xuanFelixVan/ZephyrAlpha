@@ -1,32 +1,21 @@
 ---
-
-module_id: IPS_001
-
+module_id: IPS_001_6170
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 文档管理员
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
-module_id: IPS_MANAGEMENT_001
+```
+module_id: IPS_MANAGEMENT_001_6170
+```
 
 version: 1.0.0
 
@@ -50,7 +39,9 @@ open_source_solution: "自研简化版"
 
 priority: P1
 
----
+```
+```---
+```
 
 
 
@@ -128,7 +119,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 > **版本**: v1.0
 
@@ -142,7 +135,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -188,7 +183,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -430,7 +427,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1418,7 +1417,9 @@ class ReviewComplianceManager:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1716,7 +1717,9 @@ class IPSGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1768,7 +1771,9 @@ class IPSGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1788,13 +1793,17 @@ class IPSGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1850,7 +1859,9 @@ class IPSGenerator:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: MODEL_SECURITY_SCANNER_001
-
+module_id: MODEL_SECURITY_SCANNER_001_9195
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-03
-
+created_date: '2026-04-03'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供model security scanner blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的模型安全扫描系统设计，包括漏洞检测、安全审计、风险评估等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的模型安全扫描系统设计，包括漏洞检测、安全审计、风险评估等核心功能。'
 layer: layer_02
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -74,7 +56,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +134,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -282,7 +268,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -898,7 +884,7 @@ class SecurityScanConfig:
 
 
 
----
+```---
 
 
 
@@ -962,7 +948,7 @@ class SecurityScanConfig:
 
 
 
----
+```---
 
 
 
@@ -1086,7 +1072,7 @@ jinja2>=3.1.0
 
 
 
----
+```---
 
 
 
@@ -1186,7 +1172,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1252,7 +1238,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1306,7 +1292,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1338,7 +1324,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1382,7 +1368,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1400,7 +1386,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 
@@ -1512,7 +1498,7 @@ class ModelGovernance:
 
 
 
----
+```---
 
 
 

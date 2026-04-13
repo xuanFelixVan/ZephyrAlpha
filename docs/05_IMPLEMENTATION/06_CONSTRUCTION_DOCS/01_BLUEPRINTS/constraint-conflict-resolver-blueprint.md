@@ -1,35 +1,16 @@
 ---
-
-module_id: CONSTRAINT_CONFLICT_RESOLVER_001
-
+module_id: CONSTRAINT_CONFLICT_RESOLVER_001_5886
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 约束冲突检测
-
-  - 冲突自动解决
-
-  - 约束优先级管理
-
-  - 解决方案建议
-
+- 约束冲突检测
 layer: layer_06
-
 ---
 
 
@@ -860,7 +841,9 @@ class Resolution:
 
 ```yaml
 
-- module_id: CONSTRAINT_CONFLICT_RESOLVER_001
+```
+- module_id: CONSTRAINT_CONFLICT_RESOLVER_001_5886
+```
 
   module_name: 约束冲突自动解决器
 

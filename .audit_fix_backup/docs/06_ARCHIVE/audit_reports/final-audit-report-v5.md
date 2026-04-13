@@ -59,7 +59,7 @@ implementation_status: 进行?
 
 
 
----
+```---
 
 
 
@@ -117,7 +117,7 @@ def get_implemented_factors(self) -> List[str]:
 
 
 
----
+```---
 
 
 
@@ -261,7 +261,7 @@ def _calculate_supertrend(
 
 
 
----
+```---
 
 
 
@@ -317,7 +317,7 @@ if position.unrealized_pnl_pct < -0.20:
 
 
 
----
+```---
 
 
 
@@ -375,7 +375,7 @@ return max(0, max_total_quantity - current_quantity)
 
 
 
----
+```---
 
 
 
@@ -423,7 +423,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -451,7 +451,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -475,7 +475,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -503,7 +503,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -527,7 +527,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -539,7 +539,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -557,7 +557,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -579,7 +579,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -603,7 +603,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -625,7 +625,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -641,7 +641,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -661,7 +661,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -679,7 +679,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -699,7 +699,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -719,7 +719,7 @@ quant_system_v4/
 
 
 
----
+```---
 
 
 
@@ -751,7 +751,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -773,7 +773,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -785,7 +785,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -819,7 +819,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -869,7 +869,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -909,7 +909,7 @@ system:
 
 
 
----
+```---
 
 
 
@@ -951,7 +951,7 @@ system:
 
 
 
----
+```---
 
 
 

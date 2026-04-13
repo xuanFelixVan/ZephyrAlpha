@@ -1,6 +1,15 @@
+---
+module_id: AUTO_86308
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: QUALITY_MONITORING_REPORT_006
+```
 
 version: 1.0.0
 
@@ -23,7 +32,9 @@ responsibility:
 - 系统审计分析与质量评估报告与改进建议
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # quality monitoring report 20260407 012859
@@ -50,7 +61,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -68,5 +81,7 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 

@@ -1,28 +1,20 @@
 ---
-
-module_id: DEVELOPMENT_WORKFLOW_001
-
+module_id: DEVELOPMENT_WORKFLOW_001_5552
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 个人开发者
-
 standard_type: 专业量化机构文档
-
 responsibility:
-
 - 工作流程设计与优化管理与优化维护
-
 layer: layer_05
 ---
 
 
-module_id: IMPL_DEV_WORKFLOW_001
+```
+module_id: IMPL_DEV_WORKFLOW_001_5552
+```
 
 version: 1.0.1
 

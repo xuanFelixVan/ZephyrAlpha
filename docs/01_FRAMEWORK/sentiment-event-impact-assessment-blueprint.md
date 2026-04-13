@@ -1,29 +1,22 @@
 ---
-module_id: 01_FRAMEWORK_SENTIMENT_EVENT_IMPACT_ASSESSMENT_BLUEPRINT
+module_id: 01_FRAMEWORK_SENTIMENT_EVENT_IMPACT_ASSESSMENT_BLUEPRINT_9502
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Sentiment Event Impact Assessment Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 舆情事件影响评估
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Associates
-  - Renaissance Technologies
-  - Two Sigma
-related_documents:
-  - SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md
-  - EVENT_DRIVEN_LEARNING_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./SENTIMENT_ANALYSIS_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: Transformers + Event Study
+open_source_projects: ''
 features: NLP模型、事件研究法、影响评估
-responsibility_boundary: '本文档职责（Layer 3 舆情分析层）：
+responsibility_boundary: '''本文档职责（Layer 3 舆情分析层）：'
 ---
 
 ## 📋 一、概述
@@ -48,7 +41,9 @@ responsibility_boundary: '本文档职责（Layer 3 舆情分析层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -78,7 +73,9 @@ responsibility_boundary: '本文档职责（Layer 3 舆情分析层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -150,7 +147,9 @@ class SentimentEventImpactAssessor:
 
 
 
----
+```
+```---
+```
 
 
 

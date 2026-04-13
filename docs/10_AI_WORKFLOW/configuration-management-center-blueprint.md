@@ -1,39 +1,21 @@
 ---
-
-module_id: CONFIGURATION_MANAGEMENT_CENTER_001
-
+module_id: CONFIGURATION_MANAGEMENT_CENTER_001_4782
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 配置管理中心蓝图 (CONFIGURATION_MANAGEMENT_CENTER)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 系统配置管理
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Hydra + Dynaconf
-
 priority: P1
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +90,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -260,7 +246,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -410,7 +398,9 @@ class FactorConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -490,7 +480,9 @@ class FactorConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +580,9 @@ class LoggingConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -638,7 +632,9 @@ class LoggingConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -660,7 +656,9 @@ class LoggingConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -682,7 +680,9 @@ class LoggingConfig(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 

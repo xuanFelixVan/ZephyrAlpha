@@ -1,25 +1,14 @@
 ---
-
-module_id: CONFIG_INDEX_001
-
+module_id: CONFIG_INDEX_001_2057
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-11'
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供CONFIG目录索引
-
+- 提供CONFIG目录索引
 standard_type: 专业量化机构索引
-
 applicable_scope: CONFIG
-
 layer: layer_09
 ---
 
@@ -38,7 +27,7 @@ layer: layer_09
 
 - 治理工具总索引
 
-- [09_AUDIT STATE 索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- ~~[09_AUDIT STATE 索引]~~
 
 
 
@@ -52,7 +41,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +77,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

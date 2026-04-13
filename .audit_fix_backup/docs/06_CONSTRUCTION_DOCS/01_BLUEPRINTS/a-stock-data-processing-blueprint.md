@@ -44,7 +44,7 @@ created_date: 2026-04-01
 
 last_updated: 2026-04-02
 
----
+```---
 
 > **核心职责**: A Stock Data Processing蓝图设计
 
@@ -1710,7 +1710,7 @@ class CheckpointManager:
 
 
 
----
+```---
 
 
 
@@ -1728,7 +1728,7 @@ class CheckpointManager:
 
 
 
----
+```---
 
 
 
@@ -1786,7 +1786,7 @@ class CheckpointManager:
 
 
 
----
+```---
 
 
 

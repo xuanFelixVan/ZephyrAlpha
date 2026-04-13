@@ -21,7 +21,7 @@ responsibility: REPORTS
 > **生成时间**: 2026-04-08
 > **数据来源**: `SENTINEL_L1_SCAN_20260408.json`、`overnight_runs/20260408_033240/invalid_links_detail_20260408_033240.md`、`overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md`
 
----
+```---
 
 ## 一、无效内链（69 条）
 
@@ -59,7 +59,7 @@ responsibility: REPORTS
 
 3. **review_materials_package 路径错误**（7 条）：外部评审包内链接使用了 `../04_EXECUTION/` 等路径，但评审包不在 docs/ 树内，解析后路径不存在。
 
----
+```---
 
 ## 二、module_id 重复（238 组）
 
@@ -88,7 +88,7 @@ responsibility: REPORTS
 | D. 蓝图跨目录重复 | ~30 | 同一蓝图在 FRAMEWORK + IMPLEMENTATION + ARCHIVE 三处 |
 | E. 其他 | ~58 | 各类零散冲突 |
 
----
+```---
 
 ## 三、未检出 module_id（74 篇）
 
@@ -97,7 +97,7 @@ responsibility: REPORTS
 - YAML 格式损坏（双 YAML 头、编码问题）
 - 非标准文档（README、CHANGELOG、数据文件）
 
----
+```---
 
 ## 四、L1 总结与建议
 

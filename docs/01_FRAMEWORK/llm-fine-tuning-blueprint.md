@@ -1,33 +1,15 @@
 ---
-
-module_id: LLM_FINE_TUNING_001
-
+module_id: LLM_FINE_TUNING_001_6184
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供llm fine tuning blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的大语言模型微调设计，包括指令微调、领域适应、参数高效微调等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的大语言模型微调设计，包括指令微调、领域适应、参数高效微调等核心功能。'
 layer: layer_02
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -76,7 +58,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -148,7 +132,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -210,7 +196,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -498,7 +484,7 @@ lora_r: LoRA?            lora_alpha: LoRA alpha
 
 
 
----
+```---
 
 
 
@@ -554,7 +540,7 @@ accelerate>=0.25.0
 
 
 
----
+```---
 
 
 
@@ -590,7 +576,7 @@ F1 | ?.80 |
 
 
 
----
+```---
 
 
 
@@ -608,7 +594,7 @@ F1 | ?.80 |
 
 
 
----
+```---
 
 
 
@@ -720,7 +706,7 @@ F1 | ?.80 |
 
 
 
----
+```---
 
 
 

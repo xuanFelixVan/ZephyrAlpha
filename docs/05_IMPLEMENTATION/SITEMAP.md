@@ -1,5 +1,5 @@
 ---
-module_id: SITEMAP
+module_id: SITEMAP_1030
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -40,7 +40,9 @@ responsibility: 05_IMPLEMENTATION
 
 
 layer: layer_05
----
+```
+```---
+```
 
 
 
@@ -131,7 +133,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -193,7 +195,7 @@ layer: layer_05
 
 2. ﮔﺗﮔ؟ﮔ۷۰ﮒﮒﻝ۶ﺍﮔ۴ﮔﺝﮒﺁﺗﮒﭦﻝﮔﮔﺁﻟ۶ﮔﺙﮔ?3. ﮒﻟﮔﮔ۰۲ﻛﺕﻝﮒ؟ﮔﺛﻝﭘﮔﮒﻛﺙﮒ?
 
----
+```---
 
 
 
@@ -255,7 +257,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -311,7 +313,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 

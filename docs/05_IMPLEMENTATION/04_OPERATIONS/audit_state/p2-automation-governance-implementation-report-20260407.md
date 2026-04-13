@@ -1,31 +1,17 @@
 ---
-
 responsibility:
-
 - 系统审计分析与质量评估报告与改进建议
-
-module_id: P2_AUTOMATION_GOVERNANCE_IMPLEMENTATION_REPORT_001
-
+module_id: P2_AUTOMATION_GOVERNANCE_IMPLEMENTATION_REPORT_001_7957
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级实施报告
-
 applicable_scope: P2级自动化工具和治理流程实施报告
-
 compliance_level: 专业标准
-
 implementation_date: 2026-04-07
-
 ---
 
 # P2级自动化工具和治理流程实施报告
@@ -54,7 +40,9 @@ implementation_date: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +84,9 @@ implementation_date: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -178,7 +168,9 @@ python scripts/responsibility_description_generator.py --output [输出文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -246,7 +238,9 @@ python scripts/responsibility_conflict_detector.py --threshold 0.8 --output [报
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +314,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -392,7 +388,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -458,7 +456,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -522,7 +522,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -596,7 +598,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -666,7 +670,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 
@@ -732,7 +738,9 @@ python scripts/responsibility_optimizer.py --output [报告文件]
 
 
 
----
+```
+```---
+```
 
 
 

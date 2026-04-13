@@ -1,37 +1,21 @@
 ---
-
-module_id: TECH_DECISION_RECORDS_001
-
+module_id: TECH_DECISION_RECORDS_001_8141
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: 2026-04-02
-
 owner: 首席蓝图架构师
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 技术选型决策
-
 compliance_level: 顶级专业标准
-
-reference_models: ["Technology Decision Records Best Practices", "ADR (Architecture Decision Records)"]
-
+reference_models:
+- Technology Decision Records Best Practices
 related_documents:
-
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-  - ARCHITECTURE.md
-
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
 parent_document: ../ARCHITECTURE.md
-
 implementation_status: 蓝图设计完成
-
 layer: layer_01
-responsibility: "处理TECH_DECISION_RECORDS相关业务"
+responsibility: 处理TECH_DECISION_RECORDS相关业务
 ---
 
 
@@ -58,7 +42,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +328,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -420,7 +408,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -504,7 +494,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +580,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -660,7 +654,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -744,7 +740,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -864,7 +862,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -908,7 +908,9 @@ responsibility: "处理TECH_DECISION_RECORDS相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

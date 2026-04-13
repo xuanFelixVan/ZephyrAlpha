@@ -1,165 +1,118 @@
 ---
-module_id: 08_HUMAN_AI_INTERFACE_INDEX
+module_id: LAYER_08_INDEX_AUTO
 version: 1.0.0
 status: Active
-created_date: 2026-04-07
-last_updated: 2026-04-07
-owner: 文档管理团队
-responsibility:
-  - 人机交互层主索引、模块导航与文档目录管理、系统架构概览
-standard_type: 索引文档
-applicable_scope: Layer 8 - 人机交互层
-compliance_level: 专业标准
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_08
+compliance_level: 强制标准
+priority: P0-CRITICAL
 layer: layer_08
+responsibility:
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
+# LAYER_08 自动索引
 
-# Layer 8 人机交互层索引
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 84
 
-## 📊 统计信息
+## 文档列表
 
-| 指标 | 数值 |
-|------|------|
-| **模块总数** | 84个 |
-| **原有模块** | 20个 |
-| **新增模块** | 64个 |
-| **P0级模块** | 9个 |
-| **P1级模块** | 22个 |
-| **P2级模块** | 13个 |
-| **蓝图文档** | 84个 |
-| **索引文档** | 84个 |
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [ai-code-editors-complete-guide](./ai-code-editors-complete-guide.md)
+- [alert-management-interface-blueprint](./alert-management-interface-blueprint.md)
+- [api-gateway-layer8-module](./28_API_GATEWAY/api-gateway-layer8-module.md)
+- [api-management-interface-blueprint](./api-management-interface-blueprint.md)
+- [backtest-best-practices](./backtest-best-practices.md)
+- [backtest-result-viewer-blueprint](./backtest-result-viewer-blueprint.md)
+- [blueprint-chapter-naming-standard](./blueprint-chapter-naming-standard.md)
+- [compliance-monitoring-layer8-module](./30_COMPLIANCE_MONITORING/compliance-monitoring-layer8-module.md)
+- [compliance-report-interface-blueprint](./compliance-report-interface-blueprint.md)
+- [data-exploration-interface-blueprint](./data-exploration-interface-blueprint.md)
+- [data-quality-monitoring-interface-blueprint](./data-quality-monitoring-interface-blueprint.md)
+- [decision-dashboard-blueprint](./decision-dashboard-blueprint.md)
+- [factor-case-library](./factor-case-library.md)
+- [factor-research-best-practices](./factor-research-best-practices.md)
+- [fastapi-users-auth-blueprint](./fastapi-users-auth-blueprint.md)
+- [fund-management-interface-blueprint](./fund-management-interface-blueprint.md)
+- [grafana-monitoring-blueprint](./grafana-monitoring-blueprint.md)
+- [help-system-blueprint](./help-system-blueprint.md)
+- [human-ai-integration-blueprint](./human-ai-integration-blueprint.md)
+- [human-ai-interaction-blueprint](./human-ai-interaction-blueprint.md)
+- [human-ai-interface-layer-advanced-features-blueprint](./human-ai-interface-layer-advanced-features-blueprint.md)
+- [human-ai-interface-layer-complete-supplement-blueprint](./human-ai-interface-layer-complete-supplement-blueprint.md)
+- [human-ai-interface-layer-deep-audit-report-v3-20260407](./human-ai-interface-layer-deep-audit-report-v3-20260407.md)
+- [human-ai-interface-layer-gap-analysis-blueprint](./human-ai-interface-layer-gap-analysis-blueprint.md)
+- [human-ai-interface-layer-technical-blueprint](./human-ai-interface-layer-technical-blueprint.md)
+- [index](./index.md)
+- [index-template](./index-template.md)
+- [intelligent-recommendation-system-blueprint](./intelligent-recommendation-system-blueprint.md)
+- [knowledge-base-case-studies](./knowledge-base-case-studies.md)
+- [knowledge-base-platform-guide](../08_KNOWLEDGE_BASE/knowledge-base-platform-guide.md)
+- [knowledge-transfer-system](./knowledge-transfer-system.md)
+- [liquidity-management-blueprint](./liquidity-management-blueprint.md)
+- [mobile-interface-coverage-blueprint](./mobile-interface-coverage-blueprint.md)
+- [mobile-push-notification-blueprint](./mobile-push-notification-blueprint.md)
+- [model-management-interface-blueprint](./model-management-interface-blueprint.md)
+- [model-risk-management-layer8-module](./77_MODEL_RISK_MANAGEMENT/model-risk-management-layer8-module.md)
+- [momentum-factor-library](./momentum-factor-library.md)
+- [multi-factor-strategy-library](./multi-factor-strategy-library.md)
+- [openclaw-l2-docs-08-knowledge-239](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-239.md)
+- [openclaw-l2-docs-08-knowledge-base-01-technical-knowledge-244](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-base-01-technical-knowledge-244.md)
+- [openclaw-l2-docs-08-knowledge-base-243](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-base-243.md)
+- [openclaw-l2-docs-08-knowledge-best-practices-240](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-best-practices-240.md)
+- [openclaw-l2-docs-08-knowledge-factor-library-241](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-factor-library-241.md)
+- [openclaw-l2-docs-08-knowledge-strategy-library-242](../09_AUDIT/REPORTS/openclaw-l2-docs-08-knowledge-strategy-library-242.md)
+- [overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203](./overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203.md)
+- [overlap-human-ai-interface-layer-technical-blueprint-20260407-190203](./overlap-human-ai-interface-layer-technical-blueprint-20260407-190203.md)
+- [performance-analysis-interface-blueprint](./performance-analysis-interface-blueprint.md)
+- [performance-attribution-layer8-module](./83_PERFORMANCE_ATTRIBUTION/performance-attribution-layer8-module.md)
+- [position-management-interface-blueprint](./position-management-interface-blueprint.md)
+- [realtime-risk-monitoring-layer8-module](./64_REALTIME_RISK_MONITORING/realtime-risk-monitoring-layer8-module.md)
+- [risk-dashboard-blueprint](./24_RISK_DASHBOARD/risk-dashboard-blueprint.md)
+- [risk-management-best-practices](./risk-management-best-practices.md)
+- [risk-monitoring-interface-blueprint](./risk-monitoring-interface-blueprint.md)
+- [settings-management-interface-blueprint](./settings-management-interface-blueprint.md)
+- [strategy-authoring-assistant-blueprint](./strategy-authoring-assistant-blueprint.md)
+- [strategy-case-library](./strategy-case-library.md)
+- [strategy-configuration-interface-blueprint](./strategy-configuration-interface-blueprint.md)
+- [strategy-lifecycle-management-layer8-module](./81_STRATEGY_LIFECYCLE_MANAGEMENT/strategy-lifecycle-management-layer8-module.md)
+- [streamlit-backtest-interface-blueprint](./streamlit-backtest-interface-blueprint.md)
+- [system-health-check-interface-blueprint](./system-health-check-interface-blueprint.md)
+- [trade-record-viewer-blueprint](./trade-record-viewer-blueprint.md)
+- [trading-authorization-interface-blueprint](./trading-authorization-interface-blueprint.md)
+- [transaction-cost-analysis-layer8-module](./79_TRANSACTION_COST_ANALYSIS/transaction-cost-analysis-layer8-module.md)
 
-**索引状态**: ✅ 活跃  
-**维护频率**: 按需更新  
-**下次更新**: 根据模块实施进度更新  
-**最后更新**: 2026-04-08（补充24个专业机构必备模块）
 
 ---
 
-## 上级与接力
-
-- [docs 根索引](../INDEX.md)
-- 全仓库文件治理任务清单 §7
-- 治理工具总索引
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
-
-### 索引健全性与目录体量（P5 §7）
-
-- **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260507.md（`scan_index_health.py --prefix docs/08_HUMAN_AI_INTERFACE --date 20260507`；**zero_inbound=0**；候选 md **107**；首轮 **39** 处「原有模块」子域 `INDEX`/`README` 零入链，已由本页下表补链后复跑归零）
-- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/08_HUMAN_AI_INTERFACE` **107** 条路径）
-
-### 子域门面（原有模块 01–39 · INDEX / README 入链）
-
-> 下列链用于满足「零入链」扫描：各子目录 **`INDEX.md` / `README.md`** 须被本前缀内其他 `.md` 显式引用。
-
-| 模块 | INDEX | README |
-|------|-------|--------|
-| 01_MONITORING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 05_BACKTEST_UI | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 06_REPORTING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 17_DOCUMENTATION_CENTER | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 24_RISK_DASHBOARD | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 25_STRATEGY_IDE | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 26_FACTOR_ANALYSIS | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 27_RISK_CONTROL_PANEL | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 28_API_GATEWAY | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 29_WEBSOCKET_REALTIME | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 30_COMPLIANCE_MONITORING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 31_CAPITAL_MANAGEMENT | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 32_USER_BEHAVIOR_ANALYTICS | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 33_I18N_SUPPORT | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 34_THEME_CUSTOMIZATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 35_DATA_EXPORT_TOOLS | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 36_USER_TRAINING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 37_ACCESSIBILITY | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 38_OFFLINE_SUPPORT | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 39_THIRD_PARTY_INTEGRATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-
----
-
-## 📁 其他活跃文档
-
-### 原有模块（20个）
-
-- MONITORING_DASHBOARD_BLUEPRINT
-- BACKTEST_UI_BLUEPRINT
-- REPORTING_BLUEPRINT
-- DOCUMENTATION_CENTER_BLUEPRINT
-- RISK_DASHBOARD_BLUEPRINT
-- STRATEGY_IDE_BLUEPRINT
-- FACTOR_ANALYSIS_BLUEPRINT
-- RISK_CONTROL_PANEL_BLUEPRINT
-- API_GATEWAY_LAYER8_MODULE（正式蓝图：API_GATEWAY_BLUEPRINT）
-- WEBSOCKET_REALTIME_BLUEPRINT
-- COMPLIANCE_MONITORING_LAYER8_MODULE（正式稿：COMPLIANCE_MONITORING_BLUEPRINT）
-- CAPITAL_MANAGEMENT_BLUEPRINT
-- USER_BEHAVIOR_ANALYTICS_BLUEPRINT
-- I18N_SUPPORT_BLUEPRINT
-- THEME_CUSTOMIZATION_BLUEPRINT
-- DATA_EXPORT_TOOLS_BLUEPRINT
-- USER_TRAINING_BLUEPRINT
-- ACCESSIBILITY_BLUEPRINT
-- OFFLINE_SUPPORT_BLUEPRINT
-- THIRD_PARTY_INTEGRATION_BLUEPRINT
-
----
-
-## 🧭 严格孤儿挂载（波次：A 类继续清理）
-
-- BLUEPRINT_CHAPTER_NAMING_STANDARD
-- INDEX_TEMPLATE
-
-### 新增模块 - P0级（9个）
-
-- TRADING_TERMINAL_BLUEPRINT - 交易终端（核心缺失）
-- ORDER_MANAGEMENT_SYSTEM_BLUEPRINT - 订单管理系统（OMS）
-- EXECUTION_MANAGEMENT_SYSTEM_BLUEPRINT - 执行管理系统（EMS）
-- REALTIME_RISK_MONITORING_LAYER8_MODULE - 实时风险监控（权威见 01_FRAMEWORK）
-- DATA_MANAGEMENT_PLATFORM_BLUEPRINT - 数据管理平台
-- AUDIT_LOG_SYSTEM_BLUEPRINT - 审计日志系统
-- TRANSACTION_COST_ANALYSIS_LAYER8_MODULE - 交易成本分析（TCA）（Layer8 入口 → canonical）
-- PORTFOLIO_MANAGEMENT_BLUEPRINT - 组合管理（高级）
-
-### 新增模块 - P1级（22个）
-
-- SYSTEM_CONFIG_CENTER_BLUEPRINT - 系统配置中心
-- USER_PERMISSION_MANAGEMENT_BLUEPRINT - 用户权限管理
-- PERFORMANCE_MONITORING_BLUEPRINT - 性能监控
-- LOG_MANAGEMENT_BLUEPRINT - 日志管理
-- CONFIG_MANAGEMENT_BLUEPRINT - 配置管理
-- BACKUP_RECOVERY_BLUEPRINT - 备份与恢复
-- SYSTEM_HEALTH_CHECK_BLUEPRINT - 系统健康检查
-- VERSION_MANAGEMENT_BLUEPRINT - 版本管理
-- ALGORITHMIC_TRADING_CONSOLE_BLUEPRINT - 算法交易控制台
-- RISK_REPORTING_SYSTEM_BLUEPRINT - 风险报告系统
-- DATA_QUALITY_MONITORING_LAYER8_MODULE - 数据质量监控（模块导读；正式蓝图见 `01_BLUEPRINTS`）
-- DEPLOYMENT_MANAGEMENT_PLATFORM_BLUEPRINT - 部署管理平台
-- COMPLIANCE_REPORTING_SYSTEM_BLUEPRINT - 合规报告系统
-- CLEARING_SETTLEMENT_MANAGEMENT_BLUEPRINT - 清算结算管理（高级）
-- MARGIN_MANAGEMENT_BLUEPRINT - 保证金管理（高级）
-- FUND_MANAGEMENT_BLUEPRINT - 资金管理（高级）
-- COUNTERPARTY_RISK_MANAGEMENT_BLUEPRINT - 交易对手风险管理（高级）
-- MODEL_RISK_MANAGEMENT_LAYER8_MODULE - 模型风险管理（Layer8 入口 → `01_FRAMEWORK` canonical）
-- MULTI_ACCOUNT_MANAGEMENT_BLUEPRINT - 多账户管理（高级）
-- STRATEGY_LIFECYCLE_MANAGEMENT_LAYER8_MODULE - 策略生命周期管理（Layer8 入口 → canonical）
-- MARKET_DATA_MANAGEMENT_BLUEPRINT - 市场数据管理（高级）
-- PERFORMANCE_ATTRIBUTION_LAYER8_MODULE - 绩效归因分析（高级，权威见 11_STRATEGIC_DECISION）
-
-### 新增模块 - P2级（13个）
-
-- NOTIFICATION_ALERT_SYSTEM_BLUEPRINT - 通知与告警系统
-- MOBILE_SUPPORT_BLUEPRINT - 移动端支持
-- DATA_IMPORT_TOOLS_BLUEPRINT - 数据导入工具
-- WORKFLOW_MANAGEMENT_BLUEPRINT - 工作流管理
-- KNOWLEDGE_BASE_SYSTEM_BLUEPRINT - 知识库系统
-- AI_ASSISTANT_INTEGRATION_BLUEPRINT - AI助手集成
-- PERFORMANCE_ANALYSIS_TOOLS_BLUEPRINT - 性能分析工具
-- SECURITY_AUDIT_BLUEPRINT - 安全审计
-- SANDBOX_ENVIRONMENT_BLUEPRINT - 沙箱环境
-- API_DOCUMENTATION_GENERATION_BLUEPRINT - API文档生成
-- PERFORMANCE_BENCHMARK_TESTING_BLUEPRINT - 性能基准测试
-- COLLABORATION_TOOLS_BLUEPRINT - 协作工具
-- CAPACITY_PLANNING_TOOL_BLUEPRINT - 容量规划工具
-- COST_MANAGEMENT_TOOL_BLUEPRINT - 成本管理工具
-
-
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.116453
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

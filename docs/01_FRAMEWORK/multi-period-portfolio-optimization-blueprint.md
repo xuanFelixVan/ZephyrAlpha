@@ -1,25 +1,18 @@
 ---
-module_id: 01_FRAMEWORK_MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT
+module_id: 01_FRAMEWORK_MULTI_PERIOD_PORTFOLIO_OPTIMIZATION_BLUEPRINT_5663
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Multi Period Portfolio Optimization Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: 多周期组合优化
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Associates
-  - AQR Capital
-  - BlackRock
-related_documents:
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
-  - DYNAMIC_RISK_BUDGETING_BLUEPRINT.md
-  - PORTFOLIO_REBALANCING_BLUEPRINT.md
-responsibility_boundary: '本文档负责多周期组合优化，包括：
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责多周期组合优化，包括：'
 parent_document: ./ARCHITECTURE.md
 implementation_status: 蓝图设计完成
 priority: P0 (最高优先级)
@@ -75,7 +68,9 @@ open_source_solution: CVXPY + PyPortfolioOpt + Riskfolio-Lib
 
 
 
----
+```
+```---
+```
 
 
 
@@ -223,7 +218,9 @@ Layer 6: 组合优化层
 
 
 
----
+```
+```---
+```
 
 
 
@@ -631,7 +628,9 @@ class DynamicWeightAdjuster:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -701,7 +700,9 @@ CREATE TABLE multi_period_weights (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -797,7 +798,9 @@ CREATE TABLE multi_period_weights (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -869,7 +872,9 @@ portfolio_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -901,7 +906,9 @@ portfolio_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -923,7 +930,9 @@ portfolio_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 
@@ -961,7 +970,9 @@ portfolio_performance = Gauge(
 
 
 
----
+```
+```---
+```
 
 
 

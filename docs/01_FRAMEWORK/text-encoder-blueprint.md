@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_TEXT_ENCODER_BLUEPRINT
+module_id: 01_FRAMEWORK_TEXT_ENCODER_BLUEPRINT_1950
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Text Encoder Blueprint相关业务
-created_date: 2026-04-03
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-03'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P2
-responsibility_boundary: '本文档负责Layer 4机器学习层的文本编码器设计，包括文本向量化、语义编码、多语言支持等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的文本编码器设计，包括文本向量化、语义编码、多语言支持等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -71,7 +70,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -135,7 +136,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -337,7 +338,7 @@ List[Dict]:
 
 
 
----
+```---
 
 
 
@@ -385,7 +386,7 @@ jieba>=0.42.0
 
 
 
----
+```---
 
 
 
@@ -421,7 +422,7 @@ jieba>=0.42.0
 
 
 
----
+```---
 
 
 
@@ -439,7 +440,7 @@ jieba>=0.42.0
 
 
 
----
+```---
 
 
 
@@ -551,7 +552,7 @@ jieba>=0.42.0
 
 
 
----
+```---
 
 
 

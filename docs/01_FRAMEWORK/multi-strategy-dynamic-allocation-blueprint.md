@@ -1,29 +1,22 @@
 ---
-module_id: 01_FRAMEWORK_MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT
+module_id: 01_FRAMEWORK_MULTI_STRATEGY_DYNAMIC_ALLOCATION_BLUEPRINT_6383
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Multi Strategy Dynamic Allocation Blueprint相关业务
-created_date: 2026-04-07
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-07'
+last_updated: '2026-04-07'
 owner: 首席架构师
 standard_type: 专业量化机构级蓝图
 applicable_scope: 多策略动态配置
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Multi-Strategy
-  - Renaissance Technologies
-  - Citadel Multi-Manager
-related_documents:
-  - STRATEGIC_DECISION_LAYER_BLUEPRINT.md
-  - PORTFOLIO_OPTIMIZATION_LAYER_BLUEPRINT.md
+reference_models: ''
+related_documents: ''
 parent_document: ./STRATEGIC_DECISION_LAYER_BLUEPRINT.md
 implementation_status: 蓝图设计完成
-open_source_projects:
-  - name: Optimization Algorithm + AI Recommendation
+open_source_projects: ''
 features: 优化算法、AI推荐、动态配置
-responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
+responsibility_boundary: '''本文档职责（Layer 11 战略决策层）：'
 ---
 
 ## 📋 一、概述
@@ -48,7 +41,9 @@ responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -78,7 +73,9 @@ responsibility_boundary: '本文档职责（Layer 11 战略决策层）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -160,7 +157,9 @@ class MultiStrategyDynamicAllocator:
 
 
 
----
+```
+```---
+```
 
 
 

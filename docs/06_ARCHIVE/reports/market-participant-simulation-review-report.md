@@ -1,35 +1,17 @@
 ---
-
-module_id: MARKET_PARTICIPANT_SIMULATION_REVIEW_REPORT_001
-
+module_id: MARKET_PARTICIPANT_SIMULATION_REVIEW_REPORT_001_4570
 review_id: TECH_REVIEW_MARKET_PARTICIPANT_SIM_001
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 reviewer: щжЦх╕нцКАцЬпшпДхобхоШ (Spec-Approver)
-
 review_type: цаЗхЗЖшпДхобцибх╝П (30хИЖщТЯ)
-
 review_standard: v5.3
-
 compliance_level: ф╕Уф╕ЪцаЗхЗЖ
-
 responsibility:
-
 - 归档文档、历史版本、技术评审
-
-- 系统架构
-
-- 审计系统
-
 owner: 首席文档架构师
-
 layer: layer_06
 ---
 
@@ -60,7 +42,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +104,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +200,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -304,7 +292,9 @@ layer: layer_06
 
 **цХ░цНоц╡Бшо╛шобхРИчР?*: **100%** ?
 
----
+```
+```---
+```
 
 
 
@@ -366,7 +356,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -422,7 +414,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -480,7 +474,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -564,7 +560,9 @@ layer: layer_06
 
 3. **цМБч╗нчЫСцОзхТМф╝Ш?*,чбоф┐ЭцибхЮЛхЗЖчбо?4. **AIш╛ЕхКйх╝А?*,цПРхНЗх╝АхПСцХИ?
 
----
+```
+```---
+```
 
 
 
@@ -610,7 +608,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -668,7 +668,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -706,7 +708,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

@@ -87,7 +87,7 @@ estimated_dev_hours: 8
 
 
 
----
+```---
 
 
 
@@ -531,7 +531,7 @@ def calculate_quality_score(
 
 
 
----
+```---
 
 
 
@@ -1111,7 +1111,7 @@ class DataProblem:
 
 
 
----
+```---
 
 
 
@@ -2965,7 +2965,7 @@ class ErrorRecoveryManager:
 
 
 
----
+```---
 
 
 
@@ -4615,7 +4615,7 @@ class TestDataFactory:
 
 
 
----
+```---
 
 
 
@@ -5309,7 +5309,7 @@ class ValidatorCLI:
 
 
 
----
+```---
 
 
 
@@ -5569,7 +5569,7 @@ graph TD
 
 
 
----
+```---
 
 
 
@@ -5873,7 +5873,7 @@ graph TD
 
 
 
----
+```---
 
 
 
@@ -5945,7 +5945,7 @@ graph TD
 
 
 
----
+```---
 
 
 

@@ -1,66 +1,22 @@
 ---
-
-module_id: DECISION_DASHBOARD_001
-
+module_id: DECISION_DASHBOARD_001_1047
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-06
-
 last_updated: '2026-04-09'
-
 owner: 首席蓝图架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 8 - 决策仪表板
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
-  - Bridgewater AYA Decision Dashboard
-
-  - Renaissance Decision Interface
-
-  - Two Sigma Decision Hub
-
+- Bridgewater AYA Decision Dashboard
 related_documents:
-
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-  - HUMAN_AI_INTEGRATION_BLUEPRINT.md
-
-  - GRAFANA_MONITORING_BLUEPRINT.md
-
-responsibility_boundary: |
-
-  本文档负责决策仪表板设计，包括：
-
-  - 决策入口整合
-
-  - AI建议展示
-
-  - 决策审批流程
-
-  - 决策历史追踪
-
-
-
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-  界面设计请参考：HUMAN_AI_INTEGRATION_BLUEPRINT.md
-
-  监控可视化请参考：GRAFANA_MONITORING_BLUEPRINT.md
-
+- HUMAN_AI_INTERACTION_BLUEPRINT.md
+responsibility_boundary: ''
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility: "处理DECISION_DASHBOARD_BLUEPRINT相关业务"
+responsibility: 处理DECISION_DASHBOARD_BLUEPRINT相关业务
 ---
 
 
@@ -91,7 +47,9 @@ responsibility: "处理DECISION_DASHBOARD_BLUEPRINT相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -161,7 +119,9 @@ responsibility: "处理DECISION_DASHBOARD_BLUEPRINT相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -269,7 +229,9 @@ responsibility: "处理DECISION_DASHBOARD_BLUEPRINT相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -705,7 +667,9 @@ def render_decision_history():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -817,7 +781,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -877,7 +843,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -899,7 +867,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -909,7 +879,9 @@ with tab3:
 
 **维护者**: 首席蓝图架构师
 
----
+```
+```---
+```
 
 
 
@@ -965,7 +937,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 

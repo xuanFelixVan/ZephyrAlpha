@@ -21,7 +21,7 @@ layer: layer_00
 > **适用对象**: 个人开发、AI维护、个人使用
 > **对标标准**: 桥水、文艺复兴、Two Sigma、Citadel战略决策体系
 
----
+```---
 
 ## 📋 文档说明
 
@@ -36,7 +36,7 @@ layer: layer_00
 - 个人实现价值
 - 实施路径
 
----
+```---
 
 ## 🔴 P0级核心模块蓝图
 
@@ -62,7 +62,7 @@ layer: layer_00
 
 **实施周期**: 3周
 
----
+```---
 
 ### 2. 战术资产配置系统（TAA）
 
@@ -110,7 +110,7 @@ def tactical_allocation(prices, strategic_weights, max_deviation=0.1):
     return tactical_weights
 ```
 
----
+```---
 
 ### 3. 风险平价模型系统
 
@@ -158,7 +158,7 @@ def risk_parity_portfolio(returns, target_volatility=0.15):
     return w_leveraged, leverage
 ```
 
----
+```---
 
 ### 4. 策略生命周期管理系统
 
@@ -207,7 +207,7 @@ class StrategyLifecycleManager:
         return True
 ```
 
----
+```---
 
 ## 🟡 P1级重要模块蓝图
 
@@ -233,7 +233,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 1周
 
----
+```---
 
 ### 6. 市场情报系统
 
@@ -257,7 +257,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 2周
 
----
+```---
 
 ### 7. 投资观点管理系统
 
@@ -280,7 +280,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 1周
 
----
+```---
 
 ### 8. 宏观经济预测系统
 
@@ -304,7 +304,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 2周
 
----
+```---
 
 ### 9. 行业轮动模型
 
@@ -327,7 +327,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 2周
 
----
+```---
 
 ### 10. 风格轮动模型
 
@@ -350,7 +350,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 2周
 
----
+```---
 
 ## 🟢 P2级支持模块蓝图
 
@@ -376,7 +376,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 1周
 
----
+```---
 
 ### 12. 决策树分析工具
 
@@ -399,7 +399,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 1周
 
----
+```---
 
 ### 13. 敏感性分析工具
 
@@ -422,7 +422,7 @@ class StrategyLifecycleManager:
 
 **实施周期**: 1周
 
----
+```---
 
 ## 📊 实施优先级矩阵
 
@@ -442,7 +442,7 @@ class StrategyLifecycleManager:
 | **决策树分析** | P2 | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | 1周 | ⭐⭐⭐ |
 | **敏感性分析** | P2 | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ | 1周 | ⭐⭐⭐ |
 
----
+```---
 
 ## 🗓️ 总体实施计划
 
@@ -492,7 +492,7 @@ class StrategyLifecycleManager:
 - 完整架构文档更新
 - 集成测试报告
 
----
+```---
 
 ## 📈 预期收益
 
@@ -527,7 +527,7 @@ class StrategyLifecycleManager:
 | **成本控制** | ⭐⭐⭐⭐⭐ | 开源方案大幅降低成本 |
 | **持续改进** | ⭐⭐⭐⭐⭐ | 系统化支持持续改进 |
 
----
+```---
 
 ## 🎯 总结与建议
 
@@ -562,7 +562,7 @@ class StrategyLifecycleManager:
 3. **个人适配**: 根据个人使用场景优化功能设计
 4. **渐进实施**: 分阶段实施，逐步完善系统
 
----
+```---
 
 **文档版本**: v1.0
 **创建时间**: 2026-04-07

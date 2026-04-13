@@ -1,33 +1,15 @@
 ---
-
-module_id: MARKET_MAKING_MODEL_001
-
+module_id: MARKET_MAKING_MODEL_001_5589
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-04
-
+created_date: '2026-04-04'
 last_updated: '2026-04-07'
-
-responsibility:
-
-- 提供market making model blueprint的完整架构设计、技术选型和实施路径规划
-
+responsibility: ''
 standard_type: 高层架构蓝图
-
 priority: P1
-
-responsibility_boundary: '本文档负责Layer 4机器学习层的做市模型设计，包括报价策略、库存管理、风险控制等核心功能。
-
-
-
-  '
-
+responsibility_boundary: '''本文档负责Layer 4机器学习层的做市模型设计，包括报价策略、库存管理、风险控制等核心功能。'
 layer: layer_02
-
 owner: 首席文档架构师
-
 ---
 
 
@@ -74,7 +56,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +120,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +148,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -450,7 +436,7 @@ torch.Tensor: ?        """
 
 
 
----
+```---
 
 
 
@@ -658,7 +644,7 @@ state: ?
 
 
 
----
+```---
 
 
 
@@ -696,7 +682,7 @@ state: ?
 
 
 
----
+```---
 
 
 
@@ -712,7 +698,7 @@ state: ?
 
 
 
----
+```---
 
 
 
@@ -824,7 +810,7 @@ state: ?
 
 
 
----
+```---
 
 
 

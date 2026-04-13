@@ -1,29 +1,16 @@
 ---
-
-module_id: SHORT_TERM_IMPROVEMENT_PROGRESS_20260406_001
-
+module_id: SHORT_TERM_IMPROVEMENT_PROGRESS_20260406_001_5275
 progress_id: SHORT_TERM_IMPROVEMENT_PROGRESS_20260406
-
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-06
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 standard_type: 专业量化机构进度报告
-
 applicable_scope: 短期改进任务执行进度
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 审计体系设计与质量监控与实施指导
-
 layer: layer_09
 ---
 
@@ -52,7 +39,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +79,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -246,7 +237,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -302,7 +295,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -346,7 +341,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -382,7 +379,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -430,7 +429,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -474,7 +475,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -522,7 +525,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -616,7 +621,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -674,7 +681,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

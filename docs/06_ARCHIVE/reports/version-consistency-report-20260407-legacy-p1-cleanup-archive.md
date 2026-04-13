@@ -1,8 +1,17 @@
+---
+module_id: AUTO_67725
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
 version: 1.0.0
 
+```
 module_id: VERSION_CONSISTENCY_REPORT_20260407
+```
 
 status: Active
 
@@ -17,7 +26,9 @@ responsibility:
 - VERSION_CONSISTENCY_20260407报告文档
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # 文档版本一致性检查报告
@@ -436,7 +447,9 @@ YAML格式: version: 1.0.0
 
 
 
----
+```
+```---
+```
 
 
 

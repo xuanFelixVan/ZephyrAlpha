@@ -1,5 +1,14 @@
+---
+module_id: AUTO_37119
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: IMPL_CONSTRUCTION_PLAN_TEXT_TO_STRATEGY_CONFIG_MVP_20260408
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
@@ -17,7 +26,9 @@ related_documents:
   - ../00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md
 layer: layer_05
 responsibility: "处理CONSTRUCTION_PLAN_TEXT_TO_STRATEGY_CONFIG_MVP_20260408相关业务"
----
+```
+```---
+```
 
 
 

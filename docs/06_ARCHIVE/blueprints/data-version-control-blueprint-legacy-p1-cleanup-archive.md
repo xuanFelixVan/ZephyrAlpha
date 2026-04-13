@@ -1,33 +1,15 @@
 ---
-
-module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_VERSION_CONTROL_BLUEPRINT
-
+module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_DATA_VERSION_CONTROL_BLUEPRINT_4955
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 数据版本管理
-
-  - 数据回溯
-
-  - 数据审计
-
-  - 版本控制
-
+- 数据版本管理
 layer: layer_05
-
 ---
 
 
@@ -694,7 +676,9 @@ class VersionRollbackEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -772,7 +756,9 @@ GET /api/v1/version/compare?version1=stock_prices_v122&version2=stock_prices_v12
 
 
 
----
+```
+```---
+```
 
 
 
@@ -832,7 +818,9 @@ volumes:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -854,7 +842,9 @@ volumes:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -866,7 +856,9 @@ volumes:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -880,17 +872,23 @@ volumes:
 
 
 
----
+```
+```---
+```
 
 
 
----
+```
+```---
+```
 
 
 
 
 
----
+```
+```---
+```
 
 
 
@@ -992,7 +990,9 @@ graph LR
 
 
 
----
+```
+```---
+```
 
 
 

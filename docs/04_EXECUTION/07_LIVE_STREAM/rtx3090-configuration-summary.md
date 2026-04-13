@@ -1,5 +1,5 @@
 ---
-module_id: 04_EXECUTION_07_LIVE_STREAM_RTX3090_CONFIGURATION_SUMMARY
+module_id: 04_EXECUTION_07_LIVE_STREAM_RTX3090_CONFIGURATION_SUMMARY_8877
 layer: layer_04
 version: 1.0.0
 status: Active
@@ -87,7 +87,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -207,7 +209,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -227,7 +231,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -251,7 +257,9 @@ ollama pull qwen2.5:32b
 
 
 
----
+```
+```---
+```
 
 
 
@@ -345,7 +353,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -429,7 +439,9 @@ python test_rtx3090_models.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -471,7 +483,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -519,7 +533,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -541,7 +557,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 

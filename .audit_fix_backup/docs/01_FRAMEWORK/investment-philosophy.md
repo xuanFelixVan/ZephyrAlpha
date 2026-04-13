@@ -43,7 +43,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -79,7 +79,7 @@ RISK_RULES = {
 
 
 
----
+```---
 
 
 
@@ -113,7 +113,7 @@ FACTOR_FRAMEWORK = {
 
 
 
----
+```---
 
 
 
@@ -139,7 +139,7 @@ DIVERSIFICATION_RULES = {
 
 
 
----
+```---
 
 
 
@@ -179,7 +179,7 @@ EXECUTION_RULES = {
 
 
 
----
+```---
 
 
 
@@ -219,7 +219,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -243,7 +243,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -259,7 +259,7 @@ OPTIMIZATION_PLAN = {
 
 -
 
----
+```---
 
 
 
@@ -291,7 +291,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -315,7 +315,7 @@ OPTIMIZATION_PLAN = {
 
 1. 因子挖掘：发现新的alpha因子
 
----
+```---
 
 
 
@@ -333,7 +333,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -345,7 +345,7 @@ OPTIMIZATION_PLAN = {
 
 **实施步骤**:
 
----
+```---
 
 
 
@@ -367,7 +367,7 @@ OPTIMIZATION_PLAN = {
 
 ?
 
----
+```---
 
 
 
@@ -391,7 +391,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -417,7 +417,7 @@ OPTIMIZATION_PLAN = {
 
 
 
----
+```---
 
 
 
@@ -437,7 +437,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -465,7 +465,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -499,7 +499,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -543,7 +543,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 
@@ -557,7 +557,7 @@ RISK_LIMITS = {
 
 
 
----
+```---
 
 
 

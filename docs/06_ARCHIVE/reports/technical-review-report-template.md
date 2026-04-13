@@ -1,31 +1,17 @@
 ---
-
-module_id: ARCHIVE_TECH_REVIEW_TEMPLATE_001
-
+module_id: ARCHIVE_TECH_REVIEW_TEMPLATE_001_3984
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-02
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构?
-
 standard_type: 专业量化机构实施标准
-
 applicable_scope: 系统实施与部?
-
 compliance_level: 初始标准
-
 parent_document: ../INDEX.md
-
 implementation_status: 进行?
-
 responsibility:
-
 - 数据质量 (Layer 1)
-
 layer: layer_06
 ---
 

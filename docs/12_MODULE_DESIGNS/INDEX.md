@@ -1,25 +1,15 @@
 ---
-
-module_id: MODULE_DESIGNS_INDEX_001
-
+module_id: MODULE_DESIGNS_INDEX_001_9587
 version: 1.0.1
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-11'
-
 owner: 文档治理系统
-
 standard_type: 索引文档
-
 applicable_scope: docs/module_designs（模块设计草图入口）
-
 compliance_level: 专业标准
-
 layer: layer_00
-responsibility: "处理INDEX相关业务"
+responsibility: 处理INDEX相关业务
 ---
 
 
@@ -50,7 +40,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

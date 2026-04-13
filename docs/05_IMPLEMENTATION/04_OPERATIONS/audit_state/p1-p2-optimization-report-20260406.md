@@ -1,31 +1,17 @@
 ---
-
-module_id: OPT_REPORT_P1_P2_001
-
+module_id: OPT_REPORT_P1_P2_001_9783
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-06
-
 last_updated: '2026-04-07'
-
 owner: Audit Sentinel
-
 standard_type: 专业量化机构文档优化报告
-
 applicable_scope: Alpha因子层文档优化
-
 compliance_level: 专业标准
-
 parent_document: ../LAYER2_ALPHA_FACTOR_DEEP_AUDIT_REPORT_V7_20260405.md
-
 implementation_status: 已完成
-
 responsibility:
-
 - 系统审计分析与质量评估报告与改进建议
-
 layer: layer_05
 ---
 
@@ -48,7 +34,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -66,7 +54,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -124,7 +114,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +186,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -226,7 +220,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -266,7 +262,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -298,7 +296,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -330,7 +330,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -354,7 +356,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -394,7 +398,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -418,7 +424,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -442,7 +450,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -466,7 +476,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -490,7 +502,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -514,7 +528,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -538,7 +554,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -578,7 +596,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -658,7 +678,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -726,7 +748,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -742,7 +766,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

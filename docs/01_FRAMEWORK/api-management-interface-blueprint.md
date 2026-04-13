@@ -1,89 +1,20 @@
 ---
-
-module_id: API_MANAGEMENT_INTERFACE_001
-
+module_id: API_MANAGEMENT_INTERFACE_001_4003
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-07
-
+created_date: '2026-04-07'
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 8 - API管理界面
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater API Gateway
-
-- Renaissance API Management
-
-- Two Sigma API Center
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- FASTAPI_USERS_AUTH_BLUEPRINT.md
-
-- HELP_SYSTEM_BLUEPRINT.md
-
-responsibility_boundary: '本文档负责API管理界面设计，包括：
-
-
-
-  - API文档查看界面
-
-
-
-  - API测试工具界面
-
-
-
-  - API监控统计界面
-
-
-
-  - API密钥管理界面
-
-
-
-  - API调用日志界面
-
-
-
-
-
-  战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-
-
-  认证权限请参考：FASTAPI_USERS_AUTH_BLUEPRINT.md
-
-
-
-  帮助系统请参考：HELP_SYSTEM_BLUEPRINT.md
-
-
-
-  '
-
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责API管理界面设计，包括：'
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-responsibility:
-
-- API_MANAGEMENT_INTERFACE蓝图设计
-
+responsibility: ''
 ---
 
 
@@ -136,7 +67,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -182,7 +115,9 @@ API管理界面是人机交互层的**API中心**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -302,7 +237,9 @@ API管理界面是人机交互层的**API中心**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -606,7 +543,9 @@ API管理界面是人机交互层的**API中心**，负责：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1126,7 +1065,9 @@ class APIManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1166,7 +1107,9 @@ class APIManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1186,7 +1129,9 @@ class APIManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1198,7 +1143,9 @@ class APIManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 

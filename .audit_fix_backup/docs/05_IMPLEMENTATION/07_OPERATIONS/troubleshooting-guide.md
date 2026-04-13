@@ -21,7 +21,7 @@ layer: layer_05
 **适用范围**: 系统故障、性能问题、安全事件
 **前置条件**: 具备基本的系统运维知识
 
----
+```---
 
 ## 🎯 诊断原则
 
@@ -34,7 +34,7 @@ layer: layer_05
 5. **验证确认**: 验证问题是否解决
 6. **文档记录**: 记录问题和解决方案
 
----
+```---
 
 ### 诊断工具
 
@@ -46,7 +46,7 @@ layer: layer_05
 | **数据库诊断** | pg_stat_activity | 数据库状态监控 |
 | **应用诊断** | py-spy, strace | 应用性能分析 |
 
----
+```---
 
 ## 🚨 故障分类
 
@@ -59,7 +59,7 @@ layer: layer_05
 | **P2** | 重要 | 部分功能受影响 | 1小时 |
 | **P3** | 一般 | 性能下降或小问题 | 4小时 |
 
----
+```---
 
 ### 按类型分类
 
@@ -70,7 +70,7 @@ layer: layer_05
 | **数据问题** | 数据丢失、不一致 | 硬件故障、程序错误 |
 | **安全问题** | 未授权访问、数据泄露 | 配置漏洞、攻击 |
 
----
+```---
 
 ## 🔍 诊断流程
 
@@ -96,7 +96,7 @@ ps aux | grep zephyr
 netstat -tulpn | grep 8000
 ```
 
----
+```---
 
 #### 1.2 影响评估
 
@@ -106,7 +106,7 @@ netstat -tulpn | grep 8000
 - **数据影响**: 是否影响数据完整性？
 - **时间影响**: 预计恢复时间？
 
----
+```---
 
 ### 阶段2: 信息收集
 
@@ -126,7 +126,7 @@ tail -n 1000 /var/log/nginx/error.log > /tmp/nginx_logs.txt
 tail -n 1000 /var/log/postgresql/postgresql-13-main.log > /tmp/db_logs.txt
 ```
 
----
+```---
 
 #### 2.2 指标收集
 
@@ -145,7 +145,7 @@ psql -c "SELECT * FROM pg_stat_activity;" > /tmp/db_metrics.txt
 psql -c "SELECT * FROM pg_stat_database;" >> /tmp/db_metrics.txt
 ```
 
----
+```---
 
 #### 2.3 配置收集
 
@@ -161,7 +161,7 @@ cp /etc/postgresql/13/main/postgresql.conf /tmp/db_config.conf
 cp /etc/postgresql/13/main/pg_hba.conf /tmp/db_hba.conf
 ```
 
----
+```---
 
 ### 阶段3: 问题分析
 
@@ -191,7 +191,7 @@ grep "lock" /var/log/postgresql/postgresql-13-main.log
 grep "connection" /var/log/postgresql/postgresql-13-main.log
 ```
 
----
+```---
 
 #### 3.2 性能分析
 
@@ -231,7 +231,7 @@ du -sh /* | sort -h
 iotop -o
 ```
 
----
+```---
 
 #### 3.3 网络分析
 
@@ -259,7 +259,7 @@ telnet target_host 8000
 curl -o /dev/null -s -w "%{time_total}\n" http://localhost:8000/health
 ```
 
----
+```---
 
 ### 阶段4: 解决方案
 
@@ -297,7 +297,7 @@ kill -9 $(lsof -t -i:8000)
 chown -R zephyr:zephyr /var/www/zephyr
 ```
 
----
+```---
 
 **问题2: 数据库连接失败**
 
@@ -332,7 +332,7 @@ systemctl restart postgresql
 psql -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle';"
 ```
 
----
+```---
 
 **问题3: 性能下降**
 
@@ -369,7 +369,7 @@ systemctl restart zephyr-app
 # 增加CPU、内存、磁盘
 ```
 
----
+```---
 
 ### 阶段5: 验证确认
 
@@ -386,7 +386,7 @@ pytest tests/smoke/ -v
 locust -f tests/performance/locustfile.py
 ```
 
----
+```---
 
 #### 5.2 监控验证
 
@@ -401,7 +401,7 @@ amtool alert query
 tail -f logs/app.log
 ```
 
----
+```---
 
 ### 阶段6: 文档记录
 
@@ -434,7 +434,7 @@ tail -f logs/app.log
 总结经验教训和改进措施
 ```
 
----
+```---
 
 ## 📊 诊断检查清单
 
@@ -461,7 +461,7 @@ tail -f logs/app.log
 - [ ] 数据备份检查
 - [ ] 数据恢复测试
 
----
+```---
 
 ## 🔗 相关文档
 
@@ -470,6 +470,6 @@ tail -f logs/app.log
 - 性能调优指南
 - 系统部署指南
 
----
+```---
 
 **文档版本**: v1.0.0 | **创建日期**: 2026-04-07 | **状态**: Active

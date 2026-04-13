@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V8_20260406
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_SENTIMENT_ANALYSIS_LAYER_DEEP_AUDIT_REPORT_V8_20260406_5103
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -63,7 +63,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -161,7 +163,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -307,7 +311,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -491,7 +497,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -557,7 +565,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -621,7 +631,9 @@ git checkout HEAD~1 -- docs/10_AI_WORKFLOW/SENTIMENT_ANALYSIS_SHORT_TERM_TECHNIC
 
 
 
----
+```
+```---
+```
 
 
 
@@ -683,7 +695,9 @@ git commit -m "fix: 修复短期技术规格书编码问题"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -695,7 +709,9 @@ git commit -m "fix: 修复短期技术规格书编码问题"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -707,7 +723,9 @@ git commit -m "fix: 修复短期技术规格书编码问题"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -753,7 +771,9 @@ git commit -m "fix: 修复短期技术规格书编码问题"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -805,7 +825,9 @@ git commit -m "fix: 修复短期技术规格书编码问题"
 
 
 
----
+```
+```---
+```
 
 
 

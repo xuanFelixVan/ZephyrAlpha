@@ -1,35 +1,16 @@
 ---
-
-module_id: PRODUCTION_PORTFOLIO_PIPELINE_001
-
+module_id: PRODUCTION_PORTFOLIO_PIPELINE_001_8693
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 蓝图架构师
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 生产级组合优化管道
-
-  - 端到端优化流程
-
-  - 滚动回测框架
-
-  - 真实世界数据处理
-
+- 生产级组合优化管道
 layer: layer_06
-
 ---
 
 

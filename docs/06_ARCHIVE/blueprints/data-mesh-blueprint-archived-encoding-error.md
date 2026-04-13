@@ -1317,7 +1317,7 @@ class DataProductAccessService:
 
 
 
----
+```---
 
 
 
@@ -1385,7 +1385,7 @@ class DataProductAccessService:
 
 
 
----
+```---
 
 
 
@@ -1431,7 +1431,7 @@ class DataProductAccessService:
 
 - v1.0.0 (2026-04-03): 初始版本，完成数据网格架构设?
 
----
+```---
 
 
 
@@ -1457,7 +1457,7 @@ class DataProductAccessService:
 
 
 
----
+```---
 
 
 

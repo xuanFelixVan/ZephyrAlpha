@@ -26,12 +26,14 @@ layer: layer_07
 > **目录职责**: 研究环境配置、探索性分析、模式识别与实验追踪支持  
 > **最后更新**: 2026-04-11
 
----
+```
+```---
+```
 
 ## 上级与接力
 
 - [docs 根索引](../INDEX.md)
-- [本目录 README（概述）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
+- ~~[本目录 README（概述）]~~
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
 - [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
@@ -41,29 +43,35 @@ layer: layer_07
 - **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260503.md（`scan_index_health.py --prefix docs/07_RESEARCH --date 20260503`；**zero_inbound=0**；候选 md **18**；首轮子域 **`INDEX`/`README`** 与根 **`INDEX`** 零入链，已由 [`docs/INDEX.md`](../INDEX.md) 与本页**子域门面表**补链后复跑归零）
 - **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/07_RESEARCH` **18** 条路径）
 
----
+```
+```---
+```
 
 ## 📁 子域门面（INDEX / README）
 
 | 子域 | 索引 | 概述 |
 |------|------|------|
-| 01_ENVIRONMENT | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 02_EXPLORATORY_ANALYSIS | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 03_PATTERN_RECOGNITION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
-| 04_EXPERIMENT_TRACKING | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 01_ENVIRONMENT | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| 02_EXPLORATORY_ANALYSIS | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| 03_PATTERN_RECOGNITION | ~~[INDEX.md]~~ | ~~[README.md]~~ |
+| 04_EXPERIMENT_TRACKING | ~~[INDEX.md]~~ | ~~[README.md]~~ |
 
----
+```
+```---
+```
 
 ## 📁 目录结构（职责）
 
 | 目录 | 职责 | 状态 |
 |------|------|------|
-| [01_ENVIRONMENT/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 研究环境配置 | Active |
-| [02_EXPLORATORY_ANALYSIS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 探索性分析工具 | Active |
-| [03_PATTERN_RECOGNITION/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 模式识别研究 | Active |
-| [04_EXPERIMENT_TRACKING/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 实验追踪 | Active |
+| ~~[01_ENVIRONMENT/]~~ | 研究环境配置 | Active |
+| ~~[02_EXPLORATORY_ANALYSIS/]~~ | 探索性分析工具 | Active |
+| ~~[03_PATTERN_RECOGNITION/]~~ | 模式识别研究 | Active |
+| ~~[04_EXPERIMENT_TRACKING/]~~ | 实验追踪 | Active |
 
----
+```
+```---
+```
 
 ## 📄 根目录文档
 
@@ -72,7 +80,9 @@ layer: layer_07
 | TECHNICAL_VALIDATION_PLAN.md | 技术验证计划 |
 | EXPERIMENT_TRACKING.md | 实验追踪（根文档） |
 
----
+```
+```---
+```
 
 ## 🧭 严格孤儿挂载（入口补齐）
 
@@ -92,7 +102,9 @@ layer: layer_07
 | 03_PATTERN_RECOGNITION | candle_patterns.md |
 | 04_EXPERIMENT_TRACKING | experiment_tracking.md |
 
----
+```
+```---
+```
 
 ## 🔍 与其他目录的边界
 
@@ -118,6 +130,8 @@ layer: layer_07
 - **AI工作流**: [../10_AI_WORKFLOW/INDEX.md](../10_AI_WORKFLOW/INDEX.md)
 - **研究战略层**: [../09_RESEARCH_INNOVATION/INDEX.md](../09_RESEARCH_INNOVATION/INDEX.md)
 
----
+```
+```---
+```
 
 *最后更新 2026-04-11*

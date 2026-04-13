@@ -69,7 +69,9 @@ implementation_status: 配置就绪
 
 
 
----
+```
+```---
+```
 
 
 
@@ -223,7 +225,9 @@ docker-compose -f docker-compose.p0.yml down
 
 
 
----
+```
+```---
+```
 
 
 
@@ -313,7 +317,9 @@ load_dotenv('.env.p0')
 
 
 
----
+```
+```---
+```
 
 
 
@@ -403,7 +409,9 @@ python -c "import tigerbeetle; print('TigerBeetle安装成功')"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -765,7 +773,9 @@ if __name__ == '__main__':
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1047,7 +1057,9 @@ echo ""
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1197,7 +1209,9 @@ regulatory_reporting:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1213,7 +1227,9 @@ regulatory_reporting:
 
 
 
----
+```
+```---
+```
 
 
 

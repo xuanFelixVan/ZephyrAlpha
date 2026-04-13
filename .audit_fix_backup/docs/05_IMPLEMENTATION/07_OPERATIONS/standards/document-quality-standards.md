@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: DOCUMENT_QUALITY_STANDARDS
@@ -17,7 +24,7 @@ responsibility:
   - DOCUMENT_QUALITYS标准规范
 
 layer: layer_05
----
+```---
 
 
 
@@ -36,7 +43,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -158,7 +165,7 @@ layer: layer_05
 
 ```yaml
 
----
+```---
 
 version: 1.0.0
 
@@ -171,7 +178,7 @@ updated: [更新日期]
 
 status: [文档状态]
 
----
+```---
 
 ```
 
@@ -199,7 +206,7 @@ status: [文档状态]
 
 
 
----
+```---
 
 
 
@@ -393,7 +400,7 @@ status: [文档状态]
 
 
 
----
+```---
 
 
 
@@ -513,7 +520,7 @@ def check_sections(content: str) -> dict:
 
 
 
----
+```---
 
 
 
@@ -639,7 +646,7 @@ def check_sections(content: str) -> dict:
 
 
 
----
+```---
 
 
 
@@ -747,7 +754,7 @@ def check_sections(content: str) -> dict:
 
 
 
----
+```---
 
 
 
@@ -811,7 +818,7 @@ def check_sections(content: str) -> dict:
 
 
 
----
+```---
 
 
 
@@ -907,7 +914,7 @@ A:
 
 
 
----
+```---
 
 
 

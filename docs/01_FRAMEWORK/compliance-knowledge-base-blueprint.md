@@ -1,49 +1,22 @@
 ---
-
-module_id: COMPLIANCE_KNOWLEDGE_BASE_001
-
+module_id: COMPLIANCE_KNOWLEDGE_BASE_001_9170
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 合规知识管理、法规查询、最佳实践库
-
 compliance_level: 顶级专业标准
-
 reference_models:
-
 - Claude Skills for GRC
-
-- Unicis Platform
-
-- Open Source GRC
-
 related_documents:
-
 - REGULATORY_CHANGE_TRACKING_BLUEPRINT.md
-
-- COMPLIANCE_MONITORING_SYSTEM_BLUEPRINT.md
-
-- AI_GOVERNANCE_BLUEPRINT.md
-
 parent_document: ../LAYER_10_GOVERNANCE_COMPLIANCE_INDEX.md
-
 implementation_status: 蓝图设计完成
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 ---
 
 # 合规知识库管理系统蓝图
@@ -124,7 +97,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -194,7 +169,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +277,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -500,7 +479,9 @@ CREATE TABLE document_references (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -674,7 +655,9 @@ class ComplianceQueryEngine:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -820,7 +803,9 @@ CREATE TABLE compliance_cases (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -906,7 +891,9 @@ CREATE TABLE compliance_cases (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1074,7 +1061,9 @@ const graphVisualization = {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1302,7 +1291,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1342,7 +1333,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1378,7 +1371,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1410,7 +1405,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1454,7 +1451,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1476,7 +1475,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1492,7 +1493,9 @@ class ComplianceRAGSystem:
 
 
 
----
+```
+```---
+```
 
 
 

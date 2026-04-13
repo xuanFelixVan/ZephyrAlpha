@@ -1,33 +1,16 @@
 ---
-
-module_id: LAYER6_DEEP_GAP_ANALYSIS_001
-
+module_id: LAYER6_DEEP_GAP_ANALYSIS_001_9781
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构分析报告
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6深度缺失分析
-
-  - 隐藏功能识别
-
-  - 专业机构对标
-
+- Layer 6深度缺失分析
 layer: layer_06
-
 ---
 
 
@@ -172,7 +155,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -220,7 +205,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -266,7 +253,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -310,7 +299,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -348,7 +339,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -384,7 +377,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -416,7 +411,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -448,7 +445,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -480,7 +479,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -512,7 +513,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -558,7 +561,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -588,7 +593,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -628,7 +635,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -658,7 +667,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,151 +1,96 @@
 ---
-module_id: 10_GOVERNANCE_COMPLIANCE_INDEX_GOVERNANCE_COMPLIANCE_001
-version: 1.0.1
+module_id: LAYER_10_INDEX_AUTO
+version: 1.0.0
 status: Active
-created_date: 2026-04-04
-last_updated: '2026-04-11'
-owner: 系统架构师
+created_date: 2026-04-13
+last_updated: 2026-04-13
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_10
+compliance_level: 强制标准
+priority: P0-CRITICAL
+layer: layer_10
 responsibility:
-- 目录导航与文档索引管理与优化维护
-standard_type: 专业量化机构目录索引
-applicable_scope: Layer 10 - 治理与合规层
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 设计阶段
-layer: layer_00
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
+# LAYER_10 自动索引
 
-# Layer 10：治理与合规层目录索引
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 62
 
-> **核心职责**: 目录导航和文档索引  
-> **职责边界**:
-> - ✅ 本文档负责：`docs/10_GOVERNANCE_COMPLIANCE/` 导航与子域门面入链
-> - ❌ 本文档不负责：其他模块正文的实质性改写
+## 文档列表
 
-> **版本**: v5.3（叙事口径）  
-> **架构**: Layer 10 - 治理与合规层  
-> **最后更新**: 2026-04-11
+- [ai-governance-blueprint](./ai-governance-blueprint.md)
+- [ai-strategy-automation-blueprint](./ai-strategy-automation-blueprint.md)
+- [algorithm-deployment-control-blueprint](./algorithm-deployment-control-blueprint.md)
+- [algorithm-inventory-management-blueprint](./algorithm-inventory-management-blueprint.md)
+- [algorithmic-trading-test-framework-blueprint](./algorithmic-trading-test-framework-blueprint.md)
+- [aml-monitoring-system-blueprint](./aml-monitoring-system-blueprint.md)
+- [audit-trail-tigerbeetle-implementation](./audit-trail-tigerbeetle-implementation.md)
+- [best-execution-monitoring-blueprint](./best-execution-monitoring-blueprint.md)
+- [blueprint-stage-vs-implementation-stage-analysis](./blueprint-stage-vs-implementation-stage-analysis.md)
+- [compliance-knowledge-base-blueprint](./compliance-knowledge-base-blueprint.md)
+- [compliance-monitoring-blueprint](./compliance-monitoring-blueprint.md)
+- [data-sovereignty-compliance-blueprint](./data-sovereignty-compliance-blueprint.md)
+- [document-encoding-standard](./document-encoding-standard.md)
+- [document-maintenance-process](./document-maintenance-process.md)
+- [document-review-process](./document-review-process.md)
+- [extreme-market-response-blueprint](./extreme-market-response-blueprint.md)
+- [governance-compliance-layer-blueprint](./governance-compliance-layer-blueprint.md)
+- [governance-dashboard-blueprint](./governance-dashboard-blueprint.md)
+- [human-ai-interface-layer-deep-audit-report-v2-20260407](./human-ai-interface-layer-deep-audit-report-v2-20260407.md)
+- [intelligent-compliance-check-blueprint](./intelligent-compliance-check-blueprint.md)
+- [intelligent-scheduler-blueprint](./intelligent-scheduler-blueprint.md)
+- [investment-decision-audit-blueprint](./investment-decision-audit-blueprint.md)
+- [investor-relations-management-blueprint](./investor-relations-management-blueprint.md)
+- [kill-switch-system-blueprint](./kill-switch-system-blueprint.md)
+- [layer-10-advanced-governance-gap-analysis](./layer-10-advanced-governance-gap-analysis.md)
+- [layer-10-complete-implementation-roadmap](./layer-10-complete-implementation-roadmap.md)
+- [layer-10-deep-audit-report-final](./layer-10-deep-audit-report-final.md)
+- [layer-10-deleted-files-analysis](./layer-10-deleted-files-analysis.md)
+- [layer-10-governance-compliance-deep-audit-report-v11-20260407](./layer-10-governance-compliance-deep-audit-report-v11-20260407.md)
+- [layer-10-governance-compliance-deep-audit-report-v12-20260407](./layer-10-governance-compliance-deep-audit-report-v12-20260407.md)
+- [layer-10-governance-compliance-deep-audit-report-v4-20260406](./layer-10-governance-compliance-deep-audit-report-v4-20260406.md)
+- [layer-10-governance-compliance-deep-audit-report-v5-20260406](./layer-10-governance-compliance-deep-audit-report-v5-20260406.md)
+- [layer-10-governance-compliance-deep-audit-report-v6-20260406](./layer-10-governance-compliance-deep-audit-report-v6-20260406.md)
+- [layer-10-governance-compliance-deep-audit-report-v7-20260406](./layer-10-governance-compliance-deep-audit-report-v7-20260406.md)
+- [layer-10-governance-compliance-index](./layer-10-governance-compliance-index.md)
+- [layer-10-missing-modules-implementation-plan](./layer-10-missing-modules-implementation-plan.md)
+- [layer-10-priority-modules-implementation-plan](./layer-10-priority-modules-implementation-plan.md)
+- [liquidity-risk-management-blueprint](./liquidity-risk-management-blueprint.md)
+- [market-abuse-surveillance-blueprint](./market-abuse-surveillance-blueprint.md)
+- [model-risk-management-blueprint](./model-risk-management-blueprint.md)
+- [model-risk-mlflow-implementation](./model-risk-mlflow-implementation.md)
+- [overlap-algorithm-deployment-control-blueprint-20260407-190202](./overlap-algorithm-deployment-control-blueprint-20260407-190202.md)
+- [overlap-document-classification-standard-20260407-190203](./overlap-document-classification-standard-20260407-190203.md)
+- [overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203](./overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203.md)
+- [overlap-layer-10-priority-modules-implementation-plan-20260407-190202](./overlap-layer-10-priority-modules-implementation-plan-20260407-190202.md)
+- [overlap-model-risk-mlflow-implementation-20260407-190203](./overlap-model-risk-mlflow-implementation-20260407-190203.md)
+- [p2-automation-governance-implementation-report-20260407](./p2-automation-governance-implementation-report-20260407.md)
+- [personal-ai-maintenance-blueprint-stage-complete-solution](./personal-ai-maintenance-blueprint-stage-complete-solution.md)
+- [portfolio-rebalancing-blueprint](./portfolio-rebalancing-blueprint.md)
+- [portfolio-risk-attribution-blueprint](./portfolio-risk-attribution-blueprint.md)
+- [post-quantum-cryptography-blueprint](./post-quantum-cryptography-blueprint.md)
+- [professional-terminology-standard](./professional-terminology-standard.md)
+- [realtime-risk-monitoring-blueprint](./realtime-risk-monitoring-blueprint.md)
+- [regulatory-change-tracking-blueprint](./regulatory-change-tracking-blueprint.md)
+- [responsibility-description-best-practices](./responsibility-description-best-practices.md)
+- [responsibility-review-mechanism](./responsibility-review-mechanism.md)
+- [responsibility-similarity-report-20260407](./responsibility-similarity-report-20260407.md)
+- [similarity-threshold-optimization](./similarity-threshold-optimization.md)
+- [strategy-performance-attribution-blueprint](./strategy-performance-attribution-blueprint.md)
+- [stress-test-scenario-library-blueprint](./stress-test-scenario-library-blueprint.md)
+- [third-party-risk-management-blueprint](./third-party-risk-management-blueprint.md)
+- [trade-error-correction-blueprint](./trade-error-correction-blueprint.md)
 
----
-
-## 上级与接力
-
-- [docs 根索引](../INDEX.md)
-- 全仓库文件治理任务清单 §7
-- 治理工具总索引
-- [09_AUDIT 索引](../09_AUDIT/INDEX.md)
-- [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
-
-### 索引健全性与目录体量（P5 §7）
-
-- **零入链扫描（最新）**：../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260506.md（`scan_index_health.py --prefix docs/10_GOVERNANCE_COMPLIANCE --date 20260506`；**zero_inbound=0**；候选 md **21**；首轮 **6** 处子域门面零入链，已由本页**子域门面表**补链后复跑归零）
-- **rollup（深度 3）**：../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260414.md（JSON 真源同 stem；键 `docs/10_GOVERNANCE_COMPLIANCE` **21** 条路径）
-
----
-
-## 🎯 目录职责
-
-本目录存放 Layer 10 治理与合规层文档，包括：
-
-- 内部控制体系  
-- 合规监控系统  
-- 决策审计追踪  
-- 风险治理框架  
-- 监管合规文档  
-
----
-
-## 子域门面（INDEX / README）
-
-| 子域 | 索引 | 概述 |
-|------|------|------|
-| CI_CD_INTEGRATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| CLASSIFICATION | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| GOVERNANCE_PROCESSES | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | （本目录无 `README.md`） |
-| TRAINING_SYSTEM | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | [README.md](./TRAINING_SYSTEM/README.md) |
-| KNOWLEDGE_BASE | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) | （门面见子索引） |
-
----
-
-## 📚 核心文档
-
-### 蓝图文档
-
-| 文档名称 | 说明 | 重要度 |
-|---------|------|--------|
-| 治理与合规层蓝图 | Layer 10 总体架构设计 | ⭐⭐⭐⭐⭐ |
-
-### 子模块（规划中）
-
-| 目录名称 | 说明 | 状态 |
-|---------|------|------|
-| `internal_controls/` | 内部控制体系 | 🔄 规划中 |
-| `compliance_monitoring/` | 合规监控系统 | 🔄 规划中 |
-| `decision_audit/` | 决策审计追踪 | 🔄 规划中 |
-| `risk_governance/` | 风险治理框架 | 🔄 规划中 |
-| `regulatory_compliance/` | 监管合规文档 | 🔄 规划中 |
 
 ---
 
-## 📖 快速导航
-
-### 核心功能
-
-1. **内部控制**: 交易授权、操作审计、风险控制  
-2. **合规监控**: 监管合规检查、交易规则验证、持仓限制  
-3. **决策审计**: AI 决策审计、人工决策记录、全链路追溯  
-4. **风险治理**: 风险委员会、风险预算管理、风险评估  
-
-### 技术栈
-
-- **规则引擎**: Drools / 自研规则引擎  
-- **审计系统**: 日志系统 + 区块链存证  
-- **合规检查**: 自动化合规引擎  
-- **风险评估**: AI 风险评估模型  
-
----
-
-## 🔗 相关文档
-
-- [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
-- AI 决策审计蓝图
-- 合规监控系统蓝图
-- [审计系统](../09_AUDIT/INDEX.md)
-- [战略决策层 (Layer 11)](../11_STRATEGIC_DECISION/INDEX.md)
-
----
-
-## 🧭 严格孤儿挂载（波次：A 类继续清理）
-
-- DOCUMENT_ENCODING_STANDARD
-- LINK_MAINTENANCE_MECHANISM
-- RESPONSIBILITY_REVIEW_MECHANISM
-- SIMILARITY_THRESHOLD_OPTIMIZATION
-
-### 子目录直链（持续合入 · 从 Layer 10 主索引）
-
-- CI/CD 集成指南
-- 文档创建流程
-- 文档审查流程
-- 培训体系指南
-
----
-
-## 📊 文档统计
-
-| 统计项 | 数量 |
-|--------|------|
-| 蓝图文档 | 1 |
-| 技术文档 | 0 |
-| 实施文档 | 0 |
-| **总计** | **1** |
-
----
-
-## 📝 维护说明
-
-- **创建日期**: 2026-04-04  
-- **最后更新**: 2026-04-11  
-- **维护者**: 系统架构师  
-- **更新频率**: 按需更新  
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.132088
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

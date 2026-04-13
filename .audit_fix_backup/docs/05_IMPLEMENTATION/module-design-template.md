@@ -75,7 +75,7 @@ estimated_dev_hours: 24         # 预计开发时?小时)
 
 
 
----
+```---
 
 
 
@@ -159,7 +159,7 @@ graph TD
 
 
 
----
+```---
 
 
 
@@ -319,7 +319,7 @@ module_name:
 
 
 
----
+```---
 
 
 
@@ -447,7 +447,7 @@ def core_algorithm(data: InputData) -> OutputData:
 
 
 
----
+```---
 
 
 
@@ -509,7 +509,7 @@ sqlalchemy>=1.4.0  # 数据库功?
 
 
 
----
+```---
 
 
 
@@ -643,7 +643,7 @@ def create_invalid_input() -> InputType:
 
 
 
----
+```---
 
 
 
@@ -753,7 +753,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -807,7 +807,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -863,7 +863,7 @@ alerts:
 
 
 
----
+```---
 
 
 
@@ -895,7 +895,7 @@ alerts:
 
 
 
----
+```---
 
 
 

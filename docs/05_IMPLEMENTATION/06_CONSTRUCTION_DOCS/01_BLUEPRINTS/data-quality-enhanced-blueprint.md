@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_QUALITY_ENHANCED_001
-
+module_id: DATA_QUALITY_ENHANCED_001_7073
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 数据质量检查
-
-  - 数据质量监控
-
-  - 数据质量报告
-
-  - 数据质量修复
-
+- 数据质量检查
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1478,7 +1460,9 @@ check_market_task >> generate_report_task
 
 
 
----
+```
+```---
+```
 
 
 

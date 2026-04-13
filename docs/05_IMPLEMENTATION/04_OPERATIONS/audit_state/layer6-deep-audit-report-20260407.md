@@ -1,5 +1,14 @@
+---
+module_id: AUTO_40677
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
-module_id: LAYER6_DEEP_AUDIT_REPORT_20260407_001
+```
+module_id: LAYER6_DEEP_AUDIT_REPORT_20260407_001_4936
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,7 +18,9 @@ standard_type: 专业量化机构文档
 responsibility:
 - 系统审计分析与质量评估报告与改进建议
 layer: layer_05
----
+```
+```---
+```
 
 # LAYER6 DEEP AUDIT REPORT 20260407
 
@@ -18,7 +29,9 @@ layer: layer_05
 > - ✅ 本文档负责：深度审计和分析报告相关内容
 > - ❌ 本文档不负责：其他模块内容
 
----
+```
+```---
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

@@ -25,8 +25,8 @@ layer: layer_05
 
 ## 治理与接力（项目办公室）
 
-- [项目办公室总入口](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) ｜ 全仓库文件治理任务清单 §7 ｜ 图纸柜规则 ｜ 图纸柜执行协议  
-- [过程稿与报告子目录说明](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)（非 `*BLUEPRINT.md` 终稿）  
+- ~~[项目办公室总入口]~~ ｜ 全仓库文件治理任务清单 §7 ｜ 图纸柜规则 ｜ 图纸柜执行协议  
+- ~~[过程稿与报告子目录说明]~~（非 `*BLUEPRINT.md` 终稿）  
 - 治理工具总索引 ｜ [09_AUDIT 域索引](../../../09_AUDIT/INDEX.md) ｜ [STATE 子域索引](../../../09_AUDIT/STATE/INDEX.md) ｜ L1 治理快照（20260408） ｜ [建设文档区门面](../README.md) ｜ [实施域索引](../../INDEX.md) ｜ [文档总入口](../../../INDEX.md)  
 - **深度 3 前缀体量（rollup）**：REPO_DIRECTORY_ROLLUP_20260413.md（检索 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`；与本目录蓝图文件数口径不同属正常）
 
@@ -201,6 +201,8 @@ layer: layer_05
 - VAR_ES_MONITORING_BLUEPRINT
 - VULNERABILITY_DETECTION_BLUEPRINT
 
----
+```
+```---
+```
 
 **维护**: 新增/重命名蓝图后运行 `python scripts/governance/generate_01_blueprints_index.py` 更新本页。

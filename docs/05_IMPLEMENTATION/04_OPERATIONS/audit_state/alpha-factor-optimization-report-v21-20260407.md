@@ -186,7 +186,9 @@ python scripts/document_governance_auto_check.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -228,7 +230,9 @@ python scripts/document_governance_auto_check.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -288,7 +292,9 @@ python scripts/document_governance_auto_check.py
 
 
 
----
+```
+```---
+```
 
 
 

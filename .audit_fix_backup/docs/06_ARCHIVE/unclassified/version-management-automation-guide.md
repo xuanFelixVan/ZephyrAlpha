@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: 06_ARCHIVE_20260407_P1_CLEANUP_ARCHIVE_VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
@@ -19,10 +26,10 @@ responsibility:
 - 实施指南、部署文档
 
 layer: layer_06
----
+```---
 
 
-module_id: IMPL_OPS_VERSION_AUTO_GUIDE_001
+module_id: IMPL_OPS_VERSION_AUTO_GUIDE_001_4326
 
 version: 1.0.1
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_82909
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_INVALID_LINK_ANALYSIS_20260407_20260407180137
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
 - 无效链接分析报告文档
 
 layer: layer_05
----
+```
+```---
+```
 
 
 # 无效链接分析报告
@@ -496,6 +507,8 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 *报告生成时间: 2026-04-07 15:04:43*

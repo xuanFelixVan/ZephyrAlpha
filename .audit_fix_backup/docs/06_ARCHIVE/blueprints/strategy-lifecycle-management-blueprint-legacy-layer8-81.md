@@ -17,7 +17,7 @@ responsibility: 20260410_c2_strategy_lifecycle_management
 
 > **归档说明（2026-04-10）**：删除前 Layer8 `81_` 目录内同 basename 长文快照。**正式蓝图**：STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT；**Layer8 入口 stub**：STRATEGY_LIFECYCLE_MANAGEMENT_LAYER8_MODULE。
 
----
+```---
 module_id: 08_HUMAN_AI_INTERFACE_81_STRATEGY_LIFECYCLE_MANAGEMENT
 version: 1.0.0
 status: Active
@@ -46,7 +46,7 @@ open_source_alternatives:
     url: https://git-scm.com/
     description: 版本控制系统
     recommendation: 强烈推荐
----
+```---
 
 # 模块81: 策略生命周期管理 (STRATEGY_LIFECYCLE_MANAGEMENT)
 
@@ -65,7 +65,7 @@ open_source_alternatives:
 
 策略生命周期管理负责量化策略的版本控制、审批流程、上线部署和退役管理，是量化交易系统的核心管理模块。
 
----
+```---
 
 ## 🎯 核心功能
 
@@ -97,7 +97,7 @@ open_source_alternatives:
 - **数据归档**: 退役策略数据归档
 - **退役记录**: 退役历史记录
 
----
+```---
 
 ## 🏗️ 技术架构
 
@@ -135,7 +135,7 @@ open_source_alternatives:
 └──────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 🔧 技术实现
 
@@ -311,7 +311,7 @@ class StrategyRetirementManager:
         )
 ```
 
----
+```---
 
 ## 📦 开源项目推荐
 
@@ -323,7 +323,7 @@ class StrategyRetirementManager:
 | **Git** | https://git-scm.com/ | 版本控制系统 | ⭐⭐⭐⭐⭐ |
 | **DVC** | https://dvc.org/ | 数据版本控制 | ⭐⭐⭐⭐⭐ |
 
----
+```---
 
 ## 🚀 实施计划
 
@@ -335,7 +335,7 @@ class StrategyRetirementManager:
 | 开发退役管理服务 | 1天 | 退役管理服务 |
 | 测试与优化 | 1天 | 测试报告 |
 
----
+```---
 
 ## ✅ 验收标准
 
@@ -346,7 +346,7 @@ class StrategyRetirementManager:
 | 上线成功率 | >95% | 上线成功率 |
 | 系统可用性 | >99.9% | 系统可用性 |
 
----
+```---
 
 **蓝图创建时间**: 2026-04-08  
 **蓝图版本**: 1.0.0  

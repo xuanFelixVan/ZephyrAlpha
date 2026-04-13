@@ -14,7 +14,7 @@ last_updated: 2026-04-10
 
 > 清风量化系统 v5.1 - 专业级量化交易系统（个人开发者适配版）
 
----
+```---
 
 ## 快速开始（3步）
 
@@ -37,7 +37,7 @@ copy .env.example .env
 python -m src.main
 ```
 
----
+```---
 
 ## 核心文档
 
@@ -76,7 +76,7 @@ python -m src.main
 | [内容重复扫描报告](docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
 | [索引健全性（零入链）](docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2** |
 
----
+```---
 
 ## 系统架构
 
@@ -88,7 +88,7 @@ Layer 4: 组合层 → Layer 5: 执行层 → Layer 6: 监控层 → Layer 7: �
 
 详见: [docs/01_FRAMEWORK/ARCHITECTURE.md](docs/01_FRAMEWORK/ARCHITECTURE.md)
 
----
+```---
 
 ## 项目结构
 
@@ -106,7 +106,7 @@ ZephyrAlpha/
 └── .env.example
 ```
 
----
+```---
 
 ## 技术栈
 
@@ -116,7 +116,7 @@ ZephyrAlpha/
 - **调度**: APScheduler
 - **日志**: loguru
 
----
+```---
 
 ## 相关资源
 
@@ -125,6 +125,6 @@ ZephyrAlpha/
 - **策略与执行（战术层目录）**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
 - **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](docs/06_ARCHIVE/CHANGELOG.md)
 
----
+```---
 
 **版本**: v5.1 | **更新**: 2026-04-10（含根目录 LICENSE / CONTRIBUTING / SECURITY 与架构服务目录生成物）

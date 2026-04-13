@@ -50,9 +50,8 @@ parent_document: ../INDEX.md
 
 ```yaml
 
----
+```---
 
-module_id: FACTOR_因子分类_FACTOR_TAXONOMY_001
 
 version: 1.0.0
 
@@ -70,13 +69,12 @@ applicable_scope: 全系统
 
 compliance_level: 专业标准
 
----
+```---
 
 
 
 ﻿---
 
-module_id: STANDARDS_TAXONOMY_001
 
 version: 1.0.0
 
@@ -98,7 +96,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 进行中
 
----
+```---
 
 ```
 
@@ -136,15 +134,10 @@ implementation_status: 进行中
 
 ```
 
-module_id: FACTOR_因子库目录索_001
 
-module_id: FACTOR_10_MANUAL_因子库手册_001
 
-module_id: FACTOR_因子库手_V3_2_001
 
-module_id: FACTOR_因子监控_001
 
-module_id: FACTOR_PE_TTM_IC验证记录_001
 
 ```
 
@@ -188,7 +181,7 @@ module_id: FACTOR_PE_TTM_IC验证记录_001
 
 
 
----
+```---
 
 
 
@@ -286,7 +279,7 @@ module_id: FACTOR_PE_TTM_IC验证记录_001
 
 
 
----
+```---
 
 
 
@@ -400,7 +393,7 @@ module_id: FACTOR_PE_TTM_IC验证记录_001
 
 
 
----
+```---
 
 
 
@@ -508,7 +501,7 @@ FACTOR_因子相关性矩_001
 
 
 
----
+```---
 
 
 
@@ -556,7 +549,7 @@ P3级问题（长期优化）: ████████░░░░░░░░ 
 
 
 
----
+```---
 
 
 
@@ -698,7 +691,7 @@ FACTOR_因子监控_001 → MONITORING_FACTOR_001
 
 
 
----
+```---
 
 
 
@@ -736,7 +729,7 @@ FACTOR_因子监控_001 → MONITORING_FACTOR_001
 
 
 
----
+```---
 
 
 
@@ -782,7 +775,7 @@ FACTOR_因子监控_001 → MONITORING_FACTOR_001
 
 
 
----
+```---
 
 
 

@@ -13,6 +13,7 @@ responsibility:
 standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 layer: layer_05
+audit_status: EXTRACT_TO_L0_REQUIRED
 ---
 
 # 策略引擎蓝图
@@ -712,7 +713,9 @@ if __name__ == "__main__":
 - 性能分析报告
 - 集成测试覆盖率≥70%
 
----
+```
+```---
+```
 
 **文档版本**: v1.0.0
 **创建日期**: 2026-04-07

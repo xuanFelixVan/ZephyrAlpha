@@ -1,39 +1,21 @@
 ---
-
-module_id: DATA_QUALITY_MONITORING_AI_001
-
+module_id: DATA_QUALITY_MONITORING_AI_001_9776
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 数据质量监控蓝图 (DATA_QUALITY_MONITORING)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 数据质量监控与保障
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: Great Expectations
-
 priority: P1
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +90,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -258,7 +244,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -378,7 +366,9 @@ evaluation_parameters:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -458,7 +448,9 @@ evaluation_parameters:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -550,7 +542,9 @@ class ValidationIssue(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -600,7 +594,9 @@ class ValidationIssue(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -622,7 +618,9 @@ class ValidationIssue(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -644,7 +642,9 @@ class ValidationIssue(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 

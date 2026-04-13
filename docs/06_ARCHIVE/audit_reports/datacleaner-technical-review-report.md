@@ -1,6 +1,15 @@
+---
+module_id: AUTO_47013
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: ARCHIVE_DATA_CLEANER_TECH_REVIEW_001
+```
 
 version: 1.0.1
 
@@ -27,7 +36,9 @@ responsibility:
 - 数据质量 (Layer 2)
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # DataCleaner数据清洗器模块技术评审报?
@@ -116,7 +127,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -216,7 +229,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -288,7 +303,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -344,7 +361,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -414,7 +433,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -462,7 +483,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +525,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 

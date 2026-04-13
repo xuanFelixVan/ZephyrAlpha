@@ -1,32 +1,21 @@
 ---
-
-module_id: FACTORMININGAUTOMATIONBLUEP_001
-
+module_id: FACTORMININGAUTOMATIONBLUEP_001_8342
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 layer: layer_02
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: FACTOR_MINING_AUTOMATION_001
+```
+module_id: FACTOR_MINING_AUTOMATION_001_8342
+```
 
 version: 1.0.0
 
@@ -58,7 +47,9 @@ parent_document: ../ARCHITECTURE.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +77,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -132,7 +125,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +315,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -376,7 +373,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1106,7 +1105,9 @@ class FactorEvaluator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1378,7 +1379,9 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1406,7 +1409,9 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1448,7 +1453,9 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1490,7 +1497,9 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1542,13 +1551,17 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-06 | **状态**: ✅ 活跃
 
----
+```
+```---
+```
 
 
 
@@ -1604,7 +1617,9 @@ python src/factor_mining/miner.py
 
 
 
----
+```
+```---
+```
 
 
 

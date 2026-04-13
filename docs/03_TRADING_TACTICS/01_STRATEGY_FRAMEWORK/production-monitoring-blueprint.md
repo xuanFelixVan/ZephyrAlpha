@@ -1,32 +1,21 @@
 ---
-
-module_id: PRODUCTIONMONITORINGBLUEPRIN_001
-
+module_id: PRODUCTIONMONITORINGBLUEPRIN_001_6707
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 交易策略团队
-
 responsibility:
-
 - 系统监控架构设计与实施方案与实施指导
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: STRAT_PROD_MON_001
+```
+module_id: STRAT_PROD_MON_001_6707
+```
 
 version: 1.0.0
 
@@ -42,7 +31,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +55,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -98,7 +91,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +197,9 @@ graph TB
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1774,7 +1771,7 @@ class PerformanceEvaluationEngine:
 
     async def _calculate_performance_metrics(self, performance_data: PerformanceData) -> Dict[str, float]:
 
----
+```---
 
 
 
@@ -1832,7 +1829,7 @@ class PerformanceEvaluationEngine:
 
 
 
----
+```---
 
 
 

@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_STANDARDIZATION_ENGINE_001
-
+module_id: DATA_STANDARDIZATION_ENGINE_001_7660
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
 - 数据标准化引擎
-
-- 标准定义
-
-- 数据转换
-
-- 格式统一
-
 layer: layer_05
-
 ---
 
 

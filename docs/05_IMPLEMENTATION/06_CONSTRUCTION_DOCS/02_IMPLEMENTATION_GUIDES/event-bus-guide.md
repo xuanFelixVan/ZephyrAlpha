@@ -83,7 +83,9 @@ implementation_status: ﻟﺟﻟ۰ﻛﺕ?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -491,7 +493,9 @@ class EventBus:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -671,7 +675,9 @@ touch src/event_bus/exceptions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -735,7 +741,9 @@ touch src/event_bus/exceptions.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -907,7 +915,9 @@ class TestEventBusPerformance:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -973,7 +983,9 @@ class EventBus:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1081,7 +1093,9 @@ class EventBus:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1109,7 +1123,9 @@ class EventBus:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1125,7 +1141,9 @@ class EventBus:
 
 
 
----
+```
+```---
+```
 
 
 

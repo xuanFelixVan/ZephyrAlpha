@@ -1,21 +1,12 @@
 ---
-
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_04_CONFIG_TEMPLATES_001
-
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_04_CONFIG_TEMPLATES_001_7882
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 文档管理团队
-
 responsibility:
-
-  - 提供04 Config Templates相关文档支持
-
+- 提供04 Config Templates相关文档支持
 layer: layer_05
 ---
 
@@ -98,7 +89,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

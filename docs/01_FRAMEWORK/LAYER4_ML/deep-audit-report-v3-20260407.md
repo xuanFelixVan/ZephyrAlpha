@@ -1,25 +1,14 @@
 ---
-
-module_id: LAYER4_DEEP_AUDIT_REPORT_V3_20260407_001
-
+module_id: LAYER4_DEEP_AUDIT_REPORT_V3_20260407_001_9108
 version: 3.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 个人开发者
-
 standard_type: 专业量化机构文档
-
 responsibility:
-
 - 执行文档治理审计，生成审计报告和改进建议
-
 layer: layer_04
-
 ---
 
 # Layer 4机器学习层深度审计报告 v3
@@ -46,7 +35,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -90,7 +81,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -198,7 +191,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -290,7 +285,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +317,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -412,7 +411,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -456,7 +457,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +505,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -562,7 +567,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -606,7 +613,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 
@@ -636,7 +645,9 @@ layer: layer_04
 
 
 
----
+```
+```---
+```
 
 
 

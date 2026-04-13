@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_MODULE_REGISTRY
+module_id: 05_IMPLEMENTATION_05_TECHNICAL_SPECIFICATIONS_MODULE_REGISTRY_7931
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -47,7 +47,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -169,7 +171,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -183,7 +187,7 @@ compliance_level: 专业标准
 
 ```yaml
 
-module_id: FACTOR_CALCULATOR_001
+module_id: FACTOR_CALCULATOR_001_7931
 
 name: 因子计算?layer: Layer 2 - Alpha因子?status: Active
 
@@ -231,7 +235,7 @@ interface_contract: IFactorCalculator v1.0
 
 ```yaml
 
-module_id: IMPL_MODULE_REGISTRY_ALPHA_REF_001
+module_id: IMPL_MODULE_REGISTRY_ALPHA_REF_001_7931
 
 name: Alpha因子工厂
 
@@ -281,7 +285,7 @@ interface_contract: IFactorCalculator v1.0 (调用?
 
 ```yaml
 
-module_id: IMPL_MODULE_REGISTRY_REF_001
+module_id: IMPL_MODULE_REGISTRY_REF_001_7931
 
 name: 模型训练流水?layer: Layer 4 - 机器学习?status: Active
 
@@ -327,7 +331,9 @@ interface_contract: IModelTrainer v1.0 (调用?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -357,7 +363,9 @@ interface_contract: IModelTrainer v1.0 (调用?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -387,7 +395,9 @@ interface_contract: IModelTrainer v1.0 (调用?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -407,7 +417,9 @@ interface_contract: IModelTrainer v1.0 (调用?
 
 
 
----
+```
+```---
+```
 
 
 

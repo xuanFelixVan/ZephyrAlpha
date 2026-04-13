@@ -1,10 +1,7 @@
 ---
 responsibility:
 - Black-Litterman模型
-- 观点融合
-- 市场均衡收益计算
-- 后验收益估计
-module_id: BLACK_LITTERMAN_MODEL_001
+module_id: BLACK_LITTERMAN_MODEL_001_5082
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

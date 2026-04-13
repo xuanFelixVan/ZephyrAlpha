@@ -1,6 +1,15 @@
+---
+module_id: AUTO_12709
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: RISK_ADJUSTMENT_MECHANISM_001
+```
 
 version: 1.0.0
 
@@ -21,7 +30,9 @@ responsibility:
 last_updated: 2026-04-07
 
 layer: layer_02
----
+```
+```---
+```
 
 
 # 风险调整机制蓝图
@@ -128,7 +139,9 @@ P1 - 重要支持模块，建议在风险预算框架完成后实施
 
 
 
----
+```
+```---
+```
 
 
 

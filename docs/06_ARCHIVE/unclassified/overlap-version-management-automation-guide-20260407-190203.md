@@ -1,6 +1,15 @@
+---
+module_id: AUTO_42641
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
-module_id: VERSION_MANAGEMENT_AUTOMATION_GUIDE_001
+```
+module_id: VERSION_MANAGEMENT_AUTOMATION_GUIDE_001_3186
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 操作指南编写与使用说明与系统维护管理
 
 layer: layer_06
----
+```
+```---
+```
 
 
 

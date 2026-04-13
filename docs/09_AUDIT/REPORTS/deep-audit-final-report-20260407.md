@@ -1,9 +1,5 @@
 ---
-1. **详细审计数据**: reports/layer1_deep_audit_report.json
-2. **审计报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_REPORT_20260407.md
-3. **修复报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FIX_REPORT_20260407.md
-4. **最终完成报告**: docs/09_AUDIT/REPORTS/LAYER1_DEEP_AUDIT_FINAL_REPORT_20260407.md
-module_id: 09_AUDIT_REPORTS_DEEP-AUDIT-FINAL-REPORT-20260407__001
+module_id: 09_AUDIT_REPORTS_DEEP-AUDIT-FINAL-REPORT-20260407__001_8987
 version: 1.0.0
 status: Active
 owner: 待指定

@@ -29,7 +29,9 @@ compliance_level: 专业标准
 
 经过第三次深度审计，Alpha因子层文档治理质量保持在较高水平?8%符合率），但仍存在一些需要优化的问题。相比前两次审计，大部分P0和P1级问题已解决，剩余问题主要集中在索引完备性和目录结构优化?
 
----
+```
+```---
+```
 
 
 
@@ -113,7 +115,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -161,7 +165,9 @@ SITEMAP.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -231,7 +237,9 @@ HANDOVER.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -279,7 +287,9 @@ HANDOVER.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -337,7 +347,9 @@ OPTIMIZATION_SUMMARY.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -355,7 +367,9 @@ OPTIMIZATION_SUMMARY.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -379,7 +393,9 @@ OPTIMIZATION_SUMMARY.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -453,7 +469,9 @@ T.02.FE001.factor_definition_framework.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -471,7 +489,9 @@ T.02.FE001.factor_definition_framework.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -539,7 +559,9 @@ T.02.FE001.factor_definition_framework.md
 
 
 
----
+```
+```---
+```
 
 
 
@@ -591,7 +613,9 @@ OPTIMIZATION_SUMMARY.md -> DOC_OPT_SUMMARY_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -633,7 +657,9 @@ OPTIMIZATION_SUMMARY.md -> DOC_OPT_SUMMARY_001
 
 
 
----
+```
+```---
+```
 
 
 
@@ -671,7 +697,7 @@ OPTIMIZATION_SUMMARY.md -> DOC_OPT_SUMMARY_001
 
 
 
----
+```---
 
 
 
@@ -699,7 +725,7 @@ OPTIMIZATION_SUMMARY.md -> DOC_OPT_SUMMARY_001
 
 
 
----
+```---
 
 
 
@@ -761,7 +787,7 @@ OPTIMIZATION_SUMMARY.md -> DOC_OPT_SUMMARY_001
 
 
 
----
+```---
 
 
 
@@ -809,7 +835,7 @@ Alpha因子层文档治理质量整体保持在较高水平?8%符合率），前
 
 
 
----
+```---
 
 
 

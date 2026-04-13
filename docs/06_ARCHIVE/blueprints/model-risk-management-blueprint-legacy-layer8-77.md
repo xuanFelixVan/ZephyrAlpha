@@ -1,5 +1,5 @@
 ---
-module_id: 08_HUMAN_AI_INTERFACE_77_MODEL_RISK_MANAGEMENT
+module_id: 08_HUMAN_AI_INTERFACE_77_MODEL_RISK_MANAGEMENT_2525
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
@@ -38,7 +38,9 @@ open_source_alternatives:
 | 模型注册时效 | <1天 | 模型注册完成时间 |
 | 系统可用性 | >99.9% | 系统可用性 |
 
----
+```
+```---
+```
 
 **蓝图创建时间**: 2026-04-08  
 **蓝图版本**: 1.0.0  

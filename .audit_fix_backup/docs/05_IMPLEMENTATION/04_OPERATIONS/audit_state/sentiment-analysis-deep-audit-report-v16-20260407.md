@@ -1,3 +1,10 @@
+---
+owner: System_Architect
+version: 1.0.0
+status: active
+last_updated: 2026-04-13
+---
+
 ﻿---
 
 module_id: SENTIMENT_ANALYSIS_DEEP_AUDIT_REPORT_V16_001
@@ -27,7 +34,7 @@ applicable_scope: 舆情分析层（10_AI_WORKFLOW）
 compliance_level: 专业标准
 
 layer: layer_05
----
+```---
 
 
 
@@ -58,7 +65,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -96,7 +103,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -344,7 +351,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -388,7 +395,7 @@ layer: layer_05
 
 
 
----
+```---
 
 
 
@@ -432,7 +439,7 @@ layer: layer_05
 
 ```yaml
 
----
+```---
 
 module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL_SPECIFICATION
 
@@ -450,13 +457,13 @@ responsibility:
 
   - SENTIMENT_ANALYSIS_SHORT_TERM_TECHNICAL技术规范
 
----
+```---
 
 
 
 ﻿---
 
-module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001_6105
 
 version: 1.1.0
 
@@ -490,7 +497,7 @@ responsibility:
 
   - 技术规格定义与实施标准制定与实施标准
 
----
+```---
 
 ```
 
@@ -500,9 +507,9 @@ responsibility:
 
 ```yaml
 
----
+```---
 
-module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001
+module_id: SENTIMENT_ANALYSIS_SHORT_TERM_TS_001_6105
 
 version: 1.1.0
 
@@ -536,7 +543,7 @@ responsibility:
 
   - 短期改进技术规格定义与实施标准制定
 
----
+```---
 
 ```
 
@@ -706,7 +713,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -790,7 +797,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -828,7 +835,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -844,7 +851,7 @@ responsibility:
 
 
 
----
+```---
 
 
 
@@ -928,7 +935,7 @@ responsibility:
 
 
 
----
+```---
 
 
 

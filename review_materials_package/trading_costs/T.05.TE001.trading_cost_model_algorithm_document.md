@@ -1,5 +1,5 @@
 ---
-module_id: DESIGN_DOC_002
+module_id: DESIGN_DOC_002_0050
 version: 1.0.0
 status: Active
 created_date: 2026-04-02

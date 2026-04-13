@@ -64,7 +64,7 @@ priority: P2
 
 
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ Layer 7: AI报告层
 
 
 
----
+```---
 
 
 
@@ -306,7 +306,7 @@ Layer 7: AI报告层
 
 
 
----
+```---
 
 
 
@@ -788,7 +788,7 @@ class DistributionScheduler:
 
 
 
----
+```---
 
 
 
@@ -910,7 +910,7 @@ CREATE TABLE report_templates (
 
 
 
----
+```---
 
 
 
@@ -1014,7 +1014,7 @@ CREATE TABLE report_templates (
 
 
 
----
+```---
 
 
 
@@ -1074,7 +1074,7 @@ class IReportDistributor(ABC):
 
 
 
----
+```---
 
 
 
@@ -1114,7 +1114,7 @@ class IReportDistributor(ABC):
 
 
 
----
+```---
 
 
 
@@ -1152,7 +1152,7 @@ class IReportDistributor(ABC):
 
 
 
----
+```---
 
 
 
@@ -1188,7 +1188,7 @@ class IReportDistributor(ABC):
 
 
 
----
+```---
 
 
 

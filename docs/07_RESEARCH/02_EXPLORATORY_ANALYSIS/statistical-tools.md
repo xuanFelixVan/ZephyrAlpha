@@ -115,7 +115,9 @@ def distribution_analysis(series: pd.Series) -> dict:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -195,7 +197,9 @@ def rolling_statistics(series: pd.Series, window: int = 20) -> pd.DataFrame:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -267,7 +271,9 @@ def cross_correlation(series1: pd.Series, series2: pd.Series, max_lag: int = 20)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -335,7 +341,9 @@ class AnalysisReport:
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_13664
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: QUICK_AUDIT_REPORT_20260407_173336
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
   - QUICK_AUDIT_20260407_173336报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -34,7 +45,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -54,7 +67,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -76,7 +91,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +103,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -102,7 +121,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

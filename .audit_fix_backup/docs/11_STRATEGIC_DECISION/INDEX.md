@@ -23,7 +23,7 @@ layer: layer_00
 > **架构**: Layer 11 - 战略决策层
 > **最后更新**: 2026-04-12
 > **维护者**: 系统架构师
----
+```---
 
 ## 📋 文档职责说明
 
@@ -51,10 +51,10 @@ layer: layer_00
 ### 对接文档
 
 **相关文档**：
-- [../INDEX.md](../INDEX.md) - 系统导航入口（快速导航和文档分类）
+- ~~[../INDEX.md]~~ - 系统导航入口（快速导航和文档分类）
 - ../System_Manifest.md - 系统清单账本（完整模块清单和实施状态）
 
----
+```---
 
 ## 🎯 目录职责
 
@@ -71,7 +71,7 @@ layer: layer_00
 > **最后更新**: 2026-04-12
 > **维护者**: 系统架构师
 
----
+```---
 
 ## 🎯 目录职责
 
@@ -82,7 +82,7 @@ layer: layer_00
 - 战略调整决策
 - 经济范式判断
 
----
+```---
 
 ## 📚 核心文档
 
@@ -93,11 +93,11 @@ layer: layer_00
 | [战略决策层蓝图](./complete-blueprint-overview.md) | Layer 11总体架构设计 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 | 职责边界矩阵 | 模块职责边界定义 | ⭐⭐⭐⭐⭐ | ✅ 活跃 |
 
----
+```---
 
 ## 上级与接力
 
-- [docs 根索引](../INDEX.md)
+- ~~[docs 根索引]~~
 - 全仓库文件治理任务清单 §7
 - 治理工具总索引
 - [09_AUDIT STATE 索引](../09_AUDIT/STATE/INDEX.md)
@@ -111,13 +111,13 @@ layer: layer_00
 
 | 子域 | 索引 |
 |------|------|
-| 01_asset_allocation | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 02_risk_budgeting | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 03_strategy_selection | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| 04_strategic_adjustment | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) |
-| archive | [INDEX.md](12_MODULE_DESIGNS/layer_0/INDEX.md) |
+| 01_asset_allocation | ~~[INDEX.md]~~ |
+| 02_risk_budgeting | ~~[INDEX.md]~~ |
+| 03_strategy_selection | ~~[INDEX.md]~~ |
+| 04_strategic_adjustment | ~~[INDEX.md]~~ |
+| archive | ~~[INDEX.md]~~ |
 
----
+```---
 
 ## 🧭 严格孤儿挂载（波次：A 类继续清理）
 
@@ -128,7 +128,7 @@ layer: layer_00
 - BLUEPRINT v2.0.1 备份
 - P1 BLUEPRINT 创建进展（20260407）
 
----
+```---
 
 ## 📖 模块蓝图索引
 
@@ -247,24 +247,24 @@ layer: layer_00
 | 因子暴露管理蓝图 | 因子暴露计算、因子风险预算 | P2 | ✅ 已创建 |
 | 市场冲击模型蓝图 | 市场冲击成本、最优执行 | P2 | ✅ 已创建 |
 
----
+```---
 
 ## 🔗 相关文档
 
 ### 架构文档
 
-- [统一架构 (Layer 0-11)](../01_FRAMEWORK/ARCHITECTURE.md)
+- ~~[统一架构 (Layer 0-11)]~~
 - 专业多时间框架架构
 - 模块职责边界定义
 
 ### 相关层级
 
 - [组合优化层 (Layer 6)](../04_EXECUTION/INDEX.md)
-- [风险管理层 (Layer 7)](../01_FRAMEWORK/ARCHITECTURE.md) - 详见架构文档Layer 7章节
-- [报告层 (Layer 8)](../01_FRAMEWORK/ARCHITECTURE.md) - 详见架构文档Layer 8章节
+- ~~[风险管理层 (Layer 7)]~~ - 详见架构文档Layer 7章节
+- ~~[报告层 (Layer 8)]~~ - 详见架构文档Layer 8章节
 - [治理与合规层 (Layer 10)](../10_GOVERNANCE_COMPLIANCE/INDEX.md)
 
----
+```---
 
 ## 📊 文档统计
 
@@ -309,7 +309,7 @@ layer: layer_00
 | **P2级模块** | 8个 | 170k+ | 100% |
 | **总计** | **34个** | **590k+** | **100%** |
 
----
+```---
 
 ## 🎯 快速导航
 
@@ -368,7 +368,7 @@ layer: layer_00
 - 开源项目集成蓝图
 - 技术选型决策文档
 
----
+```---
 
 ## 📝 维护说明
 
@@ -378,7 +378,7 @@ layer: layer_00
 - **更新频率**: 按需更新
 - **文档治理合规率**: 95.0%
 
----
+```---
 
 ## 🔄 更新日志
 
@@ -392,6 +392,6 @@ layer: layer_00
 ### v1.0.1 (2026-04-04)
 - ✅ 创建初始索引文档
 
----
+```---
 
 **版本**: v2.0.0 | **更新**: 2026-04-12 | **状态**: ✅ 活跃

@@ -57,7 +57,9 @@ last_updated: 2026-04-07
 
 
 
----
+```
+```---
+```
 
 
 
@@ -223,7 +225,9 @@ python scripts\test_notification.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -369,7 +373,9 @@ Unregister-ScheduledTask -TaskName "ZephyrAlpha_Weekly_Audit" -Confirm:$false
 
 
 
----
+```
+```---
+```
 
 
 
@@ -531,7 +537,9 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\monthly_summary_*
 
 
 
----
+```
+```---
+```
 
 
 
@@ -687,7 +695,9 @@ Get-PSDrive D | Select-Object Used, Free
 
 
 
----
+```
+```---
+```
 
 
 
@@ -789,7 +799,9 @@ python scripts\cleanup_audit_reports.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -807,7 +819,9 @@ python scripts\cleanup_audit_reports.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -863,7 +877,9 @@ Get-ChildItem docs\05_IMPLEMENTATION\07_OPERATIONS\audit_state\*.json |
 
 
 
----
+```
+```---
+```
 
 
 

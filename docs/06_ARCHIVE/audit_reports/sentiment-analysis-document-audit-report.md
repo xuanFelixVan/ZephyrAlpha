@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT
+module_id: 06_ARCHIVE_AUDIT_REPORTS_SENTIMENT_ANALYSIS_DOCUMENT_AUDIT_REPORT_9735
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -11,7 +11,6 @@ owner: 文档管理员
 standard_type: 专业量化机构报告
 applicable_scope: 全系统
 compliance_level: 专业标准
-тЬ?**ч╗Ушо║**: цЙАцЬЙцибхЭЧIDхЭЗхФпф╕Ая╝МцЧащЗНхдН
 ---
 **хобшобхоМцИРцЧецЬЯ**: 2026-04-03
 

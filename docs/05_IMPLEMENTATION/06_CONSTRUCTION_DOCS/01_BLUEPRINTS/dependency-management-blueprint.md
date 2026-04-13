@@ -1,33 +1,15 @@
 ---
-
-module_id: DEPENDENCY_MANAGEMENT_001
-
+module_id: DEPENDENCY_MANAGEMENT_001_9081
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 依赖管理
-
-  - 版本控制
-
-  - 依赖解析
-
-  - 环境隔离
-
+- 依赖管理
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1278,7 +1260,9 @@ poetry show --outdated
 
 
 
----
+```
+```---
+```
 
 
 

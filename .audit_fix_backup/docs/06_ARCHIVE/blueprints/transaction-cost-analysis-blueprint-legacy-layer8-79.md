@@ -17,7 +17,7 @@ responsibility: 20260410_c2_transaction_cost_analysis
 
 > **归档说明（2026-04-10）**：删除前 `79_TRANSACTION_COST_ANALYSIS` 目录内同 basename 长文快照。**正式蓝图**：TRANSACTION_COST_ANALYSIS_BLUEPRINT；**Layer8 入口 stub**：TRANSACTION_COST_ANALYSIS_LAYER8_MODULE。
 
----
+```---
 module_id: 08_HUMAN_AI_INTERFACE_79_TRANSACTION_COST_ANALYSIS
 version: 1.0.0
 status: Active
@@ -43,7 +43,7 @@ open_source_alternatives:
     url: https://github.com/quantopian/zipline
     description: 回测引擎（滑点分析）
     recommendation: 推荐
----
+```---
 
 # 模块79: 交易成本分析 (TRANSACTION_COST_ANALYSIS)
 
@@ -62,7 +62,7 @@ open_source_alternatives:
 
 交易成本分析(TCA)是量化交易系统的核心分析模块，负责分析交易执行质量、滑点、市场冲击和交易成本优化，是评估交易效率的关键工具。
 
----
+```---
 
 ## 🎯 核心功能
 
@@ -94,7 +94,7 @@ open_source_alternatives:
 - **基准对比**: 与VWAP、TWAP等基准对比
 - **优化建议**: 提供执行优化建议
 
----
+```---
 
 ## 🏗️ 技术架构
 
@@ -132,7 +132,7 @@ open_source_alternatives:
 └──────────────────────────────────────────────────────────┘
 ```
 
----
+```---
 
 ## 🔧 技术实现
 
@@ -280,7 +280,7 @@ class ExecutionQualityEvaluator:
         return min(100, base_score + benchmark_score)
 ```
 
----
+```---
 
 ## 📦 开源项目推荐
 
@@ -291,7 +291,7 @@ class ExecutionQualityEvaluator:
 | **QuantLib** | https://www.quantlib.org/ | 量化金融库 | ⭐⭐⭐⭐⭐ |
 | **Zipline** | https://github.com/quantopian/zipline | 回测引擎 | ⭐⭐⭐⭐ |
 
----
+```---
 
 ## 🚀 实施计划
 
@@ -303,7 +303,7 @@ class ExecutionQualityEvaluator:
 | 开发执行评估引擎 | 3天 | 执行评估服务 |
 | 测试与优化 | 2天 | 测试报告 |
 
----
+```---
 
 ## ✅ 验收标准
 
@@ -314,7 +314,7 @@ class ExecutionQualityEvaluator:
 | 执行评分准确率 | >90% | 执行评分准确率 |
 | 系统可用性 | >99.9% | 系统可用性 |
 
----
+```---
 
 **蓝图创建时间**: 2026-04-08  
 **蓝图版本**: 1.0.0  

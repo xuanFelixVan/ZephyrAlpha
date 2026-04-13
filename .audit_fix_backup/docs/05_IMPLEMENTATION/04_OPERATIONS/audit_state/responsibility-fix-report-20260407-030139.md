@@ -23,7 +23,7 @@ parent_document: ../INDEX.md
 | **修复失败文件** | 94 |
 | **修复成功率** | 93.7% |
 
----
+```---
 
 ## ✅ 成功修复文件列表（前50个）
 
@@ -129,7 +129,7 @@ parent_document: ../INDEX.md
    - 职责: Blueprint Stage Complete Supplement Plan.Md蓝图设计
 ... 还有 1348 个文件
 
----
+```---
 
 ## ❌ 修复失败文件列表
 
@@ -322,7 +322,7 @@ parent_document: ../INDEX.md
 94. 06_ARCHIVE\incomplete_documents\20260404_blueprint_incomplete\STRATEGY_ENGINE_CORE_BLUEPRINT_ARCHIVED.md
    - 原因: 未找到标题
 
----
+```---
 
 ## 💡 改进建议
 
@@ -340,7 +340,7 @@ parent_document: ../INDEX.md
 1. **建立自动化检查机制**: 定期检查职责描述缺失情况
 2. **建立职责描述规范**: 制定职责描述模板和审查机制
 
----
+```---
 
 ## 📝 变更记录
 

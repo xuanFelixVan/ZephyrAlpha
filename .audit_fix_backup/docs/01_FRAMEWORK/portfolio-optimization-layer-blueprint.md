@@ -60,7 +60,7 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```---
 
 
 
@@ -88,7 +88,7 @@ implementation_status: 设计阶段
 
 
 
----
+```---
 
 
 
@@ -134,7 +134,7 @@ Layer 6组合优化层是清风量化系统的**资产配置中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -364,7 +364,7 @@ Layer 6组合优化层是清风量化系统的**资产配置中枢**，负责：
 
 
 
----
+```---
 
 
 
@@ -756,7 +756,7 @@ class RiskParityOptimizer:
 
 
 
----
+```---
 
 
 
@@ -886,7 +886,7 @@ class RiskAllocator:
 
 
 
----
+```---
 
 
 
@@ -946,7 +946,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -970,7 +970,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -990,7 +990,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -1010,7 +1010,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -1034,7 +1034,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -1056,7 +1056,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
@@ -1076,13 +1076,13 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 
 **版本**: v1.0 | **更新**: 2026-04-05 | **状态**: 活跃
 
----
+```---
 
 
 
@@ -1138,7 +1138,7 @@ class RebalanceSignal:
 
 
 
----
+```---
 
 
 

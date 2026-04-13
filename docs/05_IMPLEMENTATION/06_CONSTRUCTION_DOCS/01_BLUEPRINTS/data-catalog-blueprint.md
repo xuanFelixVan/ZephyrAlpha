@@ -1,33 +1,15 @@
 ---
-
-module_id: DATA_CATALOG_001_ARCHIVED_1
-
+module_id: DATA_CATALOG_001_ARCHIVED_1_7320
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 数据目录管理
-
-  - 元数据管理
-
-  - 数据发现
-
-  - 数据血缘可视化
-
+- 数据目录管理
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -968,7 +950,9 @@ class QualityAwareCatalog:
 
 
 
----
+```
+```---
+```
 
 
 

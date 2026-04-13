@@ -62,7 +62,7 @@ related_documents:
 
   - AI_WORKFLOW_LOGGER_BLUEPRINT.md
 
----
+```---
 
 
 
@@ -88,7 +88,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -128,7 +128,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -166,7 +166,7 @@ related_documents:
 
 
 
----
+```---
 
 
 
@@ -454,7 +454,7 @@ if correlation_matrix[i, j] > 0.7:  #
 
 
 
----
+```---
 
 
 
@@ -656,7 +656,7 @@ class MultiFactorOptimizer:
 
 
 
----
+```---
 
 
 
@@ -808,7 +808,7 @@ class MultiAssetOptimizer:
 
 
 
----
+```---
 
 
 
@@ -932,7 +932,7 @@ class MarketAdapter:
 
 
 
----
+```---
 
 
 
@@ -1118,7 +1118,7 @@ class PortfolioRiskController:
 
 
 
----
+```---
 
 
 
@@ -1284,7 +1284,7 @@ CREATE TABLE strategy_correlations (
 
 
 
----
+```---
 
 
 
@@ -1358,7 +1358,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 
@@ -1410,7 +1410,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 
@@ -1438,7 +1438,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 
@@ -1468,7 +1468,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 
@@ -1476,7 +1476,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 
@@ -1532,7 +1532,7 @@ Beta?.85
 
 
 
----
+```---
 
 
 

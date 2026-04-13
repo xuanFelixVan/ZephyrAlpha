@@ -1,35 +1,16 @@
 ---
-
-module_id: LAYER6_COMPLETE_SOLUTION_001
-
+module_id: LAYER6_COMPLETE_SOLUTION_001_9445
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构方案
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - Layer 6完整方案
-
-  - 缺失模块补充
-
-  - 开源方案集成
-
-  - 实施路线图
-
+- Layer 6完整方案
 layer: layer_06
-
 ---
 
 

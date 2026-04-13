@@ -1,33 +1,15 @@
 ---
-
 responsibility:
-
 - VaR/ES监控
-
-- 风险价值
-
-- 期望损失
-
-- VaR/ES风险实时监控
-
-module_id: VAR_ES_MONITORING_001
-
+module_id: VAR_ES_MONITORING_001_3727
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_10044
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: INVESTMENT_COMMITTEE_SUPPORT_001_ARCHIVED_1
+```
 
 version: 1.0.0
 
@@ -37,7 +46,9 @@ responsibility:
 - 决策流程管理
 
 layer: layer_06
----
+```
+```---
+```
 
 
 # 投资委员会决策支持系统蓝图
@@ -64,7 +75,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -110,7 +123,9 @@ layer: layer_06
 
 
 
----
+```
+```---
+```
 
 
 
@@ -422,7 +437,9 @@ class DecisionRecord:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1310,7 +1327,9 @@ class DecisionKnowledgeBase:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1512,7 +1531,9 @@ async def get_decision(decision_id: str):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1632,7 +1653,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1718,7 +1741,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1742,7 +1767,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1782,7 +1809,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1800,7 +1829,9 @@ CREATE INDEX idx_decisions_date ON decision_records(decision_date);
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,15 +1,14 @@
 ---
-module_id: 01_FRAMEWORK_RAG_SYSTEM_BLUEPRINT
+module_id: 01_FRAMEWORK_RAG_SYSTEM_BLUEPRINT_5295
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Rag System Blueprint相关业务
-created_date: 2026-04-04
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-04'
+last_updated: '2026-04-07'
 standard_type: 高层架构蓝图
 priority: P1
-responsibility_boundary: '本文档负责Layer 4机器学习层的RAG检索增强生成系统设计，包括文档检索、知识库构建、答案生成等核心功能。
+responsibility_boundary: '''本文档负责Layer 4机器学习层的RAG检索增强生成系统设计，包括文档检索、知识库构建、答案生成等核心功能。'
 owner: 首席文档架构师
 ---
 
@@ -63,7 +62,9 @@ owner: 首席文档架构师
 
 
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +130,7 @@ owner: 首席文档架构师
 
 
 
----
+```---
 
 
 
@@ -387,7 +388,7 @@ List[Dict]:
 
 
 
----
+```---
 
 
 
@@ -439,7 +440,7 @@ tiktoken>=0.5.0
 
 
 
----
+```---
 
 
 
@@ -471,7 +472,7 @@ tiktoken>=0.5.0
 
 
 
----
+```---
 
 
 
@@ -489,7 +490,7 @@ tiktoken>=0.5.0
 
 
 
----
+```---
 
 
 
@@ -601,7 +602,7 @@ tiktoken>=0.5.0
 
 
 
----
+```---
 
 
 

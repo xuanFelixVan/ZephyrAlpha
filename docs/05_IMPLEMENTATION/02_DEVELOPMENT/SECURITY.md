@@ -81,7 +81,9 @@ implementation_status: 进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -279,7 +281,9 @@ class SecurityError(Exception):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -421,7 +425,9 @@ def require_permissions(*permissions: Permission):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -547,7 +553,9 @@ class LogSanitizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -603,7 +611,9 @@ class LogSanitizer:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -715,7 +725,9 @@ class APISecurity:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -793,7 +805,9 @@ audit_log:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -875,7 +889,9 @@ python-dotenv>=1.0.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -897,7 +913,9 @@ python-dotenv>=1.0.0
 
 
 
----
+```
+```---
+```
 
 
 

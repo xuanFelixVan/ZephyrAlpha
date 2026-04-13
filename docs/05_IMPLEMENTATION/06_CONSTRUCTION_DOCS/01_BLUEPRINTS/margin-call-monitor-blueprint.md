@@ -1,33 +1,15 @@
 ---
-
-module_id: MARGIN_CALL_MONITOR_001
-
+module_id: MARGIN_CALL_MONITOR_001_3141
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 实施团队
-
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - 保证金监控
-
-  - 追加保证金预警
-
-  - 保证金充足率计算
-
-  - 强平风险提示
-
+- 保证金监控
 layer: layer_05
-
 ---
 
 
@@ -214,7 +196,9 @@ layer: layer_05
 
 layer: Layer 5.3 (风险管理)
 
+```
 ---|--------|----------|-----------|
+```
 
 
 

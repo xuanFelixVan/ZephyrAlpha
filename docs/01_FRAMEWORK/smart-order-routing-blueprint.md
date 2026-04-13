@@ -65,7 +65,9 @@ reference_models:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -915,7 +917,9 @@ class ImplementationShortfallAlgorithm(ExecutionAlgorithm):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -997,7 +1001,9 @@ class ExecutionStatus:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1089,7 +1095,9 @@ brokers:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1121,7 +1129,9 @@ brokers:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1143,7 +1153,9 @@ brokers:
 
 
 
----
+```
+```---
+```
 
 
 

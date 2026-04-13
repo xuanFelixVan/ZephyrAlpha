@@ -1,593 +1,773 @@
 ---
-module_id: INDEX
+module_id: LAYER_09_INDEX_AUTO
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
 last_updated: 2026-04-13
-owner: 首席文档架构师
+owner: Auto-Index Compiler
+standard_type: 自动索引
+applicable_scope: layer_09
+compliance_level: 强制标准
+priority: P0-CRITICAL
 layer: layer_09
-responsibility: 09_AUDIT
-applicable_scope: 09_AUDIT目录
-compliance_level: 专业标准
-parent_document: ../INDEX.md
-implementation_status: 活跃维护
----
+responsibility:
+  - 自动生成层级索引，保证文件可索引
+  - 防止AI幻觉导致的索引不一致
+  - 实时维护文件目录完整性
 ---
 
+# LAYER_09 自动索引
 
+> ⚠️  本文件由自动索引编译器自动生成，请勿手动修改  
+> 更新时间: 2026-04-13 13:25:36  
+> 文件总数: 739
 
+## 文档列表
 
-
-
-
-
-# 审计系统目录索引
-
-
-> **核心职责**: 目录导航和文档索引
-
-
-> **职责边界**: 
-
-
-> - ✅ 本文档负责：目录导航和文档索引相关内容
-
-
-> - ❌ 本文档不负责：其他模块内容
-
-
-
-
-
-
-
-
-> **版本**: v5.3  
-
-
-> **架构**: 三级时间框架融合架构  
-
-
-> **最后更?*: 2026-04-03  
-
-
-> **维护?*: 审计系统架构?
+- [BATCH_METADATA_SUPPLEMENT_REPORT_20260413_001455](./STATE/BATCH_METADATA_SUPPLEMENT_REPORT_20260413_001455.md)
+- [BATCH_METADATA_SUPPLEMENT_REPORT_20260413_011625](./STATE/BATCH_METADATA_SUPPLEMENT_REPORT_20260413_011625.md)
+- [BATCH_METADATA_SUPPLEMENT_REPORT_20260413_012009](./STATE/BATCH_METADATA_SUPPLEMENT_REPORT_20260413_012009.md)
+- [BATCH_METADATA_SUPPLEMENT_REPORT_20260413_012434](./STATE/BATCH_METADATA_SUPPLEMENT_REPORT_20260413_012434.md)
+- [DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_222910](./STATE/DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_222910.md)
+- [FOLDER_STRUCTURE_PROFESSIONAL_ASSESSMENT_AND_PREVENTION_PLAN_20260412](../11_STRATEGIC_DECISION/FOLDER_STRUCTURE_PROFESSIONAL_ASSESSMENT_AND_PREVENTION_PLAN_20260412.md)
+- [HANDOVER](../09_ARCHIVE/factor_library/HANDOVER.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260412_235835](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260412_235835.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_005721](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_005721.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_005921](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_005921.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_010024](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_010024.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_010523](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_010523.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_010531](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_010531.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_011339](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_011339.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_012027](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_012027.md)
+- [METADATA_COMPLETENESS_CHECK_REPORT_20260413_012506](./STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_012506.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [README](./README.md)
+- [SITEMAP](./SITEMAP.md)
+- [active-scattered-blueprints-manifest-task1](./STATE/active-scattered-blueprints-manifest-task1.md)
+- [adr-standard](./adr-standard.md)
+- [adr-template](./adr-template.md)
+- [ai-audit-guidelines](./ai-audit-guidelines.md)
+- [ai-document-governance-audit-prompt](./ai-document-governance-audit-prompt.md)
+- [ai-workflow-encoding-fix-report-20260406](./REPORTS/ai-workflow-encoding-fix-report-20260406.md)
+- [ai-workflow-layer-confirmation-audit-report-v5-20260406](./REPORTS/ai-workflow-layer-confirmation-audit-report-v5-20260406.md)
+- [ai-workflow-layer-deep-audit-report-20260406](./ai-workflow-layer-deep-audit-report-20260406.md)
+- [ai-workflow-layer-deep-audit-report-v2-20260406](./ai-workflow-layer-deep-audit-report-v2-20260406.md)
+- [ai-workflow-layer-deep-audit-report-v3-20260406](./REPORTS/ai-workflow-layer-deep-audit-report-v3-20260406.md)
+- [ai-workflow-layer-deep-audit-report-v6-20260407](./REPORTS/ai-workflow-layer-deep-audit-report-v6-20260407.md)
+- [ai-workflow-layer-final-audit-report-v4-20260406](./REPORTS/ai-workflow-layer-final-audit-report-v4-20260406.md)
+- [alert-responsibility-overlap-fix-report-20260404](./REPORTS/alert-responsibility-overlap-fix-report-20260404.md)
+- [alpha-factor-comprehensive-audit-report-20260407-204111](./STATE/alpha-factor-comprehensive-audit-report-20260407-204111.md)
+- [alpha-factor-deep-audit-report-20260407-145027](./STATE/alpha-factor-deep-audit-report-20260407-145027.md)
+- [alpha-factor-fix-report-20260407-145855](./STATE/alpha-factor-fix-report-20260407-145855.md)
+- [alpha-factor-layer-deep-audit-report-20260407-185533](./STATE/alpha-factor-layer-deep-audit-report-20260407-185533.md)
+- [alpha-factor-layer-deep-audit-report-20260412-210558](./STATE/alpha-factor-layer-deep-audit-report-20260412-210558.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-191332](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-191332.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-191332-legacy-09-archive-duplicates](../09_ARCHIVE/audit_reports/alpha-factor-layer-deep-audit-report-round2-20260407-191332-legacy-09-archive-duplicates.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-191954](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-191954.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-192237](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-192237.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-201104](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-201104.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-201831](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-201831.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-202418](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-202418.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-202557](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-202557.md)
+- [alpha-factor-layer-deep-audit-report-round2-20260407-203133](./STATE/alpha-factor-layer-deep-audit-report-round2-20260407-203133.md)
+- [alpha-factor-p1-p2-fix-report](./alpha-factor-p1-p2-fix-report.md)
+- [arch-module-gap-register-20260408](./arch-module-gap-register-20260408.md)
+- [architecture-analysis-report](./architecture-analysis-report.md)
+- [architecture-completeness-analysis-20260407](./REPORTS/architecture-completeness-analysis-20260407.md)
+- [architecture-gap-analysis-and-opensource-recommendation-20260405](./REPORTS/architecture-gap-analysis-and-opensource-recommendation-20260405.md)
+- [architecture-module-audit-and-gap-plan-20260408](./architecture-module-audit-and-gap-plan-20260408.md)
+- [architecture-review-report-20260406](./REPORTS/architecture-review-report-20260406.md)
+- [architecture-service-catalog-20260410](./STATE/architecture-service-catalog-20260410.md)
+- [architecture-service-catalog-20260411](./STATE/architecture-service-catalog-20260411.md)
+- [archive-files-reference-check-report-20260407-184342](./STATE/archive-files-reference-check-report-20260407-184342.md)
+- [audit-execution-procedures](./audit-execution-procedures.md)
+- [audit-standards](./audit-standards.md)
+- [audit-tools-optimization-plan](./audit-tools-optimization-plan.md)
+- [audit-tools-usage-guide](./audit-tools-usage-guide.md)
+- [audit_comparison_report_20260413](./STATE/audit_comparison_report_20260413.md)
+- [automated-check-fix-report-20260407-153821](./STATE/automated-check-fix-report-20260407-153821.md)
+- [automated-check-report-20260407-031229](./automated-check-report-20260407-031229.md)
+- [automated-workflow-report-20260407-113557](./STATE/automated-workflow-report-20260407-113557.md)
+- [backtest-standards](../09_ARCHIVE/factor_library/backtest-standards.md)
+- [baostock-connector](../09_ARCHIVE/blueprints/baostock-connector.md)
+- [basename-collisions-20260410](./STATE/basename-collisions-20260410.md)
+- [basename-collisions-20260411](./STATE/basename-collisions-20260411.md)
+- [batch-add-layer-fields-report-20260407](./batch-add-layer-fields-report-20260407.md)
+- [batch-fix-invalid-links-report-20260407-182254](./STATE/batch-fix-invalid-links-report-20260407-182254.md)
+- [batch-metadata-supplement-report-20260407-174851](./STATE/batch-metadata-supplement-report-20260407-174851.md)
+- [batch-metadata-supplement-report-20260407-175802](./STATE/batch-metadata-supplement-report-20260407-175802.md)
+- [batch-metadata-supplement-report-20260407-175826](./STATE/batch-metadata-supplement-report-20260407-175826.md)
+- [batch-metadata-supplement-report-20260407-175842](./STATE/batch-metadata-supplement-report-20260407-175842.md)
+- [batch-metadata-supplement-report-20260407-175854](./STATE/batch-metadata-supplement-report-20260407-175854.md)
+- [batch-metadata-supplement-report-20260407-175951](./STATE/batch-metadata-supplement-report-20260407-175951.md)
+- [batch-metadata-supplement-report-20260407-180008](./STATE/batch-metadata-supplement-report-20260407-180008.md)
+- [batch-metadata-supplement-report-20260407-180034](./STATE/batch-metadata-supplement-report-20260407-180034.md)
+- [batch-metadata-supplement-report-20260407-180055](./STATE/batch-metadata-supplement-report-20260407-180055.md)
+- [batch-responsibility-supplement-report-20260407-182033](./STATE/batch-responsibility-supplement-report-20260407-182033.md)
+- [batch-responsibility-supplement-report-20260407-182049](./STATE/batch-responsibility-supplement-report-20260407-182049.md)
+- [batch-responsibility-supplement-report-20260407-182103](./STATE/batch-responsibility-supplement-report-20260407-182103.md)
+- [batch-responsibility-supplement-report-20260407-182120](./STATE/batch-responsibility-supplement-report-20260407-182120.md)
+- [blueprint-checklist](./blueprint-checklist.md)
+- [blueprint-d-overlap-candidates-20260411](./STATE/blueprint-d-overlap-candidates-20260411.md)
+- [blueprint-d-overlap-candidates-20260412](./STATE/blueprint-d-overlap-candidates-20260412.md)
+- [blueprint-d-overlap-triage-20260412](./STATE/blueprint-d-overlap-triage-20260412.md)
+- [blueprint-standard-template](./blueprint-standard-template.md)
+- [blueprint-validation-report](./blueprint-validation-report.md)
+- [canonical-pointers](../09_ARCHIVE/duplicates/canonical-pointers.md)
+- [cleaning-rules](../09_ARCHIVE/blueprints/cleaning-rules.md)
+- [code-change-documentation-guide](./code-change-documentation-guide.md)
+- [compliance-audit-system](./compliance-audit-system.md)
+- [compliance-verification-report-20260407](./STATE/compliance-verification-report-20260407.md)
+- [comprehensive-deep-audit-report-20260407](./comprehensive-deep-audit-report-20260407.md)
+- [comprehensive-implementation-report-20260402](./comprehensive-implementation-report-20260402.md)
+- [comprehensive-improvement-report-20260402](./comprehensive-improvement-report-20260402.md)
+- [comprehensive-optimization-completion-report-20260407](./comprehensive-optimization-completion-report-20260407.md)
+- [comprehensive-optimization-final-report-20260407](./comprehensive-optimization-final-report-20260407.md)
+- [consolidated-report-for-ai-20260408-021344](./STATE/overnight_runs/20260408_021344/consolidated-report-for-ai-20260408-021344.md)
+- [consolidated-report-for-ai-20260408-022356](./STATE/overnight_runs/20260408_022356/consolidated-report-for-ai-20260408-022356.md)
+- [consolidated-report-for-ai-20260408-033240](./STATE/overnight_runs/20260408_033240/consolidated-report-for-ai-20260408-033240.md)
+- [constraints-solver-technical-specification-archived](../09_ARCHIVE/blueprints/constraints-solver-technical-specification-archived.md)
+- [continuous-audit-workflow](./STATE/continuous-audit-workflow.md)
+- [continuous-improvement-completion-report-20260407-175400](./continuous-improvement-completion-report-20260407-175400.md)
+- [continuous-improvement-pilot-report-20260402](./continuous-improvement-pilot-report-20260402.md)
+- [continuous-improvement-process](./continuous-improvement-process.md)
+- [continuous-monitoring-config](./AUTOMATION/continuous-monitoring-config.md)
+- [continuous-quality-improvement-process](./STANDARDS/continuous-quality-improvement-process.md)
+- [correlation-analysis](./correlation-analysis.md)
+- [correlation-matrix](../09_ARCHIVE/factor_library/correlation-matrix.md)
+- [critical-encoding-issues-audit-report-20260406](./critical-encoding-issues-audit-report-20260406.md)
+- [data-acquisition](../09_ARCHIVE/blueprints/data-acquisition.md)
+- [data-layer-deep-audit-report-v2-20260403](./REPORTS/data-layer-deep-audit-report-v2-20260403.md)
+- [data-layer-deep-audit-report-v3-20260403](./data-layer-deep-audit-report-v3-20260403.md)
+- [data-layer-document-audit-report-20260403](./data-layer-document-audit-report-20260403.md)
+- [data-preprocessing-deep-audit-report-20260404-v5](./REPORTS/data-preprocessing-deep-audit-report-20260404-v5.md)
+- [data-preprocessing-opensource-integration-guide-20260407](./REPORTS/data-preprocessing-opensource-integration-guide-20260407.md)
+- [data-requirements](../09_ARCHIVE/TECHNICAL_SPECIFICATIONS/data-requirements.md)
+- [data-source-adapters](../09_ARCHIVE/blueprints/data-source-adapters.md)
+- [data-source-layer-deep-audit-report-v1-20260404](./REPORTS/data-source-layer-deep-audit-report-v1-20260404.md)
+- [data-source-layer-deep-audit-report-v4-20260404](./data-source-layer-deep-audit-report-v4-20260404.md)
+- [data-source-layer-deep-audit-report-v4-20260405](./data-source-layer-deep-audit-report-v4-20260405.md)
+- [data-source-layer-deep-audit-report-v5-20260405](./data-source-layer-deep-audit-report-v5-20260405.md)
+- [data-source-layer-deep-audit-report-v6-20260406](./data-source-layer-deep-audit-report-v6-20260406.md)
+- [data-source-layer-gap-analysis](../09_ARCHIVE/factor_library/data-source-layer-gap-analysis.md)
+- [data-source-p2-final-fix-report](./data-source-p2-final-fix-report.md)
+- [data-source-p2-fix-report](./data-source-p2-fix-report.md)
+- [decision-record-standard](./STANDARDS/decision-record-standard.md)
+- [decision-record-template](./decision-record-template.md)
+- [deep-audit-fix-report-20260407](./REPORTS/deep-audit-fix-report-20260407.md)
+- [deep-audit-report-20260403](./deep-audit-report-20260403.md)
+- [deep-audit-report-20260403-v2](./REPORTS/deep-audit-report-20260403-v2.md)
+- [deep-audit-report-20260404-v3](./deep-audit-report-20260404-v3.md)
+- [deep-audit-report-20260404-v4](./REPORTS/deep-audit-report-20260404-v4.md)
+- [deep-audit-report-20260405-v5](./deep-audit-report-20260405-v5.md)
+- [deep-audit-report-20260405-v6](./REPORTS/deep-audit-report-20260405-v6.md)
+- [deep-audit-report-20260407-114803](./STATE/deep-audit-report-20260407-114803.md)
+- [deep-audit-report-v2-20260403](./REPORTS/deep-audit-report-v2-20260403.md)
+- [deep-audit-report-v3-20260403](./REPORTS/deep-audit-report-v3-20260403.md)
+- [deep-audit-report-v4-20260404](./deep-audit-report-v4-20260404.md)
+- [deep-audit-report-v4-20260407](./deep-audit-report-v4-20260407.md)
+- [deep-audit-report-v5-20260404](./REPORTS/deep-audit-report-v5-20260404.md)
+- [deep-audit-report-v6-20260404](./REPORTS/deep-audit-report-v6-20260404.md)
+- [deep-audit-report-v7-20260404](./REPORTS/deep-audit-report-v7-20260404.md)
+- [deep-document-audit-report-20260407-020813](./STATE/deep-document-audit-report-20260407-020813.md)
+- [deep-files-analysis-excluding-archive-report-20260407-184511](./STATE/deep-files-analysis-excluding-archive-report-20260407-184511.md)
+- [deep-files-analysis-report-20260407-183935](./STATE/deep-files-analysis-report-20260407-183935.md)
+- [deep-system-audit-report-20260404-v7](./deep-system-audit-report-20260404-v7.md)
+- [deep-system-audit-report-20260404-v8](./deep-system-audit-report-20260404-v8.md)
+- [deep-system-audit-report-20260405-v10](./deep-system-audit-report-20260405-v10.md)
+- [deep-system-audit-report-20260405-v9](./deep-system-audit-report-20260405-v9.md)
+- [deep-system-audit-report-v12-20260406](./REPORTS/deep-system-audit-report-v12-20260406.md)
+- [deep-system-document-governance-audit-report-20260406](./REPORTS/deep-system-document-governance-audit-report-20260406.md)
+- [directory-naming-compliance-20260411](./STATE/directory-naming-compliance-20260411.md)
+- [directory-naming-compliance-20260412](./STATE/directory-naming-compliance-20260412.md)
+- [directory-structure-analysis-report-20260407-162955](./STATE/directory-structure-analysis-report-20260407-162955.md)
+- [directory-structure-analysis-report-20260412-211435](./STATE/directory-structure-analysis-report-20260412-211435.md)
+- [directory_naming_violations_report_20260412](./directory_naming_violations_report_20260412.md)
+- [doc-archival-workflow](./WORKFLOWS/doc-archival-workflow.md)
+- [doc-creation-workflow](./doc-creation-workflow.md)
+- [doc-governance-mechanism](./doc-governance-mechanism.md)
+- [doc-governance-optimization-proposal](./STANDARDS/doc-governance-optimization-proposal.md)
+- [doc-governance-system-plan](./STANDARDS/doc-governance-system-plan.md)
+- [doc-naming-standard](./doc-naming-standard.md)
+- [doc-quality-culture-plan](./doc-quality-culture-plan.md)
+- [doc-recreation-evaluation-report-20260404](./doc-recreation-evaluation-report-20260404.md)
+- [doc-reference-standard](./doc-reference-standard.md)
+- [doc-remediation-task-directive-20260408](./doc-remediation-task-directive-20260408.md)
+- [docs-encoding-governance-fix-report-20260407](./REPORTS/docs-encoding-governance-fix-report-20260407.md)
+- [docs-nav-coverage-sample-20260410](./STATE/docs-nav-coverage-sample-20260410.md)
+- [document-audit-v5.1](./REPORTS/document-audit-v5.1.md)
+- [document-classification-exception-list](./document-classification-exception-list.md)
+- [document-classification-optimization-report-20260407](./document-classification-optimization-report-20260407.md)
+- [document-classification-standard](./STANDARDS/document-classification-standard.md)
+- [document-cross-reference-analysis-20260406](./REPORTS/document-cross-reference-analysis-20260406.md)
+- [document-defect-prevention-standard](./document-defect-prevention-standard.md)
+- [document-format-fix-report-20260407](./REPORTS/document-format-fix-report-20260407.md)
+- [document-governance-best-practices](./document-governance-best-practices.md)
+- [document-governance-deep-audit-report-20260403](./REPORTS/document-governance-deep-audit-report-20260403.md)
+- [document-governance-implementation-report-20260402](./REPORTS/document-governance-implementation-report-20260402.md)
+- [document-governance-improvement-cases](./document-governance-improvement-cases.md)
+- [document-governance-maintenance-plan](../09_RESEARCH_INNOVATION/document-governance-maintenance-plan.md)
+- [document-governance-maintenance-summary](../09_RESEARCH_INNOVATION/document-governance-maintenance-summary.md)
+- [document-governance-p2-issues-remediation-report-20260403](./REPORTS/document-governance-p2-issues-remediation-report-20260403.md)
+- [document-governance-process-standard](./document-governance-process-standard.md)
+- [document-governance-remediation-final-report-20260403](./document-governance-remediation-final-report-20260403.md)
+- [document-governance-remediation-report-20260403](./REPORTS/document-governance-remediation-report-20260403.md)
+- [document-governance-solutions](./document-governance-solutions.md)
+- [document-governance-training-manual](./document-governance-training-manual.md)
+- [document-metadata-template](./document-metadata-template.md)
+- [document-quality-monitoring-mechanism](./document-quality-monitoring-mechanism.md)
+- [document-responsibility-boundary-standard](./document-responsibility-boundary-standard.md)
+- [document-system-perfection-plan](./document-system-perfection-plan.md)
+- [document-template](./document-template.md)
+- [double-yaml-exceptions](./double-yaml-exceptions.md)
+- [duplicate-content-by-hash-20260410](./STATE/duplicate-content-by-hash-20260410.md)
+- [duplicate-content-by-hash-20260411](./STATE/duplicate-content-by-hash-20260411.md)
+- [duplicate-document-archive-report-20260403](./REPORTS/duplicate-document-archive-report-20260403.md)
+- [early-warning-report-20260407-113727](./STATE/early-warning-report-20260407-113727.md)
+- [economic-regime-engine-technical-specification-v1-archived](../09_ARCHIVE/blueprints/economic-regime-engine-technical-specification-v1-archived.md)
+- [emergency-response-plan](./emergency-response-plan.md)
+- [encoding-issues-rebuild-final-report-20260406](./encoding-issues-rebuild-final-report-20260406.md)
+- [encoding-issues-rebuild-progress-report-20260406](./encoding-issues-rebuild-progress-report-20260406.md)
+- [encoding-issues-rebuild-progress-report-final-20260406](./encoding-issues-rebuild-progress-report-final-20260406.md)
+- [esg-investing-blueprint](./esg-investing-blueprint.md)
+- [excellence-standard-achievement-report-20260402](./excellence-standard-achievement-report-20260402.md)
+- [excellence-standard-improvement-plan-20260402](./excellence-standard-improvement-plan-20260402.md)
+- [factor-calculation-framework](../09_ARCHIVE/factor_library/factor-calculation-framework.md)
+- [factor-decay](../09_ARCHIVE/factor_library/factor-decay.md)
+- [factor-definition](../09_ARCHIVE/factor_library/factor-definition.md)
+- [factor-management-standard-legacy-09-archive-duplicates](../09_ARCHIVE/factor_library/factor-management-standard-legacy-09-archive-duplicates.md)
+- [factor-master-index](../09_ARCHIVE/factor_library/factor-master-index.md)
+- [factor-mining-guide](../09_ARCHIVE/factor_library/factor-mining-guide.md)
+- [factor-neutralization](../09_ARCHIVE/factor_library/factor-neutralization.md)
+- [factor-preprocessing](../09_ARCHIVE/factor_library/factor-preprocessing.md)
+- [factor-registry-legacy-09-archive-duplicates](../09_ARCHIVE/factor_library/factor-registry-legacy-09-archive-duplicates.md)
+- [factor-return-analysis](../09_ARCHIVE/factor_library/factor-return-analysis.md)
+- [factor-screening-strategy](../09_ARCHIVE/factor_library/factor-screening-strategy.md)
+- [factor-synthesis](../09_ARCHIVE/factor_library/factor-synthesis.md)
+- [factor-taxonomy-legacy-09-archive-duplicates](../09_ARCHIVE/factor_library/factor-taxonomy-legacy-09-archive-duplicates.md)
+- [factor-transparency-report](../09_ARCHIVE/audit_reports/factor-transparency-report.md)
+- [factor-validation-blueprint](../09_ARCHIVE/blueprints/factor-validation-blueprint.md)
+- [factor-validation-guide](../09_ARCHIVE/factor_library/factor-validation-guide.md)
+- [fifth-comprehensive-audit-report](./fifth-comprehensive-audit-report.md)
+- [file-naming-standard](./STANDARDS/file-naming-standard.md)
+- [final-archive-optimization-completion-report-20260407](./REPORTS/final-archive-optimization-completion-report-20260407.md)
+- [final-audit-report-20260407](./final-audit-report-20260407.md)
+- [final-audit-summary-20260406](./REPORTS/final-audit-summary-20260406.md)
+- [final-audit-summary-20260407](./REPORTS/final-audit-summary-20260407.md)
+- [final-completeness-analysis](../09_RESEARCH_INNOVATION/final-completeness-analysis.md)
+- [final-fix-summary-20260407](./final-fix-summary-20260407.md)
+- [final-fix-summary-v2-20260407](./final-fix-summary-v2-20260407.md)
+- [final-fix-summary-v3-20260407](./final-fix-summary-v3-20260407.md)
+- [final-fix-summary-v4-20260407](./final-fix-summary-v4-20260407.md)
+- [final-fix-summary-v5-20260407](./final-fix-summary-v5-20260407.md)
+- [final-fix-summary-v6-20260407](./final-fix-summary-v6-20260407.md)
+- [final-fix-summary-v7-20260407](./final-fix-summary-v7-20260407.md)
+- [final-fix-summary-v8-20260407](./final-fix-summary-v8-20260407.md)
+- [final-link-fix-report-20260407-165803](./STATE/final-link-fix-report-20260407-165803.md)
+- [final-metadata-supplement-report-20260407-180300](./final-metadata-supplement-report-20260407-180300.md)
+- [final-optimization-completion-report-20260407](./REPORTS/final-optimization-completion-report-20260407.md)
+- [final-p0-p1-optimization-completion-report-20260407](./REPORTS/final-p0-p1-optimization-completion-report-20260407.md)
+- [final-p0-p1-optimization-completion-report-v2-20260407](./REPORTS/final-p0-p1-optimization-completion-report-v2-20260407.md)
+- [financial-statements-api](../09_ARCHIVE/blueprints/financial-statements-api.md)
+- [fix-summary-report-v4-20260407](./fix-summary-report-v4-20260407.md)
+- [follow-up-action-report-20260407-151323](./STATE/follow-up-action-report-20260407-151323.md)
+- [fourth-comprehensive-audit-report-20260407-213318](./fourth-comprehensive-audit-report-20260407-213318.md)
+- [free-data-sources](../09_ARCHIVE/factor_library/free-data-sources.md)
+- [full-doc-governance-audit-phase0-20260408](./REPORTS/full-doc-governance-audit-phase0-20260408.md)
+- [full-system-audit-complete-case-20260408](./full-system-audit-complete-case-20260408.md)
+- [full-system-document-audit-plan-20260408](./full-system-document-audit-plan-20260408.md)
+- [future-factor-tools](../09_ARCHIVE/factor_library/future-factor-tools.md)
+- [git-tracked-path-anomalies-20260411](./STATE/git-tracked-path-anomalies-20260411.md)
+- [github-issue-creation-list-20260406](./github-issue-creation-list-20260406.md)
+- [governance-decisions-locked-20260408](./STATE/governance-decisions-locked-20260408.md)
+- [governance-maintenance-guide](./governance-maintenance-guide.md)
+- [human-ai-interaction-layer-deep-audit-report-20260403](./REPORTS/human-ai-interaction-layer-deep-audit-report-20260403.md)
+- [human-ai-interaction-layer-deep-audit-report-20260405](./human-ai-interaction-layer-deep-audit-report-20260405.md)
+- [human-ai-interface-layer-deep-audit-report-20260405](./REPORTS/human-ai-interface-layer-deep-audit-report-20260405.md)
+- [human-ai-interface-layer-eighth-audit-report-20260406](./human-ai-interface-layer-eighth-audit-report-20260406.md)
+- [human-ai-interface-layer-fifth-audit-report-20260406](./human-ai-interface-layer-fifth-audit-report-20260406.md)
+- [human-ai-interface-layer-fourth-audit-report-20260406](./REPORTS/human-ai-interface-layer-fourth-audit-report-20260406.md)
+- [human-ai-interface-layer-ninth-audit-report-20260406](./REPORTS/human-ai-interface-layer-ninth-audit-report-20260406.md)
+- [human-ai-interface-layer-reaudit-report-20260405](./REPORTS/human-ai-interface-layer-reaudit-report-20260405.md)
+- [human-ai-interface-layer-seventh-audit-report-20260406](./human-ai-interface-layer-seventh-audit-report-20260406.md)
+- [human-ai-interface-layer-sixth-audit-report-20260406](./human-ai-interface-layer-sixth-audit-report-20260406.md)
+- [human-ai-interface-layer-tenth-audit-report-20260406](./REPORTS/human-ai-interface-layer-tenth-audit-report-20260406.md)
+- [human-ai-interface-layer-third-audit-report-20260406](./REPORTS/human-ai-interface-layer-third-audit-report-20260406.md)
+- [ic-analysis](../09_ARCHIVE/factor_library/ic-analysis.md)
+- [ifind-connector](../09_ARCHIVE/blueprints/ifind-connector.md)
+- [immediate-action-completion-report-20260407](./immediate-action-completion-report-20260407.md)
+- [immediate-action-completion-report-20260407-183300](./immediate-action-completion-report-20260407-183300.md)
+- [immediate-action-execution-report-20260406](./immediate-action-execution-report-20260406.md)
+- [immediate-execution-report-20260407-143159](./STATE/immediate-execution-report-20260407-143159.md)
+- [incomplete-blueprint-archive-report-20260404](./REPORTS/incomplete-blueprint-archive-report-20260404.md)
+- [index-audit](./index-audit.md)
+- [index-grouped-state-20260408](./STATE/index-grouped-state-20260408.md)
+- [index-health-orphan-20260410](./STATE/index-health-orphan-20260410.md)
+- [index-health-orphan-20260411](./STATE/index-health-orphan-20260411.md)
+- [index-health-orphan-20260412](./STATE/index-health-orphan-20260412.md)
+- [index-health-orphan-20260413](./STATE/index-health-orphan-20260413.md)
+- [index-health-orphan-20260414](./STATE/index-health-orphan-20260414.md)
+- [index-health-orphan-20260415](./STATE/index-health-orphan-20260415.md)
+- [index-health-orphan-20260416](./STATE/index-health-orphan-20260416.md)
+- [index-health-orphan-20260417](./STATE/index-health-orphan-20260417.md)
+- [index-health-orphan-20260418](./STATE/index-health-orphan-20260418.md)
+- [index-health-orphan-20260419](./STATE/index-health-orphan-20260419.md)
+- [index-health-orphan-20260420](./STATE/index-health-orphan-20260420.md)
+- [index-health-orphan-20260421](./STATE/index-health-orphan-20260421.md)
+- [index-health-orphan-20260422](./STATE/index-health-orphan-20260422.md)
+- [index-health-orphan-20260423](./STATE/index-health-orphan-20260423.md)
+- [index-health-orphan-20260424](./STATE/index-health-orphan-20260424.md)
+- [index-health-orphan-20260425](./STATE/index-health-orphan-20260425.md)
+- [index-health-orphan-20260426](./STATE/index-health-orphan-20260426.md)
+- [index-health-orphan-20260427](./STATE/index-health-orphan-20260427.md)
+- [index-health-orphan-20260428](./STATE/index-health-orphan-20260428.md)
+- [index-health-orphan-20260429](./STATE/index-health-orphan-20260429.md)
+- [index-health-orphan-20260430](./STATE/index-health-orphan-20260430.md)
+- [index-health-orphan-20260501](./STATE/index-health-orphan-20260501.md)
+- [index-health-orphan-20260502](./STATE/index-health-orphan-20260502.md)
+- [index-health-orphan-20260503](./STATE/index-health-orphan-20260503.md)
+- [index-health-orphan-20260504](./STATE/index-health-orphan-20260504.md)
+- [index-health-orphan-20260505](./STATE/index-health-orphan-20260505.md)
+- [index-health-orphan-20260506](./STATE/index-health-orphan-20260506.md)
+- [index-health-orphan-20260507](./STATE/index-health-orphan-20260507.md)
+- [index-health-orphan-20260508](./STATE/index-health-orphan-20260508.md)
+- [index-health-orphan-20260509](./STATE/index-health-orphan-20260509.md)
+- [index-health-orphan-20260510](./STATE/index-health-orphan-20260510.md)
+- [index-health-orphan-20260511](./STATE/index-health-orphan-20260511.md)
+- [index-health-orphan-20260512](./STATE/index-health-orphan-20260512.md)
+- [index-health-orphan-20260513](./STATE/index-health-orphan-20260513.md)
+- [index-health-orphan-20260514](./STATE/index-health-orphan-20260514.md)
+- [index-health-orphan-20260515](./STATE/index-health-orphan-20260515.md)
+- [index-health-orphan-20260516](./STATE/index-health-orphan-20260516.md)
+- [index-health-orphan-20260517](./STATE/index-health-orphan-20260517.md)
+- [index-health-orphan-20260518](./STATE/index-health-orphan-20260518.md)
+- [index-health-orphan-20260519](./STATE/index-health-orphan-20260519.md)
+- [index-health-orphan-20260520](./STATE/index-health-orphan-20260520.md)
+- [index-health-orphan-20260521](./STATE/index-health-orphan-20260521.md)
+- [index-update-report-20260407-155528](./STATE/index-update-report-20260407-155528.md)
+- [intelligent-audit-report-20260407-113439](./STATE/intelligent-audit-report-20260407-113439.md)
+- [intelligent-link-fix-report-20260402](./intelligent-link-fix-report-20260402.md)
+- [invalid-link-fix-report-20260407-165241](./STATE/invalid-link-fix-report-20260407-165241.md)
+- [invalid-link-fix-report-20260407-165409](./STATE/invalid-link-fix-report-20260407-165409.md)
+- [invalid-links-detail-20260408-021344](./STATE/overnight_runs/20260408_021344/invalid-links-detail-20260408-021344.md)
+- [invalid-links-detail-20260408-022356](./STATE/overnight_runs/20260408_022356/invalid-links-detail-20260408-022356.md)
+- [invalid-links-detail-20260408-033240](./STATE/overnight_runs/20260408_033240/invalid-links-detail-20260408-033240.md)
+- [investment-constraint-blueprint](./investment-constraint-blueprint.md)
+- [issue-handover-document-20260407](./issue-handover-document-20260407.md)
+- [key-links-fix-report-20260404](./key-links-fix-report-20260404.md)
+- [knowledge-base-building-plan](./knowledge-base-building-plan.md)
+- [knowledge-base-enhancement-report-20260402](./knowledge-base-enhancement-report-20260402.md)
+- [layer-7-audit-completion-report](./REPORTS/layer-7-audit-completion-report.md)
+- [layer-7-deep-audit-report-v8-20260407](./REPORTS/layer-7-deep-audit-report-v8-20260407.md)
+- [layer11-capability-to-blueprint-map-20260408](./STATE/layer11-capability-to-blueprint-map-20260408.md)
+- [layer2-architecture-completeness-analysis](./STATE/layer2-architecture-completeness-analysis.md)
+- [layer2-blueprint-generation-report](./STATE/layer2-blueprint-generation-report.md)
+- [layer2-complete-blueprint-supplement-report](./STATE/layer2-complete-blueprint-supplement-report.md)
+- [layer2-complete-implementation-plan](./STATE/layer2-complete-implementation-plan.md)
+- [layer2-complete-supplement-plan](./layer2-complete-supplement-plan.md)
+- [layer2-deep-missing-analysis](./STATE/layer2-deep-missing-analysis.md)
+- [layer2-ultra-deep-missing-analysis](./layer2-ultra-deep-missing-analysis.md)
+- [layered-backtest](../09_ARCHIVE/blueprints/layered-backtest.md)
+- [link-fix-completion-report-20260404](./link-fix-completion-report-20260404.md)
+- [link-fix-report-20260402](./REPORTS/link-fix-report-20260402.md)
+- [link-validation-report-20260407](./REPORTS/link-validation-report-20260407.md)
+- [long-term-optimization-complete-plan-20260407](./long-term-optimization-complete-plan-20260407.md)
+- [long-term-optimization-execution-report-20260407](./REPORTS/long-term-optimization-execution-report-20260407.md)
+- [long-term-optimization-execution-summary-20260407](./long-term-optimization-execution-summary-20260407.md)
+- [long-term-optimization-final-report-20260407](./long-term-optimization-final-report-20260407.md)
+- [macro-data](../09_ARCHIVE/factor_library/macro-data.md)
+- [manifest-path-audit-blueprint-stage-complete-summary](./STATE/manifest-path-audit-blueprint-stage-complete-summary.md)
+- [manual-link-removal-report-20260407-170216](./STATE/manual-link-removal-report-20260407-170216.md)
+- [manual-reference-fix-report-20260407-155307](./STATE/manual-reference-fix-report-20260407-155307.md)
+- [markdown-link-validator](./markdown-link-validator.md)
+- [market-participant-simulation-spec-update-v2-archived](../09_ARCHIVE/blueprints/market-participant-simulation-spec-update-v2-archived.md)
+- [massive-file-system-deep-audit-framework](./massive-file-system-deep-audit-framework.md)
+- [mcp-plugin-usage-guide](./mcp-plugin-usage-guide.md)
+- [mcp-tool-test-guide](./mcp-tool-test-guide.md)
+- [md-by-subdir-20260408-022356](./STATE/overnight_runs/20260408_022356/md-by-subdir-20260408-022356.md)
+- [md-by-subdir-20260408-033240](./STATE/overnight_runs/20260408_033240/md-by-subdir-20260408-033240.md)
+- [md-files-by-subdirectory-20260408](./STATE/md-files-by-subdirectory-20260408.md)
+- [md-files-by-subdirectory-20260408-021344](./STATE/overnight_runs/20260408_021344/md-files-by-subdirectory-20260408-021344.md)
+- [medium-term-improvement-report-20260402](./medium-term-improvement-report-20260402.md)
+- [metadata-completeness-check-report-20260407-173301](./STATE/metadata-completeness-check-report-20260407-173301.md)
+- [metadata-completeness-check-report-20260407-174908](./STATE/metadata-completeness-check-report-20260407-174908.md)
+- [metadata-completeness-check-report-20260407-180130](./STATE/metadata-completeness-check-report-20260407-180130.md)
+- [metadata-completeness-check-report-20260407-180214](./STATE/metadata-completeness-check-report-20260407-180214.md)
+- [metadata-completeness-check-report-20260407-181528](./STATE/metadata-completeness-check-report-20260407-181528.md)
+- [metadata-completeness-check-report-20260407-181912](./STATE/metadata-completeness-check-report-20260407-181912.md)
+- [metadata-completeness-check-report-20260412-211454](./STATE/metadata-completeness-check-report-20260412-211454.md)
+- [metadata-supplement-report-20260407-173039](./STATE/metadata-supplement-report-20260407-173039.md)
+- [mid-term-improvement-completion-report-20260407](./STATE/mid-term-improvement-completion-report-20260407.md)
+- [missing-metadata-scan-report-20260407-170852](./STATE/missing-metadata-scan-report-20260407-170852.md)
+- [missing-metadata-scan-report-20260407-173053](./STATE/missing-metadata-scan-report-20260407-173053.md)
+- [missing-modules-blueprint-analysis-20260406](./REPORTS/missing-modules-blueprint-analysis-20260406.md)
+- [missing-responsibility-scan-report-20260407-170435](./STATE/missing-responsibility-scan-report-20260407-170435.md)
+- [missing-responsibility-scan-report-20260407-170649](./STATE/missing-responsibility-scan-report-20260407-170649.md)
+- [module-design-plan](../09_ARCHIVE/blueprints/module-design-plan.md)
+- [module-id-duplicates-detail-20260408-021344](./STATE/overnight_runs/20260408_021344/module-id-duplicates-detail-20260408-021344.md)
+- [module-id-duplicates-detail-20260408-022356](./STATE/overnight_runs/20260408_022356/module-id-duplicates-detail-20260408-022356.md)
+- [module-id-duplicates-detail-20260408-033240](./STATE/overnight_runs/20260408_033240/module-id-duplicates-detail-20260408-033240.md)
+- [module-id-duplication-remediation-report-20260403](./REPORTS/module-id-duplication-remediation-report-20260403.md)
+- [module-id-registry](./module-id-registry.md)
+- [module-interface-specification](./module-interface-specification.md)
+- [module-interface-template](./FORM_STANDARDS/module-interface-template.md)
+- [monitoring-report-20260407-032043](./STATE/monitoring-report-20260407-032043.md)
+- [monitoring-report-20260407-184943](./STATE/monitoring-report-20260407-184943.md)
+- [monthly-audit-report-template](./FORM_STANDARDS/monthly-audit-report-template.md)
+- [new-directory-creation-workflow](./new-directory-creation-workflow.md)
+- [news-sentiment-data-source](../09_ARCHIVE/factor_library/news-sentiment-data-source.md)
+- [openclaw-audit-summary-20260408](./REPORTS/openclaw-audit-summary-20260408.md)
+- [openclaw-chunk-log](./REPORTS/openclaw-chunk-log.md)
+- [openclaw-deleted-review](./openclaw-deleted-review.md)
+- [openclaw-doc-code-drift-sample](./REPORTS/openclaw-doc-code-drift-sample.md)
+- [openclaw-index-update-list-20260408](./REPORTS/openclaw-index-update-list-20260408.md)
+- [openclaw-l1](./openclaw-l1.md)
+- [openclaw-l2-.trae-002](./REPORTS/openclaw-l2-.trae-002.md)
+- [openclaw-l2-.trae-skills-audit-sentinel-003](./REPORTS/openclaw-l2-.trae-skills-audit-sentinel-003.md)
+- [openclaw-l2-05-implementation-04-operations-audit-state-004](./openclaw-l2-05-implementation-04-operations-audit-state-004.md)
+- [openclaw-l2-data-assessments-005](./REPORTS/openclaw-l2-data-assessments-005.md)
+- [openclaw-l2-data-assessments-economic-regime-006](./REPORTS/openclaw-l2-data-assessments-economic-regime-006.md)
+- [openclaw-l2-data-assessments-market-impact-007](./REPORTS/openclaw-l2-data-assessments-market-impact-007.md)
+- [openclaw-l2-data-assessments-smart-execution-008](./REPORTS/openclaw-l2-data-assessments-smart-execution-008.md)
+- [openclaw-l2-data-monitoring-reports-daily-009](./REPORTS/openclaw-l2-data-monitoring-reports-daily-009.md)
+- [openclaw-l2-docs-00-overview-011](./REPORTS/openclaw-l2-docs-00-overview-011.md)
+- [openclaw-l2-docs-00-resources-012](./REPORTS/openclaw-l2-docs-00-resources-012.md)
+- [openclaw-l2-docs-00-resources-04-platform-docs-013](./REPORTS/openclaw-l2-docs-00-resources-04-platform-docs-013.md)
+- [openclaw-l2-docs-010](./REPORTS/openclaw-l2-docs-010.md)
+- [openclaw-l2-docs-05-implementation-04-operations-audit-state-106](./openclaw-l2-docs-05-implementation-04-operations-audit-state-106.md)
+- [openclaw-l2-docs-05-implementation-07-operations-audit-state-122](./openclaw-l2-docs-05-implementation-07-operations-audit-state-122.md)
+- [openclaw-l2-docs-06-archive-133](./REPORTS/openclaw-l2-docs-06-archive-133.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-a-04366d92-138](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-a-04366d92-138.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-a-3561c3fb-139](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-a-3561c3fb-139.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-a-6933338f-137](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-a-6933338f-137.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-a-e27f49c3-136](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-a-e27f49c3-136.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-archive-134](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-archive-134.md)
+- [openclaw-l2-docs-06-archive-20260404-audit-reports-archive-audit-state-135](./REPORTS/openclaw-l2-docs-06-archive-20260404-audit-reports-archive-audit-state-135.md)
+- [openclaw-l2-docs-06-archive-20260404-market-participant-consolidation-140](./REPORTS/openclaw-l2-docs-06-archive-20260404-market-participant-consolidation-140.md)
+- [openclaw-l2-docs-06-archive-20260405-economic-regime-cleanup-141](./REPORTS/openclaw-l2-docs-06-archive-20260405-economic-regime-cleanup-141.md)
+- [openclaw-l2-docs-06-archive-20260406-encoding-issues-de7ced46-142](./REPORTS/openclaw-l2-docs-06-archive-20260406-encoding-issues-de7ced46-142.md)
+- [openclaw-l2-docs-06-archive-20260407-duplicate-audit-reports-143](./REPORTS/openclaw-l2-docs-06-archive-20260407-duplicate-audit-reports-143.md)
+- [openclaw-l2-docs-06-archive-20260407-duplicate-reports-144](./REPORTS/openclaw-l2-docs-06-archive-20260407-duplicate-reports-144.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-50cf8232-149](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-50cf8232-149.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-6d1af119-151](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-6d1af119-151.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-80746742-150](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-80746742-150.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-9ffb0b75-147](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-9ffb0b75-147.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-ac35daff-148](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-ac35daff-148.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-dbf65b5e-146](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-dbf65b5e-146.md)
+- [openclaw-l2-docs-06-archive-20260407-old-layer-audit-reports-145](./REPORTS/openclaw-l2-docs-06-archive-20260407-old-layer-audit-reports-145.md)
+- [openclaw-l2-docs-06-archive-20260407-p1-cleanup-archive-152](./REPORTS/openclaw-l2-docs-06-archive-20260407-p1-cleanup-archive-152.md)
+- [openclaw-l2-docs-06-archive-architecture-v4-153](./REPORTS/openclaw-l2-docs-06-archive-architecture-v4-153.md)
+- [openclaw-l2-docs-06-archive-architecture-v4-module-designs-154](./REPORTS/openclaw-l2-docs-06-archive-architecture-v4-module-designs-154.md)
+- [openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-1-155](./REPORTS/openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-1-155.md)
+- [openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-11-156](./REPORTS/openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-11-156.md)
+- [openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-9-157](./REPORTS/openclaw-l2-docs-06-archive-architecture-v4-module-designs-layer-9-157.md)
+- [openclaw-l2-docs-06-archive-duplicate-documents-158](./REPORTS/openclaw-l2-docs-06-archive-duplicate-documents-158.md)
+- [openclaw-l2-docs-06-archive-duplicate-documents-2026-5844c4dc-159](./REPORTS/openclaw-l2-docs-06-archive-duplicate-documents-2026-5844c4dc-159.md)
+- [openclaw-l2-docs-06-archive-factor-library-160](./REPORTS/openclaw-l2-docs-06-archive-factor-library-160.md)
+- [openclaw-l2-docs-06-archive-incomplete-documents-202-5484454f-161](./REPORTS/openclaw-l2-docs-06-archive-incomplete-documents-202-5484454f-161.md)
+- [openclaw-l2-docs-06-archive-integrated-documents-202-74132f62-162](./REPORTS/openclaw-l2-docs-06-archive-integrated-documents-202-74132f62-162.md)
+- [openclaw-l2-docs-06-archive-knowledge-library-enterprise-plans-163](./REPORTS/openclaw-l2-docs-06-archive-knowledge-library-enterprise-plans-163.md)
+- [openclaw-l2-docs-06-archive-main-164](./REPORTS/openclaw-l2-docs-06-archive-main-164.md)
+- [openclaw-l2-docs-06-archive-main-blueprints-165](./REPORTS/openclaw-l2-docs-06-archive-main-blueprints-165.md)
+- [openclaw-l2-docs-06-archive-main-v4-development-166](./REPORTS/openclaw-l2-docs-06-archive-main-v4-development-166.md)
+- [openclaw-l2-docs-07-ai-reporting-168](./REPORTS/openclaw-l2-docs-07-ai-reporting-168.md)
+- [openclaw-l2-docs-07-research-01-environment-170](./REPORTS/openclaw-l2-docs-07-research-01-environment-170.md)
+- [openclaw-l2-docs-07-research-02-exploratory-analysis-171](./REPORTS/openclaw-l2-docs-07-research-02-exploratory-analysis-171.md)
+- [openclaw-l2-docs-07-research-03-pattern-recognition-172](./REPORTS/openclaw-l2-docs-07-research-03-pattern-recognition-172.md)
+- [openclaw-l2-docs-07-research-04-experiment-tracking-173](./REPORTS/openclaw-l2-docs-07-research-04-experiment-tracking-173.md)
+- [openclaw-l2-docs-07-research-169](./REPORTS/openclaw-l2-docs-07-research-169.md)
+- [openclaw-l2-docs-08-human-ai-interface-01-monitoring-175](./REPORTS/openclaw-l2-docs-08-human-ai-interface-01-monitoring-175.md)
+- [openclaw-l2-docs-08-human-ai-interface-05-backtest-ui-176](./REPORTS/openclaw-l2-docs-08-human-ai-interface-05-backtest-ui-176.md)
+- [openclaw-l2-docs-08-human-ai-interface-06-reporting-177](./REPORTS/openclaw-l2-docs-08-human-ai-interface-06-reporting-177.md)
+- [openclaw-l2-docs-08-human-ai-interface-17-documentation-center-178](./REPORTS/openclaw-l2-docs-08-human-ai-interface-17-documentation-center-178.md)
+- [openclaw-l2-docs-08-human-ai-interface-174](./REPORTS/openclaw-l2-docs-08-human-ai-interface-174.md)
+- [openclaw-l2-docs-08-human-ai-interface-24-risk-dashboard-179](./REPORTS/openclaw-l2-docs-08-human-ai-interface-24-risk-dashboard-179.md)
+- [openclaw-l2-docs-08-human-ai-interface-25-strategy-ide-180](./REPORTS/openclaw-l2-docs-08-human-ai-interface-25-strategy-ide-180.md)
+- [openclaw-l2-docs-08-human-ai-interface-26-factor-analysis-181](./REPORTS/openclaw-l2-docs-08-human-ai-interface-26-factor-analysis-181.md)
+- [openclaw-l2-docs-08-human-ai-interface-27-risk-control-panel-182](./REPORTS/openclaw-l2-docs-08-human-ai-interface-27-risk-control-panel-182.md)
+- [openclaw-l2-docs-08-human-ai-interface-28-api-gateway-183](./REPORTS/openclaw-l2-docs-08-human-ai-interface-28-api-gateway-183.md)
+- [openclaw-l2-docs-08-human-ai-interface-29-websocket-realtime-184](./REPORTS/openclaw-l2-docs-08-human-ai-interface-29-websocket-realtime-184.md)
+- [openclaw-l2-docs-08-human-ai-interface-30-compliance-monitoring-185](./REPORTS/openclaw-l2-docs-08-human-ai-interface-30-compliance-monitoring-185.md)
+- [openclaw-l2-docs-08-human-ai-interface-31-capital-management-186](./REPORTS/openclaw-l2-docs-08-human-ai-interface-31-capital-management-186.md)
+- [openclaw-l2-docs-08-human-ai-interface-32-user-behavior-analytics-187](./REPORTS/openclaw-l2-docs-08-human-ai-interface-32-user-behavior-analytics-187.md)
+- [openclaw-l2-docs-08-human-ai-interface-33-i18n-support-188](./REPORTS/openclaw-l2-docs-08-human-ai-interface-33-i18n-support-188.md)
+- [openclaw-l2-docs-08-human-ai-interface-34-theme-customization-189](./REPORTS/openclaw-l2-docs-08-human-ai-interface-34-theme-customization-189.md)
+- [openclaw-l2-docs-08-human-ai-interface-35-data-export-tools-190](./REPORTS/openclaw-l2-docs-08-human-ai-interface-35-data-export-tools-190.md)
+- [openclaw-l2-docs-08-human-ai-interface-36-user-training-191](./REPORTS/openclaw-l2-docs-08-human-ai-interface-36-user-training-191.md)
+- [openclaw-l2-docs-08-human-ai-interface-37-accessibility-192](./REPORTS/openclaw-l2-docs-08-human-ai-interface-37-accessibility-192.md)
+- [openclaw-l2-docs-08-human-ai-interface-38-offline-support-193](./REPORTS/openclaw-l2-docs-08-human-ai-interface-38-offline-support-193.md)
+- [openclaw-l2-docs-08-human-ai-interface-39-third-party-integration-194](./REPORTS/openclaw-l2-docs-08-human-ai-interface-39-third-party-integration-194.md)
+- [openclaw-l2-docs-08-human-ai-interface-40-trading-terminal-195](./REPORTS/openclaw-l2-docs-08-human-ai-interface-40-trading-terminal-195.md)
+- [openclaw-l2-docs-08-human-ai-interface-41-system-config-center-196](./REPORTS/openclaw-l2-docs-08-human-ai-interface-41-system-config-center-196.md)
+- [openclaw-l2-docs-08-human-ai-interface-42-user-permission-management-197](./REPORTS/openclaw-l2-docs-08-human-ai-interface-42-user-permission-management-197.md)
+- [openclaw-l2-docs-08-human-ai-interface-43-performance-monitoring-198](./REPORTS/openclaw-l2-docs-08-human-ai-interface-43-performance-monitoring-198.md)
+- [openclaw-l2-docs-08-human-ai-interface-44-log-management-199](./REPORTS/openclaw-l2-docs-08-human-ai-interface-44-log-management-199.md)
+- [openclaw-l2-docs-08-human-ai-interface-45-config-management-200](./REPORTS/openclaw-l2-docs-08-human-ai-interface-45-config-management-200.md)
+- [openclaw-l2-docs-08-human-ai-interface-46-backup-recovery-201](./REPORTS/openclaw-l2-docs-08-human-ai-interface-46-backup-recovery-201.md)
+- [openclaw-l2-docs-08-human-ai-interface-47-system-health-check-202](./REPORTS/openclaw-l2-docs-08-human-ai-interface-47-system-health-check-202.md)
+- [openclaw-l2-docs-08-human-ai-interface-48-version-management-203](./REPORTS/openclaw-l2-docs-08-human-ai-interface-48-version-management-203.md)
+- [openclaw-l2-docs-08-human-ai-interface-49-notification-alert-system-204](./REPORTS/openclaw-l2-docs-08-human-ai-interface-49-notification-alert-system-204.md)
+- [openclaw-l2-docs-08-human-ai-interface-50-mobile-support-205](./REPORTS/openclaw-l2-docs-08-human-ai-interface-50-mobile-support-205.md)
+- [openclaw-l2-docs-08-human-ai-interface-51-data-import-tools-206](./REPORTS/openclaw-l2-docs-08-human-ai-interface-51-data-import-tools-206.md)
+- [openclaw-l2-docs-08-human-ai-interface-52-workflow-management-207](./REPORTS/openclaw-l2-docs-08-human-ai-interface-52-workflow-management-207.md)
+- [openclaw-l2-docs-08-human-ai-interface-53-knowledge-base-system-208](./REPORTS/openclaw-l2-docs-08-human-ai-interface-53-knowledge-base-system-208.md)
+- [openclaw-l2-docs-08-human-ai-interface-54-ai-assistant-integration-209](./REPORTS/openclaw-l2-docs-08-human-ai-interface-54-ai-assistant-integration-209.md)
+- [openclaw-l2-docs-08-human-ai-interface-55-performance-analysis-tools-210](./REPORTS/openclaw-l2-docs-08-human-ai-interface-55-performance-analysis-tools-210.md)
+- [openclaw-l2-docs-08-human-ai-interface-56-security-audit-211](./REPORTS/openclaw-l2-docs-08-human-ai-interface-56-security-audit-211.md)
+- [openclaw-l2-docs-08-human-ai-interface-57-sandbox-environment-212](./REPORTS/openclaw-l2-docs-08-human-ai-interface-57-sandbox-environment-212.md)
+- [openclaw-l2-docs-08-human-ai-interface-58-api-documentation-generation-213](./REPORTS/openclaw-l2-docs-08-human-ai-interface-58-api-documentation-generation-213.md)
+- [openclaw-l2-docs-08-human-ai-interface-59-performance-benchmark-testing-214](./REPORTS/openclaw-l2-docs-08-human-ai-interface-59-performance-benchmark-testing-214.md)
+- [openclaw-l2-docs-08-human-ai-interface-60-collaboration-tools-215](./REPORTS/openclaw-l2-docs-08-human-ai-interface-60-collaboration-tools-215.md)
+- [openclaw-l2-docs-08-human-ai-interface-61-order-management-system-216](./REPORTS/openclaw-l2-docs-08-human-ai-interface-61-order-management-system-216.md)
+- [openclaw-l2-docs-08-human-ai-interface-62-execution-management-system-217](./REPORTS/openclaw-l2-docs-08-human-ai-interface-62-execution-management-system-217.md)
+- [openclaw-l2-docs-08-human-ai-interface-63-algorithmic-trading-console-218](./REPORTS/openclaw-l2-docs-08-human-ai-interface-63-algorithmic-trading-console-218.md)
+- [openclaw-l2-docs-08-human-ai-interface-64-realtime-risk-monitoring-219](./REPORTS/openclaw-l2-docs-08-human-ai-interface-64-realtime-risk-monitoring-219.md)
+- [openclaw-l2-docs-08-human-ai-interface-65-risk-reporting-system-220](./REPORTS/openclaw-l2-docs-08-human-ai-interface-65-risk-reporting-system-220.md)
+- [openclaw-l2-docs-08-human-ai-interface-66-data-management-platform-221](./REPORTS/openclaw-l2-docs-08-human-ai-interface-66-data-management-platform-221.md)
+- [openclaw-l2-docs-08-human-ai-interface-67-data-quality-monitoring-222](./REPORTS/openclaw-l2-docs-08-human-ai-interface-67-data-quality-monitoring-222.md)
+- [openclaw-l2-docs-08-human-ai-interface-68-deployment-management-platform-223](./REPORTS/openclaw-l2-docs-08-human-ai-interface-68-deployment-management-platform-223.md)
+- [openclaw-l2-docs-08-human-ai-interface-69-capacity-planning-tool-224](./REPORTS/openclaw-l2-docs-08-human-ai-interface-69-capacity-planning-tool-224.md)
+- [openclaw-l2-docs-08-human-ai-interface-70-cost-management-tool-225](./REPORTS/openclaw-l2-docs-08-human-ai-interface-70-cost-management-tool-225.md)
+- [openclaw-l2-docs-08-human-ai-interface-71-audit-log-system-226](./REPORTS/openclaw-l2-docs-08-human-ai-interface-71-audit-log-system-226.md)
+- [openclaw-l2-docs-08-human-ai-interface-72-compliance-reporting-system-227](./REPORTS/openclaw-l2-docs-08-human-ai-interface-72-compliance-reporting-system-227.md)
+- [openclaw-l2-docs-08-human-ai-interface-73-clearing-settlement-management-228](./REPORTS/openclaw-l2-docs-08-human-ai-interface-73-clearing-settlement-management-228.md)
+- [openclaw-l2-docs-08-human-ai-interface-74-margin-management-229](./REPORTS/openclaw-l2-docs-08-human-ai-interface-74-margin-management-229.md)
+- [openclaw-l2-docs-08-human-ai-interface-75-fund-management-230](./REPORTS/openclaw-l2-docs-08-human-ai-interface-75-fund-management-230.md)
+- [openclaw-l2-docs-08-human-ai-interface-76-counterparty-risk-management-231](./REPORTS/openclaw-l2-docs-08-human-ai-interface-76-counterparty-risk-management-231.md)
+- [openclaw-l2-docs-08-human-ai-interface-77-model-risk-management-232](./REPORTS/openclaw-l2-docs-08-human-ai-interface-77-model-risk-management-232.md)
+- [openclaw-l2-docs-08-human-ai-interface-78-multi-account-management-233](./REPORTS/openclaw-l2-docs-08-human-ai-interface-78-multi-account-management-233.md)
+- [openclaw-l2-docs-08-human-ai-interface-79-transaction-cost-analysis-234](./REPORTS/openclaw-l2-docs-08-human-ai-interface-79-transaction-cost-analysis-234.md)
+- [openclaw-l2-docs-08-human-ai-interface-80-portfolio-management-235](./REPORTS/openclaw-l2-docs-08-human-ai-interface-80-portfolio-management-235.md)
+- [openclaw-l2-docs-08-human-ai-interface-81-strategy-lifecycle-management-236](./REPORTS/openclaw-l2-docs-08-human-ai-interface-81-strategy-lifecycle-management-236.md)
+- [openclaw-l2-docs-08-human-ai-interface-82-market-data-management-237](./REPORTS/openclaw-l2-docs-08-human-ai-interface-82-market-data-management-237.md)
+- [openclaw-l2-docs-08-human-ai-interface-83-performance-attribution-238](./REPORTS/openclaw-l2-docs-08-human-ai-interface-83-performance-attribution-238.md)
+- [openclaw-l2-docs-09-archive-duplicates-245](./REPORTS/openclaw-l2-docs-09-archive-duplicates-245.md)
+- [openclaw-l2-docs-09-archive-technical-specifications-246](./REPORTS/openclaw-l2-docs-09-archive-technical-specifications-246.md)
+- [openclaw-l2-docs-09-audit-247](./REPORTS/openclaw-l2-docs-09-audit-247.md)
+- [openclaw-l2-docs-09-audit-automation-248](./REPORTS/openclaw-l2-docs-09-audit-automation-248.md)
+- [openclaw-l2-docs-09-audit-best-practices-249](./REPORTS/openclaw-l2-docs-09-audit-best-practices-249.md)
+- [openclaw-l2-docs-09-audit-case-studies-250](./REPORTS/openclaw-l2-docs-09-audit-case-studies-250.md)
+- [openclaw-l2-docs-09-audit-config-251](./REPORTS/openclaw-l2-docs-09-audit-config-251.md)
+- [openclaw-l2-docs-09-audit-configuration-252](./REPORTS/openclaw-l2-docs-09-audit-configuration-252.md)
+- [openclaw-l2-docs-09-audit-decision-records-253](./REPORTS/openclaw-l2-docs-09-audit-decision-records-253.md)
+- [openclaw-l2-docs-09-audit-guides-254](./REPORTS/openclaw-l2-docs-09-audit-guides-254.md)
+- [openclaw-l2-docs-09-audit-procedures-255](./REPORTS/openclaw-l2-docs-09-audit-procedures-255.md)
+- [openclaw-l2-docs-09-audit-reports-256](./REPORTS/openclaw-l2-docs-09-audit-reports-256.md)
+- [openclaw-l2-docs-09-audit-research-memos-257](./REPORTS/openclaw-l2-docs-09-audit-research-memos-257.md)
+- [openclaw-l2-docs-09-audit-solutions-258](./REPORTS/openclaw-l2-docs-09-audit-solutions-258.md)
+- [openclaw-l2-docs-09-audit-standards-259](./REPORTS/openclaw-l2-docs-09-audit-standards-259.md)
+- [openclaw-l2-docs-09-audit-state-260](./REPORTS/openclaw-l2-docs-09-audit-state-260.md)
+- [openclaw-l2-docs-09-audit-state-overnight-runs-20260408-021344-261](./REPORTS/openclaw-l2-docs-09-audit-state-overnight-runs-20260408-021344-261.md)
+- [openclaw-l2-docs-09-audit-state-overnight-runs-20260408-022356-262](./REPORTS/openclaw-l2-docs-09-audit-state-overnight-runs-20260408-022356-262.md)
+- [openclaw-l2-docs-09-audit-templates-263](./REPORTS/openclaw-l2-docs-09-audit-templates-263.md)
+- [openclaw-l2-docs-09-audit-tools-264](./REPORTS/openclaw-l2-docs-09-audit-tools-264.md)
+- [openclaw-l2-docs-09-audit-training-265](./REPORTS/openclaw-l2-docs-09-audit-training-265.md)
+- [openclaw-l2-docs-09-audit-workflows-266](./REPORTS/openclaw-l2-docs-09-audit-workflows-266.md)
+- [openclaw-l2-docs-09-research-innovation-267](./REPORTS/openclaw-l2-docs-09-research-innovation-267.md)
+- [openclaw-l2-docs-09-research-innovation-archive-268](./REPORTS/openclaw-l2-docs-09-research-innovation-archive-268.md)
+- [openclaw-l2-docs-09-research-innovation-maintenance-records-269](./REPORTS/openclaw-l2-docs-09-research-innovation-maintenance-records-269.md)
+- [openclaw-l2-docs-10-ai-workflow-270](./REPORTS/openclaw-l2-docs-10-ai-workflow-270.md)
+- [openclaw-l2-docs-10-governance-compliance-271](./REPORTS/openclaw-l2-docs-10-governance-compliance-271.md)
+- [openclaw-l2-docs-10-governance-compliance-ci-cd-integration-272](./REPORTS/openclaw-l2-docs-10-governance-compliance-ci-cd-integration-272.md)
+- [openclaw-l2-docs-10-governance-compliance-classification-273](./REPORTS/openclaw-l2-docs-10-governance-compliance-classification-273.md)
+- [openclaw-l2-docs-10-governance-compliance-governance-processes-274](./REPORTS/openclaw-l2-docs-10-governance-compliance-governance-processes-274.md)
+- [openclaw-l2-docs-10-governance-compliance-knowledge-base-275](./REPORTS/openclaw-l2-docs-10-governance-compliance-knowledge-base-275.md)
+- [openclaw-l2-docs-10-governance-compliance-training-system-276](./REPORTS/openclaw-l2-docs-10-governance-compliance-training-system-276.md)
+- [openclaw-l2-docs-11-strategic-decision-01-asset-allocation-278](./REPORTS/openclaw-l2-docs-11-strategic-decision-01-asset-allocation-278.md)
+- [openclaw-l2-docs-11-strategic-decision-02-risk-budgeting-279](./REPORTS/openclaw-l2-docs-11-strategic-decision-02-risk-budgeting-279.md)
+- [openclaw-l2-docs-11-strategic-decision-03-strategy-selection-280](./REPORTS/openclaw-l2-docs-11-strategic-decision-03-strategy-selection-280.md)
+- [openclaw-l2-docs-11-strategic-decision-04-strategic-adjustment-281](./REPORTS/openclaw-l2-docs-11-strategic-decision-04-strategic-adjustment-281.md)
+- [openclaw-l2-docs-11-strategic-decision-277](./REPORTS/openclaw-l2-docs-11-strategic-decision-277.md)
+- [openclaw-l2-docs-11-strategic-decision-archive-282](./REPORTS/openclaw-l2-docs-11-strategic-decision-archive-282.md)
+- [openclaw-l2-docs-module-designs-layer-0-283](./REPORTS/openclaw-l2-docs-module-designs-layer-0-283.md)
+- [openclaw-l2-notebooks-00-templates-285](./REPORTS/openclaw-l2-notebooks-00-templates-285.md)
+- [openclaw-l2-notebooks-01-exploratory-analysis-286](./REPORTS/openclaw-l2-notebooks-01-exploratory-analysis-286.md)
+- [openclaw-l2-notebooks-02-factor-development-287](./REPORTS/openclaw-l2-notebooks-02-factor-development-287.md)
+- [openclaw-l2-notebooks-03-strategy-research-288](./REPORTS/openclaw-l2-notebooks-03-strategy-research-288.md)
+- [openclaw-l2-notebooks-04-model-experiments-289](./REPORTS/openclaw-l2-notebooks-04-model-experiments-289.md)
+- [openclaw-l2-notebooks-05-reports-290](./REPORTS/openclaw-l2-notebooks-05-reports-290.md)
+- [openclaw-l2-notebooks-284](./REPORTS/openclaw-l2-notebooks-284.md)
+- [openclaw-l2-review-materials-package-291](./REPORTS/openclaw-l2-review-materials-package-291.md)
+- [openclaw-l2-review-materials-package-a-stock-rules-292](./REPORTS/openclaw-l2-review-materials-package-a-stock-rules-292.md)
+- [openclaw-l2-review-materials-package-data-consistency-293](./REPORTS/openclaw-l2-review-materials-package-data-consistency-293.md)
+- [openclaw-l2-review-materials-package-trading-costs-294](./REPORTS/openclaw-l2-review-materials-package-trading-costs-294.md)
+- [openclaw-l2-review-materials-package-web-interface-295](./REPORTS/openclaw-l2-review-materials-package-web-interface-295.md)
+- [openclaw-l2-root-1](./REPORTS/openclaw-l2-root-1.md)
+- [openclaw-l2-scripts-296](./REPORTS/openclaw-l2-scripts-296.md)
+- [openclaw-l3-conflicts](./REPORTS/openclaw-l3-conflicts.md)
+- [openclaw-phase0](./REPORTS/openclaw-phase0.md)
+- [openclaw-remediation-backlog](./REPORTS/openclaw-remediation-backlog.md)
+- [openclaw-remediation-execution-playbook-20260408](./openclaw-remediation-execution-playbook-20260408.md)
+- [openclaw-remediation-plan-draft-20260408](./openclaw-remediation-plan-draft-20260408.md)
+- [opensource-integration-guide-20260407](./REPORTS/opensource-integration-guide-20260407.md)
+- [optimization-summary](../09_ARCHIVE/factor_library/optimization-summary.md)
+- [optimized-quick-audit-report-20260407-175046](./REPORTS/optimized-quick-audit-report-20260407-175046.md)
+- [orphan_governance_program_20260413](./STATE/orphan_governance_program_20260413.md)
+- [overfitting-test](../09_ARCHIVE/blueprints/overfitting-test.md)
+- [p0-fix-summary-20260407](./p0-fix-summary-20260407.md)
+- [p0-p1-p2-fix-summary-report-20260407](./REPORTS/p0-p1-p2-fix-summary-report-20260407.md)
+- [p0-p1-p2-resolution-summary-20260406](./p0-p1-p2-resolution-summary-20260406.md)
+- [p1-p2-fix-final-report](./STATE/p1-p2-fix-final-report.md)
+- [p1-p2-fix-report](./p1-p2-fix-report.md)
+- [p1c-deferred-20260408](./STATE/p1c-deferred-20260408.md)
+- [p2-cross-reference-completion-20260407](./p2-cross-reference-completion-20260407.md)
+- [p2-cross-reference-progress-20260406](./p2-cross-reference-progress-20260406.md)
+- [p2-issues-fix-report](./p2-issues-fix-report.md)
+- [path-optimization-report-20260407-153514](./STATE/path-optimization-report-20260407-153514.md)
+- [path-reference-human-review-20260407-151929](./STATE/path-reference-human-review-20260407-151929.md)
+- [path-reference-standard](./path-reference-standard.md)
+- [periodic-audit-mechanism](./STANDARDS/periodic-audit-mechanism.md)
+- [periodic-audit-process](./periodic-audit-process.md)
+- [periodic-audit-workflow](./WORKFLOWS/periodic-audit-workflow.md)
+- [periodic-check-guide](./STATE/periodic-check-guide.md)
+- [periodic-check-mechanism-report-20260407-161212](./periodic-check-mechanism-report-20260407-161212.md)
+- [periodic-check-plan](./STANDARDS/periodic-check-plan.md)
+- [periodic-check-summary-20260407-180215](./STATE/periodic-check-summary-20260407-180215.md)
+- [periodic-review-plan](./STATE/periodic-review-plan.md)
+- [periodic-review-plan-v2](./STATE/periodic-review-plan-v2.md)
+- [personal-audit-workflow](./personal-audit-workflow.md)
+- [personal-development-blueprint](./personal-development-blueprint.md)
+- [phase3-comprehensive-summary-20260407](./phase3-comprehensive-summary-20260407.md)
+- [phase3-core-docs-completion-20260407](./phase3-core-docs-completion-20260407.md)
+- [phase3-cross-reference-execution-plan-20260407](./phase3-cross-reference-execution-plan-20260407.md)
+- [phase3-current-progress-20260407](./phase3-current-progress-20260407.md)
+- [phase3-daily-summary-20260407](./REPORTS/phase3-daily-summary-20260407.md)
+- [phase3-p2-batch1-completion-20260407](./REPORTS/phase3-p2-batch1-completion-20260407.md)
+- [phase3-p2-batch2-completion-20260407](./phase3-p2-batch2-completion-20260407.md)
+- [phase3-p2-progress-20260407](./phase3-p2-progress-20260407.md)
+- [plan-files-creation-report-20260402](./plan-files-creation-report-20260402.md)
+- [portfolio-optimization-deep-audit-20260405-v6](./REPORTS/portfolio-optimization-deep-audit-20260405-v6.md)
+- [portfolio-optimization-deep-audit-20260405-v7](./REPORTS/portfolio-optimization-deep-audit-20260405-v7.md)
+- [precommit-failure-log-20260408](./STATE/precommit-failure-log-20260408.md)
+- [priority-issue-fix-summary-20260407](./priority-issue-fix-summary-20260407.md)
+- [professional-blueprint-governance-final-report](./STATE/professional-blueprint-governance-final-report.md)
+- [professional-comparison-analysis-20260402](./professional-comparison-analysis-20260402.md)
+- [professional-comparison-analysis-final-20260402](./professional-comparison-analysis-final-20260402.md)
+- [professional-document-governance-audit-guide](./professional-document-governance-audit-guide.md)
+- [professional-implementation-plan](./professional-implementation-plan.md)
+- [professional-standard-improvement-report-20260402](./professional-standard-improvement-report-20260402.md)
+- [qmt-interface](../09_ARCHIVE/blueprints/qmt-interface.md)
+- [quality-alert-report-20260407-184715](./STATE/quality-alert-report-20260407-184715.md)
+- [quality-metrics](../09_ARCHIVE/blueprints/quality-metrics.md)
+- [quality-metrics-report-20260407-163313](./STATE/quality-metrics-report-20260407-163313.md)
+- [quality-metrics-report-20260407-171020](./STATE/quality-metrics-report-20260407-171020.md)
+- [quality-metrics-report-20260407-173444](./STATE/quality-metrics-report-20260407-173444.md)
+- [quality-metrics-report-20260407-175301](./STATE/quality-metrics-report-20260407-175301.md)
+- [quality-metrics-report-20260407-180215](./STATE/quality-metrics-report-20260407-180215.md)
+- [quality-metrics-report-20260407-180240](./STATE/quality-metrics-report-20260407-180240.md)
+- [quality-metrics-report-20260407-182131](./STATE/quality-metrics-report-20260407-182131.md)
+- [quality-monitoring-blueprint](./quality-monitoring-blueprint.md)
+- [quality-standards-optimization-20260407](./STATE/quality-standards-optimization-20260407.md)
+- [quarterly-audit-report-template](./FORM_STANDARDS/quarterly-audit-report-template.md)
+- [quick-audit-report-20260407-173336](./REPORTS/quick-audit-report-20260407-173336.md)
+- [reference-fix-report-20260407-153331](./STATE/reference-fix-report-20260407-153331.md)
+- [reference-link-check-report-20260407-153959](./STATE/reference-link-check-report-20260407-153959.md)
+- [reference-link-check-report-20260407-155353](./STATE/reference-link-check-report-20260407-155353.md)
+- [reference-link-check-report-20260407-161401](./STATE/reference-link-check-report-20260407-161401.md)
+- [reference-link-check-report-20260407-165423](./STATE/reference-link-check-report-20260407-165423.md)
+- [reference-link-check-report-20260407-165625](./STATE/reference-link-check-report-20260407-165625.md)
+- [reference-link-check-report-20260407-165830](./STATE/reference-link-check-report-20260407-165830.md)
+- [reference-link-check-report-20260407-170244](./STATE/reference-link-check-report-20260407-170244.md)
+- [reference-link-update-report-20260407-152104](./STATE/reference-link-update-report-20260407-152104.md)
+- [reference_open_source_projects](./STATE/reference_open_source_projects.md)
+- [remaining-link-fix-report-20260407-165604](./STATE/remaining-link-fix-report-20260407-165604.md)
+- [remediation-execution-closure-20260408](./REPORTS/remediation-execution-closure-20260408.md)
+- [repo-directory-rollup-20260410](./STATE/repo-directory-rollup-20260410.md)
+- [repo-directory-rollup-20260411](./STATE/repo-directory-rollup-20260411.md)
+- [repo-directory-rollup-20260413](./STATE/repo-directory-rollup-20260413.md)
+- [repo-directory-rollup-20260414](./STATE/repo-directory-rollup-20260414.md)
+- [research-collaboration-platform-blueprint](./research-collaboration-platform-blueprint.md)
+- [research-management](../09_ARCHIVE/blueprints/research-management.md)
+- [research-memo-standard](./research-memo-standard.md)
+- [research-memo-template](./research-memo-template.md)
+- [responsibility-boundary-map](./responsibility-boundary-map.md)
+- [responsibility-description-standard](./STANDARDS/responsibility-description-standard.md)
+- [responsibility-description-standard-v2](./STANDARDS/responsibility-description-standard-v2.md)
+- [responsibility-overlap-analysis](./STATE/responsibility-overlap-analysis.md)
+- [responsibility-overlap-analysis-report-20260407](./responsibility-overlap-analysis-report-20260407.md)
+- [responsibility-supplement-report-20260407-170629](./STATE/responsibility-supplement-report-20260407-170629.md)
+- [responsibility-template-library](./responsibility-template-library.md)
+- [risk-event-template](./risk-event-template.md)
+- [risk-management-document-index](./risk-management-document-index.md)
+- [risk-management-framework](./risk-management-framework.md)
+- [round2-fix-summary-20260407](./round2-fix-summary-20260407.md)
+- [scheduled-audit-configuration](./scheduled-audit-configuration.md)
+- [scheduled-tasks-deployment-guide](./GUIDES/scheduled-tasks-deployment-guide.md)
+- [scheduler-api](../09_ARCHIVE/blueprints/scheduler-api.md)
+- [second-deep-audit-report-20260407](./second-deep-audit-report-20260407.md)
+- [security-blueprint](../05_IMPLEMENTATION/99_ARCHIVE/security-blueprint.md)
+- [sentiment-analysis-blueprint-gap-analysis](./REPORTS/sentiment-analysis-blueprint-gap-analysis.md)
+- [sentiment-analysis-comprehensive-audit-report-v3](./REPORTS/sentiment-analysis-comprehensive-audit-report-v3.md)
+- [sentiment-analysis-governance-optimization-report](./REPORTS/sentiment-analysis-governance-optimization-report.md)
+- [sentinel-autonomous-governance-run-20260408](./REPORTS/sentinel-autonomous-governance-run-20260408.md)
+- [sentinel-l1-after-p0a-20260408](./STATE/sentinel-l1-after-p0a-20260408.md)
+- [sentinel-l1-after-p0b-20260408](./STATE/sentinel-l1-after-p0b-20260408.md)
+- [sentinel-l1-after-p1a-20260408](./STATE/sentinel-l1-after-p1a-20260408.md)
+- [sentinel-l1-after-p1b-20260408](./STATE/sentinel-l1-after-p1b-20260408.md)
+- [sentinel-l1-p1c-audit-state-index-20260408](./STATE/sentinel-l1-p1c-audit-state-index-20260408.md)
+- [sentinel-l1-p1c-readme-20260408](./STATE/sentinel-l1-p1c-readme-20260408.md)
+- [sentinel-l1-post-remediation-20260408](./STATE/sentinel-l1-post-remediation-20260408.md)
+- [sentinel-l1-pre-construction-20260409](./STATE/sentinel-l1-pre-construction-20260409.md)
+- [sentinel-l1-scan-20260408](./STATE/sentinel-l1-scan-20260408.md)
+- [sentinel-l1-scan-20260408-022356](./STATE/overnight_runs/20260408_022356/sentinel-l1-scan-20260408-022356.md)
+- [sentinel-l1-scan-20260408-033240](./STATE/overnight_runs/20260408_033240/sentinel-l1-scan-20260408-033240.md)
+- [sentinel-l1-scan-20260408-20260408-021344](./STATE/overnight_runs/20260408_021344/sentinel-l1-scan-20260408-20260408-021344.md)
+- [sentinel-l1-scan-baseline-pre-remediation-20260408](./STATE/sentinel-l1-scan-baseline-pre-remediation-20260408.md)
+- [seven-dimensional-penetration-audit-report-20260412](./STATE/seven-dimensional-penetration-audit-report-20260412.md)
+- [short-long-term-execution-report-20260407-143841](./STATE/short-long-term-execution-report-20260407-143841.md)
+- [short-term-improvement-and-long-term-optimization-report-20260407](./REPORTS/short-term-improvement-and-long-term-optimization-report-20260407.md)
+- [short-term-improvement-completion-report-20260407-170900](./short-term-improvement-completion-report-20260407-170900.md)
+- [short-term-improvement-final-report-20260407-173400](./short-term-improvement-final-report-20260407-173400.md)
+- [short-term-improvement-plan-20260406](./REPORTS/short-term-improvement-plan-20260406.md)
+- [short-term-improvement-progress-20260406](./short-term-improvement-progress-20260406.md)
+- [short-term-improvement-report-20260407-161012](./STATE/short-term-improvement-report-20260407-161012.md)
+- [short-term-optimization-completion-report-20260403](./REPORTS/short-term-optimization-completion-report-20260403.md)
+- [sixth-comprehensive-audit-report](./sixth-comprehensive-audit-report.md)
+- [sparse-directory-analysis-20260407-030548](./STATE/sparse-directory-analysis-20260407-030548.md)
+- [sparse-directory-analysis-20260412-203547](./STATE/sparse-directory-analysis-20260412-203547.md)
+- [sparse-directory-fix-final-report](./sparse-directory-fix-final-report.md)
+- [sparse-directory-integration-guide-20260407-025756](./STATE/sparse-directory-integration-guide-20260407-025756.md)
+- [sparse-directory-strategy-report](./sparse-directory-strategy-report.md)
+- [stress-test-template](./stress-test-template.md)
+- [strict-orphan-files-report-20260408](./STATE/strict-orphan-files-report-20260408.md)
+- [strict-orphan-files-report-regen-20260408](./STATE/strict-orphan-files-report-regen-20260408.md)
+- [supercmd-connector](../09_ARCHIVE/blueprints/supercmd-connector.md)
+- [system-manifest-dead-link-analysis-20260407](./STATE/system-manifest-dead-link-analysis-20260407.md)
+- [system-manifest-update-guide](../09_RESEARCH_INNOVATION/_archive/system-manifest-update-guide.md)
+- [system-optimization-report-20260403](./system-optimization-report-20260403.md)
+- [tail-risk-factors](../09_ARCHIVE/factor_library/tail-risk-factors.md)
+- [technical-indicators](./technical-indicators.md)
+- [test_driven_governance_standard](./STANDARDS/test_driven_governance_standard.md)
+- [third-comprehensive-audit-report-20260407-210318](./STATE/third-comprehensive-audit-report-20260407-210318.md)
+- [third-comprehensive-audit-report-fixed-20260407-210703](./STATE/third-comprehensive-audit-report-fixed-20260407-210703.md)
+- [todo-cleanup-analysis-20260406](./REPORTS/todo-cleanup-analysis-20260406.md)
+- [todo-cleanup-inventory-20260406](./todo-cleanup-inventory-20260406.md)
+- [trae-blueprint-task-ledger-20260408](./STATE/trae-blueprint-task-ledger-20260408.md)
+- [trae-line-task-index-20260409](./trae-line-task-index-20260409.md)
+- [w2-secret-pattern-spotcheck-20260410](./STATE/w2-secret-pattern-spotcheck-20260410.md)
+- [weekly-audit-report-20260407-022518](./STATE/weekly-audit-report-20260407-022518.md)
+- [weekly-audit-report-template](./FORM_STANDARDS/weekly-audit-report-template.md)
+- [weekly-layer-check-report](./REPORTS/weekly-layer-check-report.md)
+- [weekly-longterm-optimization-report-20260407-142449](./STATE/weekly-longterm-optimization-report-20260407-142449.md)
+- [weekly-scan-report-001-20260403](./weekly-scan-report-001-20260403.md)
+- [windows-task-scheduler-config](./CONFIG/windows-task-scheduler-config.md)
+- [yaml_error_files_list_20260413](./STATE/yaml_error_files_list_20260413.md)
 
 
 ---
 
-
-
-
-
-## 🎯 目录职责
-
-
-
-
-
-本目录存放审计系统相关文档，包括审计标准、模板、最佳实践、案例研究、培训材料等?
-
-
----
-
-
-
-
-
-## 📚 核心文档
-
-
-
-
-
-### 系统概述
-
-
-
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| README | 审计系统概述 | ⭐⭐⭐⭐?|
-
-
-| 蓝图检查清单 | 蓝图检查清?| ⭐⭐⭐⭐ |
-
-
-| 蓝图验证报告 | 蓝图验证报告 | ⭐⭐⭐⭐ |
-
-
-
-
-
-### 审计标准
-
-
-
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| [标准总索引（STANDARDS/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 标准目录导航与全量入口 | ⭐⭐⭐⭐ |
-
-
-| 审计标准 | 审计标准 | ⭐⭐⭐⭐?|
-
-
-| 文档分类标准 | 文档分类标准 | ⭐⭐⭐⭐?|
-
-
-| 文档治理流程标准 | 文档治理流程标准 | ⭐⭐⭐⭐ |
-
-
-| 决策记录标准 | 决策记录标准 | ⭐⭐⭐⭐ |
-
-
-| 风险管理框架 | 风险管理框架 | ⭐⭐⭐⭐ |
-
-
-
-
-
-### 审计模板
-
-
-
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| [模板目录索引（TEMPLATES/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 模板区总索引与全量入口 | ⭐⭐⭐⭐ |
-
-
-| 专业文档治理审计指南 | 专业文档治理审计指南 | ⭐⭐⭐⭐?|
-
-
-| 文档治理审计检查清单 | 文档治理审计检查清?| ⭐⭐⭐⭐?|
-
-
-| AI文档治理审计提示词 | AI文档治理审计提示?| ⭐⭐⭐⭐ |
-
-
-| ADR模板 | 架构决策记录模板 | ⭐⭐⭐⭐ |
-
-
-| 决策记录模板 | 决策记录模板 | ⭐⭐⭐⭐ |
-
-
-
-
-
-### 最佳实现
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| [最佳实践目录索引（BEST_PRACTICES/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 最佳实践目录导航 | ⭐⭐⭐⭐ |
-
-
-| 文档治理最佳实践 | 文档治理最佳实?| ⭐⭐⭐⭐?|
-
-
-
-
-
-### 案例研究
-
-
-
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| [案例研究目录索引（CASE_STUDIES/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 案例研究目录导航 | ⭐⭐⭐⭐ |
-
-
-| 文档治理改进案例 | 文档治理改进案例 | ⭐⭐⭐⭐ |
-
-
-
-
-
-### 培训材料
-
-
-
-
-
-| 文档名称 | 说明 | 重要?|
-
-
-|---------|------|--------|
-
-
-| [培训目录索引（TRAINING/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md) | 培训目录导航 | ⭐⭐⭐⭐ |
-
-
-| 文档治理培训手册 | 文档治理培训手册 | ⭐⭐⭐⭐?|
-
-
-
-
-
----
-
-
-
-
-
-## 📌 文档治理 Playbook 与报告分流（执行中）
-
-
-
-
-
-| 文档 | 说明 |
-
-
-|------|------|
-
-
-| 全库孤儿与重复/重叠治理方案（Playbook） | 孤儿分桶、重复裁决、门禁与批次节奏（总册） |
-
-
-| 严格孤儿报告（当期） | 严格孤儿与 A/B/C 分桶 |
-
-
-| 严格孤儿纯路径清单（基线） | 每行一个路径，供批处理与对账 |
-
-
-| 施工门禁（蓝图终稿 / 三阶段） | §0～§3：先治理后编码；**真源**：项目办公室 CANON |
-
-
-| 蓝图阶段文档彻底清洁总案 | P0–P3 分阶段 + 三条工作流 + 退出标准（**真源**：项目办公室 CANON） |
-
-
-| Trae 自主执行指令（勿问 Owner） | 中文全文 + **§10 英文 normative block**（推荐 GLM 先贴英文块） |
-
-
-| 工作交接：蓝图阶段清洁接力（STATE） | **v2.0 整册**：§0 目录；**§15** Git 备份；**§16** 防幻觉；**§17** Trae×GLM-5.1 八小时方案；**§18** 重复与 Layer→蓝图导航；§11～§14 清洁/门禁/IA；终点 **第 2 阶段放行证据链** |
-
-
-| 审计门户 INDEX_AUDIT | 审计快速入口与既有「严格孤儿」分流 |
-
-
-
-
-
-### REPORTS 长列表入口
-
-
-
-
-
-| 入口 | 说明 |
-
-
-|------|------|
-
-
-| [REPORTS 门面（短说明）](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 首次进入报告区建议先读；链到分组索引与 `INDEX` |
-
-
-| REPORTS 分组索引（20260408） | 大量报告按分组可点 |
-
-
-| [REPORTS/INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) | 报告目录索引 |
-
-
-| REPORTS 索引健全性（零入链） | `scan_index_health.py --prefix docs/09_AUDIT/REPORTS` 机器报告 |
-
-
-| 治理工具总索引 | 办公室脚本与产出真源（含 `scan_index_health`） |
-
-
-
-
-
-### STATE 子域（机器产出 / 状态台账）
-
-
-
-
-
-> **`STATE/`** 与 **`REPORTS/`** 并列：本表专指 `docs/09_AUDIT/STATE`。**索引健全性**文件名按前缀分日期：`INDEX_HEALTH_20260412` = **REPORTS**；**STATE** 前缀以 **最新 `INDEX_HEALTH_*` 日期**为准（当前 **20260416**；历史 **`20260413`** 仍可对照；勿与 REPORTS 行混读）。
-
-
-
-
-
-| 入口 | 说明 |
-
-
-|------|------|
-
-
-| [STATE/INDEX](12_MODULE_DESIGNS/layer_0/INDEX.md) | 本级导航、机器产出表、rollup/接力入口 |
-
-
-| STATE 分组索引（严格孤儿挂载） | 分组承接大量 STATE 文档入口 |
-
-
-| STATE 索引健全性（零入链 · 最新 20260416） | `scan_index_health.py --prefix docs/09_AUDIT/STATE --date 20260416`（**zero_inbound=0**）；历史 `20260413` |
-
-
-| [夜间批跑索引](12_MODULE_DESIGNS/layer_0/INDEX.md) | `overnight_runs` 快照导航 |
-
-
-
-
-
-### 实施侧运营与审计稿（`05_IMPLEMENTATION/04_OPERATIONS`）
-
-
-
-
-
-> 与 `09_AUDIT` 并列：**本域**偏标准/模板/Playbook；**04_OPERATIONS** 存放实施侧运营说明与 `audit_state` 大批量审计/整改稿。整仓按目录尽治见 全仓库文件治理任务清单 §7。
-
-
-
-
-
-| 入口 | 说明 |
-
-
-|------|------|
-
-
-| [04_OPERATIONS 门面](../05_IMPLEMENTATION/04_OPERATIONS/README.md) | 目录短说明与推荐阅读顺序 |
-
-
-| [04_OPERATIONS/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/INDEX.md) | 本级索引与维护说明 |
-
-
-| [audit_state/INDEX](../05_IMPLEMENTATION/04_OPERATIONS/audit_state/INDEX.md) | 审计/整改类 Markdown 长列表 |
-
-
-| INDEX_HEALTH（零入链 · 04_OPERATIONS · 最新 20260415） | 前缀索引健全性机器报告；历史 `20260411` |
-
-
-
-
-
-### Playbook 执行批次：根目录补充入口
-
-
-
-
-
-> 从本页主索引直达（与 `INDEX_AUDIT` 并列）；仅增加链接，不改正文。
-
-
-
-
-
-- 架构分析报告
-
-
-- 大规模文件体系深度审计框架
-
-
-- 周期性审计流程
-
-
-- 持续监控配置
-
-
-- [AUTOMATION 目录索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-
-
-- [AUTOMATION README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)
-
-
-- 定时审计配置
-
-
-- [指南目录索引（GUIDES/INDEX）](12_MODULE_DESIGNS/layer_0/INDEX.md)
-
-
-- [CONFIG 目录索引](12_MODULE_DESIGNS/layer_0/INDEX.md)
-
-
-- 代码变更文档化指南
-
-
-- 定时任务部署指南
-
-
-
-
-
----
-
-
-
-
-
-## 🗂?子目?
-
-
-| 目录名称 | 说明 | 文档数量 |
-
-
-|---------|------|---------|
-
-
-| [AUTOMATION/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 自动化与持续监控配置入口 | 3 |
-
-
-| [CONFIG/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 审计工具与文档系统配置计划入口 | 6 |
-
-
-| BEST_PRACTICES/ | 最佳实现| 1 |
-
-
-| [BEST_PRACTICES README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 最佳实践说明 | 1 |
-
-
-| CASE_STUDIES/ | 案例研究 | 1 |
-
-
-| [CASE_STUDIES README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 案例研究说明 | 1 |
-
-
-| [CONFIGURATION/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 配置 | 1 |
-
-
-| [CONFIGURATION README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 配置说明 | 1 |
-
-
-| [DECISION_RECORDS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 决策记录 | 1 |
-
-
-| [DECISION_RECORDS README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 决策记录说明 | 1 |
-
-
-| [GUIDES/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 指南与工具使用说明入口 | 4 |
-
-
-| PROCEDURES/ | 流程 | 2 |
-
-
-| REPORTS/ | 报告 | 12 |
-
-
-| [RESEARCH_MEMOS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 研究备忘?| 1 |
-
-
-| [RESEARCH_MEMOS README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 研究备忘说明 | 1 |
-
-
-| [SOLUTIONS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 解决方案 | 1 |
-
-
-| [SOLUTIONS README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 解决方案说明 | 1 |
-
-
-| 文档治理解决方案 | 文档治理解决方案 | 1 |
-
-
-| STANDARDS/ | 标准 | 10 |
-
-
-| TEMPLATES/ | 模板 | 11 |
-
-
-| [TOOLS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 工具 | 1 |
-
-
-| [TOOLS README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 工具说明 | 1 |
-
-
-| TRAINING/ | 培训 | 1 |
-
-
-| [TRAINING README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) | 培训说明 | 1 |
-
-
-| [WORKFLOWS/](12_MODULE_DESIGNS/layer_0/INDEX.md) | 工作流 | 1 |
-
-
-
-
-
----
-
-
-
-
-
-## 📖 快速导?
-
-
-### 新手入门
-
-
-
-
-
-1. 阅读 README.md - 审计系统概述
-
-
-2. 阅读 TEMPLATES/PROFESSIONAL_DOCUMENT_GOVERNANCE_AUDIT_GUIDE.md - 审计指南
-
-
-3. 阅读 TRAINING/DOCUMENT_GOVERNANCE_TRAINING_MANUAL.md - 培训手册
-
-
-
-
-
-### 审计人员
-
-
-
-
-
-1. 阅读 STANDARDS/AUDIT_STANDARDS.md - 审计标准
-
-
-2. 阅读 TEMPLATES/DOCUMENT_GOVERNANCE_AUDIT_CHECKLIST.md - 审计检查清?3. 阅读 BEST_PRACTICES/DOCUMENT_GOVERNANCE_BEST_PRACTICES.md - 最佳实?
-
-
----
-
-
-
-
-
-## 🔗 相关链接
-
-
-
-
-
-- [系统主索引](../INDEX.md)
-
-
-- [框架设计索引](../01_FRAMEWORK/INDEX.md)
-
-
-- [实施层索引](../05_IMPLEMENTATION/INDEX.md)
-
-
-
-
-
-- 风险管理文档索引 - 系统文档
-
-
-
-
-
-- 文档治理章节维护指南 - 实施指南文档
-
-
-
-
-
-- 专业机构级最优实施方? - 实施指南文档
-
-
+**生成信息**
+- 生成时间: 2026-04-13T13:25:36.130583
+- 扫描范围: D:\ZephyrAlpha\docs
+- 自动化工具: Auto-Index Compiler v1.0.0

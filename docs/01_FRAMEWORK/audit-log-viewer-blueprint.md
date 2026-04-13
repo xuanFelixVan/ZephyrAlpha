@@ -1,25 +1,18 @@
 ---
-module_id: 01_FRAMEWORK_AUDIT_LOG_VIEWER_BLUEPRINT
+module_id: 01_FRAMEWORK_AUDIT_LOG_VIEWER_BLUEPRINT_4692
 layer: layer_01
 version: 1.0.0
 status: Active
-responsibility:
-  - Audit Log Viewer Blueprint相关业务
-created_date: 2026-04-06
-last_updated: 2026-04-07
+responsibility: ''
+created_date: '2026-04-06'
+last_updated: '2026-04-07'
 owner: 首席蓝图架构师
 standard_type: 专业量化机构蓝图
 applicable_scope: Layer 8 - 审计日志查看器
 compliance_level: 顶级专业标准
-reference_models:
-  - Bridgewater Audit System
-  - Renaissance Decision Audit
-  - Two Sigma Compliance Audit
-related_documents:
-  - HUMAN_AI_INTERACTION_BLUEPRINT.md
-  - GRAFANA_MONITORING_BLUEPRINT.md
-  - AI_DECISION_AUDIT_BLUEPRINT.md
-responsibility_boundary: '本文档负责审计日志查看器设计，包括：
+reference_models: ''
+related_documents: ''
+responsibility_boundary: '''本文档负责审计日志查看器设计，包括：'
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
 implementation_status: 蓝图设计完成
 ---
@@ -66,7 +59,9 @@ implementation_status: 蓝图设计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -190,7 +185,9 @@ implementation_status: 蓝图设计完成
 
 
 
----
+```
+```---
+```
 
 
 
@@ -626,7 +623,9 @@ def render_log_analysis():
 
 
 
----
+```
+```---
+```
 
 
 
@@ -810,7 +809,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -870,7 +871,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -890,7 +893,9 @@ with tab3:
 
 
 
----
+```
+```---
+```
 
 
 

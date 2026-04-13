@@ -475,7 +475,9 @@ class ComparisonResult:
 ### 6.1 System_Manifest.md索引
 
 ```yaml
+```
 - module_id: PORTFOLIO_COMPARISON_TOOL_001
+```
   module_name: 组合比较工具
   layer: Layer 6 (组合优化层)
   status: Active

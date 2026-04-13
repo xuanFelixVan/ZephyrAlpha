@@ -1,5 +1,5 @@
 ---
-module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_BAOSTOCK_20260402
+module_id: 06_ARCHIVE_AUDIT_REPORTS_DOCUMENT_ANALYSIS_L0_BAOSTOCK_20260402_5984
 layer: layer_06
 version: 1.0.0
 status: Active
@@ -35,7 +35,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +90,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +134,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -198,7 +204,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -240,7 +248,9 @@ implementation_status: "进行?
 
 3. **业务重要?*: 辅助数据源和验证工具，中等重要?4. **技术完整?*: 完整的接口设计、实现方?5. **可复用?*: 数据验证工具，中等复用价?
 
----
+```
+```---
+```
 
 
 
@@ -286,7 +296,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +312,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 
@@ -318,7 +332,9 @@ implementation_status: "进行?
 
 
 
----
+```
+```---
+```
 
 
 

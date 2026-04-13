@@ -13,7 +13,7 @@ generated_by: scripts/governance/scan_basename_collisions.py
 
 ## 说明
 
-- 与 **C1（内容 hash 相同）** 不同：basename 相同**不**表示正文相同，**禁止自动合并**；处置见 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§3.3**。
+- 与 **C1（内容 hash 相同）** 不同：basename 相同**不**表示正文相同，**禁止自动合并**；处置见 [全仓库文件治理任务清单](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§3.3**。
 - 下列 **`INDEX.md` / `README.md` 等**在机构式文档树中**常**多份并存；默认单独统计，避免与「意外同名」混淆。
 
 ## 摘要

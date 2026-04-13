@@ -1,5 +1,5 @@
 ---
-module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407
+module_id: 05_IMPLEMENTATION_04_OPERATIONS_AUDIT_STATE_CODE_CONSISTENCY_VERIFICATION_REPORT_20260407_7854
 layer: layer_05
 version: 1.0.0
 status: Active
@@ -45,7 +45,9 @@ compliance_level: 顶级专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -165,7 +167,9 @@ src/
 
 
 
----
+```
+```---
+```
 
 
 
@@ -237,7 +241,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -285,7 +291,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -359,7 +367,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -405,7 +415,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -455,7 +467,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 
@@ -477,7 +491,9 @@ pip install hmmlearn>=0.3.0
 
 
 
----
+```
+```---
+```
 
 
 

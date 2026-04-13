@@ -1,5 +1,5 @@
 ---
-module_id: ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001
+module_id: ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION_001_7558
 version: 1.0.1
 status: Active
 created_date: 2026-04-03
@@ -21,7 +21,9 @@ responsibility: "处理ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION相关业�
 **架构定位**: Layer 2.5 (市场参与者模拟层)  
 **参考标准**: 华西策略2025Q1数据、TradingAgents-CN架构
 
----
+```
+```---
+```
 
 ## 📊 一、智能体分类总览
 
@@ -38,7 +40,9 @@ responsibility: "处理ASHARE_MARKET_PARTICIPANT_AGENT_CLASSIFICATION相关业�
 | AGENT.QUANT_FUND.001 | 量化私募智能体 | ~1.50% | 高频交易 | 分钟/小时 | 🔥🔥🔥🔥 |
 
 **市场覆盖率**: 95.01% 流通市值
----
+```
+```---
+```
 
 ### 1.2 智能体架构图
 
@@ -56,7 +60,9 @@ Layer 2.5 市场参与者模拟层
         └── 信息传播 (Information Propagation)
 ```
 
----
+```
+```---
+```
 
 ## 📋 二、核心智能体详细设计
 
@@ -101,7 +107,9 @@ Layer 2.5 市场参与者模拟层
   - CPU:  (规则引擎为主)
   - 内存: <500MB
   - GPU: 不需 
----
+```
+```---
+```
 
 ### 2.2 主力智能体（(Institutional Agent)
 
@@ -145,7 +153,9 @@ Layer 2.5 市场参与者模拟层
   - 内存: 2-4GB
   - GPU: 可?(RL训练加?
 
----
+```
+```---
+```
 
 ### 2.3 散户智能 (Retail Agent)
 
@@ -188,7 +198,9 @@ Layer 2.5 市场参与者模拟层
   - CPU:  (规则引擎为主)
   - 内存: <500MB
   - GPU: 不需 
----
+```
+```---
+```
 
 ### 2.4 外资智能 (Foreign Investor Agent)  新增
 
@@ -241,7 +253,9 @@ Layer 2.5 市场参与者模拟层
 
 详见：外资智能体完整实现（正文内锚点或仓库内相关设计稿；若锚点缺失请用全文搜索 `AGENT.FOREIGN`）。
 
----
+```
+```---
+```
 
 ## 📋 三、扩展智能体详细设计
 
@@ -290,7 +304,9 @@ Layer 2.5 市场参与者模拟层
 
 详见: [保险资金智能体完整实现代码](#任务3设计保险资金智能体完整实 
 
----
+```
+```---
+```
 
 ### 3.2 产业资本智能 (Industrial Capital Agent)
 
@@ -330,7 +346,9 @@ Layer 2.5 市场参与者模拟层
 - **计算需求**:
   - CPU:    - 内存: <500MB
   - GPU: 不需 
----
+```
+```---
+```
 
 ### 3.3 社保/养老金智能 (Pension Fund Agent)
 
@@ -357,7 +375,9 @@ Layer 2.5 市场参与者模拟层
 - **长期价值投资**: 持仓周期极长
 - **稳健收益导向**: 追求长期稳定收益
 - **政策导向**: 投资方向受政策影 
----
+```
+```---
+```
 
 ### 3.4 量化私募智能 (Quant Fund Agent)
 
@@ -383,7 +403,9 @@ Layer 2.5 市场参与者模拟层
 - **高频交易**: 提供市场流动 - **统计套利**: 捕捉价格差异
 - **算法驱动**: 完全自动化交 - **短期波动放大**: 可能放大短期波动
 
----
+```
+```---
+```
 
 ## 🔧 四、智能体协作机制
 
@@ -520,7 +542,9 @@ class MultiAgentVotingSystem:
         return voting_power
 ```
 
----
+```
+```---
+```
 
 ## 📊 五、数据需求汇 
 ### 5.1 核心数据源：同花顺iFind
@@ -779,7 +803,7 @@ class MarketParticipantDataFetcher:
 | **Yahoo Finance** | 免费 | ¥0 | 全球市场数据 |
 | **总计** | - | ¥0 | 无额外成 |
 
----
+```---
 
 ## 🚀 六、实施路线图
 
@@ -792,7 +816,7 @@ class MarketParticipantDataFetcher:
 
 **工作量**: 40小时 (AI辅助 
 
----
+```---
 
 ### Phase 2: 扩展智能体实 (Month 3-4)
 
@@ -802,7 +826,7 @@ class MarketParticipantDataFetcher:
 -  产业资本智能 -  社保/养老金智能 -  量化私募智能 
 **工作量**: 40小时 (AI辅助 
 
----
+```---
 
 ### Phase 3: 协作机制实现 (Month 5-6)
 
@@ -814,7 +838,7 @@ class MarketParticipantDataFetcher:
 
 **工作量**: 60小时 (AI辅助 
 
----
+```---
 
 ## 📚 七、参考资 
 ### 7.1 学术论文
@@ -832,7 +856,7 @@ class MarketParticipantDataFetcher:
 - [华西策略：最新A股投资者结构全景图深度剖析(2025Q1)](https://finance.sina.com.cn/roll/2025-05-21/doc-inexhnhp3105035.shtml)
 - [雪球：A股参与者构成分析](https://xueqiu.com/1451114375/377463081)
 
----
+```---
 
 ##  八、验收标 
 ### 8.1 功能验收
@@ -850,7 +874,7 @@ class MarketParticipantDataFetcher:
 -  架构一致?100%
 -  风险识别覆盖 > 90%
 
----
+```---
 
 **文档结束**
 

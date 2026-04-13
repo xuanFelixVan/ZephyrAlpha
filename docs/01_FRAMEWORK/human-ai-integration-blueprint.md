@@ -1,53 +1,21 @@
 ---
-
-module_id: HUMAN_AI_INTEGRATION_001
-
+module_id: HUMAN_AI_INTEGRATION_001_4962
 version: 1.1.0
-
 status: Active
-
-created_date: 2026-04-02
-
+created_date: '2026-04-02'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_08
-
 standard_type: 专业量化机构蓝图补充
-
 applicable_scope: 三级时间框架人机协同界面设计
-
 compliance_level: 专业标准
-
 parent_document: ./HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-related_documents:
-
-- HUMAN_AI_INTERACTION_BLUEPRINT.md
-
-- HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md
-
-responsibility_boundary: "本文档负责三级时间框架人机协同界面设计，包括?  - 宏观配置层人机协同界?  - 中观策略层人机协同界?  -\
-
-  \ 微观执行层人机协同界?  \n战略规划请参考：HUMAN_AI_INTERACTION_BLUEPRINT.md\n协作场景细化请参考：HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md\n"
-
-future_extensions:
-
-- phase: short_term
-
-  timeline: 3-6个月
-
-  items:
-
-  - 多终端协同决?      - 推送通知集成
-
-  - 生物识别认证
-
-responsibility:
-
-- HUMAN_AI_INTEGRATION蓝图设计
-
+related_documents: ''
+responsibility_boundary: '"本文档负责三级时间框架人机协同界面设计，包括?  - 宏观配置层人机协同界?  - 中观策略层人机协同界?  -\'
+future_extensions: ''
+timeline: 3-6个月
+items: ''
+responsibility: ''
 ---
 
 # 三级时间框架人机协同界面设计蓝图
@@ -76,7 +44,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +62,9 @@ responsibility:
 
 - 📄 HUMAN_AI_COLLABORATION_SCENARIOS_BLUEPRINT.md：人机协作场景细?
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +88,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -258,7 +232,7 @@ class StrategicDecisionInterface:
 
 
 
----
+```---
 
 
 
@@ -384,7 +358,9 @@ class StrategyManagementInterface:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -506,7 +482,7 @@ class ExecutionMonitoringInterface:
 
 
 
----
+```---
 
 
 
@@ -610,7 +586,7 @@ class SystemGovernanceInterface:
 
 
 
----
+```---
 
 
 
@@ -678,7 +654,9 @@ class UnifiedInterfaceFramework:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1150,7 +1128,9 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1176,13 +1156,17 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 
 
----
+```
+```---
+```
 
 
 
 **版本**: v1.1 | **创建日期**: 2026-04-02 | **最后更?*: 2026-04-03 | **?*: ?正式发布
 
----
+```
+```---
+```
 
 
 
@@ -1238,7 +1222,9 @@ async def approve_decision_with_compliance(decision: DecisionRequest):
 
 
 
----
+```
+```---
+```
 
 
 

@@ -17,4 +17,4 @@ layer: layer_01
 
 **正式蓝图（canonical）**：DATA_VERSION_CONTROL_BLUEPRINT.md
 
-原同目录 `DATA_VERSION_CONTROL_BLUEPRINT.md` 与 `01_BLUEPRINTS` / `p1_cleanup_archive` **basename 碰撞**。删除前各路径全文见 [`06_ARCHIVE/20260410_c2_data_version_control/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。
+原同目录 `DATA_VERSION_CONTROL_BLUEPRINT.md` 与 `01_BLUEPRINTS` / `p1_cleanup_archive` **basename 碰撞**。删除前各路径全文见 [`06_ARCHIVE/20260410_c2_data_version_control/`](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。

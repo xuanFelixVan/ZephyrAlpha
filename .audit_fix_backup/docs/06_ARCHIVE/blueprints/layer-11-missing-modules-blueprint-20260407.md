@@ -63,7 +63,7 @@ Layer 11战略决策层当前有21个蓝图文档，但缺少以下关键模块�
 
 
 
----
+```---
 
 
 
@@ -311,7 +311,7 @@ Layer 11战略决策层当前有21个蓝图文档，但缺少以下关键模块�
 
 
 
----
+```---
 
 
 
@@ -525,7 +525,7 @@ Layer 11战略决策层当前有21个蓝图文档，但缺少以下关键模块�
 
 
 
----
+```---
 
 
 
@@ -539,9 +539,8 @@ Layer 11战略决策层当前有21个蓝图文档，但缺少以下关键模块�
 
 ```markdown
 
----
+```---
 
-module_id: EXAMPLE_PLACEHOLDER_78CFC2EE5D
 
 version: [版本号]
 
@@ -563,7 +562,7 @@ parent_document: [父文档]
 
 implementation_status: [实施状态]
 
----
+```---
 
 
 
@@ -593,7 +592,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -613,7 +612,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -633,7 +632,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -663,7 +662,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -695,7 +694,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -715,7 +714,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -729,7 +728,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -749,7 +748,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -781,7 +780,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -801,7 +800,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -821,7 +820,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -831,7 +830,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -951,7 +950,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1033,7 +1032,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1073,7 +1072,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1109,7 +1108,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 
@@ -1117,7 +1116,7 @@ implementation_status: [实施状态]
 
 
 
----
+```---
 
 
 

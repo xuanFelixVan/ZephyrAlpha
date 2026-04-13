@@ -1,33 +1,15 @@
 ---
-
-module_id: API_DOCUMENTATION_001
-
+module_id: API_DOCUMENTATION_001_4665
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - API文档生成
-
-  - API规范定义
-
-  - API测试
-
-  - API版本管理
-
+- API文档生成
 standard_type: 专业量化机构蓝图
-
 compliance_level: 专业标准
-
 layer: layer_05
-
 ---
 
 
@@ -1326,7 +1308,9 @@ DELETE /api/v1/factors/{id}     # 删除因子
 
 
 
----
+```
+```---
+```
 
 
 

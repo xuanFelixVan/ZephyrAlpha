@@ -1,113 +1,23 @@
 ---
-
-module_id: PORTFOLIO_RISK_ATTRIBUTION_001
-
+module_id: PORTFOLIO_RISK_ATTRIBUTION_001_3433
 version: 1.0.0
-
 status: Active
-
-created_date: 2026-04-06
-
+created_date: '2026-04-06'
 last_updated: '2026-04-07'
-
 owner: 首席架构师
-
 layer: layer_10
-
 standard_type: 专业量化机构级蓝图
-
 applicable_scope: 组合风险归因分析
-
 compliance_level: 顶级专业标准
-
-reference_models:
-
-- Bridgewater Risk Attribution
-
-- Citadel Risk Analytics
-
-- Two Sigma Risk Decomposition
-
-related_documents:
-
-- REALTIME_RISK_MONITORING_BLUEPRINT.md
-
-- STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md
-
-- STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md
-
+reference_models: ''
+related_documents: ''
 parent_document: ./GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md
-
 implementation_status: 蓝图设计完成
-
-open_source_projects:
-
-- name: Riskfolio-Lib
-
-  url: https://github.com/dcajasn/Riskfolio-Lib
-
-  features: 组合优化、风险分析、归因分析
-
-- name: PyPortfolioOpt
-
-  url: https://github.com/robertmartin8/PyPortfolioOpt
-
-  features: 组合优化、风险模型、绩效归因
-
-- name: cvxpy
-
-  url: https://github.com/cvxpy/cvxpy
-
-  features: 优化求解器、约束优化
-
-responsibility_boundary: '**本文档职责（Layer 10 治理与合规层）**：
-
-
-
-  - 组合风险归因（风险来源分析、风险贡献分解）
-
-
-
-  - 风险因子暴露（因子风险暴露、因子风险贡献）
-
-
-
-  - 风险预算管理（风险预算分配、风险预算监控）
-
-
-
-  - 风险报告生成（日报、周报、月报）
-
-
-
-
-
-  **与本文档职责边界**：
-
-
-
-  - GOVERNANCE_COMPLIANCE_LAYER_BLUEPRINT.md: Layer 10总体架构设计
-
-
-
-  - REALTIME_RISK_MONITORING_BLUEPRINT.md: 实时风险监控
-
-
-
-  - STRATEGY_PERFORMANCE_ATTRIBUTION_BLUEPRINT.md: 策略绩效归因
-
-
-
-  - STRESS_TEST_SCENARIO_LIBRARY_BLUEPRINT.md: 压力测试场景库
-
-
-
-  '
-
-responsibility:
-
-- 投资组合优化蓝图设计与实施指导与实施方案
-
+open_source_projects: ''
+url: https://github.com/dcajasn/Riskfolio-Lib
+features: 组合优化、风险分析、归因分析
+responsibility_boundary: '''**本文档职责（Layer 10 治理与合规层）**：'
+responsibility: ''
 ---
 
 # 组合风险归因系统蓝图
@@ -136,7 +46,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -182,7 +94,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -462,7 +376,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -586,7 +502,9 @@ class TotalRiskCalculator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -684,7 +602,9 @@ class FactorRiskAttribution:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -804,7 +724,9 @@ class RiskBudgetAllocator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -968,7 +890,9 @@ class PyPortfolioOptRiskAttribution:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1088,7 +1012,9 @@ class AIRiskAttributionAssistant:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1134,7 +1060,9 @@ class AIRiskAttributionAssistant:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1246,7 +1174,9 @@ class RiskAttributionAlertSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1272,7 +1202,9 @@ class RiskAttributionAlertSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1286,7 +1218,9 @@ class RiskAttributionAlertSystem:
 
 **下一步行动**: 实施组合风险归因系统
 
----
+```
+```---
+```
 
 
 
@@ -1342,7 +1276,9 @@ class RiskAttributionAlertSystem:
 
 
 
----
+```
+```---
+```
 
 
 

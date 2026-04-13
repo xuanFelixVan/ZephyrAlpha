@@ -1,32 +1,21 @@
 ---
-
-module_id: LIVESTREAMFINANCIALANALYSIS_001
-
+module_id: LIVESTREAMFINANCIALANALYSIS_001_1244
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 执行团队
-
 responsibility:
-
 - 系统架构蓝图设计与实施指导与实施方案
-
 layer: layer_02
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 全系统
-
 compliance_level: 专业标准
-
 ---
 
-module_id: LIVE_STREAM_FINANCIAL_ANALYSIS_001
+```
+module_id: LIVE_STREAM_FINANCIAL_ANALYSIS_001_1244
+```
 
 version: 1.0.0
 
@@ -46,7 +35,9 @@ parent_document: ../INDEX.md
 
 implementation_status: 设计阶段
 
----
+```
+```---
+```
 
 
 
@@ -98,7 +89,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -118,7 +111,9 @@ implementation_status: 设计阶段
 
 
 
----
+```
+```---
+```
 
 
 
@@ -260,7 +255,9 @@ result = transcriber.transcribe("recording.mp3")
 
 
 
----
+```
+```---
+```
 
 
 
@@ -772,7 +769,9 @@ result = analyzer.analyze(transcript_text)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -928,7 +927,9 @@ result = analyzer.analyze_sentiment(transcript_text)
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1018,7 +1019,9 @@ CPU: Intel i9-14900K / AMD Ryzen 9 7950X
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1076,7 +1079,9 @@ GPT-4 API成本:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1208,7 +1213,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1306,7 +1313,9 @@ trainer.train()
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1516,7 +1525,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1586,7 +1597,9 @@ python main.py
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2030,7 +2043,9 @@ class AudioRecorder:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2574,7 +2589,9 @@ self.logger.error(f"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3094,7 +3111,9 @@ class FactorGenerator:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3400,7 +3419,9 @@ class LiveStreamFinancialSystem:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3600,7 +3621,9 @@ output:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3738,7 +3761,9 @@ services:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3820,7 +3845,9 @@ if __name__ == "__main__":
 
 
 
----
+```
+```---
+```
 
 
 
@@ -3874,7 +3901,9 @@ if __name__ == "__main__":
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4018,7 +4047,9 @@ async def save_to_database(factors: Dict):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4054,7 +4085,9 @@ async def save_to_database(factors: Dict):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4088,11 +4121,15 @@ async def save_to_database(factors: Dict):
 
 
 
----
+```
+```---
+```
 
 
 
----
+```
+```---
+```
 
 
 
@@ -4150,7 +4187,9 @@ async def save_to_database(factors: Dict):
 
 
 
----
+```
+```---
+```
 
 
 

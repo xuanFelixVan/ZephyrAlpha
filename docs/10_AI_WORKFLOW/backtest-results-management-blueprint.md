@@ -1,39 +1,21 @@
 ---
-
-module_id: BACKTEST_RESULTS_MANAGEMENT_001
-
+module_id: BACKTEST_RESULTS_MANAGEMENT_001_5178
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席蓝图架构师
-
 responsibility:
-
 - 回测结果管理蓝图 (BACKTEST_RESULTS_MANAGEMENT)文档
-
 layer: layer_07
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: 回测结果存储与管理
-
 compliance_level: 顶级专业标准
-
 parent_document: INDEX.md
-
 implementation_status: 蓝图阶段
-
 reference_models: null
-
 open_source_solution: MLflow + SQLite
-
 priority: P1
-
 ---
 
 ## 文档职责说明
@@ -62,7 +44,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +90,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -272,7 +258,9 @@ priority: P1
 
 
 
----
+```
+```---
+```
 
 
 
@@ -438,7 +426,9 @@ CREATE TABLE backtest_trades (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -518,7 +508,9 @@ CREATE TABLE backtest_trades (
 
 
 
----
+```
+```---
+```
 
 
 
@@ -626,7 +618,9 @@ class BacktestResult(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -676,7 +670,9 @@ class BacktestResult(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -698,7 +694,9 @@ class BacktestResult(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 
@@ -720,7 +718,9 @@ class BacktestResult(BaseModel):
 
 
 
----
+```
+```---
+```
 
 
 

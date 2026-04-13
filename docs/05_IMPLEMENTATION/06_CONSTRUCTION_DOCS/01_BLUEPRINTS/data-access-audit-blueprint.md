@@ -1,5 +1,5 @@
 ---
-module_id: DATA_ACCESS_AUDIT_001
+module_id: DATA_ACCESS_AUDIT_001_8254
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,9 +9,6 @@ standard_type: 专业量化机构蓝图
 compliance_level: 专业标准
 responsibility:
 - 数据访问审计
-- 访问日志
-- 权限审计
-- 数据访问合规审计
 layer: layer_05
 ---
 

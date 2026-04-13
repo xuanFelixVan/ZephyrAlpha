@@ -1,35 +1,16 @@
 ---
-
-module_id: EXTENDED_OPTIMIZATION_MODULES_001
-
+module_id: EXTENDED_OPTIMIZATION_MODULES_001_5227
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: 2026-04-08
-
 owner: 架构团队
-
 standard_type: 专业量化机构蓝图
-
 applicable_scope: Layer 6 组合优化层
-
 compliance_level: 专业标准
-
 responsibility:
-
-  - ESG投资优化
-
-  - 行业轮动优化
-
-  - 风格轮动优化
-
-  - 因子择时优化
-
+- ESG投资优化
 layer: layer_06
-
 ---
 
 
