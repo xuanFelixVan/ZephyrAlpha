@@ -2,7 +2,7 @@
 
 ## module_id: DOCS_ROOT_INDEX_001
 
-version: 1.1.0
+version: 1.3.0
 status: Active
 created_date: 2026-04-02
 last_updated: '2026-04-13'
@@ -453,6 +453,18 @@ docs/
 
 ## 📰 更新日志
 
+### 2026-04-13: Option A/B/C1/C2 深度治理（断链/module_id全量清理）
+
+**执行概要**:
+
+- **Option A（低置信断链）**: 修复 2,615 条 low-conf 断链；修复 `fix_dead_links.py` apply_fixes() 硬编码过滤 bug；更新 sentinel SKIP_PARTS 排除备份目录
+- **Option B（frontmatter 扫描）**: module_id 覆盖率 99.4%（3510/3532）；发现 46 个重复组
+- **Option C1（含归档重复消解）**: 42 组 56 文件 module_id 添加 `_ARCHIVED` 后缀
+- **Option C2（活跃重复消解）**: 4 组活跃重复全部消解（Pair 1-3 为字节级相同副本改 `_REF`，Pair 4 为 L2 scan 改独立 ID）
+- **L3 健康度**: 断链 35/8607（0.41%），活跃重复 module_id 0，覆盖率 99.4%
+- **全链路修复率**: 5310 → 35（**断链修复 99.3%**）
+- **详细报告**: `docs/09_AUDIT/STATE/GOVERNANCE_FINAL_REPORT_20260413.md`
+
 ### 2026-04-13: Phase 3-4 全系统文档治理修复（施工阶段）
 
 **修复概要**:
@@ -460,9 +472,8 @@ docs/
 - **L1 断链修复**: 2676 条链接已批量修复（Phase 3.1a）
 - **孤儿文件**: 943 个文件补充入链，47 个过时文件归档（Phase 3.1c）
 - **D-类重叠**: 12 对高置信冗余副本删除（Phase 3.1d）
-- **L2 验证扫描**: broken_links_total = **0**（从 5310 降至 0）
-- **扫描文件总数**: 4941 个 Markdown 文件
-- **重复 module_id**: 0
+- **扫描文件总数**: 4941 → 3532 个 Markdown 文件（排除备份目录后净扫描）
+- **重复 module_id**: 46 组（已于 Option C1/C2 消解至 13 组，活跃重复 0）
 
 ### 2026-04-12: 文档治理修复
 
@@ -516,11 +527,11 @@ docs/
 ```---
 ```
 
-**文档版本**: v1.2.0
+**文档版本**: v1.3.0
 **创建日期**: 2026-04-02
 **最后更新**: 2026-04-13
 **维护者**: 系统架构师
-**状态**: ✅ 活跃维护 | 治理健康度: L2 通过（断链 0 / module_id 重复 0）
+**状态**: ✅ 活跃维护 | 治理健康度: L3 通过（断链 35/8607 = 0.41% · 活跃重复 module_id 0 · 覆盖率 99.4%）
 
 - [api-readme](api-readme.md)
 
