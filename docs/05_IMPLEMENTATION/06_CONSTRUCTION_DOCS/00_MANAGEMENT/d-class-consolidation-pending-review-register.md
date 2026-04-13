@@ -40,7 +40,9 @@ layer: layer_05
 |------|------------|----------|------------|------|------|
 | _示例_ | `../01_BLUEPRINTS/EXECUTION_STRATEGY_BACKTESTER_CONSOLIDATED_20260411.md`（占位文件名，待产出后改为可点击链） | EXECUTION_STRATEGY_BACKTESTER_BLUEPRINT（stub） | - | pending_review | **语法演示**：合稿列在文件未入库前用反引号路径避免 L1 死链；stub 列为真实可点链。 |
 
----
+```
+```---
+```
 
 ## 版本记录
 

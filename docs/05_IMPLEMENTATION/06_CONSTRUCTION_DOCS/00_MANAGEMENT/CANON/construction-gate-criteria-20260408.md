@@ -1,5 +1,5 @@
 ---
-module_id: CONSTRUCTION_GATE_CRITERIA_20260408
+module_id: CONSTRUCTION_GATE_CRITERIA_20260408_0261
 version: 1.3.0
 status: Active
 created_date: 2026-04-08
@@ -23,7 +23,9 @@ layer: layer_05
 > **允许并行**：脚本化治理、L1 扫描、纯归档搬运、单文件小修，以及 **第 2 阶段**（施工流程/计划/方案类文档）的编写——但须在 **§0** 蓝图终稿达标之后启动。  
 > **与 §0 的关系**：§0 定义「何时可写施工文档、何时可写代码」；§3 定义「写代码前还须满足的治理与审计总清单」。
 
----
+```
+```---
+```
 
 ## 0. 文档三阶段模型（Owner 已确认）
 
@@ -91,7 +93,9 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 
 **进入第 3 阶段（写代码）**：除满足 **§0.3** 外，还须满足本文 **§3 A～F**（或 §4 豁免）及 **§2** 复跑 L1 / 双 YAML 结果。
 
----
+```
+```---
+```
 
 ## 1. 用语与仓库真源对照
 
@@ -104,7 +108,9 @@ Owner 要求：**全库蓝图终稿后**，才进入第 2 阶段（编写施工�
 | **架构瘦身** | 裁决书 **ADR-OC-005**（重复/多版本正文：canonical + 归档 + 内链）；`06_ARCHIVE` 根散落归类、**`09_AUDIT/REPORTS/` 版本链收敛**（与 Backlog P1-9 一致） |
 | **文件治理** | OpenClaw **P1-C 余项**（见 `P1C_DEFERRED_20260408.md`）、`review_materials_package` 路径与豁免（P1-8）、双目录 INDEX 类问题 |
 
----
+```
+```---
+```
 
 ## 2. 基线：OpenClaw 正式闭环（若已满足则只存档、不重复劳动）
 
@@ -118,7 +124,9 @@ python scripts/merge_double_yaml_frontmatter.py --list
 
 将最新 L1 输出覆盖或并存为 `docs/09_AUDIT/STATE/SENTINEL_L1_PRE_CONSTRUCTION_YYYYMMDD.md`（及 `.json`）；若 **`判定无效 ≠ 0`** 或 **双 YAML 列表非 0**，**不得**勾选 §3-A。
 
----
+```
+```---
+```
 
 ## 3. 第 3 阶段（代码施工）前总清单（建议按块顺序执行）
 
@@ -168,7 +176,9 @@ python scripts/merge_double_yaml_frontmatter.py --list
 
 - [ ] **F1** **P2（Backlog）**：已 **执行完毕** 或 Owner 在 §4 声明 **「P2 不阻塞施工」** 并注明复审频率（如每季度）。
 
----
+```
+```---
+```
 
 ## 4. 豁免与签字
 
@@ -178,7 +188,9 @@ python scripts/merge_double_yaml_frontmatter.py --list
 |--------|----------|----------|----------|-------|
 | （示例）B4 未绑定 module_designs | 切片未定 | 仅框架目录只读清单 | YYYY-MM-DD | |
 
----
+```
+```---
+```
 
 ## 5. 放行声明模板（粘贴到 commit 或 REPORT）
 
@@ -197,7 +209,9 @@ L1 报告：docs/09_AUDIT/STATE/SENTINEL_L1_PRE_CONSTRUCTION_YYYYMMDD.md
 可启动第 3 阶段：垂直切片实现 / 按图编码。
 ```
 
----
+```
+```---
+```
 
 ## 6. 变更历史
 

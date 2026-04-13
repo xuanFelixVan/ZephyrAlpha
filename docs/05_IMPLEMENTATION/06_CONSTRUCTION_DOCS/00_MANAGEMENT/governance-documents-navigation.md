@@ -1,25 +1,14 @@
 ---
-
-module_id: GOVERNANCE_DOCUMENTS_NAVIGATION_001
-
+module_id: GOVERNANCE_DOCUMENTS_NAVIGATION_001_2910
 version: 1.0.9
-
 status: Active
-
 created_date: 2026-04-10
-
 last_updated: '2026-04-11'
-
 owner: 文档负责人（可指定）
-
 responsibility:
-
-  - 汇总全库文档治理类真源路径；项目办公室只做导航，不替代 09_AUDIT 等目录
-
+- 汇总全库文档治理类真源路径；项目办公室只做导航，不替代 09_AUDIT 等目录
 standard_type: 导航索引
-
 applicable_scope: 施工文档 / 蓝图阶段 / 与 AI 协作时的治理查阅
-
 layer: layer_05
 ---
 
@@ -36,7 +25,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -48,7 +39,7 @@ layer: layer_05
 
 |------|----------|------|
 
-| **蓝图终稿 / 施工门禁** 受控正文放在 `00_MANAGEMENT/CANON/` | ✅ **已定** | 与项目办公室同区，全库唯一真源；见 [CANON/README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| **蓝图终稿 / 施工门禁** 受控正文放在 `00_MANAGEMENT/CANON/` | ✅ **已定** | 与项目办公室同区，全库唯一真源；见 [CANON/README](./CANON/README.md) |
 
 | 在 `00_MANAGEMENT` 增加**本导航 + 少量施工专用摘要** | ✅ 推荐 | 办公室负责「找得到、链得对」，不复制海量审计正文 |
 
@@ -60,7 +51,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +113,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -190,7 +185,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -214,7 +211,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -234,11 +233,13 @@ layer: layer_05
 
 | 施工文档 README | [`docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/README.md`](../README.md) |
 
-| 项目办公室 README | [`README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 项目办公室 README | [`README.md`](./README.md) |
 
 
 
----
+```
+```---
+```
 
 
 
@@ -254,7 +255,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -272,7 +275,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 
@@ -302,7 +307,9 @@ layer: layer_05
 
 
 
----
+```
+```---
+```
 
 
 

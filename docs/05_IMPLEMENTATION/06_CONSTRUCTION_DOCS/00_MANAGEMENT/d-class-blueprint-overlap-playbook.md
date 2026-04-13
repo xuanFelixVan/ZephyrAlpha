@@ -1,15 +1,14 @@
 ---
-module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_00_MANAGEMENT_D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK
+module_id: 05_IMPLEMENTATION_06_CONSTRUCTION_DOCS_00_MANAGEMENT_D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK_3398
 layer: layer_05
 version: 1.0.0
 status: Active
-responsibility:
-  - D Class Blueprint Overlap Playbook相关业务
-created_date: 2026-04-11
-last_updated: 2026-04-11
+responsibility: ''
+created_date: '2026-04-11'
+last_updated: '2026-04-11'
 owner: 仓库 Owner / 文档负责人
 standard_type: 操作规程
-applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2 互补
+applicable_scope: '`docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2 互补'
 ---
 
 # D 类蓝图重叠 — Playbook（机器建议 + 人工裁决）
@@ -18,9 +17,11 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 > **机器角色**：`scan_blueprint_d_overlap_candidates.py` 产出 **候选对 + 指标 + 建议 canonical + 建议合并大纲**（**非最终裁决**）。  
 > **人工角色**：确认是否真重叠、是否合并、canonical、stub/archive 与全仓改链。  
 > **置信度与合稿**：**启发式分数 + A 档分流 + 可选二审 JSON** 共同支撑「有多确定」；**高置信**在满足 **§2.5** 与 **§5.1**（及 Owner 签核/书面授权）时 **允许合并正文 / 收口 canonical**；**低置信**必须走 **§5.2** 与 待审登记。二审数值字段与 `low_confidence_register` 见 二审提示词模板 **§四、§五**。  
-> **办公室互指**：全仓库文件治理任务清单 **§3.4.1**（D 类合稿方案文件索引）、治理工具总索引、项目办公室 AI 接力。
+> **办公室互指**：[REPO_WIDE（已归档）](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§3.4.1**（D 类合稿方案文件索引）、治理工具总索引、项目办公室 AI 接力。当前主线：[施工阶段任务清单](./construction-phase-task-list.md)。
 
----
+```
+```---
+```
 
 ## 1. 与 C1 / C2 / D 的边界
 
@@ -30,7 +31,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 | **C2** | 同名不同路径 | `scan_basename_collisions.py` |
 | **D** | 标题/responsibility/章节 **像** 同一主题，正文不同 | **本文 +** `scan_blueprint_d_overlap_candidates.py` |
 
----
+```
+```---
+```
 
 ## 2. 机器建议的含义（必读）
 
@@ -39,7 +42,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 - **建议 canonical** 规则偏向：路径含 **`01_BLUEPRINTS`**、正文体量更大、`last_updated` 更新等——**你必须**结合业务确认。  
 - **建议合并大纲** 来自两稿 H2 的 **并集草案**，合并时须 **去重叙事、补边界、写清「不负责什么」**。
 
----
+```
+```---
+```
 
 ## 2.5 置信度：来源、分级与「高置信可合并」
 
@@ -64,7 +69,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 - **默认**：自动化与 AI 助手优先产出 **报表、台账、断链修复**，不把未裁决合并写入主真源。  
 - **例外（高置信可合并）**：仅在 **§2.5.2** 已满足、且 Owner 对**具体批次或 pair 列表**有书面/可复制指令时，才可在仓库内执行 **正文级合并**；执行后仍须 **改链 + `sentinel_l1` / 相关 `verify_*`**，与 **§3** 定稿动作一致。
 
----
+```
+```---
+```
 
 ## 3. 推荐工作流（可与 §7 目录批次穿插）
 
@@ -74,7 +81,7 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 2. **人工初筛**：对每一候选对打开 A/B，判定：  
    - **同一 bounded context** → 倾向 **合并**（颗粒度加细：总览 + 分节 deep dive）；  
    - **不同层/不同职责**（如数据源 vs ML 侧质量）→ **不合并正文**，改为 **互链 + 职责表**。  
-3. **定稿动作**（合并路径）：对齐目录 → 吸收独有段落 → 更新 canonical → 另一路径 **stub** 或 **迁 archive** → 全仓库文件治理任务清单 **§3.2** 改链 → `sentinel_l1` / 相关 `verify_*`。  
+3. **定稿动作**（合并路径）：对齐目录 → 吸收独有段落 → 更新 canonical → 另一路径 **stub** 或 **迁 archive** → [REPO_WIDE（已归档）](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§3.2** 改链 → `sentinel_l1` / 相关 `verify_*`。  
 4. **台账**：重大裁决可记入 CANONICAL_POINTERS.md 或本目录登记表。
 
 ### 3.5 A 档分流与二审（更强模型）
@@ -90,7 +97,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 
 与 **§5 双轨**：二审结论若 **`low_confidence_register` = true** 或未满足 **§2.5.2** 高置信准入，则合稿路径仍走 **5.2** 与 待审登记；若满足 **§2.5.2** 高置信，则按 **5.1** 收口。
 
----
+```
+```---
+```
 
 ## 4. 参数与调优
 
@@ -99,7 +108,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 - 候选过少：略降 `--min-score`；或缩小 `--prefix` 分批跑（如先 `docs/01_FRAMEWORK/`）。  
 - 默认 **排除** `docs/09_AUDIT/STATE/overnight_runs/`；需纳入时加 `--keep-state-overnight`。
 
----
+```
+```---
+```
 
 ## 5. 双轨策略：高置信 vs 低置信（可同时采用）
 
@@ -136,7 +147,9 @@ applicable_scope: `docs/` 下 `*BLUEPRINT*.md` 及同类施工蓝图；与 C1/C2
 - **高置信子集** + **低置信子集** **可以同时作为方案**：同一轮 D 治理里，对报表自上而下 **先切高置信** 收口，再对余下 **走 5.2**。  
 - **不要**对低置信执行 5.1 的「删旧稿」，除非事后登记为 accepted 且已确认无引用风险。
 
----
+```
+```---
+```
 
 ## 6. 版本记录
 

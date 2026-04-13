@@ -25,7 +25,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 > **目标**：在**不破坏可追溯性**的前提下，让蓝图阶段所依赖的文档体系达到：**可发现、单真源、链接可门禁、归档可审计**。  
 > **「彻底」定义**：不是「删到篇数最少」，而是 **孤儿收敛到可接受水位、重复与 overlap 均有台账与指针、合并前 L1=0**。
 
----
+```
+```---
+```
 
 ## 1. 三条工作流（必须同时进行、分批合入）
 
@@ -37,7 +39,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 总册原则见：全库孤儿与重复/重叠治理方案（Playbook）。
 
----
+```
+```---
+```
 
 ## 2. 基线清单 vs 自动重算（避免口径漂移）
 
@@ -52,7 +56,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 > 说明：随着各域 `INDEX.md` 补链，**重算孤儿数应单调下降**；与 20260408 基线篇数不必完全一致（基线含当时口径与分桶）。
 
----
+```
+```---
+```
 
 ## 3. 分阶段执行（蓝图优先）
 
@@ -81,7 +87,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 
 按 `OVERLAP_ORPHAN_PARALLEL_REMEDIATION_SCHEDULE_20260408.md` 主题批次执行；与 P0–P1 **并行、错开 PR**。
 
----
+```
+```---
+```
 
 ## 4. 禁止事项（避免「假彻底」）
 
@@ -89,7 +97,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 - **单次 PR 改几百个文件**（除非纯机器生成且已 L1 验证）。  
 - **跳过分桶**把高价值 A 类与应归档 B 类混处理。
 
----
+```
+```---
+```
 
 ## 5. 退出标准（蓝图阶段可宣告「清洁达标」）
 
@@ -101,7 +111,9 @@ responsibility: "处理BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408相�
 | overlap | `overlap_*` 无「裸奔」缺指针（或已登记豁免） |
 | 孤儿趋势 | 重算 `REGEN` 清单较基线 **明显减少**（篇数随项目约定） |
 
----
+```
+```---
+```
 
 ## 6. 变更记录
 

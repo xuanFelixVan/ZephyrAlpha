@@ -16,9 +16,11 @@ layer: layer_05
 # 全局文件治理 — 会话交接（新对话粘贴用）
 
 > **用途**：你在**新对话**里要做「从全局扫描开始、深度清洁每一处」时，把下文 **「二、工作交接指令（请全文执行）」** 整段复制给 AI；并说明工作区根目录为 **ZephyrAlpha** 仓库。本文即一种 **「接力说明」**（给下一任的短交代）；术语亦见 项目办公室 AI 交接说明 **§0**。  
-> **真源优先级**：执行细节以 全仓库文件治理任务清单 为准（**§1.2** 编码与乱码预防及 **§1.2 末**「`.gitignore` 与 `STATE/` 两条线」；**§2.3.1** Layer 与路径防混；**§2.3.2**「位置是否正确」↔ 放置规程 **§1.6**；**§7.2 末** Solo+AI / STATE 分提交）；命令表以 治理工具总索引 为准；放置以 LAYOUT 标准（**§1 第 5～6 条**）+ 文档地图与放置规则（**§1.5**、**§1.6**）为准；系统 **Layer 0～11** 以 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 为准，**勿**从 `10_*` 目录名推断；**勿**新建平行「Layer 放置标准」。**Git / L1 / UTF-8** 见 AI 交接 §0.1；**ignore 与 `STATE/` 两条线**见 **§0.1.4**；**全委托 AI 机械清单**见 **§0.2**。
+> **真源优先级**：执行细节以 [施工阶段统一任务清单](./construction-phase-task-list.md) 为准（P0~P7 详情追溯见 [REPO_WIDE 已归档](./CANON/ARCHIVE/repo-wide-file-governance-task-list.md)）（**§1.2** 编码与乱码预防及 **§1.2 末**「`.gitignore` 与 `STATE/` 两条线」；**§2.3.1** Layer 与路径防混；**§2.3.2**「位置是否正确」↔ 放置规程 **§1.6**；**§7.2 末** Solo+AI / STATE 分提交）；命令表以 治理工具总索引 为准；放置以 LAYOUT 标准（**§1 第 5～6 条**）+ 文档地图与放置规则（**§1.5**、**§1.6**）为准；系统 **Layer 0～11** 以 [`ARCHITECTURE.md`](../../../01_FRAMEWORK/ARCHITECTURE.md) 为准，**勿**从 `10_*` 目录名推断；**勿**新建平行「Layer 放置标准」。**Git / L1 / UTF-8** 见 AI 交接 §0.1；**ignore 与 `STATE/` 两条线**见 **§0.1.4**；**全委托 AI 机械清单**见 **§0.2**。
 
----
+```
+```---
+```
 
 ## 一、与专业机构文件治理对照：本仓库已有什么、还缺什么
 
@@ -53,11 +55,13 @@ layer: layer_05
 
 ### 1.3 办公室与任务清单联动自检（维护者用）
 
-- [ ] [办公室 README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 流程 1～7 与 蓝图终稿任务清单、REPO_WIDE **无冲突表述**（并列、W 轨 ≠ 尽治）。  
+- [ ] [办公室 README](./README.md) 四步 Pipeline 总览与 [施工阶段任务清单](./construction-phase-task-list.md) **无冲突表述**。  
 - [ ] 治理工具总索引 与 `scripts/governance/` 实际脚本一致。  
 - [ ] REPO_WIDE **§8** 自查项仍可达（含 AI 交接 **①‴**、**§3.2**、放置规程 **§1.5**、**§1.6**、索引健全性）。  
 
----
+```
+```---
+```
 
 ## 二、工作交接指令（请全文执行）
 
@@ -121,13 +125,15 @@ python scripts/governance/sentinel_l1_governance_scan.py
 **阶段 E — 里程碑**
 
 - 对照 REPO_WIDE **§7.3** 总勾选与 **§8** 办公室自查。  
-- 与 蓝图终稿任务清单 **扩展轨 W0～W4** **并列核对**（W 轨勾完 ≠ 尽治完毕）。
+- 与 [施工阶段任务清单](./construction-phase-task-list.md) Phase 3 **并列核对**（历史 W 轨勾选见 [蓝图终稿任务清单（已归档）](./CANON/ARCHIVE/blueprint-phase-closure-task-list.md)）。
 
 **停止并询问 Owner 的条件**
 
 - 需 **canonical / 归档策略 / 外规** 裁决；或 sentinel 长期无法归零且涉及历史快照/审计正文是否可改。
 
----
+```
+```---
+```
 
 ## 三、版本记录
 

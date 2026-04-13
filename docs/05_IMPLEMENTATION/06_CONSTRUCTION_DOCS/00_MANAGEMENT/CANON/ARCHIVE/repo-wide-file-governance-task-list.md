@@ -1,7 +1,7 @@
 ---
 module_id: REPO_WIDE_FILE_GOVERNANCE_TASK_LIST
 version: 1.0.0
-status: Active
+status: Archived
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: 首席文档架构师
@@ -58,7 +58,9 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 
 
----
+```
+```---
+```
 
 
 
@@ -106,7 +108,9 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 
 
----
+```
+```---
+```
 
 
 
@@ -154,7 +158,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 
 
-| **`.diff` 跟踪文件** | 50 | 均已位于 [`06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)（历史 dry-run） |
+| **`.diff` 跟踪文件** | 50 | 均已位于 [`../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)（历史 dry-run） |
 
 
 
@@ -490,7 +494,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -682,7 +688,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-**办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) **「办公室内文件一览」**。
+**办公室内规章与上表对齐**：各文件职责与「可并入本窗」的动作见 [项目办公室 README](./README.md) **「办公室内文件一览」**。
 
 
 
@@ -862,7 +868,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1166,11 +1174,11 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [x] C1：至少完成一轮 hash 报表 + 对**已裁决**簇执行 §3.2（可分多 PR）。（2026-04-11：`docs/06_ARCHIVE/temp_pending/` 内 `DUPLICATE_CONTENT_BY_HASH_20260410` 所报 **5 簇**已合并为 **5 个 canonical**，副本已删；台账见该目录 [`README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。复跑 `DUPLICATE_CONTENT_BY_HASH_20260411.md`：`duplicate_clusters=0`。）  
+- [x] C1：至少完成一轮 hash 报表 + 对**已裁决**簇执行 §3.2（可分多 PR）。（2026-04-11：`docs/06_ARCHIVE/temp_pending/` 内 `DUPLICATE_CONTENT_BY_HASH_20260410` 所报 **5 簇**已合并为 **5 个 canonical**，副本已删；台账见 [`06_ARCHIVE/INDEX`](../../../06_ARCHIVE/INDEX.md)（原 `temp_pending` 合并记录见 git 历史）。复跑 `DUPLICATE_CONTENT_BY_HASH_20260411.md`：`duplicate_clusters=0`。）  
 
 
 
-- [x] C2：basename 报表完成；对**高优先级**碰撞簇完成 canonical 或重命名消解。（2026-04-11：**非导航 basename 已清空**；报表中余碰撞均为导航名分表，多份并存为预期，不纳入 C2 强制消解。）（**报表**：`BASENAME_COLLISIONS_20260411.md` — 复跑后 `docs/` 下 `.md` 碰撞 basename **4**、非导航名 **0**（余 **4** 均为导航名 `INDEX`/`README`/`SITEMAP`/`CHANGELOG`，多份并存为预期形态）。**已消解 1 簇**：`DATA_QUALITY_MONITORING_BLUEPRINT.md` — canonical 仅保留 `01_BLUEPRINTS/...`；`01_FRAMEWORK` / `10_AI_WORKFLOW` 正文迁入 [`06_ARCHIVE/20260411_c2_data_quality_monitoring/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)；Layer8 改为 `DATA_QUALITY_MONITORING_LAYER8_MODULE.md`。**已消解 2 簇**：`API_GATEWAY_BLUEPRINT.md` — canonical `API_GATEWAY_BLUEPRINT.md`；删除 Layer8 同名占位稿，入口改为 `API_GATEWAY_LAYER8_MODULE.md`（`git add` 含删除后复跑 `scan_basename_collisions.py` 可自报表剔除该簇）。**已消解 3 簇**：`DISASTER_RECOVERY_BLUEPRINT.md` — canonical `DISASTER_RECOVERY_BLUEPRINT.md`；`01_FRAMEWORK` 入口 `DISASTER_RECOVERY_FRAMEWORK_ENTRY.md`；旧稿快照 [`06_ARCHIVE/20260410_c2_disaster_recovery/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 4 簇**：`BENCHMARK_MANAGEMENT_BLUEPRINT.md` — canonical `BENCHMARK_MANAGEMENT_BLUEPRINT.md`；`11_STRATEGIC_DECISION` 入口 `BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md`；旧稿 [`06_ARCHIVE/20260410_c2_benchmark_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 5 簇**：`COMPLIANCE_MONITORING_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；Layer8 入口 `COMPLIANCE_MONITORING_LAYER8_MODULE.md`。**已消解 6 簇**：`FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` — canonical `FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md`；`LAYER4_ML` 入口 `FULL_PROCESS_DATA_LAYER4_ENTRY.md`；旧稿 [`06_ARCHIVE/20260410_c2_full_process_data_persistence/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 7 簇**：`TRANSACTION_COST_ANALYSIS_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`01_FRAMEWORK` 入口 `TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md`；Layer8 `79_` 入口 `TRANSACTION_COST_ANALYSIS_LAYER8_MODULE.md`；旧稿 [`06_ARCHIVE/20260410_c2_transaction_cost_analysis/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 8 簇**：`STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；Layer8 `81_` 入口 `STRATEGY_LIFECYCLE_MANAGEMENT_LAYER8_MODULE.md`；`p1_cleanup_archive` 同 basename 副本迁入 [`06_ARCHIVE/20260410_c2_strategy_lifecycle_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 9 簇**：`MODEL_RISK_MANAGEMENT_BLUEPRINT.md` — canonical `01_FRAMEWORK/...`；Layer8 `77_` 入口 `MODEL_RISK_MANAGEMENT_LAYER8_MODULE.md`；旧稿 [`06_ARCHIVE/20260410_c2_model_risk_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 10 簇**：`MARKET_REGIME_DETECTION_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；`10_AI_WORKFLOW` 入口 `MARKET_REGIME_DETECTION_AI_WORKFLOW_ENTRY.md`；旧稿 [`06_ARCHIVE/20260410_c2_market_regime_detection/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 11 簇**：`PERFORMANCE_ATTRIBUTION_BLUEPRINT.md` — canonical `11_STRATEGIC_DECISION/...`；Layer8 `83_` 入口 `PERFORMANCE_ATTRIBUTION_LAYER8_MODULE.md`；旧稿 [`06_ARCHIVE/20260410_c2_performance_attribution/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 12 簇**：`DATA_VERSION_CONTROL_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；`LAYER4_ML` 入口 `DATA_VERSION_CONTROL_LAYER4_ENTRY.md`；`p1_cleanup_archive` 与 Layer4 同名稿迁入 [`06_ARCHIVE/20260410_c2_data_version_control/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 13 簇**：`MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`p1_cleanup_archive` 副本 [`06_ARCHIVE/20260410_c2_model_performance_version_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 14 簇**：`RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`p1_cleanup_archive` 副本 [`06_ARCHIVE/20260410_c2_research_workflow_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 15 簇**：`REALTIME_RISK_MONITORING_BLUEPRINT.md` — canonical `01_FRAMEWORK/...`；Layer8 `64_` 入口 `REALTIME_RISK_MONITORING_LAYER8_MODULE.md`；旧稿 [`06_ARCHIVE/20260410_c2_realtime_risk_monitoring/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 16 簇**：`STRATEGY_ENGINE_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；战术域入口 `STRATEGY_ENGINE_TACTICS_ENTRY.md`；旧稿 [`06_ARCHIVE/20260410_c2_strategy_engine/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 17 簇**：`STRATEGY_SELECTION_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；战术域入口 `STRATEGY_SELECTION_TACTICS_ENTRY.md`；旧稿 [`06_ARCHIVE/20260410_c2_strategy_selection/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 18～20 簇**：`P0_FIX_COMPLETION_REPORT_V13_20260407.md`、`RESPONSIBILITY_FIX_REPORT_20260407_030139.md`、`VERSION_CONSISTENCY_REPORT_20260407.md` — canonical 均保留 [`audit_state/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 原路径；`p1_cleanup_archive` 三份迁入 [`06_ARCHIVE/20260410_c2_p1_audit_report_basenames/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 21 簇**：`SHORT_TERM_IMPROVEMENT_COMPLETION_REPORT_20260407.md` — canonical `09_AUDIT/REPORTS/...`；`STATE` 同名稿 [`06_ARCHIVE/20260410_c2_short_term_improvement_completion/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)；`INDEX_GROUPED_STATE_20260408` 内链已指向 REPORTS。**已消解 22～24 簇**：`DEEP_AUDIT_REPORT_20260407.md`、`DEEP_AUDIT_REPORT_V7_20260404.md`、`FINAL_AUDIT_REPORT_20260407.md` — 与 `09_AUDIT/REPORTS` 同名但**正文不同**；`audit_state` 侧分别重命名为 `LAYER6_DEEP_AUDIT_REPORT_20260407.md`、`LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md`、`LAYER6_FINAL_AUDIT_REPORT_20260407.md`，并更新 [`audit_state/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 与 `VERSION_CONSISTENCY_REPORT_20260407` 表内路径；`06_ARCHIVE/20260407_old_layer_audit_reports/layer6_reports` 下旧稿同步改为 `LAYER6_DEEP_AUDIT_REPORT_20260407_legacy_layer6_reports_archive.md` 以免再撞 basename。**已消解 25 簇**：`DOCUMENT_METADATA_TEMPLATE.md` — canonical `09_AUDIT/STANDARDS/...`；`p1_cleanup_archive` 副本 [`06_ARCHIVE/20260410_c2_document_metadata_template/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 26～27 簇**：`DEEP_AUDIT_REPORT_V24_20260407_025847.md`、`FULL_SYSTEM_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V12_20260407.md` — canonical 保留 [`audit_state/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)；`p1_cleanup_archive` 双份 [`06_ARCHIVE/20260410_c2_p1_audit_reports_batch2/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 28 簇**：`DEEP_AUDIT_REPORT_V3_20260407.md` — `LAYER4_ML` 与 `audit_state` 撞名异文；`audit_state` 侧改为 `LAYER8_DEEP_AUDIT_REPORT_V3_20260407.md` 并更新索引/一致性表。**已消解 29 簇**：`INDEX_GROUPED_20260408.md` — 拆为 `INDEX_GROUPED_REPORTS_20260408.md` 与 `INDEX_GROUPED_STATE_20260408.md`；`09_AUDIT` / `HANDOFF` / 卫生总案等内链已对齐。**已消解 30～32 簇**：`FACTOR_MANAGEMENT_STANDARD` / `FACTOR_REGISTRY` / `FACTOR_TAXONOMY` — `09_ARCHIVE/duplicates` 三稿分别改为 `*_legacy_09_archive_duplicates.md`，与 `02_FACTOR_LIBRARY/01_STANDARDS` 真源 basename 脱钩。**已消解 33 簇**：`ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md` — duplicates 侧同上 `_legacy_09_archive_duplicates`。**已消解 34 簇**：`DOCUMENT_CREATION_CHECKLIST.md` — canonical `07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md`；`01_FRAMEWORK` 旧稿迁入 [`06_ARCHIVE/20260410_c2_document_creation_checklist/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。**已消解 35 簇**：`DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md` — `09_RESEARCH_INNOVATION` 保留 canonical；`06_ARCHIVE/20260404_audit_reports_archive/audit_state` 副本改为 `DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_legacy_20260404_audit_reports_archive.md`（[`20260404_audit_reports_archive/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 已改链）。**已消解 36 簇**：`FAQ.md` — `07_OPERATIONS` 改为 `IMPLEMENTATION_OPERATIONS_FAQ.md` 并修 `DATA_MIGRATION_GUIDE` / `ERROR_CODES` / `TROUBLESHOOTING_GUIDE`；duplicates 侧 `FAQ_legacy_09_archive_duplicates.md`。**已消解 37～39 簇**：`overnight_runs/20260408_*` 下 `CONSOLIDATED_REPORT_FOR_AI` / `invalid_links_detail` / `module_id_duplicates_detail` — basename 追加 `_<run_id>`；`overnight_audit_runner.py` 已同步改为带后缀输出。**已消解 40 簇**：`06_ARCHIVE` 下四处 `ARCHIVE_README.md` — 分别改为 `ARCHIVE_README_06_ARCHIVE_ROOT.md` 等，子目录 `INDEX.md` 已改链。**已消解 41 簇**：`02_FACTOR_LIBRARY` 内 33 份 `OVERVIEW.md` — 统一改为 `FACTOR_LIB_*_OVERVIEW.md`，各模块 `INDEX.md` 已对齐。**C2（非导航 basename）**：已清空。）  
+- [x] C2：basename 报表完成；对**高优先级**碰撞簇完成 canonical 或重命名消解。（2026-04-11：**非导航 basename 已清空**；报表中余碰撞均为导航名分表，多份并存为预期，不纳入 C2 强制消解。）（**报表**：`BASENAME_COLLISIONS_20260411.md` — 复跑后 `docs/` 下 `.md` 碰撞 basename **4**、非导航名 **0**（余 **4** 均为导航名 `INDEX`/`README`/`SITEMAP`/`CHANGELOG`，多份并存为预期形态）。**已消解 1 簇**：`DATA_QUALITY_MONITORING_BLUEPRINT.md` — canonical 仅保留 `01_BLUEPRINTS/...`；`01_FRAMEWORK` / `10_AI_WORKFLOW` 正文迁入 [`../../../06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md`](../../../06_ARCHIVE/20260411_c2_data_quality_monitoring/README.md)；Layer8 改为 `DATA_QUALITY_MONITORING_LAYER8_MODULE.md`。**已消解 2 簇**：`API_GATEWAY_BLUEPRINT.md` — canonical `API_GATEWAY_BLUEPRINT.md`；删除 Layer8 同名占位稿，入口改为 `API_GATEWAY_LAYER8_MODULE.md`（`git add` 含删除后复跑 `scan_basename_collisions.py` 可自报表剔除该簇）。**已消解 3 簇**：`DISASTER_RECOVERY_BLUEPRINT.md` — canonical `DISASTER_RECOVERY_BLUEPRINT.md`；`01_FRAMEWORK` 入口 `DISASTER_RECOVERY_FRAMEWORK_ENTRY.md`；旧稿快照 [`../../../06_ARCHIVE/20260410_c2_disaster_recovery/README.md`](../../../06_ARCHIVE/20260410_c2_disaster_recovery/README.md)。**已消解 4 簇**：`BENCHMARK_MANAGEMENT_BLUEPRINT.md` — canonical `BENCHMARK_MANAGEMENT_BLUEPRINT.md`；`11_STRATEGIC_DECISION` 入口 `BENCHMARK_MANAGEMENT_STRATEGIC_ENTRY.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_benchmark_management/README.md`](../../../06_ARCHIVE/20260410_c2_benchmark_management/README.md)。**已消解 5 簇**：`COMPLIANCE_MONITORING_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；Layer8 入口 `COMPLIANCE_MONITORING_LAYER8_MODULE.md`。**已消解 6 簇**：`FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md` — canonical `FULL_PROCESS_DATA_PERSISTENCE_BLUEPRINT.md`；`LAYER4_ML` 入口 `FULL_PROCESS_DATA_LAYER4_ENTRY.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_full_process_data_persistence/README.md`](../../../06_ARCHIVE/20260410_c2_full_process_data_persistence/README.md)。**已消解 7 簇**：`TRANSACTION_COST_ANALYSIS_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`01_FRAMEWORK` 入口 `TRANSACTION_COST_ANALYSIS_FRAMEWORK_ENTRY.md`；Layer8 `79_` 入口 `TRANSACTION_COST_ANALYSIS_LAYER8_MODULE.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_transaction_cost_analysis/README.md`](../../../06_ARCHIVE/20260410_c2_transaction_cost_analysis/README.md)。**已消解 8 簇**：`STRATEGY_LIFECYCLE_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；Layer8 `81_` 入口 `STRATEGY_LIFECYCLE_MANAGEMENT_LAYER8_MODULE.md`；`p1_cleanup_archive` 同 basename 副本迁入 [`../../../06_ARCHIVE/20260410_c2_strategy_lifecycle_management/README.md`](../../../06_ARCHIVE/20260410_c2_strategy_lifecycle_management/README.md)。**已消解 9 簇**：`MODEL_RISK_MANAGEMENT_BLUEPRINT.md` — canonical `01_FRAMEWORK/...`；Layer8 `77_` 入口 `MODEL_RISK_MANAGEMENT_LAYER8_MODULE.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_model_risk_management/README.md`](../../../06_ARCHIVE/20260410_c2_model_risk_management/README.md)。**已消解 10 簇**：`MARKET_REGIME_DETECTION_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；`10_AI_WORKFLOW` 入口 `MARKET_REGIME_DETECTION_AI_WORKFLOW_ENTRY.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_market_regime_detection/README.md`](../../../06_ARCHIVE/20260410_c2_market_regime_detection/README.md)。**已消解 11 簇**：`PERFORMANCE_ATTRIBUTION_BLUEPRINT.md` — canonical `11_STRATEGIC_DECISION/...`；Layer8 `83_` 入口 `PERFORMANCE_ATTRIBUTION_LAYER8_MODULE.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_performance_attribution/README.md`](../../../06_ARCHIVE/20260410_c2_performance_attribution/README.md)。**已消解 12 簇**：`DATA_VERSION_CONTROL_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；`LAYER4_ML` 入口 `DATA_VERSION_CONTROL_LAYER4_ENTRY.md`；`p1_cleanup_archive` 与 Layer4 同名稿迁入 [`../../../06_ARCHIVE/20260410_c2_data_version_control/README.md`](../../../06_ARCHIVE/20260410_c2_data_version_control/README.md)。**已消解 13 簇**：`MODEL_PERFORMANCE_VERSION_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`p1_cleanup_archive` 副本 [`../../../06_ARCHIVE/20260410_c2_model_performance_version_management/README.md`](../../../06_ARCHIVE/20260410_c2_model_performance_version_management/README.md)。**已消解 14 簇**：`RESEARCH_WORKFLOW_MANAGEMENT_BLUEPRINT.md` — canonical `10_AI_WORKFLOW/...`；`p1_cleanup_archive` 副本 [`../../../06_ARCHIVE/20260410_c2_research_workflow_management/README.md`](../../../06_ARCHIVE/20260410_c2_research_workflow_management/README.md)。**已消解 15 簇**：`REALTIME_RISK_MONITORING_BLUEPRINT.md` — canonical `01_FRAMEWORK/...`；Layer8 `64_` 入口 `REALTIME_RISK_MONITORING_LAYER8_MODULE.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_realtime_risk_monitoring/README.md`](../../../06_ARCHIVE/20260410_c2_realtime_risk_monitoring/README.md)。**已消解 16 簇**：`STRATEGY_ENGINE_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；战术域入口 `STRATEGY_ENGINE_TACTICS_ENTRY.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_strategy_engine/README.md`](../../../06_ARCHIVE/20260410_c2_strategy_engine/README.md)。**已消解 17 簇**：`STRATEGY_SELECTION_BLUEPRINT.md` — canonical `01_BLUEPRINTS/...`；战术域入口 `STRATEGY_SELECTION_TACTICS_ENTRY.md`；旧稿 [`../../../06_ARCHIVE/20260410_c2_strategy_selection/README.md`](../../../06_ARCHIVE/20260410_c2_strategy_selection/README.md)。**已消解 18～20 簇**：`P0_FIX_COMPLETION_REPORT_V13_20260407.md`、`RESPONSIBILITY_FIX_REPORT_20260407_030139.md`、`VERSION_CONSISTENCY_REPORT_20260407.md` — canonical 均保留 [`audit_state/INDEX.md`](../../04_OPERATIONS/audit_state/INDEX.md) 原路径；`p1_cleanup_archive` 三份迁入 [`../../../06_ARCHIVE/20260410_c2_p1_audit_report_basenames/README.md`](../../../06_ARCHIVE/20260410_c2_p1_audit_report_basenames/README.md)。**已消解 21 簇**：`SHORT_TERM_IMPROVEMENT_COMPLETION_REPORT_20260407.md` — canonical `09_AUDIT/REPORTS/...`；`STATE` 同名稿 [`../../../06_ARCHIVE/20260410_c2_short_term_improvement_completion/README.md`](../../../06_ARCHIVE/20260410_c2_short_term_improvement_completion/README.md)；`INDEX_GROUPED_STATE_20260408` 内链已指向 REPORTS。**已消解 22～24 簇**：`DEEP_AUDIT_REPORT_20260407.md`、`DEEP_AUDIT_REPORT_V7_20260404.md`、`FINAL_AUDIT_REPORT_20260407.md` — 与 `09_AUDIT/REPORTS` 同名但**正文不同**；`audit_state` 侧分别重命名为 `LAYER6_DEEP_AUDIT_REPORT_20260407.md`、`LAYER5_DEEP_AUDIT_REPORT_V7_20260404.md`、`LAYER6_FINAL_AUDIT_REPORT_20260407.md`，并更新 [`audit_state/INDEX.md`](../../04_OPERATIONS/audit_state/INDEX.md) 与 `VERSION_CONSISTENCY_REPORT_20260407` 表内路径；`06_ARCHIVE/20260407_old_layer_audit_reports/layer6_reports` 下旧稿同步改为 `LAYER6_DEEP_AUDIT_REPORT_20260407_legacy_layer6_reports_archive.md` 以免再撞 basename。**已消解 25 簇**：`DOCUMENT_METADATA_TEMPLATE.md` — canonical `09_AUDIT/STANDARDS/...`；`p1_cleanup_archive` 副本 [`../../../06_ARCHIVE/20260410_c2_document_metadata_template/README.md`](../../../06_ARCHIVE/20260410_c2_document_metadata_template/README.md)。**已消解 26～27 簇**：`DEEP_AUDIT_REPORT_V24_20260407_025847.md`、`FULL_SYSTEM_DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_V12_20260407.md` — canonical 保留 [`audit_state/INDEX.md`](../../04_OPERATIONS/audit_state/INDEX.md)；`p1_cleanup_archive` 双份 [`../../../06_ARCHIVE/20260410_c2_p1_audit_reports_batch2/README.md`](../../../06_ARCHIVE/20260410_c2_p1_audit_reports_batch2/README.md)。**已消解 28 簇**：`DEEP_AUDIT_REPORT_V3_20260407.md` — `LAYER4_ML` 与 `audit_state` 撞名异文；`audit_state` 侧改为 `LAYER8_DEEP_AUDIT_REPORT_V3_20260407.md` 并更新索引/一致性表。**已消解 29 簇**：`INDEX_GROUPED_20260408.md` — 拆为 `INDEX_GROUPED_REPORTS_20260408.md` 与 `INDEX_GROUPED_STATE_20260408.md`；`09_AUDIT` / `HANDOFF` / 卫生总案等内链已对齐。**已消解 30～32 簇**：`FACTOR_MANAGEMENT_STANDARD` / `FACTOR_REGISTRY` / `FACTOR_TAXONOMY` — `09_ARCHIVE/duplicates` 三稿分别改为 `*_legacy_09_archive_duplicates.md`，与 `02_FACTOR_LIBRARY/01_STANDARDS` 真源 basename 脱钩。**已消解 33 簇**：`ALPHA_FACTOR_LAYER_DEEP_AUDIT_REPORT_ROUND2_20260407_191332.md` — duplicates 侧同上 `_legacy_09_archive_duplicates`。**已消解 34 簇**：`DOCUMENT_CREATION_CHECKLIST.md` — canonical `07_OPERATIONS/checklists/DOCUMENT_CREATION_CHECKLIST.md`；`01_FRAMEWORK` 旧稿迁入 [`../../../06_ARCHIVE/20260410_c2_document_creation_checklist/README.md`](../../../06_ARCHIVE/20260410_c2_document_creation_checklist/README.md)。**已消解 35 簇**：`DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT.md` — `09_RESEARCH_INNOVATION` 保留 canonical；`06_ARCHIVE/20260404_audit_reports_archive/audit_state` 副本改为 `DOCUMENT_GOVERNANCE_DEEP_AUDIT_REPORT_legacy_20260404_audit_reports_archive.md`（[`20260404_audit_reports_archive/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/INDEX.md) 已改链）。**已消解 36 簇**：`FAQ.md` — `07_OPERATIONS` 改为 `IMPLEMENTATION_OPERATIONS_FAQ.md` 并修 `DATA_MIGRATION_GUIDE` / `ERROR_CODES` / `TROUBLESHOOTING_GUIDE`；duplicates 侧 `FAQ_legacy_09_archive_duplicates.md`。**已消解 37～39 簇**：`overnight_runs/20260408_*` 下 `CONSOLIDATED_REPORT_FOR_AI` / `invalid_links_detail` / `module_id_duplicates_detail` — basename 追加 `_<run_id>`；`overnight_audit_runner.py` 已同步改为带后缀输出。**已消解 40 簇**：`06_ARCHIVE` 下四处 `ARCHIVE_README.md` — 分别改为 `ARCHIVE_README_06_ARCHIVE_ROOT.md` 等，子目录 `INDEX.md` 已改链。**已消解 41 簇**：`02_FACTOR_LIBRARY` 内 33 份 `OVERVIEW.md` — 统一改为 `FACTOR_LIB_*_OVERVIEW.md`，各模块 `INDEX.md` 已对齐。**C2（非导航 basename）**：已清空。）  
 
 
 
@@ -1186,7 +1194,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1222,7 +1232,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [x] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 或本文件版本记录。（2026-04-11：已写入办公室 README「基线复跑约定」；与本文件 §3.1 末段复审口径一致。）
+- [x] 约定**更新频率**（例如每次大版本或每季度）并写入 [项目办公室 README](./README.md) 或本文件版本记录。（2026-04-11：已写入办公室 README「基线复跑约定」；与本文件 §3.1 末段复审口径一致。）
 
 
 
@@ -1262,11 +1272,11 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [x] 评审 **50** 个已跟踪 `.diff`：保留标准、迁 archive、或从跟踪中移除。（2026-04-10：50 个均为双 YAML **dry-run** 样本，已从 `docs/09_AUDIT/STATE/` **整体迁出**至 [`docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)；`OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`、`DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` 已改为「每批自建 `double_yaml_dryrun_<YYYYMMDD>/`」并互指归档样本。）  
+- [x] 评审 **50** 个已跟踪 `.diff`：保留标准、迁 archive、或从跟踪中移除。（2026-04-10：50 个均为双 YAML **dry-run** 样本，已从 `docs/09_AUDIT/STATE/` **整体迁出**至 [`../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md)；`OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md`、`DOC_REMEDIATION_TASK_DIRECTIVE_20260408.md` 已改为「每批自建 `double_yaml_dryrun_<YYYYMMDD>/`」并互指归档样本。）  
 
 
 
-- [x] 评审 `.bak2` / `.bak3` 等：是否应仅存于 archive 或本地（不进 Git）。（2026-04-10：`docs/System_Manifest.md.bak3` → [`06_ARCHIVE/20260410_system_manifest_backup/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)；`docs/06_ARCHIVE/encoding_backups/...*.bak2` 已位于 archive，保留为编码修复历史备份。）  
+- [x] 评审 `.bak2` / `.bak3` 等：是否应仅存于 archive 或本地（不进 Git）。（2026-04-10：`docs/System_Manifest.md.bak3` → [`../../../06_ARCHIVE/20260410_system_manifest_backup/README.md`](../../../06_ARCHIVE/20260410_system_manifest_backup/README.md)；`docs/06_ARCHIVE/encoding_backups/...*.bak2` 已位于 archive，保留为编码修复历史备份。）  
 
 
 
@@ -1290,11 +1300,11 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [x] `scripts/`：在 [scripts/README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 或生成清单中补齐**分类导航**（与脚本数量匹配）。（2026-04-10：增 **分类导航（P3）** 小节 + 治理表补 `scan_basename_collisions.py`。）  
+- [x] `scripts/`：在 [scripts/README.md](../../../../scripts/README.md) 或生成清单中补齐**分类导航**（与脚本数量匹配）。（2026-04-10：增 **分类导航（P3）** 小节 + 治理表补 `scan_basename_collisions.py`。）  
 
 
 
-- [x] `src/`：在根 README 或 `src/` 下 INDEX 中保证模块入口**可跳转**。（2026-04-10：新增 [`src/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)；根 [README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)「项目结构」互指。）
+- [x] `src/`：在根 README 或 `src/` 下 INDEX 中保证模块入口**可跳转**。（2026-04-10：新增 [`src/README.md`](../../../../src/README.md)；根 [README.md](../../../../README.md)「项目结构」互指。）
 
 
 
@@ -1382,7 +1392,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 登记用途。
+- [ ] 可选：新增 **模块全景**生成脚本（或扩展现有 rollup）：按 **§2.4** 约定深度输出 `MODULE_PANORAMA_*.{json,md}`，与 rollup **同批**重跑；[`scripts/README.md`](../../../../scripts/README.md) 登记用途。
 
 
 
@@ -1426,7 +1436,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- **2026-04-15 · 前缀 `docs/05_IMPLEMENTATION/04_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS --date 20260415` → `INDEX_HEALTH_ORPHAN_20260415.md`（**zero_inbound=0**；候选 md **353**）；体量互指既有 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **407** 条）；更新 [`04_OPERATIONS/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)、[`04_OPERATIONS/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表；**本批未改** `audit_state/` 内长列表正文。
+- **2026-04-15 · 前缀 `docs/05_IMPLEMENTATION/04_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_OPERATIONS --date 20260415` → `INDEX_HEALTH_ORPHAN_20260415.md`（**zero_inbound=0**；候选 md **353**）；体量互指既有 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **407** 条）；更新 [`../../04_OPERATIONS/README.md`](../../04_OPERATIONS/README.md)、[`04_OPERATIONS/INDEX.md`](../../04_OPERATIONS/INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表；**本批未改** `audit_state/` 内长列表正文。
 
 
 
@@ -1434,15 +1444,15 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- **2026-04-17 · 前缀 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417` → `INDEX_HEALTH_ORPHAN_20260417.md`（**zero_inbound=0**；候选 md **266**；首轮曾 **18**，已通过 [`01_BLUEPRINTS/REPORTS/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 挂 12 份报告链 + [`05_DESIGN_DOCS/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 挂 6 份子域 `INDEX` 入链后复跑归零）；体量互指 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **272** 条）；更新 [`06_CONSTRUCTION_DOCS/README.md`](../README.md)、[`06_CONSTRUCTION_DOCS/INDEX.md`](../INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表。
+- **2026-04-17 · 前缀 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS --date 20260417` → `INDEX_HEALTH_ORPHAN_20260417.md`（**zero_inbound=0**；候选 md **266**；首轮曾 **18**，已通过 [`../01_BLUEPRINTS/REPORTS/README.md`](../01_BLUEPRINTS/REPORTS/README.md) 挂 12 份报告链 + [`../05_DESIGN_DOCS/INDEX.md`](../05_DESIGN_DOCS/INDEX.md) 挂 6 份子域 `INDEX` 入链后复跑归零）；体量互指 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **272** 条）；更新 [`06_CONSTRUCTION_DOCS/README.md`](../README.md)、[`06_CONSTRUCTION_DOCS/INDEX.md`](../INDEX.md) 与 [`STATE/INDEX.md`](../../../09_AUDIT/STATE/INDEX.md) 产出表。
 
 
 
-- **2026-04-18 · 前缀 `docs/06_ARCHIVE/20260404_audit_reports_archive`（归档区 · 门面批次）**：`scan_index_health.py` 增 **archive 子 `--prefix` 时取消对该 archive 根默认排除**（否则候选恒 0）；复跑 `--prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418` → `INDEX_HEALTH_ORPHAN_20260418.md`（**zero_inbound=0**；候选 **183**；首轮 **5** 处经 [`20260404_audit_reports_archive/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)、[`technical_reviews/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)、[`archived_reports_20260402/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 补链后归零）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（**218** 条）；**本批未做删并**（§7.1：归档区只读治理为主）。
+- **2026-04-18 · 前缀 `docs/06_ARCHIVE/20260404_audit_reports_archive`（归档区 · 门面批次）**：`scan_index_health.py` 增 **archive 子 `--prefix` 时取消对该 archive 根默认排除**（否则候选恒 0）；复跑 `--prefix docs/06_ARCHIVE/20260404_audit_reports_archive --date 20260418` → `INDEX_HEALTH_ORPHAN_20260418.md`（**zero_inbound=0**；候选 **183**；首轮 **5** 处经 [`20260404_audit_reports_archive/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/INDEX.md)、[`technical_reviews/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/technical_reviews/INDEX.md)、[`archived_reports_20260402/INDEX.md`](../../../06_ARCHIVE/20260404_audit_reports_archive/archived_reports_20260402/INDEX.md) 补链后归零）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（**218** 条）；**本批未做删并**（§7.1：归档区只读治理为主）。
 
 
 
-- **2026-04-19 · 前缀 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419` → `INDEX_HEALTH_ORPHAN_20260419.md`（**zero_inbound=0**；候选 **97**；首轮 **`INDEX.md` 自身** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式指向 `./05_TECHNICAL_SPECIFICATIONS/INDEX.md` 后归零）；[`05_TECHNICAL_SPECIFICATIONS/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增机器产出小节；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（**97** 条）。
+- **2026-04-19 · 前缀 `docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS --date 20260419` → `INDEX_HEALTH_ORPHAN_20260419.md`（**zero_inbound=0**；候选 **97**；首轮 **`INDEX.md` 自身** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式指向 `./05_TECHNICAL_SPECIFICATIONS/INDEX.md` 后归零）；[`05_TECHNICAL_SPECIFICATIONS/INDEX.md`](../../05_TECHNICAL_SPECIFICATIONS/INDEX.md) 增机器产出小节；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（**97** 条）。
 
 
 
@@ -1450,15 +1460,15 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- **2026-04-21 · 前缀 `docs/05_IMPLEMENTATION/07_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/07_OPERATIONS --date 20260421` → `INDEX_HEALTH_ORPHAN_20260421.md`（**zero_inbound=0**；候选 md **62**；首轮 **10** 处子域 `README`/`INDEX` 零入链，已由 [`07_OPERATIONS/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 子目录表补链后归零）；[`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 增「运维手册总索引」并子目录表链至 `./07_OPERATIONS/INDEX.md`；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **62** 条）。
+- **2026-04-21 · 前缀 `docs/05_IMPLEMENTATION/07_OPERATIONS`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/07_OPERATIONS --date 20260421` → `INDEX_HEALTH_ORPHAN_20260421.md`（**zero_inbound=0**；候选 md **62**；首轮 **10** 处子域 `README`/`INDEX` 零入链，已由 [`07_OPERATIONS/INDEX.md`](../../07_OPERATIONS/INDEX.md) 子目录表补链后归零）；[`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 增「运维手册总索引」并子目录表链至 `./07_OPERATIONS/INDEX.md`；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **62** 条）。
 
 
 
-- **2026-04-22 · 前缀 `docs/09_ARCHIVE/duplicates`（归档重复池 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/09_ARCHIVE/duplicates --date 20260422` → `INDEX_HEALTH_ORPHAN_20260422.md`（**zero_inbound=0**；候选 md **54**；首轮 **45** 处零入链，已由 [`duplicates/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增「全量挂载」清单后归零；**不**做删并）；[`09_ARCHIVE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 门面首链对齐 `./duplicates/INDEX.md`；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **54** 条）。
+- **2026-04-22 · 前缀 `docs/09_ARCHIVE/duplicates`（归档重复池 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/09_ARCHIVE/duplicates --date 20260422` → `INDEX_HEALTH_ORPHAN_20260422.md`（**zero_inbound=0**；候选 md **54**；首轮 **45** 处零入链，已由 [`duplicates/INDEX.md`](../../../09_ARCHIVE/duplicates/INDEX.md) 增「全量挂载」清单后归零；**不**做删并）；[`09_ARCHIVE/INDEX.md`](../../../09_ARCHIVE/INDEX.md) 门面首链对齐 `./duplicates/INDEX.md`；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **54** 条）。
 
 
 
-- **2026-04-23 · 前缀 `docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample`（归档 · dry-run 样本）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample --date 20260423` → `INDEX_HEALTH_ORPHAN_20260423.md`（**zero_inbound=0**；候选 md **1**；其余 **50** 个为 `.diff` 不在 md 入链口径）；[`README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) 增 P5 门面；[`06_ARCHIVE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 目录表增本样本行；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **51** 条）。
+- **2026-04-23 · 前缀 `docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample`（归档 · dry-run 样本）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260408_double_yaml_dryrun_sample --date 20260423` → `INDEX_HEALTH_ORPHAN_20260423.md`（**zero_inbound=0**；候选 md **1**；其余 **50** 个为 `.diff` 不在 md 入链口径）；[`../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md) 增 P5 门面；[`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 目录表增本样本行；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **51** 条）。
 
 
 
@@ -1466,7 +1476,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- **2026-04-25 · 前缀 `docs/06_ARCHIVE/20260407_old_layer_audit_reports`（归档 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports --date 20260425` → `INDEX_HEALTH_ORPHAN_20260425.md`（**zero_inbound=0**；候选 md **40**；首轮 **8** 处子域 `INDEX` + `layer25` 单报告零入链，已由 [`20260407_old_layer_audit_reports/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增「子目录索引」+ [`06_ARCHIVE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 表增门面行后归零）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **40** 条）。
+- **2026-04-25 · 前缀 `docs/06_ARCHIVE/20260407_old_layer_audit_reports`（归档 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_old_layer_audit_reports --date 20260425` → `INDEX_HEALTH_ORPHAN_20260425.md`（**zero_inbound=0**；候选 md **40**；首轮 **8** 处子域 `INDEX` + `layer25` 单报告零入链，已由 [`20260407_old_layer_audit_reports/INDEX.md`](../../../06_ARCHIVE/20260407_old_layer_audit_reports/INDEX.md) 增「子目录索引」+ [`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 表增门面行后归零）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **40** 条）。
 
 
 
@@ -1474,27 +1484,27 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- **2026-04-27 · 前缀 `docs/06_ARCHIVE/20260407_p1_cleanup_archive`（归档 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_p1_cleanup_archive --date 20260427` → `INDEX_HEALTH_ORPHAN_20260427.md`（**zero_inbound=0**；候选 md **23**；首轮 **21** 处零入链，已由 [`20260407_p1_cleanup_archive/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增「全量挂载」+ [`06_ARCHIVE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 表增门面行后归零；**不**做删并）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **23** 条）。
+- **2026-04-27 · 前缀 `docs/06_ARCHIVE/20260407_p1_cleanup_archive`（归档 · 门面批次）**：复跑 `scan_index_health.py --prefix docs/06_ARCHIVE/20260407_p1_cleanup_archive --date 20260427` → `INDEX_HEALTH_ORPHAN_20260427.md`（**zero_inbound=0**；候选 md **23**；首轮 **21** 处零入链，已由 [`20260407_p1_cleanup_archive/INDEX.md`](../../../06_ARCHIVE/20260407_p1_cleanup_archive/INDEX.md) 增「全量挂载」+ [`06_ARCHIVE/INDEX.md`](../../../06_ARCHIVE/INDEX.md) 表增门面行后归零；**不**做删并）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **23** 条）。
 
 
 
-- **2026-04-28 · 前缀 `docs/05_IMPLEMENTATION/02_DEVELOPMENT`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/02_DEVELOPMENT --date 20260428` → `INDEX_HEALTH_ORPHAN_20260428.md`（**zero_inbound=0**；候选 md **21**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./02_DEVELOPMENT/INDEX.md` 与 `./02_DEVELOPMENT/README.md` 后归零）；[`02_DEVELOPMENT/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **21** 条）。
+- **2026-04-28 · 前缀 `docs/05_IMPLEMENTATION/02_DEVELOPMENT`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/02_DEVELOPMENT --date 20260428` → `INDEX_HEALTH_ORPHAN_20260428.md`（**zero_inbound=0**；候选 md **21**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./02_DEVELOPMENT/INDEX.md` 与 `./02_DEVELOPMENT/README.md` 后归零）；[`02_DEVELOPMENT/INDEX.md`](../../02_DEVELOPMENT/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **21** 条）。
 
 
 
-- **2026-04-29 · 前缀 `docs/05_IMPLEMENTATION/03_DEPLOYMENT`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/03_DEPLOYMENT --date 20260429` → `INDEX_HEALTH_ORPHAN_20260429.md`（**zero_inbound=0**；候选 md **6**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./03_DEPLOYMENT/INDEX.md` 与 `./03_DEPLOYMENT/README.md` 后归零）；[`03_DEPLOYMENT/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增 P5 门面与全量清单；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **6** 条）。
+- **2026-04-29 · 前缀 `docs/05_IMPLEMENTATION/03_DEPLOYMENT`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/03_DEPLOYMENT --date 20260429` → `INDEX_HEALTH_ORPHAN_20260429.md`（**zero_inbound=0**；候选 md **6**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./03_DEPLOYMENT/INDEX.md` 与 `./03_DEPLOYMENT/README.md` 后归零）；[`03_DEPLOYMENT/INDEX.md`](../../03_DEPLOYMENT/INDEX.md) 增 P5 门面与全量清单；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **6** 条）。
 
 
 
-- **2026-04-30 · 前缀 `docs/05_IMPLEMENTATION/04_INFRASTRUCTURE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_INFRASTRUCTURE --date 20260430` → `INDEX_HEALTH_ORPHAN_20260430.md`（**zero_inbound=0**；候选 md **4**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./04_INFRASTRUCTURE/INDEX.md` 与 `./04_INFRASTRUCTURE/README.md` 等后归零）；[`04_INFRASTRUCTURE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **4** 条）。
+- **2026-04-30 · 前缀 `docs/05_IMPLEMENTATION/04_INFRASTRUCTURE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/04_INFRASTRUCTURE --date 20260430` → `INDEX_HEALTH_ORPHAN_20260430.md`（**zero_inbound=0**；候选 md **4**；首轮 **`INDEX`/`README`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./04_INFRASTRUCTURE/INDEX.md` 与 `./04_INFRASTRUCTURE/README.md` 等后归零）；[`04_INFRASTRUCTURE/INDEX.md`](../../04_INFRASTRUCTURE/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **4** 条）。
 
 
 
-- **2026-05-01 · 前缀 `docs/05_IMPLEMENTATION/01_QUICKSTART`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/01_QUICKSTART --date 20260501` → `INDEX_HEALTH_ORPHAN_20260501.md`（**zero_inbound=0**；候选 md **7**；首轮 **`INDEX.md`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./01_QUICKSTART/INDEX.md` 并扩严格孤儿挂载后归零）；[`01_QUICKSTART/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 重写为 P5 门面（本目录无 `README.md`，实施层索引误链已改）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **7** 条）。
+- **2026-05-01 · 前缀 `docs/05_IMPLEMENTATION/01_QUICKSTART`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/01_QUICKSTART --date 20260501` → `INDEX_HEALTH_ORPHAN_20260501.md`（**zero_inbound=0**；候选 md **7**；首轮 **`INDEX.md`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 显式链 `./01_QUICKSTART/INDEX.md` 并扩严格孤儿挂载后归零）；[`01_QUICKSTART/INDEX.md`](../../01_QUICKSTART/INDEX.md) 重写为 P5 门面（本目录无 `README.md`，实施层索引误链已改）；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **7** 条）。
 
 
 
-- **2026-05-02 · 前缀 `docs/05_IMPLEMENTATION/99_ARCHIVE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/99_ARCHIVE --date 20260502` → `INDEX_HEALTH_ORPHAN_20260502.md`（**zero_inbound=0**；候选 md **4**；首轮 **`INDEX.md`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 增 `99_ARCHIVE` 挂载后归零）；[`99_ARCHIVE/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **4** 条）。
+- **2026-05-02 · 前缀 `docs/05_IMPLEMENTATION/99_ARCHIVE`（门面批次）**：复跑 `scan_index_health.py --prefix docs/05_IMPLEMENTATION/99_ARCHIVE --date 20260502` → `INDEX_HEALTH_ORPHAN_20260502.md`（**zero_inbound=0**；候选 md **4**；首轮 **`INDEX.md`** 零入链，已由 [`05_IMPLEMENTATION/INDEX.md`](../../INDEX.md) 增 `99_ARCHIVE` 挂载后归零）；[`99_ARCHIVE/INDEX.md`](../../99_ARCHIVE/INDEX.md) 增 P5 门面；体量 `REPO_DIRECTORY_ROLLUP_20260414.md`（本前缀 **4** 条）。
 
 
 
@@ -1578,7 +1588,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -1604,7 +1616,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 | 1.4.72 | 2026-04-11 | **§1.2** 末增「ignore 与 `STATE/` 两条线」块quote；**§7.2** 末增 Solo+AI 与 §0.1.4 互指；§3.4.1 / §8 AI 交接行同步 **§0.1.4 / §0.2** |
 
-
+| 1.4.73 | 2026-04-13 | 批量修正错误占位链接（`10_GOVERNANCE_COMPLIANCE/...`、`12_MODULE_DESIGNS/...`）为仓库内真实相对路径；C2 长段中 `06_ARCHIVE/*` 与 `audit_state` 等链接可点击 |
 
 | 1.4.70 | 2026-04-11 | 新增 **§1.2**（Markdown 编码/乱码预防，与 L1 正交）；文首块互指 §1.2；**§2.3** 表「内链/verify」改为**推荐**复跑口径并互指 AI 交接 **§0.1.2**；§8 AI 交接自查条含 **§0.1** / **§1.2** |
 
@@ -1978,7 +1990,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2078,7 +2092,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-| 双 YAML dry-run 历史样本（50×`.diff`，已迁出 STATE） | [`06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) |
+| 双 YAML dry-run 历史样本（50×`.diff`，已迁出 STATE） | [`../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md`](../../../06_ARCHIVE/20260408_double_yaml_dryrun_sample/README.md) |
 
 
 
@@ -2086,7 +2100,9 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2214,7 +2230,9 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2238,7 +2256,7 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 
 
-- [x] [办公室 README](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类** Playbook / 二审模板 / **待审登记** / `triage_blueprint_d_overlap_pairs.py` 及 **§3.4.1** 互指）；治理工具总索引 与 `scripts/` 实际脚本同步；文档地图与放置规程 **§1.5** 与 LAYOUT 标准 **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对；2026-04-11 增补 D 类 §3.4.1 与 §2.5 口径。）  
+- [x] [办公室 README](./README.md)：**治理流程编号**仍覆盖蓝图、孤儿/重复、扩展轨、根卫生、**整仓文件尽治**、**文档地图与放置**；**办公室文件一览**表与磁盘一致（含 **D 类** Playbook / 二审模板 / **待审登记** / `triage_blueprint_d_overlap_pairs.py` 及 **§3.4.1** 互指）；治理工具总索引 与 `scripts/` 实际脚本同步；文档地图与放置规程 **§1.5** 与 LAYOUT 标准 **§1 第 5 条**互指无断链、无第二套 Layer 放置真源。（2026-04-10 批次核对；2026-04-11 增补 D 类 §3.4.1 与 §2.5 口径。）  
 
 
 
@@ -2246,7 +2264,7 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 
 
-- [x] [scripts/README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
+- [x] [scripts/README.md](../../../../scripts/README.md)：治理相关脚本表含 **rollup**、`generate_architecture_service_catalog` 与既有 `verify_*` / `sentinel_l1`；若已落地 **§2.4** `MODULE_PANORAMA_*` 脚本，表中已登记。（2026-04-10：`scan_basename_collisions`、分类导航已补；`MODULE_PANORAMA_*` 仍未落地 — 表中无该项为预期。）  
 
 
 
@@ -2634,7 +2652,9 @@ Owner 对每个待收口前缀打勾（可复制到 PR 描述或台账）：
 
 
 
----
+```
+```---
+```
 
 
 
