@@ -1,5 +1,5 @@
 ---
-module_id: LAYER_8074 6 (组合优化层)_INDEX_AUTO
+module_id: "LAYER_8074 6 (组合优化层)_INDEX_AUTO_ARCHIVED"
 version: 1.0.0
 status: Active
 created_date: 2026-04-13

@@ -1,5 +1,5 @@
 ---
-module_id: LAYER_4_INDEX_AUTO
+module_id: "LAYER_4_INDEX_AUTO_ARCHIVED"
 version: 1.0.0
 status: Active
 created_date: 2026-04-13

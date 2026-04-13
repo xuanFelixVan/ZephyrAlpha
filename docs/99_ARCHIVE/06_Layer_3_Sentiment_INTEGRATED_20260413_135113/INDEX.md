@@ -1,5 +1,5 @@
 ---
-module_id: LAYER_0308 3 (舆情分析层)_INDEX_AUTO
+module_id: "LAYER_0308 3 (舆情分析层)_INDEX_AUTO_ARCHIVED"
 version: 1.0.0
 status: Active
 created_date: 2026-04-13

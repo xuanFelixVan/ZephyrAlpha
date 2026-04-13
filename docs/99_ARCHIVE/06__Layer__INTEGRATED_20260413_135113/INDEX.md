@@ -1,5 +1,5 @@
 ---
-module_id: '[LAYER定位]'_INDEX_AUTO_5777
+module_id: "[LAYER定位]'_INDEX_AUTO_5777_ARCHIVED"
 version: 1.0.0
 status: Active
 created_date: 2026-04-13

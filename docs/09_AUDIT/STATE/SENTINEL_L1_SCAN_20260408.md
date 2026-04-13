@@ -6,7 +6,7 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260413T085505Z
+> **UTC 时间**: 20260413T090120Z
 > **Markdown 文件数**: 3532
 
 ## 链接统计
@@ -59,32 +59,29 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 ## module_id
 
-- 唯一 module_id 数: **3453**
-- 重复 id 数: **46**
+- 唯一 module_id 数: **3492**
+- 重复 id 数: **17**
 - 首道 front matter 无 `module_id` 的文件数: **22**
 
 ### 重复模块（前 20 个）
 
-- `LAYER 1 (数据源层)_INDEX_AUTO`: 4 个文件
-- `LAYER_1_INDEX_AUTO`: 3 个文件
-- `LAYER 3 (策略层)_INDEX_AUTO`: 3 个文件
-- `LAYER 3 (舆情分析层)_INDEX_AUTO`: 3 个文件
-- `LAYER_4_INDEX_AUTO`: 3 个文件
-- `LAYER 6 (组合优化层)_INDEX_AUTO`: 3 个文件
-- `LAYER_6_INDEX_AUTO`: 3 个文件
-- `LAYER 7 (AI报告层)_INDEX_AUTO`: 3 个文件
-- `LAYER_9_INDEX_AUTO`: 3 个文件
-- `LAYER X ([LAYER名称])_INDEX_AUTO`: 3 个文件
+- `LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED`: 3 个文件
 - `01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370`: 2 个文件
-- `[LAYER定位]'_INDEX_AUTO_2681`: 2 个文件
-- `-_4276 层级_INDEX_AUTO`: 2 个文件
-- `[LAYER定位]'_INDEX_AUTO_4767`: 2 个文件
-- `LAYER_0038 1 (数据源层)_INDEX_AUTO`: 2 个文件
-- `LAYER_1625 1 (数据源层)_INDEX_AUTO`: 2 个文件
 - `MARKETREGIMEBLUEPRINT_001_7487`: 2 个文件
-- `-_9433 层级标识_INDEX_AUTO`: 2 个文件
-- `LAYER_1593 3 (策略层)_INDEX_AUTO`: 2 个文件
-- `[LAYER定位]'_INDEX_AUTO_5777`: 2 个文件
+- `PORTFOLIO_PERFORMANCE_EVALUATION_001_2782`: 2 个文件
+- `AUDIT_SENTINEL_L1_SCAN_20260408`: 2 个文件
+- `[LAYER定位]'_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `- 层级标识_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `舆情分析_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER_1_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER_4_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER_6_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER_9_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER 3 (策略层)_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER 3 (舆情分析层)_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER 6 (组合优化层)_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER 7 (AI报告层)_INDEX_AUTO_ARCHIVED`: 2 个文件
+- `LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED`: 2 个文件
 
 ## 路径深度 Top 10
 
