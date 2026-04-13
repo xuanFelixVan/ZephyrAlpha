@@ -191,7 +191,7 @@ DOCS_DIR = Path("docs")
 
 def extract_links(content: str) -> list:
     """提取markdown中的所有链接"""
-    # [text](path) 格式
+    # [text]<!-- -->(path) 格式
     pattern = r'\[([^\]]+)\]\(([^)]+)\)'
     matches = re.findall(pattern, content)
     return [m[1] for m in matches if not m[1].startswith(('http', '#'))]
@@ -271,7 +271,7 @@ def mount_to_index(orphan_path: str, index_path: str):
         content = f.read()
     
     # 生成挂载链接
-    link_line = f"- [{Path(orphan_path).name}](./{orphan_rel}.md)\n"
+    link_line = f"- [{Path(orphan_path).name}]<!-- -->(./{orphan_rel}.md)\n"
     
     # 在"## 文档列表"后插入
     if '## 文档列表' in content:

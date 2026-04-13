@@ -12977,7 +12977,7 @@ module_id: AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT
   **问题**: 死链: `[mlops-platform-technical-specification](../../06_ARCHIVE/blueprints/mlops-platform-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[model-performance-version-management-blueprint-legacy-p1-cleanup-archive](../../06_ARCHIVE/blueprints/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `` [model-performance-version-management-blueprint-legacy-p1-cleanup-archive]<!-- -->(../../06_ARCHIVE/blueprints/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md) `` -> 目标不存在（已归档删除）
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[monthly-reporter-technical-review-report](../../06_ARCHIVE/reports/monthly-reporter-technical-review-report.md)` -> 目标不存在
@@ -13292,7 +13292,7 @@ module_id: AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT
   **问题**: 死链: `[overlap-intelligent-qa-system-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-intelligent-qa-system-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-investment-committee-support-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `` [overlap-investment-committee-support-blueprint-20260407-190203]<!-- -->(../../06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md) `` -> 目标不存在（已归档删除）
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-knowledge-base-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-knowledge-base-blueprint-20260407-190203.md)` -> 目标不存在
@@ -14093,7 +14093,7 @@ module_id: AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT
   **问题**: 死链: `[04_EXPERIMENT_TRACKING/](../../12_MODULE_DESIGNS/layer_0/INDEX.md)` -> 目标不存在
 
 - **文件**: `docs/07_RESEARCH/INDEX.md`
-  **问题**: 死链: `[../02_FACTOR_LIBRARY/05_BACKTEST/](../02_FACTOR_LIBRARY/05_BACKTEST/)` -> 目标不存在
+  **问题**: 死链: `` [../02_FACTOR_LIBRARY/05_BACKTEST/]<!-- -->(../02_FACTOR_LIBRARY/05_BACKTEST/) `` -> 目标不存在（目录已重命名为 05_BT_ENGINE）
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[README](./README.md)` -> 目标不存在
@@ -14579,7 +14579,7 @@ module_id: AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT
   **问题**: 死链: `[batch-responsibility-supplement-report-20260407-182120](../STATE/batch-responsibility-supplement-report-20260407-182120.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[blueprint-d-overlap-candidates-20260411](../STATE/blueprint-d-overlap-candidates-20260411.md)` -> 目标不存在
+  **问题**: 死链: `` [blueprint-d-overlap-candidates-20260411]<!-- -->(../STATE/blueprint-d-overlap-candidates-20260411.md) `` -> 目标不存在（文件已删除）
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[blueprint-d-overlap-candidates-20260412](../STATE/blueprint-d-overlap-candidates-20260412.md)` -> 目标不存在

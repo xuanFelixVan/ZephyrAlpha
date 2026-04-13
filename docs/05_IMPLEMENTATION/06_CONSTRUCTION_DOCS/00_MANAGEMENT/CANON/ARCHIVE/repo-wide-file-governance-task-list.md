@@ -126,7 +126,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 
 
-> **基线数字**：与 `git ls-files` 对齐；**人类可读 UTF-8 平面清单**见 [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)（导出命令见下，**须** `core.quotePath=false`）。在 PowerShell **默认**配置下，`git ls-files` 对非 ASCII 可能打印 **引号 + 八进制转义**——属 **CLI 显示**，**不是**索引里另存了一套「坏路径」；与 rollup 误分桶、平面清单前几行「像异常」常同源。**澄清与复跑对照**见 `GIT_TRACKED_PATH_ANOMALIES_20260411.md`。历史快照仍可查 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)（该次导出未关 quotePath，**勿**与机器统计直接混用）。
+> **基线数字**：与 `git ls-files` 对齐；**人类可读 UTF-8 平面清单**见 [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)（导出命令见下，**须** `core.quotePath=false`）。在 PowerShell **默认**配置下，`git ls-files` 对非 ASCII 可能打印 **引号 + 八进制转义**——属 **CLI 显示**，**不是**索引里另存了一套「坏路径」；与 rollup 误分桶、平面清单前几行「像异常」常同源。**澄清与复跑对照**见 `GIT_TRACKED_PATH_ANOMALIES_20260411.md`。历史快照仍可查 [`REPO_GIT_TRACKED_FILES_20260410.txt`](../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt)（该次导出未关 quotePath，**勿**与机器统计直接混用）。
 
 
 
@@ -246,7 +246,7 @@ applicable_scope: 本 Git 仓库；以 `git ls-files` 为权威清单来源
 
 
 
-| 全量前缀计数（JSON，可按任意前缀筛选） | [`REPO_DIRECTORY_ROLLUP_20260411.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 [`20260410.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
+| 全量前缀计数（JSON，可按任意前缀筛选） | [`REPO_DIRECTORY_ROLLUP_20260411.json`](../../../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 [`20260410.json`](../../../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json) |
 
 
 
@@ -1182,7 +1182,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [ ] D：候选簇已登记（`BLUEPRINT_D_OVERLAP_CANDIDATES_*` / Playbook）；可选已跑 **triage**（`BLUEPRINT_D_OVERLAP_TRIAGE_*`、`SECOND_PASS_QUEUE_*.jsonl` + 二审模板）；**已裁决**簇完成叙事归并 + 链接 + 台账；**低置信**合稿若有进行，待审登记 与实现一致。（2026-04-12：**机器候选已刷新** — `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`：扫描蓝图 **758**、截断前 **12244** 对、写入 **400** 对；**分流/二审产出示例** — `TRIAGE_20260412.md`、[`SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl)；**最终裁决与合稿仍待 Owner** 按 Playbook 从高分起评审。）  
+- [ ] D：候选簇已登记（`BLUEPRINT_D_OVERLAP_CANDIDATES_*` / Playbook）；可选已跑 **triage**（`BLUEPRINT_D_OVERLAP_TRIAGE_*`、`SECOND_PASS_QUEUE_*.jsonl` + 二审模板）；**已裁决**簇完成叙事归并 + 链接 + 台账；**低置信**合稿若有进行，待审登记 与实现一致。（2026-04-12：**机器候选已刷新** — `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md`：扫描蓝图 **758**、截断前 **12244** 对、写入 **400** 对；**分流/二审产出示例** — `TRIAGE_20260412.md`、[`SECOND_PASS_QUEUE_20260412.jsonl`](../../../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl)；**最终裁决与合稿仍待 Owner** 按 Playbook 从高分起评审。）  
 
 
 
@@ -1280,7 +1280,7 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-- [x] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。（2026-04-10：**工作区/索引**已为 UTF-8 中文名，**无**须 `git mv` 的「坏路径」。2026-04-11：**根因**为默认 `git ls-files` **显示转义** + 部分脚本未关 `quotePath`，导致 rollup/清单误判；已统一治理脚本 `git -c core.quotePath=false ls-files` 并刷新 `REPO_DIRECTORY_ROLLUP_20260411`、[`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)；说明见 `GIT_TRACKED_PATH_ANOMALIES_20260411.md`。）
+- [x] 对 `review_materials_package` 等路径中异常引号/命名（Windows 下曾出现统计异常）做**路径规范化**（若仍存在）。（2026-04-10：**工作区/索引**已为 UTF-8 中文名，**无**须 `git mv` 的「坏路径」。2026-04-11：**根因**为默认 `git ls-files` **显示转义** + 部分脚本未关 `quotePath`，导致 rollup/清单误判；已统一治理脚本 `git -c core.quotePath=false ls-files` 并刷新 `REPO_DIRECTORY_ROLLUP_20260411`、[`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt)；说明见 `GIT_TRACKED_PATH_ANOMALIES_20260411.md`。）
 
 
 
@@ -2016,35 +2016,35 @@ git ls-files | ForEach-Object { if ($_ -match '\.([^./\\]+)$') { $matches[1].ToL
 
 
 
-| 全量已跟踪路径清单（UTF-8 · `quotePath=false`） | [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt) · 历史 [`20260410`](../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
+| 全量已跟踪路径清单（UTF-8 · `quotePath=false`） | [`REPO_GIT_TRACKED_FILES_20260411.txt`](../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt) · 历史 [`20260410`](../../../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt) |
 
 
 
-| 目录深度聚合（3～6） | `REPO_DIRECTORY_ROLLUP_20260411.md` / [`.json`](../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 `20260410` |
+| 目录深度聚合（3～6） | `REPO_DIRECTORY_ROLLUP_20260411.md` / [`.json`](../../../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json) · 历史 `20260410` |
 
 
 
-| 架构服务目录 + C4 摘要（生成） | `ARCHITECTURE_SERVICE_CATALOG_20260410.md` / [`.json`](../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
+| 架构服务目录 + C4 摘要（生成） | `ARCHITECTURE_SERVICE_CATALOG_20260410.md` / [`.json`](../../../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json) |
 
 
 
-| 内容重复（SHA256 · 后缀白名单） | `DUPLICATE_CONTENT_BY_HASH_20260411.md` / [`.json`](../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json) |
+| 内容重复（SHA256 · 后缀白名单） | `DUPLICATE_CONTENT_BY_HASH_20260411.md` / [`.json`](../../../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json) |
 
 
 
-| 同名不同路径（basename · C2 · `scan_basename_collisions.py`） | `BASENAME_COLLISIONS_20260411.md` / [`.json`](../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json) |
+| 同名不同路径（basename · C2 · `scan_basename_collisions.py`） | `BASENAME_COLLISIONS_20260411.md` / [`.json`](../../../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json) |
 
 
 
-| 蓝图 D 类重叠候选（启发式 · `scan_blueprint_d_overlap_candidates.py`） | `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md` / [`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json) · 历史快照 `20260411` · Playbook · **低置信合稿台账** D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER |
+| 蓝图 D 类重叠候选（启发式 · `scan_blueprint_d_overlap_candidates.py`） | `BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.md` / [`.json`](../../../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json) · 历史快照 `20260411` · Playbook · **低置信合稿台账** D_CLASS_CONSOLIDATION_PENDING_REVIEW_REGISTER |
 
 
 
-| 蓝图 D 类 A 档分流 + 二审队列（`triage_blueprint_d_overlap_pairs.py`） | `BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md` / [`.json`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json) · [`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) · 二审提示词模板 |
+| 蓝图 D 类 A 档分流 + 二审队列（`triage_blueprint_d_overlap_pairs.py`） | `BLUEPRINT_D_OVERLAP_TRIAGE_20260412.md` / [`.json`](../../../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json) · [`BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`](../../../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl) · 二审提示词模板 |
 
 
 
-| 索引健全性（零入链候选 · `scan_index_health.py`） | `INDEX_HEALTH_ORPHAN_20260410.md` / [`.json`](../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
+| 索引健全性（零入链候选 · `scan_index_health.py`） | `INDEX_HEALTH_ORPHAN_20260410.md` / [`.json`](../../../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json) |
 
 
 

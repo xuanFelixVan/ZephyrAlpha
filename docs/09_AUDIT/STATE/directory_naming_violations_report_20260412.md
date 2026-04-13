@@ -207,12 +207,12 @@ python scripts/batch_fix_invalid_links_v2.py
 
 修复后需要更新 SITEMAP.md 中的目录映射：
 
-```markdown
+```text
 # 更新前
-- [module_designs/](./module_designs/) - 模块设计草图
+- \[module_designs/]<!-- -->(./module_designs/) - 模块设计草图
 
 # 更新后
-- [12_MODULE_DESIGNS/](./12_MODULE_DESIGNS/) - 模块设计草图
+- \[12_MODULE_DESIGNS/]<!-- -->(./12_MODULE_DESIGNS/) - 模块设计草图
 ```
 
 ```

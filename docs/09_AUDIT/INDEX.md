@@ -119,7 +119,6 @@ responsibility:
 - [batch-responsibility-supplement-report-20260407-182103](./STATE/batch-responsibility-supplement-report-20260407-182103.md)
 - [batch-responsibility-supplement-report-20260407-182120](./STATE/batch-responsibility-supplement-report-20260407-182120.md)
 - [blueprint-checklist](./blueprint-checklist.md)
-- [blueprint-d-overlap-candidates-20260411](./STATE/blueprint-d-overlap-candidates-20260411.md)
 - [blueprint-d-overlap-candidates-20260412](./STATE/blueprint-d-overlap-candidates-20260412.md)
 - [blueprint-d-overlap-triage-20260412](./STATE/blueprint-d-overlap-triage-20260412.md)
 - [blueprint-standard-template](./FORM_STANDARDS/blueprint-standard-template.md)

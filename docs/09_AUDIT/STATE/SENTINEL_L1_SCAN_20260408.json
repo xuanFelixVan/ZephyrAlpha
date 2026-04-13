@@ -1,202 +1,30 @@
 {
-  "scan_time_utc": "20260413T091216Z",
+  "scan_time_utc": "20260413T093046Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 3534,
   "links": {
     "stats": {
       "total_files_scanned": 3534,
-      "total_md_links": 8607,
-      "skipped_external": 856,
-      "valid": 7716,
-      "invalid": 35
+      "total_md_links": 8604,
+      "skipped_external": 849,
+      "valid": 7755,
+      "invalid": 0
     },
-    "invalid_details_sample": [
-      {
-        "source": "docs/03_TRADING_TACTICS/strategy-spec-s001.md",
-        "url": "../02_FACTOR_LIBRARY/05_BACKTEST/",
-        "resolved": "docs/02_FACTOR_LIBRARY/05_BACKTEST"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl"
-      },
-      {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md",
-        "url": "../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json",
-        "resolved": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json"
-      },
-      {
-        "source": "docs/06_ARCHIVE/INDEX.md",
-        "url": "./model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md",
-        "resolved": "docs/06_ARCHIVE/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md"
-      },
-      {
-        "source": "docs/07_RESEARCH/INDEX.md",
-        "url": "../02_FACTOR_LIBRARY/05_BACKTEST/",
-        "resolved": "docs/02_FACTOR_LIBRARY/05_BACKTEST"
-      },
-      {
-        "source": "docs/09_AUDIT/INDEX.md",
-        "url": "./STATE/blueprint-d-overlap-candidates-20260411.md",
-        "resolved": "docs/09_AUDIT/STATE/blueprint-d-overlap-candidates-20260411.md"
-      },
-      {
-        "source": "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
-        "url": "../../06_ARCHIVE/blueprints/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md",
-        "resolved": "docs/06_ARCHIVE/blueprints/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md"
-      },
-      {
-        "source": "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
-        "url": "../../06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md",
-        "resolved": "docs/06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md"
-      },
-      {
-        "source": "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
-        "url": "../02_FACTOR_LIBRARY/05_BACKTEST/",
-        "resolved": "docs/09_AUDIT/02_FACTOR_LIBRARY/05_BACKTEST"
-      },
-      {
-        "source": "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
-        "url": "../STATE/blueprint-d-overlap-candidates-20260411.md",
-        "resolved": "docs/09_AUDIT/STATE/blueprint-d-overlap-candidates-20260411.md"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/directory_naming_violations_report_20260412.md",
-        "url": "./module_designs/",
-        "resolved": "docs/09_AUDIT/STATE/module_designs"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/directory_naming_violations_report_20260412.md",
-        "url": "./12_MODULE_DESIGNS/",
-        "resolved": "docs/09_AUDIT/STATE/12_MODULE_DESIGNS"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/orphan_eradication_master_plan_20260413.md",
-        "url": "./{f.name}",
-        "resolved": "docs/09_AUDIT/STATE/{f.name}"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/orphan_governance_program_20260413.md",
-        "url": "path",
-        "resolved": "docs/09_AUDIT/STATE/path"
-      },
-      {
-        "source": "docs/09_AUDIT/STATE/orphan_governance_program_20260413.md",
-        "url": "./{orphan_rel}.md",
-        "resolved": "docs/09_AUDIT/STATE/{orphan_rel}.md"
-      },
-      {
-        "source": "docs/SITEMAP.md",
-        "url": "./02_FACTOR_LIBRARY/05_BACKTEST/",
-        "resolved": "docs/02_FACTOR_LIBRARY/05_BACKTEST"
-      },
-      {
-        "source": "docs/SITEMAP.md",
-        "url": "./09_AUDIT/TEMPLATES/",
-        "resolved": "docs/09_AUDIT/TEMPLATES"
-      },
-      {
-        "source": "scripts/README.md",
-        "url": "pre_commit_hook.py",
-        "resolved": "scripts/pre_commit_hook.py"
-      },
-      {
-        "source": "scripts/README.md",
-        "url": "pre_commit_check_module_id.py",
-        "resolved": "scripts/pre_commit_check_module_id.py"
-      },
-      {
-        "source": "scripts/README.md",
-        "url": "clean_cache.py",
-        "resolved": "scripts/clean_cache.py"
-      },
-      {
-        "source": "scripts/README.md",
-        "url": "clean_cache.py",
-        "resolved": "scripts/clean_cache.py"
-      }
-    ],
+    "invalid_details_sample": [],
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3497,
-    "duplicate_ids_count": 13,
+    "unique_module_ids": 3517,
+    "duplicate_ids_count": 14,
     "duplicates": {
       "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED": [
         "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/04_Layer_1_Data_Source/INDEX.md",
         "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 1 (数据源层)/INDEX.md",
         "docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md"
+      ],
+      "AUTO_LICENSE": [
+        ".venv-1/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
+        ".venv-1/Lib/site-packages/pip-26.0.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
       ],
       "[LAYER定位]'_INDEX_AUTO_ARCHIVED": [
         "docs/99_ARCHIVE/'[Layer定位]'_ARCHIVED_20260413_135113/INDEX.md",
@@ -248,31 +76,10 @@
       ]
     },
     "files_without_module_id_sample": [
-      ".audit_readme.md",
-      ".venv-1/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
-      ".venv-1/Lib/site-packages/pip-26.0.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
-      "AUDIT_10_DIMENSIONS_REPORT.md",
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/INDEX.md",
-      "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
-      "docs/09_AUDIT/REPORTS/ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md",
-      "docs/09_AUDIT/STATE/BASENAME_COLLISIONS_20260413.md",
-      "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260413.md",
-      "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md",
-      "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md",
-      "docs/INDEX.md",
-      "docs/PRECOMMIT_HOOK_SETUP.md",
-      "implementation_details.md",
-      "progress_table.md",
-      "reports/folder_structure_analysis_20260413_134123.md",
-      "reports/folder_structure_analysis_20260413_134852.md",
-      "reports/folder_structure_analysis_20260413_135132.md",
-      "reports/migration_20260413_052831.md",
-      "reports/migration_20260413_052848.md",
-      "reports/system_cleanup_analysis_20260413_135615.md",
-      "ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md",
-      "数字化系统健康白皮书.md"
+      "docs/INDEX.md"
     ],
-    "no_id_total": 23
+    "no_id_total": 2
   },
   "path_depth": {
     "deepest_30": [

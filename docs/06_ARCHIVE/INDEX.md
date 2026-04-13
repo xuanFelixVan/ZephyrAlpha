@@ -278,7 +278,6 @@ responsibility:
 - [ml-comprehensive-gap-analysis-v4-20260404](./audit_reports/ml-comprehensive-gap-analysis-v4-20260404.md)
 - [ml-gap-analysis-report-20260403](./audit_reports/ml-gap-analysis-report-20260403.md)
 - [mlops-platform-technical-specification](./blueprints/mlops-platform-technical-specification.md)
-- [model-performance-version-management-blueprint-legacy-p1-cleanup-archive](./model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md)
 - [monthly-reporter-technical-review-report](./reports/monthly-reporter-technical-review-report.md)
 - [multi-asset-correlation-modeling-blueprint](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-asset-correlation-modeling-blueprint.md)
 - [multi-objective-optimization-blueprint](../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-objective-optimization-blueprint.md)

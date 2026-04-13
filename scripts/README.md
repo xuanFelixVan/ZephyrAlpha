@@ -37,8 +37,8 @@ responsibility:
 |------|-------------|
 | **文档治理与门禁** | 上表及 [`governance/`](governance/) 目录；**权威命令表**仍以办公室 [治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md) 为准。 |
 | **批量审计 / 编码 / Layer 修复** | `scripts/` 根目录下大量历史维护脚本（如 `layer*_*.py`、`fix_*.py`、`*_audit*.py`）；**无逐文件表**，按需 `Get-ChildItem scripts/*.py` 或 IDE 搜索；新脚本优先放入 `governance/` 或单任务子目录以免继续堆根目录。 |
-| **预提交与质量** | 如 [`pre_commit_hook.py`](pre_commit_hook.py)、[`pre_commit_check_module_id.py`](pre_commit_check_module_id.py)（与根 `.pre-commit-config.yaml` 配合）。 |
-| **环境与缓存** | 见下文「缓存清理脚本」[`clean_cache.py`](clean_cache.py)。 |
+| **预提交与质量** | 如 [`hooks/pre-commit-governance-check.py`](hooks/pre-commit-governance-check.py)（现行）、[`archive/pre_commit_check_module_id.py`](archive/pre_commit_check_module_id.py)（归档备用）（与根 `.pre-commit-config.yaml` 配合）。 |
+| **环境与缓存** | 见下文「缓存清理脚本」[`archive/clean_cache.py`](archive/clean_cache.py)。 |
 
 | 脚本（在 `governance/` 内） | 作用 |
 |------|------|
@@ -62,7 +62,7 @@ responsibility:
 
 | 脚本 | 语言 | 功能 | 使用频率 |
 |------|------|------|----------|
-| [clean_cache.py](clean_cache.py) | Python 3.6+ | 自动化缓存清理 | 每周/每月 |
+| [archive/clean_cache.py](archive/clean_cache.py) | Python 3.6+ | 自动化缓存清理 | 每周/每月 |
 | [clean_cache.bat](clean_cache.bat) | Windows批处理 | 缓存清理（Windows包装器） | 每周/每月 |
 
 ```---

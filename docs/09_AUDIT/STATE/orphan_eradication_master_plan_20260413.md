@@ -122,7 +122,7 @@ generated_at: {datetime.now()}
 
 """
         for f in files:
-            content += f"- [{f.stem}](./{f.name})\n"
+            content += f"- [{f.stem}]<!-- -->(./{f.name})\n"
         
         return content
 ```
