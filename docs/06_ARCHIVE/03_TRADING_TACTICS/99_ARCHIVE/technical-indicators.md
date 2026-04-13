@@ -93,7 +93,7 @@ layer: layer_03
 
 > **配套文档**?
 
-> - 主文档：[../../INDEX.md](../INDEX.md)
+> - 主文档：[../../INDEX.md](../../INDEX.md)
 
 > - 形态识别：
 

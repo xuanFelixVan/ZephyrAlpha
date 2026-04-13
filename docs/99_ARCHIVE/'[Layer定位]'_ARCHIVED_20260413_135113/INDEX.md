@@ -24,7 +24,7 @@ responsibility:
 
 ## 文档列表
 
-- [blueprint-governance-optimization-report-20260407](./blueprint-governance-optimization-report-20260407.md)
+- [blueprint-governance-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-governance-optimization-report-20260407.md)
 
 
 ---

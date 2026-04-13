@@ -18,5 +18,5 @@ layer: layer_00
 **正式蓝图（canonical）**：MARKET_REGIME_DETECTION_BLUEPRINT.md
 
 ```
-原同目录 `MARKET_REGIME_DETECTION_BLUEPRINT.md` 与 `01_BLUEPRINTS` **basename 碰撞**；正文以图纸柜文稿为准（`module_id: MARKET_REGIME_DETECTION_001`）。删除前 `10_AI_WORKFLOW` 稿全文见 [`06_ARCHIVE/20260410_c2_market_regime_detection/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。
+原同目录 `MARKET_REGIME_DETECTION_BLUEPRINT.md` 与 `01_BLUEPRINTS` **basename 碰撞**；正文以图纸柜文稿为准（`module_id: MARKET_REGIME_DETECTION_001`）。删除前 `10_AI_WORKFLOW` 稿全文见 [`06_ARCHIVE/20260410_c2_market_regime_detection/`](../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。
 ```

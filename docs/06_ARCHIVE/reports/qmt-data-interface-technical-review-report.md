@@ -875,7 +875,7 @@ implementation_status: ш┐ЫшбМ?
 
 - QMTцХ░цНоцОехПгцКАцЬпшзДца╝ф╣ж
 
-- [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [цЮ╢цЮДхоЪф╣Й](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 - цибхЭЧшБМш┤гш╛╣чХМ
 

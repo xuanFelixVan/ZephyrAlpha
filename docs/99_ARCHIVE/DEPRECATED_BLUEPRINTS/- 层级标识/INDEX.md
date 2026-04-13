@@ -24,7 +24,7 @@ responsibility:
 
 ## 文档列表
 
-- [document-quality-standards](./document-quality-standards.md)
+- [document-quality-standards](../../../05_IMPLEMENTATION/07_OPERATIONS/standards/document-quality-standards.md)
 
 
 ---

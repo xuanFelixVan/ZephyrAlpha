@@ -48,10 +48,10 @@ python -m src.main
 | [文档索引](docs/INDEX.md) | 全库导航与分类（推荐首访） |
 | [统一架构](docs/01_FRAMEWORK/ARCHITECTURE.md) | Layer 0–11 权威分层 |
 | [系统站点图](docs/05_IMPLEMENTATION/SITEMAP.md) | 实施层站点图与导航 |
-| [接口规范](docs/03_TRADING_TACTICS/API_Contract.md) | API 契约 |
-| [策略定义](docs/03_TRADING_TACTICS/Strategy_Spec_S001.md) | 示例策略规格 |
-| [常见问题](docs/02_FACTOR_LIBRARY/10_MANUAL/FAQ.md) | FAQ |
-| [项目办公室 AI 交接说明](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/PROJECT_OFFICE_AI_HANDOFF.md) | 蓝图/建设文档治理：给 AI 或新协作者快速上手 |
+| [接口规范](./docs/03_TRADING_TACTICS/api-contract.md) | API 契约 |
+| [策略定义](./docs/03_TRADING_TACTICS/strategy-spec-s001.md) | 示例策略规格 |
+| [常见问题](./docs/02_FACTOR_LIBRARY/FAQ.md) | FAQ |
+| [项目办公室 AI 交接说明](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/project-office-ai-handoff.md) | 蓝图/建设文档治理：给 AI 或新协作者快速上手 |
 
 ### 治理与建设文档（canonical）
 
@@ -59,11 +59,11 @@ python -m src.main
 |------|------|
 | [建设文档总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md) | `06_CONSTRUCTION_DOCS` 档案室大门（须与真实子目录一致） |
 | [项目办公室 README](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/README.md) | 规章、任务清单、交付标准、CANON 门禁导航 |
-| [治理工具总索引](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) | **一条表**查：链检查、rollup、verify、架构目录、内容重复扫描等命令与产出 |
-| [文档地图与放置规则](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) | **文档地图 + 放置规则**与扫描/§7 衔接；真源为 [LAYOUT 标准](docs/09_AUDIT/STANDARDS/DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md) |
-| [蓝图交付标准（机构精华版）](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md) | 机构式目标态与 §1.5 全仓库分层 |
-| [全库蓝图终稿任务清单](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
-| [施工门禁](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/CONSTRUCTION_GATE_CRITERIA_20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
+| [治理工具总索引](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md) | **一条表**查：链检查、rollup、verify、架构目录、内容重复扫描等命令与产出 |
+| [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) | **文档地图 + 放置规则**与扫描/§7 衔接；真源为 [LAYOUT 标准](./docs/09_AUDIT/STANDARDS/document-repository-layout-standard.md) |
+| [蓝图交付标准（机构精华版）](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-delivery-standard-institutional-lite.md) | 机构式目标态与 §1.5 全仓库分层 |
+| [全库蓝图终稿任务清单](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md) | 任务 1～6 + 扩展轨 W0～W4 + **专业机构治理顺序** |
+| [施工门禁](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/construction-gate-criteria-20260408.md) | 阶段放行与蓝图范围（CANON 真源） |
 
 ### 开源协作与架构索引（生成物）
 
@@ -72,9 +72,9 @@ python -m src.main
 | [LICENSE](LICENSE) | MIT（与 `pyproject.toml` 声明一致） |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与办公室入口 |
 | [SECURITY.md](SECURITY.md) | 漏洞上报（细则见 `docs/05_IMPLEMENTATION/02_DEVELOPMENT/SECURITY.md`） |
-| [架构服务目录 + C4 摘要](docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/governance/generate_architecture_service_catalog.py` |
-| [内容重复扫描报告](docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
-| [索引健全性（零入链）](docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) **§5.2** |
+| [架构服务目录 + C4 摘要](./docs/09_AUDIT/STATE/architecture-service-catalog-20260410.md) | **自动生成**：HTTP 端点、`src/` 组件表、根目录机构缺口对照；JSON 同目录 `.json`；复跑 `python scripts/governance/generate_architecture_service_catalog.py` |
+| [内容重复扫描报告](./docs/09_AUDIT/STATE/duplicate-content-by-hash-20260410.md) | **按后缀白名单** SHA256 重复簇；复跑 `python scripts/governance/scan_duplicate_file_content.py --ext md`（可选 `--include-untracked`） |
+| [索引健全性（零入链）](./docs/09_AUDIT/STATE/index-health-orphan-20260410.md) | **`docs/` 下 md 入链统计**；复跑 `python scripts/governance/scan_index_health.py`；说明见 [文档地图与放置规则](./docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) **§5.2** |
 
 ```---
 
@@ -123,7 +123,7 @@ ZephyrAlpha/
 - **文档导航入口**: [docs/INDEX.md](docs/INDEX.md)
 - **因子库**: [docs/02_FACTOR_LIBRARY/](docs/02_FACTOR_LIBRARY/)
 - **策略与执行（战术层目录）**: [docs/03_TRADING_TACTICS/](docs/03_TRADING_TACTICS/)
-- **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](docs/06_ARCHIVE/CHANGELOG.md)
+- **变更日志**: [docs/06_ARCHIVE/CHANGELOG.md](./docs/00_OVERVIEW/CHANGELOG.md)
 
 ```---
 

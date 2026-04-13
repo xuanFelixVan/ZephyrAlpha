@@ -80,7 +80,7 @@ layer: layer_11
 **缺失蓝图文档**：0个
 **总计蓝图文档**：32个
 
-> **口径说明**：本文档为 Layer 11 蓝图清单的唯一事实源。统计口径已与 [`remaining-blueprints-implementation-plan.md`](06_ARCHIVE/duplicates/remaining-blueprints-implementation-plan.md) 和 [`blueprint-progress-report-20260407.md`](06_ARCHIVE/duplicates/blueprint-progress-report-20260407.md) 同步。缺失蓝图数量调整为 11 个（而非之前的 12 个或 10 个），原因是部分蓝图被重复计算或混淆了"规划"与"实现"状态。
+> **口径说明**：本文档为 Layer 11 蓝图清单的唯一事实源。统计口径已与 [`remaining-blueprints-implementation-plan.md`](../06_ARCHIVE/duplicates/remaining-blueprints-implementation-plan.md) 和 [`blueprint-progress-report-20260407.md`](../06_ARCHIVE/duplicates/blueprint-progress-report-20260407.md) 同步。缺失蓝图数量调整为 11 个（而非之前的 12 个或 10 个），原因是部分蓝图被重复计算或混淆了"规划"与"实现"状态。
 
 ### 实施进度
 

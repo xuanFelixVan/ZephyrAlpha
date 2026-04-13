@@ -31,7 +31,7 @@ stringData:
 
 - API接口契约 - 系统接口规范
 
-- [QMT平台文档](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - QMT使用说明
+- [QMT平台文档](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) - QMT使用说明
 
 
 

@@ -22,7 +22,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-SKIP_PARTS = {".git", ".venv", ".pytest_cache", "__pycache__"}
+SKIP_PARTS = {
+    ".git", ".venv", ".pytest_cache", "__pycache__",
+    ".audit_fix_backup",   # 备份目录，非活跃治理范围
+    ".trae",               # 工具私有目录
+    "review_materials_package",  # 评审材料包，不计入日常治理
+}
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)
 MAX_DETAIL = 20000  # 扩容至全量（Phase 2 需完整断链列表供 fix_dead_links.py 消费）

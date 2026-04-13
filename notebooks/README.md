@@ -277,7 +277,7 @@ def save_results(results_dict, filename):
 | 文档 | 说明 |
 |------|------|
 | [../docs/07_RESEARCH/README.md](../docs/07_RESEARCH/README.md) | 研究模块总览 |
-| [../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) | 开发规范 |
+| [../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/developer-rules.md) | 开发规范 |
 | [因子库标准索引](../docs/02_FACTOR_LIBRARY/01_STANDARDS/INDEX.md) | 因子标准与索引 |
 
 ```---

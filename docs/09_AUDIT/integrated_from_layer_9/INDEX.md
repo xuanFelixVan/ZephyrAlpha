@@ -24,8 +24,8 @@ responsibility:
 
 ## 文档列表
 
-- [layer9-deleted-files-review](./layer9-deleted-files-review.md)
-- [overlap-layer9-deleted-files-review-20260407-190203](./overlap-layer9-deleted-files-review-20260407-190203.md)
+- [layer9-deleted-files-review](../../06_ARCHIVE/blueprints/layer9-deleted-files-review.md)
+- [overlap-layer9-deleted-files-review-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-layer9-deleted-files-review-20260407-190203.md)
 
 
 ---

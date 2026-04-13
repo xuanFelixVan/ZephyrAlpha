@@ -409,7 +409,7 @@ Layer 5 ?风控预警R(t) ?Layer 6 ?归因分析 ?Layer 7 ?策略迭代
 
 | 因子?| ?已就?| factor-library/ |
 
-| 版本历史 | [CHANGELOG.md](06_ARCHIVE/unclassified/CHANGELOG.md) | 详细变更记录 |
+| 版本历史 | [CHANGELOG.md](../unclassified/CHANGELOG.md) | 详细变更记录 |
 
 
 

@@ -24,7 +24,7 @@ responsibility:
 
 ## 文档列表
 
-- [layer6-deep-audit-report-20260407-legacy-layer6-reports-archive](./layer6-deep-audit-report-20260407-legacy-layer6-reports-archive.md)
+- [layer6-deep-audit-report-20260407-legacy-layer6-reports-archive](../../06_ARCHIVE/audit_reports/layer6-deep-audit-report-20260407-legacy-layer6-reports-archive.md)
 
 
 ---

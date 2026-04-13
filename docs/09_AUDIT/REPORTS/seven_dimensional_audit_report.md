@@ -8818,43 +8818,43 @@ last_updated: 2026-04-13
 ### 维度5: 索引断链审计
 
 - **文件**: `docs/INDEX.md`
-  **问题**: 死链: `[模块设计草图索引](./module_designs/INDEX.md)` -> 目标不存在
+  **问题**: 死链: `[模块设计草图索引](./INDEX.md)` -> 目标不存在
 
 - **文件**: `docs/'[Layer定位]'/INDEX.md`
-  **问题**: 死链: `[blueprint-governance-optimization-report-20260407](./blueprint-governance-optimization-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-governance-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-governance-optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/- 层级/INDEX.md`
-  **问题**: 死链: `[common-issues-solutions](./common-issues-solutions.md)` -> 目标不存在
+  **问题**: 死链: `[common-issues-solutions](../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/common-issues-solutions.md)` -> 目标不存在
 
 - **文件**: `docs/- 层级/INDEX.md`
-  **问题**: 死链: `[document-structure-standard](./document-structure-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-structure-standard](../../06_ARCHIVE/unclassified/document-structure-standard.md)` -> 目标不存在
 
 - **文件**: `docs/- 层级/INDEX.md`
-  **问题**: 死链: `[overlap-document-structure-standard-20260407-190203](./overlap-document-structure-standard-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-structure-standard-20260407-190203](../../06_ARCHIVE/blueprints/overlap-document-structure-standard-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/- 层级标识/INDEX.md`
-  **问题**: 死链: `[document-quality-standards](./document-quality-standards.md)` -> 目标不存在
+  **问题**: 死链: `[document-quality-standards](../../05_IMPLEMENTATION/07_OPERATIONS/standards/document-quality-standards.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[BLUEPRINT](../../09_RESEARCH_INNOVATION/BLUEPRINT.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[SITEMAP](./SITEMAP.md)` -> 目标不存在
+  **问题**: 死链: `[SITEMAP](../../SITEMAP.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[SITEMAP_PROFESSIONAL_STRUCTURE_AUDIT_20260412](../../11_STRATEGIC_DECISION/SITEMAP_PROFESSIONAL_STRUCTURE_AUDIT_20260412.md)` -> 目标不存在
+  **问题**: 死链: `[SITEMAP_PROFESSIONAL_STRUCTURE_AUDIT_20260412](../../06_ARCHIVE/11_STRATEGIC_DECISION/SITEMAP_PROFESSIONAL_STRUCTURE_AUDIT_20260412.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[accessibility-blueprint](../../08_HUMAN_AI_INTERFACE/37_ACCESSIBILITY/accessibility-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[ai-memory-final-supplement-blueprints](./ai-memory-final-supplement-blueprints.md)` -> 目标不存在
+  **问题**: 死链: `[ai-memory-final-supplement-blueprints](../../01_FRAMEWORK/ai-memory-final-supplement-blueprints.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[ai-work-reporter-blueprint](./ai-work-reporter-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-work-reporter-blueprint](../../10_AI_WORKFLOW/ai-work-reporter-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[api-readme](./api-readme.md)` -> 目标不存在
+  **问题**: 死链: `[api-readme](../../api-readme.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[backtest-ui-blueprint](../../08_HUMAN_AI_INTERFACE/05_BT_UI/backtest-ui-blueprint.md)` -> 目标不存在
@@ -8866,13 +8866,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[benchmark-management-strategic-entry](../../11_STRATEGIC_DECISION/benchmark-management-strategic-entry.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[blueprint-stage-complete-summary](./blueprint-stage-complete-summary.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-stage-complete-summary](../../01_FRAMEWORK/blueprint-stage-complete-summary.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[blueprint-stage-complete-supplement-plan](./blueprint-stage-complete-supplement-plan.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-stage-complete-supplement-plan](../../01_FRAMEWORK/blueprint-stage-complete-supplement-plan.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[candle-patterns](./candle-patterns.md)` -> 目标不存在
+  **问题**: 死链: `[candle-patterns](../../07_RESEARCH/03_PATTERN_RECOGNITION/candle-patterns.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[capital-management-blueprint](../../08_HUMAN_AI_INTERFACE/31_CAPITAL_MANAGEMENT/capital-management-blueprint.md)` -> 目标不存在
@@ -8881,43 +8881,43 @@ last_updated: 2026-04-13
   **问题**: 死链: `[ci-cd-integration-guide](../../10_GOVERNANCE_COMPLIANCE/CI_CD_INTEGRATION/ci-cd-integration-guide.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[complete-missing-modules-blueprints-20260407](../../11_STRATEGIC_DECISION/complete-missing-modules-blueprints-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[complete-missing-modules-blueprints-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/complete-missing-modules-blueprints-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[correlation-analysis](./correlation-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[correlation-analysis](../../09_ARCHIVE/factor_library/correlation-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[data-export-tools-blueprint](../../08_HUMAN_AI_INTERFACE/35_DATA_EXPORT_TOOLS/data-export-tools-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[data-quality-lineage-management-blueprint](./data-quality-lineage-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-lineage-management-blueprint](../../10_AI_WORKFLOW/data-quality-lineage-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[data-source-extension-blueprint](./data-source-extension-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-extension-blueprint](../../10_AI_WORKFLOW/data-source-extension-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[data-source-failover-blueprint](./data-source-failover-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-failover-blueprint](../../01_FRAMEWORK/data-source-failover-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[data-source-layer-blueprint](./data-source-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-layer-blueprint](../../01_FRAMEWORK/data-source-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[data-source-quality-monitoring-blueprint](./data-source-quality-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-quality-monitoring-blueprint](../../01_FRAMEWORK/data-source-quality-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[docker-setup](../../07_RESEARCH/01_ENVIRONMENT/docker-setup.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[document-governance-knowledge-base](./document-governance-knowledge-base.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-knowledge-base](../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/document-governance-knowledge-base.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[documentation-center-blueprint](../../08_HUMAN_AI_INTERFACE/17_DOCUMENTATION_CENTER/documentation-center-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[experiment-tracking](./experiment-tracking.md)` -> 目标不存在
+  **问题**: 死链: `[experiment-tracking](../../07_RESEARCH/experiment-tracking.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[experiment-tracking](./experiment-tracking.md)` -> 目标不存在
+  **问题**: 死链: `[experiment-tracking](../../07_RESEARCH/experiment-tracking.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[factor-analysis-blueprint](../../08_HUMAN_AI_INTERFACE/26_FACTOR_ANALYSIS/factor-analysis-blueprint.md)` -> 目标不存在
@@ -8926,10 +8926,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[faq-legacy-09-archive-duplicates](../../09_ARCHIVE/blueprints/faq-legacy-09-archive-duplicates.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[full-process-data-persistence-blueprint](./full-process-data-persistence-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[full-process-data-persistence-blueprint](../../10_AI_WORKFLOW/full-process-data-persistence-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[full-process-data-persistence-blueprint-legacy-layer4-ml](./full-process-data-persistence-blueprint-legacy-layer4-ml.md)` -> 目标不存在
+  **问题**: 死链: `[full-process-data-persistence-blueprint-legacy-layer4-ml](../../06_ARCHIVE/blueprints/full-process-data-persistence-blueprint-legacy-layer4-ml.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[i18n-support-blueprint](../../08_HUMAN_AI_INTERFACE/33_I18N_SUPPORT/i18n-support-blueprint.md)` -> 目标不存在
@@ -8938,40 +8938,40 @@ last_updated: 2026-04-13
   **问题**: 死链: `[industry-factors](../../09_ARCHIVE/blueprints/industry-factors.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[investment-committee-support-blueprint](./investment-committee-support-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[investment-committee-support-blueprint](../../11_STRATEGIC_DECISION/investment-committee-support-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[knowledge-management](../../09_ARCHIVE/blueprints/knowledge-management.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[l0-qmt](./l0-qmt.md)` -> 目标不存在
+  **问题**: 死链: `[l0-qmt](../../12_MODULE_DESIGNS/layer_0/l0-qmt.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[link-maintenance-mechanism](./link-maintenance-mechanism.md)` -> 目标不存在
+  **问题**: 死链: `[link-maintenance-mechanism](../../10_GOVERNANCE_COMPLIANCE/link-maintenance-mechanism.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[market-regime-detection-ai-workflow-entry](../../10_AI_WORKFLOW/market-regime-detection-ai-workflow-entry.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[missing-modules-blueprint-collection](./missing-modules-blueprint-collection.md)` -> 目标不存在
+  **问题**: 死链: `[missing-modules-blueprint-collection](../../01_FRAMEWORK/missing-modules-blueprint-collection.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[missing-modules-blueprint-summary-20260407](./missing-modules-blueprint-summary-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[missing-modules-blueprint-summary-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/missing-modules-blueprint-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[model-ab-testing-framework-blueprint](../../10_AI_WORKFLOW/model-ab-testing-framework-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[model-lineage-blueprint](./model-lineage-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-lineage-blueprint](../../01_FRAMEWORK/model-lineage-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[model-performance-version-management-blueprint](./model-performance-version-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-performance-version-management-blueprint](../../10_AI_WORKFLOW/model-performance-version-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[model-registry-blueprint](./model-registry-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-registry-blueprint](../../01_FRAMEWORK/model-registry-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[model-risk-management-blueprint-legacy-layer8-77](./model-risk-management-blueprint-legacy-layer8-77.md)` -> 目标不存在
+  **问题**: 死链: `[model-risk-management-blueprint-legacy-layer8-77](../../06_ARCHIVE/blueprints/model-risk-management-blueprint-legacy-layer8-77.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[monitoring-dashboard-blueprint](../../08_HUMAN_AI_INTERFACE/01_MONITORING/monitoring-dashboard-blueprint.md)` -> 目标不存在
@@ -8980,46 +8980,46 @@ last_updated: 2026-04-13
   **问题**: 死链: `[offline-support-blueprint](../../08_HUMAN_AI_INTERFACE/38_OFFLINE_SUPPORT/offline-support-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[operations-knowledge-management-blueprint](./operations-knowledge-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[operations-knowledge-management-blueprint](../../10_AI_WORKFLOW/operations-knowledge-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[orphan_eradication_master_plan_20260413](../STATE/orphan_eradication_master_plan_20260413.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[overlap-model-registry-blueprint-20260407-190203](./overlap-model-registry-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-model-registry-blueprint-20260407-190203](../../../.audit_fix_backup/docs/06_ARCHIVE/blueprints/overlap-model-registry-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[performance-analysis-blueprint](./performance-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[performance-analysis-blueprint](../../10_AI_WORKFLOW/performance-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[real-time-alert-system-blueprint](./real-time-alert-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[real-time-alert-system-blueprint](../../10_AI_WORKFLOW/real-time-alert-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[remaining-blueprints-implementation-plan](./remaining-blueprints-implementation-plan.md)` -> 目标不存在
+  **问题**: 死链: `[remaining-blueprints-implementation-plan](../../06_ARCHIVE/duplicates/remaining-blueprints-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[reporting-blueprint](../../08_HUMAN_AI_INTERFACE/06_REPORTING/reporting-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[research-report-generator](./research-report-generator.md)` -> 目标不存在
+  **问题**: 死链: `[research-report-generator](../../07_RESEARCH/02_EXPLORATORY_ANALYSIS/research-report-generator.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[risk-control-panel-blueprint](../../08_HUMAN_AI_INTERFACE/27_RISK_CONTROL_PANEL/risk-control-panel-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-implementation-details](./sentiment-analysis-implementation-details.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-implementation-details](../../10_AI_WORKFLOW/sentiment-analysis-implementation-details.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-project-management](./sentiment-analysis-project-management.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-project-management](../../10_AI_WORKFLOW/sentiment-analysis-project-management.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-risk-management](./sentiment-analysis-risk-management.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-risk-management](../../10_AI_WORKFLOW/sentiment-analysis-risk-management.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-short-term-technical-specification](./sentiment-analysis-short-term-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-short-term-technical-specification](../../10_AI_WORKFLOW/sentiment-analysis-short-term-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-test-plan](./sentiment-analysis-test-plan.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-test-plan](../../10_AI_WORKFLOW/sentiment-analysis-test-plan.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[sentiment-backtest-system-blueprint](../../10_AI_WORKFLOW/sentiment-backtest-system-blueprint.md)` -> 目标不存在
@@ -9055,25 +9055,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[sentiment-layer-third-round-supplementary-modules-blueprint](../../10_AI_WORKFLOW/sentiment-layer-third-round-supplementary-modules-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[statistical-tools](./statistical-tools.md)` -> 目标不存在
+  **问题**: 死链: `[statistical-tools](../../09_ARCHIVE/blueprints/statistical-tools.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[statistical-tools](./statistical-tools.md)` -> 目标不存在
+  **问题**: 死链: `[statistical-tools](../../09_ARCHIVE/blueprints/statistical-tools.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[strategic-decision-architecture-completion-plan-20260407](../../11_STRATEGIC_DECISION/strategic-decision-architecture-completion-plan-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[strategic-decision-architecture-completion-plan-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/strategic-decision-architecture-completion-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[strategic-decision-deep-review-20260407](../../11_STRATEGIC_DECISION/strategic-decision-deep-review-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[strategic-decision-deep-review-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/strategic-decision-deep-review-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[strategy-ide-blueprint](../../08_HUMAN_AI_INTERFACE/25_STRATEGY_IDE/strategy-ide-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[strategy-lifecycle-management-blueprint-legacy-layer8-81](./strategy-lifecycle-management-blueprint-legacy-layer8-81.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-lifecycle-management-blueprint-legacy-layer8-81](../../06_ARCHIVE/blueprints/strategy-lifecycle-management-blueprint-legacy-layer8-81.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[supplementary-modules-blueprints-20260407](../../11_STRATEGIC_DECISION/supplementary-modules-blueprints-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[supplementary-modules-blueprints-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/supplementary-modules-blueprints-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[system-manifest](../../system-manifest.md)` -> 目标不存在
@@ -9121,7 +9121,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[training-system-guide](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/training-system-guide.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[transaction-cost-analysis-blueprint-legacy-layer8-79](./transaction-cost-analysis-blueprint-legacy-layer8-79.md)` -> 目标不存在
+  **问题**: 死链: `[transaction-cost-analysis-blueprint-legacy-layer8-79](../../06_ARCHIVE/blueprints/transaction-cost-analysis-blueprint-legacy-layer8-79.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[user-behavior-analytics-blueprint](../../08_HUMAN_AI_INTERFACE/32_USER_BEHAVIOR_ANALYTICS/user-behavior-analytics-blueprint.md)` -> 目标不存在
@@ -9130,16 +9130,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[user-training-blueprint](../../08_HUMAN_AI_INTERFACE/36_USER_TRAINING/user-training-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
-  **问题**: 死链: `[validation-testing-framework-blueprint](./validation-testing-framework-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[validation-testing-framework-blueprint](../../10_AI_WORKFLOW/validation-testing-framework-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/00_OVERVIEW/INDEX.md`
   **问题**: 死链: `[websocket-realtime-blueprint](../../08_HUMAN_AI_INTERFACE/29_WEBSOCKET_REALTIME/websocket-realtime-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ai-pattern-recognition-engine-blueprint](./ai-pattern-recognition-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-pattern-recognition-engine-blueprint](../../01_FRAMEWORK/LAYER4_ML/ai-pattern-recognition-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ai-virtual-research-team-implementation-plan](./ai-virtual-research-team-implementation-plan.md)` -> 目标不存在
+  **问题**: 死链: `[ai-virtual-research-team-implementation-plan](../../01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/ai-virtual-research-team-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[audit-summary-20260407](./audit-summary-20260407.md)` -> 目标不存在
@@ -9160,10 +9160,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deep-audit-report-20260407](./deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v5-20260407](./deep-audit-report-v5-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v5-20260407](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/deep-audit-report-v5-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v6-20260407](../../01_FRAMEWORK/LAYER4_ML/deep-audit-report-v6-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v6-20260407](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/deep-audit-report-v6-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[drift-detection-technical-specification](../../01_FRAMEWORK/LAYER4_ML/drift-detection-technical-specification.md)` -> 目标不存在
@@ -9175,28 +9175,28 @@ last_updated: 2026-04-13
   **问题**: 死链: `[full-process-data-layer4-entry](../../01_FRAMEWORK/LAYER4_ML/full-process-data-layer4-entry.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[machine-learning-governance-deep-audit-report-20260407](../../01_FRAMEWORK/LAYER4_ML/machine-learning-governance-deep-audit-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[machine-learning-governance-deep-audit-report-20260407](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/machine-learning-governance-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[master-index](../../01_FRAMEWORK/LAYER4_ML/master-index.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-comprehensive-audit-20260404](../../01_FRAMEWORK/LAYER4_ML/ml-comprehensive-audit-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[ml-comprehensive-audit-20260404](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-comprehensive-audit-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-layer-comprehensive-audit-20260405](../../01_FRAMEWORK/LAYER4_ML/ml-layer-comprehensive-audit-20260405.md)` -> 目标不存在
+  **问题**: 死链: `[ml-layer-comprehensive-audit-20260405](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-layer-comprehensive-audit-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-layer-deep-governance-audit-20260406](../../01_FRAMEWORK/LAYER4_ML/ml-layer-deep-governance-audit-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[ml-layer-deep-governance-audit-20260406](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-layer-deep-governance-audit-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-layer-governance-audit-20260405](../../01_FRAMEWORK/LAYER4_ML/ml-layer-governance-audit-20260405.md)` -> 目标不存在
+  **问题**: 死链: `[ml-layer-governance-audit-20260405](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-layer-governance-audit-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-layer-governance-fix-report-20260406](./ml-layer-governance-fix-report-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[ml-layer-governance-fix-report-20260406](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-layer-governance-fix-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[ml-layer-opensource-mapping-20260405](../../01_FRAMEWORK/LAYER4_ML/ml-layer-opensource-mapping-20260405.md)` -> 目标不存在
+  **问题**: 死链: `[ml-layer-opensource-mapping-20260405](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/ml-layer-opensource-mapping-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[model-drift-detection-blueprint](../../01_FRAMEWORK/LAYER4_ML/model-drift-detection-blueprint.md)` -> 目标不存在
@@ -9226,10 +9226,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-l2-docs-01-framework-layer4-ml-017](./openclaw-l2-docs-01-framework-layer4-ml-017.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[overlap-comprehensive-gap-analysis-20260407-20260407-190203](./overlap-comprehensive-gap-analysis-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-comprehensive-gap-analysis-20260407-20260407-190203](../../06_ARCHIVE/blueprints/overlap-comprehensive-gap-analysis-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[overlap-professional-gap-analysis-20260407-20260407-190203](./overlap-professional-gap-analysis-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-professional-gap-analysis-20260407-20260407-190203](../../06_ARCHIVE/blueprints/overlap-professional-gap-analysis-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[probabilistic-forecasting-technical-specification](../../01_FRAMEWORK/LAYER4_ML/probabilistic-forecasting-technical-specification.md)` -> 目标不存在
@@ -9247,34 +9247,34 @@ last_updated: 2026-04-13
   **问题**: 死链: `[streamlit-dashboard-technical-specification](../../01_FRAMEWORK/LAYER4_ML/streamlit-dashboard-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[transaction-cost-analysis-blueprint-legacy-01-framework](./transaction-cost-analysis-blueprint-legacy-01-framework.md)` -> 目标不存在
+  **问题**: 死链: `[transaction-cost-analysis-blueprint-legacy-01-framework](../../06_ARCHIVE/blueprints/transaction-cost-analysis-blueprint-legacy-01-framework.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
   **问题**: 死链: `[yaml-completeness-check-report](../../01_FRAMEWORK/LAYER4_ML/yaml-completeness-check-report.md)` -> 目标不存在
 
 - **文件**: `docs/01_FRAMEWORK/INDEX.md`
-  **问题**: 死链: `[yaml-fix-progress-report-20260406](../../01_FRAMEWORK/LAYER4_ML/yaml-fix-progress-report-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[yaml-fix-progress-report-20260406](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/yaml-fix-progress-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[01-ultimate-blueprint](./01-ultimate-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[01-ultimate-blueprint](../../06_ARCHIVE/blueprints/01-ultimate-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[02-deployment-blueprint](./02-deployment-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[02-deployment-blueprint](../../06_ARCHIVE/blueprints/02-deployment-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[a-stock-data-processing-blueprint](./a-stock-data-processing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[a-stock-data-processing-blueprint](../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/a-stock-data-processing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[ai-virtual-research-team-blueprint](./ai-virtual-research-team-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-virtual-research-team-blueprint](../../01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM/ai-virtual-research-team-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[alpha-factor-layer-blueprint](./alpha-factor-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-layer-blueprint](../../01_FRAMEWORK/alpha-factor-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[backtest-reorganization](../../02_FACTOR_LIBRARY/05_BT_ENGINE/backtest-reorganization.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[critical-modules-implementation-blueprint](./critical-modules-implementation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[critical-modules-implementation-blueprint](../../01_FRAMEWORK/critical-modules-implementation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[event-driven-factor-blueprint](../../02_FACTOR_LIBRARY/39_EVENT_DRIVEN_FACTOR/event-driven-factor-blueprint.md)` -> 目标不存在
@@ -9304,7 +9304,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-data-lineage-blueprint](../../02_FACTOR_LIBRARY/26_FACTOR_DATA_LINEAGE/factor-data-lineage-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[factor-data-quality-blueprint](./factor-data-quality-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-data-quality-blueprint](../../02_FACTOR_LIBRARY/19_FACTOR_DATA_QUALITY/factor-data-quality-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[factor-decay-mgmt-blueprint](../../02_FACTOR_LIBRARY/33_FACTOR_DECAY_MGMT/factor-decay-mgmt-blueprint.md)` -> 目标不存在
@@ -9415,10 +9415,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-lib-risk-factors-overview](../../02_FACTOR_LIBRARY/03_RISK_FACTORS/factor-lib-risk-factors-overview.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[factor-management-standard](./factor-management-standard.md)` -> 目标不存在
+  **问题**: 死链: `[factor-management-standard](../../02_FACTOR_LIBRARY/01_STANDARDS/factor-management-standard.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[factor-mining-automation-blueprint](./factor-mining-automation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-mining-automation-blueprint](../../01_FRAMEWORK/factor-mining-automation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[factor-mining-engine-blueprint](../../02_FACTOR_LIBRARY/11_FACTOR_MINING_ENGINE/factor-mining-engine-blueprint.md)` -> 目标不存在
@@ -9439,13 +9439,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-portfolio-opt-blueprint](../../02_FACTOR_LIBRARY/29_FACTOR_PORTFOLIO_OPT/factor-portfolio-opt-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[factor-portfolio-optimization-blueprint](./factor-portfolio-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-portfolio-optimization-blueprint](../../01_FRAMEWORK/factor-portfolio-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[factor-realtime-blueprint](../../02_FACTOR_LIBRARY/28_FACTOR_REALTIME/factor-realtime-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[factor-realtime-computation-blueprint](./factor-realtime-computation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-realtime-computation-blueprint](../../01_FRAMEWORK/factor-realtime-computation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[factor-registry](../../02_FACTOR_LIBRARY/01_STANDARDS/factor-registry.md)` -> 目标不存在
@@ -9472,37 +9472,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-workflow-blueprint](../../02_FACTOR_LIBRARY/21_FACTOR_WORKFLOW/factor-workflow-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[implementation-acceleration-blueprint](./implementation-acceleration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[implementation-acceleration-blueprint](../../01_FRAMEWORK/implementation-acceleration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[industry-rotation-blueprint](../../02_FACTOR_LIBRARY/35_INDUSTRY_ROTATION/industry-rotation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[interface-contract-blueprint](./interface-contract-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[interface-contract-blueprint](../../01_FRAMEWORK/interface-contract-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[knowledge-distillation-blueprint](./knowledge-distillation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-distillation-blueprint](../../01_FRAMEWORK/knowledge-distillation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[live-stream-financial-analysis-blueprint](./live-stream-financial-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[live-stream-financial-analysis-blueprint](../../04_EXECUTION/07_LIVE_STREAM/live-stream-financial-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[llm-fine-tuning-blueprint](./llm-fine-tuning-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[llm-fine-tuning-blueprint](../../01_FRAMEWORK/llm-fine-tuning-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[macro-factor-blueprint](./macro-factor-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[macro-factor-blueprint](../../11_STRATEGIC_DECISION/macro-factor-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[market-making-model-blueprint](./market-making-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-making-model-blueprint](../../01_FRAMEWORK/market-making-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[model-security-scanner-blueprint](./model-security-scanner-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-security-scanner-blueprint](../../01_FRAMEWORK/model-security-scanner-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[multi-factor-synthesis-blueprint](../../02_FACTOR_LIBRARY/13_MULTI_FACTOR_SYNTHESIS/multi-factor-synthesis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[multimodal-llm-blueprint](./multimodal-llm-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[multimodal-llm-blueprint](../../01_FRAMEWORK/multimodal-llm-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[openclaw-l2-docs-02-factor-library-00-governance-019](./openclaw-l2-docs-02-factor-library-00-governance-019.md)` -> 目标不存在
@@ -9706,10 +9706,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-l2-docs-02-factor-library-40-factor-capacity-mgmt-084](./openclaw-l2-docs-02-factor-library-40-factor-capacity-mgmt-084.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[performance-attribution-blueprint](./performance-attribution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[performance-attribution-blueprint](../../11_STRATEGIC_DECISION/performance-attribution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
-  **问题**: 死链: `[research-innovation-layer-blueprint](./research-innovation-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[research-innovation-layer-blueprint](../../01_FRAMEWORK/research-innovation-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/02_FACTOR_LIBRARY/INDEX.md`
   **问题**: 死链: `[risk-adjustment-mechanism](../../11_STRATEGIC_DECISION/02_risk_budgeting/risk-adjustment-mechanism.md)` -> 目标不存在
@@ -9718,7 +9718,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[style-factor-system-blueprint](../../02_FACTOR_LIBRARY/30_STYLE_FACTOR_SYSTEM/style-factor-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[03-security-blueprint](./03-security-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[03-security-blueprint](../../06_ARCHIVE/blueprints/03-security-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[36-decision-framework-archived](../../03_TRADING_TACTICS/99_ARCHIVE/36-decision-framework-archived.md)` -> 目标不存在
@@ -9727,49 +9727,49 @@ last_updated: 2026-04-13
   **问题**: 死链: `[ai-integration](../../03_TRADING_TACTICS/99_ARCHIVE/ai-integration.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[backtest-blueprint](./backtest-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[backtest-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/backtest-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[batch-evaluation-blueprint](./batch-evaluation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[batch-evaluation-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/batch-evaluation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[capital-allocation-blueprint](./capital-allocation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[capital-allocation-blueprint](../../11_STRATEGIC_DECISION/capital-allocation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[classification](./classification.md)` -> 目标不存在
+  **问题**: 死链: `[classification](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/classification.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[interface-standard](../../03_TRADING_TACTICS/99_ARCHIVE/interface-standard.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[layer-11-tool-encapsulation-blueprint](./layer-11-tool-encapsulation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer-11-tool-encapsulation-blueprint](../../06_ARCHIVE/blueprints/layer-11-tool-encapsulation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[leverage-management-blueprint](./leverage-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[leverage-management-blueprint](../../11_STRATEGIC_DECISION/leverage-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[lifecycle](./lifecycle.md)` -> 目标不存在
+  **问题**: 死链: `[lifecycle](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[limit-up-analysis](./limit-up-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[limit-up-analysis](../../03_TRADING_TACTICS/03_ADVANCED_TACTICS/limit-up-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[manager](../../03_TRADING_TACTICS/99_ARCHIVE/manager.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[market-cycles](./market-cycles.md)` -> 目标不存在
+  **问题**: 死链: `[market-cycles](../../03_TRADING_TACTICS/03_ADVANCED_TACTICS/market-cycles.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[meta-learning-blueprint](./meta-learning-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[meta-learning-blueprint](../../01_FRAMEWORK/meta-learning-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[model-rollback-blueprint](./model-rollback-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-rollback-blueprint](../../01_FRAMEWORK/model-rollback-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[multi-strategy-coordination-blueprint](./multi-strategy-coordination-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[multi-strategy-coordination-blueprint](../../11_STRATEGIC_DECISION/multi-strategy-coordination-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[multimodal-fusion-blueprint](./multimodal-fusion-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[multimodal-fusion-blueprint](../../01_FRAMEWORK/multimodal-fusion-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[openclaw-l2-docs-03-trading-tactics-01-strategy-framework-086](./openclaw-l2-docs-03-trading-tactics-01-strategy-framework-086.md)` -> 目标不存在
@@ -9796,37 +9796,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-l2-docs-03-trading-tactics-99-archive-092](./openclaw-l2-docs-03-trading-tactics-99-archive-092.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[overview](./overview.md)` -> 目标不存在
+  **问题**: 死链: `[overview](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-a](./retail-strategies-a.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-a](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/retail-strategies-a.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-b](./retail-strategies-b.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-b](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/retail-strategies-b.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[retail-strategies-c](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-c.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-d](./retail-strategies-d.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-d](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-d.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-e](./retail-strategies-e.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-e](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-e.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-f](./retail-strategies-f.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-f](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-f.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-g](./retail-strategies-g.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-g](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-g.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-h](./retail-strategies-h.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-h](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-h.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-i](./retail-strategies-i.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-i](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-i.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[retail-strategies-j](./retail-strategies-j.md)` -> 目标不存在
+  **问题**: 死链: `[retail-strategies-j](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-j.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[retail-strategies-k](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-k.md)` -> 目标不存在
@@ -9835,40 +9835,40 @@ last_updated: 2026-04-13
   **问题**: 死链: `[retail-strategies-l](../../03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters/retail-strategies-l.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[risk-report](./risk-report.md)` -> 目标不存在
+  **问题**: 死链: `[risk-report](../../03_TRADING_TACTICS/09_RISK_RULES/risk-report.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-long-term-technical-specification](./sentiment-analysis-long-term-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-long-term-technical-specification](../../10_AI_WORKFLOW/sentiment-analysis-long-term-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-medium-term-improvement-blueprint](./sentiment-analysis-medium-term-improvement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-medium-term-improvement-blueprint](../../10_AI_WORKFLOW/sentiment-analysis-medium-term-improvement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-medium-term-technical-specification](./sentiment-analysis-medium-term-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-medium-term-technical-specification](../../10_AI_WORKFLOW/sentiment-analysis-medium-term-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[strategy-ai-modules-analysis](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-ai-modules-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-engine-blueprint-legacy-03-trading-tactics](./strategy-engine-blueprint-legacy-03-trading-tactics.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-engine-blueprint-legacy-03-trading-tactics](../../06_ARCHIVE/blueprints/strategy-engine-blueprint-legacy-03-trading-tactics.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-engine-core-blueprint](./strategy-engine-core-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-engine-core-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-engine-core-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[strategy-engine-tactics-entry](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-engine-tactics-entry.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-evaluation-criteria](./strategy-evaluation-criteria.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-evaluation-criteria](../../11_STRATEGIC_DECISION/03_strategy_selection/strategy-evaluation-criteria.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-lifecycle-ai-blueprint](./strategy-lifecycle-ai-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-lifecycle-ai-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-lifecycle-ai-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-selection-blueprint-legacy-03-trading-tactics](./strategy-selection-blueprint-legacy-03-trading-tactics.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-selection-blueprint-legacy-03-trading-tactics](../../06_ARCHIVE/blueprints/strategy-selection-blueprint-legacy-03-trading-tactics.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[strategy-selection-framework](./strategy-selection-framework.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-selection-framework](../../11_STRATEGIC_DECISION/03_strategy_selection/strategy-selection-framework.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
   **问题**: 死链: `[strategy-selection-tactics-entry](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-selection-tactics-entry.md)` -> 目标不存在
@@ -9877,52 +9877,52 @@ last_updated: 2026-04-13
   **问题**: 死链: `[strategy-templates](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-templates.md)` -> 目标不存在
 
 - **文件**: `docs/03_TRADING_TACTICS/INDEX.md`
-  **问题**: 死链: `[wave-trading](./wave-trading.md)` -> 目标不存在
+  **问题**: 死链: `[wave-trading](../../03_TRADING_TACTICS/03_ADVANCED_TACTICS/wave-trading.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[acceptance-criteria-blueprint](./acceptance-criteria-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[acceptance-criteria-blueprint](../../01_FRAMEWORK/acceptance-criteria-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[adjustment-trigger-conditions](../../11_STRATEGIC_DECISION/04_strategic_adjustment/adjustment-trigger-conditions.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[ai-enhancement-integration-blueprint](./ai-enhancement-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-enhancement-integration-blueprint](../../01_FRAMEWORK/LAYER4_ML/ai-enhancement-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[ai-permissions](./ai-permissions.md)` -> 目标不存在
+  **问题**: 死链: `[ai-permissions](../../01_FRAMEWORK/ai-permissions.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[anomaly-detection-blueprint](./anomaly-detection-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[anomaly-detection-blueprint](../../01_FRAMEWORK/LAYER4_ML/anomaly-detection-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[complete-missing-modules-overview](./complete-missing-modules-overview.md)` -> 目标不存在
+  **问题**: 死链: `[complete-missing-modules-overview](../../01_FRAMEWORK/LAYER4_ML/complete-missing-modules-overview.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[data-version-control-blueprint-legacy-layer4-ml](./data-version-control-blueprint-legacy-layer4-ml.md)` -> 目标不存在
+  **问题**: 死链: `[data-version-control-blueprint-legacy-layer4-ml](../../06_ARCHIVE/blueprints/data-version-control-blueprint-legacy-layer4-ml.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v3-20260407](./deep-audit-report-v3-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v3-20260407](../../06_ARCHIVE/01_FRAMEWORK/LAYER4_ML/deep-audit-report-v3-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[deepar-blueprint](./deepar-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[deepar-blueprint](../../01_FRAMEWORK/deepar-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[document-responsibility-boundaries](./document-responsibility-boundaries.md)` -> 目标不存在
+  **问题**: 死链: `[document-responsibility-boundaries](../../01_FRAMEWORK/document-responsibility-boundaries.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[event-bus](./event-bus.md)` -> 目标不存在
+  **问题**: 死链: `[event-bus](../../04_EXECUTION/01_EVENT_ENGINE/event-bus.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[gap-analysis-blueprint](./gap-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[gap-analysis-blueprint](../../01_FRAMEWORK/LAYER4_ML/gap-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[health-monitoring](../../04_EXECUTION/03_MONITORING/health-monitoring.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[hyperparameter-optimization-blueprint](./hyperparameter-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[hyperparameter-optimization-blueprint](../../01_FRAMEWORK/LAYER4_ML/hyperparameter-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[implementation-roadmap](./implementation-roadmap.md)` -> 目标不存在
+  **问题**: 死链: `[implementation-roadmap](../../01_FRAMEWORK/LAYER4_ML/implementation-roadmap.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[important-python-version](../../04_EXECUTION/07_LIVE_STREAM/important-python-version.md)` -> 目标不存在
@@ -9931,58 +9931,58 @@ last_updated: 2026-04-13
   **问题**: 死链: `[install-guide-rtx3090](../../04_EXECUTION/07_LIVE_STREAM/install-guide-rtx3090.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[machine-learning-comprehensive-analysis](./machine-learning-comprehensive-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[machine-learning-comprehensive-analysis](../../01_FRAMEWORK/machine-learning-comprehensive-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[machine-learning-layer-blueprint](./machine-learning-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[machine-learning-layer-blueprint](../../01_FRAMEWORK/machine-learning-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[mamba-ssm-blueprint](./mamba-ssm-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mamba-ssm-blueprint](../../01_FRAMEWORK/mamba-ssm-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[market-microstructure-model-blueprint](./market-microstructure-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-microstructure-model-blueprint](../../01_FRAMEWORK/market-microstructure-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[market-regime-blueprint](./market-regime-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-regime-blueprint](../../01_FRAMEWORK/LAYER4_ML/market-regime-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[mia-defense-blueprint](./mia-defense-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mia-defense-blueprint](../../01_FRAMEWORK/mia-defense-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[mixture-of-experts-blueprint](./mixture-of-experts-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mixture-of-experts-blueprint](../../01_FRAMEWORK/mixture-of-experts-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-ab-testing-blueprint](./model-ab-testing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-ab-testing-blueprint](../../01_FRAMEWORK/model-ab-testing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-card-blueprint](./model-card-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-card-blueprint](../../01_FRAMEWORK/model-card-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-debugging-toolkit-blueprint](./model-debugging-toolkit-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-debugging-toolkit-blueprint](../../01_FRAMEWORK/model-debugging-toolkit-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-performance-benchmark-blueprint](./model-performance-benchmark-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-performance-benchmark-blueprint](../../01_FRAMEWORK/model-performance-benchmark-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-pruning-blueprint](./model-pruning-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-pruning-blueprint](../../01_FRAMEWORK/model-pruning-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-quantization-blueprint](./model-quantization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-quantization-blueprint](../../01_FRAMEWORK/model-quantization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-serving-blueprint](./model-serving-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-serving-blueprint](../../01_FRAMEWORK/LAYER4_ML/model-serving-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-serving-framework-blueprint](./model-serving-framework-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-serving-framework-blueprint](../../01_FRAMEWORK/model-serving-framework-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-versioning-blueprint](./model-versioning-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-versioning-blueprint](../../01_FRAMEWORK/model-versioning-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[model-watermark-blueprint](./model-watermark-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-watermark-blueprint](../../01_FRAMEWORK/model-watermark-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[module-monitor](./module-monitor.md)` -> 目标不存在
+  **问题**: 死链: `[module-monitor](../../04_EXECUTION/03_MONITORING/module-monitor.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[multi-engine-blueprint](../../04_EXECUTION/06_SIMULATION/multi-engine-blueprint.md)` -> 目标不存在
@@ -10012,16 +10012,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[order-generation-algorithms](../../04_EXECUTION/01_ORDER_EXECUTION/order-generation-algorithms.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[overlap-missing-modules-blueprint-20260407-190202](./overlap-missing-modules-blueprint-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-missing-modules-blueprint-20260407-190202](../../06_ARCHIVE/blueprints/overlap-missing-modules-blueprint-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[overlap-p1-p2-modules-blueprint-collection-20260407-190203](./overlap-p1-p2-modules-blueprint-collection-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-p1-p2-modules-blueprint-collection-20260407-190203](../../06_ARCHIVE/blueprints/overlap-p1-p2-modules-blueprint-collection-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[p2-frontier-modules-blueprint-collection](./p2-frontier-modules-blueprint-collection.md)` -> 目标不存在
+  **问题**: 死链: `[p2-frontier-modules-blueprint-collection](../../01_FRAMEWORK/p2-frontier-modules-blueprint-collection.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[performance-attribution](./performance-attribution.md)` -> 目标不存在
+  **问题**: 死链: `[performance-attribution](../../04_EXECUTION/03_MONITORING/performance-attribution.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[python-version-fix](../../04_EXECUTION/07_LIVE_STREAM/python-version-fix.md)` -> 目标不存在
@@ -10033,55 +10033,55 @@ last_updated: 2026-04-13
   **问题**: 死链: `[real-time-monitoring](../../04_EXECUTION/03_MONITORING/real-time-monitoring.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[rl-rebalancing-system-blueprint](./rl-rebalancing-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[rl-rebalancing-system-blueprint](../../01_FRAMEWORK/LAYER4_ML/rl-rebalancing-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
   **问题**: 死链: `[rtx3090-best-models](../../04_EXECUTION/07_LIVE_STREAM/rtx3090-best-models.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[rtx3090-configuration-summary](./rtx3090-configuration-summary.md)` -> 目标不存在
+  **问题**: 死链: `[rtx3090-configuration-summary](../../04_EXECUTION/07_LIVE_STREAM/rtx3090-configuration-summary.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-layer-blueprint](./sentiment-analysis-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-layer-blueprint](../../01_FRAMEWORK/sentiment-analysis-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[strategic-adjustment-mechanism](./strategic-adjustment-mechanism.md)` -> 目标不存在
+  **问题**: 死链: `[strategic-adjustment-mechanism](../../11_STRATEGIC_DECISION/04_strategic_adjustment/strategic-adjustment-mechanism.md)` -> 目标不存在
 
 - **文件**: `docs/04_EXECUTION/INDEX.md`
-  **问题**: 死链: `[time-series-forecasting-blueprint](./time-series-forecasting-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[time-series-forecasting-blueprint](../../01_FRAMEWORK/LAYER4_ML/time-series-forecasting-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[01-blueprints-repository-rules](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/01-blueprints-repository-rules.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[04-api-integration-blueprint](./04-api-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[04-api-integration-blueprint](../../06_ARCHIVE/blueprints/04-api-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[AUTH](./AUTH.md)` -> 目标不存在
+  **问题**: 死链: `[AUTH](../../05_IMPLEMENTATION/02_DEVELOPMENT/AUTH.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413](./GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md)` -> 目标不存在
+  **问题**: 死链: `[GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413](../../06_ARCHIVE/05_IMPLEMENTATION/04_OPERATIONS/GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ROADMAP](../../05_IMPLEMENTATION/01_QUICKSTART/ROADMAP.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[SECURITY](./SECURITY.md)` -> 目标不存在
+  **问题**: 死链: `[SECURITY](../../../SECURITY.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[ai-agent-call-protocol](./ai-agent-call-protocol.md)` -> 目标不存在
+  **问题**: 死链: `[ai-agent-call-protocol](../../05_IMPLEMENTATION/02_DEVELOPMENT/ai-agent-call-protocol.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ai-constraint-engine-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-constraint-engine-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[ai-construction-quick-reference](./ai-construction-quick-reference.md)` -> 目标不存在
+  **问题**: 死链: `[ai-construction-quick-reference](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/ai-construction-quick-reference.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ai-explainability-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-explainability-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[ai-factor-miner-implementation-summary](./ai-factor-miner-implementation-summary.md)` -> 目标不存在
+  **问题**: 死链: `[ai-factor-miner-implementation-summary](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-factor-miner-implementation-summary.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ai-factor-miner-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-factor-miner-technical-specification.md)` -> 目标不存在
@@ -10090,25 +10090,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[ai-pattern-recognition-engine-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-pattern-recognition-engine-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[ai-virtual-research-team-technical-specification](./ai-virtual-research-team-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[ai-virtual-research-team-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ai-virtual-research-team-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[algorithmic-trading-optimizer-blueprint](./algorithmic-trading-optimizer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[algorithmic-trading-optimizer-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/algorithmic-trading-optimizer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[all-weather-optimizer-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/all-weather-optimizer-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v10-20260406](./alpha-factor-deep-audit-report-v10-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v10-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v10-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v12-20260406](./alpha-factor-deep-audit-report-v12-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v12-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v12-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v15-20260406](./alpha-factor-deep-audit-report-v15-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v15-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v15-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v17-20260407](./alpha-factor-deep-audit-report-v17-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v17-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v17-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[alpha-factor-deep-audit-report-v18-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v18-20260407.md)` -> 目标不存在
@@ -10126,7 +10126,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[alpha-factor-deep-audit-report-v7-20260405](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v7-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v8-20260406](./alpha-factor-deep-audit-report-v8-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v8-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-deep-audit-report-v8-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[alpha-factor-factory-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/alpha-factor-factory-technical-specification.md)` -> 目标不存在
@@ -10135,28 +10135,28 @@ last_updated: 2026-04-13
   **问题**: 死链: `[alpha-factor-fix-report-v23-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-fix-report-v23-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-governance-report-v22-20260407](./alpha-factor-governance-report-v22-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-governance-report-v22-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-governance-report-v22-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alpha-factor-optimization-report-v19-20260407](./alpha-factor-optimization-report-v19-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-optimization-report-v19-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-optimization-report-v19-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[alpha-factor-optimization-report-v21-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/alpha-factor-optimization-report-v21-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[alternative-data-integration-technical-specification](./alternative-data-integration-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[alternative-data-integration-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/alternative-data-integration-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[api-design](./api-design.md)` -> 目标不存在
+  **问题**: 死链: `[api-design](../../05_IMPLEMENTATION/02_DEVELOPMENT/api-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[api-documentation-blueprint](./api-documentation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[api-documentation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/api-documentation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[api-documentation-template](./api-documentation-template.md)` -> 目标不存在
+  **问题**: 死链: `[api-documentation-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/api-documentation-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[api-gateway-blueprint](./api-gateway-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[api-gateway-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/api-gateway-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[api-interface-specification](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/api-interface-specification.md)` -> 目标不存在
@@ -10174,10 +10174,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit-checklist-template](../../05_IMPLEMENTATION/07_OPERATIONS/audit-checklist-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit-handover](./audit-handover.md)` -> 目标不存在
+  **问题**: 死链: `[audit-handover](../../05_IMPLEMENTATION/07_OPERATIONS/audit-handover.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit-logging-blueprint](./audit-logging-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[audit-logging-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/audit-logging-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit-report-version-unification-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit-report-version-unification-20260407.md)` -> 目标不存在
@@ -10207,10 +10207,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit5-comprehensive-audit-report-20260407-203909](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-comprehensive-audit-report-20260407-203909.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit5-comprehensive-audit-report-20260407-205005](./audit5-comprehensive-audit-report-20260407-205005.md)` -> 目标不存在
+  **问题**: 死链: `[audit5-comprehensive-audit-report-20260407-205005](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-comprehensive-audit-report-20260407-205005.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit5-comprehensive-audit-report-20260407-205249](./audit5-comprehensive-audit-report-20260407-205249.md)` -> 目标不存在
+  **问题**: 死链: `[audit5-comprehensive-audit-report-20260407-205249](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-comprehensive-audit-report-20260407-205249.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit5-comprehensive-fix-report-20260407-173128](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-comprehensive-fix-report-20260407-173128.md)` -> 目标不存在
@@ -10297,7 +10297,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit5-fifth-round-improvement-report-20260407-183116](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-fifth-round-improvement-report-20260407-183116.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit5-final-fix-report-20260407-205141](./audit5-final-fix-report-20260407-205141.md)` -> 目标不存在
+  **问题**: 死链: `[audit5-final-fix-report-20260407-205141](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-final-fix-report-20260407-205141.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit5-fourth-round-verification-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit5-fourth-round-verification-report-20260407.md)` -> 目标不存在
@@ -10375,10 +10375,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit6-comprehensive-audit-report-20260407-203415](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-comprehensive-audit-report-20260407-203415.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit6-comprehensive-audit-report-20260407-204814](./audit6-comprehensive-audit-report-20260407-204814.md)` -> 目标不存在
+  **问题**: 死链: `[audit6-comprehensive-audit-report-20260407-204814](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-comprehensive-audit-report-20260407-204814.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit6-comprehensive-audit-report-20260407-204938](./audit6-comprehensive-audit-report-20260407-204938.md)` -> 目标不存在
+  **问题**: 死链: `[audit6-comprehensive-audit-report-20260407-204938](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-comprehensive-audit-report-20260407-204938.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit6-full-audit-report-20260407-184216](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-full-audit-report-20260407-184216.md)` -> 目标不存在
@@ -10402,13 +10402,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit6-gap-analysis-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-gap-analysis-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit8-complete-fix-summary-20260407](./audit8-complete-fix-summary-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[audit8-complete-fix-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-complete-fix-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit8-complete-p1-fix-report-20260407-191325](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-complete-p1-fix-report-20260407-191325.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit8-complete-supplement-plan-20260407](./audit8-complete-supplement-plan-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[audit8-complete-supplement-plan-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-complete-supplement-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit8-comprehensive-p1-fix-report-20260407-191622](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-comprehensive-p1-fix-report-20260407-191622.md)` -> 目标不存在
@@ -10471,7 +10471,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit8-final-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-final-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[audit8-final-fix-summary-20260407](./audit8-final-fix-summary-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[audit8-final-fix-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-final-fix-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[audit8-final-p1-fix-report-20260407-191820](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-final-p1-fix-report-20260407-191820.md)` -> 目标不存在
@@ -10522,16 +10522,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit8-yaml-format-fix-report-20260407-192530](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit8-yaml-format-fix-report-20260407-192530.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[auto-repair-engine-blueprint](./auto-repair-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[auto-repair-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/auto-repair-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[backtest-engine-guide](./backtest-engine-guide.md)` -> 目标不存在
+  **问题**: 死链: `[backtest-engine-guide](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/backtest-engine-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[baostock-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/baostock-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[barra-risk-model-blueprint](./barra-risk-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[barra-risk-model-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/barra-risk-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[barra-risk-model-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/barra-risk-model-technical-specification.md)` -> 目标不存在
@@ -10540,22 +10540,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[best-practices-index](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best-practices-index.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[best-practices-template](./best-practices-template.md)` -> 目标不存在
+  **问题**: 死链: `[best-practices-template](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best-practices-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-audit-v8-20260407](./blueprint-audit-v8-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-audit-v8-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-cabinet-execution-protocol](./blueprint-cabinet-execution-protocol.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-cabinet-execution-protocol](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-cabinet-execution-protocol.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[blueprint-completeness-audit-report-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-completeness-audit-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-creation-progress-20260407](./blueprint-creation-progress-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-creation-progress-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/blueprint-creation-progress-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-delivery-standard-institutional-lite](./blueprint-delivery-standard-institutional-lite.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-delivery-standard-institutional-lite](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-delivery-standard-institutional-lite.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[blueprint-final-acceptance-certificate-20260412-211805](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-final-acceptance-certificate-20260412-211805.md)` -> 目标不存在
@@ -10570,52 +10570,52 @@ last_updated: 2026-04-13
   **问题**: 死链: `[blueprint-final-executive-summary-20260412](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-final-executive-summary-20260412.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-final-signoff](./blueprint-final-signoff.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-final-signoff](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/blueprint-final-signoff.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[blueprint-phase-closure-task-list](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-stage-complete-delivery-plan-20260407](./blueprint-stage-complete-delivery-plan-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-stage-complete-delivery-plan-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-stage-complete-delivery-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-stage-delivery-checklist-20260407](./blueprint-stage-delivery-checklist-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-stage-delivery-checklist-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-stage-delivery-checklist-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[blueprint-template](./blueprint-template.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/blueprint-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[blueprints-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprints-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[case-study-template](./case-study-template.md)` -> 目标不存在
+  **问题**: 死链: `[case-study-template](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case-study-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[cdc-change-data-capture-blueprint](./cdc-change-data-capture-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[cdc-change-data-capture-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/cdc-change-data-capture-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[change-request-template](./change-request-template.md)` -> 目标不存在
+  **问题**: 死链: `[change-request-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/change-request-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[ci-cd-pipeline-blueprint](./ci-cd-pipeline-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ci-cd-pipeline-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ci-cd-pipeline-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[clickhouse-integration-blueprint](./clickhouse-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[clickhouse-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/clickhouse-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[code-consistency-verification-report-20260407](./code-consistency-verification-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[code-consistency-verification-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/code-consistency-verification-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[code-quality](../../05_IMPLEMENTATION/02_DEVELOPMENT/code-quality.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[code-quality-blueprint](./code-quality-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[code-quality-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/code-quality-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[code-review-checklist](./code-review-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[code-review-checklist](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/code-review-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[cointegration-analysis-blueprint](./cointegration-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[cointegration-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/cointegration-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[compensating-transaction-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/compensating-transaction-design.md)` -> 目标不存在
@@ -10627,25 +10627,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[completeness-audit-report-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/completeness-audit-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[compliance-checker-technical-specification](./compliance-checker-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[compliance-checker-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/compliance-checker-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[comprehensive-deep-audit-20260407-173907](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-deep-audit-20260407-173907.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[comprehensive-deep-audit-20260412-204945](./comprehensive-deep-audit-20260412-204945.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-deep-audit-20260412-204945](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-deep-audit-20260412-204945.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[comprehensive-deep-audit-20260412-205942](./comprehensive-deep-audit-20260412-205942.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-deep-audit-20260412-205942](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-deep-audit-20260412-205942.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[comprehensive-deep-audit-20260412-211410](./comprehensive-deep-audit-20260412-211410.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-deep-audit-20260412-211410](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-deep-audit-20260412-211410.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[comprehensive-fix-report07-125123](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-fix-report07-125123.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[comprehensive-fix-summary-20260407](./comprehensive-fix-summary-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-fix-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-fix-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[comprehensive-implementation-solution-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-implementation-solution-20260406.md)` -> 目标不存在
@@ -10657,7 +10657,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[comprehensive-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/comprehensive-optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[config-center-blueprint](./config-center-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[config-center-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/config-center-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[config-management](../../05_IMPLEMENTATION/02_DEVELOPMENT/config-management.md)` -> 目标不存在
@@ -10669,16 +10669,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[config-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/config-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[configuration-management-blueprint](./configuration-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[configuration-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/configuration-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[construction-gate-criteria-20260408](./construction-gate-criteria-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[construction-gate-criteria-20260408](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/construction-gate-criteria-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[construction-specification](./construction-specification.md)` -> 目标不存在
+  **问题**: 死链: `[construction-specification](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/construction-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[container-orchestration-blueprint](./container-orchestration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[container-orchestration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/container-orchestration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[continuous-improvement-execution-report](../../05_IMPLEMENTATION/07_OPERATIONS/continuous-improvement-execution-report.md)` -> 目标不存在
@@ -10693,16 +10693,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[controlled-documents-register](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/controlled-documents-register.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[cross-reference-validation-report-20260407](./cross-reference-validation-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[cross-reference-validation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/cross-reference-validation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[d-class-blueprint-overlap-playbook](./d-class-blueprint-overlap-playbook.md)` -> 目标不存在
+  **问题**: 死链: `[d-class-blueprint-overlap-playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/d-class-blueprint-overlap-playbook.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[d-class-consolidation-pending-review-register](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/d-class-consolidation-pending-review-register.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[d-class-overlap-second-pass-prompt-template](./d-class-overlap-second-pass-prompt-template.md)` -> 目标不存在
+  **问题**: 死链: `[d-class-overlap-second-pass-prompt-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/d-class-overlap-second-pass-prompt-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[daily-pipeline](../../05_IMPLEMENTATION/04_INFRASTRUCTURE/daily-pipeline.md)` -> 目标不存在
@@ -10714,97 +10714,97 @@ last_updated: 2026-04-13
   **问题**: 死链: `[daily-reporter-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/daily-reporter-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-access-audit-blueprint](./data-access-audit-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-access-audit-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-access-audit-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-backup-recovery-blueprint](./data-backup-recovery-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-backup-recovery-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-backup-recovery-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-catalog-blueprint](./data-catalog-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-catalog-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-catalog-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-cleaning-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-cleaning-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-cost-management-blueprint](./data-cost-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-cost-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-cost-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-fabric-blueprint](./data-fabric-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-fabric-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-fabric-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-governance-platform-blueprint](./data-governance-platform-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-governance-platform-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-governance-platform-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-lifecycle-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-lifecycle-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-lineage-enhanced-blueprint](./data-lineage-enhanced-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-lineage-enhanced-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-lineage-enhanced-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-masking-encryption-blueprint](./data-masking-encryption-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-masking-encryption-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-masking-encryption-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-mesh-blueprint](./data-mesh-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-mesh-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-mesh-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-migration-guide](./data-migration-guide.md)` -> 目标不存在
+  **问题**: 死链: `[data-migration-guide](../../05_IMPLEMENTATION/03_DEPLOYMENT/data-migration-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-observability-blueprint](./data-observability-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-observability-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-observability-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-orchestration-system-blueprint](./data-orchestration-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-orchestration-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-orchestration-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-preprocessing-architecture-gap-analysis-blueprint](./data-preprocessing-architecture-gap-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-preprocessing-architecture-gap-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-preprocessing-architecture-gap-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-preprocessing-complete-architecture-blueprint](./data-preprocessing-complete-architecture-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-preprocessing-complete-architecture-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-preprocessing-complete-architecture-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-preprocessing-improvement-plan](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/data-preprocessing-improvement-plan.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-quality-enhanced-blueprint](./data-quality-enhanced-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-enhanced-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-quality-enhanced-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-quality-monitoring-blueprint](./data-quality-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-monitoring-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-quality-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-security-compliance-blueprint](./data-security-compliance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-security-compliance-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-security-compliance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-source-health-monitor-blueprint](./data-source-health-monitor-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-health-monitor-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-source-health-monitor-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-source-inventory](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/data-source-inventory.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-source-layer-deep-audit-report-20260407](./data-source-layer-deep-audit-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-layer-deep-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/data-source-layer-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-source-layer-deep-audit-report-v3-20260407](./data-source-layer-deep-audit-report-v3-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-layer-deep-audit-report-v3-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/data-source-layer-deep-audit-report-v3-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-source-layer-second-round-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/data-source-layer-second-round-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-source-management-blueprint](./data-source-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-source-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-standardization-engine-blueprint](./data-standardization-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-standardization-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-standardization-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[data-subscription-service-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-subscription-service-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-validation-engine-blueprint](./data-validation-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-validation-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-validation-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-version-control-blueprint](./data-version-control-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-version-control-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/data-version-control-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[data-version-control-blueprint-legacy-p1-cleanup-archive](./data-version-control-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[data-version-control-blueprint-legacy-p1-cleanup-archive](../../../.audit_fix_backup/docs/06_ARCHIVE/blueprints/data-version-control-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[database-doc-fix-report-20260407-203812](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/database-doc-fix-report-20260407-203812.md)` -> 目标不存在
@@ -10822,10 +10822,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deep-audit-report-v10-20260405](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report-v10-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v2-20260407](./deep-audit-report-v2-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v2-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v24-20260407-025847](./deep-audit-report-v24-20260407-025847.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v24-20260407-025847](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report-v24-20260407-025847.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[deep-audit-report-v4-20260407](./deep-audit-report-v4-20260407.md)` -> 目标不存在
@@ -10837,22 +10837,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deep-audit-report-v9-20260405](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report-v9-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-report07-125123](./deep-audit-report07-125123.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report07-125123](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report07-125123.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[deep-audit-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-summary-v2-20260407](./deep-audit-summary-v2-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-summary-v2-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-summary-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-summary-v6-20260407](./deep-audit-summary-v6-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-summary-v6-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-summary-v6-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-summary-v7-20260407](./deep-audit-summary-v7-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-summary-v7-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-summary-v7-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-v2-20260407](./deep-audit-v2-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-v2-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[deep-audit-v3-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-v3-20260407.md)` -> 目标不存在
@@ -10861,7 +10861,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deep-audit-v6-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-v6-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deep-audit-v7-20260407](./deep-audit-v7-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-v7-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-v7-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[deleted-files-recovery-assessment-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deleted-files-recovery-assessment-20260406.md)` -> 目标不存在
@@ -10870,13 +10870,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deleted-files-review-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deleted-files-review-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[dependency-management-blueprint](./dependency-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[dependency-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/dependency-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deployment-checklist-template](./deployment-checklist-template.md)` -> 目标不存在
+  **问题**: 死链: `[deployment-checklist-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/deployment-checklist-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[deployment-guide](./deployment-guide.md)` -> 目标不存在
+  **问题**: 死链: `[deployment-guide](../../05_IMPLEMENTATION/03_DEPLOYMENT/deployment-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[deployment-manual](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/deployment-manual.md)` -> 目标不存在
@@ -10891,16 +10891,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[dev-environment-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/dev-environment-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[dev-setup](./dev-setup.md)` -> 目标不存在
+  **问题**: 死链: `[dev-setup](../../05_IMPLEMENTATION/01_QUICKSTART/dev-setup.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[developer-rules](./developer-rules.md)` -> 目标不存在
+  **问题**: 死链: `[developer-rules](../../05_IMPLEMENTATION/02_DEVELOPMENT/developer-rules.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[development-standards](./development-standards.md)` -> 目标不存在
+  **问题**: 死链: `[development-standards](../../05_IMPLEMENTATION/02_DEVELOPMENT/development-standards.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[development-workflow](./development-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[development-workflow](../../05_IMPLEMENTATION/02_DEVELOPMENT/development-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[disaster-recovery-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/disaster-recovery-blueprint.md)` -> 目标不存在
@@ -10909,22 +10909,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[distributed-tracing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/distributed-tracing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-auditor-guide](./document-auditor-guide.md)` -> 目标不存在
+  **问题**: 死链: `[document-auditor-guide](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/document-auditor-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-auditor-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/document-auditor-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-classifier-specification](./document-classifier-specification.md)` -> 目标不存在
+  **问题**: 死链: `[document-classifier-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/document-classifier-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-creation-checklist](./document-creation-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[document-creation-checklist](../../05_IMPLEMENTATION/07_OPERATIONS/checklists/document-creation-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-governance-architecture](./document-governance-architecture.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-architecture](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-governance-architecture.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-governance-auto-check-report](./document-governance-auto-check-report.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-auto-check-report](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-governance-auto-check-report.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-governance-best-practices-library](../../05_IMPLEMENTATION/04_OPERATIONS/document-governance-best-practices-library.md)` -> 目标不存在
@@ -10933,16 +10933,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-continuous-improvement](../../05_IMPLEMENTATION/04_OPERATIONS/document-governance-continuous-improvement.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-governance-fix-report-20260407](./document-governance-fix-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-fix-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-governance-fix-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-governance-fix-summary-20260407](./document-governance-fix-summary-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-fix-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-governance-fix-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-governance-optimization-final-summary](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-governance-optimization-final-summary.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-governance-process](./document-governance-process.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-process](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/document-governance-process.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-governance-weekly-report](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-governance-weekly-report.md)` -> 目标不存在
@@ -10954,16 +10954,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-map-and-placement-governance](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-numbering-standard](./document-numbering-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-numbering-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/document-numbering-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-optimization-report-20260407](./document-optimization-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[document-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-quality-gate](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/document-quality-gate.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[document-quality-gate-standard](./document-quality-gate-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-quality-gate-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/document-quality-gate-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[document-recovery-execution-report-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/document-recovery-execution-report-20260406.md)` -> 目标不存在
@@ -10972,7 +10972,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[documentation-generation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/documentation-generation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[drift-directory-integration-report-20260407](./drift-directory-integration-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[drift-directory-integration-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/drift-directory-integration-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[duplicate-yaml-fix-report-20260407-185245](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/duplicate-yaml-fix-report-20260407-185245.md)` -> 目标不存在
@@ -10984,10 +10984,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[dynamic-correlation-modeling-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/dynamic-correlation-modeling-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[dynamic-leverage-management-blueprint](./dynamic-leverage-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[dynamic-leverage-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/dynamic-leverage-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[dynamic-leverage-management-technical-specification](./dynamic-leverage-management-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[dynamic-leverage-management-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/dynamic-leverage-management-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[economic-regime-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/economic-regime-engine-blueprint.md)` -> 目标不存在
@@ -11005,13 +11005,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[enhanced-alert-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/enhanced-alert-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[environment-config-guide](./environment-config-guide.md)` -> 目标不存在
+  **问题**: 死链: `[environment-config-guide](../../05_IMPLEMENTATION/03_DEPLOYMENT/environment-config-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[error-codes](../../05_IMPLEMENTATION/07_OPERATIONS/error-codes.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[error-handling](./error-handling.md)` -> 目标不存在
+  **问题**: 死链: `[error-handling](../../05_IMPLEMENTATION/02_DEVELOPMENT/error-handling.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[event-bus-guide](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/event-bus-guide.md)` -> 目标不存在
@@ -11023,16 +11023,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[event-detector-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/event-detector-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[event-sourcing-blueprint](./event-sourcing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[event-sourcing-blueprint](../../01_FRAMEWORK/event-sourcing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[execution-strategy-backtester-blueprint](./execution-strategy-backtester-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[execution-strategy-backtester-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/execution-strategy-backtester-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[extreme-market-handler-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/extreme-market-handler-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[factor-backtest-integration-blueprint](./factor-backtest-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-backtest-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/factor-backtest-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[factor-backtest-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/factor-backtest-technical-specification.md)` -> 目标不存在
@@ -11044,7 +11044,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-combination-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/factor-combination-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[factor-design](./factor-design.md)` -> 目标不存在
+  **问题**: 死链: `[factor-design](../../05_IMPLEMENTATION/01_QUICKSTART/factor-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[factor-ic-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/factor-ic-technical-specification.md)` -> 目标不存在
@@ -11053,16 +11053,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-store-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/factor-store-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[fault-diagnosis-blueprint](./fault-diagnosis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[fault-diagnosis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/fault-diagnosis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[feature-engineering-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/feature-engineering-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[feedback-collector-technical-specification](./feedback-collector-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[feedback-collector-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/feedback-collector-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[file-deletion-or-retention-playbook](./file-deletion-or-retention-playbook.md)` -> 目标不存在
+  **问题**: 死链: `[file-deletion-or-retention-playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/file-deletion-or-retention-playbook.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[file-system-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/file-system-optimization-report-20260407.md)` -> 目标不存在
@@ -11074,10 +11074,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[final-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/final-fix-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[financing-optimization-blueprint](./financing-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[financing-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/financing-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[first-backtest](./first-backtest.md)` -> 目标不存在
+  **问题**: 死链: `[first-backtest](../../05_IMPLEMENTATION/01_QUICKSTART/first-backtest.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[frontend-component-structure](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/frontend-component-structure.md)` -> 目标不存在
@@ -11089,61 +11089,61 @@ last_updated: 2026-04-13
   **问题**: 死链: `[gap-feasibility-analysis-personal-ai-scenario](../../05_IMPLEMENTATION/07_OPERATIONS/gap-feasibility-analysis-personal-ai-scenario.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[git-corrupted-file-recovery-handover-20260406](./git-corrupted-file-recovery-handover-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[git-corrupted-file-recovery-handover-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/git-corrupted-file-recovery-handover-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[global-file-governance-session-handoff](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/global-file-governance-session-handoff.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[governance-documents-navigation](./governance-documents-navigation.md)` -> 目标不存在
+  **问题**: 死链: `[governance-documents-navigation](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-documents-navigation.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[governance-tools-index](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[help-system-technical-specification](./help-system-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[help-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/help-system-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[hierarchical-risk-budget-blueprint](./hierarchical-risk-budget-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[hierarchical-risk-budget-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/hierarchical-risk-budget-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[high-frequency-trading-engine-blueprint](./high-frequency-trading-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[high-frequency-trading-engine-blueprint](../../01_FRAMEWORK/high-frequency-trading-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[high-performance-data-pipeline-blueprint](./high-performance-data-pipeline-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[high-performance-data-pipeline-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/high-performance-data-pipeline-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[hmm-training-plan-001](../../05_IMPLEMENTATION/07_OPERATIONS/hmm-training-plan-001.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[human-ai-layer-deep-audit-20260407-163712](./human-ai-layer-deep-audit-20260407-163712.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-layer-deep-audit-20260407-163712](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/human-ai-layer-deep-audit-20260407-163712.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ifind-connector-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/ifind-connector-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[imp-001-qmt-api-learning-plan](./imp-001-qmt-api-learning-plan.md)` -> 目标不存在
+  **问题**: 死链: `[imp-001-qmt-api-learning-plan](../../05_IMPLEMENTATION/07_OPERATIONS/improvements/imp-001-qmt-api-learning-plan.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[imp-002-qmt-api-community-research](./imp-002-qmt-api-community-research.md)` -> 目标不存在
+  **问题**: 死链: `[imp-002-qmt-api-community-research](../../05_IMPLEMENTATION/07_OPERATIONS/improvements/imp-002-qmt-api-community-research.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[imp-003-qmt-client-stability-solution](../../05_IMPLEMENTATION/07_OPERATIONS/improvements/imp-003-qmt-client-stability-solution.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[implementation-operations-faq](./implementation-operations-faq.md)` -> 目标不存在
+  **问题**: 死链: `[implementation-operations-faq](../../05_IMPLEMENTATION/07_OPERATIONS/implementation-operations-faq.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[implementation-progress](./implementation-progress.md)` -> 目标不存在
+  **问题**: 死链: `[implementation-progress](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/implementation-progress.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[improvement-implementation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/improvement-implementation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[improvement-plan-execution-report](./improvement-plan-execution-report.md)` -> 目标不存在
+  **问题**: 死链: `[improvement-plan-execution-report](../../05_IMPLEMENTATION/07_OPERATIONS/improvement_plans/improvement-plan-execution-report.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[incident-report-template](./incident-report-template.md)` -> 目标不存在
+  **问题**: 死链: `[incident-report-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/incident-report-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[index-quality-check-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/index-quality-check-report-20260407.md)` -> 目标不存在
@@ -11167,7 +11167,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[index-validation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/index-validation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[integration-testing-blueprint](./integration-testing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[integration-testing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/integration-testing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[interface-version-control](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/interface-version-control.md)` -> 目标不存在
@@ -11188,61 +11188,61 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer-7-11-directory-restructure-report-20260404](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer-7-11-directory-restructure-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer-7-11-extension-optimization-report-20260404](./layer-7-11-extension-optimization-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[layer-7-11-extension-optimization-report-20260404](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer-7-11-extension-optimization-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-architecture-completeness-analysis-20260407](./layer5-architecture-completeness-analysis-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-architecture-completeness-analysis-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-architecture-completeness-analysis-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-blueprint-completeness-final-analysis-20260408](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-blueprint-completeness-final-analysis-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-blueprint-completeness-final-analysis-20260408](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-blueprint-completeness-final-analysis-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-blueprint-coverage-reanalysis-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-blueprint-coverage-reanalysis-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-blueprint-coverage-reanalysis-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-blueprint-coverage-reanalysis-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-completeness-deep-analysis-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-completeness-deep-analysis-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-completeness-deep-analysis-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/layer5-completeness-deep-analysis-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-comprehensive-audit-report-20260407-205733](./layer5-comprehensive-audit-report-20260407-205733.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-comprehensive-audit-report-20260407-205733](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer5-comprehensive-audit-report-20260407-205733.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-comprehensive-audit-report-20260407-210012](./layer5-comprehensive-audit-report-20260407-210012.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-comprehensive-audit-report-20260407-210012](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer5-comprehensive-audit-report-20260407-210012.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer5-deep-audit-report-v7-20260404](./layer5-deep-audit-report-v7-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[layer5-deep-audit-report-v7-20260404](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer5-deep-audit-report-v7-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-210333](./layer6-comprehensive-audit-report-20260407-210333.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-210333](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-comprehensive-audit-report-20260407-210333.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-210456](./layer6-comprehensive-audit-report-20260407-210456.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-210456](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-comprehensive-audit-report-20260407-210456.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-235305](./layer6-comprehensive-audit-report-20260407-235305.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-comprehensive-audit-report-20260407-235305](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-comprehensive-audit-report-20260407-235305.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer6-deep-audit-report-20260407](./layer6-deep-audit-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-deep-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[layer6-final-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-final-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-architecture-supplement-plan-20260407](./layer8-architecture-supplement-plan-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-architecture-supplement-plan-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-architecture-supplement-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-blueprint-stage-complete-solution-20260407](./layer8-blueprint-stage-complete-solution-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-blueprint-stage-complete-solution-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-blueprint-stage-complete-solution-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-blueprint-stage-final-complete-solution-20260408](./layer8-blueprint-stage-final-complete-solution-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-blueprint-stage-final-complete-solution-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-blueprint-stage-final-complete-solution-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-blueprint-supplement-final-report-20260407](./layer8-blueprint-supplement-final-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-blueprint-supplement-final-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-blueprint-supplement-final-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[layer8-complete-optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-complete-optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-deep-audit-report-20260408](./layer8-deep-audit-report-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-deep-audit-report-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-deep-audit-report-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[layer8-deep-audit-report-optimized-20260407-205817](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-deep-audit-report-optimized-20260407-205817.md)` -> 目标不存在
@@ -11251,10 +11251,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer8-deep-audit-report-v3-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-deep-audit-report-v3-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-deleted-content-analysis-20260407](./layer8-deleted-content-analysis-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-deleted-content-analysis-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-deleted-content-analysis-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-git-deleted-content-deep-check-20260408](./layer8-git-deleted-content-deep-check-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-git-deleted-content-deep-check-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-git-deleted-content-deep-check-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[layer8-missing-modules-blueprint-comprehensive-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-missing-modules-blueprint-comprehensive-20260407.md)` -> 目标不存在
@@ -11263,28 +11263,28 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer8-professional-institution-analysis-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-professional-institution-analysis-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[layer8-recovery-completion-report-20260407](./layer8-recovery-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer8-recovery-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-recovery-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[learning-path](../../05_IMPLEMENTATION/01_QUICKSTART/learning-path.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[link-fix-case-study](./link-fix-case-study.md)` -> 目标不存在
+  **问题**: 死链: `[link-fix-case-study](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/link-fix-case-study.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[liquidity-management-system-blueprint](./liquidity-management-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[liquidity-management-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/liquidity-management-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[liquidity-management-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/liquidity-management-system-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[live-trading-interface-blueprint](./live-trading-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[live-trading-interface-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/live-trading-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[load-balancing-blueprint](./load-balancing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[load-balancing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/load-balancing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[log-aggregation-blueprint](./log-aggregation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[log-aggregation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/log-aggregation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[logging-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/logging-standard.md)` -> 目标不存在
@@ -11305,10 +11305,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[lstm-model-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/lstm-model-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[maintenance-manual](./maintenance-manual.md)` -> 目标不存在
+  **问题**: 死链: `[maintenance-manual](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/maintenance-manual.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[margin-call-monitor-blueprint](./margin-call-monitor-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[margin-call-monitor-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/margin-call-monitor-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[margin-call-monitor-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/margin-call-monitor-technical-specification.md)` -> 目标不存在
@@ -11323,7 +11323,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[market-participant-simulation-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/market-participant-simulation-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[market-participant-simulation-spec](./market-participant-simulation-spec.md)` -> 目标不存在
+  **问题**: 死链: `[market-participant-simulation-spec](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/market-participant-simulation-spec.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[market-regime-detection-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/market-regime-detection-blueprint.md)` -> 目标不存在
@@ -11341,13 +11341,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[medium-long-term-improvement-implementation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/medium-long-term-improvement-implementation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[metadata-enhancer-guide](./metadata-enhancer-guide.md)` -> 目标不存在
+  **问题**: 死链: `[metadata-enhancer-guide](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides/metadata-enhancer-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[metadata-enhancer-specification](./metadata-enhancer-specification.md)` -> 目标不存在
+  **问题**: 死链: `[metadata-enhancer-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/metadata-enhancer-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[mid-term-optimization-report-20260404](./mid-term-optimization-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[mid-term-optimization-report-20260404](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/mid-term-optimization-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[migration-guide-v1](../../05_IMPLEMENTATION/99_ARCHIVE/migration-guide-v1.md)` -> 目标不存在
@@ -11356,37 +11356,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[miniconda-installation-checklist](../../05_IMPLEMENTATION/07_OPERATIONS/miniconda-installation-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[miniconda-installation-guide](./miniconda-installation-guide.md)` -> 目标不存在
+  **问题**: 死链: `[miniconda-installation-guide](../../05_IMPLEMENTATION/07_OPERATIONS/miniconda-installation-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[missing-blueprints-checklist-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/missing-blueprints-checklist-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[missing-blueprints-checklist-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/missing-blueprints-checklist-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[model-serving-architecture-technical-specification](./model-serving-architecture-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[model-serving-architecture-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/model-serving-architecture-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[model-training-pipeline-technical-specification](./model-training-pipeline-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[model-training-pipeline-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/model-training-pipeline-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[module-archive](../../05_IMPLEMENTATION/99_ARCHIVE/module-archive.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[module-development-template](./module-development-template.md)` -> 目标不存在
+  **问题**: 死链: `[module-development-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/module-development-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[module-registry](./module-registry.md)` -> 目标不存在
+  **问题**: 死链: `[module-registry](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/module-registry.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[module-relationship-diagram](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/module-relationship-diagram.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[module-responsibility-boundaries-blueprint](./module-responsibility-boundaries-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[module-responsibility-boundaries-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/module-responsibility-boundaries-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[monitoring-alerting-system-blueprint](./monitoring-alerting-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[monitoring-alerting-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/monitoring-alerting-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[monitoring-dashboard-enhancement-blueprint](./monitoring-dashboard-enhancement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[monitoring-dashboard-enhancement-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/monitoring-dashboard-enhancement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[monitoring-manual](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/monitoring-manual.md)` -> 目标不存在
@@ -11398,10 +11398,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[multi-asset-allocation-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/multi-asset-allocation-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[multi-engine-data-consistency-design](./multi-engine-data-consistency-design.md)` -> 目标不存在
+  **问题**: 死链: `[multi-engine-data-consistency-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/multi-engine-data-consistency-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[multi-period-dynamic-optimization-blueprint](./multi-period-dynamic-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[multi-period-dynamic-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-period-dynamic-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[new-employee-onboarding-guide](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/new-employee-onboarding-guide.md)` -> 目标不存在
@@ -11419,7 +11419,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[notification-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/notification-system-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[object-storage-integration-blueprint](./object-storage-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[object-storage-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/object-storage-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[openclaw-l2-docs-05-implementation-01-quickstart-101](./openclaw-l2-docs-05-implementation-01-quickstart-101.md)` -> 目标不存在
@@ -11515,100 +11515,100 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-l2-docs-05-implementation-99-archive-132](./openclaw-l2-docs-05-implementation-99-archive-132.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[opening-strategy-blueprint](./opening-strategy-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[opening-strategy-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/opening-strategy-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[optimization-report-v11-20260406](./optimization-report-v11-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-v11-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v11-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[optimization-report-v13-20260406](./optimization-report-v13-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-v13-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v13-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[optimization-report-v14-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v14-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[optimization-report-v16-20260407](./optimization-report-v16-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-v16-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v16-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[optimization-report-v8-20260406](./optimization-report-v8-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-v8-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v8-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[optimization-report-v9-20260406](./optimization-report-v9-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-v9-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-v9-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[optimized-responsibilities-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimized-responsibilities-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[order-execution-blueprint](./order-execution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[order-execution-blueprint](../../04_EXECUTION/01_ORDER_EXECUTION/order-execution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-architecture-gap-analysis-blueprint-20260407-190203](./overlap-architecture-gap-analysis-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-architecture-gap-analysis-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-architecture-gap-analysis-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-complete-architecture-blueprint-20260407-190203](./overlap-complete-architecture-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-complete-architecture-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-complete-architecture-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-constraint-solver-blueprint-20260407-190203](./overlap-constraint-solver-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-constraint-solver-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-constraint-solver-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-data-governance-platform-blueprint-20260407-190203](./overlap-data-governance-platform-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-data-governance-platform-blueprint-20260407-190203](../../../.audit_fix_backup/docs/06_ARCHIVE/blueprints/overlap-data-governance-platform-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-distributed-query-engine-blueprint-20260407-190203](./overlap-distributed-query-engine-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-distributed-query-engine-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-distributed-query-engine-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-factor-exposure-management-blueprint-20260407-190203](./overlap-factor-exposure-management-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-factor-exposure-management-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-factor-exposure-management-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-metadata-management-enhancement-blueprint-20260407-190203](./overlap-metadata-management-enhancement-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-metadata-management-enhancement-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-metadata-management-enhancement-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-multi-asset-allocation-blueprint-20260407-190203](./overlap-multi-asset-allocation-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-multi-asset-allocation-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-multi-asset-allocation-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-strategic-allocation-engine-blueprint-20260407-190203](./overlap-strategic-allocation-engine-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-strategic-allocation-engine-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-strategic-allocation-engine-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-system-integration-blueprint-20260407-190203](./overlap-system-integration-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-system-integration-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-system-integration-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[overlap-tail-risk-metrics-extension-blueprint-20260407-190203](./overlap-tail-risk-metrics-extension-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-tail-risk-metrics-extension-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-tail-risk-metrics-extension-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p0-01-database-design-document](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-01-database-design-document.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-01-database-design-review-report](./p0-01-database-design-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[p0-01-database-design-review-report](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-01-database-design-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-02-data-dictionary](./p0-02-data-dictionary.md)` -> 目标不存在
+  **问题**: 死链: `[p0-02-data-dictionary](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-02-data-dictionary.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-03-internal-service-interface-design](./p0-03-internal-service-interface-design.md)` -> 目标不存在
+  **问题**: 死链: `[p0-03-internal-service-interface-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-03-internal-service-interface-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-04-third-party-interface-integration-design](./p0-04-third-party-interface-integration-design.md)` -> 目标不存在
+  **问题**: 死链: `[p0-04-third-party-interface-integration-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-04-third-party-interface-integration-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-05-multi-engine-coordinator-design](./p0-05-multi-engine-coordinator-design.md)` -> 目标不存在
+  **问题**: 死链: `[p0-05-multi-engine-coordinator-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-05-multi-engine-coordinator-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-06-account-management-detailed-design](./p0-06-account-management-detailed-design.md)` -> 目标不存在
+  **问题**: 死链: `[p0-06-account-management-detailed-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-06-account-management-detailed-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-07-order-management-detailed-design](./p0-07-order-management-detailed-design.md)` -> 目标不存在
+  **问题**: 死链: `[p0-07-order-management-detailed-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database/p0-07-order-management-detailed-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-blueprints-completion-report-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p0-blueprints-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p0-blueprints-completion-report-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p0-blueprints-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-fix-completion-report-20260407](./p0-fix-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p0-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-fix-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p0-fix-completion-report-v4-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-fix-completion-report-v4-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-p1-batch-fix-completed-report-20260407](./p0-p1-batch-fix-completed-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p0-p1-batch-fix-completed-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-p1-batch-fix-completed-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p0-p1-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-p1-fix-completion-report-20260407.md)` -> 目标不存在
@@ -11620,16 +11620,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p0-p1-rectification-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-p1-rectification-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p0-resolution-report-v6-20260404](./p0-resolution-report-v6-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[p0-resolution-report-v6-20260404](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p0-resolution-report-v6-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-blueprints-batch1-completion-report-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-batch1-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-blueprints-batch1-completion-report-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-batch1-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-blueprints-batch2-completion-report-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-batch2-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-blueprints-batch2-completion-report-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-batch2-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-blueprints-final-completion-report-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-final-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-blueprints-final-completion-report-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-blueprints-final-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p1-duplicate-resolution-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-duplicate-resolution-report-20260407.md)` -> 目标不存在
@@ -11638,10 +11638,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p1-implementation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-implementation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-infrastructure-blueprints-completion-report-20260407](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-infrastructure-blueprints-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-infrastructure-blueprints-completion-report-20260407](../../06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-infrastructure-blueprints-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-p2-batch-fix-completion-report-20260407](./p1-p2-batch-fix-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-p2-batch-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-p2-batch-fix-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p1-p2-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-p2-fix-completion-report-20260407.md)` -> 目标不存在
@@ -11650,16 +11650,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p1-p2-issues-resolution-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-p2-issues-resolution-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-p2-optimization-report-20260406](./p1-p2-optimization-report-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[p1-p2-optimization-report-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-p2-optimization-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-remaining-issues-final-report-20260407](./p1-remaining-issues-final-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-remaining-issues-final-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p1-remaining-issues-final-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p1-risk-mitigation-design](./p1-risk-mitigation-design.md)` -> 目标不存在
+  **问题**: 死链: `[p1-risk-mitigation-design](../../05_IMPLEMENTATION/07_OPERATIONS/p1-risk-mitigation-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[p2-fix-completion-report-20260407](./p2-fix-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p2-fix-completion-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p2-fix-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[p2-issues-fix-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p2-issues-fix-report-20260407.md)` -> 目标不存在
@@ -11677,37 +11677,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[performance-analyzer-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/performance-analyzer-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[performance-monitoring](./performance-monitoring.md)` -> 目标不存在
+  **问题**: 死链: `[performance-monitoring](../../05_IMPLEMENTATION/07_OPERATIONS/performance-monitoring.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[performance-monitoring-guide](./performance-monitoring-guide.md)` -> 目标不存在
+  **问题**: 死链: `[performance-monitoring-guide](../../05_IMPLEMENTATION/07_OPERATIONS/performance-monitoring-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[performance-report-template](./performance-report-template.md)` -> 目标不存在
+  **问题**: 死链: `[performance-report-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/performance-report-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[performance-testing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/performance-testing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[performance-tuning-guide](./performance-tuning-guide.md)` -> 目标不存在
+  **问题**: 死链: `[performance-tuning-guide](../../05_IMPLEMENTATION/07_OPERATIONS/performance-tuning-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[periodic-audit-plan](./periodic-audit-plan.md)` -> 目标不存在
+  **问题**: 死链: `[periodic-audit-plan](../../05_IMPLEMENTATION/07_OPERATIONS/periodic-audit-plan.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[personal-development-ai-maintenance-solution-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/personal-development-ai-maintenance-solution-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[personal-development-best-practices](./personal-development-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[personal-development-best-practices](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/personal-development-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[personal-development-lessons-learned](./personal-development-lessons-learned.md)` -> 目标不存在
+  **问题**: 死链: `[personal-development-lessons-learned](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/personal-development-lessons-learned.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[personal-tech-decision-checklist](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/personal-tech-decision-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[personal-workflow-guide](./personal-workflow-guide.md)` -> 目标不存在
+  **问题**: 死链: `[personal-workflow-guide](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/personal-workflow-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[phase1-design](../../05_IMPLEMENTATION/01_QUICKSTART/phase1-design.md)` -> 目标不存在
@@ -11722,31 +11722,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[portfolio-optimization-deep-audit-corrected-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-corrected-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-report-20260407](./portfolio-optimization-deep-audit-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v11-20260406](./portfolio-optimization-deep-audit-v11-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v11-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v11-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v12-20260406](./portfolio-optimization-deep-audit-v12-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v12-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v12-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v13-20260406](./portfolio-optimization-deep-audit-v13-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v13-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v13-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[portfolio-optimization-deep-audit-v14-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v14-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v15-20260406](./portfolio-optimization-deep-audit-v15-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v15-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v15-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v16-20260407](./portfolio-optimization-deep-audit-v16-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v16-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v16-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v17-20260407](./portfolio-optimization-deep-audit-v17-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v17-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v17-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-v18-20260407](./portfolio-optimization-deep-audit-v18-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-v18-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v18-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[portfolio-optimization-deep-audit-v19-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-v19-20260407.md)` -> 目标不存在
@@ -11764,22 +11764,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[position-manager-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/position-manager-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[post-deployment-checklist](./post-deployment-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[post-deployment-checklist](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/post-deployment-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[post-rectification-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/post-rectification-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[pre-deployment-checklist](./pre-deployment-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[pre-deployment-checklist](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/06_CHECKLISTS/pre-deployment-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[professional-quant-development-process](./professional-quant-development-process.md)` -> 目标不存在
+  **问题**: 死链: `[professional-quant-development-process](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/professional-quant-development-process.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[project-office-ai-handoff](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/project-office-ai-handoff.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[python-coding-best-practices](./python-coding-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[python-coding-best-practices](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices/python-coding-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[qlib-alpha158-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/qlib-alpha158-technical-specification.md)` -> 目标不存在
@@ -11800,16 +11800,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[qmt-environment-setup-summary](../../05_IMPLEMENTATION/07_OPERATIONS/qmt-environment-setup-summary.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[qmt-executor-blueprint](./qmt-executor-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[qmt-executor-blueprint](../../04_EXECUTION/01_ORDER_EXECUTION/qmt-executor-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[qmt-executor-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/qmt-executor-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[qmt-final-setup-guide](./qmt-final-setup-guide.md)` -> 目标不存在
+  **问题**: 死链: `[qmt-final-setup-guide](../../05_IMPLEMENTATION/07_OPERATIONS/qmt-final-setup-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[qmt-quick-action-checklist](./qmt-quick-action-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[qmt-quick-action-checklist](../../05_IMPLEMENTATION/07_OPERATIONS/qmt-quick-action-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[quality-monitoring-report-20260407-011229](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality-monitoring-report-20260407-011229.md)` -> 目标不存在
@@ -11836,28 +11836,28 @@ last_updated: 2026-04-13
   **问题**: 死链: `[quality-monitoring-report-20260407-014935](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/quality-monitoring-report-20260407-014935.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[quality-report-automation-blueprint](./quality-report-automation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[quality-report-automation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/quality-report-automation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[quality-scoring-system-blueprint](./quality-scoring-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[quality-scoring-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/quality-scoring-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[realtime-data-lake-blueprint](./realtime-data-lake-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[realtime-data-lake-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/realtime-data-lake-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[realtime-risk-hedge-engine-blueprint](./realtime-risk-hedge-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[realtime-risk-hedge-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/realtime-risk-hedge-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[realtime-risk-hedge-engine-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/realtime-risk-hedge-engine-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[rebalancing-blueprint](./rebalancing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[rebalancing-blueprint](../../11_STRATEGIC_DECISION/rebalancing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[rectification-report-20260407](./rectification-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[rectification-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/rectification-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[redis-cache-layer-blueprint](./redis-cache-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[redis-cache-layer-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/redis-cache-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[remaining-issues-fix-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/remaining-issues-fix-report-20260407.md)` -> 目标不存在
@@ -11866,13 +11866,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[remaining-issues-fix-report-v3-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/remaining-issues-fix-report-v3-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[repo-root-governance-playbook](./repo-root-governance-playbook.md)` -> 目标不存在
+  **问题**: 死链: `[repo-root-governance-playbook](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/repo-root-governance-playbook.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[repo-wide-file-governance-task-list](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[responsibility-clarity-optimization-final-report-20260407](./responsibility-clarity-optimization-final-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-clarity-optimization-final-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-clarity-optimization-final-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[responsibility-deduplication-report-v18-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-deduplication-report-v18-20260407.md)` -> 目标不存在
@@ -11881,7 +11881,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[responsibility-fix-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-fix-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[responsibility-fix-report-20260407-030139](./responsibility-fix-report-20260407-030139.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-fix-report-20260407-030139](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-fix-report-20260407-030139.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[responsibility-fix-report-v2-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-fix-report-v2-20260407.md)` -> 目标不存在
@@ -11905,7 +11905,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[review-material-distribution-checklist](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/review-material-distribution-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[risk-attribution-system-blueprint](./risk-attribution-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-attribution-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/risk-attribution-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[risk-attribution-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/risk-attribution-system-technical-specification.md)` -> 目标不存在
@@ -11914,25 +11914,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[risk-contribution-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/risk-contribution-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[risk-control-blueprint](./risk-control-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-control-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/risk-control-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[risk-control-technical-specification](./risk-control-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[risk-control-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/risk-control-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[risk-monitoring-manual](./risk-monitoring-manual.md)` -> 目标不存在
+  **问题**: 死链: `[risk-monitoring-manual](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/03_OPERATION_MANUALS/risk-monitoring-manual.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[saga-implementation-flowchart](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency/saga-implementation-flowchart.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[scenario-analyzer-technical-specification](./scenario-analyzer-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[scenario-analyzer-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/scenario-analyzer-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[secrets-management-blueprint](./secrets-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[secrets-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/secrets-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[security-scanning-blueprint](./security-scanning-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[security-scanning-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/security-scanning-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[sentiment-analysis-layer-deep-audit-report-v10-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-analysis-layer-deep-audit-report-v10-20260406.md)` -> 目标不存在
@@ -11944,7 +11944,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[sentiment-analysis-layer-deep-audit-report-v7-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-analysis-layer-deep-audit-report-v7-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-layer-deep-audit-report-v8-20260406](./sentiment-analysis-layer-deep-audit-report-v8-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-layer-deep-audit-report-v8-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-analysis-layer-deep-audit-report-v8-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[sentiment-analyzer-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/sentiment-analyzer-technical-specification.md)` -> 目标不存在
@@ -11971,7 +11971,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[sentiment-layer-index-fix-completion-report-v21-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-layer-index-fix-completion-report-v21-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[sentiment-layer-p1-fix-completion-report-v20-20260407](./sentiment-layer-p1-fix-completion-report-v20-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-layer-p1-fix-completion-report-v20-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-layer-p1-fix-completion-report-v20-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[sentiment-layer-responsibility-fix-completion-report-v22-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-layer-responsibility-fix-completion-report-v22-20260407.md)` -> 目标不存在
@@ -11980,7 +11980,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[sentiment-layer-vague-responsibility-fix-completion-report-v24-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-layer-vague-responsibility-fix-completion-report-v24-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[service-discovery-blueprint](./service-discovery-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[service-discovery-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/service-discovery-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[short-term-improvement-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/short-term-improvement-report-20260407.md)` -> 目标不存在
@@ -11998,13 +11998,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[signal-quality-reporter-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/signal-quality-reporter-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[simplified-risk-budget-system-blueprint](./simplified-risk-budget-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[simplified-risk-budget-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/simplified-risk-budget-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[simplified-risk-budget-system-technical-specification](./simplified-risk-budget-system-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[simplified-risk-budget-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/simplified-risk-budget-system-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[simplified-timeframe-coordination-blueprint](./simplified-timeframe-coordination-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[simplified-timeframe-coordination-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/simplified-timeframe-coordination-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[simplified-timeframe-coordination-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/simplified-timeframe-coordination-technical-specification.md)` -> 目标不存在
@@ -12019,22 +12019,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[smart-link-fix-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/smart-link-fix-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[smart-order-router-blueprint](./smart-order-router-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[smart-order-router-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/smart-order-router-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[sparse-directory-governance-report-20260407-030248](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sparse-directory-governance-report-20260407-030248.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[spec-approver-tool-guide](./spec-approver-tool-guide.md)` -> 目标不存在
+  **问题**: 死链: `[spec-approver-tool-guide](../../05_IMPLEMENTATION/07_OPERATIONS/spec-approver-tool-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[statistical-arbitrage-module-blueprint](./statistical-arbitrage-module-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[statistical-arbitrage-module-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/statistical-arbitrage-module-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[statistical-arbitrage-module-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/statistical-arbitrage-module-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[storage-tier](./storage-tier.md)` -> 目标不存在
+  **问题**: 死链: `[storage-tier](../../05_IMPLEMENTATION/04_INFRASTRUCTURE/storage-tier.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[strategic-decision-audit-completion-summary-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/strategic-decision-audit-completion-summary-20260407.md)` -> 目标不存在
@@ -12046,7 +12046,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[strategic-decision-responsibility-supplement-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/strategic-decision-responsibility-supplement-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[strategic-weighting-blueprint](./strategic-weighting-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategic-weighting-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategic-weighting-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[strategy-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-engine-blueprint.md)` -> 目标不存在
@@ -12058,7 +12058,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[strategy-execution-deep-content-audit-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/strategy-execution-deep-content-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[strategy-execution-layer-blueprint](./strategy-execution-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-execution-layer-blueprint](../../01_FRAMEWORK/strategy-execution-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[strategy-execution-layer-completeness-audit-20260406](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/strategy-execution-layer-completeness-audit-20260406.md)` -> 目标不存在
@@ -12079,16 +12079,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[strategy-factory-guide](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/02_IMPLEMENTATION_GUIDES/strategy-factory-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[strategy-factory-implementation-case-study](./strategy-factory-implementation-case-study.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-factory-implementation-case-study](../../05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies/strategy-factory-implementation-case-study.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[strategy-parameter-optimization-blueprint](./strategy-parameter-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-parameter-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-parameter-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[stress-testing-blueprint](./stress-testing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[stress-testing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/stress-testing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[stress-testing-system-blueprint](./stress-testing-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[stress-testing-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/stress-testing-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[supercommand-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/supercommand-technical-specification.md)` -> 目标不存在
@@ -12097,13 +12097,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[system-architecture-git-audit-report-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/system-architecture-git-audit-report-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[system-monitor-technical-specification](./system-monitor-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[system-monitor-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/system-monitor-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[system-wide-approval-plan](../../05_IMPLEMENTATION/07_OPERATIONS/system-wide-approval-plan.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[t.05.te001.trading-cost-model-algorithm-document](./t.05.te001.trading-cost-model-algorithm-document.md)` -> 目标不存在
+  **问题**: 死链: `[t.05.te001.trading-cost-model-algorithm-document](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/t.05.te001.trading-cost-model-algorithm-document.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[t.06.ui001.web-management-interface-architecture-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface/t.06.ui001.web-management-interface-architecture-design.md)` -> 目标不存在
@@ -12112,19 +12112,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[t.08.ar001.a-stock-rule-engine-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/t.08.ar001.a-stock-rule-engine-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[tail-risk-hedging-blueprint](./tail-risk-hedging-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[tail-risk-hedging-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/tail-risk-hedging-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[tca-blueprint](./tca-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[tca-blueprint](../../11_STRATEGIC_DECISION/tca-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[technical-evolution-roadmap](./technical-evolution-roadmap.md)` -> 目标不存在
+  **问题**: 死链: `[technical-evolution-roadmap](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/technical-evolution-roadmap.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[technical-review-meeting-agenda](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/technical-review-meeting-agenda.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[technical-review-template](./technical-review-template.md)` -> 目标不存在
+  **问题**: 死链: `[technical-review-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/technical-review-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[technical-solution-summary-report](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/technical-solution-summary-report.md)` -> 目标不存在
@@ -12133,16 +12133,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[technical-specification-template](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/technical-specification-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[test-framework](./test-framework.md)` -> 目标不存在
+  **问题**: 死链: `[test-framework](../../05_IMPLEMENTATION/02_DEVELOPMENT/test-framework.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[test-plan-template](./test-plan-template.md)` -> 目标不存在
+  **问题**: 死链: `[test-plan-template](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/04_CONFIG_STANDARDS/test-plan-template.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[testing-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/testing-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[timescaledb-integration-blueprint](./timescaledb-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[timescaledb-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/timescaledb-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[trade-auditor-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/trade-auditor-technical-specification.md)` -> 目标不存在
@@ -12151,61 +12151,61 @@ last_updated: 2026-04-13
   **问题**: 死链: `[trading-cost-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/trading-cost-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[trading-cost-optimization-technical-specification](./trading-cost-optimization-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[trading-cost-optimization-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/trading-cost-optimization-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[trading-cost-test-case-design](./trading-cost-test-case-design.md)` -> 目标不存在
+  **问题**: 死链: `[trading-cost-test-case-design](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs/trading-cost-test-case-design.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[trading-signal-validator-blueprint](./trading-signal-validator-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trading-signal-validator-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/trading-signal-validator-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[transaction-cost-aware-rebalancing-technical-specification](./transaction-cost-aware-rebalancing-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[transaction-cost-aware-rebalancing-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/transaction-cost-aware-rebalancing-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[transformer-model-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/transformer-model-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[troubleshooting-guide](./troubleshooting-guide.md)` -> 目标不存在
+  **问题**: 死链: `[troubleshooting-guide](../../05_IMPLEMENTATION/07_OPERATIONS/troubleshooting-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[turnover-control-blueprint](./turnover-control-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[turnover-control-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/turnover-control-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[ui-layout-standard](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/ui_design/ui-layout-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[unified-data-api-gateway-blueprint](./unified-data-api-gateway-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[unified-data-api-gateway-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/unified-data-api-gateway-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[unified-data-infrastructure-blueprint](./unified-data-infrastructure-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[unified-data-infrastructure-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/unified-data-infrastructure-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[unified-interface-contract-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/unified-interface-contract-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[unit-testing-blueprint](./unit-testing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[unit-testing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/unit-testing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[usage-guide](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/usage-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[user-preferences-technical-specification](./user-preferences-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[user-preferences-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/user-preferences-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[var-es-monitoring-blueprint](./var-es-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[var-es-monitoring-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/var-es-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[version-consistency-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/version-consistency-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[version-management-guide](./version-management-guide.md)` -> 目标不存在
+  **问题**: 死链: `[version-management-guide](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/version-management-guide.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[version-management-standard](./version-management-standard.md)` -> 目标不存在
+  **问题**: 死链: `[version-management-standard](../../05_IMPLEMENTATION/02_DEVELOPMENT/version-management-standard.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
-  **问题**: 死链: `[vulnerability-detection-blueprint](./vulnerability-detection-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[vulnerability-detection-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/vulnerability-detection-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/05_IMPLEMENTATION/INDEX.md`
   **问题**: 死链: `[weekly-audit-mechanism](../../05_IMPLEMENTATION/04_OPERATIONS/weekly-audit-mechanism.md)` -> 目标不存在
@@ -12223,7 +12223,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[07-system-manifest-backup](../../06_ARCHIVE/blueprints/07-system-manifest-backup.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[CHANGELOG](./CHANGELOG.md)` -> 目标不存在
+  **问题**: 死链: `[CHANGELOG](../../00_OVERVIEW/CHANGELOG.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[README](./README.md)` -> 目标不存在
@@ -12235,7 +12235,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[README](./README.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[a-stock-main-force-behavior-research](./a-stock-main-force-behavior-research.md)` -> 目标不存在
+  **问题**: 死链: `[a-stock-main-force-behavior-research](../../06_ARCHIVE/blueprints/a-stock-main-force-behavior-research.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[ai-factor-agent](../../06_ARCHIVE/factor_library/ai-factor-agent.md)` -> 目标不存在
@@ -12244,37 +12244,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[alpha-factor-approval-notice](../../06_ARCHIVE/audit_reports/alpha-factor-approval-notice.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-architecture-technical-review-report](./alpha-factor-architecture-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-architecture-technical-review-report](../../06_ARCHIVE/reports/alpha-factor-architecture-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report](./alpha-factor-deep-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report](../../06_ARCHIVE/audit_reports/alpha-factor-deep-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-deep-audit-report-v2](./alpha-factor-deep-audit-report-v2.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-deep-audit-report-v2](../../06_ARCHIVE/audit_reports/alpha-factor-deep-audit-report-v2.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[alpha-factor-deep-audit-report-v4-20260403](../../06_ARCHIVE/audit_reports/alpha-factor-deep-audit-report-v4-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-factory-blueprint](./alpha-factor-factory-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-factory-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/alpha-factor-factory-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-final-optimization-report-20260403](./alpha-factor-final-optimization-report-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-final-optimization-report-20260403](../../06_ARCHIVE/reports/alpha-factor-final-optimization-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-optimization-summary-20260403](./alpha-factor-optimization-summary-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-optimization-summary-20260403](../../06_ARCHIVE/blueprints/alpha-factor-optimization-summary-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-optimization-summary-v2-20260403](./alpha-factor-optimization-summary-v2-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-optimization-summary-v2-20260403](../../06_ARCHIVE/blueprints/alpha-factor-optimization-summary-v2-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[alpha-factor-p0-resolution-report-v3-20260403](../../06_ARCHIVE/audit_reports/alpha-factor-p0-resolution-report-v3-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-p1-resolution-report-20260403](./alpha-factor-p1-resolution-report-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-p1-resolution-report-20260403](../../06_ARCHIVE/reports/alpha-factor-p1-resolution-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[alpha-factor-technical-approval](./alpha-factor-technical-approval.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-technical-approval](../../06_ARCHIVE/blueprints/alpha-factor-technical-approval.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[alternative-data-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/alternative-data-integration-blueprint.md)` -> 目标不存在
@@ -12283,22 +12283,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[architecture-cleanup-progress-report-20260402](../../06_ARCHIVE/audit_reports/architecture-cleanup-progress-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[architecture-migration-plan](./architecture-migration-plan.md)` -> 目标不存在
+  **问题**: 死链: `[architecture-migration-plan](../../06_ARCHIVE/blueprints/architecture-migration-plan.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[architecture-remnant-cleanup-plan-20260402](./architecture-remnant-cleanup-plan-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[architecture-remnant-cleanup-plan-20260402](../../06_ARCHIVE/audit_reports/architecture-remnant-cleanup-plan-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[architecture-version-conflict-audit-report-20260402](../../06_ARCHIVE/audit_reports/architecture-version-conflict-audit-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[archive-readme-06-archive-root](./archive-readme-06-archive-root.md)` -> 目标不存在
+  **问题**: 死链: `[archive-readme-06-archive-root](../../06_ARCHIVE/unclassified/archive-readme-06-archive-root.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[archive-readme-20260404-market-participant-consolidation](./archive-readme-20260404-market-participant-consolidation.md)` -> 目标不存在
+  **问题**: 死链: `[archive-readme-20260404-market-participant-consolidation](../../06_ARCHIVE/blueprints/archive-readme-20260404-market-participant-consolidation.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[archive-readme-20260405-economic-regime-cleanup](./archive-readme-20260405-economic-regime-cleanup.md)` -> 目标不存在
+  **问题**: 死链: `[archive-readme-20260405-economic-regime-cleanup](../../06_ARCHIVE/blueprints/archive-readme-20260405-economic-regime-cleanup.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[archived-documents-recovery-report-20260403](../../06_ARCHIVE/audit_reports/archived-documents-recovery-report-20260403.md)` -> 目标不存在
@@ -12310,7 +12310,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[ashare-historical-data-technical-review-report](../../06_ARCHIVE/audit_reports/ashare-historical-data-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[ashare-market-participant-agent-classification](./ashare-market-participant-agent-classification.md)` -> 目标不存在
+  **问题**: 死链: `[ashare-market-participant-agent-classification](../../06_ARCHIVE/technical_specifications/ashare-market-participant-agent-classification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[audit-sentinel-mcp-tools-validation-report](../../06_ARCHIVE/audit_reports/audit-sentinel-mcp-tools-validation-report.md)` -> 目标不存在
@@ -12319,7 +12319,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[audit-strategy-adjustment](../../06_ARCHIVE/audit_reports/audit-strategy-adjustment.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[audit6-complete-solution-report-20260407](./audit6-complete-solution-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[audit6-complete-solution-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/audit6-complete-solution-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[auto-repair-engine-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/auto-repair-engine-blueprint-archived-encoding-error.md)` -> 目标不存在
@@ -12331,34 +12331,34 @@ last_updated: 2026-04-13
   **问题**: 死链: `[barra-risk-model-technical-review-report](../../06_ARCHIVE/reports/barra-risk-model-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[batch1-cleanup-completion-report-20260402](./batch1-cleanup-completion-report-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[batch1-cleanup-completion-report-20260402](../../06_ARCHIVE/audit_reports/batch1-cleanup-completion-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[black-litterman-model-blueprint](./black-litterman-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[black-litterman-model-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/black-litterman-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[black-litterman-model-technical-specification](./black-litterman-model-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[black-litterman-model-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/black-litterman-model-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[block-d1-findings](./block-d1-findings.md)` -> 目标不存在
+  **问题**: 死链: `[block-d1-findings](../../06_ARCHIVE/audit_reports/block-d1-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[block-d2-findings](../../06_ARCHIVE/audit_reports/block-d2-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[block-d3-findings](./block-d3-findings.md)` -> 目标不存在
+  **问题**: 死链: `[block-d3-findings](../../06_ARCHIVE/audit_reports/block-d3-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[block-d4-findings](../../06_ARCHIVE/audit_reports/block-d4-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[block-e1-findings](./block-e1-findings.md)` -> 目标不存在
+  **问题**: 死链: `[block-e1-findings](../../06_ARCHIVE/audit_reports/block-e1-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[block-e2-findings](./block-e2-findings.md)` -> 目标不存在
+  **问题**: 死链: `[block-e2-findings](../../06_ARCHIVE/audit_reports/block-e2-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[block-u1-findings](./block-u1-findings.md)` -> 目标不存在
+  **问题**: 死链: `[block-u1-findings](../../06_ARCHIVE/audit_reports/block-u1-findings.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[block-u2-findings](../../06_ARCHIVE/audit_reports/block-u2-findings.md)` -> 目标不存在
@@ -12367,10 +12367,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[blueprint-20260407-180025](../../06_ARCHIVE/blueprints/blueprint-20260407-180025.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[blueprint-completeness-analysis-report](./blueprint-completeness-analysis-report.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-completeness-analysis-report](../../06_ARCHIVE/reports/blueprint-completeness-analysis-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[blueprint-completeness-final-report](./blueprint-completeness-final-report.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-completeness-final-report](../../06_ARCHIVE/reports/blueprint-completeness-final-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[blueprint-comprehensive-assessment](../../06_ARCHIVE/blueprints/blueprint-comprehensive-assessment.md)` -> 目标不存在
@@ -12385,13 +12385,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[blueprint-stage-summary](../../06_ARCHIVE/blueprints/blueprint-stage-summary.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[complete-blueprint-overview-merged](./complete-blueprint-overview-merged.md)` -> 目标不存在
+  **问题**: 死链: `[complete-blueprint-overview-merged](../../../.audit_fix_backup/docs/06_ARCHIVE/duplicates/complete-blueprint-overview-merged.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[complete-document-audit-report-v2](../../06_ARCHIVE/audit_reports/complete-document-audit-report-v2.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[comprehensive-assessment-report](./comprehensive-assessment-report.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-assessment-report](../../06_ARCHIVE/audit_reports/comprehensive-assessment-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[comprehensive-audit-report-2026-04-02](../../06_ARCHIVE/audit_reports/comprehensive-audit-report-2026-04-02.md)` -> 目标不存在
@@ -12400,10 +12400,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[comprehensive-deep-audit-report-20260403-v2](../../06_ARCHIVE/audit_reports/comprehensive-deep-audit-report-20260403-v2.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[comprehensive-document-governance-audit-report-20260403](./comprehensive-document-governance-audit-report-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-document-governance-audit-report-20260403](../../06_ARCHIVE/audit_reports/comprehensive-document-governance-audit-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[comprehensive-system-slim-audit-report](./comprehensive-system-slim-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-system-slim-audit-report](../../06_ARCHIVE/audit_reports/comprehensive-system-slim-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[comprehensive-technical-review-report](../../06_ARCHIVE/reports/comprehensive-technical-review-report.md)` -> 目标不存在
@@ -12412,25 +12412,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[config-manager-technical-review-report](../../06_ARCHIVE/reports/config-manager-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[constraint-conflict-resolver-blueprint](./constraint-conflict-resolver-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[constraint-conflict-resolver-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/constraint-conflict-resolver-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[constraint-solver-integration-blueprint](./constraint-solver-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[constraint-solver-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/constraint-solver-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[constraint-solver-technical-specification](./constraint-solver-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[constraint-solver-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/constraint-solver-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[constraints-solver-technical-review-report](../../06_ARCHIVE/reports/constraints-solver-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[construction-docs-audit-report-2026-04-03](./construction-docs-audit-report-2026-04-03.md)` -> 目标不存在
+  **问题**: 死链: `[construction-docs-audit-report-2026-04-03](../../06_ARCHIVE/audit_reports/construction-docs-audit-report-2026-04-03.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[covariance-estimation-enhancement-blueprint](./covariance-estimation-enhancement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[covariance-estimation-enhancement-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/covariance-estimation-enhancement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[cvar-optimization-blueprint](./cvar-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[cvar-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/cvar-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[daily-reporter-technical-review-report](../../06_ARCHIVE/reports/daily-reporter-technical-review-report.md)` -> 目标不存在
@@ -12445,7 +12445,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[data-governance-platform-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/data-governance-platform-blueprint-archived-encoding-error.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[data-layer-blueprint-gap-analysis](./data-layer-blueprint-gap-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[data-layer-blueprint-gap-analysis](../../06_ARCHIVE/blueprints/data-layer-blueprint-gap-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[data-layer-resource-preparation-checklist](../../06_ARCHIVE/technical_specifications/data-layer-resource-preparation-checklist.md)` -> 目标不存在
@@ -12466,7 +12466,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[data-observability-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/data-observability-blueprint-archived-encoding-error.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[data-quality-monitoring-legacy-01-framework](./data-quality-monitoring-legacy-01-framework.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-monitoring-legacy-01-framework](../../06_ARCHIVE/blueprints/data-quality-monitoring-legacy-01-framework.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[data-security-compliance-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/data-security-compliance-blueprint-archived-encoding-error.md)` -> 目标不存在
@@ -12490,7 +12490,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[datavalidator-technical-review-report](../../06_ARCHIVE/audit_reports/datavalidator-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[dead-links-fix-report-20260404](./dead-links-fix-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[dead-links-fix-report-20260404](../../06_ARCHIVE/audit_reports/dead-links-fix-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[deep-audit-code-and-temp-20260403](../../06_ARCHIVE/audit_reports/deep-audit-code-and-temp-20260403.md)` -> 目标不存在
@@ -12499,19 +12499,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deep-audit-report-specified-directories-20260403](../../06_ARCHIVE/audit_reports/deep-audit-report-specified-directories-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v24-20260407-025847-legacy-p1-cleanup-archive](./deep-audit-report-v24-20260407-025847-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v24-20260407-025847-legacy-p1-cleanup-archive](../../06_ARCHIVE/audit_reports/deep-audit-report-v24-20260407-025847-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[deep-content-audit-report-20260403](../../06_ARCHIVE/audit_reports/deep-content-audit-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[deep-system-audit-report-20260402](./deep-system-audit-report-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[deep-system-audit-report-20260402](../../06_ARCHIVE/audit_reports/deep-system-audit-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[deep-system-audit-report-20260404](../../06_ARCHIVE/audit_reports/deep-system-audit-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[deep-system-audit-report-20260404-v2](./deep-system-audit-report-20260404-v2.md)` -> 目标不存在
+  **问题**: 死链: `[deep-system-audit-report-20260404-v2](../../06_ARCHIVE/audit_reports/deep-system-audit-report-20260404-v2.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[deep-system-audit-report-round2-20260403](../../06_ARCHIVE/audit_reports/deep-system-audit-report-round2-20260403.md)` -> 目标不存在
@@ -12520,34 +12520,34 @@ last_updated: 2026-04-13
   **问题**: 死链: `[deleted-files-evaluation-report-20260403](../../06_ARCHIVE/audit_reports/deleted-files-evaluation-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[deleted-files-recovery-report-20260404](./deleted-files-recovery-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[deleted-files-recovery-report-20260404](../../06_ARCHIVE/audit_reports/deleted-files-recovery-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[dir-structure-optimization-report-20260404](./dir-structure-optimization-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[dir-structure-optimization-report-20260404](../../06_ARCHIVE/audit_reports/dir-structure-optimization-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-analysis-l0-baostock-20260402](./document-analysis-l0-baostock-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[document-analysis-l0-baostock-20260402](../../06_ARCHIVE/audit_reports/document-analysis-l0-baostock-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-analysis-l0-ifind-20260402](./document-analysis-l0-ifind-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[document-analysis-l0-ifind-20260402](../../06_ARCHIVE/audit_reports/document-analysis-l0-ifind-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-analysis-l0-qmt-20260402](./document-analysis-l0-qmt-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[document-analysis-l0-qmt-20260402](../../06_ARCHIVE/audit_reports/document-analysis-l0-qmt-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-analysis-l0-supercmd-20260402](./document-analysis-l0-supercmd-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[document-analysis-l0-supercmd-20260402](../../06_ARCHIVE/audit_reports/document-analysis-l0-supercmd-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[document-audit-workflow](../../06_ARCHIVE/audit_reports/document-audit-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-creation-checklist-legacy-01-framework](./document-creation-checklist-legacy-01-framework.md)` -> 目标不存在
+  **问题**: 死链: `[document-creation-checklist-legacy-01-framework](../../06_ARCHIVE/blueprints/document-creation-checklist-legacy-01-framework.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[document-governance-audit-fix-completion-report-20260403](../../06_ARCHIVE/audit_reports/document-governance-audit-fix-completion-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-governance-deep-audit-report-legacy-20260404-audit-reports-archive](./document-governance-deep-audit-report-legacy-20260404-audit-reports-archive.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-deep-audit-report-legacy-20260404-audit-reports-archive](../../06_ARCHIVE/audit_reports/document-governance-deep-audit-report-legacy-20260404-audit-reports-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[document-governance-deep-audit-report-v3-20260403](../../06_ARCHIVE/audit_reports/document-governance-deep-audit-report-v3-20260403.md)` -> 目标不存在
@@ -12559,7 +12559,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-deep-audit-report-v5-20260403](../../06_ARCHIVE/audit_reports/document-governance-deep-audit-report-v5-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-governance-fix-report-20260402](./document-governance-fix-report-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-fix-report-20260402](../../06_ARCHIVE/audit_reports/document-governance-fix-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[document-governance-optimization-completion-report-20260403](../../06_ARCHIVE/audit_reports/document-governance-optimization-completion-report-20260403.md)` -> 目标不存在
@@ -12568,16 +12568,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-remediation-report-20260403-v2](../../06_ARCHIVE/audit_reports/document-governance-remediation-report-20260403-v2.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-metadata-template-legacy-p1-cleanup-archive](./document-metadata-template-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[document-metadata-template-legacy-p1-cleanup-archive](../../06_ARCHIVE/blueprints/document-metadata-template-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[document-naming-standard](../../06_ARCHIVE/blueprints/document-naming-standard.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-naming-standard-20260407-180025](./document-naming-standard-20260407-180025.md)` -> 目标不存在
+  **问题**: 死链: `[document-naming-standard-20260407-180025](../../06_ARCHIVE/blueprints/document-naming-standard-20260407-180025.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[document-restore-report](./document-restore-report.md)` -> 目标不存在
+  **问题**: 死链: `[document-restore-report](../../06_ARCHIVE/audit_reports/document-restore-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[dynamic-asset-allocation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/dynamic-asset-allocation-blueprint.md)` -> 目标不存在
@@ -12601,37 +12601,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[event-detector-technical-review-report](../../06_ARCHIVE/reports/event-detector-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[extended-optimization-modules-blueprint](./extended-optimization-modules-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[extended-optimization-modules-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/extended-optimization-modules-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[factor-backtest-audit-summary](../../06_ARCHIVE/audit_reports/factor-backtest-audit-summary.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-backtest-blueprint-completeness-audit-report](./factor-backtest-blueprint-completeness-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-backtest-blueprint-completeness-audit-report](../../06_ARCHIVE/audit_reports/factor-backtest-blueprint-completeness-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-backtest-integration-audit-report](./factor-backtest-integration-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-backtest-integration-audit-report](../../06_ARCHIVE/audit_reports/factor-backtest-integration-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-backtest-technical-review-report](./factor-backtest-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-backtest-technical-review-report](../../06_ARCHIVE/reports/factor-backtest-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-calculator-technical-review-report](./factor-calculator-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-calculator-technical-review-report](../../06_ARCHIVE/reports/factor-calculator-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-combination-technical-review-report](./factor-combination-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-combination-technical-review-report](../../06_ARCHIVE/reports/factor-combination-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-exposure-management-blueprint](./factor-exposure-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-exposure-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/factor-exposure-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-ic-technical-review-report](./factor-ic-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[factor-ic-technical-review-report](../../06_ARCHIVE/reports/factor-ic-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[factor-monitoring](../../06_ARCHIVE/factor_library/factor-monitoring.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[factor-neutral-optimization-blueprint](./factor-neutral-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-neutral-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/factor-neutral-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[factor-store-technical-review-report](../../06_ARCHIVE/audit_reports/factor-store-technical-review-report.md)` -> 目标不存在
@@ -12643,49 +12643,49 @@ last_updated: 2026-04-13
   **问题**: 死链: `[feature-store-technical-specification](../../06_ARCHIVE/blueprints/feature-store-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[feedback-collector-technical-review-report](./feedback-collector-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[feedback-collector-technical-review-report](../../06_ARCHIVE/reports/feedback-collector-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[final-architecture-cleanup-report-20260403](../../06_ARCHIVE/audit_reports/final-architecture-cleanup-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-audit-report-v5](./final-audit-report-v5.md)` -> 目标不存在
+  **问题**: 死链: `[final-audit-report-v5](../../06_ARCHIVE/audit_reports/final-audit-report-v5.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round10-20260402](./final-optimization-report-round10-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round10-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round10-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round2-20260402](./final-optimization-report-round2-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round2-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round2-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[final-optimization-report-round3-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round3-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round4-20260402](./final-optimization-report-round4-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round4-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round4-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round5-20260402](./final-optimization-report-round5-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round5-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round5-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round6-20260402](./final-optimization-report-round6-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round6-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round6-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round7-20260402](./final-optimization-report-round7-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round7-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round7-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round8-20260402](./final-optimization-report-round8-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round8-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round8-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-optimization-report-round9-20260402](./final-optimization-report-round9-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-optimization-report-round9-20260402](../../06_ARCHIVE/audit_reports/final-optimization-report-round9-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[final-quality-optimization-report-20260402](./final-quality-optimization-report-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[final-quality-optimization-report-20260402](../../06_ARCHIVE/audit_reports/final-quality-optimization-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[final-verification-audit-20260403](../../06_ARCHIVE/audit_reports/final-verification-audit-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[full-system-document-governance-deep-audit-report-v12-20260407-legacy-p1-cleanup-archive](./full-system-document-governance-deep-audit-report-v12-20260407-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[full-system-document-governance-deep-audit-report-v12-20260407-legacy-p1-cleanup-archive](../../06_ARCHIVE/audit_reports/full-system-document-governance-deep-audit-report-v12-20260407-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[gap-analysis-report](../../06_ARCHIVE/reports/gap-analysis-report.md)` -> 目标不存在
@@ -12694,10 +12694,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[governance-improvement-report-20260403](../../06_ARCHIVE/audit_reports/governance-improvement-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[help-system-technical-review-report](./help-system-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[help-system-technical-review-report](../../06_ARCHIVE/reports/help-system-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[hierarchical-optimization-framework-blueprint](./hierarchical-optimization-framework-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[hierarchical-optimization-framework-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/hierarchical-optimization-framework-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[high-performance-data-pipeline-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/high-performance-data-pipeline-blueprint-archived-encoding-error.md)` -> 目标不存在
@@ -12715,22 +12715,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[index-20260407-180025](../../06_ARCHIVE/research/index-20260407-180025.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[intelligent-qa-system-plan](./intelligent-qa-system-plan.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-qa-system-plan](../../06_ARCHIVE/blueprints/intelligent-qa-system-plan.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[knowledge-graph-plan](./knowledge-graph-plan.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-graph-plan](../../06_ARCHIVE/blueprints/knowledge-graph-plan.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[l1-cleaner](./l1-cleaner.md)` -> 目标不存在
+  **问题**: 死链: `[l1-cleaner](../../06_ARCHIVE/blueprints/l1-cleaner.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[l1-gate-review-report](./l1-gate-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[l1-gate-review-report](../../06_ARCHIVE/audit_reports/l1-gate-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[l1-normalizer](./l1-normalizer.md)` -> 目标不存在
+  **问题**: 死链: `[l1-normalizer](../../06_ARCHIVE/blueprints/l1-normalizer.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[l1-validator](./l1-validator.md)` -> 目标不存在
+  **问题**: 死链: `[l1-validator](../../06_ARCHIVE/blueprints/l1-validator.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[l11-quant-agent](../../06_ARCHIVE/unclassified/l11-quant-agent.md)` -> 目标不存在
@@ -12739,7 +12739,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[l11-text-driver](../../06_ARCHIVE/unclassified/l11-text-driver.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[l2-feasibility-assessment-report](./l2-feasibility-assessment-report.md)` -> 目标不存在
+  **问题**: 死链: `[l2-feasibility-assessment-report](../../06_ARCHIVE/audit_reports/l2-feasibility-assessment-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[l4-feature-eng](../../06_ARCHIVE/blueprints/l4-feature-eng.md)` -> 目标不存在
@@ -12763,22 +12763,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[l9-model-ensembler](../../06_ARCHIVE/blueprints/l9-model-ensembler.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v10-20260407](./layer-10-governance-compliance-deep-audit-report-v10-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v10-20260407](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v10-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v9-20260407](./layer-10-governance-compliance-deep-audit-report-v9-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v9-20260407](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v9-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer-11-architecture](../../06_ARCHIVE/blueprints/layer-11-architecture.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer-11-blueprint-completion-plan-20260407](./layer-11-blueprint-completion-plan-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-11-blueprint-completion-plan-20260407](../../06_ARCHIVE/blueprints/layer-11-blueprint-completion-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer-11-deep-audit-report-v2-20260407](../../06_ARCHIVE/audit_reports/layer-11-deep-audit-report-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer-11-missing-modules-blueprint-20260407](./layer-11-missing-modules-blueprint-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-11-missing-modules-blueprint-20260407](../../06_ARCHIVE/blueprints/layer-11-missing-modules-blueprint-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer-11-p0-rectification-report-20260406](../../06_ARCHIVE/audit_reports/layer-11-p0-rectification-report-20260406.md)` -> 目标不存在
@@ -12790,7 +12790,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer-11-short-term-improvement-plan-20260407](../../06_ARCHIVE/audit_reports/layer-11-short-term-improvement-plan-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer-11-strategic-decision-deep-audit-report-20260406](./layer-11-strategic-decision-deep-audit-report-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[layer-11-strategic-decision-deep-audit-report-20260406](../../06_ARCHIVE/audit_reports/layer-11-strategic-decision-deep-audit-report-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer-11-tool-interface-specification](../../06_ARCHIVE/blueprints/layer-11-tool-interface-specification.md)` -> 目标不存在
@@ -12823,37 +12823,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer5-responsibility-fix-report-20260407](../../06_ARCHIVE/reports/layer5-responsibility-fix-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-architecture-design-blueprint](./layer6-architecture-design-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-architecture-design-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/layer6-architecture-design-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-data-flow-design-blueprint](./layer6-data-flow-design-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-data-flow-design-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/layer6-data-flow-design-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-deep-gap-analysis-report-20260407](./layer6-deep-gap-analysis-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-deep-gap-analysis-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-deep-gap-analysis-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-final-blueprint-stage-solution-20260408](./layer6-final-blueprint-stage-solution-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-final-blueprint-stage-solution-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-final-blueprint-stage-solution-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-final-complete-solution-report-20260407](./layer6-final-complete-solution-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-final-complete-solution-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-final-complete-solution-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-final-confirmation-report-20260408](./layer6-final-confirmation-report-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-final-confirmation-report-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-final-confirmation-report-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-final-integrity-report-20260408](./layer6-final-integrity-report-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-final-integrity-report-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-final-integrity-report-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-interface-specification-blueprint](./layer6-interface-specification-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-interface-specification-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/layer6-interface-specification-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-opensource-integration-blueprint](./layer6-opensource-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-opensource-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/layer6-opensource-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-supplementary-analysis-20260408](./layer6-supplementary-analysis-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-supplementary-analysis-20260408](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer6-supplementary-analysis-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer6-test-strategy-blueprint](./layer6-test-strategy-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-test-strategy-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/layer6-test-strategy-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer9-comprehensive-audit-report-20260407](../../06_ARCHIVE/audit_reports/layer9-comprehensive-audit-report-20260407.md)` -> 目标不存在
@@ -12862,7 +12862,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer9-deep-audit-report-20260407](../../06_ARCHIVE/audit_reports/layer9-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[layer9-deep-audit-report-v2-20260407](./layer9-deep-audit-report-v2-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer9-deep-audit-report-v2-20260407](../../06_ARCHIVE/audit_reports/layer9-deep-audit-report-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[layer9-deep-audit-report-v3-20260407](../../06_ARCHIVE/audit_reports/layer9-deep-audit-report-v3-20260407.md)` -> 目标不存在
@@ -12877,7 +12877,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer9-issue-fix-report-20260407](../../06_ARCHIVE/audit_reports/layer9-issue-fix-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[liquidity-constrained-optimization-blueprint](./liquidity-constrained-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[liquidity-constrained-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/liquidity-constrained-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[lstm-model-technical-review-report](../../06_ARCHIVE/reports/lstm-model-technical-review-report.md)` -> 目标不存在
@@ -12898,22 +12898,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[machine-learning-deep-audit-report-v3-20260403](../../06_ARCHIVE/audit_reports/machine-learning-deep-audit-report-v3-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[machine-learning-optimization-blueprint](./machine-learning-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[machine-learning-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/machine-learning-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[market-analyzer-technical-review-report](../../06_ARCHIVE/reports/market-analyzer-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-impact-model-blueprint](./market-impact-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-impact-model-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/market-impact-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-microstructure-simulation-blueprint](./market-microstructure-simulation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-microstructure-simulation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/market-microstructure-simulation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-participant-behavior-research-supplement](./market-participant-behavior-research-supplement.md)` -> 目标不存在
+  **问题**: 死链: `[market-participant-behavior-research-supplement](../../06_ARCHIVE/blueprints/market-participant-behavior-research-supplement.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-participant-simulation-comprehensive-technical-review-report](./market-participant-simulation-comprehensive-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[market-participant-simulation-comprehensive-technical-review-report](../../06_ARCHIVE/reports/market-participant-simulation-comprehensive-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[market-participant-simulation-implementation-guide](../../06_ARCHIVE/blueprints/market-participant-simulation-implementation-guide.md)` -> 目标不存在
@@ -12922,19 +12922,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[market-participant-simulation-implementation-plan](../../06_ARCHIVE/blueprints/market-participant-simulation-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-participant-simulation-review-report](./market-participant-simulation-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[market-participant-simulation-review-report](../../06_ARCHIVE/reports/market-participant-simulation-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[market-participant-simulation-spec-supplement](../../06_ARCHIVE/blueprints/market-participant-simulation-spec-supplement.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[market-participant-simulation-spec-update](./market-participant-simulation-spec-update.md)` -> 目标不存在
+  **问题**: 死链: `[market-participant-simulation-spec-update](../../06_ARCHIVE/technical_specifications/market-participant-simulation-spec-update.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[mean-variance-optimization-blueprint](./mean-variance-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mean-variance-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/mean-variance-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[mean-variance-optimization-technical-specification](./mean-variance-optimization-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[mean-variance-optimization-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/mean-variance-optimization-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[meso-strategy-layer-technical-review-report](../../06_ARCHIVE/reports/meso-strategy-layer-technical-review-report.md)` -> 目标不存在
@@ -12943,22 +12943,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[migration-completion-summary-20260402](../../06_ARCHIVE/audit_reports/migration-completion-summary-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[migration-completion-summary07-125123](./migration-completion-summary07-125123.md)` -> 目标不存在
+  **问题**: 死链: `[migration-completion-summary07-125123](../../06_ARCHIVE/audit_reports/migration-completion-summary07-125123.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[migration-log-l0-baostock-20260402](./migration-log-l0-baostock-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[migration-log-l0-baostock-20260402](../../06_ARCHIVE/audit_reports/migration-log-l0-baostock-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[migration-log-l0-ifind-20260402](./migration-log-l0-ifind-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[migration-log-l0-ifind-20260402](../../06_ARCHIVE/audit_reports/migration-log-l0-ifind-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[migration-log-l0-qmt-20260402](./migration-log-l0-qmt-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[migration-log-l0-qmt-20260402](../../06_ARCHIVE/audit_reports/migration-log-l0-qmt-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[migration-log-l0-supercmd-20260402](./migration-log-l0-supercmd-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[migration-log-l0-supercmd-20260402](../../06_ARCHIVE/audit_reports/migration-log-l0-supercmd-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[missing-modules-summary-blueprint](./missing-modules-summary-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[missing-modules-summary-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/missing-modules-summary-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[ml-comprehensive-gap-analysis-v2-20260403](../../06_ARCHIVE/technical_specifications/ml-comprehensive-gap-analysis-v2-20260403.md)` -> 目标不存在
@@ -12982,16 +12982,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[monthly-reporter-technical-review-report](../../06_ARCHIVE/reports/monthly-reporter-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[monthly-summary-20260402](./monthly-summary-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[monthly-summary-20260402](../../06_ARCHIVE/unclassified/monthly-summary-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[multi-asset-correlation-modeling-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-asset-correlation-modeling-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[multi-objective-optimization-blueprint](./multi-objective-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[multi-objective-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-objective-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[multi-objective-optimization-technical-specification](./multi-objective-optimization-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[multi-objective-optimization-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/multi-objective-optimization-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[multi-strategy-hierarchical-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/multi-strategy-hierarchical-system-blueprint.md)` -> 目标不存在
@@ -13003,43 +13003,43 @@ last_updated: 2026-04-13
   **问题**: 死链: `[news-stock-matcher-technical-review-report](../../06_ARCHIVE/reports/news-stock-matcher-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[notification-system-technical-review-report](./notification-system-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[notification-system-technical-review-report](../../06_ARCHIVE/reports/notification-system-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[nozyio-reference](../../06_ARCHIVE/blueprints/nozyio-reference.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[old-arch-naming-cleanup-report-20260404](./old-arch-naming-cleanup-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[old-arch-naming-cleanup-report-20260404](../../06_ARCHIVE/audit_reports/old-arch-naming-cleanup-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[openclaw-l2-docs-06-construction-docs-01-blueprints-167](./openclaw-l2-docs-06-construction-docs-01-blueprints-167.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[optimization-history-tracker-blueprint](./optimization-history-tracker-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-history-tracker-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/optimization-history-tracker-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[optimization-result-validator-blueprint](./optimization-result-validator-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-result-validator-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/optimization-result-validator-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[optimization-summary-report-round5-20260404](./optimization-summary-report-round5-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-summary-report-round5-20260404](../../06_ARCHIVE/audit_reports/optimization-summary-report-round5-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[optimizer-diagnostics-blueprint](./optimizer-diagnostics-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[optimizer-diagnostics-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/optimizer-diagnostics-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[order-flow-analysis-blueprint](./order-flow-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[order-flow-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/order-flow-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-07-system-manifest-20260407-190203](../../06_ARCHIVE/blueprints/overlap-07-system-manifest-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-ai-decision-explanation-blueprint-20260407-190203](./overlap-ai-decision-explanation-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-ai-decision-explanation-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-ai-decision-explanation-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-ai-factor-agent-20260407-190203](../../06_ARCHIVE/blueprints/overlap-ai-factor-agent-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-ai-workflow-logger-blueprint-20260407-190203](./overlap-ai-workflow-logger-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-ai-workflow-logger-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-ai-workflow-logger-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-alerting-system-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-alerting-system-blueprint-20260407-190203.md)` -> 目标不存在
@@ -13051,10 +13051,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-api-rate-limiting-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-api-rate-limiting-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-architecture-migration-plan-20260407-190202](./overlap-architecture-migration-plan-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-architecture-migration-plan-20260407-190202](../../06_ARCHIVE/blueprints/overlap-architecture-migration-plan-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-archive-readme-20260407-190203](./overlap-archive-readme-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-archive-readme-20260407-190203](../../06_ARCHIVE/blueprints/overlap-archive-readme-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-audit-log-blueprint-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-audit-log-blueprint-20260407-190203.md)` -> 目标不存在
@@ -13063,7 +13063,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-auth-system-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-auth-system-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-auto-report-generation-blueprint-20260407-190203](./overlap-auto-report-generation-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-auto-report-generation-blueprint-20260407-190203](../../06_ARCHIVE/reports/overlap-auto-report-generation-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-automated-check-report-20260407-113557-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-automated-check-report-20260407-113557-20260407-190203.md)` -> 目标不存在
@@ -13090,13 +13090,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-batch-fix-invalid-links-report-20260407-183224-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-batch-fix-invalid-links-report-20260407-183224-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-benchmark-management-blueprint-20260407-190202](./overlap-benchmark-management-blueprint-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-benchmark-management-blueprint-20260407-190202](../../06_ARCHIVE/audit_reports/overlap-benchmark-management-blueprint-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-blueprint-20260407-190203](./overlap-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-blueprint-standard-template-20260407-190203](./overlap-blueprint-standard-template-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-blueprint-standard-template-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-blueprint-standard-template-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-canonical-pointer-template](../../06_ARCHIVE/STAGING_AREA/overlap-canonical-pointer-template.md)` -> 目标不存在
@@ -13105,7 +13105,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-ci-cd-integration-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-ci-cd-integration-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-comprehensive-assessment-report-20260407-190203](./overlap-comprehensive-assessment-report-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-comprehensive-assessment-report-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-comprehensive-assessment-report-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-comprehensive-deep-audit-20260407-170856-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-comprehensive-deep-audit-20260407-170856-20260407-190203.md)` -> 目标不存在
@@ -13153,7 +13153,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-deep-audit-report-20260404-v4-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-audit-report-20260404-v4-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-deep-audit-report-v4-20260407-20260407-190203](./overlap-deep-audit-report-v4-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-deep-audit-report-v4-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-audit-report-v4-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-deep-document-audit-report-20260407-015907-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-document-audit-report-20260407-015907-20260407-190203.md)` -> 目标不存在
@@ -13165,13 +13165,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-deep-document-audit-report-20260407-020813-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-document-audit-report-20260407-020813-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-deep-learning-sentiment-analyzer-blueprint-20260407-190203](./overlap-deep-learning-sentiment-analyzer-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-deep-learning-sentiment-analyzer-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-deep-learning-sentiment-analyzer-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-deep-system-audit-report-20260404-v7-20260407-190203](./overlap-deep-system-audit-report-20260404-v7-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-deep-system-audit-report-20260404-v7-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-system-audit-report-20260404-v7-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-deep-system-audit-report-20260405-v9-20260407-190203](./overlap-deep-system-audit-report-20260405-v9-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-deep-system-audit-report-20260405-v9-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-system-audit-report-20260405-v9-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-deep-system-audit-report-v12-20260406-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-deep-system-audit-report-v12-20260406-20260407-190203.md)` -> 目标不存在
@@ -13189,10 +13189,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-doc-archival-workflow-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-doc-archival-workflow-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-doc-governance-mechanism-20260407-190203](./overlap-doc-governance-mechanism-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-doc-governance-mechanism-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-doc-governance-mechanism-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-doc-recreation-evaluation-report-20260404-20260407-190203](./overlap-doc-recreation-evaluation-report-20260404-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-doc-recreation-evaluation-report-20260404-20260407-190203](../../06_ARCHIVE/reports/overlap-doc-recreation-evaluation-report-20260404-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-document-audit-v5.1-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-document-audit-v5.1-20260407-190203.md)` -> 目标不存在
@@ -13207,25 +13207,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-document-governance-final-audit-report-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-document-governance-final-audit-report-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-document-governance-remediation-final-report-20260403-20260407-190203](./overlap-document-governance-remediation-final-report-20260403-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-governance-remediation-final-report-20260403-20260407-190203](../../06_ARCHIVE/reports/overlap-document-governance-remediation-final-report-20260403-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-document-governance-remediation-summary-20260407-190203](../../06_ARCHIVE/unclassified/overlap-document-governance-remediation-summary-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-document-governance-task-completion-summary-20260407-20260407-190203](./overlap-document-governance-task-completion-summary-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-governance-task-completion-summary-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-document-governance-task-completion-summary-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-document-maintenance-process-20260407-190202](./overlap-document-maintenance-process-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-maintenance-process-20260407-190202](../../06_ARCHIVE/blueprints/overlap-document-maintenance-process-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-document-naming-standard-20260407-190202](./overlap-document-naming-standard-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-naming-standard-20260407-190202](../../06_ARCHIVE/blueprints/overlap-document-naming-standard-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-document-responsibility-boundary-standard-20260407-190203](./overlap-document-responsibility-boundary-standard-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-responsibility-boundary-standard-20260407-190203](../../06_ARCHIVE/blueprints/overlap-document-responsibility-boundary-standard-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-duplicate-document-archive-report-20260403-20260407-190203](./overlap-duplicate-document-archive-report-20260403-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-duplicate-document-archive-report-20260403-20260407-190203](../../06_ARCHIVE/reports/overlap-duplicate-document-archive-report-20260403-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-duplicate-yaml-fix-report-20260407-185053-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-duplicate-yaml-fix-report-20260407-185053-20260407-190203.md)` -> 目标不存在
@@ -13258,13 +13258,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-final-completion-report-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-final-completion-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-full-system-audit-report-2026-04-02-20260407-190203](./overlap-full-system-audit-report-2026-04-02-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-full-system-audit-report-2026-04-02-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-full-system-audit-report-2026-04-02-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-full-system-audit-report-20260407-190203](./overlap-full-system-audit-report-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-full-system-audit-report-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-full-system-audit-report-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-git-corrupted-file-recovery-handover-20260406-20260407-190203](./overlap-git-corrupted-file-recovery-handover-20260406-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-git-corrupted-file-recovery-handover-20260406-20260407-190203](../../06_ARCHIVE/implementation/overlap-git-corrupted-file-recovery-handover-20260406-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-human-ai-layer-content-audit-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-human-ai-layer-content-audit-20260407-20260407-190203.md)` -> 目标不存在
@@ -13276,19 +13276,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-human-ai-layer-final-audit-summary-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-human-ai-layer-final-audit-summary-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-hyperparameter-optimization-blueprint-20260407-190202](./overlap-hyperparameter-optimization-blueprint-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-hyperparameter-optimization-blueprint-20260407-190202](../../06_ARCHIVE/blueprints/overlap-hyperparameter-optimization-blueprint-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-immediate-action-execution-report-20260406-20260407-190203](./overlap-immediate-action-execution-report-20260406-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-immediate-action-execution-report-20260406-20260407-190203](../../06_ARCHIVE/reports/overlap-immediate-action-execution-report-20260406-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-incomplete-blueprint-archive-report-20260404-20260407-190203](./overlap-incomplete-blueprint-archive-report-20260404-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-incomplete-blueprint-archive-report-20260404-20260407-190203](../../../.audit_fix_backup/docs/06_ARCHIVE/reports/overlap-incomplete-blueprint-archive-report-20260404-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-index-20260407-190203](./overlap-index-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-index-20260407-190203](../../06_ARCHIVE/unclassified/overlap-index-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-intelligent-qa-system-blueprint-20260407-190203](./overlap-intelligent-qa-system-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-intelligent-qa-system-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-intelligent-qa-system-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-investment-committee-support-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md)` -> 目标不存在
@@ -13297,7 +13297,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-knowledge-base-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-knowledge-base-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-layer-7-11-directory-reorganization-report-20260404-20260407-190203](./overlap-layer-7-11-directory-reorganization-report-20260404-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-layer-7-11-directory-reorganization-report-20260404-20260407-190203](../../06_ARCHIVE/reports/overlap-layer-7-11-directory-reorganization-report-20260404-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-layer5-deep-audit-report-20260407-175232-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-layer5-deep-audit-report-20260407-175232-20260407-190203.md)` -> 目标不存在
@@ -13384,7 +13384,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-live-trading-interface-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-live-trading-interface-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-live-trading-monitor-blueprint-20260407-190203](./overlap-live-trading-monitor-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-live-trading-monitor-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-live-trading-monitor-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-mlops-platform-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-mlops-platform-blueprint-20260407-190203.md)` -> 目标不存在
@@ -13396,7 +13396,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-mobile-push-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-mobile-push-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-module-id-registry-20260407-190203](./overlap-module-id-registry-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-module-id-registry-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-module-id-registry-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-monitoring-report-20260407-031723-20260407-190203](../../06_ARCHIVE/reports/overlap-monitoring-report-20260407-031723-20260407-190203.md)` -> 目标不存在
@@ -13423,7 +13423,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-monitoring-report-20260407-115134-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-monitoring-report-20260407-115134-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-multi-agent-collaboration-blueprint-20260407-190203](./overlap-multi-agent-collaboration-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-multi-agent-collaboration-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-multi-agent-collaboration-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-online-research-environment-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-online-research-environment-blueprint-20260407-190203.md)` -> 目标不存在
@@ -13432,7 +13432,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-open-source-integration-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-open-source-integration-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-open-source-module-solution-20260407-190203](./overlap-open-source-module-solution-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-open-source-module-solution-20260407-190203](../../06_ARCHIVE/unclassified/overlap-open-source-module-solution-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-orphan-parallel-remediation-schedule-20260408](../../06_ARCHIVE/unclassified/overlap-orphan-parallel-remediation-schedule-20260408.md)` -> 目标不存在
@@ -13444,31 +13444,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-p1-p2-issues-resolution-summary-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-p1-p2-issues-resolution-summary-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-p2-issues-remediation-report-v3-20260403-20260407-190203](./overlap-p2-issues-remediation-report-v3-20260403-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-p2-issues-remediation-report-v3-20260403-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-p2-issues-remediation-report-v3-20260403-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-parameter-optimization-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-parameter-optimization-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-performance-attribution-blueprint-20260407-190203](./overlap-performance-attribution-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-performance-attribution-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-performance-attribution-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-permission-management-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-permission-management-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-portfolio-optimization-deep-audit-v13-20260406-20260407-190203](./overlap-portfolio-optimization-deep-audit-v13-20260406-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-portfolio-optimization-deep-audit-v13-20260406-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-portfolio-optimization-deep-audit-v13-20260406-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-portfolio-optimization-deep-audit-v14-20260406-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-portfolio-optimization-deep-audit-v14-20260406-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-portfolio-optimization-deep-audit-v15-20260406-20260407-190203](./overlap-portfolio-optimization-deep-audit-v15-20260406-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-portfolio-optimization-deep-audit-v15-20260406-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-portfolio-optimization-deep-audit-v15-20260406-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-portfolio-rebalancing-blueprint-20260407-190203](./overlap-portfolio-rebalancing-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-portfolio-rebalancing-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-portfolio-rebalancing-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-professional-document-governance-audit-report-20260402-20260407-190203](./overlap-professional-document-governance-audit-report-20260402-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-professional-document-governance-audit-report-20260402-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-professional-document-governance-audit-report-20260402-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-quality-metrics-report-20260407-182807-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-quality-metrics-report-20260407-182807-20260407-190203.md)` -> 目标不存在
@@ -13489,22 +13489,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-readme-20260407-190203](../../06_ARCHIVE/blueprints/overlap-readme-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-real-time-monitoring-dashboard-blueprint-20260407-190203](./overlap-real-time-monitoring-dashboard-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-real-time-monitoring-dashboard-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-real-time-monitoring-dashboard-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-real-time-risk-monitor-blueprint-20260407-190203](./overlap-real-time-risk-monitor-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-real-time-risk-monitor-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-real-time-risk-monitor-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-release-checklist-20260407-190203](./overlap-release-checklist-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-release-checklist-20260407-190203](../../06_ARCHIVE/implementation/overlap-release-checklist-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-sentiment-analysis-improvement-progress-tracker-20260407-190203](./overlap-sentiment-analysis-improvement-progress-tracker-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-sentiment-analysis-improvement-progress-tracker-20260407-190203](../../06_ARCHIVE/unclassified/overlap-sentiment-analysis-improvement-progress-tracker-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-sentiment-analysis-long-term-improvement-blueprint-20260407-190203](./overlap-sentiment-analysis-long-term-improvement-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-sentiment-analysis-long-term-improvement-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-sentiment-analysis-long-term-improvement-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-sentiment-factor-library-blueprint-20260407-190203](./overlap-sentiment-factor-library-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-sentiment-factor-library-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-sentiment-factor-library-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-sentiment-layer-deep-audit-report-v19-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-sentiment-layer-deep-audit-report-v19-20260407-20260407-190203.md)` -> 目标不存在
@@ -13573,25 +13573,25 @@ last_updated: 2026-04-13
   **问题**: 死链: `[overlap-user-preferences-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-user-preferences-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-version-management-automation-guide-20260407-190203](./overlap-version-management-automation-guide-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-version-management-automation-guide-20260407-190203](../../06_ARCHIVE/unclassified/overlap-version-management-automation-guide-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-version-management-decisions-20260407-190203](../../06_ARCHIVE/implementation/overlap-version-management-decisions-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-version-management-optimization-plan-20260407-190203](./overlap-version-management-optimization-plan-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-version-management-optimization-plan-20260407-190203](../../06_ARCHIVE/unclassified/overlap-version-management-optimization-plan-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-version-management-standard-20260407-190203](./overlap-version-management-standard-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-version-management-standard-20260407-190203](../../06_ARCHIVE/implementation/overlap-version-management-standard-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[overlap-week2-task-execution-report-20260407-20260407-190203](./overlap-week2-task-execution-report-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-week2-task-execution-report-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-week2-task-execution-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[overlap-yaml-version-addition-report-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-yaml-version-addition-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[p0-01-database-design-document-v1-backup](./p0-01-database-design-document-v1-backup.md)` -> 目标不存在
+  **问题**: 死链: `[p0-01-database-design-document-v1-backup](../../06_ARCHIVE/blueprints/p0-01-database-design-document-v1-backup.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[p0-fixes-completed](../../06_ARCHIVE/audit_reports/p0-fixes-completed.md)` -> 目标不存在
@@ -13606,22 +13606,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p2-issues-remediation-report](../../06_ARCHIVE/audit_reports/p2-issues-remediation-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[p2-issues-remediation-report-v2-20260403](./p2-issues-remediation-report-v2-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[p2-issues-remediation-report-v2-20260403](../../06_ARCHIVE/audit_reports/p2-issues-remediation-report-v2-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[p2-p3-issues-resolution-report-20260403](../../06_ARCHIVE/audit_reports/p2-p3-issues-resolution-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[parameter-optimization-blueprint](./parameter-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[parameter-optimization-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/parameter-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[path-list-audit-update](./path-list-audit-update.md)` -> 目标不存在
+  **问题**: 死链: `[path-list-audit-update](../../06_ARCHIVE/audit_reports/path-list-audit-update.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[performance-analyzer-technical-review-report](./performance-analyzer-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[performance-analyzer-technical-review-report](../../06_ARCHIVE/reports/performance-analyzer-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-attribution-blueprint](./portfolio-attribution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-attribution-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-attribution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[portfolio-capacity-estimator-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-capacity-estimator-blueprint.md)` -> 目标不存在
@@ -13630,31 +13630,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[portfolio-comparison-tool-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-comparison-tool-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-constraint-management-blueprint](./portfolio-constraint-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-constraint-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-constraint-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[portfolio-diagnostics-toolkit-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-diagnostics-toolkit-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-diversification-metric-blueprint](./portfolio-diversification-metric-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-diversification-metric-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-diversification-metric-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-drift-monitor-blueprint](./portfolio-drift-monitor-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-drift-monitor-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-drift-monitor-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-health-scoring-blueprint](./portfolio-health-scoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-health-scoring-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-health-scoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-insurance-blueprint](./portfolio-insurance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-insurance-blueprint](../../11_STRATEGIC_DECISION/portfolio-insurance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-insurance-strategy-blueprint](./portfolio-insurance-strategy-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-insurance-strategy-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-insurance-strategy-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-ai-blueprint](./portfolio-optimization-ai-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-ai-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/portfolio-optimization-ai-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-blueprint](./portfolio-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[portfolio-optimization-blueprint-completeness-report-v2](../../06_ARCHIVE/reports/portfolio-optimization-blueprint-completeness-report-v2.md)` -> 目标不存在
@@ -13663,7 +13663,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[portfolio-optimization-deep-audit-report-20260403](../../06_ARCHIVE/audit_reports/portfolio-optimization-deep-audit-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-diagnostics-blueprint](./portfolio-optimization-diagnostics-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-diagnostics-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-optimization-diagnostics-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[portfolio-optimization-gap-analysis-report](../../06_ARCHIVE/audit_reports/portfolio-optimization-gap-analysis-report.md)` -> 目标不存在
@@ -13672,31 +13672,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[portfolio-optimization-technical-review-report](../../06_ARCHIVE/audit_reports/portfolio-optimization-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-optimizer-integration-blueprint](./portfolio-optimizer-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimizer-integration-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-optimizer-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-optimizer-technical-review-report](./portfolio-optimizer-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimizer-technical-review-report](../../06_ARCHIVE/reports/portfolio-optimizer-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-performance-evaluation-blueprint](./portfolio-performance-evaluation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-performance-evaluation-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-performance-evaluation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[portfolio-scenario-analysis-blueprint](./portfolio-scenario-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-scenario-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-scenario-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[position-manager-technical-review-report](./position-manager-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[position-manager-technical-review-report](../../06_ARCHIVE/reports/position-manager-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[production-portfolio-pipeline-blueprint](./production-portfolio-pipeline-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[production-portfolio-pipeline-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/production-portfolio-pipeline-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[professional-document-governance-audit-example](./professional-document-governance-audit-example.md)` -> 目标不存在
+  **问题**: 死链: `[professional-document-governance-audit-example](../../06_ARCHIVE/audit_reports/professional-document-governance-audit-example.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[professional-document-governance-audit-report](./professional-document-governance-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[professional-document-governance-audit-report](../../06_ARCHIVE/audit_reports/professional-document-governance-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[professional-implementation-blueprint-archived](./professional-implementation-blueprint-archived.md)` -> 目标不存在
+  **问题**: 死链: `[professional-implementation-blueprint-archived](../../06_ARCHIVE/blueprints/professional-implementation-blueprint-archived.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[qingfeng-v4-development-plan](../../06_ARCHIVE/blueprints/qingfeng-v4-development-plan.md)` -> 目标不存在
@@ -13711,10 +13711,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[qmt-data-interface-technical-review-report](../../06_ARCHIVE/reports/qmt-data-interface-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[qmt-executor-technical-review-report](./qmt-executor-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[qmt-executor-technical-review-report](../../06_ARCHIVE/reports/qmt-executor-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[quality-optimization-comprehensive-report-20260402](./quality-optimization-comprehensive-report-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[quality-optimization-comprehensive-report-20260402](../../06_ARCHIVE/audit_reports/quality-optimization-comprehensive-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[quality-report-automation-blueprint-archived-encoding-error](../../06_ARCHIVE/reports/quality-report-automation-blueprint-archived-encoding-error.md)` -> 目标不存在
@@ -13726,10 +13726,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[quantitative-strategy-framework](../../06_ARCHIVE/blueprints/quantitative-strategy-framework.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[quarterly-rebalance-blueprint](./quarterly-rebalance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[quarterly-rebalance-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/quarterly-rebalance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[quick-audit-summary-20260402](./quick-audit-summary-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[quick-audit-summary-20260402](../../06_ARCHIVE/audit_reports/quick-audit-summary-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[realtime-data-lake-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/realtime-data-lake-blueprint-archived-encoding-error.md)` -> 目标不存在
@@ -13738,58 +13738,58 @@ last_updated: 2026-04-13
   **问题**: 死链: `[realtime-quality-monitor-blueprint-archived-encoding-error](../../06_ARCHIVE/blueprints/realtime-quality-monitor-blueprint-archived-encoding-error.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[release-checklist](./release-checklist.md)` -> 目标不存在
+  **问题**: 死链: `[release-checklist](../../06_ARCHIVE/implementation/release-checklist.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[responsibility-fix-report-20260407-030139-legacy-p1-cleanup-archive](./responsibility-fix-report-20260407-030139-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-fix-report-20260407-030139-legacy-p1-cleanup-archive](../../06_ARCHIVE/audit_reports/responsibility-fix-report-20260407-030139-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[risk-parity-strategy-blueprint](./risk-parity-strategy-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-parity-strategy-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/risk-parity-strategy-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[risk-parity-strategy-technical-specification](./risk-parity-strategy-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[risk-parity-strategy-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/risk-parity-strategy-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[robust-optimization-blueprint](./robust-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[robust-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/robust-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[sample-audit-report](../../06_ARCHIVE/audit_reports/sample-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[scenario-analysis-blueprint](./scenario-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[scenario-analysis-blueprint](../../11_STRATEGIC_DECISION/scenario-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[sensitivity-analysis-blueprint](./sensitivity-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[sensitivity-analysis-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/sensitivity-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-deep-audit-report](./sentiment-analysis-deep-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-deep-audit-report](../../06_ARCHIVE/audit_reports/sentiment-analysis-deep-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-document-audit-report](./sentiment-analysis-document-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-document-audit-report](../../06_ARCHIVE/audit_reports/sentiment-analysis-document-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[sentiment-analyzer-technical-review-report](./sentiment-analyzer-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analyzer-technical-review-report](../../06_ARCHIVE/reports/sentiment-analyzer-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[short-term-improvement-completion-report-20260407-legacy-audit-state](./short-term-improvement-completion-report-20260407-legacy-audit-state.md)` -> 目标不存在
+  **问题**: 死链: `[short-term-improvement-completion-report-20260407-legacy-audit-state](../../06_ARCHIVE/audit_reports/short-term-improvement-completion-report-20260407-legacy-audit-state.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[signal-decay-analyzer-blueprint](./signal-decay-analyzer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[signal-decay-analyzer-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/signal-decay-analyzer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[signal-generator-technical-review-report](./signal-generator-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[signal-generator-technical-review-report](../../06_ARCHIVE/reports/signal-generator-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[slippage-model-blueprint](./slippage-model-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[slippage-model-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/slippage-model-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[smart-execution-engine-blueprint](./smart-execution-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[smart-execution-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/smart-execution-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[stochastic-optimization-blueprint](./stochastic-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[stochastic-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/stochastic-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[strategy-engine-core-blueprint-archived](./strategy-engine-core-blueprint-archived.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-engine-core-blueprint-archived](../../06_ARCHIVE/blueprints/strategy-engine-core-blueprint-archived.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[strategy-engine-technical-review-report](../../06_ARCHIVE/reports/strategy-engine-technical-review-report.md)` -> 目标不存在
@@ -13807,7 +13807,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[strategy-pool](../../06_ARCHIVE/blueprints/strategy-pool.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[strategy-portfolio-optimization-blueprint](./strategy-portfolio-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-portfolio-optimization-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-portfolio-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[strategy-selection-blueprint](../../../.audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-selection-blueprint.md)` -> 目标不存在
@@ -13816,7 +13816,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[streamlit-dashboard-technical-review-report](../../06_ARCHIVE/reports/streamlit-dashboard-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[subdir-index-creation-report-20260404](./subdir-index-creation-report-20260404.md)` -> 目标不存在
+  **问题**: 死链: `[subdir-index-creation-report-20260404](../../06_ARCHIVE/audit_reports/subdir-index-creation-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[supercommand-technical-review-report](../../06_ARCHIVE/audit_reports/supercommand-technical-review-report.md)` -> 目标不存在
@@ -13825,19 +13825,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[system-audit-report](../../06_ARCHIVE/audit_reports/system-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[system-enhancement-blueprint](./system-enhancement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[system-enhancement-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/system-enhancement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[system-enhancement-manual](./system-enhancement-manual.md)` -> 目标不存在
+  **问题**: 死链: `[system-enhancement-manual](../../06_ARCHIVE/unclassified/system-enhancement-manual.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[system-monitor-technical-review-report](./system-monitor-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[system-monitor-technical-review-report](../../06_ARCHIVE/reports/system-monitor-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[tactics-manual](../../06_ARCHIVE/blueprints/tactics-manual.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[tax-loss-harvesting-blueprint](./tax-loss-harvesting-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[tax-loss-harvesting-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/tax-loss-harvesting-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[technical-documentation](../../06_ARCHIVE/blueprints/technical-documentation.md)` -> 目标不存在
@@ -13852,31 +13852,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[technical-review-report-l1-20260402](../../06_ARCHIVE/audit_reports/technical-review-report-l1-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[technical-review-report-l2-20260402](./technical-review-report-l2-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[technical-review-report-l2-20260402](../../06_ARCHIVE/reports/technical-review-report-l2-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[technical-review-report-l3-20260402](./technical-review-report-l3-20260402.md)` -> 目标不存在
+  **问题**: 死链: `[technical-review-report-l3-20260402](../../06_ARCHIVE/reports/technical-review-report-l3-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[technical-review-report-template](./technical-review-report-template.md)` -> 目标不存在
+  **问题**: 死链: `[technical-review-report-template](../../06_ARCHIVE/reports/technical-review-report-template.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[technical-review-summary-report](./technical-review-summary-report.md)` -> 目标不存在
+  **问题**: 死链: `[technical-review-summary-report](../../06_ARCHIVE/audit_reports/technical-review-summary-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[temp-file-audit-report](./temp-file-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[temp-file-audit-report](../../06_ARCHIVE/audit_reports/temp-file-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[trade-auditor-technical-review-report](./trade-auditor-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[trade-auditor-technical-review-report](../../06_ARCHIVE/audit_reports/trade-auditor-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[trading-cost-model-enhancement-blueprint](./trading-cost-model-enhancement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trading-cost-model-enhancement-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/trading-cost-model-enhancement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[transaction-cost-analysis-engine-blueprint](./transaction-cost-analysis-engine-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[transaction-cost-analysis-engine-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/transaction-cost-analysis-engine-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[transaction-cost-aware-rebalancing-blueprint](./transaction-cost-aware-rebalancing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[transaction-cost-aware-rebalancing-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/transaction-cost-aware-rebalancing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[transformer-model-technical-review-report](../../06_ARCHIVE/reports/transformer-model-technical-review-report.md)` -> 目标不存在
@@ -13885,85 +13885,85 @@ last_updated: 2026-04-13
   **问题**: 死链: `[upgrade-report](../../06_ARCHIVE/reports/upgrade-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[user-preferences-technical-review-report](./user-preferences-technical-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[user-preferences-technical-review-report](../../06_ARCHIVE/reports/user-preferences-technical-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[verification-audit-code-and-temp-20260403](../../06_ARCHIVE/audit_reports/verification-audit-code-and-temp-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[verification-audit-report-20260403](./verification-audit-report-20260403.md)` -> 目标不存在
+  **问题**: 死链: `[verification-audit-report-20260403](../../06_ARCHIVE/audit_reports/verification-audit-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[version-consistency-report-20260407-legacy-p1-cleanup-archive](../../06_ARCHIVE/reports/version-consistency-report-20260407-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[version-management-automation-guide](./version-management-automation-guide.md)` -> 目标不存在
+  **问题**: 死链: `[version-management-automation-guide](../../06_ARCHIVE/unclassified/version-management-automation-guide.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
   **问题**: 死链: `[version-management-decisions](../../06_ARCHIVE/implementation/version-management-decisions.md)` -> 目标不存在
 
 - **文件**: `docs/06_ARCHIVE/INDEX.md`
-  **问题**: 死链: `[version-management-optimization-plan](./version-management-optimization-plan.md)` -> 目标不存在
+  **问题**: 死链: `[version-management-optimization-plan](../../06_ARCHIVE/unclassified/version-management-optimization-plan.md)` -> 目标不存在
 
 - **文件**: `docs/06_CONSTRUCTION_DOCS/INDEX.md`
   **问题**: 死链: `[INDEX](../../12_MODULE_DESIGNS/layer_0/INDEX.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[ai-memory-architecture-completeness-analysis](./ai-memory-architecture-completeness-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[ai-memory-architecture-completeness-analysis](../../01_FRAMEWORK/ai-memory-architecture-completeness-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[ai-memory-architecture-supplement-plan](./ai-memory-architecture-supplement-plan.md)` -> 目标不存在
+  **问题**: 死链: `[ai-memory-architecture-supplement-plan](../../01_FRAMEWORK/ai-memory-architecture-supplement-plan.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[ai-memory-modules-blueprint-collection](./ai-memory-modules-blueprint-collection.md)` -> 目标不存在
+  **问题**: 死链: `[ai-memory-modules-blueprint-collection](../../01_FRAMEWORK/ai-memory-modules-blueprint-collection.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[ai-memory-supplement-completion-report](./ai-memory-supplement-completion-report.md)` -> 目标不存在
+  **问题**: 死链: `[ai-memory-supplement-completion-report](../../01_FRAMEWORK/ai-memory-supplement-completion-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[backtest-results-management-blueprint](./backtest-results-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[backtest-results-management-blueprint](../../10_AI_WORKFLOW/backtest-results-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[complete-blueprint-supplement-report](./complete-blueprint-supplement-report.md)` -> 目标不存在
+  **问题**: 死链: `[complete-blueprint-supplement-report](../../10_AI_WORKFLOW/complete-blueprint-supplement-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[configuration-management-center-blueprint](./configuration-management-center-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[configuration-management-center-blueprint](../../10_AI_WORKFLOW/configuration-management-center-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[data-quality-monitoring-legacy-10-ai-workflow](./data-quality-monitoring-legacy-10-ai-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-monitoring-legacy-10-ai-workflow](../../06_ARCHIVE/blueprints/data-quality-monitoring-legacy-10-ai-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[deleted-content-review-report](./deleted-content-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[deleted-content-review-report](../../10_AI_WORKFLOW/deleted-content-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[deleted-files-recovery-assessment-report](./deleted-files-recovery-assessment-report.md)` -> 目标不存在
+  **问题**: 死链: `[deleted-files-recovery-assessment-report](../../10_AI_WORKFLOW/deleted-files-recovery-assessment-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[experiment-memory-blueprint](./experiment-memory-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[experiment-memory-blueprint](../../01_FRAMEWORK/experiment-memory-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[factor-effectiveness-monitoring-blueprint](./factor-effectiveness-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[factor-effectiveness-monitoring-blueprint](../../10_AI_WORKFLOW/factor-effectiveness-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[historical-replay-system-blueprint](./historical-replay-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[historical-replay-system-blueprint](../../10_AI_WORKFLOW/historical-replay-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[intelligent-anomaly-detection-blueprint](./intelligent-anomaly-detection-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-anomaly-detection-blueprint](../../10_AI_WORKFLOW/intelligent-anomaly-detection-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[intelligent-parameter-optimization-blueprint](./intelligent-parameter-optimization-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-parameter-optimization-blueprint](../../10_AI_WORKFLOW/intelligent-parameter-optimization-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[intelligent-report-distribution-blueprint](./intelligent-report-distribution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-report-distribution-blueprint](../../10_AI_WORKFLOW/intelligent-report-distribution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[intelligent-scheduling-system-blueprint](./intelligent-scheduling-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-scheduling-system-blueprint](../../10_AI_WORKFLOW/intelligent-scheduling-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[ips-management-blueprint](./ips-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ips-management-blueprint](../../11_STRATEGIC_DECISION/ips-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[knowledge-management-blueprint](./knowledge-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-management-blueprint](../../10_AI_WORKFLOW/knowledge-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
   **问题**: 死链: `[layer-7-deep-audit-report-v10-20260407](./layer-7-deep-audit-report-v10-20260407.md)` -> 目标不存在
@@ -13975,82 +13975,82 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer-7-deep-audit-report-v12-20260407](./layer-7-deep-audit-report-v12-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[layer-7-final-completeness-assessment-report](./layer-7-final-completeness-assessment-report.md)` -> 目标不存在
+  **问题**: 死链: `[layer-7-final-completeness-assessment-report](../../10_AI_WORKFLOW/layer-7-final-completeness-assessment-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
   **问题**: 死链: `[layer-7-gap-analysis-and-supplement-blueprint](../../10_AI_WORKFLOW/layer-7-gap-analysis-and-supplement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[market-microstructure-analysis-blueprint](./market-microstructure-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-microstructure-analysis-blueprint](../../10_AI_WORKFLOW/market-microstructure-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[mempalace-architecture-review-report](./mempalace-architecture-review-report.md)` -> 目标不存在
+  **问题**: 死链: `[mempalace-architecture-review-report](../../01_FRAMEWORK/mempalace-architecture-review-report.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[mempalace-integration-blueprint](./mempalace-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mempalace-integration-blueprint](../../01_FRAMEWORK/mempalace-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[model-memory-blueprint](./model-memory-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-memory-blueprint](../../01_FRAMEWORK/model-memory-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[model-monitoring-drift-detection-blueprint](./model-monitoring-drift-detection-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-monitoring-drift-detection-blueprint](../../10_AI_WORKFLOW/model-monitoring-drift-detection-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[open-source-integration-blueprint](./open-source-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[open-source-integration-blueprint](../../11_STRATEGIC_DECISION/open-source-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[portfolio-attribution-technical-specification](./portfolio-attribution-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-attribution-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/portfolio-attribution-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[portfolio-diagnostics-blueprint](./portfolio-diagnostics-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-diagnostics-blueprint](../../10_AI_WORKFLOW/portfolio-diagnostics-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-layer-blueprint](./portfolio-optimization-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-layer-blueprint](../../01_FRAMEWORK/portfolio-optimization-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[portfolio-performance-evaluation-technical-specification](./portfolio-performance-evaluation-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-performance-evaluation-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/portfolio-performance-evaluation-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[post-trade-review-blueprint](./post-trade-review-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[post-trade-review-blueprint](../../10_AI_WORKFLOW/post-trade-review-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[production-monitoring-blueprint](./production-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[production-monitoring-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/production-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
   **问题**: 死链: `[research-workflow-management-blueprint](../../10_AI_WORKFLOW/research-workflow-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[research-workflow-management-blueprint-legacy-p1-cleanup-archive](./research-workflow-management-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[research-workflow-management-blueprint-legacy-p1-cleanup-archive](../../../.audit_fix_backup/docs/06_ARCHIVE/audit_reports/research-workflow-management-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[risk-budget-management-blueprint](./risk-budget-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-budget-management-blueprint](../../10_AI_WORKFLOW/risk-budget-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[risk-control-ai-blueprint](./risk-control-ai-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-control-ai-blueprint](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/risk-control-ai-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[scenario-analysis-stress-test-blueprint](./scenario-analysis-stress-test-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[scenario-analysis-stress-test-blueprint](../../10_AI_WORKFLOW/scenario-analysis-stress-test-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[signal-decay-analysis-blueprint](./signal-decay-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[signal-decay-analysis-blueprint](../../10_AI_WORKFLOW/signal-decay-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
   **问题**: 死链: `[strategy-lifecycle-management-blueprint](../../10_AI_WORKFLOW/strategy-lifecycle-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[strategy-version-control-blueprint](./strategy-version-control-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-version-control-blueprint](../../10_AI_WORKFLOW/strategy-version-control-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[stress-testing-system-technical-specification](./stress-testing-system-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[stress-testing-system-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/stress-testing-system-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[trade-execution-analysis-blueprint](./trade-execution-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trade-execution-analysis-blueprint](../../10_AI_WORKFLOW/trade-execution-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
   **问题**: 死链: `[transaction-cost-analysis-blueprint](../../10_AI_WORKFLOW/transaction-cost-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/07_AI_REPORTING/INDEX.md`
-  **问题**: 死链: `[var-es-monitoring-technical-specification](./var-es-monitoring-technical-specification.md)` -> 目标不存在
+  **问题**: 死链: `[var-es-monitoring-technical-specification](../../05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/var-es-monitoring-technical-specification.md)` -> 目标不存在
 
 - **文件**: `docs/07_RESEARCH/INDEX.md`
   **问题**: 死链: `[本目录 README（概述）](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)` -> 目标不存在
@@ -14158,109 +14158,109 @@ last_updated: 2026-04-13
   **问题**: 死链: `[README](./README.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[ai-code-editors-complete-guide](./ai-code-editors-complete-guide.md)` -> 目标不存在
+  **问题**: 死链: `[ai-code-editors-complete-guide](../../08_KNOWLEDGE_BASE/01_TECHNICAL_KNOWLEDGE/ai-code-editors-complete-guide.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[alert-management-interface-blueprint](./alert-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[alert-management-interface-blueprint](../../01_FRAMEWORK/alert-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[api-gateway-layer8-module](../../08_HUMAN_AI_INTERFACE/28_API_GATEWAY/api-gateway-layer8-module.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[api-management-interface-blueprint](./api-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[api-management-interface-blueprint](../../01_FRAMEWORK/api-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[backtest-best-practices](./backtest-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[backtest-best-practices](../../08_KNOWLEDGE/BEST_PRACTICES/backtest-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[backtest-result-viewer-blueprint](./backtest-result-viewer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[backtest-result-viewer-blueprint](../../01_FRAMEWORK/backtest-result-viewer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[compliance-monitoring-layer8-module](../../08_HUMAN_AI_INTERFACE/30_COMPLIANCE_MONITORING/compliance-monitoring-layer8-module.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[compliance-report-interface-blueprint](./compliance-report-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[compliance-report-interface-blueprint](../../01_FRAMEWORK/compliance-report-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[data-exploration-interface-blueprint](./data-exploration-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-exploration-interface-blueprint](../../01_FRAMEWORK/data-exploration-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[data-quality-monitoring-interface-blueprint](./data-quality-monitoring-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-quality-monitoring-interface-blueprint](../../01_FRAMEWORK/data-quality-monitoring-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[decision-dashboard-blueprint](./decision-dashboard-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[decision-dashboard-blueprint](../../01_FRAMEWORK/decision-dashboard-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[factor-case-library](./factor-case-library.md)` -> 目标不存在
+  **问题**: 死链: `[factor-case-library](../../08_KNOWLEDGE/FACTOR_LIBRARY/factor-case-library.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[factor-research-best-practices](./factor-research-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[factor-research-best-practices](../../08_KNOWLEDGE/BEST_PRACTICES/factor-research-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[fastapi-users-auth-blueprint](./fastapi-users-auth-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[fastapi-users-auth-blueprint](../../01_FRAMEWORK/fastapi-users-auth-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[fund-management-interface-blueprint](./fund-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[fund-management-interface-blueprint](../../01_FRAMEWORK/fund-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[grafana-monitoring-blueprint](./grafana-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[grafana-monitoring-blueprint](../../01_FRAMEWORK/grafana-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[help-system-blueprint](./help-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[help-system-blueprint](../../01_FRAMEWORK/help-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-integration-blueprint](./human-ai-integration-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-integration-blueprint](../../01_FRAMEWORK/human-ai-integration-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-interaction-blueprint](./human-ai-interaction-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-interaction-blueprint](../../01_FRAMEWORK/human-ai-interaction-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-interface-layer-advanced-features-blueprint](./human-ai-interface-layer-advanced-features-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-interface-layer-advanced-features-blueprint](../../01_FRAMEWORK/human-ai-interface-layer-advanced-features-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-interface-layer-complete-supplement-blueprint](./human-ai-interface-layer-complete-supplement-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-interface-layer-complete-supplement-blueprint](../../01_FRAMEWORK/human-ai-interface-layer-complete-supplement-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[human-ai-interface-layer-deep-audit-report-v3-20260407](./human-ai-interface-layer-deep-audit-report-v3-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-interface-layer-gap-analysis-blueprint](./human-ai-interface-layer-gap-analysis-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-interface-layer-gap-analysis-blueprint](../../01_FRAMEWORK/human-ai-interface-layer-gap-analysis-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[human-ai-interface-layer-technical-blueprint](./human-ai-interface-layer-technical-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[human-ai-interface-layer-technical-blueprint](../../../.audit_fix_backup/docs/06_ARCHIVE/blueprints/human-ai-interface-layer-technical-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[intelligent-recommendation-system-blueprint](./intelligent-recommendation-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-recommendation-system-blueprint](../../01_FRAMEWORK/intelligent-recommendation-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[knowledge-base-case-studies](./knowledge-base-case-studies.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-base-case-studies](../../08_KNOWLEDGE/knowledge-base-case-studies.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[knowledge-base-platform-guide](../../08_KNOWLEDGE_BASE/knowledge-base-platform-guide.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[knowledge-transfer-system](./knowledge-transfer-system.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-transfer-system](../../08_KNOWLEDGE/knowledge-transfer-system.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[liquidity-management-blueprint](./liquidity-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[liquidity-management-blueprint](../../11_STRATEGIC_DECISION/liquidity-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[mobile-interface-coverage-blueprint](./mobile-interface-coverage-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mobile-interface-coverage-blueprint](../../01_FRAMEWORK/mobile-interface-coverage-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[mobile-push-notification-blueprint](./mobile-push-notification-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[mobile-push-notification-blueprint](../../01_FRAMEWORK/mobile-push-notification-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[model-management-interface-blueprint](./model-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-management-interface-blueprint](../../01_FRAMEWORK/model-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[model-risk-management-layer8-module](../../08_HUMAN_AI_INTERFACE/77_MODEL_RISK_MANAGEMENT/model-risk-management-layer8-module.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[momentum-factor-library](./momentum-factor-library.md)` -> 目标不存在
+  **问题**: 死链: `[momentum-factor-library](../../08_KNOWLEDGE/FACTOR_LIBRARY/momentum-factor-library.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[multi-factor-strategy-library](./multi-factor-strategy-library.md)` -> 目标不存在
+  **问题**: 死链: `[multi-factor-strategy-library](../../08_KNOWLEDGE/STRATEGY_LIBRARY/multi-factor-strategy-library.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[openclaw-l2-docs-08-knowledge-239](./openclaw-l2-docs-08-knowledge-239.md)` -> 目标不存在
@@ -14281,19 +14281,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-l2-docs-08-knowledge-strategy-library-242](./openclaw-l2-docs-08-knowledge-strategy-library-242.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203](./overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-human-ai-interface-layer-deep-audit-report-v3-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[overlap-human-ai-interface-layer-technical-blueprint-20260407-190203](./overlap-human-ai-interface-layer-technical-blueprint-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-human-ai-interface-layer-technical-blueprint-20260407-190203](../../06_ARCHIVE/blueprints/overlap-human-ai-interface-layer-technical-blueprint-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[performance-analysis-interface-blueprint](./performance-analysis-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[performance-analysis-interface-blueprint](../../01_FRAMEWORK/performance-analysis-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[performance-attribution-layer8-module](../../08_HUMAN_AI_INTERFACE/83_PERFORMANCE_ATTRIBUTION/performance-attribution-layer8-module.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[position-management-interface-blueprint](./position-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[position-management-interface-blueprint](../../01_FRAMEWORK/position-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[realtime-risk-monitoring-layer8-module](../../08_HUMAN_AI_INTERFACE/64_REALTIME_RISK_MONITORING/realtime-risk-monitoring-layer8-module.md)` -> 目标不存在
@@ -14302,37 +14302,37 @@ last_updated: 2026-04-13
   **问题**: 死链: `[risk-dashboard-blueprint](../../08_HUMAN_AI_INTERFACE/24_RISK_DASHBOARD/risk-dashboard-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[risk-management-best-practices](./risk-management-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[risk-management-best-practices](../../08_KNOWLEDGE/BEST_PRACTICES/risk-management-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[risk-monitoring-interface-blueprint](./risk-monitoring-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[risk-monitoring-interface-blueprint](../../01_FRAMEWORK/risk-monitoring-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[settings-management-interface-blueprint](./settings-management-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[settings-management-interface-blueprint](../../01_FRAMEWORK/settings-management-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[strategy-authoring-assistant-blueprint](./strategy-authoring-assistant-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-authoring-assistant-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-authoring-assistant-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[strategy-case-library](./strategy-case-library.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-case-library](../../08_KNOWLEDGE/STRATEGY_LIBRARY/strategy-case-library.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[strategy-configuration-interface-blueprint](./strategy-configuration-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-configuration-interface-blueprint](../../01_FRAMEWORK/strategy-configuration-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[strategy-lifecycle-management-layer8-module](../../08_HUMAN_AI_INTERFACE/81_STRATEGY_LIFECYCLE_MANAGEMENT/strategy-lifecycle-management-layer8-module.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[streamlit-backtest-interface-blueprint](./streamlit-backtest-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[streamlit-backtest-interface-blueprint](../../01_FRAMEWORK/streamlit-backtest-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[system-health-check-interface-blueprint](./system-health-check-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[system-health-check-interface-blueprint](../../01_FRAMEWORK/system-health-check-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[trade-record-viewer-blueprint](./trade-record-viewer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trade-record-viewer-blueprint](../../01_FRAMEWORK/trade-record-viewer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
-  **问题**: 死链: `[trading-authorization-interface-blueprint](./trading-authorization-interface-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trading-authorization-interface-blueprint](../../01_FRAMEWORK/trading-authorization-interface-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/08_HUMAN_AI_INTERFACE/index.md`
   **问题**: 死链: `[transaction-cost-analysis-layer8-module](../../08_HUMAN_AI_INTERFACE/79_TRANSACTION_COST_ANALYSIS/transaction-cost-analysis-layer8-module.md)` -> 目标不存在
@@ -14386,22 +14386,22 @@ last_updated: 2026-04-13
   **问题**: 死链: `[METADATA_COMPLETENESS_CHECK_REPORT_20260413_012506](../STATE/METADATA_COMPLETENESS_CHECK_REPORT_20260413_012506.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[SITEMAP](./SITEMAP.md)` -> 目标不存在
+  **问题**: 死链: `[SITEMAP](../../SITEMAP.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[active-scattered-blueprints-manifest-task1](../STATE/active-scattered-blueprints-manifest-task1.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[adr-standard](./adr-standard.md)` -> 目标不存在
+  **问题**: 死链: `[adr-standard](../STANDARDS/adr-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[adr-template](./adr-template.md)` -> 目标不存在
+  **问题**: 死链: `[adr-template](../FORM_STANDARDS/adr-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[ai-audit-guidelines](./ai-audit-guidelines.md)` -> 目标不存在
+  **问题**: 死链: `[ai-audit-guidelines](../PROCEDURES/ai-audit-guidelines.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[ai-document-governance-audit-prompt](./ai-document-governance-audit-prompt.md)` -> 目标不存在
+  **问题**: 死链: `[ai-document-governance-audit-prompt](../FORM_STANDARDS/ai-document-governance-audit-prompt.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[ai-workflow-encoding-fix-report-20260406](./ai-workflow-encoding-fix-report-20260406.md)` -> 目标不存在
@@ -14470,10 +14470,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[alpha-factor-layer-deep-audit-report-round2-20260407-203133](../STATE/alpha-factor-layer-deep-audit-report-round2-20260407-203133.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[alpha-factor-p1-p2-fix-report](./alpha-factor-p1-p2-fix-report.md)` -> 目标不存在
+  **问题**: 死链: `[alpha-factor-p1-p2-fix-report](../STATE/alpha-factor-p1-p2-fix-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[arch-module-gap-register-20260408](./arch-module-gap-register-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[arch-module-gap-register-20260408](../STATE/arch-module-gap-register-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[architecture-completeness-analysis-20260407](./architecture-completeness-analysis-20260407.md)` -> 目标不存在
@@ -14482,7 +14482,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[architecture-gap-analysis-and-opensource-recommendation-20260405](./architecture-gap-analysis-and-opensource-recommendation-20260405.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[architecture-module-audit-and-gap-plan-20260408](./architecture-module-audit-and-gap-plan-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[architecture-module-audit-and-gap-plan-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/architecture-module-audit-and-gap-plan-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[architecture-review-report-20260406](./architecture-review-report-20260406.md)` -> 目标不存在
@@ -14497,16 +14497,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[archive-files-reference-check-report-20260407-184342](../STATE/archive-files-reference-check-report-20260407-184342.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[audit-execution-procedures](./audit-execution-procedures.md)` -> 目标不存在
+  **问题**: 死链: `[audit-execution-procedures](../PROCEDURES/audit-execution-procedures.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[audit-standards](./audit-standards.md)` -> 目标不存在
+  **问题**: 死链: `[audit-standards](../STANDARDS/audit-standards.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[audit-tools-optimization-plan](./audit-tools-optimization-plan.md)` -> 目标不存在
+  **问题**: 死链: `[audit-tools-optimization-plan](../CONFIG/audit-tools-optimization-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[audit-tools-usage-guide](./audit-tools-usage-guide.md)` -> 目标不存在
+  **问题**: 死链: `[audit-tools-usage-guide](../GUIDES/audit-tools-usage-guide.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[audit_comparison_report_20260413](../STATE/audit_comparison_report_20260413.md)` -> 目标不存在
@@ -14515,7 +14515,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[automated-check-fix-report-20260407-153821](../STATE/automated-check-fix-report-20260407-153821.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[automated-check-report-20260407-031229](./automated-check-report-20260407-031229.md)` -> 目标不存在
+  **问题**: 死链: `[automated-check-report-20260407-031229](../STATE/automated-check-report-20260407-031229.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[automated-workflow-report-20260407-113557](../STATE/automated-workflow-report-20260407-113557.md)` -> 目标不存在
@@ -14587,7 +14587,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[blueprint-d-overlap-triage-20260412](../STATE/blueprint-d-overlap-triage-20260412.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[blueprint-standard-template](./blueprint-standard-template.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-standard-template](../FORM_STANDARDS/blueprint-standard-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[canonical-pointers](../../09_ARCHIVE/duplicates/canonical-pointers.md)` -> 目标不存在
@@ -14596,10 +14596,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[cleaning-rules](../../09_ARCHIVE/blueprints/cleaning-rules.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[code-change-documentation-guide](./code-change-documentation-guide.md)` -> 目标不存在
+  **问题**: 死链: `[code-change-documentation-guide](../GUIDES/code-change-documentation-guide.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[compliance-audit-system](./compliance-audit-system.md)` -> 目标不存在
+  **问题**: 死链: `[compliance-audit-system](../STANDARDS/compliance-audit-system.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[compliance-verification-report-20260407](../STATE/compliance-verification-report-20260407.md)` -> 目标不存在
@@ -14614,10 +14614,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[comprehensive-improvement-report-20260402](./comprehensive-improvement-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[comprehensive-optimization-completion-report-20260407](./comprehensive-optimization-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-optimization-completion-report-20260407](../STATE/comprehensive-optimization-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[comprehensive-optimization-final-report-20260407](./comprehensive-optimization-final-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[comprehensive-optimization-final-report-20260407](../STATE/comprehensive-optimization-final-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[consolidated-report-for-ai-20260408-021344](../STATE/overnight_runs/20260408_021344/consolidated-report-for-ai-20260408-021344.md)` -> 目标不存在
@@ -14635,13 +14635,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[continuous-audit-workflow](../STATE/continuous-audit-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[continuous-improvement-completion-report-20260407-175400](./continuous-improvement-completion-report-20260407-175400.md)` -> 目标不存在
+  **问题**: 死链: `[continuous-improvement-completion-report-20260407-175400](../STATE/continuous-improvement-completion-report-20260407-175400.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[continuous-improvement-pilot-report-20260402](./continuous-improvement-pilot-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[continuous-improvement-process](./continuous-improvement-process.md)` -> 目标不存在
+  **问题**: 死链: `[continuous-improvement-process](../STANDARDS/continuous-improvement-process.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[continuous-monitoring-config](../AUTOMATION/continuous-monitoring-config.md)` -> 目标不存在
@@ -14650,7 +14650,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[continuous-quality-improvement-process](../STANDARDS/continuous-quality-improvement-process.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[correlation-analysis](./correlation-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[correlation-analysis](../../09_ARCHIVE/factor_library/correlation-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[correlation-matrix](../../09_ARCHIVE/factor_library/correlation-matrix.md)` -> 目标不存在
@@ -14701,16 +14701,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[data-source-layer-gap-analysis](../../09_ARCHIVE/factor_library/data-source-layer-gap-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[data-source-p2-final-fix-report](./data-source-p2-final-fix-report.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-p2-final-fix-report](../STATE/data-source-p2-final-fix-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[data-source-p2-fix-report](./data-source-p2-fix-report.md)` -> 目标不存在
+  **问题**: 死链: `[data-source-p2-fix-report](../STATE/data-source-p2-fix-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[decision-record-standard](../STANDARDS/decision-record-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[decision-record-template](./decision-record-template.md)` -> 目标不存在
+  **问题**: 死链: `[decision-record-template](../FORM_STANDARDS/decision-record-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[deep-audit-fix-report-20260407](./deep-audit-fix-report-20260407.md)` -> 目标不存在
@@ -14797,16 +14797,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[directory-structure-analysis-report-20260412-211435](../STATE/directory-structure-analysis-report-20260412-211435.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[directory_naming_violations_report_20260412](./directory_naming_violations_report_20260412.md)` -> 目标不存在
+  **问题**: 死链: `[directory_naming_violations_report_20260412](../STATE/directory_naming_violations_report_20260412.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[doc-archival-workflow](../WORKFLOWS/doc-archival-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-creation-workflow](./doc-creation-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[doc-creation-workflow](../WORKFLOWS/doc-creation-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-governance-mechanism](./doc-governance-mechanism.md)` -> 目标不存在
+  **问题**: 死链: `[doc-governance-mechanism](../STANDARDS/doc-governance-mechanism.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[doc-governance-optimization-proposal](../STANDARDS/doc-governance-optimization-proposal.md)` -> 目标不存在
@@ -14815,19 +14815,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[doc-governance-system-plan](../STANDARDS/doc-governance-system-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-naming-standard](./doc-naming-standard.md)` -> 目标不存在
+  **问题**: 死链: `[doc-naming-standard](../STANDARDS/doc-naming-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-quality-culture-plan](./doc-quality-culture-plan.md)` -> 目标不存在
+  **问题**: 死链: `[doc-quality-culture-plan](../STANDARDS/doc-quality-culture-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[doc-recreation-evaluation-report-20260404](./doc-recreation-evaluation-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-reference-standard](./doc-reference-standard.md)` -> 目标不存在
+  **问题**: 死链: `[doc-reference-standard](../STANDARDS/doc-reference-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[doc-remediation-task-directive-20260408](./doc-remediation-task-directive-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[doc-remediation-task-directive-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/doc-remediation-task-directive-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[docs-encoding-governance-fix-report-20260407](./docs-encoding-governance-fix-report-20260407.md)` -> 目标不存在
@@ -14839,7 +14839,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-audit-v5.1](./document-audit-v5.1.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-classification-exception-list](./document-classification-exception-list.md)` -> 目标不存在
+  **问题**: 死链: `[document-classification-exception-list](../STANDARDS/document-classification-exception-list.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-classification-optimization-report-20260407](./document-classification-optimization-report-20260407.md)` -> 目标不存在
@@ -14851,7 +14851,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-cross-reference-analysis-20260406](./document-cross-reference-analysis-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-defect-prevention-standard](./document-defect-prevention-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-defect-prevention-standard](../STANDARDS/document-defect-prevention-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-format-fix-report-20260407](./document-format-fix-report-20260407.md)` -> 目标不存在
@@ -14860,7 +14860,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-audit-report](../../09_RESEARCH_INNOVATION/document-governance-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-best-practices](./document-governance-best-practices.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-best-practices](../BEST_PRACTICES/document-governance-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-governance-complete-fix-report](../../09_RESEARCH_INNOVATION/document-governance-complete-fix-report.md)` -> 目标不存在
@@ -14878,7 +14878,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-deep-audit-report-20260403](./document-governance-deep-audit-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-deep-audit-summary](./document-governance-deep-audit-summary.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-deep-audit-summary](../../09_RESEARCH_INNOVATION/document-governance-deep-audit-summary.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-governance-final-audit-report](../../09_RESEARCH_INNOVATION/_archive/document-governance-final-audit-report.md)` -> 目标不存在
@@ -14893,7 +14893,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-implementation-report-20260402](./document-governance-implementation-report-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-improvement-cases](./document-governance-improvement-cases.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-improvement-cases](../CASE_STUDIES/document-governance-improvement-cases.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-governance-maintenance-plan](../../09_RESEARCH_INNOVATION/document-governance-maintenance-plan.md)` -> 目标不存在
@@ -14905,7 +14905,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-p2-issues-remediation-report-20260403](./document-governance-p2-issues-remediation-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-process-standard](./document-governance-process-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-process-standard](../STANDARDS/document-governance-process-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[document-governance-re-audit-report](../../09_RESEARCH_INNOVATION/document-governance-re-audit-report.md)` -> 目标不存在
@@ -14917,28 +14917,28 @@ last_updated: 2026-04-13
   **问题**: 死链: `[document-governance-remediation-report-20260403](./document-governance-remediation-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-solutions](./document-governance-solutions.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-solutions](../SOLUTIONS/document-governance-solutions.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-governance-training-manual](./document-governance-training-manual.md)` -> 目标不存在
+  **问题**: 死链: `[document-governance-training-manual](../TRAINING/document-governance-training-manual.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-metadata-template](./document-metadata-template.md)` -> 目标不存在
+  **问题**: 死链: `[document-metadata-template](../STANDARDS/document-metadata-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-quality-monitoring-mechanism](./document-quality-monitoring-mechanism.md)` -> 目标不存在
+  **问题**: 死链: `[document-quality-monitoring-mechanism](../../09_RESEARCH_INNOVATION/document-quality-monitoring-mechanism.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-responsibility-boundary-standard](./document-responsibility-boundary-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-responsibility-boundary-standard](../STANDARDS/document-responsibility-boundary-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-system-perfection-plan](./document-system-perfection-plan.md)` -> 目标不存在
+  **问题**: 死链: `[document-system-perfection-plan](../CONFIG/document-system-perfection-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[document-template](./document-template.md)` -> 目标不存在
+  **问题**: 死链: `[document-template](../FORM_STANDARDS/document-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[double-yaml-exceptions](./double-yaml-exceptions.md)` -> 目标不存在
+  **问题**: 死链: `[double-yaml-exceptions](../STATE/double-yaml-exceptions.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[duplicate-content-by-hash-20260410](../STATE/duplicate-content-by-hash-20260410.md)` -> 目标不存在
@@ -14959,7 +14959,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[economic-regime-engine-technical-specification-v1-archived](../../09_ARCHIVE/blueprints/economic-regime-engine-technical-specification-v1-archived.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[emergency-response-plan](./emergency-response-plan.md)` -> 目标不存在
+  **问题**: 死链: `[emergency-response-plan](../FORM_STANDARDS/emergency-response-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[encoding-issues-rebuild-final-report-20260406](./encoding-issues-rebuild-final-report-20260406.md)` -> 目标不存在
@@ -14971,7 +14971,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[encoding-issues-rebuild-progress-report-final-20260406](./encoding-issues-rebuild-progress-report-final-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[esg-investing-blueprint](./esg-investing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[esg-investing-blueprint](../../11_STRATEGIC_DECISION/esg-investing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[excellence-standard-achievement-report-20260402](./excellence-standard-achievement-report-20260402.md)` -> 目标不存在
@@ -15028,7 +15028,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[factor-validation-guide](../../09_ARCHIVE/factor_library/factor-validation-guide.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[fifth-comprehensive-audit-report](./fifth-comprehensive-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[fifth-comprehensive-audit-report](../STATE/fifth-comprehensive-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[file-naming-standard](../STANDARDS/file-naming-standard.md)` -> 目标不存在
@@ -15076,7 +15076,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[final-link-fix-report-20260407-165803](../STATE/final-link-fix-report-20260407-165803.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[final-metadata-supplement-report-20260407-180300](./final-metadata-supplement-report-20260407-180300.md)` -> 目标不存在
+  **问题**: 死链: `[final-metadata-supplement-report-20260407-180300](../STATE/final-metadata-supplement-report-20260407-180300.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[final-optimization-completion-report-20260407](./final-optimization-completion-report-20260407.md)` -> 目标不存在
@@ -15097,7 +15097,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[follow-up-action-report-20260407-151323](../STATE/follow-up-action-report-20260407-151323.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[fourth-comprehensive-audit-report-20260407-213318](./fourth-comprehensive-audit-report-20260407-213318.md)` -> 目标不存在
+  **问题**: 死链: `[fourth-comprehensive-audit-report-20260407-213318](../STATE/fourth-comprehensive-audit-report-20260407-213318.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[free-data-sources](../../09_ARCHIVE/factor_library/free-data-sources.md)` -> 目标不存在
@@ -15106,10 +15106,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[full-doc-governance-audit-phase0-20260408](./full-doc-governance-audit-phase0-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[full-system-audit-complete-case-20260408](./full-system-audit-complete-case-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[full-system-audit-complete-case-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/full-system-audit-complete-case-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[full-system-document-audit-plan-20260408](./full-system-document-audit-plan-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[full-system-document-audit-plan-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/full-system-document-audit-plan-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[future-factor-tools](../../09_ARCHIVE/factor_library/future-factor-tools.md)` -> 目标不存在
@@ -15166,10 +15166,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[ifind-connector](../../09_ARCHIVE/blueprints/ifind-connector.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[immediate-action-completion-report-20260407](./immediate-action-completion-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[immediate-action-completion-report-20260407](../STATE/immediate-action-completion-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[immediate-action-completion-report-20260407-183300](./immediate-action-completion-report-20260407-183300.md)` -> 目标不存在
+  **问题**: 死链: `[immediate-action-completion-report-20260407-183300](../STATE/immediate-action-completion-report-20260407-183300.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[immediate-action-execution-report-20260406](./immediate-action-execution-report-20260406.md)` -> 目标不存在
@@ -15337,7 +15337,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[invalid-links-detail-20260408-033240](../STATE/overnight_runs/20260408_033240/invalid-links-detail-20260408-033240.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[investment-constraint-blueprint](./investment-constraint-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[investment-constraint-blueprint](../../11_STRATEGIC_DECISION/investment-constraint-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[issue-handover-document-20260407](./issue-handover-document-20260407.md)` -> 目标不存在
@@ -15346,7 +15346,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[key-links-fix-report-20260404](./key-links-fix-report-20260404.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[knowledge-base-building-plan](./knowledge-base-building-plan.md)` -> 目标不存在
+  **问题**: 死链: `[knowledge-base-building-plan](../CONFIG/knowledge-base-building-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[knowledge-base-enhancement-report-20260402](./knowledge-base-enhancement-report-20260402.md)` -> 目标不存在
@@ -15376,13 +15376,13 @@ last_updated: 2026-04-13
   **问题**: 死链: `[layer2-complete-implementation-plan](../STATE/layer2-complete-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[layer2-complete-supplement-plan](./layer2-complete-supplement-plan.md)` -> 目标不存在
+  **问题**: 死链: `[layer2-complete-supplement-plan](../STATE/layer2-complete-supplement-plan.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[layer2-deep-missing-analysis](../STATE/layer2-deep-missing-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[layer2-ultra-deep-missing-analysis](./layer2-ultra-deep-missing-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[layer2-ultra-deep-missing-analysis](../STATE/layer2-ultra-deep-missing-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[layered-backtest](../../09_ARCHIVE/blueprints/layered-backtest.md)` -> 目标不存在
@@ -15421,7 +15421,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[manual-reference-fix-report-20260407-155307](../STATE/manual-reference-fix-report-20260407-155307.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[markdown-link-validator](./markdown-link-validator.md)` -> 目标不存在
+  **问题**: 死链: `[markdown-link-validator](../TOOLS/markdown-link-validator.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[market-participant-simulation-spec-update-v2-archived](../../09_ARCHIVE/blueprints/market-participant-simulation-spec-update-v2-archived.md)` -> 目标不存在
@@ -15502,10 +15502,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[module-id-duplication-remediation-report-20260403](./module-id-duplication-remediation-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[module-id-registry](./module-id-registry.md)` -> 目标不存在
+  **问题**: 死链: `[module-id-registry](../STATE/module-id-registry.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[module-interface-specification](./module-interface-specification.md)` -> 目标不存在
+  **问题**: 死链: `[module-interface-specification](../STANDARDS/module-interface-specification.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[module-interface-template](../FORM_STANDARDS/module-interface-template.md)` -> 目标不存在
@@ -15520,7 +15520,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[monthly-audit-report-template](../FORM_STANDARDS/monthly-audit-report-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[new-directory-creation-workflow](./new-directory-creation-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[new-directory-creation-workflow](../WORKFLOWS/new-directory-creation-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[news-sentiment-data-source](../../09_ARCHIVE/factor_library/news-sentiment-data-source.md)` -> 目标不存在
@@ -16069,10 +16069,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[openclaw-remediation-backlog](./openclaw-remediation-backlog.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[openclaw-remediation-execution-playbook-20260408](./openclaw-remediation-execution-playbook-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[openclaw-remediation-execution-playbook-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/openclaw-remediation-execution-playbook-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[openclaw-remediation-plan-draft-20260408](./openclaw-remediation-plan-draft-20260408.md)` -> 目标不存在
+  **问题**: 死链: `[openclaw-remediation-plan-draft-20260408](../../06_ARCHIVE/09_AUDIT/PROCEDURES/openclaw-remediation-plan-draft-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[opensource-integration-guide](../../09_RESEARCH_INNOVATION/opensource-integration-guide.md)` -> 目标不存在
@@ -16105,7 +16105,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p1-p2-fix-final-report](../STATE/p1-p2-fix-final-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[p1-p2-fix-report](./p1-p2-fix-report.md)` -> 目标不存在
+  **问题**: 死链: `[p1-p2-fix-report](../STATE/p1-p2-fix-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[p1c-deferred-20260408](../STATE/p1c-deferred-20260408.md)` -> 目标不存在
@@ -16117,7 +16117,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[p2-cross-reference-progress-20260406](./p2-cross-reference-progress-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[p2-issues-fix-report](./p2-issues-fix-report.md)` -> 目标不存在
+  **问题**: 死链: `[p2-issues-fix-report](../STATE/p2-issues-fix-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[path-optimization-report-20260407-153514](../STATE/path-optimization-report-20260407-153514.md)` -> 目标不存在
@@ -16126,7 +16126,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[path-reference-human-review-20260407-151929](../STATE/path-reference-human-review-20260407-151929.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[path-reference-standard](./path-reference-standard.md)` -> 目标不存在
+  **问题**: 死链: `[path-reference-standard](../STANDARDS/path-reference-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[periodic-audit-mechanism](../STANDARDS/periodic-audit-mechanism.md)` -> 目标不存在
@@ -16138,7 +16138,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[periodic-check-guide](../STATE/periodic-check-guide.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[periodic-check-mechanism-report-20260407-161212](./periodic-check-mechanism-report-20260407-161212.md)` -> 目标不存在
+  **问题**: 死链: `[periodic-check-mechanism-report-20260407-161212](../STATE/periodic-check-mechanism-report-20260407-161212.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[periodic-check-plan](../STANDARDS/periodic-check-plan.md)` -> 目标不存在
@@ -16153,10 +16153,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[periodic-review-plan-v2](../STATE/periodic-review-plan-v2.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[personal-audit-workflow](./personal-audit-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[personal-audit-workflow](../PROCEDURES/personal-audit-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[personal-development-blueprint](./personal-development-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[personal-development-blueprint](../../01_FRAMEWORK/personal-development-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[phase3-comprehensive-summary-20260407](./phase3-comprehensive-summary-20260407.md)` -> 目标不存在
@@ -16207,7 +16207,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[professional-comparison-analysis-final-20260402](./professional-comparison-analysis-final-20260402.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[professional-document-governance-audit-guide](./professional-document-governance-audit-guide.md)` -> 目标不存在
+  **问题**: 死链: `[professional-document-governance-audit-guide](../FORM_STANDARDS/professional-document-governance-audit-guide.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[professional-standard-improvement-report-20260402](./professional-standard-improvement-report-20260402.md)` -> 目标不存在
@@ -16300,19 +16300,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[repo-directory-rollup-20260414](../STATE/repo-directory-rollup-20260414.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[research-collaboration-platform-blueprint](./research-collaboration-platform-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[research-collaboration-platform-blueprint](../../01_FRAMEWORK/research-collaboration-platform-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[research-management](../../09_ARCHIVE/blueprints/research-management.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[research-memo-standard](./research-memo-standard.md)` -> 目标不存在
+  **问题**: 死链: `[research-memo-standard](../STANDARDS/research-memo-standard.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[research-memo-template](./research-memo-template.md)` -> 目标不存在
+  **问题**: 死链: `[research-memo-template](../FORM_STANDARDS/research-memo-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[responsibility-boundary-map](./responsibility-boundary-map.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-boundary-map](../STATE/responsibility-boundary-map.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[responsibility-description-standard](../STANDARDS/responsibility-description-standard.md)` -> 目标不存在
@@ -16330,19 +16330,19 @@ last_updated: 2026-04-13
   **问题**: 死链: `[responsibility-supplement-report-20260407-170629](../STATE/responsibility-supplement-report-20260407-170629.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[responsibility-template-library](./responsibility-template-library.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-template-library](../STANDARDS/responsibility-template-library.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[risk-event-template](./risk-event-template.md)` -> 目标不存在
+  **问题**: 死链: `[risk-event-template](../FORM_STANDARDS/risk-event-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[risk-management-framework](./risk-management-framework.md)` -> 目标不存在
+  **问题**: 死链: `[risk-management-framework](../STANDARDS/risk-management-framework.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[round2-fix-summary-20260407](./round2-fix-summary-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[scheduled-audit-configuration](./scheduled-audit-configuration.md)` -> 目标不存在
+  **问题**: 死链: `[scheduled-audit-configuration](../CONFIGURATION/scheduled-audit-configuration.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[scheduled-tasks-deployment-guide](../GUIDES/scheduled-tasks-deployment-guide.md)` -> 目标不存在
@@ -16417,10 +16417,10 @@ last_updated: 2026-04-13
   **问题**: 死链: `[short-term-improvement-and-long-term-optimization-report-20260407](./short-term-improvement-and-long-term-optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[short-term-improvement-completion-report-20260407-170900](./short-term-improvement-completion-report-20260407-170900.md)` -> 目标不存在
+  **问题**: 死链: `[short-term-improvement-completion-report-20260407-170900](../STATE/short-term-improvement-completion-report-20260407-170900.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[short-term-improvement-final-report-20260407-173400](./short-term-improvement-final-report-20260407-173400.md)` -> 目标不存在
+  **问题**: 死链: `[short-term-improvement-final-report-20260407-173400](../STATE/short-term-improvement-final-report-20260407-173400.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[short-term-improvement-plan-20260406](./short-term-improvement-plan-20260406.md)` -> 目标不存在
@@ -16435,7 +16435,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[short-term-optimization-completion-report-20260403](./short-term-optimization-completion-report-20260403.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[sixth-comprehensive-audit-report](./sixth-comprehensive-audit-report.md)` -> 目标不存在
+  **问题**: 死链: `[sixth-comprehensive-audit-report](../STATE/sixth-comprehensive-audit-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[sparse-directory-analysis-20260407-030548](../STATE/sparse-directory-analysis-20260407-030548.md)` -> 目标不存在
@@ -16444,16 +16444,16 @@ last_updated: 2026-04-13
   **问题**: 死链: `[sparse-directory-analysis-20260412-203547](../STATE/sparse-directory-analysis-20260412-203547.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[sparse-directory-fix-final-report](./sparse-directory-fix-final-report.md)` -> 目标不存在
+  **问题**: 死链: `[sparse-directory-fix-final-report](../STATE/sparse-directory-fix-final-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[sparse-directory-integration-guide-20260407-025756](../STATE/sparse-directory-integration-guide-20260407-025756.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[sparse-directory-strategy-report](./sparse-directory-strategy-report.md)` -> 目标不存在
+  **问题**: 死链: `[sparse-directory-strategy-report](../STATE/sparse-directory-strategy-report.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[stress-test-template](./stress-test-template.md)` -> 目标不存在
+  **问题**: 死链: `[stress-test-template](../FORM_STANDARDS/stress-test-template.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[strict-orphan-files-report-20260408](../STATE/strict-orphan-files-report-20260408.md)` -> 目标不存在
@@ -16477,7 +16477,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[tail-risk-factors](../../09_ARCHIVE/factor_library/tail-risk-factors.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[technical-indicators](./technical-indicators.md)` -> 目标不存在
+  **问题**: 死链: `[technical-indicators](../../09_ARCHIVE/TECHNICAL_SPECIFICATIONS/technical-indicators.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[test_driven_governance_standard](../STANDARDS/test_driven_governance_standard.md)` -> 目标不存在
@@ -16498,7 +16498,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[trae-blueprint-task-ledger-20260408](../STATE/trae-blueprint-task-ledger-20260408.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[trae-line-task-index-20260409](./trae-line-task-index-20260409.md)` -> 目标不存在
+  **问题**: 死链: `[trae-line-task-index-20260409](../STATE/trae-line-task-index-20260409.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[w2-secret-pattern-spotcheck-20260410](../STATE/w2-secret-pattern-spotcheck-20260410.md)` -> 目标不存在
@@ -16516,7 +16516,7 @@ last_updated: 2026-04-13
   **问题**: 死链: `[weekly-longterm-optimization-report-20260407-142449](../STATE/weekly-longterm-optimization-report-20260407-142449.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
-  **问题**: 死链: `[weekly-maintenance-report-20260407](../../09_RESEARCH_INNOVATION/weekly-maintenance-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[weekly-maintenance-report-20260407](../../06_ARCHIVE/09_RESEARCH_INNOVATION/weekly-maintenance-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/09_AUDIT/INDEX.md`
   **问题**: 死链: `[weekly-scan-report-001-20260403](./weekly-scan-report-001-20260403.md)` -> 目标不存在
@@ -16537,181 +16537,181 @@ last_updated: 2026-04-13
   **问题**: 死链: `[README.md](../../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[ai-governance-blueprint](./ai-governance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-governance-blueprint](../../01_FRAMEWORK/ai-governance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[ai-strategy-automation-blueprint](./ai-strategy-automation-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ai-strategy-automation-blueprint](../../01_FRAMEWORK/ai-strategy-automation-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[algorithm-deployment-control-blueprint](./algorithm-deployment-control-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[algorithm-deployment-control-blueprint](../../01_FRAMEWORK/algorithm-deployment-control-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[algorithm-inventory-management-blueprint](./algorithm-inventory-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[algorithm-inventory-management-blueprint](../../01_FRAMEWORK/algorithm-inventory-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[algorithmic-trading-test-framework-blueprint](./algorithmic-trading-test-framework-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[algorithmic-trading-test-framework-blueprint](../../01_FRAMEWORK/algorithmic-trading-test-framework-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[aml-monitoring-system-blueprint](./aml-monitoring-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[aml-monitoring-system-blueprint](../../01_FRAMEWORK/aml-monitoring-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[audit-trail-tigerbeetle-implementation](./audit-trail-tigerbeetle-implementation.md)` -> 目标不存在
+  **问题**: 死链: `[audit-trail-tigerbeetle-implementation](../../01_FRAMEWORK/audit-trail-tigerbeetle-implementation.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[best-execution-monitoring-blueprint](./best-execution-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[best-execution-monitoring-blueprint](../../01_FRAMEWORK/best-execution-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[blueprint-stage-vs-implementation-stage-analysis](./blueprint-stage-vs-implementation-stage-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-stage-vs-implementation-stage-analysis](../../01_FRAMEWORK/blueprint-stage-vs-implementation-stage-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[compliance-knowledge-base-blueprint](./compliance-knowledge-base-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[compliance-knowledge-base-blueprint](../../01_FRAMEWORK/compliance-knowledge-base-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
   **问题**: 死链: `[compliance-monitoring-blueprint](../../10_AI_WORKFLOW/compliance-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[data-sovereignty-compliance-blueprint](./data-sovereignty-compliance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[data-sovereignty-compliance-blueprint](../../01_FRAMEWORK/data-sovereignty-compliance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[document-maintenance-process](./document-maintenance-process.md)` -> 目标不存在
+  **问题**: 死链: `[document-maintenance-process](../../06_ARCHIVE/factor_library/document-maintenance-process.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[document-review-process](./document-review-process.md)` -> 目标不存在
+  **问题**: 死链: `[document-review-process](../../10_GOVERNANCE_COMPLIANCE/GOVERNANCE_PROCESSES/document-review-process.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[extreme-market-response-blueprint](./extreme-market-response-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[extreme-market-response-blueprint](../../01_FRAMEWORK/extreme-market-response-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[governance-compliance-layer-blueprint](./governance-compliance-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[governance-compliance-layer-blueprint](../../01_FRAMEWORK/governance-compliance-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[governance-dashboard-blueprint](./governance-dashboard-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[governance-dashboard-blueprint](../../01_FRAMEWORK/governance-dashboard-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
   **问题**: 死链: `[human-ai-interface-layer-deep-audit-report-v2-20260407](./human-ai-interface-layer-deep-audit-report-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[intelligent-compliance-check-blueprint](./intelligent-compliance-check-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-compliance-check-blueprint](../../01_FRAMEWORK/intelligent-compliance-check-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[intelligent-scheduler-blueprint](./intelligent-scheduler-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[intelligent-scheduler-blueprint](../../10_AI_WORKFLOW/intelligent-scheduler-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[investment-decision-audit-blueprint](./investment-decision-audit-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[investment-decision-audit-blueprint](../../01_FRAMEWORK/investment-decision-audit-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[investor-relations-management-blueprint](./investor-relations-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[investor-relations-management-blueprint](../../01_FRAMEWORK/investor-relations-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[kill-switch-system-blueprint](./kill-switch-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[kill-switch-system-blueprint](../../01_FRAMEWORK/kill-switch-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-advanced-governance-gap-analysis](./layer-10-advanced-governance-gap-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-advanced-governance-gap-analysis](../../01_FRAMEWORK/layer-10-advanced-governance-gap-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-complete-implementation-roadmap](./layer-10-complete-implementation-roadmap.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-complete-implementation-roadmap](../../01_FRAMEWORK/layer-10-complete-implementation-roadmap.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-deep-audit-report-final](./layer-10-deep-audit-report-final.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-deep-audit-report-final](../../01_FRAMEWORK/layer-10-deep-audit-report-final.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-deleted-files-analysis](./layer-10-deleted-files-analysis.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-deleted-files-analysis](../../01_FRAMEWORK/layer-10-deleted-files-analysis.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v11-20260407](./layer-10-governance-compliance-deep-audit-report-v11-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v11-20260407](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v11-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v12-20260407](./layer-10-governance-compliance-deep-audit-report-v12-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v12-20260407](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v12-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v4-20260406](./layer-10-governance-compliance-deep-audit-report-v4-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v4-20260406](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v4-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v5-20260406](./layer-10-governance-compliance-deep-audit-report-v5-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v5-20260406](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v5-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v6-20260406](./layer-10-governance-compliance-deep-audit-report-v6-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v6-20260406](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v6-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v7-20260406](./layer-10-governance-compliance-deep-audit-report-v7-20260406.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-deep-audit-report-v7-20260406](../../06_ARCHIVE/audit_reports/layer-10-governance-compliance-deep-audit-report-v7-20260406.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-governance-compliance-index](./layer-10-governance-compliance-index.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-governance-compliance-index](../../01_FRAMEWORK/layer-10-governance-compliance-index.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-missing-modules-implementation-plan](./layer-10-missing-modules-implementation-plan.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-missing-modules-implementation-plan](../../01_FRAMEWORK/layer-10-missing-modules-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[layer-10-priority-modules-implementation-plan](./layer-10-priority-modules-implementation-plan.md)` -> 目标不存在
+  **问题**: 死链: `[layer-10-priority-modules-implementation-plan](../../01_FRAMEWORK/layer-10-priority-modules-implementation-plan.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[liquidity-risk-management-blueprint](./liquidity-risk-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[liquidity-risk-management-blueprint](../../01_FRAMEWORK/liquidity-risk-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[market-abuse-surveillance-blueprint](./market-abuse-surveillance-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[market-abuse-surveillance-blueprint](../../01_FRAMEWORK/market-abuse-surveillance-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[model-risk-management-blueprint](./model-risk-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[model-risk-management-blueprint](../../01_FRAMEWORK/model-risk-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[model-risk-mlflow-implementation](./model-risk-mlflow-implementation.md)` -> 目标不存在
+  **问题**: 死链: `[model-risk-mlflow-implementation](../../06_ARCHIVE/blueprints/model-risk-mlflow-implementation.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[overlap-algorithm-deployment-control-blueprint-20260407-190202](./overlap-algorithm-deployment-control-blueprint-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-algorithm-deployment-control-blueprint-20260407-190202](../../../.audit_fix_backup/docs/06_ARCHIVE/audit_reports/overlap-algorithm-deployment-control-blueprint-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[overlap-document-classification-standard-20260407-190203](./overlap-document-classification-standard-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-document-classification-standard-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-document-classification-standard-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203](./overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-human-ai-interface-layer-deep-audit-report-v2-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[overlap-layer-10-priority-modules-implementation-plan-20260407-190202](./overlap-layer-10-priority-modules-implementation-plan-20260407-190202.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-layer-10-priority-modules-implementation-plan-20260407-190202](../../06_ARCHIVE/implementation/overlap-layer-10-priority-modules-implementation-plan-20260407-190202.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[overlap-model-risk-mlflow-implementation-20260407-190203](./overlap-model-risk-mlflow-implementation-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-model-risk-mlflow-implementation-20260407-190203](../../06_ARCHIVE/blueprints/overlap-model-risk-mlflow-implementation-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[p2-automation-governance-implementation-report-20260407](./p2-automation-governance-implementation-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p2-automation-governance-implementation-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/p2-automation-governance-implementation-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[personal-ai-maintenance-blueprint-stage-complete-solution](./personal-ai-maintenance-blueprint-stage-complete-solution.md)` -> 目标不存在
+  **问题**: 死链: `[personal-ai-maintenance-blueprint-stage-complete-solution](../../01_FRAMEWORK/personal-ai-maintenance-blueprint-stage-complete-solution.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[portfolio-rebalancing-blueprint](./portfolio-rebalancing-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-rebalancing-blueprint](../../01_FRAMEWORK/portfolio-rebalancing-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[portfolio-risk-attribution-blueprint](./portfolio-risk-attribution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-risk-attribution-blueprint](../../01_FRAMEWORK/portfolio-risk-attribution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[post-quantum-cryptography-blueprint](./post-quantum-cryptography-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[post-quantum-cryptography-blueprint](../../01_FRAMEWORK/post-quantum-cryptography-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
   **问题**: 死链: `[professional-terminology-standard](../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/professional-terminology-standard.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[realtime-risk-monitoring-blueprint](./realtime-risk-monitoring-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[realtime-risk-monitoring-blueprint](../../01_FRAMEWORK/realtime-risk-monitoring-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[regulatory-change-tracking-blueprint](./regulatory-change-tracking-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[regulatory-change-tracking-blueprint](../../01_FRAMEWORK/regulatory-change-tracking-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
   **问题**: 死链: `[responsibility-description-best-practices](../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/responsibility-description-best-practices.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[responsibility-similarity-report-20260407](./responsibility-similarity-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[responsibility-similarity-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/responsibility-similarity-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[strategy-performance-attribution-blueprint](./strategy-performance-attribution-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-performance-attribution-blueprint](../../01_FRAMEWORK/strategy-performance-attribution-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[stress-test-scenario-library-blueprint](./stress-test-scenario-library-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[stress-test-scenario-library-blueprint](../../01_FRAMEWORK/stress-test-scenario-library-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[third-party-risk-management-blueprint](./third-party-risk-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[third-party-risk-management-blueprint](../../01_FRAMEWORK/third-party-risk-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/10_GOVERNANCE_COMPLIANCE/INDEX.md`
-  **问题**: 死链: `[trade-error-correction-blueprint](./trade-error-correction-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[trade-error-correction-blueprint](../../01_FRAMEWORK/trade-error-correction-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
   **问题**: 死链: `[allocation-optimization-method](../../11_STRATEGIC_DECISION/01_asset_allocation/allocation-optimization-method.md)` -> 目标不存在
@@ -16723,31 +16723,31 @@ last_updated: 2026-04-13
   **问题**: 死链: `[asset-class-definition](../../11_STRATEGIC_DECISION/01_asset_allocation/asset-class-definition.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[benchmark-management-blueprint](./benchmark-management-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[benchmark-management-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/benchmark-management-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[blueprint-creation-progress-report-20260407](../../11_STRATEGIC_DECISION/archive/blueprint-creation-progress-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-creation-progress-report-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/archive/blueprint-creation-progress-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[blueprint-implementation-status-report-20260407](../../11_STRATEGIC_DECISION/archive/blueprint-implementation-status-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[blueprint-implementation-status-report-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/archive/blueprint-implementation-status-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
   **问题**: 死链: `[blueprint-v2.0.1-backup](../../11_STRATEGIC_DECISION/archive/blueprint-v2.0.1-backup.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[esg-investment-system-blueprint](./esg-investment-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[esg-investment-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/esg-investment-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[ips-management-system-blueprint](./ips-management-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[ips-management-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/ips-management-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[macro-factor-system-blueprint](./macro-factor-system-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[macro-factor-system-blueprint](../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/macro-factor-system-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
   **问题**: 死链: `[market-environment-assessment](../../11_STRATEGIC_DECISION/04_strategic_adjustment/market-environment-assessment.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[p1-blueprint-creation-progress-report-20260407](../../11_STRATEGIC_DECISION/archive/p1-blueprint-creation-progress-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[p1-blueprint-creation-progress-report-20260407](../../06_ARCHIVE/11_STRATEGIC_DECISION/archive/p1-blueprint-creation-progress-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
   **问题**: 死链: `[risk-budgeting-framework](../../11_STRATEGIC_DECISION/02_risk_budgeting/risk-budgeting-framework.md)` -> 目标不存在
@@ -16756,67 +16756,67 @@ last_updated: 2026-04-13
   **问题**: 死链: `[risk-budgeting-method](../../11_STRATEGIC_DECISION/02_risk_budgeting/risk-budgeting-method.md)` -> 目标不存在
 
 - **文件**: `docs/11_STRATEGIC_DECISION/INDEX.md`
-  **问题**: 死链: `[strategic-decision-layer-blueprint](./strategic-decision-layer-blueprint.md)` -> 目标不存在
+  **问题**: 死链: `[strategic-decision-layer-blueprint](../../01_FRAMEWORK/strategic-decision-layer-blueprint.md)` -> 目标不存在
 
 - **文件**: `docs/la/INDEX.md`
-  **问题**: 死链: `[archived-20260407-180025](./archived-20260407-180025.md)` -> 目标不存在
+  **问题**: 死链: `[archived-20260407-180025](../../06_ARCHIVE/implementation/archived-20260407-180025.md)` -> 目标不存在
 
 - **文件**: `docs/la/INDEX.md`
-  **问题**: 死链: `[quality-gate-mechanism](./quality-gate-mechanism.md)` -> 目标不存在
+  **问题**: 死链: `[quality-gate-mechanism](../../05_IMPLEMENTATION/07_OPERATIONS/quality-gate-mechanism.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 1 (数据源层)/INDEX.md`
-  **问题**: 死链: `[overlap-deep-review-report-20260407-20260407-190203](./overlap-deep-review-report-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-deep-review-report-20260407-20260407-190203](../../06_ARCHIVE/reports/overlap-deep-review-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 3 (策略层)/INDEX.md`
-  **问题**: 死链: `[overlap-batch-fix-progress-report-20260407-20260407-190203](./overlap-batch-fix-progress-report-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-batch-fix-progress-report-20260407-20260407-190203](../../06_ARCHIVE/reports/overlap-batch-fix-progress-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 3 (策略层)/INDEX.md`
-  **问题**: 死链: `[portfolio-optimization-deep-audit-round2-report-20260407](./portfolio-optimization-deep-audit-round2-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[portfolio-optimization-deep-audit-round2-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/portfolio-optimization-deep-audit-round2-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 3 (舆情分析层)/INDEX.md`
-  **问题**: 死链: `[sentiment-analysis-deep-audit-report-v16-20260407](./sentiment-analysis-deep-audit-report-v16-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[sentiment-analysis-deep-audit-report-v16-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/sentiment-analysis-deep-audit-report-v16-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 6 (组合优化层)/INDEX.md`
-  **问题**: 死链: `[benchmark-management-blueprint-legacy-11-strategic-decision](./benchmark-management-blueprint-legacy-11-strategic-decision.md)` -> 目标不存在
+  **问题**: 死链: `[benchmark-management-blueprint-legacy-11-strategic-decision](../../06_ARCHIVE/blueprints/benchmark-management-blueprint-legacy-11-strategic-decision.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 6 (组合优化层)/INDEX.md`
-  **问题**: 死链: `[overlap-p0-p1-fix-report-20260407-20260407-190203](./overlap-p0-p1-fix-report-20260407-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-p0-p1-fix-report-20260407-20260407-190203](../../06_ARCHIVE/reports/overlap-p0-p1-fix-report-20260407-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 7 (AI报告层)/INDEX.md`
-  **问题**: 死链: `[market-regime-detection-blueprint-legacy-10-ai-workflow](./market-regime-detection-blueprint-legacy-10-ai-workflow.md)` -> 目标不存在
+  **问题**: 死链: `[market-regime-detection-blueprint-legacy-10-ai-workflow](../../06_ARCHIVE/blueprints/market-regime-detection-blueprint-legacy-10-ai-workflow.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 7 (AI报告层)/INDEX.md`
-  **问题**: 死链: `[strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive](./strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
+  **问题**: 死链: `[strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive](../../06_ARCHIVE/blueprints/strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 8 (人机交互层)/INDEX.md`
-  **问题**: 死链: `[disaster-recovery-blueprint-legacy-01-framework](./disaster-recovery-blueprint-legacy-01-framework.md)` -> 目标不存在
+  **问题**: 死链: `[disaster-recovery-blueprint-legacy-01-framework](../../06_ARCHIVE/blueprints/disaster-recovery-blueprint-legacy-01-framework.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 8 (人机交互层)/INDEX.md`
-  **问题**: 死链: `[document-version-naming-standard](./document-version-naming-standard.md)` -> 目标不存在
+  **问题**: 死链: `[document-version-naming-standard](../STANDARDS/document-version-naming-standard.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 8 (人机交互层)/INDEX.md`
   **问题**: 死链: `[human-ai-interface-layer-deep-audit-report-20260407](./human-ai-interface-layer-deep-audit-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/Layer 8 (人机交互层)/INDEX.md`
-  **问题**: 死链: `[optimization-report-20260407](./optimization-report-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/Layer X ([Layer名称])/INDEX.md`
-  **问题**: 死链: `[document-creation-process](./document-creation-process.md)` -> 目标不存在
+  **问题**: 死链: `[document-creation-process](../../10_GOVERNANCE_COMPLIANCE/GOVERNANCE_PROCESSES/document-creation-process.md)` -> 目标不存在
 
 - **文件**: `docs/layer_1/INDEX.md`
   **问题**: 死链: `[responsibility-boundary-matrix](../../11_STRATEGIC_DECISION/responsibility-boundary-matrix.md)` -> 目标不存在
 
 - **文件**: `docs/layer_4/INDEX.md`
-  **问题**: 死链: `[deep-audit-report-v2-20260407](./deep-audit-report-v2-20260407.md)` -> 目标不存在
+  **问题**: 死链: `[deep-audit-report-v2-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/deep-audit-report-v2-20260407.md)` -> 目标不存在
 
 - **文件**: `docs/layer_6/INDEX.md`
-  **问题**: 死链: `[layer6-deep-audit-report-20260407-legacy-layer6-reports-archive](./layer6-deep-audit-report-20260407-legacy-layer6-reports-archive.md)` -> 目标不存在
+  **问题**: 死链: `[layer6-deep-audit-report-20260407-legacy-layer6-reports-archive](../../06_ARCHIVE/audit_reports/layer6-deep-audit-report-20260407-legacy-layer6-reports-archive.md)` -> 目标不存在
 
 - **文件**: `docs/layer_9/INDEX.md`
-  **问题**: 死链: `[layer9-deleted-files-review](./layer9-deleted-files-review.md)` -> 目标不存在
+  **问题**: 死链: `[layer9-deleted-files-review](../../06_ARCHIVE/blueprints/layer9-deleted-files-review.md)` -> 目标不存在
 
 - **文件**: `docs/layer_9/INDEX.md`
-  **问题**: 死链: `[overlap-layer9-deleted-files-review-20260407-190203](./overlap-layer9-deleted-files-review-20260407-190203.md)` -> 目标不存在
+  **问题**: 死链: `[overlap-layer9-deleted-files-review-20260407-190203](../../06_ARCHIVE/audit_reports/overlap-layer9-deleted-files-review-20260407-190203.md)` -> 目标不存在
 
 - **文件**: `docs/舆情分析/INDEX.md`
   **问题**: 死链: `[layer-7-deep-audit-report-v7-20260407](./layer-7-deep-audit-report-v7-20260407.md)` -> 目标不存在

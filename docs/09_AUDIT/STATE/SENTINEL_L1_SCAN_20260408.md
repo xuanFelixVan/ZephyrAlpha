@@ -6,77 +6,62 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260413T084209Z
-> **Markdown 文件数**: 4941
+> **UTC 时间**: 20260413T085505Z
+> **Markdown 文件数**: 3532
 
 ## 链接统计
 
 | 指标 | 数值 |
 |------|------|
-| 扫描文件 | 4941 |
-| Markdown 内链（非 http/锚点等已排除） | 9417 |
-| 跳过（外链/锚点等） | 1391 |
-| 判定有效 | 5230 |
-| 判定无效 | 2796 |
+| 扫描文件 | 3532 |
+| Markdown 内链（非 http/锚点等已排除） | 8607 |
+| 跳过（外链/锚点等） | 856 |
+| 判定有效 | 7716 |
+| 判定无效 | 35 |
 
 ### 无效链接样本（最多 20000 条）
 
-- `.audit_fix_backup/docs/01_FRAMEWORK/alpha-factor-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/audit-trail-tigerbeetle-implementation.md` → `../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/blueprint-stage-complete-summary.md` → `../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/blueprint-stage-complete-summary.md` → `../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/INDEX.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/blueprint-stage-complete-summary.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/blueprint-stage-complete-supplement-plan.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/data-preprocessing-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/data-source-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/event-sourcing-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/governance-compliance-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/human-ai-interaction-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/layer-10-governance-compliance-index.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/machine-learning-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/model-registry-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/portfolio-optimization-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `../04_EXECUTION/README.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/README.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/realtime-risk-monitoring-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/research-innovation-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/sentiment-analysis-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/strategy-execution-layer-blueprint.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/01_FRAMEWORK/tech-decision-records.md` → `./ARCHITECTURE.md`
-- `.audit_fix_backup/docs/03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/strategy-engine-core-blueprint.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/03_TRADING_TACTICS/README.md` → `../04_EXECUTION/README.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/02_DEVELOPMENT/developer-rules.md` → `../../02_FACTOR_LIBRARY/SITEMAP.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/02_DEVELOPMENT/error-handling.md` → `./SECURITY.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/blueprint-audit-v8-20260407.md` → `../../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-blueprint-stage-final-complete-solution-20260408.md` → `12_MODULE_DESIGNS/layer_0/INDEX.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/layer8-blueprint-supplement-final-report-20260407.md` → `12_MODULE_DESIGNS/layer_0/INDEX.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md` → `09_AUDIT/WORKFLOWS/doc-archival-workflow.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md` → `09_AUDIT/WORKFLOWS/doc-creation-workflow.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md` → `09_AUDIT/WORKFLOWS/periodic-audit-workflow.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/GEMINI_ROOT_GOVERNANCE_IMPLEMENTATION_20260413.md` → `09_AUDIT/WORKFLOWS/new-directory-creation-workflow.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/black-litterman-model-technical-specification.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/constraint-solver-technical-specification.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/market-participant-simulation-spec.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
-- `.audit_fix_backup/docs/05_IMPLEMENTATION/05_TECHNICAL_SPECIFICATIONS/mean-variance-optimization-technical-specification.md` → `../../01_FRAMEWORK/ARCHITECTURE.md`
+- `docs/03_TRADING_TACTICS/strategy-spec-s001.md` → `../02_FACTOR_LIBRARY/05_BACKTEST/`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260410.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260411.txt`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_GIT_TRACKED_FILES_20260410.txt`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260411.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260411.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/BASENAME_COLLISIONS_20260411.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_20260412.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_TRIAGE_20260412.json`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_20260412.jsonl`
+- `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md` → `../../../09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260410.json`
+- `docs/06_ARCHIVE/INDEX.md` → `./model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md`
+- `docs/07_RESEARCH/INDEX.md` → `../02_FACTOR_LIBRARY/05_BACKTEST/`
+- `docs/09_AUDIT/INDEX.md` → `./STATE/blueprint-d-overlap-candidates-20260411.md`
+- `docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md` → `../../06_ARCHIVE/blueprints/model-performance-version-management-blueprint-legacy-p1-cleanup-archive.md`
+- `docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md` → `../../06_ARCHIVE/blueprints/overlap-investment-committee-support-blueprint-20260407-190203.md`
+- `docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md` → `../02_FACTOR_LIBRARY/05_BACKTEST/`
+- `docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md` → `../STATE/blueprint-d-overlap-candidates-20260411.md`
+- `docs/09_AUDIT/STATE/directory_naming_violations_report_20260412.md` → `./module_designs/`
+- `docs/09_AUDIT/STATE/directory_naming_violations_report_20260412.md` → `./12_MODULE_DESIGNS/`
+- `docs/09_AUDIT/STATE/orphan_eradication_master_plan_20260413.md` → `./{f.name}`
+- `docs/09_AUDIT/STATE/orphan_governance_program_20260413.md` → `path`
+- `docs/09_AUDIT/STATE/orphan_governance_program_20260413.md` → `./{orphan_rel}.md`
+- `docs/SITEMAP.md` → `./02_FACTOR_LIBRARY/05_BACKTEST/`
+- `docs/SITEMAP.md` → `./09_AUDIT/TEMPLATES/`
+- `scripts/README.md` → `pre_commit_hook.py`
+- `scripts/README.md` → `pre_commit_check_module_id.py`
+- `scripts/README.md` → `clean_cache.py`
+- `scripts/README.md` → `clean_cache.py`
 
 ## module_id
 
-- 唯一 module_id 数: **4765**
-- 重复 id 数: **45**
-- 首道 front matter 无 `module_id` 的文件数: **109**
+- 唯一 module_id 数: **3453**
+- 重复 id 数: **46**
+- 首道 front matter 无 `module_id` 的文件数: **22**
 
 ### 重复模块（前 20 个）
 

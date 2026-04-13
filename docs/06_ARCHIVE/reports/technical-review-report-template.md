@@ -528,7 +528,7 @@ layer: layer_06
 
 ### B. 参考标准文?
 
-1. [ARCHITECTURE.md](../../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构定义
+1. [ARCHITECTURE.md](../../01_FRAMEWORK/ARCHITECTURE.md) - Layer 0-11架构定义
 
 2.  - 技术评审标?
 

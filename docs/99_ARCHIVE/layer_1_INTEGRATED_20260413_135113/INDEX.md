@@ -24,7 +24,7 @@ responsibility:
 
 ## 文档列表
 
-- [responsibility-boundary-matrix](./responsibility-boundary-matrix.md)
+- [responsibility-boundary-matrix](../../11_STRATEGIC_DECISION/responsibility-boundary-matrix.md)
 
 
 ---

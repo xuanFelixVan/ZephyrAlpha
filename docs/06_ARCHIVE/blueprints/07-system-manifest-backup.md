@@ -563,7 +563,7 @@ AI启动前必读顺序：
 
 |------|------|--------|
 
-| [INDEX.md](../../../03_TRADING_TACTICS/INDEX.md) | 快速导航入?| ?必读 |
+| [INDEX.md](../../03_TRADING_TACTICS/INDEX.md) | 快速导航入?| ?必读 |
 
 | System_Manifest.md | 系统清单 | ?必读 |
 

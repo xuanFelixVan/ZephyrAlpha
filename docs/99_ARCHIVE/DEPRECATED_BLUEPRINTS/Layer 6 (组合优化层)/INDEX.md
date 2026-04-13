@@ -24,8 +24,8 @@ responsibility:
 
 ## 文档列表
 
-- [benchmark-management-blueprint-legacy-11-strategic-decision](./benchmark-management-blueprint-legacy-11-strategic-decision.md)
-- [overlap-p0-p1-fix-report-20260407-20260407-190203](./overlap-p0-p1-fix-report-20260407-20260407-190203.md)
+- [benchmark-management-blueprint-legacy-11-strategic-decision](../../../06_ARCHIVE/blueprints/benchmark-management-blueprint-legacy-11-strategic-decision.md)
+- [overlap-p0-p1-fix-report-20260407-20260407-190203](../../../06_ARCHIVE/reports/overlap-p0-p1-fix-report-20260407-20260407-190203.md)
 
 
 ---

@@ -24,8 +24,8 @@ responsibility:
 
 ## 文档列表
 
-- [market-regime-detection-blueprint-legacy-10-ai-workflow](./market-regime-detection-blueprint-legacy-10-ai-workflow.md)
-- [strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive](./strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive.md)
+- [market-regime-detection-blueprint-legacy-10-ai-workflow](../../06_ARCHIVE/blueprints/market-regime-detection-blueprint-legacy-10-ai-workflow.md)
+- [strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive](../../06_ARCHIVE/blueprints/strategy-lifecycle-management-blueprint-legacy-p1-cleanup-archive.md)
 
 
 ---

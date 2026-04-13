@@ -525,7 +525,7 @@ last_updated: 2026-04-07
 
 ### 8.1 评审依据文档
 
-- [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 - 模块职责边界
 

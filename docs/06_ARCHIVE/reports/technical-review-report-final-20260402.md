@@ -673,7 +673,7 @@ compliance_level: 专业标准
 
 - 质量门禁机制
 
-- [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 - 模块职责边界定义
 

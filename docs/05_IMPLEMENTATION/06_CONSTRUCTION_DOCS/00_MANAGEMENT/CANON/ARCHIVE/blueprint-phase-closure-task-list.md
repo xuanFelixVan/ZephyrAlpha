@@ -21,7 +21,7 @@ layer: layer_05
 > **摆放规则真源**：**全库 `docs/` 目录职责与阶段落盘**以 `DOCUMENT_REPOSITORY_LAYOUT_STANDARD.md` 为准（**§1 第 5～6 条**：Layer 0～11 与路径分立摘要；**「位置是否正确」与入链分立**；勿另建平行标准）；**正式图纸柜**里什么能放、什么不能放，以 01_BLUEPRINTS 图纸柜文件治理规则 为准。  
 > **文档地图 + 放置（与扫描/尽治衔接）**：办公室规程 文档地图与放置规则（rollup → 查 LAYOUT → 搬迁 → 验证；**§1.5** 为 Layer/路径分立详述；**§1.6** 为「位置是否正确」**A～F 分桶表**，与 REPO_WIDE §2.3.2 互文）；与 全仓库文件治理任务清单 **§7**、**§2.3.1** 并列使用。系统 **Layer 0～11** 真源为 [`ARCHITECTURE.md`](../../../../../01_FRAMEWORK/ARCHITECTURE.md)。  
 > **与卫生计划的关系**：执行本清单时，应同步遵守 蓝图阶段文档卫生总计划；不必重复发明流程。  
-> **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](./README.md)、[推荐阅读入口](#推荐阅读入口) 与 全库治理文档导航（若与全库导航相关）。  
+> **维护**：在 `00_MANAGEMENT/` 新增规章类文档时，请同步更新 [项目办公室 README](../README.md)、[推荐阅读入口](#推荐阅读入口) 与 全库治理文档导航（若与全库导航相关）。  
 > **任务 3 状态**：2026-04-10 已完成 — 过程报告已迁入 `01_BLUEPRINTS/REPORTS/`，`INDEX.md` 已重生成；防幻觉执行协议见 BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md。  
 > **全仓库分层治理**：与任务 1～6 **并列**、**不互相替代**；控制面口径见 蓝图交付标准（机构精华版） **§1.5**，勾选见本文 **「全仓库分层治理（扩展轨）」**。
 > **MCP 插件使用手册**：MCP_PLUGIN_USAGE_HANDBOOK.md — 蓝图终稿任务的插件整合方案，含门禁三段补齐、契约链接验证、蓝图关联分析等工作流程。与本文 **任务 5**（门禁三段）互指。
@@ -58,8 +58,8 @@ layer: layer_05
 | **蓝图交付标准（机构精华版，目标态）**                                  | `BLUEPRINT_DELIVERY_STANDARD_INSTITUTIONAL_LITE.md`            |
 | **文档治理架构（L0～L5）**                                      | `DOCUMENT_GOVERNANCE_ARCHITECTURE.md`                          |
 | **受控文档登记表（按需填写）**                                      | `CONTROLLED_DOCUMENTS_REGISTER.md`                             |
-| **项目办公室总入口**                                           | [`README.md`](./README.md)                                     |
-| **本目录文件索引（防漂移）**                                      | [`INDEX.md`](./INDEX.md)                                       |
+| **项目办公室总入口**                                           | [`README.md`](../README.md)                                     |
+| **本目录文件索引（防漂移）**                                      | [`INDEX.md`](../INDEX.md)                                       |
 | **AI / 协作者交接说明**                                       | `PROJECT_OFFICE_AI_HANDOFF.md`                                 |
 | **图纸柜执行协议（防幻觉）**                                       | `BLUEPRINT_CABINET_EXECUTION_PROTOCOL.md`                      |
 | **全库治理文档导航**                                           | `GOVERNANCE_DOCUMENTS_NAVIGATION.md`                           |
@@ -202,7 +202,7 @@ layer: layer_05
 - **分层与验收口径**已写入受控交付标准（§1.5）与本清单扩展轨（2026-04-10）
 - **仓库根事故处置**已形成 仓库根治理 Playbook 并与 W2/W4 互指（2026-04-10，commit `b24eebce`）
 - Owner 已确认 **R0～R4** 与本仓实际目录命名一致 — **备注（2026-04-10）**：**R0** 文档与设计 = `docs/`；**R1** 仓库门面与配置 = 仓库根 `README.md`、`.gitignore`、`.pre-commit-config.yaml`、`.env.example` 等；**R2** 脚本与自动化 = `scripts/`；**R3** 源码与工程 = `src/`（入口见根 README `python -m src.main`）；**R4** 排除层 = `.venv/`、`.pytest_cache/`、`.audit_cache/`、`.trae/` 等（以 `.gitignore` 为准）。磁盘顶层目录已与 Owner 口径核对。
-- [项目办公室 README](./README.md) 与 AI 交接说明 已能指到 §1.5 与本节（2026-04-10）
+- [项目办公室 README](../README.md) 与 AI 交接说明 已能指到 §1.5 与本节（2026-04-10）
 
 ### W1：R0 文档层整体验收（超出蓝图清单者）
 
@@ -392,7 +392,7 @@ python scripts/analyze_and_fix_folder_structure.py --analyze-only
 
 | 版本    | 日期         | 说明                                                                                                                                   |
 | ----- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1.2.1 | 2026-04-13 | 修正错误占位链接（办公室 README、根 README、`scripts/README`、图纸柜 INDEX）；恢复 front matter；维护段互指 [INDEX.md](./INDEX.md) |
+| 1.2.1 | 2026-04-13 | 修正错误占位链接（办公室 README、根 README、`scripts/README`、图纸柜 INDEX）；恢复 front matter；维护段互指 [INDEX.md](../INDEX.md) |
 | 1.2.0 | 2026-04-13 | **Layer 11 蓝图终稿完成**：P0 级 5/5 完成（整合分散蓝图 3 个），P1/P2 级 8/8 完成（发现已存在分散蓝图），总计 32/32 (100%)。更新 `complete-blueprint-overview.md` 统计，归档重复版本。 |
 | 1.1.9 | 2026-04-16 | 文首/机构顺序/推荐阅读互指 LAYOUT **§1 第 6 条**、放置规程 **§1.6**、REPO_WIDE **§2.3.2**（「位置是否正确」分桶与入链分立）                                               |
 | 1.1.8 | 2026-04-11 | W2 可选密钥扫描：勾选并以 `W2_SECRET_PATTERN_SPOTCHECK_20260410` 为等价抽检证据；互指 REPO_WIDE §6                                                        |

@@ -522,7 +522,5 @@ docs/
 **维护者**: 系统架构师
 **状态**: ✅ 活跃维护 | 治理健康度: L2 通过（断链 0 / module_id 重复 0）
 
-
-
 - [api-readme](api-readme.md)
 

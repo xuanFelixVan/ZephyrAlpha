@@ -968,7 +968,7 @@ implementation_status: ш┐ЫшбМ?
 
 
 
-- [цЮ╢цЮДхоЪф╣Й](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [цЮ╢цЮДхоЪф╣Й](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 
 

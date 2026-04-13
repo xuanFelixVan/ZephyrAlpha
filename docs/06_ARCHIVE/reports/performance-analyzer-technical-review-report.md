@@ -772,7 +772,7 @@ implementation_status: 进行?
 
 
 
-- [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 
 

@@ -333,7 +333,7 @@ implementation_status: 进行?
 
 
 
-**位置**: [03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md:349-353](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md)
+**位置**: [03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md:349-353](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/lifecycle.md)
 
 
 
@@ -367,7 +367,7 @@ implementation_status: 进行?
 
 
 
-**位置**: [03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md:260-261](../../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)
+**位置**: [03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md:260-261](../../03_TRADING_TACTICS/01_STRATEGY_FRAMEWORK/overview.md)
 
 
 

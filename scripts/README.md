@@ -26,8 +26,8 @@ responsibility:
 
 ## 文档治理与门禁（与任务清单 / 办公室互指）
 
-仓库根执行；**命令与产出总表（办公室）**：[治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md)。  
-详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/BLUEPRINT_PHASE_CLOSURE_TASK_LIST.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_ROOT_GOVERNANCE_PLAYBOOK.md)。**删稿裁决**：[文件删除与保留裁决 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/FILE_DELETION_OR_RETENTION_PLAYBOOK.md)。
+仓库根执行；**命令与产出总表（办公室）**：[治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md)。  
+详情见 [全库蓝图终稿任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md) 与 [仓库根治理 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/repo-root-governance-playbook.md)。**删稿裁决**：[文件删除与保留裁决 Playbook](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/file-deletion-or-retention-playbook.md)。
 
 **实现目录**：[`scripts/governance/`](governance/)（推荐 `python scripts/governance/<脚本名>`）。本目录根下的同名 `.py` 为 **兼容转发**（`runpy`），旧文档中的 `python scripts/<脚本名>.py` 仍可用。
 
@@ -35,7 +35,7 @@ responsibility:
 
 | 类别 | 位置 / 说明 |
 |------|-------------|
-| **文档治理与门禁** | 上表及 [`governance/`](governance/) 目录；**权威命令表**仍以办公室 [治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md) 为准。 |
+| **文档治理与门禁** | 上表及 [`governance/`](governance/) 目录；**权威命令表**仍以办公室 [治理工具总索引](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/governance-tools-index.md) 为准。 |
 | **批量审计 / 编码 / Layer 修复** | `scripts/` 根目录下大量历史维护脚本（如 `layer*_*.py`、`fix_*.py`、`*_audit*.py`）；**无逐文件表**，按需 `Get-ChildItem scripts/*.py` 或 IDE 搜索；新脚本优先放入 `governance/` 或单任务子目录以免继续堆根目录。 |
 | **预提交与质量** | 如 [`pre_commit_hook.py`](pre_commit_hook.py)、[`pre_commit_check_module_id.py`](pre_commit_check_module_id.py)（与根 `.pre-commit-config.yaml` 配合）。 |
 | **环境与缓存** | 见下文「缓存清理脚本」[`clean_cache.py`](clean_cache.py)。 |
@@ -46,13 +46,13 @@ responsibility:
 | `verify_scattered_blueprints_manifest_links.py` | 校验分散蓝图清单内链 |
 | `generate_scattered_blueprints_manifest_task1.py` | 生成分散蓝图路径清单（STATE） |
 | `verify_manifest_paths_strict.py` | 校验总清单正文路径 |
-| `sentinel_l1_governance_scan.py` | 工作区递归 `*.md` 内链 + 首道 front matter `module_id`（报告在 `docs/09_AUDIT/STATE/`）；**非** `git ls-files` 全集，见 [任务清单 §1.1](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) |
+| `sentinel_l1_governance_scan.py` | 工作区递归 `*.md` 内链 + 首道 front matter `module_id`（报告在 `docs/09_AUDIT/STATE/`）；**非** `git ls-files` 全集，见 [任务清单 §1.1](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md) |
 | `backfill_missing_module_id.py` | 批量补首道 `module_id`（粘连 `---`、未闭合 FM、无头等）；`--apply` 后须复跑 `sentinel_l1_governance_scan.py` |
-| `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合路径计数（默认可视为 `git ls-files`；可加 `--include-untracked`）→ `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md) **§1、§7** |
+| `export_repo_directory_rollup.py` | 按目录深度 2～6 聚合路径计数（默认可视为 `git ls-files`；可加 `--include-untracked`）→ `docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_*`；见 [全仓库文件治理任务清单](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/repo-wide-file-governance-task-list.md) **§1、§7** |
 | `generate_architecture_service_catalog.py` | 架构/服务目录 + C4 摘要 + 可检索 JSON：`pyproject`、`src/`、`src/api/routes`、根目录机构缺口表 → `docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_*` |
 | `scan_duplicate_file_content.py` | **内容 SHA256 重复**（**必须** `--ext`，如 `md`；可选 `--include-untracked`）→ `docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_*`；不自动删稿 |
 | `scan_basename_collisions.py` | **同名不同路径（basename）**报表，默认 `docs/` 下 `.md` → `docs/09_AUDIT/STATE/BASENAME_COLLISIONS_*` |
-| `scan_index_health.py` | **`docs/` 零入链候选**（全库 md 相对链统计）→ `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；见 [放置规程 §5.2](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/DOCUMENT_MAP_AND_PLACEMENT_GOVERNANCE.md) |
+| `scan_index_health.py` | **`docs/` 零入链候选**（全库 md 相对链统计）→ `docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_*`；见 [放置规程 §5.2](../docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/document-map-and-placement-governance.md) |
 | `scan_blueprint_d_overlap_candidates.py` | **蓝图 D 类重叠候选**（启发式）→ `docs/09_AUDIT/STATE/BLUEPRINT_D_OVERLAP_CANDIDATES_*`；规程见办公室 `D_CLASS_BLUEPRINT_OVERLAP_PLAYBOOK.md` |
 | `triage_blueprint_d_overlap_pairs.py` | D 类 **A 档分流** + 二审用 `BLUEPRINT_D_OVERLAP_SECOND_PASS_QUEUE_*.jsonl`；提示词模板见办公室 `D_CLASS_OVERLAP_SECOND_PASS_PROMPT_TEMPLATE.md` |
 
@@ -248,7 +248,7 @@ preserve_dirs = [
 ## 🔗 相关文档
 
 - [.gitignore配置](../.gitignore) - 清理规则来源
-- [开发规范](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/DEVELOPER_RULES.md) - 开发工作流
+- [开发规范](../docs/05_IMPLEMENTATION/02_DEVELOPMENT/developer-rules.md) - 开发工作流
 -  - 系统监控体系
 
 ```---

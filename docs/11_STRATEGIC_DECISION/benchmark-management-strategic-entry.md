@@ -17,4 +17,4 @@ layer: layer_00
 
 **正式蓝图（canonical）**：BENCHMARK_MANAGEMENT_BLUEPRINT.md
 
-原同目录 `BENCHMARK_MANAGEMENT_BLUEPRINT.md` 与图纸柜 **basename 碰撞**，且存在双 YAML 等结构问题；正文以图纸柜文稿为准。删除前长文快照见 [`06_ARCHIVE/20260410_c2_benchmark_management/`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。
+原同目录 `BENCHMARK_MANAGEMENT_BLUEPRINT.md` 与图纸柜 **basename 碰撞**，且存在双 YAML 等结构问题；正文以图纸柜文稿为准。删除前长文快照见 [`06_ARCHIVE/20260410_c2_benchmark_management/`](../10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)。

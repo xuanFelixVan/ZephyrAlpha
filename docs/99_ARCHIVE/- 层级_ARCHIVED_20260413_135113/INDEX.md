@@ -24,9 +24,9 @@ responsibility:
 
 ## 文档列表
 
-- [common-issues-solutions](./common-issues-solutions.md)
-- [document-structure-standard](./document-structure-standard.md)
-- [overlap-document-structure-standard-20260407-190203](./overlap-document-structure-standard-20260407-190203.md)
+- [common-issues-solutions](../../10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/common-issues-solutions.md)
+- [document-structure-standard](../../06_ARCHIVE/unclassified/document-structure-standard.md)
+- [overlap-document-structure-standard-20260407-190203](../../06_ARCHIVE/blueprints/overlap-document-structure-standard-20260407-190203.md)
 
 
 ---

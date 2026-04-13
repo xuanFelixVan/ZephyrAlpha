@@ -24,10 +24,10 @@ responsibility:
 
 ## 文档列表
 
-- [disaster-recovery-blueprint-legacy-01-framework](./disaster-recovery-blueprint-legacy-01-framework.md)
-- [document-version-naming-standard](./document-version-naming-standard.md)
-- [human-ai-interface-layer-deep-audit-report-20260407](./human-ai-interface-layer-deep-audit-report-20260407.md)
-- [optimization-report-20260407](./optimization-report-20260407.md)
+- [disaster-recovery-blueprint-legacy-01-framework](../../06_ARCHIVE/blueprints/disaster-recovery-blueprint-legacy-01-framework.md)
+- [document-version-naming-standard](../../09_AUDIT/STANDARDS/document-version-naming-standard.md)
+- [human-ai-interface-layer-deep-audit-report-20260407](../../09_AUDIT/REPORTS/human-ai-interface-layer-deep-audit-report-20260407.md)
+- [optimization-report-20260407](../../05_IMPLEMENTATION/04_OPERATIONS/audit_state/optimization-report-20260407.md)
 
 
 ---

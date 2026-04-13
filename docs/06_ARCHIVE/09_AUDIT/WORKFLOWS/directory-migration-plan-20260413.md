@@ -235,9 +235,9 @@ git checkout HEAD -- docs/
 
 ## 六、关联文档
 
-- [新目录创建SOP](./new-directory-creation-workflow.md)
+- [新目录创建SOP](../../../09_AUDIT/WORKFLOWS/new-directory-creation-workflow.md)
 - 目录命名检查脚本
-- [外部审计安全评估](../../11_STRATEGIC_DECISION/EXTERNAL_AUDIT_SECURITY_ASSESSMENT_20260413.md)
+- [外部审计安全评估](../../../11_STRATEGIC_DECISION/EXTERNAL_AUDIT_SECURITY_ASSESSMENT_20260413.md)
 
 ```
 ```---

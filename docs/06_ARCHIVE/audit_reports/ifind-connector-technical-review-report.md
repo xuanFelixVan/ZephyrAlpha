@@ -881,7 +881,7 @@ implementation_status: 进行?
 
 - iFind连接器技术规格书
 
-- [架构定义](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [架构定义](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 - 模块职责边界
 

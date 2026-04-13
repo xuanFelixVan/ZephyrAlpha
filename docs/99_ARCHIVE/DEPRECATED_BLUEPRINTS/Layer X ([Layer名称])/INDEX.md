@@ -24,7 +24,7 @@ responsibility:
 
 ## 文档列表
 
-- [document-creation-process](./document-creation-process.md)
+- [document-creation-process](../../../10_GOVERNANCE_COMPLIANCE/GOVERNANCE_PROCESSES/document-creation-process.md)
 
 
 ---

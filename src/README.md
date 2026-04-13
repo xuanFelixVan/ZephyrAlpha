@@ -25,4 +25,4 @@ applicable_scope: src/
 | [`data/`](data/) | 数据层占位/初始化 |
 | [`utils/`](utils/) | 文档治理检查、链接校验、元数据工具等 |
 
-**自动生成、可检索的组件/端点表**：[`docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md)（复跑 `python scripts/governance/generate_architecture_service_catalog.py`）。
+**自动生成、可检索的组件/端点表**：[`docs/09_AUDIT/STATE/ARCHITECTURE_SERVICE_CATALOG_20260410.md`](../docs/09_AUDIT/STATE/architecture-service-catalog-20260410.md)（复跑 `python scripts/governance/generate_architecture_service_catalog.py`）。

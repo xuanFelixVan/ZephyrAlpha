@@ -384,11 +384,13 @@ def classify_and_fix(
 # ---------------------------------------------------------------------------
 
 def apply_fixes(results: list[dict], repo: Path) -> dict[str, int]:
-    """Actually modify files. Returns stats."""
+    """Actually modify files. Returns stats.
+    NOTE: caller passes pre-filtered list; accept all entries passed in.
+    """
     stats = {"replaced": 0, "removed": 0, "skipped": 0, "errors": 0}
     by_source: dict[str, list[dict]] = defaultdict(list)
     for r in results:
-        if r["action"] == "REPLACE" and r["confidence"] in ("high", "medium"):
+        if r["action"] == "REPLACE":
             by_source[r["source"]].append(r)
 
     for source_rel, fixes in by_source.items():

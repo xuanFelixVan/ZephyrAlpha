@@ -646,7 +646,7 @@ layer: layer_05
 - [strategy-portfolio-optimization-blueprint](strategy-portfolio-optimization-blueprint.md)
 
 <!-- orphan-link -->
-- [strategy-selection-blueprint](strategy-selection-blueprint.md)
+- [strategy-selection-blueprint](../../../../.audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/strategy-selection-blueprint.md)
 
 <!-- orphan-link -->
 - [stress-testing-blueprint](stress-testing-blueprint.md)

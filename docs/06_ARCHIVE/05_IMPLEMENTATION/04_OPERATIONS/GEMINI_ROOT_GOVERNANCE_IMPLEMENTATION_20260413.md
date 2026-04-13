@@ -245,10 +245,10 @@ python scripts/sync_index.py --dir docs/09_AUDIT/WORKFLOWS
 ```markdown
 ### 核心文档
 
-- [Doc Archival Workflow](../../09_AUDIT/WORKFLOWS/doc-archival-workflow.md) - `DOCARCHIVALWORKFLOW_001`
-- [Doc Creation Workflow](09_AUDIT/WORKFLOWS/doc-creation-workflow.md) - `DOCCREATIONWORKFLOW_001`
-- [Periodic Audit Workflow](../../09_AUDIT/WORKFLOWS/periodic-audit-workflow.md) - `PERIODICAUDITWORKFLOW_001`
-- [New Directory Creation Workflow](09_AUDIT/WORKFLOWS/new-directory-creation-workflow.md) - `NEW_DIRECTORY_CREATION_WORKFLOW`
+- [Doc Archival Workflow](../../../09_AUDIT/WORKFLOWS/doc-archival-workflow.md) - `DOCARCHIVALWORKFLOW_001`
+- [Doc Creation Workflow](../../../09_AUDIT/WORKFLOWS/doc-creation-workflow.md) - `DOCCREATIONWORKFLOW_001`
+- [Periodic Audit Workflow](../../../09_AUDIT/WORKFLOWS/periodic-audit-workflow.md) - `PERIODICAUDITWORKFLOW_001`
+- [New Directory Creation Workflow](../../../09_AUDIT/WORKFLOWS/new-directory-creation-workflow.md) - `NEW_DIRECTORY_CREATION_WORKFLOW`
 ```
 
 ##### 3.5 脚本类和方法

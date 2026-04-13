@@ -924,7 +924,7 @@ implementation_status: ϋ┐δϋκΝ?
 
 
 
-- [όη╢όηΕίχγϊ╣Κ](../../../01_FRAMEWORK/ARCHITECTURE.md)
+- [όη╢όηΕίχγϊ╣Κ](../../01_FRAMEWORK/ARCHITECTURE.md)
 
 
 
