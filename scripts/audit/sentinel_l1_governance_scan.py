@@ -25,7 +25,7 @@ REPO = Path(__file__).resolve().parents[2]
 SKIP_PARTS = {".git", ".venv", ".pytest_cache", "__pycache__"}
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)
-MAX_DETAIL = 800  # 明细条数上限，防止报告过大
+MAX_DETAIL = 20000  # 扩容至全量（Phase 2 需完整断链列表供 fix_dead_links.py 消费）
 # 本脚本覆写的 Markdown 报告：本轮扫描读到的仍是旧稿，勿计入「无 module_id」以免自指为 1
 L1_REPORT_MD_REL = "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md"
 
