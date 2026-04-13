@@ -132,3 +132,48 @@ layer: layer_09
 **索引状态**: ✅ 活跃
 **维护频率**: 按需更新
 **下次更新**: 按需
+
+<!-- orphan-link -->
+- [adr-template](adr-template.md)
+
+<!-- orphan-link -->
+- [ai-document-governance-audit-prompt](ai-document-governance-audit-prompt.md)
+
+<!-- orphan-link -->
+- [blueprint-standard-template](blueprint-standard-template.md)
+
+<!-- orphan-link -->
+- [decision-record-template](decision-record-template.md)
+
+<!-- orphan-link -->
+- [document-governance-audit-checklist](document-governance-audit-checklist.md)
+
+<!-- orphan-link -->
+- [document-template](document-template.md)
+
+<!-- orphan-link -->
+- [emergency-response-plan](emergency-response-plan.md)
+
+<!-- orphan-link -->
+- [module-interface-template](module-interface-template.md)
+
+<!-- orphan-link -->
+- [monthly-audit-report-template](monthly-audit-report-template.md)
+
+<!-- orphan-link -->
+- [professional-document-governance-audit-guide](professional-document-governance-audit-guide.md)
+
+<!-- orphan-link -->
+- [quarterly-audit-report-template](quarterly-audit-report-template.md)
+
+<!-- orphan-link -->
+- [research-memo-template](research-memo-template.md)
+
+<!-- orphan-link -->
+- [risk-event-template](risk-event-template.md)
+
+<!-- orphan-link -->
+- [stress-test-template](stress-test-template.md)
+
+<!-- orphan-link -->
+- [weekly-audit-report-template](weekly-audit-report-template.md)

@@ -115,3 +115,11 @@ layer: layer_02
 
 | v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |
 
+<!-- orphan-link -->
+- [factor-management-standard](factor-management-standard.md)
+
+<!-- orphan-link -->
+- [factor-registry](factor-registry.md)
+
+<!-- orphan-link -->
+- [factor-taxonomy](factor-taxonomy.md)

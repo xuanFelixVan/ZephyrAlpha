@@ -276,5 +276,32 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [retail-strategies-c](retail-strategies-c.md)
 
+<!-- orphan-link -->
+- [retail-strategies-d](retail-strategies-d.md)
 
+<!-- orphan-link -->
+- [retail-strategies-e](retail-strategies-e.md)
+
+<!-- orphan-link -->
+- [retail-strategies-f](retail-strategies-f.md)
+
+<!-- orphan-link -->
+- [retail-strategies-g](retail-strategies-g.md)
+
+<!-- orphan-link -->
+- [retail-strategies-h](retail-strategies-h.md)
+
+<!-- orphan-link -->
+- [retail-strategies-i](retail-strategies-i.md)
+
+<!-- orphan-link -->
+- [retail-strategies-j](retail-strategies-j.md)
+
+<!-- orphan-link -->
+- [retail-strategies-k](retail-strategies-k.md)
+
+<!-- orphan-link -->
+- [retail-strategies-l](retail-strategies-l.md)

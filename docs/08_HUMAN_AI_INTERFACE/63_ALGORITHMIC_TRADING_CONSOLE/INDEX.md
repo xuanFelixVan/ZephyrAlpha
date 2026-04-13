@@ -156,3 +156,5 @@ responsibility: 处理INDEX相关业务
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [algorithmic-trading-console-blueprint](algorithmic-trading-console-blueprint.md)

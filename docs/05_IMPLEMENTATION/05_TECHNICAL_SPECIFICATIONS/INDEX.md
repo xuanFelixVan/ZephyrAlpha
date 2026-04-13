@@ -840,3 +840,287 @@ applicable_scope: "全系统技术规格书（Layer 0-11）compliance_level: 专
 
 - Multi-Objective Optimization技术规格书 v1.0
 
+<!-- orphan-link -->
+- [ai-constraint-engine-technical-specification](ai-constraint-engine-technical-specification.md)
+
+<!-- orphan-link -->
+- [ai-explainability-technical-specification](ai-explainability-technical-specification.md)
+
+<!-- orphan-link -->
+- [ai-factor-miner-implementation-summary](ai-factor-miner-implementation-summary.md)
+
+<!-- orphan-link -->
+- [ai-factor-miner-technical-specification](ai-factor-miner-technical-specification.md)
+
+<!-- orphan-link -->
+- [ai-pattern-recognition-engine-technical-specification](ai-pattern-recognition-engine-technical-specification.md)
+
+<!-- orphan-link -->
+- [ai-virtual-research-team-technical-specification](ai-virtual-research-team-technical-specification.md)
+
+<!-- orphan-link -->
+- [all-weather-optimizer-technical-specification](all-weather-optimizer-technical-specification.md)
+
+<!-- orphan-link -->
+- [alpha-factor-factory-technical-specification](alpha-factor-factory-technical-specification.md)
+
+<!-- orphan-link -->
+- [alternative-data-integration-technical-specification](alternative-data-integration-technical-specification.md)
+
+<!-- orphan-link -->
+- [api-reference](api-reference.md)
+
+<!-- orphan-link -->
+- [ashare-historical-data-technical-specification](ashare-historical-data-technical-specification.md)
+
+<!-- orphan-link -->
+- [baostock-technical-specification](baostock-technical-specification.md)
+
+<!-- orphan-link -->
+- [barra-risk-model-technical-specification](barra-risk-model-technical-specification.md)
+
+<!-- orphan-link -->
+- [black-litterman-model-technical-specification](black-litterman-model-technical-specification.md)
+
+<!-- orphan-link -->
+- [compliance-checker-technical-specification](compliance-checker-technical-specification.md)
+
+<!-- orphan-link -->
+- [config-manager-technical-specification](config-manager-technical-specification.md)
+
+<!-- orphan-link -->
+- [constraint-solver-technical-specification](constraint-solver-technical-specification.md)
+
+<!-- orphan-link -->
+- [daily-portfolio-optimizer-technical-specification](daily-portfolio-optimizer-technical-specification.md)
+
+<!-- orphan-link -->
+- [daily-reporter-technical-specification](daily-reporter-technical-specification.md)
+
+<!-- orphan-link -->
+- [data-preprocessing-improvement-plan](data-preprocessing-improvement-plan.md)
+
+<!-- orphan-link -->
+- [data-source-inventory](data-source-inventory.md)
+
+<!-- orphan-link -->
+- [datacleaner-technical-specification](datacleaner-technical-specification.md)
+
+<!-- orphan-link -->
+- [datanormalizer-technical-specification](datanormalizer-technical-specification.md)
+
+<!-- orphan-link -->
+- [datavalidator-technical-specification](datavalidator-technical-specification.md)
+
+<!-- orphan-link -->
+- [document-auditor-specification](document-auditor-specification.md)
+
+<!-- orphan-link -->
+- [document-classifier-specification](document-classifier-specification.md)
+
+<!-- orphan-link -->
+- [document-governance-process](document-governance-process.md)
+
+<!-- orphan-link -->
+- [dynamic-correlation-modeling-technical-specification](dynamic-correlation-modeling-technical-specification.md)
+
+<!-- orphan-link -->
+- [dynamic-leverage-management-technical-specification](dynamic-leverage-management-technical-specification.md)
+
+<!-- orphan-link -->
+- [economic-regime-reporter-technical-specification](economic-regime-reporter-technical-specification.md)
+
+<!-- orphan-link -->
+- [event-detector-technical-specification](event-detector-technical-specification.md)
+
+<!-- orphan-link -->
+- [extreme-market-handler-technical-specification](extreme-market-handler-technical-specification.md)
+
+<!-- orphan-link -->
+- [factor-backtest-technical-specification](factor-backtest-technical-specification.md)
+
+<!-- orphan-link -->
+- [factor-calculator-technical-specification](factor-calculator-technical-specification.md)
+
+<!-- orphan-link -->
+- [factor-combination-technical-specification](factor-combination-technical-specification.md)
+
+<!-- orphan-link -->
+- [factor-ic-technical-specification](factor-ic-technical-specification.md)
+
+<!-- orphan-link -->
+- [factor-store-technical-specification](factor-store-technical-specification.md)
+
+<!-- orphan-link -->
+- [feature-engineering-technical-specification](feature-engineering-technical-specification.md)
+
+<!-- orphan-link -->
+- [feedback-collector-technical-specification](feedback-collector-technical-specification.md)
+
+<!-- orphan-link -->
+- [help-system-technical-specification](help-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [ifind-connector-technical-specification](ifind-connector-technical-specification.md)
+
+<!-- orphan-link -->
+- [interface-version-control](interface-version-control.md)
+
+<!-- orphan-link -->
+- [liquidity-management-system-technical-specification](liquidity-management-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [lstm-model-technical-specification](lstm-model-technical-specification.md)
+
+<!-- orphan-link -->
+- [margin-call-monitor-technical-specification](margin-call-monitor-technical-specification.md)
+
+<!-- orphan-link -->
+- [market-analyzer-technical-specification](market-analyzer-technical-specification.md)
+
+<!-- orphan-link -->
+- [market-impact-model-technical-specification](market-impact-model-technical-specification.md)
+
+<!-- orphan-link -->
+- [market-participant-simulation-spec](market-participant-simulation-spec.md)
+
+<!-- orphan-link -->
+- [market-regime-system-technical-specification](market-regime-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [mean-variance-optimization-technical-specification](mean-variance-optimization-technical-specification.md)
+
+<!-- orphan-link -->
+- [metadata-enhancer-specification](metadata-enhancer-specification.md)
+
+<!-- orphan-link -->
+- [model-serving-architecture-technical-specification](model-serving-architecture-technical-specification.md)
+
+<!-- orphan-link -->
+- [model-training-pipeline-technical-specification](model-training-pipeline-technical-specification.md)
+
+<!-- orphan-link -->
+- [module-registry](module-registry.md)
+
+<!-- orphan-link -->
+- [module-relationship-diagram](module-relationship-diagram.md)
+
+<!-- orphan-link -->
+- [monthly-reporter-technical-specification](monthly-reporter-technical-specification.md)
+
+<!-- orphan-link -->
+- [multi-asset-allocation-technical-specification](multi-asset-allocation-technical-specification.md)
+
+<!-- orphan-link -->
+- [multi-objective-optimization-technical-specification](multi-objective-optimization-technical-specification.md)
+
+<!-- orphan-link -->
+- [news-crawler-technical-specification](news-crawler-technical-specification.md)
+
+<!-- orphan-link -->
+- [news-stock-matcher-technical-specification](news-stock-matcher-technical-specification.md)
+
+<!-- orphan-link -->
+- [notification-system-technical-specification](notification-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [performance-analyzer-technical-specification](performance-analyzer-technical-specification.md)
+
+<!-- orphan-link -->
+- [portfolio-attribution-technical-specification](portfolio-attribution-technical-specification.md)
+
+<!-- orphan-link -->
+- [portfolio-performance-evaluation-technical-specification](portfolio-performance-evaluation-technical-specification.md)
+
+<!-- orphan-link -->
+- [portfolio-rebalancing-technical-specification](portfolio-rebalancing-technical-specification.md)
+
+<!-- orphan-link -->
+- [position-manager-technical-specification](position-manager-technical-specification.md)
+
+<!-- orphan-link -->
+- [qlib-alpha158-technical-specification](qlib-alpha158-technical-specification.md)
+
+<!-- orphan-link -->
+- [qmt-data-interface-technical-specification](qmt-data-interface-technical-specification.md)
+
+<!-- orphan-link -->
+- [qmt-executor-technical-specification](qmt-executor-technical-specification.md)
+
+<!-- orphan-link -->
+- [realtime-risk-hedge-engine-technical-specification](realtime-risk-hedge-engine-technical-specification.md)
+
+<!-- orphan-link -->
+- [risk-attribution-system-technical-specification](risk-attribution-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [risk-control-technical-specification](risk-control-technical-specification.md)
+
+<!-- orphan-link -->
+- [risk-parity-strategy-technical-specification](risk-parity-strategy-technical-specification.md)
+
+<!-- orphan-link -->
+- [scenario-analyzer-technical-specification](scenario-analyzer-technical-specification.md)
+
+<!-- orphan-link -->
+- [sentiment-analyzer-technical-specification](sentiment-analyzer-technical-specification.md)
+
+<!-- orphan-link -->
+- [signal-generator-technical-specification](signal-generator-technical-specification.md)
+
+<!-- orphan-link -->
+- [signal-quality-reporter-technical-specification](signal-quality-reporter-technical-specification.md)
+
+<!-- orphan-link -->
+- [simplified-risk-budget-system-technical-specification](simplified-risk-budget-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [simplified-timeframe-coordination-technical-specification](simplified-timeframe-coordination-technical-specification.md)
+
+<!-- orphan-link -->
+- [smart-execution-engine-technical-specification](smart-execution-engine-technical-specification.md)
+
+<!-- orphan-link -->
+- [statistical-arbitrage-module-technical-specification](statistical-arbitrage-module-technical-specification.md)
+
+<!-- orphan-link -->
+- [strategy-engine-technical-specification](strategy-engine-technical-specification.md)
+
+<!-- orphan-link -->
+- [stress-testing-system-technical-specification](stress-testing-system-technical-specification.md)
+
+<!-- orphan-link -->
+- [supercommand-technical-specification](supercommand-technical-specification.md)
+
+<!-- orphan-link -->
+- [system-monitor-technical-specification](system-monitor-technical-specification.md)
+
+<!-- orphan-link -->
+- [technical-evolution-roadmap](technical-evolution-roadmap.md)
+
+<!-- orphan-link -->
+- [technical-specification-template](technical-specification-template.md)
+
+<!-- orphan-link -->
+- [trade-auditor-technical-specification](trade-auditor-technical-specification.md)
+
+<!-- orphan-link -->
+- [trading-cost-optimization-technical-specification](trading-cost-optimization-technical-specification.md)
+
+<!-- orphan-link -->
+- [transaction-cost-aware-rebalancing-technical-specification](transaction-cost-aware-rebalancing-technical-specification.md)
+
+<!-- orphan-link -->
+- [transformer-model-technical-specification](transformer-model-technical-specification.md)
+
+<!-- orphan-link -->
+- [unified-interface-contract-specification](unified-interface-contract-specification.md)
+
+<!-- orphan-link -->
+- [usage-guide](usage-guide.md)
+
+<!-- orphan-link -->
+- [user-preferences-technical-specification](user-preferences-technical-specification.md)
+
+<!-- orphan-link -->
+- [var-es-monitoring-technical-specification](var-es-monitoring-technical-specification.md)

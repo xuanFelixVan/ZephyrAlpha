@@ -19,3 +19,6 @@ layer: layer_08
 | COMPLIANCE_MONITORING_LAYER8_MODULE.md | Layer 8 入口 | 指向正式稿 COMPLIANCE_MONITORING_BLUEPRINT.md |
 
 **索引状态**：活跃 | **维护**：按需更新
+
+<!-- orphan-link -->
+- [compliance-monitoring-layer8-module](compliance-monitoring-layer8-module.md)

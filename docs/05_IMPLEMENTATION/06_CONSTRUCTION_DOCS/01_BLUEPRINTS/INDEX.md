@@ -206,3 +206,495 @@ layer: layer_05
 ```
 
 **维护**: 新增/重命名蓝图后运行 `python scripts/governance/generate_01_blueprints_index.py` 更新本页。
+
+<!-- orphan-link -->
+- [algorithmic-trading-optimizer-blueprint](algorithmic-trading-optimizer-blueprint.md)
+
+<!-- orphan-link -->
+- [alpha-factor-factory-blueprint](alpha-factor-factory-blueprint.md)
+
+<!-- orphan-link -->
+- [alternative-data-integration-blueprint](alternative-data-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [api-documentation-blueprint](api-documentation-blueprint.md)
+
+<!-- orphan-link -->
+- [api-gateway-blueprint](api-gateway-blueprint.md)
+
+<!-- orphan-link -->
+- [audit-logging-blueprint](audit-logging-blueprint.md)
+
+<!-- orphan-link -->
+- [auto-repair-engine-blueprint](auto-repair-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [barra-risk-model-blueprint](barra-risk-model-blueprint.md)
+
+<!-- orphan-link -->
+- [benchmark-management-blueprint](benchmark-management-blueprint.md)
+
+<!-- orphan-link -->
+- [black-litterman-model-blueprint](black-litterman-model-blueprint.md)
+
+<!-- orphan-link -->
+- [cdc-change-data-capture-blueprint](cdc-change-data-capture-blueprint.md)
+
+<!-- orphan-link -->
+- [ci-cd-pipeline-blueprint](ci-cd-pipeline-blueprint.md)
+
+<!-- orphan-link -->
+- [clickhouse-integration-blueprint](clickhouse-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [code-quality-blueprint](code-quality-blueprint.md)
+
+<!-- orphan-link -->
+- [cointegration-analysis-blueprint](cointegration-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [config-center-blueprint](config-center-blueprint.md)
+
+<!-- orphan-link -->
+- [configuration-management-blueprint](configuration-management-blueprint.md)
+
+<!-- orphan-link -->
+- [constraint-conflict-resolver-blueprint](constraint-conflict-resolver-blueprint.md)
+
+<!-- orphan-link -->
+- [constraint-solver-integration-blueprint](constraint-solver-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [container-orchestration-blueprint](container-orchestration-blueprint.md)
+
+<!-- orphan-link -->
+- [covariance-estimation-enhancement-blueprint](covariance-estimation-enhancement-blueprint.md)
+
+<!-- orphan-link -->
+- [cvar-optimization-blueprint](cvar-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [data-access-audit-blueprint](data-access-audit-blueprint.md)
+
+<!-- orphan-link -->
+- [data-backup-recovery-blueprint](data-backup-recovery-blueprint.md)
+
+<!-- orphan-link -->
+- [data-catalog-blueprint](data-catalog-blueprint.md)
+
+<!-- orphan-link -->
+- [data-cleaning-engine-blueprint](data-cleaning-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [data-cost-management-blueprint](data-cost-management-blueprint.md)
+
+<!-- orphan-link -->
+- [data-fabric-blueprint](data-fabric-blueprint.md)
+
+<!-- orphan-link -->
+- [data-governance-platform-blueprint](data-governance-platform-blueprint.md)
+
+<!-- orphan-link -->
+- [data-lifecycle-management-blueprint](data-lifecycle-management-blueprint.md)
+
+<!-- orphan-link -->
+- [data-lineage-enhanced-blueprint](data-lineage-enhanced-blueprint.md)
+
+<!-- orphan-link -->
+- [data-masking-encryption-blueprint](data-masking-encryption-blueprint.md)
+
+<!-- orphan-link -->
+- [data-mesh-blueprint](data-mesh-blueprint.md)
+
+<!-- orphan-link -->
+- [data-observability-blueprint](data-observability-blueprint.md)
+
+<!-- orphan-link -->
+- [data-orchestration-system-blueprint](data-orchestration-system-blueprint.md)
+
+<!-- orphan-link -->
+- [data-preprocessing-architecture-gap-analysis-blueprint](data-preprocessing-architecture-gap-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [data-preprocessing-complete-architecture-blueprint](data-preprocessing-complete-architecture-blueprint.md)
+
+<!-- orphan-link -->
+- [data-quality-enhanced-blueprint](data-quality-enhanced-blueprint.md)
+
+<!-- orphan-link -->
+- [data-quality-monitoring-blueprint](data-quality-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [data-security-compliance-blueprint](data-security-compliance-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-health-monitor-blueprint](data-source-health-monitor-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-management-blueprint](data-source-management-blueprint.md)
+
+<!-- orphan-link -->
+- [data-standardization-engine-blueprint](data-standardization-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [data-subscription-service-blueprint](data-subscription-service-blueprint.md)
+
+<!-- orphan-link -->
+- [data-validation-engine-blueprint](data-validation-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [data-version-control-blueprint](data-version-control-blueprint.md)
+
+<!-- orphan-link -->
+- [dependency-management-blueprint](dependency-management-blueprint.md)
+
+<!-- orphan-link -->
+- [dev-environment-blueprint](dev-environment-blueprint.md)
+
+<!-- orphan-link -->
+- [disaster-recovery-blueprint](disaster-recovery-blueprint.md)
+
+<!-- orphan-link -->
+- [distributed-tracing-blueprint](distributed-tracing-blueprint.md)
+
+<!-- orphan-link -->
+- [documentation-generation-blueprint](documentation-generation-blueprint.md)
+
+<!-- orphan-link -->
+- [dynamic-asset-allocation-blueprint](dynamic-asset-allocation-blueprint.md)
+
+<!-- orphan-link -->
+- [dynamic-correlation-modeling-blueprint](dynamic-correlation-modeling-blueprint.md)
+
+<!-- orphan-link -->
+- [dynamic-leverage-management-blueprint](dynamic-leverage-management-blueprint.md)
+
+<!-- orphan-link -->
+- [economic-regime-engine-blueprint](economic-regime-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [enhanced-alert-system-blueprint](enhanced-alert-system-blueprint.md)
+
+<!-- orphan-link -->
+- [esg-investment-system-blueprint](esg-investment-system-blueprint.md)
+
+<!-- orphan-link -->
+- [execution-strategy-backtester-blueprint](execution-strategy-backtester-blueprint.md)
+
+<!-- orphan-link -->
+- [extended-optimization-modules-blueprint](extended-optimization-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-backtest-integration-blueprint](factor-backtest-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-exposure-management-blueprint](factor-exposure-management-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-neutral-optimization-blueprint](factor-neutral-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [fault-diagnosis-blueprint](fault-diagnosis-blueprint.md)
+
+<!-- orphan-link -->
+- [financing-optimization-blueprint](financing-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [hierarchical-optimization-framework-blueprint](hierarchical-optimization-framework-blueprint.md)
+
+<!-- orphan-link -->
+- [hierarchical-risk-budget-blueprint](hierarchical-risk-budget-blueprint.md)
+
+<!-- orphan-link -->
+- [high-performance-data-pipeline-blueprint](high-performance-data-pipeline-blueprint.md)
+
+<!-- orphan-link -->
+- [integration-testing-blueprint](integration-testing-blueprint.md)
+
+<!-- orphan-link -->
+- [intraday-strategy-blueprint](intraday-strategy-blueprint.md)
+
+<!-- orphan-link -->
+- [ips-management-system-blueprint](ips-management-system-blueprint.md)
+
+<!-- orphan-link -->
+- [layer6-architecture-design-blueprint](layer6-architecture-design-blueprint.md)
+
+<!-- orphan-link -->
+- [layer6-data-flow-design-blueprint](layer6-data-flow-design-blueprint.md)
+
+<!-- orphan-link -->
+- [layer6-interface-specification-blueprint](layer6-interface-specification-blueprint.md)
+
+<!-- orphan-link -->
+- [layer6-opensource-integration-blueprint](layer6-opensource-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [layer6-test-strategy-blueprint](layer6-test-strategy-blueprint.md)
+
+<!-- orphan-link -->
+- [liquidity-constrained-optimization-blueprint](liquidity-constrained-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [liquidity-management-system-blueprint](liquidity-management-system-blueprint.md)
+
+<!-- orphan-link -->
+- [live-trading-interface-blueprint](live-trading-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [load-balancing-blueprint](load-balancing-blueprint.md)
+
+<!-- orphan-link -->
+- [log-aggregation-blueprint](log-aggregation-blueprint.md)
+
+<!-- orphan-link -->
+- [machine-learning-optimization-blueprint](machine-learning-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [macro-factor-system-blueprint](macro-factor-system-blueprint.md)
+
+<!-- orphan-link -->
+- [margin-call-monitor-blueprint](margin-call-monitor-blueprint.md)
+
+<!-- orphan-link -->
+- [market-impact-model-blueprint](market-impact-model-blueprint.md)
+
+<!-- orphan-link -->
+- [market-microstructure-simulation-blueprint](market-microstructure-simulation-blueprint.md)
+
+<!-- orphan-link -->
+- [market-participant-simulation-integration-blueprint](market-participant-simulation-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [market-regime-detection-blueprint](market-regime-detection-blueprint.md)
+
+<!-- orphan-link -->
+- [mean-variance-optimization-blueprint](mean-variance-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [missing-modules-summary-blueprint](missing-modules-summary-blueprint.md)
+
+<!-- orphan-link -->
+- [module-responsibility-boundaries-blueprint](module-responsibility-boundaries-blueprint.md)
+
+<!-- orphan-link -->
+- [monitoring-alerting-system-blueprint](monitoring-alerting-system-blueprint.md)
+
+<!-- orphan-link -->
+- [monitoring-dashboard-enhancement-blueprint](monitoring-dashboard-enhancement-blueprint.md)
+
+<!-- orphan-link -->
+- [multi-asset-correlation-modeling-blueprint](multi-asset-correlation-modeling-blueprint.md)
+
+<!-- orphan-link -->
+- [multi-objective-optimization-blueprint](multi-objective-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [multi-period-dynamic-optimization-blueprint](multi-period-dynamic-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [multi-strategy-hierarchical-system-blueprint](multi-strategy-hierarchical-system-blueprint.md)
+
+<!-- orphan-link -->
+- [object-storage-integration-blueprint](object-storage-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [opening-strategy-blueprint](opening-strategy-blueprint.md)
+
+<!-- orphan-link -->
+- [optimization-history-tracker-blueprint](optimization-history-tracker-blueprint.md)
+
+<!-- orphan-link -->
+- [optimization-result-validator-blueprint](optimization-result-validator-blueprint.md)
+
+<!-- orphan-link -->
+- [optimizer-diagnostics-blueprint](optimizer-diagnostics-blueprint.md)
+
+<!-- orphan-link -->
+- [order-flow-analysis-blueprint](order-flow-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [performance-testing-blueprint](performance-testing-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-attribution-blueprint](portfolio-attribution-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-capacity-estimator-blueprint](portfolio-capacity-estimator-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-comparison-tool-blueprint](portfolio-comparison-tool-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-constraint-management-blueprint](portfolio-constraint-management-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-diagnostics-toolkit-blueprint](portfolio-diagnostics-toolkit-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-diversification-metric-blueprint](portfolio-diversification-metric-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-drift-monitor-blueprint](portfolio-drift-monitor-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-health-scoring-blueprint](portfolio-health-scoring-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-insurance-strategy-blueprint](portfolio-insurance-strategy-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-optimization-blueprint](portfolio-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-optimization-diagnostics-blueprint](portfolio-optimization-diagnostics-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-optimizer-integration-blueprint](portfolio-optimizer-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-performance-evaluation-blueprint](portfolio-performance-evaluation-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-scenario-analysis-blueprint](portfolio-scenario-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [production-portfolio-pipeline-blueprint](production-portfolio-pipeline-blueprint.md)
+
+<!-- orphan-link -->
+- [quality-report-automation-blueprint](quality-report-automation-blueprint.md)
+
+<!-- orphan-link -->
+- [quality-scoring-system-blueprint](quality-scoring-system-blueprint.md)
+
+<!-- orphan-link -->
+- [quarterly-rebalance-blueprint](quarterly-rebalance-blueprint.md)
+
+<!-- orphan-link -->
+- [realtime-data-lake-blueprint](realtime-data-lake-blueprint.md)
+
+<!-- orphan-link -->
+- [realtime-risk-hedge-engine-blueprint](realtime-risk-hedge-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [redis-cache-layer-blueprint](redis-cache-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-attribution-system-blueprint](risk-attribution-system-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-contribution-analysis-blueprint](risk-contribution-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-control-blueprint](risk-control-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-parity-strategy-blueprint](risk-parity-strategy-blueprint.md)
+
+<!-- orphan-link -->
+- [robust-optimization-blueprint](robust-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [secrets-management-blueprint](secrets-management-blueprint.md)
+
+<!-- orphan-link -->
+- [security-scanning-blueprint](security-scanning-blueprint.md)
+
+<!-- orphan-link -->
+- [sensitivity-analysis-blueprint](sensitivity-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [service-discovery-blueprint](service-discovery-blueprint.md)
+
+<!-- orphan-link -->
+- [signal-decay-analyzer-blueprint](signal-decay-analyzer-blueprint.md)
+
+<!-- orphan-link -->
+- [simplified-risk-budget-system-blueprint](simplified-risk-budget-system-blueprint.md)
+
+<!-- orphan-link -->
+- [simplified-timeframe-coordination-blueprint](simplified-timeframe-coordination-blueprint.md)
+
+<!-- orphan-link -->
+- [slippage-model-blueprint](slippage-model-blueprint.md)
+
+<!-- orphan-link -->
+- [smart-execution-engine-blueprint](smart-execution-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [smart-order-router-blueprint](smart-order-router-blueprint.md)
+
+<!-- orphan-link -->
+- [statistical-arbitrage-module-blueprint](statistical-arbitrage-module-blueprint.md)
+
+<!-- orphan-link -->
+- [stochastic-optimization-blueprint](stochastic-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [strategic-weighting-blueprint](strategic-weighting-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-authoring-assistant-blueprint](strategy-authoring-assistant-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-engine-blueprint](strategy-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-parameter-optimization-blueprint](strategy-parameter-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-portfolio-optimization-blueprint](strategy-portfolio-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-selection-blueprint](strategy-selection-blueprint.md)
+
+<!-- orphan-link -->
+- [stress-testing-blueprint](stress-testing-blueprint.md)
+
+<!-- orphan-link -->
+- [stress-testing-system-blueprint](stress-testing-system-blueprint.md)
+
+<!-- orphan-link -->
+- [system-enhancement-blueprint](system-enhancement-blueprint.md)
+
+<!-- orphan-link -->
+- [tail-risk-hedging-blueprint](tail-risk-hedging-blueprint.md)
+
+<!-- orphan-link -->
+- [tax-loss-harvesting-blueprint](tax-loss-harvesting-blueprint.md)
+
+<!-- orphan-link -->
+- [timescaledb-integration-blueprint](timescaledb-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [trading-cost-model-enhancement-blueprint](trading-cost-model-enhancement-blueprint.md)
+
+<!-- orphan-link -->
+- [trading-cost-optimization-blueprint](trading-cost-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [trading-signal-validator-blueprint](trading-signal-validator-blueprint.md)
+
+<!-- orphan-link -->
+- [transaction-cost-analysis-engine-blueprint](transaction-cost-analysis-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [transaction-cost-aware-rebalancing-blueprint](transaction-cost-aware-rebalancing-blueprint.md)
+
+<!-- orphan-link -->
+- [turnover-control-blueprint](turnover-control-blueprint.md)
+
+<!-- orphan-link -->
+- [unified-data-api-gateway-blueprint](unified-data-api-gateway-blueprint.md)
+
+<!-- orphan-link -->
+- [unified-data-infrastructure-blueprint](unified-data-infrastructure-blueprint.md)
+
+<!-- orphan-link -->
+- [unit-testing-blueprint](unit-testing-blueprint.md)
+
+<!-- orphan-link -->
+- [var-es-monitoring-blueprint](var-es-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [vulnerability-detection-blueprint](vulnerability-detection-blueprint.md)

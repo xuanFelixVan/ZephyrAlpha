@@ -156,3 +156,5 @@ responsibility: 处理INDEX相关业务
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [style-factor-system-blueprint](style-factor-system-blueprint.md)

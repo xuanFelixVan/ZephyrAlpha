@@ -108,3 +108,11 @@ layer: layer_05
 
 | 2026-04-11 | P5 §7 门面与入链 | 文档治理 | 双 YAML、机器产出互指、父级 `05_IMPLEMENTATION/INDEX` 挂载 |
 
+<!-- orphan-link -->
+- [migration-guide-v1](migration-guide-v1.md)
+
+<!-- orphan-link -->
+- [module-archive](module-archive.md)
+
+<!-- orphan-link -->
+- [security-blueprint](security-blueprint.md)

@@ -27,3 +27,5 @@ responsibility: DATA_BACKUP_RECOVERY
 
 | v1.0.0 | 2026-04-07 | 初始版本，补充完整索引内容 | 文档管理团队 |
 
+<!-- orphan-link -->
+- [factor-lib-data-source-data-backup-recovery-overview](factor-lib-data-source-data-backup-recovery-overview.md)

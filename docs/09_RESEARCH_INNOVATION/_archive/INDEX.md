@@ -119,3 +119,20 @@ layer: layer_09
 
 **下一步**: 定期更新索引，确保文档完整性
 
+<!-- orphan-link -->
+- [complete-blueprint](complete-blueprint.md)
+
+<!-- orphan-link -->
+- [complete-supplement-v2](complete-supplement-v2.md)
+
+<!-- orphan-link -->
+- [critical-missing](critical-missing.md)
+
+<!-- orphan-link -->
+- [document-governance-final-audit-report](document-governance-final-audit-report.md)
+
+<!-- orphan-link -->
+- [missing-modules-supplement](missing-modules-supplement.md)
+
+<!-- orphan-link -->
+- [system-manifest-update-guide](system-manifest-update-guide.md)

@@ -94,3 +94,18 @@ layer: layer_05
 
 **维护者**: 实施层架构师  
 **创建日期**: 2026-04-03
+
+<!-- orphan-link -->
+- [dev-setup](dev-setup.md)
+
+<!-- orphan-link -->
+- [factor-design](factor-design.md)
+
+<!-- orphan-link -->
+- [first-backtest](first-backtest.md)
+
+<!-- orphan-link -->
+- [learning-path](learning-path.md)
+
+<!-- orphan-link -->
+- [phase1-design](phase1-design.md)

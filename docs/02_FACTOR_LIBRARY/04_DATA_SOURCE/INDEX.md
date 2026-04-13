@@ -29,3 +29,5 @@ responsibility: 04_DATA_SOURCE
 
 | v1.0.0 | 2026-04-07 | 初始版本，建立数据源目录索引体系 | 文档管理团队 |
 
+<!-- orphan-link -->
+- [factor-lib-data-source-overview](factor-lib-data-source-overview.md)

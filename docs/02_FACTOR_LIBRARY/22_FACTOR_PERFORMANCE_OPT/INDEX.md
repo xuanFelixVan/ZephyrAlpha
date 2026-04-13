@@ -156,3 +156,5 @@ responsibility: 处理INDEX相关业务
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [factor-performance-opt-blueprint](factor-performance-opt-blueprint.md)

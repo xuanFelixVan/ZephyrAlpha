@@ -252,5 +252,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [risk-adjustment-mechanism](risk-adjustment-mechanism.md)
 
+<!-- orphan-link -->
+- [risk-budgeting-framework](risk-budgeting-framework.md)
 
+<!-- orphan-link -->
+- [risk-budgeting-method](risk-budgeting-method.md)

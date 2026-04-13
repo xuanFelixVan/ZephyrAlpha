@@ -20,3 +20,6 @@ layer: layer_08
 | ~~[README.md]~~ | 概述 | 模块说明 |
 
 **索引状态**：活跃 | **维护**：按需更新
+
+<!-- orphan-link -->
+- [api-gateway-layer8-module](api-gateway-layer8-module.md)

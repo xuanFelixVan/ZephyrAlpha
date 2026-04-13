@@ -85,3 +85,8 @@ layer: layer_03
 
 | 2026-04-07 | 创建索引 | Round2 Fixer | 自动生成索引 |
 
+<!-- orphan-link -->
+- [retail-strategies-a](retail-strategies-a.md)
+
+<!-- orphan-link -->
+- [retail-strategies-b](retail-strategies-b.md)

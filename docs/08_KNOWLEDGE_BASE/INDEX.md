@@ -35,3 +35,8 @@ layer: layer_08
 
 **知识覆盖率**: N/A（初始创建）
 
+<!-- orphan-link -->
+- [knowledge-base-architecture](knowledge-base-architecture.md)
+
+<!-- orphan-link -->
+- [knowledge-base-platform-guide](knowledge-base-platform-guide.md)

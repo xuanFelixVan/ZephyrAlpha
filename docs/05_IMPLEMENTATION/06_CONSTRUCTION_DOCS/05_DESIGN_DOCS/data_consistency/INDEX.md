@@ -87,3 +87,11 @@ layer: layer_05
 
 **最后更新**: 2026-04-07
 
+<!-- orphan-link -->
+- [compensating-transaction-design](compensating-transaction-design.md)
+
+<!-- orphan-link -->
+- [multi-engine-data-consistency-design](multi-engine-data-consistency-design.md)
+
+<!-- orphan-link -->
+- [saga-implementation-flowchart](saga-implementation-flowchart.md)

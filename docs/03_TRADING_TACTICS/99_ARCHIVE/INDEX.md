@@ -265,5 +265,17 @@ compliance_level: 专业标准---
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [36-decision-framework-archived](36-decision-framework-archived.md)
 
+<!-- orphan-link -->
+- [ai-integration](ai-integration.md)
 
+<!-- orphan-link -->
+- [interface-standard](interface-standard.md)
+
+<!-- orphan-link -->
+- [manager](manager.md)
+
+<!-- orphan-link -->
+- [pattern-recognition](pattern-recognition.md)

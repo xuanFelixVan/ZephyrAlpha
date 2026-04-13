@@ -28,3 +28,5 @@ responsibility:
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新
 
+<!-- orphan-link -->
+- [risk-control-panel-blueprint](risk-control-panel-blueprint.md)

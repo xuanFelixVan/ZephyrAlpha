@@ -244,5 +244,8 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [multi-factor-strategy-library](multi-factor-strategy-library.md)
 
-
+<!-- orphan-link -->
+- [strategy-case-library](strategy-case-library.md)

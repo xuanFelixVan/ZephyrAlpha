@@ -248,5 +248,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [imp-001-qmt-api-learning-plan](imp-001-qmt-api-learning-plan.md)
 
+<!-- orphan-link -->
+- [imp-002-qmt-api-community-research](imp-002-qmt-api-community-research.md)
 
+<!-- orphan-link -->
+- [imp-003-qmt-client-stability-solution](imp-003-qmt-client-stability-solution.md)

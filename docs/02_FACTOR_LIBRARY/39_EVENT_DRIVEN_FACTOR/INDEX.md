@@ -156,3 +156,5 @@ responsibility: 处理INDEX相关业务
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [event-driven-factor-blueprint](event-driven-factor-blueprint.md)

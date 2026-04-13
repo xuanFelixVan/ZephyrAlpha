@@ -385,3 +385,14 @@ docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE/
 
 - 文档治理知识库 - 系统文档
 
+<!-- orphan-link -->
+- [common-issues-solutions](common-issues-solutions.md)
+
+<!-- orphan-link -->
+- [document-governance-knowledge-base](document-governance-knowledge-base.md)
+
+<!-- orphan-link -->
+- [professional-terminology-standard](professional-terminology-standard.md)
+
+<!-- orphan-link -->
+- [responsibility-description-best-practices](responsibility-description-best-practices.md)

@@ -484,5 +484,95 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [adr-standard](adr-standard.md)
 
+<!-- orphan-link -->
+- [audit-standards](audit-standards.md)
 
+<!-- orphan-link -->
+- [compliance-audit-system](compliance-audit-system.md)
+
+<!-- orphan-link -->
+- [continuous-improvement-process](continuous-improvement-process.md)
+
+<!-- orphan-link -->
+- [continuous-quality-improvement-process](continuous-quality-improvement-process.md)
+
+<!-- orphan-link -->
+- [decision-record-standard](decision-record-standard.md)
+
+<!-- orphan-link -->
+- [doc-governance-mechanism](doc-governance-mechanism.md)
+
+<!-- orphan-link -->
+- [doc-governance-optimization-proposal](doc-governance-optimization-proposal.md)
+
+<!-- orphan-link -->
+- [doc-governance-system-plan](doc-governance-system-plan.md)
+
+<!-- orphan-link -->
+- [doc-naming-standard](doc-naming-standard.md)
+
+<!-- orphan-link -->
+- [doc-orphan-and-duplicate-governance-playbook](doc-orphan-and-duplicate-governance-playbook.md)
+
+<!-- orphan-link -->
+- [doc-quality-culture-plan](doc-quality-culture-plan.md)
+
+<!-- orphan-link -->
+- [doc-reference-standard](doc-reference-standard.md)
+
+<!-- orphan-link -->
+- [document-classification-exception-list](document-classification-exception-list.md)
+
+<!-- orphan-link -->
+- [document-classification-standard](document-classification-standard.md)
+
+<!-- orphan-link -->
+- [document-governance-process-standard](document-governance-process-standard.md)
+
+<!-- orphan-link -->
+- [document-metadata-template](document-metadata-template.md)
+
+<!-- orphan-link -->
+- [document-responsibility-boundary-standard](document-responsibility-boundary-standard.md)
+
+<!-- orphan-link -->
+- [document-version-naming-standard](document-version-naming-standard.md)
+
+<!-- orphan-link -->
+- [duplicate-document-handling-standard](duplicate-document-handling-standard.md)
+
+<!-- orphan-link -->
+- [file-naming-standard](file-naming-standard.md)
+
+<!-- orphan-link -->
+- [module-interface-specification](module-interface-specification.md)
+
+<!-- orphan-link -->
+- [path-reference-standard](path-reference-standard.md)
+
+<!-- orphan-link -->
+- [periodic-audit-mechanism](periodic-audit-mechanism.md)
+
+<!-- orphan-link -->
+- [periodic-check-plan](periodic-check-plan.md)
+
+<!-- orphan-link -->
+- [quality-standard](quality-standard.md)
+
+<!-- orphan-link -->
+- [research-memo-standard](research-memo-standard.md)
+
+<!-- orphan-link -->
+- [responsibility-description-standard-v2](responsibility-description-standard-v2.md)
+
+<!-- orphan-link -->
+- [responsibility-description-standard](responsibility-description-standard.md)
+
+<!-- orphan-link -->
+- [responsibility-template-library](responsibility-template-library.md)
+
+<!-- orphan-link -->
+- [risk-management-framework](risk-management-framework.md)

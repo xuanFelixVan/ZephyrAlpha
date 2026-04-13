@@ -28,3 +28,5 @@ responsibility:
 
 **索引状态**: ✅ 活跃 | **维护**: 按需更新
 
+<!-- orphan-link -->
+- [offline-support-blueprint](offline-support-blueprint.md)

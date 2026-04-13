@@ -248,5 +248,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [backtest-best-practices](backtest-best-practices.md)
 
+<!-- orphan-link -->
+- [factor-research-best-practices](factor-research-best-practices.md)
 
+<!-- orphan-link -->
+- [risk-management-best-practices](risk-management-best-practices.md)

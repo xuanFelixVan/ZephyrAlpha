@@ -153,3 +153,23 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [important-python-version](important-python-version.md)
+
+<!-- orphan-link -->
+- [install-guide-rtx3090](install-guide-rtx3090.md)
+
+<!-- orphan-link -->
+- [live-stream-financial-analysis-blueprint](live-stream-financial-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [python-version-fix](python-version-fix.md)
+
+<!-- orphan-link -->
+- [readme-rtx3090](readme-rtx3090.md)
+
+<!-- orphan-link -->
+- [rtx3090-best-models](rtx3090-best-models.md)
+
+<!-- orphan-link -->
+- [rtx3090-configuration-summary](rtx3090-configuration-summary.md)

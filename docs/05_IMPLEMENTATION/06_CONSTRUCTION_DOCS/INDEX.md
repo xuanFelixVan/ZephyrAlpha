@@ -185,3 +185,21 @@ layer: layer_05
 
 **目录状态**：与子目录磁盘布局对齐（2026-04-10）  
 **索引策略**：大门 + 子目录表；篇级枚举交给各 `INDEX.md` 与蓝图生成脚本
+
+<!-- orphan-link -->
+- [ai-construction-quick-reference](ai-construction-quick-reference.md)
+
+<!-- orphan-link -->
+- [blueprint-template](blueprint-template.md)
+
+<!-- orphan-link -->
+- [construction-specification](construction-specification.md)
+
+<!-- orphan-link -->
+- [implementation-progress](implementation-progress.md)
+
+<!-- orphan-link -->
+- [new-employee-onboarding-guide](new-employee-onboarding-guide.md)
+
+<!-- orphan-link -->
+- [version-management-guide](version-management-guide.md)

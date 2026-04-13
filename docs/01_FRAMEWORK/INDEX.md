@@ -226,3 +226,414 @@ responsibility:
 - 生成时间: 2026-04-13T13:25:36.079134
 - 扫描范围: D:\ZephyrAlpha\docs
 - 自动化工具: Auto-Index Compiler v1.0.0
+
+<!-- orphan-link -->
+- [acceptance-criteria-blueprint](acceptance-criteria-blueprint.md)
+
+<!-- orphan-link -->
+- [adversarial-robustness-blueprint](adversarial-robustness-blueprint.md)
+
+<!-- orphan-link -->
+- [ai-governance-blueprint](ai-governance-blueprint.md)
+
+<!-- orphan-link -->
+- [ai-memory-architecture-completeness-analysis](ai-memory-architecture-completeness-analysis.md)
+
+<!-- orphan-link -->
+- [ai-memory-architecture-supplement-plan](ai-memory-architecture-supplement-plan.md)
+
+<!-- orphan-link -->
+- [ai-memory-final-supplement-blueprints](ai-memory-final-supplement-blueprints.md)
+
+<!-- orphan-link -->
+- [ai-memory-modules-blueprint-collection](ai-memory-modules-blueprint-collection.md)
+
+<!-- orphan-link -->
+- [ai-memory-supplement-completion-report](ai-memory-supplement-completion-report.md)
+
+<!-- orphan-link -->
+- [ai-permissions](ai-permissions.md)
+
+<!-- orphan-link -->
+- [ai-strategy-automation-blueprint](ai-strategy-automation-blueprint.md)
+
+<!-- orphan-link -->
+- [alert-management-interface-blueprint](alert-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [algorithm-deployment-control-blueprint](algorithm-deployment-control-blueprint.md)
+
+<!-- orphan-link -->
+- [algorithm-inventory-management-blueprint](algorithm-inventory-management-blueprint.md)
+
+<!-- orphan-link -->
+- [algorithmic-trading-test-framework-blueprint](algorithmic-trading-test-framework-blueprint.md)
+
+<!-- orphan-link -->
+- [alpha-factor-layer-blueprint](alpha-factor-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [aml-monitoring-system-blueprint](aml-monitoring-system-blueprint.md)
+
+<!-- orphan-link -->
+- [api-management-interface-blueprint](api-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [audit-trail-tigerbeetle-implementation](audit-trail-tigerbeetle-implementation.md)
+
+<!-- orphan-link -->
+- [backtest-result-viewer-blueprint](backtest-result-viewer-blueprint.md)
+
+<!-- orphan-link -->
+- [best-execution-monitoring-blueprint](best-execution-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [blueprint-stage-complete-summary](blueprint-stage-complete-summary.md)
+
+<!-- orphan-link -->
+- [blueprint-stage-complete-supplement-plan](blueprint-stage-complete-supplement-plan.md)
+
+<!-- orphan-link -->
+- [blueprint-stage-vs-implementation-stage-analysis](blueprint-stage-vs-implementation-stage-analysis.md)
+
+<!-- orphan-link -->
+- [compliance-knowledge-base-blueprint](compliance-knowledge-base-blueprint.md)
+
+<!-- orphan-link -->
+- [compliance-report-interface-blueprint](compliance-report-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [critical-modules-implementation-blueprint](critical-modules-implementation-blueprint.md)
+
+<!-- orphan-link -->
+- [data-exploration-interface-blueprint](data-exploration-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [data-lineage-tracking-blueprint](data-lineage-tracking-blueprint.md)
+
+<!-- orphan-link -->
+- [data-quality-monitoring-interface-blueprint](data-quality-monitoring-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-failover-blueprint](data-source-failover-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-layer-blueprint](data-source-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-quality-monitoring-blueprint](data-source-quality-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [data-sovereignty-compliance-blueprint](data-sovereignty-compliance-blueprint.md)
+
+<!-- orphan-link -->
+- [decision-dashboard-blueprint](decision-dashboard-blueprint.md)
+
+<!-- orphan-link -->
+- [deepar-blueprint](deepar-blueprint.md)
+
+<!-- orphan-link -->
+- [document-responsibility-boundaries](document-responsibility-boundaries.md)
+
+<!-- orphan-link -->
+- [event-sourcing-blueprint](event-sourcing-blueprint.md)
+
+<!-- orphan-link -->
+- [experiment-memory-blueprint](experiment-memory-blueprint.md)
+
+<!-- orphan-link -->
+- [extreme-market-response-blueprint](extreme-market-response-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-mining-automation-blueprint](factor-mining-automation-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-portfolio-optimization-blueprint](factor-portfolio-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [factor-realtime-computation-blueprint](factor-realtime-computation-blueprint.md)
+
+<!-- orphan-link -->
+- [fairness-detection-blueprint](fairness-detection-blueprint.md)
+
+<!-- orphan-link -->
+- [fastapi-users-auth-blueprint](fastapi-users-auth-blueprint.md)
+
+<!-- orphan-link -->
+- [fund-management-interface-blueprint](fund-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [governance-compliance-layer-blueprint](governance-compliance-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [governance-dashboard-blueprint](governance-dashboard-blueprint.md)
+
+<!-- orphan-link -->
+- [grafana-monitoring-blueprint](grafana-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [help-system-blueprint](help-system-blueprint.md)
+
+<!-- orphan-link -->
+- [high-frequency-trading-engine-blueprint](high-frequency-trading-engine-blueprint.md)
+
+<!-- orphan-link -->
+- [human-ai-integration-blueprint](human-ai-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [human-ai-interaction-blueprint](human-ai-interaction-blueprint.md)
+
+<!-- orphan-link -->
+- [human-ai-interface-layer-advanced-features-blueprint](human-ai-interface-layer-advanced-features-blueprint.md)
+
+<!-- orphan-link -->
+- [human-ai-interface-layer-complete-supplement-blueprint](human-ai-interface-layer-complete-supplement-blueprint.md)
+
+<!-- orphan-link -->
+- [human-ai-interface-layer-gap-analysis-blueprint](human-ai-interface-layer-gap-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [implementation-acceleration-blueprint](implementation-acceleration-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-compliance-check-blueprint](intelligent-compliance-check-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-recommendation-system-blueprint](intelligent-recommendation-system-blueprint.md)
+
+<!-- orphan-link -->
+- [interface-contract-blueprint](interface-contract-blueprint.md)
+
+<!-- orphan-link -->
+- [investment-decision-audit-blueprint](investment-decision-audit-blueprint.md)
+
+<!-- orphan-link -->
+- [investor-relations-management-blueprint](investor-relations-management-blueprint.md)
+
+<!-- orphan-link -->
+- [kill-switch-system-blueprint](kill-switch-system-blueprint.md)
+
+<!-- orphan-link -->
+- [knowledge-distillation-blueprint](knowledge-distillation-blueprint.md)
+
+<!-- orphan-link -->
+- [layer-10-advanced-governance-gap-analysis](layer-10-advanced-governance-gap-analysis.md)
+
+<!-- orphan-link -->
+- [layer-10-complete-implementation-roadmap](layer-10-complete-implementation-roadmap.md)
+
+<!-- orphan-link -->
+- [layer-10-deep-audit-report-final](layer-10-deep-audit-report-final.md)
+
+<!-- orphan-link -->
+- [layer-10-deleted-files-analysis](layer-10-deleted-files-analysis.md)
+
+<!-- orphan-link -->
+- [layer-10-document-governance-audit-report](layer-10-document-governance-audit-report.md)
+
+<!-- orphan-link -->
+- [layer-10-governance-compliance-index](layer-10-governance-compliance-index.md)
+
+<!-- orphan-link -->
+- [layer-10-missing-modules-implementation-plan](layer-10-missing-modules-implementation-plan.md)
+
+<!-- orphan-link -->
+- [layer-10-priority-modules-implementation-plan](layer-10-priority-modules-implementation-plan.md)
+
+<!-- orphan-link -->
+- [liquidity-risk-management-blueprint](liquidity-risk-management-blueprint.md)
+
+<!-- orphan-link -->
+- [llm-fine-tuning-blueprint](llm-fine-tuning-blueprint.md)
+
+<!-- orphan-link -->
+- [machine-learning-comprehensive-analysis](machine-learning-comprehensive-analysis.md)
+
+<!-- orphan-link -->
+- [machine-learning-layer-blueprint](machine-learning-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [mamba-ssm-blueprint](mamba-ssm-blueprint.md)
+
+<!-- orphan-link -->
+- [market-abuse-surveillance-blueprint](market-abuse-surveillance-blueprint.md)
+
+<!-- orphan-link -->
+- [market-making-model-blueprint](market-making-model-blueprint.md)
+
+<!-- orphan-link -->
+- [market-microstructure-model-blueprint](market-microstructure-model-blueprint.md)
+
+<!-- orphan-link -->
+- [mempalace-architecture-review-report](mempalace-architecture-review-report.md)
+
+<!-- orphan-link -->
+- [mempalace-integration-blueprint](mempalace-integration-blueprint.md)
+
+<!-- orphan-link -->
+- [meta-learning-blueprint](meta-learning-blueprint.md)
+
+<!-- orphan-link -->
+- [mia-defense-blueprint](mia-defense-blueprint.md)
+
+<!-- orphan-link -->
+- [missing-modules-blueprint-collection](missing-modules-blueprint-collection.md)
+
+<!-- orphan-link -->
+- [missing-modules-blueprint-supplement](missing-modules-blueprint-supplement.md)
+
+<!-- orphan-link -->
+- [mixture-of-experts-blueprint](mixture-of-experts-blueprint.md)
+
+<!-- orphan-link -->
+- [mobile-interface-coverage-blueprint](mobile-interface-coverage-blueprint.md)
+
+<!-- orphan-link -->
+- [mobile-push-notification-blueprint](mobile-push-notification-blueprint.md)
+
+<!-- orphan-link -->
+- [model-ab-testing-blueprint](model-ab-testing-blueprint.md)
+
+<!-- orphan-link -->
+- [model-card-blueprint](model-card-blueprint.md)
+
+<!-- orphan-link -->
+- [model-debugging-toolkit-blueprint](model-debugging-toolkit-blueprint.md)
+
+<!-- orphan-link -->
+- [model-lineage-blueprint](model-lineage-blueprint.md)
+
+<!-- orphan-link -->
+- [model-management-interface-blueprint](model-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [model-memory-blueprint](model-memory-blueprint.md)
+
+<!-- orphan-link -->
+- [model-performance-benchmark-blueprint](model-performance-benchmark-blueprint.md)
+
+<!-- orphan-link -->
+- [model-pruning-blueprint](model-pruning-blueprint.md)
+
+<!-- orphan-link -->
+- [model-quantization-blueprint](model-quantization-blueprint.md)
+
+<!-- orphan-link -->
+- [model-registry-blueprint](model-registry-blueprint.md)
+
+<!-- orphan-link -->
+- [model-risk-management-blueprint](model-risk-management-blueprint.md)
+
+<!-- orphan-link -->
+- [model-rollback-blueprint](model-rollback-blueprint.md)
+
+<!-- orphan-link -->
+- [model-security-scanner-blueprint](model-security-scanner-blueprint.md)
+
+<!-- orphan-link -->
+- [model-serving-framework-blueprint](model-serving-framework-blueprint.md)
+
+<!-- orphan-link -->
+- [model-versioning-blueprint](model-versioning-blueprint.md)
+
+<!-- orphan-link -->
+- [model-watermark-blueprint](model-watermark-blueprint.md)
+
+<!-- orphan-link -->
+- [multi-task-learning-blueprint](multi-task-learning-blueprint.md)
+
+<!-- orphan-link -->
+- [multimodal-fusion-blueprint](multimodal-fusion-blueprint.md)
+
+<!-- orphan-link -->
+- [multimodal-llm-blueprint](multimodal-llm-blueprint.md)
+
+<!-- orphan-link -->
+- [neural-ode-blueprint](neural-ode-blueprint.md)
+
+<!-- orphan-link -->
+- [p2-frontier-modules-blueprint-collection](p2-frontier-modules-blueprint-collection.md)
+
+<!-- orphan-link -->
+- [performance-analysis-interface-blueprint](performance-analysis-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [personal-ai-maintenance-blueprint-stage-complete-solution](personal-ai-maintenance-blueprint-stage-complete-solution.md)
+
+<!-- orphan-link -->
+- [personal-development-blueprint](personal-development-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-optimization-layer-blueprint](portfolio-optimization-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-rebalancing-blueprint](portfolio-rebalancing-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-risk-attribution-blueprint](portfolio-risk-attribution-blueprint.md)
+
+<!-- orphan-link -->
+- [position-management-interface-blueprint](position-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [post-quantum-cryptography-blueprint](post-quantum-cryptography-blueprint.md)
+
+<!-- orphan-link -->
+- [realtime-risk-monitoring-blueprint](realtime-risk-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [regulatory-change-tracking-blueprint](regulatory-change-tracking-blueprint.md)
+
+<!-- orphan-link -->
+- [research-collaboration-platform-blueprint](research-collaboration-platform-blueprint.md)
+
+<!-- orphan-link -->
+- [research-innovation-layer-blueprint](research-innovation-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-monitoring-interface-blueprint](risk-monitoring-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-layer-blueprint](sentiment-analysis-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [settings-management-interface-blueprint](settings-management-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [strategic-decision-layer-blueprint](strategic-decision-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-configuration-interface-blueprint](strategy-configuration-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-execution-layer-blueprint](strategy-execution-layer-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-performance-attribution-blueprint](strategy-performance-attribution-blueprint.md)
+
+<!-- orphan-link -->
+- [streamlit-backtest-interface-blueprint](streamlit-backtest-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [stress-test-scenario-library-blueprint](stress-test-scenario-library-blueprint.md)
+
+<!-- orphan-link -->
+- [system-health-check-interface-blueprint](system-health-check-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [temporal-fusion-transformer-blueprint](temporal-fusion-transformer-blueprint.md)
+
+<!-- orphan-link -->
+- [third-party-risk-management-blueprint](third-party-risk-management-blueprint.md)
+
+<!-- orphan-link -->
+- [trade-error-correction-blueprint](trade-error-correction-blueprint.md)
+
+<!-- orphan-link -->
+- [trade-record-viewer-blueprint](trade-record-viewer-blueprint.md)
+
+<!-- orphan-link -->
+- [trading-authorization-interface-blueprint](trading-authorization-interface-blueprint.md)
+
+<!-- orphan-link -->
+- [transfer-learning-blueprint](transfer-learning-blueprint.md)

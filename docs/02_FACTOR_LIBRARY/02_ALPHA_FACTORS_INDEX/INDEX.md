@@ -113,3 +113,5 @@ Alpha因子的索引和分类文档
 
 | v1.0.0 | 2026-04-07 | 初始版本，创建差异化索引内容 | 文档管理团队 |
 
+<!-- orphan-link -->
+- [factor-lib-alpha-factors-index-overview](factor-lib-alpha-factors-index-overview.md)

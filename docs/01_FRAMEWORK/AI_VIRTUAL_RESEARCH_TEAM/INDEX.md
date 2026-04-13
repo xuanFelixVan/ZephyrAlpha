@@ -19,5 +19,11 @@ layer: layer_01
 
 ```
 
+<!-- orphan-link -->
+- [ai-virtual-research-team-blueprint](ai-virtual-research-team-blueprint.md)
 
+<!-- orphan-link -->
+- [ai-virtual-research-team-implementation-plan](ai-virtual-research-team-implementation-plan.md)
 
+<!-- orphan-link -->
+- [ai-virtual-research-team-project-kickoff](ai-virtual-research-team-project-kickoff.md)

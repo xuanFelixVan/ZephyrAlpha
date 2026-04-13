@@ -87,3 +87,11 @@ layer: layer_05
 
 **最后更新**: 2026-04-07
 
+<!-- orphan-link -->
+- [backtest-engine-guide](backtest-engine-guide.md)
+
+<!-- orphan-link -->
+- [event-bus-guide](event-bus-guide.md)
+
+<!-- orphan-link -->
+- [strategy-factory-guide](strategy-factory-guide.md)

@@ -248,5 +248,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [adjustment-trigger-conditions](adjustment-trigger-conditions.md)
 
+<!-- orphan-link -->
+- [market-environment-assessment](market-environment-assessment.md)
 
+<!-- orphan-link -->
+- [strategic-adjustment-mechanism](strategic-adjustment-mechanism.md)

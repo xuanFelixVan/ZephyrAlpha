@@ -400,3 +400,201 @@ layer: layer_00
 - **最后更新**: 2026-04-07
 - **维护者**: 实施团队
 - **更新频率**: 按需更新
+
+<!-- orphan-link -->
+- [ai-work-reporter-blueprint](ai-work-reporter-blueprint.md)
+
+<!-- orphan-link -->
+- [backtest-results-management-blueprint](backtest-results-management-blueprint.md)
+
+<!-- orphan-link -->
+- [complete-blueprint-supplement-report](complete-blueprint-supplement-report.md)
+
+<!-- orphan-link -->
+- [compliance-monitoring-blueprint](compliance-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [configuration-management-center-blueprint](configuration-management-center-blueprint.md)
+
+<!-- orphan-link -->
+- [data-quality-lineage-management-blueprint](data-quality-lineage-management-blueprint.md)
+
+<!-- orphan-link -->
+- [data-source-extension-blueprint](data-source-extension-blueprint.md)
+
+<!-- orphan-link -->
+- [deleted-content-review-report](deleted-content-review-report.md)
+
+<!-- orphan-link -->
+- [deleted-files-recovery-assessment-report](deleted-files-recovery-assessment-report.md)
+
+<!-- orphan-link -->
+- [factor-effectiveness-monitoring-blueprint](factor-effectiveness-monitoring-blueprint.md)
+
+<!-- orphan-link -->
+- [full-process-data-persistence-blueprint](full-process-data-persistence-blueprint.md)
+
+<!-- orphan-link -->
+- [historical-replay-system-blueprint](historical-replay-system-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-anomaly-detection-blueprint](intelligent-anomaly-detection-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-parameter-optimization-blueprint](intelligent-parameter-optimization-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-report-distribution-blueprint](intelligent-report-distribution-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-scheduler-blueprint](intelligent-scheduler-blueprint.md)
+
+<!-- orphan-link -->
+- [intelligent-scheduling-system-blueprint](intelligent-scheduling-system-blueprint.md)
+
+<!-- orphan-link -->
+- [knowledge-management-blueprint](knowledge-management-blueprint.md)
+
+<!-- orphan-link -->
+- [layer-7-final-completeness-assessment-report](layer-7-final-completeness-assessment-report.md)
+
+<!-- orphan-link -->
+- [layer-7-gap-analysis-and-supplement-blueprint](layer-7-gap-analysis-and-supplement-blueprint.md)
+
+<!-- orphan-link -->
+- [market-microstructure-analysis-blueprint](market-microstructure-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [model-ab-testing-framework-blueprint](model-ab-testing-framework-blueprint.md)
+
+<!-- orphan-link -->
+- [model-monitoring-drift-detection-blueprint](model-monitoring-drift-detection-blueprint.md)
+
+<!-- orphan-link -->
+- [model-performance-version-management-blueprint](model-performance-version-management-blueprint.md)
+
+<!-- orphan-link -->
+- [operations-knowledge-management-blueprint](operations-knowledge-management-blueprint.md)
+
+<!-- orphan-link -->
+- [performance-analysis-blueprint](performance-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [portfolio-diagnostics-blueprint](portfolio-diagnostics-blueprint.md)
+
+<!-- orphan-link -->
+- [post-trade-review-blueprint](post-trade-review-blueprint.md)
+
+<!-- orphan-link -->
+- [real-time-alert-system-blueprint](real-time-alert-system-blueprint.md)
+
+<!-- orphan-link -->
+- [research-workflow-management-blueprint](research-workflow-management-blueprint.md)
+
+<!-- orphan-link -->
+- [risk-budget-management-blueprint](risk-budget-management-blueprint.md)
+
+<!-- orphan-link -->
+- [scenario-analysis-stress-test-blueprint](scenario-analysis-stress-test-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-implementation-details](sentiment-analysis-implementation-details.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-long-term-technical-specification](sentiment-analysis-long-term-technical-specification.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-medium-term-improvement-blueprint](sentiment-analysis-medium-term-improvement-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-medium-term-technical-specification](sentiment-analysis-medium-term-technical-specification.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-project-management](sentiment-analysis-project-management.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-risk-management](sentiment-analysis-risk-management.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-short-term-technical-specification](sentiment-analysis-short-term-technical-specification.md)
+
+<!-- orphan-link -->
+- [sentiment-analysis-test-plan](sentiment-analysis-test-plan.md)
+
+<!-- orphan-link -->
+- [sentiment-backtest-system-blueprint](sentiment-backtest-system-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-data-annotation-platform-blueprint](sentiment-data-annotation-platform-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-complete-blueprint-supplement-report](sentiment-layer-complete-blueprint-supplement-report.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-deep-professional-assessment](sentiment-layer-deep-professional-assessment.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fifth-round-final-confirmation-report](sentiment-layer-fifth-round-final-confirmation-report.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fifth-round-supplementary-modules-blueprint](sentiment-layer-fifth-round-supplementary-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fifth-round-ultimate-confirmation-assessment](sentiment-layer-fifth-round-ultimate-confirmation-assessment.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-final-completeness-assessment-report](sentiment-layer-final-completeness-assessment-report.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-final-delivery-document](sentiment-layer-final-delivery-document.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-final-professional-solution-blueprint](sentiment-layer-final-professional-solution-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fourth-round-final-completeness-assessment-report](sentiment-layer-fourth-round-final-completeness-assessment-report.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fourth-round-supplementary-modules-blueprint](sentiment-layer-fourth-round-supplementary-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fourth-round-ultimate-assessment](sentiment-layer-fourth-round-ultimate-assessment.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-fourth-round-ultimate-professional-assessment](sentiment-layer-fourth-round-ultimate-professional-assessment.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-professional-gap-analysis-and-opensource-solution](sentiment-layer-professional-gap-analysis-and-opensource-solution.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-second-round-supplementary-modules-blueprint](sentiment-layer-second-round-supplementary-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-supplementary-modules-blueprint](sentiment-layer-supplementary-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-third-round-final-completeness-assessment-report](sentiment-layer-third-round-final-completeness-assessment-report.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-third-round-professional-assessment](sentiment-layer-third-round-professional-assessment.md)
+
+<!-- orphan-link -->
+- [sentiment-layer-third-round-supplementary-modules-blueprint](sentiment-layer-third-round-supplementary-modules-blueprint.md)
+
+<!-- orphan-link -->
+- [signal-decay-analysis-blueprint](signal-decay-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-lifecycle-management-blueprint](strategy-lifecycle-management-blueprint.md)
+
+<!-- orphan-link -->
+- [strategy-version-control-blueprint](strategy-version-control-blueprint.md)
+
+<!-- orphan-link -->
+- [trade-execution-analysis-blueprint](trade-execution-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [transaction-cost-analysis-blueprint](transaction-cost-analysis-blueprint.md)
+
+<!-- orphan-link -->
+- [validation-testing-framework-blueprint](validation-testing-framework-blueprint.md)

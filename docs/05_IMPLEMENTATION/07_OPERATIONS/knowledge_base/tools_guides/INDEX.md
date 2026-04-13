@@ -244,5 +244,8 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [document-auditor-guide](document-auditor-guide.md)
 
-
+<!-- orphan-link -->
+- [metadata-enhancer-guide](metadata-enhancer-guide.md)

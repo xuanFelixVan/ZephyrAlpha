@@ -1175,7 +1175,8 @@ implementation_status: '已完?tags: ["知识?, "索引", "导航"]'
 
 - ZephyrAlphaﻝ۴ﻟﺁﮒﭦﮔ۰ﻛﺝﻝﻝ۸? - 案例研究
 
+<!-- orphan-link -->
+- [knowledge-base-case-studies](knowledge-base-case-studies.md)
 
-
-
-
+<!-- orphan-link -->
+- [knowledge-transfer-system](knowledge-transfer-system.md)

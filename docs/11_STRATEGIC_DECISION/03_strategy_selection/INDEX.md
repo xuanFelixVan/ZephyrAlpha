@@ -256,5 +256,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [strategy-evaluation-criteria](strategy-evaluation-criteria.md)
 
+<!-- orphan-link -->
+- [strategy-portfolio-optimization](strategy-portfolio-optimization.md)
 
+<!-- orphan-link -->
+- [strategy-selection-framework](strategy-selection-framework.md)

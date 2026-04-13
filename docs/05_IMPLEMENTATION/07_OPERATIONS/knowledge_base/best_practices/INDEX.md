@@ -248,5 +248,11 @@ compliance_level: 专业标准
 
 **下次更新**: 按需
 
+<!-- orphan-link -->
+- [personal-development-best-practices](personal-development-best-practices.md)
 
+<!-- orphan-link -->
+- [personal-workflow-guide](personal-workflow-guide.md)
 
+<!-- orphan-link -->
+- [python-coding-best-practices](python-coding-best-practices.md)

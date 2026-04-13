@@ -15,5 +15,14 @@ implementation_status: ти▓тїТѕ?
 ---
 **у┤бт╝ЋуЅѕТюг**: v1.0.0 | **тѕЏт╗║ТЌЦТюЪ**: 2026-04-03 | **у╗┤ТіцУђ?*: ждќтИГТќЄТАБТъХТъётИ?
 
+<!-- orphan-link -->
+- [health-monitoring](health-monitoring.md)
 
+<!-- orphan-link -->
+- [module-monitor](module-monitor.md)
 
+<!-- orphan-link -->
+- [performance-attribution](performance-attribution.md)
+
+<!-- orphan-link -->
+- [real-time-monitoring](real-time-monitoring.md)
