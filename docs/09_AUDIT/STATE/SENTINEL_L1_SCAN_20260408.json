@@ -1,10 +1,10 @@
 {
-  "scan_time_utc": "20260413T093046Z",
+  "scan_time_utc": "20260413T093453Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3534,
+  "md_file_count": 3532,
   "links": {
     "stats": {
-      "total_files_scanned": 3534,
+      "total_files_scanned": 3532,
       "total_md_links": 8604,
       "skipped_external": 849,
       "valid": 7755,
@@ -14,67 +14,9 @@
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3517,
-    "duplicate_ids_count": 14,
-    "duplicates": {
-      "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/04_Layer_1_Data_Source/INDEX.md",
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 1 (数据源层)/INDEX.md",
-        "docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "AUTO_LICENSE": [
-        ".venv-1/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
-        ".venv-1/Lib/site-packages/pip-26.0.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
-      ],
-      "[LAYER定位]'_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/'[Layer定位]'_ARCHIVED_20260413_135113/INDEX.md",
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/'[Layer]'/INDEX.md"
-      ],
-      "- 层级标识_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/- 层级标识_ARCHIVED_20260413_135113/INDEX.md",
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/- 层级标识/INDEX.md"
-      ],
-      "舆情分析_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/09_DIR_18_/INDEX.md",
-        "docs/99_ARCHIVE/舆情分析_ARCHIVED_20260413_135113/INDEX.md"
-      ],
-      "LAYER_1_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/22_layer_1/INDEX.md",
-        "docs/99_ARCHIVE/layer_1_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER_4_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/27_layer_4/INDEX.md",
-        "docs/99_ARCHIVE/layer_4_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER_6_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/28_layer_6/INDEX.md",
-        "docs/99_ARCHIVE/layer_6_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER_9_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/34_layer_9/INDEX.md",
-        "docs/99_ARCHIVE/layer_9_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER 3 (策略层)_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 3 (策略层)/INDEX.md",
-        "docs/99_ARCHIVE/Layer 3 (策略层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER 3 (舆情分析层)_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 3 (舆情分析层)/INDEX.md",
-        "docs/99_ARCHIVE/Layer 3 (舆情分析层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER 6 (组合优化层)_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 6 (组合优化层)/INDEX.md",
-        "docs/99_ARCHIVE/Layer 6 (组合优化层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER 7 (AI报告层)_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 7 (AI报告层)/INDEX.md",
-        "docs/99_ARCHIVE/Layer 7 (AI报告层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED": [
-        "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer X ([Layer名称])/INDEX.md",
-        "docs/99_ARCHIVE/Layer X ([Layer名称])_INTEGRATED_20260413_135113/INDEX.md"
-      ]
-    },
+    "unique_module_ids": 3530,
+    "duplicate_ids_count": 0,
+    "duplicates": {},
     "files_without_module_id_sample": [
       "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/INDEX.md",
       "docs/INDEX.md"
@@ -83,10 +25,6 @@
   },
   "path_depth": {
     "deepest_30": [
-      {
-        "depth": 9,
-        "path": ".venv-1/Lib/site-packages/pip-26.0.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md"
-      },
       {
         "depth": 6,
         "path": "docs/06_ARCHIVE/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS/p1-infrastructure-blueprints-completion-report-20260407.md"
@@ -144,10 +82,6 @@
         "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/ARCHIVE/blueprint-phase-closure-task-list.md"
       },
       {
-        "depth": 6,
-        "path": ".venv-1/Lib/site-packages/pip/_vendor/idna/LICENSE.md"
-      },
-      {
         "depth": 5,
         "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel-l1-scan-20260408-033240.md"
       },
@@ -202,6 +136,14 @@
       {
         "depth": 5,
         "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/module-id-duplicates-detail-20260408-021344.md"
+      },
+      {
+        "depth": 5,
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/md-files-by-subdirectory-20260408-021344.md"
+      },
+      {
+        "depth": 5,
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344/invalid-links-detail-20260408-021344.md"
       }
     ]
   }

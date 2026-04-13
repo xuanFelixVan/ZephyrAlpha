@@ -27,6 +27,7 @@ SKIP_PARTS = {
     ".audit_fix_backup",   # 备份目录，非活跃治理范围
     ".trae",               # 工具私有目录
     "review_materials_package",  # 评审材料包，不计入日常治理
+    ".venv-1",             # 第二虚拟环境，含三方包 LICENSE.md 等，不纳入治理
 }
 LINK_RE = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 MODULE_ID_RE = re.compile(r"^module_id:\s*(.+?)\s*$", re.MULTILINE | re.IGNORECASE)

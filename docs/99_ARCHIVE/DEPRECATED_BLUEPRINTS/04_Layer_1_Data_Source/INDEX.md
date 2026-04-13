@@ -1,5 +1,5 @@
 ---
-module_id: "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED"
+module_id: "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED"_DEPRECATED
 # [DEPRECATED] Archive duplicate - canonical version in docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md
 version: 1.0.0
 status: DEPRECATED

@@ -1,7 +1,7 @@
 ---
-module_id: "LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED"
+module_id: LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED_DEPRECATED
 version: 1.0.0
-status: Active
+status: deprecated
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: Auto-Index Compiler
