@@ -8,8 +8,8 @@ generated_by: scripts/governance/scan_index_health.py
 # 索引健全性扫描报告（零入链候选）
 
 > **机器真源**：[`INDEX_HEALTH_ORPHAN_20260413.json`](./INDEX_HEALTH_ORPHAN_20260413.json)
-> **候选范围**：`docs/` ｜ **候选 md 数**：2689 ｜ **入链来源**：all-tracked（3357 个 md）
-> **零入链（已应用 ignore 后）**：**2391**
+> **候选范围**：`docs/` ｜ **候选 md 数**：2697 ｜ **入链来源**：all-tracked（3365 个 md）
+> **零入链（已应用 ignore 后）**：**2134**
 
 ## 说明
 
@@ -420,4 +420,4 @@ generated_by: scripts/governance/scan_index_health.py
 - `docs/04_EXECUTION/01_ORDER_EXECUTION/order-execution-blueprint.md`
 - `docs/04_EXECUTION/01_ORDER_EXECUTION/order-generation-algorithms.md`
 
-> 仅列出前 400 条，共 2391 条，详见 JSON。
+> 仅列出前 400 条，共 2134 条，详见 JSON。
