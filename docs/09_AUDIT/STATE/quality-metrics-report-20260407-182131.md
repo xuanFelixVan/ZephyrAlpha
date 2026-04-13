@@ -1,6 +1,15 @@
+---
+module_id: AUTO_95392
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: QUALITY_METRICS_REPORT_20260407_182131
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -98,7 +113,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -118,7 +135,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -140,7 +159,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -180,7 +201,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -204,7 +227,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -236,7 +261,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

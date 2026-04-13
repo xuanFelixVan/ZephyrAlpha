@@ -1,21 +1,16 @@
 ---
-module_id: 09_AUDIT_STATE_INDEX
+module_id: 09_AUDIT_STATE_INDEX_9416
 version: 1.0.1
 status: Active
 created_date: 2026-04-07
 last_updated: 2026-04-11
 owner: 首席文档架构师
 responsibility:
-  - STATE目录索引
+- STATE目录索引
 layer: layer_09
 standard_type: 索引文档
 applicable_scope: 文档索引导航
-compliance_level: 专业标准---
-> **核心职责**: 目录导航和文档索引
-> **版本**: v1.0.43
-> **创建日期**: 2026-04-07
-> **核心定位**: 文档索引导航
-> **索引**: `INDEX_STATE_001`
+compliance_level: 专业标准
 ---
 ## 📋 目录概览
 
@@ -27,7 +22,7 @@ compliance_level: 专业标准---
 
 - **审计域总索引**：[../INDEX.md](../INDEX.md) ｜ **文档总入口**：[../../INDEX.md](../../INDEX.md)  
 
-- **REPORTS 报告区门面**：[../REPORTS/README.md](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md) ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：./INDEX_HEALTH_ORPHAN_20260414.md（`docs/09_AUDIT/REPORTS`；历史 `20260412`；勿与下条 **STATE · 最新** 混读）  
+- **REPORTS 报告区门面**：~~[../REPORTS/README.md]~~ ｜ **REPORTS 前缀零入链（机器报告 · 最新 20260414）**：./INDEX_HEALTH_ORPHAN_20260414.md（`docs/09_AUDIT/REPORTS`；历史 `20260412`；勿与下条 **STATE · 最新** 混读）  
 
 - **本前缀零入链（STATE · 最新 20260416）**：./INDEX_HEALTH_ORPHAN_20260416.md（**zero_inbound=0**）｜历史 `20260413`  
 
@@ -73,7 +68,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -213,7 +210,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -227,7 +226,7 @@ compliance_level: 专业标准---
 
 - **分组入口**：`INDEX_GROUPED_STATE_20260408.md`（覆盖当前仍为严格孤儿的 95 篇 STATE 文档）
 
-- **夜间批跑**：[`overnight_runs/INDEX.md`](12_MODULE_DESIGNS/layer_0/INDEX.md)
+- **夜间批跑**：~~[`overnight_runs/INDEX.md`]~~
 
 
 
@@ -245,7 +244,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -277,7 +278,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -373,7 +376,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 
@@ -389,7 +394,9 @@ compliance_level: 专业标准---
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,33 +1,17 @@
 ---
-
-module_id: TRAE_LINE_TASK_INDEX_20260409
-
+module_id: TRAE_LINE_TASK_INDEX_20260409_1041
 version: 1.1.0
-
 status: Active
-
 created_date: 2026-04-09
-
 last_updated: '2026-04-09'
-
 owner: 仓库 Owner
-
 standard_type: 逐条任务总索引
-
 applicable_scope: Trae / Cursor 接力；与 TRAE_AUTONOMOUS_WORK_DIRECTIVE 配套
-
 parent_document: ./TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md
-
 related_documents:
-
-  - ./TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md
-
-  - ./TRAE_LINE_TASK_BACKLOG_20260409.md
-
-  - ./TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409.md
-
+- ./TRAE_MASTER_EXECUTION_CHECKLIST_20260409.md
 layer: layer_09
-responsibility: "处理TRAE_LINE_TASK_INDEX_20260409相关业务"
+responsibility: 处理TRAE_LINE_TASK_INDEX_20260409相关业务
 ---
 
 

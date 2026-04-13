@@ -1,6 +1,15 @@
+---
+module_id: AUTO_08657
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: REFERENCE_LINK_CHECK_REPORT_20260407_153959
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - REFERENCE_LINK_CHECK_20260407_153959报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 引用链接自动化检查报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +99,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +359,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +393,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_21169
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: MISSING_RESPONSIBILITY_SCAN_REPORT_20260407_170649
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
   - MISSING_RESPONSIBILITY_SCAN_20260407_170649报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -82,7 +97,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -474,7 +491,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -506,7 +525,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

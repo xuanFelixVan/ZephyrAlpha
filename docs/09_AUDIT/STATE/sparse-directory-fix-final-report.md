@@ -1,5 +1,5 @@
 ---
-module_id: SPARSE_DIRECTORY_FIX_FINAL_REPORT
+module_id: SPARSE_DIRECTORY_FIX_FINAL_REPORT_4922
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -91,7 +91,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -129,7 +131,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -155,7 +159,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -185,7 +191,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -201,7 +209,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 

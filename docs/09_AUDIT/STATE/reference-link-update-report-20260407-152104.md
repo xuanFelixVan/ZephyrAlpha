@@ -1,6 +1,15 @@
+---
+module_id: AUTO_23618
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: REFERENCE_LINK_UPDATE_REPORT_20260407_152104
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - REFERENCE_LINK_UPDATE_20260407_152104报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 引用链接更新报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -78,7 +93,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -342,7 +359,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +393,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

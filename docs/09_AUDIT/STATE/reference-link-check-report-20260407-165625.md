@@ -1,6 +1,15 @@
+---
+module_id: AUTO_63119
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: REFERENCE_LINK_CHECK_REPORT_20260407_165625
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
   - REFERENCE_LINK_CHECK_20260407_165625报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -104,7 +119,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -190,7 +207,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -222,7 +241,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

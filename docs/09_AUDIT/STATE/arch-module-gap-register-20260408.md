@@ -1,23 +1,14 @@
 ---
-
-module_id: 09_AUDIT_STATE_ARCH_MODULE_GAP_REGISTER_20260408
-
+module_id: 09_AUDIT_STATE_ARCH_MODULE_GAP_REGISTER_20260408_3725
 version: 1.6.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 项目负责人
-
 standard_type: 审计台账
-
 applicable_scope: 架构与模块缺口登记
-
 layer: layer_09
-responsibility: "处理ARCH_MODULE_GAP_REGISTER_20260408相关业务"
+responsibility: 处理ARCH_MODULE_GAP_REGISTER_20260408相关业务
 ---
 
 

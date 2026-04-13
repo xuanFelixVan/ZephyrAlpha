@@ -1,6 +1,15 @@
+---
+module_id: AUTO_67080
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: 09_AUDIT_STATE_MISSING_METADATA_SCAN_REPORT_20260407_170852
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
   - MISSING_METADATA_SCAN_20260407_170852报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -82,7 +97,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2914,7 +2931,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -2946,7 +2965,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

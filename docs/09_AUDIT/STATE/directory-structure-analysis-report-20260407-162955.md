@@ -1,6 +1,15 @@
+---
+module_id: AUTO_10161
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260407_162955
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - DIRECTORY_STRUCTURE_ANALYSIS_20260407_162955报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 目录结构分析报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +99,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -312,7 +329,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -368,7 +387,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -518,7 +539,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -550,7 +573,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

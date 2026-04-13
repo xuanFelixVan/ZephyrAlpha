@@ -1,27 +1,15 @@
 ---
-
-module_id: DOUBLE_YAML_EXCEPTIONS_REGISTRY_001
-
+module_id: DOUBLE_YAML_EXCEPTIONS_REGISTRY_001_1160
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-08
-
 last_updated: '2026-04-08'
-
 owner: 仓库 Owner
-
 standard_type: 审计台账
-
 applicable_scope: 双 YAML 合并豁免（EC-3）
-
 parent_document: ../PROCEDURES/OPENCLAW_REMEDIATION_EXECUTION_PLAYBOOK_20260408.md
-
 responsibility:
-
-  - 登记经人工确认必须保留双 YAML 头的 Markdown 路径
-
+- 登记经人工确认必须保留双 YAML 头的 Markdown 路径
 layer: layer_09
 ---
 

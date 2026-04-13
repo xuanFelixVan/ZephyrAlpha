@@ -1,6 +1,15 @@
+---
+module_id: AUTO_19096
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435
+```
 
 version: 1.0.0
 
@@ -22,7 +31,9 @@ parent_document: ../INDEX.md
 
 layer: layer_09
 responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关业务"
----
+```
+```---
+```
 
 
 
@@ -42,7 +53,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -84,7 +99,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -312,7 +329,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -372,7 +391,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -522,7 +543,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 
@@ -554,7 +577,9 @@ responsibility: "处理DIRECTORY_STRUCTURE_ANALYSIS_REPORT_20260412_211435相关
 
 
 
----
+```
+```---
+```
 
 
 

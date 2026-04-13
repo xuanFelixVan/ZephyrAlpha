@@ -421,6 +421,8 @@ responsibility: STATE
 - TAX_MANAGEMENT_BLUEPRINT
 - TCA_BLUEPRINT
 
----
+```
+```---
+```
 
 **维护**：新增/移动分散蓝图后重跑生成脚本并提交。

@@ -1,6 +1,15 @@
+---
+module_id: AUTO_74554
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: ARCHIVE_FILES_REFERENCE_CHECK_REPORT_20260407_184342
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -82,7 +97,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -13676,7 +13693,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -13750,7 +13769,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -13782,7 +13803,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

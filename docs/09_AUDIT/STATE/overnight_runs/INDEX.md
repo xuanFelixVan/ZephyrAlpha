@@ -20,7 +20,7 @@ responsibility: "处理INDEX相关业务"
 
 ## 上级与接力
 
-- [返回 STATE 目录索引 `../INDEX.md`](../INDEX.md) ｜ [审计域总索引 `../../INDEX.md`](../../INDEX.md) ｜ [REPORTS 门面 `../../REPORTS/README.md`](10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM/README.md)  
+- [返回 STATE 目录索引 `../INDEX.md`](../INDEX.md) ｜ [审计域总索引 `../../INDEX.md`](../../INDEX.md) ｜ ~~[REPORTS 门面 `../../REPORTS/README.md`]~~  
 - 全仓库文件治理任务清单 §7 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/REPO_WIDE_FILE_GOVERNANCE_TASK_LIST.md` ｜ 治理工具总索引 `../../../05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/GOVERNANCE_TOOLS_INDEX.md`  
 - **仓库内最新 L1 汇总快照（非某一 overnight 批次）**：../SENTINEL_L1_SCAN_20260408.md
 

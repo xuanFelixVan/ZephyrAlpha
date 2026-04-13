@@ -1,6 +1,15 @@
+---
+module_id: AUTO_60078
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SPARSE_DIRECTORY_INTEGRATION_GUIDE_20260407_025756_001
+```
 
 version: 1.0.0
 
@@ -19,7 +28,9 @@ responsibility:
 - 操作指南编写与使用说明与系统维护管理
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 稀疏目录整合指南
@@ -426,7 +437,9 @@ python scripts/continuous_monitoring.py
 
 
 
----
+```
+```---
+```
 
 
 

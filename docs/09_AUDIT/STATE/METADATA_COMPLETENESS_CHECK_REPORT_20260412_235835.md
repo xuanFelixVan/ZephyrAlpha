@@ -18,7 +18,9 @@ responsibility: STATE
 > - [OK] 本文档负责：检查记录、问题统计、改进建议
 > - [NO] 本文档不负责：问题修复、后续审计执行
 
----
+```
+```---
+```
 
 ## 检查概要
 
@@ -27,7 +29,9 @@ responsibility: STATE
 **检查方法**: 自动化检查  
 **检查结论**: 发现 1793 个文档存在元数据问题
 
----
+```
+```---
+```
 
 ## 检查统计
 
@@ -38,7 +42,9 @@ responsibility: STATE
 | **不完整元数据** | 1781 | 60.93% |
 | **无元数据** | 12 | 0.41% |
 
----
+```
+```---
+```
 
 ## 问题详情
 
@@ -136,7 +142,9 @@ responsibility: STATE
 11. 08_KNOWLEDGE_BASE\01_TECHNICAL_KNOWLEDGE\AI_CODE_EDITORS_COMPLETE_GUIDE.md
 12. 09_AUDIT\STATE\DIRECTORY_NAMING_COMPLIANCE_20260412.md
 
----
+```
+```---
+```
 
 ## 改进建议
 
@@ -152,7 +160,9 @@ responsibility: STATE
 2. [ ] 定期执行元数据检查
 3. [ ] 持续优化文档质量
 
----
+```
+```---
+```
 
 ## 变更记录
 

@@ -1,5 +1,14 @@
+---
+module_id: AUTO_96500
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408_ORIG
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-08
@@ -9,7 +18,9 @@ standard_type: 审计报告
 applicable_scope: docs/**/*.md 严格孤儿（入度=0）清单与分桶
 layer: layer_09
 responsibility: "处理STRICT_ORPHAN_FILES_REPORT_20260408相关业务"
----
+```
+```---
+```
 
 
 

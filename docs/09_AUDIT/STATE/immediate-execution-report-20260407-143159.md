@@ -1,6 +1,15 @@
+---
+module_id: AUTO_05251
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: IMMEDIATE_EXECUTION_REPORT_20260407_143159
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - IMMEDIATE_EXECUTION_20260407_143159报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 立即执行任务报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +95,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -122,7 +139,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -248,7 +267,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -300,7 +321,9 @@ python scripts/periodic_document_review.py quarterly
 
 
 
----
+```
+```---
+```
 
 
 
@@ -332,7 +355,9 @@ python scripts/periodic_document_review.py quarterly
 
 
 
----
+```
+```---
+```
 
 
 

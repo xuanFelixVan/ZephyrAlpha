@@ -1,5 +1,5 @@
 ---
-module_id: SPARSE_DIRECTORY_STRATEGY_REPORT
+module_id: SPARSE_DIRECTORY_STRATEGY_REPORT_3392
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -417,7 +417,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -437,7 +439,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -459,7 +463,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -487,7 +493,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 

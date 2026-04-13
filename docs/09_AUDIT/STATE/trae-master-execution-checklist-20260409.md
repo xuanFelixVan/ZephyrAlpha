@@ -1,5 +1,14 @@
+---
+module_id: AUTO_37260
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: TRAE_MASTER_EXECUTION_CHECKLIST_20260409
+```
 version: 1.0.1
 status: Active
 created_date: 2026-04-09
@@ -26,7 +35,9 @@ related_documents:
   - ./MODULE_ID_MISSING_FILES_LIST_20260409.txt
 layer: layer_09
 responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
----
+```
+```---
+```
 
 
 
@@ -52,7 +63,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 | J | 施工门禁 §3 块 | CG3 |
 | K | 二级热点子树 | SUB |
 
----
+```
+```---
+```
 
 ## A. 执行框架与真源（`TRAE_AUTONOMOUS_WORK_DIRECTIVE` + `HANDOFF` + 关联标准）
 
@@ -92,7 +105,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0034** （审计）全库分批方法见 `docs/09_AUDIT/PROCEDURES/FULL_SYSTEM_DOCUMENT_AUDIT_PLAN_20260408.md`（本清单 G 段为批次勾选）
 - [x] **T0035** （可选）附录英文规范块：同 `TRAE_AUTONOMOUS_WORK_DIRECTIVE_20260408.md` §10 Appendix A，贴 Trae 首条可增稳
 
----
+```
+```---
+```
 
 ## B. 元任务与 module_id 去重
 
@@ -104,7 +119,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0041** （DEDUP）解决 `module_id: FACTOR_GUIDE_001` 重复：canonical `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`；`docs/06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` 按 ADR 改后缀并互链
 - [x] **T0042** （DEDUP）解决 `module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` 重复：`STRICT_ORPHAN_FILES_REPORT_20260408.md` 与 `STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` 择一 canonical，另一改 module_id（如 `_REGEN`）并互链
 
----
+```
+```---
+```
 
 ## C. 严格 inbound 孤儿（逐文件 · REGEN）
 
@@ -641,7 +658,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0573** （ORPHAN）`docs/09_ARCHIVE/duplicates/research_management.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 - [x] **T0574** （ORPHAN）`docs/09_AUDIT/STATE/STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` — 自权威 INDEX/SITEMAP/父 README 增加入站链，或按 HANDOFF 归档/豁免登记
 
----
+```
+```---
+```
 
 ## D. 首道 YAML 缺少 module_id（逐文件）
 
@@ -1047,7 +1066,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0974** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/module_id_duplicates_detail_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 - [x] **T0975** （NO-MID）`docs/09_AUDIT/STATE/overnight_runs/20260408_033240/sentinel_l1_scan_20260408_033240.md` — 补首道 front matter 之 `module_id`（及 status/version）或登记豁免
 
----
+```
+```---
+```
 
 ## E. `docs/` 一级目录 — 归档 / 职责 / 导航 普查
 
@@ -1073,7 +1094,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0995** （DIR）`docs/11_STRATEGIC_DECISION/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 - [x] **T0996** （DIR）`docs/module_designs/` — 归档候选与重复扫描；补/建议 INDEX 或 README；写 1 段目录职责摘要或 defer
 
----
+```
+```---
+```
 
 ## F. 仓库非 `docs/` 文档带
 
@@ -1082,7 +1105,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T0999** （EXT）`data/**/*.md` — 与实施文档去重；登记 canonical
 - [x] **T1000** （EXT）仓库根 `README.md` — 与 `docs/INDEX.md`、`System_Manifest.md` 一致
 
----
+```
+```---
+```
 
 ## G. 全库文档审计方案 — 批次（FULL_SYSTEM_DOCUMENT_AUDIT_PLAN）
 
@@ -1122,7 +1147,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T1034** （AUDIT）批次 `I2` — 按 FULL_SYSTEM_DOCUMENT_AUDIT_PLAN 执行该路径 L1/L2/L3 与汇总报告
 - [x] **T1035** （AUDIT）批次 `I3` — 按 FULL_SYSTEM_DOCUMENT_AUDIT_PLAN 执行该路径 L1/L2/L3 与汇总报告
 
----
+```
+```---
+```
 
 ## H. HANDOFF 拆条（证据驱动）
 
@@ -1138,7 +1165,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T1045** （HO）防幻觉：声称须附 Glob/Read 或脚本片段
 - [x] **T1046** （HO）HANDOFF §18：本轮涉及重复簇 canonical 与互链
 
----
+```
+```---
+```
 
 ## I. 文档整改指令（DOC_REMEDIATION）
 
@@ -1149,7 +1178,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T1051** （REM）P1-C：P1 余项 — 指令 §8 与 P1C_DEFERRED
 - [x] **T1052** （REM）闭环：EC-1～EC-7 复跑勾选 + POST_REMEDIATION L1 存档路径
 
----
+```
+```---
+```
 
 ## J. 施工门禁 §3（进入第 3 阶段代码前）
 
@@ -1160,7 +1191,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T1057** （CG3-E）API/契约与 TDR — §3-E
 - [x] **T1058** （CG3-F）施工文档 §0.3 交付物 — §3-F
 
----
+```
+```---
+```
 
 ## K. 二级热点子树（可选加深）
 
@@ -1169,7 +1202,9 @@ responsibility: "处理TRAE_MASTER_EXECUTION_CHECKLIST_20260409相关业务"
 - [x] **T1061** （SUB）`docs/05_IMPLEMENTATION/07_OPERATIONS/` — 运维与监控入口
 - [x] **T1062** （SUB）`docs/06_ARCHIVE/` 根散落 — G1 归类索引
 
----
+```
+```---
+```
 
 **清单结束**：共 **1062** 条编号任务（T0001～T1062）。
 

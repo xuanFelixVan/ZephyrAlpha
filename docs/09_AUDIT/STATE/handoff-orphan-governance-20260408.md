@@ -1,5 +1,5 @@
 ---
-module_id: HANDOFF_ORPHAN_GOVERNANCE_20260408
+module_id: HANDOFF_ORPHAN_GOVERNANCE_20260408_2654
 version: 2.0.1
 status: Active
 created_date: 2026-04-08
@@ -42,7 +42,9 @@ layer: layer_09
 > **场景 B（本版强化）**：在 **Trae** 中使用 **GLM-5.1** **连续约 8 小时、中途不向 Owner 追问**时，以本文 + `TRAE_BLUEPRINT_TASK_LEDGER_20260408.md` 为执行剧本，目标结束时达到 **蓝图交付标准**（`CONSTRUCTION_GATE` §0.1 / §0.1a），**可进入施工文档（第 2 阶段）**；**第 3 阶段（写代码）**门槛见门禁 §3，勿与本文终点混淆。  
 > **仓库根**：`d:\ZephyrAlpha`（以实际 clone 路径为准；下文路径均相对仓库根）。
 
----
+```
+```---
+```
 
 ## 0. 文档目录（按阅读顺序）
 
@@ -64,7 +66,9 @@ layer: layer_09
 
 > 执行者**至少**通读：**0 → 15 → 16 → 17**，再按任务选读 §13～§14 与 §11。
 
----
+```
+```---
+```
 
 ## 1. 业务目标（勿跑偏）
 
@@ -75,7 +79,9 @@ layer: layer_09
 | **孤儿基线** | 人工基线：`STRICT_ORPHAN_FILES_LIST_20260408.txt` |
 | **进度重算** | `scripts/strict_orphan_inbound_scan.py` → `STRICT_ORPHAN_FILES_LIST_REGEN_<date>.txt`；**默认不要** `--basename` 覆盖 `20260408` 基线文件名 |
 
----
+```
+```---
+```
 
 ## 2. 必读与必用路径
 
@@ -117,7 +123,9 @@ layer: layer_09
 - **未收录（刻意）**：全库数千篇 `docs/**/*.md` **不可能**也不应在交接中单列穷尽；具体孤儿路径以 **`STRICT_ORPHAN_FILES_LIST_REGEN_<date>.txt`** 与基线 diff 为准。
 - **若总案引用其他日期戳文件**：以 `BLUEPRINT_PHASE_DOCUMENT_HYGIENE_MASTER_PLAN_20260408.md` 内链接与 `09_AUDIT/PROCEDURES/`、`09_AUDIT/STATE/` 当日台账为准，按需打开。
 
----
+```
+```---
+```
 
 ## 3. 孤儿口径（与脚本一致）
 
@@ -126,7 +134,9 @@ layer: layer_09
 - **排除「不算孤儿」的文件**：名为 `INDEX.md` / `README.md` / `SITEMAP.md`，以及 `docs/01_FRAMEWORK/` 下 `ARCHITECTURE.md`、`MODULE_RESPONSIBILITY_BOUNDARIES.md`、`BLUEPRINT_ARCHITECTURE_MAPPING.md`。
 - 与 `scripts/sentinel_l1_governance_scan.py` 的相对路径解析规则对齐。
 
----
+```
+```---
+```
 
 ## 4. 质量门禁
 
@@ -139,7 +149,9 @@ python scripts/sentinel_l1_governance_scan.py
 - **目标**：**Invalid links = 0**。
 - 若 `docs/09_AUDIT/STATE/` 下 `SENTINEL_L1_*`、`*REGEN*` 等生成物被 git 跟踪且**不打算提交**，可按惯例 `git restore` 对应文件。
 
----
+```
+```---
+```
 
 ## 5. 已知坑位（上一任已处理或踩过）
 
@@ -147,7 +159,9 @@ python scripts/sentinel_l1_governance_scan.py
 - **相对路径**：从 `docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/INDEX.md` 指向遗留树时，使用 **`../../06_CONSTRUCTION_DOCS/01_BLUEPRINTS/...`**。多写一层 `../` 会指到**仓库根**下不存在的路径，**L1 会报无效链**。
 - **基线 `20260408` 可能偏旧**：多域 `INDEX.md` 已分批挂载；以 **REGEN** 与磁盘为准做 diff，不要盲信旧清单行数与 IDE 缓存。
 
----
+```
+```---
+```
 
 ## 6. 推荐工作顺序（可循环 4～8 小时）
 
@@ -169,20 +183,26 @@ python scripts/sentinel_l1_governance_scan.py
 5. **收工**  
    - 再跑一次 REGEN；在 §10 或本文件末尾追加「与基线差异摘要」（可选）。
 
----
+```
+```---
+```
 
 ## 7. 与用户沟通约定
 
 - 对用户说明使用**中文**；代码标识、文件名、量化术语保留**英文**。
 - 未要求则**不**额外新建大篇 README；改动保持与任务同范围。
 
----
+```
+```---
+```
 
 ## 8. 一句话结论
 
 下一任应以 **`strict_orphan_inbound_scan.py` 的 REGEN 清单** 驱动**小批 INDEX 挂载**，每批 **L1 门禁**，**Playbook §10 留痕**；并行推进 **duplicates 台账** 与 **overlap canonical 指针**，避免单次大范围文件变动。
 
----
+```
+```---
+```
 
 ## 9. 可一并做的检查（建议同一「治理批次」内跑完）
 
@@ -197,7 +217,9 @@ python scripts/sentinel_l1_governance_scan.py
 | **架构模块 gap** | `ARCH_MODULE_GAP_REGISTER_20260408.md` + `ARCHITECTURE_MODULE_AUDIT_AND_GAP_PLAN_20260408.md` | 蓝图对齐、缺口登记与清洁批次可**交叉引用**（改 INDEX 时发现模块缺口则回填登记） |
 | **夜间批跑（可选）** | `scripts/overnight_audit_runner.py` | 适合长时自动化汇总；产物仍须人工看结论，**不**等于豁免 L1 |
 
----
+```
+```---
+```
 
 ## 10. 「过时审计文件」能不能处理？怎么处理？
 
@@ -213,7 +235,9 @@ python scripts/sentinel_l1_governance_scan.py
 
 **结论**：「过时」多数是 **STATE/REPORTS 噪音**——用**分组索引 + 元数据声明 + 指向现行真源**解决；**不要**在无 Owner 书面确认下做「删半库审计 md」式清理。
 
----
+```
+```---
+```
 
 ## 11. 蓝图阶段「清洁」还剩什么要做？（对照总案 checklist）
 
@@ -265,7 +289,9 @@ python scripts/sentinel_l1_governance_scan.py
 - [ ] P0 切片涉及的蓝图是否在总纲或映射中有「语义挂钩」（而不仅是文件存在于目录）？  
 - [ ] 新发现的 G4/G5 是否写入 `ARCH_MODULE_GAP_REGISTER_20260408.md`？
 
----
+```
+```---
+```
 
 ## 13. 文档补救与执行收口（Remediation & Execution Closure）与施工门禁
 
@@ -389,7 +415,9 @@ python scripts/sentinel_l1_governance_scan.py
 
 **一句话**：蓝图阶段结束 = **§0.2 范围内蓝图终稿化** + **总纲/边界/映射/契约形成可走通的权威阅读路径** + **施工文档目录与 INDEX 已就位**；过程稿仍可大量存在于 `STATE`/`REPORTS`，但**不得冒充**权威区现行真源（§13.4）。
 
----
+```
+```---
+```
 
 ## 14. 施工文档（「施工图纸」类交付）前的专业机构清洁名目（总清单）
 
@@ -460,7 +488,9 @@ python scripts/sentinel_l1_governance_scan.py
 - **进入第 2 阶段（写施工流程 / 计划 / 方案）**：以门禁 **§0.1 蓝图终稿** + **§0.1a 放置与 LAYOUT** 等为准；上表 **§14.1～14.7** 支撑「蓝图与文档体系已可审、可找、可链」。  
 - **进入第 3 阶段（写业务代码）**：另有门禁 **§0.3、§3 A～F** 等（含 **收口核对项 EC 复跑**、双 YAML 等），**比「动笔写施工文档」更严一层**；勿把第 3 阶段清单提前当成「写施工文档前必须全勾」，除非 Owner 另有书面决定。
 
----
+```
+```---
+```
 
 ## 15. Git 备份与安全合并（长时作业强制）
 
@@ -494,7 +524,9 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 - `git push` / `git push --tags` 按团队远程策略执行（无远程则保留本地 tag 亦可）。  
 - **不要** `git push --force` 到共享默认分支。
 
----
+```
+```---
+```
 
 ## 16. 防 AI 幻觉与证据规则（执行者必读）
 
@@ -510,7 +542,9 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 | **进度真源** | Trae 侧任务批次与完成摘要，须回写 **`docs/09_AUDIT/STATE/TRAE_BLUEPRINT_TASK_LEDGER_20260408.md`**（与台账 §6 约定一致），避免口头进度漂移。 |
 | **不向 Owner 中途追问时的默认策略** | 遇歧义：**选保守**（少删、多挂链、多登记 gap）；**不猜** Owner 意图；**把假设写进** `ARCH_MODULE_GAP_REGISTER_20260408.md` 或台账「待 Owner 裁决」列。 |
 
----
+```
+```---
+```
 
 ## 17. Trae × GLM-5.1 连续 8 小时执行方案（对齐蓝图交付）
 
@@ -548,7 +582,9 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 - **8 小时无法保证**「§0.2 内每一篇蓝图 100% §0.1」——以台账 **P0 + L1 不回归** 为硬约束；余量列入下一马拉松或 Cursor 接力。  
 - **第 2 阶段放行**的最终勾选权在 **Owner**；执行者交付的是 **可验证证据链**（L1 报告、REGEN、台账、git 历史）。
 
----
+```
+```---
+```
 
 ## 18. 重复文档与「Layer → 子模块 → 蓝图」快速导航
 
@@ -584,7 +620,9 @@ git tag -a doc-baseline-YYYYMMDD -m "文档清洁长跑前基线"
 - [ ] `01_BLUEPRINTS/INDEX.md` 与磁盘一致（脚本重生成并提交）。  
 - [ ] 在 **P0 蓝图**篇内补齐 **指向契约**与 **1～3 条相关蓝图**链接（有则补，无则登记 G5）。
 
----
+```
+```---
+```
 
 ## 19. 变更记录（本交接文档）
 

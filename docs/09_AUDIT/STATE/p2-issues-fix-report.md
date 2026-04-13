@@ -1,5 +1,5 @@
 ---
-module_id: P2_ISSUES_FIX_REPORT
+module_id: P2_ISSUES_FIX_REPORT_0786
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -49,7 +49,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -93,7 +95,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -133,7 +137,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -173,7 +179,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -189,7 +197,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -201,7 +211,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -213,7 +225,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -225,7 +239,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -237,7 +253,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -249,7 +267,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -261,7 +281,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -301,7 +323,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -335,7 +359,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -351,7 +377,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -383,7 +411,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 
@@ -405,7 +435,9 @@ responsibility:
 
 
 
----
+```
+```---
+```
 
 
 

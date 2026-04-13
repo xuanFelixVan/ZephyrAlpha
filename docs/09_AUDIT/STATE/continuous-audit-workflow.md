@@ -37,7 +37,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -87,7 +89,9 @@ git commit
 
 
 
----
+```
+```---
+```
 
 
 
@@ -149,7 +153,9 @@ python scripts/document_governance_check.py --output docs/09_AUDIT/STATE/daily_c
 
 
 
----
+```
+```---
+```
 
 
 
@@ -211,7 +217,9 @@ python scripts/document_governance_check.py --output docs/09_AUDIT/STATE/weekly_
 
 
 
----
+```
+```---
+```
 
 
 
@@ -291,7 +299,9 @@ python scripts/generate_audit_report.py --type monthly
 
 
 
----
+```
+```---
+```
 
 
 
@@ -357,7 +367,9 @@ python scripts/generate_audit_report.py --type quarterly
 
 
 
----
+```
+```---
+```
 
 
 
@@ -399,7 +411,9 @@ chmod +x .git/hooks/pre-commit
 
 
 
----
+```
+```---
+```
 
 
 
@@ -443,7 +457,9 @@ python scripts/document_governance_check.py --output report.json
 
 
 
----
+```
+```---
+```
 
 
 
@@ -487,7 +503,9 @@ python scripts/auto_generate_index.py --min-files 3
 
 
 
----
+```
+```---
+```
 
 
 
@@ -527,7 +545,9 @@ python scripts/auto_generate_index.py --min-files 3
 
 
 
----
+```
+```---
+```
 
 
 
@@ -543,7 +563,9 @@ python scripts/auto_generate_index.py --min-files 3
 
 
 
----
+```
+```---
+```
 
 
 

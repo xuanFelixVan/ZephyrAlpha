@@ -1,5 +1,5 @@
 ---
-module_id: ALPHA_FACTOR_P1_P2_FIX_REPORT
+module_id: ALPHA_FACTOR_P1_P2_FIX_REPORT_3261
 version: 1.0.0
 status: Active
 created_date: 2026-04-13
@@ -74,7 +74,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -102,7 +104,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +134,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +164,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -204,7 +212,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -226,7 +236,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -256,7 +268,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 
@@ -272,7 +286,9 @@ responsibility: STATE
 
 
 
----
+```
+```---
+```
 
 
 

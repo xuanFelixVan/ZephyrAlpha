@@ -1,6 +1,15 @@
+---
+module_id: AUTO_40983
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: WEEKLY_LONGTERM_OPTIMIZATION_REPORT_20260407_142449
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - WEEKLY_LONGTERM_OPTIMIZATION_20260407_142449报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 本周和长期优化任务执行报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,7 +115,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -162,7 +179,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -212,7 +231,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -240,7 +261,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -268,7 +291,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -320,7 +345,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -374,7 +401,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -434,7 +463,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -502,7 +533,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -546,7 +579,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

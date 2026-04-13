@@ -1,25 +1,15 @@
 ---
-
-module_id: INDEX_20260408_033240_001
-
+module_id: INDEX_20260408_033240_001_09_AUDIT_2023
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-12
-
 last_updated: 2026-04-12
-
 owner: 文档治理系统
-
 standard_type: 索引文档
-
 applicable_scope: 文档索引导航
-
 compliance_level: 专业标准
-
 layer: layer_09
-responsibility: "处理INDEX相关业务"
+responsibility: 处理INDEX相关业务
 ---
 
 
@@ -40,7 +30,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +56,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -88,7 +82,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +116,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -136,7 +134,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -152,7 +152,9 @@ responsibility: "处理INDEX相关业务"
 
 
 
----
+```
+```---
+```
 
 
 

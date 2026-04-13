@@ -1,5 +1,14 @@
+---
+module_id: AUTO_53534
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: 09_AUDIT_STATE_SPARSE_DIRECTORY_ANALYSIS_20260407_030548_001
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
@@ -9,7 +18,9 @@ standard_type: 专业量化机构文档
 responsibility:
 - 审计体系设计与质量监控与实施指导
 layer: layer_09
----
+```
+```---
+```
 
 # 稀疏目录分析报告
 
@@ -34,7 +45,9 @@ layer: layer_09
 
 | 目录路径 | 文件数 | 文件列表 |
 |
+```
 ----|--------|----------|
+```
 | 00_RESOURCES | 2 | INDEX.md, README.md |
 | 00_RESOURCES\04_PLATFORM_DOCS | 2 | INDEX.md, README.md |
 | 01_FRAMEWORK\ARCHITECTURE_DECISIONS | 2 | INDEX.md, README.md |

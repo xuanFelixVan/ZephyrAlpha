@@ -1,6 +1,15 @@
+---
+module_id: AUTO_94259
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SYSTEM_MANIFEST_DEAD_LINK_ANALYSIS_20260407
+```
 
 version: 1.0.0
 
@@ -17,7 +26,9 @@ responsibility:
   - System_Manifestmd死链接详细分析报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -36,7 +47,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -92,7 +107,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -110,7 +127,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -158,7 +177,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -178,7 +199,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

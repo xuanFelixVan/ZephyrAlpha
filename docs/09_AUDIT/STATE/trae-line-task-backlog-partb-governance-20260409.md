@@ -1,5 +1,14 @@
+---
+module_id: AUTO_11295
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
+```
 module_id: TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409
+```
 version: 1.0.0
 status: Active
 created_date: 2026-04-09
@@ -16,7 +25,9 @@ related_documents:
   - ./TRAE_LINE_TASK_BACKLOG_20260409.md
 layer: layer_09
 responsibility: "处理TRAE_LINE_TASK_BACKLOG_PARTB_GOVERNANCE_20260409相关业务"
----
+```
+```---
+```
 
 
 

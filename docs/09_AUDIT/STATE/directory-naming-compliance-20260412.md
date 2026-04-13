@@ -16,7 +16,9 @@ responsibility: STATE
 > **生成脚本**: `scripts/governance/scan_directory_naming_compliance.py`
 > **扫描日期**: 20260412
 
----
+```
+```---
+```
 
 ## 扫描摘要
 
@@ -231,7 +233,9 @@ responsibility: STATE
 | `tests/unit` | `unit` |
 | `tools` | `tools` |
 
----
+```
+```---
+```
 
 ## 参考标准
 

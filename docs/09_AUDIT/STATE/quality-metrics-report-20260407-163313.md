@@ -1,6 +1,15 @@
+---
+module_id: AUTO_80201
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: QUALITY_METRICS_REPORT_20260407_163313
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - QUALITY_METRICS_20260407_163313报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 文档质量指标监控报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -96,7 +111,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -116,7 +133,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -138,7 +157,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -178,7 +199,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +225,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -234,7 +259,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

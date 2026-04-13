@@ -1,29 +1,16 @@
 ---
-
-module_id: PERIODIC_CHECK_MECHANISM_REPORT_20260407_161212
-
+module_id: PERIODIC_CHECK_MECHANISM_REPORT_20260407_161212_2988
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: '2026-04-07'
-
 owner: 首席文档架构师
-
 standard_type: 机制报告
-
 applicable_scope: 定期检查机制建立
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 responsibility:
-
 - PERIODIC_CHECK_MECHANISM_20260407_161212报告文档
-
 layer: layer_09
 ---
 
@@ -42,7 +29,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +49,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -110,7 +101,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -130,7 +123,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -166,7 +161,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -186,7 +183,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -218,7 +217,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

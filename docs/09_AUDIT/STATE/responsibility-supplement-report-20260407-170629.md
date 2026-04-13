@@ -1,6 +1,15 @@
+---
+module_id: AUTO_60039
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: RESPONSIBILITY_SUPPLEMENT_REPORT_20260407_170629
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
   - RESPONSIBILITY_SUPPLEMENT_20260407_170629报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 
@@ -44,7 +55,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -62,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +95,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -204,7 +221,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -236,7 +255,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

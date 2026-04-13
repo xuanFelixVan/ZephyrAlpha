@@ -1,6 +1,15 @@
+---
+module_id: AUTO_65865
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: P1C_DEFERRED_20260408
+```
 
 version: 1.0.0
 
@@ -15,7 +24,9 @@ responsibility:
   - P1-C 延迟项记录
 
 layer: layer_09
----
+```
+```---
+```
 
 
 

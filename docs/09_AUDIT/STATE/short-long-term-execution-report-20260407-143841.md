@@ -1,6 +1,15 @@
+---
+module_id: AUTO_17399
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: SHORT_LONG_TERM_EXECUTION_REPORT_20260407_143841
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ responsibility:
 - SHORT_LONG_TERM_EXECUTION_20260407_143841报告文档
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 短期和长期执行任务报告
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -60,7 +73,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -100,7 +115,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -160,7 +177,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +221,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -242,7 +263,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -276,7 +299,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -324,7 +349,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -350,7 +377,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -386,7 +415,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

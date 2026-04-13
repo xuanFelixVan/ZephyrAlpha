@@ -1,0 +1,2156 @@
+{
+  "summary": {
+    "total_directories": 492,
+    "with_chinese": 0,
+    "with_space": 0,
+    "with_special_chars": 4,
+    "missing_prefix": 190,
+    "compliant": 301
+  },
+  "issues": {
+    "special_chars": [
+      {
+        "name": ".audit_cache",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_cache"
+      },
+      {
+        "name": ".audit_fix_backup",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup"
+      },
+      {
+        "name": ".github",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": false,
+        "issues": [
+          "包含特殊字符"
+        ],
+        "path": ".github"
+      },
+      {
+        "name": ".trae",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".trae"
+      }
+    ],
+    "missing_prefix": [
+      {
+        "name": ".audit_cache",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_cache"
+      },
+      {
+        "name": ".audit_fix_backup",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup"
+      },
+      {
+        "name": "AI_VIRTUAL_RESEARCH_TEAM",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM"
+      },
+      {
+        "name": "ARCHITECTURE_DECISIONS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS"
+      },
+      {
+        "name": "LAYER4_ML",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/01_FRAMEWORK/LAYER4_ML"
+      },
+      {
+        "name": "other-masters",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters"
+      },
+      {
+        "name": "audit_state",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
+      },
+      {
+        "name": "CANON",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON"
+      },
+      {
+        "name": "REPORTS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS"
+      },
+      {
+        "name": "trading_costs",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs"
+      },
+      {
+        "name": "audit_state",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state"
+      },
+      {
+        "name": "checklists",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/checklists"
+      },
+      {
+        "name": "knowledge_base",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base"
+      },
+      {
+        "name": "best_practices",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices"
+      },
+      {
+        "name": "case_studies",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies"
+      },
+      {
+        "name": "monitoring",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring"
+      },
+      {
+        "name": "standards",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/05_IMPLEMENTATION/07_OPERATIONS/standards"
+      },
+      {
+        "name": "STAGING_AREA",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/STAGING_AREA"
+      },
+      {
+        "name": "audit_reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/audit_reports"
+      },
+      {
+        "name": "blueprints",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/blueprints"
+      },
+      {
+        "name": "data_management",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/data_management"
+      },
+      {
+        "name": "duplicates",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/duplicates"
+      },
+      {
+        "name": "factor_library",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/factor_library"
+      },
+      {
+        "name": "implementation",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/implementation"
+      },
+      {
+        "name": "reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/reports"
+      },
+      {
+        "name": "research",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/research"
+      },
+      {
+        "name": "strategy_library",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/strategy_library"
+      },
+      {
+        "name": "technical_specifications",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/technical_specifications"
+      },
+      {
+        "name": "unclassified",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/06_ARCHIVE/unclassified"
+      },
+      {
+        "name": "BEST_PRACTICES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/BEST_PRACTICES"
+      },
+      {
+        "name": "CASE_STUDIES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/CASE_STUDIES"
+      },
+      {
+        "name": "CONFIG",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/CONFIG"
+      },
+      {
+        "name": "CONFIGURATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/CONFIGURATION"
+      },
+      {
+        "name": "FORM_STANDARDS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/FORM_STANDARDS"
+      },
+      {
+        "name": "GUIDES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/GUIDES"
+      },
+      {
+        "name": "PROCEDURES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/PROCEDURES"
+      },
+      {
+        "name": "REPORTS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/REPORTS"
+      },
+      {
+        "name": "SOLUTIONS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/SOLUTIONS"
+      },
+      {
+        "name": "STANDARDS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STANDARDS"
+      },
+      {
+        "name": "STATE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STATE"
+      },
+      {
+        "name": "overnight_runs",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STATE/overnight_runs"
+      },
+      {
+        "name": "20260408_021344",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STATE/overnight_runs/20260408_021344"
+      },
+      {
+        "name": "20260408_022356",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STATE/overnight_runs/20260408_022356"
+      },
+      {
+        "name": "20260408_033240",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/STATE/overnight_runs/20260408_033240"
+      },
+      {
+        "name": "TRAINING",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/TRAINING"
+      },
+      {
+        "name": "WORKFLOWS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/09_AUDIT/WORKFLOWS"
+      },
+      {
+        "name": "GOVERNANCE_PROCESSES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/10_GOVERNANCE_COMPLIANCE/GOVERNANCE_PROCESSES"
+      },
+      {
+        "name": "KNOWLEDGE_BASE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE"
+      },
+      {
+        "name": "layer_0",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".audit_fix_backup/docs/12_MODULE_DESIGNS/layer_0"
+      },
+      {
+        "name": "workflows",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".github/workflows"
+      },
+      {
+        "name": ".trae",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": true,
+        "missing_prefix": true,
+        "issues": [
+          "包含特殊字符",
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".trae"
+      },
+      {
+        "name": "skills",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".trae/skills"
+      },
+      {
+        "name": "audit-sentinel",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": ".trae/skills/audit-sentinel"
+      },
+      {
+        "name": "factors",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "config/factors"
+      },
+      {
+        "name": "risk",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "config/risk"
+      },
+      {
+        "name": "assessments",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/assessments"
+      },
+      {
+        "name": "economic_regime",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/assessments/economic_regime"
+      },
+      {
+        "name": "market_impact",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/assessments/market_impact"
+      },
+      {
+        "name": "smart_execution",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/assessments/smart_execution"
+      },
+      {
+        "name": "monitoring",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/monitoring"
+      },
+      {
+        "name": "reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/monitoring/reports"
+      },
+      {
+        "name": "daily",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "data/monitoring/reports/daily"
+      },
+      {
+        "name": "database",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "database"
+      },
+      {
+        "name": "ddl",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "database/ddl"
+      },
+      {
+        "name": "AI_VIRTUAL_RESEARCH_TEAM",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/01_FRAMEWORK/AI_VIRTUAL_RESEARCH_TEAM"
+      },
+      {
+        "name": "ARCHITECTURE_DECISIONS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/01_FRAMEWORK/ARCHITECTURE_DECISIONS"
+      },
+      {
+        "name": "LAYER4_ML",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/01_FRAMEWORK/LAYER4_ML"
+      },
+      {
+        "name": "CONFIG_MANAGEMENT",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/CONFIG_MANAGEMENT"
+      },
+      {
+        "name": "DATA_ANOMALY_DETECTION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ANOMALY_DETECTION"
+      },
+      {
+        "name": "DATA_API_GATEWAY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_API_GATEWAY"
+      },
+      {
+        "name": "DATA_CATALOG",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CATALOG"
+      },
+      {
+        "name": "DATA_COMPRESSION_ARCHIVE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_COMPRESSION_ARCHIVE"
+      },
+      {
+        "name": "DATA_CONTRACT",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_CONTRACT"
+      },
+      {
+        "name": "DATA_FEDERATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_FEDERATION"
+      },
+      {
+        "name": "DATA_LIFECYCLE_MANAGEMENT",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_LIFECYCLE_MANAGEMENT"
+      },
+      {
+        "name": "DATA_LINEAGE_TRACKING",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_LINEAGE_TRACKING"
+      },
+      {
+        "name": "DATA_MONITORING_ENHANCED",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_MONITORING_ENHANCED"
+      },
+      {
+        "name": "DATA_OBSERVABILITY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_OBSERVABILITY"
+      },
+      {
+        "name": "DATA_ORCHESTRATION_ENHANCED",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_ORCHESTRATION_ENHANCED"
+      },
+      {
+        "name": "DATA_PERMISSION_MANAGEMENT",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_PERMISSION_MANAGEMENT"
+      },
+      {
+        "name": "DATA_PROFILING",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_PROFILING"
+      },
+      {
+        "name": "DATA_RECOVERY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_RECOVERY"
+      },
+      {
+        "name": "DATA_SECURITY_PRIVACY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SECURITY_PRIVACY"
+      },
+      {
+        "name": "DATA_STANDARDIZATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_STANDARDIZATION"
+      },
+      {
+        "name": "DATA_SYNC_REPLICATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_SYNC_REPLICATION"
+      },
+      {
+        "name": "DATA_VALIDATION_FRAMEWORK",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_VALIDATION_FRAMEWORK"
+      },
+      {
+        "name": "DATA_VERSION_CONTROL",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/DATA_VERSION_CONTROL"
+      },
+      {
+        "name": "IFIND",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/IFIND"
+      },
+      {
+        "name": "REALTIME_DATA_STREAMING",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/REALTIME_DATA_STREAMING"
+      },
+      {
+        "name": "TIME_SERIES_STORAGE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/02_FACTOR_LIBRARY/04_DATA_SOURCE/TIME_SERIES_STORAGE"
+      },
+      {
+        "name": "other-masters",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/03_TRADING_TACTICS/04_YOUZI_STRATEGIES/other-masters"
+      },
+      {
+        "name": "audit_state",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state"
+      },
+      {
+        "name": "CANON",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON"
+      },
+      {
+        "name": "REPORTS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/REPORTS"
+      },
+      {
+        "name": "a_stock_rules",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/a_stock_rules"
+      },
+      {
+        "name": "data_consistency",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/data_consistency"
+      },
+      {
+        "name": "database",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/database"
+      },
+      {
+        "name": "trading_costs",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/trading_costs"
+      },
+      {
+        "name": "ui_design",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/ui_design"
+      },
+      {
+        "name": "web_interface",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/05_DESIGN_DOCS/web_interface"
+      },
+      {
+        "name": "audit_state",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/audit_state"
+      },
+      {
+        "name": "checklists",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/checklists"
+      },
+      {
+        "name": "improvement_plans",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/improvement_plans"
+      },
+      {
+        "name": "improvements",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/improvements"
+      },
+      {
+        "name": "knowledge_base",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base"
+      },
+      {
+        "name": "best_practices",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/best_practices"
+      },
+      {
+        "name": "case_studies",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/case_studies"
+      },
+      {
+        "name": "tools_guides",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/knowledge_base/tools_guides"
+      },
+      {
+        "name": "monitoring",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/monitoring"
+      },
+      {
+        "name": "standards",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/05_IMPLEMENTATION/07_OPERATIONS/standards"
+      },
+      {
+        "name": "STAGING_AREA",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/STAGING_AREA"
+      },
+      {
+        "name": "audit_reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/audit_reports"
+      },
+      {
+        "name": "blueprints",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/blueprints"
+      },
+      {
+        "name": "data_management",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/data_management"
+      },
+      {
+        "name": "duplicates",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/duplicates"
+      },
+      {
+        "name": "factor_library",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/factor_library"
+      },
+      {
+        "name": "implementation",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/implementation"
+      },
+      {
+        "name": "reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/reports"
+      },
+      {
+        "name": "research",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/research"
+      },
+      {
+        "name": "strategy_library",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/strategy_library"
+      },
+      {
+        "name": "technical_specifications",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/technical_specifications"
+      },
+      {
+        "name": "unclassified",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/06_ARCHIVE/unclassified"
+      },
+      {
+        "name": "BEST_PRACTICES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/08_KNOWLEDGE/BEST_PRACTICES"
+      },
+      {
+        "name": "FACTOR_LIBRARY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/08_KNOWLEDGE/FACTOR_LIBRARY"
+      },
+      {
+        "name": "STRATEGY_LIBRARY",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/08_KNOWLEDGE/STRATEGY_LIBRARY"
+      },
+      {
+        "name": "TECHNICAL_SPECIFICATIONS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/TECHNICAL_SPECIFICATIONS"
+      },
+      {
+        "name": "audit_reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/audit_reports"
+      },
+      {
+        "name": "blueprints",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/blueprints"
+      },
+      {
+        "name": "duplicates",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/duplicates"
+      },
+      {
+        "name": "factor_library",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/factor_library"
+      },
+      {
+        "name": "unclassified",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_ARCHIVE/unclassified"
+      },
+      {
+        "name": "AUTOMATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/AUTOMATION"
+      },
+      {
+        "name": "BEST_PRACTICES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/BEST_PRACTICES"
+      },
+      {
+        "name": "CASE_STUDIES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/CASE_STUDIES"
+      },
+      {
+        "name": "CHECKLISTS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/CHECKLISTS"
+      },
+      {
+        "name": "CONFIG",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/CONFIG"
+      },
+      {
+        "name": "CONFIGURATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/CONFIGURATION"
+      },
+      {
+        "name": "DECISION_RECORDS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/DECISION_RECORDS"
+      },
+      {
+        "name": "FORM_STANDARDS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/FORM_STANDARDS"
+      },
+      {
+        "name": "GUIDES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/GUIDES"
+      },
+      {
+        "name": "PROCEDURES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/PROCEDURES"
+      },
+      {
+        "name": "REPORTS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/REPORTS"
+      },
+      {
+        "name": "RESEARCH_MEMOS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/RESEARCH_MEMOS"
+      },
+      {
+        "name": "SOLUTIONS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/SOLUTIONS"
+      },
+      {
+        "name": "STANDARDS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STANDARDS"
+      },
+      {
+        "name": "STATE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STATE"
+      },
+      {
+        "name": "overnight_runs",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STATE/overnight_runs"
+      },
+      {
+        "name": "20260408_021344",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_021344"
+      },
+      {
+        "name": "20260408_022356",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_022356"
+      },
+      {
+        "name": "20260408_033240",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/STATE/overnight_runs/20260408_033240"
+      },
+      {
+        "name": "TOOLS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/TOOLS"
+      },
+      {
+        "name": "TRAINING",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/TRAINING"
+      },
+      {
+        "name": "WORKFLOWS",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_AUDIT/WORKFLOWS"
+      },
+      {
+        "name": "_archive",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_RESEARCH_INNOVATION/_archive"
+      },
+      {
+        "name": "maintenance_records",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/09_RESEARCH_INNOVATION/maintenance_records"
+      },
+      {
+        "name": "CI_CD_INTEGRATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/10_GOVERNANCE_COMPLIANCE/CI_CD_INTEGRATION"
+      },
+      {
+        "name": "CLASSIFICATION",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/10_GOVERNANCE_COMPLIANCE/CLASSIFICATION"
+      },
+      {
+        "name": "GOVERNANCE_PROCESSES",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/10_GOVERNANCE_COMPLIANCE/GOVERNANCE_PROCESSES"
+      },
+      {
+        "name": "KNOWLEDGE_BASE",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/10_GOVERNANCE_COMPLIANCE/KNOWLEDGE_BASE"
+      },
+      {
+        "name": "TRAINING_SYSTEM",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/10_GOVERNANCE_COMPLIANCE/TRAINING_SYSTEM"
+      },
+      {
+        "name": "archive",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/11_STRATEGIC_DECISION/archive"
+      },
+      {
+        "name": "maintenance_records",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/11_STRATEGIC_DECISION/maintenance_records"
+      },
+      {
+        "name": "layer_0",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "docs/12_MODULE_DESIGNS/layer_0"
+      },
+      {
+        "name": "notebooks",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "notebooks"
+      },
+      {
+        "name": "reports",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "reports"
+      },
+      {
+        "name": "review_materials_package",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "review_materials_package"
+      },
+      {
+        "name": "a_stock_rules",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "review_materials_package/a_stock_rules"
+      },
+      {
+        "name": "data_consistency",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "review_materials_package/data_consistency"
+      },
+      {
+        "name": "trading_costs",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "review_materials_package/trading_costs"
+      },
+      {
+        "name": "web_interface",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "review_materials_package/web_interface"
+      },
+      {
+        "name": "governance",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "scripts/governance"
+      },
+      {
+        "name": "api",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/api"
+      },
+      {
+        "name": "routes",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/api/routes"
+      },
+      {
+        "name": "core",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/core"
+      },
+      {
+        "name": "engines",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/engines"
+      },
+      {
+        "name": "modules",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules"
+      },
+      {
+        "name": "ai_factor_miner",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/ai_factor_miner"
+      },
+      {
+        "name": "examples",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/ai_factor_miner/examples"
+      },
+      {
+        "name": "economic_regime_engine",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/economic_regime_engine"
+      },
+      {
+        "name": "examples",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/economic_regime_engine/examples"
+      },
+      {
+        "name": "examples",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/examples"
+      },
+      {
+        "name": "statistical_arbitrage",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/statistical_arbitrage"
+      },
+      {
+        "name": "examples",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/modules/statistical_arbitrage/examples"
+      },
+      {
+        "name": "utils",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "src/utils"
+      },
+      {
+        "name": "faulty_samples",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tests/faulty_samples"
+      },
+      {
+        "name": "fixtures",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tests/fixtures"
+      },
+      {
+        "name": "integration",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tests/integration"
+      },
+      {
+        "name": "performance",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tests/performance"
+      },
+      {
+        "name": "unit",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tests/unit"
+      },
+      {
+        "name": "tools",
+        "has_chinese": false,
+        "has_space": false,
+        "has_special_chars": false,
+        "missing_prefix": true,
+        "issues": [
+          "缺少 2 位数字前缀（如 00_、01_）"
+        ],
+        "path": "tools"
+      }
+    ]
+  }
+}

@@ -23,7 +23,9 @@ responsibility:
 > **审计方法**: 七维穿透测试 + 逻辑压力测试  
 > **风险评级**: 🔴 **严重** — 发现多处致命漏洞
 
----
+```
+```---
+```
 
 ## 执行摘要
 
@@ -39,7 +41,9 @@ responsibility:
 
 **综合评估**: 系统治理处于 **脆弱状态**，存在多处可导致自动化脚本失效的致命缺陷。
 
----
+```
+```---
+```
 
 ## 一、致命风险 (Critical) — 需立即修复
 
@@ -73,7 +77,9 @@ responsibility:
 | `docs/11_STRATEGIC_DECISION/missing-modules-blueprint-summary-20260407.md` | 2 | `MISSING_MODULES_BLUEPRINT_SUMMARY_20260407` |
 
 **根因分析**:
+```
 1. **模板残留**: 文档模板中包含 `module_id: [MODULE_NAME]_001` 占位符，未正确替换
+```
 2. **双 YAML frontmatter**: 文档头部存在两个 `---` 块，每个块定义不同 module_id
 3. **合并冲突**: 多分支合并时未解决 module_id 冲突
 
@@ -89,7 +95,9 @@ responsibility:
 # 3. 删除重复的 module_id 定义
 ```
 
----
+```
+```---
+```
 
 ### 🔴 C-002: 双 YAML Frontmatter — 解析炸弹
 
@@ -110,7 +118,9 @@ responsibility:
 - 🔴 version/status/owner 信息不可靠
 - 🔴 CI/CD 门禁失效
 
----
+```
+```---
+```
 
 ### 🔴 C-003: module_id 命名空间污染 — 真源冲突
 
@@ -125,9 +135,13 @@ responsibility:
 
 **真源规则违反**:
 - 每个 module_id 应该唯一对应一个文档
+```
 - 发现多个文档使用 `module_id: *_001` 格式，无区分度
+```
 
----
+```
+```---
+```
 
 ## 二、逻辑缺陷 (High) — 违反 L0 真源原则
 
@@ -152,7 +166,9 @@ responsibility:
 1. 将 `path-standard.md` 提升为 L0 标准文档
 2. 或将其改为引用 L0 真源的实现指南
 
----
+```
+```---
+```
 
 ### 🟠 H-002: PATH_STANDARD.md 真源漂移
 
@@ -174,7 +190,9 @@ responsibility:
   L5 (实施层) ──引用 L0 标准──
 ```
 
----
+```
+```---
+```
 
 ### 🟠 H-003: 文档版本号混乱 — 版本漂移
 
@@ -189,7 +207,9 @@ responsibility:
 
 **问题**: 系统清单版本(5.9.0)与文档索引版本(1.1.0)不一致，反映不同演进线。
 
----
+```
+```---
+```
 
 ## 三、合规性建议 (Medium)
 
@@ -204,7 +224,9 @@ responsibility:
 
 **建议**: 创建强制 frontmatter 模板，pre-commit 钩子验证必需字段。
 
----
+```
+```---
+```
 
 ### 🟡 M-002: 孤儿文件与影子文件夹
 
@@ -213,7 +235,9 @@ responsibility:
 2. **孤儿蓝图**: `01_BLUEPRINTS/` 下大量蓝图未在对应层 INDEX.md 中挂载
 3. **影子文件夹**: `06_ARCHIVE/` 下的归档目录缺少权威源引用
 
----
+```
+```---
+```
 
 ### 🟡 M-003: INDEX.md 死链
 
@@ -224,7 +248,9 @@ responsibility:
 
 **建议**: 建立索引完整性 CI 检查，每次提交自动验证链接有效性。
 
----
+```
+```---
+```
 
 ### 🟡 M-004: SOP 文档缺少自检标准
 
@@ -242,7 +268,9 @@ responsibility:
 3. ✅ 质量检查点
 4. ✅ 异常处理流程
 
----
+```
+```---
+```
 
 ## 四、风险矩阵
 
@@ -258,7 +286,9 @@ responsibility:
 | 索引死链 | 高 | 低 | 🟡 | P3 |
 | SOP 无验收标准 | 高 | 低 | 🟡 | P3 |
 
----
+```
+```---
+```
 
 ## 五、修复路线图
 
@@ -267,7 +297,9 @@ responsibility:
 1. **双 module_id 清理**
    ```bash
    # 扫描所有双 module_id 文档
+```
    grep -r "module_id:" docs/ --include="*.md" | \
+```
      awk '{print $1}' | sort | uniq -c | sort -rn | \
      awk '$1 > 1 {print}' > double_module_id_files.txt
    
@@ -296,7 +328,9 @@ responsibility:
 7. **索引链接修复**
 8. **SOP 验收标准补充**
 
----
+```
+```---
+```
 
 ## 六、审计结论
 
@@ -316,7 +350,9 @@ responsibility:
 2. 🟠 **本周**: 解决 PATH_STANDARD 真源漂移
 3. 🟡 **本月**: 完善元数据模板和 SOP 标准
 
----
+```
+```---
+```
 
 *审计完成时间: 2026-04-12*  
 *审计专家: 首席外部审计专家 (Cyber-Governance Auditor)*  

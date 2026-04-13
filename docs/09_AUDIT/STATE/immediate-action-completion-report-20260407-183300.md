@@ -1,31 +1,16 @@
 ---
-
-module_id: 09_AUDIT_STATE_IMMEDIATE_ACTION_COMPLETION_REPORT_20260407_183300
-
+module_id: 09_AUDIT_STATE_IMMEDIATE_ACTION_COMPLETION_REPORT_20260407_183300_4311
 version: 1.0.0
-
 status: Active
-
 created_date: 2026-04-07
-
 last_updated: 2026-04-07
-
 owner: 首席文档架构师
-
 responsibility:
-
-  - 立即行动任务完成报告
-
-  - 质量优化总结
-
+- 立即行动任务完成报告
 standard_type: 完成报告
-
 applicable_scope: 立即行动任务最终报告
-
 compliance_level: 专业标准
-
 parent_document: ../INDEX.md
-
 layer: layer_09
 ---
 
@@ -46,7 +31,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -64,7 +51,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -86,7 +75,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -120,7 +111,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -168,7 +161,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -232,7 +227,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -312,7 +309,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -344,7 +343,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -388,7 +389,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

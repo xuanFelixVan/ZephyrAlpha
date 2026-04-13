@@ -1,6 +1,15 @@
+---
+module_id: AUTO_32602
+owner: System_Guardian
+version: 1.0
+status: AUDITED
+last_updated: 2026-04-13
+---
 ﻿---
 
+```
 module_id: PERIODIC_CHECK_GUIDE_001
+```
 
 version: 1.0.0
 
@@ -25,7 +34,9 @@ compliance_level: 专业标准
 parent_document: ../INDEX.md
 
 layer: layer_09
----
+```
+```---
+```
 
 
 # 文档治理定期检查指南
@@ -42,7 +53,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -80,7 +93,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -164,7 +179,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -202,7 +219,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -272,7 +291,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -308,7 +329,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 
@@ -338,7 +361,9 @@ layer: layer_09
 
 
 
----
+```
+```---
+```
 
 
 

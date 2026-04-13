@@ -1,5 +1,5 @@
 ---
-module_id: 09_AUDIT_STATE_MODULE_ID_REGISTRY
+module_id: 09_AUDIT_STATE_MODULE_ID_REGISTRY_2206
 layer: layer_09
 version: 1.0.0
 status: Active
@@ -87,7 +87,9 @@ compliance_level: 专业标准
 
 
 
----
+```
+```---
+```
 
 
 
@@ -261,7 +263,9 @@ grep -r "DATA_QUALITY" docs/ --include="*.md" | grep "module_id:"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -313,7 +317,9 @@ grep -r "DATA_QUALITY" docs/ --include="*.md" | grep "module_id:"
 
 
 
----
+```
+```---
+```
 
 
 
@@ -397,7 +403,9 @@ if ($duplicates) {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -413,7 +421,9 @@ if ($duplicates) {
 
 
 
----
+```
+```---
+```
 
 
 
@@ -431,7 +441,9 @@ if ($duplicates) {
 
 
 
----
+```
+```---
+```
 
 
 

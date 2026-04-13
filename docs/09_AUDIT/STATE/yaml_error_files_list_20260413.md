@@ -23,7 +23,9 @@ responsibility:
 > **涉及唯一文件**: ~300 个  
 > **修复状态**: 待人工干预
 
----
+```
+```---
+```
 
 ## 统计摘要
 
@@ -34,7 +36,9 @@ responsibility:
 | 字符串类型 Frontmatter | ~100 | 20% | 🟠 中 |
 | 其他错误 | ~6 | 1% | 🟡 低 |
 
----
+```
+```---
+```
 
 ## 按目录统计
 
@@ -50,7 +54,9 @@ responsibility:
 | `10_GOVERNANCE_COMPLIANCE/` | ~15 | 🟠 P1 | 治理合规 |
 | `11_STRATEGIC_DECISION/` | ~20 | 🔴 P0 | 战略决策 |
 
----
+```
+```---
+```
 
 ## P0 - 立即修复（活跃区核心文档）
 
@@ -240,7 +246,9 @@ docs/11_STRATEGIC_DECISION/03_strategy_selection/strategy-selection-framework.md
 docs/11_STRATEGIC_DECISION/04_strategic_adjustment/INDEX.md
 ```
 
----
+```
+```---
+```
 
 ## P1 - 本周修复（活跃区一般文档）
 
@@ -326,7 +334,9 @@ docs/10_GOVERNANCE_COMPLIANCE/INDEX.md
 docs/12_MODULE_DESIGNS/layer_0/INDEX.md
 ```
 
----
+```
+```---
+```
 
 ## P2 - 可选修复（归档区/历史报告）
 
@@ -347,7 +357,9 @@ docs/06_ARCHIVE/unclassified/*
 
 > **注**: 归档区文件主要为历史记录，修复优先级较低。
 
----
+```
+```---
+```
 
 ## 修复方法指南
 
@@ -358,11 +370,17 @@ docs/06_ARCHIVE/unclassified/*
 1. 打开文件，检查 `---` 分隔符
 2. 确保 YAML 块格式正确:
    ```yaml
-   ---
+```
+```   ---
+```
+```
    module_id: XXX_001
+```
    version: 1.0.0
    status: Active
-   ---
+```
+```   ---
+```
    ```
 3. 删除重复的 module_id 定义
 
@@ -374,16 +392,28 @@ docs/06_ARCHIVE/unclassified/*
 2. 改为字典格式:
    ```yaml
    # 错误 (列表)
-   ---
+```
+```   ---
+```
+```
    - module_id: XXX_001
+```
    - version: 1.0.0
-   ---
+```
+```   ---
+```
    
    # 正确 (字典)
-   ---
+```
+```   ---
+```
+```
    module_id: XXX_001
+```
    version: 1.0.0
-   ---
+```
+```   ---
+```
    ```
 
 ### 错误类型 3: 字符串类型 Frontmatter
@@ -393,12 +423,20 @@ docs/06_ARCHIVE/unclassified/*
 1. 检查 frontmatter 是否只有一行
 2. 确保完整的 YAML 格式:
    ```yaml
-   ---
+```
+```   ---
+```
+```
    module_id: XXX_001
-   ---
+```
+```
+```   ---
+```
    ```
 
----
+```
+```---
+```
 
 ## 批量修复命令
 
@@ -413,7 +451,9 @@ sort error_files_unique.txt | cut -d'/' -f1-3 | uniq -c | sort -rn
 grep "docs/01_FRAMEWORK/" error_files_unique.txt
 ```
 
----
+```
+```---
+```
 
 ## 修复完成验证
 
@@ -432,7 +472,9 @@ python scripts/check_directory_naming.py
 python scripts/batch_fix_invalid_links_v2.py
 ```
 
----
+```
+```---
+```
 
 **报告生成时间**: 2026-04-13  
 **状态**: 待修复  

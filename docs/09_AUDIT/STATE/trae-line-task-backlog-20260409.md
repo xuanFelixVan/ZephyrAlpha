@@ -38,8 +38,12 @@ responsibility: "处理TRAE_LINE_TASK_BACKLOG_20260409相关业务"
 
 ## 1. module_id 重复（2 簇）
 
+```
 - [ ] **DEDUP-01** 解决 `module_id: FACTOR_GUIDE_001` 重复：canonical `docs/02_FACTOR_LIBRARY/01_STANDARDS/FACTOR_MANAGEMENT_STANDARD.md`；对 `docs/06_ARCHIVE/overlap_FACTOR_MANAGEMENT_STANDARD_20260407_190203.md` 按 ADR-OC-003 改后缀并加互链/篇首说明。
+```
+```
 - [ ] **DEDUP-02** 解决 `module_id: 09_AUDIT_STATE_STRICT_ORPHAN_FILES_REPORT_20260408` 重复：在 `STRICT_ORPHAN_FILES_REPORT_20260408.md` 与 `STRICT_ORPHAN_FILES_REPORT_REGEN_20260408.md` 择一 canonical，另一篇改 `module_id`（如 `_REGEN` 后缀）并互链。
+```
 
 ## 2. 严格 inbound 孤儿（REGEN 清单，共 **532** 条）
 
