@@ -1,14 +1,14 @@
 {
-  "scan_time_utc": "20260413T074004Z",
+  "scan_time_utc": "20260413T075658Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 4940,
   "links": {
     "stats": {
       "total_files_scanned": 4940,
-      "total_md_links": 8371,
+      "total_md_links": 8370,
       "skipped_external": 1396,
       "valid": 1670,
-      "invalid": 5305
+      "invalid": 5304
     },
     "invalid_details_sample": [
       {
@@ -3552,11 +3552,6 @@
         "resolved": "docs/05_IMPLEMENTATION/scripts/README.md"
       },
       {
-        "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/construction-phase-task-list.md",
-        "url": "../../../09_AUDIT/STATE/CANONICAL_POINTERS.md",
-        "resolved": "docs/09_AUDIT/STATE/CANONICAL_POINTERS.md"
-      },
-      {
         "source": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/mcp-plugin-management.md",
         "url": "../../../../01_FRAMEWORK/ARCHITECTURE.md",
         "resolved": "01_FRAMEWORK/ARCHITECTURE.md"
@@ -4010,6 +4005,11 @@
         "source": "docs/05_IMPLEMENTATION/INDEX.md",
         "url": "./audit5-similarity-fix-report-20260407-190452.md",
         "resolved": "docs/05_IMPLEMENTATION/audit5-similarity-fix-report-20260407-190452.md"
+      },
+      {
+        "source": "docs/05_IMPLEMENTATION/INDEX.md",
+        "url": "./audit5-sixth-round-audit-final-report-20260407.md",
+        "resolved": "docs/05_IMPLEMENTATION/audit5-sixth-round-audit-final-report-20260407.md"
       }
     ],
     "invalid_truncated": true
