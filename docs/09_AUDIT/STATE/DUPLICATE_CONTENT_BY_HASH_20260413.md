@@ -3,6 +3,7 @@ standard_type: audit_state
 applicable_scope: 内容级重复（按后缀白名单）
 generated_date: '20260413'
 generated_by: scripts/governance/scan_duplicate_file_content.py
+module_id: AUDIT_STATE_DUPLICATE_CONTENT_BY_HASH_20260413
 ---
 
 # 内容重复扫描报告（SHA256）

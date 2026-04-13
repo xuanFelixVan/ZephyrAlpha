@@ -3,6 +3,7 @@ standard_type: audit_state
 applicable_scope: 索引健全性（零入链候选 · 路径级）
 generated_date: '20260413'
 generated_by: scripts/governance/scan_index_health.py
+module_id: AUDIT_STATE_INDEX_HEALTH_ORPHAN_20260413
 ---
 
 # 索引健全性扫描报告（零入链候选）

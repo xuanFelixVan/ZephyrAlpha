@@ -1,10 +1,10 @@
 {
-  "scan_time_utc": "20260413T090511Z",
+  "scan_time_utc": "20260413T091216Z",
   "repo": "D:\\ZephyrAlpha",
-  "md_file_count": 3532,
+  "md_file_count": 3534,
   "links": {
     "stats": {
-      "total_files_scanned": 3532,
+      "total_files_scanned": 3534,
       "total_md_links": 8607,
       "skipped_external": 856,
       "valid": 7716,
@@ -190,7 +190,7 @@
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3496,
+    "unique_module_ids": 3497,
     "duplicate_ids_count": 13,
     "duplicates": {
       "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED": [
@@ -260,6 +260,7 @@
       "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md",
       "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md",
       "docs/INDEX.md",
+      "docs/PRECOMMIT_HOOK_SETUP.md",
       "implementation_details.md",
       "progress_table.md",
       "reports/folder_structure_analysis_20260413_134123.md",
@@ -271,7 +272,7 @@
       "ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md",
       "数字化系统健康白皮书.md"
     ],
-    "no_id_total": 22
+    "no_id_total": 23
   },
   "path_depth": {
     "deepest_30": [

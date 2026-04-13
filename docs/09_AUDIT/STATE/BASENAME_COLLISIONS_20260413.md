@@ -3,6 +3,7 @@ standard_type: audit_state
 applicable_scope: 同名不同路径（basename · C2 输入）
 generated_date: '20260413'
 generated_by: scripts/governance/scan_basename_collisions.py
+module_id: AUDIT_STATE_BASENAME_COLLISIONS_20260413
 ---
 
 # Basename 碰撞报表（同名不同路径）

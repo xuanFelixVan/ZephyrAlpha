@@ -2,6 +2,7 @@
 standard_type: audit_state
 applicable_scope: 全仓库路径目录聚合（git ls-files，可选未跟踪）
 generated_date: '20260413'
+module_id: AUDIT_STATE_REPO_DIRECTORY_ROLLUP_20260413
 ---
 
 # 仓库目录深度聚合（路径条数）

@@ -1,0 +1,124 @@
+{
+  "timestamp": "20260413",
+  "total_files": 23,
+  "added": 21,
+  "skipped": 2,
+  "errors": 0,
+  "results": [
+    {
+      "file": ".audit_readme.md",
+      "status": "ADDED",
+      "module_id": "ROOT_.AUDIT_README"
+    },
+    {
+      "file": ".venv-1/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
+      "status": "ADDED",
+      "module_id": "AUTO_LICENSE"
+    },
+    {
+      "file": ".venv-1/Lib/site-packages/pip-26.0.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+      "status": "ADDED",
+      "module_id": "AUTO_LICENSE"
+    },
+    {
+      "file": "AUDIT_10_DIMENSIONS_REPORT.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_AUDIT_10_DIMENSIONS_REPORT"
+    },
+    {
+      "file": "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/00_MANAGEMENT/CANON/INDEX.md",
+      "status": "SKIP",
+      "reason": "malformed_frontmatter"
+    },
+    {
+      "file": "docs/09_AUDIT/REPORTS/seven_dimensional_audit_report.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT"
+    },
+    {
+      "file": "docs/09_AUDIT/REPORTS/ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER"
+    },
+    {
+      "file": "docs/09_AUDIT/STATE/BASENAME_COLLISIONS_20260413.md",
+      "status": "ADDED",
+      "module_id": "AUDIT_STATE_BASENAME_COLLISIONS_20260413"
+    },
+    {
+      "file": "docs/09_AUDIT/STATE/DUPLICATE_CONTENT_BY_HASH_20260413.md",
+      "status": "ADDED",
+      "module_id": "AUDIT_STATE_DUPLICATE_CONTENT_BY_HASH_20260413"
+    },
+    {
+      "file": "docs/09_AUDIT/STATE/INDEX_HEALTH_ORPHAN_20260413.md",
+      "status": "ADDED",
+      "module_id": "AUDIT_STATE_INDEX_HEALTH_ORPHAN_20260413"
+    },
+    {
+      "file": "docs/09_AUDIT/STATE/REPO_DIRECTORY_ROLLUP_20260413.md",
+      "status": "ADDED",
+      "module_id": "AUDIT_STATE_REPO_DIRECTORY_ROLLUP_20260413"
+    },
+    {
+      "file": "docs/INDEX.md",
+      "status": "SKIP",
+      "reason": "malformed_frontmatter"
+    },
+    {
+      "file": "docs/PRECOMMIT_HOOK_SETUP.md",
+      "status": "ADDED",
+      "module_id": "AUTO_PRECOMMIT_HOOK_SETUP"
+    },
+    {
+      "file": "implementation_details.md",
+      "status": "ADDED",
+      "module_id": "ROOT_IMPLEMENTATION_DETAILS"
+    },
+    {
+      "file": "progress_table.md",
+      "status": "ADDED",
+      "module_id": "ROOT_PROGRESS_TABLE"
+    },
+    {
+      "file": "reports/folder_structure_analysis_20260413_134123.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_FOLDER_STRUCTURE_ANALYSIS_20260413_134123"
+    },
+    {
+      "file": "reports/folder_structure_analysis_20260413_134852.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_FOLDER_STRUCTURE_ANALYSIS_20260413_134852"
+    },
+    {
+      "file": "reports/folder_structure_analysis_20260413_135132.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_FOLDER_STRUCTURE_ANALYSIS_20260413_135132"
+    },
+    {
+      "file": "reports/migration_20260413_052831.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_MIGRATION_20260413_052831"
+    },
+    {
+      "file": "reports/migration_20260413_052848.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_MIGRATION_20260413_052848"
+    },
+    {
+      "file": "reports/system_cleanup_analysis_20260413_135615.md",
+      "status": "ADDED",
+      "module_id": "AUTO_REPORT_SYSTEM_CLEANUP_ANALYSIS_20260413_135615"
+    },
+    {
+      "file": "ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER.md",
+      "status": "ADDED",
+      "module_id": "ROOT_ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER"
+    },
+    {
+      "file": "数字化系统健康白皮书.md",
+      "status": "ADDED",
+      "module_id": "ROOT_数字化系统健康白皮书"
+    }
+  ]
+}

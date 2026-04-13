@@ -3,6 +3,7 @@ owner: System_Architect
 version: 1.0.0
 status: active
 last_updated: 2026-04-13
+module_id: ROOT_IMPLEMENTATION_DETAILS
 ---
 
 ### 1.1 风险预算框架.md

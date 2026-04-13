@@ -1,0 +1,93 @@
+{
+  "timestamp": "20260413",
+  "total_duplicate_groups": 13,
+  "marked_deprecated": 14,
+  "errors": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "module_id": "- 层级标识_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/- 层级标识/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/- 层级标识_ARCHIVED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/04_Layer_1_Data_Source/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 1 (数据源层)/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 3 (策略层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 3 (策略层)/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 3 (策略层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 3 (舆情分析层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 3 (舆情分析层)/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 3 (舆情分析层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 6 (组合优化层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 6 (组合优化层)/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 6 (组合优化层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER 7 (AI报告层)_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 7 (AI报告层)/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer 7 (AI报告层)_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer X ([Layer名称])/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/Layer X ([Layer名称])_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER_1_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/22_layer_1/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/layer_1_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER_4_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/27_layer_4/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/layer_4_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER_6_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/28_layer_6/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/layer_6_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "LAYER_9_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/34_layer_9/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/layer_9_INTEGRATED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "[LAYER定位]'_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/'[Layer]'/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/'[Layer定位]'_ARCHIVED_20260413_135113/INDEX.md"
+    },
+    {
+      "module_id": "舆情分析_INDEX_AUTO_ARCHIVED",
+      "file": "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/09_DIR_18_/INDEX.md",
+      "status": "MARKED_DEPRECATED",
+      "canonical": "docs/99_ARCHIVE/舆情分析_ARCHIVED_20260413_135113/INDEX.md"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 ---
 module_id: "LAYER X ([LAYER名称])_INDEX_AUTO_ARCHIVED"
+# [DEPRECATED] Archive duplicate - canonical version in docs/99_ARCHIVE/Layer X ([Layer名称])_INTEGRATED_20260413_135113/INDEX.md
 version: 1.0.0
-status: Active
+status: DEPRECATED
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: Auto-Index Compiler

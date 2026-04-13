@@ -3,6 +3,7 @@ owner: System_Architect
 version: 1.0.0
 status: active
 last_updated: 2026-04-13
+module_id: AUTO_REPORT_SEVEN_DIMENSIONAL_AUDIT_REPORT
 ---
 
 # 七维深度压力测试与逻辑穿透审计报告

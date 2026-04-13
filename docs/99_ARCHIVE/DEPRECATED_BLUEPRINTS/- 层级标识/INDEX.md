@@ -1,7 +1,8 @@
 ---
 module_id: "- 层级标识_INDEX_AUTO_ARCHIVED"
+# [DEPRECATED] Archive duplicate - canonical version in docs/99_ARCHIVE/- 层级标识_ARCHIVED_20260413_135113/INDEX.md
 version: 1.0.0
-status: Active
+status: DEPRECATED
 created_date: 2026-04-13
 last_updated: 2026-04-13
 owner: Auto-Index Compiler

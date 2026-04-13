@@ -1,3 +1,9 @@
+---
+module_id: AUTO_REPORT_FOLDER_STRUCTURE_ANALYSIS_20260413_134123
+status: Auto-generated
+generated_date: 2026-04-13
+---
+
 ======================================================================
 文件夹结构分析报告
 生成时间: 2026-04-13T13:41:23.187035

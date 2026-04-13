@@ -3,6 +3,7 @@ owner: System_Architect
 version: 1.0.0
 status: active
 last_updated: 2026-04-13
+module_id: ROOT_PROGRESS_TABLE
 ---
 
 ## 📊 蓝图进度跟踪表

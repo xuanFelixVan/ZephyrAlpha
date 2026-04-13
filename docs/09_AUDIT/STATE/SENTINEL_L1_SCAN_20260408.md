@@ -6,14 +6,14 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260413T090511Z
-> **Markdown 文件数**: 3532
+> **UTC 时间**: 20260413T091216Z
+> **Markdown 文件数**: 3534
 
 ## 链接统计
 
 | 指标 | 数值 |
 |------|------|
-| 扫描文件 | 3532 |
+| 扫描文件 | 3534 |
 | Markdown 内链（非 http/锚点等已排除） | 8607 |
 | 跳过（外链/锚点等） | 856 |
 | 判定有效 | 7716 |
@@ -59,9 +59,9 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 ## module_id
 
-- 唯一 module_id 数: **3496**
+- 唯一 module_id 数: **3497**
 - 重复 id 数: **13**
-- 首道 front matter 无 `module_id` 的文件数: **22**
+- 首道 front matter 无 `module_id` 的文件数: **23**
 
 ### 重复模块（前 20 个）
 

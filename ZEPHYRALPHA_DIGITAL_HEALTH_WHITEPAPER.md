@@ -1,3 +1,9 @@
+---
+module_id: ROOT_ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER
+status: Auto-generated
+generated_date: 2026-04-13
+---
+
 # ZephyrAlpha 数字化系统健康白皮书 (V1.0_AUDITED)
 
 > **审计日期**: 2026-04-13

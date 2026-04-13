@@ -3,6 +3,7 @@ owner: System_Architect
 version: 1.0.0
 status: active
 last_updated: 2026-04-13
+module_id: AUTO_REPORT_ZEPHYRALPHA_DIGITAL_HEALTH_WHITEPAPER
 ---
 
 # 🔬 ZephyrAlpha 系统健康白皮书
