@@ -6,7 +6,7 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 # Sentinel L1 扫描结果（机器生成）
 
-> **UTC 时间**: 20260413T090120Z
+> **UTC 时间**: 20260413T090511Z
 > **Markdown 文件数**: 3532
 
 ## 链接统计
@@ -59,17 +59,13 @@ generated_by: scripts/governance/sentinel_l1_governance_scan.py
 
 ## module_id
 
-- 唯一 module_id 数: **3492**
-- 重复 id 数: **17**
+- 唯一 module_id 数: **3496**
+- 重复 id 数: **13**
 - 首道 front matter 无 `module_id` 的文件数: **22**
 
 ### 重复模块（前 20 个）
 
 - `LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED`: 3 个文件
-- `01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370`: 2 个文件
-- `MARKETREGIMEBLUEPRINT_001_7487`: 2 个文件
-- `PORTFOLIO_PERFORMANCE_EVALUATION_001_2782`: 2 个文件
-- `AUDIT_SENTINEL_L1_SCAN_20260408`: 2 个文件
 - `[LAYER定位]'_INDEX_AUTO_ARCHIVED`: 2 个文件
 - `- 层级标识_INDEX_AUTO_ARCHIVED`: 2 个文件
 - `舆情分析_INDEX_AUTO_ARCHIVED`: 2 个文件

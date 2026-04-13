@@ -1,5 +1,5 @@
 {
-  "scan_time_utc": "20260413T090120Z",
+  "scan_time_utc": "20260413T090511Z",
   "repo": "D:\\ZephyrAlpha",
   "md_file_count": 3532,
   "links": {
@@ -190,29 +190,13 @@
     "invalid_truncated": false
   },
   "module_ids": {
-    "unique_module_ids": 3492,
-    "duplicate_ids_count": 17,
+    "unique_module_ids": 3496,
+    "duplicate_ids_count": 13,
     "duplicates": {
       "LAYER 1 (数据源层)_INDEX_AUTO_ARCHIVED": [
         "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/04_Layer_1_Data_Source/INDEX.md",
         "docs/99_ARCHIVE/DEPRECATED_BLUEPRINTS/Layer 1 (数据源层)/INDEX.md",
         "docs/99_ARCHIVE/Layer 1 (数据源层)_INTEGRATED_20260413_135113/INDEX.md"
-      ],
-      "01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370": [
-        "docs/01_FRAMEWORK/dynamic-risk-budgeting-blueprint.md",
-        "docs/11_STRATEGIC_DECISION/risk-budgeting-framework-blueprint.md"
-      ],
-      "MARKETREGIMEBLUEPRINT_001_7487": [
-        "docs/01_FRAMEWORK/LAYER4_ML/market-regime-blueprint.md",
-        "docs/11_STRATEGIC_DECISION/market-environment-monitoring-blueprint.md"
-      ],
-      "PORTFOLIO_PERFORMANCE_EVALUATION_001_2782": [
-        "docs/05_IMPLEMENTATION/06_CONSTRUCTION_DOCS/01_BLUEPRINTS/portfolio-performance-evaluation-blueprint.md",
-        "docs/11_STRATEGIC_DECISION/strategy-evaluation-engine-blueprint.md"
-      ],
-      "AUDIT_SENTINEL_L1_SCAN_20260408": [
-        "docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.md",
-        "docs/09_AUDIT/STATE/SENTINEL_L2_SCAN_20260413.md"
       ],
       "[LAYER定位]'_INDEX_AUTO_ARCHIVED": [
         "docs/99_ARCHIVE/'[Layer定位]'_ARCHIVED_20260413_135113/INDEX.md",

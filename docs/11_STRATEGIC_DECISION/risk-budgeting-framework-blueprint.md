@@ -1,5 +1,5 @@
 ---
-module_id: 01_FRAMEWORK_DYNAMIC_RISK_BUDGETING_BLUEPRINT_9370
+module_id: 11_STRATEGIC_DECISION_RISK_BUDGETING_REF
 layer: layer_01
 version: 1.0.0
 status: Active

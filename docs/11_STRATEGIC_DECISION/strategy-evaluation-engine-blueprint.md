@@ -1,7 +1,7 @@
 ---
 responsibility:
 - 组合绩效评估
-module_id: PORTFOLIO_PERFORMANCE_EVALUATION_001_2782
+module_id: 11_STRATEGIC_DECISION_STRATEGY_EVAL_ENGINE_REF
 version: 1.0.0
 status: Active
 created_date: 2026-04-07

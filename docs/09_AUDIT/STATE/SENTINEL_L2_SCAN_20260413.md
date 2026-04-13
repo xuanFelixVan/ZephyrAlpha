@@ -1,5 +1,5 @@
 ---
-module_id: AUDIT_SENTINEL_L1_SCAN_20260408
+module_id: AUDIT_SENTINEL_L2_SCAN_20260413
 standard_type: audit_state
 generated_by: scripts/governance/sentinel_l1_governance_scan.py
 ---

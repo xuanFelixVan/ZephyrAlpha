@@ -1,5 +1,5 @@
 ---
-module_id: MARKETREGIMEBLUEPRINT_001_7487
+module_id: 11_STRATEGIC_DECISION_MARKET_ENV_MONITORING_REF
 version: 1.0.0
 status: Active
 created_date: 2026-04-07
