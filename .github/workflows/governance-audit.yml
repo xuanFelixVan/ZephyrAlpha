@@ -1,0 +1,47 @@
+# AI-generated: CI 治理审计门禁（Sentinel L1 + 与 pre-commit 对齐的脚本路径）
+name: Governance audit
+
+on:
+  push:
+    branches: [main, develop, master]
+    paths:
+      - 'docs/**'
+      - 'scripts/audit/**'
+      - 'scripts/governance/**'
+      - '.github/workflows/governance-audit.yml'
+  pull_request:
+    branches: [main, develop, master]
+    paths:
+      - 'docs/**'
+      - 'scripts/audit/**'
+      - 'scripts/governance/**'
+      - '.github/workflows/governance-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  sentinel-l1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Sentinel L1 governance scan
+        run: python scripts/audit/sentinel_l1_governance_scan.py
+
+      - name: Upload Sentinel L1 JSON artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentinel-l1-json
+          path: docs/09_AUDIT/STATE/SENTINEL_L1_SCAN_20260408.json
+          if-no-files-found: ignore

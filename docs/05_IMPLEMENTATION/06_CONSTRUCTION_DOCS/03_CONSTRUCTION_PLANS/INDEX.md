@@ -30,6 +30,9 @@ layer: layer_05
 
 ## 文档列表
 
+- **Phase 2 施工真源（路径锁定）**
+  - [`docs/04_CONSTRUCTION/PLANS/`](../../../04_CONSTRUCTION/PLANS/INDEX.md)：施工主计划 + 分层施工图（**P2.1 L00** 等）
+
 - **施工计划**
   - `CONSTRUCTION_PLAN_TEXT_TO_STRATEGY_CONFIG_MVP_20260408.md`：桌面端（表单+对话）“文字/对话→策略配置→回测→报告”最小闭环
 

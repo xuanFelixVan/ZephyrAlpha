@@ -14,12 +14,12 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         
     - name: Install dependencies
       run: |
@@ -28,17 +28,17 @@ jobs:
         
     - name: Run weekly audit
       run: |
-        python scripts/weekly_audit_optimized.py
+        python scripts/archive/weekly_audit_optimized.py
         
     - name: Upload audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: weekly-audit-report
         path: docs/09_AUDIT/STATE/weekly_audit_*.json
         
     - name: Check compliance rate
       run: |
-        python scripts/check_compliance_rate.py
+        python scripts/archive/check_compliance_rate.py
         
   monthly-audit:
     runs-on: ubuntu-latest
@@ -46,12 +46,12 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         
     - name: Install dependencies
       run: |
@@ -60,17 +60,17 @@ jobs:
         
     - name: Run monthly audit
       run: |
-        python scripts/monthly_audit.py
+        python scripts/archive/monthly_audit.py
         
     - name: Upload audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: monthly-audit-report
         path: docs/09_AUDIT/STATE/monthly_audit_*.json
         
     - name: Check compliance rate
       run: |
-        python scripts/check_compliance_rate.py
+        python scripts/archive/check_compliance_rate.py
         
   quarterly-audit:
     runs-on: ubuntu-latest
@@ -78,12 +78,12 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
         
     - name: Install dependencies
       run: |
@@ -92,14 +92,14 @@ jobs:
         
     - name: Run quarterly audit
       run: |
-        python scripts/quarterly_audit.py
+        python scripts/archive/quarterly_audit.py
         
     - name: Upload audit report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: quarterly-audit-report
         path: docs/09_AUDIT/STATE/quarterly_audit_*.json
         
     - name: Check compliance rate
       run: |
-        python scripts/check_compliance_rate.py
+        python scripts/archive/check_compliance_rate.py

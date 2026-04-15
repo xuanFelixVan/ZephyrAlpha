@@ -18,22 +18,23 @@ jobs:
     
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: 设置Python环境
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: 重新编译所有索引
         run: |
+          mkdir -p .github/artifacts
           python scripts/index_compiler.py --recompile-all --output .github/artifacts/index_compilation_report.json
 
       - name: 检查孤儿率
         run: |
-          ORPHAN_REPORT=$(python scripts/strict_orphan_inbound_scan.py 2>&1)
+          ORPHAN_REPORT=$(python scripts/audit/strict_orphan_inbound_scan.py 2>&1)
           ORPHAN_RATE=$(echo "$ORPHAN_REPORT" | grep "孤儿文件:" | sed 's/.*(\([0-9.]*\)%).*/\1/')
           
           echo "孤儿率: $ORPHAN_RATE%"
@@ -100,7 +101,7 @@ jobs:
 
       - name: 上传报告
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: validation-reports
           path: .github/artifacts/
@@ -126,12 +127,12 @@ jobs:
     
     steps:
       - name: 检出代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 设置Python环境
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: 防护等级评估
         run: |
@@ -169,7 +170,7 @@ jobs:
     
     steps:
       - name: 下载报告
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: validation-reports
 

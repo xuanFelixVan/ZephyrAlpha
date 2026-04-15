@@ -16,33 +16,35 @@ jobs:
     name: 重复文档检测
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
     - name: 设置Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
     
     - name: 安装依赖
       run: |
         pip install requests
     
+    - name: 创建报告目录
+      run: mkdir -p reports
+
     - name: 运行重复文档检测
       id: duplicate_check
       run: |
-        python scripts/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/duplicate_check.json
-      continue-on-error: true
+        python scripts/archive/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/duplicate_check.json
     
     - name: 生成重复文档检测报告
       if: always()
       run: |
-        python scripts/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/DUPLICATE_DETECTION_REPORT.md
+        python scripts/archive/duplicate_detector.py --dir docs/ --threshold 0.8 --output reports/DUPLICATE_DETECTION_REPORT.md
     
     - name: 上传检测报告
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: duplicate-detection-report
         path: reports/
@@ -98,7 +100,7 @@ jobs:
             if (report.similarity_duplicates && report.similarity_duplicates.length > 0) {
               details += '\n\n### 🟡 相似度重复\n';
               report.similarity_duplicates.slice(0, 3).forEach(dup => {
-                details += `- 相似度 ${dup.similarity.toFixed(2%)}: ${dup.doc1} ↔ ${dup.doc2}\n`;
+                details += `- 相似度 ${dup.similarity.toFixed(2)}: ${dup.doc1} ↔ ${dup.doc2}\n`;
               });
             }
             
@@ -118,33 +120,35 @@ jobs:
     name: 链接有效性检查
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
     - name: 设置Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
     
     - name: 安装依赖
       run: |
         pip install requests
     
+    - name: 创建报告目录
+      run: mkdir -p reports
+
     - name: 运行链接有效性检查
       id: link_check
       run: |
-        python scripts/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/link_check.json
-      continue-on-error: true
+        python scripts/archive/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/link_check.json
     
     - name: 生成链接检查报告
       if: always()
       run: |
-        python scripts/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/LINK_CHECK_REPORT.md
+        python scripts/archive/link_checker.py --dir docs/ --max-depth 3 --timeout 10 --output reports/LINK_CHECK_REPORT.md
     
     - name: 上传检查报告
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: link-check-report
         path: reports/
@@ -223,7 +227,7 @@ jobs:
     
     steps:
     - name: 下载所有报告
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     
     - name: 生成质量汇总报告
       run: |
@@ -247,7 +251,7 @@ jobs:
         cat quality_summary.md
     
     - name: 上传汇总报告
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: quality-summary-report
         path: quality_summary.md

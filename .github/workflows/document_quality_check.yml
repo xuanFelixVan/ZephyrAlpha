@@ -19,14 +19,14 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
     
     - name: Install dependencies
       run: |
@@ -35,28 +35,27 @@ jobs:
     
     - name: Check document links
       run: |
-        python scripts/ci_cd_link_checker.py
-      continue-on-error: true
+        python scripts/archive/ci_cd_link_checker.py
     
     - name: Check YAML metadata
       run: |
-        python scripts/yaml_metadata_checker.py
-      continue-on-error: true
+        python scripts/archive/yaml_metadata_checker.py
     
     - name: Check document structure
       run: |
-        python scripts/document_structure_checker.py
-      continue-on-error: true
+        python scripts/archive/document_structure_checker.py
     
     - name: Generate quality report
       run: |
-        python scripts/generate_quality_report.py
+        python scripts/archive/generate_quality_report.py
     
     - name: Upload quality report
-      uses: actions/upload-artifact@v3
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
         name: document-quality-report
-        path: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/QUALITY_REPORT_*.md
+        path: docs/05_IMPLEMENTATION/04_OPERATIONS/audit_state/
+        if-no-files-found: ignore
     
     - name: Comment on PR
       if: github.event_name == 'pull_request'

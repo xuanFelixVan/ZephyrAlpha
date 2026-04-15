@@ -101,6 +101,7 @@ layer: layer_00
 
 ## 施工文档（06_CONSTRUCTION_DOCS · 导航入口）
 
+- **Phase 2 施工计划真源**：[`docs/04_CONSTRUCTION/PLANS/`](./04_CONSTRUCTION/PLANS/INDEX.md)（主计划 + L00–L07 施工图）
 - [施工文档索引](./06_CONSTRUCTION_DOCS/INDEX.md)
 - [蓝图图纸柜 README](./06_CONSTRUCTION_DOCS/01_BLUEPRINTS/README.md)
 

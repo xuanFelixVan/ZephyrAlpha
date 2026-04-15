@@ -14,14 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0  # 获取完整历史，用于引用更新检查
     
     - name: 设置Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
     
     - name: 安装依赖
       run: |
@@ -30,7 +30,6 @@ jobs:
     - name: 验证版本元数据
       run: |
         python src/utils/validate_version_metadata.py docs/ --recursive --threshold 70
-      continue-on-error: true
     
     - name: 生成验证报告
       if: always()
@@ -39,7 +38,7 @@ jobs:
     
     - name: 上传验证报告
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: version-validation-report
         path: version_validation_report.json
